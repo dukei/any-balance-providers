@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id major_version="1.0" version="1">tracking-russian-post</id>
+  <name>EMS и Почта России</name>
+  <description>
+    Отслеживание почтового отправления почты россии и EMS по его идентификатору
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <js>main.js</js>
+    <preferences>preferences.xml</preferences>
+  </files>
+  <counters>
+    <counter id="fulltext" name="Сводка" type="text"/>
+    <counter id="date" name="Дата изменения" type="text"/>
+    <counter id="operation" name="Операция" type="text"/>
+    <counter id="location" name="Местонахождение" type="text"/>
+    <counter id="attribute" name="Атрибут" type="text"/>
+  </counters>
+</provider>

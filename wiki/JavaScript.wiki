@@ -1,0 +1,34 @@
+#summary JavaScript файлы провайдера
+
+Провайдер может иметь один или несколько JavaScript файлов, главное, чтобы в одном из них была определена функция main, например,
+
+{{{
+function main(){
+  //Получим настройки эккаунта
+  var prefs = AnyBalance.getPreferences();
+
+  //Получаем значения счетчиков
+  //что-то для этого делаем
+  var strGet = AnyBalance.requestGet(url);
+  var strPost = AnyBalance.requestGet(url, {login: prefs.login, pass: prefs.pass});
+
+  //извлекаем из строк значения счетчиков
+  //...
+
+  //Возвращаем результат
+  AnyBalance.setResult({success: true, counter: counter});
+}
+}}}
+
+Все декларированные в {Manifest манифесте} под категорией `js` файлы будут загружены при обновлении эккаунта в Android [http://developer.android.com/reference/android/webkit/WebView.html WebView] и вызвана функция main(). Получив значения счетчиков, провайдер обязательно должен вызвать AnyBalance.setResult(), чтобы передать полученные счетчики программе AnyBalance.
+
+Для получения счетчиков провайдерам необходимо пользоваться [AnyBalanceAPI AnyBalance API]. Обычная схема работы функции main представлена выше.
+ * Получаем настройки с помощью AnyBalance.getPreferences
+ * Получаем страницы, содержащие нужные нам значения
+ * Извлекаем из них значения счетчиков
+ * Возвращаем результат
+
+Ничего сложного. Можно посмотреть примеры, например 
+[TutorialHelloWorld Hello, World!]
+[TutorialExchangeCbr Курсы валют]
+[TutorialTrackingRussianPost Отслеживание посылок]

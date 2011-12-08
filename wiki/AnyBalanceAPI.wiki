@@ -16,13 +16,13 @@ AnyBalance.getLevel() //since level 1
 
 ==getLastError==
 {{{
-AnyBalance.getLastError()
+AnyBalance.getLastError() //since level 1
 }}}
 Возвращает строку - описание последней произошедшей ошибки. Имеет смысл использовать, когда отключены исключения функцией [AnyBalanceAPI#setExceptions setExceptions(false)] версии текущего AnyBalance API.
 
 ==trace==
 {{{
-AnyBalance.trace(/*string*/ msg, /*string or null*/ caller)
+AnyBalance.trace(/*string*/ msg, /*string or null*/ caller) //since level 1
 }}}
 
 Записывает сообщение `msg` в лог эккаунта. Если `caller` не `null`, то он указывается в качестве дополнительной информации. Если `null`, то в качестве `caller` будет записано `trace`.
@@ -31,7 +31,7 @@ AnyBalance.trace(/*string*/ msg, /*string or null*/ caller)
 
 ==setExceptions==
 {{{
-AnyBalance.setExceptions(/*bool*/ use)
+AnyBalance.setExceptions(/*bool*/ use) //since level 1
 }}}
 
 Переключает режим исключений (`use = true` - включить, `use = false` - выключить). По умолчанию исключения включены, то есть в случае возникновения ошибки в недрах AnyBalance API, будет выброшена ошибка [AnyBalanceAPI#Error AnyBalance.Error]). Это удобно, потому что в этом случае, если исключение провайдером не перехвачено, то он автоматически завершится и вернет описание ошибки AnyBalance.
@@ -40,7 +40,7 @@ AnyBalance.setExceptions(/*bool*/ use)
 
 ==requestGet==
 {{{
-AnyBalance.requestGet(/*string*/ url) throws AnyBalance.Error
+AnyBalance.requestGet(/*string*/ url) throws AnyBalance.Error //since level 1
 }}}
 
 Посылает GET запрос по адресу `url`. Возвращает строку - тело ответа.
@@ -71,7 +71,7 @@ AnyBalance.requestPost(/*string*/ url, /*string, object or null*/ data) throws A
 
 ==setAuthentication==
 {{{
-AnyBalance.setAuthentication(/*string*/ name, /*string*/ pass, /*object or null*/ authscope) throws AnyBalance.Error
+AnyBalance.setAuthentication(/*string*/ name, /*string*/ pass, /*object or null*/ authscope) throws AnyBalance.Error //since level 1
 }}}
 
 Устанавливает параметры HTTP авторизации для всех последующих запросов [AnyBalanceAPI#requestGet requestGet()] и [AnyBalanceAPI#requestPost requestPost()]. `name` и `pass` - имя и пароль для авторизации, 
@@ -96,7 +96,7 @@ AnyBalance.setAuthentication(/*string*/ name, /*string*/ pass, /*object or null*
 
 ==clearAuthentication==
 {{{
-AnyBalance.clearAuthentication() throws AnyBalance.Error
+AnyBalance.clearAuthentication() throws AnyBalance.Error //since level 1
 }}}
 
 Сбрасывает все ранее установленные параметры HTTP авторизации, установленные [AnyBalanceAPI#setAuthentication setAuthentication()].
@@ -105,7 +105,7 @@ AnyBalance.clearAuthentication() throws AnyBalance.Error
 
 ==setResult==
 {{{
-AnyBalance.setResult(/*object*/ result) throws AnyBalance.Error
+AnyBalance.setResult(/*object*/ result) throws AnyBalance.Error //since level 1
 }}}
 
 Функция, устанавливающая результат выполнения скрипта провайдера. Она может установить как успешное состояние и передать значение счетчиков, так и состояние ошибки и передать описание ошибки. 
@@ -137,14 +137,14 @@ AnyBalance.setResult(/*object*/ result) throws AnyBalance.Error
 
 ==isSetResultCalled==
 {{{
-AnyBalance.isSetResultCalled()
+AnyBalance.isSetResultCalled() //since level 1
 }}}
 
 Возвращает `true`, если [AnyBalanceAPI#setResult setResult()] уже была вызвана. AnyBalance не гарантирует продолжение выполнения JavaScript провайдера после вызова им [AnyBalanceAPI#setResult setResult()]. 
 
 ==isAvailable==
 {{{
-AnyBalance.isAvailable(/*array or string*/ countername, ...)
+AnyBalance.isAvailable(/*array or string*/ countername, ...) //since level 1
 }}}
 
 Возвращает `true`, если хотя бы один из переданных счетчиков разрешен пользователем. Пользователь может запретить показ некоторых счетчиков в настройках эккаунта. Чтобы сберечь ресурсы мобильного устройства пользователя, не следует извлекать и возвращать значения запрещенных счетчиков. 
@@ -164,7 +164,7 @@ if(AnyBalance.isAvailable('counter1', 'counter2')){
 
 ==getPreferences==
 {{{
-AnyBalance.getPreferences()
+AnyBalance.getPreferences() //since level 1
 }}}
 
 Возвращает `object`, содержащий все настройки эккаунта, сделанные пользователем. В том числе настройки, предусмотренные в файле категории [Preferences preferences] [Manifest манифеста]. Код провайдера может получить свои настройки из этого объекта по именам, заданным в атрибутах `key` настроек из xml-файла [Preferences настроек].
@@ -193,7 +193,7 @@ var login = prefs.login;
 
 ==Error==
 {{{
-AnyBalance.Error(/*string*/ message, /*bool*/ allowRetry)
+AnyBalance.Error(/*string*/ message, /*bool*/ allowRetry) //since level 1
 }}}
 
 Конструктор исключения. `message` - описание ошибки, `allowRetry` - флаг, предписывающий AnyBalance повторно вызвать обновление для этого эккаунта. Подробнее об `allowRetry` см. [AnyBalanceAPI#setResult setResult()].

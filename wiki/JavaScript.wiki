@@ -1,5 +1,7 @@
 #summary JavaScript файлы провайдера
 
+Процедура получения значений счетчиков, предоставляемых провайдером, реализуется на языку JavaScript.
+
 Провайдер может иметь один или несколько JavaScript файлов, главное, чтобы в одном из них была определена функция main, например,
 
 {{{
@@ -20,13 +22,13 @@ function main(){
 }
 }}}
 
-Все декларированные в [Manifest манифесте] под категорией `js` файлы будут загружены при обновлении эккаунта в Android [http://developer.android.com/reference/android/webkit/WebView.html WebView] и вызвана функция main(). Получив значения счетчиков, провайдер обязательно должен вызвать [setResult AnyBalance.setResult()], чтобы передать полученные счетчики программе AnyBalance.
+Все декларированные в [Manifest манифесте] под категорией `js` файлы будут загружены при обновлении AnyBalance эккаунта в Android [http://developer.android.com/reference/android/webkit/WebView.html WebView] и вызвана функция main(). Получив значения счетчиков, провайдер обязательно должен вызвать [AnyBalanceAPI#setResult AnyBalance.setResult()], чтобы передать полученные счетчики программе AnyBalance.
 
 Для получения счетчиков провайдерам необходимо пользоваться [AnyBalanceAPI AnyBalance API]. Обычная схема работы функции main:
- * Получаем настройки с помощью [getPreferences AnyBalance.getPreferences]
- * Получаем страницы, содержащие нужные нам значения
- * Извлекаем из них значения счетчиков
- * Возвращаем результат
+ * Получаем настройки с помощью [AnyBalanceAPI#getPreferences AnyBalance.getPreferences]
+ * Получаем страницы, содержащие нужные нам значения, с помощью функций [AnyBalanceAPI#requestGet AnyBalance.requestGet] и [AnyBalanceAPI#requestPost AnyBalance.requestPost]
+ * Извлекаем из них значения счетчиков, не забывая про оптимизацию ([AnyBalanceAPI#isAvailable AnyBalance.isAvailable])
+ * Возвращаем результат - [AnyBalanceAPI#setResult AnyBalance.setResult]
 
 Ничего сложного. Можно посмотреть примеры, например 
  * [TutorialHelloWorld Hello, World!]

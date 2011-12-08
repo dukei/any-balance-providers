@@ -54,7 +54,7 @@ AnyBalance.requestGet(/*string*/ url) throws AnyBalance.Error //since level 1
 
 ==requestPost==
 {{{
-AnyBalance.requestPost(/*string*/ url, /*string, object or null*/ data) throws AnyBalance.Error
+AnyBalance.requestPost(/*string*/ url, /*string, object or null*/ data) throws AnyBalance.Error //since level 1
 }}}
 
 Посылает POST запрос по адресу `url` с телом `data`, если это строка. Если `data` объект, то тело запроса представляет собой параметры форм с именами и значениями всех свойств объекта `data`. Возвращает строку - тело ответа.

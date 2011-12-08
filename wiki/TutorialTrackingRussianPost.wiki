@@ -151,4 +151,4 @@ log.png
 
 При показе провайдера в виджете следует выбрать большой виджет с одним большим текстовым полем, чтобы весь статус поместился целиком. Получится что-то вроде этого:
 
-<a href="http://any-balance-providers.googlecode.com/svn/wiki/images/widgets.jpg" target="_blank"><img width="240" src="http://any-balance-providers.googlecode.com/svn/wiki/images/widgets.jpg"></a> Рис. 6
+<a href="http://any-balance-providers.googlecode.com/svn/wiki/images/widgets.jpg" target="_blank"><img width="240" src="http://any-balance-providers.googlecode.com/svn/wiki/images/widgets.jpg"/></a> Рис. 6

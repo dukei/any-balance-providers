@@ -1,10 +1,21 @@
 #summary AnyBalance - что это за программа
 
-= Introduction =
+<img width="320" src="http://any-balance-providers.googlecode.com/svn/wiki/images/widgets.jpg" align="right">
 
-AnyBalance - приложение для Андроид, которое умеет показывать на экране виджеты с практически любой информацией (чаще в виде счетчиков).
+= Введение =
+
+AnyBalance - приложение для Андроид, которое умеет показывать на экране виджеты с практически любой информацией (чаще в виде счетчиков, числовых индикаторов).
+
 Информация получается через интернет специальными плагинами (AnyBalance providers), написанными на JavaScript. Такой провайдер легко написать самому, если вы знакомы с JavaScript. В первую очередь используется для показа баланса телефона с сайта телефонного провайдера.
 
-= Details =
+= Подробнее о провайдерах =
+AnyBalance провайдеры - небольшие плагины, написанные на JavaScript, которые предоставляют данные в AnyBalance для показа и статистики.
 
-Подробнее об AnyBalance...
+==Документация==
+ * [Philosophy Общая информация]
+ * [AnyBalanceAPI AnyBalance API]
+
+==Примеры==
+ * [TutorialHelloWorld Hello World]
+ * [TutorialExchangeCbr Курсы валют]
+ * [TutorialTrackingRussianPost Отслеживание посылок]

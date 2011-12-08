@@ -6,6 +6,11 @@
 = Атрибуты =
  * `inputType` - особенности ввода текста (string), возможные значения перечислены [http://developer.android.com/reference/android/widget/TextView.html#attr_android:inputType здесь]
 
+ * `dialogTitle` - заголовок диалога для редактирования настройки (строка),[http://developer.android.com/reference/android/preference/DialogPreference.html#attr_android:dialogTitle оригинал]
+ * `dialogMessage` - текст диалога для редактирования настройки (строка),[http://developer.android.com/reference/android/preference/DialogPreference.html#attr_android:dialogMessage оригинал]
+ * `positiveButtonText` - текст на кнопке подтверждения (строка),[http://developer.android.com/reference/android/preference/DialogPreference.html#attr_android:positiveButtonText оригинал]
+ * `negativeButtonText` - текст на кнопке отмены (строка),[http://developer.android.com/reference/android/preference/DialogPreference.html#attr_android:negativeButtonText оригинал]
+
  * `key` - id настройки, которое можно использовать в других настройках или в JavaScript (строка), [http://developer.android.com/reference/android/preference/Preference.html#attr_android:key оригинал]
  * `title` - название настройки (строка), [http://developer.android.com/reference/android/preference/Preference.html#attr_android:title оригинал]
  * `summary` - Задаёт подсказку по настройке (строка). Чтобы она автоматически менялась, чтобы показать реально выбранное пользователем значение, она делится на 3 части, третья из которых  может содержать специальную метку `{@s}`, которая заменяется на текущее значение настройки. Например:

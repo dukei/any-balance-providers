@@ -1,7 +1,7 @@
 #summary Описание PreferenceCategory
 
 = Описание =
-`PreferenceCategory` представляет собой группу настроек с общим заголовком. `PreferenceCategory` не может быть вложена в `PreferenceCategory`, но может быть вложена в PreferenceScreen.[http://developer.android.com/reference/android/preference/PreferenceCategory.html здесь].
+`PreferenceCategory` представляет собой группу настроек с общим заголовком. `PreferenceCategory` не может быть вложена в `PreferenceCategory`, но может быть вложена в PreferenceScreen. Оригинальное описание [http://developer.android.com/reference/android/preference/PreferenceCategory.html здесь].
 
 = Атрибуты =
  * `key` - id настройки, которое можно использовать в других настройках или в JavaScript (строка), [http://developer.android.com/reference/android/preference/Preference.html#attr_android:key оригинал]

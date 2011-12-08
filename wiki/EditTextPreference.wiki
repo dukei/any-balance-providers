@@ -22,3 +22,30 @@ summary="всегда показывается|показывается, есл�
  * `shouldDisableView` - нужно ли блокировать вид настройки, если сама настройка заблокирована (true/false),[http://developer.android.com/reference/android/preference/Preference.html#attr_android:shouldDisableView оригинал]
  * `selectable` - может ли быть выбрана пользователем (true/false),[http://developer.android.com/reference/android/preference/Preference.html#attr_android:selectable оригинал]
  * `dependency` - зависимость от другой настройки. Здесь должен указываться `key` настройки, от которой зависит данная. Если в той настройке не выставлено значение, то эта настройка будет заблокирована (string),[http://developer.android.com/reference/android/preference/Preference.html#attr_android:dependency оригинал]
+
+= Пример =
+{{{
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        key="login"
+        title="Логин" 
+        summary="Номер телефона (10 цифр)||{@s}\n" 
+        dialogTitle="Номер телефона" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите номер вашего телефона для входа в Сервис-Гид (10 цифр), например 9261234567"
+        positiveButtonText="ОК" 
+        inputType="number">
+    </EditTextPreference>
+    <EditTextPreference 
+        key="password" 
+        title="Пароль"
+        summary="Пароль для входа в Сервис-Гид||***********\n"
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        dialogMessage="Введите пароль, используемый для входа в Сервис-Гид"
+        positiveButtonText="ОК"
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>
+}}}

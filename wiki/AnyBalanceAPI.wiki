@@ -27,7 +27,7 @@ AnyBalance.trace(/*string*/ msg, /*string or null*/ caller) //since level 1
 
 Записывает сообщение `msg` в лог эккаунта. Если `caller` не `null`, то он указывается в качестве дополнительной информации. Если `null`, то в качестве `caller` будет записано `trace`.
 
-Для каждого эккаунта AnyBalance хранит лог таких сообщений с момента последнего запуска `main()`. Этот лог можно просматривать прямо в AnyBalance. Полезно использовать для отладки.
+Для каждого эккаунта AnyBalance хранит лог таких сообщений с момента последнего запуска `main()`. Этот лог можно просматривать прямо в AnyBalance. Полезно использовать для отладки. <a href="http://any-balance-providers.googlecode.com/svn/wiki/images/log.png">Пример лога.</a>
 
 ==setExceptions==
 {{{

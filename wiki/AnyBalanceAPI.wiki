@@ -18,7 +18,7 @@ AnyBalance.getLevel() //since level 1
 {{{
 AnyBalance.getLastError() //since level 1
 }}}
-Возвращает строку - описание последней произошедшей ошибки. Имеет смысл использовать, когда отключены исключения функцией [AnyBalanceAPI#setExceptions setExceptions(false)] версии текущего AnyBalance API.
+Возвращает строку - описание последней произошедшей ошибки. Имеет смысл использовать, когда исключения отключены функцией [AnyBalanceAPI#setExceptions setExceptions(false)].
 
 ==trace==
 {{{

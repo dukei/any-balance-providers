@@ -1,0 +1,20 @@
+#summary Описание ListPreference
+
+= Описание =
+`ListPreference` представляет выбор значения из списка. Оригинальное описание [http://developer.android.com/reference/android/preference/ListPreference.html здесь].
+
+= Атрибуты =
+ * `entries` - варианты для выбора (string). Варианты должны быть разделены символом "|". Например:
+ * `entryValues` - значения вариантов для выбора (string). Именно это значение попадет в JavaScript как значение этой настройки. Значения  должны быть разделены символом "|" и их количество должно совпадать с количеством вариантов для выбора в предыдущем атрибуте. Например:
+
+ * `key` - id настройки, которое можно использовать в других настройках или в JavaScript (строка), [http://developer.android.com/reference/android/preference/Preference.html#attr_android:key оригинал]
+ * `title` - название настройки (строка), [http://developer.android.com/reference/android/preference/Preference.html#attr_android:title оригинал]
+ * `summary` - Задаёт подсказку по настройке (строка). Чтобы она автоматически менялась, чтобы показать реально выбранное пользователем значение, она делится на 3 части, третья из которых  может содержать специальную метку `{@s}`, которая заменяется на текущее значение настройки. Например:
+{{{
+summary="всегда показывается|показывается, если значение не выбрано|показывает, что {@s} выбрано"
+}}}
+ * `defaultValue` - значение по умолчанию (строка). Будет отображаться в настройке как текущее значение (text),[http://developer.android.com/reference/android/preference/Preference.html#attr_android:defaultValue оригинал]
+ * `enabled` - заблокирована ли настройка (true/false),[http://developer.android.com/reference/android/preference/Preference.html#attr_android:enabled оригинал]
+ * `shouldDisableView` - нужно ли блокировать вид настройки, если сама настройка заблокирована (true/false),[http://developer.android.com/reference/android/preference/Preference.html#attr_android:shouldDisableView оригинал]
+ * `selectable` - может ли быть выбрана пользователем (true/false),[http://developer.android.com/reference/android/preference/Preference.html#attr_android:selectable оригинал]
+ * `dependency` - зависимость от другой настройки. Здесь должен указываться `key` настройки, от которой зависит данная. Если в той настройке не выставлено значение, то эта настройка будет заблокирована (string),[http://developer.android.com/reference/android/preference/Preference.html#attr_android:dependency оригинал]

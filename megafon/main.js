@@ -1,8 +1,9 @@
 function main(){
+	var prefs = AnyBalance.getPreferences();
 	AnyBalance.trace('Connecting to service guide...');
 	
 	var session = AnyBalance.requestPost('https://moscowsg.megafon.ru/ps/scc/php/check.php?CHANNEL=WWW',
-			{LOGIN: g_preferences.login, PASSWORD: g_preferences.password});
+			{LOGIN: prefs.login, PASSWORD: prefs.password});
 	
 	AnyBalance.trace('Got result from service guide: ' + session);
 	

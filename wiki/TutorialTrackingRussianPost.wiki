@@ -12,23 +12,23 @@
 
 Как обычно, будем с помощью Google Chrome отслеживать запросы, которые делает браузер, чтобы получить информацию о почтовом отправлении. Включаем журнал сети (Правой кнопкой в Хроме, Просмотр кода элемента, вкладка Network). Вводим в форму на сайте почты указанный выше номер отправления и нажимаем Enter.
 
-post1.gif
+<a href="http://any-balance-providers.googlecode.com/svn/wiki/images/post1.gif"><img width="640" src="http://any-balance-providers.googlecode.com/svn/wiki/images/post1.gif"/></a> Рис. 1
 
 Обнаруживаем, что номер был отправлен POST запросом, параметры которого перечислены на рисунке. То есть, мы тоже можем послать такой запрос с такими параметрами, чтобы получить информацию по почтовому отправлению. Почта России показывает информацию по отправлению так:
 
-post2.gif
+<a href="http://any-balance-providers.googlecode.com/svn/wiki/images/post2.gif"><img width="640" src="http://any-balance-providers.googlecode.com/svn/wiki/images/post2.gif"/></a> Рис. 2
 
 Для того, чтобы получить актуальный статус отправления, нам нужно смотреть на последнюю строчку. Смотрим на исходник... Одним регулярным выражением выделить последнюю строчку трудновато. Поэтому станем действовать гибко. 
 
 Идем на http://myregexp.com/signedJar.html, копируем туда весь html ответа с таблицей статусов отправления. Сначала нам надо найти в этом тексте таблицу.
 
-post3.gif
+<a href="http://any-balance-providers.googlecode.com/svn/wiki/images/post3.gif"><img width="640" src="http://any-balance-providers.googlecode.com/svn/wiki/images/post3.gif"/></a> Рис. 3
 
 Чтобы найти последнюю строку в таблице, просто воспользуемся функцией [http://javascript.ru/String/lastIndexOf string.lastIndexOf('<tr')]. Найдя `<tr`, вырежем кусок, начиная с него и до конца таблицы.
 
 Дальше нам надо найти поля уже внутри строки, это делается длинным, но простым регулярным выражением:
 
-post4.gif
+<a href="http://any-balance-providers.googlecode.com/svn/wiki/images/post4.gif"><img width="640" src="http://any-balance-providers.googlecode.com/svn/wiki/images/post4.gif"/></a> Рис. 4
 
 Таким образом, сложности по придумыванию способа извлечь данные решены и можно это всё запрограммировать.
 
@@ -139,7 +139,7 @@ var info = AnyBalance.requestPost('http://www.russianpost.ru/resp_engine.aspx?Pa
 
 Здесь использованы некоторые вспомогательные функции из [AnyBalanceAPI AnyBalance API]: [AnyBalanceAPI#trace trace] и [AnyBalanceAPI#isSetResultCalled isSetResultCalled]. `trace` используется для вывода отладочных сообщений в лог эккаунта, который можно просмотреть в AnyBalance, как показано на рисунке.
 
-log.png
+<a href="http://any-balance-providers.googlecode.com/svn/wiki/images/log.png"><img width="240" src="http://any-balance-providers.googlecode.com/svn/wiki/images/log.png"/></a> Рис. 5
 
 С помощью `trace` удобно отлаживать провайдер, когда не всё правильно работает с первого раза.
 
@@ -151,4 +151,4 @@ log.png
 
 При показе провайдера в виджете следует выбрать большой виджет с одним большим текстовым полем, чтобы весь статус поместился целиком. Получится что-то вроде этого:
 
-<a href="http://any-balance-providers.googlecode.com/svn/wiki/images/widgets.jpg" target="_blank"><img width="240" src="http://any-balance-providers.googlecode.com/svn/wiki/images/widgets.jpg"/></a> Рис. 6
+<a href="http://any-balance-providers.googlecode.com/svn/wiki/images/widgets.jpg"><img width="240" src="http://any-balance-providers.googlecode.com/svn/wiki/images/widgets.jpg"/></a> Рис. 6

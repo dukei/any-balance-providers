@@ -1,0 +1,14 @@
+#summary Описание PreferenceScreen
+
+= Описание =
+`PreferenceScreen` представляет собой экран с настройками. Когда один PreferenceScreen вложен в другой, то открывается новый экран с настройками. Оригинальное описание [http://developer.android.com/reference/android/preference/PreferenceScreen.html здесь].
+
+= Атрибуты =
+ * `key` - id настройки, которое можно использовать в других настройках или в JavaScript (строка), [http://developer.android.com/reference/android/preference/Preference.html#attr_android:key оригинал]
+ * `title` - название настройки (строка), [http://developer.android.com/reference/android/preference/Preference.html#attr_android:title оригинал]
+ * `summary` - подсказка по экрану настроек (строка), [http://developer.android.com/reference/android/preference/Preference.html#attr_android:summary оригинал]
+ * `enabled` - заблокирована ли настройка (true/false),[http://developer.android.com/reference/android/preference/Preference.html#attr_android:enabled оригинал]
+ * `shouldDisableView` - нужно ли блокировать вид настройки, если сама настройка заблокирована (true/false),[http://developer.android.com/reference/android/preference/Preference.html#attr_android:shouldDisableView оригинал]
+ * `selectable` - может ли быть выбрана пользователем (true/false),[http://developer.android.com/reference/android/preference/Preference.html#attr_android:selectable оригинал]
+ * `dependency` - зависимость от другой настройки. Здесь должен указываться `key` настройки, от которой зависит данная. Если в той настройке не выставлено значение, то эта настройка будет заблокирована (string),[http://developer.android.com/reference/android/preference/Preference.html#attr_android:dependency оригинал]
+ * `order` - порядок расположения настроек (int),[http://developer.android.com/reference/android/preference/Preference.html#attr_android:order оригинал]

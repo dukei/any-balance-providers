@@ -19,9 +19,9 @@
 = Пример =
 {{{
 <CheckBoxPreference
-    android:title="Checkbox Preference"
-    android:defaultValue="false"
-    android:summaryOn="Something enabled"
-    android:summaryOff="Something disabled"
-    android:key="checkboxPref" />
+    title="Checkbox Preference"
+    defaultValue="false"
+    summaryOn="Something enabled"
+    summaryOff="Something disabled"
+    key="checkboxPref" />
 }}}

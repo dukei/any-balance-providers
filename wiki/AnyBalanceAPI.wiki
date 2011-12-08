@@ -1,0 +1,218 @@
+#summary AnyBalance API
+
+= Введение =
+
+JavaScript AnyBalance API доступно провайдеру для взаимодействия с AnyBalance. Кроме того, оно предоставляет функции для посылки запросов в интернет.
+
+= Описание функций =
+
+Все функции предоставляются через глобальный объект AnyBalance. К каждой функции указан номер версии, с которой она доступна.
+
+==getLevel==
+{{{
+AnyBalance.getLevel() //since level 1
+}}}
+Возвращает номер версии текущего AnyBalance API.
+
+==getLastError==
+{{{
+AnyBalance.getLastError()
+}}}
+Возвращает строку - описание последней произошедшей ошибки. Имеет смысл использовать, когда отключены исключения функцией [AnyBalanceAPI#setExceptions setExceptions(false)] версии текущего AnyBalance API.
+
+==trace==
+{{{
+AnyBalance.trace(/*string*/ msg, /*string or null*/ caller)
+}}}
+
+Записывает сообщение `msg` в лог эккаунта. Если `caller` не `null`, то он указывается в качестве дополнительной информации. Если `null`, то в качестве `caller` будет записано `trace`.
+
+Для каждого эккаунта AnyBalance хранит лог таких сообщений с момента последнего запуска `main()`. Этот лог можно просматривать прямо в AnyBalance. Полезно использовать для отладки.
+
+==setExceptions==
+{{{
+AnyBalance.setExceptions(/*bool*/ use)
+}}}
+
+Переключает режим исключений (`use = true` - включить, `use = false` - выключить). По умолчанию исключения включены, то есть в случае возникновения ошибки в недрах AnyBalance API, будет выброшена ошибка [AnyBalanceAPI#Error AnyBalance.Error]). Это удобно, потому что в этом случае, если исключение провайдером не перехвачено, то он автоматически завершится и вернет описание ошибки AnyBalance.
+
+Если исключения отключить, то функции в случае ошибки будут возвращать ошибочное значение (обычно `null` или `false` в зависимости от функции), а описание ошибки можно получить, вызвав [AnyBalanceAPI#getLastError getLastError()].
+
+==requestGet==
+{{{
+AnyBalance.requestGet(/*string*/ url) throws AnyBalance.Error
+}}}
+
+Посылает GET запрос по адресу `url`. Возвращает строку - тело ответа.
+
+Пример:
+{{{
+  var xml = AnyBalance.requestGet('http://dgame.ru/api.php');
+}}}
+
+В случае возникновения ошибки возвращает `null` или бросает исключение [AnyBalanceAPI#Error AnyBalance.Error], в зависимости от режима исключений, установленного [AnyBalanceAPI#setExceptions setExceptions()]. 
+
+==requestPost==
+{{{
+AnyBalance.requestPost(/*string*/ url, /*string, object or null*/ data) throws AnyBalance.Error
+}}}
+
+Посылает POST запрос по адресу `url` с телом `data`, если это строка. Если `data` объект, то тело запроса представляет собой параметры форм с именами и значениями всех свойств объекта `data`. Возвращает строку - тело ответа.
+
+Пример:
+{{{
+  var str = AnyBalance.requestPost('http://haddan.ru/member.php', {
+    username: 'dukei',
+    passwd: 'strongpass'
+  });
+}}}
+
+В случае возникновения ошибки возвращает `null` или бросает исключение [AnyBalanceAPI#Error AnyBalance.Error], в зависимости от режима исключений, установленного [AnyBalanceAPI#setExceptions setExceptions()]. 
+
+==setAuthentication==
+{{{
+AnyBalance.setAuthentication(/*string*/ name, /*string*/ pass, /*object or null*/ authscope) throws AnyBalance.Error
+}}}
+
+Устанавливает параметры HTTP авторизации для всех последующих запросов [AnyBalanceAPI#requestGet requestGet()] и [AnyBalanceAPI#requestPost requestPost()]. `name` и `pass` - имя и пароль для авторизации, 
+
+`authscope` - необязательный параметр, задающий границы действия авторизации (полностью повторяет [http://developer.android.com/reference/org/apache/http/auth/AuthScope.html AuthScope] из Android). Значения по умолчанию ниже не накладывают никаких ограничений.
+{{{
+{
+  host: null, /*string or null or undefined - имя хоста */
+  realm: null, /*string or null or undefined - название области авторизации */
+  scheme: null, /*string or null or undefined - схема авторизации */
+  port: -1 /*integer or null or undefined - номер порта */
+}
+}}}
+
+Пример:
+{{{
+  AnyBalance.setAuthentication('dukei','strongpass');
+}}}
+
+В случае успеха возвращает `true`, в противном случае `false` или бросает исключение [AnyBalanceAPI#Error AnyBalance.Error], в зависимости от режима исключений, установленного [AnyBalanceAPI#setExceptions setExceptions()]. 
+
+
+==clearAuthentication==
+{{{
+AnyBalance.clearAuthentication() throws AnyBalance.Error
+}}}
+
+Сбрасывает все ранее установленные параметры HTTP авторизации, установленные [AnyBalanceAPI#setAuthentication setAuthentication()].
+
+В случае успеха возвращает `true`, в противном случае `false` или бросает исключение [AnyBalanceAPI#Error AnyBalance.Error], в зависимости от режима исключений, установленного [AnyBalanceAPI#setExceptions setExceptions()].
+
+==setResult==
+{{{
+AnyBalance.setResult(/*object*/ result) throws AnyBalance.Error
+}}}
+
+Функция, устанавливающая результат выполнения скрипта провайдера. Она может установить как успешное состояние и передать значение счетчиков, так и состояние ошибки и передать описание ошибки. 
+В случае успеха в объекте `result` должно быть установлено свойство `success`: true, а также все значения счетчиков. Имя свойства для значения счетчика должно совпадать с id счетчика, описанного в [Manifest манифесте].
+
+В случае ошибки в объекте `result` должно быть установлено свойство `error: true`, а также `message: 'описание ошибки'` и опционально `allow_retry: true`, если ошибка не фатальная и надо просто ещё раз запустить функцию `main()`. Например, если сайт, с которого извлекаются значения счетчиков, сообщает что он перегружен, и надо повторять запросы, пока он не ответит. Но этой возможностью злоупотреблять не стоит, иначе может возникнуть ситуация, когда эккаунт постоянно находится в режиме обновления.
+
+Если в `result` не установлено ни `error: true`, ни `success: true`, то эта ситуация также считается ошибкой.
+
+Например, для счетчиков из манифеста:
+{{{
+<counters>
+  <counter id="counter1" name="Счетчик 1"/>
+  <counter id="counter2" name="Счетчик 2"/>
+</counters>
+}}}
+Требуется следующий код:
+{{{
+  AnyBalance.setResult({success: true, counter1: 123, counter2: 456}); 
+}}}
+
+=== Особенности === 
+ * Эта функция может быть вызвана только *один* раз, потому что после получения результата AnyBalance считает, что работа провайдера завершена, и может прекратить его выполнение в любой момент.
+ * Будьте внимательны! В целях экономии ресурсов мобильного устройства не следует получать и возвращать значения счетчиков, которые не выбраны пользователем для показа. Проверить, выбран ли пользователем счетчик, можно функцией [AnyBalanceAPI#isAvailable isAvailable].
+ * В случае успеха можно установить специальное текстовое свойство `__tariff`. Значение этого свойства будет отображаться в списке эккаунтов. Для провайдеров баланса телефона оно может использоваться для отображения названия текущего тарифного плана.
+
+=== Возвращаемое значение ===
+В случае успеха возвращает `true`, в противном случае `false` или бросает исключение [AnyBalanceAPI#Error AnyBalance.Error], в зависимости от режима исключений, установленного [AnyBalanceAPI#setExceptions setExceptions()]. После возврата этой функции не рекомендуется делать ничего важного, потому что в любой момент код провайдера может быть выгружен.
+
+==isSetResultCalled==
+{{{
+AnyBalance.isSetResultCalled()
+}}}
+
+Возвращает `true`, если [AnyBalanceAPI#setResult setResult()] уже была вызвана. AnyBalance не гарантирует продолжение выполнения JavaScript провайдера после вызова им [AnyBalanceAPI#setResult setResult()]. 
+
+==isAvailable==
+{{{
+AnyBalance.isAvailable(/*array or string*/ countername, ...)
+}}}
+
+Возвращает `true`, если хотя бы один из переданных счетчиков разрешен пользователем. Пользователь может запретить показ некоторых счетчиков в настройках эккаунта. Чтобы сберечь ресурсы мобильного устройства пользователя, не следует извлекать и возвращать значения запрещенных счетчиков. 
+
+Пример:
+{{{
+//Если для счетчиков надо делать отдельный запрос,
+//то выясним сначала, нужны ли вообще эти счетчики?
+if(AnyBalance.isAvailable('counter1', 'counter2')){
+  var str = AnyBalance.requestGet(url1);
+  if(AnyBalance.isAvailable('counter1')) //Если этот счетчик нужен
+    result.counter1 = str.substr(1,5); //Извлекаем каким-то образом значение счетчика
+  if(AnyBalance.isAvailable('counter2')) //Если этот счетчик нужен
+    result.counter1 = str.substr(8,9); //Извлекаем каким-то образом значение счетчика
+}
+}}}
+
+==getPreferences==
+{{{
+AnyBalance.getPreferences()
+}}}
+
+Возвращает `object`, содержащий все настройки эккаунта, сделанные пользователем. В том числе настройки, предусмотренные в файле категории [Preferences preferences] [Manifest манифеста]. Код провайдера может получить свои настройки из этого объекта по именам, заданным в атрибутах `key` настроек из xml-файла [Preferences настроек].
+
+Например, файл настроек:
+{{{
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Логин" 
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        key="password" 
+        title="Пароль"
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>
+}}}
+Получение этих свойств:
+{{{
+var prefs = AnyBalance.getPreferences();
+var pass = prefs.password;
+var login = prefs.login;
+}}}
+
+==Error==
+{{{
+AnyBalance.Error(/*string*/ message, /*bool*/ allowRetry)
+}}}
+
+Конструктор исключения. `message` - описание ошибки, `allowRetry` - флаг, предписывающий AnyBalance повторно вызвать обновление для этого эккаунта. Подробнее об `allowRetry` см. [AnyBalanceAPI#setResult setResult()].
+
+Непойманное вами исключение ведет к завершению провайдера с ошибкой. Поэтому удобно использовать исключения, например, так:
+
+{{{
+var matches;
+if(matches = session.match(/<ERROR_ID>(.*?)<\/ERROR_ID>/i)){
+	AnyBalance.trace('Got error from sg: ' + matches[1]);
+	//Случилась ошибка, может быть мы можем даже увидеть её описание
+	if(matches = session.match(/<ERROR_MESSAGE>(.*?)<\/ERROR_MESSAGE>/i)){
+		AnyBalance.trace('Got error message from sg: ' + matches[1]);
+		throw new AnyBalance.Error(matches[1]);
+	}
+	AnyBalance.trace('Got unknown error from sg');
+	throw new AnyBalance.Error('Неизвестная ошибка');
+}
+if(!(matches = session.match(/<SESSION_ID>(.*?)<\/SESSION_ID>/i))){
+	throw new AnyBalance.Error('Не удалось получить сессию', true); //Странный ответ, может, можно переконнектиться потом
+}
+}}}

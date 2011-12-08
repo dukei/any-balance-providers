@@ -1,0 +1,12 @@
+#summary Описание PreferenceCategory
+
+= Описание =
+`PreferenceCategory` представляет собой группу настроек с общим заголовком. `PreferenceCategory` не может быть вложена в `PreferenceCategory`, но может быть вложена в PreferenceScreen.[http://developer.android.com/reference/android/preference/PreferenceCategory.html здесь].
+
+= Атрибуты =
+ * `key` - id настройки, которое можно использовать в других настройках или в JavaScript (строка), [http://developer.android.com/reference/android/preference/Preference.html#attr_android:key оригинал]
+ * `title` - название настройки (строка), [http://developer.android.com/reference/android/preference/Preference.html#attr_android:title оригинал]
+ * `enabled` - заблокирована ли настройка (true/false),[http://developer.android.com/reference/android/preference/Preference.html#attr_android:enabled оригинал]
+ * `shouldDisableView` - нужно ли блокировать вид настройки, если сама настройка заблокирована (true/false),[http://developer.android.com/reference/android/preference/Preference.html#attr_android:shouldDisableView оригинал]
+ * `selectable` - может ли быть выбрана пользователем (true/false),[http://developer.android.com/reference/android/preference/Preference.html#attr_android:selectable оригинал]
+ * `dependency` - зависимость от другой настройки. Здесь должен указываться `key` настройки, от которой зависит данная. Если в той настройке не выставлено значение, то эта настройка будет заблокирована (string),[http://developer.android.com/reference/android/preference/Preference.html#attr_android:dependency оригинал]

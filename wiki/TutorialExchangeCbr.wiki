@@ -13,7 +13,11 @@
 
 Для этого нажимаем правой кнопкой мыши в окне Хрома и выбираем *Просмотр кода элемента*. В открывшемся снизу окне выбираем вкладку *Network*. Теперь Хром будет показывать все запросы страниц, которые он делает, а также ответы сервера на них.
 
-Вводим в адресной строке `http://www.forexpf.ru/_informer_/cbrf.php?id=012345678` ещё раз и нажимаем Enter. Во вкладке Network появилась информация по этому запросу. Щелкаем на неё и выбираем вкладку *Response*. Это тело ответа с сервера. Вы должны увидеть примерно следующее (переформатировано и сокращено):
+Вводим в адресной строке `http://www.forexpf.ru/_informer_/cbrf.php?id=012345678` ещё раз и нажимаем Enter. Во вкладке Network появилась информация по этому запросу. Щелкаем на неё и выбираем вкладку *Response*. Это тело ответа с сервера. Вы должны увидеть примерно следующее.
+
+<a href="http://any-balance-providers.googlecode.com/svn/wiki/images/forex_resp.png"><img width="640" src="http://any-balance-providers.googlecode.com/svn/wiki/images/forex_resp.png"/></a> Рис. 1
+
+Если переформатировать и сократить для наглядности, то сервер возвращает примерно это:
 
 {{{
 for (var i=0; i<document.links.length; i++){
@@ -28,6 +32,8 @@ for (var i=0; i<document.links.length; i++){
 Теперь видно, как можно извлечь значения. Нас интересуют курсы, оканчивающиеся на `tm`, потому что они соответствуют курсу ЦБ РФ на завтра, то есть, самые свежие. Чтобы их извлечь, воспользуемся [http://javascript.ru/RegExp регулярными выражениями]. Чтобы наглядно составить регулярное выражение можно пользоваться [http://myregexp.com/signedJar.html визуальным редактором] на сайте http://myregexp.com.
 
 Скопируйте полный текст страницы в окно редактора (в нижнюю часть). Для извлечения курса доллара нам понадобится регулярное выражение `"usrutm"[^"]*"([^"]*)"`. Вставьте его в редактор (в верхнюю часть) и можете увидеть, что часть `"usrutm").innerHTML="31,1527"` подсветилась, то есть выражение составлено правильно.
+
+<a href="http://any-balance-providers.googlecode.com/svn/wiki/images/forex_regexp.png"><img width="640" src="http://any-balance-providers.googlecode.com/svn/wiki/images/forex_regexp.png"/></a> Рис. 2
 
 Таким же образом можно составить выражения и для извлечения остальных курсов. Можно уже писать функцию `main`.
 
@@ -100,7 +106,7 @@ function main(){
 
 Виджет с курсами будет выглядеть примерно так:
 
-<a href="http://any-balance-providers.googlecode.com/svn/wiki/images/widgets.jpg"><img width="240" src="http://any-balance-providers.googlecode.com/svn/wiki/images/widgets.jpg"/></a>
+<a href="http://any-balance-providers.googlecode.com/svn/wiki/images/widgets.jpg"><img width="240" src="http://any-balance-providers.googlecode.com/svn/wiki/images/widgets.jpg"/></a> Рис. 3
 
 Полный код примера находится в [http://code.google.com/p/any-balance-providers/source/browse/trunk/exchange-cbr/ репозитории].
 

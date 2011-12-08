@@ -98,6 +98,10 @@ function main(){
 
 Собственно, всё. Самое сложное позади. Остались всякие мелочи, типа иконки, собрать всё в zip файл, и т.д. Но это уже просто.
 
+Виджет с курсами будет выглядеть примерно так:
+
+<a href="http://any-balance-providers.googlecode.com/svn/wiki/images/widgets.jpg"><img width="240" src="http://any-balance-providers.googlecode.com/svn/wiki/images/widgets.jpg"/></a>
+
 Полный код примера находится в [http://code.google.com/p/any-balance-providers/source/browse/trunk/exchange-cbr/ репозитории].
 
 = Другие примеры =

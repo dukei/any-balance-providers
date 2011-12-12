@@ -17,7 +17,7 @@ function getRate(result, info, namein, nameout){
 function main(){
 	AnyBalance.trace('Connecting to russianpost...');
 	
-	var prefs = getPreferences();
+	var prefs = AnyBalance.getPreferences();
 	var post_number = prefs.code; //Код отправления, введенный пользователем
 	
 	var dt = new Date();

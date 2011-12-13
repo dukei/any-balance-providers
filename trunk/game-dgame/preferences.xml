@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="ID персонажа" 
+        positiveButtonText="ОК" 
+        summary="ID вашего персонажа в Повелителях||{@s}\n" 
+        dialogTitle="ID персонажа" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите ID вашего персонажа в игре Повелители"
+        key="userid"
+        inputType="number">
+    </EditTextPreference>
+    <EditTextPreference 
+        title="Ключ API" 
+        positiveButtonText="ОК" 
+        summary="Введите ключ для доступа к API||{@s}\n" 
+        dialogTitle="Ключ API" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите ключ для доступа к API. Ключ можно увидеть внутри игры на странице настроек персонажа: Настройки -> API. Ключ следует вводить ровно в том же виде, как на той странице, латинскими буквами, в нижнем регистре."
+        key="apikey">
+    </EditTextPreference>
+</PreferenceScreen>

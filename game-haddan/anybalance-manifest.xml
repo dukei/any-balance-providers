@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id major_version="1.0" version="1">game-haddan</id>
+  <name>Хаддан</name>
+  <description>
+    Показывает баланс игровой валюты у персонажа в игре http://haddan.ru .
+    Использует API: http://forum.haddan.ru/showthread.php?t=7336 .
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>logoH.png</icon>
+    <js>api:jquery.min.js</js> <!-- Используем библиотеку, которая и так входит в AnyBalance -->
+    <js>md5-min.js</js>
+    <js>main.js</js>
+    <preferences>preferences.xml</preferences>
+  </files>
+  <counters>
+    <counter id="cash" name="Монеты" suffix=""/>
+    <counter id="gold" name="Золото (ЗМН)" suffix=" з"/>
+    <counter id="diamond" name="Алмазы (АМН)" suffix=" а"/>
+  </counters>
+</provider>

@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id major_version="1.0" version="1">game-dgame</id>
+  <name>Повелители</name>
+  <description>
+    Показывает баланс игровой валюты у Повелителя в игре http://dgame.ru .
+    Использует API: http:///dgame.ru/ext/manual.php?id=16#f8375 .
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <js>api:jquery.min.js</js> <!-- Используем библиотеку, которая и так входит в AnyBalance -->
+    <js>main.js</js>
+    <preferences>preferences.xml</preferences>
+  </files>
+  <counters>
+    <counter id="cash" name="Золото" prefix="з "/>
+    <counter id="diamond" name="Алмазы" prefix="а "/>
+    <counter id="cr_fire" name="Кристаллы Огня" prefix="ко "/>
+    <counter id="cr_water" name="Кристаллы Воды" prefix="кв "/>
+    <counter id="cr_sky" name="Кристаллы Неба" prefix="кн "/>
+  </counters>
+</provider>

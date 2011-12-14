@@ -77,10 +77,13 @@ function main(){
 			if(AnyBalance.isAvailable('attribute'))
 				result.attribute = attribute;
 			
-			if(AnyBalance.isAvailable('fulltext'))
-				result.fulltext = date + ': ' + operation + '\n' +
-					location + '\n' + 
+			if(AnyBalance.isAvailable('fulltext')){
+				//Все поддерживаемые атрибуты (кроме img) находятся здесь
+				//http://commonsware.com/blog/Android/2010/05/26/html-tags-supported-by-textview.html
+				result.fulltext = '<small>' + date + '</small>: <b>' + operation + '</b><br/>\n' +
+					location + '<br/>\n' + 
 					attribute;
+			}
 			
 			AnyBalance.setResult(result);
 		}

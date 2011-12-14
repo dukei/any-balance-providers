@@ -12,7 +12,7 @@
     <preferences>preferences.xml</preferences>
   </files>
   <counters>
-    <counter id="fulltext" name="Сводка" type="text"/>
+    <counter id="fulltext" name="Сводка" type="html"/>
     <counter id="date" name="Дата изменения" type="text"/>
     <counter id="operation" name="Операция" type="text"/>
     <counter id="location" name="Местонахождение" type="text"/>

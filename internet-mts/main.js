@@ -1,9 +1,6 @@
-// Идея почерпнута у MtSoft.ru
-// Черт, но там уже всё устарело нахрен :(
 // Домашний Интернет и Телевидение МТС
-// Текущий баланс у провайдера "Домашний Интернет и Телевидение МТС"
 // Сайт оператора: http://www.dom.mts.ru/
-// Личный кабинет: http://kabinet.mts.ru/
+// Личный кабинет: https://kabinet.mts.ru/
 
 function main(){
 	var prefs = AnyBalance.getPreferences();
@@ -22,9 +19,9 @@ function main(){
     	throw new AnyBalance.Error(error);
     
     // Находим ссылку "Состояние счета"
-    var $url=$parse.find("A:contains('Состояние счета')");
+    var $url=$parse.find("A:contains('Счетчики услуг')");
     if ($url.length!=1)
-    	throw new AnyBalance.Error("Невозможно найти ссылку на состояние счета");
+    	throw new AnyBalance.Error("Невозможно найти ссылку на счетчики услуг");
     
     var html = AnyBalance.requestGet(baseurl + $url.attr('href'));
     var result = {success: true};
@@ -38,7 +35,7 @@ function main(){
     
     // Баланс
     if(AnyBalance.isAvailable('balance')){
-	    if (matches=/Ваш текущий баланс[\s\S]*?>(.*?)&/.exec(html)){
+	    if (matches=/customer-info-balance"><strong>\s*(.*?)\s/.exec(html)){
 	        var tmpBalance=matches[1].replace(/ |\xA0/, ""); // Удаляем пробелы
 	        tmpBalance=tmpBalance.replace(",", "."); // Заменяем запятую на точку
 	        result.balance=parseFloat(tmpBalance);
@@ -64,6 +61,18 @@ function main(){
 	    if (matches=/<h3>([^<]*)<\/h3>/i.exec(html)){
 	        result.username=matches[1];
 	    }
+    }
+    
+    if(AnyBalance.isAvailable('internet_cur')){
+        // Находим ссылку "Счетчики услуг"
+        matches = html.match(/<div class="gridium sg">\s*(<table>[\s\S]*?<\/table>)/i);
+        if(matches){
+        	var counter = $(matches[1]).find("tr.gm-row-item:contains('трафик')").find('td:nth-child(3)').first().text();
+        	if(counter)
+            	counter = $.trim(counter);
+        	if(counter)
+        		result.internet_cur = parseFloat(counter);
+        }
     }
     
     AnyBalance.setResult(result);

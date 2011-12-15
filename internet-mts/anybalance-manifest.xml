@@ -17,5 +17,6 @@
     <counter id="license" name="Лицевой счет" type="text"/>
     <counter id="agreement" name="Номер договора" type="text"/>
     <counter id="username" name="ФИО" type="text"/>
+    <counter id="internet_cur" name="Трафик в этом месяце" suffix="Mb"/>
   </counters>
 </provider>

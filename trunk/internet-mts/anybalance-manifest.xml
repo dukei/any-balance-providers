@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id  major_version="1.0" version="2">interet-mts</id>
+  <name>Домашний Интернет и Телевидение МТС</name>
+  <description>
+    Получает текущий баланс у провайдера "Домашний Интернет и Телевидение МТС"
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>api:jquery.min.js</js> <!-- Используем библиотеку, которая и так входит в AnyBalance -->
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="license" name="Лицевой счет" type="text"/>
+    <counter id="agreement" name="Номер договора" type="text"/>
+    <counter id="username" name="ФИО" type="text"/>
+  </counters>
+</provider>

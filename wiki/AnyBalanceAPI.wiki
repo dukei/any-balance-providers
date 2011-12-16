@@ -191,6 +191,12 @@ var pass = prefs.password;
 var login = prefs.login;
 }}}
 
+==setDefaultCharset==
+{{{
+AnyBalance.setDefaultCharset(/*string*/ charset) //since level 1
+}}}
+Устанавливает кодовую страницу ответов сервера по-умолчанию. Эта кодировка будет использоваться, если не получается извлечь кодировку текста из заголовка `Content-Type`. В качестве `charset` нужно указать нужную кодировку, например `utf-8`. [http://www.iana.org/assignments/character-sets Список значений `charset`].
+
 ==Error==
 {{{
 AnyBalance.Error(/*string*/ message, /*bool*/ allowRetry) //since level 1
@@ -215,4 +221,6 @@ if(matches = session.match(/<ERROR_ID>(.*?)<\/ERROR_ID>/i)){
 if(!(matches = session.match(/<SESSION_ID>(.*?)<\/SESSION_ID>/i))){
         //Странный ответ, может, можно переконнектиться...
 	throw new AnyBalance.Error('Не удалось получить сессию', true); }
+
+
 }}}

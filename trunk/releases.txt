@@ -1,0 +1,6 @@
+exchange-cbr: 15
+game-dgame: 73
+game-haddan: 73
+internet-mts: 80
+megafon: 71
+tracking-russian-post: 75

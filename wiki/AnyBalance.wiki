@@ -25,3 +25,8 @@ AnyBalance провайдеры - небольшие плагины, напис�
  * [TutorialHelloWorld Hello World]
  * [TutorialExchangeCbr Курсы валют]
  * [TutorialTrackingRussianPost Отслеживание посылок]
+ * [TutorialXML Обработка XML]
+
+==Вопросы==
+
+Если у вас возникли вопросы по работе с AnyBalance, пожалуйста, не стесняйтесь задавать их в группе обсуждения [http://groups.google.com/group/any-balance-providers-discuss AnyBalance providers group]

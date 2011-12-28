@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id  major_version="1.0" version="3">megafon</id>
+  <id  major_version="1.0" version="3">ab-megafon</id>
   <name>Мегафон</name>
   <description>
     Получает баланс, минуты и трафик на телефоне

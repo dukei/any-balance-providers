@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id  major_version="1.0" version="3">interet-mts</id>
+  <id version="3">ab-interet-mts</id>
   <name>Домашний Интернет и Телевидение МТС</name>
   <description>
     Получает текущий баланс, номера лицевого счета и договора, ФИО владельца, трафик в текущем месяце у провайдера "Домашний Интернет и Телевидение МТС"

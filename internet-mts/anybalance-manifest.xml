@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id  major_version="1.0" version="2">interet-mts</id>
+  <id  major_version="1.0" version="3">interet-mts</id>
   <name>Домашний Интернет и Телевидение МТС</name>
   <description>
     Получает текущий баланс, номера лицевого счета и договора, ФИО владельца, трафик в текущем месяце у провайдера "Домашний Интернет и Телевидение МТС"
@@ -19,4 +19,10 @@
     <counter id="username" name="ФИО" type="text"/>
     <counter id="internet_cur" name="Трафик в этом месяце" suffix="Mb"/>
   </counters>
+  <keywords>
+    провайдер интернет
+  </keywords>
+  <type>
+    internet, tv
+  </type>
 </provider>

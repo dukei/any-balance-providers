@@ -1,10 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="1">game-dgame</id>
+  <id major_version="1.0" version="2">game-dgame</id>
   <name>Повелители</name>
   <description>
     Показывает баланс игровой валюты у Повелителя в игре http://dgame.ru .
     Использует API: http:///dgame.ru/ext/manual.php?id=16#f8375 .
+    Показывает количество золота, алмазов, кристаллов огня, воды и неба.
   </description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <files>
@@ -20,4 +21,10 @@
     <counter id="cr_water" name="Кристаллы Воды" prefix="кв "/>
     <counter id="cr_sky" name="Кристаллы Неба" prefix="кн "/>
   </counters>
+  <keywords>
+    игра, повелители, disciples, maoli, dgame
+  </keywords>
+  <type>
+    game, browser
+  </type>
 </provider>

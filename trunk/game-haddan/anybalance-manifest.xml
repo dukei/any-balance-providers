@@ -1,10 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="1">game-haddan</id>
+  <id major_version="1.0" version="2">game-haddan</id>
   <name>Хаддан</name>
   <description>
     Показывает баланс игровой валюты у персонажа в игре http://haddan.ru .
-    Использует API: http://forum.haddan.ru/showthread.php?t=7336 .
+    Использует API: http://forum.haddan.ru/showthread.php?t=7336 . Показывает
+    количество монет, золота (ЗМН) и алмазов (АМН).
   </description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <files>
@@ -19,4 +20,10 @@
     <counter id="gold" name="Золото (ЗМН)" suffix=" з"/>
     <counter id="diamond" name="Алмазы (АМН)" suffix=" а"/>
   </counters>
+  <keywords>
+    игра, хаддан, haddan
+  </keywords>
+  <type>
+    game, browser
+  </type>
 </provider>

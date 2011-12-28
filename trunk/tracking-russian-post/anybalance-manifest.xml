@@ -1,9 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="1">tracking-russian-post</id>
+  <id major_version="1.0" version="2">tracking-russian-post</id>
   <name>EMS и Почта России</name>
   <description>
-    Отслеживание почтового отправления почты россии и EMS по его идентификатору
+    Отслеживание почтового отправления почты россии и EMS по его идентификатору. Может показывать сводную информацию, дату изменения статуса, текущую операцию, местонахождение, атрибуты.
+    Рекомендуется показывать сводную информацию в текстовом виджете не менее 1х2.
   </description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <files>
@@ -18,4 +19,10 @@
     <counter id="location" name="Местонахождение" type="text"/>
     <counter id="attribute" name="Атрибут" type="text"/>
   </counters>
+  <keywords>
+    Почтовое отправление, почта России
+  </keywords>
+  <type>
+    tracking, post
+  </type>
 </provider>

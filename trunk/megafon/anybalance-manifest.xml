@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id  major_version="1.0" version="2">megafon</id>
+  <id  major_version="1.0" version="3">megafon</id>
   <name>Мегафон</name>
   <description>
     Получает баланс, минуты и трафик на телефоне
@@ -19,4 +19,10 @@
     <counter id="internet_total" name="Интернет (всего)" units="Mb"/>
     <counter id="mins_total" name="Бесплатные минуты (всего)" units="мин" type="time_interval"/>
   </counters>
+  <keywords>
+    Сотовый телефон, мобильный, мобильник, megafon, интернет
+  </keywords>
+  <type>
+    cell
+  </type>
 </provider>

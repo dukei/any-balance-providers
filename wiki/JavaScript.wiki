@@ -6,7 +6,7 @@
 
 {{{
 function main(){
-  //Получим настройки эккаунта
+  //Получим настройки аккаунта
   var prefs = AnyBalance.getPreferences();
 
   //Получаем значения счетчиков
@@ -22,7 +22,7 @@ function main(){
 }
 }}}
 
-Все декларированные в [Manifest манифесте] под категорией `js` файлы будут загружены при обновлении AnyBalance эккаунта в Android [http://developer.android.com/reference/android/webkit/WebView.html WebView] и вызвана функция main(). Получив значения счетчиков, провайдер обязательно должен вызвать [AnyBalanceAPI#setResult AnyBalance.setResult()], чтобы передать полученные счетчики программе AnyBalance.
+Все декларированные в [Manifest манифесте] под категорией `js` файлы будут загружены при обновлении AnyBalance аккаунта в Android [http://developer.android.com/reference/android/webkit/WebView.html WebView] и вызвана функция main(). Получив значения счетчиков, провайдер обязательно должен вызвать [AnyBalanceAPI#setResult AnyBalance.setResult()], чтобы передать полученные счетчики программе AnyBalance.
 
 Для получения счетчиков провайдерам необходимо пользоваться [AnyBalanceAPI AnyBalance API]. Обычная схема работы функции main:
  * Получаем настройки с помощью [AnyBalanceAPI#getPreferences AnyBalance.getPreferences]

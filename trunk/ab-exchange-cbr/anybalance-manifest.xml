@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="3">exchange-cbr</id>
+  <id version="3">ab-exchange-cbr</id>
   <name>Курсы валют ЦБ</name>
   <description>
     Текущие курсы валют, установленные Центральным Банком РФ. Содержит курс доллара, евро, фунта, белорусского рубля, тенге, юаня, гривны, швейцарского франка, йены.

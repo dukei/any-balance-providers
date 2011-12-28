@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="2">game-dgame</id>
+  <id version="2">ab-game-dgame</id>
   <name>Повелители</name>
   <description>
     Показывает баланс игровой валюты у Повелителя в игре http://dgame.ru .

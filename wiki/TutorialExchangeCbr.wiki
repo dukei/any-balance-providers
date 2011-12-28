@@ -39,7 +39,7 @@ for (var i=0; i<document.links.length; i++){
 
 = Манифест =
 
-Но сначала напишем [Manifest манифест]. Ведь именно в нем определяются имена счетчиков, значения для которых мы будем извлекать в JavaScript.  Полный манифест вы можете посмотреть в [http://code.google.com/p/any-balance-providers/source/browse/trunk/exchange-cbr/anybalance-manifest.xml репозитории]. Здесь приведу только счетчики:
+Но сначала напишем [Manifest манифест]. Ведь именно в нем определяются имена счетчиков, значения для которых мы будем извлекать в JavaScript.  Полный манифест вы можете посмотреть в [http://code.google.com/p/any-balance-providers/source/browse/trunk/ab-exchange-cbr/anybalance-manifest.xml репозитории]. Здесь приведу только счетчики:
 
 {{{
   <counters>
@@ -73,7 +73,7 @@ function getRate(result, info, namein, nameout){
 
 Функция принимает `result` - объект, в который записываются извлеченные значения курсов для передачи в AnyBalance, `info` - текст со всеми счетчиками, полученный с адреса `http://www.forexpf.ru/_informer_/cbrf.php?id=012345678`, `namein` - название курса валюты в этом тексте (например, `usrutm`), `nameout` - id счетчика, соответствующего этой валюте.
 
-Надо пояснить, зачем делается вызов [AnyBalanceAPI#isAvailable AnyBalance.isAvailable()]. Дело в том, что пользователю могут быть нужны не все курсы одновременно. Может, ему нужно только курс доллара и евро, а остальное его не интересует. Тогда в настройках эккаунта он может выключить все курсы, кроме доллара и евро. Чтобы не получать зря ненужные пользователю счетчики, существует функция [AnyBalanceAPI#isAvailable AnyBalance.isAvailable()]. Если счетчик пользователем "спрятан", то для таких счетчиков она вернет `false`.
+Надо пояснить, зачем делается вызов [AnyBalanceAPI#isAvailable AnyBalance.isAvailable()]. Дело в том, что пользователю могут быть нужны не все курсы одновременно. Может, ему нужно только курс доллара и евро, а остальное его не интересует. Тогда в настройках аккаунта он может выключить все курсы, кроме доллара и евро. Чтобы не получать зря ненужные пользователю счетчики, существует функция [AnyBalanceAPI#isAvailable AnyBalance.isAvailable()]. Если счетчик пользователем "спрятан", то для таких счетчиков она вернет `false`.
 
 С функцией `getRate()` функция получения курсов валюты становится чрезвычайно простой.
 
@@ -108,7 +108,7 @@ function main(){
 
 <a href="http://any-balance-providers.googlecode.com/svn/wiki/images/widgets.jpg"><img width="240" src="http://any-balance-providers.googlecode.com/svn/wiki/images/widgets.jpg"/></a> Рис. 3
 
-Полный код примера находится в [http://code.google.com/p/any-balance-providers/source/browse/trunk/exchange-cbr/ репозитории].
+Полный код примера находится в [http://code.google.com/p/any-balance-providers/source/browse/ab-trunk/exchange-cbr/ репозитории].
 
 = Другие примеры =
 

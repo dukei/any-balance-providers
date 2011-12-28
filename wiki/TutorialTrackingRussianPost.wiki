@@ -43,7 +43,7 @@
 
 = Определение настроек =
 
-Для получения статуса отправления нам нужно знать его номер. Этот номер должен ввести пользователь при настройке эккаунта, основанном на нашем провайдере. [Preferences Настройки провайдера] определяются в xml файле и декларируются в [Manifest манифесте]. Чтобы задать настройку для ввода номера почтового отправления, нам понадобится примерно такой xml:
+Для получения статуса отправления нам нужно знать его номер. Этот номер должен ввести пользователь при настройке аккаунта, основанном на нашем провайдере. [Preferences Настройки провайдера] определяются в xml файле и декларируются в [Manifest манифесте]. Чтобы задать настройку для ввода номера почтового отправления, нам понадобится примерно такой xml:
 
 {{{
 ﻿<?xml version="1.0" encoding="utf-8"?>
@@ -72,7 +72,7 @@
 </files>
 }}}
 
-Полный текст манифеста вы можете посмотреть в [http://code.google.com/p/any-balance-providers/source/browse/trunk/tracking-russian-post/anybalance-manifest.xml репозитории].
+Полный текст манифеста вы можете посмотреть в [http://code.google.com/p/any-balance-providers/source/browse/trunk/ab-tracking-russian-post/anybalance-manifest.xml репозитории].
 
 = Программирование =
 
@@ -141,7 +141,7 @@ var info = AnyBalance.requestPost('http://www.russianpost.ru/resp_engine.aspx?Pa
 		throw new AnyBalance.Error("Отправление не найдено.")
 }}}
 
-Здесь использованы некоторые вспомогательные функции из [AnyBalanceAPI AnyBalance API]: [AnyBalanceAPI#trace trace] и [AnyBalanceAPI#isSetResultCalled isSetResultCalled]. `trace` используется для вывода отладочных сообщений в лог эккаунта, который можно просмотреть в AnyBalance, как показано на рисунке.
+Здесь использованы некоторые вспомогательные функции из [AnyBalanceAPI AnyBalance API]: [AnyBalanceAPI#trace trace] и [AnyBalanceAPI#isSetResultCalled isSetResultCalled]. `trace` используется для вывода отладочных сообщений в лог аккаунта, который можно просмотреть в AnyBalance, как показано на рисунке.
 
 <a href="http://any-balance-providers.googlecode.com/svn/wiki/images/log.png"><img width="240" src="http://any-balance-providers.googlecode.com/svn/wiki/images/log.png"/></a> Рис. 5
 
@@ -151,7 +151,7 @@ var info = AnyBalance.requestPost('http://www.russianpost.ru/resp_engine.aspx?Pa
 
 = Заключение =
 
-Собрав все в один zip файл, получим провайдер Почты России. Полный исходный текст провайдера доступен в [http://code.google.com/p/any-balance-providers/source/browse/#svn%2Ftrunk%2Ftracking-russian-post репозитории].
+Собрав все в один zip файл, получим провайдер Почты России. Полный исходный текст провайдера доступен в [http://code.google.com/p/any-balance-providers/source/browse/#svn%2Ftrunk%2Fab-tracking-russian-post репозитории].
 
 При показе провайдера в виджете следует выбрать большой виджет с одним большим текстовым полем, чтобы весь статус поместился целиком. Получится что-то вроде этого:
 

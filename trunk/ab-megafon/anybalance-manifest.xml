@@ -1,23 +1,32 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id  major_version="1.0" version="3">ab-megafon</id>
+  <id major_version="2.0" version="4">ab-megafon</id>
   <name>Мегафон</name>
   <description>
-    Получает баланс, минуты и трафик на телефоне
+    Получает баланс, минуты и трафик на телефоне. Поддерживается Столичный и Северо-западный филиал. Можете помочь с добавлением остальных филиалов? Обращайтесь к автору по email.
+
+    Особенности:
+     - Северо-западный филиал не показывает трафик
+     - Столичный филиал не показывает остаток SMS
+ 
+    Если вы можете помочь с исправлением особенностей, добро пожаловать на http://any-balance-providers.googlecode.com .
   </description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
+    <js>api:jquery.min.js</js>
     <js>main.js</js>
   </files>
   <counters>
     <counter id="balance" name="Баланс" units="р"/>
     <counter id="internet_cur" name="Интернет" units="Mb"/>
     <counter id="mins_left" name="Бесплатные минуты" units="мин" type="time_interval"/>
+    <counter id="sms_left" name="Включенные SMS"/>
     <counter id="internet_left" name="Интернет (осталось)" units="Mb"/>
     <counter id="internet_total" name="Интернет (всего)" units="Mb"/>
     <counter id="mins_total" name="Бесплатные минуты (всего)" units="мин" type="time_interval"/>
+    <counter id="sms_total" name="Включенные SMS (всего)"/>
   </counters>
   <keywords>
     Сотовый телефон, мобильный, мобильник, megafon, интернет

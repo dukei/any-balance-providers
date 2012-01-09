@@ -1,0 +1,59 @@
+#summary Пошаговый отладчик провайдеров в Google Chrome
+
+= Введение =
+
+Пошаговый отладчик провайдеров представляет собой [http://code.google.com/p/any-balance-providers/downloads/list?q=OpSys-Chrome расширение Google Chrome], которое симулирует среду выполнения провайдера в AnyBalance. Симуляция, однако, не полная, поэтому если провайдер работает в отладчике, то его необходимо проверить и непосредственно в AnyBalance.
+
+= Установка =
+
+Для установки отладчика, скачайте c помощью Google Chrome [http://code.google.com/p/any-balance-providers/downloads/list?q=OpSys-Chrome расширение]. Если вы скачиваете его с помощью Google Chrome, то оно автоматически установится.
+
+Далее в Chrome перейдите по ссылке <a href="chrome://settings/extensions" target="_blank">chrome://settings/extensions</a> и установите для расширения AnyBalanceDebugger галочку *Разрешить доступ к URL файла*.
+
+= Подготовка к отладке =
+
+Для отладки необходимо сформировать специальный локальный html-файл, в котором должны быть прописаны ссылки на скрипты провайдера и определены необходимые для них настройки. Файл обязательно должен иметь имя, заканчивающееся на `-anybalance.html`, в противном случае отладчик к нему не присоединится. Содержимое файла скопируйте из листинга ниже. Комментарии показывают, в каких местах следует сделать изменения.
+
+{{{
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <script src="chrome-extension://nkphlblmakkphcnnbklcnblgijohjdif/json2.js"></script>
+  <script src="chrome-extension://nkphlblmakkphcnnbklcnblgijohjdif/jquery.min.js"></script>
+  <script src="chrome-extension://nkphlblmakkphcnnbklcnblgijohjdif/api-adapter.js"></script>
+  <script src="chrome-extension://nkphlblmakkphcnnbklcnblgijohjdif/api.js"></script>
+  <script>
+	var g_api_preferences = {
+          //Вставьте сюда настройки, необходимые для вашего провайдера
+          //Например:
+          //  login: 'username',
+          //  password: 'secretpass'
+	};
+  </script>
+  <!-- Перечислите все скрипты, указанные в манифесте вашего провайдера.
+       Указывайте локальные пути к файлам. Библиотека JQuery уже включена,
+       отдельно указывать её не нужно.
+       Например, -->
+  <script src="file://E:\SrcRep\AnyBalanceProviders\ab-exchange-cbr\main.js"></script>
+</head>
+<body onload="">
+  <div style="display:none" id="AnyBalanceDebuggerRPCContainer"></div>
+  <button onclick="api_onload()">Execute</button>
+  <div id="AnyBalanceDebuggerLog"></div>
+</body>
+</html>
+}}}
+
+Этот файл можно записать в любое место на локальном диске. После этого его надо открыть в Google Chrome. Если расширение установлено, то по  нажатию кнопки Execute должна быть выполнена функция `main()` провайдера. Отладочные сообщения направляются в консоль Chrome и на экран. Если вы поменяли исходные файлы провайдера, не забудьте обновить отладочную страницу в Chrome, иначе он не увидит ваши изменения!
+
+= Пошаговая отладка =
+
+Пошаговая отладка делается с помощью встроенного в Google Chrome отладчика JavaScript. Консоль JavaScript может быть вызвана комбинацией клавиш в Windows: CTRL-SHIFT-J, на Mac: ALT-⌘-J . Или в меню Инструменты-Консоль JavaScript. Можно устанавливать точки останова (кликнув на номер нужной строки в окне просмотра JavaScript файла).
+
+= Особенности среды выполнения отладчика =
+
+В отладчике не работает перекодировка ответа сервера с помощью [AnyBalanceAPI#setDefaultCharset AnyBalance.setDefaultCharset]. Но по идее сам браузер должен корректно перекодировать страницу, используя подсказки кодировки в тексте страницы. Но в AnyBalance, возможно, понадобится использование функции [AnyBalanceAPI#setDefaultCharset AnyBalance.setDefaultCharset].
+
+По идее куки и авторизация должны сохраняться между последовательными запросами к [AnyBalanceAPI#requestGet AnyBalance.requestGet] и [AnyBalanceAPI#requestPost AnyBalance.requestPost]. Но это требует тестирования. [http://groups.google.com/group/any-balance-providers-discuss Сообщайте], если это не так.
+
+Поскольку расширение Google Chrome это просто подписанный `Zip`, то исходный код этого расширения вы всегда можете увидеть, просто открыв [http://code.google.com/p/any-balance-providers/downloads/list?q=OpSys-Chrome файл расширения] как `zip` файл. Если в процессе использования возникнут вопросы и предложения, то добро пожаловать в [http://groups.google.com/group/any-balance-providers-discuss группу].

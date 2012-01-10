@@ -1,6 +1,10 @@
-// Домашний Интернет и Телевидение МТС
-// Сайт оператора: http://www.dom.mts.ru/
-// Личный кабинет: https://kabinet.mts.ru/
+/**
+Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
+
+Домашний Интернет и Телевидение МТС
+Сайт оператора: http://www.dom.mts.ru/
+Личный кабинет: https://kabinet.mts.ru/
+*/
 
 function main(){
 	var prefs = AnyBalance.getPreferences();

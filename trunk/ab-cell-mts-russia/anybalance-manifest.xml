@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id major_version="1.0" version="1">ab-cell-mts-russia</id>
+  <name>МТС (Россия)</name>
+  <description>
+    Получает баланс, использованные минуты на локальные, мобильные и любимые номера.
+Получает данные из PDA версии интернет-помощника для уменьшения трафика.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="min_local" name="Локальные и мобильные минуты" units="мин"/>
+    <counter id="min_love" name="Любимые минуты" units="мин"/>
+    <counter id="min_left" name="Бесплатные минуты" units="мин"/>
+    <counter id="license" name="Лицевой счет" type="text"/>
+  </counters>
+  <keywords>
+    Сотовый телефон, мобильный, мобильник, mts, россия
+  </keywords>
+  <type>
+    cell
+  </type>
+</provider>

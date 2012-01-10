@@ -1,0 +1,134 @@
+/**
+Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
+
+Текущий баланс у сотового оператора МТС (центр). Вход через PDA-версию.
+Вдохновение почерпано у http://mtsoft.ru
+
+Сайт оператора: http://mts.ru/
+Личный кабинет: https://ip.mts.ru/SELFCAREPDA/
+*/
+var regions = {
+	auto: "https://ip.mts.ru/SELFCAREPDA/", 
+	center: "https://ip.mts.ru/SELFCAREPDA/",
+	primorye: "https://ihelper.primorye.mts.ru/SelfCarePda/",
+	nnov: "https://ip.nnov.mts.ru/selfcarepda/",
+	nw: "https://ihelper.nw.mts.ru/SELFCAREPDA/",
+	sib: "https://ip.sib.mts.ru/SELFCAREPDA/",
+	ural: "https://ip.ural.mts.ru/selfcarepda/",
+	ug: "https://ihelper.ug.mts.ru/SelfCarePda/"
+};
+
+function main(){
+    var prefs = AnyBalance.getPreferences();
+    if(!regions[prefs.region]){
+	AnyBalance.trace("Unknown region: " + prefs.region + ", setting to auto");
+        prefs.region = 'auto';
+    }
+
+    var baseurl = regions[prefs.region];
+
+    AnyBalance.trace("Trying to enter selfcare at address: " + baseurl);
+    var html = AnyBalance.requestPost(baseurl + "Security.mvc/LogOn", {
+    	username: prefs.login,
+        password: prefs.password
+    });
+
+    var regexp=/<form .*?id="redirect-form".*?action="[^"]*\.([^\.]+)\.mts\.ru/, res, tmp;
+    if (res=regexp.exec(html)){
+        //Неправильный регион. Умный мтс нас редиректит
+	//Только эта скотина не всегда даёт правильную ссылку, иногда даёт такую, которая требует ещё редиректов
+	//Поэтому приходится вычленять из ссылки непосредственно нужный регион
+	if(!regions[res[1]])
+        	throw new AnyBalance.Error("mts has redirected to unknown region: " + res[1]);
+		
+	baseurl = regions[res[1]];
+    	AnyBalance.trace("Redirected, now trying to enter selfcare at address: " + baseurl);
+        html = AnyBalance.requestPost(baseurl + "Security.mvc/LogOn", {
+    		username: prefs.login,
+        	password: prefs.password
+        });
+    }
+
+
+    regexp=/<ul class="operation-results-error"><li>(.*?)<\/li>/;
+    if (res=regexp.exec(html)){
+        throw new AnyBalance.Error(res[1]);
+    }
+
+    var result = {success: true};
+
+    AnyBalance.trace("It looks like we are in selfcare...");
+
+    // Тарифный план
+    regexp=/Тарифный план.*?>(.*?)</;
+    if (res=regexp.exec(html)){
+        result.__tariff=res[1];
+    }else{
+        throw new AnyBalance.Error('Не удаётся получить тарифный план. Неверный логин-пароль?');
+    }
+
+    AnyBalance.trace("Fetching status...");
+
+    html = AnyBalance.requestGet(baseurl + "Account.mvc/Status");
+
+    AnyBalance.trace("Parsing status...");
+
+    // Баланс
+    if(AnyBalance.isAvailable('balance')){
+        regexp=/баланс.*?>(.*?)</;
+        if (res=regexp.exec(html)){
+            tmp=res[1].replace(/ |\xA0/, ""); // Удаляем пробелы
+            tmp=tmp.replace(",", "."); // Заменяем запятую на точку
+            result.balance=parseFloat(tmp);
+        }
+    }
+    
+    // Пакет минут
+    if(AnyBalance.isAvailable('min_left')){
+        regexp=/Остаток пакета минут: (\d+)\./;
+        if (res=regexp.exec(html)){
+            tmp=res[1].replace(/ |\xA0/, ""); // Удаляем пробелы
+            tmp=tmp.replace(",", "."); // Заменяем запятую на точку
+            result.min_left=parseInt(tmp);
+        }
+    }
+    
+    // Остаток бонуса
+    if(AnyBalance.isAvailable('min_left')){
+        regexp=/Остаток бонуса: (.*?) мин/;
+        if (res=regexp.exec(html)){
+            tmp=res[1].replace(/ |\xA0/, ""); // Удаляем пробелы
+            tmp=tmp.replace(",", "."); // Заменяем запятую на точку
+            result.min_left=parseInt(tmp);
+        }
+    }
+
+    // Использовано: 0 минут местных и мобильных вызовов.
+    if(AnyBalance.isAvailable('min_local')){
+        regexp=/Использовано: (\d+) мин[^\s]* местных/;
+        if (res=regexp.exec(html)){
+            tmp=res[1].replace(/ |\xA0/, ""); // Удаляем пробелы
+            result.min_local=parseInt(tmp);
+        }
+    }
+
+    // Использовано: 0 минут на любимые номера
+    if(AnyBalance.isAvailable('min_love')){
+        regexp=/Использовано: (\d+) мин[^\s]* на любимые/;
+        if (res=regexp.exec(html)){
+            tmp=res[1].replace(/ |\xA0/, ""); // Удаляем пробелы
+            result.min_love=parseInt(tmp);
+        }
+    }
+
+    // Лицевой счет
+    if(AnyBalance.isAvailable('license')){
+        regexp=/№ .*?(.*?):/;
+        if (res=regexp.exec(html)){
+            result.license=res[1];
+        }
+    }
+
+    AnyBalance.setResult(result);
+
+}

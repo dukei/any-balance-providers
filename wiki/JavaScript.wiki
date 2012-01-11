@@ -34,3 +34,4 @@ function main(){
  * [TutorialHelloWorld Hello, World!]
  * [TutorialExchangeCbr Курсы валют]
  * [TutorialTrackingRussianPost Отслеживание посылок]
+ * [TutorialXML Обработка XML]

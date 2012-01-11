@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+ <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
     <EditTextPreference 
         title="Логин" 
@@ -20,6 +20,7 @@
         dialogMessage="Введите пароль, используемый для входа в Интернет-Помощник"
         inputType="textPassword">
     </EditTextPreference>
+    <!--
     <ListPreference 
         key="region" 
         title="Регион"
@@ -28,4 +29,5 @@
         entryValues="auto|center|primorye|nnov|nw|sib|ural|ug"
 	defaultValue="auto">
     </ListPreference>
+    -->
 </PreferenceScreen>

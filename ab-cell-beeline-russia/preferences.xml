@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Логин" 
+        positiveButtonText="ОК" 
+        summary="Номер телефона (10 цифр)||{@s}\n" 
+        dialogTitle="Номер телефона" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите номер вашего телефона для входа в Систему управления услугами (10 цифр), например 9031234567"
+        key="login"
+        inputType="number">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="Пароль для входа в Систему управления услугами||***********\n"
+        dialogMessage="Введите пароль, используемый для входа в Систему управления услугами. Для получения этого пароля вам надо со своего компьютера войти хотя бы раз на сайт http://uslugi.beeline.ru ."
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

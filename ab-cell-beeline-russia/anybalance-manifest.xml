@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id major_version="1.0" version="2">ab-cell-beeline-russia</id>
+  <name>Билайн (Россия)</name>
+  <description>
+    Получает баланс, бонусный баланс, количество бесплатных SMS, MMS и минут, владельца, тарифный план и номер договора.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="bonus_balance" name="Бонусный баланс" units="р"/>
+    <counter id="min_left" name="Минуты" units="мин" type="time_interval"/>
+    <counter id="sms_left" name="SMS" units="sms"/>
+    <counter id="mms_left" name="MMS" units="mms"/>
+    <counter id="userName" name="Владелец" type="text"/>
+    <counter id="BlockStatus" name="Состояние номера" type="text"/>
+    <counter id="license" name="Номер договора" type="text"/>
+  </counters>
+  <keywords>
+    Сотовый телефон, мобильный, мобильник, beeline, россия
+  </keywords>
+  <type>
+    cell
+  </type>
+</provider>

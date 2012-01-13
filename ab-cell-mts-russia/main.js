@@ -18,6 +18,24 @@ var regions = {
 	ug: "https://ihelper.ug.mts.ru/SelfCarePda/"
 };
 
+function getParam (html, result, param, regexp, replaces, parser) {
+	if (!AnyBalance.isAvailable (param))
+		return;
+
+	var value = regexp.exec (html);
+	if (value) {
+		value = value[1];
+		if (replaces) {
+			for (var i = 0; i < replaces.length; i += 2) {
+				value = value.replace (replaces[i], replaces[i+1]);
+			}
+		}
+		if (parser)
+			value = parser (value);
+		result[param] = value;
+	}
+}
+
 function main(){
     var prefs = AnyBalance.getPreferences();
     if(!regions[prefs.region]){
@@ -74,60 +92,22 @@ function main(){
     AnyBalance.trace("Parsing status...");
 
     // Баланс
-    if(AnyBalance.isAvailable('balance')){
-        regexp=/баланс.*?>(.*?)</;
-        if (res=regexp.exec(html)){
-            tmp=res[1].replace(/ |\xA0/, ""); // Удаляем пробелы
-            tmp=tmp.replace(",", "."); // Заменяем запятую на точку
-            result.balance=parseFloat(tmp);
-        }
-    }
+    getParam (html, result, 'balance', /баланс.*?>(.*?)</, [/ |\xA0/, "", ",", "."], parseFloat);
     
     // Пакет минут
-    if(AnyBalance.isAvailable('min_left')){
-        regexp=/Остаток пакета минут: (\d+)\./;
-        if (res=regexp.exec(html)){
-            tmp=res[1].replace(/ |\xA0/, ""); // Удаляем пробелы
-            tmp=tmp.replace(",", "."); // Заменяем запятую на точку
-            result.min_left=parseInt(tmp);
-        }
-    }
+    getParam (html, result, 'min_left', /Остаток пакета минут: (\d+)\./, [/ |\xA0/, "", ",", "."], parseInt);
     
     // Остаток бонуса
-    if(AnyBalance.isAvailable('min_left')){
-        regexp=/Остаток бонуса: (.*?) мин/;
-        if (res=regexp.exec(html)){
-            tmp=res[1].replace(/ |\xA0/, ""); // Удаляем пробелы
-            tmp=tmp.replace(",", "."); // Заменяем запятую на точку
-            result.min_left=parseInt(tmp);
-        }
-    }
+    getParam (html, result, 'min_left', /Остаток бонуса: (.*?) мин/, [/ |\xA0/, "", ",", "."], parseInt);
 
     // Использовано: 0 минут местных и мобильных вызовов.
-    if(AnyBalance.isAvailable('min_local')){
-        regexp=/Использовано: (\d+) мин[^\s]* местных/;
-        if (res=regexp.exec(html)){
-            tmp=res[1].replace(/ |\xA0/, ""); // Удаляем пробелы
-            result.min_local=parseInt(tmp);
-        }
-    }
+    getParam (html, result, 'min_local', /Использовано: (\d+) мин[^\s]* местных/, [/ |\xA0/, ""], parseInt);
 
     // Использовано: 0 минут на любимые номера
-    if(AnyBalance.isAvailable('min_love')){
-        regexp=/Использовано: (\d+) мин[^\s]* на любимые/;
-        if (res=regexp.exec(html)){
-            tmp=res[1].replace(/ |\xA0/, ""); // Удаляем пробелы
-            result.min_love=parseInt(tmp);
-        }
-    }
+    getParam (html, result, 'min_love', /Использовано: (\d+) мин[^\s]* на любимые/, [/ |\xA0/, ""], parseInt);
 
     // Лицевой счет
-    if(AnyBalance.isAvailable('license')){
-        regexp=/№ .*?(.*?):/;
-        if (res=regexp.exec(html)){
-            result.license=res[1];
-        }
-    }
+    getParam (html, result, 'license', /№ .*?(.*?):/);
 
     AnyBalance.setResult(result);
 

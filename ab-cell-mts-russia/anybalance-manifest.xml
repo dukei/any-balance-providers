@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
   <id major_version="1.0" version="1">ab-cell-mts-russia</id>
   <name>МТС (Россия)</name>
@@ -17,6 +17,11 @@
     <counter id="min_local" name="Локальные и мобильные минуты" units="мин"/>
     <counter id="min_love" name="Любимые минуты" units="мин"/>
     <counter id="min_left" name="Бесплатные минуты" units="мин"/>
+    <counter id="sms_left" name="Бесплатные СМС" units=" sms"/>
+    <counter id="mms_left" name="Бесплатные ММС" units=" mms"/>
+    <counter id="statuslock" name="Статус блокировки" type="text"/>
+    <counter id="usedinthismonth" name="Расход за этот месяц" units="р"/>
+    <counter id="usedinprevmonth" name="Расход за прошлый месяц" units="р"/>
     <counter id="license" name="Лицевой счет" type="text"/>
   </counters>
   <keywords>

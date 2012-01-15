@@ -91,7 +91,11 @@ function main(){
     if (AnyBalance.isAvailable ('min_left') ||
         AnyBalance.isAvailable ('min_local') ||
         AnyBalance.isAvailable ('min_love') ||
-        AnyBalance.isAvailable ('license')) {
+        AnyBalance.isAvailable ('license') ||
+        AnyBalance.isAvailable ('sms_left') ||
+        AnyBalance.isAvailable ('mms_left') ||
+        AnyBalance.isAvailable ('statuslock') ||
+        AnyBalance.isAvailable ('usedinthismonth')) {
 
         AnyBalance.trace("Fetching status...");
 
@@ -105,14 +109,42 @@ function main(){
         // Остаток бонуса
         getParam (html, result, 'min_left', /Остаток бонуса: (.*?) мин/, [/ |\xA0/, "", ",", "."], parseInt);
 
+        // Остаток минут
+        getParam (html, result, 'min_left', /Осталось (\d*) мин./i, [], parseInt);
+
         // Использовано: 0 минут местных и мобильных вызовов.
         getParam (html, result, 'min_local', /Использовано: (\d+) мин[^\s]* местных/, [/ |\xA0/, ""], parseInt);
 
         // Использовано: 0 минут на любимые номера
         getParam (html, result, 'min_love', /Использовано: (\d+) мин[^\s]* на любимые/, [/ |\xA0/, ""], parseInt);
 
+        // Остаток СМС
+        getParam (html, result, 'sms_left', /Осталось: (\d*) sms/i, [], parseInt);
+
+        // Остаток ММС
+        getParam (html, result, 'mms_left', /Осталось: (\d*) mms/i, [], parseInt);
+
         // Лицевой счет
         getParam (html, result, 'license', /№ .*?(.*?):/);
+
+        // Блокировка
+        getParam (html, result, 'statuslock', /class="account-status-lock"[^>]*>([^<]*)</i);
+
+        // Расход за этот месяц
+        getParam (html, result, 'usedinthismonth', /Израсходовано .*<strong>([\d.]*)/i, [], parseFloat);
+    }
+
+
+    if (AnyBalance.isAvailable ('usedinprevmonth')) {
+
+        AnyBalance.trace("Fetching history...");
+
+        html = AnyBalance.requestPost (baseurl + 'Account.mvc/History', {periodIndex: 0});
+
+        AnyBalance.trace("Parsing history...");
+
+        // Расход за прошлый месяц
+        getParam (html, result, 'usedinprevmonth', /За период израсходовано <strong>([\d.]*)</i, [], parseFloat);
     }
 
     AnyBalance.setResult(result);

@@ -1,4 +1,4 @@
-/**
+﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 
 Текущий баланс у сотового оператора МТС (центр). Вход через PDA-версию.
@@ -85,29 +85,35 @@ function main(){
         throw new AnyBalance.Error('Не удаётся получить тарифный план. Неверный логин-пароль?');
     }
 
-    AnyBalance.trace("Fetching status...");
-
-    html = AnyBalance.requestGet(baseurl + "Account.mvc/Status");
-
-    AnyBalance.trace("Parsing status...");
-
     // Баланс
-    getParam (html, result, 'balance', /баланс.*?>(.*?)</, [/ |\xA0/, "", ",", "."], parseFloat);
+    getParam (html, result, 'balance', /Баланс.*>([\d.]*)</, [/ |\xA0/, "", ",", "."], parseFloat);
+
+    if (AnyBalance.isAvailable ('min_left') ||
+        AnyBalance.isAvailable ('min_local') ||
+        AnyBalance.isAvailable ('min_love') ||
+        AnyBalance.isAvailable ('license')) {
+
+        AnyBalance.trace("Fetching status...");
+
+        html = AnyBalance.requestGet(baseurl + "Account.mvc/Status");
+
+        AnyBalance.trace("Parsing status...");
     
-    // Пакет минут
-    getParam (html, result, 'min_left', /Остаток пакета минут: (\d+)\./, [/ |\xA0/, "", ",", "."], parseInt);
+        // Пакет минут
+        getParam (html, result, 'min_left', /Остаток пакета минут: (\d+)\./, [/ |\xA0/, "", ",", "."], parseInt);
     
-    // Остаток бонуса
-    getParam (html, result, 'min_left', /Остаток бонуса: (.*?) мин/, [/ |\xA0/, "", ",", "."], parseInt);
+        // Остаток бонуса
+        getParam (html, result, 'min_left', /Остаток бонуса: (.*?) мин/, [/ |\xA0/, "", ",", "."], parseInt);
 
-    // Использовано: 0 минут местных и мобильных вызовов.
-    getParam (html, result, 'min_local', /Использовано: (\d+) мин[^\s]* местных/, [/ |\xA0/, ""], parseInt);
+        // Использовано: 0 минут местных и мобильных вызовов.
+        getParam (html, result, 'min_local', /Использовано: (\d+) мин[^\s]* местных/, [/ |\xA0/, ""], parseInt);
 
-    // Использовано: 0 минут на любимые номера
-    getParam (html, result, 'min_love', /Использовано: (\d+) мин[^\s]* на любимые/, [/ |\xA0/, ""], parseInt);
+        // Использовано: 0 минут на любимые номера
+        getParam (html, result, 'min_love', /Использовано: (\d+) мин[^\s]* на любимые/, [/ |\xA0/, ""], parseInt);
 
-    // Лицевой счет
-    getParam (html, result, 'license', /№ .*?(.*?):/);
+        // Лицевой счет
+        getParam (html, result, 'license', /№ .*?(.*?):/);
+    }
 
     AnyBalance.setResult(result);
 

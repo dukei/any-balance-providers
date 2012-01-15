@@ -86,15 +86,17 @@ function main(){
     }
 
     // Баланс
-    getParam (html, result, 'balance', /Баланс.*>([\d.]*)</, [/ |\xA0/, "", ",", "."], parseFloat);
+    getParam (html, result, 'balance', /Баланс.*>([-\d.]*)</, [/ |\xA0/, "", ",", "."], parseFloat);
 
     if (AnyBalance.isAvailable ('min_left') ||
         AnyBalance.isAvailable ('min_local') ||
         AnyBalance.isAvailable ('min_love') ||
-        AnyBalance.isAvailable ('license') ||
         AnyBalance.isAvailable ('sms_left') ||
         AnyBalance.isAvailable ('mms_left') ||
+        AnyBalance.isAvailable ('traffic_left') ||
+        AnyBalance.isAvailable ('license') ||
         AnyBalance.isAvailable ('statuslock') ||
+        AnyBalance.isAvailable ('credit') ||
         AnyBalance.isAvailable ('usedinthismonth')) {
 
         AnyBalance.trace("Fetching status...");
@@ -119,16 +121,22 @@ function main(){
         getParam (html, result, 'min_love', /Использовано: (\d+) мин[^\s]* на любимые/, [/ |\xA0/, ""], parseInt);
 
         // Остаток СМС
-        getParam (html, result, 'sms_left', /Осталось: (\d*) sms/i, [], parseInt);
+        getParam (html, result, 'sms_left', /Осталось[^\d]*(\d*) (sms|смс)/i, [], parseInt);
 
         // Остаток ММС
-        getParam (html, result, 'mms_left', /Осталось: (\d*) mms/i, [], parseInt);
+        getParam (html, result, 'mms_left', /Осталось[^\d]*(\d*) (mms|ммс)/i, [], parseInt);
+
+        // Остаток трафика
+        getParam (html, result, 'traffic_left', /Осталось[^\d]*(\d* * (kb|mb|gb))/i);
 
         // Лицевой счет
         getParam (html, result, 'license', /№ .*?(.*?):/);
 
         // Блокировка
-        getParam (html, result, 'statuslock', /class="account-status-lock"[^>]*>([^<]*)</i);
+        getParam (html, result, 'statuslock', /class="account-status-lock".*>(Номер [^<]*)</i);
+
+        // Сумма кредитного лимита
+        getParam (html, result, 'credit', /Сумма кредитного лимита.*?>([-\d\.]*)/i, [",", "."], parseFloat);
 
         // Расход за этот месяц
         getParam (html, result, 'usedinthismonth', /Израсходовано .*<strong>([\d.]*)/i, [], parseFloat);
@@ -145,6 +153,19 @@ function main(){
 
         // Расход за прошлый месяц
         getParam (html, result, 'usedinprevmonth', /За период израсходовано <strong>([\d.]*)</i, [], parseFloat);
+    }
+
+
+    if (AnyBalance.isAvailable ('monthlypay')) {
+
+        AnyBalance.trace("Fetching traffic info...");
+
+        html = AnyBalance.requestGet (baseurl + 'TariffChange.mvc');
+
+        AnyBalance.trace("Parsing traffic info...");
+
+        // Ежемесячная плата
+        getParam (html, result, 'monthlypay', /Ежемесячная плата[^\d]*([\d.]*)/i, [",", "."], parseFloat);
     }
 
     AnyBalance.setResult(result);

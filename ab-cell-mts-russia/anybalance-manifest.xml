@@ -19,10 +19,13 @@
     <counter id="min_left" name="Бесплатные минуты" units="мин"/>
     <counter id="sms_left" name="Бесплатные СМС" units=" sms"/>
     <counter id="mms_left" name="Бесплатные ММС" units=" mms"/>
+    <counter id="traffic_left" name="Остаток трафика" type="text"/>
     <counter id="statuslock" name="Статус блокировки" type="text"/>
+    <counter id="credit" name="Кредит" units="р"/>
     <counter id="usedinthismonth" name="Расход за этот месяц" units="р"/>
     <counter id="usedinprevmonth" name="Расход за прошлый месяц" units="р"/>
     <counter id="license" name="Лицевой счет" type="text"/>
+    <counter id="monthlypay" name="Ежемесячная плата" units="р"/>
   </counters>
   <keywords>
     Сотовый телефон, мобильный, мобильник, mts, россия

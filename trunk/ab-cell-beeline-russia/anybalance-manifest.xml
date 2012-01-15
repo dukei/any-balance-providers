@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="2">ab-cell-beeline-russia</id>
+  <id major_version="1.0" version="3">ab-cell-beeline-russia</id>
   <name>Билайн (Россия)</name>
   <description>
     Получает баланс, бонусный баланс, количество бесплатных SMS, MMS и минут, владельца, тарифный план и номер договора.

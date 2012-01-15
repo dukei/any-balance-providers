@@ -42,10 +42,10 @@ function main(){
       _stateParam: 'eCareLocale.currentLocale=ru_RU__Russian'
     });
 
-    var regexp=/<span class="warn">[\s\S]*([\s\S]*?)[\s\S]*<\/span>/, res, tmp;
+    var regexp=/<span class="warn">[\s]*([\s\S]*?)[\s]*<\/span>/, res, tmp;
     if (res=regexp.exec(html)){
         //Ошибка какая-то случилась... Может, пароль неправильный
-      	throw new AnyBalance.Error(res[1]);
+      	throw new AnyBalance.Error(res[1].replace(/<[^<>]+\/?>/g, ''));
     }
 
     var result = {success: true};

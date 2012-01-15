@@ -23,9 +23,9 @@
     <ListPreference 
         key="region" 
         title="Регион"
-        summary="Регион МТС, в котором зарегистрирован ваш номер|Необходим для определения адреса Интернет-Помощника\n|{@s}\n"
+        summary="Регион вашего номера|Нужен для определения Интернет-Помощника\n|{@s}\n"
         entries="Автоматически|Москва/Центр|Дальний Восток|Поволжье|Северо-Запад|Сибирь|Урал|Юг"
         entryValues="auto|center|primorye|nnov|nw|sib|ural|ug"
-	defaultValue="auto">
+	      defaultValue="auto">
     </ListPreference>
 </PreferenceScreen>

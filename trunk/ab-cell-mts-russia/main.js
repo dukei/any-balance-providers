@@ -72,6 +72,11 @@ function main(){
     if (res=regexp.exec(html)){
         throw new AnyBalance.Error(res[1]);
     }
+    
+    regexp=/<title>Произошла ошибка<\/title>/;
+    if(regexp.exec(html)){
+        throw new AnyBalance.Error("Интернет-помощник временно недоступен");
+    }
 
     var result = {success: true};
 

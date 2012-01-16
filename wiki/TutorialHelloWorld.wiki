@@ -35,7 +35,7 @@
 Создадим теперь JavaScript, получающий наш счетчик. Создайте рядом с файлом манифеста файл `main.js`.
 
 {{{
-function main{
+function main(){
   AnyBalance.setResult({success: true, mycounter: 'Hello, World!'});
 }
 }}}

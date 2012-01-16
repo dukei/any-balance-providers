@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="2.0" version="4">ab-megafon</id>
+  <id major_version="2.1" version="5">ab-megafon</id>
   <name>Мегафон</name>
   <description>
-    Получает баланс, минуты и трафик на телефоне. Поддерживается Столичный и Северо-западный филиал. Можете помочь с добавлением остальных филиалов? Обращайтесь к автору по email.
+    Получает баланс, бонусный баланс, минуты, трафик, SMS на телефоне. Поддерживается Столичный, Северо-западный и Поволжский филиал. Можете помочь с добавлением остальных филиалов и улучшением существующих? Обращайтесь к автору по email.
 
     Особенности:
-     - Северо-западный филиал не показывает трафик
+     - Северо-западный филиал не показывает трафик, бонусный баланс
      - Столичный филиал не показывает остаток SMS
+     - Поволжский филиал не показывает минуты
  
     Если вы можете помочь с исправлением особенностей, добро пожаловать на http://any-balance-providers.googlecode.com .
   </description>
@@ -24,9 +25,12 @@
     <counter id="mins_left" name="Бесплатные минуты" units="мин" type="time_interval"/>
     <counter id="sms_left" name="Включенные SMS"/>
     <counter id="internet_left" name="Интернет (осталось)" units="Mb"/>
+    <counter id="bonus_balance" name="Бонусный баланс"/>
+    <counter id="handygift_left" name="Нужный подарок - осталось (Поволжье)" units="р"/>
     <counter id="internet_total" name="Интернет (всего)" units="Mb"/>
     <counter id="mins_total" name="Бесплатные минуты (всего)" units="мин" type="time_interval"/>
     <counter id="sms_total" name="Включенные SMS (всего)"/>
+    <counter id="handygift_total" name="Нужный подарок - всего (Поволжье)" units="р"/>
   </counters>
   <keywords>
     Сотовый телефон, мобильный, мобильник, megafon, интернет, россия, москва

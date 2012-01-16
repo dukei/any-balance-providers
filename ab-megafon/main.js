@@ -11,7 +11,8 @@ var MEGA_FILIAL_URAL = 8;
 var filial_info = {};
 filial_info[MEGA_FILIAL_MOSCOW] = {
   name: 'Столичный филиал',
-  func: megafonMoscow
+  func: megafonServiceGuide,
+  site: "https://moscowsg.megafon.ru/"
 };
 filial_info[MEGA_FILIAL_SIBIR] = {
   name: 'Сибирский филиал',
@@ -28,7 +29,8 @@ filial_info[MEGA_FILIAL_FAREAST] = {
 };
 filial_info[MEGA_FILIAL_VOLGA] = {
   name: 'Поволжский филиал',
-  func: null
+  site: "https://volgasg.megafon.ru/",
+  func: megafonServiceGuide
 };
 filial_info[MEGA_FILIAL_KAVKAZ] = {
   name: 'Кавказский филиал',
@@ -168,7 +170,7 @@ function megafonNw(filial){
     var filinfo = filial_info[filial];
     var prefs = AnyBalance.getPreferences();
     
-    AnyBalance.trace('Connecting to service guide for ' + filinfo.name);
+    AnyBalance.trace('Connecting to trayinfo for ' + filinfo.name);
     
     AnyBalance.setDefaultCharset('utf-8');
     var info = AnyBalance.requestGet(filinfo.site
@@ -227,11 +229,14 @@ function megafonNw(filial){
 /**
  * Получаем данные из обычного сервис-гида для столичного филиала
  */
-function megafonMoscow(){
+function megafonServiceGuide(filial){
+    var filinfo = filial_info[filial];
+    var baseurl = filinfo.site;
+    
     var prefs = AnyBalance.getPreferences();
-    AnyBalance.trace('Connecting to moscow service guide...');
+    AnyBalance.trace('Connecting to service guide ' + filinfo.name);
 	
-    var session = AnyBalance.requestPost('https://moscowsg.megafon.ru/ps/scc/php/check.php?CHANNEL=WWW',
+    var session = AnyBalance.requestPost(baseurl + 'ps/scc/php/check.php?CHANNEL=WWW',
     {
         LOGIN: prefs.login, 
         PASSWORD: prefs.password
@@ -259,7 +264,7 @@ function megafonMoscow(){
     }
 	
     var sessionid = matches[1];
-    var text = AnyBalance.requestPost('https://moscowsg.megafon.ru/SCWWW/ACCOUNT_INFO',
+    var text = AnyBalance.requestPost(baseurl + 'SCWWW/ACCOUNT_INFO',
     {
         CHANNEL: 'WWW', 
         SESSION_ID: sessionid
@@ -272,20 +277,24 @@ function megafonMoscow(){
         }
     }
 	
-	
     //Текущий тарифный план
-    if(matches = text.match(/&#1058;&#1077;&#1082;&#1091;&#1097;&#1080;&#1081; &#1090;&#1072;&#1088;&#1080;&#1092;&#1085;&#1099;&#1081; &#1087;&#1083;&#1072;&#1085;:[\s\S]*?<nobr>(.*?)<\/nobr>/i)){
-        var tariff = html_entity_decode(matches[1]);
+    var tariff = getPropValText(text, '&#1058;&#1077;&#1082;&#1091;&#1097;&#1080;&#1081; &#1090;&#1072;&#1088;&#1080;&#1092;&#1085;&#1099;&#1081; &#1087;&#1083;&#1072;&#1085;:');
+    if(tariff)
         result.__tariff = tariff; //Special variable, not counter
+    
+    //Бонусный баланс
+    if(AnyBalance.isAvailable('bonus_balance')){
+        var val = getPropValFloat(text, '&#1041;&#1086;&#1085;&#1091;&#1089;&#1085;&#1099;&#1081; &#1073;&#1072;&#1083;&#1072;&#1085;&#1089;:');
+        if(val)
+            result.bonus_balance = val;
     }
 	
-	
-    //Бонус 1 - полчаса бесплатно
-    if(AnyBalance.isAvailable(['mins_total','mins_left'])){
-        if(matches = text.match(
-            /&#1041;&#1086;&#1085;&#1091;&#1089; 1 \- &#1087;&#1086;&#1083;&#1095;&#1072;&#1089;&#1072; &#1074; &#1087;&#1086;&#1076;&#1072;&#1088;&#1086;&#1082;[\s\S]*?<tr[\s\S]*?<div class="td_def">(\d+):(\d+)&nbsp;[\s\S]*?<div class="td_def">(\d+):(\d+)&nbsp;/i)){
-            var mins_total = parseInt(matches[1])*60 + parseInt(matches[2]);
-            var mins_left = parseInt(matches[3])*60 + parseInt(matches[4]);
+    //Бонус 1 - полчаса бесплатно (Москва)
+    if(AnyBalance.isAvailable('mins_total','mins_left')){
+        var mins = getOptionTimeIntervals(text, "&#1041;&#1086;&#1085;&#1091;&#1089; 1 \\- &#1087;&#1086;&#1083;&#1095;&#1072;&#1089;&#1072; &#1074; &#1087;&#1086;&#1076;&#1072;&#1088;&#1086;&#1082;");
+        if(mins){
+            var mins_total = mins[0];
+            var mins_left = mins[1];
 			
             if(AnyBalance.isAvailable('mins_total'))
                 result.mins_total = mins_total;
@@ -294,24 +303,190 @@ function megafonMoscow(){
         }
     }
 	
-    if(AnyBalance.isAvailable(['internet_total','internet_cur', 'internet_left'])){
-        text = AnyBalance.requestGet('https://moscowsg.megafon.ru/SCCEXTSYS/EXT_SYSTEM_PROXY_FORM?CHANNEL=WWW&SESSION_ID=' + sessionid + '&URI=3.');
-        if(matches = text.match(/<a class="gupLink" href="EXT_SYSTEM_PROXY_FORM\?([^"]*)"/i)){
-            text = AnyBalance.requestGet('https://moscowsg.megafon.ru/SCCEXTSYS/EXT_SYSTEM_PROXY_FORM?' + matches[1].replace(/&amp;/g, '&'));
-			
+    var internet_total = 0,
+        internet_cur = 0,
+        internet_left = 0;
+        
+    // Карманный интернет
+    if(AnyBalance.isAvailable('internet_total','internet_cur', 'internet_left')){
+        var vals = getOptionFloat(text, "&#1050;&#1072;&#1088;&#1084;&#1072;&#1085;&#1085;&#1099;&#1081; &#1048;&#1085;&#1090;&#1077;&#1088;&#1085;&#1077;&#1090;");
+        if(vals){
             if(AnyBalance.isAvailable('internet_total'))
-                if(matches = text.match(/title="ALL_VOLUME">([\d\.\-]+)</i))
-                    result.internet_total = parseFloat(matches[1]);
+                internet_total += vals[0];
             if(AnyBalance.isAvailable('internet_cur'))
-                if(matches = text.match(/title="CUR_VOLUME">([\d\.\-]+)</i))
-                    result.internet_cur = parseFloat(matches[1]);
+                internet_cur += vals[0]-vals[1];
             if(AnyBalance.isAvailable('internet_left'))
-                if(matches = text.match(/title="LAST_VOLUME">([\d\.\-]+)</i))
-                    result.internet_left = parseFloat(matches[1]);
+                internet_left += vals[1];
+        }
+    }
+    
+    //Исходящие SM (ОХард, Москва)
+    var sms_total = 0,
+        sms_left = 0;
+        
+    if(AnyBalance.isAvailable('sms_total', 'sms_left')){
+        var vals = getOptionInt(text, "&#1048;&#1089;&#1093;&#1086;&#1076;&#1103;&#1097;&#1080;&#1077; SM");
+        if(vals){
+            if(AnyBalance.isAvailable('sms_total'))
+                sms_total += vals[0];
+            if(AnyBalance.isAvailable('sms_left'))
+                sms_left += vals[1];
+        }
+    }
+    
+    //Пакет SMS-сообщений (Поволжье)
+    if(AnyBalance.isAvailable('sms_total', 'sms_left')){
+        var vals = getOptionInt(text, "&#1055;&#1072;&#1082;&#1077;&#1090; SMS-&#1089;&#1086;&#1086;&#1073;&#1097;&#1077;&#1085;&#1080;&#1081;");
+        if(vals){
+            if(AnyBalance.isAvailable('sms_total'))
+                sms_total += vals[0];
+            if(AnyBalance.isAvailable('sms_left'))
+                sms_left += vals[1];
+        }
+    }
+
+    //Нужный подарок (Поволжье)
+    if(AnyBalance.isAvailable('handygift_total', 'handygift_left')){
+        var vals = getOptionFloat(text, "&#1053;&#1091;&#1078;&#1085;&#1099;&#1081; &#1087;&#1086;&#1076;&#1072;&#1088;&#1086;&#1082;");
+        if(vals){
+            if(AnyBalance.isAvailable('handygift_total'))
+                result.handygift_total = vals[0];
+            if(AnyBalance.isAvailable('handygift_left'))
+                result.handygift_left = vals[1];
         }
     }
 	
+    if(filial == MEGA_FILIAL_MOSCOW){
+        // Бонусный баланс
+        if(AnyBalance.isAvailable('bonus_balance') && typeof(result.bonus_balance) == 'undefined'){
+            text = AnyBalance.requestPost(baseurl + 'SCWWW/BONUS_FORM',
+                    {
+                        CHANNEL: 'WWW', 
+                        SESSION_ID: sessionid,
+                        CUR_SUBS_MSISDN: prefs.login,
+                        SUBSCRIBER_MSISDN: prefs.login
+                    });
+                    
+            if(matches = text.match(/&#1041;&#1086;&#1085;&#1091;&#1089;&#1085;&#1099;&#1081; &#1073;&#1072;&#1083;&#1072;&#1085;&#1089;:[\s\S]*?<td class="td_right">[\s\S]*?<div>([\d\.]+)/i)){
+                result.bonus_balance = parseFloat(matches[1]);
+            }
+        }
+
+
+        // Продли скорость (Москва)
+        if(AnyBalance.isAvailable(['internet_total','internet_cur', 'internet_left'])){
+            text = AnyBalance.requestGet(baseurl + 'SCCEXTSYS/EXT_SYSTEM_PROXY_FORM?CHANNEL=WWW&SESSION_ID=' + sessionid + '&URI=3.');
+            if(matches = text.match(/<a class="gupLink" href="EXT_SYSTEM_PROXY_FORM\?([^"]*)"/i)){
+                text = AnyBalance.requestGet(baseurl + 'SCCEXTSYS/EXT_SYSTEM_PROXY_FORM?' + matches[1].replace(/&amp;/g, '&'));
+
+                if(AnyBalance.isAvailable('internet_total'))
+                    if(matches = text.match(/title="ALL_VOLUME">([\d\.\-]+)</i))
+                        internet_total += parseFloat(matches[1]);
+                if(AnyBalance.isAvailable('internet_cur'))
+                    if(matches = text.match(/title="CUR_VOLUME">([\d\.\-]+)</i))
+                        internet_cur += parseFloat(matches[1]);
+                if(AnyBalance.isAvailable('internet_left'))
+                    if(matches = text.match(/title="LAST_VOLUME">([\d\.\-]+)</i))
+                        internet_left += parseFloat(matches[1]);
+            }
+        }
+    }
+    
+    if(internet_total)
+        result.internet_total = internet_total;
+    if(internet_cur)
+        result.internet_cur = internet_cur;
+    if(internet_left)
+        result.internet_left = internet_left;
+    if(sms_total)
+        result.sms_total = sms_total;
+    if(sms_left)
+        result.sms_left = sms_left;
+	
     AnyBalance.setResult(result);
+}
+
+//Получает значение из таблиц на странице аккаунта по фрагменту названия строки
+function getPropVal(html, text){
+  var r = new RegExp(text + "[\\s\\S]*?<div class=\"td_def\">(?:<nobr>)?([\\s\\S]*?)(?:<\\/nobr>)?<\\/div>", "i");
+  var matches = html.match(r);
+  return matches;
+}
+
+function getPropValText(html, text){
+  var matches = getPropVal(html, text);
+  if(!matches)
+    return null;
+  
+  return html_entity_decode(strip_tags(matches[1])).replace(/&nbsp;/g, ' ').replace(/^\s+|\s+$/g, '');
+}
+
+function getPropValInt(html, text){
+  var matches = getPropVal(html, text);
+  if(!matches)
+    return null;
+  
+  matches = matches[1].match(/(\d+)/);
+  if(!matches)
+    return null;
+  
+  return parseInt(matches[1]);
+}
+
+function getPropValFloat(html, text){
+  var matches = getPropVal(html, text);
+  if(!matches)
+    return null;
+  
+  matches = matches[1].match(/([\d\.,]+)/);
+  if(!matches)
+    return null;
+  
+  return parseFloat(matches[1].replace(/,/g, '.'));
+}
+
+//Получает две цифры (всего и остаток) из таблицы опций по тексту названия опции
+function getOptionDigits(html, text){
+  var r = new RegExp(text + "[\\s\\S]*?<div class=\"td_def\">([\\d+\\.,:]+)[\\s\\S]*?<div class=\"td_def\">([\\d+\\.,:]+)", "i");
+  var matches = html.match(r);
+  return matches;
+}
+
+//Получает время в секундах из строки вида 10:05
+function getSeconds(mincolonseconds){
+  var matches = mincolonseconds.match(/(\d+):(\d+)/);
+  if(!matches)
+    return 0;
+  
+  return parseInt(matches[1])*60 + parseInt(matches[2]);
+}
+
+function getOptionTimeIntervals(html, text){
+  var matches = getOptionDigits(html, text);
+  if(!matches)
+    return null;
+  
+  return [getSeconds(matches[1]), getSeconds(matches[2])];
+}
+
+function getOptionInt(html, text){
+  var matches = getOptionDigits(html, text);
+  if(!matches)
+    return null;
+  
+  return [parseInt(matches[1]), parseInt(matches[2])];
+}
+
+function getOptionFloat(html, text){
+  var matches = getOptionDigits(html, text);
+  if(!matches)
+    return null;
+  
+  return [parseFloat(matches[1].replace(/,/g, '.')), parseFloat(matches[2].replace(/,/g, '.'))];
+}
+
+function strip_tags(str){
+  return str.replace(/<[^>]*>/g, '');
 }
 
 function html_entity_decode(str)

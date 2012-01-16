@@ -125,7 +125,7 @@ function getFilial(number){
     
     var prefix = parseInt(number.substr(0, 3));
     var num = parseInt(number.substr(3));
-    return getFilialByPrefixAndNumber(prefix, number);
+    return getFilialByPrefixAndNumber(prefix, num);
 }
 
 /**

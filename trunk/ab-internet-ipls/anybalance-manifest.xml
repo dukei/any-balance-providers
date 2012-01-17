@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-internet-ipls</id>
+  <name>Айпильсин</name>
+  <description>
+    Получает текущий баланс, номера лицевого счета и договора, ФИО владельца
+  </description>
+  <author>Serg Repin &lt;serg.repin@gmail.com&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>api:jquery.min.js</js> <!-- Используем библиотеку, которая и так входит в AnyBalance -->
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="license" name="Лицевой счет" type="text"/>
+    <counter id="username" name="ФИО" type="text"/>
+  </counters>
+  <keywords>
+    провайдер интернет Красногорск телевидение
+  </keywords>
+  <type>
+    internet, tv
+  </type>
+</provider>

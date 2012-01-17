@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id major_version="1.0" version="1">ab-cell-kyivstar-corp-ua</id>
+  <name>Киевстар Корпоративный (Украина)</name>
+  <description>
+    Получает баланс, остаток минут, интернет трафка, SMS для корпоративных тарифов. Проверялся на тарифе БИЗНЕС 80.
+Если у вас не работает, обратитесь к автору по e-mail, чтобы помочь это исправить.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>api:jquery.min.js</js>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="min_left" name="Бесплатные минуты" units="мин"/>
+    <counter id="min_group" name="Групповые минуты" units="мин"/>
+    <counter id="traffic_left" name="Остаток трафика" units="Мб"/>
+    <counter id="sms_left" name="Остаток трафика (пакет)" type="text"/>
+    <counter id="statuslock" name="Статус телефона" type="text"/>
+  </counters>
+  <keywords>
+    Сотовый телефон, мобильный, мобильник, kyivstar, украина
+  </keywords>
+  <type>
+    cell
+  </type>
+</provider>

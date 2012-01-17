@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-cell-bwc</id>
+  <name>БайкалВестКом</name>
+  <description>
+    Получает баланс, остаток минут, интернет трафка, SMS для корпоративных тарифов. Проверялся на тарифе БИЗНЕС 80.
+Если у вас не работает, обратитесь к автору по e-mail, чтобы помочь это исправить.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>api:jquery.min.js</js>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="min_left" name="Минуты (осталось)" units="мин"/>
+    <counter id="traffic_left" name="Трафик (осталось)" units="Мб"/>
+    <counter id="min_used" name="Минуты (использовано)" units="мин"/>
+    <counter id="traffic_used" name="Трафик (использовано)" units="Мб"/>
+    <counter id="average_speed" name="Скорость расходования в день" units="р"/>
+    <counter id="traffic_total" name="Трафик (всего)" units="Мб"/>
+    <counter id="min_total" name="Минуты (всего)" units="мин"/>
+  </counters>
+  <keywords>
+    Сотовый телефон, мобильный, мобильник, bwc, байкал
+  </keywords>
+  <type>
+    cell
+  </type>
+</provider>

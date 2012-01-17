@@ -30,7 +30,7 @@ function main(){
     var nodeid_info = $hierarchy.find('n[m="'+prefs.login+'"]').attr('i');
     var nodeid_balance = $hierarchy.find('n[m="'+prefs.login+'"]').parent().attr('i');
     
-    result = {success: true};
+    var result = {success: true};
     
     if(AnyBalance.isAvailable('balance')){
         var balance_html = AnyBalance.requestGet(baseurl + "tbmb/flash/hierarchy?action=charges&nodeId=" + nodeid_balance + "&hierId=" + hierid);

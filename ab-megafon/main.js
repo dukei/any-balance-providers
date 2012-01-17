@@ -16,12 +16,13 @@ filial_info[MEGA_FILIAL_MOSCOW] = {
 };
 filial_info[MEGA_FILIAL_SIBIR] = {
   name: 'Сибирский филиал',
-  func: null
+  site: "https://sibsg1.megafon.ru/TRAY_INFO/TRAY_INFO?LOGIN=%LOGIN%&PASSWORD=%PASSWORD%",
+  func: megafonTrayInfo
 };
 filial_info[MEGA_FILIAL_NW] = {
   name: 'Северо-западный филиал',
   site: 'https://serviceguide.megafonnw.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%',
-  func: megafonNw
+  func: megafonTrayInfo
 };
 filial_info[MEGA_FILIAL_FAREAST] = {
   name: 'Дальневосточный филиал',
@@ -34,15 +35,18 @@ filial_info[MEGA_FILIAL_VOLGA] = {
 };
 filial_info[MEGA_FILIAL_KAVKAZ] = {
   name: 'Кавказский филиал',
-  func: null
+  site: "https://kavkazsg.megafon.ru/TRAY_INFO/TRAY_INFO?LOGIN=%LOGIN%&PASSWORD=%PASSWORD%",
+  func: megafonTrayInfo
 };
 filial_info[MEGA_FILIAL_CENTRAL] = {
   name: 'Центральный филиал',
-  func: null
+  site: 'https://centersg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%',
+  func: megafonTrayInfo
 };
 filial_info[MEGA_FILIAL_URAL] = {
   name: 'Уральский филиал',
-  func: null
+  site: 'https://uralsg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%',
+  func: megafonTrayInfo
 };
 
 //http://www.mtt.ru/mtt/def
@@ -166,7 +170,7 @@ function main(){
     (filinfo.func)(filial);
 }
 
-function megafonNw(filial){
+function megafonTrayInfo(filial){
     var filinfo = filial_info[filial];
     var prefs = AnyBalance.getPreferences();
     
@@ -182,7 +186,7 @@ function megafonNw(filial){
       $xml = $(xmlDoc);
 	
     //Проверяем на ошибку
-    var error = $xml.find('SC_TRAY_INFO>ERROR>ERROR_MESSAGE').text();
+    var error = $xml.find('SC_TRAY_INFO>ERROR>ERROR_MESSAGE, TRAY_INFO>ERROR>ERROR_MESSAGE').text();
     if(error){
         if(/Robot login is not allowed/.test(error))
             throw new AnyBalance.Error('Пожалуйста, разрешите в Сервис-Гиде доступ автоматизированным системам.\n\
@@ -203,22 +207,27 @@ function megafonNw(filial){
     if(AnyBalance.isAvailable('sms_left','sms_total')){
         var $sms = $threads.filter(':has(NAME:contains("SMS"))');
         AnyBalance.trace('Found SMS discounts: ' + $sms.length);
-        if(AnyBalance.isAvailable('sms_left')){
-            result.sms_left = parseInt($sms.first().find('VOLUME_AVAILABLE').text());
+        if($sms.length){
+            if(AnyBalance.isAvailable('sms_left')){
+                result.sms_left = parseInt($sms.first().find('VOLUME_AVAILABLE').text());
+            }
+            if(AnyBalance.isAvailable('sms_total')){
+                result.sms_left = parseInt($sms.first().find('VOLUME_TOTAL').text());
+            }
         }
-        if(AnyBalance.isAvailable('sms_total')){
-            result.sms_left = parseInt($sms.first().find('VOLUME_TOTAL').text());
-        }
+        
     }
     
     if(AnyBalance.isAvailable('mins_left','mins_total')){
         var $sms = $threads.filter(':has(NAME:contains(" мин"))');
         AnyBalance.trace('Found minutes discounts: ' + $sms.length);
-        if(AnyBalance.isAvailable('mins_left')){
-            result.mins_left = parseInt($sms.first().find('VOLUME_AVAILABLE').text())*60;
-        }
-        if(AnyBalance.isAvailable('mins_total')){
-            result.mins_left = parseInt($sms.first().find('VOLUME_TOTAL').text())*60;
+        if($sms.length){
+            if(AnyBalance.isAvailable('mins_left')){
+                result.mins_left = parseInt($sms.first().find('VOLUME_AVAILABLE').text())*60;
+            }
+            if(AnyBalance.isAvailable('mins_total')){
+                result.mins_left = parseInt($sms.first().find('VOLUME_TOTAL').text())*60;
+            }
         }
     }
     

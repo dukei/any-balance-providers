@@ -35,3 +35,8 @@ function main(){
  * [TutorialExchangeCbr Курсы валют]
  * [TutorialTrackingRussianPost Отслеживание посылок]
  * [TutorialXML Обработка XML]
+
+Здесь вы можете найти очень хороший учебник и справочник по javascript на русском языке:
+
+http://learn.javascript.ru/
+http://javascript.ru/manual

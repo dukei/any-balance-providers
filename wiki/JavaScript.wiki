@@ -39,4 +39,5 @@ function main(){
 Здесь вы можете найти очень хороший учебник и справочник по javascript на русском языке:
 
 http://learn.javascript.ru/
+
 http://javascript.ru/manual

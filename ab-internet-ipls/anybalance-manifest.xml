@@ -9,7 +9,6 @@
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
-    <js>api:jquery.min.js</js> <!-- Используем библиотеку, которая и так входит в AnyBalance -->
     <js>main.js</js>
   </files>
   <counters>
@@ -18,9 +17,9 @@
     <counter id="username" name="ФИО" type="text"/>
   </counters>
   <keywords>
-    провайдер интернет Красногорск телевидение
+    провайдер интернет Красногорск телевидение телефония
   </keywords>
   <type>
-    internet, tv
+    internet, tv, telephony
   </type>
 </provider>

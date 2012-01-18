@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id major_version="1.0" version="1">ab-internet-netbynet</id>
+  <name>NetByNet</name>
+  <description>
+    Получает баланс, остаток дней и статус у интернет-провайдера NetByNet.
+  </description>
+  <author>iReset &lt;develop_ag@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="subscriber" name="Абонент" type="text"/>
+    <counter id="contract" name="Номер договора" type="text" prefix="№"/>
+    <counter id="day_left" name="Осталось дней" type="text" suffix="дн."/>
+    <counter id="status" name="Статус" type="text"/>
+  </counters>
+  <keywords>
+    интернет, москва, россия, netbynet
+  </keywords>
+  <type>
+    cell
+  </type>
+</provider>

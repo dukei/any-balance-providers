@@ -131,13 +131,13 @@ function main(){
         getParam (html, result, 'min_love', /Использовано: (\d+) мин[^\s]* на любимые/, [/ |\xA0/, ""], parseInt);
 
         // Остаток СМС
-        getParam (html, result, 'sms_left', /(?:Осталось|Остаток:)[^\d]*(\d*) (sms|смс)/i, [], parseInt);
+        getParam (html, result, 'sms_left', /(?:Осталось|Остаток)[^\d]*(\d*) (sms|смс)/i, [], parseInt);
 
         // Остаток ММС
-        getParam (html, result, 'mms_left', /(?:Осталось|Остаток:)[^\d]*(\d*) (mms|ммс)/i, [], parseInt);
+        getParam (html, result, 'mms_left', /(?:Осталось|Остаток)[^\d]*(\d*) (mms|ммс)/i, [], parseInt);
 
         // Остаток трафика
-        getParam (html, result, 'traffic_left', /(?:Осталось|Остаток:)[^\d]*(\d* * (kb|mb|gb))/i);
+        getParam (html, result, 'traffic_left', /(?:Осталось|Остаток)[^\d]*(\d* * (kb|mb|gb))/i);
 
         // Лицевой счет
         getParam (html, result, 'license', /№ .*?(.*?):/);

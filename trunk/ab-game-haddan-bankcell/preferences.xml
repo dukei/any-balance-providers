@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="ID ячейки" 
+        positiveButtonText="ОК" 
+        summary="ID ячейки в Хаддане||{@s}\n" 
+        dialogTitle="ID ячейки" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите ID вашей банковской ячейке в мире Хаддан"
+        key="cellid"
+        inputType="number">
+    </EditTextPreference>
+    <EditTextPreference 
+        title="API key" 
+        positiveButtonText="ОК" 
+        summary="Введите API key для вашей ячейки||{@s}\n" 
+        dialogTitle="API key" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Для доступа к количеству денег на вашей ячейке через API Хаддана необходимо ввести API key. Будьте внимательны, это НЕ пароль к вашему персонажу!"
+        key="apikey">
+    </EditTextPreference>
+</PreferenceScreen>

@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-game-haddan-bankcell</id>
+  <name>Хаддан - банковская ячейка</name>
+  <description>
+    Показывает баланс игровой валюты на банковской ячейке в игре http://haddan.ru .
+    Использует API: http://forum.haddan.ru/showthread.php?t=7336 . Показывает
+    количество монет.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>logoH.png</icon>
+    <js>main.js</js>
+    <preferences>preferences.xml</preferences>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" suffix="мн"/>
+  </counters>
+  <keywords>
+    игра, хаддан, haddan, банк, ячейка
+  </keywords>
+  <type>
+    game, browser
+  </type>
+</provider>

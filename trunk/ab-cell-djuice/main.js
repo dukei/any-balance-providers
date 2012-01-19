@@ -8,14 +8,22 @@ djuice
 
 function main(){
   var prefs = AnyBalance.getPreferences();
-  var baseurl = 'https://my.djuice.ua/tbmb/login_djuice/perform.do';
-    var html = AnyBalance.requestPost(baseurl, {
+  var baseurl = 'https://my.djuice.ua/';
+  AnyBalance.trace('Connecting to ' + baseurl);
+    var html = AnyBalance.requestPost(baseurl + 'tbmb/login_djuice/perform.do', {
       action: 'startup',
       user: prefs.login,
       password: prefs.password
     });
+    
+    var matches = html.match(/<td class="redError">([\s\S]*?)<\/td>/i);
+    if(matches){
+        throw new AnyBalance.Error(matches[1]);
+    }
+    
+    AnyBalance.trace('Successfully connected');
+    
     var result = {success: true};
-    var matches;
     var str_tmp;
     
     //Тарифный план

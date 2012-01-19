@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-ipls</id>
+  <id version="2">ab-internet-ipls</id>
   <name>Айпильсин</name>
   <description>
     Получает текущий баланс, номера лицевого счета, ФИО владельца

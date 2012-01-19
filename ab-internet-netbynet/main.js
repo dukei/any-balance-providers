@@ -31,20 +31,34 @@ function main(){
     var prefs = AnyBalance.getPreferences();
     var baseurl = 'http://stat.netbynet.ru/';
 
+    if (prefs.login == '')
+        throw new AnyBalance.Error ('Введите логин.');
+
+    if (prefs.password == '')
+        throw new AnyBalance.Error ('Введите пароль.');
+
     AnyBalance.trace ("Trying to enter selfcare at address: " + baseurl);
     var html = AnyBalance.requestPost (baseurl + "main", {
     	login: prefs.login,
         password: prefs.password
     });
 
+    var value = html.match (/class="error"[^>]*>([^<]+)<\/span>/i);
+    if (value){
+        throw new AnyBalance.Error (value[1]);
+    }
+
+
     AnyBalance.trace ("It looks like we are in selfcare...");
 
     var result = {success: true};
 
+    AnyBalance.trace("Parsing data...");
+
     // Тарифный план
     // Тариф выцепить сложно, пришлось ориентироваться на запись после остатка дней
-    var value = html.match (/Осталось[\s\S]*?<td> (.*?) <\/td>/i);
-    if (value && value[1] != 'нет')
+    value = html.match (/Осталось[\s\S]*?<td>(.*?)<\/td>/i);
+    if (value && value[1].indexOf ('нет') == -1)
       result.__tariff = value[1];
 
     // Баланс
@@ -61,6 +75,25 @@ function main(){
 
     // Статус
     getParam (html, result, 'status', /class="br fgreen">(?:<[^>]*>|)([^<]*)/i);
+
+
+    if (AnyBalance.isAvailable ('promised_payment')) {
+
+        AnyBalance.trace ("Fetching stats...");
+
+        html = AnyBalance.requestGet(baseurl + "stats");
+
+        AnyBalance.trace("Parsing stats...");
+
+        // Обещанные платежи
+        var promised_payments = html.match (/<li>.*?История обещанных платежей[\s\S]*?<li>/i);
+        if (promised_payments) {
+            getParam (promised_payments, result, 'promised_payment', /<tr>(?:[\s\S]*?< *td *>){5}[^\d]*(\d+\.?\d*)/i, [], parseFloat);
+        }
+    }
+
+    AnyBalance.requestGet (baseurl + "logout");
+
 
     AnyBalance.setResult(result);
 }

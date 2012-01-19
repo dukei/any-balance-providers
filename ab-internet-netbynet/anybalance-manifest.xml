@@ -3,7 +3,8 @@
   <id major_version="1.0" version="1">ab-internet-netbynet</id>
   <name>NetByNet</name>
   <description>
-    Получает баланс, остаток дней и статус у интернет-провайдера NetByNet.
+    Получает баланс, остаток дней, статус и обещанный платеж у интернет-провайдера NetByNet.
+    Для добавления информации о телевидении обращайтесь на электронную почту.
   </description>
   <author>iReset &lt;develop_ag@mail.ru&gt;</author>
   <files>
@@ -17,11 +18,12 @@
     <counter id="contract" name="Номер договора" type="text" prefix="№"/>
     <counter id="day_left" name="Осталось дней" type="text" suffix="дн."/>
     <counter id="status" name="Статус" type="text"/>
+    <counter id="promised_payment" name="Обещанный платеж" units="р"/>
   </counters>
   <keywords>
     интернет, москва, россия, netbynet
   </keywords>
   <type>
-    cell
+    internet
   </type>
 </provider>

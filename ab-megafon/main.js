@@ -26,7 +26,8 @@ filial_info[MEGA_FILIAL_NW] = {
 };
 filial_info[MEGA_FILIAL_FAREAST] = {
   name: 'Дальневосточный филиал',
-  func: null
+  site: 'https://dvsg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%',
+  func: megafonTrayInfo
 };
 filial_info[MEGA_FILIAL_VOLGA] = {
   name: 'Поволжский филиал',
@@ -182,6 +183,14 @@ function megafonTrayInfo(filial){
         .replace(/%PASSWORD%/g, prefs.password)
     );
         
+    if(/<h1>Locked<\/h1>/.test(info))
+      throw new AnyBalance.Error('Вы ввели неправильный пароль или доступ автоматическим системам заблокирован.\n\
+Для разблокировки необходимо зайти в Сервис-Гид и включить настройку Настройки Сервис-Гида/Автоматический доступ системам/Доступ открыт пользователям и автоматизированным системам, а также нажать кнопку "разблокировать".');
+        
+    var matches;
+    if(matches = /<h1>([^<]*)<\/h1>\s*<p>([^<]*)<\/p>/.exec(info))
+      throw new AnyBalance.Error(matches[1] + ": " + matches[2]); //Случился какой-то глючный бред
+        
     var xmlDoc = $.parseXML(info),
       $xml = $(xmlDoc);
 	
@@ -194,7 +203,12 @@ function megafonTrayInfo(filial){
         else
             throw new AnyBalance.Error(error);
     }
-    
+
+    error = $xml.find('SELFCARE>ERROR').text();
+    if(error){
+        throw new AnyBalance.Error(error);
+    }
+
     var result = {success: true, __tariff: $xml.find('RATE_PLAN').text()};
     
     if(AnyBalance.isAvailable('balance'))

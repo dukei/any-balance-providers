@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Номер карты" 
+        positiveButtonText="ОК" 
+        summary="Номер карты Mnogo.ru||{@s}\n" 
+        dialogTitle="Номер карты" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите номер карты Mnogo.ru"
+        key="login"
+        inputType="number">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="birthday" 
+        dialogTitle="День рождения"
+        negativeButtonText="Отмена"
+        title="День рождения"
+        summary="Ваш день рождения||{@s}\n"
+        dialogMessage="Введите ваш день рождения в формате DD-MM-YYYY, например, 28-04-1980"
+        inputType="date">
+    </EditTextPreference>
+</PreferenceScreen>

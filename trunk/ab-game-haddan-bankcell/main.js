@@ -17,6 +17,8 @@ function main(){
 		throw new AnyBalance.Exception('Wrong answer: ' + res);
 	}
 
+	result.__tariff = prefs.cellid;
+
 	if(res.error){
 		throw new AnyBalance.Exception(res.error);
 	}

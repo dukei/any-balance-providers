@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id major_version="1.0" version="1">ab-cell-djuice</id>
+  <name>Djuice</name>
+  <description>
+    Получает баланс, бесплатные минуты, СМС, ММС, бонусы и остаток интернет-трафика для мобильного оператора Djuice.
+  </description>
+  <author>S.Bashmanov</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="грн"/>
+    <counter id="mins_djuice" name="Бесплатные минуты (DJUICE)" units="мин" type="time_interval"/>
+    <counter id="mins_other" name="Бесплатные минуты (другие)" units="мин" type="time_interval"/>
+    <counter id="bonus_mms" name="Бонусные MMS"/>
+    <counter id="bonus_sms" name="Бонусные SMS"/>
+    <counter id="bonus_money" name="Бонусные средства" units="грн"/>
+    <counter id="bonus_left" name="Остаток бонусов" units="грн"/>
+    <counter id="internet_1" name="Интернет (1)" units="Mb"/>
+    <counter id="internet_2" name="Интернет (2)" units="Mb"/>
+    <counter id="home_internet" name="Домашній Інтернет" units="грн"/>
+  </counters>
+  <keywords>
+    Сотовый телефон, мобильный, мобильник, djuice, kyivstar, диджус, киевстар, украина
+  </keywords>
+  <type>
+    cell
+  </type>
+</provider>

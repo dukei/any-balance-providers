@@ -14,7 +14,7 @@ var regions = {
 	nnov: "https://ip.nnov.mts.ru/selfcarepda/",
 	nw: "https://ihelper.nw.mts.ru/SELFCAREPDA/",
 	sib: "https://ip.sib.mts.ru/SELFCAREPDA/",
-	ural: "https://ip.ural.mts.ru/selfcarepda/",
+	ural: "https://ip.nnov.mts.ru/selfcarepda/", //Почему-то урал в конце концов переадресуется сюда
 	ug: "https://ihelper.ug.mts.ru/SelfCarePda/"
 };
 
@@ -80,14 +80,16 @@ function main(){
 
     var result = {success: true};
 
-    AnyBalance.trace("It looks like we are in selfcare...");
+    regexp = /Security\.mvc\/LogOff/;
+    if(regexp.exec(html))
+    	AnyBalance.trace("It looks like we are in selfcare (found logOff)...");
+    else
+    	AnyBalance.trace("Have not found logOff... Wrong login and password or other error. Please contact author.");
 
     // Тарифный план
     regexp=/Тарифный план.*?>(.*?)</;
     if (res=regexp.exec(html)){
         result.__tariff=res[1];
-    }else{
-        throw new AnyBalance.Error('Не удаётся получить тарифный план. Неверный логин-пароль?');
     }
 
     // Баланс

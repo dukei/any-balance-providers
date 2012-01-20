@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Логин" 
+        positiveButtonText="ОК" 
+        summary="Номер телефона (10 цифр)||{@s}\n" 
+        dialogTitle="Логин" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите номер вашего телефона (10 цифр), например 4981234567"
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="Введите пароль (ЦКП, 12 цифр)||************\n"
+        dialogMessage="Данные о Цифровом Коде Платежа (ЦКП), например 022011121346"
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

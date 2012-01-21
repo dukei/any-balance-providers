@@ -16,7 +16,7 @@
         negativeButtonText="Отмена"
         title="Пароль"
         summary="Введите пароль (ЦКП, 12 цифр)||************\n"
-        dialogMessage="Данные о Цифровом Коде Платежа (ЦКП), например 022011121346"
+        dialogMessage="Данные о Цифровом Коде Платежа (ЦКП), например 022011121346, код ЦКП Вы можете найти на последнем полученном Вами счете."
         inputType="textPassword">
     </EditTextPreference>
 </PreferenceScreen>

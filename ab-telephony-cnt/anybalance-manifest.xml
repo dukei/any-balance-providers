@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-cell-cnt</id>
+  <id version="1">ab-telephony-cnt</id>
   <name>Центральный телеграф</name>
   <description>
-    Получает текущий баланс, номер договора, номера лицевого счета, ФИО владельца
+    Получает текущий баланс, номер договора, номера лицевого счета, ФИО владельца в сокращенной версии личного кабинета.
   </description>
   <author>Serg Repin &lt;serg.repin@gmail.com&gt;</author>
   <files>

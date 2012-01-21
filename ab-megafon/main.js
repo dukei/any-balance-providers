@@ -206,7 +206,7 @@ function megafonTrayInfo(filial){
 
     error = $xml.find('SELFCARE>ERROR').text();
     if(error){
-        throw new AnyBalance.Error(error);
+        throw new AnyBalance.Error(error + ' Возможно, вам надо зайти в Сервис-Гид и включить настройку Настройки Сервис-Гида/Автоматический доступ системам/Доступ открыт пользователям и автоматизированным системам, а также нажать кнопку "разблокировать".');
     }
 
     var result = {success: true, __tariff: $xml.find('RATE_PLAN').text()};

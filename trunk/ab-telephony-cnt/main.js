@@ -35,7 +35,7 @@ function main(){
 	//AnyBalance.trace(info);
     // Баланс
     if(AnyBalance.isAvailable('balance')){
-        if (matches=/Баланс<\/td>\s+<[\w\s=\"#]*>[\&nbsp;]+([\s\d\.\-]+)</.exec(info)){
+        if (matches=/Управляющий баланс<\/td>\s+<[\w\s=\"#]*>[\&nbsp;]+([\s\d\.\-]+)</.exec(info)){
         	var tmpBalance=matches[1].replace(/ |\xA0/, ""); // Удаляем пробелы
             tmpBalance=tmpBalance.replace(",", "."); // Заменяем запятую на точку
             result.balance=parseFloat(tmpBalance);

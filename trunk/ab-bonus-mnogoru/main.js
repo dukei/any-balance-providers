@@ -1,4 +1,4 @@
-/**
+﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 
 Накопительная программа много.ру
@@ -34,7 +34,7 @@ function main(){
     
     html = AnyBalance.requestGet(baseurl + 'index.html');
     
-    matches = /<table[\s\S]*?"authorizedhat"[\s\S]*?<\/table>/.exec(html);
+    matches = /<!--\s*авториз\.\s*пользователь\s*-->[\s\S]*<!--.*?\/авториз\.\s*пользователь.*?-->/.exec(html);
     if(!matches)
         throw new AnyBalance.Error("Can not find account info, contact the author");
 

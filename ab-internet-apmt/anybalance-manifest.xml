@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<provider>
+
+  <id version="1">ab-internet-apmt</id>
+
+  <name>АПМ-Телеком</name>
+
+  <description>
+    Получает текущий баланс, номер лицевого счета, ФИО владельца
+ и состояние интернета  </description>
+
+  <author>Alexander Maslikov &lt;info@apmt.ru&gt;</author>
+
+  <files>
+
+    <icon>icon.png</icon>
+
+    <preferences>preferences.xml</preferences>
+
+    <js>main.js</js>
+
+  </files>
+
+  <counters>
+
+    <counter id="balance" name="Баланс" units="р"/>
+
+    <counter id="license" name="Лицевой счет" type="text" prefix="№ "/>
+
+    <counter id="subscriber" name="ФИО" type="text"/>
+    <counter id="statusInt" name="Состояние" type="text"/>
+  </counters>
+
+  <keywords>
+    провайдер интернет Москва телевидение телефония
+ АПМ-Телеком Филевский парк Фили-Давыдково </keywords>
+
+  <type>
+    internet, tv, telephony
+  </type>
+
+</provider>

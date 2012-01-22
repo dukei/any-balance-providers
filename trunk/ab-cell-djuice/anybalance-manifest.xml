@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="2">ab-cell-djuice</id>
+  <id major_version="1.0" version="3">ab-cell-djuice</id>
   <name>Djuice</name>
   <description>
     Получает баланс, бесплатные минуты, СМС, ММС, бонусы и остаток интернет-трафика для мобильного оператора Djuice.

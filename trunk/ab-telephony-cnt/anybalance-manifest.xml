@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-telephony-cnt</id>
+  <id major_version="1.0" version="1">ab-telephony-cnt</id>
   <name>Центральный телеграф</name>
   <description>
     Получает текущий баланс, номер договора, номера лицевого счета, ФИО владельца в сокращенной версии личного кабинета.

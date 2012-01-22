@@ -137,7 +137,7 @@ function main(){
         getParam (html, result, 'mms_left', /(?:Осталось|Остаток)[^\d]*(\d*) (mms|ммс)/i, [], parseInt);
 
         // Остаток трафика
-        getParam (html, result, 'traffic_left', /(?:Осталось|Остаток)[^\d]*(\d* * (kb|mb|gb))/i);
+        getParam (html, result, 'traffic_left', /(?:Осталось|Остаток)[^\d]*(\d+,?\d* *(kb|mb|gb|кб|мб|гб))/i);
 
         // Лицевой счет
         getParam (html, result, 'license', /№ .*?(.*?):/);

@@ -13,8 +13,8 @@
   </files>
   <counters>
     <counter id="balance" name="Баланс" units="грн"/>
-    <counter id="mins_djuice" name="Бесплатные минуты (DJUICE)" units="мин" type="time_interval"/>
-    <counter id="mins_other" name="Бесплатные минуты (другие)" units="мин" type="time_interval"/>
+    <counter id="mins_djuice" name="Бонусные минуты (DJUICE)" units="мин" type="time_interval"/>
+    <counter id="mins_other" name="Бонусные минуты (другие)" units="мин" type="time_interval"/>
     <counter id="bonus_mms" name="Бонусные MMS"/>
     <counter id="bonus_sms" name="Бонусные SMS"/>
     <counter id="bonus_money" name="Бонусные средства" units="грн"/>

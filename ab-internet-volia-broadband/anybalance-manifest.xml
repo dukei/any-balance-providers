@@ -14,7 +14,7 @@
   </files>
   <counters>
     <counter id="balance" name="Баланс" suffix=" грн" type="numeric"/>
-    <counter id="traffic" name="Трафик" suffix=" GiB" type="numeric"/>
+    <counter id="traffic" name="Трафик" suffix=" GB" type="numeric"/>
   </counters>
   <keywords>
     провайдер интернет украина

@@ -93,6 +93,8 @@ AnyBalance.setAuthentication(/*string*/ name, /*string*/ pass, /*object or null*
 
 В случае успеха возвращает `true`, в противном случае `false` или бросает исключение [AnyBalanceAPI#Error AnyBalance.Error], в зависимости от режима исключений, установленного [AnyBalanceAPI#setExceptions setExceptions()]. 
 
+Замечания:
+ * До API версии 2 (AnyBalance 1.1.416) существовала ошибка, которая не позволяла не передавать третий параметр. Чтобы обойти эту ошибку в API v.1 надо в качестве третьего параметра передать пустую строку ''
 
 ==clearAuthentication==
 {{{
@@ -222,5 +224,7 @@ if(!(matches = session.match(/<SESSION_ID>(.*?)<\/SESSION_ID>/i))){
         //Странный ответ, может, можно переконнектиться...
 	throw new AnyBalance.Error('Не удалось получить сессию', true); }
 
-
 }}}
+
+Замечания:
+ * Начиная с API версии 2 (AnyBalance 1.1.416) в тексте ошибки разрешены теги HTML, например, ссылки. Поддержка HTML очень ограниченная, используйте с осторожностью.

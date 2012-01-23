@@ -25,6 +25,8 @@ function main(){
 			AnyBalance.setResult(result);
 		} else if (resst == 'bad login'){
 			throw new AnyBalance.Error('Неправильный логин или пароль');
+		} else {
+			throw new AnyBalance.Error('Неизвестный ответ сервера: ' + resst);
 		}
 	} else {
 		throw new AnyBalance.Error('Неизвестная ошибка');

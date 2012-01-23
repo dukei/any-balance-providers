@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        key="userv"
+        title="Логин" 
+        summary="Номер телефона (10 цифр)||{@s}\n" 
+        dialogTitle="Номер договора" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите номер вашего договора или псевдоним"
+        positiveButtonText="ОК" >
+    </EditTextPreference>
+    <EditTextPreference 
+        key="passv" 
+        title="Пароль"
+        summary="Пароль для входа в Личный кабинет||***********\n"
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        dialogMessage="Введите пароль, используемый для входа в Личный кабинет"
+        positiveButtonText="ОК"
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

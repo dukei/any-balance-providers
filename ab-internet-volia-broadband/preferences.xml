@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        key="login"
+        title="Номер договора" 
+        summary="Номер вашего договора (6 цифр)||{@s}\n" 
+        dialogTitle="Номер договора" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите номер вашего договора"
+        positiveButtonText="ОК" 
+        inputType="number">
+    </EditTextPreference>
+    <EditTextPreference 
+        key="pass" 
+        title="Пароль"
+        summary="Пароль для авторизации||***********\n"
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        dialogMessage="Введите пароль, используемый для авторизации"
+        positiveButtonText="ОК"
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

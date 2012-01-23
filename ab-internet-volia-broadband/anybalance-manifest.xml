@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-internet-volia-broadband</id>
+  <name>Volia Broadband (Украина)</name>
+  <description>
+    Мониторинг остатка средств на счету и использованного траффика для интернет провайдера Воля Бродбенд (Украина)
+  </description>
+  <author>Vit@liy &lt;vitaliy@root.ua&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+    <js>api:jquery.min.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" suffix=" грн" type="numeric"/>
+    <counter id="traffic" name="Трафик" suffix=" GiB" type="numeric"/>
+  </counters>
+  <keywords>
+    провайдер интернет украина
+  </keywords>
+  <type>
+    internet
+  </type>
+</provider>

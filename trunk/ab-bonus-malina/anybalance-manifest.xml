@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id major_version="1.0" version="1">ab-bonus-malina</id>
+  <name>Бонусы Малина</name>
+  <description>
+    Получает информацию по баллам на карте накопительной программы Малина.
+  </description>
+  <author>iReset &lt;develop_ag@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+    <js>api:jquery.min.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="б"/>
+    <counter id="mainPoints" name="Основные баллы" prefix="Осн:" units="б"/>
+    <counter id="expressPoints" name="EXPRESS-баллы" prefix="Expr:" units="б"/>
+    <counter id="gonePoints" name="Израсходовано" prefix="Изр:" units="б"/>
+    <counter id="burnInThisMonth" name="Сгорит в этом месяце" prefix="Сгорит:" units="б"/>
+    <counter id="burnPoints" name="Сгорело всего" prefix="Сгорело:" units="б"/>
+    <counter id="availableForPay" name="Доступно к оплате" units="р"/>
+
+    <counter id="status" name="Статус счета" type="text"/>
+    <counter id="accountNumber" name="Номер счета" prefix="№"/>
+    <counter id="customer" name="Владелец счета" type="text"/>
+  </counters>
+  <keywords>
+    бонус, баллы, bonus, карта, накопительная программа, малина
+  </keywords>
+  <type>
+    bonus
+  </type>
+</provider>

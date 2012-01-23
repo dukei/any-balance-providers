@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id major_version="1.0" version="10">ab-cell-ncc</id>
+  <name>НСС (Татарстан)</name>
+  <description>
+    Получает текущий баланс и тариф оператора НСС (Татарстан).
+    Должен работать по региону Татарстан (ncc-volga). В случае необходимости нужные изменения вносите самостоятельно или обращайтесь к автору.
+  </description>
+  <author>wtiger &lt;wtiger@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>api:jquery.min.js</js> <!-- Используем библиотеку, которая и так входит в AnyBalance -->
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="bonus" name="Бонус" units="р"/>
+  </counters>
+  <keywords>
+    оператор нсс ncc
+  </keywords>
+  <type>
+    cell
+  </type>
+</provider>

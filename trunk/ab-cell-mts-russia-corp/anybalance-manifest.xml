@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="9">ab-cell-mts-russia-corp</id>
+  <name>МТС Корпоративный (Россия)</name>
+  <description>
+    Получает баланс, ежемесячую плату и количество телефонов для заданного лицевого счета. Получает данные из интернет-помощника для корпоративных абонентов. Для экономии трафика рекомендуется выставлять конкретный регион в настройках.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="average_speed" name="Скорость расходования" units="р"/>
+    <counter id="phones" name="Число телефонов"/>
+  </counters>
+  <keywords>
+    Сотовый телефон, мобильный, мобильник, mts, россия, корпоратив
+  </keywords>
+  <type>
+    cell
+  </type>
+</provider>

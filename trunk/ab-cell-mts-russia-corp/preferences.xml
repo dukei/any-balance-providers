@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Логин" 
+        positiveButtonText="ОК" 
+        summary="Номер телефона (10 цифр)||{@s}\n" 
+        dialogTitle="Номер телефона" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите номер вашего телефона для входа в Интернет-Помощник (10 цифр), например 9161234567"
+        key="login"
+        inputType="number">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="Пароль для входа в Интернет-Помощник||***********\n"
+        dialogMessage="Введите пароль, используемый для входа в Интернет-Помощник"
+        inputType="textPassword">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="licschet" 
+        dialogTitle="Лицевой счет"
+        negativeButtonText="Отмена"
+        title="Лицевой счет"
+        summary="Номер лицевого счета (12 цифр)|Автоматически\n|{@s}\n" 
+        dialogMessage="Введите номер лицевого счета, информацию по которому надо получить. Если у вас только один лицевой счет, то оставьте это поле пустым."
+        inputType="number">
+    </EditTextPreference>
+    <ListPreference 
+        key="region" 
+        title="Регион"
+        summary="Регион вашего номера|Нужен для определения Интернет-Помощника\n|{@s}\n"
+        entries="Автоматически|Москва/Центр|Дальний Восток|Поволжье|Северо-Запад|Сибирь|Урал|Юг"
+        entryValues="auto|center|primorye|nnov|nw|sib|ural|ug"
+	defaultValue="auto">
+    </ListPreference>
+</PreferenceScreen>

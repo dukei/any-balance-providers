@@ -313,18 +313,32 @@ function megafonServiceGuide(filial){
     }
 	
     //Бонус 1 - полчаса бесплатно (Москва)
+    var mins_left = 0, mins_total = 0;
     if(AnyBalance.isAvailable('mins_total','mins_left')){
         var mins = getOptionTimeIntervals(text, "&#1041;&#1086;&#1085;&#1091;&#1089; 1 \\- &#1087;&#1086;&#1083;&#1095;&#1072;&#1089;&#1072; &#1074; &#1087;&#1086;&#1076;&#1072;&#1088;&#1086;&#1082;");
         if(mins){
-            var mins_total = mins[0];
-            var mins_left = mins[1];
-			
             if(AnyBalance.isAvailable('mins_total'))
-                result.mins_total = mins_total;
+                mins_total += mins[0];
             if(AnyBalance.isAvailable('mins_left'))
-                result.mins_left = mins_left;
+                mins_left += mins[1];
         }
     }
+	
+    //10 мин на МТС, Билайн, Скай Линк
+    if(AnyBalance.isAvailable('mins_total','mins_left')){
+        var mins = getOptionInt(text, "&#1084;&#1080;&#1085; &#1085;&#1072; &#1052;&#1058;&#1057;, &#1041;&#1080;&#1083;&#1072;&#1081;&#1085;, &#1057;&#1082;&#1072;&#1081;");
+        if(mins){
+            if(AnyBalance.isAvailable('mins_total'))
+                mins_total += mins[0]*60;
+            if(AnyBalance.isAvailable('mins_left'))
+                mins_left += mins[1]*60;
+        }
+    }
+    
+    if(mins_total)
+        result.mins_total = mins_total;
+    if(mins_left)
+        result.mins_left = mins_left;
 	
     var internet_total = 0,
         internet_cur = 0,

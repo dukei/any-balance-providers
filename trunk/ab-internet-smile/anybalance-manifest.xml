@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="1">ab-internet-smile</id>
+  <id major_version="1.1" version="2">ab-internet-smile</id>
   <name>Смайл</name>
   <description>
     Получает информацию о балансе, рекомендуемой оплате, абон. плате, бонусах, трафике на интернет-тарифах мультисервисной сети Смайл.
@@ -24,7 +24,7 @@
 
     <counter id="contract" name="Номер договора" prefix="№"/>
     <counter id="licenseFee" name="Абонентская плата" units="р"/>
-<!--    <counter id="dateEndSettlementDays" name="Окончание рассчетного периода" type="time"/>  -->
+    <counter id="dateEndSettlementDays" name="Окончание рассчетного периода" type="time"/>
   </counters>
   <keywords>
     интернет, смайл

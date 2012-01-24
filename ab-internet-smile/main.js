@@ -56,8 +56,7 @@ function main () {
     getParam (html, result, 'licenseFee', /абон\.\s*плата\s*(-?\d+\.?\d*)/i, [], parseFloat);
 
     // Дата окончания рассчетного периода
-// Временно убрано до устанения проблемы взаимодействия с программой
-//    getParam (html, result, 'dateEndSettlementDays', /Дата\s*окончания\s*рассчетного\s*периода.*?class="value".*?>(\d{2}\.\d{2}\.\d{4}\s*\d{2}:\d{2})/i, [/(\d*).(\d*).(\d*)/, '$3/$2/$1'], Date.parse);
+    getParam (html, result, 'dateEndSettlementDays', /Дата\s*окончания\s*рассчетного\s*периода.*?class="value".*?>(\d{2}\.\d{2}\.\d{4}\s*\d{2}:\d{2})/i, [/(\d*).(\d*).(\d*)/, '$3/$2/$1'], Date.parse);
 
     // Тариф
     getParam (html, result, '__tariff', /Название текущего тарифного плана.*?class="value".*?>([^<]*)/i);

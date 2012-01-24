@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id major_version="1.0" version="1">ab-money-qiwi</id>
+  <name>QIWI Кошелек</name>
+  <description>
+    Получает баланс, количество сообщений и счетов в QIWI Кошельке.
+  </description>
+  <author>iReset &lt;develop_ag@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>api:jquery.min.js</js>
+    <js>common_functions.js</js>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="messages" name="Сообщения" prefix="Сообщ:"/>
+    <counter id="bills" name="Счета" prefix="Счета:"/>
+  </counters>
+  <keywords>
+    кошелек, деньги, qiwi, оплата, платежи, карта, банковская карта, visa
+  </keywords>
+  <type>
+    money
+  </type>
+</provider>

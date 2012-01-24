@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-game-wot</id>
+	<name>World of Tanks</name>
+	<description>
+		Показывает ник, клан, количество боев и побед в игре World of Tanks
+	</description>
+	<author>Vit@liy &lt;vitaliy@root.ua&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<js>api:jquery.min.js</js>
+	</files>
+	<counters>
+		<counter id="name" name="Игровой ник" type="text"/>
+		<counter id="clan" name="Клан" type="text"/>
+		<counter id="wins" name="Победы" type="numeric"/>
+		<counter id="battles" name="Бои" type="numeric"/>
+		<counter id="win_percent" name="Процент побед" suffix="%" type="numeric"/>
+	</counters>
+	<keywords>
+		игра, game, wot
+	</keywords>
+	<type>
+		game
+	</type>
+</provider>

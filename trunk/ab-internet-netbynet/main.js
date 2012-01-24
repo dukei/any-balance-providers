@@ -3,7 +3,7 @@
 
 Получает баланс, остаток дней и статус у интернет-провайдера NetByNet.
 
-Сайт оператора: http://www.netbynet.ru/
+Сайт провайдера: http://www.netbynet.ru/
 Личный кабинет: http://stat.netbynet.ru/
 */
 
@@ -31,11 +31,11 @@ function main(){
     var prefs = AnyBalance.getPreferences();
     var baseurl = 'http://stat.netbynet.ru/';
 
-    if (prefs.login == '')
-        throw new AnyBalance.Error ('Введите логин.');
+    if (!prefs.login || prefs.login == '')
+        throw new AnyBalance.Error ('Введите логин');
 
-    if (prefs.password == '')
-        throw new AnyBalance.Error ('Введите пароль.');
+    if (!prefs.password || prefs.password == '')
+        throw new AnyBalance.Error ('Введите пароль');
 
     AnyBalance.trace ("Trying to enter selfcare at address: " + baseurl);
     var html = AnyBalance.requestPost (baseurl + "main", {

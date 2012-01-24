@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-internet-ipls</id>
+  <id major_version="2.0" version="2">ab-internet-ipls</id>
   <name>Айпильсин</name>
   <description>
-    Получает текущий баланс, номера лицевого счета, ФИО владельца
+    Получает текущий баланс, номера лицевого счета, ФИО владельца, кредит, статус блокировки
   </description>
   <author>Serg Repin &lt;serg.repin@gmail.com&gt;</author>
   <files>
@@ -12,9 +12,11 @@
     <js>main.js</js>
   </files>
   <counters>
-    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="balance" name="Баланс" units="р."/>
     <counter id="license" name="Лицевой счет" type="text"/>
     <counter id="username" name="ФИО" type="text"/>
+    <counter id="credit" name="Кредит" units="р."/>
+    <counter id="block" name="Статус блокировки" type="text"/>
   </counters>
   <keywords>
     провайдер интернет Красногорск телевидение телефония

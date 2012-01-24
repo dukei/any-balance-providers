@@ -34,23 +34,6 @@ function main(){
         result.__tariff=matches[1];
     }
     
-
-
-    // Баланс
-    if(AnyBalance.isAvailable('balance')){
-        if (matches=/Баланс<\/td>\s<td[\s\w='-\/%]*>([\d\.]+)</.exec(info)){
-            var tmpBalance=matches[1].replace(/ |\xA0/, ""); // Удаляем пробелы
-            tmpBalance=tmpBalance.replace(",", "."); // Заменяем запятую на точку
-            result.balance=parseFloat(tmpBalance);
-        }
-    }
-    // Лицевой счет
-    if(AnyBalance.isAvailable('license')){
-        if (matches=/Основной лицевой счет<\/td>\s<td[\s\w='-\/%]*>([\d\.]+)</.exec(info)){
-            result.license=matches[1];
-        }
-    }
-
     // ФИО
     if(AnyBalance.isAvailable('username')){
         if (matches=/ФИО<\/td>\s<td[\s\w='-\/%]*>([\S ]+)</i.exec(info)){
@@ -58,6 +41,50 @@ function main(){
         }
     }
     
+    var account = AnyBalance.requestGet(baseurl + "?module=accounts");
+	
+	// Лицевой счет
+    if(AnyBalance.isAvailable('license')){
+        if (matches=/ID лицевого счета<\/td>\s<td[\s\w='-\/%]*>([\d\.]+)</.exec(account)){
+            result.license=matches[1];
+        }
+    }
+	
+	// Баланс
+    if(AnyBalance.isAvailable('balance')){
+        if (matches=/Баланс<\/td>\s<td[\s\w='-\/%]*>([\d\.]+)</.exec(account)){
+            var tmpBalance=matches[1].replace(/ |\xA0/, ""); // Удаляем пробелы
+            tmpBalance=tmpBalance.replace(",", "."); // Заменяем запятую на точку
+            result.balance=parseFloat(tmpBalance);
+        }
+    }
+	
+	// Кредит
+    if(AnyBalance.isAvailable('credit')){
+        if (matches=/Кредит<\/td>\s<td[\s\w='-\/%]*>([\d\.]+)</.exec(account)){
+            var tmpBalance=matches[1].replace(/ |\xA0/, ""); // Удаляем пробелы
+            tmpBalance=tmpBalance.replace(",", "."); // Заменяем запятую на точку
+            result.credit=parseFloat(tmpBalance);
+        }
+    }
+	
+	// Статус блокировки
+    if(AnyBalance.isAvailable('block')){
+        if (matches=/Статус блокировки<\/td>\s<td[\s\w='-\/%]*>([\d\.]+)</.exec(account)){
+            var tmpBalance=matches[1].replace(/ |\xA0/, ""); // Удаляем пробелы
+            tmpBalance=tmpBalance.replace(",", "."); // Заменяем запятую на точку
+            switch (parseInt(tmpBalance)) {
+				case 0:	result.block="Работает"; break
+				case 1: result.block="Блокировка"; break
+				case 2: result.block="Обещанный платеж"; break
+				default:
+					result.block="Статус блокировки = "+parseInt(tmpBalance);
+			
+			}
+			
+        }
+    }
+	
  
     AnyBalance.setResult(result);
 }

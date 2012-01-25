@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        key="log"
+        title="Логин" 
+        summary="Учетная запись в Личном кабинете||{@s}\n" 
+        dialogTitle="Логин" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите номер вашего договора или псевдоним"
+        positiveButtonText="ОК">
+    </EditTextPreference>
+    <EditTextPreference 
+        key="pwd" 
+        title="Пароль"
+        summary="Пароль для входа в Личный кабинет||***********\n"
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        dialogMessage="Введите пароль, используемый для входа в Личный кабинет"
+        positiveButtonText="ОК"
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

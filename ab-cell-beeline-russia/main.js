@@ -73,10 +73,10 @@ function main(){
     result.__tariff = getParam (html, null, null, /Текущий тарифный план[\s\S]*?<td>([\s\S]*?)</, [/&nbsp;/g, ' ', /^\s+|\s+$/g, '']);
 
     // Баланс
-    getParam (html, result, 'balance', /Основной баланс[\s\S]*?'tabtext'>([\-\d,]+)</, alltransformations, parseFloat);
+    getParam (html, result, 'balance', /Основной баланс[\s\S]*?'tab(?:text|red)'>([\-\d,\s]+)</, alltransformations, parseFloat);
     
     // Бонус-баланс
-    getParam (html, result, 'bonus_balance', /Бонус-баланс[\s\S]*?'tabtext'>([\d,]+)</, alltransformations, parseFloat);
+    getParam (html, result, 'bonus_balance', /Бонус-баланс[\s\S]*?'tabtext'>([\d,\s]+)</, alltransformations, parseFloat);
     
     if(AnyBalance.isAvailable('sms_left')){
       result.sms_left = 0;

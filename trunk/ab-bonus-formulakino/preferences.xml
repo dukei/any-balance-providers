@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference
+        key="login"
+        title="Логин"
+        summary="Номер карты/логин для доступа к личному кабинету||{@s}\n"
+        inputType="text"
+        dialogTitle="Логин"
+        dialogMessage="Введите номер карты/логин для входа в личный кабинет"
+        positiveButtonText="ОК"
+        negativeButtonText="Отмена">
+    </EditTextPreference>
+    <EditTextPreference
+        key="password"
+        title="Пароль"
+        summary="Пин/пароль для входа в личный кабинет||**********\n"
+        inputType="textPassword"
+        dialogTitle="Пароль"
+        dialogMessage="Введите пин/пароль, используемый для входа в личный кабинет"
+        positiveButtonText="ОК"
+        negativeButtonText="Отмена">
+    </EditTextPreference>
+</PreferenceScreen>

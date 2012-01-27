@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id major_version="1.0" version="1">ab-bonus-formulakino</id>
+  <name>Формула Кино</name>
+  <description>
+    Получает информацию о бонусах на бонусной карте сети кинотеатров Формула Кино.
+  </description>
+  <author>iReset &lt;develop_ag@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>api:jquery.min.js</js>
+    <js>main.js</js>
+    <js>common_functions.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="bonus" name="Текущий бонус" units="%"/>
+    <counter id="endDate" name="Дата окончания регистрации" type="text"/>
+    <counter id="customer" name="Владелец" type="text"/>
+  </counters>
+  <keywords>
+    формула кино, бонус, кинотеатр
+  </keywords>
+  <type>
+    bonus
+  </type>
+</provider>

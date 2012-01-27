@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-rostelekom-kamchatka</id>
+  <id version="2">ab-internet-rostelekom-kamchatka</id>
   <name>Интернет Ростелеком (Камчатка)</name>
   <description>
     Получает данные из ИССА Камчатского филиала ОАО "Ростелеком": баланс, счетчики трафика

@@ -43,7 +43,7 @@ function main(){
     
     if(AnyBalance.isAvailable('balance')){
         var val = $tableBalance.find('td:contains("Актуальный баланс")').next().text();
-        if(val && (matches = val.match(/[\d\.]+/)))
+        if(val && (matches = val.match(/[\-\d\.]+/)))
             result.balance = parseFloat(matches[0]);
     }
     

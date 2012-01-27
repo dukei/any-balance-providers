@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference
+        key="number"
+        title="Номер карты"
+        summary="Номер карты для доступа к личному кабинету||{@s}\n"
+        inputType="text"
+        dialogTitle="Номер карты"
+        dialogMessage="Введите номер карты для входа в личный кабинет"
+        positiveButtonText="ОК"
+        negativeButtonText="Отмена">
+    </EditTextPreference>
+    <EditTextPreference
+        key="date"
+        title="Дата рождения"
+        summary="Дата рождения для входа в личный кабинет||{@s}\n"
+        inputType="text"
+        dialogTitle="Дата рождения"
+        dialogMessage="Введите дату рождения, используемую для входа в личный кабинет, в формате ДД.ММ.ГГ, например, 19.08.76"
+        positiveButtonText="ОК"
+        negativeButtonText="Отмена">
+    </EditTextPreference>
+</PreferenceScreen>

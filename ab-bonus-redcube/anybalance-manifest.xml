@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id major_version="1.0" version="1">ab-bonus-redcube</id>
+  <name>Красный Куб</name>
+  <description>
+    Получает информацию о бонусах на накопительной карте сети магазинов Красный Куб.
+  </description>
+  <author>iReset &lt;develop_ag@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+    <js>common_functions.js</js>
+  </files>
+  <counters>
+    <counter id="bonus" name="Бонусы" units="б"/>
+    <counter id="costPurchase" name="Сумма покупок" units="р"/>
+    <counter id="dateLastOperation" name="Дата последней операции" type="text"/>
+    <counter id="customer" name="Владелец" type="text"/>
+    <counter id="cardNumber" name="Номер карты" type="text"/>
+  </counters>
+  <keywords>
+    бонус, накопительная карта, бонусная карта, магазин, красный куб
+  </keywords>
+  <type>
+    bonus
+  </type>
+</provider>

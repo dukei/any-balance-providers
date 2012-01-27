@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id major_version="1.0" version="1">ab-bonus-mts</id>
+  <name>МТС Бонус</name>
+  <description>
+    Получает бонусные баллы за пользование услугами МТС.
+    Проверено на телефоне Московского региона. В случае некорректной работы в других регионах просьба обращаться к автору.
+    Для экономии трафика используется мобильная версия сайта. Для абонентов МТС трафик бесплатен.
+  </description>
+  <author>iReset &lt;develop_ag@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+    <js>common_functions.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс"/>
+    <counter id="customer" name="Владелец" type="text"/>
+    <counter id="lifeInProgram" name="Стаж в программе" type="text"/>
+  </counters>
+  <keywords>
+    бонус, мтс, bonus, mts
+  </keywords>
+  <type>
+    bonus
+  </type>
+</provider>

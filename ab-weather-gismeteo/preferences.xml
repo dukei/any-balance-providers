@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference
+        key="city"
+        title="Индекс города"
+        summary="Индекс города для отображения||{@s}\n"
+        inputType="number"
+        dialogTitle="Индекс города"
+        dialogMessage="Введите индекс города. Его можно получить из адресной строки браузера, выбрав на сайте http://www.gismeteo.ru нужный вам город. Например, для Москвы это 4368."
+        positiveButtonText="ОК"
+        negativeButtonText="Отмена">
+    </EditTextPreference>
+</PreferenceScreen>

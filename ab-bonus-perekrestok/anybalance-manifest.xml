@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id major_version="1.0" version="1">ab-bonus-perekrestok</id>
+  <name>Перекресток</name>
+  <description>
+    Получает информацию о бонусах на карте Клуба Перекресток.
+  </description>
+  <author>iReset &lt;develop_ag@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>api:jquery.min.js</js>
+    <js>main.js</js>
+    <js>keys.js</js>
+    <js>common_functions.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="б"/>
+    <counter id="burnInThisMonth" name="Сгорает в этом месяце" units="б"/>
+    <counter id="customer" name="Владелец" type="text"/>
+  </counters>
+  <keywords>
+    клуб, перекресток, накопительная программа, накопительная карта, бонус, бонусная карта, продукты, покупки, баллы
+  </keywords>
+  <type>
+    bonus
+  </type>
+</provider>

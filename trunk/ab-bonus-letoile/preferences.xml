@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference
+        key="number"
+        title="Номер карты"
+        summary="Номер клубной карты||{@s}\n"
+        inputType="number"
+        dialogTitle="Номер карты"
+        dialogMessage="Введите номер клубной карты Л'Этуаль"
+        positiveButtonText="ОК"
+        negativeButtonText="Отмена">
+    </EditTextPreference>
+    <ListPreference 
+        key="color"
+        title="Цвет карты"
+        summary="Цвет клубной карты||{@s}\n"
+        entries="зеленая|рубиновая или красная|сапфировая или синяя|аметистовая или серебряная|бриллиантовая или золотая"
+        entryValues="1|2|3|4|5">
+    </ListPreference>
+</PreferenceScreen>

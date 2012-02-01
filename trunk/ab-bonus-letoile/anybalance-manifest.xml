@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id major_version="1.0" version="1">ab-bonus-letoile</id>
+  <name>Л'Этуаль</name>
+  <description>
+    Получает информацию о бонусных баллах на клубных картах сети магазинов Л'Этуаль.	
+  </description>
+  <author>iReset &lt;develop_ag@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+    <js>common_functions.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="dateOf" name="Дата актуализации" type="time"/>
+  </counters>
+  <keywords>
+    клубная карта, дисконтная карта, бонусная карта, бонус, bonus, лэтуаль, летуаль, л'этуаль, letoile, скидка
+  </keywords>
+  <type>
+    bonus
+  </type>
+</provider>

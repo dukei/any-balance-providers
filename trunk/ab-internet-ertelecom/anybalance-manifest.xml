@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="1">ab-internet-ertelecom</id>
+  <id major_version="1.0" version="15">ab-internet-ertelecom</id>
   <name>Интернет провайдер Дом.ру (Казань)</name>
   <description>
-    Получает текущий баланс, бонусный баланс, номера лицевого счета и договора, статус и трафик в текущем месяце у провайдера "Эр-телеком" (ДОМ.РУ)
+    Получает текущий баланс, номер и тип лицевого счета, владельца счета, статус, трафик в текущем месяце и дату окончания предыдущей сессии у провайдера "Эр-телеком" (ДОМ.РУ)
   </description>
   <author>wtiger &lt;wtiger@mail.ru&gt;</author>
   <files>
@@ -14,12 +14,12 @@
   </files>
   <counters>
     <counter id="balance" name="Баланс" units="р"/>
-    <counter id="contract" name="Номер договора" type="text" prefix="Договор:"/>
     <counter id="status" name="Статус" type="text" prefix="Статус:"/>
     <counter id="name" name="ФИО" type="text"/>
     <counter id="contract_type" name="Тип контракта" type="text"/>
-    <counter id="traffic_inner" name="Внутренний (Домашний) трафик" prefix="Домашний:" suffix="Мб"/>
-    <counter id="traffic_outer" name="Внешний трафик" prefix="Внешний:" suffix="Мб"/>
+    <counter id="last_session_end" name="Конец последней сессии" type="text"/>
+    <counter id="traffic_inner" name="Внутренний (Домашний) трафик" prefix="Дом:" suffix="Мб"/>
+    <counter id="traffic_outer" name="Внешний трафик" prefix="Вн:" suffix="Мб"/>
   </counters>
   <keywords>
     провайдер интернет дом.ру

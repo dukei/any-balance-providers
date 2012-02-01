@@ -19,7 +19,7 @@
     <counter id="contract_type" name="Тип контракта" type="text"/>
     <counter id="last_session_end" name="Конец последней сессии" type="text"/>
     <counter id="traffic_inner" name="Внутренний (Домашний) трафик" prefix="Дом:" suffix="Мб"/>
-    <counter id="traffic_outer" name="Внешний трафик" prefix="Вн:" suffix="Мб"/>
+    <counter id="traffic_outer" name="Внешний трафик" prefix="Внеш:" suffix="Мб"/>
   </counters>
   <keywords>
     провайдер интернет дом.ру

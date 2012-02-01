@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="2">ab-internet-netbynet</id>
+  <id major_version="1.0" version="3">ab-internet-netbynet</id>
   <name>NetByNet</name>
   <description>
     Получает баланс, остаток дней, статус и обещанный платеж у интернет-провайдера NetByNet.

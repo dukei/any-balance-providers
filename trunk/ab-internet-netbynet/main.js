@@ -29,7 +29,7 @@ function getParam (html, result, param, regexp, replaces, parser) {
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-    var baseurl = 'http://stat.netbynet.ru/';
+    var baseurl = 'https://stat.netbynet.ru/';
 
     if (!prefs.login || prefs.login == '')
         throw new AnyBalance.Error ('Введите логин');

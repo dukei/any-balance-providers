@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Логин" 
+        positiveButtonText="ОК" 
+        summary="Логин, например 4951234567||{@s}\n" 
+        dialogTitle="Логин" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Логин в личный кабинет, например, 4951234567"
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="Пароль для входа в личный кабинет||***********\n"
+        dialogMessage="Введите пароль, используемый для входа в личный кабинет"
+        inputType="textPassword">
+    </EditTextPreference>
+    <ListPreference 
+        key="region" 
+        title="Регион"
+        summary="Регион вашего счета|Нужен для определения Личного кабинета\n|{@s}\n"
+        entries="Москва|Липецк|Калуга|Белгород|Курск|Тверь|Воронеж"
+        entryValues="msk|lpc|klg|blg|krs|tvr|vrn"
+	    defaultValue="msk">
+    </ListPreference>
+</PreferenceScreen>

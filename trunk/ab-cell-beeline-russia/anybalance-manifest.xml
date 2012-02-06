@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="4">ab-cell-beeline-russia</id>
+  <id major_version="1.1" version="5">ab-cell-beeline-russia</id>
   <name>Билайн (Россия)</name>
   <description>
     Получает баланс, бонусный баланс, количество бесплатных SMS, MMS и минут, владельца, тарифный план и номер договора.
+Поддерживает корпоративные тарифные планы, но не получает для них SMS, MMS и минуты.
+
+    Новое в 1.1.5:
+    Поддержка корпоративных тарифов
   </description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <files>
@@ -22,7 +26,7 @@
     <counter id="license" name="Номер договора" type="text"/>
   </counters>
   <keywords>
-    Сотовый телефон, мобильный, мобильник, beeline, россия
+    Сотовый телефон, мобильный, мобильник, beeline, россия, корпоративный
   </keywords>
   <type>
     cell

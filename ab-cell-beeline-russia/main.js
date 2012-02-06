@@ -2,7 +2,6 @@
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 
 Текущий баланс у сотового оператора Билайн (Россия).
-Вдохновение почерпано у http://mtsoft.ru
 
 Сайт оператора: http://beeline.ru/        
 Личный кабинет: https://uslugi.beeline.ru/
@@ -48,10 +47,20 @@ function main(){
       	throw new AnyBalance.Error(res[1].replace(/<[^<>]+\/?>/g, ''));
     }
 
+    var corporate = /<title>[^<>]*Управление профилем[^<>]*<\/title>/i.test(html);
+    if(!corporate)
+        parsePersonal(baseurl, html);
+    else
+        parseCorporate(baseurl, html);
+}
+
+var alltransformations = [/&nbsp;/g, '', /[\s\xA0]/g, "", ",", "."];
+
+function parsePersonal(baseurl, html){
     var result = {success: true};
 
-    AnyBalance.trace("It looks like we are in selfcare...");
-
+    AnyBalance.trace("It looks like we are in PERSONAL selfcare...");
+    
     // ФИО
     getParam (html, result, 'userName', /Владелец договора[\s\S]*?<td[^>]*>(.*?)</);
 
@@ -67,8 +76,6 @@ function main(){
 
     AnyBalance.trace("Parsing finantial info...");
     
-    var alltransformations = [/[\s\xA0]/, "", ",", "."];
-
     // Тарифный план
     result.__tariff = getParam (html, null, null, /Текущий тарифный план[\s\S]*?<td>([\s\S]*?)</, [/&nbsp;/g, ' ', /^\s+|\s+$/g, '']);
 
@@ -114,6 +121,78 @@ function main(){
     }
 
     AnyBalance.setResult(result);
-
 }
 
+function parseBalance(val){
+    AnyBalance.trace("Parsing balance: '" + val + "'");
+    return parseFloat(val);
+}
+
+function parseCorporate(baseurl, html){
+    var result = {success: true};
+
+    AnyBalance.trace("It looks like we are in CORPORATE selfcare...");
+    
+    // ФИО
+    getParam (html, result, 'userName', /Название Договора[\s\S]*?<td[^>]*>\s*(.*?)\s*</);
+
+    // Номер договора
+    getParam (html, result, 'license', /Номер Договора[\s\S]*?<td[^>]*>\s*(.*?)\s*</);
+    
+    AnyBalance.trace("Fetching balance info...");
+    
+    html = AnyBalance.requestPost(baseurl + "navigateMenu.do", {
+        _navigation_secondaryMenu:'billing.payment',
+        _resetBreadCrumbs:'true'
+    });
+
+    // Баланс
+    getParam (html, result, 'balance', /Текущий баланс[\s\S]*?<td[^>]*>\s*([\s\S]*?)\s*</i, alltransformations, parseBalance);
+    
+    AnyBalance.trace("Fetching number info...");
+    
+    var stateParam = getParam(html, null, null, /<form name="ecareSubmitForm"[\s\S]*?name="_stateParam" value="([^"]*)"/i);
+    
+    var phone = AnyBalance.getPreferences().login;
+    
+    //К сожалению, телефоны грузятся только после загрузки этой страницы
+    html = AnyBalance.requestPost(baseurl + "OnLoadSubscriberProfileFilterAction.do", {
+        _stateParam:stateParam,
+        _expandStatus:'',
+        '_navigation_thirdMenu':'services.profileManagement.subscribers',
+        subscriberNumber:phone,
+        resetBreadCrumbs:'true'
+    });
+    
+    var rTariff = new RegExp("<td>"+phone+"\\s*</td><td>.*?</td><td>(.*?)</td><td>.*?</td><td>.*?</td><td>(?:.*?)</td>");
+    var rStatus = new RegExp("<td>"+phone+"\\s*</td><td>.*?</td><td>(?:.*?)</td><td>.*?</td><td>.*?</td><td>(.*?)</td>");
+
+    // Тарифный план
+    result.__tariff = getParam (html, null, null, rTariff, [/&nbsp;/g, ' ' , /^\s+|\s+$/g, '']);
+
+    // Состояние номера
+    getParam (html, result, 'BlockStatus', rStatus, [/&nbsp;/g, ' ' , /^\s+|\s+$/g, '']);
+    
+    var stateParam = getParam(html, null, null, /<form name="ecareSubmitForm"[\s\S]*?name="_stateParam" value="([^"]*)"/i);
+
+    //А теперь давайте получим это более надёжно
+    html = AnyBalance.requestPost(baseurl + "SubscriberProfileFilterSwitchingAction.do", {
+        _stateParam:stateParam,
+        _forwardName:'',
+        _resetBreadCrumbs:'',
+        _expandStatus:'',
+        'status.code':'G',
+        subscriberNumber:phone,
+        pricePlan:'',
+        subscriberListExtExportVar:'',
+        ctrla:'subscriberListExt=CellClick=viewLinkStr='+phone+' '
+    });
+
+    // Тарифный план
+    result.__tariff = getParam (html, null, null, /Название тарифного плана[\s\S]*?<td[^>]*>\s*(?:<a[^>]*>.*?<\/a>)[\s\-]*([\s\S]*?)\s*</, [/&nbsp;/g, ' ' , /^\s+|\s+$/g, '']);
+
+    // Состояние номера
+    getParam (html, result, 'BlockStatus', /Статус номера[\s\S]*?<td[^>]*>([\s\S]*?)</, [/&nbsp;/g, ' ' , /^\s+|\s+$/g, '']);
+
+    AnyBalance.setResult(result);
+}

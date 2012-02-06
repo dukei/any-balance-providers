@@ -16,7 +16,7 @@ filial_info[MEGA_FILIAL_MOSCOW] = {
 };
 filial_info[MEGA_FILIAL_SIBIR] = {
   name: 'Сибирский филиал',
-  site: "https://sibsg1.megafon.ru/TRAY_INFO/TRAY_INFO?LOGIN=%LOGIN%&PASSWORD=%PASSWORD%",
+  site: "https://sibsg1.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%",
   func: megafonTrayInfo
 };
 filial_info[MEGA_FILIAL_NW] = {
@@ -197,7 +197,7 @@ function megafonTrayInfo(filial){
     //Проверяем на ошибку
     var error = $xml.find('SC_TRAY_INFO>ERROR>ERROR_MESSAGE, TRAY_INFO>ERROR>ERROR_MESSAGE').text();
     if(error){
-        if(/Robot login is not allowed/.test(error))
+        if(/Robot login is not allowed|does not have permissions/.test(error))
             throw new AnyBalance.Error('Пожалуйста, разрешите в Сервис-Гиде доступ автоматизированным системам.\n\
 Для этого зайдите в Сервис-Гид и включите настройку Настройки Сервис-Гида/Автоматический доступ системам/Доступ открыт пользователям и автоматизированным системам.');
         else

@@ -147,6 +147,8 @@ function parseCorporate(baseurl, html){
     // Номер договора
     getParam (html, result, 'license', /Номер Договора[\s\S]*?<td[^>]*>\s*(.*?)\s*</);
     
+    var phone = AnyBalance.getPreferences().login;
+    
     if(AnyBalance.isAvailable('balance')){
         AnyBalance.trace("Fetching balance info...");
 
@@ -161,21 +163,27 @@ function parseCorporate(baseurl, html){
     
     if(AnyBalance.isAvailable('expences')){
         AnyBalance.trace("Fetching expences info...");
+        html = AnyBalance.requestPost(baseurl + "loadUnbilledAction.do", {
+		"_navigation_secondaryMenu":'billing.unbilledCalls',
+		"_resetBreadCrumbs":'true'
+        });
 
-        html = AnyBalance.requestPost(baseurl + "navigateMenu.do", {
-            _navigation_secondaryMenu:'billing',
-            _resetBreadCrumbs:'true'
+    	var stateParam = getParam(html, null, null, /<form name="ecareSubmitForm"[\s\S]*?name="_stateParam" value="([^"]*)"/i);
+
+        html = AnyBalance.requestPost(baseurl + "VIPUnbilledSubscribersSwitchingAction.do", {
+		_stateParam: stateParam,
+		_forwardName:'unbilledCharge',
+		_resetBreadCrumbs:'null',
+		"ctrlvcol%3Dradio%3Bctrl%3DsubscriberListExt%3Btype%3Drd":phone
         });
 
         // Сколько использовано
-        getParam (html, result, 'expences', /Всего за период[\s\S]*?<nobr>\s*([\s\S]*?)\s*</i, alltransformations, parseBalance);
+        getParam (html, result, 'expences', /Общая сумма начислений[\s\S]*?<td>\s*([\s\S]*?)\s*</i, alltransformations, parseBalance);
     }
     
     AnyBalance.trace("Fetching number info...");
     
     var stateParam = getParam(html, null, null, /<form name="ecareSubmitForm"[\s\S]*?name="_stateParam" value="([^"]*)"/i);
-    
-    var phone = AnyBalance.getPreferences().login;
     
     //К сожалению, телефоны грузятся только после загрузки этой страницы
     html = AnyBalance.requestPost(baseurl + "OnLoadSubscriberProfileFilterAction.do", {

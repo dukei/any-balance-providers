@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+<id major_version="1" version="1">ab-control-teplomonitor-test</id>
+<name>ТеплоМОНИТОР</name>
+<description>
+	Получает баланс,коллектор,температуру 2,температуру 3,температуру 6
+</description>
+<author>Serg Repin &lt;serg.repin@gmail.com&gt;</author>
+<files>
+	<icon>icon.png</icon>
+	<preferences>preferences.xml</preferences>
+	<js>main.js</js>
+	<js>common_functions.js</js>
+</files>
+<counters>
+	<counter id="balance" name="Баланс"/>
+	<counter id="collector" name="Коллектор" units="°С"/>
+	<counter id="temperature2" name="Температура 2" units="°С"/>
+	<counter id="temperature3" name="Температура 3" units="°С"/>
+	<counter id="temperature6" name="Температура 6" units="°С"/>
+</counters>
+<keywords>
+провайдер мониторинг система отопления
+</keywords>
+<type>
+control, temperature, monitor
+</type>
+</provider>

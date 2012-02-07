@@ -1,4 +1,4 @@
- /**
+﻿ /**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 
 Домашний Интернет и Телевидение Айпильсин
@@ -52,7 +52,7 @@ function main(){
 	
 	// Баланс
     if(AnyBalance.isAvailable('balance')){
-        if (matches=/Баланс<\/td>\s<td[\s\w='-\/%]*>([\d\.]+)</.exec(account)){
+        if (matches=/Баланс<\/td>\s<td[\s\w='-\/%]*>([\d\.-]+)</.exec(account)){
             var tmpBalance=matches[1].replace(/ |\xA0/, ""); // Удаляем пробелы
             tmpBalance=tmpBalance.replace(",", "."); // Заменяем запятую на точку
             result.balance=parseFloat(tmpBalance);
@@ -75,7 +75,7 @@ function main(){
             tmpBalance=tmpBalance.replace(",", "."); // Заменяем запятую на точку
             switch (parseInt(tmpBalance)) {
 				case 0:	result.block="Работает"; break
-				case 1: result.block="Блокировка"; break
+				case 16: result.block="Отрицательный баланс"; break
 				case 2: result.block="Обещанный платеж"; break
 				default:
 					result.block="Статус блокировки = "+parseInt(tmpBalance);

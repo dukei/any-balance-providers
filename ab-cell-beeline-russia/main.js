@@ -139,15 +139,29 @@ function parseCorporate(baseurl, html){
     // Номер договора
     getParam (html, result, 'license', /Номер Договора[\s\S]*?<td[^>]*>\s*(.*?)\s*</);
     
-    AnyBalance.trace("Fetching balance info...");
-    
-    html = AnyBalance.requestPost(baseurl + "navigateMenu.do", {
-        _navigation_secondaryMenu:'billing.payment',
-        _resetBreadCrumbs:'true'
-    });
+    if(AnyBalance.isAvailable('balance')){
+        AnyBalance.trace("Fetching balance info...");
 
-    // Баланс
-    getParam (html, result, 'balance', /Текущий баланс[\s\S]*?<td[^>]*>\s*([\s\S]*?)\s*</i, alltransformations, parseBalance);
+        html = AnyBalance.requestPost(baseurl + "navigateMenu.do", {
+            _navigation_secondaryMenu:'billing.payment',
+            _resetBreadCrumbs:'true'
+        });
+
+        // Баланс
+        getParam (html, result, 'balance', /Текущий баланс[\s\S]*?<td[^>]*>\s*([\s\S]*?)\s*</i, alltransformations, parseBalance);
+    }
+    
+    if(AnyBalance.isAvailable('expences')){
+        AnyBalance.trace("Fetching expences info...");
+
+        html = AnyBalance.requestPost(baseurl + "navigateMenu.do", {
+            _navigation_secondaryMenu:'billing',
+            _resetBreadCrumbs:'true'
+        });
+
+        // Сколько использовано
+        getParam (html, result, 'expences', /Всего за период[\s\S]*?<nobr>\s*([\s\S]*?)\s*</i, alltransformations, parseBalance);
+    }
     
     AnyBalance.trace("Fetching number info...");
     

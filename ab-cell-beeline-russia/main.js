@@ -1,4 +1,4 @@
-/**
+﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 
 Текущий баланс у сотового оператора Билайн (Россия).
@@ -21,7 +21,7 @@ function getParam (html, result, param, regexp, replaces, parser) {
 		}
 		if (parser)
 			value = parser (value);
-    
+
     if(param)
       result[param] = value;
     else
@@ -75,9 +75,17 @@ function parsePersonal(baseurl, html){
     html = AnyBalance.requestPost(baseurl + "VIPLoadPrepaidCtnFinancialInfoAction.do", '');
 
     AnyBalance.trace("Parsing finantial info...");
-    
+
     // Тарифный план
-    result.__tariff = getParam (html, null, null, /Текущий тарифный план[\s\S]*?<td>([\s\S]*?)</, [/&nbsp;/g, ' ', /^\s+|\s+$/g, '']);
+    var tariff = getParam (html, null, null, /Текущий тарифный план[\s\S]*?<td>([\s\S]*?)<\/td>/, [/&nbsp;/g, ' ', /^\s+|\s+$/g, '']);
+    if (tariff) {
+        var $obj = $(tariff);
+        tariff = $obj.text ();
+        tariff = tariff.replace (/(^\s+|\s+$)/g, '');
+        if (tariff != '')
+            result.__tariff = tariff;
+    }
+
 
     // Баланс
     getParam (html, result, 'balance', /Основной баланс[\s\S]*?'tab(?:text|red)'>([\-\d,\s]+)</, alltransformations, parseFloat);

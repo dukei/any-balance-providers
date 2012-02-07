@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.1" version="5">ab-cell-beeline-russia</id>
+  <id major_version="1.1" version="6">ab-cell-beeline-russia</id>
   <name>Билайн (Россия)</name>
   <description>
     Получает баланс, бонусный баланс, количество бесплатных SMS, MMS и минут, владельца, тарифный план и номер договора.
-Поддерживает корпоративные тарифные планы, но не получает для них SMS, MMS и минуты.
+Поддерживает корпоративные тарифные планы, но не получает для них SMS, MMS и минуты. Зато получает для них сумму, потраченную за текущий отчетный период.
 
-    Новое в 1.1.5:
+    Новое в 1.1.6:
     Поддержка корпоративных тарифов
+    Добавление счетчика трат за период для корпоративных тарифов
   </description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <files>
@@ -21,6 +22,7 @@
     <counter id="min_left" name="Минуты" units="мин" type="time_interval"/>
     <counter id="sms_left" name="SMS" units="sms"/>
     <counter id="mms_left" name="MMS" units="mms"/>
+    <counter id="expences" name="Потрачено за период (корп.)" units="р"/>
     <counter id="userName" name="Владелец" type="text"/>
     <counter id="BlockStatus" name="Состояние номера" type="text"/>
     <counter id="license" name="Номер договора" type="text"/>

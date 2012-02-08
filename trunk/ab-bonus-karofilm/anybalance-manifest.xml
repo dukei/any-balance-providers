@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id major_version="1.0" version="1">ab-bonus-karofilm</id>
+  <name>КАРО Фильм</name>
+  <description>
+    Получает информацию о бонусах на бонусной карте сети кинотеатров "КАРО Фильм".
+  </description>
+  <author>iReset &lt;develop_ag@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>api:jquery.min.js</js>
+    <js>main.js</js>
+    <js>common_functions.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="bonus" name="Бонус" units="%"/>
+    <counter id="expiryDate" name="Дата окончания регистрации" type="time"/>
+    <counter id="conditionsForNewBonus" name="Условия получения бонуса" type="text"/>
+    <counter id="customer" name="Владелец" type="text"/>
+  </counters>
+  <keywords>
+    КАРО Фильм, фильм, карофильм, кинотеатр, кино, москва, санкт-петербург, нижний новгород, казань, калининград, самара, бонус, бонусная карта, накопительная карта, 
+  </keywords>
+  <type>
+    bonus
+  </type>
+</provider>

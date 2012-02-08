@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference
+        key="login"
+        title="Номер карты"
+        summary="Номер бонусной карты||{@s}\n"
+        inputType="number"
+        dialogTitle="Номер карты"
+        dialogMessage="Введите номер бонусной карты"
+        positiveButtonText="ОК"
+        negativeButtonText="Отмена">
+    </EditTextPreference>
+    <EditTextPreference
+        key="password"
+        title="Пин-код"
+        summary="Пин-код бонусной карты||****\n"
+        inputType="numberPassword"
+        dialogTitle="Пин-код"
+        dialogMessage="Введите пин-код бонусной карты"
+        positiveButtonText="ОК"
+        negativeButtonText="Отмена">
+    </EditTextPreference>
+</PreferenceScreen>

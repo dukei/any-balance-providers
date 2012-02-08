@@ -55,7 +55,7 @@ function handleFeed(response, prefs) {
   if (num_entries > ITEMS_PER_PAGE) {
     var projectName = escape(prefs.getString("projectName"));
     var more_downloads_link = MORE_TMPL.replace(/%PROJECT%/g, projectName);
-    content += "<br><a href='" + more_downloads_link + "'>More &gt;</a>";
+    content += "<br><a target='_blank' href='" + more_downloads_link + "'>More &gt;</a>";
   }
   content += "</center>";
   $("#content_div").html(content);

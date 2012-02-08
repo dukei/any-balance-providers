@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Copyright 2008 Google Inc.
+Copyright 2012 Dmitry Kochin.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<Module>
+  <ModulePrefs title="__UP_projectName__ downloads" 
+    title_url="http://code.google.com/p/__UP_projectName__/downloads"
+    directory_title="Downloads by Google Code"
+    description="View Google Code Project Hosting project downloads."
+    screenshot="http://google-code-project-hosting-gadgets.googlecode.com/svn/trunk/downloads/downloads_screenshot.png"
+    thumbnail="http://google-code-project-hosting-gadgets.googlecode.com/svn/trunk/downloads/downloads_thumbnail.png"
+    author="Project Hosting Team"
+    author_email="gadgets.feedback@gmail.com"
+    author_location="San Francisco, CA">
+    <Require feature="setprefs" />
+    <Require feature="dynamic-height" />
+    <Require feature="settitle" />
+  </ModulePrefs>
+  <UserPref name="projectName" datatype="hidden" />
+  <UserPref name="lastCount" datatype="hidden" />
+  <Content type="html">
+    <![CDATA[
+    
+<link href="http://google-code-project-hosting-gadgets.googlecode.com/svn/trunk/common/codegadgets.css" rel="stylesheet" type="text/css">    
+<script type="text/javascript" src="http://jqueryjs.googlecode.com/files/jquery-1.2.6.pack.js"></script>    
+<script type="text/javascript" src="http://google-code-project-hosting-gadgets.googlecode.com/svn/trunk/common/codegadgets.js"></script>
+<!-- <script type="text/javascript" src="https://raw.github.com/douglascrockford/JSON-js/master/json2.js"></script> -->
+<script type="text/javascript" src="http://any-balance-providers.googlecode.com/svn/misc/gadgets/download/gcDownloads.js"></script>
+
+<div id="content_div">
+</div>
+
+    ]]>    
+  </Content>
+
+</Module>

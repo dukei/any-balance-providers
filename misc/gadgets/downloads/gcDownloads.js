@@ -71,6 +71,9 @@ function handleFeed(response, prefs) {
   content += "</center>";
   $("#content_div").html(content);
   adjustIFrameHeight();
+  window.setTimeout(1000, adjustIFrameHeight); //try to adjust in some time, when images are loaded
+  window.setTimeout(2000, adjustIFrameHeight); //try to adjust in some time, when images are loaded
+  window.setTimeout(5000, adjustIFrameHeight); //try to adjust in some time, when images are loaded
 }
 
 function localInit() {

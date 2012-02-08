@@ -49,7 +49,7 @@ function handleFeed(response, prefs) {
     var title = entry.Summary.replace(/<pre>\s*([^\n]*)\n[\s\S]*/, '$1');
     var html = ROW_TMPL.replace(/%DATE%/g, formatted_when)
                        .replace(/%LINK%/g, entry.Link)
-		       .replace(/%IMAGE%/g, 'http://any-balance-providers.googlecode.com/svn-history/r%REVISION%/trunk/%PROVNAME%/icon.png'),
+		       .replace(/%IMAGE%/g, 'http://any-balance-providers.googlecode.com/svn-history/r%REVISION%/trunk/%PROVNAME%/icon.png')
                        .replace(/%REVISION%/g, provrev)
                        .replace(/%PROVNAME%/g, provname)
                        .replace(/%FILENAME%/g, title);

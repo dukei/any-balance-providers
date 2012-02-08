@@ -58,6 +58,6 @@
 
 В отладчике не работает перекодировка ответа сервера с помощью [AnyBalanceAPI#setDefaultCharset AnyBalance.setDefaultCharset]. Но по идее сам браузер должен корректно перекодировать страницу, используя подсказки кодировки в тексте страницы. Но в AnyBalance, возможно, понадобится использование функции [AnyBalanceAPI#setDefaultCharset AnyBalance.setDefaultCharset].
 
-По идее куки и авторизация должны сохраняться между последовательными запросами к [AnyBalanceAPI#requestGet AnyBalance.requestGet] и [AnyBalanceAPI#requestPost AnyBalance.requestPost]. Но это требует тестирования. [http://groups.google.com/group/any-balance-providers-discuss Сообщайте], если это не так.
+Куки и авторизация сохраняются между последовательными запросами к [AnyBalanceAPI#requestGet AnyBalance.requestGet] и [AnyBalanceAPI#requestPost AnyBalance.requestPost] так же, как и в AnyBalance.
 
 Поскольку расширение Google Chrome это просто подписанный `Zip`, то исходный код этого расширения вы всегда можете увидеть, просто открыв [http://code.google.com/p/any-balance-providers/downloads/list?q=OpSys-Chrome файл расширения] как `zip` файл. Если в процессе использования возникнут вопросы и предложения, то добро пожаловать в [http://groups.google.com/group/any-balance-providers-discuss группу].

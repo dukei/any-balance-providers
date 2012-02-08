@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-var ROW_TMPL = "<tr><td valign='top' style='white-space: nowrap;'>%DATE%</td><td valign='top'><a href='%LINK%' target='_blank'>%FILENAME%</a></td></tr>";
+var ROW_TMPL = "<tr><td valign='top' style='white-space: nowrap;'>%DATE%</td><td valign='center'><img width='20' src='%IMAGE%'/></td><td valign='top'><a href='%LINK%' target='_blank'>%FILENAME%</a></td></tr>";
 var MORE_TMPL = "http://code.google.com/p/%PROJECT%/downloads/list";
 var MONTHS = new Array("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec");
 var ITEMS_PER_PAGE = 10;
@@ -42,9 +42,16 @@ function handleFeed(response, prefs) {
     var entry = response.data.Entry[i];
     var when = new Date(entry.Date);
     var formatted_when = MONTHS[when.getMonth()] + " " + when.getDate();
+    var matches = entry.Title.match(/(ab-[\w\-]+)_(\d+)\.zip/);
+    if(!matches) ñontinue; //If the filename doesn't match, then it is not a provider file
+    var provname = matches[1];
+    var provrev = matches[2];
     var title = entry.Summary.replace(/<pre>\s*([^\n]*)\n[\s\S]*/, '$1');
     var html = ROW_TMPL.replace(/%DATE%/g, formatted_when)
                        .replace(/%LINK%/g, entry.Link)
+		       .replace(/%IMAGE%/g, 'http://any-balance-providers.googlecode.com/svn-history/r%REVISION%/trunk/%PROVNAME%/icon.png'),
+                       .replace(/%REVISION%/g, provrev)
+                       .replace(/%PROVNAME%/g, provname)
                        .replace(/%FILENAME%/g, title);
     content += html;
   }

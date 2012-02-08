@@ -43,9 +43,11 @@ function handleFeed(response, prefs) {
     var when = new Date(entry.Date);
     var formatted_when = MONTHS[when.getMonth()] + " " + when.getDate();
     var matches = entry.Title.match(/(ab-[\w\-]+)_(\d+)\.zip/);
-    if(!matches) ñontinue; //If the filename doesn't match, then it is not a provider file
-    var provname = matches[1];
-    var provrev = matches[2];
+    var provname, provrev;
+    if(matches){ //If the filename doesn't match, then it is not a provider file
+        provname = matches[1];
+        provrev = matches[2];
+    }
     var title = entry.Summary.replace(/<pre>\s*([^\n]*)\n[\s\S]*/, '$1');
     var html = ROW_TMPL.replace(/%DATE%/g, formatted_when)
                        .replace(/%LINK%/g, entry.Link)

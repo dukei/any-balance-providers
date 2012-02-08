@@ -6,7 +6,7 @@
 
 = Установка =
 
-Для установки отладчика, скачайте c помощью Google Chrome [http://code.google.com/p/any-balance-providers/downloads/list?q=OpSys-Chrome расширение]. Если вы скачиваете его с помощью Google Chrome, то оно автоматически установится.
+Для установки отладчика, скачайте c помощью Google Chrome [http://code.google.com/p/any-balance-providers/downloads/list?q=OpSys-Chrome расширение]. Если вы скачиваете его с помощью [https://www.google.com/chrome/ браузера Google Chrome], то оно автоматически установится.
 
 Далее в Chrome перейдите по ссылке *chrome://settings/extensions* и установите для расширения AnyBalanceDebugger галочку *Разрешить доступ к URL файла*.
 

@@ -7,7 +7,8 @@
         dialogTitle="Логин" 
         negativeButtonText="Отмена" 
         dialogMessage="Введите номер вашего телефона (10 цифр), например 4981234567"
-        key="login">
+        key="login"
+	inputType="number">
     </EditTextPreference>
     <EditTextPreference 
         positiveButtonText="ОК"
@@ -17,6 +18,6 @@
         title="Пароль"
         summary="Введите пароль (ЦКП, 12 цифр)||************\n"
         dialogMessage="Данные о Цифровом Коде Платежа (ЦКП), например 022011121346, код ЦКП Вы можете найти на последнем полученном Вами счете."
-        inputType="textPassword">
+        inputType="numberPassword">
     </EditTextPreference>
 </PreferenceScreen>

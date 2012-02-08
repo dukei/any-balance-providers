@@ -47,6 +47,8 @@ function handleFeed(response, prefs) {
     if(matches){ //If the filename doesn't match, then it is not a provider file
         provname = matches[1];
         provrev = matches[2];
+    }else{
+        continue;
     }
     var title = entry.Summary.replace(/<pre>\s*([^\n]*)\n[\s\S]*/, '$1');
     var html = ROW_TMPL.replace(/%DATE%/g, formatted_when)

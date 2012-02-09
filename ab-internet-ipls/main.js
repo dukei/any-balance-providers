@@ -74,9 +74,14 @@ function main(){
             var tmpBalance=matches[1].replace(/ |\xA0/, ""); // Удаляем пробелы
             tmpBalance=tmpBalance.replace(",", "."); // Заменяем запятую на точку
             switch (parseInt(tmpBalance)) {
-				case 0:	result.block="Работает"; break
-				case 16: result.block="Отрицательный баланс"; break
-				case 2: result.block="Обещанный платеж"; break
+				case 0:	
+					result.block='Работает';
+					break;
+				case 16:	
+					result.block='Заблокирован';
+					result.license='<font color="red"><b><s>'+result.license+'</b></s></font>'
+					break;
+				
 				default:
 					result.block="Статус блокировки = "+parseInt(tmpBalance);
 			

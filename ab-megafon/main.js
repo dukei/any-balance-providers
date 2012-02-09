@@ -311,35 +311,34 @@ function megafonServiceGuide(filial){
         if(val)
             result.bonus_balance = val;
     }
-	
-    //Бонус 1 - полчаса бесплатно (Москва)
-    var mins_left = 0, mins_total = 0;
-    if(AnyBalance.isAvailable('mins_total','mins_left')){
-        var mins = getOptionTimeIntervals(text, "&#1041;&#1086;&#1085;&#1091;&#1089; 1 \\- &#1087;&#1086;&#1083;&#1095;&#1072;&#1089;&#1072; &#1074; &#1087;&#1086;&#1076;&#1072;&#1088;&#1086;&#1082;");
-        if(mins){
-            if(AnyBalance.isAvailable('mins_total'))
-                mins_total += mins[0];
-            if(AnyBalance.isAvailable('mins_left'))
-                mins_left += mins[1];
-        }
-    }
-	
-    //10 мин на МТС, Билайн, Скай Линк
-    if(AnyBalance.isAvailable('mins_total','mins_left')){
-        var mins = getOptionInt(text, "&#1084;&#1080;&#1085; &#1085;&#1072; &#1052;&#1058;&#1057;, &#1041;&#1080;&#1083;&#1072;&#1081;&#1085;, &#1057;&#1082;&#1072;&#1081;");
-        if(mins){
-            if(AnyBalance.isAvailable('mins_total'))
-                mins_total += mins[0]*60;
-            if(AnyBalance.isAvailable('mins_left'))
-                mins_left += mins[1]*60;
-        }
-    }
     
-    if(mins_total)
-        result.mins_total = mins_total;
-    if(mins_left)
-        result.mins_left = mins_left;
-	
+    //Между Текущие скидки и пакеты услуг: и Текущие услуги:
+    matches = text.match(/<div class="heading">&#1058;&#1077;&#1082;&#1091;&#1097;&#1080;&#1077; &#1089;&#1082;&#1080;&#1076;&#1082;&#1080; &#1080; &#1087;&#1072;&#1082;&#1077;&#1090;&#1099; &#1091;&#1089;&#1083;&#1091;&#1075;:<\/div>([\s\S]*?)<div class="heading">&#1058;&#1077;&#1082;&#1091;&#1097;&#1080;&#1077; &#1091;&#1089;&#1083;&#1091;&#1075;&#1080;:<\/div>/); 
+    if(matches)
+      text = matches[1]; //Таблица скидок
+    
+    //Должны точно ловиться:
+    //Бонус 1 - полчаса бесплатно (Москва)
+    //10 мин на МТС, Билайн, Скай Линк
+    
+    if(AnyBalance.isAvailable('mins_total','mins_left')){
+      var mins_left = 0, mins_total = 0;
+      
+      //Ищем в таблице скидок строки вида: 39:00 мин   39:00, что означает Всего, Остаток
+      text.replace(/<div class="td_def">\s*(\d+)(?::(\d+))?[^<]*&#1084;&#1080;&#1085;[^<]*<[^&#;\d]*<div class="td_def">(\d+)(?::(\d+))?/g, function(str, p1, p2, p3, p4){
+        if(AnyBalance.isAvailable('mins_total'))
+            mins_total += p1*60 + (p2 ? +p2 : 0);
+        if(AnyBalance.isAvailable('mins_left'))
+            mins_left += p3*60 + (p4 ? +p4 : 0);
+        return str;
+      });
+      
+      if(mins_total)
+          result.mins_total = mins_total;
+      if(mins_left)
+          result.mins_left = mins_left;
+    }
+      
     var internet_total = 0,
         internet_cur = 0,
         internet_left = 0;

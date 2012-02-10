@@ -1,13 +1,28 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
+    <ListPreference
+        title="Погода"
+        summary="Погоду на какое время вы хотели бы видеть||{@s}\n"
+        key="tod"
+        defaultValue="-1"
+        entries="текущая|ближайшая|на утро|на день|на вечер|на ночь"
+        entryValues="-1|-2|0|1|2|3" />
     <EditTextPreference
         key="city"
         title="Индекс города"
-        summary="Индекс города для отображения||{@s}\n"
+        summary="Индекс города для отображения погоды||{@s}\n"
         inputType="number"
         dialogTitle="Индекс города"
         dialogMessage="Введите индекс города. Его можно получить из адресной строки браузера, выбрав на сайте http://www.gismeteo.ru нужный вам город. Например, для Москвы это 4368."
         positiveButtonText="ОК"
-        negativeButtonText="Отмена">
-    </EditTextPreference>
+        negativeButtonText="Отмена" />
+<!--    <EditTextPreference
+        key="index"
+        title="Индекс города для прогноза"
+        summary="Индекс города для отображения прогноза погоды||{@s}\n"
+        inputType="number"
+        dialogTitle="Индекс города"
+        dialogMessage="Введите индекс города. Его можно получить на странице http://informer.gismeteo.ru/getcode/xml.php, выбрав нужный вам город. Например, для Москвы это 27612_1."
+        positiveButtonText="ОК"
+        negativeButtonText="Отмена" /> -->
 </PreferenceScreen>

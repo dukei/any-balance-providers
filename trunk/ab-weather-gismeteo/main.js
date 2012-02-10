@@ -1,16 +1,127 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 
-Получает "Погоду за окном" для выбранного города.
+Получает текущую погоду или прогноз погоды для выбранного города.
 
 Сайт компании: http://www.gismeteo.ru
 */
 
-function main () {
-    var prefs = AnyBalance.getPreferences ();
-    var baseurl = 'http://www.gismeteo.ru/city/daily/';
 
-    checkEmpty (prefs.city, 'Введите индекс города');
+function hhmm2sec (value) {
+    if (!value)
+        return undefined;
+
+    var res = /(\d{2}):(\d{2})/.exec (value);
+    return (parseInt (10, res[1]) * 60 + parseInt (10, res[2]));
+}
+
+
+function getCurrentWeather (html, result) {
+    // Атмосферные явления
+    getParam (html, result, 'atmosphericConditions', /class="cloudness">[\s\S]*?>([^\s<]+[^<]*)/i);
+
+    // Температура
+    getParam (html, result, 'temperature', /class="temp">([-+]?\d+[,.]?\d*)/i, [], parseFloat);
+
+    // Атмосферное давление
+    getParam (html, result, 'pressure', /title="Давление">(\d+)/i, [], parseInt);
+
+    // Ветер
+    getParam (html, result, 'wind', /class="wicon wind">.*?<dd>((\d+).*?<dt>([^<]*))/i, [/(\d+).*?<dt>([^<]*)/, '$2 $1м/с']);
+
+    // Влажность
+    getParam (html, result, 'humidity', /title="Влажность">(\d+)/i, [], parseInt);
+
+    // Время обновления
+    getParam (html, result, 'time', /class="icon date">([^<]*)/i,
+        [/(\d{2})\s+(\S+)\s+(\d{4})\s+(.*)/, '$3/$2/$1 $4',
+         'января',   '01',
+         'февраля',  '02',
+         'марта',    '03',
+         'апреля',   '04',
+         'мая',      '05',
+         'июня',     '06',
+         'июля',     '07',
+         'августа',  '08',
+         'сентября', '09',
+         'октября',  '10',
+         'ноября',   '11',
+         'декабря',  '12'],
+        Date.parse);
+
+    return result;
+}
+
+
+function getWeatherForecast (html, result, tod) {
+/*    var date = new Date ();
+    var hour = date.getHours ();
+
+    var shift = 4;
+    hour -= shift;
+    hour += 6;
+    hour -= hour % 6;
+    hour += shift;
+    if (hour >= 24) {
+        hour -= 24;
+    }
+
+    if (hour < 10)
+        hour = '0' + hour;
+*/
+
+    html = html.match (/<tr class="wrow forecast"[\s\S]*?<\/tr>/g);
+    if (!html) {
+        throw new AnyBalance.Error ('Не найден прогноз погоды. Пожалуйста, обратитесь к автору скрипта.');
+    }
+
+    if (tod == '-2') {
+        html = html[0];
+    } else {
+        var hours = {'0': '04', '1': '10', '2': '16', '3': '22'};
+        var found = false;
+        for (var i = 0; i < html.length; i++) {
+            if (html[i].indexOf ('-' + hours[tod] + '"') == 45) {
+                found = true;
+                html = html[i];
+                break;
+            }
+        }
+        if (found != true) {
+            throw new AnyBalance.Error ('Не найден прогноз погоды. Пожалуйста, обратитесь к автору скрипта.');
+        }
+    }
+
+    var $table = $(html);
+
+    // Атмосферные явления
+    getParamFind (result, 'atmosphericConditions', $table, 'td:nth-child(3)');
+
+    // Температура
+    getParamFind (result, 'temperature', $table, 'td:nth-child(4)', /([-+]?\d+)/, [], parseInt);
+
+    // Атмосферное давление
+    getParamFind (result, 'pressure', $table, 'td:nth-child(5)', null, null, parseInt);
+
+    // Ветер
+    getParamFind (result, 'wind', $table, 'td:nth-child(6)', null, [/([^\d]+)(\d+)/, '$1 $2м/с']);
+
+    // Влажность
+    getParamFind (result, 'humidity', $table, 'td:nth-child(7)', null, null, parseInt);
+
+    // Комфорт
+    getParamFind (result, 'heat', $table, 'td:nth-child(8)', /([-+]?\d+)/, [], parseInt);
+
+    // Время
+    getParam (html, result, 'time', /id="wrow-(\d{4}-\d{2}-\d{2}-\d{2})/i, [/(\d{4})-(\d{2})-(\d{2})-(\d{2})/, '$1/$2/$3 $4:00:00'], Date.parse);
+
+
+    return result;
+}
+
+
+function getWeatherFromHTML (prefs) {
+    var baseurl = 'http://www.gismeteo.ru/city/daily/';
 
     var html = AnyBalance.requestGet (baseurl + prefs.city);
 
@@ -22,36 +133,224 @@ function main () {
 
     // Проверка на корректный вход
     regexp = />Погода за окном<([\s\S]*)>Прогноз</i;
-    html = regexp.exec (html);
-    if (html)
+    if (regexp.exec (html))
     	AnyBalance.trace ('It looks like we are in selfcare...');
     else {
         AnyBalance.trace ('Have not found logOff... Unknown error. Please contact author.');
         throw new AnyBalance.Error ('Неизвестная ошибка. Пожалуйста, свяжитесь с автором скрипта.');
     }
 
-    var result = {success: true};
+
+    var result = {success: false};
 
     // Город
     getParam (html, result, '__tariff', /<h3[^>]*>([^<]*)/i);
 
-    // Атмосферные явления
-    getParam (html, result, 'atmosphericConditions', /<dd>([^<]*)<\/dd>/i);
+    if (prefs.tod == '-1')
+      result = getCurrentWeather (html, result);
+    else
+      result = getWeatherForecast (html, result, prefs.tod);
 
-    // Температура
-    getParam (html, result, 'temperature', /class="temp">([-+]?\d+[,.]?\d*)/i, [], parseFloat);
 
-    // Атмосферное давление
-    getParam (html, result, 'pressure', /title="Давление">(\d+)/i, [], parseInt);
+    // Температура воды
+    getParam (html, result, 'waterTemperature', /Температура воды:.*?(\d+)&deg;C/i, [], parseFloat);
 
-    // Ветер
-    getParam (html, result, 'wind', /class="wicon wind">.*?<dt>(([^<]*)<\/dt><dd>(\d*))/i, [/([^<]*)<\/dt><dd>(\d*)/, '$1 $2м/с']);
+    // Восход Солнца
+    getParam (html, result, 'rising', /Восход[^\d]*(\d{2}:\d{2})/i);
+    result.rising = hhmm2sec (result.rising);
 
-    // Влажность
-    getParam (html, result, 'humidity', /title="Влажность">(\d+)/i, [], parseInt);
+    // Закат Солнца
+    getParam (html, result, 'setting', /Заход[^\d]*(\d{2}:\d{2})/i);
+    result.setting = hhmm2sec (result.setting);
 
-    // Время обновления
-    getParam (html, result, 'time', /class="icon date">([^<]*)/i, [/(\d{2})\.(\d{2})\.(.*)/, '$2/$1/$3'], Date.parse);
+    // Долгота дня
+    getParam (html, result, 'dayLength', /Долгота[^\d]*(\d{2}:\d{2})/i);
+    result.dayLength = hhmm2sec (result.dayLength);
+
+    // Фаза Луны
+    getParam (html, result, 'moonPhase', /Фаза[^\d]*((\d+%)[\s\S]*?<strong>([^<]+))/i, [/(\d+%)[\s\S]*?<strong>([^<]+)/, '$2 $1']);
+
+
+    result.success = true;
+    return result;
+}
+
+
+function win2utf (str) {
+    if (str == null)
+        return null;
+
+    var result = "";
+    var o_code = "";
+    var i_code = "";
+
+    for (var i = 0; i < str.length; i++) {
+        i_code = str.charCodeAt (i);
+
+        if (i_code == 184) {
+            o_code = 1105;
+        } else if (i_code == 168) {
+            o_code = 1025;
+        } else if (i_code > 191 && i_code < 256) {
+            o_code = i_code + 848;
+        } else {
+            o_code = i_code;
+        }
+
+        result += String.fromCharCode (o_code);
+     }                                                
+
+     return result;
+}
+
+
+function getWeatherFromXML (prefs) {
+    var baseurl = 'http://informer.gismeteo.ru/xml/';
+
+    var info = AnyBalance.requestGet (baseurl + prefs.city + '.xml');
+
+    if (info.length == 0) {
+        throw new AnyBalance.Error ("Ошибка получения информации о погоде.\nВозможно, Вы ввели неверный индекс города для прогноза");
+    }
+
+    var xmlDoc = $.parseXML (info),
+        $xml = $(xmlDoc);
+
+    var $town = $xml.find ('MMWEATHER>REPORT>TOWN');
+    if ($town.size () == 0)
+        throw new AnyBalance.Error ("Ошибка: не найдена информация о городе");
+
+    var result = {success: false};
+
+    // Город
+    result.__tariff = win2utf (unescape ($town.attr ('sname')));
+
+    if (prefs.tod < 0) {
+        var $forecast = $town.find ('FORECAST:first-child');
+    } else
+        var $forecast = $town.find ('FORECAST[tod="' + prefs.tod + '"]');
+    if (!$forecast)
+        throw new AnyBalance.Error ("Ошибка: не найдена информация о погоде");
+
+    if (AnyBalance.isAvailable ('atmosphericConditions')) {
+        var cloudiness = $forecast.find ('PHENOMENA').attr ('cloudiness');
+        var cloudiness_str = {'0': 'ясно',
+                              '1': 'малооблачно',
+                              '2': 'облачно',
+                              '3': 'пасмурно'};
+        var precipitation = $forecast.find ('PHENOMENA').attr ('precipitation');
+        var precipitation_str = {'4' : 'дождь',
+                                 '5' : 'ливень',
+                                 '6' : 'снег',
+                                 '7' : 'снег',
+                                 '8' : 'гроза',
+                                 '9' : 'нет данных',
+                                 '10': 'без осадков'};
+        if (cloudiness_str[cloudiness] || precipitation_str[precipitation]) {
+            result.atmosphericConditions = '';
+            if (cloudiness_str[cloudiness])
+                result.atmosphericConditions += cloudiness_str[cloudiness];
+
+            if (precipitation_str[precipitation]) {
+                if (result.atmosphericConditions != '')
+                    result.atmosphericConditions += ', ';
+                result.atmosphericConditions += precipitation_str[precipitation];
+            }
+        }
+    }
+
+    if (AnyBalance.isAvailable ('temperature')) {
+        var min = parseInt ($forecast.find ('TEMPERATURE').attr ('min'));
+        var max = parseInt ($forecast.find ('TEMPERATURE').attr ('max'));
+        result.temperature = (min + max) / 2;
+    }
+
+    if (AnyBalance.isAvailable ('pressure')) {
+        var min = parseInt ($forecast.find ('PRESSURE').attr ('min'));
+        var max = parseInt ($forecast.find ('PRESSURE').attr ('max'));
+        result.pressure = (min + max) / 2;
+    }
+
+    if (AnyBalance.isAvailable ('wind')) {
+        var min = parseInt ($forecast.find ('WIND').attr ('min'));
+        var max = parseInt ($forecast.find ('WIND').attr ('max'));
+        var direction = $forecast.find ('WIND').attr ('direction');
+        var direction_str = {'0': 'С',
+                             '1': 'СВ',
+                             '2': 'В',
+                             '3': 'ЮВ',
+                             '4': 'Ю',
+                             '5': 'ЮЗ',
+                             '6': 'З',
+                             '7': 'СЗ'};
+        result.wind = direction_str[direction] + ' ' + (min + max) / 2 + 'м/с';
+    }
+
+    if (AnyBalance.isAvailable ('humidity')) {
+        var min = parseInt ($forecast.find ('RELWET').attr ('min'));
+        var max = parseInt ($forecast.find ('RELWET').attr ('max'));
+        result.humidity = (min + max) / 2;
+    }
+
+    if (AnyBalance.isAvailable ('heat')) {
+        var min = parseInt ($forecast.find ('HEAT').attr ('min'));
+        var max = parseInt ($forecast.find ('HEAT').attr ('max'));
+        result.heat = (min + max) / 2;
+    }
+
+    if (AnyBalance.isAvailable ('time')) {
+        var day = parseInt ($forecast.attr ('day'), 10);
+        var month = parseInt ($forecast.attr ('month'), 10);
+        var year = parseInt ($forecast.attr ('year'), 10);
+        var hour = parseInt ($forecast.attr ('hour'), 10);
+        result.time = (new Date (year, month - 1, day, hour)).valueOf ();
+    }
+
+    result.success = true;
+    return result;
+}
+
+
+function main () {
+    var prefs = AnyBalance.getPreferences ();
+
+    checkEmpty (prefs.city, 'Введите индекс города');
+
+    var result = {success: false};
+
+    switch (prefs.tod) {
+        case '-2':
+        case '0':
+        case '1':
+        case '2':
+        case '3':
+//            var onlyCurrentWeather = {'waterTemperature',
+//                                      'rising',
+//                                      'setting',
+//                                      'dayLength',
+//                                      'moonPhase'};
+//            for (var i in onlyCurrentCounters) {
+//                if (AnyBalance.isAvailable (onlyCurrentWeather[i])) {
+//                    result.[onlyCurrentWeather[i]] = 
+//                }
+//            }
+
+            if (prefs.city.indexOf ('_1') > 0) {
+                result = getWeatherFromXML (prefs);
+                break;
+            }
+
+        case '-1':
+            if (prefs.city.indexOf ('_1') > 0) {
+                throw new AnyBalance.Error ('По текущему индексу города можно получить только прогноз погоды. Для получения текущей погоды введите индекс со страницы <a href="http://www.gismeteo.ru">Gismeteo.ru</a>.');
+            }
+            result = getWeatherFromHTML (prefs);
+            break;
+
+        default:
+            throw new AnyBalance.Error ("Ошибка получения выбранного прогноза. Пожалуйста, свяжитесь с автором скрипта.");
+            break;
+    }
 
     AnyBalance.setResult (result);
 }

@@ -25,7 +25,7 @@ limitations under the License.
     author="Project Hosting Team"
     author_email="gadgets.feedback@gmail.com"
     author_location="San Francisco, CA"
-    scrolling="false">
+    scrolling="no">
     <Require feature="setprefs" />
     <Require feature="dynamic-height" />
     <Require feature="settitle" />

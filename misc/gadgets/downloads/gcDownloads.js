@@ -71,19 +71,26 @@ function handleFeed(response, prefs) {
   content += "</center>";
   $("#content_div").html(content);
   
+  //Let's remove scrollers from iframe
+  var d = document, w = d.defaultView || d.parentWindow;
+  if(w){
+    var id = w.id, name = w.name;
+    var wparent = w.parent;
+    var wo = null;
+    if(id){
+      var iframe = wparent.document.getElementById(id);
+      if(iframe){
+        iframe.scrolling="no";
+        iframe.setAttribute("scrolling", "no");
+      }
+    }
+  }
+
   adjustIFrameHeight();
   
-  window.setTimeout(localAdjust, 1000);
-  window.setTimeout(localAdjust, 3000);
-  window.setTimeout(localAdjust, 5000);
-}
-
-function localAdjust(){
-  //First make it big to remove scrollers, then make it fit
-  try{
-    gadgets.window.adjustHeight(800);
-    gadgets.window.adjustHeight();
-  }catch(e){}
+  window.setTimeout(adjustIFrameHeight, 1000);
+  window.setTimeout(adjustIFrameHeight, 3000);
+  window.setTimeout(adjustIFrameHeight, 5000);
 }
 
 function localInit() {

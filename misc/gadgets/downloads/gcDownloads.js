@@ -71,8 +71,19 @@ function handleFeed(response, prefs) {
   content += "</center>";
   $("#content_div").html(content);
   gadgets.util.registerOnLoadHandler(function() {
-    adjustIFrameHeight();
+    localAdjust();
   });
+  
+  localAdjust();
+  window.setTimeout(localAdjust, 3000);
+}
+
+function localAdjust(){
+  //First make it big to remove scrollers, then make it fit
+  try{
+    gadgets.window.adjustHeight(800);
+    gadgets.window.adjustHeight();
+  }catch(e){}
 }
 
 function localInit() {

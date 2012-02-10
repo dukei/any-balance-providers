@@ -71,7 +71,7 @@ function handleFeed(response, prefs) {
   content += "</center>";
   $("#content_div").html(content);
   
-  adjustIFrameHeight();
+  localAdjust();
   
   window.setTimeout(localAdjust, 1000);
   window.setTimeout(localAdjust, 3000);

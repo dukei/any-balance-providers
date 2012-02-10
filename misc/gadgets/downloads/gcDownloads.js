@@ -71,8 +71,8 @@ function handleFeed(response, prefs) {
   content += "</center>";
   $("#content_div").html(content);
   gadgets.util.registerOnLoadHandler(function() {
-    gadgets.window.adjustHeight();
-  });  adjustIFrameHeight();
+    adjustIFrameHeight();
+  });
 }
 
 function localInit() {

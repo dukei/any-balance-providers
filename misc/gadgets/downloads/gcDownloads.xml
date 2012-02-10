@@ -24,7 +24,8 @@ limitations under the License.
     thumbnail="http://google-code-project-hosting-gadgets.googlecode.com/svn/trunk/downloads/downloads_thumbnail.png"
     author="Project Hosting Team"
     author_email="gadgets.feedback@gmail.com"
-    author_location="San Francisco, CA">
+    author_location="San Francisco, CA"
+    scrolling="false">
     <Require feature="setprefs" />
     <Require feature="dynamic-height" />
     <Require feature="settitle" />

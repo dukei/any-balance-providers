@@ -19,7 +19,7 @@
 
 function getParamFind (result, param, obj, search_str, regexp, replaces, parser)
 {
-    if (!AnyBalance.isAvailable (param))
+    if (param && !AnyBalance.isAvailable (param))
         return;
 
     var value = obj.find (search_str).text();
@@ -42,7 +42,10 @@ function getParamFind (result, param, obj, search_str, regexp, replaces, parser)
     if (parser)
         value = parser (value);
 
-    result[param] = value;
+    if (result && param)
+        result[param] = value;
+
+    return value;
 }
 
 

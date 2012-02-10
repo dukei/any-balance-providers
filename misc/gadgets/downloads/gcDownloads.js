@@ -76,13 +76,17 @@ function handleFeed(response, prefs) {
   if(w){
     var id = w.id, name = w.name;
     var wparent = w.parent;
-    var wo = null;
+    var iframe = null;
     if(id){
-      var iframe = wparent.document.getElementById(id);
-      if(iframe){
-        iframe.scrolling="no";
-        iframe.setAttribute("scrolling", "no");
-      }
+      iframe = wparent.document.getElementById(id);
+    }else if(name){
+      var wos = wparent.document.getElementsByName(name);
+      if(wos.length >= 1)
+        iframe = wos[0];
+    }
+    if(iframe){
+      iframe.scrolling="no";
+      iframe.setAttribute("scrolling", "no");
     }
   }
 

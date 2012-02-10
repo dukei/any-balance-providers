@@ -70,12 +70,12 @@ function handleFeed(response, prefs) {
   }
   content += "</center>";
   $("#content_div").html(content);
-  gadgets.util.registerOnLoadHandler(function() {
-    localAdjust();
-  });
   
-  localAdjust();
-  window.setTimeout(localAdjust, 3000);
+  adjustIFrameHeight();
+  
+  window.setTimeout(adjustIFrameHeight, 1000);
+  window.setTimeout(adjustIFrameHeight, 3000);
+  window.setTimeout(adjustIFrameHeight, 5000);
 }
 
 function localAdjust(){

@@ -71,30 +71,17 @@ function handleFeed(response, prefs) {
   content += "</center>";
   $("#content_div").html(content);
   
-  //Let's remove scrollers from iframe
-  var d = document, w = d.defaultView || d.parentWindow;
-  if(w){
-    var id = w.id, name = w.name;
-    var wparent = w.parent;
-    var iframe = null;
-    if(id){
-      iframe = wparent.document.getElementById(id);
-    }else if(name){
-      var wos = wparent.document.getElementsByName(name);
-      if(wos.length >= 1)
-        iframe = wos[0];
-    }
-    if(iframe){
-      iframe.scrolling="no";
-      iframe.setAttribute("scrolling", "no");
-    }
-  }
-
   adjustIFrameHeight();
   
-  window.setTimeout(adjustIFrameHeight, 1000);
-  window.setTimeout(adjustIFrameHeight, 3000);
-  window.setTimeout(adjustIFrameHeight, 5000);
+  window.setTimeout(localAdjust, 1000);
+  window.setTimeout(localAdjust, 3000);
+  window.setTimeout(localAdjust, 5000);
+}
+
+function localAdjust(){
+  try{
+    gadgets.window.adjustHeight($("#content_div").height());
+  }catch(e){}
 }
 
 function localInit() {

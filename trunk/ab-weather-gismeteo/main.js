@@ -12,7 +12,7 @@ function hhmm2sec (value) {
         return undefined;
 
     var res = /(\d{2}):(\d{2})/.exec (value);
-    return (parseInt (10, res[1]) * 60 + parseInt (10, res[2]));
+    return (parseInt (res[1], 10) * 60 + parseInt (res[2], 10));
 }
 
 

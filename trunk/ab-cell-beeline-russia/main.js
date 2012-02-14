@@ -83,34 +83,39 @@ function parsePersonal(baseurl, html){
         tariff = $obj.text ();
         tariff = tariff.replace (/(^\s+|\s+$)/g, '');
         if (tariff != '')
-            result.__tariff = tariff;
+            result.__tariff = html_entity_decode(tariff);
     }
+    
+    parseBalanceList(html, result);
 
+    AnyBalance.setResult(result);
+}
 
+function parseBalanceList(html, result){
     // Баланс
-    getParam (html, result, 'balance', /Основной баланс[\s\S]*?'tab(?:text|red)'>([\-\d,\s]+)</, alltransformations, parseFloat);
+    getParam (html, result, 'balance', /Основной баланс[\s\S]*?<td[\s\S]*?<td[^>]*>\s*([\-\d,\s]+)</, alltransformations, parseFloat);
     
     // Бонус-баланс
-    getParam (html, result, 'bonus_balance', /Бонус-баланс[\s\S]*?'tabtext'>([\d,\s]+)</, alltransformations, parseFloat);
+    getParam (html, result, 'bonus_balance', /Бонус-баланс[\s\S]*?<td[\s\S]*?<td[^>]*>\s*([\d,\s]+)</, alltransformations, parseFloat);
     
     if(AnyBalance.isAvailable('sms_left')){
       result.sms_left = 0;
       
       // SMS-баланс
-      var sms = getParam(html, null, null, /SMS-баланс[\s\S]*?'tabtext'>([\d,]+)</, alltransformations, parseInt);
+      var sms = getParam(html, null, null, /SMS-баланс[\s\S]*?<td[\s\S]*?<td[^>]*>\s*([\d,]+)</, alltransformations, parseInt);
       result.sms_left += sms || 0;
       
       // SMS в подарок
-      sms = getParam(html, null, null, /SMS в подарок[\s\S]*?'tabtext'>([\d,]+)</, alltransformations, parseInt);
+      sms = getParam(html, null, null, /SMS в подарок[\s\S]*?<td[\s\S]*?<td[^>]*>\s*([\d,]+)</, alltransformations, parseInt);
       result.sms_left += sms || 0;
       
       // Бесплатные SMS
-      sms = getParam(html, null, null, /Бесплатные SMS[\s\S]*?'tabtext'>([\d,]+)</, alltransformations, parseInt);
+      sms = getParam(html, null, null, /Бесплатные SMS[\s\S]*?<td[\s\S]*?<td[^>]*>\s*([\d,]+)</, alltransformations, parseInt);
       result.sms_left += sms || 0;
     }
     
     // MMS в подарок
-    getParam (html, result, 'mms_left', /MMS в подарок[\s\S]*?'tabtext'>([\d,]+)</, alltransformations, parseInt);
+    getParam (html, result, 'mms_left', /MMS в подарок[\s\S]*?<td[\s\S]*?<td[^>]*>\s*([\d,]+)</, alltransformations, parseInt);
 
     if(AnyBalance.isAvailable('min_left')){
       result.min_left = 0;
@@ -127,12 +132,10 @@ function parsePersonal(baseurl, html){
       sms = getParam(html, null, null, /БОНУС_СЕКУНДЫ[\s\S]*?'tabtext'>([\d,]+)</, alltransformations, parseInt);
       result.min_left += sms || 0;
     }
-
-    AnyBalance.setResult(result);
 }
 
 function parseBalance(val){
-    AnyBalance.trace("Parsing balance: '" + val + "'");
+    AnyBalance.trace("Parsing money value: '" + val + "'");
     return parseFloat(val);
 }
 
@@ -142,44 +145,50 @@ function parseCorporate(baseurl, html){
     AnyBalance.trace("It looks like we are in CORPORATE selfcare...");
     
     // ФИО
-    getParam (html, result, 'userName', /Название Договора[\s\S]*?<td[^>]*>\s*(.*?)\s*</);
+    getParam (html, result, 'userName', /Название Договора[\s\S]*?<td[^>]*>\s*(.*?)\s*</, null, html_entity_decode);
 
     // Номер договора
-    getParam (html, result, 'license', /Номер Договора[\s\S]*?<td[^>]*>\s*(.*?)\s*</);
+    getParam (html, result, 'license', /Номер Договора[\s\S]*?<td[^>]*>\s*(.*?)\s*</, null, html_entity_decode);
     
     var phone = AnyBalance.getPreferences().login;
     
-    if(AnyBalance.isAvailable('balance')){
+    //Ссылка на финансовую информацию, похоже, только в кредитных корпоративных тарифных планах
+    if(/'_navigation_primaryMenu=billing'/.test(html)){
+      AnyBalance.trace("Found financial info link, trying to fetch balance and expences");
+
+      if(AnyBalance.isAvailable('balance')){
         AnyBalance.trace("Fetching balance info...");
 
         html = AnyBalance.requestPost(baseurl + "navigateMenu.do", {
-            _navigation_secondaryMenu:'billing.payment',
-            _resetBreadCrumbs:'true'
+          _navigation_secondaryMenu:'billing.payment',
+          _resetBreadCrumbs:'true'
         });
 
         // Баланс
         getParam (html, result, 'balance', /Текущий баланс[\s\S]*?<td[^>]*>\s*([\s\S]*?)\s*</i, alltransformations, parseBalance);
-    }
-    
-    if(AnyBalance.isAvailable('expences')){
+      }
+
+      if(AnyBalance.isAvailable('expences')){
         AnyBalance.trace("Fetching expences info...");
         html = AnyBalance.requestPost(baseurl + "loadUnbilledAction.do", {
-		"_navigation_secondaryMenu":'billing.unbilledCalls',
-		"_resetBreadCrumbs":'true'
+          "_navigation_secondaryMenu":'billing.unbilledCalls',
+          "_resetBreadCrumbs":'true'
         });
 
-    	var stateParam = getParam(html, null, null, /<form name="ecareSubmitForm"[\s\S]*?name="_stateParam" value="([^"]*)"/i);
+        var stateParam = getParam(html, null, null, /<form name="ecareSubmitForm"[\s\S]*?name="_stateParam" value="([^"]*)"/i);
 
         html = AnyBalance.requestPost(baseurl + "VIPUnbilledSubscribersSwitchingAction.do", {
-		_stateParam: stateParam,
-		_forwardName:'unbilledCharge',
-		_resetBreadCrumbs:'null',
-		"ctrlvcol%3Dradio%3Bctrl%3DsubscriberListExt%3Btype%3Drd":phone
+          _stateParam: stateParam,
+          _forwardName:'unbilledCharge',
+          _resetBreadCrumbs:'null',
+          "ctrlvcol%3Dradio%3Bctrl%3DsubscriberListExt%3Btype%3Drd":phone
         });
 
         // Сколько использовано
         getParam (html, result, 'expences', /Общая сумма начислений[\s\S]*?<td>\s*([\s\S]*?)\s*</i, alltransformations, parseBalance);
+      }
     }
+
     
     AnyBalance.trace("Fetching number info...");
     
@@ -198,7 +207,7 @@ function parseCorporate(baseurl, html){
     var rStatus = new RegExp("<td>"+phone+"\\s*</td><td>.*?</td><td>(?:.*?)</td><td>.*?</td><td>.*?</td><td>(.*?)</td>");
 
     // Тарифный план
-    result.__tariff = getParam (html, null, null, rTariff, [/&nbsp;/g, ' ' , /^\s+|\s+$/g, '']);
+    result.__tariff = getParam (html, null, null, rTariff, [/&nbsp;/g, ' ' , /^\s+|\s+$/g, ''], html_entity_decode);
 
     // Состояние номера
     getParam (html, result, 'BlockStatus', rStatus, [/&nbsp;/g, ' ' , /^\s+|\s+$/g, '']);
@@ -219,10 +228,21 @@ function parseCorporate(baseurl, html){
     });
 
     // Тарифный план
-    result.__tariff = getParam (html, null, null, /Название тарифного плана[\s\S]*?<td[^>]*>\s*(?:<a[^>]*>.*?<\/a>)[\s\-]*([\s\S]*?)\s*</, [/&nbsp;/g, ' ' , /^\s+|\s+$/g, '']);
+    result.__tariff = getParam (html, null, null, /Название тарифного плана[\s\S]*?<td[^>]*>\s*(?:<a[^>]*>.*?<\/a>)[\s\-]*([\s\S]*?)\s*</, [/&nbsp;/g, ' ' , /^\s+|\s+$/g, ''], html_entity_decode);
 
     // Состояние номера
     getParam (html, result, 'BlockStatus', /Статус номера[\s\S]*?<td[^>]*>([\s\S]*?)</, [/&nbsp;/g, ' ' , /^\s+|\s+$/g, '']);
+    
+    if(/Список балансов/.test(html))
+      parseBalanceList(html, result); //в корпоративных предоплаченных тарифных планах похоже на персональные
 
     AnyBalance.setResult(result);
+}
+
+function html_entity_decode(str)
+{
+    //jd-tech.net
+    var tarea=document.createElement('textarea');
+    tarea.innerHTML = str;
+    return tarea.value;
 }

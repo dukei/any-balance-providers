@@ -1,3 +1,11 @@
+/**
+Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
+
+Провайдер Марьино.NET 
+Сайт оператора: http://maryno.net/
+Личный кабинет: https://my.maryno.net/
+*/
+
 function main(){
 	AnyBalance.trace('Connecting...');
 	

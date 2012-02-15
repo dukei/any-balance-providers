@@ -126,13 +126,16 @@ function main(){
 			AnyBalance.trace('Статус ->' + result.status);
 		}
 	}
-	if(AnyBalance.isAvailable('tariff')){
-        regexp=/<1>Тарифный план<2>(.*?)<3>/;
-		if (res=regexp.exec(tmp)){
+  
+  regexp=/<1>Тарифный план<2>(.*?)<3>/;
+  if (res=regexp.exec(tmp)){
+    result.__tariff=res[1];
+    if(AnyBalance.isAvailable('tariff')){
 			result.tariff=res[1];
-			AnyBalance.trace('Тарифный план ->' + result.tariff);
-		}
-	}
+    }
+		AnyBalance.trace('Тарифный план ->' + result.__tariff);
+  }
+        
 	if(AnyBalance.isAvailable('included')){
         regexp=/<1>Остаток оплаченного включенного трафика, Мб<2>(.*?)<3>/;
 		if (res=regexp.exec(tmp)){

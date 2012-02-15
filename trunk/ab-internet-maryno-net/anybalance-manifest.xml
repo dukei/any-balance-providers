@@ -1,17 +1,26 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+ <?xml version="1.0" encoding="utf-8"?>
 <provider>
   <id major_version="1.0" version="7">ab-internet-maryno-net</id>
   <name>Интернет провайдер Марино.NET(Москва)</name>
   <description>
 	Получает текущий баланс, бонусный баланс, номера лицевого счета и договора, статус у провайдера "Maryno.net"
   </description>
-  <author>KiLLer13</author>
+  <author>KiLLer13&lt;killer_kondor@pisem.net&gt;</author>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
     <js>main.js</js>
   </files>
   <counters>
+    <counter id="balance" name="Баланс"  suffix=" р"/>
+    <counter id="bonus_balance" name="Бонусный баланс"  suffix=" р"/>
+    <counter id="credit" name="Кредитование"  suffix=" р"/>
+    <counter id="included" name="Остаток оплаченного включенного трафика" suffix=" Мб"/>
+    <counter id="unpaid" name="Остаток неоплаченного включенного трафика" suffix=" Мб"/>
+    <counter id="transfer" name="Перенесенный трафик" suffix=" Мб"/>
+    <counter id="bonus" name="Бонусный трафик" suffix=" Мб"/>
+    <counter id="status" name="Статус счета" type="text"/>
+    <counter id="tariff" name="Тарифный план" type="text"/>
     <counter id="number" name="Номер договорной записи" type="text"/>
     <counter id="dogovor" name="Договор" type="text"/>
     <counter id="FIO" name="Фамилия И.О." type="text"/>
@@ -20,16 +29,7 @@
     <counter id="Phone" name="Телефон мобильный" type="text"/>
     <counter id="email" name="E-Mail" type="text"/>
     <counter id="start_day" name="Дата открытия" type="text"/>
-    <counter id="balance" name="Актуальный баланс"  suffix=" р"/>
-    <counter id="bonus_balance" name="Бонусный баланс"  suffix=" р"/>
     <counter id="unconfirmed" name="Неподтвержденные платежи"  suffix=" р"/>
-    <counter id="credit" name="Кредитование"  suffix=" р"/>
-    <counter id="status" name="Статус счета" type="text"/>
-    <counter id="tariff" name="Тарифный план" type="text"/>
-    <counter id="included" name="Остаток оплаченного включенного трафика" suffix=" Мб"/>
-    <counter id="unpaid" name="Остаток неоплаченного включенного трафика" suffix=" Мб"/>
-    <counter id="transfer" name="Перенесенный трафик" suffix=" Мб"/>
-    <counter id="bonus" name="Бонусный трафик" suffix=" Мб"/>
   </counters>
   <keywords>
         провайдер интернет марьино

@@ -26,7 +26,7 @@ var predefinedValues = [
 \u0020\u0020\u0020\u0020<small><font color=\"#CCCCCC\">(@2*m) / (@2*d)</font></small>\n\
 \u0020\u0020</td>\n\
 \u0020\u0020<td ifavailable=\"3\">\n\
-\u0020\u0020\u0020\u0020(@2)<br/>\n\
+\u0020\u0020\u0020\u0020(@3)<br/>\n\
 \u0020\u0020\u0020\u0020<small><font color=\"#CCCCCC\">(@3*m) / (@3*d)</font></small>\n\
 \u0020\u0020</td>\n\
 \u0020\u0020<td ifavailable=\"4\">\n\
@@ -58,7 +58,7 @@ var predefinedValues = [
 \u0020\u0020\u0020\u0020<small><font color=\"#CCCCCC\">(@2*m) / (@2*d)</font></small>\n\
 \u0020\u0020</td>\n\
 \u0020\u0020<td ifavailable=\"3\">\n\
-\u0020\u0020\u0020\u0020(@2)<br/>\n\
+\u0020\u0020\u0020\u0020(@3)<br/>\n\
 \u0020\u0020\u0020\u0020<small><font color=\"#CCCCCC\">(@3*m) / (@3*d)</font></small>\n\
 \u0020\u0020</td>\n\
 </tr></table>\n\
@@ -93,7 +93,7 @@ var predefinedValues = [
 \u0020\u0020\u0020\u0020<small><font color=\"#CCCCCC\">(@2*m) / (@2*d)</font></small>\n\
 \u0020\u0020</td>\n\
 \u0020\u0020<td ifavailable=\"3\">\n\
-\u0020\u0020\u0020\u0020(@2)<br/>\n\
+\u0020\u0020\u0020\u0020(@3)<br/>\n\
 \u0020\u0020\u0020\u0020<small><font color=\"#CCCCCC\">(@3*m) / (@3*d)</font></small>\n\
 \u0020\u0020</td>\n\
 </tr></table>\n\

@@ -11,5 +11,3 @@
 [http://any-balance-providers.googlecode.com/svn/trunk/ab-megafon/icon.png]
 [http://any-balance-providers.googlecode.com/svn/trunk/ab-exchange-cbr/icon.png]
 [http://any-balance-providers.googlecode.com/svn/trunk/ab-tracking-russian-post/icon.png]
-
-<wiki:gadget url="http://dgame.ru/download/gadgetHtmlWidget.xml?2" height="800" width="600" border="0" /> 

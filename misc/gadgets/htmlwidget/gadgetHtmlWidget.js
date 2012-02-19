@@ -156,7 +156,9 @@ $(function(){
     $('#selectPredefined').val("custom");
     
     $('#btnShow').click(function(){
-       $('#qrcode').html('').qrcode({width: 600,height: 600, text: editAreaLoader.getValue("textarea_1")}).dialog({modal:true, width: 'auto', height: 'auto', title: 'Scan this QR code with AnyBalance'});
+       var thelink = 'http://qrcoder.ru/code/?'+encodeURIComponent(editAreaLoader.getValue("textarea_1")) + '&5&0';
+       $('#qrcode').html('<img src="' + thelink + '" width="605" height="605"/>')
+		.dialog({modal:true, width: 'auto', height: 'auto', title: 'Scan this QR code with AnyBalance or <a href="' + thelink +'">share</a> it.'});
        localAdjust();
     });
     

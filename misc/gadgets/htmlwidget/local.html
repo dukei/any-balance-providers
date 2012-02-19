@@ -1,0 +1,51 @@
+<html>
+<head>
+<title>EditArea Test</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
+<script language="javascript" type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script language="javascript" type="text/javascript" src="jquery.qrcode.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
+<script language="javascript" type="text/javascript" src="edit_area/edit_area_full.js"></script>
+<script language="javascript" type="text/javascript" src="edit_area/edit_area_full.js"></script>
+<script language="javascript" type="text/javascript" src="gadgetHtmlWidget.js"></script>
+<style>
+    div#widget_preview{
+	color: white;
+	text-align: center;
+	background-color: black;
+	border: 1px #CCCCCC solid;
+        border-radius:6px; 
+        -webkit-border-radius:6px; 
+        -moz-border-radius:6px;
+        -khtml-border-radius:6px;
+        
+        opacity: 0.6;
+        -moz-opacity: 0.6;
+        -khtml-opacity: 0.6;
+    }
+
+    div#widget_preview td{
+        color: white;
+        text-align: center;
+        vertical-align: middle;
+    }
+</style>
+</head>
+<body>
+    Predefined template: <select id="selectPredefined"></select> <button id="btnShow">QR code</button> </br>
+    <textarea id="textarea_1" name="content" cols="80" rows="20">
+    </textarea><br/>
+    
+    
+    <table><tr><td>
+        <div id="widget_preview">
+           
+        </div>
+    </td></tr></table>
+    
+    <div id="qrcode" style="display:none">
+        
+    </div>
+</body>
+</html>

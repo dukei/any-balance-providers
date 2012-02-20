@@ -1,21 +1,28 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
+    <ListPreference
+        title="Регион"
+        summary="|Выберите регион|Выбран регион '{@s}'!"
+        key="region"
+        defaultValue="1"
+        entries="Республика Татарстан|Нижегородский филиал"
+        entryValues="1|2" />
     <EditTextPreference 
         key="userv"
         title="Логин" 
         summary="Номер телефона (10 цифр)||{@s}\n" 
-        dialogTitle="Номер договора" 
+        dialogTitle="Номер телефона" 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите номер вашего договора или псевдоним"
+        dialogMessage="Введите номер вашего телефона, например, 9041234567"
         positiveButtonText="ОК" >
     </EditTextPreference>
     <EditTextPreference 
         key="passv" 
         title="Пароль"
-        summary="Пароль для входа в Личный кабинет||***********\n"
+        summary="Пароль для входа в iServe||***********\n"
         dialogTitle="Пароль"
         negativeButtonText="Отмена"
-        dialogMessage="Введите пароль, используемый для входа в Личный кабинет"
+        dialogMessage="Введите пароль, используемый для входа в интернет-сервис НСС"
         positiveButtonText="ОК"
         inputType="textPassword">
     </EditTextPreference>

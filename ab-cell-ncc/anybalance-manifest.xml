@@ -1,10 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="10">ab-cell-ncc</id>
-  <name>НСС (Татарстан)</name>
+  <id major_version="1.0" version="17">ab-cell-ncc</id>
+  <name>НСС</name>
   <description>
-    Получает текущий баланс и тариф оператора НСС (Татарстан).
-    Должен работать по региону Татарстан (ncc-volga). В случае необходимости нужные изменения вносите самостоятельно или обращайтесь к автору.
+    Получает текущий баланс и тариф оператора НСС (Татарстан, Нижегородский филиал)
   </description>
   <author>wtiger &lt;wtiger@mail.ru&gt;</author>
   <files>
@@ -21,6 +20,6 @@
     оператор нсс ncc
   </keywords>
   <type>
-    cell
+    internet, tv
   </type>
 </provider>

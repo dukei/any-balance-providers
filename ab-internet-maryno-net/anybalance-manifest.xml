@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="7">ab-internet-maryno-net</id>
+  <id major_version="1.0" version="8">ab-internet-maryno-net</id>
   <name>Интернет провайдер Марино.NET(Москва)</name>
   <description>
 	Получает текущий баланс, бонусный баланс, номера лицевого счета и договора, статус у провайдера "Maryno.net"
@@ -19,6 +19,10 @@
     <counter id="unpaid" name="Остаток неоплаченного включенного трафика" suffix=" Мб"/>
     <counter id="transfer" name="Перенесенный трафик" suffix=" Мб"/>
     <counter id="bonus" name="Бонусный трафик" suffix=" Мб"/>
+    <counter id="traffic_month_in" name="Входящий трафик за месяц" suffix=" Мб"/>
+    <counter id="traffic_month_out" name="Исходящий трафик за месяц" suffix=" Мб"/>
+    <counter id="traffic_last_month_in" name="Входящий трафик за прошлый месяц" suffix=" Мб"/>
+    <counter id="traffic_last_month_out" name="Исходящий трафик за прошлый месяц" suffix=" Мб"/>
     <counter id="status" name="Статус счета" type="text"/>
     <counter id="tariff" name="Тарифный план" type="text"/>
     <counter id="number" name="Номер договорной записи" type="text"/>

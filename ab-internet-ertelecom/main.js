@@ -51,7 +51,7 @@ function main(){
 			result.name = matches[1];
 
 			matches = info.match(/Ваш договор: <b>(.*?) \((.*?)\)<\/b>/i);
-			result.__tariff=result.contract;
+			result.__tariff = matches[1];
 			result.contract_type = matches[2];
 
 			matches = info.match(/Ваш баланс на .*? составляет <b>(.*?) рублей\n<\/b>/i);

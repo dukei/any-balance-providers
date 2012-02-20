@@ -40,10 +40,18 @@ AnyBalance.setExceptions(/*bool*/ use) //since level 1
 
 ==requestGet==
 {{{
-AnyBalance.requestGet(/*string*/ url) throws AnyBalance.Error //since level 1
+AnyBalance.requestGet(/*string*/ url, /*object or null*/headers) throws AnyBalance.Error //since level 1,3
 }}}
 
 Посылает GET запрос по адресу `url`. Возвращает строку - тело ответа.
+
+`headers` - (необязательный параметр, поддерживается начиная с API v.3) объект с дополнительными заголовками запроса, например,
+{{{
+{
+  "Content-Type": "multipart/form-data; boundary=----WebKitFormBoundaryIu4PwUJhm5qcpsdI",
+  "User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64)"
+}
+}}}
 
 Пример:
 {{{
@@ -54,10 +62,20 @@ AnyBalance.requestGet(/*string*/ url) throws AnyBalance.Error //since level 1
 
 ==requestPost==
 {{{
-AnyBalance.requestPost(/*string*/ url, /*string, object or null*/ data) throws AnyBalance.Error //since level 1
+AnyBalance.requestPost(/*string*/ url, /*string, object or null*/ data, /*object or null*/headers) throws AnyBalance.Error //since level 1,3
 }}}
 
-Посылает POST запрос по адресу `url` с телом `data`, если это строка. Если `data` объект, то тело запроса представляет собой параметры форм с именами и значениями всех свойств объекта `data`. Возвращает строку - тело ответа.
+Посылает POST запрос по адресу `url` с телом `data`, если это строка. Если `data` объект, то тело запроса представляет собой параметры форм с именами и значениями всех свойств объекта `data`.
+
+`headers` - (необязательный параметр, поддерживается начиная с API v.3) объект с дополнительными заголовками запроса, например,
+{{{
+{
+  "Content-Type": "multipart/form-data; boundary=----WebKitFormBoundaryIu4PwUJhm5qcpsdI",
+  "User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64)"
+}
+}}}
+
+Возвращает строку - тело ответа.
 
 Пример:
 {{{
@@ -68,6 +86,10 @@ AnyBalance.requestPost(/*string*/ url, /*string, object or null*/ data) throws A
 }}}
 
 В случае возникновения ошибки возвращает `null` или бросает исключение [AnyBalanceAPI#Error AnyBalance.Error], в зависимости от режима исключений, установленного [AnyBalanceAPI#setExceptions setExceptions()]. 
+
+*Примечания*
+ * Параметр `headers` добавлен в API v.3.
+ * Начиная с API v.3 `requestPost` учитывает кодировку по умолчанию, установленную функцией [AnyBalance.setDefaultCharset AnyBalanceAPI#setDefaultCharset]
 
 ==setAuthentication==
 {{{

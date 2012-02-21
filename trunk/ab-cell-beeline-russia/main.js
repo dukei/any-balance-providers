@@ -46,7 +46,7 @@ function main(){
         //Ошибка какая-то случилась... Может, пароль неправильный
       	throw new AnyBalance.Error(res[1].replace(/<[^<>]+\/?>/g, ''));
     }
-
+    
     var corporate = /<title>[^<>]*Управление профилем[^<>]*<\/title>/i.test(html);
     if(!corporate)
         parsePersonal(baseurl, html);
@@ -58,6 +58,11 @@ var alltransformations = [/&nbsp;/g, '', /[\s\xA0]/g, "", ",", "."];
 
 function parsePersonal(baseurl, html){
     var result = {success: true};
+
+    if(AnyBalance.isAvailable('balance')){
+      result.balance = null; //Баланс должен быть всегда, даже если его не удаётся получить. 
+      //Если его не удалось получить, то передаём null, чтобы значение взялось из предыдущего запроса
+    }
 
     AnyBalance.trace("It looks like we are in PERSONAL selfcare...");
     
@@ -141,6 +146,11 @@ function parseBalance(val){
 
 function parseCorporate(baseurl, html){
     var result = {success: true};
+
+    if(AnyBalance.isAvailable('balance')){
+      result.balance = null; //Баланс должен быть всегда, даже если его не удаётся получить. 
+      //Если его не удалось получить, то передаём null, чтобы значение взялось из предыдущего запроса
+    }
 
     AnyBalance.trace("It looks like we are in CORPORATE selfcare...");
     

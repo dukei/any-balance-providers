@@ -21,6 +21,7 @@ AnyBalance провайдеры - небольшие плагины, напис�
  * [Philosophy Общая информация]
  * [AnyBalanceAPI AnyBalance API]
  * [Debugging Отладка провайдеров]
+ * [HtmlWidget Настройка HTML виджета]
 
 ==Примеры==
  * [TutorialHelloWorld Hello World]

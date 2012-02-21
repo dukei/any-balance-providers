@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id major_version="1.0" version="1">ab-bonus-gazprom</id>
+  <name>Газпром Бонус</name>
+  <description>
+    Получает бонусные баллы по бонусной карте Газпромнефть.
+  </description>
+  <author>KiLLer13&lt;killer_kondor@pisem.net&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс"/>
+    <counter id="month" name="Сумма покупок за месяц" suffix=" р"/>
+    <counter id="month_need" name="Сумма для подтверждения статуса" suffix=" р"/>
+    <counter id="month_need_up" name="Сумма для повышения статуса" suffix=" р"/>
+    <counter id="customer" name="Владелец" type="text"/>
+    <counter id="status" name="Текущий статус" type="text"/>
+  </counters>
+  <keywords>
+    бонус, газпромнефть, bonus
+  </keywords>
+  <type>
+    bonus
+  </type>
+</provider>

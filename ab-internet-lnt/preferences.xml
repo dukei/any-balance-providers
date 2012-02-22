@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Логин" 
+        positiveButtonText="ОК" 
+        summary="Логин в PLATEX.lobn.ru||{@s}\n" 
+        dialogTitle="Логин" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите логин в личный кабинет PLATEX.lobn.ru"
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="Ваш пароль к личному кабинету||***************\n"
+        dialogMessage="Введите ваш пароль к личному кабинету."
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

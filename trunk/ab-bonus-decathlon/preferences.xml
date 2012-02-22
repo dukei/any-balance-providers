@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Номер карты" 
+        positiveButtonText="ОК" 
+        summary="Номер карты Декатлон||{@s}\n" 
+        dialogTitle="Номер карты" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите номер карты Декатлон"
+        key="login"
+        inputType="number">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="Ваш пароль к личному кабинету Декатлон||***************\n"
+        dialogMessage="Введите ваш пароль к личному кабинету Декатлон. Получить его можно на сайте decathlon.ru, перейдя по ссылке 'Карта клиента Декатлон'."
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-bonus-decathlon</id>
+  <name>Бонусная карта Декатлон</name>
+  <description>
+    Получает количество баллов на карте накопительной программы Декатлон
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс"/>
+  </counters>
+  <keywords>
+    бонус, баллы, bonus, бонусная накопительная программа, Decathlon, карта клиента
+  </keywords>
+  <type>
+    bonus
+  </type>
+</provider>

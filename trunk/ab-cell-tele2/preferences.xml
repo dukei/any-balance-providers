@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Логин" 
+        positiveButtonText="ОК" 
+        summary="Номер телефона (10 цифр)||{@s}\n" 
+        dialogTitle="Номер телефона" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите номер вашего телефона для входа в Мой Tele2 (10 цифр). Например: 9531234567. Узнать номер можно, набрав *201# со своего телефона."
+        key="login"
+        inputType="number">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="Пароль для входа в Мой Tele2||***********\n"
+        dialogMessage="Введите пароль, используемый для входа в личный кабинет Мой Tele2. Если Вы не знаете свой пароль, пройдите регистрацию или восстановите пароль на сайте https://my.tele2.ru."
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

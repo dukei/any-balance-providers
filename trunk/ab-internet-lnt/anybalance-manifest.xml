@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-internet-lnt</id>
+  <name>Лобненский Народный Телефон</name>
+  <description>
+    Получает баланс, тарифный план и трафик в текущем месяце у интернет-провайдера ЛНТ.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="traffic_total" name="Трафик" units="Мб"/>
+    <counter id="traffic_in" name="Входящий трафик" units="Мб"/>
+    <counter id="traffic_out" name="Исходящий трафик" units="Мб"/>
+    <counter id="account" name="Номер счета" type="text"/>
+  </counters>
+  <keywords>
+    интернет провайдер, Лобня, телефон
+  </keywords>
+  <type>
+    internet, telephony
+  </type>
+</provider>

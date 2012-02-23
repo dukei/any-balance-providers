@@ -34,49 +34,49 @@ function main(){
     // Баланс
     if(AnyBalance.isAvailable('balance')){
       if (matches=/Залишок на рахунку:[\s\S]*?<b>(.*?)</.exec(html)){
-          result.balance=matches[1];
+          result.balance=parseFloat(matches[1]);
       }
     }
     
     //Бонусные минуты (1)
     if(AnyBalance.isAvailable('bonus_mins_1')){
       if (matches=/Залишок хвилин для дзвінків[\s\S]*?<b>(.*?)</.exec(html)){
-          result.bonus_mins_1=matches[1];
+          result.bonus_mins_1=parseInt(matches[1]);
       }
     }
     
     //Бонусные минуты (2)
     if(AnyBalance.isAvailable('bonus_mins_2')){
       if (matches=/Залишок хвилин для дзвінків[\s\S]*?Залишок хвилин для дзвінків[\s\S]*?<b>(.*?)</.exec(html)){
-          result.bonus_mins_2=matches[1];
+          result.bonus_mins_2=parseInt(matches[1]);
       }
     }
     
     //Бонусные MMS
     if(AnyBalance.isAvailable('bonus_mms')){
       if (matches=/Бонусні MMS:[\s\S]*?<b>(.*?)</.exec(html)){
-          result.bonus_mms=matches[1];
+          result.bonus_mms=parseInt(matches[1]);
       }
     }
     
     //Бонусные SMS
     if(AnyBalance.isAvailable('bonus_sms')){
       if (matches=/Бонусні SMS:[\s\S]*?<b>(.*?)</.exec(html)){
-          result.bonus_sms=matches[1];
+          result.bonus_sms=parseInt(matches[1]);
       }
     }
     
     //Бонусные средства
     if(AnyBalance.isAvailable('bonus_money')){
       if (matches=/Бонусні кошти :[\s\S]*?<b>(.*?)</.exec(html)){
-          result.bonus_money=matches[1];
+          result.bonus_money=parseFloat(matches[1]);
       }
     }
     
     //Остаток бонусов
     if(AnyBalance.isAvailable('bonus_left')){
       if (matches=/Залишок бонусів:[\s\S]*?<b>(.*?)</.exec(html)){
-          result.bonus_left=matches[1];
+          result.bonus_left=parseFloat(matches[1]);
       }
     }
     
@@ -97,7 +97,7 @@ function main(){
     //Домашний Интернет
     if(AnyBalance.isAvailable('home_internet')){
       if (matches=/Від послуги "Домашній Інтернет":[\s\S]*?<b>(.*?)</.exec(html)){
-          result.home_internet=matches[1];
+          result.home_internet=parseFloat(matches[1]);
       }
     }
     

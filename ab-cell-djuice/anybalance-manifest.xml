@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="3">ab-cell-djuice</id>
+  <id major_version="1.0" version="4">ab-cell-djuice</id>
   <name>Djuice</name>
   <description>
-    Получает баланс, бесплатные минуты, СМС, ММС, бонусы и остаток интернет-трафика для мобильного оператора Djuice.
+    Получает баланс, бонусные минуты, СМС, ММС, остаток интернет-трафика и другие бонусы для мобильного оператора Djuice.
   </description>
   <author>Sergey Bashmanov &lt;sergey.bashmanov@gmail.com&gt;</author>
   <files>
@@ -13,15 +13,15 @@
   </files>
   <counters>
     <counter id="balance" name="Баланс" units="грн"/>
-    <counter id="mins_djuice" name="Бонусные минуты (DJUICE)" units="мин" type="time_interval"/>
-    <counter id="mins_other" name="Бонусные минуты (другие)" units="мин" type="time_interval"/>
+    <counter id="bonus_mins_1" name="Бонусные минуты (1)" units="мин" type="time_interval"/>
+    <counter id="bonus_mins_2" name="Бонусные минуты (2)" units="мин" type="time_interval"/>
     <counter id="bonus_mms" name="Бонусные MMS"/>
     <counter id="bonus_sms" name="Бонусные SMS"/>
     <counter id="bonus_money" name="Бонусные средства" units="грн"/>
     <counter id="bonus_left" name="Остаток бонусов" units="грн"/>
     <counter id="internet_1" name="Интернет (1)" units="Mb"/>
     <counter id="internet_2" name="Интернет (2)" units="Mb"/>
-    <counter id="home_internet" name="Домашній Інтернет" units="грн"/>
+    <counter id="home_internet" name="Домашний Интернет" units="грн"/>
   </counters>
   <keywords>
     Сотовый телефон, мобильный, мобильник, djuice, kyivstar, диджус, киевстар, украина

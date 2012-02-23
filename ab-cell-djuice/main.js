@@ -1,4 +1,4 @@
-/**
+﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 
 djuice
@@ -11,7 +11,6 @@ function main(){
   var baseurl = 'https://my.djuice.ua/';
   AnyBalance.trace('Connecting to ' + baseurl);
     var html = AnyBalance.requestPost(baseurl + 'tbmb/login_djuice/perform.do', {
-      action: 'startup',
       user: prefs.login,
       password: prefs.password
     });
@@ -39,17 +38,17 @@ function main(){
       }
     }
     
-    //Бесплатные минуты (DJUICE)
-    if(AnyBalance.isAvailable('mins_djuice')){
-      if (matches=/Залишок хвилин для дзвінків на номери абонентів DJUICE:[\s\S]*?<b>(.*?)</.exec(html)){
-          result.mins_djuice=matches[1];
+    //Бонусные минуты (1)
+    if(AnyBalance.isAvailable('bonus_mins_1')){
+      if (matches=/Залишок хвилин для дзвінків[\s\S]*?<b>(.*?)</.exec(html)){
+          result.bonus_mins_1=matches[1];
       }
     }
     
-    //Бесплатные минуты (другие)
-    if(AnyBalance.isAvailable('mins_other')){
-      if (matches=/Залишок хвилин для дзвінків на телефонні номери абонентів «Київстар» та по Україні:[\s\S]*?<b>(.*?)</.exec(html)){
-          result.mins_other=matches[1];
+    //Бонусные минуты (2)
+    if(AnyBalance.isAvailable('bonus_mins_2')){
+      if (matches=/Залишок хвилин для дзвінків[\s\S]*?Залишок хвилин для дзвінків[\s\S]*?<b>(.*?)</.exec(html)){
+          result.bonus_mins_2=matches[1];
       }
     }
     
@@ -95,9 +94,9 @@ function main(){
       }
     }
     
-    //Домашній Інтернет
+    //Домашний Интернет
     if(AnyBalance.isAvailable('home_internet')){
-      if (matches=/Залишок бонусів:[\s\S]*?<b>(.*?)</.exec(html)){
+      if (matches=/Від послуги "Домашній Інтернет":[\s\S]*?<b>(.*?)</.exec(html)){
           result.home_internet=matches[1];
       }
     }

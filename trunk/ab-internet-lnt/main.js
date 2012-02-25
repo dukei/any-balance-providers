@@ -49,8 +49,9 @@ function main(){
     
     var result = {success: true};
     
-    getParam(html, result, 'balance', /Баланс:[\s\S]*?([\d\.]+)/, null, parseFloat);
-    getParam(html, result, 'account', /Номер счета:[\s\S]*?(#\d+)/);
+    getParam(html, result, 'balance', /Баланс:[\s\S]*?([\d\.]+)/i, null, parseFloat);
+    getParam(html, result, 'debt', /cумма обещанных платежей:[\s\S]*?([\d\.]+)/i, null, parseFloat);
+    getParam(html, result, 'account', /Номер счета:[\s\S]*?(#\d+)/i);
     
     AnyBalance.trace('Trying to find tarif plan');
     

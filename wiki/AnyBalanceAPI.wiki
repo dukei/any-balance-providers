@@ -8,6 +8,8 @@ JavaScript API доступно провайдеру для взаимодейс
 
 Все функции предоставляются через глобальный объект `AnyBalance`. К каждой функции указан номер версии API, с которой она доступна.
 
+<wiki:toc max_depth="3" />
+
 ==getLevel==
 {{{
 AnyBalance.getLevel() //since level 1

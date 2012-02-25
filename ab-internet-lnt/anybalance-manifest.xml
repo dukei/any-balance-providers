@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-lnt</id>
+  <id version="2">ab-internet-lnt</id>
   <name>Лобненский Народный Телефон</name>
   <description>
     Получает баланс, тарифный план и трафик в текущем месяце у интернет-провайдера ЛНТ.
+    Изменения в v.2: добавлена сумма обещанных платежей.
   </description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <files>
@@ -13,6 +14,7 @@
   </files>
   <counters>
     <counter id="balance" name="Баланс" units="р"/>
+    <counter id="debt" name="Обещанные платежи" units="р"/>
     <counter id="traffic_total" name="Трафик" units="Мб"/>
     <counter id="traffic_in" name="Входящий трафик" units="Мб"/>
     <counter id="traffic_out" name="Исходящий трафик" units="Мб"/>

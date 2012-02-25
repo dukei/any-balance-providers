@@ -45,4 +45,4 @@ HTML виджет предназначен для отображения сче�
 
 Вы также можете переслать кому-то ссылку на ваш штрихкод, ссылка содержится в заголовке окна, показывающего QR-код.
 
-<wiki:gadget url="http://any-balance-providers.googlecode.com/svn/misc/gadgets/htmlwidget/gadgetHtmlWidget.xml" height="700" width="700" border="0" /> 
+<wiki:gadget url="http://dgame.ru/download/gadgetHtmlWidget.xml?1" height="700" width="700" border="0" /> 

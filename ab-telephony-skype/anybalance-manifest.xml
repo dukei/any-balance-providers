@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id major_version="1" version="3">ab-telephony-skype</id>
+  <name>Skype</name>
+  <description>
+    Получает текущий баланс, валюту баланса в Skype.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс"/>
+    <counter id="currency" name="Валюта" type="text"/>
+  </counters>
+  <keywords>
+    Скайп IP-телефония
+  </keywords>
+  <type>
+    telephony
+  </type>
+</provider>

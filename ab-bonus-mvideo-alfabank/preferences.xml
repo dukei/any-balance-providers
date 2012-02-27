@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference
+        key="card"
+        title="Номер Карты"
+        summary="Номер карты||{@s}\n"
+        inputType="number"
+        dialogTitle="Номер карты"
+        dialogMessage="Введите номер карты для входа в личный кабинет, начиная с восьмой цифры восемь цифр||XXXX-XXX1-2345-678X"
+        positiveButtonText="ОК"
+        negativeButtonText="Отмена">
+    </EditTextPreference>
+    <EditTextPreference
+        positiveButtonText="ОК"
+        key="birthday" 
+        dialogTitle="День рождения"
+        negativeButtonText="Отмена"
+        title="День рождения"
+        summary="Ваш день рождения||{@s}\n"
+        dialogMessage="Введите ваш день рождения в формате DD-MM-YYYY, например, 28-04-1980"
+        inputType="date">
+    </EditTextPreference>
+</PreferenceScreen>

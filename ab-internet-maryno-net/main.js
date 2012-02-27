@@ -4,6 +4,8 @@
 Провайдер Марьино.NET 
 Сайт оператора: http://maryno.net/
 Личный кабинет: https://my.maryno.net/
+1.0.8 - добавлена информация по текущему трафикуи трафику за прошлый месяц
+1.0.9 - Округление трафика до мегабайтов.
 */
 
 function main(){
@@ -112,8 +114,8 @@ function main(){
 		url="https://my.maryno.net/stat.php?act=det_mon&ls="+data.login;
 		html = AnyBalance.requestGet(url);
 		res =/<td>Итого за месяц<.*?><.*?>(.*?) .*?<.*?><.*?>(.*?) .*?<.*?>/.exec(html);
-		result.traffic_month_in=res[1];
-		result.traffic_month_out=res[2];
+		result.traffic_month_in=Math.floor(res[1]);
+		result.traffic_month_out=Math.floor(res[2]);
 	}
 	if(AnyBalance.isAvailable('traffic_last_month_in')||
 	   AnyBalance.isAvailable('traffic_last_month_out')){
@@ -127,8 +129,8 @@ function main(){
     url="https://my.maryno.net/stat.php?act=det_mon&ls="+data.login+"&ip=&month="+month+"&year="+year;
 		html = AnyBalance.requestGet(url);
 		res =/<td>Итого за месяц<.*?><.*?>(.*?) .*?<.*?><.*?>(.*?) .*?<.*?>/.exec(html);
-		result.traffic_last_month_in=res[1];
-		result.traffic_last_month_out=res[2];
+		result.traffic_last_month_in=Math.floor(res[1]);
+		result.traffic_last_month_out=Math.floor(res[2]);
 	}
 
 

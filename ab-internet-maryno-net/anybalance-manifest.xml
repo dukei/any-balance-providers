@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="8">ab-internet-maryno-net</id>
+  <id major_version="1.0" version="9">ab-internet-maryno-net</id>
   <name>Интернет провайдер Марино.NET(Москва)</name>
   <description>
 	Получает текущий баланс, бонусный баланс, номера лицевого счета и договора, статус у провайдера "Maryno.net"

@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="1">ab-bonus-gazprom</id>
+  <id major_version="1.0" version="2">ab-bonus-gazprom</id>
   <name>Газпром Бонус</name>
   <description>
-    Получает бонусные баллы по бонусной карте Газпромнефть.
+    Получает бонусные баллы, текущий статус в программе, сумму необходимую для повышения статуса по бонусной карте Газпромнефть. 
   </description>
   <author>KiLLer13&lt;killer_kondor@pisem.net&gt;</author>
   <files>
@@ -13,6 +13,7 @@
   </files>
   <counters>
     <counter id="balance" name="Баланс"/>
+    <counter id="balance_money" name="Баланс по курсу в рублях" suffix=" р"/>
     <counter id="month" name="Сумма покупок за месяц" suffix=" р"/>
     <counter id="month_need" name="Сумма для подтверждения статуса" suffix=" р"/>
     <counter id="month_need_up" name="Сумма для повышения статуса" suffix=" р"/>

@@ -62,7 +62,7 @@ function main(){
     // Поиск идентификатора договора
     if (!prefs.account || prefs.account == '')
       prefs.account = '\\d+';
-    var regexp = 'class="contractnum" .*?toggleContract.*?\'c(\\d*)\'[^>]*>' + prefs.account;
+    var regexp = 'class="contractnum" .*?toggleContract.*?\'c(\\d+)\'[^>]*>' + prefs.account;
     value = html.match (regexp);
     var id;
     if (value)
@@ -80,7 +80,7 @@ function main(){
         AnyBalance.trace ("Parsing settings...");
 
         // ФИО
-        getParam (html, result, 'abonent', /name="fio"[^>]*value="([^"]+?)/i);
+        getParam (html, result, 'abonent', /name="fio"[^>]*value="([^"]+)/i);
 
     }
 
@@ -115,6 +115,6 @@ function main(){
     }
 
 
-AnyBalance.setResult(result);
+    AnyBalance.setResult(result);
 }
 

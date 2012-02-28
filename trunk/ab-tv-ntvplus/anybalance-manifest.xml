@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="1">ab-tv-ntvplus</id>
+  <id major_version="1.0" version="2">ab-tv-ntvplus</id>
   <name>НТВ+</name>
   <description>
     Получает баланс, бонусные баллы, сумму доплаты и пакеты услуг у НТВ+.
@@ -13,10 +13,10 @@
   </files>
   <counters>
     <counter id="balance" name="Баланс" units="р"/>
-    <counter id="abonent" name="ФИО" type="text"/>
-    <counter id="state" name="Состояние" type="text"/>
     <counter id="bonus" name="Бонус" units="балл"/>
     <counter id="recom_pay" name="Рекомендуемая доплата" units="р"/>
+    <counter id="abonent" name="ФИО" type="text"/>
+    <counter id="state" name="Состояние" type="text"/>
     <counter id="packets" name="Пакеты услуг" type="text"/>
   </counters>
   <keywords>

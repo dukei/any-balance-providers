@@ -77,21 +77,41 @@ function main () {
         getParam (html, result, 'bonus', /Бонусы и компенсации: (\d+\.?\d*)/, [], parseFloat);
     }
 
-
-    if (AnyBalance.isAvailable ('trafIn',
-                                'trafOut')) {
-
-        AnyBalance.trace ('Fetching connection info...');
-
-        html = AnyBalance.requestGet (baseurl + '?handler=ConnectInfo');
-
-        AnyBalance.trace ('Parsing connection info...');
     
+    if(AnyBalance.isAvailable('trafLimit','trafIn','trafOut')){
+        html = AnyBalance.requestGet (baseurl + '?handler=ConnectInfo');
+        
+        // Лимит
+        getParam (html, result, 'trafLimit', /Осталось бесплатного трафика.*?class="value".*?>([\d\.]+)/, null, parseFloat);
+        
         // Входящий трафик
-        getParam (html, result, 'trafIn', /Входящий трафик.*?class="value".*?>([^<]*)/);
+        getParam (html, result, 'trafIn', /Входящий трафик.*?class="value".*?>([\d\.]+)/, null, parseFloat);
     
         // Исходящий трафик
-        getParam (html, result, 'trafOut', /Исходящий трафик.*?class="value".*?>([^<]*)/);
+        getParam (html, result, 'trafOut', /Исходящий трафик.*?class="value".*?>([\d\.]+)/, null, parseFloat);
+      
+    }
+    
+    if (AnyBalance.isAvailable ('trafIn', 'trafOut') && result.trafIn === undefined && result.trafOut === undefined) {
+        var dt = new Date();
+        var year = dt.getFullYear(),
+          month = dt.getMonth()+1,
+          newYear = month == 12 ? year+1 : year,
+          newMonth = month == 12 ? 1 : month + 1;
+          
+        AnyBalance.trace ('Fetching traffic info...');
+        html = AnyBalance.requestPost (baseurl + '?handler=TrafficStat', {
+          begin_date: '01.' + month + '.' + year,
+          end_date: '01.' + newMonth + '.' + newYear
+        });
+        
+        AnyBalance.trace ('Parsing traffic info...');
+    
+        // Входящий трафик
+        getParam (html, result, 'trafIn', /Входящий[\s\S]*?>([\d\.]+)</i, null, parseFloat);
+    
+        // Исходящий трафик
+        getParam (html, result, 'trafOut', /Исходящий[\s\S]*?>([\d\.]+)</i, null, parseFloat);
     }
 
 

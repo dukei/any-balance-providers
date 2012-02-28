@@ -156,7 +156,7 @@ $(function(){
     $('#selectPredefined').val("custom");
     
     $('#btnShow').click(function(){
-       var thelink = 'http://qrcoder.ru/code/?'+encodeURIComponent(editAreaLoader.getValue("textarea_1")) + '&5&0';
+       var thelink = 'http://api.qrserver.com/v1/create-qr-code/?size=600x600&data='+encodeURIComponent(editAreaLoader.getValue("textarea_1"));
        $('#qrcode').html('<img src="' + thelink + '" width="605" height="605"/>')
 		.dialog({modal:true, width: 'auto', height: 'auto', title: 'Scan this QR code with AnyBalance or <a href="' + thelink +'">share</a> it.'});
        localAdjust();

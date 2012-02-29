@@ -4,7 +4,7 @@ Google decided to [http://code.google.com/p/support/issues/detail?id=24324 disab
 
 = Recent Commits to trunk =
 
-<wiki:gadget url="http://sorryrobot.com/projecthostingupdates/com1.xml" up_projectName="any-balance-providers" width="800"  height="100"/>
+<wiki:gadget url="http://google-code-project-hosting-gadgets.googlecode.com/svn/build/prod/changes/gcChanges.xml" up_projectName="any-balance-providers" width="800"  height="250"/>
 
 = Updates to All Issues (including closed/fixed issues) =
 

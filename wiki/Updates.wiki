@@ -1,4 +1,5 @@
 #summary Recent Commits and Updated Issues
+#labels Featured
 
 Google decided to [http://code.google.com/p/support/issues/detail?id=24324 disable the Updates/Activity tab] so here is a temporary replacement using Wiki gadgets.
 

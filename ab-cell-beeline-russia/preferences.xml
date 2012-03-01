@@ -20,4 +20,12 @@
         dialogMessage="Введите пароль, используемый для входа в Систему управления услугами. Для получения этого пароля вам надо со своего компьютера войти хотя бы раз на сайт http://uslugi.beeline.ru ."
         inputType="textPassword">
     </EditTextPreference>
+    <ListPreference 
+        key="country" 
+        title="Страна"
+        summary="Ваша страна|Нужна для определения личного кабинета\n|{@s}\n"
+        entries="Россия|Узбекистан"
+        entryValues="ru|uz"
+	defaultValue="ru">
+    </ListPreference>
 </PreferenceScreen>

@@ -31,8 +31,18 @@ function getParam (html, result, param, regexp, replaces, parser) {
 
 function main(){
     var prefs = AnyBalance.getPreferences();
+    var baseurls = {
+      ru: "https://uslugi.beeline.ru/",
+      uz: "https://uslugi.beeline.uz/"
+    }
 
-    var baseurl = "https://uslugi.beeline.ru/"
+    if(!prefs.country || !baseurls[prefs.country]){
+      AnyBalance.trace("Unknown country: " + prefs.country + ", defaulting to ru");
+      prefs.country = 'ru';
+    }
+
+    var baseurl = baseurls[prefs.country];
+
     AnyBalance.trace("Trying to enter selfcare at address: " + baseurl);
     var html = AnyBalance.requestPost(baseurl + "loginPage.do", {
     	ecareAction: 'login',
@@ -54,7 +64,8 @@ function main(){
         parseCorporate(baseurl, html);
 }
 
-var alltransformations = [/&nbsp;/g, '', /[\s\xA0]/g, "", ",", "."];
+//Преобразование в число
+var alltransformations = [/&nbsp;/g, '', /[\s\xA0]/g, "", ",", ".", /[^\d\-\.]+/g, ''];
 
 function parsePersonal(baseurl, html){
     var result = {success: true};
@@ -96,52 +107,97 @@ function parsePersonal(baseurl, html){
     AnyBalance.setResult(result);
 }
 
+function parseBalance(val){
+    AnyBalance.trace("Parsing money value: '" + val + "'");
+    return parseFloat(val);
+}
+
+function getBalanceValue(html, text, parseFunc, result, counter){
+    var regexp = new RegExp(text + '[\\s\\S]*?<td[\\s\\S]*?<td[^>]*>([^<]+)<', 'i');
+    return getParam(html, result, counter, regexp, alltransformations, parseFunc);
+}
+
 function parseBalanceList(html, result){
+    //Уменьшим область поиска для скорости и (надеюсь) для надежности
+    html = getParam(html, null, null, /'prePaid(?:Ctn)?Balances?List'([\s\S]*?)'prePaid(?:Ctn)?Balances?List'/i);
+
     // Баланс
-    getParam (html, result, 'balance', /Основной баланс[\s\S]*?<td[\s\S]*?<td[^>]*>\s*([\-\d,\s]+)</, alltransformations, parseFloat);
+    getBalanceValue (html, 'Основной баланс', parseBalance, result, 'balance');
     
     // Бонус-баланс
-    getParam (html, result, 'bonus_balance', /Бонус-баланс[\s\S]*?<td[\s\S]*?<td[^>]*>\s*([\d,\s]+)</, alltransformations, parseFloat);
+    if(AnyBalance.isAvailable('bonus_balance')){
+      result.bonus_balance = 0;
+
+      var val = getBalanceValue (html, 'Бонус-баланс', parseFloat);
+      result.bonus_balance += val || 0;
+
+      //Узбекистан
+      val = getBalanceValue (html, 'BEE_CLUB', parseFloat);
+      result.bonus_balance += val || 0;
+    }
     
     if(AnyBalance.isAvailable('sms_left')){
       result.sms_left = 0;
       
       // SMS-баланс
-      var sms = getParam(html, null, null, /SMS-баланс[\s\S]*?<td[\s\S]*?<td[^>]*>\s*([\d,]+)</, alltransformations, parseInt);
-      result.sms_left += sms || 0;
+      var sms = getBalanceValue (html, 'SMS-баланс', parseInt);
+      result.sms_left += sms || 0;                                                         
       
       // SMS в подарок
-      sms = getParam(html, null, null, /SMS в подарок[\s\S]*?<td[\s\S]*?<td[^>]*>\s*([\d,]+)</, alltransformations, parseInt);
+      sms = getBalanceValue (html, 'SMS в подарок', parseInt);
       result.sms_left += sms || 0;
       
       // Бесплатные SMS
-      sms = getParam(html, null, null, /Бесплатные SMS[\s\S]*?<td[\s\S]*?<td[^>]*>\s*([\d,]+)</, alltransformations, parseInt);
+      sms = getBalanceValue (html, 'Бесплатные SMS', parseInt);
+      result.sms_left += sms || 0;
+      
+      // SMS Бонус  //Узбекистан
+      sms = getBalanceValue (html, 'SMS Бонус', parseInt);
+      result.sms_left += sms || 0;
+      
+      // Баланс SMS  //Узбекистан
+      sms = getBalanceValue (html, 'Баланс SMS', parseInt);
+      result.sms_left += sms || 0;
+      
+      // Пакет МН SMS  //Узбекистан
+      sms = getBalanceValue (html, 'Пакет МН SMS', parseInt);
+      result.sms_left += sms || 0;
+      
+      // Дополнительный SMS баланс  //Узбекистан
+      sms = getBalanceValue (html, 'Дополнительный SMS баланс', parseInt);
       result.sms_left += sms || 0;
     }
     
     // MMS в подарок
-    getParam (html, result, 'mms_left', /MMS в подарок[\s\S]*?<td[\s\S]*?<td[^>]*>\s*([\d,]+)</, alltransformations, parseInt);
+    getBalanceValue (html, 'MMS в подарок', parseInt, result, 'mms_left');
 
     if(AnyBalance.isAvailable('min_left')){
       result.min_left = 0;
       
       // Бесплатные секунды
-      var sms = getParam(html, null, null, /Бесплатные секунды[\s\S]*?'tabtext'>([\d,]+)</, alltransformations, parseInt);
+      var sms = getBalanceValue (html, 'Бесплатные секунды', parseInt);
       result.min_left += sms || 0;
       
       // Время в подарок
-      sms = getParam(html, null, null, /Время в подарок[\s\S]*?'tabtext'>([\d,]+)</, alltransformations, parseInt);
+      sms = getBalanceValue (html, 'Время в подарок', parseInt);
       result.min_left += sms || 0;
       
       // БОНУС_СЕКУНДЫ
-      sms = getParam(html, null, null, /БОНУС_СЕКУНДЫ[\s\S]*?'tabtext'>([\d,]+)</, alltransformations, parseInt);
+      sms = getBalanceValue (html, 'БОНУС_СЕКУНДЫ', parseInt);
+      result.min_left += sms || 0;
+      
+      // Бонус секунды //Узбекистан
+      sms = getBalanceValue (html, 'БОНУС_СЕКУНДЫ', parseInt);
+      result.min_left += sms || 0;
+
+      // Час в подарок //Узбекистан
+      sms = getBalanceValue (html, 'Час в подарок', parseInt);
+      result.min_left += sms || 0;
+
+      // Баланс исходящих минут //Узбекистан
+      sms = getBalanceValue (html, 'Баланс исходящих минут', parseInt);
       result.min_left += sms || 0;
     }
-}
-
-function parseBalance(val){
-    AnyBalance.trace("Parsing money value: '" + val + "'");
-    return parseFloat(val);
 }
 
 function parseCorporate(baseurl, html){
@@ -243,8 +299,12 @@ function parseCorporate(baseurl, html){
     // Состояние номера
     getParam (html, result, 'BlockStatus', /Статус номера[\s\S]*?<td[^>]*>([\s\S]*?)</, [/&nbsp;/g, ' ' , /^\s+|\s+$/g, '']);
     
-    if(/Список балансов/.test(html))
+    if(/'prePaid(?:Ctn)?Balances?List'/i.test(html)){
+      AnyBalance.trace("Balance list found!");
       parseBalanceList(html, result); //в корпоративных предоплаченных тарифных планах похоже на персональные
+    }else{
+      AnyBalance.trace("Balance list not found, is it credit tariff plan?");
+    }
 
     AnyBalance.setResult(result);
 }

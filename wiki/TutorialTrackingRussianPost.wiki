@@ -151,7 +151,7 @@ var info = AnyBalance.requestPost('http://www.russianpost.ru/resp_engine.aspx?Pa
 
 = Заключение =
 
-Собрав все в один zip файл, получим провайдер Почты России. Полный исходный текст провайдера доступен в [http://code.google.com/p/any-balance-providers/source/browse/#svn%2Ftrunk%2Fab-tracking-russian-post репозитории].
+Собрав все в один zip файл, получим провайдер Почты России. Полный исходный текст провайдера доступен в [http://code.google.com/p/any-balance-providers/source/browse/trunk/ab-tracking-russian-post репозитории].
 
 При показе провайдера в виджете следует выбрать большой виджет с одним большим текстовым полем, чтобы весь статус поместился целиком. Получится что-то вроде этого:
 

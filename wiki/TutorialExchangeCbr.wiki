@@ -108,7 +108,7 @@ function main(){
 
 <a href="http://any-balance-providers.googlecode.com/svn/wiki/images/widgets.jpg"><img width="240" src="http://any-balance-providers.googlecode.com/svn/wiki/images/widgets.jpg"/></a> Рис. 3
 
-Полный код примера находится в [http://code.google.com/p/any-balance-providers/source/browse/ab-trunk/exchange-cbr/ репозитории].
+Полный код примера находится в [http://code.google.com/p/any-balance-providers/source/browse/trunk/ab-exchange-cbr/ репозитории].
 
 = Другие примеры =
 

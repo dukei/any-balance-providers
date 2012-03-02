@@ -8,7 +8,7 @@
 
 Рассмотрим получение значений счетчиков из XML на примере получения баланса игровой валюты в игре [http://dgame.ru Повелители]. Эта игра имеет API, при запросе которого возвращается XML, содержащий в том числе и значения счетчиков игровой валюты.
 
-Полный исходный код провайдера находится в [http://code.google.com/p/any-balance-providers/source/browse/#svn%2Ftrunk%2Fab-game-dgame репозитории]. Здесь я приведу только код получения счетчиков (полная версия в [http://code.google.com/p/any-balance-providers/source/browse/trunk/ab-game-dgame/main.js main.js]).
+Полный исходный код провайдера находится в [http://code.google.com/p/any-balance-providers/source/browse/trunk/ab-game-dgame репозитории]. Здесь я приведу только код получения счетчиков (полная версия в [http://code.google.com/p/any-balance-providers/source/browse/trunk/ab-game-dgame/main.js main.js]).
 
 Во-первых, в манифесте надо подключить [http://jquery.com/ JQuery]. Можно, конечно, просто включить её в список файлов провайдера наравне с `main.js`. Но в данном случае это не требуется, потому что JQuery используется для внутренних нужд AnyBalance и поэтому уже доступна вашему провайдеру.
 

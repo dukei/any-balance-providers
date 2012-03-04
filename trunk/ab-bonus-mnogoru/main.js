@@ -34,7 +34,7 @@ function main(){
     
     html = AnyBalance.requestGet(baseurl + 'index.html');
     
-    matches = /<!--\s*авториз\.\s*пользователь\s*-->[\s\S]*<!--.*?\/авториз\.\s*пользователь.*?-->/.exec(html);
+    matches = /<!--\s*авторизованный\s*-->[\s\S]*<!--\s*?\/авторизованный\s*?-->/.exec(html);
     if(!matches)
         throw new AnyBalance.Error("Can not find account info, contact the author");
 
@@ -44,13 +44,13 @@ function main(){
   
     var $table = $(matches[0]);
     if(AnyBalance.isAvailable('username'))
-        result.username = $table.find('tr:first-child td.authorizedhat').text() + ' ' + $table.find('tr:nth-child(2) td.authorizedhat').text();
+        result.username = $table.find('td.authorized2012 font').first().text().replace(/\s*[cс]\s+картой\s*/g, '');
   
     if(AnyBalance.isAvailable('cardnum'))
-        result.cardnum = $table.find('tr:last-child td.authorizedhat:first-child font').text();
+        result.cardnum = $table.find('td.authorized2012 b').text();
   
     if(AnyBalance.isAvailable('balance'))
-        result.balance = $table.find('tr:nth-child(3) td.authorizedhat b').text();
+        result.balance = parseInt($table.find('td.authorized2012 a').text().replace(/[^\d]+/g, ''));
     
     AnyBalance.setResult(result);
 }

@@ -36,7 +36,7 @@ function main(){
     
     matches = /<!--\s*авторизованный\s*-->[\s\S]*<!--\s*?\/авторизованный\s*?-->/.exec(html);
     if(!matches)
-        throw new AnyBalance.Error("Can not find account info, contact the author");
+        throw new AnyBalance.Error("Can not find account info (design changed?), contact the author");
 
     var result = {
         success: true

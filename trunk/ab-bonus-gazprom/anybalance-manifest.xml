@@ -1,9 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="2">ab-bonus-gazprom</id>
+  <id major_version="1.0" version="3">ab-bonus-gazprom</id>
   <name>Газпром Бонус</name>
   <description>
     Получает бонусные баллы, текущий статус в программе, сумму необходимую для повышения статуса по бонусной карте Газпромнефть. 
+	1.0.3 - Изменения на сайте gpnbonus. Теперь у них есть мобильная версия, с неё в основном и берется вся информация для экономии трафика.
+	1.0.2 - Добавил баланс в рублях по курсу программы.
   </description>
   <author>KiLLer13&lt;killer_kondor@pisem.net&gt;</author>
   <files>

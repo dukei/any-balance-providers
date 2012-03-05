@@ -5,16 +5,18 @@
 
 Сайт программы: http://www.gpnbonus.ru
 
+1.0.3 - Изменения на сайте gpnbonus. Для экономии трафика теперь у них есть мобильная версия, с неё в основно и берется вся информация.
 1.0.2 - Добавил баланс в рублях по курсу программы.
 */
 
 
 function main(){
 	var prefs = AnyBalance.getPreferences();
-	var url='http://www.gpnbonus.ru/bonus_authorize/';
+	var url='http://m.gpnbonus.ru/profile/login/';
 	AnyBalance.trace('Sending a request for authorization');
         AnyBalance.setDefaultCharset('utf-8');
 	var html = AnyBalance.requestPost(url, prefs);
+
 	if (!/Персональные данные/.exec(html)){
 		AnyBalance.trace(res[1]);
 		throw new AnyBalance.Error ('Authorization error.');
@@ -30,36 +32,42 @@ function main(){
 	}
 
 //Сумма покупок за месяц
-   	regexp=/Сумма покупок за текущий месяц.*\n.*\n.*\n.*>(.*) руб.</m;
+   	regexp=/за текущий месяц.*\n.*>(.*) руб.</m;
 	if (res=regexp.exec(html)){
 		result.month=res[1];
 	}
 
 //Сумма для подтверждения статуса
-	regexp=/Для подтверждения статуса необходимо совершить покупки на сумму.*\n.*DinPro fs24 .*>(.*) руб.</m;
+	regexp=/Для подтверждения статуса необходимо совершить покупки на сумму.*\n.*>(.*) руб.</m;
 	if (res=regexp.exec(html)){
 		result.month_need=res[1];
 	}
 
-//Сумма для повышения статуса
-	regexp=/Для повышения статуса необходимо совершить покупки на сумму.*\n.*DinPro fs24 .*>(.*) руб.</m;
-	if (res=regexp.exec(html)){
-		result.month_need_up=res[1];
-	}
-
 //Владелец
-   	regexp=/DinPro fs22 .*\">(.*)<\/div>/;
+   	regexp=/.*href=\"\/profile\/main\/\">\n(.*)</m;
 	if (res=regexp.exec(html)){
 		result.customer=res[1];
+		res=/\t(\S+).*?(\S+)\t/.exec(result.customer);
+		result.customer=res[1]+' '+res[2];
+
 	}
 
 //Текущий статус
-	regexp=/.*Текущий статус карты:.*\n.*images.(.*).png/m;
+	regexp=/.*Текущий статус карты.*\n.*>(.*?)</m;
 	if (res=regexp.exec(html)){
 		result.status=res[1];
-		if (result.status == 'silver'){result.status='Серебрянный';}
-		if (result.status == 'gold'){result.status='Золотой';}
 		result.__tariff=result.status;
+	}
+
+//Сумма для повышения статуса
+	if(AnyBalance.isAvailable('month_need_up')){
+		var url='http://www.gpnbonus.ru/profile/main/';
+		var html = AnyBalance.requestGet(url, prefs);
+		
+		regexp=/Для повышения статуса необходимо совершить покупки на сумму.*\n.*DinPro fs24 .*>(.*) руб.</m;
+		if (res=regexp.exec(html)){
+			result.month_need_up=res[1];
+		}
 	}
 
 //Баланс по курсу в рублях

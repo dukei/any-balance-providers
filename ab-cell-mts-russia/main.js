@@ -136,6 +136,15 @@ function main(){
         // Остаток ММС
         getParam (html, result, 'mms_left', /(?:Осталось|Остаток)[^\d]*(\d*) (mms|ммс)/i, [], parseInt);
 
+        // Накоплено 54 мин. в текущем месяце
+        getParam (html, result, 'min_used', /Накоплено (\d+) мин[^\s]*/, [/ |\xA0/, ""], parseInt);
+
+        // Сумма по неоплаченным счетам: 786.02 руб. (оплатить до 24.03.2012)
+        getParam (html, result, 'debt', /Сумма по неоплаченным счетам.*?>([-\d\.]*)/i, [/ |\xA0/, ""], parseFloat);
+
+        // Сумма по неоплаченным счетам: 786.02 руб. (оплатить до 24.03.2012)
+        getParam (html, result, 'pay_till', /оплатить до ([\d\.\/]+)/i, [], parseTime);
+
         // Остаток трафика
         getParam (html, result, 'traffic_left', /(?:Осталось|Остаток)[^\d]*(\d+,?\d* *(kb|mb|gb|кб|мб|гб))/i);
 
@@ -180,4 +189,11 @@ function main(){
 
     AnyBalance.setResult(result);
 
+}
+
+function parseTime(date){
+    AnyBalance.trace("Trying to parse date from " + date);
+    var dateParts = date.split(/[\.\/]/);
+    var d = new Date(dateParts[2], (dateParts[1] - 1), dateParts[0]);
+    return d.getTime();
 }

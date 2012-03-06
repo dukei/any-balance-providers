@@ -113,37 +113,37 @@ function main(){
         AnyBalance.trace("Parsing status...");
     
         // Пакет минут
-        getParam (html, result, 'min_left', /Остаток пакета минут: (\d+)\./, [/ |\xA0/, "", ",", "."], parseInt);
+        getParam (html, result, 'min_left', /Остаток пакета минут:\s*([\d\.,]+)\./, [/ |\xA0/, "", ",", "."], parseFloat);
     
         // Остаток бонуса
-        getParam (html, result, 'min_left', /Остаток бонуса: (.*?) мин/, [/ |\xA0/, "", ",", "."], parseInt);
+        getParam (html, result, 'min_left', /Остаток бонуса:\s*([\d\.,]+?)\s*мин/, [/ |\xA0/, "", ",", "."], parseFloat);
 
         // Остаток минут
-        getParam (html, result, 'min_left', /Осталось (\d*) мин./i, [], parseInt);
+        getParam (html, result, 'min_left', /Осталось\s*([\d\.,]+)\s*мин/i, [",", "."], parseFloat);
         
         // Остаток: минут
-        getParam (html, result, 'min_left', /Остаток: (\d*) минут/i, [], parseInt);
+        getParam (html, result, 'min_left', /Остаток:\s*([\d\.,]+)\s*минут/i, [",", "."], parseFloat);
 
         // Использовано: 0 минут местных и мобильных вызовов.
-        getParam (html, result, 'min_local', /Использовано: (\d+) мин[^\s]* местных/, [/ |\xA0/, ""], parseInt);
+        getParam (html, result, 'min_local', /Использовано:\s*([\d\.,]+)\s*мин[^\s]* местных/, [/ |\xA0/, "", ",", "."], parseFloat);
 
         // Использовано: 0 минут на любимые номера
-        getParam (html, result, 'min_love', /Использовано: (\d+) мин[^\s]* на любимые/, [/ |\xA0/, ""], parseInt);
+        getParam (html, result, 'min_love', /Использовано:\s*([\d\.,]+)\s*мин[^\s]* на любимые/, [/ |\xA0/, "", ",", "."], parseFloat);
 
         // Остаток СМС
-        getParam (html, result, 'sms_left', /(?:Осталось|Остаток)[^\d]*(\d*) (sms|смс)/i, [], parseInt);
+        getParam (html, result, 'sms_left', /(?:Осталось|Остаток)[^\d]*(\d*)\s*(sms|смс)/i, [], parseInt);
 
         // Остаток ММС
-        getParam (html, result, 'mms_left', /(?:Осталось|Остаток)[^\d]*(\d*) (mms|ммс)/i, [], parseInt);
+        getParam (html, result, 'mms_left', /(?:Осталось|Остаток)[^\d]*(\d*)\s*(mms|ммс)/i, [], parseInt);
 
         // Накоплено 54 мин. в текущем месяце
-        getParam (html, result, 'min_used', /Накоплено (\d+) мин[^\s]*/, [/ |\xA0/, ""], parseInt);
+        getParam (html, result, 'min_used', /Накоплено\s*(\d+)\s*мин[^\s]*/, [/ |\xA0/, ""], parseInt);
 
         // Сумма по неоплаченным счетам: 786.02 руб. (оплатить до 24.03.2012)
         getParam (html, result, 'debt', /Сумма по неоплаченным счетам.*?>([-\d\.]*)/i, [/ |\xA0/, ""], parseFloat);
 
         // Сумма по неоплаченным счетам: 786.02 руб. (оплатить до 24.03.2012)
-        getParam (html, result, 'pay_till', /оплатить до ([\d\.\/]+)/i, [], parseTime);
+        getParam (html, result, 'pay_till', /оплатить до\s*([\d\.\/]+)/i, [], parseTime);
 
         // Остаток трафика
         getParam (html, result, 'traffic_left', /(?:Осталось|Остаток)[^\d]*(\d+,?\d* *(kb|mb|gb|кб|мб|гб))/i);
@@ -158,7 +158,7 @@ function main(){
         getParam (html, result, 'credit', /Сумма кредитного лимита.*?>([-\d\.]*)/i, [",", "."], parseFloat);
 
         // Расход за этот месяц
-        getParam (html, result, 'usedinthismonth', /Израсходовано .*<strong>([\d.]*)/i, [], parseFloat);
+        getParam (html, result, 'usedinthismonth', /Израсходовано .*?<strong>([\d.]*)/i, [], parseFloat);
     }
 
 

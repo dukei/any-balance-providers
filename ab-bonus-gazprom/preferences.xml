@@ -12,11 +12,11 @@
     </EditTextPreference>
     <EditTextPreference
         key="password"
-        title="Пароль"
-        summary="Пароль для входа в личный кабинет||**********\n"
+        title="Фамилия"
+        summary="Фамилия для входа в личный кабинет||**********\n"
         inputType="textPassword"
         dialogTitle="Пароль"
-        dialogMessage="Введите пароль, используемый для входа в личный кабинет"
+        dialogMessage="Введите фамилию на кого зарегестрированна карта для входа в личный кабинет"
         positiveButtonText="ОК"
         negativeButtonText="Отмена">
     </EditTextPreference>

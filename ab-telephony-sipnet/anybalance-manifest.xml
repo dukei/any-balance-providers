@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-telephony-sipnet</id>
+  <name>SIPNET</name>
+  <description>
+    Получает текущий баланс в Sipnet.
+  </description>
+  <author>Vit@liy &lt;vitaliy@root.ua&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" prefix="$" type="numeric"/>
+  </counters>
+  <keywords>
+    sipnet sip IP-телефония
+  </keywords>
+  <type>
+    telephony
+  </type>
+</provider>

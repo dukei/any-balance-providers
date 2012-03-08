@@ -9,6 +9,7 @@
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
+    <js>api:jquery.min.js</js>
     <js>main.js</js>
   </files>
   <counters>
@@ -17,7 +18,7 @@
     <counter id="licschet" name="Лицевой счет" type="text"/>
   </counters>
   <keywords>
-    mgts, московкая городская телефонная сеть, проводной телефон
+    mgts, московская городская телефонная сеть, проводной телефон
   </keywords>
   <type>
     telephony

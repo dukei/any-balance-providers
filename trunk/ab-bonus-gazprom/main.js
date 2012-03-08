@@ -5,6 +5,7 @@
 
 Сайт программы: http://www.gpnbonus.ru
 
+1.0.5 - Изменения на сайте.
 1.0.4 - Косметические доработки. Добавил курс бонусной программы. Изменил пароль на фамилию.
 1.0.3 - Изменения на сайте gpnbonus. Для экономии трафика теперь у них есть мобильная версия, с неё в основно и берется вся информация.
 1.0.2 - Добавил баланс в рублях по курсу программы.
@@ -26,17 +27,17 @@ function main(){
 	AnyBalance.trace('Start parsing...');
 
 //Баланс
-	regexp=/Бонусов доступно.*\n.*>(.*)</m;
+	regexp=/Бонусов доступно.*\n.*\n.*>(.*)</m;
 	if (res=regexp.exec(html)){
 		result.balance=res[1];
 	}
 //Сумма покупок за месяц
-   	regexp=/за текущий месяц.*\n.*>(.*) руб.</m;
+   	regexp=/за текущий месяц.*\n.*\n.*>(.*) руб.</m;
 	if (res=regexp.exec(html)){
 		result.month=res[1];
 	}
 //Сумма для подтверждения статуса
-	regexp=/Для подтверждения статуса необходимо совершить покупки на сумму.*\n.*>(.*) руб.</m;
+	regexp=/Для подтверждения статуса необходимо совершить покупки на сумму.*\n.*\n.*>(.*) руб.</m;
 	if (res=regexp.exec(html)){
 		result.month_need=res[1];
 	}
@@ -48,15 +49,15 @@ function main(){
 		result.customer=res[1]+' '+res[2];
 	}
 //Текущий статус
-	regexp=/.*Текущий статус карты.*\n.*>(.*?)</m;
+	regexp=/.*Текущий статус карты.*\n.*\n.*>(.*?)</m;
 	if (res=regexp.exec(html)){
 		result.status=res[1];
 		result.__tariff=result.status;
 	}
 //Сумма для повышения статуса
 	if(AnyBalance.isAvailable('month_need_up')){
-		var url='http://www.gpnbonus.ru/profile/main/';
-		var html = AnyBalance.requestGet(url, prefs);
+		var url='http://www.gpnbonus.ru/profile/login/';
+		var html = AnyBalance.requestPost(url, prefs);
 		regexp=/Для повышения статуса необходимо совершить покупки на сумму.*\n.*DinPro fs24 .*>(.*) руб.</m;
 		if (res=regexp.exec(html)){
 			result.month_need_up=res[1];

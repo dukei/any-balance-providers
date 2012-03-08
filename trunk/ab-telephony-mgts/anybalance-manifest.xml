@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-telephony-mgts</id>
+  <name>МГТС</name>
+  <description>
+    Получает текущий баланс в МГТС. Интернет от МГТС пока не поддерживается (обращайтесь к автору).
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="fio" name="ФИО" type="text"/>
+    <counter id="licschet" name="Лицевой счет" type="text"/>
+  </counters>
+  <keywords>
+    mgts, московкая городская телефонная сеть, проводной телефон
+  </keywords>
+  <type>
+    telephony
+  </type>
+</provider>

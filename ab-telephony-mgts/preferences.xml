@@ -7,6 +7,7 @@
         dialogTitle="Номер телефона" 
         negativeButtonText="Отмена" 
         dialogMessage="Введите цифры вашего номера телефона с кодом города (10 цифр)"
+	inputType="number"
         key="login">
     </EditTextPreference>
     <EditTextPreference 

@@ -4,7 +4,7 @@
 Текущий баланс у сотового оператора Tele2 (Россия).
 
 Сайт оператора: http://www.tele2.ru/
-Личный кабинет: https://my.tele2.ru/
+Личный кабинет: https://webcare.tele2.ru/
 */
 
 function getParam (html, result, param, regexp, replaces, parser) {
@@ -51,13 +51,14 @@ function main(){
 
     html = AnyBalance.requestGet(baseurl + "c");
     
-    var result = {success: true}; //Баланс нельзя не получить, не выдав ошибку!
+    var result = {success: true};
     
     getParam(html, result, 'balance', /Всего доступно средств:[\s\S]*?>(-?\d[\d,\.\s]*)</i, [/\s+/g, '', /,/g, '.'], parseFloat);
     getParam(html, result, 'balance_personal', /Персональные балансы:[\s\S]*?Итого доступно:[\s\S]*?>(-?\d[\d,\.\s]*)</i, [/\s+/g, '', /,/g, '.'], parseFloat);
     getParam(html, result, 'balance_corp', /Корпоративные балансы:[\s\S]*?Итого доступно:[\s\S]*?>(-?\d[\d,\.\s]*)</i, [/\s+/g, '', /,/g, '.'], parseFloat);
 
     var eventid = getParam(html, null, null, /<a[^>]*?id="([^"]*)"[^>]*?><div><table cellpadding="0" cellspacing="0"><tr><td>Персональные данные/i);
+    var shorteventid = eventid.replace(/\.\d+$/, '');
     var params = {
         'ice.submit.partial': true,
         'ice.event.target': '',
@@ -75,22 +76,23 @@ function main(){
         '':'',
         '_WCPersonalAccount_WAR_PT_CC_WCPortlet_v1portlet_:personalAccountForm:_id_WCPersonalAccount_WAR_PT_CC_WCPortlet_v1portlet_:personalAccountForm:j_id88dropID':'',
         '_WCPersonalAccount_WAR_PT_CC_WCPortlet_v1portlet_:personalAccountForm:_id_WCPersonalAccount_WAR_PT_CC_WCPortlet_v1portlet_:personalAccountForm:j_id88status':'',
-        '_WCPersonalAccount_WAR_PT_CC_WCPortlet_v1portlet_:personalAccountForm:balance_selectionHolder':'',
-        '_WCPersonalAccount_WAR_PT_CC_WCPortlet_v1portlet_:personalAccountForm:j_id19:0:corporate_balances_selectionHolder':'',
-        '_WCPersonalAccount_WAR_PT_CC_WCPortlet_v1portlet_:personalAccountForm:j_id19:0:personal_balances_selectionHolder':'',
-        '_WCPersonalAccount_WAR_PT_CC_WCPortlet_v1portlet_:personalAccountForm:personalAccountFormTmp':'tmp',
-        'javax.faces.RenderKitId':'ICEfacesRenderKit',
-        'javax.faces.ViewState':1,
-        'icefacesCssUpdates':'',
-        '_WCPersonalAccount_WAR_PT_CC_WCPortlet_v1portlet_:personalAccountForm':'_WCPersonalAccount_WAR_PT_CC_WCPortlet_v1portlet_:personalAccountForm'
+        '_WCPersonalAccount_WAR_PT_CC_WCPortlet_v1portlet_:personalAccountForm:balance_selectionHolder':''
     };
+
+    params[shorteventid + ':corporate_balances_selectionHolder']='';
+    params[shorteventid + ':personal_balances_selectionHolder']='';
+    params['_WCPersonalAccount_WAR_PT_CC_WCPortlet_v1portlet_:personalAccountForm:personalAccountFormTmp'] = 'tmp';
+    params['javax.faces.RenderKitId'] = 'ICEfacesRenderKit';
+    params['javax.faces.ViewState'] = 1;
+    params['icefacesCssUpdates'] = '';
+    params['_WCPersonalAccount_WAR_PT_CC_WCPortlet_v1portlet_:personalAccountForm']='_WCPersonalAccount_WAR_PT_CC_WCPortlet_v1portlet_:personalAccountForm';
     params[eventid] = eventid;
     params['ice.session']= getParam(html, null, null, /session:\s*['"]([^'"]*)['"]/);
     params['ice.view']=1;
     params['ice.focus']='undefined';
     params['rand']=0.8372334879823029;
     
-    var html = AnyBalance.requestPost(baseurl + "PT_CC_WCPortlet_v1-portlet/block/send-receive-updates", params, {Origin: baseurl, Referer: baseurl + 'group/public/account_info'});
+    var html = AnyBalance.requestPost(baseurl + "PT_CC_WCPortlet_v1-portlet/block/send-receive-updates", params);
     result.__tariff = getParam(html, null, null, /Тарифный план[\s\S]*?<span[^>]*>(.*?)<\/span>/i);
     getParam(html, result, 'company', /Наименование[\s\S]*?<span[^>]*>(.*?)<\/span>/i);
     getParam(html, result, 'userName', /Абонент\s*<[\s\S]*?<span[^>]*>(.*?)<\/span>/i);

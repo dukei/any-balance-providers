@@ -122,10 +122,10 @@ function main(){
         getParam (html, result, 'min_left', /Осталось\s*([\d\.,]+)\s*мин/i, [",", "."], parseFloat);
         
         // Остаток: минут
-        getParam (html, result, 'min_left', /Остаток:\s*([\d\.,]+)\s*минут/i, [",", "."], parseFloat);
+        getParam (html, result, 'min_left', /Остаток:\s*([\d\.,]+)\s*мин/i, [",", "."], parseFloat);
 
         // Остаток минут по тарифу "Готовый офис" - 194 минут
-        getParam (html, result, 'min_left', /Остаток минут.*?([\d\.,]+)\s*мин/i, [",", "."], parseFloat);
+        getParam (html, result, 'min_left', /Остаток мин.*?([\d\.,]+)\s*мин/i, [",", "."], parseFloat);
 
         // Использовано: 0 минут местных и мобильных вызовов.
         getParam (html, result, 'min_local', /Использовано:\s*([\d\.,]+)\s*мин[^\s]* местных/, [/ |\xA0/, "", ",", "."], parseFloat);

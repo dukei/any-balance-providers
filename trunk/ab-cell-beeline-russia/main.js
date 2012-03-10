@@ -234,26 +234,6 @@ function parseCorporate(baseurl, html){
         getParam (html, result, 'balance', /Текущий баланс[\s\S]*?<td[^>]*>\s*([\s\S]*?)\s*</i, alltransformations, parseBalance);
       }
 
-      if(AnyBalance.isAvailable('sms_left','mins_left')){
-        AnyBalance.trace("Fetching included minutes info...");
-
-        html = AnyBalance.requestPost(baseurl + "loadUnbilledAction.do", {
-          _navigation_secondaryMenu:'billing.unbilledCalls',
-          _resetBreadCrumbs:'true'
-        });
-
-        html = AnyBalance.requestPost(baseurl + "VIPUnbilledSubscribersSwitchingAction.do", {
-          _navigation_secondaryMenu:'billing.unbilledCalls',
-          _resetBreadCrumbs:'true'
-        });
-
-        
-
-        // Баланс
-        getParam (html, result, 'balance', /Текущий баланс[\s\S]*?<td[^>]*>\s*([\s\S]*?)\s*</i, alltransformations, parseBalance);
-      }
-
-      
       if(AnyBalance.isAvailable('expences')){
         AnyBalance.trace("Fetching expences info...");
         // Финансовая информация - звонки текущего периода
@@ -263,22 +243,20 @@ function parseCorporate(baseurl, html){
         });
 
         // Финансовая информация - звонки текущего периода - Начисления
-        if(AnyBalance.isAvailable('expences')){
-            var stateParam = getParam(html, null, null, /<form name="ecareSubmitForm"[\s\S]*?name="_stateParam" value="([^"]*)"/i);
-            AnyBalance.trace("Fetching expences info...");
-            html = AnyBalance.requestPost(baseurl + "VIPUnbilledSubscribersSwitchingAction.do", {
-              _stateParam: stateParam,
-              _forwardName:'unbilledCharge',
-              _resetBreadCrumbs:'null',
-              "ctrlvcol%3Dradio%3Bctrl%3DsubscriberListExt%3Btype%3Drd":phone
-            });
-            
-            // Сколько использовано
-            getParam (html, result, 'expences', /Общая сумма начислений[\s\S]*?<td>\s*([\s\S]*?)\s*</i, alltransformations, parseBalance);
-        }
+        var stateParam = getParam(html, null, null, /<form name="ecareSubmitForm"[\s\S]*?name="_stateParam" value="([^"]*)"/i);
+        AnyBalance.trace("Fetching expences info...");
+        html = AnyBalance.requestPost(baseurl + "VIPUnbilledSubscribersSwitchingAction.do", {
+          _stateParam: stateParam,
+          _forwardName:'unbilledCharge',
+          _resetBreadCrumbs:'null',
+          "ctrlvcol%3Dradio%3Bctrl%3DsubscriberListExt%3Btype%3Drd":phone
+        });
+        
+        // Сколько использовано
+        getParam (html, result, 'expences', /Общая сумма начислений[\s\S]*?<td>\s*([\s\S]*?)\s*</i, alltransformations, parseBalance);
       }
 
-      if(AnyBalance.isAvailable('sms_left', 'mins_left')){
+      if(AnyBalance.isAvailable('sms_left', 'min_left')){
         AnyBalance.trace("Fetching inclusive info...");
         // Финансовая информация - звонки текущего периода
         html = AnyBalance.requestPost(baseurl + "loadUnbilledAction.do", {
@@ -288,22 +266,20 @@ function parseCorporate(baseurl, html){
 
         
       // Финансовая информация - звонки текущего периода - включенные минуты
-        if(AnyBalance.isAvailable('sms_left', 'mins_left')){
-            var stateParam = getParam(html, null, null, /<form name="ecareSubmitForm"[\s\S]*?name="_stateParam" value="([^"]*)"/i);
-            html = AnyBalance.requestPost(baseurl + "VIPUnbilledSubscribersSwitchingAction.do", {
-              _stateParam: stateParam,
-              _forwardName:'unusedInclusive',
-              _resetBreadCrumbs:'null',
-              "ctrlvcol%3Dradio%3Bctrl%3DsubscriberListExt%3Btype%3Drd":phone
-            });
-            
-            // Сколько использовано минут
-            //<td>Всё включено L (фед.)         </td><td>26.02.2012</td><td>10.03.2012</td><td>252,00</td><td>мин.</td>
-            getParam (html, result, 'mins_left', /<td>([\-\d\.\,\s]+)<\/td><td>мин[^<]*<\/td>/i, [/\s+/g, '', /,/g, '.'], parseFloat);
-            // Сколько использовано смс
-            //<td>(0/0) СМС (прием/передача)    </td><td>26.02.2012</td><td>10.03.2012</td><td>2 984,00</td><td>шт.</td>
-            getParam (html, result, 'sms_left', /<td>[^<]*(?:СМС|SMS)[^<]*<\/td><td>[^<]*<\/td><td>[^<]*<\/td><td>([\-\d\.\,\s]+)<\/td><td>шт[^<]*<\/td>/i, [/\s+/g, '', /,/g, '.'], parseFloat);
-        }
+        var stateParam = getParam(html, null, null, /<form name="ecareSubmitForm"[\s\S]*?name="_stateParam" value="([^"]*)"/i);
+        html = AnyBalance.requestPost(baseurl + "VIPUnbilledSubscribersSwitchingAction.do", {
+          _stateParam: stateParam,
+          _forwardName:'unusedInclusive',
+          _resetBreadCrumbs:'null',
+          "ctrlvcol%3Dradio%3Bctrl%3DsubscriberListExt%3Btype%3Drd":phone
+        });
+        
+        // Сколько использовано минут
+        //<td>Всё включено L (фед.)         </td><td>26.02.2012</td><td>10.03.2012</td><td>252,00</td><td>мин.</td>
+        getParam (html, result, 'min_left', /<td>([\-\d\.\,\s]+)<\/td><td>мин[^<]*<\/td>/i, [/\s+/g, '', /,/g, '.'], parseFloat);
+        // Сколько использовано смс
+        //<td>(0/0) СМС (прием/передача)    </td><td>26.02.2012</td><td>10.03.2012</td><td>2 984,00</td><td>шт.</td>
+        getParam (html, result, 'sms_left', /<td>[^<]*(?:СМС|SMS)[^<]*<\/td><td>[^<]*<\/td><td>[^<]*<\/td><td>([\-\d\.\,\s]+)<\/td><td>шт[^<]*<\/td>/i, [/\s+/g, '', /,/g, '.'], parseFloat);
       }
     }
 

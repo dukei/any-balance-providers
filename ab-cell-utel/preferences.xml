@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Логин" 
+        positiveButtonText="ОК" 
+        summary="Логин в «Uкабинет»||{@s}\n" 
+        dialogTitle="Логин" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите логин в личный кабинет Utel. Если Вы абонент услуг Utel и еще не объединили услуги в «Uкабинет», то вам необходимо пройти процедуру создания новой учетной записи на сайте https://ukabinet.u-tel.ru."
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="Пароль для входа в «Uкабинет»||***********\n"
+        dialogMessage="Введите пароль, используемый для входа в «Uкабинет». Если Вы не знаете свой пароль, пройдите регистрацию или восстановите пароль на сайте https://ukabinet.u-tel.ru."
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

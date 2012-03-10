@@ -200,6 +200,10 @@ function parseBalanceList(html, result){
     }
 }
 
+function parseMinutes(str){
+    return parseFloat(str)*60; //Переводим в секунды
+}
+
 function parseCorporate(baseurl, html){
     var result = {success: true};
 
@@ -276,7 +280,7 @@ function parseCorporate(baseurl, html){
         
         // Сколько использовано минут
         //<td>Всё включено L (фед.)         </td><td>26.02.2012</td><td>10.03.2012</td><td>252,00</td><td>мин.</td>
-        getParam (html, result, 'min_left', /<td>([\-\d\.\,\s]+)<\/td><td>мин[^<]*<\/td>/i, [/\s+/g, '', /,/g, '.'], parseFloat);
+        getParam (html, result, 'min_left', /<td>([\-\d\.\,\s]+)<\/td><td>мин[^<]*<\/td>/i, [/\s+/g, '', /,/g, '.'], parseMinutes);
         // Сколько использовано смс
         //<td>(0/0) СМС (прием/передача)    </td><td>26.02.2012</td><td>10.03.2012</td><td>2 984,00</td><td>шт.</td>
         getParam (html, result, 'sms_left', /<td>[^<]*(?:СМС|SMS)[^<]*<\/td><td>[^<]*<\/td><td>[^<]*<\/td><td>([\-\d\.\,\s]+)<\/td><td>шт[^<]*<\/td>/i, [/\s+/g, '', /,/g, '.'], parseFloat);

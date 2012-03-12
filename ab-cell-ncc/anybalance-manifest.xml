@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="17">ab-cell-ncc</id>
+  <id major_version="1.0" version="18">ab-cell-ncc</id>
   <name>НСС</name>
   <description>
     Получает текущий баланс и тариф оператора НСС (Татарстан, Нижегородский филиал)

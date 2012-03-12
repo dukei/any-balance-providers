@@ -1,5 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
+    <ListPreference
+        title="Регион"
+        summary="|Выберите регион|Выбран регион '{@s}'!"
+        key="region"
+        defaultValue="kzn"
+        entries="Барнаул|Брянск|Волгоград (Волжский)|Воронеж|Дзержинск|Екатеринбург|Ижевск|Иркутск|Йошкар-Ола|Казань|Киров|Красноярск|Курган|Курск|Липецк|Магнитогорск|Набережные Челны|Нижнекамск|Нижний Новгород|Новосибирск|Омск|Оренбург|Пенза|Пермь|Ростов-на-Дону|Рязань|Самара|Санкт-Петербург|Саратов (Энгельс)|Сызрань|Тверь|Томск|Тула|Тюмень|Ульяновск|Уфа|Чебоксары|Челябинск|Ярославль"
+        entryValues="barnaul|bryansk|volgograd|voronezh|dzr|ekat|izhevsk|irkutsk|yola|kzn|kirov|krsk|kurgan|kursk|lipetsk|mgn|nch|nk|nn|novosib|omsk|oren|penza|perm|rostov|ryazan|samara|spb|saratov|syzran|tver|tomsk|tula|tmn|ulsk|ufa|cheb|chel|yar" />
     <EditTextPreference 
         key="log"
         title="Логин" 

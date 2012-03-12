@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="16">ab-internet-ertelecom</id>
-  <name>Интернет провайдер Дом.ру (Казань)</name>
+  <id major_version="1.0" version="18">ab-internet-ertelecom</id>
+  <name>Интернет провайдер Дом.ру</name>
   <description>
     Получает текущий баланс, номер и тип лицевого счета, владельца счета, статус, трафик в текущем месяце и дату окончания предыдущей сессии у провайдера "Эр-телеком" (ДОМ.РУ)
   </description>
@@ -20,6 +20,7 @@
     <counter id="last_session_end" name="Конец последней сессии" type="text"/>
     <counter id="traffic_inner" name="Внутренний (Домашний) трафик" prefix="Дом:" suffix="Мб"/>
     <counter id="traffic_outer" name="Внешний трафик" prefix="Вн:" suffix="Мб"/>
+    <counter id="tariff_number" name="Номер тарифа" type="text"/>
   </counters>
   <keywords>
     провайдер интернет дом.ру

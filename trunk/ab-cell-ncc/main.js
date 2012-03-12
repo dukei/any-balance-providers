@@ -11,7 +11,6 @@ function main(){
 	var baseurl = 'https://iserve.ncc-volga.ru/';
 
 	AnyBalance.setDefaultCharset('koi8-r');
-//	AnyBalance.setDefaultCharset('utf-8');
     
 //	var info = AnyBalance.requestGet(baseurl + '?path=exit');
 
@@ -61,12 +60,12 @@ function main(){
 	info = AnyBalance.requestGet(baseurl + "?path=tarif");
 
 	if(prefs.region == "1"){	// Татарстан
-		if(matches = info.match(/<td>Тариф: (.*?) <\/td>/i)){
+		if(matches = info.match(/Тариф: (.*?)</)){
 			result.__tariff = matches[1];
 		}
 	}
 	else if(prefs.region == "2"){	// Нижегородский
-		if(matches = info.match(/<td>Тариф: (.*?)<\/td>/i)){
+		if(matches = info.match(/Тариф: (.*?)</)){
 			result.__tariff = matches[1];
 		}
 	}

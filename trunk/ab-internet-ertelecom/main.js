@@ -3,14 +3,26 @@
 
 Провайдер ЭрТелеком 
 Сайт оператора: http://citydom.ru/
-Личный кабинет (Казань): https://kzn.db.ertelecom.ru/
 */
 
 function main(){
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://kzn.db.ertelecom.ru/';
+	var domain = prefs.region;
 
+// установка региона
+	if(prefs.region ==""){	// Казань по умолчанию
+		domain='kzn';
+	}
+
+	AnyBalance.trace('Selected region: ' + domain);
+
+
+	var baseurl = 'https://'+domain+'.db.ertelecom.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
+
+//разлогиниться из кабинета 
+//	var outinfo = AnyBalance.requestGet(baseurl + '');
+
 
     // Заходим на главную страницу
 	AnyBalance.trace('Authorizing by ' + baseurl + "elk.php");
@@ -39,7 +51,8 @@ function main(){
 	AnyBalance.trace('Getting links by ' + baseurl + 'right.php?url=&entry=procedure%3Astatistic_user_pppoe.entry');
 	info = AnyBalance.requestGet(baseurl + 'right.php?url=&entry=procedure%3Astatistic_user_pppoe.entry');
 
-	if(matches = info.match(/<frame .*? src="https:\/\/kzn\.db\.ertelecom\.ru\/cgi-bin\/ppo\/es_webface\/statistic_user_pppoe\.get_date_show_statistic\?client\$c=.*?\&id_session\$c=(.*?)">/i)){
+	var pattern=new RegExp("<frame .*? src=\"https:\/\/"+domain+"\\.db\\.ertelecom\\.ru\/cgi-bin\/ppo\/es_webface\/statistic_user_pppoe\\.get_date_show_statistic\\?client\\$c=.*?\\&id_session\\$c=(.*?)\">","i");
+	if(matches = info.match(pattern)){
 		var id_session=matches[1];
 
 		AnyBalance.trace('Getting statistics');
@@ -52,6 +65,7 @@ function main(){
 
 			matches = info.match(/Ваш договор: <b>(.*?) \((.*?)\)<\/b>/i);
 			result.__tariff = matches[1];
+			result.tariff_number = matches[1];
 			result.contract_type = matches[2];
 
 			matches = info.match(/Ваш баланс на .*? составляет <b>(.*?) рублей\n<\/b>/i);
@@ -59,20 +73,27 @@ function main(){
 			result.balance = parseFloat(value);
 
 			if(AnyBalance.isAvailable('traffic_inner')){
-				matches = info.match(/<td colspan="30"><font color="yellow"><b>.*?"ДОМашний".*?: (.*?) Мб<\/b><\/font><\/td>/i);
-				value=matches[1].replace(',','.');value=value.replace(' ','');
-				result.traffic_inner = parseFloat(value);
+				if(matches = info.match(/<td colspan="30"><font color="yellow"><b>.*?"ДОМашний".*?: (.*?) Мб<\/b><\/font><\/td>/i)){
+					value=matches[1].replace(',','.');value=value.replace(' ','');
+					result.traffic_inner = parseFloat(value);
+				}
 			}
 
 			if(AnyBalance.isAvailable('traffic_outer')){
-				matches = info.match(/<td colspan="30"><font color="yellow"><b>.*?"Интернет трафик".*?: (.*?) Мб <\/b><\/font><\/td>/i);
-				value=matches[1].replace(',','.');value=value.replace(' ','');
-				result.traffic_outer = parseFloat(value);
+				if(matches = info.match(/<td colspan="30"><font color="yellow"><b>.*?"Интернет трафик".*?: (.*?) Мб <\/b><\/font><\/td>/i)){
+					value=matches[1].replace(',','.');value=value.replace(' ','');
+					result.traffic_outer = parseFloat(value);
+				}
 			}
 
 			if(AnyBalance.isAvailable('last_session_end')){
-				matches = info.match(/<td>(.*?)<\/td>\n<td>Интернет трафик<\/td>\n<td align="right">.*?<\/td>\n<\/tr>\n<tr bgcolor="red">/i);
-				result.last_session_end = matches[1];
+				if(matches = info.match(/<td>(.*?)<\/td>\n<td>Интернет трафик<\/td>\n<td align="right">.*?<\/td>\n<\/tr>\n<tr bgcolor="red">/i)){
+					result.last_session_end = matches[1];
+				}
+			}
+
+			if(matches = info.match(/Основной тариф: (.*?)</i)){
+				result.__tariff = matches[1];
 			}
 
 			AnyBalance.trace('WARNING! Statistics for current connection hasn\'t been showed.');

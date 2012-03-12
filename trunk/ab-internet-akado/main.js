@@ -1,9 +1,9 @@
 /**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 
-Домашний Интернет и Телевидение МТС
-Сайт оператора: http://www.dom.mts.ru/
-Личный кабинет: https://kabinet.mts.ru/
+Домашний Интернет и Телевидение Акадо
+Сайт оператора: http://www.akado.ru/
+Личный кабинет: https://office.akado.ru/login.xml
 */
 
 function main(){

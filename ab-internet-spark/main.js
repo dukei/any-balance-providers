@@ -29,6 +29,10 @@ function getParam (html, result, param, regexp, replaces, parser) {
 	}
 }
 
+function getTrafficGb(str){
+  return parseFloat((parseFloat(str)/1000).toFixed(2));
+}
+
 function main(){
     var prefs = AnyBalance.getPreferences();
 
@@ -53,6 +57,7 @@ function main(){
     getParam(html, result, 'balance', /Текущий баланс:[\s\S]*?>([\-\d,\.\s]*)/i, [/\s+/g, '', /,/g, '.'], parseFloat);
     getParam(html, result, 'abonentka', /Текущая абонентская плата за все услуги:[\s\S]*?>([\-\d,\.\s]*)/i, [/\s+/g, '', /,/g, '.'], parseFloat);
     getParam(html, result, 'traffic', /Расход трафика в текущем месяце:[\s\S]*?>([\-\d,\.\s]*)/i, [/\s+/g, '', /,/g, '.'], parseFloat);
+    getParam(html, result, 'trafficGb', /Расход трафика в текущем месяце:[\s\S]*?>([\-\d,\.\s]*)/i, [/\s+/g, '', /,/g, '.'], getTrafficGb);
     getParam(html, result, 'status', /Статус подключения:[\s\S]*?>([^<]*)/i);
     result.__tariff = getParam(html, null, null, /Текущий тарифный план:[\s\S]*?>([^<]*)/i);
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-spark</id>
+  <id version="2">ab-internet-spark</id>
   <name>СПАРК - интернет провайдер</name>
   <description>
     Получает баланс и информацию о тарифном плане для интернет провайдера СПАРК. Информация берется из личного кабинета https://stat.spark-com.ru.
@@ -13,12 +13,13 @@
   </files>
   <counters>
     <counter id="balance" name="Баланс" units="р"/>
-    <counter id="traffic" name="Трафик" units="Мб"/>
+    <counter id="traffic" name="Трафик (Мб)" units="Мб"/>
     <counter id="bonus" name="Бонусы" units="р"/>
     <counter id="abonentka" name="Абонентская плата" units="р"/>
     <counter id="licschet" name="Лицевой счет" type="text"/>
     <counter id="userName" name="ФИО" type="text"/>
     <counter id="status" name="Статус подключения" type="text"/>
+    <counter id="trafficGb" name="Трафик (Гб)" units="Гб"/>
   </counters>
   <keywords>
     интернет, электросети, PLC (Power Line Communication)

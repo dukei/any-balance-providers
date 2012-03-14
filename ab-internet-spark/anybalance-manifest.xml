@@ -19,7 +19,7 @@
     <counter id="licschet" name="Лицевой счет" type="text"/>
     <counter id="userName" name="ФИО" type="text"/>
     <counter id="status" name="Статус подключения" type="text"/>
-    <counter id="trafficGb" name="Трафик (Гб)" units="Гб"/>
+    <counter id="trafficGb" name="Трафик (Гб)" units=" Гб"/>
   </counters>
   <keywords>
     интернет, электросети, PLC (Power Line Communication)

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-internet-spark</id>
+  <id version="3">ab-internet-spark</id>
   <name>СПАРК - интернет провайдер</name>
   <description>
     Получает баланс и информацию о тарифном плане для интернет провайдера СПАРК. Информация берется из личного кабинета https://stat.spark-com.ru.

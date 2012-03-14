@@ -8,7 +8,7 @@
 */
 
 function getParam (html, result, param, regexp, replaces, parser) {
-	if (param && !AnyBalance.isAvailable (param))
+	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
 		return;
 
 	var value = regexp.exec (html);
@@ -59,7 +59,7 @@ function main(){
     getParam(html, result, 'traffic', /Расход трафика в текущем месяце:[\s\S]*?>([\-\d,\.\s]*)/i, [/\s+/g, '', /,/g, '.'], parseFloat);
     getParam(html, result, 'trafficGb', /Расход трафика в текущем месяце:[\s\S]*?>([\-\d,\.\s]*)/i, [/\s+/g, '', /,/g, '.'], getTrafficGb);
     getParam(html, result, 'status', /Статус подключения:[\s\S]*?>([^<]*)/i);
-    result.__tariff = getParam(html, null, null, /Текущий тарифный план:[\s\S]*?>([^<]*)/i);
+    getParam(html, result, '__tariff', /Текущий тарифный план:[\s\S]*?>([^<]*)/i, null, html_entity_decode);
 
     if(AnyBalance.isAvailable('bonus')){
 	var html = AnyBalance.requestGet(baseurl + "account_bonuses/");
@@ -67,4 +67,12 @@ function main(){
     }
     
     AnyBalance.setResult(result);
+}
+
+function html_entity_decode(str)
+{
+    //jd-tech.net
+    var tarea=document.createElement('textarea');
+    tarea.innerHTML = str;
+    return tarea.value;
 }

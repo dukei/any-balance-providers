@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <ListPreference
+        title="Тип игры"
+        summary="Тип игры||Тип игры: {@s}\n"
+        key="type"
+        defaultValue="o_standart"
+        entries="Online Standart|Chess960"
+        entryValues="o_standart|chess960" />
+    <EditTextPreference 
+        title="Ник" 
+        positiveButtonText="ОК" 
+        summary="Ник||{@s}\n" 
+        dialogTitle="Ваш ник" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите ваш ник на chess.com"
+        key="nick"
+        inputType="text">
+    </EditTextPreference>
+</PreferenceScreen>

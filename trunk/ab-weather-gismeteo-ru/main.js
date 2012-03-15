@@ -21,13 +21,13 @@ function getCurrentWeather (html, result) {
     getParam (html, result, 'atmosphericConditions', /class="cloudness">[\s\S]*?>([^\s<]+[^<]*)/i);
 
     // Температура
-    getParam (html, result, 'temperature', /class="temp">([-+]?\d+[,.]?\d*)/i, [], parseFloat);
+    getParam (html, result, 'temperature', /class='value\sm_temp\sc'>((?:[-+]?|&minus;|&plus;)\d+[,.]?\d*)/i, ['&minus;', '-', '&plus;', '+'], parseFloat);
 
     // Атмосферное давление
-    getParam (html, result, 'pressure', /title="Давление">(\d+)/i, [], parseInt);
+    getParam (html, result, 'pressure', /class='value m_press torr'>(\d+)/i, [], parseInt);
 
     // Ветер
-    getParam (html, result, 'wind', /class="wicon wind">.*?<dd>((\d+).*?<dt>([^<]*))/i, [/(\d+).*?<dt>([^<]*)/, '$2 $1м/с']);
+    getParam (html, result, 'wind', /<dd.*? ms'>((\d+)[\s\S]*?<dt>([^<]*))/i, [/(\d+)[\s\S]*?<dt>([^<]*)/, '$2 $1м/с']);
 
     // Влажность
     getParam (html, result, 'humidity', /title="Влажность">(\d+)/i, [], parseInt);
@@ -98,19 +98,21 @@ function getWeatherForecast (html, result, tod) {
     getParamFind (result, 'atmosphericConditions', $table, 'td:nth-child(3)');
 
     // Температура
-    getParamFind (result, 'temperature', $table, 'td:nth-child(4)', /([-+]?\d+)/, [], parseInt);
+    getParamFind (result, 'temperature', $table, 'td:nth-child(4) span:first-child', null, ["−", "-", "+", "+"], parseInt);
 
     // Атмосферное давление
-    getParamFind (result, 'pressure', $table, 'td:nth-child(5)', null, null, parseInt);
+    getParamFind (result, 'pressure', $table, 'td:nth-child(5) span:first-child', null, null, parseInt);
 
     // Ветер
-    getParamFind (result, 'wind', $table, 'td:nth-child(6)', null, [/([^\d]+)(\d+)/, '$1 $2м/с']);
+    var a = getParamFind (null, null, $table, 'td:nth-child(6) dt:first-child');
+    var b = getParamFind (null, null, $table, 'td:nth-child(6) span:first-child', null, null, parseInt);
+	result.wind = a + ' ' + b + 'м/с';
 
     // Влажность
     getParamFind (result, 'humidity', $table, 'td:nth-child(7)', null, null, parseInt);
 
     // Комфорт
-    getParamFind (result, 'heat', $table, 'td:nth-child(8)', /([-+]?\d+)/, [], parseInt);
+    getParamFind (result, 'heat', $table, 'td:nth-child(8) span:first-child', null, ["−", "-", "+", "+"], parseInt);
 
     // Время
     getParam (html, result, 'time', /id="wrow-(\d{4}-\d{2}-\d{2}-\d{2})/i, [/(\d{4})-(\d{2})-(\d{2})-(\d{2})/, '$1/$2/$3 $4:00:00'], Date.parse);
@@ -153,7 +155,7 @@ function getWeatherFromHTML (prefs) {
 
 
     // Температура воды
-    getParam (html, result, 'waterTemperature', /Температура воды:.*?(\d+)&deg;C/i, [], parseFloat);
+    getParam (html, result, 'waterTemperature', /class="temp value m_temp c">([-+]\d+)/i, [], parseFloat);
 
     // Восход Солнца
     getParam (html, result, 'rising', /Восход[^\d]*(\d{2}:\d{2})/i);

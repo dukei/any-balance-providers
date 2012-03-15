@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-game-chess-com</id>
+  <name>Chess.com</name>
+  <description>
+    Рейтинг и статистика игрока на сайте шахматного интернет-клуба chess.com
+  </description>
+  <author>Vit@liy &lt;vitaliy@root.ua&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+    <js>common_functions.js</js>
+  </files>
+  <counters>
+    <counter id="current" name="Рейтинг" type="numeric"/>
+  </counters>
+  <keywords>
+    game, chess, шахматы
+  </keywords>
+  <type>
+    game
+  </type>
+</provider>
+

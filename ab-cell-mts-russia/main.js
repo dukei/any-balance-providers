@@ -12,14 +12,14 @@ var regions = {
 	center: "https://ip.mts.ru/SELFCAREPDA/",
 	primorye: "https://ihelper.primorye.mts.ru/SelfCarePda/",
 	nnov: "https://ip.nnov.mts.ru/selfcarepda/",
-	nw: "https://ihelper.nw.mts.ru/SELFCAREPDA/",
+	nw: "https://ip.nw.mts.ru/SELFCAREPDA/",
 	sib: "https://ip.sib.mts.ru/SELFCAREPDA/",
 	ural: "https://ip.nnov.mts.ru/selfcarepda/", //Почему-то урал в конце концов переадресуется сюда
 	ug: "https://ihelper.ug.mts.ru/SelfCarePda/"
 };
 
 function getParam (html, result, param, regexp, replaces, parser) {
-	if (!AnyBalance.isAvailable (param))
+	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
 		return;
 
 	var value = regexp.exec (html);
@@ -32,7 +32,11 @@ function getParam (html, result, param, regexp, replaces, parser) {
 		}
 		if (parser)
 			value = parser (value);
-		result[param] = value;
+
+    if(param)
+      result[param] = value;
+    else
+      return value
 	}
 }
 
@@ -76,6 +80,11 @@ function main(){
     regexp=/<title>Произошла ошибка<\/title>/;
     if(regexp.exec(html)){
         throw new AnyBalance.Error("Интернет-помощник временно недоступен");
+    }
+
+    var error = getParam(html, null, null, /<h1>\s*Ошибка\s*<\/h1>\s*<p>(.*?)<\/p>/i);
+    if(error){
+        throw new AnyBalance.Error(error);
     }
 
     var result = {success: true};

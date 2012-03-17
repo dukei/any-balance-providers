@@ -393,8 +393,8 @@ function megafonServiceGuide(filial){
     }
 	
     if(filial == MEGA_FILIAL_MOSCOW){
-        // Бонусный баланс
-        if(AnyBalance.isAvailable('bonus_balance') && typeof(result.bonus_balance) == 'undefined'){
+        // Бонусный баланс (здесь более точно указано)
+        if(AnyBalance.isAvailable('bonus_balance')){
             text = AnyBalance.requestPost(baseurl + 'SCWWW/BONUS_FORM',
                     {
                         CHANNEL: 'WWW', 

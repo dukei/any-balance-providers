@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id major_version="1.0" version="1">ab-internet-speedyline</id>
+  <name>Спиди-Лайн</name>
+  <description>
+    Получает информацию о состоянии счета интернет-провайдера Спиди-Лайн.
+    Для корректной работы провайдера необходимо в личном кабинете в разделе Настройки включить опцию "Разрешить вход в личный кабинет с чужих ip адресов".
+  </description>
+  <author>iReset &lt;ireset.ag@gmail.com&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+    <js>common_functions.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Текущий баланс" units="р"/>
+    <counter id="credit" name="Кредит" units="р"/>
+    <counter id="download" name="Скачано" units="Мб"/>
+    <counter id="speed" name="Скорость" type="text"/>
+    <counter id="state" name="Статус" type="text"/>
+    <counter id="stateinternet" name="Статус интернета" type="text"/>
+
+    <counter id="id" name="ID пользователя" type="text"/>
+    <counter id="client" name="Владелец" type="text"/>
+  </counters>
+  <keywords>
+    спиди-лайн, спиди лайн, спидилайн, интернет, московская область
+  </keywords>
+  <type>
+    internet
+  </type>
+</provider>

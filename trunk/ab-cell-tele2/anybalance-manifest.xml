@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="1">ab-cell-tele2</id>
+  <id version="2">ab-cell-tele2</id>
   <name>Tele2</name>
   <description>
     Получает баланс, количество использованных в текущем месяце SMS, минут и трафика, владельца и тарифный план.
     Этот провайдер будет работать у вас, если у вас работает сайт https://my.tele2.ru.
+
+    Что нового в v.2:
+      - отрицательный баланс нормально обрабатывается
   </description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <files>

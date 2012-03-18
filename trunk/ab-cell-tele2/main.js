@@ -65,7 +65,7 @@ function main(){
       AnyBalance.trace("Searching for balance");
       html = AnyBalance.requestGet(baseurl + "balance/json?isBalanceRefresh=false&_=32431329916365609");
       json = JSON.parse(html);
-      getParam(json.balance, result, "balance", /([\d,\.\s]*)/, [/^[\s,\.]*|[\s,\.]*$/g, '', /,/g,'.'], parseFloat);
+      getParam(json.balance, result, "balance", /([\-\d,\.\s]*)/, [/^[\s,\.]*|[\s,\.]*$/g, '', /,/g,'.'], parseFloat);
     }
     
     if(AnyBalance.isAvailable('sms_used', 'min_used', 'traffic_used')){

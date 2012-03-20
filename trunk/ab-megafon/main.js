@@ -261,16 +261,12 @@ function megafonServiceGuide(filial){
 	
     var session = AnyBalance.requestPost(baseurl + 'ps/scc/php/check.php?CHANNEL=WWW',
     {
-        LOGIN: prefs.login, 
+        LOGIN: (prefs.corporate ? 'CP_' : '') + prefs.login, 
         PASSWORD: prefs.password
         });
 	
     AnyBalance.trace('Got result from service guide: ' + session);
-	
-    var result = {
-        success: true
-    };
-	
+
     var matches;
     if(matches = session.match(/<ERROR_ID>(.*?)<\/ERROR_ID>/i)){
         AnyBalance.trace('Got error from sg: ' + matches[1]);
@@ -283,10 +279,63 @@ function megafonServiceGuide(filial){
         throw new AnyBalance.Error('Неизвестная ошибка');
     }
     if(!(matches = session.match(/<SESSION_ID>(.*?)<\/SESSION_ID>/i))){
-        throw new AnyBalance.Error('Не удалось получить сессию', true); //Странный ответ, может, можно переконнектиться потом
+        throw new AnyBalance.Error('Не удалось получить сессию'); //Странный ответ, может, можно переконнектиться потом
     }
 	
     var sessionid = matches[1];
+
+    if(prefs.corporate)
+        megafonServiceGuideCorporate(filial, sessionid);
+    else
+        megafonServiceGuidePhysical(filial, sessionid);
+}
+
+function megafonServiceGuideCorporate(filial, sessionid){
+    var filinfo = filial_info[filial];
+    var baseurl = filinfo.site;
+    var prefs = AnyBalance.getPreferences();
+
+    var result = {
+        success: true
+    };
+
+    var html = AnyBalance.requestPost(baseurl + 'CPWWW/SC_CP_ASSC_CHARGES_FORM', {
+        find: '',
+        CHANNEL:'WWW',
+        SESSION_ID:sessionid,
+        P_USER_LANG_ID:1        
+    });
+
+    //Получим объединение:
+    var asscid = getParam(html, null, null, /<select[^>]+id="P_START_ASSC_ID"[^>]*>[\s\S]*?<option[^>]+value="([^"]*)"/i);
+    getParam(html, result, '__tariff', /<select[^>]+id="P_START_ASSC_ID"[^>]*>[\s\S]*?<option[^>]+title="([^"]*)"/i, null, html_entity_decode);
+
+    html = AnyBalance.requestPost(baseurl + 'CPWWW/SC_CP_ACCOUNT_ASSC_AJAX', {
+        P_ACCOUNT:'',
+        P_START_ASSC_ID:asscid,
+        P_ACCOUNT_PREV_FORM:'SC_CP_ASSC_CHARGES_FORM',
+        P_ASSC_ACCOUNT_LOADED:'onLoadedAccount()',
+        P_ASSC_ACCOUNT_RADIO_CLICK:'onClickRadioAccount()',
+        CHANNEL:'WWW',
+        SESSION_ID:sessionid,
+        P_USER_LANG_ID:1
+    });
+
+    //Теперь получим баланс
+    getParam(html, result, 'balance', /<div class="balance_[^>]*>([-\d\.]+)/i, null, parseFloat);
+
+    AnyBalance.setResult(result);
+}
+
+function megafonServiceGuidePhysical(filial, sessionid){
+    var filinfo = filial_info[filial];
+    var baseurl = filinfo.site;
+    var prefs = AnyBalance.getPreferences(), matches;
+    
+    var result = {
+        success: true
+    };
+	
     var text = AnyBalance.requestPost(baseurl + 'SCWWW/ACCOUNT_INFO',
     {
         CHANNEL: 'WWW', 
@@ -294,7 +343,7 @@ function megafonServiceGuide(filial){
     });
 	
     if(AnyBalance.isAvailable('balance')){
-        if(matches = text.match(/<div class="balance_[\w_]*good td_def">([-\d\.]+)[^<]*<\/div>/i)){
+        if(matches = text.match(/<div class="balance_[^>]*>([-\d\.]+)[^<]*<\/div>/i)){
             var balance = parseFloat(matches[1]);
             result.balance = balance;
         }
@@ -532,3 +581,26 @@ function html_entity_decode(str)
     tarea.innerHTML = str;
     return tarea.value;
 }
+
+function getParam (html, result, param, regexp, replaces, parser) {
+	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
+		return;
+
+	var value = regexp.exec (html);
+	if (value) {
+		value = value[1];
+		if (replaces) {
+			for (var i = 0; i < replaces.length; i += 2) {
+				value = value.replace (replaces[i], replaces[i+1]);
+			}
+		}
+		if (parser)
+			value = parser (value);
+
+    if(param)
+      result[param] = value;
+    else
+      return value
+	}
+}
+

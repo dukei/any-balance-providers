@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-internet-beeline</id>
+  <name>Beeline - интернет провайдер</name>
+  <description>
+    Получает баланс, бонусы и информацию о тарифном плане для Beeline интернет. Информация берется из личного кабинета http://lk.beeline.ru.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="bonus" name="Бонусы" units="р"/>
+    <counter id="traffic" name="Включенный трафик" units="Гб"/>
+    <counter id="userName" name="ФИО" type="text"/>
+    <counter id="status" name="Статус" type="text"/>
+    <counter id="status_internet" name="Интернет (статус)" type="text"/>
+    <counter id="status_tv" name="Телевидение (статус)" type="text"/>
+  </counters>
+  <keywords>
+    интернет, билайн
+  </keywords>
+  <type>
+    internet
+  </type>
+</provider>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1" version="3">ab-telephony-skype</id>
+  <id major_version="1" version="4">ab-telephony-skype</id>
   <name>Skype</name>
   <description>
     Получает текущий баланс, валюту баланса в Skype.

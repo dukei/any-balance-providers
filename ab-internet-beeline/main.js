@@ -38,7 +38,7 @@ function main(){
 
     var baseurl = "https://lk.beeline.ru/";
 
-    AnyBalance.setDefaultCharset('windows-1251');
+    AnyBalance.setDefaultCharset('utf-8');
 
 //    try{
     var html = AnyBalance.requestPost(baseurl, {

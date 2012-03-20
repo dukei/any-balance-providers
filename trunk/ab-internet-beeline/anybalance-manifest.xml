@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-beeline</id>
+  <id version="2">ab-internet-beeline</id>
   <name>Beeline - интернет провайдер</name>
   <description>
     Получает баланс, бонусы и информацию о тарифном плане для Beeline интернет. Информация берется из личного кабинета http://lk.beeline.ru.

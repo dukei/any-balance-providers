@@ -35,20 +35,21 @@ function getTrafficGb(str){
 
 function main(){
     var prefs = AnyBalance.getPreferences();
+    AnyBalance.setDefaultCharset('utf-8');
 
     var baseurl = "https://lk.beeline.ru/";
 
-    AnyBalance.setDefaultCharset('utf-8');
+    var html = AnyBalance.requestGet(baseurl); //Чтобы кука установилась
 
 //    try{
-    var html = AnyBalance.requestPost(baseurl, {
+    html = AnyBalance.requestPost(baseurl, {
         login: prefs.login,
         password: prefs.password
     });
 //    }catch(e){
 //        //Из-за ошибки в Хроме логин не может быть выполнен, потому что там используется переадресация с безопасного на обычное соединение.
 //        //Чтобы отлаживать в отладчике, зайдите в свой аккаунт вручную, и раскоментарьте эти строчки. Не забудьте закоментарить обратно потом!
-//        var html = AnyBalance.requestGet(baseurl + 'news/'); 
+//        html = AnyBalance.requestGet(baseurl + 'news/'); 
 //    }
     
     var error = getParam(html, null, null, /<ul class="errorlist">([\s\S]*?)<\/ul>/i, [/<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/, '']);

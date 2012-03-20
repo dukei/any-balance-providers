@@ -102,7 +102,7 @@ function main(){
     }
 
     // Баланс
-    getParam (html, result, 'balance', /Баланс.*>([-\d.]*)</, [/ |\xA0/, "", ",", "."], parseFloat);
+    getParam (html, result, 'balance', /Баланс.*?>([-\d\.,\s]+)/, [/\s|\xA0/, "", ",", "."], parseFloat);
 
     if (AnyBalance.isAvailable ('min_left') ||
         AnyBalance.isAvailable ('min_local') ||

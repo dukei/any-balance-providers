@@ -44,6 +44,8 @@ function main(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');    
     
+    AnyBalance.requestGet("https://login.skype.com/account/login-form");
+
     var info = AnyBalance.requestPost("https://login.skype.com/account/login-form", {
 	username:prefs.login,
 	password:prefs.password

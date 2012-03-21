@@ -152,25 +152,25 @@ function main(){
         getParam (html, result, 'min_used', /Накоплено\s*(\d+)\s*мин[^\s]*/, [/ |\xA0/, ""], parseInt);
 
         // Сумма по неоплаченным счетам: 786.02 руб. (оплатить до 24.03.2012)
-        getParam (html, result, 'debt', /Сумма по неоплаченным счетам.*?>([-\d\.]*)/i, [/ |\xA0/, ""], parseFloat);
+        getParam (html, result, 'debt', /Сумма по неоплаченным счетам.*?([-\d\.,]+)/i, [/ |\xA0/, "", ",", "."], parseFloat);
 
         // Сумма по неоплаченным счетам: 786.02 руб. (оплатить до 24.03.2012)
-        getParam (html, result, 'pay_till', /оплатить до\s*([\d\.\/]+)/i, [], parseTime);
+        getParam (html, result, 'pay_till', /оплатить до\s*([\d\.,\/]+)/i, [",", "."], parseTime);
 
         // Остаток трафика
         getParam (html, result, 'traffic_left', /(?:Осталось|Остаток)[^\d]*(\d+,?\d* *(kb|mb|gb|кб|мб|гб))/i);
 
         // Лицевой счет
-        getParam (html, result, 'license', /№ .*?(.*?):/);
+        getParam (html, result, 'license', /№ (.*?):/);
 
         // Блокировка
         getParam (html, result, 'statuslock', /class="account-status-lock".*>(Номер [^<]*)</i);
 
         // Сумма кредитного лимита
-        getParam (html, result, 'credit', /Сумма кредитного лимита.*?>([-\d\.]*)/i, [",", "."], parseFloat);
+        getParam (html, result, 'credit', /Сумма кредитного лимита.*?([-\d\.,]+)/i, [",", "."], parseFloat);
 
         // Расход за этот месяц
-        getParam (html, result, 'usedinthismonth', /Израсходовано .*?<strong>([\d.]*)/i, [], parseFloat);
+        getParam (html, result, 'usedinthismonth', /Израсходовано .*?([\d\.,]+) руб/i, [",", "."], parseFloat);
     }
 
 
@@ -183,7 +183,7 @@ function main(){
         AnyBalance.trace("Parsing history...");
 
         // Расход за прошлый месяц
-        getParam (html, result, 'usedinprevmonth', /За период израсходовано <strong>([\d.]*)</i, [], parseFloat);
+        getParam (html, result, 'usedinprevmonth', /За период израсходовано <strong>([\d\.,]*)</i, [",", "."], parseFloat);
     }
 
 
@@ -196,7 +196,7 @@ function main(){
         AnyBalance.trace("Parsing traffic info...");
 
         // Ежемесячная плата
-        getParam (html, result, 'monthlypay', /Ежемесячная плата[^\d]*([\d.]*)/i, [",", "."], parseFloat);
+        getParam (html, result, 'monthlypay', /Ежемесячная плата[^\d]*([\d\.,]+)/i, [",", "."], parseFloat);
     }
 
     AnyBalance.setResult(result);

@@ -90,13 +90,16 @@ function main(){
 			
 			var htmlpay = AnyBalance.requestGet(regionurl + res[1].replace(/\n/g,""));
 			
-			regexp = />([\d{2}\.]+)<\/[\D<>]*([\d{2}\.]+)<\/[\D<>]*([\d\.]+)<\/[\w><\s="]*>([А-Яа-я ]+)<\/TD>[\s ]*<\/TR>[\s]?<\/TBODY>/;
-			if (res=regexp.exec(htmlpay)) {
-				result.lastpaydata = res[1];
-				result.lastpaysum = parseFloat(res[3]);
-				result.lastpaydesc = res[4];
-				
-			}
+			regexp = />([\d{2}\.]+)<\/[\D<>]*([\d{2}\.]+)<\/[\D<>]*([\d\.]+)<\/[\w><\s="]*>([А-Яа-я ]+)<\/TD>/;
+			htmlpay.replace(regexp, function(str, p1, p2, p3, p4){
+				//Выбираем запись с максимальной датой
+				if(result.lastpaydata == undefined || result.lastpaydata.split('').reverse().join('') < p1.split('').reverse().join('')){
+					result.lastpaydata = p1;
+					result.lastpaysum = parseFloat(p3);
+					result.lastpaydesc = p4;
+				}
+				return str;
+			});
 		}
 
     }

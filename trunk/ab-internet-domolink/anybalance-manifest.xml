@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1" version="3">ab-internet-domolink</id>
+  <id major_version="1" version="4">ab-internet-domolink</id>
   <name>Домолинк</name>
   <description>
     Получает текущий баланс, номера лицевого счета, ФИО владельца
+
+    Новое в v.4:
+      - Исправление суммы и даты последней оплаты
   </description>
   <author>Serg Repin &lt;serg.repin@gmail.com&gt;</author>
   <files>

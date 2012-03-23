@@ -43,9 +43,9 @@ function main(){
         password: prefs.password
     });
 
-    var error = getParam(html, null, null, /<h1>Авторизация в сервере статистики<\/h1>\s*<p>([\s\S]*?)<\/p>/i, [/<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/, '']);
+    var error = getParam(html, null, null, /<(form) [^>]*name="loginForm">/i);
     if(error)
-        throw new AnyBalance.Error(error);
+        throw new AnyBalance.Error("Неверный логин или пароль");
 
     var result = {success: true};
 

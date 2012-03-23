@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-internet-rosintel</id>
+  <name>Росинтел - интернет провайдер</name>
+  <description>
+    Получает баланс и информацию о тарифном плане для интернет провайдера тульской области Росинтел. Информация берется из личного кабинета https://billing.rosintel.com.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="status" name="Состояние" type="text"/>
+    <counter id="userName" name="ФИО" type="text"/>
+  </counters>
+  <keywords>
+    интернет, тульская область, новомосковск, rosintel
+  </keywords>
+  <type>
+    internet
+  </type>
+</provider>

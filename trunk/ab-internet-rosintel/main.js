@@ -38,9 +38,6 @@ function main(){
 
     var baseurl = "https://billing.rosintel.com/";
 
-
-    AnyBalance.setDefaultCharset('windows-1251');
-
     var html = AnyBalance.requestPost(baseurl + 'client/index.php', {
         login: prefs.login,
         password: prefs.password

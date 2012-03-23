@@ -14,7 +14,7 @@
   <counters>
     <counter id="balance" name="Баланс" units="р"/>
     <counter id="bonus" name="Бонусы"/>
-    <counter id="threshold" name="Порог отключения" type="р"/>
+    <counter id="threshold" name="Порог отключения" units="р"/>
   </counters>
   <keywords>
     интернет, екатеринбург, кабинет, теленет, телесеть сервис, telenet

@@ -4,9 +4,9 @@
         title="Тип игры"
         summary="Тип игры||Тип игры: {@s}\n"
         key="type"
-        defaultValue="o_standart"
-        entries="Online Standart|Chess960"
-        entryValues="o_standart|chess960" />
+        defaultValue="online"
+        entries="Live Chess - Blitz|Live Chess - Bullet|Live Chess - Standard|Online Chess|Chess960|Tactics|Chess Mentor"
+        entryValues="live_blitz|live_bullet|live_standard|online|chess960|tactics|mentor" />
     <EditTextPreference 
         title="Ник" 
         positiveButtonText="ОК" 

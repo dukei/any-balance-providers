@@ -5,6 +5,7 @@
 
 Сайт программы: http://www.gpnbonus.ru
 
+1.0.6 - Изменения на сайте. Округление баланса в рублях.
 1.0.5 - Изменения на сайте.
 1.0.4 - Косметические доработки. Добавил курс бонусной программы. Изменил пароль на фамилию.
 1.0.3 - Изменения на сайте gpnbonus. Для экономии трафика теперь у них есть мобильная версия, с неё в основно и берется вся информация.
@@ -56,7 +57,7 @@ function main(){
 	}
 //Сумма для повышения статуса
 	if(AnyBalance.isAvailable('month_need_up')){
-		var url='http://www.gpnbonus.ru/profile/login/';
+		var url='https://www.gpnbonus.ru/profile/login/';
 		var html = AnyBalance.requestPost(url, prefs);
 		regexp=/Для повышения статуса необходимо совершить покупки на сумму.*\n.*DinPro fs24 .*>(.*) руб.</m;
 		if (res=regexp.exec(html)){
@@ -68,7 +69,7 @@ function main(){
 		html=AnyBalance.requestGet("http://www.gpnbonus.ru/on_the_way/");
 		regexp=/Наш курс: <b>(\d*) бонусов = (\d*) рубль<\/b>/;
 		if (res=regexp.exec(html)){
-			result.balance_money=(result.balance*res[2])/res[1];
+			result.balance_money=Math.floor(((result.balance*res[2])/res[1])*100)/100;
 		}
 		regexp=/Наш курс: <b>(\d* бонусов = \d* рубль)<\/b>/;
 		if (res=regexp.exec(html)){

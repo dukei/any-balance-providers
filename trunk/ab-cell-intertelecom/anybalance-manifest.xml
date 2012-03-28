@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id major_version="1.0" version="1">ab-cell-intertelecom</id>
+  <name>Интертелеком</name>
+  <description>
+    Мониторинг баланса мобильного оператора Интертелекома первого национального CDMA оператора (Украина)
+  </description>
+  <author>Ignatiy Goloviznin &lt;igoloviznin@gmail.com&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="saldo" name="Сальдо" suffix=" грн" type="numeric"/>
+  </counters>
+  <keywords>
+    мобильный национальный оператор cdma украина
+  </keywords>
+  <type>
+    cell
+  </type>
+</provider>

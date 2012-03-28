@@ -36,7 +36,7 @@ filial_info[MEGA_FILIAL_VOLGA] = {
 };
 filial_info[MEGA_FILIAL_KAVKAZ] = {
   name: 'Кавказский филиал',
-  site: "https://kavkazsg.megafon.ru/TRAY_INFO/TRAY_INFO?LOGIN=%LOGIN%&PASSWORD=%PASSWORD%",
+  site: "https://kavkazsg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%",
   func: megafonTrayInfo
 };
 filial_info[MEGA_FILIAL_CENTRAL] = {

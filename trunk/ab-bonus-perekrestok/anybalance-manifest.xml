@@ -1,11 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="1">ab-bonus-perekrestok</id>
+  <id major_version="1.0" version="2">ab-bonus-perekrestok</id>
   <name>Перекресток</name>
   <description>
     Получает информацию о бонусах на карте Клуба Перекресток.
+	
+	Версия 1.0.2 от 28.03.2012:
+	    - Исправлено получение информации о сгорающих баллах и о владельце
   </description>
-  <author>iReset &lt;develop_ag@mail.ru&gt;</author>
+  <author>iReset &lt;ireset_ag@gmail.com&gt;</author>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>

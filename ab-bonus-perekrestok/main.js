@@ -86,8 +86,17 @@ function main () {
     // Баланс
     getParam (html, result, 'balance', /Баланс:[^\d]*(\d*)/i, [], parseInt);
 
-    // Владелец
-    getParam (html, result, 'customer', /(Имя[\s\S]*?<td>([^<]*)[\s\S]*Фамилия[\s\S]*?<td>([^<]*))/i, [/Имя[\s\S]*?<td>(.)[^<]*[\s\S]*Фамилия[\s\S]*?<td>([^<]+)/, '$2 $1.']);
+    if (AnyBalance.isAvailable ('customer')) {
+
+        AnyBalance.trace ('Fetching account details...');
+
+        html = AnyBalance.requestGet (baseurl + 'accountDetails.do');
+
+        AnyBalance.trace ('Parsing account details...');
+
+        // Владелец
+        getParam (html, result, 'customer', /(Имя[\s\S]*?<td>([^<]*)[\s\S]*Фамилия[\s\S]*?<td>([^<]*))/i, [/Имя[\s\S]*?<td>(.)[^<]*[\s\S]*Фамилия[\s\S]*?<td>([^<]+)/, '$2 $1.']);
+    }
 
 
     if (AnyBalance.isAvailable ('burnInThisMonth')) {
@@ -99,13 +108,19 @@ function main () {
         AnyBalance.trace ('Parsing balance structure...');
     
         matches = /<table[^>]*id=[^>]*class="results"[\s\S]*?<\/table>/.exec (html);
-        if (!matches)
-            throw new AnyBalance.Error ('Невозможно найти информацию об аккаунте, свяжитесь с автором');
+        if (!matches) {
+            if (html.indexOf ('Не найдено аннулированных баллов') > 0) {
+			    // Ничего не делаем. Есть подозрение, что это сбой на сервере
+			} else {
+                throw new AnyBalance.Error ('Невозможно найти информацию об аккаунте, свяжитесь с автором');
+            }
+        } else {
 
-        var $table = $(matches[0]);
+            var $table = $(matches[0]);
 
-        // Сгорает в этом месяце
-        getParamFind (result, 'burnInThisMonth', $table, 'tr:nth-child(2) td:nth-child(2)', undefined, [], parseInt);
+            // Сгорает в этом месяце
+            getParamFind (result, 'burnInThisMonth', $table, 'tr:nth-child(2) td:nth-child(2)', undefined, [], parseInt);
+        }
     }
 
 

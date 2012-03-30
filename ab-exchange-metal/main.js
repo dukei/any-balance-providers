@@ -57,6 +57,7 @@ function main(){
 	var tomorrow = new Date(time + 86400*1000);
 	
 	var info = AnyBalance.requestGet('http://www.cbr.ru/scripts/xml_metall.asp?date_req1=' + getDateString(yyesterday) + '&date_req2=' + getDateString(tomorrow));
+	info = info.replace(/windows-1251/i, 'utf-8'); //Не парсится xml с этой левой кодировкой
 	
 	var result = {success: true};
 

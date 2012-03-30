@@ -1,3 +1,13 @@
+/**
+Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
+
+Получает курсы драг металлов с сайта ЦБР
+
+Сайт: http://cbr.ru
+Личный кабинет: http://www.cbr.ru/scripts/xml_metall.asp
+*/
+
+
 function numSize(num, size){
   var str = num + '';
   if(str.length < size){

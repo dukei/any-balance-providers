@@ -1,10 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="2">ab-cell-kyivstar-corp-ua</id>
+  <id version="3">ab-cell-kyivstar-corp-ua</id>
   <name>Киевстар Корпоративный (Украина)</name>
   <description>
-    Получает баланс, остаток минут, интернет трафка, SMS для корпоративных тарифов. Проверялся на тарифе БИЗНЕС 80.
+    Получает баланс, остаток минут, интернет трафка, SMS для корпоративных тарифов. Проверялся на тарифе БИЗНЕС 80 и БИЗНЕС 20.
 Если у вас не работает, обратитесь к автору по e-mail, чтобы помочь это исправить.
+
+Новое в v.3:
+- Старый баланс оказался вдруг затратами за предыдущий месяц
+- Добавлен правильный баланс
+
+Если у кого-то затраты на самом деле баланс, обращайтесь, будем исправлять.
   </description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <files>
@@ -14,7 +20,8 @@
     <js>main.js</js>
   </files>
   <counters>
-    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="balance" name="Баланс" units="₴"/>
+    <counter id="costs" name="Затраты за предыдущий месяц" units="₴"/>
     <counter id="min_left" name="Бесплатные минуты" units="мин"/>
     <counter id="min_group" name="Групповые минуты" units="мин"/>
     <counter id="traffic_left" name="Остаток трафика" units="Мб"/>

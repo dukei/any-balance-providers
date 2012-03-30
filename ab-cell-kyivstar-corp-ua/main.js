@@ -32,12 +32,19 @@ function main(){
     
     var result = {success: true};
     
-    if(AnyBalance.isAvailable('balance')){
+    if(AnyBalance.isAvailable('costs', 'balance')){
         var balance_html = AnyBalance.requestGet(baseurl + "tbmb/flash/hierarchy?action=charges&nodeId=" + nodeid_balance + "&hierId=" + hierid);
         //<cc i='8974631'><c i='17496882' c='87.65'/></cc>
-        var balance = $(balance_html).find('c').attr('c');
-        if(balance)
-            result.balance = balance;
+	if(AnyBalance.isAvailable('costs')){
+            var costs = parseFloat($(balance_html).find('c').attr('c'));
+            if(costs)
+                result.costs = costs;
+	}
+	if(AnyBalance.isAvailable('balance')){
+            var balance = parseFloat($(balance_html).find('c[b]').attr('b'));
+	    if(balance)
+                result.balance = balance;
+	}
     }
 
     //https://my.kyivstar.ua/tbmb/flash/hierarchy?action=mtninfo&hierId=4199266&nodeId=17496882&time=261

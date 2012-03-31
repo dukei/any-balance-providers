@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <provider>
   <id major_version="1.0" version="18">ab-cell-ncc</id>
   <name>НСС</name>
@@ -20,6 +20,6 @@
     оператор нсс ncc
   </keywords>
   <type>
-    internet, tv
+    cell
   </type>
 </provider>

@@ -7,10 +7,16 @@
 Сайт банка: http://www.alfabank.ru/
 Сайт бонусной программы: http://www.mvideo-bonus.ru/
 Личный кабинет: http://www.mvideo-bonus.ru/personal/
+1.0.2 - Добавлена возможность проверки для карт М.Видео-Бонус.
+1.0.1 - Начало, начал...
+
+
 */
+
 function addzero(i) {
 return (i < 10)? "0" + i: i;
 }
+
 function main(){
 
 
@@ -18,26 +24,26 @@ function main(){
 	var prefs = AnyBalance.getPreferences();
 		
         AnyBalance.setDefaultCharset('utf-8');
-
-	
+	var html = AnyBalance.requestGet('http://www.mvideo-bonus.ru/');//Получаем куки.
         var matches = /(\d{1,2})[^\d](\d{1,2})[^\d](\d\d\d\d)/.exec('' + prefs.birthday);
     	if(!matches)
         	throw new AnyBalance.Error('День рождения должен быть в формате DD-MM-YYYY, например, 28-04-1980');
         var birthdate = new Date(matches[2]+'/'+matches[1]+'/'+matches[3]);
-        var matches = /(\d)(\d\d\d\d)(\d\d\d)/.exec(prefs.card);
-
-	var url='http://www.mvideo-bonus.ru/personal/cobrand';
-
-	var html = AnyBalance.requestGet('http://www.mvideo-bonus.ru/');
-
-
+	if (prefs.type == 0){
+			var url='http://www.mvideo-bonus.ru/personal/login';
+		        matches = /(\d\d\d\d)(\d\d\d\d)/.exec(prefs.card);
+		}else{
+			var url='http://www.mvideo-bonus.ru/personal/cobrand';
+			matches = /(\d)(\d\d\d\d)(\d\d\d)/.exec(prefs.card);
+	}
 	var post={
+		zip:prefs.zip,
 		num1:matches[1],
 		num2:matches[2],
 		num3:matches[3],
 		"birthdate[Date_Day]":addzero(birthdate.getDate()),
 		"birthdate[Date_Month]":addzero(birthdate.getMonth()+1),
-		"birthdate[Date_Year]":birthdate.getFullYear()
+		"birthdate[Date_Year]":birthdate.getFullYear(),
 
 	};
 	var header = {
@@ -45,9 +51,16 @@ function main(){
 		"Referer"	:"http://www.mvideo-bonus.ru/"
 	};
 
-	html = AnyBalance.requestPost(url, post,header);
+	AnyBalance.trace(prefs.type);
+	AnyBalance.trace(url);
+	AnyBalance.trace(post.num1+' '+post.num2+' '+post.num3);
+	html = AnyBalance.requestPost(url, post, header);
+	if (prefs.type == 0){
+			var res =/<form action=\"\/personal\/login.*\n((.*\n))*.*заполнения.*\n.*<\/form>/m.exec(html);
+		}else{
+			var res =/<form action=\"\/personal\/cobrand.*\n((.*\n))*.*заполнения.*\n.*<\/form>/m.exec(html);
+	}
 
-	var res =/<form action=\"\/personal\/cobrand.*\n((.*\n))*.*заполнения.*\n.*<\/form>/m.exec(html);
         if (res){
 		AnyBalance.trace(res[0]);
 		var err =/<div class=\"errtx\">(.*?)<\/div>/.exec(res[0])
@@ -57,14 +70,14 @@ function main(){
 	if (/Здравствуйте/.exec(html)){
 		AnyBalance.trace('Authentication is successful');	
 	}else{
-		AnyBalance.trace('Authorization error');	
-		throw new AnyBalance.Error ('Ошибка авторизации.');
+		AnyBalance.trace('Authorization error.');	
+		throw new AnyBalance.Error ('Ошибка авторизации. '+err[1]);
 	}
 
 	AnyBalance.trace('Start parsing...');
 	var result = {success: true};
 
-//Бонусная шкала:
+//Бонусная шкала
         if(AnyBalance.isAvailable('bonus_scale')){
 		tmp=/Ваша бонусная шкала:.*?\n.*?blk\"><b>(.*?<\/b>.*?<b>.*?<\/b>.*?)<\/div>/m.exec(html)[1];
 		tmp=tmp.replace(/<.?b>/g,'');

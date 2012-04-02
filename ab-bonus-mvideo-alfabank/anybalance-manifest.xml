@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+ <?xml version="1.0" encoding="utf-8"?>
 <provider>
   <id major_version="1.0" version="2">ab-bonus-mvideo-alfabank</id>
   <name>М.Видео-БОНУС</name>
@@ -16,7 +16,7 @@
   <counters>
     <counter id="balance" name="Баланс бонусных рублей" suffix=" р"/>
     <counter id="balance_bonus" name="Баланс бонусов"/>
-    <counter id="burn_date" name="Ближайщая дата сгорания бонусных рублей" type="text"/>
+    <counter id="burn_date" name="Ближайшая дата сгорания бонусных рублей" type="text"/>
     <counter id="bonus_scale" name="Ваша бонусная шкала" type="text"/>
   </counters>
   <keywords>

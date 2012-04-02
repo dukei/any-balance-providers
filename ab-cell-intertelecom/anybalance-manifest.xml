@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="1">ab-cell-intertelecom</id>
+  <id major_version="1.1" version="2">ab-cell-intertelecom</id>
   <name>Интертелеком</name>
   <description>
     Мониторинг баланса мобильного оператора Интертелекома первого национального CDMA оператора (Украина)

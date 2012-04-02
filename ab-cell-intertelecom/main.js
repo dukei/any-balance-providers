@@ -21,6 +21,12 @@ function main(){
 			} else {
 				throw new AnyBalance.Error("Не удалось проверить баланс");
 			}
+			var matches = html.match(/<td>Пакет<\/td>\s*<td style="color:.+;">\s*(.*)\s*<\/td>/i);
+			if (matches) {
+				result.__tariff = matches[1]
+			} else {
+				throw new AnyBalance.Error("Не удалось проверить тариф");
+			}
 		}
 		AnyBalance.setResult(result);
 	} else {

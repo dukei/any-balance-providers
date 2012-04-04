@@ -33,12 +33,44 @@ function main(){
     var prefs = AnyBalance.getPreferences();
     var baseurl = "http://login.linkintel.ru/Cabinet/";
     
+//    html = AnyBalance.requestGet(baseurl + 'login_form.php');
+    
     AnyBalance.trace('Trying to login');
     
     var html = AnyBalance.requestPost(baseurl + "confirm.php", {
       seenform: 'y',
       AccountID_form: prefs.login,
-      Password_form: prefs.password
+      Password_form: prefs.password,
+      UserName: "",
+      TownID: "",
+      Status: "",
+      Street: "",
+      House: "",
+      Nick: "",
+      MobilePhone: "",
+      Bonus: "",
+      TariffID: "",
+      Email: "",
+      TariffName: "",
+      StreetID: "",
+      Ballance: "",
+      Town: "",
+      Floor: "",
+      AccountID: "",
+      Phone: "",
+      Building1: "",
+      Flat: "",
+      Building: "",
+      Overdraft: "",
+      MonthStartActiveBallance: "",
+      MonthStartIncludedInboundTraffic: "",
+      MonthStartBonusBallance: "",
+      MonthInboundTraffic: "",
+      MonthOutboundTraffic: "",
+      MonthCreditInboundTraffic: "",
+      MonthIncludedInboundTraffic: "",
+      MonthEndIncludedInboundTraffic: "",
+      sub_pass: "Войти"
     });
     
     if(!/<form [^>]*name="myform">/i.test(html)){

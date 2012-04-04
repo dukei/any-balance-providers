@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-linkintel</id>
+  <id version="2">ab-internet-linkintel</id>
   <name>Интернет провайдер LINKINTEL</name>
   <description>
     Получает баланс, бонусы, тарифный план и трафик в текущем месяце у интернет-провайдера LINKINTEL.

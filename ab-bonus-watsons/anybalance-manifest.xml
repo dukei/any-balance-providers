@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id major_version="1.0" version="1">ab-bonus-watsons</id>
+  <name>Сеть магазинов Watsons (Украина)</name>
+  <description>
+    Мониторинг накопленных балов по программе лояльности сети магазинов Watsons (Украина)
+  </description>
+  <author>Ignatiy Goloviznin &lt;igoloviznin@gmail.com&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="bonus" name="Бонус" suffix=" бон." type="numeric"/>
+  </counters>
+  <keywords>
+    сеть магазин ватсонс watsons dc дц украина
+  </keywords>
+  <type>
+    bonus
+  </type>
+</provider>

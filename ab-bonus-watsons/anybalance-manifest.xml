@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="1">ab-bonus-watsons</id>
+  <id version="1">ab-bonus-watsons</id>
   <name>Сеть магазинов Watsons (Украина)</name>
   <description>
     Мониторинг накопленных балов по программе лояльности сети магазинов Watsons (Украина)

@@ -23,7 +23,7 @@ function main(){
     password: prefs.password
   });
   
-  var matches = html.match(/<td class="redError">([\s\S]*?)<\/td>/i);
+  var matches = html.match(/<td class="redError">\s*([\s\S]*?)\s*<\/td>/i);
   if(matches){
       throw new AnyBalance.Error(matches[1]);
   }

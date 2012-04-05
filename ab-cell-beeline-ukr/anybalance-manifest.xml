@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id major_version="1.0" version="1">ab-cell-beeline-ukr</id>
+  <name>Билайн Украина</name>
+  <description>
+    Мониторинг баланса для мобильного оператора Билайн (Украина).
+  </description>
+  <author>Ignatiy Goloviznin &lt;igoloviznin@gmail.com&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units=" грн"/>
+  </counters>
+  <keywords>
+    Сотовый телефон, мобильный, мобильник, beeline, билайн, украина
+  </keywords>
+  <type>
+    cell
+  </type>
+</provider>

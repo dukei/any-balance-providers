@@ -6,7 +6,7 @@
         summary="Номер телефона (в формате +380ХХХХХХХХХ)||{@s}\n" 
         dialogTitle="Номер телефона" 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите номер вашего телефона для входа в Особистий кабінет (в формате +380ХХХХХХХХХ), например +380681234567"
+        dialogMessage="Введите номер вашего телефона для входа в Мій Київстар (в формате +380ХХХХХХХХХ), например +380971234567"
         key="login"
         inputType="phone">
     </EditTextPreference>
@@ -16,8 +16,8 @@
         dialogTitle="Пароль"
         negativeButtonText="Отмена"
         title="Пароль"
-        summary="Пароль для входа в Особистий кабінет||***********\n"
-        dialogMessage="Введите пароль, используемый для входа в Особистий кабінет"
+        summary="Пароль для входа в Мій Київстар||***********\n"
+        dialogMessage="Введите пароль, используемый для входа в Мій Київстар"
         inputType="textPassword">
     </EditTextPreference>
 </PreferenceScreen>

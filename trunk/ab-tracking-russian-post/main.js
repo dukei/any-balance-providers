@@ -1,19 +1,12 @@
-function getRateText(result, info, namein, nameout){
-	var matches, regexp = new RegExp('"'+namein+'"[^"]*"([^"]*)"', 'i');
-	if(matches = info.match(regexp)){
-		if(AnyBalance.isAvailable(nameout))
-			result[nameout] = matches[1];
-	}
-}
+/**
+Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 
-function getRate(result, info, namein, nameout){
-	var matches, regexp = new RegExp('"'+namein+'"[^"]*"([^"]*)"', 'i');
-	if(matches = info.match(regexp)){
-		if(AnyBalance.isAvailable(nameout))
-			result[nameout] = parseFloat(matches[1].replace(',','.'));
-	}
-}
-	
+Статус почтового отправления Почты России
+
+Сайт оператора: http://www.russianpost.ru
+Личный кабинет: http://www.russianpost.ru/resp_engine.aspx?Path=rp/servise/ru/home/postuslug/trackingpo
+*/
+
 function main(){
 	AnyBalance.trace('Connecting to russianpost...');
 	

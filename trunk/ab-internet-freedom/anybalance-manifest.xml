@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-internet-freedom</id>
+  <name>FreeDom - интернет провайдер (Воронеж)</name>
+  <description>
+    Получает баланс и информацию о тарифном плане для воронежского интернет провайдера FreeDom. Информация берется из личного кабинета https://statserv.freedom-vrn.ru.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="discount" name="Скидка" units="%"/>
+    <counter id="abonentka" name="Абонентская плата" units="р"/>
+    <counter id="status" name="Состояние" type="text"/>
+    <counter id="licschet" name="Лицевой счет" type="text"/>
+  </counters>
+  <keywords>
+    интернет, воронеж
+  </keywords>
+  <type>
+    internet
+  </type>
+</provider>

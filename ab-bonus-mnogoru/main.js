@@ -47,10 +47,10 @@ function main(){
         result.username = $table.find('td.authorized2012 font').first().text().replace(/\s*[cс]\s+картой\s*/g, '');
   
     if(AnyBalance.isAvailable('cardnum'))
-        result.cardnum = $table.find('td.authorized2012 b').text();
+        result.cardnum = $table.find('td.authorized2012 a').first().text();
   
     if(AnyBalance.isAvailable('balance'))
-        result.balance = parseInt($table.find('td.authorized2012 a').text().replace(/[^\d]+/g, ''));
+        result.balance = parseInt($table.find('td.authorized2012 a:contains("бонус")').text().replace(/[^\d]+/g, ''));
     
     AnyBalance.setResult(result);
 }

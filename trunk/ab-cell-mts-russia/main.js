@@ -183,7 +183,7 @@ function main(){
         AnyBalance.trace("Parsing history...");
 
         // Расход за прошлый месяц
-        getParam (html, result, 'usedinprevmonth', /За период израсходовано <strong>([\d\.,]*)</i, [",", "."], parseFloat);
+        getParam (html, result, 'usedinprevmonth', /За период израсходовано .*?([\d\.,]+)/i, [",", "."], parseFloat);
     }
 
 

@@ -50,6 +50,8 @@ function main(){
   if(AnyBalance.isAvailable('bonus_mins_1')){
     if (matches=/Кількість хвилин для дзвінків[\s\S]*?<b>(.*?)</.exec(html)){
         result.bonus_mins_1=parseInt(matches[1]);
+    } else if (matches=/Хвилини всередині мережі "Київстар":[\s\S]*?<b>(.*?)</.exec(html)){
+        result.bonus_mins_1=parseInt(matches[1]);
     }
   }
   
@@ -57,27 +59,43 @@ function main(){
   if(AnyBalance.isAvailable('bonus_mins_2')){
     if (matches=/Кількість хвилин для дзвінків[\s\S]*?Кількість хвилин для дзвінків[\s\S]*?<b>(.*?)</.exec(html)){
         result.bonus_mins_2=parseInt(matches[1]);
+    } else if (matches=/Залишок хвилин для дзвінків абонентам Київстар та DJUICE:[\s\S]*?<b>(.*?)</.exec(html)){
+        result.bonus_mins_2=parseInt(matches[1]);
     }
   }
   
   //Бонусные MMS
   if(AnyBalance.isAvailable('bonus_mms')){
-    if (matches=/Бонусні MMS:[\s\S]*?<b>(.*?)</.exec(html)){
+    if (matches=/>Бонусні MMS:[\s\S]*?<b>(.*?)</.exec(html)){
         result.bonus_mms=parseInt(matches[1]);
     }
   }
   
   //Бонусные SMS
   if(AnyBalance.isAvailable('bonus_sms')){
-    if (matches=/Бонусні SMS:[\s\S]*?<b>(.*?)</.exec(html)){
+    if (matches=/>Бонусні SMS:[\s\S]*?<b>(.*?)</.exec(html)){
         result.bonus_sms=parseInt(matches[1]);
+    }
+  }
+  
+  //MMS
+  if(AnyBalance.isAvailable('mms')){
+    if (matches=/>MMS:[\s\S]*?<b>(.*?)</.exec(html)){
+        result.mms=parseInt(matches[1]);
     }
   }
   
   //SMS
   if(AnyBalance.isAvailable('sms')){
-    if (matches=/Бонусні SMS:[\s\S]*?SMS:[\s\S]*?<b>(.*?)</.exec(html)){
+    if (matches=/>SMS:[\s\S]*?<b>(.*?)</.exec(html)){
         result.sms=parseInt(matches[1]);
+    }
+  }
+  
+  //SMS2
+  if(AnyBalance.isAvailable('sms2')){
+    if (matches=/>SMS:[\s\S]*?>SMS:[\s\S]*?<b>(.*?)</.exec(html)){
+        result.sms2=parseInt(matches[1]);
     }
   }
   
@@ -92,6 +110,8 @@ function main(){
   if(AnyBalance.isAvailable('bonus_money_2')){
     if (matches=/Бонуси за умовами тарифного плану "Єдина ціна":[\s\S]*?<b>(.*?)</.exec(html)){
         result.bonus_money_2=parseFloat(matches[1]);
+    } else if (matches=/Кошти по послузі "Екстра кошти":[\s\S]*?<b>(.*?)</.exec(html)){
+        result.bonus_money_2=parseInt(matches[1]);
     }
   }
   
@@ -99,6 +119,13 @@ function main(){
   if(AnyBalance.isAvailable('bonus_left')){
     if (matches=/Залишок бонусів:[\s\S]*?<b>(.*?)</.exec(html)){
         result.bonus_left=parseFloat(matches[1]);
+    }
+  }
+  
+  //Остаток бонусов (2)
+  if(AnyBalance.isAvailable('bonus_left_2')){
+    if (matches=/Залишок бонусів:[\s\S]*?Залишок бонусів:[\s\S]*?<b>(.*?)</.exec(html)){
+        result.bonus_left_2=parseFloat(matches[1]);
     }
   }
   

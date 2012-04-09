@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id major_version="1.0" version="1">ab-bonus-rivegauche</id>
+  <name>Рив Гош</name>
+  <description>
+    Получает сумму накоплений, сумму бонуса к Дню рождения для золотой карты, дата последней операции по карте.
+	1.0.1 - Начало.
+  </description>
+  <author>KiLLer13&lt;killer_kondor@pisem.net&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Сумма накоплений"/>
+    <counter id="bonus" name="Сумма бонусов" />
+    <counter id="date" name="Последняя операция по карте" type="text" />
+    <counter id="status" name="Статус карты" type="text"/>
+  </counters>
+  <keywords>
+    бонус, ривгош, bonus, rivegauche
+  </keywords>
+  <type>
+    bonus
+  </type>
+</provider>

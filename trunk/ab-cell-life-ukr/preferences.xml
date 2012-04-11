@@ -20,11 +20,11 @@
     </EditTextPreference>
     <EditTextPreference 
         key="pass" 
-        title="Пароль"
-        summary="Пароль для авторизации||***********\n"
-        dialogTitle="Пароль"
+        title="СуперПароль"
+        summary="СуперПароль для авторизации||***********\n"
+        dialogTitle="СуперПароль"
         negativeButtonText="Отмена"
-        dialogMessage="Введите пароль, используемый для авторизации"
+        dialogMessage="Введите СуперПароль, используемый для авторизации"
         positiveButtonText="ОК"
         inputType="textPassword">
     </EditTextPreference>

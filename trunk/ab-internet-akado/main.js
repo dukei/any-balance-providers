@@ -11,12 +11,19 @@ function main(){
     var baseurl = 'https://office.akado.ru/';
     
     AnyBalance.setDefaultCharset('utf-8');
+
+    var pass = hex_md5(prefs.password).toUpperCase(); //Пароль в md5
     
     // Заходим на главную страницу
     var info = AnyBalance.requestPost(baseurl + "login.xml/login", {
         login: prefs.login,
-        password: prefs.password
-    });
+        password: pass
+    }/*, {
+        'X-Requested-With':'XMLHttpRequest',
+        'Origin':'https://office.akado.ru',
+	'Referer': baseurl + 'login.xml',
+	'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.152 Safari/535.19'
+    }*/);
 
     
     var error = $('<div>' + info + '</div>').find('response>message').text();

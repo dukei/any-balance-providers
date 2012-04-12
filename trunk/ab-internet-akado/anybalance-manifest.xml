@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-akado</id>
+  <id version="2">ab-internet-akado</id>
   <name>Домашний Интернет и Телевидение АКАДО</name>
   <description>
     Получает текущий баланс, номер договора, ФИО владельца у провайдера интернет и телевидения АКАДО.
@@ -12,6 +12,7 @@
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
     <js>api:jquery.min.js</js> <!-- Используем библиотеку, которая и так входит в AnyBalance -->
+    <js>md5-min.js</js>
     <js>main.js</js>
   </files>
   <counters>

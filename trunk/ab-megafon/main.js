@@ -477,6 +477,15 @@ function megafonServiceGuidePhysical(filial, sessionid){
         }
     }
     
+    if(filial == MEGA_FILIAL_VOLGA){
+        if(AnyBalance.isAvailable('internet_left')) {
+            text = AnyBalance.requestGet(baseurl + 'SCCEXTSYS/EXT_SYSTEM_PROXY_FORM?CHANNEL=WWW&SESSION_ID=' + sessionid + '&URI=5.');
+            if(matches = text.match(/<volume>([^<]*)<\/volume>/i)){
+                internet_left += parseFloat(matches[1]);
+            }
+        }
+    }
+    
     if(internet_total)
         result.internet_total = internet_total;
     if(internet_cur)

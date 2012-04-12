@@ -129,7 +129,7 @@ function getFilial(number){
         throw new AnyBalance.Error('Телефон должен быть строкой из 10 цифр без пробелов и разделителей!');
     
     var prefix = parseInt(number.substr(0, 3));
-    var num = parseInt(number.substr(3));
+    var num = parseInt(number.substr(3).replace(/^0+(\d+)$/, '$1')); //Не должно начинаться с 0, иначе воспринимается как восьмеричное число
     return getFilialByPrefixAndNumber(prefix, num);
 }
 

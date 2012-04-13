@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-bonus-aeroflot</id>
+  <name>Аэрофлот Бонус</name>
+  <description>
+    Получает бонусные мили, квалификационные мили и уровень для программы Аэрофлот Бонус. Информация берется из личного кабинета http://aeroflotbonus.ru
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Мили"/>
+    <counter id="qmiles" name="Квалификационные мили"/>
+    <counter id="level" name="Уровень" type="text"/>
+  </counters>
+  <keywords>
+    aeroflot, miles
+  </keywords>
+  <type>
+    bonus
+  </type>
+</provider>

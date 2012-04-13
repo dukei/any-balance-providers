@@ -12,14 +12,15 @@
 
 function main () {
     var prefs = AnyBalance.getPreferences ();
-    var baseurl = 'http://web.speedyline.ru/';
+    var baseurl = 'https://web.speedyline.ru/';
 
     checkEmpty (prefs.login, 'Введите логин');
     checkEmpty (prefs.password, 'Введите пароль');
     checkEmpty (prefs.region, 'Выберите регион');
 
-    AnyBalance.trace ('Trying to enter selfcare at address: ' + baseurl);
-    var html = AnyBalance.requestPost (baseurl + '', {
+    var loginurl = baseurl + 'general.html';
+    AnyBalance.trace ('Trying to enter selfcare at address: ' + loginurl);
+    var html = AnyBalance.requestPost (loginurl, {
         login: prefs.login,
         password: prefs.password,
         region: prefs.region,
@@ -42,7 +43,7 @@ function main () {
     	AnyBalance.trace ('It looks like we are in selfcare...');
     else {
         AnyBalance.trace ('Have not found logout... Unknown error. Please contact author.');
-        throw new AnyBalance.Error ('Неизвестная ошибка. Пожалуйста, свяжитесь с автором скрипта.');
+        throw new AnyBalance.Error ('Неизвестная ошибка. Пожалуйста, свяжитесь с автором провайдера.');
     }
 
     AnyBalance.trace ('Parsing data...');

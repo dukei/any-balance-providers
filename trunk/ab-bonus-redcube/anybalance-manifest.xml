@@ -1,11 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="1">ab-bonus-redcube</id>
+  <id major_version="1.0" version="2">ab-bonus-redcube</id>
   <name>Красный Куб</name>
   <description>
     Получает информацию о бонусах на накопительной карте сети магазинов Красный Куб.
+    
+    Версия 1.0.2 от 13.04.2012:
+        - Исправлено получение страницы с данными.
   </description>
-  <author>iReset &lt;develop_ag@mail.ru&gt;</author>
+  <author>iReset &lt;ireset.ag@gmail.com&gt;</author>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>

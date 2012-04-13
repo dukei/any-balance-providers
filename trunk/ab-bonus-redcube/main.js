@@ -24,11 +24,8 @@ function main () {
     var prefs = AnyBalance.getPreferences ();
     var baseurl = 'http://www.redcube.ru/clients/club/cabinet/';
 
-    if (!prefs.number || prefs.number == '')
-        throw new AnyBalance.Error ('Введите номер карты');
-
-    if (!prefs.date || prefs.date == '')
-        throw new AnyBalance.Error ('Введите дату рождения');
+    checkEmpty (prefs.number, 'Введите номер карты');
+    checkEmpty (prefs.date, 'Введите дату рождения');
 
     var regexp=/(\d{2})\.(\d{2})\.(\d{2})/;
     var res = regexp.exec (prefs.date);
@@ -43,12 +40,12 @@ function main () {
     var html = enter (baseurl, data);
 
     // Проверка на корректный вход
-    regexp = /href="">Выйти</;
+    regexp = /">Выйти</;
     if (regexp.exec(html))
     	AnyBalance.trace ('It looks like we are in selfcare...');
     else {
         AnyBalance.trace ('Have not found logOff... Unknown error. Please contact author.');
-        throw new AnyBalance.Error ('Неизвестная ошибка. Пожалуйста, свяжитесь с автором скрипта.');
+        throw new AnyBalance.Error ('Неизвестная ошибка. Пожалуйста, свяжитесь с автором провайдера.');
     }
 
     var result = {success: true};

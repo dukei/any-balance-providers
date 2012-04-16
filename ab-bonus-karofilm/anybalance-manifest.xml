@@ -1,11 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="1">ab-bonus-karofilm</id>
+  <id major_version="1.0" version="2">ab-bonus-karofilm</id>
   <name>КАРО Фильм</name>
   <description>
     Получает информацию о бонусах на бонусной карте сети кинотеатров "КАРО Фильм".
+    
+    Версия 1.0.2 от 16.04.2012:
+        - Теперь текущий бонус (проценты) берется из информации по получению бонуса, если в информации по карте он отсутствует
   </description>
-  <author>iReset &lt;develop_ag@mail.ru&gt;</author>
+  <author>iReset &lt;ireset.ag@gmail.com&gt;</author>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
@@ -21,7 +24,7 @@
     <counter id="customer" name="Владелец" type="text"/>
   </counters>
   <keywords>
-    КАРО Фильм, фильм, карофильм, кинотеатр, кино, москва, санкт-петербург, нижний новгород, казань, калининград, самара, бонус, бонусная карта, накопительная карта, 
+    КАРО Фильм, фильм, карофильм, кинотеатр, кино, москва, санкт-петербург, нижний новгород, казань, калининград, самара, бонус, бонусная карта, накопительная карта
   </keywords>
   <type>
     bonus

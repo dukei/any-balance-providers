@@ -40,7 +40,7 @@ function main () {
 
     matches = html.match (/<table[^>]*class="xrasp"[^>]*>[\s\S]*?<\/table>/g);
     if (!matches)
-        throw new AnyBalance.Error ('Невозможно найти информацию по карте, свяжитесь с автором скрипта.');
+        throw new AnyBalance.Error ('Невозможно найти информацию по карте, свяжитесь с автором провайдера.');
 
     var result = {success: true};
 
@@ -78,10 +78,15 @@ function main () {
     // Бонус
     getParamFind (result, 'bonus', $table, 'tr:nth-child(5) td:nth-child(2)', /(\d+)/, [], parseInt);
 
-
+    
     // Попытка получить информацию о возможности перехода на новый бонусный уровень
     if (matches.length >= 2) {
         var $table = $(matches[matches.length - 1]);
+
+        // Текущий бонус
+        if (!result.bonus) {
+            getParamFind (result, 'bonus', $table, 'tr:nth-child(2) td:nth-child(2)', /(\d+)/, [], parseInt);
+        }
 
         // Условия получения бонуса
         getParamFind (result, 'conditionsForNewBonus', $table, 'tr:nth-child(7) td:nth-child(2)');

@@ -8,7 +8,18 @@ var MEGA_FILIAL_CENTRAL = 7;
 var MEGA_FILIAL_URAL = 8;
 
 //http://ru.wikipedia.org/wiki/%D0%9C%D0%B5%D0%B3%D0%B0%D0%A4%D0%BE%D0%BD#.D0.A4.D0.B8.D0.BB.D0.B8.D0.B0.D0.BB.D1.8B_.D0.BA.D0.BE.D0.BC.D0.BF.D0.B0.D0.BD.D0.B8.D0.B8
-var filial_info = {};
+var filial_info = {
+	moscowsg: MEGA_FILIAL_MOSCOW,
+	sibsg1: MEGA_FILIAL_SIBIR,
+	sibsg: MEGA_FILIAL_SIBIR,
+	szfsg: MEGA_FILIAL_NW,
+	dvsg: MEGA_FILIAL_FAREAST,
+	volgasg: MEGA_FILIAL_VOLGA,
+	kavkazsg: MEGA_FILIAL_KAVKAZ,
+	centersg: MEGA_FILIAL_CENTRAL,
+	uralsg: MEGA_FILIAL_URAL
+};
+
 filial_info[MEGA_FILIAL_MOSCOW] = {
   name: 'Столичный филиал',
   func: megafonServiceGuide,
@@ -127,10 +138,22 @@ function getFilial(number){
         throw new AnyBalance.Error('Телефон должен быть строкой из 10 цифр!');
     if(!/^\d{10}$/.test(number))
         throw new AnyBalance.Error('Телефон должен быть строкой из 10 цифр без пробелов и разделителей!');
-    
-    var prefix = parseInt(number.substr(0, 3));
-    var num = parseInt(number.substr(3).replace(/^0+(\d+)$/, '$1')); //Не должно начинаться с 0, иначе воспринимается как восьмеричное число
-    return getFilialByPrefixAndNumber(prefix, num);
+
+    var html = AnyBalance.requestPost("https://sg.megafon.ru/ps/scc/php/route.php", {
+	CHANNEL:'WWW',
+	ULOGIN:number
+    });
+
+//    Мегафон сделал сервис для определения филиала, так что попытаемся обойтись им    
+    var region = getParam(html, null, null, /<URL>https:\/\/(\w+)\./i);
+    if(region && filial_info[region]){
+	return filial_info[region];
+    }else{
+       //Филиал не определился, попробуем по префиксу понять
+        var prefix = parseInt(number.substr(0, 3));
+        var num = parseInt(number.substr(3).replace(/^0+(\d+)$/, '$1')); //Не должно начинаться с 0, иначе воспринимается как восьмеричное число
+        return getFilialByPrefixAndNumber(prefix, num);
+    }
 }
 
 /**

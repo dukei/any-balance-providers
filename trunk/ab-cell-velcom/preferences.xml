@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Номер телефона" 
+        positiveButtonText="ОК" 
+        summary="Номер телефона в международном формате||{@s}\n" 
+        dialogTitle="Логин" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите ваш номер телефона в международном формате без пробелов и разделителей, например, +375441234567."
+	inputType="phone"
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="Пароль||***********\n"
+        dialogMessage="Введите пароль, используемый для входа в ИССА https://internet.velcom.by."
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-cell-velcom</id>
+  <name>Velcom - провайдер сотовой связи (Белоруссия)</name>
+  <description>
+    Получает баланс, минуты, трафик для белорусского оператора сотовой связи Velcom
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="min" name="Минуты" units="мин"/>
+    <counter id="min_fn" name="Минуты на любимые номера" units="лн"/>
+    <counter id="traffic" name="Трафик" units="Mb"/>
+    <counter id="userName" name="ФИО" type="text"/>
+    <counter id="userNum" name="Номер абонента" type="text"/>
+    <counter id="status" name="Статус абонент" type="text"/>
+  </counters>
+  <keywords>
+    велком, мобильный
+  </keywords>
+  <type>
+    cell
+  </type>
+</provider>

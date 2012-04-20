@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Номер телефона" 
+        positiveButtonText="ОК" 
+        summary="10 цифр номера телефона||{@s}\n" 
+        dialogTitle="Логин" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите 10 цифр вашего номера телефона без пробелов и разделителей, например, 9011234567."
+	inputType="number"
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="Пароль для https://www.skypoint.ru||***********\n"
+        dialogMessage="Введите пароль, используемый для входа в личный кабинет https://www.skypoint.ru ."
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

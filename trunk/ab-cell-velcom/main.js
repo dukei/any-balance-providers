@@ -1,10 +1,10 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 
-Текущий баланс миль в программе Aeroflot Bonus.
+Текущий баланс у белорусского сотового оператора Velcom.
 
-Сайт оператора: http://aeroflotbonus.ru/
-Личный кабинет: https://www.aeroflot.ru/personal/
+Сайт оператора: http://velcom.by/
+Личный кабинет: https://internet.velcom.by/
 */
 
 function getParam (html, result, param, regexp, replaces, parser) {

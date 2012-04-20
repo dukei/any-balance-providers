@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.1" version="2">ab-cell-intertelecom</id>
+  <id version="3">ab-cell-intertelecom</id>
   <name>Интертелеком</name>
   <description>
     Мониторинг баланса мобильного оператора Интертелекома первого национального CDMA оператора (Украина)
@@ -13,6 +13,8 @@
   </files>
   <counters>
     <counter id="saldo" name="Сальдо" suffix=" грн" type="numeric"/>
+    <counter id="predoplata" name="Предоплаченые услуги на месяц" suffix=" грн" type="numeric"/>
+    <counter id="bonus" name="Неактивированные бонусы (с 094)" suffix=" грн" type="numeric"/>
   </counters>
   <keywords>
     мобильный национальный оператор cdma украина

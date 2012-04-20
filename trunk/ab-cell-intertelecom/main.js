@@ -14,18 +14,34 @@ function main(){
 	});
 	if (html){
 		var result = {success: true};
+			var matches = html.match(/<td>Тарифный план<\/td>\s*<td style="color:.+;">\s*(.*)\s*<\/td>/i);
+			if (matches) {
+				result.__tariff = matches[1]
+			} else {
+				throw new AnyBalance.Error("Не удалось проверить тариф");
+			}
 		if (AnyBalance.isAvailable('saldo')) {
 			var matches = html.match(/<td>Сальдо<\/td>\s*<td style="color:.+;">\s*(\d+\.\d\d)\s*<\/td>/i);
 			if (matches) {
 				result.saldo = matches[1]
 			} else {
-				throw new AnyBalance.Error("Не удалось проверить баланс");
+				throw new AnyBalance.Error("Не удалось проверить Сальдо");
 			}
-			var matches = html.match(/<td>Пакет<\/td>\s*<td style="color:.+;">\s*(.*)\s*<\/td>/i);
+		}
+		if (AnyBalance.isAvailable('predoplata')) {
+			var matches = html.match(/<td>Предоплаченые услуги на месяц<\/td>\s*<td style="color:.+;">\s*(\d+\.\d\d)\s*<\/td>/i);
 			if (matches) {
-				result.__tariff = matches[1]
+				result.predoplata = matches[1]
 			} else {
-				throw new AnyBalance.Error("Не удалось проверить тариф");
+				throw new AnyBalance.Error("Не удалось проверить Предоплаченые услуги на месяц");
+			}
+		}
+		if (AnyBalance.isAvailable('bonus')) {
+			var matches = html.match(/<td>Неактивированные бонусы \(с 094\)<\/td>\s*<td style="color:.+;">\s*(\d+\.\d\d)\s*<\/td>/i);
+			if (matches) {
+				result.bonus = matches[1]
+			} else {
+				throw new AnyBalance.Error("Не удалось проверить Неактивированные бонусы");
 			}
 		}
 		AnyBalance.setResult(result);

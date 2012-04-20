@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-cell-skylink</id>
+  <name>Skylink</name>
+  <description>
+    Получает баланс для оператора сотовой связи Skylink, используя личный кабинет https://www.skypoints.ru
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="userName" name="ФИО" type="text"/>
+    <counter id="userNum" name="Лицевой счет" type="text"/>
+  </counters>
+  <keywords>
+    скайлинк, мобильный
+  </keywords>
+  <type>
+    cell
+  </type>
+</provider>

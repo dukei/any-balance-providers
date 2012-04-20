@@ -16,8 +16,8 @@
         dialogTitle="Пароль"
         negativeButtonText="Отмена"
         title="Пароль"
-        summary="Пароль||***********\n"
+        summary="Пароль для входа в ИССА||***********\n"
         dialogMessage="Введите пароль, используемый для входа в ИССА https://internet.velcom.by."
-        inputType="textPassword">
+        inputType="numberPassword">
     </EditTextPreference>
 </PreferenceScreen>

@@ -3,7 +3,12 @@
 
 Получает текущую погоду или прогноз погоды для выбранного города.
 
-Сайт компании: http://www.gismeteo.ru
+Сайты компании: http://www.gismeteo.ru
+                http://www.gismeteo.ua
+                http://www.gismeteo.lt
+                http://www.gismeteo.by
+                http://www.gismeteo.com - не реализовано
+                http://www.gismeteo.md - не реализовано
 */
 
 
@@ -54,41 +59,25 @@ function getCurrentWeather (html, result) {
 
 
 function getWeatherForecast (html, result, tod) {
-/*    var date = new Date ();
-    var hour = date.getHours ();
-
-    var shift = 4;
-    hour -= shift;
-    hour += 6;
-    hour -= hour % 6;
-    hour += shift;
-    if (hour >= 24) {
-        hour -= 24;
-    }
-
-    if (hour < 10)
-        hour = '0' + hour;
-*/
-
     html = html.match (/<tr class="wrow forecast"[\s\S]*?<\/tr>/g);
     if (!html) {
-        throw new AnyBalance.Error ('Не найден прогноз погоды. Пожалуйста, обратитесь к автору скрипта.');
+        throw new AnyBalance.Error ('Не найден прогноз погоды. Пожалуйста, обратитесь к автору провайдера.');
     }
 
     if (tod == '-2') {
         html = html[0];
     } else {
-        var hours = {'0': '04', '1': '10', '2': '16', '3': '22'};
+        var hours = {'0': '0', '1': '6', '2': '12', '3': '18'};
         var found = false;
         for (var i = 0; i < html.length; i++) {
-            if (html[i].indexOf ('-' + hours[tod] + '"') == 45) {
+            if (html[i].indexOf (hours[tod] + ':00, Local') > 0) {
                 found = true;
                 html = html[i];
                 break;
             }
         }
         if (found != true) {
-            throw new AnyBalance.Error ('Не найден прогноз погоды. Пожалуйста, обратитесь к автору скрипта.');
+            throw new AnyBalance.Error ('Не найден прогноз погоды. Пожалуйста, обратитесь к автору провайдера.');
         }
     }
 
@@ -123,8 +112,9 @@ function getWeatherForecast (html, result, tod) {
 
 
 function getWeatherFromHTML (prefs) {
-    var baseurl = 'http://www.gismeteo.ru/city/daily/';
+    var baseurl = 'http://www.gismeteo.' + prefs.domen + '/city/daily/';
 
+    AnyBalance.trace ('Trying open address: ' + baseurl + prefs.city);
     var html = AnyBalance.requestGet (baseurl + prefs.city);
 
     // Проверка неправильной пары логин/пароль
@@ -138,8 +128,8 @@ function getWeatherFromHTML (prefs) {
     if (regexp.exec (html))
     	AnyBalance.trace ('It looks like we are in selfcare...');
     else {
-        AnyBalance.trace ('Have not found logOff... Unknown error. Please contact author.');
-        throw new AnyBalance.Error ('Неизвестная ошибка. Пожалуйста, свяжитесь с автором скрипта.');
+        AnyBalance.trace ('Have not found weather info... Unknown error. Please contact author.');
+        throw new AnyBalance.Error ('Неизвестная ошибка. Пожалуйста, свяжитесь с автором провайдера.');
     }
 
 
@@ -207,8 +197,9 @@ function win2utf (str) {
 
 
 function getWeatherFromXML (prefs) {
-    var baseurl = 'http://informer.gismeteo.ru/xml/';
+    var baseurl = 'http://informer.gismeteo.' + prefs.domen + '/xml/';
 
+    AnyBalance.trace ('Trying open address: ' + baseurl + prefs.city + '.xml');
     var info = AnyBalance.requestGet (baseurl + prefs.city + '.xml');
 
     if (info.length == 0) {
@@ -316,6 +307,18 @@ function getWeatherFromXML (prefs) {
 function main () {
     var prefs = AnyBalance.getPreferences ();
 
+    // Защита от undefined для уже созданных аккаунтов
+    if (!prefs.domen) {
+      prefs.domen = 'ru';
+    }
+    if (!prefs.lang) {
+      prefs.lang = 'ru';  // В текущей версии провайдера информация берется только на русском языке
+    }
+
+    if (prefs.domen == 'lt' && prefs.lang == 'ru') {
+        prefs.domen = 'lt/ru'
+    }
+
     checkEmpty (prefs.city, 'Введите индекс города');
 
     var result = {success: false};
@@ -326,17 +329,6 @@ function main () {
         case '1':
         case '2':
         case '3':
-//            var onlyCurrentWeather = {'waterTemperature',
-//                                      'rising',
-//                                      'setting',
-//                                      'dayLength',
-//                                      'moonPhase'};
-//            for (var i in onlyCurrentCounters) {
-//                if (AnyBalance.isAvailable (onlyCurrentWeather[i])) {
-//                    result.[onlyCurrentWeather[i]] = 
-//                }
-//            }
-
             if (prefs.city.indexOf ('_1') > 0) {
                 result = getWeatherFromXML (prefs);
                 break;
@@ -344,13 +336,13 @@ function main () {
 
         case '-1':
             if (prefs.city.indexOf ('_1') > 0) {
-                throw new AnyBalance.Error ('По текущему индексу города можно получить только прогноз погоды. Для получения текущей погоды введите индекс со страницы <a href="http://www.gismeteo.ru">Gismeteo.ru</a>.');
+                throw new AnyBalance.Error ('По текущему индексу города можно получить только прогноз погоды. Для получения текущей погоды введите индекс со страницы <a href="http://www.gismeteo.' + prefs.domen + '">Gismeteo.' + prefs.domen + '</a>.');
             }
             result = getWeatherFromHTML (prefs);
             break;
 
         default:
-            throw new AnyBalance.Error ("Ошибка получения выбранного прогноза. Пожалуйста, свяжитесь с автором скрипта.");
+            throw new AnyBalance.Error ("Ошибка получения выбранного прогноза. Пожалуйста, свяжитесь с автором провайдера.");
             break;
     }
 

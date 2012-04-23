@@ -16,6 +16,21 @@
         dialogMessage="Введите индекс города. Его можно получить из адресной строки браузера, выбрав на сайте http://www.gismeteo.ru нужный вам город. Например, для Москвы это 4368."
         positiveButtonText="ОК"
         negativeButtonText="Отмена" />
+    <ListPreference
+        title="Домен"
+        summary="Домен, с которого будет получена погода||{@s}\n"
+        key="domen"
+        defaultValue="ru"
+        entries="Россия (.ru)|Украина (.ua)|Литва (.lt)|Беларусь (.by)"
+        entryValues="ru|ua|lt|by" />
+<!--  Задел на будущее. В текущей версии - только русский
+    <ListPreference
+        title="Язык"
+        summary="Язык, на котором будет выдана информация||{@s}\n"
+        key="lang"
+        defaultValue="ru"
+        entries="русский"
+        entryValues="ru" /> -->
 <!--    <EditTextPreference
         key="index"
         title="Индекс города для прогноза"

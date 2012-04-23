@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1" version="4003">ab-internet-domolink</id>
+  <id major_version="1" version="5">ab-internet-domolink</id>
   <name>Домолинк</name>
   <description>
     Получает текущий баланс, номера лицевого счета, ФИО владельца

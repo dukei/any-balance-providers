@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1" version="4">ab-internet-domolink</id>
+  <id major_version="1" version="4003">ab-internet-domolink</id>
   <name>Домолинк</name>
   <description>
     Получает текущий баланс, номера лицевого счета, ФИО владельца
 
-    Новое в v.4:
+    Новое в v.5:
+	  - Добавлен регион "Тула" (все показатели, кроме Трафика и Описания последней оплаты)
+	  - Исправление ошибок;
+	Новое в v.4:
       - Исправление суммы и даты последней оплаты
   </description>
   <author>Serg Repin &lt;serg.repin@gmail.com&gt;</author>
@@ -16,13 +19,13 @@
   </files>
   <counters>
 	<counter id="balance" name="Баланс" units="р."/>
-    <counter id="traffic" name="Трафик за период" type="text"/>
-	<counter id="license" name="Лицевой счет" type="text"/>
+    <counter id="license" name="Лицевой счет" type="text"/>
+	<counter id="monthlypay" name="Ежемесячная плата" units="р."/>
 	<counter id="lastpaysum" name="Сумма последней оплаты" units="р."/>
 	<counter id="lastpaydata" name="Дата последней оплаты" type="text"/>
 	<counter id="lastpaydesc" name="Описание последней оплаты" type="text"/>
-    <counter id="monthlypay" name="Ежемесячная плата" units="р."/>
-	<counter id="username" name="ФИО" type="text"/>
+    <counter id="traffic" name="Трафик за период" type="text"/>
+	<counter id="username" name="ФИО/Название организации" type="text"/>
   </counters>
   <keywords>
     провайдер интернет Московская область телевидение телефония

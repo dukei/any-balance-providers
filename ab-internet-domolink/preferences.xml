@@ -23,8 +23,8 @@
         key="region" 
         title="Регион"
         summary="Регион вашего счета|Нужен для определения Личного кабинета\n|{@s}\n"
-        entries="Москва|Липецк|Калуга|Белгород|Курск|Тверь|Воронеж"
-        entryValues="msk|lpc|klg|blg|krs|tvr|vrn"
+        entries="Москва|Липецк|Калуга|Белгород|Курск|Тверь|Воронеж|Тула"
+        entryValues="msk|lpc|klg|blg|krs|tvr|vrn|tula"
 	    defaultValue="msk">
     </ListPreference>
 </PreferenceScreen>

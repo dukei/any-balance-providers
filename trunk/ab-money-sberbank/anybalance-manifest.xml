@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-money-sberbank</id>
+  <name>Сбербанк ОнЛ@йн</name>
+  <description>
+    Получает текущий остаток и другие параметры карт Сбербанка, используя систему Сбербанк-онлайн.
+
+    Внимание! Для работы провайдера требуется отказаться от подтверждения входа в систему «Сбербанк ОнЛ@йн» 
+одноразовым паролем в разделе Настройки - Настройка безопасности. Но не беспокойтесь, 
+отключение подтверждения даёт возможность только зайти в систему,
+в целях безопасности НЕВОЗМОЖНО отключить подтверждение одноразовым паролем переводов и платежей организациям или частным лицам.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Остаток"/>
+    <counter id="debt" name="Задолженность"/>
+    <counter id="maxlimit" name="Кредитный лимит"/>
+    <counter id="cash" name="Наличные"/>
+    <counter id="electrocash" name="Для покупок"/>
+    <counter id="cardNumber" name="Номер карты" type="text"/>
+    <counter id="currency" name="Валюта" type="text"/>
+    <counter id="userName" name="ФИО" type="text"/>
+    <counter id="cardName" name="Имя на карте" type="text"/>
+    <counter id="till" name="Срок действия" type="text"/>
+    <counter id="status" name="Статус" type="text"/>
+  </counters>
+  <keywords>
+    сбербанк онлайн, sberbank online, сберегательный банк
+  </keywords>
+  <type>
+    money
+  </type>
+</provider>

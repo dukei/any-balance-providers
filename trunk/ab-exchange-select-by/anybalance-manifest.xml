@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-exchange-select-by</id>
+  <name>Курсы валют Банков Беларуси</name>
+  <description>
+    Текущие курсы драгоценных металлов в банках республики Беларусь. Есть возможность показать лучшие курсы. Информация берется с сайта select.by.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <js>api:jquery.min.js</js>
+    <js>main.js</js>
+    <preferences>preferences.xml</preferences>
+  </files>
+  <counters>
+    <counter id="usdpok" name="USD покупка" prefix="$↓"/>
+    <counter id="usdprod" name="USD продажа" prefix="$↑"/>
+    <counter id="eurpok" name="EUR покупка" prefix="€↓"/>
+    <counter id="eurprod" name="EUR продажа" prefix="€↑"/>
+    <counter id="rurpok" name="RUR покупка" prefix="р↓"/>
+    <counter id="rurprod" name="RUR продажа" prefix="р↑"/>
+    <counter id="uepok" name="EUR/USD покупка" prefix="€/$↓"/>
+    <counter id="ueprod" name="EUR/USD продажа" prefix="€/$↑"/>
+    <counter id="bank" name="Банк" type="text"/>
+    <counter id="tel" name="Телефон банка" type="text"/>
+  </counters>
+  <keywords>
+    Беларусь, курс валют, евро, доллар
+  </keywords>
+  <type>
+    finance, exchange
+  </type>
+</provider>

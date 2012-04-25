@@ -30,7 +30,7 @@ function main () {
                                       '&captcha=0&callback=jsonp');
     AnyBalance.trace ('Login result: ' + info);
 
-    var res = eval (info);
+    var res = eval(info);
 
     // Проверка ошибки входа
     if (res.error != 0) {
@@ -38,7 +38,7 @@ function main () {
 
         switch (res.error) {
             case 3:
-                err = 'Ошибка входа. Возможо, неверно введен пароль';  // На самом деле, не факт, что это так, но на телефоне такая ситуация была, код - 3, описания ошибок нет.
+                err = 'Ошибка входа. Возможно, неверно введен пароль';  // На самом деле, не факт, что это так, но на телефоне такая ситуация была, код - 3, описания ошибок нет.
                 break;
         }
 
@@ -66,7 +66,7 @@ function main () {
     	AnyBalance.trace ('It looks like we are in selfcare...');
     else {
         AnyBalance.trace ('Have not found logout... Unknown error. Please contact author.');
-        throw new AnyBalance.Error ('Неизвестная ошибка. Пожалуйста, свяжитесь с автором скрипта.');
+        throw new AnyBalance.Error ('Неизвестная ошибка. Пожалуйста, свяжитесь с автором провайдера.');
     }
 
     var result = {success: true};

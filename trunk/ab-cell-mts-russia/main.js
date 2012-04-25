@@ -40,11 +40,17 @@ function getParam (html, result, param, regexp, replaces, parser) {
 	}
 }
 
+var replaceTagsAndSpaces = [/<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
+
 function main(){
     var prefs = AnyBalance.getPreferences();
     if(!regions[prefs.region]){
 	AnyBalance.trace("Unknown region: " + prefs.region + ", setting to auto");
         prefs.region = 'auto';
+    }
+
+    if(prefs.phone && !/^\d+$/.test(prefs.phone)){
+	throw new AnyBalance.Error('В качестве номера необходимо ввести 10 цифр номера, например, 9161234567, или не вводить ничего, чтобы получить информацию по основному номеру.');
     }
 
     var baseurl = regions[prefs.region];
@@ -54,6 +60,16 @@ function main(){
     	username: prefs.login,
         password: prefs.password
     });
+    
+    if(prefs.phone && prefs.phone != prefs.login){
+        html = AnyBalance.requestGet(baseurl + "MyPhoneNumbers.mvc");
+        html = AnyBalance.requestGet(baseurl + "MyPhoneNumbers.mvc/Change?phoneNumber=7"+prefs.phone);
+	if(!html)
+		throw new AnyBalance.Error(prefs.phone + ": номер, возможно, неправильный или у вас нет к нему доступа"); 
+	var error = getParam(html, null, null, /<ul class="operation-results-error">([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
+	if(error)
+		throw new AnyBalance.Error(prefs.phone + ": " + error); 
+    }
 
     var regexp=/<form .*?id="redirect-form".*?action="[^"]*\.([^\.]+)\.mts\.ru/, res, tmp;
     if (res=regexp.exec(html)){
@@ -103,6 +119,8 @@ function main(){
 
     // Баланс
     getParam (html, result, 'balance', /Баланс.*?>([-\d\.,\s]+)/, [/\s|\xA0/, "", ",", "."], parseFloat);
+    // Телефон
+    getParam (html, result, 'phone', /Ваш телефон:.*?>([^<]*)</i, replaceTagsAndSpaces, html_entity_decode);
 
     if (AnyBalance.isAvailable ('min_left') ||
         AnyBalance.isAvailable ('min_local') ||
@@ -209,3 +227,12 @@ function parseTime(date){
     var d = new Date(dateParts[2], (dateParts[1] - 1), dateParts[0]);
     return d.getTime();
 }
+
+function html_entity_decode(str)
+{
+    //jd-tech.net
+    var tarea=document.createElement('textarea');
+    tarea.innerHTML = str;
+    return tarea.value;
+}
+

@@ -28,4 +28,14 @@
         entryValues="auto|center|primorye|nnov|nw|sib|ural|ug"
 	      defaultValue="auto">
     </ListPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="phone" 
+        dialogTitle="Номер телефона"
+        negativeButtonText="Отмена"
+        title="Номер телефона"
+        summary="Номер телефона, чей баланс показывать|Автоматически\n|{@s}\n"
+        dialogMessage="Введите 10 цифр номера телефона, чей баланс вы хотите посмотреть. Например, 9161234567. Этот номер должен быть виден в вашем личном кабинете. Чтобы смотреть информацию по основному номеру, оставьте это поле пустым."
+        inputType="number">
+    </EditTextPreference>
 </PreferenceScreen>

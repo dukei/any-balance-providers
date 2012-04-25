@@ -49,21 +49,14 @@ function main(){
 			authRememberMe: "0"
 		}
 		, 
-		//Она ожидает, что запрос на логин будет сделан через JavaScript, поэтому надо установить этот заголовок
-		//Вообще, если не получается залогиниться просто передав логин и пароль, то надо смотреть, не устанавливаются ли при запросе какие-нибудь
-		//Дополнительные заголовки или куки
 		{"X-Requested-With":"XMLHttpRequest"}
-		,
-		{"User-Agent":"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.142 Safari/535.19"}
 	);
 	AnyBalance.trace('Got answer from authorization: "' + html + '"');
-        html = html.replace(/^\s+|\s+$/g, ''); //Важно, чтобы было без пробелов с обеих сторон, а то сравнение не пройдет, хотя в отладчике почему-то проходит.
-	if (html == "1"){ //Если авторизация успешна, то возвращается просто один
-		//Переходим на аккаунт
+        html = html.replace(/^\s+|\s+$/g, '');
+	if (html == "1"){ 
 		html = AnyBalance.requestGet(baseurl + 'account');
 		var result = {success: true};
 		if (AnyBalance.isAvailable('bonus')) {
-			//AnyBalance.trace(html); //С помощью этого на телефоне в окне "показать последний лог" можно увидеть, какой тут html
 			var matches = html.match(/<div class="bottom">\s*Загальна кількість\s*<div>(\d+?)<\/div>/i);
 			if (matches) {
 				result.bonus = parseFloat(matches[1]);
@@ -72,7 +65,6 @@ function main(){
 			}
 		}
 		if (AnyBalance.isAvailable('baly')) {
-			//AnyBalance.trace(html); //С помощью этого на телефоне в окне "показать последний лог" можно увидеть, какой тут html
 			var matches = html.match(/Мої Спеціальні пропозиції більше ніж +<span>(\d+?)<\/span>/i);
 			if (matches) {
 				result.baly = parseFloat(matches[1]);
@@ -80,8 +72,18 @@ function main(){
 				throw new AnyBalance.Error("Не удалось проверить баллы");
 			}
 		}
+		if (AnyBalance.isAvailable('skidka')) {
+			var matches = html.match(/Всього надано Бонусів<\/b><\/td>\s*<td><b>(\d+?.\d+?) грн.<\/b><\/td>/i);
+//			var matches = html.match(/Всього надано Бонусів<\/b><\/td>\s* +<td><b>(.*?) грн.<\/b><\/td>/i);
+			if (matches) {
+				result.skidka = parseFloat(matches[1]);
+			}// else {
+//				throw new AnyBalance.Error("Не удалось проверить Скидку");
+//				result.skidka = 0;
+//			}
+		}
 		AnyBalance.setResult(result);
-	} else { //А если неуспешна, то надо в этом html найти и вывести ошибку!
+	} else { 
 		var error = getParam(html, null, null, /<\/script>([\s\S]*?)<br[^>]*>/i, replaceTagsAndSpaces);
 		if(!error) error = 'Не удалось получить данные, неизвестная ошибка.';
 		throw new AnyBalance.Error(error);

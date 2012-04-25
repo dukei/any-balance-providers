@@ -10,7 +10,7 @@ Utel — это бренд, под которым предоставляются
 */
 
 function getParam (html, result, param, regexp, replaces, parser) {
-	if (param && !AnyBalance.isAvailable (param))
+	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
 		return;
 
 	var value = regexp.exec (html);
@@ -31,10 +31,17 @@ function getParam (html, result, param, regexp, replaces, parser) {
 	}
 }
 
+var replaceTagsAndSpaces = [/<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
+var replaceFloat = [/\s+/g, '', /,/g, '.'];
+
 function main(){
     var prefs = AnyBalance.getPreferences();
 
     var baseurl = "https://ucabinet.u-tel.ru/";
+
+    if(prefs.phone && !/^\d+$/.test(prefs.phone)){
+	throw new AnyBalance.Error('В качестве номера необходимо ввести все цифры номера, например, 79501234567, или не вводить ничего, чтобы получить информацию по первому номеру.');
+    }
 
     AnyBalance.setDefaultCharset('windows-1251');
 
@@ -53,24 +60,46 @@ function main(){
       throw new AnyBalance.Error("Could not find session id!");
 
     var result = {success: true}; //Баланс нельзя не получить, не выдав ошибку!
+
+    var svc = 0;
+    if(prefs.phone){
+        var rePhone = new RegExp('info&svc=(\\d+)"><strong>' + prefs.phone + '<', 'i');
+        svc = getParam(html, null, null, rePhone);
+        if(!svc)
+	    throw new AnyBalance.Error('Не получается найти номер ' + prefs.phone + ' в этом личном кабинете!');
+    }
     
     var html = AnyBalance.requestPost(baseurl + "pages/getinfofornumberfirst.jsp", {
-      svc: 0,
+      svc: svc,
       sessionid: sessionid
     }); //{"X-Requested-With": "XMLHttpRequest"}
 
-    getParam(html, result, 'balance', /var\s*balData\s*=\s*parseFloat\('([\-\d\.]+)'\)/, null, parseFloat);
+    if(/<p>Биллинг недоступен/.test(html))
+        throw new AnyBalance.Error('Биллинг временно недоступен.');
+
+
+    getParam(html, result, 'balance', /var\s*balData\s*=\s*parseFloat\('([\-\d\.]+)'\)/, replaceFloat, parseFloat);
     getParam(html, result, 'userName', /Абонент:[\s\S]*?>(.*?)</);
     getParam(html, result, 'status', /Признак активности:[\s\S]*?>(.*?)</);
-    result.__tariff = getParam(html, null, null, /Тарифный план:[\s\S]*?>(.*?)</);
+    getParam(html, result, '__tariff', /Тарифный план:[\s\S]*?>(.*?)</);
+    getParam(html, result, 'phone', /<strong [^>]*id="aliaseLabel"[^>]*>(.*)?</);
 
     if(AnyBalance.isAvailable('bonus')){
         var html = AnyBalance.requestPost(baseurl + "pages/gsminfo_ajax.jsp", {
           a: 'bonus_programm',
-          svc: 0
+          svc: svc
         }); //{"X-Requested-With": "XMLHttpRequest"}
  
-        getParam(html, result, 'bonus', /Текущий баланс[\s\S]*?>(.*?)</);
+        getParam(html, result, 'bonus', /Текущий баланс[\s\S]*?>\s*(-?\d[\d\.,\s]*)</, replaceFloat, parseFloat);
+    }
+
+    if(AnyBalance.isAvailable('gprs')){
+        var html = AnyBalance.requestPost(baseurl + "pages/gsminfo_ajax.jsp", {
+          a: 'block_packets',
+          svc: svc
+        }); //{"X-Requested-With": "XMLHttpRequest"}
+ 
+        getParam(html, result, 'gprs', /<input[^>]*id="pack_INETBLOCK[^>]*checked[^>]*>[\s\S]*?Остаток\s*:\s*(-?\d[\d\.,\s]*)/i, replaceFloat, parseFloat);
     }
 
     AnyBalance.setResult(result);

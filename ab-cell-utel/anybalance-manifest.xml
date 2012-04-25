@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-cell-utel</id>
+  <id version="2">ab-cell-utel</id>
   <name>Utel (Урал)</name>
   <description>
     Получает баланс, бонусные баллы и информацию об абоненте для сотового оператора Ростелеком Урал (Utel).
     Информация берется из личного кабинета https://ucabinet.u-tel.ru/
+
+    v2: -Поддержка нескольких номеров в одном личном кабинете
+        -Остаток трафика в услуге Пакетный GPRS
   </description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <files>
@@ -17,6 +20,8 @@
     <counter id="bonus" name="Бонусы" units="мин"/>
     <counter id="userName" name="Владелец" type="text"/>
     <counter id="status" name="Статус" type="text"/>
+    <counter id="phone" name="Номер телефона" type="text"/>
+    <counter id="gprs" name="Остаток трафика" units="Мб"/>
   </counters>
   <keywords>
     Сотовый телефон, мобильный, мобильник, utel, rostelecom, россия

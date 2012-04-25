@@ -19,4 +19,14 @@
         dialogMessage="Введите пароль, используемый для входа в «Uкабинет». Если Вы не знаете свой пароль, пройдите регистрацию или восстановите пароль на сайте https://ukabinet.u-tel.ru."
         inputType="textPassword">
     </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="phone" 
+        dialogTitle="Номер телефона"
+        negativeButtonText="Отмена"
+        title="Номер телефона"
+        summary="Номер телефона, чей баланс показывать|Автоматически\n|{@s}\n"
+        dialogMessage="Введите цифры номера телефона, чей баланс вы хотите посмотреть. Например, 79501234567. Этот номер должен быть виден в вашем личном кабинете. Чтобы смотреть информацию по первому номеру, оставьте это поле пустым."
+        inputType="number">
+    </EditTextPreference>
 </PreferenceScreen>

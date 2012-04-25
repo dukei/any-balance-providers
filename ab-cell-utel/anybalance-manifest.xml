@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-cell-utel</id>
+  <id version="3">ab-cell-utel</id>
   <name>Utel (Урал)</name>
   <description>
     Получает баланс, бонусные баллы и информацию об абоненте для сотового оператора Ростелеком Урал (Utel).

@@ -51,7 +51,7 @@ function main(){
       PASSWORD: prefs.password
     }); //{"X-Requested-With": "XMLHttpRequest"}
     
-    var error = getParam(html, null, null, /<h1 class="red">([^<]*)<\/h1>/i, [/^\s+|\s+$/g, '']);
+    var error = getParam(html, null, null, /<h1 class="red">([^<]*)<\/h1>/i, replaceTagsAndSpaces);
     if(error)
       throw new AnyBalance.Error(error);
     
@@ -82,7 +82,7 @@ function main(){
     getParam(html, result, 'userName', /Абонент:[\s\S]*?>(.*?)</);
     getParam(html, result, 'status', /Признак активности:[\s\S]*?>(.*?)</);
     getParam(html, result, '__tariff', /Тарифный план:[\s\S]*?>(.*?)</);
-    getParam(html, result, 'phone', /<strong [^>]*id="aliaseLabel"[^>]*>(.*)?</);
+    getParam(html, result, 'phone', /infofornumber_([^"']*)/);
 
     if(AnyBalance.isAvailable('bonus')){
         var html = AnyBalance.requestPost(baseurl + "pages/gsminfo_ajax.jsp", {

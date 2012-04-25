@@ -14,6 +14,7 @@
   <counters>
     <counter id="bonus" name="Бонус" suffix=" бон." type="numeric"/>
     <counter id="baly" name="Балы" suffix=" бал." type="numeric"/>
+    <counter id="skidka" name="Скидка" suffix=" грн." type="numeric"/>
   </counters>
   <keywords>
     сеть супермаркет сільпо сильпо silpo украина

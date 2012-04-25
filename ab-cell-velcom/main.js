@@ -32,6 +32,20 @@ function getParam (html, result, param, regexp, replaces, parser) {
 var replaceTagsAndSpaces = [/<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
 var replaceFloat = [/\s+/g, '', /,/g, '.'];
 
+function requestPostMultipart(url, data, headers){
+	var parts = [];
+	var boundary = '------WebKitFormBoundaryrceZMlz5Js39A2A6';
+	for(var name in data){
+		parts.push(boundary, 
+		'Content-Disposition: form-data; name="' + name + '"',
+		'',
+		data[name]);
+	}
+	parts.push(boundary);
+	headers['Content-Type'] = 'multipart/form-data; boundary=' + boundary.substr(2);
+	return AnyBalance.requestPost(url, parts.join('\r\n'), headers);
+}
+
 function main(){
     var prefs = AnyBalance.getPreferences();
 
@@ -44,53 +58,50 @@ function main(){
 
     var phone = matches[2];
     var prefix = matches[1];
-
+    
     var html = AnyBalance.requestGet(baseurl + 'work.html');
     var sid = getParam(html, null, null, /name="sid3" value="([^"]*)"/i);
     if(!sid)
 	throw new AnyBalance.Error('Не удалось найти идентификатор сессии!');
     
-    var html = AnyBalance.requestPost(baseurl + 'work.html',
-'------WebKitFormBoundaryM326yJJq1lZxkt75\r\n\
-Content-Disposition: form-data; name="sid3"\r\n\
-\r\n\
-' + sid + '\r\n\
-------WebKitFormBoundaryM326yJJq1lZxkt75\r\n\
-Content-Disposition: form-data; name="user_input_timestamp"\r\n\
-\r\n\
-' + new Date().getTime() + '\r\n\
-------WebKitFormBoundaryM326yJJq1lZxkt75\r\n\
-Content-Disposition: form-data; name="user_input_0"\r\n\
-\r\n\
-_next\r\n\
-------WebKitFormBoundaryM326yJJq1lZxkt75\r\n\
-Content-Disposition: form-data; name="last_id"\r\n\
-\r\n\
-\r\n\
-------WebKitFormBoundaryM326yJJq1lZxkt75\r\n\
-Content-Disposition: form-data; name="user_input_1"\r\n\
-\r\n\
-' + prefix + '\r\n\
-------WebKitFormBoundaryM326yJJq1lZxkt75\r\n\
-Content-Disposition: form-data; name="user_input_2"\r\n\
-\r\n\
-' + phone + '\r\n\
-------WebKitFormBoundaryM326yJJq1lZxkt75\r\n\
-Content-Disposition: form-data; name="user_input_10"\r\n\
-\r\n\
-0\r\n\
-------WebKitFormBoundaryM326yJJq1lZxkt75\r\n\
-Content-Disposition: form-data; name="user_input_3"\r\n\
-\r\n\
-' + prefs.password + '\r\n\
-------WebKitFormBoundaryM326yJJq1lZxkt75--\r\n\
-', {
-	'Content-Type': 'multipart/form-data; boundary=----WebKitFormBoundaryM326yJJq1lZxkt75',
+    var form = getParam(html, null, null, /(<form[^>]*name="mainForm"[^>]*>[\s\S]*?<\/form>)/i);
+    if(!form)
+	throw new AnyBalance.Error('Не удалось найти форму входа, похоже, velcom её спрятал. Обратитесь к автору провайдера.');
+
+    //Чё, влад, всё-таки заглянул, да? :)
+    $form = $(form);
+    var params = {};
+    $form.find('input, select').each(function(index){
+	var $inp = $(this);
+	var id=$inp.attr('id');
+	var value = $inp.attr('value');
+	if(id){
+		if(/PRE/i.test(id)){ //Это префикс
+			value = prefix;
+		}else if(/NUMBER/i.test(id)){ //Это номер
+			value = phone;
+		}else if(/PWD/i.test(id)){ //Это пароль
+			value = prefs.password;
+		}
+	}
+	var name = $inp.attr('name');
+	if(!name)
+		return;
+	if(name == 'sid3')
+		sid = value;
+	if(name == 'user_input_0')
+		value = '_next';
+	if(name == 'user_input_timestamp')
+		value = new Date().getTime();
+	params[name] = value || '';
+    });
+    
+    var html = requestPostMultipart(baseurl + 'work.html', params, {
 	'Host': 'internet.velcom.by',
 	'Origin': 'https://internet.velcom.by',
 	'Referer': 'https://internet.velcom.by/work.html',
 	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.162 Safari/535.19'
-});
+    });
 
     var error = getParam(html, null, null, /<td[^>]+class="INFO_Error"[^>]*>(.*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     if(error)

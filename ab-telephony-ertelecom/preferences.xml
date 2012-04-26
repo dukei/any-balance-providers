@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <ListPreference
+        title="Регион"
+        summary="|Выберите регион|Выбран регион '{@s}'!"
+        key="region"
+        defaultValue="spb"
+        entries="Санкт-Петербург"
+        entryValues="spb" />
+    <EditTextPreference 
+        key="loginname"
+        title="Номер" 
+        summary="Номер телефона||{@s}\n" 
+        dialogTitle="Номер" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите номер вашего домашнего телефона Дом.ru"
+        positiveButtonText="ОК">
+    </EditTextPreference>
+    <EditTextPreference 
+        key="loginpass" 
+        title="PIN-код"
+        summary="PIN-код для входа в Личный кабинет||***********\n"
+        dialogTitle="PIN-код"
+        negativeButtonText="Отмена"
+        dialogMessage="Введите PIN-код, используемый для входа в Личный кабинет"
+        positiveButtonText="ОК"
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

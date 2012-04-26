@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id major_version="1.0" version="1">ab-telephony-ertelecom</id>
+  <name>Телефония Дом.ру</name>
+  <description>
+    Получает текущий баланс, номер и тип лицевого счета, владельца счета, статус, трафик в текущем месяце и дату окончания предыдущей сессии у провайдера "Эр-телеком" (ДОМ.РУ)
+  </description>
+  <author>wtiger &lt;wtiger@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>api:jquery.min.js</js> <!-- Используем библиотеку, которая и так входит в AnyBalance -->
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="name" name="ФИО" type="text"/>
+    <counter id="last_incoming" name="Последний входящий" type="text" prefix="Вх."/>
+    <counter id="last_outgoing" name="Последний исходящий" type="text" prefix="Исх."/>
+    <counter id="tariff_number" name="Номер тарифа" type="text" prefix="Номер:"/>
+  </counters>
+  <keywords>
+    провайдер телефония дом.ру
+  </keywords>
+  <type>
+    telephony
+  </type>
+</provider>

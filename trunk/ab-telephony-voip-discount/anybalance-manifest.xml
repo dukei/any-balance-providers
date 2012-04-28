@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-telephony-voip-discount</id>
+  <name>VoipDiscount</name>
+  <description>
+    Получает текущий баланс, бесплатные дни у провайдера IP-телефонии VoipDiscount.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" prefix="€"/>
+    <counter id="freedays" name="Бесплатные дни"/>
+  </counters>
+  <keywords>
+    IP-телефония
+  </keywords>
+  <type>
+    telephony
+  </type>
+</provider>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-social-habrahabr</id>
+  <name>Habrahabr</name>
+  <description>
+    Получает информацию о карме, количество голосов и рейтинг с сайта http://habrahabr для заданного пользователя
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="karma" name="Карма"/>
+    <counter id="rating" name="Рейтинг"/>
+    <counter id="votes" name="Голоса"/>
+  </counters>
+  <keywords>
+    хабрахабр, хабр, habr
+  </keywords>
+  <type>
+    social
+  </type>
+</provider>

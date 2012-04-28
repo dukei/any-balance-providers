@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Хабрапользователь" 
+        positiveButtonText="ОК" 
+        summary="|Имя хабрапользователя|{@s}" 
+        dialogTitle="Хабрапользователь" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите имя хабрапользователя, информацию по которому вы хотите узнать."
+        key="login">
+    </EditTextPreference>
+</PreferenceScreen>

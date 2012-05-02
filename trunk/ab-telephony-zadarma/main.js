@@ -1,6 +1,8 @@
-﻿/*
+ /*
  
-Провайдер AnyBalance (http://any-balance-providers.googlecode.com)Zadarma IP-телефония
+Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
+
+Zadarma IP-телефония
 Сайт оператора: http://www.zadarma.com/
 Личный кабинет: https://ss.zadarma.com/
 

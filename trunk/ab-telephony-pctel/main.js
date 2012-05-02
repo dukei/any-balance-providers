@@ -1,6 +1,8 @@
 /*
  
-Провайдер AnyBalance (http://any-balance-providers.googlecode.com)PCTEL IP-телефония
+Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
+
+PCTEL IP-телефония
 Сайт оператора: http://www.pctel.ru/
 Личный кабинет: https://my.pctel.ru/pages/my_pctel/
 

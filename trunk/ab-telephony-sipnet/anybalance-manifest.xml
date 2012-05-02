@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-telephony-sipnet</id>
+  <id version="2">ab-telephony-sipnet</id>
   <name>SIPNET</name>
   <description>
     Получает текущий баланс в Sipnet.

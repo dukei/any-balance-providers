@@ -17,10 +17,10 @@ function main(){
 		CabinetAction: 'login'
 	});
 	
-	var matches = info.match(/<div>(\d+?\.\d+?)[^\d]+?<span style="font-size: 80%">.+?<\/span><\/div>/i);
+	var matches = info.match(/<div>(\d+?\.\d+)[^\d]*?<span style="font-size: 80%">.+?<\/span><\/div>/i);
 	if (matches) {
 		var result = {success: true};
-		result.balance = matches[1];
+		result.balance = parseFloat(matches[1]);
 		AnyBalance.setResult(result);
 	} else {
 		throw new AnyBalance.Error("Не удалось получить текущий баланс");

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Логин" 
+        positiveButtonText="ОК" 
+        summary="Логин в Zadarma||{@s}\n" 
+        dialogTitle="Электронный адрес" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите ваш электронный адрес в Zadarma"
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="Введите пароль||************\n"
+        dialogMessage="Введите ваш пароль в Zadarma"
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

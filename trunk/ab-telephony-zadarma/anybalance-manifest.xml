@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id major_version="1" version="1">ab-telephony-zadarma</id>
+  <name>Zadarma</name>
+  <description>
+    Получает текущий баланс в Zadarma.
+  </description>
+  <author>Puzuma &lt;a.puzuma@gmail.com&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" prefix="$" type="numeric"/>
+  </counters>
+  <keywords>
+    zadarma sip IP-телефония
+  </keywords>
+  <type>
+    telephony
+  </type>
+</provider>

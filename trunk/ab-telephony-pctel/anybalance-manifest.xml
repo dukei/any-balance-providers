@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id major_version="1" version="1">ab-telephony-pctel</id>
+  <name>PCTEL</name>
+  <description>
+    Получает текущий баланс в PCTEL.
+  </description>
+  <author>Puzuma &lt;a.puzuma@gmail.com&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" suffix="р" type="numeric"/>
+  </counters>
+  <keywords>
+    pctel sip IP-телефония
+  </keywords>
+  <type>
+    telephony
+  </type>
+</provider>

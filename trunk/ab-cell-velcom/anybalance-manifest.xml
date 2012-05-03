@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="3">ab-cell-velcom</id>
+  <id version="4">ab-cell-velcom</id>
   <name>Velcom - провайдер сотовой связи (Белоруссия)</name>
   <description>
     Получает баланс, минуты, трафик для белорусского оператора сотовой связи Velcom

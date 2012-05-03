@@ -140,7 +140,7 @@ Content-Disposition: form-data; name="last_id"\r\n\
     getParam(html, result, 'balance', /Текущий баланс:[\s\S]*?<td[^>]*>(-?\d[\s\d,\.]*)/i, replaceFloat, parseFloat);
     getParam(html, result, 'status', /Текущий статус абонента:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, '__tariff', /Тарифный план:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'min', /Остаток минут, SMS, MMS, GPRS, включенных в абонплату:[\s\S]*?<td[^>]*>[\s\S]*?(-?\d[\s\d,\.]*) мин(?:,|\b)/i, replaceFloat, parseFloat);
+    getParam(html, result, 'min', /Остаток минут, SMS, MMS, GPRS, включенных в абонплату:[\s\S]*?<td[^>]*>[\s\S]*?(-?\d[\s\d,\.]*) мин(?:,|\s*<)/i, replaceFloat, parseFloat);
     getParam(html, result, 'min_fn', /Остаток минут, SMS, MMS, GPRS, включенных в абонплату:[\s\S]*?<td[^>]*>[\s\S]*?(-?\d[\s\d,\.]*) мин на ЛН/i, replaceFloat, parseFloat);
     getParam(html, result, 'traffic', /Остаток минут, SMS, MMS, GPRS, включенных в абонплату:[\s\S]*?<td[^>]*>[\s\S]*?(-?\d[\s\d,\.]*) Мб/i, replaceFloat, parseFloat);
 

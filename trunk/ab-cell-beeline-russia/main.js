@@ -208,73 +208,6 @@ function parseMinutes(str){
     return parseFloat(str)*60; //Переводим в секунды
 }
 
-function checkHierarchy(baseurl, html){
-    var re = /(<div[^>]*id="div_products"[^>]*>[\s\S]*?<\/div>)/i;
-    var hierarchy = getParam(html, null, null, re);
-    if(!hierarchy){
-	AnyBalance.trace("Couldn't find hierarchy menu. Assuming it is not needed...");
-        return html;
-    }
-
-    if(hierarchy){
-      //У нас тут иерархия, надо проверить, выбрана ли группа счетов
-      $hierarchy = $(hierarchy);
-      $selected_group = $hierarchy.find('td.tis').prev().filter(':has(img[src$="item.gif"])');
-      if($selected_group.size() == 0){
-	AnyBalance.trace("No billing group is selected, trying to select one");
-        
-        var href = $hierarchy.find('td:has(img[src$="item.gif"])').next().find('a').first().attr('href');
-	if(!href){
-	  AnyBalance.trace("Can not find any billing group to select... Trying to expand...");
-          html = AnyBalance.requestPost(baseurl + "hierarchyTreeAction.do", {
-            _stateParam: getStateParam(html),
-            _resetBreadCrumbs:'true',
-            products_ctrl:'products',
-            products_action:'Expand',
-            products_param:0
-          });
-
-          $hierarchy.empty();
-          var hierarchy = getParam(html, null, null, re);
-          if(!hierarchy){
-	    AnyBalance.trace("Couldn't find hierarchy menu. Assuming it is not needed...");
-            return html;
-          }
-          $hierarchy = $(hierarchy);
-        }
-        
-        //Ещё раз пытаемся получить группу счетов после раскрытия
-        href = $hierarchy.find('td:has(img[src$="item.gif"])').next().find('a').first().attr('href');
-	if(!href)
-	  AnyBalance.trace("Can not find any billing group to select... Continuing with hope...");
-
-        if(href){
-          var params = {
-            _stateParam: getStateParam(html),
-            _forwardName:'',
-            _resetBreadCrumbs:'true',
-            _expandStatus:''
-          };
-
-          href = href.replace(/^.*\?/, '');
-          var cmds = href.split('&');
-          for(var i=0; i<cmds.length; ++i){
-            var cmds2 = cmds[i].split('='); 
-            params[cmds2[0]] = cmds2[1];
-            if(cmds2 == 'products_param')
-              params['_navigation_OrgHierarchy'] = cmds2[1];
-          }
-	  AnyBalance.trace("Now selecting first billing group...");
-          html = AnyBalance.requestPost(baseurl + "hierarchyTreeAction.do", params);
-        }
-      }else{
-	AnyBalance.trace("Billing group is already selected.");
-      }
-    }
-
-    return html;
-}
-
 function getStateParam(html){
    return getParam(html, null, null, /<form name="ecareSubmitForm"[\s\S]*?name="_stateParam" value="([^"]*)"/i);
 }
@@ -294,7 +227,7 @@ function parseCorporate(baseurl, html){
 
     // Номер договора
     getParam (html, result, 'license', /Номер Договора[\s\S]*?<td[^>]*>\s*(.*?)\s*</, null, html_entity_decode);
-
+    
     var phone = AnyBalance.getPreferences().phone || AnyBalance.getPreferences().login;
     
     //Ссылка на финансовую информацию, похоже, только в кредитных корпоративных тарифных планах
@@ -306,8 +239,6 @@ function parseCorporate(baseurl, html){
 
         // Финансовая информация - платежи
         html = AnyBalance.requestPost(baseurl + "navigateMenu.do", {
-          _stateParam: getStateParam(html),
-          _expandStatus: '',
           _navigation_secondaryMenu:'billing.payment',
           _resetBreadCrumbs:'true'
         });
@@ -318,21 +249,17 @@ function parseCorporate(baseurl, html){
 
       if(AnyBalance.isAvailable('expences')){
         AnyBalance.trace("Fetching current period calls...");
-
-    	html = checkHierarchy(baseurl, html);
-
         // Финансовая информация - звонки текущего периода
         html = AnyBalance.requestPost(baseurl + "loadUnbilledAction.do", {
-          _stateParam: getStateParam(html),
-          _expandStatus: '',
           "_navigation_secondaryMenu":'billing.unbilledCalls',
           "_resetBreadCrumbs":'true'
         });
 
         // Финансовая информация - звонки текущего периода - Начисления
+        var stateParam = getStateParam(html);
         AnyBalance.trace("Fetching expences info...");
         html = AnyBalance.requestPost(baseurl + "VIPUnbilledSubscribersSwitchingAction.do", {
-          _stateParam: getStateParam(html),
+          _stateParam: stateParam,
           _forwardName:'unbilledCharge',
           _resetBreadCrumbs:'null',
           "ctrlvcol%3Dradio%3Bctrl%3DsubscriberListExt%3Btype%3Drd":phone
@@ -345,20 +272,16 @@ function parseCorporate(baseurl, html){
       if(AnyBalance.isAvailable('sms_left', 'min_left')){
         AnyBalance.trace("Fetching inclusive info...");
         // Финансовая информация - звонки текущего периода - включенные минуты
-
-    	html = checkHierarchy(baseurl, html);
-
         html = AnyBalance.requestPost(baseurl + "loadUnbilledAction.do", {
-          _stateParam: getStateParam(html),
-          _expandStatus: '',
           "_navigation_secondaryMenu":'billing.unbilledCalls',
           "_resetBreadCrumbs":'true'
         });
 
         
       // Финансовая информация - звонки текущего периода - включенные минуты
+        var stateParam = getStateParam(html);
         html = AnyBalance.requestPost(baseurl + "VIPUnbilledSubscribersSwitchingAction.do", {
-          _stateParam: getStateParam(html),
+          _stateParam: stateParam,
           _forwardName:'unusedInclusive',
           _resetBreadCrumbs:'null',
           "ctrlvcol%3Dradio%3Bctrl%3DsubscriberListExt%3Btype%3Drd":phone
@@ -376,11 +299,11 @@ function parseCorporate(baseurl, html){
     
     AnyBalance.trace("Fetching number info...");
     
-    html = checkHierarchy(baseurl, html);
-
+    var stateParam = getStateParam(html);
+    
     //К сожалению, телефоны грузятся только после загрузки этой страницы
     html = AnyBalance.requestPost(baseurl + "OnLoadSubscriberProfileFilterAction.do", {
-        _stateParam:getStateParam(html),
+        _stateParam:stateParam,
         _expandStatus:'',
         '_navigation_thirdMenu':'services.profileManagement.subscribers',
         subscriberNumber:phone,
@@ -396,9 +319,11 @@ function parseCorporate(baseurl, html){
     // Состояние номера
     getParam (html, result, 'BlockStatus', rStatus, [/&nbsp;/g, ' ' , /^\s+|\s+$/g, '']);
     
+    var stateParam = getStateParam(html);
+
     //А теперь давайте получим это более надёжно
     html = AnyBalance.requestPost(baseurl + "SubscriberProfileFilterSwitchingAction.do", {
-        _stateParam:getStateParam(html),
+        _stateParam:stateParam,
         _forwardName:'',
         _resetBreadCrumbs:'',
         _expandStatus:'',

@@ -14,11 +14,11 @@ function main(){
 	});
 	if (html){
 		var result = {success: true};
-			var matches = html.match(/<td>Тарифный план<\/td>\s*<td style="color:.+;">\s*(.*)\s*<\/td>/i);
+			var matches = html.match(/<td>Тарифный план<\/td>\s*<td style="color:.+;">\s*<a href.+>\s*(.*)\s*<\/a>\s*<\/td>/i);
 			if (matches) {
 				result.__tariff = matches[1]
 			} else {
-				throw new AnyBalance.Error("Не удалось проверить тариф");
+				result.__tariff = 'Неопределенный тариф';
 			}
 		if (AnyBalance.isAvailable('saldo')) {
 			var matches = html.match(/<td>Сальдо<\/td>\s*<td style="color:.+;">\s*(\d+\.\d\d)\s*<\/td>/i);

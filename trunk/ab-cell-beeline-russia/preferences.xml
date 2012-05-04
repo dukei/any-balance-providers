@@ -28,4 +28,14 @@
         entryValues="ru|uz"
 	defaultValue="ru">
     </ListPreference>
+<!--    <EditTextPreference 
+        title="Прикрепленный номер" 
+        positiveButtonText="ОК" 
+        summary="Номер телефона (10 цифр)||{@s}\n" 
+        dialogTitle="Прикрепленный номер" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Прикрепленный к договору номер (10 цифр), если он отличается от логина, например 9031234567. Если вы хотите получить информацию для единственного номера, совпадающего с логином, то оставьте это поле пустым."
+        key="phone"
+        inputType="number">
+    </EditTextPreference> -->
 </PreferenceScreen>

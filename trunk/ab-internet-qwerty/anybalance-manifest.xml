@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-internet-qwerty</id>
+  <name>qwerty.ru</name>
+  <description>
+    Получает баланс и другие финансовые параметра для интернет провайдера QWERTY. Информация берется из личного кабинета http://billing.qwerty.ru.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="expences" name="Текущие начисления" units="р"/>
+    <counter id="pays" name="Платежи в текущем месяце" units="р"/>
+    <counter id="recommended" name="Рекомендуемый платеж" units="р"/>
+    <counter id="licschet" name="Лицевой счет" type="text"/>
+    <counter id="userName" name="ФИО" type="text"/>
+  </counters>
+  <keywords>
+    интернет, кверти
+  </keywords>
+  <type>
+    internet
+  </type>
+</provider>

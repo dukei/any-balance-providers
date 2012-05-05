@@ -60,9 +60,9 @@ function main(){
     AnyBalance.trace ("Parsing accounts...");
 
     // Поиск идентификатора договора
-    if (!prefs.account || prefs.account == '')
-      prefs.account = '\\d+';
-    var regexp = 'class="contractnum" .*?toggleContract.*?\'c(\\d+)\'[^>]*>' + prefs.account;
+    if (!prefs.contract || prefs.contract == '')
+      prefs.contract = '\\d+';
+    var regexp = 'class="contractnum" .*?toggleContract.*?\'c(\\d+)\'[^>]*>' + prefs.contract;
     value = html.match (regexp);
     var id;
     if (value)

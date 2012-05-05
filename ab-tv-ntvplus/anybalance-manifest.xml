@@ -1,11 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="2">ab-tv-ntvplus</id>
+  <id major_version="1.0" version="3">ab-tv-ntvplus</id>
   <name>НТВ+</name>
   <description>
     Получает баланс, бонусные баллы, сумму доплаты и пакеты услуг у НТВ+.
+    
+    Версия 1.0.3 от 05.05.2012:
+    - Исправлено получение информации при вводе номера договора в настройках.
   </description>
-  <author>iReset &lt;develop_ag@mail.ru&gt;</author>
+  <author>iReset &lt;ireset_ag@gmail.com&gt;</author>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>

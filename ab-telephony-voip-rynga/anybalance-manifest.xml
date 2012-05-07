@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-telephony-voip-rynga</id>
+  <name>Rynga</name>
+  <description>
+    Получает текущий баланс, бесплатные дни у провайдера IP-телефонии Rynga.
+  </description>
+  <author>Andrey Belchikov &lt;belchikovs@gmail.com&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+	<js>api:jquery.min.js</js>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" prefix="€"/>
+    <counter id="freedays" name="Бесплатные дни"/>
+  </counters>
+  <keywords>
+    IP-телефония voip rynga betamax
+  </keywords>
+  <type>
+    telephony
+  </type>
+</provider>

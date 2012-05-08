@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="1">ab-multima-krs</id>
+  <id major_version="1.0" version="1">ab-internet-multima-krs</id>
   <name>Мультима Красноярск</name>
   <description>
     Получает баланс лицевого счёта в компании Мультима (бывший Астрон), Красноярск.

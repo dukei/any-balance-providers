@@ -247,7 +247,7 @@ function parseCorporate(baseurl, html){
         getParam (html, result, 'balance', /Текущий баланс[\s\S]*?<td[^>]*>\s*([\s\S]*?)\s*</i, alltransformations, parseBalance);
       }
 
-      if(AnyBalance.isAvailable('expences')){
+      if(AnyBalance.isAvailable('expences','expencesTraffic','expencesAbon','expencesInstant')){
         AnyBalance.trace("Fetching current period calls...");
         // Финансовая информация - звонки текущего периода
         html = AnyBalance.requestPost(baseurl + "loadUnbilledAction.do", {
@@ -267,6 +267,10 @@ function parseCorporate(baseurl, html){
         
         // Сколько использовано
         getParam (html, result, 'expences', /Общая сумма начислений[\s\S]*?<td>\s*([\s\S]*?)\s*</i, alltransformations, parseBalance);
+        getParam (html, result, 'expencesTraffic', /Начисления за трафик[\s\S]*?<td>\s*([\s\S]*?)\s*</i, alltransformations, parseBalance);
+        getParam (html, result, 'expencesAbon', /Абонентская плата[\s\S]*?<td>\s*([\s\S]*?)\s*</i, alltransformations, parseBalance);
+        getParam (html, result, 'expencesInstant', /Разовые начисления[\s\S]*?<td>\s*([\s\S]*?)\s*</i, alltransformations, parseBalance);
+
       }
 
       if(AnyBalance.isAvailable('sms_left', 'min_left')){

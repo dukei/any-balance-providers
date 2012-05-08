@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id major_version="1.0" version="08">ab-multima-krs</id>
+  <name>Мультима Красноярск</name>
+  <description>
+    Получает баланс лицевого счёта в компании Мультима (бывший Астрон), Красноярск.
+  </description>
+  <author>Leo Hawk &lt;Leo_Hawk@Mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+  </counters>
+  <keywords>
+    Кабельное телевидение, Мультима, Астрон, интернет, Россия, Красноярск
+  </keywords>
+  <type>
+    cell
+  </type>
+</provider>

@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id major_version="1.0" version="1">ab-cell-people</id>
+  <name>PeopleNet</name>
+  <description>
+    Получает баланс для мобильного оператора PeopleNet.
+  </description>
+  <author>sirogeek &lt;sirogeek@gmail.com&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="грн"/>
+  </counters>
+  <keywords>
+    Сотовый телефон, мобильный, мобильник, people.net, украина
+  </keywords>
+  <type>
+    cell
+  </type>
+</provider>
+

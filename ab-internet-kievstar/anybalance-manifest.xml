@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id major_version="1.0" version="1">ab-internet-kyivstar</id>
+  <name>Киевстар (домашний интернет)</name>
+  <description>
+    Получает баланс, бонусные баллы для домашнего интернета Киевстар.
+  </description>
+  <author>Viacheslav Sychov &lt;viacheslav.sychov@gmail.com&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="грн"/>
+    <counter id="bonuses" name="Бонусный счет" units="грн"/>
+  </counters>
+  <keywords>
+    Домашний интернет, интернет, kyivstar, киевстар, украина
+  </keywords>
+  <type>
+    internet
+  </type>
+</provider>
+

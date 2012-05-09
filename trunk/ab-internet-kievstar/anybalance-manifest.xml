@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="1">ab-internet-kyivstar</id>
+  <id major_version="1.0" version="1">ab-internet-kievstar</id>
   <name>Киевстар (домашний интернет)</name>
   <description>
     Получает баланс, бонусные баллы для домашнего интернета Киевстар.

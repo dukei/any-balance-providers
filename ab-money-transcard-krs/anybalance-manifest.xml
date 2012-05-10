@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id major_version="1.0" version="01">ab-money-transcard-krs</id>
+  <name>Транспортная карта, Красноярск</name>
+  <description>
+    Получает информацию по транспортной карте, Красноярск.
+
+    Особенности: Возможна задержка поступления данных. Обычно данные на сайте обновляются на следующий день.
+  </description>
+  <author>Leo Hawk &lt;Leo_Hawk@Mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="KolvoEdinits" name="Количество транспортных единиц (т.е. просто рублей на счете)" units="р"/>
+    <counter id="LastSum" name="Сумма последнего пополнения" units="р"/>
+    <counter id="LastDate" name="Дата последнего пополнения" type="text"/>
+  </counters>
+  <keywords>
+    Транспортная карта, Красноярск
+  </keywords>
+  <type>
+    money
+  </type>
+</provider>

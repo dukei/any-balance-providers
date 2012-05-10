@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-cell-life-by</id>
+  <name>Life:) Белоруссия</name>
+  <description>
+    Мониторинг баланса мобильного оператора Life:) (Белоруссия)
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" suffix="р"/>
+    <counter id="balance_bonus" name="Бонусы" suffix="р"/>
+  </counters>
+  <keywords>
+    мобильный оператор лайф белоруссия проверка баланса
+  </keywords>
+  <type>
+    cell
+  </type>
+</provider>

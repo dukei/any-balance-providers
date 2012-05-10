@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Логин" 
+        positiveButtonText="ОК" 
+        summary="Логин, например 1234567||{@s}\n" 
+        dialogTitle="Логин" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Логин для входа в ИССА Белтелеком (https://issa.beltelecom.by), например, 1234567"
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="Пароль для входа в ИССА||***********\n"
+        dialogMessage="Введите пароль, используемый для входа в ИССА Белтелеком"
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

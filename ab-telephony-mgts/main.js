@@ -41,11 +41,13 @@ function main(){
     
     var html = AnyBalance.requestGet(baseurl + "start.aspx");
     var viewstate = getViewState(html);
+
+    var pin = prefs.password.substr(0, 8); //Слишком длинные пины тупо не воспринимаются
     
 	html = AnyBalance.requestPost(baseurl + "start.aspx", {
         __VIEWSTATE: viewstate,
 		txtPhone: prefs.login,
-		txtPIN: prefs.password,
+		txtPIN: pin,
         btnEnter: "Вход"
     });
     

@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="4">ab-cell-velcom</id>
+  <id version="5">ab-cell-velcom</id>
   <name>Velcom - провайдер сотовой связи (Белоруссия)</name>
   <description>
     Получает баланс, минуты, трафик для белорусского оператора сотовой связи Velcom
+    v.5:
+      - Добавлены минуты на velcom
   </description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <files>
@@ -15,6 +17,7 @@
   <counters>
     <counter id="balance" name="Баланс" units="р"/>
     <counter id="min" name="Минуты" units="мин"/>
+    <counter id="min_velcom" name="Минуты на velcom" units="vc"/>
     <counter id="min_fn" name="Минуты на любимые номера" units="лн"/>
     <counter id="traffic" name="Трафик" units="Mb"/>
     <counter id="userName" name="ФИО" type="text"/>

@@ -10,39 +10,36 @@
 function main () {
     var prefs = AnyBalance.getPreferences ();
     var baseurl = 'http://wap.bonus.mts.ru/';
+    var loginurl = 'https://login.mts.ru/amserver/UI/Login';
 
     checkEmpty (prefs.login, 'Введите номер телефона');
     checkEmpty (prefs.password, 'Введите пароль');
 
-
-    AnyBalance.trace ('Trying to enter selfcare at address: ' + baseurl);
-    var html = AnyBalance.requestGet (baseurl);
-
-    var regexp=/name="SID" value="([^"]*)"/i;
-    var res = regexp.exec (html);
-    if (!res)
-        throw new AnyBalance.Error ('Не найден идентификатор сессии. Пожалуйста, свяжитесь с автором скрипта.');
-    var sid = res[1];
-
-    var html = AnyBalance.requestPost (baseurl + 'bstub?' + sid + ':com.buongiorno.ru.mts.bonus.jhub.wap.Login', {
-        'SID': sid,
-        'target_page': '/ru/pmsdata.html?' + sid + ':target=mts_bonus_wap/index/personal_page_html',
-        'error_page': '/ru/pmsdata.html?' + sid + ':target=mts_bonus_wap/index/index_html',
-        'kod_nomer': prefs.login,
-        'pwd': prefs.password,
+    AnyBalance.trace ('Trying to login at address: ' + loginurl);
+    var html = AnyBalance.requestGet (loginurl + '?service=bonus&goto=http%3A%2F%2Fwap.bonus.mts.ru%2Fru%2Fpmsdata.html%3Ftarget%3Dmts_bonus_wap%2Findex%2Fpersonal_page_html');
+    
+    var idbutton = getParam(html, null, null, /javascript:LoginSubmit\('([^']*)'/i);
+    var idgoto = getParam(html, null, null, /<input[^>]*name="goto"[^>]*value="([^"]*)"/);
+    var loginURL = getParam(html, null, null, /<input[^>]*name="loginURL"[^>]*value="([^"]*)"/);
+    
+    html = AnyBalance.requestPost(loginurl, {
+        IDToken0:'',
+        IDToken1:prefs.login,
+        IDToken2:prefs.password,
+        IDButton:idbutton,
+        'goto':idgoto,
+        encoded:'true',
+        initialNumber:'',
+        loginURL:loginURL,
+        gx_charset:'UTF-8'
     });
-
-    // Проверка неправильной пары логин/пароль
-    var regexp=/class="error"><.*?>([^<]*)/i;
-    var res = regexp.exec (html);
-    if (res) {
-        res = res[1];
-        res = res.replace (' Учитывайте, что код и номер телефона вводятся в разные поля.', '')
-        throw new AnyBalance.Error (res);
-    }
+    
+    var error = getParam(html, null, null, /(authErr)/i, replaceTagsAndSpaces);
+    if(error)
+        throw new AnyBalance.Error("Ошибка авторизации. Проверьте логин и пароль.");
 
     // Проверка на корректный вход
-    regexp = /input name="logout"/;
+    regexp = /login\.mts\.ru\/amserver\/UI\/Logout/;
     if (regexp.exec (html))
     	AnyBalance.trace ('It looks like we are in selfcare...');
     else {
@@ -53,7 +50,7 @@ function main () {
     var result = {success: true};
 
     // ФИО
-    getParam (html, result, 'customer', /Здравствуйте,\s*([^\s<]+[^<]*?)\s*</i);
+    getParam (html, result, 'customer', /Ваш номер телефона:\s*(\d+)/i);
 
     // Баланс
     getParam (html, result, 'balance', /Баланс:\s*(\d+)/i, [], parseInt);

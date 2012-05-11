@@ -1,12 +1,12 @@
- /**
+﻿ /**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 
 Телефония Центральный тереграф
 Сайт оператора: http://www.moscow.cnt.ru/
 Сайт абонента:  http://www.cnt.ru/pcinfo.htm
 Личный кабинет: http://www.cnt.ru/pcone/
+Новый личный кабинет: http://ctweb.cnt.ru/
 */
-var kk;
 
 function main(){
     
@@ -22,47 +22,38 @@ function main(){
     	new_cabinet(prefs.login,prefs.password);
     }
     
-    
 }
 
 function new_cabinet(login,password) {
-    
-    // http://ctweb.cnt.ru/pls/rac.c/!w3_p_main.showform?CONFIG=CONTRACT&USERNAME=435024&PASSWORD=SRTvuZfnTW
-    
-    var baseurl = 'http://ctweb.cnt.ru/pls/rac.c/!w3_p_main.showform',auth='?CONFIG=CONTRACT&USERNAME=%%LOGIN%%&PASSWORD=%%PASSWORD%%';
-    
-    var session = AnyBalance.requestGet(baseurl+auth.split('%%LOGIN%%').join(login).split('%%PASSWORD%%').join(password));
-    
-    var result = {
+	
+	var baseurl = 'http://ctweb.cnt.ru/pls/rac.c/!w3_p_main.showform',auth='?CONFIG=CONTRACT&USERNAME=%%LOGIN%%&PASSWORD=%%PASSWORD%%';
+	
+	var session = AnyBalance.requestGet(baseurl+auth.split('%%LOGIN%%').join(login).split('%%PASSWORD%%').join(password));
+	
+	var error;
+	if(error=/alert\s*\("([\D]*)"\)/.exec(session)) // Ошибка авторизации
+		throw new AnyBalance.Error(error[1]);
+	
+	var result = {
         success: true
     };
     
-
-
-
-    /*						?FORMNAME=QCURRACC&CONTR_ID=1704109&NLS=WR&SID=BE9A423FC689A183E040007F01007304
-    http://ctweb.cnt.ru/pls/?FORMNAME=QTARPLAN&CONTR_ID=1704109&OBJ_ID=861761&SID=BE9A94776CF3117DE040007F010014C7&NLS=WR
-    <FRAME name="menu" SRC="?FORMNAME=QMAINMENU&OPENED=R!ACC1704109!&NLS=WR&SID=BE99F438A7453C04E040007F01004975" marginwidth="5" marginheight="5" frameborder="0" noresize>
-    <FRAME name="data" SRC="?FORMNAME=QCURRACC&CONTR_ID=1704109&NLS=WR&SID=BE99F438A7453C04E040007F01004975" marginwidth="5" marginheight="5" frameborder="0" noresize>
-    
-    <FRAME name="menu" SRC="?FORMNAME=QMAINMENU&OPENED=R!ACC1704109!&NLS=WR&SID=BE99A53497AD1962E040007F01001F1B" marginwidth="5" marginheight="5" frameborder="0" noresize>
-<FRAME name="data" SRC="?FORMNAME=QCURRACC&CONTR_ID=1704109&NLS=WR&SID=BE99A53497AD1962E040007F01001F1B" marginwidth="5" marginheight="5" frameborder="0" noresize>
-    
-    */
-    
     var data,htmlinfo,htmlmenu,htmltarif;
+	
     if (data=/FRAME\sname="data"[\D]*SRC="([\?\S]*)"/.exec(session)) {
     	htmlinfo = AnyBalance.requestGet(baseurl+data[1]);
     }
     if (data=/FRAME\sname="menu"[\D]*SRC="([\?\S]*)"/.exec(session)) {
     	htmlmenu = AnyBalance.requestGet(baseurl+data[1]);
-    }
-    
+	}
+	
 	if (data=/(\?FORMNAME=[\w\&=]*)','data'\)">Тарифы/.exec(htmlmenu)) {
 		htmltarif = AnyBalance.requestGet(baseurl+data[1])
 	}
 	// Тариф
-	getParam(htmltarif, result, '__tariff', /([\dА-Яа-я ]*)<\/a><\/[><\w=\s]*<\/TR>/, null, html_entity_decode);
+	//getParam(htmltarif, result, '__tariff', /([\dА-Яа-я ]*)<\/a><\/[><\w=\s]*<\/TR>/);//, null, html_entity_decode);
+	getParam(htmltarif, result, '__tariff', /\>([^\>]*)\<\/a\>\<\/[\>\<\w\=\s]*<\/TR\>/);//, null, html_entity_decode);
+	AnyBalance.trace(result.__tariff);
 	
     // ФИО
 	getParam (htmlinfo, result, 'username', /><TD>Клиент[:<>\w]*([А-Яа-я ]*)</i);
@@ -76,9 +67,46 @@ function new_cabinet(login,password) {
 	// Лицевой счет
 	getParam (htmlinfo, result, 'license', /><TD[\D]*\d*>Лицевой счёт[:<>\D]*(\d{6})</);
     
-    //var traffic = AnyBalance.requestGet('http://www.cnt.ru/fc/phtraf.cgi?c=showlist&p=201204');
-    
-    AnyBalance.setResult(result);
+	// Аутентификация в старом портале
+	AnyBalance.trace('AUTHENTICATION');
+	if (data=/(\?[\w=&]*)','[\w'\)">]*Дополнительно/.exec(htmlmenu)) {
+    	var htmlauth = AnyBalance.requestGet(baseurl+data[1]);
+		
+		var dataauth;
+		if (dataauth=/location=\s*"([\w:\/\.\?=]*)/.exec(htmlauth)) {
+			AnyBalance.trace("... authentication forwarding");
+			var htmlfw = AnyBalance.requestGet(dataauth[1],
+				{
+					'Referer': baseurl+data[1],
+					'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+				}
+			);
+		}
+	}
+	
+    // Данные по телефонному трафику
+    getTrafficData(result,'http://www.cnt.ru/fc/phtraf.cgi?c=showlist&p=%%PERIOD%%');
+	
+	AnyBalance.setResult(result);
+}
+
+Array.prototype.summ = function(index) {
+	var result = 0;
+	for(var i=0; i<this.length; i++){
+		result=result+this[i][index];
+	}
+	return result;
+}
+
+Array.prototype.copy = function(index,where) {
+	var result = new Array(),y=0;
+	for(var i=0; i<this.length; i++){
+		if(this[i][index]==where) {
+			result[y]=this[i];
+			y++;
+		}
+	}
+	return result;
 }
 
 function html_entity_decode(str)
@@ -87,6 +115,10 @@ function html_entity_decode(str)
     var tarea=document.createElement('textarea');
     tarea.innerHTML = str;
     return tarea.value;
+}
+
+String.prototype.right = function(num){
+  return this.substr(this.length-num,num);
 }
 
 function getParam (html, result, param, regexp, replaces, parser) {
@@ -107,6 +139,35 @@ function getParam (html, result, param, regexp, replaces, parser) {
 	}
 }
 
+function getTrafficData(result, url) {
+	
+	if (!AnyBalance.isAvailable ('traffic') && !AnyBalance.isAvailable ('trafficcost'))
+		return;
+	
+    var now = new Date(),ttab = new Array(),res,regexp;
+    var traffic = AnyBalance.requestGet(url.split('%%PERIOD%%').join(''+now.getFullYear()+('0'+(now.getMonth()+1)).right(2)));
+    regexp = />(\d*)<td>([\d{2}\.]+) ([\d{2}:]+)[\D]*([\d]*)<td>([А-Я]+)<[\D]+([\d\.]+)<td>([А-Я]+)<[\D]+([\d\.]+)<td[\D]+([\d\.]+)<td>([\d]*)/g;
+    
+    var i=0;
+    while (res = regexp.exec(traffic)) {
+    	ttab[i] = [
+    		Date.parse(res[2].replace(/(\d{2})\.(\d{2})\.(\d{4})/g,"$3-$2-$1")+'T'+res[3]),
+    		res[4],
+    		res[5],
+    		parseFloat(res[6]),
+    		res[7],
+    		parseFloat(res[8]),
+    		parseFloat(res[9]),
+    		res[10]
+    	];
+    	i++;
+    }
+    
+    result['traffic'] = ttab.summ(3);
+    result['trafficcost'] = parseFloat(ttab.summ(6).toFixed(2));
+    
+}
+
 function old_cabinet(login,password) {
     
     var baseurl = 'http://www.cnt.ru/pcone/';
@@ -124,52 +185,23 @@ function old_cabinet(login,password) {
     };
 
     var matches;
-    //Тарифный план
-    //if (matches=/Текущий тариф<\/td>\s<td[\s\w='-\/%]*>([\S ]+)</.exec(info)){
-    //    result.__tariff=matches[1];
-    //}
-    
 
-	//AnyBalance.trace(info);
-    // Баланс
-    if(AnyBalance.isAvailable('balance')){
-        if (matches=/Управляющий баланс<\/td>\s+<[\w\s=\"#]*>[\&nbsp;]+([\s\d\.\-]+)</.exec(info)){
-        	var tmpBalance=matches[1].replace(/ |\xA0/, ""); // Удаляем пробелы
-            tmpBalance=tmpBalance.replace(",", "."); // Заменяем запятую на точку
-            result.balance=parseFloat(tmpBalance);
-        }
-    }
-    
-    // Номер договора
-    if(AnyBalance.isAvailable('agreement')){
-	    if (matches=/<pre>\s*.*\s*Код\s*:\s(\d*)/.exec(info)){
-	    	result.agreement=matches[1];
-	    }
-    }
-    
     // ФИО
-    if(AnyBalance.isAvailable('username')){
-        if (matches=/<pre>\s*Наименование\s*:\s(.*)/i.exec(info)){
-            result.username=matches[1];
-        }
-    }
-    
-    // Лицевой счет
-    if(AnyBalance.isAvailable('license')){
-		var licensenums = AnyBalance.requestPost(baseurl + "app/ckps.cgi");
-		if(matches=/var cc = ([\d]*);/.exec(licensenums)){
-			var cc = parseInt(matches[1]);
-			if(matches=/var kk = (\[[\d,]*\]);/.exec(licensenums)){
-				//AnyBalance.trace(matches[1]);
-				kk = eval(matches[1]);
-				result.license = format_cc_kk('022',cc,'');;
-			}
-		}
-    }
+	getParam (info, result, 'username', /<pre>\s*Наименование\s*:\s(.*)/i);
+	   
+	// Баланс
+	getParam (info, result, 'balance', /Управляющий баланс<\/td>\s+<[\w\s=\"#]*>[\&nbsp;]+([\s\d\.\-]+)</, [/ |\xA0/, "", ",", "."], parseFloat);
 	
-		
+	// Лицевой счет
+	getParam (info, result, 'license', /<pre>\s*.*\s*Код\s*:\s(\d*)/);
+	
+	// Данные по телефонному трафику
+    getTrafficData(result,'http://www.cnt.ru/pcone/app/phtraf.cgi?c=showlist&p=%%PERIOD%%');
+    		
     AnyBalance.setResult(result);
 }
+
+var kk;
 
 function format_cc_kk(pre,cc)
 {

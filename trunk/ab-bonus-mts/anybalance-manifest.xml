@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="1">ab-bonus-mts</id>
+  <id major_version="1.0" version="2">ab-bonus-mts</id>
   <name>МТС Бонус</name>
   <description>
     Получает бонусные баллы за пользование услугами МТС.
@@ -16,7 +16,7 @@
   </files>
   <counters>
     <counter id="balance" name="Баланс"/>
-    <counter id="customer" name="Владелец" type="text"/>
+    <counter id="customer" name="Телефон" type="text"/>
     <counter id="lifeInProgram" name="Стаж в программе" type="text"/>
   </counters>
   <keywords>

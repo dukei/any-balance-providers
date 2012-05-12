@@ -232,11 +232,13 @@ function megafonTrayInfo(filial){
         throw new AnyBalance.Error(error + ' Возможно, вам надо зайти в Сервис-Гид и включить настройку Настройки Сервис-Гида/Автоматический доступ системам/Доступ открыт пользователям и автоматизированным системам, а также нажать кнопку "разблокировать".');
     }
 
-    var result = {success: true, __tariff: $xml.find('RATE_PLAN').text()};
+    var result = {success: true, __tariff: $xml.find('RATE_PLAN').text()}, val;
     
     if(AnyBalance.isAvailable('balance'))
         result.balance = parseFloat($xml.find('BALANCE').text());
-    
+
+    if(AnyBalance.isAvailable('prsnl_balance') && (val = parseFloat($xml.find('PRSNL_BALANCE').text())))
+        result.prsnl_balance = parseFloat(val);
     
     var $threads = $xml.find('RP_DISCOUNTS>DISCOUNT>THREAD');
     AnyBalance.trace('Found discounts: ' + $threads.length);
@@ -345,7 +347,9 @@ function megafonServiceGuideCorporate(filial, sessionid){
     });
 
     //Теперь получим баланс
-    getParam(html, result, 'balance', /<div class="balance_[^>]*>([-\d\.]+)/i, null, parseFloat);
+    getParam(html, result, 'balance', /&#1041;&#1072;&#1083;&#1072;&#1085;&#1089;:[\s\S]*?<div class="balance_[^>]*>([-\d\.]+)/i, null, parseFloat);
+    //Теперь получим персональный баланс
+    getParam(html, result, 'balance', /&#1055;&#1077;&#1088;&#1089;&#1086;&#1085;&#1072;&#1083;&#1100;&#1085;&#1099;&#1081; &#1073;&#1072;&#1083;&#1072;&#1085;&#1089;:[\s\S]*?<div class="balance_[^>]*>([-\d\.]+)/i, null, parseFloat);
 
     AnyBalance.setResult(result);
 }
@@ -365,13 +369,11 @@ function megafonServiceGuidePhysical(filial, sessionid){
         SESSION_ID: sessionid
     });
 	
-    if(AnyBalance.isAvailable('balance')){
-        if(matches = text.match(/<div class="balance_[^>]*>([-\d\.]+)[^<]*<\/div>/i)){
-            var balance = parseFloat(matches[1]);
-            result.balance = balance;
-        }
-    }
-	
+    //Теперь получим баланс
+    getParam(text, result, 'balance', /&#1041;&#1072;&#1083;&#1072;&#1085;&#1089;:[\s\S]*?<div class="balance_[^>]*>([-\d\.]+)/i, null, parseFloat);
+    //Теперь получим персональный баланс
+    getParam(text, result, 'balance', /&#1055;&#1077;&#1088;&#1089;&#1086;&#1085;&#1072;&#1083;&#1100;&#1085;&#1099;&#1081; &#1073;&#1072;&#1083;&#1072;&#1085;&#1089;:[\s\S]*?<div class="balance_[^>]*>([-\d\.]+)/i, null, parseFloat);
+
     //Текущий тарифный план
     var tariff = getPropValText(text, '&#1058;&#1077;&#1082;&#1091;&#1097;&#1080;&#1081; &#1090;&#1072;&#1088;&#1080;&#1092;&#1085;&#1099;&#1081; &#1087;&#1083;&#1072;&#1085;:');
     if(tariff)

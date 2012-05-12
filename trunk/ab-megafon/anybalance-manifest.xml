@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="2.4" version="17">ab-megafon</id>
+  <id major_version="2.4" version="18">ab-megafon</id>
   <name>Мегафон</name>
   <description>
     Получает баланс, бонусный баланс, минуты, трафик, SMS на телефоне. Поддерживаются все филиалы.
@@ -11,6 +11,9 @@
      
     Если вы можете помочь с исправлением особенностей, добро пожаловать на http://any-balance-providers.googlecode.com .
     
+    Новое в 2.4.18:
+     - Добавлена поддержка персонального баланса (счетчик Персональный баланс)
+
     Новое в 2.4.17:
      - Более корректно определяется сервис гид для филиалов (после изменений в мегафоне)
 
@@ -46,6 +49,7 @@
     <counter id="sms_left" name="Включенные SMS"/>
     <counter id="internet_left" name="Интернет (осталось)" units="Mb"/>
     <counter id="bonus_balance" name="Бонусный баланс"/>
+    <counter id="prsnl_balance" name="Персональный баланс (корп.)" units="р"/>
     <counter id="handygift_left" name="Нужный подарок - осталось (Поволжье)" units="р"/>
     <counter id="internet_total" name="Интернет (всего)" units="Mb"/>
     <counter id="mins_total" name="Бесплатные минуты (всего)" units="мин" type="time_interval"/>

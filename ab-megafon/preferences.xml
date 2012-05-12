@@ -23,7 +23,7 @@
     <CheckBoxPreference
         title="Корпоративный портал"
         defaultValue="false"
-        summaryOn="Использовать корпоративный портал"
-        summaryOff="Использовать обычный сервис-гид"
+        summaryOn="Используется корпоративный портал"
+        summaryOff="Используется обычный сервис-гид"
         key="corporate" />
 </PreferenceScreen>

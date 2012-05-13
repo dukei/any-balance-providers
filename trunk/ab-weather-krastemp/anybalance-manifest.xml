@@ -8,8 +8,6 @@
   <author>Denis Barkar &lt;denis.barkar@gmail.com&gt;</author>
   <files>
     <icon>icon.png</icon>
-    <!--<preferences>preferences.xml</preferences>-->
-    <!--<js>api:jquery.min.js</js>-->
     <js>main.js</js>
   </files>
   <counters>

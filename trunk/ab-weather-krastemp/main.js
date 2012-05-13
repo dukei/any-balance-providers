@@ -11,7 +11,6 @@ function main(){
 	AnyBalance.trace("Loading www.krastemp.ru");
 	var html = AnyBalance.requestGet('http://www.krastemp.ru');
 	
-	
 	AnyBalance.trace("Parsing current temperature");
 	var regexp = /Текущая температура:[\s\S]*?<font[^>]*>(.*?)<\//;
 	result.temperature = parseFloat(html.match(regexp)[1]);

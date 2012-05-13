@@ -120,6 +120,11 @@ function getBalanceValue(html, text, parseFunc, result, counter){
     return getParam(html, result, counter, regexp, alltransformations, parseFunc);
 }
 
+function getBalanceValueExpirationDate(html, text, parseFunc, result, counter){
+    var regexp = new RegExp(text + '[\\s\\S]*?<td[\\s\\S]*?<td[\\s\\S]*?<td[^>]*>([^<]+)<', 'i');
+    return getParam(html, result, counter, regexp, alltransformations, parseDate);
+}
+
 function parseBalanceList(html, result){
     //Уменьшим область поиска для скорости и (надеюсь) для надежности
     html = getParam(html, null, null, /'prePaid(?:Ctn)?Balances?List'([\s\S]*?)'prePaid(?:Ctn)?Balances?List'/i);
@@ -144,8 +149,8 @@ function parseBalanceList(html, result){
       
       // SMS-баланс
       var sms = getBalanceValue (html, 'SMS-баланс', parseInt);
-      result.sms_left += sms || 0;                                                         
-      
+      result.sms_left += sms || 0;    
+
       // SMS в подарок
       sms = getBalanceValue (html, 'SMS в подарок', parseInt);
       result.sms_left += sms || 0;
@@ -169,6 +174,10 @@ function parseBalanceList(html, result){
       // Дополнительный SMS баланс  //Узбекистан
       sms = getBalanceValue (html, 'Дополнительный SMS баланс', parseInt);
       result.sms_left += sms || 0;
+    }
+	
+	if(AnyBalance.isAvailable('sms_expiration')){
+	  result.sms_expiration = getBalanceValueExpirationDate (html, 'SMS-баланс');  
     }
     
     // MMS в подарок
@@ -206,6 +215,16 @@ function parseBalanceList(html, result){
 function parseMinutes(str){
     AnyBalance.trace('Parsing minutes from value: ' + str);
     return parseFloat(str)*60; //Переводим в секунды
+}
+
+function parseDate(str){
+    AnyBalance.trace('Parsing date from value: ' + str);
+    var matches = /(\d+)[^\d](\d+)[^\d](\d+)/.exec(str);
+    var time = 0;
+    if(matches){
+	  time = (new Date(+matches[3], matches[2]-1, +matches[1])).getTime();
+    }
+    return time;
 }
 
 function getStateParam(html){

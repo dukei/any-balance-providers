@@ -27,7 +27,7 @@ filial_info[MEGA_FILIAL_MOSCOW] = {
 };
 filial_info[MEGA_FILIAL_SIBIR] = {
   name: 'Сибирский филиал',
-  site: "https://sibsg1.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%",
+  site: "https://sibsg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%",
   func: megafonTrayInfo
 };
 filial_info[MEGA_FILIAL_NW] = {
@@ -240,7 +240,7 @@ function megafonTrayInfo(filial){
     if(AnyBalance.isAvailable('prsnl_balance') && (val = parseFloat($xml.find('PRSNL_BALANCE').text())))
         result.prsnl_balance = parseFloat(val);
     
-    var $threads = $xml.find('RP_DISCOUNTS>DISCOUNT>THREAD');
+    var $threads = $xml.find('RP_DISCOUNTS>DISCOUNT>THREAD, PACK>DISCOUNT>THREAD');
     AnyBalance.trace('Found discounts: ' + $threads.length);
     
     if(AnyBalance.isAvailable('sms_left','sms_total')){

@@ -347,9 +347,7 @@ function megafonServiceGuideCorporate(filial, sessionid){
     });
 
     //Теперь получим баланс
-    getParam(html, result, 'balance', /&#1041;&#1072;&#1083;&#1072;&#1085;&#1089;:[\s\S]*?<div class="balance_[^>]*>([-\d\.]+)/i, null, parseFloat);
-    //Теперь получим персональный баланс
-    getParam(html, result, 'balance', /&#1055;&#1077;&#1088;&#1089;&#1086;&#1085;&#1072;&#1083;&#1100;&#1085;&#1099;&#1081; &#1073;&#1072;&#1083;&#1072;&#1085;&#1089;:[\s\S]*?<div class="balance_[^>]*>([-\d\.]+)/i, null, parseFloat);
+    getParam(html, result, 'balance', /<div class="balance_[^>]*>([-\d\.]+)/i, null, parseFloat);
 
     AnyBalance.setResult(result);
 }
@@ -372,7 +370,7 @@ function megafonServiceGuidePhysical(filial, sessionid){
     //Теперь получим баланс
     getParam(text, result, 'balance', /&#1041;&#1072;&#1083;&#1072;&#1085;&#1089;:[\s\S]*?<div class="balance_[^>]*>([-\d\.]+)/i, null, parseFloat);
     //Теперь получим персональный баланс
-    getParam(text, result, 'balance', /&#1055;&#1077;&#1088;&#1089;&#1086;&#1085;&#1072;&#1083;&#1100;&#1085;&#1099;&#1081; &#1073;&#1072;&#1083;&#1072;&#1085;&#1089;:[\s\S]*?<div class="balance_[^>]*>([-\d\.]+)/i, null, parseFloat);
+    getParam(text, result, 'prsnl_balance', /&#1055;&#1077;&#1088;&#1089;&#1086;&#1085;&#1072;&#1083;&#1100;&#1085;&#1099;&#1081; &#1073;&#1072;&#1083;&#1072;&#1085;&#1089;:[\s\S]*?<div class="balance_[^>]*>([-\d\.]+)/i, null, parseFloat);
 
     //Текущий тарифный план
     var tariff = getPropValText(text, '&#1058;&#1077;&#1082;&#1091;&#1097;&#1080;&#1081; &#1090;&#1072;&#1088;&#1080;&#1092;&#1085;&#1099;&#1081; &#1087;&#1083;&#1072;&#1085;:');

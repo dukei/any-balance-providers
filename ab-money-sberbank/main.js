@@ -47,7 +47,7 @@ function parseBalance(text){
 }
 
 function parseCurrency(text){
-    var val = getParam(text, null, null, /-?\d[\d\s.,]*(\w+)/);
+    var val = getParam(text, null, null, /-?\d[\d\s.,]*(\S*)/);
     AnyBalance.trace('Parsing currency (' + val + ') from: ' + text);
     return val;
 }
@@ -90,11 +90,19 @@ function main(){
     var page = getParam(html, null, null, /top\.location\.href = '(https:[^'"]*?AuthToken=[^'"]*)/i);
     if(!page)
         throw new AnyBalance.Error("Не удаётся найти ссылку на информацию по картам. Пожалуйста, обратитесь к автору провайдера для исправления ситуации.");
-      
-    if(!/esk.zubsb.ru/.test(page)) //Пока только это поддерживается
+    
+    if(/esk.zubsb.ru/.test(page)) //Пока только это поддерживается
+        doOldAccount(page);
+    else if(/online.sberbank.ru\/PhizIC/.test(page))
+        doNewAccountPhysic(page);
+    else
         throw new AnyBalance.Error("К сожалению, ваш вариант Сбербанка-онлайн пока не поддерживается. Пожалуйста, обратитесь к автору провайдера для исправления ситуации.");
 
-    html = AnyBalance.requestGet(page);
+}
+
+function doOldAccount(page){
+    var html = AnyBalance.requestGet(page);
+    var prefs = AnyBalance.getPreferences();
 
     var newpage = getParam(html, null, null, /"redirectForm"\s\S*?action="([^"]*)"/i);
     var submitparam = getParam(html, null, null, /<input type="hidden"[^>]*name="([^"]*)"/i);
@@ -134,6 +142,50 @@ function main(){
       getParam(html, result, 'minpay', /Сумма минимального платежа[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
       getParam(html, result, 'electrocash', /Доступно для покупок[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
       getParam(html, result, 'maxcredit', /Лимит кредита[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    }
+
+    AnyBalance.setResult(result);
+}
+
+function doNewAccountPhysic(page){
+    var html = AnyBalance.requestGet(page);
+    if(/confirmTitle/.test(html))
+          throw new AnyBalance.Error("Ваш личный кабинет требует одноразовых паролей для входа. Пожалуйста, отмените в настройках кабинета требование одноразовых паролей при входе. Это безопасно: для совершения денежных операций требование одноразового пароля всё равно останется.");
+
+    var prefs = AnyBalance.getPreferences();
+    var baseurl = "https://online.sberbank.ru";
+
+    html = AnyBalance.requestGet(baseurl + '/PhizIC/private/cards/list.do');
+
+    var lastdigits = prefs.lastdigits ? prefs.lastdigits.replace(/(\d)/g, '$1\\s*') : '(?:\\d\\s*){3}\\d';
+    
+    var reCardId = new RegExp('<a\\s+href="([^"]*id=\\d+)"\\s*class="accountNumber\\b[^"]*">[^<]*' + lastdigits + '<');
+    var cardHref = getParam(html, null, null, reCardId);
+    
+    if(!cardHref)
+        if(prefs.lastdigits)
+          throw new AnyBalance.Error("Не удаётся найти ссылку на информацию по карте с последними цифрами " + prefs.lastdigits);
+        else
+          throw new AnyBalance.Error("Не удаётся найти ни одной карты");
+      
+    var cardId = getParam(html, null, null, /id=(\d+)/i);
+      
+    var baseFind = '<a\\s+href="[^"]*"\\s*class="accountNumber\\b[^"]*">[^<]*' + lastdigits + '<';
+    var reCardNumber = new RegExp('<a\\s+href="[^"]*"\\s*class="accountNumber\\b[^"]*">\s*([^<]*' + lastdigits + ')<', 'i');
+    var reBalance = new RegExp(baseFind + '[\\s\\S]*?<span class="data[^>]*>([^<]*)', 'i');
+    
+    var result = {success: true};
+    getParam(html, result, 'balance', reBalance, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'cardNumber', reCardNumber, replaceTagsAndSpaces);
+    getParam(html, result, '__tariff', reCardNumber, replaceTagsAndSpaces);
+    getParam(html, result, 'currency', reBalance, replaceTagsAndSpaces, parseCurrency);
+    
+    if(AnyBalance.isAvailable('userName', 'till', 'cash', 'electrocash')){
+        html = AnyBalance.requestGet(baseurl + '/PhizIC/private/cards/detail.do?id=' + cardId);
+        getParam(html, result, 'userName', /ФИО Держателя карты:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/, replaceTagsAndSpaces);
+        getParam(html, result, 'till', /Срок действия до:[\s\S]*?(\d\d\/\d{4})/, replaceTagsAndSpaces);
+        getParam(html, result, 'cash', /для снятия наличных:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/, replaceTagsAndSpaces, parseBalance);
+        getParam(html, result, 'electrocash', /для покупок:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/, replaceTagsAndSpaces, parseBalance);
     }
 
     AnyBalance.setResult(result);

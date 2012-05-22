@@ -16,6 +16,7 @@ function main(){
 		var v = $.parseJSON(info);
 		var resst = v.responseStatus.responseValue;
 		if (resst == 'ok'){
+			result.__tariff = v.abonent.fullname;
 			if(AnyBalance.isAvailable('balance')){
 				result['balance'] = v.services[0].saldo;
 			}

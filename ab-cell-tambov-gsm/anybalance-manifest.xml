@@ -1,21 +1,21 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <provider>
-<id major_version="1.0" version="1">ab-cell-tambov-gsm</id>
-<name>Tambov GSM</name>
-<description>Баланс мобильного оператора Tambov GSM.</description>
-<author>BArtWell &lt;web@bartwell.ru&gt;</author>
-<files>
-<icon>icon.png</icon>
-<preferences>preferences.xml</preferences>
-<js>main.js</js>
-</files>
-<counters>
-<counter id="balance" name="Баланс" units="р"/>
-</counters>
-<keywords>
-Сотовый телефон, мобильный, мобильник, TambovGSM, Tambov GSM, россия, тамбов
-</keywords>
-<type>
-cell
-</type>
+    <id major_version="1.0" version="1">ab-cell-tambov-gsm</id>
+    <name>Tambov GSM</name>
+    <description>Баланс мобильного оператора Tambov GSM.</description>
+    <author>BArtWell &lt;web@bartwell.ru&gt;</author>
+    <files>
+        <icon>icon.png</icon>
+        <preferences>preferences.xml</preferences>
+        <js>main.js</js>
+    </files>
+    <counters>
+        <counter id="balance" name="Баланс" units="р"/>
+    </counters>
+    <keywords>
+        Сотовый телефон, мобильный, мобильник, TambovGSM, Tambov GSM, россия, тамбов
+    </keywords>
+    <type>
+        cell
+    </type>
 </provider>

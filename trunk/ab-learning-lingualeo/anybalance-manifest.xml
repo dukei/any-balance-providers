@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-learning-lingualeo</id>
+  <id version="2">ab-learning-lingualeo</id>
   <name>LinguaLeo</name>
   <description>
     Получает количество фрикаделек, текущий опыт и уровень на сервисе изучения английского языка LinguaLeo
+
+    Версия 2 от 22.05.2012:
+        - Исправлено, добавлено отображение имени пользователя в списке аккаунтов;
   </description>
   <author>Vit@liy &lt;vitaliy@root.ua&gt;</author>
   <files>

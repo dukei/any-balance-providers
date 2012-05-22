@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="3">ab-internet-volia-broadband</id>
+  <id version="4">ab-internet-volia-broadband</id>
   <name>Volia Broadband (Украина)</name>
   <description>
     Мониторинг остатка средств на счету и использованного траффика для интернет провайдера Воля Бродбенд (Украина)
+
+    Версия 4 от 22.05.2012:
+        - Отображение имени абонента в списке аккаунтов;
   </description>
   <author>Vit@liy &lt;vitaliy@root.ua&gt;</author>
   <files>

@@ -24,8 +24,12 @@ function main(){
 		var pd = getData('http://worldoftanks.ru/uc/accounts/api/1.0/?source_token=WG-WoT_Assistant-1.1.2&search=' + prefs.nick + '&offset=0&limit=1');
 		var result = {success: true};
 		
+		var pname = pd.data.items[0].clan ? pd.data.items[0].name + '[' + pd.data.items[0].clan.tag + ']' : pd.data.items[0].name;
+		
+		result.__tariff = pname;
+		
 		if(AnyBalance.isAvailable('name'))
-			result['name'] = pd.data.items[0].clan ? pd.data.items[0].name + '[' + pd.data.items[0].clan.tag + ']' : pd.data.items[0].name;
+			result['name'] = pname;
 			
 		if(AnyBalance.isAvailable('wins'))
 			result['wins'] = pd.data.items[0].stats.wins;
@@ -43,9 +47,11 @@ function main(){
 		var pd = getData('http://worldoftanks.ru/community/accounts/' + id + '/api/1.2/?source_token=WG-WoT_Assistant-test');
 		var result = {success: true};
 		
+		var pname = pd.data.clan.clan ? pd.data.name + '[' + pd.data.clan.clan.abbreviation + ']' : pd.data.name;
+		
 		// Общая статистика
 		if(AnyBalance.isAvailable('name'))
-			result['name'] = pd.data.clan.clan ? pd.data.name + '[' + pd.data.clan.clan.abbreviation + ']' : pd.data.name;
+			result['name'] = pname;
 		
 		if(AnyBalance.isAvailable('wins'))
 			result['wins'] = pd.data.summary.wins;
@@ -63,6 +69,8 @@ function main(){
 				t = tmp[q]
 				if (t.localized_name == prefs.tank || t.name == prefs.tank) {
 					
+					result.__tariff = pname + ' (' + t.localized_name + ')';
+					
 					// Статистика танка
 					if(AnyBalance.isAvailable('tank_wins')){
 						result['tank_wins'] = t.win_count;
@@ -79,6 +87,8 @@ function main(){
 			}
 			if (f == 0)
 				throw new AnyBalance.Error('Танк не найден');
+		} else {
+			result.__tariff = pname;
 		}
 		AnyBalance.setResult(result);
 	}

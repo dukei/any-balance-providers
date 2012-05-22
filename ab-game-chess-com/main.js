@@ -30,6 +30,8 @@ function main(){
 		
 		var result = {success: true};
 		
+		result.__tariff = prefs.nick;
+		
 		if (AnyBalance.isAvailable('current')) {
 			var tmp_reg = new RegExp('</span>' + game_type + '</h4>[\\s\\S]\*\?<div class="right">(.*?)<span', 'i'); 
 			var matches = tmp_reg.exec(html)

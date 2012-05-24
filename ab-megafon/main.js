@@ -463,6 +463,14 @@ function megafonServiceGuidePhysical(filial, sessionid){
                 result.handygift_left = vals[1];
         }
     }
+
+    //Гигабайт в дорогу
+    if(AnyBalance.isAvailable('gb_with_you')){
+        var vals = getOptionFloat(text, "&#1043;&#1080;&#1075;&#1072;&#1073;&#1072;&#1081;&#1090; &#1074; &#1076;&#1086;&#1088;&#1086;&#1075;&#1091;");
+        if(vals){
+            result.gb_with_you = vals[1];
+        }
+    }
 	
     if(filial == MEGA_FILIAL_MOSCOW){
         // Бонусный баланс (здесь более точно указано)

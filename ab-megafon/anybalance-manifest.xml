@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="2.4" version="20">ab-megafon</id>
+  <id major_version="2.4" version="21">ab-megafon</id>
   <name>Мегафон</name>
   <description>
     Получает баланс, бонусный баланс, минуты, трафик, SMS на телефоне. Поддерживаются все филиалы.
@@ -11,6 +11,9 @@
      
     Если вы можете помочь с исправлением особенностей, добро пожаловать на http://any-balance-providers.googlecode.com .
     
+    Новое в 2.4.21:
+     - Добавлена опция Гигабайт в дорогу (Столица)
+
     Новое в 2.4.20:
      - Исправление корпоративного баланса
 
@@ -61,6 +64,7 @@
     <counter id="mins_total" name="Бесплатные минуты (всего)" units="мин" type="time_interval"/>
     <counter id="sms_total" name="Включенные SMS (всего)"/>
     <counter id="handygift_total" name="Нужный подарок - всего (Поволжье)" units="р"/>
+    <counter id="gb_with_you" name="Гигабайт в дорогу (Столица)" units="Mb"/>
   </counters>
   <keywords>
     Сотовый телефон, мобильный, мобильник, megafon, интернет, россия, москва

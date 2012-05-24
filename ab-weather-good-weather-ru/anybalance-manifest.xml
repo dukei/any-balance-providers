@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="2">ab-weather-good-weather-ru</id>
+  <id major_version="1.0" version="1">ab-weather-good-weather-ru</id>
   <name>Good-weather</name>
   <description>
-    Получает текущую погоду для выбранного города или для текущего местоположеня с сайта good-weather.ru
+    Получает текущую погоду для выбранного города или для текущего местоположения с сайта good-weather.ru
   </description>
   <author>Evgeny &lt;tverdiy@gmail.com&gt;</author>
   <files>

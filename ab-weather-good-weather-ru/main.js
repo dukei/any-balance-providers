@@ -1,4 +1,15 @@
-﻿function main(){
+﻿/**
+Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
+
+Получает текущую погоду для выбранного города или для текущего местоположения с сайта good-weather.ru
+Используется api:jquery.min.js, с помощью которого разбирается json ответ от good-weather.ru
+Список городов задан в preferences.xml в виде ListPreference.
+Если в настройках не задан город, выполняется запрос для текущего местоположения.
+
+Сайты компании: http://good-weather.ru
+*/
+
+function main(){
 
 var WeatherJsonString;
 var WeatherJsonObject;

@@ -1,9 +1,11 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-telephony-voip-rynga</id>
+  <id major_version="1.0" version="2">ab-telephony-voip-rynga</id>
   <name>Rynga</name>
   <description>
     Получает текущий баланс, бесплатные дни у провайдера IP-телефонии Rynga.
+	Что нового в 1.0.2 
+	- Исправлена проблема с иконкой	
   </description>
   <author>Andrey Belchikov &lt;belchikovs@gmail.com&gt;</author>
   <files>

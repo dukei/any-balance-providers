@@ -308,6 +308,20 @@ function megafonServiceGuide(filial){
     }
 	
     var sessionid = matches[1];
+/*
+    //Зачем-то мегафон вставил ещё один шаг авторизации...
+    var html = AnyBalance.requestPost(baseurl + 'SCC/SC_BASE_LOGIN',
+    {
+	SESSION_ID:sessionid,
+	CHANNEL:'WWW',
+        LOGIN: (prefs.corporate ? 'CP_' : '') + prefs.login, 
+        PASSWD: prefs.password
+    });
+*/
+
+    //Мегафон завершается с ошибкой, если делать без таймаута.
+    //Странно
+    sleep(5000);
 
     if(prefs.corporate)
         megafonServiceGuideCorporate(filial, sessionid);
@@ -352,6 +366,23 @@ function megafonServiceGuideCorporate(filial, sessionid){
     AnyBalance.setResult(result);
 }
 
+var replaceTagsAndSpaces = [/<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, ''];
+
+function checkTextForError(text){
+    //Произошла ошибка при работе с системой.
+    var error = getParam(text, null, null, /&#1055;&#1088;&#1086;&#1080;&#1079;&#1086;&#1096;&#1083;&#1072; &#1086;&#1096;&#1080;&#1073;&#1082;&#1072; &#1087;&#1088;&#1080; &#1088;&#1072;&#1073;&#1086;&#1090;&#1077; &#1089; &#1089;&#1080;&#1089;&#1090;&#1077;&#1084;&#1086;&#1081;[\s\S]*?<[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+    if(error)
+        throw new AnyBalance.Error(error);
+}
+
+function sleep(delay) {
+   var startTime = new Date();
+   var endTime = null;
+   do {
+       endTime = new Date();
+   } while (endTime.getTime() - startTime.getTime() < delay);
+} 
+
 function megafonServiceGuidePhysical(filial, sessionid){
     var filinfo = filial_info[filial];
     var baseurl = filinfo.site;
@@ -360,12 +391,15 @@ function megafonServiceGuidePhysical(filial, sessionid){
     var result = {
         success: true
     };
-	
+
     var text = AnyBalance.requestPost(baseurl + 'SCWWW/ACCOUNT_INFO',
     {
         CHANNEL: 'WWW', 
-        SESSION_ID: sessionid
+        SESSION_ID: sessionid,
+        P_USER_LANG_ID: 1
     });
+
+    checkTextForError(text);
 	
     //Теперь получим баланс
     getParam(text, result, 'balance', /&#1041;&#1072;&#1083;&#1072;&#1085;&#1089;:[\s\S]*?<div class="balance_[^>]*>([-\d\.]+)/i, null, parseFloat);

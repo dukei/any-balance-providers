@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+    <id major_version="1.0" version="1">ab-affiliate-plus1-wapstart</id>
+    <name>Plus1 WapStart</name>
+    <description>Статистика партнерской программы Plus1 WapStart</description>
+    <author>BArtWell &lt;web@bartwell.ru&gt;</author>
+    <files>
+	<icon>icon.png</icon>
+        <preferences>preferences.xml</preferences>
+        <js>main.js</js>
+    </files>
+    <counters>
+        <counter id="balance" name="Баланс" units="р"/>
+        <counter id="today" name="Сегодня" units="р"/>
+        <counter id="yesterday" name="Вчера" units="р"/>
+        <counter id="week" name="Неделя" units="р"/>
+        <counter id="month" name="Месяц" units="р"/>
+    </counters>
+    <keywords>
+        Партнерская программа, Plus1, wapstart, заработок
+    </keywords>
+    <type>
+        cell
+    </type>
+</provider>

@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="ID" 
+        positiveButtonText="ОК" 
+        summary="ID площадки||{@s}\n" 
+        dialogTitle="ID" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите ID площадки"
+        key="id"
+        inputType="number">
+    </EditTextPreference>
+</PreferenceScreen>

@@ -1,9 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="4">ab-internet-mts</id>
+  <id version="6">ab-internet-mts</id>
   <name>Домашний Интернет и Телевидение МТС</name>
   <description>
     Получает текущий баланс, номера лицевого счета и договора, ФИО владельца, трафик в текущем месяце у провайдера "Домашний Интернет и Телевидение МТС"
+    Поддерживается Москва (https://kabinet.mts.ru), Ростов (http://pc.aaanet.ru)
   </description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <files>

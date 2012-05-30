@@ -24,10 +24,11 @@ function main() {
 	if(r.test(html)) {
 		html = AnyBalance.requestGet('http://wap.plus1.wapstart.ru/?area=mainAccount');
 
-		r = new RegExp('<p>Баланс:\\s+([0-9,.]+)\\s+руб.</p>');
+		r = new RegExp('<p>Баланс:\\s+([0-9 ,.]+)\\s+руб.</p>');
 		var matches=r.exec(html);
 		if(matches==null) throw new AnyBalance.Error('Ошибка получения баланса');
 		matches[1]=matches[1].replace(",",".");
+		matches[1]=matches[1].replace(" ","");
 		result.balance=parseFloat(matches[1]);
 
 		r = new RegExp('<table class="statistic">\\s+<tr>[\\s\\S]+?</tr>\\s+<tr>\\s+<td>\\s+([0-9,.]+)\\s+</td>\\s+<td>\\s+([0-9,.]+)\\s+</td>\\s+<td>\\s+([0-9,.]+)\\s+</td>\\s+<td>\\s+([0-9,.]+)\\s+</td>\\s+</tr>\\s+</table>');

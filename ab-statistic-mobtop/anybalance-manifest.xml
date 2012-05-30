@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+    <id major_version="1.0" version="1">ab-statistic-mobtop</id>
+    <name>MobTop</name>
+    <description>Статистика посещаемости по данным MobTop</description>
+    <author>BArtWell &lt;web@bartwell.ru&gt;</author>
+    <files>
+	<icon>icon.png</icon>
+	<preferences>preferences.xml</preferences>
+        <js>main.js</js>
+    </files>
+    <counters>
+        <counter id="hosts_today" name="Хосты сегодня"/>
+        <counter id="hits_today" name="Хиты сегодня"/>
+        <counter id="hosts_yesterday" name="Хосты вчера"/>
+        <counter id="hits_yesterday" name="Хиты вчера"/>
+    </counters>
+    <keywords>
+        Счетчик, посещаемость, сайт, MobTop
+    </keywords>
+    <type>
+        cell
+    </type>
+</provider>

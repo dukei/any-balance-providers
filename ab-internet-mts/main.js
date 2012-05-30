@@ -53,6 +53,11 @@ function getRostov(){
     html = AnyBalance.requestGet(baseurl + 'account/resources');
     getParam(html, result, '__tariff', /"with-border">(?:[\s\S]*?<td[^>]*>){3}(.*?)<\/td>/i, replaceTagsAndSpaces);
 
+    if(AnyBalance.isAvailable('abon')){
+        html = AnyBalance.requestGet(baseurl + 'account/stat');
+        getParam(html, result, 'abon', /Абон[а-я\.]* плата(?:[\s\S]*?<td[^>]*>){2}\s*(-?\d[\d\s\.,]*)/i, replaceFloat, parseFloat);
+    }
+
     AnyBalance.setResult(result);
 }
 
@@ -61,11 +66,13 @@ function getMoscow(){
     var baseurl = 'https://kabinet.mts.ru/zservice/';
 
     // Заходим на главную страницу
-    var info = AnyBalance.requestPost(baseurl + "go", {
+/*    var info = AnyBalance.requestPost(baseurl + "go", {
     	action: 'startup',
     	logname: prefs.login,
         password: prefs.password
-    });
+    });*/
+
+    info = AnyBalance.requestGet(baseurl);
 
     var $parse = $(info);
     var error = $.trim($parse.find('div.logon-result-block>p').text());
@@ -73,8 +80,8 @@ function getMoscow(){
     if(error)
     	throw new AnyBalance.Error(error);
     
-    // Находим ссылку "Состояние счета"
-    var $url=$parse.find("A:contains('Счетчики услуг')");
+    // Находим ссылку "Счетчики услуг"
+    var $url=$parse.find("A:contains('Счетчики услуг')").first();
     if ($url.length!=1)
     	throw new AnyBalance.Error("Невозможно найти ссылку на счетчики услуг");
     
@@ -128,6 +135,16 @@ function getMoscow(){
         	if(counter)
         		result.internet_cur = parseFloat(counter);
         }
+    }
+    
+    if(AnyBalance.isAvailable('abon')){
+        // Находим ссылку "Расход средств"
+        var $url=$parse.find("A:contains('Расход средств')").first();
+        if ($url.length!=1)
+        	throw new AnyBalance.Error("Невозможно найти ссылку на Расход средств");
+        
+        var html = AnyBalance.requestGet(baseurl + $url.attr('href'));
+        getParam(html, result, 'abon', /Абон[а-я\.]* плата[\s\S]*?<span[^>]*>\s*(-?\d[\d\s\.,]*)/i, replaceFloat, parseFloat);
     }
     
     AnyBalance.setResult(result);

@@ -1,6 +1,6 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+ <?xml version="1.0" encoding="utf-8"?>
 <provider>
-    <id major_version="1.0" version="1">ab-affiliate-plus1-wapstart</id>
+    <id major_version="1.0" version="2">ab-affiliate-plus1-wapstart</id>
     <name>Plus1 WapStart</name>
     <description>Статистика партнерской программы Plus1 WapStart</description>
     <author>BArtWell &lt;web@bartwell.ru&gt;</author>

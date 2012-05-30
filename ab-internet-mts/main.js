@@ -3,12 +3,63 @@
 
 Домашний Интернет и Телевидение МТС
 Сайт оператора: http://www.dom.mts.ru/
-Личный кабинет: https://kabinet.mts.ru/
+Личный кабинет (Москва): https://kabinet.mts.ru/
+Личный кабинет (Ростов): http://pc.aaanet.ru
 */
 
+var regions = {
+   moscow: getMoscow,
+   rostov: getRostov
+};
+
 function main(){
-	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://kabinet.mts.ru/zservice/';
+    var prefs = AnyBalance.getPreferences();
+    var region = prefs.region;
+    if(!region || !regions[region])
+      region = 'moscow';
+
+    var func = regions[region];
+    func();
+}
+
+function getRostov(){
+    var prefs = AnyBalance.getPreferences();
+    var baseurl = 'http://pc.aaanet.ru/';
+
+    // Заходим на главную страницу
+    var info = AnyBalance.requestPost(baseurl + "cgi-bin/billing_auth.pl", {
+        'new': 1,
+    	login: prefs.login,
+        password: prefs.password
+    });
+
+    var error = getParam(info, null, null, /"auth_error"[\s\S]*?"([^"]*)"/i);
+    if(error)
+        throw new AnyBalance.Error(error);
+
+    var html = AnyBalance.requestGet(baseurl);
+
+    var result = {success: true};
+
+    if(AnyBalance.isAvailable('username')){
+       var $parse = $(html);
+       result.username = $parse.find('td.sidebar h3').text();
+    }
+
+    getParam(html, result, 'agreement', /Договор №(.*?)от/i, replaceTagsAndSpaces);
+    getParam(html, result, 'license', /Номер лицевого счета:(.*?)<\/li>/i, replaceTagsAndSpaces);
+    getParam(html, result, 'balance', /Баланс:\s*<[^>]*>(-?\d[\d\.,\s]*)/i, replaceFloat, parseFloat);
+
+    html = AnyBalance.requestGet(baseurl + 'account/resources');
+    getParam(html, result, '__tariff', /"with-border">(?:[\s\S]*?<td[^>]*>){3}(.*?)<\/td>/i, replaceTagsAndSpaces);
+
+    AnyBalance.setResult(result);
+}
+
+function getMoscow(){
+    var prefs = AnyBalance.getPreferences();
+    var baseurl = 'https://kabinet.mts.ru/zservice/';
+
     // Заходим на главную страницу
     var info = AnyBalance.requestPost(baseurl + "go", {
     	action: 'startup',
@@ -81,4 +132,29 @@ function main(){
     
     AnyBalance.setResult(result);
 }
+
+function getParam (html, result, param, regexp, replaces, parser) {
+	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
+		return;
+
+	var value = regexp.exec (html);
+	if (value) {
+		value = value[1];
+		if (replaces) {
+			for (var i = 0; i < replaces.length; i += 2) {
+				value = value.replace (replaces[i], replaces[i+1]);
+			}
+		}
+		if (parser)
+			value = parser (value);
+
+    if(param)
+      result[param] = value;
+    else
+      return value
+	}
+}
+
+var replaceTagsAndSpaces = [/<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
+var replaceFloat = [/\s+/g, '', /,/g, '.'];
 

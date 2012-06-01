@@ -103,7 +103,7 @@ function main(){
 	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.162 Safari/535.19'
     });
 
-    var error = getParam(html, null, null, /<td[^>]+class="INFO_Error"[^>]*>(.*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    var error = getParam(html, null, null, /<td[^>]+class="INFO(?:_Error)?"[^>]*>(.*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     if(error)
         throw new AnyBalance.Error(error);
 
@@ -136,9 +136,9 @@ Content-Disposition: form-data; name="last_id"\r\n\
 });
 
     getParam(html, result, 'userName', /ФИО:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'userNum', /номер клиента:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'balance', /Текущий баланс:[\s\S]*?<td[^>]*>(-?\d[\s\d,\.]*)/i, replaceFloat, parseFloat);
-    getParam(html, result, 'status', /Текущий статус абонента:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'userNum', /(?:номер клиента|Номер телефона):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'balance', /(?:Текущий баланс|Баланс):[\s\S]*?<td[^>]*>(-?\d[\s\d,\.]*)/i, replaceFloat, parseFloat);
+    getParam(html, result, 'status', /(?:Текущий статус абонента|Статус абонента):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, '__tariff', /Тарифный план:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'min', /Остаток минут, SMS, MMS, GPRS, включенных в абонплату:[\s\S]*?<td[^>]*>[\s\S]*?(-?\d[\s\d,\.]*) мин(?:,|\s*<)/i, replaceFloat, parseFloat);
     getParam(html, result, 'min_fn', /Остаток минут, SMS, MMS, GPRS, включенных в абонплату:[\s\S]*?<td[^>]*>[\s\S]*?(-?\d[\s\d,\.]*) мин на ЛН/i, replaceFloat, parseFloat);

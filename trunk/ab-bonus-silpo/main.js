@@ -65,7 +65,7 @@ function main(){
 			}
 		}
 		if (AnyBalance.isAvailable('baly')) {
-			var matches = html.match(/Мої Спеціальні пропозиції більше ніж +<span>(\d+?)<\/span>/i);
+			var matches = html.match(/Мої Спеціальні пропозиції ?б?і?л?ь?ш?е? ?н?і?ж? +<span>(\d+?)<\/span>/i);
 			if (matches) {
 				result.baly = parseFloat(matches[1]);
 			} else {
@@ -74,13 +74,9 @@ function main(){
 		}
 		if (AnyBalance.isAvailable('skidka')) {
 			var matches = html.match(/Всього надано Бонусів<\/b><\/td>\s*<td><b>(\d+?.\d+?) грн.<\/b><\/td>/i);
-//			var matches = html.match(/Всього надано Бонусів<\/b><\/td>\s* +<td><b>(.*?) грн.<\/b><\/td>/i);
 			if (matches) {
 				result.skidka = parseFloat(matches[1]);
-			}// else {
-//				throw new AnyBalance.Error("Не удалось проверить Скидку");
-//				result.skidka = 0;
-//			}
+			}
 		}
 		AnyBalance.setResult(result);
 	} else { 

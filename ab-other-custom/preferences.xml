@@ -1,0 +1,115 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="URL 1" 
+        positiveButtonText="ОК" 
+        summary="URL 1||{@s}\n" 
+        dialogTitle="URL 1" 
+        negativeButtonText="Отмена" 
+        key="url1"
+        inputType="text">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="regexp1"
+        dialogTitle="Регулярное выражение №1"
+        negativeButtonText="Отмена"
+        title="Регулярное выражение №1"
+        summary="Регулярное выражение №1||{@s}\n"
+        inputType="text">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="flags1"
+        dialogTitle="Модификаторы №1"
+        negativeButtonText="Отмена"
+        title="Модификаторы RegExp №1"
+        summary="Модификаторы для регулярного выражения №1 (необязательно)||{@s}\n"
+        inputType="text">
+    </EditTextPreference>
+
+    <EditTextPreference 
+        title="URL 2" 
+        positiveButtonText="ОК" 
+        summary="URL 2||{@s}\n" 
+        dialogTitle="URL 2" 
+        negativeButtonText="Отмена" 
+        key="url2"
+        inputType="text">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="regexp2"
+        dialogTitle="Регулярное выражение №2"
+        negativeButtonText="Отмена"
+        title="Регулярное выражение №2"
+        summary="Регулярное выражение №2||{@s}\n"
+        inputType="text">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="flags2"
+        dialogTitle="Модификаторы №2"
+        negativeButtonText="Отмена"
+        title="Модификаторы RegExp №2"
+        summary="Модификаторы для регулярного выражения №2 (необязательно)||{@s}\n"
+        inputType="text">
+    </EditTextPreference>
+
+    <EditTextPreference 
+        title="URL 3" 
+        positiveButtonText="ОК" 
+        summary="URL 3||{@s}\n" 
+        dialogTitle="URL 3" 
+        negativeButtonText="Отмена" 
+        key="url3"
+        inputType="text">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="regexp3"
+        dialogTitle="Регулярное выражение №3"
+        negativeButtonText="Отмена"
+        title="Регулярное выражение №3"
+        summary="Регулярное выражение №3||{@s}\n"
+        inputType="text">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="flags3"
+        dialogTitle="Модификаторы №3"
+        negativeButtonText="Отмена"
+        title="Модификаторы RegExp №3"
+        summary="Модификаторы для регулярного выражения №3 (необязательно)||{@s}\n"
+        inputType="text">
+    </EditTextPreference>
+
+    <EditTextPreference 
+        title="URL 4" 
+        positiveButtonText="ОК" 
+        summary="URL 4||{@s}\n" 
+        dialogTitle="URL 4" 
+        negativeButtonText="Отмена" 
+        key="url4"
+        inputType="text">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="regexp4"
+        dialogTitle="Регулярное выражение №4"
+        negativeButtonText="Отмена"
+        title="Регулярное выражение №4"
+        summary="Регулярное выражение №4||{@s}\n"
+        inputType="text">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="flags4"
+        dialogTitle="Модификаторы №4"
+        negativeButtonText="Отмена"
+        title="Модификаторы RegExp №4"
+        summary="Модификаторы для регулярного выражения №4 (необязательно)||{@s}\n"
+        inputType="text">
+    </EditTextPreference>
+
+</PreferenceScreen>

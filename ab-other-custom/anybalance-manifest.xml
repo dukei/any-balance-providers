@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+    <id major_version="1.1" version="1">ab-other-custom</id>
+    <name>Custom provider</name>
+    <description>Провайдер для произвольных данных</description>
+    <author>BArtWell &lt;web@bartwell.ru&gt;</author>
+    <files>
+        <preferences>preferences.xml</preferences>
+        <js>main.js</js>
+    </files>
+    <counters>
+        <counter id="counter1" name="Счетчик 1"/>
+        <counter id="counter2" name="Счетчик 2"/>
+        <counter id="counter3" name="Счетчик 3"/>
+        <counter id="counter4" name="Счетчик 4"/>
+    </counters>
+    <keywords>
+        Кастомный, произвольный, счетчик
+    </keywords>
+    <type>
+        other
+    </type>
+</provider>

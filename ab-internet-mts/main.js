@@ -66,13 +66,13 @@ function getMoscow(){
     var baseurl = 'https://kabinet.mts.ru/zservice/';
 
     // Заходим на главную страницу
-/*    var info = AnyBalance.requestPost(baseurl + "go", {
+    var info = AnyBalance.requestPost(baseurl + "go", {
     	action: 'startup',
     	logname: prefs.login,
         password: prefs.password
-    });*/
+    });
 
-    info = AnyBalance.requestGet(baseurl);
+//    info = AnyBalance.requestGet(baseurl);
 
     var $parse = $(info);
     var error = $.trim($parse.find('div.logon-result-block>p').text());

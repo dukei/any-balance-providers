@@ -59,7 +59,7 @@ function new_cabinet(login,password) {
 	getParam (htmlinfo, result, 'username', /><TD>Клиент[:<>\w]*([А-Яа-я ]*)</i);
 	   
 	// Баланс
-	getParam (htmlinfo, result, 'balance', />Текущий баланс[\D]*[\d{2}:]*\):[\D]*([\d\.]*)/, [/ |\xA0/, "", ",", "."], parseFloat);
+	getParam (htmlinfo, result, 'balance', />Текущий баланс[\D]*[\d{2}:]*\):[\D]*>([-\d\.]*)/, [/ |\xA0/, "", ",", "."], parseFloat);
 	
  	// Абоненская плата
 	getParam (htmltarif, result, 'monthlypay', /Абон.плата - ([\d\.]*)/, [/ |\xA0/, "", ",", "."], parseFloat);

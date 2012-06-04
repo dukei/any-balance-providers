@@ -39,7 +39,7 @@ function getCurrentWeather (html, result) {
 
     // Время обновления
     getParam (html, result, 'time', /class="icon date">([^<]*)/i,
-        [/(\d{2})\s+(\S+)\s+(\d{4})\s+(.*)/, '$3/$2/$1 $4',
+        [/(\d{1,2})\s+(\S+)\s+(\d{4})\s+(.*)/, '$3/$2/$1 $4',
          'января',   '01',
          'февраля',  '02',
          'марта',    '03',

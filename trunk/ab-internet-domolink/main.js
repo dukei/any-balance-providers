@@ -179,11 +179,10 @@ function domolinkcenter(region,login,password) {
 		p_pwd: password
 	});
     
-    var regexp=/REFRESH CONTENT[\W]*[\d]+;\s*URL=(\/[\w\/\.]+\?p_logname=[\d]+&p_chksum=[\d]+)/,res;
+    var regexp=/BGCOLOR="RED">[\D]*HEIGHT=100[\D]*>\s*([\S ]*)/,res;
 	
-	if (res=regexp.exec(html)) {
-		html = AnyBalance.requestGet(baseurl + res[1]);
-	} else throw new AnyBalance.Error("Не верно указан логин или пароль.");
+	if (res=regexp.exec(html)) 
+		throw new AnyBalance.Error(res[1]);
 	
     
     var result = {success: true};

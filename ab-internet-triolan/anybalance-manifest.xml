@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-internet-triolan</id>
+  <name>Triolan</name>
+  <description>
+    Получает текущий баланс интернет-провайдера Triolan (Украина). Всеукраинская локальная сеть с выходом в Интернет. Кабельное телевидение.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="грн"/>
+    <counter id="license" name="Лицевой счет" type="text"/>
+    <counter id="till" name="Оплачено по" type="time"/>
+  </counters>
+  <keywords>
+    триолан
+  </keywords>
+  <type>
+    internet
+  </type>
+</provider>

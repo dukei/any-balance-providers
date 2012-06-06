@@ -41,13 +41,13 @@ function getEventValidation(html){
 }
 
 function parseBalance(text){
-    var val = getParam(text, null, null, /(-?\d[\d\s.,]*)/, replaceFloat, parseFloat);
+    var val = getParam(text.replace(/\s+/g, ''), null, null, /(-?\d[\d\s.,]*)/, replaceFloat, parseFloat);
     AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
     return val;
 }
 
 function parseCurrency(text){
-    var val = getParam(text, null, null, /-?\d[\d\s.,]*(\S*)/);
+    var val = getParam(text.replace(/\s+/g, ''), null, null, /-?\d[\d\s.,]*(\S*)/);
     AnyBalance.trace('Parsing currency (' + val + ') from: ' + text);
     return val;
 }

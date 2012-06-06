@@ -210,6 +210,10 @@ function megafonTrayInfo(filial){
       throw new AnyBalance.Error('Вы ввели неправильный пароль или доступ автоматическим системам заблокирован.\n\
 Для разблокировки необходимо зайти в Сервис-Гид и включить настройку Настройки Сервис-Гида/Автоматический доступ системам/Доступ открыт пользователям и автоматизированным системам, а также нажать кнопку "разблокировать".');
         
+    if(/ROBOTS\-DENY/.test(info))
+      throw new AnyBalance.Error('Доступ автоматическим системам заблокирован.\n\
+Для разблокировки необходимо зайти в Сервис-Гид и включить настройку Настройки Сервис-Гида/Автоматический доступ системам/Доступ открыт пользователям и автоматизированным системам, а также нажать кнопку "разблокировать".');
+
     var matches;
     if(matches = /<h1>([^<]*)<\/h1>\s*<p>([^<]*)<\/p>/.exec(info))
       throw new AnyBalance.Error(matches[1] + ": " + matches[2]); //Случился какой-то глючный бред
@@ -251,21 +255,21 @@ function megafonTrayInfo(filial){
                 result.sms_left = parseInt($sms.first().find('VOLUME_AVAILABLE').text());
             }
             if(AnyBalance.isAvailable('sms_total')){
-                result.sms_left = parseInt($sms.first().find('VOLUME_TOTAL').text());
+                result.sms_total = parseInt($sms.first().find('VOLUME_TOTAL').text());
             }
         }
         
     }
     
     if(AnyBalance.isAvailable('mins_left','mins_total')){
-        var $sms = $threads.filter(':has(NAME:contains(" мин"))');
+        var $sms = $threads.filter(':has(NAME:contains(" мин")), :has(NAME:contains("Телефония исходящая"))');
         AnyBalance.trace('Found minutes discounts: ' + $sms.length);
         if($sms.length){
             if(AnyBalance.isAvailable('mins_left')){
                 result.mins_left = parseInt($sms.first().find('VOLUME_AVAILABLE').text())*60;
             }
             if(AnyBalance.isAvailable('mins_total')){
-                result.mins_left = parseInt($sms.first().find('VOLUME_TOTAL').text())*60;
+                result.mins_total = parseInt($sms.first().find('VOLUME_TOTAL').text())*60;
             }
         }
     }

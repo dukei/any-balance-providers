@@ -1,8 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-    <id major_version="1.1" version="1">ab-other-custom</id>
+    <id major_version="1.1" version="2">ab-other-custom</id>
     <name>Custom provider</name>
-    <description>Провайдер для произвольных данных</description>
+    <description>Провайдер для произвольных данных. Позволяет выводить произвольную информацию в виджет с заданных URL. 
+Принцип работы очень прост: вы указываете в настройках адрес страницы-источника информации и регулярное выражение, по которому 
+происходит поиск данной информации. Для использования вы должны понимать регулярные выражения Javascript.
+Примеры см. на странице http://code.google.com/p/any-balance-providers/wiki/CustomProvider</description>
     <author>BArtWell &lt;web@bartwell.ru&gt;</author>
     <files>
         <preferences>preferences.xml</preferences>

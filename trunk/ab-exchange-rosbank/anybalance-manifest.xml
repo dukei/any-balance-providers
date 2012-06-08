@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id major_version="1" version="2">ab-exchange-rosbank</id>
+  <name>РОСБАНК (курсы,расчет)</name>
+  <description>
+    Текущие курсы покупки/продажи, установленные РОСБАНК на текущую дату. Содержит курс доллара и евро.
+	Для тех, у кого кредит/ипотека в DeltaCredit или BSGV или РОСБАНК:
+	Возможность ввести в настройках свою сумму (напр.платеж по кредиту) в валюте и получать пересчет в рубли по курсу продажи. Удобно прогнозировать ден.средства для оплаты.
+  </description>
+  <author>Serg Repin &lt;serg.repin@gmail.com&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="RUB_summa" name="Сумма оплаты в рублях" units="р."/>
+    <counter id="USD_out" name="Курс доллара (продажа)" prefix="$ "/>
+    <counter id="date" name="Дата курса" type="text"/>
+    <counter id="USD" name="Курс доллара (ЦБ)" prefix="$ "/>
+    <counter id="USD_in" name="Курс доллара (покупка)" prefix="$ "/>
+    <counter id="EUR" name="Курс евро (ЦБ)" prefix="€ "/>
+    <counter id="EUR_out" name="Курс евро (продажа)" prefix="€ "/>
+    <counter id="EUR_in" name="Курс евро (покупка)" prefix="€ "/>
+  </counters>
+  <keywords>
+    Курс валют, центральный банк, центробанк рф, доллар, евро, форекс, forex, deltacredit, rosbank, bsgv, росбанк, дельтакредит, бсжв, дельта, кредит
+  </keywords>
+  <type>
+     finance, exchange
+  </type>
+</provider>

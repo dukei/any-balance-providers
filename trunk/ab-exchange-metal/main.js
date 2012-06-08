@@ -70,12 +70,16 @@ function main(){
 		getMetal($xml, result, 'Pt', '3'),
 		getMetal($xml, result, 'Pd', '4'));
 
+        var date;
+	if(maxtime > 0){
+		date = getDateString(new Date(maxtime));	
+	}else{
+		date = getDateString(new Date());	
+	}
+        result.__tariff = date;
+
 	if(AnyBalance.isAvailable('date')){
-		if(maxtime > 0){
-			result.date = getDateString(new Date(maxtime));	
-		}else{
-			result.date = getDateString(new Date());	
-		}
+                result.date = date;
 	}
 
 	AnyBalance.setResult(result);

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-telephony-youmagic</id>
+  <name>YouMagic</name>
+  <description>
+    Получает текущий баланс, тариф IP-телефонии YouMagic (http://www.youmagic.com).
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс"/>
+    <counter id="number" name="Номер" type="text"/>
+    <counter id="userName" name="Владелец" type="text"/>
+  </counters>
+  <keywords>
+    IP-телефония
+  </keywords>
+  <type>
+    telephony
+  </type>
+</provider>

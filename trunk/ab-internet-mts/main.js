@@ -144,7 +144,7 @@ function getMoscow(){
         	throw new AnyBalance.Error("Невозможно найти ссылку на Расход средств");
         
         var html = AnyBalance.requestGet(baseurl + $url.attr('href'));
-        getParam(html, result, 'abon', /Абон[а-я\.]* плата[\s\S]*?<span[^>]*>\s*(-?\d[\d\s\.,]*)/i, replaceFloat, parseFloat);
+        getParam(html, result, 'abon', /Абон[а-я\.]*плата[\s\S]*?<span[^>]*>\s*(-?\d[\d\s\.,]*)/i, replaceFloat, parseFloat);
     }
     
     AnyBalance.setResult(result);

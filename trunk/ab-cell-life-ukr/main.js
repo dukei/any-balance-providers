@@ -33,9 +33,9 @@ var replaceFloat = [/\s+/g, '', /,/g, '.'];
 
 function main(){
 	var prefs = AnyBalance.getPreferences();
-        var html=AnyBalance.requestGet("http://my.life.com.ua/wap/jsps/myAccount.jsp?language=uk&srcpage=/wap/home.jsp");
+        var html=AnyBalance.requestGet("https://my.life.com.ua/wap/jsps/myAccount.jsp?language=uk&srcpage=/wap/home.jsp");
         var frompage=getParam(html, null,null, /name="frompage" value="([^"]*)"/i);
-	var html = AnyBalance.requestPost('http://my.life.com.ua/wap/servlet/aus?language=uk&srcpage=/wap/home.jsp', {
+	var html = AnyBalance.requestPost('https://my.life.com.ua/wap/servlet/aus?language=uk&srcpage=/wap/home.jsp', {
 		frompage: frompage,
 		topage: "/wap/jsps/balanceCheck/index.jsp",
 		prefix: prefs.prefph,
@@ -50,7 +50,7 @@ function main(){
 	getParam(html, result, 'Mbalance', /(?:Ви маєте|у Вас есть) (-?\d[\d\.,\s]*) грн. (?:на основному та|на основном и)/i, replaceFloat, parseFloat);
 	getParam(html, result, 'Bbalance', /грн. на (?:основному та|основном и) (-?\d[\d\.,\s]*) грн. на/i, replaceFloat, parseFloat);
 
-        html = AnyBalance.requestGet("http://my.life.com.ua/wap/jsps/tariffs/index.jsp?language=uk&srcpage=/wap/jsps/myAccount.jsp");
+        html = AnyBalance.requestGet("https://my.life.com.ua/wap/jsps/tariffs/index.jsp?language=uk&srcpage=/wap/jsps/myAccount.jsp");
 	getParam(html, result, '__tariff', /(?:Ваш поточний тарифний план|Ваш текущий тарифный план): (.*)/i, replaceTagsAndSpaces);
 	
         

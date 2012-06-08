@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Сумма" 
+        positiveButtonText="ОК" 
+        summary="Сумма в валюте для расчета||{@s}\n" 
+        dialogTitle="Сумма" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите сумму в валюте для пересчета в рубли по курсу продажи банка"
+        key="cur_summa"
+		inputType="numberDecimal">
+    </EditTextPreference>
+    <ListPreference 
+        key="currency" 
+        title="Валюта"
+        summary="Валюта суммы|Для расчета суммы в рублях\n|{@s}\n"
+        entries="Доллар США|ЕВРО"
+        entryValues="usd|eur"
+	    defaultValue="usd">
+    </ListPreference>
+</PreferenceScreen>

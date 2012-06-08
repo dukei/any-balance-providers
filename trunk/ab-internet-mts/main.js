@@ -65,20 +65,32 @@ function getMoscow(){
     var prefs = AnyBalance.getPreferences();
     var baseurl = 'https://kabinet.mts.ru/zservice/';
 
+    var info = AnyBalance.requestGet("https://login.mts.ru/amserver/UI/Login?service=stream&arg=newsession&goto=http%3A%2F%2Fkabinet.mts.ru%3A80%2Fzservice%2Fgo");
+    var $parse = $(info);
+    var xgoto = $parse.find('input[name="goto"]').attr('value');
+    var xloginurl = $parse.find('input[name="loginURL"]').attr('value');
+
     // Заходим на главную страницу
-    var info = AnyBalance.requestPost(baseurl + "go", {
-    	action: 'startup',
-    	logname: prefs.login,
-        password: prefs.password
+    info = AnyBalance.requestPost("https://login.mts.ru/amserver/UI/Login", {
+    	IDToken0: '',
+    	IDToken1: prefs.login,
+        IDToken2: prefs.password,
+        'goto': xgoto,
+        encoded: true,
+        initialNumber: '',
+        loginURL: xloginurl,
+        gx_charset: 'UTF-8'
     });
 
 //    info = AnyBalance.requestGet(baseurl);
 
-    var $parse = $(info);
+    $parse = $(info);
     var error = $.trim($parse.find('div.logon-result-block>p').text());
     
     if(error)
     	throw new AnyBalance.Error(error);
+
+//    AnyBalance.trace(info);
     
     // Находим ссылку "Счетчики услуг"
     var $url=$parse.find("A:contains('Счетчики услуг')").first();

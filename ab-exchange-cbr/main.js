@@ -1,7 +1,7 @@
-function getRateText(result, info, namein, nameout){
+function getRateText(result, info, namein, nameout, force){
 	var matches, regexp = new RegExp('"'+namein+'"[^"]*"([^"]*)"', 'i');
 	if(matches = info.match(regexp)){
-		if(AnyBalance.isAvailable(nameout))
+		if(force || AnyBalance.isAvailable(nameout))
 			result[nameout] = matches[1];
 	}
 }
@@ -32,6 +32,7 @@ function main(){
 	getRate(result, info, 'jprutm', 'JPY');
 
 	getRateText(result, info, 'pfdt2', 'date');
+	getRateText(result, info, 'pfdt2', '__tariff', true);
 	
 	AnyBalance.setResult(result);
 }

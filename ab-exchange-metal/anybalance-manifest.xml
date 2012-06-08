@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-exchange-metal</id>
+  <id version="3">ab-exchange-metal</id>
   <name>Курсы драгоценных металлов ЦБ</name>
   <description>
     Текущие курсы драгоценных металлов, установленные Центральным Банком РФ. Содержит цены золота, серебра, платины и палладия.

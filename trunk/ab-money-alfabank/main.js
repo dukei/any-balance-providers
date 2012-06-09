@@ -80,7 +80,9 @@ function main(){
 
     html = AnyBalance.requestPost(baseurl, params);
 
-    var error = getParam(html, null, null, /в связи с ошибкой в работе системы[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+    var error = getParam(html, null, null, /id="errors"[^>]*>([\s\S]*?)<\/DIV>/i, replaceTagsAndSpaces, html_entity_decode);
+    if(error == 'Логин заблокирован')
+        throw new AnyBalance.Error('Необходимо разрешить доступ к мобильному альфа.клику (m.alfabank.ru) в настройках основного альфа.клика (click.alfabank.ru)');
     if(error)
         throw new AnyBalance.Error(error);
 

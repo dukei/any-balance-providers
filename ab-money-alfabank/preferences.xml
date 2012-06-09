@@ -29,4 +29,10 @@
         dialogMessage="Введите последние 4 цифры карты, по которой вы хотите получить информацию. Если это поле оставить пустым, то будет показана информация по первой карте."
         inputType="number">
     </EditTextPreference>
+    <CheckBoxPreference
+        title="Мобильный Альфа.Клик"
+        defaultValue="false"
+        summaryOn="Вход через мобильный Альфа.Клик (если он разрешен в основном Альфа.Клик)"
+        summaryOff="Вход через основной Альфа.Клик"
+        key="usemobile" />
 </PreferenceScreen>

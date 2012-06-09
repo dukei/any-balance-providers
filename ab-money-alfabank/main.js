@@ -58,12 +58,61 @@ function parseDate(str){
 
 function main(){
     var prefs = AnyBalance.getPreferences();
+    if(prefs.usemobile)
+        processMobile();
+    else
+        processClick();
+}
+
+function processClick(){
+    var prefs = AnyBalance.getPreferences();
+    if(prefs.cardnum && !/\d{4}/.test(prefs.cardnum))
+        throw new AnyBalance.Error("Введите 4 последних цифры номера карты или не вводите ничего, чтобы показать информацию по первой карте");
+
+    var baseurl = "https://click.alfabank.ru/ALFAIBSR/";
+    
+    var html = AnyBalance.requestGet(baseurl);
+    var sessionid = getParam(html, null, null, /SRC="[^"]*?jsessionid=([^"]*)"/i);
+//    var nexturl = getParam(html, null, null, /SRC="(index2.jsp;[^"]*)"/i);
+//    if(!nexturl)
+//         throw new AnyBalance.Error('Не удаётся найти адрес формы входа');
+
+//    html = AnyBalance.requestGet(baseurl + sessionurl);
+//    html = AnyBalance.requestGet(baseurl + nexturl);
+
+    html = AnyBalance.requestPost(baseurl + 'ControllerServlet;jsessionid=' + sessionid, {command: 'auth_loginByPasswordPage'});
+    var nexturl = getParam(html, null, null, /action='([^']*)'/i);
+    var OTOkey = getParam(html, null, null, /['"]OTOkey['"]\s*value=["']([^'"]*)["']/i);
+    var dt = new Date();
+
+    html = AnyBalance.requestPost(baseurl + nexturl, {
+        command: 'auth_loginByPassword',
+        username: prefs.login,
+        password: prefs.password,
+        OTOKey: OTOkey,
+        CurrentTime: dt.getHours()
+    });
+
+    var sms = getParam(html, null, null, /(id="loginOTP")/i);
+    if(sms)
+        throw new AnyBalance.Error("Для работы провайдера необходимо отключить запрос одноразового пароля при входе в Альфа.Клик. Это безопасно - для совершения переводов средств пароль всё равно будет требоваться. Зайдите в Альфа.Клик через браузер и в меню Настройки - Мой профиль снимите галочку \"Использовать одноразовый пароль при входе\".");
+
+    var error = getParam(html, null, null, /id="errors"[^>]*>([\s\S]*?)<\/DIV>/i, replaceTagsAndSpaces, html_entity_decode);
+    if(error)
+        throw new AnyBalance.Error(error);
+
+    nexturl = getParam(html, null, null, /action="([^"]*)"/i);
+    if(!nexturl)
+        throw new AnyBalance.Error('Не удаётся найти адрес главной внутренней страницы');
+
+    getCardsInfo(baseurl + nexturl);
+}
+
+function processMobile(){
+    var prefs = AnyBalance.getPreferences();
 
     var baseurl = "https://m.alfabank.ru/ALFAPDA/ControllerServlet";
     AnyBalance.setDefaultCharset('utf-8');
-
-    if(prefs.cardnum && !/\d{4}/.test(prefs.cardnum))
-        throw new AnyBalance.Error("Введите 4 последних цифры номера карты или не вводите ничего, чтобы показать информацию по первой карте");
 
     var html = AnyBalance.requestGet(baseurl);
     var OTOkey = getParam(html, null, null, /['"]OTOkey['"]\s*value=["']([^'"]*)["']/i);
@@ -82,14 +131,19 @@ function main(){
 
     var error = getParam(html, null, null, /id="errors"[^>]*>([\s\S]*?)<\/DIV>/i, replaceTagsAndSpaces, html_entity_decode);
     if(error == 'Логин заблокирован')
-        throw new AnyBalance.Error('Необходимо разрешить доступ к мобильному альфа.клику (m.alfabank.ru) в настройках основного альфа.клика (click.alfabank.ru)');
+        throw new AnyBalance.Error('Необходимо разрешить доступ к мобильному альфа.клику (m.alfabank.ru) в настройках основного альфа.клика (click.alfabank.ru). Только, к сожалению, Альфабанк убрал эту настройку. Воспользуйтесь получением информации через основной Альфа.Клик.');
     if(error)
         throw new AnyBalance.Error(error);
 
+    getCardsInfo(baseurl);
+}
+
+function getCardsInfo(baseurl){
+    var prefs = AnyBalance.getPreferences();
     html = AnyBalance.requestPost(baseurl, {command:'card_list'});
     var cardnum = prefs.cardnum || '\\d{4}';
 
-    var cardidx = getParam(html, null, null, new RegExp("'card_detail',\\s*'([^']*)'[^>]*>\\d\"?\\*" + cardnum, 'i'));
+    var cardidx = getParam(html, null, null, new RegExp("'card_detail',\\s*'([^']*)'[^>]*>[^<]*" + cardnum + "(?:\\s*|&nbsp;)<", 'i'));
     if(!cardidx){
         if(prefs.cardnum)
             throw new AnyBalance.Error('Не удалось найти карту с последними цифрами ' + prefs.cardnum);
@@ -101,7 +155,7 @@ function main(){
 
     var result = {success: true};
     
-    getParam(html, result, 'cardnum', /Номер карты:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i);
+    getParam(html, result, 'cardnum', /Номер карты:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'userName', /ФИО держателя карты:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'till', /Срок действия карты:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'accnum', /Номер счета:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);

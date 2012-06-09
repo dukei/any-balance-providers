@@ -95,13 +95,14 @@ function main(){
 		value = new Date().getTime();
 	params[name] = value || '';
     });
-    
-    var html = requestPostMultipart(baseurl + 'work.html', params, {
-	'Host': 'internet.velcom.by',
+
+    var required_headers = {
 	'Origin': 'https://internet.velcom.by',
 	'Referer': 'https://internet.velcom.by/work.html',
 	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.162 Safari/535.19'
-    });
+    };
+    
+    var html = requestPostMultipart(baseurl + 'work.html', params, required_headers);
 
     var error = getParam(html, null, null, /<td[^>]+class="INFO(?:_Error)?"[^>]*>(.*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     if(error)
@@ -109,32 +110,13 @@ function main(){
 
     var result = {success: true};
 
-    var html = AnyBalance.requestPost(baseurl + 'work.html',
-'------WebKitFormBoundaryrceZMlz5Js39A2A6\r\n\
-Content-Disposition: form-data; name="sid3"\r\n\
-\r\n\
-' + sid + '\r\n\
-------WebKitFormBoundaryrceZMlz5Js39A2A6\r\n\
-Content-Disposition: form-data; name="user_input_timestamp"\r\n\
-\r\n\
-' + new Date().getTime() + '\r\n\
-------WebKitFormBoundaryrceZMlz5Js39A2A6\r\n\
-Content-Disposition: form-data; name="user_input_0"\r\n\
-\r\n\
-_root/USER_INFO\r\n\
-------WebKitFormBoundaryrceZMlz5Js39A2A6\r\n\
-Content-Disposition: form-data; name="last_id"\r\n\
-\r\n\
-\r\n\
-------WebKitFormBoundaryrceZMlz5Js39A2A6\r\n\
-', {
-	'Content-Type': 'multipart/form-data; boundary=----WebKitFormBoundaryrceZMlz5Js39A2A6',
-	'Host': 'internet.velcom.by',
-	'Origin': 'https://internet.velcom.by',
-	'Referer': 'https://internet.velcom.by/',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.162 Safari/535.19'
-});
-
+    var html = requestPostMultipart(baseurl + 'work.html', {
+        sid3: sid,
+        user_input_timestamp: new Date().getTime(),
+        user_input_0: '_root/USER_INFO',
+        last_id: ''
+    }, required_headers);
+         
     getParam(html, result, 'userName', /ФИО:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'userNum', /(?:номер клиента|Номер телефона):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'balance', /(?:Текущий баланс|Баланс):[\s\S]*?<td[^>]*>(-?\d[\s\d,\.]*)/i, replaceFloat, parseFloat);
@@ -143,8 +125,24 @@ Content-Disposition: form-data; name="last_id"\r\n\
     getParam(html, result, 'min', /Остаток минут, SMS, MMS, GPRS, включенных в абонплату:[\s\S]*?<td[^>]*>[\s\S]*?(-?\d[\s\d,\.]*) мин(?:,|\s*<)/i, replaceFloat, parseFloat);
     getParam(html, result, 'min_fn', /Остаток минут, SMS, MMS, GPRS, включенных в абонплату:[\s\S]*?<td[^>]*>[\s\S]*?(-?\d[\s\d,\.]*) мин на ЛН/i, replaceFloat, parseFloat);
     getParam(html, result, 'min_velcom', /Остаток минут, SMS, MMS, GPRS, включенных в абонплату:[\s\S]*?<td[^>]*>[\s\S]*?(-?\d[\s\d,\.]*) мин на velcom/i, replaceFloat, parseFloat);
-    getParam(html, result, 'traffic', /Остаток минут, SMS, MMS, GPRS, включенных в абонплату:[\s\S]*?<td[^>]*>[\s\S]*?(-?\d[\s\d,\.]*) Мб/i, replaceFloat, parseFloat);
 
+    var traffic = getParam(html, null, null, /Остаток минут, SMS, MMS, GPRS, включенных в абонплату:[\s\S]*?<td[^>]*>[\s\S]*?(-?\d[\s\d,\.]*) Мб/i, replaceFloat, parseFloat) || 0;
+
+    if(AnyBalance.isAvailable('traffic')){
+        html = requestPostMultipart(baseurl + 'work.html', {
+            sid3: sid,
+            user_input_timestamp: new Date().getTime(),
+            user_input_0: '_root/TPLAN/PACKETS',
+            last_id: '',
+            user_input_1: -1
+        }, required_headers);
+
+        var packetMb = getParam(html, null, null, /Остаток интернет-трафика:[^<]*?(\d+)\s*Мб/i, replaceFloat, parseFloat) || 0;
+        var packetKb = getParam(html, null, null, /Остаток интернет-трафика:[^<]*?(\d+)\s*Кб/i, replaceFloat, parseFloat) || 0;
+
+        result.traffic = traffic + packetMb + packetKb/1000;
+    }
+    
     AnyBalance.setResult(result);
 }
 

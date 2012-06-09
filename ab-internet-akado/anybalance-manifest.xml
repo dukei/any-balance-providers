@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-internet-akado</id>
+  <id version="3">ab-internet-akado</id>
   <name>Домашний Интернет и Телевидение АКАДО</name>
   <description>
     Получает текущий баланс, номер договора, ФИО владельца у провайдера интернет и телевидения АКАДО.

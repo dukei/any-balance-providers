@@ -71,15 +71,17 @@ function main(){
     var services = AnyBalance.requestGet(baseurl + "services.xml");
     var $parse = $($.parseXML(services));
     var servid = $parse.find("tr:contains('УСЛУГИ ИНТЕРНЕТ')").first().attr('data-id');
-
-    services = AnyBalance.requestGet(baseurl + "services.xml?ID="+servid+"&depth=1");
-    $parse = $($.parseXML(services));
-    var tariff = $parse.find('th a').first().text();
-    if(tariff){
-      var res = /\(\s*(.*?)\s*[,\)]/.exec(tariff);
-      if(res)
-        tariff = res[1];
-      result.__tariff = tariff;
+    
+    if(servid){ //Может, услуг интернета-то и нет
+        services = AnyBalance.requestGet(baseurl + "services.xml?ID="+servid+"&depth=1");
+        $parse = $($.parseXML(services));
+        var tariff = $parse.find('th a').first().text();
+        if(tariff){
+          var res = /\(\s*(.*?)\s*[,\)]/.exec(tariff);
+          if(res)
+            tariff = res[1];
+          result.__tariff = tariff;
+        }
     }
 
     var value = $parse.find("span.description:contains('Рекомендуемая сумма оплаты услуг в следующем месяце')").parent().find("span.amount").text();

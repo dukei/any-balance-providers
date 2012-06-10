@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-exchange-select-by</id>
+  <id version="2">ab-exchange-select-by</id>
   <name>Курсы валют Банков Беларуси</name>
   <description>
-    Текущие курсы валют в банках республики Беларусь. Есть возможность показать лучшие курсы. Информация берется с сайта select.by.
+    Текущие курсы валют в банках республики Беларусь и курс Национального Банка. Есть возможность показать лучшие курсы. Информация берется с сайта select.by.
   </description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <files>
@@ -25,7 +25,7 @@
     <counter id="tel" name="Телефон банка" type="text"/>
   </counters>
   <keywords>
-    Беларусь, курс валют, евро, доллар
+    Беларусь, курс валют, евро, доллар, НБ РБ
   </keywords>
   <type>
     finance, exchange

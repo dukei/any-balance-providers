@@ -16,35 +16,31 @@ function main() {
         success: true
     };
 
-    var r = new RegExp('<a id="form:_id22" href="/logout" class="iceOutLnk po-header-logout-link">');
+    var r = new RegExp('<a id="form:_id\\d+" href="/logout" class="iceOutLnk po-header-logout-link">');
 	if(r.test(html)) {
-		html = AnyBalance.requestGet('http://partner.dstream.ru/faces/partner/partner.jsf?page=stats');
+		html = AnyBalance.requestGet('http://partner.dstream.ru/faces/partner/partner.jsf?page=stat');
 		r = new RegExp('<span id="([^"]+)" class="iceOutTxt">([^<]+)</span>','g');
 		var updated=0;
 		var mustbe=4;
-		while((matches=r.exec(html))!=null) {
+		for(i=0;(matches=r.exec(html))!=null;i++) {
 			matches[2]=matches[2].replace(",",".");
 			matches[2]=matches[2].replace("&nbsp;"," ");
 			matches[2]=matches[2].replace(" ","");
-			switch(matches[1]) {
-				case 'formMain:_id130:0:_id140:5:_id147':
+			switch(i) {
+				case 63:
 					result.today=parseFloat(matches[2]);
-					alert(matches[2]);
 					updated++;
 					break;
-				case 'formMain:_id130:0:_id140:5:_id152':
+				case 64:
 					result.yesterday=parseFloat(matches[2]);
-					alert(matches[2]);
 					updated++;
 					break;
-				case 'formMain:_id130:0:_id140:5:_id157':
+				case 65:
 					result.curmonth=parseFloat(matches[2]);
-					alert(matches[2]);
 					updated++;
 					break;
-				case 'formMain:_id130:0:_id140:5:_id162':
+				case 66:
 					result.prevmonth=parseFloat(matches[2]);
-					alert(matches[2]);
 					updated++;
 					break;
 			}

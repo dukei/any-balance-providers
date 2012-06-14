@@ -1,6 +1,6 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <provider>
-    <id major_version="1.0" version="1">ab-affiliate-digitalstream</id>
+    <id major_version="1.0" version="2">ab-affiliate-digitalstream</id>
     <name>Digital Stream</name>
     <description>Статистика партнерской программы Digital Stream</description>
     <author>BArtWell &lt;web@bartwell.ru&gt;</author>

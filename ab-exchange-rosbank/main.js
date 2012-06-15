@@ -14,7 +14,7 @@ function main(){
 	var htmlinfo = AnyBalance.requestGet(baseurl);
     var result = {success: true};
     
-    var res,regexp = /Курсы валют<\/h2>\D*USD\D*([\d\.]*)\/([\d\.]*)\D*([\d\,]*)\D*EUR\D*([\d\.]*)\/([\d\.]*)\D*([\d\,]*)\D*(\d{2}\.\d{2}\.\d{4})/;
+    var res,regexp = /Курсы валют<\/h2>\D*USD\D*([\d\.]*)\/([\d\.]*)\D*([\d\,]*)\D*EUR\D*([\d\.]*)\/([\d\.]*)\D*([\d\,]*)\D*([\d\.\/]*)\./;
 	
 	if(res=regexp.exec(htmlinfo)) {
 		result.USD = parseFloat(res[3].split(',').join('.'));

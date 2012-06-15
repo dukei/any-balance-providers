@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1" version="2">ab-exchange-rosbank</id>
+  <id major_version="1" version="3">ab-exchange-rosbank</id>
   <name>РОСБАНК (курсы,расчет)</name>
   <description>
     Текущие курсы покупки/продажи, установленные РОСБАНК на текущую дату. Содержит курс доллара и евро.
 	Для тех, у кого кредит/ипотека в DeltaCredit или BSGV или РОСБАНК:
 	Возможность ввести в настройках свою сумму (напр.платеж по кредиту) в валюте и получать пересчет в рубли по курсу продажи. Удобно прогнозировать ден.средства для оплаты.
+	
+	Новое в версии 1.3:
+	- исправлена ошибка: если дата курса имеет 2 знака, то курсы не загружаются
   </description>
   <author>Serg Repin &lt;serg.repin@gmail.com&gt;</author>
   <files>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Номер телефона" 
+        positiveButtonText="ОК" 
+        summary="Номер телефона в формате 842XXXXXXX или 902XXXXXXX||{@s}\n" 
+        dialogTitle="Номер телефона" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите ваш номер телефона в формате 842XXXXXXX или 902XXXXXXX."
+	inputType="number"
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="Пароль/PUK для входа в навигатор||***********\n"
+        dialogMessage="Введите пароль, используемый для входа в навигатор."
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

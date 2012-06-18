@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-cell-ulgsm</id>
+  <name>Ульяновск GSM</name>
+  <description>
+    Получает баланс, статус для оператора сотовой связи Ульяновск-GSM
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="status" name="Статус" type="text"/>
+  </counters>
+  <keywords>
+    мобильный
+  </keywords>
+  <type>
+    cell
+  </type>
+</provider>

@@ -65,7 +65,7 @@ function main(){
  
     var html = AnyBalance.requestPost(baseurl + "public/security/check", params, {"X-Requested-With": "XMLHttpRequest"});
     
-    var json = JSON.parse(html);
+    var json = JSON.parse(html.replace(/[\x0D\x0A]+/g, ' '));
     if(!json.success)
       throw new AnyBalance.Error(json.error);
     

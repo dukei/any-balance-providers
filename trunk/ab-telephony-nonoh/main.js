@@ -63,6 +63,16 @@ function main(){
     var error = getParam(info, null, null, /<div class="row_error_message error">([\s\S]*?)<\/div>/i, [/<.*?>/g, '', /^\s*|\s*$/g, '']);
     if(error)
         throw new AnyBalance.Error(error);
+
+    error = getParam(info, null, null, /(service is temporarily unavailable)/i);
+    if(error){
+        //Какой-то глюк с 503 ошибкой, а баланс вроде бы выдаётся по другому адресу.
+        info = AnyBalance.requestGet(baseurl + "buy_credit2/");
+    }
+
+    error = getParam(info, null, null, /(service is temporarily unavailable)/i);
+    if(error) //Попытка не помогла, возвращаем ошибку
+        throw new AnyBalance.Error("К сожалению, сайт временно недоступен. Попробуйте позднее."); 
      
     var result = {
         success: true

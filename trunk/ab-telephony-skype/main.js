@@ -40,6 +40,16 @@ function html_entity_decode(str)
 }
 
 
+var replaceTagsAndSpaces = [/<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
+var replaceFloat = [/\s+/g, '', /,/g, '.'];
+
+function parseBalance(text){
+    var _text = html_entity_decode(text.replace(/\s+/, ''));
+    var val = getParam(_text, null, null, /(-?\d[\d\.,]*)/, replaceFloat, parseFloat);
+    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
+    return val;
+}
+
 function main(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');    
@@ -62,7 +72,7 @@ function main(){
 
     var matches;
 
-    getParam(info, result, 'balance', /id="balanceAmount"><span[^>]*>[^<]*<\/span>([^<]*)/i, [/[\s,]+/, ''], parseFloat);
+    getParam(info, result, 'balance', /id="balanceAmount">([\s\S]*?)<div/i, replaceTagsAndSpaces, parseBalance);
     getParam(info, result, 'currency', /<span class='ccy'>([^<]*)/i, null, html_entity_decode);
 		
     AnyBalance.setResult(result);

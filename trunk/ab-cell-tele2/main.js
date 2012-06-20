@@ -29,6 +29,16 @@ function getParam (html, result, param, regexp, replaces, parser) {
 	}
 }
 
+var replaceTagsAndSpaces = [/<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
+var replaceFloat = [/\s+/g, '', /,/g, '.'];
+
+function parseBalance(text){
+    var _text = text.replace(/\s+/, '');
+    var val = getParam(_text, null, null, /(-?\d[\d\.,]*)/, replaceFloat, parseFloat);
+    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
+    return val;
+}
+
 function main(){
     if(AnyBalance.getLevel() < 3)
       throw new AnyBalance.Error("Этот провайдер требует AnyBalance API v.3+. Пожалуйста, обновите AnyBalance до последней версии.");
@@ -39,11 +49,21 @@ function main(){
 
     AnyBalance.setDefaultCharset('utf-8');
 
+    var html = AnyBalance.requestGet(baseurl);
+    var matches = html.match(/<input[^>]*name="(csrf[^"]*)"[^>]*value="([^"]*)"/i);
+    if(!matches)
+      throw new AnyBalance.Error("Не удаётся найти код безопасности. Свяжитесь с автором провайдера для исправления.");
+
     AnyBalance.trace("Trying to enter selfcare at address: " + baseurl);
-    var html = AnyBalance.requestPost(baseurl + "public/security/check", {
+    var params = {
       j_username: prefs.login,
-      j_password: prefs.password
-    }, {"X-Requested-With": "XMLHttpRequest"});
+      j_password: prefs.password,
+      _redirectToUrl:'',
+      is_ajax:true
+    };
+    params[matches[1]] = matches[2]; //Код безопасности
+ 
+    var html = AnyBalance.requestPost(baseurl + "public/security/check", params, {"X-Requested-With": "XMLHttpRequest"});
     
     var json = JSON.parse(html);
     if(!json.success)
@@ -58,14 +78,14 @@ function main(){
 
     html = AnyBalance.requestGet(baseurl + "home");
     
-    getParam(html, result, "userName", /"wide-header"[\s\S]*?([^<>]*)<\/h1>/i, [/^\s*|\s*$/g, '']);
-    result.__tariff = getParam(html, null, null, /Тариф<\/h2>[\s\S]*?>([^<]*)/i, [/^\s*|\s*$/g, '']);
+    getParam(html, result, "userName", /"wide-header"[\s\S]*?([^<>]*)<\/h1>/i, replaceTagsAndSpaces);
+    result.__tariff = getParam(html, null, null, /Тариф<\/h2>[\s\S]*?>([^<]*)/i, replaceTagsAndSpaces);
     
     if(AnyBalance.isAvailable('balance')){
       AnyBalance.trace("Searching for balance");
       html = AnyBalance.requestGet(baseurl + "balance/json?isBalanceRefresh=false&_=32431329916365609");
       json = JSON.parse(html);
-      getParam(json.balance, result, "balance", /([\-\d,\.\s]*)/, [/^[\s,\.]*|[\s,\.]*$/g, '', /,/g,'.'], parseFloat);
+      result.balance = parseBalance(json.balance);
     }
     
     if(AnyBalance.isAvailable('sms_used', 'min_used', 'traffic_used')){

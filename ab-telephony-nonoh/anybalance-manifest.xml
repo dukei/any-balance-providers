@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-telephony-nonoh</id>
+  <id version="2">ab-telephony-nonoh</id>
   <name>Nonoh free.voip.calls</name>
   <description>
     Получает текущий баланс, бесплатные дни, число сообщений, статус автоматического пополнения у провайдера IP-телефонии nonoh (http://www.nonoh.net).

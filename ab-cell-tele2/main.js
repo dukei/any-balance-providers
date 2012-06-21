@@ -63,7 +63,11 @@ function main(){
     };
     params[matches[1]] = matches[2]; //Код безопасности
  
-    var html = AnyBalance.requestPost(baseurl + "public/security/check", params, {"X-Requested-With": "XMLHttpRequest"});
+    html = AnyBalance.requestPost(baseurl + "public/security/check", params, {"X-Requested-With": "XMLHttpRequest"});
+
+    var error = getParam(html, null, null, /<div id="error-wrapper">[\s\S]*?<p>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
+    if(error)
+      throw new AnyBalance.Error(error);
     
     var json = JSON.parse(html.replace(/[\x0D\x0A]+/g, ' '));
     if(!json.success)

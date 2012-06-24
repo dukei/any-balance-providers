@@ -140,7 +140,7 @@ function processMobile(){
 
 function getCardsInfo(baseurl){
     var prefs = AnyBalance.getPreferences();
-    html = AnyBalance.requestPost(baseurl, {command:'card_list'});
+    var html = AnyBalance.requestPost(baseurl, {command:'card_list'});
     var cardnum = prefs.cardnum || '\\d{4}';
 
     var cardidx = getParam(html, null, null, new RegExp("'card_detail',\\s*'([^']*)'[^>]*>[^<]*" + cardnum + "(?:\\s*|&nbsp;)<", 'i'));

@@ -15,7 +15,7 @@
 
 function main(){
 	var prefs = AnyBalance.getPreferences();
-	var url='http://m.gpnbonus.ru/profile/login/';
+	var url='https://m.gpnbonus.ru/profile/login/';
 	AnyBalance.trace('Sending a request for authorization');
         AnyBalance.setDefaultCharset('utf-8');
 	var html = AnyBalance.requestPost(url, prefs);
@@ -66,7 +66,7 @@ function main(){
 	}
 //Баланс по курсу в рублях
 	if(AnyBalance.isAvailable('balance_money')){
-		html=AnyBalance.requestGet("http://www.gpnbonus.ru/on_the_way/");
+		html=AnyBalance.requestGet("https://www.gpnbonus.ru/on_the_way/");
 		regexp=/Наш курс: <b>(\d*) бонусов = (\d*) рубль<\/b>/;
 		if (res=regexp.exec(html)){
 			result.balance_money=Math.floor(((result.balance*res[2])/res[1])*100)/100;

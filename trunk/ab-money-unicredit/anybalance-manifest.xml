@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-money-unicredit</id>
+  <name>UniCredit</name>
+  <description>
+    Получает текущий остаток и другие параметры карт UniCredit, используя интернет-банк https://enter.unicredit.ru.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>api:jquery.min.js</js>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Остаток"/>
+    <counter id="cardnum" name="Номер карты" type="text"/>
+    <counter id="type" name="Тип" type="text"/>
+    <counter id="currency" name="Валюта" type="text"/>
+  </counters>
+  <keywords>
+    юникредит
+  </keywords>
+  <type>
+    money
+  </type>
+</provider>

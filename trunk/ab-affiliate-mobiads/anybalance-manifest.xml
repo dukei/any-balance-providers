@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+    <id major_version="1.0" version="1">ab-affiliate-mobiads</id>
+    <name>Mobiads</name>
+    <description>Статистика партнерской программы Mobiads</description>
+    <author>BArtWell &lt;web@bartwell.ru&gt;</author>
+    <files>
+	<icon>icon.png</icon>
+        <preferences>preferences.xml</preferences>
+        <js>main.js</js>
+    </files>
+    <counters>
+        <counter id="earned" name="Заработано сегодня" units="р"/>
+        <counter id="spended" name="Потрачено сегодня" units="р"/>
+        <counter id="balance" name="Баланс" units="р"/>
+    </counters>
+    <keywords>
+        Партнерская программа, Mobiads, заработок
+    </keywords>
+    <type>
+        affiliate
+    </type>
+</provider>

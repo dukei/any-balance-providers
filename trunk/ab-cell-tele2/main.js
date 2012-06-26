@@ -85,27 +85,39 @@ function main(){
     getParam(html, result, "userName", /"wide-header"[\s\S]*?([^<>]*)<\/h1>/i, replaceTagsAndSpaces);
     result.__tariff = getParam(html, null, null, /Тариф<\/h2>[\s\S]*?>([^<]*)/i, replaceTagsAndSpaces);
     
+    var matches = html.match(/(csrf[^:]*):\s*'([^']*)'/i);
+    if(!matches)
+        throw new AnyBalance.Error("Не удаётся найти код безопасности для запроса балансов. Свяжитесь с автором провайдера для исправления.");
+
+    var tokName = matches[1], tokVal = matches[2];
+
     if(AnyBalance.isAvailable('balance')){
       AnyBalance.trace("Searching for balance");
-      html = AnyBalance.requestGet(baseurl + "balance/json?isBalanceRefresh=false&_=32431329916365609");
+      var params = {};
+      params[tokName] = tokVal;
+      params.isBalanceRefresh = false;
+      html = AnyBalance.requestPost(baseurl + "balance/json", params);
       json = JSON.parse(html);
       result.balance = parseBalance(json.balance);
     }
     
     if(AnyBalance.isAvailable('sms_used', 'min_used', 'traffic_used')){
       AnyBalance.trace("Searching for used resources in this month");
-      html = AnyBalance.requestGet(baseurl + "payments/summary/json");
+      var params = {};
+      params[tokName] = tokVal;
+      params.isBalanceRefresh = false;
+      html = AnyBalance.requestPost(baseurl + "payments/summary/json", params);
       json = JSON.parse(html);
       for(var i=0;i<json.length;++i){
         var name = json[i].name;
         var matches;
         if(AnyBalance.isAvailable('min_used')){
-          if(matches = /(\d+) минут/i.exec(name)){
+          if(matches = /(\d+).*минут/i.exec(name)){
             result.min_used = parseInt(matches[1]);
           }
         }
         if(AnyBalance.isAvailable('sms_used')){
-          if(matches = /(\d+) .* SMS/i.exec(name)){
+          if(matches = /(\d+).*SMS/i.exec(name)){
             result.sms_used = parseInt(matches[1]);
           }
         }

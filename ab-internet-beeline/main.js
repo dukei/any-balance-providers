@@ -29,6 +29,28 @@ function getParam (html, result, param, regexp, replaces, parser) {
 	}
 }
 
+var replaceTagsAndSpaces = [/<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
+var replaceFloat = [/\s+/g, '', /,/g, '.'];
+
+function parseBalance(text){
+    var _text = text.replace(/\s+/, '');
+    var val = getParam(_text, null, null, /(-?\d[\d\.,]*)/, replaceFloat, parseFloat);
+    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
+    return val;
+}
+
+function parseDate(str){
+    AnyBalance.trace('Parsing date from value: ' + str);
+    var matches = /(\d+)[^\d](\d+)[^\d](\d+)\s+(\d+)[^\d](\d+)[^\d](\d+)/.exec(str);
+    var time;
+    if(matches){
+	  time = (new Date(+matches[3], matches[2]-1, +matches[1], +matches[4], +matches[5], +matches[6])).getTime();
+    }
+    return time;
+}
+
+
+
 function getTrafficGb(str){
   return parseFloat((parseFloat(str)/1000).toFixed(2));
 }
@@ -47,8 +69,8 @@ function main(){
         password: prefs.password
     });
 //    }catch(e){
-//        //Из-за ошибки в Хроме логин не может быть выполнен, потому что там используется переадресация с безопасного на обычное соединение.
-//        //Чтобы отлаживать в отладчике, зайдите в свой аккаунт вручную, и раскоментарьте эти строчки. Не забудьте закоментарить обратно потом!
+        //Из-за ошибки в Хроме логин не может быть выполнен, потому что там используется переадресация с безопасного на обычное соединение.
+        //Чтобы отлаживать в отладчике, зайдите в свой аккаунт вручную, и раскоментарьте эти строчки. Не забудьте закоментарить обратно потом!
 //        html = AnyBalance.requestGet(baseurl + 'news/'); 
 //    }
     
@@ -58,16 +80,19 @@ function main(){
 
     var result = {success: true};
     
-    getParam(html, result, 'balance', /Баланс:[\s\S]*?<span[^>]*>([\-\d\s\.,]+)/i, [/\s+/g, '', ',', '.'], parseFloat);
-    getParam(html, result, 'bonus', /Бонусы:[\s\S]*?<span[^>]*>([\-\d\s\.,]+)/i, [/\s+/g, '', ',', '.'], parseFloat);
+    getParam(html, result, 'balance', /Баланс:[\s\S]*?<span[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'bonus', /Бонусы:[\s\S]*?<span[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 
-    if(AnyBalance.isAvailable('status', 'status_internet', 'status_tv', 'userName')){
+    if(AnyBalance.isAvailable('status', 'status_internet', 'status_tv', 'userName', 'till', 'topay', 'abon')){
        html = AnyBalance.requestGet(baseurl + 'personal/');
 
-       getParam(html, result, 'status', /usluga_name">Текущий статус[\s\S]*?<span[^>]*>(.*?)<\/span>/i);
-       getParam(html, result, 'status_internet', /usluga_name">Интернет[\s\S]*?<span[^>]*>(.*?)<\/span>/i);
-       getParam(html, result, 'status_tv', /usluga_name">Телевидение[\s\S]*?<span[^>]*>(.*?)<\/span>/i);
-       getParam(html, result, 'userName', /usluga_name">Владелец договора[\s\S]*?<span[^>]*>(.*?)<\/span>/i);
+       getParam(html, result, 'status', /usluga_name">Текущий статус[\s\S]*?<span[^>]*>(.*?)<\/span>/i, replaceTagsAndSpaces);
+       getParam(html, result, 'status_internet', /usluga_name">Интернет[\s\S]*?<span[^>]*>(.*?)<\/span>/i, replaceTagsAndSpaces);
+       getParam(html, result, 'status_tv', /usluga_name">Телевидение[\s\S]*?<span[^>]*>(.*?)<\/span>/i, replaceTagsAndSpaces);
+       getParam(html, result, 'userName', /usluga_name">Владелец договора[\s\S]*?<span[^>]*>(.*?)<\/span>/i, replaceTagsAndSpaces);
+       getParam(html, result, 'till', /Дата окончания расчетного периода[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+       getParam(html, result, 'topay', /Сумма к оплате[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+       getParam(html, result, 'abon', /Сумма ежемесячного платежа[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     }
 
     html = AnyBalance.requestGet(baseurl + 'internet/');

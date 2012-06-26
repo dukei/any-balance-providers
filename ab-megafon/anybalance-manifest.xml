@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="2.5" version="23">ab-megafon</id>
+  <id major_version="2.5" version="24">ab-megafon</id>
   <name>Мегафон</name>
   <description>
     Получает баланс, бонусный баланс, минуты, трафик, SMS на телефоне. Поддерживаются все филиалы.
@@ -11,6 +11,9 @@
      
     Если вы можете помочь с исправлением особенностей, добро пожаловать на http://any-balance-providers.googlecode.com .
     
+    Новое в 2.5.24:
+     - Поддержка изменений на сайте
+
     Новое в 2.5.23:
      - Улучшено распознавание остатка минут в некоторых регионах
 

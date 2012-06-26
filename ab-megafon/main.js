@@ -145,7 +145,7 @@ function getFilial(number){
     });
 
 //    Мегафон сделал сервис для определения филиала, так что попытаемся обойтись им    
-    var region = getParam(html, null, null, /<URL>https:\/\/(\w+)\./i);
+    var region = getParam(html, null, null, /<URL>https?:\/\/(\w+)\./i);
     if(region && filial_info[region]){
 	return filial_info[region];
     }else{

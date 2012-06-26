@@ -4,8 +4,9 @@
 Провайдер Марьино.NET 
 Сайт оператора: http://maryno.net/
 Личный кабинет: https://my.maryno.net/
-1.0.8 - добавлена информация по текущему трафикуи трафику за прошлый месяц
+1.0.10- Обновления на сайте.
 1.0.9 - Округление трафика до мегабайтов.
+1.0.8 - добавлена информация по текущему трафикуи трафику за прошлый месяц
 */
 
 function main(){
@@ -29,11 +30,11 @@ function main(){
 	var result = {success: true};
 	AnyBalance.trace ('Start parsing...');
 
-  var res=/Общие<\/font>.*<\/table><br>(<table.*<\/table>)<br><table/.exec(html);
+	var res=/<\/script>(<table.*<\/table>)<br><table/.exec(html);
 	var tmp=res[1];
 	res=tmp.replace(/<tr><td bgcolor=#f1f3f7><b>/g,'<1>');
 	res=res.replace(/<\/b><\/td><td bgcolor=#ffffff>/g,'<2>');
-  res=res.replace(/<\/td><td bgcolor=#ffffff><\/td><\/tr>/g,'<3>');
+	res=res.replace(/<\/td><td bgcolor=#ffffff><\/td><\/tr>/g,'<3>');
 	res=res.replace(/.*pt.>/,'');
 	res=res.replace(/<\/td>.*<\/tr>/,'<3>');
 	var tmp=res.replace(/<.table>/,'');

@@ -152,6 +152,12 @@ function doNewAccountPhysic(page){
     if(/confirmTitle/.test(html))
           throw new AnyBalance.Error("Ваш личный кабинет требует одноразовых паролей для входа. Пожалуйста, отмените в настройках кабинета требование одноразовых паролей при входе. Это безопасно: для совершения денежных операций требование одноразового пароля всё равно останется.");
 
+    if(/Откроется справочник регионов, в котором щелкните по названию выбранного региона/.test(html)){
+        //Тупой сбер предлагает обязательно выбрать регион оплаты. Вот навязчивость...
+        //Ну просто выберем все регионы
+        html = AnyBalance.requestPost(baseurl + '/PhizIC/region.do', {id: -1, operation: 'button.save'});
+    }
+
     var prefs = AnyBalance.getPreferences();
     var baseurl = "https://online.sberbank.ru";
 

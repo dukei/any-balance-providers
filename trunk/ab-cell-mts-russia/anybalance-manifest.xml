@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.1" version="15">ab-cell-mts-russia</id>
+  <id major_version="1.1" version="16">ab-cell-mts-russia</id>
   <name>МТС (Россия)</name>
   <description>
     Получает баланс, использованные минуты на локальные, мобильные и любимые номера, информацию о расходах, статус блокировки, кредит, номер лицевого счета, ежемесячую плату.
 Получает данные из PDA версии интернет-помощника для уменьшения трафика.
+
+    Что нового в 1.1.16:
+      - Отображение трафика числовым счетчиком (в Мб). Чтобы отображался, надо выбрать счетчик заново.
 
     Что нового в 1.1.15:
       - Поддержка нескольких номеров в одном интернет помощнике
@@ -35,7 +38,7 @@
     <counter id="min_left" name="Бесплатные минуты" units="мин"/>
     <counter id="sms_left" name="Бесплатные СМС" units=" sms"/>
     <counter id="mms_left" name="Бесплатные ММС" units=" mms"/>
-    <counter id="traffic_left" name="Остаток трафика" type="text"/>
+    <counter id="traffic_left_mb" name="Остаток трафика" units="Mb"/>
     <counter id="min_used" name="Минут накоплено (кред.)" units="мин"/>
     <counter id="debt" name="Неоплаченные счета" units="р"/>
     <counter id="pay_till" name="Оплатить до" type="time"/>
@@ -46,6 +49,7 @@
     <counter id="license" name="Лицевой счет" type="text"/>
     <counter id="monthlypay" name="Ежемесячная плата" units="р"/>
     <counter id="phone" name="Номер телефона" type="text"/>
+    <counter id="traffic_left" name="Остаток трафика (как в помощнике)" type="text"/>
   </counters>
   <keywords>
     Сотовый телефон, мобильный, мобильник, mts, россия

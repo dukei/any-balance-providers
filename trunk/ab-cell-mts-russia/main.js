@@ -41,6 +41,35 @@ function getParam (html, result, param, regexp, replaces, parser) {
 }
 
 var replaceTagsAndSpaces = [/<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
+var replaceFloat = [/\s+/g, '', /,/g, '.'];
+
+function parseTraffic(text){
+    var _text = text.replace(/\s+/, '');
+    var val = getParam(_text, null, null, /(-?\d[\d\.,]*)/, replaceFloat, parseFloat);
+    var units = getParam(_text, null, null, /(kb|mb|gb|кб|мб|гб|байт|bytes)/i);
+    switch(units.toLowerCase()){
+      case 'bytes':
+      case 'байт':
+        val = Math.round(val/1024/1024*100)/100;
+        break;
+      case 'kb':
+      case 'кб':
+        val = Math.round(val/1024*100)/100;
+        break;
+      case 'gb':
+      case 'гб':
+        val = Math.round(val*1024);
+        break;
+    }
+    var textval = ''+val;
+    if(textval.length > 6)
+      val = Math.round(val);
+    else if(textval.length > 5)
+      val = Math.round(val*10)/10;
+
+    AnyBalance.trace('Parsing traffic (' + val + ') from: ' + text);
+    return val;
+}
 
 function main(){
     var prefs = AnyBalance.getPreferences();
@@ -118,7 +147,7 @@ function main(){
     }
 
     // Баланс
-    getParam (html, result, 'balance', /Баланс.*?>([-\d\.,\s]+)/, [/\s|\xA0/, "", ",", "."], parseFloat);
+    getParam (html, result, 'balance', /Баланс.*?>([-\d\.,\s]+)/, replaceFloat, parseFloat);
     // Телефон
     getParam (html, result, 'phone', /Ваш телефон:.*?>([^<]*)</i, replaceTagsAndSpaces, html_entity_decode);
 
@@ -128,6 +157,7 @@ function main(){
         AnyBalance.isAvailable ('sms_left') ||
         AnyBalance.isAvailable ('mms_left') ||
         AnyBalance.isAvailable ('traffic_left') ||
+        AnyBalance.isAvailable ('traffic_left_mb') ||
         AnyBalance.isAvailable ('license') ||
         AnyBalance.isAvailable ('statuslock') ||
         AnyBalance.isAvailable ('credit') ||
@@ -140,25 +170,25 @@ function main(){
         AnyBalance.trace("Parsing status...");
     
         // Пакет минут
-        getParam (html, result, 'min_left', /Остаток пакета минут:\s*([\d\.,]+)\./, [/ |\xA0/, "", ",", "."], parseFloat);
+        getParam (html, result, 'min_left', /Остаток пакета минут:\s*([\d\.,]+)\./, replaceFloat, parseFloat);
     
         // Остаток бонуса
-        getParam (html, result, 'min_left', /Остаток бонуса:\s*([\d\.,]+?)\s*мин/, [/ |\xA0/, "", ",", "."], parseFloat);
+        getParam (html, result, 'min_left', /Остаток бонуса:\s*([\d\.,]+?)\s*мин/, replaceFloat, parseFloat);
 
         // Остаток минут
-        getParam (html, result, 'min_left', /Осталось\s*([\d\.,]+)\s*мин/i, [",", "."], parseFloat);
+        getParam (html, result, 'min_left', /Осталось\s*([\d\.,]+)\s*мин/i, replaceFloat, parseFloat);
         
         // Остаток: минут
-        getParam (html, result, 'min_left', /Остаток:\s*([\d\.,]+)\s*мин/i, [",", "."], parseFloat);
+        getParam (html, result, 'min_left', /Остаток:\s*([\d\.,]+)\s*мин/i, replaceFloat, parseFloat);
 
         // Остаток минут по тарифу "Готовый офис" - 194 минут
-        getParam (html, result, 'min_left', /Остаток мин.*?([\d\.,]+)\s*мин/i, [",", "."], parseFloat);
+        getParam (html, result, 'min_left', /Остаток мин.*?([\d\.,]+)\s*мин/i, replaceFloat, parseFloat);
 
         // Использовано: 0 минут местных и мобильных вызовов.
-        getParam (html, result, 'min_local', /Использовано:\s*([\d\.,]+)\s*мин[^\s]* местных/, [/ |\xA0/, "", ",", "."], parseFloat);
+        getParam (html, result, 'min_local', /Использовано:\s*([\d\.,]+)\s*мин[^\s]* местных/, replaceFloat, parseFloat);
 
         // Использовано: 0 минут на любимые номера
-        getParam (html, result, 'min_love', /Использовано:\s*([\d\.,]+)\s*мин[^\s]* на любимые/, [/ |\xA0/, "", ",", "."], parseFloat);
+        getParam (html, result, 'min_love', /Использовано:\s*([\d\.,]+)\s*мин[^\s]* на любимые/, replaceFloat, parseFloat);
 
         // Остаток СМС
         getParam (html, result, 'sms_left', /(?:Осталось|Остаток)[^\d]*(\d*)\s*(sms|смс)/i, [], parseInt);
@@ -170,13 +200,16 @@ function main(){
         getParam (html, result, 'min_used', /Накоплено\s*(\d+)\s*мин[^\s]*/, [/ |\xA0/, ""], parseInt);
 
         // Сумма по неоплаченным счетам: 786.02 руб. (оплатить до 24.03.2012)
-        getParam (html, result, 'debt', /Сумма по неоплаченным счетам.*?([-\d\.,]+)/i, [/ |\xA0/, "", ",", "."], parseFloat);
+        getParam (html, result, 'debt', /Сумма по неоплаченным счетам.*?([-\d\.,]+)/i, replaceFloat, parseFloat);
 
         // Сумма по неоплаченным счетам: 786.02 руб. (оплатить до 24.03.2012)
         getParam (html, result, 'pay_till', /оплатить до\s*([\d\.,\/]+)/i, [",", "."], parseTime);
 
         // Остаток трафика
-        getParam (html, result, 'traffic_left', /(?:Осталось|Остаток)[^\d]*(\d+,?\d* *(kb|mb|gb|кб|мб|гб))/i);
+        getParam (html, result, 'traffic_left', /(?:Осталось|Остаток)[^\d]*(\d+,?\d* *(kb|mb|gb|кб|мб|гб|байт|bytes))/i);
+        
+	// Остаток трафика
+        getParam (html, result, 'traffic_left_mb', /(?:Осталось|Остаток)[^\d]*(\d+,?\d* *(kb|mb|gb|кб|мб|гб|байт|bytes))/i, null, parseTraffic);
 
         // Лицевой счет
         getParam (html, result, 'license', /№ (.*?):/);
@@ -185,10 +218,10 @@ function main(){
         getParam (html, result, 'statuslock', /class="account-status-lock".*>(Номер [^<]*)</i);
 
         // Сумма кредитного лимита
-        getParam (html, result, 'credit', /Сумма кредитного лимита.*?([-\d\.,]+)/i, [",", "."], parseFloat);
+        getParam (html, result, 'credit', /Сумма кредитного лимита.*?([-\d\.,]+)/i, replaceFloat, parseFloat);
 
         // Расход за этот месяц
-        getParam (html, result, 'usedinthismonth', /Израсходовано .*?([\d\.,]+) руб/i, [",", "."], parseFloat);
+        getParam (html, result, 'usedinthismonth', /Израсходовано .*?([\d\.,]+) руб/i, replaceFloat, parseFloat);
     }
 
 
@@ -201,7 +234,7 @@ function main(){
         AnyBalance.trace("Parsing history...");
 
         // Расход за прошлый месяц
-        getParam (html, result, 'usedinprevmonth', /За период израсходовано .*?([\d\.,]+)/i, [",", "."], parseFloat);
+        getParam (html, result, 'usedinprevmonth', /За период израсходовано .*?([\d\.,]+)/i, replaceFloat, parseFloat);
     }
 
 
@@ -214,7 +247,7 @@ function main(){
         AnyBalance.trace("Parsing traffic info...");
 
         // Ежемесячная плата
-        getParam (html, result, 'monthlypay', /Ежемесячная плата[^\d]*([\d\.,]+)/i, [",", "."], parseFloat);
+        getParam (html, result, 'monthlypay', /Ежемесячная плата[^\d]*([\d\.,]+)/i, replaceFloat, parseFloat);
     }
 
     AnyBalance.setResult(result);

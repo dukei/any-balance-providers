@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-internet-sportmaster</id>
+  <name>Спортмастер</name>
+  <description>
+    Получает информацию по бонусной карте Спортмастер. Информация берется из личного кабинета http://www.sportmaster.ru/personal/bonus.php
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="cardnum" name="Номер карты" type="text"/>
+  </counters>
+  <keywords>
+    sportmaster, карта, бонус
+  </keywords>
+  <type>
+    bonus
+  </type>
+</provider>

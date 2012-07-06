@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-gorcomnet</id>
+  <id version="1">ab-internet-eldorado</id>
   <name>Клуб Эльдорадо</name>
   <description>
     Получает информацию по бонусной карте клуба постоянных покупателей Эльдорадо. Информация берется из личного кабинета http://www.club.eldorado.ru.

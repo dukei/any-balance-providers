@@ -137,8 +137,10 @@ function main(){
     regexp = /Security\.mvc\/LogOff/;
     if(regexp.exec(html))
     	AnyBalance.trace("It looks like we are in selfcare (found logOff)...");
-    else
+    else{
     	AnyBalance.trace("Have not found logOff... Wrong login and password or other error. Please contact author.");
+        throw new AnyBalance.Error("Не удаётся войти в интернет помощник. Возможно, проблемы на сайте. Попробуйте вручную войти в помощник по адресу http://ip.mts.ru/SELFCAREPDA.");
+    }
 
     // Тарифный план
     regexp=/Тарифный план.*?>(.*?)</;

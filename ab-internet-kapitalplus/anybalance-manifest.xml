@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-internet-kapitalplus</id>
+  <name>Капитал Плюс (Сахалин)</name>
+  <description>
+    Получает текущий баланс, трафик у сахалинского провайдера интернет и телефонии Капитал Плюс.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>md5-min.js</js>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="traffic_ext" name="Внеш.трафик" units="Мб"/>
+    <counter id="traffic_int" name="Внутр.трафик" units="Мб"/>
+    <counter id="abon" name="Абон.плата" units="р"/>
+    <counter id="account_id" name="№ аккаунта" type="text"/>
+  </counters>
+  <keywords>
+    провайдер интернет kapitalplus капитал+
+  </keywords>
+  <type>
+    internet
+  </type>
+</provider>

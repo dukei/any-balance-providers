@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-internet-sumtel</id>
+  <name>Сумма Телеком</name>
+  <description>
+    Получает баланс у федерального интернет провайдера Сумма Телеком, представленного
+в городах Санкт-Петербург, Нижний Новгород, Тула, Орел, Воронеж, Липецк, Ростов-на-Дону, Тверь, Краснодар, Махачкала, Каспийск.
+Данные извлекаются из личного кабинета https://stat.sumtel.ru/
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="abon" name="Абонентская плата" units="р"/>
+    <counter id="status" name="Статус" type="text"/>
+    <counter id="fio" name="Владелец" type="text"/>
+  </counters>
+  <keywords>
+    sumtel
+  </keywords>
+  <type>
+    internet
+  </type>
+</provider>

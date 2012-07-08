@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-internet-koptevo</id>
+  <name>Koptevo.net</name>
+  <description>
+Баланс, статус и трафик в текущем месяце у московского интернет провайдера Koptevo.net. Основными районами предоставления услуг 
+доступа в интернет являются район Коптево, Войковский (м. Войковская), Тимирязевский 
+(м. Тимирязевская), Печатники (м. Печатники).
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="status" name="Статус" type="text"/>
+    <counter id="trafficIn" name="Вх.трафик" units="Гб"/>
+    <counter id="trafficOut" name="Исх.трафик" units="Гб"/>
+  </counters>
+  <keywords>
+    
+  </keywords>
+  <type>
+    internet
+  </type>
+</provider>

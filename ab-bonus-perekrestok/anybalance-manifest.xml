@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="2">ab-bonus-perekrestok</id>
+  <id major_version="1.0" version="3">ab-bonus-perekrestok</id>
   <name>Перекресток</name>
   <description>
     Получает информацию о бонусах на карте Клуба Перекресток.
@@ -16,6 +16,7 @@
     <js>main.js</js>
     <js>keys.js</js>
     <js>common_functions.js</js>
+    <history>history.xml</history>
   </files>
   <counters>
     <counter id="balance" name="Баланс" units="б"/>

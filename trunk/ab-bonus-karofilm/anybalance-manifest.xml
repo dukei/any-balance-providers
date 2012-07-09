@@ -12,6 +12,7 @@
     <js>api:jquery.min.js</js>
     <js>main.js</js>
     <js>common_functions.js</js>
+    <history>history.xml</history>
   </files>
   <counters>
     <counter id="balance" name="Баланс" units="р"/>

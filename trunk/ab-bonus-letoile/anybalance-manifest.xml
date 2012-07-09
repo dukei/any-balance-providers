@@ -1,16 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="1">ab-bonus-letoile</id>
+  <id major_version="1.0" version="2">ab-bonus-letoile</id>
   <name>Л'Этуаль</name>
   <description>
     Получает информацию о бонусных баллах на клубных картах сети магазинов Л'Этуаль.	
   </description>
-  <author>iReset &lt;develop_ag@mail.ru&gt;</author>
+  <author>iReset &lt;ireset.ag@gmail.com&gt;</author>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
     <js>main.js</js>
     <js>common_functions.js</js>
+    <history>history.xml</history>
   </files>
   <counters>
     <counter id="balance" name="Баланс" units="р"/>

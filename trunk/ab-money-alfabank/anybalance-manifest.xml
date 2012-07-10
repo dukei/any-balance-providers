@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="3">ab-money-alfabank</id>
+  <id version="4">ab-money-alfabank</id>
   <name>Альфабанк</name>
   <description>
     Получает текущий остаток и другие параметры карт Альфабанка, используя систему Альфа.Click.
@@ -13,6 +13,7 @@
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
     <js>main.js</js>
+    <history>history.xml</history>
   </files>
   <counters>
     <counter id="balance" name="Остаток"/>

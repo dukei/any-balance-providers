@@ -19,20 +19,29 @@
         dialogMessage="Введите пароль, используемый для входа в систему Альфа.Click."
         inputType="textPassword">
     </EditTextPreference>
+    <ListPreference 
+        key="type" 
+        title="Что смотреть"
+        summary="||{@s}\n"
+        entries="Карта|Кредитный счет"
+        entryValues="card|credit"
+	defaultValue="card">
+    </ListPreference>
     <EditTextPreference 
         positiveButtonText="ОК"
         key="cardnum" 
-        dialogTitle="Номер карты"
+        dialogTitle="Номер карты/счета"
         negativeButtonText="Отмена"
-        title="Номер карты"
-        summary="Последние 4 цифры карты|Автоматически\n|{@s}\n"
-        dialogMessage="Введите последние 4 цифры карты, по которой вы хотите получить информацию. Если это поле оставить пустым, то будет показана информация по первой карте."
+        title="Номер карты/счета"
+        summary="Последние 4 цифры карты или счета|Автоматически\n|{@s}\n"
+        dialogMessage="Введите последние 4 цифры карты или кредитного счета, по которому вы хотите получить информацию. Если это поле оставить пустым, то будет показана информация по первой карте/счету."
         inputType="number">
     </EditTextPreference>
+<!-- Мобильный, кажется, умер.    
     <CheckBoxPreference
         title="Мобильный Альфа.Клик"
         defaultValue="false"
         summaryOn="Вход через мобильный Альфа.Клик (если он разрешен в основном Альфа.Клик)"
         summaryOff="Вход через основной Альфа.Клик"
-        key="usemobile" />
+        key="usemobile" /> -->
 </PreferenceScreen>

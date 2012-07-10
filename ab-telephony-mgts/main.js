@@ -9,7 +9,7 @@
 */
 
 function getParam (html, result, param, regexp, replaces, parser) {
-	if (param && !AnyBalance.isAvailable (param))
+	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
 		return;
 
 	var value = regexp.exec (html);
@@ -22,11 +22,21 @@ function getParam (html, result, param, regexp, replaces, parser) {
 		}
 		if (parser)
 			value = parser (value);
-        if(result && param)
-            return result[param] = value;
-        else
-            return value;
+
+    if(param)
+      result[param] = value;
+    else
+      return value
 	}
+}
+
+var replaceTagsAndSpaces = [/<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
+var replaceFloat = [/\s+/g, '', /,/g, '.'];
+
+function parseBalance(text){
+    var val = getParam(text.replace(/\s+/g, ''), null, null, /(-?\d[\d\s.,]*)/, replaceFloat, parseFloat);
+    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
+    return val;
 }
 
 function getViewState(html){
@@ -34,46 +44,33 @@ function getViewState(html){
 }
 
 function main(){
-    AnyBalance.setDefaultCharset("windows-1251");
+    AnyBalance.setDefaultCharset("utf-8");
     
-    var baseurl = "https://lk.mgts.ru/";
+    var baseurl = "https://ihelper.mgts.ru/CustomerSelfCare2/";
 	var prefs = AnyBalance.getPreferences();
     
-    var html = AnyBalance.requestGet(baseurl + "start.aspx");
+    var html = AnyBalance.requestGet(baseurl);
     var viewstate = getViewState(html);
 
-    var pin = prefs.password.substr(0, 8); //Слишком длинные пины тупо не воспринимаются
+    var pin = prefs.password; //.substr(0, 8); //Слишком длинные пины тупо не воспринимаются
     
-	html = AnyBalance.requestPost(baseurl + "start.aspx", {
-        __VIEWSTATE: viewstate,
-		txtPhone: prefs.login,
-		txtPIN: pin,
-        btnEnter: "Вход"
+    html = AnyBalance.requestPost(baseurl + "logon.aspx", {
+        	__VIEWSTATE: viewstate,
+		ctl00$MainContent$tbPhoneNumber: prefs.login,
+		ctl00$MainContent$tbPassword: pin,
+                ctl00$MainContent$btnEnter: "Вход"
     });
     
     $html = $(html);
-    var error = $.trim($html.find("#lblError").text());
+    var error = $.trim($html.find(".b_error").text());
     if(error)
         throw new AnyBalance.Error(error);
     
     var result = {success: true};
-    if(AnyBalance.isAvailable('balance','fio','licschet')){
-        html = AnyBalance.requestGet(baseurl + "CustomerInfo.aspx");
-        $html = $(html);
-        if(AnyBalance.isAvailable('balance')){
-            result.balance = parseFloat($html.find('#lblBalance').first().text().replace(/,/g, '.').replace(/\s+/g, ''));
-        }
-        if(AnyBalance.isAvailable('fio')){
-            result.fio = $html.find('#lblCustomerName').first().text();
-        }
-        if(AnyBalance.isAvailable('licschet')){
-            result.licschet = parseFloat($html.find('#lblUniqueNumber').first().text());
-        }
-    }
-    
-    var html = AnyBalance.requestGet(baseurl + "CustomerDeviceList.aspx");
-    var $html = $(html);
-    result.__tariff = $html.find("td.pageEnterText:contains('Тарифный план:')").next().text().replace(/\s*Категория:.*/i, '');
+    getParam(html, result, 'fio', /<h3[^>]*>([^<]*)/i, replaceTagsAndSpaces);
+    getParam(html, result, 'licschet', /Лицевой счет:\s*<strong[^>]*>([^<]*)/i, replaceTagsAndSpaces);
+    getParam(html, result, '__tariff', /Тарифный план:\s*<strong[^>]*>([^<]*?)\./i, replaceTagsAndSpaces);
+    getParam(html, result, 'balance', /"balance-value"[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
     
     AnyBalance.setResult(result);
 }

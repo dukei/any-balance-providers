@@ -8,7 +8,7 @@
 */
 
 function getParam (html, result, param, regexp, replaces, parser) {
-	if (param && !AnyBalance.isAvailable (param))
+	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
 		return;
 
 	var value = regexp.exec (html);
@@ -28,6 +28,9 @@ function getParam (html, result, param, regexp, replaces, parser) {
       return value
 	}
 }
+
+var replaceTagsAndSpaces = [/<!--[\s\S]*?-->/g, '', /&nbsp;/g, ' ', /<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
+var replaceFloat = [/\s+/g, '', /,/g, '.'];
 
 function main(){
     var prefs = AnyBalance.getPreferences();
@@ -59,6 +62,10 @@ function main(){
         //Ошибка какая-то случилась... Может, пароль неправильный
       	throw new AnyBalance.Error(res[1].replace(/<[^<>]+\/?>/g, ''));
     }
+
+    if (getParam(html, null, null, /("EcareLoginForm")/i))
+        //Ошибка какая-то случилась... Может, пароль неправильный
+      	throw new AnyBalance.Error('Билайн не пускает в кабинет даже без сообщения ошибки. Возможно, проблемы на сайте.');
     
     var corporate = /<title>[^<>]*Управление профилем[^<>]*<\/title>/i.test(html);
     if(!corporate)
@@ -89,6 +96,9 @@ function parsePersonal(baseurl, html){
     // Номер договора
     getParam (html, result, 'license', /Номер договора[\s\S]*?<td[^>]*>(.*?)</);
     
+    // Тарифный план
+    getParam (html, result, '__tariff', /Тарифный план:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/, replaceTagsAndSpaces, html_entity_decode);
+
     AnyBalance.trace("Fetching finantial info...");
 
     html = AnyBalance.requestPost(baseurl + "VIPLoadPrepaidCtnFinancialInfoAction.do", '');
@@ -96,14 +106,7 @@ function parsePersonal(baseurl, html){
     AnyBalance.trace("Parsing finantial info...");
 
     // Тарифный план
-    var tariff = getParam (html, null, null, /Текущий тарифный план[\s\S]*?<td>([\s\S]*?)<\/td>/, [/&nbsp;/g, ' ', /^\s+|\s+$/g, '']);
-    if (tariff) {
-        var $obj = $(tariff);
-        tariff = $obj.text ();
-        tariff = tariff.replace (/(^\s+|\s+$)/g, '');
-        if (tariff != '')
-            result.__tariff = html_entity_decode(tariff);
-    }
+//    getParam (html, result, '__tariff', /Текущий тарифный план[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/, replaceTagsAndSpaces, html_entity_decode);
     
     parseBalanceList(html, result);
 
@@ -218,13 +221,36 @@ function parseMinutes(str){
 }
 
 function parseDate(str){
-    AnyBalance.trace('Parsing date from value: ' + str);
     var matches = /(\d+)[^\d](\d+)[^\d](\d+)/.exec(str);
     var time = 0;
     if(matches){
 	  time = (new Date(+matches[3], matches[2]-1, +matches[1])).getTime();
     }
+    AnyBalance.trace('Parsing date ' + new Date(time) + 'from value: ' +  str);
     return time;
+}
+
+//Билайн показывает старый расчетый период.
+//Надо сделать новый, это ближайшее прошедшее число месяца
+function parsePeriod(str){
+    var time = parseDate(str);
+    if(!time)
+      return '—';
+
+    var now = new Date();
+    var endDay = new Date(time).getDate(); //Число конца прошлого периода
+    var startDate = new Date(time + 86400*1000); //Число начала текущего периода
+    var day = startDate.getDate();
+    var curStart = new Date(now.getFullYear(), now.getMonth(), day);
+    //Если перешли через границу месяца, то надо на первое число сбросить
+    if(curStart.getDate() < endDay) surStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    if(curStart > now) //Если перепрыгнули текущую дату, откатываемся на месяц назад
+        curStart = new Date(now.getFullYear(), now.getMonth()-1, day);
+    //Если снова перешли через границу месяца, то надо на первое число сбросить
+    if(curStart.getDate() < endDay) surStart = new Date(now.getFullYear(), now.getMonth(), day);
+
+    AnyBalance.trace("Computing period start from last period end: " + curStart + ' from ' + str);
+    return curStart.getTime();
 }
 
 function getStateParam(html){
@@ -246,15 +272,15 @@ function parseCorporate(baseurl, html){
 
     // Номер договора
     getParam (html, result, 'license', /Номер Договора[\s\S]*?<td[^>]*>\s*(.*?)\s*</, null, html_entity_decode);
-    
+
     var phone = AnyBalance.getPreferences().phone || AnyBalance.getPreferences().login;
     
     //Ссылка на финансовую информацию, похоже, только в кредитных корпоративных тарифных планах
     if(/'_navigation_primaryMenu=billing'/.test(html)){
       AnyBalance.trace("Found financial info link, trying to fetch balance and expences");
 
-      if(AnyBalance.isAvailable('balance')){
-        AnyBalance.trace("Fetching balance info...");
+      if(AnyBalance.isAvailable('balance', 'period_begin')){
+        AnyBalance.trace("Fetching balance and period info...");
 
         // Финансовая информация - платежи
         html = AnyBalance.requestPost(baseurl + "navigateMenu.do", {
@@ -264,6 +290,8 @@ function parseCorporate(baseurl, html){
 
         // Баланс
         getParam (html, result, 'balance', /Текущий баланс[\s\S]*?<td[^>]*>\s*([\s\S]*?)\s*</i, alltransformations, parseBalance);
+        // Начало расчетного периода
+        getParam (html, result, 'period_begin', /<select[^>]*name="dateList\.code"[^>]*>\s*<option[^>]*>([^<]*)/i, null, parsePeriod);
       }
 
       if(AnyBalance.isAvailable('expences','expencesTraffic','expencesAbon','expencesInstant')){
@@ -337,7 +365,7 @@ function parseCorporate(baseurl, html){
     var rStatus = new RegExp("<td>"+phone+"\\s*</td><td>.*?</td><td>(?:.*?)</td><td>.*?</td><td>.*?</td><td>(.*?)</td>");
 
     // Тарифный план
-    result.__tariff = getParam (html, null, null, rTariff, [/&nbsp;/g, ' ' , /^\s+|\s+$/g, ''], html_entity_decode);
+    getParam (html, result, '__tariff', rTariff, [/&nbsp;/g, ' ' , /^\s+|\s+$/g, ''], html_entity_decode);
 
     // Состояние номера
     getParam (html, result, 'BlockStatus', rStatus, [/&nbsp;/g, ' ' , /^\s+|\s+$/g, '']);
@@ -358,7 +386,7 @@ function parseCorporate(baseurl, html){
     });
 
     // Тарифный план
-    result.__tariff = getParam (html, null, null, /Название тарифного плана[\s\S]*?<td[^>]*>\s*(?:<a[^>]*>.*?<\/a>)[\s\-]*([\s\S]*?)\s*</, [/&nbsp;/g, ' ' , /^\s+|\s+$/g, ''], html_entity_decode);
+    getParam (html, result, '__tariff', /Название тарифного плана[\s\S]*?<td[^>]*>\s*(?:<a[^>]*>.*?<\/a>)[\s\-]*([\s\S]*?)\s*</, [/&nbsp;/g, ' ' , /^\s+|\s+$/g, ''], html_entity_decode);
 
     // Состояние номера
     getParam (html, result, 'BlockStatus', /Статус номера[\s\S]*?<td[^>]*>([\s\S]*?)</, [/&nbsp;/g, ' ' , /^\s+|\s+$/g, '']);

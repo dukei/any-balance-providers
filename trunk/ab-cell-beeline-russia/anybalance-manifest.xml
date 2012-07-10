@@ -1,39 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.3" version="16">ab-cell-beeline-russia</id>
+  <id major_version="1.3" version="17">ab-cell-beeline-russia</id>
   <name>Билайн (Россия, Узбекистан)</name>
   <description>
     Получает баланс, бонусный баланс, количество бесплатных SMS, MMS и минут, владельца, тарифный план и номер договора.
 Поддерживает корпоративные тарифные планы и для кредитных тарифов получает сумму, потраченную за текущий отчетный период.
 Поддерживает на текущий момент Россию и Узбекистан.
-
-    Новое в 1.3.16:
-      - Добавлена дата окончания действия смс-пакета
-
-    Новое в 1.3.15:
-      - Добавлены начисления за трафик, абонентская плата, разовые начисления для корпоративных тарифов
-
-    Новое в 1.3.14:
-      - Исправлена поддержка смс для корпоративных тарифов
-
-    Новое в 1.3.13:
-      - Поддержка минут и смс для кредитных тарифов
-
-    Новое в 1.3.10:
-      - Поддержка Узбекистана
-      - Исправлено редкое отображение нулевого баланса
   </description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
-    <js>api:jquery.min.js</js>
     <js>main.js</js>
+    <history>history.xml</history>
   </files>
   <counters>
     <counter id="balance" name="Баланс" units="р"/>
     <counter id="bonus_balance" name="Бонусный баланс" units="р"/>
-	<counter id="min_left" name="Минуты" units="мин" type="time_interval"/>
+    <counter id="min_left" name="Минуты" units="мин" type="time_interval"/>
     <counter id="sms_left" name="SMS" units="sms"/>
     <counter id="mms_left" name="MMS" units="mms"/>
     <counter id="expences" name="Потрачено за период (корп.)" units="р"/>
@@ -44,6 +28,7 @@
     <counter id="expencesTraffic" name="Начисления за трафик (корп.)" units="р"/>
     <counter id="expencesAbon" name="Начисления абон.платы (корп.)" units="р"/>
     <counter id="expencesInstant" name="Разовые начисления (корп.)" units="р"/>
+    <counter id="period_begin" name="Начало расчетного периода (корп.)" type="time"/>
   </counters>
   <keywords>
     Сотовый телефон, мобильный, мобильник, beeline, россия, узбекистан, корпоративный, предоплатный, кредитный

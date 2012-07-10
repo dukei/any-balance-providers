@@ -14,15 +14,15 @@ function main(){
 	var htmlinfo = AnyBalance.requestGet(baseurl);
     var result = {success: true};
     
-    var res,regexp = /Курсы валют<\/h2>\D*USD\D*([\d\.]*)\/([\d\.]*)\D*([\d\,]*)\D*EUR\D*([\d\.]*)\/([\d\.]*)\D*([\d\,]*)\D*([\d\.\/]*)\./;
+    var res,regexp = /currency\W*h2\W*h2\D*USD\D*([\d\.,]*)\/([\d\.,]*)\D*([\d\.,]*)\D*EUR\D*([\d\.,]*)\/([\d\.,]*)\D*([\d\,]*)\D*([\d\.\/]*)\./;
 	
 	if(res=regexp.exec(htmlinfo)) {
 		result.USD = parseFloat(res[3].split(',').join('.'));
-		result.USD_out = parseFloat(res[2]);
-		result.USD_in = parseFloat(res[1]);
+		result.USD_out = parseFloat(res[2].split(',').join('.'));
+		result.USD_in = parseFloat(res[1].split(',').join('.'));
 		result.EUR = parseFloat(res[6].split(',').join('.'));
-		result.EUR_out = parseFloat(res[5]);
-		result.EUR_in = parseFloat(res[4]);
+		result.EUR_out = parseFloat(res[5].split(',').join('.'));
+		result.EUR_in = parseFloat(res[4].split(',').join('.'));
 		result.date = res[7];
 		result.RUB_summa = result[prefs.currency.toUpperCase()+'_out']*parseFloat(prefs.cur_summa);
 	}

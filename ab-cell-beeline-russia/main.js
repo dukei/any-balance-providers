@@ -235,7 +235,7 @@ function parseDate(str){
 function parsePeriod(str){
     var time = parseDate(str);
     if(!time)
-      return '—';
+      return 0;
 
     var now = new Date();
     var endDay = new Date(time).getDate(); //Число конца прошлого периода

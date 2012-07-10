@@ -64,10 +64,16 @@ function main(){
         processClick();
 }
 
+var g_phrases = {
+   karty: {card: 'карты', credit: 'кредитного счета'},
+   karte1: {card: 'первой карте', credit: 'первому счету'}
+}
+
 function processClick(){
     var prefs = AnyBalance.getPreferences();
+    var type = prefs.type || 'card'; //По умолчанию карта
     if(prefs.cardnum && !/\d{4}/.test(prefs.cardnum))
-        throw new AnyBalance.Error("Введите 4 последних цифры номера карты или не вводите ничего, чтобы показать информацию по первой карте");
+        throw new AnyBalance.Error("Введите 4 последних цифры номера " + g_phrases.karty[type] + " или не вводите ничего, чтобы показать информацию по " + g_phrases.karte1[type]);
 
     var baseurl = "https://click.alfabank.ru/ALFAIBSR/";
     
@@ -105,7 +111,10 @@ function processClick(){
     if(!nexturl)
         throw new AnyBalance.Error('Не удаётся найти адрес главной внутренней страницы');
 
-    getCardsInfo(baseurl + nexturl);
+    if(type == 'credit')
+    	getCreditInfoFull(baseurl + nexturl);
+    else
+    	getCardsInfo(baseurl + nexturl);
 }
 
 function processMobile(){
@@ -136,6 +145,18 @@ function processMobile(){
         throw new AnyBalance.Error(error);
 
     getCardsInfo(baseurl);
+    
+}
+
+function getCreditInfoFull(baseurl){
+    var prefs = AnyBalance.getPreferences();
+    var accnum = prefs.cardnum || '\\d{4}';
+
+    var result = {success: true};
+    
+    getCreditInfo(baseurl, result, accnum, true);
+
+    AnyBalance.setResult(result);
 }
 
 function getCardsInfo(baseurl){
@@ -156,6 +177,7 @@ function getCardsInfo(baseurl){
     var result = {success: true};
     
     getParam(html, result, 'cardnum', /Номер карты:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, '__tariff', /Номер карты:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'userName', /ФИО держателя карты:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'till', /Срок действия карты:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'accnum', /Номер счета:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
@@ -167,27 +189,44 @@ function getCardsInfo(baseurl){
         var accnum = getParam(html, null, null, /Номер счета:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
         if(!accnum)
             throw new AnyBalance.Error('Не удалось найти номер счета карты!');
-   
-    	html = AnyBalance.requestPost(baseurl, {command:'balances_listMyLoans'});
 
-        var loanidx = getParam(html, null, null, new RegExp("'creditDetail_accountDetail',\\s*'([^']*)'[^<]*" + accnum, 'i'));
-        if(!loanidx)
-            throw new AnyBalance.Error('Невозможно найти кредитную информацию по карте!');
-
-        html = AnyBalance.requestPost(baseurl, {command:'creditDetail_accountDetail', custom1: loanidx});
-        
-        getParam(html, result, 'topay', /Сумма к оплате:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-        getParam(html, result, 'paytill', /Оплатить до:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
-        getParam(html, result, 'minpay', /Минимальный платеж:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-        getParam(html, result, 'penalty', /Штрафы:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-        getParam(html, result, 'late', /Просроченная задолженность:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-        getParam(html, result, 'overdraft', /Несанкционированный перерасход:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-        getParam(html, result, 'limit', /Установленный кредитный лимит:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-        getParam(html, result, 'debt', /Общая задолженность:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-        getParam(html, result, 'gracetill', /Дата окончания льготного периода:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+        getCreditInfo(baseurl, result, accnum);
     }
 
     AnyBalance.setResult(result);
+}
+
+function getCreditInfo(baseurl, result, accnum, creditonly){
+    var html = AnyBalance.requestPost(baseurl, {command:'balances_listMyLoans'});
+
+    var loanidx = getParam(html, null, null, new RegExp("'creditDetail_accountDetail',\\s*'([^']*)'[^<]*" + accnum + '[^\d]', 'i'));
+    if(!loanidx)
+        if(!creditonly){
+            throw new AnyBalance.Error('Невозможно найти информацию по кредитному счету ' + accnum + '!');
+        }else{
+            throw new AnyBalance.Error('Невозможно найти информацию ' + (/\d{4}/.test(accnum) ? 'по счету с последними цифрами ' + accnum : 'ни по одному кредитному счету') + '!');
+        }
+
+    if(creditonly){
+        getParam(html, result, 'accnum', new RegExp("'creditDetail_accountDetail',\\s*'" + loanidx + "'[^<]*(\\d{20})", 'i'), replaceTagsAndSpaces, html_entity_decode);
+        getParam(html, result, '__tariff', new RegExp("'creditDetail_accountDetail',\\s*'" + loanidx + "'[^<]*(\\d{20})", 'i'), replaceTagsAndSpaces, html_entity_decode);
+    }
+
+    html = AnyBalance.requestPost(baseurl, {command:'creditDetail_accountDetail', custom1: loanidx});
+    
+    getParam(html, result, 'topay', /Сумма к оплате:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'paytill', /Оплатить до:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+    getParam(html, result, 'minpay', /Минимальный платеж:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'penalty', /Штрафы:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'late', /Просроченная задолженность:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'overdraft', /Несанкционированный перерасход:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'limit', /Установленный кредитный лимит:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'debt', /Общая задолженность:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'gracetill', /Дата окончания льготного периода:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+
+    if(creditonly){
+        getParam(html, result, 'balance', /Доступный лимит:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    }
 }
 
 function html_entity_decode(str)

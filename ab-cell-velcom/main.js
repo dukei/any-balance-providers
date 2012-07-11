@@ -59,7 +59,7 @@ function main(){
     var phone = matches[2];
     var prefix = matches[1];
     
-    var html = AnyBalance.requestGet(baseurl + 'work.html');
+    var html = AnyBalance.requestGet(baseurl/* + 'work.html'*/);
     var sid = getParam(html, null, null, /name="sid3" value="([^"]*)"/i);
     if(!sid)
 	throw new AnyBalance.Error('Не удалось найти идентификатор сессии!');

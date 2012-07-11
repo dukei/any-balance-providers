@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-telephony-voip-discount</id>
+  <id version="2">ab-telephony-voip-discount</id>
   <name>VoipDiscount</name>
   <description>
     Получает текущий баланс, бесплатные дни у провайдера IP-телефонии VoipDiscount.

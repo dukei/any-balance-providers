@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+    <id version="1" major_version="1.0">ab-money-iqtech</id>
+    <name>Карта учащегося (iQTech)</name>
+    <type>money</type>
+    <description>
+        Показывает баланс на карте учащегося школьника, предоставленной компанией iQTech (Татарстан).
+        Данные берутся из личного кабинета http://iqtech.org/iq/cabinet.html
+    </description>
+    <author>Sergeev Roman &lt;nm666.srv@gmail.com&gt;</author>
+    <files>
+        <icon>icon.png</icon>
+        <preferences>preferences.xml</preferences>
+        <js>main.js</js>
+    </files>
+    <counters>
+        <counter id="balanceValue" name="Баланс" suffix=" р." type="numeric" />
+        <counter id="overdraftValue" name="Овердрафт" suffix=" р." type="numeric" />
+        <counter id="childName" name="ФИО ребенка" type="text" />
+        <counter id="contractNumber" name="Номер договора" type="text" />
+    </counters>
+</provider>

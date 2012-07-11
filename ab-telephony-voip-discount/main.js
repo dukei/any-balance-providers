@@ -42,6 +42,11 @@ function html_entity_decode(str)
     return tarea.value;
 }
 
+function parseBalance(text){
+    var val = getParam(text.replace(/\s+/g, ''), null, null, /(-?\d[\d\s.,]*)/, replaceFloat, parseFloat);
+    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
+    return val;
+}
 
 function main(){
     var prefs = AnyBalance.getPreferences();
@@ -72,8 +77,8 @@ function main(){
 
     var matches;
 
-    getParam(info, result, 'balance', /Remaining credit:[\s\S]*?<b[^>]*>[^<]*?(-?\d[\d\s\.,]*)/i, replaceFloat, parseFloat);
-    getParam(info, result, 'freedays', /Freedays remaining:[\s\S]*?<b[^>]*>(\d+)/i, replaceFloat, parseFloat);
+    getParam(info, result, 'balance', /<span[^>]*class="balance"[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(info, result, 'freedays', /<span[^>]*class="freedays"[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
     result.__tariff = prefs.login;
 		
     AnyBalance.setResult(result);

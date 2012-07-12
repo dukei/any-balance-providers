@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.2" version="18">ab-cell-mts-russia</id>
+  <id major_version="1.2" version="19">ab-cell-mts-russia</id>
   <name>МТС (Россия)</name>
   <description>
     Получает баланс, использованные минуты на локальные, мобильные и любимые номера, информацию о расходах, статус блокировки, кредит, номер лицевого счета, ежемесячую плату.
@@ -32,6 +32,7 @@
     <counter id="monthlypay" name="Ежемесячная плата" units="р"/>
     <counter id="phone" name="Номер телефона" type="text"/>
     <counter id="traffic_left" name="Остаток трафика (как в помощнике)" type="text"/>
+    <counter id="bonus_balance" name="Остаток бонуса" units="р"/>
   </counters>
   <keywords>
     Сотовый телефон, мобильный, мобильник, mts, россия

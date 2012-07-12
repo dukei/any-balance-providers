@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change major_version="1.2" version="19" date="2012-07-12">
+      - Добавлен учет пакета минут
+      - Добавлен счетчик бонусного баланса (если отображается в интернет-помощнике)
+    </change>
     <change major_version="1.2" version="18" date="2012-07-07">
       - Исправлен для ведения истории версий
     </change>

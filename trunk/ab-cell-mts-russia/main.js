@@ -186,6 +186,9 @@ function main(){
         // Остаток минут по тарифу "Готовый офис" - 194 минут
         getParam (html, result, 'min_left', /Остаток мин.*?([\d\.,]+)\s*мин/i, replaceFloat, parseFloat);
 
+        // Остаток пакета: 24 минут
+        getParam (html, result, 'min_left', /Остаток пакета:?\s*([\d\.,]+)\s*мин/i, replaceFloat, parseFloat);
+
         // Использовано: 0 минут местных и мобильных вызовов.
         getParam (html, result, 'min_local', /Использовано:\s*([\d\.,]+)\s*мин[^\s]* местных/, replaceFloat, parseFloat);
 
@@ -224,6 +227,9 @@ function main(){
 
         // Расход за этот месяц
         getParam (html, result, 'usedinthismonth', /Израсходовано .*?([\d\.,]+) руб/i, replaceFloat, parseFloat);
+
+	//Остаток бонуса 100 руб
+        getParam (html, result, 'bonus_balance', /Остаток бонуса:?\s*([\d\.,]+)\s*р/i, replaceFloat, parseFloat);
     }
 
 

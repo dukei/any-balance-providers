@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-money-promsvaz</id>
+  <name>Промсвязьбанк</name>
+  <description>
+    Получает текущий остаток и другие параметры карт Промсвязьбанка, используя интернет-банк. Для пользования этим провайдером 
+вам необходимо иметь доступ в интернет банк по адресу https://retail.payment.ru .
+
+    Внимание! Для работы провайдера требуется отказаться от подтверждения входа в систему Интернет-банк
+одноразовым паролем. Но не беспокойтесь, 
+отключение подтверждения даёт возможность только зайти в систему,
+в целях безопасности НЕВОЗМОЖНО отключить подтверждение одноразовым паролем переводов и платежей организациям или частным лицам.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+    <js>api:jquery.min.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Остаток"/>
+    <counter id="currency" name="Валюта" type="text"/>
+    <counter id="cardnum" name="Номер карты" type="text"/>
+    <counter id="type" name="Тип карты" type="text"/>
+    <counter id="balance_own" name="Собственные средства"/>
+    <counter id="blocked" name="Заблокировано"/>
+    <counter id="accnum" name="Номер счета" type="text"/>
+  </counters>
+  <keywords>
+    промсвязьбанк, промсвязь, psb retail
+  </keywords>
+  <type>
+    money
+  </type>
+</provider>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-freedom</id>
+  <id version="2">ab-internet-freedom</id>
   <name>FreeDom - интернет провайдер (Воронеж)</name>
   <description>
     Получает баланс и информацию о тарифном плане для воронежского интернет провайдера FreeDom. Информация берется из личного кабинета https://statserv.freedom-vrn.ru.
@@ -10,6 +10,7 @@
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
     <js>main.js</js>
+    <history>history.xml</history>
   </files>
   <counters>
     <counter id="balance" name="Баланс" units="р"/>

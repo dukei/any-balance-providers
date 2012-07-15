@@ -3,7 +3,7 @@
   <id version="1">ab-telephony-comtube</id>
   <name>ComTube</name>
   <description>
-    Получает текущий баланс, бесплатные дни у провайдера IP-телефонии ComTube.
+    Получает текущий баланс, валюту счета и номер внутри системы у провайдера IP-телефонии ComTube.
     Сайт провайдера: http://www.comtube.com
   </description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>

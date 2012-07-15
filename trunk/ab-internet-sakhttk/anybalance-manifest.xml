@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-internet-sakhttk</id>
+  <name>ТТК-Сахалин</name>
+  <description>
+    Получает текущий баланс у сахалинского провайдера интернет ТТК-Сахалин.
+Сеть связи ТТК-Сахалин является составной частью магистральной цифровой сети связи компании ТТК.
+Личный кабинет: https://issa.sakhttk.ru/
+</description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="timeleft" name="Отключение через" units="дн"/>
+    <counter id="licschet" name="Л/c" type="text"/>
+  </counters>
+  <keywords>
+    провайдер интернет ТТК-Сахалин
+  </keywords>
+  <type>
+    internet
+  </type>
+</provider>

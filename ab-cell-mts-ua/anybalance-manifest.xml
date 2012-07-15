@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id major_version="1.0" version="2">ab-cell-mts-by</id>
+  <name>МТС (Украина)</name>
+  <description>
+    Получает баланс, минуты, смс, ммс, информацию о расходах, номер лицевого счета, ежемесячую плату и др.
+Получает данные из PDA версии интернет-помощника https://ihelper-prp.mts.com.ua/SelfCarePda/ .
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="грн"/>
+    <counter id="min_left" name="Бесплатные минуты" type="time_interval" format="{@Min}" />
+    <counter id="min_net" name="Бесплатные минуты внутри сети" type="time_interval" format="{@Min}" />
+    <counter id="min_net_all" name="Бесплатные минуты внутри сети во всех областях" type="time_interval" format="{@Min}" />
+    <counter id="sms_left" name="Бесплатные СМС" units=" sms"/>
+    <counter id="mms_left" name="Бесплатные ММС" units=" mms"/>
+    <counter id="traffic_left_mb" name="Остаток трафика" units="mb"/>
+    <counter id="bonus_balance" name="Денежный бонусный счет" units="грн"/>
+    <counter id="usedinthismonth" name="Расход за этот месяц" units="грн"/>
+<!--    <counter id="usedinprevmonth" name="Расход за прошлый месяц" units="грн"/> Че-то не показывается в лк -->
+    <counter id="license" name="Лицевой счет" type="text"/>
+    <counter id="monthlypay" name="Ежемесячная плата" units="грн"/>
+    <counter id="phone" name="Номер телефона" type="text"/>
+  </counters>
+  <keywords>
+    Сотовый телефон, мобильный, мобильник, mts, украина
+  </keywords>
+  <type>
+    cell
+  </type>
+</provider>

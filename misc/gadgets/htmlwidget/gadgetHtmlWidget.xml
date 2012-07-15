@@ -16,7 +16,7 @@ limitations under the License.
 -->
 <Module>
   <ModulePrefs title="AnyBalance HTML Widget Template Editor" 
-    title_url="http://code.google.com/p/any-balance-providers"
+    title_url="https://code.google.com/p/any-balance-providers"
     directory_title="AnyBalance HTML Widget Template Editor"
     description="Visual Editor for AnyBalance HTML Widget Templates"
     author="Dmitry Kochin"
@@ -30,11 +30,11 @@ limitations under the License.
   <Content type="html">
     <![CDATA[
     
-<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
-<script language="javascript" type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
-<script language="javascript" type="text/javascript" src="http://any-balance-providers.googlecode.com/svn/misc/gadgets/htmlwidget/edit_area/edit_area_full.js"></script>
-<script language="javascript" type="text/javascript" src="http://any-balance-providers.googlecode.com/svn/misc/gadgets/htmlwidget/gadgetHtmlWidget.js"></script>
+<link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
+<script language="javascript" type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
+<script language="javascript" type="text/javascript" src="https://any-balance-providers.googlecode.com/svn/misc/gadgets/htmlwidget/edit_area/edit_area_full.js"></script>
+<script language="javascript" type="text/javascript" src="https://any-balance-providers.googlecode.com/svn/misc/gadgets/htmlwidget/gadgetHtmlWidget.js"></script>
 
 <style>
     div#widget_preview{

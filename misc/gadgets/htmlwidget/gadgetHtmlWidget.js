@@ -165,6 +165,8 @@ function onChangeText(){
     }
     
     val = editAreaLoader.getValue("textarea_1");
+    if(val)
+        val = val.replace(/<\/?@if[^>]*>/ig, '');
     $('#widget_preview').html(val || previewText);
     localAdjust();
 }

@@ -8,7 +8,8 @@
 var predefined = [
       "1 ряд",
       "2 ряда (4:3)",
-      "4 ряда (2:2:2:1)"
+      "4 ряда (2:2:2:1)",
+      "1 главный + 4"
 ];
 
 var predefinedValues = [
@@ -112,7 +113,45 @@ var predefinedValues = [
 \u0020\u0020\u0020\u0020(@6)<br/>\n\
 \u0020\u0020\u0020\u0020<small><font color=\"#CCCCCC\">(@6*m) / (@6*d)</font></small>\n\
 \u0020\u0020</td>\n\
-</tr></table>"
+</tr></table>",
+
+"<table>\n\
+<tr><td ifavailable=\"0\">\n\
+\u0020\u0020<big>(@0n!ellipsize:10)</big><br/>\n\
+\u0020\u0020<big>(@0)</big><br/>\n\
+\u0020\u0020<font size=\"1\" color=\"(@color:diff)\">(@0*m) / (@0*l)</font><br/>\n\
+</td><td ifavailable=\"1234\">\n\
+\u0020\u0020<font size=\"2\" color=\"(@color:diff)\">\n\
+\u0020\u0020\u0020\u0020<@if ifavailable=\"1\">\n\
+\u0020\u0020\u0020\u0020\u0020\u0020(@1n!ellipsize:12)<br/>\n\
+\u0020\u0020\u0020\u0020</@if>\n\
+\u0020\u0020\u0020\u0020<@if ifavailable=\"2\">\n\
+\u0020\u0020\u0020\u0020\u0020\u0020(@2n!ellipsize:12)<br/>\n\
+\u0020\u0020\u0020\u0020</@if>\n\
+\u0020\u0020\u0020\u0020<@if ifavailable=\"3\">\n\
+\u0020\u0020\u0020\u0020\u0020\u0020(@3n!ellipsize:12)<br/>\n\
+\u0020\u0020\u0020\u0020</@if>\n\
+\u0020\u0020\u0020\u0020<@if ifavailable=\"4\">\n\
+\u0020\u0020\u0020\u0020\u0020\u0020(@4n!ellipsize:12)<br/>\n\
+\u0020\u0020\u0020\u0020</@if>\n\
+\u0020\u0020</font>\n\
+</td><td ifavailable=\"1234\">\n\
+\u0020\u0020<font size=\"2\">\n\
+\u0020\u0020\u0020\u0020<@if ifavailable=\"1\">\n\
+\u0020\u0020\u0020\u0020\u0020\u0020(@1)<br/>\n\
+\u0020\u0020\u0020\u0020</@if>\n\
+\u0020\u0020\u0020\u0020<@if ifavailable=\"2\">\n\
+\u0020\u0020\u0020\u0020\u0020\u0020(@2)<br/>\n\
+\u0020\u0020\u0020\u0020</@if>\n\
+\u0020\u0020\u0020\u0020<@if ifavailable=\"3\">\n\
+\u0020\u0020\u0020\u0020\u0020\u0020(@3)<br/>\n\
+\u0020\u0020\u0020\u0020</@if>\n\
+\u0020\u0020\u0020\u0020<@if ifavailable=\"4\">\n\
+\u0020\u0020\u0020\u0020\u0020\u0020(@4)<br/>\n\
+\u0020\u0020\u0020\u0020</@if>\n\
+\u0020\u0020</font>\n\
+</td></tr>\n\
+</table>"
 ];
 
 var previewText = "Выберите шаблон или отредактируйте шаблон вручную и кликните здесь для предварительного просмотра";

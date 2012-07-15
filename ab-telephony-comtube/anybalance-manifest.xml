@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-telephony-comtube</id>
+  <name>ComTube</name>
+  <description>
+    Получает текущий баланс, бесплатные дни у провайдера IP-телефонии ComTube.
+    Сайт провайдера: http://www.comtube.com
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс"/>
+    <counter id="currency" name="Валюта" type="text"/>
+    <counter id="number" name="Номер ComTube" type="text"/>
+  </counters>
+  <keywords>
+    IP-телефония
+  </keywords>
+  <type>
+    telephony
+  </type>
+</provider>

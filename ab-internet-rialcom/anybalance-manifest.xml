@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-internet-rialcom</id>
+  <name>РиалКом</name>
+  <description>
+    Получает баланс и информацию о тарифном плане для подмосковного интернет-провайдера РиалКом. Информация берется из личного кабинета http://stat.rialcom.ru.
+    ЗАО "РиалКом" - телекоммуникационная компания, предоставляющая весь комплекс услуг связи на территории Москвы и Московской области. Компания является крупнейшим 
+    на Юге Московской области альтернативным оператором связи и располагает наибольшей по протяженности современной оптоволоконной мультисервисной телекоммуникационной сетью.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <!-- <counter id="payments" name="Платежи в текущем месяце" units="р"/> 
+    <counter id="trafficIn" name="Входящий трафик в текущем месяце" units="Gb"/> -->
+    <counter id="credit" name="Кредит" units="р"/>
+    <counter id="licschet" name="Лицевой счет" type="text"/>
+    <counter id="userName" name="ФИО" type="text"/>
+  </counters>
+  <keywords>
+    интернет, серпухов, Щербинка, Подольск, Климовск, Чехов, Серпухов, Пущино
+  </keywords>
+  <type>
+    internet
+  </type>
+</provider>

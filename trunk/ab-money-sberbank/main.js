@@ -58,6 +58,12 @@ function main(){
     var baseurl = "https://esk.sbrf.ru/";
     AnyBalance.setDefaultCharset('utf-8');
 
+    if(prefs.__debug == 'esk'){
+      //Чтобы карты оттестировать
+      readEskCards();
+      return;
+    }
+
     if(!prefs.login)
         throw new AnyBalance.Error("Пожалуйста, укажите логин для входа в Сбербанк-Онлайн!");
     if(!prefs.password)
@@ -91,16 +97,19 @@ function main(){
     if(!page)
         throw new AnyBalance.Error("Не удаётся найти ссылку на информацию по картам. Пожалуйста, обратитесь к автору провайдера для исправления ситуации.");
     
+    AnyBalance.trace("About to authorize: " + page);
+
     if(/esk.zubsb.ru/.test(page)) //Пока только это поддерживается
         doOldAccount(page);
     else if(/online.sberbank.ru\/PhizIC/.test(page))
-        doNewAccountPhysic(page);
+        doNewAccount(page);
     else
         throw new AnyBalance.Error("К сожалению, ваш вариант Сбербанка-онлайн пока не поддерживается. Пожалуйста, обратитесь к автору провайдера для исправления ситуации.");
-
 }
 
 function doOldAccount(page){
+    AnyBalance.trace('Entering old account...');
+
     var html = AnyBalance.requestGet(page);
     var prefs = AnyBalance.getPreferences();
 
@@ -147,8 +156,82 @@ function doOldAccount(page){
     AnyBalance.setResult(result);
 }
 
-function doNewAccountPhysic(page){
+function doNewAccount(page){
     var html = AnyBalance.requestGet(page);
+    if(/PhizIC/.test(html)){
+      return doNewAccountPhysic(html);
+    }else{
+      return doNewAccountEsk(html);
+    }
+}
+
+function doNewAccountEsk(html){
+    AnyBalance.trace('Entering esk account...');
+    
+    var baseurl = 'https://esk.sbrf.ru';
+    //self.location.href='/esClient/Default.aspx?Page=1&qs=AuthToken=d80365e0-4bfd-41a1-80a1-b24847ae3e94&i=1'
+    var page = getParam(html, null, null, /self\.location\.href\s*=\s*'([^'"]*?AuthToken=[^'"]*)/i);
+    if(!page)
+        throw new AnyBalance.Error("Не удаётся найти ссылку на информацию по картам (esk). Пожалуйста, обратитесь к автору провайдера для исправления ситуации.");
+
+    var token = getParam(page, null, null, /AuthToken=([^&]*)/i);
+  
+    //Переходим в лк esk (Типа логинимся автоматически)
+    html = AnyBalance.requestGet(baseurl + page);
+    //Зачем-то ещё логинимся 
+    html = AnyBalance.requestGet(baseurl + '/esClient/_logon/MoveToCards.aspx?AuthToken='+token+'&i=1&supressNoCacheScript=1');
+    
+    //AnyBalance.trace(html);
+    
+    readEskCards();
+}
+
+function readEskCards(){
+    var baseurl = 'https://esk.sbrf.ru';
+    //Получаем карты
+    var prefs = AnyBalance.getPreferences();
+
+    AnyBalance.trace("Reading card list...");
+    var html = AnyBalance.requestGet(baseurl + '/esClient/_s/CardsDepositsAccounts.aspx');
+    //AnyBalance.trace(html);
+
+    var lastdigits = prefs.lastdigits ? prefs.lastdigits : '\\d{4}';
+    
+    var baseFind = 'Мои банковские карты[\\s\\S]*?<a\\s[^>]*href="[^"]{6,}"[^>]*>[^<]*?';
+    var reCard = new RegExp('Мои банковские карты[\\s\\S]*?<a\\s[^>]*href="([^"]{6,})"[^>]*>[^<]*?\\*\\*\\*' + lastdigits, 'i');
+    var reCardNumber = new RegExp(baseFind + '(\\d+\\*\\*\\*' + lastdigits + ')', 'i');
+    var reBalanceContainer = new RegExp(baseFind + '\\*\\*\\*' + lastdigits + '[\\s\\S]*?<td[^>]*>([\\S\\s]*?)<\\/td>', 'i');
+    var cardref = getParam(html, null, null, reCard);
+    if(!cardref)
+        if(prefs.lastdigits)
+          throw new AnyBalance.Error("Не удаётся найти ссылку на информацию по карте с последними цифрами " + prefs.lastdigits);
+        else
+          throw new AnyBalance.Error("Не удаётся найти ни одной карты");
+        
+    var result = {success: true};
+    getParam(html, result, 'cardNumber', reCardNumber);
+    getParam(html, result, 'balance', reBalanceContainer, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'currency', reBalanceContainer, replaceTagsAndSpaces, parseCurrency);
+    getParam(html, result, '__tariff', reCardNumber, replaceTagsAndSpaces);
+    
+    if(AnyBalance.isAvailable('userName', 'cardName', 'till','status','cash','debt','minpay','electrocash','maxcredit')){
+      html = AnyBalance.requestGet(baseurl+'/esClient/_s/' + cardref);
+      getParam(html, result, 'userName', /Имя держателя:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+      getParam(html, result, 'status', /Статус:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+      getParam(html, result, 'till', /Срок действия:[\s\S]*?<td[^>]*>\s*по\s*([^<\s]*)/i, replaceTagsAndSpaces);
+      getParam(html, result, 'cash', /Доступно наличных[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+      getParam(html, result, 'electrocash', /Доступно для покупок[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+      getParam(html, result, 'debt', /Сумма задолженности[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+      getParam(html, result, 'minpay', /Сумма минимального платежа[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+      getParam(html, result, 'maxcredit', /Лимит кредита[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    }
+
+    AnyBalance.setResult(result);
+}
+
+function doNewAccountPhysic(html){
+    AnyBalance.trace('Entering physic account...');
+
     if(/confirmTitle/.test(html))
           throw new AnyBalance.Error("Ваш личный кабинет требует одноразовых паролей для входа. Пожалуйста, отмените в настройках кабинета требование одноразовых паролей при входе. Это безопасно: для совершения денежных операций требование одноразового пароля всё равно останется.");
 

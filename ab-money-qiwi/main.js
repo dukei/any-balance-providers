@@ -24,9 +24,9 @@ function main () {
     AnyBalance.trace ('Trying to enter selfcare at address: ' + baseurl);
     var info = AnyBalance.requestGet (baseurl +
                                       'login.action?source=0&phone=7' +
-                                      prefs.login +
+                                      encodeURIComponent(prefs.login) +
                                       '&password=' +
-                                      prefs.password +
+                                      encodeURIComponent(prefs.password) +
                                       '&captcha=0&callback=jsonp');
     AnyBalance.trace ('Login result: ' + info);
 
@@ -61,8 +61,7 @@ function main () {
     var html = AnyBalance.requestGet (baseurl + 'userdata.action');
 
     // Проверка на корректный вход
-    regexp = /<h1>Кошелёк:/i;
-    if (regexp.exec(html))
+    if (/<h1>Кошелёк:/i.exec(html))
     	AnyBalance.trace ('It looks like we are in selfcare...');
     else {
         AnyBalance.trace ('Have not found logout... Unknown error. Please contact author.');

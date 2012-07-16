@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-cell-motiv</id>
+  <name>Мотив Телеком</name>
+  <description>
+    Получает баланс и информацию о тарифном плане для сотового оператора Мотив.
+    Информация берется из ЛИСА (Личного Интернет Сервиса Абонента) https://lisa.motivtelecom.ru
+
+    Если у вас ещё нет пароля для входа в ЛИСА, вы можете его получить. Чтобы заказать пароль, Вам необходимо 
+    отправить с Вашего телефонного аппарата пустое (или с любым текстом) SMS-сообщение на выделенный короткий 
+    номер 1070. В ответ Вы получите пароль для доступа в ЛИСА. Эта возможность не предоставляется 
+    корпоративным абонентам.
+
+    В настоящее время поддерживается вход в ЛИСУ только по номеру телефона. Не поддерживаются остатки по пакетам услуг.
+    Если вам этого не хватает, пожалуйста, напишите письмо автору провайдера для доработки.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="userName" name="Владелец" type="text"/>
+    <counter id="tarification" name="Тарификация" type="text"/>
+    <counter id="phone" name="Номер телефона" type="text"/>
+  </counters>
+  <keywords>
+    Сотовый телефон, мобильный, мобильник, мотив, екатеринбург, пермь
+  </keywords>
+  <type>
+    cell
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

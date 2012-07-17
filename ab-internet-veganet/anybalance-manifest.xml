@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-rialcom</id>
+  <id version="1">ab-internet-veganet</id>
   <name>Veganet</name>
   <description>
     Получает баланс и информацию о тарифном плане для интернет провайдера "Вега Нэт". "Вега Нэт" - интернет-сервис провайдер, работающий на территории Клинского района.
@@ -19,7 +19,7 @@
     <counter id="userName" name="ФИО" type="text"/>
   </counters>
   <keywords>
-    интернет, серпухов, Щербинка, Подольск, Климовск, Чехов, Серпухов, Пущино
+    интернет, клинский район, клин
   </keywords>
   <type>
     internet

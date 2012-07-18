@@ -273,6 +273,32 @@ function megafonTrayInfo(filial){
             }
         }
     }
+
+    if(AnyBalance.isAvailable('sub_smit')){
+        var val = $xml.find('SUB>SMIT').text();
+        if(val)
+            result.sub_smit = parseFloat(val);
+    }
+    if(AnyBalance.isAvailable('sub_smio')){
+        var val = $xml.find('SUB>SMIO').text();
+        if(val)
+            result.sub_smio = parseFloat(val);
+    }
+    if(AnyBalance.isAvailable('sub_scl')){
+        var val = $xml.find('SUB>SCL').text();
+        if(val)
+            result.sub_scl = parseFloat(val);
+    }
+    if(AnyBalance.isAvailable('sub_scr')){
+        var val = $xml.find('SUB>SCR').text();
+        if(val)
+            result.sub_scr = parseFloat(val);
+    }
+    if(AnyBalance.isAvailable('sub_soi')){
+        var val = $xml.find('SUB>SOI').text();
+        if(val)
+            result.sub_soi = parseFloat(val);
+    }
     
     AnyBalance.setResult(result);
     
@@ -410,17 +436,26 @@ function megafonServiceGuidePhysical(filial, sessionid){
     //Теперь получим персональный баланс
     getParam(text, result, 'prsnl_balance', /&#1055;&#1077;&#1088;&#1089;&#1086;&#1085;&#1072;&#1083;&#1100;&#1085;&#1099;&#1081; &#1073;&#1072;&#1083;&#1072;&#1085;&#1089;:[\s\S]*?<div class="balance_[^>]*>([-\d\.]+)/i, null, parseFloat);
 
+    //Начислено абонентской платы по тарифному плану:
+    getPropValFloat(text, '&#1053;&#1072;&#1095;&#1080;&#1089;&#1083;&#1077;&#1085;&#1086; &#1072;&#1073;&#1086;&#1085;&#1077;&#1085;&#1090;&#1089;&#1082;&#1086;&#1081; &#1087;&#1083;&#1072;&#1090;&#1099; &#1087;&#1086; &#1090;&#1072;&#1088;&#1080;&#1092;&#1085;&#1086;&#1084;&#1091; &#1087;&#1083;&#1072;&#1085;&#1091;:',
+        result, 'sub_smit');
+    //Начислено абонентской платы за услуги:
+    getPropValFloat(text, '&#1053;&#1072;&#1095;&#1080;&#1089;&#1083;&#1077;&#1085;&#1086; &#1072;&#1073;&#1086;&#1085;&#1077;&#1085;&#1090;&#1089;&#1082;&#1086;&#1081; &#1087;&#1083;&#1072;&#1090;&#1099; &#1079;&#1072; &#1091;&#1089;&#1083;&#1091;&#1075;&#1080;:',
+        result, 'sub_smio');
+    //Начислено за услуги:
+    getPropValFloat(text, '&#1053;&#1072;&#1095;&#1080;&#1089;&#1083;&#1077;&#1085;&#1086; &#1079;&#1072; &#1091;&#1089;&#1083;&#1091;&#1075;&#1080;:',
+        result, 'sub_soi');
+    //Начислено за звонки:
+    getPropValFloat(text, '&#1053;&#1072;&#1095;&#1080;&#1089;&#1083;&#1077;&#1085;&#1086; &#1079;&#1072; &#1079;&#1074;&#1086;&#1085;&#1082;&#1080;:',
+        result, 'sub_scl');
+	
     //Текущий тарифный план
     var tariff = getPropValText(text, '&#1058;&#1077;&#1082;&#1091;&#1097;&#1080;&#1081; &#1090;&#1072;&#1088;&#1080;&#1092;&#1085;&#1099;&#1081; &#1087;&#1083;&#1072;&#1085;:');
     if(tariff)
         result.__tariff = tariff; //Special variable, not counter
     
     //Бонусный баланс
-    if(AnyBalance.isAvailable('bonus_balance')){
-        var val = getPropValFloat(text, '&#1041;&#1086;&#1085;&#1091;&#1089;&#1085;&#1099;&#1081; &#1073;&#1072;&#1083;&#1072;&#1085;&#1089;:');
-        if(val)
-            result.bonus_balance = val;
-    }
+    getPropValFloat(text, '&#1041;&#1086;&#1085;&#1091;&#1089;&#1085;&#1099;&#1081; &#1073;&#1072;&#1083;&#1072;&#1085;&#1089;:', result, 'bonus_balance');
     
     //Между Текущие скидки и пакеты услуг: и Текущие услуги:
     matches = text.match(/<div class="heading">&#1058;&#1077;&#1082;&#1091;&#1097;&#1080;&#1077; &#1089;&#1082;&#1080;&#1076;&#1082;&#1080; &#1080; &#1087;&#1072;&#1082;&#1077;&#1090;&#1099; &#1091;&#1089;&#1083;&#1091;&#1075;:<\/div>([\s\S]*?)<div class="heading">&#1058;&#1077;&#1082;&#1091;&#1097;&#1080;&#1077; &#1091;&#1089;&#1083;&#1091;&#1075;&#1080;:<\/div>/); 
@@ -565,7 +600,7 @@ function megafonServiceGuidePhysical(filial, sessionid){
         result.sms_total = sms_total;
     if(sms_left)
         result.sms_left = sms_left;
-	
+
     AnyBalance.setResult(result);
 }
 
@@ -596,16 +631,22 @@ function getPropValInt(html, text){
   return parseInt(matches[1]);
 }
 
-function getPropValFloat(html, text){
-  var matches = getPropVal(html, text);
-  if(!matches)
-    return null;
-  
-  matches = matches[1].match(/([\d\.,]+)/);
-  if(!matches)
-    return null;
-  
-  return parseFloat(matches[1].replace(/,/g, '.'));
+function getPropValFloat(html, text, result, counter){
+  if(result && AnyBalance.isAvailable(counter)){
+    var matches = getPropVal(html, text);
+    if(!matches)
+      return null;
+    
+    matches = matches[1].match(/([\d\.,]+)/);
+    if(!matches)
+      return null;
+    
+    var val = parseFloat(matches[1].replace(/,/g, '.'));
+    if(result)
+        result[counter] = val;
+    
+    return val;
+  }
 }
 
 //Получает две цифры (всего и остаток) из таблицы опций по тексту названия опции
@@ -680,5 +721,11 @@ function getParam (html, result, param, regexp, replaces, parser) {
     else
       return value
 	}
+}
+
+function parseBalance(text){
+    var val = getParam(text.replace(/\s+/g, ''), null, null, /(-?\d[\d\s.,]*)/, replaceFloat, parseFloat);
+    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
+    return val;
 }
 

@@ -8,7 +8,7 @@
 */
 
 function getParam (html, result, param, regexp, replaces, parser) {
-	if (param && !AnyBalance.isAvailable (param))
+	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
 		return;
 
 	var value = regexp.exec (html);
@@ -26,8 +26,11 @@ function getParam (html, result, param, regexp, replaces, parser) {
       result[param] = value;
     else
       return value
-        }
+	}
 }
+
+var replaceTagsAndSpaces = [/<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
+var replaceFloat = [/\s+/g, '', /,/g, '.'];
 
 function main(){
     var prefs = AnyBalance.getPreferences();
@@ -72,7 +75,7 @@ function main(){
 
     var result = {success: true, balance: null};
    
-    getParam(html, result, 'balance', /<p id="espace_perso_solde_phrase">.*?(\d+)/, null, parseInt);
+    getParam(html, result, 'balance', /<\w+ id="espace_perso_solde_(?:phrase|messages)">[\s\S]*?>[^<\d]*(\d+)[^>]*</, null, parseInt);
 
     AnyBalance.setResult(result);
 }

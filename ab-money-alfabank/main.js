@@ -150,7 +150,7 @@ function processMobile(){
 
 function getCreditInfoFull(baseurl){
     var prefs = AnyBalance.getPreferences();
-    var accnum = prefs.cardnum || '\\d{4}';
+    var accnum = prefs.cardnum ? '\\d{16}' + prefs.cardnum : '\\d{20}';
 
     var result = {success: true};
     
@@ -164,15 +164,15 @@ function getCardsInfo(baseurl){
     var html = AnyBalance.requestPost(baseurl, {command:'card_list'});
     var cardnum = prefs.cardnum || '\\d{4}';
 
-    var cardidx = getParam(html, null, null, new RegExp("'card_detail',\\s*'([^']*)'[^>]*>[^<]*" + cardnum + "(?:\\s*|&nbsp;)<", 'i'));
-    if(!cardidx){
+    var matches = html.match(new RegExp("'card_detail',\\s*'([^']*)'\\s*,\\s*'([^']*)'\\s*,'([^']*)'\\s*,'([^']*)'\\s*,'([^']*)'[^>]*>([^<]*" + cardnum + ")(?:\\s|&nbsp;)*<", 'i'));
+    if(!matches){
         if(prefs.cardnum)
             throw new AnyBalance.Error('Не удалось найти карту с последними цифрами ' + prefs.cardnum);
         else
             throw new AnyBalance.Error('Не удалось найти ни одной карты!');
     }
     
-    html = AnyBalance.requestPost(baseurl, {command:'card_detail', custom1: cardidx});
+    html = AnyBalance.requestPost(baseurl, {command:'card_detail', custom1: matches[1], custom2: matches[2], custom3: matches[3], custom4: matches[4], custom5: matches[5]});
 
     var result = {success: true};
     
@@ -199,20 +199,20 @@ function getCardsInfo(baseurl){
 function getCreditInfo(baseurl, result, accnum, creditonly){
     var html = AnyBalance.requestPost(baseurl, {command:'balances_listMyLoans'});
 
-    var loanidx = getParam(html, null, null, new RegExp("'creditDetail_accountDetail',\\s*'([^']*)'[^<]*" + accnum + '[^\d]', 'i'));
-    if(!loanidx)
+    var matches = html.match(new RegExp("'creditDetail_accountDetail',\\s*'([^']*)'\\s*,\\s*'([^']*)'\\s*,'([^']*)'\\s*,'([^']*)'\\s*,'([^']*)'[^<]*(" + accnum + ')[^\d]', 'i'));
+    if(!matches)
         if(!creditonly){
             throw new AnyBalance.Error('Невозможно найти информацию по кредитному счету ' + accnum + '!');
         }else{
-            throw new AnyBalance.Error('Невозможно найти информацию ' + (/\d{4}/.test(accnum) ? 'по счету с последними цифрами ' + accnum : 'ни по одному кредитному счету') + '!');
+            throw new AnyBalance.Error('Невозможно найти информацию ' + (/\d{4}/.test(accnum) ? 'по счету с последними цифрами ' + accnum.substr(-4) : 'ни по одному кредитному счету') + '!');
         }
 
     if(creditonly){
-        getParam(html, result, 'accnum', new RegExp("'creditDetail_accountDetail',\\s*'" + loanidx + "'[^<]*(\\d{20})", 'i'), replaceTagsAndSpaces, html_entity_decode);
-        getParam(html, result, '__tariff', new RegExp("'creditDetail_accountDetail',\\s*'" + loanidx + "'[^<]*(\\d{20})", 'i'), replaceTagsAndSpaces, html_entity_decode);
+        getParam(matches[6], result, 'accnum', /(.*)/, replaceTagsAndSpaces, html_entity_decode);
+        getParam(matches[6], result, '__tariff', /(.*)/, replaceTagsAndSpaces, html_entity_decode);
     }
 
-    html = AnyBalance.requestPost(baseurl, {command:'creditDetail_accountDetail', custom1: loanidx});
+    html = AnyBalance.requestPost(baseurl, {command:'creditDetail_accountDetail', custom1: matches[1], custom2: matches[2], custom3: matches[3], custom4: matches[4], custom5: matches[5]});
     
     getParam(html, result, 'topay', /Сумма к оплате:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'paytill', /Оплатить до:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);

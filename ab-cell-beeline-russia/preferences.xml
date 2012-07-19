@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
     <EditTextPreference 
-        title="Логин" 
+        title="Номер телефона/логин" 
         positiveButtonText="ОК" 
-        summary="Номер телефона (10 цифр)||{@s}\n" 
-        dialogTitle="Номер телефона" 
+        summary="Номер телефона (10 цифр) или логин||{@s}\n" 
+        dialogTitle="Номер телефона или логин" 
         negativeButtonText="Отмена" 
         dialogMessage="Введите номер вашего телефона для входа в Систему управления услугами (10 цифр), например 9031234567"
-        key="login"
-        inputType="number">
+        key="login">
     </EditTextPreference>
     <EditTextPreference 
         positiveButtonText="ОК"

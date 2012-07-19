@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Номер договора" 
+        positiveButtonText="ОК" 
+        summary="||{@s}" 
+        dialogTitle="Номер договора" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите Номер договора для входа в личный кабинет https://billing.novotelecom.ru."
+        inputType="number"
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="||***********"
+        dialogMessage="Введите пароль, используемый для входа в личный кабинет https://billing.novotelecom.ru."
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

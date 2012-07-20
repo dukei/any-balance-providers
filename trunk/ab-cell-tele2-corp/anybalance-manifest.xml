@@ -1,15 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-cell-tele2-corp</id>
+  <id version="3">ab-cell-tele2-corp</id>
   <name>Tele2 - корпоративный</name>
   <description>
     Получает баланс и информацию об абоненте для корпоративных тарифов Tele2. Информация берется из https://webcare.tele2.ru.
+    
+    Если у вас ещё нет личного кабинета, зарегистрируйте его на странице https://webcare.tele2.ru/group/public/caregister .
   </description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
     <js>main.js</js>
+    <history>history.xml</history>
   </files>
   <counters>
     <counter id="balance" name="Баланс" units="р"/>
@@ -25,4 +28,7 @@
   <type>
     cell
   </type>
+  <country>
+    ru
+  </country>
 </provider>

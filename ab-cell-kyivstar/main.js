@@ -20,6 +20,8 @@ function main(){
 
   var html = AnyBalance.requestGet(baseurl + 'tbmb/login/show.do', headers);
   var token = /name="org.apache.struts.taglib.html.TOKEN" value="([\s\S]*?)">/.exec(html);
+  if(!token)
+      throw new AnyBalance.Error("Не удаётся найти код безопасности для входа. Проблемы или изменения на сайте?");
 
   AnyBalance.trace('Token = ' + token[1]);
 

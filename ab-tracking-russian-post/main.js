@@ -11,7 +11,7 @@ function main(){
 	AnyBalance.trace('Connecting to russianpost...');
 	
 	var prefs = AnyBalance.getPreferences();
-	var post_number = prefs.code; //Код отправления, введенный пользователем
+	var post_number = prefs.code || ''; //Код отправления, введенный пользователем
 	
 	var dt = new Date();
 	var info = AnyBalance.requestPost('http://www.russianpost.ru/resp_engine.aspx?Path=rp/servise/ru/home/postuslug/trackingpo', {
@@ -21,7 +21,7 @@ function main(){
 		CYEAR:dt.getFullYear(),
 		PATHWEB:'RP/INDEX/RU/Home',
 		PATHPAGE:'RP/INDEX/RU/Home/Search',
-		BarCode:post_number,
+		BarCode:post_number.toUpperCase(),
 		searchsign:1
 	});
 	

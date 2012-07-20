@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-tracking-russian-post</id>
+  <id version="3">ab-tracking-russian-post</id>
   <name>EMS и Почта России</name>
   <description>
     Отслеживание почтового отправления почты россии и EMS по его идентификатору. Может показывать сводную информацию, дату изменения статуса, текущую операцию, местонахождение, атрибуты.
@@ -11,6 +11,7 @@
     <icon>icon.png</icon>
     <js>main.js</js>
     <preferences>preferences.xml</preferences>
+    <history>history.xml</history>
   </files>
   <counters>
     <counter id="fulltext" name="Сводка" type="html"/>

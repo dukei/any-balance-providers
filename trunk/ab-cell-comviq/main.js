@@ -1,4 +1,4 @@
-﻿/**
+/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 
 Текущий баланс у сотового оператора Tele2se (Comviq. Sweden).
@@ -46,6 +46,10 @@ function main(){
 	simulateMigrate:false
     };
  
+	if (!prefs.login | !prefs.password) 
+		throw new AnyBalance.Error('Имя пользователя или пароль не должны быть пусты')
+
+
     html = AnyBalance.requestPost(baseurl + "WebServices/Account.asmx/LoginOrMigrate", JSON.stringify(params), {
 	"Accept": "application/json, text/javascript, */*; q=0.01",
 	"Content-Type": "application/json; charset=UTF-8",

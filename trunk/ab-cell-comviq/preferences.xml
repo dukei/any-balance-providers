@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Логин" 
+        positiveButtonText="ОК" 
+        summary="Номер телефона (10 цифр) или Email||{@s}\n" 
+        dialogTitle="Номер телефона или Email" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите номер вашего телефона или email для входа в Tele2se (10 цифр). Например: 0704111111."
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="Пароль для входа в Tele2se||***********\n"
+        dialogMessage="Введите пароль, используемый для входа в личный кабинет Tele2se. Если Вы не знаете свой пароль, пройдите регистрацию или восстановите пароль на сайте https://www.comviq.se/create-account.aspx"
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

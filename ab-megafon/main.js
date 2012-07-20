@@ -515,6 +515,17 @@ function megafonServiceGuidePhysical(filial, sessionid){
         }
     }
     
+    //Пакет SMS за бонусы
+    if(AnyBalance.isAvailable('sms_total', 'sms_left')){
+        var vals = getOptionInt(text, "SMS &#1079;&#1072; &#1073;&#1086;&#1085;&#1091;&#1089;&#1099;");
+        if(vals){
+            if(AnyBalance.isAvailable('sms_total'))
+                sms_total += vals[0];
+            if(AnyBalance.isAvailable('sms_left'))
+                sms_left += vals[1];
+        }
+    }
+
     //Пакет SMS-сообщений (Поволжье)
     if(AnyBalance.isAvailable('sms_total', 'sms_left')){
         var vals = getOptionInt(text, "&#1055;&#1072;&#1082;&#1077;&#1090; SMS-&#1089;&#1086;&#1086;&#1073;&#1097;&#1077;&#1085;&#1080;&#1081;");

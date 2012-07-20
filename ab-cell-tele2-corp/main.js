@@ -8,7 +8,7 @@
 */
 
 function getParam (html, result, param, regexp, replaces, parser) {
-	if (param && !AnyBalance.isAvailable (param))
+	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
 		return;
 
 	var value = regexp.exec (html);
@@ -93,10 +93,20 @@ function main(){
     params['rand']=0.8372334879823029;
     
     var html = AnyBalance.requestPost(baseurl + "PT_CC_WCPortlet_v1-portlet/block/send-receive-updates", params);
-    result.__tariff = getParam(html, null, null, /Тарифный план[\s\S]*?<span[^>]*>(.*?)<\/span>/i);
-    getParam(html, result, 'company', /Наименование[\s\S]*?<span[^>]*>(.*?)<\/span>/i);
-    getParam(html, result, 'userName', /Абонент\s*<[\s\S]*?<span[^>]*>(.*?)<\/span>/i);
-    getParam(html, result, 'status', /Статус абонента[\s\S]*?<span[^>]*>(.*?)<\/span>/i);
+    getParam(html, result, '__tariff', /Тарифный план[\s\S]*?<span[^>]*>(.*?)<\/span>/i, [], html_entity_decode);
+    getParam(html, result, 'company', /Наименование[\s\S]*?<span[^>]*>(.*?)<\/span>/i, [], html_entity_decode);
+    getParam(html, result, 'userName', /Абонент\s*<[\s\S]*?<span[^>]*>(.*?)<\/span>/i, [], html_entity_decode);
+    getParam(html, result, 'status', /Статус абонента[\s\S]*?<span[^>]*>(.*?)<\/span>/i, [], html_entity_decode);
     
     AnyBalance.setResult(result);
 }
+
+
+function html_entity_decode(str)
+{
+    //jd-tech.net
+    var tarea=document.createElement('textarea');
+    tarea.innerHTML = str;
+    return tarea.value;
+}
+

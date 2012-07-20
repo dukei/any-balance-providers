@@ -4,7 +4,7 @@
   <name>Comviq</name>
   <description>
    Получает баланс, количество использованных в текущем месяце трафика, тарифный план, статус карты и время действия тарифного плана.
-   Этот провайдер будет работать у вас, если вы зарегестрированы на сайте https://www.comviq.se/.
+   Этот провайдер будет работать у вас, если вы зарегистрированы на сайте https://www.comviq.se/.
 
    You can check saldo, surf statistics, tariff plan and account status.
    You must be registered on www.comviq.se to get it work.

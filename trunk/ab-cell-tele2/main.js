@@ -82,8 +82,8 @@ function main(){
 
     html = AnyBalance.requestGet(baseurl + "home");
     
-    getParam(html, result, "userName", /"wide-header"[\s\S]*?([^<>]*)<\/h1>/i, replaceTagsAndSpaces);
-    result.__tariff = getParam(html, null, null, /Тариф<\/h2>[\s\S]*?>([^<]*)/i, replaceTagsAndSpaces);
+    getParam(html, result, "userName", /"wide-header"[\s\S]*?([^<>]*)<\/h1>/i, replaceTagsAndSpaces, html_entity_decode);
+    result.__tariff = getParam(html, null, null, /Тариф<\/h2>[\s\S]*?>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
     
     var matches = html.match(/(csrf[^:]*):\s*'([^']*)'/i);
     if(!matches)
@@ -141,3 +141,12 @@ function main(){
 
     AnyBalance.setResult(result);
 }
+
+function html_entity_decode(str)
+{
+    //jd-tech.net
+    var tarea=document.createElement('textarea');
+    tarea.innerHTML = str;
+    return tarea.value;
+}
+

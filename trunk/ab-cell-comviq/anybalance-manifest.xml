@@ -1,16 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="0.1" version="1">ab-cell-comviq</id>
+  <id major_version="0.1" version="2">ab-cell-comviq</id>
   <name>Comviq</name>
   <description>
-	Получает баланс, количество использованных в текущем месяце трафика, тарифный план, статус карты и время действия тарифного плана.
-    Этот провайдер будет работать у вас, если вы зарегестрированы на сайте https://www.comviq.se/.
-  </description>
-  <author>Gleb Efimov &lt;glebef@gmail.com&gt;</author>
+   Получает баланс, количество использованных в текущем месяце трафика, тарифный план, статус карты и время действия тарифного плана.
+   Этот провайдер будет работать у вас, если вы зарегестрированы на сайте https://www.comviq.se/.
+
+   You can check saldo, surf statistics, tariff plan and account status.
+   You must be registered on www.comviq.se to get it work.
+	</description>
+  <author>Gleb Efimov &lt;glebef@mail.ru&gt;</author>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
     <js>main.js</js>
+    <history>history.xml</history>
   </files>
   <counters>
     <counter id="saldo" name="Saldo" type="numeric" units="kr"/>
@@ -19,12 +23,12 @@
     <counter id="kortstatus" name="Status" type="text"/>
   </counters>
   <keywords>
-    Сотовый телефон, мобильный, мобильник, теле2, comviq, sweden
+    Сотовый телефон, мобильный, мобильник, tele2, comviq, sweden
   </keywords>
   <type>
     cell
   </type>
   <country>
-    se
+	se
   </country>
 </provider>

@@ -6,7 +6,7 @@
 	Получает баланс, количество использованных в текущем месяце трафика, тарифный план, статус карты и время действия тарифного плана.
     Этот провайдер будет работать у вас, если вы зарегестрированы на сайте https://www.comviq.se/.
   </description>
-  <author>Gleb Efimov</author>
+  <author>Gleb Efimov &lt;glebef@gmail.com&gt;</author>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>

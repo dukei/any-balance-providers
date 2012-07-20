@@ -3,10 +3,10 @@
     <EditTextPreference 
         title="Логин" 
         positiveButtonText="ОК" 
-        summary="Номер телефона (10 цифр) или Email||{@s}\n" 
-        dialogTitle="Номер телефона или Email" 
+        summary="Введите ваш login в Comviq.se||{@s}\n" 
+        dialogTitle="Login" 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите номер вашего телефона или email для входа в Tele2se (10 цифр). Например: 0704111111."
+        dialogMessage="Введите ваш login в Comviq.se"
         key="login">
     </EditTextPreference>
     <EditTextPreference 
@@ -15,8 +15,8 @@
         dialogTitle="Пароль"
         negativeButtonText="Отмена"
         title="Пароль"
-        summary="Пароль для входа в Tele2se||***********\n"
-        dialogMessage="Введите пароль, используемый для входа в личный кабинет Tele2se. Если Вы не знаете свой пароль, пройдите регистрацию или восстановите пароль на сайте https://www.comviq.se/create-account.aspx"
+        summary="Пароль для входа в Comviq.se||***********\n"
+        dialogMessage="Введите пароль, используемый для входа в личный кабинет Comviq.se. Если Вы не знаете свой пароль, пройдите регистрацию или восстановите пароль на сайте https://www.comviq.se/."
         inputType="textPassword">
     </EditTextPreference>
 </PreferenceScreen>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="0.1" version="2">ab-cell-comviq</id>
+  <id major_version="0.1" version="1">ab-cell-comviq</id>
   <name>Comviq</name>
   <description>
    Получает баланс, количество использованных в текущем месяце трафика, тарифный план, статус карты и время действия тарифного плана.

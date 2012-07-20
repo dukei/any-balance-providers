@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
     <EditTextPreference 
-        title="Логин" 
-        positiveButtonText="ОК" 
-        summary="Введите ваш login в Comviq.se||{@s}\n" 
+        title="Login" 
+        positiveButtonText="OK" 
+        summary="Enter your login to Comviq.se||{@s}\n" 
         dialogTitle="Login" 
-        negativeButtonText="Отмена" 
-        dialogMessage="Введите ваш login в Comviq.se"
+        negativeButtonText="Cancel" 
+        dialogMessage="Enter your login to Comviq.se"
         key="login">
     </EditTextPreference>
     <EditTextPreference 
-        positiveButtonText="ОК"
+        positiveButtonText="OK"
         key="password" 
-        dialogTitle="Пароль"
-        negativeButtonText="Отмена"
-        title="Пароль"
-        summary="Пароль для входа в Comviq.se||***********\n"
+        dialogTitle="Password"
+        negativeButtonText="Cancel"
+        title="Password"
+        summary="Password for entering Comviq.se||***********\n"
         dialogMessage="Введите пароль, используемый для входа в личный кабинет Comviq.se. Если Вы не знаете свой пароль, пройдите регистрацию или восстановите пароль на сайте https://www.comviq.se/."
         inputType="textPassword">
     </EditTextPreference>

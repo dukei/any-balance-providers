@@ -49,13 +49,20 @@ function main(){
 
     var baseurl = baseurls[prefs.country];
 
+    var headers = {
+        Accept: '*/*',
+        'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
+        'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+        'User-Agent':'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0)' //Internet Explorer пускает охотнее, как ни странно.
+    };
+
     AnyBalance.trace("Trying to enter selfcare at address: " + baseurl);
     var html = AnyBalance.requestPost(baseurl + "loginPage.do", {
     	ecareAction: 'login',
       userName: prefs.login,
       password: prefs.password,
       _stateParam: 'eCareLocale.currentLocale=ru_RU__Russian'
-    });
+    }, headers);
 
     var regexp=/<span class="warn">[\s]*([\s\S]*?)[\s]*<\/span>/, res, tmp;
     if (res=regexp.exec(html)){
@@ -64,8 +71,8 @@ function main(){
     }
 
     if (getParam(html, null, null, /("EcareLoginForm")/i))
-        //Ошибка какая-то случилась... Может, пароль неправильный
-      	throw new AnyBalance.Error('Билайн не пускает в кабинет даже без сообщения ошибки. Возможно, проблемы на сайте.');
+        //Ошибка какая-то случилась... Билайн глючит. Надо попробовать ещё раз зайти.
+      	throw new AnyBalance.Error('Билайн не пускает в кабинет даже без сообщения ошибки. Возможно, проблемы на сайте.', true);
     
     var corporate = /<title>[^<>]*Управление профилем[^<>]*<\/title>/i.test(html);
     if(!corporate)

@@ -41,19 +41,34 @@ var replaceFloat = [/\s+/g, '', /,/g, '.'];
 
 function main(){
     var prefs = AnyBalance.getPreferences();
+    
+    var baseurl = "http://club.eldorado.ru/enter.php";
 
-    var baseurl = "http://www.club.eldorado.ru/enter.php";
-    var html = AnyBalance.requestPost(baseurl, {
+    var headers = {
+        Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
+        'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+        'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.11 (KHTML, like Gecko) Chrome/20.0.1132.57 Safari/536.11',
+    };
+
+    var html = AnyBalance.requestGet(baseurl, headers); //Установим сессию
+
+    headers.Referer = baseurl;
+
+    html = AnyBalance.requestPost(baseurl, {
         pan: prefs.login,
         pin: prefs.password,
         x: 49,
         y: 12,
         action: 'save'
-    });
+    }, headers);
 
     var error = getParam(html, null, null, /<div[^>]*class=['"]red['"][^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
     if(error)
         throw new AnyBalance.Error(error);
+
+    if(!getParam(html, null, null, /(personal_silver_top)/i))
+        throw new AnyBalance.Error("Не удалось зайти в личный кабинет. Проверьте, что вам удаётся зайти в него из браузера с указанными номером карты и ПИНом.");
 
     var result = {success: true};
 

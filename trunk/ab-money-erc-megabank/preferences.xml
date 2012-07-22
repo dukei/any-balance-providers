@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        key="login"
+        title="Логин" 
+        summary="Логин для входа в ЕРЦ||{@s}\n"
+        dialogTitle="Логин" 
+        dialogMessage="Введите логин для входа в ЕРЦ"
+        positiveButtonText="ОК" 
+        negativeButtonText="Отмена">
+    </EditTextPreference>
+    <EditTextPreference 
+        key="password" 
+        title="Пароль"
+        summary="Пароль для входа в ЕРЦ||***********\n"
+        dialogTitle="Пароль"
+        dialogMessage="Введите пароль, используемый для входа в ЕРЦ"
+        inputType="textPassword"
+        positiveButtonText="ОК"
+        negativeButtonText="Отмена">
+    </EditTextPreference>
+    <EditTextPreference 
+        key="account"
+        title="Счет" 
+        summary="Номер лицевого счета||{@s}\n" 
+        dialogTitle="Номер лицевого счета" 
+        dialogMessage="Введите номер вашего лицевого счета"
+        inputType="number"
+        positiveButtonText="ОК" 
+        negativeButtonText="Отмена">
+    </EditTextPreference>
+</PreferenceScreen>

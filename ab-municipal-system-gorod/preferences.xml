@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Номер карты" 
+        positiveButtonText="ОК" 
+        summary="Полный номер карты||{@s}\n" 
+        dialogTitle="Номер карты" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите номер карты Системы Город без пробелов и разделителей."
+        inputType="number"
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="||***********"
+        dialogMessage="Введите пароль, используемый для входа в личный кабинет"
+        inputType="textPassword">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="accnum" 
+        dialogTitle="Номер счета"
+        negativeButtonText="Отмена"
+        title="Номер счета"
+        summary="Номер лицевого счета|Автоматически\n|{@s}\n"
+        dialogMessage="Введите номер лицевого счета, по которому вы хотите посмотреть информацию, или оставьте пустым, чтобы получить информацию по первому номеру счета"
+        inputType="number">
+    </EditTextPreference>
+</PreferenceScreen>

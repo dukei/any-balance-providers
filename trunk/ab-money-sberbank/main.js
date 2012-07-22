@@ -72,6 +72,10 @@ function main(){
         throw new AnyBalance.Error("Надо указывать 4 последних цифры карты или не указывать ничего");
       
     var html = AnyBalance.requestGet(baseurl + 'esClient/_logon/LogonContent.aspx');
+    var error = getParam(html, null, null, /techBreakMsgLabel[^>]*>([\s\S]*?)<\/span>/i);
+    if(error)
+        throw new AnyBalance.Error(error);
+
     var eventvalidation = getEventValidation(html);
     var viewstate = getViewState(html);
 
@@ -89,7 +93,7 @@ function main(){
       'ctl00$ctl00$BaseContentPlaceHolder$ctl01$ctl04$userManual2Region$ddlRegions':''
     });
 
-    var error = getParam(html, null, null, /в связи с ошибкой в работе системы[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+    error = getParam(html, null, null, /в связи с ошибкой в работе системы[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
     if(error)
         throw new AnyBalance.Error(error);
 

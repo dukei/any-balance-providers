@@ -396,8 +396,6 @@ function megafonServiceGuideCorporate(filial, sessionid){
     AnyBalance.setResult(result);
 }
 
-var replaceTagsAndSpaces = [/<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, ''];
-
 function checkTextForError(text){
     //Произошла ошибка при работе с системой.
     var error = getParam(text, null, null, /&#1055;&#1088;&#1086;&#1080;&#1079;&#1086;&#1096;&#1083;&#1072; &#1086;&#1096;&#1080;&#1073;&#1082;&#1072; &#1087;&#1088;&#1080; &#1088;&#1072;&#1073;&#1086;&#1090;&#1077; &#1089; &#1089;&#1080;&#1089;&#1090;&#1077;&#1084;&#1086;&#1081;[\s\S]*?<[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
@@ -554,6 +552,18 @@ function megafonServiceGuidePhysical(filial, sessionid){
         if(vals){
             result.gb_with_you = vals[1];
         }
+    }
+
+    if(AnyBalance.isAvailable('last_pay_sum', 'last_pay_date')){
+        text = AnyBalance.requestPost(baseurl + 'SCWWW/PAYMENTS_INFO',
+                    {
+                        CHANNEL: 'WWW', 
+                        SESSION_ID: sessionid,
+                        CUR_SUBS_MSISDN: prefs.login,
+                        SUBSCRIBER_MSISDN: prefs.login
+                    });
+        getParam(text, result, 'last_pay_sum', /idHiddenSum[^>]*>\s*<table(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+        getParam(text, result, 'last_pay_date', /idHiddenSum[^>]*>\s*<table(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
     }
 	
     if(filial == MEGA_FILIAL_MOSCOW){
@@ -734,9 +744,21 @@ function getParam (html, result, param, regexp, replaces, parser) {
 	}
 }
 
+var replaceTagsAndSpaces = [/<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, ''];
+var replaceFloat = [/\s+/g, '', /,/g, '.'];
+
 function parseBalance(text){
     var val = getParam(text.replace(/\s+/g, ''), null, null, /(-?\d[\d\s.,]*)/, replaceFloat, parseFloat);
     AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
     return val;
 }
 
+function parseDate(str){
+    var matches = /(\d+)[^\d](\d+)[^\d](\d+)/.exec(str);
+    var time = 0;
+    if(matches){
+	  time = (new Date(+matches[3], matches[2]-1, +matches[1])).getTime();
+    }
+    AnyBalance.trace('Parsing date ' + new Date(time) + 'from value: ' +  str);
+    return time;
+}

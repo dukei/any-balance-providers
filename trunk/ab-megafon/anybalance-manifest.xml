@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="2.5" version="26">ab-megafon</id>
+  <id major_version="2.5" version="27">ab-megafon</id>
   <name>Мегафон</name>
   <description>
     Получает баланс, бонусный баланс, минуты, трафик, SMS на телефоне и многое другое. Поддерживаются все филиалы.
@@ -40,6 +40,8 @@
     <counter id="sub_scl" name="Начислено за звонки" units="р"/>
     <counter id="sub_soi" name="Начислено за услуги" units="р"/>
     <counter id="sub_scr" name="Начислено за роуминг" units="р"/>
+    <counter id="last_pay_sum" name="Последний платеж" units="р"/>
+    <counter id="last_pay_date" name="Дата посл. платежа" type="time"/>
   </counters>
   <keywords>
     Сотовый телефон, мобильный, мобильник, megafon, интернет, россия

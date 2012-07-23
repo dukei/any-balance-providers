@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Логин" 
+        positiveButtonText="ОК" 
+        summary="Логин в ГудЛайн||{@s}\n" 
+        dialogTitle="Логин" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите ваш логин в ГудЛайн"
+        inputType="textEmailAddress"
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="|Введите пароль|************"
+        dialogMessage="Введите ваш пароль в ГудЛайн"
+        inputType="textPassword">
+    </EditTextPreference>
+    <EditTextPreference 
+        title="Номер телефона" 
+        positiveButtonText="ОК" 
+        summary="|Автоматически|{@s}" 
+        dialogTitle="Номер телефона" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите номер телефона, по которому вы хотите получить информацию, или не вводите ничего, чтобы получить информацию по первому номеру."
+        inputType="number"
+        key="login">
+    </EditTextPreference>
+</PreferenceScreen>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-telephony-goodline</id>
+  <name>ГудЛайн</name>
+  <description>
+    Получает текущий баланс, валюту счета у ромингового провайдера телефонии ГудЛайн.
+    Сайт провайдера: http://goodline.ru
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс"/>
+    <counter id="currency" name="Валюта" type="text"/>
+    <counter id="number" name="Номер" type="text"/>
+    <counter id="status" name="Статус" type="text"/>
+  </counters>
+  <keywords>
+    роуминг goodline сим-карта
+  </keywords>
+  <type>
+    telephony
+  </type>
+</provider>

@@ -14,6 +14,7 @@ var regions = {
 	tvr: domolinkcenter, // Личный кабинет Тверского филиала
 	vrn: domolinkcenter, // Личный кабинет Воронежского филиала
 	tula: domolinktula, // Личный кабинет абонентов Домолинк Тула
+	smolensk: domolinksmolensk, // Личный кабинет абонентов Домолинк Тула
 };
 
 function html_entity_decode(str)
@@ -60,8 +61,37 @@ function getData(param) {
 	}
 }
 
+function domolinksmolensk(region,login,password) {
+	var baseurl = 'https://portal.centertelecom.ru/ClientWebPortal/appmanager/ClientPortal/PrivateClientDesktop?_nfpb=true&_windowLabel=LoginPortlet_2&LoginPortlet_2_actionOverride=%2Fcom%2Fsiemens%2Ftelco%2Fportal%2Fb2c%2Flogin%2Fjpf%2Flogin';
+	var regionurl = baseurl + '/pls/sip/';
+    AnyBalance.setDefaultCharset('utf8');    
+	
+	// Заходим на главную страницу
+	var html = AnyBalance.requestPost(baseurl + "", {
+		"LoginPortlet_2{actionForm.username}": login,
+		"LoginPortlet_2{actionForm.password}": password
+	});
+	
+	htmlinfo = AnyBalance.requestGet("https://portal.centertelecom.ru/ClientWebPortal/appmanager/ClientPortal/PrivateClientDesktop?_nfpb=true&_pageLabel=PrivateClient_portal_myPortal_page");
+	
+	var result = {success: true};
+	
+	var regexp=/multi-link-icon\D*([\d,\-]*)/,res;
+	
+    // ФИО
+	getParam (htmlinfo, result, 'username', /multi-link-icon\D*[\d,]*\D*[\w\s;\"\>]*([А-Яа-я ]*)/i);
+	   
+	// Лицевой счет
+	getParam (htmlinfo, result, 'license', /<span>([\d-]*)\D*multi-link-icon/);
+	
+	// Баланс
+	getParam (htmlinfo, result, 'balance', /multi-link-icon\D*([\d,\-]*)/, [/ |\xA0/, "", ",", "."], parseFloat);
+	
+	AnyBalance.setResult(result);
+}
+
 function domolinktula(region,login,password) {
-	var baseurl = 'https://cabinet.tulatelecom.ru';//https://cabinet.tulatelecom.ru/pls/sip/www.GetHomePage
+	var baseurl = 'https://cabinet.tulatelecom.ru';
 	var regionurl = baseurl + '/pls/sip/';
     AnyBalance.setDefaultCharset('utf8');    
 	

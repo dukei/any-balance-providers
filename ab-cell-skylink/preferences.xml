@@ -16,8 +16,16 @@
         dialogTitle="Пароль"
         negativeButtonText="Отмена"
         title="Пароль"
-        summary="Пароль для https://www.skypoint.ru||***********\n"
-        dialogMessage="Введите пароль, используемый для входа в личный кабинет https://www.skypoint.ru ."
+        summary="Пароль для личного кабинета||***********\n"
+        dialogMessage="Введите пароль, используемый для входа в личный кабинет."
         inputType="textPassword">
     </EditTextPreference>
+    <ListPreference 
+        key="region" 
+        title="Регион"
+        summary="Регион вашего номера|Нужен для определения личного кабинета\n|{@s}\n"
+        entries="Москва|Ульяновск"
+        entryValues="moscow|uln"
+	defaultValue="moscow">
+    </ListPreference>
 </PreferenceScreen>

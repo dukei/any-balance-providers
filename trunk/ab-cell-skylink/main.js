@@ -40,7 +40,23 @@ function getEventValidation(html){
     return getParam(html, null, null, /name="__EVENTVALIDATION".*?value="([^"]*)"/);
 }
 
+var g_regions = {
+    moscow: mainMoscow,
+    uln: mainUln
+};
+
 function main(){
+    var prefs = AnyBalance.getPreferences();
+    
+    var region = prefs.region || 'moscow';
+    var regionFunc = g_regions[region] || g_regions.moscow;
+
+    AnyBalance.trace("Entering region: " + region);
+
+    regionFunc();
+}
+
+function mainMoscow(){
     var prefs = AnyBalance.getPreferences();
 
     var baseurl = "https://www.skypoint.ru/";
@@ -67,12 +83,65 @@ function main(){
     if(error)
         throw new AnyBalance.Error(error);
 
+    error = getParam(html, null, null, /<span id="msg">(.*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+    if(error)
+        throw new AnyBalance.Error(error);
+
+    //Надо проверить, действительно ли нас пустили в кабинет, или просто перенаправили куда-то в другой регион
+    //Но проверить не могу, нет у меня учетных данных...
+    //var login_marker = getParam(html, null, null, /(...)/i);
+    //if(!login_marker)
+    //    throw new AnyBalance.Error("Не удалсь войти в личный кабинет. Неправильный регион?");
+
     var result = {success: true};
 
     getParam(html, result, 'userName', /Наименование клиента:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'userNum', /Номер Лицевого счета:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'balance', /Баланс:[\s\S]*?(-?\d[\s\d,\.]*)/i, replaceFloat, parseFloat);
     getParam(html, result, '__tariff', /Тарифный план:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
+
+    AnyBalance.setResult(result);
+}
+
+function mainUln(){
+    var prefs = AnyBalance.getPreferences();
+
+    var baseurl = "https://www2.skypoint.ru/login_form.aspx";
+    AnyBalance.setDefaultCharset('utf-8');
+
+    var headers = {
+    	"User-Agent":'Mozilla/5.0 (Windows NT 5.1; rv:2.0) Gecko/20100101 Firefox/4.0'
+    };
+    
+    var html = AnyBalance.requestGet(baseurl, headers);
+    var eventvalidation = getEventValidation(html);
+    var viewstate = getViewState(html);
+
+    html = AnyBalance.requestPost(baseurl, {
+	__EVENTTARGET:'',
+	__EVENTARGUMENT:'',
+	__VIEWSTATE:viewstate,
+	__EVENTVALIDATION:eventvalidation,
+	'ctl00$pageContent$TextBox1':prefs.login,
+	'ctl00$pageContent$TextBox2':prefs.password,
+	'ctl00$pageContent$ImageButton1.x':11,
+	'ctl00$pageContent$ImageButton1.y':12
+    }, headers
+    );
+
+    var error = getParam(html, null, null, /<span[^>]+class="err_msg"[^>]*>(.*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+    if(error)
+        throw new AnyBalance.Error(error);
+
+    //Надо проверить, действительно ли нас пустили в кабинет, или просто перенаправили куда-то в другой регион
+    //var login_marker = getParam(html, null, null, /(...)/i);
+    //if(!login_marker)
+    //    throw new AnyBalance.Error("Не удалсь войти в личный кабинет. Неправильный регион?");
+
+    var result = {success: true};
+
+    getParam(html, result, 'balance', /Ваш баланс, по состоянию на [0-9.]*, составляет:[\s\S]*?(-?\d[\s\d,\.]*)/i, replaceFloat, parseFloat);
+    getParam(html, result, 'traffic', /Суммарный трафик \(мб\)[\s\S]*?<td[^>]*>(-?\d[\s\d,\.]*)<\/td>/i, replaceFloat, parseFloat);
 
     AnyBalance.setResult(result);
 }

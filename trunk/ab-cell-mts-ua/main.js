@@ -76,7 +76,7 @@ function main(){
     var prefs = AnyBalance.getPreferences();
 
     if(prefs.phone && !/^\d+$/.test(prefs.phone)){
-	throw new AnyBalance.Error('В качестве номера необходимо ввести 9 цифр номера, например, 251234567, или не вводить ничего, чтобы получить информацию по основному номеру.');
+	throw new AnyBalance.Error('В качестве номера необходимо ввести 9 цифр номера, например, 501234567, или не вводить ничего, чтобы получить информацию по основному номеру.');
     }
 
     var baseurl = 'https://ihelper-prp.mts.com.ua/SelfCarePda/';
@@ -131,14 +131,19 @@ function main(){
     // Телефон
     sumParam (html, result, 'phone', /Ваш телефон:.*?>([^<]*)</i, replaceTagsAndSpaces, html_entity_decode);
 
-    if (AnyBalance.isAvailable ('min_left') ||
-        AnyBalance.isAvailable ('min_net') ||
-        AnyBalance.isAvailable ('min_net_all') ||
-        AnyBalance.isAvailable ('sms_left') ||
-        AnyBalance.isAvailable ('mms_left') ||
-        AnyBalance.isAvailable ('traffic_left_mb') ||
+    if (AnyBalance.isAvailable ('bonus_balance') ||
+        AnyBalance.isAvailable ('min_paket') ||
+        AnyBalance.isAvailable ('min_net_70') ||
+        AnyBalance.isAvailable ('min_net_all_33') ||
+        AnyBalance.isAvailable ('sms_paket') ||
+        AnyBalance.isAvailable ('mms_paket') ||
+        AnyBalance.isAvailable ('traffic_paket_mb') ||
+        AnyBalance.isAvailable ('traffic_kop_mb') ||
+        AnyBalance.isAvailable ('traffic_hyper_mb') ||
+        AnyBalance.isAvailable ('traffic_opera_mb') ||        
+        //Добавить пакет 2500 минут внутри сети  
         AnyBalance.isAvailable ('license') ||
-        AnyBalance.isAvailable ('bonus_balance') ||
+   
 //        AnyBalance.isAvailable ('statuslock') ||
 //        AnyBalance.isAvailable ('credit') ||
         AnyBalance.isAvailable ('usedinthismonth')) {
@@ -148,27 +153,41 @@ function main(){
         html = AnyBalance.requestGet(baseurl + "Account.mvc/Status");
 
         AnyBalance.trace("Parsing status...");
+	
+	//Денежный бонусный счет.
+        sumParam (html, result, 'bonus_balance', /Денежный бонусный счет:[^<]*осталось\s*([\d\.,]+)\s*грн/i, replaceTagsAndSpaces, parseBalance);
+	
+        // Пакет бесплатных минут для внутрисетевых звонков
+        sumParam (html, result, 'min_paket', /<li>Осталось ([\d\.,]+) бесплатных секунд до/ig, replaceFloat, parseFloat);
+	
+	// 70 минут в день для внутрисетевых звонков
+        sumParam (html, result, 'min_net_70', /<li>70 минут в день для внутрисетевых звонков:[^<]*осталось ([\d\.,]+) бесплатных секунд/ig, replaceFloat, parseFloat);
     
-        // 33 минуты в день для внутрисетевых звонков во всех областях: осталось 2000 бесплатных секунд
-        sumParam (html, result, 'min_net_all', /для внутрисетевых звонков во всех областях:\s*осталось ([\d\.,]+) бесплатных секунд/ig, replaceFloat, parseFloat);
+        // 33 минуты в день для внутрисетевых звонков во всех областях
+        sumParam (html, result, 'min_net_all_33', /<li>33 минуты в день для внутрисетевых звонков во всех областях:[^<]*осталось ([\d\.,]+) бесплатных секунд/ig, replaceFloat, parseFloat);
     
-        // 70 минут в день для внутрисетевых звонков: осталось 4200 бесплатных секунд
-        sumParam (html, result, 'min_net', /для внутрисетевых звонков:\s*осталось ([\d\.,]+) бесплатных секунд/ig, replaceFloat, parseFloat);
-    
-        // Осталось 3000 бесплатных секунд до 17.07.2012 09:16:18
-        sumParam (html, result, 'min_left', /<li>осталось ([\d\.,]+) бесплатных секунд/ig, replaceFloat, parseFloat);
-    
-        // Остаток СМС
-        sumParam (html, result, 'sms_left', / бесплатных смс[^>]*: осталось (\d+)\s*(sms|смс)/ig, null, parseInt);
+        // Пакет СМС
+        sumParam (html, result, 'sms_paket', /<li>100 бесплатных смс по Украине:[^<]*осталось (\d+) смс. Срок действия до/ig, null, parseInt);
 
-        // Остаток ММС
-        sumParam (html, result, 'mms_left', /Осталось:?[^<]*(\d+)[^<]*(?:mms|ммс)/i, null, parseInt);
+        // Пакет ММС
+        sumParam (html, result, 'mms_paket', /<li>20 бесплатных MMS:[^<]*осталось:[^\d]*?(\d+) ммс. Срок действия до/ig, null, parseInt);
+	
+        // Пакет интернета
+	sumParam (html, result, 'traffic_paket_mb', /<li>20MB_GPRS_Internet:[^<]*осталось[^\d]*?(\d+,?\d* *(kb|mb|gb|кб|мб|гб|байт|bytes)). Срок действия до/ig, null, parseTraffic);
+
+        // Интернет за копейку
+	sumParam (html, result, 'traffic_kop_mb', /<li>Осталось[^\d]*?(\d+,?\d* *(kb|mb|gb|кб|мб|гб|байт|bytes))./ig, null, parseTraffic);
+	
+        //К-во Кб загруженных по АПН hyper.net
+	sumParam (html, result, 'traffic_hyper_mb', /<li>К-во Кб загруженных по АПН hyper.net:[^<]*Использовано[^\d]*?(\d+,?\d* *(kb|mb|gb|кб|мб|гб|байт|bytes))/ig, null, parseTraffic);
+	
+        //К-во Кб загруженных по АПН opera
+	sumParam (html, result, 'traffic_opera_mb', /<li>К-во Кб загруженных по АПН opera:[^<]*Использовано[^\d]*?(\d+,?\d* *(kb|mb|gb|кб|мб|гб|байт|bytes))/ig, null, parseTraffic);
+	
+        //Добавить пакет 2500 минут внутри сети      
 
         // Остаток трафика
-        sumParam (html, result, 'traffic_left_mb', /(?:Осталось|Остаток)[^\d]*?(\d+,?\d* *(kb|mb|gb|кб|мб|гб|байт|bytes))/ig, null, parseTraffic);
-
-        //Денежный бонусный счет: осталось 1 грн.
-        sumParam (html, result, 'bonus_balance', /Денежный бонусный счет:[^<]*осталось\s*([\d\.,]+)\s*грн/i, replaceTagsAndSpaces, parseBalance);
+//        sumParam (html, result, 'traffic_left_mb', /(?:Осталось|Остаток)[^\d]*?(\d+,?\d* *(kb|mb|gb|кб|мб|гб|байт|bytes))/ig, null, parseTraffic);        
 
         // Лицевой счет
         sumParam (html, result, 'license', /№ (.*?):/);
@@ -177,6 +196,7 @@ function main(){
         sumParam (html, result, 'usedinthismonth', /Витрачено по номеру[^<]*<strong>([\s\S]*?)<\/strong>[^<]*грн/i, replaceTagsAndSpaces, parseBalance);
     }
 
+    
 
     if (AnyBalance.isAvailable ('usedinprevmonth')) {
 

@@ -134,15 +134,18 @@ function mainUln(){
         throw new AnyBalance.Error(error);
 
     //Надо проверить, действительно ли нас пустили в кабинет, или просто перенаправили куда-то в другой регион
-    //var login_marker = getParam(html, null, null, /(...)/i);
-    //if(!login_marker)
-    //    throw new AnyBalance.Error("Не удалсь войти в личный кабинет. Неправильный регион?");
+    var login_marker = getParam(html, null, null, /<span[^>]+id="ctl00_abonent_number"[^>]*>Абонент: (.*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+    if(!login_marker)
+        throw new AnyBalance.Error("Не удалсь войти в личный кабинет. Неправильный регион?");
 
-    var result = {success: true};
+    var result = {success: true, userNum:login_marker, userName:''};
 
     getParam(html, result, 'balance', /Ваш баланс, по состоянию на [0-9.]*, составляет:[\s\S]*?(-?\d[\s\d,\.]*)/i, replaceFloat, parseFloat);
     getParam(html, result, 'traffic', /Суммарный трафик \(мб\)[\s\S]*?<td[^>]*>(-?\d[\s\d,\.]*)<\/td>/i, replaceFloat, parseFloat);
 
+    var html = AnyBalance.requestGet('http://www2.skypoint.ru/pages/change_tarif2.aspx', headers);	
+    getParam(html, result, '__tariff',  /<span[^>]+id="ctl00_pageContent_Label1"[^>]*>Ваш тарифный план:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
+    
     AnyBalance.setResult(result);
 }
 

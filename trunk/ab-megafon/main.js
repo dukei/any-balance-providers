@@ -586,18 +586,25 @@ function megafonServiceGuidePhysical(filial, sessionid){
         // Продли скорость (Москва)
         if(AnyBalance.isAvailable(['internet_total','internet_cur', 'internet_left'])){
             text = AnyBalance.requestGet(baseurl + 'SCCEXTSYS/EXT_SYSTEM_PROXY_FORM?CHANNEL=WWW&SESSION_ID=' + sessionid + '&URI=3.');
-            if(matches = text.match(/<a class="gupLink" href="EXT_SYSTEM_PROXY_FORM\?([^"]*)"/i)){
-                text = AnyBalance.requestGet(baseurl + 'SCCEXTSYS/EXT_SYSTEM_PROXY_FORM?' + matches[1].replace(/&amp;/g, '&'));
-
-                if(AnyBalance.isAvailable('internet_total'))
-                    if(matches = text.match(/title="ALL_VOLUME">([\d\.\-]+)</i))
-                        internet_total += parseFloat(matches[1]);
-                if(AnyBalance.isAvailable('internet_cur'))
-                    if(matches = text.match(/title="CUR_VOLUME">([\d\.\-]+)</i))
-                        internet_cur += parseFloat(matches[1]);
-                if(AnyBalance.isAvailable('internet_left'))
-                    if(matches = text.match(/title="LAST_VOLUME">([\d\.\-]+)</i))
-                        internet_left += parseFloat(matches[1]);
+            var href = getParam(text, null, null, /"gupscc_href"[^>]*href="([^"]*)"/i, [/&amp;/g, '&']);
+            if(href){
+                text = AnyBalance.requestGet(baseurl + 'SCCEXTSYS/' + href);
+                var obj = getParam(text, null, null, /setXMLEntities\s*\(\s*(\{[\s\S]*?\})\s*\)/);
+                if(obj){
+                     var i_t = getParam(obj, null, null, /ALL_VOLUME[\s\S]*?value:\s*'([^']*)'/, replaceTagsAndSpaces, parseBalance);
+                     var i_c = getParam(obj, null, null, /CUR_VOLUME[\s\S]*?value:\s*'([^']*)'/, replaceTagsAndSpaces, parseBalance);
+                     var i_l = getParam(obj, null, null, /LAST_VOLUME[\s\S]*?value:\s*'([^']*)'/, replaceTagsAndSpaces, parseBalance);
+                     if(typeof(i_t) != 'undefined' && AnyBalance.isAvailable('internet_total'))
+                         internet_total += i_t;
+                     if(typeof(i_c) != 'undefined' && AnyBalance.isAvailable('internet_cur'))
+                         internet_cur += i_c;
+                     if(typeof(i_l) != 'undefined' && AnyBalance.isAvailable('internet_left'))
+                         internet_left += i_l;
+                }else{
+                    AnyBalance.trace("Не удаётся найти информацию по услугам GPRS...");
+                }
+            }else{
+                AnyBalance.trace("Не удаётся найти ссылку на Услуги GPRS...");
             }
         }
     }

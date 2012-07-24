@@ -4,6 +4,7 @@
   <name>ГудЛайн</name>
   <description>
     Получает текущий баланс, валюту счета у ромингового провайдера телефонии ГудЛайн.
+    Туристическая сим-карта ГудЛайн это сим-карта, которая вставляется в ваш мобильный телефон на время поездки за границу для экономии на звонках в роуминге.
     Сайт провайдера: http://goodline.ru
   </description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
@@ -19,9 +20,9 @@
     <counter id="status" name="Статус" type="text"/>
   </counters>
   <keywords>
-    роуминг goodline сим-карта
+    роуминг goodline
   </keywords>
   <type>
-    telephony
+    cell
   </type>
 </provider>

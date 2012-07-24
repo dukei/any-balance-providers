@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="1">ab-cell-mts-ua</id>
+  <id major_version="1.0" version="2">ab-cell-mts-ua</id>
   <name>МТС (Украина)</name>
   <description>
     Получает баланс, минуты, смс, ммс, информацию о расходах, номер лицевого счета, ежемесячую плату и др.
@@ -11,21 +11,27 @@
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
     <js>main.js</js>
+    <history>history.xml</history>
   </files>
   <counters>
-    <counter id="balance" name="Баланс" units="грн"/>
-    <counter id="min_left" name="Бесплатные минуты" type="time_interval" format="{@Min}" />
-    <counter id="min_net" name="Бесплатные минуты внутри сети" type="time_interval" format="{@Min}" />
-    <counter id="min_net_all" name="Бесплатные минуты внутри сети во всех областях" type="time_interval" format="{@Min}" />
-    <counter id="sms_left" name="Бесплатные СМС" units=" sms"/>
-    <counter id="mms_left" name="Бесплатные ММС" units=" mms"/>
-    <counter id="traffic_left_mb" name="Остаток трафика" units="mb"/>
-    <counter id="bonus_balance" name="Денежный бонусный счет" units="грн"/>
+    <counter id="balance" name="Баланс" units=" грн"/>
+    <counter id="bonus_balance" name="Бонусный баланс" units=" грн"/>
+    <counter id="min_paket" name="Пакет бесплатных минут для внутрисетевых звонков" type="time_interval" format="{@MIN}" units=" мин"/>
+    <counter id="min_net_70" name="70 минут в день для внутрисетевых звонков" type="time_interval" format="{@MIN}" units=" мин"/>
+    <counter id="min_net_all_33" name="33 минуты в день для внутрисетевых звонков во всех областях" type="time_interval" format="{@MIN}" units=" мин"/>
+    <counter id="sms_paket" name="Пакет СМС" units=" sms"/>
+    <counter id="mms_paket" name="Пакет ММС" units=" mms"/>
+    <counter id="traffic_paket_mb" name="Пакет интернета" units=" mb"/>
+    <counter id="traffic_kop_mb" name="Интернет за копейку" units=" mb"/>
+    <counter id="traffic_hyper_mb" name="hyper.net к-во Кб загруженных по АПН hyper.net" units=" mb"/>
+    <counter id="traffic_opera_mb" name="Opera Mini к-во Кб загруженных по АПН opera" units=" mb"/>
+<!-- Добавить пакет 2500 минут внутри сети -->    
     <counter id="usedinthismonth" name="Расход за этот месяц" units="грн"/>
 <!--    <counter id="usedinprevmonth" name="Расход за прошлый месяц" units="грн"/> Че-то не показывается в лк -->
     <counter id="license" name="Лицевой счет" type="text"/>
     <counter id="monthlypay" name="Ежемесячная плата" units="грн"/>
     <counter id="phone" name="Номер телефона" type="text"/>
+<!--Изменен    <counter id="min_left" name="Бесплатные минуты" type="time_interval" format="{@Min}" /> -->
   </counters>
   <keywords>
     Сотовый телефон, мобильный, мобильник, mts, украина

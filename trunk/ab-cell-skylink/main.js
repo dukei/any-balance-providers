@@ -91,7 +91,7 @@ function mainMoscow(){
     //Но проверить не могу, нет у меня учетных данных...
     //var login_marker = getParam(html, null, null, /(...)/i);
     //if(!login_marker)
-    //    throw new AnyBalance.Error("Не удалсь войти в личный кабинет. Неправильный регион?");
+    //    throw new AnyBalance.Error("Не удалось войти в личный кабинет. Неправильный регион?");
 
     var result = {success: true};
 
@@ -136,9 +136,13 @@ function mainUln(){
     //Надо проверить, действительно ли нас пустили в кабинет, или просто перенаправили куда-то в другой регион
     var login_marker = getParam(html, null, null, /<span[^>]+id="ctl00_abonent_number"[^>]*>Абонент: (.*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
     if(!login_marker)
-        throw new AnyBalance.Error("Не удалсь войти в личный кабинет. Неправильный регион?");
+        throw new AnyBalance.Error("Не удалось войти в личный кабинет. Неправильный регион?");
 
-    var result = {success: true, userNum:login_marker, userName:''};
+    var result = {success: true}
+    
+    if(AnyBalance.isAvailable('userNum')){
+        result.userNum = login_marker;
+    }
 
     getParam(html, result, 'balance', /Ваш баланс, по состоянию на [0-9.]*, составляет:[\s\S]*?(-?\d[\s\d,\.]*)/i, replaceFloat, parseFloat);
     getParam(html, result, 'traffic', /Суммарный трафик \(мб\)[\s\S]*?<td[^>]*>(-?\d[\s\d,\.]*)<\/td>/i, replaceFloat, parseFloat);

@@ -8,10 +8,16 @@
 */
 
 
-function getParamFind (result, param, obj, search_str, regexp)
+function getParamFind (result, param, obj, search_str, regexp, parser)
 {
     if (!AnyBalance.isAvailable (param))
         return;
+
+    if(typeof(regexp) == 'function'){
+        parser = regexp;
+        regexp = null;
+    }
+
 
     var res = obj.find (search_str).text();
     if (regexp) {
@@ -21,9 +27,39 @@ function getParamFind (result, param, obj, search_str, regexp)
             return;
     }
 
-    result[param] = res;
+    result[param] = parser ? parser(res) : res;
 }
 
+function getParam (html, result, param, regexp, replaces, parser) {
+	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
+		return;
+
+	var value = regexp.exec (html);
+	if (value) {
+		value = value[1];
+		if (replaces) {
+			for (var i = 0; i < replaces.length; i += 2) {
+				value = value.replace (replaces[i], replaces[i+1]);
+			}
+		}
+		if (parser)
+			value = parser (value);
+
+    if(param)
+      result[param] = value;
+    else
+      return value
+	}
+}
+
+var replaceTagsAndSpaces = [/<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
+var replaceFloat = [/\s+/g, '', /,/g, '.'];
+
+function parseBalance(text){
+    var val = getParam(text.replace(/\s+/g, ''), null, null, /(-?\d[\d\s.,]*)/, replaceFloat, parseFloat);
+    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
+    return val;
+}
 
 function main () {
     var prefs = AnyBalance.getPreferences ();
@@ -79,22 +115,22 @@ function main () {
     getParamFind (result, 'status', $table, 'tr:nth-child(4) td');
 
     // Накоплено основных баллов
-    getParamFind (result, 'mainPoints', $table, 'tr:nth-child(6) td');
+    getParamFind (result, 'mainPoints', $table, 'tr:nth-child(6) td', parseBalance);
 
     // Накоплено EXPRESS-баллов
-    getParamFind (result, 'expressPoints', $table, 'tr:nth-child(7) td');
+    getParamFind (result, 'expressPoints', $table, 'tr:nth-child(7) td', parseBalance);
 
     // Израсходовано баллов
-    getParamFind (result, 'gonePoints', $table, 'tr:nth-child(8) td');
+    getParamFind (result, 'gonePoints', $table, 'tr:nth-child(8) td', parseBalance);
 
     // Сгорело баллов
-    getParamFind (result, 'burnPoints', $table, 'tr:nth-child(9) td');
+    getParamFind (result, 'burnPoints', $table, 'tr:nth-child(9) td', parseBalance);
 
     // Баланс баллов
-    getParamFind (result, 'balance', $table, 'tr:nth-child(10) td');
+    getParamFind (result, 'balance', $table, 'tr:nth-child(10) td', parseBalance);
 
     // Доступно к оплате у партнеров
-    getParamFind (result, 'availableForPay', $table, 'tr:nth-child(11) td', /\d+/);
+    getParamFind (result, 'availableForPay', $table, 'tr:nth-child(11) td', /\d+/, parseBalance);
 
     if (AnyBalance.isAvailable ('burnInThisMonth')) {
 
@@ -110,7 +146,7 @@ function main () {
             var $table = $(matches[0]);
 
             // Аннулируемые в этом месяце баллы
-            getParamFind (result, 'burnInThisMonth', $table, 'tr:nth-child(2) td:nth-child(2)');
+            getParamFind (result, 'burnInThisMonth', $table, 'tr:nth-child(2) td:nth-child(2)', parseBalance);
         }
     }
 

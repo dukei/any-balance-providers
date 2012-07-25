@@ -83,8 +83,10 @@ function main(){
   var html = AnyBalance.requestGet(baseurl + 'ru/cabinet/publicutilities', headers);
 
   AnyBalance.trace('Searching account_url');
-  var account_url = (new RegExp('<div class="magic_content">[\\s\\S]*<a href=([\\s\\S]*?)>' + prefs.account)).exec(html);
-  if(!account_url) throw new AnyBalance.Error("Не удаётся найти account_url. Проблемы или изменения на сайте?");
+  if(prefs.account){
+    var account_url = (new RegExp('<div class="magic_content">[\\s\\S]*<a href=([\\s\\S]*?)>' + prefs.account)).exec(html);
+    if(!account_url) throw new AnyBalance.Error("Не удаётся найти account_url. Проблемы или изменения на сайте?");
+  } else var account_url = 'https://erc.megabank.net/ru/cabinet/publicutilities/debt&rr=1'
   AnyBalance.trace('account_url = ' + account_url[1]);
 
   AnyBalance.trace('Connecting to ' + account_url[1]);

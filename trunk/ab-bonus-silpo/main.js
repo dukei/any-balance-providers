@@ -78,6 +78,12 @@ function main(){
 				result.skidka = parseFloat(matches[1]);
 			}
 		}
+		if (AnyBalance.isAvailable('bonus_perevod')) {
+			var matches = html.match(/Увага! Ваші <b>(\d+?) Балів<\/b>,/i);
+			if (matches) {
+				result.bonus_perevod = parseFloat(matches[1]);
+			}
+		}
 		AnyBalance.setResult(result);
 	} else { 
 		var error = getParam(html, null, null, /<\/script>([\s\S]*?)<br[^>]*>/i, replaceTagsAndSpaces);

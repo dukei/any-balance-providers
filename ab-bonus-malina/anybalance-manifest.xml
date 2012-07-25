@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="2">ab-bonus-malina</id>
+  <id major_version="1.0" version="3">ab-bonus-malina</id>
   <name>Бонусы Малина</name>
   <description>
     Получает информацию по баллам на карте накопительной программы Малина.

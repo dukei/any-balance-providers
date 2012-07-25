@@ -94,39 +94,32 @@ function main(){
 
     var baseurl = regions[prefs.region];
 
+
     AnyBalance.trace("Trying to enter selfcare at address: " + baseurl);
     var html = AnyBalance.requestPost(baseurl + "Security.mvc/LogOn", {
-    	username: prefs.login,
+        username: prefs.login,
         password: prefs.password
     });
     
-    if(prefs.phone && prefs.phone != prefs.login){
-        html = AnyBalance.requestGet(baseurl + "MyPhoneNumbers.mvc");
-        html = AnyBalance.requestGet(baseurl + "MyPhoneNumbers.mvc/Change?phoneNumber=7"+prefs.phone);
-	if(!html)
-		throw new AnyBalance.Error(prefs.phone + ": номер, возможно, неправильный или у вас нет к нему доступа"); 
-	var error = sumParam(html, null, null, /<ul class="operation-results-error">([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
-	if(error)
-		throw new AnyBalance.Error(prefs.phone + ": " + error); 
-    }
-
-    var regexp=/<form .*?id="redirect-form".*?action="[^"]*\.([^\.]+)\.mts\.ru/, res, tmp;
+    var regexp=/<form .*?id="redirect-form".*?action="[^"]*?([^\/\.]+)\.mts\.ru/, res, tmp;
     if (res=regexp.exec(html)){
         //Неправильный регион. Умный мтс нас редиректит
-	//Только эта скотина не всегда даёт правильную ссылку, иногда даёт такую, которая требует ещё редиректов
-	//Поэтому приходится вычленять из ссылки непосредственно нужный регион
-	if(!regions[res[1]])
-        	throw new AnyBalance.Error("mts has redirected to unknown region: " + res[1]);
-		
-	baseurl = regions[res[1]];
-    	AnyBalance.trace("Redirected, now trying to enter selfcare at address: " + baseurl);
+        //Только эта скотина не всегда даёт правильную ссылку, иногда даёт такую, которая требует ещё редиректов
+        //Поэтому приходится вычленять из ссылки непосредственно нужный регион
+        var newReg = res[1];
+
+        if(!regions[newReg])
+            throw new AnyBalance.Error("mts has redirected to unknown region: " + res[1]);
+	
+        baseurl = regions[newReg];
+        AnyBalance.trace("Redirected, now trying to enter selfcare at address: " + baseurl);
         html = AnyBalance.requestPost(baseurl + "Security.mvc/LogOn", {
-    		username: prefs.login,
-        	password: prefs.password
+    	    username: prefs.login,
+            password: prefs.password
         });
     }
-
-
+    
+    
     regexp=/<ul class="operation-results-error"><li>(.*?)<\/li>/;
     if (res=regexp.exec(html)){
         throw new AnyBalance.Error(res[1]);
@@ -134,22 +127,32 @@ function main(){
     
     regexp=/<title>Произошла ошибка<\/title>/;
     if(regexp.exec(html)){
-        throw new AnyBalance.Error("Интернет-помощник временно недоступен");
+        throw new AnyBalance.Error("Интернет-помощник временно недоступен." + (prefs.region == 'auto' ? ' Попробуйте установить ваш Регион вручную в настройках провайдера.' : ''));
     }
-
+    
     var error = sumParam(html, null, null, /<h1>\s*Ошибка\s*<\/h1>\s*<p>(.*?)<\/p>/i);
     if(error){
         throw new AnyBalance.Error(error);
     }
-
-    var result = {success: true};
-
+    
     regexp = /Security\.mvc\/LogOff/;
     if(regexp.exec(html))
     	AnyBalance.trace("It looks like we are in selfcare (found logOff)...");
     else{
-    	AnyBalance.trace("Have not found logOff... Wrong login and password or other error. Please contact author.");
-        throw new AnyBalance.Error("Не удаётся войти в интернет помощник. Возможно, проблемы на сайте. Попробуйте вручную войти в помощник по адресу http://ip.mts.ru/SELFCAREPDA.");
+        AnyBalance.trace("Have not found logOff... Unknown other error. Please contact author.");
+        throw new AnyBalance.Error("Не удаётся войти в интернет помощник. Возможно, проблемы на сайте." + (prefs.region == 'auto' ? ' Попробуйте установить ваш Регион вручную в настройках провайдера.' : ' Попробуйте вручную войти в помощник по адресу ' + baseurl));
+    }
+
+    var result = {success: true};
+
+    if(prefs.phone && prefs.phone != prefs.login){
+        html = AnyBalance.requestGet(baseurl + "MyPhoneNumbers.mvc");
+        html = AnyBalance.requestGet(baseurl + "MyPhoneNumbers.mvc/Change?phoneNumber=7"+prefs.phone);
+        if(!html)
+	    throw new AnyBalance.Error(prefs.phone + ": номер, возможно, неправильный или у вас нет к нему доступа"); 
+        var error = sumParam(html, null, null, /<ul class="operation-results-error">([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
+        if(error)
+	    throw new AnyBalance.Error(prefs.phone + ": " + error); 
     }
 
     // Тарифный план

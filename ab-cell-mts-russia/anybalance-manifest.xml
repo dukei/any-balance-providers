@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.2" version="19">ab-cell-mts-russia</id>
+  <id major_version="1.3" version="20">ab-cell-mts-russia</id>
   <name>МТС (Россия)</name>
   <description>
     Получает баланс, использованные минуты на локальные, мобильные и любимые номера, информацию о расходах, статус блокировки, кредит, номер лицевого счета, ежемесячую плату.
-Получает данные из PDA версии интернет-помощника для уменьшения трафика.
+Получает данные из PDA версии интернет-помощника ( https://ip.mts.ru/SELFCAREPDA ) для уменьшения трафика.
+
+    Если у вас нет доступа в Интернет-Помощник, необходимо:
+    1. Подключить услугу «Интернет-Помощник» со своего мобильного телефона: наберите *111*23# и следуйте подсказкам системы;
+    2. Установить пароль: со своего мобильного телефона (или в программе МТС-Коннект) отправьте смс с текстом [25 пробел ваш пароль] на номер 111; 
+       Длина пароля должна быть от 6 до 10 символов. 
+       Пароль обязательно должен содержать не менее одной цифры, одной строчной и одной заглавной латинской буквы.
   </description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <files>
@@ -15,13 +21,15 @@
   </files>
   <counters>
     <counter id="balance" name="Баланс" units="р"/>
-    <counter id="min_local" name="Локальные и мобильные минуты" units="мин"/>
-    <counter id="min_love" name="Любимые минуты" units="мин"/>
+    <counter id="min_local" name="Использовано минут" units="мин"/>
     <counter id="min_left" name="Бесплатные минуты" units="мин"/>
     <counter id="sms_left" name="Бесплатные СМС" units=" sms"/>
     <counter id="mms_left" name="Бесплатные ММС" units=" mms"/>
     <counter id="traffic_left_mb" name="Остаток трафика" units="Mb"/>
     <counter id="min_used" name="Минут накоплено (кред.)" units="мин"/>
+    <counter id="min_love" name="Использовано минут на любимые номера" units="мин"/>
+    <counter id="min_used_mts" name="Использовано минут на МТС" units="мин"/>
+    <counter id="min_left_mts" name="Бесплатные минуты на МТС" units="мин"/>
     <counter id="debt" name="Неоплаченные счета" units="р"/>
     <counter id="pay_till" name="Оплатить до" type="time"/>
     <counter id="statuslock" name="Статус блокировки" type="text"/>
@@ -40,4 +48,7 @@
   <type>
     cell
   </type>
+  <country>
+    ru
+  </country>
 </provider>

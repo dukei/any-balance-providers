@@ -263,6 +263,7 @@ function getTrayXml(filial, address){
 }
 
 function megafonTrayInfo(filial){
+    var filinfo = filial_info[filial];
     var $xml = getTrayXml(filial, filinfo.site);
     var result = {success: true, __tariff: $xml.find('RATE_PLAN').text()}, val;
     
@@ -473,40 +474,18 @@ function megafonServiceGuidePhysical(filial, sessionid){
     //Теперь получим персональный баланс
     getParam(text, result, 'prsnl_balance', /&#1055;&#1077;&#1088;&#1089;&#1086;&#1085;&#1072;&#1083;&#1100;&#1085;&#1099;&#1081; &#1073;&#1072;&#1083;&#1072;&#1085;&#1089;[\s\S]*?<div class="balance_[^>]*>([\S\s]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 
-    if(AnyBalance.isAvailable('sub_smit','sub_smio','sub_soi','sub_scl','sub_scr')){
-        $xmlTray = null;
-        try{
-            $xmlTray = getTrayXml(filial, filinfo.tray);
-        }catch(e){
-            //Скорее всего, запрещены роботы. Давайте их разрешим
-            AnyBalance.trace('robot login seems not to be allowed, requesting permission...');
-            //Разрешаем роботов
-            AnyBalance.requestPost(baseurl + 'SCWWW/SAVE_ROBOT_PARAMETERS_ACTION', {
-                P_IS_ROBOT_LOGIN_ALLOWED:1,
-                CHANNEL:'WWW',
-                SESSION_ID:sessionid,
-                P_USER_LANG_ID:1,
-                CUR_SUBS_MSISDN:prefs.login,
-                SUBSCRIBER_MSISDN:prefs.login
-            });
-            //Сбрасываем блок
-            AnyBalance.requestPost(baseurl + 'SCWWW/UNBLOCK_ROBOT_ACTION', {
-                ROBOT_LOGIN:prefs.login,
-                CHANNEL:'WWW',
-                SESSION_ID:sessionid,
-                P_USER_LANG_ID:1,
-                CUR_SUBS_MSISDN:prefs.login,
-                SUBSCRIBER_MSISDN:prefs.login
-            });
-        }
-        try{
-        if(!$xmlTray)
-            $xmlTray = getTrayXml(filial, filinfo.tray);
-            read_sum_parameters($xmlTray);
-        }catch(e){
-            AnyBalance.trace('Could not fetch tray info: ' + e.message);
-        }
-    }
+    //Начислено абонентской платы по тарифному плану:
+    getPropValFloat(text, '&#1053;&#1072;&#1095;&#1080;&#1089;&#1083;&#1077;&#1085;&#1086; &#1072;&#1073;&#1086;&#1085;&#1077;&#1085;&#1090;&#1089;&#1082;&#1086;&#1081; &#1087;&#1083;&#1072;&#1090;&#1099; &#1087;&#1086; &#1090;&#1072;&#1088;&#1080;&#1092;&#1085;&#1086;&#1084;&#1091; &#1087;&#1083;&#1072;&#1085;&#1091;:',
+        result, 'sub_smit');
+    //Начислено абонентской платы за услуги:
+    getPropValFloat(text, '&#1053;&#1072;&#1095;&#1080;&#1089;&#1083;&#1077;&#1085;&#1086; &#1072;&#1073;&#1086;&#1085;&#1077;&#1085;&#1090;&#1089;&#1082;&#1086;&#1081; &#1087;&#1083;&#1072;&#1090;&#1099; &#1079;&#1072; &#1091;&#1089;&#1083;&#1091;&#1075;&#1080;:',
+        result, 'sub_smio');
+    //Начислено за услуги:
+    getPropValFloat(text, '&#1053;&#1072;&#1095;&#1080;&#1089;&#1083;&#1077;&#1085;&#1086; &#1079;&#1072; &#1091;&#1089;&#1083;&#1091;&#1075;&#1080;:',
+        result, 'sub_soi');
+    //Начислено за звонки:
+    getPropValFloat(text, '&#1053;&#1072;&#1095;&#1080;&#1089;&#1083;&#1077;&#1085;&#1086; &#1079;&#1072; &#1079;&#1074;&#1086;&#1085;&#1082;&#1080;:',
+        result, 'sub_scl');
 	
     //Текущий тарифный план
     var tariff = getPropValText(text, '&#1058;&#1077;&#1082;&#1091;&#1097;&#1080;&#1081; &#1090;&#1072;&#1088;&#1080;&#1092;&#1085;&#1099;&#1081; &#1087;&#1083;&#1072;&#1085;:');

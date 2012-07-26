@@ -23,7 +23,8 @@ var filial_info = {
 filial_info[MEGA_FILIAL_MOSCOW] = {
   name: 'Столичный филиал',
   func: megafonServiceGuide,
-  site: "https://moscowsg.megafon.ru/"
+  site: "https://moscowsg.megafon.ru/",
+  tray: "https://moscowsg.megafon.ru/TRAY_INFO/TRAY_INFO?LOGIN=%LOGIN%&PASSWORD=%PASSWORD%"
 };
 filial_info[MEGA_FILIAL_SIBIR] = {
   name: 'Сибирский филиал',
@@ -43,7 +44,8 @@ filial_info[MEGA_FILIAL_FAREAST] = {
 filial_info[MEGA_FILIAL_VOLGA] = {
   name: 'Поволжский филиал',
   site: "https://volgasg.megafon.ru/",
-  func: megafonServiceGuide
+  func: megafonServiceGuide,
+  tray: 'https://volgasg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%'
 };
 filial_info[MEGA_FILIAL_KAVKAZ] = {
   name: 'Кавказский филиал',
@@ -59,6 +61,27 @@ filial_info[MEGA_FILIAL_URAL] = {
   name: 'Уральский филиал',
   site: 'https://uralsg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%',
   func: megafonTrayInfo
+};
+
+var g_login_errors = {
+  error_1:"Введите логин!",
+  error_2:"Введите пароль!",
+  error_3:"Введите защитный код!",
+  error_4:"Неверный префикс.",
+  error_5:"Защитный код устарел.",
+  error_6:"Введен неверный защитный код.",
+  error_7:"Выберите контрольный вопрос.",
+  error_8:"Введите ответ на контрольный вопрос.",
+  error_9:"Вам недоступен список контрольных вопросов.",
+  error_10:"Передан неизвестный параметр.",
+  error_11:"Ваш ответ слишком короткий.",
+  error_12:"Не заполнено поле со старым паролем.",
+  error_13:"Не заполнено поле с новым паролем.",
+  error_14:"Не заполнено поле подтверждения пароля.",
+  error_15:"Пользователь не найден.",
+  error_100:"Вход в систему самообслуживания. Пожалуйста, подождите.",
+  error_200:"Ошибка запроса на сервер. Обратитесь, пожалуйста, в службу поддержки.",
+  error_0:"Ошибка. Сервис недоступен. Обратитесь, пожалуйста, в службу поддержки."
 };
 
 //http://www.mtt.ru/mtt/def
@@ -194,14 +217,14 @@ function main(){
     (filinfo.func)(filial);
 }
 
-function megafonTrayInfo(filial){
-    var filinfo = filial_info[filial];
+function getTrayXml(filial, address){
     var prefs = AnyBalance.getPreferences();
+    var filinfo = filial_info[filial];
     
     AnyBalance.trace('Connecting to trayinfo for ' + filinfo.name);
     
     AnyBalance.setDefaultCharset('utf-8');
-    var info = AnyBalance.requestGet(filinfo.site
+    var info = AnyBalance.requestGet(address
         .replace(/%LOGIN%/g, prefs.login)
         .replace(/%PASSWORD%/g, prefs.password)
     );
@@ -236,6 +259,11 @@ function megafonTrayInfo(filial){
         throw new AnyBalance.Error(error + ' Возможно, вам надо зайти в Сервис-Гид и включить настройку Настройки Сервис-Гида/Автоматический доступ системам/Доступ открыт пользователям и автоматизированным системам, а также нажать кнопку "разблокировать".');
     }
 
+    return $xml;
+}
+
+function megafonTrayInfo(filial){
+    var $xml = getTrayXml(filial, filinfo.site);
     var result = {success: true, __tariff: $xml.find('RATE_PLAN').text()}, val;
     
     if(AnyBalance.isAvailable('balance'))
@@ -274,6 +302,13 @@ function megafonTrayInfo(filial){
         }
     }
 
+    read_sum_parameters(result, $xml);
+    
+    AnyBalance.setResult(result);
+    
+}
+
+function read_sum_parameters(result, $xml){
     if(AnyBalance.isAvailable('sub_smit')){
         var val = $xml.find('SUB>SMIT').text();
         if(val)
@@ -299,9 +334,6 @@ function megafonTrayInfo(filial){
         if(val)
             result.sub_soi = parseFloat(val);
     }
-    
-    AnyBalance.setResult(result);
-    
 }
 
 /**
@@ -324,15 +356,22 @@ function megafonServiceGuide(filial){
 
     var matches;
     if(matches = session.match(/<ERROR_ID>(.*?)<\/ERROR_ID>/i)){
-        AnyBalance.trace('Got error from sg: ' + matches[1]);
+        var errid = matches[1];
+        AnyBalance.trace('Got error from sg: ' + errid);
         //Случилась ошибка, может быть мы можем даже увидеть её описание
         if(matches = session.match(/<ERROR_MESSAGE>(.*?)<\/ERROR_MESSAGE>/i)){
             AnyBalance.trace('Got error message from sg: ' + matches[1]);
             throw new AnyBalance.Error(matches[1]);
         }
+
+        errid = "error_" + Math.abs(parseInt(errid));
+        if(g_login_errors[errid])
+            throw new AnyBalance.Error(g_login_errors[errid]);
+
         AnyBalance.trace('Got unknown error from sg');
-        throw new AnyBalance.Error('Неизвестная ошибка');
+        throw new AnyBalance.Error(g_login_errors.error_0);
     }
+
     if(!(matches = session.match(/<SESSION_ID>(.*?)<\/SESSION_ID>/i))){
         throw new AnyBalance.Error('Не удалось получить сессию'); //Странный ответ, может, можно переконнектиться потом
     }
@@ -434,18 +473,40 @@ function megafonServiceGuidePhysical(filial, sessionid){
     //Теперь получим персональный баланс
     getParam(text, result, 'prsnl_balance', /&#1055;&#1077;&#1088;&#1089;&#1086;&#1085;&#1072;&#1083;&#1100;&#1085;&#1099;&#1081; &#1073;&#1072;&#1083;&#1072;&#1085;&#1089;[\s\S]*?<div class="balance_[^>]*>([\S\s]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 
-    //Начислено абонентской платы по тарифному плану:
-    getPropValFloat(text, '&#1053;&#1072;&#1095;&#1080;&#1089;&#1083;&#1077;&#1085;&#1086; &#1072;&#1073;&#1086;&#1085;&#1077;&#1085;&#1090;&#1089;&#1082;&#1086;&#1081; &#1087;&#1083;&#1072;&#1090;&#1099; &#1087;&#1086; &#1090;&#1072;&#1088;&#1080;&#1092;&#1085;&#1086;&#1084;&#1091; &#1087;&#1083;&#1072;&#1085;&#1091;:',
-        result, 'sub_smit');
-    //Начислено абонентской платы за услуги:
-    getPropValFloat(text, '&#1053;&#1072;&#1095;&#1080;&#1089;&#1083;&#1077;&#1085;&#1086; &#1072;&#1073;&#1086;&#1085;&#1077;&#1085;&#1090;&#1089;&#1082;&#1086;&#1081; &#1087;&#1083;&#1072;&#1090;&#1099; &#1079;&#1072; &#1091;&#1089;&#1083;&#1091;&#1075;&#1080;:',
-        result, 'sub_smio');
-    //Начислено за услуги:
-    getPropValFloat(text, '&#1053;&#1072;&#1095;&#1080;&#1089;&#1083;&#1077;&#1085;&#1086; &#1079;&#1072; &#1091;&#1089;&#1083;&#1091;&#1075;&#1080;:',
-        result, 'sub_soi');
-    //Начислено за звонки:
-    getPropValFloat(text, '&#1053;&#1072;&#1095;&#1080;&#1089;&#1083;&#1077;&#1085;&#1086; &#1079;&#1072; &#1079;&#1074;&#1086;&#1085;&#1082;&#1080;:',
-        result, 'sub_scl');
+    if(AnyBalance.isAvailable('sub_smit','sub_smio','sub_soi','sub_scl','sub_scr')){
+        $xmlTray = null;
+        try{
+            $xmlTray = getTrayXml(filial, filinfo.tray);
+        }catch(e){
+            //Скорее всего, запрещены роботы. Давайте их разрешим
+            AnyBalance.trace('robot login seems not to be allowed, requesting permission...');
+            //Разрешаем роботов
+            AnyBalance.requestPost(baseurl + 'SCWWW/SAVE_ROBOT_PARAMETERS_ACTION', {
+                P_IS_ROBOT_LOGIN_ALLOWED:1,
+                CHANNEL:'WWW',
+                SESSION_ID:sessionid,
+                P_USER_LANG_ID:1,
+                CUR_SUBS_MSISDN:prefs.login,
+                SUBSCRIBER_MSISDN:prefs.login
+            });
+            //Сбрасываем блок
+            AnyBalance.requestPost(baseurl + 'SCWWW/UNBLOCK_ROBOT_ACTION', {
+                ROBOT_LOGIN:prefs.login,
+                CHANNEL:'WWW',
+                SESSION_ID:sessionid,
+                P_USER_LANG_ID:1,
+                CUR_SUBS_MSISDN:prefs.login,
+                SUBSCRIBER_MSISDN:prefs.login
+            });
+        }
+        try{
+        if(!$xmlTray)
+            $xmlTray = getTrayXml(filial, filinfo.tray);
+            read_sum_parameters($xmlTray);
+        }catch(e){
+            AnyBalance.trace('Could not fetch tray info: ' + e.message);
+        }
+    }
 	
     //Текущий тарифный план
     var tariff = getPropValText(text, '&#1058;&#1077;&#1082;&#1091;&#1097;&#1080;&#1081; &#1090;&#1072;&#1088;&#1080;&#1092;&#1085;&#1099;&#1081; &#1087;&#1083;&#1072;&#1085;:');

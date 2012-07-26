@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change major_version="2.5" version="31" date="2012-07-26">
+      - Изменения на сайте (все регионы)
+    </change>
     <change major_version="2.5" version="30" date="2012-07-26">
       - Расшифровка ошибок входа в сервис гид (для столичного, центрального и поволжского регионов)
     </change>

@@ -19,8 +19,12 @@ var regions = {
 };
 
 function sumParam (html, result, param, regexp, replaces, parser, do_replace) {
-	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
-		return;
+	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param))){
+            if(do_replace)
+  	        return html;
+            else
+                return;
+	}
 
         var total_value;
 	var html_copy = html.replace(regexp, function(str, value){

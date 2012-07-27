@@ -143,21 +143,17 @@ function main(){
         AnyBalance.isAvailable ('traffic_kop_mb') ||
         AnyBalance.isAvailable ('traffic_hyper_mb') ||
         AnyBalance.isAvailable ('traffic_opera_mb') ||
-        
         AnyBalance.isAvailable ('traffic_maxenergy_mb') ||
         AnyBalance.isAvailable ('sms_net') ||
         AnyBalance.isAvailable ('min_net_maxenergy') ||
         AnyBalance.isAvailable ('min_all_100') ||
-        
         AnyBalance.isAvailable ('min_net') ||
         AnyBalance.isAvailable ('min_all_25') ||
         AnyBalance.isAvailable ('min_net_2500') ||
         AnyBalance.isAvailable ('sms_100') ||
-        
         AnyBalance.isAvailable ('min_all_60_isp') ||
         AnyBalance.isAvailable ('min_all_60') ||
         AnyBalance.isAvailable ('traffic_free_mb') ||
-        
         AnyBalance.isAvailable ('license') ||
 //        AnyBalance.isAvailable ('statuslock') ||
 //        AnyBalance.isAvailable ('credit') ||

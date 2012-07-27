@@ -39,11 +39,11 @@ function main(){
     result.__tariff = json.tariff_name;
 
     if(AnyBalance.isAvailable('traffic_ext')){
-      result.traffic_ext = Math.round(json.traffic_external_downloaded/1024/1024);
+      result.traffic_ext = Math.round(json.traffic_external_downloaded/1000/1000);
     }
 
     if(AnyBalance.isAvailable('traffic_int')){
-      result.traffic_int = Math.round(json.traffic_internal_downloaded/1024/1024*100)/100;
+      result.traffic_int = Math.round(json.traffic_internal_downloaded/1000/1000*100)/100;
     }
 
     if(AnyBalance.isAvailable('abon')){

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-kapitalplus</id>
+  <id version="2">ab-internet-kapitalplus</id>
   <name>Капитал Плюс (Сахалин)</name>
   <description>
     Получает текущий баланс, трафик у сахалинского провайдера интернет и телефонии Капитал Плюс.

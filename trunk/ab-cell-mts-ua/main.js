@@ -46,7 +46,7 @@ function parseBalance(text){
 function parseTraffic(text){
     var _text = text.replace(/\s+/, '');
     var val = sumParam(_text, null, null, /(-?\d[\d\.,]*)/, replaceFloat, parseFloat);
-    var units = sumParam(_text, null, null, /(kb|mb|gb|кб|мб|гб|байт|bytes)/i);
+    var units = sumParam(_text, null, null, /(kб|kb|mb|gb|кб|мб|гб|байт|bytes)/i);
     switch(units.toLowerCase()){
       case 'bytes':
       case 'байт':
@@ -113,6 +113,8 @@ function main(){
     }
 
     var result = {success: true};
+    
+    var min_all_60_isp;
 
     regexp = /Security\.mvc\/LogOff/;
     if(regexp.exec(html))
@@ -140,10 +142,23 @@ function main(){
         AnyBalance.isAvailable ('traffic_paket_mb') ||
         AnyBalance.isAvailable ('traffic_kop_mb') ||
         AnyBalance.isAvailable ('traffic_hyper_mb') ||
-        AnyBalance.isAvailable ('traffic_opera_mb') ||        
-        //Добавить пакет 2500 минут внутри сети  
+        AnyBalance.isAvailable ('traffic_opera_mb') ||
+        
+        AnyBalance.isAvailable ('traffic_maxenergy_mb') ||
+        AnyBalance.isAvailable ('sms_net') ||
+        AnyBalance.isAvailable ('min_net_maxenergy') ||
+        AnyBalance.isAvailable ('min_all_100') ||
+        
+        AnyBalance.isAvailable ('min_net') ||
+        AnyBalance.isAvailable ('min_all_25') ||
+        AnyBalance.isAvailable ('min_net_2500') ||
+        AnyBalance.isAvailable ('sms_100') ||
+        
+        AnyBalance.isAvailable ('min_all_60_isp') ||
+        AnyBalance.isAvailable ('min_all_60') ||
+        AnyBalance.isAvailable ('traffic_free_mb') ||
+        
         AnyBalance.isAvailable ('license') ||
-   
 //        AnyBalance.isAvailable ('statuslock') ||
 //        AnyBalance.isAvailable ('credit') ||
         AnyBalance.isAvailable ('usedinthismonth')) {
@@ -155,39 +170,65 @@ function main(){
         AnyBalance.trace("Parsing status...");
 	
 	//Денежный бонусный счет.
-        sumParam (html, result, 'bonus_balance', /Денежный бонусный счет:[^<]*осталось\s*([\d\.,]+)\s*грн/i, replaceTagsAndSpaces, parseBalance);
+        sumParam (html, result, 'bonus_balance', /<li>Денежный бонусный счет:[^<]*осталось\s*([\d\.,]+)\s*грн. Срок действия до[^<]*<\/li>/i, replaceTagsAndSpaces, parseBalance);
 	
         // Пакет бесплатных минут для внутрисетевых звонков
-        sumParam (html, result, 'min_paket', /<li>Осталось ([\d\.,]+) бесплатных секунд до/ig, replaceFloat, parseFloat);
+        sumParam (html, result, 'min_paket', /<li>Осталось ([\d\.,]+) бесплатных секунд до[^<]*<\/li>/ig, replaceFloat, parseFloat);
 	
 	// 70 минут в день для внутрисетевых звонков
-        sumParam (html, result, 'min_net_70', /<li>70 минут в день для внутрисетевых звонков:[^<]*осталось ([\d\.,]+) бесплатных секунд/ig, replaceFloat, parseFloat);
+        sumParam (html, result, 'min_net_70', /<li>70 минут в день для внутрисетевых звонков:[^<]*осталось ([\d\.,]+) бесплатных секунд<\/li>/ig, replaceFloat, parseFloat);
     
         // 33 минуты в день для внутрисетевых звонков во всех областях
-        sumParam (html, result, 'min_net_all_33', /<li>33 минуты в день для внутрисетевых звонков во всех областях:[^<]*осталось ([\d\.,]+) бесплатных секунд/ig, replaceFloat, parseFloat);
+        sumParam (html, result, 'min_net_all_33', /<li>33 минуты в день для внутрисетевых звонков во всех областях:[^<]*осталось ([\d\.,]+) бесплатных секунд<\/li>/ig, replaceFloat, parseFloat);
     
         // Пакет СМС
-        sumParam (html, result, 'sms_paket', /<li>100 бесплатных смс по Украине:[^<]*осталось (\d+) смс. Срок действия до/ig, null, parseInt);
+        sumParam (html, result, 'sms_paket', /<li>100 бесплатных смс по Украине:[^<]*осталось (\d+) смс. Срок действия до[^<]*<\/li>/ig, null, parseInt);
 
         // Пакет ММС
-        sumParam (html, result, 'mms_paket', /<li>20 бесплатных MMS:[^<]*осталось:[^\d]*?(\d+) ммс. Срок действия до/ig, null, parseInt);
+        sumParam (html, result, 'mms_paket', /<li>20 бесплатных MMS:[^<]*осталось:[^\d]*?(\d+) ммс. Срок действия до[^<]*<\/li>/ig, null, parseInt);
 	
         // Пакет интернета
-	sumParam (html, result, 'traffic_paket_mb', /<li>20MB_GPRS_Internet:[^<]*осталось[^\d]*?(\d+,?\d* *(kb|mb|gb|кб|мб|гб|байт|bytes)). Срок действия до/ig, null, parseTraffic);
+	sumParam (html, result, 'traffic_paket_mb', /<li>20MB_GPRS_Internet:[^<]*осталось[^\d]*?(\d+,?\d* *(kb|mb|gb|кб|мб|гб|байт|bytes)). Срок действия до[^<]*<\/li>/ig, null, parseTraffic);
 
-        // Интернет за копейку
-	sumParam (html, result, 'traffic_kop_mb', /<li>Осталось[^\d]*?(\d+,?\d* *(kb|mb|gb|кб|мб|гб|байт|bytes))./ig, null, parseTraffic);
+        // Интернет за копейку и другие ежедневные пакеты
+	sumParam (html, result, 'traffic_kop_mb', /<li>Осталось[^\d]*?(\d+,?\d* *(kb|mb|gb|кб|мб|гб|байт|bytes)).<\/li>/ig, null, parseTraffic);
 	
         //К-во Кб загруженных по АПН hyper.net
-	sumParam (html, result, 'traffic_hyper_mb', /<li>К-во Кб загруженных по АПН hyper.net:[^<]*Использовано[^\d]*?(\d+,?\d* *(kb|mb|gb|кб|мб|гб|байт|bytes))/ig, null, parseTraffic);
+	sumParam (html, result, 'traffic_hyper_mb', /<li>К-во Кб загруженных по АПН hyper.net:[^<]*Использовано[^\d]*?(\d+,?\d* *(kb|mb|gb|кб|мб|гб|байт|bytes))<\/li>/ig, null, parseTraffic);
 	
         //К-во Кб загруженных по АПН opera
-	sumParam (html, result, 'traffic_opera_mb', /<li>К-во Кб загруженных по АПН opera:[^<]*Использовано[^\d]*?(\d+,?\d* *(kb|mb|gb|кб|мб|гб|байт|bytes))/ig, null, parseTraffic);
+	sumParam (html, result, 'traffic_opera_mb', /<li>К-во Кб загруженных по АПН opera:[^<]*Использовано[^\d]*?(\d+,?\d* *(kb|mb|gb|кб|мб|гб|байт|bytes))<\/li>/ig, null, parseTraffic);
 	
-        //Добавить пакет 2500 минут внутри сети      
-
-        // Остаток трафика
-//        sumParam (html, result, 'traffic_left_mb', /(?:Осталось|Остаток)[^\d]*?(\d+,?\d* *(kb|mb|gb|кб|мб|гб|байт|bytes))/ig, null, parseTraffic);        
+	// Интернет Max Energy (интересно у них единица измерения прописана)
+        sumParam (html, result, 'traffic_maxenergy_mb', /<li>Осталось: (\d+,?\d* *(kб|bytes)).<\/li>/ig, null, parseTraffic);
+	
+	// СМС в сети МТС
+	sumParam (html, result, 'sms_net', /<li>Осталось (\d+) смс.<\/li>/ig, null, parseInt);
+	
+	// Минуты в сети МТС
+        sumParam (html, result, 'min_net_maxenergy', /<li>Осталось ([\d\.,]+) бесплатных секунд.<\/li>/ig, replaceFloat, parseFloat);
+	
+	// 100 минут абонентам по Украине
+        sumParam (html, result, 'min_all_100', /<li>Осталось ([\d\.,]+) секунд на все сети<\/li>/ig, replaceFloat, parseFloat);
+	
+	// Минуты с услугой «Супер без пополнения» в сети МТС
+        sumParam (html, result, 'min_net', /<li>Осталось ([\d\.,]+) бесплатных секунд<\/li>/ig, replaceFloat, parseFloat);
+	
+	// 25 минут на другие сети
+        sumParam (html, result, 'min_all_25', /<li>Осталось ([\d\.,]+) секунд на другие сети<\/li>/ig, replaceFloat, parseFloat);
+	
+        //2500 минут в сети МТС
+        sumParam (html, result, 'min_net_2500', /<li>Осталось ([\d\.,]+) секунд внутри сети<\/li>/ig, replaceFloat, parseFloat);
+	
+	// Бесплатные смс для отправки на номера в пределах Украины
+	sumParam (html, result, 'sms_100', /<li>Бесплатные смс для отправки на номера в пределах Украины:[^<]*Осталось[^\d]*?(\d+) смс. Срок действия до[^<]*<\/li>/ig, null, parseInt);
+	
+	//60 минут на все сети за 5 коп
+        sumParam (html, result, 'min_all_60_isp', /<li>К-во бесплатных минут для звонков по Украине:[^<]*Израсходовано[^\d]*?([\d\.,]+) сек.<\/li>/ig, replaceFloat, parseFloat);
+	result.min_all_60 = 3600 - min_all_60_isp;
+	
+	// Бесплатный интернет
+	sumParam (html, result, 'traffic_free_mb', /<li>К-во Кб на GPRS-Internet:[^<]*Осталось[^\d]*?(\d+,?\d* *(kb|mb|gb|кб|мб|гб|байт|bytes)).<\/li>/ig, null, parseTraffic);
 
         // Лицевой счет
         sumParam (html, result, 'license', /№ (.*?):/);

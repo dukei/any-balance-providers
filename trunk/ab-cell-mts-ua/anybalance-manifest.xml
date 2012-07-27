@@ -6,7 +6,7 @@
     Получает баланс, минуты, смс, ммс, информацию о расходах, номер лицевого счета, ежемесячую плату и др.
 Получает данные из PDA версии интернет-помощника https://ihelper-prp.mts.com.ua/SelfCarePda/ .
   </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <author>Ignatiy Goloviznin &lt;igoloviznin@gmail.com&gt;</author>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
@@ -22,16 +22,29 @@
     <counter id="sms_paket" name="Пакет СМС" units=" sms"/>
     <counter id="mms_paket" name="Пакет ММС" units=" mms"/>
     <counter id="traffic_paket_mb" name="Пакет интернета" units=" mb"/>
-    <counter id="traffic_kop_mb" name="Интернет за копейку" units=" mb"/>
+    <counter id="traffic_kop_mb" name="Интернет за копейку и другие ежедневные пакеты" units=" mb"/>
     <counter id="traffic_hyper_mb" name="hyper.net к-во Кб загруженных по АПН hyper.net" units=" mb"/>
     <counter id="traffic_opera_mb" name="Opera Mini к-во Кб загруженных по АПН opera" units=" mb"/>
-<!-- Добавить пакет 2500 минут внутри сети -->    
+    
+    <counter id="traffic_maxenergy_mb" name="Интернет Max Energy" units=" mb"/>
+    <counter id="sms_net" name="СМС в сети МТС" units=" sms"/>
+    <counter id="min_net_maxenergy" name="Минуты в сети МТС" type="time_interval" format="{@MIN}" units=" мин"/>
+    <counter id="min_all_100" name="100 минут абонентам по Украине" type="time_interval" format="{@MIN}" units=" мин"/>
+    
+    <counter id="min_net" name="Минуты с услугой «Супер без пополнения» в сети МТС" type="time_interval" format="{@MIN}" units=" мин"/>
+    <counter id="min_all_25" name="25 минут на другие сети" type="time_interval" format="{@MIN}" units=" мин"/>
+    
+    <counter id="min_net_2500" name="2500 минут в сети МТС" type="time_interval" format="{@MIN}" units=" мин"/>
+    <counter id="sms_100" name="Бесплатные смс для отправки на номера в пределах Украины" units=" sms"/>
+    
+    <counter id="min_all_60" name="60 минут на все сети за 5 коп" type="time_interval" format="{@MIN}" units=" мин"/>
+    <counter id="traffic_free_mb" name="Бесплатный интернет" units=" mb"/><!-- Актуально до 15.08.2012 для Супер Свободы -->
+    
     <counter id="usedinthismonth" name="Расход за этот месяц" units="грн"/>
 <!--    <counter id="usedinprevmonth" name="Расход за прошлый месяц" units="грн"/> Че-то не показывается в лк -->
     <counter id="license" name="Лицевой счет" type="text"/>
     <counter id="monthlypay" name="Ежемесячная плата" units="грн"/>
     <counter id="phone" name="Номер телефона" type="text"/>
-<!--Изменен    <counter id="min_left" name="Бесплатные минуты" type="time_interval" format="{@Min}" /> -->
   </counters>
   <keywords>
     Сотовый телефон, мобильный, мобильник, mts, украина

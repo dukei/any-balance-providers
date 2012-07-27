@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
     <change version="7" date="2012-07-26">
-      - Исправлено формат дат (требуется AnyBalance 2.6.530+)
+      - Исправлен формат дат (требуется AnyBalance 2.6.530+)
     </change>
     <change version="6" date="2012-07-20">
       - Исправлено отображение параметров потребительских кредитов

@@ -52,6 +52,7 @@ function parseTraffic(text){
       case 'байт':
         val = Math.round(val/1024/1024*100)/100;
         break;
+      case 'kб':
       case 'kb':
       case 'кб':
         val = Math.round(val/1024*100)/100;
@@ -198,9 +199,9 @@ sumParam (html, result, 'sms_100', /<li>Бесплатные смс для от�
         var min_all_60_isp = sumParam (html, null, null, /<li>К-во бесплатных минут для звонков по Украине:[^<]*Израсходовано[^\d]*?([\d\.,]+) сек.<\/li>/ig, replaceFloat, parseFloat);
         if(typeof(min_all_60_isp) != 'undefined'){ //Только если этот параметр найден в html
             if(AnyBalance.isAvailable('min_all_60_isp'))
-                result.min_all_60 = min_all_60_isp;
+                result.min_all_60_isp = min_all_60_isp;
             if(AnyBalance.isAvailable('min_all_60'))
-                result.min_all_60_isp = 3600 - min_all_60_isp;
+                result.min_all_60 = 3600 - min_all_60_isp;
         }
     }
 

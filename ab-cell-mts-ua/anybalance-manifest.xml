@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="3">ab-cell-mts-ua</id>
+  <id major_version="1.0" version="4">ab-cell-mts-ua</id>
   <name>МТС (Украина)</name>
   <description>
     Получает баланс, минуты, смс, ммс, информацию о расходах, номер лицевого счета, ежемесячую плату и др.

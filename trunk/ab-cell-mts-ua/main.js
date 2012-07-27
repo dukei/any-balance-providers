@@ -224,8 +224,15 @@ function main(){
 	sumParam (html, result, 'sms_100', /<li>Бесплатные смс для отправки на номера в пределах Украины:[^<]*Осталось[^\d]*?(\d+) смс. Срок действия до[^<]*<\/li>/ig, null, parseInt);
 	
 	//60 минут на все сети за 5 коп
-        sumParam (html, result, 'min_all_60_isp', /<li>К-во бесплатных минут для звонков по Украине:[^<]*Израсходовано[^\d]*?([\d\.,]+) сек.<\/li>/ig, replaceFloat, parseFloat);
-	result.min_all_60 = 3600 - min_all_60_isp;
+        if(AnyBalance.isAvailable('min_all_60', 'min_all_60_isp')){
+            var min_all_60_isp = sumParam (html, null, null, /<li>К-во бесплатных минут для звонков по Украине:[^<]*Израсходовано[^\d]*?([\d\.,]+) сек.<\/li>/ig, replaceFloat, parseFloat);
+            if(typeof(min_all_60_isp) != 'undefined'){ //Только если этот параметр найден в html
+                if(AnyBalance.isAvailable('min_all_60_isp'))
+                    result.min_all_60 = min_all_60_isp;
+                if(AnyBalance.isAvailable('min_all_60'))
+                    result.min_all_60_isp = 3600 - min_all_60_isp;
+            }
+        }
 	
 	// Бесплатный интернет
 	sumParam (html, result, 'traffic_free_mb', /<li>К-во Кб на GPRS-Internet:[^<]*Осталось[^\d]*?(\d+,?\d* *(kb|mb|gb|кб|мб|гб|байт|bytes)).<\/li>/ig, null, parseTraffic);

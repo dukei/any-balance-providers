@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Номер договора" 
+        positiveButtonText="ОК" 
+        summary="||{@s}" 
+        dialogTitle="Номер договора" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите номер договора для входа в личный кабинет http://www.spb.tvoe.tv/cabinet/"
+        inputType="number"
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="||***********"
+        dialogMessage="Введите пароль, используемый для входа в личный кабинет http://www.spb.tvoe.tv/cabinet/"
+        inputType="textPassword">
+    </EditTextPreference>
+    <ListPreference 
+        key="what" 
+        title="Услуга"
+        summary="||{@s}"
+        entries="Твоё ТВ|Твой интернет|Твой телефон (местные вызовы)|Твой телефон (междугородние/международные)"
+        entryValues="tv|inet|phone_local|phone_inter"
+	defaultValue="tv">
+    </ListPreference>
+</PreferenceScreen>

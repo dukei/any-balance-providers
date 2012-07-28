@@ -86,7 +86,7 @@ function uralsib(prefix){
 
     var tr = getParam(html, null, null, new RegExp('ИНФОРМАЦИЯ ПО КАРТЕ[\\s\\S]*?(<tr[^>]*>(?:\\s*<td[^>]*>[\\s\\S]*?<\\/td>){2}\\s*<td[^>]*>\\s*<nobr>' + schet + '[\\s\\S]*?<\\/tr>)', 'i'));
     if(!tr)
-        throw AnyBalance.Error(prefs.accnum ? "Не найдено ни одного лицевого счета!" : "Не найдено лицевого счета №" + schet); 
+        throw new AnyBalance.Error(prefs.accnum ? "Не найдено ни одного лицевого счета!" : "Не найдено лицевого счета №" + schet); 
 
     getParam(tr, result, 'balance', /(?:[\s\S]*?<\/td>\s*<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'balance_total', /Итого задолженностей:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
@@ -100,7 +100,7 @@ function uralsib(prefix){
     if(AnyBalance.isAvailable('strah', 'strah_ok', 'cold', 'hot', 'gas', 'gas_heat', 'heat', 'electr', 'electr_day', 'electr_night')){
         var ref = getParam(tr, null, null, /"(gorod_acc_info[^"]*)/i);
         if(!ref)
-            throw AnyBalance.Error("Не удаётся найти ссылку на подробную информацию о счете!");
+            throw new AnyBalance.Error("Не удаётся найти ссылку на подробную информацию о счете!");
 
         html = AnyBalance.requestGet(baseurl + ref);
         

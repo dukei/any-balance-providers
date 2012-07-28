@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-telephony-mtt</id>
+  <name>MTT - Услуги связи</name>
+  <description>
+    Получает текущий баланс у провайдера услуг связи МТТ (ОАО «Межрегиональный Транзит Телеком»). Информация берется из абонентского портала http://www.mtt.ru/sc.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс"/>
+    <counter id="licschet" name="Л/с" type="text"/>
+    <counter id="userName" name="Владелец" type="text"/>
+  </counters>
+  <keywords>
+    телефония
+  </keywords>
+  <type>
+    telephony
+  </type>
+</provider>

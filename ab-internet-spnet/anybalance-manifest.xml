@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-internet-spnet</id>
+  <name>SPNET.ru</name>
+  <description>
+    Получает баланс и информацию о тарифном плане для интернет-провайдера Сергиево-Посадского района SPNET. SPNET – телекоммуникационный бренд компании «КСИТ».
+    Информация берется из личного кабинета https://bill.spnet.ru/client/.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="traffic" name="Трафик текущем месяце" units="Gb"/> -->
+    <counter id="trafficIn" name="Вх.трафик текущем месяце" units="Gb"/> -->
+    <counter id="trafficOut" name="Исх.трафик текущем месяце" units="Gb"/> -->
+    <counter id="licschet" name="Лицевой счет" type="text"/>
+    <counter id="userName" name="ФИО" type="text"/>
+  </counters>
+  <keywords>
+    интернет, сергиево-посад
+  </keywords>
+  <type>
+    internet
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

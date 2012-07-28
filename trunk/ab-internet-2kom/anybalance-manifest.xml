@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="7">ab-internet-2kom</id>
+  <name>2КОМ</name>
+  <description>
+    Получает баланс и информацию о тарифном плане для московского интернет-провайдера 2КОМ.
+    Информация берется из личного кабинета https://portal.2kom.ru/lk/ .
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="trafficIn" name="Вх.трафик текущем периоде" units="Gb"/> -->
+    <counter id="trafficOut" name="Исх.трафик текущем периоде" units="Gb"/> -->
+    <counter id="status" name="Состояние" type="text"/>
+    <counter id="licschet" name="Лицевой счет" type="text"/>
+    <counter id="userName" name="ФИО" type="text"/>
+  </counters>
+  <keywords>
+    интернет, 2kom, 2com
+  </keywords>
+  <type>
+    internet
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

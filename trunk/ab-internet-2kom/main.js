@@ -77,7 +77,7 @@ function main(){
         var href = getParam(html, null, null, /<a[^>]*href="(lk\/stat.php[^"]*)/i);
         if(href){
             html = AnyBalance.requestGet(baseurl + href);
-            AnyBalance.trace(html);
+//            AnyBalance.trace(html);
             
             getParam(html, result, 'trafficIn', /<tr class="current">(?:[\s\S]*?<td[^>]*>){4}([^<]*)/i, replaceTagsAndSpaces, parseTrafficGb);
             getParam(html, result, 'trafficOut', /<tr class="current">(?:[\s\S]*?<td[^>]*>){5}([^<]*)/i, replaceTagsAndSpaces, parseTrafficGb);

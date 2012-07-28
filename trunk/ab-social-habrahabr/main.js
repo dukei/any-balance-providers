@@ -40,7 +40,7 @@ function main(){
 
     var error = getParam(html, null, null, /(страница не найдена \(404\))/i);
     if(error)
-        throw AnyBalance.Error("Хабрапользователь " + prefs.login + " не найден. Проверьте имя!");
+        throw new AnyBalance.Error("Хабрапользователь " + prefs.login + " не найден. Проверьте имя!");
 
     var result = {success: true};
 

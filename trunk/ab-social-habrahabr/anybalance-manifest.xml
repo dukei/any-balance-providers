@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-social-habrahabr</id>
+  <id version="2">ab-social-habrahabr</id>
   <name>Habrahabr</name>
   <description>
     Получает информацию о карме, количество голосов и рейтинг с сайта http://habrahabr для заданного пользователя

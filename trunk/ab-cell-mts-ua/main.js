@@ -147,13 +147,16 @@ function main(){
     sumParam (html, result, 'min_paket', /<li>Осталось ([\d\.,]+) бесплатных секунд до[^<]*<\/li>/ig, replaceFloat, parseFloat);
 
 // 70 минут в день для внутрисетевых звонков
-    sumParam (html, result, 'min_net_70', /<li>70 минут в день для внутрисетевых звонков:[^<]*осталось ([\d\.,]+) бесплатных секунд<\/li>/ig, replaceFloat, parseFloat);
+    sumParam (html, result, 'min_net_70', /<li>70 минут в день для внутрисетевых звонков:[^<]*осталось\s*([\d\.,]+) бесплатных секунд<\/li>/ig, replaceFloat, parseFloat);
     
     // 33 минуты в день для внутрисетевых звонков во всех областях
-    sumParam (html, result, 'min_net_all_33', /<li>33 минуты в день для внутрисетевых звонков во всех областях:[^<]*осталось ([\d\.,]+) бесплатных секунд<\/li>/ig, replaceFloat, parseFloat);
+    sumParam (html, result, 'min_net_all_33', /<li>33 минуты в день для внутрисетевых звонков во всех областях:[^<]*осталось\s*([\d\.,]+) бесплатных секунд<\/li>/ig, replaceFloat, parseFloat);
+
+    // 100 минут в день на внутрисетевое направление
+    sumParam (html, result, 'min_net_100', /<li>100 минут в день на внутрисетевое направление:[^<]*осталось\s*([\d\.,]+)/ig, replaceFloat, parseFloat);
     
     // Пакет СМС
-    sumParam (html, result, 'sms_paket', /<li>100 бесплатных смс по Украине:[^<]*осталось (\d+) смс. Срок действия до[^<]*<\/li>/ig, null, parseInt);
+    sumParam (html, result, 'sms_paket', /<li>100 бесплатных смс по Украине:[^<]*осталось\s*(\d+) смс. Срок действия до[^<]*<\/li>/ig, null, parseInt);
 
     // Пакет ММС
     sumParam (html, result, 'mms_paket', /<li>20 бесплатных MMS:[^<]*осталось:[^\d]*?(\d+) ммс. Срок действия до[^<]*<\/li>/ig, null, parseInt);

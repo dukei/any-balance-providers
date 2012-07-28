@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change major_version="1.0" version="5" date="2012-07-29">
+      Добавлен счетчик "100 минут в день на внутрисетевое направление" тарифа Супер.
+    </change>
     <change major_version="1.0" version="4" date="2012-07-27">
       Исправлены "60 минут на все сети за 5 коп", "Бесплатный интернет".
     </change>

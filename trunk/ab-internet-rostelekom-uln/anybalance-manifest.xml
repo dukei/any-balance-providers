@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1" major_version="1">ab-internet-rostelekom-uln</id>
+  <name>Интернет Ростелеком (Ульяновск)</name>
+  <description>Получает данные из Ульяновского филиала ОАО "Ростелеком" в личном кабинете http://my.ul.vt.ru/pls/internet/</description>
+  <author>Robert Khaliullov &lt;robix@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>api:jquery.min.js</js> <!-- Используем библиотеку, которая и так входит в AnyBalance -->
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="begin_balance" name="Баланс на начало текущего месяца" units="р"/>
+    <counter id="mounth_pays" name="Платежи в текущем месяце" units="р"/>
+    <counter id="belive_pays" name="Обещанные платежи" units="р"/>
+    <counter id="mounth_charge" name="Начислено за услуги в текущем месяце" units="р"/>
+    <counter id="adjust" name="Перерасчет начислений" units="р"/>
+    <counter id="credit" name="Кредит" units="р"/>
+    <counter id="agreement" name="Номер лицевого счета" type="text"/>
+ </counters>
+  <keywords>
+    провайдер, интернет, ростелеком, ульяновск
+  </keywords>
+  <type>
+    internet
+  </type>
+</provider>

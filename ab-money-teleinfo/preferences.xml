@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Логин" 
+        positiveButtonText="ОК" 
+        summary="УНК или псевдоним||{@s}\n" 
+        dialogTitle="УНК или псевдоним" 
+        negativeButtonText="Отмена" 
+        dialogMessage="УНК или псевдоним"
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="Пароль||***********\n"
+        dialogMessage="Введите пароль для входа в телебанк"
+        inputType="textPassword">
+    </EditTextPreference>
+    <EditTextPreference
+        title="Последние 4 числа карты" 
+        positiveButtonText="ОК" 
+        summary="Последние 4 числа карты||{@s}\n" 
+        dialogTitle="Последние 4 числа карты" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Последние 4 числа карты"
+        key="card">
+    </EditTextPreference>
+</PreferenceScreen>

@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1" major_version="1.0">ab-money-teleinfo</id>
+  <name>Телеинфо</name>
+  <description>Система «Телеинфо» ВТБ24. Получение баланса пластиковой карты. https://telebank.vtb24.ru/</description>
+  <author>Robert Khaliullov &lt;robix@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>api:jquery.min.js</js> <!-- Используем библиотеку, которая и так входит в AnyBalance -->
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+ </counters>
+  <keywords>
+    ВТБ24, Телебанк, телеинфо
+  </keywords>
+  <type>
+    money
+  </type>
+</provider>

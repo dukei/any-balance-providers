@@ -42,7 +42,11 @@ function main(){
 	
 	card = $html.find('h2:contains("Пластиковые карты")').parent().parent().parent().next().html();
 	$card = $('<table>'+card+'</table>');
-	$card_num = $card.find('td.number:contains("'+prefs.card+'")');
+	if (prefs.card){
+		$card_num = $card.find('td.number:contains("XXXX'+prefs.card+'")');
+	}else{
+		$card_num = $card.find('td.number');
+	}
 	val = $card_num.text();
 	if (val){
 		var result = {success: true};

@@ -61,6 +61,8 @@ function main(){
         result.bonus_mins_1=parseInt(matches[2]);
     } else if (matches=/(Хвилини всередині мережі "Київстар":|Минуты внутри сети "Киевстар":)[\s\S]*?<b>(.*?)</.exec(html)){
         result.bonus_mins_1=parseInt(matches[2]);
+    } else if (matches=/(Залишок хвилин для дзвінків на Київстар:|Остаток минут для звонков на Киевстар:)[\s\S]*?<b>(.*?)</.exec(html)){
+        result.bonus_mins_1=parseInt(matches[2]);
     }
   }
   
@@ -69,6 +71,8 @@ function main(){
     if (matches=/(Кількість хвилин для дзвінків|Количество минут для звонков)[\s\S]*?(Кількість хвилин для дзвінків|Количество минут для звонков)[\s\S]*?<b>(.*?)</.exec(html)){
         result.bonus_mins_2=parseInt(matches[3]);
     } else if (matches=/(Залишок хвилин для дзвінків абонентам Київстар та DJUICE:|Остаток минут для звонков абонентам Киевстар и DJUICE:)[\s\S]*?<b>(.*?)</.exec(html)){
+        result.bonus_mins_2=parseInt(matches[2]);
+    } else if (matches=/(Залишок тарифних хвилин для дзвінків в межах України:|Остаток тарифних минут для звонков в пределах Украини :)[\s\S]*?<b>(.*?)</.exec(html)){
         result.bonus_mins_2=parseInt(matches[2]);
     }
   }

@@ -2,7 +2,7 @@
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 
 Мережа магазинів біля дому «Фора»
-Сайт Сільпо: http://fora.ua/
+Сайт «Фора»: http://fora.ua/
 Особистий кабінет: http://fora.ua/club_postiynih_pokuptsiv/osobistiy_kabinet/
 */
 
@@ -31,7 +31,7 @@ function main(){
 			}
 		}
 		if (AnyBalance.isAvailable('bonus')) {
-			var matches = html.match(/<div class="dostupniBonus">Доступний для витрат бонус:<\/div>\s*<div class='cur-bonusItem'>([\d\.,]+) грн - до/i);
+			var matches = html.match(/<div class="dostupniBonus">Доступний для витрат бонус:<\/div>\s*<div class='cur-bonusItem'>([\d\.,]+) грн/i);
 			if (matches) {
 				result.bonus = parseFloat(matches[1]);
 			} else {

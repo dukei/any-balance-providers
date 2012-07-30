@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-bonus-fora</id>
-  <name>Фора, мережі магазинів біля дому (Україна)</name>
+  <id version="2">ab-bonus-fora</id>
+  <name>Фора, мережа магазинів біля дому (Україна)</name>
   <description>
     Мониторинг накопленных бонусов по программе "Клуб постійних покупців" сети магазинов Фора (Украина)
   </description>

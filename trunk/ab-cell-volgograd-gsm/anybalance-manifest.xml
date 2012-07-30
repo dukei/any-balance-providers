@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="3">ab-cell-volgograd-gsm</id>
+  <id major_version="1.0" version="1">ab-cell-volgograd-gsm</id>
   <name>ЗАО «Волгоград-GSM» (Ростелеком - Волгоград)</name>
   <description>
   Волгоград (Ростелеком - Волгоград)
@@ -29,4 +29,7 @@
   <type>
     cell
   </type>
+  <country>
+    ru
+  </country>
 </provider>

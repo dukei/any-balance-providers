@@ -9,6 +9,13 @@ Author: Viacheslav Sychov
 function main() {
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = "https://my.kyivstar.ua/";
+	var headers = {
+				'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
+				'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+				'User-Agent': 'Opera/9.80 (Windows NT 6.1; U; ru) Presto/2.10.289 Version/12.00',
+				Connection: 'keep-alive'
+				};
+  
 	AnyBalance.trace('Connecting to ' + baseurl);
 
 	var html = AnyBalance.requestGet(baseurl + 'tbmb/login/show.do');
@@ -21,7 +28,7 @@ function main() {
 		"org.apache.struts.taglib.html.TOKEN": token[1],
 		user: prefs.login,
 		password: prefs.password
-	});
+	}, headers);
 
 	var matches = html.match(/<td class="redError">([\s\S]*?)<\/td>/i);
 	if (matches) {

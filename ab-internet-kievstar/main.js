@@ -10,17 +10,21 @@ function main() {
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = "https://my.kyivstar.ua/";
 	var headers = {
-				'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
-				'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-				'User-Agent': 'Opera/9.80 (Windows NT 6.1; U; ru) Presto/2.10.289 Version/12.00',
-				Connection: 'keep-alive'
-				};
+		'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
+		'Accept-Language':'uk-UA,uk;q=0.8,en-US;q=0.6,en;q=0.4',
+		'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/536.11 (KHTML, like Gecko) Chrome/20.0.1132.57 Safari/536.11',
+		'Connection': 'keep-alive'
+	};
   
 	AnyBalance.trace('Connecting to ' + baseurl);
 
-	var html = AnyBalance.requestGet(baseurl + 'tbmb/login/show.do');
+	var html = AnyBalance.requestGet(baseurl + 'tbmb/login/show.do', headers);
 	var token = /name="org.apache.struts.taglib.html.TOKEN" value="([\s\S]*?)">/.exec(html);
 
+	if(!token){
+		throw new AnyBalance.Error('Can\'t get token');
+	}
+	
 	AnyBalance.trace('Token = ' + token[1]);
 
 	html = AnyBalance.requestPost(baseurl + "tbmb/login/perform.do", {

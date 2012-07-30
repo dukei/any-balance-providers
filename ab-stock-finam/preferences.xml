@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Код котировки" 
+        positiveButtonText="ОК" 
+        summary="|Код котировки с сайта, 5 символов|{@s}" 
+        dialogTitle="Код котировки" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Откройте нужную котировкy на сайте http://finam.ru. В адресной строке между profile и / идет код котировки."
+        key="number">
+    </EditTextPreference>
+</PreferenceScreen>

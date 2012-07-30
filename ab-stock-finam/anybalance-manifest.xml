@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="3">ab-stock-finam</id>
+  <name>Акции Финам</name>
+  <description>
+    Получает котировки акций с ФИНАМ. 
+
+    В настройки провайдера требуется ввести код котировки. Код котировки можно получить так:
+    1. Зайдите на http://finam.ru
+    2. Кликните по интересующей вас котировке, например, АВТОВАЗ ао
+    3. Загляните в адресную строку браузера, там будет что-то вроде http://www.finam.ru/analysis/profile00027/default.asp
+    4. Код котировки начинается сразу после profile и продолжается до /. То есть, код искомой котировки 00027
+    5. Введите код в настройки провайдера, чтобы получить значение котировки.
+  </description>
+  <author>Egor Anisimov &lt;support@ak-26.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="last" name="Цена"/>
+    <counter id="high" name="Максимум"/>
+    <counter id="low" name="Минимум"/>
+    <counter id="change" name="Изменение" units="%"/>
+    <counter id="volume" name="Объем"/>
+    <counter id="open" name="Открытие"/>
+    <counter id="close" name="Закрытие"/>
+    <counter id="name" name="Контракт" type="text"/>
+  </counters>
+  <keywords>
+    finam, биржа
+  </keywords>
+  <type>
+    finance, stock
+  </type>
+</provider>

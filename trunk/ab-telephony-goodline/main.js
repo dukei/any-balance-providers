@@ -51,6 +51,62 @@ function parseCurrency(text){
     return val;
 }
 
+/**
+ * Date.parse with progressive enhancement for ISO 8601 <https://github.com/csnover/js-iso8601>
+ * © 2011 Colin Snover <http://zetafleet.com>
+ * Released under MIT license.
+ */
+(function (Date, undefined) {
+    var origParse = Date.parse, numericKeys = [ 1, 4, 5, 6, 7, 10, 11 ];
+    Date.parse = function (date) {
+        var timestamp, struct, minutesOffset = 0;
+
+        // ES5 §15.9.4.2 states that the string should attempt to be parsed as a Date Time String Format string
+        // before falling back to any implementation-specific date parsing, so that’s what we do, even if native
+        // implementations could be faster
+        //              1 YYYY                2 MM       3 DD           4 HH    5 mm       6 ss        7 msec        8 Z 9 ±    10 tzHH    11 tzmm
+        if ((struct = /^(\d{4}|[+\-]\d{6})(?:-(\d{2})(?:-(\d{2}))?)?(?:(?:T|\s+)(\d{2}):(\d{2})(?::(\d{2})(?:\.(\d{3}))?)?(?:(Z)|([+\-])(\d{2})(?::(\d{2}))?)?)?$/.exec(date))) {
+            // avoid NaN timestamps caused by “undefined” values being passed to Date.UTC
+            for (var i = 0, k; (k = numericKeys[i]); ++i) {
+                struct[k] = +struct[k] || 0;
+            }
+
+            // allow undefined days and months
+            struct[2] = (+struct[2] || 1) - 1;
+            struct[3] = +struct[3] || 1;
+
+            if (struct[8] !== 'Z' && struct[9] !== undefined) {
+                minutesOffset = struct[10] * 60 + struct[11];
+
+                if (struct[9] === '+') {
+                    minutesOffset = 0 - minutesOffset;
+                }
+            }
+
+            timestamp = new Date(struct[1], struct[2], struct[3], struct[4], struct[5] + minutesOffset, struct[6], struct[7]).getTime();
+        }
+        else {
+            timestamp = origParse ? origParse(date) : NaN;
+        }
+
+        return timestamp;
+    };
+}(Date));
+
+function dateToDMY(date)
+{
+    var d = date.getDate();
+    var m = date.getMonth()+1;
+    var y = date.getFullYear();
+    return '' + (d<=9?'0'+d:d) + '/'+ (m<=9?'0'+m:m) + '/' + y;
+}
+
+function parseDate(str){
+    var tstamp = Date.parse(str);
+    AnyBalance.trace('Parsed date ' + new Date(tstamp) + ' from ' + str);
+    return tstamp;
+}
+
 function main(){
     var prefs = AnyBalance.getPreferences();
     if(prefs.num && !/^\d{10,}$/.test(prefs.num))
@@ -74,9 +130,24 @@ function main(){
     };
 
     var num = prefs.num ? prefs.num : '\\d{10,}';
-    var tr = getParam(info, null, null, new RegExp('Ваш список номеров туристических[\\s\\S]*?(<tr[^>]*>\\s*<td[^>]*>[\\s\\S]*?<\\/td>\\s*<td[^>]*>' + num + '<\\/td>[\\s\\S]*?<\/tr>)', 'i'));
+    var table = getParam(info, null, null, /Ваш список номеров туристических[\s\S]*?<tbody[^>]*>([\s\S]*?)<\/tbody>/i);
+    if(!table)
+        throw new AnyBalance.Error("Не удалось найти список номеров!");
+
+    var tr;
+    var lines = table.split(/<\/tr>\s*<tr[^>]*>/g);
+    var reNum = new RegExp('\\s*<td[^>]*>[\\s\\S]*?<\\/td>\\s*<td[^>]*>' + num + '<\\/td>', 'i');
+    for(var i=0; i<lines.length; ++i){
+        if(reNum.test(lines[i])){
+            tr = lines[i];
+            break;
+        }
+    }
+
     if(!tr)
         throw new AnyBalance.Error(prefs.num ? "Не удалось найти номер " + prefs.num : "Не удалось найти ни одного номера.");
+
+    var number = getParam(tr, null, null, /(?:[\s\S]*?<\/td>){1}\s*<td[^>]*>([^<]*)/i, replaceTagsAndSpaces);
 
     getParam(tr, result, 'status', /(?:[\s\S]*?<\/td>){2}\s*<td[^>]*>([^<]*)/i, replaceTagsAndSpaces);
     getParam(tr, result, 'number', /(?:[\s\S]*?<\/td>){1}\s*<td[^>]*>([^<]*)/i, replaceTagsAndSpaces);
@@ -97,6 +168,22 @@ function main(){
         html = AnyBalance.requestGet(baseurl + '/ru/abonents/entercabinet/balans/get_value/?ajax=1&id=' + id, {'X-Requested-With':'XMLHttpRequest'});
         getParam(html, result, 'balance', null, replaceTagsAndSpaces, parseBalance);
         getParam(html, result, 'currency', null, replaceTagsAndSpaces, parseCurrency);
+    }
+
+    if(AnyBalance.isAvailable('lastpay', 'lastpaydate')){
+       var dateEnd = new Date();
+       var dateStart = new Date(dateEnd.getTime() - 86400*90*1000); //Три месяца назад
+
+       html = AnyBalance.requestPost('http://212.158.163.96/public/glcl/glcl2_cab.php', {
+          started:dateToDMY(dateStart),
+          finished:dateToDMY(dateEnd),
+          command:'history',
+          s:2,
+          number:number
+       });
+
+       getParam(html, result, 'lastpaydate', /<tr[^>]*>(?:\s*<td[^>]*>[^<]*<\/td>){2}\s*<td[^>]*>([^<]*)<\/td>(?:\s*<td[^>]*>[^<]*<\/td>){4}\s*<\/tr>\s*<\/table>/i, replaceTagsAndSpaces, parseDate);
+       getParam(html, result, 'lastpay', /<tr[^>]*>(?:\s*<td[^>]*>[^<]*<\/td>){4}\s*<td[^>]*>([^<]*)<\/td>(?:\s*<td[^>]*>[^<]*<\/td>){2}\s*<\/tr>\s*<\/table>/i, replaceTagsAndSpaces, parseBalance);
     }
 		
     AnyBalance.setResult(result);

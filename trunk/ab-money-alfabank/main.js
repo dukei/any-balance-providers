@@ -1,7 +1,7 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 
-Получает текущий остаток и другие параметры карт Альфабанка, используя мобильный Альфа-клик.
+Получает текущий остаток и другие параметры карт Альфабанка, используя большой Альфа-клик.
 
 Сайт оператора: http://alfabank.ru/
 Личный кабинет: https://m.alfabank.ru/
@@ -94,7 +94,7 @@ function processClick(){
     html = AnyBalance.requestPost(baseurl + nexturl, {
         command: 'auth_loginByPassword',
         username: prefs.login,
-        password: prefs.password,
+        password: prefs.password.substr(0, 16),
         OTOKey: OTOkey,
         CurrentTime: dt.getHours()
     });
@@ -134,7 +134,7 @@ function processMobile(){
     };
 
     params[loginname] = prefs.login;
-    params[passname] = prefs.password;
+    params[passname] = prefs.password.substr(0, 16);
 
     html = AnyBalance.requestPost(baseurl, params);
 

@@ -2,7 +2,10 @@
 <provider>
     <id major_version="1.0" version="1">ab-cell-tambov-gsm</id>
     <name>Tambov GSM</name>
-    <description>Баланс мобильного оператора Tambov GSM.</description>
+    <description>Баланс мобильного оператора Tambov GSM. 
+
+    Как получить пароль для личного кабинета:    
+    Получить личный пароль можно на странице личного кабинета: http://www.tambovgsm.com/PrivateOffice/PrivateOffice_main.php.</description>
     <author>BArtWell &lt;web@bartwell.ru&gt;</author>
     <files>
         <icon>icon.png</icon>

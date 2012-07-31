@@ -28,6 +28,6 @@
         negativeButtonText="Отмена" 
         dialogMessage="Введите номер телефона, по которому вы хотите получить информацию, или не вводите ничего, чтобы получить информацию по первому номеру."
         inputType="number"
-        key="login">
+        key="num">
     </EditTextPreference>
 </PreferenceScreen>

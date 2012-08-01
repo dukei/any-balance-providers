@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-money-avangard</id>
+  <name>Банк Авангард</name>
+  <description>
+    Получает текущий остаток и другие параметры карт и счетов банка Авангард, используя систему Интернет-банк ( https://www.avangard.ru/login/logon_enter.html ).
+
+    Для входа требуется логин и пароль. Если у вас его нет, получите его на странице https://www.avangard.ru/login/firstlogon_enter.html.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+    <js>api:jquery.min.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Остаток"/>
+    <counter id="currency" name="Валюта" type="text"/>
+    <counter id="cardnum" name="Номер карты" type="text"/>
+    <counter id="cardname" name="Имя на карте" type="text"/>
+    <counter id="cardtill" name="Срок действия" type="text"/>
+    <counter id="accnum" name="Номер счета" type="text"/>
+    <counter id="accname" name="Имя счета" type="text"/>
+    <counter id="cardtype" name="Тип" type="text"/>
+    <counter id="cardstatus" name="Статус" type="text"/>
+  </counters>
+  <keywords>
+     
+  </keywords>
+  <type>
+    money
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

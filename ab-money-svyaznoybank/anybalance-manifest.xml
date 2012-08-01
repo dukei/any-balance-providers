@@ -21,13 +21,13 @@
   <counters>
     <counter id="balance" name="Остаток"/>
     <counter id="cardballs" name="Баллы"/>
-    <counter id="cardnum" name="Номер карты" type="text"/>
+    <counter id="accamount" name="Средств на счете"/>
+    <counter id="holdballs" name="Баллы к начислению"/>
     <counter id="currency" name="Валюта" type="text"/>
+    <counter id="cardnum" name="Номер карты" type="text"/>
     <counter id="cardname" name="Тип карты" type="text"/>
     <counter id="accnum" name="Номер счета" type="text"/>
     <counter id="accname" name="Имя счета" type="text"/>
-    <counter id="accamount" name="Средств на счете"/>
-    <counter id="holdballs" name="Баллы к начислению"/>
   </counters>
   <keywords>
     интернет-банк, связной

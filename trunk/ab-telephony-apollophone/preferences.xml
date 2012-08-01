@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Логин" 
+        positiveButtonText="ОК" 
+        summary="Логин в Apollo Phone||{@s}\n" 
+        dialogTitle="Логин" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите ваш логин в личный кабинет Apollo Phone"
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="Введите пароль||************\n"
+        dialogMessage="Введите ваш пароль в личный кабинет Apollo Phone"
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

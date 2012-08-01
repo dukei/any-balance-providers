@@ -199,8 +199,8 @@ function main(){
   }
 
   //Тарифный план
-  var account_tmp=getParam(html, result, 'false', /<DIV class="maintextercviewsmall">Лицевой счет[\s\S]*?class=maintextercview>(.*?)</, replaceTagsAndSpaces, false);
-  var month_tmp=getParam(html_table, result, 'false', /Справка о результатах взаиморасчетов по коммунальным услугам за (.*?)</, replaceTagsAndSpaces, false);
+  var account_tmp=getParam(html, result, false, /<DIV class="maintextercviewsmall">Лицевой счет[\s\S]*?class=maintextercview>(.*?)</, replaceTagsAndSpaces, false);
+  var month_tmp=getParam(html_table, result, false, /Справка о результатах взаиморасчетов по коммунальным услугам за (.*?)</, replaceTagsAndSpaces, false);
   result.__tariff='Счет: ' + account_tmp + ' (' + month_tmp + ')';
 
   AnyBalance.trace('Logout');

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-internet-kvidex</id>
+  <name>Квидекс-Телеком (Москва)</name>
+  <description>
+    Получает баланс и информацию о тарифном плане для московского интернет-провайдера Квидекс-Телеком ( http://kvidex.ru ). Провайдер "Квидекс-Телеком" является проектом, направленным на предоставление частным лицам и организациям широкополосного доступа в Интернет без использования телефонной линии и модема.
+
+    Информация берется из личного кабинета https://stat.kvidex.ru/.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="trafficIn" name="Вх.трафик в текущем месяце" units="Gb"/> -->
+    <counter id="trafficOut" name="Исх.трафик в текущем месяце" units="Gb"/> -->
+    <counter id="status" name="Статус" type="text"/>
+    <counter id="abon" name="Абон.плата" units="р"/> -->
+    <counter id="licschet" name="Л/с" type="text"/>
+    <counter id="userName" name="Абонент" type="text"/>
+  </counters>
+  <keywords>
+
+  </keywords>
+  <type>
+    internet
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

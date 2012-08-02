@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="12">ab-adv-yandex-direct</id>
+  <id version="1">ab-adv-yandex-direct</id>
   <name>Яндекс.Директ</name>
   <description>
     Получает параметры рекламной кампании Яндекс.Директ.

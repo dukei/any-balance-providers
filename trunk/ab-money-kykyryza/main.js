@@ -30,16 +30,20 @@ function main(){
 
     var result = {success: true};
 
+    $binfo = $html.find('.b-user-info__table').find('tr');
     
     if(AnyBalance.isAvailable('balance')){
-    	var val = $html.find('.user-balance-value').text();
+//    	var val = $html.find('.user-balance-value').text();
+    	var val = $binfo.find('th:contains("Баланс")').next().find('.b-user-info__balance').text();
+    	
     	if (val)
     		val = val.replace(/[^0-9.,]+/,'');
         if(val)
             result.balance = parseFloat(val.replace(',','.'));
     }
     if(AnyBalance.isAvailable('bonus')){
-    	var val = $html.find('.user-balance-bonuspoints').text();
+//    	var val = $html.find('.user-balance-bonuspoints').text();
+    	var val = $binfo.next().find('.b-user-info__balance').text();
     	if (val)
     		val = val.replace(/[^0-9.,]+/,'');
     	

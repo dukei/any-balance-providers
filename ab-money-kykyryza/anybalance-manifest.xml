@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1" major_version="1.0">ab-money-kykyryza</id>
+  <id version="2" major_version="1.0">ab-money-kykyryza</id>
   <name>Платежный кабинет Кукуруза</name>
   <description>Получает баланс из Платежного кабинета Кукуруза https://oplata.kykyryza.ru/personal/</description>
   <author>Robert Khaliullov &lt;robix@mail.ru&gt;</author>

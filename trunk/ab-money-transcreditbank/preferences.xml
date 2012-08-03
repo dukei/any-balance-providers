@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Логин" 
+        positiveButtonText="ОК" 
+        summary="|Введите ваш логин|{@s}" 
+        dialogTitle="Логин" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите ваш логин входа в систему Интернет-Банк."
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="|Введите пароль в Интернет-банк|***********"
+        dialogMessage="Введите пароль, используемый для входа в систему Интернет-банк."
+        inputType="textPassword">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="num" 
+        dialogTitle="Номер счета"
+        negativeButtonText="Отмена"
+        title="Номер счета"
+        summary="20 цифр номера счета|Автоматически\n|{@s}\n"
+        dialogMessage="Введите 20 цифр номера счета, по которому вы хотите получить информацию. Если это поле оставить пустым, то будет показана информация по первому счету."
+        inputType="number">
+    </EditTextPreference>
+</PreferenceScreen>

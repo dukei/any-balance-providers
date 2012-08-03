@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-money-transcreditbank</id>
+  <name>ТрансКредитБанк</name>
+  <description>
+    Получает остаток и другие параметры счетов ТрансКредитБанка ( http://www.tcb.ru ).
+
+    Провайдер получает данные из интернет банка https://i.tcb.ru
+
+    Вы можете подключиться к Интернет-банку любым из нижеприведенных способов
+      • в отделениях Банка
+      • через банкоматы и терминалы самообслуживания Банка
+      • по телефону Службы клиентской поддержки Банка
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Остаток"/>
+    <counter id="available" name="Доступно на карте"/>
+    <counter id="total" name="Итого по счетам"/>
+    <counter id="accnum" name="Номер счета" type="text"/>
+    <counter id="accname" name="Название счета" type="text"/>
+  </counters>
+  <keywords>
+    интернет-банк, транс кредит банк, transcreditbank
+  </keywords>
+  <type>
+    money
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

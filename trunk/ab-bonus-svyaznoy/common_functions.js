@@ -1,5 +1,5 @@
 ﻿function getParam (html, result, param, regexp, replaces, parser) {
-	if (param != '__tariff' && !AnyBalance.isAvailable (param))
+	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
 		return;
 
 	var value = regexp.exec (html);
@@ -12,7 +12,11 @@
 		}
 		if (parser)
 			value = parser (value);
-		result[param] = value;
+
+    if(param)
+      result[param] = value;
+    else
+      return value
 	}
 }
 

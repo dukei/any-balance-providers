@@ -69,7 +69,7 @@ function main(){
 	throw new AnyBalance.Error('Не удалось найти форму входа, похоже, velcom её спрятал. Обратитесь к автору провайдера.');
 
     //Чё, влад, всё-таки заглянул, да? :)
-    $form = $(form);
+    var $form = $(form);
     var params = {};
     $form.find('input, select').each(function(index){
 	var $inp = $(this);

@@ -50,11 +50,16 @@ function main(){
     var baseurl = baseurls[prefs.country];
 
     var headers = {
-        Accept: '*/*',
-        'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
-        'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-        'User-Agent':'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0)' //Internet Explorer пускает охотнее, как ни странно.
+        Accept:	'text/html, application/xhtml+xml, */*',
+        Referer: 'https://uslugi.beeline.ru/vip/loginPage.jsp',
+        'Accept-Language': 'ru-RU',
+	 //Internet Explorer пускает охотнее, как ни странно.
+        'User-Agent':	'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0)',
+        'Connection':	'Keep-Alive',
+        'Cache-Control': 'no-cache'
     };
+
+    var html = AnyBalance.requestGet(baseurl, headers); //Хз, помогает, или нет. Но куку какую-то она ставит. Пусть будет.
 
     AnyBalance.trace("Trying to enter selfcare at address: " + baseurl);
     var html = AnyBalance.requestPost(baseurl + "loginPage.do", {

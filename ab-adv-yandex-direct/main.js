@@ -1,10 +1,10 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 
-Получает текущий остаток и номер счета Яндекс.Деньги
+Получает параметры кампаний Яндекс.Директ
 
-Сайт оператора: http://money.yandex.ru/
-Личный кабинет: https://money.yandex.ru/
+Сайт оператора: http://direct.yandex.ru/
+Личный кабинет: https://direct.yandex.ru/
 */
 
 function getParam (html, result, param, regexp, replaces, parser) {

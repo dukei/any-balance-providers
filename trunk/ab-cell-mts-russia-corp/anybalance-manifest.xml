@@ -1,20 +1,32 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="9">ab-cell-mts-russia-corp</id>
+  <id version="10">ab-cell-mts-russia-corp</id>
   <name>МТС Корпоративный (Россия)</name>
   <description>
-    Получает баланс, ежемесячую плату и количество телефонов для заданного лицевого счета. Получает данные из интернет-помощника для корпоративных абонентов. Для экономии трафика рекомендуется выставлять конкретный регион в настройках.
+    Получает информацию по номеру и лицевому счету из интернет-помощника для корпоративных абонентов ( https://ihelper.mts.ru/Ncih ). 
+    В настройках можно указать номер или лицевой счет для получения информации по ним. В противном случае будет получена информация по номеру-логину.
   </description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
     <js>main.js</js>
+    <history>history.xml</history>
   </files>
   <counters>
     <counter id="balance" name="Баланс" units="р"/>
-    <counter id="average_speed" name="Скорость расходования" units="р"/>
-    <counter id="phones" name="Число телефонов"/>
+    <counter id="expences" name="Израсходовано по номеру" units="р"/>
+    <counter id="billing" name="Метод расчетов" type="text"/>
+    <counter id="acc_expences" name="Израсходовано за период по л/с" units="р"/>
+    <counter id="last_pay" name="Сумма последней оплаты счета" units="р"/>
+    <counter id="last_pay_date" name="Дата последней оплаты счета" type="time" format="dd/MM/yyyy"/>
+    <counter id="debt" name="Сумма по неоплаченным счетам" units="р"/>
+    <counter id="promise" name="Сумма обещанного платежа" units="р"/>
+    <counter id="promiseDate" name="Срок действия обещанного платежа" type="time" format="dd/MM/yyyy"/>
+    <counter id="phone" name="Номер телефона" type="text"/>
+    <counter id="account" name="Л/с" type="text"/>
+    <counter id="contract" name="Контракт" type="text"/>
+    <counter id="holding" name="Организация" type="text"/>
   </counters>
   <keywords>
     Сотовый телефон, мобильный, мобильник, mts, россия, корпоратив

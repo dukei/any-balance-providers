@@ -38,4 +38,12 @@
         dialogMessage="Введите 10 цифр номера телефона, чей баланс вы хотите посмотреть. Например, 9161234567. Этот номер должен быть виден в вашем личном кабинете. Чтобы смотреть информацию по основному номеру, оставьте это поле пустым."
         inputType="number">
     </EditTextPreference>
+    <ListPreference 
+        key="type" 
+        title="Интернет-помощник"
+        summary="Через какой помощник заходить|Автоматически\n|{@s}\n"
+        entries="Автоматически|Мобильный|Обычный"
+        entryValues="auto|mobile|ordinary"
+	defaultValue="auto">
+    </ListPreference>
 </PreferenceScreen>

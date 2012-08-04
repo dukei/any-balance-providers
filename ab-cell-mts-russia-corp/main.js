@@ -4,21 +4,11 @@
 Текущий баланс у на лицевом счете корпоративного тарифа сотового оператора МТС. Вход через корпоративный личный кабинет.
 
 Сайт оператора: http://mts.ru/
-Личный кабинет: https://ip.mts.ru/SELFCAREPDA/
+Личный кабинет: https://ihelper.mts.ru/Ncih/
 */
-var regions = {
-	auto: "https://ihelper.mts.ru/corpselfcare/", 
-	center: "https://ihelper.mts.ru/corpselfcare/",
-	primorye: "https://ihelper.primorye.mts.ru/SelfCareCorporate/",
-	nnov: "https://ihelper.nnov.mts.ru/selfcarecorporate/",
-	nw: "https://ihelper.nw.mts.ru/CorpSelfCare/",
-	sib: "https://ihelper.sib.mts.ru/corpselfcare/",
-	ural: "https://ihelper.nnov.mts.ru/selfcarecorporate/", //Почему-то урал в конце концов переадресуется сюда
-	ug: "https://ihelper.ug.mts.ru/CorpSelfCare/"
-};
 
 function getParam (html, result, param, regexp, replaces, parser) {
-	if (param && !AnyBalance.isAvailable (param))
+	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
 		return;
 
 	var value = regexp.exec (html);
@@ -31,123 +21,159 @@ function getParam (html, result, param, regexp, replaces, parser) {
 		}
 		if (parser)
 			value = parser (value);
-        if(result && param)
-            return result[param] = value;
-        else
-            return value;
+
+    if(param)
+      result[param] = value;
+    else
+      return value
 	}
 }
 
-function getViewState(html){
-    return getParam(html, null, null, /name="__VIEWSTATE".*?value="([^"]*)"/);
+var replaceTagsAndSpaces = [/<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
+var replaceFloat = [/\s+/g, '', /,/g, '.'];
+
+function parseBalance(text){
+    var val = getParam(text.replace(/\s+/g, ''), null, null, /(-?\d[\d\s.,]*)/, replaceFloat, parseFloat);
+    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
+    return val;
 }
 
-function getEventValidation(html){
-    return getParam(html, null, null, /name="__EVENTVALIDATION".*?value="([^"]*)"/);
+function parseDate(str){
+    var matches = /(\d+)[^\d](\d+)[^\d](\d+)/.exec(str);
+    var time;
+    if(matches){
+	  time = (new Date(+matches[3], matches[2]-1, +matches[1])).getTime();
+    }
+    AnyBalance.trace('Parsing date ' + new Date(time) + ' from value: ' + str);
+    return time;
+}
+
+function getHierarchyId(html){
+    var availableHierarchy = getParam(html, null, null, /availableHierarchy:\s*(\[[^\]]*\])/);
+    if(!availableHierarchy)
+        throw new AnyBalance.Error("Не удалось найти верхний уровень иерархии.");
+
+    AnyBalance.trace("Найдены иерархии: " + availableHierarchy);
+    
+    try{      
+        availableHierarchy = new Function("return " + availableHierarchy)();
+    }catch(e){
+        throw new AnyBalance.error("Не удалось получить иерархию");
+    }
+
+    var baseid;
+    for(var i=0; i<availableHierarchy.length; ++i){
+        var it = availableHierarchy[i];
+        if(!baseid || it.name == 'Биллинговая')
+            baseid = it.id;
+    }
+
+    if(!baseid)
+        throw new AnyBalance.error("Иерархия, похоже, пуста!");
+    
+    //Теперь у нас в baseid лежит id иерархии
+    return baseid;
 }
 
 function main(){
+    var baseurl = "https://ihelper.mts.ru/Ncih/";
     var prefs = AnyBalance.getPreferences();
-    if(!regions[prefs.region]){
-	AnyBalance.trace("Unknown region: " + prefs.region + ", setting to auto");
-        prefs.region = 'auto';
-    }
 
-    var baseurl = regions[prefs.region],
-        viewstate, eventval, matches, enterButton;
-
-    var html = AnyBalance.requestGet(baseurl + "logon.aspx");
-    viewstate = getViewState(html);
-    enterButton = getParam(html, null, null, /name="ctl00\$MainContent\$btnEnter".*?value="([^"]*)"/);
-    
     AnyBalance.trace("Trying to enter selfcare at address: " + baseurl);
-    html = AnyBalance.requestPost(baseurl + "logon.aspx", {
-        __VIEWSTATE: viewstate,
-        "ctl00$MainContent$tbPhoneNumber":prefs.login,
-        "ctl00$MainContent$tbPassword":prefs.password,
-        "ctl00$MainContent$btnEnter": enterButton
+    var html = AnyBalance.requestPost(baseurl + "Security.mvc/LogOn", {
+        Name:prefs.login,
+        Password:prefs.password
     });
     
-    //Проверим, не заредиректили ли нас
-    var regexp=/<form .*?id="redirect-form".*?action="[^"]*\.([^\.]+)\.mts\.ru/, res, tmp;
-    if (res=regexp.exec(html)){
-        //Неправильный регион. Умный мтс нас редиректит
-        //Только эта скотина не всегда даёт правильную ссылку, иногда даёт такую, которая требует ещё редиректов
-        //Поэтому приходится вычленять из ссылки непосредственно нужный регион
-        if(!regions[res[1]])
-                throw new AnyBalance.Error("mts has redirected to unknown region: " + res[1]);
-
-        baseurl = regions[res[1]];
-        AnyBalance.trace("Redirected, now trying to enter selfcare at address: " + baseurl);
-
-        html = AnyBalance.requestGet(baseurl + "logon.aspx");
-        viewstate = getViewState(html);
-        enterButton = getParam(html, null, null, /name="ctl00\$MainContent\$btnEnter".*?value="([^"]*)"/);
-
-        html = AnyBalance.requestPost(baseurl + "logon.aspx", {
-            __VIEWSTATE: viewstate,
-            "ctl00$MainContent$tbPhoneNumber":prefs.login,
-            "ctl00$MainContent$tbPassword":prefs.password,
-            "ctl00$MainContent$btnEnter": enterButton
-        });
-    }
-
     //Проверим, залогинились ли
-    if(matches = /<div class="b_error">([\s\S]*?)<\/div>/.exec(html))
-        throw new AnyBalance.Error(matches[1].replace(/<[^>]*>/g, ''));
-    
-    html = AnyBalance.requestGet(baseurl + 'pa-management.aspx');
+    var error = getParam(html, null, null, /<div[^>]*class="(?:b_error|b_warning)"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+    if(error)
+        throw new AnyBalance.Error(error);
 
-    //Проверим, получили ли инфу по счету
-    if(matches = /<div class="b_error">([\s\S]*?)<\/div>/.exec(html))
-        throw new AnyBalance.Error(matches[1].replace(/<[^>]*>/g, ''));
-
-    viewstate = getViewState(html);
-    eventval = getEventValidation(html);
+    var hierid = getHierarchyId(html);
     
-    var licschet = prefs.licschet;
-    if(!licschet){
-        licschet = getParam(html, null, null, /Лицевой счет:[^\d]*(\d*)/);
-        AnyBalance.trace('Tried to find personal account automatically: ' + licschet);
-    }
-    if(!licschet)
-        throw new AnyBalance.Error("Невозможно определить номер лицевого счета. Попробуйте ввести его в настройках вручную.");
-    
-    var reSchet = new RegExp("__doPostBack\\('([^']*)','([^']*)'\\)\">" + licschet + "<\\/a>");
-    if(!(matches = reSchet.exec(html)))
-        throw new AnyBalance.Error("Лицевой счет №"+licschet + " не найден");
-    
-    var controlview = getParam(html, null, null, /__gvctl00_MainContent_tableControl_view\.callback\(&quot;(.*?)&quot;\)/) || '';
-    AnyBalance.trace('Constructed controlview: ' + controlview);
-    
-    var html = AnyBalance.requestPost(baseurl + "pa-management.aspx", {
-        __EVENTTARGET: matches[1],
-        __EVENTARGUMENT:matches[2],
-        __LASTFOCUS: '',
-        __gvctl00_MainContent_tableControl_view__hidden: controlview,
-        __VIEWSTATE: viewstate,
-        __EVENTVALIDATION: eventval,
-        "ctl00$MainContent$tableControl$PANumbers":"",
-        "ctl00$MainContent$tableControl$PhoneNumbers":"",
-        id:'HasService',
-        "ctl00$MainContent$tableControl$FilterConditions":"",
-        "ctl00_MainContent_tableControl_CollapsableBlock1_state": 0,
-        "ctl00$MainContent$tableControl$CorpDataTypeList": "Default",
-        "ctl00$MainContent$tableControl$GroupOperationList": 1
+    var findnum = prefs.num || prefs.login;
+    var json = AnyBalance.requestPost(baseurl + 'Hierarchy.mvc/GetHierarchyNodes', {
+        from:0,
+        to:299,
+        filter:findnum,
+        id:hierid,
+        markCurrentSelection:true
     });
-    
-    //Проверим, получили ли инфу по счету
-    if(matches = /<div class="b_error">([\s\S]*?)<\/div>/.exec(html))
-        throw new AnyBalance.Error(matches[1].replace(/<[^>]*>/g, ''));
 
-    if(html.indexOf(licschet + "</h1>") < 0)
-        throw new AnyBalance.Error("Невозможно получить информацию по лицевому счету. Обратитесь к автору.");
-    
+    AnyBalance.trace('Got hierarchy nodes for ' + findnum + ': ' + json);
+    var info = JSON.parse(json);
+    if(!info.totalCount){
+        throw new AnyBalance.Error("Ошибка поиска информации по номеру или счету " + info);
+    }
+
     var result = {success: true}
-    result.__tariff = 'л/c:' + licschet;
-    getParam(html, result, "balance", /Актуальный баланс:[\s\S]*?(\d[\d.,]*)/, [",", "."], parseFloat);
-    getParam(html, result, "average_speed", /Средняя скорость расходования средств по лицевому счету:[\s\S]*?(\d[\d.,]*)/, [",", "."], parseFloat);
-    getParam(html, result, "phones", /Список телефонов лицевого счета \((\d+)\)/, null, parseInt);
 
+    var hasPhone = false;
+    for(var i=0; i<info.totalCount; ++i){
+        var node = info.nodes[i];
+        if(node.data.type == 'TerminalDevice'){
+            hasPhone = true;
+        }
+    }
+
+    var accNode = null, phoneNode = null;
+    for(var i=0; i<info.totalCount; ++i){
+        var node = info.nodes[i];
+        if(node.data.type == 'Holding' && AnyBalance.isAvailable('holding')){
+            result.holding = node.text;
+        }
+        if(node.data.type == 'Account'){
+            accNode = node;
+            if(AnyBalance.isAvailable('Account'))
+                result.account = node.text;
+            if(!hasPhone)
+                break; //Если телефонов нет, значит, получаем инфу об аккаунте
+        }
+        if(node.data.type == 'TerminalDevice'){
+            phoneNode = node;
+            if(AnyBalance.isAvailable('phone'))
+                result.phone = node.text;
+            break; //только первый телефон получаем
+        }
+        if(node.data.type == 'Contract' && AnyBalance.isAvailable('contract')){
+            result.contract = node.text;
+        }
+    }
+
+    if(!accNode && !phoneNode)
+        throw new AnyBalance.Error("Не найдено ни одного счета или телефона с номером " + findnum);
+
+    if(accNode && AnyBalance.isAvailable('balance', 'billing', 'acc_expences', 'last_pay_date', 'last_pay', 'debt', 'promise', 'promiseDate')){
+        var accInfo = AnyBalance.requestPost(baseurl + 'ObjectInfo.mvc/PersonalAccount', {objectId:accNode.data.objectId});
+        accInfo = JSON.parse(accInfo);
+        if(accInfo.success){
+            var html = accInfo.infoHtml;
+            result.__tariff = accNode.text;
+            getParam(html, result, 'balance', /Баланс[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+            getParam(html, result, 'billing', /Метод расчетов[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+            getParam(html, result, 'acc_expences', /Израсходовано за период[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+            getParam(html, result, 'last_pay_date', /Дата последней оплаты счета[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+            getParam(html, result, 'last_pay', /Сумма последней оплаты счета[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+            getParam(html, result, 'debt', /Сумма по неоплаченным счетам[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+            getParam(html, result, 'promise', /Сумма обещанного платежа[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+            getParam(html, result, 'promiseDate', /Срок действия обещанного платежа[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+        }else{
+            AnyBalance.trace("Не удалось получить информацию по счету " + accNode.text + ": " + accInfo.errorMessage);
+        }
+    }
+   
+    if(phoneNode){
+        var phoneInfo = AnyBalance.requestPost(baseurl + 'ObjectInfo.mvc/Phone', {objectId:phoneNode.data.objectId});
+        phoneInfo = JSON.parse(phoneInfo);
+        if(phoneInfo.success){
+            var html = phoneInfo.infoHtml;
+            getParam(html, result, '__tariff', /Тарифный план[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+            getParam(html, result, 'expences', /Израсходовано по номеру[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+        }else{
+            AnyBalance.trace("Не удалось получить информацию по номеру " + phoneNode.text + ": " + phoneInfo.errorMessage);
+        }
+    }
+   
     AnyBalance.setResult(result);
 }

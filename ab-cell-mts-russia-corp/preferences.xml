@@ -22,20 +22,12 @@
     </EditTextPreference>
     <EditTextPreference 
         positiveButtonText="ОК"
-        key="licschet" 
-        dialogTitle="Лицевой счет"
+        key="num" 
+        dialogTitle="Лицевой счет или телефон"
         negativeButtonText="Отмена"
-        title="Лицевой счет"
-        summary="Номер лицевого счета (12 цифр)|Автоматически\n|{@s}\n" 
-        dialogMessage="Введите номер лицевого счета, информацию по которому надо получить. Если у вас только один лицевой счет, то оставьте это поле пустым."
+        title="Лицевой счет или телефон"
+        summary="|Автоматически|{@s}" 
+        dialogMessage="Введите номер лицевого счета или телефона, информацию по которым надо получить. Если вы хотите получить информацию по номеру телефона, который является логином, то оставьте это поле пустым."
         inputType="number">
     </EditTextPreference>
-    <ListPreference 
-        key="region" 
-        title="Регион"
-        summary="Регион вашего номера|Нужен для определения Интернет-Помощника\n|{@s}\n"
-        entries="Автоматически|Москва/Центр|Дальний Восток|Поволжье|Северо-Запад|Сибирь|Урал|Юг"
-        entryValues="auto|center|primorye|nnov|nw|sib|ural|ug"
-	defaultValue="auto">
-    </ListPreference>
 </PreferenceScreen>

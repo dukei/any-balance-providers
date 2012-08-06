@@ -21,12 +21,12 @@
         inputType="textPassword">
     </EditTextPreference>
     <ListPreference 
-        key="region" 
-        title="Регион"
-        summary="Регион вашего номера|Нужен для определения Интернет-Помощника\n|{@s}\n"
-        entries="Автоматически|Москва/Центр|Дальний Восток|Поволжье|Северо-Запад|Сибирь|Урал|Юг"
-        entryValues="auto|center|primorye|nnov|nw|sib|ural|ug"
-	      defaultValue="auto">
+        key="type" 
+        title="Личный кабинет"
+        summary="|Автоматически|{@s}\n"
+        entries="Автоматически|Личный кабинет МТС|Мобильный интернет-помощник|Обычный интернет-помощник"
+        entryValues="auto|lk|mobile|ordinary"
+	defaultValue="auto">
     </ListPreference>
     <EditTextPreference 
         positiveButtonText="ОК"
@@ -39,11 +39,11 @@
         inputType="number">
     </EditTextPreference>
     <ListPreference 
-        key="type" 
-        title="Интернет-помощник"
-        summary="Через какой помощник заходить|Автоматически\n|{@s}\n"
-        entries="Автоматически|Мобильный|Обычный"
-        entryValues="auto|mobile|ordinary"
-	defaultValue="auto">
+        key="region" 
+        title="Регион"
+        summary="Регион вашего номера|Нужен для определения Интернет-Помощника\n|{@s}\n"
+        entries="Автоматически|Москва/Центр|Дальний Восток|Поволжье|Северо-Запад|Сибирь|Урал|Юг"
+        entryValues="auto|center|primorye|nnov|nw|sib|ural|ug"
+	      defaultValue="auto">
     </ListPreference>
 </PreferenceScreen>

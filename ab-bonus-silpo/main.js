@@ -56,6 +56,11 @@ function main(){
 	if (html == "1"){ 
 		html = AnyBalance.requestGet(baseurl + 'account');
 		var result = {success: true};
+		//ФИО
+		if (matches=/<div class="user_info">\s*<strong>\s*(.*?)\s*?<br\/>\s*?(.*?)\s*(.*?)\s*?<\/strong><br\/><br\/>/.exec(html)){
+		result.__tariff=matches[1]+' '+matches[2]+' '+matches[3];
+		}		
+		//Накапливаемый бонус по программе Мій «Власний Рахунок»
 		if (AnyBalance.isAvailable('bonus')) {
 			var matches = html.match(/<div class="bottom">\s*Загальна кількість\s*<div>(\d+?)<\/div>/i);
 			if (matches) {
@@ -64,6 +69,7 @@ function main(){
 				throw new AnyBalance.Error("Не удалось проверить бонусы");
 			}
 		}
+		//Мої Спеціальні пропозиції
 		if (AnyBalance.isAvailable('baly')) {
 			var matches = html.match(/Мої Спеціальні пропозиції ?б?і?л?ь?ш?е? ?н?і?ж? +<span>(\d+?)<\/span>/i);
 			if (matches) {
@@ -72,12 +78,14 @@ function main(){
 				throw new AnyBalance.Error("Не удалось проверить баллы");
 			}
 		}
+		//Начисленные бонусы переведённые в грн.
 		if (AnyBalance.isAvailable('skidka')) {
 			var matches = html.match(/Всього надано Бонусів<\/b><\/td>\s*<td><b>(\d+?.\d+?) грн.<\/b><\/td>/i);
 			if (matches) {
 				result.skidka = parseFloat(matches[1]);
 			}
 		}
+		//Промежуточные балы появляющиеся при переводе бонусов со счета bonus на счет skidka
 		if (AnyBalance.isAvailable('bonus_perevod')) {
 			var matches = html.match(/Увага! Ваші <b>(\d+?) Балів<\/b>,/i);
 			if (matches) {

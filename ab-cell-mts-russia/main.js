@@ -29,6 +29,28 @@ var regionsOrdinary = {
 	ug: "https://ihelper.ug.mts.ru/SelfCare/"
 };
 
+function getParam (html, result, param, regexp, replaces, parser) {
+	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
+		return;
+
+	var value = regexp.exec (html);
+	if (value) {
+		value = value[1];
+		if (replaces) {
+			for (var i = 0; i < replaces.length; i += 2) {
+				value = value.replace (replaces[i], replaces[i+1]);
+			}
+		}
+		if (parser)
+			value = parser (value);
+
+    if(param)
+      result[param] = value;
+    else
+      return value
+	}
+}
+
 function sumParam (html, result, param, regexp, replaces, parser, do_replace) {
 	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param))){
             if(do_replace)
@@ -108,20 +130,31 @@ function parseTraffic(text){
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-    if(prefs.type == 'mobile'){
+    if(prefs.phone && !/^\d+$/.test(prefs.phone)){
+	throw new AnyBalance.Error('В качестве номера необходимо ввести 10 цифр номера, например, 9161234567, или не вводить ничего, чтобы получить информацию по основному номеру.');
+    }
+
+    if(prefs.type == 'lk'){
+        mainLK();
+    }else if(prefs.type == 'mobile'){
         mainMobile();
     }else if(prefs.type == 'ordinary'){
         mainOrdinary();
     }else{
         try{
-	   mainMobile(true);
-           return;
+           if(!AnyBalance.isAvailable('bonus')){
+                //Мобильный помощник, только если не нужны бонусные баллы
+	        mainMobile(true);
+                return;
+           }else{
+                AnyBalance.trace('Требуются бонусные баллы, мобильные не подходит...');
+           }
         }catch(e){
            if(!e.allow_retry)
                throw e;
            AnyBalance.trace('С мобильным помощником проблема: ' + e.message + " Пробуем обычный...");
         }
-        mainOrdinary();
+        mainLK();
     }
 }
 
@@ -142,10 +175,6 @@ function mainMobile(allowRetry){
     if(!regions[prefs.region]){
 	AnyBalance.trace("Unknown region: " + prefs.region + ", setting to auto");
         prefs.region = 'auto';
-    }
-
-    if(prefs.phone && !/^\d+$/.test(prefs.phone)){
-	throw new AnyBalance.Error('В качестве номера необходимо ввести 10 цифр номера, например, 9161234567, или не вводить ничего, чтобы получить информацию по основному номеру.');
     }
 
     var baseurl = regions[prefs.region];
@@ -181,7 +210,7 @@ function mainMobile(allowRetry){
         //Не вошли. Сначала пытаемся найти вразумительное объяснение этому факту...
         regexp=/<ul class="operation-results-error"><li>(.*?)<\/li>/;
         if (res=regexp.exec(html)){
-            throw new AnyBalance.Error(res[1]);
+            throw new AnyBalance.Error(res[1], allowRetry);
         }
         
         regexp=/<title>Произошла ошибка<\/title>/;
@@ -291,10 +320,6 @@ function mainOrdinary(){
         prefs.region = 'auto';
     }
 
-    if(prefs.phone && !/^\d+$/.test(prefs.phone)){
-	throw new AnyBalance.Error('В качестве номера необходимо ввести 10 цифр номера, например, 9161234567, или не вводить ничего, чтобы получить информацию по основному номеру.');
-    }
-
     var baseurl = regionsOrdinary[prefs.region];
 
 //    var html = AnyBalance.requestGet(baseurl, headers);
@@ -313,7 +338,7 @@ function mainOrdinary(){
 //        ctl00$MainContent$btnEnter: 'Войти'
     }, headers);
     
-    var redirect=sumParam(html, null, null, /<form .*?id="redirect-form".*?action="[^"]*?([^\/\.]+)\.mts\.ru/);
+    var redirect=getParam(html, null, null, /<form .*?id="redirect-form".*?action="[^"]*?([^\/\.]+)\.mts\.ru/);
     if (redirect){
         //Неправильный регион. Умный мтс нас редиректит
         //Только эта скотина не всегда даёт правильную ссылку, иногда даёт такую, которая требует ещё редиректов
@@ -382,7 +407,9 @@ function mainOrdinary(){
 }
 
 function isAvailableStatus(){
-    return AnyBalance.isAvailable ('min_left','min_local','min_love','sms_left','mms_left','traffic_left','traffic_left_mb','license','statuslock','credit','usedinthismonth');
+    return AnyBalance.isAvailable ('min_left','min_local','min_love','sms_left','mms_left','traffic_left','traffic_left_mb',
+        'license','statuslock','credit','usedinthismonth', 'bonus_balance', 'min_left_mts', 'min_used_mts', 'min_used', 'debt',
+        'pay_till');
 }
 
 function fetchAccountStatus(html, result){
@@ -465,3 +492,100 @@ function fetchAccountStatus(html, result){
     //Остаток бонуса 100 руб
     sumParam (html, result, 'bonus_balance', /Остаток бонуса:?\s*([\d\.,]+)\s*р/i, replaceFloat, parseFloat);
 }
+
+
+function isLoggedIn(html){
+    return getParam(html, null, null, /(<meta[^>]*name="lkMonitorCheck")/i);
+}
+
+function parseJson(json){
+    return json;
+}
+
+function mainLK(){
+    AnyBalance.trace("Entering lk...");
+    
+    var headers = {
+	'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:13.0) Gecko/20100101 Firefox/13.0.1'
+    };
+
+    var prefs = AnyBalance.getPreferences();
+    AnyBalance.setDefaultCharset('utf-8');
+
+    var baseurl = 'https://lk.ssl.mts.ru';
+    var baseurlLogin = 'https://login.mts.ru';
+    //Чтобы сбросить автологин
+    var html = AnyBalance.requestGet(baseurlLogin + "/amserver/UI/Login?service=lk&goto=" + baseurl + "/&auth-status=1", headers);
+
+    if(isLoggedIn(html)){
+         AnyBalance.trace("Уже залогинены, проверяем, что на правильный номер...");
+         //Автоматом залогинились, надо проверить, что на тот номер
+         var info = AnyBalance.requestPost(baseurl + '/GoodokServices/GoodokAjaxGetWidgetInfo/', '', headers);
+         info = JSON.parse(info);
+         if(info.MSISDN != prefs.login){  //Автоматом залогинились не на тот номер
+             AnyBalance.trace("Залогинены на неправильный номер: " + prefs.MSISDN + ", выходим");
+             html = AnyBalance.requestGet(baseurlLogin + "/amserver/UI/Logout?goto=" + baseurl, headers);
+         }
+    }
+
+    if(!isLoggedIn(html)){
+        AnyBalance.trace("Логинимся с заданным номером");
+        var html = AnyBalance.requestPost(baseurlLogin + "/amserver/UI/Login", {
+            IDToken0:'',
+            IDToken1:prefs.login,
+            IDToken2:prefs.password,
+            IDButton:'+%D0%92%D1%85%D0%BE%D0%B4+%D0%B2+%D0%9B%D0%B8%D1%87%D0%BD%D1%8B%D0%B9+%D0%BA%D0%B0%D0%B1%D0%B8%D0%BD%D0%B5%D1%82+',
+            'goto':'aHR0cHM6Ly9say5zc2wubXRzLnJ1Lw==',
+            encoded:true,
+            initialNumber:'',
+            loginURL:'/amserver/UI/Login?auth-status=0&gx_charset=UTF-8&service=lk&goto=https%3A%2F%2Flk.ssl.mts.ru%2F',
+            gx_charset:'UTF-8'
+        });
+
+        if(getParam(html, null, null, /(auth-status=0)/i))
+            throw new AnyBalance.Error('Неверный логин или пароль. Повторите попытку или получите новый пароль на сайте https://lk.ssl.mts.ru/.');
+    }
+
+    if(!isLoggedIn(html)){
+        throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Он изменился или проблемы на сайте.');
+    }
+    AnyBalance.trace("Мы в личном кабинете...");
+
+    var info = AnyBalance.requestGet(baseurlLogin + '/profile/mobile/get?callback=parseJson', headers);
+    info = new Function("return " + info)();
+
+    var result = {success: true};
+    if(AnyBalance.isAvailable('balance'))
+        result.balance = Math.round(info.balance*100)/100;
+    result.__tariff = info.tariff;
+    if(AnyBalance.isAvailable('bonus'))
+        result.bonus = info.bonus;
+
+    if(isAvailableStatus()){
+        var baseurlHelper = "https://ihelper.mts.ru/selfcare/"
+        html = AnyBalance.requestGet(baseurlHelper, headers);
+        var redirect=getParam(html, null, null, /<form .*?id="redirect-form".*?action="[^"]*?([^\/\.]+)\.mts\.ru/);
+        if (redirect){
+            //Неправильный регион. Умный мтс нас редиректит
+            //Только эта скотина не всегда даёт правильную ссылку, иногда даёт такую, которая требует ещё редиректов
+            //Поэтому приходится вычленять из ссылки непосредственно нужный регион
+            if(!regionsOrdinary[redirect])
+                throw new AnyBalance.Error("МТС перенаправила на неизвестный регион: " + redirect);
+	
+            var baseurlHelper = regionsOrdinary[redirect];
+            AnyBalance.trace("Redirected, now trying to enter selfcare at address: " + baseurlHelper);
+            html = AnyBalance.requestPost(baseurlHelper + "logon.aspx", {
+                wasRedirected: '1',
+                submit: 'Go'
+            }, headers);
+            
+        }
+
+        html = AnyBalance.requestGet(baseurlHelper + "account-status.aspx", headers);
+//        AnyBalance.trace(html);
+        fetchAccountStatus(html, result);
+    }
+
+    AnyBalance.setResult(result);
+}
+

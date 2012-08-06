@@ -116,15 +116,24 @@ function main(){
 
     var baseurl = 'http://goodline.ru';
     
+    var headers = {
+	Accept:'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
+	'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Cache-Control':'max-age=0',
+	Connection:'keep-alive',
+	'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.60 Safari/537.1'
+    };
+
     var info = AnyBalance.requestPost(baseurl + "/ru/abonents/entercabinet/", {
         mail:prefs.login,
         passwd:prefs.password
-    });
+    }, headers);
 
     var error = getParam(info, null, null, /(Введите логин\/пароль для входа в систему)/i);
     if(error)
         throw new AnyBalance.Error("Не удалось войти в личный кабинет. Проверьте логин/пароль");
-                        
+
     var result = {
         success: true
     };
@@ -154,7 +163,7 @@ function main(){
 
     var tariff_ref = getParam(tr, null, null, /'(\/tariffs.php\?onum=[^']*)/i);
     if(tariff_ref){
-        html = AnyBalance.requestGet(baseurl + tariff_ref);
+        html = AnyBalance.requestGet(baseurl + tariff_ref, headers);
         getParam(html, result, '__tariff', /<tr[^>]*class="tariffs"[\s\S]*?<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
     }else{
         AnyBalance.trace("Не удалось найти ссылку на тарифный план!");
@@ -164,8 +173,11 @@ function main(){
         var id = getParam(tr, null, null, /entercabinet\/list\/delete\/([^\.]*)\.html/i);
         if(!id)
             throw new AnyBalance.Error("Не удалось найти ссылку на информацию о балансе.");
+        
+        headers['X-Requested-With'] = 'XMLHttpRequest';
+        html = AnyBalance.requestGet(baseurl + '/ru/abonents/entercabinet/balans/get_value/?ajax=1&id=' + id, headers);
+        headers['X-Requested-With'] = undefined;
 
-        html = AnyBalance.requestGet(baseurl + '/ru/abonents/entercabinet/balans/get_value/?ajax=1&id=' + id, {'X-Requested-With':'XMLHttpRequest'});
         getParam(html, result, 'balance', null, replaceTagsAndSpaces, parseBalance);
         getParam(html, result, 'currency', null, replaceTagsAndSpaces, parseCurrency);
     }
@@ -180,7 +192,7 @@ function main(){
           command:'history',
           s:2,
           number:number
-       });
+       }, headers);
 
        getParam(html, result, 'lastpaydate', /<tr[^>]*>(?:\s*<td[^>]*>[^<]*<\/td>){2}\s*<td[^>]*>([^<]*)<\/td>(?:\s*<td[^>]*>[^<]*<\/td>){4}\s*<\/tr>\s*<\/table>/i, replaceTagsAndSpaces, parseDate);
        getParam(html, result, 'lastpay', /<tr[^>]*>(?:\s*<td[^>]*>[^<]*<\/td>){4}\s*<td[^>]*>([^<]*)<\/td>(?:\s*<td[^>]*>[^<]*<\/td>){2}\s*<\/tr>\s*<\/table>/i, replaceTagsAndSpaces, parseBalance);

@@ -18,10 +18,15 @@ function main(){
 			login: prefs.login,
 			pass: prefs.pass
 		}, 
-		{"User-Agent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/536.11 (KHTML, like Gecko) Chrome/20.0.1132.57 Safari/536.11"}
+		{"User-Agent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.57 Safari/537.1"}
 	);
 	if (html){
 		var result = {success: true};
+		//ФИО
+		if (matches=/<div class="leftColumnText">(.*?)<br \/>(.*?)<br \/>(.*?)<\/div>/.exec(html)){
+		result.__tariff=matches[1]+' '+matches[2]+' '+matches[3];
+		}
+		//Накапливаемые балы по программе «Клуб постійних покупців»
 		if (AnyBalance.isAvailable('baly')) {
 			var matches = html.match(/<div id="balliNow">(\d+?)<\/div>/i);
 			if (matches) {
@@ -30,6 +35,7 @@ function main(){
 				throw new AnyBalance.Error("Не удалось проверить балы");
 			}
 		}
+		//Начисленные бонусы переведённые в грн.
 		if (AnyBalance.isAvailable('bonus')) {
 			var matches = html.match(/<div class="dostupniBonus">Доступний для витрат бонус:<\/div>\s*<div class='cur-bonusItem'>([\d\.,]+) грн/i);
 			if (matches) {

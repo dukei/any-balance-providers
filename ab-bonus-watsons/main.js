@@ -18,19 +18,26 @@ function main(){
 			login: prefs.login,
 			pass: prefs.pass
 		}, 
-		//Приходится указывать юзерагент, иначе их сервер падает
-		{"User-Agent":"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.142 Safari/535.19"}
+		{"User-Agent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.57 Safari/537.1"}
 	);
 	if (html){
 		var result = {success: true};
+		//Бонусы накопленные по программе Watsons Club
 		if (AnyBalance.isAvailable('bonus')) {
-			//AnyBalance.trace(html); //С помощью этого на телефоне в окне "показать последний лог" можно увидеть, какой тут html
 			var matches = html.match(/<div.+>Кількість балів:<\/div>\s*<div.+>(\d+?)<\/div>/i);
 			if (matches) {
 				result.bonus = parseFloat(matches[1]);
 			} else {
 				throw new AnyBalance.Error("Не удалось проверить бонусы");
 			}
+		}
+		//ФИО
+		html = AnyBalance.requestPost('http://club.watsons.com.ua/club/private/profile/view.dc',
+		{"User-Agent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.57 Safari/537.1"}
+		);
+		if (matches=/<div .*>Прізвище:<\/div>\s*<div .*>(.*?)<\/div>/.exec(html)){
+		str_tmp1=/<div .*>Ім’я:<\/div>\s*<div .*>(.*?)<\/div>/.exec(html), str_tmp2=/<div .*>По батькові:<\/div>\s*<div .*>(.*?)<\/div>/.exec(html)
+		result.__tariff=matches[1]+' '+str_tmp1[1]+' '+str_tmp2[1];
 		}
 		AnyBalance.setResult(result);
 	} else {

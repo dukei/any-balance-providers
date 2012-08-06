@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-bonus-watsons</id>
+  <id version="2">ab-bonus-watsons</id>
   <name>Сеть магазинов Watsons (Украина)</name>
   <description>
     Мониторинг накопленных балов по программе лояльности сети магазинов Watsons (Украина)
@@ -10,6 +10,7 @@
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
     <js>main.js</js>
+    <history>history.xml</history>
   </files>
   <counters>
     <counter id="bonus" name="Бонус" suffix=" бон." type="numeric"/>

@@ -1,9 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
+    <ListPreference 
+        key="numberList" 
+        title="Котировка"
+        summary="||{@s}\n"
+        entries="Brent|Light|Алюминий|Золото|Никель|Платина|Пшеница|Сахар|Серебро|NASDAQ|RTSI|MICEX 10|MICEX|TA-25 Index|SandP-Fut|GAZP|GMKN|LKOH|RTS|SBRF|VTBR|ROSN|GOLD|Si|Si-12.12(SiZ2)|RTSS|АВТОВАЗ ао|Аэрофлот|ВТБ ао|ГАЗПРОМ ао|ГМКНорНик|ЛУКОЙЛ|МТС-ао|ПолюсЗолот|Роснефть|Ростел-ао|РусГидро|Сбербанк|СевСт-ао|Сургнфгз|Уркалий-ао"
+        entryValues="04C11|04A04|049F2|04A09|049F4|04A03|122D5|122D6|04A08|1409B|0005F|0361A|0361B|14135|0006C|0442B|0442C|0442D|0442F|04430|04DB3|04DB6|04DBA|04DBB|12500|0596A|00027|0001D|04A63|041CA|0031B|00008|03CA3|042E3|04379|00007|04F2A|00003|03F08|00004|04CA7"
+	defaultValue="04C11">
+    </ListPreference>
     <EditTextPreference 
         title="Код котировки" 
         positiveButtonText="ОК" 
-        summary="|Код котировки с сайта, 5 символов|{@s}" 
+        summary="Код котировки с сайта, 5 символов|Оставьте пустым, если выбрали из списка\n|{@s}\n" 
         dialogTitle="Код котировки" 
         negativeButtonText="Отмена" 
         dialogMessage="Откройте нужную котировкy на сайте http://finam.ru. В адресной строке между profile и / идет код котировки."

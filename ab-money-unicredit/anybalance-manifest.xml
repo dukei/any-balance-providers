@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-money-unicredit</id>
+  <id version="2">ab-money-unicredit</id>
   <name>UniCredit</name>
   <description>
-    Получает текущий остаток и другие параметры карт UniCredit, используя интернет-банк https://enter.unicredit.ru.
+    Получает текущий остаток и другие параметры карт, счетов, кредитов и вкладов UniCredit, используя интернет-банк https://enter.unicredit.ru.
+
+    Как подключиться к Интернет-Банку?
+      1. обратитесь в отделение ЮниКредит Банка и заключите договор об обслуживании с использованием системы Enter.UniCredit;
+      2. прямо при подключении получите от сотрудника Банка Ваш логин, пароль и скретч-карту с набором сеансовых ключей для подтверждения операций.
+
+    Можно попробовать этот провайдер на тестовой версии интернет-банка, введя логин demo и пароль demo.
   </description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <files>
@@ -11,12 +17,24 @@
     <preferences>preferences.xml</preferences>
     <js>api:jquery.min.js</js>
     <js>main.js</js>
+    <history>history.xml</history>
   </files>
   <counters>
     <counter id="balance" name="Остаток"/>
-    <counter id="cardnum" name="Номер карты" type="text"/>
-    <counter id="type" name="Тип" type="text"/>
     <counter id="currency" name="Валюта" type="text"/>
+    <counter id="pay" name="Ближайший платеж"/>
+    <counter id="paytill" name="Заплатить до" type="time" format="dd/MM/yyyy"/>
+    <counter id="credit" name="Кредитный лимит"/>
+    <counter id="paynum" name="Осталось выплат"/>
+    <counter id="pct" name="Проценты"/>
+    <counter id="period" name="Срок" units="д"/>
+    <counter id="statustill" name="Срок действия" type="time" format="dd/MM/yyyy"/>
+    <counter id="type" name="Тип" type="text"/>
+    <counter id="status" name="Статус" type="text"/>
+    <counter id="cardnum" name="Номер карты" type="text"/>
+    <counter id="accnum" name="№ счета/сделки" type="text"/>
+    <counter id="cardname" name="Имя на карте" type="text"/>
+    <counter id="fio" name="Владелец" type="text"/>
   </counters>
   <keywords>
     юникредит

@@ -29,7 +29,7 @@ function getParam (html, result, param, regexp, replaces, parser) {
 	}
 }
 
-var replaceTagsAndSpaces = [/\\n/g, ' ', /<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
+var replaceTagsAndSpaces = [/\\n/g, ' ', /\[br\]/ig, ' ', /<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
 var replaceFloat = [/\s+/g, '', /,/g, '.'];
 
 function parseBalance(text){
@@ -47,71 +47,283 @@ function parseCurrency(text){
 }
 
 function parseDate(str){
-    AnyBalance.trace('Parsing date from value: ' + str);
     var matches = /(\d+)[^\d](\d+)[^\d](\d+)/.exec(str);
-    var time;
     if(matches){
-	  time = (new Date(+matches[3], matches[2]-1, +matches[1])).getTime();
+          var date = new Date(+matches[3], matches[2]-1, +matches[1]);
+	  var time = date.getTime();
+          AnyBalance.trace('Parsing date ' + date + ' from value: ' + str);
+          return time;
     }
-    return time;
+    AnyBalance.trace('Failed to parse date from value: ' + str);
 }
+
+function parseStatus(str){
+    return getParam(str, null, null, /^([^\(]*)/, replaceTagsAndSpaces);
+}
+
 
 function main(){
     var prefs = AnyBalance.getPreferences();
     processUnicredit();
 }
 
-function fnRnd(){
-	var now=new Date(); 
-	return 'B'+(Date.parse(now.toGMTString())+now.getMilliseconds()).toString(32);
+function encryptPass(pass, map){
+	if(map){
+		var ch='',i=0,k=0,TempPass='',PassTemplate=map.split(','), Pass='';
+		TempPass=pass;
+		while(TempPass!=''){
+			ch=TempPass.substr(0, 1);
+			k = ch.charCodeAt(0);
+			if(k>0xFF) k-=0x350;
+			if(k==7622) k=185;
+			TempPass=TempPass.length>1?TempPass.substr(1, TempPass.length):'';
+			if(Pass!='')Pass=Pass+';';
+			Pass=Pass+PassTemplate[k];
+		}
+                return Pass;
+	}else{
+		return pass;
+	}
+
 }
 
 function processUnicredit(){
     var prefs = AnyBalance.getPreferences();
-    if(prefs.cardnum && !/\d{4}/.test(prefs.cardnum))
-        throw new AnyBalance.Error("Введите 4 последних цифры номера карты или не вводите ничего, чтобы показать информацию по первой карте");
 
-    //Для демо-режима - "http://demo.enter.unicredit.ru/v1/cgi/bsi.dll";
-    var baseurl = "https://enter2.unicredit.ru/v1/cgi/bsi.dll";
+    var baseurl = prefs.login != 'demo' ? "https://enter2.unicredit.ru/v2/cgi/bsi.dll?" : "http://demo.enter.unicredit.ru/v2/cgi/bsi.dll?";
     
-    var html = AnyBalance.requestPost(baseurl, {
-        T:'RT_2Auth.CL',
-        IMode:'',
-        L:'russian',
-        A:prefs.login,
-        B:prefs.password,
-        token:fnRnd(),
-        _PresentationType:'',
-        ForceSave:'',
-        PostSave:'',
-        iiStepSaveForm:''
-    });
+    var html = AnyBalance.requestGet(baseurl + 'T=RT_2Auth.BF');
+    var mapId = getParam(html, null, null, /<input[^>]*id="MapID"[^>]*value="([^"]*)"/i);
+    var map = getParam(html, null, null, /<input[^>]*id="Map"[^>]*value="([^"]*)"/i);
+    var pass = encryptPass(prefs.password, map);
 
-    var error = getParam(html, null, null, /<div id="error">\d*\|?([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+    var headers = {
+        'Accept-Language': 'ru, en',
+        BSSHTTPRequest:1,
+        Referer: baseurl + 'T=RT_2Auth.BF',
+        Origin: baseurl + 'T=RT_2Auth.BF&Log=1&L=RUSSIAN',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.60 Safari/537.1'
+    }
+
+    html = AnyBalance.requestPost(baseurl, {
+        tic: 0,
+        T:'RT_2Auth.CL',
+        A:prefs.login,
+        B:pass,
+        L:'RUSSIAN',
+        IdCaptcha:'',
+        C:'',
+        MapID:mapId || '',
+        BROWSER:'Crome',
+        BROWSERVER: '21.0.1180.60'
+    }, headers);
+
+    var error = getParam(html, null, null, /<BSS_ERROR>\d*\|?([\s\S]*?)<\/BSS_ERROR>/i, replaceTagsAndSpaces, html_entity_decode);
     if(error)
         throw new AnyBalance.Error(error);
-    
+
+    var jsonInfo = getParam(html, null, null, /ClientInfo=(\{[\s\S]*?\})\s*(?:<\/div>|$)/i);
+    if(!jsonInfo)
+        throw new AnyBalance.Error("Не удалось найти информацию о сессии в ответе банка.");
+
+    jsonInfo = JSON.parse(jsonInfo);
+
+    if(prefs.type == 'card')
+        fetchCard(jsonInfo, headers, baseurl);
+    else if(prefs.type == 'acc')
+        fetchAccount(jsonInfo, headers, baseurl);
+    else if(prefs.type == 'crd')
+        fetchCredit(jsonInfo, headers, baseurl);
+    else if(prefs.type == 'dep')
+        fetchDeposit(jsonInfo, headers, baseurl);
+    else
+        fetchCard(jsonInfo, headers, baseurl); //По умолчанию карты будем получать
+}
+
+function fetchCard(jsonInfo, headers, baseurl){
+    var prefs = AnyBalance.getPreferences();
+    if(prefs.cardnum && !/^\d{4}$/.test(prefs.cardnum))
+        throw new AnyBalance.Error("Введите 4 последних цифры номера карты или не вводите ничего, чтобы показать информацию по первой карте");
+
+    var html = AnyBalance.requestPost(baseurl, {
+        SID:jsonInfo.SID,
+        tic:1,
+        T:'RT_2IC.form',
+        nvgt:1,
+        SCHEMENAME:'CARDSLIST',
+        XACTION:''
+    }, headers);
+
+    var cardtpl = prefs.cardnum ? '******' + prefs.cardnum : '';
     var $html = $(html);
-    var sid = $html.find('sid').attr('v');
-    if(!sid)
-        throw new AnyBalance.Error('Не удаётся найти идентификатор сессии!');
     
-    html = AnyBalance.requestGet(baseurl + '?sid=' + sid + '&t=RT_2IC.form&SCHEMENAME=moneypage&TbSynchToken=*tbimg2*');
-    $html = $(html);
-    
-    var $card = prefs.cardnum ? $html.find('div[p=CARD][ID$='+prefs.cardnum+']').first() : $html.find('div[p=CARD]').first();
+    var $card = $html.find('table.Tbl-cards' + (cardtpl ? ':contains("'+cardtpl+'")' : '')).first();
     if(!$card.size())
-        throw new AnyBalance.Error(prefs.cardnum ? 'Не удаётся найти карту с последними цифрами ' + prefs.cardnum : 'Не удаётся найти ни одной карты');
-    
+        throw new AnyBalance.Error('Не удаётся найти ' + (cardtpl ? 'карту с последними цифрами ' + cardtpl : 'ни одной карты'));
+
+    var cardid = getParam($card.html(), null, null, /CardID=(\d+)/i);
+    if(!cardid)
+        throw new AnyBalance.Error('Не удаётся найти id карты. Интернет-банк изменился?');
+
+    html = AnyBalance.requestPost(baseurl, {
+        SID:jsonInfo.SID,
+        tic:1,
+        T:'RT_2IC.form',
+        nvgt:1,
+        SCHEMENAME:'CARD',
+        XACTION:'',
+        CardID:cardid
+    }, headers);
+
     var result = {success: true};
-    if(AnyBalance.isAvailable('balance'))
-        result.balance = parseBalance($card.find('U.Ucolor1').text());
-    if(AnyBalance.isAvailable('currency'))
-        result.currency = parseCurrency($card.find('U.Ucolor1').text());
+    getParam(html, result, 'status', /Статус:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseStatus);
+    getParam(html, result, 'statustill', /Статус:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+    getParam(html, result, 'balance', /Баланс:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'currency', /Баланс:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseCurrency);
+    getParam(html, result, 'cardnum', /Номер карты:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+    getParam(html, result, '__tariff', /Номер карты:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+    getParam(html, result, 'accnum', /Счет карты:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+    getParam(html, result, 'type', /Тип карты:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+    getParam(html, result, 'fio', /Держатель:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+    getParam(html, result, 'cardname', /Имя на карте:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+    getParam(html, result, 'credit', /Кредитный лимит:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+
+    AnyBalance.setResult(result);
+}
+
+function fetchAccount(jsonInfo, headers, baseurl){
+    var prefs = AnyBalance.getPreferences();
+    if(prefs.cardnum && !/^\d{4,}$/.test(prefs.cardnum))
+        throw new AnyBalance.Error("Введите начало номера счета или не вводите ничего, чтобы показать информацию по первому счету");
+
+    var html = AnyBalance.requestPost(baseurl, {
+        SID:jsonInfo.SID,
+        tic:1,
+        T:'RT_2IC.form',
+        nvgt:1,
+        SCHEMENAME:'ACCOUNTSLIST',
+        XACTION:''
+    }, headers);
+
+    var tpl = prefs.cardnum ? prefs.cardnum : '';
+    var $html = $(html);
     
-    getParam($card.html(), result, 'type', /<\/div>([^<]*)/i, replaceTagsAndSpaces);
-    getParam($card.html(), result, 'cardnum', /№([^<]*)/i, replaceTagsAndSpaces);
+    var $acc = $html.find('div.div-b:has(span[onclick*="AccID=' + (tpl || '') + '"])').first();
+    if(!$acc.size())
+        throw new AnyBalance.Error('Не удаётся найти ' + (tpl ? 'счет №' + tpl : 'ни одного счета'));
+
+    html = $acc.html();
+    var text = $acc.text();
+
+    var result = {success: true};
+    getParam(text, result, 'balance', /:\s*([\s\S]*)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(text, result, 'currency', /:\s*([\s\S]*)/i, replaceTagsAndSpaces, parseCurrency);
+    getParam(text, result, 'type', /([\s\S]*?):<\/td>/i, replaceTagsAndSpaces);
+    getParam(jsonInfo.USR, result, 'fio', /(.*)/i, replaceTagsAndSpaces);
+    getParam(html, result, 'accnum', /AccID=(\d+)/i, replaceTagsAndSpaces);
+    getParam(html, result, '__tariff', /AccID=(\d+)/i, replaceTagsAndSpaces);
+    getParam(jsonInfo.USR, result, 'fio', /(.*)/i, replaceTagsAndSpaces);
+
+    AnyBalance.setResult(result);
+}
+
+function fetchCredit(jsonInfo, headers, baseurl){
+    var prefs = AnyBalance.getPreferences();
+    if(prefs.cardnum && !/^[0-9A-Z]{4,}$/i.test(prefs.cardnum))
+        throw new AnyBalance.Error("Введите номер кредитной сделки (её можно найти в информации о кредите в интернет-банке) или не вводите ничего, чтобы показать информацию по первому кредиту");
+
+    var html = AnyBalance.requestPost(baseurl, {
+        SID:jsonInfo.SID,
+        tic:1,
+        T:'RT_2IC.form',
+        nvgt:1,
+        SCHEMENAME:'CREDITSLIST',
+        XACTION:''
+    }, headers);
+
+    var tpl = prefs.cardnum ? prefs.cardnum.toUpperCase() : '';
+    var $html = $(html);
     
+    var $crd = $html.find('div.div-b:has(span[onclick*="CrdID=' + (tpl || '') + '"])').first();
+    if(!$crd.size())
+        throw new AnyBalance.Error('Не удаётся найти ' + (tpl ? 'кредитную сделку №' + tpl : 'ни одного кредита'));
+
+    var crdid = getParam($crd.html(), null, null, /CrdID=([0-9A-Z]+)/i);
+    if(!crdid)
+        throw new AnyBalance.Error('Не удаётся найти номер кредитной сделки. Интернет-банк изменился?');
+
+    html = AnyBalance.requestPost(baseurl, {
+        SID:jsonInfo.SID,
+        tic:1,
+        T:'RT_2IC.form',
+        nvgt:1,
+        SCHEMENAME:'CREDIT',
+        XACTION:'',
+        CrdID:crdid
+    }, headers);
+
+    var result = {success: true};
+    getParam(html, result, 'type', /<h2>([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces);
+    getParam(html, result, '__tariff', /<h2>([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces);
+    getParam(html, result, 'balance', /Осталось выплатить:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'currency', /Осталось выплатить:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseCurrency);
+    getParam(html, result, 'credit', /Сумма кредита:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'paynum', /Осталось выплат:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'pay', /Ближайший плат[ёe]ж:[\s\S]*?<td[^>]*>([^<]*)\s+до\s+/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'paytill', /Ближайший плат[ёe]ж:[\s\S]*?<td[^>]*>[^<]*\s+до\s+([^<]*)/i, replaceTagsAndSpaces, parseDate);
+    getParam(html, result, 'pct', /Проценты:[\s\S]*?<td[^>]*>[^<]*\s+до\s+([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'period', /Срок кредита:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam($crd.html(), result, 'accnum', /CrdID=([0-9A-Z]+)/i);
+
+    AnyBalance.setResult(result);
+}
+
+function fetchDeposit(jsonInfo, headers, baseurl){
+    var prefs = AnyBalance.getPreferences();
+    if(prefs.cardnum && !/^[0-9A-Z]{4,}$/i.test(prefs.cardnum))
+        throw new AnyBalance.Error("Введите номер сделки для вклада (её можно найти в информации о вкладе в интернет-банке) или не вводите ничего, чтобы показать информацию по первому вкладу");
+
+    var html = AnyBalance.requestPost(baseurl, {
+        SID:jsonInfo.SID,
+        tic:1,
+        T:'RT_2IC.form',
+        nvgt:1,
+        SCHEMENAME:'DEPOSITSLIST',
+        XACTION:''
+    }, headers);
+
+    var tpl = prefs.cardnum ? prefs.cardnum.toUpperCase() : '';
+    var $html = $(html);
+    
+    var $dep = $html.find('div.div-b:has(span[onclick*="DepID=' + (tpl || '') + '"])').first();
+    if(!$dep.size())
+        throw new AnyBalance.Error('Не удаётся найти ' + (tpl ? 'сделку вклада №' + tpl : 'ни одного вклада'));
+
+    var depid = getParam($dep.html(), null, null, /DepID=([0-9A-Z]+)/i);
+    if(!depid)
+        throw new AnyBalance.Error('Не удаётся найти номер сделки для вклада. Интернет-банк изменился?');
+
+    html = AnyBalance.requestPost(baseurl, {
+        SID:jsonInfo.SID,
+        tic:1,
+        T:'RT_2IC.form',
+        nvgt:1,
+        SCHEMENAME:'DEPOSIT',
+        XACTION:'',
+        DepID:depid
+    }, headers);
+
+    var result = {success: true};
+    getParam(html, result, 'type', /<h1>([\s\S]*?)<\/h1>/i, replaceTagsAndSpaces);
+    getParam(html, result, '__tariff', /<h1>([\s\S]*?)<\/h1>/i, replaceTagsAndSpaces);
+    getParam(html, result, 'balance', /Текущая сумма вклада[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'currency', /Текущая сумма вклада[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseCurrency);
+    getParam(html, result, 'pct', /Проценты:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'period', /Срок вклада:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam($dep.html(), result, 'accnum', /DepID=([0-9A-Z]+)/i);
+    getParam(html, result, 'status', /Статус:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+    getParam(jsonInfo.USR, result, 'fio', /(.*)/i, replaceTagsAndSpaces);
+
     AnyBalance.setResult(result);
 }
 

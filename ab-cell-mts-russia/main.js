@@ -147,7 +147,7 @@ function main(){
 	        mainMobile(true);
                 return;
            }else{
-                AnyBalance.trace('Требуются бонусные баллы, мобильные не подходит...');
+                AnyBalance.trace('Требуются бонусные баллы, мобильный помощник не подходит...');
            }
         }catch(e){
            if(!e.allow_retry)
@@ -559,7 +559,7 @@ function mainLK(){
         result.balance = Math.round(info.balance*100)/100;
     result.__tariff = info.tariff;
     if(AnyBalance.isAvailable('bonus'))
-        result.bonus = info.bonus;
+        result.bonus = parseFloat(info.bonus);
 
     if(isAvailableStatus()){
         var baseurlHelper = "https://ihelper.mts.ru/selfcare/"

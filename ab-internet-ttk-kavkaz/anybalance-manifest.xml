@@ -13,8 +13,8 @@
   </files>
   <counters>
     <counter id="balance" name="Баланс" units="р"/>
-    <counter id="trafficIn" name="Вх.трафик в текущем периоде" units="Gb"/> -->
-    <counter id="trafficOut" name="Исх.трафик в текущем периоде" units="Gb"/> -->
+    <counter id="trafficIn" name="Вх.трафик в текущем периоде" units="Gb"/>
+    <counter id="trafficOut" name="Исх.трафик в текущем периоде" units="Gb"/>
     <counter id="licschet" name="Лицевой счет" type="text"/>
     <counter id="userName" name="ФИО" type="text"/>
   </counters>
@@ -24,4 +24,7 @@
   <type>
     internet
   </type>
+  <country>
+    ru
+  </country>
 </provider>

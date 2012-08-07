@@ -37,9 +37,10 @@ function parseDate(str){
     var time;
     if(matches){
 	  time = (new Date(+matches[3], matches[2]-1, +matches[1])).getTime();
+          AnyBalance.trace('Parsing date ' + new Date(time) + ' from value: ' + str);
+          return time;
     }
-    AnyBalance.trace('Parsing date ' + new Date(time) + ' from value: ' + str);
-    return time;
+    AnyBalance.trace('Could not parse date from value: ' + str);
 }
 
 function main(){
@@ -90,7 +91,7 @@ function main(){
     if(jsonInfo.no_campaigns)
         throw new AnyBalance.Error('Рекламные кампании отсутствуют');
 
-    if(prefs.cid && !jsonInfo.camps_info)
+    if(prefs.cid && (!jsonInfo.camps_info || jsonInfo.camps_info.length == 0))
         throw new AnyBalance.Error('Нет активной рекламной кампании ID:' + prefs.cid);
 
     var sum_rest = jsonInfo.sum_rest;

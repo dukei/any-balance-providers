@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-internet-krasno</id>
+  <name>Диалог-К (Красноармейск, МО)</name>
+  <description>
+    Получает баланс и информацию о тарифном плане для интернет провайдера Диалог-К. Фирма «Диалог-К» - компания, предоставляющая широкополосный доступ в сеть Интернет в городе Красноармейск Московской области и других близлежащих населенных пунктах. Информация берется из системы "Сервис-абонент" ( https://billing.krasno.ru/ ).
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="trafficLeft" name="Остаток трафика" units="Gb"/>
+    <counter id="block" name="Блокировка" type="text"/>
+    <counter id="licschet" name="Лицевой счет" type="text"/>
+    <counter id="userName" name="ФИО" type="text"/>
+  </counters>
+  <keywords>
+    интернет, красноармейск
+  </keywords>
+  <type>
+    internet
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

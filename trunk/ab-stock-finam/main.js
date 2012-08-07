@@ -41,14 +41,15 @@ function parseBalance(text){
 function main(){
 	AnyBalance.setDefaultCharset('windows-1251');
     var prefs = AnyBalance.getPreferences();
+    var number = prefs.number || prefs.numberList;
 
-    var baseurl = "http://pda.finam.ru/analysis/quoteonline00003"+prefs.number+"/default.asp";
+    var baseurl = "http://pda.finam.ru/analysis/quoteonline00003"+number+"/default.asp";
 
     var html = AnyBalance.requestGet(baseurl);
 
     var error = getParam(html, null, null, /<\/h1>-->([\n\r\s ]+?)<\/div>/i);
     if(error)
-        throw new AnyBalance.Error("Котировки с номером " + prefs.number + " отсутствуют. Проверьте номер!");
+        throw new AnyBalance.Error("Котировки с номером " + number + " отсутствуют. Проверьте номер!");
 
     var result = {success: true};
 

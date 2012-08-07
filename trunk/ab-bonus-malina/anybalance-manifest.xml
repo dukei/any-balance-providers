@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="3">ab-bonus-malina</id>
+  <id major_version="1.0" version="4">ab-bonus-malina</id>
   <name>Бонусы Малина</name>
   <description>
-    Получает информацию по баллам на карте накопительной программы Малина.
+    Получает информацию по баллам на карте накопительной программы Малина через персональную страницу http://catalog.malina.ru/login.php.
   </description>
   <author>iReset &lt;ireset.ag@gmail.com&gt;</author>
   <files>
@@ -14,7 +14,7 @@
     <history>history.xml</history>
   </files>
   <counters>
-    <counter id="balance" name="Баланс" units="б"/>
+    <counter id="balance" name="Всего" units="б"/>
     <counter id="mainPoints" name="Основные баллы" prefix="Осн:" units="б"/>
     <counter id="expressPoints" name="EXPRESS-баллы" prefix="Expr:" units="б"/>
     <counter id="gonePoints" name="Израсходовано" prefix="Изр:" units="б"/>

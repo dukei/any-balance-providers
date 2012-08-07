@@ -106,31 +106,31 @@ function main () {
     var $table = $(matches[0]);
 
     // Номер счета
-    getParamFind (result, 'accountNumber', $table, 'tr:first-child td');
+    getParamFind (result, 'accountNumber', $table, 'tr:contains("Номер счета") td');
 
     // Владелец счета
-    getParamFind (result, 'customer', $table, 'tr:nth-child(2) td');
+    getParamFind (result, 'customer', $table, 'tr:contains("Владелец") td');
 
     // Статус счета
-    getParamFind (result, 'status', $table, 'tr:nth-child(4) td');
+    getParamFind (result, 'status', $table, 'tr:contains("Статус счета") td');
 
     // Накоплено основных баллов
-    getParamFind (result, 'mainPoints', $table, 'tr:nth-child(6) td', parseBalance);
+    getParamFind (result, 'mainPoints', $table, 'tr:contains("Накоплено основных баллов") td', parseBalance);
 
     // Накоплено EXPRESS-баллов
-    getParamFind (result, 'expressPoints', $table, 'tr:nth-child(7) td', parseBalance);
+    getParamFind (result, 'expressPoints', $table, 'tr:contains("EXPRESS") td', parseBalance);
 
     // Израсходовано баллов
-    getParamFind (result, 'gonePoints', $table, 'tr:nth-child(8) td', parseBalance);
+    getParamFind (result, 'gonePoints', $table, 'tr:contains("Израсходовано баллов") td', parseBalance);
 
     // Сгорело баллов
-    getParamFind (result, 'burnPoints', $table, 'tr:nth-child(9) td', parseBalance);
+    getParamFind (result, 'burnPoints', $table, 'tr:contains("Сгорело баллов") td', parseBalance);
 
     // Баланс баллов
-    getParamFind (result, 'balance', $table, 'tr:nth-child(10) td', parseBalance);
+    getParamFind (result, 'balance', $table, 'tr:contains("Баланс баллов") td', parseBalance);
 
     // Доступно к оплате у партнеров
-    getParamFind (result, 'availableForPay', $table, 'tr:nth-child(11) td', /\d+/, parseBalance);
+    getParamFind (result, 'availableForPay', $table, 'tr:contains("Доступно к оплате у партнеров") td', /\d+/, parseBalance);
 
     if (AnyBalance.isAvailable ('burnInThisMonth')) {
 

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="2">ab-money-qiwi</id>
+  <id major_version="1.0" version="3">ab-money-qiwi</id>
   <name>QIWI Кошелек</name>
   <description>
     Получает баланс, количество сообщений и счетов в QIWI Кошельке.

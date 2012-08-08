@@ -111,10 +111,21 @@ function main(){
     else
         pattern = new RegExp(prefs.num ? '\\d{16}'+prefs.num : '\\d{20}');
 
+    var min_i = -1;
+    var min_val = null;
+    var cur_i = -1;
     var $acc = $html.find('div.account').filter(function(i){
-        return pattern.test($(this).text());
-    }).first();
-
+        var matches = pattern.exec($(this).text());
+        if(!matches)
+             return false;
+        ++cur_i;
+        if(min_i < 0 || min_val > matches[0]){
+            min_i = cur_i;
+            min_val = matches[0];
+        }
+        return true;
+    }).eq(min_i);
+    
     if(!$acc.size()){
         if(prefs.num)
             throw new AnyBalance.Error('Не удалось найти ' + g_phrases.kartu[what] + ' с последними цифрами ' + prefs.num);
@@ -129,7 +140,22 @@ function main(){
     getParam($acc.find('div.account-name').text(), result, '__tariff', null, replaceTagsAndSpaces);
     getParam($acc.find('.card-amount-info').text(), result, 'balance', null, null, parseBalance);
     
-    var $card = $acc.find('.card-info-row' + (what == 'card' && prefs.num ? ':contains("**** ' + prefs.num + '")' : '')).first();
+    var min_i = -1;
+    var min_val = null;
+    var cur_i = -1;
+    var pattern = new RegExp('\\d{4} \\*{4} \\*{4} ' + ((what == 'card' && prefs.num) || '\\d{4}'));
+    var $card = $acc.find('.card-info-row').filter(function(i){
+        var matches = pattern.exec($(this).text());
+        if(!matches)
+             return false;
+        ++cur_i;
+        if(min_i < 0 || min_val > matches[0]){
+            min_i = cur_i;
+            min_val = matches[0];
+        }
+        return true;
+    }).eq(min_i);
+
     if($card.size()){
         getParam($card.find('.card-number').text(), result, 'cardnum');
         getParam($card.find('.card-number').text(), result, '__tariff');

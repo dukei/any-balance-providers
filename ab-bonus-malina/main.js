@@ -13,21 +13,24 @@ function getParamFind (result, param, obj, search_str, regexp, parser)
     if (!AnyBalance.isAvailable (param))
         return;
 
-    if(typeof(regexp) == 'function'){
+    if(typeof(regexp) == 'function' && !regexp.test){ //На андроид почему-то регэксп это тоже function, поэтому надо доп. проверить, что это не регэксп.
         parser = regexp;
         regexp = null;
     }
 
-
-    var res = obj.find (search_str).text();
-    if (regexp) {
-        if (regexp.test (res))
-            res = regexp.exec (res)[0];
-        else
-            return;
+    var found = obj.find (search_str);
+    if(found.size()){
+        var res = found.text();
+        if (regexp) {
+            var matches = regexp.exec(res);
+            if (matches)
+                res = matches[0];
+            else
+                return;
+        }
+        
+        result[param] = parser ? parser(res) : res;
     }
-
-    result[param] = parser ? parser(res) : res;
 }
 
 function getParam (html, result, param, regexp, replaces, parser) {
@@ -103,7 +106,8 @@ function main () {
 
     var result = {success: true};
   
-    var $table = $(matches[0]);
+    //AnyBalance.trace(matches[1]);
+    var $table = $(matches[1]);
 
     // Номер счета
     getParamFind (result, 'accountNumber', $table, 'tr:contains("Номер счета") td');

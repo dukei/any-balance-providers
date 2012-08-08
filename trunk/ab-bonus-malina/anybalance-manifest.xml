@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="4">ab-bonus-malina</id>
+  <id major_version="1.0" version="5">ab-bonus-malina</id>
   <name>Бонусы Малина</name>
   <description>
     Получает информацию по баллам на карте накопительной программы Малина через персональную страницу http://catalog.malina.ru/login.php.

@@ -61,9 +61,11 @@ function main () {
     var html = AnyBalance.requestGet (baseurl + 'userdata.action');
 
     // Проверка на корректный вход
-    if (/<h1>Кошелёк:/i.exec(html))
+    if (/<h1>Кошелёк:/i.exec(html)){
     	AnyBalance.trace ('It looks like we are in selfcare...');
-    else {
+    }else if(/passwordchangesuccess.action/i.test(html)){
+        throw new AnyBalance.Error('Срок действия пароля истек. Смените пароль, зайдя в свой QIWI-кошелек через браузер.');
+    }else {
         AnyBalance.trace ('Have not found logout... Unknown error. Please contact author.');
         throw new AnyBalance.Error ('Неизвестная ошибка. Пожалуйста, свяжитесь с автором провайдера.');
     }

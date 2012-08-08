@@ -108,6 +108,11 @@ function main(){
         throw new AnyBalance.Error("Интернет-помощник временно недоступен");
     }
 
+    regexp=/<TITLE>The page cannot be found<\/TITLE>/;
+    if(regexp.exec(html)){
+        throw new AnyBalance.Error("Интернет-помощник отсутствует по адресу " + baseurl);
+    }
+
     var error = sumParam(html, null, null, /<h1>\s*Ошибка\s*<\/h1>\s*<p>(.*?)<\/p>/i);
     if(error){
         throw new AnyBalance.Error(error);
@@ -118,10 +123,9 @@ function main(){
     var min_all_60_isp;
 
     regexp = /Security\.mvc\/LogOff/;
-    if(regexp.exec(html))
+    if(!regexp.test(html))
+    	throw new AnyBalance.Error("Не удалось войти в мобильный интернет-помощник. Проблемы на сайте?");
     	AnyBalance.trace("It looks like we are in selfcare (found logOff)...");
-    else
-    	AnyBalance.trace("Have not found logOff... Wrong login and password or other error. Please contact author.");
 
     // Тарифный план
     regexp=/Тарифний план:.*?>(.*?)</;

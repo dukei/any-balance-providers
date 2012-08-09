@@ -33,15 +33,15 @@ var replaceTagsAndSpaces = [/\\n/g, ' ', /\[br\]/ig, ' ', /<[^>]*>/g, ' ', /\s{2
 var replaceFloat = [/\s+/g, '', /,/g, '.'];
 
 function parseBalance(text){
-    var _text = text.replace(/\s+/, '');
+    var _text = text.replace(/\s+/g, '');
     var val = getParam(_text, null, null, /(-?\d[\d\.,]*)/, replaceFloat, parseFloat);
     AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
     return val;
 }
 
 function parseCurrency(text){
-    text = text.replace(/\s+/, '');
-    var val = getParam(text, null, null, /-?\d[\d\.,]*\s*(\S*)/);
+    var _text = text.replace(/\s+/g, '');
+    var val = getParam(_text, null, null, /-?\d[\d\.,]*\s*(\S*)/);
     AnyBalance.trace('Parsing currency (' + val + ') from: ' + text);
     return val;
 }
@@ -154,16 +154,23 @@ function fetchCard(jsonInfo, headers, baseurl){
         XACTION:''
     }, headers);
 
-    var cardtpl = prefs.cardnum ? '******' + prefs.cardnum : '';
-    var $html = $(html);
-    
-    var $card = $html.find('table.Tbl-cards' + (cardtpl ? ':contains("'+cardtpl+'")' : '')).first();
-    if(!$card.size())
-        throw new AnyBalance.Error('Не удаётся найти ' + (cardtpl ? 'карту с последними цифрами ' + cardtpl : 'ни одной карты'));
+    var error = getParam(html, null, null, /<REDIRECT>[\s\S]*?'(NO)CARDS'/i);
+    if(error)
+        throw new AnyBalance.Error('У вас нет ни одной карты');
 
-    var cardid = getParam($card.html(), null, null, /CardID=(\d+)/i);
-    if(!cardid)
-        throw new AnyBalance.Error('Не удаётся найти id карты. Интернет-банк изменился?');
+    var cardid = getParam(html, null, null, /<REDIRECT>[\s\S]*?CardID=(\d+)/i);
+    if(!cardid){
+        var cardtpl = prefs.cardnum ? '******' + prefs.cardnum : '';
+        var $html = $(html);
+        
+        var $card = $html.find('table.Tbl-cards' + (cardtpl ? ':contains("'+cardtpl+'")' : '')).first();
+        if(!$card.size())
+            throw new AnyBalance.Error('Не удаётся найти ' + (cardtpl ? 'карту с последними цифрами ' + cardtpl : 'ни одной карты'));
+        
+        cardid = getParam($card.html(), null, null, /CardID=(\d+)/i);
+        if(!cardid)
+            throw new AnyBalance.Error('Не удаётся найти id карты. Интернет-банк изменился?');
+    }
 
     html = AnyBalance.requestPost(baseurl, {
         SID:jsonInfo.SID,
@@ -205,23 +212,49 @@ function fetchAccount(jsonInfo, headers, baseurl){
         XACTION:''
     }, headers);
 
-    var tpl = prefs.cardnum ? prefs.cardnum : '';
-    var $html = $(html);
-    
-    var $acc = $html.find('div.div-b:has(span[onclick*="AccID=' + (tpl || '') + '"])').first();
-    if(!$acc.size())
-        throw new AnyBalance.Error('Не удаётся найти ' + (tpl ? 'счет №' + tpl : 'ни одного счета'));
-
-    html = $acc.html();
-    var text = $acc.text();
+    var error = getParam(html, null, null, /<REDIRECT>[\s\S]*?'(NO)ACCOUNTS'/i);
+    if(error)
+        throw new AnyBalance.Error('У вас нет ни одного счета');
 
     var result = {success: true};
-    getParam(text, result, 'balance', /:\s*([\s\S]*)/i, replaceTagsAndSpaces, parseBalance);
-    getParam(text, result, 'currency', /:\s*([\s\S]*)/i, replaceTagsAndSpaces, parseCurrency);
-    getParam(text, result, 'type', /([\s\S]*?):<\/td>/i, replaceTagsAndSpaces);
-    getParam(jsonInfo.USR, result, 'fio', /(.*)/i, replaceTagsAndSpaces);
-    getParam(html, result, 'accnum', /AccID=(\d+)/i, replaceTagsAndSpaces);
-    getParam(html, result, '__tariff', /AccID=(\d+)/i, replaceTagsAndSpaces);
+
+    var accid = getParam(html, null, null, /<REDIRECT>[\s\S]*?AccID=(\d+)/i);
+    if(!accid){
+        var tpl = prefs.cardnum ? prefs.cardnum : '';
+        var $html = $(html);
+        
+        var $acc = $html.find('div.div-b:has(span[onclick*="AccID=' + (tpl || '') + '"])').first();
+        if(!$acc.size())
+            throw new AnyBalance.Error('Не удаётся найти ' + (tpl ? 'счет №' + tpl : 'ни одного счета'));
+        
+//        accid = getParam(html, null, null, /AccID=(\d+)/i, replaceTagsAndSpaces);
+
+        html = $acc.html();
+        var text = $acc.text();
+        
+        getParam(text, result, 'balance', /:\s*([\s\S]*)/i, replaceTagsAndSpaces, parseBalance);
+        getParam(text, result, 'currency', /:\s*([\s\S]*)/i, replaceTagsAndSpaces, parseCurrency);
+        getParam(text, result, 'type', /([\s\S]*?):<\/td>/i, replaceTagsAndSpaces);
+        getParam(html, result, 'accnum', /AccID=(\d+)/i, replaceTagsAndSpaces);
+        getParam(html, result, '__tariff', /AccID=(\d+)/i, replaceTagsAndSpaces);
+    }else{
+        html = AnyBalance.requestPost(baseurl, {
+            SID:jsonInfo.SID,
+            tic:1,
+            T:'RT_2IC.form',
+            nvgt:1,
+            SCHEMENAME:'ACCOUNT',
+            XACTION:'',
+            AccID:accid
+        }, headers);
+
+        getParam(html, result, 'balance', /<div[^>]*class="div-b"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+        getParam(html, result, 'currency', /<div[^>]*class="div-b"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseCurrency);
+        getParam(html, result, 'type', /<div[^>]*class="div-b"[^>]*>([^:]*)/i, replaceTagsAndSpaces);
+        getParam(html, result, 'accnum', /Номер счета:([^<]*)/i, replaceTagsAndSpaces);
+        getParam(html, result, '__tariff', /Номер счета:([^<]*)/i, replaceTagsAndSpaces);
+    }
+
     getParam(jsonInfo.USR, result, 'fio', /(.*)/i, replaceTagsAndSpaces);
 
     AnyBalance.setResult(result);
@@ -241,16 +274,23 @@ function fetchCredit(jsonInfo, headers, baseurl){
         XACTION:''
     }, headers);
 
-    var tpl = prefs.cardnum ? prefs.cardnum.toUpperCase() : '';
-    var $html = $(html);
-    
-    var $crd = $html.find('div.div-b:has(span[onclick*="CrdID=' + (tpl || '') + '"])').first();
-    if(!$crd.size())
-        throw new AnyBalance.Error('Не удаётся найти ' + (tpl ? 'кредитную сделку №' + tpl : 'ни одного кредита'));
+    var error = getParam(html, null, null, /<REDIRECT>[\s\S]*?'(NO)CREDITS'/i);
+    if(error)
+        throw new AnyBalance.Error('У вас нет ни одного кредита');
 
-    var crdid = getParam($crd.html(), null, null, /CrdID=([0-9A-Z]+)/i);
-    if(!crdid)
-        throw new AnyBalance.Error('Не удаётся найти номер кредитной сделки. Интернет-банк изменился?');
+    var crdid = getParam(html, null, null, /<REDIRECT>[\s\S]*?CrdID=([0-9A-Z]+)/i);
+    if(!crdid){
+        var tpl = prefs.cardnum ? prefs.cardnum.toUpperCase() : '';
+        var $html = $(html);
+        
+        var $crd = $html.find('div.div-b:has(span[onclick*="CrdID=' + (tpl || '') + '"])').first();
+        if(!$crd.size())
+            throw new AnyBalance.Error('Не удаётся найти ' + (tpl ? 'кредитную сделку №' + tpl : 'ни одного кредита'));
+        
+        crdid = getParam($crd.html(), null, null, /CrdID=([0-9A-Z]+)/i);
+        if(!crdid)
+            throw new AnyBalance.Error('Не удаётся найти номер кредитной сделки. Интернет-банк изменился?');
+    }
 
     html = AnyBalance.requestPost(baseurl, {
         SID:jsonInfo.SID,
@@ -292,16 +332,23 @@ function fetchDeposit(jsonInfo, headers, baseurl){
         XACTION:''
     }, headers);
 
-    var tpl = prefs.cardnum ? prefs.cardnum.toUpperCase() : '';
-    var $html = $(html);
-    
-    var $dep = $html.find('div.div-b:has(span[onclick*="DepID=' + (tpl || '') + '"])').first();
-    if(!$dep.size())
-        throw new AnyBalance.Error('Не удаётся найти ' + (tpl ? 'сделку вклада №' + tpl : 'ни одного вклада'));
+    var error = getParam(html, null, null, /<REDIRECT>[\s\S]*?'(NO)DEPOSITS'/i);
+    if(error)
+        throw new AnyBalance.Error('У вас нет ни одного вклада');
 
-    var depid = getParam($dep.html(), null, null, /DepID=([0-9A-Z]+)/i);
-    if(!depid)
-        throw new AnyBalance.Error('Не удаётся найти номер сделки для вклада. Интернет-банк изменился?');
+    var depid = getParam(html, null, null, /<REDIRECT>[\s\S]*?DepID=([0-9A-Z]+)/i);
+    if(!depid){
+        var tpl = prefs.cardnum ? prefs.cardnum.toUpperCase() : '';
+        var $html = $(html);
+        
+        var $dep = $html.find('div.div-b:has(span[onclick*="DepID=' + (tpl || '') + '"])').first();
+        if(!$dep.size())
+            throw new AnyBalance.Error('Не удаётся найти ' + (tpl ? 'сделку вклада №' + tpl : 'ни одного вклада'));
+        
+        depid = getParam($dep.html(), null, null, /DepID=([0-9A-Z]+)/i);
+        if(!depid)
+            throw new AnyBalance.Error('Не удаётся найти номер сделки для вклада. Интернет-банк изменился?');
+    }
 
     html = AnyBalance.requestPost(baseurl, {
         SID:jsonInfo.SID,

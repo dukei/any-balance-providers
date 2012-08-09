@@ -2,7 +2,7 @@
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 
 Сільпо - Мережа супермаркетів
-Сайт Сільпо: http://http://silpo.ua
+Сайт Сільпо: http://silpo.ua
 Персональная страничка: https://my.silpo.ua/
 */
 
@@ -57,9 +57,9 @@ function main(){
 		html = AnyBalance.requestGet(baseurl + 'account');
 		var result = {success: true};
 		//ФИО
-		if (matches=/<div class="user_info">\s*<strong>\s*(.*?)\s*?<br\/>\s*?(.*?)\s*(.*?)\s*?<\/strong><br\/><br\/>/.exec(html)){
+		if (matches=/<div class="user_info">\s*<strong>\s*(.*?)\s*?<br\/>\s*?(.*?)&nbsp;(.*?)\s*?<\/strong><br\/><br\/>/.exec(html)){
 		result.__tariff=matches[1]+' '+matches[2]+' '+matches[3];
-		}		
+		}
 		//Накапливаемый бонус по программе Мій «Власний Рахунок»
 		if (AnyBalance.isAvailable('bonus')) {
 			var matches = html.match(/<div class="bottom">\s*Загальна кількість\s*<div>(\d+?)<\/div>/i);

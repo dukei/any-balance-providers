@@ -269,6 +269,11 @@ function getStateParam(html){
    return getParam(html, null, null, /<form name="ecareSubmitForm"[\s\S]*?name="_stateParam" value="([^"]*)"/i);
 }
 
+function getPhone(html){
+    return getParam(html, null, null, /<input[^>]*name=["']subscriberNumber["'][^>]*value=["']([^'"]*)["']/i) ||
+    	getParam(html, null, null, /subscriberListExt=CellClick=viewLinkStr=(\d+)/i);
+}
+
 function parseCorporate(baseurl, html){
     var result = {success: true};
 
@@ -285,93 +290,19 @@ function parseCorporate(baseurl, html){
     // Номер договора
     getParam (html, result, 'license', /Номер Договора[\s\S]*?<td[^>]*>\s*(.*?)\s*</, null, html_entity_decode);
 
-    var phone = AnyBalance.getPreferences().phone || AnyBalance.getPreferences().login;
-    
-    //Ссылка на финансовую информацию, похоже, только в кредитных корпоративных тарифных планах
-    if(/'_navigation_primaryMenu=billing'/.test(html)){
-      AnyBalance.trace("Found financial info link, trying to fetch balance and expences");
-
-      if(AnyBalance.isAvailable('balance', 'period_begin')){
-        AnyBalance.trace("Fetching balance and period info...");
-
-        // Финансовая информация - платежи
-        html = AnyBalance.requestPost(baseurl + "navigateMenu.do", {
-          _navigation_secondaryMenu:'billing.payment',
-          _resetBreadCrumbs:'true'
-        });
-
-        // Баланс
-        getParam (html, result, 'balance', /Текущий баланс[\s\S]*?<td[^>]*>\s*([\s\S]*?)\s*</i, alltransformations, parseBalance);
-        // Начало расчетного периода
-        getParam (html, result, 'period_begin', /<select[^>]*name="dateList\.code"[^>]*>\s*<option[^>]*>([^<]*)/i, null, parsePeriod);
-      }
-
-      if(AnyBalance.isAvailable('expences','expencesTraffic','expencesAbon','expencesInstant')){
-        AnyBalance.trace("Fetching current period calls...");
-        // Финансовая информация - звонки текущего периода
-        html = AnyBalance.requestPost(baseurl + "loadUnbilledAction.do", {
-          "_navigation_secondaryMenu":'billing.unbilledCalls',
-          "_resetBreadCrumbs":'true'
-        });
-
-        // Финансовая информация - звонки текущего периода - Начисления
-        var stateParam = getStateParam(html);
-        AnyBalance.trace("Fetching expences info...");
-        html = AnyBalance.requestPost(baseurl + "VIPUnbilledSubscribersSwitchingAction.do", {
-          _stateParam: stateParam,
-          _forwardName:'unbilledCharge',
-          _resetBreadCrumbs:'null',
-          "ctrlvcol%3Dradio%3Bctrl%3DsubscriberListExt%3Btype%3Drd":phone
-        });
-        
-        // Сколько использовано
-        getParam (html, result, 'expences', /Общая сумма начислений[\s\S]*?<td>\s*([\s\S]*?)\s*</i, alltransformations, parseBalance);
-        getParam (html, result, 'expencesTraffic', /Начисления за трафик[\s\S]*?<td>\s*([\s\S]*?)\s*</i, alltransformations, parseBalance);
-        getParam (html, result, 'expencesAbon', /Абонентская плата[\s\S]*?<td>\s*([\s\S]*?)\s*</i, alltransformations, parseBalance);
-        getParam (html, result, 'expencesInstant', /Разовые начисления[\s\S]*?<td>\s*([\s\S]*?)\s*</i, alltransformations, parseBalance);
-
-      }
-
-      if(AnyBalance.isAvailable('sms_left', 'min_left')){
-        AnyBalance.trace("Fetching inclusive info...");
-        // Финансовая информация - звонки текущего периода - включенные минуты
-        html = AnyBalance.requestPost(baseurl + "loadUnbilledAction.do", {
-          "_navigation_secondaryMenu":'billing.unbilledCalls',
-          "_resetBreadCrumbs":'true'
-        });
-
-        
-      // Финансовая информация - звонки текущего периода - включенные минуты
-        var stateParam = getStateParam(html);
-        html = AnyBalance.requestPost(baseurl + "VIPUnbilledSubscribersSwitchingAction.do", {
-          _stateParam: stateParam,
-          _forwardName:'unusedInclusive',
-          _resetBreadCrumbs:'null',
-          "ctrlvcol%3Dradio%3Bctrl%3DsubscriberListExt%3Btype%3Drd":phone
-        });
-        
-        // Сколько использовано минут
-        //<td>Всё включено L (фед.)         </td><td>26.02.2012</td><td>10.03.2012</td><td>252,00</td><td>мин.</td>
-        getParam (html, result, 'min_left', /<td>(-?\d[^<]*)<\/td><td>мин[^<]*<\/td>/i, [/\s+/g, '', /,/g, '.'], parseMinutes);
-        // Сколько использовано смс
-        //<td>(0/0) СМС (прием/передача)    </td><td>26.02.2012</td><td>10.03.2012</td><td>2 984,00</td><td>шт.</td>
-        //Странно /(-\d[\d\.,\s]*) не матчит число с пробелом в андроиде. Точнее, матчит только 2. Что за хрень такая?
-        getParam (html, result, 'sms_left', /<td>[^<]*(?:СМС|SMS)(?:[^<]*<\/td><td>){3}(-?\d[^<]*)/i, [/\s+/g, '', /,/g, '.'], parseFloat);
-      }
-    }
-    
     AnyBalance.trace("Fetching number info...");
     
     var stateParam = getStateParam(html);
     
-    //К сожалению, телефоны грузятся только после загрузки этой страницы
+    //Меню "пользователи"
     html = AnyBalance.requestPost(baseurl + "OnLoadSubscriberProfileFilterAction.do", {
         _stateParam:stateParam,
         _expandStatus:'',
         '_navigation_thirdMenu':'services.profileManagement.subscribers',
-        subscriberNumber:phone,
         resetBreadCrumbs:'true'
     });
+
+    var phone = AnyBalance.getPreferences().phone || getPhone(html) || AnyBalance.getPreferences().login;
     
     var rTariff = new RegExp("<td>"+phone+"\\s*</td><td>.*?</td><td>(.*?)</td><td>.*?</td><td>.*?</td><td>(?:.*?)</td>");
     var rStatus = new RegExp("<td>"+phone+"\\s*</td><td>.*?</td><td>(?:.*?)</td><td>.*?</td><td>.*?</td><td>(.*?)</td>");
@@ -410,6 +341,89 @@ function parseCorporate(baseurl, html){
       AnyBalance.trace("Balance list not found, is it credit tariff plan?");
     }
 
+    //Ссылка на финансовую информацию, похоже, только в кредитных корпоративных тарифных планах
+    if(/'_navigation_primaryMenu=billing'/.test(html)){
+      AnyBalance.trace("Found financial info link, trying to fetch balance and expences");
+
+      if(AnyBalance.isAvailable('balance', 'period_begin')){
+        AnyBalance.trace("Fetching balance and period info...");
+
+        // Финансовая информация - платежи
+        html = AnyBalance.requestPost(baseurl + "navigateMenu.do", {
+          _stateParam: getStateParam(html),
+          _navigation_secondaryMenu:'billing.payment',
+          _resetBreadCrumbs:'true'
+        });
+
+        // Баланс
+        getParam (html, result, 'balance', /Текущий баланс[\s\S]*?<td[^>]*>\s*([\s\S]*?)\s*</i, alltransformations, parseBalance);
+        // Начало расчетного периода
+        getParam (html, result, 'period_begin', /<select[^>]*name="dateList\.code"[^>]*>\s*<option[^>]*>([^<]*)/i, null, parsePeriod);
+      }
+
+      if(AnyBalance.isAvailable('expences','expencesTraffic','expencesAbon','expencesInstant')){
+        AnyBalance.trace("Fetching current period calls...");
+        // Финансовая информация - звонки текущего периода
+        html = AnyBalance.requestPost(baseurl + "loadUnbilledAction.do", {
+          _stateParam: getStateParam(html),
+          "_navigation_secondaryMenu":'billing.unbilledCalls',
+          "_resetBreadCrumbs":'true'
+        });
+
+        for(var i=0; i<3; i++){
+        // Финансовая информация - звонки текущего периода - Начисления
+        var stateParam = getStateParam(html);
+            AnyBalance.trace("Fetching expences info (" + (i+1) + "/3)...");
+            html = AnyBalance.requestPost(baseurl + "VIPUnbilledSubscribersSwitchingAction.do", {
+              _stateParam: stateParam,
+              _forwardName:'unbilledCharge',
+              _resetBreadCrumbs:'null',
+              "ctrlvcol%3Dradio%3Bctrl%3DsubscriberListExt%3Btype%3Drd":phone
+            });
+
+            var error = getParam(html, null, null, /<LI[^>]*class="errorMessage"[^>]*>([\S\s]*?)<\/LI>/i, replaceTagsAndSpaces, html_entity_decode);
+            // Тут иногда выдаёт <LI class="errorMessage">Обслуживание в настоящее время невозможно. Повторите, пожалуйста, запрос позже.</LI>
+            if(!error)
+                break;
+            AnyBalance.trace("Ошибка получения расходов: " + error)
+        }
+        
+        // Сколько использовано
+        getParam (html, result, 'expences', /Общая сумма начислений[\s\S]*?<td>\s*([\s\S]*?)\s*</i, alltransformations, parseBalance);
+        getParam (html, result, 'expencesTraffic', /Начисления за трафик[\s\S]*?<td>\s*([\s\S]*?)\s*</i, alltransformations, parseBalance);
+        getParam (html, result, 'expencesAbon', /Абонентская плата[\s\S]*?<td>\s*([\s\S]*?)\s*</i, alltransformations, parseBalance);
+        getParam (html, result, 'expencesInstant', /Разовые начисления[\s\S]*?<td>\s*([\s\S]*?)\s*</i, alltransformations, parseBalance);
+
+      }
+
+      if(AnyBalance.isAvailable('sms_left', 'min_left')){
+        AnyBalance.trace("Fetching inclusive info...");
+        // Финансовая информация - звонки текущего периода - включенные минуты
+        html = AnyBalance.requestPost(baseurl + "loadUnbilledAction.do", {
+          "_navigation_secondaryMenu":'billing.unbilledCalls',
+          "_resetBreadCrumbs":'true'
+        });
+
+        
+      // Финансовая информация - звонки текущего периода - включенные минуты
+        var stateParam = getStateParam(html);
+        html = AnyBalance.requestPost(baseurl + "VIPUnbilledSubscribersSwitchingAction.do", {
+          _stateParam: stateParam,
+          _forwardName:'unusedInclusive',
+          _resetBreadCrumbs:'null',
+          "ctrlvcol%3Dradio%3Bctrl%3DsubscriberListExt%3Btype%3Drd":phone
+        });
+        
+        // Сколько использовано минут
+        //<td>Всё включено L (фед.)         </td><td>26.02.2012</td><td>10.03.2012</td><td>252,00</td><td>мин.</td>
+        getParam (html, result, 'min_left', /<td>(-?\d[^<]*)<\/td><td>мин[^<]*<\/td>/i, [/\s+/g, '', /,/g, '.'], parseMinutes);
+        // Сколько использовано смс
+        //<td>(0/0) СМС (прием/передача)    </td><td>26.02.2012</td><td>10.03.2012</td><td>2 984,00</td><td>шт.</td>
+        //Странно /(-\d[\d\.,\s]*) не матчит число с пробелом в андроиде. Точнее, матчит только 2. Что за хрень такая?
+        getParam (html, result, 'sms_left', /<td>[^<]*(?:СМС|SMS)(?:[^<]*<\/td><td>){3}(-?\d[^<]*)/i, [/\s+/g, '', /,/g, '.'], parseFloat);
+      }
+    }
+    
     AnyBalance.setResult(result);
 }
 

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-internet-linkline</id>
+  <name>LinkLine (Москва)</name>
+  <description>
+    Получает баланс и информацию о тарифном плане для московского интернет-провайдера LinkLine ( http://linkline.ru ). Компания «LinkLine» предоставляет услуги доступа к сети Интернет с 2004 года. Собственная сеть компании охватывает районы Аэропорт-Динамо-Сокол, а также п.Алабушево Солнечногорского района Московской области.
+
+    Информация берется из личного кабинета https://stat.linkline.ru/.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="trafficIn" name="Вх.трафик в текущем периоде" units="Gb"/> -->
+    <counter id="trafficOut" name="Исх.трафик в текущем периоде" units="Gb"/> -->
+    <counter id="trafficLocal" name="Локальный трафик в текущем периоде" units="Gb"/> -->
+    <counter id="status" name="Состояние счета" type="text"/>
+  </counters>
+  <keywords>
+    интернет, линклайн
+  </keywords>
+  <type>
+    internet
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

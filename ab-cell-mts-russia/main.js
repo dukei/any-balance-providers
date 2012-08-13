@@ -103,18 +103,18 @@ function parseBalance(text){
 function parseTraffic(text){
     var _text = text.replace(/\s+/, '');
     var val = sumParam(_text, null, null, /(-?\d[\d\.,]*)/, replaceFloat, parseFloat);
-    var units = sumParam(_text, null, null, /(kb|mb|gb|кб|мб|гб|байт|bytes)/i);
-    switch(units.toLowerCase()){
-      case 'bytes':
-      case 'байт':
+    var units = sumParam(_text, null, null, /([kmgкмг][бb]|байт|bytes)/i);
+    switch(units.substr(0,1).toLowerCase()){
+      case 'b':
+      case 'б':
         val = Math.round(val/1024/1024*100)/100;
         break;
-      case 'kb':
-      case 'кб':
+      case 'k':
+      case 'к':
         val = Math.round(val/1024*100)/100;
         break;
-      case 'gb':
-      case 'гб':
+      case 'g':
+      case 'г':
         val = Math.round(val*1024);
         break;
     }
@@ -472,10 +472,10 @@ function fetchAccountStatus(html, result){
     sumParam (html, result, 'pay_till', /оплатить до\s*([\d\.,\/]+)/i, [",", "."], parseTime);
 
     // Остаток трафика
-    sumParam (html, result, 'traffic_left', /(?:Осталось|Остаток)[^\d]*(\d+,?\d* *(kb|mb|gb|кб|мб|гб|байт|bytes))/ig);
+    sumParam (html, result, 'traffic_left', /(?:Осталось|Остаток)[^\d]*(\d+,?\d* *([kmgкмг][бb]|байт|bytes))/ig);
     
 // Остаток трафика
-    sumParam (html, result, 'traffic_left_mb', /(?:Осталось|Остаток)[^\d]*(\d+,?\d* *(kb|mb|gb|кб|мб|гб|байт|bytes))/ig, null, parseTraffic);
+    sumParam (html, result, 'traffic_left_mb', /(?:Осталось|Остаток)[^\d]*(\d+,?\d* *([kmgкмг][бb]|байт|bytes))/ig, null, parseTraffic);
 
     // Лицевой счет
     sumParam (html, result, 'license', /№([\s\S]*?)[:<]/, replaceTagsAndSpaces);

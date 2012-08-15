@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference
+        title="Логин" 
+        positiveButtonText="ОК" 
+        summary="Логин||{@s}\n" 
+        dialogTitle="Логин" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите ваш логин для входа в Интернет-банк"
+        key="login"
+        inputType="text">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="Пароль для входа в Интернет-банк||***********\n"
+        dialogMessage="Введите пароль, используемый для входа в Интернет-банк"
+        inputType="textPassword">
+    </EditTextPreference>
+	<EditTextPreference
+        title="Номер договора" 
+        positiveButtonText="ОК" 
+        summary="Номер договора||{@s}\n" 
+        dialogTitle="Номер договора" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Номер кредитного договора"
+        key="contract"
+        inputType="number">
+    </EditTextPreference>
+</PreferenceScreen>

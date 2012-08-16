@@ -5,11 +5,13 @@
 Сайт оператора: http://www.dom.mts.ru/
 Личный кабинет (Москва): https://kabinet.mts.ru/
 Личный кабинет (Ростов): http://pc.aaanet.ru
+Личный кабинет (Новосибирск): https://my.citynsk.ru
 */
 
 var regions = {
    moscow: getMoscow,
-   rostov: getRostov
+   rostov: getRostov,
+   nsk: getNsk
 };
 
 function main(){
@@ -162,6 +164,80 @@ function getMoscow(){
     AnyBalance.setResult(result);
 }
 
+function getNsk(){
+    var prefs = AnyBalance.getPreferences();
+    var baseurl = 'https://my.citynsk.ru/csp/rkc/';
+
+    var html = AnyBalance.requestGet(baseurl + 'index.csp');
+    var href = getParam(html, null, null, /<form[^>]*action="(login[^"]*)"/i);
+    if(!href)
+        throw new AnyBalance.Error("Не удалось найти форму входа. Сайт изменен или проблемы на сайте");
+
+    html = AnyBalance.requestPost(baseurl + href, {
+        login:prefs.login,
+        passwd:prefs.password
+    });
+
+    if(!getParam(html, null, null, /<input[^>]*type=["']submit["'][^>]*value=["'](Выход)["']/i)){
+        var error = getParam(html, null, null, /FormFocus\s*\(\s*['"]([^'"]*)/i);
+        if(error)
+            throw new AnyBalance.Error(error);
+        throw new AnyBalance.Error("Не удалось войти в личный кабинет");
+    }
+
+    href = getParam(html, null, null, /<iframe[^>]*name="PM"[^>]*src=['"]([^'"]*)/i);
+    if(!href)
+        throw new AnyBalance.Error("Не удаётся найти очередную ссылку (portmonetmain). Cайт изменен?");
+
+    html = AnyBalance.requestGet(baseurl + href);
+    href = getParam(html, null, null, /<iframe[^>]*name="PMUP"[^>]*src=['"]([^'"]*)/i);
+    if(!href)
+        throw new AnyBalance.Error("Не удаётся найти очередную ссылку (pmroles). Cайт изменен?");
+
+    html = AnyBalance.requestGet(baseurl + href);
+    href = getParam(html, null, null, /<A[^>]*href=['"](pmrolesmaincontract[^'"]*)/i);
+    if(!href)
+        throw new AnyBalance.Error("Не удаётся найти очередную ссылку (pmrolesmaincontract). Cайт изменен?");
+
+    html = AnyBalance.requestGet(baseurl + href);
+    href = getParam(html, null, null, /<iframe[^>]*name="PMMENU"[^>]*src=['"]([^'"]*)/i);
+    if(!href)
+        throw new AnyBalance.Error("Не удаётся найти очередную ссылку (pmmenucontract). Cайт изменен?");
+
+    html = AnyBalance.requestGet(baseurl + href);
+    href = getParam(html, null, null, /<a[^>]*href=['"](contractinfo[^'"]*)/i);
+    if(!href)
+        throw new AnyBalance.Error("Не удаётся найти очередную ссылку (contractinfo). Cайт изменен?");
+
+    html = AnyBalance.requestGet(baseurl + href);
+    href = getParam(html, null, null, /<iframe[^>]*name="frmContent"[^>]*src=['"]([^'"]*)/i);
+    if(!href)
+        throw new AnyBalance.Error("Не удаётся найти очередную ссылку (contractinfonew). Cайт изменен?");
+
+    var hrefipstat = getParam(html, null, null, /<a[^>]*href=['"](ipstat[^'"]*)/i);
+
+    html = AnyBalance.requestGet(baseurl + href); //Совсем охренели так лк писать... Наконец-то добрались до баланса
+    
+    var result = {success: true};
+                                                   
+    getParam(html, result, 'agreement', /Договор[\s\S]*?<td[^>]*>([\s\S]*?)(?:от|<\/td>)/i, replaceTagsAndSpaces);
+    getParam(html, result, 'license', /Номер связанного л[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+    getParam(html, result, 'balance', /Остаток на л[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, '__tariff', /Текущий тариф[\s\S]*?<td[^>]*>([\s\S]*?)(?:\(|<\/td>)/i, replaceTagsAndSpaces);
+    getParam(html, result, 'abon', />(?:\s|&nbsp;)*АП(?:\s|&nbsp;)+([\d\.]+)/i, replaceTagsAndSpaces, parseBalance);
+
+    if(AnyBalance.isAvailable('internet_cur')){
+        if(!hrefipstat){
+            AnyBalance.trace("Не найдена ссылка на трафик!");
+        }else{
+            html = AnyBalance.requestGet(baseurl + hrefipstat);
+            getParam(html, result, 'internet_cur', /Итого[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTraffic);
+        }
+    }
+
+    AnyBalance.setResult(result);
+}
+
 function getParam (html, result, param, regexp, replaces, parser) {
 	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
 		return;
@@ -184,6 +260,21 @@ function getParam (html, result, param, regexp, replaces, parser) {
 	}
 }
 
-var replaceTagsAndSpaces = [/<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
-var replaceFloat = [/\s+/g, '', /,/g, '.'];
+var replaceTagsAndSpaces = [/&nbsp;/ig, ' ', /<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
+var replaceFloat = [/\s+/g, '', /,/g, ''];
+
+
+function parseBalance(text){
+    var val = getParam(text.replace(/\s+/g, ''), null, null, /(-?\d[\d.,]*)/, replaceFloat, parseFloat);
+    val = Math.round(val*100)/100;
+    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
+    return val;
+}
+
+function parseTraffic(text){
+    var val = parseBalance(text);
+    val = Math.round(val/1024/1024*100)/100;
+    AnyBalance.trace('Parsing traffic (' + val + 'Mb) from: ' + text);
+    return val;
+}
 

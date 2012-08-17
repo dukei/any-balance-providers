@@ -29,4 +29,34 @@
         dialogMessage="Введите цифры номера телефона, чей баланс вы хотите посмотреть. Например, 79501234567. Этот номер должен быть виден в вашем личном кабинете. Чтобы смотреть информацию по первому номеру, оставьте это поле пустым."
         inputType="number">
     </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="phone1" 
+        dialogTitle="Номер телефона-2"
+        negativeButtonText="Отмена"
+        title="Номер телефона-2"
+        summary="Доп. номер телефона, чей баланс показывать|Не получать информацию\n|{@s}\n"
+        dialogMessage="Введите цифры номера телефона, чей баланс вы хотите посмотреть. Например, 79501234567. Этот номер должен быть виден в вашем личном кабинете."
+        inputType="number">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="phone2" 
+        dialogTitle="Номер телефона-3"
+        negativeButtonText="Отмена"
+        title="Номер телефона-3"
+        summary="Доп. номер телефона, чей баланс показывать|Не получать информацию\n|{@s}\n"
+        dialogMessage="Введите цифры номера телефона, чей баланс вы хотите посмотреть. Например, 79501234567. Этот номер должен быть виден в вашем личном кабинете."
+        inputType="number">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="phone3" 
+        dialogTitle="Номер телефона-4"
+        negativeButtonText="Отмена"
+        title="Номер телефона-4"
+        summary="Доп. номер телефона, чей баланс показывать|Не получать информацию\n|{@s}\n"
+        dialogMessage="Введите цифры номера телефона, чей баланс вы хотите посмотреть. Например, 79501234567. Этот номер должен быть виден в вашем личном кабинете."
+        inputType="number">
+    </EditTextPreference>
 </PreferenceScreen>

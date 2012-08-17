@@ -33,9 +33,7 @@ var replaceTagsAndSpaces = [/<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /
 var replaceFloat = [/\s+/g, '', /,/g, '.'];
 
 function parseBalance(text){
-    var rub = getParam(text, null, null, /(-?\d[\d\s.,]*руб)/, replaceFloat, parseFloat) || 0;
-    var kop = getParam(text, null, null, /(-?\d[\d\s.,]*коп)/, replaceFloat, parseFloat) || 0;
-    var val = rub+kop/100;
+    var val = getParam(text.replace(/\s+/g, ''), null, null, /(-?\d[\d\s.,]*)/, replaceFloat, parseFloat);
     AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
     return val;
 }
@@ -44,9 +42,9 @@ function main(){
     var prefs = AnyBalance.getPreferences();
 
     if(!prefs.login)
-        throw new AnyBalance.Error("Введите логин!");
+        throw new AnyBalance.Error("Enter e-mail!");
     if(!prefs.password)
-        throw new AnyBalance.Error("Введите пароль!");
+        throw new AnyBalance.Error("Enter password!");
 
     var baseurl = "https://www.paypal.com/webapps/mpp/home";
 
@@ -55,7 +53,7 @@ function main(){
     var href = getParam(html, null, null, /<form[^>]*action="([^"]+)"[^>]*name="login_form"/i);
     var csrfModel = getParam(html, null, null, /<input[^>]*name="csrfModel.returnedCsrf"[^>]*value="([^"]+)"/i);
     if(!href || !csrfModel)
-        throw new AnyBalance.Error("Не найдена форма входа! Сайт изменен?");
+        throw new AnyBalance.Error("Can not find login form! Site is changed?");
 
     html = AnyBalance.requestPost(href, {
       "csrfModel.returnedCsrf": csrfModel,
@@ -70,7 +68,7 @@ function main(){
 
     href = getParam(html, null, null, /"([^"]*_login-done[^"]*)/i);
     if(!href)
-        throw new AnyBalance.Error("Не удалось зайти. Неправильный логин, пароль или сайт изменен.");
+        throw new AnyBalance.Error("Can not log in. Wrong login, password or site is changed.");
 
     html = AnyBalance.requestGet(href);
 

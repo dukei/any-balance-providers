@@ -46,60 +46,69 @@ function main(){
     AnyBalance.setDefaultCharset('windows-1251');
 
     AnyBalance.trace("Trying to enter selfcare at address: " + baseurl);
-    var html = AnyBalance.requestPost(baseurl, {
+    var htmlMain = AnyBalance.requestPost(baseurl, {
       LOGIN: prefs.login,
       PASSWORD: prefs.password
     }); //{"X-Requested-With": "XMLHttpRequest"}
     
-    var error = getParam(html, null, null, /<h1 class="red">([^<]*)<\/h1>/i, replaceTagsAndSpaces);
+    var error = getParam(htmlMain, null, null, /<h1 class="red">([^<]*)<\/h1>/i, replaceTagsAndSpaces);
     if(error)
       throw new AnyBalance.Error(error);
     
-    var sessionid = getParam(html, null, null, /sessionid:\s*['"]([^'"]*)['"]/);
+    var sessionid = getParam(htmlMain, null, null, /sessionid:\s*['"]([^'"]*)['"]/);
     if(!sessionid)
       throw new AnyBalance.Error("Could not find session id!");
 
-    var result = {success: true}; //Баланс нельзя не получить, не выдав ошибку!
+    var result = {success: true};
 
-    var svc = 0;
-    if(prefs.phone){
-        var rePhone = new RegExp('info&svc=(\\d+)"><strong>' + prefs.phone + '<', 'i');
-        svc = getParam(html, null, null, rePhone);
-        if(!svc)
-	    throw new AnyBalance.Error('Не получается найти номер ' + prefs.phone + ' в этом личном кабинете!');
-    }
-    
-    var html = AnyBalance.requestPost(baseurl + "pages/getinfofornumberfirst.jsp", {
-      svc: svc,
-      sessionid: sessionid
-    }); //{"X-Requested-With": "XMLHttpRequest"}
-
-    if(/<p>Биллинг недоступен/.test(html))
-        throw new AnyBalance.Error('Биллинг временно недоступен.');
-
-
-    getParam(html, result, 'balance', /var\s*balData\s*=\s*parseFloat\('([\-\d\.]+)'\)/, replaceFloat, parseFloat);
-    getParam(html, result, 'userName', /Абонент:[\s\S]*?>(.*?)</);
-    getParam(html, result, 'status', /Признак активности:[\s\S]*?>(.*?)</);
-    getParam(html, result, '__tariff', /Тарифный план:[\s\S]*?>(.*?)</);
-    getParam(html, result, 'phone', /infofornumber_([^"']*)/);
-
-    if(AnyBalance.isAvailable('bonus')){
-        var html = AnyBalance.requestPost(baseurl + "pages/gsminfo_ajax.jsp", {
-          a: 'bonus_programm',
-          svc: svc
+    for(var i=0; i<4; ++i){
+        if(i > 0 && !prefs['phone' + i])
+            continue;
+       
+        var svc = 0;
+        var phone = i==0 ? prefs.phone : prefs['phone' + i];
+        if(i>0 || phone){
+            var rePhone = new RegExp('info&svc=(\\d+)"><strong>' + phone + '<', 'i');
+            svc = getParam(htmlMain, null, null, rePhone);
+            if(!svc)
+	        throw new AnyBalance.Error('Не получается найти номер ' + phone + ' в личном кабинете!');
+        }
+        
+        var html = AnyBalance.requestPost(baseurl + "pages/getinfofornumberfirst.jsp", {
+          svc: svc,
+          sessionid: sessionid
         }); //{"X-Requested-With": "XMLHttpRequest"}
- 
-        getParam(html, result, 'bonus', /Текущий баланс[\s\S]*?>\s*(-?\d[\d\.,\s]*)</, replaceFloat, parseFloat);
-    }
+        
+        if(/<p>Биллинг недоступен/.test(html))
+            throw new AnyBalance.Error('Биллинг временно недоступен.');
 
-    if(AnyBalance.isAvailable('gprs')){
-        var html = AnyBalance.requestPost(baseurl + "pages/gsminfo_ajax.jsp", {
-          a: 'block_packets',
-          svc: svc
-        }); //{"X-Requested-With": "XMLHttpRequest"}
- 
-        getParam(html, result, 'gprs', /<input[^>]*id="pack_INETBLOCK[^>]*checked[^>]*>[\s\S]*?Остаток\s*:\s*(-?\d[\d\.,\s]*)/i, replaceFloat, parseFloat);
+        var suffix = i > 0 ? i : '';
+        
+        getParam(html, result, 'balance'+suffix, /var\s*balData\s*=\s*parseFloat\('([\-\d\.]+)'\)/, replaceFloat, parseFloat);
+        getParam(html, result, 'userName'+suffix, /Абонент:[\s\S]*?>(.*?)</);
+        getParam(html, result, 'status'+suffix, /Признак активности:[\s\S]*?>(.*?)</);
+        getParam(html, result, 'phone'+suffix, /infofornumber_([^"']*)/);
+	getParam(html, result, 'tariff'+suffix, /Тарифный план:[\s\S]*?>(.*?)</);
+        if(i == 0)
+	    getParam(html, result, '__tariff', /Тарифный план:[\s\S]*?>(.*?)</);
+        
+        if(AnyBalance.isAvailable('bonus'+suffix)){
+            var html = AnyBalance.requestPost(baseurl + "pages/gsminfo_ajax.jsp", {
+              a: 'bonus_programm',
+              svc: svc
+            }); //{"X-Requested-With": "XMLHttpRequest"}
+        
+            getParam(html, result, 'bonus'+suffix, /Текущий баланс[\s\S]*?>\s*(-?\d[\d\.,\s]*)</, replaceFloat, parseFloat);
+        }
+        
+        if(AnyBalance.isAvailable('gprs'+suffix)){
+            var html = AnyBalance.requestPost(baseurl + "pages/gsminfo_ajax.jsp", {
+              a: 'block_packets',
+              svc: svc
+            }); //{"X-Requested-With": "XMLHttpRequest"}
+        
+            getParam(html, result, 'gprs'+suffix, /<input[^>]*id="pack_INETBLOCK[^>]*checked[^>]*>[\s\S]*?Остаток\s*:\s*(-?\d[\d\.,\s]*)/i, replaceFloat, parseFloat);
+        }
     }
 
     AnyBalance.setResult(result);

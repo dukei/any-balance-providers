@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="3">ab-cell-utel</id>
+  <id version="4">ab-cell-utel</id>
   <name>Utel (Урал)</name>
   <description>
     Получает баланс, бонусные баллы и информацию об абоненте для сотового оператора Ростелеком Урал (Utel).
     Информация берется из личного кабинета https://ucabinet.u-tel.ru/
 
-    v2: -Поддержка нескольких номеров в одном личном кабинете
-        -Остаток трафика в услуге Пакетный GPRS
+    Если у вас еще нет личного кабинета, зарегистрируйтесь тут: https://ucabinet.u-tel.ru/?a=reg
+
+    Может выдавать информацию по 4 номерам одновременно, если все эти номера прикреплены к вашему личному кабинету.
   </description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
+    <history>history.xml</history>
     <js>main.js</js>
   </files>
   <counters>
@@ -22,6 +24,24 @@
     <counter id="status" name="Статус" type="text"/>
     <counter id="phone" name="Номер телефона" type="text"/>
     <counter id="gprs" name="Остаток трафика" units="Мб"/>
+    <counter id="balance1" name="Баланс-2" units="р"/>
+    <counter id="bonus1" name="Бонусы-2" units="мин"/>
+    <counter id="userName1" name="Владелец-2" type="text"/>
+    <counter id="status1" name="Статус-2" type="text"/>
+    <counter id="phone1" name="Номер телефона-2" type="text"/>
+    <counter id="gprs1" name="Остаток трафика-2" units="Мб"/>
+    <counter id="balance2" name="Баланс-3" units="р"/>
+    <counter id="bonus2" name="Бонусы-3" units="мин"/>
+    <counter id="userName2" name="Владелец-3" type="text"/>
+    <counter id="status2" name="Статус-3" type="text"/>
+    <counter id="phone2" name="Номер телефона-3" type="text"/>
+    <counter id="gprs2" name="Остаток трафика-3" units="Мб"/>
+    <counter id="balance3" name="Баланс-4" units="р"/>
+    <counter id="bonus3" name="Бонусы-4" units="мин"/>
+    <counter id="userName3" name="Владелец-4" type="text"/>
+    <counter id="status3" name="Статус-4" type="text"/>
+    <counter id="phone3" name="Номер телефона-4" type="text"/>
+    <counter id="gprs3" name="Остаток трафика-4" units="Мб"/>
   </counters>
   <keywords>
     Сотовый телефон, мобильный, мобильник, utel, rostelecom, россия

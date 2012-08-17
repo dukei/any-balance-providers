@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-money-wellpay</id>
+  <name>WellPay</name>
+  <description>
+    Получает текущий остаток и номер счета в WellPay - системе приятных электронных платежей ( https://www.wellpay.ru ).
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Остаток" units="р"/>
+    <counter id="number" name="Номер счета" type="text"/>
+  </counters>
+  <keywords>
+    велпей
+  </keywords>
+  <type>
+    money
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

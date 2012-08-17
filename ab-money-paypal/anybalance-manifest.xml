@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-money-paypal</id>
+  <name>PayPal</name>
+  <description>
+    Obtains balance on your PayPal account.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Balance" prefix="$"/>
+  </counters>
+  <keywords>
+    пейпал
+  </keywords>
+  <type>
+    money
+  </type>
+</provider>

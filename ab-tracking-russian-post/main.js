@@ -29,6 +29,9 @@ function main(){
 		matches;
 	
 	AnyBalance.trace('trying to find table');
+
+        if(matches = /<p[^>]*class="red"[^>]*>([\s\S]*?)<\/p>/i.exec(info)) //Проверяем на сообщение об ошибке
+		throw new AnyBalance.Error(matches[1]);  
 	
 	//Сначала найдём таблицу, содержащую все стадии отправления
 	if(matches = info.match(/<table class="pagetext">.*?<tbody>(.*?)<\/tbody>/)){

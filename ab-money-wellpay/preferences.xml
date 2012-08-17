@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Номер телефона" 
+        positiveButtonText="ОК" 
+        summary="||{@s}" 
+        dialogTitle="Номер телефона" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите только цифры номера телефона без пробелов и разделителей, например, 79261234567. Код страны (7 для России) указывать обязательно."
+        inputType="number"
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль для входа"
+        summary="||***********"
+        dialogMessage="Введите пароль, используемый для входа в систему WellPay."
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

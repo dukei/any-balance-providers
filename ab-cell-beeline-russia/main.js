@@ -159,6 +159,9 @@ function parseBalanceList(html, result){
       result.bonus_balance += val || 0;
     }
     
+    // Бонус за опрос
+    getBalanceValue (html, 'Бонус за опрос', parseFloat, result, 'bonus_survey');
+    
     if(AnyBalance.isAvailable('sms_left')){
       result.sms_left = 0;
       

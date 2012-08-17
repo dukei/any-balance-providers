@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="3">ab-tracking-russian-post</id>
+  <id version="4">ab-tracking-russian-post</id>
   <name>EMS и Почта России</name>
   <description>
     Отслеживание почтового отправления почты россии и EMS по его идентификатору. Может показывать сводную информацию, дату изменения статуса, текущую операцию, местонахождение, атрибуты.

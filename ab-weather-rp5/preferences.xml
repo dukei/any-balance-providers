@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference
+        key="city"
+        title="Код города"
+        summary="|Введите код города для отображения погоды|{@s}\n"
+        inputType="number"
+        dialogTitle="Код города"
+        dialogMessage="Введите код города. Его можно получить из адресной строки браузера, выбрав на сайте http://rp5.ru нужный вам город. Например, для Москвы это 42468."
+        positiveButtonText="ОК"
+        negativeButtonText="Отмена" />
+</PreferenceScreen>

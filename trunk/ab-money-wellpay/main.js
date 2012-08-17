@@ -62,7 +62,7 @@ function main(){
     });
 
     if(!/\/logout\//i.test(html)){
-        var error = getParam(html, null, null, /b\-login\-error[^>]*>([\s\S]*?)<\/strong>/i, replaceTagsAndSpaces);
+        var error = getParam(html, null, null, /error-message"[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces);
         if(error)
             throw new AnyBalance.Error(error);
         throw new AnyBalance.Error("Не удалось зайти. Проверьте логин и пароль.");

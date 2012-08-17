@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-internet-211</id>
+  <name>Сибирские Сети</name>
+  <description>
+    Получает баланс и информацию о тарифном плане для интернет-провайдера Сибирские Сети ( http://211.ru ). Сибирские сети предоставляют доступ в интернет в следующих городах: Барнаул, Бердск, Бийск, Заринск, Искитим, Кемерово, Кольцово, Ленинск-Кузнецкий, Новоалтайск, Новокузнецк, Новосибирск, Обь, Осинники, Пашино, Прокопьевск, Рубцовск.
+    
+    Информация берется из паспорта http://passport.211.ru/. Если у вас нет доступа к паспорту, зарегистрируйтесь тут: http://passport.211.ru/#registration
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="bonus" name="Бонус" units="β"/> -->
+  </counters>
+  <keywords>
+    интернет
+  </keywords>
+  <type>
+    internet
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

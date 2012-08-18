@@ -137,6 +137,8 @@ function doOldAccount(page){
           throw new AnyBalance.Error("Не удаётся найти ссылку на информацию по карте с последними цифрами " + prefs.lastdigits);
         else
           throw new AnyBalance.Error("Не удаётся найти ни одной карты");
+
+    var thanksref = getParam(html, null, null, /"([^"]*bonus-spasibo.ru[^"]*)/i);
         
     var result = {success: true};
     getParam(html, result, 'cardNumber', reCardNumber);
@@ -155,6 +157,11 @@ function doOldAccount(page){
       getParam(html, result, 'minpay', /Сумма минимального платежа[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
       getParam(html, result, 'electrocash', /Доступно для покупок[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
       getParam(html, result, 'maxcredit', /Лимит кредита[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    }
+
+    if(AnyBalance.isAvailable('spasibo')){
+        html = AnyBalance.requestGet(thanksref);
+        getParam(html, result, 'spasibo', /Баланс:\s*<strong[^>]*>\s*([^<]*)/i, replaceTagsAndSpaces, parseBalance);
     }
 
     AnyBalance.setResult(result);
@@ -279,6 +286,17 @@ function doNewAccountPhysic(html){
         getParam(html, result, 'till', /Срок действия до:[\s\S]*?(\d\d\/\d{4})/, replaceTagsAndSpaces);
         getParam(html, result, 'cash', /для снятия наличных:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/, replaceTagsAndSpaces, parseBalance);
         getParam(html, result, 'electrocash', /для покупок:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/, replaceTagsAndSpaces, parseBalance);
+    }
+
+    if(AnyBalance.isAvailable('spasibo')){
+        html = AnyBalance.requestGet(baseurl + '/PhizIC/private/async/loyalty.do');
+        var href = getParam(html, null, null, /^\s*(https?:\/\/\S*)/i);
+        if(!href){
+            AnyBalance.trace('Не удаётся получить ссылку на спасибо от сбербанка: ' + html);
+        }else{
+            html = AnyBalance.requestGet(href);
+            getParam(html, result, 'spasibo', /Баланс:\s*<strong[^>]*>\s*([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+        }
     }
 
     AnyBalance.setResult(result);

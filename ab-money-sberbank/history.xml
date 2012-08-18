@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="7" date="2012-08-18">
+      - Поддержка программы лояльности "Спасибо от Сбербанка" ( http://sberbank.ru/moscow/ru/person/spasibo/ ) для тех личных кабинетов, в которых есть на неё ссылка.
+    </change>
     <change version="6" date="2012-07-21">
       - Показывается ошибка, если на сайте вывешено объявление о тех. работах
     </change>

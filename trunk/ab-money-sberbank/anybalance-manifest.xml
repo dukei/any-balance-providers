@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="6">ab-money-sberbank</id>
+  <id version="7">ab-money-sberbank</id>
   <name>Сбербанк ОнЛ@йн</name>
   <description>
     Получает текущий остаток и другие параметры карт Сбербанка, используя систему Сбербанк-онлайн ( https://esk.sbrf.ru ).
+
+    Если у вас нет доступа к Сбербанк-онлайн: перейдите на страницу https://esk.sbrf.ru и нажмите кнопку "Как войти в Сбербанк ОнЛ@йн" (это флэш-ролик, лучше смотреть с компьютера).
 
     Внимание! Для работы провайдера требуется отказаться от подтверждения входа в систему «Сбербанк ОнЛ@йн» 
 одноразовым паролем в разделе Настройки - Настройка безопасности. Но не беспокойтесь, 
@@ -19,6 +21,7 @@
   </files>
   <counters>
     <counter id="balance" name="Остаток"/>
+    <counter id="spasibo" name="Спасибо"/>
     <counter id="cash" name="Наличные"/>
     <counter id="electrocash" name="Для покупок"/>
     <counter id="currency" name="Валюта" type="text"/>
@@ -31,7 +34,7 @@
     <counter id="status" name="Статус" type="text"/>
   </counters>
   <keywords>
-    сбербанк онлайн, sberbank online, сберегательный банк
+    сбербанк онлайн, sberbank online, сберегательный банк, спасибо
   </keywords>
   <type>
     money

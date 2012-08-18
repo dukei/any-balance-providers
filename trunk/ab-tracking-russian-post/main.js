@@ -32,6 +32,8 @@ function main(){
 
         if(matches = /<p[^>]*class="red"[^>]*>([\s\S]*?)<\/p>/i.exec(info)) //Проверяем на сообщение об ошибке
 		throw new AnyBalance.Error(matches[1]);  
+        if(/<h1>Server is too busy<\/h1>/i.test(info))
+		throw new AnyBalance.Error("Сервер russianpost.ru перегружен. Попробуйте позже.");  
 	
 	//Сначала найдём таблицу, содержащую все стадии отправления
 	if(matches = info.match(/<table class="pagetext">.*?<tbody>(.*?)<\/tbody>/)){

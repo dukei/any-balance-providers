@@ -129,7 +129,7 @@ function main(){
     var debt_tmp=getParam(html_table, result, false, /&#1050;&#1042;&#1040;&#1056;&#1058;&#1055;&#1051;&#1040;&#1058;&#1040;(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     var paid1_tmp=getParam(html_table, result, false, /&#1050;&#1042;&#1040;&#1056;&#1058;&#1055;&#1051;&#1040;&#1058;&#1040;(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     var paid2_tmp=getParam(html_table, result, false, /&#1050;&#1042;&#1040;&#1056;&#1058;&#1055;&#1051;&#1040;&#1058;&#1040;(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    result.rent = debt_tmp - paid1_tmp - paid2_tmp;
+    result.rent = Math.round((debt_tmp - paid1_tmp - paid2_tmp)*100)/100;
   }
 
   // Отопление
@@ -138,7 +138,7 @@ function main(){
     var debt_tmp=getParam(html_table, result, false, /&#1054;&#1058;&#1054;&#1055;&#1051;&#1045;&#1053;&#1048;&#1045;(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     var paid1_tmp=getParam(html_table, result, false, /&#1054;&#1058;&#1054;&#1055;&#1051;&#1045;&#1053;&#1048;&#1045;(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     var paid2_tmp=getParam(html_table, result, false, /&#1054;&#1058;&#1054;&#1055;&#1051;&#1045;&#1053;&#1048;&#1045;(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    result.heating = debt_tmp - paid1_tmp - paid2_tmp;
+    result.heating = Math.round((debt_tmp - paid1_tmp - paid2_tmp)*100)/100;
   }
 
   // Горячая вода
@@ -147,7 +147,7 @@ function main(){
     var debt_tmp=getParam(html_table, result, false, /&#1043;&#1054;&#1056;&#1071;&#1063;&#1040;&#1071; &#1042;&#1054;&#1044;&#1040;(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     var paid1_tmp=getParam(html_table, result, false, /&#1043;&#1054;&#1056;&#1071;&#1063;&#1040;&#1071; &#1042;&#1054;&#1044;&#1040;(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     var paid2_tmp=getParam(html_table, result, false, /&#1043;&#1054;&#1056;&#1071;&#1063;&#1040;&#1071; &#1042;&#1054;&#1044;&#1040;(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    result.hot_water = debt_tmp - paid1_tmp - paid2_tmp;
+    result.hot_water = Math.round((debt_tmp - paid1_tmp - paid2_tmp)*100)/100;
   }
 
   // Холодная вода
@@ -156,7 +156,7 @@ function main(){
     var debt_tmp=getParam(html_table, result, false, /&#1061;&#1054;&#1051;&#1054;&#1044;&#1053;&#1040;&#1071; &#1042;&#1054;&#1044;&#1040;(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     var paid1_tmp=getParam(html_table, result, false, /&#1061;&#1054;&#1051;&#1054;&#1044;&#1053;&#1040;&#1071; &#1042;&#1054;&#1044;&#1040;(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     var paid2_tmp=getParam(html_table, result, false, /&#1061;&#1054;&#1051;&#1054;&#1044;&#1053;&#1040;&#1071; &#1042;&#1054;&#1044;&#1040;(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    result.cold_water = debt_tmp - paid1_tmp - paid2_tmp;
+    result.cold_water = Math.round((debt_tmp - paid1_tmp - paid2_tmp)*100)/100;
   }
 
   // Канализация
@@ -165,7 +165,7 @@ function main(){
     var debt_tmp=getParam(html_table, result, false, /&#1050;&#1040;&#1053;&#1040;&#1051;&#1048;&#1047;&#1040;&#1062;&#1048;&#1071;(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     var paid1_tmp=getParam(html_table, result, false, /&#1050;&#1040;&#1053;&#1040;&#1051;&#1048;&#1047;&#1040;&#1062;&#1048;&#1071;(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     var paid2_tmp=getParam(html_table, result, false, /&#1050;&#1040;&#1053;&#1040;&#1051;&#1048;&#1047;&#1040;&#1062;&#1048;&#1071;(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    result.sewerage = debt_tmp - paid1_tmp - paid2_tmp;
+    result.sewerage = Math.round((debt_tmp - paid1_tmp - paid2_tmp)*100)/100;
   }
 
   // Газ
@@ -174,7 +174,7 @@ function main(){
     var debt_tmp=getParam(html_table, result, false, /&#1043;&#1040;&#1047;(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     var paid1_tmp=getParam(html_table, result, false, /&#1043;&#1040;&#1047;(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     var paid2_tmp=getParam(html_table, result, false, /&#1043;&#1040;&#1047;(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    result.gas = debt_tmp - paid1_tmp - paid2_tmp;
+    result.gas = Math.round((debt_tmp - paid1_tmp - paid2_tmp)*100)/100;
   }
 
   // Вывоз ТБО
@@ -183,7 +183,7 @@ function main(){
     var debt_tmp=getParam(html_table, result, false, /&#1042;&#1067;&#1042;&#1054;&#1047; &#1058;&#1041;&#1054;(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     var paid1_tmp=getParam(html_table, result, false, /&#1042;&#1067;&#1042;&#1054;&#1047; &#1058;&#1041;&#1054;(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     var paid2_tmp=getParam(html_table, result, false, /&#1042;&#1067;&#1042;&#1054;&#1047; &#1058;&#1041;&#1054;(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    result.garbage = debt_tmp - paid1_tmp - paid2_tmp;
+    result.garbage = Math.round((debt_tmp - paid1_tmp - paid2_tmp)*100)/100;
   }
 
   // Общий долг
@@ -196,6 +196,7 @@ function main(){
     if(result.sewerage>0) result.debt += result.sewerage;
     if(result.gas>0) result.debt += result.gas;
     if(result.garbage>0) result.debt += result.garbage;
+    result.debt = Math.round(result.garbage*100)/100;
   }
 
   //Тарифный план

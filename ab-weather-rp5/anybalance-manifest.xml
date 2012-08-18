@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-weather-rp5</id>
+  <id version="2">ab-weather-rp5</id>
   <name>Прогноз rp5.ru</name>
   <description>
    Получает прогноз погоды на завтра и послезавтра с сайта http://rp5.ru. В настройках требуется указать код города.
@@ -22,6 +22,7 @@
     <icon>icon.png</icon>
     <js>main.js</js>
     <js>api:jquery.min.js</js>
+    <history>history.xml</history>
   </files>
   <counters>
     <counter id="temp1" name="Температура (завтра)" units="°C"/>

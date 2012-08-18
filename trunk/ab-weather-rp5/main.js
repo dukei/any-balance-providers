@@ -69,12 +69,15 @@ function main(){
             result.point_name = $xml.find('point>point_name').text();
         result.__tariff = $xml.find('point>point_name').text();
         
+        var wasToday = false;
         $timesteps = $xml.find('timestep').each(function(index){
             var $timestep = $(this);
             var hour = parseInt($timestep.find('G').text());
+           
             if(8 < hour && hour <= 20){ //Это день
                 var shift = parseInt($timestep.find('time_step').text());
-                var suffix = shift < 42 ? '1' : '2';
+                var suffix = wasToday ? '2' : '1';
+                wasToday = true;
                 
         	if(AnyBalance.isAvailable('date'+suffix))
                     result['date'+suffix] = parseDate($timestep.find('datetime').text());

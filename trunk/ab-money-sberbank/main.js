@@ -259,19 +259,19 @@ function doNewAccountPhysic(html){
 
     var lastdigits = prefs.lastdigits ? prefs.lastdigits.replace(/(\d)/g, '$1\\s*') : '(?:\\d\\s*){3}\\d';
     
-    var reCardId = new RegExp('<a\\s+href="([^"]*id=\\d+)"\\s*class="accountNumber\\b[^"]*">[^<]*' + lastdigits + '<');
-    var cardHref = getParam(html, null, null, reCardId);
+    var baseFind = '<span[^>]*class="accountNumber\\b[^"]*">[^<]*' + lastdigits + '<';
+
+    var reCardId = new RegExp(baseFind + '[\\s\\S]*?<span[^>]*class\\s*=\\s*"roundPlate[^>]*onclick\\s*=\\s*"[^"]*info.do\\?id=(\\d+)', 'i');
+//    AnyBalance.trace('Пытаемся найти карту: ' + reCardId);
+    var cardId = getParam(html, null, null, reCardId);
     
-    if(!cardHref)
+    if(!cardId)
         if(prefs.lastdigits)
-          throw new AnyBalance.Error("Не удаётся найти ссылку на информацию по карте с последними цифрами " + prefs.lastdigits);
+          throw new AnyBalance.Error("Не удаётся идентификатор карты с последними цифрами " + prefs.lastdigits);
         else
           throw new AnyBalance.Error("Не удаётся найти ни одной карты");
       
-    var cardId = getParam(html, null, null, /id=(\d+)/i);
-      
-    var baseFind = '<a\\s+href="[^"]*"\\s*class="accountNumber\\b[^"]*">[^<]*' + lastdigits + '<';
-    var reCardNumber = new RegExp('<a\\s+href="[^"]*"\\s*class="accountNumber\\b[^"]*">\s*([^<]*' + lastdigits + ')<', 'i');
+    var reCardNumber = new RegExp('<span[^>]*class="accountNumber\\b[^"]*">\s*([^<]*' + lastdigits + ')<', 'i');
     var reBalance = new RegExp(baseFind + '[\\s\\S]*?<span class="data[^>]*>([^<]*)', 'i');
     
     var result = {success: true};

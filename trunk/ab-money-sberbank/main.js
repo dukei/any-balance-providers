@@ -280,6 +280,11 @@ function doNewAccountPhysic(html){
     getParam(html, result, '__tariff', reCardNumber, replaceTagsAndSpaces);
     getParam(html, result, 'currency', reBalance, replaceTagsAndSpaces, parseCurrency);
     
+    getParam(html, result, 'eurPurch', new RegExp('<tr class="courseRow1">\\s+<td[^>]+>[\\s\\S]+?</td>\\s+<td[^>]+>\\s+([0-9.]+)\\s+'),null,parseFloat);
+    getParam(html, result, 'eurSell', new RegExp('<tr class="courseRow1">(?:\\s+<td[^>]+>[\\s\\S]+?</td>){2}\\s+<td[^>]+>\\s+([0-9.]+)\\s+'),null,parseFloat);
+    getParam(html, result, 'usdPurch', new RegExp('<tr class="courseRow2">\\s+<td[^>]+>[\\s\\S]+?</td>\\s+<td[^>]+>\\s+([0-9.]+)\\s+'),null,parseFloat);
+    getParam(html, result, 'usdSell', new RegExp('<tr class="courseRow2">(?:\\s+<td[^>]+>[\\s\\S]+?</td>){2}\\s+<td[^>]+>\\s+([0-9.]+)\\s+'),null,parseFloat);
+    
     if(AnyBalance.isAvailable('userName', 'till', 'cash', 'electrocash')){
         html = AnyBalance.requestGet(baseurl + '/PhizIC/private/cards/detail.do?id=' + cardId);
         getParam(html, result, 'userName', /ФИО Держателя карты:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/, replaceTagsAndSpaces);
@@ -298,6 +303,42 @@ function doNewAccountPhysic(html){
             getParam(html, result, 'spasibo', /Баланс:\s*<strong[^>]*>\s*([^<]*)/i, replaceTagsAndSpaces, parseBalance);
         }
     }
+
+	if(AnyBalance.isAvailable('lastPurchSum') || AnyBalance.isAvailable('lastPurchPlace') || AnyBalance.isAvailable('lastPurchDate')) {
+		html=AnyBalance.requestGet(baseurl+'/PhizIC/private/cards/info.do?id='+cardId);
+		//Не применяю getParam(), поскольку нужно предварительно сравнить содержимое полей Зачисление/Списание
+		var r = new RegExp('<tr class="ListLine0">[\\s\\S]+?</tr>');
+		matches=r.exec(html);
+		if(matches==null) AnyBalance.trace('Последние покупки не найдены');
+		else {
+			//Отделяем и очищаем данные последней операции
+			html=matches[0].replace(new RegExp('\\s+','g'),' ');
+			//Разбираем строку таблицы
+			r = new RegExp('<td[^>]+>(.+?)</td> <td[^>]+>(.+?)</td> <td[^>]+>(.+?)</td> <td[^>]+>(.+?)</td>');
+			matches=r.exec(html);
+			//Сумма
+			if(matches[3]=='&nbsp;') {
+				result.lastPurchSum='-'+matches[4];
+			} else {
+				result.lastPurchSum='+'+matches[3];
+			}
+			
+			//Место
+			result.lastPurchPlace=matches[1];
+			
+			//Дата
+			if(matches[2].indexOf('сегодня')!=-1) {
+				var date = new Date();
+				date.setTime(date.getTime()+(date.getTimezoneOffset()+240)*60000); //Приводим к МСК +4
+				result.lastPurchDate=date.getDate()+'.'+(date.getMonth()+1);
+			} else if(matches[2].indexOf('вчера')!=-1) {
+				var date = new Date();
+				date.setTime(date.getTime()+(date.getTimezoneOffset()+240)*60000-86400000); //Приводим к МСК +4 и вычитаем 24 часа
+				result.lastPurchDate=date.getDate()+'.'+(date.getMonth()+1);
+			} else result.lastPurchDate=matches[2];
+			
+		}
+	}
 
     AnyBalance.setResult(result);
 }

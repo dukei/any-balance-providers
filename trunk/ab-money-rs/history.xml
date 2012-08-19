@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<history>
+    <change major_version="1.0" version="3" date="2012-08-19">
+      - Исправлена ошибка с выводом оставшихся дней, когда дней меньше или равно 4
+    </change>
+</history>

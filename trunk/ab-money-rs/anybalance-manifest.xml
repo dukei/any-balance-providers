@@ -8,6 +8,7 @@
 		<icon>icon.png</icon>
         <preferences>preferences.xml</preferences>
         <js>main.js</js>
+        <history>history.xml</history>
     </files>
     <counters>
 		<counter id="credit_balance" name="Остаток по кредиту"/>
@@ -26,4 +27,7 @@
     <type>
         money
     </type>
+    <country>
+        ru
+    </country>
 </provider>

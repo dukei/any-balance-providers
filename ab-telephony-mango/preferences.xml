@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Лицевой счет" 
+        positiveButtonText="ОК" 
+        summary="||{@s}" 
+        dialogTitle="Лицевой счет" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите ваш логин в Манго-Офис"
+        inputType="number" 
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="|Введите пароль|************"
+        dialogMessage="Введите ваш пароль в Манго-Офис"
+        inputType="textPassword">
+    </EditTextPreference>
+    <EditTextPreference 
+        title="Номер продукта" 
+        positiveButtonText="ОК" 
+        summary="|Автоматически\n|{@s}\n" 
+        dialogTitle="Лицевой счет" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите номер продукта, для которого вы хотите получить информацию. Можете оставить это поле пустым, чтобы получить информацию по первому продукту."
+        inputType="number" 
+        key="prodid">
+    </EditTextPreference>
+</PreferenceScreen>

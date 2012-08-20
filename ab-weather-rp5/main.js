@@ -60,7 +60,11 @@ function main(){
         if(!prefs.city)
             throw new AnyBalance.Error("Укажите код города для показа прогноза погоды. Код можно получить на сайте http://rp5.ru. Смотрите описание провайдера для подробностей.");
 
+        AnyBalance.trace("About to request \"http://rp5.ru/xml/"+prefs.city+"/00000/ru\"");
+
         var xml = AnyBalance.requestGet("http://rp5.ru/xml/"+prefs.city+"/00000/ru");
+        if(/404 Not Found/i.test(xml))
+            throw new AnyBalance.Error('Похоже, введенный код города "' + prefs.city + '" неверный.'); 
 	var xmlDoc = $.parseXML(xml),
           $xml = $(xmlDoc);
      

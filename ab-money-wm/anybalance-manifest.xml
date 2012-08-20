@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-money-wm</id>
+  <name>WebMoney</name>
+  <description>
+    Получает баланс на кошельках WMR, WMZ, WME, WMU и WMB. Если на вашем WM-идентификаторе несколько кошельков одного типа, то балансы на них будут просуммированы.
+
+    Для входа требуется WM-идентификатор и пароль. Данные берутся с сайта https://enter.webmoney.ru/addLP.aspx
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="wmr" name="WMR" units="р"/>
+    <counter id="wmz" name="WMZ" units="$"/>
+    <counter id="wme" name="WME" units="€"/>
+    <counter id="wmu" name="WMU" units="₴"/>
+    <counter id="wmb" name="WMB" units="р"/>
+  </counters>
+  <keywords>
+    вебмани
+  </keywords>
+  <type>
+    money
+  </type>
+  <type>
+    ru, ua, by
+  </type>
+</provider>

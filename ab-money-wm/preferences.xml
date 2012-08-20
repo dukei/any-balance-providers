@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="WM-идентификатор" 
+        positiveButtonText="ОК" 
+        summary="||{@s}" 
+        dialogTitle="WM-идентификатор" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите WM-идентификатор для просмотра баланса WebMoney"
+        inputType="number"
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="||***********"
+        dialogMessage="Введите пароль, используемый для входа в систему WebMoney"
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

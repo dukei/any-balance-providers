@@ -8,10 +8,63 @@
 */
 
 function main(){
-	AnyBalance.trace('Connecting to russianpost...');
-	
 	var prefs = AnyBalance.getPreferences();
-	var post_number = prefs.code || ''; //Код отправления, введенный пользователем
+        if(!prefs.code) //Код отправления, введенный пользователем
+            throw AnyBalance.Error("Введите код отправления!");
+
+        if(prefs.type == 'rp')
+            mainRussianPost();
+        else if(/^\d+$/.test(prefs.code)){
+            AnyBalance.trace('Идентификатор ' + prefs.code + ' похож на идентификатор почты России, а не на EMS. Попытаемся обработать его через russianpost.ru');
+            mainRussianPost();
+        }else
+            mainEms();
+}
+
+function mainEms(){
+	var prefs = AnyBalance.getPreferences();
+	AnyBalance.trace('Connecting to ems...');
+
+        var info = AnyBalance.requestPost("http://www.emspost.ru/tracking.aspx/TrackOne", JSON.stringify({id: prefs.code.toUpperCase()}), {
+            'Content-Type':'application/json; charset=UTF-8',
+            Referer: 'http://www.emspost.ru/ru/tracking/?id=' + prefs.code.toUpperCase()
+        });
+
+        var json = JSON.parse(info).d;
+        if(json.errorMessage)
+            throw new AnyBalance.Error(json.errorMessage);
+
+        if(!json.Operations || json.Operations.length == 0)
+            throw new AnyBalance.Error("В этом отправлении нет зарегистрированных операций!");
+
+	var result = {success: true};
+
+        var op = json.Operations[json.Operations.length-1];
+        var oper = op.opType == 2 ? 'Завершено' : 'В пути';
+
+        if(AnyBalance.isAvailable('date'))
+            result.date = op.opDateTime;
+	if(AnyBalance.isAvailable('location'))
+	    result.location = op.opAddressDescription;
+	if(AnyBalance.isAvailable('operation'))
+	    result.location = oper;
+	if(AnyBalance.isAvailable('attribute'))
+	    result.attribute = op.opStatus;
+
+	if(AnyBalance.isAvailable('fulltext')){
+	    //Все поддерживаемые атрибуты (кроме img) находятся здесь
+	    //http://commonsware.com/blog/Android/2010/05/26/html-tags-supported-by-textview.html
+	    result.fulltext = '<small>' + op.opDateTime + '</small>: <b>' + oper + '</b><br/>\n' +
+	        op.opAddressDescription + '<br/>\n' + 
+	        op.opStatus;
+	}
+
+        AnyBalance.setResult(result);
+}
+
+function mainRussianPost(){
+	var prefs = AnyBalance.getPreferences();
+	AnyBalance.trace('Connecting to russianpost...');
 	
 	var dt = new Date();
 	var info = AnyBalance.requestPost('http://www.russianpost.ru/resp_engine.aspx?Path=rp/servise/ru/home/postuslug/trackingpo', {
@@ -21,7 +74,7 @@ function main(){
 		CYEAR:dt.getFullYear(),
 		PATHWEB:'RP/INDEX/RU/Home',
 		PATHPAGE:'RP/INDEX/RU/Home/Search',
-		BarCode:post_number.toUpperCase(),
+		BarCode:prefs.code.toUpperCase(),
 		searchsign:1
 	});
 	
@@ -29,6 +82,7 @@ function main(){
 		matches;
 	
 	AnyBalance.trace('trying to find table');
+        result.__tariff = prefs.code;
 
         if(matches = /<p[^>]*class="red"[^>]*>([\s\S]*?)<\/p>/i.exec(info)) //Проверяем на сообщение об ошибке
 		throw new AnyBalance.Error(matches[1]);  

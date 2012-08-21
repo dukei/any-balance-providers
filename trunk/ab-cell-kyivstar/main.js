@@ -74,6 +74,8 @@ function main(){
         result.bonus_mins_2=parseInt(matches[2]);
     } else if (matches=/(Залишок тарифних хвилин для дзвінків в межах України:|Остаток тарифних минут для звонков в пределах Украини :)[\s\S]*?<b>(.*?)</.exec(html)){
         result.bonus_mins_2=parseInt(matches[2]);
+    } else if (matches=/(Залишок хвилин для дзвінків в межах України:|Остаток минут для звонков в пределах Украини :)[\s\S]*?<b>(.*?)</.exec(html)){
+        result.bonus_mins_2=parseInt(matches[2]);
     }
   }
   
@@ -124,7 +126,9 @@ function main(){
     if (matches=/(Бонуси за умовами тарифного плану "Єдина ціна":|Бонусы по условиям тарифного плана "Единая цена":)[\s\S]*?<b>(.*?)</.exec(html)){
         result.bonus_money_2=parseFloat(matches[2]);
     } else if (matches=/(Кошти по послузі "Екстра кошти"|Средства по услуге "Экстра деньги"):[\s\S]*?<b>(.*?)</.exec(html)){
-        result.bonus_money_2=parseInt(matches[2]);
+        result.bonus_money_2=parseFloat(matches[2]);
+    } else if (matches=/(Бонусні кошти:|Бонусные средства:)[\s\S]*?(Бонусні кошти:|Бонусные средства:)[\s\S]*?<b>(.*?)</.exec(html)){
+        result.bonus_money_2=parseFloat(matches[3]);
     }
   }
   
@@ -145,6 +149,8 @@ function main(){
   //Интернет (1)
   if(AnyBalance.isAvailable('internet_1')){
     if (matches=/(Залишок бонусного об\'єму даних:|Остаток бонусного объема данных:)[\s\S]*?<b>(.*?)</.exec(html)){
+        result.internet_1=Math.round(parseInt(matches[2])/1024/1024*100)/100;
+    } else if (matches=/(Залишок байт для користування послугою Інтернет GPRS :|Остаток байт для пользования услугой Интернет GPRS :)[\s\S]*?<b>(.*?)</.exec(html)){
         result.internet_1=Math.round(parseInt(matches[2])/1024/1024*100)/100;
     }
   }

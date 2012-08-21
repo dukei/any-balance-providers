@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-bonus-ion</id>
+  <name>Лень карта ИОН</name>
+  <description>
+    Получает количество баллов на карте сервисной программе ИОН ЛЕНЬ ( http://old.i-on.ru/Welcome ).
+
+    Если у вас есть ЛЕНЬ карта, но нет пароля, его можно получить на этой странице: http://old.i-on.ru/ActivateCard/
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс"/>
+    <counter id="new" name="Ещё"/>
+    <counter id="total" name="Всего заработано"/>
+    <counter id="off" name="Всего потрачено"/>
+  </counters>
+  <keywords>
+    бонус, баллы, bonus, бонусная накопительная программа, ion
+  </keywords>
+  <type>
+    bonus
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

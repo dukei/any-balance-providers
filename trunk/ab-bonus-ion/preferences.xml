@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Номер ЛЕНЬ карты" 
+        positiveButtonText="ОК" 
+        summary="||{@s}" 
+        dialogTitle="Номер карты" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите номер ЛЕНЬ карты сервисной программы ИОН"
+        key="login"
+        inputType="number">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="||***************"
+        dialogMessage="Введите ваш пароль к личному кабинету ЛЕНЬ ( http://old.i-on.ru/Welcome ). Если у вас нет пароля, получите его на http://old.i-on.ru/ActivateCard/."
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

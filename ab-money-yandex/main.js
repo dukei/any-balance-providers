@@ -40,6 +40,10 @@ function parseBalance(text){
     return val;
 }
 
+function getIdKey(html){
+    return getParam(html, null, null, /<input[^>]*name="idkey"[^>]*value="([^"]*)/i);
+}
+
 function main(){
     var prefs = AnyBalance.getPreferences();
 
@@ -51,24 +55,36 @@ function main(){
     var baseurl = "https://passport.yandex.ru/passport?mode=auth&from=money&retpath=https%3A%2F%2Fmoney.yandex.ru%2Findex.xml&msg=money";
 
     var html = AnyBalance.requestGet("https://money.yandex.ru");
+    var headers = {
+        Accept:'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
+        'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	Connection:'keep-alive',
+//        Origin:'https://money.yandex.ru',
+//        Referer:'https://money.yandex.ru/',
+        'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.5 (KHTML, like Gecko) Chrome/19.0.1084.52 Safari/536.5'
+    };
 
     html = AnyBalance.requestPost(baseurl, {
       login: prefs.login,
       passwd:prefs.password,
       timestamp: new Date().getTime()
-    }, {
-        Accept:'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-        'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
-        'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-	Connection:'keep-alive',
-        Origin:'https://money.yandex.ru',
-        Referer:'https://money.yandex.ru/',
-        'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.5 (KHTML, like Gecko) Chrome/19.0.1084.52 Safari/536.5'
-    });
+    }, headers);
 
     var error = getParam(html, null, null, /b\-login\-error[^>]*>([\s\S]*?)<\/strong>/i, replaceTagsAndSpaces);
     if(error)
         throw new AnyBalance.Error(error);
+
+    if(/Установить постоянную авторизацию на(?:\s|&nbsp;)+данном компьютере\?/i.test(html)){
+        //Яндекс задаёт дурацкие вопросы.
+        AnyBalance.trace("Яндекс спрашивает, нужно ли запоминать этот компьютер. Отвечаем, что нет... (idkey=" + getIdKey(html) + ")");
+        html = AnyBalance.requestPost("https://passport.yandex.ru/passport?mode=auth", {
+            filled:'yes',
+            timestamp:new Date().getTime(),
+            idkey:getIdKey(html), 
+            no:1
+        }, headers);
+    }
 
     if(!/current\-user\-balance\-link/i.test(html))
         throw new AnyBalance.Error("Не удалось зайти. Проверьте логин и пароль.");

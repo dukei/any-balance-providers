@@ -45,7 +45,7 @@ function main(){
     });
 
     var error = getParam(html, null, null, /class="redlight"[^>]*>([\s\S]*?)<\/div>/i, [/<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/, '']);
-    if(error)
+    if(error && !(error.match(/Баланс отрицательный/i))) //http://code.google.com/p/any-balance-providers/issues/detail?id=62
         throw new AnyBalance.Error(error);
 
     var result = {success: true};

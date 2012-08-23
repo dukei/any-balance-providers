@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-akado-ural</id>
+  <id version="2">ab-internet-akado-ural</id>
   <name>АКАДО Екатеринбург - интернет провайдер</name>
   <description>
     Получает баланс и информацию о тарифном плане для провайдера интернет и кабельного телевидения Акадо-Екатеринбург. Информация берется из личного кабинета https://stat.akado-ural.ru.
@@ -10,6 +10,7 @@
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
     <js>main.js</js>
+    <history>history.xml</history>
   </files>
   <counters>
     <counter id="balance" name="Баланс" units="р"/>
@@ -25,4 +26,7 @@
   <type>
     internet, tv
   </type>
+  <country>
+    ru
+  </country>
 </provider>

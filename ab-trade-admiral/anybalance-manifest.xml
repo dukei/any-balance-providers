@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="3">ab-trade-admiral</id>
+  <name>Admiral Markets Ltd.</name>
+  <description>
+    Получает баланс счетов в личном кабинете Admiral Markets Ltd. ( http://www.forextrade.ru/trading-room ). 
+
+    Может получать данные для четырех счетов одновременно.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс"/>
+    <counter id="currency" name="Валюта" type="text"/>
+    <counter id="accnum" name="№ счета" type="text"/>
+    <counter id="type" name="Тип счета" type="text"/>
+    <counter id="leverage" name="Плечо" type="text"/>
+    <counter id="balance1" name="Баланс 2"/>
+    <counter id="currency1" name="Валюта 2" type="text"/>
+    <counter id="accnum1" name="№ счета 2" type="text"/>
+    <counter id="type1" name="Тип счета 2" type="text"/>
+    <counter id="leverage1" name="Плечо 2" type="text"/>
+    <counter id="balance2" name="Баланс 3"/>
+    <counter id="currency2" name="Валюта 3" type="text"/>
+    <counter id="accnum2" name="№ счета 3" type="text"/>
+    <counter id="type2" name="Тип счета 3" type="text"/>
+    <counter id="leverage2" name="Плечо 3" type="text"/>
+    <counter id="balance3" name="Баланс 4"/>
+    <counter id="currency3" name="Валюта 4" type="text"/>
+    <counter id="accnum3" name="№ счета 4" type="text"/>
+    <counter id="type3" name="Тип счета 4" type="text"/>
+    <counter id="leverage3" name="Плечо 4" type="text"/>
+  </counters>
+  <keywords>
+    форекс, forex, торговля, валюта
+  </keywords>
+  <type>
+    trade
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

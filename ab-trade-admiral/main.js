@@ -94,6 +94,7 @@ function main(){
     var result = {success: true};
 
     var found = 0;
+    var all_accs = [];
     for(var i=0; i<accounts.length; ++i){
         var text = accounts[i];
         var accnum = getParam(text, null, null, /<tr[^>]*accountId="(\d+)/i);
@@ -104,14 +105,16 @@ function main(){
             getParam(text, result, 'currency' + suffix, /<tr[^>]*currencyId="([^"]+)/i);
             getParam(text, result, 'type' + suffix, /<span[^>]*class="type"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
             getParam(text, result, 'accnum' + suffix, /<span[^>]*class="num"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
-            if(found == 0)
-               getParam(text, result, '__tariff', /<span[^>]*class="num"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+            all_accs[all_accs.length] = getParam(text, null, null, /<span[^>]*class="num"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
             getParam(text, result, 'balance' + suffix, /<span[^>]*class="sum"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
             getParam(text, result, 'leverage' + suffix, /<span[^>]*class="leverage"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
             found_accnums['a' + accnum] = true;
             ++found;
         }
     }
+
+    if(all_accs.length)
+        result.__tariff = all_accs.join(', ');
 
     var found_any = false;
     var not_found_nums = [];

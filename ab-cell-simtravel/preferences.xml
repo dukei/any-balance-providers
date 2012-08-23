@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="E-mail" 
+        positiveButtonText="ОК" 
+        summary="Логин в SimTravel||{@s}\n" 
+        dialogTitle="Логин" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите ваш логин в SimTravel"
+        inputType="textEmailAddress"
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="|Введите пароль|************"
+        dialogMessage="Введите ваш пароль в SimTravel"
+        inputType="textPassword">
+    </EditTextPreference>
+    <EditTextPreference 
+        title="Номер sim-карты" 
+        positiveButtonText="ОК" 
+        summary="|Автоматически|{@s}" 
+        dialogTitle="Номер sim-карты" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите номер sim-карты, по которой вы хотите получить информацию, без пробелов и разделителей, например, 37254802354, или не вводите ничего, чтобы получить информацию по первой sim-карте."
+        inputType="number"
+        key="num">
+    </EditTextPreference>
+</PreferenceScreen>

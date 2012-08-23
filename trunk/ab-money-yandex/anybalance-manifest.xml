@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-money-yandex</id>
-  <name>Яндекс-Деньги</name>
+  <id version="2">ab-money-yandex</id>
+  <name>Яндекс.Деньги</name>
   <description>
-    Получает текущий остаток и номер счета яндекс-денег.
+    Получает текущий остаток и номер счета яндекс.денег.
 
     Внимание! Для работы провайдера требуется ввести пароль только для входа. Платежный пароль вводить не надо!
   </description>
@@ -11,6 +11,7 @@
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
+    <history>history.xml</history>
     <js>main.js</js>
   </files>
   <counters>

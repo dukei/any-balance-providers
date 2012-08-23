@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Логин" 
+        positiveButtonText="ОК" 
+        summary="||{@s}" 
+        dialogTitle="Логин" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите ваш логин в личный кабинет Admiral Markets Ltd."
+        inputType="textEmailAddress"
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="||************"
+        dialogMessage="Введите ваш пароль в личный кабинет Admiral Markets Ltd."
+        inputType="textPassword">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="accs" 
+        dialogTitle="Номера счетов"
+        negativeButtonText="Отмена"
+        title="Номера счетов"
+        summary="|Автоматически|{@s}"
+        dialogMessage="Введите до 4 номеров счетов, разделяя их пробелами, баланс которых вы хотите получить. Если оставить это поле пустым, то будет получена информация по первым 4 счетам в личном кабинете."
+        inputType="phone">
+    </EditTextPreference>
+</PreferenceScreen>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="3">ab-trade-admiral</id>
+  <id version="1">ab-trade-admiral</id>
   <name>Admiral Markets Ltd.</name>
   <description>
     Получает баланс счетов в личном кабинете Admiral Markets Ltd. ( http://www.forextrade.ru/trading-room ). 

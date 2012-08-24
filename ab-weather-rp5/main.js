@@ -53,6 +53,29 @@ function parseDate(str){
     return time;
 }
 
+function getParam (html, result, param, regexp, replaces, parser) {
+	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
+		return;
+
+	var value = regexp.exec (html);
+	if (value) {
+		value = value[1];
+		if (replaces) {
+			for (var i = 0; i < replaces.length; i += 2) {
+				value = value.replace (replaces[i], replaces[i+1]);
+			}
+		}
+		if (parser)
+			value = parser (value);
+
+    if(param)
+      result[param] = value;
+    else
+      return value
+	}
+}
+
+
 function main(){
 	AnyBalance.setDefaultCharset('utf-8');
         var prefs = AnyBalance.getPreferences();
@@ -63,10 +86,19 @@ function main(){
         AnyBalance.trace("About to request \"http://rp5.ru/xml/"+prefs.city+"/00000/ru\"");
 
         var xml = AnyBalance.requestGet("http://rp5.ru/xml/"+prefs.city+"/00000/ru");
-        if(/404 Not Found/i.test(xml))
-            throw new AnyBalance.Error('Похоже, введенный код города "' + prefs.city + '" неверный.'); 
+        if(/404 Not Found/i.test(xml)){
+            AnyBalance.trace('Похоже, rp5 заблокировал ваш IP :( Пробуем получить данные через веб.');
+            var html = AnyBalance.requestGet("http://rp5.ru/docs/xml/ru?id="+prefs.city, {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.83 Safari/537.1'});
+            xml = getParam(html, null, null, /<pre[^>]*>([\s\S]*?)<\/pre>/i, null, html_entity_decode);
+            if(!xml)
+                throw AnyBalance.Error("Не удалось получить xml для кода города " + prefs.city);
+        }
+
 	var xmlDoc = $.parseXML(xml),
           $xml = $(xmlDoc);
+
+        if(!$xml.find('point>point_name').text() && !$xml.find('point>country_id').text())
+          throw new AnyBalance.Error("Похоже, код города " + prefs.city + " неверный.");
      
 	var result = {success: true};
         if(AnyBalance.isAvailable('point_name'))
@@ -106,3 +138,12 @@ function main(){
 
 	AnyBalance.setResult(result);
 }
+
+function html_entity_decode(str)
+{
+    //jd-tech.net
+    var tarea=document.createElement('textarea');
+    tarea.innerHTML = str;
+    return tarea.value;
+}
+

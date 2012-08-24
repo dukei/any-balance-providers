@@ -1,12 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="3">ab-bonus-perekrestok</id>
+  <id major_version="1.0" version="4">ab-bonus-perekrestok</id>
   <name>Перекресток</name>
   <description>
-    Получает информацию о бонусах на карте Клуба Перекресток.
-	
-	Версия 1.0.2 от 28.03.2012:
-	    - Исправлено получение информации о сгорающих баллах и о владельце
+    Получает информацию о бонусах на карте Клуба Перекресток ( http://x5club.ru/about/ ) из личного кабинета https://prcab.x5club.ru .
   </description>
   <author>iReset &lt;ireset.ag@gmail.com&gt;</author>
   <files>
@@ -29,4 +26,7 @@
   <type>
     bonus
   </type>
+  <country>
+    ru
+  </country>
 </provider>

@@ -57,6 +57,8 @@ function main () {
     AnyBalance.trace ('Trying to enter selfcare at address: ' + baseurl);
 
     var d = new Date ();
+    var html = AnyBalance.requestGet (baseurl + 'anonymousLogin.do');
+
     var html = AnyBalance.requestPost (baseurl + 'login.do', {
         'job':        'LOGIN',
         'parameter':  formatDate (d),

@@ -58,10 +58,10 @@ function parseDate(str){
 }
 
 var g_phrases = {
-   karty: {card: 'карты', acc: 'счета'},
-   kartu: {card: 'карту', acc: 'счет'},
-   karte1: {card: 'первой карте', acc: 'первому счету'},
-   karty1: {card: 'одной карты', acc: 'одного счета'}
+   karty: {card: 'карты', acc: 'счета', dep: 'договора на вклад'},
+   kartu: {card: 'карту', acc: 'счет', dep: 'договор на вклад'},
+   karte1: {card: 'первой карте', acc: 'первому счету', dep: 'первому вкладу'},
+   karty1: {card: 'одной карты', acc: 'одного счета', dep: 'одного вклада'}
 }
 
 function main(){
@@ -102,8 +102,16 @@ function main(){
 
     AnyBalance.trace("We seem to enter the bank...");
 
-    html = AnyBalance.requestGet(baseurl + "/priv/accounts");
-    $html = $(html);
+    if(what == 'dep')
+        mainDep(what, baseurl);
+    else
+        mainCardAcc(what, baseurl);
+}
+
+function mainCardAcc(what, baseurl){
+    var prefs = AnyBalance.getPreferences();
+    var html = AnyBalance.requestGet(baseurl + "/priv/accounts");
+    var $html = $(html);
     
     var pattern = null;
     if(what == 'card')
@@ -166,6 +174,52 @@ function main(){
     getParam($acc.find('.balance-review .amount').text(), result, 'accamount', null, null, parseBalance);
     getParam($acc.find('.balance-review .amount').text(), result, 'currency', null, null, parseCurrency);
     getParam($acc.find('.points-by-holds .amount').text(), result, 'holdballs', null, null, parseBalance);
+
+    AnyBalance.setResult(result);
+}
+
+function mainDep(what, baseurl){
+    var prefs = AnyBalance.getPreferences();
+    var html = AnyBalance.requestGet(baseurl + "/priv/deposits");
+    var $html = $(html);
+    
+    var pattern = new RegExp(prefs.num ? '\\d{3,}'+prefs.num+'\\s' : '\\d{7,}\\s');
+
+    var min_i = -1;
+    var min_val = null;
+    var cur_i = -1;
+    var $acc = $html.find('div.deposits tbody tr').filter(function(i){
+        var matches = pattern.exec($(this).find('a.deposit-link').text());
+        if(!matches)
+             return false;
+        ++cur_i;
+        if(min_i < 0 || min_val > matches[0]){
+            min_i = cur_i;
+            min_val = matches[0];
+        }
+        return true;
+    }).eq(min_i);
+    
+    if(!$acc.size()){
+        if(prefs.num)
+            throw new AnyBalance.Error('Не удалось найти ' + g_phrases.kartu[what] + ' с последними цифрами ' + prefs.num);
+        else
+            throw new AnyBalance.Error('Не удалось найти ни ' + g_phrases.karty1[what] + '!');
+    }
+
+    var result = {success: true};
+
+    getParam($acc.find('span.deposit-name').text(), result, 'accname', null, replaceTagsAndSpaces);
+    getParam($acc.find('a.deposit-link span span').first().text(), result, 'cardnum', null, replaceTagsAndSpaces);
+    getParam($acc.find('span.deposit-name').text(), result, '__tariff', null, replaceTagsAndSpaces);
+    getParam($acc.find('td:nth-child(4)').text(), result, 'balance', null, replaceTagsAndSpaces, parseBalance);
+    getParam($acc.find('td:nth-child(2)').text(), result, 'currency', null, replaceTagsAndSpaces);
+
+    if(AnyBalance.isAvailable('accnum')){
+        var href = $acc.find('a.deposit-link').attr('href');
+        html = AnyBalance.requestGet(baseurl + '/' + href.replace(/^[.\/]+/g, ''));
+        getParam(html, result, 'accnum', /Счет вклада[\s\S]*?<td[^>]*>\s*(\d+)/i);
+    }
 
     AnyBalance.setResult(result);
 }

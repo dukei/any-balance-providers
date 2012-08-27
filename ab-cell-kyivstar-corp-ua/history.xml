@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="5" date="2012-08-28">
+      - Улучшено распознавание минут и трафика
+    </change>
     <change version="4" date="2012-07-20">
       - Киевстар выдавал пустые страницы из-за изменений на сайте
     </change>

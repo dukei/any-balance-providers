@@ -73,9 +73,9 @@ function main(){
     
     if(AnyBalance.isAvailable('min_left')){
         //bonuses bonus name:contains("Остаток минут для звонков на номера абонентов по Украине"), 
-        var val = $info.find('bonuses bonus name:contains("Остаток минут для звонков на номера абонентов по Украине"),\n\
-                              bonuses bonus name:contains("Залишок хвилин для дзвінків телефонні номери абонентів по Україні"),\n\
-                              bonuses bonus name:contains("Balance of minutes for accomplishing of calls to the subscribers in Ukraine")').next().text();
+        var val = $info.find('bonuses bonus name:contains("Остаток минут"):contains("по Украине"),\n\
+                              bonuses bonus name:contains("Залишок хвилин"):contains("по Україні"),\n\
+                              bonuses bonus name:contains("Balance of minutes"):contains("in Ukraine")').next().text();
         if(val){
             var matches = val.match(/(\d+)/);
             if(matches)
@@ -84,9 +84,9 @@ function main(){
     }
     
     if(AnyBalance.isAvailable('min_group')){
-        var val = $info.find('bonuses bonus name:contains("Остаток минут для звонков внутри закрытой абонентской группы"),\n\
-                              bonuses bonus name:contains("Залишок хвилин для дзвінків всередині закритої абонентської групи"),\n\
-                              bonuses bonus name:contains("Balance of minutes for accomplishing of calls inside of the closed subscriber group")').next().text();
+        var val = $info.find('bonuses bonus name:contains("Остаток минут"):contains("абонентской группы"),\n\
+                              bonuses bonus name:contains("Залишок хвилин"):contains("абонентської групи"),\n\
+                              bonuses bonus name:contains("Balance of minutes"):contains("subscriber group")').next().text();
         if(val){
             var matches = val.match(/(\d+)/);
             if(matches)
@@ -95,9 +95,7 @@ function main(){
     }
     
     if(AnyBalance.isAvailable('traffic_left')){
-        var val = $info.find('bonuses bonus name:contains("Остаток Internet GPRS"),\n\
-                              bonuses bonus name:contains("Залишок Internet GPRS"),\n\
-                              bonuses bonus name:contains("Internet GPRS balance")').next().text();
+        var val = $info.find('bonuses bonus name:contains("GPRS")').next().text();
         if(val){
             var matches = val.match(/([\d\.]+)/);
             if(matches)

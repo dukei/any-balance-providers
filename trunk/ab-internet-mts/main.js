@@ -6,12 +6,15 @@
 Личный кабинет (Москва): https://kabinet.mts.ru/
 Личный кабинет (Ростов): http://pc.aaanet.ru
 Личный кабинет (Новосибирск): https://my.citynsk.ru
+Личный кабинет (Пермь, Екатеринбург): https://bill.utk.ru/uportf/arm.pl
 */
 
 var regions = {
    moscow: getMoscow,
    rostov: getRostov,
-   nsk: getNsk
+   nsk: getNsk,
+   prm: getPrm,
+   ekt: getPrm
 };
 
 function main(){
@@ -21,6 +24,7 @@ function main(){
       region = 'moscow';
 
     var func = regions[region];
+    AnyBalance.trace('Регион: ' + region);
     func();
 }
 
@@ -238,6 +242,48 @@ function getNsk(){
     AnyBalance.setResult(result);
 }
 
+function getPrm(){
+    var prefs = AnyBalance.getPreferences();
+    AnyBalance.setDefaultCharset('koi8-r');
+
+    var baseurl = 'https://bill.utk.ru/uportf/arm.pl';
+
+    var html = AnyBalance.requestPost(baseurl, {
+        do_login:1,
+        id_menu:1,
+        login:prefs.login,
+        passwd:prefs.password,
+        ctl00$MainContent$btnEnter:'Войти'
+    });
+
+    if(!getParam(html, null, null, /(do_logout=1)/i)){
+        var error = getParam(html, null, null, /<div[^>]*class="b_warning[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+        if(error)
+            throw new AnyBalance.Error(error);
+        throw new AnyBalance.Error("Не удалось войти в личный кабинет");
+    }
+
+    var result = {success: true};
+
+    getParam(html, result, 'agreement', /Номер договора:([\s\S]*?)(?:\(|<\/li>)/i, replaceTagsAndSpaces);
+    getParam(html, result, 'license', /Код лицевого счета:([\s\S]*?)<\/li>/i, replaceTagsAndSpaces);
+    getParam(html, result, 'balance', /Баланс:([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, '__tariff', /Тарифный план:[\s\S]*?<br[^>]*>([\s\S]*?)<br[^>]*>/i, replaceTagsAndSpaces);
+    getParam(html, result, 'abon', /абон\. плата:([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+
+    if(AnyBalance.isAvailable('internet_cur')){
+        var href = getParam(html, null, null, /<a[^>]*href="arm.pl([^"]*)"[^>]*>Отчет по трафику/i);
+        if(!href){
+            AnyBalance.trace("Не найдена ссылка на трафик!");
+        }else{
+            html = AnyBalance.requestGet(baseurl + href);
+            getParam(html, result, 'internet_cur', /ИТОГО[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTrafficPerm);
+        }
+    }
+
+    AnyBalance.setResult(result);
+}
+
 function getParam (html, result, param, regexp, replaces, parser) {
 	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
 		return;
@@ -274,6 +320,16 @@ function parseBalance(text){
 function parseTraffic(text){
     var val = parseBalance(text);
     val = Math.round(val/1024/1024*100)/100;
+    AnyBalance.trace('Parsing traffic (' + val + 'Mb) from: ' + text);
+    return val;
+}
+
+function parseTrafficPerm(text){
+    var val = getParam(text, null, null, /([\d\.,]+)/, replaceFloat);
+    if(typeof(val) != 'undefined'){
+        val = Math.round(parseFloat(val)*100)/100;
+    }
+    
     AnyBalance.trace('Parsing traffic (' + val + 'Mb) from: ' + text);
     return val;
 }

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-internet-flex</id>
+  <name>Flex (Ногинск)</name>
+  <description>
+    Получает баланс и информацию о тарифном плане для ногинского интернет-провайдера Flex (http://www.flex.ru). ООО "ФЛЕКС" осуществляет подключение клиентов к домовым сетям в населенных пунктах: Ногинск, Электросталь, Бахчиванджи, Электроугли, Орехово-Зуево, Ликино-Дулево, Давыдово, Демехово, Куровское, Селятино.
+
+    Информация берется с сервера статистики https://flex.ru/stats. Логин и пароль для доступа на сервер статистике прописаны в договоре на услуги интернет.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="traffic" name="Трафик в текущем месяце" units="Gb"/> -->
+    <counter id="status" name="Состояние" type="text"/>
+    <counter id="licschet" name="Код пользователя" type="text"/>
+  </counters>
+  <keywords>
+    интернет
+  </keywords>
+  <type>
+    internet
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

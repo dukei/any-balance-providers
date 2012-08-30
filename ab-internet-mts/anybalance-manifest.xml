@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="13">ab-internet-mts</id>
+  <id version="14">ab-internet-mts</id>
   <name>Домашний Интернет и Телевидение МТС</name>
   <description>
     Получает текущий баланс, номера лицевого счета и договора, ФИО владельца, трафик в текущем месяце, абонентскую плату у провайдера "Домашний Интернет и Телевидение МТС"
@@ -24,6 +24,7 @@
   </files>
   <counters>
     <counter id="balance" name="Баланс" units="р"/>
+    <counter id="balance_tv" name="Баланс ТВ" units="р"/>
     <counter id="internet_cur" name="Трафик в этом месяце" suffix="Mb"/>
     <counter id="abon" name="Абонентская плата" suffix="р"/>
     <counter id="license" name="Лицевой счет" type="text"/>

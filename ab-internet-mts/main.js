@@ -281,6 +281,16 @@ function getPrm(){
         }
     }
 
+    if(AnyBalance.isAvailable('balance_tv')){
+        if(AnyBalance.getLevel() < 4){
+            AnyBalance.trace('Для получения баланса ТВ необходима версия AnyBalance 2.8+');
+        }else{
+            AnyBalance.setCookie('bill.utk.ru', 'service', 2);
+            html = AnyBalance.requestGet(baseurl);
+            getParam(html, result, 'balance_tv', /Баланс:([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance);
+        }
+    }
+
     AnyBalance.setResult(result);
 }
 

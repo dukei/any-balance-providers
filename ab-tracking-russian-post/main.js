@@ -51,12 +51,16 @@ function mainEms(){
 	if(AnyBalance.isAvailable('attribute'))
 	    result.attribute = op.opStatus;
 
+        var addcost = json.AddPaymentText && parseBalance(json.AddPaymentText);
+	if(AnyBalance.isAvailable('addcost'))
+	    result.addcost = addcost;
+
 	if(AnyBalance.isAvailable('fulltext')){
 	    //Все поддерживаемые атрибуты (кроме img) находятся здесь
 	    //http://commonsware.com/blog/Android/2010/05/26/html-tags-supported-by-textview.html
 	    result.fulltext = '<small>' + op.opDateTime + '</small>: <b>' + oper + '</b><br/>\n' +
 	        op.opAddressDescription + '<br/>\n' + 
-	        op.opStatus;
+	        op.opStatus + (addcost ? ', Н/п ' + json.AddPaymentText : '');
 	}
 
         AnyBalance.setResult(result);
@@ -93,6 +97,9 @@ function mainRussianPost(){
 	if(matches = info.match(/<table class="pagetext">.*?<tbody>(.*?)<\/tbody>/)){
 		AnyBalance.trace('found table');
 		var alltable = matches[1];
+                var firstRow = getParam(alltable, null, null, /<tr[^>]*>([\s\S]*?)<\/tr>/i);
+                var addcost = getParam(firstRow, result, 'addcost', /(?:[\s\S]*?<td[^>]*>){8}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+
 		//Потом найдем там последнюю строку
 		var lasttr = alltable.lastIndexOf('<tr');
 		AnyBalance.trace('found last row at ' + lasttr);
@@ -110,7 +117,7 @@ function mainRussianPost(){
 			if(AnyBalance.isAvailable('fulltext','date'))
 				date = matches[2];
 			if(AnyBalance.isAvailable('index'))
-				result.index = matches[3];
+				result.index = getParam(matches[3], null, null, /(.*)/, replaceTagsAndSpaces);
 			if(AnyBalance.isAvailable('fulltext','location'))
 				location = matches[4];
 			if(AnyBalance.isAvailable('fulltext','attribute'))
@@ -134,7 +141,7 @@ function mainRussianPost(){
 				//http://commonsware.com/blog/Android/2010/05/26/html-tags-supported-by-textview.html
 				result.fulltext = '<small>' + date + '</small>: <b>' + operation + '</b><br/>\n' +
 					location + '<br/>\n' + 
-					attribute;
+					attribute + (addcost ? ', Н/п ' + addcost + 'р' : '');
 			}
 			
 			AnyBalance.setResult(result);
@@ -144,3 +151,35 @@ function mainRussianPost(){
 	if(!AnyBalance.isSetResultCalled())
 		throw new AnyBalance.Error("Отправление не найдено.")
 }
+
+function getParam (html, result, param, regexp, replaces, parser) {
+	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
+		return;
+
+	var value;
+        var matches = regexp.exec (html);
+	if (matches) {
+		value = matches[1];
+		if (replaces) {
+			for (var i = 0; i < replaces.length; i += 2) {
+				value = value.replace (replaces[i], replaces[i+1]);
+			}
+		}
+		if (parser)
+			value = parser (value);
+        }
+
+    if(param)
+      result[param] = value;
+    return value
+}
+
+var replaceTagsAndSpaces = [/&nbsp;/g, ' ', /<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, ''];
+var replaceFloat = [/\s+/g, '', /,/g, '.'];
+
+function parseBalance(text){
+    var val = getParam(text.replace(/\s+/g, ''), null, null, /(-?\d[\d\.,]*)/, replaceFloat, parseFloat);
+    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
+    return val;
+}
+

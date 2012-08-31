@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-internet-ionit</id>
+  <name>Ионит Телеком (Северодвинск)</name>
+  <description>
+    Получает баланс и информацию о тарифном плане для северодвинского интернет-провайдера Ионит Телеком (http://www.ionitcom.ru).
+
+    Информация берется из личного кабинета https://lk.ionitcom.ru. Для доступа к балансу введите в настройки провайдера логин и пароль, указанные в вашей регистрационной карточке, которую вы получили при заключении договора с ООО "Ионит-Телеком".
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="status" name="Состояние" type="text"/>
+    <counter id="licschet" name="Лицевой счет" type="text"/>
+    <counter id="agreement" name="Номер договора" type="text"/>
+  </counters>
+  <keywords>
+    интернет
+  </keywords>
+  <type>
+    internet
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

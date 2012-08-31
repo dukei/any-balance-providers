@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id major_version="1.0" version="7">ab-tracking-computeruniverse</id>
+  <name>computeruniverse.net tracking</name>
+  <description>
+	Получает стастус заказа в магазине computeruniverse.net
+  </description>
+  <author>Sergey Homenkow &lt;hsw@yandex.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="brief_status" name="Краткий статус" type="text"/>
+    <counter id="status" name="Статус" type="html"/>
+    <counter id="date" name="Дата" type="text"/>
+    <counter id="upu_code" name="Код почтового трекинга" type="text"/>
+  </counters>
+</provider>

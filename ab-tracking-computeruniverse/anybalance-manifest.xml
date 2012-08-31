@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="7">ab-tracking-computeruniverse</id>
+  <id major_version="1.0" version="1">ab-tracking-computeruniverse</id>
   <name>computeruniverse.net tracking</name>
   <description>
-	Получает стастус заказа в магазине computeruniverse.net
+     Получает статус заказа в магазине computeruniverse.net. Заказ может неделю обрабатываться (4 статуса) до присвоения почтового трекинга. Затем статус на сайте обновляется из данных dhl.de.
   </description>
   <author>Sergey Homenkow &lt;hsw@yandex.ru&gt;</author>
   <files>

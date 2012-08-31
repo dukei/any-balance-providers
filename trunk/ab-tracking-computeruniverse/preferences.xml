@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference
+        key="parcel_number"
+        title="Parcel number" 
+        summary="Номер заказа|Укажите нормер заказа\n|{@s}\n"
+        inputType="text"
+        dialogTitle="Номер заказа" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите номер вашего заказа"
+        positiveButtonText="ОК">
+    </EditTextPreference>
+    <EditTextPreference
+        key="zip_code"
+        title="Postal code (zip code)"
+        summary="Почтовый индекс|Укажите почтовый индекс (zip)\n|{@s}\n"
+        inputType="text"
+        dialogTitle="Почтовый индекс"
+        dialogMessage="Введите почтовый индекс"
+        positiveButtonText="ОК"
+        negativeButtonText="Отмена">
+    </EditTextPreference>
+</PreferenceScreen>

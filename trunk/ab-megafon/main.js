@@ -168,7 +168,7 @@ function getFilial(number){
     });
 
 //    Мегафон сделал сервис для определения филиала, так что попытаемся обойтись им    
-    var region = getParam(html, null, null, /<URL>https?:\/\/(\w+)\./i);
+    var region = sumParam(html, null, null, /<URL>https?:\/\/(\w+)\./i);
     if(region && filial_info[region]){
 	return filial_info[region];
     }else{
@@ -416,8 +416,8 @@ function megafonServiceGuideCorporate(filial, sessionid){
     });
 
     //Получим объединение:
-    var asscid = getParam(html, null, null, /<select[^>]+id="P_START_ASSC_ID"[^>]*>[\s\S]*?<option[^>]+value="([^"]*)"/i);
-    getParam(html, result, '__tariff', /<select[^>]+id="P_START_ASSC_ID"[^>]*>[\s\S]*?<option[^>]+title="([^"]*)"/i, null, html_entity_decode);
+    var asscid = sumParam(html, null, null, /<select[^>]+id="P_START_ASSC_ID"[^>]*>[\s\S]*?<option[^>]+value="([^"]*)"/i);
+    sumParam(html, result, '__tariff', /<select[^>]+id="P_START_ASSC_ID"[^>]*>[\s\S]*?<option[^>]+title="([^"]*)"/i, null, html_entity_decode);
 
     html = AnyBalance.requestPost(baseurl + 'CPWWW/SC_CP_ACCOUNT_ASSC_AJAX', {
         P_ACCOUNT:'',
@@ -431,14 +431,14 @@ function megafonServiceGuideCorporate(filial, sessionid){
     });
 
     //Теперь получим баланс
-    getParam(html, result, 'balance', /<div class="balance_[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+    sumParam(html, result, 'balance', /<div class="balance_[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 
     AnyBalance.setResult(result);
 }
 
 function checkTextForError(text){
     //Произошла ошибка при работе с системой.
-    var error = getParam(text, null, null, /&#1055;&#1088;&#1086;&#1080;&#1079;&#1086;&#1096;&#1083;&#1072; &#1086;&#1096;&#1080;&#1073;&#1082;&#1072; &#1087;&#1088;&#1080; &#1088;&#1072;&#1073;&#1086;&#1090;&#1077; &#1089; &#1089;&#1080;&#1089;&#1090;&#1077;&#1084;&#1086;&#1081;[\s\S]*?<[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+    var error = sumParam(text, null, null, /&#1055;&#1088;&#1086;&#1080;&#1079;&#1086;&#1096;&#1083;&#1072; &#1086;&#1096;&#1080;&#1073;&#1082;&#1072; &#1087;&#1088;&#1080; &#1088;&#1072;&#1073;&#1086;&#1090;&#1077; &#1089; &#1089;&#1080;&#1089;&#1090;&#1077;&#1084;&#1086;&#1081;[\s\S]*?<[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
     if(error)
         throw new AnyBalance.Error(error);
 }
@@ -470,9 +470,9 @@ function megafonServiceGuidePhysical(filial, sessionid){
     checkTextForError(text);
 	
     //Теперь получим баланс
-    getParam(text, result, 'balance', /&#1041;&#1072;&#1083;&#1072;&#1085;&#1089;[\s\S]*?<div class="balance_[^>]*>([\S\s]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+    sumParam(text, result, 'balance', /&#1041;&#1072;&#1083;&#1072;&#1085;&#1089;[\s\S]*?<div class="balance_[^>]*>([\S\s]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
     //Теперь получим персональный баланс
-    getParam(text, result, 'prsnl_balance', /&#1055;&#1077;&#1088;&#1089;&#1086;&#1085;&#1072;&#1083;&#1100;&#1085;&#1099;&#1081; &#1073;&#1072;&#1083;&#1072;&#1085;&#1089;[\s\S]*?<div class="balance_[^>]*>([\S\s]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+    sumParam(text, result, 'prsnl_balance', /&#1055;&#1077;&#1088;&#1089;&#1086;&#1085;&#1072;&#1083;&#1100;&#1085;&#1099;&#1081; &#1073;&#1072;&#1083;&#1072;&#1085;&#1089;[\s\S]*?<div class="balance_[^>]*>([\S\s]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 
     //Начислено абонентской платы по тарифному плану:
     getPropValFloat(text, '&#1053;&#1072;&#1095;&#1080;&#1089;&#1083;&#1077;&#1085;&#1086; &#1072;&#1073;&#1086;&#1085;&#1077;&#1085;&#1090;&#1089;&#1082;&#1086;&#1081; &#1087;&#1083;&#1072;&#1090;&#1099; &#1087;&#1086; &#1090;&#1072;&#1088;&#1080;&#1092;&#1085;&#1086;&#1084;&#1091; &#1087;&#1083;&#1072;&#1085;&#1091;:',
@@ -522,20 +522,16 @@ function megafonServiceGuidePhysical(filial, sessionid){
           result.mins_left = mins_left;
     }
       
-    var internet_total = 0,
-        internet_cur = 0,
-        internet_left = 0;
-        
     // Карманный интернет
     if(AnyBalance.isAvailable('internet_total','internet_cur', 'internet_left')){
         var vals = getOptionFloat(text, "&#1050;&#1072;&#1088;&#1084;&#1072;&#1085;&#1085;&#1099;&#1081; &#1048;&#1085;&#1090;&#1077;&#1088;&#1085;&#1077;&#1090;");
         if(vals){
             if(AnyBalance.isAvailable('internet_total'))
-                internet_total += vals[0];
+                result.internet_total = (result.internet_total || 0) + vals[0];
             if(AnyBalance.isAvailable('internet_cur'))
-                internet_cur += vals[0]-vals[1];
+                result.internet_cur =(result.internet_cur || 0) +  vals[0]-vals[1];
             if(AnyBalance.isAvailable('internet_left'))
-                internet_left += vals[1];
+                result.internet_left += (result.internet_left || 0) + vals[1];
         }
     }
     
@@ -602,8 +598,8 @@ function megafonServiceGuidePhysical(filial, sessionid){
                         CUR_SUBS_MSISDN: prefs.login,
                         SUBSCRIBER_MSISDN: prefs.login
                     });
-        getParam(text, result, 'last_pay_sum', /idHiddenSum[^>]*>\s*<table(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-        getParam(text, result, 'last_pay_date', /idHiddenSum[^>]*>\s*<table(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+        sumParam(text, result, 'last_pay_sum', /idHiddenSum[^>]*>\s*<table(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+        sumParam(text, result, 'last_pay_date', /idHiddenSum[^>]*>\s*<table(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
     }
 	
     if(filial == MEGA_FILIAL_MOSCOW){
@@ -626,20 +622,20 @@ function megafonServiceGuidePhysical(filial, sessionid){
         // Продли скорость (Москва)
         if(AnyBalance.isAvailable(['internet_total','internet_cur', 'internet_left'])){
             text = AnyBalance.requestGet(baseurl + 'SCCEXTSYS/EXT_SYSTEM_PROXY_FORM?CHANNEL=WWW&SESSION_ID=' + sessionid + '&URI=3.');
-            var href = getParam(text, null, null, /"gupscc_href"[^>]*href="([^"]*)"/i, [/&amp;/g, '&']);
+            var href = sumParam(text, null, null, /"gupscc_href"[^>]*href="([^"]*)"/i, [/&amp;/g, '&']);
             if(href){
                 text = AnyBalance.requestGet(baseurl + 'SCCEXTSYS/' + href);
-                var obj = getParam(text, null, null, /setXMLEntities\s*\(\s*(\{[\s\S]*?\})\s*\)/);
+                var obj = sumParam(text, null, null, /setXMLEntities\s*\(\s*(\{[\s\S]*?\})\s*\)/);
                 if(obj){
-                     var i_t = getParam(obj, null, null, /ALL_VOLUME[\s\S]*?value:\s*'([^']*)'/, replaceTagsAndSpaces, parseBalance);
-                     var i_c = getParam(obj, null, null, /CUR_VOLUME[\s\S]*?value:\s*'([^']*)'/, replaceTagsAndSpaces, parseBalance);
-                     var i_l = getParam(obj, null, null, /LAST_VOLUME[\s\S]*?value:\s*'([^']*)'/, replaceTagsAndSpaces, parseBalance);
+                     var i_t = sumParam(obj, null, null, /ALL_VOLUME[\s\S]*?value:\s*'([^']*)'/, replaceTagsAndSpaces, parseBalance);
+                     var i_c = sumParam(obj, null, null, /CUR_VOLUME[\s\S]*?value:\s*'([^']*)'/, replaceTagsAndSpaces, parseBalance);
+                     var i_l = sumParam(obj, null, null, /LAST_VOLUME[\s\S]*?value:\s*'([^']*)'/, replaceTagsAndSpaces, parseBalance);
                      if(typeof(i_t) != 'undefined' && AnyBalance.isAvailable('internet_total'))
-                         internet_total += i_t;
+                         result.internet_total = (result.internet_total || 0) + i_t;
                      if(typeof(i_c) != 'undefined' && AnyBalance.isAvailable('internet_cur'))
-                         internet_cur += i_c;
+                         result.internet_cur = (result.internet_cur || 0) + i_c;
                      if(typeof(i_l) != 'undefined' && AnyBalance.isAvailable('internet_left'))
-                         internet_left += i_l;
+                         result.internet_left = (result.internet_left || 0) + i_l;
                 }else{
                     AnyBalance.trace("Не удаётся найти информацию по услугам GPRS...");
                 }
@@ -652,18 +648,11 @@ function megafonServiceGuidePhysical(filial, sessionid){
     if(filial == MEGA_FILIAL_VOLGA){
         if(AnyBalance.isAvailable('internet_left')) {
             text = AnyBalance.requestGet(baseurl + 'SCCEXTSYS/EXT_SYSTEM_PROXY_FORM?CHANNEL=WWW&SESSION_ID=' + sessionid + '&URI=5.');
-            if(matches = text.match(/<volume>([^<]*)<\/volume>/i)){
-                internet_left += parseFloat(matches[1]);
-            }
+            sumParam(text, result, 'internet_left', /<volume>([^<]*)<\/volume>/i, replaceTagsAndSpaces, parseBalance);
+            sumParam(text, result, 'internet_left', /осталось ([^<]*(?:[kmgкмг][бb]|байт|bytes))/i, replaceTagsAndSpaces, parseTraffic);
         }
     }
     
-    if(internet_total)
-        result.internet_total = internet_total;
-    if(internet_cur)
-        result.internet_cur = internet_cur;
-    if(internet_left)
-        result.internet_left = internet_left;
     if(sms_total)
         result.sms_total = sms_total;
     if(sms_left)
@@ -769,33 +758,47 @@ function html_entity_decode(str)
     return tarea.value;
 }
 
-function getParam (html, result, param, regexp, replaces, parser) {
-	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
-		return;
+function sumParam (html, result, param, regexp, replaces, parser, do_replace) {
+	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param))){
+            if(do_replace)
+  	        return html;
+            else
+                return;
+	}
 
-	var value = regexp.exec (html);
-	if (value) {
-		value = value[1];
-		if (replaces) {
-			for (var i = 0; i < replaces.length; i += 2) {
-				value = value.replace (replaces[i], replaces[i+1]);
-			}
+        var total_value;
+	var html_copy = html.replace(regexp, function(str, value){
+		for (var i = 0; replaces && i < replaces.length; i += 2) {
+			value = value.replace (replaces[i], replaces[i+1]);
 		}
 		if (parser)
 			value = parser (value);
+                if(typeof(total_value) == 'undefined')
+                	total_value = value;
+                else
+                	total_value += value;
+                return ''; //Вырезаем то, что заматчили
+        });
 
-    if(param)
-      result[param] = value;
-    else
-      return value
-	}
+    if(param){
+      if(typeof(total_value) != 'undefined'){
+          if(typeof(result[param]) == 'undefined')
+      	      result[param] = total_value;
+          else 
+      	      result[param] += total_value;
+      }
+      if(do_replace)
+          return html_copy;
+    }else{
+      return total_value;
+    }
 }
 
 var replaceTagsAndSpaces = [/<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, ''];
 var replaceFloat = [/\s+/g, '', /,/g, '.'];
 
 function parseBalance(text){
-    var val = getParam(text.replace(/\s+/g, ''), null, null, /(-?\d[\d\s.,]*)/, replaceFloat, parseFloat);
+    var val = sumParam(text.replace(/\s+/g, ''), null, null, /(-?\d[\d\s.,]*)/, replaceFloat, parseFloat);
     AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
     return val;
 }
@@ -809,3 +812,32 @@ function parseDate(str){
     AnyBalance.trace('Parsing date ' + new Date(time) + 'from value: ' +  str);
     return time;
 }
+
+function parseTraffic(text){
+    var _text = text.replace(/\s+/, '');
+    var val = sumParam(_text, null, null, /(-?\d[\d\.,]*)/, replaceFloat, parseFloat);
+    var units = sumParam(_text, null, null, /([kmgкмг][бb]|байт|bytes)/i);
+    switch(units.substr(0,1).toLowerCase()){
+      case 'b':
+      case 'б':
+        val = Math.round(val/1024/1024*100)/100;
+        break;
+      case 'k':
+      case 'к':
+        val = Math.round(val/1024*100)/100;
+        break;
+      case 'g':
+      case 'г':
+        val = Math.round(val*1024);
+        break;
+    }
+    var textval = ''+val;
+    if(textval.length > 6)
+      val = Math.round(val);
+    else if(textval.length > 5)
+      val = Math.round(val*10)/10;
+
+    AnyBalance.trace('Parsing traffic (' + val + ') from: ' + text);
+    return val;
+}
+

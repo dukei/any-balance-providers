@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-other-daysleft</id>
+  <name>Число дней до</name>
+  <description>
+    Показывает количество дней до разных событий: Новый Год, День Рождения, начало лета.
+  </description>
+  <author>BArtWell &lt;web@bartwell.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="birthday" name="День Рождения" type="text" />
+    <counter id="newyear" name="Новый Год" type="text" />
+    <counter id="summer" name="Лето" type="text" />
+  </counters>
+  <keywords>
+    день рождения новый год лето количество дней
+  </keywords>
+  <type>
+    other
+  </type>
+</provider>

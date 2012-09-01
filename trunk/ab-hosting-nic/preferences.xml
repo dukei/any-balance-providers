@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="№ договора" 
+        positiveButtonText="ОК" 
+        summary="||{@s}" 
+        dialogTitle="№ договора" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите номер клиентского договора (NIC-D)"
+        inputType="number"
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="||***********"
+        dialogMessage="Введите пароль, административный или технический, для входа в личный кабинет https://nic.ru."
+        inputType="textPassword">
+    </EditTextPreference>
+    <ListPreference 
+        key="pass_type" 
+        title="Тип пароля"
+        summary="||{@s}\n"
+        entries="Административный|Технический"
+        entryValues="adm|tech"
+	defaultValue="adm">
+    </ListPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="domains" 
+        dialogTitle="Домены"
+        negativeButtonText="Отмена"
+        title="Домены"
+        summary="Домены (до 4) через запятую||{@s}\n"
+        dialogMessage="Вы можете ввести до 4 доменов через запятую, для которых желаете получить информацию. Если вы не хотите получать информацию о доменах, оставьте поле пустым. Чтобы получить информацию о первом домене, введите *."
+        defaultValue="*"
+        inputType="textEmailAddress">
+    </EditTextPreference>
+</PreferenceScreen>

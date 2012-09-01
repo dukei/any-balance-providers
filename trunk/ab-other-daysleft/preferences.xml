@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+
+    <EditTextPreference 
+        title="День рождения" 
+        positiveButtonText="ОК" 
+        summary="День рождения, например, 29||{@s}\n" 
+        dialogTitle="День рождения" 
+        negativeButtonText="Отмена" 
+        dialogMessage="День рождения, например, 29"
+        key="day">
+    </EditTextPreference>
+ 
+    <ListPreference 
+        key="month" 
+        title="Месяц рождения"
+        summary="Месяц рождения||{@s}\n"
+        entries="Январь|Февраль|Март|Апрель|Май|Июнь|Июль|Август|Сентябрь|Октябрь|Ноябрь|Декабрь"
+        entryValues="1|2|3|4|5|6|7|8|9|10|11|12"
+	defaultValue="1">
+    </ListPreference>
+</PreferenceScreen>

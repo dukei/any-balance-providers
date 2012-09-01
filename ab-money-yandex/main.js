@@ -32,11 +32,12 @@ function getParam (html, result, param, regexp, replaces, parser) {
 var replaceTagsAndSpaces = [/<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
 var replaceFloat = [/\s+/g, '', /,/g, '.'];
 
-function parseBalance(text){
-    var rub = getParam(text, null, null, /(-?\d[\d\s.,]*руб)/, replaceFloat, parseFloat) || 0;
-    var kop = getParam(text, null, null, /(-?\d[\d\s.,]*коп)/, replaceFloat, parseFloat) || 0;
+function parseBalance(_text){
+    var text = _text.replace(/\s+/g, '');
+    var rub = getParam(text, null, null, /(-?\d[\d\.,]*)руб/i, replaceFloat, parseFloat) || 0;
+    var kop = getParam(text, null, null, /(-?\d[\d\.,]*)коп/i, replaceFloat, parseFloat) || 0;
     var val = rub+kop/100;
-    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
+    AnyBalance.trace('Parsing balance (' + val + ') from: ' + _text);
     return val;
 }
 

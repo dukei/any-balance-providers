@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-bonus-lukoil</id>
+  <name>Лукойл клуб</name>
+  <description>
+    Получает текущий баланс бонусных баллов, статус карты, регион участия программы.
+	Данные берутся из личного кабинете программы (http://club-lukoil.ru/cabinet/)
+  </description>
+  <author>Dmitry Reshetnikov (korleone) &lt;rdb@inbox.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс"/>
+    <counter id="status" name="Статус карты" type="text"/>
+	<counter id="region" name="Регион программы" type="text"/>
+	<counter id="statusprog" name="Статус в программе" type="text"/>
+	<counter id="username" name="ФИО" type="text"/>
+	<counter id="phonenumber" name="Номер телефона" type="text"/>
+  </counters>
+  <keywords>
+	лукойл, программа поощрения клиентов
+  </keywords>
+  <type>
+    bonus
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

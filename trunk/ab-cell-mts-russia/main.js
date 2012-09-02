@@ -382,8 +382,20 @@ function mainOrdinary(){
     var result = {success: true};
 
     if(prefs.phone && prefs.phone != prefs.login){
-        throw new AnyBalance.Error("Получение информации по другому номеру через обычный интернет-помощник пока не поддерживается (не на чем проверить). Напишите автору провайдера для исправления.");
+        html = AnyBalance.requestGet(baseurl + "my-phone-numbers.aspx", headers);
+        html = AnyBalance.requestPost(baseurl + "my-phone-numbers.aspx", {
+            ctl00_sm_HiddenField:'',
+            __EVENTTARGET:'ctl00$MainContent$transitionLink',
+            __EVENTARGUMENT:'7' + prefs.phone,
+            __VIEWSTATE: getViewState(html)
+        }, headers);
+        if(!html)
+	    throw new AnyBalance.Error(prefs.phone + ": номер, возможно, неправильный или у вас нет к нему доступа"); 
+        var error = sumParam(html, null, null, /(<h1>Мои номера<\/h1>)/i);
+        if(error)
+	    throw new AnyBalance.Error(prefs.phone + ": номер, возможно, неправильный или у вас нет к нему доступа"); 
     }
+
     
     // Тарифный план
     sumParam(html, result, '__tariff', /Тарифный план.*?>([^<]*)/i, replaceTagsAndSpaces);

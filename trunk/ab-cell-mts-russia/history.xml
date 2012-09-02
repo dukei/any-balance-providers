@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change major_version="3.1" version="26" date="2012-09-01">
+      - Поддержка нескольких номеров на одном л/с в случае обычного интернет помощника
+    </change>
     <change major_version="3.0" version="25" date="2012-08-13">
       - Слегка улучшено распознавание остатка трафика
     </change>

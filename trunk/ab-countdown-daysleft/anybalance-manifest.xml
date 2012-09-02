@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-other-daysleft</id>
+  <id version="1">ab-countdown-daysleft</id>
   <name>Число дней до</name>
   <description>
     Показывает количество дней до разных событий: Новый Год, День Рождения, начало лета.
@@ -20,6 +20,6 @@
     день рождения новый год лето количество дней
   </keywords>
   <type>
-    other
+    countdown
   </type>
 </provider>

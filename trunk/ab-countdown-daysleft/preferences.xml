@@ -8,6 +8,7 @@
         dialogTitle="День рождения" 
         negativeButtonText="Отмена" 
         dialogMessage="День рождения, например, 29"
+        inputType="number"
         key="day">
     </EditTextPreference>
  

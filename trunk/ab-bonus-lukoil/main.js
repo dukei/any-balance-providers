@@ -56,7 +56,7 @@ function main(){
 //Баланс
         regexp=/Баланс Ваших Баллов.*\n*>(.*) б/m;
         if (str=regexp.exec(html)){
-              result.balance=str[1];
+              result.balance=parseFloat(str[1]);
         }
 		AnyBalance.trace('Баланс = ' + str[1]);
 

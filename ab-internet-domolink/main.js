@@ -217,7 +217,7 @@ function domolink_new(region,login,password) {
     var reg_form_action = getParam(html, null, null, /<form[^>]*name="selectRegionForm"[^>]*action="([^"]*)/i, null, html_entity_decode);
     if(!reg_form_action){
         //AnyBalance.trace(html);
-        throw new AnyBalance.Error("Не удаётся найти форму для выбора региона");
+        throw new AnyBalance.Error("Не удаётся найти форму для выбора региона", true);  //Возможно тупой стектрейс, надо ещё попробовать.
     }
     var param_region = getParam(html, null, null, /<input[^>]*id="selectedRegionHidden"[^>]*name="([^"]*)"/i, null, html_entity_decode);
     AnyBalance.trace("region params: " + param_region);

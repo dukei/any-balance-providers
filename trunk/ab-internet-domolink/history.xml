@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-    <change major_version="1" version="7" date="2012-07-29">
-       - Поддержка Смоленска. Только баланс, владелец, номер лицевого счета. Поддерживает несколько лицевых счетов.
+    <change major_version="1" version="7" date="2012-09-03">
+       - Поддержка Кирова
     </change>
     <change major_version="1" version="6">
        - Исправлена ошибочного сообщения "Не верно указан логин или пароль"

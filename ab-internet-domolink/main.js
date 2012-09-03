@@ -1,4 +1,4 @@
-﻿ /**
+﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 
 Домашний Интернет Домолинк
@@ -14,7 +14,8 @@ var regions = {
 	tvr: domolinkcenter, // Личный кабинет Тверского филиала
 	vrn: domolinkcenter, // Личный кабинет Воронежского филиала
 	tula: domolinktula, // Личный кабинет абонентов Домолинк Тула
-	smolensk: domolinksmolensk // Личный кабинет абонентов Домолинк Тула
+	smolensk: domolinksmolensk, // Личный кабинет абонентов Домолинк Смоленск
+	kirov: domolinkkirov // Личный кабинет абонентов Домолинк Киров
 };
 
 function html_entity_decode(str)
@@ -48,7 +49,7 @@ function getParam (html, result, param, regexp, replaces, parser) {
 	}
 }
 
-var replaceTagsAndSpaces = [/<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
+var replaceTagsAndSpaces = [/&nbsp;/g, ' ', /<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
 var replaceFloat = [/\s+/g, '', /,/g, '.', /(\d)\-(\d)/g, '$1.$2'];
 
 function parseBalance(text){
@@ -73,6 +74,86 @@ function getData(param) {
 	for(var i in arr) {
 		if (!arr.hasOwnProperty(i)) continue;
 	}
+}
+
+function domolinkkirov(region, login, password){
+    var prefs = AnyBalance.getPreferences();
+    var baseurl = 'https://j-cabinet.kirov.ru:4459/pls/base/';
+    var html = AnyBalance.requestPost(baseurl + 'www.GetHomePage', {
+        p_logname:login,
+        p_pwd:password
+    });
+
+    var href = getParam(html, null, null, /<frame[^>]*src="([^"]*)"[^>]*name="MainFrame"/i);
+    if(!href){
+        var error = getParam(html, null, null, /Сообщение об ошибке\s*<\/td>[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+        if(error)
+            throw new AnyBalance.Error(error);
+        throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
+    }
+
+    html = AnyBalance.requestGet(baseurl + href);
+    href = getParam(html, null, null, /<frame[^>]*src="([^"]*)"[^>]*name="MenuFrame"/i);
+    if(!href)
+        throw new AnyBalance.Error('Не удалось найти ссылку на меню. Сайт изменен?');
+
+    var htmlMenu = AnyBalance.requestGet(baseurl + href);
+    href = getParam(htmlMenu, null, null, /<a[^>]*href="([^"]*)[^>]*>(?:\s*<[^>]+>)*\s*Информация по договору/i);
+    
+    if(!href)
+        throw new AnyBalance.Error('Не удалось найти ссылку на Информацию по договору. Сайт изменен?');
+
+    var result = {success: true};
+    getParam(htmlMenu, result, '__tariff', /<div[^>]*class="txt"[^>]*>[\s\S]*?<br[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+    
+    html = AnyBalance.requestGet(baseurl + href);
+    href = getParam(html, null, null, /<frame[^>]*src="([^"]*)"[^>]*name="pageFrame"/i);
+    if(AnyBalance.isAvailable('lastpaysum', 'lastpaydata', 'lastpaydesc')){
+        var _href = getParam(html, null, null, /<frame[^>]*src="([^"]*)"[^>]*name="MenuFrame"/i);
+        htmlMenu = AnyBalance.requestGet(baseurl + _href);
+    }
+
+    html = AnyBalance.requestGet(baseurl + href);
+    //Наконец-то добрались до баланса. Ростелеком нужно убить, они реально криворукие...
+
+    getParam(html, result, 'balance', /Текущее состояние лицевого счета[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'username', /Организация[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+    
+    if(AnyBalance.isAvailable('lastpaysum', 'lastpaydata', 'lastpaydesc')){
+        href = getParam(htmlMenu, null, null, /<a[^>]*href="([^"]*)[^>]*>(?:\s*<[^>]+>)*\s*Платежи/i);
+        if(!href)
+           throw new AnyBalance.Error('Не удалось найти ссылку на Платежи. Сайт изменен?');
+        html = AnyBalance.requestGet(baseurl + href);
+
+        href = getParam(html, null, null, /<frame[^>]*src="([^"]*)"[^>]*name="pageFrame"/i);
+        html = AnyBalance.requestGet(baseurl + href);
+
+        var page_name = getParam(html, null, null, /<input[^>]*name\s*=\s*["']?page_name[^>]*value\s*=\s*["']?([^'"]*)/i);
+        var logname = getParam(html, null, null, /<input[^>]*name\s*=\s*["']?logname[^>]*value\s*=\s*["']?([^'"]*)/i);
+        var chksum = getParam(html, null, null, /<input[^>]*name\s*=\s*["']?chksum[^>]*value\s*=\s*["']?([^'"]*)/i);
+        var dtNow = new Date();
+        var dtOld = new Date(dtNow.getTime() - 86400*90*1000);
+        html = AnyBalance.requestGet(baseurl + 'www.PageViewer?page_name='+page_name+'&logname='+logname+'&chksum='+chksum+'&n1=p_start_day&n2=p_start_month&n3=p_start_year&n4=p_finish_day&n5=p_finish_month&n6=p_finish_year&n7=p_row_count&n8=p_page_num&v8=1&n9=p_page_go&v9=' 
+               + page_name + '&v1='+dtOld.getDate()+'&v2=' + (dtOld.getMonth()+1) + '&v3=' + dtOld.getFullYear() + '&v4='+dtNow.getDate()+'&v2=' + (dtNow.getMonth()+1) + '&v3=' + dtNow.getFullYear() + '&v7=20');
+
+        getParam(html, result, 'lastpaysum', /Платежи по договору[\s\S]*?<tbody[^>]*>(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+        getParam(html, result, 'lastpaydata', /Платежи по договору[\s\S]*?<tbody[^>]*>(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+        getParam(html, result, 'lastpaydesc', /Платежи по договору[\s\S]*?<tbody[^>]*>(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+    }
+
+    if(AnyBalance.isAvailable('licschet')){
+        href = getParam(htmlMenu, null, null, /<a[^>]*href="([^"]*)[^>]*>(?:\s*<[^>]+>)*\s*Справочно-информационное обслуживание/i);
+        if(!href)
+           throw new AnyBalance.Error('Не удалось найти ссылку на Справочно-информационное обслуживание. Сайт изменен?');
+        html = AnyBalance.requestGet(baseurl + href);
+
+        href = getParam(html, null, null, /<frame[^>]*src="([^"]*)"[^>]*name="pageFrame"/i);
+        html = AnyBalance.requestGet(baseurl + href);
+        
+        getParam(html, result, 'licschet', /лицевой счёт\s+№\s*(\d+)/i);
+    }
+
+    AnyBalance.setResult(result);
 }
 
 function domolinksmolensk(region,login,password) {

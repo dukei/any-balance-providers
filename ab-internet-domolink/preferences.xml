@@ -23,10 +23,11 @@
         key="region" 
         title="Регион"
         summary="Регион вашего счета|Нужен для определения Личного кабинета\n|{@s}\n"
-        entries="Москва|Липецк|Калуга|Белгород|Курск|Тверь|Воронеж|Тула|Смоленск"
-        entryValues="msk|lpc|klg|blg|krs|tvr|vrn|tula|smolensk"
+        entries="Москва|Липецк|Калуга|Белгород|Курск|Тверь|Воронеж|Тула|Киров"
+        entryValues="msk|lpc|klg|blg|krs|tvr|vrn|tula|kirov"
 	    defaultValue="msk">
     </ListPreference>
+<!--
     <EditTextPreference 
         positiveButtonText="ОК"
         key="accnum" 
@@ -37,4 +38,5 @@
         dialogMessage="Введите последние 4 цифры карты или кредитного счета, по которому вы хотите получить информацию. Если это поле оставить пустым, то будет показана информация по первой карте/счету."
         inputType="number">
     </EditTextPreference>
+-->
 </PreferenceScreen>

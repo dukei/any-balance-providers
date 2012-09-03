@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-internet-chayka-net</id>
+  <name>Чайка.NET (Тверь)</name>
+  <description>
+    Получает баланс и информацию о тарифном плане для тверского интернет провайдера Чайка.NET. Информация берется из личного кабинета https://stats.chayka-net.ru/cgi-bin/utm5/aaa5.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="credit" name="Кредит" units="р"/>
+    <counter id="licschet" name="Лицевой счет" type="text"/>
+    <counter id="status" name="Статус" type="text"/>
+    <counter id="userName" name="ФИО" type="text"/>
+  </counters>
+  <keywords>
+    интернет
+  </keywords>
+  <type>
+    internet
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

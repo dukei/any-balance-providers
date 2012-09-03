@@ -23,11 +23,10 @@
         key="region" 
         title="Регион"
         summary="Регион вашего счета|Нужен для определения Личного кабинета\n|{@s}\n"
-        entries="Москва|Липецк|Калуга|Белгород|Курск|Тверь|Воронеж|Тула|Киров"
-        entryValues="msk|lpc|klg|blg|krs|tvr|vrn|tula|kirov"
-	    defaultValue="msk">
+        entries="Москва|Липецк|Калуга|Белгород|Курск|Тверь|Воронеж|Тула|Киров|(Нов)Белгородский|(Нов)Брянский|(Нов)Владимирский|(Нов)Воронежский|(Нов)Ивановский|(Нов)Калужский|(Нов)Костромской|(Нов)Курский|(Нов)Липецкий|(Нов)Московский|(Нов)Орловский|(Нов)Рязанский|(Нов)Смоленский|(Нов)Тамбовский|(Нов)Тверской|(Нов)Тульский|(Нов)Ярославский"
+        entryValues="msk|lpc|klg|blg|krs|tvr|vrn|tula|kirov|n_belg|n_bryansk|n_vladimir|n_voronezh|n_ivanov|n_kaluzh|n_kostroma|n_kursk|n_lipetsk|n_moscow|n_orlov|n_ryaz|n_smolensk|n_tambov|n_tver|n_tula|n_yar"
+	defaultValue="msk">
     </ListPreference>
-<!--
     <EditTextPreference 
         positiveButtonText="ОК"
         key="accnum" 
@@ -35,8 +34,7 @@
         negativeButtonText="Отмена"
         title="Номер карты/счета"
         summary="Последние 4 цифры карты или счета|Автоматически\n|{@s}\n"
-        dialogMessage="Введите последние 4 цифры карты или кредитного счета, по которому вы хотите получить информацию. Если это поле оставить пустым, то будет показана информация по первой карте/счету."
+        dialogMessage="Введите последние 4 цифры карты или кредитного счета, по которому вы хотите получить информацию. Если это поле оставить пустым, то будет показана информация по первой карте/счету. Эта настройка работает только для нового личного кабинета: http://portal.center.rt.ru!"
         inputType="number">
     </EditTextPreference>
--->
 </PreferenceScreen>

@@ -14,9 +14,45 @@ var regions = {
 	tvr: domolinkcenter, // Личный кабинет Тверского филиала
 	vrn: domolinkcenter, // Личный кабинет Воронежского филиала
 	tula: domolinktula, // Личный кабинет абонентов Домолинк Тула
-	smolensk: domolinksmolensk, // Личный кабинет абонентов Домолинк Смоленск
+	n_belg: domolink_new,
+        n_bryansk: domolink_new, //Новый личный кабинет РТ
+	n_vladimir: domolink_new,
+	n_voronezh: domolink_new,
+	n_ivanov: domolink_new,
+	n_kaluzh: domolink_new,
+	n_kostroma: domolink_new,
+	n_kursk: domolink_new,
+	n_lipetsk: domolink_new,
+	n_moscow: domolink_new,
+	n_orlov: domolink_new,
+	n_ryaz: domolink_new,
+	n_smolensk: domolink_new, //Новый личный кабинет РТ
+	n_tambov: domolink_new,
+	n_tver: domolink_new,
+	n_tula: domolink_new,
+	n_yar: domolink_new,
 	kirov: domolinkkirov // Личный кабинет абонентов Домолинк Киров
 };
+
+var regions_new = {
+	n_belg: 'Белгородский',
+	n_bryansk: 'Брянский',
+	n_vladimir: 'Владимирский',
+	n_voronezh: 'Воронежский',
+	n_ivanov: 'Ивановский',
+	n_kaluzh: 'Калужский',
+	n_kostroma: 'Костромской',
+	n_kursk: 'Курский',
+	n_lipetsk: 'Липецкий',
+	n_moscow: 'Московский',
+	n_orlov: 'Орловский',
+	n_ryaz: 'Рязанский',
+	n_smolensk: 'Смоленский',
+	n_tambov: 'Тамбовский',
+	n_tver: 'Тверской',
+	n_tula: 'Тульский',
+	n_yar: 'Ярославский'
+}
 
 function html_entity_decode(str)
 {
@@ -156,20 +192,9 @@ function domolinkkirov(region, login, password){
     AnyBalance.setResult(result);
 }
 
-function domolinksmolensk(region,login,password) {
+function domolink_new(region,login,password) {
     var prefs = AnyBalance.getPreferences();
                                             
-    var baseurl = 'https://portal.center.rt.ru/ClientWebPortal/appmanager/ClientPortal/PrivateClientDesktop';
-        AnyBalance.setDefaultCharset('utf8');    
- 
-    if(prefs.accnum && !/^d{4}$/.test(prefs.accnum))
-        throw new AnyBalance.Error("Введите в настройки последние 4 цифры лицевого счета или не вводите ничего, чтобы получить информацию по первому счету");
-
-    var accnum = (prefs.accnum || '\\d{4}') + '\\s*$';
-    var reAcc = new RegExp(accnum);
-    
-    //Логин глючит в отладчике, поэтому для отладки лучше отсюда до следующего указания закоментарить и войти вручную.
-
     var headers = {
       'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
       'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
@@ -177,115 +202,98 @@ function domolinksmolensk(region,login,password) {
       Connection: 'keep-alive'
     };
 
-    AnyBalance.requestGet("http://www.smolensk.center.rt.ru/");
+    var baseurl = 'https://portal.center.rt.ru/ClientWebPortal/appmanager/ClientPortal/PrivateClientDesktop';
+    AnyBalance.setDefaultCharset('utf8');    
+ 
+    if(prefs.accnum && !/^\d{4}$/.test(prefs.accnum))
+        throw new AnyBalance.Error("Введите в настройки последние 4 цифры лицевого счета или не вводите ничего, чтобы получить информацию по первому счету");
 
-    var html = AnyBalance.requestGet(baseurl + "?_nfpb=true&_pageLabel=PrivateClient_portal_login_page", headers);
-    var reg_form_action = getParam(html, null, null, /<form[^>]*name="selectRegionForm"[^>]*action="([^"]*)/i);
+    var accnum = (prefs.accnum || '\\d{4}') + '\\s*$';
+    var reAcc = new RegExp(accnum);
+    
+    //Ростелеком входит очень долго, поэтому для отладки лучше отсюда до следующего указания закоментарить и войти вручную.
+    var html = AnyBalance.requestGet(baseurl, headers);
+    
+    var reg_form_action = getParam(html, null, null, /<form[^>]*name="selectRegionForm"[^>]*action="([^"]*)/i, null, html_entity_decode);
     if(!reg_form_action){
-        AnyBalance.trace(html);
+        //AnyBalance.trace(html);
         throw new AnyBalance.Error("Не удаётся найти форму для выбора региона");
     }
-    var param_region = getParam(html, null, null, /<input[^>]*id="selectedRegionHidden"[^>]*name="([^"]*)"/i);
+    var param_region = getParam(html, null, null, /<input[^>]*id="selectedRegionHidden"[^>]*name="([^"]*)"/i, null, html_entity_decode);
     AnyBalance.trace("region params: " + param_region);
     
     headers.Referer = baseurl;
     
     AnyBalance.trace("Setting region...");
     var params = {};
-    params[param_region] = "Смоленский";
+    params[param_region] = regions_new[region];
     html = AnyBalance.requestPost(reg_form_action, params, headers);
 
-    var form_action = getParam(html, null, null, /<form[^>]*name="logScope\.log_form"[^>]*action="([^"]*)/i);
+    var form_action = getParam(html, null, null, /<form[^>]*name="logScope\.log_form"[^>]*action="([^"]*)/i, null, html_entity_decode);
     if(!form_action){
        AnyBalance.trace(html);
        throw new AnyBalance.Error("Не удаётся найти форму для входа в личный кабинет");
     }
 
-	AnyBalance.trace("Getting login form: " + baseurl);
-        var param_username = getParam(html, null, null, /<input[^>]*name="([^"]*)"[^>]*id="logScope.actionForm_username"/i);
-        var param_password = getParam(html, null, null, /<input[^>]*name="([^"]*)"[^>]*id="logScope.actionForm_password"/i);
-        var param_desktop = getParam(html, null, null, /<input[^>]*id="logScope.actionForm_desktop"[^>]*name="([^"]*)"/i);
-        AnyBalance.trace("login params: " + param_username + ", " + param_password + ", " + param_desktop);
-
-	// Заходим на главную страницу
-        var params = {};
-        params[param_username] = prefs.login;
-        params[param_password] = prefs.password;
-        params[param_desktop] = 'PrivateClient_portal_main_page';
-
+    AnyBalance.trace("Getting login form: " + baseurl);
+    var param_username = getParam(html, null, null, /<input[^>]*name="([^"]*)"[^>]*id="logScope.actionForm_username"/i);
+    var param_password = getParam(html, null, null, /<input[^>]*name="([^"]*)"[^>]*id="logScope.actionForm_password"/i);
+    var param_desktop = getParam(html, null, null, /<input[^>]*id="logScope.actionForm_desktop"[^>]*name="([^"]*)"/i);
+    AnyBalance.trace("login params: " + param_username + ", " + param_password + ", " + param_desktop);
+    
+    // Заходим на главную страницу
+    var params = {};
+    params[param_username] = prefs.login;
+    params[param_password] = prefs.password;
+    params[param_desktop] = 'PrivateClient_portal_main_page';
+    
     AnyBalance.trace("Entering client portal: " + form_action);
     html = AnyBalance.requestPost(form_action, params, headers);
 	
-        var error = getParam(html, null, null, /(<[^>]*txtRed[^>]*>[\s\S]*?<)/i);///<span[^>]*class="txtRed"[^>]*>([\S\s]*?)<\/span>/i);
-        if(error){
-            AnyBalance.trace(html);
-            throw new AnyBalance.Error(error);
-        }
+    var error = getParam(html, null, null, /(<[^>]*txtRed[^>]*>[\s\S]*?<)/i);///<span[^>]*class="txtRed"[^>]*>([\S\s]*?)<\/span>/i);
+    if(error){
+        AnyBalance.trace(html);
+        throw new AnyBalance.Error(error);
+    }
 
-        if(/name="logScope.log_form"/i.test(html)){
-            AnyBalance.trace(html);
-            throw new AnyBalance.Error("Не удалось войти в личный кабинет. Изменился личный кабинет или проблемы на сайте.");
-        }
+    if(/name="logScope.log_form"/i.test(html)){
+        AnyBalance.trace(html);
+        throw new AnyBalance.Error("Не удалось войти в личный кабинет. Изменился личный кабинет или проблемы на сайте.");
+    }
 
-    //Вот досюда надо закомментарить, чтобы отладчиком воспользоваться.
+    //Вот досюда надо закомментарить, чтобы можно было сразу парсить в уже залогиненом кабинете. */
 
-
-/* //С главной страницы не удаётся получить нормально инфу, потому что ростелеком настолько угробищно её выдаёт. Оторвать бы им руки...
-	html = AnyBalance.requestGet(baseurl + "?_nfpb=true&_pageLabel=PrivateClient_portal_myPortal_book");
-        
-	var $html = $(html);
-        var $acc = $html.find('#t_BankBooksWidget_1_ajax .wlp-bighorn-window-content div.txtBlack').filter(function(){
-            var num = $(this).children('td:nth-child(2)').text();
-            return reAcc.test(num);
-        }).first();
-
-        if(!$acc.size())
-            throw new AnyBalance.Error('Невозможно найти информацию ' + (prefs.accnum ? 'по счету с последними цифрами ' + prefs.accnum : 'ни по одному лицевому счету') + '!');
-
-        getParam($acc.find('a[href*="_number="]').text(), result, 'license', null, replaceTagsAndSpaces);
-        var link_icon = $acc.find('img[src*="-link-icon.png"]').first().attr('src');
-        if(link_icon){
-            var service = getParam(link_icon, null, null, /(\w+)-link-icon\.png/i);
-            if(service){
-                result.__tariff = g_services[service] || service;
-            }
-        }
-
-        getParam($acc.find('font[color="green"], font[color="red"]').text(), result, 'balance', null, replaceTagsAndSpaces, parseBalance);
-        getParam($acc.find('.txtGray').text(), result, 'username', null, replaceTagsAndSpaces);
-*/
-	
-	AnyBalance.trace("Requesting accounts info...");
-	html = AnyBalance.requestGet(baseurl + "?_nfpb=true&_pageLabel=PrivateClient_portal_Services_page");
-        
-	AnyBalance.trace(html);
-        var $html = $(html);
-
-        var $acc = $html.find('.gridTableContainer table tr').filter(function(i){
-            var num = $(this).find('a[href*="_number="]').first().text();
-            return reAcc.test(num);
-        }).first();
-
-        if(!$acc.size())
-            throw new AnyBalance.Error('Невозможно найти информацию ' + (prefs.accnum ? 'по счету с последними цифрами ' + prefs.accnum : 'ни по одному лицевому счету') + '!');
-
-	var result = {success: true};
-
-        getParam($acc.find('>td:first-child>img').attr('title'), result, '__tariff', null, replaceTagsAndSpaces);
-        getParam($acc.find('>td:nth-child(2)').text(), result, 'license', null, replaceTagsAndSpaces);
-        getParam($acc.find('>td:nth-child(3)').text(), result, 'username', null, replaceTagsAndSpaces);
-        getParam($acc.find('>td:nth-child(4)').text(), result, 'balance', null, replaceTagsAndSpaces, parseBalance);
-
-        var $subaccs = $acc.next();
-        getParam($subaccs.find('table.uslugi tr:first-child td:nth-child(3) label').first().text(), result, '__tariff', null, replaceTagsAndSpaces);
-
-	AnyBalance.setResult(result);
+    AnyBalance.trace("Requesting accounts info...");
+    html = AnyBalance.requestGet(baseurl + "?_nfpb=true&_pageLabel=PrivateClient_portal_Services_page");
+    
+    //AnyBalance.trace(html);
+    var $html = $(html);
+    
+    var $acc = $html.find('.gridTableContainer table tr').filter(function(i){
+        var num = $(this).find('a[href*="_number="]').first().text();
+        return reAcc.test(num);
+    }).first();
+    
+    if(!$acc.size())
+        throw new AnyBalance.Error('Невозможно найти информацию ' + (prefs.accnum ? 'по счету с последними цифрами ' + prefs.accnum : 'ни по одному лицевому счету') + '!');
+    
+    var result = {success: true};
+    
+    getParam($acc.find('>td:first-child>img').attr('title'), result, '__tariff', null, replaceTagsAndSpaces);
+    getParam($acc.find('>td:nth-child(2)').text(), result, 'license', null, replaceTagsAndSpaces);
+    getParam($acc.find('>td:nth-child(3)').text(), result, 'username', null, replaceTagsAndSpaces);
+    getParam($acc.find('>td:nth-child(4)').text(), result, 'balance', null, replaceTagsAndSpaces, parseBalance);
+    
+    var $subaccs = $acc.next();
+    getParam($subaccs.find('table.uslugi tr:first-child td:nth-child(3) label').first().text(), result, '__tariff', null, replaceTagsAndSpaces);
+    
+    AnyBalance.setResult(result);
 }
-
+    
 function domolinktula(region,login,password) {
 	var baseurl = 'https://cabinet.tulatelecom.ru';
 	var regionurl = baseurl + '/pls/sip/';
-    AnyBalance.setDefaultCharset('utf8');    
+	AnyBalance.setDefaultCharset('utf8');    
 	
 	// Заходим на главную страницу
 	var html = AnyBalance.requestPost(regionurl + "www.GetHomePage", {
@@ -309,7 +317,7 @@ function domolinktula(region,login,password) {
 	var urlrepcon=regionurl+"www.PageViewer?page_name=S*ADM_NET_REP_CON_BY_DAY&"+authorization+"&"+getPeriodMonth(curmonth);
 	var htmlrepcon = AnyBalance.requestGet(urlrepcon);
 	
-    var result = {success: true};
+	var result = {success: true};
 
 	AnyBalance.trace("Fetching username,tarif,license,balance...");
 	

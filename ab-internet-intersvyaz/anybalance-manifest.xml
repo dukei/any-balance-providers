@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
   <id version="1">ab-internet-intersvyaz</id>
-  <name>Интерсвязь</name>
+  <name>Интерсвязь (Челябинск)</name>
   <description>
     Получает текущий баланс лицевого счета, бонусы и другую информацию провайдера "Интерсвязь" г. Челябинск
 	Данные берутся из личного кабинета (https://ooointersvyaz2.lk.is74.ru/auth/login)
@@ -26,4 +26,7 @@
   <type>
     internet
   </type>
+  <country>
+  ru
+</country>
 </provider>

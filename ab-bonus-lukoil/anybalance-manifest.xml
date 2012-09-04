@@ -4,7 +4,7 @@
   <name>Лукойл клуб</name>
   <description>
     Получает текущий баланс бонусных баллов, статус карты, регион участия программы.
-	Данные берутся из личного кабинете программы (http://club-lukoil.ru/cabinet/)
+	Данные берутся из личного кабинета программы (http://club-lukoil.ru/cabinet/)
   </description>
   <author>Dmitry Reshetnikov (korleone) &lt;rdb@inbox.ru&gt;</author>
   <files>

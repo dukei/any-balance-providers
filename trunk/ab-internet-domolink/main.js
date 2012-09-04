@@ -217,6 +217,8 @@ function domolink_new(region,login,password) {
     var reg_form_action = getParam(html, null, null, /<form[^>]*name="selectRegionForm"[^>]*action="([^"]*)/i, null, html_entity_decode);
     if(!reg_form_action){
         //AnyBalance.trace(html);
+        if(/The source of this error is:/i.test(html))
+            throw new AnyBalance.Error("Сайт ростелекома упал. Нужно попробовать ещё раз.", true);
         throw new AnyBalance.Error("Не удаётся найти форму для выбора региона", true);  //Возможно тупой стектрейс, надо ещё попробовать.
     }
     var param_region = getParam(html, null, null, /<input[^>]*id="selectedRegionHidden"[^>]*name="([^"]*)"/i, null, html_entity_decode);
@@ -231,7 +233,7 @@ function domolink_new(region,login,password) {
 
     var form_action = getParam(html, null, null, /<form[^>]*name="logScope\.log_form"[^>]*action="([^"]*)/i, null, html_entity_decode);
     if(!form_action){
-       AnyBalance.trace(html);
+       //AnyBalance.trace(html);
        throw new AnyBalance.Error("Не удаётся найти форму для входа в личный кабинет");
     }
 
@@ -250,14 +252,14 @@ function domolink_new(region,login,password) {
     AnyBalance.trace("Entering client portal: " + form_action);
     html = AnyBalance.requestPost(form_action, params, headers);
 	
-    var error = getParam(html, null, null, /(<[^>]*txtRed[^>]*>[\s\S]*?<)/i);///<span[^>]*class="txtRed"[^>]*>([\S\s]*?)<\/span>/i);
-    if(error){
-        AnyBalance.trace(html);
-        throw new AnyBalance.Error(error);
-    }
-
     if(/name="logScope.log_form"/i.test(html)){
-        AnyBalance.trace(html);
+        //AnyBalance.trace(html);
+        var error = getParam(html, null, null, /<div[^>]+id="loginArea[\s\S]*?<[^>]*txtRed[^>]*>([\s\S]*?)</i, replaceTagsAndSpaces, html_entity_decode);
+        if(error){
+            //AnyBalance.trace(html);
+            throw new AnyBalance.Error(error);
+        }
+
         throw new AnyBalance.Error("Не удалось войти в личный кабинет. Изменился личный кабинет или проблемы на сайте.");
     }
 

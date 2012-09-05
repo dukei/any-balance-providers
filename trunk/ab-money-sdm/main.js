@@ -1,0 +1,182 @@
+﻿/**
+Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
+
+Получает текущий остаток и другие параметры карт Всероссийского банка развития регионов
+
+Сайт оператора: http://www.vbrr.ru
+Личный кабинет: https://enter2.unicredit.ru/
+*/
+
+function getParam (html, result, param, regexp, replaces, parser) {
+	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
+		return;
+
+	var value = regexp.exec (html);
+	if (value) {
+		value = value[1];
+		if (replaces) {
+			for (var i = 0; i < replaces.length; i += 2) {
+				value = value.replace (replaces[i], replaces[i+1]);
+			}
+		}
+		if (parser)
+			value = parser (value);
+
+    if(param)
+      result[param] = value;
+    else
+      return value
+	}
+}
+
+var replaceTagsAndSpaces = [/\\n/g, ' ', /\[br\]/ig, ' ', /<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
+var replaceFloat = [/\s+/g, '', /,/g, '.'];
+
+function parseBalance(text){
+    var _text = text.replace(/\s+/g, '');
+    var val = getParam(_text, null, null, /(-?\d[\d\.,]*)/, replaceFloat, parseFloat);
+    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
+    return val;
+}
+
+function parseCurrency(text){
+    var _text = text.replace(/\s+/g, '');
+    var val = getParam(_text, null, null, /-?\d[\d\.,]*\s*(\S*)/);
+    AnyBalance.trace('Parsing currency (' + val + ') from: ' + text);
+    return val;
+}
+
+function parseDate(str){
+    var matches = /(\d+)[^\d](\d+)[^\d](\d+)/.exec(str);
+    if(matches){
+          var date = new Date(+matches[3], matches[2]-1, +matches[1]);
+	  var time = date.getTime();
+          AnyBalance.trace('Parsing date ' + date + ' from value: ' + str);
+          return time;
+    }
+    AnyBalance.trace('Failed to parse date from value: ' + str);
+}
+
+function main(){
+    var prefs = AnyBalance.getPreferences();
+
+    var baseurl = "https://retail.sdm.ru";
+    
+    var headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.60 Safari/537.1'
+    }
+
+    var html = AnyBalance.requestPost(baseurl + '/logon?ReturnUrl=%2f', {
+        username:prefs.login,
+        password:prefs.password
+    }, headers);
+
+    if(!/href="LogOff"/i.test(html)){
+        var error = getParam(html, null, null, /<BSS_ERROR>\d*\|?([\s\S]*?)<\/BSS_ERROR>/i, replaceTagsAndSpaces, html_entity_decode);
+        if(error)
+            throw new AnyBalance.Error(error);
+        throw new AnyBalance.Error("Не удалось зайти в интернет-банк. Сайт изменен?");
+    }
+
+    if(prefs.type == 'card')
+        fetchCard(html, headers, baseurl);
+    else if(prefs.type == 'acc')
+        fetchAccount(html, headers, baseurl);
+    else
+        fetchCard(html, headers, baseurl); //По умолчанию карты будем получать
+}
+
+function fetchCard(html, headers, baseurl){
+    var prefs = AnyBalance.getPreferences();
+    if(prefs.cardnum && !/^\d+$/.test(prefs.cardnum))
+        throw new AnyBalance.Error("Введите первые цифры ID карты или не вводите ничего, чтобы показать информацию по первой карте. ID карты можно узнать, получив счетчик \"Сводка\"");
+
+    var re = new RegExp('(<tr[^>]*>(?:[\\s\\S](?!<tr))*?<a[^>]+href="/finances/card/' + (prefs.cardnum ? prefs.cardnum : '\\d+') + '\\d*"[\\s\\S]*?<\\/tr>)', 'i');
+    
+    var tr = getParam(html, null, null, re);
+    if(!tr)
+        throw new AnyBalance.Error('Не удаётся найти ' + (prefs.cardnum ? 'карту с первыми цифрами ID ' + prefs.cardnum : 'ни одной карты'));
+
+    var result = {success: true};
+    getParam(html, result, 'fio', /Добро пожаловать,([\s\S]*?)<\/big>/i, replaceTagsAndSpaces);
+
+    getParam(tr, result, 'id', /\/finances\/card\/(\d+)/i, replaceTagsAndSpaces);
+    getParam(tr, result, 'balance', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(tr, result, 'currency', /<img[^>]*alt="([^"]*)/i, replaceTagsAndSpaces);
+    getParam(tr, result, 'type', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+    getParam(tr, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+    getParam(tr, result, 'till', /(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+
+    if(AnyBalance.isAvailable("all")){
+        var items = [];
+        html.replace(/<tr[^>]*>(?:[\s\S](?!<tr))*?<a[^>]+href="\/finances\/card\/(\d+)"[\s\S]*?<\/tr>/i, function(str, id){
+           var line = "ID:" + id + " \"" + 
+               getParam(str, null, null, /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces) + "\" " + 
+               getParam(str, null, null, /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+           items[items.length] = line;
+        });
+        result.all = items.join('\n');
+    }
+
+    if(AnyBalance.isAvailable("cardnum", 'status', 'accnum')){
+        var id = getParam(tr, null, null, /\/finances\/card\/(\d+)/i, replaceTagsAndSpaces);
+        html = AnyBalance.requestGet(baseurl + '/finances/card/' + id);
+
+        getParam(html, result, 'cardnum', /Номер карты:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+        getParam(html, result, 'status', /Статус:[\s\S]*?<td[^>]*>([\s\S]*?)</i, replaceTagsAndSpaces);
+        getParam(html, result, 'accnum', /Номер счета:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+    }
+
+    AnyBalance.setResult(result);
+}
+
+function fetchAccount(html, headers, baseurl){
+    var prefs = AnyBalance.getPreferences();
+    if(prefs.cardnum && !/^\d+$/.test(prefs.cardnum))
+        throw new AnyBalance.Error("Введите первые цифры ID счета или не вводите ничего, чтобы показать информацию по первой карте. ID счета можно узнать, получив счетчик \"Сводка\"");
+
+    var re = new RegExp('(<tr[^>]*>(?:[\\s\\S](?!<tr))*?<a[^>]+href="/finances/account/' + (prefs.cardnum ? prefs.cardnum : '\\d+') + '\\d*"[\\s\\S]*?<\\/tr>)', 'i');
+    
+    var tr = getParam(html, null, null, re);
+    if(!tr)
+        throw new AnyBalance.Error('Не удаётся найти ' + (prefs.cardnum ? 'счет с первыми цифрами ID ' + prefs.cardnum : 'ни одного счета'));
+
+    var result = {success: true};
+    getParam(html, result, 'fio', /Добро пожаловать,([\s\S]*?)<\/big>/i, replaceTagsAndSpaces);
+
+    getParam(tr, result, 'id', /\/finances\/account\/(\d+)/i, replaceTagsAndSpaces);
+    getParam(tr, result, 'balance', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(tr, result, 'currency', /<img[^>]*alt="([^"]*)/i, replaceTagsAndSpaces);
+    getParam(tr, result, 'type', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+    getParam(tr, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+
+    if(AnyBalance.isAvailable("all")){
+        var items = [];
+        html.replace(/<tr[^>]*>(?:[\s\S](?!<tr))*?<a[^>]+href="\/finances\/account\/(\d+)"[\s\S]*?<\/tr>/i, function(str, id){
+           var line = "ID:" + id + " \"" + 
+               getParam(str, null, null, /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces) + "\" " + 
+               getParam(str, null, null, /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+           items[items.length] = line;
+        });
+        result.all = items.join('\n');
+    }
+
+    if(AnyBalance.isAvailable('till', 'accnum')){
+        var id = getParam(tr, null, null, /\/finances\/account\/(\d+)/i, replaceTagsAndSpaces);
+        html = AnyBalance.requestGet(baseurl + '/finances/account/' + id);
+
+        getParam(html, result, 'till', /Дата окончания действия карты:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+        getParam(html, result, 'accnum', /Номер счета:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+    }
+
+    AnyBalance.setResult(result);
+}
+
+function html_entity_decode(str)
+{
+    //jd-tech.net
+    var tarea=document.createElement('textarea');
+    tarea.innerHTML = str;
+    return tarea.value;
+}
+

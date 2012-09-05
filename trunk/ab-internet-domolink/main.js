@@ -210,60 +210,63 @@ function domolink_new(region,login,password) {
 
     var accnum = (prefs.accnum || '\\d{4}') + '\\s*$';
     var reAcc = new RegExp(accnum);
+    var html;
     
     //Ростелеком входит очень долго, поэтому для отладки лучше отсюда до следующего указания закоментарить и войти вручную.
-    var html = AnyBalance.requestGet(baseurl, headers);
-    
-    var reg_form_action = getParam(html, null, null, /<form[^>]*name="selectRegionForm"[^>]*action="([^"]*)/i, null, html_entity_decode);
-    if(!reg_form_action){
-        //AnyBalance.trace(html);
-        if(/The source of this error is:/i.test(html))
-            throw new AnyBalance.Error("Сайт ростелекома упал. Нужно попробовать ещё раз.", true);
-        throw new AnyBalance.Error("Не удаётся найти форму для выбора региона", true);  //Возможно тупой стектрейс, надо ещё попробовать.
-    }
-    var param_region = getParam(html, null, null, /<input[^>]*id="selectedRegionHidden"[^>]*name="([^"]*)"/i, null, html_entity_decode);
-    AnyBalance.trace("region params: " + param_region);
-    
-    headers.Referer = baseurl;
-    
-    AnyBalance.trace("Setting region...");
-    var params = {};
-    params[param_region] = regions_new[region];
-    html = AnyBalance.requestPost(reg_form_action, params, headers);
-
-    var form_action = getParam(html, null, null, /<form[^>]*name="logScope\.log_form"[^>]*action="([^"]*)/i, null, html_entity_decode);
-    if(!form_action){
-       //AnyBalance.trace(html);
-       throw new AnyBalance.Error("Не удаётся найти форму для входа в личный кабинет");
-    }
-
-    AnyBalance.trace("Getting login form: " + baseurl);
-    var param_username = getParam(html, null, null, /<input[^>]*name="([^"]*)"[^>]*id="logScope.actionForm_username"/i);
-    var param_password = getParam(html, null, null, /<input[^>]*name="([^"]*)"[^>]*id="logScope.actionForm_password"/i);
-    var param_desktop = getParam(html, null, null, /<input[^>]*id="logScope.actionForm_desktop"[^>]*name="([^"]*)"/i);
-    AnyBalance.trace("login params: " + param_username + ", " + param_password + ", " + param_desktop);
-    
-    // Заходим на главную страницу
-    var params = {};
-    params[param_username] = prefs.login;
-    params[param_password] = prefs.password;
-    params[param_desktop] = 'PrivateClient_portal_main_page';
-    
-    AnyBalance.trace("Entering client portal: " + form_action);
-    html = AnyBalance.requestPost(form_action, params, headers);
-	
-    if(/name="logScope.log_form"/i.test(html)){
-        //AnyBalance.trace(html);
-        var error = getParam(html, null, null, /<div[^>]+id="loginArea[\s\S]*?<[^>]*txtRed[^>]*>([\s\S]*?)</i, replaceTagsAndSpaces, html_entity_decode);
-        if(error){
+    if(!prefs.__dbg){
+        html = AnyBalance.requestGet(baseurl, headers);
+        
+        var reg_form_action = getParam(html, null, null, /<form[^>]*name="selectRegionForm"[^>]*action="([^"]*)/i, null, html_entity_decode);
+        if(!reg_form_action){
             //AnyBalance.trace(html);
-            throw new AnyBalance.Error(error);
+            if(/The source of this error is:/i.test(html))
+                throw new AnyBalance.Error("Сайт ростелекома упал. Нужно попробовать ещё раз.", true);
+            throw new AnyBalance.Error("Не удаётся найти форму для выбора региона", true);  //Возможно тупой стектрейс, надо ещё попробовать.
         }
-
-        throw new AnyBalance.Error("Не удалось войти в личный кабинет. Изменился личный кабинет или проблемы на сайте.");
+        var param_region = getParam(html, null, null, /<input[^>]*id="selectedRegionHidden"[^>]*name="([^"]*)"/i, null, html_entity_decode);
+        AnyBalance.trace("region params: " + param_region);
+        
+        headers.Referer = baseurl;
+        
+        AnyBalance.trace("Setting region...");
+        var params = {};
+        params[param_region] = regions_new[region];
+        html = AnyBalance.requestPost(reg_form_action, params, headers);
+        
+        var form_action = getParam(html, null, null, /<form[^>]*name="logScope\.log_form"[^>]*action="([^"]*)/i, null, html_entity_decode);
+        if(!form_action){
+           //AnyBalance.trace(html);
+           throw new AnyBalance.Error("Не удаётся найти форму для входа в личный кабинет");
+        }
+        
+        AnyBalance.trace("Getting login form: " + baseurl);
+        var param_username = getParam(html, null, null, /<input[^>]*name="([^"]*)"[^>]*id="logScope.actionForm_username"/i);
+        var param_password = getParam(html, null, null, /<input[^>]*name="([^"]*)"[^>]*id="logScope.actionForm_password"/i);
+        var param_desktop = getParam(html, null, null, /<input[^>]*id="logScope.actionForm_desktop"[^>]*name="([^"]*)"/i);
+        AnyBalance.trace("login params: " + param_username + ", " + param_password + ", " + param_desktop);
+        
+        // Заходим на главную страницу
+        var params = {};
+        params[param_username] = prefs.login;
+        params[param_password] = prefs.password;
+        params[param_desktop] = 'PrivateClient_portal_main_page';
+        
+        AnyBalance.trace("Entering client portal: " + form_action);
+        html = AnyBalance.requestPost(form_action, params, headers);
+	
+        if(/name="logScope.log_form"/i.test(html)){
+            //AnyBalance.trace(html);
+            var error = getParam(html, null, null, /<div[^>]+id="loginArea[\s\S]*?<[^>]*txtRed[^>]*>([\s\S]*?)</i, replaceTagsAndSpaces, html_entity_decode);
+            if(error){
+                //AnyBalance.trace(html);
+                throw new AnyBalance.Error(error);
+            }
+        
+            throw new AnyBalance.Error("Не удалось войти в личный кабинет. Изменился личный кабинет или проблемы на сайте.");
+        }
+        
+        //Вот досюда надо закомментарить, чтобы можно было сразу парсить в уже залогиненом кабинете. */
     }
-
-    //Вот досюда надо закомментарить, чтобы можно было сразу парсить в уже залогиненом кабинете. */
 
     AnyBalance.trace("Requesting accounts info...");
     html = AnyBalance.requestGet(baseurl + "?_nfpb=true&_pageLabel=PrivateClient_portal_Services_page");
@@ -419,24 +422,16 @@ function domolinkcenter(region,login,password) {
     
     var result = {success: true};
 
-	regexp=/Тариф<\/TD>\s?<TD[\s\w=%]*>\s?(.*)/;
-	if (res=regexp.exec(html)){
-		result.__tariff=res[1];
-	}
+        getParam(html, result, '__tariff', /Тариф<\/TD>\s*<TD[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
 
     // ФИО
-	if(AnyBalance.isAvailable('username')) {
-		regexp=/ФИО<\/TD>\s?<TD[\s\w=%]*>\s?(.*)/i;
-		if (res=regexp.exec(html)){
-			result.username=res[1];
-		}
-	}
+        getParam(html, result, 'username', /ФИО<\/TD>\s*<TD[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
 	   
 	// Лицевой счет
-	getParam (html, result, 'license', /Номер лицевого счета<\/TD>\s?<TD[\s\w=%]*>\s?([\d]*)/);
+	getParam (html, result, 'license', /Номер лицевого счета<\/TD>\s*<TD[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
 	
 	// Баланс
-	getParam (html, result, 'balance', /Текущее состояние лицевого счета<\/TD>\s?<TD[\s\w=%]*>\s*(.*)/, [/ |\xA0/, "", ",", "."], parseFloat);
+	getParam (html, result, 'balance', /Текущее состояние лицевого счета<\/TD>\s*<TD[^>]*>([\s\S]*?)<\/td>/, replaceTagsAndSpaces, parseBalance);
 	
     if (AnyBalance.isAvailable ('lastpaysum') ||
         AnyBalance.isAvailable ('lastpaydata') ||

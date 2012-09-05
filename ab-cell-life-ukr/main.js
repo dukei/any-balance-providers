@@ -3,7 +3,7 @@
 
 Life:) — GSM оператор мобильной связи.
 Сайт оператора: http://www.life.com.ua/
-Автоматическая Система Самообслуживания Абонентов (АССА): https://my.life.com.ua/web/login.jsp?locale=ua
+Система Самообслуживания: https://my.life.com.ua/web/login.jsp?locale=ua
 */
 
 function getParam (html, result, param, regexp, replaces, parser) {
@@ -52,7 +52,10 @@ function main(){
 
         html = AnyBalance.requestGet("https://my.life.com.ua/wap/jsps/tariffs/index.jsp?language=uk&srcpage=/wap/jsps/myAccount.jsp");
 	getParam(html, result, '__tariff', /(?:Ваш поточний тарифний план|Ваш текущий тарифный план): (.*)/i, replaceTagsAndSpaces);
-	
+
+	if(typeof(result.__tariff) == 'undefined'){
+           result.__tariff = '+38'+prefs.prefph+prefs.phone;
+        }
         
         AnyBalance.setResult(result);
 }

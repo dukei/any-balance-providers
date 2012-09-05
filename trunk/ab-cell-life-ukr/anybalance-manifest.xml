@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-cell-life-ukr</id>
+  <id version="3">ab-cell-life-ukr</id>
   <name>Life:) Украина</name>
   <description>
     Мониторинг баланса мобильного оператора Life:) (Украина)
@@ -10,6 +10,7 @@
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
     <js>main.js</js>
+    <history>history.xml</history>
   </files>
   <counters>
     <counter id="Mbalance" name="Основной счет" suffix=" грн" type="numeric"/>
@@ -21,4 +22,7 @@
   <type>
     cell
   </type>
+  <country>
+    ua
+  </country>
 </provider>

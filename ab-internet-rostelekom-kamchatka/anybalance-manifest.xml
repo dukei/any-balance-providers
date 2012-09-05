@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-internet-rostelekom-kamchatka</id>
+  <id version="3">ab-internet-rostelekom-kamchatka</id>
   <name>Интернет Ростелеком (Камчатка)</name>
   <description>
     Получает данные из ИССА Камчатского филиала ОАО "Ростелеком": баланс, счетчики трафика
@@ -11,6 +11,7 @@
     <preferences>preferences.xml</preferences>
     <js>api:jquery.min.js</js> <!-- Используем библиотеку, которая и так входит в AnyBalance -->
     <js>main.js</js>
+    <history>history.xml</history>
   </files>
   <counters>
     <counter id="balance" name="Баланс" units="р"/>
@@ -19,6 +20,10 @@
     <counter id="traffic_global_in" name="Входящий внешний трафик" suffix="Мб"/>
     <counter id="traffic_included" name="Предоплаченый трафик" suffix="Мб"/>
     <counter id="traffic_kamchatka" name="Безлимитная Камчатка" suffix="Гб"/>
+    <counter id="traffic_300" name="Доп. пакет внеш. трафика (300 Мб)" suffix="Мб"/>
+    <counter id="traffic_1000" name="Доп. пакет внеш. трафика (1000 Мб)" suffix="Мб"/>
+    <counter id="traffic_night_in" name="Вх. ночной безлимит в тек. месяце" suffix="Мб"/>
+    <counter id="traffic_night_out" name="Исх. ночной безлимит в тек. месяце" suffix="Мб"/>
     <counter id="time_off" name="Время отключения" suffix="дн"/>
     <counter id="average_speed" name="Скорость расходования" suffix="р"/>
     <counter id="agreement" name="Номер договора" type="text"/>

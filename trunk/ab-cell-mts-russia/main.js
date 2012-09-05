@@ -457,10 +457,11 @@ function fetchAccountStatus(html, result){
     html = sumParam (html, result, 'min_left', /Пакет минут[^:]*:\s*Оста[^\d]*([\d\.,]+)\s*мин/ig, replaceFloat, parseFloat, true);
 
     // Использовано: 0 минут местных и мобильных вызовов.
-    sumParam (html, result, 'min_local', /Использовано:\s*([\d\.,]+)\s*мин[^\s]* местных/ig, replaceFloat, parseFloat);
+    // Использовано 1 мин на городские номера Москвы, МТС домашнего региона и МТС России
+    sumParam (html, result, 'min_local', /Использовано:?\s*([\d\.,]+)\s*мин[^\s]* (местных|на городские)/ig, replaceFloat, parseFloat);
 
     // Использовано: 0 минут на любимые номера
-    sumParam (html, result, 'min_love', /Использовано:\s*([\d\.,]+)\s*мин[^\s]* на любимые/ig, replaceFloat, parseFloat);
+    sumParam (html, result, 'min_love', /Использовано:?\s*([\d\.,]+)\s*мин[^\s]* на любимые/ig, replaceFloat, parseFloat);
 
     //Использовано: 17 мин на МТС России 
     sumParam (html, result, 'min_used_mts', /Использовано:?\s*(\d+)\s*мин\S* на МТС/ig, [], parseInt);

@@ -23,8 +23,8 @@
         key="region" 
         title="Регион"
         summary="Регион вашего счета|Нужен для определения Личного кабинета\n|{@s}\n"
-        entries="Москва|Липецк|Калуга|Белгород|Курск|Тверь|Воронеж|Тула|Киров|(Нов)Белгородский|(Нов)Брянский|(Нов)Владимирский|(Нов)Воронежский|(Нов)Ивановский|(Нов)Калужский|(Нов)Костромской|(Нов)Курский|(Нов)Липецкий|(Нов)Московский|(Нов)Орловский|(Нов)Рязанский|(Нов)Смоленский|(Нов)Тамбовский|(Нов)Тверской|(Нов)Тульский|(Нов)Ярославский"
-        entryValues="msk|lpc|klg|blg|krs|tvr|vrn|tula|kirov|n_belg|n_bryansk|n_vladimir|n_voronezh|n_ivanov|n_kaluzh|n_kostroma|n_kursk|n_lipetsk|n_moscow|n_orlov|n_ryaz|n_smolensk|n_tambov|n_tver|n_tula|n_yar"
+        entries="Белгород(старый)|Белгородский(Нов)|Брянский(Нов)|Владимирский(Нов)|Воронеж(старый)|Воронежский(Нов)|Ивановский(Нов)|Калуга(старый)|Калужский(Нов)|Киров|Костромской(Нов)|Курск(старый)|Курский(Нов)|Липецк(старый)|Липецкий(Нов)|Москва(старый)|Московский(Нов)|Орловский(Нов)|Рязанский(Нов)|Смоленский(Нов)|Тамбовский(Нов)|Тверь(старый)|Тверской(Нов)|Тула(старый)|Тульский(Нов)|Ярославский(Нов)"
+        entryValues="blg|n_belg|n_bryansk|n_vladimir|vrn|n_voronezh|n_ivanov|klg|n_kaluzh|kirov|n_kostroma|krs|n_kursk|lpc|n_lipetsk|msk|n_moscow|n_orlov|n_ryaz|n_smolensk|n_tambov|tvr|n_tver|tula|n_tula|n_yar"
 	defaultValue="msk">
     </ListPreference>
     <EditTextPreference 

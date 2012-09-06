@@ -21,7 +21,7 @@ function main() {
 
 	result.summer=getDaysCount(((now.getMonth()>=8)?now.getFullYear()+1:now.getFullYear()), 6, 1);
 
-	result.birthday=getDaysCount((((now.getMonth()+1)*100+now.getDate()>prefs.month*100+prefs.day)?now.getFullYear()+1:now.getFullYear()), prefs.month, prefs.day);
+	result.birthday=getDaysCount((((now.getMonth()+1)*100+now.getDate()>prefs.month*100+parseInt(prefs.day))?now.getFullYear()+1:now.getFullYear()), prefs.month, prefs.day);
 
 	result.newyear=getDaysCount(now.getFullYear(), 12, 31)+1;
 

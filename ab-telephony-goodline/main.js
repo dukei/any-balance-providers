@@ -107,6 +107,11 @@ function parseDate(str){
     return tstamp;
 }
 
+var g_urls = {
+    ru: 'http://goodline.ru',
+    ua: 'http://goodline.com.ua'
+};
+
 function main(){
     var prefs = AnyBalance.getPreferences();
     if(prefs.num && !/^\d{10,}$/.test(prefs.num))
@@ -114,7 +119,7 @@ function main(){
 
     AnyBalance.setDefaultCharset('utf-8');    
 
-    var baseurl = 'http://goodline.ru';
+    var baseurl = g_urls[prefs.country || 'ru'];
     
     var headers = {
 	Accept:'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',

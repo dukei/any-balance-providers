@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="4">ab-telephony-goodline</id>
+  <id version="5">ab-telephony-goodline</id>
   <name>ГудЛайн</name>
   <description>
     Получает текущий баланс, валюту счета у роумингового провайдера телефонии ГудЛайн.
     Туристическая сим-карта ГудЛайн это сим-карта, которая вставляется в ваш мобильный телефон на время поездки за границу для экономии на звонках в роуминге.
-    Сайт провайдера: http://goodline.ru
+    Сайт провайдера: (для России) http://goodline.ru, (для Украины) http://goodline.com.ua
 
-    Провайдер получает данные через «Кабинет абонента» http://goodline.ru/ru/abonents/entercabinet/. Если у вас ещё нет доступа в личный кабинет, вам необходимо зарегистрироваться на странице http://goodline.ru/ru/abonents/entercabinet/registration/.
+    Для России провайдер получает данные через «Кабинет абонента» http://goodline.ru/ru/abonents/entercabinet/. Если у вас ещё нет доступа в личный кабинет, вам необходимо зарегистрироваться на странице http://goodline.ru/ru/abonents/entercabinet/registration/. Для украины испльзуются те же адреса, только .ru надо заменить на .com.ua.
   </description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <files>
@@ -30,4 +30,7 @@
   <type>
     cell
   </type>
+  <country>
+    ru, ua
+  </country>
 </provider>

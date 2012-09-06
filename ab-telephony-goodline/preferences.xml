@@ -30,4 +30,13 @@
         inputType="number"
         key="num">
     </EditTextPreference>
+    <ListPreference
+        key="country"
+        dialogTitle="Страна"
+        title="Страна"
+        defaultValue="ru"
+        entries="Россия|Украина"
+        summary="|Выберите страну|{@s}"
+        entryValues="ru|ua">
+    </ListPreference>
 </PreferenceScreen>

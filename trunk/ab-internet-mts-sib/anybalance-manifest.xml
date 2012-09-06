@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-internet-mts-sib</id>
+  <name>МТС Комстар-регионы (Сибирь)</name>
+  <description>
+    Получает баланс и информацию о тарифном плане для сибирского филиала Комстар-регионы (МТС) (http://sib.comstar-r.ru).
+
+    Личный кабинет обслуживает следующие города: Бугуруслан, Бузулук, Кемерово, Нефтеюганск, Нижневартовск, Новокузнецк, Новотроицк, Ноябрьск, Нягань, Оренбург, Первомайский, Пригородный, Пыть-Ях, Радужный, Сорочинск, Сургут, Тобольск, Тюмень
+
+    Информация берется из личного кабинета http://lka.sib.comstar-r.ru. Вы можете пользоваться этим провайдером, если можете заходить в этот личный кабинет.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="status" name="Состояние" type="text"/>
+    <counter id="licschet" name="Лицевой счет" type="text"/>
+  </counters>
+  <keywords>
+    интернет
+  </keywords>
+  <type>
+    internet
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

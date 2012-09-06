@@ -10,7 +10,7 @@
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
     <js>main.js</js>
-    <history>main.js</history>
+    <history>history.xml</history>
   </files>
   <counters>
     <counter id="birthday" name="День Рождения" type="text" />

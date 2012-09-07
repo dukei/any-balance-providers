@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="10">ab-cell-mts-russia-corp</id>
+  <id version="11">ab-cell-mts-russia-corp</id>
   <name>МТС Корпоративный (Россия)</name>
   <description>
     Получает информацию по номеру и лицевому счету из интернет-помощника для корпоративных абонентов ( https://ihelper.mts.ru/Ncih ). 

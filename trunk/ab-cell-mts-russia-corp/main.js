@@ -50,8 +50,9 @@ function parseDate(str){
 
 function getHierarchyId(html){
     var availableHierarchy = getParam(html, null, null, /availableHierarchy:\s*(\[[^\]]*\])/);
-    if(!availableHierarchy)
-        throw new AnyBalance.Error("Не удалось найти верхний уровень иерархии.");
+    if(!availableHierarchy){
+        throw new AnyBalance.Error("Не удалось найти ни верхний уровень иерархии, ни информации по текущему пользователю.");
+    }
 
     AnyBalance.trace("Найдены иерархии: " + availableHierarchy);
     
@@ -86,92 +87,114 @@ function main(){
     });
     
     //Проверим, залогинились ли
-    var error = getParam(html, null, null, /<div[^>]*class="(?:b_error|b_warning)"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
-    if(error)
-        throw new AnyBalance.Error(error);
-
-    var hierid = getHierarchyId(html);
-    
-    var findnum = prefs.num || prefs.login;
-    var json = AnyBalance.requestPost(baseurl + 'Hierarchy.mvc/GetHierarchyNodes', {
-        from:0,
-        to:299,
-        filter:findnum,
-        id:hierid,
-        markCurrentSelection:true
-    });
-
-    AnyBalance.trace('Got hierarchy nodes for ' + findnum + ': ' + json);
-    var info = JSON.parse(json);
-    if(!info.totalCount){
-        throw new AnyBalance.Error("Ошибка поиска информации по номеру или счету " + info);
+    if(!/Security.mvc\/LogOff/i.test(html)){
+        var error = getParam(html, null, null, /<div[^>]*class="(?:b_error|b_warning)"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+        if(error)
+            throw new AnyBalance.Error(error);
+        throw new AnyBalance.Error("Не удалось зайти в личный кабинет. Сайт изменен?");
     }
 
     var result = {success: true}
 
-    var hasPhone = false;
-    for(var i=0; i<info.totalCount; ++i){
-        var node = info.nodes[i];
-        if(node.data.type == 'TerminalDevice'){
-            hasPhone = true;
-        }
-    }
+    if(/\/Ncih\/OwnInfo.mvc\/GetCurrentUserInfo/i.test(html)){
+        //Похоже, это страница сотрудника, просмотр иерархии запрещен.
+        var json = AnyBalance.requestPost(baseurl + 'OwnInfo.mvc/GetCurrentUserInfo', {
+            __LOCAL_DATETIME__: new Date().getTime()
+        });
 
-    var accNode = null, phoneNode = null;
-    for(var i=0; i<info.totalCount; ++i){
-        var node = info.nodes[i];
-        if(node.data.type == 'Holding' && AnyBalance.isAvailable('holding')){
-            result.holding = node.text;
-        }
-        if(node.data.type == 'Account'){
-            accNode = node;
-            if(AnyBalance.isAvailable('Account'))
-                result.account = node.text;
-            if(!hasPhone)
-                break; //Если телефонов нет, значит, получаем инфу об аккаунте
-        }
-        if(node.data.type == 'TerminalDevice'){
-            phoneNode = node;
-            if(AnyBalance.isAvailable('phone'))
-                result.phone = node.text;
-            break; //только первый телефон получаем
-        }
-        if(node.data.type == 'Contract' && AnyBalance.isAvailable('contract')){
-            result.contract = node.text;
-        }
-    }
+        var info = JSON.parse(json);
+        if(info.errorMessage)
+            throw new AnyBalance.Error('Ошибка получения информации по текущему сотруднику: ' + info.errorMessage);
 
-    if(!accNode && !phoneNode)
-        throw new AnyBalance.Error("Не найдено ни одного счета или телефона с номером " + findnum);
-
-    if(accNode && AnyBalance.isAvailable('balance', 'billing', 'acc_expences', 'last_pay_date', 'last_pay', 'debt', 'promise', 'promiseDate')){
-        var accInfo = AnyBalance.requestPost(baseurl + 'ObjectInfo.mvc/PersonalAccount', {objectId:accNode.data.objectId});
-        accInfo = JSON.parse(accInfo);
-        if(accInfo.success){
-            var html = accInfo.infoHtml;
-            result.__tariff = accNode.text;
-            getParam(html, result, 'balance', /Баланс[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-            getParam(html, result, 'billing', /Метод расчетов[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-            getParam(html, result, 'acc_expences', /Израсходовано за период[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-            getParam(html, result, 'last_pay_date', /Дата последней оплаты счета[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
-            getParam(html, result, 'last_pay', /Сумма последней оплаты счета[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-            getParam(html, result, 'debt', /Сумма по неоплаченным счетам[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-            getParam(html, result, 'promise', /Сумма обещанного платежа[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-            getParam(html, result, 'promiseDate', /Срок действия обещанного платежа[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
-        }else{
-            AnyBalance.trace("Не удалось получить информацию по счету " + accNode.text + ": " + accInfo.errorMessage);
+        html = info.infoHtml;
+        getParam(html, result, 'account', /\bЛС:\s*(\d+)/);
+        getParam(html, result, 'holding', /<div[^>]*class="hierarchy-path"[^>]*>([\s\S]*?)(?:&gt;|<)/i, replaceTagsAndSpaces);
+        getParam(html, result, 'contract', /Сотрудник[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+        getParam(html, result, 'phone', /Номер телефона[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+        getParam(html, result, 'expences', /Израсходовано по номеру[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+        getParam(html, result, '__tariff', /Тарифный план[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+    }else{
+        var hierid = getHierarchyId(html);
+        
+        var findnum = prefs.num || prefs.login;
+        var json = AnyBalance.requestPost(baseurl + 'Hierarchy.mvc/GetHierarchyNodes', {
+            from:0,
+            to:299,
+            filter:findnum,
+            id:hierid,
+            markCurrentSelection:true
+        });
+        
+        AnyBalance.trace('Got hierarchy nodes for ' + findnum + ': ' + json);
+        var info = JSON.parse(json);
+        if(!info.totalCount){
+            throw new AnyBalance.Error("Ошибка поиска информации по номеру или счету " + info);
         }
-    }
-   
-    if(phoneNode){
-        var phoneInfo = AnyBalance.requestPost(baseurl + 'ObjectInfo.mvc/Phone', {objectId:phoneNode.data.objectId});
-        phoneInfo = JSON.parse(phoneInfo);
-        if(phoneInfo.success){
-            var html = phoneInfo.infoHtml;
-            getParam(html, result, '__tariff', /Тарифный план[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-            getParam(html, result, 'expences', /Израсходовано по номеру[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-        }else{
-            AnyBalance.trace("Не удалось получить информацию по номеру " + phoneNode.text + ": " + phoneInfo.errorMessage);
+        
+        var hasPhone = false;
+        for(var i=0; i<info.totalCount; ++i){
+            var node = info.nodes[i];
+            if(node.data.type == 'TerminalDevice'){
+                hasPhone = true;
+            }
+        }
+        
+        var accNode = null, phoneNode = null;
+        for(var i=0; i<info.totalCount; ++i){
+            var node = info.nodes[i];
+            if(node.data.type == 'Holding' && AnyBalance.isAvailable('holding')){
+                result.holding = node.text;
+            }
+            if(node.data.type == 'Account'){
+                accNode = node;
+                if(AnyBalance.isAvailable('Account'))
+                    result.account = node.text;
+                if(!hasPhone)
+                    break; //Если телефонов нет, значит, получаем инфу об аккаунте
+            }
+            if(node.data.type == 'TerminalDevice'){
+                phoneNode = node;
+                if(AnyBalance.isAvailable('phone'))
+                    result.phone = node.text;
+                break; //только первый телефон получаем
+            }
+            if(node.data.type == 'Contract' && AnyBalance.isAvailable('contract')){
+                result.contract = node.text;
+            }
+        }
+        
+        if(!accNode && !phoneNode)
+            throw new AnyBalance.Error("Не найдено ни одного счета или телефона с номером " + findnum);
+        
+        if(accNode && AnyBalance.isAvailable('balance', 'billing', 'acc_expences', 'last_pay_date', 'last_pay', 'debt', 'promise', 'promiseDate')){
+            var accInfo = AnyBalance.requestPost(baseurl + 'ObjectInfo.mvc/PersonalAccount', {objectId:accNode.data.objectId});
+            accInfo = JSON.parse(accInfo);
+            if(accInfo.success){
+                var html = accInfo.infoHtml;
+                result.__tariff = accNode.text;
+                getParam(html, result, 'balance', /Баланс[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+                getParam(html, result, 'billing', /Метод расчетов[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+                getParam(html, result, 'acc_expences', /Израсходовано за период[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+                getParam(html, result, 'last_pay_date', /Дата последней оплаты счета[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+                getParam(html, result, 'last_pay', /Сумма последней оплаты счета[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+                getParam(html, result, 'debt', /Сумма по неоплаченным счетам[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+                getParam(html, result, 'promise', /Сумма обещанного платежа[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+                getParam(html, result, 'promiseDate', /Срок действия обещанного платежа[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+            }else{
+                AnyBalance.trace("Не удалось получить информацию по счету " + accNode.text + ": " + accInfo.errorMessage);
+            }
+        }
+        
+        if(phoneNode){
+            var phoneInfo = AnyBalance.requestPost(baseurl + 'ObjectInfo.mvc/Phone', {objectId:phoneNode.data.objectId});
+            phoneInfo = JSON.parse(phoneInfo);
+            if(phoneInfo.success){
+                var html = phoneInfo.infoHtml;
+                getParam(html, result, '__tariff', /Тарифный план[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+                getParam(html, result, 'expences', /Израсходовано по номеру[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+            }else{
+                AnyBalance.trace("Не удалось получить информацию по номеру " + phoneNode.text + ": " + phoneInfo.errorMessage);
+            }
         }
     }
    

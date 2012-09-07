@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-internet-lanta-net</id>
+  <name>LanTa (Тамбов)</name>
+  <description>
+     Получает баланс и информацию о тарифном плане для тамбовского интернет-провайдера LanTa
+
+     Сайт оператора: http://www.lanta-net.ru/
+     Личный кабинет: https://stat.lanta-net.ru
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="abon" name="Абонентская плата" units="р"/>
+    <counter id="trafficIn" name="Вх.трафик" units="Gb"/>
+    <counter id="trafficOut" name="Исх.трафик" units="Gb"/>
+  </counters>
+  <keywords>
+    интернет
+  </keywords>
+  <type>
+    internet
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

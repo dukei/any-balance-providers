@@ -1,10 +1,10 @@
 /**
-Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
+РџСЂРѕРІР°Р№РґРµСЂ AnyBalance (http://any-balance-providers.googlecode.com)
 
-Текущий баланс у оператора интернет и телевидения PskovLine.
+РўРµРєСѓС‰РёР№ Р±Р°Р»Р°РЅСЃ Сѓ РѕРїРµСЂР°С‚РѕСЂР° РёРЅС‚РµСЂРЅРµС‚ Рё С‚РµР»РµРІРёРґРµРЅРёСЏ PskovLine.
 
-Сайт оператора: http://www.pskovline.ru
-Личный кабинет: http://www.pskovline.ru/utm5/
+РЎР°Р№С‚ РѕРїРµСЂР°С‚РѕСЂР°: http://www.pskovline.ru
+Р›РёС‡РЅС‹Р№ РєР°Р±РёРЅРµС‚: http://www.pskovline.ru/utm5/
 */
 
 function main() {
@@ -28,7 +28,7 @@ function main() {
         }
         
         if(!AnyBalance.isSetResultCalled())
-                throw new AnyBalance.Error("Ошибка. Проверьте логин и пароль. Если вы можете с ними войти в личный кабинет, а провайдер не работает, обратитесь к автору провайдера.");
+                throw new AnyBalance.Error("РћС€РёР±РєР°. РџСЂРѕРІРµСЂСЊС‚Рµ Р»РѕРіРёРЅ Рё РїР°СЂРѕР»СЊ. Р•СЃР»Рё РІС‹ РјРѕР¶РµС‚Рµ СЃ РЅРёРјРё РІРѕР№С‚Рё РІ Р»РёС‡РЅС‹Р№ РєР°Р±РёРЅРµС‚, Р° РїСЂРѕРІР°Р№РґРµСЂ РЅРµ СЂР°Р±РѕС‚Р°РµС‚, РѕР±СЂР°С‚РёС‚РµСЃСЊ Рє Р°РІС‚РѕСЂСѓ РїСЂРѕРІР°Р№РґРµСЂР°.");
 
 //  AnyBalance.setResult({success: true, login: login, ballance: ballance, number: number, credit: credit, work: work});
 }

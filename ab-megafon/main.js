@@ -630,12 +630,14 @@ function megafonServiceGuidePhysical(filial, sessionid){
                      var i_t = sumParam(obj, null, null, /ALL_VOLUME[\s\S]*?value:\s*'([^']*)'/, replaceTagsAndSpaces, parseBalance);
                      var i_c = sumParam(obj, null, null, /CUR_VOLUME[\s\S]*?value:\s*'([^']*)'/, replaceTagsAndSpaces, parseBalance);
                      var i_l = sumParam(obj, null, null, /LAST_VOLUME[\s\S]*?value:\s*'([^']*)'/, replaceTagsAndSpaces, parseBalance);
-                     if(typeof(i_t) != 'undefined' && AnyBalance.isAvailable('internet_total'))
+                     if(i_t && AnyBalance.isAvailable('internet_total'))
                          result.internet_total = (result.internet_total || 0) + i_t;
                      if(typeof(i_c) != 'undefined' && AnyBalance.isAvailable('internet_cur'))
-                         result.internet_cur = (result.internet_cur || 0) + i_c;
+                         if(i_t || i_c) //Если всё по нулям, это может быть просто глюк мегафона
+                             result.internet_cur = (result.internet_cur || 0) + i_c;
                      if(typeof(i_l) != 'undefined' && AnyBalance.isAvailable('internet_left'))
-                         result.internet_left = (result.internet_left || 0) + i_l;
+                         if(i_t || i_l) //Если всё по нулям, это может быть просто глюк мегафона
+                             result.internet_left = (result.internet_left || 0) + i_l;
                 }else{
                     AnyBalance.trace("Не удаётся найти информацию по услугам GPRS...");
                 }

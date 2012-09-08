@@ -196,7 +196,7 @@ function main(){
     if(result.sewerage>0) result.debt += result.sewerage;
     if(result.gas>0) result.debt += result.gas;
     if(result.garbage>0) result.debt += result.garbage;
-    result.debt = Math.round(result.garbage*100)/100;
+    result.debt = Math.round(result.debt*100)/100;
   }
 
   //Тарифный план

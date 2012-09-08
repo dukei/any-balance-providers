@@ -1,17 +1,23 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1" major_version="1.0">ab-money-teleinfo</id>
+  <id version="2" major_version="1.0">ab-money-teleinfo</id>
   <name>Телеинфо</name>
-  <description>Система «Телеинфо» ВТБ24. Получение баланса пластиковой карты. https://telebank.vtb24.ru/</description>
+  <description>Система «Телеинфо» ВТБ24. Получение баланса пластиковой карты. https://telebank.vtb24.ru/
+
+Если у вас ещё нет доступа к Телеинфо, зарегистрируйтесь здесь: https://www.telebank.ru/WebNew/Front/RegistrationTI.aspx</description>
   <author>Robert Khaliullov &lt;robix@mail.ru&gt;</author>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
     <js>api:jquery.min.js</js> <!-- Используем библиотеку, которая и так входит в AnyBalance -->
     <js>main.js</js>
+    <history>history.xml</history>
   </files>
   <counters>
-    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="balance" name="Баланс"/>
+    <counter id="currency" name="Валюта" type="text"/>
+    <counter id="cardname" name="Название" type="text"/>
+    <counter id="cardnum" name="Номер карты" type="text"/>
  </counters>
   <keywords>
     ВТБ24, Телебанк, телеинфо
@@ -19,4 +25,7 @@
   <type>
     money
   </type>
+  <country>
+    ru
+  </country>
 </provider>

@@ -36,26 +36,40 @@ function main(){
     }
 
     var html = AnyBalance.requestGet(baseurl+'Accounts/Accounts.aspx');
-	var $html = $(html);
-	
-	var result = {success: true};
-	
-	card = $html.find('h2:contains("Пластиковые карты")').parent().parent().parent().next().html();
-	$card = $('<table>'+card+'</table>');
-	if (prefs.card){
-		$card_num = $card.find('td.number:contains("XXXX'+prefs.card+'")');
-	}else{
-		$card_num = $card.find('td.number');
-	}
-	val = $card_num.text();
-	if (val){
-		var result = {success: true};
-		result.__tariff = val;
-	}else{
-		throw new AnyBalance.Error('Проверьте правильность ввода последних 4-ех чисел вашей карты');
-	}
+    var $html = $(html);
+
+    var result = {success: true};
+
+    var $accounts = $html.find('table.accounts');
+
+    var $card_tr;
+
+    if (prefs.card){                        
+	$card_tr = $accounts.find('tr:contains("XXXXXX'+prefs.card+'")');
+    }else{
+	$card_tr = $accounts.find('tr:contains("XXXXXX")');
+    }
+
+    AnyBalance.trace('Найдено карт: ' + $card_tr.size());
+    if(!$card_tr.size())
+        throw new AnyBalance.Error(prefs.card ? 'Не найдена карта с последними цифрами ' + prefs.card : 'Не найдено ни одной карты');
+
+    var result = {success: true};
+    $card_tr = $card_tr.first();
+    result.__tariff = $card_tr.find('td.number').text();
+    if(AnyBalance.isAvailable('cardnum'))
+        result.cardnum = result.__tariff;
+
+    if(AnyBalance.isAvailable('cardname')){
+        result.cardname = $card_tr.find('td:nth-child(2)').text().replace(/&nbsp;/g, ' ').replace(/^\s+|\s+$/g, '');
+    }
+
+    if(AnyBalance.isAvailable('currency')){
+        result.cardname = $card_tr.find('td:nth-child(5)').text().replace(/&nbsp;/g, ' ').replace(/^\s+|\s+$/g, '');
+    }
+
     if(AnyBalance.isAvailable('balance')){
-    	val = $card_num.next().text();
+    	val = $card_tr.find('td:nth-child(4)').text();
     	if (val)
     		val = val.replace(/[^0-9.,]+/,'');
         if(val)

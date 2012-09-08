@@ -15,20 +15,32 @@ function main() {
 
   var result = {success: true}, matches;
 
-        if(info.match(/\'utm-table\'.*?>/i)){
+        if (info.match("Неверно указаны логин или пароль")) {
+		throw new AnyBalance.Error("Повторите ввод логина и пароля");
+	}
+	else if(info.match(/\'utm-table\'.*?>/i)){
                 if(matches = info.match(/\'utm-cell\'.*?>(.*?)</img)){
 
 		var i=0; while(x=matches[i]) {matches[i]=x.match(/>(.*?)</i)[1]; i++;}
 
                         var login, ballance, number, credit, work;
 
-                        AnyBalance.setResult({success:true, login:matches[1], ballance:parseFloat(matches[5]), number:matches[3], credit:matches[7], work:matches[15]});
+			result['success']=true;
+			result['ballance']=parseFloat(matches[5]);
+			if (AnyBalance.isAvailable('login'))
+				result['login'] =matches[1];
+			if (AnyBalance.isAvailable('number'))
+				result['number']=matches[3];
+			if (AnyBalance.isAvailable('credit'))
+				result['credit']=matches[7];
+			if (AnyBalance.isAvailable('work'))
+				result['work']	=matches[15];
+
+                        AnyBalance.setResult(result);
                 }
 	
         }
         
         if(!AnyBalance.isSetResultCalled())
-                throw new AnyBalance.Error("Ошибка. Проверьте логин и пароль. Если вы можете с ними войти в личный кабинет, а провайдер не работает, обратитесь к автору провайдера.");
-
-//  AnyBalance.setResult({success: true, login: login, ballance: ballance, number: number, credit: credit, work: work});
+                throw new AnyBalance.Error("Ошибка. Проверьте работу личного кабинета. Если Вы можете войти в личный кабинет, а провайдер не работает, обратитесь к автору провайдера.");
 }

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-internet-pskovline</id>
+  <name>Pskovline</name>
+  <description>
+    ПсковЛайн. Интернет-провайдер.
+    Просмотр баланса, № лицевого счета, логина, кредита и состояния интернета.
+  </description>
+  <author>IvDor &lt;IvanDor666@gmail.com&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="ballance" name="Баланс" suffix=" р." type="numeric"/>
+    <counter id="number" name="Лицевой счет" prefix="№ " type="text"/>
+    <counter id="login" name="Логин" type="text"/>
+    <counter id="credit" name="Кредит" suffix=" р." type="text"/>
+    <counter id="work" name="Состояние интернета" type="text"/>
+  </counters>
+</provider>

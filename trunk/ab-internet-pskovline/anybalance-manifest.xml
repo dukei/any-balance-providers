@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
   <id version="1">ab-internet-pskovline</id>
-  <name>Pskovline</name>
+  <name>PskovLine (Псков)</name>
   <description>
-    ПсковЛайн. Интернет-провайдер.
-    Просмотр баланса, № лицевого счета, логина, кредита и состояния интернета.
+    ПсковЛайн (http://www.pskovline.ru). Псковский интернет-провайдер.
+    Просмотр баланса, № лицевого счета, логина, кредита и состояния интернета. Данные берутся из личного кабинета http://www.pskovline.ru/utm5/
   </description>
   <author>IvDor &lt;IvanDor666@gmail.com&gt;</author>
   <files>
@@ -19,4 +19,10 @@
     <counter id="credit" name="Кредит" suffix=" р." type="text"/>
     <counter id="work" name="Состояние интернета" type="text"/>
   </counters>
+  <type>
+    internet
+  </type>
+  <country>
+    ru
+  </country>
 </provider>

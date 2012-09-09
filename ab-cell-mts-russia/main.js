@@ -436,7 +436,7 @@ function fetchAccountStatus(html, result){
     html = sumParam (html, result, 'min_left', /Срочный контракт.*?: Осталось\s*([\d\.,]+)\s*мин/ig, replaceFloat, parseFloat, true);
 
     // Пакет минут
-    html = sumParam (html, result, 'min_left', /Остаток пакета минут:\s*([\d\.,]+)\./ig, replaceFloat, parseFloat, true);
+    html = sumParam (html, result, 'min_left', /Остаток пакета минут:\s*([\d\.,]+)\s*[\.,<]/ig, replaceFloat, parseFloat, true);
     
     // Остаток бонуса
     html = sumParam (html, result, 'min_left', /Остаток бонуса:\s*([\d\.,]+?)\s*мин/ig, replaceFloat, parseFloat, true);
@@ -486,9 +486,13 @@ function fetchAccountStatus(html, result){
 
     // Остаток трафика
     sumParam (html, result, 'traffic_left', /(?:Осталось|Остаток)[^\d]*(\d+,?\d* *([kmgкмг][бb]|байт|bytes))/ig);
+    //Подбаланс gprs: 49,26 Mb
+    sumParam (html, result, 'traffic_left', /Подбаланс gprs:[^\d]*(\d+,?\d*\s*([kmgкмг][бb]|байт|bytes))/ig);
     
 // Остаток трафика
     sumParam (html, result, 'traffic_left_mb', /(?:Осталось|Остаток)[^\d]*(\d+,?\d* *([kmgкмг][бb]|байт|bytes))/ig, null, parseTraffic);
+    //Подбаланс gprs: 49,26 Mb
+    sumParam (html, result, 'traffic_left_mb', /Подбаланс gprs:[^\d]*(\d+,?\d*\s*([kmgкмг][бb]|байт|bytes))/ig, null, parseTraffic);
 
     // Лицевой счет
     sumParam (html, result, 'license', /№([\s\S]*?)[:<]/, replaceTagsAndSpaces);

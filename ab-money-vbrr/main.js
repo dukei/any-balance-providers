@@ -4,7 +4,7 @@
 Получает текущий остаток и другие параметры карт Всероссийского банка развития регионов
 
 Сайт оператора: http://www.vbrr.ru
-Личный кабинет: https://enter2.unicredit.ru/
+Личный кабинет: https://pb1.vbrr.ru
 */
 
 function getParam (html, result, param, regexp, replaces, parser) {

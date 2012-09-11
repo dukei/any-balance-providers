@@ -34,7 +34,7 @@ function main() {
 			if (AnyBalance.isAvailable('credit'))
 				result['credit']=matches[7];
 			if (AnyBalance.isAvailable('work'))
-				result['work']	=matches[15];
+				result['work']	=matches[17];
 
                         AnyBalance.setResult(result);
                 }

@@ -63,6 +63,8 @@ function main(){
         result.bonus_mins_1=parseInt(matches[2]);
     } else if (matches=/(Залишок хвилин для дзвінків на Київстар:|Остаток минут для звонков на Киевстар:)[\s\S]*?<b>(.*?)</.exec(html)){
         result.bonus_mins_1=parseInt(matches[2]);
+    } else if (matches=/(Залишок хвилин для дзвінків абонентам Київстар та Beeline:|Остаток минут для звонков абонентам Киевстар и Beeline:)[\s\S]*?<b>(.*?)</i.exec(html)){
+        result.bonus_mins_1=parseInt(matches[2]);
     }
   }
   
@@ -78,7 +80,6 @@ function main(){
         result.bonus_mins_2=parseInt(matches[2]);
     }
   }
-  
   //Бонусные MMS
   if(AnyBalance.isAvailable('bonus_mms')){
     if (matches=/>(Бонусні MMS:|Бонусные MMS:)[\s\S]*?<b>(.*?)</.exec(html)){

@@ -32,7 +32,7 @@ function main(){
 	AnyBalance.trace('Parsing...');
 	if(prefs.region == "1"){	// Татарстан
 		if(AnyBalance.isAvailable('balance')){
-			if(matches = info.match(/<td class="icons">Баланс:<\/td>\n<td class="icons">(.*?) руб.<\/td>/i)){
+			if(matches = info.match(/<dd.*?>Баланс:<\/dd>\s*<dd.*?>(.*?) руб.<\/dd>/i)){
 				result.balance = parseFloat(matches[1].replace(',','.'));
 			}
 			else{
@@ -40,14 +40,14 @@ function main(){
 			}
 		}
 		if(AnyBalance.isAvailable('bonus')){
-			if(matches = info.match(/<td class="icons">Бонус:<\/td>\n<td class="icons">(.*?) руб.<\/td>/i)){
+			if(matches = info.match(/<dd.*?>Бонус:<\/dd>\s*<dd.*?>(.*?) руб.<\/dd>/i)){
 				result.bonus = parseFloat(matches[1].replace(',','.'));
 			}
 		}
 	}
 	else if(prefs.region == "2"){	// Нижегородский
 		if(AnyBalance.isAvailable('balance')){
-			if(matches = info.match(/<dd.*?>Баланс:<\/dd><dd.*?>(.*?) руб.<\/dd><\/dl>/i)){
+			if(matches = info.match(/<dd.*?>Баланс:<\/td>\s*<dd.*?>(.*?) руб.<\/dd>/i)){
 				result.balance = parseFloat(matches[1].replace(',','.'));
 			}
 			else{
@@ -55,7 +55,7 @@ function main(){
 			}
 		}
 		if(AnyBalance.isAvailable('bonus')){
-			if(matches = info.match(/<dd.*?>Бонус:<\/dd><dd.*?>(.*?) руб.<\/dd>/i)){
+			if(matches = info.match(/<dd.*?>Бонус:<\/dd>\s*<dd.*?>(.*?) руб.<\/dd>/i)){
 				result.bonus = parseFloat(matches[1].replace(',','.'));
 			}
 		}

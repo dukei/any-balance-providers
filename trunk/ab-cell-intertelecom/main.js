@@ -17,11 +17,18 @@ function main(){
 		throw AnyBalance.Error('Не удалось зайти в личный кабинет. Проверьте логин-пароль.');
                 
 	var result = {success: true};
+	//Название тарифа
         getParam(html, result, '__tariff', /<td>Тарифный план<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+	//Основной счет (Сальдо)
         getParam(html, result, 'saldo', /<td>Сальдо<\/td>\s*<td[^>]*>([^<]*)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	//Предоплаченые услуги на месяц
         getParam(html, result, 'predoplata', /<td>Предоплаченые услуги на месяц<\/td>\s*<td[^>]*>([^<]*)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	//Неактивированные бонусы с 094
         getParam(html, result, 'bonus', /<td>Неактивированные бонусы \(с 094\)<\/td>\s*<td[^>]*>([^<]*)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	//Предоплачение местные минуты
         getParam(html, result, 'min_local', /<td[^>]*>Минуты<\/td>[\s\S]*?<td[^>]*>[^<]*местные[^<]*<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseSeconds);
+	//Бонус по программе лояльности «Наилучшее общение»
+	getParam(html, result, 'bonus_pl', /<td>Наилучшее общение<\/td>\s*<td[^>]*>([^<]*).*?<\/td>/i, replaceTagsAndSpaces, parseBalance);
 
 	AnyBalance.setResult(result);
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="6">ab-cell-mts-ua</id>
+  <id major_version="1.0" version="7">ab-cell-mts-ua</id>
   <name>МТС (Украина)</name>
   <description>
     Получает баланс, минуты, смс, ммс, информацию о расходах, номер лицевого счета, ежемесячую плату и др.
@@ -18,6 +18,7 @@
     <counter id="bonus_balance" name="Бонусный баланс" units=" грн"/>
     <counter id="min_paket" name="Пакет бесплатных минут для внутрисетевых звонков" type="time_interval" format="{@MIN}" units=" мин"/>
     <counter id="min_net_70" name="70 минут в день для внутрисетевых звонков" type="time_interval" format="{@MIN}" units=" мин"/>
+    <counter id="min_net_30" name="30 минут в день для внутрисетевых звонков" type="time_interval" format="{@MIN}" units=" мин"/>
     <counter id="min_net_all_33" name="33 минуты в день для внутрисетевых звонков во всех областях" type="time_interval" format="{@MIN}" units=" мин"/>
     <counter id="min_net_100" name="100 минут в день на внутрисетевое направление" type="time_interval" format="{@MIN}" units=" мин"/>
     <counter id="sms_paket" name="Пакет СМС" units=" sms"/>
@@ -29,6 +30,7 @@
     <counter id="traffic_maxenergy_mb" name="Интернет Max Energy" units=" mb"/>
     <counter id="sms_net" name="СМС в сети МТС" units=" sms"/>
     <counter id="min_net_maxenergy" name="Минуты в сети МТС" type="time_interval" format="{@MIN}" units=" мин"/>
+    <counter id="min_reg_3000" name="3000 региональных минут в сети" type="time_interval" format="{@MIN}" units=" мин"/>
     <counter id="min_all_100" name="100 минут абонентам по Украине" type="time_interval" format="{@MIN}" units=" мин"/>
     <counter id="min_net" name="Минуты с услугой «Супер без пополнения» в сети МТС" type="time_interval" format="{@MIN}" units=" мин"/>
     <counter id="min_all_25" name="25 минут на другие сети" type="time_interval" format="{@MIN}" units=" мин"/>

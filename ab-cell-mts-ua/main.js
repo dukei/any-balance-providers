@@ -128,7 +128,7 @@ function main(){
     	AnyBalance.trace("It looks like we are in selfcare (found logOff)...");
 
     // Тарифный план
-    regexp=/Тарифний план:.*?>(.*?)</;
+    regexp=/Тарифн[ыи]й план:.*?>(.*?)</;
     if (res=regexp.exec(html)){
         result.__tariff=res[1];
     }
@@ -152,6 +152,9 @@ function main(){
 
 // 70 минут в день для внутрисетевых звонков
     sumParam (html, result, 'min_net_70', /<li>70 минут в день для внутрисетевых звонков:[^<]*осталось\s*([\d\.,]+) бесплатных секунд<\/li>/ig, replaceFloat, parseFloat);
+
+// 30 минут в день для внутрисетевых звонков
+    sumParam (html, result, 'min_net_30', /<li>30 минут в день для внутрисетевых звонков:[^<]*осталось\s*([\d\.,]+) бесплатных секунд<\/li>/ig, replaceFloat, parseFloat);
     
     // 33 минуты в день для внутрисетевых звонков во всех областях
     sumParam (html, result, 'min_net_all_33', /<li>33 минуты в день для внутрисетевых звонков во всех областях:[^<]*осталось\s*([\d\.,]+) бесплатных секунд<\/li>/ig, replaceFloat, parseFloat);
@@ -159,6 +162,9 @@ function main(){
     // 100 минут в день на внутрисетевое направление
     sumParam (html, result, 'min_net_100', /<li>100 минут в день на внутрисетевое направление:[^<]*осталось\s*([\d\.,]+)/ig, replaceFloat, parseFloat);
     
+    // 3000 региональных минут в сети: осталось 2988 бесплатных минут
+    sumParam (html, result, 'min_reg_3000', /<li>3000 региональных минут в сети:[^<]*осталось\s*([\d\.,]+)/ig, replaceFloat, function(str){return 60*parseFloat(str)});
+
     // Пакет СМС
     sumParam (html, result, 'sms_paket', /<li>100 бесплатных смс по Украине:[^<]*осталось\s*(\d+) смс. Срок действия до[^<]*<\/li>/ig, null, parseInt);
 

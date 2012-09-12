@@ -55,6 +55,7 @@ function main(){
     if(error)
       throw new AnyBalance.Error(error);
     
+    htmlMain = AnyBalance.requestGet(baseurl);
     var sessionid = getParam(htmlMain, null, null, /sessionid:\s*['"]([^'"]*)['"]/);
     if(!sessionid)
       throw new AnyBalance.Error("Could not find session id!");

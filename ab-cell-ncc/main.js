@@ -47,7 +47,7 @@ function main(){
 	}
 	else if(prefs.region == "2"){	// Нижегородский
 		if(AnyBalance.isAvailable('balance')){
-			if(matches = info.match(/<td.*?>Баланс:<\/td>\n<td.*?>(.*?) руб.<\/td>\n<\/tr>/i)){
+			if(matches = info.match(/<dd.*?>Баланс:<\/dd><dd.*?>(.*?) руб.<\/dd><\/dl>/i)){
 				result.balance = parseFloat(matches[1].replace(',','.'));
 			}
 			else{
@@ -55,7 +55,7 @@ function main(){
 			}
 		}
 		if(AnyBalance.isAvailable('bonus')){
-			if(matches = info.match(/<td.*?>Бонус:<\/td>\n<td.*?>(.*?) руб.<\/td>/i)){
+			if(matches = info.match(/<dd.*?>Бонус:<\/dd><dd.*?>(.*?) руб.<\/dd>/i)){
 				result.bonus = parseFloat(matches[1].replace(',','.'));
 			}
 		}

@@ -1,15 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="20">ab-cell-ncc</id>
+  <id major_version="1.1" version="21">ab-cell-ncc</id>
   <name>НСС</name>
   <description>
-    Получает текущий баланс и тариф оператора НСС (Татарстан, Нижегородский филиал)
+    Получает текущий баланс и тариф оператора НСС из личного кабинета https://iserve.ncc-volga.ru. Для настройки требуется ваш пароль в личный кабинет НСС, не менее 6 символов (латинские буквы, цифры), задается отправкой SMS-сообщения в формате "PSW пароль" на бесплатный номер 177. 
+
+    Поддерживаются регионы:
+      * Татарстан
+      * Нижегородский филиал, спасибо Voyager &lt;voyager@voyager.su&gt;
+        
   </description>
   <author>wtiger &lt;wtiger@mail.ru&gt;</author>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
     <js>api:jquery.min.js</js> <!-- Используем библиотеку, которая и так входит в AnyBalance -->
+    <history>history.xml</history>
     <js>main.js</js>
   </files>
   <counters>

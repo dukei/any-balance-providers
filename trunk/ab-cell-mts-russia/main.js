@@ -491,7 +491,7 @@ function fetchAccountStatus(html, result){
     sumParam (html, result, 'traffic_left', /(?:Осталось|Остаток)[^\d]*(\d+[\.,]?\d* *([kmgкмг][бb]|байт|bytes))/ig);
     //Подбаланс gprs: 49,26 Mb
     sumParam (html, result, 'traffic_left', /Подбаланс gprs:[^\d]*(\d+[\.,]?\d*\s*([kmgкмг][бb]|байт|bytes))/ig);
-    AnyBalance.trace(html);
+//    AnyBalance.trace(html);
 // Остаток трафика
     sumParam (html, result, 'traffic_left_mb', /(?:Осталось|Остаток)[^\d]*(\d+[\.,]?\d* *([kmgкмг][бb]|байт|bytes))/ig, null, parseTraffic);
     //Подбаланс gprs: 49,26 Mb

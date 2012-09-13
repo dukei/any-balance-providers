@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.1" version="22">ab-cell-ncc</id>
-  <name>НСС</name>
+  <id major_version="1.1" version="24">ab-cell-ncc</id>
+  <name>Ростелеком-Волга (НСС)</name>
   <description>
-    Получает текущий баланс и тариф оператора Ростелеком (НСС) из личного кабинета https://iserve.ncc-volga.ru. Для настройки требуется ваш пароль в личный кабинет НСС, не менее 6 символов (латинские буквы, цифры), задается отправкой SMS-сообщения в формате "PSW пароль" на бесплатный номер 177. 
+    Получает текущий баланс и тариф оператора Ростелеком-Волга (НСС) из личного кабинета https://iserve.ncc-volga.ru. Для настройки требуется ваш пароль в личный кабинет НСС, не менее 6 символов (латинские буквы, цифры), задается отправкой SMS-сообщения в формате "PSW пароль" на бесплатный номер 177. 
 
     Поддерживаются регионы:
-      * Татарстан
-      * Нижегородский филиал, спасибо Voyager &lt;voyager@voyager.su&gt;
+      * Татарстан (wtiger@mail.ru)
+      * Нижегородский филиал (voyager@voyager.su)
         
   </description>
   <author>wtiger &lt;wtiger@mail.ru&gt;</author>
@@ -21,9 +21,14 @@
   <counters>
     <counter id="balance" name="Баланс" units="р"/>
     <counter id="bonus" name="Бонус" units="р"/>
+    <counter id="trafic" name="Трафик" units="Mb"/>
+<!-- следующие счётчики по умолчанию выключены, т.к. не несут полезной информации - цена на интернет-трафик одна на все виды. Но для желающих...
+    <counter id="traf1" name="Трафик internet" units="Mb"/>
+    <counter id="traf2" name="Трафик WiFi" units="Mb"/>
+    <counter id="traf3" name="Трафик wap" units="Mb"/> -->
   </counters>
   <keywords>
-    оператор нсс ncc
+    оператор нсс ncc ростелеком ростелеком-волга
   </keywords>
   <type>
     cell

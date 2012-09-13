@@ -90,43 +90,46 @@ function main(){
 			result.__tariff = matches[1];
 		}
 
-		if(matches = info.match(/Трафик за текущий месяц[\s\S]*?Использовано[\s\S]*?<td.*?>(?:\s*)(.*?)<\/td>[\s\S]*?<td.*?>(?:\s*)(.*?) Кбайт<\/td>[\s\S]*?<td.*?>(?:\s*)(.*?)<\/td>[\s\S]*?<td.*?>(?:\s*)(.*?) Кбайт<\/td>[\s\S]*?<td.*?>(?:\s*)(.*?)<\/td>[\s\S]*?<td.*?>(?:\s*)(.*?) Кбайт<\/td>/)){
-			type1 = matches[1].toLowerCase();
-			type2 = matches[3].toLowerCase();
-			type3 = matches[5].toLowerCase();
-			traf1 = parseFloat(matches[2].replace(',','.'))/1024;
-			traf2 = parseFloat(matches[4].replace(',','.'))/1024;
-			traf3 = parseFloat(matches[6].replace(',','.'))/1024;
-			
-			if(type1.indexOf("internet")>=0)
-				result.traf1 = traf1.toFixed(3);
-			else
-			if(type1.indexOf("wi-fi")>=0)
-				result.traf2 = traf1.toFixed(3);
-			else
-			if(type1.indexOf("wap")>=0)
-				result.traf3 = traf1.toFixed(3);
-
-			if(type2.indexOf("internet")>=0)
-				result.traf1 = traf2.toFixed(3);
-			else
-			if(type2.indexOf("wi-fi")>=0)
-				result.traf2 = traf2.toFixed(3);
-			else
-			if(type2.indexOf("wap")>=0)
-				result.traf3 = traf2.toFixed(3);
-
-			if(type3.indexOf("internet")>=0)
-				result.traf1 = traf3.toFixed(3);
-			else
-			if(type3.indexOf("wi-fi")>=0)
-				result.traf2 = traf3.toFixed(3);
-			else
-			if(type3.indexOf("wap")>=0)
-				result.traf3 = traf3.toFixed(3);
-
-			result.trafic = (traf1 + traf2 + traf3).toFixed(3);
-		}
+		if(AnyBalance.isAvailable('trafic', 'traf1', 'traf2', 'traf3')){
+                        if(matches = info.match(/Трафик за текущий месяц[\s\S]*?Использовано[\s\S]*?<td.*?>(?:\s*)(.*?)<\/td>[\s\S]*?<td.*?>(?:\s*)(.*?) Кбайт<\/td>[\s\S]*?<td.*?>(?:\s*)(.*?)<\/td>[\s\S]*?<td.*?>(?:\s*)(.*?) Кбайт<\/td>[\s\S]*?<td.*?>(?:\s*)(.*?)<\/td>[\s\S]*?<td.*?>(?:\s*)(.*?) Кбайт<\/td>/)){
+				var type1 = matches[1].toLowerCase();
+				var type2 = matches[3].toLowerCase();
+				var type3 = matches[5].toLowerCase();
+				var traf1 = parseFloat(matches[2].replace(',','.'))/1024;
+				var traf2 = parseFloat(matches[4].replace(',','.'))/1024;
+				var traf3 = parseFloat(matches[6].replace(',','.'))/1024;
+				/* всё равно закоментарено в манифесте 
+				if(type1.indexOf("internet")>=0)
+					result.traf1 = traf1.toFixed(3);
+				else
+				if(type1.indexOf("wi-fi")>=0)
+					result.traf2 = traf1.toFixed(3);
+				else
+				if(type1.indexOf("wap")>=0)
+					result.traf3 = traf1.toFixed(3);
+		        
+				if(type2.indexOf("internet")>=0)
+					result.traf1 = traf2.toFixed(3);
+				else
+				if(type2.indexOf("wi-fi")>=0)
+					result.traf2 = traf2.toFixed(3);
+				else
+				if(type2.indexOf("wap")>=0)
+					result.traf3 = traf2.toFixed(3);
+		        
+				if(type3.indexOf("internet")>=0)
+					result.traf1 = traf3.toFixed(3);
+				else
+				if(type3.indexOf("wi-fi")>=0)
+					result.traf2 = traf3.toFixed(3);
+				else
+				if(type3.indexOf("wap")>=0)
+					result.traf3 = traf3.toFixed(3);
+		                */
+ 				if(AnyBalance.isAvailable('trafic'))
+					result.trafic = (traf1 + traf2 + traf3).toFixed(3);
+			}
+                }
 	}
 
 

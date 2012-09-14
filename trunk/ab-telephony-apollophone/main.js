@@ -70,7 +70,7 @@ function main(){
 
     getParam(html, result, 'balance', /БАЛАНС[\s\S]*?class="form3"[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'currency', /БАЛАНС[\s\S]*?class="form3"[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseCurrency);
-//    getParam(html, result, 'number', /АБОНЕНТ[\s\S]*?class="form3"[^>]*>([^<]*)/i, replaceTagsAndSpaces);
+    getParam(html, result, 'number', /АБОНЕНТ[\s\S]*?class="form3"[^>]*>([^<]*)/i, replaceTagsAndSpaces);
     getParam(html, result, 'userName', /<input[^>]*name='cont1'[^>]*value="([^"]*)/i, replaceTagsAndSpaces);
     getParam(html, result, '__tariff', /<input[^>]*name='cont1'[^>]*value="([^"]*)/i, replaceTagsAndSpaces);
 		

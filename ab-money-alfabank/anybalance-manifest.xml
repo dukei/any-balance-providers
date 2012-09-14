@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="9">ab-money-alfabank</id>
+  <id version="10">ab-money-alfabank</id>
   <name>Альфабанк</name>
   <description>
     Получает текущий остаток, дату следующего платежа, минимальный платеж и другие параметры карт, текущих и кредитных счетов Альфабанка, используя систему Альфа.Click ( https://click.alfabank.ru ).

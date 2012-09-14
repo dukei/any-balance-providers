@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
   <id version="1">ab-internet-dialog</id>
-  <name>Диалог - интернет провайдер</name>
+  <name>Диалог (Калининград)</name>
   <description>
     Получает баланс и информацию о тарифном плане для калининградского интернет провайдера Диалог. Информация берется из личного кабинета https://stats.tis-dialog.ru.
   </description>

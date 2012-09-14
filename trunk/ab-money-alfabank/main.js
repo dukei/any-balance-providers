@@ -226,7 +226,7 @@ function processClick(){
         processAccount(html, baseurl);
     else if(prefs.type == 'dep')
         processDep(html, baseurl);
-    else if(prefs.type == 'crd')
+    else if(prefs.type == 'crd' || prefs.type == 'credit')
         processCredit(html, baseurl);
     else 
         processCard(html, baseurl);
@@ -307,20 +307,28 @@ function getCreditInfo(html, result, accnum, baseurl, creditonly){
     }
 
     html = getDetailes(html, id, baseurl);
-    html = html_entity_decode(html);
 
-    getParam(html, result, 'topay', /Сумма к оплате:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'paytill', /(?:Оплатить до|Дата платежа):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
-    getParam(html, result, 'minpay', /(?:Минимальный платеж|Ежемесячный платеж)[^:]*:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'penalty', /Штрафы[^:]*:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'late', /Просроченная задолженность:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'overdraft', /Несанкционированный перерасход:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'debt', /(?:Общая задолженность|Остаток задолженности):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'gracetill', /Дата окончания льготного периода:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+    //Сумма к оплате:
+    getParam(html, result, 'topay', /&#1057;&#1091;&#1084;&#1084;&#1072;\s*&#1082;\s*&#1086;&#1087;&#1083;&#1072;&#1090;&#1077;:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    //Оплатить до|Дата платежа
+    getParam(html, result, 'paytill', /(?:&#1054;&#1087;&#1083;&#1072;&#1090;&#1080;&#1090;&#1100;\s*&#1076;&#1086;|&#1044;&#1072;&#1090;&#1072;\s*&#1087;&#1083;&#1072;&#1090;&#1077;&#1078;&#1072;):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+    //Минимальный платеж|Ежемесячный платеж
+    getParam(html, result, 'minpay', /(?:&#1052;&#1080;&#1085;&#1080;&#1084;&#1072;&#1083;&#1100;&#1085;&#1099;&#1081;\s*&#1087;&#1083;&#1072;&#1090;&#1077;&#1078;|&#1045;&#1078;&#1077;&#1084;&#1077;&#1089;&#1103;&#1095;&#1085;&#1099;&#1081;\s*&#1087;&#1083;&#1072;&#1090;&#1077;&#1078;)[^:]*:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    //Штрафы
+    getParam(html, result, 'penalty', /&#1064;&#1090;&#1088;&#1072;&#1092;&#1099;[^:]*:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    //Просроченная задолженность
+    getParam(html, result, 'late', /&#1055;&#1088;&#1086;&#1089;&#1088;&#1086;&#1095;&#1077;&#1085;&#1085;&#1072;&#1103;\s*&#1079;&#1072;&#1076;&#1086;&#1083;&#1078;&#1077;&#1085;&#1085;&#1086;&#1089;&#1090;&#1100;:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    //Несанкционированный перерасход
+    getParam(html, result, 'overdraft', /&#1053;&#1077;&#1089;&#1072;&#1085;&#1082;&#1094;&#1080;&#1086;&#1085;&#1080;&#1088;&#1086;&#1074;&#1072;&#1085;&#1085;&#1099;&#1081;\s*&#1087;&#1077;&#1088;&#1077;&#1088;&#1072;&#1089;&#1093;&#1086;&#1076;:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    //Общая задолженность|Остаток задолженности
+    getParam(html, result, 'debt', /(?:&#1054;&#1073;&#1097;&#1072;&#1103;\s*&#1079;&#1072;&#1076;&#1086;&#1083;&#1078;&#1077;&#1085;&#1085;&#1086;&#1089;&#1090;&#1100;|&#1054;&#1089;&#1090;&#1072;&#1090;&#1086;&#1082;\s*&#1079;&#1072;&#1076;&#1086;&#1083;&#1078;&#1077;&#1085;&#1085;&#1086;&#1089;&#1090;&#1080;):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    //Дата о?кончания льготного периода
+    getParam(html, result, 'gracetill', /&#1044;&#1072;&#1090;&#1072;\s*(?:&#1086;)?&#1082;&#1086;&#1085;&#1095;&#1072;&#1085;&#1080;&#1103;\s*&#1083;&#1100;&#1075;&#1086;&#1090;&#1085;&#1086;&#1075;&#1086;\s*&#1087;&#1077;&#1088;&#1080;&#1086;&#1076;&#1072;:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
 
     if(creditonly){
-        getParam(html, result, 'balance', /Доступный лимит:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-        getParam(html, result, 'currency', /Доступный лимит:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseCurrency);
+        //Доступный лимит
+        getParam(html, result, 'balance', /&#1044;&#1086;&#1089;&#1090;&#1091;&#1087;&#1085;&#1099;&#1081;\s*&#1083;&#1080;&#1084;&#1080;&#1090;:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+        getParam(html, result, 'currency', /&#1044;&#1086;&#1089;&#1090;&#1091;&#1087;&#1085;&#1099;&#1081;\s*&#1083;&#1080;&#1084;&#1080;&#1090;:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseCurrency);
     }
 }
 
@@ -330,6 +338,7 @@ function processCredit(html, baseurl){
         throw new AnyBalance.Error("Введите 4 последних цифры номера кредитного счета или не вводите ничего, чтобы показать информацию по первому кредитному счету");
 
     html = getMainPageOrModule(html, 'crd', baseurl);
+
     var result = {success: true};
 
     getCreditInfo(html, result, prefs.cardnum, baseurl, true);

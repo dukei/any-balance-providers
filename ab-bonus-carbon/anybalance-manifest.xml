@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-bonus-carbon</id>
+  <name>Карта Carbon (ТНК)</name>
+  <description>Получает баланс, количество активных и отложенных бонусов.</description>
+  <author>BArtWell &lt;web@bartwell.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="руб."/>
+    <counter id="active" name="Активные бонусы"/>
+    <counter id="deferred" name="Отложенные бонусы"/>
+  </counters>
+  <keywords>
+    бонус, баллы, bonus, бонусная накопительная программа, carbon, ТНК, топливо, бензин
+  </keywords>
+  <type>
+    bonus
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

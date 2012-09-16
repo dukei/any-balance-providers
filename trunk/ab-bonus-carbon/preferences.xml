@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Номер штрих-кода карты" 
+        positiveButtonText="ОК" 
+        summary="||{@s}" 
+        dialogTitle="Номер штрих-кода карты" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите номер штрих-кода карты бонусной программы ТНК"
+        key="login"
+        inputType="number">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="||***************"
+        dialogMessage="Введите ваш пароль к личному кабинету Carbon ( https://pay.carbon-card.ru/personal/pub/Login ). Если у вас нет пароля, получите его на https://pay.carbon-card.ru/personal/pub/GetPassword ."
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

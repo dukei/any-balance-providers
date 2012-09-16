@@ -1,10 +1,10 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 
-Бонусная программа Декатлон
+Лень карта ИОН
 
-Сайт оператора: http://www.decathlon.ru/RU/
-Личный кабинет: http://customercard.decathlon.fr/netcard/index.jsp?language=RU&country=RU
+Сайт: http://i-on.ru/
+Личный кабинет: http://old.i-on.ru/Welcome/
 */
 
 function getParam (html, result, param, regexp, replaces, parser) {

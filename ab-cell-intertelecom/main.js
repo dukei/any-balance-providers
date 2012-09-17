@@ -29,6 +29,18 @@ function main(){
         getParam(html, result, 'min_local', /<td[^>]*>Минуты<\/td>[\s\S]*?<td[^>]*>[^<]*местные[^<]*<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseSeconds);
 	//Бонус по программе лояльности «Наилучшее общение»
 	getParam(html, result, 'bonus_pl', /<td>Наилучшее общение<\/td>\s*<td[^>]*>([^<]*).*?<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	//Пакетный трафик
+        getParam(html, result, 'traffic_paket', /<td>пакетный трафик<\/td>\s*<td[^>]*>([^<]*)\.[^<]*<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	//Трафик использованный за текущую интернет сессию
+        getParam(html, result, 'traffic_paket_session', /<td>Трафик МБ<\/td>\s*<td[^>]*>([^<]*)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	//Узнаем разницу между имеющимся Пакетным трафиком и израсходованным за текущую сессию
+	if(typeof(traffic_paket) != 'undefined'){
+            if(AnyBalance.isAvailable('traffic_paket'))
+                result.traffic_paket = traffic_paket;
+            if(AnyBalance.isAvailable('traffic_paket_session'))
+                result.traffic_paket = traffic_paket - traffic_paket_session;
+        }
+	
 
 	AnyBalance.setResult(result);
 }

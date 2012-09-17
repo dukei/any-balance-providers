@@ -52,6 +52,41 @@ function parseCurrency(text){
     return val;
 }
 
+function parseDate(str){
+    var matches = /(\d+)[^\d](\d+)[^\d](\d+)(?:[^\d](\d+):(\d+)(?::(\d+))?)?/.exec(str);
+    if(matches){
+          var date = new Date(+matches[3], matches[2]-1, +matches[1], matches[4], matches[5], matches[6]);
+	  var time = date.getTime();
+          AnyBalance.trace('Parsing date ' + date + ' from value: ' + str);
+          return time;
+    }
+    AnyBalance.trace('Failed to parse date from value: ' + str);
+}
+
+function parseSmallDate(str){
+	//Дата
+	if(str.indexOf('сегодня')!=-1) {
+		var date = new Date();
+		return date.getTime();
+	} else if(str.indexOf('вчера')!=-1) {
+		var date = new Date();
+		return date.getTime()-86400000;
+	} else {
+                var matches = /(\d+)[^\d]+(\d+)/i.exec(str);
+                if(!matches){
+                    AnyBalance.trace('Не удалось распарсить дату: ' + str);
+                }else{
+                    var now = new Date();
+                    var year = now.getFullYear();
+                    if(now.getMonth()+1 < +matches[2])
+                        --year; //Если текущий месяц меньше месяца последней операции, скорее всего, то было за прошлый год
+                    var date = new Date(year, +matches[2]-1, +matches[1]);
+                    return date.getTime();
+                }
+        }
+
+}
+
 function main(){
     var prefs = AnyBalance.getPreferences();
 
@@ -148,7 +183,7 @@ function doOldAccount(page){
     getParam(html, result, 'currency', reBalanceContainer, replaceTagsAndSpaces, parseCurrency);
     getParam(html, result, '__tariff', reCardNumber, replaceTagsAndSpaces);
     
-    if(AnyBalance.isAvailable('till','status','cash','debt','minpay','electrocash','maxcredit')){
+    if(AnyBalance.isAvailable('till','status','cash','debt','minpay','electrocash','maxcredit','lastPurchDate','lastPurchSum','lastPurchPlace')){
       html = AnyBalance.requestGet('https://esk.zubsb.ru/pay/sbrf/'+cardref);
       getParam(html, result, 'till', /Срок действия:[\s\S]*?<td[^>]*>.*?по ([^<]*)/i, replaceTagsAndSpaces);
       getParam(html, result, 'status', /Статус:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
@@ -157,6 +192,17 @@ function doOldAccount(page){
       getParam(html, result, 'minpay', /Сумма минимального платежа[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
       getParam(html, result, 'electrocash', /Доступно для покупок[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
       getParam(html, result, 'maxcredit', /Лимит кредита[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+
+      //Последняя операция
+      var tr = getParam(html, null, null, /Последние операции по карте:[\s\S]*?<tr[^>]*>((?:[\s\S](?!<\/tr>))*"(?:cDebit|cCredit)"[\s\S]*?)<\/tr>/i);
+      if(tr){
+          getParam(tr, result, 'lastPurchDate', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+          getParam(tr, result, 'lastPurchSum', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+          getParam(tr, result, 'lastPurchPlace', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+      }else{
+          AnyBalance.trace('Последняя операция не найдена.');
+      }
+
     }
 
     if(AnyBalance.isAvailable('spasibo')){
@@ -306,38 +352,18 @@ function doNewAccountPhysic(html){
 
 	if(AnyBalance.isAvailable('lastPurchSum') || AnyBalance.isAvailable('lastPurchPlace') || AnyBalance.isAvailable('lastPurchDate')) {
 		html=AnyBalance.requestGet(baseurl+'/PhizIC/private/cards/info.do?id='+cardId);
-		//Не применяю getParam(), поскольку нужно предварительно сравнить содержимое полей Зачисление/Списание
-		var r = new RegExp('<tr class="ListLine0">[\\s\\S]+?</tr>');
-		matches=r.exec(html);
-		if(matches==null) AnyBalance.trace('Последние покупки не найдены');
-		else {
-			//Отделяем и очищаем данные последней операции
-			html=matches[0].replace(new RegExp('\\s+','g'),' ');
-			//Разбираем строку таблицы
-			r = new RegExp('<td[^>]+>(.+?)</td> <td[^>]+>(.+?)</td> <td[^>]+>(.+?)</td> <td[^>]+>(.+?)</td>');
-			matches=r.exec(html);
-			//Сумма
-			if(matches[3]=='&nbsp;') {
-				result.lastPurchSum='-'+matches[4];
-			} else {
-				result.lastPurchSum='+'+matches[3];
-			}
-			
-			//Место
-			result.lastPurchPlace=matches[1];
-			
-			//Дата
-			if(matches[2].indexOf('сегодня')!=-1) {
-				var date = new Date();
-				date.setTime(date.getTime()+(date.getTimezoneOffset()+240)*60000); //Приводим к МСК +4
-				result.lastPurchDate=date.getDate()+'.'+(date.getMonth()+1);
-			} else if(matches[2].indexOf('вчера')!=-1) {
-				var date = new Date();
-				date.setTime(date.getTime()+(date.getTimezoneOffset()+240)*60000-86400000); //Приводим к МСК +4 и вычитаем 24 часа
-				result.lastPurchDate=date.getDate()+'.'+(date.getMonth()+1);
-			} else result.lastPurchDate=matches[2];
-			
-		}
+                var tr = getParam(html, null, null, /<tr[^>]*class="ListLine0"[^>]*>([\S\s]*?)<\/tr>/i);
+                if(tr){
+                    getParam(tr, result, 'lastPurchDate', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseSmallDate);
+                    if(AnyBalance.isAvailable('lastPurchSum')){
+                        var credit = getParam(tr, null, null, /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+                        var debet = getParam(tr, result, 'lastPurchSum', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+                        result.lastPurchSum = credit || -debet;
+                    }
+                    getParam(tr, result, 'lastPurchPlace', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+                }else{
+                    AnyBalance.trace('Не удалось найти последнюю операцию.');
+                }
 	}
 
     AnyBalance.setResult(result);

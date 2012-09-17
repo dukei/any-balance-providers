@@ -18,27 +18,27 @@ function main(){
                 
 	var result = {success: true};
 	//Название тарифа
-        getParam(html, result, '__tariff', /<td>Тарифный план<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+        getParam(html, result, '__tariff', /<td[^>]*>\s*Тарифный план\s*<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
 	//Основной счет (Сальдо)
-        getParam(html, result, 'saldo', /<td>Сальдо<\/td>\s*<td[^>]*>([^<]*)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+        getParam(html, result, 'saldo', /<td[^>]*>\s*Сальдо\s*<\/td>\s*<td[^>]*>([^<]*)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 	//Предоплаченые услуги на месяц
-        getParam(html, result, 'predoplata', /<td>Предоплаченые услуги на месяц<\/td>\s*<td[^>]*>([^<]*)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+        getParam(html, result, 'predoplata', /<td[^>]*>\s*Предоплаченые услуги на месяц\s*<\/td>\s*<td[^>]*>([^<]*)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 	//Неактивированные бонусы с 094
-        getParam(html, result, 'bonus', /<td>Неактивированные бонусы \(с 094\)<\/td>\s*<td[^>]*>([^<]*)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+        getParam(html, result, 'bonus', /<td[^>]*>\s*Неактивированные бонусы \(с 094\)\s*<\/td>\s*<td[^>]*>([^<]*)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 	//Предоплачение местные минуты
-        getParam(html, result, 'min_local', /<td[^>]*>Минуты<\/td>[\s\S]*?<td[^>]*>[^<]*местные[^<]*<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseSeconds);
+        getParam(html, result, 'min_local', /<td[^>]*>\s*Минуты\s*<\/td>[\s\S]*?<td[^>]*>[^<]*местные[^<]*<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseSeconds);
 	//Бонус по программе лояльности «Наилучшее общение»
-	getParam(html, result, 'bonus_pl', /<td>Наилучшее общение<\/td>\s*<td[^>]*>([^<]*).*?<\/td>/i, replaceTagsAndSpaces, parseBalance);
-	//Пакетный трафик
-        getParam(html, result, 'traffic_paket', /<td>пакетный трафик<\/td>\s*<td[^>]*>([^<]*)\.[^<]*<\/td>/i, replaceTagsAndSpaces, parseBalance);
-	//Трафик использованный за текущую интернет сессию
-        getParam(html, result, 'traffic_paket_session', /<td>Трафик МБ<\/td>\s*<td[^>]*>([^<]*)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'bonus_pl', /<td[^>]*>\s*Наилучшее общение\s*<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+
+	//Пакетный трафик (получаем в локальную переменную, и независимо от включенности счетчика 'traffic_paket')
+        var traffic_paket = getParam(html, null, null, /<td[^>]*>\s*пакетный трафик\s*<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	//Трафик использованный за текущую интернет сессию  (получаем в локальную переменную, и независимо от включенности счетчика 'traffic_paket_session')
+        var traffic_paket_session = getParam(html,  null, null, /<td[^>]*>\s*Трафик МБ\s*<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+
 	//Узнаем разницу между имеющимся Пакетным трафиком и израсходованным за текущую сессию
 	if(typeof(traffic_paket) != 'undefined'){
             if(AnyBalance.isAvailable('traffic_paket'))
-                result.traffic_paket = traffic_paket;
-            if(AnyBalance.isAvailable('traffic_paket_session'))
-                result.traffic_paket = traffic_paket - traffic_paket_session;
+                result.traffic_paket = traffic_paket - (traffic_paket_session || 0); //Если вдруг traffic_paket_session не найден, то считаем его равным 0
         }
 	
 

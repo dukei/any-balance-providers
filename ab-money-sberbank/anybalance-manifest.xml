@@ -32,9 +32,10 @@
     <counter id="maxlimit" name="Кредитный лимит"/>
     <counter id="cardName" name="Имя на карте" type="text"/>
     <counter id="status" name="Статус" type="text"/>
-	<counter id="lastPurchSum" name="Сумма последней операции" type="text"/>
+
+	<counter id="lastPurchSum" name="Сумма последней операции"/>
 	<counter id="lastPurchPlace" name="Место последней операции" type="text"/>
-	<counter id="lastPurchDate" name="Дата последней операции" type="text"/>
+	<counter id="lastPurchDate" name="Дата последней операции" type="time" format="dd/MM"/>
 	<counter id="usdPurch" name="USD покупка"/>
 	<counter id="usdSell" name="USD продажа"/>
 	<counter id="eurPurch" name="EUR покупка"/>

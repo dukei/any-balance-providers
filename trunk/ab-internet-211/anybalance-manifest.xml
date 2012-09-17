@@ -15,7 +15,7 @@
   </files>
   <counters>
     <counter id="balance" name="Баланс" units="р"/>
-    <counter id="bonus" name="Бонус" units="β"/> -->
+    <counter id="bonus" name="Бонус" units="β"/>
   </counters>
   <keywords>
     интернет

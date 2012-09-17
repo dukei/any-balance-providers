@@ -16,8 +16,8 @@
   <counters>
     <counter id="balance" name="Баланс" units="р"/>
     <counter id="prihod" name="Платежи в текущем месяце" units="р"/>
-    <counter id="trafficIn" name="Вх.трафик в текущем месяце" units="Gb"/> -->
-    <counter id="trafficOut" name="Исх.трафик в текущем месяце" units="Gb"/> -->
+    <counter id="trafficIn" name="Вх.трафик в текущем месяце" units="Gb"/>
+    <counter id="trafficOut" name="Исх.трафик в текущем месяце" units="Gb"/>
     <counter id="licschet" name="Договор" type="text"/>
   </counters>
   <keywords>

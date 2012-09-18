@@ -1,0 +1,128 @@
+﻿/**
+Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
+
+Получает баланс и информацию о домене для регистратора доменов 2domains
+
+Сайт оператора: http://2domains.ru
+Личный кабинет: https://2domains.ru/reg/
+*/
+
+function getParam (html, result, param, regexp, replaces, parser) {
+	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
+		return;
+
+	var matches = regexp.exec (html), value;
+	if (matches) {
+		value = matches[1];
+		if (replaces) {
+			for (var i = 0; i < replaces.length; i += 2) {
+				value = value.replace (replaces[i], replaces[i+1]);
+			}
+		}
+		if (parser)
+			value = parser (value);
+
+    if(param)
+      result[param] = value;
+	}
+   return value
+}
+
+var replaceTagsAndSpaces = [/&nbsp;/g, ' ', /<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, ''];
+var replaceFloat = [/\s+/g, '', /,/g, '.'];
+
+function parseBalance(text){
+    var val = getParam(text.replace(/\s+/g, ''), null, null, /(-?\d[\d\s.,]*)/, replaceFloat, parseFloat);
+    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
+    return val;
+}
+
+function parseDate(str){
+    var matches = /(\d+)[^\d](\d+)[^\d](\d+)/.exec(str);
+    var time;
+    if(matches){
+	  time = (new Date(+matches[3], matches[2]-1, +matches[1])).getTime();
+          AnyBalance.trace('Parsing date ' + new Date(time) + ' from value: ' + str);
+          return time;
+    }
+    AnyBalance.trace('Could not parse date from value: ' + str);
+}
+
+function main(){
+    var prefs = AnyBalance.getPreferences();
+    AnyBalance.setDefaultCharset('windows-1251');
+
+    var baseurl = "https://2domains.ru/reg/";
+
+    var html = AnyBalance.requestPost(baseurl + 'login.php', {
+        ret:'/',
+        email:prefs.login,
+        passwd:prefs.password,
+        login:'Авторизоваться'
+    });
+
+    //AnyBalance.trace(html);
+    if(!/\/reg\/logout\.php/i.test(html)){
+        var error = getParam(html, null, null, /<p[^>]*class=["']warning[^>]*>([\s\S]*?)<\/p>/, replaceTagsAndSpaces, html_entity_decode);
+        if(error)
+            throw new AnyBalance.Error(error);
+        throw new AnyBalance.Error('Не удалось войти в личный кабинет. Проблемы на сайте или сайт изменен.');
+    }
+
+    var result = {success: true};
+
+    getParam(html, result, 'balance', /Ваш баланс:[\s\S]*?<big[^>]*>([\S\s]*?)<\/big>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'domains', /Всего доменов[\s\S]*?<big[^>]*>([\S\s]*?)<\/big>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'services', /Всего доменов[\s\S]*?<big[^>]*>[^<]*\/([\S\s]*?)<\/big>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'prolong', /К продлению:[\s\S]*?<big[^>]*>([\S\s]*?)<\/big>/i, replaceTagsAndSpaces, parseBalance);
+
+    if(prefs.domains){
+        var notfound = [];
+        var found = [];
+        var ind = 0;
+
+        var domains = prefs.domains.split(/\s*,\s*/g);
+        for(var i=0; i<domains.length; ++i){
+            var domain = domains[i];
+           
+            html = AnyBalance.requestPost(baseurl + 'domains/index.php', {
+                p_page:1,
+                c_page:1,
+                find_domain:1,
+                search_domain_name:domain
+            });
+
+            var tr = getParam(html, null, null, /(<tr(?:[\s\S](?!<\/tr>))*?class="ex2trigger"[\s\S]*?<\/tr>)/i);
+
+            if(!tr){
+                notfound[notfound.length] = domain; 
+            }else{
+                var suffix = ind > 0 ? ind : '';
+                var domain_name = getParam(tr, null, null, /<a[^>]*class="ex2trigger"[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces)
+                getParam(tr, result, 'domain' + suffix, /<a[^>]*class="ex2trigger"[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces);
+                getParam(tr, result, 'domain_till' + suffix, /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+                found[found.length] = domain_name;
+            }
+
+            ++ind;
+        }
+  
+        if(!found.length)
+            throw new AnyBalance.Error('Не найдено ни одного домена из списка: ' + prefs.domains);
+        if(notfound.length)
+            throw new AnyBalance.trace('Следующие домены не найдены: ' + notfound.join(', '));
+
+        result.__tariff = found.join(', ');
+    }
+    
+    AnyBalance.setResult(result);
+}
+
+function html_entity_decode(str)
+{
+    //jd-tech.net
+    var tarea=document.createElement('textarea');
+    tarea.innerHTML = str;
+    return tarea.value;
+}
+

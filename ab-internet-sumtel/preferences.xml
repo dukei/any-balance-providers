@@ -17,7 +17,7 @@
         negativeButtonText="Отмена"
         title="Пароль"
         summary="||***********"
-        dialogMessage="Введите пароль, используемый для входа в личный кабинет https://stat.sumtel.ru."
-        inputType="textPassword">
+        dialogMessage="Введите пароль, используемый для входа в личный кабинет http://my.sumtel.ru."
+        inputType="numberPassword">
     </EditTextPreference>
 </PreferenceScreen>

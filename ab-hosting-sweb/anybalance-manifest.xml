@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-hosting-sweb</id>
+  <name>SpaceWeb (Хостинг)</name>
+  <description>
+    Получает баланс и информацию о тарифном плане у хостинг-провайдера SpaceWeb (http://sweb.ru).
+
+    Информация берется из личного кабинета https://cp.sweb.ru.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="bonus" name="Бонус" units="р"/>
+    <counter id="block" name="До блокировки" units="дн"/>
+    <counter id="quota" name="Квота" units="Мб"/>
+  </counters>
+  <keywords>
+    интернет hosting
+  </keywords>
+  <type>
+    hosting
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

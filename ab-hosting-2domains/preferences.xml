@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="E-mail (Логин)" 
+        positiveButtonText="ОК" 
+        summary="||{@s}" 
+        dialogTitle="E-mail (Логин)" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите логин для входа в личный кабинет 2domains"
+        inputType="textEmailAddress"
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="||***********"
+        dialogMessage="Введите пароль для входа в личный кабинет 2domains."
+        inputType="textPassword">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="domains" 
+        dialogTitle="Домены"
+        negativeButtonText="Отмена"
+        title="Домены"
+        summary="Домены (до 4) через запятую||{@s}\n"
+        dialogMessage="Вы можете ввести до 4 доменов через запятую, для которых желаете получить информацию. Если вы не хотите получать информацию о доменах, оставьте поле пустым. Чтобы получить информацию о первом домене, введите *."
+        defaultValue="*"
+        inputType="textEmailAddress">
+    </EditTextPreference>
+</PreferenceScreen>

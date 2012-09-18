@@ -334,8 +334,8 @@ function getCreditInfo(html, result, accnum, baseurl, creditonly){
 
 function processCredit(html, baseurl){
     var prefs = AnyBalance.getPreferences();
-    if(prefs.cardnum && !/^\d{4}$/.test(prefs.cardnum))
-        throw new AnyBalance.Error("Введите 4 последних цифры номера кредитного счета или не вводите ничего, чтобы показать информацию по первому кредитному счету");
+    if(prefs.cardnum && !/^\d{4,}$/.test(prefs.cardnum))
+        throw new AnyBalance.Error("Введите не меньше 4 последних цифр номера кредитного счета или не вводите ничего, чтобы показать информацию по первому кредитному счету");
 
     html = getMainPageOrModule(html, 'crd', baseurl);
 
@@ -348,8 +348,8 @@ function processCredit(html, baseurl){
 
 function processAccount(html, baseurl){
     var prefs = AnyBalance.getPreferences();
-    if(prefs.cardnum && !/^\d{4}$/.test(prefs.cardnum))
-        throw new AnyBalance.Error("Введите 4 последних цифры номера счета или не вводите ничего, чтобы показать информацию по первому счету");
+    if(prefs.cardnum && !/^\d{4,}$/.test(prefs.cardnum))
+        throw new AnyBalance.Error("Введите не меньше 4 последних цифр номера счета или не вводите ничего, чтобы показать информацию по первому счету");
 
     html = getMainPageOrModule(html, 'acc', baseurl);
     

@@ -14,7 +14,7 @@ function main(){
 	});
 
         if(!/\?logout/i.test(html))
-		throw AnyBalance.Error('Не удалось зайти в личный кабинет. Проверьте логин-пароль.');
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Проверьте логин-пароль.');
                 
 	var result = {success: true};
 	//Название тарифа

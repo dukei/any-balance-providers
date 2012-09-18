@@ -255,7 +255,7 @@ function processCard(html, baseurl){
     var id = getParam(tr, null, null, /<a[^>]*id="([^"]*)[^>]*>/i, null, html_entity_decode);
     if(!id){
         var cardnum = getParam(tr, null, null, /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-        throw AnyBalance.Error('Не удается найти ID карты ' + cardnum);
+        throw new AnyBalance.Error('Не удается найти ID карты ' + cardnum);
     }
 
     html = getDetailes(html, id, baseurl);
@@ -303,7 +303,7 @@ function getCreditInfo(html, result, accnum, baseurl, creditonly){
     var id = getParam(tr, null, null, /<a[^>]*id="([^"]*)[^>]*>/i, null, html_entity_decode);
     if(!id){
         var accnum = getParam(tr, null, null, /(\d{20})/i, replaceTagsAndSpaces, html_entity_decode);
-        throw AnyBalance.Error('Не удается найти ID счета ' + accnum);
+        throw new AnyBalance.Error('Не удается найти ID счета ' + accnum);
     }
 
     html = getDetailes(html, id, baseurl);

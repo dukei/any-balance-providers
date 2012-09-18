@@ -10,7 +10,7 @@
 function main(){
 	var prefs = AnyBalance.getPreferences();
         if(!prefs.code) //Код отправления, введенный пользователем
-            throw AnyBalance.Error("Введите код отправления!");
+            throw new AnyBalance.Error("Введите код отправления!");
 
         if(prefs.type == 'rp')
             mainRussianPost();

@@ -111,9 +111,9 @@ function main(){
         }
   
         if(!found.length)
-            throw AnyBalance.Error('Не найдено ни одного домена из списка: ' + prefs.domains);
+            throw new AnyBalance.Error('Не найдено ни одного домена из списка: ' + prefs.domains);
         if(notfound.length)
-            throw AnyBalance.trace('Следующие домены не найдены: ' + notfound.join(', '));
+            throw new AnyBalance.trace('Следующие домены не найдены: ' + notfound.join(', '));
 
         result.__tariff = found.join(', ');
     }

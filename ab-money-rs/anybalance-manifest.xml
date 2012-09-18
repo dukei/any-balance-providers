@@ -1,25 +1,31 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-    <id major_version="1.0" version="3">ab-money-rs</id>
-    <name>Кредит "Русский стандарт"</name>
-    <description>Информация о кредите в банке "Русский стандарт". В настройках провайдера требуется указать логин и пароль к Интернет-банку, а также номер кредитного договора. Получить логин и пароль к Интернет-банку можно по следующему адресу: http://online.rsb.ru/</description>
+    <id major_version="2.0" version="4">ab-money-rs</id>
+    <name>Русский стандарт</name>
+    <description>Информация о карте, депозите или кредите в банке "Русский стандарт".
+В настройках провайдера требуется указать логин и пароль к Интернет-банку, а также номер кредитного договора. Получить логин и пароль к Интернет-банку можно по следующему адресу: http://online.rsb.ru
+</description>
     <author>BArtWell &lt;web@bartwell.ru&gt;</author>
     <files>
-		<icon>icon.png</icon>
+	<icon>icon.png</icon>
         <preferences>preferences.xml</preferences>
         <js>main.js</js>
         <history>history.xml</history>
     </files>
     <counters>
-		<counter id="credit_balance" name="Остаток по кредиту"/>
-		<counter id="payment_sum" name="Размер следующего платежа"/>
-		<counter id="writeoff_date" name="Дата списания платежа" type="text"/>
+	<counter id="credit_balance" name="Остаток по кредиту"/>
+	<counter id="payment_sum" name="Размер следующего платежа"/>
+	<counter id="writeoff_date" name="Дата списания платежа"  type="time" format="dd/MM/yyyy"/>
         <counter id="left" name="До списывания платежа осталось дней" type="text" units="дн"/>
-        <counter id="account_balance" name="Остаток на счёте" units="р"/>
-        <counter id="contract" name="Номер договора" type="text"/>
-        <counter id="contract_date" name="Дата заключения договора" type="text"/>
+        <counter id="account_balance" name="Остаток на счёте"/>
+        <counter id="currency" name="Валюта" type="text"/>
+        <counter id="contract" name="Номер договора/карты" type="text"/>
+        <counter id="contract_date" name="Дата заключения договора" type="time" format="dd/MM/yyyy"/>
         <counter id="credit_sum" name="Сумма кредита" units="р"/>
         <counter id="paided" name="Выплачено" units="р"/>
+        <counter id="till" name="Окончание срока действия карты" type="time" format="dd/MM/yyyy"/>
+        <counter id="status" name="Статус карты" type="text"/>
+        <counter id="accname" name="Название" type="text"/>
     </counters>
     <keywords>
         Кредит, банк, Русский стандарт

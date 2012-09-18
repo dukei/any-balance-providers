@@ -29,7 +29,7 @@ function getParam (html, result, param, regexp, replaces, parser) {
 	}
 }
 
-var replaceTagsAndSpaces = [/<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
+var replaceTagsAndSpaces = [/<[^>]*>/g, ' ', '&nbsp;', ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
 var replaceFloat = [/\s+/g, '', /,/g, '.'];
 
 function getViewState(html){
@@ -87,7 +87,7 @@ function parseSmallDate(str){
 
 }
 
-function main(){
+function main() {
     var prefs = AnyBalance.getPreferences();
 
     var baseurl = "https://esk.sbrf.ru/";
@@ -353,11 +353,12 @@ function doNewAccountPhysic(html){
 	if(AnyBalance.isAvailable('lastPurchSum') || AnyBalance.isAvailable('lastPurchPlace') || AnyBalance.isAvailable('lastPurchDate')) {
 		html=AnyBalance.requestGet(baseurl+'/PhizIC/private/cards/info.do?id='+cardId);
                 var tr = getParam(html, null, null, /<tr[^>]*class="ListLine0"[^>]*>([\S\s]*?)<\/tr>/i);
+
                 if(tr){
                     getParam(tr, result, 'lastPurchDate', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseSmallDate);
                     if(AnyBalance.isAvailable('lastPurchSum')){
                         var credit = getParam(tr, null, null, /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-                        var debet = getParam(tr, result, 'lastPurchSum', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+                        var debet = getParam(tr, null, null, /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
                         result.lastPurchSum = credit ? '+' + credit : '-' + debet;
                     }
                     getParam(tr, result, 'lastPurchPlace', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);

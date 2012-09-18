@@ -3,7 +3,7 @@
 	<EditTextPreference
         title="Логин" 
         positiveButtonText="ОК" 
-        summary="Логин||{@s}\n" 
+        summary="||{@s}" 
         dialogTitle="Логин" 
         negativeButtonText="Отмена" 
         dialogMessage="Введите ваш логин для входа в Интернет-банк"
@@ -20,13 +20,21 @@
         dialogMessage="Введите пароль, используемый для входа в Интернет-банк"
         inputType="textPassword">
     </EditTextPreference>
-	<EditTextPreference
-        title="Номер договора" 
+    <ListPreference 
+        key="type" 
+        title="Что смотреть"
+        summary="||{@s}"
+        entries="Карта|Кредит|Депозит"
+        entryValues="card|crd|dep"
+	defaultValue="crd">
+    </ListPreference>
+    <EditTextPreference
+        title="Номер договора/карты" 
         positiveButtonText="ОК" 
-        summary="Номер договора||{@s}\n" 
-        dialogTitle="Номер договора" 
+        summary="|Автоматически|{@s}" 
+        dialogTitle="Номер договора или карты" 
         negativeButtonText="Отмена" 
-        dialogMessage="Номер кредитного договора"
+        dialogMessage="В зависимости от настройки Что смотреть, введите сюда номер кредитного или депозитного договора или последние 4 цифры номера карты. Если оставить поле пустым, то будет показана информация по первой карте/депозиту."
         key="contract"
         inputType="number">
     </EditTextPreference>

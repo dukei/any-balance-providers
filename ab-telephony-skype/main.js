@@ -50,6 +50,12 @@ function parseBalance(text){
     return val;
 }
 
+function parseCurrency(text){
+    var val = html_entity_decode(text.replace(/\s+/, '')).replace(/[\-\d\.,]+/,'');
+    AnyBalance.trace('Parsing currency (' + val + ') from: ' + text);
+    return val;
+}
+
 function main(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');    
@@ -61,9 +67,12 @@ function main(){
 	password:prefs.password
     });
 
-    var error = getParam(info, null, null, /<div class="messageBody[^>]*>([\s\S]*?)<\/div>/i, [/<.*?>/g, '', /^\s*|\s*$/g, '']);
-    if(error)
-        throw new AnyBalance.Error(error);
+    if(!/secure\.skype\.com\/account\/logout/i.test(info)){
+        var error = getParam(info, null, null, /<div class="messageBody[^>]*>([\s\S]*?)<\/div>/i, [/<.*?>/g, '', /^\s*|\s*$/g, '']);
+        if(error)
+            throw new AnyBalance.Error(error);
+        throw new AnyBalance.Error("Не удалось зайти в личный кабинет. Сайт изменен?");
+    }
      
     
     var result = {
@@ -72,8 +81,8 @@ function main(){
 
     var matches;
 
-    getParam(info, result, 'balance', /id="balanceAmount">([\s\S]*?)<div/i, replaceTagsAndSpaces, parseBalance);
-    getParam(info, result, 'currency', /<span class='ccy'>([^<]*)/i, null, html_entity_decode);
+    getParam(info, result, 'balance', /<a[^>]*class="first"[^>]*store.buy.skypecredit[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(info, result, 'currency', /<a[^>]*class="first"[^>]*store.buy.skypecredit[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces, parseCurrency);
 		
     AnyBalance.setResult(result);
 }

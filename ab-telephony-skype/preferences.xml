@@ -3,7 +3,7 @@
     <EditTextPreference 
         title="Логин" 
         positiveButtonText="ОК" 
-        summary="Логин в Skype||{@s}\n" 
+        summary="||{@s}" 
         dialogTitle="Логин" 
         negativeButtonText="Отмена" 
         dialogMessage="Введите ваш логин в Skype"
@@ -15,8 +15,8 @@
         dialogTitle="Пароль"
         negativeButtonText="Отмена"
         title="Пароль"
-        summary="Введите пароль||************\n"
-        dialogMessage="Введите ваш пароль в Skype"
+        summary="|Введите пароль|************"
+        dialogMessage="Введите ваш пароль для входа в Skype"
         inputType="textPassword">
     </EditTextPreference>
 </PreferenceScreen>

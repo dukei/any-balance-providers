@@ -91,7 +91,7 @@ function main(){
             var html = AnyBalance.requestGet("http://rp5.ru/docs/xml/ru?id="+prefs.city, {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.83 Safari/537.1'});
             xml = getParam(html, null, null, /<pre[^>]*>([\s\S]*?)<\/pre>/i, null, html_entity_decode);
             if(!xml)
-                throw AnyBalance.Error("Не удалось получить xml для кода города " + prefs.city);
+                throw new AnyBalance.Error("Не удалось получить xml для кода города " + prefs.city);
         }
 
 	var xmlDoc = $.parseXML(xml),

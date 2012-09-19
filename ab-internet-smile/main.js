@@ -10,7 +10,7 @@
 
 function main () {
     var prefs = AnyBalance.getPreferences ();
-    var baseurl = 'http://user.smile-net.ru/newpa/';
+    var baseurl = 'https://user.smile-net.ru/newpa/';
 
     if (!prefs.login || prefs.login == '')
         throw new AnyBalance.Error ('Введите логин');

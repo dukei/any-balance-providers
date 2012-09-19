@@ -19,24 +19,23 @@ function main () {
         throw new AnyBalance.Error ('Введите пароль');
 
     AnyBalance.trace ('Trying to enter selfcare at address: ' + baseurl);
-    var html = AnyBalance.requestPost (baseurl, {
+    var html = AnyBalance.requestPost (baseurl + '?handler=Login', {
         login: prefs.login,
         password: prefs.password,
         handler: 'Login'
     });
 
-    var regexp=/<title>\s*Авторизация\s*<\/title>/i;
-    var res = regexp.exec (html);
-    if (res)
-        throw new AnyBalance.Error ('Неверный логин или пароль');
-
     // Проверка на корректный вход
-    regexp = /<title>\s*Общая\s*информация\s*пользователя\s*\d*\s*<\/title>/;
-    if (regexp.exec (html))
+    if (/\?handler=Login&amp;out=out/.test(html))
         AnyBalance.trace ('It looks like we are in selfcare...');
     else {
+        var regexp=/<title>\s*Авторизация\s*<\/title>/i;
+        var res = regexp.exec (html);
+        if (res)
+            throw new AnyBalance.Error ('Неверный логин или пароль');
+
         AnyBalance.trace ('Have not found logOff... Unknown error. Please contact author.');
-        throw new AnyBalance.Error ('Неизвестная ошибка. Пожалуйста, свяжитесь с автором.');
+        throw new AnyBalance.Error ('Не удалось зайти в личный кабинет. Неизвестная ошибка. Пожалуйста, свяжитесь с автором.');
     }
     var result = {success: true};
 
@@ -44,25 +43,25 @@ function main () {
     getParam (html, result, 'customer', /handler=Customer[^>]*>([^<]+)/i);
 
     // Номер договора
-    getParam (html, result, 'contract', /Номер\s*договора.*?class="value".*?>(\d+)/i, [], parseInt);
+    getParam (html, result, 'contract', />\s*Номер лицевого счета\s*<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
 
     // Баланс
-    getParam (html, result, 'balance', /Баланс.*?class="value".*?>(-?\d+\.?\d*)/i, [], parseFloat);
+    getParam (html, result, 'balance', />\s*Баланс\s*<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 
     // К оплате
-    getParam (html, result, 'payment', /К оплате.*?class="value".*?>(-?\d+\.?\d*)/i, [], parseFloat);
+    getParam (html, result, 'payment', />\s*К оплате\s*<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 
     // Абонентская плата
-    getParam (html, result, 'licenseFee', /абон\.\s*плата\s*(-?\d+\.?\d*)/i, [], parseFloat);
+    getParam (html, result, 'licenseFee', /абон\.\s*плата\s*(-?\d+\.?\d*)/i, null, parseBalance);
 
     // Дата окончания рассчетного периода
-    getParam (html, result, 'dateEndSettlementDays', /Дата\s*окончания\s*рассчетного\s*периода.*?class="value".*?>(\d{2}\.\d{2}\.\d{4}\s*\d{2}:\d{2})/i, [/(\d*).(\d*).(\d*)/, '$3/$2/$1'], Date.parse);
+    getParam (html, result, 'dateEndSettlementDays', />\s*Дата окончания расчетного периода\s*<[\s\S]*?<td[^>]*>([\s\S]*?)(?:дата начала|<\/td>)/i, replaceTagsAndSpaces, parseDate);
 
     // Тариф
-    getParam (html, result, '__tariff', /Название текущего тарифного плана.*?class="value".*?>([^<]*)/i);
+    getParam (html, result, '__tariff', />\s*Название текущего тарифа\s*<[\s\S]*?<td[^>]*>([\s\S]*?)(?:\(|<\/td>)/i, replaceTagsAndSpaces);
 
     // Статус
-    getParam (html, result, 'status', /Статус.*?class="value".*?>(?:<[^>]*>|)([^<]*)/i);
+    getParam (html, result, 'status', />\s*Статус\s*<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
 
 
     if (AnyBalance.isAvailable ('bonus')) {
@@ -82,17 +81,17 @@ function main () {
         html = AnyBalance.requestGet (baseurl + '?handler=ConnectInfo');
         
         // Лимит
-        getParam (html, result, 'trafLimit', /Осталось бесплатного трафика.*?class="value".*?>([\d\.]+)/, null, parseFloat);
+        getParam (html, result, 'trafLimit', />\s*Осталось бесплатного трафф?ика\s*<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
         
         // Входящий трафик
-        getParam (html, result, 'trafIn', /Входящий трафик.*?class="value".*?>([\d\.]+)/, null, parseFloat);
+        getParam (html, result, 'trafIn', />\s*Входящий трафф?ик\s*<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     
         // Исходящий трафик
-        getParam (html, result, 'trafOut', /Исходящий трафик.*?class="value".*?>([\d\.]+)/, null, parseFloat);
+        getParam (html, result, 'trafOut', />\s*Исходящий трафф?ик\s*<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
       
     }
     
-    if (AnyBalance.isAvailable ('trafIn', 'trafOut') && result.trafIn === undefined && result.trafOut === undefined) {
+    if (AnyBalance.isAvailable ('trafIn', 'trafOut') && (result.trafIn === undefined || result.trafOut === undefined)) {
         var dt = new Date();
         var year = dt.getFullYear(),
           month = dt.getMonth()+1,
@@ -102,16 +101,17 @@ function main () {
         AnyBalance.trace ('Fetching traffic info...');
         html = AnyBalance.requestPost (baseurl + '?handler=TrafficStat', {
           begin_date: '01.' + month + '.' + year,
-          end_date: '01.' + newMonth + '.' + newYear
+          end_date: '01.' + newMonth + '.' + newYear,
+          process: 'process'
         });
         
         AnyBalance.trace ('Parsing traffic info...');
     
         // Входящий трафик
-        getParam (html, result, 'trafIn', /Входящий[\s\S]*?>([\d\.]+)</i, null, parseFloat);
+        getParam (html, result, 'trafIn', />\s*Входящий\s*<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     
         // Исходящий трафик
-        getParam (html, result, 'trafOut', /Исходящий[\s\S]*?>([\d\.]+)</i, null, parseFloat);
+        getParam (html, result, 'trafOut', />\s*Исходящий\s*<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     }
 
 

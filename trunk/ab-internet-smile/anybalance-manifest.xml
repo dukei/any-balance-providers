@@ -20,13 +20,14 @@
     <counter id="payment" name="К оплате" units="р"/>
     <counter id="trafIn" name="Входящий трафик" units="Мб"/>
     <counter id="trafOut" name="Исходящий трафик" units="Мб"/>
-    <counter id="trafLeft" name="Лимит трафика" units="Мб"/>
     <counter id="status" name="Статус" type="text"/>
+    <counter id="dateEndSettlementDays" name="Окончание расчетного периода" type="time" format="dd/MM/yyyy"/>
+    
+    <counter id="trafLeft" name="Лимит трафика" units="Мб"/>
     <counter id="customer" name="Владелец" type="text"/>
 
     <counter id="contract" name="Номер договора" prefix="№"/>
     <counter id="licenseFee" name="Абонентская плата" units="р"/>
-    <counter id="dateEndSettlementDays" name="Окончание расчетного периода" type="time"/>
   </counters>
   <keywords>
     интернет, смайл

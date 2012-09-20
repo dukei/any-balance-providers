@@ -134,6 +134,11 @@ function main(){
 	throw new AnyBalance.Error('В качестве номера необходимо ввести 10 цифр номера, например, 9161234567, или не вводить ничего, чтобы получить информацию по основному номеру.');
     }
 
+    if(!prefs.login)
+	throw new AnyBalance.Error('Вы не ввели телефон (логин)');
+    if(!prefs.password)
+	throw new AnyBalance.Error('Вы не ввели пароль');
+
     if(prefs.type == 'lk'){
         mainLK();
     }else if(prefs.type == 'mobile'){
@@ -534,8 +539,14 @@ function mainLK(){
 
     var baseurl = 'https://lk.ssl.mts.ru';
     var baseurlLogin = 'https://login.mts.ru';
-    //Чтобы сбросить автологин
-    var html = AnyBalance.requestGet(baseurlLogin + "/amserver/UI/Login?service=lk&goto=" + baseurl + "/&auth-status=1", headers);
+
+    if(prefs.__dbg){
+        //Чтобы сбросить автологин
+        var html = AnyBalance.requestGet(baseurl, headers);
+    }else{
+        //Чтобы сбросить автологин
+        var html = AnyBalance.requestGet(baseurlLogin + "/amserver/UI/Login?service=lk&goto=" + baseurl + "/&auth-status=1", headers);
+    }
 
     if(isLoggedIn(html)){
          AnyBalance.trace("Уже залогинены, проверяем, что на правильный номер...");
@@ -554,19 +565,24 @@ function mainLK(){
             IDToken0:'',
             IDToken1:prefs.login,
             IDToken2:prefs.password,
-            IDButton:'+%D0%92%D1%85%D0%BE%D0%B4+%D0%B2+%D0%9B%D0%B8%D1%87%D0%BD%D1%8B%D0%B9+%D0%BA%D0%B0%D0%B1%D0%B8%D0%BD%D0%B5%D1%82+',
+            IDButton:'+%C2%F5%EE%E4+%E2+%CB%E8%F7%ED%FB%E9+%EA%E0%E1%E8%ED%E5%F2+',
             'goto':'aHR0cHM6Ly9say5zc2wubXRzLnJ1Lw==',
             encoded:true,
             initialNumber:'',
-            loginURL:'/amserver/UI/Login?auth-status=0&gx_charset=UTF-8&service=lk&goto=https%3A%2F%2Flk.ssl.mts.ru%2F',
-            gx_charset:'UTF-8'
+            loginURL:'/amserver/UI/Login?auth-status=0&gx_charset=UTF-8&service=lk&goto=https%3A%2F%2Flk.ssl.mts.ru%2F'
         });
-
-        if(getParam(html, null, null, /(auth-status=0)/i))
-            throw new AnyBalance.Error('Неверный логин или пароль. Повторите попытку или получите новый пароль на сайте https://lk.ssl.mts.ru/.');
     }
 
     if(!isLoggedIn(html)){
+//        AnyBalance.trace(html);
+
+        var error = getParam(html, null, null, /<div[^>]+class="field_error"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+        if(error)
+            throw new AnyBalance.Error(error);
+
+        if(getParam(html, null, null, /(auth-status=0)/i))
+            throw new AnyBalance.Error('Неверный логин или пароль. Повторите попытку или получите новый пароль на сайте https://lk.ssl.mts.ru/.');
+
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Он изменился или проблемы на сайте.');
     }
     AnyBalance.trace("Мы в личном кабинете...");
@@ -582,7 +598,7 @@ function mainLK(){
         result.bonus = parseFloat(info.bonus);
 
     if(isAvailableStatus()){
-        var baseurlHelper = "https://ihelper.mts.ru/selfcare/"
+        var baseurlHelper = "https://ihelper.mts.ru/selfcare/" + "account-status.aspx"
         html = AnyBalance.requestGet(baseurlHelper, headers);
         var redirect=getParam(html, null, null, /<form .*?id="redirect-form".*?action="[^"]*?([^\/\.]+)\.mts\.ru/);
         if (redirect){
@@ -601,7 +617,9 @@ function mainLK(){
             
         }
 
-        html = AnyBalance.requestGet(baseurlHelper + "account-status.aspx", headers);
+        if(!/<h1>Состояние счета<\/h1>/i.test(html))
+            html = AnyBalance.requestGet(baseurlHelper + (/account-status\.aspx/i.test(baseurlHelper) ? '' : 'account-status.aspx'), headers);
+
 //        AnyBalance.trace(html);
         fetchAccountStatus(html, result);
     }

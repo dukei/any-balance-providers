@@ -1,4 +1,4 @@
-/**
+﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 
 Провайдер NCC (Республика Татарстан, Нижегородский филиал)
@@ -61,76 +61,56 @@ function main(){
 		}
 	}
 
-	AnyBalance.trace("Fetching tariff...");
-	info = AnyBalance.requestGet(baseurl + "?path=tarif");
+	AnyBalance.trace("Fetching all bills info...");
+	info = AnyBalance.requestGet(baseurl + "?path=allbills");
+	if(matches = info.match(/Тарифный план<\/th>[\s\S]*?<td[\s\S]*?<\/td>[\s\S]*?<td[\s\S]*?<\/td>[\s\S]*?<td.*?>(?:\s*)(.*?)<\/td>/)){
+		result.__tariff = matches[1];
+	}
 
-/*	if(prefs.region == "1"){	// Татарстан
-		if(matches = info.match(/Тариф: (.*?)</)){
-			result.__tariff = matches[1];
-		}
-	}
-	else if(prefs.region == "2"){	// Нижегородский
-		if(matches = info.match(/Тариф: (.*?)</)){
-			result.__tariff = matches[1];
-		}
-	}
-*/
-/*	if(prefs.region == "1"){	// Татарстан
-		AnyBalance.trace("Fetching tariff...");
-		info = AnyBalance.requestGet(baseurl + "?path=tarif");
-		if(matches = info.match(/Тариф: (.*?)</)){
-			result.__tariff = matches[1];
-		}
-	}
-	else if(prefs.region == "2"){	// Нижегородский */
-{
-		AnyBalance.trace("Fetching all bills info...");
-		info = AnyBalance.requestGet(baseurl + "?path=allbills");
-		if(matches = info.match(/Тарифный план<\/th>[\s\S]*?<td[\s\S]*?<\/td>[\s\S]*?<td[\s\S]*?<\/td>[\s\S]*?<td.*?>(?:\s*)(.*?)<\/td>/)){
-			result.__tariff = matches[1];
-		}
+	if(AnyBalance.isAvailable('trafic', 'traf1', 'traf2', 'traf3')){
+                if(matches = info.match(/Трафик за текущий месяц[\s\S]*?Использовано([\s\S]*?)<\/table>/)){
+		
+			AnyBalance.trace("Fetching trafic info...");
+			var trafinfo = matches[1];
 
-		if(AnyBalance.isAvailable('trafic', 'traf1', 'traf2', 'traf3')){
-                        if(matches = info.match(/Трафик за текущий месяц[\s\S]*?Использовано[\s\S]*?<td.*?>(?:\s*)(.*?)<\/td>[\s\S]*?<td.*?>(?:\s*)(.*?) Кбайт<\/td>[\s\S]*?<td.*?>(?:\s*)(.*?)<\/td>[\s\S]*?<td.*?>(?:\s*)(.*?) Кбайт<\/td>[\s\S]*?<td.*?>(?:\s*)(.*?)<\/td>[\s\S]*?<td.*?>(?:\s*)(.*?) Кбайт<\/td>/)){
-				var type1 = matches[1].toLowerCase();
-				var type2 = matches[3].toLowerCase();
-				var type3 = matches[5].toLowerCase();
-				var traf1 = parseFloat(matches[2].replace(',','.'))/1024;
-				var traf2 = parseFloat(matches[4].replace(',','.'))/1024;
-				var traf3 = parseFloat(matches[6].replace(',','.'))/1024;
-				/* всё равно закоментарено в манифесте 
-				if(type1.indexOf("internet")>=0)
-					result.traf1 = traf1.toFixed(3);
-				else
-				if(type1.indexOf("wi-fi")>=0)
-					result.traf2 = traf1.toFixed(3);
-				else
-				if(type1.indexOf("wap")>=0)
-					result.traf3 = traf1.toFixed(3);
-		        
-				if(type2.indexOf("internet")>=0)
-					result.traf1 = traf2.toFixed(3);
-				else
-				if(type2.indexOf("wi-fi")>=0)
-					result.traf2 = traf2.toFixed(3);
-				else
-				if(type2.indexOf("wap")>=0)
-					result.traf3 = traf2.toFixed(3);
-		        
-				if(type3.indexOf("internet")>=0)
-					result.traf1 = traf3.toFixed(3);
-				else
-				if(type3.indexOf("wi-fi")>=0)
-					result.traf2 = traf3.toFixed(3);
-				else
-				if(type3.indexOf("wap")>=0)
-					result.traf3 = traf3.toFixed(3);
+	                if(matches = trafinfo.match(/<tr>([\s\S]*?)<\/tr>/g)){
+				/* всё равно закомментарено в манифесте 
+				result.traf1 = 0;
+				result.traf2 = 0;
+				result.traf3 = 0;
+				*/
+				var globaltraf = 0;
+
+				for (i=0; i<matches.length; i++){
+	                		if(matches_line = matches[i].match(/<td.*?>(?:\s*)(.*?)<\/td>[\s\S]*?<td.*?>(?:\s*)(.*?) Кбайт<\/td>/)){
+						type = matches_line[1].toLowerCase();
+						var traf = parseFloat(matches_line[2].replace(',','.'))/1024;
+
+						/* всё равно закомментарено в манифесте 
+						if(type.indexOf("internet")>=0)
+							result.traf1 = result.traf1 + traf;
+						else
+						if(type.indexOf("wi-fi")>=0)
+							result.traf2 = result.traf2 + traf;
+						else
+						if(type.indexOf("wap")>=0)
+							result.traf3 = result.traf3 + traf;
+				                */
+						globaltraf = globaltraf + traf;
+
+					}
+				}
+
+				/* всё равно закомментарено в манифесте 
+				result.traf1 = result.traf1.toFixed(3);
+				result.traf2 = result.traf2.toFixed(3);
+				result.traf3 = result.traf3.toFixed(3);
 		                */
  				if(AnyBalance.isAvailable('trafic'))
-					result.trafic = (traf1 + traf2 + traf3).toFixed(3);
+					result.trafic = globaltraf.toFixed(3);
 			}
-                }
-	}
+		}
+        }
 
 
 

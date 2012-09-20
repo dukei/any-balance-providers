@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
   <id version="5">ab-cell-utel</id>
-  <name>Utel (Урал)</name>
+  <name>Utel (ныне Ростелеком)</name>
   <description>
     Получает баланс, бонусные баллы и информацию об абоненте для сотового оператора Ростелеком Урал (Utel).
-    Информация берется из личного кабинета https://ucabinet.u-tel.ru/
+    Информация берется из личного кабинета https://ucabinet.u-tel.ru/ , который работает наравне с новым личным кабинетом https://kabinet.rt.ru/
 
     Если у вас еще нет личного кабинета, зарегистрируйтесь тут: https://ucabinet.u-tel.ru/?a=reg
 

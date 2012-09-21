@@ -374,6 +374,35 @@ function processAccount(html, baseurl){
     AnyBalance.setResult(result);
 }
 
+function processDep(html, baseurl){
+    var prefs = AnyBalance.getPreferences();
+    if(prefs.cardnum && !/^\d{4,}$/.test(prefs.cardnum))
+        throw new AnyBalance.Error("Введите не меньше 4 последних цифр номера счета депозита или не вводите ничего, чтобы показать информацию по первому депозиту");
+
+    html = getMainPageOrModule(html, 'dep', baseurl);
+    
+    //Сколько цифр осталось, чтобы дополнить до 20
+    var accnum = prefs.cardnum || '';
+    var accprefix = accnum.length;
+    accprefix = 20 - accprefix;
+
+    var re = new RegExp('(<tr[^>]*>(?:[\\s\\S](?!<\\/tr>))*>' + (accprefix ? '\\d{' + accprefix + '}' : '') + accnum + '<[\\s\\S]*?<\\/tr>)', 'i');
+    var tr = getParam(html, null, null, re);
+    if(!tr)
+        throw new AnyBalance.Error('Не удаётся найти ' + (accnum ? 'депозит с последними цифрами ' + accnum : 'ни одного депозита'));
+
+    var result = {success: true};
+
+    getParam(tr, result, 'currency', /(?:[\s\S]*?<td[^>]*>){7}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseCurrency);
+    getParam(tr, result, 'balance', /(?:[\s\S]*?<td[^>]*>){7}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(tr, result, 'acctype', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(tr, result, 'accnum', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(tr, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(tr, result, 'till', /(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+
+    AnyBalance.setResult(result);
+}
+
 function html_entity_decode(str)
 {
     //jd-tech.net

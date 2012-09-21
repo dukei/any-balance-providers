@@ -37,6 +37,7 @@
     <counter id="status" name="Статус" type="text"/>
     <counter id="limit" name="Кредитный лимит"/>
     <counter id="accnum_pay" name="Номер счета для погашения"/>
+    <counter id="all" name="Сводка" type="text"/>
   </counters>
   <keywords>
     интернет-банкинг

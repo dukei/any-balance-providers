@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Имя входа" 
+        positiveButtonText="ОК" 
+        summary="||{@s}" 
+        dialogTitle="Имя входа" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите имя входа в интернет-банк Уралсиб."
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="|Введите пароль в интернет-банк|***********"
+        dialogMessage="Введите пароль, используемый для входа в интернет-банк Уралсиб."
+        inputType="textPassword">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="cardnum" 
+        dialogTitle="ID счета"
+        negativeButtonText="Отмена"
+        title="ID счета"
+        summary="|Автоматически|{@s}"
+        inputType="number"
+        dialogMessage="Введите ID счета, по которому вы хотите получить данные. Если это поле оставить пустым, то будет показана информация по первому счету. Чтобы узнать ID имеющихся у вас счетов, выберите в настройках отображение счетчика &quot;Сводка&quot;."
+        >
+    </EditTextPreference>
+</PreferenceScreen>

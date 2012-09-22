@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="12">ab-money-alfabank</id>
+  <id version="13">ab-money-alfabank</id>
   <name>Альфабанк</name>
   <description>
     Получает текущий остаток, дату следующего платежа, минимальный платеж и другие параметры карт, текущих и кредитных счетов Альфабанка, используя систему Альфа.Click ( https://click.alfabank.ru ).
@@ -22,6 +22,7 @@
     <counter id="gracetill" name="Окончание льготного периода" type="time" format="dd/MM/yyyy"/>
     <counter id="minpay" name="Минимальный платеж"/>
     <counter id="penalty" name="Штрафы"/>
+    <counter id="currency" name="Валюта" type="text"/>
     <counter id="till" name="Срок действия" type="text"/>
     <counter id="cardnum" name="Номер карты" type="text"/>
     <counter id="userName" name="ФИО владельца" type="text"/>

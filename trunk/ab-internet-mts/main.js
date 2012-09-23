@@ -7,6 +7,7 @@
 Личный кабинет (Ростов): http://pc.aaanet.ru
 Личный кабинет (Новосибирск): https://my.citynsk.ru
 Личный кабинет (Пермь, Екатеринбург): https://bill.utk.ru/uportf/arm.pl
+Личный кабинет (Киров): https://lk.kirovnet.net
 */
 
 var regions = {
@@ -14,7 +15,8 @@ var regions = {
    rostov: getRostov,
    nsk: getNsk,
    prm: getPrm,
-   ekt: getPrm
+   ekt: getPrm,
+   krv: getKrv
 };
 
 function main(){
@@ -296,6 +298,44 @@ function getPrm(){
     AnyBalance.setResult(result);
 }
 
+function getKrv(){
+    var prefs = AnyBalance.getPreferences();
+    AnyBalance.setDefaultCharset('utf-8');
+
+    var baseurl = 'https://lk.kirovnet.net/';
+
+    var html = AnyBalance.requestPost(baseurl + 'auth?return=/index', {
+        username:prefs.login,
+        password:prefs.password,
+        timestamp:Math.round(new Date().getTime()/1000)
+    });
+
+    if(!getParam(html, null, null, /(\/auth\/logout)/i)){
+        var error = getParam(html, null, null, /<div[^>]*id="auth-failed[^>]*>([\s\S]*?)(?:<br[^>]*>|<\/div>)/i, replaceTagsAndSpaces);
+        if(error)
+            throw new AnyBalance.Error(error);
+        throw new AnyBalance.Error("Не удалось войти в личный кабинет. Сайт изменен?");
+    }
+
+    var result = {success: true};
+
+    getParam(html, result, 'agreement', /Договор:([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+    getParam(html, result, 'license', /Лицевой счёт:([\s\S]*?)<\/li>/i, replaceTagsAndSpaces);
+    getParam(html, result, 'balance', /Сейчас на вашем счёте:([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, '__tariff', /Текущий тарифный план:([\s\S]*?)<\/strong>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'abon', /Абонентcкая плата:([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'username', /Клиент:([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'daysleft', /Этой суммы вам хватит[\s\S]*?<span[^>]+class="imp"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+
+
+    if(AnyBalance.isAvailable('internet_cur')){
+        html = AnyBalance.requestGet(baseurl + 'charges');
+        getParam(html, result, 'internet_cur', /Входящий интернет трафик[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTrafficPerm);
+    }
+
+    AnyBalance.setResult(result);
+}
+
 function getParam (html, result, param, regexp, replaces, parser) {
 	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
 		return;
@@ -344,5 +384,14 @@ function parseTrafficPerm(text){
     
     AnyBalance.trace('Parsing traffic (' + val + 'Mb) from: ' + text);
     return val;
+}
+
+
+function html_entity_decode(str)
+{
+    //jd-tech.net
+    var tarea=document.createElement('textarea');
+    tarea.innerHTML = str;
+    return tarea.value;
 }
 

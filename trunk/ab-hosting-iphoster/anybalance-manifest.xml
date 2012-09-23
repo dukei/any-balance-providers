@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-hosting-iphoster</id>
+  <name>IPhoster (Хостинг)</name>
+  <description>
+    Получает сумму неоплаченных счетов и информацию о тарифном плане у хостинг-провайдера IPhoster (https://iphoster.ru).
+
+    Информация берется из личного кабинета https://iphoster.ru/panel/
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="topay" name="Неоплаченные счета" units="$"/>
+    <counter id="ticket_answers" name="Ответов на тикеты"/>
+    <counter id="bills" name="Счетов"/>
+    <counter id="tickets" name="Тикетов"/>
+    <counter id="orders" name="Заказов"/>
+    <counter id="shop" name="Товаров"/>
+    <counter id="domains" name="Доменов"/>
+    <counter id="referals" name="Рефералов"/>
+  </counters>
+  <keywords>
+    интернет hosting
+  </keywords>
+  <type>
+    hosting
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

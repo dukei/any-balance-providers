@@ -109,6 +109,7 @@ function main(){
     if (matches=/(Залишок бонусного об\'єму даних:|Остаток бонусного объема данных:)[\s\S]*?(Залишок бонусного об\'єму даних:|Остаток бонусного объема данных:)[\s\S]*?<b>(.*?)</.exec(html)){
         result.internet_2=Math.round(parseInt(matches[3])/1024/1024*100)/100;
     }
+    getParam(html, result, 'internet_2', /(?:Інтернет:|Интернет:)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTrafficMb);
   }
   
   //Домашний Интернет
@@ -128,3 +129,40 @@ function main(){
   AnyBalance.setResult(result);
 }
 
+function getParam (html, result, param, regexp, replaces, parser) {
+	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
+		return;
+
+	var matches = regexp.exec (html), value;
+	if (matches) {
+		value = matches[1];
+		if (replaces) {
+			for (var i = 0; i < replaces.length; i += 2) {
+				value = value.replace (replaces[i], replaces[i+1]);
+			}
+		}
+		if (parser)
+			value = parser (value);
+
+    if(param)
+      result[param] = value;
+	}
+   return value
+}
+
+var replaceTagsAndSpaces = [/&nbsp;/g, ' ', /<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, ''];
+var replaceFloat = [/\s+/g, '', /,/g, '.'];
+
+function parseBalance(text){
+    var val = getParam(text.replace(/\s+/g, ''), null, null, /(-?\d[\d\s.,]*)/, replaceFloat, parseFloat);
+    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
+    return val;
+}
+
+function parseTrafficMb(text){
+    var val = getParam(text.replace(/\s+/g, ''), null, null, /(-?\d[\d\s.,]*)/, replaceFloat, parseFloat);
+    if(typeof(val) != 'undefined')
+        val = Math.round(val/1024/1024*100)/100;
+    AnyBalance.trace('Parsing traffic (' + val + 'Mb) from: ' + text);
+    return val;
+}

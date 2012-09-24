@@ -36,6 +36,7 @@ function main(){
     var prefs = AnyBalance.getPreferences();
     var baseurls = {
       ru: "https://uslugi.beeline.ru/",
+      kz: "https://uslugi.beeline.kz/",
       uz: "https://uslugi.beeline.uz/"
     }
 

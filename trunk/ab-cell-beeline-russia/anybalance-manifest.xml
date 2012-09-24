@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
   <id major_version="1.3" version="21">ab-cell-beeline-russia</id>
-  <name>Билайн (Россия, Узбекистан)</name>
+  <name>Билайн</name>
   <description>
     Получает баланс, бонусный баланс, количество бесплатных SMS, MMS и минут, владельца, тарифный план и номер договора.
 Поддерживает корпоративные тарифные планы и для кредитных тарифов получает сумму, потраченную за текущий отчетный период.
-Поддерживает на текущий момент Россию ( https://uslugi.beeline.ru ) и Узбекистан ( https://uslugi.beeline.uz ).
+
+    Поддерживает страны:
+       * Россия ( https://uslugi.beeline.ru )
+       * Узбекистан ( https://uslugi.beeline.uz )
+       * Казахстан ( https://uslugi.beeline.kz )
 
     Как получить пароль к личному кабинету: 
     1. Позвоните со своего телефона на бесплатный номер *110*9# и получите SMS с логином и ВРЕМЕННЫМ паролем к системе.
@@ -32,7 +36,7 @@
     <history>history.xml</history>
   </files>
   <counters>
-    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="balance" name="Баланс"/>
     <counter id="bonus_balance" name="Бонусный баланс" units="р"/>
     <counter id="bonus_survey" name="Бонус за опрос" units="р"/>
     <counter id="min_left" name="Минуты" units="мин" type="time_interval"/>
@@ -55,6 +59,6 @@
     cell
   </type>
   <country>
-    ru, uz
+    ru, uz, kz
   </country>
 </provider>

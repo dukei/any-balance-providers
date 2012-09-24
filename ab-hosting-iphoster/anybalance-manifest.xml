@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-hosting-iphoster</id>
+  <id version="2">ab-hosting-iphoster</id>
   <name>IPhoster (Хостинг)</name>
   <description>
-    Получает сумму неоплаченных счетов и информацию о тарифном плане у хостинг-провайдера IPhoster (https://iphoster.ru).
+    Получает сумму неоплаченных счетов и информацию о тарифном плане для выбранного заказа у хостинг-провайдера IPhoster (https://iphoster.ru).
 
     Информация берется из личного кабинета https://iphoster.ru/panel/
   </description>
@@ -11,17 +11,24 @@
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
+    <history>history.xml</history>
     <js>main.js</js>
   </files>
   <counters>
     <counter id="topay" name="Неоплаченные счета" units="$"/>
-    <counter id="ticket_answers" name="Ответов на тикеты"/>
+    <counter id="ticket_answers" name="Ответов на открытые тикеты"/>
+    <counter id="daysleft" name="Осталось дней"/>
+    <counter id="till" name="Заказ оплачен до" type="time" format="dd/MM/yyyy"/>
     <counter id="bills" name="Счетов"/>
     <counter id="tickets" name="Тикетов"/>
     <counter id="orders" name="Заказов"/>
     <counter id="shop" name="Товаров"/>
     <counter id="domains" name="Доменов"/>
     <counter id="referals" name="Рефералов"/>
+    <counter id="orderid" name="№ заказа" type="text"/>
+    <counter id="status" name="Статус заказа" type="text"/>
+    <counter id="domain" name="Домен заказа" type="text"/>
+    <counter id="panel" name="Панель заказа" type="text"/>
   </counters>
   <keywords>
     интернет hosting

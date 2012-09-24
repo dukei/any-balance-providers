@@ -69,6 +69,9 @@ function main(){
 
     var baseurl = "https://iphoster.ru/panel/";
 
+    if(prefs.order && !/^\d+$/.test(prefs.cardnum))
+        throw new AnyBalance.Error("Введите номер заказа или не вводите ничего, чтобы показать информацию по первому заказу");
+
     var html = AnyBalance.requestPost(baseurl, {
         login:prefs.login,
         pass:prefs.password,
@@ -95,13 +98,38 @@ function main(){
 
     if(AnyBalance.isAvailable('topay')){
         html = AnyBalance.requestGet(baseurl + '?do=bills');
+        result.topay = 0;
         sumParam(html, result, 'topay', /<td[^>]*>((?:[\s\S](?!\/td>))*)<\/td>\s*<td[^>]*>\s*<img[^>]*src="?\/images\/payed_0/ig, replaceTagsAndSpaces, parseBalance);
     }
 
     if(AnyBalance.isAvailable('ticket_answers')){
-        html = AnyBalance.requestGet(baseurl + '?do=tickets');
+        html = AnyBalance.requestGet(baseurl + '?do=tickets&status=open');
+        result.ticket_answers = 0;
         sumParam(html, result, 'ticket_answers', /<td[^>]*>([^<]*)<\/td>\s*<td[^>]*>\s*<a[^>]*href="?\?do=tickets&sub=view/ig, replaceTagsAndSpaces, parseBalance);
     }
+
+    if(true || AnyBalance.isAvailable('orderid', 'status', 'domain', 'panel', 'daysleft')){
+        html = AnyBalance.requestGet(baseurl + '?do=host_tariff');
+        var re = new RegExp('(<tr[^>]*>\\s*<td[^>]*>\\s*' + (!prefs.order ? '\\d+' : prefs.order) + '[\\s\\S]*?<\\/tr>)', 'i');
+        var tr = sumParam(html, null, null, re);
+        if(!tr){
+            html = AnyBalance.requestGet(baseurl + '?do=vip');
+            tr = sumParam(html, null, null, re);
+        }
+        if(!tr){
+            AnyBalance.trace('Не удаётся найти ' + (prefs.order ? 'заказ № ' + prefs.order : 'ни одного заказа'));
+        }else{
+            sumParam(tr, result, 'orderid', /(?:[\S\s]*?<td[^>]*>){1}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces);
+            sumParam(tr, result, 'status', /(?:[\S\s]*?<td[^>]*>){2}\s*<img[^>]*title=["']([^'">]*)/i, replaceTagsAndSpaces);
+            sumParam(tr, result, 'domain', /(?:[\S\s]*?<td[^>]*>){3}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces);
+            sumParam(tr, result, '__tariff', /(?:[\S\s]*?<td[^>]*>){4}([\S\s]*?)(?:\[|<\/td>)/i, replaceTagsAndSpaces);
+            sumParam(tr, result, 'panel', /(?:[\S\s]*?<td[^>]*>){5}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces);
+            sumParam(tr, result, 'daysleft', /(?:[\S\s]*?<td[^>]*>){6}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+            sumParam(tr, result, 'till', /(?:[\S\s]*?<td[^>]*>){6}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+        }
+    }
+
+
 
 //    sumParam(html, result, '__tariff', /Тариф(?:<[^>]*>)?:[\S\s]*?<dd[^>]*>([\S\s]*?)<\/dd>/i, replaceTagsAndSpaces);
 

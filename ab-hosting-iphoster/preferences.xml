@@ -19,4 +19,14 @@
         dialogMessage="Введите пароль для входа в личный кабинет IPhoster"
         inputType="textPassword">
     </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="order" 
+        dialogTitle="Номер заказа"
+        negativeButtonText="Отмена"
+        title="Номер заказа"
+        summary="|Автоматически|{@s}"
+        dialogMessage="Введите номер заказа, по которому показать информацию, или оставьте его пустым, чтобы показать информацию по первому заказу."
+        inputType="number">
+    </EditTextPreference>
 </PreferenceScreen>

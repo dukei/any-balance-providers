@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Email / Mobile Number" 
+        positiveButtonText="OK" 
+        summary="|Enter your login to MyLebara|{@s}" 
+        dialogTitle="Email / Mobile Number" 
+        negativeButtonText="Cancel" 
+        dialogMessage="Enter your login to MyLebara"
+        inputType="textEmailAddress"
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="OK"
+        key="password" 
+        dialogTitle="Password"
+        negativeButtonText="Cancel"
+        title="Password"
+        summary="||***********\n"
+        dialogMessage="Please enter a password you use to enter MyLebara."
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

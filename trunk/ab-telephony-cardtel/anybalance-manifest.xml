@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-telephony-cardtel</id>
+  <name>Кардтел</name>
+  <description>
+    Получает текущий баланс у провайдера IP-телефонии Кардтел (http://cardtel.ru). 
+
+    Кардтел предоставляет услуги IP-телефонии в Москве, Санкт-Петербурге, Новосибирске, Екатеринбурге, Самаре, Томске, Омске Барнауле, Кемерово для частных лиц и корпоративных клиентов. 
+
+    Провайдер получает данные из личного кабинета https://my.cardtel.ru.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс"/>
+    <counter id="status	" name="Состояние" type="text"/>
+    <counter id="sn" name="Серийный номер" type="text"/>
+  </counters>
+  <keywords>
+    cardtel
+  </keywords>
+  <type>
+    telephony
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

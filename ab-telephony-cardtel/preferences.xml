@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="ПИН-код карты" 
+        positiveButtonText="ОК" 
+        summary="||{@s}" 
+        dialogTitle="ПИН-код карты" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите ПИН-код вашей карты"
+        inputType="number"
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Серийный номер"
+        negativeButtonText="Отмена"
+        title="Серийный номер"
+        summary="|Введите 4 последних цифры с/н|************"
+        dialogMessage="Введите последние 4 цифры серийного номера вашей карты"
+        inputType="numberPassword">
+    </EditTextPreference>
+</PreferenceScreen>

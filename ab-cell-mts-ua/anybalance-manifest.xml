@@ -5,6 +5,8 @@
   <description>
     Получает баланс, минуты, смс, ммс, информацию о расходах, номер лицевого счета, ежемесячую плату и др.
 Получает данные из PDA версии интернет-помощника https://ihelper-prp.mts.com.ua/SelfCarePda/ .
+
+    Если у вас ещё нет доступа к интернет-помощнику, зарегистрируйтесь здесь: https://ihelper-prp.mts.com.ua/CustomerSelfCare2/logon-registration.aspx
   </description>
   <author>Ignatiy Goloviznin &lt;igoloviznin@gmail.com&gt;</author>
   <files>

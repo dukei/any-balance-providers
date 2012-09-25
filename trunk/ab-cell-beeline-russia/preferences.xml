@@ -23,8 +23,8 @@
         key="country" 
         title="Страна"
         summary="Ваша страна|Нужна для определения личного кабинета\n|{@s}\n"
-        entries="Россия|Узбекистан"
-        entryValues="ru|uz"
+        entries="Россия|Узбекистан|Казахстан"
+        entryValues="ru|uz|kz"
 	defaultValue="ru">
     </ListPreference>
 </PreferenceScreen>

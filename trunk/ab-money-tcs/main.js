@@ -76,20 +76,29 @@ function main(){
 //        html = AnyBalance.requestGet(baseurl + '/authentication/?service=http%3A%2F%2Fwww.tcsbank.ru%2Fbank%2F', headers);
 
         html = AnyBalance.requestPost('https://auth.tcsbank.ru/cas/login', {
+            callback:'jQuery171018063926370814443_1348651876467',
             service: baseurl + '/bank/',
             _eventId:'submit',
-            loginFormUrl:baseurl + '/authentication/',
-            errorFormUrl:baseurl + '/authentication/error/',
-            registrationFormUrl:baseurl + '/authentication/register/',
+            asyncAuthError: baseurl + '/service/auth_error/',
             username:prefs.login,
-            password:prefs.password
+            password:prefs.password,
+            async:true,
+            _: new Date().getTime()
         }, headers);
 
 //        AnyBalance.trace(html);
-
-        var logout = getParam(html, null, null, /(\/authentication\/logout)/i);
-        if(!logout)
-            throw new AnyBalance.Error("Не удалось зайти в интернет банк. Неправильный логин-пароль?");
+        var json = getParam(html, null, null, /^jQuery\w+\(\s*(.*)\)\s*$/i);
+        if(json){
+            var json = JSON.parse(json);
+            if(json.resultCode == 'AUTHENTICATION_FAILED')
+                throw new AnyBalance.Error(json.errorMessage || 'Авторизация прошла неуспешно. Проверьте логин и пароль.');
+            if(json.resultCode != 'OK')
+                throw new AnyBalance.Error("Вход в интернет банк не удался: " + json.resultCode);
+        }else{
+            var logout = getParam(html, null, null, /(\/authentication\/logout)/i);
+            if(!logout)
+                throw new AnyBalance.Error("Не удалось зайти в интернет банк. Неправильный логин-пароль?");
+        }
     }
         
     var accounts = AnyBalance.requestGet(baseurl + '/service/accounts', {'X-Requested-With':'XMLHttpRequest', Referer: baseurl + '/bank/accounts/', 'User-Agent': userAgent});

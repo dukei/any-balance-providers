@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id major_version="1.0" version="2">ab-internet-tvoetv_elstal</id>
+  <name>Твоё ТВ Электросталь</name>
+  <description>
+    Получает баланс, кредит, номер лицевого счета для Электростальского провайдера интернет, телевидения и телефонии Твоё ТВ.
+    Информация берется из личного кабинета https://stat.eltv.ru/.
+  </description>
+  <author>Alexandr Sadovov &lt;aasdvv@gmail.com&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+   <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="ls" name="Лицевой счет" type="text"/>
+    <counter id="credit" name="Кредит" type="text"/>
+  </counters>
+  <keywords>
+    интернет, tvoe tv, электросталь
+  </keywords>
+  <type>
+    internet, telephony, tv, elektrostal
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

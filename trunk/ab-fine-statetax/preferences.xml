@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Телефон" 
+        positiveButtonText="ОК" 
+        summary="|Формат ввода: 7********* (11 знаков)|{@s}" 
+        dialogTitle="Телефон" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите телефон для входа в личный кабинет http://statetax.ru. Формат ввода: 7********* (11 цифр)"
+        inputType="number"
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="||***********"
+        dialogMessage="Введите пароль, используемый для входа в личный кабинет http://statetax.ru."
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

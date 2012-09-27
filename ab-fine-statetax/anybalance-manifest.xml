@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-fine-statetax</id>
+  <name>Штрафы ГИБДД (statetax.ru)</name>
+  <description>
+    Получает число и общую сумму неоплаченных штрафов ГИБДД с сайта http://statetax.ru. Для получения информации о своих штрафах необходимо зарегистрироваться на странице: http://statetax.ru/register.do.
+
+    Внимание! В данный момент в системе доступны штрафы только по следущим регионам: Краснодарского края, Воронежской области, Рязанской области, Смоленской области, Тамбовской области.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Сумма неоплаченных штрафов" units="р"/>
+    <counter id="count" name="Число штрафов" type="text"/>
+    <counter id="lastdate" name="Дата последнего неоплаченного нарушения" type="time" format="dd/MM/yyyy"/>
+  </counters>
+  <keywords>
+  </keywords>
+  <type>
+    fine
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

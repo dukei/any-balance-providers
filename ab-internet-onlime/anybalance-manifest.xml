@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
   <id version="2">ab-internet-onlime</id>
-  <name>Интернет провайдер Onlime (Москва)</name>
+  <name>Onlime (Москва)</name>
   <description>
     Получает текущий баланс, бонусный баланс, номера лицевого счета и договора, статус и трафик в текущем месяце у провайдера "Onlime" ( http://onlime.ru )
     Информация берется из личного кабинета https://my.onlime.ru
@@ -26,7 +26,7 @@
     <counter id="agreement" name="Номер договора" type="text"/>
   </counters>
   <keywords>
-    провайдер интернет онлайм
+    провайдер интернет онлайм ростелеком
   </keywords>
   <type>
     internet, tv

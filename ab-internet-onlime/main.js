@@ -26,7 +26,7 @@ function main(){
     var result = {success: true};
 
     info = AnyBalance.requestGet(baseurl + "json/cabinet/");
-    var oInfo = JSON.parse(info);
+    var oInfo = JSON.parse(info.replace(/\-\./g, '-0.')); //А то "balance":-.31 не распарсивается
     
     if(AnyBalance.isAvailable('balance'))
         result.balance = oInfo.balance;

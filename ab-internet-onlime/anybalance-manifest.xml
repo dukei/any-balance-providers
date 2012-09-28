@@ -1,9 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-onlime</id>
+  <id version="2">ab-internet-onlime</id>
   <name>Интернет провайдер Onlime (Москва)</name>
   <description>
-    Получает текущий баланс, бонусный баланс, номера лицевого счета и договора, статус и трафик в текущем месяце у провайдера "Onlime"
+    Получает текущий баланс, бонусный баланс, номера лицевого счета и договора, статус и трафик в текущем месяце у провайдера "Onlime" ( http://onlime.ru )
+    Информация берется из личного кабинета https://my.onlime.ru
+
+    Для работы провайдера необходимо иметь доступ к личному кабинету. Если у вас нет к нему доступа, получите его на странице https://my.onlime.ru/account/forgot_password.
   </description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <files>
@@ -11,6 +14,7 @@
     <preferences>preferences.xml</preferences>
     <js>api:jquery.min.js</js> <!-- Используем библиотеку, которая и так входит в AnyBalance -->
     <js>main.js</js>
+    <history>history.xml</history>
   </files>
   <counters>
     <counter id="balance" name="Баланс" units="р"/>
@@ -27,4 +31,7 @@
   <type>
     internet, tv
   </type>
+  <country>
+    ru
+  </country>
 </provider>

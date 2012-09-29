@@ -121,10 +121,10 @@ function getMainPageOrModule(html, type, baseurl){
          ['pt1:r2:0:t1:rangeStart', '0'],
          ['org.apache.myfaces.trinidad.faces.FORM', 'f1'],
          ['javax.faces.ViewState', viewstate],
-         ['oracle.adf.view.rich.RENDER', 'pt1:ATP1_r1'],
-         ['event', 'pt1:ATP1_r1:0:' + commands[type]],
-         ['event.pt1:ATP1_r1:0:' + commands[type], '<m xmlns="http://oracle.com/richClient/comm"><k v="type"><s>action</s></k></m>'],
-         ['oracle.adf.view.rich.PROCESS', 'pt1:ATP1_r1']
+         ['oracle.adf.view.rich.RENDER', 'pt1:left:ATP1_r1'],
+         ['event', 'pt1:left:ATP1_r1:0:' + commands[type]],
+         ['event.pt1:left:ATP1_r1:0:' + commands[type], '<m xmlns="http://oracle.com/richClient/comm"><k v="type"><s>action</s></k></m>'],
+         ['oracle.adf.view.rich.PROCESS', 'pt1:left:ATP1_r1']
       ]);
       g_wasMainPage = true;
       html = AnyBalance.requestPost(baseurl + action, paramsMainPage, addHeaders({"Adf-Rich-Message": "true"}));
@@ -135,10 +135,10 @@ function getMainPageOrModule(html, type, baseurl){
          rangeStart ? [rangeStart, '0'] : null,
          ['org.apache.myfaces.trinidad.faces.FORM', 'f1'],
          ['javax.faces.ViewState', viewstate],
-         ['oracle.adf.view.rich.RENDER', 'pt1:pt_r1'],
-         ['event', 'pt1:pt_r1:0:' + commands[type]],
-         ['event.pt1:pt_r1:0:' + commands[type], '<m xmlns="http://oracle.com/richClient/comm"><k v="type"><s>action</s></k></m>'],
-         ['oracle.adf.view.rich.PROCESS', 'pt1:pt_r1']
+         ['oracle.adf.view.rich.RENDER', 'pt1:left:ATP1_r1'],
+         ['event', 'pt1:left:ATP1_r1:0:' + commands[type]],
+         ['event.pt1:left:ATP1_r1:0:' + commands[type], '<m xmlns="http://oracle.com/richClient/comm"><k v="type"><s>action</s></k></m>'],
+         ['oracle.adf.view.rich.PROCESS', 'pt1:left:ATP1_r1']
       ]);
 
       html = AnyBalance.requestPost(baseurl + action, paramsModule, addHeaders({"Adf-Rich-Message": "true"}));

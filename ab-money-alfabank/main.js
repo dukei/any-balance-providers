@@ -169,7 +169,12 @@ function getDetailes(html, event, baseurl, renderAndProcess){
    ]);
 
    html = AnyBalance.requestPost(baseurl + action, paramsModule, addHeaders({"Adf-Rich-Message": "true"}));
-   return getParam(html, null, null, /<fragment><!\[CDATA\[([\s\S]*?)\]\]>/); //Вычленяем html;
+   html = getParam(html, null, null, /<fragment><!\[CDATA\[([\s\S]*?)\]\]>/); //Вычленяем html;
+   //Проверим на Функционал временно недоступен
+   var error = getParam(html, null, null, /(&#1060;&#1091;&#1085;&#1082;&#1094;&#1080;&#1086;&#1085;&#1072;&#1083; &#1074;&#1088;&#1077;&#1084;&#1077;&#1085;&#1085;&#1086; &#1085;&#1077;&#1076;&#1086;&#1089;&#1090;&#1091;&#1087;&#1077;&#1085;[^<]*)/, null, html_entity_decode);
+   if(error)
+       throw new AnyBalance.Error('Альфа.Клик сообщает: ' + error);
+   return html;
 }
 
 function processClick(){

@@ -65,6 +65,8 @@ function main(){
         result.bonus_mins_1=parseInt(matches[2]);
     } else if (matches=/(Залишок хвилин для дзвінків абонентам Київстар та Beeline:|Остаток минут для звонков абонентам Киевстар и Beeline:)[\s\S]*?<b>(.*?)</i.exec(html)){
         result.bonus_mins_1=parseInt(matches[2]);
+    } else if (matches=/(Залишок хвилин для дзвінків на Киевстар:|Остаток минут для звонков на Київстар:)[\s\S]*?<b>(.*?)</.exec(html)){
+        result.bonus_mins_1=parseInt(matches[2]);
     }
   }
   
@@ -77,6 +79,8 @@ function main(){
     } else if (matches=/(Залишок тарифних хвилин для дзвінків в межах України:|Остаток тарифних минут для звонков в пределах Украини :)[\s\S]*?<b>(.*?)</.exec(html)){
         result.bonus_mins_2=parseInt(matches[2]);
     } else if (matches=/(Залишок хвилин для дзвінків в межах України:|Остаток минут для звонков в пределах Украини :)[\s\S]*?<b>(.*?)</.exec(html)){
+        result.bonus_mins_2=parseInt(matches[2]);
+    } else if (matches=/(Залишок хвилин для дзвінків по Україні:|Остаток минут для звонков по Украине:)[\s\S]*?<b>(.*?)</.exec(html)){
         result.bonus_mins_2=parseInt(matches[2]);
     }
   }
@@ -127,6 +131,8 @@ function main(){
     if (matches=/(Бонуси за умовами тарифного плану "Єдина ціна":|Бонусы по условиям тарифного плана "Единая цена":)[\s\S]*?<b>(.*?)</.exec(html)){
         result.bonus_money_2=parseFloat(matches[2]);
     } else if (matches=/(Кошти по послузі "Екстра кошти"|Средства по услуге "Экстра деньги"):[\s\S]*?<b>(.*?)</.exec(html)){
+        result.bonus_money_2=parseFloat(matches[2]);
+    } else if (matches=/(Від послуги "Домашній Інтернет"|От услуги "Домашний Интернет"):[\s\S]*?<b>(.*?)</.exec(html)){
         result.bonus_money_2=parseFloat(matches[2]);
     } else if (matches=/(Бонусні кошти:|Бонусные средства:)[\s\S]*?(Бонусні кошти:|Бонусные средства:)[\s\S]*?<b>(.*?)</.exec(html)){
         result.bonus_money_2=parseFloat(matches[3]);

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-internet-iskra</id>
+  <name>ИСКРАТЕЛЕКОМ (Москва)</name>
+  <description>
+    Получает баланс и информацию о тарифном плане для московского интернет-провайдера ИСКРАТЕЛЕКОМ, а ныне Seven Sky (http://iskratelecom.ru). Предоставляет интернет в районах Текстильщики, Кузьминки, Люблино, Марьино, Братеево, Люберцы, Котельники.
+
+    Информация берется из личного кабинета https://my.istel.ru
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="licschet" name="Лицевой счет" type="text"/>
+  </counters>
+  <keywords>
+    интернет
+  </keywords>
+  <type>
+    internet
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

@@ -5,7 +5,8 @@
   <description>
     Получает баланс, количество сообщений и счетов в QIWI Кошельке. Поддерживает старый личный кабинет (https://w.qiwi.ru) и новый (https://w.qiwi.com). В новом кабинете отсутствуют сообщения, так что счетчик "Сообщения" не работает.
   </description>
-  <author>iReset &lt;develop_ag@mail.ru&gt;</author>
+  <author>iReset &lt;ireset.ag@gmail.com&gt;</author>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>

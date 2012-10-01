@@ -72,6 +72,16 @@ function parseTraffic(text){
     return val;
 }
 
+function parseDate(str){
+    var matches = /(\d+)[^\d](\d+)[^\d](\d+)/.exec(str);
+    if(matches){
+          var date = new Date(+matches[3], matches[2]-1, +matches[1]);
+	  var time = date.getTime();
+          AnyBalance.trace('Parsing date ' + date + ' from value: ' + str);
+          return time;
+    }
+    AnyBalance.trace('Failed to parse date from value: ' + str);
+}
 
 function main(){
     var prefs = AnyBalance.getPreferences();
@@ -146,6 +156,13 @@ function main(){
 
 //Денежный бонусный счет.
     sumParam (html, result, 'bonus_balance', /<li>Денежный бонусный счет:[^<]*осталось\s*([\d\.,]+)\s*грн. Срок действия до[^<]*<\/li>/i, replaceTagsAndSpaces, parseBalance);
+
+//Срок действия баланса
+    sumParam (html, result, 'termin', /Термін життя балансу:([^<]*)/i, replaceTagsAndSpaces, parseDate); //Поместили в счетчик для возврата в AnyBalance
+    var termin = sumParam (html, null, null, /Термін життя балансу:([^<]*)/i, replaceTagsAndSpaces); //Получили строку для прибавления к тарифному плану
+    if(termin){
+        result.__tariff = (result.__tariff || '') + ' (' + termin + ')'; //Первое слагаемое - текущий тариф или пустая строка, если там нет значения
+    }
 
     // Пакет бесплатных минут для внутрисетевых звонков
     sumParam (html, result, 'min_paket', /<li>Осталось ([\d\.,]+) бесплатных секунд до[^<]*<\/li>/ig, replaceFloat, parseFloat);

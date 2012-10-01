@@ -45,6 +45,7 @@
     <counter id="license" name="Лицевой счет" type="text"/>
     <counter id="monthlypay" name="Ежемесячная плата" units="грн"/>
     <counter id="phone" name="Номер телефона" type="text"/>
+    <counter id="termin" name="Срок действия баланса" type="time" format="dd/MM/yyyy"/>
   </counters>
   <keywords>
     Сотовый телефон, мобильный, мобильник, mts, украина

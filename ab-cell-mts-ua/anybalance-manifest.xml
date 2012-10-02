@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="7">ab-cell-mts-ua</id>
+  <id major_version="1.0" version="8">ab-cell-mts-ua</id>
   <name>МТС (Украина)</name>
   <description>
     Получает баланс, минуты, смс, ммс, информацию о расходах, номер лицевого счета, ежемесячую плату и др.
@@ -27,6 +27,7 @@
     <counter id="mms_paket" name="Пакет ММС" units=" mms"/>
     <counter id="traffic_paket_mb" name="Пакет интернета" units=" mb"/>
     <counter id="traffic_kop_mb" name="Интернет за копейку и другие ежедневные пакеты" units=" mb"/>
+    <counter id="traffic_reg_kop_mb" name="Интернет за копейку региональный и общенациональный" units=" mb"/>
     <counter id="traffic_hyper_mb" name="hyper.net к-во Кб загруженных по АПН hyper.net" units=" mb"/>
     <counter id="traffic_opera_mb" name="Opera Mini к-во Кб загруженных по АПН opera" units=" mb"/>
     <counter id="traffic_maxenergy_mb" name="Интернет Max Energy" units=" mb"/>
@@ -45,7 +46,7 @@
     <counter id="license" name="Лицевой счет" type="text"/>
     <counter id="monthlypay" name="Ежемесячная плата" units="грн"/>
     <counter id="phone" name="Номер телефона" type="text"/>
-    <counter id="termin" name="Срок действия баланса" type="time" format="dd/MM/yyyy"/>
+    <counter id="termin" name="Срок действия номера" type="time" format="dd/MM/yyyy"/>
   </counters>
   <keywords>
     Сотовый телефон, мобильный, мобильник, mts, украина

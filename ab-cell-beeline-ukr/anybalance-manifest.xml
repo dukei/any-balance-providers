@@ -1,9 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="2">ab-cell-beeline-ukr</id>
+  <id major_version="1.0" version="3">ab-cell-beeline-ukr</id>
   <name>Билайн Украина</name>
   <description>
     Мониторинг баланса для мобильного оператора Билайн (Украина).
+    Информация берется из системы «Личный кабинет» https://poslugy.beeline.ua/
+
+    Если вы не зарегистрированы в системе «Личный кабинет», то для пользования провайдером вам сначала нужно там зарегистрироваться на странице https://poslugy.beeline.ua/tbmb/enroll_beeline/user/show.do
   </description>
   <author>Ignatiy Goloviznin &lt;igoloviznin@gmail.com&gt;</author>
   <files>
@@ -16,6 +19,8 @@
     <counter id="balance" name="Баланс" units=" грн"/>
     <counter id="bonusbalance" name="Бонусный баланс" units=" грн"/>
     <counter id="minutebalance" name="Бонусные минуты на Beeline и Голден Телеком" units=" мин"/>
+    <counter id="minutebalance1" name="Бесплатные минуты на Киевстар и Beeline" units=" мин"/>
+    <counter id="minutebalance2" name="Бесплатные минуты на стационарные телефоны Украины" units=" мин"/>
     <counter id="doplatabalance" name="Доплата за входящие звонки" units=" грн"/>
   </counters>
   <keywords>
@@ -24,4 +29,7 @@
   <type>
     cell
   </type>
+  <country>
+    ua
+  </country>
 </provider>

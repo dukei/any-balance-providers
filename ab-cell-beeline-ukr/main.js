@@ -1,7 +1,7 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 
-Киевстар
+Билайн
 Сайт оператора: http://www.beeline.ua/
 Личный кабинет: https://poslugy.beeline.ua/
 */
@@ -12,7 +12,7 @@ function main(){
   var headers = {
     'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
     'Accept-Language':'uk-UA,uk;q=0.8,en-US;q=0.6,en;q=0.4',
-    'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/536.11 (KHTML, like Gecko) Chrome/20.0.1132.57 Safari/536.11',
+    'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.4 (KHTML, like Gecko) Chrome/22.0.1229.79 Safari/537.4',
     Connection: 'keep-alive'
   };
 
@@ -66,14 +66,27 @@ function main(){
         result.minutebalance=parseFloat(matches[1]);
     }
   }
-
+  
+  // Бесплатные минуты на Киевстар и Beeline
+  if(AnyBalance.isAvailable('minutebalance1')){
+    if (matches=/<td.+>Бе(?:сплатные минуты|зкоштовні хвилини) на Ки(?:е|ї)встар (?:и|та) Beeline:<\/td>\s*<td.+>\s*<nobr><b>(\d+?)<\/b> (?:мин|хв). <b>.+<\/b> сек.\s*<\/nobr>/.exec(html)){
+        result.minutebalance1=parseFloat(matches[1]);
+    }
+  }
+  
+  // Бесплатные минуты на стационарные телефоны Украины
+  if(AnyBalance.isAvailable('minutebalance2')){
+    if (matches=/<td.+>Бе(?:сплатные минуты|зкоштовні хвилини) на стац(?:и|і)онарн(?:ые|і) телефон(?:ы|и) Укра(?:ины|їни):<\/td>\s*<td.+>\s*<nobr><b>(\d+?)<\/b> (?:мин|хв). <b>.+<\/b> сек.\s*<\/nobr>/.exec(html)){
+        result.minutebalance2=parseFloat(matches[1]);
+    }
+  }
+  
   // Доплата за входящие звонки
   if(AnyBalance.isAvailable('doplatabalance')){
     if (matches=/<td.+>Доплата за вх(?:одящие зво|ідні дзві)нки:<\/td>\s*<td.+>\s*<nobr><b>(-?\d[\d\.,\s]*)<\/b> грн.\s*<\/nobr>/.exec(html)){
         result.doplatabalance=parseFloat(matches[1]);
     }    
   }
-
 
   AnyBalance.setResult(result);
 }

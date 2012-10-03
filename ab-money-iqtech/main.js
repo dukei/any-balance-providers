@@ -112,9 +112,9 @@ function main() {
     AnyBalance.trace("Получено: договор - " + prefs.login + ", пароль - " + prefs.password);
 
     AnyBalance.trace("Вход в личный кабинет...");
-    var info = AnyBalance.requestPost("http://iqtech.org/iq/cabinet.html;jsessionid=", { // TODO: Убрать параметр сессии
+    var info = AnyBalance.requestPost("https://novayashkola.ru:8443/processor/client-room/index.jsp", {
         contractId: prefs.login,
-        login: "Логин",
+        login: "Войти",
         password: prefs.password
     });
 
@@ -131,11 +131,11 @@ function main() {
                 var rows = getRows(info);
 
                 if (rows.length) {
-                    AnyBalance.trace("Таблица с данными найдена.");
+                    AnyBalance.trace("Таблица с данными найдена. В ней " + rows.length + " строк.");
 
                     if (AnyBalance.isAvailable("contractNumber")) {
                         AnyBalance.trace("Поиск номера договора...");
-                        result.contractNumber = getValue(rows, "Номер договора");
+                        result.contractNumber = getValue(rows, "Номер лицевого счета");
                     }
 
                     if (AnyBalance.isAvailable("childName")) {

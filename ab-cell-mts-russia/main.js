@@ -527,6 +527,19 @@ function parseJson(json){
     return json;
 }
 
+function createFormParams(html, process){
+    var params = {};
+    html.replace(/<input[^>]+name="([^"]*)"[^>]*>/ig, function(str, name){
+        var value = getParam(str, null, null, /value="([^"]*)"/i, null, html_entity_decode);
+        name = html_entity_decode(name);
+        if(process){
+            value = process(params, str, name, value);
+        }
+        params[name] = value;
+    });
+    return params;
+}
+
 function mainLK(){
     AnyBalance.trace("Entering lk...");
     
@@ -545,7 +558,7 @@ function mainLK(){
         var html = AnyBalance.requestGet(baseurl, headers);
     }else{
         //Чтобы сбросить автологин
-        var html = AnyBalance.requestGet(baseurlLogin + "/amserver/UI/Login?service=lk&goto=" + baseurl + "/&auth-status=1", headers);
+        var html = AnyBalance.requestGet(baseurlLogin + "/amserver/UI/Login?gx_charset=UTF-8&service=lk&goto=" + encodeURIComponent(baseurl + '/') + "&auth-status=0", headers);
     }
 
     if(isLoggedIn(html)){
@@ -555,22 +568,33 @@ function mainLK(){
          info = JSON.parse(info);
          if(info.MSISDN != prefs.login){  //Автоматом залогинились не на тот номер
              AnyBalance.trace("Залогинены на неправильный номер: " + prefs.MSISDN + ", выходим");
-             html = AnyBalance.requestGet(baseurlLogin + "/amserver/UI/Logout?goto=" + baseurl, headers);
+             html = AnyBalance.requestGet(baseurlLogin + "/amserver/UI/Logout?goto=" + encodeURIComponent(baseurl + '/'), headers);
          }
     }
 
     if(!isLoggedIn(html)){
-        AnyBalance.trace("Логинимся с заданным номером");
-        var html = AnyBalance.requestPost(baseurlLogin + "/amserver/UI/Login", {
-            IDToken0:'',
-            IDToken1:prefs.login,
-            IDToken2:prefs.password,
-            IDButton:'+%C2%F5%EE%E4+%E2+%CB%E8%F7%ED%FB%E9+%EA%E0%E1%E8%ED%E5%F2+',
-            'goto':'aHR0cHM6Ly9say5zc2wubXRzLnJ1Lw==',
-            encoded:true,
-            initialNumber:'',
-            loginURL:'/amserver/UI/Login?auth-status=0&gx_charset=UTF-8&service=lk&goto=https%3A%2F%2Flk.ssl.mts.ru%2F'
+        var form = getParam(html, null, null, /<form[^>]+name="Login"[^>]*>([\s\S]*?)<\/form>/i);
+        if(!form)
+            throw new AnyBalance.Error("Не удаётся найти форму входа!");
+
+        var params = createFormParams(form, function(params, input, name, value){
+            var undef;
+            if(name == 'IDToken1')
+                value = prefs.login;
+            else if(name == 'IDToken2')
+                value = prefs.password;
+            else if(name == 'noscript')
+                value = undef; //Снимаем галочку
+            else if(name == 'IDButton')
+                value = '+%C2%F5%EE%E4+%E2+%CB%E8%F7%ED%FB%E9+%EA%E0%E1%E8%ED%E5%F2+';
+           
+            return value;
         });
+
+//        AnyBalance.trace("Login params: " + JSON.stringify(params));
+
+        AnyBalance.trace("Логинимся с заданным номером");
+        var html = AnyBalance.requestPost(baseurlLogin + "/amserver/UI/Login?gx_charset=UTF-8&service=lk&goto=" + encodeURIComponent(baseurl + '/') + "&auth-status=0", params);
     }
 
     if(!isLoggedIn(html)){

@@ -66,33 +66,71 @@ function mainEms(){
         AnyBalance.setResult(result);
 }
 
+function checkForErrors(info){
+        var matches;
+        if(matches = /<p[^>]*class="red"[^>]*>([\s\S]*?)<\/p>/i.exec(info)) //Проверяем на сообщение об ошибке
+		throw new AnyBalance.Error(matches[1]);  
+        if(/<h1>Server is too busy<\/h1>/i.test(info))
+		throw new AnyBalance.Error("Сервер russianpost.ru перегружен. Попробуйте позже.");
+}
+
+function checkForRedirect(info, baseurl){
+	//<html><head></head><body onload="document.myform.submit();"><form method="post" name="myform" style="visibility:hidden;"><input id="key" name="key" value="288041"/><input type="submit"/></form></body></html> 
+        var form = getParam(info, null, null, /<form[^>]+name="myform"[^>]*>([\s\S]*?)<\/form>/i);
+        if(form){ //Зачем-то редирект. Что придумали, зачем?...
+            AnyBalance.trace('Вернули форму редиректа...');
+            var params = createFormParams(form);
+            info = AnyBalance.requestPost(baseurl, params);
+            checkForErrors(info);
+        }
+        if(/window.location.replace\(window.location.toString/.test(info)){
+            AnyBalance.trace('Ещё разок редиректнули...');
+            info = AnyBalance.requestGet(baseurl);
+            checkForErrors(info);
+        }
+        return info;
+}
+
 function mainRussianPost(){
 	var prefs = AnyBalance.getPreferences();
 	AnyBalance.trace('Connecting to russianpost...');
+        var baseurl = 'http://www.russianpost.ru/resp_engine.aspx?Path=rp/servise/ru/home/postuslug/trackingpo';
 	
+	var info = AnyBalance.requestGet(baseurl);
+        info = checkForRedirect(info, baseurl);
+
+        var form = getParam(info, null, null, /<form[^>]+name="F1"[^>]*>([\s\S]*?)<\/form>/i);
+        if(!form){
+            checkForErrors(info);
+            throw new AnyBalance.error('Не удалось найти форму запроса. На сайте обед?');
+        }
+
+        var params = createFormParams(info, function(params, input, name, value){
+            var undef;
+            if(name == 'BarCode')
+                value = prefs.code.toUpperCase();
+            else if(name == 'searchsign')
+                value = 1;
+            else if(name == 'searchbarcode')
+                value = undef;
+            return value;
+        });
+    
+        
 	var dt = new Date();
-	var info = AnyBalance.requestPost('http://www.russianpost.ru/resp_engine.aspx?Path=rp/servise/ru/home/postuslug/trackingpo', {
-		PATHCUR:'rp/servise/ru/home/postuslug/trackingpo',
-		CDAY:dt.getDate(),
-		CMONTH:dt.getMonth()+1,
-		CYEAR:dt.getFullYear(),
-		PATHWEB:'RP/INDEX/RU/Home',
-		PATHPAGE:'RP/INDEX/RU/Home/Search',
-		BarCode:prefs.code.toUpperCase(),
-		searchsign:1
-	});
+	var info = AnyBalance.requestPost(baseurl, params);
+	
+	AnyBalance.trace('Проверяем, нет ли ошибок...');
+
+        checkForErrors(info);
+        info = checkForRedirect(info, baseurl);
 	
 	var result = {success: true},
 		matches;
 	
-	AnyBalance.trace('trying to find table');
         result.__tariff = prefs.code;
 
-        if(matches = /<p[^>]*class="red"[^>]*>([\s\S]*?)<\/p>/i.exec(info)) //Проверяем на сообщение об ошибке
-		throw new AnyBalance.Error(matches[1]);  
-        if(/<h1>Server is too busy<\/h1>/i.test(info))
-		throw new AnyBalance.Error("Сервер russianpost.ru перегружен. Попробуйте позже.");  
-	
+	AnyBalance.trace('trying to find table');
 	//Сначала найдём таблицу, содержащую все стадии отправления
 	if(matches = info.match(/<table class="pagetext">.*?<tbody>(.*?)<\/tbody>/)){
 		AnyBalance.trace('found table');
@@ -181,5 +219,26 @@ function parseBalance(text){
     var val = getParam(text.replace(/\s+/g, ''), null, null, /(-?\d[\d\.,]*)/, replaceFloat, parseFloat);
     AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
     return val;
+}
+
+function createFormParams(html, process){
+    var params = {};
+    html.replace(/<input[^>]+name="([^"]*)"[^>]*>/ig, function(str, name){
+        var value = getParam(str, null, null, /value="([^"]*)"/i, null, html_entity_decode) || '';
+        name = html_entity_decode(name);
+        if(process){
+            value = process(params, str, name, value);
+        }
+        params[name] = value;
+    });
+    return params;
+}
+
+function html_entity_decode(str)
+{
+    //jd-tech.net
+    var tarea=document.createElement('textarea');
+    tarea.innerHTML = str;
+    return tarea.value;
 }
 

@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change major_version="1.1" version="11" date="2012-10-06">
+      Добавлен срок действия пакета Домашний интернет (спасибо oandrs)
+    </change>
     <change major_version="1.1" version="10" date="2012-09-24">
       Улучшено распознавания остатка трафика
     </change>

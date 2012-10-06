@@ -113,11 +113,8 @@ function main(){
   }
   
   //Домашний Интернет
-  if(AnyBalance.isAvailable('home_internet')){
-    if (matches=/(Від послуги "Домашній Інтернет":|От услуги "Домашний Интернет":)[\s\S]*?<b>(.*?)</.exec(html)){
-        result.home_internet=parseFloat(matches[2]);
-    }
-  }
+  getParam(html, result, 'home_internet', /(?:Від послуги "Домашній .нтернет":|От услуги "Домашний .нтернет":)[\s\S]*?<b>(.*?)<[\s\S]*?>(.*?)&nbsp;</, replaceTagsAndSpaces, parseBalance);
+  getParam(html, result, 'home_internet_to_date', /(?:Від послуги "Домашній .нтернет":|От услуги "Домашний .нтернет":)[\s\S]*?<b>(?:.*?)<[\s\S]*?>(.*?)&nbsp;</, replaceTagsAndSpaces, parseDate);
   
   //Остаток бонусов (2)
   if(AnyBalance.isAvailable('bonus_left_2')){
@@ -166,3 +163,15 @@ function parseTrafficMb(text){
     AnyBalance.trace('Parsing traffic (' + val + 'Mb) from: ' + text);
     return val;
 }
+
+function parseDate(str){
+    var matches = /(\d+)[^\d](\d+)[^\d](\d+)/.exec(str);
+    if(matches){
+          var date = new Date(+matches[3], matches[2]-1, +matches[1]);
+	  var time = date.getTime();
+          AnyBalance.trace('Parsing date ' + date + ' from value: ' + str);
+          return time;
+    }
+    AnyBalance.trace('Failed to parse date from value: ' + str);
+}
+

@@ -2,7 +2,7 @@
 <provider>
     <id version="1">ab-money-google-checkout</id>
     <name>Google Checkout</name>
-    <description>Статистика продаж в Google Play</description>
+    <description>Shows number of purchases in Google Play. This provider does not work with 2-steps authorization.</description>
     <author>BArtWell &lt;web@bartwell.ru&gt;</author>
     <files>
 	<icon>icon.png</icon>
@@ -10,7 +10,7 @@
         <js>main.js</js>
     </files>
     <counters>
-        <counter id="sales" name="Количество продаж"/>
+        <counter id="sales" name="Purchases"/>
     </counters>
     <keywords>
         Google, Play, Android, market, Checkout

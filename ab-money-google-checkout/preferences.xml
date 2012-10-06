@@ -2,22 +2,22 @@
 <PreferenceScreen>
     <EditTextPreference 
         title="E-mail" 
-        positiveButtonText="ОК" 
-        summary="E-mail||{@s}\n" 
+        positiveButtonText="OK" 
+        summary="||{@s}\n" 
         dialogTitle="E-mail" 
-        negativeButtonText="Отмена" 
-        dialogMessage="Введите ваш адрес e-mail"
+        negativeButtonText="Cancel" 
+        dialogMessage="Please enter your e-mail"
         key="login"
-        inputType="text">
+        inputType="textEmailAddress">
     </EditTextPreference>
     <EditTextPreference 
-        positiveButtonText="ОК"
+        positiveButtonText="OK"
         key="password" 
-        dialogTitle="Пароль"
-        negativeButtonText="Отмена"
-        title="Пароль"
-        summary="Пароль для входа в Google Checkout||***********\n"
-        dialogMessage="Введите пароль, используемый для входа в Google Checkout"
+        dialogTitle="Password"
+        negativeButtonText="Cancel"
+        title="Password"
+        summary="||***********\n"
+        dialogMessage="Please enter your password for Google Checkout"
         inputType="textPassword">
     </EditTextPreference>
 </PreferenceScreen>

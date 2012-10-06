@@ -36,6 +36,15 @@ function getParam (html, result, param, regexp, replaces, parser) {
 	}
 }
 
+var replaceTagsAndSpaces = [/<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
+var replaceFloat = [/\s+/g, '', /,/g, '.'];
+
+function parseBalance(text){
+    var val = getParam(html_entity_decode(text).replace(/\s+/g, ''), null, null, /(-?\d[\d\s.,]*)/, replaceFloat, parseFloat);
+    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
+    return val;
+}
+
 function html_entity_decode(str)
 {
     //jd-tech.net
@@ -87,12 +96,22 @@ function main() {
 
     var html = AnyBalance.requestPost(baseurlLogin + 'ServiceLoginAuth', params, g_headers);
 
-    //AnyBalance.trace(html);
+    AnyBalance.trace(html);
 
-	var r = new RegExp('<b>Входящие&nbsp;\\((\\d+)\\)</b>');
-	var matches=r.exec(html);
-	if(matches==null) throw new AnyBalance.Error('Ошибка разбора количества продаж');
-	result.sales=parseInt(matches[1]);
+    if(!/logout/i.test(html)){
+        var error = getParam(html, null, null, /<span[^>]+class="errormsg[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+        if(error)
+            throw new AnyBalance.Error(error);
+        error = getParam(html, null, null, /(<form[^>]+name="verifyForm")/i);
+        if(error)
+            throw new AnyBalance.Error("This account requires 2-step authorization. Turn off 2-step authorization to use this provider.");
+        throw new AnyBalance.Error('Can not log in google account.');
+    }
 
-	AnyBalance.setResult(result);
+    if(getParam(html, null, null, /(<form[^>]+name="createaccount")/i))
+        throw new AnyBalance.Error('Google Checkout does not exist on this account.');
+
+    getParam(html, result, 'sales', /<b[^>]*>([^<]*)<\/b>(?:&nbsp;|[\s\|])*<a[^>]+href="[^"]*sell\/archive/i, replaceTagsAndSpaces, parseBalance);
+
+    AnyBalance.setResult(result);
 }

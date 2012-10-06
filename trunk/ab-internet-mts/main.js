@@ -72,31 +72,47 @@ function getRostov(){
 function getMoscow(){
     var prefs = AnyBalance.getPreferences();
     var baseurl = 'https://kabinet.mts.ru/zservice/';
+    var baseloginurl = "https://login.mts.ru/amserver/UI/Login?service=stream&arg=newsession&goto=http%3A%2F%2Fkabinet.mts.ru%3A80%2Fzservice%2Fgo";
 
-    var info = AnyBalance.requestGet("https://login.mts.ru/amserver/UI/Login?service=stream&arg=newsession&goto=http%3A%2F%2Fkabinet.mts.ru%3A80%2Fzservice%2Fgo");
-    var $parse = $(info);
-    var xgoto = $parse.find('input[name="goto"]').attr('value');
-    var xloginurl = $parse.find('input[name="loginURL"]').attr('value');
+    var info = AnyBalance.requestGet(baseloginurl);
+
+    var form = getParam(info, null, null, /<form[^>]+name="Login"[^>]*>([\s\S]*?)<\/form>/i);
+    if(!form)
+        throw new AnyBalance.Error("Не удаётся найти форму входа!");
+
+    var params = createFormParams(form, function(params, input, name, value){
+        var undef;
+        if(name == 'IDToken1')
+            value = prefs.login;
+        else if(name == 'IDToken2')
+            value = prefs.password;
+        else if(name == 'noscript')
+            value = undef; //Снимаем галочку
+        else if(name == 'IDButton')
+            value = '+%C2%F5%EE%E4+%E2+%CB%E8%F7%ED%FB%E9+%EA%E0%E1%E8%ED%E5%F2+';
+       
+        return value;
+    });
 
     // Заходим на главную страницу
-    info = AnyBalance.requestPost("https://login.mts.ru/amserver/UI/Login", {
-    	IDToken0: '',
-    	IDToken1: prefs.login,
-        IDToken2: prefs.password,
-        'goto': xgoto,
-        encoded: true,
-        initialNumber: '',
-        loginURL: xloginurl,
-        gx_charset: 'UTF-8'
-    });
+    info = AnyBalance.requestPost(baseloginurl, params);
+    $parse = $(info);
+
+    if(!/src=exit/i.test(info)){
+        var error = $.trim($parse.find('div.logon-result-block>p').text());
+        if(!error)
+            error = getParam(info, null, null, /<label[^>]+validate="IDToken1"[^>]*>([\s\S]*?)<\/label>/i, replaceTagsAndSpaces);
+        if(!error)
+            error = getParam(info, null, null, /<label[^>]+validate="IDToken2"[^>]*>([\s\S]*?)<\/label>/i, replaceTagsAndSpaces);
+
+        if(error)
+            throw new AnyBalance.Error(error);
+
+        throw new AnyBalance.Error("Не удалось зайти в личный кабинет. Неверный логин-пароль или сайт изменен.");
+    }
 
 //    info = AnyBalance.requestGet(baseurl);
 
-    $parse = $(info);
-    var error = $.trim($parse.find('div.logon-result-block>p').text());
-    
-    if(error)
-    	throw new AnyBalance.Error(error);
 
 //    AnyBalance.trace(info);
     
@@ -393,5 +409,18 @@ function html_entity_decode(str)
     var tarea=document.createElement('textarea');
     tarea.innerHTML = str;
     return tarea.value;
+}
+
+function createFormParams(html, process){
+    var params = {};
+    html.replace(/<input[^>]+name="([^"]*)"[^>]*>/ig, function(str, name){
+        var value = getParam(str, null, null, /value="([^"]*)"/i, null, html_entity_decode);
+        name = html_entity_decode(name);
+        if(process){
+            value = process(params, str, name, value);
+        }
+        params[name] = value;
+    });
+    return params;
 }
 

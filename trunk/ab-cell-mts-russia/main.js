@@ -10,18 +10,23 @@
 var regions = {
 	auto: "https://ip.mts.ru/SELFCAREPDA/",
 	center: "https://ip.mts.ru/SELFCAREPDA/",
-	primorye: "https://ihelper.primorye.mts.ru/SelfCarePda/",
+	primorye: "https://ihelper.dv.mts.ru/SelfCarePda/",
 	nnov: "https://ip.nnov.mts.ru/selfcarepda/",
 	nw: "https://ip.nw.mts.ru/SELFCAREPDA/",
-	sib: "https://ip.sib.mts.ru/SELFCAREPDA/",
+	sib: "https://ihelper.sib.mts.ru/SELFCAREPDA/",
 	ural: "https://ip.nnov.mts.ru/selfcarepda/", //Почему-то урал в конце концов переадресуется сюда
 	ug: "https://ihelper.ug.mts.ru/SelfCarePda/"
+};
+
+var region_aliases = {
+        eao: 'primorye',
+        dv: 'primorye'
 };
 
 var regionsOrdinary = {
 	auto: "https://ihelper.mts.ru/selfcare/",
 	center: "https://ihelper.mts.ru/selfcare/",
-	primorye: "https://ihelper.primorye.mts.ru/selfcare/",
+	primorye: "https://ihelper.dv.mts.ru/selfcare/",
 	nnov: "https://ihelper.nnov.mts.ru/selfcare/",
 	nw: "https://ihelper.nw.mts.ru/selfcare/",
 	sib: "https://ihelper.sib.mts.ru/selfcare/",
@@ -348,6 +353,8 @@ function mainOrdinary(){
         //Неправильный регион. Умный мтс нас редиректит
         //Только эта скотина не всегда даёт правильную ссылку, иногда даёт такую, которая требует ещё редиректов
         //Поэтому приходится вычленять из ссылки непосредственно нужный регион
+        if(region_aliases[redirect])
+            redirect = region_aliases[redirect];
         if(!regionsOrdinary[redirect])
             throw new AnyBalance.Error("МТС перенаправила на неизвестный регион: " + redirect);
 	
@@ -629,6 +636,8 @@ function mainLK(){
             //Неправильный регион. Умный мтс нас редиректит
             //Только эта скотина не всегда даёт правильную ссылку, иногда даёт такую, которая требует ещё редиректов
             //Поэтому приходится вычленять из ссылки непосредственно нужный регион
+            if(region_aliases[redirect])
+                redirect = region_aliases[redirect];
             if(!regionsOrdinary[redirect])
                 throw new AnyBalance.Error("МТС перенаправила на неизвестный регион: " + redirect);
 	

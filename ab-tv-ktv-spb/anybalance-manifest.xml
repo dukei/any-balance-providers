@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-tv-ktv-spb</id>
+  <name>КТВ (Санкт-Петербург)</name>
+  <description>
+    Получает баланс и номер договора для питерского провайдера кабельного телевидения и интернет Компании «КТВ» (http://ktv-spb.ru).
+
+    Информация берется из личного кабинета https://my.ktv-spb.ru.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="agreement" name="Договор" type="text"/>
+  </counters>
+  <keywords>
+    интернет HDTV
+  </keywords>
+  <type>
+    internet, tv
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

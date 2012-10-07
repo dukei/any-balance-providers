@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-internet-ecotelecom</id>
+  <name>Экотелеком (Москва)</name>
+  <description>
+    Получает баланс и информацию о тарифном плане для московского интернет-провайдера Экотелеком (http://www.ecotelecom.ru). Сети компании «Экотелеком» развернуты в следующих округах г. Москвы, населённых пунктах и районах Московской области:
+      * г. Москва: ЗАО, ВАО, САО, ЮАО, ЮВАО, ЮЗАО
+      * Московская область: д. Путилково, пос. Отрадное, Красногорский район, г. Московский, Ленинский район, г. Люберцы, Люберецкий район, г. Одинцово, пос. ВНИИССОК, д. Лапино, Одинцовский район, г. Подольск, Подольский район, г. Чехов, Чеховский район, г. Щербинка.
+
+    Информация берется из личного кабинета https://bill.ecotelecom.ru.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="prihod" name="Платежи в текущем месяце" units="р"/>
+    <counter id="trafficIn" name="Вх.трафик в текущем месяце" units="Gb"/>
+    <counter id="trafficOut" name="Исх.трафик в текущем месяце" units="Gb"/>
+    <counter id="licschet" name="Договор" type="text"/>
+  </counters>
+  <keywords>
+    интернет, ecotelecom
+  </keywords>
+  <type>
+    internet
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-money-uralsib</id>
+  <id version="2">ab-money-uralsib</id>
   <name>Банк УРАЛСИБ</name>
   <description>
     Получает текущий остаток и другие параметры счетов банка Уралсиб (http://www.bankuralsib.ru), используя интернет-банк https://client.uralsibbank.ru.

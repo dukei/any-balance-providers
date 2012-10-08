@@ -132,8 +132,9 @@ function main(){
     if(activeAccId != accId)
         html = AnyBalance.requestGet(baseurl + '/account_retail.asp?AccID=' + accId);
 
-    var error = getParam(html, null, null, /<p[^>]+class="errorb"[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
-    if(error)
+    //Если это сообщение про IP, то игнорируем его
+    var error = getParam(html, null, null, /<p[^>]+class="errorb"[^>]*>(?:[\s\S](?!IP-адрес))*?<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
+    if(error) 
         throw new AnyBalance.Error(error + ' (ID: ' + accId + ')');
 
     getParam(html, result, '__tariff', /<h1[^>]*>([\s\S]*?)<\/h1>/i, replaceTagsAndSpaces);

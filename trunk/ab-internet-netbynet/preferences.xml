@@ -3,7 +3,7 @@
     <EditTextPreference
         key="login"
         title="Логин"
-        summary="Логин для доступа к личному кабинету||{@s}\n"
+        summary="||{@s}"
         inputType="text"
         dialogTitle="Логин"
         dialogMessage="Введите логин для входа в личный кабинет"
@@ -13,11 +13,19 @@
     <EditTextPreference
         key="password"
         title="Пароль"
-        summary="Пароль для входа в личный кабинет||**********\n"
+        summary="||**********"
         inputType="textPassword"
         dialogTitle="Пароль"
         dialogMessage="Введите пароль, используемый для входа в личный кабинет"
         positiveButtonText="ОК"
         negativeButtonText="Отмена">
     </EditTextPreference>
+    <ListPreference 
+        key="region" 
+        title="Регион"
+        summary="|Нужен для определения личного кабинета|{@s}"
+        entries="Москва и МО|Воронеж"
+        entryValues="moscow|voronezh"
+	      defaultValue="moscow">
+    </ListPreference>
 </PreferenceScreen>

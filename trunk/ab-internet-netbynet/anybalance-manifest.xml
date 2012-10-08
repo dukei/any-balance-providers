@@ -1,22 +1,26 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="3">ab-internet-netbynet</id>
+  <id major_version="1.0" version="4">ab-internet-netbynet</id>
   <name>NetByNet</name>
   <description>
     Получает баланс, остаток дней, статус и обещанный платеж у интернет-провайдера NetByNet.
-    Для добавления информации о телевидении обращайтесь на электронную почту.
+
+    Поддерживает регионы: Москва и МО, Воронеж. Личные кабинеты в разных регионах слегка отличаются, поэтому в каждом регионе могут быть доступны не все счетчики.
   </description>
-  <author>iReset &lt;develop_ag@mail.ru&gt;</author>
+  <author>iReset &lt;ireset.ag@gmail.com&gt;</author>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
     <js>main.js</js>
+    <history>history.xml</history>
   </files>
   <counters>
     <counter id="balance" name="Баланс" units="р"/>
+    <counter id="bonus_balance" name="Бонусный баланс" units="б"/>
+    <counter id="day_left" name="Осталось дней" type="text" suffix="дн."/>
     <counter id="subscriber" name="Абонент" type="text"/>
     <counter id="contract" name="Номер договора" type="text" prefix="№"/>
-    <counter id="day_left" name="Осталось дней" type="text" suffix="дн."/>
     <counter id="status" name="Статус" type="text"/>
     <counter id="promised_payment" name="Обещанный платеж" units="р"/>
   </counters>

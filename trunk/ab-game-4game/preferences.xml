@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Логин или емейл" 
+        positiveButtonText="ОК" 
+        summary="||{@s}" 
+        dialogTitle="Логин или емейл" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите логин или емейл для входа в личный кабинет https://ru.4game.com."
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="||***********"
+        dialogMessage="Введите пароль, используемый для входа в личный кабинет https://ru.4game.com."
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

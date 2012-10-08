@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-municipal-gu-is</id>
+  <name>Оплата ЕПД (ГУ ИС)</name>
+  <description>
+    Получает сумму оплаты по последнему выставленному счету ЕПД (за текущий или прошлый месяц). Для работы провайдера требуется ввести в его настройки код плательщика, который можно найти на любой квитанции ЕПД.
+    Если счет уже оплачен, то ГУ ИС не даёт информацию о сумме.
+
+    Информация берется со страницы http://www.gu-is.ru/pay.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Сумма без страховки" units="р"/>
+    <counter id="balance_strah" name="Сумма со страховкой" units="р"/>
+    <counter id="period" name="Период" type="text"/>
+    <counter id="status" name="Статус" type="text"/>
+  </counters>
+  <keywords>
+    единый платежный документ, еирц, ГУ ИС
+  </keywords>
+  <type>
+    municipal
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

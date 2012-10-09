@@ -39,6 +39,7 @@ function main(){
     var hierid = $hierarchy.find("h").attr('id');
     var nodeid_info = $hierarchy.find('n[m="'+prefs.login+'"]').attr('i');
     var nodeid_balance = $hierarchy.find('n[m="'+prefs.login+'"]').parent().attr('i');
+    var nodeid_services = $hierarchy.find('n[m="'+prefs.login+'"]').attr('v');
     
     var result = {success: true};
     
@@ -95,7 +96,7 @@ function main(){
     }
     
     if(AnyBalance.isAvailable('traffic_left')){
-        var val = $info.find('bonuses bonus name:contains("GPRS")').next().text();
+        var val = $info.find('bonuses bonus name:contains("GPRS"), bonuses bonus name:contains("MB")').next().text();
         if(val){
             var matches = val.match(/([\d\.]+)/);
             if(matches)
@@ -113,6 +114,65 @@ function main(){
                 result.sms_left = parseInt(matches[1]);
         }
     }
+
+    if(AnyBalance.isAvailable('mms_left', 'bonus_available')){
+        AnyBalance.trace('Проверяем, не подключены ли какие акции...');
+        var html = AnyBalance.requestGet(baseurl + "tbmb/flash/goto.do?action=features&subs=" + nodeid_services);
+        //ММС пакет
+        var url = getParam(html, null, null, /(?:Подключенные акции|Підключені акції|Activated offers)[\s\S]*?(?:Пакет MMS|Пакет MMS|MMS Pack)(?:[\s\S](?!<\/td>))*?<a[^>]+href="\/([^"]*)"[^>]*class="changeLink"/i, null, html_entity_decode);
+        if(url && AnyBalance.isAvailable('mms_left')){
+            AnyBalance.trace('Найден Пакет ММС...');
+            var html_val = AnyBalance.requestGet(baseurl + url);
+            getParam(html_val, result, 'mms_left', /(?:остаток MMS|залишок MMS|Balance MMS):([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+        }
+        //Программа благодарности "Киевстар бизнес-клуб"
+        var url = getParam(html, null, null, /(?:Подключенные акции|Підключені акції|Activated offers)[\s\S]*?(?:Программа благодарности[^<]*Киевстар бизнес-клуб|Програма подяки[^>]*Київстар бізнес клуб|Kyivstar Business Club)(?:[\s\S](?!<\/td>))*?<a[^>]+href="\/([^"]*)"[^>]*class="changeLink"/i, null, html_entity_decode);
+        if(url && AnyBalance.isAvailable('bonus_available')){
+            AnyBalance.trace('Найден Киевстар бизнес-клуб...');
+            var html_val = AnyBalance.requestGet(baseurl + url);
+            getParam(html_val, result, 'bonus_available', /(?:Доступно бонусов для списания|Доступно бонусів для списання|Available bonuses for discarding):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+        }
+    }
     
     AnyBalance.setResult(result);
 }
+
+
+function getParam (html, result, param, regexp, replaces, parser) {
+	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
+		return;
+
+	var matches = regexp.exec (html), value;
+	if (matches) {
+		value = matches[1];
+		if (replaces) {
+			for (var i = 0; i < replaces.length; i += 2) {
+				value = value.replace (replaces[i], replaces[i+1]);
+			}
+		}
+		if (parser)
+			value = parser (value);
+
+    if(param)
+      result[param] = value;
+	}
+   return value
+}
+
+var replaceTagsAndSpaces = [/&nbsp;/g, ' ', /<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, ''];
+var replaceFloat = [/\s+/g, '', /,/g, '.'];
+
+function parseBalance(text){
+    var val = getParam(text.replace(/\s+/g, ''), null, null, /(-?\d[\d\s.,]*)/, replaceFloat, parseFloat);
+    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
+    return val;
+}
+
+function html_entity_decode(str)
+{
+    //jd-tech.net
+    var tarea=document.createElement('textarea');
+    tarea.innerHTML = str;
+    return tarea.value;
+}
+

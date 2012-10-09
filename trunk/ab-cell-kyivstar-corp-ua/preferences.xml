@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
     <EditTextPreference
-        title="Логин"
+        title="Номер телефона"
         positiveButtonText="ОК"
-        summary="Номер телефона (10 цифр)||{@s}\n"
+        summary="|Номер телефона в международном формате|{@s}"
         dialogTitle="Номер телефона"
         negativeButtonText="Отмена"
         dialogMessage="Введите номер вашего телефона для входа в Мой Киевстар в формате +380ХХХХХХХХХ"

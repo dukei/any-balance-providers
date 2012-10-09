@@ -31,6 +31,42 @@ function getParam (html, result, param, regexp, replaces, parser) {
         }
 }
 
+function sumParam (html, result, param, regexp, replaces, parser, do_replace) {
+	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param))){
+            if(do_replace)
+  	        return html;
+            else
+                return;
+	}
+
+        var total_value;
+	var html_copy = html.replace(regexp, function(str, value){
+		for (var i = 0; replaces && i < replaces.length; i += 2) {
+			value = value.replace (replaces[i], replaces[i+1]);
+		}
+		if (parser)
+			value = parser (value);
+                if(typeof(total_value) == 'undefined')
+                	total_value = value;
+                else
+                	total_value += value;
+                return ''; //Р’С‹СЂРµР·Р°РµРј С‚Рѕ, С‡С‚Рѕ Р·Р°РјР°С‚С‡РёР»Рё
+        });
+
+    if(param){
+      if(typeof(total_value) != 'undefined'){
+          if(typeof(result[param]) == 'undefined')
+      	      result[param] = total_value;
+          else 
+      	      result[param] += total_value;
+      }
+      if(do_replace)
+          return html_copy;
+    }else{
+      return total_value;
+    }
+}
+
 function html_entity_decode(str)
 {
     //jd-tech.net
@@ -71,7 +107,7 @@ function main(){
         var error = getParam(info, null, null, /<div class="messageBody[^>]*>([\s\S]*?)<\/div>/i, [/<.*?>/g, '', /^\s*|\s*$/g, '']);
         if(error)
             throw new AnyBalance.Error(error);
-        throw new AnyBalance.Error("Не удалось зайти в личный кабинет. Сайт изменен?");
+        throw new AnyBalance.Error("РќРµ СѓРґР°РµС‚СЃСЏ Р·Р°Р№С‚Рё РІ Р»РёС‡РЅС‹Р№ РєР°Р±РёРЅРµС‚. РЎР°Р№С‚ РёР·РјРµРЅРµРЅ?");
     }
      
     
@@ -83,7 +119,17 @@ function main(){
 
     getParam(info, result, 'balance', /<a[^>]*class="first"[^>]*store.buy.skypecredit[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces, parseBalance);
     getParam(info, result, 'currency', /<a[^>]*class="first"[^>]*store.buy.skypecredit[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces, parseCurrency);
+    
+    if(AnyBalance.isAvailable('subscriptions')){
+    	getParam(info, result, 'subscriptions', /<li[^>]+class="subs"[^>]*>([\s\S]*?)<(?:ul|li)[^>]*>/i, replaceTagsAndSpaces, parseBalance);
+        if(!result.subscriptions) result.subscriptions = 0;
+    }
 		
+    sumParam(info, result, 'minsLeft', /<span[^>]+class="(?:minsLeft|link)"[^>]*>([\s\S]*?)<\/span>/ig, replaceTagsAndSpaces, parseBalance);
+    getParam(info, result, 'landline', /<li[^>]+class="landline"[^>]*>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(info, result, 'sms', /<li[^>]+class="sms"[^>]*>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(info, result, 'wifi', /<li[^>]+class="wifi"[^>]*>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance);
+
     AnyBalance.setResult(result);
 }
 

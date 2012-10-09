@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-    <change version="6" date="2012-09-18">
+    <change major_version="2" version="6" date="2012-10-09">
+      - Поддержка информации об использованных минутах, числе подписок, остатке минут от подписок
+    </change>
+    <change major_version="1" version="6" date="2012-09-18">
       - Поддержка нового дизайна сайта
     </change>
 </history>

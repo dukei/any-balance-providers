@@ -1,3 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="2" date="2012-10-09">
+      - Новый личный кабинет
+      - В новом кабинете нет счетчиков Ещё и Всего потрачено, они убраны
+    </change>
 </history>

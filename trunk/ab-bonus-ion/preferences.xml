@@ -17,7 +17,7 @@
         negativeButtonText="Отмена"
         title="Пароль"
         summary="||***************"
-        dialogMessage="Введите ваш пароль к личному кабинету ЛЕНЬ ( http://old.i-on.ru/Welcome ). Если у вас нет пароля, получите его на http://old.i-on.ru/ActivateCard/."
+        dialogMessage="Введите ваш пароль к личному кабинету ЛЕНЬ ( http://i-on.ru/crm/logon ). Если у вас нет пароля, получите его на http://i-on.ru/crm/activate."
         inputType="textPassword">
     </EditTextPreference>
 </PreferenceScreen>

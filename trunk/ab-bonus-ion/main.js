@@ -4,7 +4,7 @@
 Лень карта ИОН
 
 Сайт: http://i-on.ru/
-Личный кабинет: http://old.i-on.ru/Welcome/
+Личный кабинет: http://i-on.ru/crm/logon
 */
 
 function getParam (html, result, param, regexp, replaces, parser) {
@@ -29,14 +29,6 @@ function getParam (html, result, param, regexp, replaces, parser) {
 	}
 }
 
-function getViewState(html){
-    return getParam(html, null, null, /name="__VIEWSTATE".*?value="([^"]*)"/);
-}
-
-function getEventValidation(html){
-    return getParam(html, null, null, /name="__EVENTVALIDATION".*?value="([^"]*)"/);
-}
-
 function parseBalance(text){
     var val = getParam(text.replace(/\s+/g, ''), null, null, /(-?\d[\d\s.,]*)/, replaceFloat, parseFloat);
     AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
@@ -47,31 +39,28 @@ var replaceTagsAndSpaces = [/<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /
 var replaceFloat = [/\s+/g, '', /,/g, '.'];
 
 function main(){
-    var baseurl = "http://old.i-on.ru/Welcome";
+    var baseurl = "http://i-on.ru/crm/logon";
     var prefs = AnyBalance.getPreferences();
-    var html = AnyBalance.requestGet(baseurl);
     
-    html = AnyBalance.requestPost(baseurl, {
-        __EVENTTARGET:'',
-        __EVENTARGUMENT:'',
-        __VIEWSTATE:getViewState(html),
-        ctl06$ctl00$ctl00$ctl00$Default1$PartA1$Simple1$SearchText:'Поиск по товарам',
-        ctl06$ctl00$ctl01$Login1$UserName:prefs.login,
-        ctl06$ctl00$ctl01$Login1$Password:prefs.password,
-        ctl06$ctl00$ctl01$Login1$LoginButton:'Войти',
-        __EVENTVALIDATION:getEventValidation(html)
+    var html = AnyBalance.requestPost(baseurl, {
+        number:prefs.login,
+        password:prefs.password,
+        remember:false
     });
 
-    var loggedin = getParam(html, null, null, /(Добро пожаловать,)/i);
-    if(!loggedin)
+    if(!/\/crm\/logoff/i.test(html)){
+        var error = getParam(html, null, null, /<div[^>]+class="validation-summary-errors"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+        if(error)
+            throw new AnyBalance.Error(error);
         throw new AnyBalance.Error("Не удалось зайти в личный кабинет. Проверьте номер карты и пароль.");
+    }
 
     var result = {success: true};
    
-    getParam(html, result, 'balance', /Сейчас на Вашей карте[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'new', /Будут скоро активированы ещё[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'total', /Всего было накоплено[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'off', /Всего было потрачено[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'balance', /Сейчас на вашей карте:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+//    getParam(html, result, 'new', /Будут скоро активированы ещё[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'total', /Всего было накоплено:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+//    getParam(html, result, 'off', /Всего было потрачено[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 
     AnyBalance.setResult(result);
 }

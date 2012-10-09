@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-internet-airbites</id>
+  <id version="1">ab-internet-airbites</id>
   <name>Airbites.net (Украина)</name>
   <description>
     Получает баланс и информацию о статусе услуг для украинского интернет-провайдера Airbites.net (https://airbites.net.ua). Airbites.net предоставляет доступ в интернет в следующих городах: Львов, Харьков, Ивано-Франковск, Хмельницкий, Ровно, Луцк.

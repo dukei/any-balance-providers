@@ -23,8 +23,8 @@
         key="region" 
         title="Регион"
         summary="Нужен для определения личного кабинета||{@s}\n"
-        entries="Екатеринбург|Киров|Москва|Новосибирск|Пермь|Ростов"
-        entryValues="ekt|krv|moscow|nsk|prm|rostov"
+        entries="Екатеринбург|Киров|Москва|Нижний Новгород|Новосибирск|Пермь|Ростов"
+        entryValues="ekt|krv|moscow|nnov|nsk|prm|rostov"
 	defaultValue="moscow">
     </ListPreference>
 </PreferenceScreen>

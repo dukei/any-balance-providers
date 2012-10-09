@@ -16,7 +16,8 @@ var regions = {
    nsk: getNsk,
    prm: getPrm,
    ekt: getPrm,
-   krv: getKrv
+   krv: getKrv,
+   nnov: getNnov
 };
 
 function main(){
@@ -352,6 +353,49 @@ function getKrv(){
     AnyBalance.setResult(result);
 }
 
+function getNnov(){
+    var prefs = AnyBalance.getPreferences();
+    AnyBalance.setDefaultCharset('windows-1251');
+
+    var baseurl = 'http://stat.nnov.comstar-r.ru';
+    AnyBalance.setAuthentication(prefs.login, prefs.password);
+
+    var html = AnyBalance.requestGet(baseurl);
+
+    if(!/Текущий остаток:/i.test(html))
+        throw new AnyBalance.Error("Не удалось войти в личный кабинет. Неправильные логин, пароль?");
+
+    var result = {success: true};
+
+    getParam(html, result, 'license', /Лицевой счёт([^<]*)/i, replaceTagsAndSpaces);
+    getParam(html, result, 'balance', /Текущий остаток:([\s\S]*?)<br[^>]*>/i, replaceTagsAndSpaces, parseBalance2);
+    getParam(html, result, '__tariff', /Текущий тарифный план:([\s\S]*?)<\/strong>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'abon', /Абонентcкая плата:([^<]*)/i, replaceTagsAndSpaces, parseBalance2);
+    getParam(html, result, 'username', /Лицевой счёт[^<]*(?:<[^>]*>\s*)*([^<]*)/i, replaceTagsAndSpaces);
+    getParam(html, result, 'daysleft', /Этой суммы вам хватит[\s\S]*?<span[^>]+class="imp"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance2);
+
+    var url = getParam(html, null, null, /<a[^>]+href="([^"]*)"[^>]*>Информация об услугах/i, null, html_entity_decode);
+    if(!url){
+        AnyBalance.trace("Не удалось найти ссылку на информацию об услугах.");
+    }else{
+        html = AnyBalance.requestGet(baseurl + url);
+        var tr = getParam(html, null, null, /Активные услуги(?:[\s\S](?!<\/table>))*?<tr[^>]*>\s*(<td[^>]*>\s*<a[\s\S]*?)<\/tr>/i);
+        if(!tr){
+            AnyBalance.trace("Не удалось найти ссылку на информацию об интернет.");
+        }else{
+            url = getParam(tr, null, null, /<a[^>]+href="([^"]*)/i, null, html_entity_decode);
+            html = AnyBalance.requestGet(baseurl + url);
+            getParam(html, result, 'agreement', /Договор:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+            getParam(html, result, '__tariff', /Описание услуги:[\s\S]*?<td[^>]*>(?:\s*<b[^>]*>[^<]*<\/b>)?([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+            getParam(html, result, 'internet_cur', /IP трафик[\s\S]*?<small[^>]*>([\s\S]*?)<\/small>/i, replaceTagsAndSpaces, parseBalance2);
+        }
+    }
+
+
+    AnyBalance.setResult(result);
+}
+
+
 function getParam (html, result, param, regexp, replaces, parser) {
 	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
 		return;
@@ -376,10 +420,18 @@ function getParam (html, result, param, regexp, replaces, parser) {
 
 var replaceTagsAndSpaces = [/&nbsp;/ig, ' ', /<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
 var replaceFloat = [/\s+/g, '', /,/g, ''];
+var replaceFloat2 = [/\s+/g, '', /,/g, '.'];
 
 
 function parseBalance(text){
     var val = getParam(text.replace(/\s+/g, ''), null, null, /(-?\d[\d.,]*)/, replaceFloat, parseFloat);
+    val = Math.round(val*100)/100;
+    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
+    return val;
+}
+
+function parseBalance2(text){
+    var val = getParam(text.replace(/\s+/g, ''), null, null, /(-?\d[\d.,]*)/, replaceFloat2, parseFloat);
     val = Math.round(val*100)/100;
     AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
     return val;

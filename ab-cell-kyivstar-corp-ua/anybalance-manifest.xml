@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="5">ab-cell-kyivstar-corp-ua</id>
+  <id version="6">ab-cell-kyivstar-corp-ua</id>
   <name>Киевстар Корпоративный (Украина)</name>
   <description>
     Получает баланс, остаток минут, интернет трафка, SMS для корпоративных тарифов. Информация берется из системы Мой Киевстар https://my.kyivstar.ua
@@ -23,7 +23,9 @@
     <counter id="min_left" name="Бесплатные минуты" units="мин"/>
     <counter id="min_group" name="Групповые минуты" units="мин"/>
     <counter id="traffic_left" name="Остаток трафика" units="Мб"/>
-    <counter id="sms_left" name="Остаток трафика (пакет)" type="text"/>
+    <counter id="sms_left" name="Остаток SMS"/>
+    <counter id="mms_left" name="Остаток MMS"/>
+    <counter id="bonus_available" name="Доступные бонусы Киевстар бизнес-клуб"/>
     <counter id="statuslock" name="Статус телефона" type="text"/>
   </counters>
   <keywords>

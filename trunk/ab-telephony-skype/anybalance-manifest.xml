@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1" version="6">ab-telephony-skype</id>
+  <id major_version="2" version="7">ab-telephony-skype</id>
   <name>Skype</name>
   <description>
     Получает текущий баланс, валюту баланса в Skype.
@@ -15,6 +15,11 @@
   <counters>
     <counter id="balance" name="Баланс"/>
     <counter id="currency" name="Валюта" type="text"/>
+    <counter id="subscriptions" name="Число подписок"/>
+    <counter id="minsLeft" name="Остаток минут" units="мин"/>
+    <counter id="landline" name="Звонки за последние 30 дней" units="мин"/>
+    <counter id="sms" name="SMS за последние 30 дней"/>
+    <counter id="wifi" name="Skype WiFi за последние 30 дней" units="мин"/>
   </counters>
   <keywords>
     Скайп IP-телефония

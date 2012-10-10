@@ -18,8 +18,11 @@ function main() {
 		systemid: 'hb'
 	  });
 
-	if(!/<a[^>]+class="exit"[^>]*>/.test(html))
+	if(!/<a[^>]+class="exit"[^>]*>/.test(html)){
+            if(/Ввод пароля из SMS-сообщения/i.test(html))
+	        throw new AnyBalance.Error('У вас настроен вход по паролю из SMS сообщения. Для пользования провайдером необходимо отключить этот пароль в настройках интернет-банка. Это безопасно, для проведения любых операций SMS-пароль всё равно будет требоваться.');
 	    throw new AnyBalance.Error('Ошибка авторизации. Проверьте логин и пароль');
+        }
 
         if(prefs.type == 'crd')
             fetchCredit(baseurl);
@@ -54,9 +57,26 @@ function fetchCard(baseurl){
     getParam(tr, result, 'contract_date', /&#1044;&#1072;&#1090;&#1072; &#1079;&#1072;&#1082;&#1083;&#1102;&#1095;&#1077;&#1085;&#1080;&#1103; &#1076;&#1086;&#1075;&#1086;&#1074;&#1086;&#1088;&#1072;\s*-([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseDate);
     //Статус
     getParam(tr, result, 'status', /&#1057;&#1090;&#1072;&#1090;&#1091;&#1089;\s*-([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(tr, result, 'contract', /(\d{6}\*{6}\d{4})/, replaceTagsAndSpaces, html_entity_decode);
+    getParam(tr, result, 'cardnum', /(\d{6}\*{6}\d{4})/, replaceTagsAndSpaces, html_entity_decode);
     getParam(tr, result, '__tariff', /<a[^>]+class="xl"[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(tr, result, 'accname', /<a[^>]+class="xl"[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces, html_entity_decode);
+
+    var sourceData = getParam(tr, null, null, /<a[^>]+onclick="submitForm[^"]*source:'([^'"]*)'[^"]*"[^>]+class="xl"/i, replaceTagsAndSpaces);
+    var token = getParam(html, null, null, /<input[^>]+name="oracle.adf.faces.STATE_TOKEN"[^>]*value="([^"]*)/i, null, html_entity_decode);
+   
+    if(AnyBalance.isAvailable('contract')){
+        html = AnyBalance.requestPost(baseurl + 'rs/cards/RSCardsV2.jspx', {
+            'oracle.adf.faces.FORM': 'mainform',
+            'oracle.adf.faces.STATE_TOKEN': token,
+            'source': sourceData
+        });
+        //Договор № -
+        getParam(html, result, 'contract', /&#1044;&#1086;&#1075;&#1086;&#1074;&#1086;&#1088;\s*&#8470;\s*-?([^<]*)/, replaceTagsAndSpaces, html_entity_decode);
+        //Сумма для реализации Льготного периода -
+        getParam(html, result, 'gracepay', /&#1057;&#1091;&#1084;&#1084;&#1072; &#1076;&#1083;&#1103; &#1088;&#1077;&#1072;&#1083;&#1080;&#1079;&#1072;&#1094;&#1080;&#1080; &#1051;&#1100;&#1075;&#1086;&#1090;&#1085;&#1086;&#1075;&#1086; &#1087;&#1077;&#1088;&#1080;&#1086;&#1076;&#1072;\s*-?([^<]*)/, replaceTagsAndSpaces, parseBalance);
+        //Дата окончания Льготного периода -
+        getParam(html, result, 'gracetill', /&#1044;&#1072;&#1090;&#1072; &#1086;&#1082;&#1086;&#1085;&#1095;&#1072;&#1085;&#1080;&#1103; &#1051;&#1100;&#1075;&#1086;&#1090;&#1085;&#1086;&#1075;&#1086; &#1087;&#1077;&#1088;&#1080;&#1086;&#1076;&#1072;\s*-?([^<]*)/, replaceTagsAndSpaces, parseDate);
+    }
 
     AnyBalance.setResult(result);
     
@@ -194,13 +214,14 @@ function parseCurrency(text){
 }
 
 function parseDate(str){
-    AnyBalance.trace('Parsing date from value: ' + str);
     var matches = /(\d+)[^\d](\d+)[^\d](\d+)/.exec(str);
     var time;
     if(matches){
 	  time = (new Date(+matches[3], matches[2]-1, +matches[1])).getTime();
+          AnyBalance.trace('Parsing date ' + new Date(time) + ' from value: ' + str);
+          return time;
     }
-    return time;
+    AnyBalance.trace('Could not parse date from value: ' + str);
 }
 
 function html_entity_decode(str)

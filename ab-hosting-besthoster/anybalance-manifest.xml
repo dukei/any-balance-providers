@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="4">ab-hosting-best-hoster</id>
+  <id version="1">ab-hosting-besthoster</id>
   <name>Best Hoster (Хостинг)</name>
   <description>
     Получает остаток дней действия услуг хостинга и другую информацию у хостинг-провайдера Best Hoster (https://best-hoster.ru).

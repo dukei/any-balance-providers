@@ -171,15 +171,6 @@ function main(){
 function mainMobile(allowRetry){
     AnyBalance.trace("Entering mobile internet helper...");
 
-    var headers = {
-	Accept:'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-	'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
-	'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-	'Cache-Control':'max-age=0',
-	Connection:'keep-alive',
-	'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.60 Safari/537.1'
-    };
-
     var prefs = AnyBalance.getPreferences();
 
     if(!regions[prefs.region]){
@@ -194,7 +185,7 @@ function mainMobile(allowRetry){
     var html = AnyBalance.requestPost(baseurl + "Security.mvc/LogOn", {
         username: prefs.login,
         password: prefs.password
-    }, headers);
+    }, g_headers);
     
     var regexp=/<form .*?id="redirect-form".*?action="[^"]*?([^\/\.]+)\.mts\.ru/, res, tmp;
     if (res=regexp.exec(html)){
@@ -211,7 +202,7 @@ function mainMobile(allowRetry){
         html = AnyBalance.requestPost(baseurl + "Security.mvc/LogOn", {
     	    username: prefs.login,
             password: prefs.password
-        }, headers);
+        }, g_headers);
     }
     
     
@@ -241,8 +232,8 @@ function mainMobile(allowRetry){
     var result = {success: true};
 
     if(prefs.phone && prefs.phone != prefs.login){
-        html = AnyBalance.requestGet(baseurl + "MyPhoneNumbers.mvc", headers);
-        html = AnyBalance.requestGet(baseurl + "MyPhoneNumbers.mvc/Change?phoneNumber=7"+prefs.phone, headers);
+        html = AnyBalance.requestGet(baseurl + "MyPhoneNumbers.mvc", g_headers);
+        html = AnyBalance.requestGet(baseurl + "MyPhoneNumbers.mvc/Change?phoneNumber=7"+prefs.phone, g_headers);
         if(!html)
 	    throw new AnyBalance.Error(prefs.phone + ": номер, возможно, неправильный или у вас нет к нему доступа"); 
         var error = sumParam(html, null, null, /<ul class="operation-results-error">([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
@@ -261,7 +252,7 @@ function mainMobile(allowRetry){
 
         AnyBalance.trace("Fetching status...");
 
-        html = AnyBalance.requestGet(baseurl + "Account.mvc/Status", headers);
+        html = AnyBalance.requestGet(baseurl + "Account.mvc/Status", g_headers);
 
         fetchAccountStatus(html, result);
     }
@@ -270,7 +261,7 @@ function mainMobile(allowRetry){
 
         AnyBalance.trace("Fetching history...");
 
-        html = AnyBalance.requestPost (baseurl + 'Account.mvc/History', {periodIndex: 0}, headers);
+        html = AnyBalance.requestPost (baseurl + 'Account.mvc/History', {periodIndex: 0}, g_headers);
 
         AnyBalance.trace("Parsing history...");
 
@@ -283,7 +274,7 @@ function mainMobile(allowRetry){
 
         AnyBalance.trace("Fetching traffic info...");
 
-        html = AnyBalance.requestGet (baseurl + 'TariffChange.mvc', headers);
+        html = AnyBalance.requestGet (baseurl + 'TariffChange.mvc', g_headers);
 
         AnyBalance.trace("Parsing traffic info...");
 
@@ -310,29 +301,32 @@ function html_entity_decode(str)
     return tarea.value;
 }
 
-function mainOrdinary(){
+var g_headers = {
+    Accept:'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
+    'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+    'Cache-Control':'max-age=0',
+    Connection:'keep-alive',
+    'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.60 Safari/537.1'
+};
+
+function isInOrdinary(html){
+    return /amserver\/UI\/Logout/i.test(html); 
+}
+function enterOrdinary(region, retVals){
     AnyBalance.trace("Entering ordinary internet helper...");
     
-    var headers = {
-	Accept:'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-	'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
-	'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-	'Cache-Control':'max-age=0',
-	Connection:'keep-alive',
-	'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.60 Safari/537.1'
-    };
-
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
 
-    if(!regionsOrdinary[prefs.region]){
-	AnyBalance.trace("Unknown region: " + prefs.region + ", setting to auto");
-        prefs.region = 'auto';
+    if(!regionsOrdinary[region]){
+	AnyBalance.trace("Unknown region: " + region + ", setting to auto");
+        region = 'auto';
     }
 
-    var baseurl = regionsOrdinary[prefs.region];
+    var baseurl = regionsOrdinary[region];
 
-//    var html = AnyBalance.requestGet(baseurl, headers);
+//    var html = AnyBalance.requestGet(baseurl, g_headers);
 //    var viewstate = getViewState(html);
 //    if(!viewstate)
 //	throw new AnyBalance.Error('Не найдена форма входа. Процедура входа изменена или проблемы на сайте.');
@@ -346,7 +340,7 @@ function mainOrdinary(){
 //        ctl00$MainContent$tbPhoneNumber: prefs.login,
 //        ctl00$MainContent$tbPassword: prefs.password,
 //        ctl00$MainContent$btnEnter: 'Войти'
-    }, headers);
+    }, g_headers);
     
     var redirect=getParam(html, null, null, /<form .*?id="redirect-form".*?action="[^"]*?([^\/\.]+)\.mts\.ru/);
     if (redirect){
@@ -364,10 +358,10 @@ function mainOrdinary(){
             phoneNumber: '7' + prefs.login,
             password: prefs.password,
             submit: 'Go'
-        }, headers);
+        }, g_headers);
     }
-    
-    if(!sumParam(html, null, null, /(amserver\/UI\/Logout)/i)){
+
+    if(!isInOrdinary(html)){
         //Не вошли. Надо сначала попытаться выдать вразумительную ошибку, а только потом уже сдаться
 
         var error = sumParam(html, null, null, /<div class="b_error">([\s\S]*?)<\/div>/, replaceTagsAndSpaces);
@@ -391,16 +385,34 @@ function mainOrdinary(){
     }
 
     AnyBalance.trace("It looks like we are in selfcare (found logOff)...");
-    var result = {success: true};
+
+    retVals.baseurl = baseurl;
+    retVals.region = region;
+    return html;
+}
+
+function mainOrdinary(){
+    var prefs = AnyBalance.getPreferences();
+    var retVals = {};
+    var html = enterOrdinary(prefs.region, retVals);
+    var baseurl = retVals.baseurl;
+    var region = retVals.region;
+    
+    fetchOrdinary(html, baseurl);
+}
+
+function fetchOrdinary(html, baseurl, resultFromLK){
+    var prefs = AnyBalance.getPreferences();
+    var result = resultFromLK || {success: true};
 
     if(prefs.phone && prefs.phone != prefs.login){
-        html = AnyBalance.requestGet(baseurl + "my-phone-numbers.aspx", headers);
+        html = AnyBalance.requestGet(baseurl + "my-phone-numbers.aspx", g_headers);
         html = AnyBalance.requestPost(baseurl + "my-phone-numbers.aspx", {
             ctl00_sm_HiddenField:'',
             __EVENTTARGET:'ctl00$MainContent$transitionLink',
             __EVENTARGUMENT:'7' + prefs.phone,
             __VIEWSTATE: getViewState(html)
-        }, headers);
+        }, g_headers);
         if(!html)
 	    throw new AnyBalance.Error(prefs.phone + ": номер, возможно, неправильный или у вас нет к нему доступа"); 
         var error = sumParam(html, null, null, /(<h1>Мои номера<\/h1>)/i);
@@ -408,13 +420,18 @@ function mainOrdinary(){
 	    throw new AnyBalance.Error(prefs.phone + ": номер, возможно, неправильный или у вас нет к нему доступа"); 
     }
 
-    
     // Тарифный план
+    result.__tariff = undefined;
     sumParam(html, result, '__tariff', /Тарифный план.*?>([^<]*)/i, replaceTagsAndSpaces);
-    // Баланс
-    sumParam (html, result, 'balance', /<span[^>]*id="customer-info-balance[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+
+    if(!resultFromLK){ //Если мы здесь из ЛК, то не получаем уже полученные ранее счетчики
+        // Баланс
+        sumParam (html, result, 'balance', /<span[^>]*id="customer-info-balance[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+    }
+
     // Телефон
     sumParam (html, result, 'phone', /Номер:.*?>([^<]*)</i, replaceTagsAndSpaces, html_entity_decode);
+
     // Статус блокировки, хрен с ним, на следующей странице получим лучше
     //sumParam (html, result, 'statuslock', /<li[^>]*class="lock-status[^>]*>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces);
 
@@ -422,12 +439,13 @@ function mainOrdinary(){
 
         AnyBalance.trace("Fetching status...");
 
-        html = AnyBalance.requestGet(baseurl + "account-status.aspx", headers);
+        html = AnyBalance.requestGet(baseurl + "account-status.aspx", g_headers);
 
         fetchAccountStatus(html, result);
     }
 
-    AnyBalance.setResult(result);
+    if(!resultFromLK)
+        AnyBalance.setResult(result);
 }
 
 function isAvailableStatus(){
@@ -550,10 +568,6 @@ function createFormParams(html, process){
 function mainLK(){
     AnyBalance.trace("Entering lk...");
     
-    var headers = {
-	'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:13.0) Gecko/20100101 Firefox/13.0.1'
-    };
-
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
 
@@ -562,20 +576,20 @@ function mainLK(){
 
     if(prefs.__dbg){
         //Чтобы сбросить автологин
-        var html = AnyBalance.requestGet(baseurl, headers);
+        var html = AnyBalance.requestGet(baseurl, g_headers);
     }else{
         //Чтобы сбросить автологин
-        var html = AnyBalance.requestGet(baseurlLogin + "/amserver/UI/Login?gx_charset=UTF-8&service=lk&goto=" + encodeURIComponent(baseurl + '/') + "&auth-status=0", headers);
+        var html = AnyBalance.requestGet(baseurlLogin + "/amserver/UI/Login?gx_charset=UTF-8&service=lk&goto=" + encodeURIComponent(baseurl + '/') + "&auth-status=0", g_headers);
     }
 
     if(isLoggedIn(html)){
          AnyBalance.trace("Уже залогинены, проверяем, что на правильный номер...");
          //Автоматом залогинились, надо проверить, что на тот номер
-         var info = AnyBalance.requestPost(baseurl + '/GoodokServices/GoodokAjaxGetWidgetInfo/', '', headers);
+         var info = AnyBalance.requestPost(baseurl + '/GoodokServices/GoodokAjaxGetWidgetInfo/', '', g_headers);
          info = JSON.parse(info);
          if(info.MSISDN != prefs.login){  //Автоматом залогинились не на тот номер
              AnyBalance.trace("Залогинены на неправильный номер: " + prefs.MSISDN + ", выходим");
-             html = AnyBalance.requestGet(baseurlLogin + "/amserver/UI/Logout?goto=" + encodeURIComponent(baseurl + '/'), headers);
+             html = AnyBalance.requestGet(baseurlLogin + "/amserver/UI/Logout?goto=" + encodeURIComponent(baseurl + '/'), g_headers);
          }
     }
 
@@ -618,7 +632,7 @@ function mainLK(){
     }
     AnyBalance.trace("Мы в личном кабинете...");
 
-    var info = AnyBalance.requestGet(baseurlLogin + '/profile/mobile/get?callback=parseJson', headers);
+    var info = AnyBalance.requestGet(baseurlLogin + '/profile/mobile/get?callback=parseJson', g_headers);
     info = new Function("return " + info)();
 
     var result = {success: true};
@@ -630,7 +644,7 @@ function mainLK(){
 
     if(isAvailableStatus()){
         var baseurlHelper = "https://ihelper.mts.ru/selfcare/" + "account-status.aspx"
-        html = AnyBalance.requestGet(baseurlHelper, headers);
+        html = AnyBalance.requestGet(baseurlHelper, g_headers);
         var redirect=getParam(html, null, null, /<form .*?id="redirect-form".*?action="[^"]*?([^\/\.]+)\.mts\.ru/);
         if (redirect){
             //Неправильный регион. Умный мтс нас редиректит
@@ -641,20 +655,27 @@ function mainLK(){
             if(!regionsOrdinary[redirect])
                 throw new AnyBalance.Error("МТС перенаправила на неизвестный регион: " + redirect);
 	
-            var baseurlHelper = regionsOrdinary[redirect];
+            baseurlHelper = regionsOrdinary[redirect];
             AnyBalance.trace("Redirected, now trying to enter selfcare at address: " + baseurlHelper);
             html = AnyBalance.requestPost(baseurlHelper + "logon.aspx", {
                 wasRedirected: '1',
                 submit: 'Go'
-            }, headers);
-            
+            }, g_headers);
+        }
+
+        if(!isInOrdinary(html)){ //Тупой МТС не всегда может перейти из личного кабинета в интернет-помощник :(
+            AnyBalance.trace('Ошибка прямого перехода в интернет-помощник. Пробуем зайти с логином-паролем.');
+            var retVals = {};
+            html = enterOrdinary(redirect, retVals);
+            baseurlHelper = retVals.baseurl;
+            redirect = retVals.region;
         }
 
         if(!/<h1>Состояние счета<\/h1>/i.test(html))
-            html = AnyBalance.requestGet(baseurlHelper + (/account-status\.aspx/i.test(baseurlHelper) ? '' : 'account-status.aspx'), headers);
+            html = AnyBalance.requestGet(baseurlHelper + (/account-status\.aspx/i.test(baseurlHelper) ? '' : 'account-status.aspx'), g_headers);
 
 //        AnyBalance.trace(html);
-        fetchAccountStatus(html, result);
+        fetchOrdinary(html, baseurlHelper, result);
     }
 
     AnyBalance.setResult(result);

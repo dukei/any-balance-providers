@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change major_version="3.1" version="33" date="2012-10-10">
+      - Обход ошибок МТС при переходе в интернет-помощник из личного кабинета.
+    </change>
     <change major_version="3.1" version="32" date="2012-10-07">
       - Изменился адрес дальневосточного интернет-помощника
     </change>

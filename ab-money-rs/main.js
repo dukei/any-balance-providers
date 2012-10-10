@@ -115,61 +115,35 @@ function fetchDeposit(baseurl){
 
 function fetchCredit(baseurl){
     var prefs = AnyBalance.getPreferences();
-    if(!prefs.contract) //А вообще неплохо было бы при невводе номера показывать инфу по первому кредиту...
-        throw new AnyBalance.Error('Пожалуйста, введите номер договора интересующего вас кредита!');
 
-    var result = {
-        success: true
-    };
+    if(prefs.contract && !/^\d{6,10}$/.test(prefs.contract))
+        throw new AnyBalance.Error('Пожалуйста, введите номер кредита, по которому вы хотите получить информацию, или не вводите ничего, чтобы получить информацию по первому кредиту.');
 
-	var html = AnyBalance.requestGet(baseurl + 'rs/credits/RSCredit.jspx');
+    var html = AnyBalance.requestGet(baseurl + 'rs/credits/RSCredit.jspx');
 
-	var r = new RegExp('<table class="accounts">.+?<p>&#1053;&#1086;&#1084;&#1077;&#1088; &#1082;&#1088;&#1077;&#1076;&#1080;&#1090;&#1072; - '+prefs.contract+'</p>.+?</table>');
-	var matches=r.exec(html);
+    var re = new RegExp('(<tr[^>]*>(?:[\\s\\S](?!<\\/tr>))*' + 
+       //Номер кредита
+       '&#1053;&#1086;&#1084;&#1077;&#1088; &#1082;&#1088;&#1077;&#1076;&#1080;&#1090;&#1072;\\s*-\\s*' +
+       (prefs.contract ? prefs.contract : '\\d{10}') + '[\\s\\S]*?<\\/tr>)', 'i');
 
-	if(matches==null) throw new AnyBalance.Error('Кредит с указанным номером договора не найден');
-	result.contract=prefs.contract;
-	html=matches[0];
+    var tr = getParam(html, null, null, re);
+    if(!tr)
+        throw new AnyBalance.Error('Не удаётся найти ' + (prefs.contract ? 'кредит с номером ' + prefs.contract : 'ни одного кредита'));
 
-        getParam(html, result, 'contract_date', /<p>&#1044;&#1072;&#1090;&#1072; &#1079;&#1072;&#1082;&#1083;&#1102;&#1095;&#1077;&#1085;&#1080;&#1103; &#1076;&#1086;&#1075;&#1086;&#1074;&#1086;&#1088;&#1072; - ([0-9.]+)<\/p>/i, replaceTagsAndSpaces, parseDate);
+    var result = {success: true};
 
-	r = new RegExp('<p>Сумма кредита - ([0-9 ,]+)&nbsp;</p>');
-	matches=r.exec(html);
-	if(matches!=null) {
-		result.credit_sum=parseFloat(matches[1].replace(",",".").replace(" ",""));
-	}
+    //Номер кредита
+    getParam(tr, result, 'contract', /&#1053;&#1086;&#1084;&#1077;&#1088; &#1082;&#1088;&#1077;&#1076;&#1080;&#1090;&#1072;\s*-([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
 
-	r = new RegExp('<p>Выплачено - ([0-9 ,]+)&nbsp;</p>');
-	matches=r.exec(html);
-	if(matches!=null) {
-		result.paided=parseFloat(matches[1].replace(",",".").replace(" ",""));
-	}
-
-	r = new RegExp('<p>Остаток на счёте - ([0-9 ,]+)&nbsp;</p>');
-	matches=r.exec(html);
-	if(matches!=null) {
-		result.account_balance=parseFloat(matches[1].replace(",",".").replace(" ",""));
-	}
-
-	r = new RegExp('<div class="desc">&#1044;&#1086; &#1089;&#1087;&#1080;&#1089;&#1099;&#1074;&#1072;&#1085;&#1080;&#1103; &#1087;&#1083;&#1072;&#1090;&#1077;&#1078;&#1072;(?:<span class="warning">) &#1086;&#1089;&#1090;&#1072;&#1083;&#1086;&#1089;&#1100; (\\d+) &#1076;&#1085;');
-	matches=r.exec(html);
-	if(matches!=null) {
-		result.left=parseInt(matches[1]);
-	}
-
-	r = new RegExp('<p class="money">([0-9 ,-]+)&nbsp;</p>');
-	matches=r.exec(html);
-	if(matches!=null) {
-		result.credit_balance=parseFloat(matches[1].replace(",",".").replace(" ",""));
-	}
-
-	r = new RegExp('<p class="payment">Следующий платеж ([0-9 ,]+)&nbsp;</p>');
-	matches=r.exec(html);
-	if(matches!=null) {
-		result.payment_sum=parseFloat(matches[1].replace(",",".").replace(" ",""));
-	}
-
-        getParam(html, result, 'writeoff_date', /<p class="payment">до ([0-9.]+)<a/i, replaceTagsAndSpaces, parseDate);
+    getParam(tr, result, 'contract_date', /<p>&#1044;&#1072;&#1090;&#1072; &#1079;&#1072;&#1082;&#1083;&#1102;&#1095;&#1077;&#1085;&#1080;&#1103; &#1076;&#1086;&#1075;&#1086;&#1074;&#1086;&#1088;&#1072;\s*-([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseDate);
+    getParam(tr, result, 'credit_sum', /<p>Сумма кредита\s*-([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(tr, result, 'paided', /<p>Выплачено\s*-([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(tr, result, 'account_balance', /<p>Остаток на счёте\s*-([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseBalance);
+    //До списывания платежа осталось
+    getParam(tr, result, 'left', /&#1044;&#1086; &#1089;&#1087;&#1080;&#1089;&#1099;&#1074;&#1072;&#1085;&#1080;&#1103; &#1087;&#1083;&#1072;&#1090;&#1077;&#1078;&#1072;\s*(?:<[^>]*>\s*)*&#1086;&#1089;&#1090;&#1072;&#1083;&#1086;&#1089;&#1100;\s*(\d+)\s*&#1076;&#1085;/i, replaceTagsAndSpaces, parseBalance);
+    getParam(tr, result, 'credit_balance', /<p[^>]*class="money"[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(tr, result, 'payment_sum', /Следующий платеж([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(tr, result, 'writeoff_date', /<p class="payment">до ([0-9.]+)<a/i, replaceTagsAndSpaces, parseDate);
 
     AnyBalance.setResult(result);
 }

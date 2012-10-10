@@ -44,6 +44,42 @@ function getParam (html, result, param, regexp, replaces, parser) {
 	}
 }
 
+function sumParam (html, result, param, regexp, replaces, parser, do_replace) {
+	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param))){
+            if(do_replace)
+  	        return html;
+            else
+                return;
+	}
+
+        var total_value;
+	var html_copy = html.replace(regexp, function(str, value){
+		for (var i = 0; replaces && i < replaces.length; i += 2) {
+			value = value.replace (replaces[i], replaces[i+1]);
+		}
+		if (parser)
+			value = parser (value);
+                if(typeof(total_value) == 'undefined')
+                	total_value = value;
+                else
+                	total_value += value;
+                return ''; //Вырезаем то, что заматчили
+        });
+
+    if(param){
+      if(typeof(total_value) != 'undefined'){
+          if(typeof(result[param]) == 'undefined')
+      	      result[param] = total_value;
+          else 
+      	      result[param] += total_value;
+      }
+      if(do_replace)
+          return html_copy;
+    }else{
+      return total_value;
+    }
+}
+
 var replaceTagsAndSpaces = [/<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
 var replaceFloat = [/\s+/g, '', /,/g, '.'];
 
@@ -132,9 +168,9 @@ function main(){
         }else if(matches = str.match(/Безлимитная Камчатка/i)){
             getParam(val, result, 'traffic_kamchatka', null, null, parseTraffic);
         }else if(matches = str.match(/Доп. пакет внеш. трафика \(300 Мб\)/i)){
-            getParam(val, result, 'traffic_300', null, null, parseTraffic);
+            sumParam(val, result, 'traffic_300', /([\s\S]*)/, null, parseTraffic);
         }else if(matches = str.match(/Доп. пакет внеш. трафика \(1000 Мб\)/i)){
-            getParam(val, result, 'traffic_1000', null, null, parseTraffic);
+            sumParam(val, result, 'traffic_1000', /([\s\S]*)/, null, parseTraffic);
         }
     });
 

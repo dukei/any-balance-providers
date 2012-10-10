@@ -19,6 +19,12 @@ function main() {
     var r = new RegExp('<a id="form:_id\\d+" href="/logout" class="iceOutLnk po-header-logout-link">');
 	if(r.test(html)) {
 		html = AnyBalance.requestGet('http://partner.dstream.ru/faces/partner/partner.jsf?page=stat');
+
+		r = new RegExp('Все проекты</span>([\\s\\S]+?)</tbody></table></div>');
+		var matches=r.exec(html);
+		if(matches==null) throw new AnyBalance.Error('Ошибка получения обобщенных данных');
+		html=matches[1];
+
 		r = new RegExp('<span id="([^"]+)" class="iceOutTxt">([^<]+)</span>','g');
 		var updated=0;
 		var mustbe=4;
@@ -27,19 +33,19 @@ function main() {
 			matches[2]=matches[2].replace("&nbsp;"," ");
 			matches[2]=matches[2].replace(" ","");
 			switch(i) {
-				case 63:
+				case 36:
 					result.today=parseFloat(matches[2]);
 					updated++;
 					break;
-				case 64:
+				case 37:
 					result.yesterday=parseFloat(matches[2]);
 					updated++;
 					break;
-				case 65:
+				case 38:
 					result.curmonth=parseFloat(matches[2]);
 					updated++;
 					break;
-				case 66:
+				case 39:
 					result.prevmonth=parseFloat(matches[2]);
 					updated++;
 					break;

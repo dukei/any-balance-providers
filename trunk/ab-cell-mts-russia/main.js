@@ -406,6 +406,7 @@ function fetchOrdinary(html, baseurl, resultFromLK){
     var result = resultFromLK || {success: true};
 
     if(prefs.phone && prefs.phone != prefs.login){
+        AnyBalance.trace('Требуется другой номер. Пытаемся переключиться...');
         html = AnyBalance.requestGet(baseurl + "my-phone-numbers.aspx", g_headers);
         html = AnyBalance.requestPost(baseurl + "my-phone-numbers.aspx", {
             ctl00_sm_HiddenField:'',
@@ -439,7 +440,10 @@ function fetchOrdinary(html, baseurl, resultFromLK){
 
         AnyBalance.trace("Fetching status...");
 
-        html = AnyBalance.requestGet(baseurl + "account-status.aspx", g_headers);
+        if(!/<h1>Состояние счета<\/h1>/i.test(html)){
+            AnyBalance.trace('Не нашли заголовка "состояние счета". Заходим на account-status.aspx');
+            html = AnyBalance.requestGet(baseurl + "account-status.aspx", g_headers);
+        }
 
         fetchAccountStatus(html, result);
     }
@@ -643,8 +647,8 @@ function mainLK(){
         result.bonus = parseFloat(info.bonus);
 
     if(isAvailableStatus()){
-        var baseurlHelper = "https://ihelper.mts.ru/selfcare/" + "account-status.aspx"
-        html = AnyBalance.requestGet(baseurlHelper, g_headers);
+        var baseurlHelper = "https://ihelper.mts.ru/selfcare/";
+        html = AnyBalance.requestGet(baseurlHelper + "account-status.aspx", g_headers);
         var redirect=getParam(html, null, null, /<form .*?id="redirect-form".*?action="[^"]*?([^\/\.]+)\.mts\.ru/);
         if (redirect){
             //Неправильный регион. Умный мтс нас редиректит
@@ -676,10 +680,6 @@ function mainLK(){
             }
         }
 
-        if(!/<h1>Состояние счета<\/h1>/i.test(html))
-            html = AnyBalance.requestGet(baseurlHelper + (/account-status\.aspx/i.test(baseurlHelper) ? '' : 'account-status.aspx'), g_headers);
-
-//        AnyBalance.trace(html);
         fetchOrdinary(html, baseurlHelper, result);
     }
 

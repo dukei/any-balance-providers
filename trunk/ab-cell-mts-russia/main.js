@@ -665,10 +665,15 @@ function mainLK(){
 
         if(!isInOrdinary(html)){ //Тупой МТС не всегда может перейти из личного кабинета в интернет-помощник :(
             AnyBalance.trace('Ошибка прямого перехода в интернет-помощник. Пробуем зайти с логином-паролем.');
+            try{
             var retVals = {};
-            html = enterOrdinary(redirect, retVals);
-            baseurlHelper = retVals.baseurl;
-            redirect = retVals.region;
+                html = enterOrdinary(redirect, retVals);
+                baseurlHelper = retVals.baseurl;
+                redirect = retVals.region;
+            }catch(e){
+                e.message = "МТС не позволила войти в интернет-помощник из личного кабинета. Мы попытались войти в него напрямую, но не удалось: " + e.message + "\nВы можете избежать этой ошибки, отключив все счетчики, кроме баланса и бонусного баланса, или настроив вход в обычный интернет-помощник.";
+                throw e;
+            }
         }
 
         if(!/<h1>Состояние счета<\/h1>/i.test(html))

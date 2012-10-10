@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="4">ab-hosting-best-hoster</id>
+  <name>Best Hoster (Хостинг)</name>
+  <description>
+    Получает остаток дней действия услуг хостинга и другую информацию у хостинг-провайдера Best Hoster (https://best-hoster.ru).
+
+    Информация берется из личного кабинета https://order.best-hoster.ru
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <history>history.xml</history>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="daysleft" name="Осталось дней" units="дн"/>
+    <counter id="till" name="Заказ оплачен до" type="time" format="dd/MM/yyyy"/>
+    <counter id="accnum" name="Номер аккаунта" type="text"/>
+    <counter id="domains" name="Доменов"/>
+    <counter id="addaccs" name="Дополнительные аккаунты"/>
+    <counter id="parn" name="Заработок в партнерской программе"/>
+  </counters>
+  <keywords>
+    интернет hosting
+  </keywords>
+  <type>
+    hosting
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

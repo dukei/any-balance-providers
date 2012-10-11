@@ -40,6 +40,12 @@ function getEventValidation(html){
     return getParam(html, null, null, /name="__EVENTVALIDATION".*?value="([^"]*)"/);
 }
 
+function parseBalance(text){
+    var val = getParam(text.replace(/\s+/g, ''), null, null, /(-?\d[\d\s.,]*)/, replaceFloat, parseFloat);
+    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
+    return val;
+}
+
 var g_regions = {
     moscow: mainMoscow,
     uln: mainUln
@@ -62,30 +68,28 @@ function mainMoscow(){
     var baseurl = "https://www.skypoint.ru/";
     AnyBalance.setDefaultCharset('utf-8');
 
-    var html = AnyBalance.requestGet(baseurl);
+    var html = AnyBalance.requestGet(baseurl + 'Account/Login.aspx?ReturnUrl=%2f');
     var eventvalidation = getEventValidation(html);
     var viewstate = getViewState(html);
 
-    html = AnyBalance.requestPost(baseurl + 'default.aspx', {
+    html = AnyBalance.requestPost(baseurl + 'Account/Login.aspx?ReturnUrl=%2f', {
 	__EVENTTARGET:'',
 	__EVENTARGUMENT:'',
 	__VIEWSTATE:viewstate,
 	__EVENTVALIDATION:eventvalidation,
-	TextBox1:prefs.login,
-	TextBoxWatermarkExtender2_ClientState:'',
-	TextBox2:prefs.password,
-	'ImageButton1.x':8,
-	'ImageButton1.y':8,
-	HF1:'testvalue'
+	ctl00$MainContent$txtUserName:prefs.login,
+	ctl00$MainContent$WatermarContactPhone_ClientState:'',
+	ctl00$MainContent$txtPassword:prefs.password,
+	'ctl00$MainContent$bntLogin.x':18,
+	'ctl00$MainContent$bntLogin.y':20
     });
 
-    var error = getParam(html, null, null, /<td[^>]+class="INFO_Error"[^>]*>(.*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    if(error)
-        throw new AnyBalance.Error(error);
-
-    error = getParam(html, null, null, /<span id="msg">(.*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
-    if(error)
-        throw new AnyBalance.Error(error);
+    if(!/ctl00\$b[nt]{2}Login/i.test(html)){
+        var error = getParam(html, null, null, /<span[^>]+class="errorPinkMessage"(?:[^>](?!display:none|visibility))*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+        if(error)
+            throw new AnyBalance.Error(error);
+        throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен или неправильный регион?');
+    }
 
     //Надо проверить, действительно ли нас пустили в кабинет, или просто перенаправили куда-то в другой регион
     //Но проверить не могу, нет у меня учетных данных...
@@ -95,10 +99,10 @@ function mainMoscow(){
 
     var result = {success: true};
 
-    getParam(html, result, 'userName', /Наименование клиента:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'userNum', /Номер Лицевого счета:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'balance', /Баланс:[\s\S]*?(-?\d[\s\d,\.]*)/i, replaceFloat, parseFloat);
-    getParam(html, result, '__tariff', /Тарифный план:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'userName', /<span[^>]+id="txtLoginName"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'userNum', /<span[^>]+id="ucAbonentInfo_lblLitsevoySchet"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'balance', /Баланс лицевого счёта[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, '__tariff', /<span[^>]+id="ucAbonentInfo_lblTariffPlan"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
 
     AnyBalance.setResult(result);
 }

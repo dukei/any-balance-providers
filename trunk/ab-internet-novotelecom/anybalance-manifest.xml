@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-novotelecom</id>
+  <id version="2">ab-internet-novotelecom</id>
   <name>Новотелеком (Новосибирск)</name>
   <description>
     Получает баланс и информацию о тарифном плане для новосибирского Новотелеком. Информация берется из личного кабинета https://billing.novotelecom.ru.
@@ -11,6 +11,7 @@
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
     <js>main.js</js>
+    <history>history.xml</history>
   </files>
   <counters>
     <counter id="balance" name="Баланс" units="р"/>

@@ -50,29 +50,32 @@ function main(){
     var baseurl = "https://billing.novotelecom.ru/billing/user/";
     var html = AnyBalance.requestPost(baseurl + "login/", {
         form_name:'login',
-        form_back_url:baseurl,
+        form_back_url:'',
         form_action:'',
         login:prefs.login,
         password:prefs.password,
         back_url:'/'
     });
 
-    var error = getParam(html, null, null, /<div[^>]*class=['"]rxt fail['"][^>]*>[\s\S]*?<div[^>]*class=['"]rxt-content['"][^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-    if(error)
-        throw new AnyBalance.Error(error);
+    if(!/\/logout\//i.test(html)){
+        var error = getParam(html, null, null, /<div[^>]*class=['"][^'"]*fail[^'"]*['"][^>]*>([\s\S]*?)<\/div>(?!\s*<div[^>]*class=['"][^'"]*fail)/i, replaceTagsAndSpaces, html_entity_decode);
+        if(error)
+            throw new AnyBalance.Error(error);
+        throw new AnyBalance.Error("Не удалось войти в личный кабинет. Сайт изменен?");
+    }
 
     html = AnyBalance.requestGet(baseurl + 'connect/');
 
     var result = {success: true};
 
     getParam(html, result, 'balance', /<h1[^>]*class="balance"[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'userName', /<div[^>]*class="rxt personal"[^>]*>[\s\S]*?<h2[^>]*>([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'userName', /<div[^>]+class="personal-info"[^>]*>[\s\S]*?<h2[^>]*>([\s\S]*?)(?:<br[^>]*>|<\/h2>)/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'licschet', /Договор №\s*(\d+)/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'till', /Хватит примерно на\s*(\d+)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'till', /Хватит примерно на(?:\s*<[^>]*>)*\s*(\d+)/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'porog', /Порог отключения:[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 
-    getParam(html, result, '__tariff', /<div[^>]*class="ap"[^>]*>[\s\S]*?<h3[^>]*>([\s\S]*?)<\/h3>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'abon', /Абонентская плата[\s\S]*?<h1[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, '__tariff', /<h1[^>]*class="tarif-name"[^>]*>([\s\S]*?)<\/h1>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'abon', /Абонентская плата\s*<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseBalance);
 
     AnyBalance.setResult(result);
 }

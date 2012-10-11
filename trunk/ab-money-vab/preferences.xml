@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Логин" 
+        positiveButtonText="ОК" 
+        summary="|Введите логин в интернет-банк|{@s}" 
+        dialogTitle="Логин" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите логин для входа в VAB Интернет Банк."
+        inputType="number"
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="|Введите пароль в интернет-банк|***********"
+        dialogMessage="Введите пароль, используемый для входа в VAB Интернет Банк."
+        inputType="textPassword">
+    </EditTextPreference>
+    <ListPreference 
+        key="type" 
+        title="Банковский продукт"
+        summary="||{@s}\n"
+        entries="Счет|Депозит|Кредит"
+        entryValues="acc|dep|crd"
+	defaultValue="acc">
+    </ListPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="accnum" 
+        dialogTitle="ID счета/кредита/депозита"
+        negativeButtonText="Отмена"
+        title="ID продукта"
+        summary="|Автоматически|{@s}"
+        dialogMessage="Введите не менее 4 последних цифр номера счета, или ID кредита или депозита, по которому вы хотите получить данные. Если это поле оставить пустым, то будет показана информация по первому счету, кредиту или депозиту. Вы можете узнать ID кредитов и депозитов, выбрав счетчик Сводка"
+        >
+    </EditTextPreference>
+</PreferenceScreen>

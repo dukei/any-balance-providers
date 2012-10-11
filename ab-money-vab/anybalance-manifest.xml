@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-money-vab</id>
+  <name>VAB Банк</name>
+  <description>
+    Получает текущий остаток и другие параметры счетов, депозитов и кредитов Всеукраинского Акционерного Банка (http://vab.ua), используя интернет-банк https://banking.vab.ua.
+
+    Для указания счета/кредита/депозита, по которому необходимо получить информацию, надо в настройки ввести его ID. Чтобы узнать ID имеющихся у вас счетов/кредитов/депозитов, выберите в настройках отображение счетчика &quot;Сводка&quot;.
+
+    Как подключиться к Интернет-Банку?
+    Для подключения к услуге «Управления финансами» с возможностью управлять своими счетами необходимо посетить отделение Банка, заполнить заявление, подписать договор на подключение к системе Интернет-банкинг. Вы получите логин и пароль к системе. 
+
+    Можно попробовать работу провайдера на тестовой версии интернет-банка, введя логин 1 и пароль 2 в настройки аккаунта.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>api:jquery.min.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Остаток"/>
+    <counter id="available" name="Доступно"/>
+    <counter id="currency" name="Валюта" type="text"/>
+    <counter id="pay" name="Ближайший платеж"/>
+    <counter id="paytill" name="Заплатить до" type="time" format="dd/MM/yyyy"/>
+    <counter id="payfrom" name="Заплатить от" type="time" format="dd/MM/yyyy"/>
+    <counter id="till" name="Срок" type="time" format="dd/MM/yyyy"/>
+    <counter id="limit" name="Кредитный лимит"/>
+    <counter id="pct" name="Проценты" units="%"/>
+    <counter id="accname" name="Продукт" type="text"/>
+    <counter id="all" name="Сводка" type="text"/>
+  </counters>
+  <keywords>
+    ВАБ
+  </keywords>
+  <type>
+    money
+  </type>
+  <country>
+    ua
+  </country>
+</provider>

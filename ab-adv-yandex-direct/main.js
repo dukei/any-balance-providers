@@ -43,6 +43,18 @@ function parseDate(str){
     AnyBalance.trace('Could not parse date from value: ' + str);
 }
 
+var g_headers = {
+    Accept:'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
+    'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+    Сonnection:'keep-alive',
+    'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.5 (KHTML, like Gecko) Chrome/19.0.1084.52 Safari/536.5'
+};
+
+function getIdKey(html){
+    return getParam(html, null, null, /<input[^>]*name="idkey"[^>]*value="([^"]*)/i);
+}
+
 function main(){
     var prefs = AnyBalance.getPreferences();
     
@@ -57,8 +69,8 @@ function main(){
 
     var baseurl = "https://passport.yandex.ru/passport?mode=auth";
     
-    var html = AnyBalance.requestGet(baseurl);
-    var idKey = getParam(html, null, null, /Passport\.idkey\s*=\s*'([^'])*/);
+    var html = AnyBalance.requestGet(baseurl, g_headers);
+    var idKey = getIdKey(html);
     if(!idKey)
         throw new AnyBalance.Error("Не удаётся найти ключ для входа в Яндекс. Процедура входа изменилась или проблемы на сайте.");
  
@@ -69,11 +81,22 @@ function main(){
         login:prefs.login,
         passwd:prefs.password,
         timestamp:new Date().getTime()
-    });
+    }, g_headers);
 
     var error = getParam(html, null, null, /b\-login\-error[^>]*>([\s\S]*?)<\/strong>/i, replaceTagsAndSpaces);
     if(error)
         throw new AnyBalance.Error(error);
+
+    if(/Установить постоянную авторизацию на(?:\s|&nbsp;)+данном компьютере\?/i.test(html)){
+        //Яндекс задаёт дурацкие вопросы.
+        AnyBalance.trace("Яндекс спрашивает, нужно ли запоминать этот компьютер. Отвечаем, что нет... (idkey=" + getIdKey(html) + ")");
+        html = AnyBalance.requestPost("https://passport.yandex.ru/passport?mode=auth", {
+            filled:'yes',
+            timestamp:new Date().getTime(),
+            idkey:getIdKey(html), 
+            no:1
+        }, g_headers);
+    }
 
     var yandexuid = getParam(html, null, null, /passport\.yandex\.ru\/passport\?mode=logout&yu=(\d+)/);
     if(!yandexuid)
@@ -81,7 +104,7 @@ function main(){
 
     var result={success: true};
 
-    var jsonInfoStr = AnyBalance.requestGet('http://direct.yandex.ru/widget/export?yandexuid=' + yandexuid + '&cid=' + (prefs.cid || ''));
+    var jsonInfoStr = AnyBalance.requestGet('http://direct.yandex.ru/widget/export?yandexuid=' + yandexuid + '&cid=' + (prefs.cid || ''), g_headers);
     if(/Сервис временно недоступен/.test(jsonInfoStr))
         throw new AnyBalance.Error("Яндекс сообщает: Сервис временно недоступен");
 

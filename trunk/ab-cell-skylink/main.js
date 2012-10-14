@@ -65,14 +65,25 @@ function main(){
 function mainMoscow(){
     var prefs = AnyBalance.getPreferences();
 
-    var baseurl = "https://www.skypoint.ru/";
+    var baseurl = "https://www.skypoint.ru/Account/Login.aspx?ReturnUrl=%2f";
     AnyBalance.setDefaultCharset('utf-8');
 
-    var html = AnyBalance.requestGet(baseurl + 'Account/Login.aspx?ReturnUrl=%2f');
+    var headers = {
+        'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
+        'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+        'Connection':'keep-alive',
+        'Referer': baseurl,
+    	"User-Agent":'Mozilla/5.0 (Windows NT 5.1; rv:2.0) Gecko/20100101 Firefox/4.0'
+    };
+
+
+
+    var html = AnyBalance.requestGet(baseurl, headers);
     var eventvalidation = getEventValidation(html);
     var viewstate = getViewState(html);
 
-    html = AnyBalance.requestPost(baseurl + 'Account/Login.aspx?ReturnUrl=%2f', {
+    html = AnyBalance.requestPost(baseurl, {
 	__EVENTTARGET:'',
 	__EVENTARGUMENT:'',
 	__VIEWSTATE:viewstate,
@@ -80,9 +91,8 @@ function mainMoscow(){
 	ctl00$MainContent$txtUserName:prefs.login,
 	ctl00$MainContent$WatermarContactPhone_ClientState:'',
 	ctl00$MainContent$txtPassword:prefs.password,
-	'ctl00$MainContent$bntLogin.x':18,
-	'ctl00$MainContent$bntLogin.y':20
-    });
+        ctl00$MainContent$ctl00: 'Войти'
+    }, headers);
 
     if(!/ctl00\$b[nt]{2}Login/i.test(html)){
         var error = getParam(html, null, null, /<span[^>]+class="errorPinkMessage"(?:[^>](?!display:none|visibility))*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);

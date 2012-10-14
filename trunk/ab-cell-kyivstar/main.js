@@ -53,30 +53,19 @@ function main(){
     if (matches=/(Залишок на рахунку:|Остаток на счету:)[\s\S]*?<b>(.*?)</.exec(html)){
         result.balance=parseFloat(matches[2]);
     }
-  }
+  }                                                               
   
   //Бонусные минуты (1)
-  if(AnyBalance.isAvailable('bonus_mins_1')){
-    if (matches=/(Кількість хвилин для дзвінків|Количество минут для звонков)[\s\S]*?<b>(.*?)</.exec(html)){
-        result.bonus_mins_1=parseInt(matches[2]);
-    } else if (matches=/(Хвилини всередині мережі "Київстар":|Минуты внутри сети "Киевстар":)[\s\S]*?<b>(.*?)</.exec(html)){
-        result.bonus_mins_1=parseInt(matches[2]);
-    } else if (matches=/(Залишок хвилин для дзвінків на Київстар:|Остаток минут для звонков на Киевстар:)[\s\S]*?<b>(.*?)</.exec(html)){
-        result.bonus_mins_1=parseInt(matches[2]);
-    } else if (matches=/(Залишок хвилин для дзвінків абонентам Київстар та Beeline:|Остаток минут для звонков абонентам Киевстар и Beeline:)[\s\S]*?<b>(.*?)</i.exec(html)){
-        result.bonus_mins_1=parseInt(matches[2]);
-    } else if (matches=/(Залишок хвилин для дзвінків на Киевстар:|Остаток минут для звонков на Київстар:)[\s\S]*?<b>(.*?)</.exec(html)){
-        result.bonus_mins_1=parseInt(matches[2]);
-    }
-  }
-  
+  sumParam(html, result, 'bonus_mins_1', /(?:Кількість хвилин для дзвінків|Количество минут для звонков)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance);
+  sumParam(html, result, 'bonus_mins_1', /(?:Хвилини всередині мережі "?Ки.встар"?:|Минуты внутри сети "?Ки.встар"?:)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance);
+  sumParam(html, result, 'bonus_mins_1', /(?:Залишок хвилин для дзвінків на Ки.встар:|Остаток минут для звонков на Ки.встар:)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance);
+  sumParam(html, result, 'bonus_mins_1', /(?:Залишок хвилин для дзвінків абонентам Ки.встар та Beeline:|Остаток минут для звонков абонентам Ки.встар и Beeline:)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance);
+
   //Бонусные минуты (2)
   if(AnyBalance.isAvailable('bonus_mins_2')){
-    if (matches=/(Кількість хвилин для дзвінків|Количество минут для звонков)[\s\S]*?(Кількість хвилин для дзвінків|Количество минут для звонков)[\s\S]*?<b>(.*?)</.exec(html)){
-        result.bonus_mins_2=parseInt(matches[3]);
-    } else if (matches=/(Залишок хвилин для дзвінків абонентам Київстар та DJUICE:|Остаток минут для звонков абонентам Киевстар и DJUICE:)[\s\S]*?<b>(.*?)</.exec(html)){
-        result.bonus_mins_2=parseInt(matches[2]);
-    } else if (matches=/(Залишок тарифних хвилин для дзвінків в межах України:|Остаток тарифних минут для звонков в пределах Украини :)[\s\S]*?<b>(.*?)</.exec(html)){
+    if (matches=/(Залишок хвилин для дзвінків абонентам Ки.встар та DJUICE:|Остаток минут для звонков абонентам Ки.встар и DJUICE:)[\s\S]*?<b>(.*?)</.exec(html)){
+        result.bonus_mins_2=parseInt(matches[2]);                            
+    } else if (matches=/(Залишок тарифних хвилин для дзвінків в межах України:|Остаток тарифних минут для звонков в пределах Украин[иы]\s*:)[\s\S]*?<b>(.*?)</.exec(html)){
         result.bonus_mins_2=parseInt(matches[2]);
     } else if (matches=/(Залишок хвилин для дзвінків в межах України:|Остаток минут для звонков в пределах Украини :)[\s\S]*?<b>(.*?)</.exec(html)){
         result.bonus_mins_2=parseInt(matches[2]);
@@ -177,5 +166,50 @@ function main(){
   }
   
   AnyBalance.setResult(result);
+}
+
+function sumParam (html, result, param, regexp, replaces, parser, do_replace) {
+	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param))){
+            if(do_replace)
+  	        return html;
+            else
+                return;
+	}
+
+        var total_value;
+	var html_copy = html.replace(regexp, function(str, value){
+		for (var i = 0; replaces && i < replaces.length; i += 2) {
+			value = value.replace (replaces[i], replaces[i+1]);
+		}
+		if (parser)
+			value = parser (value);
+                if(typeof(total_value) == 'undefined')
+                	total_value = value;
+                else
+                	total_value += value;
+                return ''; //Вырезаем то, что заматчили
+        });
+
+    if(param){
+      if(typeof(total_value) != 'undefined'){
+          if(typeof(result[param]) == 'undefined')
+      	      result[param] = total_value;
+          else 
+      	      result[param] += total_value;
+      }
+      if(do_replace)
+          return html_copy;
+    }else{
+      return total_value;
+    }
+}
+
+var replaceTagsAndSpaces = [/<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
+var replaceFloat = [/\s+/g, '', /,/g, '.'];
+
+function parseBalance(text){
+    var val = sumParam(text.replace(/\s+/g, ''), null, null, /(-?\d[\d.,]*)/, replaceFloat, parseFloat);
+    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
+    return val;
 }
 

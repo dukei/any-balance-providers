@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-money-vab</id>
+  <id version="3">ab-money-vab</id>
   <name>VAB Банк</name>
   <description>
     Получает текущий остаток и другие параметры счетов, депозитов и кредитов Всеукраинского Акционерного Банка (http://vab.ua), используя интернет-банк https://banking.vab.ua.
@@ -31,6 +31,7 @@
     <counter id="limit" name="Кредитный лимит"/>
     <counter id="pct" name="Проценты" units="%"/>
     <counter id="accname" name="Продукт" type="text"/>
+    <counter id="accnum" name="Номер счета/ID продукта" type="text"/>
     <counter id="all" name="Сводка" type="text"/>
   </counters>
   <keywords>

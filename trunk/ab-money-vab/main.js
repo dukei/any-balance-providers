@@ -79,7 +79,7 @@ var g_headers = {
 function main(){
     var prefs = AnyBalance.getPreferences();
     if(prefs.accnum){
-        if(!(prefs.type || prefs.type == 'acc')){
+        if(!prefs.type || prefs.type == 'acc'){
             if(!/^\d{4,}$/.test(prefs.accnum))
                 throw new AnyBalance.Error("Введите не меньше 4 последних цифр номера счета или не вводите ничего, чтобы показать информацию по первому счету.");
         }else if(!/^\d{2}$/.test(prefs.accnum)){
@@ -183,6 +183,7 @@ function fetchDep(html, baseurl, result){
 
     getParam(tr, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
     getParam(tr, result, 'accname', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+    getParam(tr, result, 'accnum', /ucDeposits_rpDeposits_ctl(\d{2})_btnDepositDetails/i, replaceTagsAndSpaces);
     getParam(tr, result, 'pct', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(tr, result, 'balance', /(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(tr, result, 'currency', /(?:[\s\S]*?<td[^>]*>){7}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
@@ -200,6 +201,7 @@ function fetchCredit(html, baseurl, result){
 
     getParam(tr, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
     getParam(tr, result, 'accname', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+    getParam(tr, result, 'accnum', /ucCredits_rpCredits_ctl(\d{2})_btnLoanDetails/i, replaceTagsAndSpaces);
     getParam(tr, result, 'pct', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(tr, result, 'balance', /(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(tr, result, 'limit', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);

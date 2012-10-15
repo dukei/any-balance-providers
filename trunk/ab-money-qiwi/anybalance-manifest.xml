@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="2.0" version="4">ab-money-qiwi</id>
+  <id major_version="2.1" version="5">ab-money-qiwi</id>
   <name>QIWI Кошелек</name>
   <description>
     Получает баланс, количество сообщений и счетов в QIWI Кошельке. Поддерживает старый личный кабинет (https://w.qiwi.ru) и новый (https://w.qiwi.com). В новом кабинете отсутствуют сообщения, так что счетчик "Сообщения" не работает.

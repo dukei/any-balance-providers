@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-    <change major_version="1.0" version="4" date="2012-09-30">
+    <change major_version="2.1" version="5" date="2012-10-15">
+      - Иконка покрасивее
+    </change>
+    <change major_version="2.0" version="4" date="2012-09-30">
       - Поддержка нового личного кабинета
     </change>
     <change major_version="1.0" version="3" date="2012-08-09">

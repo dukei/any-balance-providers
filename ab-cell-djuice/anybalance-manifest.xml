@@ -4,7 +4,9 @@
   <name>Djuice</name>
   <description>
     Получает баланс, бонусные минуты, СМС, ММС, остаток интернет-трафика и другие бонусы для мобильного оператора Djuice.
-    Информация берется из системы Мой DJUICE https://my.djuice.com.ua/  Если вы не зарегистрированы в системе Мой DJUICE, то для пользования провайдером вам сначала нужно там зарегистрироваться.
+    Информация берется из системы Мой DJUICE https://my.djuice.com.ua/  
+
+    Если вы не зарегистрированы в системе Мой DJUICE, то для пользования провайдером вам сначала нужно там зарегистрироваться.
   </description>
   <author>Sergey Bashmanov &lt;sergey.bashmanov@gmail.com&gt;</author>
   <files>
@@ -26,6 +28,7 @@
     <counter id="home_internet" name="Домашний Интернет" units=" грн"/>
     <counter id="home_internet_to_date" name="Домашний Интернет действует до" prefix="до:" type="time" format="dd/MM/yyyy"/>
     <counter id="bonus_left_2" name="Остаток бонусов (2)" units=" грн"/>
+    <counter id="till" name="Срок действия номера" type="time" format="dd/MM/yyyy"/>
   </counters>
   <keywords>
     Сотовый телефон, мобильный, мобильник, djuice, kyivstar, диджус, киевстар, Украина

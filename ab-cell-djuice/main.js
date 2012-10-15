@@ -115,6 +115,8 @@ function main(){
   //Домашний Интернет
   getParam(html, result, 'home_internet', /(?:Від послуги "Домашній .нтернет":|От услуги "Домашний .нтернет":)[\s\S]*?<b>(.*?)<[\s\S]*?>(.*?)&nbsp;</, replaceTagsAndSpaces, parseBalance);
   getParam(html, result, 'home_internet_to_date', /(?:Від послуги "Домашній .нтернет":|От услуги "Домашний .нтернет":)[\s\S]*?<b>(?:.*?)<[\s\S]*?>(.*?)&nbsp;</, replaceTagsAndSpaces, parseDate);
+
+  getParam(html, result, 'till', /(?:Номер діє до:|Номер действует до:)[\s\S]*?<td>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
   
   //Остаток бонусов (2)
   if(AnyBalance.isAvailable('bonus_left_2')){

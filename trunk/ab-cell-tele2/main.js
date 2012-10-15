@@ -122,7 +122,10 @@ function main(){
           }
         }
         if(AnyBalance.isAvailable('traffic_used')){
-          if(matches = /GPRS.*?([\d\s\.\,]+) (Гб|Мб|Кб)/i.exec(name)){
+          matches = /GPRS.*?([\d\.\,]+)\s*(Гб|Мб|Кб)/i.exec(name);
+          if(!matches)
+              matches = /([\d\.\,]+)\s*(Гб|Мб|Кб).*GPRS/i.exec(name);
+          if(matches){
             var val = parseFloat(matches[1].replace(/^[\s,\.]*|[\s,\.]*$/g, '').replace(',','.'));
             switch(matches[2]){
               case 'Гб':

@@ -53,7 +53,9 @@ function main(){
     if (matches=/(Залишок на рахунку:|Остаток на счету:)[\s\S]*?<b>(.*?)</.exec(html)){
         result.balance=parseFloat(matches[2]);
     }
-  }                                                               
+  }
+
+  sumParam(html, result, 'till', /(?:Номер діє до:|Номер действует до:)[\s\S]*?<td>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
   
   //Бонусные минуты (1)
   sumParam(html, result, 'bonus_mins_1', /(?:Кількість хвилин для дзвінків|Количество минут для звонков)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance);
@@ -211,5 +213,16 @@ function parseBalance(text){
     var val = sumParam(text.replace(/\s+/g, ''), null, null, /(-?\d[\d.,]*)/, replaceFloat, parseFloat);
     AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
     return val;
+}
+
+function parseDate(str){
+    var matches = /(\d+)[^\d](\d+)[^\d](\d+)/.exec(str);
+    if(matches){
+          var date = new Date(+matches[3], matches[2]-1, +matches[1]);
+	  var time = date.getTime();
+          AnyBalance.trace('Parsing date ' + date + ' from value: ' + str);
+          return time;
+    }
+    AnyBalance.trace('Failed to parse date from value: ' + str);
 }
 

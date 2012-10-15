@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-    <change major_version="1.1" version="13" date="2012-09-30">
+    <change major_version="1.1" version="15" date="2012-09-30">
+      Добавлен счетчик "Срок действия номера"
+    </change>
+    <change major_version="1.1" version="14" date="2012-09-30">
       Улучшено распознавание минут на тарифе СУПЕР КИЇВСТАР. ВЕЛИКИЙ КРАЙ
     </change>
     <change major_version="1.1" version="13" date="2012-09-30">

@@ -1,23 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="4">ab-internet-volia-broadband</id>
+  <id version="5">ab-internet-volia-broadband</id>
   <name>Volia Broadband (Украина)</name>
   <description>
-    Мониторинг остатка средств на счету и использованного траффика для интернет провайдера Воля Бродбенд (Украина)
-
-    Версия 4 от 22.05.2012:
-        - Отображение имени абонента в списке аккаунтов;
+    Мониторинг остатка средств на счету и использованного трафика для интернет провайдера Воля Бродбенд (Украина)
   </description>
   <author>Vit@liy &lt;vitaliy@root.ua&gt;</author>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
     <js>main.js</js>
-    <js>api:jquery.min.js</js>
+    <history>history.xml</history>
   </files>
   <counters>
     <counter id="balance" name="Баланс" suffix=" грн" type="numeric"/>
     <counter id="traffic" name="Трафик" suffix=" GB" type="numeric"/>
+    <counter id="fio" name="Имя абонента" type="text"/>
   </counters>
   <keywords>
     провайдер интернет украина
@@ -25,4 +23,7 @@
   <type>
     internet
   </type>
+  <country>
+    ua
+  </country>
 </provider>

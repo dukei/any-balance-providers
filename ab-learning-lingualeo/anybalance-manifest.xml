@@ -4,17 +4,13 @@
   <name>LinguaLeo</name>
   <description>
     Получает количество фрикаделек, текущий опыт и уровень на сервисе изучения английского языка LinguaLeo
-	
-    Версия 2 от 22.05.2012:
-        - Исправлено, добавлено отображение имени пользователя в списке аккаунтов;
-    Версия 3 от 17.10.2012:
-        - Исправлено в связи с обновлениями на сайте;
   </description>
   <author>Vit@liy &lt;vitaliy@root.ua&gt;</author>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
     <js>main.js</js>
+    <history>history.xml</history>
   </files>
   <counters>
     <counter id="meatballs" name="Фрикадельки" suffix=" фр." type="text"/>

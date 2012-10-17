@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<history>
+    <change version="4" date="2012-10-17">
+        - Добавлена история;
+    </change>
+    <change version="3" date="2012-10-17">
+        - Исправлено в связи с обновлениями на сайте;
+    </change>
+    <change version="2" date="2012-05-22">
+        - Исправлено, добавлено отображение имени пользователя в списке аккаунтов;
+    </change>
+</history>

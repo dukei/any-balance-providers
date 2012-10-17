@@ -61,6 +61,25 @@ function main(){
 			
 		if(AnyBalance.isAvailable('win_percent'))
 			result['win_percent'] = (pd.data.summary.wins / pd.data.summary.battles_count * 100).toFixed(1);
+			
+		if(AnyBalance.isAvailable('er'))
+			var battles = pd.data.ratings.battles.value;
+			
+			var tmp = pd.data.vehicles;
+			var s = 0;
+			for (q in tmp){
+				t = tmp[q];
+				s += t.battle_count * t.level;
+			}
+			var fmid = s / battles;
+			
+			var dmg = pd.data.ratings.damage_dealt.value / battles;
+			var des = pd.data.ratings.frags.value / battles;
+			var det = pd.data.ratings.spotted.value / battles;
+			var cap = pd.data.ratings.ctf_points.value / battles;
+			var dff = pd.data.ratings.dropped_ctf_points.value / battles;
+			
+			result['er'] = (dmg * (10 / fmid) * (0.15 + 2 * fmid / 100) + des * (0.35 - 2 * fmid / 100) * 1000 + det * 0.2 * 1000 + cap * 0.15 * 1000 + dff * 0.15 * 1000).toFixed(0);
 		
 		if (prefs.tank) {
 			var tmp = pd.data.vehicles;

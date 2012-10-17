@@ -36,7 +36,7 @@ function main(){
                             result.fio = v.abonent.fullname;
                         var service = findGoodService(v.services);
                         if(service && service.model)
-                            result.__tariff = (service.name ? service.name + ': ' + service.model : service.model);
+                            result.__tariff = ((service.name && service.code != 'inet') ? service.name + ': ' + service.model : service.model);
 			if(AnyBalance.isAvailable('balance') && v.services[0]){
 				result['balance'] = v.services[0].saldo;
 			}

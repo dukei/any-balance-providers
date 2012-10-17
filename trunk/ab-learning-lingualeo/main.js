@@ -22,7 +22,7 @@ function main(){
 		result.__tariff = html.match(/<a href="\/profile">(.+?)<\/a>/i)[1];
 		
 		if (AnyBalance.isAvailable('meatballs')) {
-			var matches = html.match(/<strong class="sub-meat" data-tooltip=".+?">(\d+?)<i><\/i><\/strong>/i);
+			var matches = html.match(/<span data-current-meatballs>(\d+?)<\/span>/i);
 			if (matches) {
 				result.meatballs = matches[1]
 			} else {

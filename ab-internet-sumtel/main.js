@@ -34,6 +34,13 @@ function getParam (html, result, param, regexp, replaces, parser) {
 var replaceTagsAndSpaces = [/<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
 var replaceFloat = [/\s+/g, '', /,/g, '.'];
 
+function getViewState(html){
+    return getParam(html, null, null, /name="__VIEWSTATE".*?value="([^"]*)"/);
+}
+
+function getEventValidation(html){
+    return getParam(html, null, null, /name="__EVENTVALIDATION".*?value="([^"]*)"/);
+}
 
 function parseBalance(text){
     var val = getParam(text.replace(/\s+/g, ''), null, null, /(-?\d[\d\s.,]*)/, replaceFloat, parseFloat);
@@ -42,6 +49,47 @@ function parseBalance(text){
 }
 
 function main(){
+    //По санкт-петербургу пока старый кабинет. Новый стал с капчей
+    var prefs = AnyBalance.getPreferences();
+
+    var baseurl = "https://stat.sumtel.ru/";
+    AnyBalance.setDefaultCharset('utf-8');
+
+    var html = AnyBalance.requestGet(baseurl);
+    var eventvalidation = getEventValidation(html);
+    var viewstate = getViewState(html);
+
+    html = AnyBalance.requestPost(baseurl + 'Default.aspx', {
+      __EVENTTARGET:'',
+      __EVENTARGUMENT:'',
+      __VIEWSTATE:viewstate,
+      __EVENTVALIDATION: eventvalidation,
+      ctl00$txtLogin:prefs.login,
+      ctl00$txtPassword:prefs.password,
+      ctl00$btnLogin:'ВОЙТИ'
+    });
+
+    if(!/ctl00_btnLogout/i.test(html)){
+        var error = getParam(html, null, null, /lblError[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+        if(error)
+            throw new AnyBalance.Error(error);
+        if(/MAIN_FORM_NAME/.test(html))
+            throw new AnyBalance.Error("Для вашего региона личный кабинет находится по адресу http://my.sumtel.ru. AnyBalance не может в него зайти, потому что на входе необходимо вводить циферки с картинки.");
+        throw new AnyBalance.Error("Не удалось войти в личный кабинет. Сайт изменен?");
+    }
+
+    var result = {success: true};
+
+    getParam(html, result, 'balance', /lblOstatok[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'status', /lblStatus[^>]*>([^<]*)/i, replaceTagsAndSpaces);
+    getParam(html, result, '__tariff', /lblTarifName[^>]*>([^<]*)/i, replaceTagsAndSpaces);
+    getParam(html, result, 'abon', /lblTarifCost[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'fio', /lblClientName[^>]*>([^<]*)/i, replaceTagsAndSpaces);
+
+    AnyBalance.setResult(result);
+}
+
+function mainMy(){
     var prefs = AnyBalance.getPreferences();
 
     var baseurl = "http://my.sumtel.ru/";

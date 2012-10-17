@@ -1,14 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="5">ab-game-wot</id>
+	<id version="6">ab-game-wot</id>
 	<name>World of Tanks</name>
 	<description>
-		Показывает ник и клан-тэг, общее количество боев и побед в игре World of Tanks, а также информацию о количестве боев и побед на выбранном танке
-		
-		Версия 4 от 26.03.2012:
-		- Исправлено падение на Android 4 (неправильное восприятие знака процента)
-		Версия 5 от 22.05.2012:
-		- Отображение ника игрока и выбранного танка в списке аккаунтов;
+		Показывает ник и клан-тэг, общее количество боев и побед, рейтинг эффективности в игре World of Tanks, а также информацию о количестве боев и побед на выбранном танке
 	</description>
 	<author>Vit@liy &lt;vitaliy@root.ua&gt;</author>
 	<files>
@@ -17,6 +12,7 @@
 		<js>main.js</js>
 		<js>common_functions.js</js>
 		<js>api:jquery.min.js</js>
+		<history>history.xml</history>
 	</files>
 	<counters>
 		<counter id="name" name="Игровой ник[клан]" type="text"/>
@@ -26,6 +22,7 @@
 		<counter id="tank_wins" name="Победы танка" type="numeric"/>
 		<counter id="tank_battles" name="Бои танка" type="numeric"/>
 		<counter id="tank_win_percent" name="Процент побед танка" suffix="℅" type="numeric"/>
+		<counter id="er" name="Рейтинг эффективности" type="numeric"/>
 	</counters>
 	<keywords>
 		игра, game, wot

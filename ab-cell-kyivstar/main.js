@@ -32,10 +32,19 @@ function main(){
     password: prefs.password
   }, headers);
   
-  var matches = html.match(/<td class="redError">([\s\S]*?)<\/td>/i);
-  if(matches){
-      throw new AnyBalance.Error(matches[1]);
+  if(!/\/tbmb\/logout\/perform/i.test(html)){
+      var matches = html.match(/<td class="redError">([\s\S]*?)<\/td>/i);
+      if(matches){
+          throw new AnyBalance.Error(matches[1]);
+      }
+      throw new AnyBalance.Error("Не удалось зайти в личный кабинет. Сайт изменен?");
   }
+
+  if(!/\/tbmb\/payment\/activity\//i.test(html)){
+      //Не нашли ссылку на платежи. Очень вероятно, что это корпоративный аккаунт
+      throw new AnyBalance.Error("Похоже, у вас корпоративный личный кабинет. Пожалуйста, воспользуйтесь провайдером Киевстар для корпоративных тарифов");
+  }
+
   
   AnyBalance.trace('Successfully connected');
   

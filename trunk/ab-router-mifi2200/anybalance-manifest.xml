@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-router-mifi2200</id>
+  <id version="2">ab-router-mifi2200</id>
   <name>Роутер Novatel MiFi 2200</name>
   <description>
     Мониторинг параметров безпроводного роутера MiFi 2200. Получает данные из странички статистики роутера по адресу http://192.168.1.1 или по другому адресу установленному пользователем.

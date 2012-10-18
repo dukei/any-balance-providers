@@ -7,7 +7,7 @@ Router Novatel MiFi 2200 - маршрутизатор раздающий бес�
 
 function main(){
 	var prefs = AnyBalance.getPreferences();
-	var html = AnyBalance.requestPost('http://' + prefs.ipaddress + '/');
+	var html = AnyBalance.requestPost('http://' + (prefs.ipaddress || '192.168.1.1') + '/');
 
 //        if(!/\?logout/i.test(html))
 		//throw new AnyBalance.Error('Не удалось зайти в статистику. Проверьте ip-адрес.');

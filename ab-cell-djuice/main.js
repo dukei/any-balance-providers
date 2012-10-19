@@ -58,14 +58,14 @@ function main(){
   //Бонусные минуты (1)
   if(AnyBalance.isAvailable('bonus_mins_1')){
     if (matches=/(Залишок хвилин для дзвінків|Остаток минут для звонков)[\s\S]*?<b>(.*?)</.exec(html)){
-        result.bonus_mins_1=parseInt(matches[2]);
+        result.bonus_mins_1=(parseInt(matches[2])*60);
     }
   }
   
   //Бонусные минуты (2)
   if(AnyBalance.isAvailable('bonus_mins_2')){
     if (matches=/(Залишок хвилин для дзвінків|Остаток минут для звонков)[\s\S]*?(Залишок хвилин для дзвінків|Остаток минут для звонков)[\s\S]*?<b>(.*?)</.exec(html)){
-        result.bonus_mins_2=parseInt(matches[3]);
+        result.bonus_mins_2=(parseInt(matches[3])*60);
     }
   }
   

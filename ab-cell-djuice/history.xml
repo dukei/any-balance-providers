@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change major_version="1.1" version="12" date="2012-10-19">
+      Исправлены единицы измерения бонусных минут.
+    </change>
     <change major_version="1.1" version="11" date="2012-10-06">
       Добавлен срок действия пакета Домашний интернет (спасибо oandrs)
       Добавлен срок действия номера

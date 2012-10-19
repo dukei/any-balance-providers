@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.1" version="11">ab-cell-djuice</id>
+  <id major_version="1.1" version="12">ab-cell-djuice</id>
   <name>Djuice</name>
   <description>
     Получает баланс, бонусные минуты, СМС, ММС, остаток интернет-трафика и другие бонусы для мобильного оператора Djuice.
@@ -17,8 +17,8 @@
   </files>
   <counters>
     <counter id="balance" name="Баланс" units=" грн"/>
-    <counter id="bonus_mins_1" name="Бонусные минуты (1)" units=" мин" type="time_interval"/>
-    <counter id="bonus_mins_2" name="Бонусные минуты (2)" units=" мин" type="time_interval"/>
+    <counter id="bonus_mins_1" name="Бонусные минуты (1)" units=" мин" type="time_interval" format="{@MIN}"/>
+    <counter id="bonus_mins_2" name="Бонусные минуты (2)" units=" мин" type="time_interval" format="{@MIN}"/>
     <counter id="bonus_mms" name="Бонусные MMS"/>
     <counter id="bonus_sms" name="Бонусные SMS"/>
     <counter id="bonus_money" name="Бонусные средства" units=" грн"/>

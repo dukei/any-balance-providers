@@ -1,15 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="3">ab-internet-beeline</id>
-  <name>Beeline - интернет провайдер</name>
+  <id version="4">ab-internet-beeline</id>
+  <name>Beeline интернет</name>
   <description>
-    Получает баланс, бонусы и информацию о тарифном плане для Beeline интернет. Информация берется из личного кабинета http://lk.beeline.ru.
+    Получает баланс, бонусы и информацию о тарифном плане для Beeline интернет. 
+
+    Информация берется из личного кабинета http://lk.beeline.ru.
   </description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
     <js>main.js</js>
+    <history>history.xml</history>
   </files>
   <counters>
     <counter id="balance" name="Баланс" units="р"/>
@@ -29,4 +32,7 @@
   <type>
     internet
   </type>
+  <country>
+    ru
+  </country>
 </provider>

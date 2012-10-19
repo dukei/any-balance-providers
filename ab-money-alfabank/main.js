@@ -47,13 +47,14 @@ function parseCurrency(text){
 }
 
 function parseDate(str){
-    AnyBalance.trace('Parsing date from value: ' + str);
     var matches = /(\d+)[^\d](\d+)[^\d](\d+)/.exec(str);
-    var time;
     if(matches){
-	  time = (new Date(+matches[3], matches[2]-1, +matches[1])).getTime();
+          var date = new Date(+matches[3], matches[2]-1, +matches[1]);
+	  var time = date.getTime();
+          AnyBalance.trace('Parsing date ' + date + ' from value: ' + str);
+          return time;
     }
-    return time;
+    AnyBalance.trace('Failed to parse date from value: ' + str);
 }
 
 function main(){

@@ -29,7 +29,7 @@ function getParam (html, result, param, regexp, replaces, parser) {
 	}
 }
 
-var replaceTagsAndSpaces = [/<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
+var replaceTagsAndSpaces = [/&nbsp;/i, ' ', /<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
 var replaceFloat = [/\s+/g, '', /,/g, '.'];
 
 function parseBalance(text){
@@ -49,10 +49,9 @@ function parseDate(str){
     return time;
 }
 
-
-
-function getTrafficGb(str){
-  return parseFloat((parseFloat(str)/1000).toFixed(2));
+function parseTrafficGb(str){
+  var val = getParam(str.replace(/\s+/g, ''), null, null, /(-?\d[\d\s.,]*)/, replaceFloat, parseFloat);
+  return parseFloat((val/1000).toFixed(2));
 }
 
 function main(){
@@ -63,20 +62,23 @@ function main(){
 
     var html = AnyBalance.requestGet(baseurl); //Чтобы кука установилась
 
-//    try{
-    html = AnyBalance.requestPost(baseurl, {
-        login: prefs.login,
-        password: prefs.password
-    });
-//    }catch(e){
+    if(!prefs.__dbg){
+        html = AnyBalance.requestPost(baseurl, {
+            login: prefs.login,
+            password: prefs.password
+        });
+    }else{
         //Из-за ошибки в Хроме логин не может быть выполнен, потому что там используется переадресация с безопасного на обычное соединение.
         //Чтобы отлаживать в отладчике, зайдите в свой аккаунт вручную, и раскоментарьте эти строчки. Не забудьте закоментарить обратно потом!
-//        html = AnyBalance.requestGet(baseurl + 'news/'); 
-//    }
+        html = AnyBalance.requestGet(baseurl + 'news/'); 
+    }
     
-    var error = getParam(html, null, null, /<ul class="errorlist">([\s\S]*?)<\/ul>/i, [/<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/, '']);
-    if(error)
-        throw new AnyBalance.Error(error);
+    if(!/\/logout\//.test(html)){
+        var error = getParam(html, null, null, /<ul class="errorlist">([\s\S]*?)<\/ul>/i, [/<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/, '']);
+        if(error)
+            throw new AnyBalance.Error(error);
+        throw new AnyBalance.Error("Не удалось зайти в личный кабинет. Проблемы на сайте?");
+    }
 
     var result = {success: true};
     
@@ -86,18 +88,18 @@ function main(){
     if(AnyBalance.isAvailable('status', 'status_internet', 'status_tv', 'userName', 'till', 'topay', 'abon')){
        html = AnyBalance.requestGet(baseurl + 'personal/');
 
-       getParam(html, result, 'status', /usluga_name">Текущий статус[\s\S]*?<span[^>]*>(.*?)<\/span>/i, replaceTagsAndSpaces);
-       getParam(html, result, 'status_internet', /usluga_name">Интернет[\s\S]*?<span[^>]*>(.*?)<\/span>/i, replaceTagsAndSpaces);
-       getParam(html, result, 'status_tv', /usluga_name">Телевидение[\s\S]*?<span[^>]*>(.*?)<\/span>/i, replaceTagsAndSpaces);
-       getParam(html, result, 'userName', /usluga_name">Владелец договора[\s\S]*?<span[^>]*>(.*?)<\/span>/i, replaceTagsAndSpaces);
+       getParam(html, result, 'status', /usluga_name">Текущий статус[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+       getParam(html, result, 'status_internet', /usluga_name">Интернет[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+       getParam(html, result, 'status_tv', /usluga_name">Телевидение[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+       getParam(html, result, 'userName', /usluga_name">Владелец договора[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
        getParam(html, result, 'till', /Дата окончания расчетного периода[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
        getParam(html, result, 'topay', /Сумма к оплате[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
        getParam(html, result, 'abon', /Сумма ежемесячного платежа[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     }
 
     html = AnyBalance.requestGet(baseurl + 'internet/');
-    getParam(html, result, '__tariff', /Тарифный план[\s\S]*?<td[^>]*>\s*(.*?)<\/td>/i, [/&nbsp;/g, '', /\s+$/, '']);
-    getParam(html, result, 'traffic', /Предоплаченный трафик[\s\S]*?<td[^>]*>([\-\d\s\.,]+)/i, [/\s+/g, '', ',', '.'], getTrafficGb);;
+    getParam(html, result, '__tariff', /Тарифный план[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+    getParam(html, result, 'traffic', /Предоплаченный трафик[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTrafficGb);;
     
     AnyBalance.setResult(result);
 }

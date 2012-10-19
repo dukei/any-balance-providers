@@ -52,17 +52,15 @@ function main(){
   var str_tmp;
   
   //Тарифный план
-  if (matches=/(Тарифний план:|Тарифный план:)[\s\S]*?<td\s+[^>]*>(.*?)\s*<\/td>/.exec(html)){
-    str_tmp=/(Номер діє до:|Номер действует до:)[\s\S]*?<td>(.*?)</.exec(html)
-    result.__tariff=matches[2]+' (до '+str_tmp[2]+')';
+  sumParam(html, result, '__tariff', /(?:Тарифний план:|Тарифный план:)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+  if (str_tmp=/(Номер діє до:|Номер действует до:)[\s\S]*?<td>(.*?)</.exec(html)){
+     result.__tariff = (result.__tariff || '') + ' (до '+str_tmp[2]+')';
   }
   
   // Баланс
-  if(AnyBalance.isAvailable('balance')){
-    if (matches=/(Залишок на рахунку:|Остаток на счету:)[\s\S]*?<b>(.*?)</.exec(html)){
-        result.balance=parseFloat(matches[2]);
-    }
-  }
+  sumParam(html, result, 'balance', /(?:Залишок на рахунку:|Остаток на счету:|Поточний баланс:|Текущий баланс:)[\s\S]*?<b>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+
+  sumParam(html, result, 'limit', /(?:Поріг відключення:|Порог отключения:)[\s\S]*?<b>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 
   sumParam(html, result, 'till', /(?:Номер діє до:|Номер действует до:)[\s\S]*?<td>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
   
@@ -73,17 +71,11 @@ function main(){
   sumParam(html, result, 'bonus_mins_1', /(?:Залишок хвилин для дзвінків абонентам Ки.встар та Beeline:|Остаток минут для звонков абонентам Ки.встар и Beeline:)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance);
 
   //Бонусные минуты (2)
-  if(AnyBalance.isAvailable('bonus_mins_2')){
-    if (matches=/(Залишок хвилин для дзвінків абонентам Ки.встар та DJUICE:|Остаток минут для звонков абонентам Ки.встар и DJUICE:)[\s\S]*?<b>(.*?)</.exec(html)){
-        result.bonus_mins_2=parseInt(matches[2]);                            
-    } else if (matches=/(Залишок тарифних хвилин для дзвінків в межах України:|Остаток тарифних минут для звонков в пределах Украин[иы]\s*:)[\s\S]*?<b>(.*?)</.exec(html)){
-        result.bonus_mins_2=parseInt(matches[2]);
-    } else if (matches=/(Залишок хвилин для дзвінків в межах України:|Остаток минут для звонков в пределах Украини :)[\s\S]*?<b>(.*?)</.exec(html)){
-        result.bonus_mins_2=parseInt(matches[2]);
-    } else if (matches=/(Залишок хвилин для дзвінків по Україні:|Остаток минут для звонков по Украине:)[\s\S]*?<b>(.*?)</.exec(html)){
-        result.bonus_mins_2=parseInt(matches[2]);
-    }
-  }
+  sumParam(html, result, 'bonus_mins_2', /(?:Залишок хвилин для дзвінків абонентам Ки.встар та DJUICE:|Остаток минут для звонков абонентам Ки.встар и DJUICE:)[\s\S]*?<b>([^<]*)/ig, replaceTagsAndSpaces, parseBalance);
+  sumParam(html, result, 'bonus_mins_2', /(?:Залишок тарифних хвилин для дзвінків в межах України:|Остаток тарифних минут для звонков в пределах Украин[иы]\s*:)[\s\S]*?<b>([^<]*)/ig, replaceTagsAndSpaces, parseBalance);
+  sumParam(html, result, 'bonus_mins_2', /(?:Залишок хвилин для дзвінків в межах України:|Остаток минут для звонков в пределах Украини :)[\s\S]*?<b>([^<]*)/ig, replaceTagsAndSpaces, parseBalance);
+  sumParam(html, result, 'bonus_mins_2', /(?:Залишок хвилин для дзвінків по Україні:|Остаток минут для звонков по Украине:)[\s\S]*?<b>([^<]*)/ig, replaceTagsAndSpaces, parseBalance);
+
   //Бонусные MMS
   if(AnyBalance.isAvailable('bonus_mms')){
     if (matches=/>(Бонусні MMS:|Бонусные MMS:)[\s\S]*?<b>(.*?)</.exec(html)){
@@ -154,20 +146,9 @@ function main(){
   }
   
   //Интернет (1)
-  if(AnyBalance.isAvailable('internet_1')){
-    if (matches=/(Залишок бонусного об\'єму даних:|Остаток бонусного объема данных:)[\s\S]*?<b>(.*?)</.exec(html)){
-        result.internet_1=Math.round(parseInt(matches[2])/1024/1024*100)/100;
-    } else if (matches=/(Залишок байт для користування послугою Інтернет GPRS :|Остаток байт для пользования услугой Интернет GPRS :)[\s\S]*?<b>(.*?)</.exec(html)){
-        result.internet_1=Math.round(parseInt(matches[2])/1024/1024*100)/100;
-    }
-  }
-  
-  //Интернет (2)
-  if(AnyBalance.isAvailable('internet_2')){
-    if (matches=/(Залишок бонусного об\'єму даних:|Остаток бонусного объема данных:)[\s\S]*?(Залишок бонусного об\'єму даних:|Остаток бонусного объема данных:)[\s\S]*?<b>(.*?)</.exec(html)){
-        result.internet_2=Math.round(parseInt(matches[3])/1024/1024*100)/100;
-    }
-  }
+  sumParam(html, result, 'internet_1', /(?:Залишок бонусного об\'єму даних:|Остаток бонусного объема данных:)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseTraffic);
+  sumParam(html, result, 'internet_1', /(?:Залишок байт для користування послугою Інтернет GPRS\s*:|Остаток байт для пользования услугой Интернет GPRS\s*:)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseTraffic);
+  sumParam(html, result, 'internet_1', /(?:Остаток GPRS Internet\s*:|Залишок GPRS Internet\s*:)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseTraffic);
   
   //Домашний Интернет
   if(AnyBalance.isAvailable('home_internet')){
@@ -233,5 +214,37 @@ function parseDate(str){
           return time;
     }
     AnyBalance.trace('Failed to parse date from value: ' + str);
+}
+
+function parseTraffic(text){
+    var _text = text.replace(/\s+/, '');
+    var val = sumParam(_text, null, null, /(-?\d[\d\.,]*)/, replaceFloat, parseFloat);
+    var units = sumParam(_text, null, null, /([kmgкмг][бb]|байт|bytes)/i);
+    if(!units){
+        AnyBalance.trace('Can not parse units from ' + text);
+        units = 'мб';
+    }
+    switch(units.substr(0,1).toLowerCase()){
+      case 'b':
+      case 'б':
+        val = Math.round(val/1024/1024*100)/100;
+        break;
+      case 'k':
+      case 'к':
+        val = Math.round(val/1024*100)/100;
+        break;
+      case 'g':
+      case 'г':
+        val = Math.round(val*1024);
+        break;
+    }
+    var textval = ''+val;
+    if(textval.length > 6)
+      val = Math.round(val);
+    else if(textval.length > 5)
+      val = Math.round(val*10)/10;
+
+    AnyBalance.trace('Parsing traffic (' + val + ') from: ' + text);
+    return val;
 }
 

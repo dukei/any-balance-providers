@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change major_version="2.1" version="7" date="2012-10-20">
+      - Исправлено получение информации по картам American Express
+    </change>
     <change major_version="2.1" version="6" date="2012-10-10">
       - Исправлен счетчик "До списывания платежа осталось дней"
     </change>

@@ -25,6 +25,8 @@ function main(){
         try{
             mainOld();
         }catch(e){
+            if(e.fatal)
+                throw e;
             AnyBalance.trace('Ошибка подключения к старому кабинету: ' + e.message + '\nПробуем новый...');
             mainNew();
         }
@@ -32,15 +34,21 @@ function main(){
     }
 }
 
+function getFatalError(str){
+    var e = new AnyBalance.Error(str);
+    e.fatal = true;
+    return e;
+}
+
 function mainNew () {
     var prefs = AnyBalance.getPreferences ();
     var baseurl = 'https://w.qiwi.com/';
 
     if (!prefs.login)
-        throw new AnyBalance.Error ('Введите номер телефона');
+        throw getFatalError ('Введите номер телефона');
 
     if (!prefs.password)
-        throw new AnyBalance.Error ('Введите пароль');
+        throw getFatalError ('Введите пароль');
 
     AnyBalance.trace ('Trying to enter NEW account at address: ' + baseurl);
     var info = AnyBalance.requestGet (baseurl +
@@ -77,8 +85,15 @@ function mainNew () {
     // Проверка на корректный вход
     if (/\/auth\/logout\.action/i.exec(html)){
     	AnyBalance.trace ('It looks like we are in selfcare...');
+        if(!getParam(html, null, null, /(profileBalance)/i)){
+            //Похоже, проблема с паролем, устарел, наверное.
+            var error = getParam(html, null, null, /<p[^>]+class="attention"[^>]*>\s*([\s\S]*?)\s*<\/p>/i);
+            if(error)
+                throw getFatalError(error.replace(/href="\//ig, 'href="https://w.qiwi.com/'));
+            throw getFatalError('Срок действия пароля истек. Смените пароль, зайдя в свой QIWI-кошелек (https://w.qiwi.com) через браузер.');
+        }
     }else if(/passwordchangesuccess.action/i.test(html)){
-        throw new AnyBalance.Error('Срок действия пароля истек. Смените пароль, зайдя в свой QIWI-кошелек через браузер.');
+        throw getFatalError('Срок действия пароля истек. Смените пароль, зайдя в свой QIWI-кошелек (https://w.qiwi.com) через браузер.');
     }else {
         AnyBalance.trace ('Have not found logout... Unknown error. Please contact author.');
         throw new AnyBalance.Error ('Неизвестная ошибка. Пожалуйста, свяжитесь с автором провайдера.');
@@ -106,10 +121,10 @@ function mainOld () {
     var baseurl = 'https://w.qiwi.ru/';
 
     if (!prefs.login || prefs.login == '')
-        throw new AnyBalance.Error ('Введите номер телефона');
+        throw getFatalError ('Введите номер телефона');
 
     if (!prefs.password || prefs.password == '')
-        throw new AnyBalance.Error ('Введите пароль');
+        throw getFatalError ('Введите пароль');
 
     AnyBalance.trace ('Trying to enter OLD account at address: ' + baseurl);
     var info = AnyBalance.requestGet (baseurl +
@@ -144,7 +159,7 @@ function mainOld () {
         if (err == '')
             err = 'Неопределенная ошибка. Пожалуйста, свяжитесь с автором скрипта.';
         else if (err == 'Введенные цифры неверны')  // Возможно, эта ситуация будет срабатывать только при отладке в Chrome
-            err = 'Требуется ручной ввод. Пожалуйста, войдите в личный кабинет на <a href=\'http://w.qiwi.ru\'>домашней странице</a> QIWI Кошелька.';
+            err = 'Требуется ручной ввод. Пожалуйста, войдите в личный кабинет на <a href=\'https://w.qiwi.ru\'>домашней странице</a> QIWI Кошелька.';
         throw new AnyBalance.Error (err);
     }
 
@@ -154,7 +169,7 @@ function mainOld () {
     if (/<h1>Кошелёк:/i.exec(html)){
     	AnyBalance.trace ('It looks like we are in selfcare...');
     }else if(/passwordchangesuccess.action/i.test(html)){
-        throw new AnyBalance.Error('Срок действия пароля истек. Смените пароль, зайдя в свой QIWI-кошелек через браузер.');
+        throw getFatalError('Срок действия пароля истек. Смените пароль, зайдя в свой QIWI-кошелек (https://w.qiwi.ru) через браузер.');
     }else {
         AnyBalance.trace ('Have not found logout... Unknown error. Please contact author.');
         throw new AnyBalance.Error ('Неизвестная ошибка. Пожалуйста, свяжитесь с автором провайдера.');

@@ -12,7 +12,7 @@ function main() {
     var prefs = AnyBalance.getPreferences();
     var html = AnyBalance.requestGet('http://www.tambovgsm.com/PrivateOffice/PrivateOffice_main.php?Login='+prefs.login+'&Password='+prefs.password+'&Auth=Auth');
 
-    var r = new RegExp('<TD class="RB">\\s+([0-9.]+)\\s');
+    var r = new RegExp('<TD class="RB">\\s+(-?[0-9.]+)\\s');
     var matches=r.exec(html);
 
     var result = {

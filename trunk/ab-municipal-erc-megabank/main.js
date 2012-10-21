@@ -1,49 +1,47 @@
 /**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 
-ЕРЦ МЕГАБАНК
+ЕРЦ Мегабанк
 Сайт: https://erc.megabank.net/
 */
 
-/* Вспомогательные функции, которые сильно упрощают жизнь */
 function getParam (html, result, param, regexp, replaces, parser) {
-	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
-		return;
+  if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
+    return;
 
-	var value = regexp.exec (html);
-	if (value) {
-		value = value[1];
-		if (replaces) {
-			for (var i = 0; i < replaces.length; i += 2) {
-				value = value.replace (replaces[i], replaces[i+1]);
-			}
-		}
-		if (parser)
-			value = parser (value);
-
+  var matches = regexp.exec (html), value;
+  if (matches) {
+    value = matches[1];
+    if (replaces) {
+      for (var i = 0; i < replaces.length; i += 2) {
+        value = value.replace (replaces[i], replaces[i+1]);
+      }
+    }
+    if (parser)
+      value = parser (value);
     if(param)
       result[param] = value;
-    else
-      return value
-	}
+  }
+  return value
 }
 
 var replaceTagsAndSpaces = [/<[^>]*>/g, ' ', /[\r\n]/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
 var replaceFloat = [/\s+/g, '', /,/g, '.'];
 
 function parseBalance(text){
-    var val = getParam(text.replace(/\s+/g, ''), null, null, /(-?\d[\d\s.,]*)/, replaceFloat, parseFloat);
-    if (!val) val = 0;
-    //AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
-    return val;
+  var val = getParam(text.replace(/\s+/g, ''), null, null, /(-?\d[\d\s.,]*)/, replaceFloat, parseFloat);
+  if (!val) val = 0;
+  AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
+  return val;
 }
-/* end Вспомогательные функции, которые сильно упрощают жизнь */
 
 function htmlDecode(input){
   var e = document.createElement('div');
   e.innerHTML = input;
   return e.childNodes.length === 0 ? "" : e.childNodes[0].nodeValue;
 }
+
+//------------------------------------------------------------------------------
 
 function main(){
   var prefs = AnyBalance.getPreferences();
@@ -86,14 +84,15 @@ function main(){
   if(prefs.account){
     var account_url = (new RegExp('<div class="magic_content">[\\s\\S]*<a href=([\\s\\S]*?)>' + prefs.account)).exec(html);
     if(!account_url) throw new AnyBalance.Error("Не удаётся найти account_url. Проблемы или изменения на сайте?");
+    account_url = account_url[1];
   } else var account_url = 'https://erc.megabank.net/ru/cabinet/publicutilities/debt&rr=1'
-  AnyBalance.trace('account_url = ' + account_url[1]);
+  AnyBalance.trace('account_url = ' + account_url);
 
-  AnyBalance.trace('Connecting to ' + account_url[1]);
-  var html = AnyBalance.requestGet(account_url[1], headers);
+  AnyBalance.trace('Connecting to ' + account_url);
+  var html = AnyBalance.requestGet(account_url, headers);
   
   AnyBalance.trace('Searching account_N');
-  var account_N  = /(\d)$/.exec(account_url[1]);
+  var account_N  = /(\d)$/.exec(account_url);
   if(!account_N) throw new AnyBalance.Error("Не удаётся найти account_N. Проблемы или изменения на сайте?");
   AnyBalance.trace('account_N = ' + account_N[1]);
 
@@ -186,6 +185,15 @@ function main(){
     result.garbage = Math.round((debt_tmp - paid1_tmp - paid2_tmp)*100)/100;
   }
 
+  // Укртелеком
+  if(AnyBalance.isAvailable('ukrtelekom', 'debt')){
+    //AnyBalance.trace('ukrtelekom');
+    var debt_tmp=getParam(html_table, result, false, /&#1059;&#1050;&#1056;&#1058;&#1045;&#1051;&#1045;&#1050;&#1054;&#1052;(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    var paid1_tmp=getParam(html_table, result, false, /&#1059;&#1050;&#1056;&#1058;&#1045;&#1051;&#1045;&#1050;&#1054;&#1052;(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    var paid2_tmp=getParam(html_table, result, false, /&#1059;&#1050;&#1056;&#1058;&#1045;&#1051;&#1045;&#1050;&#1054;&#1052;(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    result.ukrtelekom = Math.round((debt_tmp - paid1_tmp - paid2_tmp)*100)/100;
+  }
+
   // Общий долг
   if(AnyBalance.isAvailable('debt')){
     result.debt = 0
@@ -196,6 +204,7 @@ function main(){
     if(result.sewerage>0) result.debt += result.sewerage;
     if(result.gas>0) result.debt += result.gas;
     if(result.garbage>0) result.debt += result.garbage;
+    if(result.ukrtelekom>0) result.debt += result.ukrtelekom;
     result.debt = Math.round(result.debt*100)/100;
   }
 

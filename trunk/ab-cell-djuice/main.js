@@ -1,10 +1,105 @@
 /**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 
-djuice
+Djuice
 Сайт оператора: http://www.djuice.ua/
 Личный кабинет: https://my.djuice.com.ua/
 */
+
+function sumParam (html, result, param, regexp, replaces, parser, do_replace) {
+  if (param && (param != '__tariff' && !AnyBalance.isAvailable (param))){
+    if(do_replace)
+      return html;
+    else
+      return;
+  }
+
+  var total_value;
+  var html_copy = html.replace(regexp, function(str, value){
+    for (var i = 0; replaces && i < replaces.length; i += 2) {
+      value = value.replace (replaces[i], replaces[i+1]);
+    }
+    if (parser)
+      value = parser (value);
+    if(typeof(total_value) == 'undefined')
+      total_value = value;
+    else
+      total_value += value;
+    return ''; //Вырезаем то, что заматчили
+  });
+
+  if(param){
+    if(typeof(total_value) != 'undefined'){
+      if(typeof(result[param]) == 'undefined')
+        result[param] = total_value;
+      else 
+        result[param] += total_value;
+    }
+    if(do_replace)
+      return html_copy;
+  }else{
+    return total_value;
+  }
+}
+
+var replaceTagsAndSpaces = [/<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
+var replaceFloat = [/\s+/g, '', /,/g, '.'];
+
+function parseBalance(text){
+  var val = sumParam(text.replace(/\s+/g, ''), null, null, /(-?\d[\d.,]*)/, replaceFloat, parseFloat);
+  AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
+  return val;
+}
+
+function parseDate(str){
+  var matches = /(\d+)[^\d](\d+)[^\d](\d+)/.exec(str);
+  if(matches){
+    var date = new Date(+matches[3], matches[2]-1, +matches[1]);
+    var time = date.getTime();
+    AnyBalance.trace('Parsing date ' + date + ' from value: ' + str);
+    return time;
+  }
+  AnyBalance.trace('Failed to parse date from value: ' + str);
+}
+
+function parseTraffic(text){
+  var _text = text.replace(/\s+/, '');
+  var val = sumParam(_text, null, null, /(-?\d[\d\.,]*)/, replaceFloat, parseFloat);
+  var units = sumParam(_text, null, null, /([kmgкмг][бb]|байт|bytes)/i);
+  if(!units){
+    AnyBalance.trace('Can not parse units from ' + text);
+    units = 'б';
+  }
+  switch(units.substr(0,1).toLowerCase()){
+    case 'b':
+    case 'б':
+      val = Math.round(val/1024/1024*100)/100;
+      break;
+    case 'k':
+    case 'к':
+      val = Math.round(val/1024*100)/100;
+      break;
+    case 'g':
+    case 'г':
+      val = Math.round(val*1024);
+      break;
+  }
+  var textval = ''+val;
+  if(textval.length > 6)
+    val = Math.round(val);
+  else if(textval.length > 5)
+    val = Math.round(val*10)/10;
+
+  AnyBalance.trace('Parsing traffic (' + val + ') from: ' + text);
+  return val;
+}
+
+function parseMinutes(str){
+  AnyBalance.trace('Parsing minutes from value: ' + str);
+  return parseFloat(str)*60; //Переводим в секунды
+}
+
+//------------------------------------------------------------------------------
 
 function main(){
   var prefs = AnyBalance.getPreferences();
@@ -43,137 +138,43 @@ function main(){
   var str_tmp;
   
   //Тарифный план
-  if (matches=/(Тарифний план:|Тарифный план:)[\s\S]*?<td\s+[^>]*>(.*?)\s*<\/td>/.exec(html)){
-    str_tmp=/(Номер діє до:|Номер действует до:)[\s\S]*?<td>(.*?)</.exec(html)
-    result.__tariff=matches[2]+' (до '+str_tmp[2]+')';
-  }
+  sumParam(html, result, '__tariff', /(?:Тарифний план:|Тарифный план:)[\s\S]*?<td\s+[^>]*>(.*?)\s*<\/td>/, replaceTagsAndSpaces);
   
   // Баланс
-  if(AnyBalance.isAvailable('balance')){
-    if (matches=/(Залишок на рахунку:|Остаток на счету:)[\s\S]*?<b>(.*?)</.exec(html)){
-        result.balance=parseFloat(matches[2]);
-    }
-  }
+  sumParam(html, result, 'balance', /(?:Залишок на рахунку:|Остаток на счету:)[\s\S]*?<b>(.*?)</, replaceTagsAndSpaces, parseBalance);
   
   //Бонусные минуты (1)
-  if(AnyBalance.isAvailable('bonus_mins_1')){
-    if (matches=/(Залишок хвилин для дзвінків|Остаток минут для звонков)[\s\S]*?<b>(.*?)</.exec(html)){
-        result.bonus_mins_1=(parseInt(matches[2])*60);
-    }
-  }
+  sumParam(html, result, 'bonus_mins_1', /(?:Залишок хвилин для дзвінків|Остаток минут для звонков)[\s\S]*?<b>(.*?)</, replaceTagsAndSpaces, parseMinutes);
   
   //Бонусные минуты (2)
-  if(AnyBalance.isAvailable('bonus_mins_2')){
-    if (matches=/(Залишок хвилин для дзвінків|Остаток минут для звонков)[\s\S]*?(Залишок хвилин для дзвінків|Остаток минут для звонков)[\s\S]*?<b>(.*?)</.exec(html)){
-        result.bonus_mins_2=(parseInt(matches[3])*60);
-    }
-  }
+  sumParam(html, result, 'bonus_mins_2', /(?:Залишок хвилин для дзвінків|Остаток минут для звонков)[\s\S]*?(?:Залишок хвилин для дзвінків|Остаток минут для звонков)[\s\S]*?<b>(.*?)</, replaceTagsAndSpaces, parseMinutes);
   
   //Бонусные MMS
-  if(AnyBalance.isAvailable('bonus_mms')){
-    if (matches=/(Бонусні MMS:|Бонусные MMS:)[\s\S]*?<b>(.*?)</.exec(html)){
-        result.bonus_mms=parseInt(matches[2]);
-    }
-  }
+  sumParam(html, result, 'bonus_mms', /(?:Бонусні MMS:|Бонусные MMS:)[\s\S]*?<b>(.*?)</, replaceTagsAndSpaces, parseInt);
   
   //Бонусные SMS
-  if(AnyBalance.isAvailable('bonus_sms')){
-    if (matches=/(Бонусні SMS:|Бонусные SMS:)[\s\S]*?<b>(.*?)</.exec(html)){
-        result.bonus_sms=parseInt(matches[2]);
-    }
-  }
+  sumParam(html, result, 'bonus_sms', /(?:Бонусні SMS:|Бонусные SMS:)[\s\S]*?<b>(.*?)</, replaceTagsAndSpaces, parseInt);
   
   //Бонусные средства
-  if(AnyBalance.isAvailable('bonus_money')){
-    if (matches=/(Бонусні кошти :|Бонусные средства:)[\s\S]*?<b>(.*?)</.exec(html)){
-        result.bonus_money=parseFloat(matches[2]);
-    }
-  }
+  sumParam(html, result, 'bonus_money', /(?:Бонусні кошти :|Бонусные средства:)[\s\S]*?<b>(.*?)</, replaceTagsAndSpaces, parseBalance);
   
-  //Остаток бонусов (1)
-  if(AnyBalance.isAvailable('bonus_left_1')){
-    if (matches=/(Залишок бонусів:|Остаток бонусов:)[\s\S]*?<b>(.*?)</.exec(html)){
-        result.bonus_left_1=parseFloat(matches[2]);
-    }
-  }
+  //Остаток бонусов
+  sumParam(html, result, 'bonus_left', /(?:Залишок бонусів:|Остаток бонусов:)[\s\S]*?<b>(.*?)</, replaceTagsAndSpaces, parseBalance);
+  sumParam(html, result, 'bonus_left', /(?:Залишок бонусів:|Остаток бонусов:)[\s\S]*?(?:Залишок бонусів:|Остаток бонусов:)[\s\S]*?<b>(.*?)</, replaceTagsAndSpaces, parseBalance);
   
-  //Интернет (1)
-  if(AnyBalance.isAvailable('internet_1')){
-    if (matches=/(Залишок бонусного об\'єму даних:|Остаток бонусного объема данных:)[\s\S]*?<b>(.*?)</.exec(html)){
-        result.internet_1=Math.round(parseInt(matches[2])/1024/1024*100)/100;
-    }
-  }
-  
-  //Интернет (2)
-  if(AnyBalance.isAvailable('internet_2')){
-    if (matches=/(Залишок бонусного об\'єму даних:|Остаток бонусного объема данных:)[\s\S]*?(Залишок бонусного об\'єму даних:|Остаток бонусного объема данных:)[\s\S]*?<b>(.*?)</.exec(html)){
-        result.internet_2=Math.round(parseInt(matches[3])/1024/1024*100)/100;
-    }
-    getParam(html, result, 'internet_2', /(?:Інтернет:|Интернет:)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTrafficMb);
-  }
+  //Интернет
+  sumParam(html, result, 'internet', /(?:Залишок бонусного об\'єму даних:|Остаток бонусного объема данных:)[\s\S]*?<b>(.*?)</i, replaceTagsAndSpaces, parseTraffic);
+  sumParam(html, result, 'internet', /(?:Залишок бонусного об\'єму даних:|Остаток бонусного объема данных:)[\s\S]*?(?:Залишок бонусного об\'єму даних:|Остаток бонусного объема данных:)[\s\S]*?<b>(.*?)</i, replaceTagsAndSpaces, parseTraffic);
+  sumParam(html, result, 'internet', /(?:Інтернет:|Интернет:)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTraffic);
   
   //Домашний Интернет
-  getParam(html, result, 'home_internet', /(?:Від послуги "Домашній .нтернет":|От услуги "Домашний .нтернет":)[\s\S]*?<b>(.*?)<[\s\S]*?>(.*?)&nbsp;</, replaceTagsAndSpaces, parseBalance);
-  getParam(html, result, 'home_internet_to_date', /(?:Від послуги "Домашній .нтернет":|От услуги "Домашний .нтернет":)[\s\S]*?<b>(?:.*?)<[\s\S]*?>(.*?)&nbsp;</, replaceTagsAndSpaces, parseDate);
-
-  getParam(html, result, 'till', /(?:Номер діє до:|Номер действует до:)[\s\S]*?<td>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+  sumParam(html, result, 'home_internet', /(?:Від послуги "Домашній .нтернет":|От услуги "Домашний .нтернет":)[\s\S]*?<b>(.*?)<[\s\S]*?>(.*?)&nbsp;</, replaceTagsAndSpaces, parseBalance);
   
-  //Остаток бонусов (2)
-  if(AnyBalance.isAvailable('bonus_left_2')){
-    if (matches=/(Залишок бонусів:|Остаток бонусов:)[\s\S]*?(Залишок бонусів:|Остаток бонусов:)[\s\S]*?<b>(.*?)</.exec(html)){
-        result.bonus_left_2=parseFloat(matches[3]);
-    }
-  }
+  //Домашний Интернет действует до
+  sumParam(html, result, 'home_internet_to_date', /(?:Від послуги "Домашній .нтернет":|От услуги "Домашний .нтернет":)[\s\S]*?<b>(?:.*?)<[\s\S]*?>(.*?)&nbsp;</, replaceTagsAndSpaces, parseDate);
+  
+  //Срок действия номера
+  sumParam(html, result, 'till', /(?:Номер діє до:|Номер действует до:)[\s\S]*?<td>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
   
   AnyBalance.setResult(result);
 }
-
-function getParam (html, result, param, regexp, replaces, parser) {
-	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
-		return;
-
-	var matches = regexp.exec (html), value;
-	if (matches) {
-		value = matches[1];
-		if (replaces) {
-			for (var i = 0; i < replaces.length; i += 2) {
-				value = value.replace (replaces[i], replaces[i+1]);
-			}
-		}
-		if (parser)
-			value = parser (value);
-
-    if(param)
-      result[param] = value;
-	}
-   return value
-}
-
-var replaceTagsAndSpaces = [/&nbsp;/g, ' ', /<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, ''];
-var replaceFloat = [/\s+/g, '', /,/g, '.'];
-
-function parseBalance(text){
-    var val = getParam(text.replace(/\s+/g, ''), null, null, /(-?\d[\d\s.,]*)/, replaceFloat, parseFloat);
-    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
-    return val;
-}
-
-function parseTrafficMb(text){
-    var val = getParam(text.replace(/\s+/g, ''), null, null, /(-?\d[\d\s.,]*)/, replaceFloat, parseFloat);
-    if(typeof(val) != 'undefined')
-        val = Math.round(val/1024/1024*100)/100;
-    AnyBalance.trace('Parsing traffic (' + val + 'Mb) from: ' + text);
-    return val;
-}
-
-function parseDate(str){
-    var matches = /(\d+)[^\d](\d+)[^\d](\d+)/.exec(str);
-    if(matches){
-          var date = new Date(+matches[3], matches[2]-1, +matches[1]);
-	  var time = date.getTime();
-          AnyBalance.trace('Parsing date ' + date + ' from value: ' + str);
-          return time;
-    }
-    AnyBalance.trace('Failed to parse date from value: ' + str);
-}
-

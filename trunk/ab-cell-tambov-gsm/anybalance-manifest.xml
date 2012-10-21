@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-    <id major_version="1.0" version="1">ab-cell-tambov-gsm</id>
+    <id version="2">ab-cell-tambov-gsm</id>
     <name>Tambov GSM</name>
     <description>Баланс мобильного оператора Tambov GSM. 
 
@@ -11,6 +11,7 @@
         <icon>icon.png</icon>
         <preferences>preferences.xml</preferences>
         <js>main.js</js>
+        <js>history.xml</js>
     </files>
     <counters>
         <counter id="balance" name="Баланс" units="р"/>

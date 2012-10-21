@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change major_version="1.0" version="7" date="2012-10-21">
+      Добавлен новый счетчик (Укртелеком).
+      Исправлен показ информации по умолчанию по первому счету.
+    </change>
     <change major_version="1.0" version="6" date="2012-09-08">
       Исправлен подсчет общего долга.
     </change>

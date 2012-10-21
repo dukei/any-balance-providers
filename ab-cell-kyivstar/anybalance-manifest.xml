@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.1" version="17">ab-cell-kyivstar</id>
+  <id major_version="1.2" version="18">ab-cell-kyivstar</id>
   <name>Киевстар</name>
   <description>
     Получает баланс, бонусные минуты, СМС, ММС, остаток интернет-трафика и другие бонусы для мобильного оператора Киевстар.
@@ -19,21 +19,16 @@
   </files>
   <counters>
     <counter id="balance" name="Баланс" units=" грн"/>
-    <counter id="bonus_mins_1" name="Бонусные минуты (1)" units=" мин" type="time_interval"/>
-    <counter id="bonus_mins_2" name="Бонусные минуты (2)" units=" мин" type="time_interval"/>
-    <counter id="bonus_mms" name="Бонусные MMS"/>
-    <counter id="bonus_sms" name="Бонусные SMS"/>
+    <counter id="bonus_mins_1" name="Бонусные минуты (1)" units=" мин" type="time_interval" format="{@MIN}"/>
+    <counter id="bonus_mins_2" name="Бонусные минуты (2)" units=" мин" type="time_interval" format="{@MIN}"/>
     <counter id="mms" name="MMS"/>
     <counter id="sms" name="SMS"/>
-    <counter id="sms2" name="SMS (2)"/>
-    <counter id="bonus_money_1" name="Бонусные средства (1)" units=" грн"/>
-    <counter id="bonus_money_2" name="Бонусные средства (2)" units=" грн"/>
+    <counter id="bonus_money" name="Бонусные средства" units=" грн"/>
     <counter id="bonus_left" name="Остаток бонусов" units=" грн"/>
-    <counter id="bonus_left_2" name="Остаток бонусов (2)" units=" грн"/>
-    <counter id="internet_1" name="Интернет" units=" Mb"/>
+    <counter id="internet" name="Интернет" units=" Mb"/>
     <counter id="home_internet" name="Домашний Интернет" units=" грн"/>
-    <counter id="till" name="Срок действия номера" type="time" format="dd/MM/yyyy"/>
     <counter id="limit" name="Порог отключения" type="numeric" units=" грн"/>
+    <counter id="till" name="Срок действия номера" type="time" format="dd/MM/yyyy"/>
   </counters>
   <keywords>
     Сотовый телефон, мобильный, мобильник, kyivstar, киевстар, Украина

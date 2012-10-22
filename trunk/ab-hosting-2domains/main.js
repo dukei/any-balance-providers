@@ -71,10 +71,11 @@ function main(){
 
     var result = {success: true};
 
-    getParam(html, result, 'balance', /Ваш баланс:[\s\S]*?<big[^>]*>([\S\s]*?)<\/big>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'domains', /Всего доменов[\s\S]*?<big[^>]*>([\S\s]*?)<\/big>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'services', /Всего доменов[\s\S]*?<big[^>]*>[^<]*\/([\S\s]*?)<\/big>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'prolong', /К продлению:[\s\S]*?<big[^>]*>([\S\s]*?)<\/big>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'balance', /Ваш баланс[\s\S]*?<strong[^>]*>([\S\s]*?)<\/strong>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'domains', /Домены требующие продления[\s\S]*?<strong[^>]*>[^<]*из([\S\s]*?)<\/strong>/i, replaceTagsAndSpaces, parseBalance);
+//    getParam(html, result, 'services', /Всего доменов[\s\S]*?<big[^>]*>[^<]*\/([\S\s]*?)<\/big>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'prolong', /Домены требующие продления[\s\S]*?<strong[^>]*>([\S\s]*?)<\/strong>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, '__tariff', /Тариф:[\s\S]*?<span[^>]*>([\S\s]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
 
     if(prefs.domains){
         var notfound = [];
@@ -92,15 +93,15 @@ function main(){
                 search_domain_name:domain
             });
 
-            var tr = getParam(html, null, null, /(<tr(?:[\s\S](?!<\/tr>))*?class="ex2trigger"[\s\S]*?<\/tr>)/i);
+            var tr = getParam(html, null, null, /(<tr(?:[\s\S](?!<\/tr>))*?domain_param_tt[\s\S]*?<\/tr>)/i);
 
             if(!tr){
                 notfound[notfound.length] = domain; 
             }else{
                 var suffix = ind > 0 ? ind : '';
-                var domain_name = getParam(tr, null, null, /<a[^>]*class="ex2trigger"[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces)
-                getParam(tr, result, 'domain' + suffix, /<a[^>]*class="ex2trigger"[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces);
-                getParam(tr, result, 'domain_till' + suffix, /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+                var domain_name = getParam(tr, null, null, /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+                getParam(tr, result, 'domain' + suffix, /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+                getParam(tr, result, 'domain_till' + suffix, /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
                 found[found.length] = domain_name;
             }
 
@@ -110,9 +111,9 @@ function main(){
         if(!found.length)
             throw new AnyBalance.Error('Не найдено ни одного домена из списка: ' + prefs.domains);
         if(notfound.length)
-            throw new AnyBalance.trace('Следующие домены не найдены: ' + notfound.join(', '));
+            AnyBalance.trace('Следующие домены не найдены: ' + notfound.join(', '));
 
-        result.__tariff = found.join(', ');
+        result.__tariff = ((result.__tariff && result.__tariff + ': ') || '') + found.join(', ');
     }
     
     AnyBalance.setResult(result);

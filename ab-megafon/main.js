@@ -224,10 +224,11 @@ function getTrayXml(filial, address){
     AnyBalance.trace('Connecting to trayinfo for ' + filinfo.name);
     
     AnyBalance.setDefaultCharset('utf-8');
-    var info = AnyBalance.requestGet(address
-        .replace(/%LOGIN%/g, prefs.login)
-        .replace(/%PASSWORD%/g, prefs.password)
-    );
+    var info;
+    if(prefs.__dbg_html)
+        info = prefs.__dbg_html;
+    else
+        info = AnyBalance.requestGet(address.replace(/%LOGIN%/g, prefs.login).replace(/%PASSWORD%/g, prefs.password));
         
     if(/<h1>Locked<\/h1>/.test(info))
       throw new AnyBalance.Error('Вы ввели неправильный пароль или доступ автоматическим системам заблокирован.\n\
@@ -265,7 +266,7 @@ function getTrayXml(filial, address){
 function megafonTrayInfo(filial){
     var filinfo = filial_info[filial];
     var $xml = getTrayXml(filial, filinfo.site);
-    var result = {success: true, __tariff: $xml.find('RATE_PLAN').text()}, val;
+    var result = {success: true, __tariff: $.trim($xml.find('RATE_PLAN').text())}, val;
     
     if(AnyBalance.isAvailable('balance'))
         result.balance = parseFloat($xml.find('BALANCE').text());
@@ -277,28 +278,50 @@ function megafonTrayInfo(filial){
     AnyBalance.trace('Found discounts: ' + $threads.length);
     
     if(AnyBalance.isAvailable('sms_left','sms_total')){
-        var $sms = $threads.filter(':has(NAME:contains("SMS"))');
-        AnyBalance.trace('Found SMS discounts: ' + $sms.length);
-        if($sms.length){
+        var $val = $threads.filter(':has(NAME:contains("SMS"))');
+        AnyBalance.trace('Found SMS discounts: ' + $val.length);
+        if($val.length){
             if(AnyBalance.isAvailable('sms_left')){
-                result.sms_left = parseInt($sms.first().find('VOLUME_AVAILABLE').text());
+                result.sms_left = parseInt($val.first().find('VOLUME_AVAILABLE').text());
             }
             if(AnyBalance.isAvailable('sms_total')){
-                result.sms_total = parseInt($sms.first().find('VOLUME_TOTAL').text());
+                result.sms_total = parseInt($val.first().find('VOLUME_TOTAL').text());
             }
         }
         
     }
     
     if(AnyBalance.isAvailable('mins_left','mins_total')){
-        var $sms = $threads.filter(':has(NAME:contains(" мин")), :has(NAME:contains("Телефония исходящая"))');
-        AnyBalance.trace('Found minutes discounts: ' + $sms.length);
-        if($sms.length){
+        var $val = $threads.filter(':has(NAME:contains(" мин")), :has(NAME:contains("Телефония исходящая"))');
+        AnyBalance.trace('Found minutes discounts: ' + $val.length);
+        if($val.length){
             if(AnyBalance.isAvailable('mins_left')){
-                result.mins_left = parseInt($sms.first().find('VOLUME_AVAILABLE').text())*60;
+                result.mins_left = parseInt($val.first().find('VOLUME_AVAILABLE').text())*60;
             }
             if(AnyBalance.isAvailable('mins_total')){
-                result.mins_total = parseInt($sms.first().find('VOLUME_TOTAL').text())*60;
+                result.mins_total = parseInt($val.first().find('VOLUME_TOTAL').text())*60;
+            }
+        }
+    }
+
+    if(AnyBalance.isAvailable('internet_left','internet_total','internet_cur')){
+        var $val = $threads.filter(':has(NAME:contains(" Байт")), :has(NAME_SERVICE:contains("Пакетная передача данных"))');
+        AnyBalance.trace('Found internet discounts: ' + $val.length);
+        if($val.length){
+            var name = $val.first().find('NAME').text();
+            var left = $val.first().find('VOLUME_AVAILABLE').text();
+            left = parseInt(left);
+            var total = $val.first().find('VOLUME_TOTAL').text();
+            total = parseInt(total);
+
+            if(AnyBalance.isAvailable('interet_left')){
+                result.internet_left = parseTraffic(left + name);
+            }
+            if(AnyBalance.isAvailable('interet_total')){
+                result.internet_total = parseTraffic(total + name);
+            }
+            if(AnyBalance.isAvailable('interet_cur')){
+                result.internet_cur = parseTraffic((total - left) + name);
             }
         }
     }
@@ -822,6 +845,7 @@ function parseTraffic(text){
     var _text = text.replace(/\s+/, '');
     var val = sumParam(_text, null, null, /(-?\d[\d\.,]*)/, replaceFloat, parseFloat);
     var units = sumParam(_text, null, null, /([kmgкмг][бb]|байт|bytes)/i);
+    if(!units) units = 'б';
     switch(units.substr(0,1).toLowerCase()){
       case 'b':
       case 'б':

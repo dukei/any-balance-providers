@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="4" major_version="1.0" date="2012-10-22">
+      - исправлена ошибка авторизация в новый платежный кабинет
+    </change>
     <change version="3" major_version="1.0" date="2012-10-22">
       - исправлена авторизация в платежный кабинет
     </change>

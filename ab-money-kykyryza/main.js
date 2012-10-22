@@ -16,17 +16,23 @@ function main(){
     	throw new AnyBalance.Error(matches[1].replace(/^\s*|\s*$/g, ''));
     }
 	
-    var html = AnyBalance.requestPost(baseurl + "pub/Login?wicket:interface=:2:frmLogin::IFormSubmitListener::", {
-    	id9_hf_0: '',
-    	login: prefs.login,
+    var html = AnyBalance.requestPost(baseurl + "?wicket:interface=:0:loginForm::IBehaviorListener:0:1", {
+    	id1_hf_0: '',
+    	ean: prefs.login,
     	password: prefs.password
     });
-    var $html = $(html);
-
-    var val = $html.find('span.feedbackPanelERROR').text();
-    if (val){
-    	throw new AnyBalance.Error(val);
+    obj = $.parseJSON(html);
+    if (!obj || !obj.form ){
+    	throw new AnyBalance.Error("Ошибка авторизации");
     }
+    if (!obj.form.redirectUrl){
+    	if (!obj.form.errorMessage)
+    		throw new AnyBalance.Error("Не известная ошибка авторизации.");
+    	else
+    		throw new AnyBalance.Error(obj.form.errorMessage);
+    }
+    var html = AnyBalance.requestGet(obj.form.redirectUrl);
+    var $html = $(html);
 
     var result = {success: true};
 

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-internet-maxnet</id>
+  <name>MaxNet (Харьков)</name>
+  <description>
+    Получает баланс и информацию о тарифном плане для харьковского интернет-провайдера MaxNet (http://maxnet.ua).
+
+    Информация берется из личного кабинета https://stat.maxnet.ua.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="грн"/>
+    <counter id="credit" name="Кредит" units="грн"/>
+    <counter id="licschet" name="Лицевой счет" type="text"/>
+  </counters>
+  <keywords>
+    интернет
+  </keywords>
+  <type>
+    internet
+  </type>
+  <country>
+    ua
+  </country>
+</provider>

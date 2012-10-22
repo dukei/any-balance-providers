@@ -43,6 +43,10 @@ function main(){
                 result.traffic_paket = traffic_paket - (traffic_paket_session || 0); //Если вдруг traffic_paket_session не найден, то считаем его равным 0
         }
 	
+	//Трафик смартфон 
+        getParam(html, result, 'traffic_night', /Предоплачено на пакете[\s\S]*?>\s*Ночной трафик\s*<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	//Трафик ночной
+        getParam(html, result, 'traffic_smart', /Предоплачено на пакете[\s\S]*?>\s*Смартфон\s*<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 
 	AnyBalance.setResult(result);
 }

@@ -27,7 +27,7 @@ function main(){
     }
     if (!obj.form.redirectUrl){
     	if (!obj.form.errorMessage)
-    		throw new AnyBalance.Error("Не известная ошибка авторизации.");
+    		throw new AnyBalance.Error("Неизвестная ошибка авторизации.");
     	else
     		throw new AnyBalance.Error(obj.form.errorMessage);
     }

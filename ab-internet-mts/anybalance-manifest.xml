@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="17">ab-internet-mts</id>
+  <id version="18">ab-internet-mts</id>
   <name>Домашний Интернет и Телевидение МТС</name>
   <description>
     Получает текущий баланс, номера лицевого счета и договора, ФИО владельца, трафик в текущем месяце, абонентскую плату у провайдера "Домашний Интернет и Телевидение МТС"
@@ -13,6 +13,7 @@
       * Екатеринбург (https://bill.utk.ru/uportf/arm.pl)
       * Киров (https://lk.kirovnet.net)
       * Нижний Новгород (http://stat.nnov.comstar-r.ru)
+      * Северодвинск (http://severodvinsk.stream-info.ru/client2)
 
      Для добавления вашего региона обращайтесь к автору на e-mail dco@mail.ru
   </description>

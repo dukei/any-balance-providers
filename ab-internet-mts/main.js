@@ -8,6 +8,7 @@
 Личный кабинет (Новосибирск): https://my.citynsk.ru
 Личный кабинет (Пермь, Екатеринбург): https://bill.utk.ru/uportf/arm.pl
 Личный кабинет (Киров): https://lk.kirovnet.net
+Личный кабинет (Северодвинск): http://severodvinsk.stream-info.ru/client2
 */
 
 var regions = {
@@ -17,7 +18,8 @@ var regions = {
    prm: getPrm,
    ekt: getPrm,
    krv: getKrv,
-   nnov: getNnov
+   nnov: getNnov,
+   sdv: getSdv
 };
 
 function main(){
@@ -391,6 +393,34 @@ function getNnov(){
         }
     }
 
+
+    AnyBalance.setResult(result);
+}
+
+function getSdv(){
+    var prefs = AnyBalance.getPreferences();
+    AnyBalance.setDefaultCharset('utf-8');
+
+    var baseurl = 'http://severodvinsk.stream-info.ru/client2/';
+
+    var html = AnyBalance.requestPost(baseurl + 'index.php?r=site/login', {
+        'LoginForm[login]':prefs.login,
+        'yt0':'Войти',
+        'LoginForm[password]':prefs.password
+    });
+
+    if(!/r=site\/logout/i.test(html)){
+        throw new AnyBalance.Error("Не удалось войти в личный кабинет. Неправильный логин-пароль?");
+    }
+
+    var result = {success: true};
+
+    getParam(html, result, 'agreement', /Номер договора:[^<]*<[^>]*>([^<]*)/i, replaceTagsAndSpaces);
+    getParam(html, result, 'balance', /Текущий баланс:[^<]*<[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance2);
+    getParam(html, result, '__tariff', /<!-- Работа с тарифом -->[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'abon', /Абонентская плата:([^<]*)/i, replaceTagsAndSpaces, parseBalance2);
+    getParam(html, result, 'username', /Мои аккаунты\s*\/([^<]*)/i, replaceTagsAndSpaces);
+    getParam(html, result, 'internet_cur', /Израсходовано:([^<]*)/i, replaceTagsAndSpaces, parseBalance2);
 
     AnyBalance.setResult(result);
 }

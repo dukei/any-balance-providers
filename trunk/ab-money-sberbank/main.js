@@ -157,7 +157,60 @@ function doOldAccount(page){
     var params = {};
     params[submitparam] = '';
     html = AnyBalance.requestPost('https://esk.zubsb.ru/pay/sbrf/Preload'+newpage, params);
+
+    if(prefs.type == 'acc')
+        fetchOldAcc(html);
+    else
+        fetchOldCard(html);
     
+}
+
+function fetchOldAcc(html){
+    var prefs = AnyBalance.getPreferences();
+
+    var countLeft = prefs.lastdigits && (20 - prefs.lastdigits.length);
+    var lastdigits = prefs.lastdigits ? (countLeft >= 0 ? '\\d{' + countLeft + '}' + prefs.lastdigits : prefs.lastdigits) : '\\d{20}';
+    
+    var re = new RegExp('Мои счета и вклады[\\s\\S]*?(<tr[^>]*>(?:[\\s\\S](?!</tr>))*>\\s*' + lastdigits + '\\s*<[\\s\\S]*?</tr>)', 'i');
+    var tr = getParam(html, null, null, re);
+    if(!tr){
+        if(prefs.lastdigits)
+          throw new AnyBalance.Error("Не удаётся найти ссылку на информацию по счету с последними цифрами " + prefs.lastdigits);
+        else
+          throw new AnyBalance.Error("Не удаётся найти ни одного счета");
+    }
+
+    var result = {success: true};
+
+    getParam(tr, result, 'cardNumber', /(\d{20})/);
+    getParam(tr, result, 'balance', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(tr, result, 'currency', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseCurrency);
+    getParam(tr, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)(?:<\/td>|<div)/i, replaceTagsAndSpaces);
+
+    fetchOldThanks(html, result);
+
+    var cardref = getParam(tr, null, null, /<a[^>]+href="([^"]*)/i, null, html_entity_decode);
+    
+    if(AnyBalance.isAvailable('userName')){
+      html = AnyBalance.requestGet('https://esk.zubsb.ru/pay/sbrf/AccountsMain'+cardref);
+      getParam(html, result, 'userName', /Владелец(?:&nbsp;|\s+)счета:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+    }
+
+    AnyBalance.setResult(result);
+}
+
+function fetchOldThanks(html, result){
+    var thanksref = getParam(html, null, null, /"([^"]*bonus-spasibo.ru[^"]*)/i);
+
+    if(AnyBalance.isAvailable('spasibo')){
+        html = AnyBalance.requestGet(thanksref);
+        getParam(html, result, 'spasibo', /Баланс:\s*<strong[^>]*>\s*([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+    }
+}
+
+function fetchOldCard(html){
+    var prefs = AnyBalance.getPreferences();
+
     var lastdigits = prefs.lastdigits ? prefs.lastdigits : '\\d{4}';
     
     var baseFind = 'Мои банковские карты[\\s\\S]*?<a\\s[^>]*href="[^"]{6,}"[^>]*>[^<]*?';
@@ -239,6 +292,8 @@ function doNewAccountEsk(html){
     html = AnyBalance.requestGet(baseurl + '/esClient/_logon/MoveToCards.aspx?AuthToken='+token+'&i=1&supressNoCacheScript=1');
     
     //AnyBalance.trace(html);
+    if(AnyBalance.getPreferences().type == 'acc')
+        throw new AnyBalance.Error('Ваш тип личного кабинета не поддерживает просмотр счетов. Если вам кажется это неправильным, напишите автору провайдера е-мейл.');
     
     readEskCards();
 }
@@ -299,6 +354,34 @@ function doNewAccountPhysic(html){
     }
 
     var prefs = AnyBalance.getPreferences();
+    if(prefs.type == 'acc')
+        fetchNewAccountAcc(html);
+    else
+        fetchNewAccountCard(html);
+}
+
+function fetchRates(html, result){
+    getParam(html, result, 'eurPurch', new RegExp('<tr class="courseRow1">\\s+<td[^>]+>[\\s\\S]+?</td>\\s+<td[^>]+>\\s+([0-9.]+)\\s+'),null,parseFloat);
+    getParam(html, result, 'eurSell', new RegExp('<tr class="courseRow1">(?:\\s+<td[^>]+>[\\s\\S]+?</td>){2}\\s+<td[^>]+>\\s+([0-9.]+)\\s+'),null,parseFloat);
+    getParam(html, result, 'usdPurch', new RegExp('<tr class="courseRow2">\\s+<td[^>]+>[\\s\\S]+?</td>\\s+<td[^>]+>\\s+([0-9.]+)\\s+'),null,parseFloat);
+    getParam(html, result, 'usdSell', new RegExp('<tr class="courseRow2">(?:\\s+<td[^>]+>[\\s\\S]+?</td>){2}\\s+<td[^>]+>\\s+([0-9.]+)\\s+'),null,parseFloat);
+}
+
+function fetchNewThanks(baseurl, result){
+    if(AnyBalance.isAvailable('spasibo')){
+        html = AnyBalance.requestGet(baseurl + '/PhizIC/private/async/loyalty.do');
+        var href = getParam(html, null, null, /^\s*(https?:\/\/\S*)/i);
+        if(!href){
+            AnyBalance.trace('Не удаётся получить ссылку на спасибо от сбербанка: ' + html);
+        }else{
+            html = AnyBalance.requestGet(href);
+            getParam(html, result, 'spasibo', /Баланс:\s*<strong[^>]*>\s*([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+        }
+    }
+}
+
+function fetchNewAccountCard(html){
+    var prefs = AnyBalance.getPreferences();
     var baseurl = "https://online.sberbank.ru";
 
     html = AnyBalance.requestGet(baseurl + '/PhizIC/private/cards/list.do');
@@ -325,11 +408,8 @@ function doNewAccountPhysic(html){
     getParam(html, result, 'cardNumber', reCardNumber, replaceTagsAndSpaces);
     getParam(html, result, '__tariff', reCardNumber, replaceTagsAndSpaces);
     getParam(html, result, 'currency', reBalance, replaceTagsAndSpaces, parseCurrency);
-    
-    getParam(html, result, 'eurPurch', new RegExp('<tr class="courseRow1">\\s+<td[^>]+>[\\s\\S]+?</td>\\s+<td[^>]+>\\s+([0-9.]+)\\s+'),null,parseFloat);
-    getParam(html, result, 'eurSell', new RegExp('<tr class="courseRow1">(?:\\s+<td[^>]+>[\\s\\S]+?</td>){2}\\s+<td[^>]+>\\s+([0-9.]+)\\s+'),null,parseFloat);
-    getParam(html, result, 'usdPurch', new RegExp('<tr class="courseRow2">\\s+<td[^>]+>[\\s\\S]+?</td>\\s+<td[^>]+>\\s+([0-9.]+)\\s+'),null,parseFloat);
-    getParam(html, result, 'usdSell', new RegExp('<tr class="courseRow2">(?:\\s+<td[^>]+>[\\s\\S]+?</td>){2}\\s+<td[^>]+>\\s+([0-9.]+)\\s+'),null,parseFloat);
+
+    fetchRates(html, result);
     
     if(AnyBalance.isAvailable('userName', 'till', 'cash', 'electrocash')){
         html = AnyBalance.requestGet(baseurl + '/PhizIC/private/cards/detail.do?id=' + cardId);
@@ -339,19 +419,69 @@ function doNewAccountPhysic(html){
         getParam(html, result, 'electrocash', /для покупок:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/, replaceTagsAndSpaces, parseBalance);
     }
 
-    if(AnyBalance.isAvailable('spasibo')){
-        html = AnyBalance.requestGet(baseurl + '/PhizIC/private/async/loyalty.do');
-        var href = getParam(html, null, null, /^\s*(https?:\/\/\S*)/i);
-        if(!href){
-            AnyBalance.trace('Не удаётся получить ссылку на спасибо от сбербанка: ' + html);
-        }else{
-            html = AnyBalance.requestGet(href);
-            getParam(html, result, 'spasibo', /Баланс:\s*<strong[^>]*>\s*([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-        }
-    }
+    fetchNewThanks(baseurl, result);
 
 	if(AnyBalance.isAvailable('lastPurchSum') || AnyBalance.isAvailable('lastPurchPlace') || AnyBalance.isAvailable('lastPurchDate')) {
 		html=AnyBalance.requestGet(baseurl+'/PhizIC/private/cards/info.do?id='+cardId);
+                var tr = getParam(html, null, null, /<tr[^>]*class="ListLine0"[^>]*>([\S\s]*?)<\/tr>/i);
+
+                if(tr){
+                    getParam(tr, result, 'lastPurchDate', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseSmallDate);
+                    if(AnyBalance.isAvailable('lastPurchSum')){
+                        var credit = getParam(tr, null, null, /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+                        var debet = getParam(tr, null, null, /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+                        result.lastPurchSum = credit ? '+' + credit : '-' + debet;
+                    }
+                    getParam(tr, result, 'lastPurchPlace', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+                }else{
+                    AnyBalance.trace('Не удалось найти последнюю операцию.');
+                }
+	}
+
+    AnyBalance.setResult(result);
+}
+
+function fetchNewAccountAcc(html){
+    var prefs = AnyBalance.getPreferences();
+    var baseurl = "https://online.sberbank.ru";
+
+    html = AnyBalance.requestGet(baseurl + '/PhizIC/private/accounts/list.do');
+
+    var lastdigits = prefs.lastdigits ? prefs.lastdigits.replace(/(\d)/g, '$1\\s*') : '(?:\\d\\s*){3}\\d';
+    
+    var baseFind = '<span[^>]*class="productNumber\\b[^"]*">[^<]*' + lastdigits + '<';
+
+    var reCardId = new RegExp(baseFind + '[\\s\\S]*?<span[^>]*class\\s*=\\s*"roundPlate[^>]*onclick\\s*=\\s*"[^"]*(?:operations|info).do\\?id=(\\d+)', 'i');
+//    AnyBalance.trace('Пытаемся найти карту: ' + reCardId);
+    var cardId = getParam(html, null, null, reCardId);
+    
+    if(!cardId)
+        if(prefs.lastdigits)
+          throw new AnyBalance.Error("Не удаётся идентификатор счета с последними цифрами " + prefs.lastdigits);
+        else
+          throw new AnyBalance.Error("Не удаётся найти ни одного счета");
+      
+    var reCardNumber = new RegExp('<span[^>]*class="productNumber\\b[^"]*">\s*([^<]*' + lastdigits + ')<', 'i');
+    var reBalance = new RegExp(baseFind + '[\\s\\S]*?<span class="data[^>]*>([^<]*)', 'i');
+    
+    var result = {success: true};
+    getParam(html, result, 'balance', reBalance, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'cardNumber', reCardNumber, replaceTagsAndSpaces);
+    getParam(html, result, '__tariff', new RegExp("\\?id=" + cardId + "[\\s\\S]*?<span[^>]+class=\"mainProductTitle\"[^>]*>([\\s\\S]*?)<\\/span>", "i"), replaceTagsAndSpaces);
+    getParam(html, result, 'currency', reBalance, replaceTagsAndSpaces, parseCurrency);
+    
+    fetchRates(html, result);
+    
+    if(AnyBalance.isAvailable('till', 'cash')){
+        html = AnyBalance.requestGet(baseurl + '/PhizIC/private/accounts/info.do?id=' + cardId);
+        getParam(html, result, 'till', /Дата окончания срока действия:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+        getParam(html, result, 'cash', /Максимальная сумма снятия:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    }
+
+    fetchNewThanks(baseurl, result);
+
+	if(AnyBalance.isAvailable('lastPurchSum') || AnyBalance.isAvailable('lastPurchPlace') || AnyBalance.isAvailable('lastPurchDate')) {
+		html=AnyBalance.requestGet(baseurl+'/PhizIC/private/accounts/operations.do?id='+cardId);
                 var tr = getParam(html, null, null, /<tr[^>]*class="ListLine0"[^>]*>([\S\s]*?)<\/tr>/i);
 
                 if(tr){

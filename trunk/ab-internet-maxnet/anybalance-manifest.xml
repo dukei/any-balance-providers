@@ -14,8 +14,8 @@
     <js>main.js</js>
   </files>
   <counters>
-    <counter id="balance" name="Баланс" units="грн"/>
-    <counter id="credit" name="Кредит" units="грн"/>
+    <counter id="balance" name="Баланс" units="₴"/>
+    <counter id="credit" name="Кредит" units="₴"/>
     <counter id="licschet" name="Лицевой счет" type="text"/>
   </counters>
   <keywords>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-service-infosms</id>
+  <name>ИнфоСМС</name>
+  <description>
+    Получает баланс на сервисе рассылки SMS сообщений http://infosmska.ru.
+    
+    Баланс получает посредством запроса к API сайта: http://www.infosmska.ru/Pages/HttpApi.aspx
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+  </counters>
+  <keywords>
+    смс рассылка, infosms
+  </keywords>
+  <type>
+    service
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

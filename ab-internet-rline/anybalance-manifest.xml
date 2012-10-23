@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-internet-rline</id>
+  <name>Эрлайн (Дагестан)</name>
+  <description>
+    Получает баланс и информацию о тарифном плане для дагестанского интернет-провайдера Эрлайн (http://www.r-line.ru/).
+
+    Информация берется из личного кабинета.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="licschet" name="Лицевой счет" type="text"/>
+    <counter id="credit" name="Кредит" units="р"/>
+    <counter id="trafficIn" name="Вх.трафик" units="Gb"/>
+    <counter id="trafficOut" name="Исх.трафик" units="Gb"/>
+  </counters>
+  <keywords>
+    интернет
+  </keywords>
+  <type>
+    internet
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

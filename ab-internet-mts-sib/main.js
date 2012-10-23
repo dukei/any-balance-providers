@@ -55,12 +55,13 @@ function main(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
 
-    var baseurl = "http://lka.sib.comstar-r.ru";
+    var baseurl = "https://lka.sib.comstar-r.ru/";
 
     var city2num = {bug: 26, buz: 26, kem: 29, nef: 2, nizv: 16, novk: 30, novt: 26, noy: 7, nyg: 4, orn: 26, prm: 26, prg: 26, pyh: 2, rad: 8, sor: 26, sur: 5, tob: 28, tum: 26} 
 
     if(prefs.type != 0 && prefs.type != 500 && prefs.type != 550 && !prefs.city)
         throw new AnyBalance.Error('Для выбранного типа подключения необходимо явно указать ваш город.');
+
 
 /*    AnyBalance.trace(JSON.stringify({
         extDvc:prefs.type,
@@ -70,7 +71,8 @@ function main(){
         userAction:'auth'
     }));
 */
-    var html = AnyBalance.requestPost(baseurl + '/?referer_uri=/default/account/index/', {
+
+    var html = AnyBalance.requestPost(baseurl, {
         extDvc:prefs.type,
         authCity:(prefs.city && city2num[prefs.city]) || 26,
         authLogin:prefs.login,
@@ -78,11 +80,11 @@ function main(){
         userAction:'auth'
     });
 
-    //AnyBalance.trace(html);
     if(!/\/index\/logout/i.test(html)){
         var error = getParam(html, null, null, /<div[^>]*background-color:\s*Maroon[^>]*>([\s\S]*?)<\/div>/, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error);
+        AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось войти в личный кабинет. Проблемы на сайте или сайт изменен.');
     }
 

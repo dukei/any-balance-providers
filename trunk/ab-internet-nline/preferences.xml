@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="005 номер" 
+        positiveButtonText="ОК" 
+        summary="||{@s}" 
+        dialogTitle="005 номер" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите ваш 005 номер (без префикса 005) для входа в личный кабинет ЭНЛАЙН."
+        inputType="number"
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="||***********"
+        dialogMessage="Введите пароль, используемый для входа в личный кабинет ЭНЛАЙН."
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

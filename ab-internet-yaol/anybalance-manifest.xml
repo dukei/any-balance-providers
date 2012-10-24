@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-internet-yaol</id>
+  <name>Ясенево онлайн (Москва)</name>
+  <description>
+    Получает баланс и информацию о тарифном плане для московского интернет-провайдера Ясенево Онлайн (http://yaol.ru).
+
+    Информация берется из личного кабинета https://fw.yaol.ru (https://7272829.ru).
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="status" name="Доступ в интернет" type="text"/>
+    <counter id="agreement" name="ID" type="text"/>
+  </counters>
+  <keywords>
+    яол
+  </keywords>
+  <type>
+    internet
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

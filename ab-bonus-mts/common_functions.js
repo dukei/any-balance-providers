@@ -26,3 +26,25 @@ function checkEmpty (param, error) {
 }
 
 var replaceTagsAndSpaces = [/<!--[\s\S]*?-->/, '', /<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, ''];
+
+function createFormParams(html, process){
+    var params = {};
+    html.replace(/<input[^>]+name="([^"]*)"[^>]*>/ig, function(str, name){
+        var value = getParam(str, null, null, /value="([^"]*)"/i, null, html_entity_decode);
+        name = html_entity_decode(name);
+        if(process){
+            value = process(params, str, name, value);
+        }
+        params[name] = value;
+    });
+    return params;
+}
+
+function html_entity_decode(str)
+{
+    //jd-tech.net
+    var tarea=document.createElement('textarea');
+    tarea.innerHTML = str;
+    return tarea.value;
+}
+

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-cell-utel-corp</id>
+  <name>Utel корпоративный (Ростелеком)</name>
+  <description>
+    Получает баланс и тарифный план для корпоративных тарифов оператора сотовой связи Utel (ныне Ростелеком), используя корпоративный портал https://ucabinet-old.u-tel.ru
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="userNum" name="Номер абонента" type="text"/>
+  </counters>
+  <keywords>
+    мобильный
+  </keywords>
+  <type>
+    cell
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

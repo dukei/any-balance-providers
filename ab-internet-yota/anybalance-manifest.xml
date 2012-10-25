@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="7">ab-internet-yota</id>
+  <name>Yota (Россия)</name>
+  <description>
+    Получает баланс и информацию о тарифном плане для интернет-провайдера LTE и WiMAX Yota (http://yota.ru).
+
+    Для корпоративных тарифов пока не работает (не на чем проверить). Обращайтесь к автору по е-мейл, если вам нужно добавить поддержку корпоративных тарифов.
+
+    Информация берется из личного кабинета https://my.yota.ru.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="licschet" name="Лицевой счет" type="text"/>
+    <counter id="agreement" name="Тип договора" type="text"/>
+    <counter id="email" name="E-mail" type="text"/>
+    <counter id="phone" name="Телефон" type="text"/>
+  </counters>
+  <keywords>
+    интернет
+  </keywords>
+  <type>
+    internet
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

@@ -16,36 +16,38 @@ function main () {
     checkEmpty (prefs.password, 'Введите пароль');
 
     AnyBalance.trace ('Trying to login at address: ' + loginurl);
-    var html = AnyBalance.requestGet (loginurl + '?service=bonus&goto=http%3A%2F%2Fwap.bonus.mts.ru%2Fru%2Fpmsdata.html%3Ftarget%3Dmts_bonus_wap%2Findex%2Fpersonal_page_html');
+    var html = AnyBalance.requestGet (loginurl + '?service=bonus&goto=http%3A%2F%2Fwap.bonus.mts.ru%2Fru%2Fpmsdata.html%3Ftarget%3Dmts_bonus_wap%2Findex%2Fpersonal_page_html&auth-status=0');
     
-    var idbutton = getParam(html, null, null, /javascript:LoginSubmit\('([^']*)'/i);
-    var idgoto = getParam(html, null, null, /<input[^>]*name="goto"[^>]*value="([^"]*)"/);
-    var loginURL = getParam(html, null, null, /<input[^>]*name="loginURL"[^>]*value="([^"]*)"/);
-    
-    html = AnyBalance.requestPost(loginurl, {
-        IDToken0:'',
-        IDToken1:prefs.login,
-        IDToken2:prefs.password,
-        IDButton:idbutton,
-        'goto':idgoto,
-        encoded:'true',
-        initialNumber:'',
-        loginURL:loginURL,
-        gx_charset:'UTF-8'
-    });
-    
-    var error = getParam(html, null, null, /(authErr)/i, replaceTagsAndSpaces);
-    if(error)
-        throw new AnyBalance.Error("Ошибка авторизации. Проверьте логин и пароль.");
+    var form = getParam(html, null, null, /<form[^>]+name="Login"[^>]*>([\s\S]*?)<\/form>/i);
+    if(!form)
+        throw new AnyBalance.Error("Не удаётся найти форму входа!");
 
-    // Проверка на корректный вход
-    regexp = /login\.mts\.ru\/amserver\/UI\/Logout/;
-    if (regexp.exec (html))
-    	AnyBalance.trace ('It looks like we are in selfcare...');
-    else {
-        AnyBalance.trace ('Have not found logOff... Unknown error. Please contact author.');
-        throw new AnyBalance.Error ('Неизвестная ошибка. Пожалуйста, свяжитесь с автором скрипта.');
+    var params = createFormParams(form, function(params, input, name, value){
+        var undef;
+        if(name == 'IDToken1')
+            value = prefs.login;
+        else if(name == 'IDToken2')
+            value = prefs.password;
+        else if(name == 'noscript')
+            value = undef; //Снимаем галочку
+        else if(name == 'IDButton')
+            value = '+%C2%F5%EE%E4+%E2+%CB%E8%F7%ED%FB%E9+%EA%E0%E1%E8%ED%E5%F2+';
+       
+        return value;
+    });
+
+//  AnyBalance.trace("Login params: " + JSON.stringify(params));
+
+    var html = AnyBalance.requestPost(loginurl + "?service=bonus&goto=http%3A%2F%2Fwap.bonus.mts.ru%2Fru%2Fpmsdata.html%3Ftarget%3Dmts_bonus_wap%2Findex%2Fpersonal_page_html", params);
+    
+    if(!/\/amserver\/UI\/Logout/i.test(html)){
+        var error = getParam(html, null, null, /(authErr)/i, replaceTagsAndSpaces);
+        if(error)
+            throw new AnyBalance.Error("Ошибка авторизации. Проверьте логин и пароль.");
+        throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
+
+    AnyBalance.trace ('It looks like we are in selfcare...');
 
     var result = {success: true};
 

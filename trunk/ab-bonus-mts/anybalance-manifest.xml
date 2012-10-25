@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="3">ab-bonus-mts</id>
+  <id major_version="2.0" version="4">ab-bonus-mts</id>
   <name>МТС Бонус</name>
   <description>
     Получает бонусные баллы за пользование услугами МТС.
@@ -26,4 +26,7 @@
   <type>
     bonus
   </type>
+  <country>
+    ru
+  </country>
 </provider>

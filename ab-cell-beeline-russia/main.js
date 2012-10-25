@@ -229,6 +229,23 @@ function parseBalanceList(html, result){
       sms = getBalanceValue (html, 'Баланс исходящих минут', parseInt);
       result.min_left += sms || 0;
     }
+
+    if(AnyBalance.isAvailable('traffic')){
+        var val = getBalanceValue(html, 'FTTB', parseFloat);
+        if(val)
+            result.traffic = (result.traffic || 0) + val/1024;
+
+        var val = getBalanceValue(html, 'RM_GPRS', parseFloat);
+        if(val)
+            result.traffic = (result.traffic || 0) + val/1024;
+
+        var val = getBalanceValue(html, 'GPRS_PAK', parseFloat);
+        if(val)
+            result.traffic = (result.traffic || 0) + val/1024;
+
+        if(result.traffic)
+            result.traffic = Math.round(result.traffic*100)/100;
+    }
 }
 
 function parseMinutes(str){

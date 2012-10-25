@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="2.0" version="22">ab-cell-beeline-russia</id>
+  <id major_version="2.0" version="23">ab-cell-beeline-russia</id>
   <name>Билайн</name>
   <description>
     Получает баланс, бонусный баланс, количество бесплатных SMS, MMS и минут, владельца, тарифный план и номер договора.
@@ -46,6 +46,7 @@
     <counter id="userName" name="Владелец" type="text"/>
     <counter id="BlockStatus" name="Состояние номера" type="text"/>
     <counter id="license" name="Номер договора" type="text"/>
+    <counter id="traffic" name="Трафик" units="Мб"/>
     <counter id="sms_expiration" name="Дата окончания действия смс-пакета" type="time"/>
     <counter id="expencesTraffic" name="Начисления за трафик (корп.)" units="р"/>
     <counter id="expencesAbon" name="Начисления абон.платы (корп.)" units="р"/>

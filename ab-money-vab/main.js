@@ -171,6 +171,24 @@ function fetchAcc(html, baseurl, result){
     getParam(tr, result, 'available', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(tr, result, 'currency', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
 
+    if(AnyBalance.isAvailable('blocked')){
+        var id = getParam(tr, null, null, /__doPostBack\s*\(\s*'([^']*Details)'/i);
+        if(id){
+            html = requestPostMultipart(baseurl + 'Pages/MainPage.aspx', {
+                __EVENTTARGET: id,
+                __EVENTARGUMENT: '',
+                __VSTATE: getViewState(html),
+                __VIEWSTATE: '',
+                __VIEWSTATEENCRYPTED: '',
+                __EVENTVALIDATION: getEventValidation(html)
+            }, g_headers);
+        
+            getParam(html, result, 'blocked', /(?:Блокировано|Блоковано|Blocked)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+        }else{
+            AnyBalance.trace('Не удалось получить ссылку на подробные сведения о счете');
+        }
+    }
+
     AnyBalance.setResult(result);
 }
 

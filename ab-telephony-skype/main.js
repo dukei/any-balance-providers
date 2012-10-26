@@ -92,16 +92,41 @@ function parseCurrency(text){
     return val;
 }
 
+function createFormParams(html, process){
+    var params = {};
+    html.replace(/<input[^>]+name="([^"]*)"[^>]*>/ig, function(str, name){
+        var value = getParam(str, null, null, /value="([^"]*)"/i, null, html_entity_decode);
+        name = html_entity_decode(name);
+        if(process){
+            value = process(params, str, name, value);
+        }
+        params[name] = value;
+    });
+    return params;
+}
+
 function main(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');    
-    
-    AnyBalance.requestGet("https://login.skype.com/account/login-form");
 
-    var info = AnyBalance.requestPost("https://login.skype.com/account/login-form", {
-	username:prefs.login,
-	password:prefs.password
+    var baseLogin = 'https://secure.skype.com/login?application=account&intcmp=sign-in&return_url=https%3A%2F%2Fsecure.skype.com%2Faccount%2Flogin';
+    
+    var info = AnyBalance.requestGet(baseLogin);
+    var form = getParam(info, null, null, /<form[^>]+id="LoginForm[^>]*>([\s\S]*?)<\/form>/i);
+    if(!form)
+        throw new AnyBalance.Error("Не удаётся найти форму входа. Сайт изменен или проблемы на сайте.");
+
+    var params = createFormParams(form, function(params, input, name, value){
+        var undef;
+        if(name == 'username')
+            value = prefs.login;
+        else if(name == 'password')
+            value = prefs.password;
+       
+        return value;
     });
+    
+    info = AnyBalance.requestPost(baseLogin, params);
 
     if(!/secure\.skype\.com\/account\/logout/i.test(info)){
         var error = getParam(info, null, null, /<div class="messageBody[^>]*>([\s\S]*?)<\/div>/i, [/<.*?>/g, '', /^\s*|\s*$/g, '']);

@@ -173,14 +173,14 @@ function main(){
   sumParam(html, result, 'sms', />SMS:[\s\S]*?>SMS:[\s\S]*?<b>(.*?)</, replaceTagsAndSpaces, parseInt);
   
   //Бонусные средства 
-  sumParam(html, result, 'bonus_money', /(?:Бонусні кошти:|Бонусные средства:)[\s\S]*?<b>(.*?)</i, replaceTagsAndSpaces, parseBalance);
-  sumParam(html, result, 'bonus_money', /(?:Бонуси за умовами тарифного плану "Єдина ціна":|Бонусы по условиям тарифного плана "Единая цена":)[\s\S]*?<b>(.*?)</i, replaceTagsAndSpaces, parseBalance);
-  sumParam(html, result, 'bonus_money', /(?:Кошти по послузі "Екстра кошти"|Средства по услуге "Экстра деньги"):[\s\S]*?<b>(.*?)</i, replaceTagsAndSpaces, parseBalance);
-  sumParam(html, result, 'bonus_money', /(?:Бонусні кошти:|Бонусные средства:)[\s\S]*?(?:Бонусні кошти:|Бонусные средства:)[\s\S]*?<b>(.*?)</i, replaceTagsAndSpaces, parseBalance);
+  sumParam(html, result, 'bonus_money', /(?:Бонусні кошти:|Бонусные средства:)[\s\S]*?<b>(.*?)</ig, replaceTagsAndSpaces, parseBalance);
+  sumParam(html, result, 'bonus_money', /(?:Бонуси за умовами тарифного плану "Єдина ціна":|Бонусы по условиям тарифного плана "Единая цена":)[\s\S]*?<b>(.*?)</ig, replaceTagsAndSpaces, parseBalance);
+  sumParam(html, result, 'bonus_money', /(?:Кошти по послузі "Екстра кошти"|Средства по услуге "Экстра деньги"):[\s\S]*?<b>(.*?)</ig, replaceTagsAndSpaces, parseBalance);
+  sumParam(html, result, 'bonus_money', /(?:Бонусні кошти:|Бонусные средства:)[\s\S]*?(?:Бонусні кошти:|Бонусные средства:)[\s\S]*?<b>(.*?)</ig, replaceTagsAndSpaces, parseBalance);
   
   //Остаток бонусов
-  sumParam(html, result, 'bonus_left', /(?:Залишок бонусів:|Остаток бонусов:)[\s\S]*?<b>(.*?)</i, replaceTagsAndSpaces, parseBalance);
-  sumParam(html, result, 'bonus_left', /(?:Залишок бонусів:|Остаток бонусов:)[\s\S]*?(?:Залишок бонусів:|Остаток бонусов:)[\s\S]*?<b>(.*?)</i, replaceTagsAndSpaces, parseBalance);
+  sumParam(html, result, 'bonus_left', /(?:Залишок бонусів:|Остаток бонусов:)[\s\S]*?<b>(.*?)</ig, replaceTagsAndSpaces, parseBalance);
+  sumParam(html, result, 'bonus_left', /(?:Залишок бонусів:|Остаток бонусов:)[\s\S]*?(?:Залишок бонусів:|Остаток бонусов:)[\s\S]*?<b>(.*?)</ig, replaceTagsAndSpaces, parseBalance);
   
   //Интернет
   sumParam(html, result, 'internet', /(?:Залишок бонусного об\'єму даних:|Остаток бонусного объема данных:)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseTraffic);
@@ -188,7 +188,7 @@ function main(){
   sumParam(html, result, 'internet', /(?:Остаток GPRS Internet\s*:|Залишок GPRS Internet\s*:)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseTraffic);
   
   //Домашний Интернет
-  sumParam(html, result, 'home_internet', /(?:Від послуги "Домашній Інтернет":|От услуги "Домашний Интернет":)[\s\S]*?<b>(.*?)</i, replaceTagsAndSpaces, parseBalance);
+  sumParam(html, result, 'home_internet', /(?:Від послуги "Домашній Інтернет"|От услуги "Домашний Интернет"|Бонусні кошти послуги "Домашній Інтернет"|Бонусные средства услуги "Домашний Интернет"):[\s\S]*?<b>(.*?)</ig, replaceTagsAndSpaces, parseBalance);
   
   //Порог отключения
   sumParam(html, result, 'limit', /(?:Поріг відключення:|Порог отключения:)[\s\S]*?<b>([^<]*)/i, replaceTagsAndSpaces, parseBalance);

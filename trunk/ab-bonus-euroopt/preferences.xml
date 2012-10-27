@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference
+        key="login"
+        title="№ карты"
+        summary="|Введите номер карты|{@s}"
+        inputType="text"
+        dialogTitle="№ карты"
+        dialogMessage="Введите номер дисконтной карты Евроопт"
+        inputType="number"
+        positiveButtonText="ОК"
+        negativeButtonText="Отмена">
+    </EditTextPreference>
+</PreferenceScreen>

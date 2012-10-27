@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-bonus-evroopt</id>
+  <id version="1">ab-bonus-euroopt</id>
   <name>Евроопт (Белоруссия)</name>
   <description>
     Получает информацию о скидке и сумму покупок в текущем месяце в белорусской компании евроопт (http://www.euroopt.by).

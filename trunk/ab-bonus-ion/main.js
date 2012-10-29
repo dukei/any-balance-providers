@@ -30,7 +30,8 @@ function getParam (html, result, param, regexp, replaces, parser) {
 }
 
 function parseBalance(text){
-    var val = getParam(text.replace(/\s+/g, ''), null, null, /(-?\d[\d\s.,]*)/, replaceFloat, parseFloat);
+    var _text = html_entity_decode(text);
+    var val = getParam(_text.replace(/\s+/g, ''), null, null, /(-?\d[\d\s.,]*)/, replaceFloat);
     AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
     return val;
 }
@@ -63,5 +64,13 @@ function main(){
 //    getParam(html, result, 'off', /Всего было потрачено[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 
     AnyBalance.setResult(result);
+}
+
+function html_entity_decode(str)
+{
+    //jd-tech.net
+    var tarea=document.createElement('textarea');
+    tarea.innerHTML = str;
+    return tarea.value;
 }
 

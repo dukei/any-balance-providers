@@ -54,3 +54,13 @@ function checkEmpty (param, error) {
     if (!param || param == '')
         throw new AnyBalance.Error (error);
 }
+
+var replaceTagsAndSpaces = [/<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
+var replaceFloat = [/\s+/g, '', /,/g, '.'];
+
+function parseBalance(text){
+    var val = getParam(text.replace(/\s+/g, ''), null, null, /(-?\d[\d.,]*)/, replaceFloat, parseFloat);
+    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
+    return val;
+}
+

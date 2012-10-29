@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="2">ab-bonus-svyaznoy</id>
+  <id major_version="1.0" version="3">ab-bonus-svyaznoy</id>
   <name>Связной Клуб</name>
   <description>
     Получает информацию о балансе карты, последней операции, статусе и количестве сообщений.
@@ -29,4 +29,7 @@
   <type>
     bonus
   </type>
+  <country>
+    ru
+  </country>
 </provider>

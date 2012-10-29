@@ -94,16 +94,16 @@ function main () {
     var result = {success: true};
 
     // Владелец
-    getParam (html, result, 'customer', /<a href="\/YourAccountMain.aspx">\s*<span>\s*([^<]*?)\s*</i);
+    getParam (html, result, 'customer', /<a href="\/YourAccountMain.aspx">([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
 
     // Баланс в баллах
-    getParam (html, result, 'balanceinpoints', /CurrentBalance: '(\d*)/i, [], parseInt);
+    getParam (html, result, 'balanceinpoints', /CurrentBalance: '(\d*)/i, replaceTagsAndSpaces, parseBalance);
 
     // Баланс в рублях
-    getParam (html, result, 'balanceinrubles', /\(скидка (\d*)/i, [], parseInt);
+    getParam (html, result, 'balanceinrubles', /\(скидка ([\s\S]*?)<span[^>]+class="rur[^>]*>/i, replaceTagsAndSpaces, parseBalance);
 
     // Количество сообщений
-    getParam (html, result, 'messages', /title="Мои сообщения">.*?<span>(\d*)/i, [], parseInt);
+    getParam (html, result, 'messages', /title="Мои сообщения">([\s\S]*?)<\/a>/i, replaceTagsAndSpaces, parseBalance);
 
 
     if (AnyBalance.isAvailable ('cardnumber',

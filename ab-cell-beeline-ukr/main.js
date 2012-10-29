@@ -12,7 +12,7 @@ function main(){
   var headers = {
     'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
     'Accept-Language':'uk-UA,uk;q=0.8,en-US;q=0.6,en;q=0.4',
-    'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.4 (KHTML, like Gecko) Chrome/22.0.1229.79 Safari/537.4',
+    'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.4 (KHTML, like Gecko) Chrome/22.0.1229.94 Safari/537.4',
     Connection: 'keep-alive'
   };
 
@@ -85,6 +85,13 @@ function main(){
   if(AnyBalance.isAvailable('doplatabalance')){
     if (matches=/<td.+>Доплата за вх(?:одящие зво|ідні дзві)нки:<\/td>\s*<td.+>\s*<nobr><b>(-?\d[\d\.,\s]*)<\/b> грн.\s*<\/nobr>/.exec(html)){
         result.doplatabalance=parseFloat(matches[1]);
+    }    
+  }
+  
+  // Бонус Домашний Интернет
+  if(AnyBalance.isAvailable('bonusdominet')){
+    if (matches=/<td.+>(?:От услуги "Домашний И|Від послуги "Домашній І)нтернет":<\/td>\s*<td.+>\s*<nobr><b>(-?\d[\d\.,\s]*)<\/b> грн.\s*<\/nobr>/.exec(html)){
+        result.bonusdominet=parseFloat(matches[1]);
     }    
   }
 

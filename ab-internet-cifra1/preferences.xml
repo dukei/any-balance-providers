@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Логин или № договора" 
+        positiveButtonText="ОК" 
+        summary="||{@s}" 
+        dialogTitle="Логин или № договора" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите логин или номер договора для входа в личный кабинет Цифра Один."
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="||***********"
+        dialogMessage="Введите пароль, используемый для входа в личный кабинет Цифра Один."
+        inputType="textPassword">
+    </EditTextPreference>
+    <ListPreference 
+        key="region" 
+        title="Интернет-провайдер"
+        summary="||{@s}"
+        entries="Автоматически|Ultranet"
+        entryValues="auto|ultranet"
+	      defaultValue="auto">
+    </ListPreference>
+</PreferenceScreen>

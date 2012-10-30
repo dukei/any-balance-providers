@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-internet-cifra1</id>
+  <name>Цифра Один</name>
+  <description>
+    Получает баланс и информацию о тарифном плане для российского интернет-провайдера Цифра Один (http://cifra1.ru).
+
+    Цифра Один — объединенная телекоммуникационная компания, специализирующаяся на предоставлении широкого комплекса телекоммуникационных услуг как для корпоративных клиентов, так и для домашних пользователей. Компания объединила бизнесы 11 операторов Москвы, Московской области, Твери и Краснодара.
+
+    Информация берется из личного кабинета.
+
+    Внимание! Поддерживаются следующие провайдеры, входящие в компанию Цифра Один:
+    * http://ultranet.ru, САО, Москва
+
+    Для добавления других провайдеров, обращайтесь к автору по е-мейл.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="status" name="Состояние" type="text"/>
+    <counter id="agreement" name="№ договора" type="text"/>
+  </counters>
+  <keywords>
+    интернет
+  </keywords>
+  <type>
+    internet
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

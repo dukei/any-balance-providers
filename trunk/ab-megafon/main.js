@@ -217,6 +217,15 @@ function main(){
     (filinfo.func)(filial);
 }
 
+var g_headers = {
+    Accept:'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
+    'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+    'Cache-Control':'max-age=0',
+    Connection:'keep-alive',
+    'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.60 Safari/537.1'
+};
+
 function getTrayXml(filial, address){
     var prefs = AnyBalance.getPreferences();
     var filinfo = filial_info[filial];
@@ -228,19 +237,26 @@ function getTrayXml(filial, address){
     if(prefs.__dbg_html)
         info = prefs.__dbg_html;
     else
-        info = AnyBalance.requestGet(address.replace(/%LOGIN%/g, prefs.login).replace(/%PASSWORD%/g, prefs.password));
+        info = AnyBalance.requestGet(address.replace(/%LOGIN%/g, prefs.login).replace(/%PASSWORD%/g, prefs.password), g_headers);
         
-    if(/<h1>Locked<\/h1>/.test(info))
+    
+    if(/<h1>Locked<\/h1>/.test(info)){
+      AnyBalance.trace("Server returned: " + info);
       throw new AnyBalance.Error('Вы ввели неправильный пароль или доступ автоматическим системам заблокирован.\n\
 Для разблокировки необходимо зайти в Сервис-Гид и включить настройку Настройки Сервис-Гида/Автоматический доступ системам/Доступ открыт пользователям и автоматизированным системам, а также нажать кнопку "разблокировать".');
+    }
         
-    if(/ROBOTS\-DENY/.test(info))
+    if(/ROBOTS\-DENY/.test(info)){
+      AnyBalance.trace("Server returned: " + info);
       throw new AnyBalance.Error('Доступ автоматическим системам заблокирован.\n\
 Для разблокировки необходимо зайти в Сервис-Гид и включить настройку Настройки Сервис-Гида/Автоматический доступ системам/Доступ открыт пользователям и автоматизированным системам, а также нажать кнопку "разблокировать".');
+    }
 
     var matches;
-    if(matches = /<h1>([^<]*)<\/h1>\s*<p>([^<]*)<\/p>/.exec(info))
+    if(matches = /<h1>([^<]*)<\/h1>\s*<p>([^<]*)<\/p>/.exec(info)){
+      AnyBalance.trace("Server returned: " + info);
       throw new AnyBalance.Error(matches[1] + ": " + matches[2]); //Случился какой-то глючный бред
+    }
         
     var xmlDoc = $.parseXML(info),
       $xml = $(xmlDoc);
@@ -248,6 +264,7 @@ function getTrayXml(filial, address){
     //Проверяем на ошибку
     var error = $xml.find('SC_TRAY_INFO>ERROR>ERROR_MESSAGE, TRAY_INFO>ERROR>ERROR_MESSAGE').text();
     if(error){
+        AnyBalance.trace("Server returned: " + info);
         if(/Robot login is not allowed|does not have permissions/.test(error))
             throw new AnyBalance.Error('Пожалуйста, разрешите в Сервис-Гиде доступ автоматизированным системам.\n\
 Для этого зайдите в Сервис-Гид и включите настройку Настройки Сервис-Гида/Автоматический доступ системам/Доступ открыт пользователям и автоматизированным системам.');
@@ -257,6 +274,7 @@ function getTrayXml(filial, address){
 
     error = $xml.find('SELFCARE>ERROR').text();
     if(error){
+        AnyBalance.trace("Server returned: " + info);
         throw new AnyBalance.Error(error + ' Возможно, вам надо зайти в Сервис-Гид и включить настройку Настройки Сервис-Гида/Автоматический доступ системам/Доступ открыт пользователям и автоматизированным системам, а также нажать кнопку "разблокировать".');
     }
 
@@ -292,7 +310,7 @@ function megafonTrayInfo(filial){
     }
     
     if(AnyBalance.isAvailable('mins_left','mins_total')){
-        var $val = $threads.filter(':has(NAME:contains(" мин")), :has(NAME:contains("Телефония исходящая"))');
+        var $val = $threads.filter(':has(NAME:contains(" мин")), :has(NAME:contains("Телефония исходящая")), :has(NAME:contains("Исходящая телефония"))');
         AnyBalance.trace('Found minutes discounts: ' + $val.length);
         if($val.length){
             if(AnyBalance.isAvailable('mins_left')){

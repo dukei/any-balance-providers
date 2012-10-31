@@ -95,8 +95,12 @@ function parseTraffic(text){
 }
 
 function parseMinutes(str){
-  AnyBalance.trace('Parsing minutes from value: ' + str);
-  return parseFloat(str)*60; //Переводим в секунды
+  var val = sumParam(str.replace(/\s+/g, ''), null, null, /(-?\d[\d.,]*)/, replaceFloat, parseFloat);
+  if(typeof(val) != 'undefined'){
+     val *= 60; //Переводим в секунды
+     AnyBalance.trace('Parsed ' + val + ' seconds from value: ' + str);
+  }
+  return val; 
 }
 
 //------------------------------------------------------------------------------

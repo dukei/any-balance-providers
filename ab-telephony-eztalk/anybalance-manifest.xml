@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-telephony-eztalk</id>
+  <name>EZtalk</name>
+  <description>
+    Получает текущий баланс и другие параметы у провайдера IP-телефонии EZtalk (http://eztalk.ru). 
+
+    EZtalk — инновационный сервис, позволяющий значительно экономить на междугородных и международных переговорах по телефону.
+
+    Провайдер получает данные из личного кабинета http://cabinet.eztalk.ru.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс"/>
+    <counter id="pin" name="PIN" type="text"/>
+    <counter id="phone" name="Телефон" type="text"/>
+    <counter id="notif" name="Сообщения" type="text"/>
+    <counter id="roaming" name="Роуминг" type="text"/>
+  </counters>
+  <keywords>
+    езток, езтолк
+  </keywords>
+  <type>
+    telephony
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

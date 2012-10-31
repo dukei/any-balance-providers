@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Номер телефона" 
+        positiveButtonText="ОК" 
+        summary="|Номер телефона в международном формате|{@s}" 
+        dialogTitle="Номер телефона" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите ваш номер телефона для входа в международном формате, например +79991234567"
+        inputType="phone"
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="||************"
+        dialogMessage="Введите ваш пароль в личный кабинет EZtalk"
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

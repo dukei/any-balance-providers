@@ -110,7 +110,7 @@ function main() {
 
 	html = AnyBalance.requestGet('https://adwords.google.com/select/ShowBillingSummary?hl=ru', g_headers);
 
-    getParam(html, result, 'balance', /<div[^>]+id="adw-billing-billingstatement-currentBalance"[^>]*>\s+\(([^\)]*)\)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'balance', /<div[^>]+id="adw-billing-billingstatement-currentBalance"[^>]*>\s+\(?([^\)<]*)\)?<\/div>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'currency', /<div[^>]+id="adw-billing-billingstatement-currentBalance"[^>]*>\s+\((\w+)\s+/i, replaceTagsAndSpaces);
 
     AnyBalance.setResult(result);

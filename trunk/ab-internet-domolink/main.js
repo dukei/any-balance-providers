@@ -429,7 +429,7 @@ function getPeriodMonth(date){
 function domolinkcenter(region,login,password) {
     var baseurl = 'https://room.centertelecom.ru';
     var regionurl = baseurl + '/' + region + '/';
-    AnyBalance.setDefaultCharset('utf8');    
+    AnyBalance.setDefaultCharset('utf-8');    
 	
     // Заходим на главную страницу
     var html = AnyBalance.requestPost(regionurl + "www.GetHomePage", {
@@ -456,7 +456,7 @@ function domolinkcenter(region,login,password) {
     getParam (html, result, 'license', /Номер лицевого счета<\/TD>\s*<TD[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
 	
     // Баланс
-    getParam (html, result, 'balance', /Текущее состояние лицевого счета<\/TD>\s*<TD[^>]*>([\s\S]*?)<\/td>/, replaceTagsAndSpaces, parseBalance);
+    getParam (html, result, 'balance', /Текущее состояние лицевого счета<\/TD>\s*<TD[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 	
     if (AnyBalance.isAvailable ('lastpaysum') ||
         AnyBalance.isAvailable ('lastpaydata') ||

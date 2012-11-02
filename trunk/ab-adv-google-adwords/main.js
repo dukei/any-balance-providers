@@ -109,6 +109,10 @@ function main() {
     }
 
 	html = AnyBalance.requestGet('https://adwords.google.com/select/ShowBillingSummary?hl=ru', g_headers);
+    if(/<form[^>]+name="tcaccept"/i.test(html)){
+        //Надо че-то принять, че-то у них изменилось.
+        throw new AnyBalance.Error('Положения программы Google изменились. Пожалуйста, зайдите в ваш аккаунт Adwords через браузер и на вкладке "Сводка платежных данных" примите новые положения.');
+    }
 
     getParam(html, result, 'balance', /<div[^>]+id="adw-billing-billingstatement-currentBalance"[^>]*>\s+\(?([^\)<]*)\)?<\/div>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'currency', /<div[^>]+id="adw-billing-billingstatement-currentBalance"[^>]*>\s+\((\w+)\s+/i, replaceTagsAndSpaces);

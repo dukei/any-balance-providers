@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-    <id version="1">ab-adv-google-adwords</id>
+    <id version="2">ab-adv-google-adwords</id>
     <name>Google Adwords</name>
     <description>Информация из аккаунта Google Adwords</description>
     <author>BArtWell &lt;web@bartwell.ru&gt;</author>
@@ -8,9 +8,11 @@
 	<icon>icon.png</icon>
         <preferences>preferences.xml</preferences>
         <js>main.js</js>
+    	<history>history.xml</history>
     </files>
     <counters>
         <counter id="balance" name="Баланс"/>
+        <counter id="currency" name="Валюта" type="text"/>
     </counters>
     <keywords>
         Google Adwords

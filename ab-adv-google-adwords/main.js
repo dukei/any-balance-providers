@@ -96,7 +96,7 @@ function main() {
 
     var html = AnyBalance.requestPost(baseurlLogin + 'ServiceLoginAuth', params, g_headers);
 
-    AnyBalance.trace(html);
+    //AnyBalance.trace(html);
 
     if(!/authenticatedUserName/i.test(html)){
         var error = getParam(html, null, null, /<span[^>]+class="errormsg[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
@@ -110,7 +110,8 @@ function main() {
 
 	html = AnyBalance.requestGet('https://adwords.google.com/select/ShowBillingSummary?hl=ru', g_headers);
 
-    getParam(html, result, 'balance', /<div class="primary_value" id="adw-billing-billingstatement-currentBalance">\s+\(RUB ([0-9,.]+)\)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'balance', /<div[^>]+id="adw-billing-billingstatement-currentBalance"[^>]*>\s+\(([^\)]*)\)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'currency', /<div[^>]+id="adw-billing-billingstatement-currentBalance"[^>]*>\s+\((\w+)\s+/i, replaceTagsAndSpaces);
 
     AnyBalance.setResult(result);
 }

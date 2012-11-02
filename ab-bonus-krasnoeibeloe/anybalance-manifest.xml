@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-bonus-krasnoeibeloe</id>
+  <name>Красное&amp;Белое (Урал)</name>
+  <description>
+    Получает баланс и скидку по дисконтной карте компании «Красное&amp;Белое» в Уральском регионе.
+
+    Информация берется с сайта http://www.krasnoeibeloe.ru/discount
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="discount" name="Скидка" units="%"/>
+  </counters>
+  <keywords>
+    вино
+  </keywords>
+  <type>
+    bonus
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="№ карты" 
+        positiveButtonText="ОК" 
+        summary="||{@s}" 
+        dialogTitle="№ карты" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите номер дисконтной карты Красное&amp;Белое, по которой вы хотите получить информацию"
+        inputType="number"
+        key="login">
+    </EditTextPreference>
+</PreferenceScreen>

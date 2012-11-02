@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-money-elecsnet</id>
+  <name>Элекснет</name>
+  <description>
+    Получает баланс на кошельке Элекснет (http://elecsnet.ru).
+
+    Информация берется из личного кабинета https://services.elecsnet.ru.
+
+    ВНИМАНИЕ! Для работы провайдера требуется пароль для ВХОДА в кабинет. Платежный пароль вводить НЕ НУЖНО!
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+  </counters>
+  <keywords>
+    платежная система
+  </keywords>
+  <type>
+    money
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

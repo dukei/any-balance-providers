@@ -90,7 +90,7 @@ function fetchAccount(baseurl){
     var html = AnyBalance.requestGet(baseurl + 'rs/accounts/RSAccounts.jspx');
 
     //Сколько цифр осталось, чтобы дополнить до 20
-    var accnum = prefs.cardnum || '';
+    var accnum = prefs.contract || '';
     var accprefix = accnum.length;
     accprefix = 20 - accprefix;
 

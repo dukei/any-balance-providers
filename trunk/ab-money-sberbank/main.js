@@ -171,7 +171,8 @@ function doOldAccount(page){
     if(redirect){
         AnyBalance.trace('Сбербанк перенаправил на ' + redirect);
         if(/esk.sbrf.ru\/esClient\/_logon\/MoveToCards.aspx/i.test(redirect)){
-            readEsk();
+            html = AnyBalance.requestGet(redirect);
+            doNewAccountEsk(html);
             return;
         }
 
@@ -308,10 +309,6 @@ function doNewAccountEsk(html){
     html = AnyBalance.requestGet(baseurl + '/esClient/_logon/MoveToCards.aspx?AuthToken='+token+'&i=1&supressNoCacheScript=1');
     
     //AnyBalance.trace(html);
-    readEsk();
-}
-
-function readEsk(){
     if(AnyBalance.getPreferences().type == 'acc')
         throw new AnyBalance.Error('Ваш тип личного кабинета не поддерживает просмотр счетов. Если вам кажется это неправильным, напишите автору провайдера е-мейл.');
     

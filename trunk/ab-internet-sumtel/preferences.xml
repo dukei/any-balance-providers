@@ -18,6 +18,6 @@
         title="Пароль"
         summary="||***********"
         dialogMessage="Введите пароль, используемый для входа в личный кабинет"
-        inputType="numberPassword">
+        inputType="textPassword">
     </EditTextPreference>
 </PreferenceScreen>

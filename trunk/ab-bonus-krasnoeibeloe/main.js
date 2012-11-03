@@ -34,6 +34,24 @@ function main(){
     result.balance = parseFloat(json.summ);
     result.discount = parseFloat(json.discount);
     result.__tariff = json.card_id;
+
+    var levels = [
+        [500, 1],
+        [3000, 2],
+        [8000, 4],
+        [18000, 6],
+        [36000, 8],
+        [60000, 10],
+    ];
+
+    for(var i=0; i<levels.length; ++i){
+        if(levels[i][1] > json.discount){
+            result.sumleft = levels[i][0] - json.summ;
+            result.nextsum = levels[i][0];
+            result.nextdis = levels[i][1];
+            break;
+        }
+    }
     
     AnyBalance.setResult(result);
 }

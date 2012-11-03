@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="10">ab-money-sberbank</id>
+  <id version="11">ab-money-sberbank</id>
   <name>Сбербанк ОнЛ@йн</name>
   <description>
     Получает текущий остаток и другие параметры карт и счетов Сбербанка, используя систему Сбербанк-онлайн ( https://esk.sbrf.ru ).

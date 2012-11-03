@@ -154,15 +154,31 @@ function doOldAccount(page){
 
     var newpage = getParam(html, null, null, /"redirectForm"\s\S*?action="([^"]*)"/i);
     var submitparam = getParam(html, null, null, /<input type="hidden"[^>]*name="([^"]*)"/i);
-    var params = {};
-    params[submitparam] = '';
-    html = AnyBalance.requestPost('https://esk.zubsb.ru/pay/sbrf/Preload'+newpage, params);
+    if(newpage){
+        var params = {};
+        params[submitparam] = '';
+        html = AnyBalance.requestPost('https://esk.zubsb.ru/pay/sbrf/Preload'+newpage, params);
 
-    if(prefs.type == 'acc')
-        fetchOldAcc(html);
-    else
-        fetchOldCard(html);
-    
+        if(prefs.type == 'acc')
+            fetchOldAcc(html);
+        else
+            fetchOldCard(html);
+        return;
+    }
+
+    //Проверим, может это пересылка на режим ограниченной функциональности?
+    var redirect = getParam(html, null, null, /Для продолжения работы в этом режиме перейдите по ссылке\s*<a[^>]+href="([^"]*)+/i, null, html_entity_decode);
+    if(redirect){
+        AnyBalance.trace('Сбербанк перенаправил на ' + redirect);
+        if(/esk.sbrf.ru\/esClient\/_logon\/MoveToCards.aspx/i.test(redirect)){
+            readEsk();
+            return;
+        }
+
+        throw new AnyBalance.Error('Сбербанк перенаправил на неизвестный личный кабинет. Пожалуйста, обратитесь к автору провайдера по е-мейл для исправления.');
+    }
+
+    throw new AnyBalance.Error('Не удалось войти в старый аккаунт. Проблемы или изменения на сайте. Пожалуйста, свяжитесь с автором провайдера для исправления.');
 }
 
 function fetchOldAcc(html){
@@ -292,6 +308,10 @@ function doNewAccountEsk(html){
     html = AnyBalance.requestGet(baseurl + '/esClient/_logon/MoveToCards.aspx?AuthToken='+token+'&i=1&supressNoCacheScript=1');
     
     //AnyBalance.trace(html);
+    readEsk();
+}
+
+function readEsk(){
     if(AnyBalance.getPreferences().type == 'acc')
         throw new AnyBalance.Error('Ваш тип личного кабинета не поддерживает просмотр счетов. Если вам кажется это неправильным, напишите автору провайдера е-мейл.');
     

@@ -64,7 +64,7 @@ function fetchCard(baseurl){
     var sourceData = getParam(tr, null, null, /<a[^>]+onclick="submitForm[^"]*source:'([^'"]*)'[^"]*"[^>]+class="xl"/i, replaceTagsAndSpaces);
     var token = getParam(html, null, null, /<input[^>]+name="oracle.adf.faces.STATE_TOKEN"[^>]*value="([^"]*)/i, null, html_entity_decode);
    
-    if(AnyBalance.isAvailable('contract')){
+    if(AnyBalance.isAvailable('contract','gracepay','gracetill')){
         html = AnyBalance.requestPost(baseurl + 'rs/cards/RSCardsV2.jspx', {
             'oracle.adf.faces.FORM': 'mainform',
             'oracle.adf.faces.STATE_TOKEN': token,
@@ -78,6 +78,51 @@ function fetchCard(baseurl){
         getParam(html, result, 'gracetill', /&#1044;&#1072;&#1090;&#1072; &#1086;&#1082;&#1086;&#1085;&#1095;&#1072;&#1085;&#1080;&#1103; &#1051;&#1100;&#1075;&#1086;&#1090;&#1085;&#1086;&#1075;&#1086; &#1087;&#1077;&#1088;&#1080;&#1086;&#1076;&#1072;\s*-?([^<]*)/, replaceTagsAndSpaces, parseDate);
     }
 
+    AnyBalance.setResult(result);
+    
+}
+
+function fetchAccount(baseurl){
+    var prefs = AnyBalance.getPreferences();
+    if(prefs.contract && !/^\d{4,20}$/.test(prefs.contract))
+        throw new AnyBalance.Error('Пожалуйста, введите не менее 4 последних цифр номера счета, по которому вы хотите получить информацию, или не вводите ничего, чтобы получить информацию по первому счету.');
+
+    var html = AnyBalance.requestGet(baseurl + 'rs/accounts/RSAccounts.jspx');
+
+    //Сколько цифр осталось, чтобы дополнить до 20
+    var accnum = prefs.cardnum || '';
+    var accprefix = accnum.length;
+    accprefix = 20 - accprefix;
+
+    var re = new RegExp('(<tr[^>]*>(?:[\\s\\S](?!<\\/tr>))*' + (accprefix > 0 ? '\\d{' + accprefix + '}' : '') + accnum + '\\s*<[\\s\\S]*?<\\/tr>)', 'i');
+    var tr = getParam(html, null, null, re);
+    if(!tr)
+        throw new AnyBalance.Error('Не удаётся найти ' + (prefs.contract ? 'счет с последними цифрами ' + prefs.contract : 'ни одного счета'));
+    
+    var result = {success: true};
+    getParam(tr, result, 'currency', /<p[^>]+class="money"[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseCurrency);
+    getParam(tr, result, 'account_balance', /<p[^>]+class="money"[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseBalance);
+    //Статус
+    getParam(tr, result, 'status', /&#1057;&#1086;&#1089;&#1090;&#1086;&#1103;&#1085;&#1080;&#1077;\s*-([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(tr, result, 'cardnum', /(\d{20})/, replaceTagsAndSpaces, html_entity_decode);
+    getParam(tr, result, '__tariff', /<a[^>]+class="xl"[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(tr, result, 'accname', /<a[^>]+class="xl"[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces, html_entity_decode);
+
+    /* Работает, но получать тарифный план, наверное, смысла нет
+
+    var sourceData = getParam(tr, null, null, /<a[^>]+onclick="submitForm[^"]*source:'([^'"]*)'[^"]*"[^>]+class="xl"/i, replaceTagsAndSpaces);
+    var token = getParam(html, null, null, /<input[^>]+name="oracle.adf.faces.STATE_TOKEN"[^>]*value="([^"]*)/i, null, html_entity_decode);
+
+    if(AnyBalance.isAvailable('contract')){
+        html = AnyBalance.requestPost(baseurl + 'rs/accounts/RSAccounts.jspx', {
+            'oracle.adf.faces.FORM': 'mainform',
+            'oracle.adf.faces.STATE_TOKEN': token,
+            'source': sourceData
+        });
+        //Тарифный план - №
+        getParam(html, result, 'contract', /&#1058;&#1072;&#1088;&#1080;&#1092;&#1085;&#1099;&#1081; &#1087;&#1083;&#1072;&#1085;\s*-?\s*([^<]*)/, replaceTagsAndSpaces, html_entity_decode);
+    }
+    */
     AnyBalance.setResult(result);
     
 }

@@ -3,7 +3,7 @@
   <id version="1">ab-telephony-vegatele</id>
   <name>Vega телефония</name>
   <description>
-    Получает текущий баланс и другие параметы у провайдера проводной телефонии Vega (http://www.vegatele.com).
+    Получает текущий баланс и другие параметы у украинского провайдера проводной телефонии Vega (http://www.vegatele.com).
 
     Провайдер получает данные из личного кабинета https://my.vegatele.com.
 

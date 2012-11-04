@@ -104,7 +104,7 @@ var replaceTagsAndSpaces = [/&nbsp;/g, ' ', /<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\
 var replaceFloat = [/\s+/g, '', /,/g, '.', /(\d)\-(\d)/g, '$1.$2'];
 
 function parseBalance(text){
-    var _text = text.replace(/\s+/g, '');
+    var _text = text.replace(/\s+/g, '').replace(/(\D|^)\./g, '$10.');
     var val = getParam(_text, null, null, /(-?\d[\d\.,\-]*)/, replaceFloat, parseFloat);
     AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
     return val;
@@ -636,17 +636,20 @@ function domolinkug(region,login,password) {
     html = AnyBalance.requestGet(baseurl + 'uniapp/uniapp.nocache.js');
     var permut = gwtGetStrongName(html);
 
-    //Получаем баланс
-    html = AnyBalance.requestPost(baseurl + 'uniapp/UniappService',
-        "7|0|8|https://my.south.rt.ru/uniapp/|AD22A0AE25C10F870D4CEAEC535FB2E0|ru.stcompany.uniapp.client.action.rpc.UniappService|getForm|java.lang.String/2004016611|java.util.Map|186688160|java.util.LinkedHashMap/3008245022|1|2|3|4|2|5|6|7|8|0|0|",
-        { 
-          'Content-Type': 'text/x-gwt-rpc; charset=UTF-8', 
-          'X-GWT-Module-Base':baseurl + 'uniapp',
-          'X-GWT-Permutation':permut
-        }
-    );
-
-    getParam(html, result, 'balance', /(-?\d+[.,]?\d*)\s+руб\./i, null, parseBalance);
+    if(AnyBalance.isAvailable('balanceTel', 'mgmn')){
+        //Получаем баланс
+        html = AnyBalance.requestPost(baseurl + 'uniapp/UniappService',
+            "7|0|8|https://my.south.rt.ru/uniapp/|AD22A0AE25C10F870D4CEAEC535FB2E0|ru.stcompany.uniapp.client.action.rpc.UniappService|getForm|java.lang.String/2004016611|java.util.Map|186688160|java.util.LinkedHashMap/3008245022|1|2|3|4|2|5|6|7|8|0|0|",
+            { 
+              'Content-Type': 'text/x-gwt-rpc; charset=UTF-8', 
+              'X-GWT-Module-Base':baseurl + 'uniapp',
+              'X-GWT-Permutation':permut
+            }
+        );
+        
+        getParam(html, result, 'balanceTel', /телефонная связь[\s\S]*?(-?\d*[.,]?\d*)\s+руб\./i, null, parseBalance);
+        getParam(html, result, 'mgmn', /МГ\/МН[\s\S]*?(-?\d*[.,]?\d*)\s+руб\./i, null, parseBalance);
+    }
 
     //Получаем тарифный план интернет
     html = AnyBalance.requestPost(baseurl + 'uniapp/UniappService',
@@ -660,6 +663,7 @@ function domolinkug(region,login,password) {
 
     getParam(html, result, '__tariff', /Текущий тарифный план:.*?DFTITLE=\\"([^"]*)\\"/i, null, html_entity_decode);
     getParam(html, result, 'license', /Лицевой счет:.*?DFTITLE=\\"([^"]*)\\"/i, null, html_entity_decode);
+    getParam(html, result, 'balance', /Текущий баланс:.*?DFTITLE=\\"([^"]*)\\"/i, null, parseBalance);
 
     AnyBalance.setResult(result); 
 }

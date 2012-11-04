@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change major_version="3" version="14" date="2012-11-04">
+       - Для ростелеком-юг добавлены счетчики Баланс телефонной связи и Затраты на МГ/МН связь
+    </change>
     <change major_version="3" version="13" date="2012-11-02">
        - Исправлено получение баланса в домолинк центр
     </change>

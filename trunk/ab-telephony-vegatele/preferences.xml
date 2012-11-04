@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <ListPreference 
+        key="login_method" 
+        title="Войти посредством"
+        summary="||{@s}"
+        entries="Номер лицевого счета|Логин|E-mail"
+        entryValues="number_ls|login|email"
+	defaultValue="number_ls">
+    </ListPreference>
+    <EditTextPreference 
+        title="Логин" 
+        positiveButtonText="ОК" 
+        summary="||{@s}" 
+        dialogTitle="Логин" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите ваш логин, е-мейл или номер лицевого счета, в зависимости от настройки &quot;Войти посредством&quot;"
+        inputType="textEmailAddress"
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="||************"
+        dialogMessage="Введите ваш пароль в личный кабинет Vega"
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

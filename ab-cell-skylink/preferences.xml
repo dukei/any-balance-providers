@@ -24,8 +24,8 @@
         key="region" 
         title="Регион"
         summary="Регион вашего номера|Нужен для определения личного кабинета\n|{@s}\n"
-        entries="Москва|Ульяновск"
-        entryValues="moscow|uln"
+        entries="Краснодарский край и республика Адыгея|Москва|Ульяновск"
+        entryValues="kuban|moscow|uln"
 	defaultValue="moscow">
     </ListPreference>
 </PreferenceScreen>

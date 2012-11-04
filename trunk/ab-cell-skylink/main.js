@@ -29,6 +29,42 @@ function getParam (html, result, param, regexp, replaces, parser) {
 	}
 }
 
+function sumParam (html, result, param, regexp, replaces, parser, do_replace) {
+	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param))){
+            if(do_replace)
+  	        return html;
+            else
+                return;
+	}
+
+        var total_value;
+	var html_copy = html.replace(regexp, function(str, value){
+		for (var i = 0; replaces && i < replaces.length; i += 2) {
+			value = value.replace (replaces[i], replaces[i+1]);
+		}
+		if (parser)
+			value = parser (value);
+                if(typeof(total_value) == 'undefined')
+                	total_value = value;
+                else
+                	total_value += value;
+                return ''; //Вырезаем то, что заматчили
+        });
+
+    if(param){
+      if(typeof(total_value) != 'undefined'){
+          if(typeof(result[param]) == 'undefined')
+      	      result[param] = total_value;
+          else 
+      	      result[param] += total_value;
+      }
+      if(do_replace)
+          return html_copy;
+    }else{
+      return total_value;
+    }
+}
+
 var replaceTagsAndSpaces = [/<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
 var replaceFloat = [/\s+/g, '', /,/g, '.'];
 
@@ -48,7 +84,8 @@ function parseBalance(text){
 
 var g_regions = {
     moscow: mainMoscow,
-    uln: mainUln
+    uln: mainUln,
+    kuban: mainKuban
 };
 
 function main(){
@@ -163,6 +200,43 @@ function mainUln(){
 
     var html = AnyBalance.requestGet('http://www2.skypoint.ru/pages/change_tarif2.aspx', headers);	
     getParam(html, result, '__tariff',  /<span[^>]+id="ctl00_pageContent_Label1"[^>]*>Ваш тарифный план:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
+    
+    AnyBalance.setResult(result);
+}
+
+function mainKuban(){
+    var prefs = AnyBalance.getPreferences();
+
+    var baseurl = "http://stat.kuban.skypoint.ru/";
+    AnyBalance.setDefaultCharset('windows-1251');
+
+    var headers = {
+    	"User-Agent":'Mozilla/5.0 (Windows NT 5.1; rv:2.0) Gecko/20100101 Firefox/4.0'
+    };
+    
+    var html = AnyBalance.requestPost(baseurl + '?Action=Logon', {
+	PhoneNumber:prefs.login,
+	PinCode:prefs.password,
+	LogOn:1
+    }, headers);
+
+    html = AnyBalance.requestGet(baseurl + '?Action=Logon');
+
+    if(!/\?Action=Logoff/i.test(html)){
+        var error = getParam(html, null, null, /<span[^>]+class="err_msg"[^>]*>(.*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+        if(error)
+            throw new AnyBalance.Error(error);
+        throw new AnyBalance.Error("Не удалось войти в личный кабинет. Возможно, неправильный логин-пароль или регион.");
+    }
+
+    var result = {success: true}
+    
+    getParam(html, result, 'userName', /Абонент:([\s\S]*?)<br[^>]*>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'userNum', /по лицевому счёту абонента[\s\S]*?<!--VALUE-->([\s\S]*?)<!--ENDVALUE-->/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'balance', /Баланс по лицевому счёту абонента(?:[\s\S]*?<!--VALUE-->){2}([\s\S]*?)<!--ENDVALUE-->/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'traffic', /израсходовано\s*<b[^>]*>\s*<!--VALUE-->([^<]*)<!--ENDVALUE-->\s*<\/b>\s*мегабайт/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, '__tariff',  /Текущий тарифный план:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
+    sumParam(html, result, 'trafficPack',  /Баланс в Трафик(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance);
     
     AnyBalance.setResult(result);
 }

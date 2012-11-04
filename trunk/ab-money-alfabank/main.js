@@ -295,7 +295,7 @@ function getCreditInfo(html, result, accnum, baseurl, creditonly){
     var accprefix = accnum.length;
     accprefix = 20 - accprefix;
 
-    var re = new RegExp('(<tr[^>]*>(?:[\\s\\S](?!<\\/tr>))*>[^<]*' + (accprefix ? '\\d{' + accprefix + '}' : '') + accnum + '<[\\s\\S]*?<\\/tr>)', 'i');
+    var re = new RegExp('(<tr[^>]*>(?:[\\s\\S](?!<\\/tr>))*>[^<]*' + (accprefix > 0 ? '\\d{' + accprefix + '}' : '') + accnum + '<[\\s\\S]*?<\\/tr>)', 'i');
     var tr = getParam(html, null, null, re);
     if(!tr)
         throw new AnyBalance.Error('Не удаётся найти ' + (accnum ? 'кредитный счет с последними цифрами ' + accnum : 'ни одного кредитного счета'));
@@ -364,7 +364,7 @@ function processAccount(html, baseurl){
     var accprefix = accnum.length;
     accprefix = 20 - accprefix;
 
-    var re = new RegExp('(<tr[^>]*>(?:[\\s\\S](?!<\\/tr>))*>' + (accprefix ? '\\d{' + accprefix + '}' : '') + accnum + '<[\\s\\S]*?<\\/tr>)', 'i');
+    var re = new RegExp('(<tr[^>]*>(?:[\\s\\S](?!<\\/tr>))*>' + (accprefix > 0 ? '\\d{' + accprefix + '}' : '') + accnum + '<[\\s\\S]*?<\\/tr>)', 'i');
     var tr = getParam(html, null, null, re);
     if(!tr)
         throw new AnyBalance.Error('Не удаётся найти ' + (accnum ? 'счет с последними цифрами ' + accnum : 'ни одного счета'));
@@ -392,7 +392,7 @@ function processDep(html, baseurl){
     var accprefix = accnum.length;
     accprefix = 20 - accprefix;
 
-    var re = new RegExp('(<tr[^>]*>(?:[\\s\\S](?!<\\/tr>))*>' + (accprefix ? '\\d{' + accprefix + '}' : '') + accnum + '<[\\s\\S]*?<\\/tr>)', 'i');
+    var re = new RegExp('(<tr[^>]*>(?:[\\s\\S](?!<\\/tr>))*>' + (accprefix > 0 ? '\\d{' + accprefix + '}' : '') + accnum + '<[\\s\\S]*?<\\/tr>)', 'i');
     var tr = getParam(html, null, null, re);
     if(!tr)
         throw new AnyBalance.Error('Не удаётся найти ' + (accnum ? 'депозит с последними цифрами ' + accnum : 'ни одного депозита'));

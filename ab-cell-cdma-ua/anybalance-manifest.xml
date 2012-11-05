@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-cell-cdma-ua</id>
+  <id version="2">ab-cell-cdma-ua</id>
   <name>CDMA UA</name>
   <description>
     Получает баланс и информацию о тарифном плане для украинского сотового оператора CDMA UA (http://cdma.ua).
@@ -17,6 +17,7 @@
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
     <js>main.js</js>
+    <history>history.xml</history>
   </files>
   <counters>
     <counter id="balance" name="Баланс" units="₴"/>

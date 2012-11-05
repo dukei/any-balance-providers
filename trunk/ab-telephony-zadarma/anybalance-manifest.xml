@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1" version="1">ab-telephony-zadarma</id>
+  <id major_version="2" version="2">ab-telephony-zadarma</id>
   <name>Zadarma</name>
   <description>
-    Получает текущий баланс в Zadarma.
+    Получает текущий баланс в Zadarma (http://zadarma.com), используя личный кабинет.
   </description>
   <author>Puzuma &lt;a.puzuma@gmail.com&gt;</author>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
     <js>main.js</js>
+    <history>history.xml</history>
   </files>
   <counters>
     <counter id="balance" name="Баланс" prefix="$" type="numeric"/>
@@ -20,4 +21,7 @@
   <type>
     telephony
   </type>
+  <country>
+    ru, ua
+  </country>
 </provider>

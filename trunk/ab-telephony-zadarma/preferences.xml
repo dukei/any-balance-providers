@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
     <EditTextPreference 
-        title="Логин" 
+        title="Электронный адрес" 
         positiveButtonText="ОК" 
-        summary="Логин в Zadarma||{@s}\n" 
+        summary="|Логин в Zadarma|{@s}" 
         dialogTitle="Электронный адрес" 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите ваш электронный адрес в Zadarma"
+        dialogMessage="Введите ваш электронный адрес для входа в Zadarma"
+        inputType="textEmailAddress"
         key="login">
     </EditTextPreference>
     <EditTextPreference 
@@ -15,7 +16,7 @@
         dialogTitle="Пароль"
         negativeButtonText="Отмена"
         title="Пароль"
-        summary="Введите пароль||************\n"
+        summary="||************"
         dialogMessage="Введите ваш пароль в Zadarma"
         inputType="textPassword">
     </EditTextPreference>

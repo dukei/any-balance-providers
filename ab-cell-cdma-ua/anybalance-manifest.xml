@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-cell-cdma-ua</id>
+  <name>CDMA UA</name>
+  <description>
+    Получает баланс и информацию о тарифном плане для украинского сотового оператора CDMA UA (http://cdma.ua).
+
+    Информация берется из личного кабинета http://my.cdma.ua.
+
+    Как получить пароль в личный кабинет:
+    * Для получения или изменения пароля необходимо с вашего CDMА телефона отправить SMS на номер 9229. Если Ваш контракт активный или приостановлен, в ответ вы получите SMS с новым паролем. 
+    * Для интернет абонентов, а также тех абонентов, которые сообщили Оператору CDMAua свой электронный почтовый адрес, для восстановления пароля можно воспользоваться страницей напоминания пароля (http://my.cdma.ua/?action=remind_password) или позвонить по телефону (044) 221 0000. 
+    * Для получения дополнительной информации звоните по телефону (044) 592 0000 или *111 с вашего CDMА телефона.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="₴"/>
+    <counter id="traffic" name="Трафик" units="Мб"/>
+    <counter id="traffic_free" name="Исп. бесплатный трафик" units="Мб"/>
+    <counter id="mins_city" name="Исп. минут на городские номера" units="мин"/>
+    <counter id="mins_ukr" name="Исп. минут по Украине" units="мин"/>
+    <counter id="status" name="Статус" type="text"/>
+    <counter id="licschet" name="Номер договора" type="text"/>
+    <counter id="phone" name="Номер телефона" type="text"/>
+    <counter id="userName" name="Абонент" type="text"/>
+  </counters>
+  <keywords>
+    интернет
+  </keywords>
+  <type>
+    cell
+  </type>
+  <country>
+    ua
+  </country>
+</provider>

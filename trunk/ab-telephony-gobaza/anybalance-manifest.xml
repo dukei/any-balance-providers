@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-telephony-gobaza</id>
+  <name>баZа</name>
+  <description>
+    Получает текущий баланс и другие параметы у провайдера IP-телефонии баZа (http://go2baza.ru).
+
+    Провайдер получает данные из личного кабинета https://go2baza.cnt.ru/cnt.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="mins_total" name="Включенные минуты"/>
+    <counter id="mins_left" name="Остаток минут"/>
+  </counters>
+  <keywords>
+    база, baza
+  </keywords>
+  <type>
+    telephony
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

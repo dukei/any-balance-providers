@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Номер телефона" 
+        positiveButtonText="ОК" 
+        summary="|11 цифр телефонного номера|{@s}" 
+        dialogTitle="Номер телефона" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите 11 цифр Вашего номера. Например, если у Вас московский номер в коде &quot;499&quot; ХХХ-ZZZZ, необходимо указать: 8499ХХХZZZZ."
+        inputType="number"
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="||************"
+        dialogMessage="Введите ваш пароль в личный кабинет баZа со Скретч-карты. На Скретч-карте данный пароль может быть скрыт защитной полосой."
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

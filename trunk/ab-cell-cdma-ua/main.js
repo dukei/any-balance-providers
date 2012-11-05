@@ -89,7 +89,7 @@ function main(){
     var result = {success: true};
 
     getParam(html, result, 'balance', /Состояние персонального счета[\S\s]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, '__tariff', /<td[^>]*>\s*Тарифный пакет[\S\s]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, '__tariff', /<td[^>]*>\s*Тарифный пакет[\S\s]*?<td[^>]*>([\S\s]*?)(?:\(|<\/td>)/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'traffic', /Объем переданной и принятой информации[\S\s]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'mins_city', /бесплатные минуты по городу[\S\s]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'mins_ukr', /бесплатные минуты по Украине[\S\s]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);

@@ -12,9 +12,9 @@
     <EditTextPreference 
         positiveButtonText="ОК"
         key="password" 
-        dialogTitle="Пароль"
+        dialogTitle="Пароль для входа"
         negativeButtonText="Отмена"
-        title="Пароль для входа"
+        title="Пароль"
         summary="||***********"
         dialogMessage="Введите пароль, используемый для входа в систему Яндекс.Директ."
         inputType="textPassword">

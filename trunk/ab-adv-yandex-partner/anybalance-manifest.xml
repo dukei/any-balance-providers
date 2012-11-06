@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-adv-yandex-partner</id>
+  <name>Рекламная сеть Яндекс</name>
+  <description>
+    Получает суммы заработка в рекламной сети Яндекс (https://partner.yandex.ru).
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="За текущий месяц" units="р"/>
+    <counter id="today" name="За сегодня" units="р"/>
+    <counter id="yesterday" name="За вчера" units="р"/>
+  </counters>
+  <keywords>
+  </keywords>
+  <type>
+    adv
+  </type>
+</provider>

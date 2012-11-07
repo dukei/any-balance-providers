@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-service-webeffector</id>
+  <name>WebEffector (продвижение сайтов)</name>
+  <description>
+    Получает баланс для сервиса продвижения сайтов ВебЭффектор (http://www.webeffector.ru).
+
+    Информация берется из личного кабинета http://client.webeffector.ru.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="daySpend" name="Дневной расход" units="р"/>
+  </counters>
+  <keywords>
+    поисковая оптимизация
+  </keywords>
+  <type>
+    service, seo
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

@@ -273,10 +273,11 @@ function mainSpb(){
     getParam(html, result, '__tariff',  /Тарифный план:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'trafficDay',  /Передача данных, Mб в день:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 
-    if(AnyBalance.isAvailable('balance', 'status')){
+    if(AnyBalance.isAvailable('balance', 'status', 'charged')){
         html = AnyBalance.requestGet(baseurl + 'skyServiceBalance');
         getParam(html, result, 'balance', /Баланс,[^<]*:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
         getParam(html, result, 'status', /Статус договора:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+        getParam(html, result, 'charged', /Начисления по договору за период\s*:[\s\S]*?Всего[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     }
     
     AnyBalance.setResult(result);

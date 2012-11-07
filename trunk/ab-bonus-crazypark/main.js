@@ -58,10 +58,10 @@ function main(){
 
     var result = {success: true};
 
-    getParam(html, result, 'balance', /На твоей карте:([\S\s]*?)<br/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'bonuses', /Из них бонусов:([\S\s]*?)<br/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'crazies', /Крэйзики на карте:([\S\s]*?)<br/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'cardnum', /Номер карты:([\S\s]*?)<br/i, replaceTagsAndSpaces);
+    getParam(html, result, 'balance', /На твоей карте:([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'bonuses', /Из них бонусов:([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'crazies', /Крэйзики на карте:([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'cardnum', /Номер карты:([^<]*)/i, replaceTagsAndSpaces);
     getParam(html, result, 'level', /<div[^>]+class="status"[^>]*>[\S\s]*?url\((\d)_a\.gif\)/i, replaceTagsAndSpaces, parseInt);
     getParam(html, result, 'next', /<span[^>]*>([^<]*)<\/span>\s*<br[^>]*>\s*до перехода/i, replaceTagsAndSpaces, parseBalance);
 

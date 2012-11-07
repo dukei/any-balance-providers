@@ -58,7 +58,7 @@ function main(){
 
     var result = {success: true};
 
-    getParam(html, result, 'balance', /На твоей карте:([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'balance', /На твоей карте:([\s\S]*?)<br/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'bonuses', /Из них бонусов:([^<]*)/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'crazies', /Крэйзики на карте:([^<]*)/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'cardnum', /Номер карты:([^<]*)/i, replaceTagsAndSpaces);

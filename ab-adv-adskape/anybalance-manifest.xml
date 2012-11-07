@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-adv-adskape</id>
+  <name>AdSkape (медийная реклама)</name>
+  <description>
+    Получает баланс и статистику для сети медийной рекламы AdSkape (http://adskape.ru).
+
+    Информация берется из личного кабинета.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="uniqueShow" name="Всего показов по уникальным кампаниям с начала месяца"/>
+    <counter id="uniqueShowPaid" name="Показов по кампаниям с оплатой за уникальные показы с начала месяца"/>
+    <counter id="nonUniqueShow" name="Показов по неуникальным кампаниям с начала месяца"/>
+    <counter id="uniqueShowClickPaid" name="Показов по кампаниям с оплатой за клики с начала месяца"/>
+    <counter id="clicksTotal" name="Всего кликов с начала месяца"/>
+    <counter id="clicksTotalPaid" name="Кликов по кампаниям с оплатой за клики с начала месяца"/>
+    <counter id="ctr" name="CTR с начала месяца" units="%"/>
+    <counter id="paid" name="Заработано с начала месяца" units="р"/>
+  </counters>
+  <keywords>
+    реклама
+  </keywords>
+  <type>
+    adv
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

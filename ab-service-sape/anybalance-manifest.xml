@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="4">ab-service-sape</id>
+  <name>Sape (продвижение сайтов)</name>
+  <description>
+    Получает баланс для биржи ссылок Sape (http://www.sape.ru).
+
+    Информация берется из личного кабинета https://auth.sape.ru
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="available" name="Доступно" units="р"/>
+  </counters>
+  <keywords>
+    поисковая оптимизация
+  </keywords>
+  <type>
+    service, seo
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

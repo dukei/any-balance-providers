@@ -54,6 +54,14 @@ function parseTrafficGb(str){
   return parseFloat((val/1000).toFixed(2));
 }
 
+function html_entity_decode(str)
+{
+    //jd-tech.net
+    var tarea=document.createElement('textarea');
+    tarea.innerHTML = str;
+    return tarea.value;
+}
+
 function main(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
@@ -74,7 +82,7 @@ function main(){
     }
     
     if(!/\/logout\//.test(html)){
-        var error = getParam(html, null, null, /<ul class="errorlist">([\s\S]*?)<\/ul>/i, [/<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/, '']);
+        var error = getParam(html, null, null, /<ul class="errorlist">([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error);
         throw new AnyBalance.Error("Не удалось зайти в личный кабинет. Проблемы на сайте?");
@@ -88,17 +96,17 @@ function main(){
     if(AnyBalance.isAvailable('status', 'status_internet', 'status_tv', 'userName', 'till', 'topay', 'abon')){
        html = AnyBalance.requestGet(baseurl + 'personal/');
 
-       getParam(html, result, 'status', /usluga_name">Текущий статус[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
-       getParam(html, result, 'status_internet', /usluga_name">Интернет[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
-       getParam(html, result, 'status_tv', /usluga_name">Телевидение[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
-       getParam(html, result, 'userName', /usluga_name">Владелец договора[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+       getParam(html, result, 'status', /usluga_name">Текущий статус[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+       getParam(html, result, 'status_internet', /usluga_name">Интернет[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+       getParam(html, result, 'status_tv', /usluga_name">Телевидение[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+       getParam(html, result, 'userName', /usluga_name">Владелец договора[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
        getParam(html, result, 'till', /Дата окончания расчетного периода[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
-       getParam(html, result, 'topay', /Сумма к оплате[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+       getParam(html, result, 'topay', /Сумма к оплате[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, html_entity_decode);
        getParam(html, result, 'abon', /Сумма ежемесячного платежа[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     }
 
     html = AnyBalance.requestGet(baseurl + 'internet/');
-    getParam(html, result, '__tariff', /Тарифный план[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+    getParam(html, result, '__tariff', /Тарифный план[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'traffic', /Предоплаченный трафик[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTrafficGb);;
     
     AnyBalance.setResult(result);

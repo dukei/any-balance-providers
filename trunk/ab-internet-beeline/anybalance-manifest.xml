@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="4">ab-internet-beeline</id>
+  <id version="5">ab-internet-beeline</id>
   <name>Beeline интернет</name>
   <description>
     Получает баланс, бонусы и информацию о тарифном плане для Beeline интернет. 

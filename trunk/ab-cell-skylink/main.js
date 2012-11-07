@@ -85,7 +85,8 @@ function parseBalance(text){
 var g_regions = {
     moscow: mainMoscow,
     uln: mainUln,
-    kuban: mainKuban
+    kuban: mainKuban,
+    spb: mainSpb
 };
 
 function main(){
@@ -237,6 +238,46 @@ function mainKuban(){
     getParam(html, result, 'traffic', /израсходовано\s*<b[^>]*>\s*<!--VALUE-->([^<]*)<!--ENDVALUE-->\s*<\/b>\s*мегабайт/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, '__tariff',  /Текущий тарифный план:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
     sumParam(html, result, 'trafficPack',  /Баланс в Трафик(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance);
+    
+    AnyBalance.setResult(result);
+}
+
+function mainSpb(){
+    var prefs = AnyBalance.getPreferences();
+
+    var baseurl = "https://app.spb.skylink.ru:7772/internetBalance/";
+    AnyBalance.setDefaultCharset('windows-1251');
+
+    var headers = {
+    	"User-Agent":'Mozilla/5.0 (Windows NT 5.1; rv:2.0) Gecko/20100101 Firefox/4.0'
+    };
+    
+    var html = AnyBalance.requestPost(baseurl + 'j_security_check', {
+	j_username:prefs.login,
+	j_password:prefs.password,
+	'ctl00$pContent$ImageButton1.x':33,
+	'ctl00$pContent$ImageButton1.y':5
+    }, headers);
+
+    if(!/Exit.jsp/i.test(html)){
+        var error = getParam(html, null, null, /<span[^>]+class="err_msg"[^>]*>(.*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+        if(error)
+            throw new AnyBalance.Error(error);
+        throw new AnyBalance.Error("Не удалось войти в личный кабинет. Возможно, неправильный логин-пароль или регион.");
+    }
+
+    var result = {success: true}
+    
+    getParam(html, result, 'userName', /Контактное лицо:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'userNum', /Номер счета:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, '__tariff',  /Тарифный план:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'trafficDay',  /Передача данных, Mб в день:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+
+    if(AnyBalance.isAvailable('balance', 'status')){
+        html = AnyBalance.requestGet(baseurl + 'skyServiceBalance');
+        getParam(html, result, 'balance', /Баланс,[^<]*:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+        getParam(html, result, 'status', /Статус договора:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    }
     
     AnyBalance.setResult(result);
 }

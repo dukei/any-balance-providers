@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-internet-lks-tv</id>
+  <name>Телемир (Липецк)</name>
+  <description>
+    Получает баланс и информацию о тарифном плане для липецкого интернет-тв-провайдера Телемир (http://www.lks-tv.ru).
+
+    Информация берется из личного кабинета http://stat.lks-tv.ru.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="agreement" name="ID" type="text"/>
+    <counter id="userName" name="Абонент" type="text"/>
+  </counters>
+  <keywords>
+    интернет
+  </keywords>
+  <type>
+    internet, tv
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

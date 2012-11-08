@@ -113,6 +113,10 @@ function main(){
     var result = {success: true};
     
     html = AnyBalance.requestGet(baseurl + "function=is_account");
+
+    if(!/\?function=is_exit/i.test(html)){
+        throw new AnyBalance.Error("Не удалось зайти в личный кабинет. Проблемы на сайте или сайт изменен.");
+    }
     var $html = $(html);
     var $tableInfo = $html.find('table.ystyle:has(img[src*="images/issa/person.gif"])');
     AnyBalance.trace("Found info table: " + $tableInfo.length);

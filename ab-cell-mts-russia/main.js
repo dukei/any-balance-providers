@@ -485,6 +485,9 @@ function fetchAccountStatus(html, result){
     // Остаток минут по тарифу "Готовый офис" - 194 минут
     html = sumParam (html, result, 'min_left', /Остаток мин.*?([\d\.,]+)\s*мин/ig, replaceTagsAndSpaces, parseBalance, true);
 
+    // Остаток ежемесячных пакетов: 392 минут
+    html = sumParam (html, result, 'min_left', /Остаток ежемесячных пакетов:?\s*([\d\.,]+)\s*мин/ig, replaceTagsAndSpaces, parseBalance, true);
+
     // Остаток пакета: 24 минут
     html = sumParam (html, result, 'min_left', /Остаток пакета:?\s*([\d\.,]+)\s*мин/ig, replaceTagsAndSpaces, parseBalance, true);
 

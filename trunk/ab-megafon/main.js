@@ -671,15 +671,24 @@ function megafonServiceGuidePhysical(filial, sessionid){
                 text = AnyBalance.requestGet(baseurl + 'SCCEXTSYS/' + href);
                 var obj = sumParam(text, null, null, /setXMLEntities\s*\(\s*(\{[\s\S]*?\})\s*\)/);
                 if(obj){
-                     var i_t = sumParam(obj, null, null, /ALL_VOLUME[\s\S]*?value:\s*'([^']*)'/, replaceTagsAndSpaces, parseBalance);
+                     //Сначала попытаемся получить из надписи, почему-то там точнее написано.
+                     //Периодический объем. Расходуется. Осталось 3036.96 Мб из 3072.00 Мб. Срок действия до 07.12.2012 23:59:59
+                     var i_t = sumParam(obj, null, null, /Периодический объем.\s*Расходуется.\s*Осталось[^'"]*из([^'"]*)Срок/i, replaceTagsAndSpaces, parseTraffic);
+                     if(!isset(i_t))
+                         i_t = sumParam(obj, null, null, /ALL_VOLUME[\s\S]*?value:\s*'([^']*)'/, replaceTagsAndSpaces, parseBalance);
+
                      var i_c = sumParam(obj, null, null, /CUR_VOLUME[\s\S]*?value:\s*'([^']*)'/, replaceTagsAndSpaces, parseBalance);
-                     var i_l = sumParam(obj, null, null, /LAST_VOLUME[\s\S]*?value:\s*'([^']*)'/, replaceTagsAndSpaces, parseBalance);
+
+                     var i_l = sumParam(obj, null, null, /Периодический объем.\s*Расходуется.\s*Осталось([^'"]*)из/i, replaceTagsAndSpaces, parseTraffic);
+                     if(!isset(i_l))
+                         i_l = sumParam(obj, null, null, /LAST_VOLUME[\s\S]*?value:\s*'([^']*)'/, replaceTagsAndSpaces, parseBalance);
+
                      if(i_t && AnyBalance.isAvailable('internet_total'))
                          result.internet_total = (result.internet_total || 0) + i_t;
-                     if(typeof(i_c) != 'undefined' && AnyBalance.isAvailable('internet_cur'))
+                     if(isset(i_c) && AnyBalance.isAvailable('internet_cur'))
                          if(i_t || i_c) //Если всё по нулям, это может быть просто глюк мегафона
                              result.internet_cur = (result.internet_cur || 0) + i_c;
-                     if(typeof(i_l) != 'undefined' && AnyBalance.isAvailable('internet_left'))
+                     if(isset(i_l) && AnyBalance.isAvailable('internet_left'))
                          if(i_t || i_l) //Если всё по нулям, это может быть просто глюк мегафона
                              result.internet_left = (result.internet_left || 0) + i_l;
                 }else{
@@ -705,6 +714,10 @@ function megafonServiceGuidePhysical(filial, sessionid){
         result.sms_left = sms_left;
 
     AnyBalance.setResult(result);
+}
+
+function isset(v){
+    return typeof(v) != 'undefined';
 }
 
 //Получает значение из таблиц на странице аккаунта по фрагменту названия строки

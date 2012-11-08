@@ -103,7 +103,7 @@ function main(){
 function mainMoscow(){
     var prefs = AnyBalance.getPreferences();
 
-    var baseurl = "https://www.skypoint.ru/Account/Login.aspx?ReturnUrl=%2f";
+    var baseurl = "https://www.skypoint.ru/";
     AnyBalance.setDefaultCharset('utf-8');
 
     var headers = {
@@ -117,11 +117,11 @@ function mainMoscow(){
 
 
 
-    var html = AnyBalance.requestGet(baseurl, headers);
+    var html = AnyBalance.requestGet(baseurl + 'Account/Login.aspx?ReturnUrl=%2f', headers);
     var eventvalidation = getEventValidation(html);
     var viewstate = getViewState(html);
 
-    html = AnyBalance.requestPost(baseurl, {
+    html = AnyBalance.requestPost(baseurl + 'Account/Login.aspx?ReturnUrl=%2f', {
 	__EVENTTARGET:'',
 	__EVENTARGUMENT:'',
 	__VIEWSTATE:viewstate,
@@ -152,6 +152,11 @@ function mainMoscow(){
     getParam(html, result, 'balance', /Баланс лицевого счёта[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, '__tariff', /<span[^>]+id="ucAbonentInfo_lblTariffPlan"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
 
+    if(AnyBalance.isAvailable('charged')){
+        html = AnyBalance.requestGet(baseurl + 'AbonentCenter/Summary.aspx');
+        getParam(html, result, 'charged', /<span[^>]+id="[^"]*CurrentlyUsed">([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+    }
+    
     AnyBalance.setResult(result);
 }
 

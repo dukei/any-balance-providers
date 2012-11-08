@@ -298,28 +298,37 @@ function megafonTrayInfo(filial){
     if(AnyBalance.isAvailable('sms_left','sms_total')){
         var $val = $threads.filter(':has(NAME:contains("SMS"))');
         AnyBalance.trace('Found SMS discounts: ' + $val.length);
-        if($val.length){
+        $val.each(function(){
+            var $e = $(this);
             if(AnyBalance.isAvailable('sms_left')){
-                result.sms_left = parseInt($val.first().find('VOLUME_AVAILABLE').text());
+                var val = $e.find('VOLUME_AVAILABLE').text();
+                if(val) result.sms_left = (result.sms_left || 0) + parseInt(val);
             }
             if(AnyBalance.isAvailable('sms_total')){
-                result.sms_total = parseInt($val.first().find('VOLUME_TOTAL').text());
+                var val = $e.find('VOLUME_TOTAL').text();
+                if(val) result.sms_total = (result.sms_total || 0) + parseInt(val);
             }
-        }
+        });
         
     }
     
     if(AnyBalance.isAvailable('mins_left','mins_total')){
         var $val = $threads.filter(':has(NAME:contains(" мин")), :has(NAME:contains("Телефония исходящая")), :has(NAME:contains("Исходящая телефония"))');
         AnyBalance.trace('Found minutes discounts: ' + $val.length);
-        if($val.length){
+        $val.each(function(){
+            var $e = $(this);
+            var si = $e.parent().find('PLAN_SI').text();
+            if(/Байт/i.test(si))
+                return; //Это глюк мегафона, написано байт, а должны быть минуты
             if(AnyBalance.isAvailable('mins_left')){
-                result.mins_left = parseInt($val.first().find('VOLUME_AVAILABLE').text())*60;
+                var val = $e.find('VOLUME_AVAILABLE').text();
+                if(val) result.mins_left = (result.mins_left || 0) + parseInt(val)*60;
             }
             if(AnyBalance.isAvailable('mins_total')){
-                result.mins_total = parseInt($val.first().find('VOLUME_TOTAL').text())*60;
+                var val = $e.find('VOLUME_TOTAL').text();
+                if(val) result.mins_total = (result.mins_total || 0) + parseInt(val)*60;
             }
-        }
+        });
     }
 
     if(AnyBalance.isAvailable('internet_left','internet_total','internet_cur')){

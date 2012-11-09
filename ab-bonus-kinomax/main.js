@@ -23,7 +23,10 @@ function main() {
 	html = AnyBalance.requestGet('http://kinomax.ru/users/lk/dnk.htm');
     var r = new RegExp('<a[^>]+href="/users/logout/">');
 	if(r.test(html)) {
+		AnyBalance.setDefaultCharset('utf-8');
+
 		html = AnyBalance.requestGet('http://kinomax.ru/schedule/lk.php');
+		//AnyBalance.trace(html);
 
 		r=new RegExp('карта № <b>(\\d+)</b>');
 		matches=r.exec(html);

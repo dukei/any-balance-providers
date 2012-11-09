@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-    <id version="1">ab-bonus-kinomax</id>
+    <id version="2">ab-bonus-kinomax</id>
     <name>Киномакс</name>
     <description>Информация по бонусной карте Киномакс (http://kinomax.ru).
     
@@ -11,6 +11,7 @@
 		<icon>icon.png</icon>
         <preferences>preferences.xml</preferences>
         <js>main.js</js>
+		<history>history.xml</history>
     </files>
     <counters>
         <counter id="card" name="Номер карты" type="text"/>

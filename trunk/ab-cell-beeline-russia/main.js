@@ -29,6 +29,42 @@ function getParam (html, result, param, regexp, replaces, parser) {
 	}
 }
 
+function sumParam (html, result, param, regexp, replaces, parser, do_replace) {
+	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param))){
+            if(do_replace)
+  	        return html;
+            else
+                return;
+	}
+
+        var total_value;
+	var html_copy = html.replace(regexp, function(str, value){
+		for (var i = 0; replaces && i < replaces.length; i += 2) {
+			value = value.replace (replaces[i], replaces[i+1]);
+		}
+		if (parser)
+			value = parser (value);
+                if(typeof(total_value) == 'undefined')
+                	total_value = value;
+                else
+                	total_value += value;
+                return ''; //Вырезаем то, что заматчили
+        });
+
+    if(param){
+      if(typeof(total_value) != 'undefined'){
+          if(typeof(result[param]) == 'undefined')
+      	      result[param] = total_value;
+          else 
+      	      result[param] += total_value;
+      }
+      if(do_replace)
+          return html_copy;
+    }else{
+      return total_value;
+    }
+}
+
 var replaceTagsAndSpaces = [/<!--[\s\S]*?-->/g, '', /&nbsp;/g, ' ', /<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
 var replaceFloat = [/\s+/g, '', /,/g, '.'];
 
@@ -126,9 +162,10 @@ function parsePersonal(baseurl, html){
     AnyBalance.setResult(result);
 }
 
-function parseBalance(val){
-    AnyBalance.trace("Parsing money value: '" + val + "'");
-    return parseFloat(val);
+function parseBalance(text){
+    var val = sumParam(text.replace(/\s+/g, ''), null, null, /(-?\d[\d.,]*)/, replaceFloat, parseFloat);
+    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
+    return val;
 }
 
 function getBalanceValue(html, text, parseFunc, result, counter){
@@ -150,14 +187,9 @@ function parseBalanceList(html, result){
     
     // Бонус-баланс
     if(AnyBalance.isAvailable('bonus_balance')){
-      result.bonus_balance = 0;
-
-      var val = getBalanceValue (html, 'Бонус-баланс', parseFloat);
-      result.bonus_balance += val || 0;
-
+      sumParam(html, result, 'bonus_balance', /Бонус-баланс[\s\S]*?<td[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
       //Узбекистан
-      val = getBalanceValue (html, 'BEE_CLUB', parseFloat);
-      result.bonus_balance += val || 0;
+      sumParam(html, result, 'bonus_balance', /BEE_CLUB[\s\S]*?<td[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     }
     
     // Бонус за опрос
@@ -167,32 +199,19 @@ function parseBalanceList(html, result){
       result.sms_left = 0;
       
       // SMS-баланс
-      var sms = getBalanceValue (html, 'SMS-баланс', parseInt);
-      result.sms_left += sms || 0;    
-
+      sumParam(html, result, 'sms_left', /SMS-баланс[\s\S]*?<td[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
       // SMS в подарок
-      sms = getBalanceValue (html, 'SMS в подарок', parseInt);
-      result.sms_left += sms || 0;
-      
+      sumParam(html, result, 'sms_left', /SMS в подарок[\s\S]*?<td[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
       // Бесплатные SMS
-      sms = getBalanceValue (html, 'Бесплатные SMS', parseInt);
-      result.sms_left += sms || 0;
-      
+      sumParam(html, result, 'sms_left', /Бесплатные SMS[\s\S]*?<td[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
       // SMS Бонус  //Узбекистан
-      sms = getBalanceValue (html, 'SMS Бонус', parseInt);
-      result.sms_left += sms || 0;
-      
+      sumParam(html, result, 'sms_left', /SMS Бонус[\s\S]*?<td[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
       // Баланс SMS  //Узбекистан
-      sms = getBalanceValue (html, 'Баланс SMS', parseInt);
-      result.sms_left += sms || 0;
-      
+      sumParam(html, result, 'sms_left', /Баланс SMS[\s\S]*?<td[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
       // Пакет МН SMS  //Узбекистан
-      sms = getBalanceValue (html, 'Пакет МН SMS', parseInt);
-      result.sms_left += sms || 0;
-      
+      sumParam(html, result, 'sms_left', /Пакет МН SMS[\s\S]*?<td[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
       // Дополнительный SMS баланс  //Узбекистан
-      sms = getBalanceValue (html, 'Дополнительный SMS баланс', parseInt);
-      result.sms_left += sms || 0;
+      sumParam(html, result, 'sms_left', /Дополнительный SMS баланс[\s\S]*?<td[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     }
 	
 	if(AnyBalance.isAvailable('sms_expiration')){
@@ -203,31 +222,18 @@ function parseBalanceList(html, result){
     getBalanceValue (html, 'MMS в подарок', parseInt, result, 'mms_left');
 
     if(AnyBalance.isAvailable('min_left')){
-      result.min_left = 0;
-      
       // Бесплатные секунды
-      var sms = getBalanceValue (html, 'Бесплатные секунды', parseInt);
-      result.min_left += sms || 0;
-      
+      sumParam(html, result, 'min_left', /Бесплатные секунды[\s\S]*?<td[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
       // Время в подарок
-      sms = getBalanceValue (html, 'Время в подарок', parseInt);
-      result.min_left += sms || 0;
-      
+      sumParam(html, result, 'min_left', /Время в подарок[\s\S]*?<td[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
       // БОНУС_СЕКУНДЫ
-      sms = getBalanceValue (html, 'БОНУС_СЕКУНДЫ', parseInt);
-      result.min_left += sms || 0;
-      
+      sumParam(html, result, 'min_left', /БОНУС_СЕКУНДЫ[\s\S]*?<td[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
       // Бонус секунды //Узбекистан
-      sms = getBalanceValue (html, 'БОНУС_СЕКУНДЫ', parseInt);
-      result.min_left += sms || 0;
-
+      sumParam(html, result, 'min_left', /БОНУС СЕКУНДЫ[\s\S]*?<td[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
       // Час в подарок //Узбекистан
-      sms = getBalanceValue (html, 'Час в подарок', parseInt);
-      result.min_left += sms || 0;
-
+      sumParam(html, result, 'min_left', /Час в подарок[\s\S]*?<td[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
       // Баланс исходящих минут //Узбекистан
-      sms = getBalanceValue (html, 'Баланс исходящих минут', parseInt);
-      result.min_left += sms || 0;
+      sumParam(html, result, 'min_left', /Баланс исходящих минут[\s\S]*?<td[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     }
 
     if(AnyBalance.isAvailable('traffic')){
@@ -255,12 +261,13 @@ function parseMinutes(str){
 
 function parseDate(str){
     var matches = /(\d+)[^\d](\d+)[^\d](\d+)/.exec(str);
-    var time = 0;
     if(matches){
-	  time = (new Date(+matches[3], matches[2]-1, +matches[1])).getTime();
+          var date = new Date(+matches[3], matches[2]-1, +matches[1]);
+	  var time = date.getTime();
+          AnyBalance.trace('Parsing date ' + date + ' from value: ' + str);
+          return time;
     }
-    AnyBalance.trace('Parsing date ' + new Date(time) + 'from value: ' +  str);
-    return time;
+    AnyBalance.trace('Failed to parse date from value: ' + str);
 }
 
 //Билайн показывает старый расчетый период.
@@ -295,6 +302,71 @@ function getPhone(html){
     	getParam(html, null, null, /subscriberListExt=CellClick=viewLinkStr=(\d+)/i);
 }
 
+function addParamsFromStr(params, str){
+    if(!str)
+        return params;
+    var pairs = str.split(/&/ig);
+    for(var i=0; i<pairs.length; ++i){
+        var pos = pairs[i].indexOf('=');
+        if(pos >= 0)
+            params[pairs[i].substr(0, pos)] = pairs[i].substr(pos + 1);
+        else
+            params[pairs[i]] = '';
+    }
+    return params;
+}
+
+function ensureItemHierarchyIsSelected(baseurl, curdoc, html){
+    //Проверим, выбрана ли сейчас группа счетов, или папка
+    var tr = getParam(html, null, null, /(<tr[^>]*>(?:[\s\S](?!<tr))*<td[^>]+class=['"]?tis["']?[^>]*>[\s\S]*?<\/tr>)/i);
+    if(!tr)
+        AnyBalance.trace('Не удаётся найти выбранный уровень иерархии...');
+    if(tr){
+        if(!/15\/item\.gif/i.test(tr)){
+            AnyBalance.trace('Текущий уровень иерархии - не группа счетов. Надо найти группу счетов.');
+            var trClosed, tries = 0;
+            do{
+                if(++tries > 5){
+                    AnyBalance.trace('Сделано слишком много итераций ' + tries + ': оставляем как есть');
+                    break;
+                }
+                tr = getParam(html, null, null, /(<tr[^>]*>(?:[\s\S](?!<tr))*15\/item\.gif[\s\S]*?<\/tr>)/i);
+                trClosed = getParam(html, null, null, /(<tr[^>]*>(?:[\s\S](?!<tr))*15\/folderClosed\.gif[\s\S]*?<\/tr>)/i);
+                if(tr){
+                    AnyBalance.trace('Переходим в группу счетов ' + getParam(tr, null, null, /(.*)/, replaceTagsAndSpaces));
+                    var product_params = getParam(tr, null, null, /hierarchyTreeAction.do\?([^'"]*Drilldown[^'"]*)/i);
+                    var xHierarchy = getParam(tr, null, null, /doTreeSubmit\s*\(\s*'([^']*)/i);
+                    var params = {
+                        _stateParam:getStateParam(html),
+                        _forwardName:'',
+                        _resetBreadCrumbs:true,
+                        _expandStatus:'',
+                    };
+                    addParamsFromStr(params, product_params);
+                    params[xHierarchy] = params.products_param;
+                    html = AnyBalance.requestPost(baseurl + "hierarchyTreeAction.do", params);
+                }else if(trClosed){
+                    AnyBalance.trace('Найден закрытый фолдер ' + getParam(trClosed, null, null, /(.*)/, replaceTagsAndSpaces) + '. Открываем...');
+                    var prevParams = getParam(html, null, null, /prevRequestParameters\s*=\s*'([^']*)/i);
+                    var product_params = getParam(trClosed, null, null, /hierarchyTreeAction.do\?([^'"]*Expand[^'"]*)/i);
+                    if(!product_params)
+                        throw new AnyBalance.Error('Не найдены параметры для открытия фолдера!');
+                    var params = {};
+                    addParamsFromStr(params, prevParams);
+                    addParamsFromStr(params, product_params);
+                    html = AnyBalance.requestPost(baseurl + curdoc, params);
+                }else{
+                    AnyBalance.trace('Не удалось найти ни одной группы счетов, оставляем как есть...');
+                }
+            }while(trClosed);
+        }else{
+            AnyBalance.trace('Отлично, уже выбрана группа счетов ' + getParam(tr, null, null, /(.*)/i, replaceTagsAndSpaces));
+        }
+    }
+    //На этом этапе должано быть выбрана уже группа счетов
+    return html;
+}
+
 function parseCorporate(baseurl, html){
     var result = {success: true};
 
@@ -311,13 +383,15 @@ function parseCorporate(baseurl, html){
     // Номер договора
     getParam (html, result, 'license', /Номер Договора[\s\S]*?<td[^>]*>\s*(.*?)\s*</, null, html_entity_decode);
 
+    // 	Дата окончания расчетного периода:
+    getParam (html, result, 'period_till', /Дата окончания расчетного периода:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+
+
     AnyBalance.trace("Fetching number info...");
-    
-    var stateParam = getStateParam(html);
     
     //Меню "пользователи"
     html = AnyBalance.requestPost(baseurl + "OnLoadSubscriberProfileFilterAction.do", {
-        _stateParam:stateParam,
+        _stateParam:getStateParam(html),
         _expandStatus:'',
         '_navigation_thirdMenu':'services.profileManagement.subscribers',
         resetBreadCrumbs:'true'
@@ -373,8 +447,10 @@ function parseCorporate(baseurl, html){
         html = AnyBalance.requestPost(baseurl + "navigateMenu.do", {
           _stateParam: getStateParam(html),
           _navigation_secondaryMenu:'billing.payment',
-          _resetBreadCrumbs:'true'
+          _resetBreadCrumbs:true
         });
+
+        html = ensureItemHierarchyIsSelected(baseurl, "navigateMenu.do", html);
 
         // Баланс
         getParam (html, result, 'balance', /Текущий баланс[\s\S]*?<td[^>]*>\s*([\s\S]*?)\s*</i, alltransformations, parseBalance);
@@ -382,67 +458,106 @@ function parseCorporate(baseurl, html){
         getParam (html, result, 'period_begin', /<select[^>]*name="dateList\.code"[^>]*>\s*<option[^>]*>([^<]*)/i, null, parsePeriod);
       }
 
-      if(AnyBalance.isAvailable('expences','expencesTraffic','expencesAbon','expencesInstant')){
-        AnyBalance.trace("Fetching current period calls...");
-        // Финансовая информация - звонки текущего периода
-        html = AnyBalance.requestPost(baseurl + "loadUnbilledAction.do", {
+      if(AnyBalance.isAvailable('billsum', 'billpay', 'billpaytill')){
+        AnyBalance.trace("Fetching bills info...");
+
+        // Финансовая информация - счета
+        html = AnyBalance.requestPost(baseurl + "navigateMenu.do", {
           _stateParam: getStateParam(html),
-          "_navigation_secondaryMenu":'billing.unbilledCalls',
-          "_resetBreadCrumbs":'true'
+          _expandStatus:'',
+          _navigation_secondaryMenu:'billing.benLevelBills',
+          _resetBreadCrumbs:true
         });
 
-        for(var i=0; i<3; i++){
-        // Финансовая информация - звонки текущего периода - Начисления
-        var stateParam = getStateParam(html);
-            AnyBalance.trace("Fetching expences info (" + (i+1) + "/3)...");
-            html = AnyBalance.requestPost(baseurl + "VIPUnbilledSubscribersSwitchingAction.do", {
-              _stateParam: stateParam,
-              _forwardName:'unbilledCharge',
-              _resetBreadCrumbs:'null',
-              "ctrlvcol%3Dradio%3Bctrl%3DsubscriberListExt%3Btype%3Drd":phone
-            });
+        html = ensureItemHierarchyIsSelected(baseurl, "navigateMenu.do", html);
 
-            var error = getParam(html, null, null, /<LI[^>]*class="errorMessage"[^>]*>([\S\s]*?)<\/LI>/i, replaceTagsAndSpaces, html_entity_decode);
-            // Тут иногда выдаёт <LI class="errorMessage">Обслуживание в настоящее время невозможно. Повторите, пожалуйста, запрос позже.</LI>
-            if(!error)
-                break;
-            AnyBalance.trace("Ошибка получения расходов: " + error)
+        getParam (html, result, 'billpaytill', /Оплатить до:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+        getParam (html, result, 'billsum', /Всего по счету:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+        getParam (html, result, 'billpay', /Всего к оплате:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+      }
+
+      if(AnyBalance.isAvailable('expences','expencesTraffic','expencesAbon','expencesInstant')){
+        AnyBalance.trace("Fetching current period calls for expences...");
+        // Финансовая информация - звонки текущего периода
+        html = AnyBalance.requestPost(baseurl + "navigateMenu.do", {
+          _stateParam: getStateParam(html),
+          _navigation_secondaryMenu:'billing.unbilledCalls',
+          _resetBreadCrumbs:true
+        });
+
+        html = ensureItemHierarchyIsSelected(baseurl, "navigateMenu.do", html);
+
+        //Возьмем все номера
+        var phones = [];
+        html.replace(/<input[^>]+value=['"]([^'"]*)[^>]*name=["']ctrlvcol%3Dradio%3Bctrl%3DsubscriberListExt%3Btype%3Drd["']/ig, function(str, num){
+            if(num){
+                if(phones.length < 10){
+                    phones[phones.length] = num;
+                }else{
+                    AnyBalance.trace('Пропускаем номер телефона ' + num + ', потому что номеров больше 10...');
+                }
+            }
+        });
+        AnyBalance.trace('Попытаемся получить начисления для телефонов: ' + phones.join(', '));
+
+        for(var j=0; j<phones.length; ++j){
+            for(var i=0; i<3; i++){
+                var num = phones[j];
+                // Финансовая информация - звонки текущего периода - Начисления
+                AnyBalance.trace("Fetching expences info (" + (i+1) + "/3)...");
+                html = AnyBalance.requestPost(baseurl + "VIPUnbilledSubscribersSwitchingAction.do", {
+                  _stateParam: getStateParam(html),
+                  _forwardName:'unbilledCharge',
+                  _resetBreadCrumbs:true,
+                  "ctrlvcol%3Dradio%3Bctrl%3DsubscriberListExt%3Btype%3Drd":num
+                });
+            
+                var error = getParam(html, null, null, /<LI[^>]*class="errorMessage"[^>]*>([\S\s]*?)<\/LI>/i, replaceTagsAndSpaces, html_entity_decode);
+                // Тут иногда выдаёт <LI class="errorMessage">Обслуживание в настоящее время невозможно. Повторите, пожалуйста, запрос позже.</LI>
+                if(!error)
+                    break;
+                AnyBalance.trace("Ошибка получения расходов: " + error)
+            }
+            
+            AnyBalance.trace("Получаем расходы для номера: " + num)
+            // Сколько использовано
+            sumParam (html, result, 'expences', /Общая сумма начислений[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+            sumParam (html, result, 'expencesTraffic', /Начисления за трафик[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+            sumParam (html, result, 'expencesAbon', /Абонентская плата[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+            sumParam (html, result, 'expencesInstant', /Разовые начисления[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
         }
-        
-        // Сколько использовано
-        getParam (html, result, 'expences', /Общая сумма начислений[\s\S]*?<td>\s*([\s\S]*?)\s*</i, alltransformations, parseBalance);
-        getParam (html, result, 'expencesTraffic', /Начисления за трафик[\s\S]*?<td>\s*([\s\S]*?)\s*</i, alltransformations, parseBalance);
-        getParam (html, result, 'expencesAbon', /Абонентская плата[\s\S]*?<td>\s*([\s\S]*?)\s*</i, alltransformations, parseBalance);
-        getParam (html, result, 'expencesInstant', /Разовые начисления[\s\S]*?<td>\s*([\s\S]*?)\s*</i, alltransformations, parseBalance);
-
+          
       }
 
       if(AnyBalance.isAvailable('sms_left', 'min_left')){
-        AnyBalance.trace("Fetching inclusive info...");
-        // Финансовая информация - звонки текущего периода - включенные минуты
-        html = AnyBalance.requestPost(baseurl + "loadUnbilledAction.do", {
-          "_navigation_secondaryMenu":'billing.unbilledCalls',
-          "_resetBreadCrumbs":'true'
-        });
-
-        
-      // Финансовая информация - звонки текущего периода - включенные минуты
-        var stateParam = getStateParam(html);
-        html = AnyBalance.requestPost(baseurl + "VIPUnbilledSubscribersSwitchingAction.do", {
-          _stateParam: stateParam,
-          _forwardName:'unusedInclusive',
-          _resetBreadCrumbs:'null',
-          "ctrlvcol%3Dradio%3Bctrl%3DsubscriberListExt%3Btype%3Drd":phone
-        });
-        
-        // Сколько использовано минут
-        //<td>Всё включено L (фед.)         </td><td>26.02.2012</td><td>10.03.2012</td><td>252,00</td><td>мин.</td>
-        getParam (html, result, 'min_left', /<td>(-?\d[^<]*)<\/td><td>мин[^<]*<\/td>/i, [/\s+/g, '', /,/g, '.'], parseMinutes);
-        // Сколько использовано смс
-        //<td>(0/0) СМС (прием/передача)    </td><td>26.02.2012</td><td>10.03.2012</td><td>2 984,00</td><td>шт.</td>
-        //Странно /(-\d[\d\.,\s]*) не матчит число с пробелом в андроиде. Точнее, матчит только 2. Что за хрень такая?
-        getParam (html, result, 'sms_left', /<td>[^<]*(?:СМС|SMS)(?:[^<]*<\/td><td>){3}(-?\d[^<]*)/i, [/\s+/g, '', /,/g, '.'], parseFloat);
+          AnyBalance.trace("Fetching current period calls for minutes...");
+          // Финансовая информация - звонки текущего периода
+          html = AnyBalance.requestPost(baseurl + "navigateMenu.do", {
+            _stateParam: getStateParam(html),
+            _navigation_secondaryMenu:'billing.unbilledCalls',
+            _resetBreadCrumbs:true
+          });
+          
+          html = ensureItemHierarchyIsSelected(baseurl, "navigateMenu.do", html);
+          
+          // Финансовая информация - звонки текущего периода - включенные минуты
+          var stateParam = getStateParam(html);
+          html = AnyBalance.requestPost(baseurl + "VIPUnbilledSubscribersSwitchingAction.do", {
+            _stateParam: stateParam,
+            _forwardName:'unusedInclusive',
+            _resetBreadCrumbs:true,
+            "ctrlvcol%3Dradio%3Bctrl%3DsubscriberListExt%3Btype%3Drd":phone
+          });
+          
+          // Сколько использовано минут
+          //<td>Всё включено L (фед.)         </td><td>26.02.2012</td><td>10.03.2012</td><td>252,00</td><td>мин.</td>
+          getParam (html, result, 'min_left', /<td>(-?\d[^<]*)<\/td><td>мин[^<]*<\/td>/i, replaceTagsAndSpaces, parseMinutes);
+          // Сколько использовано смс
+          //<td>(0/0) СМС (прием/передача)    </td><td>26.02.2012</td><td>10.03.2012</td><td>2 984,00</td><td>шт.</td>
+          //Странно /(-\d[\d\.,\s]*) не матчит число с пробелом в андроиде. Точнее, матчит только 2. Что за хрень такая?
+          getParam (html, result, 'sms_left', /<td>[^<]*(?:СМС|SMS)(?:[^<]*<\/td><td>){3}(-?\d[^<]*)/i, replaceTagsAndSpaces, parseBalance);
       }
+
     }
     
     AnyBalance.setResult(result);

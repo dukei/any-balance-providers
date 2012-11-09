@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="2.0" version="23">ab-cell-beeline-russia</id>
+  <id major_version="2.1" version="24">ab-cell-beeline-russia</id>
   <name>Билайн</name>
   <description>
     Получает баланс, бонусный баланс, количество бесплатных SMS, MMS и минут, владельца, тарифный план и номер договора.
@@ -43,15 +43,19 @@
     <counter id="sms_left" name="SMS" units="sms"/>
     <counter id="mms_left" name="MMS" units="mms"/>
     <counter id="expences" name="Потрачено за период (корп.)" units="р"/>
+    <counter id="billsum" name="Сумма счета (корп.)" units="р"/>
+    <counter id="billpay" name="Сумма к оплате (корп.)" units="р"/>
+    <counter id="billpaytill" name="Срок оплаты счета (корп.)" type="time" format="dd/MM/yyyy"/>
     <counter id="userName" name="Владелец" type="text"/>
     <counter id="BlockStatus" name="Состояние номера" type="text"/>
     <counter id="license" name="Номер договора" type="text"/>
     <counter id="traffic" name="Трафик" units="Мб"/>
-    <counter id="sms_expiration" name="Дата окончания действия смс-пакета" type="time"/>
+    <counter id="sms_expiration" name="Дата окончания действия смс-пакета" type="time" format="dd/MM/yyyy"/>
     <counter id="expencesTraffic" name="Начисления за трафик (корп.)" units="р"/>
     <counter id="expencesAbon" name="Начисления абон.платы (корп.)" units="р"/>
     <counter id="expencesInstant" name="Разовые начисления (корп.)" units="р"/>
-    <counter id="period_begin" name="Начало расчетного периода (корп.)" type="time"/>
+    <counter id="period_begin" name="Начало расчетного периода (корп.)" type="time" format="dd/MM/yyyy"/>
+    <counter id="period_end" name="Конец расчетного периода (корп.)" type="time" format="dd/MM/yyyy"/>
   </counters>
   <keywords>
     Сотовый телефон, мобильный, мобильник, beeline, россия, узбекистан, корпоративный, предоплатный, кредитный

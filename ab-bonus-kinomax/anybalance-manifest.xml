@@ -2,7 +2,10 @@
 <provider>
     <id version="1">ab-bonus-kinomax</id>
     <name>Киномакс</name>
-    <description>Информация по бонусной карте Киномакс</description>
+    <description>Информация по бонусной карте Киномакс (http://kinomax.ru).
+    
+    Если у вас ещё нет доступа в личный кабинет Киномакс, зарегистрируйтесь здесь: http://kinomax.ru/booknow/?what=user.
+    </description>
     <author>BArtWell &lt;web@bartwell.ru&gt;</author>
     <files>
 		<icon>icon.png</icon>
@@ -17,9 +20,12 @@
         <counter id="active" name="Активный баланс" units="р"/>
     </counters>
     <keywords>
-        Бонусная карта, скидки, киномакс, kinomax
+      Бонусная карта, скидки, киномакс, kinomax
     </keywords>
     <type>
-        affiliate
+        bonus
     </type>
+    <country>
+       ru
+    </country>
 </provider>

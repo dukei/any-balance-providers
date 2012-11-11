@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-bonus-carbon</id>
+  <id version="2">ab-bonus-carbon</id>
   <name>Карта Carbon (ТНК)</name>
   <description>Получает баланс, количество активных и отложенных бонусов.</description>
   <author>BArtWell &lt;web@bartwell.ru&gt;</author>
@@ -8,6 +8,7 @@
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
     <js>main.js</js>
+    <history>history.xml</history>
   </files>
   <counters>
     <counter id="balance" name="Баланс" units="руб."/>

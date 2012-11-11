@@ -19,10 +19,10 @@ function main() {
 	var regexp;
 	if(html.indexOf('<a href="#" class="exit"')!=-1) {
 		//Целая часть баланса
-		regexp=new RegExp('<span class="balance-value" testid="availableBalance" id="[^"]+">(\\d+)</span>');
+		regexp=new RegExp('<span class="balance-value" testid="availableBalance" id="[^"]+">([0-9 ]+)</span>');
 		matches=regexp.exec(html);
 		if(matches==null) throw new AnyBalance.Error("Ошибка получения первой части баланса.");
-		result.balance=parseFloat(matches[1]);
+		result.balance=parseFloat(matches[1].replace(" ",""));
 
 		//Дробная часть баланса
 		regexp=new RegExp('<span class="saldo-cents" testid="availableBalanceKopecks" id="[^"]+">(\\d+)</span>');
@@ -31,16 +31,16 @@ function main() {
 		result.balance=result.balance+parseFloat(matches[1])/Math.pow(10,matches[1].length);
 
 		//Активные бонусы
-		regexp=new RegExp('<div class="active">[\\s\\S]+?<span class="bonuspoints">(\\d+)</span>');
+		regexp=new RegExp('<div class="active">[\\s\\S]+?<span class="bonuspoints">([0-9. ]+)</span>');
 		matches=regexp.exec(html);
 		if(matches==null) throw new AnyBalance.Error("Ошибка получения количества активных бонусов.");
-		result.active=parseInt(matches[1]);
+		result.active=parseFloat(matches[1].replace(" ",""));
 
 		//Отложенные бонусы
-		regexp=new RegExp('<div class="deferred">[\\s\\S]+?<span class="bonuspoints">(\\d+)</span>');
+		regexp=new RegExp('<div class="deferred">[\\s\\S]+?<span class="bonuspoints">([0-9. ]+)</span>');
 		matches=regexp.exec(html);
 		if(matches==null) throw new AnyBalance.Error("Ошибка получения количества отложенных бонусов.");
-		result.deferred=parseInt(matches[1]);
+		result.deferred=parseFloat(matches[1].replace(" ",""));
 		
 	} else {
 		regexp=new RegExp('<div testid="inputBadPwdOrCard" class="error">([\\s\\S]+?)</div>');

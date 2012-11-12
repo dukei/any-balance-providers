@@ -486,7 +486,10 @@ function fetchAccountStatus(html, result){
     html = sumParam (html, result, 'min_left', /Остаток мин.*?([\d\.,]+)\s*мин/ig, replaceTagsAndSpaces, parseBalance, true);
 
     // Остаток ежемесячных пакетов: 392 минут
-    html = sumParam (html, result, 'min_left', /Остаток ежемесячных пакетов:?\s*([\d\.,]+)\s*мин/ig, replaceTagsAndSpaces, parseBalance, true);
+    html = sumParam (html, result, 'min_left', /Остаток ежемесячных пакетов\s*:?\s*([\d\.,]+)\s*мин/ig, replaceTagsAndSpaces, parseBalance, true);
+
+    // Остаток ежемесячного пакета: 296 мин
+    html = sumParam (html, result, 'min_left', /Остаток ежемесячного пакета\s*:?\s*([\d\.,]+)\s*мин/ig, replaceTagsAndSpaces, parseBalance, true);
 
     // Остаток пакета: 24 минут
     html = sumParam (html, result, 'min_left', /Остаток пакета:?\s*([\d\.,]+)\s*мин/ig, replaceTagsAndSpaces, parseBalance, true);
@@ -510,6 +513,11 @@ function fetchAccountStatus(html, result){
     sumParam (html, result, 'sms_left', /(?:Осталось|Остаток)(?: пакета)? (?:sms|смс):\s*(\d+)/ig, replaceTagsAndSpaces, parseBalance);
     // Остаток СМС
     sumParam (html, result, 'sms_left', /(?:Осталось|Остаток)[^\d]*(\d+)\s*(?:sms|смс)/ig, replaceTagsAndSpaces, parseBalance);
+    // Остаток ежемесячных пакетов: 392 смс
+    sumParam (html, result, 'sms_left', /Остаток ежемесячных пакетов\s*:?\s*([\d\.,]+)\s*(?:смс|sms)/ig, replaceTagsAndSpaces, parseBalance);
+    // Остаток ежемесячного пакета : 98 смс
+    sumParam (html, result, 'sms_left', /Остаток ежемесячного пакета\s*:?\s*([\d\.,]+)\s*(?:смс|sms)/ig, replaceTagsAndSpaces, parseBalance);
+
 
     // Остаток ММС
     sumParam (html, result, 'mms_left', /(?:Осталось|Остаток)(?: пакета)? (?:mms|ммс):\s*(\d+)/ig, replaceTagsAndSpaces, parseBalance);

@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-    <change major_version="3.1" version="37" date="2012-10-17">
+    <change major_version="3.1" version="38" date="2012-11-11">
+      - Улучшено распознавание минут, включенных в тарифный план, в некоторых регионах
+    </change>
+    <change major_version="3.1" version="37" date="2012-11-09">
       - Улучшено распознавание минут, включенных в тарифный план
       - Иконка заменена на слегка более красивую
     </change>

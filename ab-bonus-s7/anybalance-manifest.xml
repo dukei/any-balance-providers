@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-bonus-s7</id>
+  <name>S7 Приоритет</name>
+  <description>
+    Получает баланс миль и другую информацию по бонусной карте авиакомпании S7 (http://www.s7.ru).
+
+    Информация берется из личного кабинета https://www.s7.ru/home/priority/ffpAbout.dot. 
+
+    Как получить накопительную карту и пароль к личному кабинету написано здесь: http://www.s7.ru/home/priority/ffpEnrollment.dot.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+    <js>library.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Мили"/>
+    <counter id="status" name="Статус" type="text"/>
+    <counter id="cardnum" name="Номер карты" type="text"/>
+    <counter id="userName" name="Имя" type="text"/>
+  </counters>
+  <keywords>
+    с7 эссевен sseven
+  </keywords>
+  <type>
+    bonus
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-byfly</id>
-  <name>ByFly</name>
+  <id version="1">ab-tv-zala</id>
+  <name>Zala.by</name>
   <description>
-    Получает данные из ИССА ByFly - торговой марки «Белтелеком», в рамках которой предлагается широкополосный доступ в сеть Интернет.
+    Получает данные из личного кабинета http://zala.by - белорусского провайдера IPTV.
 
     Данные берутся из личного кабинета https://issa.beltelecom.by.
   </description>
@@ -17,15 +17,12 @@
   <counters>
     <counter id="balance" name="Баланс" units="р"/>
     <counter id="pays" name="Платежи" units="р"/>
-    <counter id="trafficIn" name="Вх.трафик" units="Мб"/>
-    <counter id="trafficOut" name="Исх.трафик" units="Мб"/>
-    <counter id="trafficCost" name="Стоимость трафика" units="р"/>
     <counter id="corrections" name="Корректировка" units="р"/>
-    <counter id="agreement" name="Номер договора" type="text"/>
+    <counter id="agreement" name="Лицевой счет" type="text"/>
     <counter id="username" name="ФИО" type="text"/>
  </counters>
   <keywords>
-    провайдер интернет белоруссия байфлай
+    провайдер интернет белоруссия белтелеком зала
   </keywords>
   <type>
     internet

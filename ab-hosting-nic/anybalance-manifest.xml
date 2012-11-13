@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-hosting-nic</id>
+  <id version="2">ab-hosting-nic</id>
   <name>RU-CENTER (центр регистрации доменов)</name>
   <description>
     Получает баланс и информацию о доменах из центра регистрации доменов RU-CENTER (http://www.nic.ru).
@@ -14,6 +14,7 @@
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
     <js>main.js</js>
+    <history>history.xml</history>
   </files>
   <counters>
     <counter id="balance" name="Баланс" units="р"/>

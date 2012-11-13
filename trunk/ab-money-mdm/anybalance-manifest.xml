@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+    <id version="1">ab-money-mdm</id>
+    <name>МДМ-Банк</name>
+    <description>Информация о карте, счете, депозите в МДМ-Банке (http://www.mdm.ru).
+В настройках провайдера требуется указать логин и пароль к Интернет-банку https://client.mdmbank.ru.
+
+Как подключить Интернет–банк «МДМ online»?
+ * Обратитесь к персональному менеджеру в удобном для вас офисе.
+ * Оформите банковский счет и подпишите заявление на подключение услуги.
+ * Получите в офисе банка конверт с логином и паролем для доступа в Интернет – банк «МДМ online».
+</description>
+    <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+    <files>
+	<icon>icon.png</icon>
+        <preferences>preferences.xml</preferences>
+        <js>main.js</js>
+        <js>library.js</js>
+        <history>history.xml</history>
+    </files>
+    <counters>
+	<counter id="balance" name="Баланс"/>
+        <counter id="currency" name="Валюта" type="text"/>
+        <counter id="minpay" name="Минимальный платеж"/>
+        <counter id="blocked" name="Заблокировано"/>
+        <counter id="till" name="Срок действия" type="time" format="dd/MM/yyyy"/>
+        <counter id="nextpct" name="Следующая выплата процентов" type="time" format="dd/MM/yyyy"/>
+        <counter id="overlimit" name="Перерасход сверх лимита"/>
+        <counter id="comissiondebt" name="Комиссионная задолженность"/>
+	<counter id="pct" name="Процентная ставка" units="%"/>
+        <counter id="limit" name="Кредитный лимит"/>
+        <counter id="accnum" name="Номер счета" type="text"/>
+        <counter id="cardnum" name="Номер карты" type="text"/>
+        <counter id="accname" name="Название" type="text"/>
+    </counters>
+    <keywords>
+        Кредит, банк, mdm
+    </keywords>
+    <type>
+        money
+    </type>
+    <country>
+        ru
+    </country>
+</provider>

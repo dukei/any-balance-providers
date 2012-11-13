@@ -119,7 +119,10 @@ function main () {
         getParam (html, result, 'cardnumber', /Номер карты: <nobr>([^<]*)/i);
     
         // Баллы по последней операции
-        getParam (html, result, 'pointsinlastoper', /<td class="((?:positiv|negativ)-points"><span>\d*)/i, [/(positiv|negativ)-points"><span>(\d*)/, '$1$2', 'positiv', '+', 'negativ', '-']);
+        getParam (html, result, 'pointsinlastoper', /<td[^>]*class="(?:positiv|negativ)-points"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, function(str){
+            str = html_entity_decode(str.replace(/\s+/g, ''));
+            return str.replace(/^(\d)/, '+$1');
+        });
     }
 
 

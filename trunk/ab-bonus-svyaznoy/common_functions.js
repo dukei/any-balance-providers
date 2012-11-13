@@ -64,3 +64,14 @@ function parseBalance(text){
     return val;
 }
 
+/**
+ * Заменяет HTML сущности в строке на соответствующие им символы
+ */
+function html_entity_decode(str)
+{
+    //jd-tech.net
+    var tarea=document.createElement('textarea');
+    tarea.innerHTML = str;
+    return tarea.value;
+}
+

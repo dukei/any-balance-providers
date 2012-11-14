@@ -1,10 +1,10 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 
-Текущий баланс у оператора Мотив (Пермь, Екатеринбург).
+Текущий баланс у оператора Актив (Казахстан).
 
-Сайт оператора: http://motivtelecom.ru
-Личный кабинет: https://lisa.motivtelecom.ru
+Сайт оператора: http://activ.kz
+Личный кабинет: http://ics.activ.kz
 */
 
 function getParam (html, result, param, regexp, replaces, parser) {

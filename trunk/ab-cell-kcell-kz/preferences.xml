@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Телефон" 
+        positiveButtonText="ОК" 
+        summary="|Введите 10 цифр номера телефона|{@s}\n" 
+        dialogTitle="Телефон" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите 10 цифр вашего номера телефона в формате 701XXXXXXX, 702XXXXXXX, 775XXXXXXX или 778ХХХХХХХ, например, 7011234567."
+        inputType="number"
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="||***********\n"
+        dialogMessage="Введите пароль, используемый для входа в личный кабинет Kcell. Если Вы не знаете свой пароль, отправьте любое непустое бесплатное SMS сообщение на номер 245. В ответ Вы получите пароль."
+        inputType="textPassword">
+    </EditTextPreference>
+    <ListPreference 
+        key="lang" 
+        title="Язык"
+        summary="||{@s}\n"
+        entries="қазақ|русский|english"
+        entryValues="kk|ru|en"
+	defaultValue="kk">
+    </ListPreference>
+</PreferenceScreen>

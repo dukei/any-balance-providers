@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-cell-activ-kz</id>
+  <id version="2">ab-cell-activ-kz</id>
   <name>Activ (Казахстан)</name>
   <description>
     Получает баланс и информацию о тарифном плане для сотового оператора Activ (http://www.activ.kz).
     Информация берется из ИССА (Интернет Система Сервиса Абонента) http://ics.activ.kz
 
     Если у вас ещё нет пароля для входа в ИССА, вы можете его получить. Отправьте любое непустое бесплатное SMS сообщение на номер 245. В ответ Вы получите специальный пароль. Используйте его для входа в систему.
+
+    ВНИМАНИЕ! Если вы абонент Kcell, то воспользуйтесь провайдером Kcell (Казахстан).
   </description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
     <js>main.js</js>
+    <history>history.xml</history>
   </files>
   <counters>
     <counter id="balance" name="Баланс" units="〒"/>

@@ -1,0 +1,44 @@
+﻿/**
+Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
+
+Текущий баланс у оператора Kcell (Казахстан).
+
+Сайт оператора: http://www.kcell.kz
+Личный кабинет: http://www.kcell.kz/ru/ics.account/dashboard/false
+*/
+
+var g_headers = {'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.11 (KHTML, like Gecko) Chrome/20.0.1132.57 Safari/536.11'};
+
+function main(){
+    var prefs = AnyBalance.getPreferences();
+    var lang = prefs.lang || 'kk';
+    var baseurl = "http://www.kcell.kz/" + lang + "/ics.security/authenticate/false";
+
+    AnyBalance.setDefaultCharset('utf-8');
+
+    var html = AnyBalance.requestPost(baseurl, {
+        msisdn: '7' + prefs.login,
+        password: prefs.password
+    }, g_headers);
+
+//    AnyBalance.trace(html);
+    
+    if(!/\/logout\//i.test(html)){
+        var error = getParam(html, null, null, /<div[^>]*class="[^"]*error[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+        if(error){
+            if(/Activ/i.test(error))
+                error += ' Пожалуйста, воспользуйтесь отдельным провайдером для Activ (Казахстан).';
+            throw new AnyBalance.Error(error);
+        }
+        throw new AnyBalance.Error("Не удалось зайти в личный кабинет. Сайт изменен?");
+    }
+    
+    var result = {success: true};
+    getParam(html, result, 'balance', /(?:Ваш баланс|Сіздің теңгеріміңіз|Your balance is)([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'licschet', /(?:Номер лицевого счета:|Дербес шот нөмірі|Account):[\s\S]*?<font[^>]*>([\s\S]*?)<\/font>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'userName', /<h2[^>]*>([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, '__tariff', /(?:Тарифный план|Тариф|Tariff):[\s\S]*?<font[^>]*>([\s\S]*?)<\/font>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'internet', /(?:Остатки по доп. услугам|Қосымша қызметтер бойынша қалдық|Available for VAS):[^<]*?GPRS\s*-?([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+
+    AnyBalance.setResult(result);
+}

@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-bonus-watsons</id>
+  <id version="3">ab-bonus-watsons</id>
   <name>Сеть магазинов Watsons (Украина)</name>
   <description>
-    Мониторинг накопленных балов по программе лояльности сети магазинов Watsons (Украина)
+    Мониторинг накопленных балов по программе лояльности сети магазинов Watsons (Украина).
+    
+    Для проверки балов необходимо зарегистрировать свою карточку по адресу https://club.watsons.com.ua/club/
   </description>
   <author>Ignatiy Goloviznin &lt;igoloviznin@gmail.com&gt;</author>
   <files>
@@ -21,4 +23,7 @@
   <type>
     bonus
   </type>
+  <country>
+    ua
+  </country>
 </provider>

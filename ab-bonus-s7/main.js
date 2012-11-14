@@ -55,5 +55,11 @@ function main(){
 
     result.__tariff = status + ', №' + cn;
 
+    if(AnyBalance.isAvailable('qmiles', 'flights')){
+        html = AnyBalance.requestGet(baseurl + 'home/priority/ffpMyMiles.dot');
+        getParam(html, result, 'qmiles', /<td[^>]+class="balance"[^>]*>([\s\S]*?)(?:<\/td>|\/)/i, replaceTagsAndSpaces, parseBalance);
+        getParam(html, result, 'flights', /<td[^>]+class="balance"[^>]*>[^<]*\/([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    }
+
     AnyBalance.setResult(result);
 }

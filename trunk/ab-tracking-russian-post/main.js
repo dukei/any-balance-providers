@@ -102,7 +102,7 @@ function mainRussianPost(){
         var form = getParam(info, null, null, /<form[^>]+name="F1"[^>]*>([\s\S]*?)<\/form>/i);
         if(!form){
             checkForErrors(info);
-            throw new AnyBalance.error('Не удалось найти форму запроса. На сайте обед?');
+            throw new AnyBalance.Error('Не удалось найти форму запроса. На сайте обед?');
         }
 
         var params = createFormParams(info, function(params, input, name, value){

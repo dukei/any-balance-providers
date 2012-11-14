@@ -2,8 +2,8 @@
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 
 Watsons - сеть магазинов товаров для красоты и здоровья
-Сайт сети магазинов: http://http://watsons.com.ua
-Личный кабинет: http://club.watsons.com.ua/club/
+Сайт сети магазинов: http://watsons.com.ua
+Личный кабинет: https://club.watsons.com.ua/club/
 */
 
 function main(){
@@ -14,11 +14,11 @@ function main(){
 		throw new AnyBalance.Error ('Введите № карты');
 	if (!prefs.pass || prefs.pass == '')
 		throw new AnyBalance.Error ('Введите пароль');
-	var html = AnyBalance.requestPost('http://club.watsons.com.ua/club/j_spring_security_check', {
+	var html = AnyBalance.requestPost('https://club.watsons.com.ua/club/j_spring_security_check', {
 			login: prefs.login,
 			pass: prefs.pass
 		}, 
-		{"User-Agent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.57 Safari/537.1"}
+		{"User-Agent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11"}
 	);
 	if (html){
 		var result = {success: true};
@@ -32,8 +32,8 @@ function main(){
 			}
 		}
 		//ФИО
-		html = AnyBalance.requestPost('http://club.watsons.com.ua/club/private/profile/view.dc',
-		{"User-Agent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.57 Safari/537.1"}
+		html = AnyBalance.requestPost('https://club.watsons.com.ua/club/private/profile/view.dc',
+		{"User-Agent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11"}
 		);
 		if (matches=/<div .*>Прізвище:<\/div>\s*<div .*>(.*?)<\/div>/.exec(html)){
 		str_tmp1=/<div .*>Ім’я:<\/div>\s*<div .*>(.*?)<\/div>/.exec(html), str_tmp2=/<div .*>По батькові:<\/div>\s*<div .*>(.*?)<\/div>/.exec(html)

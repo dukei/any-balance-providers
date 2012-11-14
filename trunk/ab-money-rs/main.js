@@ -43,7 +43,7 @@ function fetchCard(baseurl){
 
     var html = AnyBalance.requestGet(baseurl + 'rs/cards/RSCardsV2.jspx');
 
-    var re = new RegExp('(<tr[^>]*>(?:[\\s\\S](?!<\\/tr>))*\\d{6}\\*{5,6}' + (prefs.contract ? prefs.contract : '\\d{4}') + '[\\s\\S]*?<\\/tr>)', 'i');
+    var re = new RegExp('(<tr[^>]*>(?:[\\s\\S](?!<\\/tr>))*\\d{4}[\\d*]{2}\\*{5,8}' + (prefs.contract ? prefs.contract : '\\d{4}') + '[\\s\\S]*?<\\/tr>)', 'i');
     var tr = getParam(html, null, null, re);
     if(!tr)
         throw new AnyBalance.Error('Не удаётся найти ' + (prefs.contract ? 'карту с последними цифрами ' + prefs.contract : 'ни одной карты'));
@@ -57,7 +57,7 @@ function fetchCard(baseurl){
     getParam(tr, result, 'contract_date', /&#1044;&#1072;&#1090;&#1072; &#1079;&#1072;&#1082;&#1083;&#1102;&#1095;&#1077;&#1085;&#1080;&#1103; &#1076;&#1086;&#1075;&#1086;&#1074;&#1086;&#1088;&#1072;\s*-([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseDate);
     //Статус
     getParam(tr, result, 'status', /&#1057;&#1090;&#1072;&#1090;&#1091;&#1089;\s*-([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(tr, result, 'cardnum', /(\d{6}\*{5,6}\d{4})/, replaceTagsAndSpaces, html_entity_decode);
+    getParam(tr, result, 'cardnum', /(\d{4}[\d*]{2}\*{5,6}\d{4})/, replaceTagsAndSpaces, html_entity_decode);
     getParam(tr, result, '__tariff', /<a[^>]+class="xl"[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(tr, result, 'accname', /<a[^>]+class="xl"[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces, html_entity_decode);
 
@@ -233,10 +233,10 @@ function parseCurrency(text){
 }
 
 function parseDate(str){
-    var matches = /(\d+)[^\d](\d+)[^\d](\d+)/.exec(str);
+    var matches = /(?:(\d+)[^\d])?(\d+)[^\d](\d{4})/.exec(str);
     var time;
     if(matches){
-	  time = (new Date(+matches[3], matches[2]-1, +matches[1])).getTime();
+	  time = (new Date(+matches[3], matches[2]-1, +(matches[1] || 1))).getTime();
           AnyBalance.trace('Parsing date ' + new Date(time) + ' from value: ' + str);
           return time;
     }

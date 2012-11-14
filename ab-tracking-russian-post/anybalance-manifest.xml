@@ -1,12 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="8">ab-tracking-russian-post</id>
+  <id version="9">ab-tracking-russian-post</id>
   <name>EMS и Почта России</name>
   <description>
     Отслеживание почтового отправления почты россии и EMS по его идентификатору. Может показывать сводную информацию, дату изменения статуса, текущую операцию, местонахождение, атрибуты.
     Рекомендуется показывать сводную информацию в текстовом виджете не менее 1х2.
 
-    Получает данные с сайта http://www.russianpost.ru
+    Получает данные с сайта http://www.russianpost.ru или с http://www.emspost.ru
   </description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <files>
@@ -29,4 +29,7 @@
   <type>
     tracking, post
   </type>
+  <country>
+    ru
+  </country>
 </provider>

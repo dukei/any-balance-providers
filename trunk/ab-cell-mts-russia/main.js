@@ -187,8 +187,9 @@ function mainMobile(allowRetry){
         password: prefs.password
     }, g_headers);
     
-    var regexp=/<form .*?id="redirect-form".*?action="[^"]*?([^\/\.]+)\.mts\.ru/, res, tmp;
-    if (res=regexp.exec(html)){
+    var regexp=/<form .*?id="redirect-form".*?action="[^"]*?([^\/\.]+)\.mts\.ru/i, res, tmp;
+    var tries = 3;
+    while(tries-- > 0 && res=regexp.exec(html)){
         //Неправильный регион. Умный мтс нас редиректит
         //Только эта скотина не всегда даёт правильную ссылку, иногда даёт такую, которая требует ещё редиректов
         //Поэтому приходится вычленять из ссылки непосредственно нужный регион
@@ -342,8 +343,9 @@ function enterOrdinary(region, retVals){
 //        ctl00$MainContent$btnEnter: 'Войти'
     }, g_headers);
     
-    var redirect=getParam(html, null, null, /<form .*?id="redirect-form".*?action="[^"]*?([^\/\.]+)\.mts\.ru/);
-    if (redirect){
+    var tries = 3;
+    while(tries-- > 0 && 
+        (redirect=getParam(html, null, null, /<form .*?id="redirect-form".*?action="[^"]*?([^\/\.]+)\.mts\.ru/))){
         //Неправильный регион. Умный мтс нас редиректит
         //Только эта скотина не всегда даёт правильную ссылку, иногда даёт такую, которая требует ещё редиректов
         //Поэтому приходится вычленять из ссылки непосредственно нужный регион
@@ -496,8 +498,12 @@ function fetchAccountStatus(html, result){
 
     html = sumParam (html, result, 'min_left', /Пакет минут[^:]*:\s*Оста[^\d]*([\d\.,]+)\s*мин/ig, replaceTagsAndSpaces, parseBalance, true);
 
+    // Подбаланс минуты: 73 мин
+    html = sumParam (html, result, 'min_left', /Подбаланс минуты\s*:?\s*([\d\.,]+)\s*мин/ig, replaceTagsAndSpaces, parseBalance, true);
+
     // Остаток пакета минут на ТП "MAXI": 12000 секунд
     html = sumParam (html, result, 'min_left', /Остаток пакета минут[^<]*?([\d\.,]+)\s*сек/ig, replaceTagsAndSpaces, function(str){return Math.round(parseBalance(str)/60)}, true);
+
     
     // Использовано: 0 минут местных и мобильных вызовов.
     // Использовано 1 мин на городские номера Москвы, МТС домашнего региона и МТС России

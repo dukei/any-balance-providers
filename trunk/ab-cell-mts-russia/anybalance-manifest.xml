@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="3.1" version="40">ab-cell-mts-russia</id>
+  <id major_version="3.1" version="41">ab-cell-mts-russia</id>
   <name>МТС (Россия)</name>
   <description>
     Получает баланс, бонусные баллы использованные минуты на локальные, мобильные и любимые номера, информацию о расходах, статус блокировки, кредит, номер лицевого счета, ежемесячую плату. Может получать данные из PDA версии интернет-помощника ( https://ip.mts.ru/SELFCAREPDA ), из обычного интернет-помощника ( https://ihelper.mts.ru/selfcare ) и из личного кабинета МТС ( https://lk.ssl.mts.ru ).

@@ -146,7 +146,7 @@ function mainCardAcc(what, baseurl){
     getParam($acc.find('div.account-number').text(), result, 'accnum', /(\d{20})/);
     getParam($acc.find('div.account-name').text(), result, 'accname', null, replaceTagsAndSpaces);
     getParam($acc.find('div.account-name').text(), result, '__tariff', null, replaceTagsAndSpaces);
-    getParam($acc.find('.card-amount-info').text(), result, 'balance', null, null, parseBalance);
+    getParam($acc.find('.card-amount-info, .card-amounts-info').text(), result, 'balance', null, null, parseBalance);
     
     var min_i = -1;
     var min_val = null;

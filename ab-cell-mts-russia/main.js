@@ -13,7 +13,7 @@ var regions = {
 	primorye: "https://ihelper.dv.mts.ru/SelfCarePda/",
 	nnov: "https://ip.nnov.mts.ru/selfcarepda/",
 	nw: "https://ip.nw.mts.ru/SELFCAREPDA/",
-	sib: "https://ihelper.sib.mts.ru/SELFCAREPDA/",
+	sib: "https://ip.sib.mts.ru/SELFCAREPDA/",
 	ural: "https://ip.nnov.mts.ru/selfcarepda/", //Почему-то урал в конце концов переадресуется сюда
 	ug: "https://ihelper.ug.mts.ru/SelfCarePda/"
 };
@@ -180,7 +180,6 @@ function mainMobile(allowRetry){
 
     var baseurl = regions[prefs.region];
 
-
     AnyBalance.trace("Trying to enter selfcare at address: " + baseurl);
     var html = AnyBalance.requestPost(baseurl + "Security.mvc/LogOn", {
         username: prefs.login,
@@ -189,7 +188,7 @@ function mainMobile(allowRetry){
     
     var regexp=/<form .*?id="redirect-form".*?action="[^"]*?([^\/\.]+)\.mts\.ru/i, res, tmp;
     var tries = 3;
-    while(tries-- > 0 && res=regexp.exec(html)){
+    while(tries-- > 0 && (res=regexp.exec(html))){
         //Неправильный регион. Умный мтс нас редиректит
         //Только эта скотина не всегда даёт правильную ссылку, иногда даёт такую, которая требует ещё редиректов
         //Поэтому приходится вычленять из ссылки непосредственно нужный регион
@@ -197,7 +196,7 @@ function mainMobile(allowRetry){
 
         if(!regions[newReg])
             throw new AnyBalance.Error("mts has redirected to unknown region: " + res[1]);
-	
+
         baseurl = regions[newReg];
         AnyBalance.trace("Redirected, now trying to enter selfcare at address: " + baseurl);
         html = AnyBalance.requestPost(baseurl + "Security.mvc/LogOn", {
@@ -226,6 +225,7 @@ function mainMobile(allowRetry){
         }
     
         AnyBalance.trace("Have not found logOff... Unknown other error. Please contact author.");
+        AnyBalance.trace(html);
         throw new AnyBalance.Error("Не удаётся войти в мобильный интернет помощник. Возможно, проблемы на сайте." + (prefs.region == 'auto' ? ' Попробуйте установить ваш Регион вручную в настройках провайдера.' : ' Попробуйте вручную войти в помощник по адресу ' + baseurl), allowRetry);
     }
 
@@ -343,9 +343,9 @@ function enterOrdinary(region, retVals){
 //        ctl00$MainContent$btnEnter: 'Войти'
     }, g_headers);
     
-    var tries = 3;
+    var tries = 3, redirect;
     while(tries-- > 0 && 
-        (redirect=getParam(html, null, null, /<form .*?id="redirect-form".*?action="[^"]*?([^\/\.]+)\.mts\.ru/))){
+        (redirect=getParam(html, null, null, /<form .*?id="redirect-form".*?action="[^"]*?([^\/\.]+)\.mts\.ru/i))){
         //Неправильный регион. Умный мтс нас редиректит
         //Только эта скотина не всегда даёт правильную ссылку, иногда даёт такую, которая требует ещё редиректов
         //Поэтому приходится вычленять из ссылки непосредственно нужный регион

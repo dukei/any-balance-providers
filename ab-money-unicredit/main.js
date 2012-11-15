@@ -313,7 +313,7 @@ function fetchCredit(jsonInfo, headers, baseurl){
     getParam(html, result, 'paytill', /Ближайший плат[ёe]ж:[\s\S]*?<td[^>]*>[^<]*\s+до\s+([^<]*)/i, replaceTagsAndSpaces, parseDate);
     getParam(html, result, 'pct', /Проценты:[\s\S]*?<td[^>]*>[^<]*\s+до\s+([^<]*)/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'period', /Срок кредита:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam($crd.html(), result, 'accnum', /CrdID=([0-9A-Z]+)/i);
+    getParam(crdid, result, 'accnum', /(.*)/i);
 
     AnyBalance.setResult(result);
 }
@@ -367,7 +367,7 @@ function fetchDeposit(jsonInfo, headers, baseurl){
     getParam(html, result, 'currency', /Текущая сумма вклада[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseCurrency);
     getParam(html, result, 'pct', /Проценты:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'period', /Срок вклада:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam($dep.html(), result, 'accnum', /DepID=([0-9A-Z]+)/i);
+    getParam(depid, result, 'accnum', /(.*)/i);
     getParam(html, result, 'status', /Статус:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
     getParam(jsonInfo.USR, result, 'fio', /(.*)/i, replaceTagsAndSpaces);
 

@@ -18,10 +18,18 @@ function main(){
 	var url='https://m.gpnbonus.ru/profile/login/';
 	AnyBalance.trace('Sending a request for authorization');
         AnyBalance.setDefaultCharset('utf-8');
+
+        var html = AnyBalance.requestGet('http://m.gpnbonus.ru/to_private_office/');
+        if(/captcha_code/i.test(html))
+            throw new AnyBalance.Error('К сожалению, сайт http://www.gpnbonus.ru ввел капчу (ввод циферок с картинки) для входа в личный кабинет. Пожалуйста, обратитесь в справочную службу ГазПромНефть по телефону 8 800 700 5151 и попросите отменить капчу или сделать интерфейс для автоматических программ.');
+
 	var html = AnyBalance.requestPost(url, prefs);
 	if (!/Персональные данные/.exec(html)){
+                var error = getParam(html, null, null, /<div[^>]+errors_panel[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+                if(error)
+                     throw new AnyBalance.Error(error);
 		AnyBalance.trace('Что-то не то, возможно проблемы с сайтом');
-		throw new AnyBalance.Error ('Authorization error.');
+		throw new AnyBalance.Error ('Не удаётся зайти в личный кабинет. Возможно, неправильный логин, пароль или сайт изменен.');
 	};
 	AnyBalance.trace('Authorization was successful');
 	var result = {success: true};

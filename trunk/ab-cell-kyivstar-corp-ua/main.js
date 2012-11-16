@@ -104,7 +104,7 @@ function main(){
     }
     
     if(AnyBalance.isAvailable('traffic_left')){
-        var val = $info.find('bonuses bonus name:contains("GPRS"), bonuses bonus name:contains("MB")').next().text();
+        var val = $info.find('bonuses bonus name:contains("GPRS"), bonuses bonus name:contains("MB"), bonuses bonus name:contains("Мб")').next().text();
         if(val){
             var matches = val.match(/([\d\.]+)/);
             if(matches)

@@ -1,9 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="5">ab-internet-rostelekom-kamchatka</id>
+  <id version="6">ab-internet-rostelekom-kamchatka</id>
   <name>Интернет Ростелеком (Камчатка)</name>
   <description>
     Получает данные из ИССА Камчатского филиала ОАО "Ростелеком": баланс, счетчики трафика
+  
+    Данные берутся из личного кабинета http://issa.kamchatka.ru
   </description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <files>
@@ -20,8 +22,9 @@
     <counter id="traffic_global_in" name="Входящий внешний трафик" suffix="Мб"/>
     <counter id="traffic_included" name="Предоплаченый трафик" suffix="Мб"/>
     <counter id="traffic_kamchatka" name="Безлимитная Камчатка" suffix="Гб"/>
-    <counter id="traffic_300" name="Доп. пакет внеш. трафика (300 Мб)" suffix="Мб"/>
-    <counter id="traffic_1000" name="Доп. пакет внеш. трафика (1000 Мб)" suffix="Мб"/>
+    <counter id="traffic_ext_total" name="Доп. пакет внеш. трафика (всего)" suffix="Мб"/>
+    <counter id="traffic_1000" name="Доп. пакет внеш. трафика (использовано)" suffix="Мб"/>
+    <counter id="traffic_ext_left" name="Доп. пакет внеш. трафика (осталось)" suffix="Мб"/>
     <counter id="traffic_night_in" name="Вх. ночной безлимит в тек. месяце" suffix="Мб"/>
     <counter id="traffic_night_out" name="Исх. ночной безлимит в тек. месяце" suffix="Мб"/>
     <counter id="time_off" name="Время отключения" suffix="дн"/>
@@ -35,4 +38,7 @@
   <type>
     internet
   </type>
+  <country>
+    ru
+  </country>
 </provider>

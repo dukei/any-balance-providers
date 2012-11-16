@@ -171,10 +171,12 @@ function main(){
             getParam(val, result, 'traffic_included', null, null, parseTraffic);
         }else if(matches = str.match(/Безлимитная Камчатка/i)){
             getParam(val, result, 'traffic_kamchatka', null, null, parseTraffic);
-        }else if(matches = str.match(/Доп. пакет внеш. трафика \(300 Мб\)/i)){
-            sumParam(val, result, 'traffic_300', /([\s\S]*)/, null, parseTraffic);
-        }else if(matches = str.match(/Доп. пакет внеш. трафика \(1000 Мб\)/i)){
+        }else if(matches = str.match(/Доп. пакет внеш. трафика \((\d+)\s*Мб\)/i)){
+            var used = parseTraffic(val);
+            var total = parseTraffic(matches[1]);
+            sumParam(matches[1], result, 'traffic_ext_total', /([\s\S]*)/, null, parseTraffic);
             sumParam(val, result, 'traffic_1000', /([\s\S]*)/, null, parseTraffic);
+            sumParam('' + (total - used), result, 'traffic_ext_left', /([\s\S]*)/, null, parseTraffic);
         }
     });
 

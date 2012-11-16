@@ -90,12 +90,19 @@ function main(){
                 ++ind;
             }
             
-            if(!found.length)
-                throw new AnyBalance.Error('Не найдено ни одного домена из списка: ' + prefs.domains);
+            if(!found.length){
+                if(prefs.domains != '*'){
+                    throw new AnyBalance.Error('Не найдено ни одного домена (на обслуживании в мастерхост) из списка: ' + prefs.domains);
+                }else{
+                    AnyBalance.trace('Ни один домен не находится на обслуживании в мастерхост');
+                }
+            }else{
+                result.__tariff = ((result.__tariff && result.__tariff + ': ') || '') + found.join(', ');
+            }
+
             if(notfound.length)
                 AnyBalance.trace('Следующие домены не найдены: ' + notfound.join(', '));
             
-            result.__tariff = ((result.__tariff && result.__tariff + ': ') || '') + found.join(', ');
         }
 
     }

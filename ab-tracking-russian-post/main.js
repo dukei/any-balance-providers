@@ -186,8 +186,12 @@ function mainRussianPost(){
 		}
 	}
 	
-	if(!AnyBalance.isSetResultCalled())
+	if(!AnyBalance.isSetResultCalled()){
+                var error = getParam(info, null, null, /<div[^>]+CaptchaErrorCodeContainer[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+                if(error)
+                    throw new AnyBalance.Error('Постоянные запросы на сервер почты россии мешали, наверное, кому-то обедать, поэтому почта россии ввела капчу - для получения информации об отправлении требуется ввести цифры с изображения. Программы, к сожалению, этого делать не умеют. :(');
 		throw new AnyBalance.Error("Отправление не найдено.")
+        }
 }
 
 function getParam (html, result, param, regexp, replaces, parser) {

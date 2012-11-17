@@ -83,6 +83,22 @@ function parseBalance(text){
 }
 
 var g_regions = {
+    altai: mainUln,
+    vladimir: mainUln,
+    volgograd: mainUln,
+    vologda: mainSpb,
+    voronezh: mainUln,
+    kaliningrad: mainSpb,
+    karel: mainSpb,
+    kemerovo: mainUln,
+    kirov: mainUln,
+    murmansk: mainSpb,
+    nnov: mainUln,
+    vnov: mainSpb,
+    nsk: mainUln,
+    omsk: mainUln,
+    pskov: mainSpb,
+    rostov: mainUln,
     moscow: mainMoscow,
     kaluga: mainUln,
     uln: mainUln,

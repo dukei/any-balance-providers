@@ -59,7 +59,7 @@ function main(){
     var result = {success: true};
 
     getParam(html, result, 'balance', /Текущий баланс:[\S\s]*?<span[^>]*>([\S\s]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'licschet', /Договор:[\S\s]*?<span[^>]*>([\S\s]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'agreement', /Договор:[\S\s]*?<span[^>]*>([\S\s]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, '__tariff', /Договор:[\S\s]*?<span[^>]*>([\S\s]*?)<\/span>/i, replaceTagsAndSpaces, function(str){return 'Договор: ' + str});
 
     AnyBalance.setResult(result);

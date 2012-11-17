@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-tv-viasat-ua</id>
+  <name>Viasat (Украина)</name>
+  <description>
+    Получает баланс и другую информацию у провайдера спутникового телевидения Viasat (http://www.viasat.ua) в Украине.
+
+    Если у вас ещё нет доступа к личному кабинету Виасат, то получите его здесь: http://www.viasat.ua/abonent/accounts/new
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+    <js>library.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="agreement" name="Договор" type="text"/>
+    <counter id="clientid" name="№ клиента" type="text"/>
+    <counter id="status" name="Статус" type="text"/>
+    <counter id="cardnum" name="№ карты" type="text"/>
+  </counters>
+  <keywords>
+    спутник
+  </keywords>
+  <type>
+    tv
+  </type>
+  <country>
+    ua
+  </country>
+</provider>

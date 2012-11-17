@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="9" major_version="2.7">ab-cell-skylink</id>
+  <id version="10" major_version="3.0">ab-cell-skylink</id>
   <name>Skylink</name>
   <description>
     Получает баланс для оператора сотовой связи Skylink, используя личные кабинеты (свои в каждом регионе).
 
     Поддерживается:
       - Москва (https://www.skypoint.ru): Баланс, ФИО, Лицевой счет, Начисления по договору за период
-      - Ульяновск (https://www2.skypoint.ru): Баланс, Трафик (автор Robert Khaliullov &lt;ulrobix@gmail.com&gt;)
-      - Калуга (https://www2.skypoint.ru): Баланс, Трафик (автор Robert Khaliullov &lt;ulrobix@gmail.com&gt;)
+      - Алтайский край, Владимир, Волгоград, Воронеж, Калуга, Кемерово, Киров, Нижний новгород, Новосибирск, Омск, Ростов, Ульяновск (https://www2.skypoint.ru): Баланс, Трафик (автор Robert Khaliullov &lt;ulrobix@gmail.com&gt;)
       - Краснодарский край и республика Адыгея (http://stat.kuban.skypoint.ru): Баланс, Трафик, Льготный трафик, ФИО
-      - Санкт-Петербург (https://app.spb.skylink.ru:7772/internetBalance): Баланс, Трафик в день, ФИО, Лицевой счет, Статус, Начисления по договору за период
+      - Вологда, Калининград, Карелия, Мурманск, Новгород Великий, Псков, Санкт-Петербург (https://app.spb.skylink.ru:7772/internetBalance): Баланс, Трафик в день, ФИО, Лицевой счет, Статус, Начисления по договору за период
 
     Для добавления других регионов или доработки существующих пишите авторам на почту.
   </description>

@@ -84,6 +84,7 @@ function parseBalance(text){
 
 var g_regions = {
     moscow: mainMoscow,
+    kaluga: mainUln,
     uln: mainUln,
     kuban: mainKuban,
     spb: mainSpb

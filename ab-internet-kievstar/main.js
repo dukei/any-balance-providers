@@ -19,25 +19,28 @@ function main() {
 	AnyBalance.trace('Connecting to ' + baseurl);
 
 	var html = AnyBalance.requestGet(baseurl + 'tbmb/login/show.do', headers);
-	var token = /name="org.apache.struts.taglib.html.TOKEN" value="([\s\S]*?)">/.exec(html);
+	var token = getParam(html, null, null, /name="org.apache.struts.taglib.html.TOKEN" value="([\s\S]*?)">/i);
 
 	if(!token){
 		throw new AnyBalance.Error('Can\'t get token');
 	}
 	
-	AnyBalance.trace('Token = ' + token[1]);
+	AnyBalance.trace('Token = ' + token);
 
 	html = AnyBalance.requestPost(baseurl + "tbmb/login/perform.do", {
 		isSubmitted: "true",
-		"org.apache.struts.taglib.html.TOKEN": token[1],
+		"org.apache.struts.taglib.html.TOKEN": token,
 		user: prefs.login,
 		password: prefs.password
 	}, headers);
 
-	var matches = html.match(/<td class="redError">([\s\S]*?)<\/td>/i);
-	if (matches) {
-		throw new AnyBalance.Error(matches[1]);
-	}
+	if(!/\/logout\/perform/i.test(html)){
+        	var matches = html.match(/<td class="redError">([\s\S]*?)<\/td>/i);
+		if (matches) {
+			throw new AnyBalance.Error(matches[1]);
+		}
+                throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+        }
 
 	AnyBalance.trace('Successfully connected');
 
@@ -45,19 +48,9 @@ function main() {
 		success: true
 	};
 
-	//Баланс
-	if (AnyBalance.isAvailable('balance')) {
-		if (matches = /Поточний баланс:[\s\S]*?<b>(.*?)</.exec(html)) {
-			result.balance = parseFloat(matches[1]);
-		}
-	}
-
-	//Домашний Интернет, бонусы
-	if (AnyBalance.isAvailable('bonuses')) {
-		if (matches = /Баланс:[\s\S]*?<b>(.*?)</.exec(html)) {
-			result.bonuses = parseInt(matches[1]);
-		}
-	}
+	getParam(html, result, 'balance', /(?:Текущий баланс|Поточний баланс|Current balance):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'bonuses', /(?:Бонусный баланс|Бонусний баланс|Bonuses)[\s\S]*?>\s*(?:Баланс|Balance):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, '__tariff', /(?:Тарифный пакет|Тарифний пакет|Rate package):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
 
 	AnyBalance.setResult(result);
 }

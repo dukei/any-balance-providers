@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-telenet</id>
-  <name>КАБiNET - интернет провайдер</name>
+  <id version="2">ab-internet-telenet</id>
+  <name>КАБiNET (Екатеринбург)</name>
   <description>
-    Получает баланс и информацию о тарифном плане для интернет провайдера КАБiNET. Информация берется из личного кабинета https://stat.telenet.ru.
+    Получает баланс и информацию о тарифном плане для екатеринбургского интернет провайдера КАБiNET. Информация берется из личного кабинета https://stat.telenet.ru.
   </description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
     <js>main.js</js>
+    <history>history.xml</history>
   </files>
   <counters>
     <counter id="balance" name="Баланс" units="р"/>
@@ -22,4 +23,7 @@
   <type>
     internet
   </type>
+  <country>
+    ru
+  </country>
 </provider>

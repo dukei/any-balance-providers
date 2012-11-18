@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <ListPreference 
+        key="loginType" 
+        title="Способ входа"
+        summary="||{@s}"
+        entries="По идентификатору клиента|По текстовому псевдониму"
+        entryValues="id|nick"
+	defaultValue="id">
+    </ListPreference>
+    <EditTextPreference
+        title="Логин" 
+        positiveButtonText="ОК" 
+        summary="||{@s}" 
+        dialogTitle="Логин" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите ваш логин (идентификатор клиента или текстовый псевдоним в зависимости от настройки Способ входа) для входа в Интернет-банк"
+        key="login"
+        inputType="text">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="Пароль для входа в Интернет-банк||***********\n"
+        dialogMessage="Введите пароль, используемый для входа в Интернет-банк"
+        inputType="numberPassword">
+    </EditTextPreference>
+    <ListPreference 
+        key="type" 
+        title="Что смотреть"
+        summary="||{@s}"
+        entries="Карта|Счет"
+        entryValues="card|acc"
+	defaultValue="card">
+    </ListPreference>
+    <EditTextPreference
+        title="№ карты/счета" 
+        positiveButtonText="ОК" 
+        summary="|Автоматически|{@s}" 
+        dialogTitle="Номер счета или карты" 
+        negativeButtonText="Отмена" 
+        dialogMessage="В зависимости от настройки Что смотреть, введите сюда не менее 4 последних цифр счета или последние 4 цифры номера карты. Если оставить поле пустым, то будет показана информация по первой карте/счету/депозиту."
+        key="contract"
+        inputType="number">
+    </EditTextPreference>
+</PreferenceScreen>

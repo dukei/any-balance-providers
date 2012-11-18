@@ -1,14 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
     <EditTextPreference 
-        title="Логин" 
+        title="№ договора" 
         positiveButtonText="ОК" 
-        summary="Логин||{@s}\n" 
-        dialogTitle="Логин" 
+        summary="||{@s}" 
+        dialogTitle="№ договора" 
         negativeButtonText="Отмена" 
         dialogMessage="Введите номер договора"
         key="login"
-        inputType="phone">
+        inputType="number">
     </EditTextPreference>
     <EditTextPreference 
         positiveButtonText="ОК"
@@ -16,7 +16,7 @@
         dialogTitle="Пароль"
         negativeButtonText="Отмена"
         title="Пароль"
-        summary="Пароль для входа в 'Мій Київстар'||***********\n"
+        summary="|Пароль для входа в 'Мій Київстар'|***********"
         dialogMessage="Введите пароль, используемый для входа в 'Мій Київстар'"
         inputType="textPassword">
     </EditTextPreference>

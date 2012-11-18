@@ -13,7 +13,7 @@
     <preferences>preferences.xml</preferences>
     <js>main.js</js>
     <js>library.js</js>
-    <history>library.js</history>
+    <history>history.xml</history>
   </files>
   <counters>
     <counter id="balance" name="Баланс" units="₴"/>

@@ -28,6 +28,7 @@ function main(){
     info = AnyBalance.requestGet(baseurl + "json/cabinet/");
     AnyBalance.trace('got info: ' + info);
     var oInfo = JSON.parse(info.replace(/:(\-)?\./g, ':$10.')); //А то "balance":-.31 не распарсивается
+
     
     if(AnyBalance.isAvailable('balance'))
         result.balance = oInfo.balance;
@@ -36,6 +37,9 @@ function main(){
         result.bonus_balance = oInfo.points;
 
     result.__tariff = oInfo.tier;
+
+    if(AnyBalance.isAvailable('lock'))
+        result.lock = oInfo.lock;
     
     if(AnyBalance.isAvailable('agreement'))
         result.agreement = oInfo.contract;

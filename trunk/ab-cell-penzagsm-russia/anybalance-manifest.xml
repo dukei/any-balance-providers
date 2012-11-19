@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id major_version="1.0" version="1">ab-cell-penzagsm-russia</id>
+  <name>СМАРТС Пенза-GSM</name>
+  <description>
+    Позволяет абонентам СМАРТС Пенза-GSM получить информацию о балансе и остатке бесплатных SMS.
+	
+	Как получить пароль к Интернет-офису:
+	1. Зайдите по адресу https://ioffice.penza-gsm.ru .
+	2. Нажмите ссылку "Получить абонентский пароль". Система попросит ввести номер телефона - 6 цифр для городского или 11 для федерального. После этого на указанный номер придёт SMS с паролем для доступа в Интернет-офис.
+	3. Номер телефона и полученный пароль введите в настройках этого провайдера.
+  </description>
+  <author>Alexander Knyazhev &lt;knyazhev.am@softinvent.ru&gt;</author>
+  <files>
+	<icon>icon.png</icon>
+	<preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units=" р"/>
+    <counter id="sms_left" name="SMS" units=" sms" type="text"/>
+  </counters>
+  <keywords>
+    смартс, smarts, пенза-gsm, россия, пенза, баланс, остаток смс, сотовый телефон, мобильный, мобильник, корпоративный, предоплатный
+  </keywords>
+  <type>
+    cell
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

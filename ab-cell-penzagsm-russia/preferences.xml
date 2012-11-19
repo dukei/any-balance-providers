@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Номер телефона" 
+        positiveButtonText="ОК" 
+        summary="Номер телефона (10 или 6 цифр)\n" 
+        dialogTitle="Номер телефона" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите номер вашего телефона для входа в Интернет-офис (11 цифр для федерального номера или 6 цифр для городского). Например: 79031234567 или 234567"
+        key="login"
+		inputType="phone">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="Пароль для входа в Интернет-офис||***********\n"
+        dialogMessage="Введите пароль, используемый для входа в Интернет-офис. Для получения этого пароля вам надо со своего компьютера зайти на страницу https://ioffice.penza-gsm.ru/login ."
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

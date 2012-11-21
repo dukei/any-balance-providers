@@ -106,15 +106,22 @@ function main(){
       _stateParam: 'eCareLocale.currentLocale=ru_RU__Russian'
     }, headers);
 
-    var regexp=/<span class="warn">[\s]*([\s\S]*?)[\s]*<\/span>/, res, tmp;
-    if (res=regexp.exec(html)){
-        //Ошибка какая-то случилась... Может, пароль неправильный
-      	throw new AnyBalance.Error(res[1].replace(/<[^<>]+\/?>/g, ''));
-    }
+    if(!/\/logout.do/i.test(html)){
+        var regexp=/<span class="warn">[\s]*([\s\S]*?)[\s]*<\/span>/, res, tmp;
+        if (res=regexp.exec(html)){
+            //Ошибка какая-то случилась... Может, пароль неправильный
+          	throw new AnyBalance.Error(res[1].replace(/<[^<>]+\/?>/g, ''));
+        }
+        
+        if (getParam(html, null, null, /("EcareLoginForm")/i))
+            //Ошибка какая-то случилась... Билайн глючит. Надо попробовать ещё раз зайти.
+            throw new AnyBalance.Error('Билайн не пускает в кабинет даже без сообщения ошибки. Возможно, проблемы на сайте.', true);
 
-    if (getParam(html, null, null, /("EcareLoginForm")/i))
-        //Ошибка какая-то случилась... Билайн глючит. Надо попробовать ещё раз зайти.
-      	throw new AnyBalance.Error('Билайн не пускает в кабинет даже без сообщения ошибки. Возможно, проблемы на сайте.', true);
+        if(/В целях безопасности предлагаем Вам сменить пароль/i.test(html))
+            throw new AnyBalance.Error('Билайн требует сменить пароль. Пожалуйста, зайдите в личный кабинет Билайн (' + baseurl + ') с вашим текущим паролем и выполните инструкции по его смене. После этого введите в настройки этого провайдера новый пароль.');
+
+     	throw new AnyBalance.Error('Не удаётся войти в личный кабинет. Проблемы на сайте или сайт изменен.');
+    }
     
     var corporate = /<title>[^<>]*Управление профилем[^<>]*<\/title>/i.test(html);
     if(!corporate)
@@ -181,6 +188,8 @@ function getBalanceValueExpirationDate(html, text, parseFunc, result, counter){
 function parseBalanceList(html, result){
     //Уменьшим область поиска для скорости и (надеюсь) для надежности
     html = getParam(html, null, null, /'prePaid(?:Ctn)?Balances?List'([\s\S]*?)'prePaid(?:Ctn)?Balances?List'/i);
+    if(!html)
+        throw new AnyBalance.Error('Не найден список балансов. Обратитесь к автору провайдера для исправления.');
 
     // Баланс
     getBalanceValue (html, 'Основной баланс', parseBalance, result, 'balance');

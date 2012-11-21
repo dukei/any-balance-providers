@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-bonus-luxor</id>
+  <name>Люксор</name>
+  <description>
+    Получает баланс и другую информацию по накопительной карте сети кинотеатров Люксор (http://www.luxorfilm.ru).
+
+    Информация берется из личного кабинета http://www.luxorfilm.ru/login.aspx. 
+
+    Если у вас нет доступа к личному кабинету, зарегистрируйтесь здесь: http://www.luxorfilm.ru/Users/Registration.aspx и прикрепите к этому личному кабинету карту зрителя.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+    <js>library.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Бонусы"/>
+    <counter id="cardnum" name="Номер карты" type="text"/>
+  </counters>
+  <keywords>
+    luxor, аттракционы
+  </keywords>
+  <type>
+    bonus
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

@@ -27,8 +27,7 @@ function main(){
 
     info = AnyBalance.requestGet(baseurl + "json/cabinet/");
     AnyBalance.trace('got info: ' + info);
-    var oInfo = JSON.parse(info.replace(/:(\-)?\./g, ':$10.')); //А то "balance":-.31 не распарсивается
-
+    var oInfo = getJson(info.replace(/:(\-)?\./g, ':$10.')); //А то "balance":-.31 не распарсивается
     
     if(AnyBalance.isAvailable('balance'))
         result.balance = oInfo.balance;
@@ -47,6 +46,21 @@ function main(){
     if(AnyBalance.isAvailable('license'))
         result.license = oInfo.account;
     
+    if((AnyBalance.isAvailable('balance') && !isset(result.balance)) ||
+        (AnyBalance.isAvailable('bonus_balance') && !isset(result.bonus_balance)) ||
+        (AnyBalance.isAvailable('lock') && !isset(result.lock))){
+        //Странно, json не вернул то, что надо, придется из html вырезать
+        var html = AnyBalance.requestGet(baseurl + 'billing/balance');
+        getParam(html, result, 'balance', /Баланс:[\s\S]*?<dd[^>]*>([\s\S]*?)<\/dd>/i, replaceTagsAndSpaces, parseBalance);
+        getParam(html, result, 'lock', /Количество дней до блокировки:[\s\S]*?<dd[^>]*>([\s\S]*?)<\/dd>/i, replaceTagsAndSpaces, parseBalance);
+    }
+
+    if((AnyBalance.isAvailable('bonus_balance') && !isset(result.bonus_balance))){
+        //Странно, json не вернул то, что надо, придется из html вырезать
+        var html = AnyBalance.requestGet(baseurl + 'bonus/account/');
+        getParam(html, result, 'bonus_balance', /Бонусный счет:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    }
+
     if(AnyBalance.isAvailable('internet_total', 'internet_up', 'internet_down')){
         info = AnyBalance.requestGet(baseurl + "statistics/inet_statistics");
         var $info = $(info);

@@ -281,7 +281,7 @@ function mainSpb(){
 	'ctl00$pContent$ImageButton1.y':5
     }, headers);
 
-    if(!/Exit.jsp/i.test(html)){
+    if(/<form[^>]+action="j_security_check"/i.test(html) || !/Exit.jsp/i.test(html)){
         var error = getParam(html, null, null, /<span[^>]+class="err_msg"[^>]*>(.*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error);
@@ -299,7 +299,7 @@ function mainSpb(){
         html = AnyBalance.requestGet(baseurl + 'skyServiceBalance');
         getParam(html, result, 'balance', /Баланс,[^<]*:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
         getParam(html, result, 'status', /Статус договора:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-        getParam(html, result, 'charged', /Начисления по договору за период\s*:[\s\S]*?Всего[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+        getParam(html, result, 'charged', /Начислений по договору[\s\S]*?Всего[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     }
     
     AnyBalance.setResult(result);

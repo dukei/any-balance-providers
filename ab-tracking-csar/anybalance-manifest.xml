@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-tracking-csar</id>
+  <id version="2">ab-tracking-csar</id>
   <name>Цезарь-Сателлит</name>
   <description>
     Получает баланс и местонахождение заданной машины из системы спутникового слежения Цезарь Сателлит (http://csat.ru).
@@ -13,6 +13,7 @@
     <preferences>preferences.xml</preferences>
     <js>main.js</js>
     <js>library.js</js>
+    <history>history.xml</history>
   </files>
   <counters>
     <counter id="balance" name="Баланс"/>

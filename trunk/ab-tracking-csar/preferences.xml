@@ -20,4 +20,14 @@
         dialogMessage="Введите пароль, используемый для входа в личный кабинет Цезарь Сателлит."
         inputType="textPassword">
     </EditTextPreference>
+    <EditTextPreference 
+        title="Номер" 
+        positiveButtonText="ОК" 
+        summary="|Автоматически|{@s}" 
+        dialogTitle="Номер" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите часть номера машины (лучше цифры), по которой хотите получить информацию. Оставьте поле пустым, чтобы получить информацию по первой машине."
+        inputType="text"
+        key="plate">
+    </EditTextPreference>
 </PreferenceScreen>

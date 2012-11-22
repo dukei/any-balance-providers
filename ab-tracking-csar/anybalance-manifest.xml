@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-tracking-csar</id>
+  <name>Цезарь-Сателлит</name>
+  <description>
+    Получает баланс и местонахождение заданной машины из системы спутникового слежения Цезарь Сателлит (http://csat.ru).
+
+    Информация берется из личного кабинета http://cp.csat.ru. 
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+    <js>library.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс"/>
+    <counter id="virtual" name="Виртуальный баланс"/>
+    <counter id="daysleft" name="Хватит на" units="дн"/>
+    <counter id="plate" name="Номер" type="text"/>
+    <counter id="ignition" name="Зажигание" type="text"/>
+    <counter id="speed" name="Скорость" units="км/ч"/>
+    <counter id="course" name="Курс" type="text"/>
+    <counter id="marka" name="Марка" type="text"/>
+    <counter id="lat" name="Широта"/>
+    <counter id="long" name="Долгота"/>
+  </counters>
+  <keywords>
+    caesar satellite
+  </keywords>
+  <type>
+    tracking
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

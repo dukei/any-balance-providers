@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="3">ab-bonus-ion</id>
+  <id version="4">ab-bonus-ion</id>
   <name>Лень карта ИОН</name>
   <description>
     Получает количество баллов на карте сервисной программе ИОН ЛЕНЬ ( http://i-on.ru/crm/presents ).

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-hosting-firstvds</id>
+  <name>FirstVDS (Хостинг)</name>
+  <description>
+    Получает баланс, прогноз отключения у хостинг-провайдера FirstVDS (http://firstvds.ru).
+
+    Информация берется из личного кабинета https://my.firsvds.ru
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <history>history.xml</history>
+    <js>main.js</js>
+    <js>library.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="currency" name="Валюта" type="text"/>
+    <counter id="forecast" name="Прогноз отключения" type="text"/>
+  </counters>
+  <keywords>
+    интернет hosting
+  </keywords>
+  <type>
+    hosting
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

@@ -26,6 +26,7 @@
     <counter id="marka" name="Марка" type="text"/>
     <counter id="lat" name="Широта"/>
     <counter id="long" name="Долгота"/>
+    <country id="lasttime" name="Актуально на" type="time"/>
   </counters>
   <keywords>
     caesar satellite

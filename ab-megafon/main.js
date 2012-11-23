@@ -650,7 +650,7 @@ function megafonServiceGuidePhysical(filial, sessionid){
 
         if(i_t && AnyBalance.isAvailable('internet_total'))
             result.internet_total = (result.internet_total || 0) + i_t;
-        if(isset(i_c) && AnyBalance.isAvailable('internet_cur'))
+        if(AnyBalance.isAvailable('internet_cur'))
             if(i_t || (i_t - i_l)) //Если всё по нулям, это может быть просто глюк мегафона
                 result.internet_cur = (result.internet_cur || 0) + (i_t - i_l);
         if(isset(i_l) && AnyBalance.isAvailable('internet_left'))

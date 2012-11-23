@@ -643,6 +643,21 @@ function megafonServiceGuidePhysical(filial, sessionid){
         }
     }
 
+    //Пакет Интернет 24
+    if(AnyBalance.isAvailable('internet_total', 'internet_left', 'internet_cur')){
+        var i_t = sumParam(text, null, null, /<div[^>]+class="td_def"[^>]*>&#1048;&#1085;&#1090;&#1077;&#1088;&#1085;&#1077;&#1090; 24(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTraffic);
+        var i_l = sumParam(text, null, null, /<div[^>]+class="td_def"[^>]*>&#1048;&#1085;&#1090;&#1077;&#1088;&#1085;&#1077;&#1090; 24(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTraffic);
+
+        if(i_t && AnyBalance.isAvailable('internet_total'))
+            result.internet_total = (result.internet_total || 0) + i_t;
+        if(isset(i_c) && AnyBalance.isAvailable('internet_cur'))
+            if(i_t || (i_t - i_l)) //Если всё по нулям, это может быть просто глюк мегафона
+                result.internet_cur = (result.internet_cur || 0) + (i_t - i_l);
+        if(isset(i_l) && AnyBalance.isAvailable('internet_left'))
+            if(i_t || i_l) //Если всё по нулям, это может быть просто глюк мегафона
+                result.internet_left = (result.internet_left || 0) + i_l;
+    }
+
     if(AnyBalance.isAvailable('last_pay_sum', 'last_pay_date')){
         text = AnyBalance.requestPost(baseurl + 'SCWWW/PAYMENTS_INFO',
                     {
@@ -882,7 +897,7 @@ function parseDate(str){
 }
 
 function parseTraffic(text){
-    var _text = text.replace(/\s+/, '');
+    var _text = html_entity_decode(text.replace(/\s+/, ''));
     var val = sumParam(_text, null, null, /(-?\d[\d\.,]*)/, replaceFloat, parseFloat);
     var units = sumParam(_text, null, null, /([kmgкмг][бb]|байт|bytes)/i);
     if(!units) units = 'б';

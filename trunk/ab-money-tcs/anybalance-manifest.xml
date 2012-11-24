@@ -1,19 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-money-tcs</id>
+  <id version="3">ab-money-tcs</id>
   <name>Тинькофф Кредитные Системы</name>
   <description>
-    Получает текущий остаток и другие параметры карт банка Тинькофф Кредитные Системы, используя систему интернет-банк ( https://www.tcsbank.ru/bank ).
+    Получает текущий остаток и другие параметры карт и депозитов банка Тинькофф Кредитные Системы, используя систему интернет-банк ( https://www.tcsbank.ru/bank ).
 
     Если у вас нет доступа к интернет-банку, зарегистрируйтесь там по номеру карты на странице https://www.tcsbank.ru/authentication/register. 
 
-    Провайдер пока поддерживает получение информации только по картам. Если вам нужно что-то ещё, например, кредиты или вклады, обращайтесь к автору.
+    Провайдер пока поддерживает получение информации по картам и депозитам (вкладам). Если вам нужно что-то ещё, например, кредиты, обращайтесь к автору.
+
+    Если у вас больше одного депозита, вы можете указать последние цифры номера счета депозита, который нужно показать. Номер счета можно найти в интернет банке, в реквизитах депозита.
   </description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
     <js>main.js</js>
+    <js>library.js</js>
     <history>history.xml</history>
   </files>
   <counters>
@@ -21,10 +24,13 @@
     <counter id="minpay" name="Минимальный платеж"/>
     <counter id="minpaytill" name="Оплатить до" type="time" format="dd/MM/yyyy"/>
     <counter id="debt" name="Задолженность"/>
+    <counter id="pcts" name="Начислено процентов"/>
+    <counter id="rate" name="Процентная ставка" units="%"/>
+    <counter id="till" name="Дата окончания" type="time" format="dd/MM/yyyy"/>
     <counter id="limit" name="Кредитный лимит"/>
     <counter id="freeaddleft" name="Бесплатные пополнения"/>
     <counter id="currency" name="Валюта" type="text"/>
-    <counter id="cardnum" name="Номер карты/кредита" type="text"/>
+    <counter id="cardnum" name="Номер карты" type="text"/>
     <counter id="name" name="Название" type="text"/>
     <counter id="accnum" name="Номер счета" type="text"/>
   </counters>

@@ -62,22 +62,37 @@ function main(){
     $binfo = $html.find('.b-user-info__table').find('tr');
     
     if(AnyBalance.isAvailable('balance')){
-//    	var val = $html.find('.user-balance-value').text();
-    	var val = $binfo.find('th:contains("Баланс")').next().find('.b-user-info__balance').text();
-    	
+    	var val = $binfo.find('th:contains("Баланс"), th:contains("Доступные средства")').next().find('.b-user-info__balance').text();
+        AnyBalance.trace("Баланс: " + val);
     	if (val)
     		val = val.replace(/[^0-9.,]+/,'');
         if(val)
             result.balance = parseFloat(val.replace(',','.'));
     }
     if(AnyBalance.isAvailable('bonus')){
-//    	var val = $html.find('.user-balance-bonuspoints').text();
-    	var val = $binfo.next().find('.b-user-info__balance').text();
+    	var val = $binfo.find('th:contains("Начислено")').next().find('.b-user-info__balance').first().text();
+        AnyBalance.trace("Бонус (начислено): " + val);
     	if (val)
     		val = val.replace(/[^0-9.,]+/,'');
     	
         if(val)
             result.bonus = parseFloat(val.replace(',','.'));
     }  
+    if(AnyBalance.isAvailable('limit')){
+    	var val = $binfo.find('th:contains("Кредитный лимит")').next().find('.b-user-info__balance').text();
+        AnyBalance.trace("Кредитный лимит: " + val);
+    	if (val)
+    		val = val.replace(/[^0-9.,]+/,'');
+        if(val)
+            result.limit = parseFloat(val.replace(',','.'));
+    }
+    if(AnyBalance.isAvailable('own')){
+    	var val = $binfo.find('th:contains("Собственные"):contains("средства")').next().find('.b-user-info__balance').text();
+        AnyBalance.trace("Собственные средства: " + val);
+    	if (val)
+    		val = val.replace(/[^0-9.,]+/,'');
+        if(val)
+            result.own = parseFloat(val.replace(',','.'));
+    }
     AnyBalance.setResult(result);
 }

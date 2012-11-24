@@ -142,6 +142,8 @@ function main() {
         doOldAccount(page);
     else if(/online.sberbank.ru\/PhizIC/.test(page))
         doNewAccount(page);
+    else if(/Off_Service/i.test(page))
+        throw new AnyBalance.Error("В настоящее время услуга Сбербанк ОнЛ@йн временно недоступна по техническим причинам. Сбербанк приносит свои извинения за доставленные неудобства.");
     else
         throw new AnyBalance.Error("К сожалению, ваш вариант Сбербанка-онлайн пока не поддерживается. Пожалуйста, обратитесь к автору провайдера для исправления ситуации.");
 }

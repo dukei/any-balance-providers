@@ -56,7 +56,11 @@ function main(){
     var result = {success: true};
 
     getParam(html, result, '__tariff', /<tbody[^>]+mainBody[^>]*>(?:[\S\s]*?<td[^>]*>){2}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'balance', /<tbody[^>]+mainBody[^>]*>(?:[\S\s]*?<td[^>]*>){3}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'balance', /<tbody[^>]+mainBody[^>]*>(?:[\S\s]*?<td[^>]*>){3}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, function(str){
+        var v = parseBalance(str);
+        if(v) v = Math.round(v*100)/100;
+        return v;
+    });
     getParam(html, result, 'currency', /<tbody[^>]+mainBody[^>]*>(?:[\S\s]*?<td[^>]*>){4}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'forecast', /<tbody[^>]+mainBody[^>]*>(?:[\S\s]*?<td[^>]*>){5}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
 

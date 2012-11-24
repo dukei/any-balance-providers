@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="4" major_version="1.0">ab-money-kykyryza</id>
+  <id version="5" major_version="1.0">ab-money-kykyryza</id>
   <name>Платежный кабинет Кукуруза</name>
   <description>Получает баланс из Платежного кабинета Кукуруза https://oplata.kykyryza.ru/personal/</description>
   <author>Robert Khaliullov &lt;robix@mail.ru&gt;</author>
@@ -14,7 +14,8 @@
   <counters>
     <counter id="balance" name="Баланс" units="р"/>
     <counter id="bonus" name="Бонусы" units="балла"/>
-    
+    <counter id="limit" name="Кредитный лимит" units="р"/>
+    <counter id="own" name="Собственные средства" units="р"/>
  </counters>
   <keywords>
     Кукуруза, Платёжный кабинет

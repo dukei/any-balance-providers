@@ -21,18 +21,37 @@ function main(){
             mainEms();
 }
 
+function myGetJson(html){
+    var json = getJson(html);
+    if(!json.d){
+        AnyBalance.trace(html);
+        if(json.Message)
+            throw new AnyBalance.Error(json.Message);
+        throw new AnyBalance.Error("Неверный ответ от сервера!");
+    }
+    json = json.d;
+    if(json.errorMessage)
+        throw new AnyBalance.Error(json.errorMessage);
+    return json;
+}
+
 function mainEms(){
 	var prefs = AnyBalance.getPreferences();
 	AnyBalance.trace('Connecting to ems...');
 
-        var info = AnyBalance.requestPost("http://www.emspost.ru/tracking.aspx/TrackOne", JSON.stringify({id: prefs.code.toUpperCase()}), {
+        var info = AnyBalance.requestGet("http://www.emspost.ru/ru/tracking/?id=" + prefs.code.toUpperCase(), {Referer: 'http://www.emspost.ru/ru/'});
+        var secretId = getParam(info, null, null, /var\s+trackIDs\s*=\s*\[\s*''\s*,\s*'([^']*)/i);
+        if(!secretId)
+            throw new AnyBalance.Error('Не найден секретный ID отправления. Вы ввели неверный номер отправления?');
+        AnyBalance.trace('Секретный номер отправления: ' + secretId);
+
+        info = AnyBalance.requestPost("http://www.emspost.ru/tracking.aspx/TrackOne", JSON.stringify({gId: secretId}), {
             'Content-Type':'application/json; charset=UTF-8',
             Referer: 'http://www.emspost.ru/ru/tracking/?id=' + prefs.code.toUpperCase()
         });
 
-        var json = JSON.parse(info).d;
-        if(json.errorMessage)
-            throw new AnyBalance.Error(json.errorMessage);
+        var json = myGetJson(info);
+//        AnyBalance.trace('Emspost data: ' + info);
 
         if(!json.Operations || json.Operations.length == 0)
             throw new AnyBalance.Error("В этом отправлении нет зарегистрированных операций!");
@@ -193,56 +212,3 @@ function mainRussianPost(){
 		throw new AnyBalance.Error("Отправление не найдено.")
         }
 }
-
-function getParam (html, result, param, regexp, replaces, parser) {
-	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
-		return;
-
-	var value;
-        var matches = regexp.exec (html);
-	if (matches) {
-		value = matches[1];
-		if (replaces) {
-			for (var i = 0; i < replaces.length; i += 2) {
-				value = value.replace (replaces[i], replaces[i+1]);
-			}
-		}
-		if (parser)
-			value = parser (value);
-        }
-
-    if(param)
-      result[param] = value;
-    return value
-}
-
-var replaceTagsAndSpaces = [/&nbsp;/g, ' ', /<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, ''];
-var replaceFloat = [/\s+/g, '', /,/g, '.'];
-
-function parseBalance(text){
-    var val = getParam(text.replace(/\s+/g, ''), null, null, /(-?\d[\d\.,]*)/, replaceFloat, parseFloat);
-    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
-    return val;
-}
-
-function createFormParams(html, process){
-    var params = {};
-    html.replace(/<input[^>]+name="([^"]*)"[^>]*>/ig, function(str, name){
-        var value = getParam(str, null, null, /value="([^"]*)"/i, null, html_entity_decode) || '';
-        name = html_entity_decode(name);
-        if(process){
-            value = process(params, str, name, value);
-        }
-        params[name] = value;
-    });
-    return params;
-}
-
-function html_entity_decode(str)
-{
-    //jd-tech.net
-    var tarea=document.createElement('textarea');
-    tarea.innerHTML = str;
-    return tarea.value;
-}
-

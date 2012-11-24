@@ -7,69 +7,18 @@
 Личный кабинет: https://www.tcsbank.ru/authentication/?service=http%3A%2F%2Fwww.tcsbank.ru%2Fbank%2F
 */
 
-function getParam (html, result, param, regexp, replaces, parser) {
-	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
-		return;
-
-	var value = regexp ? regexp.exec (html) : html;
-	if (value) {
-                if(regexp)
-		    value = typeof(value[1]) == 'undefined' ? value[0] : value[1];
-		if (replaces) {
-			for (var i = 0; i < replaces.length; i += 2) {
-				value = value.replace (replaces[i], replaces[i+1]);
-			}
-		}
-		if (parser)
-			value = parser (value);
-
-    if(param)
-      result[param] = value;
-    else
-      return value
-	}
+var g_headers = {
+    'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
+    'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.60 Safari/537.1'
 }
-
-var replaceTagsAndSpaces = [/&nbsp;/ig, ' ', /<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
-var replaceFloat = [/\s+/g, '', /,/g, '.'];
-
-function parseBalance(text){
-    var val = getParam(text.replace(/\s+/g, ''), null, null, /(-?\d[\d\s.,]*)/, replaceFloat, parseFloat);
-    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
-    return val;
-}
-
-function parseCurrency(text){
-    var val = getParam(text.replace(/\s+/g, ''), null, null, /-?\d[\d\s.,]*(\S*)/);
-    AnyBalance.trace('Parsing currency (' + val + ') from: ' + text);
-    return val;
-}
-
-function parseDate(str){
-    var matches = /(\d+)[^\d](\d+)[^\d](\d+)/.exec(str);
-    if(matches){
-          var date = new Date(+matches[3], matches[2]-1, +matches[1]);
-	  var time = date.getTime();
-          AnyBalance.trace('Parsing date ' + date + ' from value: ' + str);
-          return time;
-    }
-    AnyBalance.trace('Failed to parse date from value: ' + str);
-}
-
-var userAgent = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.60 Safari/537.1';
 
 function main(){
     var prefs = AnyBalance.getPreferences();
 
     var baseurl = "https://www.tcsbank.ru";
     AnyBalance.setDefaultCharset('utf-8');
-
-    var headers = {
-        'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-        'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
-        'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-        'User-Agent': userAgent
-    }
 
     var html;
     if(!prefs.__debug){ //Вход в отладчике глючит, поэтому входим вручную, а проверяем только извлечение счетчиков
@@ -84,12 +33,12 @@ function main(){
             password:prefs.password,
             async:true,
             _: new Date().getTime()
-        }, headers);
+        }, g_headers);
 
 //        AnyBalance.trace(html);
         var json = getParam(html, null, null, /^jQuery\w+\(\s*(.*)\)\s*$/i);
         if(json){
-            var json = JSON.parse(json);
+            var json = getJson(json);
             if(json.resultCode == 'AUTHENTICATION_FAILED')
                 throw new AnyBalance.Error(json.errorMessage || 'Авторизация прошла неуспешно. Проверьте логин и пароль.');
             if(json.resultCode != 'OK')
@@ -101,38 +50,35 @@ function main(){
         }
     }
         
-    var accounts = AnyBalance.requestGet(baseurl + '/service/accounts', {'X-Requested-With':'XMLHttpRequest', Referer: baseurl + '/bank/accounts/', 'User-Agent': userAgent});
-    accounts = JSON.parse(accounts);
+    var accounts = AnyBalance.requestGet(baseurl + '/service/accounts', addHeaders({'X-Requested-With':'XMLHttpRequest', Referer: baseurl + '/bank/accounts/'}));
+    accounts = getJson(accounts);
 
     if(accounts.resultCode != 'OK')
         throw new AnyBalance.Error('Не удалось получить список карт: ' + accounts.resultCode);
 
-    var cards = null;
-    for(var i=0; accounts.payload && i<accounts.payload.length; ++i){
-        if((!prefs.type || prefs.type == 'card') && /карты/i.test(accounts.payload[i].name)){
-            cards = accounts.payload[i].accounts;
-            break;
-        }
+    if(prefs.type == 'card'){
+        fetchCard(accounts, baseurl);
+    }else if(prefs.type == 'dep'){
+        fetchDep(accounts, baseurl);
+    }else{
+        fetchCard(accounts, baseurl);
     }
-
-    fetchCard(accounts.payload[i].accounts, baseurl);
-}
-
-function endsWith(str, suffix) {
-    return str.indexOf(suffix, str.length - suffix.length) !== -1;
-}
-
-function isset(val) {
-    return typeof(val) != 'undefined';
 }
 
 function fetchCard(accounts, baseurl){
+    var cards = [];
+    for(var i=0; i<accounts.payload.length; ++i){
+        if(/карты/i.test(accounts.payload[i].name)){
+            cards = cards.concat(accounts.payload[i].accounts);
+        }
+    }
+    if(cards.length == 0)
+        throw new AnyBalance.Error("У вас нет ни одной карты!");
+    accounts = cards;
+
     var prefs = AnyBalance.getPreferences();
     if(prefs.num && !/^\d{4}$/.test(prefs.num))
         throw new AnyBalance.Error("Укажите 4 последних цифры карты или не указывайте ничего, чтобы получить информацию по первой карте.");
-
-    if(!accounts || accounts.length == 0)
-        throw new AnyBalance.Error("У вас нет ни одной карты!");
 
     var card = null;
     var cardNumber = 0;
@@ -177,8 +123,8 @@ function fetchCard(accounts, baseurl){
     result.__tariff = thiscard.name;
 
     if(AnyBalance.isAvailable('minpaytill', 'limit', 'freeaddleft')){
-        var accinfo = AnyBalance.requestGet(baseurl + '/service/account_info?request=current&account=' + card.id, {'X-Requested-With':'XMLHttpRequest', Referer: baseurl + '/bank/accounts/', 'User-Agent': userAgent});
-        accinfo = JSON.parse(accinfo);
+        var accinfo = AnyBalance.requestGet(baseurl + '/service/account_info?request=current&account=' + card.id, addHeaders({'X-Requested-With':'XMLHttpRequest', Referer: baseurl + '/bank/accounts/'}));
+        accinfo = getJson(accinfo);
         if(accinfo.resultCode == 'OK'){
             for(var i=0; i<accinfo.payload.length; ++i){
                 var cat = accinfo.payload[i];
@@ -200,11 +146,73 @@ function fetchCard(accounts, baseurl){
     AnyBalance.setResult(result);
 }
 
-function html_entity_decode(str)
-{
-    //jd-tech.net
-    var tarea=document.createElement('textarea');
-    tarea.innerHTML = str;
-    return tarea.value;
+function fetchDep(accounts, baseurl){
+    var deps = [];
+    for(var i=0; i<accounts.payload.length; ++i){
+        if(/Вклады/i.test(accounts.payload[i].name)){
+            deps = deps.concat(accounts.payload[i].accounts);
+        }
+    }
+    if(deps.length == 0)
+        throw new AnyBalance.Error("У вас нет ни одного депозита!");
+    accounts = deps;
+
+    var prefs = AnyBalance.getPreferences();
+    if(prefs.num && !/^\d{4,}$/.test(prefs.num))
+        throw new AnyBalance.Error("Укажите не менее 4 последних цифр номера депозита, или не указывайте ничего, чтобы получить информацию по первому депозиту.");
+
+    var dep = null;
+
+    if(!prefs.num){
+        dep = accounts[0];
+    }else{
+        finddep: 
+        for(var i=0; i<accounts.length; ++i){
+            if(endsWith(accounts[i].externalAccountNumber, prefs.num)){
+                dep = accounts[i];
+                break finddep;
+            }
+        }
+    }
+    
+    if(!dep)
+        throw new AnyBalance.Error("Не удалось найти депозит с последними цифрами " + prefs.num);
+
+    var result = {success: true};
+    
+    if(AnyBalance.isAvailable('balance'))
+        result.balance = dep.moneyAmount.value;
+    if(AnyBalance.isAvailable('currency'))
+        result.currency = dep.moneyAmount.currency.name;
+//    if(AnyBalance.isAvailable('startAmount'))
+//        result.startAmount = dep.startAmount;
+    if(AnyBalance.isAvailable('name'))
+        result.name = dep.name;
+    if(AnyBalance.isAvailable('accnum'))
+        result.accnum = dep.externalAccountNumber;
+    if(AnyBalance.isAvailable('rate'))
+        result.rate = dep.depositRate;
+    if(AnyBalance.isAvailable('till'))
+        result.till = dep.plannedCloseDate.milliseconds;
+    result.__tariff = dep.name;
+
+    if(AnyBalance.isAvailable('pcts')){
+        var accinfo = AnyBalance.requestGet(baseurl + '/service/account_info?request=current&account=' + dep.id, addHeaders({'X-Requested-With':'XMLHttpRequest', Referer: baseurl + '/bank/accounts/'}));
+        accinfo = getJson(accinfo);
+        if(accinfo.resultCode == 'OK'){
+            for(var i=0; i<accinfo.payload.length; ++i){
+                var cat = accinfo.payload[i];
+                for(var j=0; j<cat.fields.length; ++j){
+                    var field = cat.fields[j];
+                    if(field.label == 'Начислено процентов за весь период' && AnyBalance.isAvailable('pcts'))
+                        result.pcts = field.value.value;
+                }
+            }
+        }else{
+            AnyBalance.trace('Не удалось получить расширенную информацию по депозиту: ' + JSON.stringify(accinfo));
+        }
+    }
+    
+    AnyBalance.setResult(result);
 }
 

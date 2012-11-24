@@ -38,7 +38,7 @@ function main(){
     result.__tariff = oInfo.tier;
 
     if(AnyBalance.isAvailable('lock'))
-        result.lock = oInfo.lock;
+        result.lock = oInfo.lock == 1000 ? 100 : oInfo.lock; //Похоже, 1000 используется, как бесконечное значение, в кабинете показывается >100
     
     if(AnyBalance.isAvailable('agreement'))
         result.agreement = oInfo.contract;

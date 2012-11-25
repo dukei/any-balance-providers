@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-cell-bakcell-az</id>
+  <name>Bakcell (Азербайджан)</name>
+  <description>
+    Получает информацию об оставшихся бесплатных смс для сотового оператора bakcell (http://www.bakcell.com).
+    Информация берется из личного кабинета http://www.bakcell.com/ru/login
+
+    Если у вас ещё нет пароля для входа в личный кабинет, вы можете его получить на странице http://www.bakcell.com/ru/register.
+
+    ВНИМАНИЕ! Значение баланса в личном кабинете не нашел :( Если знаете, где он, обращайтесь по е-мейл к автору, добавлю.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+    <js>library.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="sms_left" name="SMS внесетевые"/>
+    <counter id="sms_in_left" name="SMS внутрисетевые"/>
+  </counters>
+  <keywords>
+    Сотовый телефон, мобильный, мобильник, баксел
+  </keywords>
+  <type>
+    cell
+  </type>
+  <country>
+    az
+  </country>
+</provider>

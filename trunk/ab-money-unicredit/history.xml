@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="5" date="2012-11-25">
+      - Слегка изменился адрес интернет-банка
+    </change>
     <change version="4" date="2012-11-16">
       - Исправлена ошибка Cannot call method 'html' of undefined, возникающая у кредитов и депозитов в некоторых случаях
     </change>

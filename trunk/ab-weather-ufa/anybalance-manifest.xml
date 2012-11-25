@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="2">ab-weather-ufa</id>
+  <name>Температура по республике Башкортостан</name>
+  <description>
+   Получает текущую температуру с датчиков стационарных станций метеоконтроля в республике Башкортостан.
+
+   Данные получает с сайта http://be.bashkirenergo.ru/weather/index.asp
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <js>main.js</js>
+    <js>library.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="ufa" name="УФА" units="°C"/>
+    <counter id="kol" name="УФА: Колхозный рынок" units="°C"/>
+    <counter id="psz" name="УФА: ПС Западная" units="°C"/>
+    <counter id="tra" name="УФА: Трамвайная" units="°C"/>
+    <counter id="syp" name="УФА: Сипайлово" units="°C"/>
+    <counter id="dom" name="УФА: Дом печати" units="°C"/>
+    <counter id="aer" name="Аэропорт 'Уфа'" units="°C"/>
+    <counter id="ste" name="Стерлитамак" units="°C"/>
+    <counter id="sal" name="Салават" units="°C"/>
+    <counter id="nef" name="Нефтекамск" units="°C"/>
+    <counter id="tuy" name="Туймазы" units="°C"/>
+    <counter id="ish" name="Ишимбай" units="°C"/>
+    <counter id="kum" name="Кумертау" units="°C"/>
+    <counter id="bel" name="Белорецк" units="°C"/>
+    <counter id="sib" name="Сибай" units="°C"/>
+    <counter id="uch" name="Учалы" units="°C"/>
+    <counter id="mel" name="Мелеуз" units="°C"/>
+    <counter id="dur" name="Дюртюли" units="°C"/>
+    <counter id="yan" name="Янаул" units="°C"/>
+    <counter id="aks" name="Аксаково" units="°C"/>
+    <counter id="kar" name="Караидель" units="°C"/>
+    <counter id="mra" name="Мраково" units="°C"/>
+    <counter id="isa" name="Исянгулово" units="°C"/>
+    <counter id="bur" name="Бурибай" units="°C"/>
+    <counter id="fed" name="Федоровка" units="°C"/>
+    <counter id="bek" name="Бекетово" units="°C"/>
+    <counter id="tul" name="Тюльди" units="°C"/>
+    <counter id="pav" name="Павловка" units="°C"/>
+    <counter id="mis" name="Мишкино" units="°C"/>
+    <counter id="kus" name="Кушнаренково" units="°C"/>
+    <counter id="pri" name="Прибельский" units="°C"/>
+    <counter id="time" name="Данные на" type="time" format="[hh:mm] dd/MM/yyyy"/>
+  </counters>
+  <keywords>
+    прогноз, погода, температура, воздух, уфа
+  </keywords>
+  <type>
+    weather
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

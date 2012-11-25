@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-tv-tricolor</id>
+  <name>Триколор ТВ</name>
+  <description>
+    Получает баланс и другую информацию у провайдера спутникового телевидения Триколор ТВ (http://tricolor.tv).
+
+    Информация берется из личного кабинета Триколор ТВ https://lk.tricolor.tv/trcustomer.
+
+    Если у вас ещё нет доступа к личному кабинету Триколор ТВ, то нажмите ссылку "получить пароль" на странице https://lk.tricolor.tv/trcustomer
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+    <js>library.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="agreement" name="Договор" type="text"/>
+    <counter id="status" name="Статус" type="text"/>
+    <counter id="device" name="№ оборудования" type="text"/>
+  </counters>
+  <keywords>
+    спутник tricolor
+  </keywords>
+  <type>
+    tv
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

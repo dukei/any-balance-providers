@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="DREID приёмника" 
+        positiveButtonText="ОК" 
+        summary="||{@s}" 
+        dialogTitle="DREID приёмника" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите DRE ID - 12-тизначный или 14-тизначный номер приемника."
+        inputType="number"
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="||***********"
+        dialogMessage="Введите пароль, используемый для входа в личный кабинет Триколор."
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

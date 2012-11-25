@@ -4,7 +4,7 @@
 Получает текущий остаток и другие параметры карт банка Юникредит
 
 Сайт оператора: http://www.unicreditbank.ru/rus/index.wbp
-Личный кабинет: https://enter2.unicredit.ru/
+Личный кабинет: https://enter.unicredit.ru/
 */
 
 function getParam (html, result, param, regexp, replaces, parser) {
@@ -90,7 +90,7 @@ function encryptPass(pass, map){
 function processUnicredit(){
     var prefs = AnyBalance.getPreferences();
 
-    var baseurl = prefs.login != 'demo' ? "https://enter2.unicredit.ru/v2/cgi/bsi.dll?" : "http://demo.enter.unicredit.ru/v2/cgi/bsi.dll?";
+    var baseurl = prefs.login != 'demo' ? "https://enter.unicredit.ru/v2/cgi/bsi.dll?" : "http://demo.enter.unicredit.ru/v2/cgi/bsi.dll?";
     
     var html = AnyBalance.requestGet(baseurl + 'T=RT_2Auth.BF');
     var mapId = getParam(html, null, null, /<input[^>]*id="MapID"[^>]*value="([^"]*)"/i);

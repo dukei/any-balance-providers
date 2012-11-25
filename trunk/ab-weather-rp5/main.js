@@ -5,76 +5,19 @@
 XML данные с http://rp5.ru/docs/xml/ru
 */
 
-/**
- * Date.parse with progressive enhancement for ISO 8601 <https://github.com/csnover/js-iso8601>
- * © 2011 Colin Snover <http://zetafleet.com>
- * Released under MIT license.
- */
-(function (Date, undefined) {
-    var origParse = Date.parse, numericKeys = [ 1, 4, 5, 6, 7, 10, 11 ];
-    Date.parse = function (date) {
-        var timestamp, struct, minutesOffset = 0;
-
-        // ES5 §15.9.4.2 states that the string should attempt to be parsed as a Date Time String Format string
-        // before falling back to any implementation-specific date parsing, so that’s what we do, even if native
-        // implementations could be faster
-        //              1 YYYY                2 MM       3 DD           4 HH    5 mm       6 ss        7 msec        8 Z 9 ±    10 tzHH    11 tzmm
-        if ((struct = /^(\d{4}|[+\-]\d{6})(?:-(\d{1,2})(?:-(\d{1,2}))?)?(?:(?:T|\s+)(\d{1,2}):(\d{1,2})(?::(\d{1,2})(?:\.(\d{1,3}))?)?(?:(Z)|([+\-])(\d{2})(?::(\d{2}))?)?)?$/.exec(date))) {
-            // avoid NaN timestamps caused by “undefined” values being passed to Date.UTC
-            for (var i = 0, k; (k = numericKeys[i]); ++i) {
-                struct[k] = +struct[k] || 0;
-            }
-
-            // allow undefined days and months
-            struct[2] = (+struct[2] || 1) - 1;
-            struct[3] = +struct[3] || 1;
-
-            if (struct[8] !== 'Z' && struct[9] !== undefined) {
-                minutesOffset = struct[10] * 60 + struct[11];
-
-                if (struct[9] === '+') {
-                    minutesOffset = 0 - minutesOffset;
-                }
-            }
-
-            timestamp = new Date(struct[1], struct[2], struct[3], struct[4], struct[5] + minutesOffset, struct[6], struct[7]).getTime();
-        }
-        else {
-            timestamp = origParse ? origParse(date) : NaN;
-        }
-
-        return timestamp;
-    };
-}(Date));
-
 function parseDate(str){
-    var time = Date.parse(str);
-    AnyBalance.trace("Parsing date " + new Date(time) + " from " + str);
-    return time;
+  //Рассчитывает на библиотеку date.js
+  var dt = Date.parse(str);
+  if(!dt){
+      AnyBalance.trace('Can not parse date from ' + str);
+      return;
+  }
+
+  dt = new Date(dt);
+  
+  AnyBalance.trace('Parsed date ' + dt.toString() + ' from ' + str);
+  return dt.getTime(); 
 }
-
-function getParam (html, result, param, regexp, replaces, parser) {
-	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
-		return;
-
-	var value = regexp.exec (html);
-	if (value) {
-		value = value[1];
-		if (replaces) {
-			for (var i = 0; i < replaces.length; i += 2) {
-				value = value.replace (replaces[i], replaces[i+1]);
-			}
-		}
-		if (parser)
-			value = parser (value);
-
-    if(param)
-      result[param] = value;
-    else
-      return value
-	}
-}
-
 
 function main(){
 	AnyBalance.setDefaultCharset('utf-8');
@@ -85,15 +28,55 @@ function main(){
 
         AnyBalance.trace("About to request \"http://rp5.ru/xml/"+prefs.city+"/00000/ru\"");
 
-        var xml = AnyBalance.requestGet("http://rp5.ru/xml/"+prefs.city+"/00000/ru");
-        if(/404 Not Found/i.test(xml)){
-            AnyBalance.trace('Похоже, rp5 заблокировал ваш IP :( Пробуем получить данные через веб.');
-            var html = AnyBalance.requestGet("http://rp5.ru/docs/xml/ru?id="+prefs.city, {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.83 Safari/537.1'});
-            xml = getParam(html, null, null, /<pre[^>]*>([\s\S]*?)<\/pre>/i, null, html_entity_decode);
-            if(!xml)
-                throw new AnyBalance.Error("Не удалось получить xml для кода города " + prefs.city);
+        var retry = false;
+        try{
+            var xml = AnyBalance.requestGet("http://rp5.ru/xml/"+prefs.city+"/00000/ru");
+            retry = /404 Not Found/i.test(xml);
+        }catch(e){
+            retry = true;
+            AnyBalance.trace('Проблема получения xml: ' + e.message);
         }
+        if(retry){
+            AnyBalance.trace('Похоже, rp5 заблокировал ваш IP :( Пробуем парсить HTML страницу.');
+            var html = AnyBalance.requestGet('http://wap.rp5.ru/' + prefs.city + "/ru");
+            parseHtml(html);
+        }else{
+            parseXml(xml);
+        }
+}
 
+function parseHtml(html){
+        if(!/\/wap\/style.css/i.test(html))
+            throw new AnyBalance.Error('Не удаётся получить данные по выбранному городу. Неверный код города?');
+
+	var result = {success: true};
+        getParam(html, result, '__tariff', /<h1[^>]*>([\s\S]*?)<\/h1>/i, replaceTagsAndSpaces, html_entity_decode);
+
+        var wasToday = false;
+        html.replace(/<tr><td><b>(?:пн|вт|ср|чт|пт|сб|вс)(?:[\s\S]*?<\/tr>){5}/ig, function(tr){
+            var time = getParam(tr, null, null, /<tr><td><b>(?:пн|вт|ср|чт|пт|сб|вс),([^<]*)/i, replaceTagsAndSpaces, parseDate);
+            var hour = new Date(time).getHours();
+            
+            if(8 < hour && hour <= 20){ //Это день
+                var suffix = wasToday ? '2' : '1';
+                wasToday = true;
+
+                getParam(tr, result, 'date'+suffix, /<tr><td><b>(?:пн|вт|ср|чт|пт|сб|вс),([^<]*)/i, replaceTagsAndSpaces, parseDate);
+                getParam(tr, result, 'cloud'+suffix, /облачность([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+                getParam(tr, result, 'temp'+suffix, /(?:[\s\S]*?<tr[^>]*>){4}([\s\S]*?)<\/tr>/i, replaceTagsAndSpaces, parseBalance);
+                getParam(tr, result, 'humidity'+suffix, /влажность([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+                getParam(tr, result, 'wind_dir'+suffix, />ветер([^,]*)/i, replaceTagsAndSpaces, html_entity_decode);
+                getParam(tr, result, 'wind_vel'+suffix, />ветер(.*?)м\/сек/i, replaceTagsAndSpaces, parseBalance);
+                getParam(tr, result, 'falls'+suffix, /(?:[\s\S]*?<tr[^>]*>){4}.*?,([^\(,]*)/i, replaceTagsAndSpaces, html_entity_decode);
+                getParam(tr, result, 'precip'+suffix, /(?:[\s\S]*?<tr[^>]*>){4}.*?,(.*?)мм/i, replaceTagsAndSpaces, parseBalance);
+                
+            }
+        });
+
+	AnyBalance.setResult(result);
+}
+
+function parseXml(xml){
 	var xmlDoc = $.parseXML(xml),
           $xml = $(xmlDoc);
 
@@ -111,7 +94,6 @@ function main(){
             var hour = parseInt($timestep.find('G').text());
            
             if(8 < hour && hour <= 20){ //Это день
-                var shift = parseInt($timestep.find('time_step').text());
                 var suffix = wasToday ? '2' : '1';
                 wasToday = true;
                 
@@ -138,12 +120,3 @@ function main(){
 
 	AnyBalance.setResult(result);
 }
-
-function html_entity_decode(str)
-{
-    //jd-tech.net
-    var tarea=document.createElement('textarea');
-    tarea.innerHTML = str;
-    return tarea.value;
-}
-

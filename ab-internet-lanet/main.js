@@ -49,8 +49,10 @@ function parseDate(str){
       AnyBalance.trace('Can not parse date from ' + str);
       return;
   }
+
+  dt = new Date(dt);
   
-  AnyBalance.trace('Parsed date ' + new Date(dt).toString() + ' from ' + str);
+  AnyBalance.trace('Parsed date ' + dt.toString() + ' from ' + str);
   return dt.getTime(); 
 }
 

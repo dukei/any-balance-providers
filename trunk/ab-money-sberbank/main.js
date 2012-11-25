@@ -287,6 +287,11 @@ function fetchOldCard(html){
 
 function doNewAccount(page){
     var html = AnyBalance.requestGet(page);
+    if(/StartMobileBankRegistrationForm/i.test(html)){
+        //Сбербанк хочет, чтобы вы приняли решение о подключении мобильного банка. Откладываем решение.
+        html = AnyBalance.requestPost('https://online.sberbank.ru/PhizIC/login/register-mobilebank/start.do', {operation: 'skip'});
+//        throw new AnyBalance.Error('Сбербанк хочет, чтобы вы приняли решение о подключении мобильного банка. Пожалуйста, зайдите в Сбербанк ОнЛ@йн через браузер и сделайте выбор.');
+    }
     if(/PhizIC/.test(html)){
       return doNewAccountPhysic(html);
     }else{

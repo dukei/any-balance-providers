@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-game-godville</id>
+	<name>Godville.net</name>
+	<description>
+		Отображает некоторые параметры игры (здоровье, прана, количество кирпичей, уровень героя)
+	</description>
+	<author>Vit@liy &lt;vitaliy@root.ua&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<js>api:jquery.min.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="name" name="Имя героя" type="text"/>
+		<counter id="level" name="Уровень" prefix="Ур. " type="numeric"/>
+		<counter id="health" name="Здоровье" type="numeric"/>
+		<counter id="health_p" name="Здоровье, ℅" suffix="℅" type="numeric"/>
+		<counter id="health_t" name="Здоровье, текущее/максимальное" type="text"/>
+		<counter id="bricks_p" name="Кирпичи, ℅" suffix="℅" type="numeric"/>
+		<counter id="bricks" name="Кирпичи, шт" suffix=" шт" type="numeric"/>
+		<counter id="godpower" name="Прана" suffix="℅" type="numeric"/>
+	</counters>
+	<keywords>
+		игра, game, godville
+	</keywords>
+	<type>
+		game
+	</type>
+</provider>

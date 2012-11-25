@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference
+        key="login"
+        title="Имя бога" 
+        summary="Ваше имя бога в игре||{@s}\n" 
+        dialogTitle="Ваше имя бога в игре" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите ваше имя бога в игре"
+        positiveButtonText="ОК" 
+        inputType="text">
+    </EditTextPreference>
+</PreferenceScreen>

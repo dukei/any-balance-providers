@@ -34,6 +34,10 @@ var regionsOrdinary = {
 	ug: "https://ihelper.ug.mts.ru/SelfCare/"
 };
 
+function isset(val){
+    return typeof(val) != 'undefined';
+}
+
 function getParam (html, result, param, regexp, replaces, parser) {
 	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
 		return;
@@ -169,121 +173,128 @@ function main(){
 }
 
 function mainMobile(allowRetry){
-    AnyBalance.trace("Entering mobile internet helper...");
-
-    var prefs = AnyBalance.getPreferences();
-
-    if(!regions[prefs.region]){
+    try{
+        AnyBalance.trace("Entering mobile internet helper...");
+        
+        var prefs = AnyBalance.getPreferences();
+        
+        if(!regions[prefs.region]){
 	AnyBalance.trace("Unknown region: " + prefs.region + ", setting to auto");
-        prefs.region = 'auto';
-    }
-
-    var baseurl = regions[prefs.region];
-
-    AnyBalance.trace("Trying to enter selfcare at address: " + baseurl);
-    var html = AnyBalance.requestPost(baseurl + "Security.mvc/LogOn", {
-        username: prefs.login,
-        password: prefs.password
-    }, g_headers);
-    
-    var regexp=/<form .*?id="redirect-form".*?action="[^"]*?([^\/\.]+)\.mts\.ru/i, res, tmp;
-    var tries = 3;
-    while(tries-- > 0 && (res=regexp.exec(html))){
-        //Неправильный регион. Умный мтс нас редиректит
-        //Только эта скотина не всегда даёт правильную ссылку, иногда даёт такую, которая требует ещё редиректов
-        //Поэтому приходится вычленять из ссылки непосредственно нужный регион
-        var newReg = res[1];
-
-        if(!regions[newReg])
-            throw new AnyBalance.Error("mts has redirected to unknown region: " + res[1]);
-
-        baseurl = regions[newReg];
-        AnyBalance.trace("Redirected, now trying to enter selfcare at address: " + baseurl);
-        html = AnyBalance.requestPost(baseurl + "Security.mvc/LogOn", {
-    	    username: prefs.login,
+            prefs.region = 'auto';
+        }
+        
+        var baseurl = regions[prefs.region];
+        
+        AnyBalance.trace("Trying to enter selfcare at address: " + baseurl);
+        var html = AnyBalance.requestPost(baseurl + "Security.mvc/LogOn", {
+            username: prefs.login,
             password: prefs.password
         }, g_headers);
-    }
-    
-    
-    regexp = /Security\.mvc\/LogOff/;
-    if(!regexp.exec(html)){
-        //Не вошли. Сначала пытаемся найти вразумительное объяснение этому факту...
-        regexp=/<ul class="operation-results-error"><li>(.*?)<\/li>/;
-        if (res=regexp.exec(html)){
-            throw new AnyBalance.Error(res[1], allowRetry);
+        
+        var regexp=/<form .*?id="redirect-form".*?action="[^"]*?([^\/\.]+)\.mts\.ru/i, res, tmp;
+        var tries = 3;
+        while(tries-- > 0 && (res=regexp.exec(html))){
+            //Неправильный регион. Умный мтс нас редиректит
+            //Только эта скотина не всегда даёт правильную ссылку, иногда даёт такую, которая требует ещё редиректов
+            //Поэтому приходится вычленять из ссылки непосредственно нужный регион
+            var newReg = res[1];
+        
+            if(!regions[newReg])
+                throw new AnyBalance.Error("mts has redirected to unknown region: " + res[1], false);
+        
+            baseurl = regions[newReg];
+            AnyBalance.trace("Redirected, now trying to enter selfcare at address: " + baseurl);
+            html = AnyBalance.requestPost(baseurl + "Security.mvc/LogOn", {
+        	    username: prefs.login,
+                password: prefs.password
+            }, g_headers);
         }
         
-        regexp=/<title>Произошла ошибка<\/title>/;
-        if(regexp.exec(html)){
-            throw new AnyBalance.Error("Мобильный интернет-помощник временно недоступен." + (prefs.region == 'auto' ? ' Попробуйте установить ваш Регион вручную в настройках провайдера.' : ''), allowRetry);
+        
+        regexp = /Security\.mvc\/LogOff/;
+        if(!regexp.exec(html)){
+            //Не вошли. Сначала пытаемся найти вразумительное объяснение этому факту...
+            regexp=/<ul class="operation-results-error"><li>(.*?)<\/li>/;
+            if (res=regexp.exec(html)){
+                throw new AnyBalance.Error(res[1], allowRetry);
+            }
+            
+            regexp=/<title>Произошла ошибка<\/title>/;
+            if(regexp.exec(html)){
+                throw new AnyBalance.Error("Мобильный интернет-помощник временно недоступен." + (prefs.region == '' ? ' Попробуйте установить ваш Регион вручную в настройках провайдера.' : ''), allowRetry);
+            }
+            
+            var error = sumParam(html, null, null, /<h1>\s*Ошибка\s*<\/h1>\s*<p>(.*?)<\/p>/i);
+            if(error){
+                throw new AnyBalance.Error(error, allowRetry);
+            }
+        
+            AnyBalance.trace("Have not found logOff... Unknown other error. Please contact author.");
+            AnyBalance.trace(html);
+            throw new AnyBalance.Error("Не удаётся войти в мобильный интернет помощник. Возможно, проблемы на сайте." + (prefs.region == '' ? ' Попробуйте установить ваш Регион вручную в настройках провайдера.' : ' Попробуйте вручную войти в помощник по адресу ' + baseurl), allowRetry);
         }
         
-        var error = sumParam(html, null, null, /<h1>\s*Ошибка\s*<\/h1>\s*<p>(.*?)<\/p>/i);
-        if(error){
-            throw new AnyBalance.Error(error, allowRetry);
+        AnyBalance.trace("It looks like we are in selfcare (found logOff)...");
+        var result = {success: true};
+        
+        if(prefs.phone && prefs.phone != prefs.login){
+            html = AnyBalance.requestGet(baseurl + "MyPhoneNumbers.mvc", g_headers);
+            html = AnyBalance.requestGet(baseurl + "MyPhoneNumbers.mvc/Change?phoneNumber=7"+prefs.phone, g_headers);
+            if(!html)
+	    throw new AnyBalance.Error(prefs.phone + ": номер, возможно, неправильный или у вас нет к нему доступа", false); 
+            var error = sumParam(html, null, null, /<ul class="operation-results-error">([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
+            if(error)
+	    throw new AnyBalance.Error(prefs.phone + ": " + error, false); 
         }
-    
-        AnyBalance.trace("Have not found logOff... Unknown other error. Please contact author.");
-        AnyBalance.trace(html);
-        throw new AnyBalance.Error("Не удаётся войти в мобильный интернет помощник. Возможно, проблемы на сайте." + (prefs.region == 'auto' ? ' Попробуйте установить ваш Регион вручную в настройках провайдера.' : ' Попробуйте вручную войти в помощник по адресу ' + baseurl), allowRetry);
+        
+        // Тарифный план
+        sumParam(html, result, '__tariff', /Тарифный план.*?>([^<]*)/i, replaceTagsAndSpaces);
+        // Баланс
+        sumParam (html, result, 'balance', /Баланс.*?>([-\d\.,\s]+)/i, replaceFloat, parseFloat);
+        // Телефон
+        sumParam (html, result, 'phone', /Ваш телефон:.*?>([^<]*)</i, replaceTagsAndSpaces, html_entity_decode);
+        
+        if (isAvailableStatus()) {
+        
+            AnyBalance.trace("Fetching status...");
+        
+            html = AnyBalance.requestGet(baseurl + "Account.mvc/Status", g_headers);
+        
+            fetchAccountStatus(html, result);
+        }
+        
+        if (AnyBalance.isAvailable ('usedinprevmonth')) {
+        
+            AnyBalance.trace("Fetching history...");
+        
+            html = AnyBalance.requestPost (baseurl + 'Account.mvc/History', {periodIndex: 0}, g_headers);
+        
+            AnyBalance.trace("Parsing history...");
+        
+            // Расход за прошлый месяц
+            sumParam (html, result, 'usedinprevmonth', /За период израсходовано .*?([\d\.,]+)/i, replaceFloat, parseFloat);
+        }
+        
+        
+        if (AnyBalance.isAvailable ('monthlypay')) {
+        
+            AnyBalance.trace("Fetching traffic info...");
+        
+            html = AnyBalance.requestGet (baseurl + 'TariffChange.mvc', g_headers);
+        
+            AnyBalance.trace("Parsing traffic info...");
+        
+            // Ежемесячная плата
+            sumParam (html, result, 'monthlypay', /Ежемесячная плата[^\d]*([\d\.,]+)/i, replaceFloat, parseFloat);
+        }
+        
+        AnyBalance.setResult(result);
+    }catch(e){
+        //Если не установлено требование другой попытки, устанавливаем его в переданное в функцию значение
+        if(!isset(e.allowRetry))
+            e.allowRetry = allowRetry;
+        throw e; 
     }
-
-    AnyBalance.trace("It looks like we are in selfcare (found logOff)...");
-    var result = {success: true};
-
-    if(prefs.phone && prefs.phone != prefs.login){
-        html = AnyBalance.requestGet(baseurl + "MyPhoneNumbers.mvc", g_headers);
-        html = AnyBalance.requestGet(baseurl + "MyPhoneNumbers.mvc/Change?phoneNumber=7"+prefs.phone, g_headers);
-        if(!html)
-	    throw new AnyBalance.Error(prefs.phone + ": номер, возможно, неправильный или у вас нет к нему доступа"); 
-        var error = sumParam(html, null, null, /<ul class="operation-results-error">([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
-        if(error)
-	    throw new AnyBalance.Error(prefs.phone + ": " + error); 
-    }
-
-    // Тарифный план
-    sumParam(html, result, '__tariff', /Тарифный план.*?>([^<]*)/i, replaceTagsAndSpaces);
-    // Баланс
-    sumParam (html, result, 'balance', /Баланс.*?>([-\d\.,\s]+)/i, replaceFloat, parseFloat);
-    // Телефон
-    sumParam (html, result, 'phone', /Ваш телефон:.*?>([^<]*)</i, replaceTagsAndSpaces, html_entity_decode);
-
-    if (isAvailableStatus()) {
-
-        AnyBalance.trace("Fetching status...");
-
-        html = AnyBalance.requestGet(baseurl + "Account.mvc/Status", g_headers);
-
-        fetchAccountStatus(html, result);
-    }
-
-    if (AnyBalance.isAvailable ('usedinprevmonth')) {
-
-        AnyBalance.trace("Fetching history...");
-
-        html = AnyBalance.requestPost (baseurl + 'Account.mvc/History', {periodIndex: 0}, g_headers);
-
-        AnyBalance.trace("Parsing history...");
-
-        // Расход за прошлый месяц
-        sumParam (html, result, 'usedinprevmonth', /За период израсходовано .*?([\d\.,]+)/i, replaceFloat, parseFloat);
-    }
-
-
-    if (AnyBalance.isAvailable ('monthlypay')) {
-
-        AnyBalance.trace("Fetching traffic info...");
-
-        html = AnyBalance.requestGet (baseurl + 'TariffChange.mvc', g_headers);
-
-        AnyBalance.trace("Parsing traffic info...");
-
-        // Ежемесячная плата
-        sumParam (html, result, 'monthlypay', /Ежемесячная плата[^\d]*([\d\.,]+)/i, replaceFloat, parseFloat);
-    }
-
-    AnyBalance.setResult(result);
 
 }
 

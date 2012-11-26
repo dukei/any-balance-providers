@@ -1,0 +1,151 @@
+/**
+Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
+
+Информация о карте, кредите, депозите в банке "ХоумКредит".
+
+Сайт: http://www.homecredit.ru
+ЛК: https://ib.homecredit.ru
+*/
+
+var g_headers = {
+    Accept:'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
+    'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+    Connection:'keep-alive',
+    'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11'
+};
+
+function main() {
+    var prefs = AnyBalance.getPreferences();
+    var baseurl = 'https://ib.homecredit.ru/ibs/';
+
+    var html = AnyBalance.requestGet(baseurl, g_headers);
+    var form = getParam(html, null, null, /(<form[^>]+class="aui-form[\s\S]*?<\/form>)/i);
+    if(!form)
+        throw new AnyBalance.Error('Не удаётся найти форму входа. Сайт изменен?');
+
+    var action = getParam(form, null, null, /<form[^>]+action="([^"]*)/i, null, html_entity_decode);
+    var params = createFormParams(form, function(params, input, name, value){
+        var undef;
+        if(/login/i.test(name))
+            value = prefs.login;
+        else if(/password/i.test(name))
+            value = prefs.password;
+        return value;
+    });
+
+    var html = AnyBalance.requestPost(action, params, g_headers);
+
+    if(!/portal\/logout/i.test(html)){
+        var error = getParam(html, null, null, /<div[^>]*portlet-msg-error[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+        if(error)
+            throw new AnyBalance.Error(error);
+        throw new AnyBalance.Error('Не удалось войти в интернет-банк. Сайт изменен?');
+    }
+
+    if(prefs.type == 'crd')
+        fetchCredit(baseurl, html);
+    else if(prefs.type == 'acc')
+        fetchAccount(baseurl, html);
+    else if(prefs.type == 'card')
+        fetchCard(baseurl, html);
+    else if(prefs.type == 'dep')
+        fetchDeposit(baseurl, html);
+    else
+        fetchDeposit(baseurl, html); //По умолчанию депозит
+}
+
+function fetchCard(baseurl, html){
+    throw new AnyBalance.Error('Карты пока не поддерживаются. Обращайтесь к автору провайдера по е-мейл для исправления.');
+
+    var prefs = AnyBalance.getPreferences();
+    if(prefs.contract && !/^\d{4}$/.test(prefs.contract))
+        throw new AnyBalance.Error('Пожалуйста, введите 4 последних цифры номера карты, по которой вы хотите получить информацию, или не вводите ничего, чтобы получить информацию по первой карте.');
+}
+
+function fetchAccount(baseurl, html){
+    throw new AnyBalance.Error('Счета пока не поддерживаются. Обращайтесь к автору провайдера по е-мейл для исправления.');
+
+    var prefs = AnyBalance.getPreferences();
+    if(prefs.contract && !/^\d{4,20}$/.test(prefs.contract))
+        throw new AnyBalance.Error('Пожалуйста, введите не менее 4 последних цифр номера счета, по которому вы хотите получить информацию, или не вводите ничего, чтобы получить информацию по первому счету.');
+
+    //Сколько цифр осталось, чтобы дополнить до 20
+    var accnum = prefs.contract || '';
+    var accprefix = accnum.length;
+    accprefix = 20 - accprefix;
+}
+
+function createProductsIds(html, result){
+    if(AnyBalance.isAvailable('all')){
+        var all = [], types = {
+           deposit: 'Депозит'
+        }; 
+        html.replace(/<a[^>]+id="[^"]*:([^":]+)_(\d+)"[^>]*class="selectProduct"[\s\S]*?<\/a>/i, function(str, type, id){
+            var name = getParam(str, null, null, /<td[^>]+class="productInfo"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+            if(types[type]){
+                all[all.length] = types[type] + ': ' + id + ' — ' + name;
+            }else{
+                AnyBalance.trace('Пропускаем неизвестный тип: ' + type + ', ' + name);
+            }
+        });
+        if(all)
+            result.all = all.join(',\n');
+    }
+        
+}
+
+function fetchDeposit(baseurl, html){
+    var prefs = AnyBalance.getPreferences();
+    if(prefs.contract && !/^\d{1,20}$/.test(prefs.contract))
+        throw new AnyBalance.Error('Пожалуйста, введите ID вклада, по которому вы хотите получить информацию, или не вводите ничего, чтобы получить информацию по первому вкладу.');
+
+    var re = new RegExp('(<a[^>]+id="[^"]*deposit_' + (prefs.contract ? prefs.contract : '\\d+') + '"[^>]*class="selectProduct"[\\s\\S]*?<\\/a>)', 'i');
+    var tr = getParam(html, null, null, re);
+    if(!tr)
+        throw new AnyBalance.Error('Не удаётся найти ' + (prefs.contract ? 'вклад с ID ' + prefs.contract : 'ни одного вклада'));
+
+    var result = {success: true};
+    
+    createProductsIds(html, result);
+
+    getParam(tr, result, '__tariff', /<td[^>]+class="productInfo"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(tr, result, 'accname', /<td[^>]+class="productInfo"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(tr, result, 'balance', /<td[^>]+class="productAmount"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(tr, result, 'currency', /<td[^>]+class="productAmount"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseCurrency);
+
+    if(AnyBalance.isAvailable('pcts', 'agreement', 'status', 'accnum', 'till', 'rate')){
+        var isSelected = getParam(tr, null, null, /<span[^>]+class="(selected)"/i);
+        if(!isSelected){
+            var action = getParam(tr, null, null, /PrimeFaces.ajax.AjaxRequest\s*\(\s*'([^']*)/i, null, html_entity_decode);
+            var formId = getParam(tr, null, null, /PrimeFaces.ajax.AjaxRequest\s*\([^"]*formId\s*:\s*'([^']*)/i, null, html_entity_decode);
+            var source = getParam(tr, null, null, /PrimeFaces.ajax.AjaxRequest\s*\([^"]*source\s*:\s*'([^']*)/i, null, html_entity_decode);
+            var form = getParam(html, null, null, new RegExp('(<form[^>]+id="' + formId + '"[\\s\\S]*?<\\/form>)', 'i'));
+            var params = createFormParams(form);
+            params['javax.faces.partial.ajax'] = true;
+            params['javax.faces.source'] = source;
+            params['javax.faces.partial.execute'] = '@all';
+            params[source] = source;
+            html = AnyBalance.requestPost(params['javax.faces.encodedURL'] || action, params);
+        }
+
+        getParam(html, result, 'pcts', /Сумма начисленных процентов[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+        getParam(html, result, 'agreement', /Номер договора[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+        getParam(html, result, 'status', /Статус[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+        getParam(html, result, 'accnum', /Номер счета вклада[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+        getParam(html, result, 'till', /Дата закрытия[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+        getParam(html, result, 'rate', /Процентная ставка[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    }
+
+    AnyBalance.setResult(result);
+    
+}
+
+function fetchCredit(baseurl, html){
+    throw new AnyBalance.Error('Кредиты пока не поддерживаются, обратитесь к автору провайдера для исправления.');
+
+    var prefs = AnyBalance.getPreferences();
+
+    if(prefs.contract && !/^\d{6,10}$/.test(prefs.contract))
+        throw new AnyBalance.Error('Пожалуйста, введите номер кредита, по которому вы хотите получить информацию, или не вводите ничего, чтобы получить информацию по первому кредиту.');
+}

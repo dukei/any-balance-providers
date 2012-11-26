@@ -66,53 +66,6 @@ function html_entity_decode(str)
 }
 
 /**
- * Получает объект с параметрами форм (ищет в html все <input и <select и возвращает объект с их именами-значениями.
- * 
- * process - функция function(params, str, name, value). Возвращаемое значение будет положено в объект params под именем name. Если возвратит undefined, то ничего не будет сделано.
- * params - объект, который вернется из createFormParams
- * str - весь <input или <select
- * name - атрибут name <input или <select
- * value - атрибут value <input или <select
- * 
- * Типичное использование:
- *
-        var params = createFormParams(html, function(params, str, name, value){
-            if(name == 'login')
-                return prefs.login;
-            return value;
-        });
- */
-function createFormParams(html, process){
-    var params = {};
-    html.replace(/<input[^>]+name="([^"]*)"[^>]*>|<select[^>]+name="([^"]*)"[^>]*>[\s\S]*?<\/select>/ig, function(str, nameInp, nameSel){
-        var value = '';
-        if(nameInp){
-            value = getParam(str, null, null, /value="([^"]*)"/i, null, html_entity_decode);
-            name = nameInp;
-        }else if(nameSel){
-            value = getParam(str, null, null, /^<[^>]*value="([^"]*)"/i, null, html_entity_decode);
-            if(typeof(value) == 'undefined'){
-                var optSel = getParam(str, null, null, /(<option[^>]+selected[^>]*>)/i);
-                if(!optSel)
-                    optSel = getParam(str, null, null, /(<option[^>]*>)/i);
-                value = getParam(optSel, null, null, /value="([^"]*)"/i, null, html_entity_decode);
-            }
-            name = nameSel;
-        }
-
-        name = html_entity_decode(name);
-        if(process){
-            value = process(params, str, name, value);
-        }
-        if(typeof(value) != 'undefined')
-            params[name] = value;
-    });
-
-    //AnyBalance.trace('Form params are: ' + JSON.stringify(params));
-    return params;
-}
-
-/**
  *  Получает дату из строки
  */
 function parseDate(str){

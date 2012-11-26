@@ -208,7 +208,7 @@ function main(){
     sumParam (html, result, 'traffic_maxenergy_mb', /<li>Осталось: (\d+,?\d* *(kб|bytes)).<\/li>/ig, null, parseTraffic);
 
     // СМС в сети МТС
-    sumParam (html, result, 'sms_net', /<li>Осталось (\d+) смс.<\/li>/ig, null, parseInt);
+    sumParam (html, result, 'sms_net', /<li>Осталось (\d+) смс.[^<]*<\/li>/ig, null, parseInt);
 
     // Минуты в сети МТС
     sumParam (html, result, 'min_net_maxenergy', /<li>Осталось ([\d\.,]+) бесплатных секунд.<\/li>/ig, replaceFloat, parseFloat);

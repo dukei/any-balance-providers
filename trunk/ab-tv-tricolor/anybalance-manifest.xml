@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-tv-tricolor</id>
+  <id version="2">ab-tv-tricolor</id>
   <name>Триколор ТВ</name>
   <description>
     Получает баланс и другую информацию у провайдера спутникового телевидения Триколор ТВ (http://tricolor.tv).
@@ -15,12 +15,19 @@
     <preferences>preferences.xml</preferences>
     <js>main.js</js>
     <js>library.js</js>
+    <history>history.xml</history>
   </files>
   <counters>
     <counter id="balance" name="Баланс" units="р"/>
     <counter id="agreement" name="Договор" type="text"/>
     <counter id="status" name="Статус" type="text"/>
     <counter id="device" name="№ оборудования" type="text"/>
+    <counter id="service1" name="Услуга" type="text"/>
+    <counter id="daysleft1" name="Остаток дней" units="дн"/>
+    <counter id="service2" name="Услуга 2" type="text"/>
+    <counter id="daysleft2" name="Остаток дней 2" units="дн"/>
+    <counter id="service3" name="Услуга 3" type="text"/>
+    <counter id="daysleft3" name="Остаток дней 3" units="дн"/>
   </counters>
   <keywords>
     спутник tricolor

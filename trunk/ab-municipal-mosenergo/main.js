@@ -34,6 +34,9 @@ function main(){
         y: 9
     }, g_headers);
 
+//    var params = AnyBalance.getLastResponseParameters();
+//    AnyBalance.trace(JSON.stringify(params));
+
     //Выход из кабинета
     if(!/&#1042;&#1099;&#1093;&#1086;&#1076; &#1080;&#1079; &#1082;&#1072;&#1073;&#1080;&#1085;&#1077;&#1090;&#1072;/i.test(html)){
         if(html.length < 5000 && AnyBalance.getLevel() < 5) //Обрезается по '\0'

@@ -70,7 +70,9 @@ function main(){
             result.balance = parseFloat(val.replace(',','.'));
     }
     if(AnyBalance.isAvailable('bonus')){
-    	var val = $binfo.find('th:contains("Начислено")').next().find('.b-user-info__balance').first().text();
+    	var val = $binfo.find('th:contains("Начислено")').next().find('.b-user-info__balance').first().text(); //По карте с кредитным лимитом
+        if(!val)
+    	    val = $binfo.next().find('.b-user-info__balance').text(); //По обычной карте без надписи
         AnyBalance.trace("Бонус (начислено): " + val);
     	if (val)
     		val = val.replace(/[^0-9.,]+/,'');

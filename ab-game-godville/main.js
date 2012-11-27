@@ -11,7 +11,7 @@ function main(){
 	if (!prefs.login || prefs.login == '')
 		throw new AnyBalance.Error('Введите ваше имя бога');
 
-	var pd = AnyBalance.requestGet('http://godville.net/gods/api/' + prefs.login + '.json');
+	var pd = AnyBalance.requestGet('http://godville.net/gods/api/' + prefs.login.replace(' ', '%20') + '.json');
 
 	if(!pd || pd == '')
 		throw new AnyBalance.Error('Не удалось получить данные');

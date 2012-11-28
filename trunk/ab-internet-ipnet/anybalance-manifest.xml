@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-internet-ipnet</id>
+  <name>IPNET (Киев)</name>
+  <description>
+    Получает баланс и информацию о тарифном плане для киевского интернет-провайдера IPNET (http://ipnet.ru).
+
+    Информация берется из личного кабинета https://stat.ipnet.ua.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+    <js>library.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="₴"/>
+    <counter id="status" name="Состояние" type="text"/>
+    <counter id="agreement" name="Договор" type="text"/>
+    <counter id="till" name="Хватит до" type="time" format="dd/MM/yyyy"/>
+  </counters>
+  <keywords>
+    интернет
+  </keywords>
+  <type>
+    internet
+  </type>
+  <country>
+    ua
+  </country>
+</provider>

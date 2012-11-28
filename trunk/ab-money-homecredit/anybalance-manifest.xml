@@ -27,9 +27,9 @@
         <counter id="status" name="Статус" type="text"/>
         <counter id="till" name="Срок действия" type="time" format="dd/MM/yyyy"/>
 	<counter id="rate" name="Процентная ставка" units="%"/>
+        <counter id="all" name="Сводка" type="text"/>
         <counter id="accnum" name="Номер счета" type="text"/>
         <counter id="accname" name="Название" type="text"/>
-        <counter id="all" name="Сводка" type="text"/>
     </counters>
     <keywords>
         Кредит, банк, home credit

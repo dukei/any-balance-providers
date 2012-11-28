@@ -253,3 +253,49 @@ if(!(matches = session.match(/<SESSION_ID>(.*?)<\/SESSION_ID>/i))){
 
 Замечания:
  * Начиная с API версии 2 (AnyBalance 1.1.416) в тексте ошибки разрешены теги HTML, например, ссылки. Поддержка HTML очень ограниченная, используйте с осторожностью.
+
+==getCookies==
+{{{
+AnyBalance.getCookies() //since level 4
+}}}
+
+Возвращает все куки (массив), которые установлены в локальной сессии. Выглядит этот массив примерно следующим образом:
+{{{
+[
+ {"name":"myowncookie","value":"myvalue","domain":"192.168.1.101","path":"/","persistent":false},
+ {"name":"anothercookie","value":"someval","domain":"192.168.1.101","path":"/","expires":"Wed, 28 Nov 2012 23:04:05 GMT","persistent":true}
+]
+}}}
+
+==getCookie==
+{{{
+AnyBalance.getCookie(/*string*/ name, /*object or null*/ params) //since level 4
+}}}
+
+Возвращает значение первой куки с заданным именем. При этом можно указать дополнительное ограничение на домен и путь в объекте `params` (все поля необязательные).
+
+{{{
+var params = {
+    domain: 'example.com', //Домен куки
+    path: '/', //Путь куки
+    allcookies: [] //Если вы до этого получили все куки функцией AnyBalance.getCookies(), 
+                   //то рекомендуется в этом параметре передать массив кук
+};
+}}}
+
+Возвращает строку - значение куки.
+
+==setCookie==
+{{{
+AnyBalance.setCookie(/*string*/ domain, /*string*/ name, /*string or null*/ value, /*object or null*/ params) //since level 4
+}}}
+
+Устанавливает (замещает) куки с заданным именем и параметрами. Или удаляет её (если `value == null`).
+
+{{{
+var params = {
+    path: '/', //Путь куки
+    expire: 'GMT Time String', //Срок устаревания
+    secure: false //Безопасная ли кука
+};
+}}}

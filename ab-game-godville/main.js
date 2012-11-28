@@ -22,7 +22,7 @@ function main(){
 	var js = $.parseJSON(pd);
 
 	var result = {success: true};
-	
+
 	var hname = js.name;
 
 	result.__tariff = hname;
@@ -36,9 +36,6 @@ function main(){
 	if(AnyBalance.isAvailable('health'))
 		result['health'] = js.health;
 
-	if(AnyBalance.isAvailable('health_p'))
-		result['health_p'] = ((js.health / js.max_health) * 100).toFixed(1);
-
 	if(AnyBalance.isAvailable('health_t'))
 		result['health_t'] = js.health + "/" +  js.max_health;
 
@@ -50,6 +47,25 @@ function main(){
 
 	if(AnyBalance.isAvailable('godpower'))
 		result['godpower'] = js.godpower;
+
+		
+	if(js.diary_last){
+
+		if(AnyBalance.isAvailable('health_t'))
+			result['health_t'] = js.health + "/" +  js.max_health;
+
+		if(AnyBalance.isAvailable('health_p'))
+			result['health_p'] = ((js.health / js.max_health) * 100).toFixed(1);
+
+		if(AnyBalance.isAvailable('level_p'))
+			result['level_p'] = js.exp_progress;
+
+		if(AnyBalance.isAvailable('quest_p'))
+			result['quest_p'] = js.quest_progress;
+
+	} else {
+		throw new AnyBalance.Error('Включите расширенное API а настройках игры');
+	}
 
 	AnyBalance.setResult(result);
 

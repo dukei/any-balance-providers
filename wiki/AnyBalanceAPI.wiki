@@ -295,7 +295,69 @@ AnyBalance.setCookie(/*string*/ domain, /*string*/ name, /*string or null*/ valu
 {{{
 var params = {
     path: '/', //Путь куки
-    expire: 'GMT Time String', //Срок устаревания
+    expires: 'GMT Time String', //Срок устаревания
     secure: false //Безопасная ли кука
 };
 }}}
+
+==getLastResponseParameters==
+{{{
+AnyBalance.getLastResponseParameters() //since level 5
+}}}
+
+Получает параметры, связанные с последним запросом. Возвращает объект:
+
+{{{
+var params = {
+    url: 'http://somedomain.com/path', //Финальный URL (после всех редиректов)
+    status: 'HTTP/1.1 200 OK', //HTTP status
+    headers: [ //Набор HTTP заголовков ответа
+        ['name', 'value'],
+        ...
+    ]
+};
+}}}
+
+Рекомендуется вместо этой функции пользоваться набором частных функций, получающих отдельные элементы этой структуры, а именно: [AnyBalanceAPI#getLastUrl getLastUrl()], [AnyBalanceAPI#getLastStatusString getLastStatusString()], [AnyBalanceAPI#getLastStatusCode getLastStatusCode()], [AnyBalanceAPI#getLastResponseHeaders getLastResponseHeaders()] и [AnyBalanceAPI#getLastResponseHeader getLastResponseHeader()]
+
+===getLastUrl===
+{{{
+AnyBalance.getLastUrl() //since level 5
+}}}
+
+Получает финальный url, который был получен или на который был переадресован последний вызов [AnyBalanceAPI#requestGet requestGet()] или [AnyBalanceAPI#requestPost requestPost()].
+
+===getLastStatusString===
+{{{
+AnyBalance.getLastStatusString() //since level 5
+}}}
+
+Получает строку HTTP статуса, которая была получена с последним вызовом [AnyBalanceAPI#requestGet requestGet()] или [AnyBalanceAPI#requestPost requestPost()].
+
+===getLastStatusCode===
+{{{
+AnyBalance.getLastStatusString() //since level 5
+}}}
+
+Получает код HTTP ответа на последний запрос [AnyBalanceAPI#requestGet requestGet()] или [AnyBalanceAPI#requestPost requestPost()].
+
+===getLastResponseHeaders===
+{{{
+AnyBalance.getLastResponseHeaders() //since level 5
+}}}
+
+Получает массив всех HTTP заголовков ответа на последний запрос [AnyBalanceAPI#requestGet requestGet()] или [AnyBalanceAPI#requestPost requestPost()]. Возвращается массив:
+
+{{{
+    var headers = [ //Набор HTTP заголовков ответа
+        ['name', 'value'], //название заголовка, его значение
+        ...
+    ]
+}}}
+
+===getLastResponseHeader===
+{{{
+AnyBalance.getLastResponseHeader(/*string*/ name) //since level 5
+}}}
+
+Получает строковое значение первого заголовка с заданным именем `name`. Заголовок ищется среди всех заголовков ответа на последний запрос [AnyBalanceAPI#requestGet requestGet()] или [AnyBalanceAPI#requestPost requestPost()]. Если такого нет, возвращает `null`. 

@@ -396,12 +396,17 @@ function megafonServiceGuide(filial){
     
     var prefs = AnyBalance.getPreferences();
     AnyBalance.trace('Connecting to service guide ' + filinfo.name);
-	
-    var session = AnyBalance.requestPost(baseurl + 'ps/scc/php/check.php?CHANNEL=WWW',
-    {
-        LOGIN: (prefs.corporate ? 'CP_' : '') + prefs.login, 
-        PASSWORD: prefs.password
+
+    var session;
+    if(filial == MEGA_FILIAL_MOSCOW){
+        //Влад, ну что же ты всё подглядываешь-то??? Впрочем, пользуйся, не жалко :)
+        session = AnyBalance.requestGet(baseurl + 'SESSION/GET_SESSION?MSISDN=' + prefs.login + '&PASS=' + prefs.password + '&CHANNEL=WWW');
+    }else{
+	session = AnyBalance.requestPost(baseurl + 'ps/scc/php/check.php?CHANNEL=WWW', {
+            LOGIN: (prefs.corporate ? 'CP_' : '') + prefs.login, 
+            PASSWORD: prefs.password
         });
+    }
 	
     AnyBalance.trace('Got result from service guide: ' + session);
 

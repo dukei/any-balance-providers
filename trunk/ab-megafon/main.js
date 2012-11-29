@@ -289,6 +289,9 @@ function megafonTrayInfo(filial){
     if(AnyBalance.isAvailable('balance'))
         result.balance = parseFloat($xml.find('BALANCE').text());
 
+    if(AnyBalance.isAvailable('phone'))
+        result.phone = $xml.find('NUMBER').first().text();
+
     if(AnyBalance.isAvailable('prsnl_balance') && (val = parseFloat($xml.find('PRSNL_BALANCE').text())))
         result.prsnl_balance = parseFloat(val);
     
@@ -399,8 +402,12 @@ function megafonServiceGuide(filial){
 
     var session;
     if(filial == MEGA_FILIAL_MOSCOW){
-        //Влад, ну что же ты всё подглядываешь-то??? Впрочем, пользуйся, не жалко :)
-        session = AnyBalance.requestGet(baseurl + 'SESSION/GET_SESSION?MSISDN=' + prefs.login + '&PASS=' + prefs.password + '&CHANNEL=WWW');
+        if(prefs.corporate){
+            session = AnyBalance.requestGet('http://moscow.megafon.ru/ext/sg_gate.phtml?MSISDN=CP_' + prefs.login + '&PASS=' + encodeURIComponent(prefs.password) + '&CHANNEL=WWW');
+        }else{
+            //Влад, ну что же ты всё подглядываешь-то??? Впрочем, пользуйся, не жалко :)
+            session = AnyBalance.requestGet(baseurl + 'SESSION/GET_SESSION?MSISDN=' + ((prefs.corporate ? 'CP_' : '') + prefs.login) + '&PASS=' + encodeURIComponent(prefs.password) + '&CHANNEL=WWW');
+        }
     }else{
 	session = AnyBalance.requestPost(baseurl + 'ps/scc/php/check.php?CHANNEL=WWW', {
             LOGIN: (prefs.corporate ? 'CP_' : '') + prefs.login, 
@@ -470,6 +477,9 @@ function megafonServiceGuideCorporate(filial, sessionid){
         P_USER_LANG_ID:1        
     });
 
+    if(/SESSION_TIMEOUT_REDIRECT/.test(html))
+        throw new AnyBalance.Error('Мегафон не желает пускать в корпоративный портал, возможно, из-за того, что введена капча (ввод цифр с картинки) на входе. Если вы знаете способ войти в корпоративный портал без капчи, обращайтесь к автору провайдера по е-мейл.');
+
     //Получим объединение:
     var asscid = sumParam(html, null, null, /<select[^>]+id="P_START_ASSC_ID"[^>]*>[\s\S]*?<option[^>]+value="([^"]*)"/i);
     sumParam(html, result, '__tariff', /<select[^>]+id="P_START_ASSC_ID"[^>]*>[\s\S]*?<option[^>]+title="([^"]*)"/i, null, html_entity_decode);
@@ -515,17 +525,23 @@ function megafonServiceGuidePhysical(filial, sessionid){
         success: true
     };
 
+    var phone = prefs.phone || prefs.login;
+
     var text = AnyBalance.requestPost(baseurl + 'SCWWW/ACCOUNT_INFO',
     {
+        SUBSCRIBER_MSISDN:phone,
         CHANNEL: 'WWW', 
         SESSION_ID: sessionid,
-        P_USER_LANG_ID: 1
+        P_USER_LANG_ID: 1,
+        CUR_SUBS_MSISDN:phone
     });
 
     checkTextForError(text);
 	
     //Теперь получим баланс
     sumParam(text, result, 'balance', /&#1041;&#1072;&#1083;&#1072;&#1085;&#1089;[\s\S]*?<div class="balance_[^>]*>([\S\s]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+    //Теперь получим телефон
+    sumParam(text, result, 'phone', /<select[^>]*name="SUBSCRIBER_MSISDN"[\s\S]*?<option[^>]+value="([^"]*)[^>]*selected/i, replaceTagsAndSpaces, html_entity_decode);
     //Теперь получим персональный баланс
     sumParam(text, result, 'prsnl_balance', /&#1055;&#1077;&#1088;&#1089;&#1086;&#1085;&#1072;&#1083;&#1100;&#1085;&#1099;&#1081; &#1073;&#1072;&#1083;&#1072;&#1085;&#1089;[\s\S]*?<div class="balance_[^>]*>([\S\s]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 
@@ -668,8 +684,8 @@ function megafonServiceGuidePhysical(filial, sessionid){
                     {
                         CHANNEL: 'WWW', 
                         SESSION_ID: sessionid,
-                        CUR_SUBS_MSISDN: prefs.login,
-                        SUBSCRIBER_MSISDN: prefs.login
+                        CUR_SUBS_MSISDN: phone,
+                        SUBSCRIBER_MSISDN: phone
                     });
         sumParam(text, result, 'last_pay_sum', /idHiddenSum[^>]*>\s*<table(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
         sumParam(text, result, 'last_pay_date', /idHiddenSum[^>]*>\s*<table(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
@@ -682,8 +698,8 @@ function megafonServiceGuidePhysical(filial, sessionid){
                     {
                         CHANNEL: 'WWW', 
                         SESSION_ID: sessionid,
-                        CUR_SUBS_MSISDN: prefs.login,
-                        SUBSCRIBER_MSISDN: prefs.login
+                        CUR_SUBS_MSISDN: phone,
+                        SUBSCRIBER_MSISDN: phone
                     });
                     
             if(matches = text.match(/&#1041;&#1086;&#1085;&#1091;&#1089;&#1085;&#1099;&#1081; &#1073;&#1072;&#1083;&#1072;&#1085;&#1089;:[\s\S]*?<td class="td_right">[\s\S]*?<div>([\d\.]+)/i)){

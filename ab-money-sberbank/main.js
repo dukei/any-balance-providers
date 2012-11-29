@@ -305,8 +305,10 @@ function doNewAccountEsk(html){
     var baseurl = 'https://esk.sbrf.ru';
     //self.location.href='/esClient/Default.aspx?Page=1&qs=AuthToken=d80365e0-4bfd-41a1-80a1-b24847ae3e94&i=1'
     var page = getParam(html, null, null, /self\.location\.href\s*=\s*'([^'"]*?AuthToken=[^'"]*)/i);
-    if(!page)
+    if(!page){
+        AnyBalance.trace(html);
         throw new AnyBalance.Error("Не удаётся найти ссылку на информацию по картам (esk). Пожалуйста, обратитесь к автору провайдера для исправления ситуации.");
+    }
 
     var token = getParam(page, null, null, /AuthToken=([^&]*)/i);
   

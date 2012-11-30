@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-internet-starblazer</id>
+  <name>StarBlazer</name>
+  <description>
+    Получает баланс и информацию о тарифном плане для провайдера интернет и спутникового телевидения StarBlazer (http://starblazer.ru).
+
+    Информация берется из личного кабинета https://billing.starblazer.ru.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+    <js>library.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="traffic" name="Трафик в этом месяце" units="Мб"/>
+    <counter id="speed" name="Скорость" units="кбит"/>
+    <counter id="dealer" name="Дилер" type="text"/>
+    <counter id="status" name="Статус интернет" type="text"/>
+    <counter id="block" name="Блокировка" type="text"/>
+    <counter id="booster" name="Ускоритель Slonax 3G" type="text"/>
+    <counter id="traffic_tariff" name="Трафик с момента смены тарифа" units="Мб"/>
+    <counter id="agreement" name="Договор" type="text"/>
+  </counters>
+  <keywords>
+    интернет
+  </keywords>
+  <type>
+    internet, tv
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

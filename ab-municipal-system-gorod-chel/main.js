@@ -17,8 +17,8 @@ function main(){
     if(!prefs.login || !/^\d{16}$/.test(prefs.login))
         throw new AnyBalance.Error("Введите полный номер карты Системы Город. Только цифры без пробелов и разделителей.");
     
-    if(prefs.accnum && !/^\d+$/.test(prefs.accnum))
-        throw new AnyBalance.Error("Введите полный номер лицевого счета, по которому вы хотите получить информацию, или не вводите ничего, если хотите получить информацию по первому счету.");
+//    if(prefs.accnum && !/^\d+$/.test(prefs.accnum))
+//        throw new AnyBalance.Error("Введите полный номер лицевого счета, по которому вы хотите получить информацию, или не вводите ничего, если хотите получить информацию по первому счету.");
 
     for(var prefix in supported_cards){
         if(prefs.login.indexOf(prefix) == 0){
@@ -59,20 +59,33 @@ function chelyab(prefix){
 
     var result = {success: true};
 
-    var tr = getParam(html, null, null, new RegExp('Ваши счета[\\s\\S]*?(<tr[^>]*>(?:\\s*<td[^>]*>(?:[\\s\\S](?!<t))*<\\/td>){2}\\s*<td[^>]*>\\s*' + schet + '[\\s\\S]*?<\\/tr>)', 'i'));
-    if(!tr)
-        throw new AnyBalance.Error(!prefs.accnum ? "Не найдено ни одного лицевого счета!" : "Не найдено лицевого счета №" + schet); 
+    var re = /<tr[^>]*>(?:\s*<td[^>]*>(?:[\s\S](?!<t))*<\/td>){2}\s*<td[^>]*>\s*\d+[\s\S]*?<\/tr>/ig;
+    html.replace(re, function(tr){
+        //var tr = getParam(html, null, null, new RegExp('Ваши счета[\\s\\S]*?(<tr[^>]*>(?:\\s*<td[^>]*>(?:[\\s\\S](?!<t))*<\\/td>){2}\\s*<td[^>]*>\\s*' + schet + '[\\s\\S]*?<\\/tr>)', 'i'));
+        //if(!tr)
+        //    throw new AnyBalance.Error(!prefs.accnum ? "Не найдено ни одного лицевого счета!" : "Не найдено лицевого счета №" + schet); 
+        var name = getParam(tr, null, null, /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<br/i, replaceTagsAndSpaces, html_entity_decode);
+        var acc = getParam(tr, null, null, /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<br/i, replaceTagsAndSpaces, html_entity_decode);
+        if(!prefs.accnum || 
+            (name && name.indexOf(prefs.accnum) >= 0) ||
+            (acc && acc.indexOf(prefs.accnum) >= 0)){
 
-    getParam(tr, result, 'balance', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(tr, result, '2pay', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'balance_total', /ЗАДОЛЖЕННОСТЬ:([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, '2pay_total', /ЗАДОЛЖЕННОСТЬ:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(tr, result, 'fio', /<td[^>]*>([\s\S]*?)<br/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(tr, result, 'address', /<td[^>]*>[\s\S]*?<br[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(tr, result, 'service', /(?:[\s\S]*?<td[^>]*>){2}(?:(?:[\s\S](?!<br))*:)?([\s\S]*?)<br/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(tr, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<br/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(tr, result, 'provider', /(?:[\s\S]*?<td[^>]*>){2}[\s\S]*?<br[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(tr, result, 'accnum', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+        
+            getParam(tr, result, 'balance', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+            getParam(tr, result, '2pay', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+            getParam(html, result, 'balance_total', /ЗАДОЛЖЕННОСТЬ:([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+            getParam(html, result, '2pay_total', /ЗАДОЛЖЕННОСТЬ:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+            getParam(tr, result, 'fio', /<td[^>]*>([\s\S]*?)<br/i, replaceTagsAndSpaces, html_entity_decode);
+            getParam(tr, result, 'address', /<td[^>]*>[\s\S]*?<br[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+            getParam(tr, result, 'service', /(?:[\s\S]*?<td[^>]*>){2}(?:(?:[\s\S](?!<br))*:)?([\s\S]*?)<br/i, replaceTagsAndSpaces, html_entity_decode);
+            getParam(tr, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<br/i, replaceTagsAndSpaces, html_entity_decode);
+            getParam(tr, result, 'provider', /(?:[\s\S]*?<td[^>]*>){2}[\s\S]*?<br[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+            getParam(tr, result, 'accnum', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+ 
+            AnyBalance.setResult(result);
+            return;
+        }
+    });
 
-    AnyBalance.setResult(result);
+    throw new AnyBalance.Error(!prefs.accnum ? "Не найдено ни одного лицевого счета!" : "Не найдено лицевого счета, содержащего текст " + schet); 
 }

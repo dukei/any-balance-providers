@@ -40,6 +40,7 @@ function parseBalance(text){
 
 var supported_cards = {
    '990005000': uralsib //Система ГОРОД Башкортостан, Ижевск, Кемерово, Екатеринбург и др.
+   '990002': function(prefix){redirect(prefix, 'Челябинск');}
 };
 
 function main(){
@@ -86,7 +87,7 @@ function uralsib(prefix){
 
     var tr = getParam(html, null, null, new RegExp('ИНФОРМАЦИЯ ПО КАРТЕ[\\s\\S]*?(<tr[^>]*>(?:\\s*<td[^>]*>[\\s\\S]*?<\\/td>){2}\\s*<td[^>]*>\\s*<nobr>' + schet + '[\\s\\S]*?<\\/tr>)', 'i'));
     if(!tr)
-        throw new AnyBalance.Error(prefs.accnum ? "Не найдено ни одного лицевого счета!" : "Не найдено лицевого счета №" + schet); 
+        throw new AnyBalance.Error(!prefs.accnum ? "Не найдено ни одного лицевого счета!" : "Не найдено лицевого счета №" + schet); 
 
     getParam(tr, result, 'balance', /(?:[\s\S]*?<\/td>\s*<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'balance_total', /Итого задолженностей:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
@@ -127,3 +128,6 @@ function html_entity_decode(str)
     return tarea.value;
 }
 
+function redirect(prefix, city){
+    throw new AnyBalance.Error('Для карт, начинающихся на ' + prefix + ' установите провайдер Система Город (' + city + ')');
+}

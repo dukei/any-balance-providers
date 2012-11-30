@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<history>
+    <change major_version="1.0" version="3" date="2012-11-30">
+      - Исправлено описание
+      - Корректное сообщение об ошибке, если на найден нужный лицевой счет
+    </change>
+</history>

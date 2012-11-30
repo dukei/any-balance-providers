@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="2">ab-municipal-system-gorod</id>
+  <id major_version="1.0" version="3">ab-municipal-system-gorod</id>
   <name>Система Город</name>
   <description>
     Получает баланс и значения счетчиков по лицевым счетам, привязанным к карте Система Город.
@@ -10,6 +10,9 @@
     Этот провайдер поддерживает следующие карты Системы Город, номера которых начинаются на:
       990005-000 - Башкортостан, Ижевск, Кемерово, Екатеринбург и др., Банк УРАЛСИБ ( https://oplata.uralsibbank.ru/gorod_login.asp )
 
+    Не поддерживаются этим провайдером, но для которых есть специализированные провайдеры
+      990002 - Челябинск - используйте провайдер Система Город (Челябинск)
+
     Для добавления личных кабинетов других карт Системы Город пишите автору на e-mail.
   </description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
@@ -17,6 +20,7 @@
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
     <js>main.js</js>
+    <history>history.xml</history>
   </files>
   <counters>
     <counter id="balance" name="Баланс" units="р"/>

@@ -34,107 +34,8 @@ var regionsOrdinary = {
 	ug: "https://ihelper.ug.mts.ru/SelfCare/"
 };
 
-function isset(val){
-    return typeof(val) != 'undefined';
-}
-
-function getParam (html, result, param, regexp, replaces, parser) {
-	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
-		return;
-
-	var value = regexp.exec (html);
-	if (value) {
-		value = value[1];
-		if (replaces) {
-			for (var i = 0; i < replaces.length; i += 2) {
-				value = value.replace (replaces[i], replaces[i+1]);
-			}
-		}
-		if (parser)
-			value = parser (value);
-
-    if(param)
-      result[param] = value;
-    else
-      return value
-	}
-}
-
-function sumParam (html, result, param, regexp, replaces, parser, do_replace) {
-	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param))){
-            if(do_replace)
-  	        return html;
-            else
-                return;
-	}
-
-        var total_value;
-	var html_copy = html.replace(regexp, function(str, value){
-		for (var i = 0; replaces && i < replaces.length; i += 2) {
-			value = value.replace (replaces[i], replaces[i+1]);
-		}
-		if (parser)
-			value = parser (value);
-                if(typeof(total_value) == 'undefined')
-                	total_value = value;
-                else
-                	total_value += value;
-                return ''; //Вырезаем то, что заматчили
-        });
-
-    if(param){
-      if(typeof(total_value) != 'undefined'){
-          if(typeof(result[param]) == 'undefined')
-      	      result[param] = total_value;
-          else 
-      	      result[param] += total_value;
-      }
-      if(do_replace)
-          return html_copy;
-    }else{
-      return total_value;
-    }
-}
-
-var replaceTagsAndSpaces = [/<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
-var replaceFloat = [/\s+/g, '', /,/g, '.'];
-
 function getViewState(html){
     return sumParam(html, null, null, /name="__VIEWSTATE".*?value="([^"]*)"/);
-}
-
-function parseBalance(text){
-    var val = sumParam(text.replace(/\s+/g, ''), null, null, /(-?\d[\d.,]*)/, replaceFloat, parseFloat);
-    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
-    return val;
-}
-
-function parseTraffic(text){
-    var _text = text.replace(/\s+/, '');
-    var val = sumParam(_text, null, null, /(-?\d[\d\.,]*)/, replaceFloat, parseFloat);
-    var units = sumParam(_text, null, null, /([kmgкмг][бb]|байт|bytes)/i);
-    switch(units.substr(0,1).toLowerCase()){
-      case 'b':
-      case 'б':
-        val = Math.round(val/1024/1024*100)/100;
-        break;
-      case 'k':
-      case 'к':
-        val = Math.round(val/1024*100)/100;
-        break;
-      case 'g':
-      case 'г':
-        val = Math.round(val*1024);
-        break;
-    }
-    var textval = ''+val;
-    if(textval.length > 6)
-      val = Math.round(val);
-    else if(textval.length > 5)
-      val = Math.round(val*10)/10;
-
-    AnyBalance.trace('Parsing traffic (' + val + ') from: ' + text);
-    return val;
 }
 
 function main(){
@@ -296,21 +197,6 @@ function mainMobile(allowRetry){
         throw e; 
     }
 
-}
-
-function parseTime(date){
-    AnyBalance.trace("Trying to parse date from " + date);
-    var dateParts = date.split(/[\.\/]/);
-    var d = new Date(dateParts[2], (dateParts[1] - 1), dateParts[0]);
-    return d.getTime();
-}
-
-function html_entity_decode(str)
-{
-    //jd-tech.net
-    var tarea=document.createElement('textarea');
-    tarea.innerHTML = str;
-    return tarea.value;
 }
 
 var g_headers = {
@@ -547,7 +433,7 @@ function fetchAccountStatus(html, result){
     sumParam (html, result, 'debt', /Сумма по неоплаченным счетам.*?([-\d\.,]+)/i, replaceTagsAndSpaces, parseBalance);
 
     // Сумма по неоплаченным счетам: 786.02 руб. (оплатить до 24.03.2012)
-    sumParam (html, result, 'pay_till', /оплатить до\s*([\d\.,\/]+)/i, [",", "."], parseTime);
+    sumParam (html, result, 'pay_till', /оплатить до\s*([\d\.,\/]+)/i, replaceTagsAndSpaces, parseDate);
 
     // Остаток трафика
     sumParam (html, result, 'traffic_left', /(?:Осталось|Остаток)[^\d]*(\d+[\.,]?\d* *([kmgкмг][бb]|байт|bytes))/ig);
@@ -581,20 +467,7 @@ function isLoggedIn(html){
 }
 
 function parseJson(json){
-    return json;
-}
-
-function createFormParams(html, process){
-    var params = {};
-    html.replace(/<input[^>]+name="([^"]*)"[^>]*>/ig, function(str, name){
-        var value = getParam(str, null, null, /value="([^"]*)"/i, null, html_entity_decode);
-        name = html_entity_decode(name);
-        if(process){
-            value = process(params, str, name, value);
-        }
-        params[name] = value;
-    });
-    return params;
+    return getJson(json);
 }
 
 function mainLK(){
@@ -664,15 +537,12 @@ function mainLK(){
     }
     AnyBalance.trace("Мы в личном кабинете...");
 
-    var info = AnyBalance.requestGet(baseurlLogin + '/profile/mobile/get?callback=parseJson', g_headers);
-    info = new Function("return " + info)();
-
     var result = {success: true};
-    if(AnyBalance.isAvailable('balance'))
-        result.balance = Math.round(info.balance*100)/100;
-    result.__tariff = info.tariff;
-    if(AnyBalance.isAvailable('bonus') && typeof(info.bonus) != 'undefined')
-        result.bonus = parseFloat(info.bonus);
+//    var info = AnyBalance.requestGet(baseurlLogin + '/profile/mobile/get?callback=parseJson', g_headers);
+    var info = AnyBalance.requestGet(baseurlLogin + '/profile/header?service=lk&style=2013&update', g_headers);
+    getParam(info, result, 'balance', /Ваш баланс:\s*<a[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(info, result, '__tariff', /Ваш тариф:\s*<a[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(info, result, 'bonus', /Баллов:\s*<a[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces, parseBalance);
 
     if(isAvailableStatus()){
         var baseurlHelper = "https://ihelper.mts.ru/selfcare/";

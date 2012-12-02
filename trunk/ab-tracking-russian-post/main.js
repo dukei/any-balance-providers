@@ -40,46 +40,41 @@ function mainEms(){
 	AnyBalance.trace('Connecting to ems...');
 
         var info = AnyBalance.requestGet("http://www.emspost.ru/ru/tracking/?id=" + prefs.code.toUpperCase(), {Referer: 'http://www.emspost.ru/ru/'});
-        var secretId = getParam(info, null, null, /var\s+trackIDs\s*=\s*\[\s*''\s*,\s*'([^']*)/i);
-        if(!secretId)
-            throw new AnyBalance.Error('Не найден секретный ID отправления. Вы ввели неверный номер отправления?');
-        AnyBalance.trace('Секретный номер отправления: ' + secretId);
 
-        info = AnyBalance.requestPost("http://www.emspost.ru/tracking.aspx/TrackOne", JSON.stringify({gId: secretId}), {
-            'Content-Type':'application/json; charset=UTF-8',
-            Referer: 'http://www.emspost.ru/ru/tracking/?id=' + prefs.code.toUpperCase()
-        });
+        var table = getParam(info, null, null, /<div[^>]+id="trackingResult"[^>]*>([\s\S]*?)<\/div>/i);
+        if(!table)
+            throw new AnyBalance.Error('Не найдены данные по отправлению. Неверный номер отправления или сайт изменен.');
 
-        var json = myGetJson(info);
-//        AnyBalance.trace('Emspost data: ' + info);
+        var lasttr = getParam(table, null, null, /(<tr>(?:\s*<td[^>]*>[^<]*<\/td>){4}\s*<\/tr>\s*<\/tbody>)/i);
+        if(!lasttr){
+            var error = getParam(table, null, null, /<td[^>]+style=['"]color:#ff0000[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+            if(error)
+                throw new AnyBalance.Error(error);
+            throw new AnyBalance.Error('В этом отправлении нет зарегистрированных операций!');
+        }
 
-        if(!json.Operations || json.Operations.length == 0)
-            throw new AnyBalance.Error("В этом отправлении нет зарегистрированных операций!");
+        var date = getParam(lasttr, null, null, /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+        var location = getParam(lasttr, null, null, /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+        var operation = getParam(lasttr, null, null, /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+        var addcost = getParam(table, null, null, /Наложенный платеж[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 
 	var result = {success: true};
 
-        var op = json.Operations[json.Operations.length-1];
-        var oper = op.opType == 2 ? 'Завершено' : 'В пути';
-
         if(AnyBalance.isAvailable('date'))
-            result.date = op.opDateTime;
-	if(AnyBalance.isAvailable('location'))
-	    result.location = op.opAddressDescription;
-	if(AnyBalance.isAvailable('operation'))
-	    result.location = oper;
-	if(AnyBalance.isAvailable('attribute'))
-	    result.attribute = op.opStatus;
-
-        var addcost = json.AddPaymentText && parseBalance(json.AddPaymentText);
-	if(AnyBalance.isAvailable('addcost'))
-	    result.addcost = addcost;
+            result.date = date;
+        if(AnyBalance.isAvailable('location'))
+            result.location = location;
+        if(AnyBalance.isAvailable('operation'))
+            result.operation = operation;
+        if(AnyBalance.isAvailable('addcost'))
+            result.addcost = addcost;
 
 	if(AnyBalance.isAvailable('fulltext')){
 	    //Все поддерживаемые атрибуты (кроме img) находятся здесь
 	    //http://commonsware.com/blog/Android/2010/05/26/html-tags-supported-by-textview.html
-	    result.fulltext = '<small>' + op.opDateTime + '</small>: <b>' + oper + '</b><br/>\n' +
-	        op.opAddressDescription + '<br/>\n' + 
-	        op.opStatus + (addcost ? ', Н/п ' + json.AddPaymentText : '');
+	    result.fulltext = '<small>' + date + '</small>: <b>' + operation + '</b><br/>\n' +
+	        location + '<br/>\n' + 
+	        (addcost ? 'Н/п ' + addcost + 'руб.' : '');
 	}
 
         AnyBalance.setResult(result);

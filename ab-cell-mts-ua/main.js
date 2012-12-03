@@ -165,7 +165,7 @@ function main(){
     }
 
     // Пакет бесплатных минут для внутрисетевых звонков
-    sumParam (html, result, 'min_paket', /<li>Осталось ([\d\.,]+) бесплатных секунд до[^<]*<\/li>/ig, replaceFloat, parseFloat);
+    sumParam (html, result, 'min_paket', /<li>Осталось ([\d\.,]+) бесплатных секунд[^<]*<\/li>/ig, replaceFloat, parseFloat);
 
     // 70 минут в день для внутрисетевых звонков
     sumParam (html, result, 'min_net_70', /<li>70 минут в день для внутрисетевых звонков:[^<]*осталось\s*([\d\.,]+) бесплатных секунд<\/li>/ig, replaceFloat, parseFloat);

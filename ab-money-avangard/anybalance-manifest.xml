@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="3">ab-money-avangard</id>
+  <id version="4">ab-money-avangard</id>
   <name>Банк Авангард</name>
   <description>
     Получает текущий остаток и другие параметры карт и счетов банка Авангард, используя систему Интернет-банк ( https://www.avangard.ru/login/logon_enter.html ).
@@ -24,6 +24,7 @@
     <counter id="minpaydate" name="Дата мин.платежа" type="time" format="dd/MM/yyyy"/>
     <counter id="freepay" name="Платеж льготного периода"/>
     <counter id="freepaydate" name="Дата платежа льготного периода" type="time" format="dd/MM/yyyy"/>
+    <counter id="debt" name="Задолженность"/>
     <counter id="limit" name="Кредитный лимит"/>
     <counter id="cardnum" name="Номер карты" type="text"/>
     <counter id="cardname" name="Имя на карте" type="text"/>

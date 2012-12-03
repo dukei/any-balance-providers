@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="4" date="2012-12-03">
+      - Добавлен счетчик "Задолженность"
+    </change>
     <change version="3" date="2012-10-06">
       - Исправлена ошибка в сумме платежа льготного периода и минимального платежа (Leo Hawk)
     </change>

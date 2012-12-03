@@ -130,6 +130,7 @@ function main(){
     getParam($acc.find('a.xl').text(), result, '__tariff', /(\d{20})/);
     getParam($acc.find('tr:has(a.xl)').text(), result, 'accname', /([\S\s]*?)\d{20}/, replaceTagsAndSpaces);
     getParam($acc.find('tr:first-child td:last-child b').text(), result, 'balance', null, replaceTagsAndSpaces, parseBalance);
+    var balance = getParam($acc.find('tr:first-child td:last-child b').text(), null, null, null, replaceTagsAndSpaces, parseBalance);
     getParam($acc.find('tr:first-child td:last-child b').text(), result, 'currency', null, replaceTagsAndSpaces, parseCurrency);
 
     if(what == 'card'){
@@ -144,17 +145,21 @@ function main(){
         }
     }
 
-    if(AnyBalance.isAvailable('limit', 'minpay', 'minpaydate', 'freepay', 'freepaydate')){
+    if(AnyBalance.isAvailable('limit', 'minpay', 'minpaydate', 'freepay', 'freepaydate', 'debt')){
        //{source:'f:_id164:0:_id180'}
        var source = getParam($acc.find('a.xl').attr('onclick'), null, null, /\{source:'([^']*)/i);
        //<input type="hidden" name="oracle.adf.faces.STATE_TOKEN" value="-118qdrmfn5">
        var token = getParam(html, null, null, /<input[^>]*name="oracle\.adf\.faces\.STATE_TOKEN"[^>]*value="([^"]*)/i);
        if(source && token){
+//            AnyBalance.setCookie('www.avangard.ru', 'oracle.uix', '0^^GMT+4:00');
+//            AnyBalance.setCookie('www.avangard.ru', 'xscroll-faces/pages/accounts/all_acc.jspx', '0:1354528466127');
+//            AnyBalance.setCookie('www.avangard.ru', 'yscroll-faces/pages/accounts/all_acc.jspx', '0:1354528466130');
+
             html = AnyBalance.requestPost(baseurl + 'ibAvn/faces/pages/accounts/all_acc.jspx', {
                 'oracle.adf.faces.FORM':'f',
                 'oracle.adf.faces.STATE_TOKEN': token,
                 source: source
-            });
+            }/*, {Referer: 'https://www.avangard.ru/ibAvn/faces/pages/accounts/all_acc.jspx'}*/);
        
             //До 31.08.2012 для уплаты минимального платежа необходимо внести 1,675.05 RUR     
             //&#1044;&#1086; 31.08.2012 &#1076;&#1083;&#1103; &#1091;&#1087;&#1083;&#1072;&#1090;&#1099; &#1084;&#1080;&#1085;&#1080;&#1084;&#1072;&#1083;&#1100;&#1085;&#1086;&#1075;&#1086; &#1087;&#1083;&#1072;&#1090;&#1077;&#1078;&#1072; &#1085;&#1077;&#1086;&#1073;&#1093;&#1086;&#1076;&#1080;&#1084;&#1086; &#1074;&#1085;&#1077;&#1089;&#1090;&#1080; 1,675.05 RUR
@@ -162,10 +167,15 @@ function main(){
             getParam(html, result, 'minpay', /&#1044;&#1086;\s*[\d\.]+\s*&#1076;&#1083;&#1103; &#1091;&#1087;&#1083;&#1072;&#1090;&#1099; &#1084;&#1080;&#1085;&#1080;&#1084;&#1072;&#1083;&#1100;&#1085;&#1086;&#1075;&#1086; &#1087;&#1083;&#1072;&#1090;&#1077;&#1078;&#1072; &#1085;&#1077;&#1086;&#1073;&#1093;&#1086;&#1076;&#1080;&#1084;&#1086; &#1074;&#1085;&#1077;&#1089;&#1090;&#1080;([^<]*)/i, replaceTagsAndSpaces, parseBalance2);
             //Кредитный лимит
             getParam(html, result, 'limit', /&#1050;&#1088;&#1077;&#1076;&#1080;&#1090;&#1085;&#1099;&#1081; &#1083;&#1080;&#1084;&#1080;&#1090;:[\s\S]*?<td[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+            var limit = getParam(html, null, null, /&#1050;&#1088;&#1077;&#1076;&#1080;&#1090;&#1085;&#1099;&#1081; &#1083;&#1080;&#1084;&#1080;&#1090;:[\s\S]*?<td[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
             //Для выполнения условия льготного периода Вы можете внести сумму в размере 14,656.58 RUR по 20.08.2012 включительно
             //&#1044;&#1083;&#1103; &#1074;&#1099;&#1087;&#1086;&#1083;&#1085;&#1077;&#1085;&#1080;&#1103; &#1091;&#1089;&#1083;&#1086;&#1074;&#1080;&#1103; &#1083;&#1100;&#1075;&#1086;&#1090;&#1085;&#1086;&#1075;&#1086; &#1087;&#1077;&#1088;&#1080;&#1086;&#1076;&#1072; &#1042;&#1099; &#1084;&#1086;&#1078;&#1077;&#1090;&#1077; &#1074;&#1085;&#1077;&#1089;&#1090;&#1080; &#1089;&#1091;&#1084;&#1084;&#1091; &#1074; &#1088;&#1072;&#1079;&#1084;&#1077;&#1088;&#1077; 14,656.58 RUR &#1087;&#1086; 20.08.2012
             getParam(html, result, 'freepaydate', /&#1044;&#1083;&#1103; &#1074;&#1099;&#1087;&#1086;&#1083;&#1085;&#1077;&#1085;&#1080;&#1103; &#1091;&#1089;&#1083;&#1086;&#1074;&#1080;&#1103; &#1083;&#1100;&#1075;&#1086;&#1090;&#1085;&#1086;&#1075;&#1086; &#1087;&#1077;&#1088;&#1080;&#1086;&#1076;&#1072; &#1042;&#1099; &#1084;&#1086;&#1078;&#1077;&#1090;&#1077; &#1074;&#1085;&#1077;&#1089;&#1090;&#1080; &#1089;&#1091;&#1084;&#1084;&#1091; &#1074; &#1088;&#1072;&#1079;&#1084;&#1077;&#1088;&#1077;[^<]*?&#1087;&#1086;\s*([\d\.]+)/i, null, parseDate);
             getParam(html, result, 'freepay', /&#1044;&#1083;&#1103; &#1074;&#1099;&#1087;&#1086;&#1083;&#1085;&#1077;&#1085;&#1080;&#1103; &#1091;&#1089;&#1083;&#1086;&#1074;&#1080;&#1103; &#1083;&#1100;&#1075;&#1086;&#1090;&#1085;&#1086;&#1075;&#1086; &#1087;&#1077;&#1088;&#1080;&#1086;&#1076;&#1072; &#1042;&#1099; &#1084;&#1086;&#1078;&#1077;&#1090;&#1077; &#1074;&#1085;&#1077;&#1089;&#1090;&#1080; &#1089;&#1091;&#1084;&#1084;&#1091; &#1074; &#1088;&#1072;&#1079;&#1084;&#1077;&#1088;&#1077;([^<]*?)&#1087;&#1086;/i, replaceTagsAndSpaces, parseBalance2);
+
+            if(AnyBalance.isAvailable('debt') && limit){
+                result.debt = limit - balance; //Задолженность
+            }
        }
     }
 

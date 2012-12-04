@@ -1,19 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-cell-life-by</id>
+  <id version="2">ab-cell-life-by</id>
   <name>Life:) Белоруссия</name>
   <description>
     Мониторинг баланса мобильного оператора Life:) (Белоруссия)
+    Данные берутся из личного кабинета https://issa.life.com.by
+
+    Если у вас ещё нет доступа к этому личному кабинету, наберите на своём телефоне *120# и следуйте инструкциям.
   </description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
     <js>main.js</js>
+    <js>library.js</js>
+    <history>history.xml</history>
   </files>
   <counters>
     <counter id="balance" name="Баланс" suffix="р"/>
     <counter id="balance_bonus" name="Бонусы" suffix="р"/>
+    <counter id="traffic_left" name="Остаток трафика" suffix="Мб"/>
   </counters>
   <keywords>
     мобильный оператор лайф белоруссия проверка баланса
@@ -21,4 +27,7 @@
   <type>
     cell
   </type>
+  <country>
+    by
+  </country>
 </provider>

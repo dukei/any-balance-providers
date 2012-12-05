@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-municipal-pitersbyt</id>
+  <name>Петербургская сбытовая компания</name>
+  <description>
+    Получает текущую задолженность в Петербургской Сбытовой Компании (http://pesc.ru). Получает данные из личного кабинета http://ikus.pesc.ru:8080/IKUSUser (для физических лиц).
+
+    Если у вас еще нет доступа к этому личному кабинету, нажмите ссылку "Регистрация" на странице http://ikus.pesc.ru:8080/IKUSUser. 
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+    <js>library.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Задолженность" units="р"/>
+    <counter id="licschet" name="Лицевой счет" type="text"/>
+  </counters>
+  <keywords>
+    пск, питер, санкт-петербург, ленинград, ленинградская область, электричество
+  </keywords>
+  <type>
+    municipal
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

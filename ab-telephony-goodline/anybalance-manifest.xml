@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="5">ab-telephony-goodline</id>
+  <id version="6">ab-telephony-goodline</id>
   <name>ГудЛайн</name>
   <description>
     Получает текущий баланс, валюту счета у роумингового провайдера телефонии ГудЛайн.
@@ -14,6 +14,7 @@
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
     <js>main.js</js>
+    <js>library.js</js>
     <history>history.xml</history>
   </files>
   <counters>

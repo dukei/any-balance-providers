@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-weather-ufa</id>
+  <id version="3">ab-weather-ufa</id>
   <name>Температура по республике Башкортостан</name>
   <description>
    Получает текущую температуру с датчиков стационарных станций метеоконтроля в республике Башкортостан.

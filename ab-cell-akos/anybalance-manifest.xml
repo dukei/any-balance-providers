@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-cell-akos</id>
+  <name>АКОС GSM (Ростелеком)</name>
+  <description>
+    Получает баланс, использованные минуты, интернет трафик для сотового оператора АКОС GSM (ныне Ростелеком): http://akos.ru.
+Данные берутся из личного кабинета https://issa.akos.ru
+
+Для первого входа в Интернет Систему Сервиса Абонентов (ИССА) необходимо установить пароль.
+Пароль может быть установлен одним из следующих способов:
+
+1) позвоните со своего мобильного телефона на номер 101 и, следуя инструкциям
+автоинформатора, сначала нажмите 2, потом 1 и после установите свой индивидуальный пароль;
+
+2) на своем мобильном телефоне наберите комбинацию *100# и нажмите клавишу посыла вызова,
+затем отправьте команду 2, потом команду 1 и после установите свой индивидуальный пароль.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="min" name="Минуты" units="мин"/>
+    <counter id="traffic" name="Трафик" units="Мб"/>
+    <counter id="average_speed" name="Скорость расходования в день" units="р"/>
+  </counters>
+  <keywords>
+    Сотовый телефон, мобильный, мобильник, akos, akoc
+  </keywords>
+  <type>
+    cell
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

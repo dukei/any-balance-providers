@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference
+        title="Логин"
+        positiveButtonText="ОК"
+        summary="Номер телефона (7 цифр)||{@s}\n"
+        dialogTitle="Номер телефона"
+        negativeButtonText="Отмена"
+        dialogMessage="Введите последние 7 цифр номера вашего телефона для входа в АССА в формате 5054567"
+        key="login"
+        inputType="number">
+    </EditTextPreference>
+    <EditTextPreference
+        positiveButtonText="ОК"
+        key="password"
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="Пароль для входа в АССА||***********\n"
+        dialogMessage="Введите пароль, используемый для входа в АССА"
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

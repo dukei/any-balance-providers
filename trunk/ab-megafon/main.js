@@ -645,6 +645,17 @@ function megafonServiceGuidePhysical(filial, sessionid){
         }
     }
 
+    //SMS на номера России
+    if(AnyBalance.isAvailable('sms_total', 'sms_left')){
+        var vals = getOptionInt(text, "SMS &#1085;&#1072; &#1085;&#1086;&#1084;&#1077;&#1088;&#1072; &#1056;&#1086;&#1089;&#1089;&#1080;&#1080;");
+        if(vals){
+            if(AnyBalance.isAvailable('sms_total'))
+                sms_total += vals[0];
+            if(AnyBalance.isAvailable('sms_left'))
+                sms_left += vals[1];
+        }
+    }
+
     //Нужный подарок (Поволжье)
     if(AnyBalance.isAvailable('handygift_total', 'handygift_left')){
         var vals = getOptionFloat(text, "&#1053;&#1091;&#1078;&#1085;&#1099;&#1081; &#1087;&#1086;&#1076;&#1072;&#1088;&#1086;&#1082;");

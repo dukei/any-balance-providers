@@ -11,6 +11,15 @@ function jsonp (obj) {
   return obj;
 }
 
+var g_headers = {
+    Accept:'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
+    'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+    'Cache-Control':'max-age=0',
+    Connection:'keep-alive',
+    'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.60 Safari/537.1'
+};
+
 function main(){
     var prefs = AnyBalance.getPreferences ();
     switch(prefs.type){
@@ -50,15 +59,17 @@ function mainNew () {
     if (!prefs.password)
         throw getFatalError ('Введите пароль');
 
+    AnyBalance.requestGet(baseurl + 'payment/main.action'); //Надо сессию поставить
+
     AnyBalance.trace ('Trying to enter NEW account at address: ' + baseurl);
     var info = AnyBalance.requestGet (baseurl +
                                       'auth/login.action?source=MENU&login=%2B7' +
                                       encodeURIComponent(prefs.login) +
                                       '&password=' +
-                                      encodeURIComponent(prefs.password));
+                                      encodeURIComponent(prefs.password), addHeaders({Accept: 'application/json, text/javascript', 'X-Requested-With':'XMLHttpRequest'}));
     AnyBalance.trace ('Login result: ' + info);
 
-    var res = JSON.parse(info);
+    var res = getJson(info);
 
     // Проверка ошибки входа
     if (res.code.value != '0'){
@@ -135,7 +146,11 @@ function mainOld () {
                                       '&captcha=0&callback=jsonp');
     AnyBalance.trace ('Login result: ' + info);
 
-    var res = eval(info);
+    try{
+       var res = eval(info);
+    }catch(e){
+       throw new AnyBalance.Error('Неверный ответ сервера (' + e.message + '). Сайт изменен?');
+    }
 
     // Проверка ошибки входа
     if (res.error != 0) {

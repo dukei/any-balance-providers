@@ -31,3 +31,30 @@ function parseBalance(text){
     return val;
 }
 
+/**
+ *  Добавляет хедеры к переданным или к g_headers
+ */
+function addHeaders(newHeaders, oldHeaders){
+   var headers = {}, oldHeaders = oldHeaders || g_headers;
+   for(var i in oldHeaders){
+       headers[i] = oldHeaders[i];
+   }
+   for(i in newHeaders){
+       headers[i] = newHeaders[i];
+   }
+   return headers;
+}
+
+/**
+ *  Получает JSON из переданного текста, кидает ошибку, если не парсится
+ */
+function getJson(html){
+   try{
+       var json = JSON.parse(html);
+       return json;
+   }catch(e){
+       AnyBalance.trace('Bad json (' + e.message + '): ' + html);
+       throw new AnyBalance.Error('Сервер вернул ошибочные данные: ' + e.message);
+   }
+}
+

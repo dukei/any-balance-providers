@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-internet-inetvl</id>
+  <name>АльянсТелеком (Владивосток)</name>
+  <description>
+    Получает баланс и информацию о тарифном плане для владивостокского интернет-провайдера АльянсТелеком (http://inetvl.ru).
+
+    Информация берется из личного кабинета https://stat.inetvl.ru.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+    <js>library.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="block" name="Блокировка" type="text"/>
+    <counter id="licschet" name="Лицевой счет" type="text"/>
+    <counter id="promise" name="Обещаный платеж" units="р"/>
+    <counter id="promise_close" name="Заплатить до" type="time" format="dd/MM/yyyy"/>
+    <counter id="bestpay" name="Рекомендуемая предоплата" units="р"/>
+  </counters>
+  <keywords>
+    интернет
+  </keywords>
+  <type>
+    internet
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

@@ -18,7 +18,7 @@ function main(){
         Password: prefs.password
     });
     
-    var error = getParam(html, null, null, /<td[^>]+class=['"]?error[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    var error = getParam(html, null, null, /<table[^>]+class=['"]?centorize-td[^>]*>([\s\S]*?)<\/tr>/i, replaceTagsAndSpaces, html_entity_decode);
     if(error){
         throw new AnyBalance.Error(error);
     }

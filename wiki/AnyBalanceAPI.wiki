@@ -336,7 +336,7 @@ AnyBalance.getLastStatusString() //since level 5
 
 ===getLastStatusCode===
 {{{
-AnyBalance.getLastStatusString() //since level 5
+AnyBalance.getLastStatusCode() //since level 5
 }}}
 
 Получает код HTTP ответа на последний запрос [AnyBalanceAPI#requestGet requestGet()] или [AnyBalanceAPI#requestPost requestPost()].

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference
+        title="Номер телефона или логин"
+        positiveButtonText="ОК"
+        summary="|Номер телефона (10 цифр) или логин|{@s}\n"
+        dialogTitle="Номер телефона или логин"
+        negativeButtonText="Отмена"
+        dialogMessage="Введите последние 10 цифр номера вашего телефона в международном формате для входа в ИССА, например, 9025245433. Если вы абонент ADSL, ME, WiMAX, введите логин."
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference
+        positiveButtonText="ОК"
+        key="password"
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="|Пароль для входа в ИССА|***********\n"
+        dialogMessage="Введите пароль, используемый для входа в ИССА. Если вы не знаете пароль, прочитайте инструкции в описании этого провайдера."
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

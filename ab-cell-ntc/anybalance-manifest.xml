@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-cell-ntk</id>
+  <name>НТК (Приморский край)</name>
+  <description>
+    Получает баланс и информацию о тарифном плане для сотового оператора ОАО «Новая Телефонная Компания», Приморский край: http://www.vntc.ru.
+Данные берутся из личного кабинета https://issa.vntc.ru
+
+ВНИМАНИЕ! Для входа в ИССА существует два типа пароля, пароль на лицевой счет и пароль на приложение. Вводить нужно пароль на приложение, если он установлен, иначе вводится пароль на лицевой счет.
+
+Для абонентов сотовой связи НТК: установить пароль на лицевой счет, можно, позвонив с мобильного телефона на номер 19732 или через USSD, набрав на мобильном телефоне *197*32#. Для абонентов "Джой Микс" номер соответственно 197394 и *197*394#. Пароль на приложение можно установить или сменить, войдя в ИССА, выбрав элемент меню 'Смена пароля'.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="min" name="Бесплатные секунды" type="time_interval" format="{@MIN}:{@sec}"/>
+    <counter id="min_ntk" name="Оплаченное время НТК" type="time_interval" format="{@MIN}:{@sec}"/>
+    <counter id="traffic" name="GPRS" units="Мб"/>
+    <counter id="sms" name="SMS" units="sms"/>
+    <counter id="bonus" name="Скидки на счету"/>
+    <counter id="average_speed" name="Скорость расходования в день" units="р"/>
+  </counters>
+  <keywords>
+    Сотовый телефон, мобильный, мобильник, ntk, ntc
+  </keywords>
+  <type>
+    cell
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

@@ -38,6 +38,7 @@ function main(){
                         if(service && service.model)
                             result.__tariff = ((service.name && service.code != 'inet') ? service.name + ': ' + service.model : service.model);
 			if(AnyBalance.isAvailable('balance') && v.services[0]){
+                                AnyBalance.trace('balance is ' + v.services[0].saldo + ', ' + typeof(v.services[0].saldo));
 				result['balance'] = v.services[0].saldo;
 			}
 			if(AnyBalance.isAvailable('traffic') && v.traffic && v.traffic[0] && v.traffic[0].rows && v.traffic[0].rows[2] && v.traffic[0].rows[2].underTraffic){

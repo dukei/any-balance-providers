@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-cell-ntk</id>
+  <id version="1">ab-cell-ntc</id>
   <name>НТК (Приморский край)</name>
   <description>
     Получает баланс и информацию о тарифном плане для сотового оператора ОАО «Новая Телефонная Компания», Приморский край: http://www.vntc.ru.

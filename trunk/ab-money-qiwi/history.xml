@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change major_version="2.1" version="8" date="2012-12-09">
+      - Удален фон у иконки
+    </change>
     <change major_version="2.1" version="7" date="2012-12-07">
       - Исправление процедуры входа для нового кабинета
     </change>

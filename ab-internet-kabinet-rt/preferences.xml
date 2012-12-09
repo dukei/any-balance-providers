@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Логин" 
+        positiveButtonText="ОК" 
+        summary="||{@s}" 
+        dialogTitle="Логин" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите логин для входа в личный кабинет https://kabinet.rt.ru."
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="||***********"
+        dialogMessage="Введите пароль, используемый для входа в личный кабинет https://kabinet.rt.ru."
+        inputType="textPassword">
+    </EditTextPreference>
+    <EditTextPreference 
+        title="Лицевой счет" 
+        positiveButtonText="ОК" 
+        summary="|Автоматически|{@s}" 
+        dialogTitle="Лицевой счет" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите последние цифры номера лицевого счета, по которому вы хотите получить информацию, или оставьте поле пустым, чтобы получить информацию по первому лицевому счету."
+        inputType="number"
+        key="num">
+    </EditTextPreference>
+</PreferenceScreen>

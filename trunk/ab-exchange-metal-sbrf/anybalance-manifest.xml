@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="5">ab-exchange-metal-sbrf</id>
+  <name>Курсы драгоценных металлов Сбербанка</name>
+  <description>
+    Текущие курсы покупки и продажи драгоценных металлов, установленные Сбербанком РФ. Содержит цены золота, серебра, платины и палладия. Получает данные со страницы 
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <js>main.js</js>
+    <js>library.js</js>
+  </files>
+  <counters>
+    <counter id="Au_buy" name="Золото покупка" prefix="Au↓ "/>
+    <counter id="Au_sell" name="Золото продажа" prefix="Au↑ "/>
+    <counter id="Ag_buy" name="Серебро покупка" prefix="Ag↓ "/>
+    <counter id="Ag_sell" name="Серебро продажа" prefix="Ag↑ "/>
+    <counter id="Pt_buy" name="Платина покупка" prefix="Pt↓ "/>
+    <counter id="Pt_sell" name="Платина продажа" prefix="Pt↑ "/>
+    <counter id="Pd_buy" name="Палладий покупка" prefix="Pd↓ "/>
+    <counter id="Pd_sell" name="Палладий продажа" prefix="Pd↑ "/>
+    <counter id="date" name="Дата" type="time" format="dd/MM/yyyy"/>
+  </counters>
+  <keywords>
+    Драгоценные металлы, золото, серебро, платина, палладий, sberbank, сберегательный банк
+  </keywords>
+  <type>
+    finance, exchange, metal
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

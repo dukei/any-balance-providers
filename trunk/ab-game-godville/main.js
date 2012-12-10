@@ -26,7 +26,7 @@ function main(){
 	var hname = js.name;
 
 	result.__tariff = hname;
-
+	
 	if(AnyBalance.isAvailable('name'))
 		result['name'] = hname;
 
@@ -66,6 +66,16 @@ function main(){
 	} else {
 		throw new AnyBalance.Error('Включите расширенное API а настройках игры');
 	}
+	
+	if(AnyBalance.isAvailable('savings')) {
+			var pd = AnyBalance.requestGet('http://godville.net/gods/' + prefs.login.replace(' ', '%20'));
+			var matches = pd.match(/<td class="label">Сбережения<\/td>\s+?<td class="name">(\d+) /i);
+			if (matches) {
+				result['savings'] = matches[1]
+			} else {
+				throw new AnyBalance.Error("Сбережений не обнаружено");
+			}
+		}
 
 	AnyBalance.setResult(result);
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-game-godville</id>
+	<id version="4">ab-game-godville</id>
 	<name>Godville.net</name>
 	<description>
 		Отображает некоторые параметры игры (здоровье, прана, количество кирпичей, уровень героя)
@@ -24,6 +24,7 @@
 		<counter id="godpower" name="Прана" suffix="℅" type="numeric"/>
 		<counter id="level_p" name="Уровень, ℅" suffix="℅" type="numeric"/>
 		<counter id="quest_p" name="Квест, ℅" suffix="℅" type="numeric"/>
+		<counter id="savings" name="Сбережения, тыс." suffix=" тыс." type="numeric"/>
 	</counters>
 	<keywords>
 		игра, game, godville

@@ -11,6 +11,9 @@ function main(){
 	var baseurl = 'https://my.onlime.ru/';
 
     AnyBalance.setDefaultCharset('utf-8');
+
+    if(!prefs.login || !prefs.password)
+        throw new AnyBalance.Error('Пожалуйста, установите в настройках провайдера логин и пароль.');
     
     // Заходим на главную страницу
     var info = AnyBalance.requestPost(baseurl + "session/login", {
@@ -18,9 +21,12 @@ function main(){
         "login_credentials[password]": prefs.password
     });
     
-    var error = $('#errHolder', info).text();
-    if(error){
-        throw new AnyBalance.Error(error);
+    if(!/\/session\/logout/i.test(info)){
+        var error = $('#errHolder', info).text();
+        if(error){
+            throw new AnyBalance.Error(error);
+        }
+        throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
     }
     
     var result = {success: true};

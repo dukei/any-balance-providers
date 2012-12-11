@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change major_version="2.1" version="27" date="2012-12-11">
+      - Правильное получение минут, когда их больше 1000
+    </change>
     <change major_version="2.1" version="26" date="2012-11-21">
       - Выдача ошибки в случае требования билайном смены пароля
     </change>

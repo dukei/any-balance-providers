@@ -202,7 +202,7 @@ function parseBalanceList(html, result){
     }
     
     // Бонус за опрос
-    getBalanceValue (html, 'Бонус за опрос', parseFloat, result, 'bonus_survey');
+    getBalanceValue (html, 'Бонус за опрос', parseBalance, result, 'bonus_survey');
     
     if(AnyBalance.isAvailable('sms_left')){
       result.sms_left = 0;
@@ -246,15 +246,15 @@ function parseBalanceList(html, result){
     }
 
     if(AnyBalance.isAvailable('traffic')){
-        var val = getBalanceValue(html, 'FTTB', parseFloat);
+        var val = getBalanceValue(html, 'FTTB', parseBalance);
         if(val)
             result.traffic = (result.traffic || 0) + val/1024;
 
-        var val = getBalanceValue(html, 'RM_GPRS', parseFloat);
+        var val = getBalanceValue(html, 'RM_GPRS', parseBalance);
         if(val)
             result.traffic = (result.traffic || 0) + val/1024;
 
-        var val = getBalanceValue(html, 'GPRS_PAK', parseFloat);
+        var val = getBalanceValue(html, 'GPRS_PAK', parseBalance);
         if(val)
             result.traffic = (result.traffic || 0) + val/1024;
 
@@ -264,8 +264,7 @@ function parseBalanceList(html, result){
 }
 
 function parseMinutes(str){
-    AnyBalance.trace('Parsing minutes from value: ' + str);
-    return parseFloat(str)*60; //Переводим в секунды
+    return parseBalance(str)*60; //Переводим в секунды
 }
 
 function parseDate(str){

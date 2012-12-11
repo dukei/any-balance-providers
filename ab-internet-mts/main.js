@@ -111,7 +111,7 @@ function getMoscow(){
         if(error)
             throw new AnyBalance.Error(error);
 
-        throw new AnyBalance.Error("Не удалось зайти в личный кабинет. Неверный логин-пароль или сайт изменен.");
+        throw new AnyBalance.Error("Не удалось зайти в личный кабинет. Неверный логин-пароль, регион или сайт изменен.");
     }
 
 //    info = AnyBalance.requestGet(baseurl);
@@ -323,34 +323,41 @@ function getKrv(){
 
     var baseurl = 'https://lk.kirovnet.net/';
 
-    var html = AnyBalance.requestPost(baseurl + 'auth?return=/index', {
-        username:prefs.login,
-        password:prefs.password,
-        timestamp:Math.round(new Date().getTime()/1000)
-    });
+    if(!prefs.__dbg){
+        var html = AnyBalance.requestPost(baseurl + '?r=site/login&0=site%2Flogin', {
+            'LoginForm[login]':prefs.login,
+            yt0: 'Войти',
+            'LoginForm[password]':prefs.password
+        });
+    }else{
+        var html = AnyBalance.requestGet(baseurl + '?r=account/index');
+    }
 
-    if(!getParam(html, null, null, /(\/auth\/logout)/i)){
-        var error = getParam(html, null, null, /<div[^>]*id="auth-failed[^>]*>([\s\S]*?)(?:<br[^>]*>|<\/div>)/i, replaceTagsAndSpaces);
-        if(error)
-            throw new AnyBalance.Error(error);
-        throw new AnyBalance.Error("Не удалось войти в личный кабинет. Сайт изменен?");
+    if(!/\?r=site\/logout/i.test(html)){
+        throw new AnyBalance.Error("Не удалось войти в личный кабинет. Неправильный логин-пароль?");
     }
 
     var result = {success: true};
 
-    getParam(html, result, 'agreement', /Договор:([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-    getParam(html, result, 'license', /Лицевой счёт:([\s\S]*?)<\/li>/i, replaceTagsAndSpaces);
-    getParam(html, result, 'balance', /Сейчас на вашем счёте:([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, '__tariff', /Текущий тарифный план:([\s\S]*?)<\/strong>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'abon', /Абонентcкая плата:([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'username', /Клиент:([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'daysleft', /Этой суммы вам хватит[\s\S]*?<span[^>]+class="imp"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'agreement', /Номер договора:([\s\S]*?)<a/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'balance', /Текущий баланс:([\s\S]*?)<\/a>/i, replaceTagsAndSpaces, parseBalance2);
 
-
-    if(AnyBalance.isAvailable('internet_cur')){
-        html = AnyBalance.requestGet(baseurl + 'charges');
-        getParam(html, result, 'internet_cur', /Входящий интернет трафик[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTrafficPerm);
+    //Тут услуги в таблице, пройдемся по ней и возьмем тарифные планы
+    var services = sumParam(html, null, null, /(<tr[^>]*>\s*<td[^>]+class="first_col"[^>]*>(?:[\s\S](?!\/tr))*<\/tr>)/ig);
+    var tariffs = [];
+    for(var i=0; i<services.length; ++i){
+        var tariff = getParam(services[i], null, null, /(?:[\s\S]*?<td[^>]*>){2}\s*<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
+        if(tariff == 'Услуги')
+            continue;
+        tariffs[tariffs.length] = tariff;
+        getParam(services[i], result, 'abon', /Абонентская плата:([^<]*)/i, replaceTagsAndSpaces, parseBalance2);
     }
+    
+    if(tariffs.length > 0)
+        result.__tariff = tariffs.join(', ');
+
+    getParam(html, result, '__tariff', /Текущий тарифный план:([\s\S]*?)<\/strong>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'username', /Общая информация\s+\/([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 
     AnyBalance.setResult(result);
 }
@@ -504,5 +511,77 @@ function createFormParams(html, process){
         params[name] = value;
     });
     return params;
+}
+
+/**
+ * Получает значение, подходящее под регулярное выражение regexp, производит 
+ * в нем замены replaces, результат передаёт в функцию parser, 
+ * а затем записывает результат в счетчик с именем param в result
+ * Результат в result помещается только если счетчик выбран пользователем 
+ * в настройках аккаунта
+ *
+ * Очень похоже на getParam, но может получать несколько значений (при наличии 
+ * в регулярном выражении флага g). В этом случае суммирует их.
+ * 
+ * если result и param равны null, то значение просто возвращается.
+ * eсли parser == null, то возвращается результат сразу после замен
+ * если replaces == null, то замены не делаются
+ * do_replace - если true, то найденные значения вырезаются из переданного текста
+ * 
+ * replaces - массив, нечетные индексы - регулярные выражения, четные - строки, 
+ * на которые надо заменить куски, подходящие под предыдущее регулярное выражение
+ * см. например replaceTagsAndSpaces
+ */
+function sumParam (html, result, param, regexp, replaces, parser, do_replace, aggregate) {
+    if (param && (param != '__tariff' && !AnyBalance.isAvailable (param))){
+        if(do_replace)
+          return html;
+        else
+            return;
+    }
+
+    if(typeof(do_replace) == 'function'){
+        aggregate = do_replace;
+        do_replace = false;
+    }
+
+    var values = [];
+    if(param && isset(result[param]))
+        values[values.length] = result.param;
+
+    var html_copy = html.replace(regexp, function(str, value){
+	for (var i = 0; replaces && i < replaces.length; i += 2) {
+		value = value.replace (replaces[i], replaces[i+1]);
+	}
+	if (parser)
+		value = parser (value);
+            
+            if(isset(value))
+            	values[values.length] = value;
+            return ''; //Вырезаем то, что заматчили
+    });
+
+    var total_value;
+    if(aggregate)
+        total_value = aggregate(values);
+    else if(!param) //Если не требуется записывать в резалт, и функция агрегации отсутствует, то вернем массив
+        total_value = values;
+
+    if(param){
+      if(isset(total_value)){
+          result[param] = total_value;
+      }
+      if(do_replace)
+          return html_copy;
+    }else{
+      return total_value;
+    }
+}
+
+/**
+ *  Проверяет, определено ли значение переменной
+ */
+function isset(v){
+    return typeof(v) != 'undefined';
 }
 

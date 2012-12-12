@@ -16,26 +16,31 @@ var g_headers = {
 
 function main(){
     var prefs = AnyBalance.getPreferences();
+    if(AnyBalance.getLevel() < 4)
+        throw new AnyBalance.Error('Этот провайдер требует AnyBalance API v.4+');
 
-    var baseurl = "https://www.tcsbank.ru";
+    var basedomain = "www.tcsbank.ru";
+    var baseurl = "https://" + basedomain;
     AnyBalance.setDefaultCharset('utf-8');
 
-    var html;
+    var html, sessionid;
     if(!prefs.__debug){ //Вход в отладчике глючит, поэтому входим вручную, а проверяем только извлечение счетчиков
-//        html = AnyBalance.requestGet(baseurl + '/authentication/?service=http%3A%2F%2Fwww.tcsbank.ru%2Fbank%2F', headers);
+        //Устанавливает JSESSIONID
+        AnyBalance.requestGet(baseurl + '/authentication/?service=' + encodeURIComponent(baseurl + '/bank/'), g_headers);
 
         html = AnyBalance.requestPost('https://auth.tcsbank.ru/cas/login', {
-            callback:'jQuery171018063926370814443_1348651876467',
-            service: baseurl + '/bank/',
+            callback:'jQuery1820823795270640403_1355329522395',
+            stamp:'_1355329529005_835711790',
+            service: baseurl + '/api/v1/session/',
             _eventId:'submit',
-            asyncAuthError: baseurl + '/service/auth_error/',
+            asyncAuthError: baseurl + '/api/v1/auth_error/',
             username:prefs.login,
             password:prefs.password,
             async:true,
             _: new Date().getTime()
-        }, g_headers);
+        }, addHeaders({Referer: baseurl + '/authentication/?service=' + baseurl + '/bank/accounts/'}));
 
-//        AnyBalance.trace(html);
+        //AnyBalance.trace(html);
         var json = getParam(html, null, null, /^jQuery\w+\(\s*(.*)\)\s*$/i);
         if(json){
             var json = getJson(json);
@@ -43,29 +48,45 @@ function main(){
                 throw new AnyBalance.Error(json.errorMessage || 'Авторизация прошла неуспешно. Проверьте логин и пароль.');
             if(json.resultCode != 'OK')
                 throw new AnyBalance.Error("Вход в интернет банк не удался: " + json.resultCode);
+            if(!json.payload)
+                throw new AnyBalance.Error("Не удалось найти идентификатор сессии!");
+            sessionid = json.payload;
+            AnyBalance.setCookie(basedomain, 'sessionid', sessionid);
         }else{
-            var logout = getParam(html, null, null, /(\/authentication\/logout)/i);
-            if(!logout)
-                throw new AnyBalance.Error("Не удалось зайти в интернет банк. Неправильный логин-пароль?");
+            //Не вернулся json. Наверное, в чем-то проблема
+            throw new AnyBalance.Error("Не удалось зайти в интернет банк. Сайт изменен?");
         }
+    }else{
+        //В отладчике просто получаем куки в уже зайденной сессии
+        var sessionid = AnyBalance.getCookie('sessionid');
+        if(!sessionid)
+            throw new AnyBalance.Error("Зайдите в ТКС банк вручную, затем запустите отладчик");
     }
-        
-    var accounts = AnyBalance.requestGet(baseurl + '/service/accounts', addHeaders({'X-Requested-With':'XMLHttpRequest', Referer: baseurl + '/bank/accounts/'}));
+
+    //Данные грузятся только после получения этой страницы, хитрецы, блин...
+    AnyBalance.requestGet(baseurl + '/bank/accounts/', g_headers);
+
+    var accounts = AnyBalance.requestGet(baseurl + '/api/v1/accounts/?sessionid=' + sessionid, addHeaders({
+        Accept:'application/json, text/javascript, */*; q=0.01',
+        'X-Requested-With':'XMLHttpRequest',
+        Referer: baseurl + '/bank/accounts/'
+    }));
+    
     accounts = getJson(accounts);
 
     if(accounts.resultCode != 'OK')
         throw new AnyBalance.Error('Не удалось получить список карт: ' + accounts.resultCode);
 
     if(prefs.type == 'card'){
-        fetchCard(accounts, baseurl);
+        fetchCard(accounts, baseurl, sessionid);
     }else if(prefs.type == 'dep'){
-        fetchDep(accounts, baseurl);
+        fetchDep(accounts, baseurl, sessionid);
     }else{
-        fetchCard(accounts, baseurl);
+        fetchCard(accounts, baseurl, sessionid);
     }
 }
 
-function fetchCard(accounts, baseurl){
+function fetchCard(accounts, baseurl, sessionid){
     var cards = [];
     for(var i=0; i<accounts.payload.length; ++i){
         if(/карты/i.test(accounts.payload[i].name)){
@@ -123,7 +144,13 @@ function fetchCard(accounts, baseurl){
     result.__tariff = thiscard.name;
 
     if(AnyBalance.isAvailable('minpaytill', 'limit', 'freeaddleft')){
-        var accinfo = AnyBalance.requestGet(baseurl + '/service/account_info?request=current&account=' + card.id, addHeaders({'X-Requested-With':'XMLHttpRequest', Referer: baseurl + '/bank/accounts/'}));
+
+        var accinfo = AnyBalance.requestGet(baseurl + '/api/v1/account_info/?sessionid=' + sessionid + '&request=current&account=' + card.id, addHeaders({
+            Accept:'application/json, text/javascript, */*; q=0.01',
+            'X-Requested-With':'XMLHttpRequest',
+            Referer: baseurl + '/bank/accounts/?account=' + card.id
+        }));
+
         accinfo = getJson(accinfo);
         if(accinfo.resultCode == 'OK'){
             for(var i=0; i<accinfo.payload.length; ++i){
@@ -146,7 +173,7 @@ function fetchCard(accounts, baseurl){
     AnyBalance.setResult(result);
 }
 
-function fetchDep(accounts, baseurl){
+function fetchDep(accounts, baseurl, sessionid){
     var deps = [];
     for(var i=0; i<accounts.payload.length; ++i){
         if(/Вклады/i.test(accounts.payload[i].name)){
@@ -197,7 +224,12 @@ function fetchDep(accounts, baseurl){
     result.__tariff = dep.name;
 
     if(AnyBalance.isAvailable('pcts')){
-        var accinfo = AnyBalance.requestGet(baseurl + '/service/account_info?request=current&account=' + dep.id, addHeaders({'X-Requested-With':'XMLHttpRequest', Referer: baseurl + '/bank/accounts/'}));
+        var accinfo = AnyBalance.requestGet(baseurl + '/api/v1/account_info/?sessionid=' + sessionid + '&request=current&account=' + dep.id, addHeaders({
+            Accept:'application/json, text/javascript, */*; q=0.01',
+            'X-Requested-With':'XMLHttpRequest',
+            Referer: baseurl + '/bank/accounts/?account=' + dep.id
+        }));
+
         accinfo = getJson(accinfo);
         if(accinfo.resultCode == 'OK'){
             for(var i=0; i<accinfo.payload.length; ++i){

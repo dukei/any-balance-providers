@@ -138,15 +138,15 @@ function main(){
     	AnyBalance.trace("It looks like we are in selfcare (found logOff)...");
 
     // Тарифный план
-    regexp=/Тарифн[ыи]й план:.*?>(.*?)</;
+    regexp=/(?:Тарифн[ыи]й план|tariff plan):.*?>(.*?)</;
     if (res=regexp.exec(html)){
         result.__tariff=res[1];
     }
 
     // Баланс
-    sumParam (html, result, 'balance', /Баланс:.*?<strong>([\s\S]*?)<\/strong>/i, replaceTagsAndSpaces, parseBalance);
+    sumParam (html, result, 'balance', /(?:Баланс|balance):.*?<strong>([\s\S]*?)<\/strong>/i, replaceTagsAndSpaces, parseBalance);
     // Телефон
-    sumParam (html, result, 'phone', /Ваш телефон:.*?>([^<]*)</i, replaceTagsAndSpaces, html_entity_decode);
+    sumParam (html, result, 'phone', /(?:Ваш телефон|phone):.*?>([^<]*)</i, replaceTagsAndSpaces, html_entity_decode);
 
     AnyBalance.trace("Fetching status...");
 
@@ -224,6 +224,9 @@ function main(){
 
     //2500 минут в сети МТС
     sumParam (html, result, 'min_net_2500', /<li>Осталось ([\d\.,]+) секунд внутри сети<\/li>/ig, replaceFloat, parseFloat);
+    
+    // Расход минут на Любимые Номера
+    sumParam (html, result, 'min_ln', /<li>К-во бесплатных минут для звонков на ЛН:[^<]*Израсходовано\s*([\d\.,]+) сек.<\/li>/ig, replaceFloat, parseFloat);
 
     // Бесплатные смс для отправки на номера в пределах Украины
     sumParam (html, result, 'sms_100', /<li>Бесплатные смс для отправки на номера в пределах Украины:[^<]*Осталось[^\d]*?(\d+) смс. Срок действия до[^<]*<\/li>/ig, null, parseInt);

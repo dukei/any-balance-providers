@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="10">ab-cell-mts-ua</id>
+  <id major_version="1.0" version="11">ab-cell-mts-ua</id>
   <name>МТС (Украина)</name>
   <description>
     Получает баланс, минуты, смс, ммс, информацию о расходах, номер лицевого счета, ежемесячую плату и др.
@@ -17,7 +17,7 @@
   </files>
   <counters>
     <counter id="balance" name="Баланс" units=" грн"/>
-    <counter id="bonus_balance" name="Бонусный баланс" units=" грн"/>
+    <counter id="bonus_balance" name="Бонусный баланс" units=" грн" flags="zero_when_empty"/>
     <counter id="min_paket" name="Пакет бесплатных минут для внутрисетевых звонков" type="time_interval" format="{@MIN}" units=" мин"/>
     <counter id="min_net_70" name="70 минут в день для внутрисетевых звонков" type="time_interval" format="{@MIN}" units=" мин"/>
     <counter id="min_net_30" name="30 минут в день для внутрисетевых звонков" type="time_interval" format="{@MIN}" units=" мин"/>
@@ -38,6 +38,7 @@
     <counter id="min_net" name="Минуты с услугой «Супер без пополнения» в сети МТС" type="time_interval" format="{@MIN}" units=" мин"/>
     <counter id="min_all_25" name="25 минут на другие сети" type="time_interval" format="{@MIN}" units=" мин"/>
     <counter id="min_net_2500" name="2500 минут в сети МТС" type="time_interval" format="{@MIN}" units=" мин"/>
+    <counter id="min_ln" name="Расход минут на Любимые Номера" type="time_interval" format="{@MIN}" units=" мин"/>
     <counter id="sms_100" name="Бесплатные смс для отправки на номера в пределах Украины" units=" sms"/>
     <counter id="min_all_60" name="60 минут на все сети за 5 коп" type="time_interval" format="{@MIN}" units=" мин"/>
     <counter id="traffic_free_mb" name="Бесплатный интернет" units=" mb"/><!-- Актуально до 15.08.2012 для Супер Свободы -->

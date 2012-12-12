@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="3">ab-municipal-system-gorod-chel</id>
-  <name>Система Город (Челябинск)</name>
+  <id version="1">ab-municipal-system-gorod-altai</id>
+  <name>Система Город (Алтайский край)</name>
   <description>
-    Получает балансы, общий баланс по лицевым счетам, привязанным к карте Система Город.
+    Получает балансы, общую задолженность по лицевым счетам, привязанным к карте Система Город.
 
     Федеральная Система «Город» - автоматизированная система сбора платежей за услуги, которыми Вы пользуетесь каждый день. Несмотря на то, что программа федеральная, в каждом регионе свои карты Система Город, и свои личные кабинеты для проверки их баланса.
 
     Этот провайдер поддерживает следующие карты Системы Город, номера которых начинаются на:
-      990002 - Челябинск ( https://gorod74.ru )
+      990006 - Алтайский край ( https://www.sistemagorod.ru )
+
+    Данные получаются из личного кабинета https://www.sistemagorod.ru/lk. Если у вас еще нет карты Системы Город, вы можете её получить здесь: https://www.sistemagorod.ru/lk/new-card
+    В настоящее время провайдер позволяет входить в кабинет только по номеру карты. Если вам требуется вход по номеру телефона, пожалуйста, обращайтесь к автору провайдера.
 
     По поддержке других карт смотрите описание отдельного провайдера Система Город.
   </description>
@@ -22,13 +25,10 @@
   </files>
   <counters>
     <counter id="balance" name="Баланс" units="р"/>
-    <counter id="2pay" name="К оплате" units="р"/>
-    <counter id="balance_total" name="Итого" units="р"/>
-    <counter id="2pay_total" name="Всего к оплате" units="р"/>
+    <counter id="2pay_total" name="Общая задолженность" units="р"/>
     <counter id="fio" name="ФИО" type="text"/>
     <counter id="address" name="Адрес" type="text"/>
     <counter id="service" name="Услуга" type="text"/>
-    <counter id="provider" name="Поставщик" type="text"/>
     <counter id="accnum" name="Лицевой счет" type="text"/>
   </counters>
   <keywords>

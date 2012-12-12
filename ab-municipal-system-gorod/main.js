@@ -41,6 +41,7 @@ function parseBalance(text){
 var supported_cards = {
    '990005000': uralsib //Система ГОРОД Башкортостан, Ижевск, Кемерово, Екатеринбург и др.
    '990002': function(prefix){redirect(prefix, 'Челябинск');}
+   '990006': function(prefix){redirect(prefix, 'Алтайский край');}
 };
 
 function main(){

@@ -12,16 +12,6 @@
     </EditTextPreference>
     <EditTextPreference 
         positiveButtonText="ОК"
-        key="surname" 
-        dialogTitle="Фамилия"
-        negativeButtonText="Отмена"
-        title="Фамилия"
-        summary="||{@s}"
-        dialogMessage="Введите фамилию, на которую оформлена карта Системы Город"
-        inputType="text">
-    </EditTextPreference>
-    <EditTextPreference 
-        positiveButtonText="ОК"
         key="password" 
         dialogTitle="Пароль"
         negativeButtonText="Отмена"

@@ -3,12 +3,21 @@
 
 Получает баланс и значения счетчиков по лицевым счетам, привязанным к карте Система Город (Челябинск).
 
-Сайт оператора: https://gorod74.ru/
-Личный кабинет: https://gorod74.ru/
+Сайт оператора: http://www.sistemagorod.ru
+Личный кабинет: https://www.sistemagorod.ru/lk/
 */
 
 var supported_cards = {
-   '990002': chelyab //Система ГОРОД Челябинск
+   '990006': altai //Система ГОРОД Алтайский край
+};
+
+var g_headers = {
+    Accept:'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
+    'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+    'Cache-Control':'max-age=0',
+    Connection:'keep-alive',
+    'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.60 Safari/537.1'
 };
 
 function main(){
@@ -31,58 +40,53 @@ function main(){
         throw new AnyBalance.Error("Карта с номером " + prefs.cardnum + " не поддерживается этим провайдером. Попробуйте общий провайдер \"Система Город\".");
 }
 
-function chelyab(prefix){
+function altai(prefix){
     var prefs = AnyBalance.getPreferences();
-    var zeroes = prefs.login.substr(6, 4);
-    var num = prefs.login.substr(10);
+    var pan = prefs.login.substr(6);
 
-    var baseurl = "https://gorod74.ru/";
-    if(!prefs.__dbg){
-        var html = AnyBalance.requestPost(baseurl + "gorod/zadolzh/auth.jsp", {
-            pan1:zeroes,
-            pan2:num,
-            usr: prefs.surname,
-            pin:prefs.password
-        });
-    }else{
-        var html = AnyBalance.requestGet(baseurl + "gorod/zadolzh/debts.jsp");
-    }
+    var baseurl = "https://www.sistemagorod.ru/lk/";
+    AnyBalance.requestGet(baseurl, g_headers);
 
-    if(!/"end.jsp"/i.test(html)){
-      var error = getParam(html, null, null, /<p[^>]*align=['"]center['"][^>]*>Уважаемый абонент!((?:[\s\S]*?<\/p>){2})/i, replaceTagsAndSpaces, html_entity_decode);
+    var html = AnyBalance.requestPost(baseurl + "auth", {
+        redirectUrl:'',
+        typeAuth:'card',
+        pan:pan,
+        passwordCard: prefs.password
+    }, g_headers);
+
+    if(!/\/lk\/logout/i.test(html)){
+      var error = getParam(html, null, null, /<h1>Внимание!<\/h1>([\s\S]*?)<br/i, replaceTagsAndSpaces, html_entity_decode);
       if(error)
           throw new AnyBalance.Error(error);
       throw new AnyBalance.Error("Не удалось войти в личный кабинет по неизвестной причине. Сайт изменен?");
     }
 
-    var schet = prefs.accnum || "\\d+";
-
     var result = {success: true};
 
-    var re = /<tr[^>]*>(?:\s*<td[^>]*>(?:[\s\S](?!<t))*<\/td>){2}\s*<td[^>]*>\s*\d+[\s\S]*?<\/tr>/ig;
+    var table = getParam(html, null, null, /<table[^>]+id="serv_table"[^>]*>([\s\S]*?)<\/table>/i);
+    if(!table)
+        throw new AnyBalance.Error('Не найдена таблица услуг.');
+
+    var re = /<tr[^>]+info_tr[^>]*>(?:[\s\S](?!\/tr>))*<\/tr>/ig;
     html.replace(re, function(tr){
         if(AnyBalance.isSetResultCalled())
             return; //Если уже вернули результат, то дальше крутимся вхолостую
 
         var accnum = (prefs.accnum || '').toUpperCase();
-        var name = getParam(tr, null, null, /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<br/i, replaceTagsAndSpaces, html_entity_decode);
-        var acc = getParam(tr, null, null, /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<br/i, replaceTagsAndSpaces, html_entity_decode);
+        var name = getParam(tr, null, null, /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+        var acc = getParam(tr, null, null, /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<br/i, replaceTagsAndSpaces, html_entity_decode);
         if(!prefs.accnum || 
             (name && name.toUpperCase().indexOf(accnum) >= 0) ||
             (acc && acc.toUpperCase().indexOf(accnum) >= 0)){
 
-        
             getParam(tr, result, 'balance', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-            getParam(tr, result, '2pay', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-            getParam(html, result, 'balance_total', /ЗАДОЛЖЕННОСТЬ:([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-            getParam(html, result, '2pay_total', /ЗАДОЛЖЕННОСТЬ:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-            getParam(tr, result, 'fio', /<td[^>]*>([\s\S]*?)<br/i, replaceTagsAndSpaces, html_entity_decode);
-            getParam(tr, result, 'address', /<td[^>]*>[\s\S]*?<br[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-            getParam(tr, result, 'service', /(?:[\s\S]*?<td[^>]*>){2}(?:(?:[\s\S](?!<br))*:)?([\s\S]*?)<br/i, replaceTagsAndSpaces, html_entity_decode);
-            getParam(tr, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<br/i, replaceTagsAndSpaces, html_entity_decode);
-            getParam(tr, result, 'provider', /(?:[\s\S]*?<td[^>]*>){2}[\s\S]*?<br[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-            getParam(tr, result, 'accnum', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+            getParam(tr, result, 'address', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+            getParam(tr, result, 'service', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+            getParam(tr, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+            getParam(tr, result, 'accnum', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
  
+            getParam(html, result, '2pay_total', /Общая сумма задолженности:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+
             AnyBalance.setResult(result);
             return;
         }

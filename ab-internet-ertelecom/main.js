@@ -26,102 +26,51 @@ function main(){
 
     // Заходим на главную страницу
 	AnyBalance.trace('Authorizing by ' + baseurl + "elk.php");
-	var info = AnyBalance.requestPost(baseurl + "elk.php", {
+	var info = AnyBalance.requestPost(baseurl + "elk.php?t_m=0", {
 		"log": prefs.log,
 		"pwd": prefs.pwd
 	});
     
-	var error = $('#errHolder', info).text();
-	if(error){
-		throw new AnyBalance.Error(error);
-	}
+        if(!/elk.php\?out=out/.test(info)){
+           var error = getParam(info, null, null, /<error>([\s\S]*?)<\/error>/i, replaceTagsAndSpaces, html_entity_decode);
+           if(error)
+               throw new AnyBalance.Error(error);
+           throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+        }
     
-	var result = {success: true};
-	if(matches = info.match(/<error>\n(.*?)\n<\/error>/i)){
-		throw new AnyBalance.Error(matches[1]);
-	}
+        var result = {success: true};
 
-	if(AnyBalance.isAvailable('status')){
-		if(matches = info.match(/title="Статус: (.*?)">/i)){
-			AnyBalance.trace('Parse status');
-			result.status = matches[1];
-		}
-	}
+        getParam(info, result, 'balance', /На счёте:[\s\S]*?<h1[^>]*>([\s\S]*?)<\/h1>/i, replaceTagsAndSpaces, parseBalance);
+        getParam(info, result, 'tariff_number', /Номер договора([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+        getParam(info, result, 'name', /<span[^>]+class="client-name"[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+        getParam(info, result, '__tariff', /Текущий тариф:[\s\S]*?<h1[^>]*>([\s\S]*?)<\/h1>/i, replaceTagsAndSpaces, html_entity_decode);
 
-	AnyBalance.trace('Getting links by ' + baseurl + 'right.php?url=&entry=procedure%3Astatistic_user_pppoe.entry');
-	info = AnyBalance.requestGet(baseurl + 'right.php?url=&entry=procedure%3Astatistic_user_pppoe.entry');
+        if(AnyBalance.isAvailable('bits')){
+            info = AnyBalance.requestGet(baseurl + 'elk.php?t_m=6');
+            getParam(info, result, 'bits', /На счёте:[\s\S]*?<h1[^>]*>([\s\S]*?)<\/h1>/i, replaceTagsAndSpaces, parseBalance);
+        }
 
-	var pattern=new RegExp("<frame .*? src=\"https:\/\/"+domain+"\\.db\\.ertelecom\\.ru\/cgi-bin\/ppo\/es_webface\/statistic_user_pppoe\\.get_date_show_statistic\\?client\\$c=.*?\\&id_session\\$c=(.*?)\">","i");
-	if(matches = info.match(pattern)){
-		var id_session=matches[1];
+	if(AnyBalance.isAvailable('last_session_end','traffic_inner','traffic_outer','contract_type')){
+	    AnyBalance.trace('Getting links to statistics by ' + baseurl + 'right.php?url=&entry=procedure%3Astatistic_user_pppoe.entry');
+            info = AnyBalance.requestGet(baseurl + 'right.php?url=&entry=procedure%3Astatistic_user_pppoe.entry');
 
-		AnyBalance.trace('Getting statistics');
-		info = AnyBalance.requestGet(baseurl + 'cgi-bin/ppo/es_webface/statistic_user_pppoe.statistic_user?client$c='+prefs.log+'&id_session$c='+id_session+'&day1$c=01&day2$c=-1');
-
-		AnyBalance.trace('Parse fields');
-		if(matches = info.match(/Здравствуйте, (.*?)\n/i)){
-
-			result.name = matches[1];
-
-			matches = info.match(/Ваш договор: <b>(.*?) \((.*?)\)<\/b>/i);
-			result.__tariff = matches[1];
-			result.tariff_number = matches[1];
-			result.contract_type = matches[2];
-
-			matches = info.match(/Ваш баланс на .*? составляет <b>(.*?) рублей\n<\/b>/i);
-			var value=matches[1].replace(',','.');value=value.replace(' ','');
-			result.balance = parseFloat(value);
-
-			if(AnyBalance.isAvailable('traffic_inner')){
-				if(matches = info.match(/<td colspan="30"><font color="yellow"><b>.*?"ДОМашний".*?: (.*?) Мб<\/b><\/font><\/td>/i)){
-					value=matches[1].replace(',','.');value=value.replace(' ','');
-					result.traffic_inner = parseFloat(value);
-				}
-			}
-
-			if(AnyBalance.isAvailable('traffic_outer')){
-				if(matches = info.match(/<td colspan="30"><font color="yellow"><b>.*?"Интернет трафик".*?: (.*?) Мб <\/b><\/font><\/td>/i)){
-					value=matches[1].replace(',','.');value=value.replace(' ','');
-					result.traffic_outer = parseFloat(value);
-				}
-			}
-
-			if(AnyBalance.isAvailable('last_session_end')){
-				if(matches = info.match(/<td>(.*?)<\/td>\n<td>Интернет трафик<\/td>\n<td align="right">.*?<\/td>\n<\/tr>\n<tr bgcolor="red">/i)){
-					result.last_session_end = matches[1];
-				}
-			}
-
-			if(matches = info.match(/Основной тариф: (.*?)</i)){
-				result.__tariff = matches[1];
-			}
-
-			AnyBalance.trace('WARNING! Statistics for current connection hasn\'t been showed.');
-
-		}
-		else{
-			if(matches = info.match(/<td class="info_win">(.*?)<br><br>/i)){
-				var errs=matches[1];
-				errs=errs.replace(new RegExp("<.*?>",'g')," ");
-				AnyBalance.trace(errs);
-				throw new AnyBalance.Error(errs);
-			}
-			else{
-				throw new AnyBalance.Error("Error getting statistics");
-			}
-		}
-	}
-
-	else{
-		if(matches = info.match(/<td class="info_win">(.*?)<br><br>/i)){
-			var errs=matches[1];
-			errs=errs.replace(new RegExp("<.*?>",'g')," ");
-			AnyBalance.trace(errs);
-			throw new AnyBalance.Error(errs);
-		}
-		else{
-			throw new AnyBalance.Error("Error");
-		}
+            var href = getParam(info, null, null, /<frame[^>]+target="right"[^>]*src="([^"]*)/i, null, html_entity_decode);
+            if(!href){
+                AnyBalance.trace('Не удаётся найти промежуточную ссылку на трафик.');
+            }else{
+                var session = getParam(href, null, null, /(client.*)/i);
+                if(!session){
+                    AnyBalance.trace('Не удаётся найти информацию о сессии.');
+                }else{
+		    AnyBalance.trace('Getting statistics');
+		    info = AnyBalance.requestGet(baseurl + 'cgi-bin/ppo/es_webface/statistic_user_pppoe.statistic_user?' + session + '&day1$c=01&day2$c=-1');
+                
+                    getParam(info, result, 'traffic_inner', /Наработка за период по типу трафика "ДОМашний трафик"[^<]*?:([^<]*)/i, replaceTagsAndSpaces, parseTraffic);
+                    getParam(info, result, 'traffic_outer', /Наработка за период по типу трафика "Интернет трафик"[^<]*?:([^<]*)/i, replaceTagsAndSpaces, parseTraffic);
+                    getParam(info, result, 'last_session_end', /<td[^>]*>([^<]*)<\/td>\s*<td[^>]*>Интернет трафик<\/td>\s*<td[^>]*>.*?<\/td>\s*<\/tr>\s*<tr[^>]+bgcolor="red"[^>]*>/i, replaceTagsAndSpaces, html_entity_decode);
+                    getParam(info, result, 'contract_type', /Ваш договор:[\s\S]*?\(([\s\S]*?)\)\s*<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
+                }
+            }
 	}
 
 	AnyBalance.setResult(result);

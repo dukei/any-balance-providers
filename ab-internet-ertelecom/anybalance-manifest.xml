@@ -1,20 +1,23 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="18">ab-internet-ertelecom</id>
-  <name>Интернет провайдер Дом.ру</name>
+  <id version="2">ab-internet-ertelecom</id>
+  <name>Дом.ру (Эр-телеком)</name>
   <description>
-    Получает текущий баланс, номер и тип лицевого счета, владельца счета, статус, трафик в текущем месяце и дату окончания предыдущей сессии у провайдера "Эр-телеком" (ДОМ.РУ)
+    Получает текущий баланс, номер и тип лицевого счета, владельца счета, статус, трафик в текущем месяце и дату окончания предыдущей сессии у провайдера "Эр-телеком" (ДОМ.РУ): http://citydom.ru.
+
+    Информацию получает из соответствующего городу личного кабинета, например, для Санкт-Петербурга это https://spb.db.ertelecom.ru/elk.php.
   </description>
   <author>wtiger &lt;wtiger@mail.ru&gt;</author>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
-    <js>api:jquery.min.js</js> <!-- Используем библиотеку, которая и так входит в AnyBalance -->
     <js>main.js</js>
+    <js>library.js</js>
+    <history>history.xml</history>
   </files>
   <counters>
     <counter id="balance" name="Баланс" units="р"/>
-    <counter id="status" name="Статус" type="text" prefix="Статус:"/>
+    <counter id="bits" name="Биты" units="Ѣ"/>
     <counter id="name" name="ФИО" type="text"/>
     <counter id="contract_type" name="Тип контракта" type="text"/>
     <counter id="last_session_end" name="Конец последней сессии" type="text"/>
@@ -28,4 +31,7 @@
   <type>
     internet, tv
   </type>
+  <ru>
+    ru
+  </ru>
 </provider>

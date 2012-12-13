@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-kabinet-rt</id>
-  <api min_level="4" flags="no_browser" />
+  <id version="2">ab-internet-kabinet-rt</id>
   <name>Кабинет Ростелеком</name>
   <description>
     Получает баланс и информацию о выбранном лицевом счете из единого личного кабинета Ростелеком (https://kabinet.rt.ru).
@@ -12,11 +11,23 @@
     <preferences>preferences.xml</preferences>
     <js>main.js</js>
     <js>library.js</js>
+    <history>history.xml</history>
   </files>
   <counters>
     <counter id="balance" name="Баланс" units="р"/>
     <counter id="licschet" name="Лицевой счет" type="text"/>
     <counter id="status" name="Статус"  type="text"/>
+    <counter id="balance1" name="Баланс 2" units="р"/>
+    <counter id="licschet1" name="Лицевой счет 2" type="text"/>
+    <counter id="status1" name="Статус 2"  type="text"/>
+    <counter id="balance2" name="Баланс 3" units="р"/>
+    <counter id="licschet2" name="Лицевой счет 3" type="text"/>
+    <counter id="status2" name="Статус 3"  type="text"/>
+    <counter id="balance3" name="Баланс 4" units="р"/>
+    <counter id="licschet3" name="Лицевой счет 4" type="text"/>
+    <counter id="status3" name="Статус 4"  type="text"/>
+    <counter id="totalBalancePlus" name="Сумма остатков" units="р"/>
+    <counter id="totalBalanceMinus" name="Сумма задолженностей" units="р"/>
   </counters>
   <keywords>
     интернет

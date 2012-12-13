@@ -20,12 +20,12 @@
         inputType="textPassword">
     </EditTextPreference>
     <EditTextPreference 
-        title="Лицевой счет" 
+        title="Лицевые счета" 
         positiveButtonText="ОК" 
         summary="|Автоматически|{@s}" 
-        dialogTitle="Лицевой счет" 
+        dialogTitle="Лицевые счета" 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите последние цифры номера лицевого счета, по которому вы хотите получить информацию, или оставьте поле пустым, чтобы получить информацию по первому лицевому счету."
+        dialogMessage="Введите последние цифры номеров лицевых счетов через запятую (до 4), по которым вы хотите получить информацию, или оставьте поле пустым, чтобы получить информацию по первым четырем лицевым счетам."
         inputType="number"
         key="num">
     </EditTextPreference>

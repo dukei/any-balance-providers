@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-internet-tele-vox</id>
+  <name>Телевокс (Благовещенск)</name>
+  <description>
+    Получает баланс и информацию о тарифном плане для благовещенского интернет-провайдера Телевокс (http://www.tlvx.ru).
+
+    Информация берется из личного кабинета https://www.tele-vox.ru.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+    <js>library.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="prihod" name="Платежи в текущем месяце" units="р"/>
+    <counter id="trafficIn" name="Вх.трафик в текущем месяце" units="Gb"/>
+    <counter id="trafficOut" name="Исх.трафик в текущем месяце" units="Gb"/>
+    <counter id="licschet" name="Договор" type="text"/>
+  </counters>
+  <keywords>
+    интернет, televox
+  </keywords>
+  <type>
+    internet
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

@@ -21,7 +21,14 @@ function main(){
     	//alert(matches[1].replace(/<[^>]+>/g, ''));
     	throw new AnyBalance.Error(matches[1].replace(/^\s*|\s*$/g, ''));
     }
-    
+
+    var matches = html.match(/<meta[^>]+URL=([^"]+)/i);
+    if(!matches){
+    	throw new AnyBalance.Error('Ошибка входа');
+    }
+
+    var html = AnyBalance.requestGet(baseurl+matches[1]);
+  
     var result = {success: true};
     
     var $html = $(html);

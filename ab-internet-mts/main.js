@@ -76,29 +76,34 @@ function getMoscow(){
     var prefs = AnyBalance.getPreferences();
     var baseurl = 'https://kabinet.mts.ru/zservice/';
     var baseloginurl = "https://login.mts.ru/amserver/UI/Login?service=stream&arg=newsession&goto=http%3A%2F%2Fkabinet.mts.ru%3A80%2Fzservice%2Fgo";
+    
+    if(!prefs.__dbg){
+        var info = AnyBalance.requestGet(baseloginurl);
+        
+        var form = getParam(info, null, null, /<form[^>]+name="Login"[^>]*>([\s\S]*?)<\/form>/i);
+        if(!form)
+            throw new AnyBalance.Error("Не удаётся найти форму входа!");
+        
+        var params = createFormParams(form, function(params, input, name, value){
+            var undef;
+            if(name == 'IDToken1')
+                value = prefs.login;
+            else if(name == 'IDToken2')
+                value = prefs.password;
+            else if(name == 'noscript')
+                value = undef; //Снимаем галочку
+            else if(name == 'IDButton')
+                value = '+%C2%F5%EE%E4+%E2+%CB%E8%F7%ED%FB%E9+%EA%E0%E1%E8%ED%E5%F2+';
+           
+            return value;
+        });
+        
+        // Заходим на главную страницу
+        info = AnyBalance.requestPost(baseloginurl, params);
+    }else{
+        var info = AnyBalance.requestGet(baseurl);
+    }
 
-    var info = AnyBalance.requestGet(baseloginurl);
-
-    var form = getParam(info, null, null, /<form[^>]+name="Login"[^>]*>([\s\S]*?)<\/form>/i);
-    if(!form)
-        throw new AnyBalance.Error("Не удаётся найти форму входа!");
-
-    var params = createFormParams(form, function(params, input, name, value){
-        var undef;
-        if(name == 'IDToken1')
-            value = prefs.login;
-        else if(name == 'IDToken2')
-            value = prefs.password;
-        else if(name == 'noscript')
-            value = undef; //Снимаем галочку
-        else if(name == 'IDButton')
-            value = '+%C2%F5%EE%E4+%E2+%CB%E8%F7%ED%FB%E9+%EA%E0%E1%E8%ED%E5%F2+';
-       
-        return value;
-    });
-
-    // Заходим на главную страницу
-    info = AnyBalance.requestPost(baseloginurl, params);
     $parse = $(info);
 
     if(!/src=exit/i.test(info)){
@@ -133,6 +138,8 @@ function getMoscow(){
     if (matches=/Тарифный план:[\s\S]*?>(.*?)</.exec(html)){
     	result.__tariff=matches[1];
     }
+
+    getParam(html, result, 'daysleft', /(\d+) дн\S+ до списания абонентской платы/i, null, parseBalance);
     
     // Баланс
     if(AnyBalance.isAvailable('balance')){
@@ -185,6 +192,7 @@ function getMoscow(){
         var html = AnyBalance.requestGet(baseurl + $url.attr('href'));
         getParam(html, result, 'abon', /Абон[а-я\.]*плата[\s\S]*?<span[^>]*>\s*(-?\d[\d\s\.,]*)/i, replaceFloat, parseFloat);
     }
+
     
     AnyBalance.setResult(result);
 }

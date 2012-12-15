@@ -66,9 +66,9 @@ function fetchCard(baseurl, html){
     if(!tr)
         throw new AnyBalance.Error('Не удаётся найти ' + (prefs.contract ? 'карту с последними цифрами ' + prefs.contract : 'ни одной карты'));
 
-    var isCredit = /<a[^>]+id="[^"]*creditCard_\\d+"/.test(tr); 
+    var isCredit = /<a[^>]+id="[^"]*creditCard_\d+"/.test(tr); 
     //Проверим, выбран ли сейчас интересующий нас продукт.
-    var selected = getParam(html, null, null, new RegExp('<div[^>]+class="productBlock\\s+([^"]*)(?:[\\s\\S](?!</a>))*<a[^>]+id="[^"]*' + (isCredit ? 'credit' : 'debit') + '_\d+"', 'i'));
+    var selected = getParam(html, null, null, new RegExp('<div[^>]+class="productBlock\\s+([^"]*)(?:[\\s\\S](?!</a>))*<a[^>]+id="[^"]*' + (isCredit ? 'credit' : 'debit') + '_\\d+"', 'i'));
     var isProductSelected = selected && /productBlockActive/i.test(selected);
 
     var result = {success: true};
@@ -77,8 +77,9 @@ function fetchCard(baseurl, html){
     getParam(tr, result, 'accname', /<td[^>]+class="productInfo"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(tr, result, 'balance', /<td[^>]+class="productAmount"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(tr, result, 'currency', /<td[^>]+class="productAmount"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseCurrency);
+    var balance = getParam(tr, null, null, /<td[^>]+class="productAmount"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 
-    if(AnyBalance.isAvailable('own', 'agreement', 'status', 'accnum', 'limit', 'blocked', 'minpaytill', 'minpay')){
+    if(AnyBalance.isAvailable('own', 'agreement', 'status', 'accnum', 'limit', 'blocked', 'minpaytill', 'minpay', 'debt')){
         //Проверим выбран ли текущий продукт и нужный вклад внутри него
         var isSelected = isProductSelected && getParam(tr, null, null, /<span[^>]+class="(selected)"/i);
         if(!isSelected){
@@ -102,6 +103,11 @@ function fetchCard(baseurl, html){
         getParam(html, result, 'accnum', /Номер счета:?[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
         getParam(html, result, 'minpaytill', /(?:Дата платежа|Рекомендуемая дата внесения средств)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
         getParam(html, result, 'minpay', /Сумма минимального платежа[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+                    
+        var limit = getParam(html, null, null, /(?:Лимит овердрафта:|Кредитный лимит)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+        if(isCredit && limit && AnyBalance.isAvailable('debt')){
+            result.debt = limit - balance;
+        }
     }
 
     AnyBalance.setResult(result);

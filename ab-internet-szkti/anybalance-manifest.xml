@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-internet-szkti</id>
+  <name>СЗКТИ (Мегафон)</name>
+  <description>
+    Получает баланс и информацию о тарифном плане для мурманского оператора фиксированной связи СЗКТИ (ОАО «Северо-Западная компания по телекоммуникациям и информатике»), которое было присоединено к ОАО «МегаФон». Сайт оператора: http://szkti.ru.
+
+    Как получить платежный идентификатор: http://szkti.ru/oplata/uznat_pay_id
+
+    Информация берется из личного кабинета http://stat.szkti.ru.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+    <js>library.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="abon" name="Абонентская плата" units="р"/>
+    <counter id="usedinthismonth" name="Начислено в текущем месяце" units="р"/>
+    <counter id="pi" name="Платежный идентификатор" type="text"/>
+    <counter id="fio" name="ФИО" type="text"/>
+    <counter id="licschet" name="Лицевой счет" type="text"/>
+  </counters>
+  <keywords>
+    интернет, szkti, megafon, мурманск
+  </keywords>
+  <type>
+    internet, telephony
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

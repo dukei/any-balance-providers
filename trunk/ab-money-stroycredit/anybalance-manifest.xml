@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+    <id version="1">ab-money-stroycredit</id>
+    <name>Стройкредит</name>
+    <description>Информация о карте в банке Стройкредит (http://stroycredit.ru).
+Информация берется из системы информационного обслуживания держателей банковских карт https://card.stroycredit.ru.
+
+Как подключить систему Инфо-кард?
+ * Для начала работы необходимо заполнить Анкету держателя карты: https://card.stroycredit.ru/cards/RegistrationForm.do
+ * После проверки введенных данных доступ к Системе будет включен, а на электронный адрес, указанный в Анкете, будет отправлено подтверждение.
+
+ВНИМАНИЕ! На сайте банка написано, что с 01 апреля 2005 года данная услуга явлется платной. Размер комиссии составляет 100 рублей в месяц. Плата взимается в случае осуществления входа в систему более 1 раза в месяц, и производится по окончании календарного месяца посредством автоматического списания с Вашего карточного счета. Это выглядит очень странно и дорого на фоне бесплатных полноценных интернет-банков у других банков. Уточните у службы поддержки банка, действительно ли вы должны за это платить.
+</description>
+    <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+    <files>
+	<icon>icon.png</icon>
+        <preferences>preferences.xml</preferences>
+        <js>main.js</js>
+        <js>library.js</js>
+        <history>history.xml</history>
+    </files>
+    <counters>
+	<counter id="balance" name="Баланс"/>
+	<counter id="blocked" name="Заблокировано"/>
+	<counter id="limit" name="Кредитный лимит"/>
+    </counters>
+    <keywords>
+        Кредит, банк, строй кредит
+    </keywords>
+    <type>
+        money
+    </type>
+    <country>
+        ru
+    </country>
+</provider>

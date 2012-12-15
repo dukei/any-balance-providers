@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference
+        title="№ карты" 
+        positiveButtonText="ОК" 
+        summary="||{@s}" 
+        dialogTitle="№ карты" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите все 16 цифр номера вашей карты без пробелов и разделителей"
+        key="login"
+        inputType="number">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="|Пароль для входа в систему Инфо-кард|***********\n"
+        dialogMessage="Введите пароль, используемый для входа в систему Инфо-кард"
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

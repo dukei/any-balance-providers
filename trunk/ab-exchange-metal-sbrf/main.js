@@ -25,6 +25,9 @@ function main(){
 	var now = new Date();
 	var yesterday = new Date(now.getTime() - 1*86400*1000);
 
+        var prefs = AnyBalance.getPreferences();
+        var region = prefs.region || '223';
+
         var metals = {
             "1": "Au",
             "6": "Ag",
@@ -33,7 +36,7 @@ function main(){
         };
 	
 	var info = AnyBalance.requestPost('http://www.sbrf.ru/common/js/get_quote_values.php', 
-            "version=0&inf_block=223&cbrf=0&group=2&quotes_for=&qid[]=1&qid[]=6&qid[]=28&qid[]=29&_date_afrom114=" + getDateString(yesterday) + "&_date_ato114=" + getDateString(now),
+            "version=0&inf_block=" + prefs.region + "&cbrf=0&group=2&quotes_for=&qid[]=1&qid[]=6&qid[]=28&qid[]=29&_date_afrom114=" + getDateString(yesterday) + "&_date_ato114=" + getDateString(now),
             {
                 Accept: '*/*',
                 'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
@@ -78,6 +81,28 @@ function main(){
             if(AnyBalance.isAvailable('date'))
                 result.date = Date.parse(dt_max);
         }
+
+        //buildRegions(result);
 	
 	AnyBalance.setResult(result);
+}
+
+function buildRegions(result){
+    var html = AnyBalance.requestGet('http://www.sbrf.ru/chelyabinsk/ru/quotes/metals/timeline/');
+    var regions = sumParam(html, null, null, /(<div class="region_item"[^>]*>([\s\S]*?)<\/div>)/ig);
+    AnyBalance.trace('Found ' + regions.length + ' regions');
+    var names = [], values = [];
+    for(var i=0; i<regions.length; ++i){
+        var id = sumParam(regions[i], null, null, /region=['"]([^'"]*)/i)[0];
+        AnyBalance.trace('Getting region: ' + id);
+        html = AnyBalance.requestGet('http://www.sbrf.ru/' + id + '/ru/quotes/metals/timeline/');
+        var inf_block = sumParam(html, null, null, /name="inf_block"[^>]*value="([^"]*)/i)[0];
+        if(!inf_block)
+            throw new AnyBalance.Error('Could not get inf_block for ' + id);
+        names[names.length] = sumParam(regions[i], null, null, /([\s\S]*)/i, replaceTagsAndSpaces)[0];
+        values[values.length] = inf_block;
+    }
+
+    result.regions = names.join('|');
+    result.region_values = values.join('|');
 }

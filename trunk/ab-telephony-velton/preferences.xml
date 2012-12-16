@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Персональный код" 
+        positiveButtonText="ОК" 
+        summary="|Введите ваш персональный код|{@s}\n" 
+        dialogTitle="Логин" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите ваш персональный код для входа в личный кабинет Velton Telecom."
+        inputType="number"
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="|Введите пароль|***********"
+        dialogMessage="Введите пароль, используемый для входа в личный кабинет Velton Telecom."
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

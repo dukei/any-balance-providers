@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-internet-velton</id>
+  <name>Velton Telecom</name>
+  <description>
+    Получает текущий баланс провайдера проводной телефонии Velton Telecom (Украина). 
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+    <js>library.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="грн"/>
+    <counter id="license" name="Лицевой счет" type="text"/>
+    <counter id="fio" name="ФИО" type="text"/>
+  </counters>
+  <keywords>
+    велтон
+  </keywords>
+  <type>
+    telephony
+  </type>
+  <country>
+    ua
+  </country>
+</provider>

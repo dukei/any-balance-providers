@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="2">ab-internet-ttk-kalin</id>
+  <name>ТТК - Калининград</name>
+  <description>
+    Получает баланс и информацию о тарифном плане для калининградского интернет-провайдера Калининград ТрансТелеКом. Информация берется из личного кабинета http://billing.kgdttk.ru/client/index.php.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+    <js>library.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="status" name="Состояние" type="text"/>
+    <counter id="trafficIn" name="Вх.трафик в текущем месяце" units="Гб"/>
+    <counter id="trafficOut" name="Исх.трафик в текущем месяце" units="Гб"/>
+    <counter id="userName" name="ФИО" type="text"/>
+  </counters>
+  <keywords>
+    интернет, калининград, ттк, ttk
+  </keywords>
+  <type>
+    internet
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-velton</id>
+  <id version="1">ab-telephony-velton</id>
   <name>Velton Telecom</name>
   <description>
     Получает текущий баланс провайдера проводной телефонии Velton Telecom (Украина). 

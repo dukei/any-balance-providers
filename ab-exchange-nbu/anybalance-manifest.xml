@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-exchange-nbu</id>
+  <name>Курсы валют НБУ</name>
+  <description>
+    Текущие курсы валют, установленные Национальным Банком Украины. Содержит в том числе курс доллара, евро, фунта, белорусского рубля, тенге, юаня, гривны, швейцарского франка, йены.
+
+    Информация берется со страницы http://bank.gov.ua/control/uk/curmetal/detail/currency?period=daily
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="USD" prefix="$ " name="Долар США"/>
+    <counter id="EUR" prefix="€ " name="Євро"/>
+    <counter id="GBP" prefix="£ " name="Англійський фунт стерлінгів"/>
+    <counter id="BYR" prefix="Br " name="Бiлоруський рубль"/>
+    <counter id="KZT" prefix="〒 " name="Казахстанський тенге"/>
+    <counter id="CHF" prefix="₣ " name="Швейцарський франк"/>
+    <counter id="CNY" prefix="Ұ " name="Юань Женьмiньбi"/>
+    <counter id="JPY" prefix="¥ " name="Японська єна"/>
+    <counter id="AUD" prefix="AUD" name="Австралійський долар"/>
+    <counter id="AZM" prefix="AZM" name="Азербайджанський манат"/>
+    <counter id="DKK" prefix="DKK" name="Датська крона"/>
+    <counter id="ISK" prefix="ISK" name="Ісландська крона"/>
+    <counter id="CAD" prefix="CAD" name="Канадський долар"/>
+    <counter id="LVL" prefix="LVL" name="Латвійський лат"/>
+    <counter id="LTL" prefix="LTL" name="Литовський літ"/>
+    <counter id="MDL" prefix="MDL" name="Молдовський лей"/>
+    <counter id="NOK" prefix="NOK" name="Норвезька крона"/>
+    <counter id="PLN" prefix="PLN" name="Польський злотий"/>
+    <counter id="RUB" prefix="RUB" name="Російський рубль"/>
+    <counter id="SGD" prefix="SGD" name="Сінгапурський долар"/>
+    <counter id="XDR" prefix="XDR" name="Спецiальнi права запозичення"/>
+    <counter id="TRL" prefix="TRL" name="Турецька ліра"/>
+    <counter id="TMM" prefix="TMM" name="Туркменський манат"/>
+    <counter id="HUF" prefix="HUF" name="Угорський форинт"/>
+    <counter id="UZS" prefix="UZS" name="Узбецький сум"/>
+    <counter id="CZK" prefix="CZK" name="Чеська крона"/>
+    <counter id="SEK" prefix="SEK" name="Шведська крона"/>
+    <counter id="date" name="Дата курса" type="text"/>
+  </counters>
+  <keywords>
+    Курс валют, национальный банк, нацбанк украины, доллар, евро, фунт, белорусский рубль, тенге, юань, гривна, франк, йена
+  </keywords>
+  <type>
+    finance, exchange
+  </type>
+  <country>
+    ua
+  </country>
+</provider>

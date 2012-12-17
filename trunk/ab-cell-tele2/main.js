@@ -51,8 +51,12 @@ function main(){
 
     var html = AnyBalance.requestGet(baseurl);
     var matches = html.match(/<input[^>]*name="(csrf[^"]*)"[^>]*value="([^"]*)"/i);
-    if(!matches)
+    if(!matches){
+      var error = getParam(html, null, null, /<div[^>]+id="error-wrapper"[^>]*>([\s\S]*?)(?:<a |<\/div>)/i, replaceTagsAndSpaces, html_entity_decode);
+      if(error)
+          throw new AnyBalance.Error(error);
       throw new AnyBalance.Error("Не удаётся найти код безопасности. Свяжитесь с автором провайдера для исправления.");
+    }
 
     AnyBalance.trace("Trying to enter selfcare at address: " + baseurl);
     var params = {

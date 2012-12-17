@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-municipal-ipay-ge</id>
+  <name>iPay.ge</name>
+  <description>
+    Obtains Tbilisi utility services debts from https://ipay.ge: TELASI, Cleaning Payments, GWP (Gergian Water and Power), KazTransGas Tbilisi.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+    <js>library.js</js>
+  </files>
+  <counters>
+    <counter id="debtElec" name="TELASI"/>
+    <counter id="debtClean" name="Cleaning Payments"/>
+    <counter id="debtWater" name="GWP (Gergian Water and Power)"/>
+    <counter id="debtGas" name="KazTransGas Tbilisi"/>
+    <counter id="name" name="Name" type="text"/>
+    <counter id="address" name="Address" type="text"/>
+  </counters>
+  <keywords>
+    municipal
+  </keywords>
+  <type>
+    municipal
+  </type>
+  <country>
+    ge
+  </country>
+</provider>

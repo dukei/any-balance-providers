@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="10" date="2012-12-17">
+      - Исправлено сообщение об ошибке в случае отключения сайта
+    </change>
     <change version="9" date="2012-12-10">
       - Заменена иконка на более красивую
     </change>

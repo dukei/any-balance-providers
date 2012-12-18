@@ -121,8 +121,11 @@ function main(){
             from:0,
             to:299,
             filter:findnum,
+            hierarchyType:'Billing',
+            'objectSubtypeCodesFilter[0]':'Mobile',
             id:hierid,
-            markCurrentSelection:true
+            markCurrentSelection:true,
+            __LOCAL_DATETIME__:new Date().toISOString()
         });
         
         AnyBalance.trace('Got hierarchy nodes for ' + findnum + ': ' + json);
@@ -172,6 +175,8 @@ function main(){
             if(accInfo.success){
                 var html = accInfo.infoHtml;
                 result.__tariff = accNode.text;
+                if(/Получение запрошенной информации в данный момент недоступно/i.test(html))
+                    AnyBalance.trace("Проблемы получения информации по л/с " + accNode.text + ": МТС сообщает, что получение запрошенной информации в данный момент недоступно");
                 getParam(html, result, 'balance', /Баланс[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
                 getParam(html, result, 'billing', /Метод расчетов[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
                 getParam(html, result, 'acc_expences', /Израсходовано за период[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
@@ -190,6 +195,8 @@ function main(){
             phoneInfo = JSON.parse(phoneInfo);
             if(phoneInfo.success){
                 var html = phoneInfo.infoHtml;
+                if(/Получение запрошенной информации в данный момент недоступно/i.test(html))
+                    AnyBalance.trace("Проблемы получения информации по номеру " + phoneNode.text + ": МТС сообщает, что получение запрошенной информации в данный момент недоступно");
                 getParam(html, result, '__tariff', /Тарифный план[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
                 getParam(html, result, 'expences', /Израсходовано по номеру[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
             }else{

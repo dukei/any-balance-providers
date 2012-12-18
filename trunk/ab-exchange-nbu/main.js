@@ -8,16 +8,51 @@ function getRateDate(result, info){
 	}
 }
 
-function getRate(result, info, namein, nameout){
-	if(AnyBalance.isAvailable(nameout || namein)){
-		var matches, regexp = new RegExp('<tr[^>]*>\\s*<td[^>]*>[^<]*</td>\\s*<td[^>]*>'+namein+'(?:[\\s\\S]*?<td[^>]*>){3}([^<]*)', 'i');
-		if(matches = info.match(regexp)){
-			result[nameout || namein] = parseFloat(matches[1].replace(',','.'));
+function getRate(result, info, namein){
+	if(AnyBalance.isAvailable(namein)){
+                var prefs = AnyBalance.getPreferences();
+		var matches, regexpValue = new RegExp('<tr[^>]*>\\s*<td[^>]*>[^<]*</td>\\s*<td[^>]*>'+namein+'(?:[\\s\\S]*?<td[^>]*>){3}([^<]*)', 'i'),
+                             regexpMul = new RegExp('<tr[^>]*>\\s*<td[^>]*>[^<]*</td>\\s*<td[^>]*>'+namein+'(?:[\\s\\S]*?<td[^>]*>){1}([^<]*)', 'i');
+		if(matches = info.match(regexpValue)){
+	     	        var val = parseFloat(matches[1].replace(',','.'));
+                        if(prefs.normalize){
+                            matches = info.match(regexpMul);
+                            var mul = parseInt(matches[1]) || 1;
+                            val /= mul;
+                            if(val >= 1){ 
+                                //Если курс больше единицы, то так и оставляем, он комфортен
+                                result['suf' + namein] = ' ' + shorts.UAH + '/' + (shorts[namein] || namein);
+                            }else{
+                                //Если курс меньше единицы, то лучше инвертировать его
+                                val = 1/val;
+                                result['suf' + namein] = ' ' + (shorts[namein] || namein) + '/' + shorts.UAH;
+                            }
+                            val = Math.round(val*100)/100;
+                        }else{
+                            result['pre' + namein] = (shorts[namein] || namein) + " ";
+                        }
+                        result[namein] = val;
 		}
         }
 }
+
+var shorts = {
+UAH: "₴",
+USD: "$",
+EUR: "€", 
+GBP: "£",
+BYR: "Br", 
+KZT: "〒",
+CHF: "₣",
+CNY: "Ұ",
+JPY: "¥",
+RUB: "р"
+};
 	
 function main(){
+        if(AnyBalance.getLevel() < 5)
+            return "Для этого провайдера необходимо AnyBalance API v.5+";
+
 	AnyBalance.trace('Connecting to nbu...');
 	
 	var info = AnyBalance.requestGet('http://bank.gov.ua/control/uk/curmetal/detail/currency?period=daily');

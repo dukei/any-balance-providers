@@ -26,7 +26,7 @@ function main(){
 	var yesterday = new Date(now.getTime() - 1*86400*1000);
 
         var prefs = AnyBalance.getPreferences();
-        var region = prefs.region || '223';
+        var region = (prefs.region || '223').replace(/_\d+$/, ''); //Суффикс нужен только для различия региона в списке, а значимая только первая часть
 
         var metals = {
             "1": "Au",
@@ -36,7 +36,7 @@ function main(){
         };
 	
 	var info = AnyBalance.requestPost('http://www.sbrf.ru/common/js/get_quote_values.php', 
-            "version=0&inf_block=" + prefs.region + "&cbrf=0&group=2&quotes_for=&qid[]=1&qid[]=6&qid[]=28&qid[]=29&_date_afrom114=" + getDateString(yesterday) + "&_date_ato114=" + getDateString(now),
+            "version=0&inf_block=" + region + "&cbrf=0&group=2&quotes_for=&qid[]=1&qid[]=6&qid[]=28&qid[]=29&_date_afrom114=" + getDateString(yesterday) + "&_date_ato114=" + getDateString(now),
             {
                 Accept: '*/*',
                 'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
@@ -100,7 +100,7 @@ function buildRegions(result){
         if(!inf_block)
             throw new AnyBalance.Error('Could not get inf_block for ' + id);
         names[names.length] = sumParam(regions[i], null, null, /([\s\S]*)/i, replaceTagsAndSpaces)[0];
-        values[values.length] = inf_block;
+        values[values.length] = inf_block + '_' + i;
     }
 
     result.regions = names.join('|');

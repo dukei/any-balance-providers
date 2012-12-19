@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-telephony-agent</id>
+  <name>агент@mail.ru</name>
+  <description>
+    Получает текущий баланс в агент@mail.ru. 
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+    <js>library.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="license" name="Лицевой счет" type="text"/>
+    <counter id="login" name="Учетная запись" type="text"/>
+  </counters>
+  <keywords>
+    мейл ру
+  </keywords>
+  <type>
+    telephony
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-bonus-plus</id>
+  <name>Плюс</name>
+  <description>
+    Получает баланс бонусных баллов и другую информацию по карте бонусной программы Плюс (http://pluspb.ru).
+
+    Как получить пароль к личному кабинету написано здесь: http://plusbp.ru/activation.html.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+    <js>library.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="gained" name="Накоплено всего" units="р"/>
+    <counter id="spent" name="Потрачено всего" units="р"/>
+    <counter id="status" name="Статус" type="text"/>
+    <counter id="licschet" name="Номер счета" type="text"/>
+    <counter id="userName" name="Имя" type="text"/>
+  </counters>
+  <keywords>
+    plus плюс
+  </keywords>
+  <type>
+    bonus
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

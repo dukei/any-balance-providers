@@ -43,7 +43,7 @@ function getParam (html, result, param, regexp, replaces, parser) {
 }
 
 //Замена пробелов и тэгов
-var replaceTagsAndSpaces = [/&nbsp;/ig, ' ', /<!--[\s\S]*?-->/g, '', /<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, ''];
+var replaceTagsAndSpaces = [/долг/ig, '-', /&nbsp;/ig, ' ', /<!--[\s\S]*?-->/g, '', /<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, ''];
 //Замена для чисел
 var replaceFloat = [/\s+/g, '', /,/g, '.'];
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="4">ab-municipal-system-gorod</id>
+  <id major_version="1.0" version="5">ab-municipal-system-gorod</id>
   <name>Система Город</name>
   <description>
     Получает баланс и значения счетчиков по лицевым счетам, привязанным к карте Система Город.

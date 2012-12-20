@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-qwerty</id>
+  <id version="2">ab-internet-qwerty</id>
   <name>qwerty.ru</name>
   <description>
     Получает баланс и другие финансовые параметра для интернет провайдера QWERTY. Информация берется из личного кабинета http://billing.qwerty.ru.
@@ -10,6 +10,7 @@
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
     <js>main.js</js>
+    <history>history.xml</history>
   </files>
   <counters>
     <counter id="balance" name="Баланс" units="р"/>
@@ -25,4 +26,7 @@
   <type>
     internet
   </type>
+  <country>
+    ru
+  </country>
 </provider>

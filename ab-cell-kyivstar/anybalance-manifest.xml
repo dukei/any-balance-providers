@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.2" version="20">ab-cell-kyivstar</id>
+  <id major_version="1.2" version="21">ab-cell-kyivstar</id>
   <name>Киевстар</name>
   <description>
     Получает баланс, бонусные минуты, СМС, ММС, остаток интернет-трафика и другие бонусы для мобильного оператора Киевстар.
@@ -14,6 +14,7 @@
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
+    <js>library.js</js>
     <js>main.js</js>
     <history>history.xml</history>
   </files>
@@ -24,6 +25,7 @@
     <counter id="mms" name="MMS"/>
     <counter id="sms" name="SMS"/>
     <counter id="bonus_money" name="Бонусные средства" units=" грн"/>
+    <counter id="bonus_money_till" name="Срок действия бонусных средств" type="time" format="dd/MM/yyyy"/>
     <counter id="bonus_left" name="Остаток бонусов" units=" грн"/>
     <counter id="internet" name="Интернет" units=" Mb"/>
     <counter id="home_internet" name="Домашний Интернет" units=" грн"/>

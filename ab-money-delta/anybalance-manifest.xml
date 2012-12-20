@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-money-delta</id>
+  <id version="2">ab-money-delta</id>
   <name>Дельта Банк</name>
   <description>
     Получает текущий остаток и другие параметры счетов Дельта Банка (http://deltabank.com.ua), используя интернет-банк https://online.deltabank.com.ua.
@@ -14,7 +14,6 @@
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
-    <js>api:jquery.min.js</js>
     <js>main.js</js>
     <history>history.xml</history>
   </files>

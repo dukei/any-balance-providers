@@ -160,14 +160,14 @@ function main(){
                 __EVENTVALIDATION: getEventValidation(html)
             }, g_headers);
         
-            getParam(html, result, 'agreement', /Номер\s+договора[\s\S]*?<div[^>]+class="value"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
-            getParam(html, result, 'pct', /Процентная ставка[\s\S]*?<div[^>]+class="value"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-            getParam(html, result, 'monthlypay', /Ежемесячный платеж[\s\S]*?<div[^>]+class="value"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-            getParam(html, result, 'debt', /Остаток задолженности[\s\S]*?<div[^>]+class="value"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+            getParam(html, result, 'agreement', /(?:Номер\s+договора|Номер\s+договору)[\s\S]*?<div[^>]+class="value"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+            getParam(html, result, 'pct', /(?:Процентная ставка|Процентна ставка)[\s\S]*?<div[^>]+class="value"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+            getParam(html, result, 'monthlypay', /(?:Ежемесячный платеж|Щомісячний платіж)[\s\S]*?<div[^>]+class="value"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+            getParam(html, result, 'debt', /(?:Остаток задолженности|Залишок заборгованості)[\s\S]*?<div[^>]+class="value"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
         
-            getParam(html, result, 'pay', /Будущий обязательный платеж[\s\S]*?<div[^>]+class="value"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-            getParam(html, result, 'paytill', /Дата будущего платежа[\s\S]*?<div[^>]+class="value"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseDate);
-            getParam(html, result, 'debt', /Общая задолженность[\s\S]*?<div[^>]+class="value"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+            getParam(html, result, 'pay', /(?:Будущий обязательный платеж|Майбутній обов'язковий платіж)[\s\S]*?<div[^>]+class="value"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+            getParam(html, result, 'paytill', /(?:Дата будущего платежа|Дата майбутнього платежу)[\s\S]*?<div[^>]+class="value"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseDate);
+            getParam(html, result, 'debt', /(?:Общая задолженность|Загальна заборгованість)[\s\S]*?<div[^>]+class="value"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
         }else{
             AnyBalance.trace('Не удалось получить ссылку на подробные сведения о счете');
         }

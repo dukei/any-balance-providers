@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="4">ab-cell-beeline-ukr</id>
+  <id major_version="2.0" version="5">ab-cell-beeline-ukr</id>
   <name>Билайн Украина</name>
   <description>
     Мониторинг баланса для мобильного оператора Билайн (Украина).
@@ -12,6 +12,7 @@
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
+    <js>library.js</js>
     <js>main.js</js>
     <history>history.xml</history>
   </files>
@@ -21,6 +22,7 @@
     <counter id="minutebalance" name="Бонусные минуты на Beeline и Голден Телеком" units=" мин"/>
     <counter id="minutebalance1" name="Бесплатные минуты на Киевстар и Beeline" units=" мин"/>
     <counter id="minutebalance2" name="Бесплатные минуты на стационарные телефоны Украины" units=" мин"/>
+    <counter id="minutebalance_other" name="Другие бесплатные минуты" units=" мин"/>
     <counter id="doplatabalance" name="Доплата за входящие звонки" units=" грн"/>
     <counter id="bonusdominet" name="Бонус Домашний Интернет" units=" грн"/>
   </counters>

@@ -40,60 +40,35 @@ function main(){
   var result = {success: true};
   var str_tmp;
   
+  var aggregate_concat = create_aggregate_join('');
+
   // Тариф
-  if (matches=/<nobr>Тарифн(?:и|ы)й план:<\/nobr>\s*<\/td>\s*<td.+>(.*?)\s*<\/td>\s*<\/tr>/.exec(html)){
-    str_tmp=/<nobr>Номер д(?:іє|ействует) до:<\/nobr>\s*<\/td>\s*<td>(.*?)<\/td>/.exec(html)
-   result.__tariff=matches[1]+' (до '+str_tmp[1]+')';
-  }
+  sumParam(html, result, '__tariff', /<nobr>Тарифн(?:и|ы)й план:<\/nobr>[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode, aggregate_concat);
+  sumParam(html, result, '__tariff', /<nobr>Номер д(?:іє|ействует) до:<\/nobr>[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, function(str){return ' (до' +  html_entity_decode(str) + ')'}, aggregate_concat);
   
   // Баланс
-  if(AnyBalance.isAvailable('balance')){
-    if (matches=/<nobr>(?:Остаток на счету|Залишок на рахунку):<\/nobr>\s*<\/td>\s*<td>\s*<table.+\s*<colgroup>\s*<col.+\s*<col.+\s*<\/colgroup>\s*<.+\s*<td.+><b>(-?\d[\d\.,\s]*)<\/b>\s*грн.<\/td>/.exec(html)){
-        result.balance=parseFloat(matches[1]);
-    }
-  }
+  getParam(html, result, 'balance', /(?:Остаток на счету|Залишок на рахунку):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 
   // Бонусный баланс
-  if(AnyBalance.isAvailable('bonusbalance')){
-    if (matches=/<td.+>Бонусн(?:ые средства|і кошти):<\/td>\s*<td.+>\s*<nobr><b>(-?\d[\d\.,\s]*)<\/b> грн.\s*<\/nobr>/.exec(html)){
-        result.bonusbalance=parseFloat(matches[1]);
-    }
-  }
+  getParam(html, result, 'bonusbalance', /Бонусн(?:ые средства|і кошти):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 
   // Бонусные минуты на Beeline и Голден Телеком
-  if(AnyBalance.isAvailable('minutebalance')){
-    if (matches=/<td.+>Бонусн(?:ые минуты|і хвилини) на Beeline (?:и|та) Голден Телеком:<\/td>\s*<td.+>\s*<nobr><b>(\d+?)<\/b> (?:мин|хв). <b>.+<\/b> сек.\s*<\/nobr>/.exec(html)){
-        result.minutebalance=parseFloat(matches[1]);
-    }
-  }
+  getParam(html, result, 'minutebalance', /Бонусн(?:ые минуты|і хвилини) на Beeline (?:и|та) Голден Телеком:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
   
   // Бесплатные минуты на Киевстар и Beeline
-  if(AnyBalance.isAvailable('minutebalance1')){
-    if (matches=/<td.+>Бе(?:сплатные минуты|зкоштовні хвилини) на Ки(?:е|ї)встар (?:и|та) Beeline:<\/td>\s*<td.+>\s*<nobr><b>(\d+?)<\/b> (?:мин|хв). <b>.+<\/b> сек.\s*<\/nobr>/.exec(html)){
-        result.minutebalance1=parseFloat(matches[1]);
-    }
-  }
+  getParam(html, result, 'minutebalance1', /Бе(?:сплатные минуты|зкоштовні хвилини) на Ки(?:е|ї)встар (?:и|та) Beeline:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
   
   // Бесплатные минуты на стационарные телефоны Украины
-  if(AnyBalance.isAvailable('minutebalance2')){
-    if (matches=/<td.+>Бе(?:сплатные минуты|зкоштовні хвилини) на стац(?:и|і)онарн(?:ые|і) телефон(?:ы|и) Укра(?:ины|їни):<\/td>\s*<td.+>\s*<nobr><b>(\d+?)<\/b> (?:мин|хв). <b>.+<\/b> сек.\s*<\/nobr>/.exec(html)){
-        result.minutebalance2=parseFloat(matches[1]);
-    }
-  }
+  getParam(html, result, 'minutebalance2', /Бе(?:сплатные минуты|зкоштовні хвилини) на стац(?:и|і)онарн(?:ые|і) телефон(?:ы|и) Укра(?:ины|їни):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
   
   // Доплата за входящие звонки
-  if(AnyBalance.isAvailable('doplatabalance')){
-    if (matches=/<td.+>Доплата за вх(?:одящие зво|ідні дзві)нки:<\/td>\s*<td.+>\s*<nobr><b>(-?\d[\d\.,\s]*)<\/b> грн.\s*<\/nobr>/.exec(html)){
-        result.doplatabalance=parseFloat(matches[1]);
-    }    
-  }
+  getParam(html, result, 'doplatabalance', /Доплата за вх(?:одящие зво|ідні дзві)нки:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
   
   // Бонус Домашний Интернет
-  if(AnyBalance.isAvailable('bonusdominet')){
-    if (matches=/<td.+>(?:От услуги "Домашний И|Від послуги "Домашній І)нтернет":<\/td>\s*<td.+>\s*<nobr><b>(-?\d[\d\.,\s]*)<\/b> грн.\s*<\/nobr>/.exec(html)){
-        result.bonusdominet=parseFloat(matches[1]);
-    }    
-  }
+  getParam(html, result, 'bonusdominet', /(?:От услуги "Домашний И|Від послуги "Домашній І)нтернет":[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+
+  // Другие бесплатные минуты
+  sumParam(html, result, 'minutebalance_other', /Хвилини за умовами ТП:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 
   AnyBalance.setResult(result);
 }

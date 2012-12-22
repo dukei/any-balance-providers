@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Номер кошелька" 
+        positiveButtonText="ОК" 
+        summary="||{@s}" 
+        dialogTitle="Номер кошелька" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите номер кошелька без пробелов и разделителей, например, 12345678"
+        inputType="number"
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль для входа"
+        summary="||***********"
+        dialogMessage="Введите пароль, используемый для входа в систему EasyPay."
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

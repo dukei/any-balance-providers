@@ -2,20 +2,20 @@
 <PreferenceScreen>
     <EditTextPreference 
         title="User number" 
-        positiveButtonText="ОК" 
+        positiveButtonText="OK" 
         summary="For electricity, water, cleanup|Please enter your user number\n|{@s}\n" 
         dialogTitle="User number" 
-        negativeButtonText="Отмена" 
+        negativeButtonText="Cancel" 
         dialogMessage="Please enter your user number stated on a bill."
         inputType="number"
         key="usernum">
     </EditTextPreference>
     <EditTextPreference 
         title="User number/check number" 
-        positiveButtonText="ОК" 
+        positiveButtonText="OK" 
         summary="For gas|Please enter your user number/check number\n|{@s}\n" 
         dialogTitle="User number/check number" 
-        negativeButtonText="Отмена" 
+        negativeButtonText="Cancel" 
         dialogMessage="Please enter user number/check number stated on the bill, issued by the service provider. Enter numbers only: 6 digit user number followed by 3 digit check number."
         inputType="number"
         key="gazusernum">

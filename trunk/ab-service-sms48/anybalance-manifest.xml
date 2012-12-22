@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-service-sms48</id>
+  <name>SMS 48 - сервис SMS-рассылок</name>
+  <description>
+    Получает баланс и статистику на сервисе рассылки SMS сообщений http://sms48.ru.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="sms_ru" name="SMS Россия" units=" sms"/>
+    <counter id="sms_ru_smpp" name="SMS Россия (SMPP)" units=" smpp"/>
+  </counters>
+  <keywords>
+    смс рассылка, смсц
+  </keywords>
+  <type>
+    service
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

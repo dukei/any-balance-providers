@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-internet-complat</id>
+  <name>COMPL@T (Москва)</name>
+  <description>
+    Получает баланс и информацию о тарифном плане для московского интернет-провайдера COMPL@T (http://www.complat.ru).
+
+    Информация берется из личного кабинета https://stat.complat.ru/login.dhtml.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="payday" name="День расчетов"/>
+    <counter id="trafficIn" name="Вх.трафик в текущем месяце" units="Gb"/>
+    <counter id="trafficOut" name="Исх.трафик в текущем месяце" units="Gb"/>
+    <counter id="status" name="Статус" type="text"/>
+  </counters>
+  <keywords>
+    интернет, complat, комплат
+  </keywords>
+  <type>
+    internet
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

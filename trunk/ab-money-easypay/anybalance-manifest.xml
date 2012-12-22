@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-money-easypay</id>
+  <name>EasyPay (Белоруссия)</name>
+  <description>
+    Получает текущий остаток и номер кошелька в EasyPay - системе приятных электронных платежей ( https://www.easypay.by ).
+
+EasyPay (от англ. "easy"-легко, "pay"- платить) – это электронные деньги, которые предназначены для осуществления быстрых платежей, надежный и быстрый способ передачи денег в интернете и с помощью SMS-сообщений.
+EasyPay действуют на территории Республики Беларусь, "электронные деньги" используются в качестве платежного средства. Использование "электронных денег" регламентируется Постановлением Правления Национального банка Республики Беларусь 26.11.2003 № 201 (в редакции постановления Правления Национального банка Республики Беларусь 16.02.2007 № 52).
+
+EasyPay – это совместный проект ОАО "Белгазпромбанк" и ООО "Открытый Контакт".
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="number" name="Номер кошелька" type="text"/>
+  </counters>
+  <keywords>
+    изипей
+  </keywords>
+  <type>
+    money
+  </type>
+  <country>
+    by
+  </country>
+</provider>

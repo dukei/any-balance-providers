@@ -3,7 +3,7 @@
       <ListPreference 
         key="prefph"
         title="Префикс номера телефона" 
-        summary="Префикс номера телефона|063 или 093|{@s}\n" 
+        summary="|Выберите префикс номера телефона|{@s}" 
 	entries="063|093"
 	entryValues="063|093"
         dialogTitle="Префикс номера телефона">
@@ -26,6 +26,15 @@
         negativeButtonText="Отмена"
         dialogMessage="Введите СуперПароль, используемый для авторизации. Если у вас нет пароля, позвоните со своего телефона Life :) на номер *124*779#, пароль придет вам в ответном SMS."
         positiveButtonText="ОК"
-        inputType="textPassword">
+        inputType="numberPassword">
     </EditTextPreference>
+      <ListPreference 
+        key="lk_type"
+        title="Получение данных" 
+        summary="||{@s}" 
+	entries="Wap-кабинет|API мобильного приложения"
+	entryValues="wap|api"
+        defaultValue="api"
+        dialogTitle="Получение данных">
+    </ListPreference>
 </PreferenceScreen>

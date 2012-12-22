@@ -26,7 +26,7 @@ function main(){
 
     var baseurl = "https://www.ipay.ge/executeService.servlet";
 
-    if(!prefs.usernum && !prefs.gasusernum)
+    if(!prefs.usernum && !prefs.gazusernum)
         throw new AnyBalance.Error('Please enter User number or User number/Check number!');
 
     if(prefs.lang == 'en'){
@@ -43,7 +43,7 @@ function main(){
             var html = AnyBalance.requestPost(baseurl + '?catId=category.utility.key&serId=bog-comp-telasi&serviceId=bog-telasi-customer-info', {
                 'service.parameterBeans[0].inputs[0].value':prefs.usernum
             });
-            checkError(html);
+            checkError(html, 'Telasi');
             getParam(html, result, 'name', /<input[^>]+id="bog_comp_telasi_customerName[^>]*value="([^"]*)/i, replaceTagsAndSpaces, html_entity_decode);
             getParam(html, result, 'address', /<input[^>]+id="bog_comp_telasi_streetName[^>]*value="([^"]*)/i, replaceTagsAndSpaces, html_entity_decode);
             getParam(html, result, 'debtElec', /<input[^>]+id="bog_comp_telasi_estimateDebt[^>]*value="([^"]*)/i, replaceTagsAndSpaces, parseBalance);
@@ -58,7 +58,7 @@ function main(){
             var html = AnyBalance.requestPost(baseurl + '?catId=category.utility.key&serId=bog-comp-cleanup&serviceId=bog-cleanup-customer-info', {
                 'service.parameterBeans[0].inputs[0].value':prefs.usernum
             });
-            checkError(html);
+            checkError(html, 'Cleanup');
             getParam(html, result, 'name', /<input[^>]+id="bog_comp_cleanup_customerName[^>]*value="([^"]*)/i, replaceTagsAndSpaces, html_entity_decode);
             getParam(html, result, 'address', /<input[^>]+id="bog_comp_cleanup_streetName[^>]*value="([^"]*)/i, replaceTagsAndSpaces, html_entity_decode);
             getParam(html, result, 'debtClean', /<input[^>]+id="bog_comp_cleanup_estimateDebt[^>]*value="([^"]*)/i, replaceTagsAndSpaces, parseBalance);
@@ -73,7 +73,7 @@ function main(){
             var html = AnyBalance.requestPost(baseurl + '?catId=category.utility.key&serId=bog-comp-tbilisiwater&serviceId=bog-tbilisiwater-customer-info', {
                 'service.parameterBeans[0].inputs[0].value':prefs.usernum
             });
-            checkError(html);
+            checkError(html, 'Tbilisi water');
             getParam(html, result, 'name', /<input[^>]+id="bog_comp_tbilisiwater_name[^>]*value="([^"]*)/i, replaceTagsAndSpaces, html_entity_decode);
             getParam(html, result, 'address', /<input[^>]+id="bog_comp_tbilisiwater_address[^>]*value="([^"]*)/i, replaceTagsAndSpaces, html_entity_decode);
             getParam(html, result, 'debtWater', /<input[^>]+id="bog_comp_tbilisiwater_debt[^>]*value="([^"]*)/i, replaceTagsAndSpaces, parseBalance);
@@ -83,16 +83,16 @@ function main(){
     }
 
     if(AnyBalance.isAvailable('debtGas')){
-        if(prefs.gasusernum){
+        if(prefs.gazusernum){
             AnyBalance.trace('Getting gas...');
-            if(prefs.gasusernum && !/^\d{9}$/.test(prefs.gasusernum))
+            if(prefs.gazusernum && !/^\d{9}$/.test(prefs.gazusernum))
                 throw new AnyBalance.Error('Please enter 6 digits of User number and 3 digits of Check number without spaces and delimiters!');
 
             var html = AnyBalance.requestPost(baseurl + '?catId=category.tbilgazi.key&serId=bog-comp-tbilgazi-web&serviceId=bog-tbilgazi-verify', {
-                'service.parameterBeans[0].inputs[0].value':prefs.gasusernum.substr(0,6),
-                'service.parameterBeans[0].inputs[1].value':prefs.gasusernum.substr(6)
+                'service.parameterBeans[0].inputs[0].value':prefs.gazusernum.substr(0,6),
+                'service.parameterBeans[0].inputs[1].value':prefs.gazusernum.substr(6)
             });
-            checkError(html);
+            checkError(html, 'Tbilgazi');
             getParam(html, result, 'name', /<input[^>]+id="bog_comp_tbilgazi_web_name[^>]*value="([^"]*)/i, replaceTagsAndSpaces, html_entity_decode);
             getParam(html, result, 'address', /<input[^>]+id="bog_comp_tbilgazi_web_address[^>]*value="([^"]*)/i, replaceTagsAndSpaces, html_entity_decode);
             getParam(html, result, 'debtGas', /<input[^>]+id="bog_comp_tbilgazi_web_debt[^>]*value="([^"]*)/i, replaceTagsAndSpaces, parseBalance);

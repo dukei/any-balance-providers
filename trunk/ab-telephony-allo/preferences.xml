@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+      <ListPreference 
+        key="prefix"
+        title="Префикс номера телефона" 
+        summary="|Без префикса|{@s}" 
+	entries="Без префикса|495|499|812"
+	entryValues="|495|499|812"
+        dialogTitle="Префикс вашего номера АллоИнкогнито">
+    </ListPreference>
+    <EditTextPreference 
+        title="Номер телефона" 
+        positiveButtonText="ОК" 
+        summary="|Ваш номер АллоИнкогнито|{@s}\n" 
+        dialogTitle="Логин" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите 7 цифр вашего номера АллоИнкогнито."
+        inputType="number"
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="PIN"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="|Введите PIN|***********"
+        dialogMessage="Введите ваш PIN-код управления, используемый для входа в личный кабинет АллоИнкогнито."
+        inputType="numberPassword">
+    </EditTextPreference>
+</PreferenceScreen>

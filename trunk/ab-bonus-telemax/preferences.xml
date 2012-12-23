@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="№ карты" 
+        positiveButtonText="ОК" 
+        summary="||{@s}" 
+        dialogTitle="№ карты" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите номер карты для входа в личный кабинет программы Телемакс-Бонус."
+        inputType="number"
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="||***********"
+        dialogMessage="Введите пароль, используемый для входа в личный кабинет программы Телемакс-бонус."
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

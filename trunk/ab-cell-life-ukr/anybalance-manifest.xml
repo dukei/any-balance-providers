@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="5">ab-cell-life-ukr</id>
+  <id version="6">ab-cell-life-ukr</id>
   <name>Life:) Украина</name>
   <description>
     Мониторинг баланса мобильного оператора Life:) (Украина)
@@ -29,11 +29,12 @@
     <counter id="Mbalance" name="Основной счет" suffix=" ₴" type="numeric"/>
     <counter id="Bbalance" name="Бонусный счет" suffix=" ₴" type="numeric"/>
     <!-- <counter id="debt" name="Долг" suffix="₴" type="numeric"/> -->
-    <counter id="mins_life" name="Бесплатные минуты по сети Life:)" type="time_interval" format="{@MIN}" units=" мин"/>
     <counter id="sms_uk" name="Бесплатные SMS по Украине" type="numeric" units=" смс"/>
-    <counter id="sms_life" name="Бесплатные SMS по Life:)" type="numeric" units=" смс"/>
-    <counter id="gprs" name="Бесплатный трафик" suffix="Мб" type="numeric"/>
-    <counter id="mms" name="Бесплатные MMS по сети Life:)" type="numeric" units=" ммс"/>
+    <counter id="sms_life" name="Бесплатные SMS в сети Life:)" type="numeric" units=" смс"/>
+    <counter id="gprs" name="Бесплатный трафик" suffix=" Мб" type="numeric"/>
+    <counter id="mms_uk" name="Бесплатные MMS по Украине" type="numeric" units=" ммс"/>
+    <counter id="mms_life" name="Бесплатные MMS в сети Life:)" type="numeric" units=" ммс"/>
+    <counter id="mins_life" name="Бесплатные минуты по сети Life:)" type="time_interval" format="{@MIN}" units=" мин"/>
     <counter id="mins_family" name="Бесплатные минуты на родные номера" type="time_interval" format="{@MIN}" units=" мин"/>
     <counter id="till" name="Действителен до" type="time" format="dd/MM/yyyy"/>
   </counters>

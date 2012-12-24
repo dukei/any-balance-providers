@@ -21,6 +21,14 @@ var g_ServiceStatus = {
   UNKNOWN_STATUS: "не определен"
 };
 
+var g_headers = {
+    Accept:'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
+    'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+    Connection:'keep-alive',
+    'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11'
+};
+
 function main(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
@@ -34,7 +42,7 @@ function main(){
         action: 'login',
         login:prefs.login,
         passwd:prefs.password
-    });
+    }, g_headers);
 
     var json = getJson(html);
     if(json.isError)
@@ -44,7 +52,7 @@ function main(){
 
     AnyBalance.setCookie('kabinet.rt.ru', 'sessionHashKey', json.sessionKey);
 
-    html = AnyBalance.requestGet(baseurl);
+    html = AnyBalance.requestGet(baseurl, g_headers);
     var accinfo = getParam(html, null, null, /var[\s+]services\s*=\s*(\{[\s\S]*?\})\s*;/, null, getJson);
     if(!accinfo)
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
@@ -93,7 +101,7 @@ function main(){
         }
 
         AnyBalance.trace('Получаем данные для л/с: ' + acc.number);
-        html = AnyBalance.requestPost(baseurl + 'serverLogic/getAccountInfo', {account: acc.id});
+        html = AnyBalance.requestPost(baseurl + 'serverLogic/getAccountInfo', {account: acc.id}, g_headers);
         json = getJson(html);
 
         acc.__detailedInfo = json;
@@ -133,7 +141,7 @@ function main(){
             var acc = accinfo.accounts[i];
             if(!acc.__detailedInfo){
                 AnyBalance.trace('Дополнительно получаем данные для л/с: ' + acc.number);
-                html = AnyBalance.requestPost(baseurl + 'serverLogic/getAccountInfo', {account: acc.id});
+                html = AnyBalance.requestPost(baseurl + 'serverLogic/getAccountInfo', {account: acc.id}, g_headers);
                 json = getJson(html);
 
                 if(json.balance > 0)

@@ -7,13 +7,9 @@
 Личный кабинет: https://stat.complat.ru/login.dhtml
 */
 
-function parseTrafficGb(str){
+function parseTrafficMb(str){
   var val = getParam(str.replace(/\s+/g, ''), null, null, /(-?\d[\d\s.,]*)/, replaceFloat, parseBalance);
-  if(isset(val)){
-      var ret = parseFloat((val/1024).toFixed(2));
-      AnyBalance.trace('Parsed traffic ' + ret + 'Gb from ' + str);
-      return ret;
-  }
+  return val;
 }
 
 function main(){
@@ -48,8 +44,8 @@ function main(){
 
     if(AnyBalance.isAvailable('trafficIn','trafficOut')){
         html = AnyBalance.requestGet(baseurl + "datetraffic.dhtml");
-        getParam(html, result, 'trafficIn', /Входящего(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTrafficGb);
-        getParam(html, result, 'trafficOut', /Исходящего(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTrafficGb);
+        getParam(html, result, 'trafficIn', /Входящего(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTrafficMb);
+        getParam(html, result, 'trafficOut', /Исходящего(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTrafficMb);
     }
 
     AnyBalance.setResult(result);

@@ -609,71 +609,26 @@ function megafonServiceGuidePhysical(filial, sessionid){
         }
     }
     
+    //200 SMS MegaVIP 0
+    sumOption(text, result, 'sms_total', 'sms_left', 'SMS MegaVIP');
+
     //Исходящие SM (ОХард, Москва)
-    var sms_total = 0,
-        sms_left = 0;
+    sumOption(text, result, 'sms_total', 'sms_left', '&#1048;&#1089;&#1093;&#1086;&#1076;&#1103;&#1097;&#1080;&#1077; SM');
         
-    if(AnyBalance.isAvailable('sms_total', 'sms_left')){
-        var vals = getOptionInt(text, "&#1048;&#1089;&#1093;&#1086;&#1076;&#1103;&#1097;&#1080;&#1077; SM");
-        if(vals){
-            if(AnyBalance.isAvailable('sms_total'))
-                sms_total += vals[0];
-            if(AnyBalance.isAvailable('sms_left'))
-                sms_left += vals[1];
-        }
-    }
-    
     //Пакет SMS за бонусы
-    if(AnyBalance.isAvailable('sms_total', 'sms_left')){
-        var vals = getOptionInt(text, "SMS &#1079;&#1072; &#1073;&#1086;&#1085;&#1091;&#1089;&#1099;");
-        if(vals){
-            if(AnyBalance.isAvailable('sms_total'))
-                sms_total += vals[0];
-            if(AnyBalance.isAvailable('sms_left'))
-                sms_left += vals[1];
-        }
-    }
+    sumOption(text, result, 'sms_total', 'sms_left', 'SMS &#1079;&#1072; &#1073;&#1086;&#1085;&#1091;&#1089;&#1099;');
 
     //Пакет SMS-сообщений (Поволжье)
-    if(AnyBalance.isAvailable('sms_total', 'sms_left')){
-        var vals = getOptionInt(text, "&#1055;&#1072;&#1082;&#1077;&#1090; SMS-&#1089;&#1086;&#1086;&#1073;&#1097;&#1077;&#1085;&#1080;&#1081;");
-        if(vals){
-            if(AnyBalance.isAvailable('sms_total'))
-                sms_total += vals[0];
-            if(AnyBalance.isAvailable('sms_left'))
-                sms_left += vals[1];
-        }
-    }
+    sumOption(text, result, 'sms_total', 'sms_left', '&#1055;&#1072;&#1082;&#1077;&#1090; SMS-&#1089;&#1086;&#1086;&#1073;&#1097;&#1077;&#1085;&#1080;&#1081;');
 
     //SMS на номера России
-    if(AnyBalance.isAvailable('sms_total', 'sms_left')){
-        var vals = getOptionInt(text, "SMS &#1085;&#1072; &#1085;&#1086;&#1084;&#1077;&#1088;&#1072; &#1056;&#1086;&#1089;&#1089;&#1080;&#1080;");
-        if(vals){
-            if(AnyBalance.isAvailable('sms_total'))
-                sms_total += vals[0];
-            if(AnyBalance.isAvailable('sms_left'))
-                sms_left += vals[1];
-        }
-    }
+    sumOption(text, result, 'sms_total', 'sms_left', 'SMS &#1085;&#1072; &#1085;&#1086;&#1084;&#1077;&#1088;&#1072; &#1056;&#1086;&#1089;&#1089;&#1080;&#1080;');
 
     //Нужный подарок (Поволжье)
-    if(AnyBalance.isAvailable('handygift_total', 'handygift_left')){
-        var vals = getOptionFloat(text, "&#1053;&#1091;&#1078;&#1085;&#1099;&#1081; &#1087;&#1086;&#1076;&#1072;&#1088;&#1086;&#1082;");
-        if(vals){
-            if(AnyBalance.isAvailable('handygift_total'))
-                result.handygift_total = vals[0];
-            if(AnyBalance.isAvailable('handygift_left'))
-                result.handygift_left = vals[1];
-        }
-    }
+    sumOption(text, result, 'handygift_total', 'handygift_left', '&#1053;&#1091;&#1078;&#1085;&#1099;&#1081; &#1087;&#1086;&#1076;&#1072;&#1088;&#1086;&#1082;');
 
     //Гигабайт в дорогу
-    if(AnyBalance.isAvailable('gb_with_you')){
-        var vals = getOptionFloat(text, "&#1043;&#1080;&#1075;&#1072;&#1073;&#1072;&#1081;&#1090; &#1074; &#1076;&#1086;&#1088;&#1086;&#1075;&#1091;");
-        if(vals){
-            result.gb_with_you = vals[1];
-        }
-    }
+    sumOption(text, result, null, 'gb_with_you', '&#1043;&#1080;&#1075;&#1072;&#1073;&#1072;&#1081;&#1090; &#1074; &#1076;&#1086;&#1088;&#1086;&#1075;&#1091;');
 
     //Пакет Интернет 24
     if(AnyBalance.isAvailable('internet_total', 'internet_left', 'internet_cur')){
@@ -764,11 +719,6 @@ function megafonServiceGuidePhysical(filial, sessionid){
         }
     }
     
-    if(sms_total)
-        result.sms_total = sms_total;
-    if(sms_left)
-        result.sms_left = sms_left;
-
     AnyBalance.setResult(result);
 }
 
@@ -781,6 +731,17 @@ function getPropVal(html, text){
   var r = new RegExp(text + "[\\s\\S]*?<div class=\"td_def\">(?:<nobr>)?([\\s\\S]*?)(?:<\\/nobr>)?<\\/div>", "i");
   var matches = html.match(r);
   return matches;
+}
+
+function sumOption(text, result, totalName, leftName, optionName){
+    if(totalName){
+        var re1 = new RegExp('<div[^>]+class="td_def"[^>]*>[^<]*' + optionName + '(?:(?:[\\s\\S](?!<tr))*?<td[^>]*>){1}([\\s\\S]*?)</td>', 'i');
+        sumParam(text, result, totalName, re1, replaceTagsAndSpaces, parseBalance);
+    }
+    if(leftName){
+        var re2 = new RegExp('<div[^>]+class="td_def"[^>]*>[^<]*' + optionName + '(?:(?:[\\s\\S](?!<tr))*?<td[^>]*>){2}([\\s\\S]*?)</td>', 'i');
+        sumParam(text, result, leftName, re2, replaceTagsAndSpaces, parseBalance);
+    }
 }
 
 function getPropValText(html, text){
@@ -913,7 +874,7 @@ var replaceTagsAndSpaces = [/<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, ''];
 var replaceFloat = [/\s+/g, '', /,/g, '.'];
 
 function parseBalance(text){
-    var val = sumParam(text.replace(/\s+/g, ''), null, null, /(-?\d[\d\s.,]*)/, replaceFloat, parseFloat);
+    var val = sumParam(html_entity_decode(text.replace(/\s+/g, '')), null, null, /(-?\d[\d\s.,]*)/, replaceFloat, parseFloat);
     AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
     return val;
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-money-swedbank</id>
+  <id major_version="1" version="1">ab-money-swedbank</id>
   <name>Swedbank</name>
   <description>
     Retrieves the balance of the bank account in Swedbank through internet bank system.
@@ -13,23 +13,18 @@
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
     <js>main.js</js>
-    <js>api:jquery.min.js</js>
     <history>history.xml</history>
   </files>
   <counters>
-    <counter id="balance" name="Balance"/>
-    <!--
-    <counter id="accnum" name="Clearing number, Account number" type="text"/>
-    <counter id="transactions" name="Last transactions" type="html"/>
-	-->
+    <counter id="balance" name="Balance" units=" kr"/>
   </counters>
   <keywords>
-     
+    bank, swedbank, sweden
   </keywords>
   <type>
     money
   </type>
   <country>
-    sv
+    se
   </country>
 </provider>

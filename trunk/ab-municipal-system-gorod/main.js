@@ -50,9 +50,6 @@ function main(){
     if(!prefs.login || !/^\d+$/.test(prefs.login))
         throw new AnyBalance.Error("Введите полный номер карты Системы Город. Только цифры без пробелов и разделителей.");
     
-    if(prefs.accnum && !/^\d{8,}$/.test(prefs.accnum))
-        throw new AnyBalance.Error("Введите полный номер лицевого счета, по которому вы хотите получить информацию, или не вводите ничего, если хотите получить информацию по первому счету.");
-
     for(var prefix in supported_cards){
         if(prefs.login.indexOf(prefix) == 0){
             supported_cards[prefix](prefix);
@@ -82,13 +79,29 @@ function uralsib(prefix){
       throw new AnyBalance.Error("Не удалось войти в личный кабинет по неизвестной причине");
     }
 
-    var schet = prefs.accnum || "\\d{9}";
-
     var result = {success: true};
 
-    var tr = getParam(html, null, null, new RegExp('ИНФОРМАЦИЯ ПО КАРТЕ[\\s\\S]*?(<tr[^>]*>(?:\\s*<td[^>]*>[\\s\\S]*?<\\/td>){2}\\s*<td[^>]*>\\s*<nobr>' + schet + '[\\s\\S]*?<\\/tr>)', 'i'));
-    if(!tr)
-        throw new AnyBalance.Error(!prefs.accnum ? "Не найдено ни одного лицевого счета!" : "Не найдено лицевого счета №" + schet); 
+    var retr = /<tr[^>]*>(?:(?:[\s\S](?!<tr))*?<td[^>]*>){5}(?:[\s\S](?!<tr))*?<\/tr>/ig, matches, tr;
+    while(matches = retr.exec(html)){
+        var _tr = matches[0];
+        var name = getParam(_tr, null, null, /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+        var accnum = getParam(_tr, null, null, /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+        if(prefs.accnum && accnum.toUpperCase().indexOf(prefs.accnum.toUpperCase()) < 0)
+            continue;
+        if(prefs.accname && name.toUpperCase().indexOf(prefs.accname.toUpperCase()) < 0)
+            continue;
+        tr = _tr;
+        break;
+    }
+
+    if(!tr){
+        var causes = [];
+        if(prefs.accnum)
+            causes[causes.length] = "номер которого содержит \"" + prefs.accnum + '"';
+        if(prefs.accname)
+            causes[causes.length] = "название услуги которого содержит \"" + prefs.accname + '"';
+        throw new AnyBalance.Error(causes.length==0 ? "Не найдено ни одного лицевого счета!" : "Не найдено лицевого счета, " + causes.join(' и ')); 
+    }
 
     getParam(tr, result, 'balance', /(?:[\s\S]*?<\/td>\s*<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'balance_total', /Итого задолженностей:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);

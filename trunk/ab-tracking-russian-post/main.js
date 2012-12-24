@@ -203,7 +203,7 @@ function mainRussianPost(){
 	if(!AnyBalance.isSetResultCalled()){
                 var error = getParam(info, null, null, /<div[^>]+CaptchaErrorCodeContainer[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
                 if(error)
-                    throw new AnyBalance.Error('Постоянные запросы на сервер почты россии мешали, наверное, кому-то обедать, поэтому почта россии ввела капчу - для получения информации об отправлении требуется ввести цифры с изображения. Программы, к сожалению, этого делать не умеют. :(');
+                    throw new AnyBalance.Error('ВНИМАНИЕ! Для получения информации по отправления Почты России пользуйтесь провайдером "Моя посылка". Напрямую получить информацию об отправлении не удаётся в связи с капчей на сайте почты россии.');
 		throw new AnyBalance.Error("Отправление не найдено.")
         }
 }

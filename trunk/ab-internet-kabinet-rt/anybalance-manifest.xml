@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-internet-kabinet-rt</id>
+  <id version="3">ab-internet-kabinet-rt</id>
   <name>Кабинет Ростелеком</name>
   <description>
     Получает баланс и информацию о выбранном лицевом счете из единого личного кабинета Ростелеком (https://kabinet.rt.ru).

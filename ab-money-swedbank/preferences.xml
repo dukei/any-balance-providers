@@ -14,7 +14,7 @@
         title="Personal password" 
         summary="|Enter the personal password|***********"
         dialogTitle="Personal password"
-        dialogMessage="Enter your personal password. If you do not have it, you can order it in you internet banking, if you login by using security device."
+        dialogMessage="Enter your personal password. If you do not have it, you can order it in you internet banking, if you login using security device."
         inputType="textPassword"
         positiveButtonText="Ok"
         negativeButtonText="Cancel">

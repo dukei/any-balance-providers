@@ -82,36 +82,44 @@ function main(){
     var result = {success: true}, matches;
     AnyBalance.setDefaultCharset("ISO-8859-1");
     
-    var html = AnyBalance.requestGet(baseurl + "login.html", headers);
-	AnyBalance.trace("login.html: " + html);
+    var url = baseurl + "login.html";
+    AnyBalance.trace("GET: " + url);
+    var html = AnyBalance.requestGet(url, headers);
+    AnyBalance.trace(url + ": " + html);
 
     if (!(matches = html.match(reCSRF)))
         throw new AnyBalance.Error("login token not found.");
     var csrftoken = matches[1];
-	AnyBalance.trace("login.html: " + csrftoken);
+    AnyBalance.trace(url + " token: " + csrftoken);
         
-    html = AnyBalance.requestPost(baseurl + "loginNext.html", {
+    url = baseurl + "loginNext.html";
+    AnyBalance.trace("POST: " + url);
+    html = AnyBalance.requestPost(url, {
         'xyz':prefs.login,
         'auth-method':'code',
         '_csrf_token':csrftoken,
     }, headers);
-	AnyBalance.trace("loginNext.html: " + html);
+    AnyBalance.trace(url + ": " + html);
     
     if (!(matches = html.match(reCSRF)))
         throw new AnyBalance.Error("loginNext token not found.");
     csrftoken = matches[1];
-	AnyBalance.trace("loginNext.html: " + csrftoken);
+    AnyBalance.trace(url + " token: " + csrftoken);
         
-    html = AnyBalance.requestPost(baseurl + "login.html", {
+    url = baseurl + "login.html";
+    AnyBalance.trace("POST: " + url);
+    html = AnyBalance.requestPost(url, {
         'zyx': prefs.password,
         '_csrf_token': csrftoken,
     }, headers);
-	AnyBalance.trace("login.html (post): " + html);
+    AnyBalance.trace(url + " (post): " + html);
     if (html.indexOf(ctWrongLoginPass) >= 0)
         throw new AnyBalance.Error("Invalid login and/or password");
     
-    var html = AnyBalance.requestGet(baseurl + "accounts.html", headers);
-	AnyBalance.trace("accounts.html: " + html);
+    url = baseurl + "accounts.html";
+    AnyBalance.trace("POST: " + url);
+    html = AnyBalance.requestGet(url, headers);
+    AnyBalance.trace(url + ": " + html);
 
     var pattern = new RegExp(reAccounts, 'g');
     while(matches = pattern.exec(html))

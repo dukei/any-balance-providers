@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        key="login"
+        title="Personnummer" 
+        summary="|Enter personnummer yyyymmddxxxx|{@s}" 
+        dialogTitle="Personnummer" 
+        dialogMessage="Enter your personnummer in form of yyyymmddxxxx."
+        positiveButtonText="Ok" 
+        negativeButtonText="Cancel">
+    </EditTextPreference>
+    <EditTextPreference 
+        key="password" 
+        title="Personal password" 
+        summary="|Enter the personal password|***********"
+        dialogTitle="Personal password"
+        dialogMessage="Enter your personal password. If you do not have it, you can order it in you internet banking, if you login by using security device."
+        inputType="textPassword"
+        positiveButtonText="Ok"
+        negativeButtonText="Cancel">
+    </EditTextPreference>
+</PreferenceScreen>

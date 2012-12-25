@@ -1,10 +1,10 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 
-Получает текущий остаток и другие параметры карт и счетов NURBANK Open24 (казахстан)
+Получает текущий остаток и другие параметры карт и счетов Росгосстрах
 
-Сайт оператора: http://www.nurbank.kz
-Личный кабинет: https://www.open24.kz
+Сайт оператора: http://www.rgsbank.ru
+Личный кабинет: https://online.rgsbank.ru
 */
 
 function getParam (html, result, param, regexp, replaces, parser) {
@@ -100,7 +100,7 @@ var g_headers = {
 function main(){
     var prefs = AnyBalance.getPreferences();
 
-    var baseurl = "https://www.open24.kz/v1/cgi/bsi.dll?";
+    var baseurl = "https://online.rgsbank.ru/v1/cgi/bsi.dll?";
     
     var html = AnyBalance.requestGet(baseurl + 'T=RT_2Auth.BF');
     var mapId = getParam(html, null, null, /<input[^>]*name="MapID"[^>]*value="([^"]*)"/i);
@@ -170,6 +170,8 @@ function main(){
         fetchCard(jsonInfo, baseurl);
     else if(prefs.type == 'acc')
         fetchAccount(jsonInfo, baseurl);
+    else if(prefs.type == 'dep')
+        fetchDeposit(jsonInfo, baseurl);
     else
         fetchCard(jsonInfo, baseurl); //По умолчанию карты будем получать
 }
@@ -195,13 +197,36 @@ function fetchCard(jsonInfo, baseurl){
 
     var result = {success: true};
     getParam(tr, result, 'cardnum', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-    getParam(tr, result, 'balance', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(tr, result, 'accnum', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-    getParam(tr, result, 'currency', /(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+    getParam(tr, result, 'balance', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(tr, result, 'currency', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
     getParam(tr, result, 'type', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
     getParam(tr, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-    getParam(tr, result, 'fio', /(?:[\s\S]*?<td[^>]*>){7}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-    getParam(tr, result, 'status', /(?:[\s\S]*?<td[^>]*>){8}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+    getParam(jsonInfo.USR, result, 'fio', /(.*)/i, replaceTagsAndSpaces);
+    getParam(tr, result, 'status', /(?:[\s\S]*?<td[^>]*>){7}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+
+    if(AnyBalance.isAvailable('minpay', 'minpaytill', 'debt', 'accnum', 'till', 'pct')){
+        var id = getParam(tr, null, null, /show_paymentdetails\s*\([^)]*'([^']*)'\s*\)/);
+        if(!id){
+            AnyBalance.trace('Не удаётся найти ID карты для получения расширенной информации.');
+        }else{
+            
+            html = AnyBalance.requestPost(baseurl, {
+                SID:jsonInfo.SID,
+                tic:1,
+                T:'RT_2IC.view',
+                SCHEMENAME:'CARDS',
+                IDR:id,
+                FORMACTION:'VIEW'
+            }, g_headers);
+
+            getParam(html, result, 'minpay', /Всего к погашению в очередной платеж(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+            getParam(html, result, 'minpaytill', /Срок очередного платежа(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+            getParam(html, result, 'debt', /Задолженность по кредиту(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+            getParam(html, result, 'accnum', /Счет карты(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+            getParam(html, result, 'till', /Срок действия(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+            getParam(html, result, 'pct', /Процентная ставка(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+        }
+    }
     AnyBalance.setResult(result);
 }
 
@@ -220,7 +245,7 @@ function fetchAccount(jsonInfo, baseurl){
     }, g_headers);
 
     var cardnum = prefs.cardnum ? prefs.cardnum : '\\d{4,}';
-    var re = new RegExp('(<tr[^>]*>(?:[\\s\\S](?!<tr))*<input[^>]*STM="[^"]*' + cardnum + '"[\\s\\S]*?</tr>)', 'i');
+    var re = new RegExp('(<tr[^>]*>(?:[\\s\\S](?!<tr))*<input[^>]*STM="[^"]*' + cardnum + '["|][\\s\\S]*?</tr>)', 'i');
     var tr = getParam(html, null, null, re);
     if(!tr)
         throw new AnyBalance.Error('Не удаётся найти ' + (prefs.cardnum ? 'счет с последними цифрами ' + prefs.cardnum : 'ни одного счета'));
@@ -232,6 +257,61 @@ function fetchAccount(jsonInfo, baseurl){
     getParam(tr, result, 'type', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
     getParam(tr, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
     getParam(jsonInfo.USR, result, 'fio', /(.*)/i, replaceTagsAndSpaces);
+    AnyBalance.setResult(result);
+}
+
+function fetchDeposit(jsonInfo, baseurl){
+    var prefs = AnyBalance.getPreferences();
+    if(prefs.cardnum && !/^\d{4}$/.test(prefs.cardnum))
+        throw new AnyBalance.Error("Введите 4 последних цифры номера счета депозита или не вводите ничего, чтобы показать информацию по первому депозиту");
+
+    var html = AnyBalance.requestPost(baseurl, {
+        SID:jsonInfo.SID,
+        tic:1,
+        T:'RT_2IC.SC',
+        nvgt:1,
+        SCHEMENAME:'DEPOSITS',
+        FILTERIDENT:''
+    }, g_headers);
+
+    //Сколько цифр осталось, чтобы дополнить до 20
+    var accnum = prefs.cardnum || '';
+    var accprefix = accnum.length;
+    accprefix = 20 - accprefix;
+
+    var re = new RegExp('(<tr[^>]*>(?:[\\s\\S](?!<tr))*' + (accprefix > 0 ? '\\d{' + accprefix + '}' : '') + accnum + '[\\s\\S]*?</tr>)', 'i');
+    var tr = getParam(html, null, null, re);
+    if(!tr)
+        throw new AnyBalance.Error('Не удаётся найти ' + (accprefix > 0 ? 'депозит с последними цифрами ' + prefs.cardnum : 'ни одного депозита'));
+
+    var result = {success: true};
+    getParam(tr, result, 'balance', /(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(tr, result, 'pct', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(tr, result, 'accnum', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+    getParam(tr, result, 'currency', /(?:[\s\S]*?<td[^>]*>){7}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+    getParam(tr, result, 'type', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+    getParam(tr, result, 'till', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+    getParam(tr, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+    getParam(jsonInfo.USR, result, 'fio', /(.*)/i, replaceTagsAndSpaces);
+
+    if(AnyBalance.isAvailable('pcts')){
+        var id = getParam(tr, null, null, /SIDR="([^"]*)/i);
+        if(!id){
+            AnyBalance.trace('Не удаётся найти ID депозита для получения расширенной информации.');
+        }else{
+            
+            html = AnyBalance.requestPost(baseurl, {
+                SID:jsonInfo.SID,
+                tic:1,
+                T:'RT_2IC.view',
+                SCHEMENAME:'DEPOSITS',
+                IDR:id,
+                FORMACTION:'VIEW'
+            }, g_headers);
+
+            getParam(html, result, 'pcts', /Начисленные проценты(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+        }
+    }
     AnyBalance.setResult(result);
 }
 

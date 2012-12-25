@@ -1,10 +1,10 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 
-Получает текущий остаток и другие параметры карт и счетов Росгосстрах
+Получает текущий остаток и другие параметры карт и счетов Татфондбанка
 
-Сайт оператора: http://www.rgsbank.ru
-Личный кабинет: https://online.rgsbank.ru
+Сайт оператора: http://www.tfb.ru
+Личный кабинет: https://online.tfb.ru
 */
 
 function getParam (html, result, param, regexp, replaces, parser) {
@@ -100,7 +100,7 @@ var g_headers = {
 function main(){
     var prefs = AnyBalance.getPreferences();
 
-    var baseurl = "https://online.rgsbank.ru/v1/cgi/bsi.dll?";
+    var baseurl = "https://online.tfb.ru/v1/cgi/bsi.dll?";
     
     var html = AnyBalance.requestGet(baseurl + 'T=RT_2Auth.BF');
     var mapId = getParam(html, null, null, /<input[^>]*name="MapID"[^>]*value="([^"]*)"/i);
@@ -205,7 +205,7 @@ function fetchCard(jsonInfo, baseurl){
     getParam(tr, result, 'status', /(?:[\s\S]*?<td[^>]*>){7}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
 
     if(AnyBalance.isAvailable('minpay', 'minpaytill', 'debt', 'accnum', 'till', 'pct')){
-        var id = getParam(tr, null, null, /show_paymentdetails\s*\([^)]*'([^']*)'\s*\)/);
+        var id = getParam(tr, null, null, /SIDR="([^"]*)/i);
         if(!id){
             AnyBalance.trace('Не удаётся найти ID карты для получения расширенной информации.');
         }else{

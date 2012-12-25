@@ -153,16 +153,14 @@ function main(){
     html = AnyBalance.requestGet(baseurl + "Account.mvc/Status");
 
     AnyBalance.trace("Parsing status...");
+    
+    //Срок действия (баланса) номера (!!!пропал из интернет помощника)
+    sumParam (html, result, 'termin', /Термін життя балансу:([^<]*)/i, replaceTagsAndSpaces, parseDate);
 
     //Денежный бонусный счет.
     sumParam (html, result, 'bonus_balance', /<li>Денежный бонусный счет:[^<]*осталось\s*([\d\.,]+)\s*грн. Срок действия до[^<]*<\/li>/i, replaceTagsAndSpaces, parseBalance);
-
-    //Срок действия (баланса) номера
-    sumParam (html, result, 'termin', /Термін життя балансу:([^<]*)/i, replaceTagsAndSpaces, parseDate); //Поместили в счетчик для возврата в AnyBalance
-    var termin = sumParam (html, null, null, /Термін життя балансу:([^<]*)/i, replaceTagsAndSpaces); //Получили строку для прибавления к тарифному плану
-    if(termin){
-        result.__tariff = (result.__tariff || '') + ' (до ' + termin + ')'; //Первое слагаемое - текущий тариф или пустая строка, если там нет значения
-    }
+    //Срок бонусного счета
+    sumParam (html, result, 'termin_bonus_balance', /<li>Денежный бонусный счет:[^<]*осталось\s*[^<]*\s*грн. Срок действия до ([^<]*)<\/li>/i, replaceTagsAndSpaces, parseDate);
 
     // Пакет бесплатных минут для внутрисетевых звонков
     sumParam (html, result, 'min_paket', /<li>Осталось ([\d\.,]+) бесплатных секунд[^<]*<\/li>/ig, replaceFloat, parseFloat);
@@ -179,21 +177,28 @@ function main(){
     // 100 минут в день на внутрисетевое направление
     sumParam (html, result, 'min_net_100', /<li>100 минут в день на внутрисетевое направление:[^<]*осталось\s*([\d\.,]+)/ig, replaceFloat, parseFloat);
     
-    // 3000 региональных минут в сети: осталось 2988 бесплатных минут
+    // 3000 региональных минут в сети
     sumParam (html, result, 'min_reg_3000', /<li>3000 региональных минут в сети:[^<]*осталось\s*([\d\.,]+)/ig, replaceFloat, function(str){return 60*parseFloat(str)});
 
     // Пакет СМС
     sumParam (html, result, 'sms_paket', /<li>100 бесплатных смс по Украине:[^<]*осталось\s*(\d+) смс. Срок действия до[^<]*<\/li>/ig, null, parseInt);
+    //Срок Пакета СМС
+    sumParam (html, result, 'termin_sms_paket', /<li>100 бесплатных смс по Украине:[^<]*осталось\s*[^<]* смс. Срок действия до([^<]*)<\/li>/i, replaceTagsAndSpaces, parseDate);
 
     // Пакет ММС
     sumParam (html, result, 'mms_paket', /<li>20 бесплатных MMS:[^<]*осталось:[^\d]*?(\d+) ммс. Срок действия до[^<]*<\/li>/ig, null, parseInt);
+    //Срок Пакета ММС
+    sumParam (html, result, 'termin_mms_paket', /<li>20 бесплатных MMS:[^<]*осталось:[^\d]*?[^<]* ммс. Срок действия до([^<]*)<\/li>/i, replaceTagsAndSpaces, parseDate);
 
     // Пакет интернета
     sumParam (html, result, 'traffic_paket_mb', /<li>20MB_GPRS_Internet:[^<]*осталось[^\d]*?(\d+,?\d* *(kb|mb|gb|кб|мб|гб|байт|bytes)). Срок действия до[^<]*<\/li>/ig, null, parseTraffic);
+    //Срок Пакета интернета
+    sumParam (html, result, 'termin_traffic_paket_mb', /<li>20MB_GPRS_Internet:[^<]*осталось[^\d]*?[^<]*. Срок действия до([^<]*)<\/li>/i, replaceTagsAndSpaces, parseDate);
 
     // Интернет за копейку (новый) региональный и общенациональный
     // Проверен на пакете 1000 Мб за 10 грн. (если не будут распознаваться пакеты 1500 Мб за 15 грн и 2000 Мб за 20 грн, то добавить их распознавание в этот счетчик traffic_reg_kop_mb)
     sumParam (html, result, 'traffic_reg_kop_mb', /<li>GPRS_Internet:[^<]*осталось[^\d]*?(\d+,?\d* *(kb|mb|gb|кб|мб|гб|байт|bytes)). Срок действия до[^<]*<\/li>/ig, null, parseTraffic);
+    sumParam (html, result, 'termin_traffic_reg_kop_mb', /<li>GPRS_Internet:[^<]*осталось[^\d]*?[^<]*. Срок действия до([^<]*)<\/li>/i, replaceTagsAndSpaces, parseDate);
 
     // Интернет за копейку (старый) и другие ежедневные пакеты
     sumParam (html, result, 'traffic_kop_mb', /<li>Осталось[^\d]*?(\d+,?\d* *(kb|mb|gb|кб|мб|гб|байт|bytes)).<\/li>/ig, null, parseTraffic);
@@ -230,6 +235,8 @@ function main(){
 
     // Бесплатные смс для отправки на номера в пределах Украины
     sumParam (html, result, 'sms_100', /<li>Бесплатные смс для отправки на номера в пределах Украины:[^<]*Осталось[^\d]*?(\d+) смс. Срок действия до[^<]*<\/li>/ig, null, parseInt);
+    //Срок Бесплатные смс для отправки на номера в пределах Украины
+    sumParam (html, result, 'termin_sms_100', /<li>Бесплатные смс для отправки на номера в пределах Украины:[^<]*Осталось[^\d]*?[^<]* смс. Срок действия до([^<]*)<\/li>/i, replaceTagsAndSpaces, parseDate);
 
     //60 минут на все сети за 5 коп
     if(AnyBalance.isAvailable('min_all_60', 'min_all_60_isp')){

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="11">ab-cell-mts-ua</id>
+  <id major_version="1.0" version="12">ab-cell-mts-ua</id>
   <name>МТС (Украина)</name>
   <description>
     Получает баланс, минуты, смс, ммс, информацию о расходах, номер лицевого счета, ежемесячую плату и др.
@@ -16,8 +16,8 @@
     <history>history.xml</history>
   </files>
   <counters>
-    <counter id="balance" name="Баланс" units=" грн"/>
-    <counter id="bonus_balance" name="Бонусный баланс" units=" грн" flags="zero_when_empty"/>
+    <counter id="balance" name="Баланс" units=" ₴"/>
+    <counter id="bonus_balance" name="Бонусный баланс" units=" ₴" flags="zero_when_empty"/>
     <counter id="min_paket" name="Пакет бесплатных минут для внутрисетевых звонков" type="time_interval" format="{@MIN}" units=" мин"/>
     <counter id="min_net_70" name="70 минут в день для внутрисетевых звонков" type="time_interval" format="{@MIN}" units=" мин"/>
     <counter id="min_net_30" name="30 минут в день для внутрисетевых звонков" type="time_interval" format="{@MIN}" units=" мин"/>
@@ -42,12 +42,19 @@
     <counter id="sms_100" name="Бесплатные смс для отправки на номера в пределах Украины" units=" sms"/>
     <counter id="min_all_60" name="60 минут на все сети за 5 коп" type="time_interval" format="{@MIN}" units=" мин"/>
     <counter id="traffic_free_mb" name="Бесплатный интернет" units=" mb"/><!-- Актуально до 15.08.2012 для Супер Свободы -->
-    <counter id="usedinthismonth" name="Расход за этот месяц" units="грн"/>
+    <counter id="usedinthismonth" name="Расход за этот месяц" units=" ₴"/>
 <!--    <counter id="usedinprevmonth" name="Расход за прошлый месяц" units="грн"/> Че-то не показывается в лк -->
     <counter id="license" name="Лицевой счет" type="text"/>
-    <counter id="monthlypay" name="Ежемесячная плата" units="грн"/>
+    <counter id="monthlypay" name="Ежемесячная плата" units=" ₴"/>
     <counter id="phone" name="Номер телефона" type="text"/>
+    <!--Сроки пакетов -->
     <counter id="termin" name="Срок действия номера" type="time" format="dd/MM/yyyy"/>
+    <counter id="termin_bonus_balance" name="Срок действия бонусного баланса" type="time" format="dd/MM/yyyy HH:mm:ss"/>
+    <counter id="termin_sms_paket" name="Срок действия пакета СМС" type="time" format="dd/MM/yyyy"/>
+    <counter id="termin_mms_paket" name="Срок действия пакета ММС" type="time" format="dd/MM/yyyy"/>
+    <counter id="termin_traffic_paket_mb" name="Срок действия пакета интернета" type="time" format="dd/MM/yyyy"/>
+    <counter id="termin_traffic_reg_kop_mb" name="Срок действия интернета за копейку регионального и общенационального" type="time" format="dd/MM/yyyy"/>
+    <counter id="termin_sms_100" name="Срок действия бесплатных смс для отправки на номера в пределах Украины" type="time" format="dd/MM/yyyy"/>
   </counters>
   <keywords>
     Сотовый телефон, мобильный, мобильник, mts, украина
@@ -55,4 +62,7 @@
   <type>
     cell
   </type>
+  <country>
+    ua
+  </country>
 </provider>

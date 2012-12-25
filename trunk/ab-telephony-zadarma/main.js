@@ -28,7 +28,7 @@ function main(){
         }
 
 	var balance = info.match(/<span class="balance">.*\$(-?\d+[\.,]\d+).*<\/span>/i);
-	var tariff = info.match(/<p><strong>(.*)<\/strong>( \(стоимость \d+\.\d+.*\))<\/p>/i);
+	var tariff = info.match(/<p><strong>(.*)<\/strong>( \((?:стоимость|вартість|cost) \d+\.\d+.*\))<\/p>/i);
 
 	if (balance) {
 		var result = {success: true};

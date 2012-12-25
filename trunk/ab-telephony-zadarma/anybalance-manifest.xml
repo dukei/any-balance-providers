@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="2" version="2">ab-telephony-zadarma</id>
+  <id major_version="2" version="3">ab-telephony-zadarma</id>
   <name>Zadarma</name>
   <description>
     Получает текущий баланс в Zadarma (http://zadarma.com), используя личный кабинет.

@@ -39,7 +39,7 @@ function main(){
 
     getParam(html, result, 'balance', /Баланс счета[\s\S]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'payday', /День расчетов[\s\S]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, '__tariff', /Тариф[\s\S]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, '__tariff', /Тариф[\s\S]*?<td[^>]*>(?:[^<]*-)?([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'status', /Статус пользователя[\s\S]*?<td[^>]*>([\S\s]*?)(?:<a|<\/td>)/i, replaceTagsAndSpaces, html_entity_decode);
 
     if(AnyBalance.isAvailable('trafficIn','trafficOut')){

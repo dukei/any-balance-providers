@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change major_version="2.5" version="46" date="2012-12-25">
+      - Исправлено распознавание СМС
+    </change>
     <change major_version="2.5" version="45" date="2012-12-24">
       - Улучшено распознавание СМС на некоторых тарифных планах
     </change>

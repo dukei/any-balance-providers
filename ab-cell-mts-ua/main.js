@@ -72,10 +72,14 @@ function parseTraffic(text){
     return val;
 }
 
+/**
+ *  Получает дату из строки
+ */
 function parseDate(str){
-    var matches = /(\d+)[^\d](\d+)[^\d](\d+)/.exec(str);
+    var matches = /(?:(\d+)[^\d])?(\d+)[^\d](\d{2,4})(?:[^\d](\d+):(\d+)(?::(\d+))?)?/.exec(str);
     if(matches){
-          var date = new Date(+matches[3], matches[2]-1, +matches[1]);
+          var year = +matches[3];
+          var date = new Date(year < 1000 ? 2000 + year : year, matches[2]-1, +(matches[1] || 1), matches[4] || 0, matches[5] || 0, matches[6] || 0);
 	  var time = date.getTime();
           AnyBalance.trace('Parsing date ' + date + ' from value: ' + str);
           return time;
@@ -287,13 +291,6 @@ function main(){
 
     AnyBalance.setResult(result);
 
-}
-
-function parseTime(date){
-    AnyBalance.trace("Trying to parse date from " + date);
-    var dateParts = date.split(/[\.\/]/);
-    var d = new Date(dateParts[2], (dateParts[1] - 1), dateParts[0]);
-    return d.getTime();
 }
 
 function html_entity_decode(str)

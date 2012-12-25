@@ -735,11 +735,11 @@ function getPropVal(html, text){
 
 function sumOption(text, result, totalName, leftName, optionName){
     if(totalName){
-        var re1 = new RegExp('<div[^>]+class="td_def"[^>]*>[^<]*' + optionName + '(?:(?:[\\s\\S](?!<tr))*?<td[^>]*>){1}([\\s\\S]*?)</td>', 'i');
+        var re1 = new RegExp('<div[^>]+class="td_def"[^>]*>(?:<div[^>]*>|[^<]|<nobr[^>]*>)*' + optionName + '(?:(?:[\\s\\S](?!<tr))*?<td[^>]*>){1}([\\s\\S]*?)</td>', 'i');
         sumParam(text, result, totalName, re1, replaceTagsAndSpaces, parseBalance);
     }
     if(leftName){
-        var re2 = new RegExp('<div[^>]+class="td_def"[^>]*>[^<]*' + optionName + '(?:(?:[\\s\\S](?!<tr))*?<td[^>]*>){2}([\\s\\S]*?)</td>', 'i');
+        var re2 = new RegExp('<div[^>]+class="td_def"[^>]*>(?:<div[^>]*>|[^<]|<nobr[^>]*>)*' + optionName + '(?:(?:[\\s\\S](?!<tr))*?<td[^>]*>){2}([\\s\\S]*?)</td>', 'i');
         sumParam(text, result, leftName, re2, replaceTagsAndSpaces, parseBalance);
     }
 }

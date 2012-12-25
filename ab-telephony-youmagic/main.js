@@ -69,9 +69,12 @@ function main(){
 
     html = AnyBalance.requestPost(baseurl + "/ru/component/portabillinguser/login", params);
 
-    var error = getParam(html, null, null, /<dd class="error[^>]*>([\s\S]*?)<\/dd>/i, replaceTagsAndSpaces, html_entity_decode);
-    if(error)
-        throw new AnyBalance.Error(error);
+    if(!/name="task"[^>]*value="logout"/i.test(html)){
+        var error = getParam(html, null, null, /<dd class="error[^>]*>([\s\S]*?)<\/dd>/i, replaceTagsAndSpaces, html_entity_decode);
+        if(error)
+            throw new AnyBalance.Error(error);
+        throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
+    }
      
     var result = {
         success: true
@@ -79,9 +82,9 @@ function main(){
 
     var matches;
 
-    getParam(html, result, 'userName', /Здравствуйте,[\s\S]*?>(.*?)</i, replaceTagsAndSpaces);
-    getParam(html, result, 'balance', /Баланс:[\s\S]*?<\/span[^>]*>([\s\S]*?)</i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, '__tariff', /Тариф:[\s\S]*?<\/span[^>]*>([\s\S]*?)</i, replaceTagsAndSpaces);
+    getParam(html, result, 'userName', /(?:Здравствуйте|Hi),[\s\S]*?>(.*?)</i, replaceTagsAndSpaces);
+    getParam(html, result, 'balance', /<b[^>]+id="ac_balance"[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, '__tariff', /(?:Тариф|Tariff):[\s\S]*?<\/span[^>]*>([\s\S]*?)</i, replaceTagsAndSpaces);
     getParam(html, result, 'number', /number-icon[\s\S]*?>([\s\S]*?)</i, replaceTagsAndSpaces);
 		
     AnyBalance.setResult(result);

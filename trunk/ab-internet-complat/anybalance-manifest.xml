@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-internet-complat</id>
+  <id version="3">ab-internet-complat</id>
   <name>COMPL@T (Москва)</name>
   <description>
     Получает баланс и информацию о тарифном плане для московского интернет-провайдера COMPL@T (http://www.complat.ru).

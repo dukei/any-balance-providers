@@ -35,17 +35,17 @@ function getMyPosylkaResult(prefs){
 	var id = prefs.track_id; //Код отправления, введенный пользователем
 	var dest = prefs.track_dest; //Страна назначения
 
-	var baseurl = "https://moyaposylka.ru/";
+	var baseurl = "https://moyaposylka.ru";
 	var html = AnyBalance.requestGet(baseurl, g_headers);
         var token = getParam(html, null, null, /<input[^>]+name="tracker\[_token\]"[^>]*value="([^"]*)/i, null, html_entity_decode);
         if(!token)
             throw new AnyBalance.Error('Не найден токен безопасности. Сайт изменен?');
         
-	html = AnyBalance.requestPost(baseurl + 'quick-check', {
+	html = AnyBalance.requestPost(baseurl + '/quick-check', {
 		'tracker[number]':prefs.track_id,
 		'tracker[destinationCountry]':prefs.track_dest,
 		'tracker[_token]':token
-	}, addHeaders({'X-Requested-With': 'XMLHttpRequest', Origin:baseurl, Referer:baseurl}));
+	}, addHeaders({Origin:baseurl, Referer:baseurl + '/', 'X-Requested-With': 'XMLHttpRequest'}));
 
 	var json = getJson(html);
         if(!json.content){
@@ -67,7 +67,7 @@ function getMyPosylkaResult(prefs){
                 AnyBalance.trace('Случилась ошибка, пробуем закешеный результат: ' + error);
         }
 
-        html = AnyBalance.requestGet(baseurl + prefs.track_id, g_headers);
+        html = AnyBalance.requestGet(baseurl + '/' + prefs.track_id, g_headers);
         tr = getParam(html, null, null, /<tr[^>]*>(\s*<td[^>]+class="tracker-date[\s\S]*?)<\/tr>/i);
         if(!tr){
             if(error)

@@ -94,3 +94,25 @@ function getJson(html){
        throw new AnyBalance.Error('Сервер вернул ошибочные данные: ' + e.message);
    }
 }
+/**
+ *  Объединяет два объекта. Свойства с общими именами берутся из newObject
+ */
+function joinObjects(newObject, oldObject){
+   var obj = {};
+   for(var i in oldObject){
+       obj[i] = oldObject[i];
+   }
+   for(i in newObject){
+       obj[i] = newObject[i];
+   }
+   return obj;
+}
+
+/**
+ *  Добавляет хедеры к переданным или к g_headers
+ */
+function addHeaders(newHeaders, oldHeaders){
+   oldHeaders = oldHeaders || g_headers;
+   return joinObjects(newHeaders, oldHeaders);
+}
+

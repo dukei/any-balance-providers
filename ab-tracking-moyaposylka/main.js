@@ -22,13 +22,21 @@ function getDateString(dt){
 	return numSize(dt.getDate(), 2) + '/' + numSize(dt.getMonth()+1, 2) + '/' + dt.getFullYear() + " " + numSize(dt.getHours(), 2) + ':' + numSize(dt.getMinutes(), 2);
 }
 
+var g_headers = {
+	Accept:'*/*',
+	'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
+	'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+        Connection:'keep-alive',
+	'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.97 Safari/537.11'
+};
+
 function getMyPosylkaResult(prefs){
 	AnyBalance.trace('Connecting to moyaposylka...');
 	var id = prefs.track_id; //Код отправления, введенный пользователем
 	var dest = prefs.track_dest; //Страна назначения
 
 	var baseurl = "https://moyaposylka.ru/";
-	var html = AnyBalance.requestGet(baseurl);
+	var html = AnyBalance.requestGet(baseurl, g_headers);
         var token = getParam(html, null, null, /<input[^>]+name="tracker\[_token\]"[^>]*value="([^"]*)/i, null, html_entity_decode);
         if(!token)
             throw new AnyBalance.Error('Не найден токен безопасности. Сайт изменен?');
@@ -37,7 +45,7 @@ function getMyPosylkaResult(prefs){
 		'tracker[number]':prefs.track_id,
 		'tracker[destinationCountry]':prefs.track_dest,
 		'tracker[_token]':token
-	});
+	}, addHeaders({'X-Requested-With': 'XMLHttpRequest', Origin:baseurl, Referer:baseurl}));
 
 	var json = getJson(html);
         if(!json.content){
@@ -59,7 +67,7 @@ function getMyPosylkaResult(prefs){
                 AnyBalance.trace('Случилась ошибка, пробуем закешеный результат: ' + error);
         }
 
-        html = AnyBalance.requestGet(baseurl + prefs.track_id);
+        html = AnyBalance.requestGet(baseurl + prefs.track_id, g_headers);
         tr = getParam(html, null, null, /<tr[^>]*>(\s*<td[^>]+class="tracker-date[\s\S]*?)<\/tr>/i);
         if(!tr){
             if(error)

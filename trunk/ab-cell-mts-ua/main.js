@@ -168,6 +168,8 @@ function main(){
 
     // Пакет бесплатных минут для внутрисетевых звонков
     sumParam (html, result, 'min_paket', /<li>Осталось ([\d\.,]+) бесплатных секунд[^<]*<\/li>/ig, replaceFloat, parseFloat);
+    //Срок Пакет бесплатных минут для внутрисетевых звонков
+    sumParam (html, result, 'termin_min_paket', /<li>Осталось[^<]*бесплатных секунд до ([^<]*)<\/li>/i, replaceTagsAndSpaces, parseDate);
 
     // 70 минут в день для внутрисетевых звонков
     sumParam (html, result, 'min_net_70', /<li>70 минут в день для внутрисетевых звонков:[^<]*осталось\s*([\d\.,]+) бесплатных секунд<\/li>/ig, replaceFloat, parseFloat);
@@ -202,6 +204,7 @@ function main(){
     // Интернет за копейку (новый) региональный и общенациональный
     // Проверен на пакете 1000 Мб за 10 грн. (если не будут распознаваться пакеты 1500 Мб за 15 грн и 2000 Мб за 20 грн, то добавить их распознавание в этот счетчик traffic_reg_kop_mb)
     sumParam (html, result, 'traffic_reg_kop_mb', /<li>GPRS_Internet:[^<]*осталось[^\d]*?(\d+,?\d* *(kb|mb|gb|кб|мб|гб|байт|bytes)). Срок действия до[^<]*<\/li>/ig, null, parseTraffic);
+    //Срок Интернет за копейку (новый) региональный и общенациональный
     sumParam (html, result, 'termin_traffic_reg_kop_mb', /<li>GPRS_Internet:[^<]*осталось[^\d]*?[^<]*. Срок действия до([^<]*)<\/li>/i, replaceTagsAndSpaces, parseDate);
 
     // Интернет за копейку (старый) и другие ежедневные пакеты

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        key="login"
+        title="User name" 
+        summary="|Enter user name|{@s}" 
+        dialogTitle="User name" 
+        dialogMessage="Enter your user name. If you do not have user name / password, you need to register at www.skanetrafiken.se."
+        positiveButtonText="Ok" 
+        negativeButtonText="Cancel">
+    </EditTextPreference>
+    <EditTextPreference 
+        key="password" 
+        title="Password" 
+        summary="|Enter the password|***********"
+        dialogTitle="Password"
+        dialogMessage="Enter your Password."
+        inputType="textPassword"
+        positiveButtonText="Ok"
+        negativeButtonText="Cancel">
+    </EditTextPreference>
+    <EditTextPreference 
+        key="card" 
+        title="Last 4 digits of card number" 
+        summary="|Enter the last 4 digits of card number, which you want to get info about|{@s}"
+        dialogTitle="Last 4 digits of card number"
+        dialogMessage="Enter the last 4 digits of card number, which you want to get info about. Leave it blank to get the info about first card."
+        positiveButtonText="Ok"
+        negativeButtonText="Cancel">
+    </EditTextPreference>
+</PreferenceScreen>

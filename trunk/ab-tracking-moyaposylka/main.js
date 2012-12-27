@@ -67,12 +67,14 @@ function getMyPosylkaResult(prefs){
                 AnyBalance.trace('Случилась ошибка, пробуем закешеный результат: ' + error);
         }
 
-        html = AnyBalance.requestGet(baseurl + '/' + prefs.track_id, g_headers);
-        tr = getParam(html, null, null, /<tr[^>]*>(\s*<td[^>]+class="tracker-date[\s\S]*?)<\/tr>/i);
         if(!tr){
-            if(error)
-                throw new AnyBalance.Error(error);
-            throw new AnyBalance.Error('Информация об отправлении не найдена!');
+            html = AnyBalance.requestGet(baseurl + '/' + prefs.track_id, g_headers);
+            tr = getParam(html, null, null, /<tr[^>]*>(\s*<td[^>]+class="tracker-date[\s\S]*?)<\/tr>/i);
+            if(!tr){
+                if(error)
+                    throw new AnyBalance.Error(error);
+                throw new AnyBalance.Error('Информация об отправлении не найдена!');
+            }
         }
 
         getParam(html, result, 'trackid', /<h2[^>]*>([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces, html_entity_decode);

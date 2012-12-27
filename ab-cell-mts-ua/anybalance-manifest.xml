@@ -50,6 +50,7 @@
     <!--Сроки пакетов -->
     <counter id="termin" name="Срок действия номера" type="time" format="dd/MM/yyyy"/>
     <counter id="termin_bonus_balance" name="Срок действия бонусного баланса" type="time" format="dd/MM/yyyy HH:mm:ss"/>
+    <counter id="termin_min_paket" name="Срок действия пакета бесплатных минут для внутрисетевых звонков" type="time" format="dd/MM/yyyy HH:mm:ss"/>
     <counter id="termin_sms_paket" name="Срок действия пакета СМС" type="time" format="dd/MM/yyyy"/>
     <counter id="termin_mms_paket" name="Срок действия пакета ММС" type="time" format="dd/MM/yyyy"/>
     <counter id="termin_traffic_paket_mb" name="Срок действия пакета интернета" type="time" format="dd/MM/yyyy"/>

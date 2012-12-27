@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="2.0" version="5">ab-cell-beeline-ukr</id>
+  <id major_version="2.1" version="6">ab-cell-beeline-ukr</id>
   <name>Билайн Украина</name>
   <description>
     Мониторинг баланса для мобильного оператора Билайн (Украина).
@@ -17,14 +17,17 @@
     <history>history.xml</history>
   </files>
   <counters>
-    <counter id="balance" name="Баланс" units=" грн"/>
-    <counter id="bonusbalance" name="Бонусный баланс" units=" грн"/>
+    <counter id="balance" name="Баланс" units=" ₴"/>
+    <counter id="bonusbalance" name="Бонусный баланс" units=" ₴"/>
     <counter id="minutebalance" name="Бонусные минуты на Beeline и Голден Телеком" units=" мин"/>
     <counter id="minutebalance1" name="Бесплатные минуты на Киевстар и Beeline" units=" мин"/>
     <counter id="minutebalance2" name="Бесплатные минуты на стационарные телефоны Украины" units=" мин"/>
-    <counter id="minutebalance_other" name="Другие бесплатные минуты" units=" мин"/>
-    <counter id="doplatabalance" name="Доплата за входящие звонки" units=" грн"/>
-    <counter id="bonusdominet" name="Бонус Домашний Интернет" units=" грн"/>
+    <counter id="minutebalance3" name="Минуты по условиям ТП (на Киевстар, Билайн, Голден ТЕЛЕКОМ)" units=" мин"/>
+    <counter id="minutebalance4" name="Пакетные минуты по условиям ТП (по Украине)" units=" мин"/>
+    <counter id="doplatabalance" name="Доплата за входящие звонки" units=" ₴"/>
+    <counter id="bonusdominet" name="Бонус Домашний Интернет" units=" ₴"/>
+    <counter id="termin" name="Срок действия номера" type="time" format="dd/MM/yyyy"/>
+    <counter id="termin_doplatabalance" name="Срок действия бонусов доплаты за входящие звонки" type="time" format="dd/MM/yyyy"/>
   </counters>
   <keywords>
     Сотовый телефон, мобильный, мобильник, beeline, билайн, украина

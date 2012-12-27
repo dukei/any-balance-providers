@@ -6,6 +6,10 @@
 Личный кабинет: https://poslugy.beeline.ua/
 */
 
+/**
+ *  Получает дату из строки
+ */
+
 function main(){
   var prefs = AnyBalance.getPreferences();
   var baseurl = "https://poslugy.beeline.ua/";
@@ -43,14 +47,17 @@ function main(){
   var aggregate_concat = create_aggregate_join('');
 
   // Тариф
-  sumParam(html, result, '__tariff', /<nobr>Тарифн(?:и|ы)й план:<\/nobr>[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode, aggregate_concat);
-  sumParam(html, result, '__tariff', /<nobr>Номер д(?:іє|ействует) до:<\/nobr>[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, function(str){return ' (до' +  html_entity_decode(str) + ')'}, aggregate_concat);
+  getParam(html, result, '__tariff', /<nobr>Тарифн(?:и|ы)й план:<\/nobr>[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+  // Срок действия номера
+  getParam(html, result, 'termin', /<nobr>Номер д(?:іє|ействует) до:<\/nobr>[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
   
   // Баланс
   getParam(html, result, 'balance', /(?:Остаток на счету|Залишок на рахунку):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 
   // Бонусный баланс
-  getParam(html, result, 'bonusbalance', /Бонусн(?:ые средства|і кошти):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+  sumParam(html, result, 'bonusbalance', /Бонусн(?:ые средства|і кошти):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+  // Остаток бонусов
+  sumParam(html, result, 'bonusbalance', /(?:Остаток бонусо|Залишок бонусі)в:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 
   // Бонусные минуты на Beeline и Голден Телеком
   getParam(html, result, 'minutebalance', /Бонусн(?:ые минуты|і хвилини) на Beeline (?:и|та) Голден Телеком:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
@@ -61,14 +68,23 @@ function main(){
   // Бесплатные минуты на стационарные телефоны Украины
   getParam(html, result, 'minutebalance2', /Бе(?:сплатные минуты|зкоштовні хвилини) на стац(?:и|і)онарн(?:ые|і) телефон(?:ы|и) Укра(?:ины|їни):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
   
+  // Минуты по условиям ТП (на Киевстар, Билайн, Голден ТЕЛЕКОМ)
+  sumParam(html, result, 'minutebalance3', /(?:Минуты по условиям|Хвилини за умовами) ТП:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+  
+  // Минуты по условиям ТП (на Киевстар, Билайн, Голден ТЕЛЕКОМ)
+  sumParam(html, result, 'minutebalance3', /(?:Минуты по условиям|Хвилини за умовами) ТП:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+  
+  // Пакетные минуты по условиям ТП (по Украине)
+  sumParam(html, result, 'minutebalance4', /Пакетн(?:ые минуты по условиям|і хвилини за умовами) ТП:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);  
+
   // Доплата за входящие звонки
   getParam(html, result, 'doplatabalance', /Доплата за вх(?:одящие зво|ідні дзві)нки:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+  // Срок действия бонусов доплаты за входящие звонки
+  getParam(html, result, 'termin_doplatabalance', /Доплата за вх(?:одящие зво|ідні дзві)нки:[\s\S]*?<td[^>]*>[\s\S]*?<\/td>[\s\S]*?<td[\s\S]*?>[\s\S]*?>([\s\S]*?)</i, replaceTagsAndSpaces, parseDate);
   
   // Бонус Домашний Интернет
   getParam(html, result, 'bonusdominet', /(?:От услуги "Домашний И|Від послуги "Домашній І)нтернет":[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 
-  // Другие бесплатные минуты
-  sumParam(html, result, 'minutebalance_other', /Хвилини за умовами ТП:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 
   AnyBalance.setResult(result);
 }

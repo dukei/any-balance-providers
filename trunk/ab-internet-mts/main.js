@@ -9,6 +9,7 @@
 Личный кабинет (Пермь, Екатеринбург): https://bill.utk.ru/uportf/arm.pl
 Личный кабинет (Киров): https://lk.kirovnet.net
 Личный кабинет (Северодвинск): http://severodvinsk.stream-info.ru/client2
+Личный кабинет (Вологда): https://stats.vologda.comstar-r.ru/
 */
 
 var regions = {
@@ -19,7 +20,8 @@ var regions = {
    ekt: getPrm,
    krv: getKrv,
    nnov: getNnov,
-   sdv: getSdv
+   sdv: getSdv,
+   vlgd: getVologda
 };
 
 function main(){
@@ -440,6 +442,41 @@ function getSdv(){
     AnyBalance.setResult(result);
 }
 
+function getVologda(){
+    var prefs = AnyBalance.getPreferences();
+    AnyBalance.setDefaultCharset('utf-8');
+
+    var baseurl = 'https://stats.vologda.comstar-r.ru/';
+
+    var html = AnyBalance.requestPost(baseurl + 'index.php?r=site/login', {
+        'LoginForm[login]':prefs.login,
+        'yt0':'Войти',
+        'LoginForm[password]':prefs.password
+    });
+
+    if(!/r=site\/logout/i.test(html)){
+        throw new AnyBalance.Error("Не удалось войти в личный кабинет. Неправильный логин-пароль?");
+    }
+
+    var result = {success: true};
+
+    //Вначале попытаемся найти активный тариф
+    var tr = getParam(html, null, null, /<tr[^>]+class="account"[^>]*>((?:[\s\S](?!<\/tr))*?Состояние:\s+актив[\s\S]*?)<\/tr>/i);
+    if(!tr)
+        tr = getParam(html, null, null, /<tr[^>]+class="account"[^>]*>([\s\S]*?)<\/tr>/i);
+
+    if(tr){
+        getParam(tr, result, '__tariff', /<!-- Работа с тарифом -->[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
+        getParam(tr, result, 'abon', /Абонентская плата:([^<]*)/i, replaceTagsAndSpaces, parseBalance2);
+        getParam(tr, result, 'internet_cur', /Израсходовано:([^<]*)/i, replaceTagsAndSpaces, parseBalance2);
+    }
+
+    getParam(html, result, 'agreement', /Номер договора:[^<]*<[^>]*>([^<]*)/i, replaceTagsAndSpaces);
+    getParam(html, result, 'balance', /Текущий баланс:[^<]*<[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance2);
+    getParam(html, result, 'username', /Мои аккаунты\s*\/([^<]*)/i, replaceTagsAndSpaces);
+
+    AnyBalance.setResult(result);
+}
 
 function getParam (html, result, param, regexp, replaces, parser) {
 	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))

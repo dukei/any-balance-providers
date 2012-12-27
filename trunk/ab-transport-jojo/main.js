@@ -12,7 +12,7 @@ My pages: https://www.skanetrafiken.se/templates/MSRootPage.aspx?id=2935&epslang
 var reViewState = "__VIEWSTATE\"\\s+value=\"([^\"]+)\"";
 var ctLoginFail = "ctl00_fullRegion_menuRegion_Login_msNotLoggedInDiv"
 var ctWrongLoginPass = "Inloggningen misslyckades";
-var reAccounts = "\"></a>\\s*</td>\\s*<td\\s*class=\"cardinfoaligntop\">\\s*<a\\s*id=\"ctl\\d*_fullRegion_mainRegion_CardInformation1_mRepeaterMyCards_ctl(\\d{2,3})_LinkButton\\d{1,3}\"[^>]+>([^<]+)</a>\\s*</td>\\s*<td[^>]+>\\s*<a\\s*id=\"ctl00_fullRegion_mainRegion_CardInformation1_mRepeaterMyCards_ctl\\d{2,3}_LinkButton\\d{1,3}\"[^>]+>([^<]+)</a>";
+var reAccounts = "1_mRepeaterMyCards_ctl(\\d{2,3})_LinkButton\\d{1,3}\"[^>]+>([^<]+)</a>\\s*</td>\\s*<td[^>]+>\\s*<a\\s*id=\"ctl00_fullRegion_mainRegion_CardInformation1_mRepeaterMyCards_ctl\\d{2,3}_LinkButton\\d{1,3}\"[^>]+>([^<]+)</a>";
 
 var headers = {
     "User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64)"};

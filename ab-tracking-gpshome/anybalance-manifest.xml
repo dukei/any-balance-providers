@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-tracking-gpshome</id>
+  <name>GPSHome</name>
+  <description>
+    Получает информацию по трекеру из системы слежения GPSHome (http://www.gpshome.ru).
+
+    Информация берется из личного кабинета. 
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+    <js>library.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="charge" name="Заряд" units="%"/>
+    <counter id="odo" name="Одометр" units=" км"/>
+    <counter id="speed" name="Скорость" units=" км/ч"/>
+    <counter id="course" name="Курс" units="°"/>
+    <counter id="lat" name="Широта" units="°"/>
+    <counter id="long" name="Долгота" units="°"/>
+    <counter id="alt" name="Высота" units=" м"/>
+    <counter id="sat" name="Спутники"/>
+    <country id="time" name="Актуально на" type="time"/>
+    <country id="name" name="Название" type="text"/>
+  </counters>
+  <keywords>
+    жпс хоум
+  </keywords>
+  <type>
+    tracking
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

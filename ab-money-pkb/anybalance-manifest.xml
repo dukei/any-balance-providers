@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-money-pkb</id>
-  <name>Банк Петрокоммерц</name>
+  <id version="2">ab-money-pkb</id>
+  <name>Петрокоммерц (PKB on-line)</name>
   <description>
     Получает текущий остаток и другие параметры карт, счетов Банка Петрокоммерц (http://www.pkb.ru), используя интернет-банк https://www.pkb24.ru.
 

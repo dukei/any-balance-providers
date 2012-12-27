@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-tv-domru</id>
+  <name>Дом.ру (КТВ)</name>
+  <description>
+    Получает текущий баланс у провайдера кабельного телевидения ДОМ.РУ: http://citydom.ru.
+
+    Информацию получает из соответствующего городу личного кабинета, например, для Санкт-Петербурга это https://spb.domru.ru/balance_ktv
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+    <js>library.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="contract" name="Номер договора" type="text"/>
+  </counters>
+  <keywords>
+    провайдер дом.ру ктв
+  </keywords>
+  <type>
+    tv
+  </type>
+  <ru>
+    ru
+  </ru>
+</provider>

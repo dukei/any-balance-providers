@@ -6,10 +6,6 @@
 Личный кабинет: https://poslugy.beeline.ua/
 */
 
-/**
- *  Получает дату из строки
- */
-
 function main(){
   var prefs = AnyBalance.getPreferences();
   var baseurl = "https://poslugy.beeline.ua/";

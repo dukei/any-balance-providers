@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Телефон или е-мейл" 
+        positiveButtonText="ОК" 
+        summary="||{@s}" 
+        dialogTitle="Телефон или е-мейл" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите телефон или е-мейл для входа в личный кабинет Белый Ветер Цифровой."
+        inputType="textEmailAddress"
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="||***********"
+        dialogMessage="Введите пароль, используемый для входа в личный кабинет Белый Ветер Цифровой."
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

@@ -17,7 +17,7 @@
     <history>history.xml</history>
   </files>
   <counters>
-    <counter id="balance" name="Avard miles"/>
+    <counter id="balance" name="Award miles"/>
     <counter id="qbalance" name="Status miles"/>
     <counter id="cardnum" name="Customer number" type="text"/>
   </counters>

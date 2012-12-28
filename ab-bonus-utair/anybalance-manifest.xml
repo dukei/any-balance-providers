@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-bonus-utair</id>
+  <name>UTair</name>
+  <description>
+    Получает баланс баллов и другую информацию по бонусной карте авиакомпании UTair (http://www.utair.ru).
+
+    Информация берется из личного кабинета https://ffp.utair.ru/css/index.action.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+    <js>library.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс"/>
+    <counter id="cardnum" name="Номер карты" type="text"/>
+  </counters>
+  <keywords>
+    уютное небо
+  </keywords>
+  <type>
+    bonus
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

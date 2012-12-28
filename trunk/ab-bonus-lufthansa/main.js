@@ -39,6 +39,9 @@ function main(){
         var error = getParam(html, null, null, /<span[^>]*class="feedback_neg"[^>]*>([\s\S]*?)<\/span>/, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error);
+        var message = getParam(html, null, null, /<h1>Miles[\s\S]*?More[\s\S]*?Message[\s\S]*?<\/h1>[\s\S]*?<div[\s\S]*?>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+        if(message)
+            throw new AnyBalance.Error(message);
         throw new AnyBalance.Error('Could not enter miles&more site. Is the site changed?');
     }
 

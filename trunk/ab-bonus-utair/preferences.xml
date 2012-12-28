@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="№ карты" 
+        positiveButtonText="ОК" 
+        summary="||{@s}" 
+        dialogTitle="№ карты" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите номер карты для входа в личный кабинет UTair."
+        inputType="number"
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="ПИН"
+        negativeButtonText="Отмена"
+        title="ПИН"
+        summary="||***********"
+        dialogMessage="Введите ПИН, используемый для входа в личный кабинет UTair."
+        inputType="numberPassword">
+    </EditTextPreference>
+</PreferenceScreen>

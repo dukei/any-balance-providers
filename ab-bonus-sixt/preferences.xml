@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Username / Customer no." 
+        positiveButtonText="OK" 
+        summary="||{@s}" 
+        dialogTitle="Username / Customer no." 
+        negativeButtonText="Cancel" 
+        dialogMessage="Please enter username or customer number for your Sixt account"
+        inputType="textEmailAddress"
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="OK"
+        key="password" 
+        dialogTitle="Password"
+        negativeButtonText="Cancel"
+        title="Password"
+        summary="||***********"
+        dialogMessage="Please enter password for your Sixt account"
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

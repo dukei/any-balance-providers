@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="User name or card number" 
+        positiveButtonText="OK" 
+        summary="||{@s}" 
+        dialogTitle="User name or card number" 
+        negativeButtonText="Cancel" 
+        dialogMessage="Please enter user name or Miles &amp; More card number."
+        inputType="textEmailAddress"
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="OK"
+        key="password" 
+        dialogTitle="Password or PIN"
+        negativeButtonText="Cancel"
+        title="Password or PIN"
+        summary="||***********"
+        dialogMessage="Enter password or Miles &amp; More PIN."
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

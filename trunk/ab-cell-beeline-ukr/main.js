@@ -65,13 +65,10 @@ function main(){
   getParam(html, result, 'minutebalance2', /Бе(?:сплатные минуты|зкоштовні хвилини) на стац(?:и|і)онарн(?:ые|і) телефон(?:ы|и) Укра(?:ины|їни):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
   
   // Минуты по условиям ТП (на Киевстар, Билайн, Голден ТЕЛЕКОМ)
-  sumParam(html, result, 'minutebalance3', /(?:Минуты по условиям|Хвилини за умовами) ТП:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-  
-  // Минуты по условиям ТП (на Киевстар, Билайн, Голден ТЕЛЕКОМ)
-  sumParam(html, result, 'minutebalance3', /(?:Минуты по условиям|Хвилини за умовами) ТП:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+  sumParam(html, result, 'minutebalance3', /.>(?:Минуты по условиям|Хвилини за умовами) ТП:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
   
   // Пакетные минуты по условиям ТП (по Украине)
-  sumParam(html, result, 'minutebalance4', /Пакетн(?:ые минуты по условиям|і хвилини за умовами) ТП:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);  
+  sumParam(html, result, 'minutebalance4', /.>Пакетн(?:ые минуты по условиям|і хвилини за умовами) ТП:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);  
 
   // Доплата за входящие звонки
   getParam(html, result, 'doplatabalance', /Доплата за вх(?:одящие зво|ідні дзві)нки:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);

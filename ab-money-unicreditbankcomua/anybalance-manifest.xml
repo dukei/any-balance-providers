@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id major_version="1" version="1">ab-money-unicreditbankcomua</id>
+  <name>UniCredit Bank (unicreditbank.com.ua)</name>
+  <description>
+    Отримує кількість доступних коштів по рахунках Українського UniCredit Bank (того, чий сайт unicreditbank.com.ua).
+    Не сумісний з Українським банком ПАТ "Укрсоцбанк", UniCredit Bank (тим, чий сайт unicredit.com.ua).
+    
+    Для входу в демо версію використовуйте номер клієнта: 1, пароль: 1, номер рахунку залиште пустим.
+  </description>
+  <author>valeravi &lt;valeravi@vi-soft.com.ua&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Доступні кошти" type="numeric"/>
+    <counter id="currency" name="Валюта" type="text"/>
+  </counters>
+  <keywords>
+    bank, банк, юнікредит, юникредит, unicredit, unicreditbank
+  </keywords>
+  <type>
+    money
+  </type>
+  <country>
+    ua
+  </country>
+</provider>

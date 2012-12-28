@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-bonus-lufthansa</id>
+  <id version="2">ab-bonus-lufthansa</id>
   <name>Lufthansa Miles&amp;More</name>
   <description>
     Obtains information on Lufthansa Miles&amp;More bonus program (http://www.miles-and-more.com).

@@ -125,12 +125,11 @@ function lifeGet(method, params){
     return xml;
 }
 
-function aggregate_traffic(values){
-    var sum = aggregate_sum(values);
-    if(sum){
-        return Math.round(sum/1024/1024);
-    }
-    return sum;
+function parseTrafficMb(str){
+    var val = parseBalance(str);
+    if(isset(val))
+        val = Math.round(val/1024*100)/100;
+    return val;
 }
 
 function main(){
@@ -172,8 +171,8 @@ function mainApi(){
     if(AnyBalance.isAvailable('gprs', 'mms_uk', 'mms_life', 'sms_uk', 'sms_life', 'mins_family', 'mins_life')){
         xml = lifeGet('getBalances', {msisdn: msisdn, languageId: lang, osType: 'ANDROID', token: token});
         
-        sumParam(xml, result, 'gprs', /<balance[^>]+code="FreeGprs[^>]*amount="([^"]*)/ig, replaceTagsAndSpaces, parseBalance, aggregate_traffic);
-	sumParam(xml, result, 'gprs', /<balance[^>]+code="Bundle_Gprs[^>]*amount="([^"]*)/ig, replaceTagsAndSpaces, parseBalance, aggregate_traffic);
+        sumParam(xml, result, 'gprs', /<balance[^>]+code="FreeGprs[^>]*amount="([^"]*)/ig, replaceTagsAndSpaces, parseTrafficMb, aggregate_sum);
+	sumParam(xml, result, 'gprs', /<balance[^>]+code="Bundle_Gprs[^>]*amount="([^"]*)/ig, replaceTagsAndSpaces, parseTrafficMb, aggregate_sum);
         sumParam(xml, result, 'mms_life', /<balance[^>]+code="FreeMms[^>]*amount="([^"]*)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	sumParam(xml, result, 'mms_life', /<balance[^>]+code="Bundle_Mms_Onnet[^>]*amount="([^"]*)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	sumParam(xml, result, 'mms_uk', /<balance[^>]+code="Bundle_Mms_Ukraine[^>]*amount="([^"]*)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);

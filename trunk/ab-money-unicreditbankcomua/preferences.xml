@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        key="login"
+        title="Номер клієнта" 
+        summary="|Введіть номер клієнта|{@s}" 
+        dialogTitle="Номер клієнта" 
+        dialogMessage="Введіть ваш номер клієнта. Якщо не маєте, зверніться до вашого відділення банку для отримання доступу до UniCredit он-лайн."
+        positiveButtonText="Ok" 
+        negativeButtonText="Скасувати">
+    </EditTextPreference>
+    <EditTextPreference 
+        key="password" 
+        title="Пароль" 
+        summary="|Введіть пароль|***********"
+        dialogTitle="Пароль"
+        dialogMessage="Введіть ваш пароль."
+        inputType="textPassword"
+        positiveButtonText="Ok"
+        negativeButtonText="Скасувати">
+    </EditTextPreference>
+    <EditTextPreference 
+        key="account" 
+        title="Номер рахунку" 
+        summary="|Введіть номер рахунку, по якому ви бажаєте отримувати інформацію (це не є номер картки, це може бути номер карткового рахунку вашої картки)|{@s}"
+        dialogTitle="Номер рахунку"
+        dialogMessage="Введіть номер рахунку (це не є номер картки), по якому ви бажаєте отримувати інформацію. Якщо бажаєте отримувати інформацію по карті (дебетовій, кредитній), то вводьте номер карткового рахунку, до якого прив'язана картка (взнати цей номер можна в інтернет банкінгу https://online.unicreditbank.com.ua або у вашому відділенні банка. Залиште поле пустим для отримання інформації по першому рахунку в списку."
+        positiveButtonText="Ok"
+        negativeButtonText="Скасувати">
+    </EditTextPreference>
+</PreferenceScreen>

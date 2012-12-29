@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-internet-exfloyt</id>
+  <name>Exfloyt (Днепропетровск)</name>
+  <description>
+    Получает баланс для днепропетровского интернет-провайдера Exfloyt. Информация берется из личного кабинета https://stat.exfloyt.com.ua.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+    <js>library.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="traffic" name="Остаток трафика"/>
+  </counters>
+  <keywords>
+    эксфлойт, украина
+  </keywords>
+  <type>
+    internet
+  </type>
+  <country>
+    ua
+  </country>
+</provider>

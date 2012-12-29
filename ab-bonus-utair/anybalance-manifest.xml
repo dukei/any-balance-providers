@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-bonus-utair</id>
+  <id version="2">ab-bonus-utair</id>
   <name>UTair</name>
   <description>
     Получает баланс баллов и другую информацию по бонусной карте авиакомпании UTair (http://www.utair.ru).

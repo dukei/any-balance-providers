@@ -18,6 +18,6 @@
         title="ПИН"
         summary="||***********"
         dialogMessage="Введите ПИН, используемый для входа в личный кабинет UTair."
-        inputType="numberPassword">
+        inputType="textPassword">
     </EditTextPreference>
 </PreferenceScreen>

@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id major_version="1.0" version="1">ab-tracking-advertisements</id>
+  <name>Наблюдение за объявлениями (Slando.ru)</name>
+  <description>
+    Помогает отслеживать появление новых объявлений по заданной подстроке на Slando.ru, выводит краткую информацию о последнем таком объявлении.
+  </description>
+  <author>wtiger &lt;wtiger@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>api:jquery.min.js</js> <!-- Используем библиотеку, которая и так входит в AnyBalance -->
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="found" name="Найдено объявлений" units="шт."/>
+    <counter id="last" name="Последнее найденное" type="text"/>
+    <counter id="date" name="Дата последнего найденного" type="text"/>
+    <counter id="region" name="Город или регион" type="text"/>
+  </counters>
+  <keywords>
+    другое трекинг slando.ru
+  </keywords>
+  <type>
+    other
+  </type>
+</provider>

@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        key="region"
+        title="Город или регион" 
+        summary="Город или регион||{@s}\n" 
+        dialogTitle="Город или регион" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Укажите город или регион для отслеживания объявления в формате city.region. Узнать его можно в адресной строке браузера, например, http://город.регион.slando.ru."
+        positiveButtonText="ОК">
+    </EditTextPreference>
+    <EditTextPreference 
+        key="pattern"
+        title="Строка поиска" 
+        summary="Строка поиска||{@s}\n" 
+        dialogTitle="Строка поиска" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Укажите строку для отслеживания объявления так же, как вы ввели бы ее на сайте для поиска."
+        positiveButtonText="ОК">
+    </EditTextPreference>
+</PreferenceScreen>

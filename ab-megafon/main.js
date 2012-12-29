@@ -657,23 +657,26 @@ function megafonServiceGuidePhysical(filial, sessionid){
         sumParam(text, result, 'last_pay_date', /idHiddenSum[^>]*>\s*<table(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
     }
 	
-    if(filial == MEGA_FILIAL_MOSCOW){
-        // Бонусный баланс (здесь более точно указано)
-        if(AnyBalance.isAvailable('bonus_balance')){
-            text = AnyBalance.requestPost(baseurl + 'SCWWW/BONUS_FORM',
-                    {
-                        CHANNEL: 'WWW', 
-                        SESSION_ID: sessionid,
-                        CUR_SUBS_MSISDN: phone,
-                        SUBSCRIBER_MSISDN: phone
-                    });
-                    
-            if(matches = text.match(/&#1041;&#1086;&#1085;&#1091;&#1089;&#1085;&#1099;&#1081; &#1073;&#1072;&#1083;&#1072;&#1085;&#1089;:[\s\S]*?<td class="td_right">[\s\S]*?<div>([\d\.]+)/i)){
-                result.bonus_balance = parseFloat(matches[1]);
-            }
+    // Бонусный баланс (здесь более точно указано)
+    if(AnyBalance.isAvailable('bonus_balance', 'bonus_balance_burn')){
+        text = AnyBalance.requestPost(baseurl + 'SCWWW/BONUS_FORM',
+                {
+                    CHANNEL: 'WWW', 
+                    SESSION_ID: sessionid,
+                    CUR_SUBS_MSISDN: phone,
+                    SUBSCRIBER_MSISDN: phone
+                });
+                
+        if(matches = text.match(/&#1041;&#1086;&#1085;&#1091;&#1089;&#1085;&#1099;&#1081; &#1073;&#1072;&#1083;&#1072;&#1085;&#1089;:[\s\S]*?<td class="td_right">[\s\S]*?<div>([\d\.]+)/i)){
+            result.bonus_balance = parseFloat(matches[1]);
         }
 
+        //Сгорают в текущем месяце
+        sumParam(text, result, 'bonus_burn', /<colgroup[^>]+grid_template_name="DEAD_BONUSES"(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    }
 
+
+    if(filial == MEGA_FILIAL_MOSCOW){
         // Продли скорость (Москва)
         if(AnyBalance.isAvailable(['internet_total','internet_cur', 'internet_left'])){
             text = AnyBalance.requestGet(baseurl + 'SCCEXTSYS/EXT_SYSTEM_PROXY_FORM?CHANNEL=WWW&SESSION_ID=' + sessionid + '&URI=3.');

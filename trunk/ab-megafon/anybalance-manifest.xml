@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="2.5" version="46">ab-megafon</id>
+  <id major_version="2.5" version="47">ab-megafon</id>
   <name>Мегафон</name>
   <description>
     Получает баланс, бонусный баланс, минуты, трафик, SMS на телефоне и многое другое. Поддерживаются все филиалы.
@@ -43,6 +43,7 @@
     <counter id="sub_smio" name="Начислено абон.платы за услуги" units="р"/>
     <counter id="last_pay_sum" name="Последний платеж" units="р"/>
     <counter id="last_pay_date" name="Дата посл. платежа" type="time" format="dd/MM/yyyy"/>
+    <counter id="bonus_burn" name="Бонусные баллы, сгорающие в конце текущего месяца"/>
     <counter id="phone" name="Телефон" type="text" format="dd/MM/yyyy"/>
   </counters>
   <keywords>

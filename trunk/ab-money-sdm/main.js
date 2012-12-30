@@ -71,8 +71,8 @@ function main(){
         password:prefs.password
     }, headers);
 
-    if(!/href="LogOff"/i.test(html)){
-        var error = getParam(html, null, null, /<BSS_ERROR>\d*\|?([\s\S]*?)<\/BSS_ERROR>/i, replaceTagsAndSpaces, html_entity_decode);
+    if(!/\/logoff/i.test(html)){
+        var error = getParam(html, null, null, /<div[^>]+class="error"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error);
         throw new AnyBalance.Error("Не удалось зайти в интернет-банк. Сайт изменен?");

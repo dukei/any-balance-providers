@@ -75,10 +75,11 @@ function main(){
                 if(_domain == '*')
                     _domain = '\\w+\\.\\w+';
                
-                var tr = getParam(html, null, null, new RegExp('(<li(?:[\\s\\S](?!<\\/li>))*?домен(?:\\s|<(?!\\/li>)[^>]*>)*' + _domain + '[\\s\\S]*?<\\/li>)', 'i'));
+                var tr = getParam(domainsHtml, null, null, new RegExp('(<li(?:[\\s\\S](?!<\\/li>))*?домен(?:\\s|<(?!\\/li>)[^>]*>)*' + _domain + '[\\s\\S]*?<\\/li>)', 'i'));
             
                 if(!tr){
-                    notfound[notfound.length] = domain; 
+                    if(domain != '*')
+                        notfound[notfound.length] = domain; 
                 }else{
                     var suffix = ind > 0 ? ind : '';
                     var domain_name = getParam(tr, null, null, /<font[^>]+class="text_hl"[^>]*>([\s\S]*?)<\/font>/i, replaceTagsAndSpaces, html_entity_decode);

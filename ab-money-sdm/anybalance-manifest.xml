@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-money-sdm</id>
+  <id version="3">ab-money-sdm</id>
   <name>СДМ-Банк</name>
   <description>
     Получает текущий остаток и другие параметры карт, счетов СДМ-Банка (http://www.sdm.ru), используя интернет-банк https://retail.sdm.ru.

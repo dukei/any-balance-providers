@@ -33,7 +33,8 @@ var replaceTagsAndSpaces = [/\\n/g, ' ', /\[br\]/ig, ' ', /<[^>]*>/g, ' ', /\s{2
 var replaceFloat = [/\s+/g, '', /,/g, '.'];
 
 function parseBalance(text){
-    var _text = text.replace(/\s+/g, '');
+    var _text = html_entity_decode(text);
+    _text = _text.replace(/\s+/g, '');
     var val = getParam(_text, null, null, /(-?\d[\d\.,]*)/, replaceFloat, parseFloat);
     AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
     return val;

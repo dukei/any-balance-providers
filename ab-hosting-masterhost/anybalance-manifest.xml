@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-hosting-masterhost</id>
+  <id version="3">ab-hosting-masterhost</id>
   <name>Masterhost (хостинг)</name>
   <description>
     Получает баланс и информацию о доменах (находящихся на обслуживании в .masterhost) у хостинг провайдера Мастерхост (http://masterhost.ru).

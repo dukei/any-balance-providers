@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="1">ab-tracking-advertisements</id>
-  <name>Наблюдение за объявлениями (Slando.ru)</name>
+  <id major_version="1.0" version="2">ab-tracking-advertisements</id>
+  <name>Наблюдение за объявлениями (Avito.ru, Slando.ru)</name>
   <description>
-    Помогает отслеживать появление новых объявлений по заданной подстроке на Slando.ru, выводит краткую информацию о последнем таком объявлении.
+    Помогает отслеживать появление новых объявлений по заданной подстроке на Avito.ru и Slando.ru, выводит краткую информацию о последних таких объявлениях.
   </description>
   <author>wtiger &lt;wtiger@mail.ru&gt;</author>
   <files>
@@ -13,13 +13,17 @@
     <js>main.js</js>
   </files>
   <counters>
-    <counter id="found" name="Найдено объявлений" units="шт."/>
-    <counter id="last" name="Последнее найденное" type="text"/>
-    <counter id="date" name="Дата последнего найденного" type="text"/>
-    <counter id="region" name="Город или регион" type="text"/>
+    <counter id="found_total" name="Найдено объявлений (всего)" units="шт."/>
+    <counter id="found_a" name="Найдено объявлений (Avito)" units="шт." prefix="A:"/>
+    <counter id="last_a" name="Последнее найденное (Avito)" type="text" prefix="A:"/>
+    <counter id="date_a" name="Когда опубликовано (Avito)" type="text" prefix="A:"/>
+    <counter id="found" name="Найдено объявлений (Slando)" units="шт." prefix="S:"/>
+    <counter id="last" name="Последнее найденное (Slando)" type="text" prefix="S:"/>
+    <counter id="date" name="Когда опубликовано (Slando)" type="text" prefix="S:"/>
+    <counter id="region" name="Город или регион (Slando)" type="text" prefix="S:"/>
   </counters>
   <keywords>
-    другое трекинг slando.ru
+    другое трекинг slando.ru avito.ru
   </keywords>
   <type>
     other

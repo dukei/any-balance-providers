@@ -578,36 +578,32 @@ function megafonServiceGuidePhysical(filial, sessionid){
     //Бонус 1 - полчаса бесплатно (Москва)
     //10 мин на МТС, Билайн, Скай Линк
     
-    if(AnyBalance.isAvailable('mins_total','mins_left')){
-      var mins_left = 0, mins_total = 0;
-      
-      //Ищем в таблице скидок строки вида: 39:00 мин   39:00, что означает Всего, Остаток
-      text.replace(/<div class="td_def">\s*(\d+)(?::(\d+))?[^<]*&#1084;&#1080;&#1085;[^<]*<[^&#;\d]*<div class="td_def">(\d+)(?::(\d+))?/g, function(str, p1, p2, p3, p4){
-        if(AnyBalance.isAvailable('mins_total'))
-            mins_total += p1*60 + (p2 ? +p2 : 0);
-        if(AnyBalance.isAvailable('mins_left'))
-            mins_left += p3*60 + (p4 ? +p4 : 0);
-        return str;
-      });
-      
-      if(mins_total)
-          result.mins_total = mins_total;
-      if(mins_left)
-          result.mins_left = mins_left;
-    }
-      
-    // Карманный интернет
-    if(AnyBalance.isAvailable('internet_total','internet_cur', 'internet_left')){
-        var vals = getOptionFloat(text, "&#1050;&#1072;&#1088;&#1084;&#1072;&#1085;&#1085;&#1099;&#1081; &#1048;&#1085;&#1090;&#1077;&#1088;&#1085;&#1077;&#1090;");
-        if(vals){
-            if(AnyBalance.isAvailable('internet_total'))
-                result.internet_total = (result.internet_total || 0) + vals[0];
-            if(AnyBalance.isAvailable('internet_cur'))
-                result.internet_cur =(result.internet_cur || 0) +  vals[0]-vals[1];
-            if(AnyBalance.isAvailable('internet_left'))
-                result.internet_left += (result.internet_left || 0) + vals[1];
+    var reOption = /(<tr[^>]*>(?:(?:[\s\S](?!<\/tr>))*?<td[^>]*>\s*<div[^>]+class="td_def"[^>]*>){3}[\s\S]*?<\/tr>)/ig;
+    while(matches = reOption.exec(text)){
+        var name = getParam(matches[1], null, null, /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+        //Ищем в таблице скидок строки вида: 39:00 мин   39:00, что означает Всего, Остаток
+        var p = /<div class="td_def">\s*(\d+)(?::(\d+))?[^<]*&#1084;&#1080;&#1085;[^<]*<[^&#;\d]*<div class="td_def">(\d+)(?::(\d+))?/i.exec(matches[1]);
+        if(p){ //Это минуты, надо бы их рассортировать
+             if(/мин на МТС Билайн Скай Линк/i.test(name))
+                 sumOption(matches[1], result, 'mins_compet_total', 'mins_compet_left', '.', parseMinutes);
+             else if(/мин на номера СНГ/i.test(name))
+                 sumOption(matches[1], result, 'mins_sng_total', 'mins_sng_left', '.', parseMinutes);
+             else if(/мин по России/i.test(name))
+                 sumOption(matches[1], result, 'mins_country_total', 'mins_country_left', '.', parseMinutes);
+             else
+                 sumOption(matches[1], result, 'mins_total', 'mins_left', '.', parseMinutes);
+        }else if(/GPRS|Интернет|Internet/i.test(name)){
+             sumOption(matches[1], result, 'internet_total', 'internet_left', '.', parseTraffic);
+             if(AnyBalance.isAvailable('internet_cur')){
+                 var total = getParam(matches[1], null, null, /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTraffic);
+                 var left = getParam(matches[1], null, null, /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTraffic);
+                 if(isset(total) && isset(left))
+                     result.internet_cur = (result.internet_cur || 0) + total - left;
+             }
         }
     }
+      
+    // Карманный интернет теперь покрывается циклом выше
     
     //200 SMS MegaVIP 0
     sumOption(text, result, 'sms_total', 'sms_left', 'SMS MegaVIP');
@@ -630,20 +626,7 @@ function megafonServiceGuidePhysical(filial, sessionid){
     //Гигабайт в дорогу
     sumOption(text, result, null, 'gb_with_you', '&#1043;&#1080;&#1075;&#1072;&#1073;&#1072;&#1081;&#1090; &#1074; &#1076;&#1086;&#1088;&#1086;&#1075;&#1091;');
 
-    //Пакет Интернет 24
-    if(AnyBalance.isAvailable('internet_total', 'internet_left', 'internet_cur')){
-        var i_t = sumParam(text, null, null, /<div[^>]+class="td_def"[^>]*>&#1048;&#1085;&#1090;&#1077;&#1088;&#1085;&#1077;&#1090; 24(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTraffic);
-        var i_l = sumParam(text, null, null, /<div[^>]+class="td_def"[^>]*>&#1048;&#1085;&#1090;&#1077;&#1088;&#1085;&#1077;&#1090; 24(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTraffic);
-
-        if(i_t && AnyBalance.isAvailable('internet_total'))
-            result.internet_total = (result.internet_total || 0) + i_t;
-        if(AnyBalance.isAvailable('internet_cur'))
-            if(i_t || (i_t - i_l)) //Если всё по нулям, это может быть просто глюк мегафона
-                result.internet_cur = (result.internet_cur || 0) + (i_t - i_l);
-        if(isset(i_l) && AnyBalance.isAvailable('internet_left'))
-            if(i_t || i_l) //Если всё по нулям, это может быть просто глюк мегафона
-                result.internet_left = (result.internet_left || 0) + i_l;
-    }
+    //Пакет Интернет 24 теперь покрывается циклом выше
 
     if(AnyBalance.isAvailable('last_pay_sum', 'last_pay_date')){
         text = AnyBalance.requestPost(baseurl + 'SCWWW/PAYMENTS_INFO',
@@ -736,14 +719,30 @@ function getPropVal(html, text){
   return matches;
 }
 
-function sumOption(text, result, totalName, leftName, optionName){
+function parseMinutes(str){
+    var _str = html_entity_decode(str);
+    var matches = /(\d+)(?::(\d+))?/i.exec(_str), val;
+    if(matches){
+        val = matches[1]*60 + (matches[2] ? +matches[2] : 0);
+    }
+    if(isset(val))
+        AnyBalance.trace('Parsed ' + val + ' seconds from ' + str + ' (' + _str + ')');
+    else
+        AnyBalance.trace('Failed to parse seconds from ' + str + ' (' + _str + ')');
+    return val;
+}
+
+function sumOption(text, result, totalName, leftName, optionName, parseFunc){
+    if(!parseFunc) parseFunc = parseBalance;
+    var reOption = /(<tr[^>]*>(?:(?:[\s\S](?!<\/tr>))*?<td[^>]*>\s*<div[^>]+class="td_def"[^>]*>){3}[\s\S]*?<\/tr>)/ig;
+
     if(totalName){
-        var re1 = new RegExp('<div[^>]+class="td_def"[^>]*>(?:<div[^>]*>|[^<]|<nobr[^>]*>)*' + optionName + '(?:(?:[\\s\\S](?!<tr))*?<td[^>]*>){1}([\\s\\S]*?)</td>', 'i');
-        sumParam(text, result, totalName, re1, replaceTagsAndSpaces, parseBalance);
+        var re1 = new RegExp('<tr[^>]*>\\s*<td[^>]*>\\s*<div[^>]+class="td_def"[^>]*>(?:<div[^>]*>|[^<]|<nobr[^>]*>)*' + optionName + '(?:(?:[\\s\\S](?!<tr))*?<td[^>]*>){1}([\\s\\S]*?)</td>', 'ig');
+        sumParam(text, result, totalName, re1, replaceTagsAndSpaces, parseFunc);
     }
     if(leftName){
-        var re2 = new RegExp('<div[^>]+class="td_def"[^>]*>(?:<div[^>]*>|[^<]|<nobr[^>]*>)*' + optionName + '(?:(?:[\\s\\S](?!<tr))*?<td[^>]*>){2}([\\s\\S]*?)</td>', 'i');
-        sumParam(text, result, leftName, re2, replaceTagsAndSpaces, parseBalance);
+        var re2 = new RegExp('<tr[^>]*>\\s*<td[^>]*>\\s*<div[^>]+class="td_def"[^>]*>(?:<div[^>]*>|[^<]|<nobr[^>]*>)*' + optionName + '(?:(?:[\\s\\S](?!<tr))*?<td[^>]*>){2}([\\s\\S]*?)</td>', 'ig');
+        sumParam(text, result, leftName, re2, replaceTagsAndSpaces, parseFunc);
     }
 }
 
@@ -837,6 +836,43 @@ function html_entity_decode(str)
     return tarea.value;
 }
 
+/**
+ * Получает значение, подходящее под регулярное выражение regexp, производит 
+ * в нем замены replaces, результат передаёт в функцию parser, 
+ * а затем записывает результат в счетчик с именем param в result
+ * Результат в result помещается только если счетчик выбран пользователем 
+ * в настройках аккаунта
+ * 
+ * если result и param равны null, то значение просто возвращается.
+ * eсли parser == null, то возвращается результат сразу после замен
+ * если replaces == null, то замены не делаются
+ * 
+ * replaces - массив, нечетные индексы - регулярные выражения, четные - строки, 
+ * на которые надо заменить куски, подходящие под предыдущее регулярное выражение
+ * см. например replaceTagsAndSpaces
+ */
+
+function getParam (html, result, param, regexp, replaces, parser) {
+	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
+		return;
+
+	var matches = regexp ? regexp.exec (html) : [html, html], value;
+	if (matches) {
+		value = matches[1];
+		if (replaces) {
+			for (var i = 0; i < replaces.length; i += 2) {
+				value = value.replace (replaces[i], replaces[i+1]);
+			}
+		}
+		if (parser)
+			value = parser (value);
+
+    if(param)
+      result[param] = value;
+	}
+   return value
+}
+
 function sumParam (html, result, param, regexp, replaces, parser, do_replace) {
 	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param))){
             if(do_replace)
@@ -917,7 +953,7 @@ function parseTraffic(text){
     else if(textval.length > 5)
       val = Math.round(val*10)/10;
 
-    AnyBalance.trace('Parsing traffic (' + val + ') from: ' + text);
+    AnyBalance.trace('Parsing traffic (' + val + ') from: ' + text + ' (' + _text + ')');
     return val;
 }
 

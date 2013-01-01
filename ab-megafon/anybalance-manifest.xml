@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="2.5" version="47">ab-megafon</id>
+  <id major_version="2.5" version="48">ab-megafon</id>
   <name>Мегафон</name>
   <description>
     Получает баланс, бонусный баланс, минуты, трафик, SMS на телефоне и многое другое. Поддерживаются все филиалы.
@@ -24,7 +24,10 @@
   </files>
   <counters>
     <counter id="balance" name="Баланс" units="р"/>
-    <counter id="mins_left" name="Бесплатные минуты" units="мин" type="time_interval"/>
+    <counter id="mins_left" name="Бесплатные минуты" units="мин" type="time_interval" format="{@MIN}"/>
+    <counter id="mins_country_left" name="Минуты по России" units="мин" type="time_interval" format="{@MIN}"/>
+    <counter id="mins_sng_left" name="Минуты по СНГ" units="мин" type="time_interval" format="{@MIN}"/>
+    <counter id="mins_compet_left" name="Минуты на МТС,Билайн,Скайлинк" units="мин" type="time_interval" format="{@MIN}"/>
     <counter id="internet_left" name="Интернет (осталось)" units="Mb"/>
     <counter id="sms_left" name="Включенные SMS"/>
     <counter id="bonus_balance" name="Бонусный баланс"/>
@@ -33,7 +36,10 @@
     <counter id="gb_with_you" name="Гигабайт в дорогу (Столица)" units="Mb"/>
     <counter id="internet_cur" name="Интернет (использовано)" units="Mb"/>
     <counter id="internet_total" name="Интернет (всего)" units="Mb"/>
-    <counter id="mins_total" name="Бесплатные минуты (всего)" units="мин" type="time_interval"/>
+    <counter id="mins_total" name="Бесплатные минуты (всего)" units="мин" type="time_interval" format="{@MIN}"/>
+    <counter id="mins_country_total" name="Минуты по России (всего)" units="мин" type="time_interval" format="{@MIN}"/>
+    <counter id="mins_sng_total" name="Минуты по СНГ (всего)" units="мин" type="time_interval" format="{@MIN}"/>
+    <counter id="mins_compet_total" name="Минуты на МТС,Билайн,Скайлинк (всего)" units="мин" type="time_interval" format="{@MIN}"/>
     <counter id="sms_total" name="Включенные SMS (всего)"/>
     <counter id="handygift_total" name="Нужный подарок - всего (Поволжье)" units="р"/>
     <counter id="sub_scl" name="Начислено за звонки" units="р"/>

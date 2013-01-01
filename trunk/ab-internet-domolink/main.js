@@ -775,7 +775,7 @@ function domolinkudm(region,login,password) {
 
     html = AnyBalance.requestGet(regionurl + 'www.PageViewer?page_name=F_ADM_NET_INFO' + authorization);
     getParam(html, result, '__tariff', /<td[^>]*>\s*Тариф[\s\S]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'bonus', /<td[^>]*>\s*Абонент[\s\S]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'username', /<td[^>]*>\s*Абонент[\s\S]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
 
     var urlreppay=regionurl+"www.PageViewer?page_name=S*ADM_NET_REP_PAY"+authorization;
     if (AnyBalance.isAvailable ('lastpaysum') ||

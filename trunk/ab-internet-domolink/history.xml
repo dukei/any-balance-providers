@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change major_version="3" version="17" date="2013-01-01">
+       - Исправлены бонусные баллы и ФИО для Удмуртии
+    </change>
     <change major_version="3" version="16" date="2013-01-01">
        - Добавлена Удмуртия
     </change>

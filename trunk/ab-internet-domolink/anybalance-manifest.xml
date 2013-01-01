@@ -13,6 +13,7 @@
     Киров (https://j-cabinet.kirov.ru:4459/pls/base/)
     Нижний Новгород (http://abonent.nnov.volga.rt.ru)
     Мордовия (http://billing.saransk.ru)
+    Удмуртия (https://statservip.udmvt.ru)
 
   Новый личный кабинет (http://portal.center.rt.ru):
     Белгородский, Брянский, Владимирский, Воронежский, Ивановский, Калужский, Костромской, Курский, Липецкий, Московский, Орловский, Рязанский, Смоленский, Тамбовский, Тверской, Тульский, Ярославский
@@ -35,15 +36,16 @@
     <history>history.xml</history>
   </files>
   <counters>
-	<counter id="balance" name="Баланс" units="р."/>
-	<counter id="balanceTel" name="Баланс телефонной связи" units="р."/>
-	<counter id="mgmn" name="Потрачено на МГ/МН связь" units="р."/>
-    <counter id="license" name="Лицевой счет" type="text"/>
-	<counter id="monthlypay" name="Ежемесячная плата" units="р."/>
-	<counter id="lastpaysum" name="Сумма последней оплаты" units="р."/>
+	<counter id="balance" name="Баланс" units="р"/>
+	<counter id="balanceTel" name="Баланс телефонной связи" units="р"/>
+	<counter id="bonus" name="Бонусные баллы" units="б"/>
+	<counter id="mgmn" name="Потрачено на МГ/МН связь" units="р"/>
+        <counter id="license" name="Лицевой счет" type="text"/>
+	<counter id="monthlypay" name="Ежемесячная плата" units="р"/>
+	<counter id="lastpaysum" name="Сумма последней оплаты" units="р"/>
 	<counter id="lastpaydata" name="Дата последней оплаты" type="text"/>
 	<counter id="lastpaydesc" name="Описание последней оплаты" type="text"/>
-    <counter id="traffic" name="Трафик за период" type="text"/>
+        <counter id="traffic" name="Трафик за период" type="text"/>
 	<counter id="username" name="ФИО/Название организации" type="text"/>
   </counters>
   <keywords>

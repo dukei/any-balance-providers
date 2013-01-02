@@ -37,4 +37,13 @@
         defaultValue="api"
         dialogTitle="Получение данных">
     </ListPreference>
+    <ListPreference 
+        key="lang"
+        title="Язык отображения" 
+        summary="||{@s}" 
+	entries="Русский|Українська|English"
+	entryValues="ru|uk|en"
+        defaultValue="ru"
+        dialogTitle="Язык отображения данных">
+    </ListPreference>
 </PreferenceScreen>

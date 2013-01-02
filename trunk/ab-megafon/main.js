@@ -688,6 +688,8 @@ function megafonServiceGuidePhysical(filial, sessionid){
                      if(isset(i_l) && AnyBalance.isAvailable('internet_left'))
                          if(i_t || i_l) //Если всё по нулям, это может быть просто глюк мегафона
                              result.internet_left = (result.internet_left || 0) + i_l;
+
+                     getParam(obj, result, 'internet_till', /Срок действия до ([^'"]*)/i, replaceTagsAndSpaces, parseDate);
                 }else{
                     AnyBalance.trace("Не удаётся найти информацию по услугам GPRS...");
                 }
@@ -918,14 +920,19 @@ function parseBalance(text){
     return val;
 }
 
+/**
+ *  Получает дату из строки
+ */
 function parseDate(str){
-    var matches = /(\d+)[^\d](\d+)[^\d](\d+)/.exec(str);
-    var time = 0;
+    var matches = /(?:(\d+)[^\d])?(\d+)[^\d](\d{2,4})(?:[^\d](\d+):(\d+)(?::(\d+))?)?/.exec(str);
     if(matches){
-	  time = (new Date(+matches[3], matches[2]-1, +matches[1])).getTime();
+          var year = +matches[3];
+          var date = new Date(year < 1000 ? 2000 + year : year, matches[2]-1, +(matches[1] || 1), matches[4] || 0, matches[5] || 0, matches[6] || 0);
+	  var time = date.getTime();
+          AnyBalance.trace('Parsing date ' + date + ' from value: ' + str);
+          return time;
     }
-    AnyBalance.trace('Parsing date ' + new Date(time) + 'from value: ' +  str);
-    return time;
+    AnyBalance.trace('Failed to parse date from value: ' + str);
 }
 
 function parseTraffic(text){

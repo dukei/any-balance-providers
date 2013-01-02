@@ -6,28 +6,6 @@ Life:) — GSM оператор мобильной связи.
 Система Самообслуживания: https://my.life.com.ua/web/login.jsp?locale=ua
 */
 
-function getParam (html, result, param, regexp, replaces, parser) {
-	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
-		return;
-
-	var value = regexp.exec (html);
-	if (value) {
-		value = value[1];
-		if (replaces) {
-			for (var i = 0; i < replaces.length; i += 2) {
-				value = value.replace (replaces[i], replaces[i+1]);
-			}
-		}
-		if (parser)
-			value = parser (value);
-
-    if(param)
-      result[param] = value;
-    else
-      return value
-	}
-}
-
 function parseBalanceLeft(str){
     var val = parseBalance(str);
     if(isset(val)){
@@ -35,9 +13,6 @@ function parseBalanceLeft(str){
     }
     return val;
 }
-
-var replaceTagsAndSpaces = [/<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, ''];
-var replaceFloat = [/\s+/g, '', /,/g, '.'];
 
 function createParams(params){
     var str = '';
@@ -128,7 +103,7 @@ function lifeGet(method, params){
 function parseTrafficMb(str){
     var val = parseBalance(str);
     if(isset(val))
-        val = Math.round(val/1024*100)/100;
+        val = Math.round(val/1024/1024*100)/100;
     return val;
 }
 

@@ -88,6 +88,7 @@ var g_regions = {
     volgograd: mainUln,
     vologda: mainSpb,
     voronezh: mainUln,
+    ekt: mainUln,
     kaliningrad: mainSpb,
     karel: mainSpb,
     kemerovo: mainUln,

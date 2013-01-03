@@ -27,8 +27,11 @@ function main(){
 
     var result = {success: true};
 
-    getParam(html, result, 'balance', /<td[^>]*>Состояние счета[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, '__tariff', /<td[^>]*>Вид программы[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'balance', /<strong[^>]*>([^<]*)<\/strong>\s*Наградные мили/i, replaceTagsAndSpaces, parseBalance);
+    if(AnyBalance.isAvailable('balance') && !isset(result.balance))
+        getParam(html, result, 'balance', /<td[^>]*>Состояние счета[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+
+    getParam(html, result, '__tariff', /<td[^>]*>(?:Вид программы|Уровень участия)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'cardnum', /Номер карты[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
 
     AnyBalance.setResult(result);

@@ -114,3 +114,10 @@ function createFormParams(html, process){
 
 
 
+/**
+ *  Проверяет, определено ли значение переменной
+ */
+function isset(v){
+    return typeof(v) != 'undefined';
+}
+

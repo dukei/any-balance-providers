@@ -56,9 +56,12 @@ function main(){
 
 //    AnyBalance.trace(html);
     
-    var error = getParam(html, null, null, /<div[^>]*class="errmsg"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
-    if(error)
-      throw new AnyBalance.Error(error);
+    if(!/\/logout/i.test(html)){
+        var error = getParam(html, null, null, /<div[^>]*class="errmsg"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+        if(error)
+          throw new AnyBalance.Error(error);
+        throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
+    }
     
     var result = {success: true};
 
@@ -67,6 +70,9 @@ function main(){
     getParam(html, result, '__tariff', /Тарифный план:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
     getParam(html, result, 'tarification', /Тарификация:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
     getParam(html, result, 'phone', /Номер телефона:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+    getParam(html, result, 'sms', /Остаток SMS:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'mms', /Остаток MMS:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'min', /Пакеты голосовых услуг:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 
     AnyBalance.setResult(result);
 }

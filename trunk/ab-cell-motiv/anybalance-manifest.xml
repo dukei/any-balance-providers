@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-cell-motiv</id>
+  <id version="2">ab-cell-motiv</id>
   <name>Мотив Телеком</name>
   <description>
     Получает баланс и информацию о тарифном плане для сотового оператора Мотив.
@@ -11,7 +11,7 @@
     номер 1070. В ответ Вы получите пароль для доступа в ЛИСА. Эта возможность не предоставляется 
     корпоративным абонентам.
 
-    В настоящее время поддерживается вход в ЛИСУ только по номеру телефона. Не поддерживаются остатки по пакетам услуг.
+    В настоящее время поддерживается вход в ЛИСУ только по номеру телефона. Не поддерживается остаток GPRS.
     Если вам этого не хватает, пожалуйста, напишите письмо автору провайдера для доработки.
   </description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
@@ -19,12 +19,16 @@
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
     <js>main.js</js>
+    <history>history.xml</history>
   </files>
   <counters>
     <counter id="balance" name="Баланс" units="р"/>
+    <counter id="min" name="Минуты" units=" мин"/>
+    <counter id="sms" name="SMS" units=" sms"/>
+    <counter id="mms" name="MMS" units=" mms"/>
+    <counter id="phone" name="Номер телефона" type="text"/>
     <counter id="userName" name="Владелец" type="text"/>
     <counter id="tarification" name="Тарификация" type="text"/>
-    <counter id="phone" name="Номер телефона" type="text"/>
   </counters>
   <keywords>
     Сотовый телефон, мобильный, мобильник, мотив, екатеринбург, пермь

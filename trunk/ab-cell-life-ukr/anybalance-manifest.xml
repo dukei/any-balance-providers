@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="10">ab-cell-life-ukr</id>
+  <id version="11">ab-cell-life-ukr</id>
   <name>Life:) Украина</name>
   <description>
     Мониторинг баланса мобильного оператора Life:) (Украина)
@@ -35,6 +35,7 @@
     <counter id="mms_uk" name="Бесплатные MMS по Украине" type="numeric" units=" ммс"/>
     <counter id="mms_life" name="Бесплатные MMS в сети Life:)" type="numeric" units=" ммс"/>
     <counter id="mins_life" name="Бесплатные минуты по сети Life:)" type="time_interval" format="{@MIN}" units=" мин"/>
+    <counter id="mins_uk" name="Бесплатные минуты на номера других операторов и фиксированной связи Украины" type="time_interval" format="{@MIN}" units=" мин"/>
     <counter id="mins_fixed" name="Бесплатные минуты на номера фиксированной связи Украины" type="time_interval" format="{@MIN}" units=" мин"/>
     <counter id="mins_family" name="Бесплатные минуты на родные номера" type="time_interval" format="{@MIN}" units=" мин"/>
     <counter id="till" name="Действителен до" type="time" format="dd/MM/yyyy"/>

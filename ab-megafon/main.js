@@ -315,21 +315,34 @@ function megafonTrayInfo(filial){
         
     }
     
-    if(AnyBalance.isAvailable('mins_left','mins_total')){
+    if(AnyBalance.isAvailable('mins_left','mins_total','sms_left','sms_total')){
         var $val = $threads.filter(':has(NAME:contains(" мин")), :has(NAME:contains("Телефония исходящая")), :has(NAME:contains("Исходящая телефония"))');
         AnyBalance.trace('Found minutes discounts: ' + $val.length);
         $val.each(function(){
             var $e = $(this);
             var si = $e.parent().find('PLAN_SI').text();
-            if(/Байт/i.test(si))
+            var plan = $e.parent().find('PLAN_NAME').text();
+            var valAvailable = $e.find('VOLUME_AVAILABLE').text();
+            var valTotal = $e.find('VOLUME_TOTAL').text();
+            if(/Байт/i.test(si)){
+                AnyBalance.trace('Пропускаем потенциальный глюк мегафона, Исходящая телефония, но написано байт, а должны быть минуты: ' + plan + ' - ' + valAvailable + '/' + valTotal);
                 return; //Это глюк мегафона, написано байт, а должны быть минуты
-            if(AnyBalance.isAvailable('mins_left')){
-                var val = $e.find('VOLUME_AVAILABLE').text();
-                if(val) result.mins_left = (result.mins_left || 0) + parseInt(val)*60;
             }
-            if(AnyBalance.isAvailable('mins_total')){
-                var val = $e.find('VOLUME_TOTAL').text();
-                if(val) result.mins_total = (result.mins_total || 0) + parseInt(val)*60;
+            if(plan && /SMS/i.test(plan)){
+                AnyBalance.trace('Обходим потенциальный глюк мегафона, Исходящая телефония, но написано SMS, а должны быть минуты: ' + plan + ' - ' + valAvailable + '/' + valTotal);
+                if(isset(valAvailable) && AnyBalance.isAvailable('sms_left')){
+                    result.sms_left = (result.sms_left || 0) + parseInt(valAvailable);
+                }
+                if(isset(valTotal) && AnyBalance.isAvailable('sms_total')){
+                    result.sms_total = (result.sms_total || 0) + parseInt(valTotal);
+                }
+            }else{
+                if(isset(valAvailable) && AnyBalance.isAvailable('mins_left')){
+                    result.mins_left = (result.mins_left || 0) + parseInt(valAvailable)*60;
+                }
+                if(isset(valTotal) && AnyBalance.isAvailable('mins_total')){
+                    result.mins_total = (result.mins_total || 0) + parseInt(valTotal)*60;
+                }
             }
         });
     }

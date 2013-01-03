@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="2.5" version="49">ab-megafon</id>
+  <id major_version="2.5" version="50">ab-megafon</id>
   <name>Мегафон</name>
   <description>
     Получает баланс, бонусный баланс, минуты, трафик, SMS на телефоне и многое другое. Поддерживаются все филиалы.

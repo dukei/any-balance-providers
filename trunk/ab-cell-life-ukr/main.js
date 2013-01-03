@@ -158,6 +158,8 @@ function mainApi(){
         sumParam(xml, result, 'mins_life', /<balance[^>]+code="Bundle_Voice_Onnet"[^>]*amount="([^"]*)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	sumParam(xml, result, 'mins_life', /<balance[^>]+code="Bundle_Voice_Onnet_West"[^>]*amount="([^"]*)/ig, replaceTagsAndSpaces, parseBalanceLeft, aggregate_sum);
 	sumParam(xml, result, 'mins_fixed', /<balance[^>]+code="Bundle_Voice_Pstn[^>]*amount="([^"]*)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+	//Бесплатные минуты [другие операторы и фикс. сеть Украины]
+	sumParam(xml, result, 'mins_fixed', /<balance[^>]+code="Bundle_Voice_Offnet[^>]*amount="([^"]*)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     }
         
     AnyBalance.setResult(result);

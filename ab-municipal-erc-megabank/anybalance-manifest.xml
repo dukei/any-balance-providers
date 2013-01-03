@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="7">ab-municipal-erc-megabank</id>
+  <id major_version="1.0" version="8">ab-municipal-erc-megabank</id>
   <name>ЕРЦ Мегабанк</name>
   <description>
     Единый расчетный центр "Мегабанка" – банковский продукт по оплате жилищно-коммунальных услуг, который разработан и внедрен в Харькове, Кировограде, Полтаве, Чернигове, Черкассах, Новой Каховке Херсонской области, Львове, Донецке, Борисполе. Идет работа по внедрению технологии ЕРЦ в Симферополе и Феодосии (АР Крым). Через систему ЕРЦ "Мегабанка" оплачивают коммунальные услуги более 12% всех плательщиков Украины.
@@ -17,15 +17,15 @@
     <history>history.xml</history>
   </files>
   <counters>
-    <counter id="debt" name="Общий долг" units=" грн"/>
-    <counter id="rent" name="Квартплата" units=" грн"/>
-    <counter id="heating" name="Отопление" units=" грн"/>
-    <counter id="sewerage" name="Канализация" units=" грн"/>
-    <counter id="gas" name="Газ" units=" грн"/>
-    <counter id="garbage" name="Вывоз ТБО" units=" грн"/>
-    <counter id="cold_water" name="Холодная вода" units=" грн"/>
-    <counter id="hot_water" name="Горячая вода" units=" грн"/>
-    <counter id="ukrtelekom" name="Укртелеком" units=" грн"/>
+    <counter id="debt" name="Общий долг" suffix=" ₴" type="numeric"/>
+    <counter id="rent" name="Квартплата" suffix=" ₴" type="numeric"/>
+    <counter id="heating" name="Отопление" suffix=" ₴" type="numeric"/>
+    <counter id="sewerage" name="Канализация" suffix=" ₴" type="numeric"/>
+    <counter id="gas" name="Газ" suffix=" ₴" type="numeric"/>
+    <counter id="garbage" name="Вывоз ТБО" suffix=" ₴" type="numeric"/>
+    <counter id="cold_water" name="Холодная вода" suffix=" ₴" type="numeric"/>
+    <counter id="hot_water" name="Горячая вода" suffix=" ₴" type="numeric"/>
+    <counter id="ukrtelekom" name="Укртелеком" suffix=" ₴" type="numeric"/>
     <counter id="account" name="Лицевой счет" type="text"/>
     <counter id="address" name="Адрес" type="text"/>
     <counter id="name" name="Ф.И.О." type="text"/>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Фамилия" 
+        positiveButtonText="ОК" 
+        summary="||{@s}" 
+        dialogTitle="Фамилия" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите фамилию для входа в личный кабинет."
+        inputType="text"
+        key="surname">
+    </EditTextPreference>
+    <EditTextPreference 
+        title="№ карты" 
+        positiveButtonText="ОК" 
+        summary="||{@s}" 
+        dialogTitle="№ карты" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите номер карты для входа в личный кабинет."
+        inputType="number"
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="ПИН"
+        negativeButtonText="Отмена"
+        title="ПИН"
+        summary="||***********"
+        dialogMessage="Введите ПИН, используемый для входа в личный кабинет."
+        inputType="numberPassword">
+    </EditTextPreference>
+</PreferenceScreen>

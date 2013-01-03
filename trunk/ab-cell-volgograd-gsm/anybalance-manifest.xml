@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="1">ab-cell-volgograd-gsm</id>
-  <name>ЗАО «Волгоград-GSM» (Ростелеком - Волгоград)</name>
+  <id version="2">ab-cell-volgograd-gsm</id>
+  <name>Волгоград-GSM (Ростелеком)</name>
   <description>
   Волгоград (Ростелеком - Волгоград)
   Уважаемые абоненты ЗАО "Волгоград-GSM", предлагаем Вам воспользоваться Личным кабинетом (ИССА) для контроля состояния своего лицевого счета. 
@@ -10,11 +10,14 @@
   В случае неправильного ввода пароля 3 раза подряд доступ к системе блокируется на 30 мин.
   Номер телефона - это 10 цифр в формате 902XXXXXXX или 904XXXXXXX.
   </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <author>paskoav &lt;paskoav@gmail.com&gt;</author>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
+    <js>library.js</js>
     <js>main.js</js>
+    <history>history.xml</history>
   </files>
   <counters>
     <counter id="ActualBalance" name="Актуальный баланс" units="руб."/>
@@ -22,6 +25,8 @@
     <counter id="BonusBalance" name="Количество бонусных баллов на счету" units="бал"/>
     <counter id="DateOff" name="Предположительная дата отключения без поступления средств менее, чем через" units="дн."/>
     <counter id="MinBalabce" name="Минимальный баланс для подключения" units="руб."/>
+    <counter id="min" name="Накоплено исходящих" units="мин"/>
+    <counter id="sms" name="Бесплатные SMS" units="sms"/>
   </counters>
   <keywords>
     Сотовый телефон, мобильный, мобильник, Волгоград, Волгоградская область, ИССА, ЗАО «Волгоград-GSM», Ростелеком

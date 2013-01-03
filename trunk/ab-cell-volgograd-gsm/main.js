@@ -1,49 +1,46 @@
-﻿function main(){
-	var prefs = AnyBalance.getPreferences();
-	var login = prefs.login;
-	var password = prefs.password;
-	var Postinfo = AnyBalance.requestPost('https://issa.volgogsm.ru/cgi-bin/cgi.exe?function=is_login', {
-		Lang:2,
-		mobnum:login,
-		Password:password,
-		x:27,
-		y:13
-	});
-	var info = AnyBalance.requestGet('https://issa.volgogsm.ru/cgi-bin/cgi.exe?function=is_account');
-	if(Postinfo.search('Ошибка аутентификации') != -1){
-		throw new AnyBalance.Error('Введен неверный номер или пароль, либо этот номер заблокирован');
-	};
-	var result = {success: true};
-	var regexp1 = new RegExp('Актуальный баланс:[^&]*&nbsp;(\\-?\\d*\\.?\\d*)');
-        var matches1;
-	var regexp2 = new RegExp('Средняя скорость расходования средств по лицевому счету в день:[^&]*&nbsp;(\\-?\\d*\\.?\\d*)');
-        var matches2;
-	var regexp3 = new RegExp('Количество бонусных баллов на счету:[^&]*&nbsp;(\\-?\\d*\\.?\\d*)');
-        var matches3;
-	var regexp4 = new RegExp('Предположительная дата отключения без поступления средств менее, чем через:[^&]*&nbsp;(\\-?\\d*\\.?\\d*)');
-        var matches4;
-	var regexp5 = new RegExp('Минимальный баланс для подключения:[^&]*&nbsp;(\\-?\\d*\\.?\\d*)');
-        var matches5;
-		
-	if(matches1 = info.match(regexp1)){
-		if(AnyBalance.isAvailable('ActualBalance'))
-			result.ActualBalance = parseFloat(matches1[1]);
-	};
-	if(matches2 = info.match(regexp2)){
-		if(AnyBalance.isAvailable('DayRashod'))
-			result.DayRashod = parseFloat(matches2[1]);
-	};
-	if(matches3 = info.match(regexp3)){
-		if(AnyBalance.isAvailable('BonusBalance'))
-			result.BonusBalance = parseFloat(matches3[1]);
-	};
-	if(matches4 = info.match(regexp4)){
-		if(AnyBalance.isAvailable('DateOff'))
-			result.DateOff = parseFloat(matches4[1]);
-	};
-	if(matches5 = info.match(regexp5)){
-		if(AnyBalance.isAvailable('MinBalabce'))
-			result.MinBalabce = parseFloat(matches5[1]);
-	};
-	AnyBalance.setResult(result);
+﻿/**
+Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
+
+Текущий баланс у сотового оператора НТК.
+
+сайт оператора: http://www.vntc.ru
+ИССА оператора: https://issa.vntc.ru
+*/
+
+function main(){
+    var prefs = AnyBalance.getPreferences();
+    
+    var baseurl = "https://issa.volgogsm.ru/cgi-bin/cgi.exe?";
+
+    AnyBalance.trace("Trying to enter issa at address: " + baseurl + "function=is_login");
+    var html = AnyBalance.requestPost(baseurl + "function=is_login", {
+        mobnum: prefs.login,
+        Password: prefs.password
+    });
+    
+    var error = getParam(html, null, null, /<table[^>]+class=['"]?centorize-td[^>]*>([\s\S]*?)<\/tr>/i, replaceTagsAndSpaces, html_entity_decode);
+    if(error){
+        throw new AnyBalance.Error(error);
+    }
+
+    var result = {success: true};
+    
+    html = AnyBalance.requestGet(baseurl + "function=is_account");
+    if(!/\?function=is_exit/i.test(html)){
+        throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+    }
+
+    getParam(html, result, 'ActualBalance', /Актуальный баланс:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'DayRashod', /Средняя скорость расходования средств по лицевому счету в день:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'BonusBalance', /Количество бонусных баллов на счету:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'MinBalabce', /Минимальный баланс для подключения:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'DateOff', /Предположительная дата отключения без поступления средств менее, чем через:([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+
+    sumParam(html, result, 'sms', /остаток Бонус (?:&quot;|")\d+ SMS(?:&quot;|") составляет (\d+) SMS/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    sumParam(html, result, 'sms', /у Вас остаток (\d+) для услуги Бонус (?:&quot;|")\d+ SMS(?:&quot;|")/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    sumParam(html, result, 'min', /накоплено исходящий трафик составляет (\d+) мин/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+
+    getParam(html, result, '__tariff', /issa\/tariff\.gif[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode); 
+    
+    AnyBalance.setResult(result);
 }

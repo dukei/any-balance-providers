@@ -3,7 +3,7 @@
     <EditTextPreference
         title="Логин"
         positiveButtonText="ОК"
-        summary="Номер телефона (10 цифр)||{@s}\n"
+        summary="|Номер телефона (10 цифр)|{@s}\n"
         dialogTitle="Номер телефона"
         negativeButtonText="Отмена"
         dialogMessage="Введите номер вашего телефона для входа в ИССА (10 цифр), например 9021234567"
@@ -13,7 +13,7 @@
     <EditTextPreference
 		title="Пароль"
         positiveButtonText="ОК"
-        summary="Пароль для входа в ИССА||***********\n"
+        summary="|Пароль для входа в ИССА|***********\n"
         dialogTitle="Пароль"
         negativeButtonText="Отмена"
         dialogMessage="Для входа в ИССА необходимо ввести пароль. При неправильном вводе пароля 3 раз подряд, вход в ИССА блокируется на 30 минут."

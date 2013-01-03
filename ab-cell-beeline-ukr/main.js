@@ -6,6 +6,13 @@
 Личный кабинет: https://poslugy.beeline.ua/
 */
 
+function parseTrafficMb(str){
+    var val = parseBalance(str);
+    if(isset(val))
+        val = Math.round(val/1024/1024*100)/100;
+    return val;
+}
+
 function main(){
   var prefs = AnyBalance.getPreferences();
   var baseurl = "https://poslugy.beeline.ua/";
@@ -68,7 +75,10 @@ function main(){
   sumParam(html, result, 'minutebalance3', /.>(?:Минуты по условиям|Хвилини за умовами) ТП:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
   
   // Пакетные минуты по условиям ТП (по Украине)
-  sumParam(html, result, 'minutebalance4', /.>Пакетн(?:ые минуты по условиям|і хвилини за умовами) ТП:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);  
+  sumParam(html, result, 'minutebalance4', /.>Пакетн(?:ые минуты по условиям|і хвилини за умовами) ТП:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+  
+  // Остаток минут на Киевстар и Голден Телеком
+  sumParam(html, result, 'minutebalance5', /.>(?:Остаток минут для звонков на Киевстар и|Залишок хвилин для дзвінків на Київстар та) Голден Телеком:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 
   // Доплата за входящие звонки
   getParam(html, result, 'doplatabalance', /Доплата за вх(?:одящие зво|ідні дзві)нки:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
@@ -77,7 +87,9 @@ function main(){
   
   // Бонус Домашний Интернет
   getParam(html, result, 'bonusdominet', /(?:От услуги "Домашний И|Від послуги "Домашній І)нтернет":[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-
+  
+  //Остаток бонусного объема данных
+  sumParam(html, result, 'bonusinet', /.>(?:Остаток бонусного объема данны|Залишок бонусного об\'єму дани)х:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseTrafficMb, aggregate_sum);
 
   AnyBalance.setResult(result);
 }

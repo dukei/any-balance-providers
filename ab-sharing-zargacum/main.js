@@ -7,6 +7,17 @@
 Личный кабинет: https://billing.zargacum.net
 */
 
+function getPacket(html, name, result, counter){
+    //Регулярное выражение для получения строки таблицы с пакетом с именем name
+    var re = new RegExp('(<!-- \\*\\*\\*ccArray(?:[\\s\\S](?!</tr))*?' + name + '[\\s\\S]*?</tr>)', 'i');
+    var tr = getParam(html, null, null, re);
+    if(tr){
+        //Нашли пакет
+        getParam(tr, result, counter, /\[b_price\] => (.*)/, null, parseBalance);
+        getParam(tr, result, counter + '_till', /\[ActiveTill\] => (.*)/, null, parseDateISO);
+    }
+}
+
 function main(){
     var prefs = AnyBalance.getPreferences();
 
@@ -32,6 +43,10 @@ function main(){
     getParam(html, result, 'balance', /Баланс:([\S\s]*?)[\(\|<]/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, '__tariff', /Тип учетки([\S\s]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'bonus', /Бонус\s*<[^>]*>\s*:([\S\s]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+
+    //Обязательно надо экранировать служебные символы в названии пакета, потому что оно вставляется в регулярное выражение
+    getPacket(html, 'VIP \\(36e\\) ALL', result, 'vip36e');
+    getPacket(html, 'SRG SSR \\+ HD \\(13e\\)', result, 'srgssrhd36e');
 
     AnyBalance.setResult(result);
 }

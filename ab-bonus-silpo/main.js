@@ -28,6 +28,20 @@ function getParam (html, result, param, regexp, replaces, parser) {
 	}
 }
 
+function parseDate(str){
+  //Рассчитывает на библиотеку date.js
+  var dt = Date.parse(str);
+  if(!dt){
+      AnyBalance.trace('Can not parse date from ' + str);
+      return;
+  }
+
+  dt = new Date(dt);
+  
+  AnyBalance.trace('Parsed date ' + dt.toString() + ' from ' + str);
+  return dt.getTime(); 
+}
+
 var replaceTagsAndSpaces = [/<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
 var replaceFloat = [/\s+/g, '', /,/g, '.'];
 
@@ -92,6 +106,8 @@ function main(){
 				result.bonus_perevod = parseFloat(matches[1]);
 			}
 		}
+		//Дата перерасчета бонусов
+		getParam(html, result, 'bonus_conversion', /<td>Наступне перерахування Балів в Бонус<\/td>\s*<td>Наступна доставка Сертифікатів<\/td>\s*<\/tr>\s*<tr>\s*<td>([^<]*)<\/td>/i, replaceTagsAndSpaces, parseDate);
 		AnyBalance.setResult(result);
 	} else { 
 		var error = getParam(html, null, null, /<\/script>([\s\S]*?)<br[^>]*>/i, replaceTagsAndSpaces);

@@ -376,6 +376,7 @@ function doNewAccountPhysic(html){
     if(/Откроется справочник регионов, в котором щелкните по названию выбранного региона/.test(html)){
         //Тупой сбер предлагает обязательно выбрать регион оплаты. Вот навязчивость...
         //Ну просто выберем все регионы
+        var baseurl = 'https://online.sberbank.ru';
         html = AnyBalance.requestPost(baseurl + '/PhizIC/region.do', {id: -1, operation: 'button.save'});
     }
 

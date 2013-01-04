@@ -29,37 +29,44 @@ filial_info[MEGA_FILIAL_MOSCOW] = {
 filial_info[MEGA_FILIAL_SIBIR] = {
   name: 'Сибирский филиал',
   site: "https://sibsg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%",
+  widget: 'https://sibsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
   func: megafonTrayInfo
 };
 filial_info[MEGA_FILIAL_NW] = {
   name: 'Северо-западный филиал',
-  site: 'https://serviceguide.megafonnw.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%',
-  func: megafonTrayInfo
+  site: 'https://szfsg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%',
+  widget: 'https://szfsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
+  func: megafonTrayInfo,
 };
 filial_info[MEGA_FILIAL_FAREAST] = {
   name: 'Дальневосточный филиал',
   site: 'https://dvsg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%',
+  widget: 'https://dvsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
   func: megafonTrayInfo
 };
 filial_info[MEGA_FILIAL_VOLGA] = {
   name: 'Поволжский филиал',
   site: "https://volgasg.megafon.ru/",
   func: megafonServiceGuide,
+  widget: 'https://volgasg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
   tray: 'https://volgasg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%'
 };
 filial_info[MEGA_FILIAL_KAVKAZ] = {
   name: 'Кавказский филиал',
   site: "https://kavkazsg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%",
+  widget: 'https://kavkazsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
   func: megafonTrayInfo
 };
 filial_info[MEGA_FILIAL_CENTRAL] = {
   name: 'Центральный филиал',
   site: 'https://centersg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%',
+  widget: 'https://centersg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
   func: megafonTrayInfo
 };
 filial_info[MEGA_FILIAL_URAL] = {
   name: 'Уральский филиал',
   site: 'https://uralsg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%',
+  widget: 'https://uralsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
   func: megafonTrayInfo
 };
 
@@ -168,7 +175,7 @@ function getFilial(number){
     });
 
 //    Мегафон сделал сервис для определения филиала, так что попытаемся обойтись им    
-    var region = sumParam(html, null, null, /<URL>https?:\/\/(\w+)\./i);
+    var region = getParam(html, null, null, /<URL>https?:\/\/(\w+)\./i);
     if(region && filial_info[region]){
 	return filial_info[region];
     }else{
@@ -237,7 +244,7 @@ function getTrayXml(filial, address){
     if(prefs.__dbg_html)
         info = prefs.__dbg_html;
     else
-        info = AnyBalance.requestGet(address.replace(/%LOGIN%/g, prefs.login).replace(/%PASSWORD%/g, prefs.password), g_headers);
+        info = AnyBalance.requestGet(address.replace(/%LOGIN%/g, prefs.login).replace(/%PASSWORD%/g, encodeURIComponent(prefs.password)), g_headers);
         
     
     if(/<h1>Locked<\/h1>/.test(info)){
@@ -357,19 +364,39 @@ function megafonTrayInfo(filial){
             var total = $val.first().find('VOLUME_TOTAL').text();
             total = parseInt(total);
 
-            if(AnyBalance.isAvailable('interet_left')){
-                result.internet_left = parseTraffic(left + name);
+            if(AnyBalance.isAvailable('internet_left')){
+                result.internet_left = parseTrafficMy(left + name);
             }
-            if(AnyBalance.isAvailable('interet_total')){
-                result.internet_total = parseTraffic(total + name);
+            if(AnyBalance.isAvailable('internet_total')){
+                result.internet_total = parseTrafficMy(total + name);
             }
-            if(AnyBalance.isAvailable('interet_cur')){
-                result.internet_cur = parseTraffic((total - left) + name);
+            if(AnyBalance.isAvailable('internet_cur')){
+                result.internet_cur = parseTrafficMy((total - left) + name);
             }
         }
     }
 
     read_sum_parameters(result, $xml);
+
+    if(AnyBalance.isAvailable('bonus_balance', 'last_pay_sum', 'last_pay_date')){
+        //Некоторую инфу можно получить из яндекс виджета. Давайте попробуем.
+        var prefs = AnyBalance.getPreferences();
+        AnyBalance.setDefaultCharset('utf-8');
+        var html = AnyBalance.requestGet(filinfo.widget.replace(/%LOGIN%/g, prefs.login).replace(/%PASSWORD%/g, encodeURIComponent(prefs.password)), g_headers);
+        try{
+           var json = getParam(html, null, null, /^[^({]*\((\{[\s\S]*?\})\);?\s*$/);
+           if(!json)
+               throw new AnyBalance.Error('Неверный ответ сервера: ' + json);
+           json = getJsonEval(json);
+           if(!json.ok)
+               throw new AnyBalance.Error(json.error.text2);
+           getParam(json.ok.html, result, 'bonus_balance', /<div[^>]+class="bonus"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+           getParam(json.ok.html, result, 'last_pay_sum', /<div[^>]+class="payment_amount"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+           getParam(json.ok.html, result, 'last_pay_date', /<div>([^<]*)<\/div>\s*<div[^>]+class="payment_source"/i, replaceTagsAndSpaces, parseDate);
+        }catch(e){
+           AnyBalance.trace('Не удалось получить доп. счетчики из Яндекс.виджета: ' + e.message);
+        }
+    }
     
     AnyBalance.setResult(result);
     
@@ -451,7 +478,7 @@ function megafonServiceGuide(filial){
     if(!(matches = session.match(/<SESSION_ID>(.*?)<\/SESSION_ID>/i))){
         throw new AnyBalance.Error('Не удалось получить сессию'); //Странный ответ, может, можно переконнектиться потом
     }
-	
+
     var sessionid = matches[1];
 /*
     //Зачем-то мегафон вставил ещё один шаг авторизации...
@@ -466,7 +493,7 @@ function megafonServiceGuide(filial){
 
     //Мегафон завершается с ошибкой, если делать без таймаута.
     //Странно
-    sleep(5000);
+//    sleep(5000);
 
     if(prefs.corporate)
         megafonServiceGuideCorporate(filial, sessionid);
@@ -494,8 +521,8 @@ function megafonServiceGuideCorporate(filial, sessionid){
         throw new AnyBalance.Error('Мегафон не желает пускать в корпоративный портал, возможно, из-за того, что введена капча (ввод цифр с картинки) на входе. Если вы знаете способ войти в корпоративный портал без капчи, обращайтесь к автору провайдера по е-мейл.');
 
     //Получим объединение:
-    var asscid = sumParam(html, null, null, /<select[^>]+id="P_START_ASSC_ID"[^>]*>[\s\S]*?<option[^>]+value="([^"]*)"/i);
-    sumParam(html, result, '__tariff', /<select[^>]+id="P_START_ASSC_ID"[^>]*>[\s\S]*?<option[^>]+title="([^"]*)"/i, null, html_entity_decode);
+    var asscid = getParam(html, null, null, /<select[^>]+id="P_START_ASSC_ID"[^>]*>[\s\S]*?<option[^>]+value="([^"]*)"/i);
+    getParam(html, result, '__tariff', /<select[^>]+id="P_START_ASSC_ID"[^>]*>[\s\S]*?<option[^>]+title="([^"]*)"/i, null, html_entity_decode);
 
     html = AnyBalance.requestPost(baseurl + 'CPWWW/SC_CP_ACCOUNT_ASSC_AJAX', {
         P_ACCOUNT:'',
@@ -509,14 +536,14 @@ function megafonServiceGuideCorporate(filial, sessionid){
     });
 
     //Теперь получим баланс
-    sumParam(html, result, 'balance', /<div class="balance_[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'balance', /<div class="balance_[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 
     AnyBalance.setResult(result);
 }
 
 function checkTextForError(text){
     //Произошла ошибка при работе с системой.
-    var error = sumParam(text, null, null, /&#1055;&#1088;&#1086;&#1080;&#1079;&#1086;&#1096;&#1083;&#1072; &#1086;&#1096;&#1080;&#1073;&#1082;&#1072; &#1087;&#1088;&#1080; &#1088;&#1072;&#1073;&#1086;&#1090;&#1077; &#1089; &#1089;&#1080;&#1089;&#1090;&#1077;&#1084;&#1086;&#1081;[\s\S]*?<[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+    var error = getParam(text, null, null, /&#1055;&#1088;&#1086;&#1080;&#1079;&#1086;&#1096;&#1083;&#1072; &#1086;&#1096;&#1080;&#1073;&#1082;&#1072; &#1087;&#1088;&#1080; &#1088;&#1072;&#1073;&#1086;&#1090;&#1077; &#1089; &#1089;&#1080;&#1089;&#1090;&#1077;&#1084;&#1086;&#1081;[\s\S]*?<[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
     if(error)
         throw new AnyBalance.Error(error);
 }
@@ -552,11 +579,11 @@ function megafonServiceGuidePhysical(filial, sessionid){
     checkTextForError(text);
 	
     //Теперь получим баланс
-    sumParam(text, result, 'balance', /&#1041;&#1072;&#1083;&#1072;&#1085;&#1089;[\s\S]*?<div class="balance_[^>]*>([\S\s]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(text, result, 'balance', /&#1041;&#1072;&#1083;&#1072;&#1085;&#1089;[\s\S]*?<div class="balance_[^>]*>([\S\s]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
     //Теперь получим телефон
-    sumParam(text, result, 'phone', /<select[^>]*name="SUBSCRIBER_MSISDN"[\s\S]*?<option[^>]+value="([^"]*)[^>]*selected/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(text, result, 'phone', /<select[^>]*name="SUBSCRIBER_MSISDN"[\s\S]*?<option[^>]+value="([^"]*)[^>]*selected/i, replaceTagsAndSpaces, html_entity_decode);
     //Теперь получим персональный баланс
-    sumParam(text, result, 'prsnl_balance', /&#1055;&#1077;&#1088;&#1089;&#1086;&#1085;&#1072;&#1083;&#1100;&#1085;&#1099;&#1081; &#1073;&#1072;&#1083;&#1072;&#1085;&#1089;[\s\S]*?<div class="balance_[^>]*>([\S\s]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(text, result, 'prsnl_balance', /&#1055;&#1077;&#1088;&#1089;&#1086;&#1085;&#1072;&#1083;&#1100;&#1085;&#1099;&#1081; &#1073;&#1072;&#1083;&#1072;&#1085;&#1089;[\s\S]*?<div class="balance_[^>]*>([\S\s]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 
     //Начислено абонентской платы по тарифному плану:
     getPropValFloat(text, '&#1053;&#1072;&#1095;&#1080;&#1089;&#1083;&#1077;&#1085;&#1086; &#1072;&#1073;&#1086;&#1085;&#1077;&#1085;&#1090;&#1089;&#1082;&#1086;&#1081; &#1087;&#1083;&#1072;&#1090;&#1099; &#1087;&#1086; &#1090;&#1072;&#1088;&#1080;&#1092;&#1085;&#1086;&#1084;&#1091; &#1087;&#1083;&#1072;&#1085;&#1091;:',
@@ -606,10 +633,10 @@ function megafonServiceGuidePhysical(filial, sessionid){
              else
                  sumOption(matches[1], result, 'mins_total', 'mins_left', '.', parseMinutes);
         }else if(/GPRS|Интернет|Internet/i.test(name)){
-             sumOption(matches[1], result, 'internet_total', 'internet_left', '.', parseTraffic);
+             sumOption(matches[1], result, 'internet_total', 'internet_left', '.', parseTrafficMy);
              if(AnyBalance.isAvailable('internet_cur')){
-                 var total = getParam(matches[1], null, null, /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTraffic);
-                 var left = getParam(matches[1], null, null, /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTraffic);
+                 var total = getParam(matches[1], null, null, /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTrafficMy);
+                 var left = getParam(matches[1], null, null, /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTrafficMy);
                  if(isset(total) && isset(left))
                      result.internet_cur = (result.internet_cur || 0) + total - left;
              }
@@ -649,8 +676,8 @@ function megafonServiceGuidePhysical(filial, sessionid){
                         CUR_SUBS_MSISDN: phone,
                         SUBSCRIBER_MSISDN: phone
                     });
-        sumParam(text, result, 'last_pay_sum', /idHiddenSum[^>]*>\s*<table(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-        sumParam(text, result, 'last_pay_date', /idHiddenSum[^>]*>\s*<table(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+        getParam(text, result, 'last_pay_sum', /idHiddenSum[^>]*>\s*<table(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+        getParam(text, result, 'last_pay_date', /idHiddenSum[^>]*>\s*<table(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
     }
 	
     // Бонусный баланс (здесь более точно указано)
@@ -668,7 +695,7 @@ function megafonServiceGuidePhysical(filial, sessionid){
         }
 
         //Сгорают в текущем месяце
-        sumParam(text, result, 'bonus_burn', /<colgroup[^>]+grid_template_name="DEAD_BONUSES"(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+        getParam(text, result, 'bonus_burn', /<colgroup[^>]+grid_template_name="DEAD_BONUSES"(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     }
 
 
@@ -676,22 +703,22 @@ function megafonServiceGuidePhysical(filial, sessionid){
         // Продли скорость (Москва)
         if(AnyBalance.isAvailable(['internet_total','internet_cur', 'internet_left'])){
             text = AnyBalance.requestGet(baseurl + 'SCCEXTSYS/EXT_SYSTEM_PROXY_FORM?CHANNEL=WWW&SESSION_ID=' + sessionid + '&URI=3.');
-            var href = sumParam(text, null, null, /"gupscc_href"[^>]*href="([^"]*)"/i, [/&amp;/g, '&']);
+            var href = getParam(text, null, null, /"gupscc_href"[^>]*href="([^"]*)"/i, [/&amp;/g, '&']);
             if(href){
                 text = AnyBalance.requestGet(baseurl + 'SCCEXTSYS/' + href);
-                var obj = sumParam(text, null, null, /setXMLEntities\s*\(\s*(\{[\s\S]*?\})\s*\)/);
+                var obj = getParam(text, null, null, /setXMLEntities\s*\(\s*(\{[\s\S]*?\})\s*\)/);
                 if(obj){
                      //Сначала попытаемся получить из надписи, почему-то там точнее написано.
                      //Периодический объем. Расходуется. Осталось 3036.96 Мб из 3072.00 Мб. Срок действия до 07.12.2012 23:59:59
-                     var i_t = sumParam(obj, null, null, /Периодический объем.\s*Расходуется.\s*Осталось[^'"]*из([^'"]*)Срок/i, replaceTagsAndSpaces, parseTraffic);
+                     var i_t = getParam(obj, null, null, /Периодический объем.\s*Расходуется.\s*Осталось[^'"]*из([^'"]*)Срок/i, replaceTagsAndSpaces, parseTrafficMy);
                      if(!isset(i_t))
-                         i_t = sumParam(obj, null, null, /ALL_VOLUME[\s\S]*?value:\s*'([^']*)'/, replaceTagsAndSpaces, parseBalance);
+                         i_t = getParam(obj, null, null, /ALL_VOLUME[\s\S]*?value:\s*'([^']*)'/, replaceTagsAndSpaces, parseBalance);
 
-                     var i_c = sumParam(obj, null, null, /CUR_VOLUME[\s\S]*?value:\s*'([^']*)'/, replaceTagsAndSpaces, parseBalance);
+                     var i_c = getParam(obj, null, null, /CUR_VOLUME[\s\S]*?value:\s*'([^']*)'/, replaceTagsAndSpaces, parseBalance);
 
-                     var i_l = sumParam(obj, null, null, /Периодический объем.\s*Расходуется.\s*Осталось([^'"]*)из/i, replaceTagsAndSpaces, parseTraffic);
+                     var i_l = getParam(obj, null, null, /Периодический объем.\s*Расходуется.\s*Осталось([^'"]*)из/i, replaceTagsAndSpaces, parseTrafficMy);
                      if(!isset(i_l))
-                         i_l = sumParam(obj, null, null, /LAST_VOLUME[\s\S]*?value:\s*'([^']*)'/, replaceTagsAndSpaces, parseBalance);
+                         i_l = getParam(obj, null, null, /LAST_VOLUME[\s\S]*?value:\s*'([^']*)'/, replaceTagsAndSpaces, parseBalance);
 
                      if(i_t && AnyBalance.isAvailable('internet_total'))
                          result.internet_total = (result.internet_total || 0) + i_t;
@@ -715,8 +742,8 @@ function megafonServiceGuidePhysical(filial, sessionid){
     if(filial == MEGA_FILIAL_VOLGA){
         if(AnyBalance.isAvailable('internet_left')) {
             text = AnyBalance.requestGet(baseurl + 'SCCEXTSYS/EXT_SYSTEM_PROXY_FORM?CHANNEL=WWW&SESSION_ID=' + sessionid + '&URI=5.');
-            sumParam(text, result, 'internet_left', /<volume>([^<]*)<\/volume>/i, replaceTagsAndSpaces, parseBalance);
-            sumParam(text, result, 'internet_left', /осталось ([^<]*(?:[kmgкмг][бb]|байт|bytes))/i, replaceTagsAndSpaces, parseTraffic);
+            sumParam(text, result, 'internet_left', /<volume>([^<]*)<\/volume>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+            sumParam(text, result, 'internet_left', /осталось ([^<]*(?:[kmgкмг][бb]|байт|bytes))/i, replaceTagsAndSpaces, parseTrafficMy, aggregate_sum);
         }
     }
     
@@ -753,11 +780,11 @@ function sumOption(text, result, totalName, leftName, optionName, parseFunc){
 
     if(totalName){
         var re1 = new RegExp('<tr[^>]*>\\s*<td[^>]*>\\s*<div[^>]+class="td_def"[^>]*>(?:<div[^>]*>|[^<]|<nobr[^>]*>)*' + optionName + '(?:(?:[\\s\\S](?!<tr))*?<td[^>]*>){1}([\\s\\S]*?)</td>', 'ig');
-        sumParam(text, result, totalName, re1, replaceTagsAndSpaces, parseFunc);
+        sumParam(text, result, totalName, re1, replaceTagsAndSpaces, parseFunc, aggregate_sum);
     }
     if(leftName){
         var re2 = new RegExp('<tr[^>]*>\\s*<td[^>]*>\\s*<div[^>]+class="td_def"[^>]*>(?:<div[^>]*>|[^<]|<nobr[^>]*>)*' + optionName + '(?:(?:[\\s\\S](?!<tr))*?<td[^>]*>){2}([\\s\\S]*?)</td>', 'ig');
-        sumParam(text, result, leftName, re2, replaceTagsAndSpaces, parseFunc);
+        sumParam(text, result, leftName, re2, replaceTagsAndSpaces, parseFunc, aggregate_sum);
     }
 }
 
@@ -843,137 +870,6 @@ function strip_tags(str){
   return str.replace(/<[^>]*>/g, '');
 }
 
-function html_entity_decode(str)
-{
-    //jd-tech.net
-    var tarea=document.createElement('textarea');
-    tarea.innerHTML = str;
-    return tarea.value;
+function parseTrafficMy(str){
+  return parseTraffic(str, 'b');
 }
-
-/**
- * Получает значение, подходящее под регулярное выражение regexp, производит 
- * в нем замены replaces, результат передаёт в функцию parser, 
- * а затем записывает результат в счетчик с именем param в result
- * Результат в result помещается только если счетчик выбран пользователем 
- * в настройках аккаунта
- * 
- * если result и param равны null, то значение просто возвращается.
- * eсли parser == null, то возвращается результат сразу после замен
- * если replaces == null, то замены не делаются
- * 
- * replaces - массив, нечетные индексы - регулярные выражения, четные - строки, 
- * на которые надо заменить куски, подходящие под предыдущее регулярное выражение
- * см. например replaceTagsAndSpaces
- */
-
-function getParam (html, result, param, regexp, replaces, parser) {
-	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
-		return;
-
-	var matches = regexp ? regexp.exec (html) : [html, html], value;
-	if (matches) {
-		value = matches[1];
-		if (replaces) {
-			for (var i = 0; i < replaces.length; i += 2) {
-				value = value.replace (replaces[i], replaces[i+1]);
-			}
-		}
-		if (parser)
-			value = parser (value);
-
-    if(param)
-      result[param] = value;
-	}
-   return value
-}
-
-function sumParam (html, result, param, regexp, replaces, parser, do_replace) {
-	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param))){
-            if(do_replace)
-  	        return html;
-            else
-                return;
-	}
-
-        var total_value;
-	var html_copy = html.replace(regexp, function(str, value){
-		for (var i = 0; replaces && i < replaces.length; i += 2) {
-			value = value.replace (replaces[i], replaces[i+1]);
-		}
-		if (parser)
-			value = parser (value);
-                if(typeof(total_value) == 'undefined')
-                	total_value = value;
-                else
-                	total_value += value;
-                return ''; //Вырезаем то, что заматчили
-        });
-
-    if(param){
-      if(typeof(total_value) != 'undefined'){
-          if(typeof(result[param]) == 'undefined')
-      	      result[param] = total_value;
-          else 
-      	      result[param] += total_value;
-      }
-      if(do_replace)
-          return html_copy;
-    }else{
-      return total_value;
-    }
-}
-
-var replaceTagsAndSpaces = [/<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, ''];
-var replaceFloat = [/\s+/g, '', /,/g, '.'];
-
-function parseBalance(text){
-    var val = sumParam(html_entity_decode(text.replace(/\s+/g, '')), null, null, /(-?\d[\d\s.,]*)/, replaceFloat, parseFloat);
-    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
-    return val;
-}
-
-/**
- *  Получает дату из строки
- */
-function parseDate(str){
-    var matches = /(?:(\d+)[^\d])?(\d+)[^\d](\d{2,4})(?:[^\d](\d+):(\d+)(?::(\d+))?)?/.exec(str);
-    if(matches){
-          var year = +matches[3];
-          var date = new Date(year < 1000 ? 2000 + year : year, matches[2]-1, +(matches[1] || 1), matches[4] || 0, matches[5] || 0, matches[6] || 0);
-	  var time = date.getTime();
-          AnyBalance.trace('Parsing date ' + date + ' from value: ' + str);
-          return time;
-    }
-    AnyBalance.trace('Failed to parse date from value: ' + str);
-}
-
-function parseTraffic(text){
-    var _text = html_entity_decode(text.replace(/\s+/, ''));
-    var val = sumParam(_text, null, null, /(-?\d[\d\.,]*)/, replaceFloat, parseFloat);
-    var units = sumParam(_text, null, null, /([kmgкмг][бb]|байт|bytes)/i);
-    if(!units) units = 'б';
-    switch(units.substr(0,1).toLowerCase()){
-      case 'b':
-      case 'б':
-        val = Math.round(val/1024/1024*100)/100;
-        break;
-      case 'k':
-      case 'к':
-        val = Math.round(val/1024*100)/100;
-        break;
-      case 'g':
-      case 'г':
-        val = Math.round(val*1024);
-        break;
-    }
-    var textval = ''+val;
-    if(textval.length > 6)
-      val = Math.round(val);
-    else if(textval.length > 5)
-      val = Math.round(val*10)/10;
-
-    AnyBalance.trace('Parsing traffic (' + val + ') from: ' + text + ' (' + _text + ')');
-    return val;
-}
-

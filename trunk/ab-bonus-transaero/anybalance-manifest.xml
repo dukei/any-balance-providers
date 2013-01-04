@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-bonus-transaero</id>
+  <name>Трансаэро Привилегия</name>
+  <description>
+    Получает баланс баллов и другую информацию по бонусной программе «Трансаэро Привилегия» (http://transaero.ru/ru/special-programs/privilege/privilege-terms).
+
+    Информация берется из личного кабинета http://transaero.ru/ru/privilege/argo-login.
+
+    Если у вас ещё нет ПИН-кода для входа в личный кабинет, получите его на этой странице: http://transaero.ru/ru/privilege/argo-pin
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+    <js>library.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс"/>
+    <counter id="cardnum" name="Номер карты" type="text"/>
+  </counters>
+  <keywords>
+    авиакомпания
+  </keywords>
+  <type>
+    bonus
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

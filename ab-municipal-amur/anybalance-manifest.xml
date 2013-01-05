@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-municipal-amur</id>
+  <id version="2">ab-municipal-amur</id>
   <name>ЭнергоКомфорт (Амур)</name>
   <description>
     Получает баланс и информацию о последнем платеже в ООО "ЭнергоКомфорт" Амур" (http://www.amurcomsys.ru). Получает данные из личного кабинета http://info.amurcomsys.ru/epdinfo/login.
@@ -17,10 +17,16 @@
   </files>
   <counters>
     <counter id="balance" name="Баланс" units="р"/>
-    <counter id="agreement" name="Код плательщика" type="text"/>
+    <counter id="bill" name="Начислено" units="р"/>
+    <counter id="agreement" name="Номер л/с" type="text"/>
     <counter id="fio" name="Владелец" type="text"/>
-    <counter id="lastdate" name="Дата последнего платежа" type="time" format="dd/MM/yyyy"/>
+    <counter id="lastdate" name="Дата последнего платежа" type="time" format="dd-MM-yyyy"/>
     <counter id="lastsum" name="Последний платеж" units="р"/>
+    <counter id="lastcounter" name="Эл-во: показания счетчика"/>
+    <counter id="lastcounter_gvs" name="ГВС: показания счетчика"/>
+    <counter id="lastcounter_hvs" name="ХВС: показания счетчика"/>
+    <counter id="lastbill" name="Последнее подтвержденное начисление" units="р"/>
+    <counter id="lastbilldate" name="Период последнего подтвержденного начисления" type="time" format="MM-yyyy"/>
   </counters>
   <keywords>
     электричество

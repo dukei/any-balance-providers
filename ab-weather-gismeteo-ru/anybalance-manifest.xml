@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="2.1" version="11">ab-weather-gismeteo-ru</id>
+  <id major_version="2.1" version="12">ab-weather-gismeteo-ru</id>
   <name>Gismeteo</name>
   <description>
     Получает текущую погоду, прогноз погоды, температуру водоемов, время восхода, захода Солнца, фазы луны для выбранного города.

@@ -32,7 +32,7 @@ function getCurrentWeather (html, result) {
     getParam (html, result, 'pressure', /class='value m_press torr'>(\d+)/i, [], parseInt);
 
     // Ветер
-    getParam (html, result, 'wind', /<dd.*? ms'>((\d+)[\s\S]*?<dt>([^<]*))/i, [/(\d+)[\s\S]*?<dt>([^<]*)/, '$2 $1м/с']);
+    getParam (html, result, 'wind', /<dd[^>]* ms'[^>]*>((\d+)[\s\S]*?<dt>([^<]*))/i, [/(\d+)[\s\S]*?<dt>([^<]*)/, '$2 $1м/с']);
 
     // Влажность
     getParam (html, result, 'humidity', /title="Влажность">(\d+)/i, [], parseInt);

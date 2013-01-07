@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-bonus-sportmaster</id>
+  <id version="2">ab-bonus-sportmaster</id>
   <name>Спортмастер</name>
   <description>
-    Получает информацию по бонусной карте Спортмастер. Информация берется из личного кабинета http://www.sportmaster.ru/personal/bonus.php
+    Получает информацию по бонусной карте Спортмастер. Информация берется из личного кабинета http://www.sportmaster.ru/personal/bonus.php (если у вас есть логин и пароль) или со страницы http://www.sportmaster.ru/club-program/ (если у вас есть номер карты).
   </description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
+    <history>history.xml</history>
     <js>main.js</js>
   </files>
   <counters>
@@ -21,4 +22,7 @@
   <type>
     bonus
   </type>
+  <country>
+    ru
+  </country>
 </provider>

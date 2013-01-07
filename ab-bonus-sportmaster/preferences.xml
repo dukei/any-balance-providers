@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
     <EditTextPreference 
-        title="Логин" 
+        title="№ карты или логин" 
         positiveButtonText="ОК" 
         summary="||{@s}" 
-        dialogTitle="Логин" 
+        dialogTitle="№ карты или логин" 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите логин"
+        dialogMessage="Введите № карты или логин. Если вы введете номер карты, то пароль вводить необязательно."
         key="login">
     </EditTextPreference>
     <EditTextPreference 
@@ -15,8 +15,8 @@
         dialogTitle="Пароль"
         negativeButtonText="Отмена"
         title="Пароль"
-        summary="||***********"
-        dialogMessage="Введите пароль, используемый для входа в личный кабинет."
+        summary="|Не требуется, если введен № карты|***********"
+        dialogMessage="Введите пароль, используемый для входа в личный кабинет. Если вы ввели номер карты, то пароль вводить необязательно."
         inputType="textPassword">
     </EditTextPreference>
 </PreferenceScreen>

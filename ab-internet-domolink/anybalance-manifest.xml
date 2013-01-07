@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="3" version="17">ab-internet-domolink</id>
+  <id major_version="3" version="18">ab-internet-domolink</id>
   <name>Ростелеком - Домолинк</name>
   <description>
   Получает текущий баланс, номер лицевого счета, ФИО владельца или Название организации, размер ежемесячной платы, дату, сумму и описание последней оплаты, трафик в текущем месяце.
@@ -14,6 +14,7 @@
     Нижний Новгород (http://abonent.nnov.volga.rt.ru)
     Мордовия (http://billing.saransk.ru)
     Удмуртия (https://statservip.udmvt.ru)
+    Марий-Эл (http://www.stat.mari-el.ru)
 
   Новый личный кабинет (http://portal.center.rt.ru):
     Белгородский, Брянский, Владимирский, Воронежский, Ивановский, Калужский, Костромской, Курский, Липецкий, Московский, Орловский, Рязанский, Смоленский, Тамбовский, Тверской, Тульский, Ярославский
@@ -31,8 +32,9 @@
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
-    <js>main.js</js>
     <js>api:jquery.min.js</js>
+    <js>library.js</js>
+    <js>main.js</js>
     <history>history.xml</history>
   </files>
   <counters>

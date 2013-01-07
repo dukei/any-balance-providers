@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-internet-supersky</id>
+  <name>Supersky (Севастополь)</name>
+  <description>
+    Получает баланс и информацию о тарифном плане для севастопольского интернет-провайдера Supersky (http://supersky.ua).
+
+    Информация берется из личного кабинета https://stat.supersky.ua
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units=" ₴"/>
+    <counter id="bonus" name="Бонусы"/>
+    <counter id="traffic" name="Трафик в текущем месяце" units=" Гб"/>
+    <counter id="trafficCost" name="Стоимость трафика в текущем месяце" units=" ₴"/>
+    <counter id="licschet" name="Лицевой счет" type="text"/>
+    <counter id="fio" name="ФИО" type="text"/>
+    <counter id="status" name="Статус" type="text"/>
+  </counters>
+  <keywords>
+    интернет, super sky
+  </keywords>
+  <type>
+    internet
+  </type>
+  <country>
+    ua
+  </country>
+</provider>

@@ -19,6 +19,7 @@ var regions = {
     kirov: domolinkkirov, // Личный кабинет абонентов Домолинк Киров
     mord: domolinksaransk, //Республика мордовия
     udm: domolinkudm, //Удмуртия
+    mel: domolinkmel, //Марий-Эл
 
     ug_ast: domolinkug, //Астраханская область, 
     ug_vlgr: domolinkug, //Волгоградская область, 
@@ -69,47 +70,6 @@ var regions_new = {
     n_tver: 'Тверской',
     n_tula: 'Тульский',
     n_yar: 'Ярославский'
-}
-
-function html_entity_decode(str)
-{
-    //jd-tech.net
-    var tarea=document.createElement('textarea');
-    tarea.innerHTML = str;
-    return tarea.value;
-}
-
-function getParam (html, result, param, regexp, replaces, parser) {
-    if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
-        return;
-
-    var value = regexp ? regexp.exec (html) : html;
-    if (value) {
-        if(regexp)
-            value = value[1];
-        if (replaces) {
-            for (var i = 0; i < replaces.length; i += 2) {
-                value = value.replace (replaces[i], replaces[i+1]);
-            }
-        }
-        if (parser)
-            value = parser (value);
-
-        if(param)
-            result[param] = value;
-        else
-            return value
-    }
-}
-
-var replaceTagsAndSpaces = [/&nbsp;/g, ' ', /<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
-var replaceFloat = [/\s+/g, '', /,/g, '.', /(\d)\-(\d)/g, '$1.$2'];
-
-function parseBalance(text){
-    var _text = text.replace(/\s+/g, '').replace(/(\D|^)\./g, '$10.');
-    var val = getParam(_text, null, null, /(-?\d[\d\.,\-]*)/, replaceFloat, parseFloat);
-    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
-    return val;
 }
 
 function main(){
@@ -189,7 +149,7 @@ function domolinkkirov(region, login, password){
         var dtNow = new Date();
         var dtOld = new Date(dtNow.getTime() - 86400*90*1000);
         html = AnyBalance.requestGet(baseurl + 'www.PageViewer?page_name='+page_name+'&logname='+logname+'&chksum='+chksum+'&n1=p_start_day&n2=p_start_month&n3=p_start_year&n4=p_finish_day&n5=p_finish_month&n6=p_finish_year&n7=p_row_count&n8=p_page_num&v8=1&n9=p_page_go&v9=' 
-            + page_name + '&v1='+dtOld.getDate()+'&v2=' + (dtOld.getMonth()+1) + '&v3=' + dtOld.getFullYear() + '&v4='+dtNow.getDate()+'&v2=' + (dtNow.getMonth()+1) + '&v3=' + dtNow.getFullYear() + '&v7=20');
+            + page_name + '&v1='+dtOld.getDate()+'&v2=' + (dtOld.getMonth()+1) + '&v3=' + dtOld.getFullYear() + '&v4='+dtNow.getDate()+'&v5=' + (dtNow.getMonth()+1) + '&v6=' + dtNow.getFullYear() + '&v7=20');
 
         getParam(html, result, 'lastpaysum', /Платежи по договору[\s\S]*?<tbody[^>]*>(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
         getParam(html, result, 'lastpaydata', /Платежи по договору[\s\S]*?<tbody[^>]*>(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
@@ -710,10 +670,7 @@ function domolinksaransk(region,login,password) {
 	
     var urlreppay=regionurl+"www.PageViewer?page_name=S*ADM_NET_REP_PAY"+authorization;
 	
-    if (AnyBalance.isAvailable ('lastpaysum') ||
-        AnyBalance.isAvailable ('lastpaydata')
-        //|| AnyBalance.isAvailable ('lastpaydesc')
-        ) {
+    if (AnyBalance.isAvailable ('lastpaysum','lastpaydata','lastpaydesc')) {
 
         AnyBalance.trace("Fetching payment...");
 
@@ -778,10 +735,76 @@ function domolinkudm(region,login,password) {
     getParam(html, result, 'username', /<td[^>]*>\s*Абонент[\s\S]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
 
     var urlreppay=regionurl+"www.PageViewer?page_name=S*ADM_NET_REP_PAY"+authorization;
-    if (AnyBalance.isAvailable ('lastpaysum') ||
-        AnyBalance.isAvailable ('lastpaydata')
-        //|| AnyBalance.isAvailable ('lastpaydesc')
-        ) {
+    if (AnyBalance.isAvailable ('lastpaysum','lastpaydata','lastpaydesc')) {
+        AnyBalance.trace("Fetching payment...");
+
+        var htmlpay,urlpay;
+        var curmonth = new Date();
+        curmonth.setDate(1); // Начало текущего месяца
+        for(var i=0; i<3; i++) { // смотрим макс. на 3 месяца назад
+            urlpay = urlreppay+"&"+getPeriodMonth(curmonth, i);
+            AnyBalance.trace("Checking "+(i+1)+"th month...");
+            htmlpay = AnyBalance.requestGet(urlpay);
+            var count = getParam(htmlpay, null, null, /Всего записей\s*:\s*([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+            if(count > 0){
+                //Выбираем запись с максимальной датой
+                AnyBalance.trace("... bingo! We're find the last payment.");
+                getParam(htmlpay, result, 'lastpaydata', /Дата платежа(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+                getParam(htmlpay, result, 'lastpaydesc', /Дата платежа(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+                getParam(htmlpay, result, 'lastpaysum', /Дата платежа(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+                break;
+            }
+        }
+    }
+    
+    AnyBalance.setResult(result);
+}
+
+function domolinkmel(region,login,password) {
+    var baseurl = 'http://www.stat.mari-el.ru';
+    var regionurl = baseurl + '/pls/startip/';
+    AnyBalance.setDefaultCharset('utf8');    
+	
+    // Заходим на главную страницу
+    var htmlFrmset = AnyBalance.requestPost(regionurl + "www.GetHomePage", {
+        p_logname: login,
+        p_pwd: password,
+        p_lang:'RUS'
+    });
+
+    var next = getParam(htmlFrmset, null, null, /<META[^>]+REFRESH[^>]+URL=([^"]*)/i, null, html_entity_decode);
+    if(!next){
+        var error = getParam(htmlFrmset, null, null, /<td[^>]+class="?zag[^>]*>\s*Сообщение об ошибке[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+        if(error)
+            throw new AnyBalance.Error(error);
+        throw new AnyBalance.Error("Не удалось зайти в личный кабинет. Сайт изменен?");
+    }
+
+    var authorization = getParam(next, null, null, /(&logname.*)/i);
+    var html = AnyBalance.requestGet(regionurl + 'www.PageViewer?page_name=AND*CLI_DSL_INFO' + authorization);
+
+    var result = {
+        success: true
+    };
+
+    // Тариф
+    getParam(html, result, 'balance', /Текущее состояние лицевого счета[\s\S]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'license', /Номер лицевого счета[\s\S]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, '__tariff', /<td[^>]*>\s*Тариф[\s\S]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'username', /<td[^>]*>\s*ФИО[\s\S]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+
+    if(AnyBalance.isAvailable('traffic')){
+        var dtNow = new Date();
+        html = AnyBalance.requestGet(regionurl + 'www.PageViewer?page_name=S*CLI_DIALUP_REP_CON_GROUP' + authorization + '&n1=p_start_day&v1=01&n2=p_start_month&v2=' + (dtNow.getMonth()+1) 
+            + '&n3=p_start_year&v3=' + dtNow.getFullYear() + '&n4=p_finish_day&v4=' + dtNow.getDate() + '&n5=p_finish_month&v5=' + (dtNow.getMonth()+1) + '&n6=p_finish_year&v6=' + dtNow.getFullYear() + '&n7=p_page_num&v7=1&n8=p_row_count&v8=20');
+
+        sumParam(html, result, 'traffic', /входящий[^<]*?трафик[\s\S]*?<td[^>]*>([\S\s]*?)<\/td>/ig, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
+        if(isset(result.traffic))
+            result.traffic = '' + result.traffic + ' Мб';
+    }
+
+    var urlreppay=regionurl+"www.PageViewer?page_name=S*CLI_DIALUP_REP_PAY"+authorization;
+    if (AnyBalance.isAvailable ('lastpaysum','lastpaydata','lastpaydesc')) {
 
         AnyBalance.trace("Fetching payment...");
 

@@ -648,26 +648,18 @@ function megafonServiceGuidePhysical(filial, sessionid){
     // Карманный интернет теперь покрывается циклом выше
     
     //200 SMS MegaVIP 0
-    sumOption(text, result, 'sms_total', 'sms_left', 'SMS MegaVIP');
+    //Пакет SMS за бонусы (SMS &#1079;&#1072; &#1073;&#1086;&#1085;&#1091;&#1089;&#1099;)
+    //Пакет SMS-сообщений (Поволжье) (&#1055;&#1072;&#1082;&#1077;&#1090; SMS-&#1089;&#1086;&#1086;&#1073;&#1097;&#1077;&#1085;&#1080;&#1081;)
+    //SMS на номера России (SMS &#1085;&#1072; &#1085;&#1086;&#1084;&#1077;&#1088;&#1072; &#1056;&#1086;&#1089;&#1089;&#1080;&#1080;)
+    //(SMS)
+    sumOption(text, result, 'sms_total', 'sms_left', 'SMS');
+    sumOption(text, result, 'sms_total', 'sms_left', 'СМС');
 
     //Исходящие SM (ОХард, Москва)
     sumOption(text, result, 'sms_total', 'sms_left', '&#1048;&#1089;&#1093;&#1086;&#1076;&#1103;&#1097;&#1080;&#1077; SM');
         
-    //Пакет SMS за бонусы
-    sumOption(text, result, 'sms_total', 'sms_left', 'SMS &#1079;&#1072; &#1073;&#1086;&#1085;&#1091;&#1089;&#1099;');
-
-    //Пакет SMS-сообщений (Поволжье)
-    sumOption(text, result, 'sms_total', 'sms_left', '&#1055;&#1072;&#1082;&#1077;&#1090; SMS-&#1089;&#1086;&#1086;&#1073;&#1097;&#1077;&#1085;&#1080;&#1081;');
-
-    //SMS на номера России
-    sumOption(text, result, 'sms_total', 'sms_left', 'SMS &#1085;&#1072; &#1085;&#1086;&#1084;&#1077;&#1088;&#1072; &#1056;&#1086;&#1089;&#1089;&#1080;&#1080;');
-
-    //(SMS)
-    sumOption(text, result, 'sms_total', 'sms_left', '\\(SMS\\)');
-
     //MMS
     sumOption(text, result, 'mms_total', 'mms_left', 'MMS');
-    //ММС
     sumOption(text, result, 'mms_total', 'mms_left', 'ММС');
 
     //Нужный подарок (Поволжье)

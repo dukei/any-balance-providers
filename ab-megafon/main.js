@@ -630,6 +630,8 @@ function megafonServiceGuidePhysical(filial, sessionid){
                  sumOption(matches[1], result, 'mins_sng_total', 'mins_sng_left', '.', parseMinutes);
              else if(/мин по России/i.test(name))
                  sumOption(matches[1], result, 'mins_country_total', 'mins_country_left', '.', parseMinutes);
+             else if(/внутри сети/i.test(name))
+                 sumOption(matches[1], result, 'mins_net_total', 'mins_net_left', '.', parseMinutes);
              else
                  sumOption(matches[1], result, 'mins_total', 'mins_left', '.', parseMinutes);
         }else if(/GPRS|Интернет|Internet/i.test(name)){
@@ -659,6 +661,14 @@ function megafonServiceGuidePhysical(filial, sessionid){
 
     //SMS на номера России
     sumOption(text, result, 'sms_total', 'sms_left', 'SMS &#1085;&#1072; &#1085;&#1086;&#1084;&#1077;&#1088;&#1072; &#1056;&#1086;&#1089;&#1089;&#1080;&#1080;');
+
+    //(SMS)
+    sumOption(text, result, 'sms_total', 'sms_left', '\\(SMS\\)');
+
+    //MMS
+    sumOption(text, result, 'mms_total', 'mms_left', 'MMS');
+    //ММС
+    sumOption(text, result, 'mms_total', 'mms_left', 'ММС');
 
     //Нужный подарок (Поволжье)
     sumOption(text, result, 'handygift_total', 'handygift_left', '&#1053;&#1091;&#1078;&#1085;&#1099;&#1081; &#1087;&#1086;&#1076;&#1072;&#1088;&#1086;&#1082;');

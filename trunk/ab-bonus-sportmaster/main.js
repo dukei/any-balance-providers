@@ -42,24 +42,46 @@ var replaceFloat = [/\s+/g, '', /,/g, '.'];
 function main(){
     var prefs = AnyBalance.getPreferences();
 
-    var baseurl = "http://www.sportmaster.ru/personal/bonus.php?login=yes";
-    var html = AnyBalance.requestPost(baseurl, {
-        AUTH_FORM:'Y',
-        TYPE:'AUTH',
-        backurl:'/personal/bonus.php',
-        USER_LOGIN:prefs.login,
-        USER_PASSWORD:prefs.password
-    });
+    if(prefs.password){
+        AnyBalance.trace('Введен пароль - получаем данные из личного кабинета');
 
-    var error = getParam(html, null, null, /<font[^>]*class=['"]errortext['"][^>]*>([\s\S]*?)<\/font>/i, replaceTagsAndSpaces, html_entity_decode);
-    if(error)
-        throw new AnyBalance.Error(error);
+        var baseurl = "http://www.sportmaster.ru/personal/bonus.php?login=yes";
+        var html = AnyBalance.requestPost(baseurl, {
+            AUTH_FORM:'Y',
+            TYPE:'AUTH',
+            backurl:'/personal/bonus.php',
+            USER_LOGIN:prefs.login,
+            USER_PASSWORD:prefs.password
+        });
+        
+        var error = getParam(html, null, null, /<font[^>]*class=['"]errortext['"][^>]*>([\s\S]*?)<\/font>/i, replaceTagsAndSpaces, html_entity_decode);
+        if(error)
+            throw new AnyBalance.Error(error);
+        
+        var result = {success: true};
+        
+        getParam(html, result, 'cardnum', /Номер бонусной карты:[\s\S]*?>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+        getParam(html, result, '__tariff', /Номер бонусной карты:[\s\S]*?>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+        getParam(html, result, 'balance', /Доступно средств:[\s\S]*?>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+    }else{
+        AnyBalance.trace('Пароль не введен - получаем данные по номеру карты');
 
-    var result = {success: true};
+        var baseurl = "http://www.sportmaster.ru/club-program/";
+        var html = AnyBalance.requestPost(baseurl, {
+            card_id:prefs.login,
+            check_bonus:''
+        });
+        
+        if(!/Доступно средств:([^']*)/i.test(html))
+            throw new AnyBalance.Error("Не удалось получить баланс. Неверный номер карты?");
 
-    getParam(html, result, 'cardnum', /Номер бонусной карты:[\s\S]*?>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, '__tariff', /Номер бонусной карты:[\s\S]*?>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'balance', /Доступно средств:[\s\S]*?>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+        var result = {success: true};
+        
+        result.__tariff = prefs.login;
+        if(AnyBalance.isAvailable('cardnum'))
+            result.cardnum = prefs.login;
+        getParam(html, result, 'balance', /Доступно средств:([^']*)/i, replaceTagsAndSpaces, parseBalance);
+    }
 
     AnyBalance.setResult(result);
 }

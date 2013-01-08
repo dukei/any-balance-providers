@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="2.1" version="8">ab-money-qiwi</id>
+  <id major_version="2.2" version="9">ab-money-qiwi</id>
   <name>QIWI Кошелек</name>
   <description>
-    Получает баланс, количество сообщений и счетов в QIWI Кошельке. Поддерживает старый личный кабинет (https://w.qiwi.ru) и новый (https://w.qiwi.com). В новом кабинете отсутствуют сообщения, так что счетчик "Сообщения" не работает.
+    Получает баланс, количество сообщений и счетов в QIWI Кошельке. Поддерживает старый личный кабинет (https://w.qiwi.ru) и новый (https://w.qiwi.com).
   </description>
   <author>iReset &lt;ireset.ag@gmail.com&gt;</author>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
@@ -26,6 +26,6 @@
     money
   </type>
   <country>
-    ru
+    ru, ua
   </country>
 </provider>

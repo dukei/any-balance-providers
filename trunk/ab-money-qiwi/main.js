@@ -62,9 +62,12 @@ function mainNew () {
     AnyBalance.requestGet(baseurl + 'payment/main.action'); //Надо сессию поставить
 
     AnyBalance.trace ('Trying to enter NEW account at address: ' + baseurl);
+
+    var login = /^\s*\+/.test(prefs.login) ? prefs.login : '+7' + prefs.login;
+
     var info = AnyBalance.requestGet (baseurl +
-                                      'auth/login.action?source=MENU&login=%2B7' +
-                                      encodeURIComponent(prefs.login) +
+                                      'auth/login.action?source=MENU&login=' +
+                                      encodeURIComponent(login) +
                                       '&password=' +
                                       encodeURIComponent(prefs.password), addHeaders({Accept: 'application/json, text/javascript', 'X-Requested-With':'XMLHttpRequest'}));
     AnyBalance.trace ('Login result: ' + info);
@@ -124,6 +127,12 @@ function mainNew () {
         result.bills = count ? count.length : 0;
     }
 
+    if(AnyBalance.isAvailable('messages')){
+        html = AnyBalance.requestGet(baseurl + 'user/message/content/loadlist.action');
+        var count = html.match(/<li[^>]+data-container-name="item"[^>]*class="unread"/ig);
+        result.messages = count ? count.length : 0;
+    }
+
     AnyBalance.setResult (result);
 }
 
@@ -138,9 +147,10 @@ function mainOld () {
         throw getFatalError ('Введите пароль');
 
     AnyBalance.trace ('Trying to enter OLD account at address: ' + baseurl);
+    var login = /^\s*\+/.test(prefs.login) ? prefs.login.replace(/\+/g, '') : '7' + prefs.login;
     var info = AnyBalance.requestGet (baseurl +
-                                      'login.action?source=0&phone=7' +
-                                      encodeURIComponent(prefs.login) +
+                                      'login.action?source=0&phone=' +
+                                      encodeURIComponent(login) +
                                       '&password=' +
                                       encodeURIComponent(prefs.password) +
                                       '&captcha=0&callback=jsonp');

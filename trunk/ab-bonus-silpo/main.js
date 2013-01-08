@@ -107,7 +107,7 @@ function main(){
 			}
 		}
 		//Дата перерасчета бонусов
-		getParam(html, result, 'bonus_conversion', /<td>Наступне перерахування Балів в Бонус<\/td>\s*<td>Наступна доставка Сертифікатів<\/td>\s*<\/tr>\s*<tr>\s*<td>([^<]*)<\/td>/i, replaceTagsAndSpaces, parseDate);
+		getParam(html, result, 'bonus_conversion', /<td>Наступне&nbsp;перерахування&nbsp;Балів&nbsp;в&nbsp;Бонус<\/td>\s*<td>Наступна&nbsp;доставка&nbsp;Сертифікатів<\/td>\s*<\/tr>\s*<tr>\s*<td>([^<]*) року.<\/td>/i, replaceTagsAndSpaces, parseDate);
 		AnyBalance.setResult(result);
 	} else { 
 		var error = getParam(html, null, null, /<\/script>([\s\S]*?)<br[^>]*>/i, replaceTagsAndSpaces);

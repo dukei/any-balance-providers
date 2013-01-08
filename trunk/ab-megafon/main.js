@@ -656,7 +656,7 @@ function megafonServiceGuidePhysical(filial, sessionid){
     sumOption(text, result, 'sms_total', 'sms_left', 'СМС');
 
     //Исходящие SM (ОХард, Москва)
-    sumOption(text, result, 'sms_total', 'sms_left', '&#1048;&#1089;&#1093;&#1086;&#1076;&#1103;&#1097;&#1080;&#1077; SM');
+    sumOption(text, result, 'sms_total', 'sms_left', '&#1048;&#1089;&#1093;&#1086;&#1076;&#1103;&#1097;&#1080;&#1077; SM\\s*<');
         
     //MMS
     sumOption(text, result, 'mms_total', 'mms_left', 'MMS');

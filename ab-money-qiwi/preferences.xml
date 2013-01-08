@@ -4,9 +4,9 @@
         key="login"
         title="Номер телефона"
         summary="Номер телефона для доступа к личному кабинету||{@s}\n"
-        inputType="number"
+        inputType="phone"
         dialogTitle="Номер телефона"
-        dialogMessage="Введите номер мобильного телефона без префикса для входа в личный кабинет, например, 9163215476"
+        dialogMessage="Введите номер мобильного телефона в международном формате для входа в личный кабинет, например, +79163215476"
         positiveButtonText="ОК"
         negativeButtonText="Отмена">
     </EditTextPreference>

@@ -30,6 +30,7 @@ function getParam (html, result, param, regexp, replaces, parser) {
 
 function parseDate(str){
   //Рассчитывает на библиотеку date.js
+  str = str.replace(/(\d{4}).*$/, '$1'); //Убираем г. после года, чтобы не мешалось 
   var dt = Date.parse(str);
   if(!dt){
       AnyBalance.trace('Can not parse date from ' + str);

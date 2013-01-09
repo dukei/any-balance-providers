@@ -6,114 +6,20 @@ Djuice
 Личный кабинет: https://my.djuice.com.ua/
 */
 
-function sumParam (html, result, param, regexp, replaces, parser, do_replace) {
-  if (param && (param != '__tariff' && !AnyBalance.isAvailable (param))){
-    if(do_replace)
-      return html;
-    else
-      return;
-  }
-
-  var total_value;
-  var html_copy = html.replace(regexp, function(str, value){
-    for (var i = 0; replaces && i < replaces.length; i += 2) {
-      value = value.replace (replaces[i], replaces[i+1]);
-    }
-    if (parser)
-      value = parser (value);
-    if(typeof(total_value) == 'undefined')
-      total_value = value;
-    else
-      total_value += value;
-    return ''; //Вырезаем то, что заматчили
-  });
-
-  if(param){
-    if(typeof(total_value) != 'undefined'){
-      if(typeof(result[param]) == 'undefined')
-        result[param] = total_value;
-      else 
-        result[param] += total_value;
-    }
-    if(do_replace)
-      return html_copy;
-  }else{
-    return total_value;
-  }
-}
-
-var replaceTagsAndSpaces = [/<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
-var replaceFloat = [/\s+/g, '', /,/g, '.'];
-
-function parseBalance(text){
-  var val = sumParam(text.replace(/\s+/g, ''), null, null, /(-?\d[\d.,]*)/, replaceFloat, parseFloat);
-  AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
-  return val;
-}
-
-function parseDate(str){
-  var matches = /(\d+)[^\d](\d+)[^\d](\d+)/.exec(str);
-  if(matches){
-    var date = new Date(+matches[3], matches[2]-1, +matches[1]);
-    var time = date.getTime();
-    AnyBalance.trace('Parsing date ' + date + ' from value: ' + str);
-    return time;
-  }
-  AnyBalance.trace('Failed to parse date from value: ' + str);
-}
-
-function parseTraffic(text){
-  var _text = text.replace(/\s+/, '');
-  var val = sumParam(_text, null, null, /(-?\d[\d\.,]*)/, replaceFloat, parseFloat);
-  var units = sumParam(_text, null, null, /([kmgкмг][бb]|байт|bytes)/i);
-  if(!units){
-    AnyBalance.trace('Can not parse units from ' + text);
-    units = 'б';
-  }
-  switch(units.substr(0,1).toLowerCase()){
-    case 'b':
-    case 'б':
-      val = Math.round(val/1024/1024*100)/100;
-      break;
-    case 'k':
-    case 'к':
-      val = Math.round(val/1024*100)/100;
-      break;
-    case 'g':
-    case 'г':
-      val = Math.round(val*1024);
-      break;
-  }
-  var textval = ''+val;
-  if(textval.length > 6)
-    val = Math.round(val);
-  else if(textval.length > 5)
-    val = Math.round(val*10)/10;
-
-  AnyBalance.trace('Parsing traffic (' + val + ') from: ' + text);
-  return val;
-}
-
-/**
- * Заменяет HTML сущности в строке на соответствующие им символы
- */
-function html_entity_decode(str)
-{
-    //jd-tech.net
-    var tarea=document.createElement('textarea');
-    tarea.innerHTML = str;
-    return tarea.value;
-}
-
 function parseMinutes(str){
-  AnyBalance.trace('Parsing minutes from value: ' + str);
-  return parseFloat(str)*60; //Переводим в секунды
+  var val = parseBalance(str);
+  if(isset(val)){
+      val *= 60; //Переводим в секунды
+      AnyBalance.trace('Parsed ' + val + ' minutes from value: ' + str);
+  }
+  AnyBalance.trace('Parsed ' + val + ' minutes from value: ' + str);
+  return val; 
 }
 
 //------------------------------------------------------------------------------
 
 function getToken(html){
-    var token = /name="org.apache.struts.taglib.html.TOKEN"[^>]+value="([\s\S]*?)">/.exec(html);
+    var token = /name="org.apache.struts.taglib.html.TOKEN"[^>]+value="([\s\S]*?)">/i.exec(html);
     if(!token)
         throw new AnyBalance.Error("Не удаётся найти код безопасности для входа. Проблемы или изменения на сайте?");
     return token[1];
@@ -152,43 +58,42 @@ function main(){
   var str_tmp;
   
   //Тарифный план
-  sumParam(html, result, '__tariff', /(?:Тарифний план:|Тарифный план:)[\s\S]*?<td\s+[^>]*>(.*?)\s*<\/td>/, replaceTagsAndSpaces);
+  getParam(html, result, '__tariff', /(?:Тарифний план:|Тарифный план:)[\s\S]*?<td\s+[^>]*>(.*?)\s*<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
   
   // Баланс
-  sumParam(html, result, 'balance', /(?:Залишок на рахунку:|Остаток на счету:)[\s\S]*?<b>(.*?)</, replaceTagsAndSpaces, parseBalance);
+  getParam(html, result, 'balance', /(?:Залишок на рахунку:|Остаток на счету:)[\s\S]*?<b>(.*?)</i, replaceTagsAndSpaces, parseBalance);
   
-  //Бонусные минуты (1)
-  sumParam(html, result, 'bonus_mins_1', /(?:Залишок хвилин для дзвінків|Остаток минут для звонков)[\s\S]*?<b>(.*?)</, replaceTagsAndSpaces, parseMinutes);
-  
-  //Бонусные минуты (2)
-  sumParam(html, result, 'bonus_mins_2', /(?:Залишок хвилин для дзвінків|Остаток минут для звонков)[\s\S]*?(?:Залишок хвилин для дзвінків|Остаток минут для звонков)[\s\S]*?<b>(.*?)</, replaceTagsAndSpaces, parseMinutes);
+  //Залишок хвилин для дзвінків на Киевстар
+  html = sumParam(html, result, 'bonus_mins_kyiv', /(?:Залишок хвилин для дзвінків|Остаток минут для звонков)\s*(?:на Київстар|на Киевстар)[\s\S]*?<b>(.*?)</ig, replaceTagsAndSpaces, parseMinutes, true, aggregate_sum);
+  //Залишок хвилин для дзвінків по Украине
+  html = sumParam(html, result, 'bonus_mins_country', /(?:Залишок хвилин для дзвінків|Остаток минут для звонков)\s*(?:по Україні|по Украине)[\s\S]*?<b>(.*?)</ig, replaceTagsAndSpaces, parseMinutes, true, aggregate_sum);
+  //Другие бонусные минуты
+  sumParam(html, result, 'bonus_mins', /(?:Залишок хвилин для дзвінків|Остаток минут для звонков)[\s\S]*?<b>(.*?)</ig, replaceTagsAndSpaces, parseMinutes, true, aggregate_sum);
   
   //Бонусные MMS
-  sumParam(html, result, 'bonus_mms', /(?:Бонусні MMS:|Бонусные MMS:)[\s\S]*?<b>(.*?)</, replaceTagsAndSpaces, parseInt);
+  sumParam(html, result, 'bonus_mms', /(?:Бонусні MMS:|Бонусные MMS:)[\s\S]*?<b>(.*?)</ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
   
   //Бонусные SMS
-  sumParam(html, result, 'bonus_sms', /(?:Бонусні SMS:|Бонусные SMS:)[\s\S]*?<b>(.*?)</, replaceTagsAndSpaces, parseInt);
+  sumParam(html, result, 'bonus_sms', /(?:Бонусні SMS:|Бонусные SMS:)[\s\S]*?<b>(.*?)</ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
   
   //Бонусные средства
-  sumParam(html, result, 'bonus_money', /(?:Бонусні кошти :|Бонусные средства:)[\s\S]*?<b>(.*?)</, replaceTagsAndSpaces, parseBalance);
+  sumParam(html, result, 'bonus_money', /(?:Бонусні кошти :|Бонусные средства:)[\s\S]*?<b>(.*?)</ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
   
   //Остаток бонусов
-  sumParam(html, result, 'bonus_left', /(?:Залишок бонусів:|Остаток бонусов:)[\s\S]*?<b>(.*?)</, replaceTagsAndSpaces, parseBalance);
-  sumParam(html, result, 'bonus_left', /(?:Залишок бонусів:|Остаток бонусов:)[\s\S]*?(?:Залишок бонусів:|Остаток бонусов:)[\s\S]*?<b>(.*?)</, replaceTagsAndSpaces, parseBalance);
+  sumParam(html, result, 'bonus_left', /(?:Залишок бонусів:|Остаток бонусов:)[\s\S]*?<b>(.*?)</ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
   
   //Интернет
-  sumParam(html, result, 'internet', /(?:Залишок бонусного об\'єму даних:|Остаток бонусного объема данных:)[\s\S]*?<b>(.*?)</i, replaceTagsAndSpaces, parseTraffic);
-  sumParam(html, result, 'internet', /(?:Залишок бонусного об\'єму даних:|Остаток бонусного объема данных:)[\s\S]*?(?:Залишок бонусного об\'єму даних:|Остаток бонусного объема данных:)[\s\S]*?<b>(.*?)</i, replaceTagsAndSpaces, parseTraffic);
-  sumParam(html, result, 'internet', /(?:Інтернет:|Интернет:)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTraffic);
+  sumParam(html, result, 'internet', /(?:Залишок бонусного об\'єму даних:|Остаток бонусного объема данных:)[\s\S]*?<b>(.*?)</ig, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
+  sumParam(html, result, 'internet', /(?:Інтернет:|Интернет:)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
   
   //Домашний Интернет
-  sumParam(html, result, 'home_internet', /(?:Від послуги "Домашній .нтернет":|От услуги "Домашний .нтернет":)[\s\S]*?<b>(.*?)<[\s\S]*?>(.*?)&nbsp;</, replaceTagsAndSpaces, parseBalance);
+  sumParam(html, result, 'home_internet', /(?:Від послуги "Домашній .нтернет":|От услуги "Домашний .нтернет":)[\s\S]*?<b>(.*?)<[\s\S]*?>(.*?)&nbsp;</ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
   
   //Домашний Интернет действует до
-  sumParam(html, result, 'home_internet_to_date', /(?:Від послуги "Домашній .нтернет":|От услуги "Домашний .нтернет":)[\s\S]*?<b>(?:.*?)<[\s\S]*?>(.*?)&nbsp;</, replaceTagsAndSpaces, parseDate);
+  sumParam(html, result, 'home_internet_to_date', /(?:Від послуги "Домашній .нтернет":|От услуги "Домашний .нтернет":)[\s\S]*?<b>(?:.*?)<[\s\S]*?>(.*?)&nbsp;</ig, replaceTagsAndSpaces, parseDate, aggregate_min);
   
   //Срок действия номера
-  sumParam(html, result, 'till', /(?:Номер діє до:|Номер действует до:)[\s\S]*?<td>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+  getParam(html, result, 'till', /(?:Номер діє до:|Номер действует до:)[\s\S]*?<td>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
 
   //Получим дату последнего пополнения, а также дату последнего пополнения на 40 гривен и больше + 29 дней (для срока действия пакета интернет)
   if(AnyBalance.isAvailable('lastpaydate', 'lastpaysum', 'lastpaydesc', 'paydate40end')){
@@ -198,7 +103,7 @@ function main(){
       var month = new Date(now.getFullYear(), now.getMonth(), 1);
 
       //Узнаем начальную дату регистрации, чтобы не запрашивать слишком далеко
-      var startDate = sumParam(html, null, null, /(?:предоставляется, начиная с|зв’язку надається, починаючи з)\s*<b[^>]*>([^<]*)<\/b>/i, replaceTagsAndSpaces, parseDate) || 0;
+      var startDate = getParam(html, null, null, /(?:предоставляется, начиная с|зв’язку надається, починаючи з)\s*<b[^>]*>([^<]*)<\/b>/i, replaceTagsAndSpaces, parseDate) || 0;
       getPayments(html, allpayments);
       var maxTries = 3;
       while(!findPayments(allpayments, result) && month.getTime() > startDate && maxTries-- > 0){
@@ -211,7 +116,7 @@ function main(){
               toDate: getDateString(new Date(month.getFullYear(), month.getMonth()+1, 0), '/')
           });
           getPayments(html, allpayments);
-          startDate = startDate || sumParam(html, null, null, /(?:предоставляется, начиная с|зв’язку надається, починаючи з)\s*<b[^>]*>([^<]*)<\/b>/i, replaceTagsAndSpaces, parseDate) || 0;
+          startDate = startDate || getParam(html, null, null, /(?:предоставляется, начиная с|зв’язку надається, починаючи з)\s*<b[^>]*>([^<]*)<\/b>/i, replaceTagsAndSpaces, parseDate) || 0;
       }
   }
 
@@ -234,12 +139,12 @@ function getDateString(dt, separator){
 }
 
 function getPayments(html, allpayments){
-    var payments = sumParam(html, null, null, /<edx_table[^>]+name="Payments"[^>]*>([\s\S]*?)<\/edx_table>/i);
+    var payments = getParam(html, null, null, /<edx_table[^>]+name="Payments"[^>]*>([\s\S]*?)<\/edx_table>/i);
     if(payments){
         payments.replace(/<tr[^>]*>([\s\S]*?)<\/tr>/ig, function(str, tr){
-            var date = sumParam(tr, null, null, /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
-            var desc = sumParam(tr, null, null, /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-            var sum = sumParam(tr, null, null, /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+            var date = getParam(tr, null, null, /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+            var desc = getParam(tr, null, null, /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+            var sum = getParam(tr, null, null, /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
             if(!date || !sum){
                 AnyBalance.trace('Could not obtain date or sum from row: ' + tr);
             }else{

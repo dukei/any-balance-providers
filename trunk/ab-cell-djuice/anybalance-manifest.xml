@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.2" version="15">ab-cell-djuice</id>
+  <id major_version="1.3" version="16">ab-cell-djuice</id>
   <name>Djuice</name>
   <description>
     Получает баланс, бонусные минуты, СМС, ММС, остаток интернет-трафика и другие бонусы для мобильного оператора Djuice.
@@ -8,17 +8,20 @@
 
     Если вы не зарегистрированы в системе Мой DJUICE, то для пользования провайдером вам сначала нужно там зарегистрироваться.
   </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <author>Sergey Bashmanov &lt;sergey.bashmanov@gmail.com&gt;</author>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
+    <js>library.js</js>
     <js>main.js</js>
     <history>history.xml</history>
   </files>
   <counters>
     <counter id="balance" name="Баланс" suffix=" ₴" type="numeric"/>
-    <counter id="bonus_mins_1" name="Бонусные минуты (1)" units=" мин" type="time_interval" format="{@MIN}"/>
-    <counter id="bonus_mins_2" name="Бонусные минуты (2)" units=" мин" type="time_interval" format="{@MIN}"/>
+    <counter id="bonus_mins_kyiv" name="Минуты на Киевстар" units=" мин" type="time_interval" format="{@MIN}"/>
+    <counter id="bonus_mins_country" name="Минуты по Украине" units=" мин" type="time_interval" format="{@MIN}"/>
+    <counter id="bonus_mins" name="Другие бонусные минуты" units=" мин" type="time_interval" format="{@MIN}"/>
     <counter id="bonus_mms" name="Бонусные MMS" type="numeric"/>
     <counter id="bonus_sms" name="Бонусные SMS" type="numeric"/>
     <counter id="bonus_money" name="Бонусные средства" suffix=" ₴" type="numeric"/>

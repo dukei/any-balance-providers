@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-telephony-callbacker</id>
+  <name>Callbacker</name>
+  <description>
+    Получает текущий баланс провайдера IP телефонии Callbacker (http://callbacker.com). 
+    
+    Данные берутся из личного кабинета https://customer.callbacker.com/cabinet/
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+    <js>library.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" prefix="$"/>
+    <counter id="phone" name="Телефон" type="text"/>
+  </counters>
+  <keywords>
+    колбэкер
+  </keywords>
+  <type>
+    telephony
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

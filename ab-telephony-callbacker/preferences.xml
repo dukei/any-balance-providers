@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Логин" 
+        positiveButtonText="ОК" 
+        summary="|Введите номер вашей учетной записи|{@s}\n" 
+        dialogTitle="Логин" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите номер вашей учетной записи в Callbacker."
+        inputType="number"
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="|Введите пароль|***********"
+        dialogMessage="Введите пароль, используемый для входа в личный кабинет Callbacker."
+        inputType="numberPassword">
+    </EditTextPreference>
+</PreferenceScreen>

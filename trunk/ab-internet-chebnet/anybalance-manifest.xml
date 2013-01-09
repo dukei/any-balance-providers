@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-telecet</id>
+  <id version="1">ab-internet-chebnet</id>
   <name>ЧебNet (Чебоксары)</name>
   <description>
     Получает баланс и информацию о тарифном плане для чебоксарского интернет-провайдера ЧебNet (http://chebnet.com).

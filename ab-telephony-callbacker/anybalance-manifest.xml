@@ -2,6 +2,7 @@
 <provider>
   <id version="1">ab-telephony-callbacker</id>
   <name>Callbacker</name>
+  <api min_level="4"/>
   <description>
     Получает текущий баланс провайдера IP телефонии Callbacker (http://callbacker.com). 
     

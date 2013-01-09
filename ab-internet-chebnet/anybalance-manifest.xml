@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-internet-telecet</id>
+  <name>ЧебNet (Чебоксары)</name>
+  <description>
+    Получает баланс и информацию о тарифном плане для чебоксарского интернет-провайдера ЧебNet (http://chebnet.com).
+
+    Информация берется из личного кабинета http://ds.chebnet.com
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="credit" name="Кредит" units="р"/>
+    <counter id="traffic" name="Трафик в текущем периоде" units=" Гб"/>
+    <counter id="trafficCost" name="Стоимость трафика в текущем периоде" units=" Гб"/>
+    <counter id="status" name="Статус" type="text"/>
+  </counters>
+  <keywords>
+    чебнет
+  </keywords>
+  <type>
+    internet
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

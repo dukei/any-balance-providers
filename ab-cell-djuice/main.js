@@ -67,6 +67,11 @@ function main(){
   html = sumParam(html, result, 'bonus_mins_kyiv', /(?:Залишок хвилин для дзвінків|Остаток минут для звонков)\s*(?:на Київстар|на Киевстар)[\s\S]*?<b>(.*?)</ig, replaceTagsAndSpaces, parseMinutes, true, aggregate_sum);
   //Залишок хвилин для дзвінків по Украине
   html = sumParam(html, result, 'bonus_mins_country', /(?:Залишок хвилин для дзвінків|Остаток минут для звонков)\s*(?:по Україні|по Украине)[\s\S]*?<b>(.*?)</ig, replaceTagsAndSpaces, parseMinutes, true, aggregate_sum);
+  //Остаток минут для звонков на номера абонентов «Киевстар» и по Украине: (относим пока к украине, пока никто не возмущается)
+  html = sumParam(html, result, 'bonus_mins_country', /(?:Залишок хвилин для дзвінків|Остаток минут для звонков)[^<]*(?:Киевстар|Київстар)[^<]*(?:Украине|Україні)[\s\S]*?<b>(.*?)</ig, replaceTagsAndSpaces, parseMinutes, true, aggregate_sum);
+  //Остаток минут для звонков на номера абонентов DJUICE
+  html = sumParam(html, result, 'bonus_mins_dj', /(?:Залишок хвилин для дзвінків|Остаток минут для звонков)[^<]*DJUICE[\s\S]*?<b>(.*?)</ig, replaceTagsAndSpaces, parseMinutes, true, aggregate_sum);
+
   //Другие бонусные минуты
   sumParam(html, result, 'bonus_mins', /(?:Залишок хвилин для дзвінків|Остаток минут для звонков)[\s\S]*?<b>(.*?)</ig, replaceTagsAndSpaces, parseMinutes, true, aggregate_sum);
   

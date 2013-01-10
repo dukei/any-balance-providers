@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-<!--    <change version="2" date="2012-11-18">
-      - Исправлена ошибка в получении счетов и депозитов
-    </change> -->
+    <change version="2" date="2013-01-10">
+      - Исправлена ошибка провайдера на андроид 4+. Для этого требуется AnyBalance API 6+.
+    </change>
 </history>

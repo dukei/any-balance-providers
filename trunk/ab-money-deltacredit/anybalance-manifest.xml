@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-    <id version="1">ab-money-deltacredit</id>
+    <id version="2">ab-money-deltacredit</id>
+    <api min_level="6"/>
     <name>ДельтаКредит (Webby 1.0)</name>
     <description>Информация о счете, кредите в банке ДельтаКредит (http://www.deltacredit.ru).
 В настройках провайдера требуется указать логин и пароль к Интернет-банку https://webby.deltacredit.ru/bank/RSL/welcome.html.

@@ -12,13 +12,19 @@ var g_headers = {
     'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
     'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
     Connection:'keep-alive',
-    Referer: 'https://webby.deltacredit.ru/bank/RSL/welcome.html',
+    Referer: 'https://webby.deltacredit.ru:443/bank/RSL/welcome.html',
     'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11'
 };
 
 function main() {
     var prefs = AnyBalance.getPreferences();
-    var baseurl = 'https://webby.deltacredit.ru/webby/';
+    var baseurl = 'https://webby.deltacredit.ru:443/webby/';
+
+    if(AnyBalance.getLevel() < 6)
+        throw new AnyBalance.Error('Этот провайдер требует AnyBalance API 6+');
+
+    //Старый сайт имеет баг в TSL, приходится явно перейти на SSL
+    AnyBalance.setOptions({SSL_ENABLED_PROTOCOLS: ['SSLv3']});
 
     var html = AnyBalance.requestPost(baseurl + 'w_welcome.rez_login', {
         name_:prefs.login,
@@ -26,7 +32,7 @@ function main() {
     }, g_headers);
 
     if(!/RSL\/menuRF\.js/i.test(html)){
-        var error = getParam(html, null, null, /<div[^>]*portlet-msg-error[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+        var error = getParam(html, null, null, /<h4[^>]*>([\s\S]*?)<\/h4>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error);
         throw new AnyBalance.Error('Не удалось войти в интернет-банк. Сайт изменен?');

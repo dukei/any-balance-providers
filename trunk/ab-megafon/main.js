@@ -322,7 +322,7 @@ function megafonTrayInfo(filial){
         
     }
     
-    if(AnyBalance.isAvailable('mins_left','mins_total','sms_left','sms_total')){
+    if(AnyBalance.isAvailable('mins_left','mins_total','sms_left','sms_total','mms_left','mms_total')){
         var $val = $threads.filter(':has(NAME:contains(" мин")), :has(NAME:contains("Телефония исходящая")), :has(NAME:contains("Исходящая телефония"))');
         AnyBalance.trace('Found minutes discounts: ' + $val.length);
         $val.each(function(){
@@ -331,8 +331,8 @@ function megafonTrayInfo(filial){
             var plan = $e.parent().find('PLAN_NAME').text();
             var valAvailable = $e.find('VOLUME_AVAILABLE').text();
             var valTotal = $e.find('VOLUME_TOTAL').text();
-            if(/Байт/i.test(si)){
-                AnyBalance.trace('Пропускаем потенциальный глюк мегафона, Исходящая телефония, но написано байт, а должны быть минуты: ' + plan + ' - ' + valAvailable + '/' + valTotal);
+            if(/Байт|Тар.ед./i.test(si)){
+                AnyBalance.trace('Пропускаем потенциальный глюк мегафона, Исходящая телефония, но написано ' + si + ', а должны быть минуты: ' + plan + ' - ' + valAvailable + '/' + valTotal);
                 return; //Это глюк мегафона, написано байт, а должны быть минуты
             }
             if(plan && /SMS/i.test(plan)){
@@ -342,6 +342,14 @@ function megafonTrayInfo(filial){
                 }
                 if(isset(valTotal) && AnyBalance.isAvailable('sms_total')){
                     result.sms_total = (result.sms_total || 0) + parseInt(valTotal);
+                }
+            }else if(plan && /MMS/i.test(plan)){
+                AnyBalance.trace('Обходим потенциальный глюк мегафона, Исходящая телефония, но написано MMS, а должны быть минуты: ' + plan + ' - ' + valAvailable + '/' + valTotal);
+                if(isset(valAvailable) && AnyBalance.isAvailable('mms_left')){
+                    result.mms_left = (result.mms_left || 0) + parseInt(valAvailable);
+                }
+                if(isset(valTotal) && AnyBalance.isAvailable('mms_total')){
+                    result.mms_total = (result.mms_total || 0) + parseInt(valTotal);
                 }
             }else{
                 if(isset(valAvailable) && AnyBalance.isAvailable('mins_left')){
@@ -549,11 +557,15 @@ function checkTextForError(text){
 }
 
 function sleep(delay) {
-   var startTime = new Date();
-   var endTime = null;
-   do {
-       endTime = new Date();
-   } while (endTime.getTime() - startTime.getTime() < delay);
+   if(AnyBalance.getLevel() < 6){
+      var startTime = new Date();
+      var endTime = null;
+      do {
+          endTime = new Date();
+      } while (endTime.getTime() - startTime.getTime() < delay);
+   }else{
+      AnyBalance.sleep(delay);
+   }
 } 
 
 function megafonServiceGuidePhysical(filial, sessionid){

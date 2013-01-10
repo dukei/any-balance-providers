@@ -10,7 +10,7 @@
 function main(){
     var prefs = AnyBalance.getPreferences();
 
-    AnyBalance.setDefaultCharset('utf-8');
+    AnyBalance.setDefaultCharset('windows-1251');
 
     var baseurl = "https://bill.tomtel.ru/fastcom/!w3_p_main.showform";
 

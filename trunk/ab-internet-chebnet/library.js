@@ -94,6 +94,21 @@ function html_entity_decode(str)
     return tarea.value;
 }
 
+function parseDateJS(str){
+  //Рассчитывает на библиотеку date-ru-RU.js
+  var _str = str.replace(/(\d+)\s*г(?:\.|ода?)?,?/i, '$1 '); //Убираем г. после года, чтобы не мешалось
+  var dt = Date.parse(_str);
+  if(!dt){
+      AnyBalance.trace('Can not parse date from ' + str);
+      return;
+  }
+
+  dt = new Date(dt);
+  
+  AnyBalance.trace('Parsed date ' + dt.toString() + ' from ' + str);
+  return dt.getTime(); 
+}
+
 /**
  *  Проверяет, определено ли значение переменной
  */

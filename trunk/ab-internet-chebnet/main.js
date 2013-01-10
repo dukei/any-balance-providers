@@ -52,6 +52,7 @@ function main(){
     getParam(html, result, '__tariff', /Текущий тарифный план[\s\S]*?<td[^>]*>([\s\S]*?)(?:<\/td>|<td|<tr|<\/table)/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'traffic', /суммарно[\s\S]*?<td[^>]*>([\s\S]*?)(?:<\/td>|<td|<tr|<\/table)/i, replaceTagsAndSpaces, parseTrafficGb);
     getParam(html, result, 'trafficCost', /суммарно(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)(?:<\/td>|<td|<tr|<\/table)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'periodTill', /<td[^>]*>Дата окончания[\s\S]*?<td[^>]*>([\s\S]*?)(?:<\/td>|<td|<tr|<\/table)/i, replaceTagsAndSpaces, parseDateJS);
 
     AnyBalance.setResult(result);
 }

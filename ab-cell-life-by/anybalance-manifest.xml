@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-cell-life-by</id>
+  <id version="3">ab-cell-life-by</id>
   <name>Life:) Белоруссия</name>
   <description>
     Мониторинг баланса мобильного оператора Life:) (Белоруссия)
@@ -17,9 +17,10 @@
     <history>history.xml</history>
   </files>
   <counters>
-    <counter id="balance" name="Баланс" suffix="р"/>
-    <counter id="balance_bonus" name="Бонусы" suffix="р"/>
-    <counter id="traffic_left" name="Остаток трафика" suffix="Мб"/>
+    <counter id="balance" name="Баланс" suffix=" р"/>
+    <counter id="balance_bonus" name="Бонусы" suffix=" р"/>
+    <counter id="traffic_left" name="Остаток трафика" suffix=" Мб"/>
+    <counter id="min_left" name="Остаток минут" suffix=" мин"/>
   </counters>
   <keywords>
     мобильный оператор лайф белоруссия проверка баланса

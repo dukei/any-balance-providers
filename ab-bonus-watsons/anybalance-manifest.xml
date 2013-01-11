@@ -17,7 +17,8 @@
   </files>
   <counters>
     <counter id="bonus" name="Бонус" suffix=" бон." type="numeric"/>
-    <counter id="termin_bonus" name="Срок действия бонусов" type="time" format="dd/MM/yyyy"/>
+    <counter id="bonus_burn_date" name="Срок действия бонусов" type="time" format="dd/MM/yyyy"/>
+    <counter id="bonus_burn" name="Сгорающие бонусы" suffix=" бон." type="numeric"/>
   </counters>
   <keywords>
     сеть магазин ватсонс watsons dc дц украина

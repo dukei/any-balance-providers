@@ -204,3 +204,16 @@ function aggregate_min(values){
     }
     return total_value;
 }
+
+function aggregate_join(values, delimiter){
+    if(values.length == 0)
+        return;
+    if(!isset(delimiter))
+        delimiter = ', ';
+    return values.join(delimiter);
+}
+
+function create_aggregate_join(delimiter){
+    return function(values){ return aggregate_join(values, delimiter); }
+}
+

@@ -7,13 +7,14 @@
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
+        var baseurl = "https://club.watsons.com.ua/club/";
 	var pass = prefs.pass;
 	var login = prefs.login;
 	if (!prefs.login || prefs.login == '')
 		throw new AnyBalance.Error('Введите № карты');
 	if (!prefs.pass || prefs.pass == '')
 		throw new AnyBalance.Error('Введите пароль');
-	var html = AnyBalance.requestPost('https://club.watsons.com.ua/club/j_spring_security_check',
+	var html = AnyBalance.requestPost(baseurl + 'j_spring_security_check',
 		{
 			login : prefs.login,
 			pass : prefs.pass
@@ -29,12 +30,29 @@ function main() {
 		// Бонусы накопленные по программе Watsons Club
 		getParam(html, result, 'bonus', /<div[^>]*>Кількість балів:[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 
+                if(AnyBalance.isAvailable('bonus_burn', 'bonus_burn_date')){
+                    var json = AnyBalance.requestPost(baseurl + 'private/account/balance/pointspage.dc', '{"pageNumber":"1"}', {
+                        'Content-Type':'application/json',
+                        'Accept':'application/json, text/javascript, */*; q=0.01',
+		        "User-Agent" : "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.52 Safari/537.17",
+                        'X-Requested-With':'XMLHttpRequest'
+                    });
+                    json = getJson(json);
+ 
+                    if(json.records){
+                        if(AnyBalance.isAvailable('bonus_burn'))
+                            result.bonus_burn = json.rows[0].points;
+                        if(AnyBalance.isAvailable('bonus_burn_date'))
+                            result.bonus_burn_date = parseDateISO(json.rows[0].expirationDate);
+                    }
+                }
+
 		sumParam(html, result, 'termin_bonus',
 				/<div[^>]*>Станом на:[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i,
 				replaceTagsAndSpaces, parseDate, aggregate_min);
 
 		// ФИО
-		html = AnyBalance.requestGet('https://club.watsons.com.ua/club/private/profile/view.dc',
+		html = AnyBalance.requestGet(baseurl + 'private/profile/view.dc',
 			{
 				"User-Agent" : "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.52 Safari/537.17"
 			});

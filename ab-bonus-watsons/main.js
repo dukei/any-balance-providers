@@ -18,7 +18,7 @@ function main(){
 			login: prefs.login,
 			pass: prefs.pass
 		}, 
-		{"User-Agent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11"}
+		{"User-Agent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.52 Safari/537.17"}
 	);
 	if (html){
 		var result = {success: true};
@@ -31,9 +31,12 @@ function main(){
 				throw new AnyBalance.Error("Не удалось проверить бонусы");
 			}
 		}
+		//Срок действия бонусов
+		//sumParam (html, result, 'termin_bonus', /<div.+>\d+.+<\/div>\s*<div.+>([^<]*).+<\/div>/i, replaceTagsAndSpaces, parseDate, aggregate_min);
+		sumParam (html, result, 'termin_bonus', /<div.+>Станом на:<\/div>\s*<div.+>([^<]*)<\/div>/i, replaceTagsAndSpaces, parseDate, aggregate_min);
 		//ФИО
 		html = AnyBalance.requestPost('https://club.watsons.com.ua/club/private/profile/view.dc',
-		{"User-Agent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11"}
+		{"User-Agent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.52 Safari/537.17"}
 		);
 		if (matches=/<div .*>Прізвище:<\/div>\s*<div .*>(.*?)<\/div>/.exec(html)){
 		str_tmp1=/<div .*>Ім’я:<\/div>\s*<div .*>(.*?)<\/div>/.exec(html), str_tmp2=/<div .*>По батькові:<\/div>\s*<div .*>(.*?)<\/div>/.exec(html)

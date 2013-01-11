@@ -30,6 +30,7 @@ function main() {
 		// Бонусы накопленные по программе Watsons Club
 		getParam(html, result, 'bonus', /<div[^>]*>Кількість балів:[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 
+		// Срок действия бонусов и бонусы которые сгорят
                 if(AnyBalance.isAvailable('bonus_burn', 'bonus_burn_date')){
                     var json = AnyBalance.requestPost(baseurl + 'private/account/balance/pointspage.dc', '{"pageNumber":"1"}', {
                         'Content-Type':'application/json',
@@ -46,10 +47,6 @@ function main() {
                             result.bonus_burn_date = parseDateISO(json.rows[0].expirationDate);
                     }
                 }
-
-		sumParam(html, result, 'termin_bonus',
-				/<div[^>]*>Станом на:[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i,
-				replaceTagsAndSpaces, parseDate, aggregate_min);
 
 		// ФИО
 		html = AnyBalance.requestGet(baseurl + 'private/profile/view.dc',

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+      <ListPreference 
+        key="preix"
+        title="Префикс номера телефона" 
+        summary="|Выберите префикс номера телефона|{@s}" 
+	entries="50|51"
+	entryValues="50|51"
+        defaultValue="50"
+        dialogTitle="Префикс номера телефона">
+    </ListPreference>
+    <EditTextPreference 
+        title="Телефон" 
+        positiveButtonText="ОК" 
+        summary="|Введите 7 цифр номера телефона|{@s}\n" 
+        dialogTitle="Телефон" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите последние 7 цифр вашего номера телефона без префикса ."
+        inputType="number"
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="||***********\n"
+        dialogMessage="Введите пароль, используемый для входа в личный кабинет Azercell."
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-cell-bwc</id>
+  <id version="2">ab-cell-bwc</id>
   <name>БайкалВестКом (Ростелеком)</name>
   <description>
     Получает баланс, остаток минут, интернет трафка, SMS для корпоративных тарифов сотового оператора БайкалВестКом, ныне Ростелеком (http://www.bwc.ru).

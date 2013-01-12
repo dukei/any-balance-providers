@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Код города" 
+        positiveButtonText="ОК" 
+        summary="|Оставьте пустым, если входите по номеру л/с|{@s}\n" 
+        dialogTitle="Код города" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите код города вашего телефона или оставьте поле пустым, если вы хотите войти по номеру лицевого счета."
+        inputType="number"
+        key="prefix">
+    </EditTextPreference>
+    <EditTextPreference 
+        title="Номер телефона или л/с" 
+        positiveButtonText="ОК" 
+        summary="|Ваш номер телефона или л/с|{@s}\n" 
+        dialogTitle="Номер телефона или л/с" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите цифры вашего номера без кода города, если вы входите по номеру телефона, или введите номер вашего лицевого счета, если вы входите по нему."
+        inputType="number"
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="PIN"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="|Введите PIN|***********"
+        dialogMessage="Введите ваш пароль, используемый для входа в личный кабинет."
+        inputType="numberPassword">
+    </EditTextPreference>
+    <ListPreference 
+        key="region" 
+        title="Регион"
+        summary="|Выберите ваш регион|{@s}"
+        entries="Приморский край|Хабаровский край|Амурская область|Камчатский край|Сахалинская область|Магаданская область"
+        entryValues="423|421|416|415|424|413"
+        defaultValue="416">
+    </ListPreference>
+</PreferenceScreen>

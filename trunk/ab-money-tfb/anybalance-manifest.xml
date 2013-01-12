@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-money-tfb</id>
+  <id version="2">ab-money-tfb</id>
   <name>Татфондбанк</name>
   <description>
     Получает текущий остаток и другие параметры карт, счетов, депозитов банка Татфондбанка (http://www.tfb.ru), используя интернет-банк https://online.tfb.ru.

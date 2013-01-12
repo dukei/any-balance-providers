@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-money-open24-kz</id>
+  <id version="2">ab-money-open24-kz</id>
   <name>NURBANK (Казахстан)</name>
   <description>
     Получает текущий остаток и другие параметры карт, счетов Нурбанка (http://www.nurbank.kz), используя интернет-банк https://www.open24.kz.

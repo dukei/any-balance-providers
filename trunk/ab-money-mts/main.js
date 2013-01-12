@@ -62,11 +62,15 @@ function parseStatus(str){
 }
 
 function sleep(delay) {
-   var startTime = new Date();
-   var endTime = null;
-   do {
-       endTime = new Date();
-   } while (endTime.getTime() - startTime.getTime() < delay);
+   if(AnyBalance.getLevel() < 6){
+      var startTime = new Date();
+      var endTime = null;
+      do {
+          endTime = new Date();
+      } while (endTime.getTime() - startTime.getTime() < delay);
+   }else{
+      AnyBalance.sleep(delay);
+   }
 } 
 
 function encryptPass(pass, map){

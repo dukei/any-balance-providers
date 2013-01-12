@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-money-mts</id>
+  <id version="2">ab-money-mts</id>
   <name>МТС Банк</name>
   <description>
     Получает текущий остаток и другие параметры карт, счетов МТС Банка (http://www.mtsbank.ru), используя интернет-банк https://personalbank.ru.

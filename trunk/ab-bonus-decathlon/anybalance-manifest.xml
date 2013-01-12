@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-bonus-decathlon</id>
+  <id version="3">ab-bonus-decathlon</id>
   <name>Бонусная карта Декатлон</name>
   <description>
     Получает количество баллов на карте накопительной программы Декатлон.

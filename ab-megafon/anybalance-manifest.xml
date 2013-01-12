@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="2.6" version="54">ab-megafon</id>
+  <id major_version="2.6" version="55">ab-megafon</id>
   <name>Мегафон</name>
   <description>
     Получает баланс, бонусный баланс, минуты, трафик, SMS на телефоне и многое другое. Поддерживаются все филиалы.
@@ -31,8 +31,8 @@
     <counter id="mins_compet_left" name="Минуты на МТС,Билайн,Скайлинк" units="мин" type="time_interval" format="{@MIN}"/>
     <counter id="mins_net_left" name="Минуты внутри сети" units="мин" type="time_interval" format="{@MIN}"/>
     <counter id="internet_left" name="Интернет (осталось)" units="Mb"/>
-    <counter id="sms_left" name="Включенные SMS"/>
-    <counter id="mms_left" name="Включенные MMS"/>
+    <counter id="sms_left" name="SMS включенные "/>
+    <counter id="mms_left" name="MMS включенные"/>
     <counter id="bonus_balance" name="Бонусный баланс"/>
     <counter id="prsnl_balance" name="Персональный баланс (корп.)" units="р"/>
     <counter id="handygift_left" name="Нужный подарок - осталось (Поволжье)" units="р"/>
@@ -48,11 +48,11 @@
     <counter id="sms_total" name="Включенные SMS (всего)"/>
     <counter id="mms_total" name="Включенные MMS (всего)"/>
     <counter id="handygift_total" name="Нужный подарок - всего (Поволжье)" units="р"/>
-    <counter id="sub_scl" name="Начислено за звонки" units="р"/>
-    <counter id="sub_soi" name="Начислено за услуги" units="р"/>
-    <counter id="sub_scr" name="Начислено за роуминг" units="р"/>
-    <counter id="sub_smit" name="Начислено абон.платы по тарифному плану" units="р"/>
-    <counter id="sub_smio" name="Начислено абон.платы за услуги" units="р"/>
+    <counter id="sub_scl" name="За звонки начислено" units="р"/>
+    <counter id="sub_soi" name="За услуги начислено" units="р"/>
+    <counter id="sub_scr" name="За роуминг начислено" units="р"/>
+    <counter id="sub_smit" name="АП по ТП (начислено абон.платы по тарифному плану) " units="р"/>
+    <counter id="sub_smio" name="АП за услуги (Начислено абон.платы за услуги)" units="р"/>
     <counter id="last_pay_sum" name="Последний платеж" units="р"/>
     <counter id="last_pay_date" name="Дата посл. платежа" type="time" format="dd/MM/yyyy"/>
     <counter id="bonus_burn" name="Бонусные баллы, сгорающие в конце текущего месяца"/>

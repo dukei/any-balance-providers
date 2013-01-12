@@ -1,0 +1,78 @@
+﻿/**
+Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
+
+Получает текущий остаток и другие параметры у дальневосточного провайдера проводной телефонии Ростелеком
+
+Сайт оператора: http://dv.rt.ru/
+Личный кабинет: https://cabinet.dv.rt.ru
+*/
+
+function main(){
+    var prefs = AnyBalance.getPreferences();
+
+    var baseurl = "https://cabinet.dv.rt.ru/";
+    AnyBalance.setDefaultCharset('utf-8');
+
+    var html = AnyBalance.requestGet(baseurl + 'select_region/' + prefs.region);
+
+    var form_build_id = getParam(html, null, null, /<input[^>]+name="form_build_id"[^>]*value="([^"]*)/i, null, html_entity_decode);
+
+    if(!form_build_id)
+        throw new AnyBalance.Error('Не удаётся найти форму входа. Сайт изменен?');
+
+    if(prefs.prefix){
+        //Вход по телефону
+        html = AnyBalance.requestPost(baseurl + 'issa_login', {
+            city_code:prefs.prefix,
+            phone_bill:prefs.login,
+            pin_code:prefs.password,
+            op:'Войти',
+            dept_id:prefs.region, 
+            type:'phone',
+            form_build_id:form_build_id,
+            form_id:'issa_user_login_form'
+        });
+    }else{
+        //Вход по лицевому счету
+        html = AnyBalance.requestPost(baseurl + 'issa_login/bill', {
+            phone_bill:prefs.login,
+            pin_code:prefs.password,
+            op:'Войти',
+            dept_id:prefs.region, 
+            type:'bill',
+            form_build_id:form_build_id,
+            form_id:'issa_user_login_form'
+        });
+    }
+
+    if(!/issa_logout/i.test(html)){
+        var error = getParam(html, null, null, /<div[^>]+warning[^>]*>([\s\S]*?)<div[^>]+msg_type="popup"[^>]*>/i, replaceTagsAndSpaces, html_entity_decode);
+        if(error)
+            throw new AnyBalance.Error(error);
+        throw new AnyBalance.Error('Не удалось войти в личный кабинет. Неправильный логин-пароль?');
+    }
+
+    var result = {success: true};
+
+    getParam(html, result, 'balance', /<td[^>]*>Итого[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'licschet', /<div[^>]*id="user-account"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'fio', /<h1[^>]*class="username"[^>]*>([\s\S]*?)<\/h1>/i, replaceTagsAndSpaces, html_entity_decode);
+
+    result.__tariff = (prefs.prefix || '') + prefs.login;
+
+    //getRegions(result);
+
+    AnyBalance.setResult(result);
+}
+
+function getRegions(result){
+    var html = AnyBalance.requestGet("https://cabinet.dv.rt.ru/", {'Cookie': null});
+    var re = /<a[^>]+href="\/select_region\/(\d+)">([^<]*)<\/a>/ig, matches;
+    var ids = [], names = [];
+    while(matches = re.exec(html)){
+        ids.push(matches[1]);
+        names.push(matches[2]);
+    }
+    result.entries = names.join('|');
+    result.entryValues = ids.join('|');
+}

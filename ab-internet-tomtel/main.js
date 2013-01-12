@@ -8,6 +8,12 @@
 */
 
 function main(){
+    if(AnyBalance.getLevel() < 6)
+        throw new AnyBalance.Error('Этот провайдер требует AnyBalance API 6+');
+
+    //Старый сервер оракл 10g имеет баг в TSL, приходится явно перейти на SSL
+    AnyBalance.setOptions({SSL_ENABLED_PROTOCOLS: ['SSLv3']});
+
     var prefs = AnyBalance.getPreferences();
 
     AnyBalance.setDefaultCharset('windows-1251');

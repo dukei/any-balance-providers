@@ -57,8 +57,11 @@ function main(){
     getParam(html, result, 'balance', /<td[^>]*>Итого[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'licschet', /<div[^>]*id="user-account"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'fio', /<h1[^>]*class="username"[^>]*>([\s\S]*?)<\/h1>/i, replaceTagsAndSpaces, html_entity_decode);
-
-    result.__tariff = (prefs.prefix || '') + prefs.login;
+    getParam(html, result, 'phone', /<span[^>]*id="menuPhone"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, '__tariff', /<span[^>]*id="menuLocalTariff"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'ic_vendor', /<span[^>]*id="menuIntercityVendor"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'ic_tariff', /<span[^>]*id="menuIntercityTariff"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'address', /<h1[^>]+class="username"[^>]*>[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
 
     //getRegions(result);
 

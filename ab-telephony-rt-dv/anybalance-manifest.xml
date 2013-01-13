@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-telephony-rt-dv</id>
+  <id version="2">ab-telephony-rt-dv</id>
   <name>Ростелеком (Дальний восток)</name>
   <description>
     Получает текущий баланс провайдера проводной телефонии Ростелеком (Дальний восток) (http://dv.rt.ru). 
@@ -18,9 +18,13 @@
     <history>history.xml</history>
   </files>
   <counters>
-    <counter id="balance" name="Баланс" units="уе"/>
-    <counter id="phone" name="Номер АллоИнкогнито" type="text"/>
+    <counter id="balance" name="Баланс" units="р"/>
     <counter id="fio" name="ФИО" type="text"/>
+    <counter id="address" name="Адрес" type="text"/>
+    <counter id="ic_vendor" name="Оператор дальней связи" type="text"/>
+    <counter id="ic_tariff" name="Тариф дальней связи" type="text"/>
+    <counter id="phone" name="Номер" type="text"/>
+    <counter id="licschet" name="Лицевой счет" type="text"/>
   </counters>
   <keywords>
     rostelecom дв амурская приморский хабаровский камчатский сахалинская магаданская

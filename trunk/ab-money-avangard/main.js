@@ -7,39 +7,6 @@
 Личный кабинет: https://www.avangard.ru/login/logon_enter.html
 */
 
-function getParam (html, result, param, regexp, replaces, parser) {
-	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
-		return;
-
-	var value = regexp ? regexp.exec (html) : html;
-	if (value) {
-                if(regexp)
-		    value = value[1];
-		if (replaces) {
-			for (var i = 0; i < replaces.length; i += 2) {
-				value = value.replace (replaces[i], replaces[i+1]);
-			}
-		}
-		if (parser)
-			value = parser (value);
-
-    if(param)
-      result[param] = value;
-    else
-      return value
-	}
-}
-
-var replaceTagsAndSpaces = [/<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
-var replaceFloat = [/\s+/g, '', /,/g, '.', /(\d)\-(\d)/g, '$1.$2'];
-
-function parseBalance(text){
-    var _text = text.replace(/\s+/g, '');
-    var val = getParam(_text, null, null, /(-?\d[\d\.,\-]*)/, replaceFloat, parseFloat);
-    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
-    return val;
-}
-
 var replaceFloat2 = [/\s+/g, '', /,/g, '', /(\d)\-(\d)/g, '$1.$2'];
 
 function parseBalance2(text){
@@ -49,23 +16,6 @@ function parseBalance2(text){
     return val;
 }
 
-function parseCurrency(text){
-    var _text = text.replace(/\s+/g, '');
-    var val = getParam(_text, null, null, /[\d\.,\-]+(\S*)/);
-    AnyBalance.trace('Parsing currency (' + val + ') from: ' + text);
-    return val;
-}
-
-function parseDate(str){
-    var matches = /(\d+)[^\d](\d+)[^\d](\d+)/.exec(str);
-    var time;
-    if(matches){
-	  time = (new Date(+matches[3], matches[2]-1, +matches[1])).getTime();
-    }
-    AnyBalance.trace('Parsing date ' + new Date(time) + ' from value: ' + str);
-    return time;
-}
-
 var g_phrases = {
    karty: {card: 'карты', acc: 'счета'},
    kartu: {card: 'карту', acc: 'счет'},
@@ -73,6 +23,15 @@ var g_phrases = {
    karty1: {card: 'одной карты', acc: 'одного счета'}
 }
 
+var g_headers = {
+    'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
+    'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+    'Cache-Control':'max-age=0',
+    'Connection':'keep-alive',
+    'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.97 Safari/537.11'
+};
+    
 function main(){
     var prefs = AnyBalance.getPreferences();
     var baseurl = "https://www.avangard.ru/";
@@ -87,7 +46,7 @@ function main(){
         passwd:prefs.password,
         x:38,
         y:6,
-    });
+    }, g_headers);
 
     var error = getParam(html, null, null, /<!--WAS_ERROR-->([\s\S]*?)<!--\/WAS_ERROR-->/i, replaceTagsAndSpaces);
     if(error)
@@ -99,7 +58,86 @@ function main(){
 
     AnyBalance.trace("We seem to enter the bank...");
 
-    html = AnyBalance.requestGet(baseurl + "ibAvn/" + firstpage);
+    var url = AnyBalance.getLastUrl();
+    //Физики и IP почему-то на разные папки редиректятся... Узнаем, на какую нас занесло
+    var bankType = getParam(url, null, null, /avangard.ru\/(\w+Avn)/i);
+    if(!bankType)
+        throw new AnyBalance.Error('Не удаётся определить тип банка по url: ' + url);
+    AnyBalance.trace('Тип банка: ' + bankType);
+
+    //Зачем-то банк требует удалить эту куку
+    AnyBalance.setCookie('www.avangard.ru', 'JSESSIONID', null, {path: '/' + bankType});
+
+    baseurl += bankType;
+    html = AnyBalance.requestGet(baseurl + "/" + firstpage, g_headers);
+
+    if(bankType == 'clbAvn'){
+        fetchBankYur(html, baseurl);
+    }else{
+        fetchBankPhysic(html, baseurl);
+    }
+}
+
+function fetchBankYur(html, baseurl){
+    var prefs = AnyBalance.getPreferences();
+    var what = prefs.what || 'card';
+
+    if(what == 'card')
+        throw new AnyBalance.Error('Для интернет-банка для юридических лиц карты пока не поддерживаются. Выберите информацию по счету или обратитесь к автору провайдера.');
+
+    if(/<title>session_error<\/title>/i.test(html)){
+        if(!prefs.__dbg){
+            var error = getParam(html, null, null, /<body>([\s\S]*?)<\/body>/i, replaceTagsAndSpaces, html_entity_decode);
+            throw new AnyBalance.Error(error);
+        }
+    }
+
+    //Без этого почему-то не даёт получить инфу по картам.
+    html = AnyBalance.requestGet(baseurl + '/faces/facelet-pages/iday_balance.jspx', g_headers);
+
+    html = AnyBalance.requestPost(baseurl + '/faces/facelet-pages/iday_balance.jspx', {
+        docslist___jeniaPopupFrame:'',
+        'docslist:main:selVal':0,
+        'docslist:main:clTbl:_s':0,
+        'docslist:main:clTbl:_us':0,
+        'docslist:main:clTbl:rangeStart':0,
+        'docslist:main:accTbl:_s':0,
+        'docslist:main:accTbl:_us':0,
+        'docslist:main:accTbl:rangeStart':0,
+        'oracle.adf.faces.FORM':'docslist',
+        'oracle.adf.faces.STATE_TOKEN':getStateToken(html),
+        'docslist:main:clTbl:_sm':'',
+        'docslist:main:accTbl:_sm':'',
+        'event':'',
+        'source':'docslist:main:_id514'
+     }, addHeaders({Referer: baseurl + '/faces/facelet-pages/iday_balance.jspx'}));
+
+     var table = getParam(html, null, null, /<table[^>]+class="x2f"[^>]*>([\s\S]*?)<\/table>/i);
+     if(!table)
+        throw new AnyBalance.Error('Не найдена таблица счетов. Сайт изменен?');
+
+     var re = new RegExp('<tr[^>]*>(?:[\\s\\S](?!</tr>))*?(?:\\d\\s*){16}' + (prefs.num ? prefs.num : '(?:\\d\\s*){4}') + '[\\s\\S]*?</tr>', 'i');
+     var tr = getParam(table, null, null, re);
+     if(!tr)
+        throw new AnyBalance.Error(prefs.num ? 'Не найден счет с последними цифрами ' + prefs.num : 'Не найдено ни одного счета');
+
+     var result = {success: true};
+     getParam(tr, result, 'balance', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+     getParam(tr, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+     getParam(tr, result, 'accnum', /((?:\d\s*){20})/i, replaceTagsAndSpaces, html_entity_decode);
+     getParam(tr, result, 'accname', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)(?:<\/td>|<\/div>)/i, replaceTagsAndSpaces, html_entity_decode);
+
+    AnyBalance.setResult(result);
+}
+
+function getStateToken(html){
+       var token = getParam(html, null, null, /<input[^>]*name="oracle\.adf\.faces\.STATE_TOKEN"[^>]*value="([^"]*)/i);
+       return token;
+}
+
+function fetchBankPhysic(html, baseurl){
+    var prefs = AnyBalance.getPreferences();
+    var what = prefs.what || 'card';
 
     var pattern = null;
     if(what == 'card')
@@ -107,7 +145,7 @@ function main(){
     else
         pattern = new RegExp(prefs.num ? '(\\d{16}'+prefs.num+')' : '(\\d{20})');
 
-    $html = $(html);
+    var $html = $(html);
     var acccardnum = null;
 
     var $acc = $html.find('table[width="700"]').filter(function(i){
@@ -149,17 +187,17 @@ function main(){
        //{source:'f:_id164:0:_id180'}
        var source = getParam($acc.find('a.xl').attr('onclick'), null, null, /\{source:'([^']*)/i);
        //<input type="hidden" name="oracle.adf.faces.STATE_TOKEN" value="-118qdrmfn5">
-       var token = getParam(html, null, null, /<input[^>]*name="oracle\.adf\.faces\.STATE_TOKEN"[^>]*value="([^"]*)/i);
+       var token = getStateToken(html);
        if(source && token){
 //            AnyBalance.setCookie('www.avangard.ru', 'oracle.uix', '0^^GMT+4:00');
 //            AnyBalance.setCookie('www.avangard.ru', 'xscroll-faces/pages/accounts/all_acc.jspx', '0:1354528466127');
 //            AnyBalance.setCookie('www.avangard.ru', 'yscroll-faces/pages/accounts/all_acc.jspx', '0:1354528466130');
 
-            html = AnyBalance.requestPost(baseurl + 'ibAvn/faces/pages/accounts/all_acc.jspx', {
+            html = AnyBalance.requestPost(baseurl + '/faces/pages/accounts/all_acc.jspx', {
                 'oracle.adf.faces.FORM':'f',
                 'oracle.adf.faces.STATE_TOKEN': token,
                 source: source
-            }/*, {Referer: 'https://www.avangard.ru/ibAvn/faces/pages/accounts/all_acc.jspx'}*/);
+            }, g_headers/*, {Referer: baseurl + '/faces/pages/accounts/all_acc.jspx'}*/);
        
             //До 31.08.2012 для уплаты минимального платежа необходимо внести 1,675.05 RUR     
             //&#1044;&#1086; 31.08.2012 &#1076;&#1083;&#1103; &#1091;&#1087;&#1083;&#1072;&#1090;&#1099; &#1084;&#1080;&#1085;&#1080;&#1084;&#1072;&#1083;&#1100;&#1085;&#1086;&#1075;&#1086; &#1087;&#1083;&#1072;&#1090;&#1077;&#1078;&#1072; &#1085;&#1077;&#1086;&#1073;&#1093;&#1086;&#1076;&#1080;&#1084;&#1086; &#1074;&#1085;&#1077;&#1089;&#1090;&#1080; 1,675.05 RUR
@@ -181,12 +219,3 @@ function main(){
 
     AnyBalance.setResult(result);
 }
-
-function html_entity_decode(str)
-{
-    //jd-tech.net
-    var tarea=document.createElement('textarea');
-    tarea.innerHTML = str;
-    return tarea.value;
-}
-

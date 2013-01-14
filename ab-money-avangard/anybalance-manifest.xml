@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="4">ab-money-avangard</id>
+  <id version="5">ab-money-avangard</id>
   <name>Банк Авангард</name>
   <description>
     Получает текущий остаток и другие параметры карт и счетов банка Авангард, используя систему Интернет-банк ( https://www.avangard.ru/login/logon_enter.html ).
@@ -13,8 +13,9 @@
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
-    <js>main.js</js>
     <js>api:jquery.min.js</js>
+    <js>library.js</js>
+    <js>main.js</js>
     <history>history.xml</history>
   </files>
   <counters>

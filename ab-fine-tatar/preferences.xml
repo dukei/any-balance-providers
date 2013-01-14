@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Телефон" 
+        positiveButtonText="ОК" 
+        summary="|Формат ввода: 9********* (10 цифр)|{@s}" 
+        dialogTitle="Телефон" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите телефон для входа в личный кабинет https://uslugi.tatar.ru. Формат ввода: 9********* (10 цифр)"
+        inputType="number"
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="||***********"
+        dialogMessage="Введите пароль, используемый для входа в личный кабинет http://uslugi.tatar.ru."
+        inputType="textPassword">
+    </EditTextPreference>
+    <EditTextPreference 
+        title="Номер машины" 
+        positiveButtonText="ОК" 
+        summary="|Формат ввода: cXXXccRR или XXXXccRR|{@s}" 
+        dialogTitle="Номер машины" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите номер машины в формате cXXXccRR для автомобиля или XXXXccRR для мотоцикла, где с - буква, X - цифра, RR - номер региона (2 или 3 цифры)."
+        inputType="text"
+        key="plate">
+    </EditTextPreference>
+    <EditTextPreference 
+        title="Свидетельство о регистрации" 
+        positiveButtonText="ОК" 
+        summary="|Введите последние 6 цифр|{@s}" 
+        dialogTitle="Свидетельство о регистрации" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите последние 6 цифр номера свидетельства о регистрации ТС."
+        inputType="number"
+        key="sr">
+    </EditTextPreference>
+</PreferenceScreen>

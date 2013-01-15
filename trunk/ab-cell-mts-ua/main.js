@@ -87,7 +87,7 @@ function main(){
     getParam (html, result, 'termin_bonus_balance', /<li>Денежный бонусный счет:[^<]*осталось\s*[^<]*\s*грн. Срок действия до ([^<]*)<\/li>/i, replaceTagsAndSpaces, parseDate);
 
     // Пакет бесплатных минут для внутрисетевых звонков
-    sumParam (html, result, 'min_paket', /<li>Осталось ([\d\.,]+) бесплатных секунд[^<]*<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    sumParam (html, result, 'min_paket', /<li>Осталось ([\d\.,]+) бесплатных секунд до[^<]*<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     //Срок Пакет бесплатных минут для внутрисетевых звонков
     sumParam (html, result, 'termin_min_paket', /<li>Осталось[^<]*бесплатных секунд до ([^<]*)<\/li>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
 
@@ -100,8 +100,9 @@ function main(){
     // 33 минуты в день для внутрисетевых звонков во всех областях
     sumParam (html, result, 'min_net_all_33', /<li>33 минуты в день для внутрисетевых звонков во всех областях:[^<]*осталось\s*([\d\.,]+) бесплатных секунд<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 
-    // 100 минут в день на внутрисетевое направление
+    // 100/200 минут в день на внутрисетевое направление
     sumParam (html, result, 'min_net_100', /<li>100 минут в день на внутрисетевое направление:[^<]*осталось\s*([\d\.,]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    sumParam (html, result, 'min_net_100', /<li>200 минут в день на внутрисетевое направление:[^<]*осталось\s*([\d\.,]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     
     // 3000 региональных минут в сети
     sumParam (html, result, 'min_reg_3000', /<li>3000 региональных минут в сети:[^<]*осталось\s*([\d\.,]+)/ig, replaceFloat, function(str){return 60*parseFloat(str)});

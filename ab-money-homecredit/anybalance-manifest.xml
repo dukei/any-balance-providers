@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-    <id version="3">ab-money-homecredit</id>
+    <id version="4">ab-money-homecredit</id>
     <name>Хоум Кредит</name>
     <description>Информация о карте, кредите, депозите в банке Хоум Кредит (http://www.homecredit.ru).
 В настройках провайдера требуется указать логин и пароль к Интернет-банку https://ib.homecredit.ru.
@@ -10,7 +10,7 @@
 
 ВНИМАНИЕ! В настоящее время поддерживаются вклады и карты. Если вам нужна поддержка кредитов, обращайтесь к автору провайдера по е-мейл.
 
-Для указания депозита можно ввести его ID. Получить ID всех депозитов можно в счетчике "Сводка".
+Для указания депозита или кредита можно ввести его ID. Получить ID всех депозитов и кредитов можно в счетчике "Сводка".
 </description>
     <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
     <files>
@@ -27,6 +27,7 @@
         <counter id="minpaytill" name="Заплатить до" type="time" format="dd/MM/yyyy"/>
         <counter id="debt" name="Задолженность"/>
 	<counter id="pcts" name="Начисленные проценты"/>
+	<counter id="notpaid" name="Не выплачено"/> <!-- Это число неоплаченных периодов для кредита, насколько я понимаю -->
         <counter id="currency" name="Валюта" type="text"/>
         <counter id="status" name="Статус" type="text"/>
         <counter id="till" name="Срок действия" type="time" format="dd/MM/yyyy"/>

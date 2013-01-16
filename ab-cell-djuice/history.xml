@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change major_version="1.3" version="18" date="2013-01-16">
+      Добавлен счетчик Номер телефона
+    </change>
     <change major_version="1.3" version="17" date="2013-01-09">
       Добавлен счетчик Минуты на DJUICE
     </change>

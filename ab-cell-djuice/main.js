@@ -98,7 +98,9 @@ function main(){
   sumParam(html, result, 'home_internet_to_date', /(?:Від послуги "Домашній .нтернет":|От услуги "Домашний .нтернет":)[\s\S]*?<b>(?:.*?)<[\s\S]*?>(.*?)&nbsp;</ig, replaceTagsAndSpaces, parseDate, aggregate_min);
   
   //Срок действия номера
-  getParam(html, result, 'till', /(?:Номер діє до:|Номер действует до:)[\s\S]*?<td>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+  getParam(html, result, 'till', /(?:Номер діє до:|Номер действует до:)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+
+  getParam(html, result, 'phone', /(?:Номер|Номер):[\s\S]*?<td[^>]*>([\s\S]*?)(?:\(|<\/td>)/i, replaceTagsAndSpaces, html_entity_decode);
 
   //Получим дату последнего пополнения, а также дату последнего пополнения на 40 гривен и больше + 29 дней (для срока действия пакета интернет)
   if(AnyBalance.isAvailable('lastpaydate', 'lastpaysum', 'lastpaydesc', 'paydate40end')){
@@ -187,5 +189,6 @@ function findPayments(allpayments, result){
         if(maxIndex40 >= 0)
             result.paydate40end = allpayments[maxIndex40].date + 29*86400*1000; //Пакет действует 29 дней после платежа в 40 гривен
     }
+
     return ret;
 }

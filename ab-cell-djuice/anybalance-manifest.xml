@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.3" version="17">ab-cell-djuice</id>
+  <id major_version="1.3" version="18">ab-cell-djuice</id>
   <name>Djuice</name>
   <description>
     Получает баланс, бонусные минуты, СМС, ММС, остаток интернет-трафика и другие бонусы для мобильного оператора Djuice.
@@ -35,6 +35,7 @@
     <counter id="lastpaydate" name="Дата посл. платежа" type="time" format="dd/MM/yyyy"/>
     <counter id="lastpaydesc" name="Тип посл. платежа" units=" ₴" type="text"/>
     <counter id="paydate40end" name="Срок действия трафика (АЛЬО КВАРТАЛ! МІЙ РЕГІОН)" type="time" format="dd/MM/yyyy"/>
+    <counter id="phone" name="Номер телефона" type="text"/>
   </counters>
   <keywords>
     Сотовый телефон, мобильный, мобильник, djuice, kyivstar, диджус, киевстар, Украина

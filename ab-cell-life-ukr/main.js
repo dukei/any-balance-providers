@@ -179,6 +179,10 @@ function mainApi(){
 	sumParam(xml, result, 'mins_uk', /<balance[^>]+code="Bundle_Voice_Offnet[^>]*amount="([^"]*)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     }
         
+    if(AnyBalance.isAvailable('phone')){
+        result.phone = '+'+msisdn;
+    }
+
     AnyBalance.setResult(result);
 }
 
@@ -206,6 +210,10 @@ function mainWap(){
 
 	if(typeof(result.__tariff) == 'undefined'){
            result.__tariff = '+38'+prefs.prefph+prefs.phone;
+        }
+
+        if(AnyBalance.isAvailable('phone')){
+           result.phone = '+38'+prefs.prefph+prefs.phone;
         }
         
         AnyBalance.setResult(result);

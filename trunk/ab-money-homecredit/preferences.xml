@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-	<EditTextPreference
+    <EditTextPreference
         title="Логин" 
         positiveButtonText="ОК" 
         summary="||{@s}" 
@@ -24,8 +24,8 @@
         key="type" 
         title="Продукт"
         summary="||{@s}"
-        entries="Депозит|Карта"
-        entryValues="dep|card"
+        entries="Депозит|Карта|Кредит"
+        entryValues="dep|card|crd"
 	defaultValue="dep">
     </ListPreference>
     <EditTextPreference
@@ -34,7 +34,7 @@
         summary="|Автоматически|{@s}" 
         dialogTitle="ID продукта" 
         negativeButtonText="Отмена" 
-        dialogMessage="В зависимости от настройки Что смотреть, введите сюда ID депозита или последние 4 цифры карты. Если оставить поле пустым, то будет показана информация по первой карте/депозиту. Узнать ID депозитов можно узнать из счетчика Сводка."
+        dialogMessage="В зависимости от настройки Что смотреть, введите сюда ID депозита или кредита или последние 4 цифры карты. Если оставить поле пустым, то будет показана информация по первому продукту. ID депозитов и кредитов можно узнать из счетчика Сводка."
         key="contract"
         inputType="number">
     </EditTextPreference>

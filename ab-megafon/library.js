@@ -18,6 +18,7 @@ AnyBalance (http://any-balance-providers.googlecode.com)
  * 
  * replaces - массив, нечетные индексы - регулярные выражения, четные - строки, 
  * на которые надо заменить куски, подходящие под предыдущее регулярное выражение
+ * массивы могут быть вложенными
  * см. например replaceTagsAndSpaces
  */
 
@@ -25,27 +26,52 @@ function getParam (html, result, param, regexp, replaces, parser) {
 	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
 		return;
 
-	var matches = regexp ? regexp.exec (html) : [html, html], value;
+	var matches = regexp ? html.match(regexp) : [, html], value;
 	if (matches) {
-		value = matches[1];
-		if (replaces) {
-			for (var i = 0; i < replaces.length; i += 2) {
-				value = value.replace (replaces[i], replaces[i+1]);
-			}
-		}
+                //Если нет скобок, то значение - всё заматченное
+		value = replaceAll(isset(matches[1]) ? matches[1] : matches[0], replaces);
 		if (parser)
 			value = parser (value);
 
-    if(param)
-      result[param] = value;
+		if(param)
+			result[param] = value;
 	}
-   return value
+	return value;
 }
 
 //Замена пробелов и тэгов
-var replaceTagsAndSpaces = [/&nbsp;/ig, ' ', /<!--[\s\S]*?-->/g, '', /<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, ''];
+var replaceTagsAndSpaces = [/&nbsp;/ig, ' ', /&minus;/ig, '-', /<!--[\s\S]*?-->/g, '', /<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, ''];
 //Замена для чисел
-var replaceFloat = [/\s+/g, '', /,/g, '.'];
+var replaceFloat = [/&minus;/ig, '-', /\s+/g, '', /,/g, '.'];
+
+/**
+ *  Проверяет, определено ли значение переменной
+ */
+function isset(v){
+    return typeof(v) != 'undefined';
+}
+
+/**
+ *  Проверяет, является ли объект массивом
+ */
+function isArray(arr){
+	return Object.prototype.toString.call( arr ) === '[object Array]';
+}
+
+/**
+ * Делает все замены в строке value. При этом, если элемент replaces массив, то делает замены по нему рекурсивно.
+ */
+function replaceAll(value, replaces){
+	for (var i = 0; replaces && i < replaces.length; ++i) {
+                if(isArray(replaces[i])){
+			value = replaceAll(value, replaces[i]);
+                }else{
+			value = value.replace (replaces[i], replaces[i+1]);
+			++i; //Пропускаем ещё один элемент, использованный в качестве замены
+                }
+	}
+        return value;
+}
 
 /**
  * Извлекает числовое значение из переданного текста
@@ -88,19 +114,12 @@ function parseDate(str){
 function getJsonEval(html){
    try{
        //Запрещаем использование следующих переменных из функции:
-       var json = new Function('window', 'AnyBalance', 'g_AnyBalanceApiParams', '_AnyBalanceApi', 'return ' + html).apply(null);
+       var json = new Function('window', 'AnyBalance', 'g_AnyBalanceApiParams', '_AnyBalanceApi', 'document', 'return ' + html).apply(null);
        return json;
    }catch(e){
        AnyBalance.trace('Bad json (' + e.message + '): ' + html);
        throw new AnyBalance.Error('Сервер вернул ошибочные данные: ' + e.message);
    }
-}
-
-/**
- *  Проверяет, определено ли значение переменной
- */
-function isset(v){
-    return typeof(v) != 'undefined';
 }
 
 /**
@@ -111,23 +130,26 @@ function isset(v){
  * в настройках аккаунта
  *
  * Очень похоже на getParam, но может получать несколько значений (при наличии 
- * в регулярном выражении флага g). В этом случае суммирует их.
+ * в регулярном выражении флага g). В этом случае применяет к ним функцию aggregate, 
+ * а если она не передана, то возвращает массив всех совпадений.
  * 
  * если result и param равны null, то значение просто возвращается.
  * eсли parser == null, то возвращается результат сразу после замен
+ * если regexp == null, то значением является переданный html
  * если replaces == null, то замены не делаются
- * do_replace - если true, то найденные значения вырезаются из переданного текста
+ * do_replace - если true, то найденные значения вырезаются из переданного текста 
+ * и новый текст возвращается (только при param == null)
  * 
  * replaces - массив, нечетные индексы - регулярные выражения, четные - строки, 
- * на которые надо заменить куски, подходящие под предыдущее регулярное выражение
+ * на которые надо заменить куски, подходящие под предыдущее регулярное выражение. Эти массивы могут быть вложенными.
  * см. например replaceTagsAndSpaces
  */
 function sumParam (html, result, param, regexp, replaces, parser, do_replace, aggregate) {
     if (param && (param != '__tariff' && !AnyBalance.isAvailable (param))){
-        if(do_replace)
-          return html;
+	if(do_replace)
+		return html;
         else
-            return;
+		return;
     }
 
     if(typeof(do_replace) == 'function'){
@@ -135,21 +157,25 @@ function sumParam (html, result, param, regexp, replaces, parser, do_replace, ag
         do_replace = false;
     }
 
-    var values = [];
+    var values = [], matches;
     if(param && isset(result[param]))
-        values[values.length] = result[param];
+        values.push(result[param]);
 
-    var html_copy = html.replace(regexp, function(str, value){
-	for (var i = 0; replaces && i < replaces.length; i += 2) {
-		value = value.replace (replaces[i], replaces[i+1]);
-	}
-	if (parser)
-		value = parser (value);
+    if(!regexp){
+        values.push(replaceAll(html, replaces));
+    }else{
+        regexp.lastIndex = 0; //Удостоверяемся, что начинаем поиск сначала.
+        while(matches = regexp.exec(html)){
+		value = isset(matches[1]) ? matches[1] : matches[0];
+        	value = replaceAll(value, replaces);
+		if (parser)
+			value = parser (value);
             
-            if(isset(value))
-            	values[values.length] = value;
-            return ''; //Вырезаем то, что заматчили
-    });
+        	values.push(value);
+        	if(!regexp.global)
+            		break; //Если поиск не глобальный, то выходим из цикла
+	}
+    }
 
     var total_value;
     if(aggregate)
@@ -162,7 +188,7 @@ function sumParam (html, result, param, regexp, replaces, parser, do_replace, ag
           result[param] = total_value;
       }
       if(do_replace)
-          return html_copy;
+          return regexp ? html.replace(regexp, '') : html;
     }else{
       return total_value;
     }
@@ -182,7 +208,7 @@ function aggregate_sum(values){
  * Вычисляет трафик в мегабайтах из переданной строки.
  */
 function parseTraffic(text, defaultUnits){
-    var _text = text.replace(/\s+/, '');
+    var _text = html_entity_decode(text.replace(/\s+/, ''));
     var val = getParam(_text, null, null, /(-?\d[\d\.,]*)/, replaceFloat, parseFloat);
     if(!isset(val)){
         AnyBalance.trace("Could not parse traffic value from " + text);

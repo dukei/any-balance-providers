@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change major_version="2.6" version="56" date="2013-01-16">
+      - Исправлено распознавание трафика на некоторых тарифах
+    </change>
     <change major_version="2.6" version="55" date="2013-01-10">
       - Слегка переименованы счетчики для более удобного использования с виджетом 1 Главный + 4
     </change>

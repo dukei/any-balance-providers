@@ -11,7 +11,7 @@ function main(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
 
-    if(!prefs.plate || !/^[\w\d]\d\d\d\w\w\d{2,3}$/i.test(prefs.plate))
+    if(!prefs.plate || !/^.\d\d\d..\d{2,3}$/i.test(prefs.plate))
         throw new AnyBalance.Error('Введите номер машины в формате cXXXccRR для автомобиля или XXXXccRR для мотоцикла, где с - буква, X - цифра, RR - номер региона (2 или 3 цифры).');
     if(!prefs.sr)
         throw new AnyBalance.Error('Введите последние 6 цифр номера свидетельства о регистрации.');
@@ -43,8 +43,8 @@ function main(){
         throw new AnyBalance.Error('Не удалось войти в личный кабинет. Проблемы на сайте или сайт изменен.');
     }
 
-    var isAuto = /^\w/.test(prefs.plate);
-    var number = getParam(prefs.plate, null, null, /^[\w\d]\d\d\d\w\w/);
+    var isAuto = /^\D/.test(prefs.plate);
+    var number = getParam(prefs.plate, null, null, /^.\d\d\d../);
     var region = getParam(prefs.plate, null, null, /(\d+)$/);
 
     html = AnyBalance.requestPost(baseurl + 'gibdd/fines/fines', {

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-fine-tatar</id>
+  <id version="2">ab-fine-tatar</id>
   <name>Штрафы ГИБДД (Татарстан)</name>
   <description>
     Получает число и общую сумму неоплаченных штрафов ГИБДД с сайта ГосУслуг Татарстана https://uslugi.tatar.ru. Для получения информации о своих штрафах необходимо там зарегистрироваться.
@@ -11,6 +11,7 @@
     <preferences>preferences.xml</preferences>
     <js>library.js</js>
     <js>main.js</js>
+    <history>history.xml</history>
   </files>
   <counters>
     <counter id="balance" name="Сумма неоплаченных штрафов" units="р"/>

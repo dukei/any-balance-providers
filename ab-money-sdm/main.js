@@ -58,19 +58,31 @@ function parseDate(str){
     AnyBalance.trace('Failed to parse date from value: ' + str);
 }
 
+function sleep(delay) {
+   if(AnyBalance.getLevel() < 6){
+      var startTime = new Date();
+      var endTime = null;
+      do {
+          endTime = new Date();
+      } while (endTime.getTime() - startTime.getTime() < delay);
+   }else{
+      AnyBalance.sleep(delay);
+   }
+} 
+
+var g_headers = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.60 Safari/537.1'
+}
+
 function main(){
     var prefs = AnyBalance.getPreferences();
 
     var baseurl = "https://retail.sdm.ru";
     
-    var headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.60 Safari/537.1'
-    }
-
     var html = AnyBalance.requestPost(baseurl + '/logon?ReturnUrl=%2f', {
         username:prefs.login,
         password:prefs.password
-    }, headers);
+    }, g_headers);
 
     if(!/\/logoff/i.test(html)){
         var error = getParam(html, null, null, /<div[^>]+class="error"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
@@ -79,15 +91,34 @@ function main(){
         throw new AnyBalance.Error("Не удалось зайти в интернет-банк. Сайт изменен?");
     }
 
+    if(waitForRefresh(html, baseurl)) //Обновляем данные о счетах
+        html = AnyBalance.requestGet(baseurl + '/');
+
     if(prefs.type == 'card')
-        fetchCard(html, headers, baseurl);
+        fetchCard(html, baseurl);
     else if(prefs.type == 'acc')
-        fetchAccount(html, headers, baseurl);
+        fetchAccount(html, baseurl);
     else
-        fetchCard(html, headers, baseurl); //По умолчанию карты будем получать
+        fetchCard(html, baseurl); //По умолчанию карты будем получать
 }
 
-function fetchCard(html, headers, baseurl){
+function waitForRefresh(html, baseurl){
+    var id = getParam(html, null, null, /wait\(\s*'([^']*)/);
+    var tried = id, i=0;
+    while(id){
+        AnyBalance.trace('Waiting for refresh: ' + id + ', try #' + (++i));
+        id = AnyBalance.requestPost(baseurl + '/home/wait', {id: id}, g_headers);
+        if(id && i > 25){
+            AnyBalance.trace('Не удалось дождаться обновления данных за 25 секунд, показываем, что есть...');
+            return false;  
+        }
+            
+        sleep(1000);
+    }
+    return tried;
+}
+
+function fetchCard(html, baseurl){
     var prefs = AnyBalance.getPreferences();
     if(prefs.cardnum && !/^\d+$/.test(prefs.cardnum))
         throw new AnyBalance.Error("Введите первые цифры ID карты или не вводите ничего, чтобы показать информацию по первой карте. ID карты можно узнать, получив счетчик \"Сводка\"");
@@ -121,7 +152,7 @@ function fetchCard(html, headers, baseurl){
 
     if(AnyBalance.isAvailable("cardnum", 'status', 'accnum')){
         var id = getParam(tr, null, null, /\/finances\/card\/(\d+)/i, replaceTagsAndSpaces);
-        html = AnyBalance.requestGet(baseurl + '/finances/card/' + id);
+        html = AnyBalance.requestGet(baseurl + '/finances/card/' + id, g_headers);
 
         getParam(html, result, 'cardnum', /Номер карты:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
         getParam(html, result, 'status', /Статус:[\s\S]*?<td[^>]*>([\s\S]*?)</i, replaceTagsAndSpaces);
@@ -131,7 +162,7 @@ function fetchCard(html, headers, baseurl){
     AnyBalance.setResult(result);
 }
 
-function fetchAccount(html, headers, baseurl){
+function fetchAccount(html, baseurl){
     var prefs = AnyBalance.getPreferences();
     if(prefs.cardnum && !/^\d+$/.test(prefs.cardnum))
         throw new AnyBalance.Error("Введите первые цифры ID счета или не вводите ничего, чтобы показать информацию по первой карте. ID счета можно узнать, получив счетчик \"Сводка\"");
@@ -164,7 +195,7 @@ function fetchAccount(html, headers, baseurl){
 
     if(AnyBalance.isAvailable('till', 'accnum')){
         var id = getParam(tr, null, null, /\/finances\/account\/(\d+)/i, replaceTagsAndSpaces);
-        html = AnyBalance.requestGet(baseurl + '/finances/account/' + id);
+        html = AnyBalance.requestGet(baseurl + '/finances/account/' + id, g_headers);
 
         getParam(html, result, 'till', /Дата окончания действия карты:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
         getParam(html, result, 'accnum', /Номер счета:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);

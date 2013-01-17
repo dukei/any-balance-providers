@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Логин" 
+        positiveButtonText="ОК" 
+        summary="|Введите логин в личный кабинет|{@s}\n" 
+        dialogTitle="Логин" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите логин в личный кабинет http://minu.elisa.ee."
+        inputType="text"
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="|Введите пароль|***********"
+        dialogMessage="Введите ваш пароль, используемый для входа в личный кабинет http://minu.elisa.ee."
+        inputType="textPassword">
+    </EditTextPreference>
+    <EditTextPreference 
+        title="Номер телефона" 
+        positiveButtonText="ОК" 
+        summary="|Автоматически|{@s}\n" 
+        dialogTitle="Номер телефона" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите последние цифры телефона, по которому вы хотите получить информацию."
+        inputType="number"
+        key="num">
+    </EditTextPreference>
+    <ListPreference 
+        key="lang"
+        title="Язык" 
+        summary="|Выберите язык|{@s}" 
+	entries="Русский|Eesti"
+	entryValues="ru|et"
+        defaultValue="ru"
+        dialogTitle="Выберите язык">
+    </ListPreference>
+</PreferenceScreen>

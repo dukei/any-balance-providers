@@ -100,10 +100,15 @@ function main(){
 
     AnyBalance.trace("Trying to enter selfcare at address: " + baseurl);
     var html = AnyBalance.requestPost(baseurl + "loginPage.do", {
-    	ecareAction: 'login',
-      userName: prefs.login,
-      password: prefs.password,
-      _stateParam: 'eCareLocale.currentLocale=ru_RU__Russian'
+        _stateParam:'eCareLocale.currentLocale=ru_RU__Russian',
+        _forwardName:'',
+        _resetBreadCrumbs:'',
+        _expandStatus:'',
+        userName:prefs.login,
+        password:prefs.password,
+        x:31,
+        y:12,
+        ecareAction:'login'
     }, headers);
 
     if(!/\/logout.do/i.test(html)){

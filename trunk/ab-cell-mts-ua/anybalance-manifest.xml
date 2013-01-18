@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.1" version="15">ab-cell-mts-ua</id>
+  <id major_version="1.1" version="16">ab-cell-mts-ua</id>
   <name>МТС (Украина)</name>
   <description>
     Получает баланс, минуты, смс, ммс, информацию о расходах, номер лицевого счета, ежемесячую плату и др.
@@ -29,8 +29,6 @@
     <counter id="traffic_paket_mb" name="Пакет интернета" units=" mb"/>
     <counter id="traffic_kop_mb" name="Интернет за копейку и другие ежедневные пакеты" units=" mb"/>
     <counter id="traffic_reg_kop_mb" name="Интернет за копейку региональный и общенациональный" units=" mb"/>
-    <counter id="traffic_hyper_mb" name="hyper.net к-во Кб загруженных по АПН hyper.net" units=" mb"/>
-    <counter id="traffic_opera_mb" name="Opera Mini к-во Кб загруженных по АПН opera" units=" mb"/>
     <counter id="traffic_maxenergy_mb" name="Интернет Max Energy" units=" mb"/>
     <counter id="sms_net" name="СМС в сети МТС" units=" sms"/>
     <counter id="min_net_maxenergy" name="Минуты в сети МТС" type="time_interval" format="{@MIN}" units=" мин"/>
@@ -42,12 +40,9 @@
     <counter id="min_ln" name="Расход минут на Любимые Номера" type="time_interval" format="{@MIN}" units=" мин"/>
     <counter id="sms_100" name="Бесплатные смс для отправки на номера в пределах Украины" units=" sms"/>
     <counter id="min_all_60" name="60 минут на все сети за 5 коп" type="time_interval" format="{@MIN}" units=" мин"/>
+    <counter id="traffic_hyper_mb" name="hyper.net к-во Кб загруженных по АПН hyper.net" units=" mb"/>
+    <counter id="traffic_opera_mb" name="Opera Mini к-во Кб загруженных по АПН opera" units=" mb"/>
     <counter id="traffic_free_mb" name="Бесплатный интернет" units=" mb"/><!-- Актуально до 15.08.2012 для Супер Свободы -->
-    <counter id="usedinthismonth" name="Расход за этот месяц" units=" ₴"/>
-<!--    <counter id="usedinprevmonth" name="Расход за прошлый месяц" units="грн"/> Че-то не показывается в лк -->
-    <counter id="license" name="Лицевой счет" type="text"/>
-    <counter id="monthlypay" name="Ежемесячная плата" units=" ₴"/>
-    <counter id="phone" name="Номер телефона" type="text"/>
     <!--Сроки пакетов -->
     <counter id="termin" name="Срок действия номера" type="time" format="dd/MM/yyyy"/>
     <counter id="termin_bonus_balance" name="Срок действия бонусного баланса" type="time" format="dd/MM/yyyy HH:mm:ss"/>
@@ -57,6 +52,11 @@
     <counter id="termin_traffic_paket_mb" name="Срок действия пакета интернета" type="time" format="dd/MM/yyyy"/>
     <counter id="termin_traffic_reg_kop_mb" name="Срок действия интернета за копейку регионального и общенационального" type="time" format="dd/MM/yyyy"/>
     <counter id="termin_sms_100" name="Срок действия бесплатных смс для отправки на номера в пределах Украины" type="time" format="dd/MM/yyyy"/>
+    <!--    <counter id="usedinprevmonth" name="Расход за прошлый месяц" units="грн"/> Че-то не показывается в лк -->
+    <counter id="phone" name="Номер телефона" type="text"/>
+    <counter id="usedinthismonth" name="Расход за этот месяц" units=" ₴"/>
+    <counter id="license" name="Лицевой счет" type="text"/>
+    <counter id="monthlypay" name="Ежемесячная плата" units=" ₴"/>
   </counters>
   <keywords>
     Сотовый телефон, мобильный, мобильник, mts, украина

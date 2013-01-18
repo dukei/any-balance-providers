@@ -7,90 +7,64 @@
 Личный кабинет: https://state.r-line.ru/cgi-bin/utm5/aaa5
 */
 
-function getParam (html, result, param, regexp, replaces, parser) {
-	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
-		return;
-
-	var matches = regexp.exec (html), value;
-	if (matches) {
-		value = matches[1];
-		if (replaces) {
-			for (var i = 0; i < replaces.length; i += 2) {
-				value = value.replace (replaces[i], replaces[i+1]);
-			}
-		}
-		if (parser)
-			value = parser (value);
-
-    if(param)
-      result[param] = value;
-	}
-   return value
-}
-
-var replaceTagsAndSpaces = [/&nbsp;/g, ' ', /<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, ''];
-var replaceFloat = [/\s+/g, '', /,/g, '.'];
-
-function parseBalance(text){
-    var val = getParam(text.replace(/\s+/g, ''), null, null, /(-?\d[\d\s.,]*)/, replaceFloat, parseFloat);
-    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
-    return val;
-}
-
 function parseTrafficGb(str){
-  var val = getParam(str.replace(/\s+/g, ''), null, null, /(-?\d[\d\s.,]*)/, replaceFloat, parseFloat);
-  return parseFloat((val/1024).toFixed(2));
+  var val = getParam(str.replace(/\s+/g, ''), null, null, /(-?\d[\d\s.,]*)/, replaceFloat, parseBalance);
+  if(isset(val)){
+      var ret = parseFloat((val/1024/1024/1024).toFixed(2));
+      AnyBalance.trace('Parsed traffic ' + ret + 'Gb from ' + str);
+      return ret;
+  }
 }
 
 function main(){
     var prefs = AnyBalance.getPreferences();
+
     AnyBalance.setDefaultCharset('utf-8');
 
-    var baseurl = "https://state.r-line.ru/cgi-bin/utm5/";
+    var baseurl = "https://state.r-line.ru:8443/bgbilling/webexecuter";
 
-    html = AnyBalance.requestPost(baseurl + 'aaa5', {
-        login:prefs.login,
-        password:prefs.password
+    var html = AnyBalance.requestPost(baseurl, {
+        midAuth:0,
+        user:prefs.login,
+        pswd:prefs.password,
+        N10001:''
     });
 
     //AnyBalance.trace(html);
-    if(!/cmd=logout/i.test(html)){
-        var error = getParam(html, null, null, /<BR[^>]*>\s*Ошибка:([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+
+    if(!/\?action=Exit/i.test(html)){
+        var error = getParam(html, null, null, /<h2[^>]*>ОШИБКА:([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error);
-        throw new AnyBalance.Error('Не удалось войти в личный кабинет. Проблемы на сайте или сайт изменен.');
+        
+        throw new AnyBalance.Error("Не удалось войти в личный кабинет. Личный кабинет изменился или проблемы на сайте.");
     }
+
+    var contractId = getParam(html, null, null, /contractId=(\d+)/);
+    if(!contractId)
+        throw new AnyBalance.Error("Не удалось найти номер контракта. Личный кабинет изменился или проблемы на сайте.");
+
+    html = AnyBalance.requestGet(baseurl + "?action=ShowBalance&mid=contract&contractId="+contractId);
 
     var result = {success: true};
 
-    getParam(html, result, 'balance', /Баланс основного счета[\S\s]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'licschet', /Основной счет[\S\s]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'credit', /Кредит основного счета[\S\s]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'status', /Блокировка[\S\s]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'balance', /Исходящий остаток на конец месяца[\s\S]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'prihod', /Приход за месяц \(всего\)[\s\S]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'credit', /<td[^>]*>\s*Лимит[\s\S]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 
-    var skey = getParam(html, null, null, /skey=([0-9a-f]{32})/i);
+    getParam(html, result, 'licschet', /Договор №[\s\S]*?<a[^>]*>([^<]*)/i, replaceTagsAndSpaces);
 
-    html = AnyBalance.requestGet(baseurl + "user5?cmd=user_services_list&skey=" + skey);
-    getParam(html, result, '__tariff', /Тарифный план(?:[\S\s]*?<td[^>]*>){7}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    html = AnyBalance.requestGet(baseurl + "?action=ChangeTariff&mid=contract&contractId="+contractId);
+    //Тарифный план в последней строчке таблицы
+    getParam(html, result, '__tariff', /Тарифный план[\s\S]*<tr[^>]*>\s*<td[^>]*>\s*<font[^>]*>([^<]*?)<\/font>/i, replaceTagsAndSpaces);
 
-    if(AnyBalance.isAvailable('trafficIn', 'trafficOut')){
-        var now = new Date();
-        var begin = new Date(now.getFullYear(), now.getMonth(), 1);
-        html = AnyBalance.requestGet(baseurl + "user5?s_hour=0&s_min=0&s_mday=1&s_mon=" + begin.getMonth() + "&s_year=" + begin.getFullYear() + 
-                      "&e_hour=23&e_min=59&e_mday=" + now.getDate() + "&e_mon=" + now.getMonth() + "&e_year=" + now.getFullYear() + "&cmd=user_reports_traffic&skey=" + skey);
-
-       getParam(html, result, 'trafficIn', /Incoming[\s\S]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceFloat, parseTrafficGb);
-       getParam(html, result, 'trafficOut', /Outgoing[\s\S]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceFloat, parseTrafficGb);
+/* Трафик они не считают пока
+    var dt = new Date();
+    if(AnyBalance.isAvailable('trafficIn','trafficOut')){
+        html = AnyBalance.requestGet(baseurl + "?action=ShowLoginsBalance&mid=1&module=dialup&contractId=" + contractId);
+        getParam(html, result, 'trafficIn', /Итого:(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTrafficGb);
+        getParam(html, result, 'trafficOut', /Итого:(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTrafficGb);
     }
-    
+*/
     AnyBalance.setResult(result);
 }
-
-function html_entity_decode(str)
-{
-    //jd-tech.net
-    var tarea=document.createElement('textarea');
-    tarea.innerHTML = str;
-    return tarea.value;
-}
-

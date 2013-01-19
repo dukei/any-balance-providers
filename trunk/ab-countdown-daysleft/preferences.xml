@@ -9,15 +9,48 @@
         negativeButtonText="Отмена" 
         dialogMessage="День рождения, например, 29"
         inputType="number"
-        key="day">
+        key="bday">
     </EditTextPreference>
  
     <ListPreference 
-        key="month" 
+        key="bmonth" 
         title="Месяц рождения"
         summary="Месяц рождения||{@s}\n"
         entries="Январь|Февраль|Март|Апрель|Май|Июнь|Июль|Август|Сентябрь|Октябрь|Ноябрь|Декабрь"
         entryValues="1|2|3|4|5|6|7|8|9|10|11|12"
 	defaultValue="1">
     </ListPreference>
+
+
+	<EditTextPreference 
+        title="День начала отпуска" 
+        positiveButtonText="ОК" 
+        summary="Число, например, 18||{@s}\n" 
+        dialogTitle="День начала отпуска" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Число, например, 18"
+        inputType="number"
+        key="aday">
+    </EditTextPreference>
+ 
+    <ListPreference 
+        key="amonth" 
+        title="Месяц начала отпуска"
+        summary="Месяц начала отпуска||{@s}\n"
+        entries="Январь|Февраль|Март|Апрель|Май|Июнь|Июль|Август|Сентябрь|Октябрь|Ноябрь|Декабрь"
+        entryValues="1|2|3|4|5|6|7|8|9|10|11|12"
+	defaultValue="1">
+    </ListPreference>
+
+	<EditTextPreference 
+        title="Год начала отпуска" 
+        positiveButtonText="ОК" 
+        summary="Год, например, 2013||{@s}\n" 
+        dialogTitle="Год начала отпуска" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Год, например, 2013"
+        inputType="number"
+        key="ayear">
+    </EditTextPreference>
+
 </PreferenceScreen>

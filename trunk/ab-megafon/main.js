@@ -400,8 +400,10 @@ function megafonTrayInfo(filial){
         var html = AnyBalance.requestGet(filinfo.widget.replace(/%LOGIN%/g, prefs.login).replace(/%PASSWORD%/g, encodeURIComponent(prefs.password)), g_headers);
         try{
            var json = getParam(html, null, null, /^[^({]*\((\{[\s\S]*?\})\);?\s*$/);
-           if(!json)
-               throw new AnyBalance.Error('Неверный ответ сервера: ' + json);
+           if(!json){
+               AnyBalance.trace('Неверный ответ сервера: ' + html);
+               throw new AnyBalance.Error('Неверный ответ сервера.');
+           }
            json = getJsonEval(json);
            if(!json.ok)
                throw new AnyBalance.Error(json.error.text2);
@@ -425,7 +427,11 @@ function megafonTrayInfo(filial){
                }
            }
         }catch(e){
-           AnyBalance.trace('Не удалось получить доп. счетчики из Яндекс.виджета: ' + e.message);
+           if(!errorInTray){
+               AnyBalance.trace('Не удалось получить доп. счетчики из Яндекс.виджета: ' + e.message);
+           }else{
+               throw new AnyBalance.Error(errorInTray + '. Яндекс.Виджет: ' + e.message);
+           }
         }
     }
     

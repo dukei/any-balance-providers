@@ -246,7 +246,6 @@ function getTrayXml(filial, address){
     else
         info = AnyBalance.requestGet(address.replace(/%LOGIN%/g, prefs.login).replace(/%PASSWORD%/g, encodeURIComponent(prefs.password)), g_headers);
         
-    
     if(/<h1>Locked<\/h1>/.test(info)){
       AnyBalance.trace("Server returned: " + info);
       throw new AnyBalance.Error('Вы ввели неправильный пароль или доступ автоматическим системам заблокирован.\n\
@@ -289,104 +288,112 @@ function getTrayXml(filial, address){
 }
 
 function megafonTrayInfo(filial){
-    var filinfo = filial_info[filial];
-    var $xml = getTrayXml(filial, filinfo.site);
-    var result = {success: true, __tariff: $.trim($xml.find('RATE_PLAN').text())}, val;
+    var filinfo = filial_info[filial], errorInTray;
     
-    if(AnyBalance.isAvailable('balance'))
-        result.balance = parseFloat($xml.find('BALANCE').text());
+    var result = {success: true};
+    try{
+        var $xml = getTrayXml(filial, filinfo.site), val;
+        result.__tariff = $.trim($xml.find('RATE_PLAN').text());
 
-    if(AnyBalance.isAvailable('phone'))
-        result.phone = $xml.find('NUMBER').first().text();
+        if(AnyBalance.isAvailable('balance'))
+            result.balance = parseFloat($xml.find('BALANCE').text());
 
-    if(AnyBalance.isAvailable('prsnl_balance') && (val = parseFloat($xml.find('PRSNL_BALANCE').text())))
-        result.prsnl_balance = parseFloat(val);
-    
-    var $threads = $xml.find('RP_DISCOUNTS>DISCOUNT>THREAD, PACK>DISCOUNT>THREAD');
-    AnyBalance.trace('Found discounts: ' + $threads.length);
-    
-    if(AnyBalance.isAvailable('sms_left','sms_total')){
-        var $val = $threads.filter(':has(NAME:contains("SMS"))');
-        AnyBalance.trace('Found SMS discounts: ' + $val.length);
-        $val.each(function(){
-            var $e = $(this);
-            if(AnyBalance.isAvailable('sms_left')){
-                var val = $e.find('VOLUME_AVAILABLE').text();
-                if(val) result.sms_left = (result.sms_left || 0) + parseInt(val);
-            }
-            if(AnyBalance.isAvailable('sms_total')){
-                var val = $e.find('VOLUME_TOTAL').text();
-                if(val) result.sms_total = (result.sms_total || 0) + parseInt(val);
-            }
-        });
-        
-    }
-    
-    if(AnyBalance.isAvailable('mins_left','mins_total','sms_left','sms_total','mms_left','mms_total')){
-        var $val = $threads.filter(':has(NAME:contains(" мин")), :has(NAME:contains("Телефония исходящая")), :has(NAME:contains("Исходящая телефония"))');
-        AnyBalance.trace('Found minutes discounts: ' + $val.length);
-        $val.each(function(){
-            var $e = $(this);
-            var si = $e.parent().find('PLAN_SI').text();
-            var plan = $e.parent().find('PLAN_NAME').text();
-            var valAvailable = $e.find('VOLUME_AVAILABLE').text();
-            var valTotal = $e.find('VOLUME_TOTAL').text();
-            if(/Байт|Тар.ед./i.test(si)){
-                AnyBalance.trace('Пропускаем потенциальный глюк мегафона, Исходящая телефония, но написано ' + si + ', а должны быть минуты: ' + plan + ' - ' + valAvailable + '/' + valTotal);
-                return; //Это глюк мегафона, написано байт, а должны быть минуты
-            }
-            if(plan && /SMS/i.test(plan)){
-                AnyBalance.trace('Обходим потенциальный глюк мегафона, Исходящая телефония, но написано SMS, а должны быть минуты: ' + plan + ' - ' + valAvailable + '/' + valTotal);
-                if(isset(valAvailable) && AnyBalance.isAvailable('sms_left')){
-                    result.sms_left = (result.sms_left || 0) + parseInt(valAvailable);
-                }
-                if(isset(valTotal) && AnyBalance.isAvailable('sms_total')){
-                    result.sms_total = (result.sms_total || 0) + parseInt(valTotal);
-                }
-            }else if(plan && /MMS/i.test(plan)){
-                AnyBalance.trace('Обходим потенциальный глюк мегафона, Исходящая телефония, но написано MMS, а должны быть минуты: ' + plan + ' - ' + valAvailable + '/' + valTotal);
-                if(isset(valAvailable) && AnyBalance.isAvailable('mms_left')){
-                    result.mms_left = (result.mms_left || 0) + parseInt(valAvailable);
-                }
-                if(isset(valTotal) && AnyBalance.isAvailable('mms_total')){
-                    result.mms_total = (result.mms_total || 0) + parseInt(valTotal);
-                }
-            }else{
-                if(isset(valAvailable) && AnyBalance.isAvailable('mins_left')){
-                    result.mins_left = (result.mins_left || 0) + parseInt(valAvailable)*60;
-                }
-                if(isset(valTotal) && AnyBalance.isAvailable('mins_total')){
-                    result.mins_total = (result.mins_total || 0) + parseInt(valTotal)*60;
-                }
-            }
-        });
-    }
+        if(AnyBalance.isAvailable('phone'))
+            result.phone = $xml.find('NUMBER').first().text();
 
-    if(AnyBalance.isAvailable('internet_left','internet_total','internet_cur')){
-        var $val = $threads.filter(':has(NAME:contains(" Байт")), :has(NAME_SERVICE:contains("Пакетная передача данных"))');
-        AnyBalance.trace('Found internet discounts: ' + $val.length);
-        if($val.length){
-            var name = $val.first().find('NAME').text();
-            var left = $val.first().find('VOLUME_AVAILABLE').text();
-            left = parseInt(left);
-            var total = $val.first().find('VOLUME_TOTAL').text();
-            total = parseInt(total);
+        if(AnyBalance.isAvailable('prsnl_balance') && (val = parseFloat($xml.find('PRSNL_BALANCE').text())))
+            result.prsnl_balance = parseFloat(val);
 
-            if(AnyBalance.isAvailable('internet_left')){
-                result.internet_left = parseTrafficMy(left + name);
-            }
-            if(AnyBalance.isAvailable('internet_total')){
-                result.internet_total = parseTrafficMy(total + name);
-            }
-            if(AnyBalance.isAvailable('internet_cur')){
-                result.internet_cur = parseTrafficMy((total - left) + name);
+        var $threads = $xml.find('RP_DISCOUNTS>DISCOUNT>THREAD, PACK>DISCOUNT>THREAD');
+        AnyBalance.trace('Found discounts: ' + $threads.length);
+
+        if(AnyBalance.isAvailable('sms_left','sms_total')){
+            var $val = $threads.filter(':has(NAME:contains("SMS"))');
+            AnyBalance.trace('Found SMS discounts: ' + $val.length);
+            $val.each(function(){
+                var $e = $(this);
+                if(AnyBalance.isAvailable('sms_left')){
+                    var val = $e.find('VOLUME_AVAILABLE').text();
+                    if(val) result.sms_left = (result.sms_left || 0) + parseInt(val);
+                }
+                if(AnyBalance.isAvailable('sms_total')){
+                    var val = $e.find('VOLUME_TOTAL').text();
+                    if(val) result.sms_total = (result.sms_total || 0) + parseInt(val);
+                }
+            });
+
+        }
+
+        if(AnyBalance.isAvailable('mins_left','mins_total','sms_left','sms_total','mms_left','mms_total')){
+            var $val = $threads.filter(':has(NAME:contains(" мин")), :has(NAME:contains("Телефония исходящая")), :has(NAME:contains("Исходящая телефония"))');
+            AnyBalance.trace('Found minutes discounts: ' + $val.length);
+            $val.each(function(){
+                var $e = $(this);
+                var si = $e.parent().find('PLAN_SI').text();
+                var plan = $e.parent().find('PLAN_NAME').text();
+                var valAvailable = $e.find('VOLUME_AVAILABLE').text();
+                var valTotal = $e.find('VOLUME_TOTAL').text();
+                if(/Байт|Тар.ед./i.test(si)){
+                    AnyBalance.trace('Пропускаем потенциальный глюк мегафона, Исходящая телефония, но написано ' + si + ', а должны быть минуты: ' + plan + ' - ' + valAvailable + '/' + valTotal);
+                    return; //Это глюк мегафона, написано байт, а должны быть минуты
+                }
+                if(plan && /SMS/i.test(plan)){
+                    AnyBalance.trace('Обходим потенциальный глюк мегафона, Исходящая телефония, но написано SMS, а должны быть минуты: ' + plan + ' - ' + valAvailable + '/' + valTotal);
+                    if(isset(valAvailable) && AnyBalance.isAvailable('sms_left')){
+                        result.sms_left = (result.sms_left || 0) + parseInt(valAvailable);
+                    }
+                    if(isset(valTotal) && AnyBalance.isAvailable('sms_total')){
+                        result.sms_total = (result.sms_total || 0) + parseInt(valTotal);
+                    }
+                }else if(plan && /MMS/i.test(plan)){
+                    AnyBalance.trace('Обходим потенциальный глюк мегафона, Исходящая телефония, но написано MMS, а должны быть минуты: ' + plan + ' - ' + valAvailable + '/' + valTotal);
+                    if(isset(valAvailable) && AnyBalance.isAvailable('mms_left')){
+                        result.mms_left = (result.mms_left || 0) + parseInt(valAvailable);
+                    }
+                    if(isset(valTotal) && AnyBalance.isAvailable('mms_total')){
+                        result.mms_total = (result.mms_total || 0) + parseInt(valTotal);
+                    }
+                }else{
+                    if(isset(valAvailable) && AnyBalance.isAvailable('mins_left')){
+                        result.mins_left = (result.mins_left || 0) + parseInt(valAvailable)*60;
+                    }
+                    if(isset(valTotal) && AnyBalance.isAvailable('mins_total')){
+                        result.mins_total = (result.mins_total || 0) + parseInt(valTotal)*60;
+                    }
+                }
+            });
+        }
+
+        if(AnyBalance.isAvailable('internet_left','internet_total','internet_cur')){
+            var $val = $threads.filter(':has(NAME:contains(" Байт")), :has(NAME_SERVICE:contains("Пакетная передача данных"))');
+            AnyBalance.trace('Found internet discounts: ' + $val.length);
+            if($val.length){
+                var name = $val.first().find('NAME').text();
+                var left = $val.first().find('VOLUME_AVAILABLE').text();
+                left = parseInt(left);
+                var total = $val.first().find('VOLUME_TOTAL').text();
+                total = parseInt(total);
+
+                if(AnyBalance.isAvailable('internet_left')){
+                    result.internet_left = parseTrafficMy(left + name);
+                }
+                if(AnyBalance.isAvailable('internet_total')){
+                    result.internet_total = parseTrafficMy(total + name);
+                }
+                if(AnyBalance.isAvailable('internet_cur')){
+                    result.internet_cur = parseTrafficMy((total - left) + name);
+                }
             }
         }
+
+        read_sum_parameters(result, $xml);
+    }catch(e){
+        //Не удалось получить инфу из хмл. Но не станем сразу унывать, получим что-нить из виджета
+        AnyBalance.trace('Не удалось получить данные из входа для автоматических систем: ' + e.message);
+        errorInTray = e.message || "Unknown error";
     }
 
-    read_sum_parameters(result, $xml);
-
-    if(AnyBalance.isAvailable('bonus_balance', 'last_pay_sum', 'last_pay_date')){
+    if(AnyBalance.isAvailable('bonus_balance', 'last_pay_sum', 'last_pay_date') || errorInTray){
         //Некоторую инфу можно получить из яндекс виджета. Давайте попробуем.
         var prefs = AnyBalance.getPreferences();
         AnyBalance.setDefaultCharset('utf-8');
@@ -401,6 +408,22 @@ function megafonTrayInfo(filial){
            getParam(json.ok.html, result, 'bonus_balance', /<div[^>]+class="bonus"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
            getParam(json.ok.html, result, 'last_pay_sum', /<div[^>]+class="payment_amount"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
            getParam(json.ok.html, result, 'last_pay_date', /<div>([^<]*)<\/div>\s*<div[^>]+class="payment_source"/i, replaceTagsAndSpaces, parseDate);
+           
+           if(errorInTray){
+               getParam(json.ok.html, result, 'balance', /<div[^>]+class="subs_balance[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+               getParam(json.ok.html, result, 'sub_smio', /Начислено абонентской платы\s*<\/td>(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+               getParam(json.ok.html, result, 'sub_soi', /Начислено за услуги\s*<\/td>(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+               getParam(json.ok.html, result, 'sub_scl', /Начислено за звонки\s*<\/td>(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+               getParam(json.ok.html, result, 'sub_scr', /Роуминг\s*<\/td>(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+               getParam(json.ok.html, result, 'phone', /<span[^>]+class="login"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+               
+               var table = getParam(json.ok.html, null, null, /<table[^>]+class="[^>]*rate-plans[^>][\s\S]*?<\/table>/i);
+               if(table){
+                   sumParam(table, result, '__tariff', /<tr[^>]*>\s*<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+               }else{
+                   AnyBalance.trace('Не удалось найти список тарифных планов в яндекс.виджете');
+               }
+           }
         }catch(e){
            AnyBalance.trace('Не удалось получить доп. счетчики из Яндекс.виджета: ' + e.message);
         }
@@ -762,10 +785,6 @@ function megafonServiceGuidePhysical(filial, sessionid){
     }
     
     AnyBalance.setResult(result);
-}
-
-function isset(v){
-    return typeof(v) != 'undefined';
 }
 
 //Получает значение из таблиц на странице аккаунта по фрагменту названия строки

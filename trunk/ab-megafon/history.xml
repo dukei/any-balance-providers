@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change major_version="2.6" version="57" date="2013-01-19">
+      - Получение данных из яндекс.виджета при недоступности входа для автоматизированных систем
+    </change>
     <change major_version="2.6" version="56" date="2013-01-16">
       - Исправлено распознавание трафика на некоторых тарифах
     </change>

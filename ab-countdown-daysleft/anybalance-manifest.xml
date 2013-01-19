@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-countdown-daysleft</id>
+  <id version="3">ab-countdown-daysleft</id>
   <name>Число дней до</name>
   <description>
     Показывает количество дней до разных событий: Новый Год, День Рождения, начало лета.
@@ -16,9 +16,10 @@
     <counter id="birthday" name="День Рождения" type="text" />
     <counter id="newyear" name="Новый Год" type="text" />
     <counter id="summer" name="Лето" type="text" />
+    <counter id="absence" name="Отпуск" type="text" />
   </counters>
   <keywords>
-    день рождения новый год лето количество дней
+    день рождения новый год лето отпуск количество дней
   </keywords>
   <type>
     countdown

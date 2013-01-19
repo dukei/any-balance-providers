@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-internet-westcall</id>
+  <name>WestCall домашние сети (Санкт-Петербург)</name>
+  <description>
+    Получает баланс и информацию о тарифном плане для санкт-петербургского интернет-провайдера WestCall (http://westhome.spb.ru).
+
+    Информация берется из личного кабинета https://console.westhome.spb.ru.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="licschet" name="Лицевой счет" type="text"/>
+    <counter id="pay" name="Сумма к оплате" units="р"/>
+    <counter id="paytill" name="Рекомендуемая дата оплаты" type="time" format="dd/MM/yyyy"/>
+    <counter id="bonus_traffic" name="Остаток бонусного трафика" units="Gb"/>
+    <counter id="free_traffic" name="Входящий бесплатный трафик" units="Gb"/>
+  </counters>
+  <keywords>
+    весткол вестхоум
+  </keywords>
+  <type>
+    internet
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

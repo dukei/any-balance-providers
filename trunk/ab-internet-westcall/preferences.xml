@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
     <EditTextPreference 
-        title="Абонентский номер" 
+        title="Логин" 
         positiveButtonText="ОК" 
         summary="||{@s}" 
-        dialogTitle="Абонентский номер" 
+        dialogTitle="Логин" 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите ваш абонентский номер (лицевой счет) для входа в личный кабинет."
-        inputType="number"
+        dialogMessage="Введите ваш логин (абонентский номер, лицевой счет) для входа в личный кабинет."
+        inputType="text"
         key="login">
     </EditTextPreference>
     <EditTextPreference 

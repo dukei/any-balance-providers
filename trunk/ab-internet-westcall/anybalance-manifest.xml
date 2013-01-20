@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-westcall</id>
+  <id version="2">ab-internet-westcall</id>
   <name>WestCall домашние сети (Санкт-Петербург)</name>
   <description>
     Получает баланс и информацию о тарифном плане для санкт-петербургского интернет-провайдера WestCall (http://westhome.spb.ru).

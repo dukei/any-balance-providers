@@ -18,34 +18,40 @@ AnyBalance (http://any-balance-providers.googlecode.com)
  * 
  * replaces - массив, нечетные индексы - регулярные выражения, четные - строки, 
  * на которые надо заменить куски, подходящие под предыдущее регулярное выражение
+ * массивы могут быть вложенными
  * см. например replaceTagsAndSpaces
  */
 
 function getParam (html, result, param, regexp, replaces, parser) {
-	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
+	if (!isAvailable(param))
 		return;
 
-	var matches = regexp ? regexp.exec (html) : [html, html], value;
+	var matches = regexp ? html.match(regexp) : [, html], value;
 	if (matches) {
-		value = matches[1];
-		if (replaces) {
-			for (var i = 0; i < replaces.length; i += 2) {
-				value = value.replace (replaces[i], replaces[i+1]);
-			}
-		}
+                //Если нет скобок, то значение - всё заматченное
+		value = replaceAll(isset(matches[1]) ? matches[1] : matches[0], replaces);
 		if (parser)
 			value = parser (value);
 
-    if(param)
-      result[param] = value;
+		if(param)
+			result[isArray(param) ? param[0] : param] = value;
 	}
-   return value
+	return value;
+}
+
+function isAvailable(param){
+    if(!param)
+        return true;
+    var bArray = isArray(param), tariffName = '__tariff';
+    if((bArray && param.indexOf(tariffName) >= 0) || (!bArray && param == '__tariff'))
+        return true; //Тариф всегда нужен
+    return AnyBalance.isAvailable (param);
 }
 
 //Замена пробелов и тэгов
-var replaceTagsAndSpaces = [/&nbsp;/ig, ' ', /<!--[\s\S]*?-->/g, '', /<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, ''];
+var replaceTagsAndSpaces = [/&nbsp;/ig, ' ', /&minus;/ig, '-', /<!--[\s\S]*?-->/g, '', /<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, ''];
 //Замена для чисел
-var replaceFloat = [/\s+/g, '', /,/g, '.'];
+var replaceFloat = [/&minus;/ig, '-', /\s+/g, '', /,/g, '.'];
 //Замена для Javascript строк
 var replaceSlashes = [/\\(.?)/g, function(str, n){
         switch (n) {
@@ -57,6 +63,35 @@ var replaceSlashes = [/\\(.?)/g, function(str, n){
               return n;
         }
     }];
+
+/**
+ *  Проверяет, определено ли значение переменной
+ */
+function isset(v){
+    return typeof(v) != 'undefined';
+}
+
+/**
+ *  Проверяет, является ли объект массивом
+ */
+function isArray(arr){
+	return Object.prototype.toString.call( arr ) === '[object Array]';
+}
+
+/**
+ * Делает все замены в строке value. При этом, если элемент replaces массив, то делает замены по нему рекурсивно.
+ */
+function replaceAll(value, replaces){
+	for (var i = 0; replaces && i < replaces.length; ++i) {
+                if(isArray(replaces[i])){
+			value = replaceAll(value, replaces[i]);
+                }else{
+			value = value.replace (replaces[i], replaces[i+1]);
+			++i; //Пропускаем ещё один элемент, использованный в качестве замены
+                }
+	}
+        return value;
+}
 
 /**
  * Извлекает числовое значение из переданного текста
@@ -157,8 +192,10 @@ function joinObjects(newObject, oldObject){
    for(var i in oldObject){
        obj[i] = oldObject[i];
    }
-   for(i in newObject){
-       obj[i] = newObject[i];
+   if(newObject){
+      for(i in newObject){
+          obj[i] = newObject[i];
+      }
    }
    return obj;
 }
@@ -168,7 +205,24 @@ function joinObjects(newObject, oldObject){
  */
 function addHeaders(newHeaders, oldHeaders){
    oldHeaders = oldHeaders || g_headers;
-   return joinObjects(newHeaders, oldHeaders);
+   var bOldArray = isArray(oldHeaders);
+   var bNewArray = isArray(newHeaders);
+   if(!bOldArray && !bNewArray)
+       return joinObjects(newHeaders, oldHeaders);
+   if(bOldArray && bNewArray) //Если это массивы, то просто делаем им join
+       return oldHeader.slice().push.apply(oldHeader, newHeaders);
+   if(!bOldArray && bNewArray){ //Если старый объект, а новый массив
+       var headers = joinObjects(null, oldHeaders);
+       for(var i=0; i<newHeaders.length; ++i)
+           headers[newHeaders[i][0]] = newHeaders[i][1];
+       return headers;
+   }
+   if(bOldArray && !bNewArray){ //Если старый массив, а новый объект, то это специальный объект {index: [name, value], ...}!
+       var headers = oldHeaders.slice();
+       for(i in newHeaders)
+           headers[i] = newHeaders[i];
+       return headers;
+   }
 }
 
 /**
@@ -185,17 +239,25 @@ function getJson(html){
 }
 
 /**
+ *  Получает JSON из переданного текста, выполняя его (требуется для невалидного JSON)
+ */
+function getJsonEval(html){
+   try{
+       //Запрещаем использование следующих переменных из функции:
+       var json = new Function('window', 'AnyBalance', 'g_AnyBalanceApiParams', '_AnyBalanceApi', 'document', 'return ' + html).apply(null);
+       return json;
+   }catch(e){
+       AnyBalance.trace('Bad json (' + e.message + '): ' + html);
+       throw new AnyBalance.Error('Сервер вернул ошибочные данные: ' + e.message);
+   }
+}
+
+
+/**
  *  Проверяет, не оканчивается ли строка на заданную
  */
 function endsWith(str, suffix) {
     return str.indexOf(suffix, str.length - suffix.length) !== -1;
-}
-
-/**
- *  Проверяет, определено ли значение переменной
- */
-function isset(v){
-    return typeof(v) != 'undefined';
 }
 
 /**
@@ -240,6 +302,32 @@ function isset(v){
     };
 }(Date));
 
+function parseDateISO(str){
+    var dt = Date.parse(str);
+    if(!dt){
+        AnyBalance.trace('Could not parse date from ' + str);
+        return;
+    }else{
+        AnyBalance.trace('Parsed ' + new Date(dt) + ' from ' + str);
+        return dt;
+    }
+}
+
+function parseDateJS(str){
+  //Рассчитывает на библиотеку date-ru-RU.js
+  var _str = str.replace(/(\d+)\s*г(?:\.|ода?)?,?/i, '$1 '); //Убираем г. после года, чтобы не мешалось
+  var dt = Date.parse(_str);
+  if(!dt){
+      AnyBalance.trace('Can not parse date from ' + str);
+      return;
+  }
+
+  dt = new Date(dt);
+  
+  AnyBalance.trace('Parsed date ' + dt.toString() + ' from ' + str);
+  return dt.getTime(); 
+}
+
 /**
  * Получает значение, подходящее под регулярное выражение regexp, производит 
  * в нем замены replaces, результат передаёт в функцию parser, 
@@ -248,45 +336,54 @@ function isset(v){
  * в настройках аккаунта
  *
  * Очень похоже на getParam, но может получать несколько значений (при наличии 
- * в регулярном выражении флага g). В этом случае суммирует их.
+ * в регулярном выражении флага g). В этом случае применяет к ним функцию aggregate, 
+ * а если она не передана, то возвращает массив всех совпадений.
  * 
  * если result и param равны null, то значение просто возвращается.
  * eсли parser == null, то возвращается результат сразу после замен
+ * если regexp == null, то значением является переданный html
  * если replaces == null, то замены не делаются
- * do_replace - если true, то найденные значения вырезаются из переданного текста
+ * do_replace - если true, то найденные значения вырезаются из переданного текста 
+ * и новый текст возвращается (только при param == null)
  * 
  * replaces - массив, нечетные индексы - регулярные выражения, четные - строки, 
- * на которые надо заменить куски, подходящие под предыдущее регулярное выражение
+ * на которые надо заменить куски, подходящие под предыдущее регулярное выражение. Эти массивы могут быть вложенными.
  * см. например replaceTagsAndSpaces
  */
 function sumParam (html, result, param, regexp, replaces, parser, do_replace, aggregate) {
-    if (param && (param != '__tariff' && !AnyBalance.isAvailable (param))){
-        if(do_replace)
-          return html;
+    if (!isAvailable(param)){
+	if(do_replace)
+		return html;
         else
-            return;
+		return;
     }
+    //После того, как проверили нужность счетчиков, кладем результат в первый из переданных счетчиков. Оставляем только первый
+    param = isArray(param) ? param[0] : param;
 
     if(typeof(do_replace) == 'function'){
         aggregate = do_replace;
         do_replace = false;
     }
 
-    var values = [];
+    var values = [], matches;
     if(param && isset(result[param]))
-        values[values.length] = result[param];
+        values.push(result[param]);
 
-    var html_copy = html.replace(regexp, function(str, value){
-	for (var i = 0; replaces && i < replaces.length; i += 2) {
-		value = value.replace (replaces[i], replaces[i+1]);
-	}
-	if (parser)
-		value = parser (value);
+    if(!regexp){
+        values.push(replaceAll(html, replaces));
+    }else{
+        regexp.lastIndex = 0; //Удостоверяемся, что начинаем поиск сначала.
+        while(matches = regexp.exec(html)){
+		value = isset(matches[1]) ? matches[1] : matches[0];
+        	value = replaceAll(value, replaces);
+		if (parser)
+			value = parser (value);
             
-            if(isset(value))
-            	values[values.length] = value;
-            return ''; //Вырезаем то, что заматчили
-    });
+        	values.push(value);
+        	if(!regexp.global)
+            		break; //Если поиск не глобальный, то выходим из цикла
+	}
+    }
 
     var total_value;
     if(aggregate)
@@ -299,7 +396,7 @@ function sumParam (html, result, param, regexp, replaces, parser, do_replace, ag
           result[param] = total_value;
       }
       if(do_replace)
-          return html_copy;
+          return regexp ? html.replace(regexp, '') : html;
     }else{
       return total_value;
     }
@@ -324,36 +421,77 @@ function aggregate_join(values, delimiter){
 }
 
 function create_aggregate_join(delimiter){
-    return function(values){ return aggregate_join(delimiter); }
+    return function(values){ return aggregate_join(values, delimiter); }
+}
+
+function aggregate_min(values){
+    if(values.length == 0)
+        return;
+    var total_value;
+    for(var i=0; i<values.length; ++i){
+        if(!isset(total_value) || total_value > values[i])
+            total_value = values[i];
+    }
+    return total_value;
+}
+
+function aggregate_max(values){
+    if(values.length == 0)
+        return;
+    var total_value;
+    for(var i=0; i<values.length; ++i){
+        if(!isset(total_value) || total_value < values[i])
+            total_value = values[i];
+    }
+    return total_value;
 }
 
 /**
  * Вычисляет трафик в мегабайтах из переданной строки.
  */
-function parseTraffic(text){
-    var _text = text.replace(/\s+/, '');
+function parseTraffic(text, defaultUnits){
+    return parseTrafficEx(text, 1024, 2, defaultUnits);
+}
+
+/**
+ * Вычисляет трафик в гигабайтах из переданной строки.
+ */
+function parseTrafficGb(text, defaultUnits){
+    return parseTrafficEx(text, 1024, 3, defaultUnits);
+}
+
+/**
+ * Вычисляет трафик в нужных единицах из переданной строки.
+ */
+function parseTrafficEx(text, thousand, order, defaultUnits){
+    var _text = html_entity_decode(text.replace(/\s+/, ''));
     var val = getParam(_text, null, null, /(-?\d[\d\.,]*)/, replaceFloat, parseFloat);
     if(!isset(val)){
         AnyBalance.trace("Could not parse traffic value from " + text);
         return;
     }
     var units = getParam(_text, null, null, /([kmgкмг][бb]|байт|bytes)/i);
-    if(!units){
+    if(!units && !defaultUnits){
         AnyBalance.trace("Could not parse traffic units from " + text);
         return;
     }
+    if(!units) units = defaultUnits;
     switch(units.substr(0,1).toLowerCase()){
       case 'b':
       case 'б':
-        val = Math.round(val/1024/1024*100)/100;
+        val = Math.round(val/Math.pow(thousand, order)*100)/100;
         break;
       case 'k':
       case 'к':
-        val = Math.round(val/1024*100)/100;
+        val = Math.round(val/Math.pow(thousand, order-1)*100)/100;
+        break;
+      case 'm':
+      case 'м':
+        val = Math.round(val/Math.pow(thousand, order-2)*100)/100;
         break;
       case 'g':
       case 'г':
-        val = Math.round(val*1024);
+        val = Math.round(val/Math.pow(thousand, order-3));
         break;
     }
     var textval = ''+val;
@@ -361,7 +499,7 @@ function parseTraffic(text){
       val = Math.round(val);
     else if(textval.length > 5)
       val = Math.round(val*10)/10;
-
-    AnyBalance.trace('Parsing traffic (' + val + ') from: ' + text);
+    var dbg_units = {0: 'b', 1: 'kb', 2: 'mb', 3: 'gb'};
+    AnyBalance.trace('Parsing traffic (' + val + dbg_units[order] + ') from: ' + text);
     return val;
 }

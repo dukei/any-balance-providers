@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id major_version="1.3" version="6">ab-weather-moscow</id>
+  <name>Температура в Москве</name>
+  <description>Текущая температура в Москве с gradus.melda.ru. Рекомендуется показывать Температуру с цветом в текстовом виджете 1х1.
+  </description>
+  <author>Erelen Laiquendi &lt;erelen@melda.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="temperature_color" name="Температура с цветом" type="html" />
+    <counter id="temperature" name="Температура" type="text" units="°" />
+  </counters>
+  <keywords>
+    погода, температура, москва, россия
+  </keywords>
+  <type>
+    weather
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

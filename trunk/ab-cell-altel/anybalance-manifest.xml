@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-cell-altel</id>
+  <name>ALTEL (Казахстан)</name>
+  <description>
+    Получает баланс и информацию о тарифном плане для продуктов АО «АЛТЕЛ» - первого национального оператора сотовой связи в Республике Казахстан.
+
+    Провайдер получает данные по следующим продуктам АЛТЕЛ: PAThWORD, JET, City и Dalacom. Данные берутся из личного кабинета https://cabinet.3g.kz:8443
+
+    Получение пароля:
+    1. Если Вы абонент Dalacom, Pathword, City без услуги EVDO, пароль вы можете получить, отправив SMS сообщение на номер 77003. В ответ Вы получите сообщение с паролем для доступа. 
+    2. Если Вы абонент Dalacom, Pathword, City с подключенной услугой EVDO или абонент Jet, то паролем по умолчанию для входа в личный кабинет является PIN1. Если вы забыли текущий пароль, используйте раздел «Забыли пароль?» на странице авторизации.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="〒"/>
+    <counter id="fio" name="Абонент" type="text"/>
+    <counter id="status" name="Статус" type="text"/>
+    <counter id="lastPay" name="Последний платеж" units="〒"/>
+    <counter id="lastPayDate" name="Дата последнего платежа" type="time" format="dd/MM/yyyy"/>
+    <counter id="phone" name="Телефон" type="text"/>
+    <counter id="mins_left" name="Остаток минут" units=" мин"/>
+    <counter id="traffic_left" name="Остаток трафика" units=" Мб"/>
+  </counters>
+  <keywords>
+    мобильный
+  </keywords>
+  <type>
+    cell
+  </type>
+  <country>
+    kz
+  </country>
+</provider>

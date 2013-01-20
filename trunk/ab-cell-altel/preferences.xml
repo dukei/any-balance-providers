@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <ListPreference 
+        key="product" 
+        title="Личный кабинет"
+        summary="||{@s}\n"
+        entries="DALACOM|CITY|PAThWORD|JET"
+        entryValues="AUTH_DALACOM|AUTH_CITY|AUTH_PAThWORD|AUTH_EVDO"
+	defaultValue="AUTH_DALACOM">
+    </ListPreference>
+    <EditTextPreference 
+        title="Номер телефона" 
+        positiveButtonText="ОК" 
+        summary="|Введите 10 цифр номера телефона|{@s}\n" 
+        dialogTitle="Номер телефона" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите 10 цифр вашего номера телефона (только цифры), например, 7001234567."
+	inputType="number"
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="||***********\n"
+        dialogMessage="Введите пароль, используемый для входа в личный кабинет."
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

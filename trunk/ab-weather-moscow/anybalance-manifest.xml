@@ -2,7 +2,8 @@
 <provider>
   <id major_version="1.3" version="6">ab-weather-moscow</id>
   <name>Температура в Москве</name>
-  <description>Текущая температура в Москве с gradus.melda.ru. Рекомендуется показывать Температуру с цветом в текстовом виджете 1х1.
+  <description>Текущая температура в Москве с http://gradus.melda.ru/
+  Подробная инструкция по настройке: http://melda.ru/gradus/android/
   </description>
   <author>Erelen Laiquendi &lt;erelen@melda.ru&gt;</author>
   <files>

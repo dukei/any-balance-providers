@@ -65,7 +65,7 @@ function main(){
     }
 
     // Баланс
-    getParam (html, result, 'balance', /Баланс.*?>([-\d\.,\s]+)/, replaceFloat, parseFloat);
+    getParam (html, result, 'balance', /Баланс.*?>([-\d\.,\s]+)/, replaceTagsAndSpaces, parseBalance);
     // Телефон
     getParam (html, result, 'phone', /Ваш телефон:.*?>([^<]*)</i, replaceTagsAndSpaces, html_entity_decode);
 
@@ -111,19 +111,19 @@ function main(){
         html = sumParam (html, result, 'min_love', /Использовано:\s*([\d\.,]+).*?мин[^\s]* на любимые/ig, replaceTagsAndSpaces, parseBalance, true, aggregate_sum);
 
         // Остаток СМС
-        getParam (html, result, 'sms_left', /(?:Осталось|Остаток)[^\d]*(\d*).*?(sms|смс)/i, [], parseInt);
+        getParam (html, result, 'sms_left', /(?:Осталось|Остаток)[^\d]*(\d*).*?(sms|смс)/i, [], parseBalance);
 
         // Остаток ММС
-        getParam (html, result, 'mms_left', /(?:Осталось|Остаток)[^\d]*(\d*).*?(mms|ммс)/i, [], parseInt);
+        getParam (html, result, 'mms_left', /(?:Осталось|Остаток)[^\d]*(\d*).*?(mms|ммс)/i, [], parseBalance);
 
         // Накоплено 54 мин. в текущем месяце
-        getParam (html, result, 'min_used', /Накоплено.*?(\d+).*?мин[^\s]*/, replaceFloat, parseInt);
+        getParam (html, result, 'min_used', /Накоплено.*?(\d+).*?мин[^\s]*/, replaceFloat, parseBalance);
 
         // Сумма по неоплаченным счетам: 786.02 руб. (оплатить до 24.03.2012)
-        getParam (html, result, 'debt', /Сумма по неоплаченным счетам.*?([-\d\.,]+)/i, replaceFloat, parseFloat);
+        getParam (html, result, 'debt', /Сумма по неоплаченным счетам.*?([-\d\.,]+)/i, replaceFloat, parseBalance);
 
         // Сумма по неоплаченным счетам: 786.02 руб. (оплатить до 24.03.2012)
-        getParam (html, result, 'pay_till', /оплатить до.*?([\d\.,\/]+)/i, replaceFloat, parseTime);
+        getParam (html, result, 'pay_till', /оплатить до.*?([\d\.,\/]+)/i, replaceFloat, parseDate);
 
         // Остаток трафика
         sumParam (html, result, 'traffic_left', /(?:Осталось|Остаток)[^<]*?(\d+[.,]?\d*\s*([kmgкмг][бb]|байт|byte))/i, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
@@ -136,13 +136,13 @@ function main(){
         getParam (html, result, 'statuslock', /class="account-status-lock".*>(Номер [^<]*)</i);
 
         // Сумма кредитного лимита
-        getParam (html, result, 'credit', /Сумма кредитного лимита.*?([-\d\.,]+)/i, [",", "."], parseFloat);
+        getParam (html, result, 'credit', /Сумма кредитного лимита.*?([-\d\.,]+)/i, [",", "."], parseBalance);
 
         // Расход за этот месяц
-        getParam (html, result, 'usedinthismonth', /Израсходовано .*?([\d\.,]+).*?руб/i, [",", "."], parseFloat);
+        getParam (html, result, 'usedinthismonth', /Израсходовано по номеру[^<]*<strong>([\s\S]*?)<\/strong>/i, replaceTagsAndSpaces, parseBalance);
     }
 
-
+/*  Тормозит и не работает
     if (AnyBalance.isAvailable ('usedinprevmonth')) {
 
         AnyBalance.trace("Fetching history...");
@@ -152,9 +152,9 @@ function main(){
         AnyBalance.trace("Parsing history...");
 
         // Расход за прошлый месяц
-        getParam (html, result, 'usedinprevmonth', /За период израсходовано .*?([\d\.,]+)/i, [",", "."], parseFloat);
+        getParam (html, result, 'usedinprevmonth', /За период израсходовано .*?([\d\.,]+)/i, replaceTagsAndSpaces, parseBalance);
     }
-
+*/
 
     if (AnyBalance.isAvailable ('monthlypay')) {
 
@@ -165,25 +165,9 @@ function main(){
         AnyBalance.trace("Parsing abon info...");
 
         // Ежемесячная плата
-        getParam (html, result, 'monthlypay', /(?:Ежемесячная плата|Абонентская плата:)[^\d]*([\d\.,]+)/i, [",", "."], parseFloat);
+        getParam (html, result, 'monthlypay', /(?:Ежемесячная плата|Абонентская плата:)[^\d]*([\d\.,]+)/i, replaceTagsAndSpaces, parseBalance);
     }
 
     AnyBalance.setResult(result);
 
 }
-
-function parseTime(date){
-    AnyBalance.trace("Trying to parse date from " + date);
-    var dateParts = date.split(/[\.\/]/);
-    var d = new Date(dateParts[2], (dateParts[1] - 1), dateParts[0]);
-    return d.getTime();
-}
-
-function html_entity_decode(str)
-{
-    //jd-tech.net
-    var tarea=document.createElement('textarea');
-    tarea.innerHTML = str;
-    return tarea.value;
-}
-

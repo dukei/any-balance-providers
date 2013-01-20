@@ -476,27 +476,22 @@ function parseTrafficEx(text, thousand, order, defaultUnits){
         return;
     }
     if(!units) units = defaultUnits;
-    var units_str;
     switch(units.substr(0,1).toLowerCase()){
       case 'b':
       case 'б':
         val = Math.round(val/Math.pow(thousand, order)*100)/100;
-        units_str = 'b';
         break;
       case 'k':
       case 'к':
         val = Math.round(val/Math.pow(thousand, order-1)*100)/100;
-        units_str = 'kb';
         break;
       case 'm':
       case 'м':
         val = Math.round(val/Math.pow(thousand, order-2)*100)/100;
-        units_str = 'mb';
         break;
       case 'g':
       case 'г':
         val = Math.round(val/Math.pow(thousand, order-3));
-        units_str = 'gb';
         break;
     }
     var textval = ''+val;
@@ -504,7 +499,7 @@ function parseTrafficEx(text, thousand, order, defaultUnits){
       val = Math.round(val);
     else if(textval.length > 5)
       val = Math.round(val*10)/10;
-
-    AnyBalance.trace('Parsing traffic (' + val + units_str + ') from: ' + text);
+    var dbg_units = {0: 'b', 1: 'kb', 2: 'mb', 3: 'gb'};
+    AnyBalance.trace('Parsing traffic (' + val + dbg_units[order] + ') from: ' + text);
     return val;
 }

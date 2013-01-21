@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-internet-starnet</id>
+  <name>StarNet (Молдавия)</name>
+  <description>
+    Получает баланс и информацию о тарифных планах по различным услугам для молдавского интернет-провайдера StarNet (http://starnet.md).
+
+    Информация берется из личного кабинета http://my.starnet.md
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс интернет" units=" L"/>
+    <counter id="bonus" name="Звезды лояльности" units="★"/>
+    <counter id="balanceVoice" name="Баланс голосовой связи" units=" L"/>
+    <counter id="limitVoice" name="Кредит голосовой связи" units=" L"/>
+    <counter id="phonesVoice" name="Телефоны" type="text"/>
+    <counter id="tariffVoice" name="Тариф голосовой связи" type="text"/>
+    <counter id="tariffTv" name="Тариф TV" type="text"/>
+    <counter id="tariffInternet" name="Тариф интернет" type="text"/>
+    <counter id="bonusTotal" name="Звезды лояльности (всего получено)" units="★"/>
+  </counters>
+  <keywords>
+    старнет
+  </keywords>
+  <type>
+    internet, tv, telephony
+  </type>
+  <country>
+    md
+  </country>
+</provider>

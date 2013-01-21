@@ -103,6 +103,9 @@ function main(){
     // 100/200 минут в день на внутрисетевое направление
     sumParam (html, result, 'min_net_100', /<li>100 минут в день на внутрисетевое направление:[^<]*осталось\s*([\d\.,]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     sumParam (html, result, 'min_net_100', /<li>200 минут в день на внутрисетевое направление:[^<]*осталось\s*([\d\.,]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    sumParam (html, result, 'min_net_100', /<li>Осталось ([\d\.,]+) бесплатных секундДо [^<]*<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    //Срок действия 100/200 минут в день на внутрисетевое направление
+    sumParam (html, result, 'termin_min_net_100', /<li>Осталось [\d\.,]+ бесплатных секундДо ([^<]*)<\/li>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
     
     // 3000 региональных минут в сети
     sumParam (html, result, 'min_reg_3000', /<li>3000 региональных минут в сети:[^<]*осталось\s*([^<]*)/ig, replaceTagsAndSpaces, parseBalance, function(str){return 60*parseFloat(str)}, aggregate_sum);
@@ -142,6 +145,8 @@ function main(){
 
     // СМС в сети МТС
     sumParam (html, result, 'sms_net', /<li>Осталось (\d+) смс.[^<]*<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    //Срок Срок действия СМС в сети МТС
+    sumParam (html, result, 'termin_sms_net', /<li>Осталось \d+ смс. До ([^<]*)<\/li>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
 
     // Минуты в сети МТС
     sumParam (html, result, 'min_net_maxenergy', /<li>Осталось ([\d\.,]+) бесплатных секунд.<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);

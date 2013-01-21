@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-cell-zz</id>
+  <name>Zelta Zivtiņa (Латвия)</name>
+  <description>
+    Получает баланс и информацию о тарифном плане для сотового оператора Zelta Zivtiņa (http://www.zeltazivtina.lv).
+    Информация берется из личного кабинета https://mana.zeltazivtina.lv
+
+    Если у вас ещё нет пароля для входа в личный кабинет, зарегистрируйтесь на странице https://mana.zeltazivtina.lv.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" prefix="Ls "/>
+    <counter id="incoming" name="Бонус за входящий звонок" prefix="Ls "/>
+    <counter id="till" name="Срок действия карты" type="time" format="dd/MM/yyyy"/>
+    <counter id="phone" name="Телефон" type="text"/>
+  </counters>
+  <keywords>
+    Сотовый телефон, мобильный, мобильник, zz
+  </keywords>
+  <type>
+    cell
+  </type>
+  <country>
+    lv
+  </country>
+</provider>

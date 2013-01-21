@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Телефон" 
+        positiveButtonText="ОК" 
+        summary="|Введите 8 цифр номера телефона|{@s}\n" 
+        dialogTitle="Телефон" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите 8 цифр вашего номера телефона БЕЗ кода государства +371."
+        inputType="number"
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="||***********\n"
+        dialogMessage="Введите пароль, используемый для входа в https://mana.zeltazivtina.lv. Если у вас нет пароля, сначала зарегистрируйтесь в этом личном кабинете."
+        inputType="textPassword">
+    </EditTextPreference>
+    <ListPreference 
+        key="lang" 
+        title="Язык"
+        summary="||{@s}\n"
+        entries="Auto|русский|Latviešu"
+        entryValues="|ru|lv"
+	defaultValue="">
+    </ListPreference>
+</PreferenceScreen>

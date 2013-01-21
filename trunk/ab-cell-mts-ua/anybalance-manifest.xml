@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.1" version="16">ab-cell-mts-ua</id>
+  <id major_version="1.1" version="17">ab-cell-mts-ua</id>
   <name>МТС (Украина)</name>
   <description>
     Получает баланс, минуты, смс, ммс, информацию о расходах, номер лицевого счета, ежемесячую плату и др.
@@ -47,11 +47,13 @@
     <counter id="termin" name="Срок действия номера" type="time" format="dd/MM/yyyy"/>
     <counter id="termin_bonus_balance" name="Срок действия бонусного баланса" type="time" format="dd/MM/yyyy HH:mm:ss"/>
     <counter id="termin_min_paket" name="Срок действия пакета бесплатных минут для внутрисетевых звонков" type="time" format="dd/MM/yyyy HH:mm:ss"/>
+    <counter id="termin_min_net_100" name="Срок действия 100/200 минут в день на внутрисетевое направление" type="time" format="dd/MM/yyyy HH:mm:ss"/>
     <counter id="termin_sms_paket" name="Срок действия пакета СМС" type="time" format="dd/MM/yyyy"/>
     <counter id="termin_mms_paket" name="Срок действия пакета ММС" type="time" format="dd/MM/yyyy"/>
     <counter id="termin_traffic_paket_mb" name="Срок действия пакета интернета" type="time" format="dd/MM/yyyy"/>
     <counter id="termin_traffic_reg_kop_mb" name="Срок действия интернета за копейку регионального и общенационального" type="time" format="dd/MM/yyyy"/>
     <counter id="termin_sms_100" name="Срок действия бесплатных смс для отправки на номера в пределах Украины" type="time" format="dd/MM/yyyy"/>
+    <counter id="termin_sms_net" name="Срок действия СМС в сети МТС" type="time" format="dd/MM/yyyy HH:mm:ss"/>
     <!--    <counter id="usedinprevmonth" name="Расход за прошлый месяц" units="грн"/> Че-то не показывается в лк -->
     <counter id="phone" name="Номер телефона" type="text"/>
     <counter id="usedinthismonth" name="Расход за этот месяц" units=" ₴"/>

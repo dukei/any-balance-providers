@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="0">ab-bonus-eldorado-ua</id>
+  <id version="1">ab-bonus-eldorado-ua</id>
   <name>Клуб Эльдорадо (Украина)</name>
   <description>
     Получает информацию по бонусной карте клуба постоянных покупателей Эльдорадо. Информация берется из личного кабинета http://www.club.eldorado.com.ua.

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="2.1" version="28">ab-cell-beeline-russia</id>
+  <id major_version="2.1" version="29">ab-cell-beeline-russia</id>
   <name>Билайн</name>
   <description>
     Получает баланс, бонусный баланс, количество бесплатных SMS, MMS и минут, владельца, тарифный план и номер договора.
@@ -36,7 +36,7 @@
     <history>history.xml</history>
   </files>
   <counters>
-    <counter id="balance" name="Баланс"/>
+    <counter id="balance" name="Баланс" units="{@currency}"/>
     <counter id="bonus_balance" name="Бонусный баланс" units="р"/>
     <counter id="bonus_survey" name="Бонус за опрос" units="р"/>
     <counter id="min_left" name="Минуты" units="мин" type="time_interval"/>
@@ -46,10 +46,10 @@
     <counter id="billsum" name="Сумма счета (корп.)" units="р"/>
     <counter id="billpay" name="Сумма к оплате (корп.)" units="р"/>
     <counter id="billpaytill" name="Срок оплаты счета (корп.)" type="time" format="dd/MM/yyyy"/>
+    <counter id="traffic" name="Трафик" units="Мб"/>
     <counter id="userName" name="Владелец" type="text"/>
     <counter id="BlockStatus" name="Состояние номера" type="text"/>
     <counter id="license" name="Номер договора" type="text"/>
-    <counter id="traffic" name="Трафик" units="Мб"/>
     <counter id="sms_expiration" name="Дата окончания действия смс-пакета" type="time" format="dd/MM/yyyy"/>
     <counter id="expencesTraffic" name="Начисления за трафик (корп.)" units="р"/>
     <counter id="expencesAbon" name="Начисления абон.платы (корп.)" units="р"/>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="0">ab-bonus-eldorado-ua</id>
+  <name>Клуб Эльдорадо (Украина)</name>
+  <description>
+    Получает информацию по бонусной карте клуба постоянных покупателей Эльдорадо. Информация берется из личного кабинета http://www.club.eldorado.com.ua.
+  </description>
+  <author>Ignatiy Goloviznin &lt;igoloviznin@gmail.com&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Активная сумма" suffix=" ₴" type="numeric"/>
+    <counter id="balance_not_active" name="НЕактивная сумма" suffix=" ₴" type="numeric"/>
+  </counters>
+  <keywords>
+    eldorado, эльдорадо, прибуткова, картка, карта, бонус, украина
+  </keywords>
+  <type>
+    bonus
+  </type>
+  <country>
+    ua
+  </country>
+</provider>

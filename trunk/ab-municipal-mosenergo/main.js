@@ -34,13 +34,11 @@ function main(){
         y: 9
     }, g_headers);
 
-//    var params = AnyBalance.getLastResponseParameters();
-//    AnyBalance.trace(JSON.stringify(params));
-
     //Выход из кабинета
     if(!/&#1042;&#1099;&#1093;&#1086;&#1076; &#1080;&#1079; &#1082;&#1072;&#1073;&#1080;&#1085;&#1077;&#1090;&#1072;/i.test(html)){
         if(html.length < 5000 && AnyBalance.getLevel() < 5) //Обрезается по '\0'
-            throw new AnyBalance.Error("К сожалению, из-за ошибки в Android 4.0+ этот провайдер не работает. Для исправления, пожалуйста, дождитесь следующей версии AnyBalance.");
+            //throw new AnyBalance.Error("К сожалению, из-за ошибки в Android 4.0+ этот провайдер не работает. Для исправления, пожалуйста, дождитесь следующей версии AnyBalance.");
+            throw new AnyBalance.Error("Ваша версия AnyBalance не может получить информацию для этого провайдера. Пожалуйста, установите последнюю версию AnyBalance.");
         throw new AnyBalance.Error('Не удалось войти в личный кабинет. Неправильный номер счета или пароль?');
     }
 
@@ -48,10 +46,13 @@ function main(){
 
     getParam(html, result, 'balance', /&#1058;&#1077;&#1082;&#1091;&#1097;&#1080;&#1081; &#1073;&#1072;&#1083;&#1072;&#1085;&#1089; &#1089;&#1095;&#1077;&#1090;&#1072;([^<]*)/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'agreement', /№ лицевого счёта:([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, '__tariff', /№ лицевого счёта:([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'lastdate', /Информация о последнем платеже[\s\S]*?<tbody[^>]*>(?:[\s\S]*?<td[^>]*>){1}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
     getParam(html, result, 'lastcounter', /Информация о последнем платеже[\s\S]*?<tbody[^>]*>(?:[\s\S]*?<td[^>]*>){3}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'lastsum', /Информация о последнем платеже[\s\S]*?<tbody[^>]*>[\s\S]*?Итого(?:[\s\S]*?<td[^>]*>){3}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+
+    getParam(html, result, '__tariff', /№ лицевого счёта:([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+    //Величина тарифа:
+    getParam(html, result, '__tariff', /&#1042;&#1077;&#1083;&#1080;&#1095;&#1080;&#1085;&#1072; &#1090;&#1072;&#1088;&#1080;&#1092;&#1072;:(?:[\s\S](?!<\/table))*?<table[^>]+RichSubTable[^>]*>([\S\s]*?)<\/table>/i, replaceTagsAndSpaces, html_entity_decode);
 
     AnyBalance.setResult(result);
 }

@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change major_version="2.1" version="29" date="2013-01-19">
+      - Добавлено распознавание Интернет бонуса
+      - Единицы измерения баланса
+    </change>
     <change major_version="2.1" version="28" date="2013-01-19">
       - Исправлена ошибка входа в некоторых случаях
     </change>

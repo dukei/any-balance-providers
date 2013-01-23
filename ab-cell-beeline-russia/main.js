@@ -68,13 +68,19 @@ function sumParam (html, result, param, regexp, replaces, parser, do_replace) {
 var replaceTagsAndSpaces = [/<!--[\s\S]*?-->/g, '', /&nbsp;/g, ' ', /<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
 var replaceFloat = [/\s+/g, '', /,/g, '.'];
 
+var g_currency = {
+      ru: "р",
+      kz: "〒",
+      uz: " сўм"
+};
+
 function main(){
     var prefs = AnyBalance.getPreferences();
     var baseurls = {
       ru: "https://uslugi.beeline.ru/",
       kz: "https://uslugi.beeline.kz/",
       uz: "https://uslugi.beeline.uz/"
-    }
+    };
 
     if(!prefs.country || !baseurls[prefs.country]){
       AnyBalance.trace("Unknown country: " + prefs.country + ", defaulting to ru");
@@ -97,6 +103,9 @@ function main(){
     };
 
     var html = AnyBalance.requestGet(baseurl, headers); //Хз, помогает, или нет. Но куку какую-то она ставит. Пусть будет.
+
+    if(/<h1[^>]*>[^<]*Gateway Time-out/i.test(html))
+	throw new AnyBalance.Error('Сайт личного кабинета Билайн временно не работает. Пожалуйста, попробуйте позже.');
 
     AnyBalance.trace("Trying to enter selfcare at address: " + baseurl);
     var html = AnyBalance.requestPost(baseurl + "loginPage.do", {
@@ -144,6 +153,7 @@ function parsePersonal(baseurl, html){
     if(AnyBalance.isAvailable('balance')){
       result.balance = null; //Баланс должен быть всегда, даже если его не удаётся получить. 
       //Если его не удалось получить, то передаём null, чтобы значение взялось из предыдущего запроса
+      result.currency = g_currency[AnyBalance.getPreferences().country || 'ru'];
     }
 
     AnyBalance.trace("It looks like we are in PERSONAL selfcare...");
@@ -260,6 +270,10 @@ function parseBalanceList(html, result){
             result.traffic = (result.traffic || 0) + val/1024;
 
         var val = getBalanceValue(html, 'GPRS_PAK', parseBalance);
+        if(val)
+            result.traffic = (result.traffic || 0) + val/1024;
+
+        var val = getBalanceValue(html, 'Интернет баланс', parseBalance);
         if(val)
             result.traffic = (result.traffic || 0) + val/1024;
 
@@ -386,6 +400,7 @@ function parseCorporate(baseurl, html){
     if(AnyBalance.isAvailable('balance')){
       result.balance = null; //Баланс должен быть всегда, даже если его не удаётся получить. 
       //Если его не удалось получить, то передаём null, чтобы значение взялось из предыдущего запроса
+      result.currency = g_currency[AnyBalance.getPreferences().country || 'ru'];
     }
 
     AnyBalance.trace("It looks like we are in CORPORATE selfcare...");

@@ -3,7 +3,7 @@
     <EditTextPreference 
         title="Логин" 
         positiveButtonText="ОК" 
-        summary="УНК или псевдоним||{@s}\n" 
+        summary="|УНК или псевдоним|{@s}\n" 
         dialogTitle="УНК или псевдоним" 
         negativeButtonText="Отмена" 
         dialogMessage="УНК или псевдоним"
@@ -15,17 +15,25 @@
         dialogTitle="Пароль"
         negativeButtonText="Отмена"
         title="Пароль"
-        summary="Пароль||***********\n"
+        summary="|Введите пароль|***********\n"
         dialogMessage="Введите пароль для входа в телебанк"
         inputType="textPassword">
     </EditTextPreference>
+    <ListPreference 
+        key="type" 
+        title="Что смотреть"
+        summary="||{@s}"
+        entries="Карта|Счет в АБС"
+        entryValues="card|abs"
+	defaultValue="card">
+    </ListPreference>
     <EditTextPreference
-        title="Последние 4 числа карты" 
+        title="Номер карты/счета" 
         positiveButtonText="ОК" 
-        summary="Последние 4 числа карты||{@s}\n" 
-        dialogTitle="Последние 4 числа карты" 
+        summary="|Автоматически|{@s}\n" 
+        dialogTitle="Номер карты/счета" 
         negativeButtonText="Отмена" 
-        dialogMessage="Последние 4 числа карты"
+        dialogMessage="В зависимости от настройки Что смотреть, введите сюда последние цифры номера карты или счета. Если оставить поле пустым, то будет показана информация по первому счету/карте."
         key="card">
     </EditTextPreference>
 </PreferenceScreen>

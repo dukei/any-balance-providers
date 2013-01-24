@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2" major_version="1.0">ab-money-teleinfo</id>
+  <id version="3" major_version="1.1">ab-money-teleinfo</id>
   <name>ВТБ24: Телеинфо</name>
   <description>Система «Телеинфо» ВТБ24. Получение баланса пластиковой карты. https://telebank.vtb24.ru/
 
@@ -12,18 +12,21 @@
    При этом существует неприятная проблема - эти услуги взаимоисключающие. То есть, если подключен Телебанк, то из-за дурацкого ограничения на ввод одноразового кода проверить счет через AnyBalance или подобную программу невозможно. Пожалуйста, пожалуйтесь в поддержку банка (по номеру (495) 771-78-24), надеюсь, будет толк.
 </description>
   <author>Robert Khaliullov &lt;robix@mail.ru&gt;</author>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
     <js>api:jquery.min.js</js> <!-- Используем библиотеку, которая и так входит в AnyBalance -->
+    <js>library.js</js>
     <js>main.js</js>
     <history>history.xml</history>
   </files>
   <counters>
-    <counter id="balance" name="Баланс"/>
+    <counter id="balance" name="Баланс" units=" {@currency}"/>
     <counter id="currency" name="Валюта" type="text"/>
     <counter id="cardname" name="Название" type="text"/>
-    <counter id="cardnum" name="Номер карты" type="text"/>
+    <counter id="cardnum" name="Номер" type="text"/>
+    <counter id="fio" name="Владелец" type="text"/>
  </counters>
   <keywords>
     ВТБ24, Телебанк, телеинфо

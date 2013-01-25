@@ -48,6 +48,8 @@ function main(){
     getParam(html, result, 'agreement', /№ лицевого счёта:([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'lastdate', /Информация о последнем платеже[\s\S]*?<tbody[^>]*>(?:[\s\S]*?<td[^>]*>){1}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
     getParam(html, result, 'lastcounter', /Информация о последнем платеже[\s\S]*?<tbody[^>]*>(?:[\s\S]*?<td[^>]*>){3}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'lastcounter1', /Информация о последнем платеже(?:[\s\S](?!<\/table>))*?<tbody[^>]*>(?:(?:[\s\S](?!Итого))*?<td[^>]*>){7}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'lastcounter2', /Информация о последнем платеже(?:[\s\S](?!<\/table>))*?<tbody[^>]*>(?:(?:[\s\S](?!Итого))*?<td[^>]*>){11}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'lastsum', /Информация о последнем платеже[\s\S]*?<tbody[^>]*>[\s\S]*?Итого(?:[\s\S]*?<td[^>]*>){3}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 
     getParam(html, result, '__tariff', /№ лицевого счёта:([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);

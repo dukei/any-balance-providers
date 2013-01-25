@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="5">ab-municipal-mosenergo</id>
+  <id version="6">ab-municipal-mosenergo</id>
   <name>Мосэнергосбыт</name>
   <description>
     Получает баланс и информацию о последнем платеже в МосЭнергоСбыт. Получает данные из личного кабинета https://lkkbyt.mosenergosbyt.ru.
@@ -20,6 +20,8 @@
     <counter id="agreement" name="Лицевой счет" type="text"/>
     <counter id="lastdate" name="Дата последнего платежа" type="time" format="dd/MM/yyyy"/>
     <counter id="lastcounter" name="Последние показания счетчика"/>
+    <counter id="lastcounter1" name="Последние показания другого счетчика"/>
+    <counter id="lastcounter2" name="Последние показания третьего счетчика"/>
     <counter id="lastsum" name="Последний платеж" units="р"/>
   </counters>
   <keywords>

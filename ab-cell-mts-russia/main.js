@@ -69,7 +69,14 @@ function main(){
                throw e;
            AnyBalance.trace('С мобильным помощником проблема: ' + e.message + " Пробуем обычный...");
         }
-        mainLK();
+        try{
+           mainLK(true);
+        }catch(e){
+           if(!e.allow_retry)
+               throw e;
+           AnyBalance.trace('С личным кабинетам проблема: ' + e.message + " Пробуем обычный помощник...");
+           mainOrdinary();
+        }
     }
 }
 
@@ -192,8 +199,8 @@ function mainMobile(allowRetry){
         AnyBalance.setResult(result);
     }catch(e){
         //Если не установлено требование другой попытки, устанавливаем его в переданное в функцию значение
-        if(!isset(e.allowRetry))
-            e.allowRetry = allowRetry;
+        if(!isset(e.allow_retry))
+            e.allow_retry = allowRetry;
         throw e; 
     }
 
@@ -331,6 +338,9 @@ function fetchOrdinary(html, baseurl, resultFromLK){
 
     // Телефон
     sumParam (html, result, 'phone', /Номер:.*?>([^<]*)</i, replaceTagsAndSpaces, html_entity_decode);
+
+    if(AnyBalance.isAvailable('bonus') && !isset(result.bonus))
+        result.bonus = null; //Не сбрасываем уже ранее полученное значение бонуса в 0. Может, мы получаем из помощника, потому что сдох ЛК
 
     // Статус блокировки, хрен с ним, на следующей странице получим лучше
     //sumParam (html, result, 'statuslock', /<li[^>]*class="lock-status[^>]*>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces);
@@ -470,7 +480,7 @@ function parseJson(json){
     return getJson(json);
 }
 
-function mainLK(){
+function mainLK(allowRetry){
     AnyBalance.trace("Entering lk...");
     
     var prefs = AnyBalance.getPreferences();
@@ -479,62 +489,71 @@ function mainLK(){
     var baseurl = 'https://lk.ssl.mts.ru';
     var baseurlLogin = 'https://login.mts.ru';
 
-    if(prefs.__dbg){
-        //Чтобы сбросить автологин
-        var html = AnyBalance.requestGet(baseurl, g_headers);
-    }else{
-        //Чтобы сбросить автологин
-        var html = AnyBalance.requestGet(baseurlLogin + "/amserver/UI/Login?gx_charset=UTF-8&service=lk&goto=" + encodeURIComponent(baseurl + '/') + "&auth-status=0", g_headers);
+    try{
+        if(prefs.__dbg){
+            //Чтобы сбросить автологин
+            var html = AnyBalance.requestGet(baseurl, g_headers);
+        }else{
+            //Чтобы сбросить автологин
+            var html = AnyBalance.requestGet(baseurlLogin + "/amserver/UI/Login?gx_charset=UTF-8&service=lk&goto=" + encodeURIComponent(baseurl + '/') + "&auth-status=0", g_headers);
+        }
+        
+        if(isLoggedIn(html)){
+             AnyBalance.trace("Уже залогинены, проверяем, что на правильный номер...");
+             //Автоматом залогинились, надо проверить, что на тот номер
+             var info = AnyBalance.requestPost(baseurl + '/GoodokServices/GoodokAjaxGetWidgetInfo/', '', g_headers);
+             info = JSON.parse(info);
+             if(info.MSISDN != prefs.login){  //Автоматом залогинились не на тот номер
+                 AnyBalance.trace("Залогинены на неправильный номер: " + prefs.MSISDN + ", выходим");
+                 html = AnyBalance.requestGet(baseurlLogin + "/amserver/UI/Logout?goto=" + encodeURIComponent(baseurl + '/'), g_headers);
+             }
+        }
+        
+        if(!isLoggedIn(html)){
+            var form = getParam(html, null, null, /<form[^>]+name="Login"[^>]*>([\s\S]*?)<\/form>/i);
+            if(!form)
+                throw new AnyBalance.Error("Не удаётся найти форму входа!", allowRetry);
+        
+            var params = createFormParams(form, function(params, input, name, value){
+                var undef;
+                if(name == 'IDToken1')
+                    value = prefs.login;
+                else if(name == 'IDToken2')
+                    value = prefs.password;
+                else if(name == 'noscript')
+                    value = undef; //Снимаем галочку
+                else if(name == 'IDButton')
+                    value = '+%C2%F5%EE%E4+%E2+%CB%E8%F7%ED%FB%E9+%EA%E0%E1%E8%ED%E5%F2+';
+               
+                return value;
+            });
+        
+//  //        AnyBalance.trace("Login params: " + JSON.stringify(params));
+        
+            AnyBalance.trace("Логинимся с заданным номером");
+            html = AnyBalance.requestPost(baseurlLogin + "/amserver/UI/Login?gx_charset=UTF-8&service=lk&goto=" + encodeURIComponent(baseurl + '/') + "&auth-status=0", params);
+//            AnyBalance.trace("Команду логина послали, смотрим, что получилось...");
+        }
+        
+        if(!isLoggedIn(html)){
+//  //        AnyBalance.trace(html);
+        
+            var error = getParam(html, null, null, /<div[^>]+class="field_error"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+            if(error)
+                throw new AnyBalance.Error(error, false);
+        
+            if(getParam(html, null, null, /(auth-status=0)/i))
+                throw new AnyBalance.Error('Неверный логин или пароль. Повторите попытку или получите новый пароль на сайте https://lk.ssl.mts.ru/.', false);
+        
+            throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Он изменился или проблемы на сайте.', allowRetry);
+        }
+    }catch(e){
+        //Если не установлено требование другой попытки, устанавливаем его в переданное в функцию значение
+        if(!isset(e.allow_retry))
+            e.allow_retry = allowRetry;
+        throw e; 
     }
 
-    if(isLoggedIn(html)){
-         AnyBalance.trace("Уже залогинены, проверяем, что на правильный номер...");
-         //Автоматом залогинились, надо проверить, что на тот номер
-         var info = AnyBalance.requestPost(baseurl + '/GoodokServices/GoodokAjaxGetWidgetInfo/', '', g_headers);
-         info = JSON.parse(info);
-         if(info.MSISDN != prefs.login){  //Автоматом залогинились не на тот номер
-             AnyBalance.trace("Залогинены на неправильный номер: " + prefs.MSISDN + ", выходим");
-             html = AnyBalance.requestGet(baseurlLogin + "/amserver/UI/Logout?goto=" + encodeURIComponent(baseurl + '/'), g_headers);
-         }
-    }
-
-    if(!isLoggedIn(html)){
-        var form = getParam(html, null, null, /<form[^>]+name="Login"[^>]*>([\s\S]*?)<\/form>/i);
-        if(!form)
-            throw new AnyBalance.Error("Не удаётся найти форму входа!");
-
-        var params = createFormParams(form, function(params, input, name, value){
-            var undef;
-            if(name == 'IDToken1')
-                value = prefs.login;
-            else if(name == 'IDToken2')
-                value = prefs.password;
-            else if(name == 'noscript')
-                value = undef; //Снимаем галочку
-            else if(name == 'IDButton')
-                value = '+%C2%F5%EE%E4+%E2+%CB%E8%F7%ED%FB%E9+%EA%E0%E1%E8%ED%E5%F2+';
-           
-            return value;
-        });
-
-//        AnyBalance.trace("Login params: " + JSON.stringify(params));
-
-        AnyBalance.trace("Логинимся с заданным номером");
-        var html = AnyBalance.requestPost(baseurlLogin + "/amserver/UI/Login?gx_charset=UTF-8&service=lk&goto=" + encodeURIComponent(baseurl + '/') + "&auth-status=0", params);
-    }
-
-    if(!isLoggedIn(html)){
-//        AnyBalance.trace(html);
-
-        var error = getParam(html, null, null, /<div[^>]+class="field_error"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
-        if(error)
-            throw new AnyBalance.Error(error);
-
-        if(getParam(html, null, null, /(auth-status=0)/i))
-            throw new AnyBalance.Error('Неверный логин или пароль. Повторите попытку или получите новый пароль на сайте https://lk.ssl.mts.ru/.');
-
-        throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Он изменился или проблемы на сайте.');
-    }
     AnyBalance.trace("Мы в личном кабинете...");
 
     var result = {success: true};

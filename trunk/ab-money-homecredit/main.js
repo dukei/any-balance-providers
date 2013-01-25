@@ -73,6 +73,7 @@ function fetchCard(baseurl, html){
 
     var isCredit = /<a[^>]+id="[^"]*creditCard_\d+"/.test(tr); 
     //Проверим, выбран ли сейчас интересующий нас продукт.
+    //FIXME: судя по депозиту и кредиту надо проверять наличие класса productBlockActive именно у нужной карты. А здесь странно как-то. Наверху в id есть Card, а здесь нет. Так что для карт надо бы перепроверить.
     var selected = getParam(html, null, null, new RegExp('<div[^>]+class="productBlock\\s+([^"]*)(?:[\\s\\S](?!</a>))*<a[^>]+id="[^"]*' + (isCredit ? 'credit' : 'debit') + '_\\d+"', 'i'));
     var isProductSelected = selected && /productBlockActive/i.test(selected);
 
@@ -137,7 +138,7 @@ function createProductsIds(html, result){
            deposit: 'Депозит',
            loan: 'Кредит'
         }; 
-        html.replace(/<a[^>]+id="[^"]*:([^":]+)_(\d+)"[^>]*class="selectProduct"[\s\S]*?<\/a>/i, function(str, type, id){
+        html.replace(/<a[^>]+id="[^"]*:([^":]+)_(\d+)"[^>]*class="selectProduct"[\s\S]*?<\/a>/ig, function(str, type, id){
             var name = getParam(str, null, null, /<td[^>]+class="productInfo"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
             if(types[type]){
                 all[all.length] = types[type] + ': ' + id + ' — ' + name;
@@ -160,8 +161,9 @@ function fetchDeposit(baseurl, html){
     var tr = getParam(html, null, null, re);
     if(!tr)
         throw new AnyBalance.Error('Не удаётся найти ' + (prefs.contract ? 'вклад с ID ' + prefs.contract : 'ни одного вклада'));
+    var id = getParam(tr, null, null, /<a[^>]+id="[^"]*loan_(\d+)"/i);
 
-    var selected = getParam(html, null, null, /<div[^>]+class="productBlock\s+([^"]*)(?:[\s\S](?!<\/a>))*<a[^>]+id="[^"]*deposit_\d+"/i);
+    var selected = getParam(html, null, null, new RegExp('<div[^>]+class="productBlock\\s+([^"]*)(?:[\\s\\S](?!</a>))*<a[^>]+id="[^"]*deposit_' + id + '"', 'i'));
     var isProductSelected = selected && /productBlockActive/i.test(selected);
 
     var result = {success: true};
@@ -210,8 +212,9 @@ function fetchCredit(baseurl, html){
     var tr = getParam(html, null, null, re);
     if(!tr)
         throw new AnyBalance.Error('Не удаётся найти ' + (prefs.contract ? 'кредит с ID ' + prefs.contract : 'ни одного кредита'));
+    var id = getParam(tr, null, null, /<a[^>]+id="[^"]*loan_(\d+)"/i);
 
-    var selected = getParam(html, null, null, /<div[^>]+class="productBlock\s+([^"]*)(?:[\s\S](?!<\/a>))*<a[^>]+id="[^"]*loan_\d+"/i);
+    var selected = getParam(html, null, null, new RegExp('<div[^>]+class="productBlock\\s+([^"]*)(?:[\\s\\S](?!</a>))*<a[^>]+id="[^"]*loan_' + id + '"', 'i'));
     var isProductSelected = selected && /productBlockActive/i.test(selected);
 
     var result = {success: true};

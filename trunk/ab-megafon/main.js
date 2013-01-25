@@ -304,7 +304,7 @@ function megafonTrayInfo(filial){
         if(AnyBalance.isAvailable('prsnl_balance') && (val = parseFloat($xml.find('PRSNL_BALANCE').text())))
             result.prsnl_balance = parseFloat(val);
 
-        var $threads = $xml.find('RP_DISCOUNTS>DISCOUNT>THREAD, PACK>DISCOUNT>THREAD');
+        var $threads = $xml.find('RP_DISCOUNTS>DISCOUNT>THREAD, PACK>DISCOUNT>THREAD, RP_DISCOUNTS>DISCOUNT:not(:has(THREAD))');
         AnyBalance.trace('Found discounts: ' + $threads.length);
 
         if(AnyBalance.isAvailable('sms_left','sms_total')){
@@ -365,10 +365,10 @@ function megafonTrayInfo(filial){
         }
 
         if(AnyBalance.isAvailable('internet_left','internet_total','internet_cur')){
-            var $val = $threads.filter(':has(NAME:contains(" Байт")), :has(NAME_SERVICE:contains("Пакетная передача данных"))');
+            var $val = $threads.filter(':has(NAME:contains(" Байт")), :has(NAME_SERVICE:contains("Пакетная передача данных")), :has(PLAN_NAME:contains("Интернет"))');
             AnyBalance.trace('Found internet discounts: ' + $val.length);
             if($val.length){
-                var name = $val.first().find('NAME').text();
+                var name = $val.first().find('PLAN_SI, NAME').text();
                 var left = $val.first().find('VOLUME_AVAILABLE').text();
                 left = parseInt(left);
                 var total = $val.first().find('VOLUME_TOTAL').text();

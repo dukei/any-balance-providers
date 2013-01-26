@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-internet-smartintel</id>
+  <name>SmartIntel (Орехово-Зуево)</name>
+  <description>
+    Получает баланс и информацию о тарифном плане для подмосковного интернет-провайдера SmartIntel (http://smartintel.ru), который предоставляет доступ в интернет в Орехово-Зуево, Ликино-Дулево, Демихово, Кабаново, Куровское, Губино.
+
+    Информация берется из личного кабинета https://stat.smartintel.ru.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="fio" name="Абонент" type="text"/>
+    <counter id="licschet" name="Лицевой счет" type="text"/>
+    <counter id="agreement" name="Договор" type="text"/>
+    <counter id="status" name="Статус" type="text"/>
+  </counters>
+  <keywords>
+    интернет
+  </keywords>
+  <type>
+    internet
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="6">ab-game-wot</id>
+	<id version="7">ab-game-wot</id>
 	<name>World of Tanks</name>
 	<description>
-		Показывает ник и клан-тэг, общее количество боев и побед, рейтинг эффективности в игре World of Tanks, а также информацию о количестве боев и побед на выбранном танке
+		Показывает ник и клан-тэг, общее количество боев и побед, рейтинги эффективности в игре World of Tanks, а также информацию о количестве боев и побед на выбранном танке
 	</description>
-	<author>Vit@liy &lt;vitaliy@root.ua&gt;</author>
+	<author>Vitaliy Poluphanov &lt;vitaliy@root.ua&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
@@ -23,6 +23,7 @@
 		<counter id="tank_battles" name="Бои танка" type="numeric"/>
 		<counter id="tank_win_percent" name="Процент побед танка" suffix="℅" type="numeric"/>
 		<counter id="er" name="Рейтинг эффективности" type="numeric"/>
+		<counter id="er_armor" name="Рейтинг эффективности Бронесайта" type="numeric"/>
 	</counters>
 	<keywords>
 		игра, game, wot

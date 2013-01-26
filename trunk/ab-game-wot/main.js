@@ -62,16 +62,8 @@ function main(){
 		if(AnyBalance.isAvailable('win_percent'))
 			result['win_percent'] = (pd.data.summary.wins / pd.data.summary.battles_count * 100).toFixed(1);
 			
-		if(AnyBalance.isAvailable('er'))
+		if(AnyBalance.isAvailable('er', 'er_armor'))
 			var battles = pd.data.ratings.battles.value;
-			
-			var tmp = pd.data.vehicles;
-			var s = 0;
-			for (q in tmp){
-				t = tmp[q];
-				s += t.battle_count * t.level;
-			}
-			var fmid = s / battles;
 			
 			var dmg = pd.data.ratings.damage_dealt.value / battles;
 			var des = pd.data.ratings.frags.value / battles;
@@ -79,8 +71,24 @@ function main(){
 			var cap = pd.data.ratings.ctf_points.value / battles;
 			var dff = pd.data.ratings.dropped_ctf_points.value / battles;
 			
+		if(AnyBalance.isAvailable('er'))
+			var tmp = pd.data.vehicles;
+			var s = 0;
+			for (q in tmp){
+				t = tmp[q];
+				s += t.battle_count * t.level;
+			}
+			var fmid = s / battles;
+
 			result['er'] = (dmg * (10 / fmid) * (0.15 + 2 * fmid / 100) + des * (0.35 - 2 * fmid / 100) * 1000 + det * 0.2 * 1000 + cap * 0.15 * 1000 + dff * 0.15 * 1000).toFixed(0);
-		
+
+		if(AnyBalance.isAvailable('er_armor'))
+			var avg_exp = pd.data.ratings.battle_avg_xp.value;
+			var avg_perf = pd.data.ratings.battle_wins.value / battles;
+			
+			// http://armor.kiev.ua/wot/rating/
+			result['er_armor'] = (Math.log(battles) / 10 * (avg_exp + dmg * (avg_perf * 2 + des * 0.9 + (det + cap + dff) * 0.5))).toFixed(0);
+			
 		if (prefs.tank) {
 			var tmp = pd.data.vehicles;
 			var f = 0;

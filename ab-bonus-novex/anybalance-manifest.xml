@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-bonus-novex</id>
+  <name>НОВЭКС</name>
+  <description>
+    Получает баланс бонусов на карте бонусной программы НОВЭКС ( http://www.novex-trade.ru/bonus-card-program/ ).
+
+    Как получить карту? Вы можете купить карту за 95 рублей в сети магазинов НОВЭКС.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+    <js>library.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Бонусы"/>
+  </counters>
+  <keywords>
+    bonus новекс
+  </keywords>
+  <type>
+    bonus
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

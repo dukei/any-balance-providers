@@ -22,7 +22,7 @@
     </EditTextPreference>
     <ListPreference 
         key="type" 
-        title="Продукт"
+        title="Что смотреть"
         summary="||{@s}"
         entries="Счет|Кредит"
         entryValues="acc|crd"

@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference
+        title="Номер карты" 
+        positiveButtonText="ОК" 
+        summary="||{@s}" 
+        dialogTitle="Номер карты" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите номер (все 16 цифр) вашей виртуальной предоплаченной карты"
+        key="login"
+        inputType="number">
+    </EditTextPreference>
+    <EditTextPreference
+        title="Срок действия" 
+        positiveButtonText="ОК" 
+        summary="|В формате ММ/ГГ, например, 05/14|{@s}" 
+        dialogTitle="Срок действия" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите срок действия вашей виртуальной предоплаченной карты в формате ММ/ГГ, например, 05/14."
+        key="till"
+        inputType="text">
+    </EditTextPreference>
+</PreferenceScreen>

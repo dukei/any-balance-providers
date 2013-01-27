@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-bonus-kopilka</id>
+  <name>Копилка</name>
+  <description>
+    Получает баланс баллов на карте бонусной программы Копилка ( http://kopilka-bonus.ru ).
+
+    Если у вас есть карта, но ещё нет доступа в личный кабинет, зарегистрируйтесь здесь: https://kopilka-bonus.ru/join/preform.html.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+    <js>library.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Баллы" units=" б"/>
+    <counter id="total" name="Сумма покупок" units=" р"/>
+    <counter id="cardnum" name="Номер карты" type="text"/>
+  </counters>
+  <keywords>
+    bonus
+  </keywords>
+  <type>
+    bonus
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

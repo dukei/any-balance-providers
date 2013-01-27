@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-internet-ttk-ural</id>
+  <name>ТТК-Урал</name>
+  <description>
+    Получает баланс и информацию о тарифном плане для интернет-провайдера Транстелеком - Урал (https://www.uralttk.ru).
+
+    Информация берется из личного кабинета https://www.uralttk.ru/billing.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="licschet" name="Лицевой счет" type="text"/>
+    <counter id="agreement" name="Договор" type="text"/>
+  </counters>
+  <keywords>
+    интернет
+  </keywords>
+  <type>
+    internet
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

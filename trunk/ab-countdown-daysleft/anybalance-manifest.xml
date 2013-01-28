@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="3">ab-countdown-daysleft</id>
+  <id version="4">ab-countdown-daysleft</id>
   <name>Число дней до</name>
   <description>
-    Показывает количество дней до разных событий: Новый Год, День Рождения, начало лета.
+    Показывает количество дней до разных событий: Новый Год, День Рождения, начало лета, отпуск.
   </description>
   <author>BArtWell &lt;web@bartwell.ru&gt;</author>
   <files>
@@ -13,10 +13,10 @@
     <history>history.xml</history>
   </files>
   <counters>
-    <counter id="birthday" name="День Рождения" type="text" />
-    <counter id="newyear" name="Новый Год" type="text" />
-    <counter id="summer" name="Лето" type="text" />
-    <counter id="absence" name="Отпуск" type="text" />
+    <counter id="birthday" name="День Рождения"/>
+    <counter id="newyear" name="Новый Год"/>
+    <counter id="summer" name="Лето"/>
+    <counter id="absence" name="Отпуск"/>
   </counters>
   <keywords>
     день рождения новый год лето отпуск количество дней

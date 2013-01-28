@@ -52,6 +52,17 @@ function main(){
 	
 	//Дата последней абонентской активности
 	sumParam(html, result, 'date_activity', /<td[^>]*>\s*Дата последней абонентской активности \(мм.гггг\)\s*<\/td>\s*<td[^>]*>([^<]*)<\/td>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
+	
+	//Лояльный стаж
+	sumParam(html, result, 'loyalty', /<td[^>]*>\s*Лояльный стаж \(гг.мм\)\s*<\/td>\s*<td[^>]*>([^<]*)\.[^<]*<\/td>/ig, replaceTagsAndSpaces, function(str){return 365*86400*parseFloat(str)}, aggregate_sum);
+	sumParam(html, result, 'loyalty', /<td[^>]*>\s*Лояльный стаж \(гг.мм\)\s*<\/td>\s*<td[^>]*>[^<]*\.([^<]*)<\/td>/ig, replaceTagsAndSpaces, function(str){return 30*86400*parseFloat(str)}, aggregate_sum);
+	
+	//Абонентский стаж
+	sumParam(html, result, 'mobsubscr', /<td[^>]*>\s*Лояльный стаж \(гг.мм\)\s*<\/td>\s*<td[^>]*>([^<]*)\.[^<]*<\/td>/ig, replaceTagsAndSpaces, function(str){return 365*86400*parseFloat(str)}, aggregate_sum);
+	sumParam(html, result, 'mobsubscr', /<td[^>]*>\s*Лояльный стаж \(гг.мм\)\s*<\/td>\s*<td[^>]*>[^<]*\.([^<]*)<\/td>/ig, replaceTagsAndSpaces, function(str){return 30*86400*parseFloat(str)}, aggregate_sum);
+	
+	//Размер скидки по программе лояльности «Наилучшее общение»
+        result.skidka = skidka2loyal(result.loyalty);
 
 	//Количество новостей
         getParam(html, result, 'news', />Новости <span [^>]*>([^<]*)<\/span>/i, replaceTagsAndSpaces, parseBalance);
@@ -75,4 +86,34 @@ function parseSeconds(str){
           return time;
     }
     AnyBalance.trace('Could not parse seconds from value: ' + str);
+}
+
+function skidka2loyal(str){
+    var skidka;
+    
+    switch(str){
+      case str*((str>=0)&&(str<7776000)):
+        skidka = 0;
+      break;
+      case str*((str>=7776000)&&(str<15552000)):
+        skidka = 2;
+      break;
+      case str*((str>=15552000)&&(str<63072000)):
+        skidka = 5;
+      break;
+      case str*((str>=63072000)&&(str<94608000)):
+        skidka = 7;
+      break;
+      case str*((str>=94608000)&&(str<157680000)):
+        skidka = 10;
+      break;
+      case str*((str>=157680000)&&(str<315360000)):
+        skidka = 15;
+      break;
+      case str*((str>=315360000)&&(str<946080000)):
+        skidka = 20;
+      break;
+    }
+  
+    return skidka;
 }

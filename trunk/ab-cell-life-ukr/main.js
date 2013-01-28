@@ -151,32 +151,34 @@ function mainApi(){
     if(AnyBalance.isAvailable('gprs', 'mms_uk', 'mms_life', 'sms_uk', 'sms_life', 'mins_family', 'mins_life')){
         xml = lifeGet('getBalances', {msisdn: msisdn, languageId: lang, osType: 'ANDROID', token: token});
         
-	//Подарочный Бесплатный трафик
+	//Подарочный трафик
         sumParam(xml, result, 'gprs', /<balance[^>]+code="FreeGprs[^>]*amount="([^"]*)/ig, replaceTagsAndSpaces, parseTrafficMb, aggregate_sum);
-	//Бесплатный трафик
+	//Трафик
 	sumParam(xml, result, 'gprs', /<balance[^>]+code="Bundle_Gprs[^>]*amount="([^"]*)/ig, replaceTagsAndSpaces, parseTrafficMb, aggregate_sum);
-	//Подарочные Бесплатные MMS в сети Life:)
+	//Подарочные MMS в сети Life:)
         sumParam(xml, result, 'mms_life', /<balance[^>]+code="FreeMms[^>]*amount="([^"]*)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-	//Бесплатные MMS в сети Life:)
+	//MMS в сети Life:)
 	sumParam(xml, result, 'mms_life', /<balance[^>]+code="Bundle_Mms_Onnet[^>]*amount="([^"]*)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-	//Бесплатные MMS по Украине
+	//MMS по Украине
 	sumParam(xml, result, 'mms_uk', /<balance[^>]+code="Bundle_Mms_Ukraine[^>]*amount="([^"]*)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-	//Подарочные Бесплатные SMS в сети Life:)
+	//Подарочные SMS в сети Life:)
 	sumParam(xml, result, 'sms_life', /<balance[^>]+code="FreeSms[^>]*amount="([^"]*)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-	//Бесплатные SMS в сети Life:)
+	//SMS в сети Life:)
         sumParam(xml, result, 'sms_life', /<balance[^>]+code="Bundle_Sms_Onnet[^>]*amount="([^"]*)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-	//Бесплатные SMS по Украине
+	//SMS по Украине
 	sumParam(xml, result, 'sms_uk', /<balance[^>]+code="Bundle_Sms_Ukraine[^>]*amount="([^"]*)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-	//Бесплатные минуты на родные номера в старом варианте Свободного Лайфа
+	//Минуты на родные номера в старом варианте Свободного Лайфа
 	sumParam(xml, result, 'mins_family', /<balance[^>]+code="Bundle_UsageN_FF_FREE[^>]*amount="([^"]*)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-	//Бесплатные минуты по сети Life:)
+	//Минуты по сети Life:)
         sumParam(xml, result, 'mins_life', /<balance[^>]+code="Bundle_Voice_Onnet"[^>]*amount="([^"]*)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-	//Бесплатные минуты по сети Life:) западных тарифов
+	//Минуты по сети Life:) западных тарифов
 	sumParam(xml, result, 'mins_life', /<balance[^>]+code="Bundle_Voice_Onnet_West"[^>]*amount="([^"]*)/ig, replaceTagsAndSpaces, parseBalanceLeft, aggregate_sum);
-	//Бесплатные минуты на номера фиксированной связи Украины
+	//Минуты на номера фиксированной связи Украины
 	sumParam(xml, result, 'mins_fixed', /<balance[^>]+code="Bundle_Voice_Pstn[^>]*amount="([^"]*)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-	//Бесплатные минуты на номера других операторов и фиксированной связи Украины
+	//Минуты на номера других операторов и фиксированной связи Украины
 	sumParam(xml, result, 'mins_uk', /<balance[^>]+code="Bundle_Voice_Offnet[^>]*amount="([^"]*)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+	//Минуты на номера мобильных операторов Украины
+	sumParam(xml, result, 'mins_mob', /<balance[^>]+code="Bundle_Youth_Voice[^>]*amount="([^"]*)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     }
         
     if(AnyBalance.isAvailable('phone')){

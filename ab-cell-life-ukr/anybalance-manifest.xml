@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="12">ab-cell-life-ukr</id>
+  <id version="13">ab-cell-life-ukr</id>
   <name>Life:) Украина</name>
   <description>
     Мониторинг баланса мобильного оператора Life:) (Украина)
@@ -29,15 +29,16 @@
     <counter id="Mbalance" name="Основной счет" suffix=" ₴" type="numeric"/>
     <counter id="Bbalance" name="Бонусный счет" suffix=" ₴" type="numeric"/>
     <!-- <counter id="debt" name="Долг" suffix="₴" type="numeric"/> -->
-    <counter id="gprs" name="Бесплатный трафик" suffix=" Мб" type="numeric"/>
-    <counter id="sms_uk" name="Бесплатные SMS по Украине" type="numeric" units=" смс"/>
-    <counter id="sms_life" name="Бесплатные SMS в сети Life:)" type="numeric" units=" смс"/>
-    <counter id="mms_uk" name="Бесплатные MMS по Украине" type="numeric" units=" ммс"/>
-    <counter id="mms_life" name="Бесплатные MMS в сети Life:)" type="numeric" units=" ммс"/>
-    <counter id="mins_life" name="Бесплатные минуты по сети Life:)" type="time_interval" format="{@MIN}" units=" мин"/>
-    <counter id="mins_uk" name="Бесплатные минуты на номера других операторов и фиксированной связи Украины" type="time_interval" format="{@MIN}" units=" мин"/>
-    <counter id="mins_fixed" name="Бесплатные минуты на номера фиксированной связи Украины" type="time_interval" format="{@MIN}" units=" мин"/>
-    <counter id="mins_family" name="Бесплатные минуты на родные номера" type="time_interval" format="{@MIN}" units=" мин"/>
+    <counter id="gprs" name="Трафик" suffix=" Мб" type="numeric"/>
+    <counter id="sms_uk" name="SMS по Украине" type="numeric" units=" смс"/>
+    <counter id="sms_life" name="SMS в сети Life:)" type="numeric" units=" смс"/>
+    <counter id="mms_uk" name="MMS по Украине" type="numeric" units=" ммс"/>
+    <counter id="mms_life" name="MMS в сети Life:)" type="numeric" units=" ммс"/>
+    <counter id="mins_life" name="Минуты по сети Life:)" type="time_interval" format="{@MIN}" units=" мин"/>
+    <counter id="mins_uk" name="Минуты на номера других операторов и фиксированной связи Украины" type="time_interval" format="{@MIN}" units=" мин"/>
+    <counter id="mins_mob" name="Минуты на номера мобильных операторов Украины" type="time_interval" format="{@MIN}" units=" мин"/>
+    <counter id="mins_fixed" name="Минуты на номера фиксированной связи Украины" type="time_interval" format="{@MIN}" units=" мин"/>
+    <counter id="mins_family" name="Минуты на родные номера" type="time_interval" format="{@MIN}" units=" мин"/>
     <counter id="till" name="Действителен до" type="time" format="dd/MM/yyyy"/>
     <counter id="phone" name="Номер телефона" type="text"/>
   </counters>

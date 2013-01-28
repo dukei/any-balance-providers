@@ -54,15 +54,13 @@ function main(){
 	sumParam(html, result, 'date_activity', /<td[^>]*>\s*Дата последней абонентской активности \(мм.гггг\)\s*<\/td>\s*<td[^>]*>([^<]*)<\/td>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
 	
 	//Лояльный стаж
-	sumParam(html, result, 'loyalty', /<td[^>]*>\s*Лояльный стаж \(гг.мм\)\s*<\/td>\s*<td[^>]*>([^<]*)\.[^<]*<\/td>/ig, replaceTagsAndSpaces, function(str){return 365*86400*parseFloat(str)}, aggregate_sum);
-	sumParam(html, result, 'loyalty', /<td[^>]*>\s*Лояльный стаж \(гг.мм\)\s*<\/td>\s*<td[^>]*>[^<]*\.([^<]*)<\/td>/ig, replaceTagsAndSpaces, function(str){return 30*86400*parseFloat(str)}, aggregate_sum);
+	getParam(html, result, 'loyalty', /<td[^>]*>\s*Лояльный стаж \(гг.мм\)\s*<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseStazh);
 	
 	//Абонентский стаж
-	sumParam(html, result, 'mobsubscr', /<td[^>]*>\s*Лояльный стаж \(гг.мм\)\s*<\/td>\s*<td[^>]*>([^<]*)\.[^<]*<\/td>/ig, replaceTagsAndSpaces, function(str){return 365*86400*parseFloat(str)}, aggregate_sum);
-	sumParam(html, result, 'mobsubscr', /<td[^>]*>\s*Лояльный стаж \(гг.мм\)\s*<\/td>\s*<td[^>]*>[^<]*\.([^<]*)<\/td>/ig, replaceTagsAndSpaces, function(str){return 30*86400*parseFloat(str)}, aggregate_sum);
+	getParam(html, result, 'mobsubscr', /<td[^>]*>\s*Абонентский стаж \(гг.мм\)\s*<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseStazh);
 	
 	//Размер скидки по программе лояльности «Наилучшее общение»
-        result.skidka = skidka2loyal(result.loyalty);
+	getParam(html, result, 'skidka', /<td[^>]*>\s*Лояльный стаж \(гг.мм\)\s*<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, skidka2loyal);
 
 	//Количество новостей
         getParam(html, result, 'news', />Новости <span [^>]*>([^<]*)<\/span>/i, replaceTagsAndSpaces, parseBalance);
@@ -71,6 +69,17 @@ function main(){
 	getParam(html, result, 'phonet', /<td[^>]*>\s*Номер телефона\s*<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, add380);
 
 	AnyBalance.setResult(result);
+}
+
+function parseStazh(str){
+    var matches = str.match(/(\d+)\.(\d+)/);
+    if(matches){
+        var val = (365*matches[1] + 30*matches[2])*86400;
+        AnyBalance.trace("Parsed " + val + ' seconds from ' + str);
+        return val;
+    }else{
+        AnyBalance.trace("Не удалось вычислить стаж из " + str);
+    }
 }
 
 function add380(str){
@@ -89,31 +98,26 @@ function parseSeconds(str){
 }
 
 function skidka2loyal(str){
+    var val = parseStazh(str);
+    if(!isset(val))
+        return;
+
     var skidka;
     
-    switch(str){
-      case str*((str>=0)&&(str<7776000)):
+    if(val<7776000)
         skidka = 0;
-      break;
-      case str*((str>=7776000)&&(str<15552000)):
+    else if((val>=7776000)&&(val<15552000))
         skidka = 2;
-      break;
-      case str*((str>=15552000)&&(str<63072000)):
+    else if((val>=15552000)&&(val<63072000))
         skidka = 5;
-      break;
-      case str*((str>=63072000)&&(str<94608000)):
+    else if((val>=63072000)&&(val<94608000))
         skidka = 7;
-      break;
-      case str*((str>=94608000)&&(str<157680000)):
+    else if((val>=94608000)&&(val<157680000))
         skidka = 10;
-      break;
-      case str*((str>=157680000)&&(str<315360000)):
+    else if((val>=157680000)&&(val<315360000))
         skidka = 15;
-      break;
-      case str*((str>=315360000)&&(str<946080000)):
+    else //if((val>=315360000)&&(val<946080000))
         skidka = 20;
-      break;
-    }
   
     return skidka;
 }

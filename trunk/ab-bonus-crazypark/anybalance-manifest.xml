@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="3">ab-bonus-crazypark</id>
+  <id version="4">ab-bonus-crazypark</id>
   <name>Crazy Park</name>
   <description>
     Получает баланс и другую информацию по накопительной карте сети развлекательных центров Crazy Park (http://www.crazypark.ru).
@@ -13,6 +13,8 @@
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
+    <history>history.xml</history>
+    <js>library.js</js>
     <js>main.js</js>
   </files>
   <counters>

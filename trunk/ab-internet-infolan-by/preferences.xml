@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Номер договора" 
+        positiveButtonText="ОК" 
+        summary="||{@s}" 
+        dialogTitle="Номер договора" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите номер договора для входа в личный кабинет."
+        inputType="number"
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Код авторизации"
+        negativeButtonText="Отмена"
+        title="Код авторизации"
+        summary="||***********"
+        dialogMessage="Введите код авторизации. Его можно увидеть в личном кабинете."
+        inputType="textPassword">
+    </EditTextPreference>
+    <EditTextPreference 
+        title="Название VPN" 
+        positiveButtonText="ОК" 
+        summary="|Автоматически|{@s}" 
+        dialogTitle="Название VPN" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите название учетной записи VPN, по которой вы хотите показать информацию, или не вводите ничего, чтобы получить информацию по первой записи."
+        inputType="textEmailAddress" 
+        key="inet">
+    </EditTextPreference>
+</PreferenceScreen>

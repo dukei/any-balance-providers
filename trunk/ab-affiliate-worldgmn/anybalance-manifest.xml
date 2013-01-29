@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-affiliate-worldgmn</id>
+  <name>WorldGMN</name>
+  <description>
+    Получает различные показатели партнера программы WorldGMN (http://www.worldgmn.com).
+
+    Информация берется из личного кабинета http://www.worldgmn.com/login.php
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <history>history.xml</history>
+    <js>library.js</js>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Balance" prefix="$"/>
+    <counter id="till" name="Plan expiry" type="time" format="dd/MM/yyyy"/>
+    <counter id="status" name="Your status" type="text"/>
+    <counter id="wallet" name="Wallet" prefix="$"/>
+    <counter id="totalearn" name="Gold" prefix="$"/>
+    <counter id="adkash_status" name="AdKash status" type="text"/>
+    <counter id="adkash_left" name="Left team earning" prefix="$"/>
+    <counter id="adkash_right" name="Right team earning" prefix="$"/>
+    <counter id="adkash_bonus" name="AdKash bonus" prefix="$"/>
+  </counters>
+  <keywords>
+    ворлдгмн
+  </keywords>
+  <type>
+    affiliate
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

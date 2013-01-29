@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-internet-infolan-by</id>
+  <name>Домашняя сеть (Белоруссия)</name>
+  <description>
+    Получает баланс и другую информацию для интернет-провайдера Домашняя сеть (http://infolan.by).
+
+    Провайдер для доступа требует номер договора и код авторизации (показан в личном кабинете).
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units=" р"/>
+    <counter id="daysleft" name="Осталось дней" units=" дн"/>
+    <counter id="inet_name" name="Название VPN" type="text"/>
+    <counter id="inet_balance" name="Баланс VPN" units=" р"/>
+    <counter id="inet_traffic" name="Трафик VPN" units=" Мб"/>
+    <counter id="inet_daysleft" name="Осталось дней VPN" units=" дн"/>
+  </counters>
+  <keywords>
+    интернет инфолан
+  </keywords>
+  <type>
+    internet
+  </type>
+  <country>
+    by
+  </country>
+</provider>

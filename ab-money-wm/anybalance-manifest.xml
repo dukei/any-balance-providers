@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-money-wm</id>
+  <id version="2">ab-money-wm</id>
   <name>WebMoney</name>
   <description>
     Получает баланс на кошельках WMR, WMZ, WME, WMU и WMB. Если на вашем WM-идентификаторе несколько кошельков одного типа, то балансы на них будут просуммированы.
@@ -14,6 +14,7 @@
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
+    <history>history.xml</history>
     <js>main.js</js>
   </files>
   <counters>

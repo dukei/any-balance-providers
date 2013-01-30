@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-municipal-nskenergo</id>
+  <name>Новосибирскэнергосбыт</name>
+  <description>
+    Получает баланс и информацию о последнем платеже в НовосибирскЭнергоСбыт. Получает данные из личного кабинета https://narod.nskes.ru.
+
+    Если у вас еще нет доступа к этому личному кабинету, зарегистрируйтесь здесь: https://narod.nskes.ru/registration.php. 
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+    <js>library.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="pen" name="Пеня" units="р"/>
+    <counter id="fio" name="ФИО" type="text"/>
+    <counter id="lastpaydate" name="Дата последнего платежа" type="time" format="dd/MM/yyyy"/>
+    <counter id="indication" name="Показания счетчика" units="Квт*ч"/>
+  </counters>
+  <keywords>
+    новосибирскэнерго, новосибирск, электричество
+  </keywords>
+  <type>
+    municipal
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

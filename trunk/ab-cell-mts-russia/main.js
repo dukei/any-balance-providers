@@ -156,11 +156,11 @@ function mainMobile(allowRetry){
         }
         
         // Тарифный план
-        sumParam(html, result, '__tariff', /Тарифный план.*?>([^<]*)/i, replaceTagsAndSpaces);
+        getParam(html, result, '__tariff', /Тарифный план.*?>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
         // Баланс
-        sumParam (html, result, 'balance', /Баланс.*?>([-\d\.,\s]+)/i, replaceFloat, parseFloat);
+        getParam (html, result, 'balance', /Баланс.*?>([-\d\.,\s]+)/i, replaceTagsAndSpaces, parseBalance);
         // Телефон
-        sumParam (html, result, 'phone', /Ваш телефон:.*?>([^<]*)</i, replaceTagsAndSpaces, html_entity_decode);
+        getParam (html, result, 'phone', /Ваш телефон:.*?>([^<]*)</i, replaceTagsAndSpaces, html_entity_decode);
         
         if (isAvailableStatus()) {
         
@@ -180,7 +180,7 @@ function mainMobile(allowRetry){
             AnyBalance.trace("Parsing history...");
         
             // Расход за прошлый месяц
-            sumParam (html, result, 'usedinprevmonth', /За период израсходовано .*?([\d\.,]+)/i, replaceFloat, parseFloat);
+            getParam (html, result, 'usedinprevmonth', /За период израсходовано .*?([\d\.,]+)/i, replaceTagsAndSpaces, parseBalance);
         }
         
         
@@ -193,7 +193,7 @@ function mainMobile(allowRetry){
             AnyBalance.trace("Parsing traffic info...");
         
             // Ежемесячная плата
-            sumParam (html, result, 'monthlypay', /Ежемесячная плата[^\d]*([\d\.,]+)/i, replaceFloat, parseFloat);
+            getParam (html, result, 'monthlypay', /Ежемесячная плата[^\d]*([\d\.,]+)/i, replaceTagsAndSpaces, parseBalance);
         }
         
         AnyBalance.setResult(result);
@@ -328,16 +328,13 @@ function fetchOrdinary(html, baseurl, resultFromLK){
     }
 
     // Тарифный план
-    result.__tariff = undefined;
-    sumParam(html, result, '__tariff', /Тарифный план.*?>([^<]*)/i, replaceTagsAndSpaces);
+    getParam(html, result, '__tariff', /Тарифный план.*?>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 
-    if(!resultFromLK){ //Если мы здесь из ЛК, то не получаем уже полученные ранее счетчики
-        // Баланс
-        sumParam (html, result, 'balance', /<span[^>]*id="customer-info-balance[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-    }
+    // Баланс
+    getParam (html, result, 'balance', /<span[^>]*id="customer-info-balance[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
 
     // Телефон
-    sumParam (html, result, 'phone', /Номер:.*?>([^<]*)</i, replaceTagsAndSpaces, html_entity_decode);
+    getParam (html, result, 'phone', /Номер:.*?>([^<]*)</i, replaceTagsAndSpaces, html_entity_decode);
 
     if(AnyBalance.isAvailable('bonus') && !isset(result.bonus))
         result.bonus = null; //Не сбрасываем уже ранее полученное значение бонуса в 0. Может, мы получаем из помощника, потому что сдох ЛК
@@ -562,6 +559,7 @@ function mainLK(allowRetry){
     getParam(info, result, 'balance', /Ваш баланс:\s*<a[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces, parseBalance);
     getParam(info, result, '__tariff', /Ваш тариф:\s*<a[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(info, result, 'bonus', /Баллов:\s*<a[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(info, result, 'phone', /<div[^>]+class="tel"[^>]*>([\s\S]*?)(?:<\/b>|<\/div>)/i, replaceTagsAndSpaces, html_entity_decode);
 
     if(isAvailableStatus()){
         var baseurlHelper = "https://ihelper.mts.ru/selfcare/";

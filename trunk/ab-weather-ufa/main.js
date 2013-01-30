@@ -26,8 +26,10 @@ function main(){
 
         if(AnyBalance.isAvailable('ufa','aer','ste','sal','nef','tuy','ish','kum','bel','sib','uch','mel','dur','yan','aks','kar','mra','isa','bur','fed','bek','tul','pav','mis','kus','pri')){
            var html = AnyBalance.requestGet(baseurl + 'index.asp');
-           if(!/ДАННЫЕ НА/i.test(html))
+           if(!/ДАННЫЕ НА/i.test(html)){
+               AnyBalance.trace(html);
                throw new AnyBalance.Error('Не найдена погода. Похоже, временные проблемы на сайте.');
+           }
 
            getParam(html, result, 'time', /ДАННЫЕ НА([\s\S]*?)<hr[^>]*>/i, replaceTagsAndSpaces, parseDate);
 
@@ -61,8 +63,10 @@ function main(){
 
         if(AnyBalance.isAvailable('kol','psz','tra','syp','dom')){
            var html = AnyBalance.requestGet(baseurl + 'ufa/index.asp');
-           if(!/ДАННЫЕ НА/i.test(html))
+           if(!/ДАННЫЕ НА/i.test(html)){
+               AnyBalance.trace(html);
                throw new AnyBalance.Error('Не найдена погода. Похоже, временные проблемы на сайте.');
+           }
 
            getParam(html, result, 'time', /ДАННЫЕ НА([\s\S]*?)<hr[^>]*>/i, replaceTagsAndSpaces, parseDate);
 

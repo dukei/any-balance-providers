@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="4" date="2013-01-29">
+      - Запись отладочной информации в случае недоступности сайта
+    </change>
     <change version="3" date="2012-12-05">
       - Сообщение об ошибке в случае недоступности сайта
     </change>

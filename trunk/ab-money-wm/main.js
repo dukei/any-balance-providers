@@ -82,6 +82,7 @@ function main(){
     getParam(html, result, 'wmz', /<div[^>]*class="purses"[^>]*title="[^"]*?([\d\.,]*)WMZ/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'wme', /<div[^>]*class="purses"[^>]*title="[^"]*?([\d\.,]*)WME/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'wmu', /<div[^>]*class="purses"[^>]*title="[^"]*?([\d\.,]*)WMU/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'wmb', /<div[^>]*class="purses"[^>]*title="[^"]*?([\d\.,]*)WMB/i, replaceTagsAndSpaces, parseBalance);
     getParam(prefs.login, result, '__tariff', /(.*)/i, replaceTagsAndSpaces);
 
     AnyBalance.setResult(result);

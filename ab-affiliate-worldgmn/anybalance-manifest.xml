@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-affiliate-worldgmn</id>
+  <id version="2">ab-affiliate-worldgmn</id>
   <name>WorldGMN</name>
   <description>
     Получает различные показатели партнера программы WorldGMN (http://www.worldgmn.com).

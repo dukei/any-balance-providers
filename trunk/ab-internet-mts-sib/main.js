@@ -55,7 +55,7 @@ function main(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
 
-    var baseurl = "https://lka.sib.comstar-r.ru/";
+    var baseurl = "https://lka.ural.mts.ru/";
 
     var city2num = {bug: 26, buz: 26, kem: 29, nef: 2, nizv: 16, novk: 30, novt: 26, noy: 7, nyg: 4, orn: 26, prm: 26, prg: 26, pyh: 2, rad: 8, sor: 26, sur: 5, tob: 28, tum: 26} 
 

@@ -7,13 +7,22 @@
 Личный кабинет: https://mobile.lufthansa.com/mma/account.do
 */
 
+var g_headers = {
+        'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
+        'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+        'Cache-Control':'max-age=0',
+        'Connection':'keep-alive',
+        'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.56 Safari/537.17'
+};
+
 function main(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
 
     var baseurl = "https://mobile.lufthansa.com";
     //Need to enter a country
-    html = AnyBalance.requestGet(baseurl + "/hpg/cor.do?l=en_US");
+    html = AnyBalance.requestGet(baseurl + "/hpg/cor.do?l=en_US", g_headers);
 
 //    return makeCountries(html);
 
@@ -22,18 +31,20 @@ function main(){
     if(!action)
         throw new AnyBalance.Error('Can not find country form!');
 
-    var sid = getParam(action, null, null, /jsessionid=([^\?;&]+)/i); 
+    var sid = getParam(action, null, null, /jsessionid=([^\?;&]+)/i);
+    if(!sid)
+        throw new AnyBalance.Error('Не удалось найти идентификатор сессии! Сайт изменен?'); 
 
     html = AnyBalance.requestPost(baseurl + action, {
         country: country,
         timezone: jstz.determine_timezone().name()
-    });
+    }, g_headers);
 
     var html = AnyBalance.requestPost(baseurl + "/mma/account.do;jsessionid=" + sid + "?l=en_US", {
         user:prefs.login,
         pass:prefs.password,
         step:'search'
-    });
+    }, g_headers);
 
     if(!/step=logout/.test(html)){
         var error = getParam(html, null, null, /<span[^>]*class="feedback_neg"[^>]*>([\s\S]*?)<\/span>/, replaceTagsAndSpaces, html_entity_decode);
@@ -47,10 +58,17 @@ function main(){
 
     var result = {success: true};
 
-    getParam(html, result, 'balance', /<td[^>]*>Award miles[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'qbalance', /<td[^>]*>Status miles[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, '__tariff', /<td[^>]*>Status[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'cardnum', /<td[^>]*>Customer number[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    if(!/<div[^>]*>Award miles/i.test(html)) //Язык не всегда переключается с первого раза. Если баланс не нашли, переключаем силой
+        html = AnyBalance.requestGet(baseurl + "/mma/account.do;jsessionid=" + sid + "?l=en_US", g_headers);
+
+    getParam(html, result, 'balance', /<div[^>]*>Award miles[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'qbalance', /<div[^>]*>Status miles[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'hon', /<div[^>]*>HON Circle miles[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, '__tariff', /<div[^>]+class="[^"]*account_box[^>]*>(?:[\s\S]*?<br[^>]*>){2}([\s\S]*?)(?:<\/td>|<br)/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'cardnum', /<div[^>]*>Customer number:([^<]*)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'nextstatus', /To achieve (.*?) status, you still/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'nextstatusmiles', /To achieve (?:.*?) status, you still need (\d+) status miles/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'nextfs', /To achieve (?:.*?) status, you still need (?:.*?)(\d+) flight segments/i, replaceTagsAndSpaces, parseBalance);
 
     AnyBalance.setResult(result);
 }

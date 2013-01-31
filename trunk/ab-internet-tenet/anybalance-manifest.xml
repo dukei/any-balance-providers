@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-internet-tenet</id>
+  <name>TeNeT (Одесса)</name>
+  <description>
+    Получает баланс и информацию о тарифном плане для одесского интернет провайдера TeNeT (http://tenet.ua).
+
+    Информация берется из личного кабинета https://stats.tenet.ua.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <history>history.xml</history>
+    <js>library.js</js>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="₴"/>
+    <counter id="licschet" name="Лицевой счет" type="text"/>
+    <counter id="fio" name="ФИО" type="text"/>
+    <counter id="status" name="Статус ЛС" type="text"/>
+    <counter id="spent" name="Начислено за услуги" units="₴"/>
+  </counters>
+  <keywords>
+    тенет
+  </keywords>
+  <type>
+    internet
+  </type>
+  <country>
+    ua
+  </country>
+</provider>

@@ -832,70 +832,120 @@ function domolinkmel(region,login,password) {
 }
 
 function domolinksamara(region,login,password) {
-    var baseurl = 'http://62.213.0.44';
-    var regionurl = baseurl + '/pls/stat/';
-    AnyBalance.setDefaultCharset('utf8');    
-	
-    // Заходим на главную страницу
-    var htmlFrmset = AnyBalance.requestPost(regionurl + "www.GetHomePage", {
-        p_logname: login,
-        p_pwd: password,
-        p_lang:'RUS'
+    AnyBalance.setDefaultCharset('windows-1251');    
+
+    var baseurl = 'http://lk.samara.volga.rt.ru/';
+    var html = AnyBalance.requestPost(baseurl + 'servletlogin', {
+	login:login,
+	password:password
     });
 
-    var next = getParam(htmlFrmset, null, null, /document.location.href\s*=\s*"([^"]*)/i, null, html_entity_decode);
-    if(!next){
-        var error = getParam(htmlFrmset, null, null, /<td[^>]+class="?zag[^>]*>\s*Сообщение об ошибке[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-        if(error)
-            throw new AnyBalance.Error(error);
-        throw new AnyBalance.Error("Не удалось зайти в личный кабинет. Сайт изменен?");
-    }
-
-    var authorization = getParam(next, null, null, /(&logname.*)/i);
-    var html = AnyBalance.requestGet(regionurl + 'www.PageViewer?page_name=S*ADM_DIALUP_INFO_TFP' + authorization);
-
-    var result = {
-        success: true
-    };
-
-    // Тариф
-    getParam(html, result, 'balance', /Текущее состояние лицевого счета[\s\S]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'license', /Номер лицевого счета[\s\S]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, '__tariff', /<td[^>]*>\s*Тариф[\s\S]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'username', /<td[^>]*>\s*Организация[\s\S]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-
-    if(AnyBalance.isAvailable('traffic')){
-        var dtNow = new Date();
-        html = AnyBalance.requestGet(regionurl + 'www.PageViewer?page_name=S*CLI_DIALUP_REP_CON_GROUP' + authorization + '&n1=p_start_day&v1=01&n2=p_start_month&v2=' + (dtNow.getMonth()+1) 
-            + '&n3=p_start_year&v3=' + dtNow.getFullYear() + '&n4=p_finish_day&v4=' + dtNow.getDate() + '&n5=p_finish_month&v5=' + (dtNow.getMonth()+1) + '&n6=p_finish_year&v6=' + dtNow.getFullYear() + '&n7=p_page_num&v7=1&n8=p_row_count&v8=20');
-
-        sumParam(html, result, 'traffic', /входящий[^<]*?трафик[\s\S]*?<td[^>]*>([\S\s]*?)<\/td>/ig, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
-        if(isset(result.traffic))
-            result.traffic = '' + result.traffic + ' Мб';
-    }
-
-    var urlreppay=regionurl+"www.PageViewer?page_name=S*CLI_DIALUP_REP_PAY"+authorization;
-    if (AnyBalance.isAvailable ('lastpaysum','lastpaydata','lastpaydesc')) {
-
-        AnyBalance.trace("Fetching payment...");
-
-        var htmlpay,urlpay;
-        var curmonth = new Date();
-        curmonth.setDate(1); // Начало текущего месяца
-        for(var i=0; i<3; i++) { // смотрим макс. на 3 месяца назад
-            urlpay = urlreppay+"&"+getPeriodMonth(curmonth, i);
-            AnyBalance.trace("Checking "+(i+1)+"th month...");
-            htmlpay = AnyBalance.requestGet(urlpay);
-            var count = getParam(htmlpay, null, null, /Всего записей\s*:\s*([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-            if(count > 0){
-                //Выбираем запись с максимальной датой
-                AnyBalance.trace("... bingo! We're find the last payment.");
-                getParam(htmlpay, result, 'lastpaydata', /Дата платежа(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-                getParam(htmlpay, result, 'lastpaydesc', /Дата платежа(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-                getParam(htmlpay, result, 'lastpaysum', /Дата платежа(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-                break;
+    var result = {success: true};
+        
+    var regionurl = getParam(html, null, null, /<FORM[^>]+name\s*=\s*["']?f1[^>]+ACTION\s*=\s*["']?([^'"]*?)www.PageViewer/i, null, html_entity_decode);
+    if(regionurl){
+        // Заходим на главную страницу
+        var htmlFrmset = AnyBalance.requestPost(regionurl + "www.GetHomePage", {
+            p_logname: login,
+            p_pwd: password,
+            p_lang:'RUS'
+        });
+        
+        var next = getParam(htmlFrmset, null, null, /document.location.href\s*=\s*"([^"]*)/i, null, html_entity_decode);
+        if(!next){
+            var error = getParam(htmlFrmset, null, null, /<td[^>]+class="?zag[^>]*>\s*Сообщение об ошибке[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+            if(error)
+                throw new AnyBalance.Error(error);
+            throw new AnyBalance.Error("Не удалось зайти в личный кабинет. Сайт изменен?");
+        }
+        
+        var authorization = getParam(next, null, null, /(&logname.*)/i);
+        var html = AnyBalance.requestGet(regionurl + 'www.PageViewer?page_name=S*ADM_DIALUP_INFO_TFP' + authorization);
+        
+        // Тариф
+        getParam(html, result, 'balance', /Текущее состояние лицевого счета[\s\S]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+        getParam(html, result, 'license', /Номер лицевого счета[\s\S]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+        getParam(html, result, '__tariff', /<td[^>]*>\s*Тариф[\s\S]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+        getParam(html, result, 'username', /<td[^>]*>\s*Организация[\s\S]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+        
+        if(AnyBalance.isAvailable('traffic')){
+            var dtNow = new Date();
+            html = AnyBalance.requestGet(regionurl + 'www.PageViewer?page_name=S*CLI_DIALUP_REP_CON_GROUP' + authorization + '&n1=p_start_day&v1=01&n2=p_start_month&v2=' + (dtNow.getMonth()+1) 
+                + '&n3=p_start_year&v3=' + dtNow.getFullYear() + '&n4=p_finish_day&v4=' + dtNow.getDate() + '&n5=p_finish_month&v5=' + (dtNow.getMonth()+1) + '&n6=p_finish_year&v6=' + dtNow.getFullYear() + '&n7=p_page_num&v7=1&n8=p_row_count&v8=20');
+        
+            sumParam(html, result, 'traffic', /входящий[^<]*?трафик[\s\S]*?<td[^>]*>([\S\s]*?)<\/td>/ig, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
+            if(isset(result.traffic))
+                result.traffic = '' + result.traffic + ' Мб';
+        }
+        
+        var urlreppay=regionurl+"www.PageViewer?page_name=S*CLI_DIALUP_REP_PAY"+authorization;
+        if (AnyBalance.isAvailable ('lastpaysum','lastpaydata','lastpaydesc')) {
+        
+            AnyBalance.trace("Fetching payment...");
+        
+            var htmlpay,urlpay;
+            var curmonth = new Date();
+            curmonth.setDate(1); // Начало текущего месяца
+            for(var i=0; i<3; i++) { // смотрим макс. на 3 месяца назад
+                urlpay = urlreppay+"&"+getPeriodMonth(curmonth, i);
+                AnyBalance.trace("Checking "+(i+1)+"th month...");
+                htmlpay = AnyBalance.requestGet(urlpay);
+                var count = getParam(htmlpay, null, null, /Всего записей\s*:\s*([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+                if(count > 0){
+                    //Выбираем запись с максимальной датой
+                    AnyBalance.trace("... bingo! We're find the last payment.");
+                    getParam(htmlpay, result, 'lastpaydata', /Дата платежа(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+                    getParam(htmlpay, result, 'lastpaydesc', /Дата платежа(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+                    getParam(htmlpay, result, 'lastpaysum', /Дата платежа(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+                    break;
+                }
             }
         }
+    }else{
+        //Остались в lk.samara.volga.rt.ru
+        if(!/<FRAME[^>]+SRC\s*=\s*"main.jsp"/i.test(html)){
+            throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Проблемы на сайте или сайт изменен.');
+        }
+
+        html = AnyBalance.requestGet(baseurl + 'main.jsp');
+        
+        getParam(html, result, 'balance', /Текущее состояние баланса[\s\S]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+        getParam(html, result, 'license', /Номер лицевого счета[\s\S]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+        getParam(html, result, '__tariff', /Основная Услуга(?:[\s\S]*?<td[^>]*>){2}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+        getParam(html, result, 'username', /ФИО\/Наименование[\s\S]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+
+        if (AnyBalance.isAvailable ('lastpaysum','lastpaydata','lastpaydesc')) {
+        
+            AnyBalance.trace("Fetching payment...");
+        
+            var htmlpay;
+            var curmonth = new Date();
+            for(var i=0; i<3; i++) { // смотрим макс. на 3 месяца назад
+                AnyBalance.trace("Checking "+(i+1)+"th month...");
+                var nextmonth = new Date(curmonth.getFullYear(), curmonth.getMonth()+1, 1);
+                htmlpay = AnyBalance.requestPost(baseurl + 'payments_history.jsp', {
+                    day_beg:1,
+                    month_beg:curmonth.getMonth(),
+                    year_beg:curmonth.getFullYear(),
+                    day_end:1,
+                    month_end:nextmonth.getMonth(),
+                    year_end:nextmonth.getFullYear(),
+                    getPay:'Сформировать список'
+                });
+
+               //Выбираем запись с максимальной датой
+                var row = getParam(htmlpay, null, null, /Дата платежа(?:[\s\S](?!<\/table))*?<tr[^>]*>([\s\S]*?)<\/tr>/i);
+                if(row){
+                    AnyBalance.trace("... bingo! We're find the last payment.");
+                    getParam(row, result, 'lastpaydata', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+                    getParam(row, result, 'lastpaysum', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+                    break;
+                }
+
+                curmonth = new Date(curmonth.getFullYear(), curmonth.getMonth()-1, 1);
+            }
+        }
+
     }
     
     AnyBalance.setResult(result);

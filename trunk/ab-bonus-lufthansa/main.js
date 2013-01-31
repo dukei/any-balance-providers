@@ -33,7 +33,7 @@ function main(){
 
     var sid = getParam(action, null, null, /jsessionid=([^\?;&]+)/i);
     if(!sid)
-        throw new AnyBalance.Error('Не удалось найти идентификатор сессии! Сайт изменен?'); 
+        throw new AnyBalance.Error('Can not find session identifier! Is the site changed?'); 
 
     html = AnyBalance.requestPost(baseurl + action, {
         country: country,

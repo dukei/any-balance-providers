@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-bonus-lufthansa</id>
+  <id version="3">ab-bonus-lufthansa</id>
   <name>Lufthansa Miles&amp;More</name>
   <description>
     Obtains information on Lufthansa Miles&amp;More bonus program (http://www.miles-and-more.com).
@@ -19,7 +19,11 @@
   <counters>
     <counter id="balance" name="Award miles"/>
     <counter id="qbalance" name="Status miles"/>
+    <counter id="hon" name="HON Circle miles"/>
     <counter id="cardnum" name="Customer number" type="text"/>
+    <counter id="nextstatus" name="Next status" type="text"/>
+    <counter id="nextstatusmiles" name="Status miles to next status"/>
+    <counter id="nextfs" name="Flights segments to next status"/>
   </counters>
   <keywords>
     Люфтганза

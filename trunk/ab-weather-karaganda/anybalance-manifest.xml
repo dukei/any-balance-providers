@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0"  version="1">ab-weather-karaganda</id>
+  <id major_version="1.0"  version="2">ab-weather-karaganda</id>
   <name>Погода в Караганде</name>
   <description>
     Отображение текущей погоды с сайта meteoclub.kz.  Показания снимаются с оборудывания, расположенного по улице Язева города Караганда. 
   </description>
   <author>v_stikh &lt;stikhilyas@gmail.com&gt;</author>
   <files>
+    <js>api:jquery.min.js</js>
     <icon>icon.png</icon>
     <js>main.js</js>
   </files>
   <counters>
-    <counter id="Temp" name="Температура" units="°C"/>
-    <counter id="Press" name="Атмосферное давление" units="мм.рт.ст"/>
-    <counter id="Wind" name="Скорость ветра" units="м/с"/>
+    <counter id="temperature" name="Температура" units="°C"/>
+    <counter id="pressure" name="Атмосферное давление" units="мм.рт.ст"/>
+    <counter id="wind" name="Скорость ветра" units="м/с"/>
   </counters>
   <keywords>
    прогноз, погода, температура, Караганда, meteoclub.kz

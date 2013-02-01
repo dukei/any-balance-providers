@@ -17,6 +17,9 @@ function main() {
     var prefs = AnyBalance.getPreferences();
     var html = AnyBalance.requestGet('http://www.sbrf.ru/'+prefs.region+'/ru/quotes/currencies/table/');
 
+    getParam(html, result, 'date', /<input[^>]+value="([^"]*)"[^>]*name="date"/i, null, parseDate);
+    getParam(html, result, '__tariff', /<input[^>]+value="([^"]*)"[^>]*name="date"/i, null, html_entity_decode);
+
 	var r = new RegExp('<input type="hidden" name="([^"]+)" value="([^"]+)" />','g');
 	var url='http://www.sbrf.ru/common/js/quote_table.php?payment=cash&person=natural';
 	while((matches=r.exec(html))!=null) {

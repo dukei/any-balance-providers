@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-    <id major_version="1.0" version="3">ab-exchange-sbrf</id>
+    <id major_version="1.0" version="4">ab-exchange-sbrf</id>
     <name>Курсы валют СБ РФ</name>
     <description>Курсы валют от банка "Сбербанк"</description>
     <author>BArtWell &lt;web@bartwell.ru&gt;</author>
@@ -18,7 +18,7 @@
         <counter id="eur_sell" name="EUR продажа" units="р"/>
         <counter id="gbp_purch" name="GBP покупка" units="р"/>
         <counter id="gbp_sell" name="GBP продажа" units="р"/>
-        <counter id="date" name="Дата курса" type="time" format="dd/MM/yyyy"/>
+        <counter id="date" name="Дата курса" type="time" format="dd.MM.yyyy"/>
     </counters>
     <keywords>
         Курсы, валюта, доллар, евро, фунт, сбербанк

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<history>
+    <change major_version="1.0" version="2" date="2013-02-02">
+      - Оптимизация провайдера (уменьшение трафика) - данные теперь извлекаются с meteoclub.kz/meteoXML.php
+    </change>
+</history>

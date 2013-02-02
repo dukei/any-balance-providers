@@ -7,38 +7,6 @@
 Личный кабинет: http://stat.netbynet.ru/
 */
 
-
-function getParam (html, result, param, regexp, replaces, parser) {
-	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
-		return;
-
-	var value = regexp.exec (html);
-	if (value) {
-		value = value[1];
-		if (replaces) {
-			for (var i = 0; i < replaces.length; i += 2) {
-				value = value.replace (replaces[i], replaces[i+1]);
-			}
-		}
-		if (parser)
-			value = parser (value);
-
-    if(param)
-      result[param] = value;
-    else
-      return value
-	}
-}
-
-var replaceTagsAndSpaces = [/<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
-var replaceFloat = [/\s+/g, '', /,/g, '.'];
-
-function parseBalance(text){
-    var val = getParam(text.replace(/\s+/g, ''), null, null, /(-?\d[\d\s.,]*)/, replaceFloat, parseFloat);
-    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
-    return val;
-}
-
 function main(){
     var prefs = AnyBalance.getPreferences();
 
@@ -144,7 +112,7 @@ function mainVoronezh(){
     	'pr[form][auto][login]': prefs.login,
     	'pr[form][auto][password]': prefs.password,
     	'pr[form][auto][form_event]': 'Войти'
-    });
+    }, {'Accept-Charset': 'windows-1251'});
 
     if(!/\?exit=1/i.test(html)){
         var error = getParam (html, null, null, /<font[^>]+color=['"]red['"][^>]*>([\s\S]*?)<\/font>/i, replaceTagsAndSpaces);
@@ -158,16 +126,12 @@ function mainVoronezh(){
 
     var result = {success: true};
 
+    html = AnyBalance.requestGet(baseurl + '?pr%5Bcontrol%5D%5Bkernel%5D%5Brecord%5D=23&pr%5Bcontrol%5D%5Bkernel%5D%5Bparent%5D=19&menu=19');
+
     AnyBalance.trace("Parsing data...");
 
-    // Тарифный план
-    // Тариф выцепить сложно, пришлось ориентироваться на запись после остатка дней
-    value = html.match (/Осталось[\s\S]*?<td>(.*?)<\/td>/i);
-    if (value && value[1].indexOf ('нет') == -1)
-      result.__tariff = value[1];
-
     // Баланс
-    getParam (html, result, 'balance', /<b[^>]*>баланс:<\/b>([\s\S]*?)<br[^>]*>/i, replaceTagsAndSpaces, parseBalance);
+    getParam (html, result, 'balance', /Лицевой счет:[\s\S]*?баланс:([\s\S]*?)<br/i, replaceTagsAndSpaces, parseBalance);
 
     // Абонент
     getParam (html, result, 'subscriber', /Приветствуем Вас,([^<]*)/i, replaceTagsAndSpaces);
@@ -176,13 +140,14 @@ function mainVoronezh(){
     getParam (html, result, 'contract', /Лицевой счет:([\s\S]*?),/i, replaceTagsAndSpaces);
 
     // Расчетный период - остаток
-    getParam (html, result, 'day_left', /До списания абонентской платы осталось:<\/b>([\s\S]*?)<br[^>]*>/i, replaceTagsAndSpaces, parseBalance);
-
-    // Бонусный счет 
-    getParam (html, result, '__tariff', /(Бонусный счет[\s\S]*?)Баланс/i, replaceTagsAndSpaces);
+    getParam (html, result, 'day_left', /До списания абонентской платы осталось:([\s\S]*?)<br/i, replaceTagsAndSpaces, parseBalance);
 
     // Бонусный баланс 
-    getParam (html, result, 'bonus_balance', /Бонусный счет[\s\S]*?Баланс:([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+    getParam (html, result, 'bonus_balance', /Бонусный счет[\s\S]*?Баланс:([\s\S]*?)<br/i, replaceTagsAndSpaces, parseBalance);
+
+    sumParam(html, result, '__tariff', /Тарифный план:([\s\S]*?)(?:<\/span>|<a)/i, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+    // Бонусный статус
+    sumParam (html, result, '__tariff', /(<strong[^>]*>\s*Бонусный счет[\s\S]*?)Баланс/i, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
 
     AnyBalance.setResult(result);
 }

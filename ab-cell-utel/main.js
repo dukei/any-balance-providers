@@ -9,31 +9,6 @@ Utel — это бренд, под которым предоставляются
 Личный кабинет: https://ucabinet.u-tel.ru/
 */
 
-function getParam (html, result, param, regexp, replaces, parser) {
-	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
-		return;
-
-	var value = regexp.exec (html);
-	if (value) {
-		value = value[1];
-		if (replaces) {
-			for (var i = 0; i < replaces.length; i += 2) {
-				value = value.replace (replaces[i], replaces[i+1]);
-			}
-		}
-		if (parser)
-			value = parser (value);
-
-    if(param)
-      result[param] = value;
-    else
-      return value
-	}
-}
-
-var replaceTagsAndSpaces = [/<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
-var replaceFloat = [/\s+/g, '', /,/g, '.'];
-
 function main(){
     var prefs = AnyBalance.getPreferences();
 
@@ -51,7 +26,7 @@ function main(){
       PASSWORD: prefs.password
     }); //{"X-Requested-With": "XMLHttpRequest"}
     
-    var error = getParam(htmlMain, null, null, /<h1 class="red">([^<]*)<\/h1>/i, replaceTagsAndSpaces);
+    var error = getParam(htmlMain, null, null, /<h1 class="red">([^<]*)<\/h1>/i, replaceTagsAndSpaces, html_entity_decode);
     if(error)
       throw new AnyBalance.Error(error);
     
@@ -85,7 +60,7 @@ function main(){
 
         var suffix = i > 0 ? i : '';
         
-        getParam(html, result, 'balance'+suffix, /var\s*balData\s*=\s*parseFloat\('([\-\d\.]+)'\)/, replaceFloat, parseFloat);
+        getParam(html, result, 'balance'+suffix, /var\s*balData\s*=\s*parseFloat\('([\-\d\.]+)'\)/, replaceTagsAndSpaces, parseBalance);
         getParam(html, result, 'userName'+suffix, /Абонент:[\s\S]*?>(.*?)</);
         getParam(html, result, 'status'+suffix, /Признак активности:[\s\S]*?>(.*?)</);
         getParam(html, result, 'phone'+suffix, /infofornumber_([^"']*)/);
@@ -99,7 +74,24 @@ function main(){
               svc: svc
             }); //{"X-Requested-With": "XMLHttpRequest"}
         
-            getParam(html, result, 'bonus'+suffix, /Текущий баланс[\s\S]*?>\s*(-?\d[\d\.,\s]*)</, replaceFloat, parseFloat);
+            getParam(html, result, 'bonus'+suffix, /Текущий баланс[\s\S]*?>\s*(-?\d[\d\.,\s]*)</i, replaceTagsAndSpaces, parseBalance);
+        }
+
+        if(AnyBalance.isAvailable('gprs'+suffix, 'sms'+suffix, 'mms'+suffix, 'min'+suffix)){
+            var html = AnyBalance.requestGet(baseurl + "?a=bonuspackages&svc=" + svc); //{"X-Requested-With": "XMLHttpRequest"}
+            var table = getParam(html, null, null, /<table[^>]+class="payment[^>]*>\s*<tr[^>]*>(?:[\s\S](?!<\/table>))*?<\/tr>([\s\S]*?)<\/table>/i);
+            if(!table)
+                AnyBalance.trace('Не удаётся найти таблицу подключенных пакетов вознаграждений');
+            else{
+                var rows = sumParam(table, null, null, /<tr[^>]*>([\s\S]*?)<\/tr>/ig);
+                for(var i=0; i<rows.length; ++i){
+                    var row = rows[i];
+                    sumParam(row, result, 'sms'+suffix, /(?:[\s\S]*?<td[^>]*>){4}\s*(\d+)\s*SMS/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+                    sumParam(row, result, 'mms'+suffix, /(?:[\s\S]*?<td[^>]*>){4}\s*(\d+)\s*MMS/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+                    sumParam(row, result, 'min'+suffix, /(?:[\s\S]*?<td[^>]*>){4}\s*(\d+)\s*мин/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+                    sumParam(row, result, 'gprs'+suffix, /(?:[\s\S]*?<td[^>]*>){4}\s*([\d.,]+)\s*(?:[мmkкгg][бb]|байт|bytes)/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+                }
+            }
         }
         
         if(AnyBalance.isAvailable('gprs'+suffix)){
@@ -108,7 +100,7 @@ function main(){
               svc: svc
             }); //{"X-Requested-With": "XMLHttpRequest"}
         
-            getParam(html, result, 'gprs'+suffix, /<input[^>]*id="pack_INETBLOCK[^>]*checked[^>]*>[\s\S]*?Остаток\s*:\s*(-?\d[\d\.,\s]*)/i, replaceFloat, parseFloat);
+            sumParam(html, result, 'gprs'+suffix, /<input[^>]*id="pack_INETBLOCK[^>]*checked[^>]*>[\s\S]*?Остаток\s*:\s*([^<]*)/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
         }
     }
 

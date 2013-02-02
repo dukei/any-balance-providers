@@ -76,7 +76,7 @@ function altai(prefix){
 
         var accnum = (prefs.accnum || '').toUpperCase();
         var name = getParam(tr, null, null, /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-        var acc = getParam(tr, null, null, /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<br/i, replaceTagsAndSpaces, html_entity_decode);
+        var acc = getParam(tr, null, null, /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
         if(!prefs.accnum || 
             (name && name.toUpperCase().indexOf(accnum) >= 0) ||
             (acc && acc.toUpperCase().indexOf(accnum) >= 0)){
@@ -95,5 +95,5 @@ function altai(prefix){
     });
 
     if(!AnyBalance.isSetResultCalled())
-        throw new AnyBalance.Error(!prefs.accnum ? "Не найдено ни одного лицевого счета!" : "Не найдено лицевого счета, содержащего текст " + schet); 
+        throw new AnyBalance.Error(!prefs.accnum ? "Не найдено ни одного лицевого счета!" : "Не найдено лицевого счета, содержащего текст " + prefs.accnum); 
 }

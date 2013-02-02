@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="3" date="2013-02-02">
+      - Исправлена ошибка получения конкретного счета по его номеру
+    </change>
     <change version="2" date="2013-02-02">
       - Поддержка изменений в процедуре авторизации
     </change>

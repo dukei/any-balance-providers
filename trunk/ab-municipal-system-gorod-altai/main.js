@@ -48,18 +48,20 @@ function altai(prefix){
     AnyBalance.requestGet(baseurl, g_headers);
 
     var html = AnyBalance.requestPost(baseurl + "auth", {
-        redirectUrl:'',
         typeAuth:'card',
+        'answer-captcha':'',
         pan:pan,
-        passwordCard: prefs.password
+        pin: prefs.password
     }, g_headers);
 
-    if(!/\/lk\/logout/i.test(html)){
-      var error = getParam(html, null, null, /<h1>Внимание!<\/h1>([\s\S]*?)<br/i, replaceTagsAndSpaces, html_entity_decode);
+    if(!/<state>ok<\/state>/i.test(html)){
+      var error = getParam(html, null, null, /<error>([\s\S]*?)<\/error>/i, replaceTagsAndSpaces, html_entity_decode);
       if(error)
           throw new AnyBalance.Error(error);
       throw new AnyBalance.Error("Не удалось войти в личный кабинет по неизвестной причине. Сайт изменен?");
     }
+
+    html = AnyBalance.requestGet(baseurl);
 
     var result = {success: true};
 

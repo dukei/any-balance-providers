@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-internet-mclaut</id>
+  <api flags="private"/> <!-- Доступ возможен только из сети провайдера -->
+  <name>McLaut (Черкассы)</name>
+  <description>
+    Получает баланс и информацию о тарифном плане для черкасского интернет провайдера McLaut (http://mclaut.com).
+
+    Информация берется из личного кабинета https://bill.mclaut.com.
+
+    ВНИМАНИЕ! Этот кабинет недоступен извне сети McLaut, так что получение баланса возможно только через WiFi соединение с домашним роутером.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <history>history.xml</history>
+    <js>library.js</js>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="₴"/>
+    <counter id="licschet" name="Лицевой счет" type="text"/>
+    <counter id="fio" name="ФИО" type="text"/>
+    <counter id="status" name="Активен" type="text"/>
+  </counters>
+  <keywords>
+    маклаут
+  </keywords>
+  <type>
+    internet
+  </type>
+  <country>
+    ua
+  </country>
+</provider>

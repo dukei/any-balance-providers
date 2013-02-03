@@ -114,16 +114,15 @@ function main(){
       getPayments(html, allpayments);
       var maxTries = 3;
       while(!findPayments(allpayments, result) && month.getTime() > startDate && maxTries-- > 0){
-          month = new Date(month.getFullYear(), month.getMonth()-1, 1);
-          
           html = AnyBalance.requestPost(baseurl + 'tbmb/view/display_view.do', {
               'org.apache.struts.taglib.html.TOKEN': getToken(html),
-              selectedDate: getDateString(new Date(month.getFullYear(), month.getMonth()+1, 1), '/'),
+              selectedDate: getDateString(new Date(month.getFullYear(), month.getMonth(), 1), '.'),
               fromDate: getDateString(month, '/'),
               toDate: getDateString(new Date(month.getFullYear(), month.getMonth()+1, 0), '/')
           });
           getPayments(html, allpayments);
           startDate = startDate || getParam(html, null, null, /(?:предоставляется, начиная с|зв’язку надається, починаючи з)\s*<b[^>]*>([^<]*)<\/b>/i, replaceTagsAndSpaces, parseDate) || 0;
+          month = new Date(month.getFullYear(), month.getMonth()-1, 1);
       }
   }
 

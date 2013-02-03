@@ -32,9 +32,12 @@ function mainCenter(){
         password: prefs.password
     });
 
-    var value = html.match (/class="error"[^>]*>([^<]+)<\/span>/i);
-    if (value){
-        throw new AnyBalance.Error (value[1]);
+    if(!/logout/i.test(html)){
+        var error = getParam(html, null, null, /class="error"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+        if (error){
+            throw new AnyBalance.Error (error);
+        }
+        throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
 
 
@@ -51,20 +54,26 @@ function mainCenter(){
       result.__tariff = value[1];
 
     // Баланс
-    getParam (html, result, 'balance', /class="balance".*?(-?[\d]+\.?[\d]*)/i, [], parseFloat);
+    getParam (html, result, 'balance', /<span[^>]+class="balance"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
 
     // Абонент
-    getParam (html, result, 'subscriber', /Абонент[^>]*>([^<]*)/i);
+    getParam (html, result, 'subscriber', /Абонент[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 
     // Номер договора
-    getParam (html, result, 'contract', /Договор[^\d]*([\d]+)/i, [], parseInt);
+    getParam (html, result, 'contract', /Договор([^<(]*)/i, replaceTagsAndSpaces, html_entity_decode);
 
     // Расчетный период - остаток
-    getParam (html, result, 'day_left', /Осталось[^\d]*([\d]+)/i, [], parseInt);
+    getParam (html, result, 'day_left', /Осталось[^\d]*([\d]+)/i, replaceTagsAndSpaces, parseBalance);
 
-    // Статус
-    getParam (html, result, 'status', /class="br fgreen">(?:<[^>]*>|)([^<]*)/i);
-
+    //Таблица с тарифными планами
+    var table = getParam(html, null, null, /<table[^>]*>(?:[\s\S](?!<\/table>))*?<th[^>]*>Договор(?:[\s\S](?!<\/table>))*?<th[^>]*>Текущий тариф[\s\S]*?<\/table>/i);
+    if(table){
+        getParam(table, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+        // Статус
+        getParam(table, result, 'status', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    }else{
+        AnyBalance.trace('Не удалось найти таблицу с тарифным планом. Сайт изменен?');
+    }
 
     if (AnyBalance.isAvailable ('promised_payment')) {
 
@@ -77,11 +86,11 @@ function mainCenter(){
         // Обещанные платежи
         var promised_payments = html.match (/<li>.*?История обещанных платежей[\s\S]*?<li>/i);
         if (promised_payments) {
-            getParam (promised_payments, result, 'promised_payment', /<tr>(?:[\s\S]*?< *td *>){5}[^\d]*(\d+\.?\d*)/i, [], parseFloat);
+            getParam (promised_payments[0], result, 'promised_payment', /<tr>(?:[\s\S]*?< *td *>){5}[^\d]*(\d+\.?\d*)/i, [], parseFloat);
         }
     }
 
-    AnyBalance.requestGet (baseurl + "logout");
+//    AnyBalance.requestGet (baseurl + "logout");
 
 
     AnyBalance.setResult(result);
@@ -116,7 +125,7 @@ function mainVoronezh(){
 
     if(!/\?exit=1/i.test(html)){
         var error = getParam (html, null, null, /<font[^>]+color=['"]red['"][^>]*>([\s\S]*?)<\/font>/i, replaceTagsAndSpaces);
-        if (value){
+        if (error){
             throw new AnyBalance.Error (error);
         }
         throw new AnyBalance.Error ("Не удаётся войти в личный кабинет. Сайт изменен?");

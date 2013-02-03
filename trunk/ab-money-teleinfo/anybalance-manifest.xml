@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="3" major_version="1.1">ab-money-teleinfo</id>
+  <id version="4" major_version="1.1">ab-money-teleinfo</id>
   <name>ВТБ24: Телеинфо</name>
   <description>Система «Телеинфо» ВТБ24. Получение баланса пластиковой карты. https://telebank.vtb24.ru/
 

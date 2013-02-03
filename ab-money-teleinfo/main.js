@@ -35,6 +35,9 @@ function main(){
         if (val){
         	throw new AnyBalance.Error($html.find('#LabelMessage').text());
         }
+       if(/id="ItemNewPassword"/i.test(html))
+           throw new AnyBalance.Error('Телеинфо требует поменять пароль. Пожалуйста, войдите в Телеинфо через браузер, поменяйте пароль, а затем введите новый пароль в настройки провайдера.');
+        
        throw new AnyBalance.Error('Не удалось зайти в Телеинфо. Сайт изменен?');
     }
 

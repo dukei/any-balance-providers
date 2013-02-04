@@ -18,7 +18,7 @@ function main(){
 			login: prefs.login,
 			pass: prefs.pass
 		}, 
-		{"User-Agent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.57 Safari/537.1"}
+		{"User-Agent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.57 Safari/537.17"}
 	);
 	if (html){
 		var result = {success: true};

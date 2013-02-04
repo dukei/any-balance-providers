@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.2" version="24">ab-cell-kyivstar</id>
+  <id major_version="1.2" version="25">ab-cell-kyivstar</id>
   <name>Киевстар</name>
   <description>
     Получает баланс, бонусные минуты, СМС, ММС, остаток интернет-трафика и другие бонусы для мобильного оператора Киевстар.
@@ -31,6 +31,7 @@
     <counter id="home_internet" name="Домашний Интернет" suffix=" ₴" type="numeric"/>
     <counter id="limit" name="Порог отключения" suffix=" ₴" type="numeric"/>
     <counter id="till" name="Срок действия номера" type="time" format="dd/MM/yyyy"/>
+    <counter id="comfort_till" name="Срок действия услуги Комфортный переход" type="time" format="dd/MM/yyyy"/>
     <counter id="phone" name="Номер телефона" type="text"/>
   </counters>
   <keywords>

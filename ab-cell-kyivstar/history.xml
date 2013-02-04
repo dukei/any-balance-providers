@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change major_version="1.2" version="25" date="2013-02-04">
+      Добавлено распознавание срока действия Остатка бонусов.
+      Добавлен счетчик "Срок действия услуги Комфортный переход".
+    </change>
     <change major_version="1.2" version="24" date="2013-01-16">
       Добавлен счетчик Номер телефона
     </change>

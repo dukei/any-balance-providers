@@ -6,6 +6,17 @@
 Персональная страничка: https://my.silpo.ua/
 */
 
+function parseDateMoment(str){
+    var mom = moment(str.replace(/i/ig, 'і'), ['DD MMM YYYY', 'HH:mm-D MMM YYYY']);
+    if(!mom.isValid()){
+        AnyBalance.trace('Failed to parse date from ' + str);
+    }else{
+        var val = mom.toDate();
+        AnyBalance.trace('Parsed date ' + val + ' from ' + str);
+        return val.getTime();
+    }
+}
+
 function getParam (html, result, param, regexp, replaces, parser) {
 	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
 		return;
@@ -28,21 +39,6 @@ function getParam (html, result, param, regexp, replaces, parser) {
 	}
 }
 
-function parseDate(str){
-  //Рассчитывает на библиотеку date.js
-  str = str.replace(/(\d{4}).*$/, '$1'); //Убираем г. после года, чтобы не мешалось 
-  var dt = Date.parse(str);
-  if(!dt){
-      AnyBalance.trace('Can not parse date from ' + str);
-      return;
-  }
-
-  dt = new Date(dt);
-  
-  AnyBalance.trace('Parsed date ' + dt.toString() + ' from ' + str);
-  return dt.getTime(); 
-}
-
 var replaceTagsAndSpaces = [/<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
 var replaceFloat = [/\s+/g, '', /,/g, '.'];
 
@@ -50,6 +46,7 @@ function main(){
 	var baseurl = 'https://my.silpo.ua/';
 	var prefs = AnyBalance.getPreferences();
 	AnyBalance.setDefaultCharset('utf-8');
+	moment.lang('uk');
 	var authPwd = prefs.pass;
 	var authBarcode = prefs.login;
 	if (!prefs.login || prefs.login == '')
@@ -108,7 +105,7 @@ function main(){
 			}
 		}
 		//Дата перерасчета бонусов
-		getParam(html, result, 'bonus_conversion', /<td>Наступне(?:&nbsp;|\s)+перерахування(?:&nbsp;|\s)+Балів(?:&nbsp;|\s)+в(?:&nbsp;|\s)+Бонус<\/td>\s*<td>Наступна(?:&nbsp;|\s)+доставка(?:&nbsp;|\s)+Сертифікатів<\/td>\s*<\/tr>\s*<tr>\s*<td>([^<]*)<\/td>/i, replaceTagsAndSpaces, parseDate);
+		getParam(html, result, 'bonus_conversion', /<td>Наступне(?:&nbsp;|\s)+перерахування(?:&nbsp;|\s)+Балів(?:&nbsp;|\s)+в(?:&nbsp;|\s)+Бонус<\/td>\s*<td>Наступна(?:&nbsp;|\s)+доставка(?:&nbsp;|\s)+Сертифікатів<\/td>\s*<\/tr>\s*<tr>\s*<td>([^<]*)<\/td>/i, replaceTagsAndSpaces, parseDateMoment);
 		AnyBalance.setResult(result);
 	} else { 
 		var error = getParam(html, null, null, /<\/script>([\s\S]*?)<br[^>]*>/i, replaceTagsAndSpaces);

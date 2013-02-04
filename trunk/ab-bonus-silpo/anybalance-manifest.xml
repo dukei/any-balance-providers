@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="6">ab-bonus-silpo</id>
+  <id version="7">ab-bonus-silpo</id>
   <name>Сільпо, мережа супермаркетів (Україна)</name>
   <description>
     Мониторинг накопленных бонусов по программе "Власний рахунок" сети супермаркетов Сільпо (Украина). Получает информацию из личного кабинета https://my.silpo.ua.
@@ -10,8 +10,9 @@
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
     <js>main.js</js>
-    <js>date-uk-UA.js</js>
     <history>history.xml</history>
+    <js>moment.js</js>
+    <js>moment.lang.uk.js</js>
   </files>
   <counters>
     <counter id="bonus" name="Бонус" suffix=" бон." type="numeric"/>

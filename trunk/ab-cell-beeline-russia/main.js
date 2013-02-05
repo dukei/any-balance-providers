@@ -261,22 +261,16 @@ function parseBalanceList(html, result){
     }
 
     if(AnyBalance.isAvailable('traffic')){
-        var val = getBalanceValue(html, 'FTTB', parseBalance);
+         //Интернет-пакет - счетчик из казахстанского ЛK
+        var val = getBalanceValue(html, 'Интернет-пакет', parseBalance);
         if(val)
             result.traffic = (result.traffic || 0) + val/1024;
 
-        var val = getBalanceValue(html, 'RM_GPRS', parseBalance);
-        if(val)
-            result.traffic = (result.traffic || 0) + val/1024;
-
-        var val = getBalanceValue(html, 'GPRS_PAK', parseBalance);
-        if(val)
-            result.traffic = (result.traffic || 0) + val/1024;
-
+        //Интернет баланс - добавлен позже, видимо из другого ЛК
         var val = getBalanceValue(html, 'Интернет баланс', parseBalance);
         if(val)
             result.traffic = (result.traffic || 0) + val/1024;
-
+          
         if(result.traffic)
             result.traffic = Math.round(result.traffic*100)/100;
     }

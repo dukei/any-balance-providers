@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="2.1" version="29">ab-cell-beeline-russia</id>
+  <id major_version="2.1" version="30">ab-cell-beeline-russia</id>
   <name>Билайн</name>
   <description>
     Получает баланс, бонусный баланс, количество бесплатных SMS, MMS и минут, владельца, тарифный план и номер договора.
@@ -58,7 +58,7 @@
     <counter id="period_till" name="Конец расчетного периода (корп.)" type="time" format="dd/MM/yyyy"/>
   </counters>
   <keywords>
-    Сотовый телефон, мобильный, мобильник, beeline, россия, узбекистан, корпоративный, предоплатный, кредитный
+    Сотовый телефон, мобильный, мобильник, beeline, россия, узбекистан, казахстан, корпоративный, предоплатный, кредитный
   </keywords>
   <type>
     cell

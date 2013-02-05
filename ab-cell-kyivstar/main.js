@@ -122,11 +122,11 @@ function main(){
   
   //Срок действия услуги Комфортный переход
   if(AnyBalance.isAvailable('comfort_till')){
-  var html = AnyBalance.requestGet(baseurl + "tbmb/tsm/overview.do", headers);
-  if(/show.do\?featureId=99&amp;in=1/i.test(html)){
-  var html = AnyBalance.requestGet(baseurl + "tbmb/tsm/complexFeature/show.do?featureId=99&in=1", headers);
-  sumParam(html, result, 'comfort_till', /(?:Послуга буде автоматично відключена&nbsp;|Услуга будет автоматически отключена&nbsp;)([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
-  }
+      html = AnyBalance.requestGet(baseurl + "tbmb/tsm/overview.do", headers);
+      if(/show.do\?featureId=99&amp;in=1/i.test(html)){
+          html = AnyBalance.requestGet(baseurl + "tbmb/tsm/complexFeature/show.do?featureId=99&in=1", headers);
+          sumParam(html, result, 'comfort_till', /(?:Послуга буде автоматично відключена&nbsp;|Услуга будет автоматически отключена&nbsp;)([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
+      }
   }
   
   AnyBalance.setResult(result);

@@ -26,6 +26,9 @@ function main() {
     var prefs = AnyBalance.getPreferences();
     var baseurl = 'https://www.citibank.ru/RUGCB/';
 
+    if(prefs.profile && !/^\d{4}$/.test(prefs.profile))
+        throw new AnyBalance.Error('Введите последние 4 цифры профиля или не вводите ничего, чтобы получить информацию по первому профилю.');
+
     var html = AnyBalance.requestGet(baseurl + 'JSO/signon/DisplayUsernameSignon.do', g_headers);
 
     html = AnyBalance.requestPost(baseurl + 'JSO/signon/ProcessUsernameSignon.do', {
@@ -38,6 +41,21 @@ function main() {
 
     if(!/signoff\/Signoff\.do/i.test(html)){
         throw new AnyBalance.Error('Не удалось войти в интернет-банк. Неправильный логин-пароль?');
+    }
+
+    var select = getParam(html, null, null, /<select[^>]+name="selectedProfile"[\s\S]*?<\/select>/i);
+    if(select){ //Необходимо выбрать профиль
+        var num = prefs.profile ? prefs.profile : '\\d{4}';
+        var re = new RegExp('<option[^>]+value="([^"]*)"[^>]*>([^<]*' + num + ')\\s*</option>', 'i');
+        var value = getParam(select, null, null, re, null, html_entity_decode);
+        if(!value)
+            throw new AnyBalance.Error(prefs.profile ? 'Не найдено ни одного профиля. Сайт изменен?' : 'Не найдено профиля с последними цифрами ' + prefs.profile);
+        AnyBalance.trace("Selecting profile " + select.match(re)[2]);
+        html = AnyBalance.requestPost(baseurl + 'JSO/signon/ProcessUsernameProfileSignon.do', {
+            SYNC_TOKEN:getToken(html),
+            selectedProfile:value
+        }, g_headers);
+       
     }
 
     var hrefJson = getParam(html, null, null, /'\/([^']*GetRSDashboardResponse\.do[^']*)/i);
@@ -78,6 +96,8 @@ function main() {
 
                 if(AnyBalance.isAvailable('balance') && /Доступно сейчас|Available now/i.test(bal.balText))
                     result.balance = val;
+                if(AnyBalance.isAvailable('ondeposit') && /Текущий баланс|On deposit/i.test(bal.balText))
+                    result.ondeposit = val;
                 if(AnyBalance.isAvailable('limit') && /Кредитный лимит|Credit limit/i.test(bal.balText))
                     result.limit = val;
                 if(AnyBalance.isAvailable('credit') && /Использованный кредит|Credit used/i.test(bal.balText))

@@ -27,7 +27,17 @@
         dialogTitle="Последние цифры счета" 
         negativeButtonText="Отмена" 
         dialogMessage="Введите сюда последние цифры номера счета или карты. Если оставить поле пустым, то будет показана информация по первой карте/счету."
-        key="contract"
+        key="accnum"
+        inputType="number">
+    </EditTextPreference>
+    <EditTextPreference
+        title="Профиль" 
+        positiveButtonText="ОК" 
+        summary="|Автоматически|{@s}" 
+        dialogTitle="Последние цифры профиля" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите сюда последние цифры профиля, если у вас несколько профилей в интернет-банке. Или оставьте поле пустым для автоматического выбора профиля."
+        key="profile"
         inputType="number">
     </EditTextPreference>
 </PreferenceScreen>

@@ -413,6 +413,11 @@ function megafonTrayInfo(filial){
            
            if(errorInTray){
                getParam(json.ok.html, result, 'balance', /<div[^>]+class="subs_balance[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+               if(AnyBalance.isAvailable('balance') && !isset(result.balance)){
+                   var e = new AnyBalance.Error(errorInTray);
+                   e.skip = true;
+                   throw e; //Яндекс виджет не дал баланс. Значит, во всём дальнейшем смысла нет.
+               }
                getParam(json.ok.html, result, 'sub_smio', /Начислено абонентской платы\s*<\/td>(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
                getParam(json.ok.html, result, 'sub_soi', /Начислено за услуги\s*<\/td>(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
                getParam(json.ok.html, result, 'sub_scl', /Начислено за звонки\s*<\/td>(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
@@ -427,6 +432,8 @@ function megafonTrayInfo(filial){
                }
            }
         }catch(e){
+           if(e.skip)
+               throw e;
            if(!errorInTray){
                AnyBalance.trace('Не удалось получить доп. счетчики из Яндекс.виджета: ' + e.message);
            }else{

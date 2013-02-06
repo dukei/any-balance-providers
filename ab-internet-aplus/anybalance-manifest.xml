@@ -22,6 +22,7 @@
     <counter id="licschet" name="Лицевой счет" type="text"/>
     <counter id="fio" name="ФИО" type="text"/>
     <counter id="status" name="Статус" type="text"/>
+    <counter id="till" name="Действует до" type="time" format="dd/MM/yyyy"/>
     <counter id="trafficIn" name="Вх.трафик в текущем месяце" units=" Гб"/>
     <counter id="trafficOut" name="Исх.трафик в текущем месяце" units=" Гб"/>
   </counters>

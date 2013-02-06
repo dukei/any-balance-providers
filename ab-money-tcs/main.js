@@ -141,34 +141,16 @@ function fetchCard(accounts, baseurl, sessionid){
         result.cardnum = thiscard.value;
     if(AnyBalance.isAvailable('accnum'))
         result.accnum = card.externalAccountNumber;
+    if(AnyBalance.isAvailable('freeaddleft'))
+        result.freeaddleft = card.freeRenewalsLeftCount;
+    if(AnyBalance.isAvailable('till') && isset(thiscard.expiration))
+        result.till = thiscard.expiration.milliseconds;
+    if(AnyBalance.isAvailable('limit') && isset(card.creditLimit))
+        result.limit = card.creditLimit.value;
+    if(AnyBalance.isAvailable('minpaytill') && isset(card.duedate))
+        result.minpaytill = card.duedate.milliseconds;
+
     result.__tariff = thiscard.name;
-
-    if(AnyBalance.isAvailable('minpaytill', 'limit', 'freeaddleft')){
-
-        var accinfo = AnyBalance.requestGet(baseurl + '/api/v1/account_info/?sessionid=' + sessionid + '&request=current&account=' + card.id, addHeaders({
-            Accept:'application/json, text/javascript, */*; q=0.01',
-            'X-Requested-With':'XMLHttpRequest',
-            Referer: baseurl + '/bank/accounts/?account=' + card.id
-        }));
-
-        accinfo = getJson(accinfo);
-        if(accinfo.resultCode == 'OK'){
-            for(var i=0; i<accinfo.payload.length; ++i){
-                var cat = accinfo.payload[i];
-                for(var j=0; j<cat.fields.length; ++j){
-                    var field = cat.fields[j];
-                    if(field.label == 'Кредитный лимит' && AnyBalance.isAvailable('limit'))
-                        result.limit = field.value.value;
-                    if(field.label == 'Оплатить до' && AnyBalance.isAvailable('minpaytill'))
-                        result.minpaytill = parseDate(field.value);
-                    if(field.label == 'Осталось бесплатных пополнений' && AnyBalance.isAvailable('freeaddleft'))
-                        result.freeaddleft = field.value;
-                }
-            }
-        }else{
-            AnyBalance.trace('Не удалось получить расширенную информацию по карте: ' + JSON.stringify(accinfo));
-        }
-    }
     
     AnyBalance.setResult(result);
 }
@@ -221,29 +203,9 @@ function fetchDep(accounts, baseurl, sessionid){
         result.rate = dep.depositRate;
     if(AnyBalance.isAvailable('till'))
         result.till = dep.plannedCloseDate.milliseconds;
+    if(AnyBalance.isAvailable('pcts') && isset(dep.interest))
+        result.pcts = dep.interest.value;
     result.__tariff = dep.name;
-
-    if(AnyBalance.isAvailable('pcts')){
-        var accinfo = AnyBalance.requestGet(baseurl + '/api/v1/account_info/?sessionid=' + sessionid + '&request=current&account=' + dep.id, addHeaders({
-            Accept:'application/json, text/javascript, */*; q=0.01',
-            'X-Requested-With':'XMLHttpRequest',
-            Referer: baseurl + '/bank/accounts/?account=' + dep.id
-        }));
-
-        accinfo = getJson(accinfo);
-        if(accinfo.resultCode == 'OK'){
-            for(var i=0; i<accinfo.payload.length; ++i){
-                var cat = accinfo.payload[i];
-                for(var j=0; j<cat.fields.length; ++j){
-                    var field = cat.fields[j];
-                    if(field.label == 'Начислено процентов за весь период' && AnyBalance.isAvailable('pcts'))
-                        result.pcts = field.value.value;
-                }
-            }
-        }else{
-            AnyBalance.trace('Не удалось получить расширенную информацию по депозиту: ' + JSON.stringify(accinfo));
-        }
-    }
     
     AnyBalance.setResult(result);
 }

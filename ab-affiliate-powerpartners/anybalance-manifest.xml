@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id major_version="1.0" version="2">ab-affiliate-powerpartners</id>
+  <name>PowerPartners.ru</name>
+  <description>
+    Получает текущий баланс, а так же статистику заказов и выплат в партнёрской программе PowerPartners.ru.
+  </description>
+  <author>Vadim Manykin &lt;admin@powerpartners.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="orders" name="Заказов"/>
+    <counter id="current_orders_amount" name="Доход сегодня" units="р"/>
+    <counter id="current_orders_count" name="Заказов сегодня"/>
+    <counter id="last_payment_amount" name="Последняя выплата" units="р"/>
+    <counter id="last_payment_date" name="Дата последней выплаты" type="text"/>
+  </counters>
+  <keywords>
+    Партнёрская программа, партнерка, партнёрка, powerpartners
+  </keywords>
+  <type>
+    affiliate
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

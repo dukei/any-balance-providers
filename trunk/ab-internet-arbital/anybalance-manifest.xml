@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-internet-arbital</id>
+  <name>Arbital (Санкт-Петербург)</name>
+  <description>
+    Получает баланс и информацию о тарифном плане для питерского интернет провайдера Arbital (http://arbital.ru).
+
+    Информация берется из личного кабинета http://my.arbital.ru.
+
+    При первом входе требуется ввести номер договора в виде Lxxxx и пароль, указанный в договоре.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <history>history.xml</history>
+    <js>library.js</js>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units=" р"/>
+    <counter id="credit" name="Кредит" units=" р"/>
+    <counter id="fio" name="ФИО" type="text"/>
+    <counter id="status" name="Статус" type="text"/>
+    <counter id="till" name="Хватит до" type="time" format="dd/MM/yyyy"/>
+    <counter id="trafficIn" name="Вх.трафик в текущем месяце" units=" Гб"/>
+    <counter id="trafficOut" name="Исх.трафик в текущем месяце" units=" Гб"/>
+  </counters>
+  <keywords>
+    арбитал
+  </keywords>
+  <type>
+    internet
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

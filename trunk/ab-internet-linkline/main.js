@@ -70,9 +70,9 @@ function main(){
 
     var result = {success: true};
 
-    getParam(html, result, 'balance', />Баланс[\s\S]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'balance', /Баланс:([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, '__tariff', />Тарифный план[\s\S]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces);
-    getParam(html, result, 'status', />Состояние счета[\s\S]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces);
+    getParam(html, result, 'status', />Состояние счета[\s\S]*?<td[^>]*>([\S\s]*?)(?:<\/td>|<\/b>)/i, replaceTagsAndSpaces);
     getParam(html, result, 'trafficLocal', />Локальный[\s\S]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseTrafficGb);
     getParam(html, result, 'trafficIn', />Входящий[\s\S]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseTrafficGb);
     getParam(html, result, 'trafficOut', />Исходящий[\s\S]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseTrafficGb);

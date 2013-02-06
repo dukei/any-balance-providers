@@ -159,6 +159,11 @@ function mainMobile(allowRetry){
         getParam(html, result, '__tariff', /Тарифный план.*?>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
         // Баланс
         getParam (html, result, 'balance', /Баланс.*?>([-\d\.,\s]+)/i, replaceTagsAndSpaces, parseBalance);
+        if(AnyBalance.isAvailable('balance') && !isset(result.balance)){
+            AnyBalance.trace(html);
+            throw new AnyBalance.Error('Не удалось найти баланс в мобильном помощнике!', allowRetry); 
+        }
+
         // Телефон
         getParam (html, result, 'phone', /Ваш телефон:.*?>([^<]*)</i, replaceTagsAndSpaces, html_entity_decode);
         

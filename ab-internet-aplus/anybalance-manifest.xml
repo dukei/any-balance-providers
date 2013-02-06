@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-internet-aplus</id>
+  <name>Айчына Плюс (Беларусь)</name>
+  <description>
+    Получает баланс и информацию о тарифном плане для белорусского интернет провайдера Айчына Плюс (http://aplus.by).
+
+    Информация берется из личного кабинета https://cp.aplus.by.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <history>history.xml</history>
+    <js>moment.min.js</js>
+    <js>moment.lang.ru.min.js</js>
+    <js>library.js</js>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units=" р"/>
+    <counter id="licschet" name="Лицевой счет" type="text"/>
+    <counter id="fio" name="ФИО" type="text"/>
+    <counter id="status" name="Статус" type="text"/>
+    <counter id="trafficIn" name="Вх.трафик в текущем месяце" units=" Гб"/>
+    <counter id="trafficOut" name="Исх.трафик в текущем месяце" units=" Гб"/>
+  </counters>
+  <keywords>
+    аплюс
+  </keywords>
+  <type>
+    internet
+  </type>
+  <country>
+    by
+  </country>
+</provider>

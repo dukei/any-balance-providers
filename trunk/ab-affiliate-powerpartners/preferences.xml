@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        key="email"
+        title="e-mail"
+        inputType="textEmailAddress"
+        summary="Адрес эл.почты партнёра||{@s}\n"
+        dialogTitle="Регистрационый e-mail"
+        dialogMessage="Введите адрес эл.почты, указанный при регистрации в партнёрской программе"
+        positiveButtonText="ОК"
+        negativeButtonText="Отмена">
+    </EditTextPreference>
+    <EditTextPreference 
+        key="password" 
+        title="Пароль"
+        inputType="textPassword"
+        summary="Пароль для входа||***********\n"
+        dialogTitle="Пароль"
+        dialogMessage="Введите пароль, используемый для входа в партнёрскую программу"
+        positiveButtonText="ОК"
+        negativeButtonText="Отмена">
+    </EditTextPreference>
+</PreferenceScreen>

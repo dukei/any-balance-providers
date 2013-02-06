@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<history>
+    <change major_version="1.0" version="2">
+      - Добавлен вывод email эккаунта в виде тарифа
+    </change>
+    <change major_version="1.0" version="1">
+      - Первый работающий релиз провайдера
+    </change>
+</history>

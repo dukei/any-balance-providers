@@ -10,7 +10,8 @@
 function main(){
     var prefs = AnyBalance.getPreferences();
     
-    var baseurl = "https://issa.volgogsm.ru/cgi-bin/cgi.exe?";
+//    var baseurl = "https://issa.volgogsm.ru/cgi-bin/cgi.exe?";
+    var baseurl = "https://80.69.146.12/issa/cgi-bin/cgi.exe?";
 
     AnyBalance.trace("Trying to enter issa at address: " + baseurl + "function=is_login");
     var html = AnyBalance.requestPost(baseurl + "function=is_login", {

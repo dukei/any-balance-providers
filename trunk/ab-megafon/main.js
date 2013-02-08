@@ -505,6 +505,10 @@ function megafonServiceGuide(filial){
     if(matches = session.match(/<ERROR_ID>(.*?)<\/ERROR_ID>/i)){
         var errid = matches[1];
         AnyBalance.trace('Got error from sg: ' + errid);
+
+        if(errid == '60020011')
+            throw new AnyBalance.Error('Пользователь заблокирован. Для разблокировки наберите команду *105*00# и нажмите клавишу вызова, новый пароль будет отправлен Вам в SMS.');
+
         //Случилась ошибка, может быть мы можем даже увидеть её описание
         if(matches = session.match(/<ERROR_MESSAGE>(.*?)<\/ERROR_MESSAGE>/i)){
             AnyBalance.trace('Got error message from sg: ' + matches[1]);

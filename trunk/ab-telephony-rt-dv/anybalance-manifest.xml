@@ -25,7 +25,7 @@
     <counter id="licschet" name="Лицевой счет" type="text"/>
     <counter id="ilogin" name="Интернет логин" type="text"/>
     <counter id="iabon" name="Абон.плата интернет" units="р"/>
-    <counter id="tvid" name="Интернет логин" type="text"/>
+    <counter id="tvid" name="ТВ идентификатор" type="text"/>
     <counter id="tvabon" name="Абон.плата ТВ" units="р"/>
   </counters>
   <keywords>

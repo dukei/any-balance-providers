@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-telephony-rt-dv</id>
+  <id version="3">ab-telephony-rt-dv</id>
   <name>Ростелеком (Дальний восток)</name>
   <description>
-    Получает текущий баланс провайдера проводной телефонии Ростелеком (Дальний восток) (http://dv.rt.ru). 
+    Получает текущий баланс провайдера проводной телефонии, интернет и ТВ Ростелеком (Дальний восток) (http://dv.rt.ru). 
     
     Данные берутся из личного кабинета https://cabinet.dv.rt.ru
-
-    Интернет и ТВ пока не поддерживаются, потому что не на чем проверить. Обращайтесь к автору по е-мейл.
   </description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <files>
@@ -25,12 +23,16 @@
     <counter id="ic_tariff" name="Тариф дальней связи" type="text"/>
     <counter id="phone" name="Номер" type="text"/>
     <counter id="licschet" name="Лицевой счет" type="text"/>
+    <counter id="ilogin" name="Интернет логин" type="text"/>
+    <counter id="iabon" name="Абон.плата интернет" units="р"/>
+    <counter id="tvid" name="Интернет логин" type="text"/>
+    <counter id="tvabon" name="Абон.плата ТВ" units="р"/>
   </counters>
   <keywords>
     rostelecom дв амурская приморский хабаровский камчатский сахалинская магаданская
   </keywords>
   <type>
-    telephony
+    telephony, internet, tv
   </type>
   <country>
     ru

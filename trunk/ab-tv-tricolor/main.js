@@ -11,7 +11,9 @@ var g_headers = {
   'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
   'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
   'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Intel Mac OS X 10.6; rv:7.0.1) Gecko/20100101 Firefox/7.0.1',
-  Connection: 'keep-alive'
+  Connection: 'keep-alive',
+  Origin:'https://lk.tricolor.tv',
+  Referer:'https://lk.tricolor.tv/trcustomer/Login.aspx'
 };
 
 function getViewState(html){
@@ -30,7 +32,7 @@ function main(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
 
-    var baseurl = "https://lk.tricolor.tv/trcustomer/";
+    var baseurl = "https://lk.tricolor.tv/trCustomer/";
 
     var html = AnyBalance.requestGet(baseurl + 'Login.aspx', g_headers);
 
@@ -52,9 +54,9 @@ function main(){
         __ASYNCPOST:true,
         'ctl00$ContentPlaceHolder1$BLogin.x':49,
         'ctl00$ContentPlaceHolder1$BLogin.y':17
-    }, g_headers);
+    }, addHeaders({'X-MicrosoftAjax':'Delta=true'}));
 
-    var redirect = getParam(html, null, null, /\/trCustomer\/(CustPage.aspx[^|]*)/i);
+    var redirect = getParam(html, null, null, /pageRedirect\|\|\/trCustomer\/([^|]*)/i);
 
     //AnyBalance.trace(html);
     if(!redirect){ ///ctl00.logOff/i.test(html)
@@ -68,14 +70,11 @@ function main(){
 
     var result = {success: true};
 
-    getParam(html, result, 'balance', /<td[^>]*id="ctl00_ContentPlaceHolder1_pBalanceCurr"[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'agreement', /№ договора абонента:[\S\s]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'device', /№ оборудования:[\S\s]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'balance', /<td[^>]*id="[^"]*pBalanceCurr"[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'agreement', /<td[^>]+id="[^"]*pContractNumber"[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'device', /<td[^>]+id="[^"]*pReceicerNumber"[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, '__tariff', />\s*(?:пакет)\s*(<[\S\s]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'status', /Статус абонента:[\S\s]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
 
-    html = AnyBalance.requestGet(baseurl + 'OServices.aspx', g_headers);
-   
     var services = [];
     var n = 1;
     html.replace(/<tr[^>]*>(?:[\s\S](?!<\/tr))*Активная услуга[\s\S]*?<\/tr>/ig, function(tr){

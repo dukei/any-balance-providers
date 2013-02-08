@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="3">ab-bonus-decathlon</id>
+  <id version="4">ab-bonus-decathlon</id>
   <name>Бонусная карта Декатлон</name>
   <description>
     Получает количество баллов на карте накопительной программы Декатлон.
@@ -9,11 +9,13 @@
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
+    <js>library.js</js>
     <js>main.js</js>
     <history>history.xml</history>
   </files>
   <counters>
     <counter id="balance" name="Баланс"/>
+    <counter id="left2kupon" name="Осталось для получения купона"/>
   </counters>
   <keywords>
     бонус, баллы, bonus, бонусная накопительная программа, Decathlon, карта клиента

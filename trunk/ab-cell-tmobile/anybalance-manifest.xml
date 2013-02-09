@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-cell-tmobile</id>
+  <name>T-Mobile (USA)</name>
+  <description>
+    Obtains T-Mobile account balance.
+
+    If you are not registered for T-Mobile you can register here: https://m.my.t-mobile.com/Login/ (Follow "Sign up" link).
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Account balance" prefix="$"/>
+    <counter id="till" name="Use by" type="time" format="dd/MM/yyyy"/>
+    <counter id="status" name="Plan status" type="text"/>
+    <counter id="2pay" name="Amount Needed To Renew" prefix="$"/>
+    <counter id="min" name="Minutes" units=" min"/>
+    <counter id="sms" name="Messages" units=" sms"/>
+    <counter id="traffic" name="Data" units=" Mb"/>
+  </counters>
+  <keywords>
+  </keywords>
+  <type>
+    internet
+  </type>
+  <country>
+    us
+  </country>
+</provider>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-affiliate-11region</id>
+  <name>ПО-РЕГИОНЫ</name>
+  <description>
+    Получает заработанную сумму в финансовой пирамиде Потребительске Общество РЕГИОНЫ (http://11region.com).
+
+    Информация берется из личного кабинета.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <history>history.xml</history>
+    <js>library.js</js>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Заработано" units="р"/>
+  </counters>
+  <keywords>
+    regiony
+  </keywords>
+  <type>
+    affiliate
+  </type>
+  <country>
+    ru, ua, by
+  </country>
+</provider>

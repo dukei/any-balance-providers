@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="4" major_version="1.1">ab-money-teleinfo</id>
+  <id version="5" major_version="1.1">ab-money-teleinfo</id>
   <name>ВТБ24: Телеинфо</name>
   <description>Система «Телеинфо» ВТБ24. Получение баланса пластиковой карты. https://telebank.vtb24.ru/
 
@@ -23,6 +23,17 @@
   </files>
   <counters>
     <counter id="balance" name="Баланс" units=" {@currency}"/>
+    <counter id="minpay" name="Минимальный платеж" units=" {@currency}"/>
+    <counter id="minpaytill" name="Срок мин.платежа" type="time" format="dd/MM/yyyy"/>
+    <counter id="gracepay" name="Грейс платеж" units=" {@currency}"/>
+    <counter id="gracetill" name="Конец льготного периода" type="time" format="dd/MM/yyyy"/>
+    <counter id="limit" name="Кредитный лимит" units=" {@currency}"/>
+    <counter id="credit_till" name="Срок кредита" type="time" format="dd/MM/yyyy"/>
+    <counter id="accbalance" name="Остаток на счете" units=" {@currency}"/>
+    <counter id="own" name="Собственные средства" units=" {@currency}"/>
+    <counter id="blocked" name="Заблокировано" units=" {@currency}"/>
+    <counter id="accnum" name="Номер счета" type="text"/>
+    <counter id="pct" name="Процентная ставка" units="%"/>
     <counter id="currency" name="Валюта" type="text"/>
     <counter id="cardname" name="Название" type="text"/>
     <counter id="cardnum" name="Номер" type="text"/>

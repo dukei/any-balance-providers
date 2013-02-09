@@ -88,47 +88,45 @@ function fetchCard(baseurl){
     var prefs = AnyBalance.getPreferences();
     var html = AnyBalance.requestGet(baseurl+'Accounts/Accounts.aspx');
 
-    var $html = $(html);
-
     var result = {success: true};
 
-    var $accounts = $html.find('table.accounts');
+    var accounts = getParam(html, null, null, /<table[^>]+class="accounts[\s\S]*?<\/table>/i);
+    if(!accounts)
+        throw new AnyBalance.Error('Не найдена таблица счетов и карт. Сайт изменен?');
 
-    var $card_tr;
+    var card_tr = getParam(accounts, null, null, new RegExp('<tr[^>]*>(?:[\\s\\S](?!</tr))*?XXXXXX' + (prefs.card ? prefs.card : '\\d{4}') + '[\\s\\S]*?</tr>', 'i'));
 
-    if (prefs.card){                        
-	$card_tr = $accounts.find('tr:contains("XXXXXX'+prefs.card+'")');
-    }else{
-	$card_tr = $accounts.find('tr:contains("XXXXXX")');
-    }
-
-    AnyBalance.trace('Найдено карт: ' + $card_tr.size());
-    if(!$card_tr.size())
+    if(!card_tr)
         throw new AnyBalance.Error(prefs.card ? 'Не найдена карта с последними цифрами ' + prefs.card : 'Не найдено ни одной карты');
 
     var result = {success: true};
-    $card_tr = $card_tr.first();
-    result.__tariff = $card_tr.find('td.number').text();
-    if(AnyBalance.isAvailable('cardnum'))
-        result.cardnum = result.__tariff;
 
-    if(AnyBalance.isAvailable('cardname')){
-        result.cardname = $card_tr.find('td:nth-child(2)').text().replace(/&nbsp;/g, ' ').replace(/^\s+|\s+$/g, '');
-    }
-
-    if(AnyBalance.isAvailable('currency', 'balance')){
-        result.cardname = $card_tr.find('td:nth-child(5)').text().replace(/&nbsp;/g, ' ').replace(/^\s+|\s+$/g, '');
-    }
-
-    if(AnyBalance.isAvailable('balance')){
-    	val = $card_tr.find('td:nth-child(4)').text();
-    	if (val)
-    		val = val.replace(/[^0-9.,]+/,'');
-        if(val)
-            result.balance = parseFloat(val.replace(',','.'));
-    }
-    
     getParam(html, result, 'fio', /<div[^>]+id="name"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
 
+    getParam(card_tr, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(card_tr, result, 'cardname', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(card_tr, result, 'cardnum', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(card_tr, result, 'balance', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(card_tr, result, ['currency','balance','gracepay','minpay','limit','accbalance','own','blocked'], /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+
+    if(AnyBalance.isAvailable('pct','accnum','limit','credit_till','minpaytill','minpay','gracetill','gracepay','accbalance','own','blocked')){
+        var accid = getParam(card_tr, null, null, /accountid=([\-0-9]+)/i);
+        if(accid){
+            html = AnyBalance.requestGet(baseurl + 'Accounts/Account.aspx?accountid=' + accid + '&systemid=ssOpenway');
+            getParam(html, result, 'accnum', /<span[^>]+id="[^"]*LabelCardAccountNumber"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+            getParam(html, result, 'pct', /<span[^>]+id="[^"]*LabelCardRate"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+            getParam(html, result, 'limit', /<span[^>]+id="[^"]*LabelCardCreditLimit"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+            getParam(html, result, 'credit_till', /<span[^>]+id="[^"]*LabelCardCreditLimitEndDate"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseDate);
+            getParam(html, result, 'minpaytill', /<span[^>]+id="[^"]*LabelCardMonthlyPaymentDate"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseDate);
+            getParam(html, result, 'gracetill', /<span[^>]+id="[^"]*LabelCardGracePeriodEndDate"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseDate);
+            getParam(html, result, 'minpay', /<span[^>]+id="[^"]*LabelCardMinimumPayment"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+            getParam(html, result, 'gracepay', /<span[^>]+id="[^"]*LabelCardGracePeriodSum"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+            getParam(html, result, 'accbalance', /<span[^>]+id="[^"]*LabelCardRest"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+            getParam(html, result, 'own', /<span[^>]+id="[^"]*LabelCardOwnMoney"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+            getParam(html, result, 'blocked', /<span[^>]+id="[^"]*LabelCardBlocked"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+        }else{
+            AnyBalance.trace('Не удалось найти идентификатор счета карты и получить по ней подробную информацию');
+        }
+    }
     AnyBalance.setResult(result);
 }

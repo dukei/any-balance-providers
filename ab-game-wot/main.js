@@ -80,7 +80,9 @@ function main(){
 			}
 			var fmid = s / battles;
 
-			result['er'] = (dmg * (10 / fmid) * (0.15 + 2 * fmid / 100) + des * (0.35 - 2 * fmid / 100) * 1000 + det * 0.2 * 1000 + cap * 0.15 * 1000 + dff * 0.15 * 1000).toFixed(0);
+			// result['er'] = (dmg * (10 / fmid) * (0.15 + 2 * fmid / 100) + des * (0.35 - 2 * fmid / 100) * 1000 + det * 0.2 * 1000 + cap * 0.15 * 1000 + dff * 0.15 * 1000).toFixed(0);
+			
+			result['er'] = (dmg * (10 / (fmid + 2)) * (0.23 + 2 * fmid / 100) + des * 250 + det * 150 + Math.log(cap + 1) / Math.log(1.732) * 150 + dff * 150).toFixed(0);
 
 		if(AnyBalance.isAvailable('er_armor'))
 			var avg_exp = pd.data.ratings.battle_avg_xp.value;

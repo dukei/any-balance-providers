@@ -1,10 +1,10 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 
-Текущий баланс у питерского оператора интернет Арбитал
+Текущий баланс у спутникового оператора интернет Радуга интернет
 
-Сайт оператора: http://arbital.ru
-Личный кабинет: http://my.arbital.ru/
+Сайт оператора: http://radugainternet.ru/
+Личный кабинет: https://cabinet.radugainternet.ru
 */
 
 function parseTrafficGbMy(str){

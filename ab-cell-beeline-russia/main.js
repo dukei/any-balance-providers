@@ -7,67 +7,6 @@
 Личный кабинет: https://uslugi.beeline.ru/
 */
 
-function getParam (html, result, param, regexp, replaces, parser) {
-	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
-		return;
-
-	var value = regexp.exec (html);
-	if (value) {
-		value = value[1];
-		if (replaces) {
-			for (var i = 0; i < replaces.length; i += 2) {
-				value = value.replace (replaces[i], replaces[i+1]);
-			}
-		}
-		if (parser)
-			value = parser (value);
-
-    if(param)
-      result[param] = value;
-    else
-      return value
-	}
-}
-
-function sumParam (html, result, param, regexp, replaces, parser, do_replace) {
-	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param))){
-            if(do_replace)
-  	        return html;
-            else
-                return;
-	}
-
-        var total_value;
-	var html_copy = html.replace(regexp, function(str, value){
-		for (var i = 0; replaces && i < replaces.length; i += 2) {
-			value = value.replace (replaces[i], replaces[i+1]);
-		}
-		if (parser)
-			value = parser (value);
-                if(typeof(total_value) == 'undefined')
-                	total_value = value;
-                else
-                	total_value += value;
-                return ''; //Вырезаем то, что заматчили
-        });
-
-    if(param){
-      if(typeof(total_value) != 'undefined'){
-          if(typeof(result[param]) == 'undefined')
-      	      result[param] = total_value;
-          else 
-      	      result[param] += total_value;
-      }
-      if(do_replace)
-          return html_copy;
-    }else{
-      return total_value;
-    }
-}
-
-var replaceTagsAndSpaces = [/<!--[\s\S]*?-->/g, '', /&nbsp;/g, ' ', /<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
-var replaceFloat = [/\s+/g, '', /,/g, '.'];
-
 var g_currency = {
       ru: "р",
       kz: "〒",
@@ -184,12 +123,6 @@ function parsePersonal(baseurl, html){
     AnyBalance.setResult(result);
 }
 
-function parseBalance(text){
-    var val = sumParam(text.replace(/\s+/g, ''), null, null, /(-?\d[\d.,]*)/, replaceFloat, parseFloat);
-    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
-    return val;
-}
-
 function getBalanceValue(html, text, parseFunc, result, counter){
     var regexp = new RegExp(text + '[\\s\\S]*?<td[\\s\\S]*?<td[^>]*>([^<]+)<', 'i');
     return getParam(html, result, counter, regexp, alltransformations, parseFunc);
@@ -211,9 +144,9 @@ function parseBalanceList(html, result){
     
     // Бонус-баланс
     if(AnyBalance.isAvailable('bonus_balance')){
-      sumParam(html, result, 'bonus_balance', /Бонус-баланс[\s\S]*?<td[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+      sumParam(html, result, 'bonus_balance', /Бонус-баланс[\s\S]*?<td[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
       //Узбекистан
-      sumParam(html, result, 'bonus_balance', /BEE_CLUB[\s\S]*?<td[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+      sumParam(html, result, 'bonus_balance', /BEE_CLUB[\s\S]*?<td[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     }
     
     // Бонус за опрос
@@ -223,19 +156,19 @@ function parseBalanceList(html, result){
       result.sms_left = 0;
       
       // SMS-баланс
-      sumParam(html, result, 'sms_left', /SMS-баланс[\s\S]*?<td[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+      sumParam(html, result, 'sms_left', /SMS-баланс[\s\S]*?<td[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
       // SMS в подарок
-      sumParam(html, result, 'sms_left', /SMS в подарок[\s\S]*?<td[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+      sumParam(html, result, 'sms_left', /SMS в подарок[\s\S]*?<td[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
       // Бесплатные SMS
-      sumParam(html, result, 'sms_left', /Бесплатные SMS[\s\S]*?<td[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+      sumParam(html, result, 'sms_left', /Бесплатные SMS[\s\S]*?<td[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
       // SMS Бонус  //Узбекистан
-      sumParam(html, result, 'sms_left', /SMS Бонус[\s\S]*?<td[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+      sumParam(html, result, 'sms_left', /SMS Бонус[\s\S]*?<td[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
       // Баланс SMS  //Узбекистан
-      sumParam(html, result, 'sms_left', /Баланс SMS[\s\S]*?<td[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+      sumParam(html, result, 'sms_left', /Баланс SMS[\s\S]*?<td[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
       // Пакет МН SMS  //Узбекистан
-      sumParam(html, result, 'sms_left', /Пакет МН SMS[\s\S]*?<td[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+      sumParam(html, result, 'sms_left', /Пакет МН SMS[\s\S]*?<td[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
       // Дополнительный SMS баланс  //Узбекистан
-      sumParam(html, result, 'sms_left', /Дополнительный SMS баланс[\s\S]*?<td[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+      sumParam(html, result, 'sms_left', /Дополнительный SMS баланс[\s\S]*?<td[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     }
 	
 	if(AnyBalance.isAvailable('sms_expiration')){
@@ -247,17 +180,32 @@ function parseBalanceList(html, result){
 
     if(AnyBalance.isAvailable('min_left')){
       // Бесплатные секунды
-      sumParam(html, result, 'min_left', /Бесплатные секунды[\s\S]*?<td[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+      sumParam(html, result, 'min_left', /Бесплатные секунды(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
       // Время в подарок
-      sumParam(html, result, 'min_left', /Время в подарок[\s\S]*?<td[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+      sumParam(html, result, 'min_left', /Время в подарок(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
       // БОНУС_СЕКУНДЫ
-      sumParam(html, result, 'min_left', /БОНУС_СЕКУНДЫ[\s\S]*?<td[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+      sumParam(html, result, 'min_left', /БОНУС_СЕКУНДЫ(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
       // Бонус секунды //Узбекистан
-      sumParam(html, result, 'min_left', /БОНУС СЕКУНДЫ[\s\S]*?<td[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+      sumParam(html, result, 'min_left', /БОНУС СЕКУНДЫ(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
       // Час в подарок //Узбекистан
-      sumParam(html, result, 'min_left', /Час в подарок[\s\S]*?<td[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+      sumParam(html, result, 'min_left', /Час в подарок(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
       // Баланс исходящих минут //Узбекистан
-      sumParam(html, result, 'min_left', /Баланс исходящих минут[\s\S]*?<td[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+      sumParam(html, result, 'min_left', /Баланс исходящих минут(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    }
+
+    if(AnyBalance.isAvailable('min_left_till')){
+      // Бесплатные секунды
+      sumParam(html, result, 'min_left_till', /Бесплатные секунды(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate, aggregate_min);
+      // Время в подарок
+      sumParam(html, result, 'min_left_till', /Время в подарок(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate, aggregate_min);
+      // БОНУС_СЕКУНДЫ
+      sumParam(html, result, 'min_left_till', /БОНУС_СЕКУНДЫ(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate, aggregate_min);
+      // Бонус секунды //Узбекистан
+      sumParam(html, result, 'min_left_till', /БОНУС СЕКУНДЫ(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate, aggregate_min);
+      // Час в подарок //Узбекистан
+      sumParam(html, result, 'min_left_till', /Час в подарок(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate, aggregate_min);
+      // Баланс исходящих минут //Узбекистан
+      sumParam(html, result, 'min_left_till', /Баланс исходящих минут(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate, aggregate_min);
     }
 
     if(AnyBalance.isAvailable('traffic')){
@@ -278,17 +226,6 @@ function parseBalanceList(html, result){
 
 function parseMinutes(str){
     return parseBalance(str)*60; //Переводим в секунды
-}
-
-function parseDate(str){
-    var matches = /(\d+)[^\d](\d+)[^\d](\d+)/.exec(str);
-    if(matches){
-          var date = new Date(+matches[3], matches[2]-1, +matches[1]);
-	  var time = date.getTime();
-          AnyBalance.trace('Parsing date ' + date + ' from value: ' + str);
-          return time;
-    }
-    AnyBalance.trace('Failed to parse date from value: ' + str);
 }
 
 //Билайн показывает старый расчетый период.
@@ -543,10 +480,10 @@ function parseCorporate(baseurl, html){
             
             AnyBalance.trace("Получаем расходы для номера: " + num)
             // Сколько использовано
-            sumParam (html, result, 'expences', /Общая сумма начислений[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-            sumParam (html, result, 'expencesTraffic', /Начисления за трафик[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-            sumParam (html, result, 'expencesAbon', /Абонентская плата[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-            sumParam (html, result, 'expencesInstant', /Разовые начисления[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+            getParam (html, result, 'expences', /Общая сумма начислений[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+            getParam (html, result, 'expencesTraffic', /Начисления за трафик[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+            getParam (html, result, 'expencesAbon', /Абонентская плата[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+            getParam (html, result, 'expencesInstant', /Разовые начисления[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
         }
           
       }
@@ -583,12 +520,4 @@ function parseCorporate(baseurl, html){
     }
     
     AnyBalance.setResult(result);
-}
-
-function html_entity_decode(str)
-{
-    //jd-tech.net
-    var tarea=document.createElement('textarea');
-    tarea.innerHTML = str;
-    return tarea.value;
 }

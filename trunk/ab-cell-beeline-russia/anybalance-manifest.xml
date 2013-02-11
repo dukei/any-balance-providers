@@ -32,6 +32,7 @@
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
+    <js>library.js</js>
     <js>main.js</js>
     <history>history.xml</history>
   </files>
@@ -42,6 +43,7 @@
     <counter id="min_left" name="Минуты" units="мин" type="time_interval"/>
     <counter id="sms_left" name="SMS" units="sms"/>
     <counter id="mms_left" name="MMS" units="mms"/>
+    <counter id="min_left_till" name="Срок действия пакета минут" type="time" format="dd/MM/yyyy"/>
     <counter id="expences" name="Потрачено за период (корп.)" units="р"/>
     <counter id="billsum" name="Сумма счета (корп.)" units="р"/>
     <counter id="billpay" name="Сумма к оплате (корп.)" units="р"/>

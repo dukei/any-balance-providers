@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-  <change major_version="2.1" version="30" date="2013-02-05">
+    <change major_version="2.1" version="31" date="2013-02-11">
+      - Добавлен счетчик "Срок действия пакета минут"
+    </change>
+    <change major_version="2.1" version="30" date="2013-02-05">
       - Исправлено отображение оставшегося объема трафика для казахстана в связи с изменением личного кабинета
     </change>
     <change major_version="2.1" version="29" date="2013-01-19">

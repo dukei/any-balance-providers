@@ -480,10 +480,10 @@ function parseCorporate(baseurl, html){
             
             AnyBalance.trace("Получаем расходы для номера: " + num)
             // Сколько использовано
-            getParam (html, result, 'expences', /Общая сумма начислений[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-            getParam (html, result, 'expencesTraffic', /Начисления за трафик[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-            getParam (html, result, 'expencesAbon', /Абонентская плата[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-            getParam (html, result, 'expencesInstant', /Разовые начисления[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+            sumParam (html, result, 'expences', /Общая сумма начислений[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+            sumParam (html, result, 'expencesTraffic', /Начисления за трафик[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+            sumParam (html, result, 'expencesAbon', /Абонентская плата[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+            sumParam (html, result, 'expencesInstant', /Разовые начисления[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
         }
           
       }

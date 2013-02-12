@@ -29,7 +29,7 @@ function main(){
         if(error)
             throw new AnyBalance.Error(error);
 
-        throw new AnyBalance.Error('Cant login. Is the site changed?');
+        throw new AnyBalance.Error('Can\'t login. Is the site changed?');
     }
 
 	var result = {success: true};

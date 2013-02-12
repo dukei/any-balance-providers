@@ -7,24 +7,22 @@
 Личный кабинет: http://billing.kgdttk.ru
 */
 
-function getTrafficGb(str){
-  var balance = parseBalance(str);
-  if(isset(balance))
-      return parseFloat((balance/1024).toFixed(2));
+function parseTrafficGbMy(str){
+    return parseTrafficGb(str, 'mb');
 }
 
 function main(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
 
-    var baseurl = "http://billing.kgdttk.ru/";
+    var baseurl = "http://stat.ok-internet.ru/";
 
     var html = AnyBalance.requestPost(baseurl + 'client/index.php', {
         login: prefs.login,
         password: prefs.password
     });
 
-    if(!/'devision',\s*'-1'/i.test(html)){
+    if(!/'devision',\s*-1/i.test(html)){
         var error = getParam(html, null, null, /<(form) [^>]*name="loginForm">/i);
         if(error)
             throw new AnyBalance.Error("Неверный логин или пароль");
@@ -35,7 +33,7 @@ function main(){
 
     getParam(html, result, 'userName', /Вы:<\/td>\s*<td[^>]*>(.*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     //Четвертая третья колонка в таблице под заголовком баланс
-    getParam(html, result, 'balance', /<td[^>]*>Баланс(?:[\S\s]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'balance', /<td[^>]*>Баланс(?:[\S\s]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 
     var re = new RegExp(prefs.login + '\\s*</a>\\s*</td>\\s*<td[^>]*>(.*?)</td>', 'i');
     getParam(html, result, '__tariff', re, replaceTagsAndSpaces, html_entity_decode);
@@ -58,9 +56,9 @@ function main(){
             day_till:dt.getDate()
         });
         re = new RegExp(prefs.login + '\\s*</a>\\s*</td>(?:[\\S\\s]*?<td[^>]*>){2}(.*?)</td>', 'i');
-        getParam(html, result, 'trafficIn', re, replaceTagsAndSpaces, getTrafficGb);
+        getParam(html, result, 'trafficIn', re, replaceTagsAndSpaces, parseTrafficGbMy);
         re = new RegExp(prefs.login + '\\s*</a>\\s*</td>(?:[\\S\\s]*?<td[^>]*>){3}(.*?)</td>', 'i');
-        getParam(html, result, 'trafficOut', re, replaceTagsAndSpaces, getTrafficGb);
+        getParam(html, result, 'trafficOut', re, replaceTagsAndSpaces, parseTrafficGbMy);
     }
 
     AnyBalance.setResult(result);

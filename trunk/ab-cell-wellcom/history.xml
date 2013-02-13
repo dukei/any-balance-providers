@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="3" date="2013-02-13">
+      Исправлен счетчик остатка трафика
+    </change>
     <change version="2" date="2013-02-12">
       Добавлен счетчик остатка трафика
     </change>

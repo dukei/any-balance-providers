@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-cell-wellcom</id>
+  <id version="3">ab-cell-wellcom</id>
   <name>Wellcom (Ростелеком, Томск)</name>
   <description>
     Получает баланс и информацию о тарифном плане для томского сотового оператора Wellcom, ныне Ростелеком - Томский филиал (http://wellcom.tomsk.ru).
@@ -25,7 +25,7 @@
     <counter id="status" name="Состояние" type="text"/>
     <counter id="licschet" name="Лицевой счет" type="text"/>
     <counter id="phone" name="Номер телефона" type="text"/>
-    <counter id="traffic" name="Остаток трафика" units=" Мб"/>
+    <counter id="traffic_left" name="Остаток трафика" units=" Мб"/>
   </counters>
   <keywords>
     интернет

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="12">ab-cell-intertelecom</id>
+  <id version="13">ab-cell-intertelecom</id>
   <name>Интертелеком</name>
   <description>
     Мониторинг баланса мобильного оператора Интертелекома, первого национального CDMA оператора Украины (http://www.intertelecom.ua). Получает данные из системы самообслуживания https://assa.intertelecom.ua.
@@ -21,17 +21,17 @@
     <counter id="predoplata" name="Предоплаченые услуги на месяц" suffix=" ₴" type="numeric"/>
     <counter id="bonus" name="Неактивированные бонусы (с 094)" suffix=" ₴" type="numeric"/>
     <counter id="min_local" name="Местные минуты" type="time_interval" format="{@H}:{@min}:{@sec}"/>
-    <counter id="bonus_pl" name="Бонус по программе лояльности «Наилучшее общение»" suffix=" ₴" type="numeric"/>
+    <counter id="bonus_pl" name="Бонус по программе лояльности «Наилучшее общение»" suffix=" ₴" type="numeric" flags="zero_when_empty"/>
     <counter id="traffic_paket" name="Пакетный трафик" units=" mb"/>
     <counter id="traffic_smart" name="Трафик Смартфон" units=" mb"/>
     <counter id="traffic_night" name="Трафик ночной" units=" mb"/>
-    <counter id="bonus_fb" name="Бонус facebook" suffix=" ₴" type="numeric"/>
-    <counter id="traffic_action" name="Трафик по акции" units=" mb"/>
+    <counter id="bonus_fb" name="Бонус facebook" suffix=" ₴" type="numeric" flags="zero_when_empty"/>
+    <counter id="traffic_action" name="Трафик по акции" units=" mb" flags="zero_when_empty"/>
     <counter id="date_activity" name="Дата последней абонентской активности" type="time" format="dd/MM/yyyy"/>
     <counter id="skidka" name="Размер скидки по программе лояльности «Наилучшее общение»" suffix="%" type="numeric"/>
     <counter id="loyalty" name="Лояльный стаж" type="time_interval" format="{@y}:{@mo}"/>
     <counter id="mobsubscr" name="Абонентский стаж" type="time_interval" format="{@y}:{@mo}"/>
-    <counter id="news" name="Новости" type="numeric"/>
+    <counter id="news" name="Новости" type="numeric" flags="zero_when_empty"/>
     <counter id="phonet" name="Номер телефона" type="text"/>
   </counters>
   <keywords>

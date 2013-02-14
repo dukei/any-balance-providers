@@ -65,8 +65,8 @@ function main(){
 		    AnyBalance.trace('Getting statistics');
 		    info = AnyBalance.requestGet(baseurl + 'cgi-bin/ppo/es_webface/statistic_user_pppoe.statistic_user?' + session + '&day1$c=01&day2$c=-1');
                 
-                    getParam(info, result, 'traffic_inner', /Наработка за период по типу трафика "ДОМашний трафик"[^<]*?:([^<]*)/i, replaceTagsAndSpaces, parseTraffic);
-                    getParam(info, result, 'traffic_outer', /Наработка за период по типу трафика "Интернет трафик"[^<]*?:([^<]*)/i, replaceTagsAndSpaces, parseTraffic);
+                    getParam(info, result, 'traffic_inner', /Наработка за период по типу трафика "ДОМашний трафик"[^<]*?:([^<]*)/i, replaceTagsAndSpaces, parseTrafficGb);
+                    getParam(info, result, 'traffic_outer', /Наработка за период по типу трафика "Интернет трафик"[^<]*?:([^<]*)/i, replaceTagsAndSpaces, parseTrafficGb);
                     getParam(info, result, 'last_session_end', /<td[^>]*>([^<]*)<\/td>\s*<td[^>]*>Интернет трафик<\/td>\s*<td[^>]*>.*?<\/td>\s*<\/tr>\s*<tr[^>]+bgcolor="red"[^>]*>/i, replaceTagsAndSpaces, html_entity_decode);
                     getParam(info, result, 'contract_type', /Ваш договор:[\s\S]*?\(([\s\S]*?)\)\s*<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
                 }

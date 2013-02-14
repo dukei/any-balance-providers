@@ -37,6 +37,10 @@ function main(){
 
     AnyBalance.setDefaultCharset('utf-8');
 //    var html = AnyBalance.requestGet(baseurl + "c/portal/login?k=2");
+//    AnyBalance.requestPost(baseurl + "PT_SML_AA_CALoginPortlet_v1.1-portlet/GetMode", {
+//        u_name:prefs.login,
+ //       u_password:prefs.password
+  //  }, {Referer: baseurl + 'c/portal/login?k=2'});
 
     var html = AnyBalance.requestPost(baseurl + "c/portal/login?cmd=login&redirect=https://webcare.tele2.ru/c&fail_redirect=https://webcare.tele2.ru/group/public/login?p_p_id=AACALoginPortlet_WAR_PT_SML_AA_CALoginPortlet_v11portlet&p_p_lifecycle=0&p_p_state=normal&p_p_mode=view&p_p_col_id=column-1&p_p_col_count=1", {
         j_username: prefs.login,

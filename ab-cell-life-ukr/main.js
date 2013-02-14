@@ -14,6 +14,14 @@ function parseBalanceLeft(str){
     return val;
 }
 
+function parseTrafficMbLeft(str){
+    var val = parseTrafficMb(str);
+    if(isset(val)){
+        val = 50 + val; //По условиям Интернета за копейку для Востока
+    }
+    return val;
+}
+
 function createParams(params){
     var str = '';
     for(var param in params){
@@ -153,8 +161,12 @@ function mainApi(){
         
 	//Подарочный трафик
         sumParam(xml, result, 'gprs', /<balance[^>]+code="FreeGprs[^>]*amount="([^"]*)/ig, replaceTagsAndSpaces, parseTrafficMb, aggregate_sum);
-	//Трафик
-	sumParam(xml, result, 'gprs', /<balance[^>]+code="Bundle_Gprs[^>]*amount="([^"]*)/ig, replaceTagsAndSpaces, parseTrafficMb, aggregate_sum);
+	//Трафик пакетный
+	sumParam(xml, result, 'gprs', /<balance[^>]+code="Bundle_Gprs_All"[^>]*amount="([^"]*)/ig, replaceTagsAndSpaces, parseTrafficMb, aggregate_sum);
+	//Трафик в Безумном дне
+	sumParam(xml, result, 'gprs', /<balance[^>]+code="Bundle_Gprs_Internet_Youth"[^>]*amount="([^"]*)/ig, replaceTagsAndSpaces, parseTrafficMb, aggregate_sum);
+	//Трафик Интернет за копейку для Востока
+	sumParam(xml, result, 'gprs', /<balance[^>]+code="Bundle_Gprs_Internet_Kopiyka"[^>]*amount="([^"]*)/ig, replaceTagsAndSpaces, parseTrafficMbLeft, aggregate_sum);
 	//Подарочные MMS в сети Life:)
         sumParam(xml, result, 'mms_life', /<balance[^>]+code="FreeMms[^>]*amount="([^"]*)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	//MMS в сети Life:)

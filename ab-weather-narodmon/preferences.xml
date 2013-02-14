@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference
+        title="Номер датчика"
+        positiveButtonText="ОК"
+        summary="Номер датчика с сайта"
+        dialogTitle="Номер датчика"
+        negativeButtonText="Отмена"
+        dialogMessage="Выберите нужный датчик на сайте http://narodmon.ru. После id= идет номер датчика."
+        key="number">
+    </EditTextPreference>
+</PreferenceScreen>

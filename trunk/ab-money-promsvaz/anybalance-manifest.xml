@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-money-promsvaz</id>
+  <id version="2">ab-money-promsvaz</id>
   <name>Промсвязьбанк</name>
   <description>
     Получает текущий остаток и другие параметры карт Промсвязьбанка, используя интернет-банк. Для пользования этим провайдером 
@@ -15,17 +15,23 @@
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
+    <history>history.xml</history>
+    <js>moment.min.js</js>
+    <js>moment.lang.ru.min.js</js>
+    <js>library.js</js>
     <js>main.js</js>
     <js>api:jquery.min.js</js>
   </files>
   <counters>
-    <counter id="balance" name="Остаток"/>
-    <counter id="currency" name="Валюта" type="text"/>
+    <counter id="balance" name="Остаток" units=" {@currency}"/>
+    <counter id="till" name="Срок действия" type="time" format="dd/MM/yyyy"/>
+    <counter id="income" name="Ожидаемый доход" units=" {@currency}"/>
     <counter id="cardnum" name="Номер карты" type="text"/>
     <counter id="type" name="Тип карты" type="text"/>
-    <counter id="balance_own" name="Собственные средства"/>
-    <counter id="blocked" name="Заблокировано"/>
+    <counter id="balance_own" name="Собственные средства" units=" {@currency}"/>
+    <counter id="blocked" name="Заблокировано" units=" {@currency}"/>
     <counter id="accnum" name="Номер счета" type="text"/>
+    <counter id="currency" name="Валюта" type="text"/>
   </counters>
   <keywords>
     промсвязьбанк, промсвязь, psb retail
@@ -33,4 +39,7 @@
   <type>
     money
   </type>
+  <country>
+    ru
+  </country>
 </provider>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-money-vbank</id>
+  <id version="2">ab-money-vbank</id>
   <name>Банк Возрождение</name>
   <description>
     Получает остаток и другие параметры карт банка Возрождение (http://www.vbank.ru) из системы «Vbank с тобой» https://online.bankcard.ru.

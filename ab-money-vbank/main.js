@@ -91,6 +91,10 @@ function main(){
         var error = getParam(html, null, null, /<div[^>]class="error"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
         if(error)
             throw new AnyBalance.Error(error);
+        if(/changepassword.aspx/i.test(html)){
+            AnyBalance.requestGet(baseurl + 'logout.aspx'); //На всякий случай попробуем выйти, но вообще-то ничего кроме смены пароля сделать почему-то нельзя...
+            throw new AnyBalance.Error('Банк требует сменить пароль. Пожалуйста, зайдите в интернет-банк https://online.bankcard.ru через браузер, смените пароль, а затем введите новый пароль в настройки провайдера.');
+        }
         throw new AnyBalance.Error("Не удалось зайти в интернет-банк. Сайт изменился?");
     }
 

@@ -47,9 +47,9 @@ function main(){
     getParam(html, result, 'balance', /&#1058;&#1077;&#1082;&#1091;&#1097;&#1080;&#1081; &#1073;&#1072;&#1083;&#1072;&#1085;&#1089; &#1089;&#1095;&#1077;&#1090;&#1072;([^<]*)/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'agreement', /№ лицевого счёта:([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'lastdate', /Информация о последнем платеже[\s\S]*?<tbody[^>]*>(?:[\s\S]*?<td[^>]*>){1}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
-    getParam(html, result, 'lastcounter', /Информация о последнем платеже[\s\S]*?<tbody[^>]*>(?:[\s\S]*?<td[^>]*>){3}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'lastcounter1', /Информация о последнем платеже(?:[\s\S](?!<\/table>))*?<tbody[^>]*>(?:(?:[\s\S](?!Итого))*?<td[^>]*>){6}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'lastcounter2', /Информация о последнем платеже(?:[\s\S](?!<\/table>))*?<tbody[^>]*>(?:(?:[\s\S](?!Итого))*?<td[^>]*>){9}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'lastcounter', /История показаний счетчика[\s\S]*?<tbody[^>]*>(?:[\s\S]*?<td[^>]*>){3}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'lastcounter1', /История показаний счетчика(?:[\s\S](?!<\/table>))*?<tbody[^>]*>(?:(?:[\s\S](?!<\/table))*?<td[^>]*>){7}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'lastcounter2', /История показаний счетчика(?:[\s\S](?!<\/table>))*?<tbody[^>]*>(?:(?:[\s\S](?!<\/table))*?<td[^>]*>){11}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'lastsum', /Информация о последнем платеже[\s\S]*?<tbody[^>]*>[\s\S]*?Итого(?:[\s\S]*?<td[^>]*>){2}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 
     getParam(html, result, '__tariff', /№ лицевого счёта:([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);

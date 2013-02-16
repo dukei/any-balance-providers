@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-money-promsvaz</id>
+  <id version="3">ab-money-promsvaz</id>
   <name>Промсвязьбанк</name>
   <description>
     Получает текущий остаток и другие параметры карт Промсвязьбанка, используя интернет-банк. Для пользования этим провайдером 

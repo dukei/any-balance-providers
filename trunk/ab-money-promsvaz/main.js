@@ -87,15 +87,17 @@ function fetchCard(baseurl, html){
         throw new AnyBalance.Error("Надо указывать 4 последних цифры карты или не указывать ничего");
     
     //Инфа о счетах схлопнута, а надо её раскрыть
-    html = AnyBalance.requestPost(baseurl + '/n/Main/Home.aspx', {
-        ctl00$ScriptManager:'ctl00$main$upCards|ctl00$main$cardList',
-        __EVENTTARGET:'ctl00$main$cardList',
-        __EVENTARGUMENT:'exp',
-        __VIEWSTATE:viewstate,
-        __EVENTVALIDATION:eventvalidation,
-        __VIEWSTATEENCRYPTED:'',
-        __ASYNCPOST:true
-    });
+    if(!/<[^>]+infoSectionHeaderExpanded[^>]+ctl00_main_cardList_Header/i.test(html)){
+        html = AnyBalance.requestPost(baseurl + '/n/Main/Home.aspx', {
+            ctl00$ScriptManager:'ctl00$main$upCards|ctl00$main$cardList',
+            __EVENTTARGET:'ctl00$main$cardList',
+            __EVENTARGUMENT:'exp',
+            __VIEWSTATE:viewstate,
+            __EVENTVALIDATION:eventvalidation,
+            __VIEWSTATEENCRYPTED:'',
+            __ASYNCPOST:true
+        });
+    }
 
     var lastdigits = prefs.lastdigits ? prefs.lastdigits : '\\d{4}';
     
@@ -141,7 +143,7 @@ function fetchAccount(baseurl, html){
         throw new AnyBalance.Error("Надо указывать от 4 последних цифр счета или не указывать ничего");
     
     if(!/<[^>]+infoSectionHeaderExpanded[^>]+ctl00_main_accountList_Header/i.test(html)){
-        var html = AnyBalance.requestPost(baseurl + '/n/Main/Home.aspx', {
+        html = AnyBalance.requestPost(baseurl + '/n/Main/Home.aspx', {
             ctl00$ScriptManager:'ctl00$main$upAccounts|ctl00$main$accountList',
             __EVENTTARGET:'ctl00$main$accountList',
             __EVENTARGUMENT:'exp',
@@ -161,7 +163,7 @@ function fetchAccount(baseurl, html){
     var lastdigits = prefs.lastdigits ? prefs.lastdigits : '\\d{4}';
     
     var $html = $('<div>' + html + '</div>');
-    var $card = $html.find("#ctl00_main_upAccounts div.infoUnit").filter(function(){
+    var $card = $html.find("#ctl00_main_accountList div.infoUnit").filter(function(){
         var num = replaceAll($('.infoUnitObject', this).first().text(), replaceTagsAndSpaces);
         return re.test(num);
     }).first();
@@ -212,7 +214,7 @@ function fetchDeposit(baseurl, html){
     var viewstate = getViewState(html);
     
     if(!/<[^>]+infoSectionHeaderExpanded[^>]+ctl00_main_depositList_Header/i.test(html)){
-        var html = AnyBalance.requestPost(baseurl + '/n/Main/Home.aspx', {
+        html = AnyBalance.requestPost(baseurl + '/n/Main/Home.aspx', {
             ctl00$ScriptManager:'ctl00$main$upDeposits|ctl00$main$depositList',
             __EVENTTARGET:'ctl00$main$depositList',
             __EVENTARGUMENT:'exp',
@@ -225,7 +227,7 @@ function fetchDeposit(baseurl, html){
 
     //Сколько цифр осталось, чтобы дополнить до 20
     var $html = $('<div>' + html + '</div>');
-    var $card = $html.find("#ctl00_main_upDeposits div.twoColumnBlock").filter(function(){
+    var $card = $html.find("#ctl00_main_depositList div.twoColumnBlock").filter(function(){
         var num = replaceAll($('.twoColumnBlockCaption', this).first().text(), replaceTagsAndSpaces);
         return prefs.lastdigits ? num.indexOf(prefs.lastdigits) >= 0 : true;
     }).first();

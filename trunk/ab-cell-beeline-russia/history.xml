@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-    <change major_version="2.1" version="33" date="2013-02-16">
+    <change major_version="2.1" version="34" date="2013-02-16">
       - Сообщение об ошибке при недоступности сайта
     </change>
     <change major_version="2.1" version="32" date="2013-02-13">

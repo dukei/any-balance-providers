@@ -49,6 +49,10 @@ function main(){
     var unavailable = getParam(html, null, null, /<font[^>]+color\s*=\s*['"]?#666666[^>]*>\s*(Система временно недоступна[\s\S]*?)<\/font>/i, replaceTagsAndSpaces, html_entity_decode);
     if(unavailable)
         throw new AnyBalance.Error(unavailable);
+    if(/РџРѕР¶Р°Р»СѓР№СЃС‚Р°, РїРѕРІС‚РѕСЂРёС‚Рµ РїРѕРїС‹С‚РєСѓ РїРѕР·РґРЅРµРµ/.test(html)){
+        //Система временно недоступна на UTF-8. Почему-то заглушка в UTF-8
+        throw new AnyBalance.Error('Сайт личного кабинета Билайн временно недоступен. Билайн приносит извинения за временные неудобства.');
+    }
 
     AnyBalance.trace("Trying to enter selfcare at address: " + baseurl);
     var html = AnyBalance.requestPost(baseurl + "loginPage.do", {

@@ -46,6 +46,10 @@ function main(){
     if(/<h1[^>]*>[^<]*Gateway Time-out/i.test(html))
 	throw new AnyBalance.Error('Сайт личного кабинета Билайн временно не работает. Пожалуйста, попробуйте позже.');
 
+    var unavailable = getParam(html, null, null, /<font[^>]+color\s*=\s*['"]?#666666[^>]*>\s*(Система временно недоступна[\s\S]*?)<\/font>/i, replaceTagsAndSpaces, html_entity_decode);
+    if(unavailable)
+        throw new AnyBalance.Error(unavailable);
+
     AnyBalance.trace("Trying to enter selfcare at address: " + baseurl);
     var html = AnyBalance.requestPost(baseurl + "loginPage.do", {
         _stateParam:'eCareLocale.currentLocale=ru_RU__Russian',

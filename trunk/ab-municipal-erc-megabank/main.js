@@ -44,6 +44,7 @@ function htmlDecode(input){
 //------------------------------------------------------------------------------
 
 function main(){
+  AnyBalance.setDefaultCharset('utf-8');
   var prefs = AnyBalance.getPreferences();
   var baseurl = 'https://erc.megabank.net/';
   var headers = {
@@ -194,6 +195,15 @@ function main(){
     result.ukrtelekom = Math.round((debt_tmp - paid1_tmp - paid2_tmp)*100)/100;
   }
 
+  // Воля
+  if(AnyBalance.isAvailable('volya', 'debt')){
+    //AnyBalance.trace('volya');
+    var debt_tmp=getParam(html_table, result, false, /&#1042;&#1054;&#1051;&#1071;. &#1058;&#1045;&#1051;&#1045;&#1050;&#1054;&#1052;&#1052;&#1059;&#1053;&#1048;&#1050;&#1040;&#1062;. &#1059;&#1057;&#1051;&#1059;&#1043;&#1048;(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    var paid1_tmp=getParam(html_table, result, false, /&#1042;&#1054;&#1051;&#1071;. &#1058;&#1045;&#1051;&#1045;&#1050;&#1054;&#1052;&#1052;&#1059;&#1053;&#1048;&#1050;&#1040;&#1062;. &#1059;&#1057;&#1051;&#1059;&#1043;&#1048;(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    var paid2_tmp=getParam(html_table, result, false, /&#1042;&#1054;&#1051;&#1071;. &#1058;&#1045;&#1051;&#1045;&#1050;&#1054;&#1052;&#1052;&#1059;&#1053;&#1048;&#1050;&#1040;&#1062;. &#1059;&#1057;&#1051;&#1059;&#1043;&#1048;(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    result.volya = Math.round((debt_tmp - paid1_tmp - paid2_tmp)*100)/100;
+  }
+
   // Общий долг
   if(AnyBalance.isAvailable('debt')){
     result.debt = 0
@@ -205,6 +215,7 @@ function main(){
     if(result.gas>0) result.debt += result.gas;
     if(result.garbage>0) result.debt += result.garbage;
     if(result.ukrtelekom>0) result.debt += result.ukrtelekom;
+    if(result.volya>0) result.debt += result.volya;
     result.debt = Math.round(result.debt*100)/100;
   }
 

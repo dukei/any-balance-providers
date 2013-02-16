@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change major_version="3" version="21" date="2013-02-16">
+       - Добавлена Чувашия
+    </change>
     <change major_version="3" version="20" date="2013-01-31">
        - Исправлена Самара в некоторых случаях
     </change>

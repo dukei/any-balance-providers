@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-tracking-4px</id>
+  <name>4px Express</name>
+  <description>
+    Delivery tracking for 4px Express (China). The info is obtained from site http://en.4px.com/.
+    It is preferable to show Summary info in text widget of size 1x2 or more.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <js>library.js</js>
+    <js>main.js</js>
+    <preferences>preferences.xml</preferences>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="fulltext" name="Summary" type="html"/>
+    <counter id="date" name="Date" type="time"/>
+    <counter id="status" name="Status" type="text"/>
+    <counter id="track" name="Track ID" type="text"/>
+    <counter id="dest" name="Destination" type="text"/>
+    <counter id="pod" name="POD" type="text"/>
+  </counters>
+  <keywords>
+    Почтовое отправление, почта Китая
+  </keywords>
+  <type>
+    tracking, post
+  </type>
+</provider>

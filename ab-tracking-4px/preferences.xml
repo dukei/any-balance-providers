@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Tracking number" 
+        positiveButtonText="OK" 
+        summary="|Enter the whole number without spaces or delimiters|{@s}" 
+        dialogTitle="Tracking number" 
+        negativeButtonText="Cancel" 
+        dialogMessage="Please enter your tracking number without spaces or delimiters"
+        key="track_id">
+    </EditTextPreference>
+</PreferenceScreen>

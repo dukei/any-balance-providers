@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Ник" 
+        positiveButtonText="OK" 
+        summary="|Введите ваш ник|{@s}" 
+        dialogTitle="Номер телефона" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите ваш ник на gambler.ru"
+        inputType="text"
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="OK"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="||***********\n"
+        dialogMessage="Введите пароль для входа в личный кабинет."
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

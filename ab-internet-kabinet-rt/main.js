@@ -80,11 +80,22 @@ function main(){
         var acc = null;
         if(num){
             //Если num непустой, то ищем аккаунт с этим номером
+            accsearch:
             for(var j=0; j<accinfo.accounts.length; ++j){
                 var _acc = accinfo.accounts[j];
                 if(endsWith(_acc.number, num)){
                     acc = _acc;
                     break;
+                }
+                if(_acc.services){
+                    //Если не нашли по номеру л/с, то ищем по номеру телефона
+                    for(var j1=0; j1<_acc.services.length; ++j1){
+                        var _service = _acc.services[j1];
+                        if(endsWith(_service.number, num)){
+                    	    acc = _acc;
+                            break accsearch;
+                        }
+                    }
                 }
             }
         }else{
@@ -97,39 +108,75 @@ function main(){
                 not_found[not_found.length] = num;
                 AnyBalance.trace('Аккаунт, оканчивающийся на ' + num + ' не найден.');
             }
-            break;
+            continue;
         }
 
-        AnyBalance.trace('Получаем данные для л/с: ' + acc.number);
-        html = AnyBalance.requestPost(baseurl + 'serverLogic/getAccountInfo', {account: acc.id}, g_headers);
-        json = getJson(html);
+        var suffix = i ? i : '';
 
-        acc.__detailedInfo = json;
-        
-        if(i < 4){
-            var suffix = i ? i : '';
+        if(AnyBalance.isAvailable('totalBalancePlus', 'totalBalanceMinus') || 
+           (i < 4 && AnyBalance.isAvailable('balance' + suffix, 'bonus' + suffix, 'sms' + suffix, 'mms' + suffix, 'min' + suffix, 'gprs' + suffix, 'status' + suffix, 'licschet' + suffix, 'name' + suffix, 'phone' + suffix))){
+
+            AnyBalance.trace('Получаем данные для л/с: ' + acc.number);
+            html = AnyBalance.requestPost(baseurl + 'serverLogic/getAccountInfo', {account: acc.id}, g_headers);
+            json = getJson(html);
+    
+            acc.__detailedInfo = json;
+
+            var balance = getAccBalance(json);
             
-            if(AnyBalance.isAvailable('balance'))
-                result['balance' + suffix] = json.balance/100;
-            
-            var statuses = []; 
-            for(var j=0; json.services && j<json.services.length; ++j){
-                var service = json.services[j];
-                tariffs[tariffs.length] = service.typeString + ': ' + service.tariff.tarName;
-                statuses[statuses.length] = service.typeString + ': ' + g_ServiceStatus[service.status];
+            if(i < 4){
+                if(AnyBalance.isAvailable('balance' + suffix))
+                    result['balance' + suffix] = balance;
+                
+                var statuses = [], names = [], bonuses = [], phones = [], sms = [], mms = [], gprs = []; 
+                for(var j=0; json.services && j<json.services.length; ++j){
+                    var service = json.services[j];
+                    tariffs.push(service.typeString + ': ' + service.tariff.tarName);
+                    statuses.push(g_ServiceStatus[service.status]);
+                    if(service.alias)
+                        names.push(service.alias);
+                    phones.push(service.number);
+    
+                    if(AnyBalance.isAvailable('bonus' + suffix)){
+                        var jsonBonus = getJson(AnyBalance.requestPost(baseurl + 'serverLogic/getBonusProgramStatus', {serviceId: service.id}, g_headers));
+                        if(jsonBonus.balance)
+                            bonuses.push(parseInt(jsonBonus.balance));
+                    }
+                    if(AnyBalance.isAvailable('sms' + suffix, 'mms' + suffix, 'min' + suffix, 'gprs' + suffix)){
+                        var jsonPackets = getJson(AnyBalance.requestPost(baseurl + 'serverLogic/viewCurrentBonus', {serviceId: service.id}, g_headers));
+                        if(jsonPackets.bonusCurrent){
+                            for(var j1=0; j1<jsonPackets.bonusCurrent.length; ++j1){
+                                var _packet = jsonPackets.bonusCurrent[j1];
+                                sumParam(_packet.currentCount, result, 'sms'+suffix, /(\d+)\s*SMS/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+                                sumParam(_packet.currentCount, result, 'mms'+suffix, /(\d+)\s*MMS/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+                                sumParam(_packet.currentCount, result, 'min'+suffix, /(\d+)\s*мин/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+                                sumParam(_packet.currentCount, result, 'gprs'+suffix, /([\d.,]+)\s*(?:[мmkкгg][бb]|байт|bytes)/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+                            }
+                        }
+                    }
+                }
+    
+                if(AnyBalance.isAvailable('status' + suffix) && statuses.length > 0)
+                    result['status' + suffix] = statuses.join(', ');
+                
+                if(AnyBalance.isAvailable('licschet' + suffix))
+                    result['licschet' + suffix] = acc.number;
+    
+                if(AnyBalance.isAvailable('name' + suffix) && names.length > 0)
+                    result['name' + suffix] = names.join(', ');
+    
+                if(AnyBalance.isAvailable('phone' + suffix) && phones.length > 0)
+                    result['phone' + suffix] = phones.join(', ');
+    
+                if(AnyBalance.isAvailable('bonus' + suffix) && bonuses.length > 0)
+                    result['bonus' + suffix] = aggregate_sum(bonuses);
             }
-
-            if(AnyBalance.isAvailable('status') && statuses.length > 0)
-                result['status' + suffix] = statuses.join(', ');
-            
-            if(AnyBalance.isAvailable('licschet'))
-                result['licschet' + suffix] = acc.number;
+    
+            if(balance > 0)
+                totalBalancePlus += balance;
+            else
+                totalBalanceMinus += balance;
         }
-
-        if(json.balance > 0)
-            totalBalancePlus += json.balance/100;
-        else
-            totalBalanceMinus += json.balance/100;
     }
 
     if(tariffs.length)
@@ -159,4 +206,21 @@ function main(){
     }
 
     AnyBalance.setResult(result);
+}
+
+function getAccBalance(json){
+    //Баланс может быть разбит на суббалансы
+    var balance;
+    if((!isset(json.balance) || json.balance==null) && json.subAccounts){
+        for(var i=0; i<json.subAccounts.length; ++i){
+            var acc = json.subAccounts[i];
+            if(isset(acc.balance) && acc.balance!=null){
+                if(!isset(balance)) balance = 0;
+                balance += parseInt(acc.balance/100);
+            }
+        }
+    }else{
+        balance = json.balance/100;
+    }
+    return balance;
 }

@@ -674,7 +674,7 @@ function megafonServiceGuidePhysical(filial, sessionid){
     while(matches = reOption.exec(text)){
         var name = getParam(matches[1], null, null, /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
         //Ищем в таблице скидок строки вида: 39:00 мин   39:00, что означает Всего, Остаток
-        var p = /<div class="td_def">\s*(\d+)(?::(\d+))?[^<]*&#1084;&#1080;&#1085;[^<]*<[^&#;\d]*<div class="td_def">(\d+)(?::(\d+))?/i.exec(matches[1]);
+        var p = /<div class="td_def">\s*(\d+)(?::(\d+))?[^<]*(?:&#1052;|&#1084;)&#1080;&#1085;[^<]*<[^&#;\d]*<div class="td_def">(\d+)(?::(\d+))?/i.exec(matches[1]);
         if(p){ //Это минуты, надо бы их рассортировать
              if(/мин на МТС Билайн Скай Линк/i.test(name))
                  sumOption(matches[1], result, 'mins_compet_total', 'mins_compet_left', '.', parseMinutes);

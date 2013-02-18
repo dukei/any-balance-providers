@@ -547,6 +547,7 @@ function mainLK(allowRetry){
             if(getParam(html, null, null, /(auth-status=0)/i))
                 throw new AnyBalance.Error('Неверный логин или пароль. Повторите попытку или получите новый пароль на сайте https://lk.ssl.mts.ru/.', false);
         
+            AnyBalance.trace(html);
             throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Он изменился или проблемы на сайте.', allowRetry);
         }
     }catch(e){

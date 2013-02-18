@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="3">ab-cell-mts-by</id>
+  <id version="4">ab-cell-mts-by</id>
   <name>МТС (Беларусь)</name>
   <description>
     Получает баланс, информацию о расходах, статус блокировки, кредит, номер лицевого счета, ежемесячую плату. 
@@ -19,6 +19,7 @@
   </files>
   <counters>
     <counter id="balance" name="Баланс" units="р"/>
+    <counter id="bonus" name="Бонусные баллы" units="б"/>
     <counter id="min_local" name="Локальные и мобильные минуты" units="мин"/>
     <counter id="min_love" name="Любимые минуты" units="мин"/>
     <counter id="min_left" name="Бесплатные минуты" units="мин"/>

@@ -20,6 +20,14 @@
         dialogMessage="Введите пароль, используемый для входа в Интернет-Помощник"
         inputType="textPassword">
     </EditTextPreference>
+    <ListPreference 
+        key="type" 
+        title="Личный кабинет"
+        summary="|Автоматически|{@s}\n"
+        entries="Автоматически|Мобильный интернет-помощник|Обычный интернет-помощник"
+        entryValues="auto|mobile|ordinary"
+	defaultValue="auto">
+    </ListPreference>
     <EditTextPreference 
         positiveButtonText="ОК"
         key="phone" 

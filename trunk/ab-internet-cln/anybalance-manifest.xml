@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-internet-cln</id>
+  <name>CLN (Москва)</name>
+  <description>
+    Получает баланс и информацию о тарифном плане для московского интернет-провайдера CLN (Convergent Local Networks) (http://www.cln.net). Информация берется из личного кабинета https://billing.cln.net.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="status" name="Состояние" type="text"/>
+    <counter id="traffic" name="Трафик" units="Гб"/>
+    <counter id="abon" name="Абонентская плата" units="р"/>
+    <counter id="quota" name="Квота" units="Кбит/с"/>
+    <counter id="lastpaysum" name="Последний платеж" units="р"/>
+    <counter id="lastpaydate" name="Дата последнего платежа" type="time" format="dd/MM/yyyy"/>
+    <counter id="lastpaydesc" name="Информация о последнем платеже" type="text"/>
+    <counter id="userName" name="ФИО" type="text"/>
+  </counters>
+  <keywords>
+    клн
+  </keywords>
+  <type>
+    internet
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

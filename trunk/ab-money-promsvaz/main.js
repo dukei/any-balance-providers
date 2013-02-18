@@ -243,7 +243,7 @@ function fetchDeposit(baseurl, html){
     getParam($card.find(".depositBalanceAmount").text(), result, 'balance', /(.*)/, replaceTagsAndSpaces, parseBalance);
     getParam($card.find(".depositBalanceAmount").text(), result, ['currency', 'balance', 'income'], /(.*)/, replaceTagsAndSpaces, parseCurrency);
     
-    if(AnyBalance.isAvailable('accnum')){
+    if(AnyBalance.isAvailable('accnum','income')){
         eventvalidation = getEventValidation1(html);
         viewstate = getViewState1(html);
         

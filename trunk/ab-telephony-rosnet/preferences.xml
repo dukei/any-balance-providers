@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Номер телефона" 
+        positiveButtonText="OK" 
+        summary="|Введите 7 цифр вашего телефона|{@s}" 
+        dialogTitle="Номер телефона" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите 7 цифр вашего номер телефона, например, 6234567"
+        inputType="number"
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="OK"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="||***********\n"
+        dialogMessage="Введите пароль для входа в личный кабинет."
+        inputType="textPassword">
+    </EditTextPreference>
+    <ListPreference 
+        key="type" 
+        title="Кабинет клиента"
+        summary="||{@s}\n"
+        entries="Непростой номер(аванс)"
+        entryValues="4"
+	defaultValue="4">
+    </ListPreference>
+</PreferenceScreen>

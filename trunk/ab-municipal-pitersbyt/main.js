@@ -40,6 +40,7 @@ function gwtGetJSON(str){
 
 function main(){
     var baseurl = 'http://ikus.pesc.ru:8080/IKUSUser/';
+//    var baseurl = 'https://ikus.pes.spb.ru/IKUSUser/';
     AnyBalance.setDefaultCharset('utf8');    
     var prefs = AnyBalance.getPreferences();
 	
@@ -52,7 +53,14 @@ function main(){
         { 
           'Content-Type': 'text/x-gwt-rpc; charset=UTF-8', 
           'X-GWT-Module-Base':baseurl + 'gwt/personalAccountAuth/',
-          'X-GWT-Permutation':gwtGetStrongName(html)
+          'X-GWT-Permutation':gwtGetStrongName(html),
+//          'Origin': 'http://ikus.pesc.ru:8080',
+//          'Referer':baseurl,
+//          'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.57 Safari/537.17',
+//          'Accept': '*/*',
+//          'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+//          'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3'
+
         }
     );
 

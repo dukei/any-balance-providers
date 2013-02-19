@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-municipal-nskenergo</id>
+  <id version="2">ab-municipal-nskenergo</id>
   <name>Новосибирскэнергосбыт</name>
   <description>
     Получает баланс и информацию о последнем платеже в НовосибирскЭнергоСбыт. Получает данные из личного кабинета https://narod.nskes.ru.
@@ -16,14 +16,20 @@
     <history>history.xml</history>
   </files>
   <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="pen" name="Пеня" units="р"/>
+    <counter id="balance" name="Баланс (Электричество)" units="р"/>
+    <counter id="pen" name="Пеня (Электричество)" units="р"/>
+    <counter id="lastpaydate" name="Дата последнего платежа (Электричество)" type="time" format="dd/MM/yyyy"/>
+    <counter id="balance_otop" name="Баланс (Отопление)" units="р"/>
+    <counter id="pen_otop" name="Пеня (Отопление)" units="р"/>
+    <counter id="lastpaydate_otop" name="Дата последнего платежа (Отопление)" type="time" format="dd/MM/yyyy"/>
+    <counter id="balance_gor" name="Баланс (ГВ)" units="р"/>
+    <counter id="pen_gor" name="Пеня (ГВ)" units="р"/>
+    <counter id="lastpaydate_gor" name="Дата последнего платежа (ГВ)" type="time" format="dd/MM/yyyy"/>
+    <counter id="indication" name="Показания счетчика (Электричество)" units="Квт*ч"/>
     <counter id="fio" name="ФИО" type="text"/>
-    <counter id="lastpaydate" name="Дата последнего платежа" type="time" format="dd/MM/yyyy"/>
-    <counter id="indication" name="Показания счетчика" units="Квт*ч"/>
   </counters>
   <keywords>
-    новосибирскэнерго, новосибирск, электричество
+    новосибирскэнерго, новосибирск, электричество, горячая вода, отопление
   </keywords>
   <type>
     municipal

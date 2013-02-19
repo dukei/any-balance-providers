@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-municipal-krasnog</id>
+  <name>Красногорье-ДЭЗ</name>
+  <description>
+    Получает сумму долга и информацию о последнем платеже в Красногорье-ДЭЗ (http://www.lenina45.ru). Получает данные из личного кабинета (http://krc.lenina45.ru).
+
+    Если у вас еще нет доступа к этому личному кабинету, зарегистрируйтесь здесь: http://krc.lenina45.ru/Register.aspx. 
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+    <js>library.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Долг" units="р"/>
+    <counter id="charge" name="Начисление" units="р"/>
+    <counter id="recomp" name="Перерасчет" units="р"/>
+    <counter id="lastpay" name="Последний платеж" units="р"/>
+    <counter id="lastpaydate" name="Дата последнего платежа" type="time" format="dd/MM/yyyy"/>
+    <counter id="fio" name="ФИО" type="text"/>
+  </counters>
+  <keywords>
+    
+  </keywords>
+  <type>
+    municipal
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

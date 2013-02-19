@@ -19,6 +19,9 @@ var g_headers = {
     'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.60 Safari/537.1'
 };
 
+function getViewState(html){
+    return getParam(html, null, null, /name="__VIEWSTATE".*?value="([^"]*)"/);
+}
 
 function mainOrdinary(){
     var prefs = AnyBalance.getPreferences();

@@ -19,4 +19,12 @@
         dialogMessage="Введите пароль, используемый для входа в личный кабинет"
         inputType="textPassword">
     </EditTextPreference>
+    <ListPreference 
+        key="type" 
+        title="Личный кабинет"
+        summary="||{@s}\n"
+        entries="Петербургская Сбытовая Компания|Петроэлектросбыт"
+        entryValues="pesc|pes"
+	defaultValue="pesc">
+    </ListPreference>
 </PreferenceScreen>

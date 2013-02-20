@@ -13,21 +13,25 @@ function main(){
 
     var baseurl = "http://www.ulmart.ru/";
 
-    var html = AnyBalance.requestPost(baseurl + 'login.php', {
-        login:prefs.login,
-        pass:prefs.password
+    var html = AnyBalance.requestPost(baseurl + 'j_spring_security_check', {
+        j_username:prefs.login,
+        j_password:prefs.password,
+        _spring_security_remember_me:''
     });
 
-    if(!/logout\.php/.test(html)){
-        if(/<title>Ошибка<\/title>/i.test(html))
-            throw new AnyBalance.Error("Неверный логин или пароль");
+    if(!/\/logout/.test(html)){
+        var error = getParam(html, null, null, /<div[^>]+id="loginErrorDiv"[^>]*>([\s\S]*?)(?:Проверьте состояние|<\/div>)/i, replaceTagsAndSpaces, html_entity_decode);
+        if(error)
+            throw new AnyBalance.Error(error);
         throw new AnyBalance.Error('Не удалось войти в личный кабинет. Проблемы на сайте или сайт изменен.');
     }
 
     var result = {success: true};
 
-    getParam(html, result, 'balance', /XXL-Бонус:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, '__tariff', /<table[^>]+class="loggedBlock"[\s\S]*?<tr[^>]*>([\s\S]*?)<\/tr>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'balance', /<span[^>]+id="user_popup_bonus"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'fio', /<div[^>]+class="[^"]*_login"[^>]*>([\s\S]*?)(?:▼|<\/div>)/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'price', /цена&nbsp;(\d+)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, '__tariff', /<div[^>]+class="b-dropdown-popup__info"[^>]*>(?:[\s\S](?!<\/div>))*?<br[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
 
     AnyBalance.setResult(result);
 }

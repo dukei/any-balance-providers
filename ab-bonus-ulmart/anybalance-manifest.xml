@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-bonus-ulmart</id>
+  <id version="2">ab-bonus-ulmart</id>
   <name>Ulmart</name>
   <description>
     Получает баланс XXL-бонусов в бонусной программе магазина электроники Ulmart (http://www.ulmart.ru).
@@ -17,6 +17,8 @@
   </files>
   <counters>
     <counter id="balance" name="XXL-Бонус"/>
+    <counter id="fio" name="ФИО" type="text"/>
+    <counter id="price" name="Колонка цен"/>
   </counters>
   <keywords>
     xxl-bonus

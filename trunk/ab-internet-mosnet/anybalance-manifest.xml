@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-internet-mosnet</id>
+  <name>МОСНЕТ (Москва)</name>
+  <description>
+    Получает баланс и информацию о тарифном плане для московского интернет-провайдера МОСНЕТ (http://mosnet.ru). Информация берется из личного кабинета https://privateoffice.mosnet.ru.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="trafficIn" name="Вх.трафик в текущем месяце" units="Гб"/>
+    <counter id="trafficOut" name="Исх.трафик в текущем месяце" units="Гб"/>
+    <counter id="debt" name="Задолженность по обещанным платежам" units="р"/>
+    <counter id="licschet" name="Лицевой счет" type="text"/>
+    <counter id="fio" name="ФИО" type="text"/>
+  </counters>
+  <keywords>
+    
+  </keywords>
+  <type>
+    internet
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

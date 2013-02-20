@@ -303,7 +303,7 @@ function fetchAccountStatus(html, result){
     sumParam (html, result, 'traffic_left', /:[^<]*?(\d+[,.]?\d*\s*([kmgкмг][бb]|байт|byte))/i, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
 
     // Лицевой счет
-    getParam (html, result, 'license', /№ (.*?):/);
+    getParam (html, result, 'license', /№ ([^<]*?)(?:<|:)/, replaceTagsAndSpaces, html_entity_decode);
 
     // Блокировка
     getParam (html, result, 'statuslock', /class="account-status-lock".*>(Номер [^<]*)</i);
@@ -312,7 +312,7 @@ function fetchAccountStatus(html, result){
     getParam (html, result, 'credit', /Сумма кредитного лимита.*?([-\d\.,]+)/i, [",", "."], parseBalance);
 
     // Расход за этот месяц
-    getParam (html, result, 'usedinthismonth', /Израсходовано по номеру[^<]*<strong>([\s\S]*?)<\/strong>/i, replaceTagsAndSpaces, parseBalance);
+    getParam (html, result, 'usedinthismonth', /Израсходовано по номеру[^<]*?(?:<strong>|:)([\s\S]*?)(?:<\/strong>|<\/p>|<\/td>)/i, replaceTagsAndSpaces, parseBalance);
 }
 
 function main(){

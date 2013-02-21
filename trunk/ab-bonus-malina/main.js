@@ -66,7 +66,7 @@ function parseBalance(text){
 
 function main () {
     var prefs = AnyBalance.getPreferences ();
-    var baseurl = 'http://catalog.malina.ru/';
+    var baseurl = 'https://www.malina.ru/';
 
     if (!prefs.login || prefs.login == '')
         throw new AnyBalance.Error ('Введите логин');
@@ -75,10 +75,11 @@ function main () {
         throw new AnyBalance.Error ('Введите пароль');
 
     AnyBalance.trace ('Trying to enter selfcare at address: ' + baseurl);
-    AnyBalance.requestGet (baseurl);  // Запрос необходим для формирования cookie с регионом MSK
+    AnyBalance.requestGet (baseurl + 'login.php');  // Запрос необходим для формирования cookie с регионом MSK
     var html = AnyBalance.requestPost (baseurl + 'login.php', {
         login: prefs.login,
-        password: prefs.password
+        password: prefs.password,
+        backurl: 'L3BlcnNvbmFsLw=='
     });
 
     // Проверка неправильной пары логин/пароль
@@ -128,7 +129,7 @@ function main () {
     getParamFind (result, 'gonePoints', $table, 'tr:contains("Израсходовано баллов") td', parseBalance);
 
     // Сгорело баллов
-    getParamFind (result, 'burnPoints', $table, 'tr:contains("Сгорело баллов") td', parseBalance);
+    //getParamFind (result, 'burnPoints', $table, 'tr:contains("Сгорело баллов") td', parseBalance);
 
     // Баланс баллов
     getParamFind (result, 'balance', $table, 'tr:contains("Баланс баллов") td', parseBalance);
@@ -143,18 +144,9 @@ function main () {
         html = AnyBalance.requestGet (baseurl + 'personal/balance_structure.php');
 
         AnyBalance.trace ('Parsing balance structure...');
-    
-        matches = /<table\s*class="pure"[\s\S]*?<\/table>/.exec (html);
-        if (matches) {
-  
-            var $table = $(matches[0]);
 
-            // Аннулируемые в этом месяце баллы
-            getParamFind (result, 'burnInThisMonth', $table, 'tr:nth-child(2) td:nth-child(2)', parseBalance);
-        }
+        getParam(html, result, 'burnInThisMonth', /Баллов, которые сгорят в ближайшие месяцы —\s*(\d+)/i, null, parseBalance);
     }
-
-    AnyBalance.requestGet (baseurl + 'logout.php');
 
     AnyBalance.setResult (result);
 }

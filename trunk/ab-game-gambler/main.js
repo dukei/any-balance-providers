@@ -41,7 +41,7 @@ function main(){
         glogin:'Войти'
     }, addHeaders({Referer: baseurl + 'login'})); 
 
-    var userid = getParam(html, null, null, /\/user\/info\?uin=(\d+)&?title/i);
+    var userid = getParam(html, null, null, /\/user\/info\?uin=(\d+)/i);
 
     if(!userid){
         //Если в кабинет войти не получилось, то в первую очередь надо поискать в ответе сервера объяснение ошибки

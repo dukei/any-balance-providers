@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="23" date="2013-02-21">
+      - Добавлен новый регион - Пенза (http://client.lanbilling.ptcomm.ru)
+    </change>
     <change version="22" date="2013-01-16">
       - Добавлен новый регион - Ижевск (https://lk.izhnt.ru)
     </change>

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-ptcomm</id>
-  <name>Пенза-Телеком</name>
+  <id version="2">ab-internet-ptcomm</id>
+  <name>Пенза-Телеком (МТС)</name>
   <description>
-    Получает баланс и информацию о тарифном плане для пензенского интернет-провайдера Пенза-Телеком (http://www.ptcomm.ru/).
+    Получает баланс и информацию о тарифном плане для пензенского интернет-провайдера Пенза-Телеком, а ныне МТС (http://www.penza.mts.ru/mts_stream).
 
-    Информация берется из личного кабинета https://billing.ptcomm.ru/cgi-bin/net/login (для физических лиц).
+    Информация берется из личного кабинета http://client.lanbilling.ptcomm.ru/ (для физических лиц).
   </description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <files>
@@ -17,13 +17,10 @@
   </files>
   <counters>
     <counter id="balance" name="Баланс" units="р"/>
-    <counter id="trafficIn" name="Вх.трафик в текущем месяце" units="Мб"/>
-    <counter id="trafficInNight" name="Вх.трафик в текущем месяце (ночной)" units="Мб"/>
-    <counter id="trafficOut" name="Исх.трафик в текущем месяце" units="Мб"/>
-    <counter id="trafficOutNight" name="Исх.трафик в текущем месяце (ночной)" units="Мб"/>
-    <counter id="licschet" name="Лицевой счет" type="text"/>
     <counter id="agreement" name="Договор" type="text"/>
     <counter id="status" name="Статус" type="text"/>
+    <counter id="abon" name="Абонентская плата" units="р"/>
+    <counter id="username" name="ФИО" type="text"/>
   </counters>
   <keywords>
     интернет, ptcomm

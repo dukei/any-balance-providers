@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-bonus-kegel</id>
+  <name>КеГеЛьБУМ</name>
+  <description>
+    Получает баланс КеГЛей в бонусной программе магазинов ОТДОХНИ и МЯСНОВЪ (http://www.kegelbum.ru).
+
+    Информация берется из личного кабинета.
+
+    Если у вас ещё нет доступа к личному кабинету, зарегистрируйтесь здесь: http://www.kegelbum.ru/register.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+    <js>library.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units=" кгл"/>
+    <counter id="balance_total" name="Баланс на всех картах" units=" кгл"/>
+    <counter id="fio" name="ФИО" type="text"/>
+    <counter id="cardnum" name="Номер карты" type="text"/>
+    <counter id="status" name="Статус" type="text"/>
+  </counters>
+  <keywords>
+    kegelbum
+  </keywords>
+  <type>
+    bonus
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

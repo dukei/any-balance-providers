@@ -58,7 +58,7 @@ function main(){
         }
     }else{
         //В отладчике просто получаем куки в уже зайденной сессии
-        var sessionid = AnyBalance.getCookie('sessionid');
+        var sessionid = AnyBalance.getCookie('sessionid', {domain: 'www.tcsbank.ru'});
         if(!sessionid)
             throw new AnyBalance.Error("Зайдите в ТКС банк вручную, затем запустите отладчик");
     }
@@ -149,6 +149,24 @@ function fetchCard(accounts, baseurl, sessionid){
         result.limit = card.creditLimit.value;
     if(AnyBalance.isAvailable('minpaytill') && isset(card.duedate))
         result.minpaytill = card.duedate.milliseconds;
+
+    if(AnyBalance.isAvailable('pcts')){
+        //Информация по выписке
+        var statements = AnyBalance.requestGet(baseurl + '/api/v1/statements/?sessionid=' + sessionid + '&account=' + card.id, addHeaders({
+            Accept:'application/json, text/javascript, */*; q=0.01',
+            'X-Requested-With':'XMLHttpRequest',
+            Referer: baseurl + '/bank/accounts/'
+        }));
+    
+        try{
+            statements = getJson(statements).payload[0]; //получаем самую последнюю выписку
+
+            if(AnyBalance.isAvailable('pcts') && isset(statements.interest))
+                result.pcts = statements.interest.value;
+        }catch(e){
+            AnyBalance.trace('Не удалось получить информацию по выписке: ' + e.message);
+        }
+    }
 
     result.__tariff = thiscard.name;
     

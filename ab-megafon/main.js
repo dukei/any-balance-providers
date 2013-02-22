@@ -263,9 +263,14 @@ function getTrayXml(filial, address){
       AnyBalance.trace("Server returned: " + info);
       throw new AnyBalance.Error(matches[1] + ": " + matches[2]); //Случился какой-то глючный бред
     }
-        
-    var xmlDoc = $.parseXML(info),
-      $xml = $(xmlDoc);
+    
+    try{    
+        var xmlDoc = $.parseXML(info),
+          $xml = $(xmlDoc);
+    }catch(e){
+        AnyBalance.trace("Server returned: " + info);
+        throw new AnyBalance.Error('Сервис-Гид вернул неверный XML. Похоже, временные проблемы на сайте.');
+    }
 	
     //Проверяем на ошибку
     var error = $xml.find('SC_TRAY_INFO>ERROR>ERROR_MESSAGE, TRAY_INFO>ERROR>ERROR_MESSAGE').text();

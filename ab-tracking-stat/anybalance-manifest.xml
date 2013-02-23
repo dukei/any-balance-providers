@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-tracking-gdeposylka</id>
+  <id version="1">ab-tracking-stat</id>
   <name>Статистика прохождения посылок</name>
   <description>Статистика прохождения международных почтовых отправлений с сайтов ГдеПосылка.ру и sms-track.ru. Отображает среднее значение между экспортом и импортом из Китая, Гонконга, США и Англии в Россию (зачастую самый долгий этап).</description>
   <author>Артём Бажанов &lt;web@bartwell.ru&gt;</author>

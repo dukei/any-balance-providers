@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-tracking-gdeposylka</id>
+  <name>Статистика прохождения посылок</name>
+  <description>Статистика прохождения международных почтовых отправлений с сайтов ГдеПосылка.ру и sms-track.ru. Отображает среднее значение между экспортом и импортом из Китая, Гонконга, США и Англии в Россию (зачастую самый долгий этап).</description>
+  <author>Артём Бажанов &lt;web@bartwell.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="gp_hkru_export_import" name="[ГП] HK->RU импорт"/>
+    <counter id="gp_cnru_export_import" name="[ГП] CN->RU импорт"/>
+    <counter id="gp_usru_export_import" name="[ГП] US->RU импорт"/>
+    <counter id="gp_gbru_export_import" name="[ГП] GB->RU импорт"/>
+    
+    <counter id="st_hkru_export_import" name="[ST] HK->RU импорт"/>
+    <counter id="st_cnru_export_import" name="[ST] CN->RU импорт"/>
+    <counter id="st_usru_export_import" name="[ST] US->RU импорт"/>
+    <counter id="st_gbru_export_import" name="[ST] GB->RU импорт"/>
+  </counters>
+  <keywords>
+    Почтовое отправление, Почта России, статистика
+  </keywords>
+  <type>
+    tracking, post
+  </type>
+</provider>

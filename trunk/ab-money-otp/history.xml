@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-    <change version="4" date="2013-02-24">
+    <change version="3" date="2013-02-24">
       - Поддержка изменений в личном кабинете
       - Добавлена возможность получать информацию по счетам
     </change>

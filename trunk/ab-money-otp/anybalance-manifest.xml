@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-money-otp</id>
+  <id version="3">ab-money-otp</id>
   <name>ОТП Банк</name>
   <description>
     Получает текущий остаток и другие параметры карт ОТП Банка ( http://otpbank.ru ), используя систему ОТПдирект ( https://direkt.otpbank.ru ).
@@ -11,24 +11,25 @@
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
+    <js>library.js</js>
     <js>main.js</js>
     <js>api:jquery.min.js</js>
     <history>history.xml</history>
   </files>
   <counters>
-    <counter id="balance" name="Остаток"/>
-    <counter id="minpay" name="Мин.платеж"/>
+    <counter id="balance" name="Остаток" units=" {@currency}"/>
+    <counter id="minpay" name="Мин.платеж" units=" {@currency}"/>
     <counter id="minpaytill" name="Дата очередного платежа" type="time" format="dd/MM/yyyy"/>
-    <counter id="gracepay" name="Платеж льготного периода"/>
+    <counter id="gracepay" name="Платеж льготного периода" units=" {@currency}"/>
     <counter id="gracepaytill" name="Дата вхождения в льготный период" type="time" format="dd/MM/yyyy"/>
-    <counter id="debt" name="Сумма долга к уплате"/>
-    <counter id="own" name="Остаток собственных средств"/>
-    <counter id="currency" name="Валюта" type="text"/>
-    <counter id="limit" name="Кредитный лимит"/>
-    <counter id="cardnum" name="Номер карты" type="text"/>
+    <counter id="debt" name="Сумма долга к уплате" units=" {@currency}"/>
+    <counter id="own" name="Остаток собственных средств" units=" {@currency}"/>
+    <counter id="limit" name="Кредитный лимит" units=" {@currency}"/>
+    <counter id="cardnum" name="Номер" type="text"/>
     <counter id="cardname" name="Имя на карте" type="text"/>
     <counter id="till" name="Срок действия" type="text"/>
     <counter id="type" name="Тип" type="text"/>
+    <counter id="currency" name="Валюта" type="text"/>
   </counters>
   <keywords>
     otp bank

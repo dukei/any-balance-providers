@@ -379,8 +379,8 @@ function sumParam (html, result, param, regexp, replaces, parser, do_replace, ag
         	value = replaceAll(value, replaces);
 		if (parser)
 			value = parser (value);
-            
-        	values.push(value);
+                if(isset(value))
+        		values.push(value);
         	if(!regexp.global)
             		break; //Если поиск не глобальный, то выходим из цикла
 	}

@@ -139,8 +139,8 @@ function html_entity_decode(str)
             return value;
         });
  */
-function createFormParams(html, process){
-    var params = {};
+function createFormParams(html, process, array){
+    var params = array ? [] : {};
     html.replace(/<input[^>]+name="([^"]*)"[^>]*>|<select[^>]+name="([^"]*)"[^>]*>[\s\S]*?<\/select>/ig, function(str, nameInp, nameSel){
         var value = '';
         if(nameInp){
@@ -162,7 +162,8 @@ function createFormParams(html, process){
             value = process(params, str, name, value);
         }
         if(typeof(value) != 'undefined')
-            params[name] = value;
+            if(array) params.push([name, value])
+            else params[name] = value;
     });
 
     //AnyBalance.trace('Form params are: ' + JSON.stringify(params));
@@ -210,7 +211,7 @@ function addHeaders(newHeaders, oldHeaders){
    if(!bOldArray && !bNewArray)
        return joinObjects(newHeaders, oldHeaders);
    if(bOldArray && bNewArray) //Если это массивы, то просто делаем им join
-       return oldHeader.slice().push.apply(oldHeader, newHeaders);
+       return oldHeaders.slice().push.apply(oldHeaders, newHeaders);
    if(!bOldArray && bNewArray){ //Если старый объект, а новый массив
        var headers = joinObjects(null, oldHeaders);
        for(var i=0; i<newHeaders.length; ++i)
@@ -378,8 +379,8 @@ function sumParam (html, result, param, regexp, replaces, parser, do_replace, ag
         	value = replaceAll(value, replaces);
 		if (parser)
 			value = parser (value);
-            
-        	values.push(value);
+                if(isset(value))
+        		values.push(value);
         	if(!regexp.global)
             		break; //Если поиск не глобальный, то выходим из цикла
 	}
@@ -491,7 +492,7 @@ function parseTrafficEx(text, thousand, order, defaultUnits){
         break;
       case 'g':
       case 'г':
-        val = Math.round(val/Math.pow(thousand, order-3));
+        val = Math.round(val/Math.pow(thousand, order-3)*100)/100;
         break;
     }
     var textval = ''+val;
@@ -503,3 +504,22 @@ function parseTrafficEx(text, thousand, order, defaultUnits){
     AnyBalance.trace('Parsing traffic (' + val + dbg_units[order] + ') from: ' + text);
     return val;
 }
+
+/**
+ * Создаёт мультипарт запрос
+ */
+function requestPostMultipart(url, data, headers){
+	var parts = [];
+	var boundary = '------WebKitFormBoundaryrceZMlz5Js39A2A6';
+	for(var name in data){
+		parts.push(boundary, 
+		'Content-Disposition: form-data; name="' + name + '"',
+		'',
+		data[name]);
+	}
+	parts.push(boundary, '--');
+        if(!headers) headers = {};
+	headers['Content-Type'] = 'multipart/form-data; boundary=' + boundary.substr(2);
+	return AnyBalance.requestPost(url, parts.join('\r\n'), headers);
+}
+

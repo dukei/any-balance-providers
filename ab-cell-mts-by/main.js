@@ -277,6 +277,9 @@ function fetchAccountStatus(html, result){
     // Р300 мин: 899.8 мин. до 31.12.9999 23:59:59
     html = sumParam (html, result, 'min_left', /\s+мин:[^<]*?([\d\.,]+)\s*мин/ig, replaceTagsAndSpaces, parseBalance, true, aggregate_sum);
 
+    // Компания: 63,4 мин. до
+    html = sumParam (html, result, 'min_left', /:\s*([\d\.,]+)\s*мин\.?\s+до/ig, replaceTagsAndSpaces, parseBalance, true, aggregate_sum);
+
     // Использовано: 0 минут местных и мобильных вызовов.
     html = sumParam (html, result, 'min_local', /Использовано:\s*([\d\.,]+).*?мин[^\s]* местных/ig, replaceTagsAndSpaces, parseBalance, true, aggregate_sum);
 
@@ -297,19 +300,24 @@ function fetchAccountStatus(html, result){
 
     // Сумма по неоплаченным счетам: 786.02 руб. (оплатить до 24.03.2012)
     getParam (html, result, 'pay_till', /оплатить до.*?([\d\.,\/]+)/i, replaceFloat, parseDate);
+    
+    //Для обычного помощника чуть по другому долг получать
+    getParam (html, result, 'debt', /оплатить до(?:[\s\S](?!<\/td>))*?<strong[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 
     // Остаток трафика
-    sumParam (html, result, 'traffic_left', /(?:Осталось|Остаток)[^<]*?(\d+[.,]?\d*\s*([kmgкмг][бb]|байт|byte))/i, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
-    sumParam (html, result, 'traffic_left', /:[^<]*?(\d+[,.]?\d*\s*([kmgкмг][бb]|байт|byte))/i, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
+    html = sumParam (html, result, 'traffic_left_vpn', /VPN Counter[^<]*?:[^<]*?(\d+[,.]?\d*\s*([kmgкмг][бb]|байт|byte))/ig, replaceTagsAndSpaces, parseTraffic, true, aggregate_sum);
+
+    html = sumParam (html, result, 'traffic_left', /(?:Осталось|Остаток)[^<]*?(\d+[.,]?\d*\s*([kmgкмг][бb]|байт|byte))/ig, replaceTagsAndSpaces, parseTraffic, true, aggregate_sum);
+    html = sumParam (html, result, 'traffic_left', /:[^<]*?(\d+[,.]?\d*\s*([kmgкмг][бb]|байт|byte))/ig, replaceTagsAndSpaces, parseTraffic, true, aggregate_sum);
 
     // Лицевой счет
     getParam (html, result, 'license', /№ ([^<]*?)(?:<|:)/, replaceTagsAndSpaces, html_entity_decode);
 
     // Блокировка
-    getParam (html, result, 'statuslock', /class="account-status-lock".*>(Номер [^<]*)</i);
+    getParam (html, result, 'statuslock', /class="account-status-lock".*>(Номер [^<]*)</i, replaceTagsAndSpaces, html_entity_decode);
 
     // Сумма кредитного лимита
-    getParam (html, result, 'credit', /Сумма кредитного лимита.*?([-\d\.,]+)/i, [",", "."], parseBalance);
+    getParam (html, result, 'credit', /(?:Сумма кредитного лимита|Кредитный лимит)[\s\S]*?(-?\d+[\d\.,]*)/i, replaceTagsAndSpaces, parseBalance);
 
     // Расход за этот месяц
     getParam (html, result, 'usedinthismonth', /Израсходовано по номеру[^<]*?(?:<strong>|:)([\s\S]*?)(?:<\/strong>|<\/p>|<\/td>)/i, replaceTagsAndSpaces, parseBalance);

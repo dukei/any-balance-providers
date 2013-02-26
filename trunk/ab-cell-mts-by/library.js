@@ -211,7 +211,7 @@ function addHeaders(newHeaders, oldHeaders){
    if(!bOldArray && !bNewArray)
        return joinObjects(newHeaders, oldHeaders);
    if(bOldArray && bNewArray) //Если это массивы, то просто делаем им join
-       return oldHeader.slice().push.apply(oldHeader, newHeaders);
+       return oldHeaders.slice().push.apply(oldHeaders, newHeaders);
    if(!bOldArray && bNewArray){ //Если старый объект, а новый массив
        var headers = joinObjects(null, oldHeaders);
        for(var i=0; i<newHeaders.length; ++i)
@@ -370,17 +370,20 @@ function sumParam (html, result, param, regexp, replaces, parser, do_replace, ag
     if(param && isset(result[param]))
         values.push(result[param]);
 
+    function replaceAndPush(value){
+        value = replaceAll(value, replaces);
+	if (parser)
+		value = parser (value);
+        if(isset(value))
+        	values.push(value);
+    }
+
     if(!regexp){
-        values.push(replaceAll(html, replaces));
+        replaceAndPush(html);
     }else{
         regexp.lastIndex = 0; //Удостоверяемся, что начинаем поиск сначала.
         while(matches = regexp.exec(html)){
-		value = isset(matches[1]) ? matches[1] : matches[0];
-        	value = replaceAll(value, replaces);
-		if (parser)
-			value = parser (value);
-            
-        	values.push(value);
+                replaceAndPush(isset(matches[1]) ? matches[1] : matches[0]);
         	if(!regexp.global)
             		break; //Если поиск не глобальный, то выходим из цикла
 	}
@@ -517,7 +520,7 @@ function requestPostMultipart(url, data, headers){
 		'',
 		data[name]);
 	}
-	parts.push(boundary);
+	parts.push(boundary, '--');
         if(!headers) headers = {};
 	headers['Content-Type'] = 'multipart/form-data; boundary=' + boundary.substr(2);
 	return AnyBalance.requestPost(url, parts.join('\r\n'), headers);

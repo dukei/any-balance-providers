@@ -370,17 +370,20 @@ function sumParam (html, result, param, regexp, replaces, parser, do_replace, ag
     if(param && isset(result[param]))
         values.push(result[param]);
 
+    function replaceAndPush(value){
+        value = replaceAll(value, replaces);
+	if (parser)
+		value = parser (value);
+        if(isset(value))
+        	values.push(value);
+    }
+
     if(!regexp){
-        values.push(replaceAll(html, replaces));
+        replaceAndPush(html);
     }else{
         regexp.lastIndex = 0; //Удостоверяемся, что начинаем поиск сначала.
         while(matches = regexp.exec(html)){
-		value = isset(matches[1]) ? matches[1] : matches[0];
-        	value = replaceAll(value, replaces);
-		if (parser)
-			value = parser (value);
-                if(isset(value))
-        		values.push(value);
+                replaceAndPush(isset(matches[1]) ? matches[1] : matches[0]);
         	if(!regexp.global)
             		break; //Если поиск не глобальный, то выходим из цикла
 	}

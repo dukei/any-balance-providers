@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change major_version="2.6" version="64" date="2013-02-26">
+      - Улучшено распознавание блокировки программ-роботов.
+    </change>
     <change major_version="2.6" version="63" date="2013-02-24">
       - Исправлена ошибка получения остатка СМС, ММС и др. в случае наличия использованных пакетов
     </change>

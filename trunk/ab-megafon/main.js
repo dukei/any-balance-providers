@@ -246,13 +246,17 @@ function getTrayXml(filial, address){
     else
         info = AnyBalance.requestGet(address.replace(/%LOGIN%/g, prefs.login).replace(/%PASSWORD%/g, encodeURIComponent(prefs.password)), g_headers);
         
+    if(/<title>Not Found<\/title>/.test(info)){
+      AnyBalance.trace("Server returned: " + info);
+      throw new AnyBalance.Error('Похоже, автоматический вход временно отсутствует на сервере Мегафона. Попробуйте позднее.');
+    }
     if(/<h1>Locked<\/h1>/.test(info)){
       AnyBalance.trace("Server returned: " + info);
       throw new AnyBalance.Error('Вы ввели неправильный пароль или доступ автоматическим системам заблокирован.\n\
 Для разблокировки необходимо зайти в Сервис-Гид и включить настройку Настройки Сервис-Гида/Автоматический доступ системам/Доступ открыт пользователям и автоматизированным системам, а также нажать кнопку "разблокировать".');
     }
         
-    if(/ROBOTS\-DENY/.test(info)){
+    if(/ROBOTS-DENY|SCC-ROBOT-LOGIN-DENY/.test(info)){
       AnyBalance.trace("Server returned: " + info);
       throw new AnyBalance.Error('Доступ автоматическим системам заблокирован.\n\
 Для разблокировки необходимо зайти в Сервис-Гид и включить настройку Настройки Сервис-Гида/Автоматический доступ системам/Доступ открыт пользователям и автоматизированным системам, а также нажать кнопку "разблокировать".');

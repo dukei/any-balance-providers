@@ -267,13 +267,18 @@ function getTrayXml(filial, address){
       AnyBalance.trace("Server returned: " + info);
       throw new AnyBalance.Error(matches[1] + ": " + matches[2]); //Случился какой-то глючный бред
     }
-    
+
     try{    
         var xmlDoc = $.parseXML(info),
           $xml = $(xmlDoc);
     }catch(e){
         AnyBalance.trace("Server returned: " + info);
         throw new AnyBalance.Error('Сервис-Гид вернул неверный XML. Похоже, временные проблемы на сайте.');
+    }
+
+    if(!/<BALANCE>[^<]*<\/BALANCE>/i.test(info)){
+      AnyBalance.trace("Server returned: " + info);
+      throw new AnyBalance.Error('Сервис гид вернул XML без баланса. Похоже, тут что-то не так!'); //Случился какой-то глючный бред, пришел xml без баланса
     }
 	
     //Проверяем на ошибку
@@ -296,6 +301,14 @@ function getTrayXml(filial, address){
     return $xml;
 }
 
+function isAvailableButUnset(params){
+    for(var i=0; i<params.length; ++i){
+        if(AnyBalance.isAvailable(params[i]) && !isset(params[i]))
+            return true;
+    }
+    return false;
+}
+
 function megafonTrayInfo(filial){
     var filinfo = filial_info[filial], errorInTray;
     
@@ -304,14 +317,9 @@ function megafonTrayInfo(filial){
         var $xml = getTrayXml(filial, filinfo.site), val;
         result.__tariff = $.trim($xml.find('RATE_PLAN').text());
 
-        if(AnyBalance.isAvailable('balance'))
-            result.balance = parseFloat($xml.find('BALANCE').text());
-
-        if(AnyBalance.isAvailable('phone'))
-            result.phone = $xml.find('NUMBER').first().text();
-
-        if(AnyBalance.isAvailable('prsnl_balance') && (val = parseFloat($xml.find('PRSNL_BALANCE').text())))
-            result.prsnl_balance = parseFloat(val);
+        getParam($xml.find('BALANCE').text() || '', result, 'balance', null, null, parseBalance);
+        getParam($xml.find('NUMBER').first().text() || '', result, 'phone', null, null, parseBalance);
+        getParam($xml.find('PRSNL_BALANCE').first().text() || '', result, 'prsnl_balance', null, null, parseBalance);
 
         var $threads = $xml.find('RP_DISCOUNTS>DISCOUNT>THREAD, PACK>DISCOUNT>THREAD, RP_DISCOUNTS>DISCOUNT:not(:has(THREAD))');
         AnyBalance.trace('Found discounts: ' + $threads.length);
@@ -321,16 +329,9 @@ function megafonTrayInfo(filial){
             AnyBalance.trace('Found SMS discounts: ' + $val.length);
             $val.each(function(){
                 var $e = $(this);
-                if(AnyBalance.isAvailable('sms_left')){
-                    var val = $e.find('VOLUME_AVAILABLE').text();
-                    if(val) result.sms_left = (result.sms_left || 0) + parseInt(val);
-                }
-                if(AnyBalance.isAvailable('sms_total')){
-                    var val = $e.find('VOLUME_TOTAL').text();
-                    if(val) result.sms_total = (result.sms_total || 0) + parseInt(val);
-                }
+                sumParam($e.find('VOLUME_AVAILABLE').text() || '', result, 'sms_left', null, null, parseBalance, aggregate_sum);
+                sumParam($e.find('VOLUME_TOTAL').text() || '', result, 'sms_total', null, null, parseBalance, aggregate_sum);
             });
-
         }
 
         if(AnyBalance.isAvailable('mins_left','mins_total','sms_left','sms_total','mms_left','mms_total')){
@@ -348,27 +349,15 @@ function megafonTrayInfo(filial){
                 }
                 if(plan && /SMS/i.test(plan)){
                     AnyBalance.trace('Обходим потенциальный глюк мегафона, Исходящая телефония, но написано SMS, а должны быть минуты: ' + plan + ' - ' + valAvailable + '/' + valTotal);
-                    if(isset(valAvailable) && AnyBalance.isAvailable('sms_left')){
-                        result.sms_left = (result.sms_left || 0) + parseInt(valAvailable);
-                    }
-                    if(isset(valTotal) && AnyBalance.isAvailable('sms_total')){
-                        result.sms_total = (result.sms_total || 0) + parseInt(valTotal);
-                    }
+                    sumParam(valAvailable || '', result, 'sms_left', null, null, parseBalance, aggregate_sum);
+                    sumParam(valTotal || '', result, 'sms_total', null, null, parseBalance, aggregate_sum);
                 }else if(plan && /MMS/i.test(plan)){
                     AnyBalance.trace('Обходим потенциальный глюк мегафона, Исходящая телефония, но написано MMS, а должны быть минуты: ' + plan + ' - ' + valAvailable + '/' + valTotal);
-                    if(isset(valAvailable) && AnyBalance.isAvailable('mms_left')){
-                        result.mms_left = (result.mms_left || 0) + parseInt(valAvailable);
-                    }
-                    if(isset(valTotal) && AnyBalance.isAvailable('mms_total')){
-                        result.mms_total = (result.mms_total || 0) + parseInt(valTotal);
-                    }
+                    sumParam(valAvailable || '', result, 'mms_left', null, null, parseBalance, aggregate_sum);
+                    sumParam(valTotal || '', result, 'mms_total', null, null, parseBalance, aggregate_sum);
                 }else{
-                    if(isset(valAvailable) && AnyBalance.isAvailable('mins_left')){
-                        result.mins_left = (result.mins_left || 0) + parseInt(valAvailable)*60;
-                    }
-                    if(isset(valTotal) && AnyBalance.isAvailable('mins_total')){
-                        result.mins_total = (result.mins_total || 0) + parseInt(valTotal)*60;
-                    }
+                    sumParam(valAvailable || '', result, 'mins_left', null, null, parseMinutes, aggregate_sum);
+                    sumParam(valTotal || '', result, 'mins_total', null, null, parseMinutes, aggregate_sum);
                 }
             });
         }
@@ -402,10 +391,11 @@ function megafonTrayInfo(filial){
         errorInTray = e.message || "Unknown error";
     }
 
-    if(AnyBalance.isAvailable('bonus_balance', 'last_pay_sum', 'last_pay_date') || errorInTray){
+    if(AnyBalance.isAvailable('bonus_balance', 'last_pay_sum', 'last_pay_date') || errorInTray || isAvailableButUnset(['balance','phone','sub_smit','sub_smio','sub_scl','sub_scr','sub_soi'])){
         //Некоторую инфу можно получить из яндекс виджета. Давайте попробуем.
         var prefs = AnyBalance.getPreferences();
         AnyBalance.setDefaultCharset('utf-8');
+        AnyBalance.trace('Попытаемся получить данные из яндекс виджета');
         var html = AnyBalance.requestGet(filinfo.widget.replace(/%LOGIN%/g, prefs.login).replace(/%PASSWORD%/g, encodeURIComponent(prefs.password)), g_headers);
         try{
            var json = getParam(html, null, null, /^[^({]*\((\{[\s\S]*?\})\);?\s*$/);
@@ -427,9 +417,9 @@ function megafonTrayInfo(filial){
                    e.skip = true;
                    throw e; //Яндекс виджет не дал баланс. Значит, во всём дальнейшем смысла нет.
                }
-               getParam(json.ok.html, result, 'sub_smio', /Начислено абонентской платы\s*<\/td>(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-               getParam(json.ok.html, result, 'sub_soi', /Начислено за услуги\s*<\/td>(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-               getParam(json.ok.html, result, 'sub_scl', /Начислено за звонки\s*<\/td>(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+               getParam(json.ok.html, result, 'sub_smio', /(?:Начислено абонентской платы|Абонентская плата)\s*<\/td>(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+               getParam(json.ok.html, result, 'sub_soi', /(?:Исходящие SMS\/MMS|Начислено за услуги)\s*<\/td>(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+               getParam(json.ok.html, result, 'sub_scl', /(?:Исходящие вызовы|Начислено за звонки)\s*<\/td>(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
                getParam(json.ok.html, result, 'sub_scr', /Роуминг\s*<\/td>(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
                getParam(json.ok.html, result, 'phone', /<span[^>]+class="login"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
                
@@ -456,31 +446,11 @@ function megafonTrayInfo(filial){
 }
 
 function read_sum_parameters(result, $xml){
-    if(AnyBalance.isAvailable('sub_smit')){
-        var val = $xml.find('SUB>SMIT').text();
-        if(val)
-            result.sub_smit = parseFloat(val);
-    }
-    if(AnyBalance.isAvailable('sub_smio')){
-        var val = $xml.find('SUB>SMIO').text();
-        if(val)
-            result.sub_smio = parseFloat(val);
-    }
-    if(AnyBalance.isAvailable('sub_scl')){
-        var val = $xml.find('SUB>SCL').text();
-        if(val)
-            result.sub_scl = parseFloat(val);
-    }
-    if(AnyBalance.isAvailable('sub_scr')){
-        var val = $xml.find('SUB>SCR').text();
-        if(val)
-            result.sub_scr = parseFloat(val);
-    }
-    if(AnyBalance.isAvailable('sub_soi')){
-        var val = $xml.find('SUB>SOI').text();
-        if(val)
-            result.sub_soi = parseFloat(val);
-    }
+    getParam($xml.find('SUB>SMIT').text() || '', result, 'sub_smit', null, null, parseBalance);
+    getParam($xml.find('SUB>SMIO').text() || '', result, 'sub_smio', null, null, parseBalance);
+    getParam($xml.find('SUB>SCL').text() || '', result, 'sub_scl', null, null, parseBalance);
+    getParam($xml.find('SUB>SCR').text() || '', result, 'sub_scr', null, null, parseBalance);
+    getParam($xml.find('SUB>SOI').text() || '', result, 'sub_soi', null, null, parseBalance);
 }
 
 /**

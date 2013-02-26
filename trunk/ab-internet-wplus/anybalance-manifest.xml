@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="2">ab-internet-wplus</id>
+  <name>Вэб Плас (Санкт-Петербург)</name>
+  <description>
+    Получает баланс и информацию о тарифном плане для санкт-петербургского интернет провайдера Вэб Плас (http://www.wplus.ru). Информация берется из личного кабинета https://ccenter.wplus.net.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="2pay" name="Рекомендуемая сумма оплаты" units="р"/>
+    <counter id="lastpaysum" name="Последний платеж" units="р"/>
+    <counter id="lastpaydate" name="Дата последнего платежа" type="time" format="dd/MM/yyyy"/>
+    <counter id="lastpaydesc" name="Описание последнего платежа" type="text"/>
+    <counter id="bonus_status" name="Статусные баллы" units="б"/>
+    <counter id="bonus_reg" name="Регулярные баллы" units="б"/>
+    <counter id="agr" name="Договор" type="text"/>
+  </counters>
+  <keywords>
+    интернет, ленинград, питер
+  </keywords>
+  <type>
+    internet
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

@@ -8,7 +8,7 @@
                 http://www.gismeteo.lt
                 http://www.gismeteo.by
                 http://www.gismeteo.com - не реализовано
-                http://www.gismeteo.md - не реализовано
+                http://www.gismeteo.md
 */
 
 

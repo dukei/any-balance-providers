@@ -304,8 +304,8 @@ function fetchAccountStatus(html, result){
     //Для обычного помощника чуть по другому долг получать
     getParam (html, result, 'debt', /оплатить до(?:[\s\S](?!<\/td>))*?<strong[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 
-    // Остаток трафика
-    html = sumParam (html, result, 'traffic_left_vpn', /VPN Counter[^<]*?:[^<]*?(\d+[,.]?\d*\s*([kmgкмг][бb]|байт|byte))/ig, replaceTagsAndSpaces, parseTraffic, true, aggregate_sum);
+    // Остаток трафика (для впн надо в любом случае получать, иначе может наложиться на обычный трафик)
+    html = sumParam (html, result, ['traffic_left_vpn', 'traffic_left'], /VPN Counter[^<]*?:[^<]*?(\d+[,.]?\d*\s*([kmgкмг][бb]|байт|byte))/ig, replaceTagsAndSpaces, parseTraffic, true, aggregate_sum);
 
     html = sumParam (html, result, 'traffic_left', /(?:Осталось|Остаток)[^<]*?(\d+[.,]?\d*\s*([kmgкмг][бb]|байт|byte))/ig, replaceTagsAndSpaces, parseTraffic, true, aggregate_sum);
     html = sumParam (html, result, 'traffic_left', /:[^<]*?(\d+[,.]?\d*\s*([kmgкмг][бb]|байт|byte))/ig, replaceTagsAndSpaces, parseTraffic, true, aggregate_sum);

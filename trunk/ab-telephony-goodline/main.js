@@ -21,8 +21,8 @@ function parseDate(str){
 }
 
 var g_urls = {
-    ru: ['http://new.goodline.ru', mainNew],
-    ua: ['http://new.goodline.com.ua', mainOld]
+    ru: ['http://goodline.ru', mainNew],
+    ua: ['http://goodline.com.ua', mainOld]
 };
 
 var g_headers = {

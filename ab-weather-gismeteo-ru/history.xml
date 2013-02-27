@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change major_version="2.1" version="13" date="2013-02-27">
+    - Добавлен молдавский сайт (на русском языке)
+    </change>
     <change major_version="2.1" version="12" date="2013-01-05">
     - Исправлено отображение ветра в текущей погоде
     </change>

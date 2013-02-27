@@ -21,8 +21,8 @@
         summary="Домен, с которого будет получена погода||{@s}\n"
         key="domen"
         defaultValue="ru"
-        entries="Россия (.ru)|Украина (.ua)|Литва (.lt)|Беларусь (.by)"
-        entryValues="ru|ua|lt|by" />
+        entries="Россия (.ru)|Украина (.ua)|Литва (.lt)|Беларусь (.by)|Молдова (.md)"
+        entryValues="ru|ua|lt|by|md" />
 <!--  Задел на будущее. В текущей версии - только русский
     <ListPreference
         title="Язык"

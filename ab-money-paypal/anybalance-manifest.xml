@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-money-paypal</id>
+  <id version="2">ab-money-paypal</id>
   <name>PayPal</name>
   <description>
     Obtains balance on your PayPal account.
@@ -9,6 +9,8 @@
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
+    <history>history.xml</history>
+    <js>library.js</js>
     <js>main.js</js>
   </files>
   <counters>

@@ -84,7 +84,10 @@ function main(){
         //bonuses bonus name:contains("Остаток минут для звонков на номера абонентов по Украине"), 
         var val = $info.find('bonuses bonus name:contains("Остаток минут"):contains("по Украине"),\n\
                               bonuses bonus name:contains("Залишок хвилин"):contains("по Україні"),\n\
-                              bonuses bonus name:contains("Balance of minutes"):contains("in Ukraine")').next().text();
+                              bonuses bonus name:contains("Balance of minutes"):contains("in Ukraine"),\n\
+                              bonuses bonus name:contains("Бонусные минуты"),\n\
+                              bonuses bonus name:contains("Бонусні хвилини"),\n\
+                              bonuses bonus name:contains("Balance of minutes")').next().text();
         if(val){
             var matches = val.match(/(\d+)/);
             if(matches)
@@ -104,7 +107,7 @@ function main(){
     }
     
     if(AnyBalance.isAvailable('traffic_left')){
-        var val = $info.find('bonuses bonus name:contains("GPRS"), bonuses bonus name:contains("MB"), bonuses bonus name:contains("Мб")').next().text();
+        var val = $info.find('bonuses bonus name:contains("GPRS"), bonuses bonus name:contains("MB"), bonuses bonus name:contains("Mb"), bonuses bonus name:contains("Мб")').next().text();
         if(val){
             var matches = val.match(/([\d\.]+)/);
             if(matches)

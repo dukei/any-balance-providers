@@ -1,10 +1,10 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 
-Получает баланс и информацию о тарифном плате для сотового оператора MatrixMobile 
+Получает баланс и информацию о тарифном плате для сотового оператора xxxxxx 
 
-Operator site: http://matrixmobile.ru
-Личный кабинет: https://matrixopen.ru/login
+Operator site: http://xxxxxx.ru
+Личный кабинет: https://kabinet.xxxxxx.ru/login
 */
 
 var g_headers = {
@@ -20,7 +20,7 @@ function main(){
     var prefs = AnyBalance.getPreferences();
 
     //Лучше базовый url забить где-нибудь вначале в переменную, потом гораздо легче переделывать в другой провайдер
-    var baseurl = "https://matrixopen.ru/";
+    var baseurl = "https://kabinet.xxxxxx.ru/";
 
     //Не забываем устанавливать кодировку по-умолчанию. Её можно узнать из заголовка Content-Type или из тела страницы в теге <meta> 
     AnyBalance.setDefaultCharset('utf-8'); 

@@ -185,8 +185,11 @@ function findPayments(allpayments, result){
     }
     if(AnyBalance.isAvailable('paydate40end')){
         ret = ret && maxIndex40 >= 0;
-        if(maxIndex40 >= 0)
-            result.paydate40end = allpayments[maxIndex40].date + 29*86400*1000; //Пакет действует 29 дней после платежа в 40 гривен
+        if(maxIndex40 >= 0){
+            var paydate40 = new Date(allpayments[maxIndex40].date);
+            var paydate40end = new Date(paydate40.getFullYear(), paydate40.getMonth(), paydate40.getDate() + 29 + 1, 0, -1);
+            result.paydate40end = paydate40end.getTime(); //Пакет действует 29 дней после платежа в 40 гривен, но отсчет начинается на следующий день
+        }
     }
 
     return ret;

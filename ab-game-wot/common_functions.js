@@ -6,15 +6,20 @@
 function getData(url) {
 	var data = AnyBalance.requestGet(url);
 	if (data){
-		var js = $.parseJSON(data);
-		var st =  js.status
-		if (st == 'ok'){
-			return js;
-		} else if (st == 'error'){
-			var err = js.error
-			throw new AnyBalance.Error('Ошибка: ' + err);
+		var code = data.match(/<title>(.+?)<\/title>/i);
+		if (code){
+			throw new AnyBalance.Error(code[1]);
 		} else {
-			throw new AnyBalance.Error('Неизвестный ответ сервера: ' + st);
+			var js = $.parseJSON(data);
+			var st =  js.status
+			if (st == 'ok'){
+				return js;
+			} else if (st == 'error'){
+				var err = js.error
+				throw new AnyBalance.Error('Ошибка: ' + err);
+			} else {
+				throw new AnyBalance.Error('Неизвестный ответ сервера: ' + st);
+			}
 		}
 	} else {
 		throw new AnyBalance.Error('Неизвестная ошибка');

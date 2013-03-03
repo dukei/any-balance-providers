@@ -89,7 +89,7 @@ function main(){
       __EVENTVALIDATION:eventvalidation,
       txtLogin:prefs.login,
       txtPassword:prefs.password,
-      btnAtl:'Войти'
+      btnLoginStandard:'Войти'
     });
 
     error = getParam(html, null, null, /<span[^>]*id="lblErrorMsg"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Лицевой счет" 
+        positiveButtonText="OK" 
+        summary="|Введите номер лицевого счета или договора|{@s}" 
+        dialogTitle="Номер телефона" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите номер лицевого счета или договора"
+        inputType="number"
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="OK"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="||***********"
+        dialogMessage="Введите пароль для входа в личный кабинет."
+        inputType="textPassword">
+    </EditTextPreference>
+    <ListPreference 
+        key="region" 
+        title="Регион"
+        summary="|Выберите ваш домашний регион|{@s}"
+        entries="Новосибирская область|Республика Бурятия|Иркутcкая область|Алтайский край|Республика Хакасия|Омская область|Томская область|Красноярский край|Кемеровская область|Забайкальский край|Горный Алтай"
+        entryValues="1|2|3|4|5|6|7|8|9|10|11"
+	      defaultValue="1">
+    </ListPreference>
+    
+
+</PreferenceScreen>

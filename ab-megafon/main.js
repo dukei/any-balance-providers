@@ -805,15 +805,16 @@ function parseMinutes(str){
 
 function sumOption(text, result, totalName, leftName, optionName, parseFunc){
     if(!parseFunc) parseFunc = parseBalance;
-    var reOption = /(<tr[^>]*>(?:(?:[\s\S](?!<\/tr>))*?<td[^>]*>\s*<div[^>]+class="td_def"[^>]*>){3}[\s\S]*?<\/tr>)/ig;
 
     if(totalName){
+        var aggregate = /^mins_/.test(totalName) ? aggregate_sum_minutes : aggregate_sum;
         var re1 = new RegExp('<tr[^>]*>\\s*<td[^>]*>\\s*<div[^>]+class="td_def"[^>]*>(?:<div[^>]*>|[^<]|<nobr[^>]*>)*' + optionName + '(?:(?:[\\s\\S](?!<tr))*?<td[^>]*>){1}([\\s\\S]*?)</td>', 'ig');
-        sumParam(text, result, totalName, re1, replaceTagsAndSpaces, parseFunc, aggregate_sum);
+        sumParam(text, result, totalName, re1, replaceTagsAndSpaces, parseFunc, aggregate);
     }
     if(leftName){
+        var aggregate = /^mins_/.test(leftName) ? aggregate_sum_minutes : aggregate_sum;
         var re2 = new RegExp('<tr[^>]*>\\s*<td[^>]*>\\s*<div[^>]+class="td_def"[^>]*>(?:<div[^>]*>|[^<]|<nobr[^>]*>)*' + optionName + '(?:(?:[\\s\\S](?!<tr))*?<td[^>]*>){2}([\\s\\S]*?)</td>', 'ig');
-        sumParam(text, result, leftName, re2, replaceTagsAndSpaces, parseFunc, aggregate_sum);
+        sumParam(text, result, leftName, re2, replaceTagsAndSpaces, parseFunc, aggregate);
     }
 }
 
@@ -901,4 +902,15 @@ function strip_tags(str){
 
 function parseTrafficMy(str){
   return parseTraffic(str, 'b');
+}
+
+function aggregate_sum_minutes(values){
+    if(values.length == 0)
+        return;
+    var total_value = 0;
+    for(var i=0; i<values.length; ++i){
+        if(values[i] < 24*60*31*60) //Большие значения это безлимит, они нам неинтересны
+            total_value += values[i];
+    }
+    return total_value;
 }

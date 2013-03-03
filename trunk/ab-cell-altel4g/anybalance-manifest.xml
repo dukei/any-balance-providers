@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-cell-altel</id>
+  <id version="1">ab-cell-altel4g</id>
   <name>ALTEL 4G (Казахстан)</name>
   <description>
     Получает баланс и информацию о тарифном плане для LTE-тарифов АО «АЛТЕЛ» (http://altel4g.kz).

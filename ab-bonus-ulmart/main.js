@@ -28,10 +28,10 @@ function main(){
 
     var result = {success: true};
 
-    getParam(html, result, 'balance', /<span[^>]+id="user_popup_bonus"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'fio', /<div[^>]+class="[^"]*_login"[^>]*>([\s\S]*?)(?:▼|<\/div>)/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'price', /цена&nbsp;(\d+)/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, '__tariff', /<div[^>]+class="b-dropdown-popup__info"[^>]*>(?:[\s\S](?!<\/div>))*?<br[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'balance', /<strong[^>]+class="title"[^>]*>XXL-Бонус[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'fio', /<div[^>]+class="name"[^>]*>([\s\S]*?)(?:▼|<\/div>)/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'price', /цена(?:&nbsp;|\s)+(\d+)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, '__tariff', /<div[^>]+class="b-dropdown-popup__info"[^>]*>[\s\S]*?<\/div>([\s\S]*?)<ul/i, replaceTagsAndSpaces, html_entity_decode);
 
     AnyBalance.setResult(result);
 }

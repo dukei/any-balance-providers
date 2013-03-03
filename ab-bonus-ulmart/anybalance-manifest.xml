@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-bonus-ulmart</id>
+  <id version="3">ab-bonus-ulmart</id>
   <name>Ulmart</name>
   <description>
     Получает баланс XXL-бонусов в бонусной программе магазина электроники Ulmart (http://www.ulmart.ru).

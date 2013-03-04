@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-cell-du</id>
+  <name>du</name>
+  <description>
+    Retrieve balance and plan information from du (http://www.du.ae) selfcare.
+
+    The selfcare address is: https://selfcare.du.ae
+
+    If you still have not got du selfcare account please register here: https://selfcare.du.ae
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Balance" units=" AED"/>
+    <counter id="fio" name="Name" type="text"/>
+    <counter id="phone" name="Phone" type="text"/>
+    <counter id="till" name="Renewal date" type="time" format="dd/MM/yyyy"/>
+  </counters>
+  <keywords>
+    
+  </keywords>
+  <type>
+    cell
+  </type>
+  <country>
+    ae
+  </country>
+</provider>

@@ -3,7 +3,7 @@
     <EditTextPreference 
         title="Логин" 
         positiveButtonText="ОК" 
-        summary="Логин, например stm1234567||{@s}\n" 
+        summary="|Введите логин, например stm1234567|{@s}" 
         dialogTitle="Логин" 
         negativeButtonText="Отмена" 
         dialogMessage="Логин в личный кабинет МТС, например, stm1234567"
@@ -15,7 +15,7 @@
         dialogTitle="Пароль"
         negativeButtonText="Отмена"
         title="Пароль"
-        summary="Пароль для входа в личный кабинет||***********\n"
+        summary="|Введите пароль для входа в личный кабинет|***********"
         dialogMessage="Введите пароль, используемый для входа в личный кабинет МТС"
         inputType="textPassword">
     </EditTextPreference>
@@ -23,8 +23,8 @@
         key="region" 
         title="Регион"
         summary="Нужен для определения личного кабинета||{@s}\n"
-        entries="Вологда|Екатеринбург|Ижевск|Киров|Москва|Нижний Новгород|Новосибирск|Пенза|Пермь|Ростов|Северодвинск"
-        entryValues="vlgd|ekt|izh|krv|moscow|nnov|nsk|pnz|prm|rostov|sdv"
+        entries="Вологда|Екатеринбург|Ижевск|Киров|Комсомольск-на-Амуре|Москва|Нижний Новгород|Новосибирск|Пенза|Пермь|Ростов|Северодвинск"
+        entryValues="vlgd|ekt|izh|krv|kms|moscow|nnov|nsk|pnz|prm|rostov|sdv"
 	defaultValue="moscow">
     </ListPreference>
 </PreferenceScreen>

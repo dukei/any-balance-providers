@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="23">ab-internet-mts</id>
+  <id version="24">ab-internet-mts</id>
   <name>Домашний Интернет и Телевидение МТС</name>
   <description>
     Получает текущий баланс, номера лицевого счета и договора, ФИО владельца, трафик в текущем месяце, абонентскую плату у провайдера "Домашний Интернет и Телевидение МТС"
@@ -17,6 +17,7 @@
       * Вологда (https://stats.vologda.comstar-r.ru)
       * Ижевск (https://lk.izhnt.ru)
       * Пенза (http://client.lanbilling.ptcomm.ru)
+      * Комсомольск-на-Амуре (http://issa.kms.multinex.ru)
 
      Для добавления вашего региона обращайтесь к автору на e-mail dco@mail.ru
   </description>

@@ -23,7 +23,8 @@ var regions = {
    sdv: getSdv,
    vlgd: getVologda,
    izh: getIzhevsk,
-   pnz: getPnz
+   pnz: getPnz,
+   kms: getKomsomolsk,
 };
 
 function main(){
@@ -535,6 +536,42 @@ function getIzhevsk(){
         'LoginForm[login]':prefs.login,
         'yt0':'Войти',
         'LoginForm[password]':prefs.password
+    });
+
+    if(!/r=site\/logout/i.test(html)){
+        throw new AnyBalance.Error("Не удалось войти в личный кабинет. Неправильный логин-пароль?");
+    }
+
+    var result = {success: true};
+
+    //Вначале попытаемся найти активный тариф
+    var tr = getParam(html, null, null, /<tr[^>]+class="account"[^>]*>((?:[\s\S](?!<\/tr))*?Состояние:\s+актив[\s\S]*?)<\/tr>/i);
+    if(!tr)
+        tr = getParam(html, null, null, /<tr[^>]+class="account"[^>]*>([\s\S]*?)<\/tr>/i);
+
+    if(tr){
+        getParam(tr, result, '__tariff', /<!-- Работа с тарифом -->[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
+        getParam(tr, result, 'abon', /Абонентская плата:([^<]*)/i, replaceTagsAndSpaces, parseBalance2);
+        getParam(tr, result, 'internet_cur', /Израсходовано:([^<]*)/i, replaceTagsAndSpaces, parseBalance2);
+    }
+
+    getParam(html, result, 'agreement', /Номер договора:[^<]*<[^>]*>([^<]*)/i, replaceTagsAndSpaces);
+    getParam(html, result, 'balance', /Текущий баланс:[^<]*<[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance2);
+    getParam(html, result, 'username', /Мои аккаунты\s*\/([^<]*)/i, replaceTagsAndSpaces);
+
+    AnyBalance.setResult(result);
+}
+
+function getKomsomolsk(){
+    var prefs = AnyBalance.getPreferences();
+    AnyBalance.setDefaultCharset('utf-8');
+
+    var baseurl = 'http://issa.kms.multinex.ru/';
+
+    var html = AnyBalance.requestPost(baseurl + 'index.php?r=site/login', {
+        'LoginForm[login]':prefs.login,
+        'LoginForm[password]':prefs.password,
+        'yt0':'Войти'
     });
 
     if(!/r=site\/logout/i.test(html)){

@@ -3,7 +3,7 @@
     <EditTextPreference 
         title="Логин" 
         positiveButtonText="ОК" 
-        summary="|Логин в ГудЛайн|{@s}\n" 
+        summary="|Логин в ГудЛайн|{@s}" 
         dialogTitle="Логин" 
         negativeButtonText="Отмена" 
         dialogMessage="Введите ваш логин в ГудЛайн"

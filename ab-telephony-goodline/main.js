@@ -44,6 +44,14 @@ function getMyJson(info){
     } 
 }
 
+function findParam(params, name){
+    for(var i=0; i<params.length; ++i){
+        if(params[i][0] == name)
+            return i;
+    }
+    return -1;
+}
+
 function createSignedParams(params, arData)
 {
 	var key = new rsasec_key(arData.key.E, arData.key.M, arData.key.chunk);
@@ -52,16 +60,24 @@ function createSignedParams(params, arData)
 	for(var i = 0; i < arData.params.length; i++)
 	{
                 var param = arData.params[i];
-		if(params[param])
+                var idx = findParam(params, param);
+		if(idx >= 0)
 		{
-			data += '&' + param + '=' + encodeURIComponent(params[param]);
-                        params[param] = undefined;
+			data += '&' + param + '=' + encodeURIComponent(params[idx][1]);
+                        params[idx] = undefined;
 		}
 	}
 	data = data + '&__SHA=' + SHA1(data);
 
-	params.__RSA_DATA = rsasec_crypt(data, key);
-        return params;
+	params.push(['__RSA_DATA', rsasec_crypt(data, key)]);
+
+        var out = [];
+        for(var i=0; i<params.length; ++i){
+            var p = params[i];
+            if(!p) continue;
+            out.push(encodeURIComponent(p[0]) + '=' + encodeURIComponent(p[1]));
+        }
+        return out.join('&');
 }
 
 function main(){
@@ -81,26 +97,33 @@ function mainNew(baseurl){
 
     var info = AnyBalance.requestGet(baseurl + '/user', g_headers);
     var rsainfo = getParam(info, null, null, /top.rsasec_form_bind\)\s*\((\{'formid':'form_auth'[^)]*\})\)/);
-    if(!rsainfo)
+    if(!rsainfo){
+        var error = getParam(info, null, null, /<h2[^>]+style="color:\s*#933"[^>]*>([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces, html_entity_decode);
+        if(error)
+            throw new AnyBalance.Error(error);
         throw new AnyBalance.Error('Не найдены ключи шифрования пароля. Сайт изменен, обратитесь к автору провайдера.');
+    }
 
     rsainfo = getMyJson(rsainfo);
     
 //    AnyBalance.requestGet(baseurl + '/ru/bb/?ajax=1&p_id=21&pl=banner_right5', g_headers); //Сессию устанавливает. Вот тупизм.
 
-    var info = AnyBalance.requestPost(baseurl + "/user/?login=yes", createSignedParams({
-        AUTH_FORM:'Y',
-        TYPE:'AUTH',
-        backurl:'/user/',
-        Login:'Авторизация',
-        USER_LOGIN:prefs.login,
-        USER_PASSWORD:prefs.password
-    }, rsainfo), addHeaders({Referer: baseurl + '/user/'}));
+    var info = AnyBalance.requestPost(baseurl + "/user/?login=yes", createSignedParams([
+        ['AUTH_FORM','Y'],
+        ['TYPE','AUTH'],
+        ['backurl','/user/'],
+        ['USER_LOGIN',prefs.login],
+        ['USER_PASSWORD',prefs.password],
+        ['Login','Авторизация']
+    ], rsainfo), addHeaders({'Content-Type': 'application/x-www-form-urlencoded', Referer: baseurl + '/user/'}));
 
     if(!/\?logout=yes/i.test(info)){
         var error = getParam(info, null, null, /<font[^>]+class="errortext"[^>]*>([\s\S]*?)<\/font>/i, replaceTagsAndSpaces, html_entity_decode);
+        if(!error)
+            error = getParam(info, null, null, /<h2[^>]+style="color:\s*#933"[^>]*>([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error);
+        AnyBalance.trace(info);
         throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
     }
 

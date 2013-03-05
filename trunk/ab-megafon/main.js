@@ -665,7 +665,7 @@ function megafonServiceGuidePhysical(filial, sessionid){
                  sumOption(matches[1], result, 'mins_net_total', 'mins_net_left', '.', parseMinutes);
              else
                  sumOption(matches[1], result, 'mins_total', 'mins_left', '.', parseMinutes);
-        }else if(/GPRS|Интернет|Internet/i.test(name)){
+        }else if(/GPRS|Интернет|Internet|\d+\s+[гмкgmk][бb]/i.test(name)){
              sumOption(matches[1], result, 'internet_total', 'internet_left', '.', parseTrafficMy);
              if(AnyBalance.isAvailable('internet_cur')){
                  var total = getParam(matches[1], null, null, /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTrafficMy);

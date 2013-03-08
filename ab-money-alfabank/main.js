@@ -59,6 +59,10 @@ function parseDate(str){
 
 function main(){
     var prefs = AnyBalance.getPreferences();
+    if(!prefs.login)
+        throw new AnyBalance.Error('Введите логин в альфа.клик!');
+    if(!prefs.password)
+        throw new AnyBalance.Error('Введите пароль для входа в альфа.клик!');
     if(prefs.usemobile)
         processMobile();
     else

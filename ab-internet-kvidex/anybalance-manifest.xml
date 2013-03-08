@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-kvidex</id>
+  <id version="2">ab-internet-kvidex</id>
   <name>Квидекс-Телеком (Москва)</name>
   <description>
     Получает баланс и информацию о тарифном плане для московского интернет-провайдера Квидекс-Телеком ( http://kvidex.ru ). Провайдер "Квидекс-Телеком" является проектом, направленным на предоставление частным лицам и организациям широкополосного доступа в Интернет без использования телефонной линии и модема.
@@ -12,6 +12,7 @@
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
     <js>main.js</js>
+    <history>history.xml</history>
   </files>
   <counters>
     <counter id="balance" name="Баланс" units="р"/>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-affiliate-gamma-ic</id>
+  <name>Gamma Investment Corporation</name>
+  <description>
+    Компания «Gamma Investment Corporation» (http://www.gamma-ic.ru) предлагает услуги по управлению капиталом на высокодоходном инвестиционном рынке «Forex». Получает данные из личного кабинета.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="dep" name="Текущий депозит" units=" $"/>
+    <counter id="income" name="Прибыль" units=" $"/>
+    <counter id="base" name="Инвестировано" units=" $"/>
+    <counter id="out" name="Выведено" units=" $"/>
+    <counter id="pct" name="Доход" units="%"/>
+    <counter id="fio" name="ФИО" type="text"/>
+  </counters>
+  <keywords>
+    
+  </keywords>
+  <type>
+    affiliate
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

@@ -7,37 +7,56 @@
 Личный кабинет: http://www.redcube.ru/clients/club/cabinet/
 */
 
+function checkEmpty (param, error) {
+    if (!param || param == '')
+        throw new AnyBalance.Error (error);
+}
 
 function enter (url, data) {
     var html = AnyBalance.requestPost (url, data);
 
-    var regexp=/<!--\s*\/Yandex.Metrika\s*counter\s*-->\s*(?:<script[^>]*>\s*<\/script>\s*)?([^\s<]+[^<]*)/i;
-    var res = regexp.exec (html);
-    if (res)
-        throw new AnyBalance.Error (res[1]);
+    var error=getParam(html, null, null, /<div[^>]+id="dangerMessage"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+    if (error)
+        throw new AnyBalance.Error (error);
 
     return html;
 }
 
 
 function main () {
+    AnyBalance.setDefaultCharset ('utf-8');
+
     var prefs = AnyBalance.getPreferences ();
-    var baseurl = 'http://www.redcube.ru/clients/club/cabinet/';
+    var baseurl = 'http://club.redcube.ru/';
 
     checkEmpty (prefs.number, 'Введите номер карты');
     checkEmpty (prefs.date, 'Введите дату рождения');
 
     var regexp=/(\d{2})\.(\d{2})\.(\d{2})/;
     var res = regexp.exec (prefs.date);
-    if (!res || !Date.parse (res[2] + '-' + res[1] + '-' + res[3]))
+    var date = Date.parse (res[2] + '-' + res[1] + '-' + res[3]);
+    if (!res || !date)
         throw new AnyBalance.Error ('Дата рождения введена неправильно');
+
+    date = new Date(date);
 
     AnyBalance.trace ('Trying to enter selfcare at address: ' + baseurl);
 
-    var data = {number: prefs.number};
-    enter (baseurl, data);
-    data.date = prefs.date;
-    var html = enter (baseurl, data);
+    enter (baseurl, {
+	_method:'POST',
+	'data[Auth][card]':prefs.number,
+	serverurl:'http://www.redcube.ru',
+	text:'Найти'
+    });
+
+    var html = enter (baseurl, {
+	_method:'POST',
+	'data[Auth][date][day]':date.getDate() < 10 ? '0' + date.getDate() : date.getDate(),
+	'data[Auth][date][month]':date.getMonth()+1,
+	'data[Auth][date][year]':date.getFullYear(),
+	serverurl:'http://www.redcube.ru',
+	text:'Найти'
+    });
 
     // Проверка на корректный вход
     regexp = /">Выйти</;
@@ -51,16 +70,16 @@ function main () {
     var result = {success: true};
 
     // ФИО
-    getParam (html, result, 'customer', /Уважаемый\s*([^!]*)!/i);
+    getParam (html, result, 'customer', /Уважаем(?:ый|ая)\s*([^!]*)!/i, replaceTagsAndSpaces, html_entity_decode);
 
     // Номер карты
-    getParam (html, result, 'cardNumber', /Номер\s*Вашей\s*карты[^>]*>([^<]*)/i);
+    getParam (html, result, 'cardNumber', /Номер\s*Вашей\s*карты[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 
     // Остаток бонусов
-    getParam (html, result, 'bonus', /Остаток\s*бонусов[^\d]*(\d*)/i, [], parseInt);
+    getParam (html, result, 'bonus', /Остаток\s*бонусов[^\d]*(\d+[.,]?\d*)/i, replaceTagsAndSpaces, parseBalance);
 
     // Сумма всех покупок
-    getParam (html, result, 'costPurchase', /Сумма\s*всех\s*покупок[^\d]*(\d+[.,]?\d*)/i, [',', '.'], parseFloat);
+    getParam (html, result, 'costPurchase', /Сумма\s*всех\s*покупок[^\d]*(\d+[.,]?\d*)/i, replaceTagsAndSpaces, parseBalance);
 
     // Дата последней операции
     getParam (html, result, 'dateLastOperation', /Дата\s*последней\s*операции[^\d]*(\d{2}.\d{2}.\d{4})/i);

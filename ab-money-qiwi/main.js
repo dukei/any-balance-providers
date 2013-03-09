@@ -49,6 +49,18 @@ function getFatalError(str){
     return e;
 }
 
+var g_currency = {
+    RUB: 'р',
+    USD: '$',
+    KZT: '〒',
+    UAH: '₴'
+};
+
+function parseCurrencyMy(text){
+    var currency = parseCurrency(text);
+    return g_currency[currency] ? ' ' + g_currency[currency] : currency;
+}
+
 function mainNew () {
     var prefs = AnyBalance.getPreferences ();
     var baseurl = 'https://w.qiwi.com/';
@@ -116,7 +128,8 @@ function mainNew () {
     var result = {success: true};
 
     // Баланс
-    getParam (html, result, 'balance', /id="person-accounts-RUB"[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+    getParam (html, result, 'balance', /<option[^>]+id="person-accounts-\w+"[^>]*selected[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+    getParam (html, result, ['currency', 'balance'], /<option[^>]+id="person-accounts-\w+"[^>]*selected[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseCurrencyMy);
 
     // Сообщения (че-то непонятно, где они в новом личном кабинете)
     //getParam (html, result, 'messages', /Сообщения:.*?>(\d+)/i, [], parseInt);
@@ -204,6 +217,7 @@ function mainOld () {
 
     // Баланс
     getParam (html, result, 'balance', /id="balance".*?>([+-]?(?:\d+[.,]?\d*|\d*[.,]?\d+))/i, [',', '.'], parseFloat);
+    getParam (' р', result, ['currency', 'balance']);
 
     // Сообщения
     getParam (html, result, 'messages', /Сообщения:.*?>(\d+)/i, [], parseInt);

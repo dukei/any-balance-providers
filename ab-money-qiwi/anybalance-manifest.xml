@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="2.2" version="9">ab-money-qiwi</id>
+  <id major_version="2.2" version="10">ab-money-qiwi</id>
   <name>QIWI Кошелек</name>
   <description>
     Получает баланс, количество сообщений и счетов в QIWI Кошельке. Поддерживает старый личный кабинет (https://w.qiwi.ru) и новый (https://w.qiwi.com).
@@ -10,12 +10,12 @@
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
-    <js>common_functions.js</js>
+    <js>library.js</js>
     <js>main.js</js>
     <history>history.xml</history>
   </files>
   <counters>
-    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="balance" name="Баланс" units="{@currency}"/>
     <counter id="messages" name="Сообщения" prefix="Сообщ:"/>
     <counter id="bills" name="Счета" prefix="Счета:"/>
   </counters>
@@ -26,6 +26,6 @@
     money
   </type>
   <country>
-    ru, ua
+    ru, ua, kz
   </country>
 </provider>

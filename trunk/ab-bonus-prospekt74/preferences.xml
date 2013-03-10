@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Номер карты" 
+        positiveButtonText="OK" 
+        summary="|Введите номер вашей карты|{@s}" 
+        dialogTitle="Номер карты" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите все цифры номера вашей бонусной карты"
+        inputType="number"
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="OK"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="||***********\n"
+        dialogMessage="Введите ваш пароль для входа в личный кабинет или день рождения в формате дд.мм.гггг."
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

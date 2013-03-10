@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-affiliate-innovative-securities</id>
+  <name>Innovative Securities</name>
+  <description>
+    Innovative Securities (https://www.innovativesecurities.com) была основана в 2008 году в Новой Зеландии. Задача компании заключается в том, чтобы помочь клиентам создать стабильное и надежное будущее на основе прочных финансовых инвестиций.
+
+    Провайдер получает данные из личного кабинета для клиентов (https://www.innovativesecurities.com/loginpage.php).
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс инвестиций" units="€"/>
+    <counter id="rs" name="Расчётный счёт" units="€"/>
+    <counter id="credit" name="Кредитный баланс" units="€"/>
+    <counter id="avail" name="Доступный баланс для транзакций" units="€"/>
+    <counter id="fio" name="Владелец счета" type="text"/>
+    <counter id="acc" name="Номер счета" type="text"/>
+  </counters>
+  <keywords>
+    
+  </keywords>
+  <type>
+    affiliate
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

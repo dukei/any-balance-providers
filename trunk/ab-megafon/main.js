@@ -410,7 +410,7 @@ function megafonTrayInfo(filial){
            getParam(json.ok.html, result, 'last_pay_sum', /<div[^>]+class="payment_amount"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
            getParam(json.ok.html, result, 'last_pay_date', /<div>([^<]*)<\/div>\s*<div[^>]+class="payment_source"/i, replaceTagsAndSpaces, parseDate);
            
-           if(errorInTray){
+           if(errorInTray || isAvailableButUnset(['balance','phone','sub_smit','sub_smio','sub_scl','sub_scr','sub_soi'])){
                getParam(json.ok.html, result, 'balance', /<div[^>]+class="subs_balance[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
                if(AnyBalance.isAvailable('balance') && !isset(result.balance)){
                    var e = new AnyBalance.Error(errorInTray);
@@ -430,6 +430,34 @@ function megafonTrayInfo(filial){
                    AnyBalance.trace('Не удалось найти список тарифных планов в яндекс.виджете');
                }
            }
+
+           if(errorInTray){
+               //Минуты и прочее получаем только в случае ошибки в сервисгиде, чтобы случайно два раза не сложить
+               var discounts = sumParam(json.ok.html, null, null, /<td[^>]+class="cc_discount_row"[^>]*>([\s\S]*?)<\/td>/ig);
+               for(var i=0; i<discounts.length; ++i){
+                   var discount = discounts[i];
+                   var name = getParam(discount, null, null, /<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+                   var val = getParam(discount, null, null, /<div[^>]+class="discount_volume"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+                   if(/SMS/i.test(name)){
+                       sumParam(val, result, 'sms_left', /\/(.*)/, null, parseBalance, aggregate_sum);
+                       sumParam(val, result, 'sms_total', /(.*?)\//, null, parseBalance, aggregate_sum);
+                   }else if(/мин/i.test(val)){
+                       sumParam(val, result, 'mins_left', /\/(.*)/, null, parseMinutes, aggregate_sum);
+                       sumParam(val, result, 'mins_total', /(.*?)\//, null, parseMinutes, aggregate_sum);
+                   }else if(/[кгмkgm][бb]/i.test(val)){
+                       var left = getParam(val, null, null, /\/(.*)/, null, parseTraffic);
+                       var total = getParam(val, null, null, /(.*)\//, null, parseTraffic);
+                       if(AnyBalance.isAvailable('internet_left') && isset(left))
+                       	   result.internet_left = (result.internet_left||0) + left;
+                       if(AnyBalance.isAvailable('internet_total') && isset(total))
+                       	   result.internet_total = (result.internet_total||0) + total;
+                       if(AnyBalance.isAvailable('internet_cur') && isset(total) && isset(left))
+                       	   result.internet_cur = (result.internet_cur||0) + (total - left);
+                   }
+                   
+               }
+           }
+
         }catch(e){
            if(e.skip)
                throw e;

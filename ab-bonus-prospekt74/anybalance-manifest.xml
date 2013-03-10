@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-cell-matrixmobile</id>
+  <name>Проспект (Челябинск)</name>
+  <description>
+    Получает информацию по бонусной программе челябинской розничной сети "Проспект" (http://www.prospect74.ru)
+
+    Информация берется из личного кабинета: http://www.prospect74.ru/buyers/bonus
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Бонусные баллы" units="б"/>
+    <counter id="available" name="Доступные бонусные баллы" units="б"/>
+    <counter id="delayed" name="Отложенные бонусные баллы" units="б"/>
+    <counter id="total" name="Всего накоплено" units="р"/>
+    <counter id="fio" name="ФИО" type="text"/>
+  </counters>
+  <keywords>
+    челябинск prospekt
+  </keywords>
+  <type>
+    bonus
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-bonus-citilink</id>
+  <name>Ситилинк</name>
+  <description>
+    Получает бонусы в бонусной программе электронного дискаунтера Ситилинк (http://www.citilink.ru/)
+
+    Информация берется из личного кабинета: http://www.citilink.ru/login
+
+    Если у вас нет доступа к личному кабинету, зарегистрируйтесь здесь: http://www.citilink.ru/registration
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Бонусы" units="б"/>
+    <counter id="new" name="Бонусы к начислению" units="б"/>
+    <counter id="num" name="Товаров в текущем квартале" units="б"/>
+    <counter id="sum" name="Покупки в текущем квартале" units="р"/>
+  </counters>
+  <keywords>
+    ситилинк
+  </keywords>
+  <type>
+    bonus
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

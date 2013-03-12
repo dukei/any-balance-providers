@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="25" date="2013-03-12">
+      - Изменение адреса личного кабинета для Перми и Екатеринбурга (https://lka.ural.mts.ru)
+    </change>
     <change version="24" date="2013-03-04">
       - Добавлен новый регион - Комсомольск-на-Амуре (http://issa.kms.multinex.ru)
     </change>

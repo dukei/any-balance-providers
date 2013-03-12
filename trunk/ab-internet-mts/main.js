@@ -276,7 +276,7 @@ function getNsk(){
     AnyBalance.setResult(result);
 }
 
-function getPrm(){
+function getPrmOld(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('koi8-r');
 
@@ -326,6 +326,64 @@ function getPrm(){
             getParam(html, result, 'balance_tv', /Баланс:([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance);
         }
     }
+
+    AnyBalance.setResult(result);
+}
+
+function parseBalanceRK(_text){
+    var text = _text.replace(/\s+/g, '');
+    var rub = getParam(text, null, null, /(-?\d[\d\.,]*)руб/i, replaceFloat, parseFloat) || 0;
+    var kop = getParam(text, null, null, /(-?\d[\d\.,]*)коп/i, replaceFloat, parseFloat) || 0;
+    var val = rub+kop/100;
+    AnyBalance.trace('Parsing balance (' + val + ') from: ' + _text);
+    return val;
+}
+
+function getPrm(){
+    //Взято из комстар регионы (сибирь)
+    var prefs = AnyBalance.getPreferences();
+    AnyBalance.setDefaultCharset('utf-8');
+
+    var baseurl = "https://lka.ural.mts.ru/";
+
+    var city2num = {bug: 26, buz: 26, kem: 29, nef: 2, nizv: 16, novk: 30, novt: 26, noy: 7, nyg: 4, orn: 26, prm: 26, prg: 26, pyh: 2, rad: 8, sor: 26, sur: 5, tob: 28, tum: 26} 
+
+    var type = prefs.type || 0;
+    if(type != 0 && type != 500 && type != 550 && !prefs.city)
+        throw new AnyBalance.Error('Для выбранного типа подключения необходимо явно указать ваш город.');
+
+
+/*    AnyBalance.trace(JSON.stringify({
+        extDvc:prefs.type,
+        authCity:(prefs.city && city2num[prefs.city]) || 26,
+        authLogin:prefs.login,
+        authPassword:prefs.password,
+        userAction:'auth'
+    }));
+*/
+
+    var html = AnyBalance.requestPost(baseurl, {
+        extDvc:type,
+        authCity:(prefs.city && city2num[prefs.city]) || 26,
+        authLogin:prefs.login,
+        authPassword:prefs.password,
+        userAction:'auth'
+    });
+
+    if(!/\/index\/logout/i.test(html)){
+        var error = getParam(html, null, null, /<div[^>]*background-color:\s*Maroon[^>]*>([\s\S]*?)<\/div>/, replaceTagsAndSpaces, html_entity_decode);
+        if(error)
+            throw new AnyBalance.Error(error);
+        AnyBalance.trace(html);
+        throw new AnyBalance.Error('Не удалось войти в личный кабинет. Проблемы на сайте или сайт изменен.');
+    }
+
+    var result = {success: true};
+
+    getParam(html, result, 'balance', /Баланс:[\S\s]*?<strong[^>]*>([\S\s]*?)<\/strong>/i, replaceTagsAndSpaces, parseBalanceRK);
+    getParam(html, result, 'status', /Статус:[\S\s]*?<strong[^>]*>([\S\s]*?)<\/strong>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'licschet', /Лицевой счёт:[\S\s]*?<strong[^>]*>([\S\s]*?)<\/strong>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, '__tariff', /Тарифный план:[\S\s]*?<strong[^>]*>([\S\s]*?)<\/strong>/i, replaceTagsAndSpaces, html_entity_decode);
 
     AnyBalance.setResult(result);
 }

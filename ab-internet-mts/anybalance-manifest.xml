@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="24">ab-internet-mts</id>
+  <id version="25">ab-internet-mts</id>
   <name>Домашний Интернет и Телевидение МТС</name>
   <description>
     Получает текущий баланс, номера лицевого счета и договора, ФИО владельца, трафик в текущем месяце, абонентскую плату у провайдера "Домашний Интернет и Телевидение МТС"
@@ -9,8 +9,8 @@
       * Москва (https://kabinet.mts.ru)
       * Ростов (http://pc.aaanet.ru) - КОМСТАР-Регионы Южный филиал
       * Новосибирск (https://my.citynsk.ru) - бывший CityHomeNet
-      * Пермь (https://bill.utk.ru/uportf/arm.pl)
-      * Екатеринбург (https://bill.utk.ru/uportf/arm.pl)
+      * Пермь (https://lka.ural.mts.ru)
+      * Екатеринбург (https://lka.ural.mts.ru)
       * Киров (https://lk.kirovnet.net)
       * Нижний Новгород (http://stat.nnov.comstar-r.ru)
       * Северодвинск (http://severodvinsk.stream-info.ru/client2)

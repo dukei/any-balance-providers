@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Номер телефона" 
+        positiveButtonText="OK" 
+        summary="|Номер в международном формате, например, +79262344334|{@s}" 
+        dialogTitle="Номер телефона" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите ваш номер телефона, например, +79261234567. Обязательно + вначале и только цифры потом."
+        inputType="phone"
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="OK"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="||***********\n"
+        dialogMessage="Введите пароль для входа в личный кабинет Leomoney."
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

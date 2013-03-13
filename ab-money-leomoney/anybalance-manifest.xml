@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-money-leomoney</id>
+  <name>Leomoney</name>
+  <description>
+    Получает баланс на кошельке Leomoney (http://leomoney.ru)
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+  </counters>
+  <keywords>
+    леомани
+  </keywords>
+  <type>
+    money
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Skywards Number" 
+        positiveButtonText="OK" 
+        summary="||{@s}" 
+        dialogTitle="Skywards Number" 
+        negativeButtonText="Cancel" 
+        dialogMessage="Please enter your Skywards Number."
+        inputType="number"
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="OK"
+        key="password" 
+        dialogTitle="Password"
+        negativeButtonText="Cancel"
+        title="Password"
+        summary="||***********"
+        dialogMessage="Enter password to login to your Skywards personal account."
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

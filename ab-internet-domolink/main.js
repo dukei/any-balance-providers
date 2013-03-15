@@ -846,13 +846,17 @@ function domolinksamara(region,login,password) {
     var regionurl = getParam(html, null, null, /<FORM[^>]+name\s*=\s*["']?f1[^>]+ACTION\s*=\s*["']?([^'"]*?)www.PageViewer/i, null, html_entity_decode);
     if(regionurl){
         // Заходим на главную страницу
-        var htmlFrmset = AnyBalance.requestPost(regionurl + "www.GetHomePage", {
-            p_logname: login,
-            p_pwd: password,
-            p_lang:'RUS'
+        var htmlFrmset = AnyBalance.requestPost(regionurl + "www.PageViewer", {
+            n1: 'p_logname',
+	    n2: 'p_pwd',
+            n3: 'p_lang',
+            v1: login,
+            v2: password,
+            v3:'RUS',
+            page_name: 'SMR*START_PAGE_AGREE'
         });
         
-        var next = getParam(htmlFrmset, null, null, /document.location.href\s*=\s*"([^"]*)/i, null, html_entity_decode);
+        var next = getParam(htmlFrmset, null, null, /document.location.href\s*=\s*["']([^"']*)/i, null, html_entity_decode);
         if(!next){
             var error = getParam(htmlFrmset, null, null, /<td[^>]+class="?zag[^>]*>\s*Сообщение об ошибке[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
             if(error)
@@ -860,7 +864,12 @@ function domolinksamara(region,login,password) {
             throw new AnyBalance.Error("Не удалось зайти в личный кабинет. Сайт изменен?");
         }
         
-        var authorization = getParam(next, null, null, /(&logname.*)/i);
+        var html = AnyBalance.requestGet(regionurl + next);
+        var authorization = getParam(html, null, null, /(&logname=[^"']*)/i, null, html_entity_decode);
+        if(!authorization){
+            throw new AnyBalance.Error("Не удалось получить строку авторизации. Сайт изменен?");
+        }
+
         var html = AnyBalance.requestGet(regionurl + 'www.PageViewer?page_name=S*ADM_DIALUP_INFO_TFP' + authorization);
         
         // Тариф

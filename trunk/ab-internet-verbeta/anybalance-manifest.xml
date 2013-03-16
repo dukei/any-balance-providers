@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id major_version="1.0" version="1">ab-internet-verbeta</id>
+  <name>Verbeta Telecom (Москва)</name>
+  <description>
+	Получает текущий баланс, номер договора, состояние счета у провайдера "Verbeta Telecom"
+  </description>
+  <author>KiLLer13&lt;killer_kondor@pisem.net&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс"  suffix=" р"/>
+    <counter id="dolg" name="Погасить задолженность до" type="text"/>
+    <counter id="tariff" name="Тарифный план" type="text"/>
+    <counter id="dogovor" name="Номер договора" type="text"/>
+    <counter id="status" name="Состояние счета" type="text"/>
+  </counters>
+  <keywords>
+        провайдер интернет verbeta 
+  </keywords>
+  <type>
+    internet, tv
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

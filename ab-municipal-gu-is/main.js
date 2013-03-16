@@ -8,36 +8,6 @@
 Личный кабинет: http://www.gu-is.ru/pay
 */
 
-function getParam (html, result, param, regexp, replaces, parser) {
-	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
-		return;
-
-	var matches = regexp.exec (html), value;
-	if (matches) {
-		value = matches[1];
-		if (replaces) {
-			for (var i = 0; i < replaces.length; i += 2) {
-				value = value.replace (replaces[i], replaces[i+1]);
-			}
-		}
-		if (parser)
-			value = parser (value);
-
-    if(param)
-      result[param] = value;
-	}
-   return value
-}
-
-var replaceTagsAndSpaces = [/&nbsp;/g, ' ', /<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, ''];
-var replaceFloat = [/\s+/g, '', /,/g, '.'];
-
-function parseBalance(text){
-    var val = getParam(text.replace(/\s+/g, ''), null, null, /(-?\d[\d\s.,]*)/, replaceFloat, parseFloat);
-    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
-    return val;
-}
-
 function main(){
     AnyBalance.setDefaultCharset('utf-8');
 
@@ -93,22 +63,29 @@ function findBill(baseurl, dt){
     //Если у нас пара документов
     getParam(html, result, 'balance', /сумма в документе:\s*([\-\d\.]*)\s*без страх/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'balance_strah', /сумма в документе:.*?([\-\d\.]*)\s*со? страх/i, replaceTagsAndSpaces, parseBalance);
+   
     //Если у нас один документ
     getParam(html, result, 'balance', /<span[^>]+class="sum"[^>]*>([^<]*)<\/span>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'balance_strah', /<span[^>]+class="sum_with_insurance"[^>]*>([^<]*)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+
+    if(AnyBalance.isAvailable('strah')){
+    	//Если у нас пара документов
+    	var bal = getParam(html, null, null, /сумма в документе:\s*([\-\d\.]*)\s*без страх/i, replaceTagsAndSpaces, parseBalance);
+    	var bals = getParam(html, null, null, /сумма в документе:.*?([\-\d\.]*)\s*со? страх/i, replaceTagsAndSpaces, parseBalance);
+   
+    	//Если у нас один документ
+        if(!isset(bal))
+    	    bal = getParam(html, null, null, /<span[^>]+class="sum"[^>]*>([^<]*)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+        if(!isset(bals))
+    	    bals = getParam(html, null, null, /<span[^>]+class="sum_with_insurance"[^>]*>([^<]*)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+        
+        result.strah = bals-bal;
+    }
 
     getParam(html, result, 'period', /период:\s*(?:<[^>]*>\s*)*<b[^>]*>([^<]*)/i, replaceTagsAndSpaces);
     if(AnyBalance.isAvailable('status'))
         result.status = 'OK';
     
     AnyBalance.setResult(result);
-}
-
-function html_entity_decode(str)
-{
-    //jd-tech.net
-    var tarea=document.createElement('textarea');
-    tarea.innerHTML = str;
-    return tarea.value;
 }
 

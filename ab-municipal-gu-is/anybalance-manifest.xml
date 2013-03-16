@@ -12,11 +12,14 @@
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
+    <js>library.js</js>
     <js>main.js</js>
+    <history>history.xml</history>
   </files>
   <counters>
     <counter id="balance" name="Сумма без страховки" units="р"/>
     <counter id="balance_strah" name="Сумма со страховкой" units="р"/>
+    <counter id="strah" name="Сумма страховки" units="р"/>
     <counter id="period" name="Период" type="text"/>
     <counter id="status" name="Статус" type="text"/>
   </counters>

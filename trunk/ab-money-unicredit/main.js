@@ -7,56 +7,6 @@
 Личный кабинет: https://enter.unicredit.ru/
 */
 
-function getParam (html, result, param, regexp, replaces, parser) {
-	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
-		return;
-
-	var value = regexp.exec (html);
-	if (value) {
-		value = value[1];
-		if (replaces) {
-			for (var i = 0; i < replaces.length; i += 2) {
-				value = value.replace (replaces[i], replaces[i+1]);
-			}
-		}
-		if (parser)
-			value = parser (value);
-
-    if(param)
-      result[param] = value;
-    else
-      return value
-	}
-}
-
-var replaceTagsAndSpaces = [/\\n/g, ' ', /\[br\]/ig, ' ', /<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
-var replaceFloat = [/\s+/g, '', /,/g, '.'];
-
-function parseBalance(text){
-    var _text = text.replace(/\s+/g, '');
-    var val = getParam(_text, null, null, /(-?\d[\d\.,]*)/, replaceFloat, parseFloat);
-    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
-    return val;
-}
-
-function parseCurrency(text){
-    var _text = text.replace(/\s+/g, '');
-    var val = getParam(_text, null, null, /-?\d[\d\.,]*\s*(\S*)/);
-    AnyBalance.trace('Parsing currency (' + val + ') from: ' + text);
-    return val;
-}
-
-function parseDate(str){
-    var matches = /(\d+)[^\d](\d+)[^\d](\d+)/.exec(str);
-    if(matches){
-          var date = new Date(+matches[3], matches[2]-1, +matches[1]);
-	  var time = date.getTime();
-          AnyBalance.trace('Parsing date ' + date + ' from value: ' + str);
-          return time;
-    }
-    AnyBalance.trace('Failed to parse date from value: ' + str);
-}
-
 function parseStatus(str){
     return getParam(str, null, null, /^([^\(]*)/, replaceTagsAndSpaces);
 }
@@ -223,18 +173,17 @@ function fetchAccount(jsonInfo, headers, baseurl){
         var tpl = prefs.cardnum ? prefs.cardnum : '';
         var $html = $(html);
         
-        var $acc = $html.find('div.div-b:has(span[onclick*="AccID=' + (tpl || '') + '"])').first();
+        var $acc = $html.find('div.div-cards:has(span[onclick*="AccID=' + (tpl || '') + '"])').first();
         if(!$acc.size())
             throw new AnyBalance.Error('Не удаётся найти ' + (tpl ? 'счет №' + tpl : 'ни одного счета'));
         
 //        accid = getParam(html, null, null, /AccID=(\d+)/i, replaceTagsAndSpaces);
 
         html = $acc.html();
-        var text = $acc.text();
         
-        getParam(text, result, 'balance', /:\s*([\s\S]*)/i, replaceTagsAndSpaces, parseBalance);
-        getParam(text, result, 'currency', /:\s*([\s\S]*)/i, replaceTagsAndSpaces, parseCurrency);
-        getParam(text, result, 'type', /([\s\S]*?):<\/td>/i, replaceTagsAndSpaces);
+        getParam(html, result, 'balance', /<td[^>]+class="div-b"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+        getParam(html, result, 'currency', /<td[^>]+class="div-b"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseCurrency);
+        getParam(html, result, 'type', /<div[^>]+class="div-b"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
         getParam(html, result, 'accnum', /AccID=(\d+)/i, replaceTagsAndSpaces);
         getParam(html, result, '__tariff', /AccID=(\d+)/i, replaceTagsAndSpaces);
     }else{
@@ -248,9 +197,9 @@ function fetchAccount(jsonInfo, headers, baseurl){
             AccID:accid
         }, headers);
 
-        getParam(html, result, 'balance', /<div[^>]*class="div-b"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-        getParam(html, result, 'currency', /<div[^>]*class="div-b"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseCurrency);
-        getParam(html, result, 'type', /<div[^>]*class="div-b"[^>]*>([^:]*)/i, replaceTagsAndSpaces);
+        getParam(html, result, 'balance', /<td[^>]*class="div-b"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+        getParam(html, result, 'currency', /<td[^>]*class="div-b"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseCurrency);
+        getParam(html, result, 'type', /<div[^>]*class="div-b"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
         getParam(html, result, 'accnum', /Номер счета:([^<]*)/i, replaceTagsAndSpaces);
         getParam(html, result, '__tariff', /Номер счета:([^<]*)/i, replaceTagsAndSpaces);
     }
@@ -373,12 +322,3 @@ function fetchDeposit(jsonInfo, headers, baseurl){
 
     AnyBalance.setResult(result);
 }
-
-function html_entity_decode(str)
-{
-    //jd-tech.net
-    var tarea=document.createElement('textarea');
-    tarea.innerHTML = str;
-    return tarea.value;
-}
-

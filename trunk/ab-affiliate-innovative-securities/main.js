@@ -20,7 +20,7 @@ function main(){
     });
 
     if(!/logout.php/i.test(html)){
-        var error = getParam(html, null, null, /<div[^>]+class=["']errorbox["'][^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode); 
+        var error = getParam(html, null, null, /<div[^>]+reason_message[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode); 
         if(error){
             throw new AnyBalance.Error(error);
         }
@@ -30,9 +30,9 @@ function main(){
     html = AnyBalance.requestGet(baseurl + 'details.php');
     
     var result = {success: true};
-    getParam(html, result, 'fio', /(?:Владелец счёта|Account holder|Kontobesitzer):[\s\S]*?<font[^>]*>([\s\S]*?)<\/font>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, '__tariff', /(?:Продукт|Product|Produkt):([\s\S]*?)<img/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'acc', /(?:Номер счёта|Account number|Kontonummer):([\s\S]*?)<img/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'fio', /<div[^>]+class="details_info"[\s\S]*?<font[^>]*>([\s\S]*?)<\/font>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, '__tariff', /(?:Продукт|Product|Produkt):([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'acc', /(?:Номер счёта|Account number|Kontonummer):([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
 
     getParam(html, result, 'balance', /(?:Баланс инвестиции|Investment Balance|Investitionssaldo):[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'rs', /(?:Расчётный счёт|Charge Balance|Verrechnungskonto):[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseBalance);

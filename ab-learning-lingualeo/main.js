@@ -19,7 +19,7 @@ function main(){
 	if (html) {
 		var result = {success: true};
 		
-		result.__tariff = html.match(/<a href="\/profile">(.+?)<\/a>/i)[1];
+		result.__tariff = html.match(/<a href="\/profile".+?>(.+?)<\/a>/i)[1];
 		
 		if (AnyBalance.isAvailable('meatballs')) {
 			var matches = html.match(/<span data-current-meatballs>(\d+?)<\/span>/i);
@@ -38,7 +38,7 @@ function main(){
 			}
 		}
 		if (AnyBalance.isAvailable('xp')) {
-			var matches = html.match(/<div class="progress-bar" data-xp-progressbar style="width: (\d+?)%">/i);
+			var matches = html.match(/<div class="l-prog-progress" data-xp-progressbar style="width: (\d+?)%">/i);
 			if (matches) {
 				result.xp = matches[1]
 			} else {

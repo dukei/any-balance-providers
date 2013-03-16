@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="13" major_version="3.0" date="2013-03-16">
+      - Добавлен Скайлинк Рязань
+    </change>
     <change version="12" major_version="3.0" date="2013-01-03">
       - Добавлен Скайлинк Екатеринбург
     </change>

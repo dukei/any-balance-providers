@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="12" major_version="3.0">ab-cell-skylink</id>
+  <id version="13" major_version="3.0">ab-cell-skylink</id>
   <name>Skylink</name>
   <description>
     Получает баланс для оператора сотовой связи Skylink, используя личные кабинеты (свои в каждом регионе).
@@ -10,6 +10,7 @@
       - Алтайский край, Владимир, Волгоград, Воронеж, Екатеринбург, Калуга, Кемерово, Киров, Нижний новгород, Новосибирск, Омск, Ростов, Ульяновск (https://www2.skypoint.ru): Баланс, Трафик (автор Robert Khaliullov &lt;ulrobix@gmail.com&gt;)
       - Краснодарский край и республика Адыгея (http://stat.kuban.skypoint.ru): Баланс, Трафик, Льготный трафик, ФИО
       - Вологда, Калининград, Карелия, Мурманск, Новгород Великий, Псков, Санкт-Петербург (https://app.spb.skylink.ru:7772/internetBalance): Баланс, Трафик в день, ФИО, Лицевой счет, Статус, Начисления по договору за период
+      - Рязань (https://skylink.ryazan.ru/balance): Баланс, Трафик. Вместо пароля необходимо указывать номер договора
 
     Для добавления других регионов или доработки существующих пишите авторам на почту.
   </description>
@@ -17,6 +18,7 @@
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
+    <js>library.js</js>
     <js>main.js</js>
     <history>history.xml</history>
   </files>

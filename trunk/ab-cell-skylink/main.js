@@ -7,67 +7,6 @@
 Личный кабинет: https://www.skypoint.ru/
 */
 
-function getParam (html, result, param, regexp, replaces, parser) {
-	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
-		return;
-
-	var value = regexp.exec (html);
-	if (value) {
-		value = value[1];
-		if (replaces) {
-			for (var i = 0; i < replaces.length; i += 2) {
-				value = value.replace (replaces[i], replaces[i+1]);
-			}
-		}
-		if (parser)
-			value = parser (value);
-
-    if(param)
-      result[param] = value;
-    else
-      return value
-	}
-}
-
-function sumParam (html, result, param, regexp, replaces, parser, do_replace) {
-	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param))){
-            if(do_replace)
-  	        return html;
-            else
-                return;
-	}
-
-        var total_value;
-	var html_copy = html.replace(regexp, function(str, value){
-		for (var i = 0; replaces && i < replaces.length; i += 2) {
-			value = value.replace (replaces[i], replaces[i+1]);
-		}
-		if (parser)
-			value = parser (value);
-                if(typeof(total_value) == 'undefined')
-                	total_value = value;
-                else
-                	total_value += value;
-                return ''; //Вырезаем то, что заматчили
-        });
-
-    if(param){
-      if(typeof(total_value) != 'undefined'){
-          if(typeof(result[param]) == 'undefined')
-      	      result[param] = total_value;
-          else 
-      	      result[param] += total_value;
-      }
-      if(do_replace)
-          return html_copy;
-    }else{
-      return total_value;
-    }
-}
-
-var replaceTagsAndSpaces = [/<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
-var replaceFloat = [/\s+/g, '', /,/g, '.'];
-
 function getViewState(html){
     return getParam(html, null, null, /name="__VIEWSTATE".*?value="([^"]*)"/);
 }
@@ -76,9 +15,12 @@ function getEventValidation(html){
     return getParam(html, null, null, /name="__EVENTVALIDATION".*?value="([^"]*)"/);
 }
 
-function parseBalance(text){
-    var val = getParam(text.replace(/\s+/g, ''), null, null, /(-?\d[\d\s.,]*)/, replaceFloat, parseFloat);
-    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
+function parseBalanceRK(_text){
+    var text = _text.replace(/\s+/g, '');
+    var rub = getParam(text, null, null, /(-?\d[\d\.,]*)руб/i, replaceFloat, parseFloat) || 0;
+    var kop = getParam(text, null, null, /(-?\d[\d\.,]*)коп/i, replaceFloat, parseFloat) || 0;
+    var val = rub+kop/100;
+    AnyBalance.trace('Parsing balance (' + val + ') from: ' + _text);
     return val;
 }
 
@@ -104,7 +46,8 @@ var g_regions = {
     kaluga: mainUln,
     uln: mainUln,
     kuban: mainKuban,
-    spb: mainSpb
+    spb: mainSpb,
+    ryaz: mainRyaz
 };
 
 function main(){
@@ -306,11 +249,29 @@ function mainSpb(){
     AnyBalance.setResult(result);
 }
 
-function html_entity_decode(str)
-{
-    //jd-tech.net
-    var tarea=document.createElement('textarea');
-    tarea.innerHTML = str;
-    return tarea.value;
-}
+function mainRyaz(){
+    var prefs = AnyBalance.getPreferences();
 
+    var baseurl = "https://skylink.ryazan.ru/balance";
+    AnyBalance.setDefaultCharset('utf-8');
+
+    var headers = {
+    	"User-Agent":'Mozilla/5.0 (Windows NT 5.1; rv:2.0) Gecko/20100101 Firefox/4.0'
+    };
+    
+    var html = AnyBalance.requestGet(baseurl + '?phone_num=' + encodeURIComponent(prefs.login) + '&acc_num=' + encodeURIComponent(prefs.password), headers);
+
+    if(/Повторить ввод/i.test(html)){
+        var error = getParam(html, null, null, /<body[^>]*>([\s\S]*?)<br|$/i, replaceTagsAndSpaces, html_entity_decode);
+        if(error)
+            throw new AnyBalance.Error(error);
+        throw new AnyBalance.Error("Не удалось войти в личный кабинет. Возможно, неправильный логин-пароль или регион.");
+    }
+
+    var result = {success: true}
+    
+    getParam(html, result, 'balance', /Ваш баланс составляет([\s\S]*?)<br/i, replaceTagsAndSpaces, parseBalanceRK);
+    getParam(html, result, 'traffic', /Использовано интернет за текущий месяц([\s\S]*?)<br/i, replaceTagsAndSpaces, parseTraffic);
+    
+    AnyBalance.setResult(result);
+}

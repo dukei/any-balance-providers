@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="5">ab-money-unicredit</id>
+  <id version="6">ab-money-unicredit</id>
   <name>UniCredit</name>
   <description>
     Получает текущий остаток и другие параметры карт, счетов, кредитов и вкладов UniCredit, используя интернет-банк https://enter.unicredit.ru.
@@ -16,6 +16,7 @@
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
     <js>api:jquery.min.js</js>
+    <js>library.js</js>
     <js>main.js</js>
     <history>history.xml</history>
   </files>
@@ -42,4 +43,7 @@
   <type>
     money
   </type>
+  <country>
+    ru
+  </country>
 </provider>

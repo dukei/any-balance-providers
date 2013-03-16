@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-game-travian</id>
+  <name>Travian</name>
+  <description>
+    Получает баланс денег и ресурсов в игре Travian (российские сервера, http://travian.ru)
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="gold" name="Золото" units=" зол."/>
+    <counter id="silver" name="Серебро" units=" с."/>
+    <counter id="wood" name="Древесина" units=" д."/>
+    <counter id="clay" name="Глина" units=" г."/>
+    <counter id="iron" name="Железо" units=" ж."/>
+    <counter id="weat" name="Зерно" units=" з."/>
+    <counter id="wood_total" name="Древесина (макс.)" units=" д."/>
+    <counter id="clay_total" name="Глина (макс.)" units=" г."/>
+    <counter id="iron_total" name="Железо (макс.)" units=" ж."/>
+    <counter id="weat_total" name="Зерно (макс.)" units=" з."/>
+    <counter id="fio" name="Имя" type="text"/>
+  </counters>
+  <keywords>
+    Травиан
+  </keywords>
+  <type>
+    game
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

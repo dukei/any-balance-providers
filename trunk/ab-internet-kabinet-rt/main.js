@@ -64,6 +64,7 @@ function main(){
         throw new AnyBalance.Error("В вашем кабинете Ростелеком ещё не подключена ни одна услуга");
 
     AnyBalance.trace('Найдено ' + accinfo.accounts.length + ' л/с');
+    AnyBalance.trace('Требуются ' + (prefs.num || 'любые л/с'));
 
     var nums = prefs.num ? prefs.num.split(/,/g) : ['', '', '', ''];
 

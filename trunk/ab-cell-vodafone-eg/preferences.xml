@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Mobile number" 
+        positiveButtonText="OK" 
+        summary="|Enter your mobile in the form 01xxxxxxxx|{@s}" 
+        dialogTitle="Mobile number" 
+        negativeButtonText="Cancel" 
+        dialogMessage="Enter your login to Vodafone personal account in the form 01xxxxxxxx"
+        inputType="number"
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="OK"
+        key="password" 
+        dialogTitle="Password"
+        negativeButtonText="Cancel"
+        title="Password"
+        summary="||***********"
+        dialogMessage="Please enter a password you use to Vodafone personal account."
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

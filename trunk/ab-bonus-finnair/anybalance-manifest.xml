@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-bonus-finnair</id>
+  <name>Finnair Plus</name>
+  <description>
+    Obtains Finnair Plus award miles from your personal account at https://www.finnair.com.
+
+    If you don't have Finnair membership number, please join here: https://www.finnair.com/INT/GB/join
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Award Miles" units=""/>
+    <counter id="flights" name="Flights flown" units=""/>
+    <counter id="tier_points" name="Tier points" units=""/>
+    <counter id="tier_points_total" name="Lifetime tier points" units=""/>
+    <counter id="end" name="Tracking period end" type="time" format="dd/MM/yyyy"/>
+    <counter id="begin" name="Tracking period start" type="time" format="dd/MM/yyyy"/>
+    <counter id="fio" name="Name" type="text"/>
+    <counter id="num" name="Membership number" type="text"/>
+  </counters>
+  <keywords>
+  </keywords>
+  <type>
+    bonus
+  </type>
+  <country>
+    fi
+  </country>
+</provider>

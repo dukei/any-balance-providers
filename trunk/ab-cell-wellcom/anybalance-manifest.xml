@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="3">ab-cell-wellcom</id>
+  <id version="4">ab-cell-wellcom</id>
   <name>Wellcom (Ростелеком, Томск)</name>
   <description>
     Получает баланс и информацию о тарифном плане для томского сотового оператора Wellcom, ныне Ростелеком - Томский филиал (http://wellcom.tomsk.ru).

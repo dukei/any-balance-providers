@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Username" 
+        positiveButtonText="OK" 
+        summary="||{@s}" 
+        dialogTitle="Username" 
+        negativeButtonText="Cancel" 
+        dialogMessage="Please enter your membership number without the AY prefix and with no spaces between the numbers."
+        inputType="number"
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="OK"
+        key="password" 
+        dialogTitle="Password"
+        negativeButtonText="Cancel"
+        title="Password"
+        summary="||***********"
+        dialogMessage="Enter password to login to your Finnair Plus personal account."
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

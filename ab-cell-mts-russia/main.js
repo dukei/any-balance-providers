@@ -413,6 +413,9 @@ function fetchAccountStatus(html, result){
     // Остаток пакета минут на ТП "MAXI": 12000 секунд
     html = sumParam (html, result, 'min_left', /Остаток пакета минут[^<]*?([\d\.,]+)\s*сек/ig, replaceTagsAndSpaces, function(str){return Math.round(parseBalance(str)/60)}, true);
 
+    // Остаток "Бесплатных вызовов при платеже": 29
+    html = sumParam (html, result, 'min_left', /"Бесплатных вызовов при платеже":[^<]*?([\d\.,]+)/ig, replaceTagsAndSpaces, parseBalance, true);
+
     
     // Использовано: 0 минут местных и мобильных вызовов.
     // Использовано 1 мин на городские номера Москвы, МТС домашнего региона и МТС России

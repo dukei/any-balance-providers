@@ -18,6 +18,8 @@ function main(){
 
     if(prefs.region == 'voronezh')
         mainVoronezh();
+    else if(prefs.region == 'belgorod')
+        mainBelgorod();
     else
         mainCenter();
 }
@@ -96,21 +98,6 @@ function mainCenter(){
     AnyBalance.setResult(result);
 }
 
-function requestPostMultipart(url, data, headers){
-	var parts = [];
-	var boundary = '------WebKitFormBoundaryrceZMlz5Js39A2A6';
-	for(var name in data){
-		parts.push(boundary, 
-		'Content-Disposition: form-data; name="' + name + '"',
-		'',
-		data[name]);
-	}
-	parts.push(boundary);
-        if(!headers) headers = {};
-	headers['Content-Type'] = 'multipart/form-data; boundary=' + boundary.substr(2);
-	return AnyBalance.requestPost(url, parts.join('\r\n'), headers);
-}
-
 function mainVoronezh(){
     var prefs = AnyBalance.getPreferences();
     var baseurl = 'https://selfcare.puzzle.su/voronezh/index.php';
@@ -122,6 +109,58 @@ function mainVoronezh(){
     	'pr[form][auto][password]': prefs.password,
     	'pr[form][auto][form_event]': 'Войти'
     }, {'Accept-Charset': 'windows-1251'});
+
+    if(!/\?exit=1/i.test(html)){
+        var error = getParam (html, null, null, /<font[^>]+color=['"]red['"][^>]*>([\s\S]*?)<\/font>/i, replaceTagsAndSpaces);
+        if (error){
+            throw new AnyBalance.Error (error);
+        }
+        throw new AnyBalance.Error ("Не удаётся войти в личный кабинет. Сайт изменен?");
+    }
+
+    AnyBalance.trace ("It looks like we are in selfcare...");
+
+    var result = {success: true};
+
+    html = AnyBalance.requestGet(baseurl + '?pr%5Bcontrol%5D%5Bkernel%5D%5Brecord%5D=23&pr%5Bcontrol%5D%5Bkernel%5D%5Bparent%5D=19&menu=19');
+
+    AnyBalance.trace("Parsing data...");
+
+    // Баланс
+    getParam (html, result, 'balance', /Лицевой счет:[\s\S]*?баланс:([\s\S]*?)<br/i, replaceTagsAndSpaces, parseBalance);
+
+    // Абонент
+    getParam (html, result, 'subscriber', /Приветствуем Вас,([^<]*)/i, replaceTagsAndSpaces);
+
+    // Номер договора
+    getParam (html, result, 'contract', /Лицевой счет:([\s\S]*?),/i, replaceTagsAndSpaces);
+
+    // Расчетный период - остаток
+    getParam (html, result, 'day_left', /До списания абонентской платы осталось:([\s\S]*?)<br/i, replaceTagsAndSpaces, parseBalance);
+
+    // Бонусный баланс 
+    getParam (html, result, 'bonus_balance', /Бонусный счет[\s\S]*?Баланс:([\s\S]*?)<br/i, replaceTagsAndSpaces, parseBalance);
+
+    sumParam(html, result, '__tariff', /Тарифный план:([\s\S]*?)(?:<\/span>|<a)/i, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+    // Бонусный статус
+    sumParam (html, result, '__tariff', /(<strong[^>]*>\s*Бонусный счет[\s\S]*?)Баланс/i, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+
+    AnyBalance.setResult(result);
+}
+
+function mainBelgorod(){
+    var prefs = AnyBalance.getPreferences();
+    AnyBalance.setDefaultCharset('windows-1251');
+    var baseurl = 'https://selfcare.puzzle.su/belgorod/';
+
+    AnyBalance.trace ("Trying to enter selfcare at address: " + baseurl);
+    var html = requestPostMultipart (baseurl + "?", {
+    	'LOGIN': prefs.login,
+    	'PASSWD': prefs.password,
+    	'URL': 'selfcare.puzzle.su',
+    	'subm.x': 31,
+    	'subm.y': 4
+    });
 
     if(!/\?exit=1/i.test(html)){
         var error = getParam (html, null, null, /<font[^>]+color=['"]red['"][^>]*>([\s\S]*?)<\/font>/i, replaceTagsAndSpaces);

@@ -44,7 +44,7 @@ function main(){
 
     var packets = getParam(html, null, null, /<h2[^>]*>\s*Общая продолжительность разговоров[\s\S]*?<table[^>]*>([\s\S]*?)<\/table>/i);
     if(packets){
-    	sumParam(packets, result, 'traffic_left', /<tr[^>]*>(?:(?:[\s\S](?!<\/tr))*?<td[^>]*>){2}[^<]*\d+ [МГ]Б(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, [/\(мегабайт\)/i, 'мб', /\(гигабайт\)/i, 'гб', replaceTagsAndSpaces], parseTraffic, aggregate_sum);
+    	sumParam(packets, result, 'traffic_left', /<tr[^>]*>(?:(?:[\s\S](?!<\/tr))*?<td[^>]*>){2}[^<]*(?:\d+ [МГ]Б|интернет)(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, [/\(мегабайт\)/i, 'мб', /\(гигабайт\)/i, 'гб', replaceTagsAndSpaces], parseTraffic, aggregate_sum);
     }else{
         AnyBalance.trace('Не удалось получить таблицу доп. услуг');
     }

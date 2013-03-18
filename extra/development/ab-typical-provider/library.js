@@ -33,7 +33,7 @@ function getParam (html, result, param, regexp, replaces, parser) {
 		if (parser)
 			value = parser (value);
 
-		if(param)
+		if(param && isset(value))
 			result[isArray(param) ? param[0] : param] = value;
 	}
 	return value;
@@ -352,6 +352,12 @@ function parseDateJS(str){
  * см. например replaceTagsAndSpaces
  */
 function sumParam (html, result, param, regexp, replaces, parser, do_replace, aggregate) {
+    if(typeof(do_replace) == 'function'){
+        var aggregate_old = aggregate;
+        aggregate = do_replace;
+        do_replace = aggregate_old || false;
+    }
+
     if (!isAvailable(param)){
 	if(do_replace)
 		return html;
@@ -360,11 +366,6 @@ function sumParam (html, result, param, regexp, replaces, parser, do_replace, ag
     }
     //После того, как проверили нужность счетчиков, кладем результат в первый из переданных счетчиков. Оставляем только первый
     param = isArray(param) ? param[0] : param;
-
-    if(typeof(do_replace) == 'function'){
-        aggregate = do_replace;
-        do_replace = false;
-    }
 
     var values = [], matches;
     if(param && isset(result[param]))

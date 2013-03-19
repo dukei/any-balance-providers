@@ -62,34 +62,43 @@ function main(){
 		if(AnyBalance.isAvailable('win_percent'))
 			result['win_percent'] = (pd.data.summary.wins / pd.data.summary.battles_count * 100).toFixed(1);
 			
-		if(AnyBalance.isAvailable('er', 'er_armor'))
+		if(AnyBalance.isAvailable('er', 'er_armor', 'wn6'))
 			var battles = pd.data.ratings.battles.value;
 			
-			var dmg = pd.data.ratings.damage_dealt.value / battles;
-			var des = pd.data.ratings.frags.value / battles;
-			var det = pd.data.ratings.spotted.value / battles;
-			var cap = pd.data.ratings.ctf_points.value / battles;
-			var dff = pd.data.ratings.dropped_ctf_points.value / battles;
+			var DAMAGE = pd.data.ratings.damage_dealt.value / battles;
+			var FRAGS = pd.data.ratings.frags.value / battles;
+			var SPOT = pd.data.ratings.spotted.value / battles;
+			var CAP = pd.data.ratings.ctf_points.value / battles;
+			var DEF = pd.data.ratings.dropped_ctf_points.value / battles;
 			
-		if(AnyBalance.isAvailable('er'))
+		if(AnyBalance.isAvailable('er', 'er_armor'))
+			var CAP = pd.data.ratings.ctf_points.value / battles;
+
+		if(AnyBalance.isAvailable('er', 'wn6'))
 			var tmp = pd.data.vehicles;
 			var s = 0;
 			for (q in tmp){
 				t = tmp[q];
 				s += t.battle_count * t.level;
 			}
-			var fmid = s / battles;
-
-			// result['er'] = (dmg * (10 / fmid) * (0.15 + 2 * fmid / 100) + des * (0.35 - 2 * fmid / 100) * 1000 + det * 0.2 * 1000 + cap * 0.15 * 1000 + dff * 0.15 * 1000).toFixed(0);
+			var TIER = s / battles;
 			
-			result['er'] = (dmg * (10 / (fmid + 2)) * (0.23 + 2 * fmid / 100) + des * 250 + det * 150 + Math.log(cap + 1) / Math.log(1.732) * 150 + dff * 150).toFixed(0);
+		if(AnyBalance.isAvailable('wn6', 'er_armor'))
+			var WINRATE = pd.data.ratings.battle_wins.value / battles; // not percent
+			
+		if(AnyBalance.isAvailable('er'))
+			// result['er'] = (DAMAGE * (10 / TIER) * (0.15 + 2 * TIER / 100) + FRAGS * (0.35 - 2 * TIER / 100) * 1000 + SPOT * 0.2 * 1000 + CAP * 0.15 * 1000 + DEF * 0.15 * 1000).toFixed(0); - старая формула
+			
+			result['er'] = (DAMAGE * (10 / (TIER + 2)) * (0.23 + 2 * TIER / 100) + FRAGS * 250 + SPOT * 150 + Math.log(CAP + 1) / Math.log(1.732) * 150 + DEF * 150).toFixed(0);
 
 		if(AnyBalance.isAvailable('er_armor'))
 			var avg_exp = pd.data.ratings.battle_avg_xp.value;
-			var avg_perf = pd.data.ratings.battle_wins.value / battles;
 			
 			// http://armor.kiev.ua/wot/rating/
-			result['er_armor'] = (Math.log(battles) / 10 * (avg_exp + dmg * (avg_perf * 2 + des * 0.9 + (det + cap + dff) * 0.5))).toFixed(0);
+			result['er_armor'] = (Math.log(battles) / 10 * (avg_exp + DAMAGE * (WINRATE * 2 + FRAGS * 0.9 + (SPOT + CAP + DEF) * 0.5))).toFixed(0);4
+			
+		if(AnyBalance.isAvailable('wn6'))
+			result['wn6'] = ((1240 - 1040 / Math.pow((Math.min(TIER, 6)), 0.164)) * FRAGS + DAMAGE * 530 / (184 * Math.exp(0.24 * TIER) + 130) + SPOT * 125 + Math.min(DEF, 2.2) * 100 + ((185 / (0.17 + Math.exp((WINRATE * 100 - 35) * -0.134))) - 500) * 0.45 + (6 - Math.min(TIER, 6)) * -60).toFixed(0);
 			
 		if (prefs.tank) {
 			var tmp = pd.data.vehicles;

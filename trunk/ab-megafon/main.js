@@ -669,63 +669,65 @@ function megafonServiceGuidePhysical(filial, sessionid){
     getPropValFloat(text, '&#1041;&#1086;&#1085;&#1091;&#1089;&#1085;&#1099;&#1081; &#1073;&#1072;&#1083;&#1072;&#1085;&#1089;:', result, 'bonus_balance');
     
     //Между Текущие скидки и пакеты услуг: и Текущие услуги:
-    matches = text.match(/<div class="heading">&#1058;&#1077;&#1082;&#1091;&#1097;&#1080;&#1077; &#1089;&#1082;&#1080;&#1076;&#1082;&#1080; &#1080; &#1087;&#1072;&#1082;&#1077;&#1090;&#1099; &#1091;&#1089;&#1083;&#1091;&#1075;:<\/div>([\s\S]*?)<div class="heading">&#1058;&#1077;&#1082;&#1091;&#1097;&#1080;&#1077; &#1091;&#1089;&#1083;&#1091;&#1075;&#1080;:<\/div>/); 
-    if(matches)
-      text = matches[1]; //Таблица скидок
+    //matches = text.match(/<div сlass="heading">&#1058;&#1077;&#1082;&#1091;&#1097;&#1080;&#1077; &#1089;&#1082;&#1080;&#1076;&#1082;&#1080; &#1080; &#1087;&#1072;&#1082;&#1077;&#1090;&#1099; &#1091;&#1089;&#1083;&#1091;&#1075;:<\/div>([\s\S]*?)<div class="heading">&#1058;&#1077;&#1082;&#1091;&#1097;&#1080;&#1077; &#1091;&#1089;&#1083;&#1091;&#1075;&#1080;:<\/div>/); 
+    var text = getParam(text, null, null, /<table(?:[\s\S](?!<\/table>))*?(?:colname="SUBS_VOLUME"|head_grid_template_name="DISCOUNTS")(?:[\s\S]*?<\/table>){2}/i);
+    if(text){//Таблица скидок
+        var colnum = /colname="OWNER"/.test(text) ? 2 : 1; //Новая колонка в некоторых кабинетах - владелец скидки
     
-    //Должны точно ловиться:
-    //Бонус 1 - полчаса бесплатно (Москва)
-    //10 мин на МТС, Билайн, Скай Линк
-    
-    var reOption = /(<tr[^>]*>(?:(?:[\s\S](?!<\/tr>))*?<td[^>]*>\s*<div[^>]+class="td_def"[^>]*>){3}[\s\S]*?<\/tr>)/ig;
-    while(matches = reOption.exec(text)){
-        var name = getParam(matches[1], null, null, /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-        //Ищем в таблице скидок строки вида: 39:00 мин   39:00, что означает Всего, Остаток
-        var p = /<div class="td_def">\s*(\d+)(?::(\d+))?[^<]*(?:&#1052;|&#1084;)&#1080;&#1085;[^<]*<[^&#;\d]*<div class="td_def">(\d+)(?::(\d+))?/i.exec(matches[1]);
-        if(p){ //Это минуты, надо бы их рассортировать
-             if(/мин на МТС Билайн Скай Линк/i.test(name))
-                 sumOption(matches[1], result, 'mins_compet_total', 'mins_compet_left', '.', parseMinutes);
-             else if(/мин на номера СНГ/i.test(name))
-                 sumOption(matches[1], result, 'mins_sng_total', 'mins_sng_left', '.', parseMinutes);
-             else if(/мин по России/i.test(name))
-                 sumOption(matches[1], result, 'mins_country_total', 'mins_country_left', '.', parseMinutes);
-             else if(/внутри сети/i.test(name))
-                 sumOption(matches[1], result, 'mins_net_total', 'mins_net_left', '.', parseMinutes);
-             else
-                 sumOption(matches[1], result, 'mins_total', 'mins_left', '.', parseMinutes);
-        }else if(/GPRS|Интернет|Internet|\d+\s+[гмкgmk][бb]/i.test(name)){
-             sumOption(matches[1], result, 'internet_total', 'internet_left', '.', parseTrafficMy);
-             if(AnyBalance.isAvailable('internet_cur')){
-                 var total = getParam(matches[1], null, null, /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTrafficMy);
-                 var left = getParam(matches[1], null, null, /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTrafficMy);
-                 if(isset(total) && isset(left))
-                     result.internet_cur = (result.internet_cur || 0) + total - left;
-             }
-        }
-    }
-      
-    // Карманный интернет теперь покрывается циклом выше
-    
-    //200 SMS MegaVIP 0
-    //Пакет SMS за бонусы (SMS &#1079;&#1072; &#1073;&#1086;&#1085;&#1091;&#1089;&#1099;)
-    //Пакет SMS-сообщений (Поволжье) (&#1055;&#1072;&#1082;&#1077;&#1090; SMS-&#1089;&#1086;&#1086;&#1073;&#1097;&#1077;&#1085;&#1080;&#1081;)
-    //SMS на номера России (SMS &#1085;&#1072; &#1085;&#1086;&#1084;&#1077;&#1088;&#1072; &#1056;&#1086;&#1089;&#1089;&#1080;&#1080;)
-    //(SMS)
-    sumOption(text, result, 'sms_total', 'sms_left', 'SMS');
-    sumOption(text, result, 'sms_total', 'sms_left', 'СМС');
-
-    //Исходящие SM (ОХард, Москва)
-    sumOption(text, result, 'sms_total', 'sms_left', '&#1048;&#1089;&#1093;&#1086;&#1076;&#1103;&#1097;&#1080;&#1077; SM\\s*<');
+        //Должны точно ловиться:
+        //Бонус 1 - полчаса бесплатно (Москва)
+        //10 мин на МТС, Билайн, Скай Линк
         
-    //MMS
-    sumOption(text, result, 'mms_total', 'mms_left', 'MMS');
-    sumOption(text, result, 'mms_total', 'mms_left', 'ММС');
-
-    //Нужный подарок (Поволжье)
-    sumOption(text, result, 'handygift_total', 'handygift_left', '&#1053;&#1091;&#1078;&#1085;&#1099;&#1081; &#1087;&#1086;&#1076;&#1072;&#1088;&#1086;&#1082;');
-
-    //Гигабайт в дорогу
-    sumOption(text, result, null, 'gb_with_you', '&#1043;&#1080;&#1075;&#1072;&#1073;&#1072;&#1081;&#1090; &#1074; &#1076;&#1086;&#1088;&#1086;&#1075;&#1091;');
+        var reOption = /(<tr[^>]*>(?:(?:[\s\S](?!<\/tr>))*?<td[^>]*>\s*<div[^>]+class="td_def"[^>]*>){3}[\s\S]*?<\/tr>)/ig;
+        while(matches = reOption.exec(text)){
+            var name = getParam(matches[1], null, null, /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+            //Ищем в таблице скидок строки вида: 39:00 мин   39:00, что означает Всего, Остаток
+            var p = /<div class="td_def">\s*(\d+)(?::(\d+))?[^<]*(?:&#1052;|&#1084;)&#1080;&#1085;[^<]*<[^&#;\d]*<div class="td_def">(\d+)(?::(\d+))?/i.exec(matches[1]);
+            if(p){ //Это минуты, надо бы их рассортировать
+                 if(/мин на МТС Билайн Скай Линк/i.test(name))
+                     sumOption(colnum, matches[1], result, 'mins_compet_total', 'mins_compet_left', '.', parseMinutes);
+                 else if(/мин на номера СНГ/i.test(name))
+                     sumOption(colnum, matches[1], result, 'mins_sng_total', 'mins_sng_left', '.', parseMinutes);
+                 else if(/мин по России/i.test(name))
+                     sumOption(colnum, matches[1], result, 'mins_country_total', 'mins_country_left', '.', parseMinutes);
+                 else if(/внутри сети/i.test(name))
+                     sumOption(colnum, matches[1], result, 'mins_net_total', 'mins_net_left', '.', parseMinutes);
+                 else
+                     sumOption(colnum, matches[1], result, 'mins_total', 'mins_left', '.', parseMinutes);
+            }else if(/GPRS|Интернет|Internet|\d+\s+[гмкgmk][бb]/i.test(name)){
+                 sumOption(colnum, matches[1], result, 'internet_total', 'internet_left', '.', parseTrafficMy);
+                 if(AnyBalance.isAvailable('internet_cur')){
+                     var total = getParam(matches[1], null, null, /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTrafficMy);
+                     var left = getParam(matches[1], null, null, /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTrafficMy);
+                     if(isset(total) && isset(left))
+                         result.internet_cur = (result.internet_cur || 0) + total - left;
+                 }
+            }
+        }
+          
+        // Карманный интернет теперь покрывается циклом выше
+        
+        //200 SMS MegaVIP 0
+        //Пакет SMS за бонусы (SMS &#1079;&#1072; &#1073;&#1086;&#1085;&#1091;&#1089;&#1099;)
+        //Пакет SMS-сообщений (Поволжье) (&#1055;&#1072;&#1082;&#1077;&#1090; SMS-&#1089;&#1086;&#1086;&#1073;&#1097;&#1077;&#1085;&#1080;&#1081;)
+        //SMS на номера России (SMS &#1085;&#1072; &#1085;&#1086;&#1084;&#1077;&#1088;&#1072; &#1056;&#1086;&#1089;&#1089;&#1080;&#1080;)
+        //(SMS)
+        sumOption(colnum, text, result, 'sms_total', 'sms_left', 'SMS');
+        sumOption(colnum, text, result, 'sms_total', 'sms_left', 'СМС');
+        
+        //Исходящие SM (ОХард, Москва)
+        sumOption(colnum, text, result, 'sms_total', 'sms_left', '&#1048;&#1089;&#1093;&#1086;&#1076;&#1103;&#1097;&#1080;&#1077; SM\\s*<');
+            
+        //MMS
+        sumOption(colnum, text, result, 'mms_total', 'mms_left', 'MMS');
+        sumOption(colnum, text, result, 'mms_total', 'mms_left', 'ММС');
+        
+        //Нужный подарок (Поволжье)
+        sumOption(colnum, text, result, 'handygift_total', 'handygift_left', '&#1053;&#1091;&#1078;&#1085;&#1099;&#1081; &#1087;&#1086;&#1076;&#1072;&#1088;&#1086;&#1082;');
+        
+        //Гигабайт в дорогу
+        sumOption(colnum, text, result, null, 'gb_with_you', '&#1043;&#1080;&#1075;&#1072;&#1073;&#1072;&#1081;&#1090; &#1074; &#1076;&#1086;&#1088;&#1086;&#1075;&#1091;');
+    }
 
     //Пакет Интернет 24 теперь покрывается циклом выше
 
@@ -831,17 +833,17 @@ function parseMinutes(str){
     return val;
 }
 
-function sumOption(text, result, totalName, leftName, optionName, parseFunc){
+function sumOption(num, text, result, totalName, leftName, optionName, parseFunc){
     if(!parseFunc) parseFunc = parseBalance;
 
     if(totalName){
         var aggregate = /^mins_/.test(totalName) ? aggregate_sum_minutes : aggregate_sum;
-        var re1 = new RegExp('<tr[^>]*>\\s*<td[^>]*>\\s*<div[^>]+class="td_def"[^>]*>(?:<div[^>]*>|[^<]|<nobr[^>]*>)*' + optionName + '(?:(?:[\\s\\S](?!<tr))*?<td[^>]*>){1}([\\s\\S]*?)</td>', 'ig');
+        var re1 = new RegExp('<tr[^>]*>\\s*<td[^>]*>\\s*<div[^>]+class="td_def"[^>]*>(?:<div[^>]*>|[^<]|<nobr[^>]*>)*' + optionName + '(?:(?:[\\s\\S](?!<tr))*?<td[^>]*>){' + num + '}([\\s\\S]*?)</td>', 'ig');
         sumParam(text, result, totalName, re1, replaceTagsAndSpaces, parseFunc, aggregate);
     }
     if(leftName){
         var aggregate = /^mins_/.test(leftName) ? aggregate_sum_minutes : aggregate_sum;
-        var re2 = new RegExp('<tr[^>]*>\\s*<td[^>]*>\\s*<div[^>]+class="td_def"[^>]*>(?:<div[^>]*>|[^<]|<nobr[^>]*>)*' + optionName + '(?:(?:[\\s\\S](?!<tr))*?<td[^>]*>){2}([\\s\\S]*?)</td>', 'ig');
+        var re2 = new RegExp('<tr[^>]*>\\s*<td[^>]*>\\s*<div[^>]+class="td_def"[^>]*>(?:<div[^>]*>|[^<]|<nobr[^>]*>)*' + optionName + '(?:(?:[\\s\\S](?!<tr))*?<td[^>]*>){' + (num+1) + '}([\\s\\S]*?)</td>', 'ig');
         sumParam(text, result, leftName, re2, replaceTagsAndSpaces, parseFunc, aggregate);
     }
 }

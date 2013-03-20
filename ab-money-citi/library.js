@@ -33,7 +33,7 @@ function getParam (html, result, param, regexp, replaces, parser) {
 		if (parser)
 			value = parser (value);
 
-		if(param)
+		if(param && isset(value))
 			result[isArray(param) ? param[0] : param] = value;
 	}
 	return value;
@@ -211,7 +211,7 @@ function addHeaders(newHeaders, oldHeaders){
    if(!bOldArray && !bNewArray)
        return joinObjects(newHeaders, oldHeaders);
    if(bOldArray && bNewArray) //Если это массивы, то просто делаем им join
-       return oldHeader.slice().push.apply(oldHeader, newHeaders);
+       return oldHeaders.slice().push.apply(oldHeaders, newHeaders);
    if(!bOldArray && bNewArray){ //Если старый объект, а новый массив
        var headers = joinObjects(null, oldHeaders);
        for(var i=0; i<newHeaders.length; ++i)
@@ -352,6 +352,12 @@ function parseDateJS(str){
  * см. например replaceTagsAndSpaces
  */
 function sumParam (html, result, param, regexp, replaces, parser, do_replace, aggregate) {
+    if(typeof(do_replace) == 'function'){
+        var aggregate_old = aggregate;
+        aggregate = do_replace;
+        do_replace = aggregate_old || false;
+    }
+
     if (!isAvailable(param)){
 	if(do_replace)
 		return html;
@@ -361,26 +367,24 @@ function sumParam (html, result, param, regexp, replaces, parser, do_replace, ag
     //После того, как проверили нужность счетчиков, кладем результат в первый из переданных счетчиков. Оставляем только первый
     param = isArray(param) ? param[0] : param;
 
-    if(typeof(do_replace) == 'function'){
-        aggregate = do_replace;
-        do_replace = false;
-    }
-
     var values = [], matches;
     if(param && isset(result[param]))
         values.push(result[param]);
 
+    function replaceAndPush(value){
+        value = replaceAll(value, replaces);
+	if (parser)
+		value = parser (value);
+        if(isset(value))
+        	values.push(value);
+    }
+
     if(!regexp){
-        values.push(replaceAll(html, replaces));
+        replaceAndPush(html);
     }else{
         regexp.lastIndex = 0; //Удостоверяемся, что начинаем поиск сначала.
         while(matches = regexp.exec(html)){
-		value = isset(matches[1]) ? matches[1] : matches[0];
-        	value = replaceAll(value, replaces);
-		if (parser)
-			value = parser (value);
-            
-        	values.push(value);
+                replaceAndPush(isset(matches[1]) ? matches[1] : matches[0]);
         	if(!regexp.global)
             		break; //Если поиск не глобальный, то выходим из цикла
 	}
@@ -471,7 +475,7 @@ function parseTrafficEx(text, thousand, order, defaultUnits){
         AnyBalance.trace("Could not parse traffic value from " + text);
         return;
     }
-    var units = getParam(_text, null, null, /([kmgкмг][бb]|байт|bytes)/i);
+    var units = getParam(_text, null, null, /([kmgкмг][бb]|[бb](?![\wа-я])|байт|bytes)/i);
     if(!units && !defaultUnits){
         AnyBalance.trace("Could not parse traffic units from " + text);
         return;
@@ -492,7 +496,7 @@ function parseTrafficEx(text, thousand, order, defaultUnits){
         break;
       case 'g':
       case 'г':
-        val = Math.round(val/Math.pow(thousand, order-3));
+        val = Math.round(val/Math.pow(thousand, order-3)*100)/100;
         break;
     }
     var textval = ''+val;
@@ -517,7 +521,7 @@ function requestPostMultipart(url, data, headers){
 		'',
 		data[name]);
 	}
-	parts.push(boundary);
+	parts.push(boundary, '--');
         if(!headers) headers = {};
 	headers['Content-Type'] = 'multipart/form-data; boundary=' + boundary.substr(2);
 	return AnyBalance.requestPost(url, parts.join('\r\n'), headers);

@@ -40,6 +40,10 @@ function main() {
     }, g_headers);
 
     if(!/signoff\/Signoff\.do/i.test(html)){
+        if(/id="nonOtpLogonButton"/i.test(html))
+             html = AnyBalance.requestGet(baseurl + 'JSO/signon/uname/HomePage.do', g_headers);
+    }
+    if(!/signoff\/Signoff\.do/i.test(html)){
         throw new AnyBalance.Error('Не удалось войти в интернет-банк. Неправильный логин-пароль?');
     }
 

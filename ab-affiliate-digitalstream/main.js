@@ -18,11 +18,16 @@ function main() {
 
     var r = new RegExp('<a id="form:_id\\d+" href="/logout" class="iceOutLnk po-header-logout-link">');
 	if(r.test(html)) {
-		html = AnyBalance.requestGet('http://partner.dstream.ru/faces/partner/partner.jsf?page=stat');
+		html = AnyBalance.requestGet('http://partner.dstream.ru/faces/partner/partner.jsf?page=statistic_section');
 
-		r = new RegExp('Все проекты</span>([\\s\\S]+?)</tbody></table></div>');
+		r = new RegExp('Сводные данные</span>[\\s\\S]+?</span>([\\s\\S]+?)</tbody></table></div>');
 		var matches=r.exec(html);
 		if(matches==null) throw new AnyBalance.Error('Ошибка получения обобщенных данных');
+		html=matches[1];
+		
+		r = new RegExp('<tr[^>]+><td[^>]+><span[^>]+>Итого:</span></td>([\\s\\S]+?)</tr>');
+		var matches=r.exec(html);
+		if(matches==null) throw new AnyBalance.Error('Ошибка получения итоговых данных');
 		html=matches[1];
 
 		r = new RegExp('<span id="([^"]+)" class="iceOutTxt">([^<]+)</span>','g');
@@ -33,19 +38,19 @@ function main() {
 			matches[2]=matches[2].replace("&nbsp;"," ");
 			matches[2]=matches[2].replace(" ","");
 			switch(i) {
-				case 36:
+				case 0:
 					result.today=parseFloat(matches[2]);
 					updated++;
 					break;
-				case 37:
+				case 1:
 					result.yesterday=parseFloat(matches[2]);
 					updated++;
 					break;
-				case 38:
+				case 2:
 					result.curmonth=parseFloat(matches[2]);
 					updated++;
 					break;
-				case 39:
+				case 3:
 					result.prevmonth=parseFloat(matches[2]);
 					updated++;
 					break;

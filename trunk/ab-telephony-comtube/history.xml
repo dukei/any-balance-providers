@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="3" date="2013-03-22">
+      Исправление досадного недоразумения
+    </change>
     <change version="2" date="2013-03-22">
       Изменения в личном кабинете
     </change>

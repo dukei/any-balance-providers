@@ -7,56 +7,6 @@
 Личный кабинет: https://ibank.svyaznoybank.ru
 */
 
-function getParam (html, result, param, regexp, replaces, parser) {
-	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
-		return;
-
-	var value = regexp ? regexp.exec (html) : html;
-	if (value) {
-                if(regexp)
-		    value = value[1];
-		if (replaces) {
-			for (var i = 0; i < replaces.length; i += 2) {
-				value = value.replace (replaces[i], replaces[i+1]);
-			}
-		}
-		if (parser)
-			value = parser (value);
-
-    if(param)
-      result[param] = value;
-    else
-      return value
-	}
-}
-
-var replaceTagsAndSpaces = [/<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
-var replaceFloat = [/\s+/g, '', /,/g, '.', /(\d)\-(\d)/g, '$1.$2'];
-
-function parseBalance(text){
-    var _text = text.replace(/\s+/g, '');
-    var val = getParam(_text, null, null, /(-?\d[\d\.,\-]*)/, replaceFloat, parseFloat);
-    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
-    return val;
-}
-
-function parseCurrency(text){
-    var _text = text.replace(/\s+/g, '');
-    var val = getParam(_text, null, null, /[\d\.,\-]+(\S*)/);
-    AnyBalance.trace('Parsing currency (' + val + ') from: ' + text);
-    return val;
-}
-
-function parseDate(str){
-    AnyBalance.trace('Parsing date from value: ' + str);
-    var matches = /(\d+)[^\d](\d+)[^\d](\d+)/.exec(str);
-    var time;
-    if(matches){
-	  time = (new Date(+matches[3], matches[2]-1, +matches[1])).getTime();
-    }
-    return time;
-}
-
 var g_phrases = {
    karty: {card: 'карты', acc: 'счета', dep: 'договора на вклад'},
    kartu: {card: 'карту', acc: 'счет', dep: 'договор на вклад'},
@@ -64,11 +14,14 @@ var g_phrases = {
    karty1: {card: 'одной карты', acc: 'одного счета', dep: 'одного вклада'}
 }
 
+//Заменяем системную строку замен
+var myReplaceTagsAndSpaces = [replaceTagsAndSpaces, /(\d)\-(\d)/g, '$1.$2'];
+
 function main(){
     var prefs = AnyBalance.getPreferences();
     var baseurl = "https://ibank.svyaznoybank.ru/lite/app";
     AnyBalance.setDefaultCharset("utf-8");
-    
+
     var what = prefs.what || 'card';
     if(prefs.num && !/\d{4}/.test(prefs.num))
         throw new AnyBalance.Error("Введите 4 последних цифры номера " + g_phrases.karty[what] + " или не вводите ничего, чтобы показать информацию по " + g_phrases.karte1[what]);
@@ -145,35 +98,44 @@ function mainCardAcc(what, baseurl){
 
     getParam($acc.find('div.account-number').text(), result, 'accnum', /(\d{20})/);
     getParam($acc.find('div.account-name').text(), result, 'accname', null, replaceTagsAndSpaces);
-    getParam($acc.find('div.account-name').text(), result, '__tariff', null, replaceTagsAndSpaces);
-    getParam($acc.find('.card-amount-info, .card-amounts-info').text(), result, 'balance', null, null, parseBalance);
+    if(what != 'card')
+        getParam($acc.find('div.account-name').text(), result, '__tariff', null, replaceTagsAndSpaces);
+    getParam($acc.find('.card-amount-info, .card-amounts-info').text(), result, 'balance', null, myReplaceTagsAndSpaces, parseBalance);
     
-    var min_i = -1;
-    var min_val = null;
-    var cur_i = -1;
     var pattern = new RegExp('\\d{4} \\*{4} \\*{4} ' + ((what == 'card' && prefs.num) || '\\d{4}'));
-    var $card = $acc.find('.card-info-row').filter(function(i){
-        var matches = pattern.exec($(this).text());
+    var cards = [];
+    $acc.find('.card-info-row').filter(function(i){
+        var text = $(this).text();
+        var matches = pattern.exec(text);
         if(!matches)
              return false;
-        ++cur_i;
-        if(min_i < 0 || min_val > matches[0]){
-            min_i = cur_i;
-            min_val = matches[0];
-        }
+        cards.push([matches[0], this]);
         return true;
-    }).eq(min_i);
+    });
 
-    if($card.size()){
-        getParam($card.find('.card-number').text(), result, 'cardnum');
-        getParam($card.find('.card-number').text(), result, '__tariff');
-        getParam($card.find('.card-name').text(), result, 'cardname');
-        getParam($card.find('.card-amount-info-balls').text(), result, 'cardballs', null, null, parseBalance);
+    cards.sort(function(a, b){
+        if(a[0] < b[0])
+            return -1;
+        if(a[0] > b[0])
+            return 1;
+        return 0;
+    });
+
+    for(var i=0; i<Math.min(cards.length, 4); ++i){
+        var $card = $(cards[i]);
+        var suffix = i > 0 ? i : '';
+        if($card.size()){
+            getParam($card.find('.card-number').text(), result, 'cardnum' + suffix);
+            if(what == 'card')
+                sumParam($card.find('.card-number').text(), result, '__tariff', null, null, null, aggregate_join);
+            getParam($card.find('.card-name').text(), result, 'cardname' + suffix);
+            getParam($card.find('.card-amount-info-balls').text(), result, 'cardballs' + suffix, null, myReplaceTagsAndSpaces, parseBalance);
+        }
     }
 
-    getParam($acc.find('.balance-review .amount').text(), result, 'accamount', null, null, parseBalance);
-    getParam($acc.find('.balance-review .amount').text(), result, 'currency', null, null, parseCurrency);
-    getParam($acc.find('.points-by-holds .amount').text(), result, 'holdballs', null, null, parseBalance);
+    getParam($acc.find('.balance-review .amount').text(), result, 'accamount', null, myReplaceTagsAndSpaces, parseBalance);
+    getParam($acc.find('.balance-review .amount').text(), result, 'currency', null, myReplaceTagsAndSpaces, parseCurrency);
+    getParam($acc.find('.points-by-holds .amount').text(), result, 'holdballs', null, myReplaceTagsAndSpaces, parseBalance);
 
     AnyBalance.setResult(result);
 }
@@ -212,7 +174,7 @@ function mainDep(what, baseurl){
     getParam($acc.find('span.deposit-name').text(), result, 'accname', null, replaceTagsAndSpaces);
     getParam($acc.find('a.deposit-link span span').first().text(), result, 'cardnum', null, replaceTagsAndSpaces);
     getParam($acc.find('span.deposit-name').text(), result, '__tariff', null, replaceTagsAndSpaces);
-    getParam($acc.find('td:nth-child(4)').text(), result, 'balance', null, replaceTagsAndSpaces, parseBalance);
+    getParam($acc.find('td:nth-child(4)').text(), result, 'balance', null, myReplaceTagsAndSpaces, parseBalance);
     getParam($acc.find('td:nth-child(2)').text(), result, 'currency', null, replaceTagsAndSpaces);
 
     if(AnyBalance.isAvailable('accnum')){
@@ -223,12 +185,3 @@ function mainDep(what, baseurl){
 
     AnyBalance.setResult(result);
 }
-
-function html_entity_decode(str)
-{
-    //jd-tech.net
-    var tarea=document.createElement('textarea');
-    tarea.innerHTML = str;
-    return tarea.value;
-}
-

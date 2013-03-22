@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-telephony-comtube</id>
+  <id version="3">ab-telephony-comtube</id>
   <name>ComTube</name>
   <description>
     Получает текущий баланс, валюту счета и номер внутри системы у провайдера IP-телефонии ComTube.
@@ -10,6 +10,7 @@
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
+    <js>library.js</js>
     <js>main.js</js>
     <history>history.xml</history>
   </files>

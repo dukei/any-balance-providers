@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="11" date="2013-03-22">
+        - Исправлена ошибка с обнулением счетчиков;
+    </change>
     <change version="10" date="2013-03-19">
         - Добавлен счетчик рейтинга эффективности WN6;
     </change>

@@ -16,12 +16,12 @@ function main(){
 	}
 	
 	// Проверяем нужен ли нам id, при необходимости получаем его
-	if ((AnyBalance.isAvailable('tank_wins', 'tank_battles', 'tank_win_percent'))||(prefs.listPref == 'id'))
+	if ((AnyBalance.isAvailable('tank_wins', 'tank_battles', 'tank_win_percent', 'er', 'wn6', 'er_armor'))||(prefs.listPref == 'id'))
 		var id = (prefs.listPref == 'id') ? prefs.nick : getID (prefs.nick);
 		
 	// Если есть ник и не нужны данные, которые можно получить по id (только общая статистика)
-	if ((!(AnyBalance.isAvailable('tank_wins', 'tank_battles', 'tank_win_percent')))&&(prefs.listPref == 'nick')) {
-		var pd = getData('http://worldoftanks.ru/uc/accounts/api/1.0/?source_token=WG-WoT_Assistant-1.1.2&search=' + prefs.nick + '&offset=0&limit=1');
+	if ((!(AnyBalance.isAvailable('tank_wins', 'tank_battles', 'tank_win_percent', 'er', 'wn6', 'er_armor')))&&(prefs.listPref == 'nick')) {
+		var pd = getData('http://worldoftanks.ru/uc/accounts/api/1.1/?source_token=WG-WoT_Assistant-1.1.2&search=' + prefs.nick + '&offset=0&limit=1');
 		var result = {success: true};
 		
 		var pname = pd.data.items[0].clan ? pd.data.items[0].name + '[' + pd.data.items[0].clan.tag + ']' : pd.data.items[0].name;
@@ -44,7 +44,7 @@ function main(){
 
 	// Если есть id или нужны данные, которые можно получить по id (статистика по танкам)
 	} else {
-		var pd = getData('http://worldoftanks.ru/community/accounts/' + id + '/api/1.2/?source_token=WG-WoT_Assistant-test');
+		var pd = getData('http://worldoftanks.ru/community/accounts/' + id + '/api/1.9/?source_token=WG-WoT_Assistant-test');
 		var result = {success: true};
 		
 		var pname = pd.data.clan.clan ? pd.data.name + '[' + pd.data.clan.clan.abbreviation + ']' : pd.data.name;

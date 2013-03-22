@@ -27,6 +27,6 @@ function getData(url) {
 }
 
 function getID(nick) {
-	var v = getData('http://worldoftanks.ru/uc/accounts/api/1.0/?source_token=WG-WoT_Assistant-1.1.2&search=' + nick + '&offset=0&limit=1');
+	var v = getData('http://worldoftanks.ru/uc/accounts/api/1.1/?source_token=WG-WoT_Assistant-1.1.2&search=' + nick + '&offset=0&limit=1');
 	return v.data.items[0].id;
 }

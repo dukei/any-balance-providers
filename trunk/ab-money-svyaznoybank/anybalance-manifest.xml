@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="4">ab-money-svyaznoybank</id>
+  <id version="5">ab-money-svyaznoybank</id>
   <name>Связнойбанк</name>
   <description>
     Получает текущий остаток, бонусные баллы и другие параметры карт, счетов и вкладов Связнойбанка, используя систему Интернет-банк ( https://ibank.svyaznoybank.ru ).
@@ -14,8 +14,9 @@
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
-    <js>main.js</js>
     <js>api:jquery.min.js</js>
+    <js>library.js</js>
+    <js>main.js</js>
     <history>history.xml</history>
   </files>
   <counters>
@@ -28,6 +29,15 @@
     <counter id="cardname" name="Тип карты" type="text"/>
     <counter id="accnum" name="Номер счета" type="text"/>
     <counter id="accname" name="Имя счета" type="text"/>
+    <counter id="cardnum1" name="Номер карты 2" type="text"/>
+    <counter id="cardname1" name="Тип карты 2" type="text"/>
+    <counter id="cardballs1" name="Баллы 2"/>
+    <counter id="cardnum2" name="Номер карты 3" type="text"/>
+    <counter id="cardname2" name="Тип карты 3" type="text"/>
+    <counter id="cardballs2" name="Баллы 3"/>
+    <counter id="cardnum3" name="Номер карты 4" type="text"/>
+    <counter id="cardname3" name="Тип карты 4" type="text"/>
+    <counter id="cardballs3" name="Баллы 4"/>
   </counters>
   <keywords>
     интернет-банк, связной

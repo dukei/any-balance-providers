@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-bonus-stroydvor</id>
+  <name>Строительный двор</name>
+  <description>
+    Получает информацию по бонусной карте компании Строительный двор (http://www.sdvor.com). Розничное направление представлено 16 магазинами в Тюмени, Екатеринбурге, Ялуторовске, Тобольске, Березовском, Нижнем Тагиле, Сургуте, Перми и Нижневартовске
+
+    Информация по карте берется с сайта http://www.sdvor.com/checkcards
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="pct_com" name="Скидка на общестрой" units="%"/>
+    <counter id="pct_otd" name="Скилка на отделочные материалы" units="%"/>
+  </counters>
+  <keywords>
+    стройдвор
+  </keywords>
+  <type>
+    bonus
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

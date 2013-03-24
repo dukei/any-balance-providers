@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="1">ab-weather-narodmon</id>
+  <id major_version="1.0" version="2">ab-weather-narodmon</id>
   <name>Народный монитор</name>
   <description>
    Получает текущую погоду с сайта narodmon.ru.  В настройки провайдера требуется ввести номер датчика. Номер датчика можно получить так:
@@ -15,9 +15,12 @@
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
     <js>main.js</js>
+	<history>history.xml</history>
   </files>
   <counters>
     <counter id="temperature" name="Температура воздуха" units="°C"/>
+	<counter id="humidity" name="Влажность" units="%"/>
+	<counter id="pressure" name="Давление" units="мм рт.ст."/>
   </counters>
   <keywords>
     прогноз, погода, температура, воздух, narodmon

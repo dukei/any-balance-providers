@@ -43,7 +43,7 @@ function main(){
     var prefs = AnyBalance.getPreferences();
     var number = prefs.number || prefs.numberList;
 
-    var baseurl = "http://narodmon.ru/?ajax=&mode=snslst&id="+number+"&tz=8";
+    var baseurl = "http://moe26.ru/projects/narodmon/?id="+number;
 
     var html = AnyBalance.requestGet(baseurl);
 
@@ -55,6 +55,8 @@ function main(){
 
  
     getParam(html, result, 'temperature', /&nbsp;<b>([\s\S]*?)&deg;<\/b>/i, replaceFloat, parseBalance);
+    getParam(html, result, 'humidity', /&nbsp;<b>([\s\S]*?)%<\/b>/i, replaceFloat, parseBalance);
+	getParam(html, result, 'pressure', /&nbsp;<b>([\s\S]*?)mmHg<\/b>/i, replaceFloat, parseBalance);
 
 
     AnyBalance.setResult(result);

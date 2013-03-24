@@ -1,4 +1,4 @@
-﻿/**
+/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 
 Текущий баланс у калининградского оператора интернет Диалог.
@@ -54,9 +54,11 @@ function main(){
     var result = {success: true};
 
  
-    getParam(html, result, 'temperature', /&nbsp;<b>([\s\S]*?)&deg;<\/b>/i, replaceFloat, parseBalance);
-    getParam(html, result, 'humidity', /&nbsp;<b>([\s\S]*?)%<\/b>/i, replaceFloat, parseBalance);
-	getParam(html, result, 'pressure', /&nbsp;<b>([\s\S]*?)mmHg<\/b>/i, replaceFloat, parseBalance);
+    getParam(html, result, 'temperature', /&nbsp;<b>([\d.+-]*?)&deg;<\/b>/i, replaceFloat, parseBalance);
+    getParam(html, result, 'humidity', /&nbsp;<b>([\d]*?)%<\/b>/i, replaceFloat, parseBalance);
+	getParam(html, result, 'pressure', /&nbsp;<b>([\d]*?)mmHg<\/b>/i, replaceFloat, parseBalance);
+
+
 
 
     AnyBalance.setResult(result);

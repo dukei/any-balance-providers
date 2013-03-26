@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="8" date="2013-03-26">
+        - Очередное изменение разметки на сайте;
+    </change>
     <change version="7" date="2013-03-16">
         - Исправлено в связи с обновлениями на сайте;
     </change>

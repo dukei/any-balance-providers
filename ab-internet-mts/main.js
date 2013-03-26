@@ -25,6 +25,7 @@ var regions = {
    izh: getIzhevsk,
    pnz: getPnz,
    kms: getKomsomolsk,
+   tula: getTula,
 };
 
 function main(){
@@ -639,9 +640,9 @@ function getKomsomolsk(){
     var result = {success: true};
 
     //Вначале попытаемся найти активный тариф
-    var tr = getParam(html, null, null, /<tr[^>]+class="account"[^>]*>((?:[\s\S](?!<\/tr))*?Состояние:\s+актив[\s\S]*?)<\/tr>/i);
+    var tr = getParam(html, null, null, /<tr[^>]+class="(?:account|odd|even)"[^>]*>((?:[\s\S](?!<\/tr))*?Состояние:\s+актив[\s\S]*?)<\/tr>/i);
     if(!tr)
-        tr = getParam(html, null, null, /<tr[^>]+class="account"[^>]*>([\s\S]*?)<\/tr>/i);
+        tr = getParam(html, null, null, /<tr[^>]+class="(?:account|odd|even)"[^>]*>([\s\S]*?)<\/tr>/i);
 
     if(tr){
         getParam(tr, result, '__tariff', /<!-- Работа с тарифом -->[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
@@ -655,6 +656,65 @@ function getKomsomolsk(){
 
     AnyBalance.setResult(result);
 }
+
+//LANBilling
+function getTula(){
+    var prefs = AnyBalance.getPreferences();
+    AnyBalance.setDefaultCharset('utf-8');
+
+    var baseurl = "http://balance.altair-tv.ru/";
+
+    var html = AnyBalance.requestPost(baseurl + 'client/index.php', {
+        login: prefs.login,
+        password: prefs.password
+    });
+
+    if(!/'devision',\s*'-1'/i.test(html)){
+        var error = getParam(html, null, null, /<(form) [^>]*name="loginForm">/i);
+        if(error)
+            throw new AnyBalance.Error("Неверный логин или пароль");
+        if(/<title>The page is temporarily unavailable<\/title>/i.test(html))
+            throw new AnyBalance.Error("Сайт временно недоступен. Попробуйте позднее.");
+ 
+        throw new AnyBalance.Error("Не удалось зайти в личный кабинет. Сайт изменен?");
+    }
+
+    var result = {success: true};
+
+    getParam(html, result, 'username', /Вы:<\/td>\s*<td[^>]*>(.*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    //Четвертая третья колонка в таблице под заголовком баланс
+    getParam(html, result, 'balance', /<td[^>]*>Баланс(?:[\S\s]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance2);
+    getParam(html, result, 'agreement', /<td[^>]*>Номер договора(?:[\S\s]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+
+    var re = new RegExp(prefs.login + '\\s*</a>\\s*</td>\\s*<td[^>]*>(.*?)</td>', 'i');
+    getParam(html, result, '__tariff', re, replaceTagsAndSpaces, html_entity_decode);
+    re = new RegExp(prefs.login + '\\s*</a>\\s*</td>(?:[\\S\\s]*?<td[^>]*>){5}(.*?)</td>', 'i');
+    getParam(html, result, 'status', re, replaceTagsAndSpaces, html_entity_decode);
+
+    if(AnyBalance.isAvailable('trafficIn', 'trafficOut')){
+        var dt = new Date();
+        html = AnyBalance.requestPost(baseurl + 'client/index.php', {
+            devision:2,
+            service:1,
+            statmode:0,
+            vgstat:0,
+            timeblock:1,
+            year_from:dt.getFullYear(),
+            month_from:dt.getMonth()+1,
+            day_from:1,
+            year_till:dt.getFullYear(),
+            month_till:dt.getMonth()+1,
+            day_till:dt.getDate()
+        });
+        re = new RegExp(prefs.login + '\\s*</a>\\s*</td>(?:[\\S\\s]*?<td[^>]*>){2}(.*?)</td>', 'i');
+        getParam(html, result, 'internet_cur', re, replaceTagsAndSpaces, parseBalance2);
+        //re = new RegExp(prefs.login + '\\s*</a>\\s*</td>(?:[\\S\\s]*?<td[^>]*>){3}(.*?)</td>', 'i');
+        //getParam(html, result, 'trafficOut', re, replaceTagsAndSpaces, parseTraffic);
+    }
+
+    AnyBalance.setResult(result);
+}
+
 
 function getParam (html, result, param, regexp, replaces, parser) {
 	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))

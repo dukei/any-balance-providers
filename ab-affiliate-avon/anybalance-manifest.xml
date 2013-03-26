@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-affiliate-avon</id>
+  <name>AVON</name>
+  <description>
+    Получает баланс и другую информацию по представителю AVON (http://www.avon.ru)
+
+    Информация берется из личного кабинета: https://www.avon.ru/REPSuite/
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="credit" name="Кредит" units="р"/>
+    <counter id="lastpay" name="Последний платеж" units="р"/>
+    <counter id="daysleft" name="До сдачи заказа" units=" дн."/>
+    <counter id="orderdate" name="Дата заказа" type="time" format="dd/MM/yyyy"/>
+    <counter id="paytill" name="Срок оплаты" type="time" format="dd/MM/yyyy"/>
+    <counter id="fio" name="ФИО" type="text"/>
+  </counters>
+  <keywords>
+    Эйвон, авон
+  </keywords>
+  <type>
+    affiliate
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

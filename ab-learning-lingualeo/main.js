@@ -19,10 +19,15 @@ function main(){
 	if (html) {
 		var result = {success: true};
 		
-		result.__tariff = html.match(/<a href="\/profile".+?>(.+?)<\/a>/i)[1];
+		var matches = html.match(/<a href="\/profile"[\s\S]+?>(.+?)<\/a>/i);
+		if (matches) {
+			result.__tariff = matches[1]
+		} else {
+			throw new AnyBalance.Error("Не удалось получить имя пользователя");
+		}
 		
 		if (AnyBalance.isAvailable('meatballs')) {
-			var matches = html.match(/<span data-current-meatballs>(\d+?)<\/span>/i);
+			var matches = html.match(/"meatballs":(\d+),/i);
 			if (matches) {
 				result.meatballs = matches[1]
 			} else {
@@ -38,7 +43,7 @@ function main(){
 			}
 		}
 		if (AnyBalance.isAvailable('xp')) {
-			var matches = html.match(/<div class="l-prog-progress" data-xp-progressbar style="width: (\d+?)%">/i);
+			var matches = html.match(/<div class="l-prog-progress" data-xp-progressbar\s+style="width: (\d+?)%">/i);
 			if (matches) {
 				result.xp = matches[1]
 			} else {

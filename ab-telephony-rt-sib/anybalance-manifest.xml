@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-telephony-rt-sib</id>
+  <id version="2">ab-telephony-rt-sib</id>
   <name>Ростелеком Сибирь</name>
   <description>
     Получает баланс и информацию о тарифном плане для сибирского оператора проводной телефонии Ростелеком-сибирский филиал (http://sibirtelecom.ru)
@@ -18,6 +18,9 @@
   <counters>
     <counter id="balance" name="Сумма к оплате" units="р"/>
     <counter id="recom" name="Рекомендованный платеж" units="р"/>
+    <counter id="count" name="Число звонков в текущем месяце" units=""/>
+    <counter id="dur" name="Длительность звонков в текущем месяце" units=" мин"/>
+    <counter id="cost" name="Стоимость звонков в текущем месяце" type="р"/>
     <counter id="fio" name="ФИО" type="text"/>
     <counter id="licschet" name="Лицевой счет" type="text"/>
   </counters>

@@ -20,7 +20,7 @@
     <counter id="recom" name="Рекомендованный платеж" units="р"/>
     <counter id="count" name="Число звонков в текущем месяце" units=""/>
     <counter id="dur" name="Длительность звонков в текущем месяце" units=" мин"/>
-    <counter id="cost" name="Стоимость звонков в текущем месяце" type="р"/>
+    <counter id="cost" name="Стоимость звонков в текущем месяце" units="р"/>
     <counter id="fio" name="ФИО" type="text"/>
     <counter id="licschet" name="Лицевой счет" type="text"/>
   </counters>

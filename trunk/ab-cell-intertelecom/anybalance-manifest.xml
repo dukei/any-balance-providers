@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="14">ab-cell-intertelecom</id>
+  <id version="15">ab-cell-intertelecom</id>
   <name>Интертелеком</name>
   <description>
     Мониторинг баланса мобильного оператора Интертелекома, первого национального CDMA оператора Украины (http://www.intertelecom.ua). Получает данные из системы самообслуживания https://assa.intertelecom.ua.
@@ -29,8 +29,8 @@
     <counter id="traffic_action" name="Трафик по акции" units=" mb" flags="zero_when_empty"/>
     <counter id="date_activity" name="Дата последней абонентской активности" type="time" format="dd/MM/yyyy"/>
     <counter id="skidka" name="Размер скидки по программе лояльности «Наилучшее общение»" suffix="%" type="numeric"/>
-    <counter id="loyalty" name="Лояльный стаж" type="time_interval" format="{@y}:{@mo}"/>
-    <counter id="mobsubscr" name="Абонентский стаж" type="time_interval" format="{@y}:{@mo}"/>
+    <counter id="loyalty" name="Лояльный стаж" type="time_interval" format="{@Y}:{@mo}"/>
+    <counter id="mobsubscr" name="Абонентский стаж" type="time_interval" format="{@Y}:{@mo}"/>
     <counter id="news" name="Новости" type="numeric" flags="zero_when_empty"/>
     <counter id="phonet" name="Номер телефона" type="text"/>
   </counters>

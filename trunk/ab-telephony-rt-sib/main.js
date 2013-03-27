@@ -44,6 +44,14 @@ function main(){
     sumParam(html, result, 'balance', /Сумма к оплате на\s*[\d\/]*\s*составляет:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     sumParam(html, result, 'recom', /Сумма рекомендованного платежа[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 
+    if(AnyBalance.isAvailable('dur', 'cost', 'count')){
+        var dt = new Date();
+        html = AnyBalance.requestGet(baseurl + 'index.jsp?action=apusd&period_from=' + dt.getFullYear() + (dt.getMonth() < 9 ? '0' : '') + (dt.getMonth()+1), g_headers);
+        getParam(html, result, 'count', /Итого разговоров по телефону[^<]*?:([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+        getParam(html, result, 'dur', /Длительность:([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+        getParam(html, result, 'cost', /Сумма:[^<]*?[cс] НДС:([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+    }
+
     AnyBalance.setResult(result);
 }
 

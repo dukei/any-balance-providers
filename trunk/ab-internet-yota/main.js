@@ -7,41 +7,6 @@
 Личный кабинет: https://my.yota.ru/
 */
 
-function getParam (html, result, param, regexp, replaces, parser) {
-	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
-		return;
-
-	var matches = regexp.exec (html), value;
-	if (matches) {
-		value = matches[1];
-		if (replaces) {
-			for (var i = 0; i < replaces.length; i += 2) {
-				value = value.replace (replaces[i], replaces[i+1]);
-			}
-		}
-		if (parser)
-			value = parser (value);
-
-    if(param)
-      result[param] = value;
-	}
-   return value
-}
-
-var replaceTagsAndSpaces = [/&nbsp;/g, ' ', /<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, ''];
-var replaceFloat = [/\s+/g, '', /,/g, '.'];
-
-function parseBalance(text){
-    var val = getParam(text.replace(/\s+/g, ''), null, null, /(-?\d[\d\s.,]*)/, replaceFloat, parseFloat);
-    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
-    return val;
-}
-
-function parseTrafficGb(str){
-  var val = getParam(str.replace(/\s+/g, ''), null, null, /(-?\d[\d\s.,]*)/, replaceFloat, parseFloat);
-  return parseFloat((val/1024).toFixed(2));
-}
-
 function main(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
@@ -52,41 +17,47 @@ function main(){
         throw new AnyBalance.Error('Пожалуйста, введите логин в личный кабинет Yota!');
 
     var html, login, old_token;
-    if(/@/.test(prefs.login)){
-        AnyBalance.trace("Пытаемся войти по e-mail");
-        html = AnyBalance.requestPost(baseurl + 'login/getUidByMail', {value: prefs.login});
-        login = getParam(html, null, null, /^ok\|(.*)/i, replaceTagsAndSpaces);
-        if(!login)
-            throw new AnyBalance.Error('Данный емейл (' + prefs.login + ') не зарегистрирован в Yota.');
-        AnyBalance.trace("Определили лицевой счет: " + login);
-        old_token = prefs.login;
-    }else if(prefs.login.replace(/\D/gi, "").length > 10){
-        AnyBalance.trace("Пытаемся войти по номеру телефона");
-        html = AnyBalance.requestPost(baseurl + 'login/getUidByPhone', {value: prefs.login.replace(/\D/gi, "")});
-        login = getParam(html, null, null, /^ok\|(.*)/i, replaceTagsAndSpaces);
-        if(!login)
-            throw new AnyBalance.Error('Данный телефон (' + prefs.login + ') не зарегистрирован в Yota.');
-        AnyBalance.trace("Определили лицевой счет: " + login);
-        old_token = prefs.login;
+    if(!prefs.__dbg){
+        if(/@/.test(prefs.login)){
+            AnyBalance.trace("Пытаемся войти по e-mail");
+            html = AnyBalance.requestPost(baseurl + 'login/getUidByMail', {value: prefs.login});
+            login = getParam(html, null, null, /^ok\|(.*)/i, replaceTagsAndSpaces);
+            if(!login)
+                throw new AnyBalance.Error('Данный емейл (' + prefs.login + ') не зарегистрирован в Yota.');
+            AnyBalance.trace("Определили лицевой счет: " + login);
+            old_token = prefs.login;
+        }else if(prefs.login.replace(/\D/gi, "").length > 10){
+            AnyBalance.trace("Пытаемся войти по номеру телефона");
+            html = AnyBalance.requestPost(baseurl + 'login/getUidByPhone', {value: prefs.login.replace(/\D/gi, "")});
+            login = getParam(html, null, null, /^ok\|(.*)/i, replaceTagsAndSpaces);
+            if(!login)
+                throw new AnyBalance.Error('Данный телефон (' + prefs.login + ') не зарегистрирован в Yota.');
+            AnyBalance.trace("Определили лицевой счет: " + login);
+            old_token = prefs.login;
+        }else{
+            AnyBalance.trace("Пытаемся войти по лицевому счету.");
+            login = prefs.login;
+        }
+        
+        html = AnyBalance.requestPost('https://login.yota.ru/UI/Login', {
+            'goto':baseurl + 'loginSuccess',
+            gotoOnFail:baseurl + 'loginError',
+            org:'customer',
+            'old-token':old_token,
+            IDToken3:prefs.password,
+            IDToken2:prefs.password,
+            IDToken1:login
+        });
     }else{
-        AnyBalance.trace("Пытаемся войти по лицевому счету.");
-        login = prefs.login;
+        html = AnyBalance.requestGet(baseurl + 'devices');
     }
-
-    var html = AnyBalance.requestPost('https://login.yota.ru/UI/Login', {
-        'goto':baseurl + 'loginSuccess',
-        gotoOnFail:baseurl + 'loginError',
-        org:'customer',
-        'old-token':old_token,
-        IDToken3:prefs.password,
-        IDToken2:prefs.password,
-        IDToken1:login
-    });
 
     //AnyBalance.trace(html);
 
     if(!/\/selfcare\/logout/.test(html)){
         var error = getParam(html, null, null, /id="site-fastclick"[^>]*>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, html_entity_decode);
+        if(!error)
+            error = getParam(html, null, null, /id="selfcare-not-available"[^>]*>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error);
         throw new AnyBalance.Error('Не удалось войти в личный кабинет. Неверный логин-пароль?');
@@ -94,21 +65,25 @@ function main(){
 
     var result = {success: true};
 
+    if(!/<span[^>]*>Yota 4G<\/span>/i.test(html)){
+        AnyBalance.trace('Открылась не страница по устройству. Надо открыть нужную страницу');
+        html = AnyBalance.requestGet(baseurl + 'devices');
+    }
+
     getParam(html, result, 'balance', /<dd[^>]+id="balance-holder"[^>]*>([\S\s]*?)<\/dd>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'licschet', /(?:Номер лицевого счета|Personal Account Number)[\S\s]*?<div[^>]+class="value"[^>]*>([\S\s]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'agreement', /(?:Тип договора|Contract Type)[\S\s]*?<div[^>]+class="value"[^>]*>([\S\s]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, '__tariff', /(?:Фамилия Имя|>Name<)[\S\s]*?<div[^>]+class="value"[^>]*>([\S\s]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'email', /E-mail[\S\s]*?<div[^>]+class="value"[^>]*>([\S\s]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'phone', /(?:Мобильный телефон|Mobile Phone Number)[\S\s]*?<div[^>]+class="value"[^>]*>([\S\s]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'abon', /<div[^>]+class="cost"[^>]*>([\S\s]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'speed', /<div[^>]+class="speed"[^>]*>([\S\s]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, '__tariff', /<div[^>]+class="speed"[^>]*>([\S\s]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'daysleft', /<div[^>]+class="time[^"]*"[^>]*>([\S\s]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+
+    if(AnyBalance.isAvailable('licschet', 'agreement', 'fio', 'email', 'phone')){
+        html = AnyBalance.requestGet(baseurl + 'profile');
+        getParam(html, result, 'licschet', /(?:Номер лицевого счета|Personal Account Number)[\S\s]*?<div[^>]+class="value"[^>]*>([\S\s]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+        getParam(html, result, 'agreement', /(?:Тип договора|Contract Type)[\S\s]*?<div[^>]+class="value"[^>]*>([\S\s]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+        getParam(html, result, 'fio', /(?:Фамилия Имя|>Name<)[\S\s]*?<div[^>]+class="value"[^>]*>([\S\s]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+        getParam(html, result, 'email', /E-mail[\S\s]*?<div[^>]+class="value"[^>]*>([\S\s]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+        getParam(html, result, 'phone', /(?:Мобильный телефон|Mobile Phone Number)[\S\s]*?<div[^>]+class="value"[^>]*>([\S\s]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+    }
     
     AnyBalance.setResult(result);
 }
-
-function html_entity_decode(str)
-{
-    //jd-tech.net
-    var tarea=document.createElement('textarea');
-    tarea.innerHTML = str;
-    return tarea.value;
-}
-

@@ -318,7 +318,7 @@ function megafonTrayInfo(filial){
         result.__tariff = $.trim($xml.find('RATE_PLAN').text());
 
         getParam($xml.find('BALANCE').text() || '', result, 'balance', null, null, parseBalance);
-        getParam($xml.find('NUMBER').first().text() || '', result, 'phone', null, null, parseBalance);
+        getParam($xml.find('NUMBER').first().text() || '', result, 'phone', null, null, html_entity_decode);
         getParam($xml.find('PRSNL_BALANCE').first().text() || '', result, 'prsnl_balance', null, null, parseBalance);
 
         var $threads = $xml.find('RP_DISCOUNTS>DISCOUNT>THREAD, PACK>DISCOUNT>THREAD, RP_DISCOUNTS>DISCOUNT:not(:has(THREAD))');
@@ -335,7 +335,7 @@ function megafonTrayInfo(filial){
         }
 
         if(AnyBalance.isAvailable('mins_left','mins_total','sms_left','sms_total','mms_left','mms_total')){
-            var $val = $threads.filter(':has(NAME:contains(" мин")), :has(NAME:contains("Телефония исходящая")), :has(NAME:contains("Исходящая телефония"))');
+            var $val = $threads.filter(':has(NAME:contains(" мин")), :has(NAME:contains("Телефония исходящая")), :has(NAME:contains("Исходящая телефония")), :has(PLAN_SI:contains("мин"))');
             AnyBalance.trace('Found minutes discounts: ' + $val.length);
             $val.each(function(){
                 var $e = $(this);

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-bonus-stroydvor</id>
+  <id version="2">ab-bonus-stroydvor</id>
   <name>Строительный двор</name>
   <description>
     Получает информацию по бонусной карте компании Строительный двор (http://www.sdvor.com). Розничное направление представлено 16 магазинами в Тюмени, Екатеринбурге, Ялуторовске, Тобольске, Березовском, Нижнем Тагиле, Сургуте, Перми и Нижневартовске
@@ -18,7 +18,7 @@
   <counters>
     <counter id="balance" name="Баланс" units="р"/>
     <counter id="pct_com" name="Скидка на общестрой" units="%"/>
-    <counter id="pct_otd" name="Скилка на отделочные материалы" units="%"/>
+    <counter id="pct_otd" name="Скидка на отделочные материалы" units="%"/>
   </counters>
   <keywords>
     стройдвор

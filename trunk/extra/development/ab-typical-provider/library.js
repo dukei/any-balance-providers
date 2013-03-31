@@ -201,6 +201,12 @@ function joinObjects(newObject, oldObject){
    return obj;
 }
 
+function joinArrays(arr1, arr2){
+   var narr = arr1.slice();
+   narr.push.apply(narr, arr2);
+   return narr;
+}
+
 /**
  *  Добавляет хедеры к переданным или к g_headers
  */
@@ -211,7 +217,7 @@ function addHeaders(newHeaders, oldHeaders){
    if(!bOldArray && !bNewArray)
        return joinObjects(newHeaders, oldHeaders);
    if(bOldArray && bNewArray) //Если это массивы, то просто делаем им join
-       return oldHeaders.slice().push.apply(oldHeaders, newHeaders);
+       return joinArrays(oldHeaders, newHeaders);
    if(!bOldArray && bNewArray){ //Если старый объект, а новый массив
        var headers = joinObjects(null, oldHeaders);
        for(var i=0; i<newHeaders.length; ++i)
@@ -469,7 +475,7 @@ function parseTrafficGb(text, defaultUnits){
  * Вычисляет трафик в нужных единицах из переданной строки.
  */
 function parseTrafficEx(text, thousand, order, defaultUnits){
-    var _text = html_entity_decode(text.replace(/\s+/, ''));
+    var _text = html_entity_decode(text.replace(/\s+/g, ''));
     var val = getParam(_text, null, null, /(-?\d[\d\.,]*)/, replaceFloat, parseFloat);
     if(!isset(val)){
         AnyBalance.trace("Could not parse traffic value from " + text);

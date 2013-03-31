@@ -475,7 +475,7 @@ function parseTrafficGb(text, defaultUnits){
  * Вычисляет трафик в нужных единицах из переданной строки.
  */
 function parseTrafficEx(text, thousand, order, defaultUnits){
-    var _text = html_entity_decode(text.replace(/\s+/, ''));
+    var _text = html_entity_decode(text.replace(/\s+/g, ''));
     var val = getParam(_text, null, null, /(-?\d[\d\.,]*)/, replaceFloat, parseFloat);
     if(!isset(val)){
         AnyBalance.trace("Could not parse traffic value from " + text);

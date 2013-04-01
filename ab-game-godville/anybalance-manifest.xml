@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-game-godville</id>
+	<id version="5">ab-game-godville</id>
 	<name>Godville.net</name>
 	<description>
 		Отображает некоторые параметры игры (здоровье, прана, количество кирпичей, уровень героя)
 	</description>
-	<author>Vit@liy &lt;vitaliy@root.ua&gt;</author>
+	<author>Vitaliy Poluphanov &lt;vitaliy@root.ua&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

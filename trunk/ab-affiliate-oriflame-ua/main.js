@@ -7,14 +7,17 @@
 Личный кабинет: http://vip.oriflame.ua 
 */
 
-var g_baseurl = "https://ua-eshop.oriflame.com/eShop/";
+var g_baseurl = {
+    ua: "https://ua-eshop.oriflame.com/eShop/",
+    ru: "https://ru-eshop.oriflame.com/eShop/"
+};
+
 var g_headers = {
         'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
         'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
         'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
         'Cache-Control':'max-age=0',
         'Connection':'keep-alive',
-        'Referer':g_baseurl,
         'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.56 Safari/537.17'
 };
 
@@ -26,7 +29,11 @@ function main(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
 
-    var baseurl = g_baseurl;
+    if(!g_baseurl[prefs.country])
+        prefs.country = 'ua';
+
+    var baseurl = g_baseurl[prefs.country];
+    g_headers.Referer = baseurl;
 
     var html = AnyBalance.requestGet(baseurl + 'Login.aspx');
 

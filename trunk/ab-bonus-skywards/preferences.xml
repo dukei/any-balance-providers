@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
     <EditTextPreference 
-        title="Skywards Number" 
+        title="Membership Number" 
         positiveButtonText="OK" 
         summary="||{@s}" 
-        dialogTitle="Skywards Number" 
+        dialogTitle="Membership Number" 
         negativeButtonText="Cancel" 
-        dialogMessage="Please enter your Skywards Number."
+        dialogMessage="Please enter your Membership Number."
         inputType="number"
         key="login">
     </EditTextPreference>

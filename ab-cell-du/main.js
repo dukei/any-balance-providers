@@ -15,6 +15,21 @@ var g_headers = {
 'User-Agent':'Mozilla/5.0 (BlackBerry; U; BlackBerry 9900; en-US) AppleWebKit/534.11+ (KHTML, like Gecko) Version/7.0.0.187 Mobile Safari/534.11+'
 };
 
+/**
+ *  Получает дату из строки mm/dd/yy
+ */
+function parseDateMy(str){
+    var matches = /(?:(\d+)[^\d])?(\d+)[^\d](\d{2,4})(?:[^\d](\d+):(\d+)(?::(\d+))?)?/.exec(str);
+    if(matches){
+          var year = +matches[3];
+          var date = new Date(year < 1000 ? 2000 + year : year, matches[1]-1, +(matches[2] || 1), matches[4] || 0, matches[5] || 0, matches[6] || 0);
+	  var time = date.getTime();
+          AnyBalance.trace('Parsing date ' + date + ' from value: ' + str);
+          return time;
+    }
+    AnyBalance.trace('Failed to parse date from value: ' + str);
+}
+
 function main(){
     var prefs = AnyBalance.getPreferences();
 
@@ -44,9 +59,31 @@ function main(){
     
     html = AnyBalance.requestGet(baseurl + 'selfcare-portal-web/selfcare/portal/userManagement/web/accountoverview/respondToAjaxRequests.do?tagID=AccountBalanceDiv%2C1%2C&locale=en&actionNames=getPrepaidAccountBalance%2C&contrract=' + contract + '&rndm=' + new Date().getTime());
 
-    getParam(html, result, '__tariff', /<th[^>]*>\s*Balance type(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'balance', /<th[^>]*>\s*Balance type(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'till', /<th[^>]*>\s*Balance type(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+    var balances = getParam(html, null, null, /<th[^>]*>\s*Balance type([\s\S]*?)<\/table>/i);
+    if(!balances)
+        throw new AnyBalance.Error('Can not find your account balance. Is site changed?');
+
+    var rows = sumParam(balances, null, null, /<tr[^>]*>([\s\S]*?)<\/tr>/ig);
+    for(var i=0; i<rows.length; ++i){
+        var plan = getParam(rows[i], null, null, /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+        if(/More International/i.test(plan) && AnyBalance.isAvailable('balance', 'till')){
+            sumParam(plan, result, '__tariff', null, null, null, aggregate_join);
+            getParam(rows[i], result, 'balance', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+            getParam(rows[i], result, 'till', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDateMy);
+        }else if(/More Data/i.test(plan) && AnyBalance.isAvailable('balance_md', 'till_md')){
+            sumParam(plan, result, '__tariff', null, null, null, aggregate_join);
+            getParam(rows[i], result, 'balance_md', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTraffic);
+            getParam(rows[i], result, 'till_md', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDateMy);
+        }else if(/More Time/i.test(plan) && AnyBalance.isAvailable('balance_mt', 'till_mt')){
+            sumParam(plan, result, '__tariff', null, null, null, aggregate_join);
+            getParam(rows[i], result, 'balance_mt', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+            getParam(rows[i], result, 'till_mt', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDateMy);
+        }else if(/More Credit/i.test(plan) && AnyBalance.isAvailable('balance_mc', 'till_mc')){
+            sumParam(plan, result, '__tariff', null, null, null, aggregate_join);
+            getParam(rows[i], result, 'balance_mc', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+            getParam(rows[i], result, 'till_mc', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDateMy);
+        }
+    }
     
     getParam(prefs.login, result, 'phone', null, replaceTagsAndSpaces, html_entity_decode);
 

@@ -70,7 +70,10 @@ function main(){
 	if(AnyBalance.isAvailable('savings')) {
 			var pd = AnyBalance.requestGet('http://godville.net/gods/' + prefs.login.replace(' ', '%20'));
 			var matches = pd.match(/<td class="label">Сбережения<\/td>\s+?<td class="name">(\d+) /i);
-			if (matches) {
+			var matches2 = pd.match(/Кирпичей для храма/i);
+			if (matches2) {
+				result['savings'] = 0
+			} else if (matches) {
 				result['savings'] = matches[1]
 			} else {
 				throw new AnyBalance.Error("Сбережений не обнаружено");

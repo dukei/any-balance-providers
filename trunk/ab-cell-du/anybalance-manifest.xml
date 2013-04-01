@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-cell-du</id>
+  <id version="2">ab-cell-du</id>
   <name>du</name>
   <description>
     Retrieve balance and plan information from du (http://www.du.ae) selfcare.
@@ -18,10 +18,16 @@
     <history>history.xml</history>
   </files>
   <counters>
-    <counter id="balance" name="Balance" units=" AED"/>
+    <counter id="balance" name="More International Balance" units=" AED"/>
+    <counter id="till" name="Renewal date" type="time" format="MM/dd/yyyy"/>
+    <counter id="balance_md" name="More Data Balance" units=" Mb"/>
+    <counter id="till_md" name="More International Renewal date" type="time" format="MM/dd/yyyy"/>
+    <counter id="balance_mc" name="More Credit Balance" units=" AED"/>
+    <counter id="till_mc" name="More Credit Renewal date" type="time" format="MM/dd/yyyy"/>
+    <counter id="balance_mt" name="More Time Balance" units=" AED"/>
+    <counter id="till_mt" name="More Time Renewal date" type="time" format="MM/dd/yyyy"/>
     <counter id="fio" name="Name" type="text"/>
     <counter id="phone" name="Phone" type="text"/>
-    <counter id="till" name="Renewal date" type="time" format="dd/MM/yyyy"/>
   </counters>
   <keywords>
     

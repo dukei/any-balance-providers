@@ -31,8 +31,7 @@ function main(){
 
 //    AnyBalance.trace(html);
     
-    if(!/\/logout\//i.test(html)){
-       //Хм, он нас почему-то не довел до счета. Попытаемся явно перейти
+    if(/<form[^>]+id="login-form"/i.test(html)){
        var error = getParam(html, null, null, /<div[^>]*class="[^"]*alert[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
        if(error)
             throw new AnyBalance.Error(error);

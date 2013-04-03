@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="13" major_version="3.0">ab-cell-skylink</id>
+  <id version="14" major_version="3.0">ab-cell-skylink</id>
   <name>Skylink</name>
   <description>
     Получает баланс для оператора сотовой связи Skylink, используя личные кабинеты (свои в каждом регионе).
@@ -27,6 +27,7 @@
     <counter id="traffic" name="Трафик за месяц" units="mb" />
     <counter id="trafficDay" name="Трафик в день" units="mb" />
     <counter id="trafficPack" name="Льготный трафик" units="mb" />
+    <counter id="min_left" name="Остаток минут" units=" мин" />
     <counter id="userName" name="ФИО" type="text"/>
     <counter id="userNum" name="Лицевой счет" type="text"/>
     <counter id="status" name="Статус" type="text"/>

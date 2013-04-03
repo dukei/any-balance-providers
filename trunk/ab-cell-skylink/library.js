@@ -33,7 +33,7 @@ function getParam (html, result, param, regexp, replaces, parser) {
 		if (parser)
 			value = parser (value);
 
-		if(param)
+		if(param && isset(value))
 			result[isArray(param) ? param[0] : param] = value;
 	}
 	return value;
@@ -201,6 +201,12 @@ function joinObjects(newObject, oldObject){
    return obj;
 }
 
+function joinArrays(arr1, arr2){
+   var narr = arr1.slice();
+   narr.push.apply(narr, arr2);
+   return narr;
+}
+
 /**
  *  Добавляет хедеры к переданным или к g_headers
  */
@@ -211,7 +217,7 @@ function addHeaders(newHeaders, oldHeaders){
    if(!bOldArray && !bNewArray)
        return joinObjects(newHeaders, oldHeaders);
    if(bOldArray && bNewArray) //Если это массивы, то просто делаем им join
-       return oldHeaders.slice().push.apply(oldHeaders, newHeaders);
+       return joinArrays(oldHeaders, newHeaders);
    if(!bOldArray && bNewArray){ //Если старый объект, а новый массив
        var headers = joinObjects(null, oldHeaders);
        for(var i=0; i<newHeaders.length; ++i)
@@ -352,6 +358,12 @@ function parseDateJS(str){
  * см. например replaceTagsAndSpaces
  */
 function sumParam (html, result, param, regexp, replaces, parser, do_replace, aggregate) {
+    if(typeof(do_replace) == 'function'){
+        var aggregate_old = aggregate;
+        aggregate = do_replace;
+        do_replace = aggregate_old || false;
+    }
+
     if (!isAvailable(param)){
 	if(do_replace)
 		return html;
@@ -360,11 +372,6 @@ function sumParam (html, result, param, regexp, replaces, parser, do_replace, ag
     }
     //После того, как проверили нужность счетчиков, кладем результат в первый из переданных счетчиков. Оставляем только первый
     param = isArray(param) ? param[0] : param;
-
-    if(typeof(do_replace) == 'function'){
-        aggregate = do_replace;
-        do_replace = false;
-    }
 
     var values = [], matches;
     if(param && isset(result[param]))
@@ -468,7 +475,7 @@ function parseTrafficGb(text, defaultUnits){
  * Вычисляет трафик в нужных единицах из переданной строки.
  */
 function parseTrafficEx(text, thousand, order, defaultUnits){
-    var _text = html_entity_decode(text.replace(/\s+/, ''));
+    var _text = html_entity_decode(text.replace(/\s+/g, ''));
     var val = getParam(_text, null, null, /(-?\d[\d\.,]*)/, replaceFloat, parseFloat);
     if(!isset(val)){
         AnyBalance.trace("Could not parse traffic value from " + text);

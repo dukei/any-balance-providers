@@ -1,21 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
     <EditTextPreference 
-        key="region_a"
-        title="Город (Avito)" 
-        summary="Город (Avito)||{@s}\n" 
-        dialogTitle="Город (Avito)" 
-        negativeButtonText="Отмена" 
-        dialogMessage="Укажите город для отслеживания объявления на Avito.ru в формате city. Узнать его можно в адресной строке браузера, например, http://http://www.avito.ru/город."
-        positiveButtonText="ОК">
-    </EditTextPreference>
-    <EditTextPreference 
         key="region"
-        title="Город или регион (Slando)" 
-        summary="Город или регион (Slando)||{@s}\n" 
-        dialogTitle="Город или регион (Slando)" 
+        title="Город" 
+        summary="Город||{@s}\n" 
+        dialogTitle="Город" 
         negativeButtonText="Отмена" 
-        dialogMessage="Укажите город или регион для отслеживания объявления на Slando.ru в формате city.region. Узнать его можно в адресной строке браузера, например, http://город.регион.slando.ru."
+        dialogMessage="Укажите город для отслеживания объявления формате city. Узнать его можно в адресной строке браузера, например, http://www.avito.ru/город."
         positiveButtonText="ОК">
     </EditTextPreference>
     <EditTextPreference 

@@ -41,7 +41,7 @@ function main(){
 
 function getRostov(){
     var prefs = AnyBalance.getPreferences();
-    var baseurl = 'http://pc.aaanet.ru/';
+    var baseurl = 'http://lk.ug.mts.ru/';
 
     // Заходим на главную страницу
     var info = AnyBalance.requestPost(baseurl + "cgi-bin/billing_auth.pl", {

@@ -46,10 +46,11 @@ filial_info[MEGA_FILIAL_FAREAST] = {
 };
 filial_info[MEGA_FILIAL_VOLGA] = {
   name: 'Поволжский филиал',
-  site: "https://volgasg.megafon.ru/",
-  func: megafonServiceGuide,
+//  site: "https://volgasg.megafon.ru/",
+//  func: megafonServiceGuide,
+  func: megafonTrayInfo,
   widget: 'https://volgasg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
-  tray: 'https://volgasg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%'
+  site: 'https://volgasg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%'
 };
 filial_info[MEGA_FILIAL_KAVKAZ] = {
   name: 'Кавказский филиал',
@@ -438,7 +439,10 @@ function megafonTrayInfo(filial){
                    var discount = discounts[i];
                    var name = getParam(discount, null, null, /<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
                    var val = getParam(discount, null, null, /<div[^>]+class="discount_volume"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-                   if(/SMS/i.test(name)){
+                   if(/MMS/i.test(name)){
+                       sumParam(val, result, 'mms_left', /\/(.*)/, null, parseBalance, aggregate_sum);
+                       sumParam(val, result, 'mms_total', /(.*?)\//, null, parseBalance, aggregate_sum);
+                   }else if(/SMS/i.test(name)){
                        sumParam(val, result, 'sms_left', /\/(.*)/, null, parseBalance, aggregate_sum);
                        sumParam(val, result, 'sms_total', /(.*?)\//, null, parseBalance, aggregate_sum);
                    }else if(/мин/i.test(val)){

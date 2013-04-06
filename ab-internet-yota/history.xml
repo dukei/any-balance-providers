@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="3" date="2013-04-06">
+      Поддержка двух устройств Yota в одном аккаунте
+    </change>
     <change version="2" date="2013-03-28">
       Добавлены счетчики Осталось дней, Скорость, Абонентская плата
     </change>

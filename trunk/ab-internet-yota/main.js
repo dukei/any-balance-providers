@@ -7,6 +7,16 @@
 Личный кабинет: https://my.yota.ru/
 */
 
+function aggregateToBalances(vals, result, name){
+    for(var i=0; i<vals.length; ++i){
+        var thisname = name + (i ? i : '');
+        if(AnyBalance.isAvailable(thisname))
+            result[thisname] = vals[i];
+    }
+}
+
+function createBalancesAggregate(result, name){ return function(vals){ aggregateToBalances(vals, result, name) }};
+
 function main(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
@@ -70,10 +80,10 @@ function main(){
         html = AnyBalance.requestGet(baseurl + 'devices');
     }
 
-    getParam(html, result, 'balance', /<dd[^>]+id="balance-holder"[^>]*>([\S\s]*?)<\/dd>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'abon', /<div[^>]+class="cost"[^>]*>([\S\s]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'speed', /<div[^>]+class="speed"[^>]*>([\S\s]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, '__tariff', /<div[^>]+class="speed"[^>]*>([\S\s]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+    sumParam(html, null, null, /<dd[^>]+id="balance-holder"[^>]*>([^{]*?)<\/dd>/ig, replaceTagsAndSpaces, parseBalance, createBalancesAggregate(result, 'balance'));
+    sumParam(html, null, null, /<div[^>]+class="cost"[^>]*>([^{]*?)<\/div>/ig, replaceTagsAndSpaces, parseBalance, createBalancesAggregate(result, 'abon'));
+    sumParam(html, null, null, /<div[^>]+class="speed"[^>]*>([^{]*?)<\/div>/ig, replaceTagsAndSpaces, html_entity_decode, createBalancesAggregate(result, 'speed'));
+    sumParam(html, result, '__tariff', /<h3[^>]+class="device-title"[^>]*>([\S\s]*?)<\/h3>/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
     getParam(html, result, 'daysleft', /<div[^>]+class="time[^"]*"[^>]*>([\S\s]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 
     if(AnyBalance.isAvailable('licschet', 'agreement', 'fio', 'email', 'phone')){

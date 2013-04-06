@@ -80,11 +80,11 @@ function main(){
         html = AnyBalance.requestGet(baseurl + 'devices');
     }
 
-    sumParam(html, null, null, /<dd[^>]+id="balance-holder"[^>]*>([^{]*?)<\/dd>/ig, replaceTagsAndSpaces, parseBalance, createBalancesAggregate(result, 'balance'));
+    getParam(html, result, 'balance', /<dd[^>]+id="balance-holder"[^>]*>([^{]*?)<\/dd>/i, replaceTagsAndSpaces, parseBalance);
     sumParam(html, null, null, /<div[^>]+class="cost"[^>]*>([^{]*?)<\/div>/ig, replaceTagsAndSpaces, parseBalance, createBalancesAggregate(result, 'abon'));
     sumParam(html, null, null, /<div[^>]+class="speed"[^>]*>([^{]*?)<\/div>/ig, replaceTagsAndSpaces, html_entity_decode, createBalancesAggregate(result, 'speed'));
     sumParam(html, result, '__tariff', /<h3[^>]+class="device-title"[^>]*>([\S\s]*?)<\/h3>/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
-    getParam(html, result, 'daysleft', /<div[^>]+class="time[^"]*"[^>]*>([\S\s]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+    sumParam(html, null, null, /<div[^>]+class="time[^"]*"[^>]*>([\S\s]*?)<\/div>/ig, replaceTagsAndSpaces, parseBalance, createBalancesAggregate(result, 'daysleft'));
 
     if(AnyBalance.isAvailable('licschet', 'agreement', 'fio', 'email', 'phone')){
         html = AnyBalance.requestGet(baseurl + 'profile');

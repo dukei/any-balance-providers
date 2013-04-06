@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="3">ab-internet-yota</id>
+  <id version="4">ab-internet-yota</id>
   <name>Yota (Россия)</name>
   <description>
     Получает баланс и информацию о тарифном плане для интернет-провайдера LTE и WiMAX Yota (http://yota.ru).

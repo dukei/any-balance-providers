@@ -3,7 +3,7 @@
     <EditTextPreference 
         key="login"
         title="Логин" 
-        summary="Логин||{@s}\n" 
+        summary="||{@s}" 
         dialogTitle="Логин" 
         negativeButtonText="Отмена" 
         dialogMessage="Укажите логин."
@@ -12,7 +12,7 @@
     <EditTextPreference 
         key="pass"
         title="Пароль" 
-        summary="Пароль||***********\n" 
+        summary="||***********" 
         dialogTitle="Пароль" 
         negativeButtonText="Отмена" 
         dialogMessage="Укажите пароль."

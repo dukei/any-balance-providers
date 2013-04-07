@@ -149,6 +149,9 @@ function parseBalanceList(html, result){
 
     // Баланс
     getBalanceValue (html, 'Основной баланс', parseBalance, result, 'balance');
+    var curr = getParam(html, null, null, /<td[^>]*>Основной баланс[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    if(AnyBalance.isAvailable('balance') && curr && /Доллар|\$/i.test(curr)) //Если в долларах, то надо перезаписать уже инициализированную валюту
+        result.currency = '$';
     
     // Бонус-баланс
     if(AnyBalance.isAvailable('bonus_balance')){
@@ -227,6 +230,11 @@ function parseBalanceList(html, result){
         if(val)
             result.traffic = (result.traffic || 0) + val/1024;
           
+        //Для узбекистана актуально
+        var val = getBalanceValue(html, 'GPRS_PACK', parseBalance);
+        if(val)
+            result.traffic = (result.traffic || 0) + val/1024;
+
         if(result.traffic)
             result.traffic = Math.round(result.traffic*100)/100;
     }

@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id major_version="1.0" version="4">ab-affiliate-vladimirfx</id>
+  <name>Партнерская программа Vladimirfx</name>
+  <description>
+    Помогает отслеживать состояние депозита инвестора на сайте www.vladimirfx.com.
+  </description>
+  <author>wtiger &lt;wtiger@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>api:jquery.min.js</js> <!-- Используем библиотеку, которая и так входит в AnyBalance -->
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="total_investors" name="Всего инвесторов"/>
+    <counter id="total_deposit" name="Общий депозит"/>
+    <counter id="average_week" name="В среднем за неделю" prefix="Нед:" suffix="%"/>
+    <counter id="average_month" name="В среднем за месяц" prefix="Мес:" suffix="%"/>
+    <counter id="all_time" name="За все время" prefix="Все:" suffix="%"/>
+    <counter id="trade_time" name="Торговля ведется" suffix="дн."/>
+    <counter id="stocking_withdrawal" name="Пополнение/снятие" suffix="$"/>
+    <counter id="profit_deadloss" name="Прибыль/убыток" prefix="Изм:" suffix="$"/>
+    <counter id="balance" name="Баланс" prefix="Бал:" suffix="$"/>
+    <counter id="max_percent" name="Максимальный процент"/>
+    <counter id="current_percent" name="Текущий процент"/>
+  </counters>
+  <keywords>
+    партнерская программа vladimirfx
+  </keywords>
+  <type>
+    affiliate
+  </type>
+</provider>

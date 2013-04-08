@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-internet-itkm</id>
+  <name>Ивантеевские телекоммуникации</name>
+  <description>
+    Получает баланс и информацию о тарифном плане для подмосковного интернет-провайдера Ивантеевские телекоммуникации (http://itkm.ru)
+
+    Информация берется из системы статистики https://stat.itkm.su за текущий месяц
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="login" name="Логин" type="text"/>
+    <counter id="trafficIn" name="Входящий трафик" units=" Гб"/>
+    <counter id="trafficOut" name="Исходящий трафик" units=" Гб"/>
+    <counter id="trafficTotal" name="Предоплаченный трафик" units=" Гб"/>
+  </counters>
+  <keywords>
+    ивантеевка
+  </keywords>
+  <type>
+    internet
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

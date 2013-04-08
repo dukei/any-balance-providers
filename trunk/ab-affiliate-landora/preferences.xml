@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        key="Login"
+        title="Логин" 
+        summary="Логин||{@s}\n" 
+        dialogTitle="Логин" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Укажите логин."
+        positiveButtonText="ОК">
+    </EditTextPreference>
+    <EditTextPreference 
+        key="Pswd"
+        title="Пароль" 
+        summary="Пароль||***********\n" 
+        dialogTitle="Пароль" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Укажите пароль."
+        inputType="textPassword"
+        positiveButtonText="ОК">
+    </EditTextPreference>
+</PreferenceScreen>

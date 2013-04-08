@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id major_version="1.0" version="6">ab-affiliate-landora</id>
+  <name>Партнерская программа Landora Investing LTD</name>
+  <description>
+    Помогает отслеживать состояние депозита инвестора на сайте www.landora-investing.com
+  </description>
+  <author>wtiger &lt;wtiger@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="cource_dollar" name="Курс доллара" suffix="$"/>
+    <counter id="cource_euro" name="Курс евро" suffix="€"/>
+    <counter id="deposit" name="Текущий депозит" prefix="Деп:" suffix="$"/>
+    <counter id="date_penalty" name="Дата вывода без штрафа" prefix=":" type="text"/>
+    <counter id="balance" name="Текущий баланс" prefix="Бал:" suffix="$"/>
+    <counter id="referral" name="Реф. начисления" prefix="Ref:" suffix="$"/>
+    <counter id="profit" name="Изменение" prefix="Изм:" suffix="%"/>
+    <counter id="total" name="Всего инвестировано" prefix="Всего:" suffix="$"/>
+    <counter id="stocking" name="Всего начислено" prefix="Нач:" suffix="$"/>
+    <counter id="withdrawal" name="Всего выведено" prefix="Выв:" suffix="$"/>
+  </counters>
+  <keywords>
+    партнерская программа landora investing ltd
+  </keywords>
+  <type>
+    affiliate
+  </type>
+</provider>

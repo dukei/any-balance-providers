@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="4">ab-affiliate-vladimirfx</id>
+  <id major_version="1.0" version="7">ab-affiliate-vladimirfx</id>
   <name>Партнерская программа Vladimirfx</name>
   <description>
     Помогает отслеживать состояние депозита инвестора на сайте www.vladimirfx.com.
@@ -9,21 +9,22 @@
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
-    <js>api:jquery.min.js</js> <!-- Используем библиотеку, которая и так входит в AnyBalance -->
+    <js>api:jquery.min.js</js>
+    <js>library.js</js>
     <js>main.js</js>
   </files>
   <counters>
     <counter id="total_investors" name="Всего инвесторов"/>
-    <counter id="total_deposit" name="Общий депозит"/>
-    <counter id="average_week" name="В среднем за неделю" prefix="Нед:" suffix="%"/>
-    <counter id="average_month" name="В среднем за месяц" prefix="Мес:" suffix="%"/>
-    <counter id="all_time" name="За все время" prefix="Все:" suffix="%"/>
-    <counter id="trade_time" name="Торговля ведется" suffix="дн."/>
-    <counter id="stocking_withdrawal" name="Пополнение/снятие" suffix="$"/>
-    <counter id="profit_deadloss" name="Прибыль/убыток" prefix="Изм:" suffix="$"/>
-    <counter id="balance" name="Баланс" prefix="Бал:" suffix="$"/>
-    <counter id="max_percent" name="Максимальный процент"/>
-    <counter id="current_percent" name="Текущий процент"/>
+    <counter id="total_deposit" name="Общий депозит" units="$"/>
+    <counter id="average_week" name="В среднем за неделю" units="%"/>
+    <counter id="average_month" name="В среднем за месяц" units="%"/>
+    <counter id="all_time" name="За все время" units="%"/>
+    <counter id="trade_time" name="Торговля ведется" units="дн."/>
+    <counter id="stocking_withdrawal" name="Пополнение/снятие" units="$"/>
+    <counter id="profit_deadloss" name="Прибыль/убыток" units="$"/>
+    <counter id="balance" name="Баланс" prefix="Бал:" units="$"/>
+    <counter id="max_percent" name="Максимальный процент" units="%"/>
+    <counter id="current_percent" name="Текущий процент" units="%"/>
   </counters>
   <keywords>
     партнерская программа vladimirfx
@@ -31,7 +32,4 @@
   <type>
     affiliate
   </type>
-  <country>
-    ru
-  </country>
 </provider>

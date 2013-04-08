@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="6">ab-affiliate-landora</id>
+  <id major_version="1.0" version="8">ab-affiliate-landora</id>
   <name>Партнерская программа Landora Investing LTD</name>
   <description>
     Помогает отслеживать состояние депозита инвестора на сайте www.landora-investing.com
@@ -9,20 +9,21 @@
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
+    <js>api:jquery.min.js</js>
     <js>library.js</js>
     <js>main.js</js>
   </files>
   <counters>
-    <counter id="cource_dollar" name="Курс доллара" suffix="$"/>
-    <counter id="cource_euro" name="Курс евро" suffix="€"/>
-    <counter id="deposit" name="Текущий депозит" prefix="Деп:" suffix="$"/>
-    <counter id="date_penalty" name="Дата вывода без штрафа" prefix=":" type="text"/>
-    <counter id="balance" name="Текущий баланс" prefix="Бал:" suffix="$"/>
-    <counter id="referral" name="Реф. начисления" prefix="Ref:" suffix="$"/>
-    <counter id="profit" name="Изменение" prefix="Изм:" suffix="%"/>
-    <counter id="total" name="Всего инвестировано" prefix="Всего:" suffix="$"/>
-    <counter id="stocking" name="Всего начислено" prefix="Нач:" suffix="$"/>
-    <counter id="withdrawal" name="Всего выведено" prefix="Выв:" suffix="$"/>
+    <counter id="cource_dollar" name="Курс доллара" units="$"/>
+    <counter id="cource_euro" name="Курс евро" units="€"/>
+    <counter id="deposit" name="Текущий депозит" units="$"/>
+    <counter id="date_penalty" name="Дата вывода без штрафа" type="text"/>
+    <counter id="balance" name="Текущий баланс" units="$"/>
+    <counter id="referral" name="Реф. начисления" units="$"/>
+    <counter id="profit" name="Изменение" units="%"/>
+    <counter id="total" name="Всего инвестировано" units="$"/>
+    <counter id="stocking" name="Всего начислено" units="$"/>
+    <counter id="withdrawal" name="Всего выведено" units="$"/>
   </counters>
   <keywords>
     партнерская программа landora investing ltd

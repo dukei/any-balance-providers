@@ -3,19 +3,19 @@
     <EditTextPreference 
         key="Login"
         title="Логин" 
-        summary="Логин||{@s}\n" 
+        summary="||{@s}" 
         dialogTitle="Логин" 
         negativeButtonText="Отмена" 
-        dialogMessage="Укажите логин."
+        dialogMessage="Введите логин в личный кабинет."
         positiveButtonText="ОК">
     </EditTextPreference>
     <EditTextPreference 
         key="Pswd"
         title="Пароль" 
-        summary="Пароль||***********\n" 
+        summary="||***********" 
         dialogTitle="Пароль" 
         negativeButtonText="Отмена" 
-        dialogMessage="Укажите пароль."
+        dialogMessage="Введите пароль, используемый для входа в личный кабинет."
         inputType="textPassword"
         positiveButtonText="ОК">
     </EditTextPreference>

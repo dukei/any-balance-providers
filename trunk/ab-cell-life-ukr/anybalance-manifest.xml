@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="15">ab-cell-life-ukr</id>
+  <id version="16">ab-cell-life-ukr</id>
   <name>Life:) Украина</name>
   <description>
     Мониторинг баланса мобильного оператора Life:) (Украина)
@@ -28,7 +28,6 @@
   <counters>
     <counter id="Mbalance" name="Основной счет" suffix=" ₴" type="numeric"/>
     <counter id="Bbalance" name="Бонусный счет" suffix=" ₴" type="numeric"/>
-    <!-- <counter id="debt" name="Долг" suffix="₴" type="numeric"/> -->
     <counter id="gprs" name="Трафик" suffix=" Мб" type="numeric"/>
     <counter id="sms_uk" name="SMS по Украине" type="numeric" units=" смс"/>
     <counter id="sms_life" name="SMS в сети Life:)" type="numeric" units=" смс"/>

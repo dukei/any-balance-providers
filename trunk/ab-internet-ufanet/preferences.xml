@@ -27,4 +27,14 @@
         entryValues="ishimbai|neftekamsk|okt|orenburg|orsk|slv|sterlitamak|ufa"
 	      defaultValue="ufa">
     </ListPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="licschet" 
+        dialogTitle="Лицевой счет"
+        negativeButtonText="Отмена"
+        title="Лицевой счет"
+        summary="|Автоматически\n|{@s}\n"
+        dialogMessage="Введите цифры лицевой счета, чей баланс вы хотите посмотреть. Чтобы смотреть информацию по первому счету, оставьте это поле пустым."
+        inputType="number">
+    </EditTextPreference>
 </PreferenceScreen>

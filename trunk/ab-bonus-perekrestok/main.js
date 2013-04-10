@@ -43,14 +43,19 @@ function formatDate (date) {
     return date.getFullYear () + '-' + month + '-' + day + ' ' + hours + ':' + minutes;
 }
 
-
+var g_baseurls = {
+    ordinary: 'https://prcab.x5club.ru/cwa/',
+    vip: 'https://prcab.x5club.ru/green/'
+}
 
 function main () {
     var prefs = AnyBalance.getPreferences ();
-    var baseurl = 'https://prcab.x5club.ru/cwa/';
+    var baseurl = g_baseurls[prefs.type] || g_baseurls.ordinary;;
 
     checkEmpty (prefs.login, 'Введите номер карты');
     checkEmpty (prefs.password, 'Введите пароль');
+
+    AnyBalance.trace("Входим в кабинет " + baseurl);
 
     submitLogin (prefs);
 

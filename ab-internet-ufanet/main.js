@@ -46,6 +46,9 @@ function main(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
 
+    if(prefs.licschet && !/^\d{5,}$/.test(prefs.licschet))
+        throw new AnyBalance.Error('Укажите цифры номера лицевого счета, по которому вы хотите получить информацию, или не указывайте ничего, чтобы получить информацию по первому лицевому счету.');
+
     var baseurl = "https://my.ufanet.ru/";
 
     var html = AnyBalance.requestPost(baseurl + 'login', {
@@ -64,9 +67,21 @@ function main(){
 
     var result = {success: true};
 
+    if(prefs.licschet){
+        var ls = getParam(html, null, null, /Лицевой счет<\/p>\s*<p[^>]+class="important"[^>]*>([\S\s]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
+        if(!ls || ls.indexOf(prefs.licschet) < 0){
+            var re = new RegExp('<a[^>]+href="/(contract/change-contract/[^"]*)"[^>]*>(?:[\\s\\S](?!</a>))*?' + prefs.login, 'i');
+            var href = getParam(html, null, null, re, null, html_entity_decode);
+            AnyBalance.trace("Переходим в другой лиц. счет: " + href);
+            html = AnyBalance.requestGet('https://my.ufanet.ru/' + href);
+        }
+        
+    }
+
     getParam(html, result, 'balance', /Остаток на счете:[\S\s]*?<p[^>]*>([\S\s]*?)<\/p>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'pay', /Рекомендуемая сумма к оплате:[\S\s]*?<p[^>]*>([\S\s]*?)<\/p>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'daysleft', /До конца учетного периода:[\S\s]*?<p[^>]*>([\S\s]*?)<\/p>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'licschet', /Лицевой счет<\/p>\s*<p[^>]+class="important"[^>]*>([\S\s]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'agreement', /№ договора[\S\s]*?<p[^>]*>([\S\s]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
 
     html = AnyBalance.requestGet(baseurl + "contract/information");

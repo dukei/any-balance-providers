@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-cell-matrixmobile</id>
+  <id version="1">ab-bonus-shell</id>
   <name>Shell CLUBSMART</name>
   <description>
     Получает баланс на бонусной карте сети АЗС Shell (https://www.shellsmart.com)

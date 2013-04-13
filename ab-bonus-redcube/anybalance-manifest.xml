@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="2.0" version="3">ab-bonus-redcube</id>
+  <id major_version="2.1" version="4">ab-bonus-redcube</id>
   <name>Красный Куб</name>
   <description>
     Получает информацию о бонусах на накопительной карте сети магазинов Красный Куб (http://club.redcube.ru).

@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change major_version="2.1" version="4" date="2013-04-13">
+      Исправлена ошибка входа в некоторых случаях
+    </change>
     <change major_version="2.0" version="3" date="2013-03-09">
       Поддержка изменений в личном кабинете
     </change>

@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-tracking-novaposhta</id>
+  <name>Нова пошта</name>
+  <description>
+    Отслеживание почтового отправления украинской службой доставки грузов Нова Пошта.
+    Рекомендуется показывать местоположение в текстовом виджете не менее 1х2.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <js>library.js</js>
+    <js>main.js</js>
+    <preferences>preferences.xml</preferences>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="fulltext" name="Местоположение" type="html"/>
+    <counter id="location" name="Текущее местоположение" type="text"/>
+    <counter id="expected" name="Дата прибытия" type="time" format="dd/MM/yyyy"/>
+    <counter id="route" name="Маршрут" type="text"/>
+    <counter id="trackid" name="№ накладной" type="text"/>
+  </counters>
+  <keywords>
+    Почтовое отправление, почта Украины
+  </keywords>
+  <type>
+    tracking, post
+  </type>
+  <country>
+    ua
+  </country>
+</provider>

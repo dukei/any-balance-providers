@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Номер накладной" 
+        positiveButtonText="ОК" 
+        summary="|Введите весь номер без скобок и пробелов|{@s}" 
+        dialogTitle="Номер накладно" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите номер товарно-транспортной накладной (весь номер, только цифры). Например, 56155000006911"
+        inputType="number"
+        key="track_id">
+    </EditTextPreference>
+</PreferenceScreen>

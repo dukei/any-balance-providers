@@ -52,7 +52,7 @@ function main () {
     var html = enter (baseurl, {
 	_method:'POST',
 	'data[Auth][date][day]':date.getDate() < 10 ? '0' + date.getDate() : date.getDate(),
-	'data[Auth][date][month]':date.getMonth()+1,
+	'data[Auth][date][month]':(date.getMonth() < 9 ? '0' : '') + (date.getMonth()+1),
 	'data[Auth][date][year]':date.getFullYear(),
 	serverurl:'http://www.redcube.ru',
 	text:'Найти'

@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-magnus</id>
+	<name>Магнус</name>
+	<description>
+		Получает текущий баланс для абонентов ISP Магнус (http://magnus.net.ua). Так же доступны для отображения ID номер, ФИО, контактные данные абонента, его тарифный план и прочее.
+		
+		Информация берется из личного кабинета https://stat2.magnus.net.ua
+	</description>
+	<author>Alexandr Avramenko &lt;ussr1985@ukr.net&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>api:jquery.min.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="mlog" name="Логин" type="text"/>
+		<counter id="mid" name="ID"/>
+		<counter id="mbal" name="Баланс" units="грн"/>
+		<counter id="mtar" name="Тарифный план" type="text"/>
+		<counter id="mfio" name="ФИО" type="text"/>
+		<counter id="madr" name="Адрес" type="text"/>
+		<counter id="mip" name="Real-IP" type="text"/>
+		<counter id="mmac" name="MAC-адрес" type="text"/>
+		<counter id="mtel" name="Домашний телефон" type="text"/>
+		<counter id="mmob" name="Мобильный телефон" type="text"/>
+		<counter id="mstat" name="Статус" type="text"/>
+		<counter id="mreg" name="Дата регистрации" type="text"/>
+	</counters>
+	<keywords>
+		провайдер интернет Magnus Белая Церковь
+	</keywords>
+	<type>
+		internet
+	</type>
+	<country>
+		ru
+	</country>
+</provider>

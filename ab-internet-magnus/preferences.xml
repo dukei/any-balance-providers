@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference 
+		title="Логин" 
+		positiveButtonText="ОК" 
+		summary="|Введите логин|{@s}" 
+		dialogTitle="Логин" 
+		negativeButtonText="Отмена" 
+		dialogMessage="Введите логин, используемый для входа в личный кабинет ISP Magnus"
+		inputType="textNoSuggestions"
+		key="usr_log">
+	</EditTextPreference>
+	<EditTextPreference 
+		title="Пароль" 
+		positiveButtonText="ОК" 
+		summary="|Введите пароль|******" 
+		dialogTitle="Пароль" 
+		negativeButtonText="Отмена" 
+		dialogMessage="Введите пароль, используемый для входа в личный кабинет ISP Magnus"
+		inputType="textPassword"
+		key="usr_pass">
+	</EditTextPreference>
+</PreferenceScreen>

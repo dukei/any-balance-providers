@@ -33,7 +33,7 @@ function parseDateMoment(str){
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-    var baseurl = "http://www.emirates.com/account/english/login/login.aspx?mode=ssl";
+    var baseurl = "https://www.emirates.com/account/english/login/login.aspx?mode=ssl";
     AnyBalance.setDefaultCharset('utf-8'); 
 
     moment.lang('en');
@@ -45,7 +45,7 @@ function main(){
         throw new AnyBalance.Error('Could not find login form. Is the site changed?');
 
     //Теперь, когда секретный параметр есть, можно попытаться войти
-    html = AnyBalance.requestPost(baseurl + 'index.aspx', {
+    html = AnyBalance.requestPost(baseurl, {
         __VIEWSTATE:vs,
         __EVENTTARGET:'',
         __EVENTARGUMENT:'',

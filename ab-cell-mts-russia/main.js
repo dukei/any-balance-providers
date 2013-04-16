@@ -495,12 +495,13 @@ function mainLK(allowRetry){
     var baseurlLogin = 'https://login.mts.ru';
 
     try{
+        var loginUrl = baseurlLogin + "/amserver/UI/Login?gx_charset=UTF-8&service=lk&goto=" + encodeURIComponent(baseurl + '/') + "&auth-status=0";
         if(prefs.__dbg){
             //Чтобы сбросить автологин
             var html = AnyBalance.requestGet(baseurl, g_headers);
         }else{
             //Чтобы сбросить автологин
-            var html = AnyBalance.requestGet(baseurlLogin + "/amserver/UI/Login?gx_charset=UTF-8&service=lk&goto=" + encodeURIComponent(baseurl + '/') + "&auth-status=0", g_headers);
+            var html = AnyBalance.requestGet(loginUrl, g_headers);
         }
         
         if(isLoggedIn(html)){
@@ -528,7 +529,7 @@ function mainLK(allowRetry){
                 else if(name == 'noscript')
                     value = undef; //Снимаем галочку
                 else if(name == 'IDButton')
-                    value = '+%C2%F5%EE%E4+%E2+%CB%E8%F7%ED%FB%E9+%EA%E0%E1%E8%ED%E5%F2+';
+                    value = 'Submit';
                
                 return value;
             });
@@ -536,7 +537,7 @@ function mainLK(allowRetry){
 //  //        AnyBalance.trace("Login params: " + JSON.stringify(params));
         
             AnyBalance.trace("Логинимся с заданным номером");
-            html = AnyBalance.requestPost(baseurlLogin + "/amserver/UI/Login?gx_charset=UTF-8&service=lk&goto=" + encodeURIComponent(baseurl + '/') + "&auth-status=0", params);
+            html = AnyBalance.requestPost(loginUrl, params, addHeaders({Referer: loginUrl}));
 //            AnyBalance.trace("Команду логина послали, смотрим, что получилось...");
         }
         

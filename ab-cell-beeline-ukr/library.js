@@ -164,6 +164,17 @@ function aggregate_sum(values){
     return total_value;
 }
 
+function aggregate_min(values){
+    if(values.length == 0)
+        return;
+    var total_value;
+    for(var i=0; i<values.length; ++i){
+        if(!isset(total_value) || total_value > values[i])
+            total_value = values[i];
+    }
+    return total_value;
+}
+
 function aggregate_join(values, delimiter){
     if(values.length == 0)
         return;

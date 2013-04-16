@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-tv-continent</id>
+  <name>Континент ТВ</name>
+  <description>
+    Получает баланс и информацию о тарифном плане для провайдера спутникового телевидения Континент ТВ (http://www.continent-tv.ru) и Орион Экспресс (http://orion-express.ru).
+
+    Информация берется из личного кабинета: http://my.orion-express.ru
+
+    Если у вас ещё нет пароля, зарегистрируйтесь по номеру карты здесь: http://my.orion-express.ru/?register
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="mtotal" name="Всего сообщений" units=""/>
+    <counter id="mnew" name="Новых сообщений" units=""/>
+    <counter id="fio" name="ФИО" type="text"/>
+    <counter id="num" name="Номер карты" type="text"/>
+    <counter id="sat" name="Спутник" type="text"/>
+    <counter id="till" name="Дата окончания" type="time" format="dd/MM/yyyy"/>
+    <counter id="mlast" name="Последнее сообщение" type="text"/>
+  </counters>
+  <keywords>
+    орион экспресс
+  </keywords>
+  <type>
+    tv
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

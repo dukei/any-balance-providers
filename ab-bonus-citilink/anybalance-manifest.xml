@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-bonus-citilink</id>
+  <id version="2">ab-bonus-citilink</id>
   <name>Ситилинк</name>
   <description>
     Получает бонусы в бонусной программе электронного дискаунтера Ситилинк (http://www.citilink.ru/)

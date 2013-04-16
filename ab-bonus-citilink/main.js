@@ -44,7 +44,7 @@ function main(){
     //Раз мы здесь, то мы успешно вошли в кабинет
     //Получаем все счетчики
     var result = {success: true};
-    getParam(html, result, 'balance', /<h2[^>]*>Закрома<\/h2>\s*<p[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'balance', /<h2[^>]*>Закрома<\/h2>(?:[\s\S](?!<\/td>))*?<p[^>]*>\s*(\d+)\s*бонус/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'new', /ожидают начисления([^<]*)/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'num', /(\d+)\s*товар\S* на сумму/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'sum', /\d+\s*товар\S* на сумму([^<]*)/i, replaceTagsAndSpaces, parseBalance);

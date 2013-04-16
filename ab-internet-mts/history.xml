@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="28" date="2013-04-16">
+      - Изменение процедуры входа в московском регионе
+    </change>
     <change version="27" date="2013-04-04">
       - Изменен адрес личного кабинета в ростовском регионе
     </change>

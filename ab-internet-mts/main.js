@@ -12,6 +12,15 @@
 Личный кабинет (Вологда): https://stats.vologda.comstar-r.ru/
 */
 
+var g_headers = {
+    Accept:'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
+    'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+    'Cache-Control':'max-age=0',
+    Connection:'keep-alive',
+    'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.60 Safari/537.1'
+};
+
 var regions = {
    moscow: getMoscow,
    rostov: getRostov,
@@ -99,13 +108,13 @@ function getMoscow(){
             else if(name == 'noscript')
                 value = undef; //Снимаем галочку
             else if(name == 'IDButton')
-                value = '+%C2%F5%EE%E4+%E2+%CB%E8%F7%ED%FB%E9+%EA%E0%E1%E8%ED%E5%F2+';
+                value = 'Submit';
            
             return value;
         });
         
         // Заходим на главную страницу
-        info = AnyBalance.requestPost(baseloginurl, params);
+        info = AnyBalance.requestPost(baseloginurl, params, addHeaders({Referer: baseloginurl}));
     }else{
         var info = AnyBalance.requestGet(baseurl);
     }
@@ -866,5 +875,59 @@ function sumParam (html, result, param, regexp, replaces, parser, do_replace, ag
  */
 function isset(v){
     return typeof(v) != 'undefined';
+}
+
+/**
+ *  Объединяет два объекта. Свойства с общими именами берутся из newObject
+ */
+function joinObjects(newObject, oldObject){
+   var obj = {};
+   for(var i in oldObject){
+       obj[i] = oldObject[i];
+   }
+   if(newObject){
+      for(i in newObject){
+          obj[i] = newObject[i];
+      }
+   }
+   return obj;
+}
+
+function joinArrays(arr1, arr2){
+   var narr = arr1.slice();
+   narr.push.apply(narr, arr2);
+   return narr;
+}
+
+/**
+ *  Добавляет хедеры к переданным или к g_headers
+ */
+function addHeaders(newHeaders, oldHeaders){
+   oldHeaders = oldHeaders || g_headers;
+   var bOldArray = isArray(oldHeaders);
+   var bNewArray = isArray(newHeaders);
+   if(!bOldArray && !bNewArray)
+       return joinObjects(newHeaders, oldHeaders);
+   if(bOldArray && bNewArray) //Если это массивы, то просто делаем им join
+       return joinArrays(oldHeaders, newHeaders);
+   if(!bOldArray && bNewArray){ //Если старый объект, а новый массив
+       var headers = joinObjects(null, oldHeaders);
+       for(var i=0; i<newHeaders.length; ++i)
+           headers[newHeaders[i][0]] = newHeaders[i][1];
+       return headers;
+   }
+   if(bOldArray && !bNewArray){ //Если старый массив, а новый объект, то это специальный объект {index: [name, value], ...}!
+       var headers = oldHeaders.slice();
+       for(i in newHeaders)
+           headers[i] = newHeaders[i];
+       return headers;
+   }
+}
+
+/**
+ *  Проверяет, является ли объект массивом
+ */
+function isArray(arr){
+	return Object.prototype.toString.call( arr ) === '[object Array]';
 }
 

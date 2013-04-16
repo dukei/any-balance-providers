@@ -22,7 +22,7 @@
     <ListPreference 
         key="region" 
         title="Регион"
-        summary="Нужен для определения личного кабинета||{@s}"
+        summary="|Нужен для определения личного кабинета|{@s}"
         entries="Вологда|Екатеринбург|Ижевск|Киров|Комсомольск-на-Амуре|Москва|Нижний Новгород|Новосибирск|Пенза|Пермь|Ростов|Северодвинск|Тула"
         entryValues="vlgd|ekt|izh|krv|kms|moscow|nnov|nsk|pnz|prm|rostov|sdv|tula"
 	defaultValue="moscow">

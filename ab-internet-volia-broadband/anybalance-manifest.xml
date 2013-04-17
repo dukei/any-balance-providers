@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="7">ab-internet-volia-broadband</id>
+  <id version="8">ab-internet-volia-broadband</id>
   <name>Volia Broadband (Украина)</name>
   <description>
     Мониторинг остатка средств на счету и использованного трафика для интернет провайдера Воля Бродбенд (Украина)
@@ -15,6 +15,14 @@
   <counters>
     <counter id="balance" name="Баланс" suffix=" ₴" type="numeric"/>
     <counter id="traffic" name="Трафик" suffix=" GB" type="numeric"/>
+    <counter id="traffic_in_lim" name="Трафик в лимите" suffix=" GB" type="numeric"/>
+    <counter id="traffic_over_lim" name="Трафик за лимитом" suffix=" GB" type="numeric"/>
+    <counter id="traffic_SatEx" name="Трафик внешний (зарубежный)" suffix=" GB" type="numeric"/>
+    <counter id="traffic_in_lim_SatEx" name="Трафик в лимите внешний (зарубежный)" suffix=" GB" type="numeric"/>
+    <counter id="traffic_over_lim_SatEx" name="Трафик за лимитом внешний (зарубежный)" suffix=" GB" type="numeric"/>
+    <counter id="traffic_UkrEx" name="Трафик внутренний (украинский)" suffix=" GB" type="numeric"/>
+    <counter id="traffic_in_lim_UkrEx" name="Трафик в лимите внутренний (украинский)" suffix=" GB" type="numeric"/>
+    <counter id="traffic_over_lim_UkrEx" name="Трафик за лимитом внутренний (украинский)" suffix=" GB" type="numeric"/>
     <counter id="fio" name="Имя абонента" type="text"/>
   </counters>
   <keywords>

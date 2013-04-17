@@ -18,10 +18,10 @@
     <history>history.xml</history>
   </files>
   <counters>
-    <counter id="balance" name="Бонусы" units="б"/>
-    <counter id="new" name="Бонусы к начислению" units="б"/>
-    <counter id="num" name="Товаров в текущем квартале" units="б"/>
-    <counter id="sum" name="Покупки в текущем квартале" units="р"/>
+    <counter id="balance" name="Бонусы" units=" Б"/>
+    <counter id="new" name="Бонусы к начислению" units=" Б"/>
+    <counter id="num" name="Товаров в текущем квартале" units=" т"/>
+    <counter id="sum" name="Покупки в текущем квартале" units=" р"/>
   </counters>
   <keywords>
     ситилинк

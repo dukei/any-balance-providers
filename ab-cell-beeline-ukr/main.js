@@ -71,10 +71,12 @@ function main(){
   // Срок действия бонусов доплаты за входящие звонки
   sumParam(html, result, 'termin_bonusbalance', /Доплата за вх(?:одящие зво|ідні дзві)нки:[\s\S]*?<td[^>]*>[\s\S]*?<\/td>[\s\S]*?<td[\s\S]*?>[\s\S]*?>([\s\S]*?)</ig, replaceTagsAndSpaces, parseDate, aggregate_min);
   
-  //sumParam (html, result, 'termin_min_paket', /<li>Осталось[^<]*бесплатных секунд до ([^<]*)<\/li>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
+  // Бесплатные минуты на Киевстар, Билайн и Голден Телеком
+  sumParam(html, result, 'minutebalance6', /nbsp;<\/nobr>[\s\S]*?<\/td>[\s\S]*?<\/tr>[\s\S]*?<tr>[\s\S]*?<td[^>]*>(?:Остаток минут|Залишок хвилин) для (?:звонко|дзвінкі)в на Ки(?:е|ї)встар:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
   
+  // Льготные минуты на мобильные и стационарные номера по Украине
+  sumParam(html, result, 'minutebalance7', /<nobr>(?:Срок действия|Строк дії)<\/nobr>[\s\S]*?<\/td>[\s\S]*?<\/tr>[\s\S]*?<tr>[\s\S]*?<td[^>]*>(?:Остаток минут|Залишок хвилин) для (?:звонко|дзвінкі)в на Ки(?:е|ї)встар:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
   
-
   // Бонусные минуты на Beeline и Голден Телеком
   getParam(html, result, 'minutebalance', /Бонусн(?:ые минуты|і хвилини) на Beeline (?:и|та) Голден Телеком:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
   

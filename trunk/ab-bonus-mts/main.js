@@ -7,6 +7,20 @@
 Личный кабинет: http://www.bonus.mts.ru
 */
 
+function checkEmpty (param, error) {
+    if (!param)
+        throw new AnyBalance.Error (error);
+}
+
+var g_headers = {
+    Accept:'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
+    'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+    'Cache-Control':'max-age=0',
+    Connection:'keep-alive',
+    'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.60 Safari/537.1'
+};
+
 function main () {
     var prefs = AnyBalance.getPreferences ();
     var baseurl = 'http://wap.bonus.mts.ru/';
@@ -16,7 +30,8 @@ function main () {
     checkEmpty (prefs.password, 'Введите пароль');
 
     AnyBalance.trace ('Trying to login at address: ' + loginurl);
-    var html = AnyBalance.requestGet (loginurl + '?service=bonus&goto=http%3A%2F%2Fwap.bonus.mts.ru%2Fru%2Fpmsdata.html%3Ftarget%3Dmts_bonus_wap%2Findex%2Fpersonal_page_html&auth-status=0');
+    var loginfullurl = loginurl + '?service=bonus&goto=http%3A%2F%2Fwap.bonus.mts.ru%2Fru%2Fpmsdata.html%3Ftarget%3Dmts_bonus_wap%2Findex%2Fpersonal_page_html&auth-status=0';
+    var html = AnyBalance.requestGet (loginfullurl);
     
     var form = getParam(html, null, null, /<form[^>]+name="Login"[^>]*>([\s\S]*?)<\/form>/i);
     if(!form)
@@ -31,17 +46,23 @@ function main () {
         else if(name == 'noscript')
             value = undef; //Снимаем галочку
         else if(name == 'IDButton')
-            value = '+%C2%F5%EE%E4+%E2+%CB%E8%F7%ED%FB%E9+%EA%E0%E1%E8%ED%E5%F2+';
+            value = 'Submit';
        
         return value;
     });
 
 //  AnyBalance.trace("Login params: " + JSON.stringify(params));
 
-    var html = AnyBalance.requestPost(loginurl + "?service=bonus&goto=http%3A%2F%2Fwap.bonus.mts.ru%2Fru%2Fpmsdata.html%3Ftarget%3Dmts_bonus_wap%2Findex%2Fpersonal_page_html", params);
+    var html = AnyBalance.requestPost(loginurl + "?service=bonus&goto=http%3A%2F%2Fwap.bonus.mts.ru%2Fru%2Fpmsdata.html%3Ftarget%3Dmts_bonus_wap%2Findex%2Fpersonal_page_html", params, addHeaders({Referer: loginfullurl}));
     
     if(!/\/amserver\/UI\/Logout/i.test(html)){
-        var error = getParam(html, null, null, /(authErr)/i, replaceTagsAndSpaces);
+        var error = sumParam(html, null, null, /<i[^>]+class="auth-error-text"[^>]*>([\s\S]*?)<\/i>/ig, replaceTagsAndSpaces, html_entity_decode, function(arr){return aggregate_join(arr).replace(/^(\s*,)+\s*|\s*(,\s*)+$/g, '').replace(/,(\s*,)+/g, ',')});
+        if(error)
+            throw new AnyBalance.Error(error);
+        error = getParam(html, null, null, /<div[^>]+class="msg_error"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+        if(error)
+            throw new AnyBalance.Error(error);
+        error = getParam(html, null, null, /(authErr)/i);
         if(error)
             throw new AnyBalance.Error("Ошибка авторизации. Проверьте логин и пароль.");
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');

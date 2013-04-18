@@ -35,6 +35,7 @@ var regions = {
    pnz: getPnz,
    kms: getKomsomolsk,
    tula: getTula,
+   bal: getBalakovo,
 };
 
 function main(){
@@ -154,7 +155,7 @@ function getMoscow(){
     	result.__tariff=matches[1];
     }
 
-    getParam(html, result, 'daysleft', /(\d+) дн\S+ до списания абонентской платы/i, null, parseBalance);
+    getParam(html, result, 'daysleft', /(\d+) дн\S+ до списания абонентской платы/i, null, parseBalance3);
     
     // Баланс
     if(AnyBalance.isAvailable('balance')){
@@ -270,16 +271,16 @@ function getNsk(){
                                                    
     getParam(html, result, 'agreement', /Договор[\s\S]*?<td[^>]*>([\s\S]*?)(?:от|<\/td>)/i, replaceTagsAndSpaces);
     getParam(html, result, 'license', /Номер связанного л[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-    getParam(html, result, 'balance', /Остаток на л[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'balance', /Остаток на л[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance3);
     getParam(html, result, '__tariff', /Текущий тариф[\s\S]*?<td[^>]*>([\s\S]*?)(?:\(|<\/td>)/i, replaceTagsAndSpaces);
-    getParam(html, result, 'abon', />(?:\s|&nbsp;)*АП(?:\s|&nbsp;)+([\d\.]+)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'abon', />(?:\s|&nbsp;)*АП(?:\s|&nbsp;)+([\d\.]+)/i, replaceTagsAndSpaces, parseBalance3);
 
     if(AnyBalance.isAvailable('internet_cur')){
         if(!hrefipstat){
             AnyBalance.trace("Не найдена ссылка на трафик!");
         }else{
             html = AnyBalance.requestGet(baseurl + hrefipstat);
-            getParam(html, result, 'internet_cur', /Итого[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTraffic);
+            getParam(html, result, 'internet_cur', /Итого[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTrafficBytes);
         }
     }
 
@@ -311,9 +312,9 @@ function getPrmOld(){
 
     getParam(html, result, 'agreement', /Номер договора:([\s\S]*?)(?:\(|<\/li>)/i, replaceTagsAndSpaces);
     getParam(html, result, 'license', /Код лицевого счета:([\s\S]*?)<\/li>/i, replaceTagsAndSpaces);
-    getParam(html, result, 'balance', /Баланс:([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'balance', /Баланс:([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance3);
     getParam(html, result, '__tariff', /Тарифный план:[\s\S]*?<br[^>]*>([\s\S]*?)<br[^>]*>/i, replaceTagsAndSpaces);
-    getParam(html, result, 'abon', /абон\. плата:([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'abon', /абон\. плата:([^<]*)/i, replaceTagsAndSpaces, parseBalance3);
     getParam(html, result, 'username', /class="customer-info"[\s\S]*?<h3[^>]*>([\s\S]*?)<\/h3>/i, replaceTagsAndSpaces);
 
 
@@ -333,7 +334,7 @@ function getPrmOld(){
         }else{
             AnyBalance.setCookie('bill.utk.ru', 'service', 2);
             html = AnyBalance.requestGet(baseurl);
-            getParam(html, result, 'balance_tv', /Баланс:([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance);
+            getParam(html, result, 'balance_tv', /Баланс:([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance3);
         }
     }
 
@@ -666,268 +667,122 @@ function getKomsomolsk(){
     AnyBalance.setResult(result);
 }
 
-//LANBilling
 function getTula(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
 
-    var baseurl = "http://balance.altair-tv.ru/";
+    var baseurl = "https://kabinet.tula.mts.ru/";
 
-    var html = AnyBalance.requestPost(baseurl + 'client/index.php', {
-        login: prefs.login,
-        password: prefs.password
-    });
+    if(!prefs.__dbg){
+        var html = AnyBalance.requestPost(baseurl + 'client2/index.php?r=site/login', {
+            'LoginForm[login]':prefs.login,
+            'LoginForm[password]':prefs.password,
+            'yt0':'Войти'
+        });
+    }else{
+        var html = AnyBalance.requestGet(baseurl + 'client2/index.php?r=account/index');
+    }
 
-    if(!/'devision',\s*'-1'/i.test(html)){
-        var error = getParam(html, null, null, /<(form) [^>]*name="loginForm">/i);
-        if(error)
-            throw new AnyBalance.Error("Неверный логин или пароль");
-        if(/<title>The page is temporarily unavailable<\/title>/i.test(html))
-            throw new AnyBalance.Error("Сайт временно недоступен. Попробуйте позднее.");
- 
-        throw new AnyBalance.Error("Не удалось зайти в личный кабинет. Сайт изменен?");
+    if(!/r=site\/logout/i.test(html)){
+        throw new AnyBalance.Error("Не удалось войти в личный кабинет. Неправильный логин-пароль?");
     }
 
     var result = {success: true};
 
-    getParam(html, result, 'username', /Вы:<\/td>\s*<td[^>]*>(.*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    //Четвертая третья колонка в таблице под заголовком баланс
-    getParam(html, result, 'balance', /<td[^>]*>Баланс(?:[\S\s]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance2);
-    getParam(html, result, 'agreement', /<td[^>]*>Номер договора(?:[\S\s]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    //Вначале попытаемся найти активный тариф
+    var tr = getParam(html, null, null, /<tr[^>]+class="(?:account|odd|even)"[^>]*>((?:[\s\S](?!<\/tr))*?Состояние:\s+актив[\s\S]*?)<\/tr>/i);
+    if(!tr)
+        tr = getParam(html, null, null, /<tr[^>]+class="(?:account|odd|even)"[^>]*>([\s\S]*?)<\/tr>/i);
 
-    var re = new RegExp(prefs.login + '\\s*</a>\\s*</td>\\s*<td[^>]*>(.*?)</td>', 'i');
-    getParam(html, result, '__tariff', re, replaceTagsAndSpaces, html_entity_decode);
-    re = new RegExp(prefs.login + '\\s*</a>\\s*</td>(?:[\\S\\s]*?<td[^>]*>){5}(.*?)</td>', 'i');
-    getParam(html, result, 'status', re, replaceTagsAndSpaces, html_entity_decode);
-
-    if(AnyBalance.isAvailable('trafficIn', 'trafficOut')){
-        var dt = new Date();
-        html = AnyBalance.requestPost(baseurl + 'client/index.php', {
-            devision:2,
-            service:1,
-            statmode:0,
-            vgstat:0,
-            timeblock:1,
-            year_from:dt.getFullYear(),
-            month_from:dt.getMonth()+1,
-            day_from:1,
-            year_till:dt.getFullYear(),
-            month_till:dt.getMonth()+1,
-            day_till:dt.getDate()
-        });
-        re = new RegExp(prefs.login + '\\s*</a>\\s*</td>(?:[\\S\\s]*?<td[^>]*>){2}(.*?)</td>', 'i');
-        getParam(html, result, 'internet_cur', re, replaceTagsAndSpaces, parseBalance2);
-        //re = new RegExp(prefs.login + '\\s*</a>\\s*</td>(?:[\\S\\s]*?<td[^>]*>){3}(.*?)</td>', 'i');
-        //getParam(html, result, 'trafficOut', re, replaceTagsAndSpaces, parseTraffic);
+    if(tr){
+        getParam(tr, result, '__tariff', /<!-- Работа с тарифом -->[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
+        getParam(tr, result, 'abon', /Абонентская плата:([^<]*)/i, replaceTagsAndSpaces, parseBalance2);
+        getParam(tr, result, 'internet_cur', /Израсходовано:([^<]*)/i, replaceTagsAndSpaces, parseBalance2);
     }
+
+    getParam(html, result, 'agreement', /Номер договора:[^<]*<[^>]*>([^<]*)/i, replaceTagsAndSpaces);
+    getParam(html, result, 'balance', /Текущий баланс:[^<]*<[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance2);
+    getParam(html, result, 'username', /Мои аккаунты\s*\/([^<]*)/i, replaceTagsAndSpaces);
 
     AnyBalance.setResult(result);
 }
 
+function getBalakovo(){
+    var prefs = AnyBalance.getPreferences();
+    AnyBalance.setDefaultCharset('utf-8');
 
-function getParam (html, result, param, regexp, replaces, parser) {
-	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
-		return;
+    var baseurl = "http://stat.balakovo.comstar-r.ru/";
 
-	var value = regexp.exec (html);
-	if (value) {
-		value = value[1];
-		if (replaces) {
-			for (var i = 0; i < replaces.length; i += 2) {
-				value = value.replace (replaces[i], replaces[i+1]);
-			}
-		}
-		if (parser)
-			value = parser (value);
+    var html = AnyBalance.requestPost(baseurl + 'client2/index.php?r=site/login', {
+        'LoginForm[login]':prefs.login,
+        'LoginForm[password]':prefs.password,
+        'yt0':'Войти'
+    });
 
-    if(param)
-      result[param] = value;
-    else
-      return value
-	}
+    if(!/r=site\/logout/i.test(html)){
+        throw new AnyBalance.Error("Не удалось войти в личный кабинет. Неправильный логин-пароль?");
+    }
+
+    var result = {success: true};
+
+    //Вначале попытаемся найти интернет лиц. счет
+    var accTv = {}, accInet = {};
+    var accs = sumParam(html, null, null, /Номер договора:[\s\S]*?<\/table>/ig);
+    for(var i=0; i<accs.length; ++i){
+        var act = /Состояние:\s+актив/i.test(accs[i]) ? 'active' : 'inactive';
+        if(accs[i].indexOf('Израсходовано:') >= 0){
+            if(!isset(accInet[act]))
+                accInet[act] = accs[i];
+        }else{
+            if(!isset(accTv[act]))
+                accTv[act] = accs[i];
+        }
+    }
+
+    function readAcc(html, isInet){
+        if(html){
+            var tr = getParam(html, null, null, /<tr[^>]+class="(?:account|odd|even)"[^>]*>((?:[\s\S](?!<\/tr))*?Состояние:\s+актив[\s\S]*?)<\/tr>/i);
+            if(!tr)
+                tr = getParam(html, null, null, /<tr[^>]+class="(?:account|odd|even)"[^>]*>([\s\S]*?)<\/tr>/i);
+            
+            if(tr){
+                sumParam(tr, result, '__tariff', /<!-- Работа с тарифом -->[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+                if(isInet){
+                    getParam(tr, result, 'abon', /Абонентская плата:([^<]*)/i, replaceTagsAndSpaces, parseBalance2);
+                    getParam(tr, result, 'internet_cur', /Израсходовано:([^<]*)/i, replaceTagsAndSpaces, parseBalance2);
+                }
+            }
+            
+            sumParam(html, result, 'agreement', /Номер договора:[^<]*<[^>]*>([^<]*)/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+            getParam(html, result, isInet ? 'balance' : 'balance_tv', /Текущий баланс:[^<]*<[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance2);
+            getParam(html, result, 'username', /Мои аккаунты\s*\/([^<]*)/i, replaceTagsAndSpaces);
+        }
+    }
+
+    readAcc(accInet.active || accInet.inactive, true);
+    readAcc(accTv.active || accTv.inactive);
+
+    AnyBalance.setResult(result);
 }
 
-var replaceTagsAndSpaces = [/&nbsp;/ig, ' ', /<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
-var replaceFloat = [/\s+/g, '', /,/g, ''];
-var replaceFloat2 = [/\s+/g, '', /,/g, '.'];
-
-
-function parseBalance(text){
-    var val = getParam(text.replace(/\s+/g, ''), null, null, /(-?\d[\d.,]*)/, replaceFloat, parseFloat);
-    val = Math.round(val*100)/100;
-    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
+function parseBalance3(text){
+    var val = parseBalance(text.replace(/,/g, ''));
+    if(isset(val))
+        val = Math.round(val*100)/100;
     return val;
 }
 
 function parseBalance2(text){
-    var val = getParam(text.replace(/\s+/g, ''), null, null, /(-?\d[\d.,]*)/, replaceFloat2, parseFloat);
-    val = Math.round(val*100)/100;
-    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
+    var val = parseBalance(text);
+    if(isset(val))
+        val = Math.round(val*100)/100;
     return val;
 }
 
-function parseTraffic(text){
-    var val = parseBalance(text);
-    val = Math.round(val/1024/1024*100)/100;
-    AnyBalance.trace('Parsing traffic (' + val + 'Mb) from: ' + text);
-    return val;
+function parseTrafficBytes(text){
+    return parseTraffic(text, 'b');
 }
 
 function parseTrafficPerm(text){
-    var val = getParam(text, null, null, /([\d\.,]+)/, replaceFloat);
-    if(typeof(val) != 'undefined'){
-        val = Math.round(parseFloat(val)*100)/100;
-    }
-    
-    AnyBalance.trace('Parsing traffic (' + val + 'Mb) from: ' + text);
-    return val;
+    return parseTraffic(text, 'mb');
 }
-
-
-function html_entity_decode(str)
-{
-    //jd-tech.net
-    var tarea=document.createElement('textarea');
-    tarea.innerHTML = str;
-    return tarea.value;
-}
-
-function createFormParams(html, process){
-    var params = {};
-    html.replace(/<input[^>]+name="([^"]*)"[^>]*>/ig, function(str, name){
-        var value = getParam(str, null, null, /value="([^"]*)"/i, null, html_entity_decode);
-        name = html_entity_decode(name);
-        if(process){
-            value = process(params, str, name, value);
-        }
-        params[name] = value;
-    });
-    return params;
-}
-
-/**
- * Получает значение, подходящее под регулярное выражение regexp, производит 
- * в нем замены replaces, результат передаёт в функцию parser, 
- * а затем записывает результат в счетчик с именем param в result
- * Результат в result помещается только если счетчик выбран пользователем 
- * в настройках аккаунта
- *
- * Очень похоже на getParam, но может получать несколько значений (при наличии 
- * в регулярном выражении флага g). В этом случае суммирует их.
- * 
- * если result и param равны null, то значение просто возвращается.
- * eсли parser == null, то возвращается результат сразу после замен
- * если replaces == null, то замены не делаются
- * do_replace - если true, то найденные значения вырезаются из переданного текста
- * 
- * replaces - массив, нечетные индексы - регулярные выражения, четные - строки, 
- * на которые надо заменить куски, подходящие под предыдущее регулярное выражение
- * см. например replaceTagsAndSpaces
- */
-function sumParam (html, result, param, regexp, replaces, parser, do_replace, aggregate) {
-    if (param && (param != '__tariff' && !AnyBalance.isAvailable (param))){
-        if(do_replace)
-          return html;
-        else
-            return;
-    }
-
-    if(typeof(do_replace) == 'function'){
-        aggregate = do_replace;
-        do_replace = false;
-    }
-
-    var values = [];
-    if(param && isset(result[param]))
-        values[values.length] = result.param;
-
-    var html_copy = html.replace(regexp, function(str, value){
-	for (var i = 0; replaces && i < replaces.length; i += 2) {
-		value = value.replace (replaces[i], replaces[i+1]);
-	}
-	if (parser)
-		value = parser (value);
-            
-            if(isset(value))
-            	values[values.length] = value;
-            return ''; //Вырезаем то, что заматчили
-    });
-
-    var total_value;
-    if(aggregate)
-        total_value = aggregate(values);
-    else if(!param) //Если не требуется записывать в резалт, и функция агрегации отсутствует, то вернем массив
-        total_value = values;
-
-    if(param){
-      if(isset(total_value)){
-          result[param] = total_value;
-      }
-      if(do_replace)
-          return html_copy;
-    }else{
-      return total_value;
-    }
-}
-
-/**
- *  Проверяет, определено ли значение переменной
- */
-function isset(v){
-    return typeof(v) != 'undefined';
-}
-
-/**
- *  Объединяет два объекта. Свойства с общими именами берутся из newObject
- */
-function joinObjects(newObject, oldObject){
-   var obj = {};
-   for(var i in oldObject){
-       obj[i] = oldObject[i];
-   }
-   if(newObject){
-      for(i in newObject){
-          obj[i] = newObject[i];
-      }
-   }
-   return obj;
-}
-
-function joinArrays(arr1, arr2){
-   var narr = arr1.slice();
-   narr.push.apply(narr, arr2);
-   return narr;
-}
-
-/**
- *  Добавляет хедеры к переданным или к g_headers
- */
-function addHeaders(newHeaders, oldHeaders){
-   oldHeaders = oldHeaders || g_headers;
-   var bOldArray = isArray(oldHeaders);
-   var bNewArray = isArray(newHeaders);
-   if(!bOldArray && !bNewArray)
-       return joinObjects(newHeaders, oldHeaders);
-   if(bOldArray && bNewArray) //Если это массивы, то просто делаем им join
-       return joinArrays(oldHeaders, newHeaders);
-   if(!bOldArray && bNewArray){ //Если старый объект, а новый массив
-       var headers = joinObjects(null, oldHeaders);
-       for(var i=0; i<newHeaders.length; ++i)
-           headers[newHeaders[i][0]] = newHeaders[i][1];
-       return headers;
-   }
-   if(bOldArray && !bNewArray){ //Если старый массив, а новый объект, то это специальный объект {index: [name, value], ...}!
-       var headers = oldHeaders.slice();
-       for(i in newHeaders)
-           headers[i] = newHeaders[i];
-       return headers;
-   }
-}
-
-/**
- *  Проверяет, является ли объект массивом
- */
-function isArray(arr){
-	return Object.prototype.toString.call( arr ) === '[object Array]';
-}
-

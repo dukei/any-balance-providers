@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="29" date="2013-04-18">
+      - Исправлена Тула (изменен личный кабинет), добавлено Балаково (http://stat.balakovo.comstar-r.ru)
+    </change>
     <change version="28" date="2013-04-16">
       - Изменение процедуры входа в московском регионе
     </change>

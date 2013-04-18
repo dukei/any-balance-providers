@@ -322,11 +322,11 @@ function megafonTrayInfo(filial){
         getParam($xml.find('NUMBER').first().text() || '', result, 'phone', null, null, html_entity_decode);
         getParam($xml.find('PRSNL_BALANCE').first().text() || '', result, 'prsnl_balance', null, null, parseBalance);
 
-        var $threads = $xml.find('RP_DISCOUNTS>DISCOUNT>THREAD, PACK>DISCOUNT>THREAD, RP_DISCOUNTS>DISCOUNT:not(:has(THREAD))');
+        var $threads = $xml.find('RP_DISCOUNTS>DISCOUNT>THREAD, PACK>DISCOUNT>THREAD, RP_DISCOUNTS>DISCOUNT:has(>VOLUME_AVAILABLE)');
         AnyBalance.trace('Found discounts: ' + $threads.length);
 
         if(AnyBalance.isAvailable('sms_left','sms_total')){
-            var $val = $threads.filter(':has(NAME:contains("SMS"))');
+            var $val = $threads.filter(':has(NAME:contains("SMS")), :has(PLAN_NAME:contains("SMS"))');
             AnyBalance.trace('Found SMS discounts: ' + $val.length);
             $val.each(function(){
                 var $e = $(this);
@@ -397,7 +397,7 @@ function megafonTrayInfo(filial){
         var prefs = AnyBalance.getPreferences();
         AnyBalance.setDefaultCharset('utf-8');
         AnyBalance.trace('Попытаемся получить данные из яндекс виджета');
-        var html = AnyBalance.requestGet(filinfo.widget.replace(/%LOGIN%/g, prefs.login).replace(/%PASSWORD%/g, encodeURIComponent(prefs.password)), g_headers);
+        var html = AnyBalance.getPreferences().__dbg_widget || AnyBalance.requestGet(filinfo.widget.replace(/%LOGIN%/g, prefs.login).replace(/%PASSWORD%/g, encodeURIComponent(prefs.password)), g_headers);
         try{
            var json = getParam(html, null, null, /^[^({]*\((\{[\s\S]*?\})\);?\s*$/);
            if(!json){

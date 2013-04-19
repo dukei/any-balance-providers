@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="4">ab-internet-yota</id>
+  <id version="5">ab-internet-yota</id>
   <name>Yota (Россия)</name>
   <description>
     Получает баланс и информацию о тарифном плане для интернет-провайдера LTE и WiMAX Yota (http://yota.ru).
@@ -21,11 +21,11 @@
     <counter id="balance" name="Баланс" units="р"/>
     <counter id="abon" name="Абонентская плата" units="р"/>
     <counter id="speed" name="Скорость" type="text"/>
-    <counter id="daysleft" name="Осталось дней" units=" дн."/>
+    <counter id="timeleft" name="Осталось времени" type="time_interval" format="{@D}дн, {@h}:{@min}"/>
     <counter id="licschet" name="Лицевой счет" type="text"/>
     <counter id="abon1" name="Абонентская плата 2" units="р"/>
     <counter id="speed1" name="Скорость 2" type="text"/>
-    <counter id="daysleft1" name="Осталось дней 2" units=" дн."/>
+    <counter id="timeleft1" name="Осталось времени 2" type="time_interval" format="{@D}дн, {@h}:{@min}"/>
     <counter id="agreement" name="Тип договора" type="text"/>
     <counter id="email" name="E-mail" type="text"/>
     <counter id="phone" name="Телефон" type="text"/>

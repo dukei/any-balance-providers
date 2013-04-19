@@ -84,7 +84,7 @@ function main(){
     sumParam(html, null, null, /<div[^>]+class="cost"[^>]*>([^{]*?)<\/div>/ig, replaceTagsAndSpaces, parseBalance, createBalancesAggregate(result, 'abon'));
     sumParam(html, null, null, /<div[^>]+class="speed"[^>]*>([^{]*?)<\/div>/ig, replaceTagsAndSpaces, html_entity_decode, createBalancesAggregate(result, 'speed'));
     sumParam(html, result, '__tariff', /<h3[^>]+class="device-title"[^>]*>([\S\s]*?)<\/h3>/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
-    sumParam(html, null, null, /<div[^>]+class="time[^"]*"[^>]*>([\S\s]*?)<\/div>/ig, replaceTagsAndSpaces, parseBalance, createBalancesAggregate(result, 'daysleft'));
+    sumParam(html, null, null, /<div[^>]+class="time[^"]*"[^>]*>([\S\s]*?)<\/div>/ig, replaceTagsAndSpaces, parseTimeInterval, createBalancesAggregate(result, 'timeleft'));
 
     if(AnyBalance.isAvailable('licschet', 'agreement', 'fio', 'email', 'phone')){
         html = AnyBalance.requestGet(baseurl + 'profile');
@@ -96,4 +96,30 @@ function main(){
     }
     
     AnyBalance.setResult(result);
+}
+
+function parseTimeInterval(str){
+    var val = parseBalance(str);
+    if(!isset(val))
+        return;
+    var units = getParam(str, null, null, /\d+\s*(.)/);
+    switch(units){
+        case 'Д':
+        case 'д':
+            val*=86400;
+            break;
+        case 'ч':
+        case 'Ч':
+            val*=3600;
+            break;
+        case 'м':
+        case 'М':
+            val*=60;
+            break;
+	default:
+            AnyBalance.trace('Не удалось выяснить единицы изменения для интервала ' + str);
+            return;
+    }
+    AnyBalance.trace('Получили ' + val + ' сек из ' + str);
+    return val;
 }

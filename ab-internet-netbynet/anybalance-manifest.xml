@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="2.0" version="7">ab-internet-netbynet</id>
+  <id major_version="2.0" version="8">ab-internet-netbynet</id>
   <name>NetByNet</name>
   <description>
     Получает баланс, остаток дней, статус и обещанный платеж у интернет-провайдера NetByNet.
 
-    Поддерживает регионы: Москва и МО, Воронеж, Белгород. Личные кабинеты в разных регионах слегка отличаются, поэтому в каждом регионе могут быть доступны не все счетчики.
+    Поддерживает регионы: Москва и МО, Воронеж, Белгород, Орел. Личные кабинеты в разных регионах слегка отличаются, поэтому в каждом регионе могут быть доступны не все счетчики.
   </description>
   <author>iReset &lt;ireset.ag@gmail.com&gt;</author>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>

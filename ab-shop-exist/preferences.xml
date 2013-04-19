@@ -19,4 +19,14 @@
         dialogMessage="Введите пароль, используемый для входа в личный кабинет."
         inputType="textPassword">
     </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="num" 
+        dialogTitle="Номер заказа"
+        negativeButtonText="Отмена"
+        title="Номер заказа"
+        summary="Последние цифры номера заказа|Автоматически\n|{@s}\n"
+        dialogMessage="Введите последние цифры номера активного заказа, по которому вы хотите получить информацию. Если это поле оставить пустым, то будет показана информация по первому активному заказу, если он есть."
+        inputType="number">
+    </EditTextPreference>
 </PreferenceScreen>

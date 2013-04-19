@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-shop-exist</id>
+  <id version="2">ab-shop-exist</id>
   <name>Exist.ru</name>
   <description>
     Получает баланс и другую информацию для магазина автозапчастей http://exist.ru.
@@ -20,13 +20,18 @@
     <counter id="debt" name="Долг по заказам" units="р"/>
     <counter id="card" name="Баланс карты" units="р"/>
     <counter id="carddebt" name="Долг по карте" units="р"/>
+    <counter id="orderstatus" name="Статус заказа" type="text"/>
+    <counter id="orderexpect" name="Ожидается" type="time" format="dd/MM/yyyy"/>
+    <counter id="orderdesc" name="Описание заказа" type="text"/>
+    <counter id="ordernum" name="Номер заказа" type="text"/>
+    <counter id="ordersum" name="Сумма заказа" type="numeric" units="р"/>
     <counter id="code" name="Код клиента" type="text"/>
   </counters>
   <keywords>
     экзист
   </keywords>
   <type>
-    ru
+    shop
   </type>
   <country>
     ru

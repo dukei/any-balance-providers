@@ -30,6 +30,9 @@ function main(){
 
     var html = AnyBalance.requestGet(baseurl + 'Login.aspx?ReturnUrl=%2fProfile%2fbalance.aspx', g_headers);
 
+    if(prefs.num && /^\d+$/.test(prefs.num))
+        throw new AnyBalance.Error('Введите последние цифры номера заказа или не вводите ничего, чтобы получить информацию по последнему заказу');
+
     //Находим секретный параметр
     var viewstate = getViewState(html);
     var eventvalidation = getEventValidation(html);
@@ -65,6 +68,22 @@ function main(){
     getParam(html, result, 'debt', /Долг по заказам:[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'card', /Счёт кредитной карты:[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'carddebt', /Долг по счёту кредитной карты:[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+
+    if(AnyBalance.isAvailable('ordernum', 'ordersum', 'orderdesc', 'orderstatus', 'orderexpect')){
+        html = AnyBalance.requestGet(baseurl+'Orders/default.aspx', g_headers); 
+        var num = prefs.num || '\\d+';
+        var re = new RegExp("<tr[^>]*>(?:[\\s\\S](?!</tr>))*?getOrder\\('[^']*\\d*" + num + "'[\\s\\S]*?</tr>", "i");
+        var tr = getParam(html, null, null, re);
+        if(!tr)
+            AnyBalance.trace(prefs.num ? 'Не найдено активного заказа с последними цифрами ' + prefs.num : 'Не найдено ни одного активного заказа');
+        else{
+           getParam(tr, result, 'ordernum', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+           getParam(tr, result, 'ordersum', /(?:[\s\S]*?<td[^>]*>){8}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+           getParam(tr, result, 'orderstatus', /(?:[\s\S]*?<td[^>]*>){11}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+           getParam(tr, result, 'orderexpect', /(?:[\s\S]*?<td[^>]*>){12}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+           getParam(tr, result, 'orderdesc', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+        }
+    }
 
     //Возвращаем результат
     AnyBalance.setResult(result);

@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="7">ab-affiliate-vladimirfx</id>
-  <name>Партнерская программа Vladimirfx</name>
+  <id major_version="1.0" version="8">ab-affiliate-vladimirfx</id>
+  <name>Инвестиционная программа Vladimirfx.ru</name>
   <description>
-    Помогает отслеживать состояние депозита инвестора на сайте www.vladimirfx.com.
+    Помогает отслеживать состояние депозита инвестора на сайте www.vladimirfx.ru.
   </description>
   <author>wtiger &lt;wtiger@mail.ru&gt;</author>
   <files>
@@ -22,12 +22,12 @@
     <counter id="trade_time" name="Торговля ведется" units="дн."/>
     <counter id="stocking_withdrawal" name="Пополнение/снятие" units="$"/>
     <counter id="profit_deadloss" name="Прибыль/убыток" units="$"/>
-    <counter id="balance" name="Баланс" prefix="Бал:" units="$"/>
+    <counter id="balance" name="Баланс" units="$"/>
     <counter id="max_percent" name="Максимальный процент" units="%"/>
     <counter id="current_percent" name="Текущий процент" units="%"/>
   </counters>
   <keywords>
-    партнерская программа vladimirfx
+    партнерская программа vladimirfx.ru
   </keywords>
   <type>
     affiliate

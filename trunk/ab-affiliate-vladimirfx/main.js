@@ -1,8 +1,8 @@
 /**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 
-Провайдер партнерской программы Vladimirfx
-Сайт: http://www.vladimirfx.com/
+Провайдер инвестиционной программы Vladimirfx.ru
+Сайт: http://www.vladimirfx.ru/
 mailto:wtiger@mail.ru
 */
 
@@ -14,7 +14,7 @@ function main(){
 //		"logout": "1"
 //	});
 
-	var baseurl = 'https://www.vladimirfx.com/';
+	var baseurl = 'https://www.vladimirfx.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 
 	AnyBalance.trace('Authorizing...');
@@ -34,7 +34,6 @@ function main(){
 
 	if(matches = info.match(/В доступе отказано/i)){
 		throw new AnyBalance.Error("В доступе к сайту отказано.");}
-
 
 
 	AnyBalance.trace('Parsing... '+info);

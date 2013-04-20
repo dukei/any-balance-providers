@@ -340,8 +340,8 @@ function megafonTrayInfo(filial){
             AnyBalance.trace('Found minutes discounts: ' + $val.length);
             $val.each(function(){
                 var $e = $(this);
-                var si = $e.parent().find('PLAN_SI').text();
-                var plan = $e.parent().find('PLAN_NAME').text();
+                var si = $e.find('PLAN_SI').text() || $e.parent().find('PLAN_SI').text(); //Сначала всё-таки попытаемся в своем тэге найти, вдруг это уже DISCOUNT, а не THREAD
+                var plan = $e.find('PLAN_NAME').text() || $e.parent().find('PLAN_NAME').text();
                 var valAvailable = $e.find('VOLUME_AVAILABLE').text();
                 var valTotal = $e.find('VOLUME_TOTAL').text();
                 if(/Байт|Тар.ед./i.test(si)){
@@ -445,7 +445,7 @@ function megafonTrayInfo(filial){
                    }else if(/SMS/i.test(name)){
                        sumParam(val, result, 'sms_left', /\/(.*)/, null, parseBalance, aggregate_sum);
                        sumParam(val, result, 'sms_total', /(.*?)\//, null, parseBalance, aggregate_sum);
-                   }else if(/мин/i.test(val)){
+                   }else if(/мин/i.test(val) || /минут/i.test(name)){
                        sumParam(val, result, 'mins_left', /\/(.*)/, null, parseMinutes, aggregate_sum);
                        sumParam(val, result, 'mins_total', /(.*?)\//, null, parseMinutes, aggregate_sum);
                    }else if(/[кгмkgm][бb]/i.test(val)){

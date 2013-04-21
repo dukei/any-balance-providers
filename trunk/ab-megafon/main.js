@@ -440,14 +440,14 @@ function megafonTrayInfo(filial){
                    var name = getParam(discount, null, null, /<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
                    var val = getParam(discount, null, null, /<div[^>]+class="discount_volume"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
                    if(/MMS/i.test(name)){
-                       sumParam(val, result, 'mms_left', /\/(.*)/, null, parseBalance, aggregate_sum);
-                       sumParam(val, result, 'mms_total', /(.*?)\//, null, parseBalance, aggregate_sum);
+                       sumParam(val, result, 'mms_left', /(?:.*)\/(.*)\/(?:.*)/, null, parseBalance, aggregate_sum);
+                       sumParam(val, result, 'mms_total', /(?:.*)\/(?:.*)\/(.*)/, null, parseBalance, aggregate_sum);
                    }else if(/SMS/i.test(name)){
-                       sumParam(val, result, 'sms_left', /\/(.*)/, null, parseBalance, aggregate_sum);
-                       sumParam(val, result, 'sms_total', /(.*?)\//, null, parseBalance, aggregate_sum);
+                       sumParam(val, result, 'sms_left', /(?:.*)\/(.*)\/(?:.*)/, null, parseBalance, aggregate_sum);
+                       sumParam(val, result, 'sms_total', /(?:.*)\/(?:.*)\/(.*)/, null, parseBalance, aggregate_sum);
                    }else if(/мин/i.test(val) || /минут/i.test(name)){
-                       sumParam(val, result, 'mins_left', /\/(.*)/, null, parseMinutes, aggregate_sum);
-                       sumParam(val, result, 'mins_total', /(.*?)\//, null, parseMinutes, aggregate_sum);
+                       sumParam(val, result, 'mins_left', /(?:.*)\/(.*)\/(?:.*)/, null, parseMinutes, aggregate_sum);
+                       sumParam(val, result, 'mins_total', /(?:.*)\/(?:.*)\/(.*)/, null, parseMinutes, aggregate_sum);
                    }else if(/[кгмkgm][бb]/i.test(val)){
                        var left = getParam(val, null, null, /\/(.*)/, null, parseTraffic);
                        var total = getParam(val, null, null, /(.*)\//, null, parseTraffic);

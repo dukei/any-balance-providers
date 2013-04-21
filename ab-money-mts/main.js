@@ -184,7 +184,7 @@ function fetchCard(jsonInfo, html, headers, baseurl){
     if(!table)
         throw new AnyBalance.Error('У вас нет ни одной карты');
 
-    var re = new RegExp('<td[^>]*>(\\d{4}\\s*[\\d\\*]{4}\\s*\\*{4}\\s*' + (prefs.cardnum ? prefs.cardnum : '\\d{4}') + ')<\\/td>', 'i');
+    var re = new RegExp('<td[^>]*>([\\d\\*]{4}\\s*[\\d\\*]{4}\\s*\\*{4}\\s*' + (prefs.cardnum ? prefs.cardnum : '\\d{4}') + ')<\\/td>', 'i');
 
     var tr;
     table.replace(/<tr[^>]*>([\s\S]*?)<\/tr>/ig, function(str, str1){

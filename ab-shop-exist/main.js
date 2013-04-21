@@ -23,6 +23,21 @@ function getEventValidation(html){
     return getParam(html, null, null, /name="__EVENTVALIDATION".*?value="([^"]*)"/) || getParam(html, null, null, /__EVENTVALIDATION\|([^\|]*)/i);
 }
 
+function parseDateMy(str){
+    var val;
+    if(/Завтра/i.test(str)){
+        var dt = new Date();
+	val = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate() + 1);
+    }else if(/Сегодня/i.test(str)){
+        var dt = new Date();
+	val = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate());
+    }else{
+        return parseDate(str);
+    }
+    AnyBalance.trace("Parsed " + val + " from " + str);
+    return val && val.getTime();
+}
+
 function main(){
     var prefs = AnyBalance.getPreferences();
     var baseurl = "http://www.exist.ru/Profile/";
@@ -80,7 +95,7 @@ function main(){
            getParam(tr, result, 'ordernum', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
            getParam(tr, result, 'ordersum', /(?:[\s\S]*?<td[^>]*>){8}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
            getParam(tr, result, 'orderstatus', /(?:[\s\S]*?<td[^>]*>){11}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-           getParam(tr, result, 'orderexpect', /(?:[\s\S]*?<td[^>]*>){12}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+           getParam(tr, result, 'orderexpect', /(?:[\s\S]*?<td[^>]*>){12}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDateMy);
            getParam(tr, result, 'orderdesc', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
         }
     }

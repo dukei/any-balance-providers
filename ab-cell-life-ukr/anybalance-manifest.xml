@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="16">ab-cell-life-ukr</id>
+  <id version="17">ab-cell-life-ukr</id>
   <name>Life:) Украина</name>
   <description>
     Мониторинг баланса мобильного оператора Life:) (Украина)
@@ -12,7 +12,7 @@
 
     Пароль придет в ответном SMS. Полученный СуперПароль можно вводить в настройки провайдера.
 
-    Провайдер умеет получать данные через личный кабинет https://my.life.com.ua/wap/jsps/myAccount.jsp или через API для мобильного приложения Life:) (https://play.google.com/store/apps/details?id=com.life.my). В последнем случае данных показывается больше. Если вы видите, что провайдер не показывает данные, которые есть в мобильном приложении, обращайтесь к автору для исправления.
+    Провайдер умеет получать данные через API для мобильного приложения Life:) (https://play.google.com/store/apps/details?id=com.life.my). Если вы видите, что провайдер не показывает данные, которые есть в мобильном приложении, обращайтесь к автору для исправления.
   </description>
   <author>Ignatiy Goloviznin &lt;igoloviznin@gmail.com&gt;</author>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>

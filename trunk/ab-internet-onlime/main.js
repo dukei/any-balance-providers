@@ -14,6 +14,9 @@ function main(){
 
     if(!prefs.login || !prefs.password)
         throw new AnyBalance.Error('Пожалуйста, установите в настройках провайдера логин и пароль.');
+
+    if(prefs.num && !/^\d+$/.test(prefs.num))
+        throw new AnyBalance.Error('Пожалуйста, введите номер лицевого счета или договора, по которому вы хотите получить информацию, или не вводите ничего, чтобы получить информацию по первому счету.');
     
     // Заходим на главную страницу
     var info = AnyBalance.requestPost(baseurl + "session/login", {
@@ -22,7 +25,7 @@ function main(){
     });
     
     if(!/\/session\/logout/i.test(info)){
-        var error = $('#errHolder', info).text();
+        var error = getParam(info, null, null, /<p[^>]+id="errHolder"[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error){
             throw new AnyBalance.Error(error);
         }
@@ -30,6 +33,19 @@ function main(){
     }
     
     var result = {success: true};
+
+    var form = getParam(info, null, null, /<form[^>]+class="forma"[^>]*action="[^"]*choosecontract[^>]*>([\s\S]*?)<\/form>/i)
+    if(form){
+        //Несколько контрактов на аккаунте. Надо выбрать нужный лицевой счет
+        AnyBalance.trace('Требуется выбрать контракт...');
+        var re = new RegExp('<tr[^>]*>(?:[\\s\\S](?!</tr>))*?<strong[^>]*>\\s*\\d*' + (prefs.num || '\\d+') + '\\s*</strong>[\\s\\S]*?</tr>', 'i');
+        var row = getParam(form, null, null, re);
+        if(!row)
+            throw new AnyBalance.Error(prefs.num ? 'Не удалось найти лицевой счет или договор с последними цифрами ' + prefs.num : 'Не удалось найти ни одного номера счета!');
+        var idx = getParam(row, null, null, /<input[^>]+value="([^"]*)"[^>]*name="contract"/i, null, html_entity_decode);
+        AnyBalance.trace('Выбираем контракт ' + idx + '...');
+        info = AnyBalance.requestPost(baseurl + 'index/choosecontract/', {contract: idx});
+    }
 
     info = AnyBalance.requestGet(baseurl + "json/cabinet/");
     AnyBalance.trace('got info: ' + info);
@@ -68,21 +84,25 @@ function main(){
     }
 
     if(AnyBalance.isAvailable('internet_total', 'internet_up', 'internet_down')){
-        info = AnyBalance.requestGet(baseurl + "statistics/inet_statistics");
-        var $info = $(info);
-        if(AnyBalance.isAvailable('internet_total', 'internet_down')){
-            var val = $info.find('table.streifig tr:nth-child(2) th:nth-child(2)').text();
-            if(val)
-                result.internet_down = Math.round(parseFloat(val)/1024*100)/100; //Переводим в Гб с двумя точками после запятой
-        }
-        if(AnyBalance.isAvailable('internet_total', 'internet_up')){
-            var val = $info.find('table.streifig tr:nth-child(2) th:nth-child(3)').text();
-            if(val)
-                result.internet_up = Math.round(parseFloat(val)/1024*100)/100; //Переводим в Гб с двумя точками после запятой
-        }
-        if(AnyBalance.isAvailable('internet_total')){
-            if(result.internet_down && result.internet_up)
-                result.internet_total = result.internet_down + result.internet_up;
+        try{
+            info = AnyBalance.requestGet(baseurl + "statistics/inet_statistics");
+            var $info = $(info);
+            if(AnyBalance.isAvailable('internet_total', 'internet_down')){
+                var val = $info.find('table.streifig tr:nth-child(2) th:nth-child(2)').text();
+                if(val)
+                    result.internet_down = Math.round(parseFloat(val)/1024*100)/100; //Переводим в Гб с двумя точками после запятой
+            }
+            if(AnyBalance.isAvailable('internet_total', 'internet_up')){
+                var val = $info.find('table.streifig tr:nth-child(2) th:nth-child(3)').text();
+                if(val)
+                    result.internet_up = Math.round(parseFloat(val)/1024*100)/100; //Переводим в Гб с двумя точками после запятой
+            }
+            if(AnyBalance.isAvailable('internet_total')){
+                if(result.internet_down && result.internet_up)
+                    result.internet_total = result.internet_down + result.internet_up;
+            }
+        }catch(e){
+            AnyBalance.trace('Не удалось получить трафик: ' + e.message);
         }
     }
     

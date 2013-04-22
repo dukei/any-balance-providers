@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="6">ab-internet-onlime</id>
+  <id version="7">ab-internet-onlime</id>
   <name>Onlime (Москва)</name>
   <description>
     Получает текущий баланс, бонусный баланс, номера лицевого счета и договора, статус и трафик в текущем месяце у провайдера "Onlime" ( http://onlime.ru )

@@ -28,15 +28,6 @@
         positiveButtonText="ОК"
         inputType="numberPassword">
     </EditTextPreference>
-      <ListPreference 
-        key="lk_type"
-        title="Получение данных" 
-        summary="||{@s}" 
-	entries="Wap-кабинет|API мобильного приложения"
-	entryValues="wap|api"
-        defaultValue="api"
-        dialogTitle="Получение данных">
-    </ListPreference>
     <ListPreference 
         key="lang"
         title="Язык отображения" 

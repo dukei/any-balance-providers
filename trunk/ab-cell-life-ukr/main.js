@@ -130,13 +130,6 @@ function main(){
     if(!prefs.phone || !/^\d{7}$/.test(prefs.phone))
         throw new AnyBalance.Error('Введите номер вашего телефона (7 цифр)');
 
-    if(prefs.lk_type == 'wap')
-        mainWap();
-    else
-        mainApi();
-}
-
-function mainApi(){
     var prefs = AnyBalance.getPreferences();
     var msisdn = '38'+prefs.prefph+prefs.phone;
     var lang = prefs.lang || 'ru';
@@ -210,37 +203,4 @@ function mainApi(){
     }
 
     AnyBalance.setResult(result);
-}
-
-function mainWap(){
-	var prefs = AnyBalance.getPreferences();
-        var html=AnyBalance.requestGet("https://my.life.com.ua/wap/jsps/myAccount.jsp?language=uk&srcpage=/wap/home.jsp");
-        var frompage=getParam(html, null,null, /name="frompage" value="([^"]*)"/i);
-	var html = AnyBalance.requestPost('https://my.life.com.ua/wap/servlet/aus?language=uk&srcpage=/wap/home.jsp', {
-		frompage: frompage,
-		topage: "/wap/jsps/balanceCheck/index.jsp",
-		prefix: prefs.prefph,
-		msisdn: prefs.phone,
-		password: prefs.pass
-	});
-        var error = getParam(html, null, null, /.>([^>]*?):?\s*<form action="\/wap\/servlet\/aus/i, replaceTagsAndSpaces);
-	if(error)
-		throw new AnyBalance.Error(error);
-
-	var result = {success: true};
-	getParam(html, result, 'Mbalance', /(?:Ви маєте|у Вас есть) (-?\d[\d\.,\s]*) грн. (?:на основному та|на основном и)/i, replaceFloat, parseFloat);
-	getParam(html, result, 'Bbalance', /грн. на (?:основному та|основном и) (-?\d[\d\.,\s]*) грн. на/i, replaceFloat, parseFloat);
-
-        html = AnyBalance.requestGet("https://my.life.com.ua/wap/jsps/tariffs/index.jsp?language=uk&srcpage=/wap/jsps/myAccount.jsp");
-	getParam(html, result, '__tariff', /(?:Ваш поточний тарифний план|Ваш текущий тарифный план): (.*)/i, replaceTagsAndSpaces);
-
-	if(typeof(result.__tariff) == 'undefined'){
-           result.__tariff = '+38'+prefs.prefph+prefs.phone;
-        }
-
-        if(AnyBalance.isAvailable('phone')){
-           result.phone = '+38'+prefs.prefph+prefs.phone;
-        }
-        
-        AnyBalance.setResult(result);
 }

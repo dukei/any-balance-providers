@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id major_version="1.0" version="3">ab-affiliate-ups</id>
+  <name>Инвестиционная программа Union Payment Services</name>
+  <description>
+    Помогает отслеживать состояние депозита инвестора Union Payment Services на сайте unionpaymentservices.com
+  </description>
+  <author>wtiger &lt;wtiger@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>api:jquery.min.js</js>
+    <js>library.js</js>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="withdrawal" name="Всего выведено" units="$"/>
+    <counter id="current_sum" name="Сумма текущих долей" units="$"/>
+    <counter id="total_income" name="Всего заработано" units="$"/>
+    <counter id="balance" name="Баланс" units="$"/>
+  </counters>
+  <keywords>
+    инвестиционная программа unionpaymentservices.com
+  </keywords>
+  <type>
+    affiliate
+  </type>
+</provider>

@@ -68,6 +68,7 @@ function main(){
     var result = {success: true};
 
     getParam(html, result, 'balance', />\s*Баланс[\s\S]*?>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'bonus', /Бонус\s*<strong[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'userName', /<label>Абонент\s*(.*)/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'licschet', /<label>№ договора\s*(.*)/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, '__tariff', /<label>Тариф\s*(.*)/i, replaceTagsAndSpaces, html_entity_decode);

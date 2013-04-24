@@ -8,10 +8,11 @@
 */
 
 var g_headers = {
-  'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
-  'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-  'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Intel Mac OS X 10.6; rv:7.0.1) Gecko/20100101 Firefox/7.0.1',
-  Connection: 'keep-alive'
+    Accept:'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
+    'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+    Connection:'keep-alive',
+    'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.64 Safari/537.31'
 };
 
 function main(){
@@ -25,13 +26,21 @@ function main(){
 
     var parts = /^(\d{5})(\d{3})(\d{2})$/.exec(prefs.login);
 
-    var html = AnyBalance.requestPost(baseurl + 'backLink.jsf?mode=auth', {
-        book: parts[1],
-	num: parts[2],
-	kr: parts[3],
-	psw:prefs.password,
-        x: 37,
-        y: 9
+    var html = AnyBalance.requestGet(baseurl, g_headers);
+    var rnd = getParam(html, null, null, /<input[^>]+name="login:fTemplateLogin:rnd"[^>]*value="([^"]*)/i);
+    if(!rnd)
+        throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
+
+    html = AnyBalance.requestPost(baseurl + 'pages/main.jsf', {
+        'login:fTemplateLogin':'login:fTemplateLogin',
+        'login:fTemplateLogin:itLS':parts[1],
+        'login:fTemplateLogin:itABN':parts[2],
+        'login:fTemplateLogin:itKr':parts[3],
+        'login:fTemplateLogin:itEmail':'',
+        'login:fTemplateLogin:itPwd':prefs.password,
+        'login:fTemplateLogin:rnd':rnd,
+        'login:fTemplateLogin:cbLogin':'Войти в личный кабинет',
+        'javax.faces.ViewState':'j_id1'
     }, g_headers);
 
     //Выход из кабинета
@@ -39,7 +48,10 @@ function main(){
         if(html.length < 5000 && AnyBalance.getLevel() < 5) //Обрезается по '\0'
             //throw new AnyBalance.Error("К сожалению, из-за ошибки в Android 4.0+ этот провайдер не работает. Для исправления, пожалуйста, дождитесь следующей версии AnyBalance.");
             throw new AnyBalance.Error("Ваша версия AnyBalance не может получить информацию для этого провайдера. Пожалуйста, установите последнюю версию AnyBalance.");
-        throw new AnyBalance.Error('Не удалось войти в личный кабинет. Неправильный номер счета или пароль?');
+        var error = getParam(html, null, null, /<span[^>]+id="login:fTemplateLogin:otLoginError"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+        if(error)
+            throw new AnyBalance.Error(error);
+        throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
     }
 
     var result = {success: true};

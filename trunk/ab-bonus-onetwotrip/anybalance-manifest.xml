@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id major-version="1.0" version="1">ab-bonus-onetwotrip</id>
+  <name>OneTwoTrip.com</name>
+  <description>
+    OneTwoTrip.com - бонусные баллы
+  </description>
+  <author>Victor Vostrikov &lt;v.vostrikov@softworks.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon> <!-- файл иконки -->
+    <preferences>preferences.xml</preferences> <!-- Файл настроек -->
+    <js>main.js</js> <!-- необходим как минимум один файл с функцией main() -->
+    <js>api:jquery.min.js</js>
+    <history>history.xml</history> <!-- История изменений версий провайдера -->   
+  </files>
+  <counters>
+    <counter id="ott-bonus" name="Бонусы" type="numeric"/>
+    <counter id="ott-curr" name="Валюта бонусов" type="text"/>
+  </counters>
+  <type>
+     bonus
+  </type>
+</provider>

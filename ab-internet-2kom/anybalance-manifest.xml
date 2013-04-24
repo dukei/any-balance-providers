@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-2kom</id>
+  <id version="2">ab-internet-2kom</id>
   <name>2КОМ</name>
   <description>
     Получает баланс и информацию о тарифном плане для московского интернет-провайдера 2КОМ.
@@ -11,9 +11,11 @@
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
     <js>main.js</js>
+    <history>history.xml</history>
   </files>
   <counters>
     <counter id="balance" name="Баланс" units="р"/>
+    <counter id="bonus" name="Бонус" units=""/>
     <counter id="trafficIn" name="Вх.трафик текущем периоде" units="Gb"/>
     <counter id="trafficOut" name="Исх.трафик текущем периоде" units="Gb"/>
     <counter id="status" name="Состояние" type="text"/>

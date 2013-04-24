@@ -132,7 +132,7 @@ function main(){
                 var statuses = [], names = [], bonuses = [], phones = [], sms = [], mms = [], gprs = []; 
                 for(var j=0; json.services && j<json.services.length; ++j){
                     var service = json.services[j];
-                    tariffs.push(service.typeString + ': ' + service.tariff.tarName);
+                    tariffs.push((service.typeString || service.serviceType) + (service.tariff ? ': ' + service.tariff.tarName : ''));
                     statuses.push(g_ServiceStatus[service.status]);
                     if(service.alias)
                         names.push(service.alias);

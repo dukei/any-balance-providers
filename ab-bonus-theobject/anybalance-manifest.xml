@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id major-version="1.0" version="1">ab-bonus-theobject</id>
+  <name>СК &quot;Объект&quot;</name>
+  <description>
+    Стрелковый клуб &quot;Объект&quot; - бонусные баллы и баланс
+    Сайт: http://www.theobject.ru
+  </description>
+  <author>Victor Vostrikov &lt;v.vostrikov@softworks.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon> <!-- файл иконки -->
+    <preferences>preferences.xml</preferences> <!-- Файл настроек -->
+    <js>main.js</js> <!-- необходим как минимум один файл с функцией main() -->
+    <js>api:jquery.min.js</js>
+    <history>history.xml</history> <!-- История изменений версий провайдера -->   
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" type="numeric"/>
+    <counter id="bonus" name="Бонусы" type="numeric"/>
+  </counters>
+  <keywords>
+    Объект, стрелковый клуб, IPSC
+  </keywords>
+  <type>
+    bonus
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

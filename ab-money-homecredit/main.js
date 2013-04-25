@@ -66,15 +66,16 @@ function fetchCard(baseurl, html){
         throw new AnyBalance.Error('Пожалуйста, введите 4 последних цифры номера карты, по которой вы хотите получить информацию, или не вводите ничего, чтобы получить информацию по первой карте.');
     
     var cardnum = prefs.contract ? prefs.contract : '\\d{4}';
-    var re = new RegExp('(<a[^>]+id="[^"]*(?:debit|credit)Card_\\d+"[^>]*class="selectProduct[^"]*"(?:[\\s\\S](?!</a>))*\\d{4}\\s+\\d{2}\\*{2}\\s+\\*{4}\\s+' + cardnum + '[\\s\\S]*?</a>)', 'i');
+    var re = new RegExp('(<a[^>]+id="[^"]*(?:debit|credit)Card_\\d+"[^>]*class="[^"]*selectProduct[^"]*"(?:[\\s\\S](?!</a>))*\\d{4}\\s+\\d{2}\\*{2}\\s+\\*{4}\\s+' + cardnum + '[\\s\\S]*?</a>)', 'i');
     var tr = getParam(html, null, null, re);
     if(!tr)
         throw new AnyBalance.Error('Не удаётся найти ' + (prefs.contract ? 'карту с последними цифрами ' + prefs.contract : 'ни одной карты'));
 
     var isCredit = /<a[^>]+id="[^"]*creditCard_\d+"/.test(tr); 
-    //Проверим, выбран ли сейчас интересующий нас продукт.
     //FIXME: судя по депозиту и кредиту надо проверять наличие класса productBlockActive именно у нужной карты. А здесь странно как-то. Наверху в id есть Card, а здесь нет. Так что для карт надо бы перепроверить.
-    var selected = getParam(html, null, null, new RegExp('<div[^>]+class="productBlock\\s+([^"]*)(?:[\\s\\S](?!</a>))*<a[^>]+id="[^"]*' + (isCredit ? 'credit' : 'debit') + '_\\d+"', 'i'));
+    //Проверим, выбран ли сейчас интересующий нас продукт. Для этого ищем, какой именно блок включает наш продукт
+    var reProductBlock = new RegExp('<div[^>]+class="productBlock\\s+([^"]*)(?:[\\s\\S](?!</a>))*?<a[^>]+id="[^"]*' + (isCredit ? 'credit' : 'debit') + '(?:Card)?_\\d+"', 'i');
+    var selected = getParam(html, null, null, reProductBlock);
     var isProductSelected = selected && /productBlockActive/i.test(selected);
 
     var result = {success: true};
@@ -89,16 +90,7 @@ function fetchCard(baseurl, html){
         //Проверим выбран ли текущий продукт и нужный вклад внутри него
         var isSelected = isProductSelected && getParam(tr, null, null, /<span[^>]+class="(selected)"/i);
         if(!isSelected){
-            var action = getParam(tr, null, null, /PrimeFaces.ajax.AjaxRequest\s*\(\s*'([^']*)/i, null, html_entity_decode);
-            var formId = getParam(tr, null, null, /PrimeFaces.ajax.AjaxRequest\s*\([^"]*formId\s*:\s*'([^']*)/i, null, html_entity_decode);
-            var source = getParam(tr, null, null, /PrimeFaces.ajax.AjaxRequest\s*\([^"]*source\s*:\s*'([^']*)/i, null, html_entity_decode);
-            var form = getParam(html, null, null, new RegExp('(<form[^>]+id="' + formId + '"[\\s\\S]*?<\\/form>)', 'i'));
-            var params = createFormParams(form);
-            params['javax.faces.partial.ajax'] = true;
-            params['javax.faces.source'] = source;
-            params['javax.faces.partial.execute'] = '@all';
-            params[source] = source;
-            html = AnyBalance.requestPost(params['javax.faces.encodedURL'] || action, params);
+            html = requestDetails(html, tr);
         }
 
         getParam(html, result, 'own', /Остаток собственных средств на счете[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
@@ -108,7 +100,8 @@ function fetchCard(baseurl, html){
         getParam(html, result, 'status', /Статус карты[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
         getParam(html, result, 'accnum', /Номер счета:?[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
         getParam(html, result, 'minpaytill', /(?:Дата платежа|Рекомендуемая дата внесения средств)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
-        getParam(html, result, 'minpay', /Сумма минимального платежа[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+        getParam(html, result, 'minpay', /(?:Сумма минимального платежа|Сумма следующего платежа)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+        getParam(html, result, 'overall_debt', /Общая задолженность[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
                     
         var limit = getParam(html, null, null, /(?:Лимит овердрафта:|Кредитный лимит)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
         if(isCredit && limit && AnyBalance.isAvailable('debt')){
@@ -117,6 +110,21 @@ function fetchCard(baseurl, html){
     }
 
     AnyBalance.setResult(result);
+}
+
+//Получаем детали по продукту, если он не выбран. tr - блок продукта
+function requestDetails(html, tr){
+    var source = getParam(tr, null, null, /PrimeFaces.\w+\s*\([^"]*source\s*:\s*'([^']*)/i, null, html_entity_decode);
+    var formId = getParam(source, null, null, /^.*j_idt\d+/i);
+    var form = getParam(html, null, null, new RegExp('(<form[^>]+id="' + formId + '"[\\s\\S]*?<\\/form>)', 'i'));
+    var action = getParam(form, null, null, /<form[^>]+action="[^"]*/i, null, html_entity_decode);
+    var params = createFormParams(form);
+    params['javax.faces.partial.ajax'] = true;
+    params['javax.faces.source'] = source;
+    params['javax.faces.partial.execute'] = '@all';
+    params[source] = source;
+    html = AnyBalance.requestPost(params['javax.faces.encodedURL'] || action, params);
+    return html;
 }
 
 function fetchAccount(baseurl, html){
@@ -138,7 +146,7 @@ function createProductsIds(html, result){
            deposit: 'Депозит',
            loan: 'Кредит'
         }; 
-        html.replace(/<a[^>]+id="[^"]*:([^":]+)_(\d+)"[^>]*class="selectProduct"[\s\S]*?<\/a>/ig, function(str, type, id){
+        html.replace(/<a[^>]+id="[^"]*:([^":]+)_(\d+)"[^>]*class="[^"]*selectProduct[^"]*"[\s\S]*?<\/a>/ig, function(str, type, id){
             var name = getParam(str, null, null, /<td[^>]+class="productInfo"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
             if(types[type]){
                 all[all.length] = types[type] + ': ' + id + ' — ' + name;
@@ -157,13 +165,13 @@ function fetchDeposit(baseurl, html){
     if(prefs.contract && !/^\d{1,20}$/.test(prefs.contract))
         throw new AnyBalance.Error('Пожалуйста, введите ID вклада, по которому вы хотите получить информацию, или не вводите ничего, чтобы получить информацию по первому вкладу.');
 
-    var re = new RegExp('(<a[^>]+id="[^"]*deposit_' + (prefs.contract ? prefs.contract : '\\d+') + '"[^>]*class="selectProduct"[\\s\\S]*?<\\/a>)', 'i');
+    var re = new RegExp('(<a[^>]+id="[^"]*deposit_' + (prefs.contract ? prefs.contract : '\\d+') + '"[^>]*class="[^"]*selectProduct[^"]*"[\\s\\S]*?<\\/a>)', 'i');
     var tr = getParam(html, null, null, re);
     if(!tr)
         throw new AnyBalance.Error('Не удаётся найти ' + (prefs.contract ? 'вклад с ID ' + prefs.contract : 'ни одного вклада'));
     var id = getParam(tr, null, null, /<a[^>]+id="[^"]*loan_(\d+)"/i);
 
-    var selected = getParam(html, null, null, new RegExp('<div[^>]+class="productBlock\\s+([^"]*)(?:[\\s\\S](?!</a>))*<a[^>]+id="[^"]*deposit_' + id + '"', 'i'));
+    var selected = getParam(html, null, null, new RegExp('<div[^>]+class="productBlock\\s+([^"]*)(?:[\\s\\S](?!</a>))*?<a[^>]+id="[^"]*deposit_' + id + '"', 'i'));
     var isProductSelected = selected && /productBlockActive/i.test(selected);
 
     var result = {success: true};
@@ -179,16 +187,7 @@ function fetchDeposit(baseurl, html){
         //Проверим выбран ли текущий продукт и нужный вклад внутри него
         var isSelected = isProductSelected && getParam(tr, null, null, /<span[^>]+class="(selected)"/i);
         if(!isSelected){
-            var action = getParam(tr, null, null, /PrimeFaces.ajax.AjaxRequest\s*\(\s*'([^']*)/i, null, html_entity_decode);
-            var formId = getParam(tr, null, null, /PrimeFaces.ajax.AjaxRequest\s*\([^"]*formId\s*:\s*'([^']*)/i, null, html_entity_decode);
-            var source = getParam(tr, null, null, /PrimeFaces.ajax.AjaxRequest\s*\([^"]*source\s*:\s*'([^']*)/i, null, html_entity_decode);
-            var form = getParam(html, null, null, new RegExp('(<form[^>]+id="' + formId + '"[\\s\\S]*?<\\/form>)', 'i'));
-            var params = createFormParams(form);
-            params['javax.faces.partial.ajax'] = true;
-            params['javax.faces.source'] = source;
-            params['javax.faces.partial.execute'] = '@all';
-            params[source] = source;
-            html = AnyBalance.requestPost(params['javax.faces.encodedURL'] || action, params);
+            html = requestDetails(html, tr);
         }
 
         getParam(html, result, 'pcts', /Сумма начисленных процентов[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
@@ -208,13 +207,13 @@ function fetchCredit(baseurl, html){
     if(prefs.contract && !/^\d{1,20}$/.test(prefs.contract))
         throw new AnyBalance.Error('Пожалуйста, введите ID кредита, по которому вы хотите получить информацию, или не вводите ничего, чтобы получить информацию по первому кредиту.');
 
-    var re = new RegExp('(<a[^>]+id="[^"]*loan_' + (prefs.contract ? prefs.contract : '\\d+') + '"[^>]*class="selectProduct"[\\s\\S]*?<\\/a>)', 'i');
+    var re = new RegExp('(<a[^>]+id="[^"]*loan_' + (prefs.contract ? prefs.contract : '\\d+') + '"[^>]*class="[^"]*selectProduct[^"]*"[\\s\\S]*?<\\/a>)', 'i');
     var tr = getParam(html, null, null, re);
     if(!tr)
         throw new AnyBalance.Error('Не удаётся найти ' + (prefs.contract ? 'кредит с ID ' + prefs.contract : 'ни одного кредита'));
     var id = getParam(tr, null, null, /<a[^>]+id="[^"]*loan_(\d+)"/i);
 
-    var selected = getParam(html, null, null, new RegExp('<div[^>]+class="productBlock\\s+([^"]*)(?:[\\s\\S](?!</a>))*<a[^>]+id="[^"]*loan_' + id + '"', 'i'));
+    var selected = getParam(html, null, null, new RegExp('<div[^>]+class="productBlock\\s+([^"]*)(?:[\\s\\S](?!</a>))*?<a[^>]+id="[^"]*loan_' + id + '"', 'i'));
     var isProductSelected = selected && /productBlockActive/i.test(selected);
 
     var result = {success: true};
@@ -230,16 +229,7 @@ function fetchCredit(baseurl, html){
         //Проверим выбран ли текущий продукт и нужный кредит внутри него
         var isSelected = isProductSelected && getParam(tr, null, null, /<span[^>]+class="(selected)"/i);
         if(!isSelected){
-            var action = getParam(tr, null, null, /PrimeFaces.ajax.AjaxRequest\s*\(\s*'([^']*)/i, null, html_entity_decode);
-            var formId = getParam(tr, null, null, /PrimeFaces.ajax.AjaxRequest\s*\([^"]*formId\s*:\s*'([^']*)/i, null, html_entity_decode);
-            var source = getParam(tr, null, null, /PrimeFaces.ajax.AjaxRequest\s*\([^"]*source\s*:\s*'([^']*)/i, null, html_entity_decode);
-            var form = getParam(html, null, null, new RegExp('(<form[^>]+id="' + formId + '"[\\s\\S]*?<\\/form>)', 'i'));
-            var params = createFormParams(form);
-            params['javax.faces.partial.ajax'] = true;
-            params['javax.faces.source'] = source;
-            params['javax.faces.partial.execute'] = '@all';
-            params[source] = source;
-            html = AnyBalance.requestPost(params['javax.faces.encodedURL'] || action, params);
+            html = requestDetails(html, tr);
         }
 
         getParam(html, result, 'minpaytill', /Рекомендованная дата платежа[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);

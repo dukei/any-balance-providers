@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change major_version="2.6" version="74" date="2013-04-25">
+      - Исправлено получение остатка трафика из Яндекс виджета
+    </change>
     <change major_version="2.6" version="73" date="2013-04-21">
       - Исправлено получение остатка минут/смс из Яндекс виджета
     </change>

@@ -17,6 +17,9 @@
     <counter id="ott-bonus" name="Бонусы" type="numeric"/>
     <counter id="ott-curr" name="Валюта бонусов" type="text"/>
   </counters>
+  <keywords>
+   OneTwoTrip, flight, авиабилеты, авиа, avia 
+  </keywords>  
   <type>
      bonus
   </type>

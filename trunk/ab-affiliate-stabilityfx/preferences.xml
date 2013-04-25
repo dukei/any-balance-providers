@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        key="id"
+        title="ID" 
+        summary="||{@s}" 
+        dialogTitle="ID" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите ID личного кабинета."
+        positiveButtonText="ОК">
+    </EditTextPreference>
+    <EditTextPreference 
+        key="pass"
+        title="Пароль" 
+        summary="||***********" 
+        dialogTitle="Пароль" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите пароль, используемый для входа в личный кабинет."
+        inputType="textPassword"
+        positiveButtonText="ОК">
+    </EditTextPreference>
+</PreferenceScreen>

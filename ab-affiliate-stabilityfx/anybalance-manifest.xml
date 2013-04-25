@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id major_version="1" version="1">ab-affiliate-stabilityfx</id>
+  <name>StabilityFX</name>
+  <description>
+    Помогает отслеживать состояние депозита инвестора на сайте www.stabilityfx.com
+  </description>
+  <author>wtiger &lt;wtiger@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>api:jquery.min.js</js>
+    <js>library.js</js>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="invested_total" name="Инвестировано" units="$"/>
+    <counter id="invested_process" name="Инвестировано (в обработке)" units="$"/>
+    <counter id="withdrawal" name="Выведено" units="$"/>
+    <counter id="profit" name="Прибыль по вкладу" units="$"/>
+    <counter id="profit_referral" name="Прибыль от рефералов" units="$"/>
+    <counter id="profit_total" name="Общая прибыль" units="$"/>
+    <counter id="balance" name="Баланс" units="$"/>
+  </counters>
+  <keywords>
+    инвестиционная программа stabilityfx.com
+  </keywords>
+  <type>
+    affiliate
+  </type>
+</provider>

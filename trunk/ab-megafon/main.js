@@ -449,14 +449,14 @@ function megafonTrayInfo(filial){
                        sumParam(val, result, 'mins_left', /(?:.*)\/(.*)\/(?:.*)/, null, parseMinutes, aggregate_sum);
                        sumParam(val, result, 'mins_total', /(?:.*)\/(?:.*)\/(.*)/, null, parseMinutes, aggregate_sum);
                    }else if(/[кгмkgm][бb]/i.test(val)){
-                       var left = getParam(val, null, null, /\/(.*)/, null, parseTraffic);
-                       var total = getParam(val, null, null, /(.*)\//, null, parseTraffic);
+                       var left = getParam(val, null, null, /(?:.*)\/(.*)\/(?:.*)/, null, parseTraffic);
+                       var total = getParam(val, null, null, /(?:.*)\/(?:.*)\/(.*)/, null, parseTraffic);
                        if(AnyBalance.isAvailable('internet_left') && isset(left))
                        	   result.internet_left = (result.internet_left||0) + left;
                        if(AnyBalance.isAvailable('internet_total') && isset(total))
                        	   result.internet_total = (result.internet_total||0) + total;
-                       if(AnyBalance.isAvailable('internet_cur') && isset(total) && isset(left))
-                       	   result.internet_cur = (result.internet_cur||0) + (total - left);
+                       if(AnyBalance.isAvailable('internet_cur') && isset(total))
+                       	   result.internet_cur = (result.internet_cur||0) + (total - (left||0));
                    }
                    
                }

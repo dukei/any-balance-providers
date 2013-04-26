@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Number or e-mail" 
+        positiveButtonText="ОК" 
+        summary="||{@s}" 
+        dialogTitle="Number or e-mail" 
+        negativeButtonText="Cancel" 
+        dialogMessage="Please enter your FlyingBlue number or e-mail."
+        inputType="textEmailAddress"
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Password or PIN"
+        negativeButtonText="Cancel"
+        title="Password or PIN"
+        summary="||***********"
+        dialogMessage="Please enter your password or PIN to FlyingBlue account."
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

@@ -11,7 +11,8 @@ var g_regions = {
     voronezh: mainVoronezh,
     belgorod: mainBelgorod,
     center: mainCenter,
-    orel: mainBelgorod
+    orel: mainBelgorod,
+    oskol: mainBelgorod
 };
 
 function main(){
@@ -193,7 +194,7 @@ function mainBelgorod(region){
     getParam (html, result, 'contract', /<b[^>]*>Лицевой счет:([\s\S]*?),/i, replaceTagsAndSpaces);
 
     // Расчетный период - остаток
-    getParam (html, result, 'day_left', /До списания абонентской платы осталось:([\s\S]*?)<br/i, replaceTagsAndSpaces, parseBalance);
+    getParam (html, result, 'day_left', /(?:Количество дней до ухода в финансовую блокировку|До списания абонентской платы осталось):([\s\S]*?)<br/i, replaceTagsAndSpaces, parseBalance);
 
     // Бонусный баланс 
     getParam (html, result, 'bonus_balance', /Баланс:([\s\S]*?)\s*балл/i, replaceTagsAndSpaces, parseBalance);
@@ -201,6 +202,11 @@ function mainBelgorod(region){
     sumParam(html, result, '__tariff', /Тарифный план:([\s\S]*?)(?:<\/span>|<a)/i, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
     // Бонусный статус
     sumParam (html, result, '__tariff', /(<strong[^>]*>\s*Бонусный счет[\s\S]*?)Баланс/i, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+
+    // Статус договора 
+    getParam (html, result, 'status', /Текущий статус договора:([\s\S]*?)<br/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam (html, result, 'abonday', /Суточная абонентская плата:([\s\S]*?)<br/i, replaceTagsAndSpaces, parseBalance);
+    getParam (html, result, 'abon', /Ежемесячная абонентская плата:([\s\S]*?)<br/i, replaceTagsAndSpaces, parseBalance);
 
     AnyBalance.setResult(result);
 }

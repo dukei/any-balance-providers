@@ -10,6 +10,8 @@
 function main(){
     var prefs = AnyBalance.getPreferences();
 
+    throw new AnyBalance.Error('Кабинет отменен Ростелекомом - все данные перенесены в Единый кабинет Ростелеком (https://kabinet.rt.ru). В этом кабинете надо зарегистрироваться заново и пользоваться соответствующим провайдером: Ростелеком (Единый кабинет).');
+
     var baseurl = "https://cabinet.dv.rt.ru/";
     AnyBalance.setDefaultCharset('utf-8');
 

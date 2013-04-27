@@ -7,32 +7,6 @@
 Личный кабинет: https://online.mkb.ru
 */
 
-function getParam (html, result, param, regexp, replaces, parser) {
-	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
-		return;
-
-	var value = regexp ? regexp.exec (html) : html;
-	if (value) {
-                if(regexp)
-		    value = typeof(value[1]) == 'undefined' ? value[0] : value[1];
-		if (replaces) {
-			for (var i = 0; i < replaces.length; i += 2) {
-				value = value.replace (replaces[i], replaces[i+1]);
-			}
-		}
-		if (parser)
-			value = parser (value);
-
-    if(param)
-      result[param] = value;
-    else
-      return value
-	}
-}
-
-var replaceTagsAndSpaces = [/&nbsp;/ig, ' ', /<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
-var replaceFloat = [/\s+/g, '', /,/g, '.'];
-
 function getViewState(html){
     return getParam(html, null, null, /name="__VIEWSTATE".*?value="([^"]*)"/);
 }
@@ -47,29 +21,6 @@ function getViewState1(html){
 
 function getEventValidation1(html){
     return getParam(html, null, null, /__EVENTVALIDATION\|([^\|]*)/i);
-}
-
-function parseBalance(text){
-    var val = getParam(text.replace(/\s+/g, ''), null, null, /(-?\d[\d\s.,]*)/, replaceFloat, parseFloat);
-    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
-    return val;
-}
-
-function parseCurrency(text){
-    var val = getParam(text.replace(/\s+/g, ''), null, null, /-?\d[\d\s.,]*(\S*)/);
-    AnyBalance.trace('Parsing currency (' + val + ') from: ' + text);
-    return val;
-}
-
-function parseDate(str){
-    var matches = /(\d+)[^\d](\d+)[^\d](\d+)/.exec(str);
-    if(matches){
-          var date = new Date(+matches[3], matches[2]-1, +matches[1]);
-	  var time = date.getTime();
-          AnyBalance.trace('Parsing date ' + date + ' from value: ' + str);
-          return time;
-    }
-    AnyBalance.trace('Failed to parse date from value: ' + str);
 }
 
 function main(){
@@ -172,70 +123,35 @@ function fetchCredit(html, baseurl){
     
     if(AnyBalance.isAvailable('accnum', 'needpay', 'needpaytill', 'pctcredit', 'limit', 'latedebt') && href){
         html = AnyBalance.requestGet(baseurl + href);
-//        AnyBalance.trace(html);
 
-        html = AnyBalance.requestPost(baseurl + '/secure/loans.aspx', {
-            ctl00$ctl00$scripts:'ctl00$ctl00$scripts|ctl00$ctl00$SimpleContentPlaceHolder$MCPHolder$LoansProcessorTimer',
-            ctl00_ctl00_scripts_HiddenField:'',
-            __EVENTTARGET:'ctl00$ctl00$SimpleContentPlaceHolder$MCPHolder$LoansProcessorTimer',
-            __EVENTARGUMENT:'',
-            __VIEWSTATE:getViewState(html),
-            __EVENTVALIDATION:getEventValidation(html),
-            __ASYNCPOST:true
-        }, {
-            'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.60 Safari/537.1',
-            'X-MicrosoftAjax':'Delta=true',
-            'X-Requested-With':'XMLHttpRequest'
-        });
+        var tr = getParam(html, null, null, /<tr[^>]*>(?:[\s\S](?!<\/tr>))*?<input[^>]+name="rbgLoans"[^>]*checked="checked"[\s\S]*?<\/tr>/i);
+        if(!tr)
+            AnyBalance.trace('Не удалось найти строку с подробной информацией по кредиту');
+        
+        getParam(tr, result, 'needpaytill', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
 
-//        AnyBalance.trace(html);
-
-        $html = $('<div>' + html + '</div>');
-        var $tr = $html.find('table.cardlist tr:contains("' + crdid + '")').first();
-        AnyBalance.trace("Поиск информации о кредите " + crdid + ": найдено " + $tr.size());
-        if(!$tr.size()){
-            AnyBalance.trace("Не удалось найти расширенную информацию о кредите");
-        }else{
-            getParam($tr.find('td:nth-child(4)').text(), result, 'limit', null, replaceTagsAndSpaces, parseBalance);
-            getParam($tr.find('td:nth-child(5)').text(), result, 'needpaytill', null, replaceTagsAndSpaces, parseDate);
-            getParam($tr.find('td:nth-child(6)').text(), result, 'latedebt', null, replaceTagsAndSpaces, parseBalance);
-   
-            var crdid1 = $tr.find('td:first-child input[type="radio"]').val();
-            if(!crdid1){
-                AnyBalance.trace("Не удалось найти ещё более расширенную информацию о кредите");
-            }else if(AnyBalance.isAvailable('accnum', 'needpay', 'pctcredit') && crdid1){
-                html = AnyBalance.requestPost(baseurl + '/secure/loans.aspx', {
-                    ctl00$ctl00$scripts:'ctl00$ctl00$SimpleContentPlaceHolder$MCPHolder$upLoansList|' + crdid1,
-                    ctl00_ctl00_scripts_HiddenField:'',
-                    rbgLoans:crdid1,
-                    __EVENTTARGET:crdid1,
-                    __EVENTARGUMENT:'',
-                    __LASTFOCUS:'',
-                    __VIEWSTATE:getViewState1(html),
-                    __EVENTVALIDATION:getEventValidation1(html),
-                    __ASYNCPOST:true
-                }, {
-                    'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.60 Safari/537.1',
-                    'X-MicrosoftAjax':'Delta=true',
-                    'X-Requested-With':'XMLHttpRequest'
-                });
-
-                getParam(html, result, 'accnum', /Лицевой счет №:([\s\S]*?)<\/li>/i, replaceTagsAndSpaces);
-                getParam(html, result, 'needpay', /Сумма ближайшего платежа:([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance);
-                getParam(html, result, 'pctcredit', /процентная ставка по кредиту:([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance);
-            }
+        var idx;
+        if(tr){
+            idx = getParam(tr, null, null, /data-index="(\d+)/i, null, parseInt);
+            if(!isset(idx))
+                AnyBalance.trace('Не удалось найти индекс информации по кредиту');
         }
 
+        var json = getParam(html, null, null, /var\s+loanDetailsData\s*=\s*(\[[\s\S]*?\])\s*(?:;|\r?\n\s*var)/, null, getJson);
+        if(!json)
+            AnyBalance.trace('Не удалось найти json-информацию по кредиту');
+
+        if(!json || !json[idx] || !json[idx].dt){
+            AnyBalance.trace('Не удалось найти в json информацию по кредиту');
+        }else{
+            var info = json[idx].dt;
+            getParam(info, result, 'accnum', /Лицевой счет №:([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, html_entity_decode);
+            getParam(info, result, 'needpay', /Сумма ближайшего платежа:([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance);
+            getParam(info, result, 'pctcredit', /Текущая процентная ставка по кредиту:([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance);
+            getParam(info, result, 'limit', /Общая сумма кредита:([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance);
+            getParam(info, result, 'latedebt', /Просроченная задолженность по кредиту:([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance);
+        }
     }
     
     AnyBalance.setResult(result);
 }
-
-function html_entity_decode(str)
-{
-    //jd-tech.net
-    var tarea=document.createElement('textarea');
-    tarea.innerHTML = str;
-    return tarea.value;
-}
-

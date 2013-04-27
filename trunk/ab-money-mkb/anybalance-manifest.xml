@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-money-mkb</id>
+  <id version="3">ab-money-mkb</id>
   <name>Московский Кредитный Банк</name>
   <description>
     Получает текущий остаток и другие параметры карт и кредитов Московского Кредитного Банка, используя систему МКБ Онлайн ( https://online.mkb.ru ).
@@ -11,6 +11,7 @@
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
+    <js>library.js</js>
     <js>main.js</js>
     <js>api:jquery.min.js</js>
     <history>history.xml</history>

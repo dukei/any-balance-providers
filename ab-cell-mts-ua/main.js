@@ -87,9 +87,9 @@ function main(){
     getParam (html, result, 'termin_bonus_balance', /<li>Денежный бонусный счет:[^<]*осталось\s*[^<]*\s*грн. Срок действия до ([^<]*)<\/li>/i, replaceTagsAndSpaces, parseDate);
 
     // Пакет бесплатных минут для внутрисетевых звонков
-    sumParam (html, result, 'min_paket', /<li>Осталось ([\d\.,]+) бесплатных секунд до[^<]*<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    sumParam (html, result, 'min_paket', /<li>Осталось ([\d\.,]+) бесплатных секунд\.? до[^<]*<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     //Срок Пакет бесплатных минут для внутрисетевых звонков
-    sumParam (html, result, 'termin_min_paket', /<li>Осталось[^<]*бесплатных секунд до ([^<]*)<\/li>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
+    sumParam (html, result, 'termin_min_paket', /<li>Осталось[^<]*бесплатных секунд\.? до ([^<]*)<\/li>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
 
     // 70 минут в день для внутрисетевых звонков
     sumParam (html, result, 'min_net_70', /<li>70 минут в день для внутрисетевых звонков:[^<]*осталось\s*([\d\.,]+) бесплатных секунд<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);

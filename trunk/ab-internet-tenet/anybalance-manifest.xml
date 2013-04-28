@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-tenet</id>
+  <id version="2">ab-internet-tenet</id>
   <name>TeNeT (Одесса)</name>
   <description>
     Получает баланс и информацию о тарифном плане для одесского интернет провайдера TeNeT (http://tenet.ua).

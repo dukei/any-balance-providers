@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-itkm</id>
+  <id version="2">ab-internet-itkm</id>
   <name>Ивантеевские телекоммуникации</name>
   <description>
     Получает баланс и информацию о тарифном плане для подмосковного интернет-провайдера Ивантеевские телекоммуникации (http://itkm.ru)

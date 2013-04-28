@@ -26,7 +26,7 @@ function main(){
     var html = AnyBalance.requestPost(baseurl, {
 	user:prefs.login,
 	passwd:prefs.password,
-	BeginDay:dt.getDate(),
+	BeginDay:1,
 	BeginMonth:dt.getMonth()+1,
 	BeginYear:dt.getFullYear(),
 	EndDay:dt.getDate(),

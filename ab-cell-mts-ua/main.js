@@ -149,7 +149,7 @@ function main(){
     sumParam (html, result, 'termin_sms_net', /<li>Осталось \d+ смс. До ([^<]*)<\/li>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
 
     // Минуты в сети МТС
-    sumParam (html, result, 'min_net_maxenergy', /<li>Осталось ([\d\.,]+) бесплатных секунд.<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    sumParam (html, result, 'min_net_maxenergy', /<li>Осталось ([\d\.,]+) бесплатных секунд.\s?<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 
     // 100 минут абонентам по Украине
     sumParam (html, result, 'min_all_100', /<li>Осталось ([\d\.,]+) секунд на все сети<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);

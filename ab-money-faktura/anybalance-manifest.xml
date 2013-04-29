@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-money-faktura</id>
+  <name>Фактура</name>
+  <description>
+    Получает текущий остаток, бонусные баллы и другие параметры карт банков, работающих через factura.ru, используя систему Интернет-банк ( https://www.faktura.ru/lite/app ).
+
+    Если у вас нет доступа к интернет-банку, выполните условия на странице https://www.faktura.ru/lite/app/pub/Register . 
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>api:jquery.min.js</js>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Остаток"/>
+    <counter id="accamount" name="Средств на счете"/>
+    <counter id="currency" name="Валюта" type="text"/>
+    <counter id="free" name="Свободных средств (не на картах)"/>
+    <counter id="blocked" name="Необработанные операции"/>
+    <counter id="cardnum" name="Номер карты" type="text"/>
+    <counter id="cardname" name="Тип карты" type="text"/>
+    <counter id="accnum" name="Номер счета" type="text"/>
+    <counter id="accname" name="Имя счета" type="text"/>
+  </counters>
+  <keywords>
+    интернет-банк, фактура, левобережный
+  </keywords>
+  <type>
+    money
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

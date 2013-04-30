@@ -352,6 +352,8 @@ function megafonTrayInfo(filial){
                     AnyBalance.trace('Обходим потенциальный глюк мегафона, Исходящая телефония, но написано SMS, а должны быть минуты: ' + plan + ' - ' + valAvailable + '/' + valTotal);
                     sumParam(valAvailable || '', result, 'sms_left', null, null, parseBalance, aggregate_sum);
                     sumParam(valTotal || '', result, 'sms_total', null, null, parseBalance, aggregate_sum);
+                }else if(plan && /GPRS/i.test(plan)){
+                    AnyBalance.trace('Обходим потенциальный глюк мегафона, минуты, но написано GPRS, а должны быть минуты: ' + plan + ' - ' + valAvailable + '/' + valTotal);
                 }else if(plan && /MMS/i.test(plan)){
                     AnyBalance.trace('Обходим потенциальный глюк мегафона, Исходящая телефония, но написано MMS, а должны быть минуты: ' + plan + ' - ' + valAvailable + '/' + valTotal);
                     sumParam(valAvailable || '', result, 'mms_left', null, null, parseBalance, aggregate_sum);
@@ -364,14 +366,14 @@ function megafonTrayInfo(filial){
         }
 
         if(AnyBalance.isAvailable('internet_left','internet_total','internet_cur')){
-            var $val = $threads.filter(':has(NAME:contains(" Байт")), :has(NAME_SERVICE:contains("Пакетная передача данных")), :has(PLAN_NAME:contains("Интернет"))');
+            var $val = $threads.filter(':has(NAME:contains(" Байт")), :has(NAME_SERVICE:contains("Пакетная передача данных")), :has(PLAN_NAME:contains("Интернет")), :has(PLAN_NAME:contains("GPRS"))');
             AnyBalance.trace('Found internet discounts: ' + $val.length);
             if($val.length){
                 var name = $val.first().find('PLAN_SI, NAME').text();
                 var left = $val.first().find('VOLUME_AVAILABLE').text();
-                left = parseInt(left);
+                left = parseFloat(left);
                 var total = $val.first().find('VOLUME_TOTAL').text();
-                total = parseInt(total);
+                total = parseFloat(total);
 
                 if(AnyBalance.isAvailable('internet_left')){
                     result.internet_left = parseTrafficMy(left + name);

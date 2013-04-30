@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Номер телефона/логин" 
+        positiveButtonText="ОК" 
+        summary="|Номер телефона (10 цифр) или логин|{@s}" 
+        dialogTitle="Номер телефона или логин" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите логин или номер вашего телефона для входа в личный кабинет (10 цифр), например 9031234567"
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="||***********"
+        dialogMessage="Введите пароль, используемый для входа в личный кабинет. Если вы не знаете пароль, наберите *611# со своего мобильного телефона для получения логина и пароля."
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

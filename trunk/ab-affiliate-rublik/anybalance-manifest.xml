@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-cell-matrixmobile</id>
+  <name>Rublik.com</name>
+  <description>
+    Получает баланс и статистику в партнерской программе по майнингу биткоинов http://Rublik.com
+
+    Информация берется из личного кабинета.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="На счету" units=" {@currency}"/>
+    <counter id="sol" name="Найдено решений" units=" реш"/>
+    <counter id="sol_total" name="Заработано за решения" units=" {@currency}"/>
+    <counter id="partner" name="Партнерское вознаграждение" units=" {@currency}"/>
+    <counter id="bonus" name="Бонус" units=" {@currency}"/>
+    <counter id="total" name="Всего заработано" units=" {@currency}"/>
+    <counter id="total_out" name="Всего выведено" units=" {@currency}"/>
+  </counters>
+  <keywords>
+    рублик
+  </keywords>
+  <type>
+    cell
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

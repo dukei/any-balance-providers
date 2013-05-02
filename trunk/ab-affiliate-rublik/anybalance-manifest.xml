@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-cell-matrixmobile</id>
+  <id version="1">ab-affiliate-rublik</id>
   <name>Rublik.com</name>
   <description>
     Получает баланс и статистику в партнерской программе по майнингу биткоинов http://Rublik.com
@@ -28,7 +28,7 @@
     рублик
   </keywords>
   <type>
-    cell
+    affiliate
   </type>
   <country>
     ru

@@ -91,7 +91,7 @@ function main(){
     if(!dogid)
         throw new AnyBalance.Error('Не удалось получить номер лицевого счета. Сайт изменен?');
 
-    html = AnyBalance.requestGet(baseurl + 'cabinet/get_services/' + dogid + '/' + Math.random());
+    html = AnyBalance.requestGet(baseurl + 'cabinet/url_get_services/' + dogid + '/' + Math.random());
     var json = getJson(html);
     if(json.error)
         throw new AnyBalance.Error(json.error);

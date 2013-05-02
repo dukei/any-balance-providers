@@ -49,7 +49,7 @@ function main(){
     var result = {success: true};
     getParam(html, result, 'balance', /на Вашому рахунку\s*<span[^>]+class="points"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
 
-    if(AnyBalance.isAvailable('')){
+    if(AnyBalance.isAvailable('fio','licschet','std','extra','used','corr','out')){
         html = AnyBalance.requestGet(baseurl + 'yourAccount.do?menuId=yourAccount', g_headers);
         getParam(html, result, 'fio', /Основний учасник[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
         getParam(html, result, 'licschet', /Номер рахунку[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);

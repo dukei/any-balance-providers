@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-money-belapb</id>
+  <name>Белагропромбанк (Беларусь)</name>
+  <description>
+    Получает текущий остаток и другие параметры счетов Белагропромбанка (http://www.belapb.by), используя интернет-банк https://www.ibank.belapb.by
+
+    Для использования системы «Интернет-банкинг» Вам необходимо:
+     * быть держателем карточки, выпущенной Банком, либо заключить с Банком договор текущего (расчетного) счета, договор банковского вклада (депозита) или кредитный договор;
+     * обратиться в подразделение Банка;
+     * ознакомиться с Правилами использования услуги системы «Интернет-банкинг» и оформить заявление на подключение к услуге;
+     * оплатить вознаграждение за подключение к системе «Интернет-банкинг»;
+     * получить карточку с логином и паролем, а также карточку с сеансовыми ключами для доступа к системе «Интернет-банкинг».
+     * Далее услуга будет активизирована и доступ будет разрешен.
+
+    В настоящее время провайдер поддерживает только счета. Для добавления карт, депозитов и кредитов обращайтесь к автору по е-мейл.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Остаток" units=" {@currency}"/>
+    <counter id="type" name="Тип" type="text"/>
+<!--    <counter id="status" name="Статус" type="text"/> 
+    <counter id="cardnum" name="Номер карты" type="text"/> -->
+    <counter id="accnum" name="Номер счета" type="text"/>
+    <counter id="fio" name="Владелец" type="text"/>
+    <counter id="currency" name="Валюта" type="text"/>
+  </counters>
+  <keywords>
+    интернет-банкинг
+  </keywords>
+  <type>
+    money
+  </type>
+  <country>
+    by
+  </country>
+</provider>

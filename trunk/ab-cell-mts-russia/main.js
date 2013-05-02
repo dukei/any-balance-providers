@@ -427,6 +427,8 @@ function fetchAccountStatus(html, result){
     //Использовано: 17 мин на МТС России 
     sumParam (html, result, 'min_used_mts', /Использовано:?\s*(\d+)\s*мин\S* на МТС/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 
+    // Остаток СМС Перезвони мне 
+    html = sumParam (html, result, 'sms_left_perezvoni', /Осталось:\s*([0-5])\s*(?:sms|смс)/i, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
     // Остаток ежемесячных пакетов: 392 смс
     html = sumParam (html, result, 'sms_left', /Остаток ежемесячных пакетов\s*:?\s*([\d\.,]+)\s*(?:смс|sms)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
     // Остаток ежемесячного пакета : 98 смс

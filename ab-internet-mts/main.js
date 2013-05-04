@@ -254,9 +254,10 @@ function getNsk(){
         throw new AnyBalance.Error("Не удаётся найти очередную ссылку (pmmenucontract). Cайт изменен?");
 
     html = AnyBalance.requestGet(baseurl + href);
-    href = getParam(html, null, null, /<a[^>]*href=['"](contractinfo[^'"]*)/i);
-    if(!href)
+    var hrefs = sumParam(html, null, null, /<a[^>]*href=['"](contractinfo[^'"]*)/ig);
+    if(!hrefs.length)
         throw new AnyBalance.Error("Не удаётся найти очередную ссылку (contractinfo). Cайт изменен?");
+    href = hrefs[0];
 
     html = AnyBalance.requestGet(baseurl + href);
     href = getParam(html, null, null, /<iframe[^>]*name="frmContent"[^>]*src=['"]([^'"]*)/i);
@@ -270,17 +271,30 @@ function getNsk(){
     var result = {success: true};
                                                    
     getParam(html, result, 'agreement', /Договор[\s\S]*?<td[^>]*>([\s\S]*?)(?:от|<\/td>)/i, replaceTagsAndSpaces);
-    getParam(html, result, 'license', /Номер связанного л[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+    getParam(html, result, 'license', /Номер (?:связанного )?л[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
     getParam(html, result, 'balance', /Остаток на л[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance3);
     getParam(html, result, '__tariff', /Текущий тариф[\s\S]*?<td[^>]*>([\s\S]*?)(?:\(|<\/td>)/i, replaceTagsAndSpaces);
     getParam(html, result, 'abon', />(?:\s|&nbsp;)*АП(?:\s|&nbsp;)+([\d\.]+)/i, replaceTagsAndSpaces, parseBalance3);
+
+    if(AnyBalance.isAvailable('balance_tv') && hrefs.length >= 2){
+        href = hrefs[1];
+
+        html = AnyBalance.requestGet(baseurl + href);
+        href = getParam(html, null, null, /<iframe[^>]*name="frmContent"[^>]*src=['"]([^'"]*)/i);
+        if(!href)
+            throw new AnyBalance.Error("Не удаётся найти очередную ссылку (contractinfonew). Cайт изменен?");
+        
+        html = AnyBalance.requestGet(baseurl + href); //Совсем охренели так лк писать... Наконец-то добрались до баланса
+        
+        getParam(html, result, 'balance_tv', /Остаток на л[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance3);
+    }
 
     if(AnyBalance.isAvailable('internet_cur')){
         if(!hrefipstat){
             AnyBalance.trace("Не найдена ссылка на трафик!");
         }else{
             html = AnyBalance.requestGet(baseurl + hrefipstat);
-            getParam(html, result, 'internet_cur', /Итого[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTrafficBytes);
+            getParam(html, result, 'internet_cur', /Итого[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, [/,/g, '', replaceTagsAndSpaces], parseTrafficBytes);
         }
     }
 

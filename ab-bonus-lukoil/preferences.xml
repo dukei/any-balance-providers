@@ -3,11 +3,11 @@
     <EditTextPreference 
         title="Номер карты" 
         positiveButtonText="ОК" 
-        summary="логин||{@s}\n" 
-        dialogTitle="Логин" 
+        summary="||{@s}" 
+        dialogTitle="Номер карты" 
 		inputType="number"
         negativeButtonText="Отмена" 
-        dialogMessage="Введите логин для входа в систему Лукойл - программа поощрения клиентов."
+        dialogMessage="Введите номер карты (логин) для входа в систему Лукойл - программа поощрения клиентов."
         key="login">
     </EditTextPreference>
     <EditTextPreference 

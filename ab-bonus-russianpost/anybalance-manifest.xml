@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1" major_version="1.0">ab-bonus-russianpost</id>
+  <name>Почта России: Любимый клиент</name>
+  <description>Получает баллы из программы "Любимый клиент" Почты России. Регистрация в программе автоматическая при приобретении Почтовой карты. Баллы начисляются за оплату услуг в отделениях почтовой связи. Кроме того, зарегистрироваться в программе можно, заполнив заявление. Накопленные баллы можно обменять на любые товары из каталога. Срок действия накопленных баллов 3 года с момента начисления.
+  
+  Подробнее о Почтовой карте: http://www.russianpost.ru/rp/servise/ru/home/finuslug/postdebitcard
+  Подробнее о программе: http://www.russianpost.ru/rp/servise/ru/home/uslforpeople/favourite_client
+  Таблица начисления баллов: http://www.russianpost.ru/rp/servise/ru/home/uslforpeople/favourite_client/faq#q10
+  </description>
+  <author>Egor Anisimov &lt;support@ak-26.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>api:jquery.min.js</js> <!-- Используем библиотеку, которая и так входит в AnyBalance -->
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units=" балла"/>
+ </counters>
+  <keywords>
+    Почта России, Любимый клиент, бонусы
+  </keywords>
+  <type>
+    bonus
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

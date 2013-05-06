@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1" version="1">ab-money-swedbank</id>
+  <id major_version="1" version="2">ab-money-swedbank</id>
   <name>Swedbank</name>
   <description>
     Retrieves the balance of the bank account in Swedbank through internet bank system.
@@ -12,6 +12,7 @@
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
+    <js>encoder.js</js>
     <js>main.js</js>
     <history>history.xml</history>
   </files>

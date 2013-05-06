@@ -11,6 +11,7 @@ Internet banking: https://mobilbank.swedbank.se/
 
 var reCSRF = "csrf_token\".*?value=\"([^\"]+)\"";
 var ctWrongLoginPass = "misslyckats";
+var ctError = "<h1>Fel</h1>";
 var reAccounts = "(account|loan)\\.html\\?id=([^\"]+)\"[^>]*>\\s*(?:<span\\sclass=\"icon\">[^<]*</span>\\s*)?<span\\s*class=\"name\">([^<]+)</span>\\s*(?:<br/>\\s*)?<span\\s*class=\"amount\">([^<]+)</";
 
 var headers = {
@@ -88,7 +89,7 @@ function main(){
     AnyBalance.trace(url + ": " + html);
 
     if (!(matches = html.match(reCSRF)))
-        throw new AnyBalance.Error("login token not found.");
+        throw new AnyBalance.Error("login token not found");
     var csrftoken = matches[1];
     AnyBalance.trace(url + " token: " + csrftoken);
         
@@ -102,7 +103,7 @@ function main(){
     AnyBalance.trace(url + ": " + html);
     
     if (!(matches = html.match(reCSRF)))
-        throw new AnyBalance.Error("loginNext token not found.");
+        throw new AnyBalance.Error("loginNext token not found");
     csrftoken = matches[1];
     AnyBalance.trace(url + " token: " + csrftoken);
         
@@ -115,7 +116,12 @@ function main(){
     AnyBalance.trace(url + " (post): " + html);
     if (html.indexOf(ctWrongLoginPass) >= 0)
         throw new AnyBalance.Error("Invalid login and/or password");
-    
+    if (html.indexOf(ctError) >= 0)
+    {
+    	var errmsg = getParam(html, null, null, /infobox"[\s\S]*?>([^<]+)</i, replaceTagsAndSpaces, null);
+        throw new AnyBalance.Error(errmsg ? Encoder.htmlDecode(errmsg) : "Error during login");
+    }
+
     url = baseurl + "accounts.html";
     AnyBalance.trace("POST: " + url);
     html = AnyBalance.requestGet(url, headers);
@@ -128,7 +134,7 @@ function main(){
             break;
     }
     if (!matches)
-        throw new AnyBalance.Error("Account not found.");
+        throw new AnyBalance.Error("Account not found");
     var accType = matches[1];
     var accIndex = matches[2];
     var accName = matches[3].trim();

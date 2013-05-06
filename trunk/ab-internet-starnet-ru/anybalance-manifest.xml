@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-internet-starnet-ru</id>
+  <name>Starnet (Москва)</name>
+  <description>
+    Получает баланс и другие параметры интернет провайдера Starnet (http://www.starnet.ru)
+
+    Информация берется из личного кабинета Starnet: https://my.starnet.ru/cgi-bin/
+  </description>
+  <author>Alexandra Shalamova &lt;alexandrashalamova@gmail.com&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>    
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="fio" name="ФИО" type="text"/>
+    <counter id="numberls" name="№ ЛС" type="text"/>
+    <counter id="status" name="статус ЛС" type="text"/>
+    <counter id="cost" name="Стоимость услуг" units="р"/>
+    <counter id="promisepayment" name="Обещанный платеж" units="р"/>
+  </counters>
+  <keywords>
+    Старнет
+  </keywords>
+  <type>
+    internet
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

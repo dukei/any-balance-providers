@@ -1,7 +1,7 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 
-Получает баланс и информацию о тарифном плате для сотового оператора xxxxxx 
+Получает баланс и информацию о тарифном плане для сотового оператора xxxxxx 
 
 Operator site: http://xxxxxx.ru
 Личный кабинет: https://kabinet.xxxxxx.ru/login

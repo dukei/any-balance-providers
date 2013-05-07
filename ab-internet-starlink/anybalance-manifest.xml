@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-starlink</id>
+  <id version="2">ab-internet-starlink</id>
   <name>Starlink (Москва)</name>
   <description>
     Получает баланс и информацию о тарифном плане для московского интернет-провайдера Starlink (http://starlink.ru).
@@ -11,8 +11,9 @@
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
-    <js>main.js</js>
+    <history>history.xml</history>
     <js>library.js</js>
+    <js>main.js</js>
   </files>
   <counters>
     <counter id="balance" name="Баланс" units="р"/>

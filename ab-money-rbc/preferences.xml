@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Email или телефон" 
+        positiveButtonText="ОК" 
+        summary="||{@s}" 
+        dialogTitle="Email или телефон" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите Email или телефон для входа в личный кабинет."
+        inputType="textEmailAddress"
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="||***********"
+        dialogMessage="Введите пароль, используемый для входа в личный кабинет."
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

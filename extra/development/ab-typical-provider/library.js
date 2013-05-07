@@ -144,7 +144,10 @@ function createFormParams(html, process, array){
     html.replace(/<input[^>]+name="([^"]*)"[^>]*>|<select[^>]+name="([^"]*)"[^>]*>[\s\S]*?<\/select>/ig, function(str, nameInp, nameSel){
         var value = '';
         if(nameInp){
-            value = getParam(str, null, null, /value="([^"]*)"/i, null, html_entity_decode);
+            if(/type="button"/i.test(str))
+                value=undefined;
+            else
+                value = getParam(str, null, null, /value="([^"]*)"/i, null, html_entity_decode) || '';
             name = nameInp;
         }else if(nameSel){
             value = getParam(str, null, null, /^<[^>]*value="([^"]*)"/i, null, html_entity_decode);

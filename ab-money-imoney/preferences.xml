@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Handy-номер" 
+        positiveButtonText="ОК" 
+        summary="||{@s}" 
+        dialogTitle="Handy-номер" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите ваш Handy-номер для входа в интернет банк."
+        inputType="number"
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="||***********"
+        dialogMessage="Введите пароль, используемый для входа в личный кабинет."
+        inputType="textPassword">
+    </EditTextPreference>
+    <EditTextPreference 
+        title="Номер карты/счета" 
+        positiveButtonText="ОК" 
+        summary="|Автоматически|{@s}" 
+        dialogTitle="Номер карты/счета" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите последние 4 цифры номера карты/счета, информацию по которой вы хотите получить. Оставьте это поле пустым, если хотите получить информацию по первой карте/счету"
+        inputType="number"
+        key="num">
+    </EditTextPreference>
+</PreferenceScreen>

@@ -22,7 +22,7 @@
     <counter id="traffic_total" name="Общий трафик за текущий месяц" units="Gb"/>
   </counters>
   <keywords>
-    интернет, байкал, транстелеком
+    интернет, чита, транстелеком
   </keywords>
   <type>
     internet

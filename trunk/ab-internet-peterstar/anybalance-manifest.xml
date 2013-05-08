@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-internet-peterstar</id>
+  <name>ПетерСтар (Санкт-Петербург)</name>
+  <description>
+    Информация о счете в компании «ПетерСтар», специализирующейся на предоставлении услуг телефонии, интернет и передачи данных. (http://peterhome.ru)
+
+    Информация берется из личного кабинета клиента «ПетерСтар»: http://bill.peterstar.ru
+
+  </description>
+  <author>Alexandra Shalamova &lt;alexandrashalamova@gmail.com&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="у.е"/>
+    <counter id="number" name="Номер лицевого счета" type="text"/>
+    <counter id="fio" name="ФИО" type="text"/>
+    <counter id="login" name="Логин" type="text"/>
+    <counter id="phone" name="Телефон" type="text"/>
+  </counters>
+  <keywords>
+    ПетерСтар
+  </keywords>
+  <type>
+    internet
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

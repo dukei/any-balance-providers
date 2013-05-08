@@ -36,6 +36,10 @@ function main(){
 
     var result = {success: true};
     getParam(html, result, 'balance', /((?:Долг|Переплата)(?:\s|&nbsp;)*:\s*<span[^>]*>[\s\S]*?)<\/span>/i, [/Долг(?:\s|&nbsp;)*:/i, '-', replaceTagsAndSpaces], parseBalance);
+    
+    getParam(html, result, 'statement', /Расход электроэнергии(?:[\s\S]*?<td[^>]*>){9}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'consumption', /Расход электроэнергии(?:[\s\S]*?<td[^>]*>){10}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+
     getParam(html, result, 'account', /Лицевой счет(?:\s|&nbsp;)*:\s*<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'fio', /ФИО(?:\s|&nbsp;)*:\s*([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'number', /Номер счетчика(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);

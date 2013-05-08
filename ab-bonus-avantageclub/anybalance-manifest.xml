@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
   <id version="1">ab-bonus-avantageclub</id>
-  <name>Бонусная карта магазина Улыбка Радуги</name>
+  <name>Улыбка Радуги</name>
   <description>
     Получает баланс и другую информацию по бонусной карте с сайта магазина Улыбка Радуги (http://r-ulybka.ru)
 

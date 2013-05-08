@@ -17,7 +17,7 @@
     <history>history.xml</history>
   </files>
   <counters>
-    <counter id="balance" name="Баланс" units="баллов"/>
+    <counter id="balance" name="Баланс" units=" Б"/>
     <counter id="fio" name="ФИО" type="text"/>
     <counter id="number" name="Номер карты" type="text"/>
     <counter id="email" name="Email" type="text"/>

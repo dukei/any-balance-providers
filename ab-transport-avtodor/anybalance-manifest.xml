@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-transport-avtodor</id>
+  <name>Автодор</name>
+  <description>
+    Получает баланс со счета в компании Автодор (http://avtodor-ts.ru)
+
+    Информация берется из личного кабинета системы Автодор: http://avtodor-ts.ru/account/index
+
+    Для возможности проверки баланса текущего счета необходимо завершить регистрацию своего профиля и ввести в соответствующее поле формы сайта компании номер Договора, заключенного при приобретении электронного средства проезда.
+  </description>
+  <author>Alexandra Shalamova &lt;alexandrashalamova@gmail.com&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="fio" name="ФИО" type="text"/>
+    <counter id="number" name="Договор" type="text"/>
+    <counter id="email" name="Email (логин)" type="text"/>
+  </counters>
+  <keywords>
+    avtodor
+  </keywords>
+  <type>
+    transport
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

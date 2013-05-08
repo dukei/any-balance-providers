@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-money-idea</id>
+  <name>Идея Банк (Украина)</name>
+  <description>
+    Получает текущий остаток и другие параметры счетов, депозитов и кредитов Идея Банка (http://ideabank.com.ua), используя интернет-банк https://online.ideabank.com.ua
+
+    Для указания счета/кредита/депозита, по которому необходимо получить информацию, надо в настройки ввести его ID. Чтобы узнать ID имеющихся у вас счетов/кредитов/депозитов, выберите в настройках отображение счетчика &quot;Сводка&quot;.
+
+    Как подключиться к Интернет-Банку?
+    Для подключения к услуге «интернет-банкинг» с возможностью управлять своими счетами необходимо посетить отделение Банка, заполнить заявление, подписать договор на подключение к системе Интернет-банкинг. Вы получите логин и пароль к системе. 
+
+    Можно попробовать работу провайдера на тестовой версии интернет-банка, введя логин 1 и пароль 1 в настройки аккаунта.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Остаток" units=" {@currency}"/>
+    <counter id="available" name="Доступно" units=" {@currency}"/>
+    <counter id="pay" name="Ближайший платеж" units=" {@currency}"/>
+    <counter id="paytill" name="Заплатить до" type="time" format="dd/MM/yyyy"/>
+    <counter id="till" name="Срок" type="time" format="dd/MM/yyyy"/>
+    <counter id="limit" name="Кредитный лимит" units=" {@currency}"/>
+    <counter id="pct" name="Проценты" units="%"/>
+    <counter id="accname" name="Продукт" type="text"/>
+    <counter id="accnum" name="Номер счета/ID продукта" type="text"/>
+    <counter id="currency" name="Валюта" type="text"/>
+    <counter id="all" name="Сводка" type="text"/>
+  </counters>
+  <keywords>
+    Идея
+  </keywords>
+  <type>
+    money
+  </type>
+  <country>
+    ua
+  </country>
+</provider>

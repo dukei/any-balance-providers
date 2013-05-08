@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Номер счета" 
+        positiveButtonText="ОК" 
+        summary="||{@s}" 
+        dialogTitle="Номер счета" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите номер лицевого счета."
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="surname" 
+        dialogTitle="Фамилия"
+        negativeButtonText="Отмена"
+        title="Фамилия"
+        summary="||{@s}"
+        dialogMessage="Введите вашу фамилию.">
+    </EditTextPreference>
+</PreferenceScreen>

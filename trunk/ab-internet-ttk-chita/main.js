@@ -7,18 +7,8 @@
 Личный кабинет: http://newstat.ttk-chita.ru:8080/bgbilling/webexecuter
 */
 
-function parseTrafficTotalGb(str){
-     var traffics = str.split(/\//g);
-     var total;
-     for(var i=0; i<traffics.length; ++i){
-         var val = parseBalance(traffics[i]);
-         if(typeof(val) != 'undefined')
-             total = (total || 0) + val;
-     }
-     
-     total = total && parseFloat((total/1024).toFixed(2));
-     AnyBalance.trace('Parsed total traffic ' + total + ' Gb from ' + str);
-     return total;
+function parseTrafficMy(str){
+    return parseTrafficGb(str, 'b');
 }
 
 function main(){
@@ -59,7 +49,7 @@ function main(){
         
         getParam(html, result, 'traffic_time', /Итого:(?:[\S\s]*?<td[^>]*>){2}[\S\s]*?\[(\d+)\]/i, replaceTagsAndSpaces, parseBalance);
         getParam(html, result, 'traffic_cost', /Итого:(?:[\S\s]*?<td[^>]*>){3}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-        getParam(html, result, 'traffic_total', /Итого:(?:[\S\s]*?<td[^>]*>){4}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseTrafficTotalGb);
+        getParam(html, result, 'traffic_total', /Итого:(?:[\S\s]*?<td[^>]*>){4}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseTrafficMy);
     }
     
     AnyBalance.setResult(result);

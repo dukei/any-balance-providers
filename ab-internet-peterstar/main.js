@@ -1,10 +1,10 @@
 ﻿/**
-Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
+Провайдер Петерстар (http://any-balance-providers.googlecode.com)
 
-Получает баланс и информацию о тарифном плате для сотового оператора xxxxxx 
+Получает баланс и информацию о тарифном плате для провайдера Петерстар 
 
-Operator site: http://xxxxxx.ru
-Личный кабинет: https://kabinet.xxxxxx.ru/login
+Operator site: http://peterhome.ru/
+Личный кабинет: http://bill.peterstar.ru
 */
 
 var g_headers = {
@@ -44,7 +44,7 @@ function main(){
 
 
     var result = {success: true};
-    getParam(html, result, 'balance', /Текущее состояние лицевого счета[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'balance', /Текущее\s*состояние\s*лицевого\s*счета[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseBalance);
 
     getParam(html, result, 'number', /Номер\s*лицевого\s*счета(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)&/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'fio', /<input[^>]*?name\s*=\s*v2[^>]*value\s*=\s*"([^"]*)/i, replaceTagsAndSpaces, html_entity_decode);

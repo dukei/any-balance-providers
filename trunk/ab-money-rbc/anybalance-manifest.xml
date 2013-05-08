@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
   <id version="1">ab-money-rbc</id>
-  <name>RBC Money</name>
+  <name>RBK Money</name>
   <description>
-    Получает баланс системы RBC Money (http://rbkmoney.ru)
+    Получает баланс системы RBK Money (http://rbkmoney.ru)
 
-    Информация берется из личного кабинета RBC Money: https://rbkmoney.ru/login.aspx
+    Информация берется из личного кабинета RBK Money: https://rbkmoney.ru/login.aspx
 
   </description>
   <author>Alexandra Shalamova &lt;alexandrashalamova@gmail.com&gt;</author>

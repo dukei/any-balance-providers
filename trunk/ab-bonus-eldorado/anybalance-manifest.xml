@@ -1,22 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-bonus-eldorado</id>
+  <id version="3">ab-bonus-eldorado</id>
   <name>Клуб Эльдорадо</name>
   <description>
-    Получает информацию по бонусной карте клуба постоянных покупателей Эльдорадо. Информация берется из личного кабинета http://www.club.eldorado.ru.
+    Получает информацию по бонусной карте клуба постоянных покупателей Эльдорадо. Информация берется из личного кабинета http://www.eldorado.ru/personal/?loyalty.
   </description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
+    <js>library.js</js>
     <js>main.js</js>
   </files>
   <counters>
     <counter id="balance" name="Активная сумма" units="р"/>
     <counter id="reserv" name="Резервная сумма" units="р"/>
-    <counter id="level" name="Статус участия" type="text"/>
+<!--    <counter id="level" name="Статус участия" type="text"/>
     <counter id="status" name="Статус карты" type="text"/>
-    <counter id="type" name="Тип участия" type="text"/>
+    <counter id="type" name="Тип участия" type="text"/> -->
     <counter id="userName" name="ФИО владельца" type="text"/>
     <counter id="cardnum" name="Номер карты" type="text"/>
     <counter id="phone" name="Телефон" type="text"/>
@@ -26,5 +27,8 @@
   </keywords>
   <type>
     bonus
+  </type>
+  <type>
+    ru
   </type>
 </provider>

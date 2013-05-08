@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-bonus-podarok-rn-card</id>
+  <name>Подарки по дороге</name>
+  <description>
+    Получает баланс карты "Подарки по дороге" (http://www.podarok.rn-card.ru/)
+
+    Информация берется из личного кабинета: http://www.podarok.rn-card.ru/cabinet
+
+  </description>
+  <author>Alexandra Shalamova &lt;alexandrashalamova@gmail.com&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units=" Б"/>
+  </counters>
+  <keywords>
+    Подарки по дороге, podarok rn-card
+  </keywords>
+  <type>
+    bonus
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

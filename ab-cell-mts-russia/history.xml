@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change major_version="3.2" version="51" date="2013-05-09">
+      - Улучшено разпознавание минут
+    </change>
     <change major_version="3.2" version="50" date="2013-05-02">
       - Избавляемся от паразитных 5 смс
     </change>

@@ -26,16 +26,22 @@ function getParam (html, result, param, regexp, replaces, parser) {
 	if (!isAvailable(param))
 		return;
 
-	var matches = regexp ? html.match(regexp) : [, html], value;
-	if (matches) {
-                //Если нет скобок, то значение - всё заматченное
-		value = replaceAll(isset(matches[1]) ? matches[1] : matches[0], replaces);
-		if (parser)
-			value = parser (value);
+        var regexps = isArray(regexp) ? regexp : [regexp];
+        for(var i=0; i<regexps.length; ++i){ //Если массив регэкспов, то возвращаем первый заматченный
+                regexp = regexps[i];
+		var matches = regexp ? html.match(regexp) : [, html], value;
+		if (matches) {
+                        //Если нет скобок, то значение - всё заматченное
+			value = replaceAll(isset(matches[1]) ? matches[1] : matches[0], replaces);
+			if (parser)
+				value = parser (value);
+	        
+			if(param && isset(value))
+				result[isArray(param) ? param[0] : param] = value;
+			break;
+		}
+        }
 
-		if(param && isset(value))
-			result[isArray(param) ? param[0] : param] = value;
-	}
 	return value;
 }
 
@@ -367,12 +373,14 @@ function sumParam (html, result, param, regexp, replaces, parser, do_replace, ag
         do_replace = aggregate_old || false;
     }
 
-    if (!isAvailable(param)){
-	if(do_replace){ //Даже если счетчик не требуется, всё равно надо вырезать его матчи, чтобы не мешалось другим счетчикам
-		return regexp ? html.replace(regexp, '') : html;
-        }else
-		return;
+    function replaceIfNeeded(){
+	if(do_replace) 
+		return regexp ? html.replace(regexp, '') : '';
     }
+
+    if (!isAvailable(param))  //Даже если счетчик не требуется, всё равно надо вырезать его матчи, чтобы не мешалось другим счетчикам
+        return replaceIfNeeded();
+
     //После того, как проверили нужность счетчиков, кладем результат в первый из переданных счетчиков. Оставляем только первый
     param = isArray(param) ? param[0] : param;
 
@@ -388,15 +396,21 @@ function sumParam (html, result, param, regexp, replaces, parser, do_replace, ag
         	values.push(value);
     }
 
-    if(!regexp){
-        replaceAndPush(html);
-    }else{
-        regexp.lastIndex = 0; //Удостоверяемся, что начинаем поиск сначала.
-        while(matches = regexp.exec(html)){
+    var regexps = isArray(regexp) ? regexp : [regexp];
+    for(var i=0; i<regexps.length; ++i){ //Пройдемся по массиву регулярных выражений
+        regexp = regexps[i];
+        if(!regexp){
+            replaceAndPush(html);
+        }else{
+            regexp.lastIndex = 0; //Удостоверяемся, что начинаем поиск сначала.
+            while(matches = regexp.exec(html)){
                 replaceAndPush(isset(matches[1]) ? matches[1] : matches[0]);
-        	if(!regexp.global)
-            		break; //Если поиск не глобальный, то выходим из цикла
-	}
+            	if(!regexp.global)
+                    break; //Если поиск не глобальный, то выходим из цикла
+	    }
+        }
+        if(do_replace) //Убираем все матчи, если это требуется
+            html = regexp ? html.replace(regexp, '') : '';
     }
 
     var total_value;
@@ -409,8 +423,7 @@ function sumParam (html, result, param, regexp, replaces, parser, do_replace, ag
       if(isset(total_value)){
           result[param] = total_value;
       }
-      if(do_replace)
-          return regexp ? html.replace(regexp, '') : html;
+      return html;
     }else{
       return total_value;
     }

@@ -397,10 +397,10 @@ function fetchAccountStatus(html, result){
     html = sumParam (html, result, 'min_left', /Остаток мин.*?([\d\.,]+)\s*мин/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
 
     // Остаток ежемесячных пакетов: 392 минут
-    html = sumParam (html, result, 'min_left', /Остаток ежемесячных пакетов\s*:?\s*([\d\.,]+)\s*мин/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
+    html = sumParam (html, result, 'min_left', /Остаток ежемесячных пакетов\s*(?:минут\s*)?:?\s*([\d\.,]+)\s*мин/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
 
     // Остаток ежемесячного пакета: 296 мин
-    html = sumParam (html, result, 'min_left', /Остаток ежемесячного пакета\s*:?\s*([\d\.,]+)\s*мин/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
+    html = sumParam (html, result, 'min_left', /Остаток ежемесячного пакета\s*(?:минут\s*)?:?\s*([\d\.,]+)\s*мин/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
 
     // Остаток пакета: 24 минут
     html = sumParam (html, result, 'min_left', /Остаток пакета:?\s*([\d\.,]+)\s*мин/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);

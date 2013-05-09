@@ -302,9 +302,9 @@ function getTrayXml(filial, address){
     return $xml;
 }
 
-function isAvailableButUnset(params){
+function isAvailableButUnset(result, params){
     for(var i=0; i<params.length; ++i){
-        if(AnyBalance.isAvailable(params[i]) && !isset(params[i]))
+        if(AnyBalance.isAvailable(params[i]) && !isset(result[params[i]]))
             return true;
     }
     return false;
@@ -332,6 +332,16 @@ function megafonTrayInfo(filial){
                 var $e = $(this);
                 sumParam($e.find('VOLUME_AVAILABLE').text() || '', result, 'sms_left', null, null, parseBalance, aggregate_sum);
                 sumParam($e.find('VOLUME_TOTAL').text() || '', result, 'sms_total', null, null, parseBalance, aggregate_sum);
+            });
+        }
+
+        if(AnyBalance.isAvailable('mms_left','mms_total')){
+            var $val = $threads.filter(':has(NAME:contains("MMS")), :has(PLAN_NAME:contains("MMS"))');
+            AnyBalance.trace('Found MMS discounts: ' + $val.length);
+            $val.each(function(){
+                var $e = $(this);
+                sumParam($e.find('VOLUME_AVAILABLE').text() || '', result, 'mms_left', null, null, parseBalance, aggregate_sum);
+                sumParam($e.find('VOLUME_TOTAL').text() || '', result, 'mms_total', null, null, parseBalance, aggregate_sum);
             });
         }
 
@@ -394,7 +404,10 @@ function megafonTrayInfo(filial){
         errorInTray = e.message || "Unknown error";
     }
 
-    if(AnyBalance.isAvailable('bonus_balance', 'last_pay_sum', 'last_pay_date') || errorInTray || isAvailableButUnset(['balance','phone','sub_smit','sub_smio','sub_scl','sub_scr','sub_soi'])){
+    if(AnyBalance.isAvailable('bonus_balance', 'last_pay_sum', 'last_pay_date') 
+		|| errorInTray 
+		|| isAvailableButUnset(result, ['balance','phone','sub_smit','sub_smio','sub_scl','sub_scr','sub_soi','mms_left','mms_total','sms_left','sms_total','mins_left','mins_total','internet_left','internet_cur','internet_total'])){
+
         //Некоторую инфу можно получить из яндекс виджета. Давайте попробуем.
         var prefs = AnyBalance.getPreferences();
         AnyBalance.setDefaultCharset('utf-8');
@@ -413,9 +426,9 @@ function megafonTrayInfo(filial){
            getParam(json.ok.html, result, 'last_pay_sum', /<div[^>]+class="payment_amount"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
            getParam(json.ok.html, result, 'last_pay_date', /<div>([^<]*)<\/div>\s*<div[^>]+class="payment_source"/i, replaceTagsAndSpaces, parseDate);
            
-           if(errorInTray || isAvailableButUnset(['balance','phone','sub_smit','sub_smio','sub_scl','sub_scr','sub_soi'])){
+           if(errorInTray || isAvailableButUnset(result, ['balance','phone','sub_smit','sub_smio','sub_scl','sub_scr','sub_soi'])){
                getParam(json.ok.html, result, 'balance', /<div[^>]+class="subs_balance[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-               if(AnyBalance.isAvailable('balance') && !isset(result.balance)){
+               if(isAvailableButUnset(result, ['balance'])){
                    var e = new AnyBalance.Error(errorInTray);
                    e.skip = true;
                    throw e; //Яндекс виджет не дал баланс. Значит, во всём дальнейшем смысла нет.
@@ -428,36 +441,51 @@ function megafonTrayInfo(filial){
                
                var table = getParam(json.ok.html, null, null, /<table[^>]+class="[^>]*rate-plans[^>][\s\S]*?<\/table>/i);
                if(table){
-                   sumParam(table, result, '__tariff', /<tr[^>]*>\s*<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+                   if(isAvailableButUnset(result, ['__tariff']))
+                       sumParam(table, result, '__tariff', /<tr[^>]*>\s*<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
                }else{
                    AnyBalance.trace('Не удалось найти список тарифных планов в яндекс.виджете');
                }
            }
 
-           if(errorInTray){
+           if(errorInTray || isAvailableButUnset(result, ['mms_left','mms_total','sms_left','sms_total','mins_left','mins_total','internet_left','internet_cur','internet_total'])){
+               var need_mms_left = isAvailableButUnset(result, ['mms_left']),
+                   need_mms_total = isAvailableButUnset(result, ['mms_total']),
+                   need_sms_left = isAvailableButUnset(result, ['sms_left']),
+                   need_sms_total = isAvailableButUnset(result, ['sms_total']),
+                   need_mins_left = isAvailableButUnset(result, ['mins_left']),
+                   need_mins_total = isAvailableButUnset(result, ['mins_total']),
+                   need_int_left = isAvailableButUnset(result, ['int_left']),
+                   need_int_total = isAvailableButUnset(result, ['int_total']),
+                   need_int_cur = isAvailableButUnset(result, ['int_cur']);
+     
                //Минуты и прочее получаем только в случае ошибки в сервисгиде, чтобы случайно два раза не сложить
                var discounts = sumParam(json.ok.html, null, null, /<td[^>]+class="cc_discount_row"[^>]*>([\s\S]*?)<\/td>/ig);
+               var reDiscount3Value = /^[^\/]*\/([^\/]*)\/[^\/]*$/;
+               var reDiscount3Total = /[^\/]*\/[^\/]*\/([^\/]*)/;
+               var reDiscount2Value = /^[^\/]*\/([^\/]*)$/;
+               var reDiscount2Total = /^([^\/]*)\/[^\/]*$/;
                for(var i=0; i<discounts.length; ++i){
                    var discount = discounts[i];
                    var name = getParam(discount, null, null, /<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
                    var val = getParam(discount, null, null, /<div[^>]+class="discount_volume"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
                    if(/MMS/i.test(name)){
-                       sumParam(val, result, 'mms_left', /(?:.*)\/(.*)\/(?:.*)/, null, parseBalance, aggregate_sum);
-                       sumParam(val, result, 'mms_total', /(?:.*)\/(?:.*)\/(.*)/, null, parseBalance, aggregate_sum);
+                       if(need_mms_left) sumParam(val, result, 'mms_left', [reDiscount3Value, reDiscount2Value], null, parseBalance, aggregate_sum);
+                       if(need_mms_total) sumParam(val, result, 'mms_total', [reDiscount3Total, reDiscount2Total], null, parseBalance, aggregate_sum);
                    }else if(/SMS/i.test(name)){
-                       sumParam(val, result, 'sms_left', /(?:.*)\/(.*)\/(?:.*)/, null, parseBalance, aggregate_sum);
-                       sumParam(val, result, 'sms_total', /(?:.*)\/(?:.*)\/(.*)/, null, parseBalance, aggregate_sum);
+                       if(need_sms_left) sumParam(val, result, 'sms_left', [reDiscount3Value, reDiscount2Value], null, parseBalance, aggregate_sum);
+                       if(need_sms_total) sumParam(val, result, 'sms_total', [reDiscount3Total, reDiscount2Total], null, parseBalance, aggregate_sum);
                    }else if(/мин/i.test(val) || /минут/i.test(name)){
-                       sumParam(val, result, 'mins_left', /(?:.*)\/(.*)\/(?:.*)/, null, parseMinutes, aggregate_sum);
-                       sumParam(val, result, 'mins_total', /(?:.*)\/(?:.*)\/(.*)/, null, parseMinutes, aggregate_sum);
+                       if(need_mins_left) sumParam(val, result, 'mins_left', [reDiscount3Value, reDiscount2Value], null, parseMinutes, aggregate_sum);
+                       if(need_mins_total) sumParam(val, result, 'mins_total', [reDiscount3Total, reDiscount2Total], null, parseMinutes, aggregate_sum);
                    }else if(/[кгмkgm][бb]/i.test(val)){
-                       var left = getParam(val, null, null, /(?:.*)\/(.*)\/(?:.*)/, null, parseTraffic);
-                       var total = getParam(val, null, null, /(?:.*)\/(?:.*)\/(.*)/, null, parseTraffic);
-                       if(AnyBalance.isAvailable('internet_left') && isset(left))
+                       var left = getParam(val, null, null, [reDiscount3Value, reDiscount2Value], null, parseTraffic);
+                       var total = getParam(val, null, null, [reDiscount3Total, reDiscount2Total], null, parseTraffic);
+                       if(need_internet_left && isset(left))
                        	   result.internet_left = (result.internet_left||0) + left;
-                       if(AnyBalance.isAvailable('internet_total') && isset(total))
+                       if(need_internet_total && isset(total))
                        	   result.internet_total = (result.internet_total||0) + total;
-                       if(AnyBalance.isAvailable('internet_cur') && isset(total))
+                       if(need_internet_cur && isset(total))
                        	   result.internet_cur = (result.internet_cur||0) + (total - (left||0));
                    }
                    

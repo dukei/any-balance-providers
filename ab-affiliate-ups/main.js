@@ -52,6 +52,7 @@ function main(){
 	getParam(info, result, 'current_sum', /<span class="s1">Сумма текущих долей <\/span><span class="s2">\$\s*(.*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(info, result, 'total_income', /<span class="s1">Всего заработано<\/span><span class="s2">\$\s*(.*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(info, result, 'balance', /<span class="s1">Баланс<\/span><span class="s2">\$\s*(.*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+	result.total_balance = result.balance + result.current_sum;
 
 
 //	var outinfo = AnyBalance.requestPost(baseurl + "cab.php", {

@@ -1,63 +1,24 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 
-Получает баланс и информацию о тарифном плане для томского интернет-провайдера FibreNET
+Получает баланс и информацию о тарифном плане для томского интернет-провайдера Cifra1
 
-Сайт оператора: http://fibrenet.ru
-Личный кабинет: https://billing.fibrenet.ru
+Сайт оператора: http://www.cifra1.ru/
+Личный кабинет: http://www.cifra1.ru/
 */
 
-function getParam (html, result, param, regexp, replaces, parser) {
-	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
-		return;
-
-	var matches = regexp.exec (html), value;
-	if (matches) {
-		value = matches[1];
-		if (replaces) {
-			for (var i = 0; i < replaces.length; i += 2) {
-				value = value.replace (replaces[i], replaces[i+1]);
-			}
-		}
-		if (parser)
-			value = parser (value);
-
-    if(param)
-      result[param] = value;
-	}
-   return value
-}
-
-var replaceTagsAndSpaces = [/&nbsp;/g, ' ', /<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, ''];
-var replaceFloat = [/\s+/g, '', /,/g, '.'];
-
-function parseBalance(text){
-    var val = getParam(text.replace(/\s+/g, ''), null, null, /(-?\d[\d\s.,]*)/, replaceFloat, parseFloat);
-    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
-    return val;
-}
-
-function parseTrafficGb(str){
-  var val = getParam(str.replace(/\s+/g, ''), null, null, /(-?\d[\d\s.,]*)/, replaceFloat, parseFloat);
-  return parseFloat((val/1024).toFixed(2));
-}
-
-function getJson(html){
-   try{
-       var json = JSON.parse(html);
-       return json;
-   }catch(e){
-       AnyBalance.trace('Bad json (' + e.message + '): ' + html);
-       throw new AnyBalance.Error('Сервер вернул ошибочные данные: ' + e.message);
-   }
-}
-
 var g_regionsById = {
-    ultranet: getUltranet
+    ultranet: getUltranet,
+    cifra1: getCifra1
 };
 
 var g_regionsByUrl = {
-    'https://stat.ultranet.ru/login/': 'ultranet'
+    'https://stat.ultranet.ru/login/': 'ultranet',
+    'http://stat.cifra1.ru/amsc/auth.jsf': 'cifra1',
+};
+
+var g_headers = {
+    'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.64 Safari/537.31'
 };
 
 function main(){
@@ -84,6 +45,54 @@ function main(){
     AnyBalance.trace('region: ' + region);
     g_regionsById[region](region, params);
 }
+
+function getCifra1(region, params){
+    var baseurl = 'http://stat.cifra1.ru/amsc/';
+    var prefs = AnyBalance.getPreferences();
+    var headers = g_headers;
+    if(!params){
+/*        var html = AnyBalance.requestGet(baseurl);
+        headers = addHeaders({Referer:baseurl});
+
+        params = {
+		'html:authForm:html':'authForm',
+		'html:authForm:loginInputText':prefs.login,
+		'html:authForm:j_id_id47':prefs.password,
+		'html:authForm:j_id_id62':'Войти',
+		'javax.faces.ViewState':'j_id1'
+        };
+*/
+        params = {
+            from_url_9: '',
+            'html:authForm:loginInputText':prefs.login,
+            'html:authForm:j_id_id45':prefs.password
+        };
+   }
+
+    var html = AnyBalance.requestPost(baseurl + 'auth.jsf', params);
+ 
+    if(!/log__out/i.test(html)){
+        throw new AnyBalance.Error('Не удалось войти в личный кабинет. Неверный логин или пароль, проблемы на сайте или сайт изменен.');
+    }
+
+    var result = {success: true};
+
+    //Баланс
+    getParam(html, result, 'balance', /&#1041;&#1072;&#1083;&#1072;&#1085;&#1089;:([\S\s]*?)(\||<a)/i, replaceTagsAndSpaces, parseBalance);
+    //Лицевой счет: 
+    getParam(html, result, 'agreement', /&#1051;&#1080;&#1094;&#1077;&#1074;&#1086;&#1081; &#1089;&#1095;&#1105;&#1090;:([\S\s]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+
+    var services = getParam(html, null, null, /<table[^>]+id="[^"]*services"[\s\S]*?<\/table>/i);
+    if(services){
+        //Ищем кроме бесплатного тарифного плана
+        sumParam(services, result, '__tariff', /<tr(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/ig, [/&#1041;&#1077;&#1089;&#1087;&#1083;&#1072;&#1090;&#1085;&#1099;&#1081;/, '', replaceTagsAndSpaces], html_entity_decode, aggregate_join);
+    }else{
+        AnyBalance.trace('Не удалось найти таблицу услуг!');
+    }
+
+    AnyBalance.setResult(result);
+}    
+
 
 function getUltranet(region, params){
     var baseurl = 'https://stat.ultranet.ru/';
@@ -113,13 +122,3 @@ function getUltranet(region, params){
     getParam(html, result, '__tariff', /Тариф:[\S\s]*?<td[^>]*>([\S\s]*?)(?:<\/td>|<a)/i, replaceTagsAndSpaces, html_entity_decode);
     AnyBalance.setResult(result);
 }    
-
-
-function html_entity_decode(str)
-{
-    //jd-tech.net
-    var tarea=document.createElement('textarea');
-    tarea.innerHTML = str;
-    return tarea.value;
-}
-

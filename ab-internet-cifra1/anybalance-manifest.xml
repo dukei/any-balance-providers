@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-cifra1</id>
+  <id version="2">ab-internet-cifra1</id>
   <name>Цифра Один</name>
   <description>
     Получает баланс и информацию о тарифном плане для российского интернет-провайдера Цифра Один (http://cifra1.ru).
@@ -11,6 +11,7 @@
 
     Внимание! Поддерживаются следующие провайдеры, входящие в компанию Цифра Один:
     * http://ultranet.ru, САО, Москва
+    * http://cifra1.ru
 
     Для добавления других провайдеров, обращайтесь к автору по е-мейл.
   </description>
@@ -18,7 +19,9 @@
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
+    <js>library.js</js>
     <js>main.js</js>
+    <history>history.xml</history>
   </files>
   <counters>
     <counter id="balance" name="Баланс" units="р"/>

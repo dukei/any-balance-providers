@@ -12,7 +12,8 @@ var g_regions = {
     belgorod: mainBelgorod,
     center: mainCenter,
     orel: mainBelgorod,
-    oskol: mainBelgorod
+    oskol: mainBelgorod,
+    lipetsk: mainBelgorod,
 };
 
 function main(){

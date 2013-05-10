@@ -13,6 +13,31 @@ function parseTrafficMb(str){
     return val;
 }
 
+function parseBalanceRK(_text){
+    var text = _text.replace(/\s+/g, '');
+    var rub = getParam(text, null, null, /(-?\d[\d\.,]*)(?:мин|хв|руб|грн)/i, replaceFloat, parseFloat) || 0;
+    var kop = getParam(text, null, null, /(-?\d[\d\.,]*)(?:сек)/i, replaceFloat, parseFloat) || 0;
+    var val = rub+kop/100;
+    AnyBalance.trace('Parsing balance (' + val + ') from: ' + _text);
+    return val;
+}
+
+//При сумме считаем, что дробная часть - это секунды
+function aggregate_sum_mins(mins){
+    if(mins.length == 0)
+        return;
+    var minutes=0, seconds=0;
+    for(var i=0; i<mins.length; ++i){
+        var val = mins[i];
+        minutes += Math.floor(val);
+        seconds += (val - Math.floor(val))*100;
+    }
+
+    minutes += Math.floor(seconds/60);
+    minutes += (seconds%60)/100;
+    return minutes;
+}
+
 function main(){
   var prefs = AnyBalance.getPreferences();
   var baseurl = "https://poslugy.beeline.ua/";
@@ -71,29 +96,29 @@ function main(){
   // Срок действия бонусов доплаты за входящие звонки
   sumParam(html, result, 'termin_bonusbalance', /Доплата за вх(?:одящие зво|ідні дзві)нки:[\s\S]*?<td[^>]*>[\s\S]*?<\/td>[\s\S]*?<td[\s\S]*?>[\s\S]*?>([\s\S]*?)</ig, replaceTagsAndSpaces, parseDate, aggregate_min);
   
-  // Бесплатные минуты на Киевстар, Билайн и Голден Телеком
-  sumParam(html, result, 'minutebalance6', /(?:Остаток минут|Залишок хвилин) для (?:звонко|дзвінкі)в на Ки(?:е|ї)встар:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+  // Бесплатные минуты на Киевстар
+  sumParam(html, result, 'minutebalance6', /(?:Остаток минут|Залишок хвилин) для (?:звонко|дзвінкі)в на Ки(?:е|ї)встар:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalanceRK, aggregate_sum_mins);
   
   // Льготные минуты на мобильные и стационарные номера по Украине
-  sumParam(html, result, 'minutebalance7', /(?:Остаток минут|Залишок хвилин) для (?:звонко|дзвінкі)в на (?:других|інших) оператор(?:о|і)в:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+  sumParam(html, result, 'minutebalance7', /(?:Остаток минут|Залишок хвилин) для (?:звонко|дзвінкі)в на (?:других|інших) оператор(?:о|і)в:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalanceRK, aggregate_sum_mins);
 
   // Бонусные минуты на Beeline и Голден Телеком
-  getParam(html, result, 'minutebalance', /Бонусн(?:ые минуты|і хвилини) на Beeline (?:и|та) Голден Телеком:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+  getParam(html, result, 'minutebalance', /Бонусн(?:ые минуты|і хвилини) на Beeline (?:и|та) Голден Телеком:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalanceRK);
   
   // Бесплатные минуты на Киевстар и Beeline
-  getParam(html, result, 'minutebalance1', /Бе(?:сплатные минуты|зкоштовні хвилини) на Ки(?:е|ї)встар (?:и|та) Beeline:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+  getParam(html, result, 'minutebalance1', /Бе(?:сплатные минуты|зкоштовні хвилини) на Ки(?:е|ї)встар (?:и|та) Beeline:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalanceRK);
   
   // Минуты на стационарные телефоны Украины
-  getParam(html, result, 'minutebalance2', /(?:инуты|вилини) на стац(?:и|і)онарн(?:ые|і) телефон(?:ы|и) Укра(?:ины|їни):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+  getParam(html, result, 'minutebalance2', /(?:инуты|вилини) на стац(?:и|і)онарн(?:ые|і) телефон(?:ы|и) Укра(?:ины|їни):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalanceRK);
   
   // Минуты по условиям ТП (на Киевстар, Билайн, Голден ТЕЛЕКОМ)
-  sumParam(html, result, 'minutebalance3', /.>(?:Минуты по условиям|Хвилини за умовами) ТП:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+  sumParam(html, result, 'minutebalance3', /.>(?:Минуты по условиям|Хвилини за умовами) ТП:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalanceRK, aggregate_sum_mins);
   
   // Пакетные минуты по условиям ТП (по Украине)
-  sumParam(html, result, 'minutebalance4', /.>Пакетн(?:ые минуты по условиям|і хвилини за умовами) ТП:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+  sumParam(html, result, 'minutebalance4', /.>Пакетн(?:ые минуты по условиям|і хвилини за умовами) ТП:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalanceRK, aggregate_sum_mins);
   
   // Остаток минут на Киевстар и Голден Телеком
-  sumParam(html, result, 'minutebalance5', /.>(?:Остаток минут для звонков на Киевстар и|Залишок хвилин для дзвінків на Київстар та) Голден Телеком:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+  sumParam(html, result, 'minutebalance5', /.>(?:Остаток минут для звонков на Киевстар и|Залишок хвилин для дзвінків на Київстар та) Голден Телеком:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, parseBalanceRK, parseBalance, aggregate_sum_mins);
 
   // Бонус Домашний Интернет
   getParam(html, result, 'bonusdominet', /(?:От услуги "Домашний И|Від послуги "Домашній І)нтернет":[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);

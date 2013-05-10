@@ -21,7 +21,7 @@ function main(){
 	var info = AnyBalance.requestPost(baseurl + "cab.php", {
 		"login": prefs.login,
 		"pass": prefs.pass,
-		"enter": "1",
+		"enter": "2",
 		"lang": "ru"
 	},
 	{	"Accept-Language": "ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4",

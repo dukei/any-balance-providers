@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="12">ab-affiliate-vladimirfx</id>
-  <name>Инвестиционная программа Vladimirfx.ru</name>
+  <id major_version="1" version="2">ab-affiliate-vladimirfx</id>
+  <name>VladimirFX</name>
   <description>
     Помогает отслеживать состояние депозита инвестора на сайте www.vladimirfx.ru.
   </description>

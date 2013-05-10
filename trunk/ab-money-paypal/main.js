@@ -35,7 +35,7 @@ function main(){
     if(error)
         throw new AnyBalance.Error(error);
 
-    href = getParam(html, null, null, /"([^"]*_login-done[^"]*)/i);
+    href = getParam(html, null, null, /"([^"]*(?:%5f|_)login(?:%2d|-)done[^"]*)/i, null, html_entity_decode);
     if(!href)
         throw new AnyBalance.Error("Can not log in. Wrong login, password or site is changed.");
 

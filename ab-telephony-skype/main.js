@@ -142,8 +142,8 @@ function main(){
 
     var matches;
 
-    getParam(info, result, 'balance', /<a[^>]*class="first"[^>]*store.buy.skypecredit[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(info, result, 'currency', /<a[^>]*class="first"[^>]*store.buy.skypecredit[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces, parseCurrency);
+    getParam(info, result, 'balance', /<a[^>]*class="credit icon[\s\S]*?<a[^>]*class="first[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(info, result, 'currency', /<a[^>]*class="credit icon[\s\S]*?<a[^>]*class="first[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces, parseCurrency);
     
     if(AnyBalance.isAvailable('subscriptions')){
     	getParam(info, result, 'subscriptions', /<li[^>]+class="subs"[^>]*>([\s\S]*?)<(?:ul|li)[^>]*>/i, replaceTagsAndSpaces, parseBalance);
@@ -154,6 +154,11 @@ function main(){
     getParam(info, result, 'landline', /<li[^>]+class="landline"[^>]*>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance);
     getParam(info, result, 'sms', /<li[^>]+class="sms"[^>]*>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance);
     getParam(info, result, 'wifi', /<li[^>]+class="wifi"[^>]*>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance);
+    
+    if(AnyBalance.isAvailable('inactivein')){
+        getParam(info, result, 'inactivein', /Your Skype Credit becomes inactive in\s*([0-9]*)\s+day/i, replaceTagsAndSpaces, parseBalance);
+        if(!result.inactivein) result.inactivein = 180;
+    }
 
     AnyBalance.setResult(result);
 }

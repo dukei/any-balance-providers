@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id major_version="1" version="1">ab-bonus-balticmiles</id>
+  <name>BalticMiles</name>
+  <description>
+    Reading the information from BalticMiles account (http://www.balticmiles.com)
+
+    BalticMiles is the largest multi-partner loyalty programme in the Baltic states with more than 200 Point-issuing partners. It was launched in October 2009. BalticMiles Points can be earned at over 19 650 places throughout the world. 
+
+    Members can earn Points for flights, hotel accommodation, car rentals, restaurants, beauty and spa treatments, health care, telecommunications, financial services, as well as while shopping at over 1000 international online merchants through the online affiliate program. Points earned can be exchanged for flight tickets, leisure and adventure activities, music downloads, and products from the BalticMiles online shop.
+
+    SIA ‘Baltic Miles’ is a separate limited liability company that is fully owned by ‘Air Baltic Corporation’ (airBaltic) with its headquarters at Riga International Airport, Latvia.
+  </description>
+  <author>valeravi &lt;valeravi@vi-soft.com.ua&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="My points"/>
+    <counter id="expiration" name="Will expire" type="text"/>
+    <counter id="card" name="Card number" type="text"/>
+    <counter id="name" name="Name" type="text"/>
+    <counter id="statusbalance" name="Status points"/>
+    <counter id="expbalance1" name="Will expire in current month"/>
+    <counter id="expmonth1" name="Current expiration month" type="text"/>
+    <counter id="expbalance2" name="Will expire in next month"/>
+    <counter id="expmonth2" name="Next expiration month" type="text"/>
+    <counter id="expbalance3" name="Will expire in month after next"/>
+    <counter id="expmonth3" name="Expiration month after next" type="text"/>
+    <counter id="explastupdated" name="Expiration information last updated" type="time" format="dd/MM/yyyy"/>
+  </counters>
+  <keywords>
+    BalticMiles, miles, airBaltic
+  </keywords>
+  <type>
+    bonus
+  </type>
+  <country>
+  </country>
+</provider>

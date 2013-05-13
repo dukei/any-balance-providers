@@ -100,7 +100,8 @@ function main(){
   sumParam(html, result, 'minutebalance6', /(?:Остаток минут|Залишок хвилин) для (?:звонко|дзвінкі)в на Ки(?:е|ї)встар:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalanceRK, aggregate_sum_mins);
   
   // Льготные минуты на мобильные и стационарные номера по Украине
-  sumParam(html, result, 'minutebalance7', /(?:Остаток минут|Залишок хвилин) для (?:звонко|дзвінкі)в на (?:других|інших) оператор(?:о|і)в:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalanceRK, aggregate_sum_mins);
+  // Остаток минут для звонков на других операторов и номера фиксированной связи:
+  sumParam(html, result, 'minutebalance7', /(?:Остаток минут|Залишок хвилин) для (?:звонко|дзвінкі)в на (?:других|інших) оператор(?:о|і)в:?[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalanceRK, aggregate_sum_mins);
 
   // Бонусные минуты на Beeline и Голден Телеком
   getParam(html, result, 'minutebalance', /Бонусн(?:ые минуты|і хвилини) на Beeline (?:и|та) Голден Телеком:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalanceRK);

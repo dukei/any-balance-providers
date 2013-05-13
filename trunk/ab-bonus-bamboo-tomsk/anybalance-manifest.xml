@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-bonus-bamboo-tomsk</id>
+  <name>Бамбук (Томск)</name>
+  <description>
+    Получает сумму бонусов с карты ресторанов Бамбук (http://bamboo.tomsk.ru/)
+
+    Информация берется из личного кабинета: http://bamboo.tomsk.ru/bonus/
+
+  </description>
+  <author>Alexandra Shalamova &lt;alexandrashalamova@gmail.com&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="fio" name="ФИО" type="text"/>
+  </counters>
+  <keywords>
+    Бамбук ресторанный комплекс, суши бар
+  </keywords>
+  <type>
+    bonus
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

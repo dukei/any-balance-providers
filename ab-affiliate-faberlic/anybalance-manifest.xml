@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-affiliate-faberlic</id>
+  <name>Faberlic</name>
+  <description>
+    Получает информацию для консультанта Faberlic (https://faberlic.com)
+
+    Информация берется из личного кабинета системы Faberlic: https://faberlic.com/index.php
+
+  </description>
+  <author>Alexandra Shalamova &lt;alexandrashalamova@gmail.com&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Мой счёт" prefix="RUR "/>
+    <counter id="myOS" name="Моя ОС" prefix="ОС RUR "/>
+    <counter id="payable" name="К оплате" prefix="RUR "/>
+
+    <counter id="delivery" name="Ближайшая доставка" type="text"/>
+    <counter id="consultant" name="Консультант" type="text"/>
+    <counter id="LO" name="ЛО" type="text"/>
+    <counter id="OLG" name="ОЛГ" type="text"/>
+    <counter id="GO" name="ГО" type="text"/>
+    <counter id="fio" name="ФИО" type="text"/>
+  </counters>
+  <keywords>
+    Фаберлик
+  </keywords>
+  <type>
+    affiliate
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

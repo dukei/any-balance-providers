@@ -22,7 +22,7 @@ function main(){
 
     AnyBalance.setDefaultCharset('utf-8'); 
     var prefs = AnyBalance.getPreferences(),
-        params = '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><soap:Header><ParamsHeader xmlns="Wallet.Security.WebService"><Params><Param Name="CultureId" Value="ru-RU"/></Params></ParamsHeader></soap:Header><soap:Body><GetSessionTicket xmlns="Wallet.Security.WebService"><Login>%</Login><Password>%</Password><LoginType>Auto</LoginType><ClientId>w1_web</ClientId><Params><Param Name="UserAgent" Value="Chrome 26.0.1410.64"/><Param Name="ClientResolutionX" Value="1440"/><Param Name="ClientResolutionY" Value="900"/><Param Name="AppVersion" Value="%"/></Params></GetSessionTicket></soap:Body></soap:Envelope>',
+        params = '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><soap:Header><ParamsHeader xmlns="Wallet.Security.WebService"><Params><Param Name="CultureId" Value="ru-RU"/></Params></ParamsHeader></soap:Header><soap:Body><GetSessionTicket xmlns="Wallet.Security.WebService"><Login>%login%</Login><Password>%password%</Password><LoginType>Auto</LoginType><ClientId>w1_web</ClientId><Params><Param Name="UserAgent" Value="Chrome 26.0.1410.64"/><Param Name="ClientResolutionX" Value="1440"/><Param Name="ClientResolutionY" Value="900"/><Param Name="AppVersion" Value="%appversion%"/></Params></GetSessionTicket></soap:Body></soap:Envelope>',
         pass = Basis.Crypt(prefs.password).sha1(!0).base64().toString(),
         baseurl = "https://www.walletone.com/",
         html;
@@ -31,7 +31,7 @@ function main(){
 
     var appversion = getParam(html, null, null, /<meta[^>]+name="build"[^>]+content="([^"]*?)"[^>]*\/>/i, replaceTagsAndSpaces, html_entity_decode); 
 
-    params = params.replace("%", prefs.login).replace("%", pass).replace("%", appversion);
+    params = params.replace("%login%", prefs.login).replace("%password%", pass).replace("%appversion%", appversion);
 
     html = AnyBalance.requestPost(baseurl + 'w1service/SecurityService.asmx', params, addHeaders({'SOAPAction':'Wallet.Security.WebService/GetSessionTicket'})); 
 

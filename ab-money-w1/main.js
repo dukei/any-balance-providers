@@ -44,8 +44,8 @@ function main(){
 
     var sessionKey = getParam(html, null, null, /<SessionKey>([\s\S]*?)<\/SessionKey>/i, replaceTagsAndSpaces, html_entity_decode);
     
-    params = '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><soap:Header><SecurityHeader xmlns="Wallet.Processing.WebService"><SessionKey>%</SessionKey></SecurityHeader><ParamsHeader xmlns="Wallet.Processing.WebService"><Params><Param Name="CultureId" Value="ru-RU"/></Params></ParamsHeader></soap:Header><soap:Body><GetUserBalance xmlns="Wallet.Processing.WebService"/></soap:Body></soap:Envelope>',
-    params = params.replace("%", sessionKey);
+    params = '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><soap:Header><SecurityHeader xmlns="Wallet.Processing.WebService"><SessionKey>%session%</SessionKey></SecurityHeader><ParamsHeader xmlns="Wallet.Processing.WebService"><Params><Param Name="CultureId" Value="ru-RU"/></Params></ParamsHeader></soap:Header><soap:Body><GetUserBalance xmlns="Wallet.Processing.WebService"/></soap:Body></soap:Envelope>',
+    params = params.replace("%session%", sessionKey);
 
     html = AnyBalance.requestPost(baseurl + 'w1service11/ProcessingService.asmx', params, addHeaders({'SOAPAction':'Wallet.Processing.WebService/GetUserBalance'})); 
 

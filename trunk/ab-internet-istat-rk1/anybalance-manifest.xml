@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-internet-istat-rk1</id>
+  <name>РусКом (Ревда)</name>
+  <description>
+    Получает баланс и информацию о тарифном плане для интернет провайдера РусКом 
+
+    Информация берется из личного кабинета провайдера: https://istat.rk1.ru/
+
+  </description>
+  <author>Alexandra Shalamova &lt;alexandrashalamova@gmail.com&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="advice" name="Рекомендуемый платеж" units="р"/>
+    <counter id="disable" name="Порог отключения" units="р"/>
+    <counter id="number" name="Лицевой счёт" type="text"/>
+  </counters>
+  <keywords>
+    РусКом istat rk1 
+  </keywords>
+  <type>
+    internet
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

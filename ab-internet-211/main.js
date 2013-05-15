@@ -7,6 +7,10 @@
 Личный кабинет: http://passport.211.ru/
 */
 
+var g_headers = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.64 Safari/537.31'
+};
+
 function main(){
     var prefs = AnyBalance.getPreferences();
 
@@ -14,13 +18,14 @@ function main(){
 
     var baseurl = "http://passport.211.ru";
 
-    var html = AnyBalance.requestGet(baseurl + '/user/index');
-
-    html = AnyBalance.requestPost('http://header.211.ru/', {
-        retpath: baseurl,
-        login:prefs.login,
-        password:prefs.password
-    }, {Referer: baseurl + '/user/index'});
+    var html = AnyBalance.requestGet(baseurl + '/user/index', g_headers);
+    if(!prefs.__debug){
+        html = AnyBalance.requestPost('http://header.211.ru/', {
+            retpath: baseurl,
+            login:prefs.login,
+            password:prefs.password
+        }, addHeaders({Referer: baseurl + '/user/index'}));
+    }
 
     var href = getParam(html, null, null, /(\/logout)/i);
     if(!href){

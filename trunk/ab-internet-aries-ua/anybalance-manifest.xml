@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-internet-aries-ua</id>
+  <name>Aries(Одесса)</name>
+  <description>
+    Получает баланс, информацию о кредите и последнем платеже для интернет провайдера Aries (http://www.aries.net.ua/)
+
+    Информация берется из личного кабинета: http://cabinet.aries.net.ua/
+
+  </description>
+  <author>Alexandra Shalamova &lt;alexandrashalamova@gmail.com&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units=" грн"/>
+    <counter id="kredit" name="Кредит" units=" грн"/>
+
+    <counter id="lastPayDate" name="Дата последнего платежа" type="text"/>
+    <counter id="lastPayBalance" name="Сумма последнего платежа" units=" грн"/>
+    <counter id="lastPayStatus" name="Комментарий к последнему платежу" type="text"/>
+  </counters>
+  <keywords>
+    ариес Aries
+  </keywords>
+  <type>
+    internet
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

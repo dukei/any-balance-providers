@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-internet-stats</id>
+  <name>Связь ТехноСервис</name>
+  <description>
+    Получает баланс и другую информацию для интерент провайдера Связь ТехноСервис (http://www.stsats.ru)
+
+    Информация берется из личного кабинета клиента: http://cab.stsats.ru
+
+    Для данного провайдера рекомендуется отдельно подключать аккаунты для интернет, телефонии и Wimax.
+
+  </description>
+  <author>Alexandra Shalamova &lt;alexandrashalamova@gmail.com&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс интернет" units="р"/>
+    <counter id="promise" name="Сумма обещанных платежей интернет" units="р"/>
+    <counter id="ipStatus" name="Состояние IP адресов" type="text"/>
+    <counter id="period" name="Текущий период интернет" type="text"/>
+
+    <counter id="balancePhone" name="Баланс телефонии" units="р"/>
+    <counter id="promisePhone" name="Сумма обещанных платежей телефонии" units="р"/>
+
+    <counter id="balanceWimax" name="Баланс Wimax" units="р"/>
+    <counter id="promiseWimax" name="Сумма обещанных платежей Wimax" units="р"/>
+
+    <counter id="fio" name="ФИО" type="text"/>
+  </counters>
+  <keywords>
+    Связь Техно Сервис
+  </keywords>
+  <type>
+    internet
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

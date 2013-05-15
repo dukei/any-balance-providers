@@ -34,11 +34,18 @@ function main(){
     getParam(html, result, '__tariff', /Текущий<\/th>\s*<td>\s*<b>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'status', /Состояние:\s*<\/b>\s*([\s\S]*?)\s*<\/td>/i, [replaceTagsAndSpaces], html_entity_decode);
 
-    getParam(html, result, 'balance', /Текущий баланс:\s*<\/b>\s*([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    var newBalance = result.balance.split(" ");
-    result.balance = newBalance[0] + "." + newBalance[2];
+    getParam(html, result, 'balance', /Текущий баланс:\s*<\/b>\s*([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalanceRK);
 
     getParam(html, result, 'number', /Лицевой счет:\s*([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
 
     AnyBalance.setResult(result);
+}
+
+function parseBalanceRK(_text){
+    var text = _text.replace(/\s+/g, '');
+    var rub = getParam(text, null, null, /(-?\d[\d\.,]*)руб/i, replaceFloat, parseFloat) || 0;
+    var kop = getParam(text, null, null, /(-?\d[\d\.,]*)коп/i, replaceFloat, parseFloat) || 0;
+    var val = rub+kop/100;
+    AnyBalance.trace('Parsing balance (' + val + ') from: ' + _text);
+    return val;
 }

@@ -1,21 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-cell-matrixmobile</id>
-  <name>Matrix Mobile</name>
+  <id version="1"></id>
+  <name></name>
   <description>
-    Получает баланс и информацию о тарифном плане для сотового оператора Matrix Mobile (http://matrixmobile.ru)
 
-    Информация берется из системы учета и активации услуг Matrix Open: https://matrixopen.ru
-
-    Как получить или сменить пароль?
-    Со своего мобильного телефона 
-      1. наберите номер 555
-      2. перейдите в меню услуги Matrix Open, нажав цифру 5
-      3. следуйте инструкциям автоинформатора
-    
-    В течение 15 минут ожидайте SMS-сообщение с паролем для доступа к услуге Matrix Open.
-
-    Для подключения услуги юридическими лицами - Вам необходимо связаться с отделом по работе с корпоративными клиентами по тел. +7 (495) 780-4710 или по электронной почте corpmobile@mtx.ru.
   </description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <files>
@@ -32,10 +20,10 @@
     <counter id="phone" name="Телефон" type="text"/>
   </counters>
   <keywords>
-    Матрикс Телеком
+    
   </keywords>
   <type>
-    cell
+    
   </type>
   <country>
     ru

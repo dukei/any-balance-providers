@@ -56,6 +56,7 @@ function main(){
 
         getParam(html, result, 'balancePhone', /Баланс:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseBalance);
         getParam(html, result, 'promisePhone', /Сумма обещанных платежей:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseBalance);
+        getParam(html, result, 'statusPhone', /Состояние тел\. номеров клиента:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
     }
 
     if (/wrapper\.php\?v_s=32/i.test(html)) {            

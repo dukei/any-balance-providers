@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-stats</id>
-  <name>Связь ТехноСервис</name>
+  <id version="2">ab-internet-stats</id>
+  <name>СвязьТехноСервис</name>
   <description>
-    Получает баланс и другую информацию для интерент провайдера Связь ТехноСервис (http://www.stsats.ru)
+    Получает баланс и другую информацию для интерент провайдера СвязьТехноСервис (http://www.stsats.ru)
 
     Информация берется из личного кабинета клиента: http://cab.stsats.ru
 
@@ -31,6 +31,7 @@
     <counter id="promiseWimax" name="Сумма обещанных платежей Wimax" units="р"/>
 
     <counter id="fio" name="ФИО" type="text"/>
+    <counter id="id" name="Персональный ID" type="text"/>
   </counters>
   <keywords>
     Связь Техно Сервис

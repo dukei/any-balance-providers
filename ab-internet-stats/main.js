@@ -1,7 +1,7 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 
-Получает баланс и другую информацию для интерент провайдера Связь ТехноСервис
+Получает баланс и другую информацию для интерент провайдера СвязьТехноСервис
 
 Operator site: http://www.stsats.ru/
 Личный кабинет: http://cab.stsats.ru/
@@ -35,7 +35,7 @@ function main(){
     }
 
     var result = {success: true};
-    getParam(html, result, 'fio', /Добро пожаловать в тестовый кабинет,\s*([\s\S]*?)!/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'fio', /Добро пожаловать в [^<]*?кабинет,\s*([\s\S]*?)!/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'id', /Ваш персональный ID:\s*<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
 
     html = AnyBalance.requestGet(baseurl + "wrapper.php?cclass_id=17", g_headers);

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-bonus-big-remont</id>
+  <name>Большой ремонт</name>
+  <description>
+    Получает бонусные баллы и суммы для карты Большого ремонта (http://big-remont.ru/)
+
+  </description>
+  <author>Alexandra Shalamova &lt;alexandrashalamova@gmail.com&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Общая накопленная сумма" units="р"/>
+    <counter id="balanceBonus" name="Накопленная сумма в бонусах" units=" Б"/>
+    <counter id="balanceBonusInRUR" name="Сумма накопленных бонусов в рублях" units="р"/>
+  </counters>
+  <keywords>
+    big remont
+  </keywords>
+  <type>
+    bonus
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

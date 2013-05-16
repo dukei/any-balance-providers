@@ -3,7 +3,7 @@
   <id version="1">ab-internet-dorinet</id>
   <name>DoRiN Networks</name>
   <description>
-    Получает баланс для провайдера IP телефонии DoRiN Networks (http://matrixmobile.ru)
+    Получает баланс для провайдера IP телефонии DoRiN Networks (http://dorinet.org)
 
     BИнформация берется из личного кабинета системы DoRiN Networks (http://dorinet.org/lk.php)
   </description>

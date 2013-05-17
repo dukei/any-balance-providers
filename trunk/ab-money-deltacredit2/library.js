@@ -26,16 +26,22 @@ function getParam (html, result, param, regexp, replaces, parser) {
 	if (!isAvailable(param))
 		return;
 
-	var matches = regexp ? html.match(regexp) : [, html], value;
-	if (matches) {
-                //Если нет скобок, то значение - всё заматченное
-		value = replaceAll(isset(matches[1]) ? matches[1] : matches[0], replaces);
-		if (parser)
-			value = parser (value);
+        var regexps = isArray(regexp) ? regexp : [regexp];
+        for(var i=0; i<regexps.length; ++i){ //Если массив регэкспов, то возвращаем первый заматченный
+                regexp = regexps[i];
+		var matches = regexp ? html.match(regexp) : [, html], value;
+		if (matches) {
+                        //Если нет скобок, то значение - всё заматченное
+			value = replaceAll(isset(matches[1]) ? matches[1] : matches[0], replaces);
+			if (parser)
+				value = parser (value);
+	        
+			if(param && isset(value))
+				result[isArray(param) ? param[0] : param] = value;
+			break;
+		}
+        }
 
-		if(param)
-			result[isArray(param) ? param[0] : param] = value;
-	}
 	return value;
 }
 
@@ -144,7 +150,10 @@ function createFormParams(html, process, array){
     html.replace(/<input[^>]+name="([^"]*)"[^>]*>|<select[^>]+name="([^"]*)"[^>]*>[\s\S]*?<\/select>/ig, function(str, nameInp, nameSel){
         var value = '';
         if(nameInp){
-            value = getParam(str, null, null, /value="([^"]*)"/i, null, html_entity_decode);
+            if(/type="button"/i.test(str))
+                value=undefined;
+            else
+                value = getParam(str, null, null, /value="([^"]*)"/i, null, html_entity_decode) || '';
             name = nameInp;
         }else if(nameSel){
             value = getParam(str, null, null, /^<[^>]*value="([^"]*)"/i, null, html_entity_decode);
@@ -201,6 +210,12 @@ function joinObjects(newObject, oldObject){
    return obj;
 }
 
+function joinArrays(arr1, arr2){
+   var narr = arr1.slice();
+   narr.push.apply(narr, arr2);
+   return narr;
+}
+
 /**
  *  Добавляет хедеры к переданным или к g_headers
  */
@@ -211,7 +226,7 @@ function addHeaders(newHeaders, oldHeaders){
    if(!bOldArray && !bNewArray)
        return joinObjects(newHeaders, oldHeaders);
    if(bOldArray && bNewArray) //Если это массивы, то просто делаем им join
-       return oldHeaders.slice().push.apply(oldHeaders, newHeaders);
+       return joinArrays(oldHeaders, newHeaders);
    if(!bOldArray && bNewArray){ //Если старый объект, а новый массив
        var headers = joinObjects(null, oldHeaders);
        for(var i=0; i<newHeaders.length; ++i)
@@ -345,26 +360,29 @@ function parseDateJS(str){
  * если regexp == null, то значением является переданный html
  * если replaces == null, то замены не делаются
  * do_replace - если true, то найденные значения вырезаются из переданного текста 
- * и новый текст возвращается (только при param == null)
+ * и новый текст возвращается (только при param != null)
  * 
  * replaces - массив, нечетные индексы - регулярные выражения, четные - строки, 
  * на которые надо заменить куски, подходящие под предыдущее регулярное выражение. Эти массивы могут быть вложенными.
  * см. например replaceTagsAndSpaces
  */
 function sumParam (html, result, param, regexp, replaces, parser, do_replace, aggregate) {
-    if (!isAvailable(param)){
-	if(do_replace)
-		return html;
-        else
-		return;
+    if(typeof(do_replace) == 'function'){
+        var aggregate_old = aggregate;
+        aggregate = do_replace;
+        do_replace = aggregate_old || false;
     }
+
+    function replaceIfNeeded(){
+	if(do_replace) 
+		return regexp ? html.replace(regexp, '') : '';
+    }
+
+    if (!isAvailable(param))  //Даже если счетчик не требуется, всё равно надо вырезать его матчи, чтобы не мешалось другим счетчикам
+        return replaceIfNeeded();
+
     //После того, как проверили нужность счетчиков, кладем результат в первый из переданных счетчиков. Оставляем только первый
     param = isArray(param) ? param[0] : param;
-
-    if(typeof(do_replace) == 'function'){
-        aggregate = do_replace;
-        do_replace = false;
-    }
 
     var values = [], matches;
     if(param && isset(result[param]))
@@ -378,15 +396,21 @@ function sumParam (html, result, param, regexp, replaces, parser, do_replace, ag
         	values.push(value);
     }
 
-    if(!regexp){
-        replaceAndPush(html);
-    }else{
-        regexp.lastIndex = 0; //Удостоверяемся, что начинаем поиск сначала.
-        while(matches = regexp.exec(html)){
+    var regexps = isArray(regexp) ? regexp : [regexp];
+    for(var i=0; i<regexps.length; ++i){ //Пройдемся по массиву регулярных выражений
+        regexp = regexps[i];
+        if(!regexp){
+            replaceAndPush(html);
+        }else{
+            regexp.lastIndex = 0; //Удостоверяемся, что начинаем поиск сначала.
+            while(matches = regexp.exec(html)){
                 replaceAndPush(isset(matches[1]) ? matches[1] : matches[0]);
-        	if(!regexp.global)
-            		break; //Если поиск не глобальный, то выходим из цикла
-	}
+            	if(!regexp.global)
+                    break; //Если поиск не глобальный, то выходим из цикла
+	    }
+        }
+        if(do_replace) //Убираем все матчи, если это требуется
+            html = regexp ? html.replace(regexp, '') : '';
     }
 
     var total_value;
@@ -399,8 +423,7 @@ function sumParam (html, result, param, regexp, replaces, parser, do_replace, ag
       if(isset(total_value)){
           result[param] = total_value;
       }
-      if(do_replace)
-          return regexp ? html.replace(regexp, '') : html;
+      return html;
     }else{
       return total_value;
     }
@@ -468,13 +491,13 @@ function parseTrafficGb(text, defaultUnits){
  * Вычисляет трафик в нужных единицах из переданной строки.
  */
 function parseTrafficEx(text, thousand, order, defaultUnits){
-    var _text = html_entity_decode(text.replace(/\s+/, ''));
+    var _text = html_entity_decode(text.replace(/\s+/g, ''));
     var val = getParam(_text, null, null, /(-?\d[\d\.,]*)/, replaceFloat, parseFloat);
     if(!isset(val)){
         AnyBalance.trace("Could not parse traffic value from " + text);
         return;
     }
-    var units = getParam(_text, null, null, /([kmgкмг][бb]|[бb](?![\wа-я])|байт|bytes)/i);
+    var units = getParam(_text, null, null, /([kmgкмг][бb]?|[бb](?![\wа-я])|байт|bytes)/i);
     if(!units && !defaultUnits){
         AnyBalance.trace("Could not parse traffic units from " + text);
         return;

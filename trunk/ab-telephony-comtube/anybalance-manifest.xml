@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="3">ab-telephony-comtube</id>
+  <id version="4">ab-telephony-comtube</id>
   <name>ComTube</name>
   <description>
-    Получает текущий баланс, валюту счета и номер внутри системы у провайдера IP-телефонии ComTube.
+    Получает текущий баланс, баланс инвестиционного счета, валюту счета и номер внутри системы у провайдера IP-телефонии ComTube.
     Сайт провайдера: http://www.comtube.com
   </description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
@@ -16,6 +16,7 @@
   </files>
   <counters>
     <counter id="balance" name="Баланс" units=" {@currency}"/>
+    <counter id="invest" name="Баланс инвестиционного счета" units=" {@currency}"/>
     <counter id="number" name="Номер ComTube" type="text"/>
     <counter id="currency" name="Валюта" type="text"/>
   </counters>

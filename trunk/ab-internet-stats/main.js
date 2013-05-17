@@ -48,6 +48,7 @@ function main(){
         getParam(html, result, 'promise', /Сумма обещанных платежей:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseBalance);
         getParam(html, result, 'ipStatus', /Состояние IP адресов:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
         getParam(html, result, 'period', /Текущий период:\s*([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces, html_entity_decode);  
+        getParam(html, result, 'rekplat', /Необходимая для внесения [^<]*?услуг:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseBalance); 
     }
 
     if (/wrapper\.php\?v_s=27/i.test(html)) {            
@@ -65,6 +66,9 @@ function main(){
 
         getParam(html, result, 'balanceWimax', /Баланс:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseBalance);
         getParam(html, result, 'promiseWimax', /Сумма обещанных платежей:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseBalance);
+        getParam(html, result, 'statusWimax', /Состояние IP адресов:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
+        getParam(html, result, 'periodWimax', /Текущий период:\s*([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces, html_entity_decode);  
+        getParam(html, result, 'rekplatWimax', /Необходимая для внесения [^<]*?услуг:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseBalance); 
     }
 
     AnyBalance.setResult(result);

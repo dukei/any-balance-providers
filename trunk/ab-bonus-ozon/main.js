@@ -10,9 +10,22 @@
 function main(){
     var prefs = AnyBalance.getPreferences();
 
-    var baseurl = "http://www.ozon.ru/";
+    var baseurl = "https://www.ozon.ru/";
 
-    var html = AnyBalance.requestPost(baseurl + 'default.aspx?context=login', {
+    var html = AnyBalance.requestGet(baseurl + 'default.aspx?context=login');
+    var ev = getEventValidation(html);
+    var vs = getViewState(html);
+    if(!vs || !ev)
+        throw new AnyBalance.Error('Не найдена форма входа. Сайт изменен?');
+
+    if(/<input[^>]+name="Answer"/i.test(html))
+        throw new AnyBalance.Error('Озон ввёл капчу при входе в личный кабинет. Провайдер временно не работает.');
+        
+    html = AnyBalance.requestPost(baseurl + 'default.aspx?context=login', {
+        __EVENTTARGET:'',
+        __EVENTARGUMENT:'',
+        __VIEWSTATE:vs,
+        __EVENTVALIDATION:ev,
         LoginType:1,
         LoginGroup:'HasAccountRadio',
         Login:prefs.login,
@@ -48,3 +61,12 @@ function main(){
 
     AnyBalance.setResult(result);
 }
+
+function getViewState(html){
+    return getParam(html, null, null, /name="__VIEWSTATE".*?value="([^"]*)"/) || getParam(html, null, null, /__VIEWSTATE\|([^\|]*)/i);
+}
+
+function getEventValidation(html){
+    return getParam(html, null, null, /name="__EVENTVALIDATION".*?value="([^"]*)"/) || getParam(html, null, null, /__EVENTVALIDATION\|([^\|]*)/i);
+}
+

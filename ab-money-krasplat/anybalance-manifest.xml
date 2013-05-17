@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-money-krasplat</id>
+  <name>Internet Платёжка</name>
+  <description>
+    Получает баланс, номер счета и информацию о последнем платеже в системе Internet Платёжка (http://www.krasplat.ru)
+
+    Информация берется из личного кабинета (https://www.krasplat.ru/index.php)
+  </description>
+  <author>Alexandra Shalamova &lt;alexandrashalamova@gmail.com&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="number" name="Номер счета" type="text"/>
+
+    <counter id="lastDate" name="Дата последнего платежа" type="time" format="dd/MM/yyyy"/>
+    <counter id="lastNumber" name="Адрес последнего платежа" type="text"/>
+    <counter id="lastBalance" name="Сумма последнего платежа" units="р"/>
+  </counters>
+  <keywords>
+      интернет платежка красноярский краевой расчетный центр
+  </keywords>
+  <type>
+    money
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

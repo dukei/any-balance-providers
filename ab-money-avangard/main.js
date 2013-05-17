@@ -171,9 +171,11 @@ function fetchBankPhysic(html, baseurl){
     var balance = getParam($acc.find('tr:first-child td:last-child b').text(), null, null, null, replaceTagsAndSpaces, parseBalance);
     getParam($acc.find('tr:first-child td:last-child b').text(), result, 'currency', null, replaceTagsAndSpaces, parseCurrency);
 
+    var cardnum = '';
     if(what == 'card'){
         var $card = $acc.find('table.cardListTable tr:contains("' + acccardnum + '")').first();
         if($card.size()){
+            cardnum = getParam($card.find('td:nth-child(2)').text(), null, null, null, replaceTagsAndSpaces);
             getParam($card.find('td:nth-child(2)').text(), result, 'cardnum', null, replaceTagsAndSpaces);
             getParam($card.find('td:nth-child(2)').text(), result, '__tariff', null, replaceTagsAndSpaces);
             getParam($card.find('td:nth-child(3)').text(), result, 'cardname', null, replaceTagsAndSpaces);
@@ -213,6 +215,25 @@ function fetchBankPhysic(html, baseurl){
 
             if(AnyBalance.isAvailable('debt') && limit){
                 result.debt = limit - balance; //Задолженность
+            }
+
+           
+            if(AnyBalance.isAvailable('lgotsum', 'lgottill')){
+                html = AnyBalance.requestPost(baseurl + '/faces/pages/accounts/card_acc_detailed.jspx', {
+                    'f:_id216:rangeStart':0,
+                    'oracle.adf.faces.FORM':'f',
+                    'oracle.adf.faces.STATE_TOKEN':getStateToken(html),
+                    source:getParam(html, null, null, /info_card_preference_enabled.gif[\s\S]*?\{source:'([^']*)/i)
+                }, g_headers);
+
+                html = AnyBalance.requestPost(baseurl + '/faces/pages/accounts/preference_info_inner.jspx', {time: new Date().getTime()}, addHeaders({
+                    'Referer':baseurl + '/faces/pages/accounts/preference_info.jspx',
+                    'X-Requested-With':'XMLHttpRequest'
+                }));
+            
+                getParam(html, result, 'lgotsum', /Для получения льготы необходимо сделать покупок на сумму\s*<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+                getParam(html, result, 'lgottill', /Для получения льготы необходимо сделать покупок на сумму(?:[\s\S]*?<span[^>]*>){2}([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseDate);
+                 
             }
        }
     }

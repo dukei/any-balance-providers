@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="4">ab-internet-stats</id>
+  <id version="5">ab-internet-stats</id>
   <name>СвязьТехноСервис</name>
   <description>
     Получает баланс и другую информацию для интерент провайдера СвязьТехноСервис (http://www.stsats.ru)
@@ -24,6 +24,7 @@
     <counter id="ipStatus" name="Состояние IP адресов" type="text"/>
     <counter id="period" name="Текущий период интернет" type="text"/>
     <counter id="rekplat" name="Рекомендуемый платеж интернет" units="р"/>
+    <counter id="trafik" name="Объем использованного трафика" units="МБ"/>
 
     <counter id="balancePhone" name="Баланс телефонии" units="р"/>
     <counter id="promisePhone" name="Сумма обещанных платежей телефонии" units="р"/>
@@ -34,6 +35,7 @@
     <counter id="statusWimax" name="Состояние IP адресов Wimax" type="text"/>
     <counter id="periodWimax" name="Текущий период Wimax" type="text"/>
     <counter id="rekplatWimax" name="Рекомендуемый платеж Wimax" units="р"/>
+    <counter id="trafikWimax" name="Объем использованного трафика Wimax" units="МБ"/>
 
 	<counter id="fio" name="ФИО" type="text"/>
 	<counter id="id" name="Персональный ID" type="text"/>
@@ -42,7 +44,7 @@
     Связь Техно Сервис
   </keywords>
   <type>
-    internet
+    internet, telephony
   </type>
   <country>
     ru

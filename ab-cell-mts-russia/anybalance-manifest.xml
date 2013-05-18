@@ -40,7 +40,8 @@
     <counter id="min_used_mts" name="Использовано минут на МТС" units="мин"/>
     <counter id="min_left_mts" name="Бесплатные минуты на МТС" units="мин"/>
     <counter id="debt" name="Неоплаченные счета" units="р"/>
-    <counter id="pay_till" name="Оплатить до" type="time"/>
+    <counter id="pay_till" name="Оплатить до" type="time" format="dd/MM/yyyy"/>
+    <counter id="min_till" name="Срок действия пакета минут" type="time"/>
     <counter id="statuslock" name="Статус блокировки" type="text"/>
     <counter id="credit" name="Кредит" units="р"/>
     <counter id="usedinthismonth" name="Расход за этот месяц" units="р"/>

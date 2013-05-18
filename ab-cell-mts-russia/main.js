@@ -372,6 +372,9 @@ function isAvailableStatus(){
 function fetchAccountStatus(html, result){
     AnyBalance.trace("Parsing status...");
     
+    // Ближайший срок истекания пакета минут
+    sumParam (html, result, 'min_till', /мин\.?,?\s*действует до ([^<]*)/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
+
     //Территория МТС (3000 минут): Осталось 0 минут
     html = sumParam (html, result, 'min_left_mts', /Территория МТС.*?: Осталось\s*([\d\.,]+)\s*мин/ig, replaceFloat, parseBalance, aggregate_sum, true);
     html = sumParam (html, result, 'min_left_mts', /Осталось\s*([\d\.,]+)\s*мин\S* на МТС/ig, replaceFloat, parseBalance, aggregate_sum, true);
@@ -416,7 +419,6 @@ function fetchAccountStatus(html, result){
     // Остаток "Бесплатных вызовов при платеже": 29
     html = sumParam (html, result, 'min_left', /"Бесплатных вызовов при платеже":[^<]*?([\d\.,]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
 
-    
     // Использовано: 0 минут местных и мобильных вызовов.
     // Использовано 1 мин на городские номера Москвы, МТС домашнего региона и МТС России
     sumParam (html, result, 'min_local', /Использовано:?\s*([\d\.,]+)\s*мин[^\s]* (местных|на городские)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);

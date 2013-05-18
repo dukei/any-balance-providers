@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="5" version="1">ab-game-godville</id>
+	<id version="6">ab-game-godville</id>
 	<name>Godville.net</name>
 	<description>
 		Отображает некоторые параметры игры (здоровье, прана, количество кирпичей, уровень героя)

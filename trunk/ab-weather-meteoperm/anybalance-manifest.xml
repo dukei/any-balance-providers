@@ -3,13 +3,14 @@
   <id major_version="1.0" version="1">ab-weather-meteoperm</id>
   <name>Температура в Перми(ПГУ)</name>
   <description>
-   Получает текущую погоду с сайта meteo.perm.ru. Для измерения температуры используется температурный датчик собственного производства, расположенный в ПГУ г. Перми и защищенный от воздействия внешних факторов, что позволяет довольно точно определять температуру воздуха. 
+   Получает текущую погоду с сайта http://meteo.perm.ru. Для измерения температуры используется температурный датчик собственного производства, расположенный в ПГУ г. Перми и защищенный от воздействия внешних факторов, что позволяет довольно точно определять температуру воздуха. 
   </description>
   <author>Sancho Vyatchanin&lt;mail@sancho.pw&gt;</author>
   <files>
     <icon>icon.png</icon>
     <!--<preferences>preferences.xml</preferences>-->
     <!--<js>api:jquery.min.js</js>-->
+    <js>library.js</js>
     <js>main.js</js>
   </files>
   <counters>
@@ -33,9 +34,12 @@
     <counter id="sut_doza" name="Суточная доза ультрафиолетового излучения" units="МЭД"/>
   </counters>
   <keywords>
-    прогноз, погода, температура, воздух, meteoperm
+    прогноз, погода, температура, воздух, meteoperm, пермь
   </keywords>
   <type>
     weather
   </type>
+  <country>
+    ru
+  </country>
 </provider>

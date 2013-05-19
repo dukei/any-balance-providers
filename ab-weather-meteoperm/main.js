@@ -10,9 +10,12 @@ function main(){
 	var result = {success: true};
 	AnyBalance.trace("Loading meteo.perm.ru");
 	var html = AnyBalance.requestGet('http://meteo.perm.ru/current-data');
-	
+
+        if(!/<span class="big2">/i.test(html))
+            throw new AnyBalance.Error('Не удаётся найти текущую температуру. Сайт изменен?');
+
 	AnyBalance.trace("Parsing current temperature");
-	var regexp = /[\s\S]*<span class="big2"><strong>(.*?) &deg;C<\/strong>[\s\S]*<\//;
+	var regexp = /[\s\S]*<span class="big2">([\s\S]*?)<\/span>/;
 	var regexp1 = /[\s\S]*Ощущаемая температура[\s\S]*4">(.*?) &deg;C[\s\S]*Точка росы[\s\S]*<\//;
 	var regexp2 = /[\s\S]*Точка росы[\s\S]*4">(.*?) &deg;C[\s\S]*Атмосферное давление[\s\S]*<\//;
 	var regexp3 = /[\s\S]*Атмосферное давление[\s\S]*4">(.*?) мм рт[\s\S]*Относительная влажность воздуха[\s\S]*<\//;
@@ -30,23 +33,23 @@ function main(){
 	var regexp15 = /[\s\S]*Индекс ультрафиолетового излучения[\s\S]*4">(.*?)<\/td>[\s\S]*Суточная доза ультрафиолетового излучения[\s\S]*<\//;
 	var regexp16 = /[\s\S]*Суточная доза ультрафиолетового излучения[\s\S]*4">(.*?) МЭД[\s\S]*Дизайн[\s\S]*<\//;
 
-	result.temperature = parseFloat(html.match(regexp)[1]);
-	result.o_temp = parseFloat(html.match(regexp1)[1]);
-	result.point_dew = parseFloat(html.match(regexp2)[1]);
-	result.atm_davl = parseFloat(html.match(regexp3)[1]);
-	result.otn_vl_vozd = parseFloat(html.match(regexp4)[1]);
-	result.v_vetra = parseFloat(html.match(regexp5)[1]);
-	result.sr_v_vetra_10 = parseFloat(html.match(regexp6)[1]);
-	result.sr_v_vetra_1 = parseFloat(html.match(regexp7)[1]);
-	result.napr_vetra = String(html.match(regexp8)[1]);
-	result.ur_osad_1 = parseFloat(html.match(regexp9)[1]);
-	result.ur_osad_tek = parseFloat(html.match(regexp10)[1]);
-	result.date_osad = String(html.match(regexp11)[1]);
-	result.intens_osad = parseFloat(html.match(regexp12)[1]);
-	result.sum_ispar = parseFloat(html.match(regexp13)[1]);
-	result.intens_potoka = parseFloat(html.match(regexp14)[1]);
-	result.index = parseFloat(html.match(regexp15)[1]);
-	result.sut_doza = parseFloat(html.match(regexp16)[1]);
+        getParam(html, result, 'temperature', regexp, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'o_temp', regexp1, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'point_dew', regexp2, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'atm_davl', regexp3, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'otn_vl_vozd', regexp4, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'v_vetra', regexp5, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'sr_v_vetra_10', regexp6, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'sr_v_vetra_1', regexp7, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'napr_vetra', regexp8, replaceTagsAndSpaces);
+	getParam(html, result, 'ur_osad_1', regexp9, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'ur_osad_tek', regexp10, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'date_osad', regexp11, replaceTagsAndSpaces);
+	getParam(html, result, 'intens_osad', regexp12, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'sum_ispar', regexp13, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'intens_potoka', regexp14, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'index', regexp15, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'sut_doza', regexp16, replaceTagsAndSpaces, parseBalance);
 	
 	AnyBalance.setResult(result);
 }

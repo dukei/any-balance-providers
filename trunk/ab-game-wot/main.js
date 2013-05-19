@@ -16,11 +16,11 @@ function main(){
 	}
 	
 	// Проверяем нужен ли нам id, при необходимости получаем его
-	if ((AnyBalance.isAvailable('tank_wins', 'tank_battles', 'tank_win_percent', 'er', 'wn6', 'er_armor'))||(prefs.listPref == 'id'))
+	if ((AnyBalance.isAvailable('tank_wins', 'tank_battles', 'tank_win_percent', 'er', 'wn6', 'er_armor', 'er_xvm', 'wn6_xvm'))||(prefs.listPref == 'id'))
 		var id = (prefs.listPref == 'id') ? prefs.nick : getID (prefs.nick);
 		
 	// Если есть ник и не нужны данные, которые можно получить по id (только общая статистика)
-	if ((!(AnyBalance.isAvailable('tank_wins', 'tank_battles', 'tank_win_percent', 'er', 'wn6', 'er_armor')))&&(prefs.listPref == 'nick')) {
+	if ((!(AnyBalance.isAvailable('tank_wins', 'tank_battles', 'tank_win_percent', 'er', 'wn6', 'er_armor', 'er_xvm', 'wn6_xvm')))&&(prefs.listPref == 'nick')) {
 		var pd = getData('http://worldoftanks.ru/uc/accounts/api/1.1/?source_token=WG-WoT_Assistant-1.1.2&search=' + prefs.nick + '&offset=0&limit=1');
 		var result = {success: true};
 		
@@ -62,7 +62,7 @@ function main(){
 		if(AnyBalance.isAvailable('win_percent'))
 			result['win_percent'] = (pd.data.summary.wins / pd.data.summary.battles_count * 100).toFixed(1);
 			
-		if(AnyBalance.isAvailable('er', 'er_armor', 'wn6'))
+		if(AnyBalance.isAvailable('er', 'er_armor', 'wn6', 'er_xvm', 'wn6_xvm'))
 			var battles = pd.data.ratings.battles.value;
 			
 			var DAMAGE = pd.data.ratings.damage_dealt.value / battles;
@@ -71,10 +71,10 @@ function main(){
 			var CAP = pd.data.ratings.ctf_points.value / battles;
 			var DEF = pd.data.ratings.dropped_ctf_points.value / battles;
 			
-		if(AnyBalance.isAvailable('er', 'er_armor'))
+		if(AnyBalance.isAvailable('er', 'er_armor', 'er_xvm'))
 			var CAP = pd.data.ratings.ctf_points.value / battles;
 
-		if(AnyBalance.isAvailable('er', 'wn6'))
+		if(AnyBalance.isAvailable('er', 'wn6', 'er_xvm', 'wn6_xvm'))
 			var tmp = pd.data.vehicles;
 			var s = 0;
 			for (q in tmp){
@@ -83,13 +83,17 @@ function main(){
 			}
 			var TIER = s / battles;
 			
-		if(AnyBalance.isAvailable('wn6', 'er_armor'))
+		if(AnyBalance.isAvailable('wn6', 'er_armor', 'wn6_xvm'))
 			var WINRATE = pd.data.ratings.battle_wins.value / battles; // not percent
 			
-		if(AnyBalance.isAvailable('er'))
+		if(AnyBalance.isAvailable('er', 'er_xvm'))
 			// result['er'] = (DAMAGE * (10 / TIER) * (0.15 + 2 * TIER / 100) + FRAGS * (0.35 - 2 * TIER / 100) * 1000 + SPOT * 0.2 * 1000 + CAP * 0.15 * 1000 + DEF * 0.15 * 1000).toFixed(0); - старая формула
 			
-			result['er'] = (DAMAGE * (10 / (TIER + 2)) * (0.23 + 2 * TIER / 100) + FRAGS * 250 + SPOT * 150 + Math.log(CAP + 1) / Math.log(1.732) * 150 + DEF * 150).toFixed(0);
+			var er = DAMAGE * (10 / (TIER + 2)) * (0.23 + 2 * TIER / 100) + FRAGS * 250 + SPOT * 150 + Math.log(CAP + 1) / Math.log(1.732) * 150 + DEF * 150
+			result['er'] = er.toFixed(0);;
+			
+			if(AnyBalance.isAvailable('er_xvm'))
+				result['er_xvm'] = (Math.max(Math.min(4.787e-17 * Math.pow(er,6) - 3.5544e-13 * Math.pow(er,5) + 1.02606e-9 * Math.pow(er,4) - 1.4665e-6 * Math.pow(er,3) + 1.0827e-3 * Math.pow(er,2) - 0.3133 * er + 20.49, 100), 0)).toFixed(1);
 
 		if(AnyBalance.isAvailable('er_armor'))
 			var avg_exp = pd.data.ratings.battle_avg_xp.value;
@@ -97,8 +101,14 @@ function main(){
 			// http://armor.kiev.ua/wot/rating/
 			result['er_armor'] = (Math.log(battles) / 10 * (avg_exp + DAMAGE * (WINRATE * 2 + FRAGS * 0.9 + (SPOT + CAP + DEF) * 0.5))).toFixed(0);4
 			
-		if(AnyBalance.isAvailable('wn6'))
-			result['wn6'] = ((1240 - 1040 / Math.pow((Math.min(TIER, 6)), 0.164)) * FRAGS + DAMAGE * 530 / (184 * Math.exp(0.24 * TIER) + 130) + SPOT * 125 + Math.min(DEF, 2.2) * 100 + ((185 / (0.17 + Math.exp((WINRATE * 100 - 35) * -0.134))) - 500) * 0.45 + (6 - Math.min(TIER, 6)) * -60).toFixed(0);
+		if(AnyBalance.isAvailable('wn6', 'wn6_xvm'))
+		
+			var wn6 = (1240 - 1040 / Math.pow((Math.min(TIER, 6)), 0.164)) * FRAGS + DAMAGE * 530 / (184 * Math.exp(0.24 * TIER) + 130) + SPOT * 125 + Math.min(DEF, 2.2) * 100 + ((185 / (0.17 + Math.exp((WINRATE * 100 - 35) * -0.134))) - 500) * 0.45 + (6 - Math.min(TIER, 6)) * -60
+			
+			result['wn6'] = wn6.toFixed(0);
+			
+			if(AnyBalance.isAvailable('wn6_xvm'))
+				result['wn6_xvm'] = (Math.max(Math.min(-1.334e-11 * Math.pow(wn6,4) + 5.673e-8 * Math.pow(wn6,3) - 7.575e-5 * Math.pow(wn6,2) + 0.08392 * wn6 - 9.362, 100), 0)).toFixed(1);
 			
 		if (prefs.tank) {
 			var tmp = pd.data.vehicles;

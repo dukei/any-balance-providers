@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="12" date="2013-05-19">
+        - Добавлены шкалы XVM для рейтингов эффективности;
+    </change>
     <change version="11" date="2013-03-22">
         - Исправлена ошибка с обнулением счетчиков;
     </change>

@@ -439,16 +439,19 @@ function aggregate_sum(values){
     return total_value;
 }
 
-function aggregate_join(values, delimiter){
+function aggregate_join(values, delimiter, allow_empty){
     if(values.length == 0)
         return;
     if(!isset(delimiter))
         delimiter = ', ';
-    return values.join(delimiter);
+    var ret = values.join(delimiter);
+    if(!allow_empty)
+        ret = ret.replace(/^(?:\s*,\s*)+|(?:\s*,\s*){2,}|(?:\s*,\s*)+$/g, '');
+    return ret;
 }
 
-function create_aggregate_join(delimiter){
-    return function(values){ return aggregate_join(values, delimiter); }
+function create_aggregate_join(delimiter, allow_empty){
+    return function(values){ return aggregate_join(values, delimiter, allow_empty); }
 }
 
 function aggregate_min(values){

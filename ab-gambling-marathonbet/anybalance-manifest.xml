@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-gambling-marathonbet</id>
+  <id version="2">ab-gambling-marathonbet</id>
   <name>Марафон</name>
   <description>
     Получает информацию о балансе для букмекерской конторы Марафон (https://www.marathonbet.com)
@@ -16,6 +16,8 @@
   <counters>
     <counter id="balance" name="Доступный баланс" units=" {@currency}"/>
     <counter id="fio" name="ФИО" type="text"/>
+    <counter id="ns" name="Нерассчитанные ставки" units=" {@currency}"/>
+    <counter id="out" name="Запрос на выплату" units=" {@currency}"/>
   </counters>
   <keywords>
     marathon букмекерская контора компания Panbet Curasao N.V. 

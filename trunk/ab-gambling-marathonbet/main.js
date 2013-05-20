@@ -21,11 +21,8 @@ function main(){
 
     var baseurl = "https://www.marathonbet.com/";
 
-    if (!/^[0-9]{6,7}|[A-Za-z0-9\-_\.\%\+]+@([A-Za-z0-9\-_]+\.)+[A-Za-z]{2,4}$/i.test(prefs.login)) {
+    if (!/^(?:[0-9]{6,7}|[a-z0-9\-_\.\%\+]+@([a-z0-9\-_]+\.)+[a-z]{2,4})$/i.test(prefs.login)) {
         throw new AnyBalance.Error("В логине должно быть от 6 до 7 цифр. Можно также ввести Ваш электронный адрес, указанный при регистрации.");        
-    }
-    else if (prefs.login.indexOf("@") === -1) {
-        throw new AnyBalance.Error("Неверное имя пользователя");     
     }
 
     if (!/^.{6,}$/i.test(prefs.password)) {
@@ -48,8 +45,16 @@ function main(){
 
     var result = {success: true};
     getParam(html, result, 'fio', /<div[^>]+class="auth"[^>]*>[\s\S]*?,\s*([\s\S]*?)!/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'balance', /<span[^>]+id='balance'[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'balance', /<span[^>]+id='balance'[^>]*>([\s\S]*?)<\/span>/i, [/,/g, '', replaceTagsAndSpaces], parseBalance);
     getParam(html, result, ['currency', 'balance'], /<span[^>]+id='balance'[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseMyCurrency);
+
+    if(AnyBalance.isAvailable('ns', 'out')){
+        html = AnyBalance.requestGet(baseurl + 'ru/myaccount/myaccount.htm', g_headers);
+        //Нерассчитанные ставки
+        getParam(html, result, 'ns', /<td[^>]+class="value"(?:[\s\S]*?<span[^>]+class=['"]balance-value[^>]*>){2}([\s\S]*?)<\/span>/i, [/,/g, '', replaceTagsAndSpaces], parseBalance);
+        //Запрошено на выплату
+        getParam(html, result, 'out', /<td[^>]+class="value"(?:[\s\S]*?<span[^>]+class=['"]balance-value[^>]*>){3}([\s\S]*?)<\/span>/i, [/,/g, '', replaceTagsAndSpaces], parseBalance);
+    }
 
     AnyBalance.setResult(result);
 }

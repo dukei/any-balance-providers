@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-seo-gnezdo</id>
+  <name>Gnezdo.ru новости</name>
+  <description>
+    Получает баланс для сайта Gnezdo.ru новости (http://www.gnezdo.ru/)
+
+    Информация берется из личного кабинета (http://news.gnezdo.ru/cgi-bin/admin/login.cgi)
+
+  </description>
+  <author>Alexandra Shalamova &lt;alexandrashalamova@gmail.com&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Текущий счет" units="р"/>
+    <counter id="update" name="Данные обновлены" type="text"/>
+    <counter id="coef" name="Коэффициент обмена" type="text"/>
+  </counters>
+  <keywords>
+    гнездо
+  </keywords>
+  <type>
+    seo
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

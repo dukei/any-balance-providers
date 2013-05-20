@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-gambling-parimatch</id>
+  <name>Parimatch</name>
+  <description>
+    Получает баланс на счету сайта Parimatch (http://www.parimatch.com/)
+
+  </description>
+  <author>Alexandra Shalamova &lt;alexandrashalamova@gmail.com&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс на счету" units=" {@currency}"/>
+    <counter id="summ" name="Сумма нерасчитанных" units=" {@currencysumm}"/>
+    <counter id="rates" name="Ставки из 100"/>
+    <counter id="bonus" name="Бонус" units=" {@currencybonus}"/>
+  </counters>
+  <keywords>
+    париматч
+  </keywords>
+  <type>
+    gambling
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

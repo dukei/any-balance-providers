@@ -40,7 +40,7 @@ function main(){
 
     AnyBalance.trace ("Trying to enter selfcare at address: " + baseurl);
     var html = AnyBalance.requestPost (baseurl + "login-page.xl", {
-        goto: '/',
+        'goto': '/',
         login: prefs.login,
         password: prefs.password
     });

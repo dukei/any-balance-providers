@@ -14,6 +14,7 @@
     <history>history.xml</history>
   </files>
   <counters>
+    <counter id="results" name="Информация о доставке" type="html"/>
     <counter id="now" name="Текущее местоположение" type="text"/>
     <counter id="tocity" name="Куда" type="text"/>
     <counter id="from" name="Откуда" type="text"/>

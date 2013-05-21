@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Номер накладной" 
+        positiveButtonText="ОК" 
+        summary="||{@s}" 
+        dialogTitle="Номер накладной" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите номер накладной."
+        key="number">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="city" 
+        dialogTitle="Название города"
+        negativeButtonText="Отмена"
+        title="Название города"
+        summary="||{@s}"
+        dialogMessage="Введите название города">
+    </EditTextPreference>
+</PreferenceScreen>

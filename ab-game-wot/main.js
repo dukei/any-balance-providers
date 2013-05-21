@@ -37,8 +37,19 @@ function main(){
 		if(AnyBalance.isAvailable('battles'))
 			result['battles'] = pd.data.items[0].stats.battles;
 			
-		if(AnyBalance.isAvailable('win_percent'))
-			result['win_percent'] = (pd.data.items[0].stats.wins / pd.data.items[0].stats.battles * 100).toFixed(1);
+		if(AnyBalance.isAvailable('win_percent', 'next_perc', 'next_perc_05'))
+			var win_percent = pd.data.items[0].stats.wins / pd.data.items[0].stats.battles * 100
+			
+			if(AnyBalance.isAvailable('win_percent'))
+				result['win_percent'] = win_percent.toFixed(1);
+				
+			if(AnyBalance.isAvailable('next_perc'))
+				var np = Math.floor(win_percent) + 1;
+				result['next_perc'] = Math.floor((np * pd.data.items[0].stats.battles - 100 * pd.data.items[0].stats.wins) / (100 - np) + 1);
+				
+			if(AnyBalance.isAvailable('next_perc_05'))
+				var np = Math.floor(win_percent + 0.5) + 0.5;
+				result['next_perc_05'] = Math.floor((np * pd.data.items[0].stats.battles - 100 * pd.data.items[0].stats.wins) / (100 - np) + 1);
 		
 		AnyBalance.setResult(result);
 
@@ -59,8 +70,20 @@ function main(){
 		if(AnyBalance.isAvailable('battles'))
 			result['battles'] = pd.data.summary.battles_count;
 			
-		if(AnyBalance.isAvailable('win_percent'))
-			result['win_percent'] = (pd.data.summary.wins / pd.data.summary.battles_count * 100).toFixed(1);
+		if(AnyBalance.isAvailable('win_percent', 'next_perc', 'next_perc_05'))
+			var win_percent = pd.data.summary.wins / pd.data.summary.battles_count * 100
+			
+			if(AnyBalance.isAvailable('win_percent'))
+				result['win_percent'] = win_percent.toFixed(1);
+				
+			if(AnyBalance.isAvailable('next_perc'))
+				var np = Math.floor(win_percent) + 1;
+				result['next_perc'] = Math.floor((np * pd.data.summary.battles_count - 100 * pd.data.summary.wins) / (100 - np) + 1);
+				
+			if(AnyBalance.isAvailable('next_perc_05'))
+				var np = Math.floor(win_percent + 0.5) + 0.5;
+				result['next_perc_05'] = Math.floor((np * pd.data.summary.battles_count - 100 * pd.data.summary.wins) / (100 - np) + 1);
+				
 			
 		if(AnyBalance.isAvailable('er', 'er_armor', 'wn6', 'er_xvm', 'wn6_xvm'))
 			var battles = pd.data.ratings.battles.value;
@@ -90,7 +113,9 @@ function main(){
 			// result['er'] = (DAMAGE * (10 / TIER) * (0.15 + 2 * TIER / 100) + FRAGS * (0.35 - 2 * TIER / 100) * 1000 + SPOT * 0.2 * 1000 + CAP * 0.15 * 1000 + DEF * 0.15 * 1000).toFixed(0); - старая формула
 			
 			var er = DAMAGE * (10 / (TIER + 2)) * (0.23 + 2 * TIER / 100) + FRAGS * 250 + SPOT * 150 + Math.log(CAP + 1) / Math.log(1.732) * 150 + DEF * 150
-			result['er'] = er.toFixed(0);;
+			
+			if(AnyBalance.isAvailable('er'))
+				result['er'] = er.toFixed(0);
 			
 			if(AnyBalance.isAvailable('er_xvm'))
 				result['er_xvm'] = (Math.max(Math.min(4.787e-17 * Math.pow(er,6) - 3.5544e-13 * Math.pow(er,5) + 1.02606e-9 * Math.pow(er,4) - 1.4665e-6 * Math.pow(er,3) + 1.0827e-3 * Math.pow(er,2) - 0.3133 * er + 20.49, 100), 0)).toFixed(1);
@@ -105,7 +130,8 @@ function main(){
 		
 			var wn6 = (1240 - 1040 / Math.pow((Math.min(TIER, 6)), 0.164)) * FRAGS + DAMAGE * 530 / (184 * Math.exp(0.24 * TIER) + 130) + SPOT * 125 + Math.min(DEF, 2.2) * 100 + ((185 / (0.17 + Math.exp((WINRATE * 100 - 35) * -0.134))) - 500) * 0.45 + (6 - Math.min(TIER, 6)) * -60
 			
-			result['wn6'] = wn6.toFixed(0);
+			if(AnyBalance.isAvailable('wn6'))
+				result['wn6'] = wn6.toFixed(0);
 			
 			if(AnyBalance.isAvailable('wn6_xvm'))
 				result['wn6_xvm'] = (Math.max(Math.min(-1.334e-11 * Math.pow(wn6,4) + 5.673e-8 * Math.pow(wn6,3) - 7.575e-5 * Math.pow(wn6,2) + 0.08392 * wn6 - 9.362, 100), 0)).toFixed(1);

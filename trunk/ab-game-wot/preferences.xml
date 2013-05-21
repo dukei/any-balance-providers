@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-<ListPreference
+	<ListPreference
         title="Метод идентификации игрока"
         summary="Если вы знаете свой id, лучше использовать его, найти id можно в ссылке на свой профиль на официальном сайте||Метод идентификации: {@s}\n"
         key="listPref"

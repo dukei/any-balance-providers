@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+   <ListPreference 
+        key="curs" 
+        title="Выберите какой курс показать"
+        summary="|Выберите город|{@s}"
+        entries="BTC/USD|BTC/EUR|BTC/RUR|LTC/BTC|LTC/USD|LTC/RUR|NMC/BTC|USD/RUR|EUR/USD"
+        entryValues="btc_usd|btc_eur|btc_rur|ltc_btc|ltc_usd|ltc_rur|nmc_btc|usd_rur|eur_usd"
+        defaultValue="btc_usd">
+    </ListPreference>
+</PreferenceScreen>

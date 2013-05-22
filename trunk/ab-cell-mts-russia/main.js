@@ -419,6 +419,9 @@ function fetchAccountStatus(html, result){
     // Остаток "Бесплатных вызовов при платеже": 29
     html = sumParam (html, result, 'min_left', /"Бесплатных вызовов при платеже":[^<]*?([\d\.,]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
 
+    // Осталось минут (Smart):278.
+    html = sumParam (html, result, 'min_left', /Осталось минут[^<]*?:\s*([\d\.,]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
+
     // Использовано: 0 минут местных и мобильных вызовов.
     // Использовано 1 мин на городские номера Москвы, МТС домашнего региона и МТС России
     sumParam (html, result, 'min_local', /Использовано:?\s*([\d\.,]+)\s*мин[^\s]* (местных|на городские)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);

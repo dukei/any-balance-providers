@@ -21,7 +21,7 @@
     <counter id="coming" name="Приход за месяц (всего)" units="р"/>
     <counter id="consumption" name="Расход за месяц (всего)" units="р"/>
     <counter id="working" name="Наработка за месяц (всего)" units="р"/>
-    <counter id="licenseFee" name="Абонентская плата" units="р"/>
+    <!-- <counter id="licenseFee" name="Абонентская плата" units="р"/> -->
     <counter id="outgoing" name="Исходящий остаток на конец месяца" units="р"/>
     <counter id="limit" name="Лимит" units="р"/>
   </counters>

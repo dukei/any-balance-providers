@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
   <id version="1">ab-municipal-erc-ur</id>
-  <name>Единый Расчетный Центр</name>
+  <name>Единый Расчетный Центр (Екатеринбург)</name>
   <description>
     Получает информацию о комунальных платежах из системы Единый Расчетный Центр (http://www.erc.ur.ru/)
 
@@ -28,7 +28,7 @@
     <counter id="balance9" name="Газ" units="р"/>
   </counters>
   <keywords>
-    erc.ur.ru 
+    erc.ur.ru ЕРЦ
   </keywords>
   <type>
     municipal

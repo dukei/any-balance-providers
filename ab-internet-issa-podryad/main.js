@@ -45,7 +45,7 @@ function main(){
     getParam(html, result, 'coming', /Приход за месяц \(всего\)<\/td><td>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'consumption', /Расход за месяц \(всего\)<\/td><td>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'working', /Наработка за месяц \(всего\)<\/td><td>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'licenseFee', /Абонентская плата<\/td><td>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    // getParam(html, result, 'licenseFee', /Абонентская плата<\/td><td>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'outgoing', /Исходящий остаток на конец месяца<\/td><td>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'limit', /Лимит<\/td><td>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 

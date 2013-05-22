@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-municipal-erc-ur</id>
+  <name>Единый Расчетный Центр</name>
+  <description>
+    Получает информацию о комунальных платежах из системы Единый Расчетный Центр (http://www.erc.ur.ru/)
+
+    Информация берется из личного кабинета (http://www.erc.ur.ru/client/private_office/mprivate_office.htp)
+  </description>
+  <author>Alexandra Shalamova &lt;alexandrashalamova@gmail.com&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance10" name="ВСЕГО" units="р"/>
+    <counter id="balance" name="Содержание жилья (с лифтом)" units="р"/>
+    <counter id="balance2" name="Капитальный ремонт" units="р"/>
+    <counter id="balance3" name="Отопление" units="р"/>
+    <counter id="balance4" name="подача воды" units="р"/>
+    <counter id="balance5" name="нагрев воды" units="р"/>
+    <counter id="balance6" name="Холодное водоснабжение" units="р"/>
+    <counter id="balance7" name="Водоотведение" units="р"/>
+    <counter id="balance8" name="Электроэнергия" units="р"/>
+    <counter id="balance9" name="Газ" units="р"/>
+  </counters>
+  <keywords>
+    erc.ur.ru 
+  </keywords>
+  <type>
+    municipal
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

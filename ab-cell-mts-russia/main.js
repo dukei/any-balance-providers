@@ -442,6 +442,8 @@ function fetchAccountStatus(html, result){
     html = sumParam (html, result, 'sms_left', /(?:Осталось|Остаток)(?: пакета)? (?:sms|смс):\s*(\d+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
     // Остаток СМС
     html = sumParam (html, result, 'sms_left', /(?:Осталось|Остаток)[^\d]*(\d+)\s*(?:sms|смс)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
+    //Остаток пакета Безлимит М2М SMS: 61
+    html = sumParam (html, result, 'sms_left', /Остаток пакета [^<]*?(?:смс|sms):\s*([\d\.,]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
 
 
     // Остаток ММС
@@ -503,13 +505,15 @@ function mainLK(allowRetry){
 
     try{
         var loginUrl = baseurlLogin + "/amserver/UI/Login?gx_charset=UTF-8&service=lk&goto=" + encodeURIComponent(baseurl + '/') + "&auth-status=0";
-        if(prefs.__dbg){
+/*        if(prefs.__dbg){
             //Чтобы сбросить автологин
             var html = AnyBalance.requestGet(baseurl, g_headers);
         }else{
             //Чтобы сбросить автологин
             var html = AnyBalance.requestGet(loginUrl, g_headers);
-        }
+        } */
+
+        var html = AnyBalance.requestGet(baseurl, g_headers);
         
         if(isLoggedIn(html)){
              AnyBalance.trace("Уже залогинены, проверяем, что на правильный номер...");

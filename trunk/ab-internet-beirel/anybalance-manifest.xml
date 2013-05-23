@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id major_version="1.0" version="1">ab-internet-beirel</id>
+  <name>Бэйрэль Телеком (Пушкино)</name>
+  <description>
+    Получает баланс лицевого счета провайдера Бэйрэль Телеком (http://www.beirel.ru/)
+  </description>
+  <author>Roman Terekhov &lt;roman@terekhov.su&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс лицевого счета" units="р"/>
+    <counter id="clientname" name="ФИО" type="text"/>
+    <counter id="accuntid" name="Лицевой счет" type="text"/>
+    <counter id="block" name="Блокировка" type="text"/>
+    <counter id="__tariff" name="Тарифный план" type="text"/>
+  </counters>
+  <keywords>
+    beirel
+  </keywords>
+  <type>
+    internet
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

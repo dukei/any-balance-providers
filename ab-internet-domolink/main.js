@@ -184,7 +184,7 @@ function domolink_new(region,login,password) {
     };
 
     var baseurl = 'https://portal.center.rt.ru/ClientWebPortal/appmanager/ClientPortal/PrivateClientDesktop';
-    AnyBalance.setDefaultCharset('utf8');    
+    AnyBalance.setDefaultCharset('utf-8');    
  
     if(prefs.accnum && !/^\d{4}$/.test(prefs.accnum))
         throw new AnyBalance.Error("Введите в настройки последние 4 цифры лицевого счета или не вводите ничего, чтобы получить информацию по первому счету");
@@ -281,7 +281,7 @@ function domolink_new(region,login,password) {
 function domolinktula(region,login,password) {
     var baseurl = 'https://cabinet.tulatelecom.ru';
     var regionurl = baseurl + '/pls/sip/';
-    AnyBalance.setDefaultCharset('utf8');    
+    AnyBalance.setDefaultCharset('utf-8');    
 	
     // Заходим на главную страницу
     var html = AnyBalance.requestPost(regionurl + "www.GetHomePage", {
@@ -487,7 +487,7 @@ function domolinkcenter(region,login,password) {
 
 function domolinknnov(region,login,password) {
     var baseurl = 'http://abonent.nnov.volga.rt.ru/pls/users/';
-    AnyBalance.setDefaultCharset('utf8');    
+    AnyBalance.setDefaultCharset('utf-8');    
 	
     // Заходим на главную страницу
     var html = AnyBalance.requestPost(baseurl + "www.GetHomePage", {
@@ -496,15 +496,19 @@ function domolinknnov(region,login,password) {
         p_pwd: password
     });
     
-    var href = getParam(html, null, null, /<FRAME[^>]+SRC\s*=\s*"([^>]*)"[^>]+NAME\s*=\s*"MAIN"/i, null, html_entity_decode);
-    if(!href){
-        var error = getParam(html, null, null, /Сообщение об ошибке\s*<\/td>[\s\S]*?<TD[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+
+    var next = getParam(html, null, null, /<META[^>]+REFRESH[^>]+URL=([^"]*)/i, null, html_entity_decode);
+    if(!next){
+        var error = getParam(html, null, null, /<td[^>]+class="?zag[^>]*>\s*Сообщение об ошибке[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error);
-        throw new AnyBalance.Error('Не удаётся найти ссылку на содержимое личного кабинета. Сайт изменен?');
+        throw new AnyBalance.Error("Не удалось зайти в личный кабинет. Сайт изменен?");
     }
 
-    html = AnyBalance.requestGet(baseurl + href);
+    var authorization = getParam(next, null, null, /(&logname.*)/i);
+
+//    html = AnyBalance.requestGet(baseurl + next);
+    html = AnyBalance.requestGet(baseurl + 'www.PageViewer?page_name=ADM_DUSA_INFO' + authorization);
     
     var result = {
         success: true
@@ -516,7 +520,7 @@ function domolinknnov(region,login,password) {
     getParam(html, result, 'username', /Номер договора(?:[\s\S]*?<TD[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
 	   
     // Лицевой счет
-    getParam (html, result, 'license', /Номер договора[\s\S]*?<TD[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+    getParam (html, result, 'license', /Номер договора[\s\S]*?<TD[^>]*>([\s\S]*?)(?:от|<\/td>)/i, replaceTagsAndSpaces);
 	
     // Баланс
     getParam (html, result, 'balance', /Текущее состояние лицевого счета[\s\S]*?<TD[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
@@ -559,7 +563,7 @@ function gwtGetJSON(str){
 
 function domolinkug(region,login,password) {
     var baseurl = 'https://my.south.rt.ru/';
-    AnyBalance.setDefaultCharset('utf8');    
+    AnyBalance.setDefaultCharset('utf-8');    
 	
     // Заходим на главную страницу
     var html = AnyBalance.requestGet(baseurl + "login");
@@ -634,7 +638,7 @@ function domolinkug(region,login,password) {
 function domolinksaransk(region,login,password) {
     var baseurl = 'http://billing.saransk.ru:7777';
     var regionurl = baseurl + '/pls/ip/';
-    AnyBalance.setDefaultCharset('utf8');    
+    AnyBalance.setDefaultCharset('utf-8');    
 	
     // Заходим на главную страницу
     var htmlFrmset = AnyBalance.requestPost(regionurl + "www.GetHomePage", {
@@ -701,7 +705,7 @@ function domolinksaransk(region,login,password) {
 function domolinkudm(region,login,password) {
     var baseurl = 'https://statservip.udmvt.ru';
     var regionurl = baseurl + '/pls/sip_w/';
-    AnyBalance.setDefaultCharset('utf8');    
+    AnyBalance.setDefaultCharset('utf-8');    
 	
     // Заходим на главную страницу
     var htmlFrmset = AnyBalance.requestPost(regionurl + "www.GetHomePage", {
@@ -765,7 +769,7 @@ function domolinkudm(region,login,password) {
 function domolinkmel(region,login,password) {
     var baseurl = 'http://www.stat.mari-el.ru';
     var regionurl = baseurl + '/pls/startip/';
-    AnyBalance.setDefaultCharset('utf8');    
+    AnyBalance.setDefaultCharset('utf-8');    
 	
     // Заходим на главную страницу
     var htmlFrmset = AnyBalance.requestPost(regionurl + "www.GetHomePage", {
@@ -965,7 +969,7 @@ function domolinksamara(region,login,password) {
 function domolinkchuv(region,login,password) {
     var baseurl = 'http://newstat.chtts.ru/';
     var regionurl = baseurl + '';
-    AnyBalance.setDefaultCharset('utf8');    
+    AnyBalance.setDefaultCharset('utf-8');    
 	
     // Заходим на главную страницу
     var htmlFrmset = AnyBalance.requestPost(regionurl + "www.GetHomePage", {

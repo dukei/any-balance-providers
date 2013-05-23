@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="2">ab-bonus-letoile</id>
+  <id version="3">ab-bonus-letoile</id>
   <name>Л'Этуаль</name>
   <description>
     Получает информацию о бонусных баллах на клубных картах сети магазинов Л'Этуаль.	
@@ -23,4 +23,7 @@
   <type>
     bonus
   </type>
+  <country>
+    ru
+  </country>
 </provider>

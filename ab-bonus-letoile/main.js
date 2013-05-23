@@ -22,18 +22,18 @@ function main () {
         prefs.number);
 
     // Проверка неправильной пары логин/пароль
-    var regexp=/<div class="g-error">\s*([\s\S]*?)\s*</;
-    var res = regexp.exec (html);
-    if (res)
-        throw new AnyBalance.Error (res[1]);
+    if (!/Баланс\s*карты:/i.test(html)) {
+        var regexp=/<div class="g-error">\s*([\s\S]*?)\s*</;
+        var res = regexp.exec (html);
+        if (res)
+            throw new AnyBalance.Error (res[1]);
+        throw new AnyBalance.Error ("Не удалось зайти в личный кабинет. Сайт изменен?");
+    }
 
     var result = {};
 
     // Баланс
-    getParam (html, result, 'balance', /Баланс\s*карты:[^\d]*(\d+\.?\d*)/i, [], parseFloat);
-
-    if (!result.balance)
-        throw new AnyBalance.Error ('Неопределенная ошибка. Пожалуйста, обратитесь к автору скрипта');
+    getParam (html, result, 'balance', /Баланс\s*карты:[^\d]*(\d+\.?\d*)/i, [], parseFloat)
 
     result.success = true;
 

@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="1">ab-internet-beirel</id>
+  <id major_version="1.0" version="2">ab-internet-beirel</id>
   <name>Бэйрэль Телеком (Пушкино)</name>
   <description>
-    Получает баланс лицевого счета провайдера Бэйрэль Телеком (http://www.beirel.ru/)
+    Отображает следующую информацию для провайдера Бэйрэль Телеком (http://www.beirel.ru/):
+    * Баланс лицевого счета
+    * Номер лицевого счета
+    * ФИО абонента
+    * Тарифный план
+    * Наличие блокировки интернета
+
+    Для работы плагина необходимо знать логин/пароль от личного кабинета, который указан на последней странице договора.
   </description>
   <author>Roman Terekhov &lt;roman@terekhov.su&gt;</author>
   <files>

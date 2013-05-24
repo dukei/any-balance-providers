@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
   <id version="2">ab-internet-linkintel</id>
-  <name>Интернет провайдер LINKINTEL</name>
+  <name>LINKINTEL (Лобня)</name>
   <description>
-    Получает баланс, бонусы, тарифный план и трафик в текущем месяце у интернет-провайдера LINKINTEL.
+    Получает баланс, бонусы, тарифный план и трафик в текущем месяце у интернет-провайдера LINKINTEL (http://linkintel.ru).
   </description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <files>
@@ -26,4 +26,7 @@
   <type>
     internet, telephony
   </type>
+  <country>
+    ru
+  </country>
 </provider>

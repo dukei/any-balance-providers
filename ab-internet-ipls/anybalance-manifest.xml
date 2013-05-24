@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
   <id major_version="2" version="4">ab-internet-ipls</id>
-  <name>Айпильсин</name>
+  <name>Айпильсин (Красногорск)</name>
   <description>
-    Получает текущий баланс, номера лицевого счета, ФИО владельца, кредит, статус блокировки
+    Получает текущий баланс, номера лицевого счета, ФИО владельца, кредит, статус блокировки у красногорского интернет провайдера Айпильсин (http://ipls.ru)
   </description>
   <author>Serg Repin &lt;serg.repin@gmail.com&gt;</author>
   <files>
@@ -24,4 +24,7 @@
   <type>
     internet, tv, telephony
   </type>
+  <country>
+    ru
+  </country>
 </provider>

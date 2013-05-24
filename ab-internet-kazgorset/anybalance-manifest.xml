@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
   <id major_version="1.0" version="1">ab-internet-kazgorset</id>
-  <name>Интернет провайдер Казгорсеть</name>
+  <name>Казгорсеть</name>
   <description>
-    Получает текущий баланс, трафик и время наработки за текущий и прошлый месяцы у провайдера "Казгорсеть" (Казань)
+    Получает текущий баланс, трафик и время наработки за текущий и прошлый месяцы у провайдера "Казгорсеть" (Казань) http://kazgorset.ru/
   </description>
   <author>wtiger &lt;wtiger@mail.ru&gt;</author>
   <files>
@@ -28,4 +28,7 @@
   <type>
     internet, tv
   </type>
+  <country>
+    ru
+  </country>
 </provider>

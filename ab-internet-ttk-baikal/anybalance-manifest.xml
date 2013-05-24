@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
   <id version="1">ab-internet-ttk-baikal</id>
-  <name>ТТК-Байкал - интернет провайдер</name>
+  <name>ТТК-Байкал</name>
   <description>
-    Получает баланс и информацию о тарифном плане для интернет провайдера ТТК-Байкал. Информация берется из личного кабинета https://stat.baikal-ttk.ru.
+    Получает баланс и информацию о тарифном плане для интернет провайдера ТТК-Байкал (http://baikal-ttk.ru). Информация берется из личного кабинета https://stat.baikal-ttk.ru.
+
+    Провайдер предоставляет доступ в интернет в следующих городах: Иркутск, Ангарск, Вихоревка, Тайшет, Зима, Братск, Нижнеудинск, Улан-Удэ, Усолье-Сибирское, Шелехов, Нерюнгри, Якутск
   </description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <files>
@@ -22,4 +24,7 @@
   <type>
     internet
   </type>
+  <country>
+    ru
+  </country>
 </provider>

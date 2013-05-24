@@ -4,11 +4,11 @@
 
   <id version="1">ab-internet-apmt</id>
 
-  <name>АПМ-Телеком</name>
+  <name>АПМ-Телеком (Москва)</name>
 
   <description>
     Получает текущий баланс, номер лицевого счета, ФИО владельца
- и состояние интернета  </description>
+ и состояние интернета у провайдера интернет АПМ-Телеком (http://www.apmt.ru) из личного кабинета https://stat.apmt.ru</description>
 
   <author>Alexander Maslikov &lt;info@apmt.ru&gt;</author>
 
@@ -39,5 +39,9 @@
   <type>
     internet, tv, telephony
   </type>
+
+  <country>
+    ru
+  </country>
 
 </provider>

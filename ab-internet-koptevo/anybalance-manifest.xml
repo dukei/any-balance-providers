@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
   <id version="1">ab-internet-koptevo</id>
-  <name>Koptevo.net</name>
+  <name>Koptevo.net (Москва)</name>
   <description>
 Баланс, статус и трафик в текущем месяце у московского интернет провайдера Koptevo.net. Основными районами предоставления услуг 
 доступа в интернет являются район Коптево, Войковский (м. Войковская), Тимирязевский 
@@ -25,4 +25,8 @@
   <type>
     internet
   </type>
+
+  <country>
+    ru
+  </country>
 </provider>

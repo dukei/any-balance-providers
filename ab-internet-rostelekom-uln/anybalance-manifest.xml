@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
   <id version="2" major_version="1">ab-internet-rostelekom-uln</id>
-  <name>Интернет Ростелеком (Ульяновск)</name>
-  <description>Получает данные из Ульяновского филиала ОАО "Ростелеком" в личном кабинете http://my.ul.vt.ru/pls/internet/</description>
+  <name>Ростелеком (Ульяновск)</name>
+  <description>Получает данные по интернет подключению из Ульяновского филиала ОАО "Ростелеком" в личном кабинете http://my.ul.vt.ru/pls/internet/</description>
   <author>Robert Khaliullov &lt;robix@mail.ru&gt;</author>
   <files>
     <icon>icon.png</icon>
@@ -26,4 +26,7 @@
   <type>
     internet
   </type>
+  <country>
+    ru
+  </country>
 </provider>

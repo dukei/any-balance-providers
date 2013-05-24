@@ -3,7 +3,8 @@
   <id version="2">ab-internet-kapitalplus</id>
   <name>Капитал Плюс (Сахалин)</name>
   <description>
-    Получает текущий баланс, трафик у сахалинского провайдера интернет и телефонии Капитал Плюс.
+    Получает текущий баланс, трафик у сахалинского провайдера интернет и телефонии Капитал Плюс (http://kapitalplus.net).
+    Данные берутся из личного кабинета http://stats.kapitalplus.net/
   </description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <files>
@@ -25,4 +26,7 @@
   <type>
     internet
   </type>
+  <country>
+    ru
+  </country>
 </provider>

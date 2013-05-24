@@ -3,7 +3,8 @@
   <id version="2" major_version="1.0" >ab-internet-ktk</id>
   <name>Kurskonline</name>
   <description>
-    Получает текущий баланс, номер договора  у провайдера Kurskonline ("Курская телефонная компания").
+    Получает текущий баланс, номер договора  у провайдера Kurskonline ("Курская телефонная компания"): http://r46.ru
+    Данные берутся из личного кабинета http://kabinet.r46.ru/
   </description>
   <author>Andrey Belchikov &lt;belchikovs@gmail.com&gt;</author>
   <files>
@@ -22,4 +23,7 @@
   <type>
     internet
   </type>
+  <country>
+     ru
+  </country>
 </provider>

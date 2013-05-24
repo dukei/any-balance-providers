@@ -157,7 +157,15 @@ function main(){
     
     if(AnyBalance.isAvailable('inactivein')){
         getParam(info, result, 'inactivein', /Your Skype Credit becomes inactive in\s*([0-9]*)\s+day/i, replaceTagsAndSpaces, parseBalance);
-        if(!result.inactivein) result.inactivein = 180;
+        if(!result.inactivein){
+            if(/Your Skype Credit becomes inactive tomorrow/i.test(info)){
+                result.inactivein = 1;
+            }else if(/Your Skype Credit becomes inactive today/i.test(info)){
+                result.inactivein = 0;
+            }else{
+                result.inactivein = 180;
+            }
+        }
     }
 
     AnyBalance.setResult(result);

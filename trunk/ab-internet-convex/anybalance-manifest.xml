@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
   <id version="1">ab-internet-convex</id>
-  <name>Convex - интернет провайдер</name>
+  <name>Convex (Екатеринбург)</name>
   <description>
-    Получает баланс и информацию о тарифном плане для интернет провайдера Convex. Информация берется из личного кабинета http://convex.ru.
+    Получает баланс и информацию о тарифном плане для екатеринбургского интернет провайдера Convex. Информация берется из личного кабинета http://convex.ru.
   </description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <files>
@@ -23,4 +23,7 @@
   <type>
     internet
   </type>
+  <country>
+    ru
+  </country>
 </provider>

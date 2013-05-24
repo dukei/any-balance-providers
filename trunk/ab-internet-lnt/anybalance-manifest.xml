@@ -3,13 +3,14 @@
   <id version="2">ab-internet-lnt</id>
   <name>Лобненский Народный Телефон</name>
   <description>
-    Получает баланс, тарифный план и трафик в текущем месяце у интернет-провайдера ЛНТ.
-    Изменения в v.2: добавлена сумма обещанных платежей.
+    Получает баланс, тарифный план и трафик в текущем месяце у интернет-провайдера ЛНТ (http://www.lobn.ru).
+    Данные берутся из личного кабинета ПЛАТЕКС: http://platex.lobn.ru/	
   </description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
+    <history>history.xml</history>
     <js>main.js</js>
   </files>
   <counters>
@@ -26,4 +27,7 @@
   <type>
     internet, telephony
   </type>
+  <country>
+    ru
+  </country>
 </provider>

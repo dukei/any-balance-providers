@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-tele-vox</id>
+  <id version="2">ab-internet-tele-vox</id>
   <name>Телевокс (Благовещенск)</name>
   <description>
     Получает баланс и информацию о тарифном плане для благовещенского интернет-провайдера Телевокс (http://www.tlvx.ru).
@@ -13,6 +13,7 @@
     <preferences>preferences.xml</preferences>
     <js>main.js</js>
     <js>library.js</js>
+    <history>history.xml</history>
   </files>
   <counters>
     <counter id="balance" name="Баланс" units="р"/>

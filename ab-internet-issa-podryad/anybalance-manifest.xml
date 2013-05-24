@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-issa-podryad</id>
+  <id version="2">ab-internet-issa-podryad</id>
   <name>Подряд (Приморский край)</name>
   <description>
     Получает баланс для интернет-провайдера Подряд (http://podryad.tv/)

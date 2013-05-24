@@ -3,17 +3,15 @@
   <id major_version="1.0" version="2">ab-internet-speedyline</id>
   <name>Спиди-Лайн</name>
   <description>
-    Получает информацию о состоянии счета интернет-провайдера Спиди-Лайн.
+    Получает информацию о состоянии счета интернет-провайдера Спиди-Лайн (http://www.speedyline.ru) из личного кабинета https://web.speedyline.ru.
+
     Для корректной работы провайдера необходимо в личном кабинете в разделе Настройки включить опцию "Разрешить вход в личный кабинет с чужих ip адресов".
-    
-    Версия 1.0.2 от 13.04.2012:
-        - Исправлена процедура авторизации.
-        - Добавлен регион "Можайск".
   </description>
   <author>iReset &lt;ireset.ag@gmail.com&gt;</author>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
+    <history>history.xml</history>
     <js>main.js</js>
     <js>common_functions.js</js>
   </files>
@@ -34,4 +32,7 @@
   <type>
     internet
   </type>
+  <country>
+    ru
+  </country>
 </provider>

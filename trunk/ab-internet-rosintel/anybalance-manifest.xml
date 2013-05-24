@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
   <id version="2">ab-internet-rosintel</id>
-  <name>Росинтел - интернет провайдер</name>
+  <name>Росинтел (Тульская область)</name>
   <description>
-    Получает баланс и информацию о тарифном плане для интернет провайдера тульской области Росинтел. Информация берется из личного кабинета https://billing.rosintel.com.
+    Получает баланс и информацию о тарифном плане для интернет провайдера тульской области Росинтел (http://www.rosintel.ru). Информация берется из личного кабинета https://billing.rosintel.com/client.
+
+    Сеть Росинтел охватывает такие города Тульского региона как, Тула, Новомосковск, Донской, Богородицк, Щекино, Болохово, Узловая, Сокольники, Северо-Задонск
   </description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <files>
@@ -22,4 +24,7 @@
   <type>
     internet
   </type>
+  <country>
+    ru
+  </country>
 </provider>

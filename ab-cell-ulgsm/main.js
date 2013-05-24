@@ -1,9 +1,9 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 
-Текущий баланс у белорусского сотового оператора Ульяновск-GSM.
+Текущий баланс у сотового оператора Ульяновск-GSM.
 
-Сайт оператора: http://ul-gsm.ru/
+Сайт оператора: http://www.ulgsm-ncc.ru/
 Личный кабинет: https://www.navigator.ul-gsm.ru/
 */
 

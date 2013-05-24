@@ -200,6 +200,17 @@ function mainMobile(allowRetry){
             // Ежемесячная плата
             getParam (html, result, 'monthlypay', /Ежемесячная плата[^\d]*([\d\.,]+)/i, replaceTagsAndSpaces, parseBalance);
         }
+
+        if(AnyBalance.isAvailable('tourist')){
+            AnyBalance.trace("Fetching accumulated info...");
+        
+            html = AnyBalance.requestGet (baseurl + 'Account.mvc/AccumulatedCounters', g_headers);
+        
+            AnyBalance.trace("Parsing accumulated info...");
+        
+            fetchAccumulatedCounters(html, result, true);
+
+        }
         
         AnyBalance.setResult(result);
     }catch(e){
@@ -359,6 +370,13 @@ function fetchOrdinary(html, baseurl, resultFromLK){
         fetchAccountStatus(html, result);
     }
 
+    if(AnyBalance.isAvailable('tourist')){
+        AnyBalance.trace("Fetching accumulated counters...");
+        html = AnyBalance.requestGet(baseurl + "accumulated-counters.aspx", g_headers);
+
+        fetchAccumulatedCounters(html, result);
+    }
+
     if(!resultFromLK)
         AnyBalance.setResult(result);
 }
@@ -367,6 +385,13 @@ function isAvailableStatus(){
     return AnyBalance.isAvailable ('min_left','min_local','min_love','sms_left','mms_left','traffic_left','traffic_left_mb',
         'license','statuslock','credit','usedinthismonth', 'bonus_balance', 'min_left_mts', 'min_used_mts', 'min_used', 'debt',
         'pay_till');
+}
+
+function fetchAccumulatedCounters(html, result, mobile){
+    AnyBalance.trace("Parsing accumulated counters...");
+
+    getParam(html, result, 'tourist', mobile ? /Туристическая СИМ-карта от МТС[\s\S]*?Состояние счетчика:[\s\S]*?<span[^>]+class="value"[^>]*>([\s\S]*?)<\/span>/i : 
+                                               /Туристическая СИМ-карта от МТС[\s\S]*?<td[^>]+class="counter-value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 }
 
 function fetchAccountStatus(html, result){

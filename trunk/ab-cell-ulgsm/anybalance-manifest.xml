@@ -3,7 +3,7 @@
   <id version="1">ab-cell-ulgsm</id>
   <name>Ульяновск GSM</name>
   <description>
-    Получает баланс, статус для оператора сотовой связи Ульяновск-GSM
+    Получает баланс, статус для оператора сотовой связи Ульяновск-GSM (http://www.ulgsm-ncc.ru/)
   </description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <files>
@@ -21,4 +21,7 @@
   <type>
     cell
   </type>
+  <country>
+    ru
+  </country>
 </provider>

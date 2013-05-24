@@ -446,7 +446,7 @@ function aggregate_join(values, delimiter, allow_empty){
         delimiter = ', ';
     var ret = values.join(delimiter);
     if(!allow_empty)
-        ret = ret.replace(/^(?:\s*,\s*)+|(?:\s*,\s*){2,}|(?:\s*,\s*)+$/g, '');
+        ret = ret.replace(/^(?:\s*(,\s*)?)+|(?:\s*,\s*){2,}|(?:(\s*,)?\s*)+$/g, '');
     return ret;
 }
 

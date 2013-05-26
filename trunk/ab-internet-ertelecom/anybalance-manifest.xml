@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="3">ab-internet-ertelecom</id>
+  <id version="4">ab-internet-ertelecom</id>
   <name>Дом.ру (Эр-телеком)</name>
   <description>
-    Получает текущий баланс, номер и тип лицевого счета, владельца счета, статус, трафик в текущем месяце и дату окончания предыдущей сессии у провайдера "Эр-телеком" (ДОМ.РУ): http://citydom.ru.
+    Получает текущий баланс, номер лицевого счета у провайдера "Эр-телеком" (ДОМ.РУ): http://domru.ru.
 
-    Информацию получает из соответствующего городу личного кабинета, например, для Санкт-Петербурга это https://spb.db.ertelecom.ru/elk.php.
+    Информацию получает из личного кабинета https://lk.domru.ru.
   </description>
   <author>wtiger &lt;wtiger@mail.ru&gt;</author>
   <files>
@@ -18,12 +18,13 @@
   <counters>
     <counter id="balance" name="Баланс" units="р"/>
     <counter id="bits" name="Биты" units="Ѣ"/>
-    <counter id="name" name="ФИО" type="text"/>
+<!--    <counter id="name" name="ФИО" type="text"/>
     <counter id="contract_type" name="Тип контракта" type="text"/>
     <counter id="last_session_end" name="Конец последней сессии" type="text"/>
     <counter id="traffic_inner" name="Внутренний (Домашний) трафик" prefix="Дом:" suffix="Гб"/>
-    <counter id="traffic_outer" name="Внешний трафик" prefix="Вн:" suffix="Гб"/>
-    <counter id="tariff_number" name="Номер тарифа" type="text"/>
+    <counter id="traffic_outer" name="Внешний трафик" prefix="Вн:" suffix="Гб"/> -->
+    <counter id="tariff_number" name="Номер договора" type="text"/>
+    <counter id="status" name="Статус" type="text"/>
   </counters>
   <keywords>
     провайдер интернет дом.ру

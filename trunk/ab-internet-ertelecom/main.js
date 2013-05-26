@@ -16,23 +16,31 @@ function main(){
 
 	AnyBalance.trace('Selected region: ' + domain);
 
+	var baseurl = 'https://lk.domru.ru/';
 
-	var baseurl = 'https://'+domain+'.db.ertelecom.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 
-//разлогиниться из кабинета 
-//	var outinfo = AnyBalance.requestGet(baseurl + '');
+	var info = AnyBalance.requestGet(baseurl + "login");
+        var token = getParam(info, null, null, /<input[^>]+value="([^"]*)"[^>]*name="YII_CSRF_TOKEN"/i);
+        if(!token)
+            throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
 
+        AnyBalance.setCookie('.domru.ru', 'service', '0');
+        AnyBalance.setCookie('.domru.ru', 'citydomain', domain);
 
     // Заходим на главную страницу
-	AnyBalance.trace('Authorizing by ' + baseurl + "elk.php");
-	var info = AnyBalance.requestPost(baseurl + "elk.php?t_m=0", {
-		"log": prefs.log,
-		"pwd": prefs.pwd
+	var info = AnyBalance.requestPost(baseurl + "login", {
+                YII_CSRF_TOKEN: token,
+		"Login[username]": prefs.log,
+		"Login[password]": prefs.pwd,
+                city: domain,
+                yt0: 'Войти'
 	});
+
+        
     
-        if(!/elk.php\?out=out/.test(info)){
-           var error = getParam(info, null, null, /<error>([\s\S]*?)<\/error>/i, replaceTagsAndSpaces, html_entity_decode);
+        if(!/\/logout/.test(info)){
+           var error = sumParam(info, null, null, /<div[^>]+class="b-login__errormessage"[^>]*>([\s\S]*?)<\/div>/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
            if(error)
                throw new AnyBalance.Error(error);
            throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
@@ -40,17 +48,16 @@ function main(){
     
         var result = {success: true};
 
-        getParam(info, result, 'balance', /На счёте:[\s\S]*?<h1[^>]*>([\s\S]*?)<\/h1>/i, replaceTagsAndSpaces, parseBalance);
-        getParam(info, result, 'tariff_number', /Номер договора([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-        getParam(info, result, 'name', /<span[^>]+class="client-name"[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-        getParam(info, result, '__tariff', /Текущий тариф:[\s\S]*?<h1[^>]*>([\s\S]*?)<\/h1>/i, replaceTagsAndSpaces, html_entity_decode);
+        getParam(info, result, 'balance', /<span[^>]+balance-value[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+        getParam(info, result, 'tariff_number', /№ договора:([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
+//        getParam(info, result, 'name', /<span[^>]+class="client-name"[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+        sumParam(info, result, '__tariff', /a[^>]+class="b-services__tarif[^>]*>([\s\S]*?)<\/a>/ig, [/Подключить|Участвовать/ig, '', replaceTagsAndSpaces], html_entity_decode, aggregate_join);
+        getParam(info, result, 'bits', /<a[^>]+href="\/privilege"[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces, parseBalance);
+        getParam(info, result, 'status', /<a[^>]+href="[^"]*status.domru.ru"[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces, html_entity_decode);
 
-        if(AnyBalance.isAvailable('bits')){
-            info = AnyBalance.requestGet(baseurl + 'elk.php?t_m=6');
-            getParam(info, result, 'bits', /На счёте:[\s\S]*?<h1[^>]*>([\s\S]*?)<\/h1>/i, replaceTagsAndSpaces, parseBalance);
-        }
 
-	if(AnyBalance.isAvailable('last_session_end','traffic_inner','traffic_outer','contract_type')){
+/*	//Нет в новом кабинете
+        if(AnyBalance.isAvailable('last_session_end','traffic_inner','traffic_outer','contract_type')){
 	    AnyBalance.trace('Getting links to statistics by ' + baseurl + 'right.php?url=&entry=procedure%3Astatistic_user_pppoe.entry');
             info = AnyBalance.requestGet(baseurl + 'right.php?url=&entry=procedure%3Astatistic_user_pppoe.entry');
 
@@ -72,7 +79,7 @@ function main(){
                 }
             }
 	}
-
+*/
 	AnyBalance.setResult(result);
 };
 

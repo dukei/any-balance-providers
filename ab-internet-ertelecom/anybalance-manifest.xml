@@ -3,7 +3,7 @@
   <id version="4">ab-internet-ertelecom</id>
   <name>Дом.ру (Эр-телеком)</name>
   <description>
-    Получает текущий баланс, номер лицевого счета у провайдера "Эр-телеком" (ДОМ.РУ): http://domru.ru.
+    Получает текущий баланс, номер лицевого счета у интернет провайдера "Эр-телеком" (ДОМ.РУ): http://domru.ru.
 
     Информацию получает из личного кабинета https://lk.domru.ru.
   </description>
@@ -27,7 +27,7 @@
     <counter id="status" name="Статус" type="text"/>
   </counters>
   <keywords>
-    провайдер интернет дом.ру
+    дом.ру ertelecom citidom эретелеком ситидом
   </keywords>
   <type>
     internet

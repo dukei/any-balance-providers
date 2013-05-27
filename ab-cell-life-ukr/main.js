@@ -162,6 +162,8 @@ function main(){
         
 	//Подарочный трафик
         sumParam(xml, result, 'gprs', /<balance[^>]+code="FreeGprs[^>]*amount="([^"]*)/ig, replaceTagsAndSpaces, parseTrafficMb, aggregate_sum);
+	//Трафик бывший подарочный
+	sumParam(xml, result, 'gprs', /<balance[^>]+code="Bundle_Gprs_Internet"[^>]*amount="([^"]*)/ig, replaceTagsAndSpaces, parseTrafficMb, aggregate_sum);
 	//Трафик пакетный
 	sumParam(xml, result, 'gprs', /<balance[^>]+code="Bundle_Gprs_All"[^>]*amount="([^"]*)/ig, replaceTagsAndSpaces, parseTrafficMb, aggregate_sum);
 	//Трафик в Безумном дне

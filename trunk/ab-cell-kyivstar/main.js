@@ -95,6 +95,7 @@ function main(){
   sumParam(html, result, 'sms', />(?:Бонусні SMS:|Бонусные SMS:)[\s\S]*?<b>(.*?)</, replaceTagsAndSpaces, parseBalance, aggregate_sum);
   sumParam(html, result, 'sms', />SMS:[\s\S]*?<b>(.*?)</ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
   sumParam(html, result, 'sms', /(?:Остаток текстових сообщений для отправки абонентам Киевстар и Beeline|Залишок текстових повідомлень для відправки абонентам Київстар та Beeline):[\s\S]*?<b>(.*?)</ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+  sumParam(html, result, 'sms', />(?:СМС за умовами ТП:|СМС по условиям ТП:)[\s\S]*?<b>(.*?)</, replaceTagsAndSpaces, parseBalance, aggregate_sum);
   
   //Бонусные средства 
   sumParam(html, result, 'bonus_money', /(?:Бонусні кошти:|Бонусные средства:)[\s\S]*?<b>(.*?)</ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
@@ -128,15 +129,26 @@ function main(){
   sumParam(html, result, 'till', /(?:Номер діє до:|Номер действует до:)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate, aggregate_sum);
 
   getParam(html, result, 'phone', /(?:Номер|Номер):[\s\S]*?<td[^>]*>([\s\S]*?)(?:\(|<\/td>)/i, replaceTagsAndSpaces, html_entity_decode);
-  
+
   //Срок действия услуги Комфортный переход
   if(AnyBalance.isAvailable('comfort_till')){
-      html = AnyBalance.requestGet(baseurl + "tbmb/tsm/overview.do", headers);
-      if(/show.do\?featureId=99&amp;in=1/i.test(html)){
-          html = AnyBalance.requestGet(baseurl + "tbmb/tsm/complexFeature/show.do?featureId=99&in=1", headers);
-          sumParam(html, result, 'comfort_till', /(?:Послуга буде автоматично відключена&nbsp;|Услуга будет автоматически отключена&nbsp;)([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
-      }
+    html = AnyBalance.requestGet(baseurl + "tbmb/tsm/overview.do", headers);
+    if(/show.do\?featureId=99&amp;in=1/i.test(html)){
+      html = AnyBalance.requestGet(baseurl + "tbmb/tsm/complexFeature/show.do?featureId=99&in=1", headers);
+      sumParam(html, result, 'comfort_till', /(?:Послуга буде автоматично відключена&nbsp;|Услуга будет автоматически отключена&nbsp;)([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
+    }
   }
-  
+
+  //Пакет SMS
+  if(AnyBalance.isAvailable('sms_packet', 'sms_packet_till', 'sms_packet_left')){
+    html = AnyBalance.requestGet(baseurl + "tbmb/tsm/overview.do", headers);
+    if(/show.do\?featureId=349&amp;in=1/i.test(html)){
+      html = AnyBalance.requestGet(baseurl + "tbmb/tsm/complexFeature/show.do?featureId=349&in=1", headers);
+      getParam(html, result, 'sms_packet', /<nobr>(?:Пакет: |Пакет: )<strong> ([\s\S]*?) <\/strong>/i, replaceTagsAndSpaces);
+      sumParam(html, result, 'sms_packet_till', /<nobr>(?:Срок действия:|Строк дії:) <strong> ([\s\S]*?)<\/strong>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
+      sumParam(html, result, 'sms_packet_left', /<nobr>(?:Остаток:|Залишок:) <strong> ([\s\S]*?)sms/ig, replaceTagsAndSpaces, parseInt, aggregate_sum);
+    }
+  }
+
   AnyBalance.setResult(result);
 }

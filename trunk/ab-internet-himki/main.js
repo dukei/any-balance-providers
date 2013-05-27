@@ -69,9 +69,9 @@ function main(){
     //Раз мы здесь, то мы успешно вошли в кабинет
     //Получаем все счетчики
     var result = {success: true};
-    getParam(json.balance, result, 'balance', null, replaceTagsAndSpaces, parseBalance);
-    getParam(json.shouldPay, result, '2pay', null, replaceTagsAndSpaces, parseBalance);
-    getParam(json.contractId, result, 'licschet', null, replaceTagsAndSpaces, html_entity_decode);
+    getParam(''+json.balance, result, 'balance', null, replaceTagsAndSpaces, parseBalance);
+    getParam(''+json.shouldPay, result, '2pay', null, replaceTagsAndSpaces, parseBalance);
+    getParam(''+json.contractId, result, 'licschet', null, replaceTagsAndSpaces, html_entity_decode);
 
     for(var i=0; json.clientinfo && i<json.clientinfo.length; ++i){
         var info = json.clientinfo[i];
@@ -80,5 +80,5 @@ function main(){
     }
 
     //Возвращаем результат
-    AnyBalance.setResult(result);
+    AnyBalance.setResult(result);           	
 }

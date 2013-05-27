@@ -50,6 +50,7 @@ function main(){
     }
 
     getParam(html, result, 'balance', /<td[^>]*>Итого:<\/td>(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(number, result, '__tariff', null, null, null);
 
     AnyBalance.setResult(result);
 }

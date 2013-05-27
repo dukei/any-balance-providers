@@ -95,7 +95,7 @@ function main(){
     sumParam (html, result, 'min_net_70', /<li>70 минут в день для внутрисетевых звонков:[^<]*осталось\s*([\d\.,]+) бесплатных секунд<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 
     // 30 минут в день для внутрисетевых звонков
-    sumParam (html, result, 'min_net_30', /<li>30 минут в день для внутрисетевых звонков:[^<]*осталось\s*([\d\.,]+)\s*минут<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    sumParam (html, result, 'min_net_30', /<li>30 минут в день для внутрисетевых звонков:[^<]*осталось\s*([\d\.,]+) бесплатных секунд<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     sumParam (html, result, 'min_net_30', /<li>Осталось\s*([\d\.,]+)\s*минут<\/li>/ig, replaceTagsAndSpaces, parseBalance, function(str){return 60*parseFloat(str)}, aggregate_sum);
     
     // 33 минуты в день для внутрисетевых звонков во всех областях

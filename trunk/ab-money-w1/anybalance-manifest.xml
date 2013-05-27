@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-money-w1</id>
+  <id version="2">ab-money-w1</id>
   <name>W1 Единый Кошелек</name>
   <description>
     Получает баланс из Единого Кошелька W1(http://www.w1.ru/)
@@ -18,10 +18,10 @@
     <history>history.xml</history>
   </files>
   <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="SafeAmount" name="Неснижаемая сумма" units="р"/>
-    <counter id="HoldAmount" name="Заблокированная сумма" units="р"/>
-    <counter id="Overdraft" name="Превышение кредита" units="р"/>
+    <counter id="balance" name="Баланс" units="{@currency}"/>
+    <counter id="SafeAmount" name="Неснижаемая сумма" units="{@currency}"/>
+    <counter id="HoldAmount" name="Заблокированная сумма" units="{@currency}"/>
+    <counter id="Overdraft" name="Превышение кредита" units="{@currency}"/>
   </counters>
   <keywords>
     W1 Единый Кошелек

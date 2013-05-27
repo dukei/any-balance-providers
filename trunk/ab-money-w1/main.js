@@ -25,7 +25,16 @@ function main(){
         params = '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><soap:Header><ParamsHeader xmlns="Wallet.Security.WebService"><Params><Param Name="CultureId" Value="ru-RU"/></Params></ParamsHeader></soap:Header><soap:Body><GetSessionTicket xmlns="Wallet.Security.WebService"><Login>%login%</Login><Password>%password%</Password><LoginType>Auto</LoginType><ClientId>w1_web</ClientId><Params><Param Name="UserAgent" Value="Chrome 26.0.1410.64"/><Param Name="ClientResolutionX" Value="1440"/><Param Name="ClientResolutionY" Value="900"/><Param Name="AppVersion" Value="%appversion%"/></Params></GetSessionTicket></soap:Body></soap:Envelope>',
         pass = Basis.Crypt(prefs.password).sha1(!0).base64().toString(),
         baseurl = "https://www.walletone.com/",
-        html;
+        html,
+        currency = {
+            980 : ' ₴',
+            398 : ' ₸',
+            643 : ' р',
+            710 : ' ZAR',
+            840 : ' $',
+            978 : ' €' 
+        },
+        currencyCode = prefs.currency || 643;
     
     html = AnyBalance.requestGet(baseurl + 'client/' , g_headers);
 
@@ -51,11 +60,13 @@ function main(){
 
     var result = {success: true};
     
-    getParam(html, result, 'balance', /<CurrencyId>643<\/CurrencyId>(?:<Amount>){1}([\s\S]*?)<\/Amount>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'SafeAmount', /<CurrencyId>643<\/CurrencyId>[\s\S]*(?:<SafeAmount>){1}([\s\S]*?)<\/SafeAmount>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'HoldAmount', /<CurrencyId>643<\/CurrencyId>[\s\S]*(?:<HoldAmount>){1}([\s\S]*?)<\/HoldAmount>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'Overdraft', /<CurrencyId>643<\/CurrencyId>[\s\S]*(?:<Overdraft>){1}([\s\S]*?)<\/Overdraft>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'balance', new RegExp("<CurrencyId>" + currencyCode + "<\/CurrencyId>(?:<Amount>){1}([\\s\\S]*?)<\/Amount>", "i"), replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'SafeAmount', new RegExp("<CurrencyId>" + currencyCode + "<\/CurrencyId>[\\s\\S]*(?:<SafeAmount>){1}([\\s\\S]*?)<\/SafeAmount>", "i"), replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'HoldAmount', new RegExp("<CurrencyId>" + currencyCode + "<\/CurrencyId>[\\s\\S]*(?:<HoldAmount>){1}([\\s\\S]*?)<\/HoldAmount>", "i"), replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'Overdraft', new RegExp("<CurrencyId>" + currencyCode + "<\/CurrencyId>[\\s\\S]*(?:<Overdraft>){1}([\\s\\S]*?)<\/Overdraft>", "i"), replaceTagsAndSpaces, parseBalance);
  
+    getParam(currency[currencyCode], result, ['currency', "balance"], null, replaceTagsAndSpaces, null);
+    
     // //Возвращаем результат
     AnyBalance.setResult(result);
 }

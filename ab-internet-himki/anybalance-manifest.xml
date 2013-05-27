@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-himki</id>
+  <id version="2">ab-internet-himki</id>
   <name>BIGtelecom</name>
   <description>
     Получает баланс и информацию о тарифном плане для подмосковного интернет провайдера БИГ Телеком (http://himki.net)

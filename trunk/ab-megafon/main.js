@@ -378,21 +378,21 @@ function megafonTrayInfo(filial){
         if(AnyBalance.isAvailable('internet_left','internet_total','internet_cur')){
             var $val = $threads.filter(':has(NAME:contains(" Байт")), :has(NAME_SERVICE:contains("Пакетная передача данных")), :has(PLAN_NAME:contains("Интернет")), :has(PLAN_NAME:contains("GPRS"))');
             AnyBalance.trace('Found internet discounts: ' + $val.length);
-            if($val.length){
-                var name = $val.first().find('PLAN_SI, NAME').text();
-                var left = $val.first().find('VOLUME_AVAILABLE').text();
+            for(var i=0;i<$val.length;++i){
+                var name = $val.eq(i).find('PLAN_SI, NAME').text();
+                var left = $val.eq(i).find('VOLUME_AVAILABLE').text();
                 left = parseFloat(left);
-                var total = $val.first().find('VOLUME_TOTAL').text();
+                var total = $val.eq(i).find('VOLUME_TOTAL').text();
                 total = parseFloat(total);
 
                 if(AnyBalance.isAvailable('internet_left')){
-                    result.internet_left = parseTrafficMy(left + name);
+                    result.internet_left = (result.internet_left || 0) + parseTrafficMy(left + name);
                 }
                 if(AnyBalance.isAvailable('internet_total')){
-                    result.internet_total = parseTrafficMy(total + name);
+                    result.internet_total = (result.internet_total || 0) + parseTrafficMy(total + name);
                 }
                 if(AnyBalance.isAvailable('internet_cur')){
-                    result.internet_cur = parseTrafficMy((total - left) + name);
+                    result.internet_cur = (result.internet_cur || 0) + parseTrafficMy((total - left) + name);
                 }
             }
         }
@@ -455,9 +455,9 @@ function megafonTrayInfo(filial){
                    need_sms_total = isAvailableButUnset(result, ['sms_total']),
                    need_mins_left = isAvailableButUnset(result, ['mins_left']),
                    need_mins_total = isAvailableButUnset(result, ['mins_total']),
-                   need_int_left = isAvailableButUnset(result, ['int_left']),
-                   need_int_total = isAvailableButUnset(result, ['int_total']),
-                   need_int_cur = isAvailableButUnset(result, ['int_cur']);
+                   need_int_left = isAvailableButUnset(result, ['internet_left']),
+                   need_int_total = isAvailableButUnset(result, ['internet_total']),
+                   need_int_cur = isAvailableButUnset(result, ['internet_cur']);
      
                //Минуты и прочее получаем только в случае ошибки в сервисгиде, чтобы случайно два раза не сложить
                var discounts = sumParam(json.ok.html, null, null, /<td[^>]+class="cc_discount_row"[^>]*>([\s\S]*?)<\/td>/ig);
@@ -481,11 +481,11 @@ function megafonTrayInfo(filial){
                    }else if(/[кгмkgm][бb]/i.test(val)){
                        var left = getParam(val, null, null, [reDiscount3Value, reDiscount2Value], null, parseTraffic);
                        var total = getParam(val, null, null, [reDiscount3Total, reDiscount2Total], null, parseTraffic);
-                       if(need_internet_left && isset(left))
+                       if(need_int_left && isset(left))
                        	   result.internet_left = (result.internet_left||0) + left;
-                       if(need_internet_total && isset(total))
+                       if(need_int_total && isset(total))
                        	   result.internet_total = (result.internet_total||0) + total;
-                       if(need_internet_cur && isset(total))
+                       if(need_int_cur && isset(total))
                        	   result.internet_cur = (result.internet_cur||0) + (total - (left||0));
                    }
                    

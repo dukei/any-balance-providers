@@ -19,4 +19,13 @@
         dialogMessage="Введите пароль, используемый для входа в личный кабинет."
         inputType="textPassword">
     </EditTextPreference>
+    <ListPreference
+        key="currency"
+        dialogTitle="Валюта"
+        title="Валюта"
+        defaultValue="RUB"
+        entries="Гривна|Тенге|Российский рубль|Рэнд|Доллар США|Евро"
+        summary="|Выберите валюту|{@s}"
+        entryValues="980|398|643|710|840|978">
+    </ListPreference>
 </PreferenceScreen>

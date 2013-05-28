@@ -9,6 +9,7 @@
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
+    <history>history.xml</history>
     <js>main.js</js>
   </files>
   <counters>

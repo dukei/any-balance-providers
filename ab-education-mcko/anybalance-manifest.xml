@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-education-mcko</id>
+  <name>МРКО</name>
+  <description>
+    Получает информацию об оценках из Московского регистра качества образования (http://new.mcko.ru/)
+
+    Информация берется из сводной ведомости
+  </description>
+  <author>Alexandra Shalamova &lt;alexandrashalamova@gmail.com&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balanceEng" name="английский язык" type="text" />
+    <counter id="balanceBio" name="биология" type="text" />
+    <counter id="balanceGeo" name="география" type="text"/>
+    <counter id="balanceIzo" name="изобразительное искусство" type="text" />
+    <counter id="balanceIst" name="история" type="text" />
+    <counter id="balanceLit" name="литература" type="text" />
+    <counter id="balanceMat" name="математика" type="text" />
+    <counter id="balanceObsch" name="обществознание включая экономику и право" type="text" />
+    <counter id="balanceRus" name="русский язык" type="text" />
+    <counter id="balanceMus" name="музыка" type="text" />
+  </counters>
+  <keywords>
+    Московский регистр качества образования mcko.ru
+  </keywords>
+  <type>
+    education
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

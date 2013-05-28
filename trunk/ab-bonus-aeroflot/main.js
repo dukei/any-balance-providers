@@ -65,7 +65,7 @@ Content-Disposition: form-data; name="return_url"\n\
 
     var result = {success: true};
 
-    html = AnyBalance.requestGet(baseurl + 'ajax/mile_balance');
+    html = AnyBalance.requestGet(baseurl + 'ajax/mile_balance', {'X-Requested-With':'XMLHttpRequest'});
 
     getParam(html, result, 'balance', /^(\d+)/i, replaceFloat, parseFloat);
     getParam(html, result, 'qmiles', /,(\d+)/i, replaceFloat, parseFloat);

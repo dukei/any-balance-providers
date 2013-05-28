@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change major_version="3.3" version="56" date="2013-05-28">
+      - Добавлен счетчик Использовано СМС
+      - Исправлена смена номера при наличии нескольких номеров в помощнике
+    </change>
     <change major_version="3.3" version="55" date="2013-05-24">
       - Добавлен счетчик Туристическая СИМ-карта от МТС
     </change>

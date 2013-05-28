@@ -330,12 +330,18 @@ function fetchOrdinary(html, baseurl, resultFromLK){
     if(prefs.phone && prefs.phone != prefs.login){
         AnyBalance.trace('Требуется другой номер. Пытаемся переключиться...');
         html = AnyBalance.requestGet(baseurl + "my-phone-numbers.aspx", g_headers);
+
+        var token = getParam(html, null, null, /<input[^>]+name="csrfToken"[^>]*value="([^"]*)/i);
+        var domain = getParam(baseurl, null, null, /\/\/(.*?)\//);
+        AnyBalance.setCookie(domain, 'csrfToken', token);
+
         html = AnyBalance.requestPost(baseurl + "my-phone-numbers.aspx", {
             ctl00_sm_HiddenField:'',
+	    csrfToken: token,
             __EVENTTARGET:'ctl00$MainContent$transitionLink',
             __EVENTARGUMENT:'7' + prefs.phone,
             __VIEWSTATE: getViewState(html)
-        }, g_headers);
+        }, addHeaders({Referer: baseurl + "my-phone-numbers.aspx"}));
         if(!html)
 	    throw new AnyBalance.Error(prefs.phone + ": номер, возможно, неправильный или у вас нет к нему доступа"); 
         var error = getParam(html, null, null, /(<h1>Мои номера<\/h1>)/i);
@@ -470,6 +476,8 @@ function fetchAccountStatus(html, result){
     //Остаток пакета Безлимит М2М SMS: 61
     html = sumParam (html, result, 'sms_left', /Остаток пакета [^<]*?(?:смс|sms):\s*([\d\.,]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
 
+    //Использовано: 6 sms
+    sumParam (html, result, 'sms_used', /Использовано:\s*([\d\.,]+)\s*(?:смс|sms)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 
     // Остаток ММС
     sumParam (html, result, 'mms_left', /(?:Осталось|Остаток)(?: пакета)? (?:mms|ммс):\s*(\d+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);

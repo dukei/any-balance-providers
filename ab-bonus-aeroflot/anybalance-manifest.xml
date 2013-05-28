@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-bonus-aeroflot</id>
+  <id version="2">ab-bonus-aeroflot</id>
   <name>Аэрофлот Бонус</name>
   <description>
     Получает бонусные мили, квалификационные мили и уровень для программы Аэрофлот Бонус. Информация берется из личного кабинета http://aeroflotbonus.ru

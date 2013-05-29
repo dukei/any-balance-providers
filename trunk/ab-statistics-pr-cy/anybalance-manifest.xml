@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-statistics-pr-cy</id>
+  <name>PR-CY</name>
+  <description>
+    Получается статисту Яндекса и Google с сайта PR-CY (http://pr-cy.ru/)
+  </description>
+  <author>Alexandra Shalamova &lt;alexandrashalamova@gmail.com&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="yandexTic" name="Яндекс тИЦ" type="text"/>
+    <counter id="yandexCatalog" name="Яндекс Каталог" type="text"/>
+    <counter id="yandexIndex" name="Проиндексировано Яндекс" type="text"/>
+
+    <counter id="googlePR" name="Google Page Rank" type="text"/>
+    <counter id="googleCatalog" name="DMOZ.org каталог" type="text"/>
+    <counter id="googleIndex" name="Проиндексировано Google" type="text"/>
+  </counters>
+  <keywords>
+    рп су
+  </keywords>
+  <type>
+    statistics
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

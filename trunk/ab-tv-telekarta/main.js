@@ -33,7 +33,7 @@ function main(){
     
     getParam(msg, result, 'num', /^([\s\S]*?):/i,  replaceTagsAndSpaces, html_entity_decode);
     getParam(msg, result, '__tariff', /^([\s\S]*?):/i,  replaceTagsAndSpaces, html_entity_decode);
-    getParam(msg, result, 'till', /:\s*<\/span>([\s\S]*?)/i,  replaceTagsAndSpaces, parseDate);
+    getParam(msg, result, 'till', /:\s*<\/span>([^<]*)/i,  replaceTagsAndSpaces, parseDate);
     if(AnyBalance.isAvailable('till') && !isset(result.till)){
         //Не удалось получить дату подписки.
         if(!/нет активной подписки/i.test(msg))

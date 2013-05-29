@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-money-leader-card</id>
+  <id version="2">ab-money-leader-card</id>
   <name>Карта «Лидер»</name>
   <description>
      Показывает баланс на карте Лидер.
@@ -14,13 +14,12 @@
     <history>history.xml</history>
   </files>
   <counters>
-    <counter id="balance" name="Баланс" units=" {@currency}"/>
-    <counter id="fio" name="ФИО" type="text"/>
+    <counter id="balance" name="Баланс" units=" р"/>
     <counter id="card" name="Номер карты" type="text"/>
-    <counter id="currency" name="Валюта" type="text"/>
+    <counter id="pursue" name="Номер кошелька" type="text"/>
   </counters>
   <keywords>
-    сайклос шишлос cyclos карт
+    карта лидер леомани leomoney
   </keywords>
   <type>
     money

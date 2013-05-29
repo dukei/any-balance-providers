@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Адрес сайта" 
+        positiveButtonText="ОК" 
+        summary="||{@s}" 
+        dialogTitle="Адрес сайта" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите адрес сайта."
+        key="login">
+    </EditTextPreference>
+</PreferenceScreen>

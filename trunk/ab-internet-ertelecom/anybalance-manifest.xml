@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="4">ab-internet-ertelecom</id>
+  <id version="5">ab-internet-ertelecom</id>
   <name>Дом.ру (Эр-телеком)</name>
   <description>
     Получает текущий баланс, номер лицевого счета у интернет провайдера "Эр-телеком" (ДОМ.РУ): http://domru.ru.

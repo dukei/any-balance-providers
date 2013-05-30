@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-tv-raduga-tv</id>
+  <name>Радуга-ТВ (Москва)</name>
+  <description>
+    Получается баланс карты доступа для провайдера спутникового телевидения Радуга-ТВ (http://www.raduga-tv.ru/)
+
+    Информация берется со страницы проверки карты (http://www.raduga-tv.ru/supports/check-card)
+
+  </description>
+  <author>Alexandra Shalamova &lt;alexandrashalamova@gmail.com&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="balanceBal" name="Бонусы" units=" Б"/>
+    <counter id="status" name="Статус" type="text"/>
+    <counter id="number" name="Номер карты" type="text"/>
+  </counters>
+  <keywords>
+    спутниковое телевидение raduga-tv
+  </keywords>
+  <type>
+    tv
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

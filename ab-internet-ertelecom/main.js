@@ -25,8 +25,10 @@ function main(){
         if(!token)
             throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
 
+        AnyBalance.setCookie('domru.ru', 'citydomain'); //Удаляем старую куку
+
         AnyBalance.setCookie('.domru.ru', 'service', '0');
-        AnyBalance.setCookie('.domru.ru', 'citydomain', domain);
+        AnyBalance.setCookie('.domru.ru', 'citydomain', domain, {path: '/'});
 
     // Заходим на главную страницу
 	var info = AnyBalance.requestPost(baseurl + "login", {

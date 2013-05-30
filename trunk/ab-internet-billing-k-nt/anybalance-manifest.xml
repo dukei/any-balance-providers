@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-internet-billing-k-nt</id>
+  <name>Новые Технологии (Клинцы)</name>
+  <description>
+    Получает баланс для интернет провайдера Новые Технологии города Клинцы (http://billing.k-nt.ru/)
+
+    Информация берется из личного кабинета клиента (http://billing.k-nt.ru/index:cabinet.ib)
+  </description>
+  <author>Alexandra Shalamova &lt;alexandrashalamova@gmail.com&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс плательщика" units="р"/>
+    <counter id="fio" name="ФИО" type="text"/>
+    <counter id="balanceSum" name="Суммарный месячный платёж" units="р"/>
+    <counter id="number" name="Идентификатор плательщика" type="text"/>
+  </counters>
+  <keywords>
+    интернет новые технологии
+  </keywords>
+  <type>
+    
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

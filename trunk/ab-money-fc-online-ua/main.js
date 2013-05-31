@@ -45,10 +45,10 @@ function main(){
     html = AnyBalance.requestGet(baseurl + 'bankworld/ru/external/accounts/cards_xml.bml', addHeaders({'Referer': baseurl + 'bankworld/ru/external/cards.bml', 'X-Requested-With':'XMLHttpRequest' }, g_headers)); 
 
     var result = {success: true};
-    html = html.replace(/[ ]/g, '').replace(/[\n]/g, '');
+    html = html.replace(/ >/g, '>').replace(/\n/g, '');
 
     var xml = xml2json.parser(html),
-        cartNum = new RegExp("[\\d]{12}" + prefs.cardnum, "i");
+        cartNum = new RegExp("^\\d{12}" + (prefs.cardnum ? prefs.cardnum : "\\d{4}$"), "i");
         realJSON = xml.accountlist.account,
         thisIsCart = '';
 
@@ -56,12 +56,13 @@ function main(){
     var newJSON = {};
     for (i in realJSON) { 
         newJSON[realJSON[i].accountno] = realJSON[i];
-        if (cartNum.test(realJSON[i].accountno)) { thisIsCart = realJSON[i].accountno; }
+        if (cartNum.test(realJSON[i].accountno) && thisIsCart === '') { thisIsCart = realJSON[i].accountno; }
     }
 
+    if (thisIsCart === '') { throw new AnyBalance.Error('Карты не найдены'); } 
+
     getParam(newJSON[thisIsCart].name, result, 'type', null, replaceTagsAndSpaces, html_entity_decode);
-    getParam(newJSON[thisIsCart].currencycode, result, 'currencycode', null, replaceTagsAndSpaces, html_entity_decode); // валюта
-    getParam(newJSON[thisIsCart].expiry_date, result, 'expiryDate', null, replaceTagsAndSpaces, html_entity_decode); // дата истечения срока
+    getParam(newJSON[thisIsCart].expiry_date, result, 'expiryDate', null, replaceTagsAndSpaces, parseDate); // дата истечения срока
     getParam(newJSON[thisIsCart].holder_name, result, 'holderName', null, replaceTagsAndSpaces, html_entity_decode); // держатель карты
     
     var schets = newJSON[thisIsCart].text6.split("|"),
@@ -77,6 +78,7 @@ function main(){
     html = AnyBalance.requestPost(baseurl + 'bankworld/ru/external/accounts/otb.bml', {BIType: 'CardOTB', BIXML: '<DOC><pan Value="' + thisIsCart + '"/></DOC>', correspondencetext: 'true'},addHeaders({'Referer': baseurl + 'bankworld/ru/external/cards.bml', 'X-Requested-With':'XMLHttpRequest' }, g_headers)); 
 
     getParam(html, result, 'availablebalance', /<balance>([\s\S]*?)<\/balance>/i, null, parseBalance); // доступный баланс
+    getParam(newJSON[thisIsCart].currencycode, result, ['currencycode', 'availablebalance'], null, replaceTagsAndSpaces, null); // валюта
 
     AnyBalance.setResult(result);
 }

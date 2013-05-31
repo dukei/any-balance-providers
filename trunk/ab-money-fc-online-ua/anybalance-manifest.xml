@@ -16,10 +16,9 @@
     <history>history.xml</history>
   </files>
   <counters>
-    <counter id="availablebalance" name="Доступный остаток" units=""/>
+    <counter id="availablebalance" name="Доступный остаток" units=" {@currencycode}"/>
     <counter id="type" name="тип карты" type="text"/>
-    <counter id="currencycode" name="Валюта" type="text"/>
-    <counter id="expiryDate" name="Дата истечения срока" type="text"/>
+    <counter id="expiryDate" name="Дата истечения срока" type="time" format="MM.yyyy" />
     <counter id="schet" name="Счета" type="text"/>
     <counter id="holderName" name="Держатель карты" type="text"/>
   </counters>

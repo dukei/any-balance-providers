@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-money-fc-online-ua</id>
+  <name>Банк "Финансы и Кредит" (Украина)</name>
+  <description>
+    Получает информацию из личного кабинета банка "Финансы и Кредит" (https://fc-online.com.ua)
+
+  </description>
+  <author>Alexandra Shalamova &lt;alexandrashalamova@gmail.com&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>xml2json.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="availablebalance" name="Доступный остаток" units=""/>
+    <counter id="type" name="тип карты" type="text"/>
+    <counter id="currencycode" name="Валюта" type="text"/>
+    <counter id="expiryDate" name="Дата истечения срока" type="text"/>
+    <counter id="schet" name="Счета" type="text"/>
+    <counter id="holderName" name="Держатель карты" type="text"/>
+  </counters>
+  <keywords>
+    банк fc
+  </keywords>
+  <type>
+    money
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-tv-raduga-tv</id>
+  <id version="2">ab-tv-raduga-tv</id> 
   <name>Радуга-ТВ (Москва)</name>
   <description>
     Получается баланс карты доступа для провайдера спутникового телевидения Радуга-ТВ (http://www.raduga-tv.ru/)
@@ -21,6 +21,11 @@
     <counter id="balanceBal" name="Бонусы" units=" Б"/>
     <counter id="status" name="Статус" type="text"/>
     <counter id="number" name="Номер карты" type="text"/>
+
+    <counter id="endDateBasovii" name="Дата окончания базового пакета Радуга ТВ" type="time" format="dd.MM.yyyy"/>
+    <counter id="endDateDostup" name="Дата окончания доступа к сети Радуга ТВ" type="time" format="dd.MM.yyyy"/>
+    <counter id="endDateDostupnii" name="Дата окончания доступного пакета Радуга ТВ" type="time" format="dd.MM.yyyy"/>
+
   </counters>
   <keywords>
     спутниковое телевидение raduga-tv

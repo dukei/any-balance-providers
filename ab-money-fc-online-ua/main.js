@@ -7,12 +7,10 @@ Operator site: https://fc-online.com.ua
 */
 
 var g_headers = {
-'Accept-Encoding':'gzip,deflate,sdch',
+'Accept':'*/*',
+'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
 'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 'Connection':'keep-alive',
-'Content-type':'application/x-www-form-urlencoded',
-'Host':'fc-online.com.ua',
-
 'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/27.0.1453.94 Safari/537.36'
 };
 
@@ -23,7 +21,7 @@ function main(){
 
     AnyBalance.setDefaultCharset('utf-8'); 
 
-    var html = AnyBalance.requestGet(baseurl + 'bankworld/ru/loginbrowser/login.xhtml', addHeaders({'Accept':'*/*', 'Content-Length':'93', 'Origin':'https://fc-online.com.ua', 'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3'}, g_headers));
+    var html = AnyBalance.requestGet(baseurl + 'bankworld/ru/loginbrowser/login.xhtml', addHeaders({'Origin':'https://fc-online.com.ua'}, g_headers));
 
     var form = getParam(html, null, null, /<form[^>]+id="workForm"[^>]*>([\s\S]*?)<\/form>/i);    
     if(!form)
@@ -44,7 +42,7 @@ function main(){
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
 
-    html = AnyBalance.requestGet(baseurl + 'bankworld/ru/external/accounts/cards_xml.bml', addHeaders({'Accept':'*/*', 'Referer': baseurl + 'bankworld/ru/external/cards.bml', 'X-Requested-With':'XMLHttpRequest' }, g_headers)); 
+    html = AnyBalance.requestGet(baseurl + 'bankworld/ru/external/accounts/cards_xml.bml', addHeaders({'Referer': baseurl + 'bankworld/ru/external/cards.bml', 'X-Requested-With':'XMLHttpRequest' }, g_headers)); 
 
     var result = {success: true};
     html = html.replace(/[ ]/g, '').replace(/[\n]/g, '');
@@ -76,7 +74,7 @@ function main(){
     }
     getParam(schetStr.join(", "), result, 'schet', null, replaceTagsAndSpaces, html_entity_decode); // счета
 
-    html = AnyBalance.requestPost(baseurl + 'bankworld/ru/external/accounts/otb.bml', {BIType: 'CardOTB', BIXML: '<DOC><pan Value="' + thisIsCart + '"/></DOC>', correspondencetext: 'true'},addHeaders({'Accept':'*/*', 'Referer': baseurl + 'bankworld/ru/external/cards.bml', 'X-Requested-With':'XMLHttpRequest' }, g_headers)); 
+    html = AnyBalance.requestPost(baseurl + 'bankworld/ru/external/accounts/otb.bml', {BIType: 'CardOTB', BIXML: '<DOC><pan Value="' + thisIsCart + '"/></DOC>', correspondencetext: 'true'},addHeaders({'Referer': baseurl + 'bankworld/ru/external/cards.bml', 'X-Requested-With':'XMLHttpRequest' }, g_headers)); 
 
     getParam(html, result, 'availablebalance', /<balance>([\s\S]*?)<\/balance>/i, null, parseBalance); // доступный баланс
 

@@ -34,7 +34,7 @@ function main(){
 
     html = AnyBalance.requestPost(baseurl + 'supports/check-card', params, addHeaders({Referer: baseurl + 'supports/check-card'})); 
 
-    if(/class="page_error"/i.test(html)){
+    if(/class="error_txt"/i.test(html)){
         var error = getParam(html, null, null, /<div[^>]+class="error_txt"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error);
@@ -46,6 +46,10 @@ function main(){
     getParam(html, result, 'status', /<div[^>]+class=\\'def_content\\'[^>]*>(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\\\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'balance', /<div[^>]+class=\\'def_content\\'[^>]*>(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\\\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'balanceBal', /<div[^>]+class=\\'def_content\\'[^>]*>(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\\\/td>/i, replaceTagsAndSpaces, parseBalance);
+
+    getParam(html, result, 'endDateBasovii', /<td>Базовый пакет Радуга ТВ(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\\\/td>/i, replaceTagsAndSpaces, parseDate);
+    getParam(html, result, 'endDateDostup', /<td>Доступ к сети Радуга ТВ(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\\\/td>/i, replaceTagsAndSpaces, parseDate);
+    getParam(html, result, 'endDateDostupnii', /<td>Доступный пакет Радуга ТВ(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\\\/td>/i, replaceTagsAndSpaces, parseDate);
 
     AnyBalance.setResult(result);
 }

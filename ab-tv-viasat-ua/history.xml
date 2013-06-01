@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<history>
+    <change version="2" date="2013-06-01">
+      Исправлено получение отрицательного баланса и знак валюты изменен на гривны
+    </change>
+</history>

@@ -44,7 +44,7 @@ function main(){
 
     var result = {success: true};
 
-    getParam(html, result, 'balance', /<span[^>]*class="balance"[^>]*>([\S\s]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'balance', /<span[^>]*class="balance"[^>]*>([\S\s]*?)<\/span>/i, [/&#8209;/g, '-', replaceTagsAndSpaces], parseBalance);
     getParam(html, result, 'agreement', /(?:№ договору|№ договора):([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, '__tariff', />\s*(?:пакет)\s*(<[\S\s]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'status', /(?:Статус):([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);

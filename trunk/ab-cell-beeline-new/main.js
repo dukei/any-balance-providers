@@ -55,6 +55,12 @@ function getBlock(url, html, name){
     return data;  
 }
 
+function myParseCurrency(text){
+    var val = html_entity_decode(text.replace(/\s+/, '')).replace(/[\-\d\.,]+/,'');
+    AnyBalance.trace('Parsing currency (' + val + ') from: ' + text);
+    return val;
+}
+
 function main(){
     var prefs = AnyBalance.getPreferences();
     var baseurl = "https://my.beeline.ru/";
@@ -100,8 +106,8 @@ function main(){
 
     if(AnyBalance.isAvailable('balance', 'fio')){
         xhtml = getBlock(baseurl + 'c/pre/index.html', html, 'balancePreHeadDetails');
-        getParam(xhtml, result, 'balance', /у вас на балансе[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-        getParam(xhtml, result, 'currency', /у вас на балансе[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseCurrency);
+        getParam(xhtml, result, 'balance', /у вас на балансе([\s\S]*)/i, replaceTagsAndSpaces, parseBalance);
+        getParam(xhtml, result, 'currency', /у вас на балансе([\s\S]*)/i, replaceTagsAndSpaces, myParseCurrency);
         getParam(xhtml, result, 'fio', /<span[^>]+class="b2c.header.greeting.pre.b2c.ban"[^>]*>([\s\S]*?)(?:<\/span>|,)/i, replaceTagsAndSpaces, html_entity_decode);
     }
 

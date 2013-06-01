@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-tv-viasat-ua</id>
+  <id version="2">ab-tv-viasat-ua</id>
   <name>Viasat (Украина)</name>
   <description>
     Получает баланс и другую информацию у провайдера спутникового телевидения Viasat (http://www.viasat.ua) в Украине.
@@ -13,9 +13,10 @@
     <preferences>preferences.xml</preferences>
     <js>main.js</js>
     <js>library.js</js>
+    <history>history.xml</history>
   </files>
   <counters>
-    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="balance" name="Баланс" units=" ₴"/>
     <counter id="agreement" name="Договор" type="text"/>
     <counter id="clientid" name="№ клиента" type="text"/>
     <counter id="status" name="Статус" type="text"/>

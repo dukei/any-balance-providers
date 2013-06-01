@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="2" version="10">ab-telephony-skype</id>
+  <id major_version="2" version="11">ab-telephony-skype</id>
   <name>Skype</name>
   <description>
-    Получает текущий баланс, валюту баланса в Skype.
+    Получает текущий баланс, валюту баланса в Skype (https://skype.com).
   </description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <files>

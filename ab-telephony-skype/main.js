@@ -142,8 +142,8 @@ function main(){
 
     var matches;
 
-    getParam(info, result, 'balance', /<a[^>]*class="credit icon[\s\S]*?<a[^>]*class="first[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(info, result, 'currency', /<a[^>]*class="credit icon[\s\S]*?<a[^>]*class="first[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces, parseCurrency);
+    getParam(info, result, 'balance', /<a[^>]*class="credit(?:ATU) icon[\s\S]*?<a[^>]*class="first[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(info, result, 'currency', /<a[^>]*class="credit(?:ATU) icon[\s\S]*?<a[^>]*class="first[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces, parseCurrency);
     
     if(AnyBalance.isAvailable('subscriptions')){
     	getParam(info, result, 'subscriptions', /<li[^>]+class="subs"[^>]*>([\s\S]*?)<(?:ul|li)[^>]*>/i, replaceTagsAndSpaces, parseBalance);

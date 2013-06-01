@@ -8,62 +8,6 @@
 */
 
 
-function getParamFind (result, param, obj, search_str, regexp, parser)
-{
-    if (!AnyBalance.isAvailable (param))
-        return;
-
-    if(typeof(regexp) == 'function' && !regexp.test){ //На андроид почему-то регэксп это тоже function, поэтому надо доп. проверить, что это не регэксп.
-        parser = regexp;
-        regexp = null;
-    }
-
-    var found = obj.find (search_str);
-    if(found.size()){
-        var res = found.text();
-        if (regexp) {
-            var matches = regexp.exec(res);
-            if (matches)
-                res = matches[0];
-            else
-                return;
-        }
-        
-        result[param] = parser ? parser(res) : res;
-    }
-}
-
-function getParam (html, result, param, regexp, replaces, parser) {
-	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
-		return;
-
-	var value = regexp.exec (html);
-	if (value) {
-		value = value[1];
-		if (replaces) {
-			for (var i = 0; i < replaces.length; i += 2) {
-				value = value.replace (replaces[i], replaces[i+1]);
-			}
-		}
-		if (parser)
-			value = parser (value);
-
-    if(param)
-      result[param] = value;
-    else
-      return value
-	}
-}
-
-var replaceTagsAndSpaces = [/<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
-var replaceFloat = [/\s+/g, '', /,/g, '.'];
-
-function parseBalance(text){
-    var val = getParam(text.replace(/\s+/g, ''), null, null, /(-?\d[\d\s.,]*)/, replaceFloat, parseFloat);
-    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
-    return val;
-}
-
 function main () {
     var prefs = AnyBalance.getPreferences ();
     var baseurl = 'https://www.malina.ru/';
@@ -79,69 +23,60 @@ function main () {
     var html = AnyBalance.requestPost (baseurl + 'login.php', {
         login: prefs.login,
         password: prefs.password,
-        backurl: 'L3BlcnNvbmFsLw=='
+        backurl: ''
     });
 
-    // Проверка неправильной пары логин/пароль
-    var regexp=/id="alert"[\s\S]*?<p>(.*?)<\/p>/i;
-    var res = regexp.exec (html);
-    if (res) {
-        res = res[1].replace ('Ошибка! ', '');
-        throw new AnyBalance.Error (res);
+    // Проверка на корректный вход
+    if(!/\/logout.php/i.test(html)){
+        // Проверка неправильной пары логин/пароль
+        var error = getParam(html, null, null, /<div[^>]+id="alert"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+        if(error)
+            throw new AnyBalance.Error(error);
+        throw new AnyBalance.Error('Не удалось зайти на персональную страницу. Сайт изменен?');
     }
 
-    // Проверка на корректный вход
-    regexp = /\/logout.php/;
-    if (regexp.exec(html))
-    	AnyBalance.trace ('It looks like we are in selfcare...');
-    else {
-        AnyBalance.trace ('Have not found logout... Unknown error. Please contact author.');
-        throw new AnyBalance.Error ('Неизвестная ошибка. Пожалуйста, свяжитесь с автором.');
-    }
+    AnyBalance.trace ('It looks like we are in selfcare...');
 
     AnyBalance.trace ('Parsing data...');
     
-    matches = /id="account"[\s\S]*?(<table>[\s\S]*?<\/table>)/.exec (html);
-    if (!matches)
+    matches = /class="points"/.exec (html);
+    if (!/class="points"/i.test(html))
         throw new AnyBalance.Error ('Невозможно найти информацию об аккаунте, свяжитесь с автором');
 
     var result = {success: true};
   
-    //AnyBalance.trace(matches[1]);
-    var $table = $(matches[1]);
-
     // Номер счета
-    getParamFind (result, 'accountNumber', $table, 'tr:contains("Номер счета") td');
+    getParam (html, result, 'accountNumber', /<th[^>]*>Номер счета[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
 
     // Владелец счета
-    getParamFind (result, 'customer', $table, 'tr:contains("Владелец") td');
+    getParam (html, result, 'customer', /<th[^>]*>Владелец счета[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
 
     // Статус счета
-    getParamFind (result, 'status', $table, 'tr:contains("Статус счета") td');
+    getParam (html, result, 'status', /<th[^>]*>Статус счета[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
 
     // Накоплено основных баллов
-    getParamFind (result, 'mainPoints', $table, 'tr:contains("Накоплено основных баллов") td', parseBalance);
+    //getParam (html, result, 'mainPoints', /<th[^>]*>Владелец счета[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
 
     // Накоплено EXPRESS-баллов
-    getParamFind (result, 'expressPoints', $table, 'tr:contains("EXPRESS") td', parseBalance);
+    //getParam (html, result, 'expressPoints', $table, 'tr:contains("EXPRESS") td', parseBalance);
 
     // Израсходовано баллов
-    getParamFind (result, 'gonePoints', $table, 'tr:contains("Израсходовано баллов") td', parseBalance);
+    //getParam (html, result, 'gonePoints', $table, 'tr:contains("Израсходовано баллов") td', parseBalance);
 
     // Сгорело баллов
     //getParamFind (result, 'burnPoints', $table, 'tr:contains("Сгорело баллов") td', parseBalance);
 
     // Баланс баллов
-    getParamFind (result, 'balance', $table, 'tr:contains("Баланс баллов") td', parseBalance);
+    getParam (html, result, 'balance', /<th[^>]*>Баланс баллов[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 
     // Доступно к оплате у партнеров
-    getParamFind (result, 'availableForPay', $table, 'tr:contains("Доступно к оплате у партнеров") td', /\d+/, parseBalance);
+    getParam (html, result, 'availableForPay', /<th[^>]*>Доступно к обмену на товары и услуги[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 
     if (AnyBalance.isAvailable ('burnInThisMonth')) {
 
         AnyBalance.trace ('Fetching balance structure...');
 
-        html = AnyBalance.requestGet (baseurl + 'personal/balance_structure.php');
+        html = AnyBalance.requestGet (baseurl + 'siebel/personal/forecast/');
 
         AnyBalance.trace ('Parsing balance structure...');
 

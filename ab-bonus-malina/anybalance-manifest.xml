@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="6">ab-bonus-malina</id>
+  <id major_version="2.0" version="7">ab-bonus-malina</id>
   <name>Бонусы Малина</name>
   <description>
     Получает информацию по баллам на карте накопительной программы Малина через персональную страницу https://malina.ru/login.php.
@@ -9,18 +9,18 @@
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
+    <js>library.js</js>
     <js>main.js</js>
-    <js>api:jquery.min.js</js>
     <history>history.xml</history>
   </files>
   <counters>
-    <counter id="balance" name="Всего" units="б"/>
-    <counter id="mainPoints" name="Основные баллы" prefix="Осн:" units="б"/>
-    <counter id="expressPoints" name="EXPRESS-баллы" prefix="Expr:" units="б"/>
-    <counter id="gonePoints" name="Израсходовано" prefix="Изр:" units="б"/>
-    <counter id="burnInThisMonth" name="Сгорит в этом месяце" prefix="Сгорит:" units="б"/>
+    <counter id="balance" name="Всего" units=" Б"/>
+ <!--    <counter id="mainPoints" name="Основные баллы" prefix="Осн:" units=" Б"/> -->
+ <!--    <counter id="expressPoints" name="EXPRESS-баллы" prefix="Expr:" units=" Б"/> -->
+ <!--    <counter id="gonePoints" name="Израсходовано" prefix="Изр:" units=" Б"/> -->
+    <counter id="burnInThisMonth" name="Сгорит в этом месяце" prefix="" units=" Б"/>
  <!--    <counter id="burnPoints" name="Сгорело всего" prefix="Сгорело:" units="б"/> -->
-    <counter id="availableForPay" name="Доступно к оплате" units="р"/>
+    <counter id="availableForPay" name="Доступно к оплате" units=" р"/>
 
     <counter id="status" name="Статус счета" type="text"/>
     <counter id="accountNumber" name="Номер счета" prefix="№"/>

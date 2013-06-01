@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change major_version="2.0" version="6" date="2013-02-22">
+      - Существенный изменения в личном кабинете. Некоторые счетчики больше недоступны.
+    </change>
     <change major_version="1.0" version="6" date="2013-02-22">
       - Изменения в личном кабинете
     </change>

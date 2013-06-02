@@ -24,7 +24,7 @@ function createParamsArray(params){
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-    var baseurl = "http://cabinet.idport.kz/IdPort/";
+    var baseurl = "https://cabinet.idport.kz:8443/IdPort/";
 
     AnyBalance.setDefaultCharset('utf-8'); 
 
@@ -48,7 +48,7 @@ function main(){
 
     if(!/\?logout=true/i.test(html)){
         //Если в кабинет войти не получилось, то в первую очередь надо поискать в ответе сервера объяснение ошибки
-        if(/location.href\s*=\s*'http:\/\/cabinet.idport.kz\/IdPort\/index_error.html'/.test(html))
+        if(/location.href\s*=\s*'https?:\/\/cabinet.idport.kz(?::\d+)?\/IdPort\/index_error.html'/.test(html))
             throw new AnyBalance.Error('Неверно указаны логин или пароль');
         //Если объяснения ошибки не найдено, при том, что на сайт войти не удалось, то, вероятно, произошли изменения на сайте
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');

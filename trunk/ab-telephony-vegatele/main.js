@@ -80,6 +80,7 @@ function main(){
         var error = getParam(html, null, null, /<span[^>]*class=["']red\s*-small[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error);
+        AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Проблемы на сайте или сайт изменен.');
     }
     

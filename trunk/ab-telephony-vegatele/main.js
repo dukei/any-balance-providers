@@ -7,61 +7,20 @@ VEGA — телефонная фиксированная связь в горо�
 
 */
 
-function getParam (html, result, param, regexp, replaces, parser) {
-	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
-		return;
-
-	var value = regexp ? regexp.exec (html) : html;
-	if (value) {
-                if(regexp)
-		    value = value[1];
-		if (replaces) {
-			for (var i = 0; i < replaces.length; i += 2) {
-				value = value.replace (replaces[i], replaces[i+1]);
-			}
-		}
-		if (parser)
-			value = parser (value);
-
-    if(param)
-      result[param] = value;
-    else
-      return value
-	}
-}
-
-var replaceTagsAndSpaces = [/&nbsp;/ig, ' ', /<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
-var replaceFloat = [/\s+/g, '', /,/g, '.', /(\d)\-(\d)/g, '$1.$2'];
-
-function parseBalance(text){
-    var _text = text.replace(/\s+/g, '');
-    var val = getParam(_text, null, null, /(-?\d[\d\.,\-]*)/, replaceFloat, parseFloat);
-    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
-    return val;
-}
-
-function parseCurrency(text){
-    var _text = text.replace(/\s+/g, '');
-    var val = getParam(_text, null, null, /[\d\.,\-]+(\S*)/);
-    AnyBalance.trace('Parsing currency (' + val + ') from: ' + text);
-    return val;
-}
-
-function getJson(html){
-    try{
-        return JSON.parse(html);
-    }catch(e){
-        AnyBalance.trace('wrong json: ' + e.message + ' (' + html + ')');
-        throw new AnyBalance.Error('Неправильный ответ сервера. Если эта ошибка повторяется, обратитесь к автору провайдера.');
-    }
-}
+var g_headers = {
+'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
+'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+'Connection':'keep-alive',
+'User-Agent':'Mozilla/5.0 (Windows NT 5.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/27.0.1453.94 Safari/537.36'
+};
 
 function main(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');    
 
     var baseurl = "https://my.vegatele.com/";
-    var html = AnyBalance.requestGet(baseurl + 'login_pc_tel');
+    var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
     var token = getParam(html, null, null, /<input[^>]+name="csrf_token"[^>]*value="([^"]*)/i);
     if(!token)
        throw new AnyBalance.Error('Не удаётся найти форму входа. Проблемы на сайте или сайт изменен.');
@@ -74,7 +33,7 @@ function main(){
         'submit.x':16,
         'submit.y':14,
         submit:'submit'
-    });
+    }, addHeaders({Referer: baseurl + 'login'}));
 
     if(!/\/logout/i.test(html)){
         var error = getParam(html, null, null, /<span[^>]*class=["']red\s*-small[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
@@ -92,7 +51,7 @@ function main(){
     if(!dogid)
         throw new AnyBalance.Error('Не удалось получить номер лицевого счета. Сайт изменен?');
 
-    html = AnyBalance.requestGet(baseurl + 'cabinet/url_get_services/' + dogid + '/' + Math.random());
+    html = AnyBalance.requestGet(baseurl + 'cabinet/url_get_services/' + dogid + '/' + Math.random(), g_headers);
     var json = getJson(html);
     if(json.error)
         throw new AnyBalance.Error(json.error);
@@ -117,12 +76,3 @@ function main(){
 
     AnyBalance.setResult(result);
 }
-
-function html_entity_decode(str)
-{
-    //jd-tech.net
-    var tarea=document.createElement('textarea');
-    tarea.innerHTML = str;
-    return tarea.value;
-}
-

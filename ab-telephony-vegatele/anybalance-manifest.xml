@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-telephony-vegatele</id>
+  <id version="3">ab-telephony-vegatele</id>
   <name>Vega телефония</name>
   <description>
     Получает текущий баланс и другие параметы у украинского провайдера проводной телефонии Vega (http://www.vegatele.com).

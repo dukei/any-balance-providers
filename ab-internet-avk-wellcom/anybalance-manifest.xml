@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-internet-avk-wellcom</id>
+  <name>АВК-ВЕЛЛКОМ</name> 
+  <description>
+    Получает баланс для интернет провайдера АВК-ВЕЛЛКОМ (http://www.avk-wellcom.ru/)
+
+    Информация берется из личного кабинета (http://www.avk-wellcom.ru/stat_beta/account/info/)
+  </description>
+  <author>Alexandra Shalamova &lt;alexandrashalamova@gmail.com&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Текущее состояние лицевого счета" units="р"/>
+    <counter id="fio" name="ФИО" type="text"/>
+    <counter id="status" name="Статус счета" type="text"/>
+    <counter id="phone1" name="Домашний телефон" type="text"/>
+    <counter id="phone2" name="Мобильный телефон" type="text"/>
+  </counters>
+  <keywords>
+    интернет провайдер 
+  </keywords>
+  <type>
+    internet
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

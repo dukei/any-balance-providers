@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="17" date="2013-06-03">
+      - Поддержка новой страницы входа в Сбербанк Онлайн
+    </change>
     <change version="16" date="2013-01-04">
       - Исправление ошибки 'baseurl not defined' при неустановленном регионе оплаты
     </change>

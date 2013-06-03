@@ -90,7 +90,7 @@ function parseSmallDate(str){
 function main() {
     var prefs = AnyBalance.getPreferences();
 
-    var baseurl = "https://esk.sbrf.ru/";
+    var baseurl = "https://online.sberbank.ru/CSAFront/login.do";
     AnyBalance.setDefaultCharset('utf-8');
 
     if(prefs.__debug == 'esk'){
@@ -105,7 +105,7 @@ function main() {
         throw new AnyBalance.Error("Пожалуйста, укажите пароль для входа в Сбербанк-Онлайн!");
     if(prefs.lastdigits && !/^\d{4}$/.test(prefs.lastdigits))
         throw new AnyBalance.Error("Надо указывать 4 последних цифры карты или не указывать ничего");
-      
+/*      
     var html = AnyBalance.requestGet(baseurl + 'esClient/_logon/LogonContent.aspx');
     var error = getParam(html, null, null, /techBreakMsgLabel[^>]*>([\s\S]*?)<\/span>/i);
     if(error)
@@ -127,12 +127,24 @@ function main() {
       'ctl00$ctl00$BaseContentPlaceHolder$ctl01$ContentUpdatePanelParam':'',
       'ctl00$ctl00$BaseContentPlaceHolder$ctl01$ctl04$userManual2Region$ddlRegions':''
     });
+*/
+
+    var html = AnyBalance.requestPost(baseurl, {
+	'field(login)':prefs.login,
+	'field(password)':prefs.password,
+	operation:'button.begin'
+    });
 
     error = getParam(html, null, null, /в связи с ошибкой в работе системы[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
     if(error)
         throw new AnyBalance.Error(error);
 
-    var page = getParam(html, null, null, /top\.location\.href = '(https:[^'"]*?AuthToken=[^'"]*)/i);
+    if(/\$\$errorFlag/i.test(html)){
+        var error = getParam(html, null, null, /([\s\S]*)/, replaceTagsAndSpaces, html_entity_decode);
+        throw new AnyBalance.Error(error);
+    }
+
+    var page = getParam(html, null, null, /value\s*=\s*["'](https:[^'"]*?AuthToken=[^'"]*)/i);
     if(!page)
         throw new AnyBalance.Error("Не удаётся найти ссылку на информацию по картам. Пожалуйста, обратитесь к автору провайдера для исправления ситуации.");
     

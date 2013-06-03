@@ -3,6 +3,7 @@
 
 Провайдер инвестиционной программы Union Payment Services
 Сайт: http://unionpaymentservices.com/
+      http://unionpaymentservices.net/
 mailto:wtiger@mail.ru
 */
 
@@ -14,11 +15,11 @@ function main(){
 //		"logout": "1"
 //	});
 
-	var baseurl = 'https://unionpaymentservices.com/';
+	var baseurl = 'https://unionpaymentservices.net/';
 	AnyBalance.setDefaultCharset('utf-8');
 
 	AnyBalance.trace('Authorizing...');
-	var info = AnyBalance.requestPost(baseurl + "/ru/login", {
+	var info = AnyBalance.requestPost(baseurl + "ru/login", {
 		"Login": prefs.Login,
 		"Pswd": prefs.Pswd
 	},

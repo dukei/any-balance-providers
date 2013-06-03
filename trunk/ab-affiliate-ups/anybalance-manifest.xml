@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1" version="4">ab-affiliate-ups</id>
+  <id major_version="1" version="5">ab-affiliate-ups</id>
   <name>Union Payment Services</name>
   <description>
-    Помогает отслеживать состояние депозита инвестора Union Payment Services на сайте unionpaymentservices.com
+    Помогает отслеживать состояние депозита инвестора Union Payment Services на сайте unionpaymentservices.net
   </description>
   <author>wtiger &lt;wtiger@mail.ru&gt;</author>
   <files>
@@ -21,7 +21,7 @@
     <counter id="balance" name="Баланс" units="$"/>
   </counters>
   <keywords>
-    инвестиционная программа unionpaymentservices.com
+    инвестиционная программа union payment services
   </keywords>
   <type>
     affiliate

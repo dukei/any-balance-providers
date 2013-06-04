@@ -16,7 +16,7 @@ function main(){
 
     var prefs = AnyBalance.getPreferences();
 
-    var baseurl = "http://ics.activ.kz";
+    var baseurl = "http://www.activ.kz";
 
     AnyBalance.setDefaultCharset('utf-8');
 
@@ -24,7 +24,7 @@ function main(){
     var lang = prefs.lang || 'ru';
     lang = langMap[lang] || lang; //Переведем старые настройки в новые.
     
-    var html = AnyBalance.requestPost(baseurl + "/" + lang + "/ics.security/authenticate/false", {
+    var html = AnyBalance.requestPost(baseurl + "/" + lang + "/ics.security/authenticate", {
         'msisdn':'+7' + prefs.login,
         'password': prefs.password
     }, {'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.11 (KHTML, like Gecko) Chrome/20.0.1132.57 Safari/536.11'});

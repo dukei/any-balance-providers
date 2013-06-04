@@ -28,6 +28,6 @@
         title="ПИН"
         summary="||***********"
         dialogMessage="Введите ПИН, используемый для входа в личный кабинет."
-        inputType="numberPassword">
+        inputType="text">
     </EditTextPreference>
 </PreferenceScreen>

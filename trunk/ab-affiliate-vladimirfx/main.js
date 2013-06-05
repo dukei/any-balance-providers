@@ -34,7 +34,6 @@ function main(){
 	}
 
 	var result = {success: true};
-	result.__tariff=prefs.login;
 
 	if(matches = info.match(/В доступе отказано/i)){
 		throw new AnyBalance.Error("В доступе к сайту отказано.");}
@@ -42,6 +41,7 @@ function main(){
 
 	AnyBalance.trace('Parsing... ');
 
+	getParam(info, result, '__tariff', /Инвестиционный счет \#(.*?)</i, replaceTagsAndSpaces, parseBalance);
 	getParam(info, result, 'total_investors', /<td>Всего инвесторов:<\/td><td><b>(\d+)<\/b><\/td>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(info, result, 'total_deposit', /<td>Общий депозит:<\/td><td><b>(.*?)\$<\/b><\/td>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(info, result, 'average_week', /<td>В среднем за неделю:<\/td><td><b>(.*?)%<\/b><\/td>/i, replaceTagsAndSpaces, parseBalance);
@@ -51,6 +51,8 @@ function main(){
 	getParam(info, result, 'stocking_withdrawal', /<b>Пополнение\/снятие:<\/b><\/td><td align="center">(.*?) USD<\/td>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(info, result, 'profit_deadloss', /<b>Прибыль\/убыток:<\/b><\/td><td align="center">(.*?) USD\s*<\/td>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(info, result, 'balance', /<b>Баланс:<\/b><\/td><td align="center">(.*?) USD\s*<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(info, result, 'term_days', /<b>Срок вклада \(суток\):<\/b><\/td><td align="center">(.*?)\s+.*?<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(info, result, 'term_percent', /<b>Срок вклада \(суток\):<\/b><\/td><td align="center">.*?\s+\((.*?)\%\)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(info, result, 'max_percent', /<b>Максимальный процент:<\/b><\/td><td align="center">(.*?)\%\s*<\/td>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(info, result, 'current_percent', /<b>Ваш текущий процент:<\/b><\/td><td align="center">(.*?)\%\s*<\/td>/i, replaceTagsAndSpaces, parseBalance);
 

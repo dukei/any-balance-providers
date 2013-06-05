@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1" version="2">ab-affiliate-vladimirfx</id>
+  <id major_version="1" version="3">ab-affiliate-vladimirfx</id>
   <name>VladimirFX</name>
   <description>
     Помогает отслеживать состояние депозита инвестора на сайте www.vladimirfx.ru.
@@ -14,15 +14,17 @@
     <js>main.js</js>
   </files>
   <counters>
-    <counter id="total_investors" name="Всего инвесторов"/>
-    <counter id="total_deposit" name="Общий депозит" units="$"/>
-    <counter id="average_week" name="В среднем за неделю" units="%"/>
-    <counter id="average_month" name="В среднем за месяц" units="%"/>
-    <counter id="all_time" name="За все время" units="%"/>
-    <counter id="trade_time" name="Торговля ведется" units="дн."/>
+    <counter id="total_investors" name="*Всего инвесторов"/>
+    <counter id="total_deposit" name="*Общий депозит" units="$"/>
+    <counter id="average_week" name="*В среднем за неделю" units="%"/>
+    <counter id="average_month" name="*В среднем за месяц" units="%"/>
+    <counter id="all_time" name="*За все время" units="%"/>
+    <counter id="trade_time" name="*Торговля ведется" units="дн."/>
     <counter id="stocking_withdrawal" name="Пополнение/снятие" units="$"/>
     <counter id="profit_deadloss" name="Прибыль/убыток" units="$"/>
     <counter id="balance" name="Баланс" units="$"/>
+    <counter id="term_days" name="Срок вклада" units="дн"/>
+    <counter id="term_percent" name="Бонус-процент" units="%"/>
     <counter id="max_percent" name="Максимальный процент" units="%"/>
     <counter id="current_percent" name="Текущий процент" units="%"/>
   </counters>

@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id major_version="1" version="2">ab-affiliate-axiomlab</id>
+  <name>AxiomLab</name>
+  <description>
+    Помогает отслеживать состояние депозита инвестора AxiomLab Company Ltd. на сайте http://www.invest-biznes.com/
+  </description>
+  <author>wtiger &lt;wtiger@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>api:jquery.min.js</js>
+    <js>library.js</js>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Общий баланс" units="руб"/>
+    <counter id="main_balance" name="Основной счет" units="руб"/>
+    <counter id="add_balance" name="Дополнительные счета" units="руб"/>
+  </counters>
+  <keywords>
+    инвестиционная программа axiomlab
+  </keywords>
+  <type>
+    affiliate
+  </type>
+</provider>

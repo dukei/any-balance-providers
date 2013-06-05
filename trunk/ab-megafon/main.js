@@ -257,6 +257,11 @@ function getTrayXml(filial, address){
 Для разблокировки необходимо зайти в Сервис-Гид и включить настройку Настройки Сервис-Гида/Автоматический доступ системам/Доступ открыт пользователям и автоматизированным системам, а также нажать кнопку "разблокировать".');
     }
         
+    if(/SCC-ROBOT-PASSWORD-INCORRECT/.test(info)){
+      AnyBalance.trace("Server returned: " + info);
+      throw new AnyBalance.Error('Вы ввели неправильный пароль.');
+    }
+
     if(/ROBOTS-DENY|SCC-ROBOT-LOGIN-DENY/.test(info)){
       AnyBalance.trace("Server returned: " + info);
       throw new AnyBalance.Error('Доступ автоматическим системам заблокирован.\n\
@@ -362,7 +367,7 @@ function megafonTrayInfo(filial){
                     AnyBalance.trace('Обходим потенциальный глюк мегафона, Исходящая телефония, но написано SMS, а должны быть минуты: ' + plan + ' - ' + valAvailable + '/' + valTotal);
                     sumParam(valAvailable || '', result, 'sms_left', null, null, parseBalance, aggregate_sum);
                     sumParam(valTotal || '', result, 'sms_total', null, null, parseBalance, aggregate_sum);
-                }else if(plan && /GPRS/i.test(plan)){
+                }else if(plan && /GPRS|интернет|мб/i.test(plan)){
                     AnyBalance.trace('Обходим потенциальный глюк мегафона, минуты, но написано GPRS, а должны быть минуты: ' + plan + ' - ' + valAvailable + '/' + valTotal);
                 }else if(plan && /MMS/i.test(plan)){
                     AnyBalance.trace('Обходим потенциальный глюк мегафона, Исходящая телефония, но написано MMS, а должны быть минуты: ' + plan + ' - ' + valAvailable + '/' + valTotal);
@@ -376,10 +381,11 @@ function megafonTrayInfo(filial){
         }
 
         if(AnyBalance.isAvailable('internet_left','internet_total','internet_cur')){
-            var $val = $threads.filter(':has(NAME:contains(" Байт")), :has(NAME_SERVICE:contains("Пакетная передача данных")), :has(PLAN_NAME:contains("Интернет")), :has(PLAN_NAME:contains("GPRS"))');
+            var $val = $threads.filter(':has(NAME:contains(" Байт")), :has(NAME_SERVICE:contains("Пакетная передача данных")), :has(PLAN_NAME:contains("Интернет")), :has(PLAN_NAME:contains("интернет")), :has(PLAN_NAME:contains("GPRS"))');
             AnyBalance.trace('Found internet discounts: ' + $val.length);
             for(var i=0;i<$val.length;++i){
                 var name = $val.eq(i).find('PLAN_SI, NAME').text();
+                if(name) name = name.replace(/мин/ig, 'тар.ед.'); //измеряется в 100кб интервалах
                 var left = $val.eq(i).find('VOLUME_AVAILABLE').text();
                 left = parseFloat(left);
                 var total = $val.eq(i).find('VOLUME_TOTAL').text();
@@ -965,7 +971,7 @@ function strip_tags(str){
 }
 
 function parseTrafficMy(str){
-  return parseTraffic(str, 'b');
+  return parseTrafficExMega(str, 1024, 2, 'b');
 }
 
 function aggregate_sum_minutes(values){
@@ -978,3 +984,52 @@ function aggregate_sum_minutes(values){
     }
     return total_value;
 }
+
+/**
+ * Вычисляет трафик в нужных единицах из переданной строки.
+ */
+function parseTrafficExMega(text, thousand, order, defaultUnits){
+    var _text = html_entity_decode(text.replace(/\s+/g, ''));
+    var val = getParam(_text, null, null, /(-?\d[\d\.,]*)/, replaceFloat, parseFloat);
+    if(!isset(val)){
+        AnyBalance.trace("Could not parse traffic value from " + text);
+        return;
+    }
+    var units = getParam(_text, null, null, /([kmgкмгт][бb]?|[бb](?![\wа-я])|байт|bytes)/i);
+    if(!units && !defaultUnits){
+        AnyBalance.trace("Could not parse traffic units from " + text);
+        return;
+    }
+    if(!units) units = defaultUnits;
+    switch(units.substr(0,1).toLowerCase()){
+      case 'b':
+      case 'б':
+        val = Math.round(val/Math.pow(thousand, order)*100)/100;
+        break;
+      case 'k':
+      case 'к':
+        val = Math.round(val/Math.pow(thousand, order-1)*100)/100;
+        break;
+      case 'm':
+      case 'м':
+        val = Math.round(val/Math.pow(thousand, order-2)*100)/100;
+        break;
+      case 't': //100кб интервалы
+      case 'т':
+        val = Math.round(val*100/Math.pow(thousand, order-1)*100)/100;
+        break;
+      case 'g':
+      case 'г':
+        val = Math.round(val/Math.pow(thousand, order-3)*100)/100;
+        break;
+    }
+    var textval = ''+val;
+    if(textval.length > 6)
+      val = Math.round(val);
+    else if(textval.length > 5)
+      val = Math.round(val*10)/10;
+    var dbg_units = {0: 'b', 1: 'kb', 2: 'mb', 3: 'gb'};
+    AnyBalance.trace('Parsing traffic (' + val + dbg_units[order] + ') from: ' + text);
+    return val;
+}
+

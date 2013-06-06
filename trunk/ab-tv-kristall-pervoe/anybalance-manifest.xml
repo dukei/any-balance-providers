@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-tv-kristall-pervoe</id>
+  <name>Кристалл (Уфа, Туймазы, Белебей)</name>
+  <description>
+    Получает баланс для провайдера Кристалл (http://kristall-pervoe.tv/)
+
+    Информация берется из личного кабинета клиента (http://lk.kristall-pervoe.tv/)
+  </description>
+  <author>Alexandra Shalamova &lt;alexandrashalamova@gmail.com&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="bonus" name="Бонусов" units=" Б"/>
+    <counter id="days" name="Осталось" units=" дней"/>
+    <counter id="lastPeriod" name="Остаток с прошлого периода" units="р"/>
+    <counter id="income" name="Поступления на счёт (всего)" units="р"/>
+    <counter id="service" name="Наработка по услугам (всего)" units="р"/>
+    <counter id="oneService" name="Расход по разовым услугам (всего)" units="р"/>
+    <counter id="fio" name="ФИО" type="text"/>
+  </counters>
+  <keywords>
+    kristall телевидение
+  </keywords>
+  <type>
+    tv
+  </type>
+  <country>
+    ru-ba
+  </country>
+</provider>

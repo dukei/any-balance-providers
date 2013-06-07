@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-internet-coltel</id>
+  <name>Nextone</name>
+  <description>
+    Получается баланс и другую информацию для интеренет провайдера Nextone (http://www.next-one.ru/)
+
+    Информация берется из личного кабинета клиента (https://st.coltel.ru/account)
+  </description>
+  <author>Alexandra Shalamova &lt;alexandrashalamova@gmail.com&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="average" name="Средний чек" units="р"/>
+    <counter id="experience" name="Стаж" type="text"/>
+    <counter id="date" name="Дата окончания" type="time" format="dd.MM.yyyy"/>
+    <counter id="cost" name="Стоимость" units="р"/>
+    <counter id="fio" name="ФИО" type="text"/>
+  </counters>
+  <keywords>
+    интеренет некстон 
+  </keywords>
+  <type>
+    internet
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

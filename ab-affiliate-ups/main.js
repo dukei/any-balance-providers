@@ -15,10 +15,14 @@ function main(){
 //		"logout": "1"
 //	});
 
-	var baseurl = 'https://unionpaymentservices.net/';
+	var baseurl;
+
+	if(prefs.site==1){baseurl= 'https://unionpaymentservices.com/';}
+	else{baseurl= 'https://unionpaymentservices.net/';}
+
 	AnyBalance.setDefaultCharset('utf-8');
 
-	AnyBalance.trace('Authorizing...');
+	AnyBalance.trace('Authorizing to '+baseurl+'...');
 	var info = AnyBalance.requestPost(baseurl + "ru/login", {
 		"Login": prefs.Login,
 		"Pswd": prefs.Pswd
@@ -32,10 +36,10 @@ function main(){
 		throw new AnyBalance.Error(error);
 	}
 
-	var result = {success: true};
-
 	if(matches = info.match(/Неверный пароль/i)){
 		throw new AnyBalance.Error("В доступе к сайту отказано.");}
+
+	var result = {success: true};
 
 
 	AnyBalance.trace('Get info... ');
@@ -46,6 +50,10 @@ function main(){
 	});
 
 
+	if(!(matches = info.match(/<h3>Общая информация<\/h3>/i))){
+		throw new AnyBalance.Error("Ошибка при получении данных.");}
+
+
 	AnyBalance.trace('Parsing... ');
 
 	result.__tariff=prefs.Login;
@@ -53,8 +61,31 @@ function main(){
 	getParam(info, result, 'current_sum', /<span class="s1">Сумма текущих долей <\/span><span class="s2">\$\s*(.*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(info, result, 'total_income', /<span class="s1">Всего заработано<\/span><span class="s2">\$\s*(.*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(info, result, 'balance', /<span class="s1">Баланс<\/span><span class="s2">\$\s*(.*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(info, result, 'terminals', /<p>Терминалов выкуплено - (\d+)<br>/i, replaceTagsAndSpaces, parseBalance);
 	result.total_balance = result.balance + result.current_sum;
 
+
+	if(AnyBalance.isAvailable('referal_total') || AnyBalance.isAvailable('referal_active') || AnyBalance.isAvailable('referal_balance')){
+
+		info = AnyBalance.requestGet(baseurl + "ru/cabinet/affiliate",
+		{	"Accept-Language": "ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4",
+			"User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64)"
+		});
+
+		getParam(info, result, 'referal_total', /<tr><td>Всего рефералов<\/td><td>(.*?)<\/td><\/tr>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(info, result, 'referal_active', /<tr><td>Активных рефералов<\/td><td>(.*?)<\/td><\/tr>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(info, result, 'referal_balance', /<tr><td>Партнерское вознаграждение<\/td><td>(.*?)<\/td><\/tr>/i, replaceTagsAndSpaces, parseBalance);
+	}
+
+	if(AnyBalance.isAvailable('order_status')){
+
+		info = AnyBalance.requestGet(baseurl + "ru/cabinet/profile",
+		{	"Accept-Language": "ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4",
+			"User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64)"
+		});
+
+		getParam(info, result, 'order_status', /<p>Состояние договора <span.*?>\s+(\S+)\s+/i, replaceTagsAndSpaces, html_entity_decode);
+	}
 
 //	var outinfo = AnyBalance.requestPost(baseurl + "cab.php", {
 //		"logout": "1"

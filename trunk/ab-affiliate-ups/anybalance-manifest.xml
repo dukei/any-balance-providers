@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1" version="5">ab-affiliate-ups</id>
+  <id major_version="1" version="6">ab-affiliate-ups</id>
   <name>Union Payment Services</name>
   <description>
     Помогает отслеживать состояние депозита инвестора Union Payment Services на сайте unionpaymentservices.net
@@ -19,6 +19,11 @@
     <counter id="current_sum" name="Сумма текущих долей" units="$"/>
     <counter id="total_income" name="Всего заработано" units="$"/>
     <counter id="balance" name="Баланс" units="$"/>
+    <counter id="referal_total" name="Всего рефералов"/>
+    <counter id="referal_active" name="Активных рефералов"/>
+    <counter id="referal_balance" name="Партнерское вознаграждение" units="$"/>
+    <counter id="terminals" name="Терминалов выкуплено"/>
+    <counter id="order_status" name="Состояние договора" type="text"/>
   </counters>
   <keywords>
     инвестиционная программа union payment services

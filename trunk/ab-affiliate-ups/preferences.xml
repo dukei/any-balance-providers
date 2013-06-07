@@ -19,4 +19,11 @@
         inputType="textPassword"
         positiveButtonText="ОК">
     </EditTextPreference>
+    <ListPreference
+        title="Сайт"
+        summary="К какому сайту обращаться: com или net|Выберите|Выбран {@s}! "
+        key="site"
+        defaultValue="2"
+        entries="com|net"
+        entryValues="1|2" />
 </PreferenceScreen>

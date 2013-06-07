@@ -212,6 +212,13 @@ function mainMobile(allowRetry){
 
         }
         
+        if(AnyBalance.isAvailable('abonservice')){
+            AnyBalance.trace("Fetching paid services...");
+            html = AnyBalance.requestGet(baseurl + "Product.mvc", g_headers);
+        
+            sumParam(html, result, 'abonservice', /Стоимость в месяц:([^<]*)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+        }
+
         AnyBalance.setResult(result);
     }catch(e){
         //Если не установлено требование другой попытки, устанавливаем его в переданное в функцию значение
@@ -383,6 +390,13 @@ function fetchOrdinary(html, baseurl, resultFromLK){
         fetchAccumulatedCounters(html, result);
     }
 
+    if(AnyBalance.isAvailable('abonservice')){
+        AnyBalance.trace("Fetching paid services...");
+        html = AnyBalance.requestGet(baseurl + "product-2-view.aspx", g_headers);
+
+        sumParam(html, result, 'abonservice', /<tr[^>]+class="gm-row-item(?:[\s\S](?!<\/tr>))*?<td[^>]+class="price"[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    }
+
     if(!resultFromLK)
         AnyBalance.setResult(result);
 }
@@ -396,8 +410,8 @@ function isAvailableStatus(){
 function fetchAccumulatedCounters(html, result, mobile){
     AnyBalance.trace("Parsing accumulated counters...");
 
-    getParam(html, result, 'tourist', mobile ? /Туристическая СИМ-карта от МТС[\s\S]*?Состояние счетчика:[\s\S]*?<span[^>]+class="value"[^>]*>([\s\S]*?)<\/span>/i : 
-                                               /Туристическая СИМ-карта от МТС[\s\S]*?<td[^>]+class="counter-value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'tourist', mobile ? /Счетчик Туристическая СИМ-карта от МТС\.[\s\S]*?Состояние счетчика:[\s\S]*?<span[^>]+class="value"[^>]*>([\s\S]*?)<\/span>/i : 
+                                               /Счетчик Туристическая СИМ-карта от МТС\.[\s\S]*?<td[^>]+class="counter-value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 }
 
 function fetchAccountStatus(html, result){

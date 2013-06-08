@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-telephony-agent</id>
+  <id version="2">ab-telephony-agent</id>
   <name>агент@mail.ru</name>
   <description>
-    Получает текущий баланс в агент@mail.ru. 
+    Получает текущий баланс в агент@mail.ru из личного кабинета http://agent.mail.ru/phonecalls/cabinet
   </description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <files>
@@ -11,10 +11,12 @@
     <preferences>preferences.xml</preferences>
     <js>main.js</js>
     <js>library.js</js>
+    <history>history.xml</history>
   </files>
   <counters>
     <counter id="balance" name="Баланс" units="р"/>
     <counter id="license" name="Лицевой счет" type="text"/>
+    <counter id="number" name="Номер при вызове" type="text"/>
     <counter id="login" name="Учетная запись" type="text"/>
   </counters>
   <keywords>

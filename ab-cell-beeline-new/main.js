@@ -15,20 +15,20 @@ var g_headers = {
 'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.64 Safari/537.31'
 };
 
-function getBlock(url, html, name){
-    var re = new RegExp("PrimeFaces\\.\\w+\\s*\\(\\s*\\{[^}]*update:\\s*'[^']*:" + name);
+function getBlock(url, html, name, exact){
+    var re = new RegExp("PrimeFaces\\.\\w+\\s*\\(\\s*\\{[^}]*update:\\s*'" + (exact ? "" : "[^']*:") + name);
     var data = getParam(html, null, null, re);
     if(!data){
         AnyBalance.trace('Блок ' + name + ' не найден!');
         return '';
     }
-
+    
     var formId = getParam(data, null, null, /formId:\s*'([^']*)/, replaceSlashes);
     if(!formId){
         AnyBalance.trace('Не найден ID формы для блока ' + name + '!');
         return '';
     }
-
+    
     var form = getParam(html, null, null, new RegExp('<form[^>]+name="' + formId + '"[\\s\\S]*?</form>', 'i'));
     if(!form){
         AnyBalance.trace('Не найдена форма ' + formId + ' для блока ' + name + '!');
@@ -38,16 +38,16 @@ function getBlock(url, html, name){
     var params = createFormParams(form);
     var source = getParam(data, null, null, /source:\s*'([^']*)/, replaceSlashes);     
     var render = getParam(data, null, null, /update:\s*'([^']*)/, replaceSlashes);     
-
+    
     params['javax.faces.partial.ajax'] = true;
     params['javax.faces.source'] = source;
     params['javax.faces.partial.execute'] = '@all';
     params['javax.faces.partial.render'] = render;
     params[render] = render;
     params[source] = source;
-
+    
     html = AnyBalance.requestPost(url, params, addHeaders({Referer: url, 'Faces-Request':'partial/ajax', 'X-Requested-With':'XMLHttpRequest'}));
-    data = getParam(html, null, null, new RegExp('<update[^>]*:' + name + '"[^>]*>\\s*<!\\[CDATA\\[([\\s\\S]*?)\\]\\]></update>', 'i'));
+    data = getParam(html, null, null, new RegExp('<update[^>]*' + (exact ? 'id="' : '[^>]*:') + name + '"[^>]*>\\s*<!\\[CDATA\\[([\\s\\S]*?)\\]\\]></update>', 'i'));
     if(!data){
         AnyBalance.trace('Неверный ответ для блока ' + name + ': ' + html);
         return '';
@@ -56,7 +56,7 @@ function getBlock(url, html, name){
 }
 
 function myParseCurrency(text){
-    var val = html_entity_decode(text.replace(/\s+/, '')).replace(/[\-\d\.,]+/,'');
+    var val = html_entity_decode(text).replace(/\s+/g, '').replace(/[\-\d\.,]+/g,'');
     AnyBalance.trace('Parsing currency (' + val + ') from: ' + text);
     return val;
 }
@@ -95,13 +95,63 @@ function main(){
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
 
+    if(/b2b_post/i.test(html)){
+        fetchPost(baseurl, html);
+    }else{
+        fetchPre(baseurl, html);
+    }
+}
+
+function fetchPost(baseurl, html){
     //Раз мы здесь, то мы успешно вошли в кабинет
+    AnyBalance.trace("Мы в предоплатном кабинете");
+    //Получаем все счетчики
+    var result = {success: true};
+
+    getParam(html, result, 'phone', /<input[^>]+id="serviceBlock:paymentForm:[^>]*value="([^"]*)/i, replaceTagsAndSpaces, html_entity_decode);
+
+    var xhtml = getBlock(baseurl + 'c/post/index.html', html, 'list-contents', true);
+    getParam(xhtml, result, '__tariff', /<h2[^>]*>Текущий тариф([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+
+    getParam(xhtml, result, 'balance', /Расходы по номеру за текущий период с НДС[\s\S]*?<div[^>]+class="balan?ce-summ"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(xhtml, result, 'currency', /Расходы по номеру за текущий период с НДС[\s\S]*?<div[^>]+class="balan?ce-summ"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, myParseCurrency);
+
+    if(AnyBalance.isAvailable('fio')){
+        var xhtml = AnyBalance.requestGet(baseurl + 'm/post/index.html', g_headers);
+        getParam(xhtml, result, 'fio', /<div[^>]+class="abonent-name"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+        
+    }
+/*
+    if(AnyBalance.isAvailable('sms_left', 'mms_left')){
+        xhtml = getBlock(baseurl + 'c/pre/index.html', html, 'bonusesloaderDetails');
+        var services = sumParam(xhtml, null, null, /<tr[^>]*>\s*<td[^>]+class="title"(?:[\s\S](?!<\/tr>))*?<td[^>]+class="value"[\s\S]*?<\/tr>/ig);
+        for(var i=0; i<services.length; ++i){
+            var name = getParam(services[i], null, null, /<td[^>]+class="title"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+            if(/SMS/i.test(name)){
+                sumParam(services[i], result, 'sms_left', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+            }else if(/MMS/i.test(name)){
+                sumParam(services[i], result, 'mms_left', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+            }else{
+                AnyBalance.trace("Неизвестная опция: " + services[i]);
+            }
+        }
+    }
+*/
+    //Возвращаем результат
+    AnyBalance.setResult(result);
+
+}
+
+function fetchPre(baseurl, html){
+    //Раз мы здесь, то мы успешно вошли в кабинет постоплатный
+    AnyBalance.trace("Мы в постоплатном кабинете");
     //Получаем все счетчики
     var result = {success: true};
 
     getParam(html, result, 'phone', /<input[^>]+id="serviceBlock:paymentForm:[^>]*value="([^"]*)/i, replaceTagsAndSpaces, html_entity_decode);
 
     var xhtml = getBlock(baseurl + 'c/pre/index.html', html, 'currentTariffLoaderDetails');
+
     getParam(xhtml, result, '__tariff', /<div[^>]+:tariffInfo[^>]*class="current"[^>]*>(?:[\s\S](?!<\/div>))*?<h2[^>]*>([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces, html_entity_decode);
 
     if(AnyBalance.isAvailable('balance', 'fio')){
@@ -128,4 +178,5 @@ function main(){
 
     //Возвращаем результат
     AnyBalance.setResult(result);
+
 }

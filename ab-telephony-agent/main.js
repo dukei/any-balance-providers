@@ -42,13 +42,14 @@ function main(){
         throw new AnyBalance.Error('Не удалось войти в личный кабинет. Неправильный логин-пароль?');
     }
 
-    html = AnyBalance.requestGet(baseurl + 'phonecalls/cabinet');
+    html = AnyBalance.requestGet(baseurl + 'phonecalls/cabinet/settings');
 
     var result = {success: true};
-    getParam(html, result, 'license', /Номер счета:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'login', /Учетная запись:[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, '__tariff', /Учетная запись:[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'balance', /Текущий баланс:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'license', /<label[^>]*>Номер счета[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(prefs.login, result, 'login');
+    getParam(prefs.login, result, '__tariff');
+    getParam(html, result, 'balance', /<label[^>]*>Текущий баланс[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'number', /<label[^>]*>Номер при вызове[\s\S]*?<option[^>]+value="([^"]*)[^>]*selected/i, replaceTagsAndSpaces, html_entity_decode);
 
     AnyBalance.setResult(result);
 }

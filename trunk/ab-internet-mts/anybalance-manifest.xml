@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="33">ab-internet-mts</id>
+  <id version="34">ab-internet-mts</id>
   <name>Домашний Интернет и Телевидение МТС</name>
   <description>
     Получает текущий баланс, номера лицевого счета и договора, ФИО владельца, трафик в текущем месяце, абонентскую плату у провайдера "Домашний Интернет и Телевидение МТС"
@@ -14,7 +14,7 @@
       * Киров (https://lk.kirovnet.net)
       * Нижний Новгород (http://stat.nnov.comstar-r.ru)
       * Северодвинск (http://severodvinsk.stream-info.ru/client2)
-      * Вологда (https://stats.vologda.comstar-r.ru)
+      * Вологда (https://lk.vologda.mts.ru)
       * Ижевск (https://lk.izhnt.ru)
       * Пенза (http://client.lanbilling.ptcomm.ru)
       * Комсомольск-на-Амуре (http://issa.kms.multinex.ru)

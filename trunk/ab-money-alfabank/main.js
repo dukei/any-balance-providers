@@ -176,7 +176,10 @@ function processClick(){
 
     if(/<form[^>]*action="security"/.test(html)){
         //Мы остались на странице входа. какая-то ошибка
-        var error = getParam(html, null, null, /(Неверный логин или пароль)/i);
+        var error = getParam(html, null, null, /<div[^>]+class="[^"]*\bred"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+        if(error)
+            throw new AnyBalance.Error(error);
+        error = getParam(html, null, null, /(Неверный логин или пароль)/i);
         if(error)
             throw new AnyBalance.Error(error);
         throw new AnyBalance.Error("Не удалось зайти в интернет-банк. Проверьте, что сайт доступен.");

@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="11" date="2013-06-09">
+      - Восстановлено получение минут во все сети
+    </change>
     <change version="10" date="2013-06-07">
       - Восстановлено получение минут
     </change>

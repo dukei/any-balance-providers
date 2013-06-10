@@ -15,7 +15,7 @@ function main(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
 
-    var baseurl = "http://stat.ok-internet.ru/";
+    var baseurl = "https://stat.ok-internet.ru/";
 
     var html = AnyBalance.requestPost(baseurl + 'client/index.php', {
         login: prefs.login,

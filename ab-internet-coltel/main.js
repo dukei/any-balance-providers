@@ -2,7 +2,7 @@
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 
 
-Получается баланс и другую информацию для интеренет провайдера Коламбия - Телеком 
+Получает баланс и другую информацию для интернет провайдера Nextone 
 
 Operator site: http://www.next-one.ru/
 Личный кабинет: https://st.coltel.ru/account

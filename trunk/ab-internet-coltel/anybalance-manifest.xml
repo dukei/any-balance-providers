@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
   <id version="1">ab-internet-coltel</id>
-  <name>Nextone</name>
+  <name>Nextone (Волгоград)</name>
   <description>
-    Получается баланс и другую информацию для интеренет провайдера Nextone (http://www.next-one.ru/)
+    Получает баланс и другую информацию для интернет провайдера Nextone (http://www.next-one.ru/)
 
     Информация берется из личного кабинета клиента (https://st.coltel.ru/account)
   </description>

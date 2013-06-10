@@ -7,7 +7,7 @@
 
     Информация берется из личного кабинета клиента (http://my.travelsim.ua/billing/)
   </description>
-  <author>Alexandra Shalamova &lt;alexanrdashalamova@gmail.com&gt;</author>
+  <author>Alexandra Shalamova &lt;alexandrashalamova@gmail.com&gt;</author>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>

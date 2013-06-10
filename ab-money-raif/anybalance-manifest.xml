@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1"></id>
+  <name></name>
+  <description>
+    Получает текущий остаток и другие параметры счетов и депозитов банка Райффайзенбанк (http://www.raiffeisen.ru), используя интернет-банк https://connect.raiffeisen.ru.
+
+Для подключения к Raiffeisen CONNECT обратитесь с документом, удостоверяющим личность, в любое отделение типа «А» Райффайзенбанка и подпишите Заявление на регистрацию в системе Raiffeisen CONNECT. После подписания заявления вы получите:
+1. ваше имя пользователя (логин),
+2. ПИН-конверт, содержащий ваш пароль для доступа в Raiffeisen CONNECT.
+
+    В настоящее время провайдер поддерживает только счета и депозиты. Для добавления карт или кредитов или других банковских продуктов обращайтесь к автору по е-мейл.
+
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units=" {@currency}"/>
+    <counter id="pcts" name="Проценты в конце срока" units=" {@currency}"/>
+    <counter id="currency" name="Валюта" type="text"/>
+    <counter id="accnum" name="Номер счета" type="text"/>
+    <counter id="minpaytill" name="Срок платежа по кредиту" type="time" format="dd/MM/yyyy"/>
+    <counter id="limit" name="Кредитный лимит" units=" {@currency}"/>
+    <counter id="till" name="Срок действия" type="time" format="dd/MM/yyyy"/>
+    <counter id="rate" name="Процентная ставка" units="%"/>
+    <counter id="fio" name="ФИО" type="text"/>
+    <counter id="all" name="Сводка" type="text"/>
+  </counters>
+  <keywords>
+    
+  </keywords>
+  <type>
+    money
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

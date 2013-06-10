@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-cell-travelsim</id>
+  <name>TravelSIM (Украина)</name>
+  <description> 
+    Получает баланс для оператора TravelSIM (http://travelsim.ua/)
+
+    Информация берется из личного кабинета клиента (http://my.travelsim.ua/billing/)
+  </description>
+  <author>Alexandra Shalamova &lt;alexanrdashalamova@gmail.com&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" prefix="$"/>
+    <counter id="email" name="E-mail" type="text"/>
+    <counter id="name" name="Псевдо" type="text"/>
+  </counters>
+  <keywords>
+    тревелсим, мобильный оператор, Украина
+  </keywords>
+  <type>
+    cell
+  </type>
+  <country>
+    ua
+  </country>
+</provider>

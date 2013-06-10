@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-    <id version="1">ab-money-rsb</id>
+    <id version="1">ab-money-rsb-ua</id>
     <name>Русский стандарт (Украина)</name>
     <description>Информация о карте в банке "Русский стандарт" (http://www.rsb.ua).
 В настройках провайдера требуется указать логин и пароль к Интернет-банку. 

@@ -1,9 +1,9 @@
 /**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 
-Информация о кредите в банке "Русский стандарт".
+Информация о кредите в банке "Русский стандарт" Украина.
 
-Сайт: https://online.rsb.ru/
+Сайт: https://online.rsb.ua
 */
 
 function main() {

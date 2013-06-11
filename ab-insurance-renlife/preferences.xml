@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Логин" 
+        positiveButtonText="ОК" 
+        summary="||{@s}" 
+        dialogTitle="Логин" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите логин в личный кабинет."
+        key="login"
+        inputType="number">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="||***********"
+        dialogMessage="Введите пароль, используемый для входа в личный кабинет."
+        inputType="textPassword">
+    </EditTextPreference>
+    <EditTextPreference 
+        title="Номер полиса" 
+        positiveButtonText="ОК" 
+        summary="||{@s}" 
+        dialogTitle="Номер полиса" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите номер полиса, по которому нужно показать информацию. Если оставить поле пустым, будет выводиться информация по первому найденному полису."
+        key="number"
+        inputType="number">
+    </EditTextPreference>
+</PreferenceScreen>

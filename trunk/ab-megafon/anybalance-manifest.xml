@@ -24,38 +24,38 @@
     <history>history.xml</history>
   </files>
   <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="mins_left" name="Бесплатные минуты" units="мин" type="time_interval" format="{@MIN}"/>
-    <counter id="mins_country_left" name="Минуты по России" units="мин" type="time_interval" format="{@MIN}"/>
-    <counter id="mins_sng_left" name="Минуты по СНГ" units="мин" type="time_interval" format="{@MIN}"/>
+    <counter id="balance" name="Баланс" units=" р"/>
+    <counter id="mins_left" name="Бесплатные минуты" units=" мин" type="time_interval" format="{@MIN}"/>
+    <counter id="mins_country_left" name="Минуты по России" units=" мин" type="time_interval" format="{@MIN}"/>
+    <counter id="mins_sng_left" name="Минуты по СНГ" units=" мин" type="time_interval" format="{@MIN}"/>
     <counter id="mins_compet_left" name="Минуты на МТС,Билайн,Скайлинк" units="мин" type="time_interval" format="{@MIN}"/>
-    <counter id="mins_net_left" name="Минуты внутри сети" units="мин" type="time_interval" format="{@MIN}"/>
-    <counter id="internet_left" name="Интернет (осталось)" units="Mb"/>
-    <counter id="sms_left" name="SMS включенные "/>
-    <counter id="mms_left" name="MMS включенные"/>
+    <counter id="mins_net_left" name="Минуты внутри сети" units=" мин" type="time_interval" format="{@MIN}"/>
+    <counter id="internet_left" name="Интернет (осталось)" units=" Mb"/>
+    <counter id="sms_left" name="SMS включенные" units=" sms"/>
+    <counter id="mms_left" name="MMS включенные" units=" mms"/>
     <counter id="bonus_balance" name="Бонусный баланс"/>
-    <counter id="prsnl_balance" name="Персональный баланс (корп.)" units="р"/>
-    <counter id="handygift_left" name="Нужный подарок - осталось (Поволжье)" units="р"/>
-    <counter id="gb_with_you" name="Гигабайт в дорогу (Столица)" units="Mb"/>
-    <counter id="internet_cur" name="Интернет (использовано)" units="Mb"/>
-    <counter id="internet_total" name="Интернет (всего)" units="Mb"/>
+    <counter id="prsnl_balance" name="Персональный баланс (корп.)" units=" р"/>
+    <counter id="handygift_left" name="Нужный подарок - осталось (Поволжье)" units=" р"/>
+    <counter id="gb_with_you" name="Гигабайт в дорогу (Столица)" units=" Mb"/>
+    <counter id="internet_cur" name="Интернет (использовано)" units=" Mb"/>
+    <counter id="internet_total" name="Интернет (всего)" units=" Mb"/>
     <counter id="internet_till" name="Срок действия пакета интернет" type="time" format="dd/MM/yyyy"/>
-    <counter id="mins_total" name="Бесплатные минуты (всего)" units="мин" type="time_interval" format="{@MIN}"/>
-    <counter id="mins_country_total" name="Минуты по России (всего)" units="мин" type="time_interval" format="{@MIN}"/>
+    <counter id="mins_total" name="Бесплатные минуты (всего)" units=" мин" type="time_interval" format="{@MIN}"/>
+    <counter id="mins_country_total" name="Минуты по России (всего)" units=" мин" type="time_interval" format="{@MIN}"/>
     <counter id="mins_sng_total" name="Минуты по СНГ (всего)" units="мин" type="time_interval" format="{@MIN}"/>
-    <counter id="mins_compet_total" name="Минуты на МТС,Билайн,Скайлинк (всего)" units="мин" type="time_interval" format="{@MIN}"/>
-    <counter id="mins_net_total" name="Минуты внутри сети (всего)" units="мин" type="time_interval" format="{@MIN}"/>
-    <counter id="sms_total" name="Включенные SMS (всего)"/>
-    <counter id="mms_total" name="Включенные MMS (всего)"/>
-    <counter id="handygift_total" name="Нужный подарок - всего (Поволжье)" units="р"/>
-    <counter id="sub_scl" name="За звонки начислено" units="р"/>
-    <counter id="sub_soi" name="За услуги начислено" units="р"/>
-    <counter id="sub_scr" name="За роуминг начислено" units="р"/>
-    <counter id="sub_smit" name="АП по ТП (начислено абон.платы по тарифному плану) " units="р"/>
-    <counter id="sub_smio" name="АП за услуги (Начислено абон.платы за услуги)" units="р"/>
-    <counter id="last_pay_sum" name="Последний платеж" units="р"/>
+    <counter id="mins_compet_total" name="Минуты на МТС,Билайн,Скайлинк (всего)" units=" мин" type="time_interval" format="{@MIN}"/>
+    <counter id="mins_net_total" name="Минуты внутри сети (всего)" units=" мин" type="time_interval" format="{@MIN}"/>
+    <counter id="sms_total" name="Включенные SMS (всего)" units=" sms"/>
+    <counter id="mms_total" name="Включенные MMS (всего)" units=" mms"/>
+    <counter id="handygift_total" name="Нужный подарок - всего (Поволжье)" units=" р"/>
+    <counter id="sub_scl" name="За звонки начислено" units=" р"/>
+    <counter id="sub_soi" name="За услуги начислено" units=" р"/>
+    <counter id="sub_scr" name="За роуминг начислено" units=" р"/>
+    <counter id="sub_smit" name="АП по ТП (начислено абон.платы по тарифному плану) " units=" р"/>
+    <counter id="sub_smio" name="АП за услуги (Начислено абон.платы за услуги)" units=" р"/>
+    <counter id="last_pay_sum" name="Последний платеж" units=" р"/>
     <counter id="last_pay_date" name="Дата посл. платежа" type="time" format="dd/MM/yyyy"/>
-    <counter id="bonus_burn" name="Бонусные баллы, сгорающие в конце текущего месяца"/>
+    <counter id="bonus_burn" name="Бонусные баллы, сгорающие в конце текущего месяца" units=" Б"/>
     <counter id="phone" name="Телефон" type="text" format="dd/MM/yyyy"/>
   </counters>
   <keywords>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="2">ab-insurance-renlife</id>
+  <name>Ренессанс Жизнь</name>
+  <description>
+    Получает информацию о договоре в системе Ренессанс Жизнь (http://www.renlife.com/)
+
+    Информация берется из личного кабинета (https://lifecabinet.renlife.com/)
+  </description>
+  <author>Alexandra Shalamova &lt;alexandrashalamova@gmail.com&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="status" name="Статус полиса" type="text"/>
+    <counter id="dateBegin" name="Дата начала действия" type="time" format="dd.MM.yyyy"/>
+    <counter id="dateEnd" name="Дата окончания действия" type="time" format="dd.MM.yyyy"/>
+    <counter id="payPeriod" name="Периодичность оплаты" type="text"/>
+    <counter id="fee" name="Страховой взнос" units="р"/>
+    <counter id="indexFee" name="Индексированный взнос" units="р"/>
+    <counter id="datePay" name="Дата очередного платежа" type="time" format="dd.MM.yyyy"/>
+    <counter id="debtFee" name="Задолженность по оплате/переплата" units="р"/>
+  </counters>
+  <keywords>
+    страхование
+  </keywords>
+  <type>
+    insurance
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

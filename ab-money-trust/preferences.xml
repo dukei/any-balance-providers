@@ -7,7 +7,6 @@
         dialogTitle="Логин" 
         negativeButtonText="Отмена" 
         dialogMessage="Введите логин для входа в интернет-банк."
-        inputType="text"
         key="login"
         inputType="number">
     </EditTextPreference>

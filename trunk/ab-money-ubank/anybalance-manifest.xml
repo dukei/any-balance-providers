@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-money-ubank</id>
+  <id version="2">ab-money-ubank</id>
   <name>Ubank</name>
   <description>
-    Получает баланс в системе Ubank (http://ubank.ru/)
+    Получает баланс в системе Ubank (http://ubank.net/)
 
-    Информация берется из личного кабинета клиента (https://account.ubank.su/ru/)
+    Информация берется из личного кабинета клиента (https://account.ubank.net/ru/)
   </description>
   <author>Alexandra Shalamova &lt;alexandrashalamova@gmail.com&gt;</author>
   <files>

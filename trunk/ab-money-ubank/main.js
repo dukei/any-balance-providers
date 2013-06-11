@@ -38,8 +38,8 @@ function main(){
     }
 
     var result = {success: true};
-    getParam(html, result, 'balance', /<div[^>]+class="ub"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, ['currency', 'balance'], /<div[^>]+class="ub"[^>]*>\s*<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'balance', /<a[^>]+class="balance"[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, ['currency', 'balance'], /<a[^>]+class="balance"[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces, parseCurrency);
 
     AnyBalance.setResult(result);
 }

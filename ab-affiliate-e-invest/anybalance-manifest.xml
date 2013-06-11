@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-affiliate-e-invest</id>
+  <name>E-INVEST.BIZ</name>
+  <description>
+    Получает баланс, количество сообщений и репутацию на сайте E-INVEST.BIZ (http://e-invest.biz)
+  </description>
+  <author>Alexandra Shalamova &lt;alexandrashalamova@gmail.com&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" prefix="$"/>
+    <counter id="reputation" name="Репутация" type="text"/>
+    <counter id="messages" name="Сообщений" type="text"/>
+  </counters>
+  <keywords>
+    инвестиции
+  </keywords>
+  <type>
+    affiliate
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

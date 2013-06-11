@@ -39,11 +39,11 @@ function main() {
 	y:7
     }, g_headers);
 
-    if(!/signoff\/Signoff\.do/i.test(html)){
+    if(!/link_signOffLink/i.test(html)){
         if(/id="nonOtpLogonButton"/i.test(html))
              html = AnyBalance.requestGet(baseurl + 'JSO/signon/uname/HomePage.do', g_headers);
     }
-    if(!/signoff\/Signoff\.do/i.test(html)){
+    if(!/link_signOffLink/i.test(html)){
         throw new AnyBalance.Error('Не удалось войти в интернет-банк. Неправильный логин-пароль?');
     }
 
@@ -63,8 +63,15 @@ function main() {
     }
 
     var hrefJson = getParam(html, null, null, /'\/([^']*GetRSDashboardResponse\.do[^']*)/i);
-    if(!hrefJson)
-    throw new AnyBalance.Error('Не удалось найти ссылку на получение информации по счетам. Сайт изменен?');
+    if(!hrefJson){
+        //Возможно, у нас хоумпейдж не туда смотрит, тогда надо перейти на правильный хоумпейдж
+        html = AnyBalance.requestGet(baseurl + 'JPS/portal/Home.do', addHeaders({Referer: baseurl + 'JSO/signon/uname/HomePage.do'}));
+    }
+
+    hrefJson = getParam(html, null, null, /'\/([^']*GetRSDashboardResponse\.do[^']*)/i);
+    if(!hrefJson){
+        throw new AnyBalance.Error('Не удалось найти ссылку на получение информации по счетам. Сайт изменен?');
+    }
 
     var jsonStr = AnyBalance.requestGet(baseurl + hrefJson);
     var json = getJson(jsonStr);

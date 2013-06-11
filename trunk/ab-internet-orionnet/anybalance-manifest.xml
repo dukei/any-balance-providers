@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-internet-orionnet</id>
+  <name>Орион телеком (Красноярск)</name>
+  <description>
+    Получает баланс и информацию о тарифе для интернет провайдера Орион телеком (http://orionnet.ru/)
+
+    Информация берется из личного кабинета клиента (https://stat.orionnet.ru/)
+  </description>
+  <author>Alexandra Shalamova &lt;alexandrashalamova@gmail.com&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="credit" name="Кредит" units="р"/>
+    <counter id="pay" name="Абонентская плата" units="р"/>
+    <counter id="block" name="Блокировка" type="text"/>
+    <counter id="fio" name="ФИО" type="text"/>
+  </counters>
+  <keywords>
+    интернет orionnet
+  </keywords>
+  <type>
+    internet
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

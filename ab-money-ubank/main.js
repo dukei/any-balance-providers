@@ -18,7 +18,7 @@ var g_headers = {
 function main(){
     var prefs = AnyBalance.getPreferences();
 
-    var baseurl = "https://account.ubank.su/";
+    var baseurl = "https://account.ubank.net/";
 
     AnyBalance.setDefaultCharset('utf-8'); 
 

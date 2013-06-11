@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-money-ubank</id>
+  <id version="3">ab-money-ubank</id>
   <name>Ubank</name>
   <description>
     Получает баланс в системе Ubank (http://ubank.net/)
@@ -16,7 +16,7 @@
     <history>history.xml</history>
   </files>
   <counters>
-    <counter id="balance" name="Баланс" units="{@currency}"/>
+    <counter id="balance" name="Баланс" units=" {@currency}"/>
   </counters>
   <keywords>
     юбанк

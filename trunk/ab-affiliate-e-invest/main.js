@@ -30,10 +30,7 @@ function main(){
     }, addHeaders({Referer: baseurl})); 
 
     if(!/action=logout/i.test(html)){
-        var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
-        if(error)
-            throw new AnyBalance.Error(error);
-        throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+        throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Возможно вы ввели неправильный логин или пароль. Либо сайт изменен.');
     }
 
     var result = {success: true};

@@ -81,9 +81,9 @@ function main(){
 	});
 
 
-	getParam(info, result, 'main_balance', /Ваш основной счет: (.*?) руб/i, replaceTagsAndSpaces, parseBalance);
-	getParam(info, result, 'add_balance', /Ваши дополнительные счета: (.*?) руб/i, replaceTagsAndSpaces, parseBalance);
-	result.balance = result.main_balance+result.add_balance;	
+	getParam(info, result, 'main_balance', /Ваш основной счет: (.*?) руб/i, [/\s+/g, '', replaceTagsAndSpaces], parseBalance);
+	getParam(info, result, 'add_balance', /Ваши дополнительные счета: (.*?) руб/i, [/\s+/g, '', replaceTagsAndSpaces], parseBalance);
+	result.balance = result.main_balance*1+result.add_balance*1;
 
 
 //	var outinfo = AnyBalance.requestPost(baseurl + "cab.php", {

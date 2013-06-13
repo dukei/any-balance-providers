@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-bonus-leadermt</id>
+  <id version="2">ab-bonus-leadermt</id>
   <name>Лидер Бонус</name>
   <description>
     Получает баланс и количество выбранных подарков для бонусной карты Лидер (http://bonus.leadermt.ru/)

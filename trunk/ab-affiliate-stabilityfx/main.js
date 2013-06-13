@@ -34,10 +34,13 @@ function main(){
 		throw new AnyBalance.Error(error);
 	}
 
-	var result = {success: true};
-
 	if(matches = info.match(/<form method="post" action="account.php">/i)){
 		throw new AnyBalance.Error("Вероятно, введены неверные данные, поскольку вход в кабинет не удался.");}
+
+	if(!(matches = info.match(/Личный кабинет/i))){
+		throw new AnyBalance.Error("Ошибка получения данных.");}
+
+	var result = {success: true};
 
 	AnyBalance.trace('Parsing... ');
 
@@ -49,7 +52,6 @@ function main(){
 	getParam(info, result, 'profit_referral', /<td >Прибыль от рефералов<\/td>\s+<td>(.*?)\$<\/td>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(info, result, 'profit_total', /<td>Общая прибыль<\/td>\s+<td.*?>(.*?)\$<\/td>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(info, result, 'balance', /<td>Баланс счета<\/td>\s+<td.*?>(.*?)\$<\/td>/i, replaceTagsAndSpaces, parseBalance);
-
 
 //	var outinfo = AnyBalance.requestPost(baseurl + "cab.php", {
 //		"logout": "1"

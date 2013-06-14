@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-bonus-ozon</id>
+  <id version="3">ab-bonus-ozon</id>
   <name>OZON.ru</name>
   <description>
     Получает баланc счета и количество баллов в интернет магазине OZON.ru (http://www.ozon.ru).
 
     Информация берется из личного кабинета. 
-
-    Примечание: к сожалению, озон ввел капчу при входе в личный кабинет, поэтому временно этот провайдер не работает.
   </description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <files>

@@ -15,7 +15,7 @@ function main(){
     var html = AnyBalance.requestGet(baseurl + 'default.aspx?context=login');
     var ev = getEventValidation(html);
     var vs = getViewState(html);
-    if(!vs || !ev)
+    if(!vs)
         throw new AnyBalance.Error('Не найдена форма входа. Сайт изменен?');
 
     if(/<input[^>]+name="Answer"/i.test(html))
@@ -26,7 +26,6 @@ function main(){
         __EVENTARGUMENT:'',
         __VIEWSTATE:vs,
         __EVENTVALIDATION:ev,
-        LoginType:1,
         LoginGroup:'HasAccountRadio',
         Login:prefs.login,
         Password:prefs.password,

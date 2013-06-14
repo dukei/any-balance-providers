@@ -16,14 +16,14 @@
     <history>history.xml</history>
   </files>
   <counters>
-    <counter id="status" name="Статус полиса" type="text"/>
-    <counter id="dateBegin" name="Дата начала действия" type="time" format="dd.MM.yyyy"/>
-    <counter id="dateEnd" name="Дата окончания действия" type="time" format="dd.MM.yyyy"/>
-    <counter id="payPeriod" name="Периодичность оплаты" type="text"/>
+    <counter id="datePay" name="Дата очередного платежа" type="time" format="dd.MM.yyyy"/>
     <counter id="fee" name="Страховой взнос" units="р"/>
     <counter id="indexFee" name="Индексированный взнос" units="р"/>
-    <counter id="datePay" name="Дата очередного платежа" type="time" format="dd.MM.yyyy"/>
     <counter id="debtFee" name="Задолженность по оплате/переплата" units="р"/>
+    <counter id="dateBegin" name="Дата начала действия" type="time" format="dd.MM.yyyy"/>
+    <counter id="dateEnd" name="Дата окончания действия" type="time" format="dd.MM.yyyy"/>
+    <counter id="status" name="Статус полиса" type="text"/>
+    <counter id="payPeriod" name="Периодичность оплаты" type="text"/>
   </counters>
   <keywords>
     страхование

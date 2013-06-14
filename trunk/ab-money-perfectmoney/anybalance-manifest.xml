@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-money-perfectmoney</id>
+  <name>Perfect Money</name>
+  <description>
+    This provider helps you to check balances on your Perfect Money's account.
+  </description>
+  <author>wtiger &lt;wtiger@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>api:jquery.min.js</js>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="u_account" name="USD account" type="text" prefix="U"/>
+    <counter id="u_balance" name="USD balance" units="$"/>
+    <counter id="e_account" name="EUR account" type="text" prefix="E"/>
+    <counter id="e_balance" name="EUR balance" units="€"/>
+    <counter id="g_account" name="GOLD account" type="text" prefix="G"/>
+    <counter id="g_balance" name="GOLD balance" units=" Troy oz."/>
+  </counters>
+  <keywords>
+    money perfect perfectmoney
+  </keywords>
+  <type>
+    money
+  </type>
+</provider>

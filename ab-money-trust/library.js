@@ -23,20 +23,35 @@ AnyBalance (http://any-balance-providers.googlecode.com)
  */
 
 function getParam (html, result, param, regexp, replaces, parser) {
-	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
+	if (!isAvailable(param))
 		return;
 
-	var matches = regexp ? html.match(regexp) : [, html], value;
-	if (matches) {
-                //Если нет скобок, то значение - всё заматченное
-		value = replaceAll(isset(matches[1]) ? matches[1] : matches[0], replaces);
-		if (parser)
-			value = parser (value);
+        var regexps = isArray(regexp) ? regexp : [regexp];
+        for(var i=0; i<regexps.length; ++i){ //Если массив регэкспов, то возвращаем первый заматченный
+                regexp = regexps[i];
+		var matches = regexp ? html.match(regexp) : [, html], value;
+		if (matches) {
+                        //Если нет скобок, то значение - всё заматченное
+			value = replaceAll(isset(matches[1]) ? matches[1] : matches[0], replaces);
+			if (parser)
+				value = parser (value);
+	        
+			if(param && isset(value))
+				result[isArray(param) ? param[0] : param] = value;
+			break;
+		}
+        }
 
-		if(param)
-			result[param] = value;
-	}
 	return value;
+}
+
+function isAvailable(param){
+    if(!param)
+        return true;
+    var bArray = isArray(param), tariffName = '__tariff';
+    if((bArray && param.indexOf(tariffName) >= 0) || (!bArray && param == '__tariff'))
+        return true; //Тариф всегда нужен
+    return AnyBalance.isAvailable (param);
 }
 
 //Замена пробелов и тэгов
@@ -130,12 +145,15 @@ function html_entity_decode(str)
             return value;
         });
  */
-function createFormParams(html, process){
-    var params = {};
+function createFormParams(html, process, array){
+    var params = array ? [] : {};
     html.replace(/<input[^>]+name="([^"]*)"[^>]*>|<select[^>]+name="([^"]*)"[^>]*>[\s\S]*?<\/select>/ig, function(str, nameInp, nameSel){
         var value = '';
         if(nameInp){
-            value = getParam(str, null, null, /value="([^"]*)"/i, null, html_entity_decode);
+            if(/type="button"/i.test(str))
+                value=undefined;
+            else
+                value = getParam(str, null, null, /value="([^"]*)"/i, null, html_entity_decode) || '';
             name = nameInp;
         }else if(nameSel){
             value = getParam(str, null, null, /^<[^>]*value="([^"]*)"/i, null, html_entity_decode);
@@ -153,7 +171,8 @@ function createFormParams(html, process){
             value = process(params, str, name, value);
         }
         if(typeof(value) != 'undefined')
-            params[name] = value;
+            if(array) params.push([name, value])
+            else params[name] = value;
     });
 
     //AnyBalance.trace('Form params are: ' + JSON.stringify(params));
@@ -191,6 +210,12 @@ function joinObjects(newObject, oldObject){
    return obj;
 }
 
+function joinArrays(arr1, arr2){
+   var narr = arr1.slice();
+   narr.push.apply(narr, arr2);
+   return narr;
+}
+
 /**
  *  Добавляет хедеры к переданным или к g_headers
  */
@@ -201,7 +226,7 @@ function addHeaders(newHeaders, oldHeaders){
    if(!bOldArray && !bNewArray)
        return joinObjects(newHeaders, oldHeaders);
    if(bOldArray && bNewArray) //Если это массивы, то просто делаем им join
-       return oldHeader.slice().push.apply(oldHeader, newHeaders);
+       return joinArrays(oldHeaders, newHeaders);
    if(!bOldArray && bNewArray){ //Если старый объект, а новый массив
        var headers = joinObjects(null, oldHeaders);
        for(var i=0; i<newHeaders.length; ++i)
@@ -335,43 +360,57 @@ function parseDateJS(str){
  * если regexp == null, то значением является переданный html
  * если replaces == null, то замены не делаются
  * do_replace - если true, то найденные значения вырезаются из переданного текста 
- * и новый текст возвращается (только при param == null)
+ * и новый текст возвращается (только при param != null)
  * 
  * replaces - массив, нечетные индексы - регулярные выражения, четные - строки, 
  * на которые надо заменить куски, подходящие под предыдущее регулярное выражение. Эти массивы могут быть вложенными.
  * см. например replaceTagsAndSpaces
  */
 function sumParam (html, result, param, regexp, replaces, parser, do_replace, aggregate) {
-    if (param && (param != '__tariff' && !AnyBalance.isAvailable (param))){
-	if(do_replace)
-		return html;
-        else
-		return;
+    if(typeof(do_replace) == 'function'){
+        var aggregate_old = aggregate;
+        aggregate = do_replace;
+        do_replace = aggregate_old || false;
     }
 
-    if(typeof(do_replace) == 'function'){
-        aggregate = do_replace;
-        do_replace = false;
+    function replaceIfNeeded(){
+	if(do_replace) 
+		return regexp ? html.replace(regexp, '') : '';
     }
+
+    if (!isAvailable(param))  //Даже если счетчик не требуется, всё равно надо вырезать его матчи, чтобы не мешалось другим счетчикам
+        return replaceIfNeeded();
+
+    //После того, как проверили нужность счетчиков, кладем результат в первый из переданных счетчиков. Оставляем только первый
+    param = isArray(param) ? param[0] : param;
 
     var values = [], matches;
     if(param && isset(result[param]))
         values.push(result[param]);
 
-    if(!regexp){
-        values.push(replaceAll(html, replaces));
-    }else{
-        regexp.lastIndex = 0; //Удостоверяемся, что начинаем поиск сначала.
-        while(matches = regexp.exec(html)){
-		value = isset(matches[1]) ? matches[1] : matches[0];
-        	value = replaceAll(value, replaces);
-		if (parser)
-			value = parser (value);
-            
+    function replaceAndPush(value){
+        value = replaceAll(value, replaces);
+	if (parser)
+		value = parser (value);
+        if(isset(value))
         	values.push(value);
-        	if(!regexp.global)
-            		break; //Если поиск не глобальный, то выходим из цикла
-	}
+    }
+
+    var regexps = isArray(regexp) ? regexp : [regexp];
+    for(var i=0; i<regexps.length; ++i){ //Пройдемся по массиву регулярных выражений
+        regexp = regexps[i];
+        if(!regexp){
+            replaceAndPush(html);
+        }else{
+            regexp.lastIndex = 0; //Удостоверяемся, что начинаем поиск сначала.
+            while(matches = regexp.exec(html)){
+                replaceAndPush(isset(matches[1]) ? matches[1] : matches[0]);
+            	if(!regexp.global)
+                    break; //Если поиск не глобальный, то выходим из цикла
+	    }
+        }
+        if(do_replace) //Убираем все матчи, если это требуется
+            html = regexp ? html.replace(regexp, '') : '';
     }
 
     var total_value;
@@ -384,8 +423,7 @@ function sumParam (html, result, param, regexp, replaces, parser, do_replace, ag
       if(isset(total_value)){
           result[param] = total_value;
       }
-      if(do_replace)
-          return regexp ? html.replace(regexp, '') : html;
+      return html;
     }else{
       return total_value;
     }
@@ -401,16 +439,19 @@ function aggregate_sum(values){
     return total_value;
 }
 
-function aggregate_join(values, delimiter){
+function aggregate_join(values, delimiter, allow_empty){
     if(values.length == 0)
         return;
     if(!isset(delimiter))
         delimiter = ', ';
-    return values.join(delimiter);
+    var ret = values.join(delimiter);
+    if(!allow_empty)
+        ret = ret.replace(/^(?:\s*(,\s*)?)+|(?:\s*,\s*){2,}|(?:(\s*,)?\s*)+$/g, '');
+    return ret;
 }
 
-function create_aggregate_join(delimiter){
-    return function(values){ return aggregate_join(values, delimiter); }
+function create_aggregate_join(delimiter, allow_empty){
+    return function(values){ return aggregate_join(values, delimiter, allow_empty); }
 }
 
 function aggregate_min(values){
@@ -439,13 +480,27 @@ function aggregate_max(values){
  * Вычисляет трафик в мегабайтах из переданной строки.
  */
 function parseTraffic(text, defaultUnits){
-    var _text = html_entity_decode(text.replace(/\s+/, ''));
+    return parseTrafficEx(text, 1024, 2, defaultUnits);
+}
+
+/**
+ * Вычисляет трафик в гигабайтах из переданной строки.
+ */
+function parseTrafficGb(text, defaultUnits){
+    return parseTrafficEx(text, 1024, 3, defaultUnits);
+}
+
+/**
+ * Вычисляет трафик в нужных единицах из переданной строки.
+ */
+function parseTrafficEx(text, thousand, order, defaultUnits){
+    var _text = html_entity_decode(text.replace(/\s+/g, ''));
     var val = getParam(_text, null, null, /(-?\d[\d\.,]*)/, replaceFloat, parseFloat);
     if(!isset(val)){
         AnyBalance.trace("Could not parse traffic value from " + text);
         return;
     }
-    var units = getParam(_text, null, null, /([kmgкмг][бb]|байт|bytes)/i);
+    var units = getParam(_text, null, null, /([kmgкмг][бb]?|[бb](?![\wа-я])|байт|bytes)/i);
     if(!units && !defaultUnits){
         AnyBalance.trace("Could not parse traffic units from " + text);
         return;
@@ -454,15 +509,19 @@ function parseTraffic(text, defaultUnits){
     switch(units.substr(0,1).toLowerCase()){
       case 'b':
       case 'б':
-        val = Math.round(val/1024/1024*100)/100;
+        val = Math.round(val/Math.pow(thousand, order)*100)/100;
         break;
       case 'k':
       case 'к':
-        val = Math.round(val/1024*100)/100;
+        val = Math.round(val/Math.pow(thousand, order-1)*100)/100;
+        break;
+      case 'm':
+      case 'м':
+        val = Math.round(val/Math.pow(thousand, order-2)*100)/100;
         break;
       case 'g':
       case 'г':
-        val = Math.round(val*1024);
+        val = Math.round(val/Math.pow(thousand, order-3)*100)/100;
         break;
     }
     var textval = ''+val;
@@ -470,7 +529,26 @@ function parseTraffic(text, defaultUnits){
       val = Math.round(val);
     else if(textval.length > 5)
       val = Math.round(val*10)/10;
-
-    AnyBalance.trace('Parsing traffic (' + val + ') from: ' + text);
+    var dbg_units = {0: 'b', 1: 'kb', 2: 'mb', 3: 'gb'};
+    AnyBalance.trace('Parsing traffic (' + val + dbg_units[order] + ') from: ' + text);
     return val;
 }
+
+/**
+ * Создаёт мультипарт запрос
+ */
+function requestPostMultipart(url, data, headers){
+	var parts = [];
+	var boundary = '------WebKitFormBoundaryrceZMlz5Js39A2A6';
+	for(var name in data){
+		parts.push(boundary, 
+		'Content-Disposition: form-data; name="' + name + '"',
+		'',
+		data[name]);
+	}
+	parts.push(boundary, '--');
+        if(!headers) headers = {};
+	headers['Content-Type'] = 'multipart/form-data; boundary=' + boundary.substr(2);
+	return AnyBalance.requestPost(url, parts.join('\r\n'), headers);
+}
+

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="4">ab-money-trust</id>
+  <id version="5">ab-money-trust</id>
   <name>Траст банк</name>   
   <description>
     Получает текущий остаток и другие параметры карт/счетов/депозитов банка Траст (http://www.trust.ru/), используя интернет-банк https://online.trust.ru/

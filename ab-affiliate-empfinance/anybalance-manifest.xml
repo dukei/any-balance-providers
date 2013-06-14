@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-affiliate-empfinance</id>
+  <name>Empire Finance Group</name>
+  <description>
+    This provider helps you to check status of your Empire Finance Group's account on https://empfinance.com/
+  </description>
+  <author>wtiger &lt;wtiger@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>api:jquery.min.js</js>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Account Balance" units="$"/>
+    <counter id="earned" name="Earned" units="$"/>
+    <counter id="withdrew_total" name="Withdrew Total" units="$"/>
+    <counter id="total_invested" name="Total Invested" units="$"/>
+  </counters>
+  <keywords>
+    investment program empire finance group
+  </keywords>
+  <type>
+    affiliate
+  </type>
+</provider>

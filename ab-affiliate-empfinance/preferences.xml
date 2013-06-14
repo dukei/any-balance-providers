@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        key="username"
+        title="Login" 
+        summary="||{@s}" 
+        dialogTitle="Login" 
+        negativeButtonText="Cancel"
+        dialogMessage="Login for your Empfinance's account."
+        positiveButtonText="ОК">
+    </EditTextPreference>
+    <EditTextPreference 
+        key="password"
+        title="Password" 
+        summary="||***********" 
+        dialogTitle="Password" 
+        negativeButtonText="Cancel"
+        dialogMessage="Password for your Empfinance's account."
+        inputType="textPassword"
+        positiveButtonText="ОК">
+    </EditTextPreference>
+</PreferenceScreen>

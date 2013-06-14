@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        key="AccountID"
+        title="Member ID"
+        summary="||{@s}" 
+        dialogTitle="Member ID" 
+        negativeButtonText="Cancel" 
+        dialogMessage="Enter your Perfect Money's Member ID."
+        positiveButtonText="ОК">
+    </EditTextPreference>
+    <EditTextPreference 
+        key="PassPhrase"
+        title="Password" 
+        summary="||***********" 
+        dialogTitle="Password" 
+        negativeButtonText="Cancel" 
+        dialogMessage="Enter the passphrase for access to the account."
+        inputType="textPassword"
+        positiveButtonText="ОК">
+    </EditTextPreference>
+</PreferenceScreen>

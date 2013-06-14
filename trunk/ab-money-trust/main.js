@@ -8,6 +8,7 @@
 */
 
 function sleep(delay) {
+   AnyBalance.trace('Sleeping ' + delay + ' ms');
    if(AnyBalance.getLevel() < 6){
       var startTime = new Date();
       var endTime = null;
@@ -15,6 +16,7 @@ function sleep(delay) {
           endTime = new Date();
       } while (endTime.getTime() - startTime.getTime() < delay);
    }else{
+      AnyBalance.trace('Calling hw sleep');
       AnyBalance.sleep(delay);
    }
 } 
@@ -141,7 +143,7 @@ function fetchCard(jsonInfo, baseurl){
     getParam(tr, result, '__tariff', /<div[^>]+class="type"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
     getParam(tr, result, 'status', /<p[^>]+class="status"[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
     getParam(tr, result, 'balance', /<span[^>]+class="amount"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(tr, result, 'currency', /<span[^>]+class="currency"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+    getParam(tr, result, ['currency', 'balance'], /<span[^>]+class="currency"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
     getParam(tr, result, 'fio', /<div[^>]+class="holder"[^>]*>(?:[\s\S](?!<\/div))*?<p[^>]+class="value"[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
     getParam(tr, result, 'till', /<div[^>]+class="expire"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseDate);
 
@@ -173,7 +175,7 @@ function fetchAccount(jsonInfo, baseurl){
     var result = {success: true};
     getParam(tr, result, 'accnum', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
     getParam(tr, result, 'balance', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(tr, result, 'currency', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+    getParam(tr, result, ['currency', 'balance'], /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
     getParam(tr, result, 'type', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
     getParam(tr, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
     getParam(jsonInfo.USR, result, 'fio', /(.*)/i, replaceTagsAndSpaces);
@@ -209,7 +211,7 @@ function fetchDeposit(jsonInfo, baseurl){
 
     var result = {success: true};
     getParam(tr, result, 'accnum', /(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-    getParam(tr, result, 'currency', /(?:[\s\S]*?<td[^>]*>){8}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+    getParam(tr, result, ['currency', 'balance'], /(?:[\s\S]*?<td[^>]*>){8}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
     getParam(tr, result, 'pct', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(tr, result, 'balance', /(?:[\s\S]*?<td[^>]*>){7}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(tr, result, 'type', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);

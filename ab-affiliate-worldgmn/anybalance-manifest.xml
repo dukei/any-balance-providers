@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-affiliate-worldgmn</id>
+  <id version="3">ab-affiliate-worldgmn</id>
   <name>WorldGMN</name>
   <description>
-    Получает различные показатели партнера программы WorldGMN (http://www.worldgmn.com).
+    Получает различные показатели партнера программы WorldGMN (https://www.worldgmn.com).
 
-    Информация берется из личного кабинета http://www.worldgmn.com/login.php
+    Информация берется из личного кабинета https://www.worldgmn.com/login.php
   </description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <files>
@@ -21,10 +21,11 @@
     <counter id="status" name="Your status" type="text"/>
     <counter id="wallet" name="Wallet" prefix="$"/>
     <counter id="totalearn" name="Gold" prefix="$"/>
-    <counter id="adkash_status" name="AdKash status" type="text"/>
+    <counter id="adkash_total" name="Total ADV views balance" prefix="$"/>
     <counter id="adkash_left" name="Left team earning" prefix="$"/>
     <counter id="adkash_right" name="Right team earning" prefix="$"/>
     <counter id="adkash_bonus" name="AdKash bonus" prefix="$"/>
+    <counter id="adkash_status" name="AdKash status" type="text"/>
   </counters>
   <keywords>
     ворлдгмн

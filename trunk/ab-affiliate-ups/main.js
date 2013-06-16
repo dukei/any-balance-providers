@@ -57,10 +57,10 @@ function main(){
 	AnyBalance.trace('Parsing... ');
 
 	result.__tariff=prefs.Login;
-	getParam(info, result, 'withdrawal', /<span class="s1">Всего выведено<\/span><span class="s2">\$\s*(.*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(info, result, 'current_sum', /<span class="s1">Сумма текущих долей <\/span><span class="s2">\$\s*(.*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(info, result, 'total_income', /<span class="s1">Всего заработано<\/span><span class="s2">\$\s*(.*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(info, result, 'balance', /<span class="s1">Баланс<\/span><span class="s2">\$\s*(.*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(info, result, 'withdrawal', /<span class="s1">Всего выведено<\/span><span class="s2">\$\s*(.*?)<\/span>/i, [/\,/g, '', replaceTagsAndSpaces], parseBalance);
+	getParam(info, result, 'current_sum', /<span class="s1">Сумма текущих долей <\/span><span class="s2">\$\s*(.*?)<\/span>/i, [/\,/g, '', replaceTagsAndSpaces], parseBalance);
+	getParam(info, result, 'total_income', /<span class="s1">Всего заработано<\/span><span class="s2">\$\s*(.*?)<\/span>/i, [/\,/g, '', replaceTagsAndSpaces], parseBalance);
+	getParam(info, result, 'balance', /<span class="s1">Баланс<\/span><span class="s2">\$\s*(.*?)<\/span>/i, [/\,/g, '', replaceTagsAndSpaces], parseBalance);
 	getParam(info, result, 'terminals', /<p>Терминалов выкуплено - (\d+)<br>/i, replaceTagsAndSpaces, parseBalance);
 	result.total_balance = result.balance + result.current_sum;
 
@@ -74,7 +74,7 @@ function main(){
 
 		getParam(info, result, 'referal_total', /<tr><td>Всего рефералов<\/td><td>(.*?)<\/td><\/tr>/i, replaceTagsAndSpaces, parseBalance);
 		getParam(info, result, 'referal_active', /<tr><td>Активных рефералов<\/td><td>(.*?)<\/td><\/tr>/i, replaceTagsAndSpaces, parseBalance);
-		getParam(info, result, 'referal_balance', /<tr><td>Партнерское вознаграждение<\/td><td>(.*?)<\/td><\/tr>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(info, result, 'referal_balance', /<tr><td>Партнерское вознаграждение<\/td><td>(.*?)<\/td><\/tr>/i, [/\,/g, '', replaceTagsAndSpaces], parseBalance);
 	}
 
 	if(AnyBalance.isAvailable('order_status')){

@@ -7,7 +7,7 @@
 Личный кабинет: http://www.worldgmn.com/login.php
 */
 
-var g_baseurl = "http://www.worldgmn.com/";
+var g_baseurl = "https://www.worldgmn.com/";
 var g_headers = {
         'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
         'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
@@ -51,7 +51,7 @@ function main(){
     if(AnyBalance.isAvailable('wallet')){
         html = AnyBalance.requestGet(baseurl + 'user_accounting.php', g_headers);
         
-        getParam(html, result, 'wallet', /<span[^>]+class="wl_title"[^>]*>([^<]*)<\/span>(?:[\s\S](?!<\/td>))*?<a[^>]+user_recharge_wallet.php/i, replaceTagsAndSpaces, parseBalance);
+        getParam(html, result, 'wallet', /<span[^>]+class="wl_title"[^>]*>([^<]*)<\/span>(?:[\s\S](?!<\/td>))*?<a[^>]+user_wikash_wallet_recharge.php/i, replaceTagsAndSpaces, parseBalance);
     }
 
     if(AnyBalance.isAvailable('totalearn')){
@@ -60,10 +60,11 @@ function main(){
         getParam(html, result, 'totalearn', /<div[^>]+class="[^"]*\s+inv"[^>]*>[\s\S]*?<div[^>]+class="[^"]*\s+fToRight"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
     }
 
-    if(AnyBalance.isAvailable('adkash_status', 'adkash_left', 'adkash_right', 'adkash_bonus')){
+    if(AnyBalance.isAvailable('adkash_status', 'adkash_left', 'adkash_right', 'adkash_bonus', 'adkash_total')){
         html = AnyBalance.requestGet(baseurl + 'user_adkash.php', g_headers);
         
         getParam(html, result, 'adkash_status', /Status:[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+        getParam(html, result, 'adkash_total', /views Balance:([^<]*)/i, replaceTagsAndSpaces, parseBalance);
         getParam(html, result, 'adkash_left', /Left team earning:([^<]*)/i, replaceTagsAndSpaces, parseBalance);
         getParam(html, result, 'adkash_right', /Right team earning:([^<]*)/i, replaceTagsAndSpaces, parseBalance);
         getParam(html, result, 'adkash_bonus', /ADKASH BONUS:([^<]*)/i, replaceTagsAndSpaces, parseBalance);

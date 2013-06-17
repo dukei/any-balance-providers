@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-insurance-renlife</id>
+  <id version="3">ab-insurance-renlife</id>
   <name>Ренессанс Жизнь</name>
   <description>
     Получает информацию о договоре в системе Ренессанс Жизнь (http://www.renlife.com/)
 
     Информация берется из личного кабинета (https://lifecabinet.renlife.com/)
+
+    Если вы осуществляете вход в личный кабинет впервые и ранее не изменяли ваши логин/пароль, то в качестве логина используйте сочетание серии и номера Вашего паспорта (иного документа, удостоверяющего личность), указанные в заявлении на страхование. Серию и номер паспорта (иного документа, удостоверяющего личность) вводите без пробелов и иных знаков (например, 4500123456), в качестве пароля - дату выдачи паспорта (иного документа, удостоверяющего личность) (например, 11.02.2003). Если в серии/номере есть буквы, то вводите их заглавными.
   </description>
   <author>Alexandra Shalamova &lt;alexandrashalamova@gmail.com&gt;</author>
   <files>
@@ -16,6 +18,7 @@
     <history>history.xml</history>
   </files>
   <counters>
+    <counter id="total" name="Всего оплачено" units="р"/>
     <counter id="datePay" name="Дата очередного платежа" type="time" format="dd.MM.yyyy"/>
     <counter id="fee" name="Страховой взнос" units="р"/>
     <counter id="indexFee" name="Индексированный взнос" units="р"/>
@@ -24,6 +27,7 @@
     <counter id="dateEnd" name="Дата окончания действия" type="time" format="dd.MM.yyyy"/>
     <counter id="status" name="Статус полиса" type="text"/>
     <counter id="payPeriod" name="Периодичность оплаты" type="text"/>
+    <counter id="num" name="Номер полиса" type="text"/>
   </counters>
   <keywords>
     страхование

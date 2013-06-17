@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-money-raif</id>
+  <id version="2">ab-money-raif</id>
   <name>Райффайзен</name>
   <description>
     Получает текущий остаток и другие параметры счетов и депозитов банка Райффайзенбанк (http://www.raiffeisen.ru), используя интернет-банк https://connect.raiffeisen.ru.
@@ -9,7 +9,7 @@
 1. ваше имя пользователя (логин),
 2. ПИН-конверт, содержащий ваш пароль для доступа в Raiffeisen CONNECT.
 
-    В настоящее время провайдер поддерживает только счета и депозиты. Для добавления карт или кредитов или других банковских продуктов обращайтесь к автору по е-мейл.
+    В настоящее время провайдер поддерживает только карты, счета и депозиты. Для добавления кредитов или других банковских продуктов обращайтесь к автору по е-мейл.
 
   </description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
@@ -25,6 +25,7 @@
     <counter id="pcts" name="Проценты в конце срока" units=" {@currency}"/>
     <counter id="currency" name="Валюта" type="text"/>
     <counter id="accnum" name="Номер счета" type="text"/>
+    <counter id="cardnum" name="Номер карты" type="text"/>
     <counter id="minpaytill" name="Срок платежа по кредиту" type="time" format="dd/MM/yyyy"/>
     <counter id="limit" name="Кредитный лимит" units=" {@currency}"/>
     <counter id="till" name="Срок действия" type="time" format="dd/MM/yyyy"/>

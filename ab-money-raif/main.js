@@ -31,6 +31,7 @@ var g_xml_login = '<?xml version="1.0" encoding="UTF-8" standalone="yes" ?><soap
 function translateError(error){
     var errors = {
         'logins.password.incorrect': 'Неправильный логин или пароль',
+        'profile.login.first_entry': 'Это ваш первый вход в Райффайзен.Connect. Пожалуйста, зайдите в https://connect.raiffeisen.ru через браузер и установите постоянный пароль'
     };
 
     if(errors[error])
@@ -78,24 +79,42 @@ function main(){
 
 function fetchCard(baseurl, html, result){
     var prefs = AnyBalance.getPreferences();
-    throw new AnyBalance.Error('Карты пока не поддерживаются. Обращайтесь к автору провайдера по е-мейл dco@mail.ru');
 
-    if(prefs.num && !/^\d+$/.test(prefs.num))
-        throw new AnyBalance.Error('Введите последние цифры интересующего вас счета или не вводите ничего, чтобы получить информацию по первому счету');
+    if(prefs.num && !/^\d{4}$/.test(prefs.num))
+        throw new AnyBalance.Error('Введите последние 4 цифры интересующей вас карты или не вводите ничего, чтобы получить информацию по первой карте');
 
     html = AnyBalance.requestPost(baseurl + 'RCCardService', g_xml_cards, addHeaders({SOAPAction: 'urn:GetCards'})); 
    
-    var re = new RegExp('<ns:return[^>]*>((?:[\\s\\S](?!</ns:return>))*?<ax\\d+:number>\\d+' + (prefs.num ? prefs.num : '') + '</ac\\d+:number>[\\s\\S]*?)</ns:return>', 'i');
+    var re = new RegExp('<ns:return[^>]*>((?:[\\s\\S](?!</ns:return>))*?<ax\\d+:number>[^<]*' + (prefs.num ? prefs.num : '\\d{4}') + '</ax\\d+:number>[\\s\\S]*?)</ns:return>', 'i');
+    var info = getParam(html, null, null, re);
+    if(!info)
+        throw new AnyBalance.Error(prefs.num ? 'Не удалось найти карту с последними цифрами ' + prefs.num : 'Не найдено ни одной карты');
 
-    getParam(html, result, '__tariff', /<ax\d+:number>([\s\S]*?)<\/ax\d+:number>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(info, result, '__tariff', /<ax\d+:type>([\s\S]*?)<\/ax\d+:type>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(info, result, 'cardnum', /<ax\d+:number>([\s\S]*?)<\/ax\d+:number>/i, replaceTagsAndSpaces, html_entity_decode);
 
-    getParam(html, result, 'accnum', /<ax\d+:number>([\s\S]*?)<\/ax\d+:number>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'balance', /<ax\d+:balance>([\s\S]*?)<\/ax\d+:balance>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'currency', /<ax\d+:currency>([\s\S]*?)<\/ax\d+:currency>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(info, result, 'accnum', /<ax\d+:accountNumber>([\s\S]*?)<\/ax\d+:accountNumber>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(info, result, 'balance', /<ax\d+:balance>([\s\S]*?)<\/ax\d+:balance>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(info, result, 'currency', /<ax\d+:currency>([\s\S]*?)<\/ax\d+:currency>/i, replaceTagsAndSpaces, html_entity_decode);
 
-    getParam(html, result, 'minpaytill', /<ax\d+:nextCreditPaymentDate>([\s\S]*?)<\/ax\d+:nextCreditPaymentDate>/i, replaceTagsAndSpaces, parseDateISO);
-    getParam(html, result, 'limit', /<ax\d+:creditLimit>([\s\S]*?)<\/ax\d+:creditLimit>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'till', /<ax\d+:closeDate>([\s\S]*?)<\/ax\d+:closeDate>/i, replaceTagsAndSpaces, parseDateISO);
+    getParam(info, result, 'minpaytill', /<ax\d+:nextCreditPaymentDate>([\s\S]*?)<\/ax\d+:nextCreditPaymentDate>/i, replaceTagsAndSpaces, parseDateISO);
+    getParam(info, result, 'minpay', /<ax\d+:minimalCreditPayment>([\s\S]*?)<\/ax\d+:minimalCreditPayment>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(info, result, 'limit', /<ax\d+:creditLimit>([\s\S]*?)<\/ax\d+:creditLimit>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(info, result, 'till', /<ax\d+:expirationDate>([\s\S]*?)<\/ax\d+:expirationDate>/i, replaceTagsAndSpaces, parseDateISO);
+
+    if(AnyBalance.isAvailable('all')){
+        var all = sumParam(html, null, null, /<ns:return[^>]*>([\s\S]*?)<\/ns:return>/ig);
+        var out = [];
+        for(var i=0; i<all.length; ++i){
+            var info = all[i];
+            var accnum = getParam(info, null, null, /<ax\d+:number>([\s\S]*?)<\/ax\d+:number>/i, replaceTagsAndSpaces, html_entity_decode);
+            var balance = getParam(info, null, null, /<ax\d+:balance>([\s\S]*?)<\/ax\d+:balance>/i, replaceTagsAndSpaces, parseBalance);
+            var currency = getParam(info, null, null, /<ax\d+:currency>([\s\S]*?)<\/ax\d+:currency>/i, replaceTagsAndSpaces, html_entity_decode);
+            out.push(accnum + ': ' + balance + ' ' + currency);
+        }
+        result.all = out.join('\n');
+    }
+
 }
 
 function fetchAccount(baseurl, html, result){
@@ -117,6 +136,7 @@ function fetchAccount(baseurl, html, result){
     getParam(info, result, 'currency', /<ax\d+:currency>([\s\S]*?)<\/ax\d+:currency>/i, replaceTagsAndSpaces, html_entity_decode);
 
     getParam(info, result, 'minpaytill', /<ax\d+:nextCreditPaymentDate>([\s\S]*?)<\/ax\d+:nextCreditPaymentDate>/i, replaceTagsAndSpaces, parseDateISO);
+    getParam(html, result, 'minpay', /<ax\d+:minimalCreditPayment>([\s\S]*?)<\/ax\d+:minimalCreditPayment>/i, replaceTagsAndSpaces, parseBalance);
     getParam(info, result, 'limit', /<ax\d+:creditLimit>([\s\S]*?)<\/ax\d+:creditLimit>/i, replaceTagsAndSpaces, parseBalance);
     getParam(info, result, 'till', /<ax\d+:closeDate>([\s\S]*?)<\/ax\d+:closeDate>/i, replaceTagsAndSpaces, parseDateISO);
 

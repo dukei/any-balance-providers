@@ -38,28 +38,35 @@ function main(){
 
     var result = {success: true};
 
-    var reg = {
-        statusReg: new RegExp('<td[^>]*>\\s*<a[^>]*>\\d*' + (prefs.number ? prefs.number : '\\d*') + '<\/a>(?:[\\s\\S]*?<td[^>]*>){1}([\\s\\S]*?)<\/td>', "i"),
-        tariffReg: new RegExp('<td[^>]*>\\s*<a[^>]*>\\d*' + (prefs.number ? prefs.number : '\\d*') + '<\/a>(?:[\\s\\S]*?<td[^>]*>){2}([\\s\\S]*?)<\/td>', "i"),
-        beginReg: new RegExp('<td[^>]*>\\s*<a[^>]*>\\d*' + (prefs.number ? prefs.number : '\\d*') + '<\/a>(?:[\\s\\S]*?<td[^>]*>){3}([\\s\\S]*?)<\/td>', "i"),
-        endReg: new RegExp('<td[^>]*>\\s*<a[^>]*>\\d*' + (prefs.number ? prefs.number : '\\d*') + '<\/a>(?:[\\s\\S]*?<td[^>]*>){4}([\\s\\S]*?)<\/td>', "i"),
-        payPeriodReg: new RegExp('<td[^>]*>\\s*<a[^>]*>\\d*' + (prefs.number ? prefs.number : '\\d*') + '<\/a>(?:[\\s\\S]*?<td[^>]*>){5}([\\s\\S]*?)<\/td>', "i"),
-        feeReg: new RegExp('<td[^>]*>\\s*<a[^>]*>\\d*' + (prefs.number ? prefs.number : '\\d*') + '<\/a>(?:[\\s\\S]*?<td[^>]*>){6}([\\s\\S]*?)<\/td>', "i"),
-        indexFeeReg: new RegExp('<td[^>]*>\\s*<a[^>]*>\\d*' + (prefs.number ? prefs.number : '\\d*') + '<\/a>(?:[\\s\\S]*?<td[^>]*>){7}([\\s\\S]*?)<\/td>', "i"),
-        datePayReg: new RegExp('<td[^>]*>\\s*<a[^>]*>\\d*' + (prefs.number ? prefs.number : '\\d*') + '<\/a>(?:[\\s\\S]*?<td[^>]*>){8}([\\s\\S]*?)<\/td>', "i"),
-        debtFeeReg: new RegExp('<td[^>]*>\\s*<a[^>]*>\\d*' + (prefs.number ? prefs.number : '\\d*') + '<\/a>(?:[\\s\\S]*?<td[^>]*>){9}([\\s\\S]*?)<\/td>', "i"),
-    };
+    var table = getParam(html, null, null, /<h1[^>]*>Информация о договорах<\/h1>\s*<table[\s\S]*?<\/table>/);
+    if(!table)
+        throw new AnyBalance.Error('Не найдена информация о договорах');
 
-    getParam(html, result, 'status', reg.statusReg, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, '__tariff', reg.tariffReg, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'dateBegin', reg.beginReg, replaceTagsAndSpaces, parseDate);
-    getParam(html, result, 'dateEnd', reg.endReg, replaceTagsAndSpaces, parseDate);
+    var tr = getParam(table, null, null, new RegExp('<td[^>]*>\\s*<a[^>]*>\\d*' + (prefs.number ? prefs.number : '') + '<\/a>[\\s\\S]*?<\/tr>', "i"));
+    if(!tr)
+        throw new AnyBalance.Error(prefs.number ? 'Не найдено договора с последними цифрами ' + prefs.number : 'Не найдено ни одного договора');
 
-    getParam(html, result, 'payPeriod', reg.payPeriodReg, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'fee', reg.feeReg, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'indexFee', reg.indexFeeReg, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'datePay', reg.datePayReg, replaceTagsAndSpaces, parseDate);
-    getParam(html, result, 'debtFee', reg.debtFeeReg, replaceTagsAndSpaces, parseBalance);
+    AnyBalance.trace('Found row: ' + tr);
+
+    getParam(tr, result, 'status', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(tr, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(tr, result, 'dateBegin', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+    getParam(tr, result, 'dateEnd', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+
+    getParam(tr, result, 'payPeriod', /(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(tr, result, 'fee', /(?:[\s\S]*?<td[^>]*>){7}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(tr, result, 'indexFee', /(?:[\s\S]*?<td[^>]*>){8}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(tr, result, 'datePay', /(?:[\s\S]*?<td[^>]*>){9}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+    getParam(tr, result, 'debtFee', /(?:[\s\S]*?<td[^>]*>){10}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+
+    getParam(tr, result, 'num', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+
+    var id=getParam(tr, null, null, /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    if(AnyBalance.isAvailable('total')){
+        html = AnyBalance.requestGet(baseurl + 'order/' + id);
+        sumParam(html, result, 'total', /<td[^>]*>([^<]*)<\/td>\s*(?:<td[^>]*>[^<]*<\/td>\s*)<td[^>]*>Оплачен/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    }
+
 
     AnyBalance.setResult(result);
 }

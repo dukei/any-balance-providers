@@ -23,8 +23,12 @@ function main(){
 		throw new AnyBalance.Error(error);
 	}
 
+
+	if(matches = info.match(/API is disabled on this account/i)){
+		throw new AnyBalance.Error("API is disabled. Try to enable API in security section of your account on www.perfectmoney.is and set IP mask to *.*.*.*. PLEASE NOTE THAT ENABLING API IS SERIOUS SECURITY RISK FOR YOUR ACCOUNT.");}
+
 	if(matches = info.match(/API is disabled for this IP/i)){
-		throw new AnyBalance.Error("API is disabled. Try to enable API in security section of your account on www.perfectmoney.is and set IP mask *.*.*.*. PLEASE NOTE THAT ENABLING API IS SERIOUS SECURITY RISK FOR YOUR ACCOUNT.");}
+		throw new AnyBalance.Error("API is not accepted for your IP-address. Open the security section of your account on www.perfectmoney.is and set IP mask to *.*.*.*. PLEASE NOTE THAT ENABLING API IS SERIOUS SECURITY RISK FOR YOUR ACCOUNT.");}
 
 	if(matches = info.match(/<input name='ERROR' type='hidden' value='(.*?)'>/i)){
 		throw new AnyBalance.Error(matches[1]);}

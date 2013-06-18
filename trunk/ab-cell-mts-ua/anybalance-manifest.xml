@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.1" version="21">ab-cell-mts-ua</id>
+  <id major_version="1.1" version="22">ab-cell-mts-ua</id>
   <name>МТС (Украина)</name>
   <description>
     Получает баланс, минуты, смс, ммс, информацию о расходах, номер лицевого счета, ежемесячую плату и др.
@@ -24,7 +24,7 @@
     <counter id="min_paket" name="Пакет бесплатных минут для внутрисетевых звонков" type="time_interval" format="{@MIN}" units=" мин"/>
     <counter id="min_net_70" name="70 минут в день для внутрисетевых звонков" type="time_interval" format="{@MIN}" units=" мин"/>
     <counter id="min_net_30" name="30 минут в день для внутрисетевых звонков" type="time_interval" format="{@MIN}" units=" мин"/>
-    <counter id="min_net_all_33" name="33 минуты в день для внутрисетевых звонков во всех областях" type="time_interval" format="{@MIN}" units=" мин"/>
+    <counter id="min_net_all_33" name="30/33 минуты в день для внутрисетевых звонков во всех областях" type="time_interval" format="{@MIN}" units=" мин"/>
     <counter id="min_net_100" name="100 минут в день на внутрисетевое направление" type="time_interval" format="{@MIN}" units=" мин"/>
     <counter id="min_net_200" name="200 минут в день на внутрисетевое направление" type="time_interval" format="{@MIN}" units=" мин"/>
     <counter id="sms_paket" name="Пакет СМС" units=" sms"/>
@@ -50,6 +50,7 @@
     <counter id="termin" name="Срок действия номера" type="time" format="dd/MM/yyyy"/>
     <counter id="termin_bonus_balance" name="Срок действия бонусного баланса" type="time" format="dd/MM/yyyy HH:mm:ss"/>
     <counter id="termin_min_paket" name="Срок действия пакета бесплатных минут для внутрисетевых звонков" type="time" format="dd/MM/yyyy HH:mm:ss"/>
+    <counter id="termin_min_net_all_33" name="Срок действия 30/33 минуты в день на внутрисетевое направление" type="time" format="dd/MM/yyyy HH:mm:ss"/>
     <counter id="termin_min_net_100" name="Срок действия 100/200 минут в день на внутрисетевое направление" type="time" format="dd/MM/yyyy HH:mm:ss"/>
     <counter id="termin_sms_paket" name="Срок действия пакета СМС" type="time" format="dd/MM/yyyy"/>
     <counter id="termin_mms_paket" name="Срок действия пакета ММС" type="time" format="dd/MM/yyyy"/>

@@ -4,6 +4,8 @@
   <name>Perfect Money</name>
   <description>
     This provider helps you to check balances on your Perfect Money's account.
+    <p><br><p>It is need to enable API in security section of your account on www.perfectmoney.is and set IP mask to *.*.*.*.
+    PLEASE NOTE THAT ENABLING API IS SERIOUS SECURITY RISK FOR YOUR ACCOUNT.</p></br></p>
   </description>
   <author>wtiger &lt;wtiger@mail.ru&gt;</author>
   <files>

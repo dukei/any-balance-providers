@@ -315,6 +315,10 @@ function isAvailableButUnset(result, params){
     return false;
 }
 
+jQuery.expr[':'].parents = function(a,i,m){
+    return jQuery(a).parents(m[3]).length < 1;
+};
+
 function megafonTrayInfo(filial){
     var filinfo = filial_info[filial], errorInTray;
     
@@ -351,7 +355,7 @@ function megafonTrayInfo(filial){
         }
 
         if(AnyBalance.isAvailable('mins_left','mins_total','sms_left','sms_total','mms_left','mms_total')){
-            var $val = $threads.filter(':has(NAME:contains(" мин")), :has(NAME:contains("Телефония исходящая")), :has(NAME:contains("Исходящая телефония")), :has(PLAN_SI:contains("мин"))');
+            var $val = $threads.filter(':has(NAME:contains(" мин")), :has(NAME:contains("Телефония исходящая")), :has(NAME:contains("Исходящая телефония")), :has(PLAN_SI:contains("мин")), :has(NAME:contains("Переходи на ноль"))');
             AnyBalance.trace('Found minutes discounts: ' + $val.length);
             $val.each(function(){
                 var $e = $(this);

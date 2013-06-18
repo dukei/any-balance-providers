@@ -98,8 +98,12 @@ function main(){
     sumParam (html, result, 'min_net_30', /<li>30 минут в день для внутрисетевых звонков:[^<]*осталось\s*([\d\.,]+) бесплатных секунд<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     sumParam (html, result, 'min_net_30', /<li>Осталось\s*([\d\.,]+)\s*минут<\/li>/ig, replaceTagsAndSpaces, parseBalance, function(str){return 60*parseFloat(str)}, aggregate_sum);
     
-    // 33 минуты в день для внутрисетевых звонков во всех областях
-    sumParam (html, result, 'min_net_all_33', /<li>33 минуты в день для внутрисетевых звонков во всех областях:[^<]*осталось\s*([\d\.,]+) бесплатных секунд<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    // 30/33 минуты в день для внутрисетевых звонков во всех областях
+    sumParam (html, result, 'min_net_all_33', /<li>33 минуты в день для внутрисетевых звонков во всех областях:[^<]*осталось\s*([\d\.,]+) бесплатных секунд[^<]*<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    sumParam (html, result, 'min_net_all_33', /<li>30 минут в день для внутрисетевых звонков во всех областях:[^<]*осталось\s*([\d\.,]+) бесплатных секунд[^<]*<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    // Срок дейcтвия 30/33 минуты в день для внутрисетевых звонков во всех областях
+    sumParam (html, result, 'termin_min_net_all_33', /<li>33 минуты в день для внутрисетевых звонков во всех областях:[^<]*осталось\s*[\d\.,]+ бесплатных секунд. До ([^<]*)<\/li>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
+    sumParam (html, result, 'termin_min_net_all_33', /<li>30 минут в день для внутрисетевых звонков во всех областях:[^<]*осталось\s*[\d\.,]+ бесплатных секунд. До ([^<]*)<\/li>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);    
 
     // 100/200 минут в день на внутрисетевое направление (тут вообще путаница, в одном тарифе поменяли количество минут, добавили новую строку, а старую не убрали. Пришлось разделить счетчики…)
     // 100 минут в день на внутрисетевое направление

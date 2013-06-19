@@ -18,13 +18,6 @@ function parseMinutes(str){
 
 //------------------------------------------------------------------------------
 
-function getToken(html){
-    var token = /name="org.apache.struts.taglib.html.TOKEN"[^>]+value="([\s\S]*?)">/i.exec(html);
-    if(!token)
-        throw new AnyBalance.Error("Не удаётся найти код безопасности для входа. Проблемы или изменения на сайте?");
-    return token[1];
-}
-
 function main(){
   var prefs = AnyBalance.getPreferences();
   var baseurl = 'https://my.djuice.ua/';
@@ -38,19 +31,24 @@ function main(){
   AnyBalance.trace('Connecting to ' + baseurl);
 
   var html = AnyBalance.requestGet(baseurl + 'tbmb/login_djuice/show.do', headers);
-  AnyBalance.trace('Token = ' + getToken(html));
+  var form = getParam(html, null, null, /<form[^>]+action="[^"]*perform.do"[^>]*>([\s\S]*?)<\/form>/i);
+ 
+  if(!form)
+      throw new AnyBalance.Error("Не удаётся найти форму входа. Проблемы или изменения на сайте?");
 
-  var html = AnyBalance.requestPost(baseurl + 'tbmb/login_djuice/perform.do', {
-    isSubmitted: "true",
-    "org.apache.struts.taglib.html.TOKEN": getToken(html),
-    user: prefs.login,
-    password: prefs.password
-  }, headers);
+  var params = createFormParams(form);
+  params.user = prefs.login;
+  params.password = prefs.password;
+  var html = AnyBalance.requestPost(baseurl + "tbmb/login_djuice/perform.do", params, headers);
   
-  var matches = html.match(/<td class="redError">([\s\S]*?)<\/td>/i);
-  if(matches){
-      throw new AnyBalance.Error(matches[1]);
+  if(!/\/tbmb\/logout\/perform/i.test(html)){
+      var matches = html.match(/<td class="redError">([\s\S]*?)<\/td>/i);
+      if(matches){
+          throw new AnyBalance.Error(matches[1]);
+      }
+      throw new AnyBalance.Error("Не удалось зайти в личный кабинет. Сайт изменен?");
   }
+
   
   AnyBalance.trace('Successfully connected');
   

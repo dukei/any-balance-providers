@@ -170,6 +170,10 @@ function fetchPre(baseurl, html){
                 sumParam(services[i], result, 'sms_left', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
             }else if(/MMS/i.test(name)){
                 sumParam(services[i], result, 'mms_left', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+            }else if(/Рублей БОНУС/i.test(name)){
+                sumParam(services[i], result, 'rub_bonus', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+            }else if(/Рублей за участие в опросе/i.test(name)){
+                sumParam(services[i], result, 'rub_opros', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
             }else{
                 AnyBalance.trace("Неизвестная опция: " + services[i]);
             }

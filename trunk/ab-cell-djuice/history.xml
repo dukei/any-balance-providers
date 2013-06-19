@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change major_version="1.3" version="22" date="2013-06-16">
+      Изменения в процедуре входа в ЛК
+    </change>
     <change major_version="1.3" version="22" date="2013-03-02">
       Уточнен срок действия трафика (АЛЬО КВАРТАЛ! МІЙ РЕГІОН)
     </change>

@@ -30,18 +30,15 @@ function main(){
   AnyBalance.trace('Connecting to ' + baseurl);
 
   var html = AnyBalance.requestGet(baseurl + 'tbmb/login/show.do', headers);
-  var token = /name="org.apache.struts.taglib.html.TOKEN" value="([\s\S]*?)">/.exec(html);
-  if(!token)
-      throw new AnyBalance.Error("Не удаётся найти код безопасности для входа. Проблемы или изменения на сайте?");
+  var form = getParam(html, null, null, /<form[^>]+action="[^"]*perform.do"[^>]*>([\s\S]*?)<\/form>/i);
+ 
+  if(!form)
+      throw new AnyBalance.Error("Не удаётся найти форму входа. Проблемы или изменения на сайте?");
 
-  AnyBalance.trace('Token = ' + token[1]);
-
-  var html = AnyBalance.requestPost(baseurl + "tbmb/login/perform.do", {
-    isSubmitted: "true",
-    "org.apache.struts.taglib.html.TOKEN": token[1],
-    user: prefs.login,
-    password: prefs.password
-  }, headers);
+  var params = createFormParams(form);
+  params.user = prefs.login;
+  params.password = prefs.password;
+  var html = AnyBalance.requestPost(baseurl + "tbmb/login/perform.do", params, headers);
   
   if(!/\/tbmb\/logout\/perform/i.test(html)){
       var matches = html.match(/<td class="redError">([\s\S]*?)<\/td>/i);

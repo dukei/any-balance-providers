@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change major_version="1.2" version="30" date="2013-06-19">
+      Изменения в процедуре входа в ЛК
+    </change>
     <change major_version="1.2" version="29" date="2013-05-27">
       Добавлен показ информации о пакетах СМС.
     </change>

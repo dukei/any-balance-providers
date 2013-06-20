@@ -16,6 +16,12 @@ function parseMinutes(str){
   return val; 
 }
 
+function getToken(html){
+    var token = /name="org.apache.struts.taglib.html.TOKEN"[^>]+value="([\s\S]*?)">/i.exec(html);
+    if(!token)
+        throw new AnyBalance.Error("Не удаётся найти код безопасности для отправки формы. Проблемы или изменения на сайте?");
+    return token[1];
+}
 //------------------------------------------------------------------------------
 
 function main(){

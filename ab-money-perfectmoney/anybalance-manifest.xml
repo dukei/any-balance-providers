@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-money-perfectmoney</id>
+  <id version="3">ab-money-perfectmoney</id>
   <name>Perfect Money</name>
   <description>
     This provider helps you to check balances on your Perfect Money's account.

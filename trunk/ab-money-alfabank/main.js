@@ -24,13 +24,13 @@ var g_phrases = {
    karte1: {card: 'первой карте', credit: 'первому счету'}
 }
 
-var g_headers = {
-  'Accept':'*/*',
-   'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
-   'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-   'Connection':'keep-alive',
-   'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.89 Safari/537.1'
-};
+var g_headers = [
+  ['Accept', '*/*'],
+  ['Accept-Charset', 'windows-1251,utf-8;q=0.7,*;q=0.3'],
+  ['Accept-Language', 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4'],
+  ['Connection', 'keep-alive'],
+  ['User-Agent', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.89 Safari/537.1']
+];
 
 var g_currencyDependancy = ['currency', 'balance', 'topay', 'debt', 'minpay', 'penalty', 'late', 'overdraft', 'limit'];
 
@@ -116,7 +116,11 @@ function getNextPage(html, event, baseurl, extra_params){
    var action = getParam(html, null, null, /<form[^>]*name="f1"[^>]*action="\/(ALFAIBSR[^"]*)/i, null, html_entity_decode);
    if(!action)
        throw new AnyBalance.Error('Не удаётся найти форму ввода команды. Сайт изменен?');
-   var params = createFormParams(form, null, true);
+   var params = createFormParams(form, function(params, str, name, value){
+       if(/::input$/.test(name))
+           return; //Ненужные поля
+       return value;
+   }, true);
 
    var paramsModule = createParams(joinArrays(params, extra_params), event);
 
@@ -161,13 +165,17 @@ function processClick(){
         throw new AnyBalance.Error("Введите 4 последних цифры номера " + g_phrases.karty[type] + " или не вводите ничего, чтобы показать информацию по " + g_phrases.karte1[type]);
 
     var baseurl = "https://click.alfabank.ru/";
-    
+
+//    AnyBalance.trace("Before get");    
     var html = AnyBalance.requestGet(baseurl + 'ALFAIBSR/', g_headers);
+//    AnyBalance.trace("After get");    
 
     html = AnyBalance.requestPost(baseurl + 'adfform/security', {
         username: prefs.login,
         password: prefs.password.substr(0, 16),
     }, g_headers);
+
+//    AnyBalance.trace("After first post");    
 
     html = AnyBalance.requestPost(baseurl + 'oam/server/auth_cred_submit', {
         username: prefs.login,
@@ -209,7 +217,7 @@ function processClick(){
         throw new AnyBalance.Error("Альфабанк считает, что вам необходимо сменить старый пароль. Зайдите в Альфа.Клик через браузер, поменяйте пароль, затем введите новый пароль в настройки провайдера.");
     }
 
-    if(/Ac2Main\s*=/.test(html)){  //Альфаклик 2.0
+    if(/\(C2skin\)/.test(html)){  //Альфаклик 2.0
         AnyBalance.trace("Определен Альфа.Клик 2.0");
         if(prefs.type == 'card')
             processCard2(html, baseurl);

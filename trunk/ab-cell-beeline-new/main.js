@@ -174,6 +174,8 @@ function fetchPre(baseurl, html){
                 sumParam(services[i], result, 'rub_bonus', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
             }else if(/Рублей за участие в опросе/i.test(name)){
                 sumParam(services[i], result, 'rub_opros', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+            }else if(/Секунд БОНУС/i.test(name)){
+                sumParam(services[i], result, 'sek_bonus', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
             }else{
                 AnyBalance.trace("Неизвестная опция: " + services[i]);
             }

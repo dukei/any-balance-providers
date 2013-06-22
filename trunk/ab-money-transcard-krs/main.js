@@ -8,13 +8,13 @@
 	};
 
 	var result = {success: true};
-	var regexp1 = new RegExp('Количество транспортных единиц: (\\d*)');
+	var regexp1 = new RegExp('Количество транспортных единиц: (\\d*\\,?\\d*)');
 	var regexp2 = new RegExp('Приемщик.*?<\\/td><td>([^<]*)<\\/td><td>.*?<\\/td><td>([^<]*)');
         var matches1, matches2;
 
 	if(matches1 = info.match(regexp1)){
 		if(AnyBalance.isAvailable('KolvoEdinits'))
-			result.KolvoEdinits = parseFloat(matches1[1]);
+			result.KolvoEdinits = parseFloat(matches1[1].replace(',','.'));
 		if(matches2 = info.match(regexp2)){
 			if(AnyBalance.isAvailable('LastDate'))
 				result.LastDate = matches2[1].substring(0,10);

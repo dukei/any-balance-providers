@@ -7,12 +7,20 @@
 Личный кабинет: http://www.ozon.ru/default.aspx?context=login
 */
 
+var g_headers = {
+'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
+'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+'Connection':'keep-alive',
+'User-Agent':'Mozilla/5.0 (BlackBerry; U; BlackBerry 9900; en-US) AppleWebKit/534.11+ (KHTML, like Gecko) Version/7.0.0.187 Mobile Safari/534.11+'
+};
+
 function main(){
     var prefs = AnyBalance.getPreferences();
 
     var baseurl = "https://www.ozon.ru/";
 
-    var html = AnyBalance.requestGet(baseurl + 'default.aspx?context=login');
+    var html = AnyBalance.requestGet(baseurl + 'default.aspx?context=login', g_headers);
     var ev = getEventValidation(html);
     var vs = getViewState(html);
     if(!vs)
@@ -31,7 +39,7 @@ function main(){
         Password:prefs.password,
         CapabilityAgree:'on',
         Authentication:'Продолжить',
-    });
+    }, addHeaders({Referer: baseurl + 'default.aspx?context=login'}));
    
     if(!/\?context=logoff/i.test(html)){
         var error = getParam(html, null, null, /<span[^>]+class="ErrorSpan"[^>]*>([\s\S]*?)<\/span>/i);
@@ -43,7 +51,7 @@ function main(){
     var result = {success: true};
 
     if(AnyBalance.isAvailable('balance', 'blocked', 'available')){
-        html = AnyBalance.requestGet(baseurl + '?context=myaccount');
+        html = AnyBalance.requestGet(baseurl + '?context=myaccount', g_headers);
         
         getParam(html, result, 'balance', /Остаток средств на счете[\s\S]*?<dd[^>]*>([\s\S]*?)<\/dd>/i, replaceTagsAndSpaces, parseBalance);
         getParam(html, result, 'blocked', /Заблокировано[\s\S]*?<dd[^>]*>([\s\S]*?)<\/dd>/i, replaceTagsAndSpaces, parseBalance);
@@ -51,7 +59,7 @@ function main(){
     }
 
     if(AnyBalance.isAvailable('bonus')){
-        html = AnyBalance.requestGet(baseurl + '?context=mypoints');
+        html = AnyBalance.requestGet(baseurl + '?context=mypoints', g_headers);
         getParam(html, result, 'bonus', /Сумма:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     }
 

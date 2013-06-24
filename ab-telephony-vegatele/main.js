@@ -47,32 +47,14 @@ function main(){
         success: true
     };
 
-    var dogid = getParam(html, null, null, /<input[^>]+id="hdogid"[^>]*value="([^"]*)/i);
-    if(!dogid)
-        throw new AnyBalance.Error('Не удалось получить номер лицевого счета. Сайт изменен?');
 
-    html = AnyBalance.requestGet(baseurl + 'cabinet/url_get_services/' + dogid + '/' + Math.random(), g_headers);
-    var json = getJson(html);
-    if(json.error)
-        throw new AnyBalance.Error(json.error);
+    html = AnyBalance.requestGet(baseurl + 'finance/client_info', g_headers);
 
-    if(AnyBalance.isAvailable('balance'))
-        result.balance = Math.round(json.balance.balance*100)/100;
-
-    if(AnyBalance.isAvailable('fio'))
-        result.fio = json.ClientName;
-
-    for(var i=0; i<json.services.length; ++i){
-        var service = json.services[i];
-        if(!prefs.number || service.name_conn == prefs.number){
-            if(AnyBalance.isAvailable('number'))
-                result.number = service.name_conn;
-            if(AnyBalance.isAvailable('status'))
-                result.status = service.status == '0' ? 'Активна' : 'Не активна';
-            result.__tariff = service.tm_name;
-            break;
-        }
-    }
+    getParam(html, result, 'balance', /<span[^>]+id="balance"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'fio', /<span[^>]+id="client_name"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'number', /<select[^>]+name="service"[^>]*>(?:[\s\S](?!<\/select>))*?<option[^>]+selected[^>]*>([\s\S]*?)<\/option>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'status', /<span[^>]+id="ConnectionStatus"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, '__tariff', /<span[^>]+id="tmName"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
 
     AnyBalance.setResult(result);
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="4">ab-telephony-vegatele</id>
+  <id version="5">ab-telephony-vegatele</id>
   <name>Vega телефония</name>
   <description>
     Получает текущий баланс и другие параметы у украинского провайдера проводной телефонии Vega (http://www.vegatele.com).
@@ -24,7 +24,7 @@
     <history>history.xml</history>
   </files>
   <counters>
-    <counter id="balance" name="Баланс" units="₴"/>
+    <counter id="balance" name="Баланс" units=" ₴"/>
     <counter id="number" name="Телефон" type="text"/>
     <counter id="status" name="Статус" type="text"/>
     <counter id="fio" name="Абонент" type="text"/>

@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change major_version="3.3" version="58" date="2013-06-25">
+      - Распознавание минут по некоторым опциям
+    </change>
     <change major_version="3.3" version="57" date="2013-06-07">
       - Добавлен счетчик Абонентская плата за услуги
       - Исправлен счетчик Туристическая карта МТС

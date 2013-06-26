@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
     <EditTextPreference 
-        title="Номер карты" 
+        title="Логин" 
         positiveButtonText="ОК" 
         summary="||{@s}" 
-        dialogTitle="Номер карты" 
-		inputType="number"
+        dialogTitle="Логин" 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите номер карты (логин) для входа в систему Лукойл - программа поощрения клиентов."
+        dialogMessage="Введите логин в личный кабинет."
         key="login">
     </EditTextPreference>
     <EditTextPreference 
@@ -17,7 +16,7 @@
         negativeButtonText="Отмена"
         title="Пароль"
         summary="||***********"
-        dialogMessage="Введите пароль, используемый для входа в систему Лукойл - программа поощрения клиентов."
+        dialogMessage="Введите пароль, используемый для входа в личный кабинет."
         inputType="textPassword">
     </EditTextPreference>
 </PreferenceScreen>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="3">ab-money-money-mail-ru</id>
+  <id version="1">ab-money-money-mail-ru</id>
   <name>деньги@mail.ru</name>
   <description>
     Получает текущий баланс в деньги@mail.ru из личного кабинета https://money.mail.ru/

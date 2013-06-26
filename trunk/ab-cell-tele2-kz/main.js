@@ -22,7 +22,14 @@ function main(){
 	// Значала зачем-то проверяем номер, какую-то куку ставит еще...
 	var json = {msisdn: prefs.login};
     var html = AnyBalance.requestPost(baseurl + 'auth/checkMsisdn.json', JSON.stringify(json), g_headers);
-	json = {msisdn: prefs.login, password: prefs.password};
+    json = getJson(html);
+    if(json.oCurrState == '-1')
+        throw new AnyBalance.Error('Введенный номер не принадлежит Tele2!');
+
+    if(json.oCurrState != '2' && json.oCurrState != '1')
+        throw new AnyBalance.Error('К сожалению, ваш номер обслуживается старым кабинетом и требует капчу. Поддержка этого кабинета появится позднее.');
+
+    json = {msisdn: prefs.login, password: prefs.password};
     html = AnyBalance.requestPost(baseurl + 'auth/tele2.json', JSON.stringify(json), g_headers); 
 
     if(/"err"/i.test(html)){

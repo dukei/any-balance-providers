@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-money-raif</id>
+  <id version="3">ab-money-raif</id>
   <name>Райффайзен</name>
   <description>
     Получает текущий остаток и другие параметры счетов и депозитов банка Райффайзенбанк (http://www.raiffeisen.ru), используя интернет-банк https://connect.raiffeisen.ru.
@@ -34,7 +34,7 @@
     <counter id="all" name="Сводка" type="text"/>
   </counters>
   <keywords>
-     raiffaisen
+     raiffaisen raif raifaisen райф
   </keywords>
   <type>
     money

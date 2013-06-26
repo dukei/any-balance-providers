@@ -12,8 +12,9 @@ function main(){
     AnyBalance.setDefaultCharset('utf-8');
 
     var baseurl = "https://www.s7.ru/";
+	var baseurlLogin = "https://cca.s7.ru/";
 
-    var html = AnyBalance.requestPost(baseurl + 'cas/login', {
+    var html = AnyBalance.requestPost(baseurlLogin + 'cas/login', {
         renew:true,
         auto:true,
         service:baseurl + 'home/priority/ffpAbout.dot',
@@ -33,7 +34,7 @@ function main(){
         return value;
     });
 
-    html = AnyBalance.requestPost(baseurl + 'cas/login', params);
+    html = AnyBalance.requestPost(baseurlLogin + 'cas/login', params);
 
     //AnyBalance.trace(html);
     if(!/priority\/logout/.test(html)){

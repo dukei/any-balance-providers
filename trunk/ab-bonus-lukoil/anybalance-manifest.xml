@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-bonus-lukoil</id>
-  <name>Лукойл клуб</name>
+  <id version="1">ab-bonus-lukoil</id>
+  <name>Лукойл Ликард</name>
   <description>
-    Получает текущий баланс бонусных баллов, регион участия в программе Лукойл клуб.
-	Данные берутся из личного кабинета программы (http://club-lukoil.ru/cabinet/)
+     Получает значения из кабиенета http://my.licard.com/
   </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <author>Dmitry Reshetnikov (korleone) &lt;rdb@inbox.ru&gt;</author>
+  <author>Stark &lt;support@starksoft.ru&gt;</author>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
@@ -16,15 +14,12 @@
     <history>history.xml</history>
   </files>
   <counters>
-    <counter id="balance" name="Баланс"/>
-<!--    <counter id="status" name="Статус карты" type="text"/> -->
-	<counter id="region" name="Регион программы" type="text"/>
-<!--	<counter id="statusprog" name="Статус в программе" type="text"/> -->
-	<counter id="username" name="ФИО" type="text"/>
-	<counter id="phonenumber" name="Номер телефона" type="text"/>
+    <counter id="balance" name="Баланс" units=" р"/>
+	<counter id="last_payment" name="Последний платеж" units=" р"/>
+    <counter id="name" name="Юр. Лицо" type="text"/>
   </counters>
   <keywords>
-	лукойл, программа поощрения клиентов
+    
   </keywords>
   <type>
     bonus

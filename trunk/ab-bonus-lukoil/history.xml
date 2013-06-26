@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-    <change version="2" date="2013-05-04">
-      - Поддержка измений в личном кабинете
-    </change>
-    <change version="1" date="2012-09-02">
-      - Первая версия плагина программы лояльности Лукойл
+<change version="1" date="2013-06-26">
+      Первая версия
     </change>
 </history>

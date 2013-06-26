@@ -3,17 +3,8 @@
 
 Получает баланс на картах и счетах Райффайзен-банка
 
-Operator site: http://www.raiffeisen.ru
+Site: http://www.raiffeisen.ru
 Личный кабинет: https://connect.raiffeisen.ru
-*/
-
-/**
-Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Получает баланс и информацию о тарифном плане для сотового оператора xxxxxx 
-
-Operator site: http://xxxxxx.ru
-Личный кабинет: https://kabinet.xxxxxx.ru/login
 */
 
 var g_headers = {
@@ -74,9 +65,7 @@ function main(){
     //Возвращаем результат
     AnyBalance.setResult(result);
 }
-
 //    
-
 function fetchCard(baseurl, html, result){
     var prefs = AnyBalance.getPreferences();
 
@@ -94,7 +83,7 @@ function fetchCard(baseurl, html, result){
     getParam(info, result, 'cardnum', /<ax\d+:number>([\s\S]*?)<\/ax\d+:number>/i, replaceTagsAndSpaces, html_entity_decode);
 
     getParam(info, result, 'accnum', /<ax\d+:accountNumber>([\s\S]*?)<\/ax\d+:accountNumber>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(info, result, 'balance', /<ax\d+:balance>([\s\S]*?)<\/ax\d+:balance>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(info, result, 'balance', /balance>([\s\S]*?)<\/ax[\s\S]{1,10}:balance>/i, replaceTagsAndSpaces, parseBalance);
     getParam(info, result, 'currency', /<ax\d+:currency>([\s\S]*?)<\/ax\d+:currency>/i, replaceTagsAndSpaces, html_entity_decode);
 
     getParam(info, result, 'minpaytill', /<ax\d+:nextCreditPaymentDate>([\s\S]*?)<\/ax\d+:nextCreditPaymentDate>/i, replaceTagsAndSpaces, parseDateISO);
@@ -114,7 +103,6 @@ function fetchCard(baseurl, html, result){
         }
         result.all = out.join('\n');
     }
-
 }
 
 function fetchAccount(baseurl, html, result){
@@ -187,5 +175,4 @@ function fetchDeposit(baseurl, html, result){
         }
         result.all = out.join('\n');
     }
-
 }

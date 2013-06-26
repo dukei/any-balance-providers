@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="6">ab-cell-beeline-new</id>
+  <id version="7">ab-cell-beeline-new</id>
   <name>Билайн (новый кабинет)</name>
   <description>
     Получает баланс и информацию о тарифном плане для сотового оператора Билайн (http://beeline.ru)
@@ -27,10 +27,12 @@
   </files>
   <counters>
     <counter id="balance" name="Баланс" units=" {@currency}"/>
+    <counter id="prebal" name="Предварительная сумма по договору" units=" {@currency}"/>
     <counter id="sms_left" name="Остаток SMS" units=" sms"/>
     <counter id="mms_left" name="Остаток MMS" units=" mms"/>
     <counter id="rub_bonus" name="Рублей БОНУС" units=" руб"/>
-    <counter id="sek_bonus" name="Секунд БОНУС" type="time_interval" format="{@H}:{@min}:{@sec}"/>
+    <counter id="min_bi" name="Минуты на Билайн" type="time_interval" format="{@H}:{@min}:{@sec}"/>
+    <counter id="min_local" name="Минуты на местные номера" type="time_interval" format="{@H}:{@min}:{@sec}"/>
     <counter id="rub_opros" name="Рублей за участие в опросе" units=" руб"/>
     <counter id="fio" name="ФИО" type="text"/>
     <counter id="phone" name="Телефон" type="text"/>

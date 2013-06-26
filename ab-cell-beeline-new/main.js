@@ -68,7 +68,7 @@ function main(){
 
     var html = AnyBalance.requestGet(baseurl + 'login.html', g_headers);
 
-    var tform = getParam(html, null, null, /<form[^>]+name="loginFormB2c"[^>]*>([\s\S]*?)<\/form>/i);
+    var tform = getParam(html, null, null, /<form[^>]+name="loginFormB2c"[^>]*>[\s\S]*?<\/form>/i);
     if(!tform) //Если параметр не найден, то это, скорее всего, свидетельствует об изменении сайта или о проблемах с ним
         throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
 
@@ -78,8 +78,10 @@ function main(){
     params['loginFormB2c:passwordVisible'] = prefs.password;
     params['loginFormB2c:loginButton'] = '';
 
+    var action = getParam(tform, null, null, /<form[^>]+action="\/([^"]*)/i, null, html_entity_decode);
+
     //Теперь, когда секретный параметр есть, можно попытаться войти
-    html = AnyBalance.requestPost(baseurl + 'login.html', params, addHeaders({Referer: baseurl + 'login.html'})); 
+    html = AnyBalance.requestPost(baseurl + (action || 'login.html'), params, addHeaders({Referer: baseurl + 'login.html'})); 
 
     if(/<form[^>]+name="chPassForm"/i.test(html))
         throw new AnyBalance.Error('Вы зашли по временному паролю, требуется сменить пароль. Для этого войдите в ваш кабинет https://my.beeline.ru через браузер и смените там пароль. Новый пароль введите в настройки данного провайдера.');
@@ -104,17 +106,31 @@ function main(){
 
 function fetchPost(baseurl, html){
     //Раз мы здесь, то мы успешно вошли в кабинет
-    AnyBalance.trace("Мы в предоплатном кабинете");
+    AnyBalance.trace("Мы в постоплатном кабинете");
     //Получаем все счетчики
     var result = {success: true};
 
-    getParam(html, result, 'phone', /<input[^>]+id="serviceBlock:paymentForm:[^>]*value="([^"]*)/i, replaceTagsAndSpaces, html_entity_decode);
+    var multi = /<span[^>]+class="marked"[^>]*>/i.test(html), xhtml;
 
-    var xhtml = getBlock(baseurl + 'c/post/index.html', html, 'list-contents', true);
-    getParam(xhtml, result, '__tariff', /<h2[^>]*>Текущий тариф([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'phone', multi ? /<span[^>]+class="marked"[^>]*>([\s\S]*?)<\/span>/i : /<input[^>]+id="serviceBlock:paymentForm:[^>]*value="([^"]*)/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'prebal', /ваша предварительная сумма по договору([\s\S]*?)<\/span><\/span>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, ['currency', 'prebal'], /ваша предварительная сумма по договору([\s\S]*?)<\/span><\/span>/i, replaceTagsAndSpaces, parseBalance);
 
-    getParam(xhtml, result, 'balance', /Расходы по номеру за текущий период с НДС[\s\S]*?<div[^>]+class="balan?ce-summ"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(xhtml, result, 'currency', /Расходы по номеру за текущий период с НДС[\s\S]*?<div[^>]+class="balan?ce-summ"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, myParseCurrency);
+    if(!multi){
+        xhtml = getBlock(baseurl + 'c/post/index.html', html, 'list-contents', true);
+        getParam(xhtml, result, '__tariff', /<h2[^>]*>Текущий тариф([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+        
+        getParam(xhtml, result, 'balance', /Расходы по номеру за текущий период с НДС[\s\S]*?<div[^>]+class="balan?ce-summ"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+        getParam(xhtml, result, ['currency', 'balance'], /Расходы по номеру за текущий период с НДС[\s\S]*?<div[^>]+class="balan?ce-summ"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, myParseCurrency);
+    }else{
+        //Если несколько номеров в кабинете, то почему-то баланс надо брать отсюда
+        xhtml = getBlock(baseurl + 'c/post/index.html', html, 'homeBalance');
+        getParam(xhtml, result, 'balance', /Расходы по номеру за текущий период с НДС[\s\S]*?<div[^>]+class="balan?ce-summ"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+        getParam(xhtml, result, ['currency','balance'], /Расходы по номеру за текущий период с НДС[\s\S]*?<div[^>]+class="balan?ce-summ"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, myParseCurrency);
+
+        xhtml = getBlock(baseurl + 'c/post/index.html', html, 'loadingTariffDetails');
+        getParam(xhtml, result, '__tariff', /<div[^>]+:tariffInfo[^>]*class="(?:current|tariff-info)"[^>]*>(?:[\s\S](?!<\/div>))*?<h2[^>]*>([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces, html_entity_decode);
+    }
 
     if(AnyBalance.isAvailable('fio')){
         var xhtml = AnyBalance.requestGet(baseurl + 'm/post/index.html', g_headers);
@@ -144,7 +160,7 @@ function fetchPost(baseurl, html){
 
 function fetchPre(baseurl, html){
     //Раз мы здесь, то мы успешно вошли в кабинет постоплатный
-    AnyBalance.trace("Мы в постоплатном кабинете");
+    AnyBalance.trace("Мы в предоплатном кабинете");
     //Получаем все счетчики
     var result = {success: true};
 
@@ -161,7 +177,7 @@ function fetchPre(baseurl, html){
         getParam(xhtml, result, 'fio', /<span[^>]+class="b2c.header.greeting.pre.b2c.ban"[^>]*>([\s\S]*?)(?:<\/span>|,)/i, replaceTagsAndSpaces, html_entity_decode);
     }
 
-    if(AnyBalance.isAvailable('sms_left', 'mms_left')){
+    if(AnyBalance.isAvailable('sms_left', 'mms_left', 'rub_bonus', 'rub_opros', 'sek_bonus')){
         xhtml = getBlock(baseurl + 'c/pre/index.html', html, 'bonusesloaderDetails');
         var services = sumParam(xhtml, null, null, /<tr[^>]*>\s*<td[^>]+class="title"(?:[\s\S](?!<\/tr>))*?<td[^>]+class="value"[\s\S]*?<\/tr>/ig);
         for(var i=0; i<services.length; ++i){
@@ -174,8 +190,10 @@ function fetchPre(baseurl, html){
                 sumParam(services[i], result, 'rub_bonus', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
             }else if(/Рублей за участие в опросе/i.test(name)){
                 sumParam(services[i], result, 'rub_opros', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-            }else if(/Секунд БОНУС/i.test(name)){
-                sumParam(services[i], result, 'sek_bonus', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+            }else if(/Секунд БОНУС\s*\+/i.test(name)){
+                sumParam(services[i], result, 'min_bi', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+            }else if(/Секунд БОНУС-2/i.test(name)){
+                sumParam(services[i], result, 'min_local', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
             }else{
                 AnyBalance.trace("Неизвестная опция: " + services[i]);
             }

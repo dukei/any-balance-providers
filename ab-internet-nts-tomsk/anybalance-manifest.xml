@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-nts-tomsk</id>
+  <id version="2">ab-internet-nts-tomsk</id>
   <name>Новые Телесистемы (Томск)</name>
   <description>
 	Получает данные из кабинета Новые Телесистемы (Томск) http://www.nts.su/my/index.php/

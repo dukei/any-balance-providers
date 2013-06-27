@@ -44,8 +44,8 @@ function main(){
 	
 	if(!/my\/auth\/logout/i.test(html))
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Проверьте Ваш логин или пароль');
-	
-    //Раз мы здесь, то мы успешно вошли в кабинет
+
+	//Раз мы здесь, то мы успешно вошли в кабинет
     var result = {success: true};
 	getParam(html, result, 'balance', /Остаток[\s\S]*?table_cell">\s*([\s\S]*?)\s*<\/td/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'account', /Номер счета[\s\S]*?table_cell">\s*([\s\S]*?)\s*<\/td/i, replaceTagsAndSpaces, null);
@@ -53,6 +53,27 @@ function main(){
 	getParam(html, result, 'monthly_fee', /ежемесячная абон. плата[\s\S]*?table_cell">\s*([\s\S]*?)\s*<\/td/i, replaceTagsAndSpaces, parseBalance);	
 	getParam(html, result, 'credit', /Кредит[\s\S]*?table_cell">\s*([\s\S]*?)\s*<\/td/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'fio', /short_info[\s\S]{1,50}<p>\s*([\s\S]*?)\s*<\/p>/i, replaceTagsAndSpaces, null);
+	
+	try
+	{
+		var found = /getCards[\s\S]{1,100}data:[\s\S]*?subsId:\s*([\s\S]*?),[\s\S]*?parentId:\s*([\s\S]*?),[\s\S]*?acNum:\s*'?([\s\S]*?)'?,[\s\S]*?bill:\s*'?([\s\S]*?)'?\s*\}/i.exec(html);
+		if(found)
+		{
+			html = AnyBalance.requestPost(baseurl + 'my/index.php/ajax/getCards', 
+			{
+				subsId:found[1],
+				parentId:found[2],
+				acNum:found[3],
+				bill:found[4]
+			}, g_headers);
+			
+			getParam(html, result, '__tariff', /параметры\s*тарифного\s*плана"\s*target=_blank>([\s\S]*?)<\/a/i, replaceTagsAndSpaces, null);
+		}
+	}
+	catch(e)
+	{
+		
+	}
     //Возвращаем результат
     AnyBalance.setResult(result);
 }

@@ -34,21 +34,33 @@ function main(){
 			'user[password]':prefs.password,
 		}, g_headers); 
     }
-	// по идее надо разбирать json, но сайт возвращает его в порнушном виде, не понятно как его преобразовать в нормальный
-	/*var found = /HupoApp\(([\s\S]*?),\s*\{logLevel/i.exec(html);
-	var json;
-	if(!found)
-		throw new AnyBalance.Error('Не удалось получиь данные авторизации');
-	else
-		json = getJsonEval(found[1]);*/
-		
-	if(!/HupoApp\(([\s\S]*?),\s*\{logLevel/i.test(html))
-		throw new AnyBalance.Error('Не удалось войти в личный кабнет, неправильный логни-пароль?');
-		
-	var result = {success: true};
-    getParam(html, result, 'balance', /n_sum_bal":"([\s\S]*?)"/i, null, parseBalance);
-	getParam(html, result, 'monthly_fee', /n_good_sum[\s\S]*?n_good_sum":"([\s\S]*?)"/i, null, parseBalance);
 
-    //Возвращаем результат
+	var found = /new HupoApp\(([\s\S]*)\.data/i.exec(html);
+	var json;
+	if(!found){
+		found = /class="error_container">([\s\S]*?)<\/div>/i.exec(html);
+		if(found)
+			throw new AnyBalance.Error('Сайт сообщил об ошибке: '+found[1]);
+
+		throw new AnyBalance.Error('Не удалось получить данные авторизации, возможно сайт не доступен');
+	}
+	else
+		json = getJson(found[1]);
+
+	// Если мы здесь, значит вход удачный
+	var result = {success: true};
+	var fio = json.data.person.vc_surname + ' ' + json.data.person.vc_first_name + ' ' +json.data.person.vc_second_name;
+	getParam(fio, result, 'fio', null, null, null);
+	try{
+		getParam(json.data.personal_accounts[0].n_sum_bal, result, 'balance', null, null, parseBalance);
+		getParam(json.data.personal_accounts[0].vc_name, result, 'account', null, null, null);
+		getParam(json.data.personal_accounts[0].d_accounting_begin, result, 'period_begin', null, null, parseDateISO);
+		getParam(json.data.widgets.additional_parameters.user.PR_Months.n_value, result, 'months', null, null, parseBalance);
+	} catch(e){
+		AnyBalance.trace('Что-то пошло не так, возможно, еще нет подключенных услуг в личном кабинете');
+	}
+    //Иначе не получается нормально получить месячный платеж
+	getParam(html, result, 'monthly_fee', /n_good_sum[\s\S]*?n_good_sum":"([\s\S]*?)"/i, null, parseBalance);
+	//Возвращаем результат
     AnyBalance.setResult(result);
 }

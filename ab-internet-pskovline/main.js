@@ -26,17 +26,18 @@ function main() {
 
 	if (info.match(/\"tab_user_main\".*?>/i)) {
 
+info=info.replace(/&thinsp;/ig,"");
+
                        var login, ballance, number, credit, work;
 
 			result['success']=true;
 			result['ballance']=parseFloat(info.match(/(\d+,\d+)/ig)[1].replace(",","."));
-AnyBalance.trace(result['ballance']);
 			if (AnyBalance.isAvailable('login'))
 				result['login']=info.match(/ (\w+)<\/title/i)[1];
-AnyBalance.trace(result['login']);
 			if (AnyBalance.isAvailable('number'))
 				result['number']=info.match(/>Лицевой счет.*?(\d+).*?\(/i)[1];
-AnyBalance.trace(result['number']);
+
+//AnyBalance.trace("Traffic: "+parseFloat(info.match(/(\d+,\d+)/ig)[6].replace(",",".")));
 
                         AnyBalance.setResult(result);
 

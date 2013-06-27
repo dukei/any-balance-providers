@@ -113,6 +113,11 @@ function main() {
 
     var eventvalidation = getEventValidation(html);
     var viewstate = getViewState(html);
+    if(!viewstate){
+        if(/<title>Runtime Error<\/title>/i.test(html))
+            throw new AnyBalance.Error('Сервер Сбербанка Онлайн временно недоступен по техническим причинам. Попробуйте позднее.');
+        throw new AnyBalance.Error('Не удаётся найти форму входа. Сайт изменен?');
+    }
 
     html = AnyBalance.requestPost(baseurl + 'esClient/_logon/LogonContent.aspx', {
       __EVENTTARGET:'ctl00$ctl00$BaseContentPlaceHolder$EnterContentPlaceHolder$btnLogin',

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-aido</id>
+  <id version="2">ab-internet-aido</id>
   <name>Айдо Телеком (Тольятти)</name>
   <description>
      Получает значения интернет- провайдера Айдо Телеком в г. Тольятти (https://my.aido.ru/login)
@@ -15,7 +15,11 @@
   </files>
   <counters>
     <counter id="balance" name="Баланс" units=" р"/>
-	<counter id="monthly_fee" name="Ежемесячная плата" type="text"/>
+	<counter id="monthly_fee" name="Ежемесячная плата" units=" р"/>
+	<counter id="fio" name="ФИО" type="text"/>
+	<counter id="account" name="Лицевой счет" type="text"/>
+	<counter id="period_begin" name="Начало расчетного периода" type="time" format="dd/MM/yyyy"/>
+	<counter id="months" name="Накопленные месяцы" units=" мес"/>
   </counters>
   <keywords>
 

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-service-sms-skynetcompany</id>
+  <name>SMS SkyNet</name>
+  <description>
+	Получает данные СМС провайдера скайнет (http://sms.skynetcompany.com)
+  </description>
+  <author>Stark &lt;support@starksoft.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units=" р" />
+	<counter id="sms" name="СМС" units="смс"/>
+    <counter id="summary" name="Сводка" type="text"/>
+  </counters>
+  <keywords>
+    
+  </keywords>
+  <type>
+    service
+  </type>
+  <country>
+    ru, ua, by
+  </country>
+</provider>

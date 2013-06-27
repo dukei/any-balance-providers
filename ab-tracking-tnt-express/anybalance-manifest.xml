@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-tracking-tnt-express</id>
+  <name>TNT Express</name>
+  <description>
+	TNT ensures that your parcels, documents and freight items are delivered safely and on time throughout the world. (http://www.tnt.com/webtracker/tracker.do?navigation=1)
+  </description>
+  <author>Stark &lt;support@starksoft.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <js>main.js</js>
+    <js>library.js</js>
+    <preferences>preferences.xml</preferences>
+    <history>history.xml</history>
+  </files>
+  <counters>
+	<counter id="reference" name="Reference" type="text"/>
+    <counter id="pick_up_date" name="Pick Up Date" type="text"/>
+	<counter id="destination" name="Destination" type="text"/>
+	<counter id="estimated" name="Estimated" type="text"/>
+  </counters>
+  <keywords>
+    
+  </keywords>
+  <type>
+    tracking, post
+  </type>
+  <country>
+    au, us
+  </country>
+</provider>

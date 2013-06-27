@@ -15,12 +15,12 @@
     <history>history.xml</history>
   </files>
   <counters>
-    <counter id="balance" name="Баланс" units="{@currency}"/>
-    <counter id="messages" name="Сообщения" prefix="Сообщ:"/>
-    <counter id="bills" name="Счета" prefix="Счета:"/>
+    <counter id="balance" name="Баланс" units=" {@currency}"/>
+    <counter id="messages" name="Сообщения" units=" шт"/>
+    <counter id="bills" name="Счета" units=" шт"/>
   </counters>
   <keywords>
-    кошелек, деньги, qiwi, оплата, платежи, карта, банковская карта, visa
+    кошелек, деньги, киви, оплата, платежи, карта, банковская карта, visa, виза
   </keywords>
   <type>
     money

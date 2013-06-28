@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-affiliate-euroinvest</id>
+  <name>Euro Invest Company</name>
+  <description>
+	Получает данные из кабинета инвестора (https://www.eic-ee.com/my/)
+	
+  </description>
+  <author>Stark &lt;support@starksoft.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="nontrade_balance" name="Лицевой (Неторговый)" units=" $"/>
+	<counter id="nontrade_partnership" name="Партнерский (Неторговый)" units=" $"/>
+	<counter id="invest_stable" name="Стабильный (Инвестиционный)" units=" $"/>
+	<counter id="invest_speculate" name="Спекулятивный (Инвестиционный)" units=" $"/>
+	<counter id="invest_agressive" name="Агрессивный (Инвестиционный)" units=" $"/>
+	<counter id="name" name="ФИО" type="text"/>
+  </counters>
+  <keywords>
+    
+  </keywords>
+  <type>
+	affiliate
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

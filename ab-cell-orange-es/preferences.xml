@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Login" 
+        positiveButtonText="OK" 
+        summary="||{@s}" 
+        dialogTitle="Login" 
+        negativeButtonText="Cancel" 
+        dialogMessage="Enter login."
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="OK"
+        key="password" 
+        dialogTitle="Password"
+        negativeButtonText="Cancel"
+        title="Password"
+        summary="||***********"
+        dialogMessage="Enter password."
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

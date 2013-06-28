@@ -7,28 +7,6 @@
 Личный кабинет: https://webcare.tele2.ru/
 */
 
-function getParam (html, result, param, regexp, replaces, parser) {
-	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
-		return;
-
-	var value = regexp.exec (html);
-	if (value) {
-		value = value[1];
-		if (replaces) {
-			for (var i = 0; i < replaces.length; i += 2) {
-				value = value.replace (replaces[i], replaces[i+1]);
-			}
-		}
-		if (parser)
-			value = parser (value);
-
-    if(param)
-      result[param] = value;
-    else
-      return value
-	}
-}
-
 function main(){
     var prefs = AnyBalance.getPreferences();
 
@@ -57,9 +35,9 @@ function main(){
     
     var result = {success: true};
     
-    getParam(html, result, 'balance', /Всего доступно средств:[\s\S]*?>(-?\d[\d,\.\s]*)</i, [/\s+/g, '', /,/g, '.'], parseFloat);
-    getParam(html, result, 'balance_personal', /Персональные балансы:[\s\S]*?Итого доступно:[\s\S]*?>(-?\d[\d,\.\s]*)</i, [/\s+/g, '', /,/g, '.'], parseFloat);
-    getParam(html, result, 'balance_corp', /Корпоративные балансы:[\s\S]*?Итого доступно:[\s\S]*?>(-?\d[\d,\.\s]*)</i, [/\s+/g, '', /,/g, '.'], parseFloat);
+    getParam(html, result, 'balance', /Всего доступно средств:[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'balance_personal', /Персональные балансы:[\s\S]*?Итого доступно:[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'balance_corp', /Корпоративные балансы:[\s\S]*?Итого доступно:[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
 
     var eventid = getParam(html, null, null, /<a[^>]*?id="([^"]*)"[^>]*?><div><table cellpadding="0" cellspacing="0"><tr><td>Персональные данные/i);
     var shorteventid = eventid.replace(/\.\d+$/, '');
@@ -104,13 +82,3 @@ function main(){
     
     AnyBalance.setResult(result);
 }
-
-
-function html_entity_decode(str)
-{
-    //jd-tech.net
-    var tarea=document.createElement('textarea');
-    tarea.innerHTML = str;
-    return tarea.value;
-}
-

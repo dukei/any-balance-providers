@@ -140,7 +140,13 @@ function main() {
 	operation:'button.begin'
     });
 
+    //var html = AnyBalance.requestGet('https://stat.online.sberbank.ru/PhizIC-res/InaccessPage/index.html');
+
     error = getParam(html, null, null, /в связи с ошибкой в работе системы[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+    if(error)
+        throw new AnyBalance.Error(error);
+
+    error = getParam(html, null, null, /<h1[^>]*>О временной недоступности услуги[\s\S]*?<p[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
     if(error)
         throw new AnyBalance.Error(error);
 
@@ -150,8 +156,10 @@ function main() {
     }
 
     var page = getParam(html, null, null, /value\s*=\s*["'](https:[^'"]*?AuthToken=[^'"]*)/i);
-    if(!page)
+    if(!page){
+        AnyBalance.trace(html);
         throw new AnyBalance.Error("Не удаётся найти ссылку на информацию по картам. Пожалуйста, обратитесь к автору провайдера для исправления ситуации.");
+    }
     
     AnyBalance.trace("About to authorize: " + page);
 

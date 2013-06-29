@@ -133,20 +133,19 @@ function main() {
       'ctl00$ctl00$BaseContentPlaceHolder$ctl01$ctl04$userManual2Region$ddlRegions':''
     });
 */
+    var html = AnyBalance.requestPost(baseurl);
 
-    var html = AnyBalance.requestPost(baseurl, {
+    var error = getParam(html, null, null, /<h1[^>]*>О временной недоступности услуги[\s\S]*?<p[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
+    if(error)
+        throw new AnyBalance.Error(error);
+
+    html = AnyBalance.requestPost(baseurl, {
 	'field(login)':prefs.login,
 	'field(password)':prefs.password,
 	operation:'button.begin'
     });
 
-    //var html = AnyBalance.requestGet('https://stat.online.sberbank.ru/PhizIC-res/InaccessPage/index.html');
-
     error = getParam(html, null, null, /в связи с ошибкой в работе системы[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-    if(error)
-        throw new AnyBalance.Error(error);
-
-    error = getParam(html, null, null, /<h1[^>]*>О временной недоступности услуги[\s\S]*?<p[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
     if(error)
         throw new AnyBalance.Error(error);
 

@@ -78,11 +78,11 @@ function main(){
 		if(AnyBalance.isAvailable('balance')){
 			if(matches=htmlframe.match(/id="t37243(.*?)\/td>/i)){
 				//AnyBalance.trace(matches[1]);			
-				if(matches=matches[1].match(/valign="top"\s*style="cursor:pointer;">(.*?)\s\(/i)){
+				if(matches=matches[1].match(/valign="top"\s*style="cursor:pointer;"><b>(.*?)\s\(/i)){
 					result.balance = matches[1].replace(",","");
 					AnyBalance.trace('Balance OK...');
 				}
-				else if (matches=matches[1].match(/valign="top"\s*style="cursor:pointer;"><b>(.*?)\s\(/i)){
+				else if (matches=matches[1].match(/valign="top"\s*style="cursor:pointer;">(.*?)\s\(/i)){
 					result.balance = matches[1].replace(",","");
 					AnyBalance.trace('Balance OK...');
 				}
@@ -99,11 +99,11 @@ function main(){
 		if(AnyBalance.isAvailable('date')){
 			if(matches=htmlframe.match(/<td width="70"\s*class="accState1"\s(.*?)\/td>/i)){
 				//AnyBalance.trace(matches[1]);
-				if(trandate=matches[1].match((/"top">(.*?)</i))){
+				if(trandate=matches[1].match((/"top"><b>(.*?)</i))){
 					result.date = parseDate(trandate[1]);
 					AnyBalance.trace('Date OK...');
 				}
-				else if(trandate=matches[1].match((/"top"><b>(.*?)</i))){
+				else if(trandate=matches[1].match((/"top">(.*?)</i))){
 					result.date = parseDate(trandate[1]);
 					AnyBalance.trace('Date OK...');
 				}

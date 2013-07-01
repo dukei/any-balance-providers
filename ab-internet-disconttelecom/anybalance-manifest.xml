@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-internet-disconttelecom</id>
+  <name>Дисконт Телеком</name>
+  <description>
+	Плучает данные для интернет провайдера Дисконт Телеком г. Москва
+  </description>
+  <author>Stark &lt;support@starksoft.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units=" р"/>
+	<counter id="bonus" name="Бонус" units=" р"/>
+	<counter id="account" name="Номер договора" type="text"/>
+  </counters>
+  <keywords>
+    Дисконт
+  </keywords>
+  <type>
+    internet
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

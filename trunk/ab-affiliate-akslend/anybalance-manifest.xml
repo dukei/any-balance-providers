@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-affiliate-akslend</id>
+  <name>AKSlend</name>
+  <description>
+    Помогает отслеживать состояние депозита инвестора AKSlend на сайте http://www.akslend.com/
+  </description>
+  <author>wtiger &lt;wtiger@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>api:jquery.min.js</js>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="$"/>
+    <counter id="main_access" name="Доступно сейчас" units="$"/>
+    <counter id="main_busy" name="Занято в трейдинге" units="$"/>
+    <counter id="main_referral" name="Партнерские" units="$"/>
+  </counters>
+  <keywords>
+    инвестиционная программа akslend
+  </keywords>
+  <type>
+    affiliate
+  </type>
+</provider>

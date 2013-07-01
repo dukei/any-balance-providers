@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="3" version="23">ab-internet-domolink</id>
+  <id major_version="3" version="24">ab-internet-domolink</id>
   <name>Ростелеком - Домолинк</name>
   <description>
   Получает текущий баланс, номер лицевого счета, ФИО владельца или Название организации, размер ежемесячной платы, дату, сумму и описание последней оплаты, трафик в текущем месяце.

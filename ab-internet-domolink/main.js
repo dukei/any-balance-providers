@@ -1,4 +1,5 @@
-﻿/**
+﻿
+/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 
 Домашний Интернет Домолинк
@@ -564,44 +565,28 @@ function gwtGetJSON(str){
 function domolinkug(region,login,password) {
     var baseurl = 'https://my.south.rt.ru/';
     AnyBalance.setDefaultCharset('utf-8');    
+    var prefs = AnyBalance.getPreferences();
 	
     // Заходим на главную страницу
-    var html = AnyBalance.requestGet(baseurl + "login");
-    if(/Tomcat Server is Dead/.test(html))
-        throw new AnyBalance.Error("Сервер временно недоступен. Попробуйте позднее");
+    var html = AnyBalance.requestPost(baseurl + "login", {
+        'login-field': prefs.login,
+        'pwd-field': prefs.password,
+        action: 'signin'
+    }, {Referer: baseurl + 'login'});
 
-    //Скачиваем скрипт для поиска $strongName
-    html = AnyBalance.requestGet(baseurl + 'login/login.nocache.js');
-
-    //Авторизируемся
-    html = AnyBalance.requestPost(baseurl + "login/UniappService", 
-        "7|0|7|https://my.south.rt.ru/login/|AD22A0AE25C10F870D4CEAEC535FB2E0|ru.stcompany.uniapp.client.action.rpc.UniappService|login|java.lang.String/2004016611|" + gwtEscape(login) + "|" + gwtEscape(password) + "|1|2|3|4|2|5|5|6|7|",
-        { 
-          'Content-Type': 'text/x-gwt-rpc; charset=UTF-8', 
-          'X-GWT-Module-Base':baseurl + 'login/',
-          'X-GWT-Permutation':gwtGetStrongName(html)
-        }
-    );
-
-    //Тут получаем что-то вроде //OK[0,5,0,0,0,0,4,3,2,1,1,["ru.stcompany.uniapp.client.global.AppUser/557065269","Успешная аутентификация","ИП ВОРОНЦОВ А.А.","T","stat-636127"],0,7]
-    var auth = gwtGetJSON(html);
-    if(auth[11][1] != 'Успешная аутентификация')
-        throw new AnyBalance.Error(auth[11][1]);
-
-    var result = { success: true };
-
-    if(AnyBalance.isAvailable('username'))
-        result.username = auth[11][2];
-
-    //Заходим в новую главную страницу
-    html = AnyBalance.requestPost(baseurl + "login", {
-        'login-field': login,
-        'pwd-field': password
-    });
+    if(!/uniapp.nocache.js/i.test(html)){
+        if(/Tomcat Server is Dead/.test(html))
+            throw new AnyBalance.Error("Сервер временно недоступен. Попробуйте позднее");
+        var error = getParam(html, null, null, /<div[^>]+id="message"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+        if(error)
+            throw new AnyBalance.Error(error);
+        throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
+    }
 
     //Скачиваем новый скрипт для поиска $strongName
     html = AnyBalance.requestGet(baseurl + 'uniapp/uniapp.nocache.js');
     var permut = gwtGetStrongName(html);
+    var result = {success: true};
 
     if(AnyBalance.isAvailable('balanceTel', 'mgmn')){
         //Получаем баланс
@@ -628,9 +613,15 @@ function domolinkug(region,login,password) {
         }
     );
 
-    getParam(html, result, '__tariff', /Текущий тарифный план:.*?DFTITLE=\\"([^"]*)\\"/i, null, html_entity_decode);
-    getParam(html, result, 'license', /Лицевой счет:.*?DFTITLE=\\"([^"]*)\\"/i, null, html_entity_decode);
-    getParam(html, result, 'balance', /Текущий баланс:.*?DFTITLE=\\"([^"]*)\\"/i, null, parseBalance);
+    var json = getParam(html, null, null, /^\/\/OK(\[[\s\S]*?\])$/, null, getJsonEval);
+    AnyBalance.trace(json[1][0]);
+    if(!json){
+        AnyBalance.trace('Не удалось получить данные по интернет: ' + html);
+    }else{
+        getParam(json[1][0], result, '__tariff', /Текущий тарифный план:.*?DFTITLE="([^"]*)"/i, null, html_entity_decode);
+        getParam(json[1][0], result, 'license', /Лицевой счет:.*?DFTITLE="([^"]*)"/i, null, html_entity_decode);
+        getParam(json[1][0], result, 'balance', [/Текущий баланс:.*?DFTITLE="([^"]*)"/i, /Начислено:.*?DFTITLE="([^"]*)"/i], null, parseBalance);
+    }
 
     AnyBalance.setResult(result); 
 }

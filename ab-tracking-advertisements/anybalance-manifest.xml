@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="4">ab-tracking-advertisements</id>
-  <name>Наблюдение за объявлениями на Avito.ru</name>
+  <id version="5">ab-tracking-advertisements</id>
+  <name>Наблюдение за Avito.ru</name>
   <description>
     Помогает отслеживать появление новых объявлений по заданной подстроке на Avito.ru, выводит краткую информацию о последних таких объявлениях.
   </description>
@@ -9,15 +9,16 @@
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
-    <js>api:jquery.min.js</js> <!-- Используем библиотеку, которая и так входит в AnyBalance -->
+    <js>api:jquery.min.js</js>
+    <js>library.js</js>
     <js>main.js</js>
+    <history>history.xml</history>
   </files>
   <counters>
     <counter id="found" name="Найдено объявлений" units="шт."/>
     <counter id="last" name="Последнее" type="text"/>
-    <counter id="date" name="Дата" type="text"/>
-    <counter id="time" name="Время" type="text"/>
-    <counter id="datetime" name="Опубликовано" type="text"/>
+    <counter id="date" name="Дата публикации" type="text"/>
+    <counter id="time" name="Время публикации" type="text"/>
     <counter id="price" name="Стоимость"/>
     <counter id="currency" name="Валюта" type="text"/>
   </counters>

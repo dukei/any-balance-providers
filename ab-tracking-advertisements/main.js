@@ -11,8 +11,7 @@ function main(){
 	var region = prefs.region;
 	var pattern = prefs.pattern;
 
-
-	var pattern1=pattern.replace(" ","+");
+	var pattern1=pattern.replace(/ /g,"+");
 
 	var baseurl = 'http://www.avito.ru/'+region+'?name='+pattern1;
 	AnyBalance.setDefaultCharset('utf-8');
@@ -33,15 +32,15 @@ function main(){
 		result.found = matches[1];
 	}else {throw new AnyBalance.Error("Ошибка при получении данных с сайта.");}
 
-	if(AnyBalance.isAvailable('last') && (matches = info.match(/<div class="t_i_date">\s+(.*?)\s+<span class="t_i_time">(.*?)<\/span>[\s\S]*?<h3 class="t_i_h3">\s+<a .*?href="(.*?)".*?>\s+(.*?)<\/a>\s+<\/h3>\s+<div class="t_i_description">\s+<span>(.*?)<\/span>\s*<span>(.*?)<\/span>\s*<\/div>/i))){
-			result.date = matches[1];
-			result.time = matches[2];
-			result.datetime = matches[1] + ' ' + matches[2];
-			result.last = matches[4];
-			result.price = matches[5].replace(new RegExp("&nbsp;",''),"");
-			result.currency = matches[6];
+	if(AnyBalance.isAvailable('last') && (matches = info.match(/<div class="t_i_date">[\s\S]*?<div class="t_i_description">[\s\S]*?<\/div>/i))){
+		info=matches[0];
 
-			AnyBalance.trace('See link to the last post: http://www.avito.ru'+matches[3]);
+		getParam(info, result, 'date', /<div class="t_i_date">\s+(\S*?)\s*<span/i, replaceTagsAndSpaces, html_entity_decode);
+		getParam(info, result, 'time', / <span class="t_i_time">(.*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+		getParam(info, result, 'last', /<div class="t_i_title">\s*<.*?>\s*<a.*?>\s+(.*?)<\/a>/i, replaceTagsAndSpaces, html_entity_decode);
+		getParam(info, result, 'price', /<div class="t_i_description">\s+<span>(.*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(info, result, 'currency', /<div class="t_i_description">\s+<span>.*?<\/span>\s*<span>(.*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+
 	}else {throw new AnyBalance.Error("Ошибка при разборе ответа с сайта.");}
 
 	AnyBalance.setResult(result);

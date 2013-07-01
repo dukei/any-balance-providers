@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-cell-tele2-kz</id>
+  <id version="3">ab-cell-tele2-kz</id>
   <name>Теле2 Казахстан</name>
   <description>
      Получает значения из личного кабинета Теле2 Казахстан (http://www.tele2.kz/)
@@ -17,6 +17,7 @@
   <counters>
     <counter id="balance" name="Баланс" units="〒"/>
 	<counter id="internet_trafic" name="Интернет-пакеты (ежемесячные)" units=" Мб"/>
+	<counter id="internet_trafic_weerkly" name="Интернет-пакеты (еженедельные)" units=" Мб"/>
     <counter id="fio" name="ФИО" type="text"/>
   </counters>
   <keywords>

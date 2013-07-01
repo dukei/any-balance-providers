@@ -53,8 +53,12 @@ function main(){
 		json = getJson(html);
 		var v = Math.round(json.returns[0].volume);
 		getParam('' + v, result, 'internet_trafic', null, null, parseBalance);
+		
+		v = Math.round(json.returns[1].volume);
+		getParam('' + v, result, 'internet_trafic_weerkly', null, null, parseBalance);
+		
 	} catch(e){
-		AnyBalance.trace('Попытались получить баланс Интернет-пакеты (ежемесячные), не получилось из-за ошибки ' + e);
+		AnyBalance.trace('Попытались получить баланс Интернет-пакеты, из-за ошибки ' + e);
 	}
 
     AnyBalance.setResult(result);

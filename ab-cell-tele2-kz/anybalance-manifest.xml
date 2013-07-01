@@ -16,8 +16,7 @@
   </files>
   <counters>
     <counter id="balance" name="Баланс" units="〒"/>
-	<counter id="internet_trafic" name="Интернет-пакеты (ежемесячные)" units=" Мб"/>
-	<counter id="internet_trafic_weerkly" name="Интернет-пакеты (еженедельные)" units=" Мб"/>
+	<counter id="internet_trafic" name="Интернет-пакеты" units=" Мб"/>
     <counter id="fio" name="ФИО" type="text"/>
   </counters>
   <keywords>

@@ -51,11 +51,21 @@ function main(){
 		// Сайт возвращает JSON c доп. балансами, они -то нам и нужны
 		html = AnyBalance.requestPost(baseurl + 'balanceres', '', addHeaders({Referer: baseurl + 'profile'}));
 		json = getJson(html);
-		var v = Math.round(json.returns[0].volume);
-		getParam('' + v, result, 'internet_trafic', null, null, parseBalance);
+                var v;
+                if(isset(json.returns[0])){ //Ежемесячные
+		    v = Math.round(json.returns[0].volume);
+		    getParam('' + v, result, 'internet_trafic', null, null, parseBalance);
+                }
+
+                if(isset(json.returns[1])){ //Еженедельные
+		    v = Math.round(json.returns[1].volume);
+		    getParam('' + v, result, 'internet_trafic', null, null, parseBalance);
+                }
 		
-		v = Math.round(json.returns[1].volume);
-		getParam('' + v, result, 'internet_trafic_weerkly', null, null, parseBalance);
+                if(isset(json.returns[2])){ //Ежедневные
+		    v = Math.round(json.returns[2].volume);
+		    getParam('' + v, result, 'internet_trafic', null, null, parseBalance);
+                }
 		
 	} catch(e){
 		AnyBalance.trace('Попытались получить баланс Интернет-пакеты, из-за ошибки ' + e);

@@ -91,26 +91,6 @@ function main(){
 			}
 		}
 		else {AnyBalance.trace('Не вдалось отримати масив данних...');}
-		//Отримуємо валюту рахунку
-		/*if(AnyBalance.isAvailable('currency')){
-			if(matches=htmlframe.match(/<td width="60"\s*class="accState1"\s(.*?)\/td>/i)){
-				AnyBalance.trace(matches[1]);
-				if(currency=matches[1].match((/"top"><b>(.*?)</i))){
-					result.currency = currency[1];
-					AnyBalance.trace('Currency OK...');
-				}
-				else if(currency=matches[1].match((/"top">(.*?)</i))){
-					result.currency = currency[1];
-					AnyBalance.trace('Currency OK...');
-				}
-			}
-		}*/
-		/*if(AnyBalance.isAvailable('currency')){
-			if(matches=htmlframe.match(/"top">(.*?)</i)){
-				result.currency=matches[1];
-				AnyBalance.trace('Currency OK...');
-			}
-		}*/
 		//Отримуємо дату останнього руху по рахунку
 		if(AnyBalance.isAvailable('date')){
 			if(matches=htmlframe.match(/<td width="70"\s*class="accState1"\s(.*?)\/td>/i)){

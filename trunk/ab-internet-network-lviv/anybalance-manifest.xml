@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-internet-network-lviv</id>
+  <name>Network (Украина)</name>
+  <description>
+	Получает данные для интернет провайдера Network Lviv.ua Украина (http://www.network.lviv.ua/)
+	
+	Адрес личного кабинета: https://my.network.lviv.ua/
+  </description>
+  <author>Stark &lt;support@starksoft.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units=" Грн"/>
+    <counter id="fio" name="ФИО" type="text"/>
+  </counters>
+  <keywords>
+    
+  </keywords>
+  <type>
+    internet
+  </type>
+  <country>
+    ua
+  </country>
+</provider>

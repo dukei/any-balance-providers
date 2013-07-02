@@ -85,7 +85,6 @@ function main(){
         T:'rt_0clientupdaterest.doheavyupd'
     }, g_headers);
 
-	// до сюда все ок
     var i=0;
     do{
         AnyBalance.trace('Ожидание обновления данных: ' + (i+1));
@@ -113,6 +112,9 @@ function main(){
         fetchAccount(jsonInfo, baseurl);
     else if(prefs.type == 'dep')
         fetchDeposit(jsonInfo, baseurl);
+    else if(prefs.type == 'cred')
+        fetchCredit(jsonInfo, baseurl);		
+		
     else
         fetchCard(jsonInfo, baseurl); //По умолчанию карты будем получать
 }
@@ -182,12 +184,10 @@ function fetchAccount(jsonInfo, baseurl){
     getParam(tr, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
     getParam(jsonInfo.USR, result, 'fio', /(.*)/i, replaceTagsAndSpaces);
     AnyBalance.setResult(result);
-    
 }
 
 function fetchDeposit(jsonInfo, baseurl){
     var prefs = AnyBalance.getPreferences();
-    // throw new AnyBalance.Error("Получение информации по депозитам пока не поддерживается. Обращайтесь к автору провайдера.");
    
     if(prefs.cardnum && !/^\d{4,}$/.test(prefs.cardnum))
         throw new AnyBalance.Error("Введите от четырех последних цифр номера счета депозита или не вводите ничего, чтобы показать информацию по первому депозиту");
@@ -241,4 +241,63 @@ function fetchDeposit(jsonInfo, baseurl){
     }
     AnyBalance.setResult(result);
     
+}
+
+function fetchCredit(jsonInfo, baseurl){
+    var prefs = AnyBalance.getPreferences();
+    var html = AnyBalance.requestPost(baseurl, {
+		LASTREQUESTURL:'T=RT_2IC.SC,nvgt=1,SCHEMENAME=CREDITS,FILTERIDENT=',
+        SID:jsonInfo.SID,
+        tic:1,
+        T:'RT_2IC.SC',
+        nvgt:1,
+        SCHEMENAME:'CREDITS',
+        FILTERIDENT:''
+    }, addHeaders({Referer: baseurl}));
+	var result = {success: true};
+	// Теперь соберем данные о кредитах
+	var firstIDR = '';
+	var found = /SIDR="([\s\S]*?)">([\s\S]*?)<\//.exec(html);
+	var Details = '';
+	while(found)
+	{
+		if(firstIDR == '')
+			firstIDR = found[1];
+		// Нашли совпадение, занесем в сводку
+		Details = Details+'ID: ' + found[1] + ' Имя: ' + found[2] + '\n';
+		// продолжим поиск
+		html = html.replace(/SIDR="([\s\S]*?)">([\s\S]*?)<\//, '');
+		found = /SIDR="([\s\S]*?)">([\s\S]*?)<\//.exec(html);
+	}
+	getParam(Details, result, 'all', null, null);
+
+	// Теперь запросим инфу по конкретному кредиту
+	var idr = prefs.cardnum ? prefs.cardnum : firstIDR;
+	if(idr == '')
+		throw new AnyBalance.Error('Не удаётся найти ID кредита');
+	AnyBalance.trace('idr is set to '+idr);
+	html = AnyBalance.requestPost(baseurl, {
+		FILTERIDENT:'',
+		IDR:idr,
+		IDR:idr,
+		SCHEMENAME:'CREDITS',
+		SID:jsonInfo.SID,
+		T:'RT_2IC.view',
+		XACTION:'VIEW',
+		nvgt:1,
+		tic:1,
+    }, g_headers);
+	// Мы в расширенной инфе по кредиту
+	getParam(html, result, ['limit', 'currency'], /Лимит кредита[\s\S]*?">([\s\S]*?)\(([\s\S]{1,5}),/i, null, parseBalance);
+	getParam(html, result, 'debt', /Сумма задолженности по основному долгу[\s\S]*?>([\s\S]*?)<\/td>/i, null, parseBalance);
+	getParam(html, result, 'minpay', /Всего к погашению в очередной платеж[\s\S]*?>([\s\S]*?)<\/td>/i, null, parseBalance);
+	getParam(html, result, 'minpaytill', /Срок очередного платежа[\s\S]*?>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+	getParam(html, result, 'pcts', /Сумма начисленных процентов[\s\S]*?>([\s\S]*?)<\/td>/i, null, parseBalance);
+	getParam(html, result, 'type', /Тип кредита[\s\S]*?<td>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'accnum', /Номер договора[\s\S]*?<td>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'pct', /Процентная ставка[\s\S]*?>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'till', /Срок погашения[\s\S]*?>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+    getParam(jsonInfo.USR, result, 'fio', /(.*)/i, replaceTagsAndSpaces);
+	
+    AnyBalance.setResult(result);
 }

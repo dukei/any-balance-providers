@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-money-uniastrum</id>
+  <id version="2">ab-money-uniastrum</id>
   <name>Юниаструм банк</name>   
   <description>
-    Получает текущий остаток и другие параметры карт/счетов/депозитов банка Юниаструм (http://uniastrum.ru/), используя интернет-банк https://1bank.uniastrum.ru
+    Получает текущий остаток и другие параметры карт/счетов/депозитов/кредитов банка Юниаструм (http://uniastrum.ru/), используя интернет-банк https://1bank.uniastrum.ru
   </description>
   <author>Stark &lt;support@starksoft.ru&gt;</author>
   <files>
@@ -15,9 +15,10 @@
   </files>
   <counters>
     <counter id="balance" name="Остаток" units=" {@currency}"/>
-    <counter id="minpay" name="К оплате"/>
-    <counter id="minpaytill" name="Срок оплаты" type="time" format="dd/MM/yyyy"/>
+    <counter id="limit" name="Лимит кредита" units=" {@currency}"/>
     <counter id="debt" name="Задолженность"/>
+	<counter id="minpay" name="К оплате"/>
+    <counter id="minpaytill" name="Срок оплаты" type="time" format="dd/MM/yyyy"/>
     <counter id="type" name="Тип" type="text"/>
     <counter id="pct" name="Процентная ставка" units="%"/>
     <counter id="pcts" name="Сумма начисленных процентов"/>
@@ -27,6 +28,7 @@
     <counter id="accnum" name="Номер счета" type="text"/>
     <counter id="fio" name="Владелец" type="text"/>
     <counter id="currency" name="Валюта" type="text"/>
+	<counter id="all" name="Сводка" type="text"/>
   </counters>
   <keywords>
     интернет-банкинг

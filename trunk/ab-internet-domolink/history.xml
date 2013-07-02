@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change major_version="3" version="25" date="2013-07-02">
+       - Исправлен ростелеком юг - иногда не получался тарифный план интернета
+    </change>
     <change major_version="3" version="24" date="2013-07-01">
        - Исправлен ростелеком юг
     </change>

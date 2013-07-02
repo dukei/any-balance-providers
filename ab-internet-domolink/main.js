@@ -618,8 +618,10 @@ function domolinkug(region,login,password) {
     if(!json){
         AnyBalance.trace('Не удалось получить данные по интернет: ' + html);
     }else{
+        getParam(json[1][0], result, '__tariff', /"Тарифный план:([^"]+)/i, null, function(str){return replaceAll(html_entity_decode(str), replaceTagsAndSpaces)});
         getParam(json[1][0], result, '__tariff', /Текущий тарифный план:.*?DFTITLE="([^"]*)"/i, null, html_entity_decode);
         getParam(json[1][0], result, 'license', /Лицевой счет:.*?DFTITLE="([^"]*)"/i, null, html_entity_decode);
+        getParam(json[1][0], result, 'license', /Лицевой счет №([^,"]+)/i, replaceTagsAndSpaces, html_entity_decode);
         getParam(json[1][0], result, 'balance', [/Текущий баланс:.*?DFTITLE="([^"]*)"/i, /Начислено:.*?DFTITLE="([^"]*)"/i], null, parseBalance);
     }
 

@@ -21,16 +21,6 @@ function parseDate(str){
     }
     AnyBalance.trace('Failed to parse date from value: ' + str);
 }
-function parseDateISO(str){
-    var dt = Date.parse(str);
-    if(!dt){
-        AnyBalance.trace('Could not parse date from ' + str);
-        return;
-    }else{
-        AnyBalance.trace('Parsed ' + new Date(dt) + ' from ' + str);
-        return dt;
-    }
-}
 
 function main(){
 	var result = {success: true};
@@ -64,38 +54,64 @@ function main(){
 		if(matches=htmlframe.match(/4"\sclass="content_firs_head">&nbsp;<b>(.*?)<\/b/i)){
 				result.__tariff = matches[1];
 		}
-		//Отримуємо номер рахунку
-		if(AnyBalance.isAvailable('number')){
-			if(matches=htmlframe.match(/id="acc37243(.*?)\/td>/i)){
-				//AnyBalance.trace(matches[1]);
-				if(matches=matches[1].match((/26(\d*?)</i))){
-					result.number = "26"+matches[1];
+		//Отримуємо масив данних
+		if(matches=htmlframe.match(/AccAmountInfo\[0\]\s*=(.*?)\);/i)){
+			//AnyBalance.trace(matches[1]);			
+			if(matches=matches[1].match(/'(.*?)'/gi)){
+				//Отримуємо номер рахунку
+				if(AnyBalance.isAvailable('number')){
+					//AnyBalance.trace(matches[8]);
+					if(number=matches[8].match((/<b>(.*?)<\/b/i))) {
+						result.number = number[1];
+					}
+					else result.number = matches[8];
 					AnyBalance.trace('Number OK...');
 				}
-			}
-		}
-		//Отримуємо баланс
-		if(AnyBalance.isAvailable('balance')){
-			if(matches=htmlframe.match(/id="t37243(.*?)\/td>/i)){
-				//AnyBalance.trace(matches[1]);			
-				if(matches=matches[1].match(/valign="top"\s*style="cursor:pointer;"><b>(.*?)\s\(/i)){
-					result.balance = matches[1].replace(",","");
+				//Отримуємо валюту рахунку
+				if(AnyBalance.isAvailable('currency')){
+					//AnyBalance.trace(matches[9]);
+					var currencyIndex = parseInt((matches[9].match(/'(.*?)'/i))[1]);
+					//AnyBalance.trace(currencyIndex);
+					var currencytable = new Array();
+					currencytable[980] = "UAH";
+					currencytable[840] = "USD";
+					currencytable[810] = "RUR";
+					currencytable[643] = "RUB";
+					currencytable[978] = "EUR";
+					result.currency = currencytable[currencyIndex];
+					AnyBalance.trace('Currency OK...');
+				}
+				//Отримуємо баланс
+				if(AnyBalance.isAvailable('balance')){
+					//AnyBalance.trace(matches[3]);
+					var balance = matches[3].match(/<i>(.*?)\s/i);
+					result.balance = balance[1].replace(",","");
 					AnyBalance.trace('Balance OK...');
 				}
-				else if (matches=matches[1].match(/valign="top"\s*style="cursor:pointer;">(.*?)\s\(/i)){
-					result.balance = matches[1].replace(",","");
-					AnyBalance.trace('Balance OK...');
-				}
 			}
 		}
+		else {AnyBalance.trace('Не вдалось отримати масив данних...');}
 		//Отримуємо валюту рахунку
-		if(AnyBalance.isAvailable('currency')){
+		/*if(AnyBalance.isAvailable('currency')){
+			if(matches=htmlframe.match(/<td width="60"\s*class="accState1"\s(.*?)\/td>/i)){
+				AnyBalance.trace(matches[1]);
+				if(currency=matches[1].match((/"top"><b>(.*?)</i))){
+					result.currency = currency[1];
+					AnyBalance.trace('Currency OK...');
+				}
+				else if(currency=matches[1].match((/"top">(.*?)</i))){
+					result.currency = currency[1];
+					AnyBalance.trace('Currency OK...');
+				}
+			}
+		}*/
+		/*if(AnyBalance.isAvailable('currency')){
 			if(matches=htmlframe.match(/"top">(.*?)</i)){
 				result.currency=matches[1];
 				AnyBalance.trace('Currency OK...');
 			}
-		}
-		//Отримуємо дату останнього руху на рахунку
+		}*/
+		//Отримуємо дату останнього руху по рахунку
 		if(AnyBalance.isAvailable('date')){
 			if(matches=htmlframe.match(/<td width="70"\s*class="accState1"\s(.*?)\/td>/i)){
 				//AnyBalance.trace(matches[1]);

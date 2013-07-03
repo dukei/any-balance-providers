@@ -55,15 +55,14 @@ function main(){
 				result.__tariff = matches[1];
 		}
 		//Отримуємо масив данних
+		if(AnyBalance.isAvailable('number', 'currency', 'balance')){
 		if(matches=htmlframe.match(/AccAmountInfo\[0\]\s*=(.*?)\);/i)){
 			//AnyBalance.trace(matches[1]);			
 			if(matches=matches[1].match(/'(.*?)'/gi)){
 				//Отримуємо номер рахунку
 				if(AnyBalance.isAvailable('number')){
 					//AnyBalance.trace(matches[8]);
-					if(number=matches[8].match((/<b>(.*?)<\/b/i))) {
-						result.number = number[1];
-					}
+					if(number=matches[8].match((/<b>(.*?)<\/b/i))) result.number = number[1];
 					else result.number = matches[8].match(/'(.*?)'/i)[1];
 					AnyBalance.trace('Number OK...');
 				}
@@ -89,7 +88,7 @@ function main(){
 					AnyBalance.trace('Balance OK...');
 				}
 			}
-		}
+		}}
 		else {AnyBalance.trace('Не вдалось отримати масив данних...');}
 		//Отримуємо дату останнього руху по рахунку
 		if(AnyBalance.isAvailable('date')){

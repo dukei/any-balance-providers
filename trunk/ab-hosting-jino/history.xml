@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-<change version="1" date="2013-06-25">
-      Первая версия
+<change version="2" date="2013-07-03">
+      Добавлено отображение Даты отключения, оплаты в сутки, оплаты в месяц, Статус аккаунта
     </change>
 </history>

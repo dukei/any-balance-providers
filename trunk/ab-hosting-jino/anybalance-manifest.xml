@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-hosting-jino</id>
+  <id version="2">ab-hosting-jino</id>
   <name>Джино</name>
   <description>
      Получает значения из личного кабинета Хостинг-провайдера Джино (http://cp.jino.ru/)
@@ -9,12 +9,21 @@
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
+	
+	<js>moment.min.js</js>
+    <js>moment.lang.ru.min.js</js>
+	<js>moment.lang.uk.js</js>
+	
     <js>library.js</js>
     <js>main.js</js>
     <history>history.xml</history>
   </files>
   <counters>
     <counter id="balance" name="Баланс" units=" р"/>
+	<counter id="deadline" name="Дата отключения" type="time" format="dd/MM/yyyy"/>
+	<counter type= "text" id="state" name="Статус"/>
+	<counter id="monthly_fee" name="Оплата в месяц" units=" р"/>
+	<counter id="daily_fee" name="Оплата в день" units=" р"/>
     <counter id="storage_used" name="Дисковое простарнство - использовано" units=" мб"/>
 	<counter type= "text" id="storage_percent" name="Дисковое простарнство - процент свободного места" units=" %"/>
   </counters>

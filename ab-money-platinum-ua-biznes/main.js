@@ -64,7 +64,7 @@ function main(){
 					if(number=matches[8].match((/<b>(.*?)<\/b/i))) {
 						result.number = number[1];
 					}
-					else result.number = matches[8];
+					else result.number = matches[8].match(/'(.*?)'/i)[1];
 					AnyBalance.trace('Number OK...');
 				}
 				//Отримуємо валюту рахунку

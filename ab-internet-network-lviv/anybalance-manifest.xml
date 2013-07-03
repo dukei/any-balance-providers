@@ -17,6 +17,7 @@
   </files>
   <counters>
     <counter id="balance" name="Баланс" units=" Грн"/>
+	<counter id="credit" name="Кредит" units=" Грн"/>
     <counter id="fio" name="ФИО" type="text"/>
   </counters>
   <keywords>

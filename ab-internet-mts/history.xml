@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="35" date="2013-07-03">
+      - Добавлен Курган (https://infocentr.ru/)
+	</change>
     <change version="34" date="2013-06-09">
       - Изменена Вологда (https://lk.vologda.mts.ru)
     </change>

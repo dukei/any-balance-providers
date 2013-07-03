@@ -138,22 +138,19 @@ function main(){
             throw new AnyBalance.Error(error);
         throw new AnyBalance.Error("Не удается зайти в личный кабинет. Сайт изменен?");
     }
-     
-    
-    var result = {
-        success: true
-    };
-
+    var result = {success: true};
     var matches;
 
-    getParam(info, result, 'balance', /<a[^>]*class="credit(?:ATU)? icon[\s\S]*?<a[^>]*class="first[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(info, result, 'currency', /<a[^>]*class="credit(?:ATU)? icon[\s\S]*?<a[^>]*class="first[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces, parseCurrency);
+    //getParam(info, result, 'balance', /<a[^>]*class="credit(?:ATU)? icon[\s\S]*?<a[^>]*class="first[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(info, result, 'balance', /class="credit(?:ATU)? icon[\s\S]*?class="first[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(info, result, 'currency', /class="credit(?:ATU)? icon[\s\S]*?class="first[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces, parseCurrency);
     
     if(AnyBalance.isAvailable('subscriptions')){
-    	getParam(info, result, 'subscriptions', /<li[^>]+class="subs"[^>]*>([\s\S]*?)<(?:ul|li)[^>]*>/i, replaceTagsAndSpaces, parseBalance);
+    	//getParam(info, result, 'subscriptions', /<li[^>]+class="subs"[^>]*>([\s\S]*?)<(?:ul|li)[^>]*>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(info, result, 'subscriptions', /class="subscriptions icon[\s\S]*?class="first"[\s\S]*?">([\s\S]*?)span>/i, replaceTagsAndSpaces, parseBalance);
+		
         if(!result.subscriptions) result.subscriptions = 0;
     }
-		
     sumParam(info, result, 'minsLeft', /<span[^>]+class="(?:minsLeft|link)"[^>]*>([\s\S]*?)<\/span>/ig, replaceTagsAndSpaces, parseBalance);
     getParam(info, result, 'landline', /<li[^>]+class="landline"[^>]*>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance);
     getParam(info, result, 'sms', /<li[^>]+class="sms"[^>]*>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance);
@@ -171,7 +168,5 @@ function main(){
             }
         }
     }
-
-    AnyBalance.setResult(result);
+	AnyBalance.setResult(result);
 }
-

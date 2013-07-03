@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="4">ab-money-platinum-ua-biznes</id>
+  <id version="5">ab-money-platinum-ua-biznes</id>
   <name>Платинум-бизнес</name>
   <description>
 	Отримує поточний залишок на бізнес рахунку банку Платинум Банк (Україна), використовуючи інтернет-банк https://biznes.platinumbank.com.ua
@@ -19,6 +19,8 @@
     <counter id="number" name="Номер рахунку"/>	
 	<counter id="currency" name="Валюта" type="text"/>
     <counter id="date" name="Дата останнього руху" type="time" format="dd/MM/yyyy"/>
+	<counter id="dataopen" name="Дата відкриття рахунку" type="time" format="dd/MM/yyyy"/>
+	<counter id="newmessage" name="Повідомлень з банку"/>	
   </counters>
   <keywords>
      platinum bank Платинум банк

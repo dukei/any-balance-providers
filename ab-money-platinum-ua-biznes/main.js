@@ -55,7 +55,7 @@ function main(){
 				result.__tariff = matches[1];
 		}
 		//Отримуємо масив данних
-		if(AnyBalance.isAvailable('number', 'currency', 'balance')){
+		if(AnyBalance.isAvailable('number', 'currency', 'balance', 'dataopen')){
 		if(matches=htmlframe.match(/AccAmountInfo\[0\]\s*=(.*?)\);/i)){
 			//AnyBalance.trace(matches[1]);			
 			if(matches=matches[1].match(/'(.*?)'/gi)){
@@ -87,9 +87,16 @@ function main(){
 					result.balance = balance[1].replace(",","");
 					AnyBalance.trace('Balance OK...');
 				}
+				//Отримуємо дату відкриття рахунку
+				if(AnyBalance.isAvailable('dataopen')){
+					//AnyBalance.trace(matches[4]);
+					result.dataopen = parseDate(matches[4].match(/'(.*?)'/i));
+					AnyBalance.trace('Dataopen OK...');
+				}				
 			}
-		}}
-		else {AnyBalance.trace('Не вдалось отримати масив данних...');}
+		}
+		else {throw new AnyBalance.Error("Не вдалось отримати масив данних...");}
+		}
 		//Отримуємо дату останнього руху по рахунку
 		if(AnyBalance.isAvailable('date')){
 			if(matches=htmlframe.match(/<td width="70"\s*class="accState1"\s(.*?)\/td>/i)){
@@ -104,7 +111,18 @@ function main(){
 				}
 			}
 		}
-
+		//Отримуємо кількість непрочитаних повідомлень з банку
+		if(AnyBalance.isAvailable('newmessage')){
+			if(matches=htmlframe.match(/<td height="17"\s*width="40"\s*align="right">(.*?)<\/td>/gi)){
+				for(i=0;i<matches.length;i++){
+					matches[i]=(matches[i].match(/right">\d+&nbsp;/i)[0]).match(/\d+/i)[0];
+				}
+				//AnyBalance.trace(matches);
+				result.newmessage = matches[3];
+				AnyBalance.trace('NewMessage OK...');
+			}
+		}				
+		//Передача результатів
 		AnyBalance.setResult(result);
 			
 	}

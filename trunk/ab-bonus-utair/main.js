@@ -34,5 +34,15 @@ function main(){
     getParam(html, result, '__tariff', /<td[^>]*>(?:Вид программы|Уровень участия)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'cardnum', /Номер карты[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
 
+	getParam(html, result, 'miles_thisyear', /<strong>([\s\S]{1,100})Статусные мили в текущем году/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'miles_lastyear', /<strong>([\s\S]{1,100})Статусные мили в прошлом году/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'miles_to_erase', /<strong>([\s\S]{1,100})Наградые мили к следующему аннулированию/i, replaceTagsAndSpaces, parseBalance);
+	
+	getParam(html, result, 'miles_to_erase_date', /Наградые мили к следующему аннулированию([\s\S]{1,20})/i, replaceTagsAndSpaces, parseDate);
+	
+	
+	
+	
+	
     AnyBalance.setResult(result);
 }

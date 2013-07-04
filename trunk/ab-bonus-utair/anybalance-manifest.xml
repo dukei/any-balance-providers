@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="3">ab-bonus-utair</id>
+  <id version="4">ab-bonus-utair</id>
   <name>UTair</name>
   <description>
     Получает баланс баллов и другую информацию по бонусной карте авиакомпании UTair (http://www.utair.ru).
@@ -17,7 +17,18 @@
   </files>
   <counters>
     <counter id="balance" name="Баланс"/>
+	
+	<counter id="miles_thisyear" name="Статусные мили в текущем году"/>
+	<counter id="miles_lastyear" name="Статусные мили в прошлом году"/>
+	<counter id="miles_to_erase" name="Наградые мили к следующему аннулированию "/>
+	
+	<counter id="miles_to_erase_date" format="dd/MM/yyyy" type="time" name="Дата аннулирования"/>
+	
+	
     <counter id="cardnum" name="Номер карты" type="text"/>
+	
+	
+	
   </counters>
   <keywords>
     уютное небо

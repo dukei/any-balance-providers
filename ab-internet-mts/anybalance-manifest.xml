@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="35">ab-internet-mts</id>
+  <id version="36">ab-internet-mts</id>
   <name>Домашний Интернет и Телевидение МТС</name>
   <description>
     Получает текущий баланс, номера лицевого счета и договора, ФИО владельца, трафик в текущем месяце, абонентскую плату у провайдера "Домашний Интернет и Телевидение МТС"
@@ -25,6 +25,7 @@
       * Магнитогорск (https://stat.magnitogorsk.multinex.ru)
       * Миасс (http://stat.miass.multinex.ru)
 	  * Курган (https://infocentr.ru/lk/index.php?r=site/login)
+	  * Барнаул (https://kabinet.barnaul.mts.ru/)
 
      Для добавления вашего региона обращайтесь к автору на e-mail dco@mail.ru
   </description>

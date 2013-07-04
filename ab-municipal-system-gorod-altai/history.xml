@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="4" date="2013-07-04">
+      - Исправлена ошибка получения текущего баланса
+    </change>
     <change version="3" date="2013-02-02">
       - Исправлена ошибка получения конкретного счета по его номеру
     </change>

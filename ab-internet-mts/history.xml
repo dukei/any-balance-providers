@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="36" date="2013-07-04">
+      - Добавлен Барнаул (https://kabinet.barnaul.mts.ru/)
+	</change>
     <change version="35" date="2013-07-03">
       - Добавлен Курган (https://infocentr.ru/)
 	</change>

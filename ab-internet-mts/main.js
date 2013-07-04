@@ -18,6 +18,7 @@ var g_headers = {
     'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
     'Cache-Control':'max-age=0',
     Connection:'keep-alive',
+	'X-Requested-With':'XMLHttpRequest',
     'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.60 Safari/537.1'
 };
 
@@ -41,6 +42,7 @@ var regions = {
    mag: getMagnit,
    miass: getMiass,
    kurgan: getKurgan,
+   barnaul: getBarnaul,
 };
 
 function main(){
@@ -999,5 +1001,45 @@ function getKurgan(){
     getParam(html, result, 'balance', /Текущий баланс:[^<]*<[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance2);
     getParam(html, result, 'username', /Мои аккаунты[\s\S]{1,150}<strong>([\s\S]*?)<\/strong>/i, null);
 
+    AnyBalance.setResult(result);
+}
+
+function getBarnaul(){
+    var prefs = AnyBalance.getPreferences();
+    AnyBalance.setDefaultCharset('utf-8');
+
+    var baseurl = 'https://kabinet.barnaul.mts.ru/';
+
+    var html = AnyBalance.requestPost(baseurl + 'res/modules/AjaxRequest.php?Method=Login', {
+		BasicAuth:true,
+		'Client':'mts',
+		'Data[Login]':prefs.login,
+        'Data[Passwd]':prefs.password,
+        'Service':'API.User.Service'
+	});
+    
+	var json = getJson(html);
+	
+    if(json.Error == true){
+        throw new AnyBalance.Error("Не удалось войти в личный кабинет. Неправильный логин-пароль?");
+    }
+	var token = json.Result.Result.Token[0];
+	html = AnyBalance.requestPost(baseurl + 'res/modules/AjaxRequest.php?Method=GetContainerByPath', {
+		'AccessToken':token,
+		'Client':'mts',
+        'Service':'API.Interface.Service'
+	});
+	json = getJson(html);
+	html = JSON.stringify(json);
+    var result = {success: true};
+    //Вначале попытаемся найти активный тариф
+    getParam(html, result, '__tariff', /Name[\s\S]{1,20}Тариф\s*'([\s\S]*?)'/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'balance', /ClientId":"","Name":"[\s\S]*?(-?\d[\d\s]*[.,]?\d*[.,]?\d*)\s*руб/i, replaceTagsAndSpaces, parseBalance2);
+
+/*	getParam(html, result, 'abon', /Абонентская плата:([^<]*)/i, replaceTagsAndSpaces, parseBalance2);
+    getParam(html, result, 'internet_cur', /Израсходовано:([^<]*)/i, replaceTagsAndSpaces, parseBalance2);
+    getParam(html, result, 'agreement', /Номер договора:[^<]*<[^>]*>([^<]*)/i, replaceTagsAndSpaces);
+    getParam(html, result, 'username', /Мои аккаунты[\s\S]{1,150}<strong>([\s\S]*?)<\/strong>/i, null);
+*/
     AnyBalance.setResult(result);
 }

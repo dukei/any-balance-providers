@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="3">ab-municipal-system-gorod-altai</id>
+  <id version="4">ab-municipal-system-gorod-altai</id>
   <name>Система Город (Алтайский край)</name>
   <description>
     Получает балансы, общую задолженность по лицевым счетам, привязанным к карте Система Город.

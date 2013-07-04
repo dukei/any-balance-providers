@@ -33,15 +33,14 @@ function main(){
 		throw new AnyBalance.Error('Не удалось получить ID сесии. Сайт изменен?');
 
 	html = AnyBalance.requestGet(baseurl + 'ajax/users/getuserdatafl', addHeaders({Referer: baseurl+'ajax/users/getuserdatafl'})); 
-		
-		
 	var result = {success: true};
+	getParam(html, result, 'date_itog', /date_itog([\s\S]*?)date_itog/i, null, parseDate);
+	getParam(html, result, 'days_left', /days_left([\s\S]*?)days_left/i, null, parseBalance);
 	
 	getParam(html, result, 'fio', /<fio>([\s\S]*?)<\/fio>/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'balance', /<deposit>([\s\S]*?)<\/deposit>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'credit', /<credit>([\s\S]*?)<\/credit>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, '__tariff', /<tarif>([\s\S]*?)<\/tarif>/i, replaceTagsAndSpaces, html_entity_decode);
-	//<date_itog>20-08-2013</date_itog>
 
     AnyBalance.setResult(result);
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-network-lviv</id>
+  <id version="2">ab-internet-network-lviv</id>
   <name>Network (Украина)</name>
   <description>
 	Получает данные для интернет провайдера Network Lviv.ua Украина (http://www.network.lviv.ua/)
@@ -18,6 +18,10 @@
   <counters>
     <counter id="balance" name="Баланс" units=" Грн"/>
 	<counter id="credit" name="Кредит" units=" Грн"/>
+	<counter id="days_left" name="Дней до отключения"/>
+	<counter id="date_itog" name="Дата отключения" type="time" format="dd/MM/yyyy"/>
+	
+	
     <counter id="fio" name="ФИО" type="text"/>
   </counters>
   <keywords>

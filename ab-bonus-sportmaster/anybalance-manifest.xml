@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="3">ab-bonus-sportmaster</id>
+  <id version="4">ab-bonus-sportmaster</id>
   <name>Спортмастер</name>
   <description>
     Получает информацию по бонусной карте Спортмастер. Информация берется из личного кабинета http://www.sportmaster.ru/personal/bonus.php (если у вас есть логин и пароль) или со страницы http://www.sportmaster.ru/club-program/ (если у вас есть номер карты).

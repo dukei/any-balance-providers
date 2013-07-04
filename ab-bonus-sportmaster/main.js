@@ -48,7 +48,7 @@ function main(){
                 card_id:prefs.login,
                 check_bonus:''
             });
-            status = getParam(html, null, null, /<div[^>]+class="[^"]*newbg3[\s\S]*?alert\s*\(\s*'([^']*)/i, replaceSlashes);
+            status = getParam(html, null, null, /card_bonus\s*=\s*'([^']*)/, replaceSlashes);
             if(/Доступно средств:/i.test(status))
                 break;
         }

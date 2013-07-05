@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="6">ab-tracking-advertisements</id>
+  <id version="7">ab-tracking-advertisements</id>
   <name>Наблюдение за Avito.ru</name>
   <description>
     Помогает отслеживать появление новых объявлений по заданной подстроке на Avito.ru, выводит краткую информацию о последних таких объявлениях.

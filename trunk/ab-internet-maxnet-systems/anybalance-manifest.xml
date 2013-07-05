@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="777">ab-internet-maxnet-systems</id>
+  <name>Maxnet Systems</name>
+  <description>
+	Получает данные из личного кабинета инетрнет-провайдера Maxnet Systems (http://www.maxnet.ru/) в регионах Калуга, Обнинск, Балабаново
+	
+	Личный кабинет находится по адресу https://stat.maxnet.ru/	
+  </description>
+  <author>Stark &lt;support@starksoft.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+	<counter id="abon" name="Абонентская плата" units="р"/>
+	<counter id="traf" name="Трафик" units="мб"/>
+    <counter id="fio" name="ФИО" type="text"/>
+	<counter id="acc_num" name="Номер договора" type="text"/>
+    <counter id="status" name="Статус" type="text"/>
+  </counters>
+  <keywords>
+    
+  </keywords>
+  <type>
+    
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

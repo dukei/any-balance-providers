@@ -85,13 +85,16 @@ function main(){
         var val = $info.find('bonuses bonus name:contains("Остаток минут"):contains("по Украине"),\n\
                               bonuses bonus name:contains("Залишок хвилин"):contains("по Україні"),\n\
                               bonuses bonus name:contains("Balance of minutes"):contains("in Ukraine"),\n\
-                              bonuses bonus name:contains("Бонусные минуты"),\n\
+							  bonuses bonus name:contains("Остаток минут для звонков абонентам других мобильных операторов"):contains("по Украине"),\n\
+                              bonuses bonus name:contains("Залишок хвилин для дзвінків абонентам іншим мобільним операторам"):contains("по Україні"),\n\
+                              bonuses bonus name:contains("Balance of minutes to the other mobile and fix subscribers"):contains("in Ukraine"),\n\
+							  bonuses bonus name:contains("Бонусные минуты"),\n\
                               bonuses bonus name:contains("Бонусні хвилини"),\n\
                               bonuses bonus name:contains("Balance of minutes")').next().text();
         if(val){
             var matches = val.match(/(\d+)/);
             if(matches)
-                result.min_left = parseInt(matches[1]);
+				result.min_left = parseInt(matches[1]);
         }
     }
     

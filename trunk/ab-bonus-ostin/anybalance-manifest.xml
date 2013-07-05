@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
+	<api flags="no_browser" />
+	<id version="1">ab-bonus-ostin</id>
+	<name>O`stin бонусы</name>
+	<description>
+		Получает баланс бонусных баллов на карте O`stin по адресу http://bonus.ostin.com/
+	</description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс"/>
+	</counters>
+	<keywords>
+		остин, 
+	</keywords>
+	<type>
+		bonus
+	</type>
+	<country>
+		ru
+	</country>
+</provider>

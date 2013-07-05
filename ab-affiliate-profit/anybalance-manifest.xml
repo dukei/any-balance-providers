@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-affiliate-profit</id>
+  <id version="2">ab-affiliate-profit</id>
   <name>Profit-Partner.ru</name>
   <description>
     Получает различные показатели в партнерской программе Profit-Partner.ru (http://profit-partner.ru).

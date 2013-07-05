@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-<!--    <change version="2" date="2013-01-29">
-      - Исправлено получение баланса
-    </change>  -->
+   <change version="2" date="2013-07-05">
+      - Исправлено получение прогноза дохода
+    </change>  
 </history>

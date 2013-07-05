@@ -52,7 +52,9 @@ function main(){
     getParam(html, result, 'today', /<td[^>]*>Сегодня[\s\S]*?<td[^>]*>([\s\S]*?)<\/a>\s*<\/td>/i, [/"[^"]*"/g, '', replaceTagsAndSpaces], parseBalance);
     getParam(html, result, 'yesterday', /<td[^>]*>Вчера[\s\S]*?<td[^>]*>([\s\S]*?)<\/a>\s*<\/td>/i, [/"[^"]*"/g, '', replaceTagsAndSpaces], parseBalance);
     getParam(html, result, 'month', /<td[^>]*>За 30 дней[\s\S]*?<td[^>]*>([\s\S]*?)<\/a>\s*<\/td>/i, [/"[^"]*"/g, '', replaceTagsAndSpaces], parseBalance);
-    getParam(html, result, 'estimate', /<td[^>]*>Прогноз дохода[\s\S]*?<td[^>]*>([\s\S]*?)<\/a>\s*<\/td>/i, [/"[^"]*"/g, '', replaceTagsAndSpaces], parseBalance);
+    //getParam(html, result, 'estimate', /<td[^>]*>Прогноз дохода[\s\S]*?<td[^>]*>([\s\S]*?)<\/a>\s*<\/td>/i, [/"[^"]*"/g, '', replaceTagsAndSpaces], parseBalance);
+	getParam(html, result, 'estimate', /Прогноз дохода[\s\S]*?">([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	
 
     if(AnyBalance.isAvailable('views','clicks','ctr','cpc','cpm','income')){
         var now = new Date();

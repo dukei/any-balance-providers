@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-vintem</id>
+  <api flags="no_browser" />
+  <id version="2">ab-internet-vintem</id>
   <name>Винтем Телеком (Пушкино)</name>
   <description>
     Получает баланс для интернет провайдера Винтем Телеком (http://www.vintem.ru/)

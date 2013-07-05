@@ -89,6 +89,10 @@ function altai(prefix){
  
             getParam(html, result, '2pay_total', /Общая сумма задолженности:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 
+			getParam(html, result, 'jil_plus', /ЖИЛ-КОММ. УСЛУГИ \+(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)р./i, replaceTagsAndSpaces, parseBalance);
+			getParam(html, result, 'electricity', /ЭЛ\. ЭНЕРГИЯ(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)р./i, replaceTagsAndSpaces, parseBalance);
+			getParam(html, result, 'telecom', /УСЛУГИ СВЯЗИ(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)р./i, replaceTagsAndSpaces, parseBalance);
+
             AnyBalance.setResult(result);
             return;
         }

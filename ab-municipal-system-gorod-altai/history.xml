@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="5" date="2013-07-05">
+      - Добавлены счетчики Жил-комм. услуги+, Эл. энергия, Услуги связи
+	  - Добавлена совместимость с Balance Widget
+    </change>
     <change version="4" date="2013-07-04">
       - Исправлена ошибка получения текущего баланса
     </change>

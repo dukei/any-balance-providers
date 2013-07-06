@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change major_version="3.3" version="60" date="2013-07-06">
+      - исправлено распознавание минут
+    </change>
     <change major_version="3.3" version="59" date="2013-07-03">
       - Улучшено распознавание минут
     </change>

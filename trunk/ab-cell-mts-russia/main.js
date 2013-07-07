@@ -435,7 +435,7 @@ function fetchAccountStatus(html, result){
     html = sumParam (html, result, 'min_left', /Остаток бонуса:\s*([\d\.,]+?)\s*мин/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
 
     // Остаток минут
-    html = sumParam (html, result, 'min_left', /Осталось:?\s*([\d\.,]+)\s*мин/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
+    html = sumParam (html, result, 'min_left', /Осталось:?\s*([\d\.,]+)\s*(?:бесплатных\s*)?мин/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
     
     // Пакет минут Готовый офис: Остаток 149 минут
     // Остаток: минут

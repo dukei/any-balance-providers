@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-affiliate-11region</id>
+  <id version="2">ab-affiliate-11region</id>
+  <api flags="no_browser" />
   <name>ПО-РЕГИОНЫ</name>
   <description>
     Получает заработанную сумму в Потребительском Обществе РЕГИОНЫ (http://11region.com).

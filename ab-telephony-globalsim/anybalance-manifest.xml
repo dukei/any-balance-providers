@@ -14,7 +14,7 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units="р"/>
+		<counter id="balance" name="Баланс" units="USD"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="phone" name="Телефон GLOBALSIM" type="text"/>
 	</counters>

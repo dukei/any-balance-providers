@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change major_version="2" version="13" date="2013-07-08">
+      - Добавлена совместимость с Balance Widget
+	  - Поддержка изменений в личном кабинете
+    </change>
     <change major_version="2" version="12" date="2013-07-03">
       - Исправлено получение баланса, подписок. Обновлена иконка
     </change>

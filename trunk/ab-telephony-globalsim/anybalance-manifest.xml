@@ -19,6 +19,6 @@
 		<counter id="phone" name="Телефон GLOBALSIM" type="text"/>
 	</counters>
 	<keywords></keywords>
-	<type></type>
+	<type>telephony</type>
 	<country>ru</country>
 </provider>

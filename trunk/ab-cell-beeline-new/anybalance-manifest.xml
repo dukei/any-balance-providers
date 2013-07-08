@@ -2,6 +2,7 @@
 <provider>
   <id version="8">ab-cell-beeline-new</id>
   <name>Билайн (новый кабинет)</name>
+  <api flags="no_browser" />
   <description>
     Получает баланс и информацию о тарифном плане для сотового оператора Билайн (http://beeline.ru)
 

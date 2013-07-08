@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-    <id version="1">ab-adv-google-adsense</id>
+    <id version="2">ab-adv-google-adsense</id>
+	<api flags="no_browser" />
     <name>Google AdSense</name>
     <description>Информация из аккаунта Google AdSense</description>
     <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>

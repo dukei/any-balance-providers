@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-adv-adskape</id>
+  <id version="2">ab-adv-adskape</id>
+  <api flags="no_browser" />
   <name>AdSkape (медийная реклама)</name>
   <description>
     Получает баланс и статистику для сети медийной рекламы AdSkape (http://adskape.ru).
@@ -12,6 +13,7 @@
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
     <js>main.js</js>
+	<history>history.xml</history>
   </files>
   <counters>
     <counter id="balance" name="Баланс" units="р"/>

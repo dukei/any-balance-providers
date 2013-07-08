@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="2" version="12">ab-telephony-skype</id>
+  <id major_version="2" version="13">ab-telephony-skype</id>
+  <api flags="no_browser" />
   <name>Skype</name>
   <description>
     Получает текущий баланс, валюту баланса в Skype (https://skype.com).
@@ -9,6 +10,7 @@
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
+	<js>library.js</js>
     <js>main.js</js>
     <history>history.xml</history>
   </files>

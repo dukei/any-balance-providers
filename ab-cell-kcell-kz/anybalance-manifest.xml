@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-cell-kcell-kz</id>
+  <id version="2">ab-cell-kcell-kz</id>
+  <api flags="no_browser"/>
   <name>Kcell (Казахстан)</name>
   <description>
     Получает баланс и информацию о тарифном плане для сотового оператора Kcell (http://www.kcell.kz).
@@ -20,7 +21,9 @@
   </files>
   <counters>
     <counter id="balance" name="Баланс" units="〒"/>
-    <counter id="internet" name="GPRS" units="Mb"/>
+    <counter id="internet" name="GPRS" units=" Mb"/>
+    <counter id="min_left" name="Минуты" units=" мин"/>
+    <counter id="sms_left" name="SMS" units=" sms"/>
     <counter id="licschet" name="Лицевой счет" type="text"/>
     <counter id="userName" name="Имя" type="text"/>
   </counters>

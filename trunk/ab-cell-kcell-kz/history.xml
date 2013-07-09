@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="2" date="2013-07-09">
+      - Добавлена обработка i.kcell.kz
+    </change>
     <change version="2" date="2013-07-08">
       - Исправлен вход в кабинет
       - Добавлены бонусные смс и минуты

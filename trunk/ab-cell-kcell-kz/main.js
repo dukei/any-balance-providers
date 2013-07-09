@@ -13,7 +13,8 @@ function main(){
     var prefs = AnyBalance.getPreferences();
     var lang = prefs.lang || 'kk';
     var baseurl = "http://www.kcell.kz/" + lang + "/ics.security/authenticate/false";
-
+	var ibaseurl = 'https://i.kcell.kz/';
+	
     AnyBalance.setDefaultCharset('utf-8');
 
     var html = AnyBalance.requestPost(baseurl, {
@@ -41,6 +42,18 @@ function main(){
     getParam(html, result, 'internet', /(?:Остатки по доп. услугам|Қосымша қызметтер бойынша қалдық|Available for VAS):[^<]*?GPRS\s*-?([^<]*)/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'sms_left', /(?:Остатки по доп. услугам|Қосымша қызметтер бойынша қалдық|Available for VAS):[^<]*?(?:Бонусные смс|Бонустық SMS|Bonus SMS)\s*-?([^<]*)/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'min_left', /(?:Остатки по доп. услугам|Қосымша қызметтер бойынша қалдық|Available for VAS):[^<]*?(\d+)\s*(?:бонусных мин|бонустық минут|bonus on-net min)/i, replaceTagsAndSpaces, parseBalance);
-
+	// PUK получаем в переменную, но не отображаем из соображений безопасности
+	var puk = getParam(html, result, null, /PUK[\s\S]*?(\d+)/i, replaceTagsAndSpaces, html_entity_decode);
+	if(puk)
+	{
+		AnyBalance.trace('Нашли puk-код, пробуем зайти на i.kcell.kz...');
+		// Нашли PUK код
+		html = AnyBalance.requestPost(ibaseurl + 'enter', {
+        'msisdn':prefs.login,
+        'puk':puk,
+		token:''
+		}, g_headers); 
+		getParam(html, result, 'inet_unlim', /До снижения скорости\s*-([\s\S]*?)<\//i, replaceTagsAndSpaces, parseTraffic);
+	}
     AnyBalance.setResult(result);
 }

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="5">ab-municipal-system-gorod-altai</id>
+  <id version="6">ab-municipal-system-gorod-altai</id>
+  <api flags="no_browser" />
   <name>Система Город (Алтайский край)</name>
   <description>
     Получает балансы, общую задолженность по лицевым счетам, привязанным к карте Система Город.
@@ -26,11 +27,7 @@
   <counters>
     <counter id="balance" name="Баланс" units="р"/>
     <counter id="2pay_total" name="Общая задолженность" units="р"/>
-	
-	<counter id="jil_plus" name="Жил-комм. услуги+" units="р"/>
-	<counter id="electricity" name="Эл. энергия" units="р"/>
-	<counter id="telecom" name="Услуги связи" units="р"/>
-	
+    <counter id="last_payment" name="Последняя оплата" units="р"/>	
     <counter id="fio" name="ФИО" type="text"/>
     <counter id="address" name="Адрес" type="text"/>
     <counter id="service" name="Услуга" type="text"/>

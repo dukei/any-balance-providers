@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="2">ab-internet-east</id>
+  <name>East Telecom</name>
+  <description>
+    Получает баланс для East Telecom
+  </description>
+  <author>Ilya Laptev &lt;ia.laptev@gmail.com&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <!--js>library.js</js-->
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="rub" name="Баланс" units=" руб"/>
+    <counter id="credit" name="Кредит" units=" руб"/>    
+    <counter id="fio" name="ФИО" type="text"/>
+    <counter id="state" name="Статус интернета" type="text"/>
+    <counter id="login" name="Логин" type="text"/>
+    <counter id="uid" name="Номер договора" type="text"/>
+  </counters>
+  <keywords>
+    east-telecom
+  </keywords>
+  <type>
+    internet
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

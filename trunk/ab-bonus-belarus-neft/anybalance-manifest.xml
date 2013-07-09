@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
+	<api flags="no_browser" />
+	<id version="1">ab-bonus-belarus-neft</id>
+	<name>Беларусь Нефть</name>
+	<description>Получает данные по карте Беларусь Нефть. Адрес личного кабинета http://wbi.beloil.by/lprogram/login</description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>sha1.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс"/>
+		<counter id="discount" name="Размер скидки в текущем месяце"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="card_num" name="№ карты" type="text"/>
+		<counter id="all" name="Сводка" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>bonus</type>
+	<country>by</country>
+</provider>

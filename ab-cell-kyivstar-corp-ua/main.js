@@ -6,6 +6,30 @@
 Сайт оператора: http://my.kyivstar.ua/
 */
 
+function parseBalanceRK(_text){
+    var text = _text.replace(/\s+/g, '');
+    var rub = getParam(text, null, null, /(-?\d[\d\.,]*)(?:мин|хв|руб|грн)/i, replaceFloat, parseFloat) || 0;
+    var kop = getParam(text, null, null, /(-?\d[\d\.,]*)(?:сек|коп|sec)/i, replaceFloat, parseFloat) || 0;
+    var val = rub+kop/100;
+    AnyBalance.trace('Parsing balance/minutes (' + val + ') from: ' + _text);
+    return val;
+}
+//При сумме считаем, что дробная часть - это секунды
+function aggregate_sum_mins(mins){
+    if(mins.length == 0)
+        return;
+    var minutes=0, seconds=0;
+    for(var i=0; i<mins.length; ++i){
+        var val = mins[i];
+        minutes += Math.floor(val);
+        seconds += (val - Math.floor(val))*100;
+    }
+
+    minutes += Math.floor(seconds/60);
+    minutes += (seconds%60)/100;
+    return minutes;
+}
+
 function main(){
     var prefs = AnyBalance.getPreferences();
     
@@ -16,7 +40,7 @@ function main(){
       'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Intel Mac OS X 10.6; rv:7.0.1) Gecko/20100101 Firefox/7.0.1',
       Connection: 'keep-alive'
     };
-
+	
     AnyBalance.trace("Trying to enter selfcare at address: " + baseurl);
     var html = AnyBalance.requestPost(baseurl + "tbmb/login/perform.do", {
         isSubmitted: "true",
@@ -82,25 +106,26 @@ function main(){
     
     if(AnyBalance.isAvailable('min_left')){
         //bonuses bonus name:contains("Остаток минут для звонков на номера абонентов по Украине"), 
-        var val = $info.find('bonuses bonus name:contains("Остаток минут"):contains("по Украине"),\n\
-                              bonuses bonus name:contains("Залишок хвилин"):contains("по Україні"),\n\
-                              bonuses bonus name:contains("Balance of minutes"):contains("in Ukraine"),\n\
-							  bonuses bonus name:contains("Остаток минут для звонков абонентам других мобильных операторов"):contains("по Украине"),\n\
-                              bonuses bonus name:contains("Залишок хвилин для дзвінків абонентам іншим мобільним операторам"):contains("по Україні"),\n\
-                              bonuses bonus name:contains("Balance of minutes to the other mobile and fix subscribers"):contains("in Ukraine"),\n\
-							  bonuses bonus name:contains("Бонусные минуты"),\n\
-                              bonuses bonus name:contains("Бонусні хвилини"),\n\
+        var val = $info.find('bonuses bonus name:contains("Остаток минут"):contains("по Украине"),\
+                              bonuses bonus name:contains("Залишок хвилин"):contains("по Україні"),\
+                              bonuses bonus name:contains("Balance of minutes"):contains("in Ukraine"),\
+							  bonuses bonus name:contains("Остаток минут для звонков абонентам других мобильных операторов"),\
+                              bonuses bonus name:contains("Залишок хвилин для дзвінків абонентам іншим мобільним операторам"),\
+                              bonuses bonus name:contains("Balance of minutes to the other mobile and fix subscribers"),\
+							  bonuses bonus name:contains("Бонусные минуты"),\
+                              bonuses bonus name:contains("Бонусні хвилини"),\
                               bonuses bonus name:contains("Balance of minutes")').next().text();
         if(val){
-            var matches = val.match(/(\d+)/);
+		    sumParam(val+'', result, 'min_left', null, replaceTagsAndSpaces, parseBalanceRK, aggregate_sum_mins);
+            /*var matches = val.match(/(\d+)/);
             if(matches)
-				result.min_left = parseInt(matches[1]);
+				result.min_left = parseInt(matches[1]);*/
         }
     }
     
     if(AnyBalance.isAvailable('min_group')){
-        var val = $info.find('bonuses bonus name:contains("Остаток минут"):contains("абонентской группы"),\n\
-                              bonuses bonus name:contains("Залишок хвилин"):contains("абонентської групи"),\n\
+        var val = $info.find('bonuses bonus name:contains("Остаток минут"):contains("абонентской группы"),\
+                              bonuses bonus name:contains("Залишок хвилин"):contains("абонентської групи"),\
                               bonuses bonus name:contains("Balance of minutes"):contains("subscriber group")').next().text();
         if(val){
             var matches = val.match(/(\d+)/);
@@ -150,43 +175,3 @@ function main(){
     
     AnyBalance.setResult(result);
 }
-
-
-function getParam (html, result, param, regexp, replaces, parser) {
-	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
-		return;
-
-	var matches = regexp.exec (html), value;
-	if (matches) {
-		value = matches[1];
-		if (replaces) {
-			for (var i = 0; i < replaces.length; i += 2) {
-				value = value.replace (replaces[i], replaces[i+1]);
-			}
-		}
-		if (parser)
-			value = parser (value);
-
-    if(param)
-      result[param] = value;
-	}
-   return value
-}
-
-var replaceTagsAndSpaces = [/&nbsp;/g, ' ', /<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, ''];
-var replaceFloat = [/\s+/g, '', /,/g, '.'];
-
-function parseBalance(text){
-    var val = getParam(text.replace(/\s+/g, ''), null, null, /(-?\d[\d\s.,]*)/, replaceFloat, parseFloat);
-    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
-    return val;
-}
-
-function html_entity_decode(str)
-{
-    //jd-tech.net
-    var tarea=document.createElement('textarea');
-    tarea.innerHTML = str;
-    return tarea.value;
-}
-

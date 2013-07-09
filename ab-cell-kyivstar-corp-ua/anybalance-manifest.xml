@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="9">ab-cell-kyivstar-corp-ua</id>
+  <id version="10">ab-cell-kyivstar-corp-ua</id>
   <name>Киевстар Корпоративный (Украина)</name>
   <description>
     Получает баланс, остаток минут, интернет трафка, SMS для корпоративных тарифов. Информация берется из системы Мой Киевстар https://my.kyivstar.ua
@@ -14,6 +14,7 @@
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
     <js>api:jquery.min.js</js>
+    <js>library.js</js>
     <js>main.js</js>
     <history>history.xml</history>
   </files>

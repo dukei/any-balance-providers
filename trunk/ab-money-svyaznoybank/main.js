@@ -1,187 +1,172 @@
-﻿/**
+﻿﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 
 Получает текущий остаток и другие параметры карт Связного Банка через интернет банк.
 
-Сайт оператора: http://www.svyaznoybank.ru/
-Личный кабинет: https://ibank.svyaznoybank.ru
+Сайт оператора: http://iqbank.ru/
+Личный кабинет: https://login.iqbank.ru
 */
 
-var g_phrases = {
-   karty: {card: 'карты', acc: 'счета', dep: 'договора на вклад'},
-   kartu: {card: 'карту', acc: 'счет', dep: 'договор на вклад'},
-   karte1: {card: 'первой карте', acc: 'первому счету', dep: 'первому вкладу'},
-   karty1: {card: 'одной карты', acc: 'одного счета', dep: 'одного вклада'}
-}
-
-//Заменяем системную строку замен
-var myReplaceTagsAndSpaces = [replaceTagsAndSpaces, /(\d)\-(\d)/g, '$1.$2'];
+var g_headers = {
+	'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
+	'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Connection':'keep-alive',
+	'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/27.0.1453.116 Safari/537.36'
+};
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-    var baseurl = "https://ibank.svyaznoybank.ru/lite/app";
+    var baseurl = "https://login.iqbank.ru/";
     AnyBalance.setDefaultCharset("utf-8");
-
-    var what = prefs.what || 'card';
-    if(prefs.num && !/\d{4}/.test(prefs.num))
-        throw new AnyBalance.Error("Введите 4 последних цифры номера " + g_phrases.karty[what] + " или не вводите ничего, чтобы показать информацию по " + g_phrases.karte1[what]);
-
-    var html = AnyBalance.requestGet(baseurl + "/pub/Login");
     
-    var matches = /<form[^>]*class="login rounded"[^>]*id="([^"]*)"[^>]*action="\.\.([^"]*)"/i.exec(html);
-    if(!matches){
-        var prof = getParam(html, null, null, /<title>(Профилактические работы)<\/title>/i);
-        if(prof)
-            throw new AnyBalance.Error("В настоящее время в системе Интернет-банк проводятся профилактические работы. Пожалуйста, попробуйте ещё раз позже.");
-        throw new AnyBalance.Error("Не удаётся найти форму входа в интернет-банк! Сайт недоступен или изменения на сайте.");
+    var html = AnyBalance.requestGet(baseurl + 'auth/UI/Login', g_headers);
+
+    var csrfsign = getParam(html, null, null, /<input[^>]+name="csrf.sign"[^>]*value="([^"]*)/i, null, html_entity_decode);
+    var csrfts = getParam(html, null, null, /<input[^>]+name="csrf.ts"[^>]*value="([^"]*)/i, null, html_entity_decode);
+
+    if(!csrfsign)
+        throw new AnyBalance.Error('Не найдена форма входа! Сайт изменен?');
+
+    html = AnyBalance.requestPost(baseurl + 'auth/UI/Login', {
+        r:'',
+        IDToken1:prefs.login,
+        IDToken2:prefs.password,
+        IDButton:'login',
+        'csrf.sign':csrfsign,
+        'csrf.ts':csrfts
+    }, addHeaders({Referer: baseurl + 'auth/UI/Login'}));
+
+    if(!/<meta[^>]+http-equiv="refresh"[^>]*url=https:\/\/iqbank.ru/i.test(html)){
+        if(/otpCode/i.test(html))
+            throw new AnyBalance.Error('Для работы этого провайдера требуется отключить в настройках интернет-банка подтверждение входа по СМС. Это безопасно, для совершения операций все равно будет требоваться подтверждение по СМС.');
+        var error = getParam(html, null, null, /<div[^>]+class="err"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+        if(error)
+            throw new AnyBalance.Error(error);
+        error = getParam(html, null, null, /<div[^>]+class="b_card"[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
+        if(error)
+            throw new AnyBalance.Error(error);
+        throw new AnyBalance.Error('Не удалось войти в интернет-банк. Сайт изменен?');
     }
 
-    var id=matches[1], href=matches[2];
-    var params = {};
-    params[id + "_hf_0"] = '';
-    params.hasData = 'X';
-    params.login=prefs.login;
-    params.password=prefs.password;
+    baseurl = "https://iqbank.ru";
+    html = AnyBalance.requestGet(baseurl, g_headers);
 
-    html = AnyBalance.requestPost(baseurl + href, params);
-
-    var error = getParam(html, null, null, /<span[^>]*class="feedbackPanelERROR"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
-    if(error)
-        throw new AnyBalance.Error(error);
-
-    var needsms = getParam(html, null, null, /(sms-message-panel)/i);
-    if(needsms)
-        throw new AnyBalance.Error("Для работы этого провайдера требуется отключить в настройках интернет-банка подтверждение входа по СМС. Это безопасно, для совершения операций все равно будет требоваться подтверждение по СМС.");
-
-    AnyBalance.trace("We seem to enter the bank...");
-
-    if(what == 'dep')
-        mainDep(what, baseurl);
-    else
-        mainCardAcc(what, baseurl);
+    if(prefs.what == 'card'){
+        fetchCard(baseurl, html);
+    }else if(prefs.what == 'dep'){
+        fetchDep(baseurl, html);
+    }else{
+        fetchCard(baseurl, html);
+    }
 }
 
-function mainCardAcc(what, baseurl){
+function fetchCard(baseurl, html){
     var prefs = AnyBalance.getPreferences();
-    var html = AnyBalance.requestGet(baseurl + "/priv/accounts");
-    var $html = $(html);
-    
-    var pattern = null;
-    if(what == 'card')
-        pattern = new RegExp('\\d{4} \\*{4} \\*{4} ' + (prefs.num || '\\d{4}'));
-    else
-        pattern = new RegExp(prefs.num ? '\\d{16}'+prefs.num : '\\d{20}');
+    if(prefs.num && !/^\d{4}$/.test(prefs.num))
+        throw new AnyBalance.Error("Введите 4 последних цифры номера карты или не вводите ничего, чтобы показать информацию по первой карте");
 
-    var min_i = -1;
-    var min_val = null;
-    var cur_i = -1;
-    var $acc = $html.find('div.account').filter(function(i){
-        var matches = pattern.exec($(this).text());
-        if(!matches)
-             return false;
-        ++cur_i;
-        if(min_i < 0 || min_val > matches[0]){
-            min_i = cur_i;
-            min_val = matches[0];
+    var products = getParam(html, null, null, /Page.products\s*=\s*(\[.*?\]);/, null, getJson);
+    var cards = getParam(html, null, null, /cards:\s*(\{.*\}),/, null, getJson);
+    var product;
+    for(var i=0; i<products.length; ++i){
+        var p = products[i];
+        if(p.CardId && cards[p.CardId] && (!prefs.num || (prefs.num && endsWith(cards[p.CardId].Number, prefs.num)))){
+            product = p;
+            break;
         }
-        return true;
-    }).eq(min_i);
-    
-    if(!$acc.size()){
-        if(prefs.num)
-            throw new AnyBalance.Error('Не удалось найти ' + g_phrases.kartu[what] + ' с последними цифрами ' + prefs.num);
-        else
-            throw new AnyBalance.Error('Не удалось найти ни ' + g_phrases.karty1[what] + '!');
+    }
+
+    if(!product)
+        throw new AnyBalance.Error(prefs.num ? "Не удалось найти карту с последними цифрами " + prefs.num : "Не удалось найти ни одной карты");
+
+    var theSameCards = [product];
+    for(var i=0; i<products.length; ++i){
+        if(products[i].ProductId == product.ProductId && products[i].CardId != product.CardId && products[i].CardId)
+            theSameCards.push(products[i]);
     }
 
     var result = {success: true};
-
-    getParam($acc.find('div.account-number').text(), result, 'accnum', /(\d{20})/);
-    getParam($acc.find('div.account-name').text(), result, 'accname', null, replaceTagsAndSpaces);
-    if(what != 'card')
-        getParam($acc.find('div.account-name').text(), result, '__tariff', null, replaceTagsAndSpaces);
-    getParam($acc.find('.card-amount-info, .card-amounts-info').text(), result, 'balance', null, myReplaceTagsAndSpaces, parseBalance);
-    
-    var pattern = new RegExp('\\d{4} \\*{4} \\*{4} ' + ((what == 'card' && prefs.num) || '\\d{4}'));
-    var cards = [];
-    $acc.find('.card-info-row').filter(function(i){
-        var text = $(this).text();
-        var matches = pattern.exec(text);
-        if(!matches)
-             return false;
-        cards.push([matches[0], this]);
-        return true;
-    });
-
-    cards.sort(function(a, b){
-        if(a[0] < b[0])
-            return -1;
-        if(a[0] > b[0])
-            return 1;
-        return 0;
-    });
-
-    for(var i=0; i<Math.min(cards.length, 4); ++i){
-        var $card = $(cards[i]);
-        var suffix = i > 0 ? i : '';
-        if($card.size()){
-            getParam($card.find('.card-number').text(), result, 'cardnum' + suffix);
-            if(what == 'card')
-                sumParam($card.find('.card-number').text(), result, '__tariff', null, null, null, aggregate_join);
-            getParam($card.find('.card-name').text(), result, 'cardname' + suffix);
-            getParam($card.find('.card-amount-info-balls').text(), result, 'cardballs' + suffix, null, myReplaceTagsAndSpaces, parseBalance);
-        }
-    }
-
-    getParam($acc.find('.balance-review .amount').text(), result, 'accamount', null, myReplaceTagsAndSpaces, parseBalance);
-    getParam($acc.find('.balance-review .amount').text(), result, 'currency', null, myReplaceTagsAndSpaces, parseCurrency);
-    getParam($acc.find('.points-by-holds .amount').text(), result, 'holdballs', null, myReplaceTagsAndSpaces, parseBalance);
-
-    AnyBalance.setResult(result);
-}
-
-function mainDep(what, baseurl){
-    var prefs = AnyBalance.getPreferences();
-    var html = AnyBalance.requestGet(baseurl + "/priv/deposits");
-    var $html = $(html);
-    
-    var pattern = new RegExp(prefs.num ? '\\d{3,}'+prefs.num+'\\s' : '\\d{7,}\\s');
-
-    var min_i = -1;
-    var min_val = null;
-    var cur_i = -1;
-    var $acc = $html.find('div.deposits tbody tr').filter(function(i){
-        var matches = pattern.exec($(this).find('a.deposit-link').text());
-        if(!matches)
-             return false;
-        ++cur_i;
-        if(min_i < 0 || min_val > matches[0]){
-            min_i = cur_i;
-            min_val = matches[0];
-        }
-        return true;
-    }).eq(min_i);
-    
-    if(!$acc.size()){
-        if(prefs.num)
-            throw new AnyBalance.Error('Не удалось найти ' + g_phrases.kartu[what] + ' с последними цифрами ' + prefs.num);
-        else
-            throw new AnyBalance.Error('Не удалось найти ни ' + g_phrases.karty1[what] + '!');
-    }
-
-    var result = {success: true};
-
-    getParam($acc.find('span.deposit-name').text(), result, 'accname', null, replaceTagsAndSpaces);
-    getParam($acc.find('a.deposit-link span span').first().text(), result, 'cardnum', null, replaceTagsAndSpaces);
-    getParam($acc.find('span.deposit-name').text(), result, '__tariff', null, replaceTagsAndSpaces);
-    getParam($acc.find('td:nth-child(4)').text(), result, 'balance', null, myReplaceTagsAndSpaces, parseBalance);
-    getParam($acc.find('td:nth-child(2)').text(), result, 'currency', null, replaceTagsAndSpaces);
+    getParam(product.CurrencyTitle, result, ['currency', 'balance', 'accamount']);
 
     if(AnyBalance.isAvailable('accnum')){
-        var href = $acc.find('a.deposit-link').attr('href');
-        html = AnyBalance.requestGet(baseurl + '/' + href.replace(/^[.\/]+/g, ''));
-        getParam(html, result, 'accnum', /Счет вклада[\s\S]*?<td[^>]*>\s*(\d+)/i);
+        var html = AnyBalance.requestGet(baseurl + '/Account/Details?account=' + product.AccountNumber);
+        getParam(html, result, 'accnum', /Номер счета:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    }
+
+    for(var i=0; i<theSameCards.length && i<4; ++i){
+        var p = theSameCards[i];
+        var suffix = (i==0 ? '': i);
+        getParam(cards[p.CardId].Number, result, 'cardnum' + suffix);
+        if(i==0)
+            getParam(cards[p.CardId].Number, result, '__tariff');
+        if(AnyBalance.isAvailable('cardballs' + suffix)){
+            var html = AnyBalance.requestGet(baseurl + p.BalanceUrl, g_headers);
+            var json = getJson(html);
+            getParam(json.balls, result, 'cardballs' + suffix, null, replaceTagsAndSpaces, parseBalance);
+        }
+
+        if((AnyBalance.isAvailable('balance') && !isset(result.balance)) || (AnyBalance.isAvailable('accamount') && !isset(result.balance)) || AnyBalance.isAvailable('cardname' + suffix)){
+            var html = AnyBalance.requestGet(baseurl + p.DetailsUrl, g_headers);
+            var json = getJson(html);
+            if(!isset(result.balance))
+                getParam(json.balance, result, 'balance', null, replaceTagsAndSpaces, parseBalance);
+            if(!isset(result.accbalance))
+                getParam(json.html, result, 'accbalance', /Собственные средства:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+            getParam(json.html, result, 'cardname' + suffix, /<h3[^>]*>([\s\S]*?)<\/h3>/i, replaceTagsAndSpaces, html_entity_decode);
+        }
     }
 
     AnyBalance.setResult(result);
 }
+
+function fetchDep(baseurl, html){
+    var prefs = AnyBalance.getPreferences();
+    if(prefs.num && !/^\d+$/.test(prefs.num))
+        throw new AnyBalance.Error("Введите ID депозита или не вводите ничего, чтобы показать информацию по первому депозиту. ID депозитов можно увидеть в счетчике Сводка.");
+
+    var products = getParam(html, null, null, /Page.products\s*=\s*(\[.*?\]);/, null, getJson);
+    var cards = getParam(html, null, null, /cards:\s*(\{.*\}),/, null, getJson);
+
+    var result = {success: true};
+    if(AnyBalance.isAvailable('all')){
+        var all = [];
+        var deposits = sumParam(html, null, null, /<div[^>]+data-id=[\s\S]*?<div[^>]+class="inner-card[\s\S]*?<\/div>/ig);
+        for(var i=0; i<deposits.length; ++i){
+            if(/<span[^>]+class="number">/i.test(deposits[i]))
+                continue; //Это не депозит
+            var pid = getParam(deposits[i], null, null, /<div[^>]+data-id="([^"]*)/i, replaceTagsAndSpaces, html_entity_decode);
+            var name = getParam(deposits[i], null, null, /<h2[^>]*>([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces, html_entity_decode);
+            all.push(pid + ': ' + name);
+        }
+        result.all = all.join('\n');
+    }
+
+    var product;
+    for(var i=0; i<products.length; ++i){
+        var p = products[i];
+        if(!p.CardId && /Deposit/i.test(p.DetailsUrl) && (!prefs.num || prefs.num == p.ProductId)){
+            product = p;
+            break;
+        }
+    }
+
+    if(!product)
+        throw new AnyBalance.Error(prefs.num ? "Не удалось найти депозит с ID " + prefs.num : "Не удалось найти ни одного депозита");
+
+    getParam(product.CurrencyTitle, result, ['currency', 'balance', 'accamount']);
+
+    var html = AnyBalance.requestGet(baseurl + product.AjaxUrl);
+    getParam(html, result, 'accname', /<h2[^>]*>([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, '__tariff', /<h2[^>]*>([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces, html_entity_decode);
+
+    if(AnyBalance.isAvailable('balance', 'accnum')){
+        var html = AnyBalance.requestGet(baseurl + product.DetailsUrl);
+        var json = getJson(html);
+        getParam(json.html, result, 'accnum', /Номер счета:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+        getParam(json.html, result, 'balance', /Баланс:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    }
+
+    AnyBalance.setResult(result);
+}
+

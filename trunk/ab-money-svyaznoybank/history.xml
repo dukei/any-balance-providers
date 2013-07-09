@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="6" date="2013-07-09">
+      - Поддержка нового интернет банка - IQ банк
+    </change>
     <change version="5" date="2013-03-22">
       - Показ информации сразу по нескольким картам на одном счете
     </change>

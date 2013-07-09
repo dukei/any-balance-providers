@@ -112,7 +112,7 @@ function fetchCard(baseurl, html){
             if(!isset(result.balance))
                 getParam(json.balance, result, 'balance', null, replaceTagsAndSpaces, parseBalance);
             if(!isset(result.accbalance))
-                getParam(json.html, result, 'accbalance', /Собственные средства:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+                getParam(json.html, result, 'accamount', /Собственные средства:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
             getParam(json.html, result, 'cardname' + suffix, /<h3[^>]*>([\s\S]*?)<\/h3>/i, replaceTagsAndSpaces, html_entity_decode);
         }
     }

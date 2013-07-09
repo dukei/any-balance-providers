@@ -43,6 +43,9 @@ function main(){
         var status;
 
         for(var type in types){
+            if(types[prefs.type] && type != prefs.type)
+                continue; //Если у нас задан тип, то получаем сразу его
+
             var html = AnyBalance.requestPost(baseurl, {
                 card_type:type,
                 card_id:prefs.login,

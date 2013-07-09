@@ -82,16 +82,18 @@ function altai(prefix){
             (acc && acc.toUpperCase().indexOf(accnum) >= 0)){
 
             getParam(tr, result, 'balance', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+			getParam(tr, result, 'last_payment', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
             getParam(tr, result, 'address', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
             getParam(tr, result, 'service', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
             getParam(tr, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
             getParam(tr, result, 'accnum', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
  
+			//
             getParam(html, result, '2pay_total', /Общая сумма задолженности:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 
-			getParam(html, result, 'jil_plus', /ЖИЛ-КОММ. УСЛУГИ \+(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)р./i, replaceTagsAndSpaces, parseBalance);
+			/*getParam(html, result, 'jil_plus', /ЖИЛ-КОММ. УСЛУГИ \+(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)р./i, replaceTagsAndSpaces, parseBalance);
 			getParam(html, result, 'electricity', /ЭЛ\. ЭНЕРГИЯ(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)р./i, replaceTagsAndSpaces, parseBalance);
-			getParam(html, result, 'telecom', /УСЛУГИ СВЯЗИ(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)р./i, replaceTagsAndSpaces, parseBalance);
+			getParam(html, result, 'telecom', /УСЛУГИ СВЯЗИ(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)р./i, replaceTagsAndSpaces, parseBalance);*/
 
             AnyBalance.setResult(result);
             return;

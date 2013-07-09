@@ -100,7 +100,8 @@ function parsePersonal(baseurl, html){
     if(AnyBalance.isAvailable('balance')){
       result.balance = null; //Баланс должен быть всегда, даже если его не удаётся получить. 
       //Если его не удалось получить, то передаём null, чтобы значение взялось из предыдущего запроса
-      result.currency = g_currency[AnyBalance.getPreferences().country || 'ru'];
+      if(AnyBalance.isAvailable('balance','bonus_balance','bonus_survey','expences','billsum','billpay','expencesTraffic','expencesAbon','expencesInstant'))
+          result.currency = g_currency[AnyBalance.getPreferences().country || 'ru'];
     }
 
     AnyBalance.trace("It looks like we are in PERSONAL selfcare...");
@@ -150,7 +151,7 @@ function parseBalanceList(html, result){
     // Баланс
     getBalanceValue (html, 'Основной баланс', parseBalance, result, 'balance');
     var curr = getParam(html, null, null, /<td[^>]*>Основной баланс[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    if(AnyBalance.isAvailable('balance') && curr && /Доллар|\$/i.test(curr)) //Если в долларах, то надо перезаписать уже инициализированную валюту
+    if(AnyBalance.isAvailable('balance','bonus_balance','bonus_survey','expences','billsum','billpay','expencesTraffic','expencesAbon','expencesInstant') && curr && /Доллар|\$/i.test(curr)) //Если в долларах, то надо перезаписать уже инициализированную валюту
         result.currency = '$';
     
     // Бонус-баланс
@@ -347,7 +348,8 @@ function parseCorporate(baseurl, html){
     if(AnyBalance.isAvailable('balance')){
       result.balance = null; //Баланс должен быть всегда, даже если его не удаётся получить. 
       //Если его не удалось получить, то передаём null, чтобы значение взялось из предыдущего запроса
-      result.currency = g_currency[AnyBalance.getPreferences().country || 'ru'];
+      if(AnyBalance.isAvailable('balance','bonus_balance','bonus_survey','expences','billsum','billpay','expencesTraffic','expencesAbon','expencesInstant'))
+          result.currency = g_currency[AnyBalance.getPreferences().country || 'ru'];
     }
 
     AnyBalance.trace("It looks like we are in CORPORATE selfcare...");

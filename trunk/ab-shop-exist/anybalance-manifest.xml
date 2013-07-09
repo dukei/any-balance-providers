@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="3" version="1">ab-shop-exist</id>
+  <id version="4">ab-shop-exist</id>
   <name>Exist.ru</name>
   <description>
     Получает баланс и другую информацию для магазина автозапчастей http://exist.ru.

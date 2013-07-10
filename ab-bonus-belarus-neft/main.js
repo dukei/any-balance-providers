@@ -41,10 +41,11 @@ function main(){
 	getParam(html, result, 'discount', /РАЗМЕР ВАШЕЙ СКИДКИ[\s\S]{1,20}В ТЕКУЩЕМ МЕСЯЦЕ[\s\S]{1,20}СОСТАВЛЯЕТ([\s\S]*?)percent/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'card_num', /№ карты\s*(\d+)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, '__tariff', /№ карты\s*(\d+)/i, replaceTagsAndSpaces, html_entity_decode);
-	
-	var all = '';
-	
-    //getParam(html, result, 'all', /Статус:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
 
+	getParam(html, result, 'discount_next', /ДЛЯ ПОЛУЧЕНИЯ[\s\S]{1,100}СЛЕДУЮЩЕЙ СКИДКИ[\s\S]{1,100}<span class="board-value">([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'discount_bal_next', /ВАМ ОСТАЛОСЬ[\s\S]{1,100}НАБРАТЬ[\s\S]{1,100}<span class="board-value">([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+	
+
+    
     AnyBalance.setResult(result);
 }

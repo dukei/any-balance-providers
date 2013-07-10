@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="2">ab-cell-pildyk</id>
+  <name>Pildyk</name>
+  <description>
+    Получает баланс для Pildyk (www.pildyk.lt)
+  </description>
+  <author>Ilya Laptev &lt;ia.laptev@gmail.com&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <!--js>library.js</js-->
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units=" lt"/>
+    <counter id="balanceExpire" name="Дата сгорания баланса" type="text"/>
+    <counter id="name" name="Владелец" type="text"/>    
+    <counter id="telnum" name="Номер телефона" type="text"/>    
+  </counters>
+  <keywords>
+    pildyk
+  </keywords>
+  <type>
+    mobile
+  </type>
+  <country>
+    lt
+  </country>
+</provider>

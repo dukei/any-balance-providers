@@ -41,7 +41,7 @@ function main(){
 
     getParam(html, result, 'fio', /Абонент:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'licschet', /Лицевой cчет N:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'balance', /(?:Переплата|Задолженность):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'balance', /((?:Переплата|Задолженность):[\s\S]*?<td[^>]*>[\s\S]*?)<\/td>/i, [/Задолженность:/ig, '-', replaceTagsAndSpaces], parseBalance);
 
     var tr = getParam(html, null, null, /История платежей:(?:[\s\S](?!<\/table>))*?(<tr[^>]*>(?:[\s\S](?!<\/tr>|<\/table>))*?[\s\S]<\/tr>)\s*<\/table>/i);
     if(tr){

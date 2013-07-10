@@ -113,6 +113,12 @@ function main() {
                     result.limit = val;
                 if(AnyBalance.isAvailable('credit') && /Использованный кредит|Credit used/i.test(bal.balText))
                     result.credit = val;
+
+                if(AnyBalance.isAvailable('credit_total') && /Сумма к погашению|Payoff amount/i.test(bal.balText))
+                    result.credit_total = val;
+                if(AnyBalance.isAvailable('credit_next_payment') && /Сумма следующего платежа|Next installment amount/i.test(bal.balText))
+                    result.credit_next_payment = val;					
+					
                 if(AnyBalance.isAvailable('currency') && !isset(result.currency))
                     result.currency = parseCurrency(bal.balDetail);
             }

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-municipal-krasenergo</id>
+  <id version="2">ab-municipal-krasenergo</id>
+  <api flags="no_browser"/>
   <name>Красноярскэнергосбыт</name>
   <description>
     Получает баланс и информацию о последнем платеже в КрасноярскЭнергоСбыт. Получает данные из личного кабинета http://krsk-sbit.ru/quasar.php.

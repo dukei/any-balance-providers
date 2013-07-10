@@ -32,7 +32,7 @@ function main(){
         
         info = AnyBalance.requestPost(baseLogin, params);
     }else{
-        //info = AnyBalance.requestGet('URL к залогиненому кабинету');
+        info = AnyBalance.requestGet('https://secure.skype.com/portal/overview');
     }
 
     if(!/secure\.skype\.com\/account\/logout/i.test(info)){
@@ -54,7 +54,7 @@ function main(){
 		
         if(!result.subscriptions) result.subscriptions = 0;
     }
-    sumParam(info, result, 'minsLeft', /<span[^>]+class="(?:minsLeft|link)"[^>]*>([\s\S]*?)<\/span>/ig, replaceTagsAndSpaces, parseBalance);
+    sumParam(info, result, 'minsLeft', /<span[^>]+class="(?:minsLeft|link)"[^>]*>([\s\S]*?)<\/span>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     getParam(info, result, 'landline', /<li[^>]+class="landline"[^>]*>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance);
     getParam(info, result, 'sms', /<li[^>]+class="sms"[^>]*>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance);
     getParam(info, result, 'wifi', /<li[^>]+class="wifi"[^>]*>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance);

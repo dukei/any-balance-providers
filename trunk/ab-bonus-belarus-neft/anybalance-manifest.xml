@@ -2,7 +2,7 @@
 <provider>
 	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser" />
-	<id version="1">ab-bonus-belarus-neft</id>
+	<id version="2">ab-bonus-belarus-neft</id>
 	<name>Беларусь Нефть</name>
 	<description>Получает данные по карте Беларусь Нефть. Адрес личного кабинета http://wbi.beloil.by/lprogram/login</description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
@@ -16,7 +16,9 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс"/>
-		<counter id="discount" name="Размер скидки в текущем месяце"/>
+		<counter id="discount" name="Размер скидки в текущем месяце" units="%"/>
+		<counter id="discount_next" name="Размер следующей скидки" units="%"/>
+		<counter id="discount_bal_next" name="Баллов до следующей скидки"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="card_num" name="№ карты" type="text"/>
 		<counter id="all" name="Сводка" type="text"/>

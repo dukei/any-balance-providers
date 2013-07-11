@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
+	<api flags="no_browser" />
+	<id version="1">ab-internet-telesystems-ua</id>
+	<name>Телесистемы Украины</name>
+	<description>Получает данные из личного кабинета интернет-провайдера Телесистемы Украины (http://telesystems.ua/cabinet/index.php)</description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units="р"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="acc_num" name="Номер договора" type="text"/>
+		<counter id="acc_num_two" name="Номер личного счета" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet</type>
+	<country>ua</country>
+</provider>

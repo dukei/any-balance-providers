@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
   <id version="2">ab-internet-east</id>
-  <name>East Telecom</name>
+  <api flags="no_browser"/>
+  <name>East Telecom (Мытищи)</name>
   <description>
-    Получает баланс для East Telecom
+    Получает баланс для интернет провайдера East Telecom (http://east.ru) из личного кабинета https://debet.east.ru.
   </description>
   <author>Ilya Laptev &lt;ia.laptev@gmail.com&gt;</author>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
-    <!--js>library.js</js-->
+    <js>library.js</js>
     <js>main.js</js>
     <history>history.xml</history>
   </files>
@@ -22,7 +23,7 @@
     <counter id="uid" name="Номер договора" type="text"/>
   </counters>
   <keywords>
-    east-telecom
+    east-telecom Ист Телеком
   </keywords>
   <type>
     internet

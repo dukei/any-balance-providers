@@ -2,7 +2,7 @@
 <provider>
 	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser" />
-	<id version="2">ab-bonus-belarus-neft</id>
+	<id version="3">ab-bonus-belarus-neft</id>
 	<name>Беларусь Нефть</name>
 	<description>Получает данные по карте Беларусь Нефть. Адрес личного кабинета http://wbi.beloil.by/lprogram/login</description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>

@@ -1,7 +1,6 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
-
 var g_headers = {
 	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:21.0) Gecko/20100101 Firefox/21.0',
 	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
@@ -16,7 +15,7 @@ function main()
     var prefs = AnyBalance.getPreferences();
     var baseurl = 'http://cp.jino.ru/cpanel';
     AnyBalance.setDefaultCharset('utf-8'); 
-	moment.lang('ru');
+	//moment.lang('ru');
 	
     var html = AnyBalance.requestPost(baseurl, 
 	{
@@ -51,13 +50,44 @@ function main()
     //Возвращаем результат
     AnyBalance.setResult(result);
 }
+// Парсит дату из такого вида в мс 27 июля 2013
 function parseDateMoment(str){
-    var mom = moment(str.replace(/i/ig, 'і'), ['DD MMM YYYY', 'HH:mm-D MMM YYYY']);
-    if(!mom.isValid()){
-        AnyBalance.trace('Failed to parse date from ' + str);
-    }else{
-        var val = mom.toDate();
-        AnyBalance.trace('Parsed date ' + val + ' from ' + str);
-        return val.getTime();
-    }
+	
+	var found = /(\d{1,2})\s*([\s\S]*?)\s*(\d{1,4})/i.exec(str);
+	if(found)
+	{
+		var day = found[1];
+		var month = found[2];
+		var year = found[3];
+
+		if(month == 'января')
+			month = '01';
+		else if(month == 'февраля')
+			month = '02';
+		else if(month == 'марта')
+			month = '03';
+		else if(month == 'апреля')
+			month = '04';
+		else if(month == 'мая')
+			month = '05';
+		else if(month == 'июня')
+			month = '06';
+		else if(month == 'июля')
+			month = '07';
+		else if(month == 'августа')
+			month = '08';
+		else if(month == 'сентября')
+			month = '09';
+		else if(month == 'октября')
+			month = '10';
+		else if(month == 'ноября')
+			month = '11';
+		else if(month == 'декабря')
+			month = '12';
+
+		return getParam(day+'.'+month+'.'+ year, null, null, null, replaceTagsAndSpaces, parseDate);
+	}
+	else
+		AnyBalance.trace('Failed to parse date from ' + str);
 }
+

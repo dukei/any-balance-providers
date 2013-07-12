@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-cell-pildyk</id>
+  <id version="3">ab-cell-pildyk</id>
   <name>Pildyk</name>
   <description>
     Получает баланс для Pildyk (www.pildyk.lt)
@@ -9,7 +9,7 @@
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
-    <s>library.js</js>
+    <js>library.js</js>
     <js>main.js</js>
     <history>history.xml</history>
   </files>

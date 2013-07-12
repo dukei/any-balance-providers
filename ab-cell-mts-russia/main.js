@@ -99,7 +99,7 @@ function mainMobile(allowRetry){
             password: prefs.password
         }, g_headers);
         
-        var regexp=/<form .*?id="redirect-form".*?action="[^"]*?([^\/\.]+)\.mts\.ru/i, res, tmp;
+        var regexp = /<form .*?id="redirect-form".*?action="[^"]*?([^\/\.]+)\.mts\.ru/i, res, tmp;
         var tries = 3;
         while(tries-- > 0 && (res=regexp.exec(html))){
             //Неправильный регион. Умный мтс нас редиректит

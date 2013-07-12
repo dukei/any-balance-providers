@@ -2,7 +2,7 @@
 <provider>
 	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser" />
-	<id version="1">ab-internet-domonet-ua</id>
+	<id version="2">ab-internet-domonet-ua</id>
 	<name>Домонет (Киев)</name>
 	<description>Получает данные из личного кабинета интернет-провайдера Украины Домонет г. Киев (https://my.domonet.ua/)</description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>

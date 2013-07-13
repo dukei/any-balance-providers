@@ -46,6 +46,12 @@ function main(){
         error = getParam(html, null, null, /<div[^>]+class="b_card"[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error);
+        error = getParam(html, null, null, /<h2[^>]*>([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces, html_entity_decode);
+        if(error){
+            var error1 = getParam(html, null, null, /<div[^>]+class="recover"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+            if(error1) error += ' ' + error1;
+            throw new AnyBalance.Error(error);
+        }
         throw new AnyBalance.Error('Не удалось войти в интернет-банк. Сайт изменен?');
     }
 

@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change major_version="2.2" version="11" date="2013-07-14">
+      - Поддержка изменений в процедуре входа
+    </change>
     <change major_version="2.2" version="10" date="2013-03-09">
       - Исправлено получение основного счета в разной валюте
     </change>

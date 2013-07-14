@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="2.2" version="10">ab-money-qiwi</id>
+  <id major_version="2.2" version="11">ab-money-qiwi</id>
+  <api flags="no_browser"/>
   <name>QIWI Кошелек</name>
   <description>
     Получает баланс, количество сообщений и счетов в QIWI Кошельке. Поддерживает старый личный кабинет (https://w.qiwi.ru) и новый (https://w.qiwi.com).

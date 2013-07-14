@@ -76,15 +76,25 @@ function mainNew () {
     AnyBalance.trace ('Trying to enter NEW account at address: ' + baseurl);
 
     var login = /^\s*\+/.test(prefs.login) ? prefs.login : '+7' + prefs.login;
+    var params = {
+        source: 'MENU',
+        login: login,
+        password: prefs.password
+    };
 
-    var info = AnyBalance.requestGet (baseurl +
-                                      'auth/login.action?source=MENU&login=' +
-                                      encodeURIComponent(login) +
-                                      '&password=' +
-                                      encodeURIComponent(prefs.password), addHeaders({Accept: 'application/json, text/javascript', 'X-Requested-With':'XMLHttpRequest'}));
+    var info = AnyBalance.requestPost (baseurl + 'auth/login.action', params, addHeaders({Accept: 'application/json, text/javascript', 'X-Requested-With':'XMLHttpRequest'}));
     AnyBalance.trace ('Login result: ' + info);
 
     var res = getJson(info);
+
+    if(res.code.value == '7'){
+        AnyBalance.trace('Требуется ввести токен авторизации');
+        params.loginToken = res.data.token;
+        var info = AnyBalance.requestPost (baseurl + 'auth/login.action', params, addHeaders({Accept: 'application/json, text/javascript', 'X-Requested-With':'XMLHttpRequest'}));
+        AnyBalance.trace ('Login result 2: ' + info);
+
+        res = getJson(info);
+    }
 
     // Проверка ошибки входа
     if (res.code.value != '0'){
@@ -96,6 +106,7 @@ function mainNew () {
 		4 : "Требуется подтверждение",
 		5 : "Требуется подтверждение",
 		6 : "Срок действия пароля истек",
+                7 : "Требуется ввод токена авторизации",
 		success : "Успех",
 		timeout : "Время соединения истекло. Проверьте подключение к сети",
 		error : "Ошибка соединения. Проверьте подключение к сети",
@@ -103,7 +114,7 @@ function mainNew () {
 		parsererror : "Синтаксическая ошибка"
 	};
 
-        throw new AnyBalance.Error (res.message || (res.messages ? res.messages.join('\n') : 'Не удаётся войти в QIWI кошелек: ' + errors[res.code.value]));
+        throw new AnyBalance.Error (res.message || (res.messages ? res.messages.join('\n') : 'Не удаётся войти в QIWI кошелек: ' + (errors[res.code.value] || res.code._NAME)));
     }
 
     var html = AnyBalance.requestGet (baseurl + 'payment/main.action');

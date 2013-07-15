@@ -1,12 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
     <EditTextPreference 
-        title="Логин" 
+        title="Логин или номер карты" 
         positiveButtonText="ОК" 
         summary="Логин в Apollo Phone||{@s}\n" 
-        dialogTitle="Логин" 
+        dialogTitle="Логин или номер карты" 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите ваш логин в личный кабинет Apollo Phone"
+        dialogMessage="Введите ваш Логин или номер карты в личный кабинет Apollo Phone. Если Вы ввели номер карты, так же необходимо выбрать Тип абонента - Карточный"
         key="login">
     </EditTextPreference>
     <EditTextPreference 
@@ -19,4 +19,12 @@
         dialogMessage="Введите ваш пароль в личный кабинет Apollo Phone"
         inputType="textPassword">
     </EditTextPreference>
+	<ListPreference 
+        key="type" 
+        title="Тип абонента"
+        summary="|Обычный|{@s}\n"
+        entries="Обычный|Карточный"
+        entryValues="def|card"
+	defaultValue="def">
+    </ListPreference>
 </PreferenceScreen>

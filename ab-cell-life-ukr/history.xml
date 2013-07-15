@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="21" date="2013-07-15">
+      - Добавлена поддержка Balance Widget
+    </change>
     <change version="20" date="2013-06-14">
       - Минуты услуги Life :) 5 копеек перенесены в счетчик "Минуты на номера других операторов и фиксированной связи Украины".
     </change>

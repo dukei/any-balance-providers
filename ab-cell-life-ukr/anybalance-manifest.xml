@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="20">ab-cell-life-ukr</id>
+  <id version="21">ab-cell-life-ukr</id>
+  <api flags="no_browser" />
   <name>Life:) Украина</name>
   <description>
     Мониторинг баланса мобильного оператора Life:) (Украина)

@@ -8,7 +8,7 @@
 
 function parseBalanceRK(_text){
     var text = _text.replace(/\s+/g, '');
-    var rub = getParam(text, null, null, /(-?\d[\d\.,]*)(?:мин|хв|руб|грн)/i, replaceFloat, parseFloat) || 0;
+    var rub = getParam(text, null, null, /(-?\d[\d\.,]*)(?:min|мин|хв|руб|грн)/i, replaceFloat, parseFloat) || 0;
     var kop = getParam(text, null, null, /(-?\d[\d\.,]*)(?:сек|коп|sec)/i, replaceFloat, parseFloat) || 0;
     var val = rub+kop/100;
     AnyBalance.trace('Parsing balance/minutes (' + val + ') from: ' + _text);

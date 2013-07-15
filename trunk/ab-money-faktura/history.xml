@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-<!--    <change version="1" date="2012-07-29">
-      - Первая версия провайдера
-    </change> -->
+    <change version="2" date="2013-07-15">
+      - Исправлена работа после изменений на сайте
+    </change> 
 </history>

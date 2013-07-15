@@ -6,46 +6,13 @@ Apollophone Телефония
 Личный кабинет: https://secure.apollophone.com/
 
 */
-
-function getParam (html, result, param, regexp, replaces, parser) {
-	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
-		return;
-
-	var value = regexp ? regexp.exec (html) : html;
-	if (value) {
-                if(regexp)
-		    value = value[1];
-		if (replaces) {
-			for (var i = 0; i < replaces.length; i += 2) {
-				value = value.replace (replaces[i], replaces[i+1]);
-			}
-		}
-		if (parser)
-			value = parser (value);
-
-    if(param)
-      result[param] = value;
-    else
-      return value
-	}
-}
-
-var replaceTagsAndSpaces = [/<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
-var replaceFloat = [/\s+/g, '', /,/g, '.', /(\d)\-(\d)/g, '$1.$2'];
-
-function parseBalance(text){
-    var _text = text.replace(/\s+/g, '');
-    var val = getParam(_text, null, null, /(-?\d[\d\.,\-]*)/, replaceFloat, parseFloat);
-    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
-    return val;
-}
-
-function parseCurrency(text){
-    var _text = text.replace(/\s+/g, '');
-    var val = getParam(_text, null, null, /[\d\.,\-]+(\S*)/);
-    AnyBalance.trace('Parsing currency (' + val + ') from: ' + text);
-    return val;
-}
+var g_headers = {
+	'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
+	'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Connection':'keep-alive',
+	'User-Agent':'Mozilla/5.0 (BlackBerry; U; BlackBerry 9900; en-US) AppleWebKit/534.11+ (KHTML, like Gecko) Version/7.0.0.187 Mobile Safari/534.11+'
+};
 
 function main(){
     var prefs = AnyBalance.getPreferences();
@@ -53,35 +20,42 @@ function main(){
 
     var baseurl = "https://secure.apollophone.com/";
     
-    var html = AnyBalance.requestPost(baseurl, {
-	user:prefs.login,
-	password:prefs.password
-    });
-
-    var error = getParam(html, null, null, /<td[^>]*class="zv3"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-    if(error)
-        throw new AnyBalance.Error(error);
-    
-    var result = {
-        success: true
-    };
-
-    var matches;
-
-    getParam(html, result, 'balance', /БАЛАНС[\s\S]*?class="form3"[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'currency', /БАЛАНС[\s\S]*?class="form3"[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseCurrency);
-    getParam(html, result, 'number', /АБОНЕНТ[\s\S]*?class="form3"[^>]*>([^<]*)/i, replaceTagsAndSpaces);
-    getParam(html, result, 'userName', /<input[^>]*name='cont1'[^>]*value="([^"]*)/i, replaceTagsAndSpaces);
-    getParam(html, result, '__tariff', /<input[^>]*name='cont1'[^>]*value="([^"]*)/i, replaceTagsAndSpaces);
+	var html;
+    var result = {success: true};
+	
+	if(prefs.type == 'card')
+	{
+		html = AnyBalance.requestPost('https://secure.apollophone.ru/cardoffice/' , {
+			ap_login:prefs.login,
+			ap_password:'',
+			office_action:'login_do',
+			'tx_apollologin_pi1[submit_button]':'Войти'
+		} , addHeaders({Referer: baseurl}));
 		
+		if(!/header__login__exit/i.test(html))
+		{
+			throw new AnyBalance.Error('Не удалось войти в личный кабинет с номером карты '+prefs.login+' проверьте правильность ввода');
+		}
+		
+		getParam(html, result, 'balance', /Ваш баланс:([\s\S]*?)руб/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, '__tariff', /Тип карты:\s*<strong>([\s\S]*?)<\/strong>/i, replaceTagsAndSpaces);
+	}
+	else
+	{
+		html = AnyBalance.requestPost(baseurl, {
+			user:prefs.login,
+			password:prefs.password
+		}, g_headers);
+		
+		var error = getParam(html, null, null, /<td[^>]*class="zv3"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+		if(error)
+			throw new AnyBalance.Error(error);
+
+		getParam(html, result, 'balance', /БАЛАНС[\s\S]*?class="form3"[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'currency', /БАЛАНС[\s\S]*?class="form3"[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseCurrency);
+		getParam(html, result, 'number', /АБОНЕНТ[\s\S]*?class="form3"[^>]*>([^<]*)/i, replaceTagsAndSpaces);
+		getParam(html, result, 'userName', /<input[^>]*name='cont1'[^>]*value="([^"]*)/i, replaceTagsAndSpaces);
+		getParam(html, result, '__tariff', /<input[^>]*name='cont1'[^>]*value="([^"]*)/i, replaceTagsAndSpaces);
+	}
     AnyBalance.setResult(result);
 }
-
-function html_entity_decode(str)
-{
-    //jd-tech.net
-    var tarea=document.createElement('textarea');
-    tarea.innerHTML = str;
-    return tarea.value;
-}
-

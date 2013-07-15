@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="4">ab-cell-life-by</id>
+  <id version="5">ab-cell-life-by</id>
+  <api flags="no_browser" />
   <name>Life:) Белоруссия</name>
   <description>
     Мониторинг баланса мобильного оператора Life:) (Белоруссия)
@@ -12,8 +13,8 @@
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
-    <js>main.js</js>
     <js>library.js</js>
+	<js>main.js</js>
     <history>history.xml</history>
   </files>
   <counters>
@@ -22,6 +23,7 @@
     <counter id="traffic_left" name="Остаток трафика" suffix=" Мб"/>
     <counter id="traffic_night_left" name="Остаток ночного трафика" suffix=" Мб"/>
     <counter id="min_left" name="Остаток минут" suffix=" мин"/>
+	<counter id="sms_left" name="Остаток СМС" suffix=" смс"/>
   </counters>
   <keywords>
     мобильный оператор лайф белоруссия проверка баланса

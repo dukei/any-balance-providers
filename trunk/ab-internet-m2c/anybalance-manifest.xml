@@ -22,6 +22,6 @@
 		<counter id="abon" name="Абонентская плата" type="text"/>
 	</counters>
 	<keywords></keywords>
-	<type></type>
+	<type>internet</type>
 	<country>ru</country>
 </provider>

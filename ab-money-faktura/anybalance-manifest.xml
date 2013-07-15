@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-money-faktura</id>
+  <id version="2">ab-money-faktura</id>
   <name>Фактура</name>
   <description>
     Получает текущий остаток, бонусные баллы и другие параметры карт банков, работающих через factura.ru, используя систему Интернет-банк ( https://www.faktura.ru/lite/app ).

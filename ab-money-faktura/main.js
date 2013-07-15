@@ -1,11 +1,15 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Получает текущий остаток и другие параметры карт Связного Банка через интернет банк.
-
-Сайт оператора: http://www.svyaznoybank.ru/
-Личный кабинет: https://ibank.svyaznoybank.ru
 */
+
+function parseBalanceEx(_text)
+{
+    var text = _text.replace(/\s+/g, '');
+    var rub = getParam(text, null, null, /(-?\d[\d\s]*[.,-]?\d*[.,]?\d*)/i, [/[^\d]/, ''], parseFloat) || 0;
+    var val = rub/100;
+    AnyBalance.trace('Parsing balance (' + val + ') from: ' + _text);
+    return val;
+}
 
 var g_phrases = {
    karty: {card: 'карты', acc: 'счета', dep: 'договора на вклад'},
@@ -28,7 +32,7 @@ function main(){
 
     var html = AnyBalance.requestGet(baseurl + "/pub/Login");
     
-    var matches = /<form[^>]*class="login rounded"[^>]*id="([^"]*)"[^>]*action="\.\.([^"]*)"/i.exec(html);
+    var matches = /class="login rounded[^>]*id="([^"]*)"[^>]*action="\.\.([^"]*)"/i.exec(html);
     if(!matches){
         var prof = getParam(html, null, null, /<title>(Профилактические работы)<\/title>/i);
         if(prof)
@@ -64,7 +68,9 @@ function main(){
 function mainCardAcc(what, baseurl){
     var prefs = AnyBalance.getPreferences();
     var html = AnyBalance.requestGet(baseurl + "/priv/accounts");
-    var $html = $(html);
+	
+	// Избавимся от jquery
+    //var $html = $(html);
     
     var pattern = null;
     if(what == 'card')
@@ -72,10 +78,59 @@ function mainCardAcc(what, baseurl){
     else
         pattern = new RegExp(prefs.num ? '\\d{16}'+prefs.num : '\\d{20}');
 
-    var min_i = -1;
+	var tables = sumParam(html, null, null, /(<div class="account-block">(?:[\s\S](?!<div class="account-block">))*?Счет №[\s\S]*?<\/div>\s*<\/div>\s*<\/div>\s*)/ig, null, null, null, null);
+	
+	if(!tables.length){
+        //if(prefs.num)
+        //    throw new AnyBalance.Error('Не удалось найти ' + g_phrases.kartu[what] + ' с последними цифрами ' + prefs.num);
+       //else
+            throw new AnyBalance.Error('Не удалось найти ни ' + g_phrases.karty1[what] + '!');
+    }
+	// Получили блоки 
+	var result = {success: true};
+	for(var i = 0; i < tables.length; i++)
+	{
+		if(what == 'card' && /card-info/i.test(tables[i]))
+		{
+			// Любая карта
+			if(!prefs.num)
+			{
+				getParam(tables[i], result, 'accnum', /Счет\s*№(\d+)/i, null, null);
+				getParam(tables[i], result, 'accname', /bind\(this\)\);">([\s\S]*?)<\/span>/i, null, null);
+				getParam(tables[i], result, 'balance', /card-amounts[\s\S]{1,70}class="amount">([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalanceEx);
+				getParam(tables[i], result, 'cardnum', /<div class="card-info">\s*<span>([\s\S]*?)<\/span>/i, null, null);
+				getParam(tables[i], result, '__tariff', /<div class="card-info">\s*<span>([\s\S]*?)<\/span>/i, null, null);
+				getParam(tables[i], result, 'accamount', /Средств на счете[\s\S]{1,30}class="amount">([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalanceEx);
+				getParam(tables[i], result, 'blocked', /Сумма необработанных операций[\s\S]{1,70}class="amount">([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalanceEx);
+				break;
+			}
+			else
+			{
+				var acc = getParam(tables[i], null, null, /<div class="card-info">\s*<span>([\s\S]*?)<\/span>/i, null, null);
+				// Смотрим только нужный счет
+				if(acc != null && endsWith(acc, prefs.num))
+				{
+					getParam(tables[i], result, 'accnum', /Счет\s*№(\d+)/i, null, null);
+					getParam(tables[i], result, 'accname', /bind\(this\)\);">([\s\S]*?)<\/span>/i, null, null);
+					getParam(tables[i], result, 'balance', /card-amounts[\s\S]{1,70}class="amount">([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalanceEx);
+					getParam(tables[i], result, 'cardnum', /<div class="card-info">\s*<span>([\s\S]*?)<\/span>/i, null, null);
+					getParam(tables[i], result, '__tariff', /<div class="card-info">\s*<span>([\s\S]*?)<\/span>/i, null, null);
+					getParam(tables[i], result, 'accamount', /Средств на счете[\s\S]{1,30}class="amount">([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalanceEx);
+					getParam(tables[i], result, 'blocked', /Сумма необработанных операций[\s\S]{1,70}class="amount">([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalanceEx);
+					break;
+				}
+			}
+		}
+		// Любой счет
+		else
+		{
+			
+		}
+	}
+    /*var min_i = -1;
     var min_val = null;
     var cur_i = -1;
-    var $acc = $html.find('div.account').filter(function(i){
+    var $acc = $html.find('div.account-block').filter(function(i){
         var matches = pattern.exec($(this).text());
         if(!matches)
              return false;
@@ -95,6 +150,9 @@ function mainCardAcc(what, baseurl){
     }
 
     var result = {success: true};
+	
+	
+	
 
     getParam($acc.find('div.account-number').text(), result, 'accnum', /(\d{20})/);
     getParam($acc.find('div.account-name').text(), result, 'accname', null, replaceTagsAndSpaces);
@@ -136,7 +194,7 @@ function mainCardAcc(what, baseurl){
     getParam($acc.find('.account-amount-info:contains("Свободных средств") .amount').text(), result, 'free', null, myReplaceTagsAndSpaces, parseBalance);
     getParam($acc.find('.account-amount-info:contains("Сумма необработанных операций") .amount').text(), result, 'blocked', null, myReplaceTagsAndSpaces, parseBalance);
     getParam($acc.find('.balance-review .amount').text(), result, 'currency', null, myReplaceTagsAndSpaces, parseCurrency);
-
+*/
     AnyBalance.setResult(result);
 }
 

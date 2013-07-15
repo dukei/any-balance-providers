@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="3">ab-cell-pildyk</id>
+  <!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
+  <api flags="no_browser" />
+  <id version="4">ab-cell-pildyk</id>
   <name>Pildyk</name>
   <description>
     Получает баланс для Pildyk (www.pildyk.lt)
@@ -15,7 +17,7 @@
   </files>
   <counters>
     <counter id="balance" name="Баланс" units=" lt"/>
-    <counter id="balanceExpire" name="Дата сгорания баланса" type="text"/>
+    <counter id="balanceExpire" name="Дата сгорания баланса" type="time" format="dd/MM/yyyy"/>
     <counter id="name" name="Владелец" type="text"/>    
     <counter id="telnum" name="Номер телефона" type="text"/>    
   </counters>

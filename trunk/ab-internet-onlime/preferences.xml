@@ -16,7 +16,7 @@
         negativeButtonText="Отмена"
         title="Пароль"
         summary="|Пароль для входа в личный кабинет|***********"
-        dialogMessage="Введите пароль, используемый для входа в личный кабинет Онлайм (my.onlime.ru)"
+        dialogMessage="Введите пароль, используемый для входа в личный кабинет Онлайм (my.onlime.ru) не более 16 символов."
         inputType="textPassword">
     </EditTextPreference>
     <EditTextPreference 

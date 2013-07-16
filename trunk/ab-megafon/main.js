@@ -479,10 +479,10 @@ function megafonTrayInfo(filial){
                    var discount = discounts[i];
                    var name = getParam(discount, null, null, /<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
                    var val = getParam(discount, null, null, /<div[^>]+class="discount_volume"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-                   if(/MMS/i.test(name)){
+                   if(/MMS|ММС/i.test(name)){
                        if(need_mms_left) sumParam(val, result, 'mms_left', [reDiscount3Value, reDiscount2Value], null, parseBalance, aggregate_sum);
                        if(need_mms_total) sumParam(val, result, 'mms_total', [reDiscount3Total, reDiscount2Total], null, parseBalance, aggregate_sum);
-                   }else if(/SMS/i.test(name)){
+                   }else if(/SMS|СМС/i.test(name)){
                        if(need_sms_left) sumParam(val, result, 'sms_left', [reDiscount3Value, reDiscount2Value], null, parseBalance, aggregate_sum);
                        if(need_sms_total) sumParam(val, result, 'sms_total', [reDiscount3Total, reDiscount2Total], null, parseBalance, aggregate_sum);
                    }else if(/мин/i.test(val) || /минут/i.test(name)){
@@ -497,8 +497,9 @@ function megafonTrayInfo(filial){
                        	   result.internet_total = (result.internet_total||0) + total;
                        if(need_int_cur && isset(total))
                        	   result.internet_cur = (result.internet_cur||0) + (total - (left||0));
+                   }else{
+                       AnyBalance.trace('Неизвестная опция ' + name + ': ' + val);
                    }
-                   
                }
            }
 

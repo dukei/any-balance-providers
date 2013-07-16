@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
+  <api flags="no_browser" />
+  <id version="1">ab-municipal-elektroset</id>
+  <name>ОАО Электросеть (Мытищи)</name>
+  <description>
+    Данные из личного кабинета абонентов ОАО Электросеть (https://lkk.oao-elektroset.ru/ru.tii.lkk/pages/main.jsf)
+  </description>
+  <author>Ilya Laptev &lt;ia.laptev@gmail.com&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="account" name="Лицевой счет" type="text"/>    
+    <counter id="address" name="Адрес" type="text"/>
+    <counter id="fio" name="ФИО" type="text"/>
+    <counter id="tarif" name="Тариф" type="text"/>
+    <counter id="last" name="Информация о последнем платеже" type="text"/>
+  </counters>
+  <keywords>
+    elektroset Электросеть
+  </keywords>
+  <type>
+    municipal
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

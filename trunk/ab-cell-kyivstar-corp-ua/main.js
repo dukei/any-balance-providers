@@ -109,10 +109,10 @@ function main(){
         var val = $info.find('bonuses bonus name:contains("Остаток минут"):contains("по Украине"),\
                               bonuses bonus name:contains("Залишок хвилин"):contains("по Україні"),\
                               bonuses bonus name:contains("Balance of minutes"):contains("in Ukraine"),\
-							  bonuses bonus name:contains("Остаток минут для звонков абонентам других мобильных операторов"),\
-                              bonuses bonus name:contains("Залишок хвилин для дзвінків абонентам іншим мобільним операторам"),\
+			      bonuses bonus name:contains("Остаток минут для звонков абонентам"):contains("других мобильных операторов"),\
+                              bonuses bonus name:contains("Залишок хвилин для дзвінків абонентам"):contains("іншим мобільним операторам"),\
                               bonuses bonus name:contains("Balance of minutes to the other mobile and fix subscribers"),\
-							  bonuses bonus name:contains("Бонусные минуты"),\
+			      bonuses bonus name:contains("Бонусные минуты"),\
                               bonuses bonus name:contains("Бонусні хвилини"),\
                               bonuses bonus name:contains("Balance of minutes")').next().text();
         if(val){

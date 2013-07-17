@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
+	<api flags="no_browser" />
+	<id version="1">ab-money-nomos-regionbank</id>
+	<name>Номос регионбанк</name>
+	<description>Получает данные по картам и счетам Номос Регионбанка (https://m.regiobank.ru)
+	
+	На данный момент поддерживается вход по идентификатору клиента, если Вы хотите добавить вход по логину или по номеру карты, пишите автору провайдера на support@starkspft.ru
+	</description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units="{@currency}"/>
+		<counter id="acc_num" name="Номер счета" type="text"/>
+		<counter id="cardnumb" name="Номер карты" type="text"/>
+		<counter id="card_expdate" name="Срок действия карты" type="time" format="dd/MM/yyyy"/>
+		<counter id="accttitle" name="Название счета" type="text"/>
+		<counter id="currency" name="Валюта" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>money</type>
+	<country>ru</country>
+</provider>

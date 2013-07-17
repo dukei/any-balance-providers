@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Идентификатор клиента" 
+        positiveButtonText="ОК" 
+        summary="||{@s}" 
+        dialogTitle="Идентификатор клиента" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите идентификатор клиента."
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Секретный код"
+        negativeButtonText="Отмена"
+        title="Секретный код"
+        summary="||***********"
+        dialogMessage="Введите cекретный код, используемый для входа в личный кабинет."
+        inputType="textPassword">
+    </EditTextPreference>
+	<EditTextPreference 
+        positiveButtonText="ОК"
+        key="acc" 
+        dialogTitle="Номер счета"
+        negativeButtonText="Отмена"
+        title="Номер счета"
+        summary="||{@s}"
+        dialogMessage="Введите последние 4 цифры номера счета или оставьте пустым, чтобы получить данные по первому счету."
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

@@ -1,8 +1,5 @@
 /**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Статистика покупок с Google Checkout.
-Провайдер получает эти данные из личного Кабинета. Для работы требуется указать в настройках партнерские e-mail и пароль.
 */
 
 var g_headers = {
@@ -10,95 +7,36 @@ var g_headers = {
     'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
     'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
     'Connection':'keep-alive',
-    //Мобильный браузер хотим
-    'User-Agent':'Mozilla/5.0 (Linux; U; Android 4.0.2; en-us; Galaxy Nexus Build/ICL53F) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30'
-}
-
-function getParam (html, result, param, regexp, replaces, parser) {
-	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
-		return;
-
-	var value = regexp.exec (html);
-	if (value) {
-		value = value[1];
-		if (replaces) {
-			for (var i = 0; i < replaces.length; i += 2) {
-				value = value.replace (replaces[i], replaces[i+1]);
-			}
-		}
-		if (parser)
-			value = parser (value);
-
-    if(param)
-      result[param] = value;
-    else
-      return value
-	}
-}
-
-var replaceTagsAndSpaces = [/<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
-var replaceFloat = [/\s+/g, '', /,/g, '.'];
-
-function parseBalance(text){
-    var val = getParam(html_entity_decode(text).replace(/\s+/g, ''), null, null, /(-?\d[\d\s.,]*)/, replaceFloat, parseFloat);
-    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
-    return val;
-}
-
-function html_entity_decode(str)
-{
-    //jd-tech.net
-    var tarea=document.createElement('textarea');
-    tarea.innerHTML = str;
-    return tarea.value;
-}
-
-function createFormParams(html, process){
-    var params = {};
-    html.replace(/<input[^>]+name="([^"]*)"[^>]*>/ig, function(str, name){
-        var value = getParam(str, null, null, /value="([^"]*)"/i, null, html_entity_decode);
-        name = html_entity_decode(name);
-        if(process){
-            value = process(params, str, name, value);
-        }
-        params[name] = value;
-    });
-    return params;
+    'User-Agent':'	Mozilla/5.0 (Windows NT 6.1; WOW64; rv:22.0) Gecko/20100101 Firefox/22.0'
 }
 
 function main() {
-
-	var result = {
-        success: true
-    };
-
     var prefs = AnyBalance.getPreferences();
-    
     AnyBalance.setDefaultCharset('utf-8');
 
-    var baseurl = "https://accounts.google.com/ServiceLogin?service=sierra&continue=https://checkout.google.com/sell/orders?upgrade%3Dtrue&hl=ru&nui=1&ltmpl=seller&sacu=1";
-    var baseurlLogin = "https://accounts.google.com/";
-    
-    var html = AnyBalance.requestGet(baseurl, g_headers);
-    var params = createFormParams(html, function(params, input, name, value){
-        var undef;
-        if(name == 'Email')
-            value = prefs.login;
-        else if(name == 'Passwd')
-            value = prefs.password;
-        else if(name == 'PersistentCookie')
-            value = undef; //Снимаем галочку
-       
-        return value;
-    });
-    
-    //AnyBalance.trace(JSON.stringify(params));
+    var baseurl = 'https://wallet.google.com/';
+    var baseurlLogin = 'https://accounts.google.com/';
+    // запрашиваем форму входа, чтобы получить все параметры
+    var html = AnyBalance.requestGet(baseurlLogin + 'ServiceLoginAuth', g_headers);
+	
+	// Ищем переменную для входа
+	var GALX = '';
+	var found = /GALX[\s\S]*?value="([\s\S]*?)"/i.exec(html);
+	if(found)
+	{
+		GALX = found[1];
+	}
+	else
+		throw new AnyBalance.Error('Не нашли секретный параметр, дальше продолжать нет смысла');
 
-    var html = AnyBalance.requestPost(baseurlLogin + 'ServiceLoginAuth', params, g_headers);
-
-    AnyBalance.trace(html);
-
-    if(!/logout/i.test(html)){
+	html = AnyBalance.requestPost(baseurlLogin + 'ServiceLoginAuth', {
+		'Passwd':prefs.password,
+		'Email':prefs.login,
+		'GALX':GALX,
+		'PersistentCookie':'yes',
+	}, g_headers);
+	
+	if(!/logout/i.test(html)){
         var error = getParam(html, null, null, /<span[^>]+class="errormsg[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
         if(error)
             throw new AnyBalance.Error(error);
@@ -106,12 +44,24 @@ function main() {
         if(error)
             throw new AnyBalance.Error("This account requires 2-step authorization. Turn off 2-step authorization to use this provider.");
         throw new AnyBalance.Error('Can not log in google account.');
-    }
+	}
+	var result = { success: true };
+	getParam(html, result, 'fio', /<span\s*id=gbi4t>([\s\S]*?)<\/span>/i, null, null);
+	getParam(html, result, 'login_email', /<span class=gbps2>([\s\S]*?)<\/span>/i, null, null);
+	// Получаем информацию из кошелька гугл
+	html = AnyBalance.requestGet(baseurl + 'merchant/pages/', g_headers);
+	
+	if(/\/merchant\/logout/i.test(html)){
+		var href = getParam(html, null, null, /(merchant\/pages\/bcid-[\s\S]{1,200})\/earnings\/display/i, null, null);
+		// Переходим на страницу Выплаты:
+		html = AnyBalance.requestGet(baseurl + href + '/transactions/display?selectedrange=LAST_THREE_MONTHS&filterchoice=ALL_TRANSACTIONS', g_headers);
 
-    if(getParam(html, null, null, /(<form[^>]+name="createaccount")/i))
-        throw new AnyBalance.Error('Google Checkout does not exist on this account.');
+		getParam(html, result, 'balance', /id="currentBalanceAmount">([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'last_payment', /lastSuccessfulPaymentAmount">([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'last_payment_date', /lastSuccessfulPaymentAmount[\s\S]{1,50}class="scorecard-section-footnote">[\s\S]*?on([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseDate);
+	}
+	else
+		AnyBalance.trace('Can`t login to Google Wallet, dou have it on this this account?');
 
-    getParam(html, result, 'sales', /<b[^>]*>([^<]*)<\/b>(?:&nbsp;|[\s\|])*<a[^>]+href="[^"]*sell\/archive/i, replaceTagsAndSpaces, parseBalance);
-
-    AnyBalance.setResult(result);
+	AnyBalance.setResult(result);
 }

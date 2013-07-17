@@ -1,16 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-    <id version="1">ab-money-google-checkout</id>
-    <name>Google Checkout</name>
-    <description>Shows number of purchases in Google Play. This provider does not work with 2-steps authorization.</description>
-    <author>BArtWell &lt;web@bartwell.ru&gt;</author>
+    <id version="2">ab-money-google-checkout</id>
+    <name>Google Checkout (Wallet)</name>
+	<api flags="no_browser" />
+    <description>
+		Shows current balance in google Wallet account. 
+		
+		This provider does not work with 2-steps authorization.
+	</description>
+    <author>Stark &lt;support@starksoft.ru&gt;</author>
     <files>
 	<icon>icon.png</icon>
         <preferences>preferences.xml</preferences>
+		<js>library.js</js>
         <js>main.js</js>
     </files>
     <counters>
-        <counter id="sales" name="Purchases"/>
+        <counter id="balance" name="Balance"/>
+		<counter id="last_payment" name="Last payment"/>
+		<counter id="last_payment_date" name="Last payment date" type="time" format="dd/MM/yyyy" />
+		<counter id="fio" name="Name" type="text"/>
+		<counter id="login_email" name="E-Mail" type="text"/>
     </counters>
     <keywords>
         Google, Play, Android, market, Checkout

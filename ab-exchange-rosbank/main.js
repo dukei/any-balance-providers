@@ -11,11 +11,15 @@ function main(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');    
 	var baseurl = 'http://www.rosbank.ru/ru/';
-	var htmlinfo = AnyBalance.requestGet(baseurl);
+	var htmlinfo = AnyBalance.requestGet(baseurl,
+	{
+		"Accept-Encoding": "deflate"
+	}
+	);
     var result = {success: true};
     
     var res,regexp = /currency\W*h2\W*h2\D*USD\D*([\d\.,]*)\/([\d\.,]*)\D*([\d\.,]*)\D*EUR\D*([\d\.,]*)\/([\d\.,]*)\D*([\d\,]*)\D*([\d\.\/]*)\./;
-	
+	//AnyBalance.trace(htmlinfo);
 	if(res=regexp.exec(htmlinfo)) {
 		result.USD = parseFloat(res[3].split(',').join('.'));
 		result.USD_out = parseFloat(res[2].split(',').join('.'));

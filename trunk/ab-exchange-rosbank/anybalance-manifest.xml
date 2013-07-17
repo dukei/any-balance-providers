@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1" version="4">ab-exchange-rosbank</id>
+  <id major_version="1" version="5">ab-exchange-rosbank</id>
   <name>РОСБАНК (курсы,расчет)</name>
   <description>
     Текущие курсы покупки/продажи, установленные РОСБАНК на текущую дату. Содержит курс доллара и евро.

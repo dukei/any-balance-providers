@@ -148,6 +148,32 @@ function main(){
 	}
 
 
+// Стратегия
+        if(AnyBalance.isAvailable('strategy')){
+		url='http://www.mvideo-bonus.ru/personal/edit/strategy/';
+		html = AnyBalance.requestGet(url, header);
+		var s=0
+		for (var j=1;j<5;j++){
+			var tmp=/MVStrategy\">\r\n(.*)\r\n(.*)\r\n(.*)\r\n(.*)\r\n(.*)<\/select>/m.exec(html)[j];
+			if(/select/.exec(tmp)){s=j;}
+		}
+		var strategy=['500 р. за 15000 Бонусов','2х500 р. за 30000 Бонусов','3х500 р. за 45000 Бонусов','4х500 р. за 60000 Бонусов'];
+		AnyBalance.trace(strategy[s-1]);
+		result.strategy=strategy[s-1];
+	}
+// Дата последней операции по счету
+        if(AnyBalance.isAvailable('last_date')){
+		url='http://www.mvideo-bonus.ru/personal/detail/';
+		html = AnyBalance.requestGet(url, header);
+		tmp=/<td class=\"tdl\">(.*)<\/td>/.exec(html)[1];
+		AnyBalance.trace(tmp);
+		result.last_date=tmp;
+
+	}
+
+
+
+
 	AnyBalance.trace('End parsing!');
 	
 

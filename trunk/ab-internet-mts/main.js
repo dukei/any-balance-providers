@@ -1,15 +1,5 @@
 /**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Домашний Интернет и Телевидение МТС
-Сайт оператора: http://www.dom.mts.ru/
-Личный кабинет (Москва): https://kabinet.mts.ru/
-Личный кабинет (Ростов): http://pc.aaanet.ru
-Личный кабинет (Новосибирск): https://my.citynsk.ru
-Личный кабинет (Пермь, Екатеринбург): https://bill.utk.ru/uportf/arm.pl
-Личный кабинет (Киров): https://lk.kirovnet.net
-Личный кабинет (Северодвинск): http://severodvinsk.stream-info.ru/client2
-Личный кабинет (Вологда): https://stats.vologda.comstar-r.ru/
 */
 
 var g_headers = {
@@ -43,6 +33,7 @@ var regions = {
    miass: getMiass,
    kurgan: getKurgan,
    barnaul: getBarnaul,
+   belgorod: getBelgorod,
 };
 
 function main(){
@@ -1041,5 +1032,44 @@ function getBarnaul(){
     getParam(html, result, 'agreement', /Номер договора:[^<]*<[^>]*>([^<]*)/i, replaceTagsAndSpaces);
     getParam(html, result, 'username', /Мои аккаунты[\s\S]{1,150}<strong>([\s\S]*?)<\/strong>/i, null);
 */
+    AnyBalance.setResult(result);
+}
+
+function getBelgorod(){
+    var prefs = AnyBalance.getPreferences();
+    AnyBalance.setDefaultCharset('utf-8');
+
+    var baseurl = 'http://stat.belgorod-net.ru/';
+
+    if(!prefs.__dbg){
+        var html = AnyBalance.requestPost(baseurl + 'index.php?r=site/login', {
+            'LoginForm[login]':prefs.login,
+            'LoginForm[password]':prefs.password,
+            'yt0':'Войти'
+        });
+    }else{
+        var html = AnyBalance.requestGet(baseurl + 'index.php?r=site/login');
+    }
+
+    if(!/\/logout/i.test(html)){
+        throw new AnyBalance.Error("Не удалось войти в личный кабинет. Неправильный логин-пароль?");
+    }
+
+    var result = {success: true};
+    //Вначале попытаемся найти активный тариф
+    var tr = getParam(html, null, null, /<tr[^>]+class="(?:account|odd|even)"[^>]*>((?:[\s\S](?!<\/tr))*?Состояние:\s+актив[\s\S]*?)<\/tr>/i);
+    if(!tr)
+        tr = getParam(html, null, null, /<tr[^>]+class="(?:account|odd|even)"[^>]*>([\s\S]*?)<\/tr>/i);
+
+    if(tr){
+        getParam(tr, result, '__tariff', /<!-- Работа с тарифом -->[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
+        getParam(tr, result, 'abon', /Абонентская плата:([^<]*)/i, replaceTagsAndSpaces, parseBalance2);
+        getParam(tr, result, 'internet_cur', /Израсходовано:([^<]*)/i, replaceTagsAndSpaces, parseBalance2);
+    }
+
+    getParam(html, result, 'agreement', /Номер договора:[^<]*<[^>]*>([^<]*)/i, replaceTagsAndSpaces);
+    getParam(html, result, 'balance', /Текущий баланс:[^<]*<[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance2);
+    getParam(html, result, 'username', /Мои аккаунты[\s\S]{1,150}<strong>([\s\S]*?)<\/strong>/i, null);
+
     AnyBalance.setResult(result);
 }

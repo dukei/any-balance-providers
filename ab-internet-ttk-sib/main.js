@@ -57,7 +57,7 @@ function main(){
             testbil:''
         }, headers);
  
-//        AnyBalance.trace(html);
+        AnyBalance.trace(html);
     }else{
        var html = AnyBalance.requestGet(baseurl);
     }
@@ -74,8 +74,8 @@ function main(){
     getParam(html, result, 'userName', /<h2>Здравствуйте,([^<!]*)/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'daysleft', /Интернета вам хватит примерно[\s\S]*?<span[^>]*>\s*на([^<]*)д/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'licschet', /<span[^>]*>\s*Лицевой счет\s*<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'balance', /<td[^>]*class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'agreement', />\s*Договор\s*<[\s\S]*?<td[^>]*>([\s\S]*?)(?:от|<\/td>)/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'balance', /<div[^>]*class="state_accounts"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, '__tariff', />\s*Тариф\s*<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
 
     if(AnyBalance.isAvailable('bonus')){

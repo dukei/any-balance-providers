@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="3">ab-internet-ttk-sib</id>
+  <id version="4">ab-internet-ttk-sib</id>
   <name>ТТК-Западная Сибирь</name>
   <description>
     Получает баланс и информацию о тарифном плане для интернет провайдера ТТК-Сибирь. Информация берется из личного кабинета https://stat.myttk.ru/.
@@ -31,7 +31,7 @@
     интернет, транстелеком
   </keywords>
   <type>
-    internet
+    internet, telephony
   </type>
   <country>
     ru

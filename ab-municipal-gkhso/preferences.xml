@@ -20,4 +20,14 @@
         dialogMessage="Введите пароль, используемый для входа в личный кабинет."
         inputType="textPassword">
     </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="accnum" 
+        dialogTitle="Номер счета или название услуги"
+        negativeButtonText="Отмена"
+        title="Поставщик или услуга"
+        summary="|Автоматически\n|{@s}\n"
+        dialogMessage="Введите наименование поставщика или часть названия услуги, по которой вы хотите посмотреть информацию, или оставьте пустым, чтобы получить информацию по первой услуге"
+        inputType="text">
+    </EditTextPreference>	
 </PreferenceScreen>

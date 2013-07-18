@@ -58,5 +58,35 @@ function main(){
     getParam(html, result, 'last', /<h2[^>]*>Последний платёж:<\/h2>(?:[\s\S]*?<span[^>]*>){1}([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'date', /Суммы к оплате на ([\s\S]*?):/i, replaceTagsAndSpaces, parseDate);
 
+	// Теперь таблица услуг
+	html = AnyBalance.requestGet(baseurl + 'room/details.action', g_headers);
+	
+	var table = getParam(html, null, null, /(<table class="grid">[\s\S]*?<\/table>)/i);
+    if(!table)
+        throw new AnyBalance.Error('Не найдена таблица услуг. Обратитесь к автору провайдера по имейл.');
+
+    var re = /(<tr class="">[\s\S]*?<\/tr>)/ig;
+    html.replace(re, function(tr)
+	{
+        if(AnyBalance.isSetResultCalled())
+            return; //Если уже вернули результат, то дальше крутимся вхолостую
+
+		var accnum = (prefs.accnum || '').toUpperCase();
+        var name = getParam(tr, null, null, /(?:[\s\S]*?<td[^>]*>){1}\s*([\s\S]*?)\s*<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+        var acc = getParam(tr, null, null, /(?:[\s\S]*?<td[^>]*>){2}\s*([\s\S]*?)\s*<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+        if(!prefs.accnum || (name && name.toUpperCase().indexOf(accnum) >= 0) || (acc && acc.toUpperCase().indexOf(accnum) >= 0))
+		{
+			getParam(tr, result, 'usluga', /(?:[\s\S]*?<td[^>]*>){1}\s*([\s\S]*?)\s*<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+			getParam(tr, result, 'postavshik', /(?:[\s\S]*?<td[^>]*>){2}\s*([\s\S]*?)\s*<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+            getParam(tr, result, 'ostatok', /(?:[\s\S]*?<td[^>]*>){3}\s*([\s\S]*?)\s*<\/td>/i, replaceTagsAndSpaces, parseBalance);
+			getParam(tr, result, 'nachislenia', /(?:[\s\S]*?<td[^>]*>){4}\s*([\s\S]*?)\s*<\/td>/i, replaceTagsAndSpaces, parseBalance);
+			getParam(tr, result, 'oplacheno', /(?:[\s\S]*?<td[^>]*>){5}\s*([\s\S]*?)\s*<\/td>/i, replaceTagsAndSpaces, parseBalance);
+			getParam(tr, result, 'ostatok_konec', /(?:[\s\S]*?<td[^>]*>){6}\s*([\s\S]*?)\s*<\/td>/i, replaceTagsAndSpaces, parseBalance);
+			getParam(tr, result, 'k_oplate', /(?:[\s\S]*?<td[^>]*>){7}\s*([\s\S]*?)\s*<\/td>/i, replaceTagsAndSpaces, parseBalance);
+            AnyBalance.setResult(result);
+            return;
+        }
+    });
+	
     AnyBalance.setResult(result);
 }

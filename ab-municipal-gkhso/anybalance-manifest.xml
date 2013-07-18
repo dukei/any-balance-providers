@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-municipal-gkhso</id>
+  <id version="3">ab-municipal-gkhso</id>
   <api flags="no_browser" />
   <name>ЖКХНСО (Новосибирск)</name>
   <description>
@@ -23,6 +23,13 @@
     <counter id="fio" name="ФИО" type="text"/>
     <counter id="adress" name="Адрес" type="text"/>
     <counter id="date" name="Суммы к оплате на" type="time" format="dd.MM.yyyy"/>
+	<counter id="usluga" name="Услуга" type="text"/>
+	<counter id="postavshik" name="Поставщик" type="text"/>
+	<counter id="ostatok" name="Остаток на начало месяца"/>
+	<counter id="nachislenia" name="Начисления + перерасчёты"/>
+	<counter id="oplacheno" name="Оплачено"/>
+	<counter id="ostatok_konec" name="Остаток на конец месяца"/>
+	<counter id="k_oplate" name="К оплате по услуге"/>
   </counters>
   <keywords>
     жкх

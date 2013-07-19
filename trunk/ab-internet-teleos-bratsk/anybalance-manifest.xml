@@ -4,7 +4,7 @@
 	<api flags="no_browser" />
 	<id version="1">ab-internet-teleos-bratsk</id>
 	<name>Телеос (Братск)</name>
-	<description>Получает данные для интернет провайдер Телеос-1 г. Братск по адресу https://stat.teleos.ru/</description>
+	<description>Получает данные для интернет провайдера Телеос-1 г. Братск по адресу https://stat.teleos.ru/</description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>

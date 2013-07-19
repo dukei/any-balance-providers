@@ -87,13 +87,48 @@ function main(){
         AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось войти в личный кабинет. Проблемы на сайте или сайт изменен.');
     }
-
     var result = {success: true};
+	
+	if(!prefs.accnum)
+	{
+		getParam(html, result, 'balance', /Баланс:[\S\s]*?<strong[^>]*>([\S\s]*?)<\/strong>/i, replaceTagsAndSpaces, parseBalanceRK);
+		getParam(html, result, 'status', /Статус:[\S\s]*?<strong[^>]*>([\S\s]*?)<\/strong>/i, replaceTagsAndSpaces, html_entity_decode);
+		getParam(html, result, 'licschet', /Лицевой счёт:[\S\s]*?<strong[^>]*>([\S\s]*?)<\/strong>/i, replaceTagsAndSpaces, html_entity_decode);
+		getParam(html, result, '__tariff', /Тарифный план:[\S\s]*?<strong[^>]*>([\S\s]*?)<\/strong>/i, replaceTagsAndSpaces, html_entity_decode);
+	}
+	else
+	{
+		// Теперь таблица услуг
+		var table = getParam(html, null, null, /(<table[\s\S]{1,150}id="list"[\s\S]*?<\/table>)/i);
+		if(!table)
+			throw new AnyBalance.Error('Не найдена таблица услуг. Обратитесь к автору провайдера по имейл.');
+		
+		
+		
+		
+		var re = /(<tr[\s\S]*?<\/tr>)/ig;
+		html.replace(re, function(tr)
+		{
+			if(AnyBalance.isSetResultCalled())
+				return; //Если уже вернули результат, то дальше крутимся вхолостую
+			
+			var accnum = (prefs.accnum || '').toUpperCase();
+			var acc = getParam(tr, null, null, /(?:[\s\S]*?<td[^>]*>){1}\s*(?:<b>|<a href[\s\S]*?>|)\s*([\s\S]*?)\s*(?:<\/b>|<\/a>|)\s*<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+			//var acc = getParam(tr, null, null, /(?:[\s\S]*?<td[^>]*>){2}\s*([\s\S]*?)\s*<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+			if(!prefs.accnum || /*(name && name.toUpperCase().indexOf(accnum) >= 0) || */(acc && acc.toUpperCase().indexOf(accnum) >= 0))
+			{
+				getParam(tr, result, 'balance', /(?:[\s\S]*?<td[^>]*>){5}\s*(?:<b>|<a href[\s\S]*?>|)\s*([\s\S]*?)\s*(?:<\/b>|<\/a>|)\s*<\/td>/i, replaceTagsAndSpaces, parseBalanceRK);
+				//getParam(html, result, 'status', /Статус:[\S\s]*?<strong[^>]*>([\S\s]*?)<\/strong>/i, replaceTagsAndSpaces, html_entity_decode);
+				getParam(tr, result, 'licschet', /(?:[\s\S]*?<td[^>]*>){1}\s*(?:<b>|<a href[\s\S]*?>|)\s*([\s\S]*?)\s*(?:<\/b>|<\/a>|)\s*<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+				//getParam(html, result, '__tariff', /Тарифный план:[\S\s]*?<strong[^>]*>([\S\s]*?)<\/strong>/i, replaceTagsAndSpaces, html_entity_decode);
+				getParam(tr, result, 'usluga', /(?:[\s\S]*?<td[^>]*>){4}\s*(?:<b>|<a href[\s\S]*?>|)\s*([\s\S]*?)\s*(?:<\/b>|<\/a>|)\s*<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+				AnyBalance.setResult(result);
+				return;
+			}
+		});
+	}
 
-    getParam(html, result, 'balance', /Баланс:[\S\s]*?<strong[^>]*>([\S\s]*?)<\/strong>/i, replaceTagsAndSpaces, parseBalanceRK);
-    getParam(html, result, 'status', /Статус:[\S\s]*?<strong[^>]*>([\S\s]*?)<\/strong>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'licschet', /Лицевой счёт:[\S\s]*?<strong[^>]*>([\S\s]*?)<\/strong>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, '__tariff', /Тарифный план:[\S\s]*?<strong[^>]*>([\S\s]*?)<\/strong>/i, replaceTagsAndSpaces, html_entity_decode);
+
 
     AnyBalance.setResult(result);
 }

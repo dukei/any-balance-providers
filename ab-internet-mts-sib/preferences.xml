@@ -27,6 +27,16 @@
         dialogMessage="Введите пароль, используемый для входа в личный кабинет lka.sib.comstar-r.ru."
         inputType="textPassword">
     </EditTextPreference>
+	<EditTextPreference 
+        positiveButtonText="ОК"
+        key="accnum" 
+        dialogTitle="Номер счета"
+        negativeButtonText="Отмена"
+        title="Номер счета"
+        summary="||***********"
+        dialogMessage="Введите номер счета, за которым хотите следить или оставьте пустым, чтобы получить первый счет."
+        inputType="textPassword">
+    </EditTextPreference>
     <ListPreference 
         key="city" 
         title="Город"

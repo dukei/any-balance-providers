@@ -44,13 +44,11 @@ function main(){
     var result = {success: true};
     var matches;
 
-    //getParam(info, result, 'balance', /<a[^>]*class="credit(?:ATU)? icon[\s\S]*?<a[^>]*class="first[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(info, result, 'balance', /class="credit[\s\S]{1,50}icon[\s\S]*?class="first">([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	getParam(info, result, 'balance', /class="credit[\s\S]*?semibold">([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
     getParam(info, result, 'currency', /class="credit[\s\S]{1,50}icon[\s\S]*?class="first">([\s\S]*?)<\//i, replaceTagsAndSpaces, parseCurrency);
     
     if(AnyBalance.isAvailable('subscriptions')){
-    	//getParam(info, result, 'subscriptions', /<li[^>]+class="subs"[^>]*>([\s\S]*?)<(?:ul|li)[^>]*>/i, replaceTagsAndSpaces, parseBalance);
-		getParam(info, result, 'subscriptions', /class="subscriptions icon[\s\S]*?class="first"[\s\S]*?">([\s\S]*?)span>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(info, result, 'subscriptions', /class="subscriptions\s*icon[\s\S]*?screenReaderAcc">([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
 		
         if(!result.subscriptions) result.subscriptions = 0;
     }

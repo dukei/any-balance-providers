@@ -144,9 +144,12 @@ function getBalanceValueExpirationDate(html, text, parseFunc, result, counter){
 
 function parseBalanceList(html, result){
     //Уменьшим область поиска для скорости и (надеюсь) для надежности
-    html = getParam(html, null, null, /'prePaid(?:Ctn)?Balances?List'([\s\S]*?)'prePaid(?:Ctn)?Balances?List'/i);
-    if(!html)
-        throw new AnyBalance.Error('Не найден список балансов. Обратитесь к автору провайдера для исправления.');
+    var _html = getParam(html, null, null, /'prePaid(?:Ctn)?Balances?List'([\s\S]*?)'prePaid(?:Ctn)?Balances?List'/i);
+    if(!_html){
+        var error = getParam(html, null, null, /<span[^>]+class="warn"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+        throw new AnyBalance.Error('Не найден список балансов. ' + (error || 'Обратитесь к автору провайдера для исправления.'));
+    }
+    html = _html;
 
     // Баланс
     getBalanceValue (html, 'Основной баланс', parseBalance, result, 'balance');

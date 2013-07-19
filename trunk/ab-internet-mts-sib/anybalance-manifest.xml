@@ -2,7 +2,7 @@
 <provider>
   <!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
   <api flags="no_browser" />
-  <id version="4">ab-internet-mts-sib</id>
+  <id version="5">ab-internet-mts-sib</id>
   <name>МТС Комстар-регионы (Сибирь)</name>
   <description>
     Получает баланс и информацию о тарифном плане для сибирского филиала Комстар-регионы (МТС) (https://ural.mts.ru).

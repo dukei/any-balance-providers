@@ -8,7 +8,7 @@
 
 function main(){
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://my.ul.vt.ru/pls/internet/';
+	var baseurl = 'http://my.ul.volga.rt.ru/pls/internet/';
     // Заходим на главную страницу
     var html = AnyBalance.requestPost(baseurl + "www.GetHomePage", {
     	p_lang: 'RUS',

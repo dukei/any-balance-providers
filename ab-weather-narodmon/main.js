@@ -6,7 +6,7 @@ function main(){
     var baseurl = "http://narodmon.ru/client.php";
 
     var html = AnyBalance.requestPost(baseurl,'{"cmd":"sensorDev","id":"'+number+'","api_key":"90FeOzSOINuLI","uuid":"5d41402abc4b2a76b9719d911017c592"}');
-	var info=$.parseJSON(html);
+	var info=JSON.parse(html);
     if(info.sensors==null)
         throw new AnyBalance.Error("Датчик с номером " + number + " отсутствует. Проверьте номер!");
 		

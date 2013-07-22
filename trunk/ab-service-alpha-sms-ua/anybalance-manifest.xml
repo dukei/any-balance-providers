@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
+	<api flags="no_browser" />
+	<id version="1">ab-service-alpha-sms-ua</id>
+	<name>Альфа SMS (Украина)</name>
+	<description>
+		Получает данные о баланса СМС сервиса Альфа СМС Украина (http://www.alphasms.ua/)
+	</description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс"/>
+	</counters>
+	<keywords></keywords>
+	<type>service</type>
+	<country>ua</country>
+</provider>

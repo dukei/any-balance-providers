@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="ID Счетчика" 
+        positiveButtonText="ОК" 
+        summary="||{@s}" 
+        dialogTitle="ID Счетчика" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите id счетчика (id можно посмотреть в адресной строке браузера ?counter_id=12345678)"
+        key="login">
+    </EditTextPreference>
+</PreferenceScreen>

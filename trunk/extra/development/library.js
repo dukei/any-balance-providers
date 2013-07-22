@@ -704,7 +704,7 @@ function parseTrafficEx(text, thousand, order, defaultUnits){
         AnyBalance.trace("Could not parse traffic value from " + text);
         return;
     }
-    var units = getParam(_text, null, null, /([kmgкмг][бb]?|[бb](?![\wа-я])|байт|bytes)/i);
+    var units = getParam(_text, null, null, /([kmgtкмгт][бb]?|[бb](?![\wа-я])|байт|bytes)/i);
     if(!units && !defaultUnits){
         AnyBalance.trace("Could not parse traffic units from " + text);
         return;
@@ -727,13 +727,17 @@ function parseTrafficEx(text, thousand, order, defaultUnits){
       case 'г':
         val = Math.round(val/Math.pow(thousand, order-3)*100)/100;
         break;
+      case 't':
+      case 'т':
+        val = Math.round(val/Math.pow(thousand, order-4)*100)/100;
+        break;
     }
     var textval = ''+val;
     if(textval.length > 6)
       val = Math.round(val);
     else if(textval.length > 5)
       val = Math.round(val*10)/10;
-    var dbg_units = {0: 'b', 1: 'kb', 2: 'mb', 3: 'gb'};
+    var dbg_units = {0: 'b', 1: 'kb', 2: 'mb', 3: 'gb', 4: 'tb'};
     AnyBalance.trace('Parsing traffic (' + val + dbg_units[order] + ') from: ' + text);
     return val;
 }

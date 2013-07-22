@@ -16,6 +16,12 @@ var g_headers = {
 };
 
 function getBlock(url, html, name, exact){
+    var formhtml = html;
+    if(isArray(html)){  //Если массив, то разный хтмл для поиска блока и для формы
+        formhtml = html[1];
+        html = html[0];
+    }
+
     var re = new RegExp("PrimeFaces\\.\\w+\\s*\\(\\s*\\{[^}]*update:\\s*'" + (exact ? "" : "[^']*:") + name);
     var data = getParam(html, null, null, re);
     if(!data){
@@ -29,7 +35,7 @@ function getBlock(url, html, name, exact){
         return '';
     }
     
-    var form = getParam(html, null, null, new RegExp('<form[^>]+name="' + formId + '"[\\s\\S]*?</form>', 'i'));
+    var form = getParam(formhtml, null, null, new RegExp('<form[^>]+name="' + formId + '"[\\s\\S]*?</form>', 'i'));
     if(!form){
         AnyBalance.trace('Не найдена форма ' + formId + ' для блока ' + name + '!');
         return '';
@@ -122,6 +128,7 @@ function fetchPost(baseurl, html){
         
         getParam(xhtml, result, 'balance', /Расходы по номеру за текущий период с НДС[\s\S]*?<div[^>]+class="balan?ce-summ"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
         getParam(xhtml, result, ['currency', 'balance'], /Расходы по номеру за текущий период с НДС[\s\S]*?<div[^>]+class="balan?ce-summ"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, myParseCurrency);
+
     }else{
         //Если несколько номеров в кабинете, то почему-то баланс надо брать отсюда
         xhtml = getBlock(baseurl + 'c/post/index.html', html, 'homeBalance');
@@ -132,27 +139,18 @@ function fetchPost(baseurl, html){
         getParam(xhtml, result, '__tariff', /<div[^>]+:tariffInfo[^>]*class="(?:current|tariff-info)"[^>]*>(?:[\s\S](?!<\/div>))*?<h2[^>]*>([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces, html_entity_decode);
     }
 
+    if(AnyBalance.isAvailable('sms_left', 'mms_left')){
+        xhtml = getBlock(baseurl + 'c/post/index.html', html, 'loadingBonusesAndServicesDetails');
+        xhtml = getBlock(baseurl + 'c/post/index.html', [xhtml, html], 'bonusesloaderDetails');
+        getBonuses(xhtml, result);
+    }
+
     if(AnyBalance.isAvailable('fio')){
         var xhtml = AnyBalance.requestGet(baseurl + 'm/post/index.html', g_headers);
         getParam(xhtml, result, 'fio', /<div[^>]+class="abonent-name"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
         
     }
-/*
-    if(AnyBalance.isAvailable('sms_left', 'mms_left')){
-        xhtml = getBlock(baseurl + 'c/pre/index.html', html, 'bonusesloaderDetails');
-        var services = sumParam(xhtml, null, null, /<tr[^>]*>\s*<td[^>]+class="title"(?:[\s\S](?!<\/tr>))*?<td[^>]+class="value"[\s\S]*?<\/tr>/ig);
-        for(var i=0; i<services.length; ++i){
-            var name = getParam(services[i], null, null, /<td[^>]+class="title"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-            if(/SMS/i.test(name)){
-                sumParam(services[i], result, 'sms_left', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-            }else if(/MMS/i.test(name)){
-                sumParam(services[i], result, 'mms_left', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-            }else{
-                AnyBalance.trace("Неизвестная опция: " + services[i]);
-            }
-        }
-    }
-*/
+
     //Возвращаем результат
     AnyBalance.setResult(result);
 
@@ -179,28 +177,31 @@ function fetchPre(baseurl, html){
 
     if(AnyBalance.isAvailable('sms_left', 'mms_left', 'rub_bonus', 'rub_opros', 'sek_bonus')){
         xhtml = getBlock(baseurl + 'c/pre/index.html', html, 'bonusesloaderDetails');
-        var services = sumParam(xhtml, null, null, /<tr[^>]*>\s*<td[^>]+class="title"(?:[\s\S](?!<\/tr>))*?<td[^>]+class="value"[\s\S]*?<\/tr>/ig);
-        for(var i=0; i<services.length; ++i){
-            var name = getParam(services[i], null, null, /<td[^>]+class="title"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-            if(/SMS/i.test(name)){
-                sumParam(services[i], result, 'sms_left', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-            }else if(/MMS/i.test(name)){
-                sumParam(services[i], result, 'mms_left', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-            }else if(/Рублей БОНУС/i.test(name)){
-                sumParam(services[i], result, 'rub_bonus', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-            }else if(/Рублей за участие в опросе/i.test(name)){
-                sumParam(services[i], result, 'rub_opros', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-            }else if(/Секунд БОНУС\s*\+/i.test(name)){
-                sumParam(services[i], result, 'min_bi', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-            }else if(/Секунд БОНУС-2/i.test(name)){
-                sumParam(services[i], result, 'min_local', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-            }else{
-                AnyBalance.trace("Неизвестная опция: " + services[i]);
-            }
-        }
+        getBonuses(xhtml, result);
     }
 
     //Возвращаем результат
     AnyBalance.setResult(result);
+}
 
+function getBonuses(xhtml, result){
+    var services = sumParam(xhtml, null, null, /<tr[^>]*>\s*<td[^>]+class="title"(?:[\s\S](?!<\/tr>))*?<td[^>]+class="value"[\s\S]*?<\/tr>/ig);
+    for(var i=0; i<services.length; ++i){
+        var name = getParam(services[i], null, null, /<td[^>]+class="title"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+        if(/SMS/i.test(name)){
+            sumParam(services[i], result, 'sms_left', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+        }else if(/MMS/i.test(name)){
+            sumParam(services[i], result, 'mms_left', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+        }else if(/Рублей БОНУС/i.test(name)){
+            sumParam(services[i], result, 'rub_bonus', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+        }else if(/Рублей за участие в опросе/i.test(name)){
+            sumParam(services[i], result, 'rub_opros', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+        }else if(/Секунд БОНУС\s*\+/i.test(name)){
+            sumParam(services[i], result, 'min_bi', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+        }else if(/Секунд БОНУС-2/i.test(name)){
+            sumParam(services[i], result, 'min_local', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+        }else{
+            AnyBalance.trace("Неизвестная опция: " + services[i]);
+        }
+    }
 }

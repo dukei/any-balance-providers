@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="2">ab-weather-narodmon</id>
+  <id major_version="1.0" version="3">ab-weather-narodmon</id>
   <name>Народный монитор</name>
   <description>
    Получает текущую погоду с сайта narodmon.ru.  В настройки провайдера требуется ввести номер датчика. Номер датчика можно получить так:

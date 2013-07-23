@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="8" date="2013-07-23">
+      - Добавлена совместимость с Balance Widget
+    </change>
     <change version="7" date="2013-04-24">
       - Исправлена ошибка получения данных в случае недоступности тарифных данных в ростелекоме
     </change>

@@ -26,16 +26,22 @@ function getParam (html, result, param, regexp, replaces, parser) {
 	if (!isAvailable(param))
 		return;
 
-	var matches = regexp ? html.match(regexp) : [, html], value;
-	if (matches) {
-                //Если нет скобок, то значение - всё заматченное
-		value = replaceAll(isset(matches[1]) ? matches[1] : matches[0], replaces);
-		if (parser)
-			value = parser (value);
+        var regexps = isArray(regexp) ? regexp : [regexp];
+        for(var i=0; i<regexps.length; ++i){ //Если массив регэкспов, то возвращаем первый заматченный
+                regexp = regexps[i];
+		var matches = regexp ? html.match(regexp) : [, html], value;
+		if (matches) {
+                        //Если нет скобок, то значение - всё заматченное
+			value = replaceAll(isset(matches[1]) ? matches[1] : matches[0], replaces);
+			if (parser)
+				value = parser (value);
+	        
+			if(param && isset(value))
+				result[isArray(param) ? param[0] : param] = value;
+			break;
+		}
+        }
 
-		if(param)
-			result[isArray(param) ? param[0] : param] = value;
-	}
 	return value;
 }
 
@@ -114,13 +120,217 @@ function parseCurrency(text){
 /**
  * Заменяет HTML сущности в строке на соответствующие им символы
  */
-function html_entity_decode(str)
+ function html_entity_decode (string) {
+  // http://kevin.vanzonneveld.net
+  // +   original by: john (http://www.jd-tech.net)
+  // +      input by: ger
+  // +   improved by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
+  // +    revised by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
+  // +   bugfixed by: Onno Marsman
+  // +   improved by: marc andreu
+  // +    revised by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
+  // +      input by: Ratheous
+  // +   bugfixed by: Brett Zamir (http://brett-zamir.me)
+  // +      input by: Nick Kolosov (http://sammy.ru)
+  // +   bugfixed by: Fox
+  // -    depends on: get_html_translation_table
+  // *     example 1: html_entity_decode('Kevin &amp; van Zonneveld');
+  // *     returns 1: 'Kevin & van Zonneveld'
+  // *     example 2: html_entity_decode('&amp;lt;');
+  // *     returns 2: '&lt;'
+  var hash_map = {},
+    symbol = '',
+    tmp_str = '',
+    entity = '';
+  tmp_str = string.toString();
+  var quote_style = '';
+  if (false === (hash_map = get_html_translation_table('HTML_ENTITIES', quote_style))) {
+    return false;
+  }
+
+  // fix &amp; problem
+  // http://phpjs.org/functions/get_html_translation_table:416#comment_97660
+  delete(hash_map['&']);
+  hash_map['&'] = '&amp;';
+
+  for (symbol in hash_map) {
+    entity = hash_map[symbol];
+    tmp_str = tmp_str.split(entity).join(symbol);
+  }
+  tmp_str = tmp_str.split('&#039;').join("'");
+
+  return tmp_str;
+}
+function get_html_translation_table (table, quote_style) {
+  // http://kevin.vanzonneveld.net
+  // +   original by: Philip Peterson
+  // +    revised by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
+  // +   bugfixed by: noname
+  // +   bugfixed by: Alex
+  // +   bugfixed by: Marco
+  // +   bugfixed by: madipta
+  // +   improved by: KELAN
+  // +   improved by: Brett Zamir (http://brett-zamir.me)
+  // +   bugfixed by: Brett Zamir (http://brett-zamir.me)
+  // +      input by: Frank Forte
+  // +   bugfixed by: T.Wild
+  // +      input by: Ratheous
+  // %          note: It has been decided that we're not going to add global
+  // %          note: dependencies to php.js, meaning the constants are not
+  // %          note: real constants, but strings instead. Integers are also supported if someone
+  // %          note: chooses to create the constants themselves.
+  // *     example 1: get_html_translation_table('HTML_SPECIALCHARS');
+  // *     returns 1: {'"': '&quot;', '&': '&amp;', '<': '&lt;', '>': '&gt;'}
+  var entities = {},
+    hash_map = {},
+    decimal;
+  var constMappingTable = {},
+    constMappingQuoteStyle = {};
+  var useTable = {},
+    useQuoteStyle = {};
+
+  // Translate arguments
+  constMappingTable[0] = 'HTML_SPECIALCHARS';
+  constMappingTable[1] = 'HTML_ENTITIES';
+  constMappingQuoteStyle[0] = 'ENT_NOQUOTES';
+  constMappingQuoteStyle[2] = 'ENT_COMPAT';
+  constMappingQuoteStyle[3] = 'ENT_QUOTES';
+
+  useTable = !isNaN(table) ? constMappingTable[table] : table ? table.toUpperCase() : 'HTML_SPECIALCHARS';
+  useQuoteStyle = !isNaN(quote_style) ? constMappingQuoteStyle[quote_style] : quote_style ? quote_style.toUpperCase() : 'ENT_COMPAT';
+
+  if (useTable !== 'HTML_SPECIALCHARS' && useTable !== 'HTML_ENTITIES') {
+    throw new Error("Table: " + useTable + ' not supported');
+    // return false;
+  }
+
+  entities['38'] = '&amp;';
+  if (useTable === 'HTML_ENTITIES') {
+    entities['160'] = '&nbsp;';
+    entities['161'] = '&iexcl;';
+    entities['162'] = '&cent;';
+    entities['163'] = '&pound;';
+    entities['164'] = '&curren;';
+    entities['165'] = '&yen;';
+    entities['166'] = '&brvbar;';
+    entities['167'] = '&sect;';
+    entities['168'] = '&uml;';
+    entities['169'] = '&copy;';
+    entities['170'] = '&ordf;';
+    entities['171'] = '&laquo;';
+    entities['172'] = '&not;';
+    entities['173'] = '&shy;';
+    entities['174'] = '&reg;';
+    entities['175'] = '&macr;';
+    entities['176'] = '&deg;';
+    entities['177'] = '&plusmn;';
+    entities['178'] = '&sup2;';
+    entities['179'] = '&sup3;';
+    entities['180'] = '&acute;';
+    entities['181'] = '&micro;';
+    entities['182'] = '&para;';
+    entities['183'] = '&middot;';
+    entities['184'] = '&cedil;';
+    entities['185'] = '&sup1;';
+    entities['186'] = '&ordm;';
+    entities['187'] = '&raquo;';
+    entities['188'] = '&frac14;';
+    entities['189'] = '&frac12;';
+    entities['190'] = '&frac34;';
+    entities['191'] = '&iquest;';
+    entities['192'] = '&Agrave;';
+    entities['193'] = '&Aacute;';
+    entities['194'] = '&Acirc;';
+    entities['195'] = '&Atilde;';
+    entities['196'] = '&Auml;';
+    entities['197'] = '&Aring;';
+    entities['198'] = '&AElig;';
+    entities['199'] = '&Ccedil;';
+    entities['200'] = '&Egrave;';
+    entities['201'] = '&Eacute;';
+    entities['202'] = '&Ecirc;';
+    entities['203'] = '&Euml;';
+    entities['204'] = '&Igrave;';
+    entities['205'] = '&Iacute;';
+    entities['206'] = '&Icirc;';
+    entities['207'] = '&Iuml;';
+    entities['208'] = '&ETH;';
+    entities['209'] = '&Ntilde;';
+    entities['210'] = '&Ograve;';
+    entities['211'] = '&Oacute;';
+    entities['212'] = '&Ocirc;';
+    entities['213'] = '&Otilde;';
+    entities['214'] = '&Ouml;';
+    entities['215'] = '&times;';
+    entities['216'] = '&Oslash;';
+    entities['217'] = '&Ugrave;';
+    entities['218'] = '&Uacute;';
+    entities['219'] = '&Ucirc;';
+    entities['220'] = '&Uuml;';
+    entities['221'] = '&Yacute;';
+    entities['222'] = '&THORN;';
+    entities['223'] = '&szlig;';
+    entities['224'] = '&agrave;';
+    entities['225'] = '&aacute;';
+    entities['226'] = '&acirc;';
+    entities['227'] = '&atilde;';
+    entities['228'] = '&auml;';
+    entities['229'] = '&aring;';
+    entities['230'] = '&aelig;';
+    entities['231'] = '&ccedil;';
+    entities['232'] = '&egrave;';
+    entities['233'] = '&eacute;';
+    entities['234'] = '&ecirc;';
+    entities['235'] = '&euml;';
+    entities['236'] = '&igrave;';
+    entities['237'] = '&iacute;';
+    entities['238'] = '&icirc;';
+    entities['239'] = '&iuml;';
+    entities['240'] = '&eth;';
+    entities['241'] = '&ntilde;';
+    entities['242'] = '&ograve;';
+    entities['243'] = '&oacute;';
+    entities['244'] = '&ocirc;';
+    entities['245'] = '&otilde;';
+    entities['246'] = '&ouml;';
+    entities['247'] = '&divide;';
+    entities['248'] = '&oslash;';
+    entities['249'] = '&ugrave;';
+    entities['250'] = '&uacute;';
+    entities['251'] = '&ucirc;';
+    entities['252'] = '&uuml;';
+    entities['253'] = '&yacute;';
+    entities['254'] = '&thorn;';
+    entities['255'] = '&yuml;';
+  }
+
+  if (useQuoteStyle !== 'ENT_NOQUOTES') {
+    entities['34'] = '&quot;';
+  }
+  if (useQuoteStyle === 'ENT_QUOTES') {
+    entities['39'] = '&#39;';
+  }
+  entities['60'] = '&lt;';
+  entities['62'] = '&gt;';
+
+
+  // ascii decimals to real symbols
+  for (decimal in entities) {
+    if (entities.hasOwnProperty(decimal)) {
+      hash_map[String.fromCharCode(decimal)] = entities[decimal];
+    }
+  }
+
+  return hash_map;
+}
+/*function html_entity_decode(str)
 {
+	//return str;
     //jd-tech.net
-    var tarea=document.createElement('textarea');
+    var tarea = document.createElement('textarea');
     tarea.innerHTML = str;
     return tarea.value;
-}
+}*/
 
 /**
  * Получает объект с параметрами форм (ищет в html все <input и <select и возвращает объект с их именами-значениями.
@@ -144,7 +354,10 @@ function createFormParams(html, process, array){
     html.replace(/<input[^>]+name="([^"]*)"[^>]*>|<select[^>]+name="([^"]*)"[^>]*>[\s\S]*?<\/select>/ig, function(str, nameInp, nameSel){
         var value = '';
         if(nameInp){
-            value = getParam(str, null, null, /value="([^"]*)"/i, null, html_entity_decode);
+            if(/type="button"/i.test(str))
+                value=undefined;
+            else
+                value = getParam(str, null, null, /value="([^"]*)"/i, null, html_entity_decode) || '';
             name = nameInp;
         }else if(nameSel){
             value = getParam(str, null, null, /^<[^>]*value="([^"]*)"/i, null, html_entity_decode);
@@ -201,6 +414,12 @@ function joinObjects(newObject, oldObject){
    return obj;
 }
 
+function joinArrays(arr1, arr2){
+   var narr = arr1.slice();
+   narr.push.apply(narr, arr2);
+   return narr;
+}
+
 /**
  *  Добавляет хедеры к переданным или к g_headers
  */
@@ -211,7 +430,7 @@ function addHeaders(newHeaders, oldHeaders){
    if(!bOldArray && !bNewArray)
        return joinObjects(newHeaders, oldHeaders);
    if(bOldArray && bNewArray) //Если это массивы, то просто делаем им join
-       return oldHeaders.slice().push.apply(oldHeaders, newHeaders);
+       return joinArrays(oldHeaders, newHeaders);
    if(!bOldArray && bNewArray){ //Если старый объект, а новый массив
        var headers = joinObjects(null, oldHeaders);
        for(var i=0; i<newHeaders.length; ++i)
@@ -345,26 +564,29 @@ function parseDateJS(str){
  * если regexp == null, то значением является переданный html
  * если replaces == null, то замены не делаются
  * do_replace - если true, то найденные значения вырезаются из переданного текста 
- * и новый текст возвращается (только при param == null)
+ * и новый текст возвращается (только при param != null)
  * 
  * replaces - массив, нечетные индексы - регулярные выражения, четные - строки, 
  * на которые надо заменить куски, подходящие под предыдущее регулярное выражение. Эти массивы могут быть вложенными.
  * см. например replaceTagsAndSpaces
  */
 function sumParam (html, result, param, regexp, replaces, parser, do_replace, aggregate) {
-    if (!isAvailable(param)){
-	if(do_replace)
-		return html;
-        else
-		return;
+    if(typeof(do_replace) == 'function'){
+        var aggregate_old = aggregate;
+        aggregate = do_replace;
+        do_replace = aggregate_old || false;
     }
+
+    function replaceIfNeeded(){
+	if(do_replace) 
+		return regexp ? html.replace(regexp, '') : '';
+    }
+
+    if (!isAvailable(param))  //Даже если счетчик не требуется, всё равно надо вырезать его матчи, чтобы не мешалось другим счетчикам
+        return replaceIfNeeded();
+
     //После того, как проверили нужность счетчиков, кладем результат в первый из переданных счетчиков. Оставляем только первый
     param = isArray(param) ? param[0] : param;
-
-    if(typeof(do_replace) == 'function'){
-        aggregate = do_replace;
-        do_replace = false;
-    }
 
     var values = [], matches;
     if(param && isset(result[param]))
@@ -378,15 +600,21 @@ function sumParam (html, result, param, regexp, replaces, parser, do_replace, ag
         	values.push(value);
     }
 
-    if(!regexp){
-        replaceAndPush(html);
-    }else{
-        regexp.lastIndex = 0; //Удостоверяемся, что начинаем поиск сначала.
-        while(matches = regexp.exec(html)){
+    var regexps = isArray(regexp) ? regexp : [regexp];
+    for(var i=0; i<regexps.length; ++i){ //Пройдемся по массиву регулярных выражений
+        regexp = regexps[i];
+        if(!regexp){
+            replaceAndPush(html);
+        }else{
+            regexp.lastIndex = 0; //Удостоверяемся, что начинаем поиск сначала.
+            while(matches = regexp.exec(html)){
                 replaceAndPush(isset(matches[1]) ? matches[1] : matches[0]);
-        	if(!regexp.global)
-            		break; //Если поиск не глобальный, то выходим из цикла
-	}
+            	if(!regexp.global)
+                    break; //Если поиск не глобальный, то выходим из цикла
+	    }
+        }
+        if(do_replace) //Убираем все матчи, если это требуется
+            html = regexp ? html.replace(regexp, '') : '';
     }
 
     var total_value;
@@ -399,8 +627,7 @@ function sumParam (html, result, param, regexp, replaces, parser, do_replace, ag
       if(isset(total_value)){
           result[param] = total_value;
       }
-      if(do_replace)
-          return regexp ? html.replace(regexp, '') : html;
+      return html;
     }else{
       return total_value;
     }
@@ -416,16 +643,19 @@ function aggregate_sum(values){
     return total_value;
 }
 
-function aggregate_join(values, delimiter){
+function aggregate_join(values, delimiter, allow_empty){
     if(values.length == 0)
         return;
     if(!isset(delimiter))
         delimiter = ', ';
-    return values.join(delimiter);
+    var ret = values.join(delimiter);
+    if(!allow_empty)
+        ret = ret.replace(/^(?:\s*,\s*)+|(?:\s*,\s*){2,}|(?:\s*,\s*)+$/g, '');
+    return ret;
 }
 
-function create_aggregate_join(delimiter){
-    return function(values){ return aggregate_join(values, delimiter); }
+function create_aggregate_join(delimiter, allow_empty){
+    return function(values){ return aggregate_join(values, delimiter, allow_empty); }
 }
 
 function aggregate_min(values){
@@ -468,13 +698,13 @@ function parseTrafficGb(text, defaultUnits){
  * Вычисляет трафик в нужных единицах из переданной строки.
  */
 function parseTrafficEx(text, thousand, order, defaultUnits){
-    var _text = html_entity_decode(text.replace(/\s+/, ''));
+    var _text = html_entity_decode(text.replace(/\s+/g, ''));
     var val = getParam(_text, null, null, /(-?\d[\d\.,]*)/, replaceFloat, parseFloat);
     if(!isset(val)){
         AnyBalance.trace("Could not parse traffic value from " + text);
         return;
     }
-    var units = getParam(_text, null, null, /([kmgкмг][бb]|байт|bytes)/i);
+    var units = getParam(_text, null, null, /([kmgкмг][бb]?|[бb](?![\wа-я])|байт|bytes)/i);
     if(!units && !defaultUnits){
         AnyBalance.trace("Could not parse traffic units from " + text);
         return;

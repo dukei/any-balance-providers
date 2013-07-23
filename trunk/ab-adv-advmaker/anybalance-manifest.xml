@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
+	<api flags="no_browser" />
+	<id version="12">ab-adv-advmaker</id>
+	<name>AdvMaker</name>
+	<description>
+		Получает данные по баннерам из рекламной сети AdvMaker (https://advmaker.net/webmaster/) 
+		
+		Если какие-то данные отображаются не правильно или не в должном количестве, связывайтесь с автором провайдера по имейл.
+	</description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Общий баланс" units="р"/>
+		<counter id="click_under " name="ClickUnder" units="р"/>
+		<counter id="slide_banner" name="SlideBanner" units="р"/>
+		<counter id="banners" name="Banners" units="р"/>
+	</counters>
+	<keywords>реклама</keywords>
+	<type>adv</type>
+	<country>ru</country>
+</provider>

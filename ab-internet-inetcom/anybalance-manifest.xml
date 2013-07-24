@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-inetcom</id>
-  <api flags="no_browser"/>
+  <id version="5">ab-internet-inetcom</id>
   <name>Инетком (Москва)</name>
   <description>
     Получает баланс и информацию о тарифном плане для интернет-провайдера Инетком (Москва). Информация берется из личного кабинета https://stat.inetcom.ru/cabinet.
@@ -11,13 +10,16 @@
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
     <js>main.js</js>
+    <js>library.js</js>
     <history>history.xml</history>
   </files>
   <counters>
     <counter id="balance"  name="Баланс" units="р"/>
-    <!--counter id="abplata"  name="Абонентская плата за расчетный период" units="р"/-->
     <counter id="traffic"  name="Трафик в текущем периоде" units="Гб"/>
     <counter id="userName" name="ФИО" type="text"/>
+    <counter id="period"   name="Расчетный период" type="text"/>
+    <!--counter id="id"       name="Номер договора" type="text"/-->
+    <!--counter id="abplata"  name="Абонентская плата за расчетный период" units="р"/-->
   </counters>
   <keywords>
     inetcom

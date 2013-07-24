@@ -2,12 +2,12 @@
 <provider>
   <!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
   <api flags="no_browser" />
-  <id version="1">ab-cell-vodafone-gr</id>
+  <id version="2">ab-cell-vodafone-gr</id>
   <name>Vodafone Greece</name>
   <description>
-    Obtains balance and other plan information on Vodafone Greece personal account (http://www.vodafone.it)
+    Obtains balance and other plan information on Vodafone Greece personal account (http://www.vodafone.gr)
 	
-    If you don't have Vodafone personal account, please register here: https://registrazione.vodafone.it/190/regu/checkLinkAccount.do
+    If you don't have Vodafone personal account, please register here: http://www.vodafone.gr/portal/client/cms/viewCmsPage.action?pageId=8441
   </description>
   <author>Stark &lt;support@starksoft.ru&gt;</author>
   <files>

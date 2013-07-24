@@ -21,10 +21,10 @@ function main(){
     var baseurl = "https://bill.strelatelecom.ru/I/!w3_p_main.showform";
 
     var html = AnyBalance.requestPost(baseurl + '?CONFIG=CONTRACT', {
-	IDENTIFICATION:'CONTRACT',
-	USERNAME:prefs.login,
-	PASSWORD:prefs.password,
-	FORMNAME:'QFRAME'
+		IDENTIFICATION:'CONTRACT',
+		USERNAME:prefs.login,
+		PASSWORD:prefs.password,
+		FORMNAME:'QFRAME'
     });
 
     var sid = getParam(html, null, null, /sid=([0-9a-f]+)/i);
@@ -41,8 +41,18 @@ function main(){
     if(!contr_id)
         throw new AnyBalance.Error('Не удаётся найти идентификатор договора. Сайт изменен?');
 
-    html = AnyBalance.requestGet(baseurl + '?FORMNAME=QCURRACC&CONTR_ID=' + contr_id + '&SID=' + sid + '&NLS=WR');
-
+    //html = AnyBalance.requestGet(baseurl + '?FORMNAME=QCURRACC&CONTR_ID=' + contr_id + '&SID=' + sid + '&NLS=WR');
+    html = AnyBalance.requestPost(baseurl + '?FORMNAME=QCURRACC&CONTR_ID=' + contr_id + '&SID=' + sid + '&NLS=WR', {
+		CONTR_ID:contr_id,
+		ERROR:'Ñòðàíèöà óñòàðåëà',
+		FORMNAME:'QCURRACC',
+		IDENTIFICATION:'CONTRACT',
+		NLS:'WR',
+		PASSWORD:prefs.password,
+		SID:sid,
+		USERNAME:prefs.login,
+    });
+	
     var result = {success: true};
     getParam(html, result, 'balance', /Текущий баланс[\s\S]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'topay', /Рекомендуемая сумма платежа:[\s\S]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);

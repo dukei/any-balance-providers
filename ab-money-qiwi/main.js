@@ -140,11 +140,13 @@ function mainNew () {
 
     // Баланс
     getParam (html, result, 'balance', /<option[^>]+id="person-accounts-\w+"[^>]*selected[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-    getParam (html, result, ['currency', 'balance'], /<option[^>]+id="person-accounts-\w+"[^>]*selected[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseCurrencyMy);
+    // Это не всегда работает на девайсе, хотя в ебугере все отлично
+	//getParam (html, result, ['currency', 'balance'], /<option[^>]+id="person-accounts-\w+"[^>]*selected[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseCurrencyMy);
+	getParam (html, result, 'currency', /<option[^>]+id="person-accounts-\w+"[^>]*selected[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseCurrencyMy);
 
     // Сообщения (че-то непонятно, где они в новом личном кабинете)
     //getParam (html, result, 'messages', /Сообщения:.*?>(\d+)/i, [], parseInt);
-
+	
     if(AnyBalance.isAvailable('bills')){
         html = AnyBalance.requestGet(baseurl + 'user/order/main.action?type=1');
         var count = html.match(/<div[^>]*ordersLine\s+NOT_PAID[^>]*>/ig);
@@ -156,7 +158,37 @@ function mainNew () {
         var count = html.match(/<li[^>]+data-container-name="item"[^>]*class="unread"/ig);
         result.messages = count ? count.length : 0;
     }
-
+	// QVC
+	if(AnyBalance.isAvailable('qvc_card'))
+	{
+        html = AnyBalance.requestGet(baseurl + 'qvc/main.action');
+		
+		var card = getParam (html, result, 'qvc_card', /Номер карты:[\s\S]{1,70}value">\s*([\s\S]*?)\s*<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
+		getParam (html, result, 'qvc_exp', /Срок действия:[\s\S]{1,70}value">\s*([\s\S]*?)\s*<\/p>/i, replaceTagsAndSpaces, parseDate);
+		// Получим отчеты, чтобы получить последнюю транзакцию по карте
+		var today = new Date();
+		var yr = today.getFullYear();
+		var month = today.getMonth()+1;
+		month = ('0'+month).slice(-2);
+		var day = ('0'+today.getDate()).slice(-2);
+		// На валидность проверяется только дата окончания отчета
+		html = AnyBalance.requestGet(baseurl + 'qvc/reports.action?number='+card+'&daterange=true&start=24.06.2013&finish='+day+'.'+month+'.'+yr);
+		
+		var element = getParam (html, null, null, /(<div class="reportsLine">[\s\S]*?<div class="clearBoth">)/i, null, html_entity_decode);
+		if(element)
+		{
+			var seller = getParam (html, null, null, /<div class="comment">([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+			var ammount = getParam (html, null, null, /<div class="cash">(-?\d[\d\s]*[.,]?\d*[.,]?\d*)/i, null, null);
+			
+			var date = getParam (html, null, null, /<span class="date">([\s\S]*?)<\//i, null, null);
+			var time = getParam (html, null, null, /<span class="time">([\s\S]*?)<\//i, null, null);
+			
+			var all = date + ' ' + time +': \n' + seller + ' (' + ammount + ')';
+			getParam (all, result, 'qvc_last', null, null, null);
+		}
+		else
+			AnyBalance.trace('Не нашли ни одной транзакции');
+    }
     AnyBalance.setResult (result);
 }
 
@@ -236,5 +268,15 @@ function mainOld () {
     // Счета
     getParam (html, result, 'bills', /Счета:.*?>(\d+)/i, [], parseInt);
 
+	
+	// QVC
+	if(AnyBalance.isAvailable('qvc_card'))
+	{
+        html = AnyBalance.requestGet(baseurl + 'qvc.action');
+		
+		getParam (html, result, 'qvc_card', /Номер карты:[\s\S]{1,6}>\s*([\s\S]*?)\s*<\//i, replaceTagsAndSpaces, html_entity_decode);
+		getParam (html, result, 'qvc_exp', /Срок действия:[\s\S]{1,6}>\s*([\s\S]*?)\s*<\//i, replaceTagsAndSpaces, parseDate);
+    }
+	
     AnyBalance.setResult (result);
 }

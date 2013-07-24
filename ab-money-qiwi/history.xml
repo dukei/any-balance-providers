@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change major_version="2.2" version="12" date="2013-07-24">
+      - Добавлено отображение QVC карты и срока ее действия, а так же отображение последней транзакции
+    </change>
     <change major_version="2.2" version="11" date="2013-07-14">
       - Поддержка изменений в процедуре входа
     </change>

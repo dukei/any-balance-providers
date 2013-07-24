@@ -21,55 +21,51 @@ function main(){
     var baseurl = "https://stat.inetcom.ru/cabinet/";
 
     sessID = Math.random().toString().substr(2);
+    if (sessID.substr(0,1) == '0') {
+	  sessID = '1'+sessID	
+	}
     var html = AnyBalance.requestPost(baseurl + 'index.php', {
         ICSess: sessID,
         url:    '',
         login: prefs.login,
         password: prefs.password
     });
-
-    var p1 = html.lastIndexOf('<div id="infoscroll">');
+    
+    //AnyBalance.trace('got  ' + html);
+    
+    var p1 = html.lastIndexOf('<div id="infotitle">');
     if (p1 < 0)
         throw new AnyBalance.Error('Неверный логин или пароль.');
 
-    html = html.substr(p1 + '<div id="infoscroll">'.length);
-
-    var p2 = html.indexOf('</div>');
+    html = html.substr(p1 + '<div id="infotitle">'.length);
+ 
+    var p2 = html.indexOf('<div id="infobbg">');
     if (p2 < 0)
         throw new AnyBalance.Error('Не удаётся найти данные. Сайт изменен?');
 
     html = html.substr(0, p2);
-
-    var matches;
-
-    var userName = "";
-    if(matches = html.match(/<p>Здравствуйте, <span class="green">(.*?)<\/span>/)){
-        userName = matches[1];
-        AnyBalance.trace('got userName ' + userName);
+ 
+    var result = {success: true};
+    //getParam(html, result, 'id', /Номер договора[^>]*>(.*?)<\/b/i,  replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'userName', /Здравствуйте, [^>]*>(.*?)<\/span>/i,  replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'balance', /Состояние Вашего лицевого счета[^>]*>(.*?)<\/span>/i,  replaceTagsAndSpaces, parseBalance);
+    //getParam(html, result, 'abplate', /Абонентская плата за расчетный период[^>]*>(.*?)<\/span>/i,  replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'traffic', /Входящий трафик в расчетном периоде[^>]*>(.*?)<\/span>/i,  replaceTagsAndSpaces, parseBalance);
+    
+    var ps = "";
+    if(matches = html.match(/Расчетный период c[^>]*>(.*?)</)){
+        ps = matches[1];
     }
-
-    var balance = "";
-    if(matches = html.match(/<p>Состояние Вашего лицевого счета: <span class="green">(.*?)<\/span>/)){
-        balance = matches[1];
-        AnyBalance.trace('got balance ' + balance);
+    var pe = "";
+    if(matches = html.match(/span> по [^>]*>(.*?)</)){
+        pe = matches[1];
     }
-       
-    /*var abplata = "";
-    if(matches = html.match(/<p>Абонентская плата за расчетный период: <span class="blue">(.*?)<\/span>/)){
-        abplata = matches[1];
-        AnyBalance.trace('got price per period ' + abplata);
-    }*/
-
-    var traffic = "";
-    if(matches = html.match(/<p>Входящий трафик в расчетном периоде: <span class="green">(.*?)<\/span>/)){
-        traffic = matches[1];
-        AnyBalance.trace('got traffic ' + traffic);
+    if (ps != "" && pe != "") {
+        period = ps+' по '+pe
+        result['period'] = period;
     }
-
-    var result = {success: true,
-                  userName: userName,
-                  balance: parseFloat(balance), 
-                  traffic: parseFloat(traffic)};
 
     AnyBalance.setResult(result);
 }
+
+

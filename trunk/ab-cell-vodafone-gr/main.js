@@ -25,7 +25,7 @@ function main(){
     }else{
         html = AnyBalance.requestGet(baseurl + 'portal/client/idm/loadPrepayUserProfile.action');
     }
-	html = AnyBalance.requestGet(baseurl + 'portal/client/idm/loadPrepayUserProfile.action');
+	html = AnyBalance.requestGet(baseurl + 'portal/client/idm/loadPrepayUserProfile.action?request_locale=en&lang=en_EN');
 	
     if(!/logout\.action/i.test(html)){
         //Если в кабинет войти не получилось, то в первую очередь надо поискать в ответе сервера объяснение ошибки

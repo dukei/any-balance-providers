@@ -3,7 +3,7 @@
     <EditTextPreference 
         title="Phone number" 
         positiveButtonText="OK" 
-        summary="|Enter your login to Vodafone Italy|{@s}" 
+        summary="|Enter your login to Vodafone Greece|{@s}" 
         dialogTitle="Phone number" 
         negativeButtonText="Cancel" 
         dialogMessage="Enter your login to Vodafone personal account"

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="5">ab-internet-inetcom</id>
+  <id version="2">ab-internet-inetcom</id>
   <name>Инетком (Москва)</name>
   <description>
     Получает баланс и информацию о тарифном плане для интернет-провайдера Инетком (Москва). Информация берется из личного кабинета https://stat.inetcom.ru/cabinet.

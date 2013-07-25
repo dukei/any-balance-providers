@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change major_version="2.6" version="81" date="2013-07-25">
+      - Ещё улучшено распознавание СМС и ММС в некоторых случаях
+    </change>
     <change major_version="2.6" version="80" date="2013-07-16">
       - Улучшено распознавание СМС и ММС в некоторых случаях
     </change>

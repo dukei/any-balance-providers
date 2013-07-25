@@ -335,7 +335,7 @@ function megafonTrayInfo(filial){
         AnyBalance.trace('Found discounts: ' + $threads.length);
 
         if(AnyBalance.isAvailable('sms_left','sms_total')){
-            var $val = $threads.filter(':has(NAME:contains("SMS")), :has(PLAN_NAME:contains("SMS"))');
+            var $val = $threads.filter(':has(NAME:contains("SMS")), :has(PLAN_NAME:contains("SMS")), :has(NAME:contains("смс")), :has(PLAN_NAME:contains("смс"))');
             AnyBalance.trace('Found SMS discounts: ' + $val.length);
             $val.each(function(){
                 var $e = $(this);
@@ -345,7 +345,7 @@ function megafonTrayInfo(filial){
         }
 
         if(AnyBalance.isAvailable('mms_left','mms_total')){
-            var $val = $threads.filter(':has(NAME:contains("MMS")), :has(PLAN_NAME:contains("MMS"))');
+            var $val = $threads.filter(':has(NAME:contains("MMS")), :has(PLAN_NAME:contains("MMS")), :has(NAME:contains("ммс")), :has(PLAN_NAME:contains("ммс"))');
             AnyBalance.trace('Found MMS discounts: ' + $val.length);
             $val.each(function(){
                 var $e = $(this);
@@ -367,13 +367,13 @@ function megafonTrayInfo(filial){
                     AnyBalance.trace('Пропускаем потенциальный глюк мегафона, Исходящая телефония, но написано ' + si + ', а должны быть минуты: ' + plan + ' - ' + valAvailable + '/' + valTotal);
                     return; //Это глюк мегафона, написано байт, а должны быть минуты
                 }
-                if(plan && /SMS/i.test(plan)){
+                if(plan && /SMS|смс/i.test(plan)){
                     AnyBalance.trace('Обходим потенциальный глюк мегафона, Исходящая телефония, но написано SMS, а должны быть минуты: ' + plan + ' - ' + valAvailable + '/' + valTotal);
                     sumParam(valAvailable || '', result, 'sms_left', null, null, parseBalance, aggregate_sum);
                     sumParam(valTotal || '', result, 'sms_total', null, null, parseBalance, aggregate_sum);
                 }else if(plan && /GPRS|интернет|мб/i.test(plan)){
                     AnyBalance.trace('Обходим потенциальный глюк мегафона, минуты, но написано GPRS, а должны быть минуты: ' + plan + ' - ' + valAvailable + '/' + valTotal);
-                }else if(plan && /MMS/i.test(plan)){
+                }else if(plan && /MMS|ммс/i.test(plan)){
                     AnyBalance.trace('Обходим потенциальный глюк мегафона, Исходящая телефония, но написано MMS, а должны быть минуты: ' + plan + ' - ' + valAvailable + '/' + valTotal);
                     sumParam(valAvailable || '', result, 'mms_left', null, null, parseBalance, aggregate_sum);
                     sumParam(valTotal || '', result, 'mms_total', null, null, parseBalance, aggregate_sum);

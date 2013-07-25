@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-internet-premier-gc</id>
+  <name>Премьер Группа Компаний</name>
+  <description>
+    Получает баланс и информацию о тарифном плане для интернет-провайдера Премьер-ГС (Московская область: г.Пушкино, Тарасовка, Черкизово, Правдинский)
+    Информация берется из личного кабинета http://www.premier-gc.ru/
+  </description>
+  <author>Mikhail Fedotov &lt;anyremote@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="fio" name="ФИО" type="text"/>   
+    <counter id="status"  name="Статус клиента" type="text"/>
+    <!--counter id="tariff"  name="Пакет услуг" type="text"/-->
+    <!--counter id="id" name="ID Клиента" type="number"/-->
+    <!--counter id="dogovor" name="Договор" type="text"/-->
+  </counters>
+  <keywords>
+    premier-gc
+  </keywords>
+  <type>
+    internet
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

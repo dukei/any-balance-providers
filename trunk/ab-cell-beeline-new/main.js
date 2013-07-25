@@ -75,8 +75,13 @@ function main(){
     var html = AnyBalance.requestGet(baseurl + 'login.html', g_headers);
 
     var tform = getParam(html, null, null, /<form[^>]+name="loginFormB2C:loginForm"[^>]*>[\s\S]*?<\/form>/i);
-    if(!tform) //Если параметр не найден, то это, скорее всего, свидетельствует об изменении сайта или о проблемах с ним
+    if(!tform){ //Если параметр не найден, то это, скорее всего, свидетельствует об изменении сайта или о проблемах с ним
+        if(AnyBalance.getLastStatusCode() > 400){
+            AnyBalance.trace("Beeline returned: " + AnyBalance.getLastStatusString());
+            throw new AnyBalance.Error('Личный кабинет Билайн временно не работает. Пожалуйста, попробуйте позднее.');
+        }
         throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
+    }
 
     var params = createFormParams(tform);
     params['loginFormB2C:loginForm:login'] = prefs.login;
@@ -171,7 +176,7 @@ function fetchPre(baseurl, html){
     if(AnyBalance.isAvailable('balance', 'fio')){
         xhtml = getBlock(baseurl + 'c/pre/index.html', html, 'balancePreHeadDetails');
         getParam(xhtml, result, 'balance', /у вас на балансе([\s\S]*)/i, replaceTagsAndSpaces, parseBalance);
-        getParam(xhtml, result, 'currency', /у вас на балансе([\s\S]*)/i, replaceTagsAndSpaces, myParseCurrency);
+        getParam(xhtml, result, ['currency', 'balance'], /у вас на балансе([\s\S]*)/i, replaceTagsAndSpaces, myParseCurrency);
         getParam(xhtml, result, 'fio', /<span[^>]+class="b2c.header.greeting.pre.b2c.ban"[^>]*>([\s\S]*?)(?:<\/span>|,)/i, replaceTagsAndSpaces, html_entity_decode);
     }
 

@@ -74,15 +74,15 @@ function main(){
 
     var html = AnyBalance.requestGet(baseurl + 'login.html', g_headers);
 
-    var tform = getParam(html, null, null, /<form[^>]+name="loginFormB2c"[^>]*>[\s\S]*?<\/form>/i);
+    var tform = getParam(html, null, null, /<form[^>]+name="loginFormB2C:loginForm"[^>]*>[\s\S]*?<\/form>/i);
     if(!tform) //Если параметр не найден, то это, скорее всего, свидетельствует об изменении сайта или о проблемах с ним
         throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
 
     var params = createFormParams(tform);
-    params['loginFormB2c:login'] = prefs.login;
-    params['loginFormB2c:password'] = prefs.password;
-    params['loginFormB2c:passwordVisible'] = prefs.password;
-    params['loginFormB2c:loginButton'] = '';
+    params['loginFormB2C:loginForm:login'] = prefs.login;
+    params['loginFormB2C:loginForm:password'] = prefs.password;
+    params['loginFormB2C:loginForm:passwordVisible'] = prefs.password;
+    params['loginFormB2C:loginForm:loginButton'] = '';
 
     var action = getParam(tform, null, null, /<form[^>]+action="\/([^"]*)/i, null, html_entity_decode);
 

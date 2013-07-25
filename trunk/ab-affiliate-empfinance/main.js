@@ -41,10 +41,13 @@ function main(){
 	var result = {success: true};
 
 	result.__tariff = prefs.username;
-	getParam(info, result, 'balance', /<td>Account Balance:<\/td>\s+<td>\$?(.*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(info, result, 'earned', /<td>Earned:<\/td>\s+<td>\$(.*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(info, result, 'withdrew_total', /<td>Withdrew Total:<\/td>\s+<td>\$(.*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(info, result, 'total_invested', /<td>Total Invested:<\/td>\s+<td>\$(.*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	result.balance_pm = getParam(info, null, null, /<td>Account Balance:<\/td>\s+<td>[\s\$]+(.*?)<.*?><\/td>/i, replaceTagsAndSpaces, parseBalance);
+	result.balance_ego = getParam(info, null, null, /<td>Account Balance:<\/td>\s+<td>[\s\$]+.*?<.*?>[\s\$]+(.*?)<.*?><\/td>/i, replaceTagsAndSpaces, parseBalance);
+	result.balance_wire = getParam(info, null, null, /<td>Account Balance:<\/td>\s+<td>[\s\$]+.*?<.*?>[\s\$]+.*?<.*?>[\s\$]+(.*?)<.*?><\/td>/i, replaceTagsAndSpaces, parseBalance);
+	result.balance = result.balance_pm + result.balance_ego + result.balance_wire;
+	getParam(info, result, 'earned', /<td>Earned:<\/td>\s+<td>[\s\$]+(.*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(info, result, 'withdrew_total', /<td>Withdrew Total:<\/td>\s+<td>[\s\$]+(.*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(info, result, 'total_invested', /<td>Total Invested:<\/td>\s+<td>[\s\$]+(.*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 
 	AnyBalance.setResult(result);
 };

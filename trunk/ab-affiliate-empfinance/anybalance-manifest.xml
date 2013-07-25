@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-affiliate-empfinance</id>
+  <id version="2">ab-affiliate-empfinance</id>
   <name>Empire Finance Group</name>
   <description>
     This provider helps you to check status of your Empire Finance Group's account on https://empfinance.com/
@@ -15,7 +15,10 @@
     <history>history.xml</history>
   </files>
   <counters>
-    <counter id="balance" name="Account Balance" units="$"/>
+    <counter id="balance" name="Account Balance (Total)" units="$"/>
+    <counter id="balance_pm" name="Account Balance (PM)" units="$"/>
+    <counter id="balance_ego" name="Account Balance (Ego)" units="$"/>
+    <counter id="balance_wire" name="Account Balance (Wire)" units="$"/>
     <counter id="earned" name="Earned" units="$"/>
     <counter id="withdrew_total" name="Withdrew Total" units="$"/>
     <counter id="total_invested" name="Total Invested" units="$"/>

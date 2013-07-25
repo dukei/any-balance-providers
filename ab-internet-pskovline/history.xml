@@ -10,4 +10,7 @@
     <change major_version="1" version="4" date="2013-06-27">
       - Исправлены крупные суммы баланса
     </change>
+    <change major_version="1" version="5" date="2013-07-25">
+      - Исправлен отрицательный баланс..
+    </change>
 </history>

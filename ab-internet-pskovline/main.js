@@ -4,7 +4,7 @@
 Текущий баланс у оператора интернет и телевидения PskovLine.
 
 Сайт оператора: http://www.pskovline.ru
-Личный кабинет: http://www.pskovline.ru/utm5/
+Личный кабинет: http://stat.pskovline.ru/
 */
 
 function main() {
@@ -13,7 +13,7 @@ function main() {
   var url="http://stat.pskovline.ru/";
 
 //  var info = AnyBalance.requestPost(url, {user_login: prefs.login, password: prefs.password});
-  var info = AnyBalance.requestPost(url+'/login', {'user[login]': prefs.login, 'user[password]': prefs.password});
+  var info = AnyBalance.requestPost(url+'login', {'user[login]': prefs.login, 'user[password]': prefs.password});
 
   var result = {success: true}, matches;
 
@@ -26,12 +26,12 @@ function main() {
 
 	if (info.match(/\"tab_user_main\".*?>/i)) {
 
-info=info.replace(/&thinsp;/ig,"");
+info=info.replace(/&thinsp;/ig,"").replace(/&minus;/ig,"-");
 
                        var login, ballance, number, credit, work;
 
 			result['success']=true;
-			result['ballance']=parseFloat(info.match(/(\d+,\d+)/ig)[1].replace(",","."));
+			result['ballance']=parseFloat(info.match(/(-?\d+,\d+)/ig)[1].replace(",","."));
 			if (AnyBalance.isAvailable('login'))
 				result['login']=info.match(/ (\w+)<\/title/i)[1];
 			if (AnyBalance.isAvailable('number'))

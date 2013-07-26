@@ -1,27 +1,17 @@
 /**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Текущий баланс у интернет провайдера Премьер Группа Компаний (Московская область).
-
-http://www.premier-gc.ru/
-
 */
-
 var g_headers = {
-'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
-'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-'Connection':'keep-alive',
-'User-Agent':'Mozilla/5.0 (BlackBerry; U; BlackBerry 9900; en-US) AppleWebKit/534.11+ (KHTML, like Gecko) Version/7.0.0.187 Mobile Safari/534.11+'
+	'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
+	'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Connection':'keep-alive',
+	'User-Agent':'Mozilla/5.0 (BlackBerry; U; BlackBerry 9900; en-US) AppleWebKit/534.11+ (KHTML, like Gecko) Version/7.0.0.187 Mobile Safari/534.11+'
 };
 
 function main(){
-	
     var prefs = AnyBalance.getPreferences();
-
-    var baseurl = "http://stat.premier-gc.ru/";
- 
-    // force to win-1251
+    var baseurl = 'http://stat.premier-gc.ru/';
     AnyBalance.setDefaultCharset('windows-1251'); 
 
     if(!prefs.login)
@@ -30,7 +20,7 @@ function main(){
 	    throw new AnyBalance.Error('Вы не ввели пароль');
 
     var html = AnyBalance.requestPost(baseurl+'client.php', {
-        ContractNumber: prefs.login,
+		ContractNumber: prefs.login,
         Password:       prefs.password
     });
 
@@ -45,8 +35,6 @@ function main(){
     if(p1 < 0){
          throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
-
-    //Получаем все счетчики
     var result = {success: true};
     
     getParam(html, result, 'fio',     /Название:<\/td>[^>]*><b>(.*?)<\/b>/i,    replaceTagsAndSpaces, html_entity_decode);

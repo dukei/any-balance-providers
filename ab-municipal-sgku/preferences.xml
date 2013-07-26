@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <ListPreference 
+        key="locality" 
+        title="Город"
+        summary="||{@s}"
+        entries="Банный|Барсово|Белый Яр|Высокий Мыс|ГПЗ|Горный|Каюкова|Локосово|Лямина|Лянтор|Малоюганский|Нижнесортымский|Песчаный|Русскинская|Сайгатина|Солнечный|Старое Сайгатина|Сургут|Сытомино|Тром-Аган|Тундрино|Угут|Ульт-Ягун|Федоровский"
+        entryValues="Банный|Барсово|Белый Яр|Высокий Мыс|ГПЗ|Горный|Каюкова|Локосово|Лямина|Лянтор|Малоюганский|Нижнесортымский|Песчаный|Русскинская|Сайгатина|Солнечный|Старое Сайгатина|Сургут|Сытомино|Тром-Аган|Тундрино|Угут|Ульт-Ягун|Федоровский"
+	defaultValue="Сургут">
+    </ListPreference>
+    <ListPreference 
+        key="street" 
+        title="Улица"
+        summary="||{@s}"
+        entries="пр-кт Ленина|ул Лермонтова|пр-кт Мира|ул Профсоюзов|ул Чехова"
+        entryValues="Ленина|Лермонтова|Мира|Профсоюзов|Чехова"
+	defaultValue="Мира">
+    </ListPreference>
+    <EditTextPreference 
+        title="Номер дома" 
+        positiveButtonText="ОК" 
+        summary="|Введите номер дома|{@s}" 
+        dialogTitle="Номер дома" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите номер вашего дома"
+        key="house"
+        inputType="number">
+    </EditTextPreference>
+    <EditTextPreference 
+        title="Номер квартиры" 
+        positiveButtonText="ОК" 
+        summary="|Введите номер квартиры|{@s}" 
+        dialogTitle="Номер квартиры" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите номер вашей квартиры"
+        key="flat"
+        inputType="number">
+    </EditTextPreference>
+    <EditTextPreference 
+        title="Лицевой счет" 
+        positiveButtonText="ОК" 
+        summary="|Введите номер лицевого счета|{@s}" 
+        dialogTitle="Номер лицевого счета" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите номер вашего лицевого счета"
+        visible="0"
+        key="account"
+        inputType="number">
+    </EditTextPreference>
+</PreferenceScreen>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-municipal-sgku</id>
+  <api min_level="7" flags="no_browser"/>
+  <name>ЖКХ Сургут</name>
+  <description>
+      Показывает состояние лицевого счета по оплате ЖКХ с сайта https://sgku.ru.
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+    <js target="preferences">preferences.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="peni" name="Пени" units="р"/>
+    <counter id="licschet" name="Лицевой счет" type="text"/>
+    <counter id="date" name="Дата" format="dd/MM/yyyy" type="time"/>
+    <counter id="address" name="Адрес" type="text"/>
+  </counters>
+  <keywords>
+    жилищно-коммунальные услуги
+  </keywords>
+  <type>
+    municipal
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

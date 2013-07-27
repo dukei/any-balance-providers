@@ -125,7 +125,7 @@ function fetchPost(baseurl, html){
 
     getParam(html, result, 'phone', multi ? /<span[^>]+class="marked"[^>]*>([\s\S]*?)<\/span>/i : /<input[^>]+id="serviceBlock:paymentForm:[^>]*value="([^"]*)/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'prebal', /ваша предварительная сумма по договору([\s\S]*?)<\/span><\/span>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, ['currency', 'prebal'], /ваша предварительная сумма по договору([\s\S]*?)<\/span><\/span>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, ['currency', 'prebal', 'overpay'], /ваша предварительная сумма по договору([\s\S]*?)<\/span><\/span>/i, replaceTagsAndSpaces, myParseCurrency);
 
     if(!multi){
         xhtml = getBlock(baseurl + 'c/post/index.html', html, 'list-contents', true);
@@ -136,12 +136,19 @@ function fetchPost(baseurl, html){
 
     }else{
         //Если несколько номеров в кабинете, то почему-то баланс надо брать отсюда
-        xhtml = getBlock(baseurl + 'c/post/index.html', html, 'homeBalance');
-        getParam(xhtml, result, 'balance', /Расходы по номеру за текущий период с НДС[\s\S]*?<div[^>]+class="balan?ce-summ"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-        getParam(xhtml, result, ['currency','balance'], /Расходы по номеру за текущий период с НДС[\s\S]*?<div[^>]+class="balan?ce-summ"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, myParseCurrency);
+        if(AnyBalance.isAvailable('balance','currency')){
+            xhtml = getBlock(baseurl + 'c/post/index.html', html, 'homeBalance');
+            getParam(xhtml, result, 'balance', /Расходы по номеру за текущий период с НДС[\s\S]*?<div[^>]+class="balan?ce-summ"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+            getParam(xhtml, result, ['currency','balance'], /Расходы по номеру за текущий период с НДС[\s\S]*?<div[^>]+class="balan?ce-summ"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, myParseCurrency);
+        }
 
         xhtml = getBlock(baseurl + 'c/post/index.html', html, 'loadingTariffDetails');
         getParam(xhtml, result, '__tariff', /<div[^>]+:tariffInfo[^>]*class="(?:current|tariff-info)"[^>]*>(?:[\s\S](?!<\/div>))*?<h2[^>]*>([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces, html_entity_decode);
+
+        if(AnyBalance.isAvailable('overpay')){
+            xhtml = getBlock(baseurl + 'c/post/index.html', html, 'callDetailsDetails');
+            getParam(xhtml, result, 'overpay', /<h4[^>]*>Переплата[\s\S]*?<span[^>]+class="price[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+        }
     }
 
     if(AnyBalance.isAvailable('sms_left', 'mms_left')){

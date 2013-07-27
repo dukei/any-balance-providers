@@ -200,6 +200,8 @@ function main(){
     getParam (html, result, 'usedinthismonth', /Витрачено по номеру[^<]*<strong>([\s\S]*?)<\/strong>[^<]*грн/i, replaceTagsAndSpaces, parseBalance);
 
     
+    // Израсходовано: 3 смс
+    sumParam (html, result, 'sms_used', /<li>Израсходовано:\s*(\d+)\s*(?:sms|смс)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 
     if (AnyBalance.isAvailable ('usedinprevmonth')) {
 

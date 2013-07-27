@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
   <id major_version="1.1" version="22">ab-cell-mts-ua</id>
+  <api flags="no_browser"/>
   <name>МТС (Украина)</name>
   <description>
     Получает баланс, минуты, смс, ммс, информацию о расходах, номер лицевого счета, ежемесячую плату и др.
@@ -46,6 +47,7 @@
     <counter id="traffic_hyper_mb" name="hyper.net к-во Кб загруженных по АПН hyper.net" units=" mb"/>
     <counter id="traffic_opera_mb" name="Opera Mini к-во Кб загруженных по АПН opera" units=" mb"/>
     <counter id="traffic_free_mb" name="Бесплатный интернет" units=" mb"/><!-- Актуально до 15.08.2012 для Супер Свободы -->
+    <counter id="sms_used" name="Израсходовано SMS" units=" sms"/>
     <!--Сроки пакетов -->
     <counter id="termin" name="Срок действия номера" type="time" format="dd/MM/yyyy"/>
     <counter id="termin_bonus_balance" name="Срок действия бонусного баланса" type="time" format="dd/MM/yyyy HH:mm:ss"/>

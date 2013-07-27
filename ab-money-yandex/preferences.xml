@@ -3,7 +3,7 @@
     <EditTextPreference 
         title="Логин" 
         positiveButtonText="ОК" 
-        summary="Логин в Яндекс.Деньги||{@s}\n" 
+        summary="|Введите логин в Яндекс.Деньги|{@s}" 
         dialogTitle="Логин" 
         negativeButtonText="Отмена" 
         dialogMessage="Введите логин для входа в Яндекс.Деньги."

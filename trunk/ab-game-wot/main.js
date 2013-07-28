@@ -8,6 +8,7 @@ World of Tanks — бесплатная онлайн игра
 function main(){
 	var prefs = AnyBalance.getPreferences();
 	checkEmpty(prefs.nick, 'Введите ник или id');
+	
 	// Проверяем правильность id
 	if (prefs.listPref == 'id'){
 		var regexp = /\d+$/;
@@ -18,7 +19,7 @@ function main(){
 	// Проверяем нужен ли нам id, при необходимости получаем его
 	if ((AnyBalance.isAvailable('tank_wins', 'tank_battles', 'tank_win_percent', 'er', 'wn6', 'er_armor', 'er_xvm', 'wn6_xvm'))||(prefs.listPref == 'id'))
 		var id = (prefs.listPref == 'id') ? prefs.nick : getID (prefs.nick);
-		
+
 	// Если есть ник и не нужны данные, которые можно получить по id (только общая статистика)
 	if ((!(AnyBalance.isAvailable('tank_wins', 'tank_battles', 'tank_win_percent', 'er', 'wn6', 'er_armor', 'er_xvm', 'wn6_xvm')))&&(prefs.listPref == 'nick')) {
 		var pd = getData('http://worldoftanks.ru/uc/accounts/api/1.1/?source_token=WG-WoT_Assistant-1.1.2&search=' + prefs.nick + '&offset=0&limit=1');
@@ -41,7 +42,7 @@ function main(){
 			var win_percent = pd.data.items[0].stats.wins / pd.data.items[0].stats.battles * 100
 			
 			if(AnyBalance.isAvailable('win_percent'))
-				result['win_percent'] = win_percent.toFixed(1);
+				result['win_percent'] = win_percent.toFixed(prefs.accuracy);
 				
 			if(AnyBalance.isAvailable('next_perc'))
 				var np = Math.floor(win_percent) + 1;
@@ -74,7 +75,7 @@ function main(){
 			var win_percent = pd.data.summary.wins / pd.data.summary.battles_count * 100
 			
 			if(AnyBalance.isAvailable('win_percent'))
-				result['win_percent'] = win_percent.toFixed(1);
+				result['win_percent'] = win_percent.toFixed(prefs.accuracy);
 				
 			if(AnyBalance.isAvailable('next_perc'))
 				var np = Math.floor(win_percent) + 1;
@@ -118,13 +119,18 @@ function main(){
 				result['er'] = er.toFixed(0);
 			
 			if(AnyBalance.isAvailable('er_xvm'))
-				result['er_xvm'] = (Math.max(Math.min(4.787e-17 * Math.pow(er,6) - 3.5544e-13 * Math.pow(er,5) + 1.02606e-9 * Math.pow(er,4) - 1.4665e-6 * Math.pow(er,3) + 1.0827e-3 * Math.pow(er,2) - 0.3133 * er + 20.49, 100), 0)).toFixed(1);
+				// http://www.koreanrandom.com/forum/topic/2625-xvm-%D1%88%D0%BA%D0%B0%D0%BB%D0%B0-scale/page-48
+				if(er<420) {
+					result['er_xvm'] = 0
+				} else {
+					result['er_xvm'] = (Math.max(Math.min(er*(er*(er*(er*(er*(4.5254e-17*er - 3.3131e-13) + 9.4164e-10) - 1.3227e-6) + 9.5664e-4) - 0.2598) + 13.23, 100), 0)).toFixed(prefs.accuracy);
+				}
 
 		if(AnyBalance.isAvailable('er_armor'))
 			var avg_exp = pd.data.ratings.battle_avg_xp.value;
 			
 			// http://armor.kiev.ua/wot/rating/
-			result['er_armor'] = (Math.log(battles) / 10 * (avg_exp + DAMAGE * (WINRATE * 2 + FRAGS * 0.9 + (SPOT + CAP + DEF) * 0.5))).toFixed(0);4
+			result['er_armor'] = (Math.log(battles) / 10 * (avg_exp + DAMAGE * (WINRATE * 2 + FRAGS * 0.9 + (SPOT + CAP + DEF) * 0.5))).toFixed(0);
 			
 		if(AnyBalance.isAvailable('wn6', 'wn6_xvm'))
 		
@@ -134,7 +140,12 @@ function main(){
 				result['wn6'] = wn6.toFixed(0);
 			
 			if(AnyBalance.isAvailable('wn6_xvm'))
-				result['wn6_xvm'] = (Math.max(Math.min(-1.334e-11 * Math.pow(wn6,4) + 5.673e-8 * Math.pow(wn6,3) - 7.575e-5 * Math.pow(wn6,2) + 0.08392 * wn6 - 9.362, 100), 0)).toFixed(1);
+				// http://www.koreanrandom.com/forum/topic/2625-xvm-%D1%88%D0%BA%D0%B0%D0%BB%D0%B0-scale/page-48
+				if(wn6>2160) {
+					result['wn6_xvm'] = 100
+				} else {
+					result['wn6_xvm'] = (Math.max(Math.min(wn6*(wn6*(wn6*(-1.268e-11*wn6 + 5.147e-8) - 6.418e-5) + 7.576e-2) - 7.25, 100), 0)).toFixed(prefs.accuracy);
+				}
 			
 		if (prefs.tank) {
 			var tmp = pd.data.vehicles;
@@ -153,7 +164,7 @@ function main(){
 						result['tank_battles'] = t.battle_count;
 					}
 					if(AnyBalance.isAvailable('tank_win_percent')){
-						result['tank_win_percent'] = (t.win_count / t.battle_count * 100).toFixed(1);
+						result['tank_win_percent'] = (t.win_count / t.battle_count * 100).toFixed(prefs.accuracy);
 					}
 					f = 1;
 					break;

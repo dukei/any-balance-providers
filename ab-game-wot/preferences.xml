@@ -27,4 +27,11 @@
         positiveButtonText="ОК" 
         inputType="text">
     </EditTextPreference>
+	<ListPreference
+        title="Точность"
+        summary="Количество цифр после запятой для некоторых счетчиков||Точность: {@s}\n"
+        key="accuracy"
+        defaultValue="1"
+        entries="0|1|2|3"
+        entryValues="0|1|2|3" />
 </PreferenceScreen>

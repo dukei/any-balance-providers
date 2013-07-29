@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
+	<api flags="no_browser" />
+	<id version="1">ab-hosting-vpsnow</id>
+	<name>VPS Now</name>
+	<description>
+		Получает данные для хостинг- провайдера VPS Now (http://vpsnow.ru/)
+		
+		Личный кабинет находится по адресу: https://vpsnow.ru/client/dologin.php
+	</description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="total" name="Всего к оплате" units="{@currency}"/>
+		<counter id="cred" name="Кредитный баланс"units="{@currency}"/>
+		<counter id="uslugi" name="Кол-во продуктов/услуг" type="text"/>
+		<counter id="tikets" name="Открытых тикетов" type="text"/>
+		<counter id="scheta" name="Счетов к оплате" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>hosting</type>
+	<country>ru</country>
+</provider>

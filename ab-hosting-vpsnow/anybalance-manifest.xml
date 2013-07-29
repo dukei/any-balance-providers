@@ -19,7 +19,7 @@
 	</files>
 	<counters>
 		<counter id="total" name="Всего к оплате" units="{@currency}"/>
-		<counter id="cred" name="Кредитный баланс"units="{@currency}"/>
+		<counter id="cred" name="Кредитный баланс" units="{@currency}"/>
 		<counter id="uslugi" name="Кол-во продуктов/услуг" type="text"/>
 		<counter id="tikets" name="Открытых тикетов" type="text"/>
 		<counter id="scheta" name="Счетов к оплате" type="text"/>

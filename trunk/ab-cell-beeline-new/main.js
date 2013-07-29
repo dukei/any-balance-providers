@@ -96,6 +96,8 @@ function main(){
 
     if(/<form[^>]+name="chPassForm"/i.test(html))
         throw new AnyBalance.Error('Вы зашли по временному паролю, требуется сменить пароль. Для этого войдите в ваш кабинет https://my.beeline.ru через браузер и смените там пароль. Новый пароль введите в настройки данного провайдера.');
+    if(/<form[^>]+action="\/changePass.html"/i.test(html))
+        throw new AnyBalance.Error('Билайн требует сменить пароль. Зайдите в кабинет https://my.beeline.ru через браузер и поменяйте пароль на постоянный.');
 
     //После входа обязательно проверяем маркер успешного входа
     //Обычно это ссылка на выход, хотя иногда приходится искать что-то ещё
@@ -144,11 +146,11 @@ function fetchPost(baseurl, html){
 
         xhtml = getBlock(baseurl + 'c/post/index.html', html, 'loadingTariffDetails');
         getParam(xhtml, result, '__tariff', /<div[^>]+:tariffInfo[^>]*class="(?:current|tariff-info)"[^>]*>(?:[\s\S](?!<\/div>))*?<h2[^>]*>([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces, html_entity_decode);
+    }
 
-        if(AnyBalance.isAvailable('overpay')){
-            xhtml = getBlock(baseurl + 'c/post/index.html', html, 'callDetailsDetails');
-            getParam(xhtml, result, 'overpay', /<h4[^>]*>Переплата[\s\S]*?<span[^>]+class="price[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-        }
+    if(AnyBalance.isAvailable('overpay')){
+        xhtml = getBlock(baseurl + 'c/post/index.html', html, 'callDetailsDetails');
+        getParam(xhtml, result, 'overpay', /<h4[^>]*>Переплата[\s\S]*?<span[^>]+class="price[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
     }
 
     if(AnyBalance.isAvailable('sms_left', 'mms_left')){

@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="3">ab-cell-tele2-kz</id>
+  <id version="4">ab-cell-tele2-kz</id>
+  <!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
+  <api flags="no_browser" />
   <name>Теле2 Казахстан</name>
   <description>
      Получает значения из личного кабинета Теле2 Казахстан (http://www.tele2.kz/)
+	 
 	 Чтобы получить пароль перейдите по ссылке https://iself.tele2.kz/login и введите свой номер телефона в поле "Регистрация", затем нажмите получить пароль.
   </description>
   <author>Stark &lt;support@starksoft.ru&gt;</author>

@@ -23,7 +23,7 @@ function main(){
 //    var csrfModel = getParam(html, null, null, /<input[^>]*name="csrfModel.returnedCsrf"[^>]*value="([^"]+)"/i);
     if(!href /*|| !csrfModel*/)
         throw new AnyBalance.Error("Can not find login form! Site is changed?");
-
+	
     html = AnyBalance.requestPost(href, {
 //      "csrfModel.returnedCsrf": csrfModel,
       login_email: prefs.login,
@@ -43,7 +43,11 @@ function main(){
 
     var result={success: true};
 
+	getParam(html, result, 'currency', /<span[^>]*class="balance[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseCurrency);
     getParam(html, result, 'balance', /<span[^>]*class="balance[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
 
+	
+	
+	
     AnyBalance.setResult(result);
 }

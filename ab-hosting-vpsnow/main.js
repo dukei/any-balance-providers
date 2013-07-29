@@ -40,6 +40,15 @@ function main(){
 	getParam(html, result, 'uslugi', /Кол-во продуктов\/услуг([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'tikets', /Открытых тикетов([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'scheta', /Счетов к оплате([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-
+	
+	html = AnyBalance.requestGet(baseurl + 'client/clientarea.php?action=products', g_headers);
+	var tr = getParam(html, null, null, /(<tr class="clientareatableactive">[\s\S]*?<\/tr>)/i, null, null);
+	if(!tr)
+		AnyBalance.trace('Не нашли ни одного сервера, проверьте, есть ли они у Вас? :)');
+		
+	getParam(tr, result, 'serv', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)</i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(tr, result, 'serv_pay', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)</i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(tr, result, 'serv_till', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)</i, replaceTagsAndSpaces, parseDate);
+	
     AnyBalance.setResult(result);
 }

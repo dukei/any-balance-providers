@@ -2,7 +2,7 @@
 <provider>
 	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser" />
-  <id version="4">ab-money-paypal</id>
+  <id version="5">ab-money-paypal</id>
   <name>PayPal</name>
   <description>
     Obtains balance on your PayPal account.
@@ -16,7 +16,7 @@
     <js>main.js</js>
   </files>
   <counters>
-    <counter id="balance" name="Balance" units="{@currency}"/>
+    <counter id="balance" name="Balance" units=" {@currency}"/>
   </counters>
   <keywords>
     пейпал

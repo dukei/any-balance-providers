@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-telephony-rt-saratov</id>
+  <name>Ростелеком-Волга (Саратов)</name>
+  <description>
+    Получает баланс и информацию о тарифном плане для оператора проводной телефонии Ростелеком - Саратовский филиал (http://volga.rt.ru/)
+
+    Информация берется из личного кабинета: https://webcab.san.ru/
+  </description>
+  <author>Stark &lt;support@starksoft.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+	<js>library.js</js>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+	<counter id="fio" name="ФИО" type="text"/>
+    <counter id="accnum" name="Номер лицевого счета" type="text"/>
+ </counters>
+  <keywords>
+    ростелеком, саратов, волга, телеком
+  </keywords>
+  <type>
+    telephony
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

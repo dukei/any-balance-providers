@@ -42,7 +42,7 @@ AnyBalance.setExceptions(/*bool*/ use) //since level 1
 
 ==requestGet==
 {{{
-AnyBalance.requestGet(/*string*/ url, /*object or null*/headers) throws AnyBalance.Error //since level 1,3
+AnyBalance.requestGet(/*string*/ url, /*object or null*/headers, /*object or null*/options) throws AnyBalance.Error //since level 1,3,7
 }}}
 
 Посылает GET запрос по адресу `url`. Возвращает строку - тело ответа.
@@ -55,6 +55,17 @@ AnyBalance.requestGet(/*string*/ url, /*object or null*/headers) throws AnyBalan
 }
 }}}
 
+`options` - (необязательный параметр, поддерживается, начиная с API v.7)
+объект с дополнительными настройками.
+{{{
+{
+   "callback": function(info){}, //Асинхронный вызов запроса, 
+      //результат придет в функцию в виде 
+      //{success: true|false, content: '', error: ''}
+      //Этот параметр работает только для вызова из управления настройками
+}
+}}}
+
 Пример:
 {{{
   var xml = AnyBalance.requestGet('http://dgame.ru/api.php');
@@ -64,7 +75,7 @@ AnyBalance.requestGet(/*string*/ url, /*object or null*/headers) throws AnyBalan
 
 ==requestPost==
 {{{
-AnyBalance.requestPost(/*string*/ url, /*string, object or null*/ data, /*object or null*/headers) throws AnyBalance.Error //since level 1,3
+AnyBalance.requestPost(/*string*/ url, /*string, object or null*/ data, /*object or null*/headers, /*object or null*/options) throws AnyBalance.Error //since level 1,3,7
 }}}
 
 Посылает POST запрос по адресу `url` с телом `data`, если это строка. Если `data` объект, то тело запроса представляет собой параметры форм с именами и значениями всех свойств объекта `data`.
@@ -90,8 +101,9 @@ AnyBalance.requestPost(/*string*/ url, /*string, object or null*/ data, /*object
 В случае возникновения ошибки возвращает `null` или бросает исключение [AnyBalanceAPI#Error AnyBalance.Error], в зависимости от режима исключений, установленного [AnyBalanceAPI#setExceptions setExceptions()]. 
 
 *Примечания*
- * Параметр `headers` добавлен в API v.3.
+ * Параметр `headers` добавлен в API v.3. Работает аналогично [AnyBalanceAPI#requestGet requestGet()]
  * Начиная с API v.3 `requestPost` учитывает кодировку по умолчанию, установленную функцией [AnyBalance.setDefaultCharset AnyBalanceAPI#setDefaultCharset]
+ * Параметр `options` добавлен в API v.7. Работает аналогично [AnyBalanceAPI#requestGet requestGet()]
 
 ==setAuthentication==
 {{{

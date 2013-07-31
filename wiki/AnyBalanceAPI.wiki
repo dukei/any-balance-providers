@@ -373,3 +373,74 @@ AnyBalance.getLastResponseHeader(/*string*/ name) //since level 5
 }}}
 
 Получает строковое значение первого заголовка с заданным именем `name`. Заголовок ищется среди всех заголовков ответа на последний запрос [AnyBalanceAPI#requestGet requestGet()] или [AnyBalanceAPI#requestPost requestPost()]. Если такого нет, возвращает `null`. 
+
+=Управление настройками=
+
+Начиная с API v.7 можно управлять процессом настройки провайдера, для этого предназначены следующие функции API.
+
+==Preference==
+
+Представляет собой объект настройки. Содержит свойства и методы для управления настройкой. Как правило, явно не создаётся, а возвращается другими методами и свойствами, возвращающими настройки.
+
+Настройки бывают тех же типов, что описываются в `xml`, у них почти все те же свойства. Типы образуют иерархию наследования свойств. Базовый тип - Preference, от него наследуются все остальные.
+
+===Типы настроек и поддерживаемые свойства===
+{{{
+{
+    Preference: {
+    	properties: ['key','title',
+                     'summary', //Изначальное summary, как было в xml
+                     'summaryPlain', //Текущее summary
+    	             'enabled', 'dependency','order','defaultValue',
+    	             'visible','parent','preference'],
+    },
+    DialogPreference: {
+    	properties: ['dialogTitle','dialogMessage',
+    	             'positiveButtonText','negativeButtonText'],
+    	parent: 'Preference' 
+    },
+    EditTextPreference: {
+    	properties: ['inputType','text'],
+    	parent: 'DialogPreference' 
+    },
+    ListPreference: {
+    	properties: ['entries','value'],
+    	parent: 'DialogPreference' 
+    },
+    CheckBoxPreference: {
+    	properties: ['summaryOff','summaryOn',
+    	             'disableDependentsState','checked'],
+    	parent: 'Preference' 
+    },
+    PreferenceGroup: {
+    	properties: ['preferences'],
+    	parent: 'Preference' 
+    },
+    PreferenceCategory: {
+    	properties: [],
+    	parent: 'PreferenceGroup' 
+    },
+    PreferenceScreen: {
+    	properties: [],
+    	parent: 'PreferenceGroup' 
+    },
+}
+}}}
+
+В каждом типе указаны присущие типу свойства и ссылка на базовый тип. Настройки базового типа также наследуются.
+
+===get===
+{{{
+pref.get(/*string or object*/ prop) //since level 7
+}}}
+
+Получает свойство с именем `prop`. В этом случае возвращает значение свойства. Можно получить значение сразу нескольких свойств, если передать в качестве prop объект с ключами - именами свойств. Например,
+
+{{{
+   var title = pref.get('title');
+
+   var props = pref.get({title: '', summary: '', enabled: '', visible: ''});
+   //props будет равен {title: 'Логин', summary: '||{@s}', enabled: true, visible: true}
+}}}
+
+

@@ -434,8 +434,9 @@ AnyBalance.getLastResponseHeader(/*string*/ name) //since level 5
 pref.get(/*string or object*/ prop) //since level 7
 }}}
 
-Получает свойство с именем `prop`. В этом случае возвращает значение свойства. Можно получить значение сразу нескольких свойств, если передать в качестве prop объект с ключами - именами свойств. Например,
+Получает свойство с именем `prop`. В этом случае возвращает значение свойства. Можно получить значение сразу нескольких свойств, если передать в качестве `prop` объект с ключами - именами свойств. Например,
 
+Пример:
 {{{
    var title = pref.get('title');
 
@@ -443,4 +444,160 @@ pref.get(/*string or object*/ prop) //since level 7
    //props будет равен {title: 'Логин', summary: '||{@s}', enabled: true, visible: true}
 }}}
 
+===set===
+{{{
+pref.set(/*string or object*/ prop, value) //since level 7
+}}}
 
+Устанавливает свойство с именем `prop` в значение value. В этом случае возвращает значение свойства. Можно установить значение сразу нескольких свойств, если передать в качестве `prop` объект с ключами - именами свойств и значениями - значениями свойств. Например,
+
+Пример:
+{{{
+   var title = pref.set('entries');
+
+   //Устанавливаем набор значений для списка ListPreference и сразу же выбираем одно из значений
+   var props = pref.set({entries: [{n: 'Пункт 1', v: 'p1'}, {n: 'Пункт 2', v: 'p2'}], value: 'p1']});
+}}}
+
+===add===
+{{{
+pref.add(/*object*/ props) //since level 7
+}}}
+
+Метод добавляет новую настройку. Этот метод есть только у настроек типа `PreferenceGroup` (`CategoryPreference` и `ScreenPreference`). В `props` указываются значения свойств новой настройки.
+
+Пример:
+{{{
+var group = AnyBalance.getPreference();
+
+var pref = g_group.add({
+    type: 'EditTextPreference',
+    title: 'Новая настройка',
+    key: 'newEdit',
+    summary: '||{@s}',
+    value: 'test'
+});
+}}}
+
+===remove===
+{{{
+pref.remove() //since level 7
+}}}
+
+Метод удаляет настройку. После вызова этого метода уже нельзя обращаться к этой настройке, потому что настройка уже будет удалена.
+
+===getSubPreferences===
+{{{
+pref.getSubPreferences() //since level 7
+}}}
+
+Метод получает дочерние настройки. Этот метод есть только у настроек типа `PreferenceGroup` (`CategoryPreference` и `ScreenPreference`). 
+
+Возвращает массив дочерних настроек в виде объектов `Preference`.
+
+===getType===
+{{{
+pref.getType() //since level 7
+}}}
+
+Метод получает тип настройки. 
+
+==getTopPreferences==
+{{{
+AnyBalance.getTopPreferences() //since level 7
+}}}
+
+Метод получает настройки верхнего уровня. 
+
+Возвращает массив настроек в виде объектов `Preference`.
+
+==getPreference==
+{{{
+AnyBalance.getPreference(/*string*/ key) //since level 7
+}}}
+
+Возвращает настройку в виде объекта `Preference` с ключом `key`.
+
+==setPreferenceProperties==
+{{{
+AnyBalance.setPreferenceProperties(/*object*/ prefs) //since level 7
+}}}
+
+Эта функция предназначена для быстрой установки свойств нескольких настроек сразу. Устанавливаемые свойства для каждой настройки передаются в виде объекта `{propname: propvalue, ...}`
+
+Параметр `prefs` передаётся в формате 
+{{{
+{
+   key: { //Ключ настройки
+       propname: propvalue,
+       ...
+   }, ...
+}
+}}}
+
+Пример:
+{{{
+var props = AnyBalance.getPreferenceProperties({
+    locality: {
+        value: ''
+    }
+});
+
+var surgut = (props.locality.value == 'Сургут');
+
+AnyBalance.setPreferenceProperties({
+    street: {visible: surgut},
+    house: {visible: surgut},
+    flat: {visible: surgut},
+    account: {visible: !surgut},
+});
+}}}
+
+==getPreferenceProperties==
+{{{
+AnyBalance.getPreferenceProperties(/*object*/ prefs) //since level 7
+}}}
+
+Эта функция предназначена для быстрого извлечения свойств нескольких настроек сразу. 
+
+Пример:
+{{{
+var props = AnyBalance.getPreferenceProperties({
+    locality: {
+        value: '',
+        enabled: ''
+    },
+    street: {
+        enabled: ''
+    }
+});
+
+//Значения свойств настроек теперь легко получить примерно так:
+AnyBalance.trace(props.locality.enabled);
+AnyBalance.trace(props.street.enabled);
+}}}
+
+==addCallback==
+{{{
+AnyBalance.addCallback(/*string*/ event, /*function*/ func) //since level 7
+}}}
+
+Привязывает функцию к событию. События есть следующие:
+ * `change#` - срабатывает при изменении любой настройки
+ * `change#key` - срабатывает при изменении настройки с ключом `key`
+
+Пример:
+{{{
+AnyBalance.addCallback('change#country', onChangeCountry);
+AnyBalance.addCallback('change#city', onChangeCity);
+AnyBalance.addCallback('change#amountOut', recomputeComission);
+AnyBalance.addCallback('change#tarif', onChangeTariff);
+AnyBalance.addCallback('change#currency', onChangeCurrency);
+}}}
+
+==removeCallback==
+{{{
+AnyBalance.removeCallback(/*string*/ event, /*function*/ func) //since level 7
+}}}
+
+Отвязывает заданную функцию от события.

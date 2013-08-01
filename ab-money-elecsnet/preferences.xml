@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
     <EditTextPreference 
-        title="№ кошелька (телефона)" 
+        title="Логин" 
         positiveButtonText="ОК" 
         summary="||{@s}" 
-        dialogTitle="№ кошелька (телефона)" 
+        dialogTitle="Логин" 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите номер кошелька или записной книжки (номер телефона) для входа в личный кабинет https://services.elecsnet.ru."
-        inputType="number"
+        dialogMessage="Введите логин в личный кабинет."
         key="login">
     </EditTextPreference>
     <EditTextPreference 
@@ -17,7 +16,7 @@
         negativeButtonText="Отмена"
         title="Пароль"
         summary="||***********"
-        dialogMessage="Введите пароль, используемый для входа в личный кабинет https://services.elecsnet.ru."
+        dialogMessage="Введите пароль, используемый для входа в личный кабинет."
         inputType="textPassword">
     </EditTextPreference>
 </PreferenceScreen>

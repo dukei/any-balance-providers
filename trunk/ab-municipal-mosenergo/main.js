@@ -19,7 +19,7 @@ function main(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
 
-    var baseurl = "https://lkkbyt.mosenergosbyt.ru/";
+    var baseurl = 'https://lkkbyt.mosenergosbyt.ru/';
 
     if(!/^\d{10}$/.test(prefs.login || ''))
         throw new AnyBalance.Error('Введите 10 цифр лицевого счета без пробелов и разделителей.');
@@ -27,24 +27,23 @@ function main(){
     var parts = /^(\d{5})(\d{3})(\d{2})$/.exec(prefs.login);
 
     var html = AnyBalance.requestGet(baseurl, g_headers);
-    var rnd = getParam(html, null, null, /<input[^>]+name="login:fTemplateLogin:rnd"[^>]*value="([^"]*)/i);
+    /*var rnd = getParam(html, null, null, /<input[^>]+name="login:fTemplateLogin:rnd"[^>]*value="([^"]*)/i);
     if(!rnd)
-        throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
+        throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');*/
+	//17839-078-50
 
-    html = AnyBalance.requestPost(baseurl + 'pages/main.jsf', {
-        'login:fTemplateLogin':'login:fTemplateLogin',
-        'login:fTemplateLogin:itLS':parts[1],
-        'login:fTemplateLogin:itABN':parts[2],
-        'login:fTemplateLogin:itKr':parts[3],
-        'login:fTemplateLogin:itEmail':'',
-        'login:fTemplateLogin:itPwd':prefs.password,
-        'login:fTemplateLogin:rnd':rnd,
-        'login:fTemplateLogin:cbLogin':'Войти в личный кабинет',
-        'javax.faces.ViewState':'j_id1'
+    html = AnyBalance.requestPost(baseurl + 'backLink.xhtml?mode=auth', {
+        'book':parts[1],
+        'num':parts[2],
+        'kr':parts[3],
+        'email':'',
+        'psw':prefs.password,
+        'x':'44',
+        'y':'10'
     }, g_headers);
 
     //Выход из кабинета
-    if(!/&#1042;&#1099;&#1093;&#1086;&#1076; &#1080;&#1079; &#1082;&#1072;&#1073;&#1080;&#1085;&#1077;&#1090;&#1072;/i.test(html)){
+    if(!/common\/login\.xhtml\?logout/i.test(html)){
         if(html.length < 5000 && AnyBalance.getLevel() < 5) //Обрезается по '\0'
             //throw new AnyBalance.Error("К сожалению, из-за ошибки в Android 4.0+ этот провайдер не работает. Для исправления, пожалуйста, дождитесь следующей версии AnyBalance.");
             throw new AnyBalance.Error("Ваша версия AnyBalance не может получить информацию для этого провайдера. Пожалуйста, установите последнюю версию AnyBalance.");
@@ -56,15 +55,17 @@ function main(){
 
     var result = {success: true};
 
-    getParam(html, result, 'balance', /&#1058;&#1077;&#1082;&#1091;&#1097;&#1080;&#1081; &#1073;&#1072;&#1083;&#1072;&#1085;&#1089; &#1089;&#1095;&#1077;&#1090;&#1072;([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'agreement', /№ лицевого счёта:([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'balance', /Баланс([\s\S]*?)руб/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'agreement', /ЛС №\s*([\s\S]*?)\s*<\//i, replaceTagsAndSpaces, html_entity_decode);
+	
+	
     getParam(html, result, 'lastdate', /Информация о последнем платеже[\s\S]*?<tbody[^>]*>(?:[\s\S]*?<td[^>]*>){1}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
     getParam(html, result, 'lastcounter', /История показаний счетчика[\s\S]*?<tbody[^>]*>(?:[\s\S]*?<td[^>]*>){3}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'lastcounter1', /История показаний счетчика(?:[\s\S](?!<\/table>))*?<tbody[^>]*>(?:(?:[\s\S](?!<\/table))*?<td[^>]*>){7}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'lastcounter2', /История показаний счетчика(?:[\s\S](?!<\/table>))*?<tbody[^>]*>(?:(?:[\s\S](?!<\/table))*?<td[^>]*>){11}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'lastsum', /Информация о последнем платеже[\s\S]*?<tbody[^>]*>(?:[\s\S]*?<td[^>]*>){2}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 
-    getParam(html, result, '__tariff', /№ лицевого счёта:([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, '__tariff', /ЛС №\s*([\s\S]*?)\s*<\//i, replaceTagsAndSpaces, html_entity_decode);
     //Величина тарифа:
     getParam(html, result, '__tariff', /&#1042;&#1077;&#1083;&#1080;&#1095;&#1080;&#1085;&#1072; &#1090;&#1072;&#1088;&#1080;&#1092;&#1072;:(?:[\s\S](?!<\/table))*?<table[^>]+RichSubTable[^>]*>([\S\s]*?)<\/table>/i, replaceTagsAndSpaces, html_entity_decode);
 

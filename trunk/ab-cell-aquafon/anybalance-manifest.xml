@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-cell-aquafon</id>
+	<name>Аквафон</name>
+	<description>
+		Получает данные для сотового оператора Абхазии Аквафон (http://www.aquafon.com/)
+		
+		Личный кабинет находится по адресу https://scc.aquafon.com/
+		
+		ВНИМАНИЕ! Для работы данного провайдера необходимо зарегистрироваться!
+		
+		Для получения пароля отправьте USSD-команду на номер *1234# или пустое SMS на номер 1234
+	</description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units="р"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="acc_num" name="Номер счета" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>cell</type>
+</provider>

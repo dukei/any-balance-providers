@@ -99,7 +99,7 @@ function main(){
 		}
 		//Промежуточные балы появляющиеся при переводе бонусов со счета bonus на счет skidka
 		if (AnyBalance.isAvailable('bonus_perevod')) {
-			var matches = html.match(/Увага! Ваші <b>(\d+?) Балів<\/b>,/i);
+			var matches = html.match(/Увага! Ваші (?:<strong>|<b>)(\d+?) (?:Б|б)алів(?:<\/strong>|<\/b>),/i);
 			if (matches) {
 				result.bonus_perevod = parseFloat(matches[1]);
 			}

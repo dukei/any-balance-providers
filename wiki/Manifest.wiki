@@ -20,6 +20,7 @@
     <preferences>preferences.xml</preferences> <!-- Файл настроек -->
     <js>main.js</js> <!-- необходим как минимум один файл с функцией main() -->
     <js>lib.js</js> <!-- Можно (необязательно) указывать доп. файлы js -->
+    <js target="preferences|parser">preferences.js</js> <!-- Можно (необязательно) перечислить в каких случаях должен включаться файл js (API v.7+) -->
     <history>history.xml</history> <!-- История изменений версий провайдера -->
   </files>
   <counters> <!-- описание счетчиков этого провайдера -->

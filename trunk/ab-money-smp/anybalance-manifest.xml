@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-    <id version="1">ab-money-smp</id>
-    <api min_level="5"/> <!-- используем динамические единицы изменения -->
+    <id version="2">ab-money-smp</id>
+    <api min_level="5" flags="no_browser"/> <!-- используем динамические единицы изменения -->
     <name>СМП Банк</name>
     <description>Информация о карте в банке СМП Банк (http://smpbank.ru/).
 

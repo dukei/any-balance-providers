@@ -96,29 +96,30 @@ function fetchCard(baseurl, html){
     if(prefs.contract && !/^\d{4}$/.test(prefs.contract))
         throw new AnyBalance.Error('Пожалуйста, введите 4 последние цифр номера карты, по которой вы хотите получить информацию, или не вводите ничего, чтобы получить информацию по первой карте.');
 
-    var table = getParam(html, null, null, /<div[^>]+id="divListCard"[^>]*>\s*<table[^>]*>([\s\S]*?)<\/table>/i);
+    var table = getParam(html, null, null, /<div[^>]+id="blckListCard"[^>]*>\s*<table[^>]*>([\s\S]*?)<\/table>/i);
     if(!table)
         throw new AnyBalance.Error('Не удалось найти список карт. Сайт изменен?');
 
-    var re = new RegExp('<tr(?:[\\s\\S](?!</tr))*?\\d{6}\\*{6}' + (prefs.contract || '\\d{4}') + '[\\s\\S]*?</tr>', 'i');
+    var re = new RegExp('<tr(?:[\\s\\S](?!</tr))*?\\*{4}' + (prefs.contract || '\\d{4}') + '[\\s\\S]*?</tr>', 'i');
     var tr = getParam(html, null, null, re);
     if(!tr)
         throw new AnyBalance.Error('Не удаётся найти ' + (prefs.contract ? 'карту с последними цифрами ' + prefs.contract : 'ни одной карты'));
 
     var result = {success: true};
     
-    getParam(tr, result, 'balance', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(tr, result, ['currency', 'balance'], /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseCurrency);
-    getParam(tr, result, 'accnum', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(tr, result, 'cardnum', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)(?:<\/td>|<br)/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(tr, result, 'balance', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(tr, result, ['currency', 'balance'], /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseCurrency);
+    getParam(tr, result, 'accnum', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)(?:<br|<\/td>)/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(tr, result, 'cardnum', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)(?:<\/td>|<br)/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(tr, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(tr, result, 'till', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
     getParam(html, result, 'fio', /<li[^>]+class="userIndication"[^>]*>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, html_entity_decode);
 
     if(AnyBalance.isAvailable('cardname')){
-        getParam(tr, result, 'cardname', /<a[^>]+href="[^"]*SetCardName[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces, html_entity_decode);
+        var cn = getParam(tr, null, null, /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i);
+        getParam(cn || '', result, 'cardname', /<span[^>]+class="[^"]*editLinkWrapper[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
         if(result.cardname == 'Добавить название')
-            getParam(tr, result, 'cardname', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+            getParam(tr, result, 'cardname', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)(?:<\/td>|<br)/i, replaceTagsAndSpaces, html_entity_decode);
     }
 
     if(AnyBalance.isAvailable('till','bonus','payNext','payTill','blocked','type')){
@@ -127,7 +128,7 @@ function fetchCard(baseurl, html){
             AnyBalance.trace('Не удалось найти ссылку на дополнительную информацию по карте. Сайт изменен?');
         }else{
             html = AnyBalance.requestGet(baseurl + 'Ib/GetCardDetail?cardId=' + id, g_headers);
-            getParam(html, result, 'bonus', /Общая сумма баллов, выплаченная Банком на(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+            getParam(html, result, 'bonus', /<i[^>]*>СМП Трансаэро Бонус(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
             getParam(html, result, 'payNext', /Сумма минимального платежа(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
             getParam(html, result, 'payTill', /Минимальный платёж необходимо внести до(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
             getParam(html, result, 'blocked', /Зарезервированные суммы по расходным операциям(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);

@@ -37,7 +37,7 @@ function main(){
      
 	var result = {success: true};
 
-        getParam(html, result, 'trackid', /(?:Результати пошуку за товарно-транспортною накладною №)([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+        getParam(html, result, 'trackid', /(?:Результати пошуку за товарно-транспортною накладною №|Результаты поиска по товарно-транспортной накладной №)([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
         getParam(html, result, 'route', /(?:Маршрут вантажу|Маршрут груза)(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
         getParam(html, result, 'expected', /(?:Дата прибуття|Дата прибытия)(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
         getParam(html, result, 'location', /(?:Текущее местоположение|Поточне місцезнаходження)(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);

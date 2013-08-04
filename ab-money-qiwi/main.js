@@ -142,7 +142,7 @@ function mainNew () {
     getParam (html, result, 'balance', /<option[^>]+id="person-accounts-\w+"[^>]*selected[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
     // Это не всегда работает на девайсе, хотя в ебугере все отлично
 	//getParam (html, result, ['currency', 'balance'], /<option[^>]+id="person-accounts-\w+"[^>]*selected[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseCurrencyMy);
-	getParam (html, result, 'currency', /<option[^>]+id="person-accounts-\w+"[^>]*selected[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseCurrencyMy);
+	getParam (html, result, ['currency', 'balance'], /<option[^>]+id="person-accounts-\w+"[^>]*selected[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseCurrencyMy);
 
     // Сообщения (че-то непонятно, где они в новом личном кабинете)
     //getParam (html, result, 'messages', /Сообщения:.*?>(\d+)/i, [], parseInt);

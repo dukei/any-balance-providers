@@ -16,7 +16,7 @@
     <history>history.xml</history>
   </files>
   <counters>
-    <counter id="balance" name="Баланс" units=" {@currency}"/>
+    <counter id="balance" name="Баланс" units="{@currency}"/>
 	<counter id="qvc_card" name="Номер карты QVC" type="text"/>
 	<counter id="qvc_exp" name="Срок действия QVC" type="time" format="dd/MM/yyyy"/>
 	<counter id="qvc_last" name="Последняя транзакция по QVC" type="text"/>

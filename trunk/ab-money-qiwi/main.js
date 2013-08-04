@@ -120,7 +120,7 @@ function mainNew () {
     var html = AnyBalance.requestGet (baseurl + 'payment/main.action');
 
     // Проверка на корректный вход
-    if (/\/auth\/logout\.action/i.exec(html)){
+    if (/id="person-accounts-/i.exec(html)){
     	AnyBalance.trace ('It looks like we are in selfcare...');
         if(!getParam(html, null, null, /(profileBalance)/i)){
             //Похоже, проблема с паролем, устарел, наверное.

@@ -37,8 +37,12 @@ function main(){
 	getParam(html, result, 'bonus_pl', /<td[^>]*>\s*Наилучшее общение\s*<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 	//Бонус facebook
 	getParam(html, result, 'bonus_fb', /<td[^>]*>\s*Бонус facebook\s*<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	//Бонус «Вільний доступ»    [^>]*<\/td>
+	getParam(html, result, 'bonus_vd', /<td[^>]*>\s*Бонус [^>]*Вільний доступ[^>]*\s*<\/td>\s*<td[^>]*>([\s\S]*?) \([^>]*\)\s*<\/td>/i, replaceTagsAndSpaces, parseBalance);
 	//Пакетный трафик (получаем в локальную переменную, и независимо от включенности счетчика 'traffic_paket')
     var traffic_paket = getParam(html, null, null, /<td[^>]*>\s*пакетный трафик\s*<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+        //Пакетный трафик (Rev.B)
+    var traffic_paket_revb = getParam(html, null, null, /пакетный трафик \(Rev.B\)\s*<[\s\S]*?<td[^>]*>([\s\S]*?) по/i, replaceTagsAndSpaces, parseBalance);
 	//Трафик использованный за текущую интернет сессию  (получаем в локальную переменную, и независимо от включенности счетчика 'traffic_paket_session')
     var traffic_paket_session = getParam(html,  null, null, /<td[^>]*>\s*Трафик МБ\s*<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 	//Узнаем разницу между имеющимся Пакетным трафиком и израсходованным за текущую сессию
@@ -46,6 +50,11 @@ function main(){
 		if(AnyBalance.isAvailable('traffic_paket'))
             result.traffic_paket = traffic_paket - (traffic_paket_session || 0); //Если вдруг traffic_paket_session не найден, то считаем его равным 0
         }
+        if(typeof(traffic_paket_revb) != 'undefined'){
+		if(AnyBalance.isAvailable('traffic_paket_revb'))
+            result.traffic_paket_revb = traffic_paket_revb - (traffic_paket_session || 0); //Если вдруг traffic_paket_session не найден, то считаем его равным 0
+        }
+
 	//Трафик ночной
     getParam(html, result, 'traffic_night', />\s*Ночной трафик\s*<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 	//Трафик смартфон 
@@ -57,6 +66,9 @@ function main(){
 	
 	//Использованный трафик
 	sumParam(html, result, 'traffic_it', />\s*IT\s*<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+	
+	//Использованный трафик
+	sumParam(html, result, 'traffic_3g_turbo', />\s*3G_TURBO\s*<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	
 	//Дата последней абонентской активности
 	sumParam(html, result, 'date_activity', /<td[^>]*>\s*Дата последней абонентской активности \(мм.гггг\)\s*<\/td>\s*<td[^>]*>([^<]*)<\/td>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);

@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="19" date="2013-08-05">
+      - Добавлены счетчики "Бонус «Вільний доступ»", "Трафик 3G_TURBO", "Пакетный трафик (Rev.B)".
+    </change>
     <change version="18" date="2013-07-17">
       - Добавлен счетчик "Минуты по России".
     </change>

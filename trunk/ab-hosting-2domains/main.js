@@ -6,55 +6,13 @@
 Сайт оператора: http://2domains.ru
 Личный кабинет: https://2domains.ru/reg/
 */
-
-function getParam (html, result, param, regexp, replaces, parser) {
-	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
-		return;
-
-	var matches = regexp.exec (html), value;
-	if (matches) {
-		value = matches[1];
-		if (replaces) {
-			for (var i = 0; i < replaces.length; i += 2) {
-				value = value.replace (replaces[i], replaces[i+1]);
-			}
-		}
-		if (parser)
-			value = parser (value);
-
-    if(param)
-      result[param] = value;
-	}
-   return value
-}
-
-var replaceTagsAndSpaces = [/&nbsp;/g, ' ', /<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, ''];
-var replaceFloat = [/\s+/g, '', /,/g, '.'];
-
-function parseBalance(text){
-    var val = getParam(text.replace(/\s+/g, ''), null, null, /(-?\d[\d\s.,]*)/, replaceFloat, parseFloat);
-    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
-    return val;
-}
-
-function parseDate(str){
-    var matches = /(\d+)[^\d](\d+)[^\d](\d+)/.exec(str);
-    var time;
-    if(matches){
-	  time = (new Date(+matches[3], matches[2]-1, +matches[1])).getTime();
-          AnyBalance.trace('Parsing date ' + new Date(time) + ' from value: ' + str);
-          return time;
-    }
-    AnyBalance.trace('Could not parse date from value: ' + str);
-}
-
 function main(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('windows-1251');
 
     var baseurl = "https://2domains.ru/reg/";
 
-    var html = AnyBalance.requestPost(baseurl + 'login.php', {
+    var html = AnyBalance.requestPost(baseurl + 'login1.php', {
         ret:'/',
         email:prefs.login,
         passwd:prefs.password,
@@ -101,7 +59,7 @@ function main(){
                 var suffix = ind > 0 ? ind : '';
                 var domain_name = getParam(tr, null, null, /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
                 getParam(tr, result, 'domain' + suffix, /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-                getParam(tr, result, 'domain_till' + suffix, /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+                getParam(tr, result, 'domain_till' + suffix, /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
                 found[found.length] = domain_name;
             }
 
@@ -118,12 +76,3 @@ function main(){
     
     AnyBalance.setResult(result);
 }
-
-function html_entity_decode(str)
-{
-    //jd-tech.net
-    var tarea=document.createElement('textarea');
-    tarea.innerHTML = str;
-    return tarea.value;
-}
-

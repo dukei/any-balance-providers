@@ -18,7 +18,7 @@ var g_headers = {
 function main(){
     var prefs = AnyBalance.getPreferences();
 
-    var baseurl = "http://avtodor-ts.ru/";
+    var baseurl = 'http://avtodor-tr.ru/';
 
     AnyBalance.setDefaultCharset('utf-8'); 
 

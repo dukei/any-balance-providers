@@ -26,11 +26,11 @@ function main(){
 
     var parts = /^(\d{5})(\d{3})(\d{2})$/.exec(prefs.login);
 
-    var html = AnyBalance.requestGet(baseurl, g_headers);
+    //var html = AnyBalance.requestGet(baseurl, g_headers);
     /*var rnd = getParam(html, null, null, /<input[^>]+name="login:fTemplateLogin:rnd"[^>]*value="([^"]*)/i);
     if(!rnd)
         throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');*/
-    html = AnyBalance.requestPost(baseurl + 'backLink.xhtml?mode=auth', {
+    var html = AnyBalance.requestPost(baseurl + 'backLink.xhtml?mode=auth', {
         'book':parts[1],
         'num':parts[2],
         'kr':parts[3],
@@ -55,11 +55,12 @@ function main(){
 
     getParam(html, result, 'balance', /Баланс([\s\S]*?)руб/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'agreement', /ЛС №\s*([\s\S]*?)\s*<\//i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, '__tariff', /ЛС №\s*([\s\S]*?)\s*<\//i, replaceTagsAndSpaces, html_entity_decode);	
 	
-	getParam(html, result, '__tariff', /ЛС №\s*([\s\S]*?)\s*<\//i, replaceTagsAndSpaces, html_entity_decode);
-    //Величина тарифа:
-    getParam(html, result, '__tariff', /Величина тарифа[\s\S]*?(<span>[\s\S]*?)<\/td><\/tr>/i, replaceTagsAndSpaces, html_entity_decode);
-	
+	html = AnyBalance.requestGet(baseurl + 'abonent/persInfo.xhtml', g_headers);
+	//Величина тарифа:
+    getParam(html, result, '__tariff', /Величина тарифа:[\s\S]*?(<table>[\s\S]*?<\/table>)/i, replaceTagsAndSpaces, html_entity_decode);
+
 	if(isAvailable(['lastdate', 'lastsum']))
 	{
 		html = AnyBalance.requestGet(baseurl + 'abonent/paysInfo.xhtml', g_headers);
@@ -78,8 +79,8 @@ function main(){
 			AnyBalance.trace('не нашли таблицу с показаниями счетчиков, свяжитесь с автором провайдера');
 			
 		getParam(table, result, 'lastcounter', /<tbody[^>]*>(?:[\s\S]*?<td[^>]*>){4}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-		getParam(table, result, 'lastcounter1', /<tbody[^>]*>(?:[\s\S]*?<td[^>]*>){9}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-		getParam(table, result, 'lastcounter2', /<tbody[^>]*>(?:[\s\S]*?<td[^>]*>){14}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(table, result, 'lastcounter1', /<tbody[^>]*>(?:[\s\S]{1,200}<td[^>]*>){6}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(table, result, 'lastcounter2', /<tbody[^>]*>(?:[\s\S]{1,200}<td[^>]*>){8}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 	}
 
     AnyBalance.setResult(result);

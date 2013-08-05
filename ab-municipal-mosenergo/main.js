@@ -30,8 +30,6 @@ function main(){
     /*var rnd = getParam(html, null, null, /<input[^>]+name="login:fTemplateLogin:rnd"[^>]*value="([^"]*)/i);
     if(!rnd)
         throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');*/
-	//17839-078-50
-
     html = AnyBalance.requestPost(baseurl + 'backLink.xhtml?mode=auth', {
         'book':parts[1],
         'num':parts[2],
@@ -58,16 +56,31 @@ function main(){
     getParam(html, result, 'balance', /Баланс([\s\S]*?)руб/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'agreement', /ЛС №\s*([\s\S]*?)\s*<\//i, replaceTagsAndSpaces, html_entity_decode);
 	
-	
-    getParam(html, result, 'lastdate', /Информация о последнем платеже[\s\S]*?<tbody[^>]*>(?:[\s\S]*?<td[^>]*>){1}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
-    getParam(html, result, 'lastcounter', /История показаний счетчика[\s\S]*?<tbody[^>]*>(?:[\s\S]*?<td[^>]*>){3}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'lastcounter1', /История показаний счетчика(?:[\s\S](?!<\/table>))*?<tbody[^>]*>(?:(?:[\s\S](?!<\/table))*?<td[^>]*>){7}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'lastcounter2', /История показаний счетчика(?:[\s\S](?!<\/table>))*?<tbody[^>]*>(?:(?:[\s\S](?!<\/table))*?<td[^>]*>){11}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'lastsum', /Информация о последнем платеже[\s\S]*?<tbody[^>]*>(?:[\s\S]*?<td[^>]*>){2}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-
-    getParam(html, result, '__tariff', /ЛС №\s*([\s\S]*?)\s*<\//i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, '__tariff', /ЛС №\s*([\s\S]*?)\s*<\//i, replaceTagsAndSpaces, html_entity_decode);
     //Величина тарифа:
-    getParam(html, result, '__tariff', /&#1042;&#1077;&#1083;&#1080;&#1095;&#1080;&#1085;&#1072; &#1090;&#1072;&#1088;&#1080;&#1092;&#1072;:(?:[\s\S](?!<\/table))*?<table[^>]+RichSubTable[^>]*>([\S\s]*?)<\/table>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, '__tariff', /Величина тарифа[\s\S]*?(<span>[\s\S]*?)<\/td><\/tr>/i, replaceTagsAndSpaces, html_entity_decode);
+	
+	if(isAvailable(['lastdate', 'lastsum']))
+	{
+		html = AnyBalance.requestGet(baseurl + 'abonent/paysInfo.xhtml', g_headers);
+		var table = getParam(html, null, null, /(<tbody id="t_pays:tbody_element">[\s\S]*?<\/tbody>)/i, null, null);
+		if(!table)
+			AnyBalance.trace('не нашли таблицу с платежами, свяжитесь с автором провайдера');
+
+		getParam(table, result, 'lastdate', /<tbody[^>]*>(?:[\s\S]*?<td[^>]*>){1}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+		getParam(table, result, 'lastsum', /<tbody[^>]*>(?:[\s\S]*?<td[^>]*>){2}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	}
+    if(isAvailable(['lastcounter', 'lastcounter1', 'lastcounter2']))
+	{
+		html = AnyBalance.requestGet(baseurl + 'abonent/counter.xhtml', g_headers);
+		var table = getParam(html, null, null, /(<table id="r_ctr:0:t_pok"[\s\S]*?<\/tbody><\/table>)/i, null, null);
+		if(!table)
+			AnyBalance.trace('не нашли таблицу с показаниями счетчиков, свяжитесь с автором провайдера');
+			
+		getParam(table, result, 'lastcounter', /<tbody[^>]*>(?:[\s\S]*?<td[^>]*>){4}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(table, result, 'lastcounter1', /<tbody[^>]*>(?:[\s\S]*?<td[^>]*>){9}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(table, result, 'lastcounter2', /<tbody[^>]*>(?:[\s\S]*?<td[^>]*>){14}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	}
 
     AnyBalance.setResult(result);
 }

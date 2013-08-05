@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="18">ab-cell-intertelecom</id>
+  <id version="19">ab-cell-intertelecom</id>
   <!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
   <api flags="no_browser" />
   <name>Интертелеком</name>
@@ -27,10 +27,13 @@
 	<counter id="min_rus" name="Минуты по России" type="time_interval" format="{@H}:{@min}:{@sec}"/>
     <counter id="bonus_pl" name="Бонус по программе лояльности «Наилучшее общение»" suffix=" ₴" type="numeric" flags="zero_when_empty"/>
     <counter id="traffic_paket" name="Пакетный трафик" units=" mb"/>
+    <counter id="traffic_paket_revb" name="Пакетный трафик (Rev.B)" units=" mb"/>
     <counter id="traffic_smart" name="Трафик Смартфон" units=" mb"/>
     <counter id="traffic_night" name="Трафик ночной" units=" mb"/>
     <counter id="traffic_it" name="Трафик IT" units=" mb"/>
+    <counter id="traffic_3g_turbo" name="Трафик 3G_TURBO" units=" mb"/>
     <counter id="bonus_fb" name="Бонус facebook" suffix=" ₴" type="numeric" flags="zero_when_empty"/>
+    <counter id="bonus_vd" name="Бонус «Вільний доступ»" suffix=" ₴" type="numeric" flags="zero_when_empty"/>
     <counter id="traffic_action" name="Трафик по акции" units=" mb" flags="zero_when_empty"/>
     <counter id="date_activity" name="Дата последней абонентской активности" type="time" format="dd/MM/yyyy"/>
     <counter id="skidka" name="Размер скидки по программе лояльности «Наилучшее общение»" suffix="%" type="numeric"/>

@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="3">ab-money-raif</id>
+  <!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
+  <api flags="no_browser" />
+  <id version="4">ab-money-raif</id>
   <name>Райффайзен</name>
   <description>
     Получает текущий остаток и другие параметры счетов и депозитов банка Райффайзенбанк (http://www.raiffeisen.ru), используя интернет-банк https://connect.raiffeisen.ru.
@@ -26,7 +28,9 @@
     <counter id="currency" name="Валюта" type="text"/>
     <counter id="accnum" name="Номер счета" type="text"/>
     <counter id="cardnum" name="Номер карты" type="text"/>
-    <counter id="minpaytill" name="Срок платежа по кредиту" type="time" format="dd/MM/yyyy"/>
+	<counter id="paid" name="Погашено по кредиту" units=" {@currency}"/>
+	<counter id="minpay" name="Сумма платежа по кредиту" units=" {@currency}"/>
+	<counter id="minpaytill" name="Срок платежа по кредиту" type="time" format="dd/MM/yyyy"/>
     <counter id="limit" name="Кредитный лимит" units=" {@currency}"/>
     <counter id="till" name="Срок действия" type="time" format="dd/MM/yyyy"/>
     <counter id="rate" name="Процентная ставка" units="%"/>

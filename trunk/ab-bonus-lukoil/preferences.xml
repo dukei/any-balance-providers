@@ -6,7 +6,7 @@
         summary="||{@s}" 
         dialogTitle="Логин" 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите логин в личный кабинет."
+        dialogMessage="Введите e-mail или номер карты."
         key="login">
     </EditTextPreference>
     <EditTextPreference 
@@ -19,4 +19,12 @@
         dialogMessage="Введите пароль, используемый для входа в личный кабинет."
         inputType="textPassword">
     </EditTextPreference>
+    <ListPreference 
+        key="type" 
+        title="Кабинет"
+        summary="||{@s}\n"
+        entries="club-lukoil.ru|my.licard.com"
+        entryValues="club|likard"
+		defaultValue="likard">
+    </ListPreference>	
 </PreferenceScreen>

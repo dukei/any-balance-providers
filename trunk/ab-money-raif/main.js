@@ -8,10 +8,10 @@ Site: http://www.raiffeisen.ru
 */
 
 var g_headers = {
-'Accept':'text/xml',
-'Content-Type':'text/xml',
-'Connection':'keep-alive',
-'User-Agent':'Dalvik/1.6.0 (Linux; U; Android 4.1.2; GT-I9300 Build/JZO54K) Android/2.1.1(121)'
+	'Accept':'text/xml',
+	'Content-Type':'text/xml',
+	'Connection':'keep-alive',
+	'User-Agent':'Dalvik/1.6.0 (Linux; U; Android 4.1.2; GT-I9300 Build/JZO54K) Android/2.1.1(121)'
 };
 
 var g_xml_login = '<?xml version="1.0" encoding="UTF-8" standalone="yes" ?><soapenv:Envelope xmlns:xsd="http://entry.rconnect/xsd" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://service.rconnect" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><soapenv:Header /><soapenv:Body><ser:login><ser:login>%LOGIN%</ser:login><ser:password>%PASSWORD%</ser:password></ser:login></soapenv:Body></soapenv:Envelope>',
@@ -27,7 +27,7 @@ function translateError(error){
 
     if(errors[error])
         return errors[error];
-
+	
     AnyBalance.trace('Неизвестная ошибка: ' + error);
     return error;
 }
@@ -59,6 +59,8 @@ function main(){
         fetchAccount(baseurl, html, result);
     else if(prefs.type == 'dep')
         fetchDeposit(baseurl, html, result);
+    else if(prefs.type == 'cred')
+        fetchCredit(baseurl, html, result);		
     else
         fetchAccount(baseurl, html, result);
 
@@ -175,4 +177,32 @@ function fetchDeposit(baseurl, html, result){
         }
         result.all = out.join('\n');
     }
+}
+
+function fetchCredit(baseurl, html, result){
+    var prefs = AnyBalance.getPreferences();
+	
+    html = AnyBalance.requestPost(baseurl + 'RCLoanService', g_xml_accounts, addHeaders({SOAPAction: 'urn:GetLoans'})); 
+	
+	getParam(html, result, 'rate', /<ax\d+:intrestRate>([\s\S]*?)<\/ax\d+:intrestRate>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance', /<ax\d+:loanAmount>([\s\S]*?)<\/ax\d+:loanAmount>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'minpay', /<ax\d+:nextPaymentAmount>([\s\S]*?)<\/ax\d+:nextPaymentAmount>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'paid', /<ax\d+:paidLoanAmount>([\s\S]*?)<\/ax\d+:paidLoanAmount>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'currency', /<ax\d+:currency>[^<]*?([^<\.]*?)<\/ax\d+:currency>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'minpaytill', /<ax\d+:nextPaymentDate>([\s\S]*?)<\/ax\d+:nextPaymentDate>/i, replaceTagsAndSpaces, parseDateISO);
+	getParam(html, result, 'till', /<ax\d+:closeDate>([\s\S]*?)<\/ax\d+:closeDate>/i, replaceTagsAndSpaces, parseDateISO);
+	
+    /*if(AnyBalance.isAvailable('all'))
+	{
+        var all = sumParam(html, null, null, /<ns:return[^>]*>([\s\S]*?)<\/ns:return>/ig);
+        var out = [];
+        for(var i=0; i<all.length; ++i){
+            var info = all[i];
+            var accnum = getParam(info, null, null, /<ax\d+:accountNumber>([\s\S]*?)<\/ax\d+:accountNumber>/i, replaceTagsAndSpaces, html_entity_decode);
+            var balance = getParam(info, null, null, /<ax\d+:initialAmount>([\s\S]*?)<\/ax\d+:initialAmount>/i, replaceTagsAndSpaces, parseBalance);
+            var currency = getParam(info, null, null, /<ax\d+:currency>[^<]*?([^<\.]*?)<\/ax\d+:currency>/i, replaceTagsAndSpaces, html_entity_decode);
+            out.push(accnum + ': ' + balance + ' ' + currency);
+        }
+        result.all = out.join('\n');
+    }*/
 }

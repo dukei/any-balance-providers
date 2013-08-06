@@ -60,7 +60,10 @@ function main(){
 	html = AnyBalance.requestGet(baseurl + 'abonent/persInfo.xhtml', g_headers);
 	//Величина тарифа:
     getParam(html, result, '__tariff', /Величина тарифа:[\s\S]*?(<table>[\s\S]*?<\/table>)/i, replaceTagsAndSpaces, html_entity_decode);
-
+	// Однотарифный, Двухтарифный, Трехтарифный
+	var type = getParam(html, null, null, /Тариф[\s\S]*?<tbody[^>]*>(?:[\s\S]*?<td[^>]*>){2}([\S\s]*?)<\/td>/i, null, null);
+	
+	
 	if(isAvailable(['lastdate', 'lastsum']))
 	{
 		html = AnyBalance.requestGet(baseurl + 'abonent/paysInfo.xhtml', g_headers);
@@ -79,9 +82,15 @@ function main(){
 			AnyBalance.trace('не нашли таблицу с показаниями счетчиков, свяжитесь с автором провайдера');
 			
 		getParam(table, result, 'lastcounter', /<tbody[^>]*>(?:[\s\S]*?<td[^>]*>){4}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-		getParam(table, result, 'lastcounter1', /<tbody[^>]*>(?:[\s\S]{1,200}<td[^>]*>){6}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-		getParam(table, result, 'lastcounter2', /<tbody[^>]*>(?:[\s\S]{1,200}<td[^>]*>){8}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+		
+		if(type.toLowerCase().indexOf("двухтарифный") != -1)
+			getParam(table, result, 'lastcounter1', /<tbody[^>]*>(?:[\s\S]*?<td[^>]*>){6}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+		
+		if(type.toLowerCase().indexOf("трехтарифный") != -1)
+		{	
+			getParam(table, result, 'lastcounter1', /<tbody[^>]*>(?:[\s\S]*?<td[^>]*>){6}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+			getParam(table, result, 'lastcounter2', /<tbody[^>]*>(?:[\s\S]*?<td[^>]*>){8}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+		}
 	}
-
     AnyBalance.setResult(result);
 }

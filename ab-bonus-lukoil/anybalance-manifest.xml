@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-bonus-lukoil</id>
-  <name>Лукойл Ликард</name>
+  <!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
+  <api flags="no_browser" />
+  <id version="2">ab-bonus-lukoil</id>
+  <name>Лукойл (Бонусы)</name>
   <description>
-     Получает значения из кабиенета http://my.licard.com/
+	Получает данные по картам Лукой Ликард (http://my.licard.com/), а так же по картам Лояльности (http://club-lukoil.ru/cabinet/)
+	
+	Вы можете выбрать в настройках кабинет в котором Вы зарегистрированы, по умолчанию используется Ликард.
   </description>
   <author>Stark &lt;support@starksoft.ru&gt;</author>
   <files>
@@ -16,6 +20,7 @@
   <counters>
     <counter id="balance" name="Баланс" units=" р"/>
 	<counter id="last_payment" name="Последний платеж" units=" р"/>
+	<counter id="acc_num" name="Номер карты" type="text"/>
     <counter id="name" name="Юр. Лицо" type="text"/>
   </counters>
   <keywords>

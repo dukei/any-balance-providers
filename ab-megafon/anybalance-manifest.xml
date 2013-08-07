@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="2.6" version="81">ab-megafon</id>
+  <id major_version="3.0" version="82">ab-megafon</id>
+  <api flags="no_browser"/>
   <name>Мегафон</name>
   <description>
     Получает баланс, бонусный баланс, минуты, трафик, SMS на телефоне и многое другое. Поддерживаются все филиалы.
@@ -18,7 +19,6 @@
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
-    <js>api:jquery.min.js</js>
     <js>library.js</js>
     <js>main.js</js>
     <history>history.xml</history>

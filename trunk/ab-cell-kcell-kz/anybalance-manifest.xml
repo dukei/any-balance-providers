@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="3">ab-cell-kcell-kz</id>
+  <id version="4">ab-cell-kcell-kz</id>
     <!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
   <api flags="no_browser" />
   <name>Kcell (Казахстан)</name>

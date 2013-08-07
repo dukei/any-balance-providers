@@ -12,7 +12,7 @@ var g_headers = {'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/5
 function main(){
     var prefs = AnyBalance.getPreferences();
     var lang = prefs.lang || 'kk';
-    var baseurl = "http://www.kcell.kz/" + lang + "/ics.security/authenticate/false";
+    var baseurl = "https://www.kcell.kz/" + lang + "/ics.security/authenticate/false";
 	var ibaseurl = 'https://i.kcell.kz/';
 	
     AnyBalance.setDefaultCharset('utf-8');

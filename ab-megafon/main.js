@@ -307,10 +307,6 @@ function isAvailableButUnset(result, params){
     return false;
 }
 
-jQuery.expr[':'].parents = function(a,i,m){
-    return jQuery(a).parents(m[3]).length < 1;
-};
-
 function megafonTrayInfo(filial){
     var filinfo = filial_info[filial], errorInTray;
     

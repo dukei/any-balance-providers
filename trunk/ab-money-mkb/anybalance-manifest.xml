@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="3">ab-money-mkb</id>
+  <id version="4">ab-money-mkb</id>
   <name>Московский Кредитный Банк</name>
   <description>
     Получает текущий остаток и другие параметры карт и кредитов Московского Кредитного Банка, используя систему МКБ Онлайн ( https://online.mkb.ru ).
@@ -22,15 +22,17 @@
     <counter id="needpaytill" name="Обязательный платеж: заплатить до" type="time" format="dd/MM/yyyy"/>
     <counter id="gracepay" name="Отчетная задолженность"/>
     <counter id="gracepaytill" name="Отчетная задолженность: заплатить до" type="time" format="dd/MM/yyyy"/>
+	<counter id="deptill" name="Срок вклада до:" type="time" format="dd/MM/yyyy"/>
     <counter id="pct" name="Срочные проценты"/>
     <counter id="credit" name="Срочный Кредит"/>
     <counter id="latedebt" name="Просроченная задолженность"/>
     <counter id="limit" name="Кредитный лимит"/>
-    <counter id="pctcredit" name="Процентная ставка по кредиту" units="%"/>
+    <counter id="pctcredit" name="Процентная ставка по кредиту/депозиту" units="%"/>
     <counter id="currency" name="Валюта" type="text"/>
-    <counter id="cardnum" name="Номер карты/кредита" type="text"/>
+    <counter id="cardnum" name="Номер карты/кредита/депозита" type="text"/>
     <counter id="accnum" name="Номер счета" type="text"/>
     <counter id="name" name="Тип карты/кредита" type="text"/>
+	<counter id="fio" name="ФИО" type="text"/>
   </counters>
   <keywords>
     мкб онлайн, mkb online, moscow credit bank

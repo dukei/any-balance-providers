@@ -55,6 +55,10 @@ function main(){
         fetchCard(html, baseurl);
     else if(prefs.type == 'crd')
         fetchCredit(html, baseurl);
+    else if(prefs.type == 'dep')
+        fetchDeposit(html, baseurl);
+    else if(prefs.type == 'acc')
+        fetchAccount(html, baseurl);		
     else
         fetchCard(html, baseurl);
     
@@ -154,4 +158,103 @@ function fetchCredit(html, baseurl){
     }
     
     AnyBalance.setResult(result);
+}
+
+function fetchAccount(html, baseurl){
+    var prefs = AnyBalance.getPreferences();
+    if(prefs.num && !/^\d{4}$/.test(prefs.num))
+        throw new AnyBalance.Error("Укажите 4 последних цифры счета или не указывайте ничего, чтобы получить информацию по первому счету.");
+
+    var $html = $(html);
+    var $card = $html.find('tr.btnrsaccs' + (prefs.num ? ':has(td[title*="***' + prefs.num + '"])' : '')).first();
+    if(!$card.size())
+        throw new AnyBalance.Error(prefs.num ? "Не удалось найти счет с последними цифрами " + prefs.num : "Не удалось найти ни одного счета!");
+
+    var result = {success: true};
+    
+    getParam($card.find('td:first-child').attr('title'), result, 'accnum', null, replaceTagsAndSpaces);
+	
+	getParam($card.find('td:first-child').text(), result, 'fio', null, replaceTagsAndSpaces);
+	getParam($card.find('td.money').text(), result, 'balance', null, replaceTagsAndSpaces, parseBalance);
+
+	// Не понятно, надо ли это?
+    /*var href = $card.find('td:first-child a').attr('href');
+    if(!href)
+        AnyBalance.trace('Не удалось обнаружить ссылку на подробную информацию по карте');
+    
+    if(AnyBalance.isAvailable('accnum', 'needpay', 'needpaytill', 'grace', 'gracetill', 'pct', 'credit', 'limit') && href){
+        html = AnyBalance.requestGet(baseurl + href);
+        getParam(html, result, 'accnum', /Номер счета:[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+        getParam(html, result, 'needpay', /Обязательный платеж\.[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+        getParam(html, result, 'needpaytill', /Обязательный платеж\.[^<]*\s+по\s+([^<]*)/i, replaceTagsAndSpaces, parseDate);
+        getParam(html, result, 'gracepay', /Отчетная задолженность\.[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+        getParam(html, result, 'gracepaytill', /Отчетная задолженность\.[^<]*\s+по\s+([^<]*)/i, replaceTagsAndSpaces, parseDate);
+        getParam(html, result, 'pct', /Срочные проценты[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+        getParam(html, result, 'credit', /Срочный Кредит[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+        getParam(html, result, 'limit', /Установленный лимит задолженности[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+    }*/
+    
+    AnyBalance.setResult(result);
+}
+
+function fetchDeposit(html, baseurl){
+    var prefs = AnyBalance.getPreferences();
+	html = AnyBalance.requestGet(baseurl + '/secure/deps.aspx');
+	
+	var tJson = getParam(html, null, null, /var\s*depdata\s*=\s*\[([\s\S]*?)\]/i, null, null);
+	if(!tJson)
+		throw new AnyBalance.Error('Сайт вернул не верные данные, возможно проблемы на сайте!');
+	
+	var json = getJson(tJson);
+	
+    var result = {success: true};
+    
+	getParam(json.ac, result, 'accnum', null, replaceTagsAndSpaces);
+	getParam(json.nm, result, 'cardnum', null, replaceTagsAndSpaces);
+	getParam(json.db, result, 'balance', null, replaceTagsAndSpaces, parseBalance);
+	getParam(json.dr, result, 'pctcredit', null, replaceTagsAndSpaces, parseBalance);
+	getParam(json.de, result, 'deptill', null, replaceTagsAndSpaces, parseDateMoment);
+	
+    AnyBalance.setResult(result);
+}
+
+// Парсит дату из такого вида в мс 27 июля 2013
+function parseDateMoment(str){
+	
+	var found = /(\d{1,2})\s*([\s\S]*?)\s*(\d{1,4})/i.exec(str);
+	if(found)
+	{
+		var day = found[1];
+		var month = found[2];
+		var year = found[3];
+
+		if(month == 'января')
+			month = '01';
+		else if(month == 'февраля')
+			month = '02';
+		else if(month == 'марта')
+			month = '03';
+		else if(month == 'апреля')
+			month = '04';
+		else if(month == 'мая')
+			month = '05';
+		else if(month == 'июня')
+			month = '06';
+		else if(month == 'июля')
+			month = '07';
+		else if(month == 'августа')
+			month = '08';
+		else if(month == 'сентября')
+			month = '09';
+		else if(month == 'октября')
+			month = '10';
+		else if(month == 'ноября')
+			month = '11';
+		else if(month == 'декабря')
+			month = '12';
+
+		return getParam(day+'.'+month+'.'+ year, null, null, null, replaceTagsAndSpaces, parseDate);
+	}
+	else
+		AnyBalance.trace('Failed to parse date from ' + str);
 }

@@ -234,7 +234,7 @@ var g_headers = {
     'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.60 Safari/537.1'
 };
 
-function getTrayXml(filial, address){
+function getTrayXmlText(filial, address){
     var prefs = AnyBalance.getPreferences();
     var filinfo = filial_info[filial];
     
@@ -274,21 +274,13 @@ function getTrayXml(filial, address){
       throw new AnyBalance.Error(matches[1] + ": " + matches[2]); //Случился какой-то глючный бред
     }
 
-    try{    
-        var xmlDoc = $.parseXML(info),
-          $xml = $(xmlDoc);
-    }catch(e){
-        AnyBalance.trace("Server returned: " + info);
-        throw new AnyBalance.Error('Сервис-Гид вернул неверный XML. Похоже, временные проблемы на сайте.');
-    }
-
     if(!/<BALANCE>[^<]*<\/BALANCE>/i.test(info)){
       AnyBalance.trace("Server returned: " + info);
       throw new AnyBalance.Error('Сервис гид вернул XML без баланса. Похоже, тут что-то не так!'); //Случился какой-то глючный бред, пришел xml без баланса
     }
 	
     //Проверяем на ошибку
-    var error = $xml.find('SC_TRAY_INFO>ERROR>ERROR_MESSAGE, TRAY_INFO>ERROR>ERROR_MESSAGE').text();
+    var error = getParam(info, null, null, /<ERROR_MESSAGE[^>]*>([\s\S]*?)<\/ERROR_MESSAGE>/, replaceTagsAndSpaces, html_entity_decode);
     if(error){
         AnyBalance.trace("Server returned: " + info);
         if(/Robot login is not allowed|does not have permissions/.test(error))
@@ -298,13 +290,13 @@ function getTrayXml(filial, address){
             throw new AnyBalance.Error(error);
     }
 
-    error = $xml.find('SELFCARE>ERROR').text();
+    error = getParam(info, null, null, /<ERROR\b[^>]*>([\s\S]*?)<\/ERROR>/, replaceTagsAndSpaces, html_entity_decode);;
     if(error){
         AnyBalance.trace("Server returned: " + info);
         throw new AnyBalance.Error(error + ' Возможно, вам надо зайти в Сервис-Гид и включить настройку Настройки Сервис-Гида/Автоматический доступ системам/Доступ открыт пользователям и автоматизированным системам, а также нажать кнопку "разблокировать".');
     }
 
-    return $xml;
+    return info;
 }
 
 function isAvailableButUnset(result, params){
@@ -324,90 +316,62 @@ function megafonTrayInfo(filial){
     
     var result = {success: true};
     try{
-        var $xml = getTrayXml(filial, filinfo.site), val;
-        result.__tariff = $.trim($xml.find('RATE_PLAN').text());
+        var xml = getTrayXmlText(filial, filinfo.site), val;
+        getParam(xml, result, '__tariff', /<RATE_PLAN>([\s\S]*?)<\/RATE_PLAN>/i, replaceTagsAndSpaces, html_entity_decode);
 
-        getParam($xml.find('BALANCE').text() || '', result, 'balance', null, null, parseBalance);
-        getParam($xml.find('NUMBER').first().text() || '', result, 'phone', null, null, html_entity_decode);
-        getParam($xml.find('PRSNL_BALANCE').first().text() || '', result, 'prsnl_balance', null, null, parseBalance);
+        getParam(xml, result, 'balance', /<BALANCE>([\s\S]*?)<\/BALANCE>/i, replaceTagsAndSpaces, parseBalance);
+        getParam(xml, result, 'phone', /<NUMBER>([\s\S]*?)<\/NUMBER>/i, replaceTagsAndSpaces, html_entity_decode);
+        getParam(xml, result, 'prsnl_balance', /<PRSNL_BALANCE>([\s\S]*?)<\/PRSNL_BALANCE>/i, replaceTagsAndSpaces, parseBalance);
 
-        var $threads = $xml.find('RP_DISCOUNTS>DISCOUNT>THREAD, PACK>DISCOUNT>THREAD, RP_DISCOUNTS>DISCOUNT:has(>VOLUME_AVAILABLE)');
-        AnyBalance.trace('Found discounts: ' + $threads.length);
+        var discounts = sumParam(xml, null, null, /<DISCOUNT>([\s\S]*?)<\/DISCOUNT>/ig);
+        AnyBalance.trace('Found discounts: ' + discounts.length);
 
-        if(AnyBalance.isAvailable('sms_left','sms_total')){
-            var $val = $threads.filter(':has(NAME:contains("SMS")), :has(PLAN_NAME:contains("SMS")), :has(NAME:contains("смс")), :has(PLAN_NAME:contains("смс"))');
-            AnyBalance.trace('Found SMS discounts: ' + $val.length);
-            $val.each(function(){
-                var $e = $(this);
-                sumParam($e.find('VOLUME_AVAILABLE').text() || '', result, 'sms_left', null, null, parseBalance, aggregate_sum);
-                sumParam($e.find('VOLUME_TOTAL').text() || '', result, 'sms_total', null, null, parseBalance, aggregate_sum);
-            });
-        }
-
-        if(AnyBalance.isAvailable('mms_left','mms_total')){
-            var $val = $threads.filter(':has(NAME:contains("MMS")), :has(PLAN_NAME:contains("MMS")), :has(NAME:contains("ммс")), :has(PLAN_NAME:contains("ммс"))');
-            AnyBalance.trace('Found MMS discounts: ' + $val.length);
-            $val.each(function(){
-                var $e = $(this);
-                sumParam($e.find('VOLUME_AVAILABLE').text() || '', result, 'mms_left', null, null, parseBalance, aggregate_sum);
-                sumParam($e.find('VOLUME_TOTAL').text() || '', result, 'mms_total', null, null, parseBalance, aggregate_sum);
-            });
-        }
-
-        if(AnyBalance.isAvailable('mins_left','mins_total','sms_left','sms_total','mms_left','mms_total')){
-            var $val = $threads.filter(':has(NAME:contains(" мин")), :has(NAME:contains("Телефония исходящая")), :has(NAME:contains("Исходящая телефония")), :has(PLAN_SI:contains("мин")), :has(NAME:contains("Переходи на ноль"))');
-            AnyBalance.trace('Found minutes discounts: ' + $val.length);
-            $val.each(function(){
-                var $e = $(this);
-                var si = $e.find('PLAN_SI').text() || $e.parent().find('PLAN_SI').text(); //Сначала всё-таки попытаемся в своем тэге найти, вдруг это уже DISCOUNT, а не THREAD
-                var plan = $e.find('PLAN_NAME').text() || $e.parent().find('PLAN_NAME').text();
-                var valAvailable = $e.find('VOLUME_AVAILABLE').text();
-                var valTotal = $e.find('VOLUME_TOTAL').text();
-                if(/Байт|Тар.ед./i.test(si)){
-                    AnyBalance.trace('Пропускаем потенциальный глюк мегафона, Исходящая телефония, но написано ' + si + ', а должны быть минуты: ' + plan + ' - ' + valAvailable + '/' + valTotal);
-                    return; //Это глюк мегафона, написано байт, а должны быть минуты
+        for(var i=0; i<discounts.length; ++i){
+            var d = discounts[i];
+            var name = getParam(d, null, null, /<NAME>([\s\S]*?)<\/NAME>/i) || '';
+            var plan_name = getParam(d, null, null, /<PLAN_NAME>([\s\S]*?)<\/PLAN_NAME>/i) || '';
+            var plan_si = getParam(d, null, null, /<PLAN_SI>([\s\S]*?)<\/PLAN_SI>/i) || '';
+            var name_service = getParam(d, null, null, /<NAME_SERVICE>([\s\S]*?)<\/NAME_SERVICE>/i) || '';
+            var names = name + ',' + plan_name;
+            if(/sms|смс/i.test(names)){
+                AnyBalance.trace('Найдены SMS: ' + names);
+                sumParam(d, result, 'sms_left', /<VOLUME_AVAILABLE>([\s\S]*?)<\/VOLUME_AVAILABLE>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+                sumParam(d, result, 'sms_total', /<VOLUME_TOTAL>([\s\S]*?)<\/VOLUME_TOTAL>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+            }else if(/mms|ммс/i.test(names)){
+                AnyBalance.trace('Найдены MMS: ' + names);
+                sumParam(d, result, 'mms_left', /<VOLUME_AVAILABLE>([\s\S]*?)<\/VOLUME_AVAILABLE>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+                sumParam(d, result, 'mms_total', /<VOLUME_TOTAL>([\s\S]*?)<\/VOLUME_TOTAL>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+            }else if(/GPRS| Байт|интернет|мб|Пакетная передача данных/i.test(names) || /Пакетная передача данных/i.test(name_service) || /Байт|Тар.ед./i.test(plan_si)){
+                AnyBalance.trace('Найден интернет: ' + names + ', ' + plan_si);
+                var valAvailable = getParam(d, null, null, /<VOLUME_AVAILABLE>([\s\S]*?)<\/VOLUME_AVAILABLE>/i, replaceTagsAndSpaces, parseBalance);
+                var valTotal = getParam(d, null, null, /<VOLUME_TOTAL>([\s\S]*?)<\/VOLUME_TOTAL>/i, replaceTagsAndSpaces, parseBalance);
+                var units = plan_si;
+                if(units == 'мин'){
+                    //Надо попытаться исправить ошибку мегафона с единицами измерения трафика
+                    if(/GB/i.test(plan_name)) units = 'мб';
+                    else units = 'тар.ед.'; //измеряется в 100кб интервалах
                 }
-                if(plan && /SMS|смс/i.test(plan)){
-                    AnyBalance.trace('Обходим потенциальный глюк мегафона, Исходящая телефония, но написано SMS, а должны быть минуты: ' + plan + ' - ' + valAvailable + '/' + valTotal);
-                    sumParam(valAvailable || '', result, 'sms_left', null, null, parseBalance, aggregate_sum);
-                    sumParam(valTotal || '', result, 'sms_total', null, null, parseBalance, aggregate_sum);
-                }else if(plan && /GPRS|интернет|мб/i.test(plan)){
-                    AnyBalance.trace('Обходим потенциальный глюк мегафона, минуты, но написано GPRS, а должны быть минуты: ' + plan + ' - ' + valAvailable + '/' + valTotal);
-                }else if(plan && /MMS|ммс/i.test(plan)){
-                    AnyBalance.trace('Обходим потенциальный глюк мегафона, Исходящая телефония, но написано MMS, а должны быть минуты: ' + plan + ' - ' + valAvailable + '/' + valTotal);
-                    sumParam(valAvailable || '', result, 'mms_left', null, null, parseBalance, aggregate_sum);
-                    sumParam(valTotal || '', result, 'mms_total', null, null, parseBalance, aggregate_sum);
-                }else{
-                    sumParam(valAvailable || '', result, 'mins_left', null, null, parseMinutes, aggregate_sum);
-                    sumParam(valTotal || '', result, 'mins_total', null, null, parseMinutes, aggregate_sum);
-                }
-            });
-        }
 
-        if(AnyBalance.isAvailable('internet_left','internet_total','internet_cur')){
-            var $val = $threads.filter(':has(NAME:contains(" Байт")), :has(NAME_SERVICE:contains("Пакетная передача данных")), :has(PLAN_NAME:contains("Интернет")), :has(PLAN_NAME:contains("интернет")), :has(PLAN_NAME:contains("GPRS"))');
-            AnyBalance.trace('Found internet discounts: ' + $val.length);
-            for(var i=0;i<$val.length;++i){
-                var name = $val.eq(i).find('PLAN_SI, NAME').text();
-                if(name) name = name.replace(/мин/ig, 'тар.ед.'); //измеряется в 100кб интервалах
-                var left = $val.eq(i).find('VOLUME_AVAILABLE').text();
-                left = parseFloat(left);
-                var total = $val.eq(i).find('VOLUME_TOTAL').text();
-                total = parseFloat(total);
-
-                if(AnyBalance.isAvailable('internet_left')){
-                    result.internet_left = (result.internet_left || 0) + parseTrafficMy(left + name);
+                if(AnyBalance.isAvailable('internet_left') && isset(valAvailable)){
+                    result.internet_left = (result.internet_left || 0) + parseTrafficMy(valAvailable + units);
                 }
-                if(AnyBalance.isAvailable('internet_total')){
-                    result.internet_total = (result.internet_total || 0) + parseTrafficMy(total + name);
+                if(AnyBalance.isAvailable('internet_total') && isset(valTotal)){
+                    result.internet_total = (result.internet_total || 0) + parseTrafficMy(valTotal + units);
                 }
-                if(AnyBalance.isAvailable('internet_cur')){
-                    result.internet_cur = (result.internet_cur || 0) + parseTrafficMy((total - left) + name);
+                if(AnyBalance.isAvailable('internet_cur') && isset(valAvailable) && isset(valTotal)){
+                    result.internet_cur = (result.internet_cur || 0) + parseTrafficMy((valTotal - valAvailable) + units);
                 }
+            }else if(/телефония исходящая|исходящая телефония| мин|Переходи на ноль/i.test(names) || /мин/i.test(plan_si)){
+                AnyBalance.trace('Найдены минуты: ' + names + ', ' + plan_si);
+                sumParam(d, result, 'mins_left', /<VOLUME_AVAILABLE>([\s\S]*?)<\/VOLUME_AVAILABLE>/i, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
+                sumParam(d, result, 'mins_total', /<VOLUME_TOTAL>([\s\S]*?)<\/VOLUME_TOTAL>/i, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
+            }else{
+                AnyBalance.trace('Неизвестный discount: ' + d);
             }
         }
-
-        read_sum_parameters(result, $xml);
+       
+        AnyBalance.trace('Ищем агрегированные параметры...');
+        read_sum_parameters_text(result, xml);
     }catch(e){
         //Не удалось получить инфу из хмл. Но не станем сразу унывать, получим что-нить из виджета
         AnyBalance.trace('Не удалось получить данные из входа для автоматических систем: ' + e.message);
@@ -518,12 +482,12 @@ function megafonTrayInfo(filial){
     
 }
 
-function read_sum_parameters(result, $xml){
-    getParam($xml.find('SUB>SMIT').text() || '', result, 'sub_smit', null, null, parseBalance);
-    getParam($xml.find('SUB>SMIO').text() || '', result, 'sub_smio', null, null, parseBalance);
-    getParam($xml.find('SUB>SCL').text() || '', result, 'sub_scl', null, null, parseBalance);
-    getParam($xml.find('SUB>SCR').text() || '', result, 'sub_scr', null, null, parseBalance);
-    getParam($xml.find('SUB>SOI').text() || '', result, 'sub_soi', null, null, parseBalance);
+function read_sum_parameters_text(result, xml){
+    getParam(xml, result, 'sub_smit', /<SMIT>([\s\S]*?)<\/SMIT>/i, null, parseBalance);
+    getParam(xml, result, 'sub_smio', /<SMIO>([\s\S]*?)<\/SMIO>/i, null, parseBalance);
+    getParam(xml, result, 'sub_scl', /<SCL>([\s\S]*?)<\/SCL>/i, null, parseBalance);
+    getParam(xml, result, 'sub_scr', /<SCR>([\s\S]*?)<\/SCR>/i, null, parseBalance);
+    getParam(xml, result, 'sub_soi', /<SOI>([\s\S]*?)<\/SOI>/i, null, parseBalance);
 }
 
 /**

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
+	<api flags="no_browser" />
+	<id version="1">ab-transport-whsd</id>
+	<name>Западный Скоростной Диаметр</name>
+	<description>
+		Получает данные для оператора платной автомагистрали "Западный Скоростной Диаметр" в г. Санкт-Петербург. http://www.whsd.ru/
+	</description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units="р"/>
+		<counter id="bsk" name="Количество БСК/транспондеров"/>
+		<counter id="acc" name="Договор №" type="text"/>
+		<counter id="thismonthtravel" name="Поездок за текущий месяц" type="text"/>
+		<counter id="thismonthtravelpay" name="Общая стоимость поездок за текущий месяц" units="р"/>
+		<counter id="lasttraveldate" name="Дата последней поездки" type="time" format="dd/MM/yyyy"/>
+		<counter id="status" name="Статус" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type></type>
+	<country>ru</country>
+</provider>

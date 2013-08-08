@@ -53,7 +53,7 @@ function main(){
     if(error)
         throw new AnyBalance.Error(error);
 
-    var needsms = getParam(html, null, null, /(sms-message-panel)/i);
+    var needsms = getParam(html, null, null, /(sms-message-panel|Введите SMS-код)/i);
     if(needsms)
         throw new AnyBalance.Error("Для работы этого провайдера требуется отключить в настройках интернет-банка подтверждение входа по СМС. Это безопасно, для совершения операций все равно будет требоваться подтверждение по СМС.");
 

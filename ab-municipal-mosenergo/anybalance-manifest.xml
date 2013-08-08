@@ -2,7 +2,7 @@
 <provider>
 	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser" />
-  <id version="13">ab-municipal-mosenergo</id>
+  <id version="14">ab-municipal-mosenergo</id>
   <name>Мосэнергосбыт</name>
   <description>
     Получает баланс и информацию о последнем платеже в МосЭнергоСбыт. Получает данные из личного кабинета https://lkkbyt.mosenergosbyt.ru.

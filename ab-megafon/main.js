@@ -268,6 +268,11 @@ function getTrayXmlText(filial, address){
 Для разблокировки необходимо зайти в Сервис-Гид и включить настройку Настройки Сервис-Гида/Автоматический доступ системам/Доступ открыт пользователям и автоматизированным системам, а также нажать кнопку "разблокировать".');
     }
 
+    if(/SCC-ROBOTS-ERROR/.test(info)){
+      AnyBalance.trace("Server returned: " + info);
+      throw new AnyBalance.Error('Сервис гид временно находится на техобслуживании. Зайдите позже.');
+    }
+
     var matches;
     if(matches = /<h1>([^<]*)<\/h1>\s*<p>([^<]*)<\/p>/.exec(info)){
       AnyBalance.trace("Server returned: " + info);
@@ -344,7 +349,7 @@ function megafonTrayInfo(filial){
                 var units = plan_si;
                 if(units == 'мин'){
                     //Надо попытаться исправить ошибку мегафона с единицами измерения трафика
-                    if(/GB/i.test(plan_name)) units = 'мб';
+                    if(/[GM]B/i.test(plan_name)) units = 'мб';
                     else units = 'тар.ед.'; //измеряется в 100кб интервалах
                 }
 

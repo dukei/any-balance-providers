@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-municipal-pitersbyt</id>
+  <id version="3">ab-municipal-pitersbyt</id>
   <name>Петербургская сбытовая компания</name>
   <description>
     Получает текущую задолженность в Петербургской Сбытовой Компании (http://pesc.ru) и Петроэлектросбыте (http://www.pes.spb.ru).

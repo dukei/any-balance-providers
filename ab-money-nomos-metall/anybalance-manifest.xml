@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
+	<api flags="no_browser" />
+    <id version="1">ab-money-nomos-metall</id>
+    <name>НОМОС-Банк (Курсы драг. металлов)</name>
+    <description>
+		Получает текущие курсы купли-продажи металлов в НОМОС-Банке (http://nomos.ru)
+	</description>
+    <author>Stark &lt;support@starksoft.ru&gt;</author>
+    <files>
+	<icon>icon.png</icon>
+        <js>main.js</js>
+        <js>library.js</js>
+        <history>history.xml</history>
+    </files>
+    <counters>
+		<counter id="gold_buy" name="Золото покупка"/>
+		<counter id="gold_sell" name="Золото продажа"/>
+		<counter id="serebro_buy" name="Серебро покупка"/>
+		<counter id="serebro_sell" name="Серебро продажа"/>
+		<counter id="platina_buy" name="Платина покупка"/>
+		<counter id="platina_sell" name="Платина продажа"/>
+		<counter id="palladi_buy" name="Палладий покупка"/>
+		<counter id="palladi_sell" name="Палладий продажа"/>
+    </counters>
+    <keywords>
+        nomos, металл, драг
+    </keywords>
+    <type>
+        money
+    </type>
+    <country>
+        ru
+    </country>
+</provider>

@@ -4,7 +4,9 @@
 	<api flags="no_browser" />
 	<id version="1">ab-telephony-intelnetcom</id>
 	<name>IntelNetCom</name>
-	<description></description>
+	<description>
+		Получает данные для провайдера IP-телефонии IntelNetCom из личного кабинета по адресу https://voip.intelnetcom.ru/user/
+	</description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>

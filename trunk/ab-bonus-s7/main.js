@@ -7,23 +7,31 @@
 Личный кабинет: https://www.s7.ru/home/priority/ffpAbout.dot
 */
 
+var g_headers = {
+	'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
+	'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Connection':'keep-alive',
+	'User-Agent':'Mozilla/5.0 (BlackBerry; U; BlackBerry 9900; en-US) AppleWebKit/534.11+ (KHTML, like Gecko) Version/7.0.0.187 Mobile Safari/534.11+'
+};
+
 function main(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
 
-    var baseurl = "https://www.s7.ru/";
-	var baseurlLogin = "https://cca.s7.ru/";
-
+    var baseurl = 'https://www.s7.ru/';
+	var baseurlLogin = 'https://cca.s7.ru/';
+	
     var html = AnyBalance.requestPost(baseurlLogin + 'cas/login', {
         renew:true,
         auto:true,
-        service:baseurl + 'home/priority/ffpAbout.dot',
+        service:baseurl + 'home/priority/ffpAccount.dot',
         errorPage:baseurl + 'home/priority/ffpLoginError.dot',
         hiddenText:'',
         username:prefs.login,
         password:prefs.password
-    });
-
+    }, g_headers);
+	
     var params = createFormParams(html, function(params, str, name, value){
         if(/type="(submit|reset)"/i.test(str))
             return;
@@ -33,9 +41,28 @@ function main(){
             return prefs.password;
         return value;
     });
+	
+    html = AnyBalance.requestPost(baseurlLogin + 'cas/login', params, addHeaders({Referer:'https://cca.s7.ru/cas/login'}));
+	
+	// Странно, но иногда требует дополнительных переходов, пока оставлю, вдруг пригодится
+	/*AnyBalance.trace(html);
+	var key = getParam(html, null, null, /(?:Нажмите|Click)\s*<a\s*href="([\s\S]*?)">(?:на ссылку|here)/i, null, null);
+	if(!key)
+		throw new AnyBalance.Error('Не нашли ссылку на редирект, тут что-то не так...');
+	
+	var href = '';
+	if(/http/.test(key))
+		href = key;
+	else
+		href = baseurl + 'home/priority/ffpAbout.dot' + key;
+		
+		
+	AnyBalance.trace('Нашли линк ' + href);
 
-    html = AnyBalance.requestPost(baseurlLogin + 'cas/login', params);
-
+	html = AnyBalance.requestGet(href, g_headers);*/
+	
+	//html = AnyBalance.requestGet(baseurl, g_headers);
+	
     //AnyBalance.trace(html);
     if(!/priority\/logout/.test(html)){
         var error = getParam(html, null, null, /<div[^>]*class=["']error[^>]*>([\s\S]*?)<\/div>/, replaceTagsAndSpaces, html_entity_decode);

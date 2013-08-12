@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change major_version="1.2" version="32" date="2013-08-12">
+      Улучшено распознавание трафика в некоторых случаях
+    </change>
     <change major_version="1.2" version="31" date="2013-06-19">
       Добавлен счетчик: Домашний Интернет, срок действия
     </change>

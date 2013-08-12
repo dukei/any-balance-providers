@@ -2,7 +2,7 @@
 <provider>
   <!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
   <api flags="no_browser" />
-  <id major_version="1.2" version="31">ab-cell-kyivstar</id>
+  <id major_version="1.2" version="32">ab-cell-kyivstar</id>
   <name>Киевстар</name>
   <description>
     Получает баланс, бонусные минуты, СМС, ММС, остаток интернет-трафика и другие бонусы для мобильного оператора Киевстар.

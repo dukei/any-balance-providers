@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
+	<api flags="no_browser" />
+	<id version="1">ab-internet-infotelecom</id>
+	<name>Инфотелеком (Сергиев-Посад)</name>
+	<description>
+		Получает данные для интернет-провадйера Инфотелеком г.Сергиев-Посад http://lansp.ru/
+		
+		Личный кабинет находится по адресу https://bill.lansp.ru/
+	</description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units="р"/>
+		<counter id="traf" name="Трафик" units="Мб"/>
+		<counter id="acc" name="Номер лицевого счета" type="text"/>
+		<counter id="status" name="Статус интернета" type="text"/>
+		<counter id="phone" name="Телефон" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

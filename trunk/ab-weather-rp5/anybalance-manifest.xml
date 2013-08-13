@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="5">ab-weather-rp5</id>
+  <id version="6">ab-weather-rp5</id>
+  <api flags="no_browser"/>
   <name>Прогноз rp5.ru</name>
   <description>
    Получает прогноз погоды на завтра и послезавтра с сайта http://rp5.ru. В настройках требуется указать код города.
@@ -22,8 +23,8 @@
     <preferences>preferences.xml</preferences>
     <icon>icon.png</icon>
     <js>main.js</js>
-    <js>api:jquery.min.js</js>
-    <js>date-ru-RU.js</js>
+    <js>moment.min.js</js>
+    <js>moment.lang.ru.min.js</js>
     <js>library.js</js>
     <history>history.xml</history>
   </files>

@@ -56,11 +56,11 @@ function main(){
 		    v = Math.round(json.returns[0].volume);
 		    getParam('' + v, result, 'internet_trafic', null, null, parseBalance);
         }
-		if(isset(json.returns[1])){ //Еженедельные
+		else if(isset(json.returns[1])){ //Еженедельные
 			v = Math.round(json.returns[1].volume);
 			getParam('' + v, result, 'internet_trafic', null, null, parseBalance);
         }
-		if(isset(json.returns[2])){ //Ежедневные
+		else if(isset(json.returns[2])){ //Ежедневные
 			v = Math.round(json.returns[2].volume);
 		    getParam('' + v, result, 'internet_trafic', null, null, parseBalance);
 		}

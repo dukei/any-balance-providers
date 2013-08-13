@@ -54,15 +54,18 @@ function main(){
 		var v;
         if(isset(json.returns[0])){ //Ежемесячные
 		    v = Math.round(json.returns[0].volume);
-		    getParam('' + v, result, 'internet_trafic', null, null, parseBalance);
+			sumParam('' + v, result, 'internet_trafic', null, null, parseBalance, aggregate_sum);
+		    //getParam('' + v, result, 'internet_trafic', null, null, parseBalance);
         }
-		else if(isset(json.returns[1])){ //Еженедельные
+		if(isset(json.returns[1])){ //Еженедельные
 			v = Math.round(json.returns[1].volume);
-			getParam('' + v, result, 'internet_trafic', null, null, parseBalance);
+			sumParam('' + v, result, 'internet_trafic', null, null, parseBalance, aggregate_sum);
+			//getParam('' + v, result, 'internet_trafic', null, null, parseBalance);
         }
-		else if(isset(json.returns[2])){ //Ежедневные
+		if(isset(json.returns[2])){ //Ежедневные
 			v = Math.round(json.returns[2].volume);
-		    getParam('' + v, result, 'internet_trafic', null, null, parseBalance);
+		    //getParam('' + v, result, 'internet_trafic', null, null, parseBalance);
+			sumParam('' + v, result, 'internet_trafic', null, null, parseBalance, aggregate_sum);
 		}
 	} catch(e){
 		AnyBalance.trace('Ошибка при получении Интернет-пакетов: ' + e);

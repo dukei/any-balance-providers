@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="5">ab-cell-tele2-kz</id>
+  <id version="6">ab-cell-tele2-kz</id>
   <!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
   <api flags="no_browser" />
   <name>Теле2 Казахстан</name>

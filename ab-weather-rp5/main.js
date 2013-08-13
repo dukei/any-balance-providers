@@ -116,7 +116,7 @@ function parseXml(xml){
                 getXMLParam(timestep, result, 'precipitation'+suffix, 'precipitation', replaceTagsAndSpaces, parseBalance);
 
                 var falls = ['без осадков', 'дождь', 'дождь со снегом', 'снег'];
-                getXMLParam(timestep, result, 'wind_dir'+suffix, 'wind_direction', replaceTagsAndSpaces, function(str){
+                getXMLParam(timestep, result, 'falls'+suffix, 'falls', replaceTagsAndSpaces, function(str){
                     return falls[parseInt(str)];
                 });
             }

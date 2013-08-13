@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-    <change version="7" date="2013-08-13">
+    <change version="8" date="2013-08-13">
       - Исправлено получение уровня осадков
     </change>
     <change version="6" date="2013-08-13">

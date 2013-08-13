@@ -72,7 +72,7 @@ function parseHtml(html){
                 getParam(tr, result, 'wind_dir'+suffix, />ветер([^,]*)/i, replaceTagsAndSpaces, html_entity_decode);
                 getParam(tr, result, 'wind_vel'+suffix, />ветер(.*?)м\/сек/i, replaceTagsAndSpaces, parseBalance);
                 getParam(tr, result, 'falls'+suffix, /(?:[\s\S]*?<tr[^>]*>){4}.*?,([^\(,]*)/i, replaceTagsAndSpaces, html_entity_decode);
-                getParam(tr, result, 'precip'+suffix, /(?:[\s\S]*?<tr[^>]*>){4}.*?,(.*?)мм/i, replaceTagsAndSpaces, parseBalance);
+                getParam(tr, result, 'precipitation'+suffix, /(?:[\s\S]*?<tr[^>]*>){4}.*?,(.*?)мм/i, replaceTagsAndSpaces, parseBalance);
                 getParam(tr, result, 'pressure'+suffix, /давление\s*([\d.,]+)/i, replaceTagsAndSpaces, parseBalance);
 
                 
@@ -113,7 +113,7 @@ function parseXml(xml){
                 getXMLParam(timestep, result, 'pressure'+suffix, 'pressure', replaceTagsAndSpaces, parseBalance);
                 getXMLParam(timestep, result, 'wind_dir'+suffix, 'wind_direction', replaceTagsAndSpaces, html_entity_decode);
                 getXMLParam(timestep, result, 'wind_vel'+suffix, 'wind_velocity', replaceTagsAndSpaces, parseBalance);
-                getXMLParam(timestep, result, 'precip'+suffix, 'precipitation', replaceTagsAndSpaces, parseBalance);
+                getXMLParam(timestep, result, 'precipitation'+suffix, 'precipitation', replaceTagsAndSpaces, parseBalance);
 
                 var falls = ['без осадков', 'дождь', 'дождь со снегом', 'снег'];
                 getXMLParam(timestep, result, 'wind_dir'+suffix, 'wind_direction', replaceTagsAndSpaces, function(str){

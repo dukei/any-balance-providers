@@ -134,7 +134,7 @@ function fetchCard(jsonInfo, baseurl){
 	
     var cardnum = prefs.cardnum ? prefs.cardnum : '\\d{4}';
 	
-	var re = new RegExp('(<TBODY>[\\s\\S]*?[\\s\\S]*?' + cardnum + '[\\s\\S]*?</TBODY>)', 'i');
+	var re = new RegExp('(<TR ST="40">[\\s\\S]{1,700}' + cardnum + '[\\s\\S]*?class="auth_bb info"[\\s\\S]*?</TD></TR>)', 'i');
     var tr = getParam(html, null, null, re);
     if(!tr)
         throw new AnyBalance.Error('Не удаётся найти ' + (prefs.cardnum ? 'карту с последними цифрами ' + prefs.cardnum : 'ни одной карты'));
@@ -147,7 +147,7 @@ function fetchCard(jsonInfo, baseurl){
 	getParam(tr, result, ['currency', 'balance'], /class="ISO"[^>]*>([\s\S]*?)<\/TD>/i, replaceTagsAndSpaces);
 	getParam(tr, result, 'fio', /class="info"[^>]*>([\s\S]*?)<\/TD>/i, replaceTagsAndSpaces);
 	getParam(tr, result, 'type', /class="auth_bb info"[^>]*>([\s\S]*?)<\/TD>/i, replaceTagsAndSpaces);
-	getParam(tr, result, '__tariff', /class="auth_bb info"[^>]*>([\s\S]*?)<\/TD>/i, replaceTagsAndSpaces);
+	getParam(tr, result, '__tariff', /class="card">([\s\S]*?)<\/TD><\/TR>/i, replaceTagsAndSpaces);
 	// Этих данных нет
     //getParam(tr, result, 'till', /<div[^>]+class="expire"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseDate);
 

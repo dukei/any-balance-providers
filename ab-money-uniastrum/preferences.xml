@@ -32,11 +32,20 @@
         positiveButtonText="ОК"
         key="cardnum" 
         inputType="number"
-        dialogTitle="Номер карты"
+        dialogTitle="Номер карты/счета"
         negativeButtonText="Отмена"
         title="Номер карты"
         summary="|Автоматически|{@s}"
-        dialogMessage="Введите последние 4 цифры карты/счета/депозита, по которому вы хотите получить данные. Если это поле оставить пустым, то будет показана информация по первой карте/счету/депозиту."
-        >
+        dialogMessage="Введите последние 4 цифры карты/счета/депозита, по которому вы хотите получить данные. Если это поле оставить пустым, то будет показана информация по первой карте/счету/депозиту.">
     </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="credname" 
+        inputType="text"
+        dialogTitle="Введите часть названия кредита"
+        negativeButtonText="Отмена"
+        title="Название кредита"
+        summary="|Автоматически|{@s}"
+        dialogMessage="Введите название кредита, по нему можно будет идентифицировать остаток">
+    </EditTextPreference>	
 </PreferenceScreen>

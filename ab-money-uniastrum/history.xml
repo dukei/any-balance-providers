@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+   <change version="4" date="2013-08-14">
+      Добавлено отображение нескольких кредитов
+   </change>
    <change version="3" date="2013-08-14">
       Исправлена обработка нескольких карт
    </change>

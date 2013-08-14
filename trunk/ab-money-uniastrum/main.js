@@ -256,25 +256,27 @@ function fetchCredit(jsonInfo, baseurl){
     }, addHeaders({Referer: baseurl}));
 	var result = {success: true};
 	// Теперь соберем данные о кредитах
-	var firstIDR = '';
+	var idr = '';
 	var found = /SIDR="([\s\S]*?)">([\s\S]*?)<\//.exec(html);
-	var Details = '';
+	//var Details = '';
 	while(found)
 	{
-		if(firstIDR == '')
-			firstIDR = found[1];
+		if(prefs.credname){
+			if(found[2].toLowerCase().indexOf(prefs.credname.toLowerCase()) != -1)
+				idr = found[1];			
+		}else{
+			if(idr == '')
+				idr = found[1];
+		}
 		// Нашли совпадение, занесем в сводку
-		Details = Details+'ID: ' + found[1] + ' Имя: ' + found[2] + '\n';
+		//Details = Details+'ID: ' + found[1] + ' Имя: ' + found[2] + '\n';
 		// продолжим поиск
 		html = html.replace(/SIDR="([\s\S]*?)">([\s\S]*?)<\//, '');
 		found = /SIDR="([\s\S]*?)">([\s\S]*?)<\//.exec(html);
 	}
-	getParam(Details, result, 'all', null, null);
+	//getParam(Details, result, 'all', null, null);
 
 	// Теперь запросим инфу по конкретному кредиту
-	var idr = prefs.cardnum ? prefs.cardnum : firstIDR;
-	if(idr == '')
-		throw new AnyBalance.Error('Не удаётся найти ID кредита');
 	AnyBalance.trace('idr is set to '+idr);
 	html = AnyBalance.requestPost(baseurl, {
 		FILTERIDENT:'',

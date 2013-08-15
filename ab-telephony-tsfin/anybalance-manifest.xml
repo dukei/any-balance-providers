@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
+	<api flags="no_browser" />
+	<id version="1">ab-telephony-tsfin</id>
+	<name>Телесеть Финанс</name>
+	<description>
+		Получает данные для SIP провайдера Телесеть Финанс по адресу https://cp.tsfin.ru/info.php
+	</description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс"/>
+		<counter id="daily" name="Средний дневной расход по договору"/>
+		<counter id="monthly" name="Прогноз расхода по договору на месяц"/>
+		<counter id="acc" name="Лицевой счёт №" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>telephony</type>
+	<country>ru</country>
+</provider>

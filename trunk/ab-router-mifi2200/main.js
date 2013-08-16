@@ -8,27 +8,31 @@ Router Novatel MiFi 2200 - маршрутизатор раздающий бес�
 function main(){
 	var prefs = AnyBalance.getPreferences();
 	var html = AnyBalance.requestPost('http://' + (prefs.ipaddress || '192.168.1.1') + '/');
-
+	
 //        if(!/\?logout/i.test(html))
 		//throw new AnyBalance.Error('Не удалось зайти в статистику. Проверьте ip-адрес.');
                 
 	var result = {success: true};
 	//Название
-        getParam(html, result, '__tariff', /<div\s*id=networkRat>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+        getParam(html, result, '__tariff', /<div\s*id=[^<]*networkRat[^<]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+	
 	//Заряд батареи
-	getParam(html, result, 'battery', /battery([0-4])\.gif/i, replaceTagsAndSpaces, level2pct);
+	getParam(html, result, 'battery', /batte*r*y*([0-4])\.gif/i, replaceTagsAndSpaces, level2pct);
+	
+	//Уровень сигнала
+	getParam(html, result, 'network_level', /rssi([0-5])\.gif/i, replaceTagsAndSpaces, level2plt);
 	
 	//Количество подключенных пользователей
-	getParam(html, result, 'users', /Users :<\/td> <td class=rightstd title=[^<]*> <span id=clconn>([0-5])<\/span>&nbsp;\/&nbsp;<span id=clallow>5<\/span>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'users', /Users :<\/td>\s<td class=[^<]*rightstd[^<]* title=[^<]*>\s<span id=[^<]*clconn[^<]*>([0-5])<\/span>&nbsp;\/&nbsp;<span id=[^<]*clallow[^<]*>5<\/span>/i, replaceTagsAndSpaces, parseBalance);
 	
 	//Время соединения
-        getParam(html, result, 'connected_time', /Connected Time: <\/td> <td class=rightstd> <span id=sessionTime> ([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseSeconds);
+        getParam(html, result, 'connected_time', /Connected Time: <\/td>\s<td class=[^<]*rightstd[^<]*>\s<span id=[^<]*sessionTime[^<]*> ([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseSeconds);
 	
         //Принятый трафик
-        getParam(html, result, 'traffic_received', /Received: <\/td> <td class=rightstd> <span id=sessionRx>([\d,\.]* (kb|mb|gb|кб|мб|гб|байт|bytes))<\/span>/i, null, parseTraffic);
+        getParam(html, result, 'traffic_received', /Received: <\/td>\s<td class=[^<]*rightstd[^<]*>\s<span id=[^<]*sessionRx[^<]*>([\d,\.]* (kb|mb|gb|кб|мб|гб|байт|bytes))<\/span>/i, null, parseTraffic);
 	
         //Отправленный трафик
-        getParam(html, result, 'traffic_transmitted', /Transmitted: <\/td> <td class=rightstd> <span id=sessionTx>([\d,\.]* (kb|mb|gb|кб|мб|гб|байт|bytes))<\/span>/i, null, parseTraffic);
+        getParam(html, result, 'traffic_transmitted', /Transmitted: <\/td>\s<td class=[^<]*rightstd[^<]*>\s<span id=[^<]*sessionTx[^<]*>([\d,\.]* (kb|mb|gb|кб|мб|гб|байт|bytes))<\/span>/i, null, parseTraffic);
 	
 
 	AnyBalance.setResult(result);
@@ -135,5 +139,11 @@ function level2pct(str){
     var level = [0, 25, 50, 75, 100];
     var pct = level[parseInt(str)];
     return pct;
+}
+
+function level2plt(str){
+    var level = [0, 20, 40, 60, 80, 100];
+    var plt = level[parseInt(str)];
+    return plt;
 }
 

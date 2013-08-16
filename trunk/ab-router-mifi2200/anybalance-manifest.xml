@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-router-mifi2200</id>
+  <id version="3">ab-router-mifi2200</id>
   <name>Роутер Novatel MiFi 2200</name>
   <description>
     Мониторинг параметров безпроводного роутера MiFi 2200. Получает данные из странички статистики роутера по адресу http://192.168.1.1 или по другому адресу установленному пользователем.
@@ -16,6 +16,7 @@
   </files>
   <counters>
     <counter id="battery" name="Заряд батареи" suffix=" %" type="numeric"/>
+    <counter id="network_level" name="Уровень сигнала" suffix=" %" type="numeric"/>
     <counter id="users" name="Количество подключенных пользователей" type="numeric"/>
     <counter id="connected_time" name="Время соединения" type="time_interval" format="{@H}:{@min}:{@sec}"/>
     <counter id="traffic_received" name="Принятый трафик" units=" mb"/>

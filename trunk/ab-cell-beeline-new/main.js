@@ -98,7 +98,17 @@ function main(){
         throw new AnyBalance.Error('Вы зашли по временному паролю, требуется сменить пароль. Для этого войдите в ваш кабинет https://my.beeline.ru через браузер и смените там пароль. Новый пароль введите в настройки данного провайдера.');
     if(/<form[^>]+action="\/changePass.html"/i.test(html))
         throw new AnyBalance.Error('Билайн требует сменить пароль. Зайдите в кабинет https://my.beeline.ru через браузер и поменяйте пароль на постоянный.');
-
+	// Билайн просит подтвердить условия соглашения
+	if(/<h1>Условия предоставления услуги<\/h1>/i.test(html))
+	{
+		throw new AnyBalance.Error('Билайн требует подтвердить пользовательское соглашение. Зайдите в кабинет https://my.beeline.ru через браузер.');
+		/*AnyBalance.trace('Билайн просит подтвердить пользовательское соглашение, что ж, попробуем...');
+		html = AnyBalance.requestPost(baseurl + 'c/pre/index.html', {
+			j_idt37:j_idt44=j_idt37:j_idt44
+			j_idt37:j_idt44:j_idt45=
+			javax.faces.ViewState=-6286590272079463813:-6348402349795970218
+		}, addHeaders({Referer: baseurl + 'login.html'})); */
+	}
     //После входа обязательно проверяем маркер успешного входа
     //Обычно это ссылка на выход, хотя иногда приходится искать что-то ещё
     if(!/logOutLink/i.test(html)){
@@ -180,13 +190,22 @@ function fetchPre(baseurl, html){
 
     var xhtml = getBlock(baseurl + 'c/pre/index.html', html, 'currentTariffLoaderDetails');
 
-    getParam(xhtml, result, '__tariff', /<div[^>]+:tariffInfo[^>]*class="current"[^>]*>(?:[\s\S](?!<\/div>))*?<h2[^>]*>([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces, html_entity_decode);
+    var tarif = getParam(xhtml, result, '__tariff', /<div[^>]+:tariffInfo[^>]*class="current"[^>]*>(?:[\s\S](?!<\/div>))*?<h2[^>]*>([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces, html_entity_decode);
+	if(!tarif)
+		getParam(xhtml, result, '__tariff', /<h2>Текущий тариф\s*([\s\S]*?)\s*<\/h2>/i, replaceTagsAndSpaces, html_entity_decode);
 
+	
     if(AnyBalance.isAvailable('balance', 'fio')){
-        xhtml = getBlock(baseurl + 'c/pre/index.html', html, 'balancePreHeadDetails');
+        /*xhtml = getBlock(baseurl + 'c/pre/index.html', html, 'balancePreHeadDetails');
+		
         getParam(xhtml, result, 'balance', /у вас на балансе([\s\S]*)/i, replaceTagsAndSpaces, parseBalance);
         getParam(xhtml, result, ['currency', 'balance'], /у вас на балансе([\s\S]*)/i, replaceTagsAndSpaces, myParseCurrency);
-        getParam(xhtml, result, 'fio', /<span[^>]+class="b2c.header.greeting.pre.b2c.ban"[^>]*>([\s\S]*?)(?:<\/span>|,)/i, replaceTagsAndSpaces, html_entity_decode);
+        getParam(xhtml, result, 'fio', /<span[^>]+class="b2c.header.greeting.pre.b2c.ban"[^>]*>([\s\S]*?)(?:<\/span>|,)/i, replaceTagsAndSpaces, html_entity_decode);*/
+		xhtml = getBlock(baseurl + 'c/pre/index.html', html, 'homeBalance');
+		
+        getParam(xhtml, result, 'balance', /class="price[\s\S]*?>([\s\S]*?уб)/i, replaceTagsAndSpaces, parseBalance);
+        getParam(xhtml, result, ['currency', 'balance'], /class="price[\s\S]*?>([\s\S]*?уб)/i, replaceTagsAndSpaces, myParseCurrency);
+        //getParam(xhtml, result, 'fio', /<span[^>]+class="b2c.header.greeting.pre.b2c.ban"[^>]*>([\s\S]*?)(?:<\/span>|,)/i, replaceTagsAndSpaces, html_entity_decode);		
     }
 
     if(AnyBalance.isAvailable('sms_left', 'mms_left', 'rub_bonus', 'rub_opros', 'sek_bonus')){

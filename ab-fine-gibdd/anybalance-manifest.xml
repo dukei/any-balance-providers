@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
+	<api flags="no_browser" />
+	<id version="1">ab-fine-gibdd</id>
+	<name>Штрафы ГИББД</name>
+	<description>
+		Получает данные по штрафам на сайте gibdd.ru этот провайдер требует версию AnyBalance API >= 8, с поддержкой капчи.
+		
+		Для получения информации по штрафам необходимо ввести номер транспортного средства, а так же номер свидетельства о регистрации.
+	</description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Общая сумма штрафов"/>
+		<counter id="count" name="Колличество штрафов"/>
+		<counter id="date" name="Дата последнего нарушения" type="text"/>
+		<counter id="koap" name="Статья КоАП последнего штрафа" type="text"/>
+		<counter id="podrazdel" name="Подразделение последнего штрафа" type="text"/>
+		<counter id="postanovlenie" name="Постановление последнего штрафа" type="text"/>
+		<counter id="summ" name="Сумма последнего штрафа"/>
+	</counters>
+	<keywords>штрафы, гаи, гибдд, мвд</keywords>
+	<type>fine</type>
+	<country>ru</country>
+</provider>

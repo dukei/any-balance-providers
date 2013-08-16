@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Гос. номер" 
+        positiveButtonText="ОК" 
+        summary="||{@s}" 
+        dialogTitle="Введите номер Вашего автомобиля." 
+        negativeButtonText="Отмена" 
+        dialogMessage="Номер должен быть в формате а351со190."
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Св-во о регистрации."
+        negativeButtonText="Отмена"
+        title="Св-во о регистрации."
+        summary="||***********"
+        dialogMessage="Введите номер свидетельства о регистрации в формате 50от123456."
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

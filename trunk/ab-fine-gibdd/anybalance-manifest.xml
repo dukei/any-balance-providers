@@ -20,8 +20,9 @@
 	<counters>
 		<counter id="balance" name="Общая сумма штрафов"/>
 		<counter id="count" name="Колличество штрафов"/>
-		<counter id="date" name="Дата последнего нарушения" type="text"/>
+		<counter id="date" name="Дата последнего нарушения" type="time" format="dd/MM/yyyy"/>
 		<counter id="koap" name="Статья КоАП последнего штрафа" type="text"/>
+		<counter id="descr" name="Описание последнего штрафа" type="text"/>
 		<counter id="podrazdel" name="Подразделение последнего штрафа" type="text"/>
 		<counter id="postanovlenie" name="Постановление последнего штрафа" type="text"/>
 		<counter id="summ" name="Сумма последнего штрафа"/>

@@ -30,20 +30,22 @@ function main(){
 			throw new AnyBalance.Error('Провайдер требует AnyBakance API v8, пожалуйста, обновите AnyBalance!');
         }
     }
-	var found = /(\W{1}\d+\W{2})(\d{2,3})/i.exec(prefs.login);
+	/*var found = /(\W{1}\d+\W{2})(\d{2,3})/i.exec(prefs.login);
 	if(!found)
-		throw new AnyBalance.Error('Введеный гос. номер не соответствует формату а351со190');
-		
-		
-	params.regnum = found[1];
-    params.regreg = found[2];
-	params.stsnum = prefs.password;
+		throw new AnyBalance.Error('Введеный гос. номер не соответствует формату а351со190');*/
 
-	AnyBalance.trace('Отправляем данные: ' + JSON.stringify(params));
+	/*params.regnum = found[1];
+    params.regreg = found[2];
+	params.stsnum = prefs.password;*/
+	
+	params.regnum = 'р931ем';
+    params.regreg = '199';
+	params.stsnum = '77хт940425';
+
+	//AnyBalance.trace('Отправляем данные: ' + JSON.stringify(params));
 	html = AnyBalance.requestPost(baseurl + 'check/fines/', params);	
 
 	var result = {success: true};
-	
 	var table = getParam(html, null, null, /(<table col=[\s\S]*?id='decisList'[\s\S]*?<\/table>)/i);
 	// Если таблицы нет то нет и штрафов
     if(!table){
@@ -57,19 +59,18 @@ function main(){
 
 	if(fines.length > 0)
 	{
-		AnyBalance.trace('Нашли ' + fines.length);
+		AnyBalance.trace('Штрафов: ' + fines.length);
 		for(var i = 0; i< fines.length; i++)
 		{
 			var curr = fines[i];
 			sumParam(curr, result, 'balance', /(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/ig, null, parseBalance, aggregate_sum);
 		}
+		getParam(curr, result, 'descr', /title[^\"]*\"([\s\S]*?)\"/i, null, html_entity_decode);
 		getParam(curr, result, 'date', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, null, parseDate);
 		getParam(curr, result, 'koap', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
 		getParam(curr, result, 'podrazdel', /(?:[\s\S]*?<td[^>]*>){4}[\s\S]*?regkod[\s\S]*?>([\s\S]*?)<\//i, null, html_entity_decode);
-		
 		getParam(curr, result, 'postanovlenie', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)</i, null, html_entity_decode);
 		sumParam(curr, result, 'summ', /(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/ig, null, parseBalance, aggregate_sum);
-		
 		
 		getParam(fines.length+'', result, 'count', null, replaceTagsAndSpaces, parseBalance);
 	}

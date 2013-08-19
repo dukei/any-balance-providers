@@ -153,8 +153,13 @@ function main(){
 
     // СМС в сети МТС
     sumParam (html, result, 'sms_net', /<li>Осталось (\d+) смс.[^<]*<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-    //Срок Срок действия СМС в сети МТС
+    //Срок действия СМС в сети МТС
     sumParam (html, result, 'termin_sms_net', /<li>Осталось \d+ смс. До ([^<]*)<\/li>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
+    
+    // СМС на сети других мобильных операторов Украины
+    sumParam (html, result, 'sms_others', /<li>Осталось: (\d+) смс. Срок действия до[^<]*<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    //Срок СМС на сети других мобильных операторов Украины
+    sumParam (html, result, 'termin_sms_others', /<li>Осталось: \d+ смс. Срок действия до([^<]*)<\/li>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
 
     // Минуты в сети МТС
     sumParam (html, result, 'min_net_maxenergy', /<li>Осталось ([\d\.,]+) бесплатных секунд.\s?<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);

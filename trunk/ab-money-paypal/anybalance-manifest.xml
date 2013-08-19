@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
-	<api flags="no_browser" />
-  <id version="5">ab-money-paypal</id>
+  <id version="6">ab-money-paypal</id>
   <name>PayPal</name>
   <description>
     Obtains balance on your PayPal account.

@@ -99,7 +99,7 @@ function main(){
     if(/<form[^>]+action="\/changePass.html"/i.test(html))
         throw new AnyBalance.Error('Билайн требует сменить пароль. Зайдите в кабинет https://my.beeline.ru через браузер и поменяйте пароль на постоянный.');
 	// Билайн просит подтвердить условия соглашения
-	if(/<h1>Условия предоставления услуги<\/h1>/i.test(html))
+	/*if(/<h1>Условия предоставления услуги<\/h1>/i.test(html))
 	{
 		throw new AnyBalance.Error('Билайн требует подтвердить пользовательское соглашение. Зайдите в кабинет https://my.beeline.ru через браузер.');
 		/*AnyBalance.trace('Билайн просит подтвердить пользовательское соглашение, что ж, попробуем...');
@@ -107,8 +107,8 @@ function main(){
 			j_idt37:j_idt44=j_idt37:j_idt44
 			j_idt37:j_idt44:j_idt45=
 			javax.faces.ViewState=-6286590272079463813:-6348402349795970218
-		}, addHeaders({Referer: baseurl + 'login.html'})); */
-	}
+		}, addHeaders({Referer: baseurl + 'login.html'})); 
+	}*/
     //После входа обязательно проверяем маркер успешного входа
     //Обычно это ссылка на выход, хотя иногда приходится искать что-то ещё
     if(!/logOutLink/i.test(html)){
@@ -190,12 +190,11 @@ function fetchPre(baseurl, html){
 
     var xhtml = getBlock(baseurl + 'c/pre/index.html', html, 'currentTariffLoaderDetails');
 
-    var tarif = getParam(xhtml, result, '__tariff', /<div[^>]+:tariffInfo[^>]*class="current"[^>]*>(?:[\s\S](?!<\/div>))*?<h2[^>]*>([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces, html_entity_decode);
-	if(!tarif)
-		getParam(xhtml, result, '__tariff', /<h2>Текущий тариф\s*([\s\S]*?)\s*<\/h2>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(xhtml, result, '__tariff', [/<div[^>]+:tariffInfo[^>]*class="current"[^>]*>(?:[\s\S](?!<\/div>))*?<h2[^>]*>([\s\S]*?)<\/h2>/i, /<h2>Текущий тариф\s*([\s\S]*?)\s*<\/h2>/i], replaceTagsAndSpaces, html_entity_decode);
+	//if(!result.__tariff)
+		//getParam(xhtml, result, '__tariff', /<h2>Текущий тариф\s*([\s\S]*?)\s*<\/h2>/i, replaceTagsAndSpaces, html_entity_decode);
 
-	
-    if(AnyBalance.isAvailable('balance', 'fio')){
+	if(AnyBalance.isAvailable('balance', 'fio')){
         /*xhtml = getBlock(baseurl + 'c/pre/index.html', html, 'balancePreHeadDetails');
 		
         getParam(xhtml, result, 'balance', /у вас на балансе([\s\S]*)/i, replaceTagsAndSpaces, parseBalance);
@@ -225,13 +224,13 @@ function getBonuses(xhtml, result){
             sumParam(services[i], result, 'sms_left', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
         }else if(/MMS/i.test(name)){
             sumParam(services[i], result, 'mms_left', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-        }else if(/Рублей БОНУС/i.test(name)){
+        }else if(/Рублей БОНУС|бонус-баланс/i.test(name)){
             sumParam(services[i], result, 'rub_bonus', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
         }else if(/Рублей за участие в опросе/i.test(name)){
             sumParam(services[i], result, 'rub_opros', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-        }else if(/Секунд БОНУС\s*\+/i.test(name)){
+        }else if(/Секунд БОНУС\s*\+|Баланс бонус-секунд/i.test(name)){
             sumParam(services[i], result, 'min_bi', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-        }else if(/Секунд БОНУС-2/i.test(name)){
+        }else if(/Секунд БОНУС-2|Баланс бесплатных секунд-промо/i.test(name)){
             sumParam(services[i], result, 'min_local', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
         }else{
             AnyBalance.trace("Неизвестная опция: " + services[i]);

@@ -120,13 +120,135 @@ function parseCurrency(text){
 /**
  * Заменяет HTML сущности в строке на соответствующие им символы
  */
-function html_entity_decode(str)
+function html_entity_decode (string) {
+    var entities = get_html_translation_table();
+    var replaced = string.replace(/&(#?)(\w+);/g, function(str, sharp, m){
+        if(!sharp){
+            var ml = m.toLowerCase(m);
+            if(entities.hasOwnProperty(ml))
+                return String.fromCharCode(entities[ml]);
+        }else{
+            if(/^\d+$/.test(m))
+                return String.fromCharCode(parseInt(m));
+        }
+    });
+    return replaced;
+}
+
+function get_html_translation_table () {
+  var entities = {
+    amp:	38,
+    nbsp:	160,
+    iexcl:	161,
+    cent:	162,
+    pound:	163,
+    curren:	164,
+    yen:	165,
+    brvbar:	166,
+    sect:	167,
+    uml:	168,
+    copy:	169,
+    ordf:	170,
+    laquo:	171,
+    not:	172,
+    shy:	173,
+    reg:	174,
+    macr:	175,
+    deg:	176,
+    plusmn:	177,
+    sup2:	178,
+    sup3:	179,
+    acute:	180,
+    micro:	181,
+    para:	182,
+    middot:	183,
+    cedil:	184,
+    sup1:	185,
+    ordm:	186,
+    raquo:	187,
+    frac14:	188,
+    frac12:	189,
+    frac34:	190,
+    iquest:	191,
+    agrave:	192,
+    aacute:	193,
+    acirc:	194,
+    atilde:	195,
+    auml:	196,
+    aring:	197,
+    aelig:	198,
+    ccedil:	199,
+    egrave:	200,
+    eacute:	201,
+    ecirc:	202,
+    euml:	203,
+    igrave:	204,
+    iacute:	205,
+    icirc:	206,
+    iuml:	207,
+    eth:	208,
+    ntilde:	209,
+    ograve:	210,
+    oacute:	211,
+    ocirc:	212,
+    otilde:	213,
+    ouml:	214,
+    times:	215,
+    oslash:	216,
+    ugrave:	217,
+    uacute:	218,
+    ucirc:	219,
+    uuml:	220,
+    yacute:	221,
+    thorn:	222,
+    szlig:	223,
+    agrave:	224,
+    aacute:	225,
+    acirc:	226,
+    atilde:	227,
+    auml:	228,
+    aring:	229,
+    aelig:	230,
+    ccedil:	231,
+    egrave:	232,
+    eacute:	233,
+    ecirc:	234,
+    euml:	235,
+    igrave:	236,
+    iacute:	237,
+    icirc:	238,
+    iuml:	239,
+    eth:	240,
+    ntilde:	241,
+    ograve:	242,
+    oacute:	243,
+    ocirc:	244,
+    otilde:	245,
+    ouml:	246,
+    divide:	247,
+    oslash:	248,
+    ugrave:	249,
+    uacute:	250,
+    ucirc:	251,
+    uuml:	252,
+    yacute:	253,
+    thorn:	254,
+    yuml:	255,
+    quot:	34,
+    lt:		60,
+    gt:		62
+  };
+
+  return entities;
+}
+/*function html_entity_decode(str)
 {
+	//return str;
     //jd-tech.net
-    var tarea=document.createElement('textarea');
+    var tarea = document.createElement('textarea');
     tarea.innerHTML = str;
     return tarea.value;
-}
+}*/
 
 /**
  * Получает объект с параметрами форм (ищет в html все <input и <select и возвращает объект с их именами-значениями.
@@ -147,21 +269,21 @@ function html_entity_decode(str)
  */
 function createFormParams(html, process, array){
     var params = array ? [] : {};
-    html.replace(/<input[^>]+name="([^"]*)"[^>]*>|<select[^>]+name="([^"]*)"[^>]*>[\s\S]*?<\/select>/ig, function(str, nameInp, nameSel){
+    html.replace(/<input[^>]+name=['"]([^'"]*)['"][^>]*>|<select[^>]+name=['"]([^'"]*)['"][^>]*>[\s\S]*?<\/select>/ig, function(str, nameInp, nameSel){
         var value = '';
         if(nameInp){
-            if(/type="button"/i.test(str))
+            if(/type=['"]button['"]/i.test(str))
                 value=undefined;
             else
-                value = getParam(str, null, null, /value="([^"]*)"/i, null, html_entity_decode) || '';
+                value = getParam(str, null, null, /value=['"]([^'"]*)['"]/i, null, html_entity_decode) || '';
             name = nameInp;
         }else if(nameSel){
-            value = getParam(str, null, null, /^<[^>]*value="([^"]*)"/i, null, html_entity_decode);
+            value = getParam(str, null, null, /^<[^>]*value=['"]([^'"]*)['"]/i, null, html_entity_decode);
             if(typeof(value) == 'undefined'){
                 var optSel = getParam(str, null, null, /(<option[^>]+selected[^>]*>)/i);
                 if(!optSel)
                     optSel = getParam(str, null, null, /(<option[^>]*>)/i);
-                value = getParam(optSel, null, null, /value="([^"]*)"/i, null, html_entity_decode);
+                value = getParam(optSel, null, null, /value=['"]([^'"]*)["']/i, null, html_entity_decode);
             }
             name = nameSel;
         }
@@ -236,7 +358,7 @@ function addHeaders(newHeaders, oldHeaders){
    if(bOldArray && !bNewArray){ //Если старый массив, а новый объект, то это специальный объект {index: [name, value], ...}!
        var headers = oldHeaders.slice();
        for(i in newHeaders)
-           headers.push([i, newHeaders[i]]);
+           headers[i] = newHeaders[i];
        return headers;
    }
 }
@@ -446,7 +568,7 @@ function aggregate_join(values, delimiter, allow_empty){
         delimiter = ', ';
     var ret = values.join(delimiter);
     if(!allow_empty)
-        ret = ret.replace(/^(?:\s*(,\s*)?)+|(?:\s*,\s*){2,}|(?:(\s*,)?\s*)+$/g, '');
+        ret = ret.replace(/^(?:\s*,\s*)+|(?:\s*,\s*){2,}|(?:\s*,\s*)+$/g, '');
     return ret;
 }
 
@@ -500,7 +622,7 @@ function parseTrafficEx(text, thousand, order, defaultUnits){
         AnyBalance.trace("Could not parse traffic value from " + text);
         return;
     }
-    var units = getParam(_text, null, null, /([kmgкмг][бb]?|[бb](?![\wа-я])|байт|bytes)/i);
+    var units = getParam(_text, null, null, /([kmgtкмгт][бb]?|[бb](?![\wа-я])|байт|bytes)/i);
     if(!units && !defaultUnits){
         AnyBalance.trace("Could not parse traffic units from " + text);
         return;
@@ -523,13 +645,17 @@ function parseTrafficEx(text, thousand, order, defaultUnits){
       case 'г':
         val = Math.round(val/Math.pow(thousand, order-3)*100)/100;
         break;
+      case 't':
+      case 'т':
+        val = Math.round(val/Math.pow(thousand, order-4)*100)/100;
+        break;
     }
     var textval = ''+val;
     if(textval.length > 6)
       val = Math.round(val);
     else if(textval.length > 5)
       val = Math.round(val*10)/10;
-    var dbg_units = {0: 'b', 1: 'kb', 2: 'mb', 3: 'gb'};
+    var dbg_units = {0: 'b', 1: 'kb', 2: 'mb', 3: 'gb', 4: 'tb'};
     AnyBalance.trace('Parsing traffic (' + val + dbg_units[order] + ') from: ' + text);
     return val;
 }

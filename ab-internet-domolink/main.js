@@ -83,7 +83,6 @@ function main(){
     }
     AnyBalance.trace("Entering region: " + prefs.region);
     (regions[prefs.region])(prefs.region,prefs.login,prefs.password);
-	
 }
 
 function getData(param) {
@@ -733,7 +732,7 @@ function domolinkudm(region,login,password) {
     getParam(html, result, '__tariff', /<td[^>]*>\s*Тариф[\s\S]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'username', /<td[^>]*>\s*Абонент[\s\S]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
 
-    var urlreppay=regionurl+"www.PageViewer?page_name=S*ADM_NET_REP_PAY"+authorization;
+    var urlreppay = regionurl+"www.PageViewer?page_name=S*ADM_NET_REP_PAY"+authorization;
     if (AnyBalance.isAvailable ('lastpaysum','lastpaydata','lastpaydesc')) {
         AnyBalance.trace("Fetching payment...");
 
@@ -750,7 +749,7 @@ function domolinkudm(region,login,password) {
                 AnyBalance.trace("... bingo! We're find the last payment.");
                 getParam(htmlpay, result, 'lastpaydata', /Дата платежа(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
                 getParam(htmlpay, result, 'lastpaydesc', /Дата платежа(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-                getParam(htmlpay, result, 'lastpaysum', /Дата платежа(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+                getParam(htmlpay, result, 'lastpaysum', /Дата платежа(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
                 break;
             }
         }

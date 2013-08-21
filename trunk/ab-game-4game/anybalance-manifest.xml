@@ -1,29 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-game-4game</id>
-  <name>Фогейм</name>
-  <description>
-    Получает баланс и бонусы в сервисе для поклонников онлайн развлечений Фогейм (https://ru.4game.com).
-
-    Информация берется из личного кабинета.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="bonus" name="Бонусы" units="б"/>
-  </counters>
-  <keywords>
-    4game
-  </keywords>
-  <type>
-    game
-  </type>
-  <country>
-    ru
-  </country>
+	<id version="2">ab-game-4game</id>
+	<name>Фогейм</name>
+	<description>
+	Получает баланс и бонусы в сервисе для поклонников онлайн развлечений Фогейм (https://ru.4game.com).
+	</description>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units="р"/>
+		<counter id="bonus" name="Бонусы" units="б"/>
+	</counters>
+	<keywords>4game</keywords>
+	<type>game</type>
+	<country>ru</country>
 </provider>

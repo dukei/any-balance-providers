@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-gambling-marathonbet</id>
+	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
+	<api flags="no_browser" />
+  <id version="3">ab-gambling-marathonbet</id>
   <name>Марафон</name>
   <description>
     Получает информацию о балансе для букмекерской конторы Марафон (https://www.marathonbet.com)

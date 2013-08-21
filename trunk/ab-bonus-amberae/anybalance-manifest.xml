@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
+	<api flags="no_browser" />
+	<id version="1">ab-bonus-amberae</id>
+	<name>AMBER</name>
+	<description>
+		Obtains balance in Amber bonus sytem at adress http://myamber.ae/
+	</description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Points Balance"/>
+		<counter id="fio" name="Name" type="text"/>
+		<counter id="num" name="Membership Number" type="text"/>
+		<counter id="tier" name="Tier Name" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>bonus</type>
+</provider>

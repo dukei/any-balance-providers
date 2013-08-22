@@ -1,18 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="14">ab-bonus-gazprom</id>
+  <id major_version="2.0" version="8">ab-bonus-gazprom</id>
+  <api flags="captcha|no_browser"/>
   <name>Газпром Бонус</name>
   <description>
-    Получает бонусные баллы, текущий статус в программе, сумму необходимую для повышения статуса по бонусной карте Газпромнефть. 
-
-    ВНИМАНИЕ! В настоящее время провайдер не работает, потому что сайт http://www.gpnbonus.ru ввел капчу (ввод циферок с картинки) для входа в личный кабинет. Пожалуйста, обратитесь в справочную службу ГазПромНефть по телефону 8 800 700 5151 и попросите отменить капчу или сделать интерфейс для автоматических программ.
+    Получает бонусные баллы, текущий статус в программе, сумму, необходимую для повышения статуса по бонусной карте Газпромнефть. 
   </description>
   <author>KiLLer13&lt;killer_kondor@pisem.net&gt;</author>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
-    <js>main.js</js>
     <js>library.js</js>
+    <js>main.js</js>
     <history>history.xml</history>
   </files>
   <counters>
@@ -26,7 +26,7 @@
     <counter id="status" name="Текущий статус" type="text"/>
   </counters>
   <keywords>
-    бонус, газпромнефть, bonus
+    бонус, газпромнефть, bonus, gazpromneft
   </keywords>
   <type>
     bonus

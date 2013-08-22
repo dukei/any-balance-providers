@@ -86,6 +86,9 @@ function checkForErrors(info){
 		throw new AnyBalance.Error(matches[1]);  
         if(/<h1>Server is too busy<\/h1>/i.test(info))
 		throw new AnyBalance.Error("Сервер russianpost.ru перегружен. Попробуйте позже.");
+        var error = getParam(info, null, null, /<div[^>]+id="CaptchaErrorCodeContainer"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+        if(error)
+                throw new AnyBalance.Error(error);
 }
 
 function checkForRedirect(info, baseurl){
@@ -119,6 +122,15 @@ function mainRussianPost(){
             throw new AnyBalance.Error('Не удалось найти форму запроса. На сайте обед?');
         }
 
+        var captcha = '';
+        if(AnyBalance.getLevel() >= 7){
+            var captchaimg = getParam(form, null, null, /<img[^>]+id='captchaImage'[^>]*src=['"]([^'"]*)/, null, html_entity_decode);
+            if(captchaimg){
+                captchaimg = AnyBalance.requestGet('http://www.russianpost.ru' + captchaimg);
+                captcha = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки. Если вы хотите получать статус отправления Почты России без ввода кода, воспользуйтесь провайдером \"Моя посылка\".", captchaimg);
+            }
+        }
+
         var params = createFormParams(info, function(params, input, name, value){
             var undef;
             if(name == 'BarCode')
@@ -127,6 +139,8 @@ function mainRussianPost(){
                 value = 1;
             else if(name == 'searchbarcode')
                 value = undef;
+            else if(name == 'InputedCaptchaCode')
+                value = captcha;
             return value;
         });
     
@@ -146,10 +160,10 @@ function mainRussianPost(){
 
 	AnyBalance.trace('trying to find table');
 	//Сначала найдём таблицу, содержащую все стадии отправления
-	if(matches = info.match(/<table class="pagetext">.*?<tbody>(.*?)<\/tbody>/)){
+        var alltable = getParam(info, null, null, /<table[^>]+id="tbl_track_results"[^>]*>([\s\S]*?)<\/table>/i);
+	if(alltable){
 		AnyBalance.trace('found table');
-		var alltable = matches[1];
-                var firstRow = getParam(alltable, null, null, /<tr[^>]*>([\s\S]*?)<\/tr>/i);
+                var firstRow = getParam(alltable, null, null, /<tr[^>]*>(\s*<td[\s\S]*?)<\/tr>/i);
                 var addcost = getParam(firstRow, result, 'addcost', /(?:[\s\S]*?<td[^>]*>){8}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 
 		//Потом найдем там последнюю строку

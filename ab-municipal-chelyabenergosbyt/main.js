@@ -43,7 +43,18 @@ function main(){
 		getParam(html, result, 'lastpaydate', /Дата платежа[\s\S]*?(?:[\s\S]*?<td[^>]*>){1}[\s\S]*?([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);	
 		getParam(html, result, 'lastpaysum', /Дата платежа[\s\S]*?(?:[\s\S]*?<td[^>]*>){3}[\s\S]*?([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
 	}
-
-	
+	if(isAvailable(['lastcounterdate', 'lastcounterday', 'lastcounternight', 'lastcounterpik', 'lastcounterstatus']))
+	{
+		html = AnyBalance.requestGet(baseurl + 'Present-web/consumer/countervalue/showAccountCounterValues.action?clearsessionhelper=true&dojo.preventCache=1377159328001');
+		getParam(html, result, 'lastcounterdate', /Дата(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);	
+		// Показания ДЕНЬ
+		getParam(html, result, 'lastcounterday', /Дата(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+		// Показания НОЧЬ
+		getParam(html, result, 'lastcounternight', /Дата(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+		// Показания ПИК
+		getParam(html, result, 'lastcounterpik', /Дата(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);		
+		//Статус
+		getParam(html, result, 'lastcounterstatus', /Дата(?:[\s\S]*?<td[^>]*>){7}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);		
+	}
     AnyBalance.setResult(result);
 }

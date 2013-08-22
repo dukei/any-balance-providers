@@ -2,7 +2,7 @@
 <provider>
   <!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
   <api flags="no_browser" />
-  <id version="1">ab-municipal-chelyabenergosbyt</id>
+  <id version="2">ab-municipal-chelyabenergosbyt</id>
   <name>Челябэнергосбыт</name>
   <description>
     Получает информацию в системе Челябэнергосбыт из личного кабинета https://cabinet.esbt.ru/Present-web/appLaunch.action
@@ -20,6 +20,11 @@
 	<counter id="agreement" name="Договор" type="text"/>
 	<counter id="lastpaydate" name="Дата последнего платежа" type="text"/>
 	<counter id="lastpaysum" name="Сумма последнего платежа"/>
+	<counter id="lastcounterdate" name="Дата показаний счетчика" type="text"/>	
+	<counter id="lastcounterday" name="Показания ДЕНЬ"/>
+	<counter id="lastcounternight" name="Показания НОЧЬ"/>
+	<counter id="lastcounterpik" name="Показания ПИК"/>
+	<counter id="lastcounterstatus" name="Статус показаний счетчика" type="text"/>
 	<counter id="fio" name="ФИО" type="text"/>
   </counters>
   <keywords>

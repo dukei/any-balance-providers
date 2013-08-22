@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
+	<api flags="no_browser|private" />
+	<id version="1">ab-internet-westcall-ryazan</id>
+	<name>WestCall (Рязань)</name>
+	<description>
+	Получает данные для интернет-провайдера WestCall (ООО ИнтерТелеком, г. Рязань) https://cabinet.westcall-rzn.ru/
+	
+	Этот провайдер доступен только из сетей WestCall (Рязань) и Nlink (г. Рязань)
+	</description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Ваш баланс" units="р"/>
+		<counter id="recomended" name="Рекомендуемый платеж" units="р"/>
+		<counter id="incoming_traf" name="Входящий трафик" units="Gb"/>
+		<counter id="outgoing_traf" name="Исходящий трафик" units="Gb"/>
+		<counter id="deadline" name="Дата окончания расчетного периода" type="time" format="dd/MM/yyyy"/>
+		<counter id="sess" name="Кол-во сессий"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="acc_num" name="Счет N" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

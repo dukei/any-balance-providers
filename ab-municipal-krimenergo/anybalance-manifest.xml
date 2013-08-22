@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
+	<api flags="no_browser" />
+	<id version="1">ab-municipal-krimenergo</id>
+	<name>Крымэнерго</name>
+	<description>
+	Получает данные в системе Крымэнерго (http://www.krymenergo.com/)
+	
+	Информация берется из личного кабинета https://secure.mega-billing.com/byt/ru/energo
+	</description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units="грн"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="lastcounter" name="Последние показания счетчика" type="text"/>
+		<counter id="lastpay" name="Последняя оплата" type="text"/>
+		<counter id="acc" name="Лицевой счет" type="text"/>
+		<counter id="tarif" name="Тарификация" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>municipal</type>
+	<country>ua</country>
+</provider>

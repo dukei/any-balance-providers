@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
+	<api flags="no_browser" />
+	<id version="1">ab-cell-mts-arm</id>
+	<name>МТС (Армения)</name>
+	<description>
+	Получает информацию о балансе и тарифном плане сотового оператора МТС в Армении по адресу https://cabinet.mts.am/.
+	</description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units="AMD"/>
+		<counter id="bonus" name="Бонусы" units="AMD"/>
+		<counter id="validto" name="Срок действия" type="time" format="dd/MM/yyyy"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="phone" name="Телефон" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>cell</type>
+	<country>am</country>
+</provider>

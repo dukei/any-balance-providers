@@ -27,20 +27,16 @@ function main(){
             params.captcha_word = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
             AnyBalance.trace('Капча получена: ' + params.captcha_word);
 		}else{
-			throw new AnyBalance.Error('Провайдер требует AnyBakance API v8, пожалуйста, обновите AnyBalance!');
+			throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
         }
     }
-	/*var found = /(\W{1}\d+\W{2})(\d{2,3})/i.exec(prefs.login);
+	var found = /(\W{1}\d+\W{2})(\d{2,3})/i.exec(prefs.login);
 	if(!found)
-		throw new AnyBalance.Error('Введеный гос. номер не соответствует формату а351со190');*/
+		throw new AnyBalance.Error('Введеный гос. номер не соответствует формату а351со190');
 
-	/*params.regnum = found[1];
+	params.regnum = found[1];
     params.regreg = found[2];
-	params.stsnum = prefs.password;*/
-	
-	params.regnum = 'р931ем';
-    params.regreg = '199';
-	params.stsnum = '77хт940425';
+	params.stsnum = prefs.password;
 
 	//AnyBalance.trace('Отправляем данные: ' + JSON.stringify(params));
 	html = AnyBalance.requestPost(baseurl + 'check/fines/', params);	
@@ -54,7 +50,6 @@ function main(){
 			throw new AnyBalance.Error(error);
         //throw new AnyBalance.Error('Не удалось получить информацию по шртафам');
     }
-	
 	var fines = sumParam(html, null, null, /(<tr class='fineline'[\s\S]*?<\/tr>)/ig, null, html_entity_decode, null);
 
 	if(fines.length > 0)
@@ -78,10 +73,7 @@ function main(){
 	else
 	{
 		getParam('0', result, 'balance', null, null, parseBalance);
-		
 		//В базе данных отсутствует информация о неуплаченных штрафах по Вашему запросу
 	}
-
-
     AnyBalance.setResult(result);
 }

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
+	<api flags="no_browser" />
+	<id version="1">ab-municipal-yaltateplo-krim</id>
+	<name>Крымтеплокоммунэнерго</name>
+	<description>
+	Получает данные в системе Крымтеплокоммунэнерго (http://yaltateplo.com/)
+	</description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units="грн"/>
+		<counter id="acc" name="Лицевой счет" type="text"/>
+		<counter id="nachisleno" name="Начислено за прошлый месяц" units="грн"/>
+		<counter id="oplacheno" name="Оплачено за прошлый месяц" units="грн"/>
+		<counter id="dolg" name="Долг за прошлый месяц" units="грн"/>
+	</counters>
+	<keywords></keywords>
+	<type>municipal</type>
+	<country>ua</country>
+</provider>

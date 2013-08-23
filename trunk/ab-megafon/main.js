@@ -842,6 +842,9 @@ function megafonServiceGuidePhysical(filial, sessionid){
 							AnyBalance.trace('Опция ' + optName+ ' нам известна, разбираем...');
 							sumParam(tr, result, 'internet_total', /Включённый объём:(?:[\s\S]*?<div[^>]*>){3}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
 							sumParam(tr, result, 'internet_left', /Включённый объём:(?:[\s\S]*?<div[^>]*>){4}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
+
+							if(isAvailable('internet_cur'))
+								result.internet_cur = (result.internet_cur||0) + (result.internet_total - (result.internet_left||0));
 						}
 						else
 							AnyBalance.trace('Опция ' + optName+ ' не известна, свяжитесь с автором провайдера для добавления данной опции.');

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-    <change version="1" date="2013-08-08">
-      - Исправлена ошибка в настройках
-    </change> -->
+    <change version="3" date="2013-08-23">
+      - Поддержка капчи (для новой версии программы)
+    </change>
 </history>

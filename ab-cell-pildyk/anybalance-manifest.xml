@@ -2,7 +2,7 @@
 <provider>
   <!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
   <api flags="no_browser" />
-  <id version="4">ab-cell-pildyk</id>
+  <id version="5">ab-cell-pildyk</id>
   <name>Pildyk</name>
   <description>
     Получает баланс для Pildyk (www.pildyk.lt)
@@ -18,8 +18,8 @@
   <counters>
     <counter id="balance" name="Баланс" units=" lt"/>
     <counter id="balanceExpire" name="Дата сгорания баланса" type="time" format="dd/MM/yyyy"/>
-    <counter id="name" name="Владелец" type="text"/>    
-    <counter id="telnum" name="Номер телефона" type="text"/>    
+    <counter id="name" name="Владелец" type="text"/>
+    <counter id="telnum" name="Номер телефона" type="text"/>
   </counters>
   <keywords>
     pildyk

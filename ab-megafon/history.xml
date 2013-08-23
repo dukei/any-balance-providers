@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change major_version="3.0" version="86" date="2013-08-23">
+      - Еще раз улучшено распознавание трафика для столичного филиала (Stark)
+    </change>
     <change major_version="3.0" version="85" date="2013-08-23">
       - Улучшено распознавание трафика для столичного филиала (Stark)
     </change>

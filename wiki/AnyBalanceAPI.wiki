@@ -374,7 +374,7 @@ AnyBalance.getLastResponseHeader(/*string*/ name) //since level 5
 
 Получает строковое значение первого заголовка с заданным именем `name`. Заголовок ищется среди всех заголовков ответа на последний запрос [AnyBalanceAPI#requestGet requestGet()] или [AnyBalanceAPI#requestPost requestPost()]. Если такого нет, возвращает `null`.
 
-===retrieveCode===
+==retrieveCode==
 {{{
 AnyBalance.retrieveCode(/*string*/ comment, /*string*/ image) //since level 7
 }}}

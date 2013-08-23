@@ -630,9 +630,7 @@ function megafonServiceGuidePhysical(filial, sessionid){
     var baseurl = filinfo.site;
     var prefs = AnyBalance.getPreferences(), matches;
     
-    var result = {
-        success: true
-    };
+    var result = {success: true};
 
     var phone = prefs.phone || prefs.login;
 
@@ -809,6 +807,49 @@ function megafonServiceGuidePhysical(filial, sessionid){
             }else{
                 AnyBalance.trace("Не удаётся найти ссылку на Услуги GPRS...");
             }
+			AnyBalance.trace('Пробуем получить данные из "Изменение тарифных опций"');
+			// Еще один интернет
+			text = AnyBalance.requestPost(baseurl + 'SCWWW/PACKS_FORM', {
+				'P_GRID_LEFT':'0',
+				'P_GRID_WIDTH':'740',
+				'find':'',
+				'CHANNEL':'WWW',
+				'SESSION_ID':sessionid,
+				'P_USER_LANG_ID':'1',
+				'CUR_SUBS_MSISDN':phone,
+				'SUBSCRIBER_MSISDN':phone
+			});
+			var tbody = getParam(text, null, null, /(?:Опции группы|&#1054;&#1087;&#1094;&#1080;&#1080; &#1075;&#1088;&#1091;&#1087;&#1087;&#1099;)[\s\S]*?(<tbody>[\s\S]*?<\/tbody>)/i, null, html_entity_decode);
+			if(tbody)
+			{
+				AnyBalance.trace('Получили таблицу услуг...');
+				//AnyBalance.trace(tbody);
+				
+				var enabledTrs = sumParam(tbody, null, null, /<tr[^>]*class="grid-row"[^>]*>(?:[\s\S](?!<tr[^>]*class="grid-row"[^>]*>))*/ig);
+				AnyBalance.trace('Нашли ' + enabledTrs.length + ' элементов в таблице');
+				
+				for(var i = 0; i < enabledTrs.length; i++)
+				{
+					var checkedLen = 0;
+					var tr = enabledTrs[i];
+					if(/checked/i.test(tr))
+					{
+						AnyBalance.trace('Нашли ' + ++checkedLen + ' отмеченных элементов в таблице');
+						var optName = getParam(tr, null, null, /<TMP_PACK_NAME>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+						AnyBalance.trace('Опция ' + optName);
+						if(optName == 'Интернет XS')
+						{
+							AnyBalance.trace('Опция ' + optName+ ' нам известна, разбираем...');
+							sumParam(tr, result, 'internet_total', /Включённый объём:(?:[\s\S]*?<div[^>]*>){3}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
+							sumParam(tr, result, 'internet_left', /Включённый объём:(?:[\s\S]*?<div[^>]*>){4}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
+						}
+						else
+							AnyBalance.trace('Опция ' + optName+ ' не известна, свяжитесь с автором провайдера для добавления данной опции.');
+					}
+				}
+			}
+			else
+				AnyBalance.trace("Не удаётся найти таблицу услуг, свяжиетсь с автором провайдера");
         }
     }
     

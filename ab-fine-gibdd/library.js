@@ -126,7 +126,7 @@ function html_entity_decode (string) {
         if(!sharp){
             var ml = m.toLowerCase(m);
             if(entities.hasOwnProperty(ml))
-                return entities[ml];
+                return String.fromCharCode(entities[ml]);
         }else{
             if(/^\d+$/.test(m))
                 return String.fromCharCode(parseInt(m));

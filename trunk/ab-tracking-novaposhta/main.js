@@ -27,9 +27,9 @@ function main(){
 		'en':prefs.track_id
 	}, addHeaders({Origin:baseurl}));
 
-	if(!/<div[^>]+class="result"[^>]*>[^<]*<table/i.test(html)){
+	if(!/<div[^>]+class="result"[^>]*>(?:[^<]|<br[^>]*>)*<table/i.test(html)){
             //если нет таблицы с результатом, значит, вероятно, ошибка
-            var error = getParam(html, null, null, /<div[^>]+class="result"[^>]*>[^<]*<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+            var error = getParam(html, null, null, /<div[^>]+class="result"[^>]*>(?:[^<]|<br[^>]*>)*<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
             if(error)
                 throw new AnyBalance.Error(error);
             throw new AnyBalance.Error('Не найден статус отправления. Неверный код отправления или произошли изменения на сайте.');

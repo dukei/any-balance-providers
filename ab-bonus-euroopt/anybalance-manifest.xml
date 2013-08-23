@@ -1,9 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-bonus-euroopt</id>
-  <name>Евроопт (Белоруссия)</name>
+  <id version="3">ab-bonus-euroopt</id>
+  <api flags="no_browser|captcha" min_level="3"/>
+  <name>Евроопт (Беларусь)</name>
   <description>
-    Получает информацию о скидке и сумму покупок в текущем месяце в белорусской компании евроопт (http://www.euroopt.by).
+    Получает информацию о скидке и сумму покупок в текущем месяце в белорусской компании евроопт (http://www.euroopt.by). Требует ввода капчи.
  
     Информация берется со страницы http://www.euroopt.by/otchet-po-diskontnoj-karte-2
   </description>
@@ -12,7 +13,7 @@
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
     <js>main.js</js>
-    <js>common_functions.js</js>
+    <js>library.js</js>
     <history>history.xml</history>
   </files>
   <counters>

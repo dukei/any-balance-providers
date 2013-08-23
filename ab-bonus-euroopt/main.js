@@ -14,13 +14,14 @@ function main () {
     }
 
     var prefs = AnyBalance.getPreferences ();
-    var baseurl = 'http://www.euroopt.by/otchet-po-diskontnoj-karte-2';
+    var baseurl = 'http://www.euroopt.by/';
+    if(!prefs.login)
+        throw new AnyBalance.Error('Введите № карты');
 
-    checkEmpty (prefs.login, 'Введите № карты');
-
-    var html = AnyBalance.requestGet(baseurl);
+    var html = AnyBalance.requestGet(baseurl + 'otchet-po-diskontnoj-karte-2');
     var form = getParam(html, null, null, /<form[^>]+id="maec4cmoduleform_1"[^>]*>([\s\S]*?)<\/form>/i);
-    checkEmpty (form, 'Не удалось найти форму ввода номера карты. Сайт изменен?');
+    if(!form)
+        throw new AnyBalance.Error('Не удалось найти форму ввода номера карты. Сайт изменен?');
 
     var params = createFormParams(form, function(params, input, name, value){
         var dt = new Date();
@@ -30,11 +31,17 @@ function main () {
             value = '1.' + (dt.getMonth()+1) + '.' + dt.getFullYear();
         else if(name == 'maec4cto')
             value = dt.getDate() + '.' + (dt.getMonth()+1) + '.' + dt.getFullYear();
+        else if(name == 'captcha'){
+            if(AnyBalance.getLevel() < 7)
+                throw new AnyBalance.Error ('Этот провайдер требует ввода капчи. Обновите программу для поддержки капчи.');
+            var captchaimg = AnyBalance.requestGet(baseurl + 'captcha.php');
+            value = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки.", captchaimg);
+        }
        
         return value;
     });
 
-    var html = AnyBalance.requestPost(baseurl, params);
+    var html = AnyBalance.requestPost(baseurl + 'otchet-po-diskontnoj-karte-2', params);
     
     var error = getParam(html, null, null, /<div[^>]+class="error-message[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
     if(error)
@@ -43,7 +50,7 @@ function main () {
     var result = {success: true};
 
     getParam(html, result, 'status', /Текущий статус карточки:[^<]*<strong[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-    sumParam(html, result, 'sum', /<th[^>]*>\d+\.\d+\.\d+<\/th>\s*<td[^>]*>(\d+)<\/td>/ig, replaceTagsAndSpaces, parseBalance);
+    sumParam(html, result, 'sum', /<th[^>]*>\d+\.\d+\.\d+<\/th>\s*<td[^>]*>(\d+)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 
     AnyBalance.setResult (result);
 }

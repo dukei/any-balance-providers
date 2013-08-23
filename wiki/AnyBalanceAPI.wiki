@@ -372,7 +372,21 @@ AnyBalance.getLastResponseHeaders() //since level 5
 AnyBalance.getLastResponseHeader(/*string*/ name) //since level 5
 }}}
 
-Получает строковое значение первого заголовка с заданным именем `name`. Заголовок ищется среди всех заголовков ответа на последний запрос [AnyBalanceAPI#requestGet requestGet()] или [AnyBalanceAPI#requestPost requestPost()]. Если такого нет, возвращает `null`. 
+Получает строковое значение первого заголовка с заданным именем `name`. Заголовок ищется среди всех заголовков ответа на последний запрос [AnyBalanceAPI#requestGet requestGet()] или [AnyBalanceAPI#requestPost requestPost()]. Если такого нет, возвращает `null`.
+
+===retrieveCode===
+{{{
+AnyBalance.retrieveCode(/*string*/ comment, /*string*/ image) //since level 7
+}}}
+
+Запрашивает ввод кода с картинки. В настоящее время эта функция открывает в программе окошко с картинкой и полем ввода, в которое надо за минуту успеть ввести код.
+
+Пример использования:
+{{{
+var captchaimg = AnyBalance.requestGet(baseurl + 'captcha.php');
+var value = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки.", captchaimg);
+}}}
+ 
 
 =Управление настройками=
 

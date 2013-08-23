@@ -20,4 +20,12 @@
         dialogMessage="Введите ваш пароль к личному кабинету ЛЕНЬ ( http://i-on.ru/crm/logon ). Если у вас нет пароля, получите его на http://i-on.ru/crm/activate."
         inputType="textPassword">
     </EditTextPreference>
+    <ListPreference 
+        key="cabinet" 
+        title="Какой кабинет использовать"
+        summary="||{@s}\n"
+        entries="Новый кабинет|Старый кабинет"
+        entryValues="new|old"
+	defaultValue="old">
+    </ListPreference>	
 </PreferenceScreen>

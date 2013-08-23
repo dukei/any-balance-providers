@@ -1,22 +1,26 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="4">ab-bonus-ion</id>
+	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
+	<api flags="no_browser" />
+  <id version="5">ab-bonus-ion</id>
   <name>Лень карта ИОН</name>
   <description>
-    Получает количество баллов на карте сервисной программе ИОН ЛЕНЬ ( http://i-on.ru/crm/presents ).
+    Получает количество баллов на карте сервисной программе ИОН ЛЕНЬ в старом кабинете (http://i-on.ru/crm/presents) и новом (https://pay.i-on.ru/personal/pub/Entrance).
 
-    Если у вас есть ЛЕНЬ карта, но нет пароля, его можно получить на этой странице: http://i-on.ru/crm/activate.
+    Если у вас есть ЛЕНЬ карта, но нет пароля, его можно получить на этой странице: https://pay.i-on.ru/personal/pub/OtpPage?mode=passwordForFirstLogin
   </description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
+	<js>library.js</js>
     <js>main.js</js>
     <history>history.xml</history>
   </files>
   <counters>
     <counter id="balance" name="Баланс"/>
     <counter id="total" name="Всего заработано"/>
+	<counter id="bonuses" name="Баланс (Баллов)"/>
   </counters>
   <keywords>
     бонус, баллы, bonus, бонусная накопительная программа, ion

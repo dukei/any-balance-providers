@@ -2,7 +2,7 @@
 <provider>
 	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser" />
-	<id version="1">ab-internet-telphin</id>
+	<id version="2">ab-internet-telphin</id>
 	<name>Телфин</name>
 	<description>
 		Получает данные для интернет-провайдера Телфин (http://www.telphin.ru/)

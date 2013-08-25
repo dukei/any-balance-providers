@@ -13,9 +13,9 @@ var g_headers = {
 function main(){
     var prefs = AnyBalance.getPreferences();
     var baseurl = 'https://account.telphin.ru/';
-    AnyBalance.setDefaultCharset('windows-1251'); 
+    AnyBalance.setOptions({FORCE_CHARSET: 'windows-1251'}); 
 
-	var html = AnyBalance.requestPost(baseurl + 'login.php?r_page=', {
+    var html = AnyBalance.requestPost(baseurl + 'login.php?r_page=', {
         'user_name':prefs.login,
         'user_pass':prefs.password,
     }, g_headers); 

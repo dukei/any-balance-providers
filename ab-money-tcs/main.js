@@ -26,16 +26,20 @@ function main(){
     var html, sessionid;
     html = AnyBalance.requestGet(baseurl + '/api/v1/session/?username=' + encodeURIComponent(prefs.login) + '&password=' + encodeURIComponent(prefs.password), g_headers);
 
-    AnyBalance.setCookie(basedomain, 'sessionid', "text");
-
     json = getJson(html);
-    sessionid = json.payload;
+    if(json.resultCode == 'AUTHENTICATION_FAILED')
+        throw new AnyBalance.Error(json.errorMessage || 'Авторизация прошла неуспешно. Проверьте логин и пароль.');
+    if(json.resultCode && json.resultCode != 'OK')
+        throw new AnyBalance.Error("Вход в интернет банк не удался: " + json.resultCode);
+
+    sessionid = json.payload.sessionId;
+
     if(!sessionid){
         var error = json.errorMessage;
         if(error)
             throw new AnyBalance.Error(error);
         AnyBalance.trace(html);
-        throw new AnyBalance.Error('Ошибка входа в интернет банк. Сайт изменен?');
+        throw new AnyBalance.Error('Не удалось найти идентификатор сессии. Сайт изменен?');
     }
         
     AnyBalance.setCookie(basedomain, 'sessionid', sessionid);

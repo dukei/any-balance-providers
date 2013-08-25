@@ -24,6 +24,23 @@ function main(){
     AnyBalance.setDefaultCharset('utf-8');
 
     var html, sessionid;
+    html = AnyBalance.requestGet(baseurl + '/api/v1/session/?username=' + encodeURIComponent(prefs.login) + '&password=' + encodeURIComponent(prefs.password), g_headers);
+
+    AnyBalance.setCookie(basedomain, 'sessionid', "text");
+
+    json = getJson(html);
+    sessionid = json.payload;
+    if(!sessionid){
+        var error = json.errorMessage;
+        if(error)
+            throw new AnyBalance.Error(error);
+        AnyBalance.trace(html);
+        throw new AnyBalance.Error('Ошибка входа в интернет банк. Сайт изменен?');
+    }
+        
+    AnyBalance.setCookie(basedomain, 'sessionid', sessionid);
+                                                                                                                                                                   
+/*    
     if(!prefs.__debug){ //Вход в отладчике глючит, поэтому входим вручную, а проверяем только извлечение счетчиков
         //Устанавливает JSESSIONID
         AnyBalance.requestGet(baseurl + '/authentication/?service=' + encodeURIComponent(baseurl + '/bank/'), g_headers);
@@ -61,7 +78,7 @@ function main(){
         var sessionid = AnyBalance.getCookie('sessionid', {domain: 'www.tcsbank.ru'});
         if(!sessionid)
             throw new AnyBalance.Error("Зайдите в ТКС банк вручную, затем запустите отладчик");
-    }
+    } */
 
     //Данные грузятся только после получения этой страницы, хитрецы, блин...
     AnyBalance.requestGet(baseurl + '/bank/accounts/', g_headers);

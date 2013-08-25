@@ -16,7 +16,7 @@
         dialogTitle="Пароль"
         negativeButtonText="Отмена"
         title="Пароль"
-        summary="Пароль для входа в Интернет-банк||***********\n"
+        summary="|Пароль для входа в Интернет-банк|***********"
         dialogMessage="Введите пароль, используемый для входа в Интернет-банк"
         inputType="textPassword">
     </EditTextPreference>

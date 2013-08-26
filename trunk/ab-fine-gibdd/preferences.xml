@@ -16,6 +16,6 @@
         negativeButtonText="Отмена"
         title="Св-во о регистрации."
         summary="||{@s}" 
-        dialogMessage="Введите номер свидетельства о регистрации в формате 50от123456.">
+        dialogMessage="Введите номер свидетельства о регистрации в формате 50ХХ123456.">
     </EditTextPreference>
 </PreferenceScreen>

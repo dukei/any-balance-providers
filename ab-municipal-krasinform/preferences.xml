@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Номер социальной карты" 
+        positiveButtonText="ОК" 
+        summary="||{@s}" 
+        dialogTitle="Номер социальной карты" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите номер социальной карты."
+        key="login">
+    </EditTextPreference>
+</PreferenceScreen>

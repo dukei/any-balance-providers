@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
+	<api flags="no_browser" />
+	<id version="1">ab-municipal-krasinform</id>
+	<name>КрасИнформ</name>
+	<description>
+	Получает информацию по сойиальной карте на сайте http://krasinform.ru/
+	</description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Всего использованных поездок"/>
+		<counter id="total_base" name="Количество базовых поездок на данный период"/>
+		<counter id="used_base" name="Количество использованных базовых поездок"/>
+		<counter id="unused_base" name="Количество не использованных базовых поездок"/>
+		<counter id="purchased_addon" name="Количество приобретенных дополнительных поездок"/>
+		<counter id="used_addon" name="Количество использованных дополнительных поездок"/>
+	</counters>
+	<keywords></keywords>
+	<type>municipal</type>
+	<country>ru</country>
+</provider>

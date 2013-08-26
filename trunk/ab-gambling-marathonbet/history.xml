@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="4" date="2013-08-26">
+	Исправлен счетчик Нерассчитанные ставки
+    </change>
     <change version="3" date="2013-08-21">
       Мелкие исправления
     </change>

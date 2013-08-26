@@ -146,7 +146,7 @@ function getWeatherFromHTML (prefs) {
 
 
     // Температура воды
-    getParam (html, result, 'waterTemperature', /class="temp value m_temp c">([-+]\d+)/i, [], parseFloat);
+    getParam (html, result, 'waterTemperature', /<div[^>]+class="wicon water"[^>]*>\s*<dd[^>]+class="value m_temp c">([-+]?\d+)/i, [], parseFloat);
 
     // Восход Солнца
     getParam (html, result, 'rising', /Восход[^\d]*(\d{2}:\d{2})/i);

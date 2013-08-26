@@ -53,18 +53,22 @@ function main(){
 	}, g_headers); 
 	
     if(!/ctl00_ctl00_ctl00_lnkSignOut/i.test(html)){
-        var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
-        if(error)
-            throw new AnyBalance.Error(error);
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
     var result = {success: true};
     getParam(html, result, '__tariff', /ctl00_ctl00_ctl00_addMenue_lblSubType">([\s\S]*?)</i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'balance', /ctl00_ctl00_ctl00_addMenue_lblAccount">([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'bonus', /"ctl00_ctl00_MainContent2_content_lblBonusPoint">([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'status', /"ctl00_ctl00_ctl00_addMenue_lblStatus">([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'validto', /"ctl00_ctl00_ctl00_addMenue_lblExpDateInfo">([\s\S]*?)<\//i, replaceTagsAndSpaces, parseDate);
 	getParam(prefs.login, result, 'phone', null, null, null);
 
+	if(isAvailable('bonus'))
+	{
+		var SubscriberID = getParam(html, null, null, /SubscriberID=([^"]*)/i);
+		
+		html = AnyBalance.requestGet(baseurl + 'Pages/bonusconvert.aspx?SubscriberID='+SubscriberID, g_headers);
+		getParam(html, result, 'bonus', /You have(.*?)bonus points/i, replaceTagsAndSpaces, parseBalance);
+	}
+	
     AnyBalance.setResult(result);
 }

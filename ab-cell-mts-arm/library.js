@@ -122,15 +122,19 @@ function parseCurrency(text){
  */
 function html_entity_decode (string) {
     var entities = get_html_translation_table();
-    var replaced = string.replace(/&(#?)(\w+);/g, function(str, sharp, m){
+    var replaced = string.replace(/&(#(x)?)?(\w+);/ig, function(str, sharp, x, m){
         if(!sharp){
             var ml = m.toLowerCase(m);
             if(entities.hasOwnProperty(ml))
                 return String.fromCharCode(entities[ml]);
-        }else{
+        }else if(!x){
             if(/^\d+$/.test(m))
                 return String.fromCharCode(parseInt(m));
+        }else{
+            if(/^[0-9a-f]+$/i.test(m))
+		return String.fromCharCode(parseInt(m, 16));
         }
+        return str;
     });
     return replaced;
 }

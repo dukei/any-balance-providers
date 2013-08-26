@@ -1,100 +1,89 @@
-/**
+﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Куруза
-Сайт оператора: http://kykyryza.ru
-Личный кабинет: https://oplata.kykyryza.ru/personal/main
 */
+var g_headers = {
+    Accept:'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
+    'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+    'Cache-Control':'max-age=0',
+    'Accept-Encoding':null, //Че-то какой-то битый стрим она получает, ошибка EOFException вываливается. Отменяем сжатие
+    Connection:'keep-alive',
+    'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.95 Safari/537.36',
+	'X-Requested-With':'XMLHttpRequest',
+	Referer:'https://oplata.kykyryza.ru/personal/pub/Entrance'
+};
 
 function main(){
-	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://oplata.kykyryza.ru/personal/';
+    var prefs = AnyBalance.getPreferences();
+	//if(prefs.cabinet == 'new')
+		doNewCabinet(prefs);
+	/*else /*if(prefs.cabinet == 'old')*
+		doOldCabinet(prefs);*/
+}
+
+function doNewCabinet(prefs){
+	var baseurl = 'https://oplata.kykyryza.ru/';
+	var html = AnyBalance.requestGet(baseurl + 'personal/pub/Entrance', g_headers);
+	// Это форма где нужно ввести только номер карты, затем ставится кука и можно уже вводить логин и пароль
+	var loginForm = getParam(html, null, null, /<form[^>]*>(?!<form[^>]*>)[\s\S]*?b-form-login[\s\S]*?<\/form>/i);
+	if(!loginForm)
+		throw new AnyBalance.Error("Не удалось найти форму входа, сайт изменен?");
+		
+	var loginFormSubmit = getParam(loginForm, null, null, /<form[^>]*data-validator-ajax-url="\.\.([\s\S]*?)"/i);
+
+	var params = createFormParams(loginForm, function(params, str, name, value){
+		if(name == 'ean')
+			return prefs.login;
+		else if(name == 'password')
+			return prefs.password;
+		return value;
+	});
+	// в итоге должны запрашивать нечто https://pay.i-on.ru/personal/;jsessionid=51927EFF6F83933EE13B1AD5B3B9330B?wicket:interface=:0:loginForm::IBehaviorListener:0:1
+    html = AnyBalance.requestPost(baseurl + 'personal' + loginFormSubmit, params, g_headers);
+	// Какой ?#*$%#**%%! делал этот кабинет?! Два Post запроса подряд с одинаковой data, чтобы убедится что мы не роботы? :)
+	html = AnyBalance.requestPost(baseurl + 'personal' + loginFormSubmit, params, g_headers);
 	
-	var html = AnyBalance.requestGet(baseurl + 'pub/Entrance');
-    var matches = html.match(/<h1>(ТЕХНИЧЕСКИЕ РАБОТЫ)<\/h1>/i);
-    if(matches){
-    	throw new AnyBalance.Error(matches[1].replace(/^\s*|\s*$/g, ''));
+	var json = getJson(html);
+	
+    if(!json.validated){
+        var error = getParam(html, null, null, /<div[^>]+class="validation-summary-errors"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+        if(error)
+            throw new AnyBalance.Error(error);
+        throw new AnyBalance.Error("Не удалось зайти в личный кабинет. Проверьте номер карты и пароль.");
     }
-//Первый шаг авторизации. Проверка номера карты	
-    var html = AnyBalance.requestPost(baseurl + "?wicket:interface=:0:loginForm::IBehaviorListener:0:1", {
-    	id7_hf_0: '',
-    	ean: prefs.login,
-    	password: ''
-    });
-    AnyBalance.trace(html);
-    obj = $.parseJSON(html);
-    
-    if (!obj || !obj.validated || obj.cardActive == false){
-    	
-    	if (obj.form && obj.form.errorMessage)
-    		throw new AnyBalance.Error(obj.form.errorMessage);
-    	else if (obj.fields && obj.fields[0] && obj.fields[0].errorMessage)
-    		throw new AnyBalance.Error(obj.fields[0].errorMessage);
-    	else
-    		throw new AnyBalance.Error("Ошибка авторизации. Проверьте правильность ввода номера карты");
+
+	html = AnyBalance.requestGet(json.form.redirectUrl, g_headers);
+	
+    var result = {success: true};
+    getParam(html, result, 'balance', /Баланс[\s\S]*?b-user-info__balance[^>]*>([\s\S]*?)</i, null, parseBalance);
+	getParam(html, result, 'bonuses', /bonus-statement[^>]*>\s*<span[^>]*b-user-info__balance[^>]*>([\s\S]*?)</i, null, parseBalance);
+	result.__tariff = prefs.login;
+
+    AnyBalance.setResult(result);
+}
+
+function doOldCabinet(prefs)
+{
+	var baseurl = 'http://i-on.ru/';
+    var html = AnyBalance.requestPost(baseurl + 'crm/logon', {
+        number:prefs.login,
+        password:prefs.password,
+        remember:false
+    }, g_headers);
+
+    if(!/\/crm\/logoff/i.test(html)){
+        var error = getParam(html, null, null, /<div[^>]+class="validation-summary-errors"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+        if(error)
+            throw new AnyBalance.Error(error);
+        throw new AnyBalance.Error("Не удалось зайти в личный кабинет. Проверьте номер карты и пароль.");
     }
-    
-//Второй шаг авторизации. Проверка пароля	
-    
-    var html = AnyBalance.requestPost(baseurl + "?wicket:interface=:0:loginForm::IBehaviorListener:0:1", {
-    	id7_hf_0: '',
-    	ean: prefs.login,
-    	password: prefs.password
-    });
-    
-    AnyBalance.trace(html);
-    obj = $.parseJSON(html);
-    if (obj.form && obj.form.redirectUrl)
-    	url = obj.form.redirectUrl;
-    else
-		throw new AnyBalance.Error("Ошибка авторизации. Проверьте правильность ввода пароля");
-    
-//Получение балансов    
-    AnyBalance.trace(url);	
-    
-    var html = AnyBalance.requestGet(url);
-    
-    //AnyBalance.trace(html);
-    var $html = $(html);
 
     var result = {success: true};
+   
+    getParam(html, result, 'balance', /Сейчас на вашей карте:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+//    getParam(html, result, 'new', /Будут скоро активированы ещё[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'total', /Всего было накоплено:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+//    getParam(html, result, 'off', /Всего было потрачено[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 
-    $binfo = $html.find('.b-user-info__table').find('tr');
-    
-    if(AnyBalance.isAvailable('balance')){
-    	var val = $binfo.find('th:contains("Баланс"), th:contains("Доступные средства")').next().find('.b-user-info__balance').text();
-        AnyBalance.trace("Баланс: " + val);
-    	if (val)
-    		val = val.replace(/[^0-9.,]+/,'');
-        if(val)
-            result.balance = parseFloat(val.replace(',','.'));
-    }
-    if(AnyBalance.isAvailable('bonus')){
-    	var val = $binfo.find('th:contains("Начислено")').next().find('.b-user-info__balance').first().text(); //По карте с кредитным лимитом
-        if(!val)
-    	    val = $binfo.next().find('.b-user-info__balance').text(); //По обычной карте без надписи
-        AnyBalance.trace("Бонус (начислено): " + val);
-    	if (val)
-    		val = val.replace(/[^0-9.,]+/,'');
-    	
-        if(val)
-            result.bonus = parseFloat(val.replace(',','.'));
-    }  
-    if(AnyBalance.isAvailable('limit')){
-    	var val = $binfo.find('th:contains("Кредитный лимит")').next().find('.b-user-info__balance').text();
-        AnyBalance.trace("Кредитный лимит: " + val);
-    	if (val)
-    		val = val.replace(/[^0-9.,]+/,'');
-        if(val)
-            result.limit = parseFloat(val.replace(',','.'));
-    }
-    if(AnyBalance.isAvailable('own')){
-    	var val = $binfo.find('th:contains("Собственные"):contains("средства")').next().find('.b-user-info__balance').text();
-        AnyBalance.trace("Собственные средства: " + val);
-    	if (val)
-    		val = val.replace(/[^0-9.,]+/,'');
-        if(val)
-            result.own = parseFloat(val.replace(',','.'));
-    }
     AnyBalance.setResult(result);
 }

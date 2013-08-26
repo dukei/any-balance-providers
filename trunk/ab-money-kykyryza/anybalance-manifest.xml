@@ -1,29 +1,25 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="6" major_version="1.0">ab-money-kykyryza</id>
-  <name>Платежный кабинет Кукуруза</name>
-  <description>Получает баланс из Платежного кабинета Кукуруза https://oplata.kykyryza.ru/personal/</description>
-  <author>Robert Khaliullov &lt;robix@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>api:jquery.min.js</js> <!-- Используем библиотеку, которая и так входит в AnyBalance -->
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="bonus" name="Бонусы" units="балла"/>
-    <counter id="limit" name="Кредитный лимит" units="р"/>
-    <counter id="own" name="Собственные средства" units="р"/>
- </counters>
-  <keywords>
-    Кукуруза, Платёжный кабинет
-  </keywords>
-  <type>
-    money
-  </type>
-  <country>
-    ru
-  </country>
+	<id version="7" major_version="1.0">ab-money-kykyryza</id>
+	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
+	<api flags="no_browser" />
+	<name>Платежный кабинет Кукуруза</name>
+	<description>Получает баланс из Платежного кабинета Кукуруза https://oplata.kykyryza.ru/personal/</description>
+	<author>Robert Khaliullov &lt;robix@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units="р"/>
+		<counter id="bonus" name="Бонусы" units="балла"/>
+		<counter id="limit" name="Кредитный лимит" units="р"/>
+		<counter id="own" name="Собственные средства" units="р"/>
+	</counters>
+	<keywords>Кукуруза, Платёжный кабинет</keywords>
+	<type>money</type>
+	<country>ru</country>
 </provider>

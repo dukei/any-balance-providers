@@ -56,7 +56,7 @@ function doNewCabinet(prefs){
 	
     var result = {success: true};
     getParam(html, result, 'balance', /Баланс[\s\S]*?b-user-info__balance[^>]*>([\s\S]*?)</i, null, parseBalance);
-	getParam(html, result, 'bonuses', /bonus-statement[^>]*>\s*<span[^>]*b-user-info__balance[^>]*>([\s\S]*?)</i, null, parseBalance);
+	getParam(html, result, 'bonus', /bonus-statement[^>]*>\s*<span[^>]*b-user-info__balance[^>]*>([\s\S]*?)</i, null, parseBalance);
 	result.__tariff = prefs.login;
 
     AnyBalance.setResult(result);

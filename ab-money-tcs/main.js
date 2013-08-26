@@ -163,7 +163,7 @@ function fetchCard(accounts, baseurl, sessionid){
     if(AnyBalance.isAvailable('accnum'))
         result.accnum = card.externalAccountNumber;
     if(AnyBalance.isAvailable('freeaddleft'))
-        result.freeaddleft = card.freeRenewalsLeftCount;
+        result.freeaddleft = parseBalance(card.renewalAmountLeft.value+'');
     if(AnyBalance.isAvailable('till') && isset(thiscard.expiration))
         result.till = thiscard.expiration.milliseconds;
     if(AnyBalance.isAvailable('limit') && isset(card.creditLimit))

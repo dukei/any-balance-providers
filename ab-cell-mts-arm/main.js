@@ -66,8 +66,9 @@ function main(){
 	{
 		var SubscriberID = getParam(html, null, null, /SubscriberID=([^"]*)/i);
 		
-		html = AnyBalance.requestGet(baseurl + 'Pages/bonusconvert.aspx?SubscriberID='+SubscriberID, g_headers);
-		getParam(html, result, 'bonus', /You have(.*?)bonus points/i, replaceTagsAndSpaces, parseBalance);
+		html = AnyBalance.requestPost(baseurl + 'Pages/bonushistory.aspx?SubscriberID='+SubscriberID, '', g_headers);
+		html = AnyBalance.requestPost(baseurl + 'Pages/bonushistory.aspx?SubscriberID='+SubscriberID, '', g_headers);
+		getParam(html, result, 'bonus', /You have([\s\S]*?)bonus points/i, replaceTagsAndSpaces, parseBalance);
 	}
 	
     AnyBalance.setResult(result);

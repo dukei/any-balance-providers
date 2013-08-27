@@ -2,7 +2,7 @@
 <provider>
 	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser" />
-  <id version="2">ab-money-delta</id>
+  <id version="3">ab-money-delta</id>
   <name>Дельта Банк</name>
   <description>
     Получает текущий остаток и другие параметры счетов Дельта Банка (http://deltabank.com.ua), используя интернет-банк https://online.deltabank.com.ua.

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
+	<api flags="no_browser" />
+	<id version="2">ab-other-turbosquid</id>
+	<name>Turbosquid</name>
+	<description>
+	Получает данные в системе Turbosquid
+	
+	TurboSquid был основан в 2000 году для нужд индустрии 3D-моделирования. Предлагая для загрузки более 300 000 3D-моделей, TurboSquid является главным источником 3D-моделей в Интернете.
+	</description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Balance"/>
+	</counters>
+	<keywords></keywords>
+	<type>other</type>
+</provider>

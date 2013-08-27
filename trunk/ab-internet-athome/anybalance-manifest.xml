@@ -1,17 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-athome</id>
-  <name>Домашние сети «Эт Хоум» (Санкт-Петербург)</name>
-  <description>
-    Получает баланс и информацию о тарифном плане для питерского интернет-провайдера Домашние сети «Эт Хоум» (http://at-home.ru). Домашние сети «Эт Хоум» - это объединение операторов домашнего Интернета, входящих в компанию «ПиН Телеком» под общим брендом и предлагающих телекоммуникационные услуги в Санкт-Петербурге и Ленинградской области.
+	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
+	<api flags="no_browser" />
+	<id version="2">ab-internet-athome</id>
+	<name>Домашние сети «Эт Хоум» (Санкт-Петербург)</name>
+	<description>
+	Получает баланс и информацию о тарифном плане для питерского интернет-провайдера Домашние сети «Эт Хоум» (http://at-home.ru). Домашние сети «Эт Хоум» - это объединение операторов домашнего Интернета, входящих в компанию «ПиН Телеком» под общим брендом и предлагающих телекоммуникационные услуги в Санкт-Петербурге и Ленинградской области.
 
-    Информация берется из личного кабинета https://billing.at-home.ru.
-  </description>
+	Информация берется из личного кабинета https://billing.at-home.ru.
+	</description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
+	<js>library.js</js>
     <js>main.js</js>
+	<history>history.xml</history>
   </files>
   <counters>
     <counter id="balance" name="Баланс" units="р"/>

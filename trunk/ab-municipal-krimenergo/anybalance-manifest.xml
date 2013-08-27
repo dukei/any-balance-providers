@@ -2,10 +2,11 @@
 <provider>
 	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser" />
-	<id version="1">ab-municipal-krimenergo</id>
-	<name>Крымэнерго</name>
+	<id version="2">ab-municipal-krimenergo</id>
+	<name>Интернет-магазин коммунальных услуг (Мегасофт)</name>
 	<description>
-	Получает данные в системе Крымэнерго (http://www.krymenergo.com/)
+	Получает данные в системе Мегасофт (http://www.krymenergo.com/)
+	На данный момент поддерживаются: Крымэнерго, Киевэнерго
 	
 	Информация берется из личного кабинета https://secure.mega-billing.com/byt/ru/energo
 	</description>

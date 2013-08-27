@@ -7,56 +7,6 @@
 Личный кабинет: https://online.deltabank.com.ua
 */
 
-function getParam (html, result, param, regexp, replaces, parser) {
-	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
-		return;
-
-	var value = regexp.exec (html);
-	if (value) {
-		value = value[1];
-		if (replaces) {
-			for (var i = 0; i < replaces.length; i += 2) {
-				value = value.replace (replaces[i], replaces[i+1]);
-			}
-		}
-		if (parser)
-			value = parser (value);
-
-    if(param)
-      result[param] = value;
-    else
-      return value
-	}
-}
-
-var replaceTagsAndSpaces = [/\\n/g, ' ', /\[br\]/ig, ' ', /<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
-var replaceFloat = [/\s+/g, '', /,/g, '.'];
-
-function parseBalance(text){
-    var _text = text.replace(/\s+/g, '');
-    var val = getParam(_text, null, null, /(-?\d[\d\.,]*)/, replaceFloat, parseFloat);
-    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
-    return val;
-}
-
-function parseCurrency(text){
-    var _text = text.replace(/\s+/g, '');
-    var val = getParam(_text, null, null, /-?\d[\d\.,]*\s*(\S*)/);
-    AnyBalance.trace('Parsing currency (' + val + ') from: ' + text);
-    return val;
-}
-
-function parseDate(str){
-    var matches = /(\d+)[^\d](\d+)[^\d](\d+)/.exec(str);
-    if(matches){
-          var date = new Date(+matches[3], matches[2]-1, +matches[1]);
-	  var time = date.getTime();
-          AnyBalance.trace('Parsing date ' + date + ' from value: ' + str);
-          return time;
-    }
-    AnyBalance.trace('Failed to parse date from value: ' + str);
-}
-
 function getViewState(html){
     return getParam(html, null, null, /name="__VIEWSTATE".*?value="([^"]*)"/);
 }
@@ -66,9 +16,13 @@ function getEventValidation(html){
 }
 
 var g_headers = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.60 Safari/537.1'
+	'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'Accept-Encoding':'gzip, deflate',
+	'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3',
+	'Connection':'keep-alive',
+	'Referer':'https://online.deltabank.com.ua/Pages/User/LogOn.aspx',
+	'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:23.0) Gecko/20100101 Firefox/23.0',
 }
-
 
 function main(){
     var prefs = AnyBalance.getPreferences();
@@ -80,23 +34,37 @@ function main(){
     var baseurl = prefs.login != '1' ? "https://online.deltabank.com.ua/" : "https://online.deltabank.com.ua/DEMO/";
     
     var html = AnyBalance.requestGet(baseurl + 'Pages/User/LogOn.aspx', g_headers);
+	
+	//
+	var captcha_word;
+
+	if(AnyBalance.getLevel() >= 7){
+		AnyBalance.trace('Пытаемся ввести капчу');
+		var href = getParam(html, null, null, /(CaptchaImage.aspx[^>]*?)"/);
+		var captcha = AnyBalance.requestGet(baseurl+'Pages/'+ href);
+            captcha_word = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
+            AnyBalance.trace('Капча получена: ' + captcha_word);
+		}else{
+			throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
+        }
+		
+		
     var viewstate = getViewState(html);
     var eventvalidation = getEventValidation(html);
-
+	
     html = AnyBalance.requestPost(baseurl + 'Pages/User/LogOn.aspx', {
-        __EVENTTARGET: '',
-        __EVENTARGUMENT:'',
-        __VIEWSTATE:viewstate,
-        __VIEWSTATEENCRYPTED:'',
-        __EVENTVALIDATION:eventvalidation,
-        wzLogin$tbLogin:prefs.login,
-        wzLogin$tbPassword:prefs.password,
-        'wzLogin$btnLogOn.x':54,
-        'wzLogin$btnLogOn.y':10,
-        wzLogin$logOn_Step1$divLogin$txtLogin:prefs.login,
-        wzLogin$logOn_Step1$divLogin$txtPass:prefs.password,
-        'wzLogin$logOn_Step1$divLogin$btnLogin.x':77,
-        'wzLogin$logOn_Step1$divLogin$btnLogin.y':13
+		'__EVENTARGUMENT':'',
+		'__EVENTTARGET':'',
+		'__EVENTVALIDATION':eventvalidation,
+		'__SCROLLPOSITIONX':0,
+		'__SCROLLPOSITIONY':0,
+		'__VIEWSTATE':viewstate,
+		'__VIEWSTATEENCRYPTED':'',
+		'wzLogin$logOn_Step1$divLogin$btnLoginCaptcha.x':0,
+		'wzLogin$logOn_Step1$divLogin$btnLoginCaptcha.y':0,
+		'wzLogin$logOn_Step1$divLogin$txtCaptcha':captcha_word,
+		'wzLogin$logOn_Step1$divLogin$txtLoginCaptcha':'21314611',
+		'wzLogin$logOn_Step1$divLogin$txtPassCaptcha':'arseniy318',
     }, g_headers);
 
     if(!/ctl00\$btnLogout/i.test(html)){

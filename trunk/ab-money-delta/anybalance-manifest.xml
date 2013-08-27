@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
+	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
+	<api flags="no_browser" />
   <id version="2">ab-money-delta</id>
   <name>Дельта Банк</name>
   <description>
@@ -14,6 +16,7 @@
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
+	<js>library.js</js>
     <js>main.js</js>
     <history>history.xml</history>
   </files>

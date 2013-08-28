@@ -117,6 +117,7 @@ function main(){
         if(error)
             throw new AnyBalance.Error(error);
         //Если объяснения ошибки не найдено, при том, что на сайт войти не удалось, то, вероятно, произошли изменения на сайте
+        AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
 
@@ -131,7 +132,7 @@ function fetchPost(baseurl, html){
     //Раз мы здесь, то мы успешно вошли в кабинет
     AnyBalance.trace("Мы в постоплатном кабинете");
     //Получаем все счетчики
-    var result = {success: true};
+    var result = {success: true, balance: null};
 
     var multi = /<span[^>]+class="marked"[^>]*>/i.test(html), xhtml;
 
@@ -184,7 +185,7 @@ function fetchPre(baseurl, html){
     //Раз мы здесь, то мы успешно вошли в кабинет постоплатный
     AnyBalance.trace("Мы в предоплатном кабинете");
     //Получаем все счетчики
-    var result = {success: true};
+    var result = {success: true, balance: null};
 
     getParam(html, result, 'phone', /<input[^>]+id="serviceBlock:paymentForm:[^>]*value="([^"]*)/i, replaceTagsAndSpaces, html_entity_decode);
 
@@ -202,8 +203,8 @@ function fetchPre(baseurl, html){
         getParam(xhtml, result, 'fio', /<span[^>]+class="b2c.header.greeting.pre.b2c.ban"[^>]*>([\s\S]*?)(?:<\/span>|,)/i, replaceTagsAndSpaces, html_entity_decode);*/
 		xhtml = getBlock(baseurl + 'c/pre/index.html', html, 'homeBalance');
 		
-        getParam(xhtml, result, 'balance', /class="price[\s\S]*?>([\s\S]*?уб)/i, replaceTagsAndSpaces, parseBalance);
-        getParam(xhtml, result, ['currency', 'balance'], /class="price[\s\S]*?>([\s\S]*?уб)/i, replaceTagsAndSpaces, myParseCurrency);
+        getParam(xhtml, result, 'balance', /class="price[\s\S]*?>([\s\S]*?)<\/h3>/i, replaceTagsAndSpaces, parseBalance);
+        getParam(xhtml, result, ['currency', 'balance'], /class="price[\s\S]*?>([\s\S]*?)<\/h3>/i, replaceTagsAndSpaces, myParseCurrency);
         //getParam(xhtml, result, 'fio', /<span[^>]+class="b2c.header.greeting.pre.b2c.ban"[^>]*>([\s\S]*?)(?:<\/span>|,)/i, replaceTagsAndSpaces, html_entity_decode);		
     }
 

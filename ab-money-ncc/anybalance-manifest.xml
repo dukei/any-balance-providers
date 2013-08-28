@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
+	<api flags="no_browser" />
+	<id version="1">ab-money-ncc</id>
+	<name>Платёжная система NCC</name>
+	<description>
+	Получает баланс по карте платежной системы NCC (http://www.ncc-uc.ru/). Данные берутся из Операционного раздела https://www.ncc.volga.ru/pay
+	
+	Если у Вас еще нет доступа в Операционный раздел, перейдите по ссылке для регистрации http://www.ncc-uc.ru/cgi-bin/page1.pl?id=42&amp;rod_id=31
+	</description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units="р"/>
+		<counter id="fio" name="ФИО" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>money</type>
+	<country>ru</country>
+</provider>

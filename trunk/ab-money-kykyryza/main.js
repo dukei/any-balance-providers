@@ -59,6 +59,10 @@ function doNewCabinet(prefs){
 	getParam(html, result, 'bonus', /bonus-statement[^>]*>\s*<span[^>]*b-user-info__balance[^>]*>([\s\S]*?)</i, null, parseBalance);
 	getParam(html, result, 'limit', />Кредитный лимит[\s\S]{1,60}b-user-info__balance[^>]*>([\s\S]*?)</i, null, parseBalance);
 	getParam(html, result, 'own', /Собственные[\s\S]*?средства[\s\S]*?b-user-info__balance[^>]*>([\s\S]*?)</i, null, parseBalance);
+	
+	html = AnyBalance.requestGet(baseurl + 'personal/bonus-statement', g_headers);
+	getParam(html, result, 'bonus_avail', /Доступные баллы[\s\S]*?span[^>]*>([\s\S]*?)</i, null, parseBalance);
+	
 	result.__tariff = prefs.login;
 
     AnyBalance.setResult(result);

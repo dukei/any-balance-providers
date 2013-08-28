@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="9" major_version="1.0">ab-money-kykyryza</id>
+	<id version="10" major_version="1.0">ab-money-kykyryza</id>
 	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser" />
 	<name>Платежный кабинет Кукуруза</name>
@@ -16,6 +16,7 @@
 	<counters>
 		<counter id="balance" name="Баланс" units="р"/>
 		<counter id="bonus" name="Бонусы" units="балла"/>
+		<counter id="bonus_avail" name="Бонусы доступные" units="балла"/>
 		<counter id="limit" name="Кредитный лимит" units="р"/>
 		<counter id="own" name="Собственные средства" units="р"/>
 	</counters>

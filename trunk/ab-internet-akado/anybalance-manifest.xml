@@ -1,37 +1,35 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="3">ab-internet-akado</id>
-  <name>Домашний Интернет и Телевидение АКАДО</name>
-  <description>
-    Получает текущий баланс, номер договора, ФИО владельца у провайдера интернет и телевидения АКАДО (http://www.akado.ru). Данные берутся из личного кабинета https://office.akado.ru.
-
-В АКАДО вообще нужно следить за своим балансом, иначе они вас могут загнать в глубокий минус с помощью хитрой услуги
-Техническая поддержка, которую невозможно отключить и плата за которую списывается независимо от наличия денег на счете.
-
-    Как получить пароль:
-    Если Вы забыли пароль доступа, Вам следует обратиться в Абонентскую службу по телефону (499) 940-00-00. Вам будет необходимо сообщить 8-значный номер вашего абонентского договора.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>api:jquery.min.js</js> <!-- Используем библиотеку, которая и так входит в AnyBalance -->
-    <js>md5-min.js</js>
-    <js>main.js</js>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="payhint" name="Рекомендуемая сумма оплаты" suffix="р"/>
-    <counter id="agreement" name="Номер договора" type="text"/>
-    <counter id="username" name="ФИО" type="text"/>
-  </counters>
-  <keywords>
-    провайдер интернет AKADO мошенничество вымогательство
-  </keywords>
-  <type>
-    internet, tv
-  </type>
-  <country>
-    ru
-  </country>
+	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
+	<api flags="no_browser" />
+	<id version="4">ab-internet-akado</id>
+	<name>Домашний Интернет и Телевидение АКАДО</name>
+	<description>
+	Получает текущий баланс, номер договора, ФИО владельца у провайдера интернет и телевидения АКАДО (http://www.akado.ru). Данные берутся из личного кабинета https://office.akado.ru.
+	
+	В АКАДО вообще нужно следить за своим балансом, иначе они вас могут загнать в глубокий минус с помощью хитрой услуги 
+	Техническая поддержка, которую невозможно отключить и плата за которую списывается независимо от наличия денег на счете.
+	
+	Как получить пароль:
+	Если Вы забыли пароль доступа, Вам следует обратиться в Абонентскую службу по телефону (499) 940-00-00. Вам будет необходимо сообщить 8-значный номер вашего абонентского договора.
+	</description>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>md5-min.js</js>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units="р"/>
+		<counter id="payhint" name="Рекомендуемая сумма оплаты" suffix="р"/>
+		<counter id="agreement" name="Номер договора" type="text"/>
+		<counter id="username" name="ФИО" type="text"/>
+	</counters>
+	<keywords>провайдер интернет AKADO мошенничество вымогательство</keywords>
+	<type>internet, tv</type>
+	<country>ru</country>
 </provider>

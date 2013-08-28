@@ -2,7 +2,7 @@
 <provider>
 	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser" />
-	<id version="3">ab-cell-mts-arm</id>
+	<id version="4">ab-cell-mts-arm</id>
 	<name>МТС (Армения)</name>
 	<description>
 	Получает информацию о балансе и тарифном плане сотового оператора МТС в Армении по адресу https://cabinet.mts.am/.
@@ -17,7 +17,7 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units="AMD"/>
-		<counter id="bonus" name="Бонусы" units="AMD"/>
+		<counter id="bonus" name="Бонусы"/>
 		<counter id="validto" name="Срок действия" type="time" format="dd/MM/yyyy"/>
 		<counter id="status" name="Статус" type="text"/>
 		<counter id="phone" name="Телефон" type="text"/>

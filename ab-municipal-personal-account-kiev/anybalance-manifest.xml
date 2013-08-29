@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
+	<api flags="no_browser" />
+	<id version="1">ab-municipal-personal-account-kiev</id>
+	<name>Навигатор-онлайн (Киев)</name>
+	<description>
+	Получает данные из личного кабинета Навигатор-онлайн (Киев) https://www.personal-account.kiev.ua/entrance/?rr=/dashboard/
+	</description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Долг/переплата"/>
+		<counter id="nachisleno" name="Начислено"/>
+		<counter id="lastdate" name="Дата последней оплаты" type="time" format="dd/MM/yyyy"/>
+		<counter id="lastsumm" name="Cума последней оплаты"/>
+		<counter id="geo" name="ЖЕО" type="text"/>
+		<counter id="acc_num" name="Номер счета" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>municipal</type>
+	<country>ua</country>
+</provider>

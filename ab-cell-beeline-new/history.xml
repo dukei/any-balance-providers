@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-    <change version="17" date="2013-08-29">
-	- Улучшенная обработка ошибок (Stark)
-    </change>
     <change version="16" date="2013-08-28">
 	- Исправлено получение баланса для долларовых тарифов
     </change>

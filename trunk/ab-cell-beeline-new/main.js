@@ -120,7 +120,6 @@ function main(){
         AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
-
     if(/b2b_post/i.test(html)){
         fetchPost(baseurl, html);
     }else{
@@ -175,10 +174,8 @@ function fetchPost(baseurl, html){
         getParam(xhtml, result, 'fio', /<div[^>]+class="abonent-name"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
         
     }
-
     //Возвращаем результат
     AnyBalance.setResult(result);
-
 }
 
 function fetchPre(baseurl, html){
@@ -198,13 +195,7 @@ function fetchPre(baseurl, html){
         getParam(xhtml, result, ['currency', 'balance'], /у вас на балансе([\s\S]*)/i, replaceTagsAndSpaces, myParseCurrency);
         getParam(xhtml, result, 'fio', /<span[^>]+class="b2c.header.greeting.pre.b2c.ban"[^>]*>([\s\S]*?)(?:<\/span>|,)/i, replaceTagsAndSpaces, html_entity_decode);*/
 		xhtml = getBlock(baseurl + 'c/pre/index.html', html, 'homeBalance');
-		// Воркэраунд: иногда в кабинете нет баланса, хоть и удалось в него зайти, надо бросить эксепшн, чтобы не вводить в заблуждение
-		if(/Баланс временно недоступен/i.test(xhtml)){
-			AnyBalance.trace(xhtml);
-			throw new AnyBalance.Error('Не удалось найти баланс в личном кабинете. Это говорит о том, что на сайте ведутся технические работы и баланс временно недоступен. Попробуйте обновить позже.');
-		}
         getParam(xhtml, result, 'balance', /class="price[\s\S]*?>([\s\S]*?)<\/h3>/i, replaceTagsAndSpaces, parseBalance);
-		
         getParam(xhtml, result, ['currency', 'balance'], /class="price[\s\S]*?>([\s\S]*?)<\/h3>/i, replaceTagsAndSpaces, myParseCurrency);
         //getParam(xhtml, result, 'fio', /<span[^>]+class="b2c.header.greeting.pre.b2c.ban"[^>]*>([\s\S]*?)(?:<\/span>|,)/i, replaceTagsAndSpaces, html_entity_decode);		
     }

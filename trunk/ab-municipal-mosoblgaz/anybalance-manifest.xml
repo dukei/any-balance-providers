@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
+	<api flags="no_browser" />
+	<id version="1">ab-municipal-mosoblgaz</id>
+	<name>Мособлгаз</name>
+	<description>
+	Получает данные частных абонентов Мособлгаз из личного кабинета http://lksaupg.mosoblgaz.ru/LoginPersonalSUPG.aspx.
+	
+	Этот провайдер требует версию AnyBalance API >= 7, с поддержкой капчи.
+	</description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units="р"/>
+		<counter id="income" name="Поступления на счёт в текущем месяце" units="р"/>
+		<counter id="nachisl" name="Начисления текущего месяца" units="р"/>
+		<counter id="recomended" name="Рекомендуемая сумма к оплате" units="р"/>
+		<counter id="acc" name="Лицевой счет" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>municipal</type>
+	<country>ru</country>
+</provider>

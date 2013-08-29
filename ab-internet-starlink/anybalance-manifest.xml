@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-internet-starlink</id>
+  <id version="3">ab-internet-starlink</id>
   <name>Starlink (Москва)</name>
   <description>
     Получает баланс и информацию о тарифном плане для московского интернет-провайдера Starlink (http://starlink.ru).
@@ -17,10 +17,10 @@
   </files>
   <counters>
     <counter id="balance" name="Баланс" units="р"/>
-    <counter id="available" name="Доступно для оплаты услуг" units="р"/>
+    <!--<counter id="available" name="Доступно для оплаты услуг" units="р"/>-->
     <counter id="daysleft" name="До конца отчетного периода" units="д"/>
-    <counter id="traffic" name="Трафик за период" units="Gb"/>
-    <counter id="trafficTurbo" name="Остаток турбо трафика" units="Gb"/>
+    <counter id="traffic" name="Трафик за период" units="Mb"/>
+    <!--<counter id="trafficTurbo" name="Остаток турбо трафика" units="Gb"/>-->
   </counters>
   <keywords>
     интернет, старлинк

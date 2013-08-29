@@ -186,14 +186,10 @@ function fetchPre(baseurl, html){
     AnyBalance.trace("Мы в предоплатном кабинете");
     //Получаем все счетчики
     var result = {success: true, balance: null};
-
     getParam(html, result, 'phone', /<input[^>]+id="serviceBlock:paymentForm:[^>]*value="([^"]*)/i, replaceTagsAndSpaces, html_entity_decode);
 
     var xhtml = getBlock(baseurl + 'c/pre/index.html', html, 'currentTariffLoaderDetails');
-
     getParam(xhtml, result, '__tariff', [/<div[^>]+:tariffInfo[^>]*class="current"[^>]*>(?:[\s\S](?!<\/div>))*?<h2[^>]*>([\s\S]*?)<\/h2>/i, /<h2>Текущий тариф\s*([\s\S]*?)\s*<\/h2>/i], replaceTagsAndSpaces, html_entity_decode);
-	//if(!result.__tariff)
-		//getParam(xhtml, result, '__tariff', /<h2>Текущий тариф\s*([\s\S]*?)\s*<\/h2>/i, replaceTagsAndSpaces, html_entity_decode);
 
 	if(AnyBalance.isAvailable('balance', 'fio')){
         /*xhtml = getBlock(baseurl + 'c/pre/index.html', html, 'balancePreHeadDetails');
@@ -202,8 +198,13 @@ function fetchPre(baseurl, html){
         getParam(xhtml, result, ['currency', 'balance'], /у вас на балансе([\s\S]*)/i, replaceTagsAndSpaces, myParseCurrency);
         getParam(xhtml, result, 'fio', /<span[^>]+class="b2c.header.greeting.pre.b2c.ban"[^>]*>([\s\S]*?)(?:<\/span>|,)/i, replaceTagsAndSpaces, html_entity_decode);*/
 		xhtml = getBlock(baseurl + 'c/pre/index.html', html, 'homeBalance');
-		
+		// Воркэраунд: иногда в кабинете нет баланса, хоть и удалось в него зайти, надо бросить эксепшн, чтобы не вводить в заблуждение
+		if(/Баланс временно недоступен/i.test(xhtml)){
+			AnyBalance.trace(xhtml);
+			throw new AnyBalance.Error('Не удалось найти баланс в личном кабинете. Это говорит о том, что на сайте ведутся технические работы и баланс временно недоступен. Попробуйте обновить позже.');
+		}
         getParam(xhtml, result, 'balance', /class="price[\s\S]*?>([\s\S]*?)<\/h3>/i, replaceTagsAndSpaces, parseBalance);
+		
         getParam(xhtml, result, ['currency', 'balance'], /class="price[\s\S]*?>([\s\S]*?)<\/h3>/i, replaceTagsAndSpaces, myParseCurrency);
         //getParam(xhtml, result, 'fio', /<span[^>]+class="b2c.header.greeting.pre.b2c.ban"[^>]*>([\s\S]*?)(?:<\/span>|,)/i, replaceTagsAndSpaces, html_entity_decode);		
     }
@@ -212,7 +213,7 @@ function fetchPre(baseurl, html){
         xhtml = getBlock(baseurl + 'c/pre/index.html', html, 'bonusesloaderDetails');
         getBonuses(xhtml, result);
     }
-
+	
     //Возвращаем результат
     AnyBalance.setResult(result);
 }

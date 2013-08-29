@@ -23,8 +23,9 @@ var filial_info = {
 filial_info[MEGA_FILIAL_MOSCOW] = {
   name: 'Столичный филиал',
   func: megafonServiceGuide,
-  site: "https://moscowsg.megafon.ru/",
-  tray: "https://moscowsg.megafon.ru/TRAY_INFO/TRAY_INFO?LOGIN=%LOGIN%&PASSWORD=%PASSWORD%"
+  site: 	"https://moscowsg.megafon.ru/",
+  widget:	'https://moscowsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
+  tray: 	"https://moscowsg.megafon.ru/TRAY_INFO/TRAY_INFO?LOGIN=%LOGIN%&PASSWORD=%PASSWORD%"
 };
 filial_info[MEGA_FILIAL_SIBIR] = {
   name: 'Сибирский филиал',
@@ -508,6 +509,12 @@ function megafonServiceGuide(filial){
         }else{
             //Влад, ну что же ты всё подглядываешь-то??? Впрочем, пользуйся, не жалко :)
             session = AnyBalance.requestGet(baseurl + 'SESSION/GET_SESSION?MSISDN=' + ((prefs.corporate ? 'CP_' : '') + prefs.login) + '&PASS=' + encodeURIComponent(prefs.password) + '&CHANNEL=WWW');
+			var code = AnyBalance.getLastStatusCode();
+			if(code > 400){
+				AnyBalance.trace('Невозможно зайти в сервис гид, придется получать данные из виджета');
+				megafonTrayInfo(filial);
+				return;
+			}
         }
     }else{
 	session = AnyBalance.requestPost(baseurl + 'ps/scc/php/check.php?CHANNEL=WWW', {

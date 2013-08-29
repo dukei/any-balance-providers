@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change major_version="3.0" version="87" date="2013-08-29">
+      - Мегафон закрыл доступ в полноценный сервис-гид, пока вместо него используем яндекс.виджет (Stark)
+    </change>
     <change major_version="3.0" version="86" date="2013-08-23">
       - Еще раз улучшено распознавание трафика для столичного филиала (Stark)
     </change>

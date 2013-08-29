@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<api flags="no_browser|private" />
+	<id version="1">ab-internet-interzet</id>
+	<name>InterZet (Санкт-Петербург)</name>
+	<description>
+	Получает данные для крупного интернет-провайдера Санкт-Петербурга InterZet (http://interzet.ru/)
+	
+	Личный кабинет находится по адресу: http://bill.zet/
+	
+	Данный провайдер работает только из локальной сети InterZet.
+	</description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units="р"/>
+		<counter id="bonus" name="Бонусные очки"/>
+		<counter id="acsess" name="Доступ в интернет" type="text"/>
+		<counter id="status" name="Состояние счета" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
+	<api flags="no_browser" />
+	<id version="1">ab-adv-marketgid</id>
+	<name>МаркетГид</name>
+	<description>
+	Получает данные из тизерной рекламной сети МаркетГид.
+	
+	Информация берется из личного кабинета https://my.marketgid.com
+	</description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units="{@currency}"/>
+		<counter id="wallet" name="МГ-кошелёк" units="{@currency}"/>
+		<counter id="clicks" name="Клики (Всего)"/>
+		<counter id="shows" name="Показы (Всего)"/>
+		<counter id="ctr" name="CTR (Всего)"/>
+		<counter id="cpm" name="CPM (Всего)" units="{@currency}"/>
+		<counter id="forclick" name="За клик (Всего)" units="¢"/>
+		<counter id="earnings" name="Заработок (Всего)" units="{@currency}"/>
+	</counters>
+	<keywords></keywords>
+	<type>adv</type>
+	<country>ru</country>
+</provider>

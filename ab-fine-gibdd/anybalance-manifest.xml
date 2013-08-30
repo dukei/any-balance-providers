@@ -2,7 +2,7 @@
 <provider>
 	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser" />
-	<id version="2">ab-fine-gibdd</id>
+	<id version="3">ab-fine-gibdd</id>
 	<name>Штрафы ГИББД</name>
 	<description>
 		Получает данные по штрафам на сайте gibdd.ru этот провайдер требует версию AnyBalance API >= 7, с поддержкой капчи.

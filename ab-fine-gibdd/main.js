@@ -30,7 +30,7 @@ function main(){
 			throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
         }
     }
-	var found = /(\W{0,1}\d+\W{2})(\d{2,3})/i.exec(prefs.login);
+	var found = /([\s\S]{0,1}\d+[\s\S]{2})(\d{2,3})/i.exec(prefs.login);
 	if(!found)
 		throw new AnyBalance.Error('Введеный гос. номер не соответствует формату а351со190');
 

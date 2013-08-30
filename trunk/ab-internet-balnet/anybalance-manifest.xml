@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="7">ab-balance-balnet</id>
-  <name>Балнет</name>
+  <id version="1">ab-internet-balnet</id>
+  <api flags="no_browser"/>
+  <name>Балнет (Балашиха)</name>
   <description>
-    Получает информацию об остатке на счете пользователя БалНет. Информация берется из личного кабинета https://billing.balnet.ru/lk/
+    Получает информацию об остатке на счете пользователя БалНет (Балашиха, Московская область). Информация берется из личного кабинета https://billing.balnet.ru/lk/
   </description>
   <author>Alexander Bekrenev &lt;zeemor@yandex.ru&gt;</author>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
     <history>history.xml</history>
+    <js>library.js</js>
     <js>main.js</js>
   </files>
   <counters>
@@ -22,6 +24,9 @@
     balnet
   </keywords>
   <type>
-    balance
+    internet
   </type>
+  <country>
+    ru
+  </country>
 </provider>

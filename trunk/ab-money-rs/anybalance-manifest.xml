@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-    <id major_version="3.0" version="12">ab-money-rs</id>
+    <id major_version="3.0" version="13">ab-money-rs</id>
     <api flags="no_browser"/>
     <name>Русский стандарт</name>
     <description>Информация о карте, счете, депозите или кредите в банке "Русский стандарт".
@@ -23,6 +23,7 @@
 	<counter id="writeoff_date" name="Дата списания платежа"  type="time" format="dd/MM/yyyy"/>
         <counter id="left" name="До списывания платежа осталось дней" type="text" units="дн"/>
         <counter id="account_balance" name="Остаток на счёте"/>
+		<counter id="account_blocked_balance" name="Заблокированная сумма"/>
         <counter id="gracepay" name="Льготный платеж"/>
         <counter id="gracetill" name="Дата окончания льготного периода" type="time" format="dd/MM/yyyy"/>
         <counter id="currency" name="Валюта" type="text"/>

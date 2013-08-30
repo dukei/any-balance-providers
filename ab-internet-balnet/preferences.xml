@@ -3,7 +3,7 @@
     <EditTextPreference
         title="Логин"
         positiveButtonText="ОК"
-        summary="Логин||{@s}\n"
+        summary="|Введите логин|{@s}"
         dialogTitle="Логин"
         negativeButtonText="Отмена"
         dialogMessage="Введите логин в личный кабинет БалНет"
@@ -15,7 +15,7 @@
         dialogTitle="Пароль"
         negativeButtonText="Отмена"
         title="Пароль"
-        summary="Пароль||***********\n"
+        summary="|Введите пароль|***********"
         dialogMessage="Введите пароль, используемый для входа в личный кабинет БалНет."
         inputType="textPassword">
     </EditTextPreference>

@@ -58,7 +58,7 @@ function fetchCard(baseurl, json){
             getParam(card.num4, result, 'cardnum');
             getParam(acc.name, result, 'accname');
 
-            if(AnyBalance.isAvailable('till', 'contract_date', 'status', 'gracepay', 'gracetill')){
+            if(AnyBalance.isAvailable('till', 'contract_date', 'status', 'gracepay', 'gracetill', 'account_blocked_balance')){
                 var url = getParam(card.link, null, null, /\/hb\/faces\/(.*)/);
                 
                 var html = AnyBalance.requestGet(baseurl + url);
@@ -70,7 +70,6 @@ function fetchCard(baseurl, json){
                 getParam(html, result, 'status', /&#1057;&#1090;&#1072;&#1090;&#1091;&#1089;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
                 //Номер карты
                 getParam(html, result, 'cardnum', /&#1053;&#1086;&#1084;&#1077;&#1088; &#1082;&#1072;&#1088;&#1090;&#1099;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/, replaceTagsAndSpaces, html_entity_decode);
-
                 //Договор
                 getParam(html, result, 'contract', />&#1044;&#1086;&#1075;&#1086;&#1074;&#1086;&#1088;<[\s\S]*?<td[^>]*>(?:&#8470; )?([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
                 //Сумма для реализации Льготного периода -
@@ -78,6 +77,9 @@ function fetchCard(baseurl, json){
                 //Дата окончания Льготного периода -
                 getParam(html, result, 'gracetill', /&#1044;&#1072;&#1090;&#1072; &#1086;&#1082;&#1086;&#1085;&#1095;&#1072;&#1085;&#1080;&#1103; &#1083;&#1100;&#1075;&#1086;&#1090;&#1085;&#1086;&#1075;&#1086; &#1087;&#1077;&#1088;&#1080;&#1086;&#1076;&#1072;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
 
+				// Сумма заблокированных среддств
+				getParam(html, result, 'account_blocked_balance', /&#1047;&#1072;&#1073;&#1083;&#1086;&#1082;&#1080;&#1088;&#1086;&#1074;&#1072;&#1085;&#1085;&#1072;&#1103; &#1089;&#1091;&#1084;&#1084;&#1072;[\s\S]*?<span class="summ">([\s\S]*?)<\/span>/i, [/&nbsp;/ig, '', /&minus;/ig, '-', /<!--[\s\S]*?-->/g, '', /<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /\s+/ig, '',], parseBalance);
+				
             }
 
             AnyBalance.setResult(result);

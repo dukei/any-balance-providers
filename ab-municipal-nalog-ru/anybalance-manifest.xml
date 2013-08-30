@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
+	<api flags="no_browser" />
+	<id version="1">ab-municipal-nalog-ru</id>
+	<name>Федеральная Налоговая Служба</name>
+	<description>
+	Пролучает данные на сайте Федеральной Налоговой Службы http://nalog.ru/.
+	
+	Личный кабинет налогоплательщика находится по адресу https://lk2.service.nalog.ru/lk/
+	
+	ВНИМАНИЕ! Для получения регистрационной карты и доступа к сервису «Личный кабинет налогоплательщика для физических лиц» Вы должны лично обратиться в любую* инспекцию ФНС России, независимо от места постановки на учет. При обращении в инспекцию ФНС России по месту жительства при себе необходимо иметь документ, удостоверяющий личность. При обращении в иные инспекции ФНС России при себе необходимо иметь документ, удостоверяющий личность, и оригинал или копию свидетельства о постановке на учет физического лица (свидетельство о присвоении ИНН)/уведомления о постановке на учет.
+	</description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="arrears" name="Задолженность" units="р"/>
+		<counter id="overpay" name="Переплата" units="р"/>
+		<counter id="income" name="Зачислено" units="р"/>
+		<counter id="paid" name="Уплачено" units="р"/>
+		<counter id="unpaid" name="Начислено" units="р"/>
+		<counter id="fio" name="ФИО" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>municipal</type>
+	<country>ru</country>
+</provider>

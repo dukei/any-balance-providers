@@ -5,6 +5,9 @@
   <description>
     Получает баланс, бонусные баллы, сумму доплаты и пакеты услуг НТВ+ (http://ntvplus.ru), используя личный кабинет.
   </description>
+  <instruction>
+    Чтобы получить логин и пароль, зарегистрируйтесь здесь: http://www.ntvplus.ru/register.xl . В процессе регистрации потребуется ввести номер вашего договора и серийный номер смарт-карты НТВ-ПЛЮС, расположенной в вашем ресивере.
+  </instruction>
   <author>iReset &lt;ireset.ag@gmail.com&gt;</author>
   <files>
     <icon>icon.png</icon>

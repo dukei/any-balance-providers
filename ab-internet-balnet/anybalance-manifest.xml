@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="7">ab-balance-balnet</id>
+  <name>Балнет</name>
+  <description>
+    Получает информацию об остатке на счете пользователя БалНет. Информация берется из личного кабинета https://billing.balnet.ru/lk/
+  </description>
+  <author>Alexander Bekrenev &lt;zeemor@yandex.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <history>history.xml</history>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" suffix=" р"/> 
+    <counter id="account" name="Основной лицевой счет" type="text"/>
+    <counter id="credit" name="Кредит" suffix=" р"/>
+    <counter id="switch" name="Состояние интернета" type="text"/>
+  </counters>
+  <keywords>
+    balnet
+  </keywords>
+  <type>
+    balance
+  </type>
+</provider>

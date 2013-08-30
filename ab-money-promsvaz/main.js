@@ -78,6 +78,16 @@ function main(){
 
 }
 
+function getBonuses(baseurl, result)
+{
+	if(isAvailable('bonuses', 'bonuses_grade'))
+	{
+		html = AnyBalance.requestGet(baseurl + '/n/Services/BonusProgram.aspx');
+		getParam(html, result, 'bonuses', /class="bonusAmount"[^>]*>([^<]*)/, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'bonuses_grade', /Уровень\s*"([^"]*)/, replaceTagsAndSpaces, html_entity_decode);
+	}
+}
+
 function fetchCard(baseurl, html){
     var prefs = AnyBalance.getPreferences();
 
@@ -111,6 +121,7 @@ function fetchCard(baseurl, html){
         throw new AnyBalance.Error(prefs.lastdigits ? "Не удаётся найти карту с последними цифрами " + prefs.lastdigits : "Не удаётся найти ни одной карты!");
     
     var result = {success: true};
+	getBonuses(baseurl, result);
     result.__tariff = $card.find(".cardNumber").text();
     if(AnyBalance.isAvailable('cardnum'))
         result.cardnum = $card.find(".cardNumber").text();
@@ -130,7 +141,7 @@ function fetchCard(baseurl, html){
         getParam(html, result, 'balance_own', /ctl00_main_lblAccountBalance[^>]*>([^<]*)/, replaceTagsAndSpaces, parseBalance);
         getParam(html, result, 'blocked', /ctl00_main_lblReserved[^>]*>([^<]*)/, replaceTagsAndSpaces, parseBalance);
     }
-    
+
     AnyBalance.setResult(result);
 }
 
@@ -172,6 +183,7 @@ function fetchAccount(baseurl, html){
         throw new AnyBalance.Error(prefs.lastdigits ? "Не удаётся найти счет с последними цифрами " + prefs.lastdigits : "Не удаётся найти ни одной карты!");
     
     var result = {success: true};
+	getBonuses(baseurl, result);
     result.__tariff = replaceAll($card.find(".infoUnitCaption").text(), replaceTagsAndSpaces);;
     if(AnyBalance.isAvailable('accnum'))
         result.cardnum = $card.find(".infoUnitObject").text();
@@ -236,6 +248,7 @@ function fetchDeposit(baseurl, html){
         throw new AnyBalance.Error(prefs.lastdigits ? "Не удаётся найти депозит с названием " + prefs.lastdigits : "Не удаётся найти ни одного депозита!");
     
     var result = {success: true};
+	getBonuses(baseurl, result);	
     result.__tariff = $.trim($card.find(".twoColumnBlockCaption").text());
     if(AnyBalance.isAvailable('type'))
         result.type = $.trim($card.find(".depositReplenishment").text());

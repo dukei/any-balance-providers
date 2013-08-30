@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-router-wd-d50</id>
+  <name>Роутер WD-D50</name>
+  <description>
+    Мониторинг параметров безпроводного роутера WD-D50. Получает данные из странички статистики роутера по адресу http://192.168.169.1 или по другому адресу установленному пользователем.
+
+    Обратите внимание: Данный провайдер не может точно отображать данные использованного трафика. Для контроля расхода денежных средств используйте провайдер того оператора, к которому подключено устройство.
+  </description>
+  <author>Ignatiy Goloviznin &lt;igoloviznin@gmail.com&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="connect_status_3g" name="Статус подключения модема" type="text"/>
+    <counter id="modem_type" name="Марка модема" type="text"/>
+    <counter id="network_level_ch" name="Уровень сигнала" type="numeric"/>
+    <counter id="network_level" name="Уровень сигнала %" suffix=" %" type="numeric"/>
+    <counter id="users" name="Количество подключенных пользователей" type="numeric"/>
+    <counter id="traffic_received_3g" name="Принятый трафик 3G" units=" mb"/>
+    <counter id="traffic_transmitted_3g" name="Отправленный трафик 3G" units=" mb"/>
+    <counter id="traffic_received_lan" name="Принятый трафик LAN" units=" mb"/>
+    <counter id="traffic_transmitted_lan" name="Отправленный трафик LAN" units=" mb"/>
+    <counter id="traffic_received_wan" name="Принятый трафик WAN" units=" mb"/>
+    <counter id="traffic_transmitted_wan" name="Отправленный трафик WAN" units=" mb"/>
+  </counters>
+  <keywords>
+    роутер файловое хранилище WD-D50 3G Wi-Fi CDMA EVDO GSM UMTS WCDMA
+  </keywords>
+  <type>
+    router
+  </type>
+</provider>

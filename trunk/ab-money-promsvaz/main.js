@@ -78,10 +78,8 @@ function main(){
 
 }
 
-function getBonuses(baseurl, result)
-{
-	if(isAvailable('bonuses', 'bonuses_grade'))
-	{
+function getBonuses(baseurl, result){
+	if(isAvailable('bonuses', 'bonuses_grade')){
 		html = AnyBalance.requestGet(baseurl + '/n/Services/BonusProgram.aspx');
 		getParam(html, result, 'bonuses', /class="bonusAmount"[^>]*>([^<]*)/, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, 'bonuses_grade', /Уровень\s*"([^"]*)/, replaceTagsAndSpaces, html_entity_decode);

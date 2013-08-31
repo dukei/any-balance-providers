@@ -41,7 +41,7 @@ function parseBalance(text){
 function main(){
     var prefs = AnyBalance.getPreferences();
 
-    var baseurl = "http://www.aline-gsm.ru/index.php";
+    var baseurl = "http://rt-gsm.ru/index.php";
 
     AnyBalance.setDefaultCharset('utf-8');
     
@@ -69,9 +69,12 @@ function main(){
 
 //    AnyBalance.trace(html);
     
-    var error = getParam(html, null, null, /<dd[^>]*class="error message[^>]*>([\s\S]*?)<\/dd>/i, replaceTagsAndSpaces);
-    if(error)
-      throw new AnyBalance.Error(error);
+    if(!/<input[^>]+name="task"[^>]*value="logout"/i.test(html)){
+        var error = getParam(html, null, null, /<dd[^>]*class="error message[^>]*>([\s\S]*?)<\/dd>/i, replaceTagsAndSpaces);
+        if(error)
+          throw new AnyBalance.Error(error);
+        throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+    }
     
     var result = {success: true};
 

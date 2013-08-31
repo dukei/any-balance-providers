@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-cell-aline</id>
+  <id version="2">ab-cell-aline</id>
+  <api flags="no_browser"/>
   <name>Элайн GSM (Марий Эл)</name>
   <description>
     Получает баланс и информацию о тарифном плане для сотового оператора Элайн-GSM республики Марий Эл, ныне Ростелеком.
-    Информация берется из личного кабинета http://www.aline-gsm.ru/
+    Информация берется из личного кабинета http://www.aline-gsm.ru, ныне http://rt-gsm.ru
   </description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
     <js>main.js</js>
+    <history>history.xml</history>
   </files>
   <counters>
     <counter id="balance" name="Баланс" units="р"/>
@@ -18,7 +20,7 @@
     <counter id="userName" name="Владелец" type="text"/>
   </counters>
   <keywords>
-    Сотовый телефон, мобильный, мобильник, eline
+    Сотовый телефон, мобильный, мобильник, eline, rostelecom
   </keywords>
   <type>
     cell

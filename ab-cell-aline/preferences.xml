@@ -3,7 +3,7 @@
     <EditTextPreference 
         title="Телефон" 
         positiveButtonText="ОК" 
-        summary="7 цифр номера телефона||{@s}\n" 
+        summary="|7 цифр номера телефона|{@s}" 
         dialogTitle="Телефон" 
         negativeButtonText="Отмена" 
         dialogMessage="Введите последние 7 цифр вашего номера телефона, например, 1234567, без префикса +7902!."
@@ -16,8 +16,8 @@
         dialogTitle="Пароль"
         negativeButtonText="Отмена"
         title="Пароль"
-        summary="Пароль для входа в личный кабинет||***********\n"
-        dialogMessage="Введите пароль, используемый для входа в личный кабинет (http://www.aline-gsm.ru/)."
+        summary="|Пароль для входа в личный кабинет|***********"
+        dialogMessage="Введите пароль, используемый для входа в личный кабинет (http://rt-gsm.ru/)."
         inputType="textPassword">
     </EditTextPreference>
 </PreferenceScreen>

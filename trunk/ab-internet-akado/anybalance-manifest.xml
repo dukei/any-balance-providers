@@ -2,7 +2,7 @@
 <provider>
 	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser" />
-	<id version="4">ab-internet-akado</id>
+	<id version="5">ab-internet-akado</id>
 	<name>Домашний Интернет и Телевидение АКАДО</name>
 	<description>
 	Получает текущий баланс, номер договора, ФИО владельца у провайдера интернет и телевидения АКАДО (http://www.akado.ru). Данные берутся из личного кабинета https://office.akado.ru.

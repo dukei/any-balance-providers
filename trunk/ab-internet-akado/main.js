@@ -50,7 +50,7 @@ function main(){
     var services = AnyBalance.requestGet(baseurl + 'services.xml');
 
 	if(/УСЛУГИ ИНТЕРНЕТ/i.test(services)){
-		var servid = getParam(services, null, null, /<a href="\?ID=([\s\S]*?)">УСЛУГИ ИНТЕРНЕТ<\/a>/i, null, html_entity_decode);
+		var servid = getParam(services, null, null, /<a href="\?ID=([^"&]*)">УСЛУГИ ИНТЕРНЕТ<\/a>/i, null, html_entity_decode);
 		services = AnyBalance.requestGet(baseurl + 'services.xml?ID='+servid+'&depth=1');
 		var tariff = getParam(services, null, null, /<th>\s*<a href[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 		if(tariff){

@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change major_version="3.0" version="88" date="2013-09-01">
+      - Более точное распознавание некоторых параметров в яндекс-виджете
+    </change>
     <change major_version="3.0" version="87" date="2013-08-29">
       - Мегафон закрыл доступ в полноценный сервис-гид, пока вместо него используем яндекс.виджет (Stark)
     </change>

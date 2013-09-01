@@ -307,7 +307,7 @@ function getTrayXmlText(filial, address){
 
 function isAvailableButUnset(result, params){
     for(var i=0; i<params.length; ++i){
-        if(AnyBalance.isAvailable(params[i]) && !isset(result[params[i]]))
+        if(isAvailable(params[i]) && !isset(result[params[i]]))
             return true;
     }
     return false;

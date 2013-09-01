@@ -433,7 +433,8 @@ function megafonTrayInfo(filial){
                    need_mins_total = isAvailableButUnset(result, ['mins_total']),
                    need_int_left = isAvailableButUnset(result, ['internet_left']),
                    need_int_total = isAvailableButUnset(result, ['internet_total']),
-                   need_int_cur = isAvailableButUnset(result, ['internet_cur']);
+                   need_int_cur = isAvailableButUnset(result, ['internet_cur']),
+                   need_gb_with_you = isAvailableButUnset(result, ['gb_with_you']);
      
                //Минуты и прочее получаем только в случае ошибки в сервисгиде, чтобы случайно два раза не сложить
                var discounts = sumParam(json.ok.html, null, null, /<td[^>]+class="cc_discount_row"[^>]*>([\s\S]*?)<\/td>/ig);
@@ -441,6 +442,7 @@ function megafonTrayInfo(filial){
                var reDiscount3Total = /[^\/]*\/[^\/]*\/([^\/]*)/;
                var reDiscount2Value = /^[^\/]*\/([^\/]*)$/;
                var reDiscount2Total = /^([^\/]*)\/[^\/]*$/;
+               var wasSM = false;
                for(var i=0; i<discounts.length; ++i){
                    var discount = discounts[i];
                    var name = getParam(discount, null, null, /<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
@@ -451,9 +453,27 @@ function megafonTrayInfo(filial){
                    }else if(/SMS|СМС/i.test(name)){
                        if(need_sms_left) sumParam(val, result, 'sms_left', [reDiscount3Value, reDiscount2Value], null, parseBalance, aggregate_sum);
                        if(need_sms_total) sumParam(val, result, 'sms_total', [reDiscount3Total, reDiscount2Total], null, parseBalance, aggregate_sum);
+                   }else if(/Бизнес Микс/i.test(name) && /шт/i.test(val)){
+                       if(need_sms_left) sumParam(val, result, 'sms_left', [reDiscount3Value, reDiscount2Value], null, parseBalance, aggregate_sum);
+                       if(need_sms_total) sumParam(val, result, 'sms_total', [reDiscount3Total, reDiscount2Total], null, parseBalance, aggregate_sum);
+                   }else if(/Исходящие SM/i.test(name)){
+                       if(!wasSM){
+                           if(need_sms_left) sumParam(val, result, 'sms_left', [reDiscount3Value, reDiscount2Value], null, parseBalance, aggregate_sum);
+                           if(need_sms_total) sumParam(val, result, 'sms_total', [reDiscount3Total, reDiscount2Total], null, parseBalance, aggregate_sum);
+                           wasSM = true;
+                       }else{
+                           AnyBalance.trace('Пропускаем дублированные смс до сниженной цены: ' + val);
+                       }
                    }else if(/мин/i.test(val) || /минут/i.test(name)){
-                       if(need_mins_left) sumParam(val, result, 'mins_left', [reDiscount3Value, reDiscount2Value], null, parseMinutes, aggregate_sum);
-                       if(need_mins_total) sumParam(val, result, 'mins_total', [reDiscount3Total, reDiscount2Total], null, parseMinutes, aggregate_sum);
+                       var left = getParam(val, null, null, [reDiscount3Value, reDiscount2Value], null, parseBalance);
+                       if(!isset(left) || left < 1000000){ //Большие значения, считай, безлимит. Че его показывать...
+                           if(need_mins_left) sumParam(val, result, 'mins_left', [reDiscount3Value, reDiscount2Value], null, parseMinutes, aggregate_sum);
+                           if(need_mins_total) sumParam(val, result, 'mins_total', [reDiscount3Total, reDiscount2Total], null, parseMinutes, aggregate_sum);
+                       }else{
+                           AnyBalance.trace('Пропускаем безлимитные минуты: ' + val);
+                       }
+                   }else if(/Гигабайт в дорогу/i.test(name)){
+                       if(need_gb_with_you) sumParam(val, result, 'gb_with_you', [reDiscount3Value, reDiscount2Value], null, parseTraffic, aggregate_sum);
                    }else if(/[кгмkgm][бb]/i.test(val)){
                        var left = getParam(val, null, null, [reDiscount3Value, reDiscount2Value], null, parseTraffic);
                        var total = getParam(val, null, null, [reDiscount3Total, reDiscount2Total], null, parseTraffic);

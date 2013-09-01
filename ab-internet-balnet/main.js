@@ -19,8 +19,8 @@ function main(){
 	  password:prefs.password
 	});
 
-    if(/Баланс<\/td>\s*[^>]+>(\d+\.?\d*)<\/td>/i.test(html)){
-        var error = getParam(html, null, null, /<br>\s*<p style="color:red">([\S\d\s]+)<\/p>/ig, null, null);
+    if(!/Баланс<\/td>\s*[^>]+>(\d+\.?\d*)<\/td>/i.test(html)){
+        var error = getParam(html, null, null, /<br>\s*<p style=["']color:red['"]>([\W\d\s]+)<\/p>/i, null, null);
         if(error)
             throw new AnyBalance.Error(error);
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');

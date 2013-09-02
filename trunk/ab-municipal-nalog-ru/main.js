@@ -37,13 +37,13 @@ function main(){
 	html = AnyBalance.requestGet(baseurl + 'lk/totals.html?t=1377871971796', g_headers); 
 	
 	var json = getJson(html);
-	
-	getParam(json.totals.arrears, result, 'arrears', null, replaceTagsAndSpaces, parseBalanceRK);
-	getParam(json.totals.overpay, result, 'overpay', null, replaceTagsAndSpaces, parseBalanceRK);
-	getParam(json.totals.income, result, 'income', null, replaceTagsAndSpaces, parseBalanceRK);
-	getParam(json.totals.paid, result, 'paid', null, replaceTagsAndSpaces, parseBalanceRK);
-	getParam(json.totals.unpaid, result, 'unpaid', null, replaceTagsAndSpaces, parseBalanceRK);
-	
+	if(json && json.totals){
+		getParam(json.totals.arrears, result, 'arrears', null, replaceTagsAndSpaces, parseBalanceRK);
+		getParam(json.totals.overpay, result, 'overpay', null, replaceTagsAndSpaces, parseBalanceRK);
+		getParam(json.totals.income, result, 'income', null, replaceTagsAndSpaces, parseBalanceRK);
+		getParam(json.totals.paid, result, 'paid', null, replaceTagsAndSpaces, parseBalanceRK);
+		getParam(json.totals.unpaid, result, 'unpaid', null, replaceTagsAndSpaces, parseBalanceRK);
+	}
     AnyBalance.setResult(result);
 }
 

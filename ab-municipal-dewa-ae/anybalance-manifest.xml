@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
+	<api flags="no_browser" />
+	<id version="1">ab-municipal-dewa-ae</id>
+	<name>Dubai Electicity and Water Authority</name>
+	<description>
+	Obtains information from e-services of Dubai Electicity and Water Authority (https://e-services.dewa.gov.ae/).
+	
+	To register, please folow this link: https://portal.dewa.gov.ae/irj/portal/anonymous/rnew
+	</description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Total balance"/>
+		<counter id="electricity" name="Electricity"/>
+		<counter id="water" name="Water"/>
+		<counter id="sewerage" name="Sewerage"/>
+		<counter id="housing" name="Housing"/>
+		<counter id="cooling" name="Cooling"/>
+		<counter id="other" name="Other"/>
+	</counters>
+	<keywords></keywords>
+	<type>municipal</type>
+	<country>ae</country>
+</provider>

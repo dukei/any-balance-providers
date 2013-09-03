@@ -25,6 +25,6 @@
         summary="||{@s}\n"
         entries="club-lukoil.ru|my.licard.com"
         entryValues="club|likard"
-		defaultValue="likard">
+	defaultValue="club">
     </ListPreference>	
 </PreferenceScreen>

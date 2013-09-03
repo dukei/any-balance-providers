@@ -63,6 +63,11 @@ function main(){
 	sumParam(html, result, 'traffic_action', />\s*по акции\s*<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	sumParam(html, result, 'traffic_action', />\s*Валентинка от Интертелеком. 1000 MB\s*<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     sumParam(html, result, 'traffic_action', />\s*Подарок от Интертелеком. 1000 MB\s*<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    
+        //Акционный счет
+	getParam(html, result, 'bonus_action_current', /<td[^>]*>\s*Акционный счет на текущий месяц \(без АП\)<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'bonus_action_next', /<td[^>]*>\s*Акционный счет на следующие мес. \(без АП\)<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	
 	
 	//Использованный трафик
 	sumParam(html, result, 'traffic_it', />\s*IT\s*<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);

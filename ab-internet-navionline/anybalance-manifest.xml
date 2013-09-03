@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
+	<api flags="no_browser" />
+	<id version="1">ab-internet-navionline</id>
+	<name>Навигатор Онлайн (Киев)</name>
+	<description>
+	Получает данные из системы Навигатор Онлайн (Киев)  http://naverex.net/
+	
+	Личный кабинет находится по адресу: https://bill.naverex.net/	
+	</description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Депозит" units="грн"/>
+		<counter id="credit" name="Кредит" units="грн"/>
+		<counter id="bonus" name="Бонус" units="грн"/>
+		<counter id="sum_pay" name="Сумма оплат" units="грн"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="dogovor" name="Договор" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet</type>
+	<country>ua</country>
+</provider>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
+	<api flags="no_browser" />
+	<id version="1">ab-internet-justlan</id>
+	<name>JustLan (Воронеж)</name>
+	<description>
+	Получает данные интернет-провайдера JustLan (Связь Телеком) г. Воронеж http://svzt.ru/
+	
+	Личный кабинет находится по адресу: https://stat.svzt.ru/login/
+	</description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units="р"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="acc_num" name="Лицевой счёт" type="text"/>
+		<counter id="traf_income" name="Входящий трафик" units="Мб"/>
+		<counter id="traf_outgoing" name="Исходящий трафик" units="Мб"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

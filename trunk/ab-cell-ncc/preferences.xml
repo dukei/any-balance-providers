@@ -1,12 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <ListPreference
+    <!--
+	Это ни к чему вообще
+	<ListPreference
         title="Регион"
         summary="|Выберите регион|Выбран регион '{@s}'!"
         key="region"
         defaultValue="1"
         entries="Республика Татарстан|Нижегородский филиал"
-        entryValues="1|2" />
+        entryValues="1|2" />-->
     <EditTextPreference 
         key="userv"
         title="Логин" 

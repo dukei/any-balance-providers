@@ -363,6 +363,9 @@ function megafonTrayInfo(filial){
                 if(AnyBalance.isAvailable('internet_cur') && isset(valAvailable) && isset(valTotal)){
                     result.internet_cur = (result.internet_cur || 0) + parseTrafficMy((valTotal - valAvailable) + units);
                 }
+            }else if(/вызовы внутри спг/i.test(names) && /мин/i.test(plan_si)){
+                AnyBalance.trace('Найдены минуты внутри группы: ' + names + ', ' + plan_si);
+                sumParam(d, result, 'mins_net_left', /<VOLUME_AVAILABLE>([\s\S]*?)<\/VOLUME_AVAILABLE>/i, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
             }else if(/телефония исходящая|исходящая телефония| мин|Переходи на ноль/i.test(names) || /мин/i.test(plan_si)){
                 AnyBalance.trace('Найдены минуты: ' + names + ', ' + plan_si);
                 sumParam(d, result, 'mins_left', /<VOLUME_AVAILABLE>([\s\S]*?)<\/VOLUME_AVAILABLE>/i, replaceTagsAndSpaces, parseMinutes, aggregate_sum);

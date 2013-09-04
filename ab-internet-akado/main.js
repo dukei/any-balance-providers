@@ -62,4 +62,3 @@ function main(){
 	}
     AnyBalance.setResult(result);
 }
-

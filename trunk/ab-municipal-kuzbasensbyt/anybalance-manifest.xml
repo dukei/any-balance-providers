@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
+	<api flags="no_browser" />
+	<id version="1">ab-municipal-kuzbasensbyt</id>
+	<name>ОАО Кузбассэнергосбыт</name>
+	<description>
+	Получает данные из системы ОАО Кузбассэнергосбыт  (Мечел) http://www.kuzesc.ru/
+	
+	Личный кабинет находится по адресу: http://www.kuzesc.ru:7777/pls/apex/f?p=100:1
+	</description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс"/>
+		<counter id="current" name="Текущие показания "/>
+		<counter id="period" name="Период" type="text"/>
+		<counter id="saldo" name="Сальдо на начало периода"/>
+		<counter id="pokazaniya" name="Показания на начало периода"/>
+		<counter id="pokazaniya_end" name="Показания на конец периода"/>
+		<counter id="rashod" name="Расход, кВтч"/>
+		<counter id="tarif" name="Тариф, руб/кВтч."/>
+		<counter id="nachisleno" name="Начислено за период, руб."/>
+		<counter id="oplacheno" name="Оплачено за период, руб"/>
+		<counter id="saldo_end" name="Сальдо на конец периода, руб."/>
+	</counters>
+	<keywords></keywords>
+	<type>municipal</type>
+	<country>ru</country>
+</provider>

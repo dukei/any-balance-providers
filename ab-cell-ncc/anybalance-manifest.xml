@@ -1,39 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.1" version="24">ab-cell-ncc</id>
-  <name>Ростелеком-Волга (НСС)</name>
-  <description>
-    Получает текущий баланс и тариф оператора Ростелеком-Волга (НСС) из личного кабинета https://iserve.ncc-volga.ru. Для настройки требуется ваш пароль в личный кабинет НСС, не менее 6 символов (латинские буквы, цифры), задается отправкой SMS-сообщения в формате "PSW пароль" на бесплатный номер 177. 
-
-    Поддерживаются регионы:
-      * Татарстан (wtiger@mail.ru)
-      * Нижегородский филиал (voyager@voyager.su)
-        
-  </description>
-  <author>wtiger &lt;wtiger@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>api:jquery.min.js</js> <!-- Используем библиотеку, которая и так входит в AnyBalance -->
-    <history>history.xml</history>
-    <js>main.js</js>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="bonus" name="Бонус" units="р"/>
-    <counter id="trafic" name="Трафик" units="Mb"/>
-<!-- следующие счётчики по умолчанию выключены, т.к. не несут полезной информации - цена на интернет-трафик одна на все виды. Но для желающих...
-    <counter id="traf1" name="Трафик internet" units="Mb"/>
-    <counter id="traf2" name="Трафик WiFi" units="Mb"/>
-    <counter id="traf3" name="Трафик wap" units="Mb"/> -->
-  </counters>
-  <keywords>
-    оператор нсс ncc ростелеком ростелеком-волга
-  </keywords>
-  <type>
-    cell
-  </type>
-  <country>
-    ru
-  </country>
+	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
+	<api flags="no_browser" />
+	<id major_version="1.1" version="25">ab-cell-ncc</id>
+	<name>Ростелеком-Волга (НСС)</name>
+	<description>
+	Получает текущий баланс и тариф оператора Ростелеком-Волга (НСС) из личного кабинета https://iserve.ncc-volga.ru. Для настройки требуется ваш пароль в личный кабинет НСС, не менее 6 символов (латинские буквы, цифры), задается отправкой SMS-сообщения в формате "PSW пароль" на бесплатный номер 177.
+	
+	Поддерживаются регионы все регионы, но если Ваш регион не поддерживается свяжитесь с автором провайдера по e-mail support@starksoft.ru
+	</description>
+	<author>wtiger &lt;wtiger@mail.ru&gt;</author>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<history>history.xml</history>
+		<js>library.js</js>
+		<js>main.js</js>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units="р"/>
+		<counter id="bonus" name="Бонус" units="р"/>
+		<counter id="trafic" name="Трафик" units="Mb"/>
+		<counter id="accum_trafic" name="Трафик (Аккумулятор)" units="Mb"/>
+		<counter id="accum_mins" name="Минуты (Аккумулятор)"/>
+		<counter id="accum_sms" name="СМС (Аккумулятор)"/>
+		<counter id="filial" name="Филиал" type="text"/>
+		<counter id="phone" name="Номер" type="text"/>
+		<counter id="acc_num" name="Номер лицевого счета" type="text"/>
+		<!-- следующие счётчики по умолчанию выключены, т.к. не несут полезной информации - цена на интернет-трафик одна на все виды. Но для желающих...
+		<counter id="traf1" name="Трафик internet" units="Mb"/>
+		<counter id="traf2" name="Трафик WiFi" units="Mb"/>
+		<counter id="traf3" name="Трафик wap" units="Mb"/> -->
+	</counters>
+	<keywords>оператор нсс ncc ростелеком ростелеком-волга</keywords>
+	<type>cell</type>
+	<country>ru</country>
 </provider>

@@ -93,22 +93,16 @@ function main(){
 
     //Теперь, когда секретный параметр есть, можно попытаться войти
     html = AnyBalance.requestPost(baseurl + (action || 'login.html'), params, addHeaders({Referer: baseurl + 'login.html'})); 
-
-    if(/<form[^>]+name="chPassForm"/i.test(html))
+	// Иногда билайн нормальный пароль считает временным и предлагает его изменить, но если сделать еще один запрос, пускает и показывает баланс
+	if(/Ваш пароль временный\.\s*Необходимо изменить его на постоянный/i.test(html)){
+		AnyBalance.trace('Билайн считает наш пароль временным, но это может быть и не так, попробуем еще раз войти...');
+		html = AnyBalance.requestPost(baseurl + (action || 'login.html'), params, addHeaders({Referer: baseurl + 'login.html'})); 
+	}
+	// Ну и тут еще раз проверяем, получилось-таки войти или нет
+    if(/<form[^>]+name="chPassForm"|Ваш пароль временный\.\s*Необходимо изменить его на постоянный/i.test(html))
         throw new AnyBalance.Error('Вы зашли по временному паролю, требуется сменить пароль. Для этого войдите в ваш кабинет https://my.beeline.ru через браузер и смените там пароль. Новый пароль введите в настройки данного провайдера.');
     if(/<form[^>]+action="\/changePass.html"/i.test(html))
         throw new AnyBalance.Error('Билайн требует сменить пароль. Зайдите в кабинет https://my.beeline.ru через браузер и поменяйте пароль на постоянный.');
-	// Билайн просит подтвердить условия соглашения
-	/*if(/<h1>Условия предоставления услуги<\/h1>/i.test(html))
-	{
-		throw new AnyBalance.Error('Билайн требует подтвердить пользовательское соглашение. Зайдите в кабинет https://my.beeline.ru через браузер.');
-		/*AnyBalance.trace('Билайн просит подтвердить пользовательское соглашение, что ж, попробуем...');
-		html = AnyBalance.requestPost(baseurl + 'c/pre/index.html', {
-			j_idt37:j_idt44=j_idt37:j_idt44
-			j_idt37:j_idt44:j_idt45=
-			javax.faces.ViewState=-6286590272079463813:-6348402349795970218
-		}, addHeaders({Referer: baseurl + 'login.html'})); 
-	}*/
     //После входа обязательно проверяем маркер успешного входа
     //Обычно это ссылка на выход, хотя иногда приходится искать что-то ещё
     if(!/logOutLink/i.test(html)){
@@ -180,7 +174,7 @@ function fetchPost(baseurl, html){
 
 function fetchPre(baseurl, html){
     //Раз мы здесь, то мы успешно вошли в кабинет постоплатный
-    AnyBalance.trace("Мы в предоплатном кабинете");
+    AnyBalance.trace('Мы в предоплатном кабинете');
     //Получаем все счетчики
     var result = {success: true, balance: null};
     getParam(html, result, 'phone', /<input[^>]+id="serviceBlock:paymentForm:[^>]*value="([^"]*)/i, replaceTagsAndSpaces, html_entity_decode);
@@ -194,17 +188,16 @@ function fetchPre(baseurl, html){
         getParam(xhtml, result, 'balance', /у вас на балансе([\s\S]*)/i, replaceTagsAndSpaces, parseBalance);
         getParam(xhtml, result, ['currency', 'balance'], /у вас на балансе([\s\S]*)/i, replaceTagsAndSpaces, myParseCurrency);
         getParam(xhtml, result, 'fio', /<span[^>]+class="b2c.header.greeting.pre.b2c.ban"[^>]*>([\s\S]*?)(?:<\/span>|,)/i, replaceTagsAndSpaces, html_entity_decode);*/
+
 		xhtml = getBlock(baseurl + 'c/pre/index.html', html, 'homeBalance');
-        getParam(xhtml, result, 'balance', /class="price[\s\S]*?>([\s\S]*?)<\/h3>/i, replaceTagsAndSpaces, parseBalance);
-        getParam(xhtml, result, ['currency', 'balance'], /class="price[\s\S]*?>([\s\S]*?)<\/h3>/i, replaceTagsAndSpaces, myParseCurrency);
+		getParam(xhtml, result, 'balance', /class="price[^>]*>([\s\S]*?)<\/h3>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(xhtml, result, ['currency', 'balance'], /class="price[^>]*>([\s\S]*?)<\/h3>/i, replaceTagsAndSpaces, myParseCurrency);
         //getParam(xhtml, result, 'fio', /<span[^>]+class="b2c.header.greeting.pre.b2c.ban"[^>]*>([\s\S]*?)(?:<\/span>|,)/i, replaceTagsAndSpaces, html_entity_decode);		
     }
-
     if(AnyBalance.isAvailable('sms_left', 'mms_left', 'rub_bonus', 'rub_opros', 'sek_bonus')){
         xhtml = getBlock(baseurl + 'c/pre/index.html', html, 'bonusesloaderDetails');
         getBonuses(xhtml, result);
     }
-	
     //Возвращаем результат
     AnyBalance.setResult(result);
 }

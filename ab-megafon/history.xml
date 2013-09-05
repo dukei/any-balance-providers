@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change major_version="3.0" version="91" date="2013-09-05">
+      - Обход перепутывания мегафоном значений Осталось/Всего
+    </change>
     <change major_version="3.0" version="90" date="2013-09-04">
       - Разделены минуты на спг и обычные минуты в некоторых случаях
     </change>

@@ -441,51 +441,37 @@ function megafonTrayInfo(filial){
      
                //Минуты и прочее получаем только в случае ошибки в сервисгиде, чтобы случайно два раза не сложить
                var discounts = sumParam(json.ok.html, null, null, /<td[^>]+class="cc_discount_row"[^>]*>([\s\S]*?)<\/td>/ig);
-               var reDiscount3Value = /^[^\/]*\/([^\/]*)\/[^\/]*$/;
-               var reDiscount3Total = /[^\/]*\/[^\/]*\/([^\/]*)/;
-               var reDiscount2Value = /^[^\/]*\/([^\/]*)$/;
-               var reDiscount2Total = /^([^\/]*)\/[^\/]*$/;
                var wasSM = false;
                for(var i=0; i<discounts.length; ++i){
                    var discount = discounts[i];
                    var name = getParam(discount, null, null, /<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
                    var val = getParam(discount, null, null, /<div[^>]+class="discount_volume"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
                    if(/MMS|ММС/i.test(name)){
-                       if(need_mms_left) sumParam(val, result, 'mms_left', [reDiscount3Value, reDiscount2Value], null, parseBalance, aggregate_sum);
-                       if(need_mms_total) sumParam(val, result, 'mms_total', [reDiscount3Total, reDiscount2Total], null, parseBalance, aggregate_sum);
+                       getLeftAndTotal(val, result, need_mms_left, need_mms_total, 'mms_left', 'mms_total', parseBalance);
                    }else if(/SMS|СМС/i.test(name)){
-                       if(need_sms_left) sumParam(val, result, 'sms_left', [reDiscount3Value, reDiscount2Value], null, parseBalance, aggregate_sum);
-                       if(need_sms_total) sumParam(val, result, 'sms_total', [reDiscount3Total, reDiscount2Total], null, parseBalance, aggregate_sum);
+                       getLeftAndTotal(val, result, need_sms_left, need_sms_total, 'sms_left', 'sms_total', parseBalance);
                    }else if(/Бизнес Микс/i.test(name) && /шт/i.test(val)){
-                       if(need_sms_left) sumParam(val, result, 'sms_left', [reDiscount3Value, reDiscount2Value], null, parseBalance, aggregate_sum);
-                       if(need_sms_total) sumParam(val, result, 'sms_total', [reDiscount3Total, reDiscount2Total], null, parseBalance, aggregate_sum);
+                       getLeftAndTotal(val, result, need_sms_left, need_sms_total, 'sms_left', 'sms_total', parseBalance);
                    }else if(/Исходящие SM/i.test(name)){
                        if(!wasSM){
-                           if(need_sms_left) sumParam(val, result, 'sms_left', [reDiscount3Value, reDiscount2Value], null, parseBalance, aggregate_sum);
-                           if(need_sms_total) sumParam(val, result, 'sms_total', [reDiscount3Total, reDiscount2Total], null, parseBalance, aggregate_sum);
+                           getLeftAndTotal(val, result, need_sms_left, need_sms_total, 'sms_left', 'sms_total', parseBalance);
                            wasSM = true;
                        }else{
                            AnyBalance.trace('Пропускаем дублированные смс до сниженной цены: ' + val);
                        }
                    }else if(/мин/i.test(val) || /минут/i.test(name)){
-                       var left = getParam(val, null, null, [reDiscount3Value, reDiscount2Value], null, parseBalance);
-                       if(!isset(left) || left < 1000000){ //Большие значения, считай, безлимит. Че его показывать...
-                           if(need_mins_left) sumParam(val, result, 'mins_left', [reDiscount3Value, reDiscount2Value], null, parseMinutes, aggregate_sum);
-                           if(need_mins_total) sumParam(val, result, 'mins_total', [reDiscount3Total, reDiscount2Total], null, parseMinutes, aggregate_sum);
+                       var mins = getLeftAndTotal(val, result, false, false, 'mins_left', 'mins_total', parseMinutes);
+                       if(!isset(mins.left) || mins.left < 1000000){ //Большие значения, считай, безлимит. Че его показывать...
+                           addLeftAndTotal(mins, result, need_mins_left, need_mins_total, 'mins_left', 'mins_total');
                        }else{
                            AnyBalance.trace('Пропускаем безлимитные минуты: ' + val);
                        }
                    }else if(/Гигабайт в дорогу/i.test(name)){
-                       if(need_gb_with_you) sumParam(val, result, 'gb_with_you', [reDiscount3Value, reDiscount2Value], null, parseTraffic, aggregate_sum);
+                       getLeftAndTotal(val, result, need_gb_with_you, false, 'gb_with_you', null, parseTraffic);
                    }else if(/[кгмkgm][бb]/i.test(val)){
-                       var left = getParam(val, null, null, [reDiscount3Value, reDiscount2Value], null, parseTraffic);
-                       var total = getParam(val, null, null, [reDiscount3Total, reDiscount2Total], null, parseTraffic);
-                       if(need_int_left && isset(left))
-                       	   result.internet_left = (result.internet_left||0) + left;
-                       if(need_int_total && isset(total))
-                       	   result.internet_total = (result.internet_total||0) + total;
-                       if(need_int_cur && isset(total))
-                       	   result.internet_cur = (result.internet_cur||0) + (total - (left||0));
+                       var traf = getLeftAndTotal(val, result, need_int_left, need_int_total, 'internet_left', 'internet_total', parseTraffic);
+                       if(need_int_cur && isset(traf.total))
+                       	   result.internet_cur = (result.internet_cur||0) + (traf.total - (traf.left||0));
                    }else{
                        AnyBalance.trace('Неизвестная опция ' + name + ': ' + val);
                    }
@@ -506,6 +492,31 @@ function megafonTrayInfo(filial){
     AnyBalance.setResult(result);
     
 }
+
+function getLeftAndTotal(text, result, needleft, needtotal, left, total, parseFunc){
+    var reDiscount3Value = /^[^\/]*\/([^\/]*)\/[^\/]*$/;
+    var reDiscount3Total = /[^\/]*\/[^\/]*\/([^\/]*)/;
+    var reDiscount2Value = /^[^\/]*\/([^\/]*)$/;
+    var reDiscount2Total = /^([^\/]*)\/[^\/]*$/;
+
+    var _left = getParam(text, null, null, [reDiscount3Value, reDiscount2Value], null, parseFunc);
+    var _total = getParam(text, null, null, [reDiscount3Total, reDiscount2Total], null, parseFunc);
+    if(isset(_left) && isset(_total) && _total < _left){
+        //Всего меньше, чем осталось. Значит, надо наоборот
+        var tmp = _total; _total = _left; _left = tmp;
+    }
+
+    var ret = {left: _left, total: _total};
+    addLeftAndTotal(ret, result, needleft, needtotal, left, total);
+
+    return ret;
+}
+
+function addLeftAndTotal(val, result, needleft, needtotal, left, total){
+    if(needleft && isset(val.left)) result[left] = (result[left] || 0) + val.left;
+    if(needtotal && isset(val.total)) result[total] = (result[total] || 0) + val.total;
+}
+
 
 function read_sum_parameters_text(result, xml){
     getParam(xml, result, 'sub_smit', /<SMIT>([\s\S]*?)<\/SMIT>/i, null, parseBalance);

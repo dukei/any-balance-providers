@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
   <id version="2">ab-money-leomoney</id>
+  <api flags="no_browser"/>
   <name>Leomoney</name>
   <description>
     Получает баланс на кошельке Leomoney (http://leomoney.ru)

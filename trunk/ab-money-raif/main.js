@@ -185,7 +185,8 @@ function fetchCredit(baseurl, html, result){
     html = AnyBalance.requestPost(baseurl + 'RCLoanService', g_xml_accounts, addHeaders({SOAPAction: 'urn:GetLoans'})); 
 	
 	getParam(html, result, 'rate', /<ax\d+:intrestRate>([\s\S]*?)<\/ax\d+:intrestRate>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'balance', /<ax\d+:loanAmount>([\s\S]*?)<\/ax\d+:loanAmount>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'cred_ammount', /<ax\d+:loanAmount>([\s\S]*?)<\/ax\d+:loanAmount>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance', /<ax\d+:paymentRest>([\s\S]*?)<\/ax\d+:paymentRest>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'minpay', /<ax\d+:nextPaymentAmount>([\s\S]*?)<\/ax\d+:nextPaymentAmount>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'paid', /<ax\d+:paidLoanAmount>([\s\S]*?)<\/ax\d+:paidLoanAmount>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'currency', /<ax\d+:currency>[^<]*?([^<\.]*?)<\/ax\d+:currency>/i, replaceTagsAndSpaces, html_entity_decode);

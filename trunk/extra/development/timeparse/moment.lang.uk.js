@@ -1,4 +1,5 @@
-﻿(function () {
+﻿window=this.window || this;
+(function () {
     function e(e) {
         function n(e, n) {
             var r = e.split("_"),

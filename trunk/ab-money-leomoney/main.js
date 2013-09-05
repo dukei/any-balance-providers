@@ -50,6 +50,8 @@ function main(){
     var result = {success: true};
     getParam(html, result, '__tariff', /(Кошелек №\s*\d+)/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'balance', /Ваш баланс:([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseBalanceRK);
+    getParam(html, result, 'spent', /Из них израсходовано:([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'limit', /Месячный лимит:([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseBalance);
 
     //Возвращаем результат
     AnyBalance.setResult(result);

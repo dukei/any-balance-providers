@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-money-leomoney</id>
+  <id version="2">ab-money-leomoney</id>
   <name>Leomoney</name>
   <description>
     Получает баланс на кошельке Leomoney (http://leomoney.ru)
@@ -15,6 +15,8 @@
   </files>
   <counters>
     <counter id="balance" name="Баланс" units="р"/>
+    <counter id="spent" name="Потрачено в текущем месяце" units="р"/>
+    <counter id="limit" name="Месячный лимит" units="р"/>
   </counters>
   <keywords>
     леомани

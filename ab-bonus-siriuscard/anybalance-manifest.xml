@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
+	<api flags="no_browser" />
+	<id version="1">ab-bonus-siriuscard</id>
+	<name>Sirius Card</name>
+	<description>
+	Obtains balance from Sirius personal account at https://www.jumeirah.com/en/sirius-login/
+	</description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Sirius points"/>
+		<counter id="tier_balance" name="Tier points"/>
+		<counter id="fio" name="Name" type="text"/>
+		<counter id="level" name="Tier level" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>bonus</type>
+	<country>ae</country>
+</provider>

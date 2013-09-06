@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
-	<api flags="no_browser" />
+	<api flags="no_browser|captcha" />
 	<id version="3">ab-fine-gibdd</id>
 	<name>Штрафы ГИБДД</name>
 	<description>
 		Получает данные по штрафам на сайте gibdd.ru этот провайдер требует версию AnyBalance API >= 7, с поддержкой капчи.
 		
 		Для получения информации по штрафам необходимо ввести номер транспортного средства, а так же номер свидетельства о регистрации.
-		
-		Данный провайдер работает только в AnyBalance, Balance Widget пока не поддерживает отображение капчи.
 	</description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>

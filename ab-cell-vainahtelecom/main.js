@@ -39,6 +39,11 @@ function main(){
 	session = getParam(html, null, null, /<SESSION_ID>([\s\S]*?)<\/SESSION_ID>/i);
 	
     if(!session){
+		var error = getParam(html, null, null, /<ERROR_ID>([\s\S]*?)<\/ERROR_ID>/i, replaceTagsAndSpaces, html_entity_decode);
+        if(error == -3)
+            throw new AnyBalance.Error('Введите цифры с картинки!');
+        else if(error == -6)
+            throw new AnyBalance.Error('Вы ввели не верные символы с картинки! Попробуйте еще раз');
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
 	

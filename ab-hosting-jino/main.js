@@ -15,44 +15,65 @@ function main()
     var prefs = AnyBalance.getPreferences();
     var baseurl = 'http://cp.jino.ru/cpanel';
     AnyBalance.setDefaultCharset('utf-8'); 
-	//moment.lang('ru');
-	
-    var html = AnyBalance.requestPost(baseurl, 
-	{
+
+    var html = AnyBalance.requestPost(baseurl, {
 		auth:'true',
 		login:prefs.login,
 		next:'/',
 		password:prefs.password,
     }, g_headers); 
 
-    if(!/logout=true/i.test(html))
-	{
-        //Если в кабинет войти не получилось, то в первую очередь надо поискать в ответе сервера объяснение ошибки
-        var error = getParam(html, null, null, /class="error_msg msg">([\s\S]*?)<br/i, replaceTagsAndSpaces, html_entity_decode);
+    if(!/logout=true/i.test(html)){
+        var error = getParam(html, null, null, /msgs"[^>]*>[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error);
-        //Если объяснения ошибки не найдено, при том, что на сайт войти не удалось, то, вероятно, произошли изменения на сайте
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
     var result = {success: true};
-    getParam(html, result, 'balance', /Баланс[\s\S]*?<strong[^>]*>([\s\S]*?)</i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'deadline', /Истекает[\s\S]*?">([\s\S]*?)<\//i, replaceTagsAndSpaces, parseDateMoment);
-	getParam(html, result, 'state', /Статус[\S\s]*?succ">\s*([\S\s]*?)\s*<\//i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'balance', /Баланс[^>]*>:\s*[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'deadline', /Истекает[^>]*>:\s*[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseDateMoment);
+	getParam(html, result, 'state', /Статус[^>]*>:\s*[^>]*>\s*([^<]*?)\s*</i, replaceTagsAndSpaces, html_entity_decode);
+	// Дисковое простанство
+	if(isAvailable('storage_percent','storage_used','monthly_fee','daily_fee', 'storage_percent_left', 'storage_total', 'storage_left')){
+		html = AnyBalance.requestGet(baseurl + '?area=services_srv&srv=disk');
+		getParam(html, result, 'monthly_fee', /Оплата в месяц(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, null, parseBalance);
+		getParam(html, result, 'daily_fee', /Оплата в сутки(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, null, parseBalance);
+		
+		var ptc = getParam(html, null, null, /Использование услуги:(?:[\s\S]*?<p[^>]*>){1}[\s\S]*?(\d[\d.,]*)%/i, null, parseBalance);
+		if(ptc){
+			result.storage_percent = ptc;
+			result.storage_percent_left = 100-ptc;
+		}
+		var storageTotal = getParam(html, null, null, /Использование услуги:(?:[\s\S]*?<p[^>]*>)[^<]*Мб{1}([^<]*)Мб/i, null, parseBalance);
+		var storageUsed = getParam(html, null, null, /Использование услуги:(?:[\s\S]*?<p[^>]*>){1}([^<]*)Мб/i, null, parseBalance);
+		result.storage_total = storageTotal;
+		result.storage_used = storageUsed;
+		if(storageTotal && storageUsed){
+			result.storage_left = storageTotal-storageUsed;
+		}
+	}
+	// Почтовый сервис
+	if(isAvailable('mail_used','mail_total','mail_left','mail_percent', 'mail_percent_left')){
+		html = AnyBalance.requestGet(baseurl + '?area=services_srv&srv=mail');
+		
+		var ptc = getParam(html, null, null, /Использование услуги:(?:[\s\S]*?<p[^>]*>){1}[\s\S]*?(\d[\d.,]*)%/i, null, parseBalance);
+		if(ptc){
+			result.mail_percent = ptc;
+			result.mail_percent_left = 100-ptc;
+		}
+		var storageTotal = getParam(html, null, null, /Использование услуги:(?:[\s\S]*?<p[^>]*>)[^<]*Мб{1}([^<]*)Мб/i, null, parseBalance);
+		var storageUsed = getParam(html, null, null, /Использование услуги:(?:[\s\S]*?<p[^>]*>){1}([^<]*)Мб/i, null, parseBalance);
+		result.mail_total = storageTotal;
+		result.mail_used = storageUsed;
+		if(storageTotal && storageUsed){
+			result.mail_left = storageTotal-storageUsed;
+		}
+	}
 	
-	// теперь пойдем посмотрим дисковое прострнство
-	html = AnyBalance.requestGet(baseurl + '?area=services_srv&srv=disk');
-	
-	getParam(html, result, 'storage_percent', /Использование услуги:[\s\S]{1,80}width([\s\S]*?)%/i, null, parseBalance);
-	getParam(html, result, 'storage_used', /Дисковое пространство[\s\S]{1,300}label">([\s\S]*?)</i, replaceTagsAndSpaces, parseTraffic);
-	getParam(html, result, 'monthly_fee', /Оплата в месяц[\s\S]*?<strong>([\s\S]*?)<\/strong>/i, null, parseBalance);
-	getParam(html, result, 'daily_fee', /Оплата в сутки[\s\S]*?<strong>([\s\S]*?)<\/strong>/i, null, parseBalance);
-	
-    //Возвращаем результат
     AnyBalance.setResult(result);
 }
 // Парсит дату из такого вида в мс 27 июля 2013
 function parseDateMoment(str){
-	
 	var found = /(\d{1,2})\s*([\s\S]*?)\s*(\d{1,4})/i.exec(str);
 	if(found)
 	{

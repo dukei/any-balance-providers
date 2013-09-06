@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-ttk-baikal</id>
+  <id version="2">ab-internet-ttk-baikal</id>
+  <api flags="no_browser"/>
   <name>ТТК-Байкал</name>
   <description>
     Получает баланс и информацию о тарифном плане для интернет провайдера ТТК-Байкал (http://baikal-ttk.ru). Информация берется из личного кабинета https://stat.baikal-ttk.ru.
@@ -11,7 +12,9 @@
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
+    <js>library.js</js>
     <js>main.js</js>
+    <history>history.xml</history>
   </files>
   <counters>
     <counter id="balance" name="Баланс" units="р"/>

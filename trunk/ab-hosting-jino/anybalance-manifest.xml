@@ -1,36 +1,37 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
-  <api flags="no_browser" />
-  <id version="3">ab-hosting-jino</id>
-  <name>Джино</name>
-  <description>
-     Получает значения из личного кабинета Хостинг-провайдера Джино (http://cp.jino.ru/)
-  </description>
-  <author>Stark &lt;support@starksoft.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units=" р"/>
-	<counter id="deadline" name="Дата отключения" type="time" format="dd/MM/yyyy"/>
-	<counter type= "text" id="state" name="Статус"/>
-	<counter id="monthly_fee" name="Оплата в месяц" units=" р"/>
-	<counter id="daily_fee" name="Оплата в день" units=" р"/>
-    <counter id="storage_used" name="Дисковое простарнство - использовано" units=" мб"/>
-	<counter type= "text" id="storage_percent" name="Дисковое простарнство - процент свободного места" units=" %"/>
-  </counters>
-  <keywords>
-    Джино
-  </keywords>
-  <type>
-    hosting
-  </type>
-  <country>
-    ru
-  </country>
+	<api flags="no_browser" />
+	<id version="4">ab-hosting-jino</id>
+	<name>Джино</name>
+	<description>
+	Получает значения из личного кабинета Хостинг-провайдера Джино (http://cp.jino.ru/)
+	</description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units="р"/>
+		<counter id="deadline" name="Дата отключения" type="time" format="dd/MM/yyyy"/>
+		<counter type= "text" id="state" name="Статус"/>
+		<counter id="monthly_fee" name="Оплата в месяц" units="р"/>
+		<counter id="daily_fee" name="Оплата в день" units="р"/>
+		<counter id="storage_used" name="Дисковое простарнство - использовано Mb" units="Mb"/>
+		<counter id="storage_total" name="Дисковое простарнство - всего Mb" units="Mb"/>
+		<counter id="storage_left" name="Дисковое простарнство - осталось Mb" units="Mb"/>
+		<counter id="storage_percent" name="Дисковое простарнство - использовано %" units="%" type="text" />
+		<counter id="storage_percent_left" name="Дисковое простарнство - осталось %" units="%" type="text" />
+		<counter id="mail_used" name="Почта - использовано Mb" units="Mb"/>
+		<counter id="mail_total" name="Почта - всего Mb" units="Mb"/>
+		<counter id="mail_left" name="Почта - осталось Mb" units="Mb"/>
+		<counter id="mail_percent" name="Почта - использовано %" units="%" type="text" />
+		<counter id="mail_percent_left" name="Почта - осталось %" units="%" type="text" />
+	</counters>
+	<keywords></keywords>
+	<type>hosting</type>
+	<country>ru</country>
 </provider>

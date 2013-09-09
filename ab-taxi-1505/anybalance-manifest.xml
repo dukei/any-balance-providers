@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
+	<api flags="no_browser" />
+	<id version="1">ab-taxi-1505</id>
+	<name>Такси 1505</name>
+	<description>
+	Получает количество поездок в Такси 1505 (http://www.taxi1505.com.ua/)
+	</description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="payed" name="Платные поездки"/>
+		<counter id="free" name="Бесплатные поездки"/>
+	</counters>
+	<keywords></keywords>
+	<type>taxi</type>
+	<country>ua</country>
+</provider>

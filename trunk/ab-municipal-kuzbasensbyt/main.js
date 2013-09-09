@@ -51,7 +51,12 @@ function main(){
 	getParam(html, result, 'current', /Ваша переплата[\s\S]*?по показан([\s\S]*?)составляет/i, replaceTagsAndSpaces, parseBalance);
 	// Список формируется так, что последняя запись находится внизу, надо почитать все ряды в таблице и узнать какой из них последний
 	var periods = sumParam(html, null, null, /(<tr\s*class="highlight-row">[\s\S]*?<\/tr>)/ig, null, html_entity_decode, null);
-	html = periods[periods.length-1];	
+
+	if(prefs.period == 'prev')
+		html = periods[periods.length-2];	
+	else
+		html = periods[periods.length-1];
+
 	// Период
 	getParam(html, result, 'period', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
 	//Сальдо на начало периода

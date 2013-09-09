@@ -2,7 +2,7 @@
 <provider>
 	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser" />
-	<id version="1">ab-municipal-kuzbasensbyt</id>
+	<id version="2">ab-municipal-kuzbasensbyt</id>
 	<name>ОАО Кузбассэнергосбыт</name>
 	<description>
 	Получает данные из системы ОАО Кузбассэнергосбыт  (Мечел) http://www.kuzesc.ru/
@@ -19,7 +19,7 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс"/>
-		<counter id="current" name="Текущие показания "/>
+		<counter id="current" name="Текущие показания"/>
 		<counter id="period" name="Период" type="text"/>
 		<counter id="saldo" name="Сальдо на начало периода"/>
 		<counter id="pokazaniya" name="Показания на начало периода"/>

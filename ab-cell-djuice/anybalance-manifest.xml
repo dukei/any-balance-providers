@@ -2,7 +2,7 @@
 <provider>
   <!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
   <api flags="no_browser" />
-  <id major_version="1.3" version="25">ab-cell-djuice</id>
+  <id major_version="1.3" version="26">ab-cell-djuice</id>
   <name>Djuice</name>
   <description>
     Получает баланс, бонусные минуты, СМС, ММС, остаток интернет-трафика и другие бонусы для мобильного оператора Djuice.

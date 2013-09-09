@@ -75,7 +75,7 @@ function main(){
 	//Бонусные SMS
 	sumParam(html, result, 'bonus_sms', /(?:Бонусні SMS:|Бонусные SMS:)[\s\S]*?<b>(.*?)</ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	//Бонусные средства
-	sumParam(html, result, 'bonus_money', /(?:Бонусні кошти :|Бонусные средства:)[\s\S]*?<b>(.*?)</ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+	sumParam(html, result, 'bonus_money', /(?:Бонусні кошти:|Бонусные средства:)[\s\S]*?<b>(.*?)</ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	//Остаток бонусов
 	sumParam(html, result, 'bonus_left', /(?:Залишок бонусів:|Остаток бонусов:)[\s\S]*?<b>(.*?)</ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	//Интернет

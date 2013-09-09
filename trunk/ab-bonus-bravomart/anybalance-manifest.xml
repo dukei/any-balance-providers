@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
+	<api flags="no_browser" />
+	<id version="1">ab-bonus-bravomart</id>
+	<name>BravoMart</name>
+	<description>
+	Obtains balance of bonus points in Bravo Mart http://www.bravomart.com/
+	</description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Balance" units="р"/>
+		<counter id="fio" name="Name" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>bonus</type>
+	<country>ae</country>
+</provider>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
+	<api flags="no_browser" />
+	<id version="1">ab-internet-infolink</id>
+	<name>Инфолинк</name>
+	<description>
+	Получает данные для интернет-провайдера Инфолинк http://infolink.ru/ в городах Московской области: Щёлково, Щёлково-3, Монино, Свердловский, Электросталь, Орехово-Зуево, Королёв, Лосино-Петровский
+	
+	Личный кабинет находится по адресу: https://user.infolink.ru/
+	</description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units="р"/>
+		<counter id="bonuses" name="Бонусы"/>
+		<counter id="deadline" name="Дата отключения" type="time" format="dd/MM/yyyy"/>
+		<counter id="acc_num" name="Номер лицевого счёта" type="text"/>
+		<counter id="incoming_traf" name="Входящий трафик"units="Mb"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

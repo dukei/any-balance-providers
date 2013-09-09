@@ -2,7 +2,7 @@
 <provider>
 	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser" />
-	<id version="1">ab-service-jetswap</id>
+	<id version="2">ab-service-jetswap</id>
 	<name>JetSwap</name>
 	<description>
 	Получает информацию из личного кабинета JetSwap (http://www.jetswap.com/)
@@ -17,6 +17,8 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс"/>
+		<counter id="earned_today" name="Заработали кредитов в серфинге сегодня"/>
+		<counter id="earned_month" name="Заработали кредитов в серфинге в среднем за месяц"/>
 		<counter id="cred" name="Кредиты"/>
 		<counter id="bonus" name="Бонусы"/>
 		<counter id="refs" name="Всего рефералов"/>

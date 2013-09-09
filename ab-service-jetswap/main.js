@@ -37,5 +37,9 @@ function main(){
 	getParam(html, result, 'refs', /Всего рефералов([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'refs_pcts', /Процент с рефералов:([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	
+	getParam(html, result, 'earned_today', /Вы заработали кредитов в серфинге сегодня[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'earned_month', /Вы заработали кредитов в серфинге сегодня[^>]*>[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	
+	
     AnyBalance.setResult(result);
 }

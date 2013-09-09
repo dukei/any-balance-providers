@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
-	<api flags="no_browser" />
-	<id version="1">ab-municipal-mosoblgaz</id>
+	<api flags="no_browser|captcha" />
+	<id version="2">ab-municipal-mosoblgaz</id>
 	<name>Мособлгаз</name>
 	<description>
 	Получает данные частных абонентов Мособлгаз из личного кабинета http://lksaupg.mosoblgaz.ru/LoginPersonalSUPG.aspx.
 	
-	Этот провайдер требует версию AnyBalance API >= 7, с поддержкой капчи.
+	Этот провайдер требует версию AnyBalance API 7+, с поддержкой капчи.
 	</description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>

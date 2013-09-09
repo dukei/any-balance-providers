@@ -10,9 +10,9 @@
 function main(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
-
-    var baseurl = "http://www.ulmart.ru/";
-
+	
+    var baseurl = 'http://www.ulmart.ru/';
+	
     var html = AnyBalance.requestPost(baseurl + 'j_spring_security_check', {
         j_username:prefs.login,
         j_password:prefs.password,
@@ -28,7 +28,7 @@ function main(){
 
     var result = {success: true};
 
-    getParam(html, result, 'balance', /<strong[^>]+class="title"[^>]*>XXL-Бонус[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'balance', /class="title"[^>]*>XXL-Бонус[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'fio', /<div[^>]+class="name"[^>]*>([\s\S]*?)(?:▼|<\/div>)/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'price', /цена(?:&nbsp;|\s)+(\d+)/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, '__tariff', /<div[^>]+class="b-dropdown-popup__info"[^>]*>[\s\S]*?<\/div>([\s\S]*?)<ul/i, replaceTagsAndSpaces, html_entity_decode);

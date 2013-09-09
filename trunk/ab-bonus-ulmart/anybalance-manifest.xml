@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="3">ab-bonus-ulmart</id>
+  <id version="4">ab-bonus-ulmart</id>
+  <api flags="no_browser" />
   <name>Ulmart</name>
   <description>
     Получает баланс XXL-бонусов в бонусной программе магазина электроники Ulmart (http://www.ulmart.ru).
@@ -11,8 +12,8 @@
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
-    <js>main.js</js>
     <js>library.js</js>
+	<js>main.js</js>
     <history>history.xml</history>
   </files>
   <counters>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Login" 
+        positiveButtonText="OK" 
+        summary="|Enter login|{@s}" 
+        dialogTitle="Login" 
+        negativeButtonText="Cancel" 
+        dialogMessage="Enter login to Mashreqbank."
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="OK"
+        key="password" 
+        dialogTitle="Password"
+        negativeButtonText="Cancel"
+        title="Password"
+        summary="|Enter password|***********"
+        dialogMessage="Enter password to Mashreqbank."
+        inputType="textPassword">
+    </EditTextPreference>
+    <ListPreference 
+        key="type" 
+        title="What to find"
+        summary="||{@s}\n"
+        entries="Card|Account"
+        entryValues="card|acc"
+	defaultValue="card">
+    </ListPreference>
+    <EditTextPreference 
+        positiveButtonText="OK"
+        key="cardnum" 
+        dialogTitle="Number of card/account"
+        negativeButtonText="Cancel"
+        title="Number of card/account"
+        summary="Enter last 4 digits of your card/account|Automatic\n|{@s}\n"
+        dialogMessage="Enter last 4 digits of your card/account what you want to find, or dont enter anything to find first item."
+        inputType="number">
+    </EditTextPreference>
+</PreferenceScreen>

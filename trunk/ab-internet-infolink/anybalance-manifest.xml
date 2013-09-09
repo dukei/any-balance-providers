@@ -6,7 +6,7 @@
 	<name>Инфолинк</name>
 	<description>
 	Получает данные для интернет-провайдера Инфолинк http://infolink.ru/ в городах Московской области: Щёлково, Щёлково-3, Монино, Свердловский, Электросталь, Орехово-Зуево, Королёв, Лосино-Петровский
-	
+
 	Личный кабинет находится по адресу: https://user.infolink.ru/
 	</description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
@@ -22,7 +22,7 @@
 		<counter id="bonuses" name="Бонусы"/>
 		<counter id="deadline" name="Дата отключения" type="time" format="dd/MM/yyyy"/>
 		<counter id="acc_num" name="Номер лицевого счёта" type="text"/>
-		<counter id="incoming_traf" name="Входящий трафик"units="Mb"/>
+		<counter id="incoming_traf" name="Входящий трафик" units="Mb"/>
 	</counters>
 	<keywords></keywords>
 	<type>internet</type>

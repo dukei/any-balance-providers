@@ -4,17 +4,18 @@
     <name>Google Wallet (Checkout)</name>
 	<api flags="no_browser"/>
     <description>
-		Shows current balance in google Wallet account.
-		
-		This provider does not work with 2-steps authorization.
+	Shows current balance in google Wallet account.
+	
+	This provider does not work with 2-steps authorization.
 	</description>
     <author>Stark &lt;support@starksoft.ru&gt;</author>
-    <files>
-	<icon>icon.png</icon>
-        <preferences>preferences.xml</preferences>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
 		<js>library.js</js>
-        <js>main.js</js>
-    </files>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
     <counters>
         <counter id="balance" name="Balance" units="{@currency}"/>
 		<counter id="last_payment" name="Last payment" units="{@currency}"/>

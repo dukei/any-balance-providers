@@ -6,7 +6,7 @@
         summary="||{@s}" 
         dialogTitle="Введите номер Вашего автомобиля." 
         negativeButtonText="Отмена" 
-        dialogMessage="Номер должен быть в формате а351со190, буквы русские."
+        dialogMessage="Номер должен быть в формате а351со190 либо 1234ав199, буквы русские."
         key="login">
     </EditTextPreference>
     <EditTextPreference 

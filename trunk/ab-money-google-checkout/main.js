@@ -23,9 +23,7 @@ function main() {
 	var GALX = '';
 	var found = /GALX[\s\S]*?value="([\s\S]*?)"/i.exec(html);
 	if(found)
-	{
 		GALX = found[1];
-	}
 	else
 		throw new AnyBalance.Error('Не нашли секретный параметр, дальше продолжать нет смысла');
 
@@ -42,7 +40,7 @@ function main() {
             throw new AnyBalance.Error(error);
         error = getParam(html, null, null, /(<form[^>]+name="verifyForm")/i);
         if(error)
-            throw new AnyBalance.Error("This account requires 2-step authorization. Turn off 2-step authorization to use this provider.");
+            throw new AnyBalance.Error('This account requires 2-step authorization. Turn off 2-step authorization to use this provider.');
         throw new AnyBalance.Error('Can not log in google account.');
 	}
 	var result = { success: true };
@@ -55,13 +53,21 @@ function main() {
 		var href = getParam(html, null, null, /(merchant\/pages\/bcid-[\s\S]{1,200})\/earnings\/display/i, null, null);
 		// Переходим на страницу Выплаты:
 		html = AnyBalance.requestGet(baseurl + href + '/transactions/display?selectedrange=LAST_THREE_MONTHS&filterchoice=ALL_TRANSACTIONS', g_headers);
-
-		getParam(html, result, 'balance', /id="currentBalanceAmount">([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'last_payment', /lastSuccessfulPaymentAmount">([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'last_payment_date', /lastSuccessfulPaymentAmount[\s\S]{1,50}class="scorecard-section-footnote">[\s\S]*?on([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseDate);
+		
+		getParam(html, result, 'balance', /id="currentBalanceAmount"[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, ['currency', 'balance'], /id="currentBalanceAmount"[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseCurrencyMy);
+		
+		getParam(html, result, 'last_payment', /lastSuccessfulPaymentAmount"[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'last_payment_date', /lastSuccessfulPaymentAmount"[^>]*>[^>]*>[^>]*>[^>]*on([\s\S]*?)<\//i, replaceTagsAndSpaces, parseDate);
 	}
 	else
-		AnyBalance.trace('Can`t login to Google Wallet, dou have it on this this account?');
+		AnyBalance.trace('Can`t login to Google Wallet, do have it on this account?');
 
 	AnyBalance.setResult(result);
+}
+
+function parseCurrencyMy(text){
+    var val = getParam(html_entity_decode(text).replace(/\s+/g, ''), null, null, /(\S*?)-?\d[\d.,]*/);
+    AnyBalance.trace('Parsing currency (' + val + ') from: ' + text);
+    return val;
 }

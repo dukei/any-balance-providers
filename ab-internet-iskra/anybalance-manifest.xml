@@ -1,29 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-iskra</id>
-  <name>ИСКРАТЕЛЕКОМ (Москва)</name>
-  <description>
-    Получает баланс и информацию о тарифном плане для московского интернет-провайдера ИСКРАТЕЛЕКОМ, а ныне Seven Sky (http://iskratelecom.ru). Предоставляет интернет в районах Текстильщики, Кузьминки, Люблино, Марьино, Братеево, Люберцы, Котельники.
+	<api flags="no_browser" />
+	<id version="2">ab-internet-iskra</id>
+	<name>Seven Sky (ИСКРАТЕЛЕКОМ) (Москва)</name>
+	<description>
+	Получает баланс и информацию о тарифном плане для московского интернет-провайдера Seven Sky (http://www.seven-sky.net/) бывший ИСКРАТЕЛЕКОМ (http://iskratelecom.ru).
 
-    Информация берется из личного кабинета https://my.istel.ru
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="licschet" name="Лицевой счет" type="text"/>
-  </counters>
-  <keywords>
-    интернет
-  </keywords>
-  <type>
-    internet
-  </type>
-  <country>
-    ru
-  </country>
+	Предоставляет интернет в районах Текстильщики, Кузьминки, Люблино, Марьино, Братеево, Люберцы, Котельники.
+	
+	Информация берется из личного кабинета https://stat.7-sky.info/cgi-bin/clients/login
+	</description>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units="р"/>
+		<counter id="licschet" name="Лицевой счет" type="text"/>
+	</counters>
+	<keywords>интернет севен скай</keywords>
+	<type>internet</type>
+	<country>ru</country>
 </provider>

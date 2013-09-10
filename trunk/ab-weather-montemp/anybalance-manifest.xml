@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="2">ab-weather-montemp</id>
+  <id major_version="1.0" version="3">ab-weather-montemp</id>
   <name>Montemp (Температура в Монастырщине)</name>
   <description>
    Получает текущую погоду с сайта http://www.flags8192.ru/temps/. Для измерения температуры используется температурный датчик собственного производства под управлением UsbTenkiMux (тоже собственного производства), расположенный в п. Монастырщина Смоленской области и защищенный от воздействия внешних факторов, что позволяет довольно точно определять температуру воздуха. 
   </description>
   <author>Alexander Listratenkov &lt;a.listratenkov@gmail.com&gt;</author>
   <files>
+    <history>history.xml</history>
     <icon>icon.png</icon>
     <js>main.js</js>
   </files>

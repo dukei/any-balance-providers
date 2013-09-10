@@ -30,7 +30,7 @@ function main(){
 			throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
         }
     }
-	var found = /([\s\S]{0,1}\d+[\s\S]{2})(\d{2,3})/i.exec(prefs.login);
+	var found = /(\D{0,1}\d+\D{2})(\d{2,3})/i.exec(prefs.login);
 	if(!found)
 		throw new AnyBalance.Error('Введеный гос. номер не соответствует формату а351со190');
 
@@ -38,25 +38,21 @@ function main(){
     params.regreg = found[2];
 	params.stsnum = prefs.password;
 
-	//AnyBalance.trace('Отправляем данные: ' + JSON.stringify(params));
 	html = AnyBalance.requestPost(baseurl + 'check/fines/', params);	
 
-	var result = {success: true};
+	var result = {success: true, balance:0 };
 	var table = getParam(html, null, null, /(<table col=[\s\S]*?id='decisList'[\s\S]*?<\/table>)/i);
 	// Если таблицы нет то нет и штрафов
     if(!table){
 	    var error = getParam(html, null, null, [/class="errormsgs info-message"><li><font color='red'>([\s\S]*?)<\/font><\/ul>/i, /<div class="block_main errorview">\s*([\s\S]*?)\s*<\//i], null, html_entity_decode);
-		if(error)
+		if(error && error.indexOf('отсутствует информация о неуплаченных штрафах') < 0)
 			throw new AnyBalance.Error(error);
-        //throw new AnyBalance.Error('Не удалось получить информацию по шртафам');
     }
 	var fines = sumParam(html, null, null, /(<tr class='fineline'[\s\S]*?<\/tr>)/ig, null, html_entity_decode, null);
 	
-	if(fines.length > 0)
-	{
+	if(fines.length > 0){
 		AnyBalance.trace('Штрафов: ' + fines.length);
-		for(var i = 0; i< fines.length; i++)
-		{
+		for(var i = 0; i< fines.length; i++){
 			var curr = fines[i];
 			sumParam(curr, result, 'balance', /(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/ig, null, parseBalance, aggregate_sum);
 		}
@@ -67,12 +63,11 @@ function main(){
 		getParam(curr, result, 'postanovlenie', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)</i, null, html_entity_decode);
 		sumParam(curr, result, 'summ', /(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/ig, null, parseBalance, aggregate_sum);
 		
-		getParam(fines.length+'', result, 'count', null, replaceTagsAndSpaces, parseBalance);
+		result.count = fines.length;
+		//getParam(fines.length+'', result, 'count', null, replaceTagsAndSpaces, parseBalance);
 	}
 	// Нет штрафов
-	else
-	{
-		getParam('0', result, 'balance', null, null, parseBalance);
+	else{
 		result.descr = 'В базе данных отсутствует информация о неуплаченных штрафах по Вашему запросу';
 	}
     AnyBalance.setResult(result);

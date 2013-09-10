@@ -61,6 +61,40 @@ function getBlock(url, html, name, exact){
     return data;  
 }
 
+function refreshBalance(url, html, htmlBalance){
+    var data = getParam(htmlBalance, null, null, /PrimeFaces\.\w+\s*\(\s*\{[^}]*update:\s*'[^']*headerBalance/);
+    if(!data){
+        AnyBalance.trace('Блок headerBalance не найден!');
+        return '';
+    }
+    var source = getParam(data, null, null, /source:\s*'([^']*)/, replaceSlashes);     
+    var render = getParam(data, null, null, /update:\s*'([^']*)/, replaceSlashes);
+    var form = getParam(htmlBalance, null, null, new RegExp('(<form[^>]+>)(?:[\\s\\S](?!</?form))*id="' + source + '"'));
+    if(!form){
+        AnyBalance.trace('Не найдена форма для блока headerBalance!');
+        return '';
+    }
+
+    var viewState = getParam(html, null, null, /<input[^>]+name="javax.faces.ViewState"[^>]*value="([^"]*)/i, null, html_entity_decode);
+
+    var formId = getParam(form, null, null, /id="([^"]*)/i, null, html_entity_decode);
+    var params = createFormParams(form);
+    params['javax.faces.partial.ajax'] = true;
+    params['javax.faces.source'] = source;
+    params['javax.faces.partial.execute'] = '@all';
+    params['javax.faces.partial.render'] = render;
+    params[source] = source;
+    params['javax.faces.ViewState'] = viewState;
+
+    html = AnyBalance.requestPost(url, params, addHeaders({Referer: url, 'Faces-Request':'partial/ajax', 'X-Requested-With':'XMLHttpRequest'}));
+    data = getParam(html, null, null, new RegExp('<update[^>]+id="' + formId + '"[^>]*>\\s*<!\\[CDATA\\[([\\s\\S]*?)\\]\\]></update>', 'i'));
+    if(!data){
+        AnyBalance.trace('Неверный ответ для блока headerBalance: ' + html);
+        return '';
+    }
+    return data;  
+}
+
 function myParseCurrency(text){
     var val = html_entity_decode(text).replace(/\s+/g, '').replace(/[\-\d\.,]+/g,'');
     AnyBalance.trace('Parsing currency (' + val + ') from: ' + text);
@@ -110,6 +144,13 @@ function main(){
         var error = getParam(html, null, null, /<span[^>]+class="ui-messages-error-summary"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error);
+        error = getParam(html, null, null, /<div[^>]+class="error-page[\s|"][^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+        if(error)
+            throw new AnyBalance.Error(error);
+        if(AnyBalance.getLastStatusCode() > 400){
+            AnyBalance.trace("Beeline returned: " + AnyBalance.getLastStatusString());
+            throw new AnyBalance.Error('Личный кабинет Билайн временно не работает. Пожалуйста, попробуйте позднее.');
+        }
         //Если объяснения ошибки не найдено, при том, что на сайт войти не удалось, то, вероятно, произошли изменения на сайте
         AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
@@ -140,6 +181,11 @@ function fetchPost(baseurl, html){
         getParam(xhtml, result, 'balance', /Расходы по номеру за текущий период с НДС[\s\S]*?<div[^>]+class="balan?ce-summ"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
         getParam(xhtml, result, ['currency', 'balance'], /Расходы по номеру за текущий период с НДС[\s\S]*?<div[^>]+class="balan?ce-summ"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, myParseCurrency);
 
+        if(isAvailableBonuses()){
+//           xhtml = getBlock(baseurl + 'c/post/index.html', html, 'loadingBonusesAndServicesDetails');
+            xhtml = getBlock(baseurl + 'c/post/index.html', [xhtml, html], 'bonusesloaderDetails');
+            getBonuses(xhtml, result);
+        }
     }else{
         //Если несколько номеров в кабинете, то почему-то баланс надо брать отсюда
         if(AnyBalance.isAvailable('balance','currency')){
@@ -150,17 +196,17 @@ function fetchPost(baseurl, html){
 
         xhtml = getBlock(baseurl + 'c/post/index.html', html, 'loadingTariffDetails');
         getParam(xhtml, result, '__tariff', /<div[^>]+:tariffInfo[^>]*class="(?:current|tariff-info)"[^>]*>(?:[\s\S](?!<\/div>))*?<h2[^>]*>([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces, html_entity_decode);
+
+        if(isAvailableBonuses()){
+            xhtml = getBlock(baseurl + 'c/post/index.html', html, 'loadingBonusesAndServicesDetails');
+            xhtml = getBlock(baseurl + 'c/post/index.html', [xhtml, html], 'bonusesloaderDetails');
+            getBonuses(xhtml, result);
+        }
     }
 
     if(AnyBalance.isAvailable('overpay')){
         xhtml = getBlock(baseurl + 'c/post/index.html', html, 'callDetailsDetails');
         getParam(xhtml, result, 'overpay', /<h4[^>]*>Переплата[\s\S]*?<span[^>]+class="price[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-    }
-
-    if(AnyBalance.isAvailable('sms_left', 'mms_left')){
-        xhtml = getBlock(baseurl + 'c/post/index.html', html, 'loadingBonusesAndServicesDetails');
-        xhtml = getBlock(baseurl + 'c/post/index.html', [xhtml, html], 'bonusesloaderDetails');
-        getBonuses(xhtml, result);
     }
 
     if(AnyBalance.isAvailable('fio')){
@@ -173,7 +219,7 @@ function fetchPost(baseurl, html){
 }
 
 function fetchPre(baseurl, html){
-    //Раз мы здесь, то мы успешно вошли в кабинет постоплатный
+    //Раз мы здесь, то мы успешно вошли в кабинет предоплатный
     AnyBalance.trace('Мы в предоплатном кабинете');
     //Получаем все счетчики
     var result = {success: true, balance: null};
@@ -188,13 +234,18 @@ function fetchPre(baseurl, html){
         getParam(xhtml, result, 'balance', /у вас на балансе([\s\S]*)/i, replaceTagsAndSpaces, parseBalance);
         getParam(xhtml, result, ['currency', 'balance'], /у вас на балансе([\s\S]*)/i, replaceTagsAndSpaces, myParseCurrency);
         getParam(xhtml, result, 'fio', /<span[^>]+class="b2c.header.greeting.pre.b2c.ban"[^>]*>([\s\S]*?)(?:<\/span>|,)/i, replaceTagsAndSpaces, html_entity_decode);*/
-
-		xhtml = getBlock(baseurl + 'c/pre/index.html', html, 'homeBalance');
+	xhtml = getBlock(baseurl + 'c/pre/index.html', html, 'homeBalance');
+/*        var tries = 0; //Почему-то не работает. Сколько раз ни пробовал, если первый раз баланс недоступен, то и остальные оказывается недоступен...
+        while(/balance-not-found/i.test(xhtml) && tries < 20){
+            AnyBalance.trace('Баланс временно недоступен, пробуем обновить: ' + (++tries));
+            AnyBalance.sleep(2000);
+            xhtml = refreshBalance(baseurl + 'c/pre/index.html', html, xhtml) || xhtml;
+        } */
 		getParam(xhtml, result, 'balance', /class="price[^>]*>([\s\S]*?)<\/h3>/i, replaceTagsAndSpaces, parseBalance);
 		getParam(xhtml, result, ['currency', 'balance'], /class="price[^>]*>([\s\S]*?)<\/h3>/i, replaceTagsAndSpaces, myParseCurrency);
         //getParam(xhtml, result, 'fio', /<span[^>]+class="b2c.header.greeting.pre.b2c.ban"[^>]*>([\s\S]*?)(?:<\/span>|,)/i, replaceTagsAndSpaces, html_entity_decode);		
     }
-    if(AnyBalance.isAvailable('sms_left', 'mms_left', 'rub_bonus', 'rub_opros', 'sek_bonus')){
+    if(isAvailableBonuses()){
         xhtml = getBlock(baseurl + 'c/pre/index.html', html, 'bonusesloaderDetails');
         getBonuses(xhtml, result);
     }
@@ -202,24 +253,35 @@ function fetchPre(baseurl, html){
     AnyBalance.setResult(result);
 }
 
+function isAvailableBonuses(){
+    return AnyBalance.isAvailable('sms_left', 'mms_left', 'rub_bonus', 'rub_opros', 'min_local', 'min_bi');
+}
+
 function getBonuses(xhtml, result){
-    var services = sumParam(xhtml, null, null, /<tr[^>]*>\s*<td[^>]+class="title"(?:[\s\S](?!<\/tr>))*?<td[^>]+class="value"[\s\S]*?<\/tr>/ig);
-    for(var i=0; i<services.length; ++i){
-        var name = getParam(services[i], null, null, /<td[^>]+class="title"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-        if(/SMS/i.test(name)){
-            sumParam(services[i], result, 'sms_left', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-        }else if(/MMS/i.test(name)){
-            sumParam(services[i], result, 'mms_left', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-        }else if(/Рублей БОНУС|бонус-баланс/i.test(name)){
-            sumParam(services[i], result, 'rub_bonus', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-        }else if(/Рублей за участие в опросе/i.test(name)){
-            sumParam(services[i], result, 'rub_opros', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-        }else if(/Секунд БОНУС\s*\+|Баланс бонус-секунд/i.test(name)){
-            sumParam(services[i], result, 'min_bi', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-        }else if(/Секунд БОНУС-2|Баланс бесплатных секунд-промо/i.test(name)){
-            sumParam(services[i], result, 'min_local', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-        }else{
-            AnyBalance.trace("Неизвестная опция: " + services[i]);
+    var bonuses = sumParam(xhtml, null, null, /<div[^>]+class="bonus-heading"[^>]*>[\s\S]*?<\/table>/ig);
+    for(var j=0; j<bonuses.length; ++j){
+        var bonus = bonuses[j];
+        var bonus_name = getParam(bonus, null, null, /<div[^>]+class="bonus-heading"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+        var services = sumParam(bonus, null, null, /<tr[^>]*>\s*<td[^>]+class="title"(?:[\s\S](?!<\/tr>))*?<td[^>]+class="value"[\s\S]*?<\/tr>/ig);
+        for(var i=0; i<services.length; ++i){
+            var name = '' + getParam(services[i], null, null, /<td[^>]+class="title"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode) + ' ' + bonus_name;
+            if(/SMS/i.test(name)){
+                sumParam(services[i], result, 'sms_left', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+            }else if(/MMS/i.test(name)){
+                sumParam(services[i], result, 'mms_left', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+            }else if(/Рублей БОНУС|бонус-баланс/i.test(name)){
+                sumParam(services[i], result, 'rub_bonus', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+            }else if(/Рублей за участие в опросе|Счастливое время/i.test(name)){
+                sumParam(services[i], result, 'rub_opros', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+            }else if(/Времени общения/i.test(name)){
+                sumParam(services[i], result, 'min_local', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+            }else if(/Секунд БОНУС\s*\+|Баланс бонус-секунд/i.test(name)){
+                sumParam(services[i], result, 'min_bi', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+            }else if(/Секунд БОНУС-2|Баланс бесплатных секунд-промо/i.test(name)){
+                sumParam(services[i], result, 'min_local', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+            }else{
+                AnyBalance.trace("Неизвестная опция: " + bonus_name + ' ' + services[i]);
+            }
         }
     }
 }

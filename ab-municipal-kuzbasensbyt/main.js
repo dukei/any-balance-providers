@@ -46,35 +46,40 @@ function main(){
 
     var result = {success: true};
 	// Баланс
-	getParam(html, result, 'balance', /Ваша переплата[\s\S]*?по показан[\s\S]*?составляет([\s\S]*?)руб/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance', /Ваша (?:переплата|задолженность)[\s\S]*?по показан[\s\S]*?составляет([\s\S]*?)руб/i, replaceTagsAndSpaces, parseBalance);
 	// Текущие показания 
-	getParam(html, result, 'current', /Ваша переплата[\s\S]*?по показан([\s\S]*?)составляет/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'current', /Ваша (?:переплата|задолженность)[\s\S]*?по показан([\s\S]*?)составляет/i, replaceTagsAndSpaces, parseBalance);
 	// Список формируется так, что последняя запись находится внизу, надо почитать все ряды в таблице и узнать какой из них последний
 	var periods = sumParam(html, null, null, /(<tr\s*class="highlight-row">[\s\S]*?<\/tr>)/ig, null, html_entity_decode, null);
 
+	var tableTitles = sumParam(html, null, null, /<th[^>]*COL[^>]*>([\s\S]*?)<\/th>/ig);	
 	if(prefs.period == 'prev')
 		html = periods[periods.length-2];	
 	else
 		html = periods[periods.length-1];
 
-	// Период
-	getParam(html, result, 'period', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-	//Сальдо на начало периода
-	getParam(html, result, 'saldo', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-	//Показания на начало периода
-	getParam(html, result, 'pokazaniya', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-	//Показания на конец периода
-	getParam(html, result, 'pokazaniya_end', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-	//Расход, кВтч
-	getParam(html, result, 'rashod', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-	//Тариф, руб/кВтч.
-	getParam(html, result, 'tarif', /(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-	//Начислено за период, руб.
-	getParam(html, result, 'nachisleno', /(?:[\s\S]*?<td[^>]*>){7}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-	//Оплачено за период, руб
-	getParam(html, result, 'oplacheno', /(?:[\s\S]*?<td[^>]*>){8}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-	//Сальдо на конец периода, руб.
-	getParam(html, result, 'saldo_end', /(?:[\s\S]*?<td[^>]*>){9}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-
+	var tableElements = sumParam(html, null, null, /<td[^>]*>([\s\S]*?)<\/td>/ig);
+	
+	for(i = 0; i < tableTitles.length; i++){
+		var curr = tableTitles[i];
+		if(curr.indexOf('Период расчёта') > -1)
+			getParam(tableElements[i], result, 'period', null, replaceTagsAndSpaces, html_entity_decode);
+		else if(curr.indexOf('Сальдо на начало периода') > -1)
+			getParam(tableElements[i], result, 'saldo', null, replaceTagsAndSpaces, parseBalance);
+		else if(curr.indexOf('Показания на начало периода') > -1)
+			getParam(tableElements[i], result, 'pokazaniya', null, replaceTagsAndSpaces, parseBalance);
+		else if(curr.indexOf('Показания на конец периода') > -1)
+			getParam(tableElements[i], result, 'pokazaniya_end', null, replaceTagsAndSpaces, parseBalance);
+		else if(curr.indexOf('Расход, кВтч') > -1)
+			getParam(tableElements[i], result, 'rashod', null, replaceTagsAndSpaces, parseBalance);
+		else if(curr.indexOf('Тариф') > -1)
+			getParam(tableElements[i], result, 'tarif', null, replaceTagsAndSpaces, parseBalance);
+		else if(curr.indexOf('Начислено за период, руб') > -1)
+			getParam(tableElements[i], result, 'nachisleno', null, replaceTagsAndSpaces, parseBalance);
+		else if(curr.indexOf('Оплачено за период') > -1)
+			getParam(tableElements[i], result, 'oplacheno', null, replaceTagsAndSpaces, parseBalance);
+		else if(curr.indexOf('Сальдо на конец периода') > -1)
+			getParam(tableElements[i], result, 'saldo_end', null, replaceTagsAndSpaces, parseBalance);
+	}
     AnyBalance.setResult(result);
 }

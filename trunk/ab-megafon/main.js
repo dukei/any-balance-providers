@@ -446,6 +446,10 @@ function megafonTrayInfo(filial){
                    var discount = discounts[i];
                    var name = getParam(discount, null, null, /<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
                    var val = getParam(discount, null, null, /<div[^>]+class="discount_volume"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+                   if(!isset(val)){
+                       AnyBalance.trace('Опция без значений: ' + discount);
+                       continue;
+                   }
                    if(/MMS|ММС/i.test(name)){
                        getLeftAndTotal(val, result, need_mms_left, need_mms_total, 'mms_left', 'mms_total', parseBalance);
                    }else if(/SMS|СМС/i.test(name)){

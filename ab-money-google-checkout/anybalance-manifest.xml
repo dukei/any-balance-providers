@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-    <id version="2">ab-money-google-checkout</id>
-    <name>Google Checkout (Wallet)</name>
-	<api flags="no_browser" />
+    <id version="3">ab-money-google-checkout</id>
+    <name>Google Wallet (Checkout)</name>
+	<api flags="no_browser"/>
     <description>
-		Shows current balance in google Wallet account. 
+		Shows current balance in google Wallet account.
 		
 		This provider does not work with 2-steps authorization.
 	</description>
@@ -16,16 +16,15 @@
         <js>main.js</js>
     </files>
     <counters>
-        <counter id="balance" name="Balance"/>
-		<counter id="last_payment" name="Last payment"/>
+        <counter id="balance" name="Balance" units="{@currency}"/>
+		<counter id="last_payment" name="Last payment" units="{@currency}"/>
 		<counter id="last_payment_date" name="Last payment date" type="time" format="dd/MM/yyyy" />
 		<counter id="fio" name="Name" type="text"/>
+		<counter id="currency" name="Currency" type="text"/>
 		<counter id="login_email" name="E-Mail" type="text"/>
     </counters>
     <keywords>
         Google, Play, Android, market, Checkout
     </keywords>
-    <type>
-        money
-    </type>
+    <type>money</type>
 </provider>

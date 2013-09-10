@@ -2,10 +2,10 @@
 <provider>
 	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser" />
-	<id version="2">ab-municipal-kuzbasensbyt</id>
+	<id version="3">ab-municipal-kuzbasensbyt</id>
 	<name>ОАО Кузбассэнергосбыт</name>
 	<description>
-	Получает данные из системы ОАО Кузбассэнергосбыт  (Мечел) http://www.kuzesc.ru/
+	Получает данные из системы ОАО Кузбассэнергосбыт (Мечел) http://www.kuzesc.ru/
 	
 	Личный кабинет находится по адресу: http://www.kuzesc.ru:7777/pls/apex/f?p=100:1
 	</description>

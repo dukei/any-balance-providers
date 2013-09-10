@@ -50,5 +50,10 @@ function main(){
 	getParam(html, result, 'nachisl', /Начисления текущего месяца(?:[\s\S]*?<span[^>]*>){1}([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'recomended', /Рекомендуемая сумма к оплате(?:[\s\S]*?<span[^>]*>){1}([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
 
+	getParam(html, result, '__tariff', />Счетчик([^,]*)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'next_check', /очередной срок поверки([^<]*)/i, replaceTagsAndSpaces, parseDate);
+	getParam(html, result, 'last_counter_val', /Последние показания(?:[\s\S]*?<p[^>]*>)([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'last_counter_date', /Последние показания(?:[\s\S]*?<p[^>]*>){2}([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseDate);
+
     AnyBalance.setResult(result);
 }

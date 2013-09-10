@@ -2,7 +2,7 @@
 <provider>
 	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser|captcha" />
-	<id version="1">ab-municipal-mosoblgaz</id>
+	<id version="2">ab-municipal-mosoblgaz</id>
 	<name>Мособлгаз</name>
 	<description>
 	Получает данные частных абонентов Мособлгаз из личного кабинета http://lksaupg.mosoblgaz.ru/LoginPersonalSUPG.aspx.
@@ -24,6 +24,9 @@
 		<counter id="recomended" name="Рекомендуемая сумма к оплате" units="р"/>
 		<counter id="acc" name="Лицевой счет" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="next_check" name="Очередной срок поверки счетчика" type="time" format="dd/MM/yyyy"/>
+		<counter id="last_counter_val" name="Последние показания"/>
+		<counter id="last_counter_date" name="Дата последних показаний счетчика" type="time" format="dd/MM/yyyy"/>
 	</counters>
 	<keywords></keywords>
 	<type>municipal</type>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
+	<api flags="no_browser" />
+	<id version="1">ab-internet-omks</id>
+	<name>Омские кабельные сети</name>
+	<description>
+	Получает данные из личного кабинета интернет-провайдера в г. Омск Омские кабельные сети по адресу http://billing.omkc.ru/.
+	</description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units="{@currency}"/>
+		<counter id="cred" name="Кредит" units="{@currency}"/>
+		<counter id="acc_num" name="Номер счета" type="text"/>
+		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="bonus_pcts" name="Бонусная карта - %" type="text"/>
+		<counter id="bonus_months" name="Бонусная карта - длительность " type="text"/>
+		<counter id="bonus_ammount" name="Бонусная карта - cумма накоплений"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

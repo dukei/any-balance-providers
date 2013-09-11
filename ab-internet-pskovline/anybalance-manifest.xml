@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="5" major_version="1">ab-internet-pskovline</id>
+  <id version="6" major_version="1">ab-internet-pskovline</id>
   <name>PskovLine (Псков)</name>
   <description>
     ПсковЛайн (http://www.pskovline.ru). Псковский интернет-провайдер.
-    Просмотр баланса, № лицевого счета, логина, кредита и состояния интернета. Данные берутся из личного кабинета http://www.pskovline.ru/utm5/
+    Просмотр баланса, № лицевого счета, логина, кредита и состояния интернета. Данные берутся из личного кабинета http://stat.pskovline.ru/
   </description>
   <author>IvDor &lt;IvanDor666@gmail.com&gt;</author>
   <files>

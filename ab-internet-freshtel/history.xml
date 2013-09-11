@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="4" date="2013-09-11">
+	- Исправлено отображение трафика
+    </change>
     <change version="3" date="2013-09-06">
 	- Добавлено отображение трафика
     </change>

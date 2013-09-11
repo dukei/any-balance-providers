@@ -207,8 +207,14 @@ function main(){
     // СМС С услугой «Супер 3D Ноль»
     sumParam (html, result, 'sms_used', /<li>Израсходовано:\s*(\d+)\s*(?:sms|смс)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     
+    // Тариф 3d команда
+    sumParam (html, result, 'mms_used', /<li>Израсходовано:\s*(\d+)\s*(?:mms|ммс)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    
     // Интернет С услугой «Супер 3D Ноль»
     sumParam (html, result, 'traffic_used', /<li>Использовано[^\d]*?(\d+,?\d* *(kb|mb|gb|кб|мб|гб|байт|bytes)).<\/li>/ig, null, parseTraffic, aggregate_sum);
+    
+    // Тариф 3d команда
+    sumParam (html, result, 'min_used', /<li>Израсходовано\s*([\d\.,]+) сек.<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     
     // ПЗС за Мб по услуге Супер 3D Региональный 0
     sumParam (html, result, 'PZS_MB_3D', /<li>ПЗС за Мб по услуге Супер 3D[^<]*([\d\.,]+)<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);

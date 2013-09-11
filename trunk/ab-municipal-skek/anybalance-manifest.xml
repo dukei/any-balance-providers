@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<api flags="no_browser" />
+	<id version="1">ab-municipal-skek</id>
+	<name>ОАО СКЭК</name>
+	<description>
+	Получает данные для ОАО Северо-Кузбасская энергетическая компания.
+	
+	Личный кабинет находится по адресу: https://skek.ru/cabinet/info.html
+	</description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units="р"/>
+		<counter id="usluga" name="Название услуги" type="text"/>
+		<counter id="counter_val" name="Показания счетчика"/>
+		<counter id="full_adr" name="Адрес" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>municipal</type>
+	<country>ru</country>
+</provider>

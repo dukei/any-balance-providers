@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <ListPreference 
+        key="city" 
+        title="Город"
+        summary="||{@s}\n"
+        entries="Кемерово|Березовский|Ленинск-Кузнецкий|Промышленная|Кедровка"
+        entryValues="1|2|3|4|5"
+		defaultValue="1">
+    </ListPreference>
+    <EditTextPreference 
+        title="Улица" 
+        positiveButtonText="ОК" 
+        summary="||{@s}" 
+        dialogTitle="Улица" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите название улицы."
+        key="street">
+    </EditTextPreference>
+    <EditTextPreference 
+        title="Дом" 
+        positiveButtonText="ОК" 
+        summary="||{@s}" 
+        dialogTitle="Дом" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите номер дома."
+        key="house">
+    </EditTextPreference>
+    <EditTextPreference 
+        title="Номер счета" 
+        positiveButtonText="ОК" 
+        summary="||{@s}" 
+        dialogTitle="Номер счета" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите номер счета, по которому хотите получить данные."
+        key="acc">
+    </EditTextPreference>
+</PreferenceScreen>

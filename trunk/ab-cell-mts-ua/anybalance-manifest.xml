@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.1" version="26">ab-cell-mts-ua</id>
+  <id major_version="1.1" version="27">ab-cell-mts-ua</id>
   <api flags="no_browser"/>
   <name>МТС (Украина)</name>
   <description>
@@ -49,7 +49,9 @@
     <counter id="traffic_opera_mb" name="Opera Mini к-во Кб загруженных по АПН opera" units=" mb"/>
     <counter id="traffic_free_mb" name="Бесплатный интернет" units=" mb"/><!-- Актуально до 15.08.2012 для Супер Свободы -->
     <counter id="sms_used" name="Израсходовано SMS" units=" sms"/>
+    <counter id="mms_used" name="Израсходовано MMS" units=" mms"/>
     <counter id="traffic_used" name="Использованно Мб" units=" mb"/>
+    <counter id="min_used" name="Израсходовано минут" type="time_interval" format="{@MIN}" units=" мин"/>
     <counter id="PZS_MB_3D" name="ПЗС за Мб по услуге Супер 3D" units=" ₴" flags="zero_when_empty"/>
     <counter id="PZS_MB_opera" name="ПЗС за первое событие для APN opera" units=" ₴" flags="zero_when_empty"/>
     <!--Сроки пакетов -->

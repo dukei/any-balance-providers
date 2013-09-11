@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<api flags="no_browser" />
+	<id version="1">ab-municipal-eskk</id>
+	<name>ООО ЭСКК</name>
+	<description>
+	Получает данные для провайдера ООО Энергосбытовая компания Кузбасса http://www.eskk.ru/
+	
+	Личный кабинет находится по адресу: http://www.eskk.ru/log_individuals/index.php
+	</description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Долг на начало месяца" units="р"/>
+		<counter id="oplata" name="Оплачено в текущем месяце" units="р"/>
+		<counter id="counter_last_val" name="Последнее показание счетчика"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="acc_num" name="Лицевой счет" type="text"/>
+		<counter id="category" name="Категория потребления" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>municipal</type>
+	<country>ru</country>
+</provider>

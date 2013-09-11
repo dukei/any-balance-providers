@@ -17,7 +17,7 @@ function main(){
 	
 	var html = AnyBalance.requestGet(baseurl + 'debt/req.do?');
 	var session = getParam(html, null, null, /name="PHPSESSID"[^>]*value="([^"]*)/i);
-
+	
 	var captchaa;
 	if(AnyBalance.getLevel() >= 7){
 		AnyBalance.trace('Пытаемся ввести капчу');
@@ -31,27 +31,33 @@ function main(){
     AnyBalance.setDefaultCharset('utf-8');
 	html = AnyBalance.requestPost(baseurl + 'debt/req.do?', {
 	    cmd:'find',
-		inn:'022301984795',
-		fam:'Назиров',
-		nam:'Фаим',
+		inn:prefs.inn,
+		fam:prefs.surname,
+		nam:prefs.name,
 		otch:'',
 		cap:captchaa
-
-        /*PHPSESSID:session,
-        LOGIN:prefs.login,
-        PASSWORD:prefs.password,
-        CODE:captchaa*/
     }, addHeaders({Referer: baseurl + 'debt/req.do?'})); 
-
-    if(!/\/Logout/i.test(html)){
+	
+    if(!/logout/i.test(html)){
         var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error);
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-    }	
+    }
+	var result = {success: true, balance:0, all:''};
+	
+	var json = getJson(getParam(html, null, null, /var\s*DEBT\s*=\s*([\s\S]*?\});/i))
+	
+	var len = json.regions.length;
+	for(i = 0; i < len; i++){
+		var curr = json.regions[i];
+		
+		var sum = (curr.pds[0].sum ? curr.pds[0].sum : undefined);
+		result.all += curr.code+ ' '+curr.name+'\n'+ (sum ? curr.pds[0].ifnsName+': '+ curr.pds[0].taxName +'-'+  curr.pds[0].taxKind+ ': ' +sum  : 'Нет задоженности') + '\n\n';
+		
+		sumParam(sum, result, 'balance', /([\s\S]*)/i, null, parseBalance, aggregate_sum);
+	}
 
-
-    var result = {success: true};
     getParam(html, result, 'fio', /class="group-client"[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'acc_num', /&#1051;&#1080;&#1094;&#1077;&#1074;&#1086;&#1081; &#1089;&#1095;&#1077;&#1090;:(?:[\s\S]*?<div[^>]*>){2}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'balance', /&#1041;&#1072;&#1083;&#1072;&#1085;&#1089;(?:[\s\S]*?<div[^>]*>){2}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);

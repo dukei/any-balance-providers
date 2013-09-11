@@ -14,7 +14,7 @@ function main(){
     var prefs = AnyBalance.getPreferences();
     var baseurl = 'https://portal.freshtel.ua/';
     AnyBalance.setDefaultCharset('windows-1251'); 
-
+	
 	var html = AnyBalance.requestPost(baseurl + 'ps/selfcare_unt/login.php', {
         X_Username:prefs.login,
         X_Password:prefs.password,
@@ -41,8 +41,6 @@ function main(){
 	getParam(html, result, 'traf_limit', /&#1051;&#1110;&#1084;&#1110;&#1090; &#1090;&#1088;&#1072;&#1092;&#1110;&#1082;&#1091;(?:[^>]*>){6}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'traf_bonus', /&#1041;&#1086;&#1085;&#1091;&#1089; &#1090;&#1088;&#1072;&#1092;&#1110;&#1082;&#1091;(?:[^>]*>){6}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'traf_used', /&#1042;&#1080;&#1082;&#1086;&#1088;&#1080;&#1089;&#1090;&#1072;&#1085;&#1086;(?:[^>]*>){6}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-	
-	
 	getParam(html, result, '__tariff', /<NAME>([^<]*)/i, null, html_entity_decode);
 	
     AnyBalance.setResult(result);

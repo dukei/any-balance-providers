@@ -2,7 +2,7 @@
 <provider>
 	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser" />
-	<id version="3">ab-internet-freshtel</id>
+	<id version="4">ab-internet-freshtel</id>
 	<name>FreshTel 4G</name>
 	<description>
 	Получает данные для провайдера FreshTel 4G (http://freshtel.ua/)
@@ -23,6 +23,9 @@
 		<counter id="bonus" name="Бонус" units=" {@currency}"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="acc" name="Номер счета" type="text"/>
+		<counter id="traf_limit" name="Лимит трафика" units="Mb"/>
+		<counter id="traf_bonus" name="Бонус трафика" units="Mb"/>
+		<counter id="traf_used" name="Использовано трафика" units="Mb"/>
 	</counters>
 	<keywords></keywords>
 	<type>internet</type>

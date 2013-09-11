@@ -13,4 +13,7 @@
     <change major_version="1" version="5" date="2013-07-25">
       - Исправлен отрицательный баланс..
     </change>
+    <change major_version="1" version="6" date="2013-09-12">
+      - Очередная смена кабинета
+    </change>
 </history>

@@ -55,5 +55,9 @@ function main(){
 	getParam(html, result, 'last_counter_val', /Последние показания(?:[\s\S]*?<p[^>]*>)([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'last_counter_date', /Последние показания(?:[\s\S]*?<p[^>]*>){2}([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseDate);
 
+	if(!result.balance){
+		html = AnyBalance.requestGet(baseurl + 'PersonalCalculationsSUPG.aspx', g_headers);
+		getParam(html, result, 'balance', /Задолженность(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	}
     AnyBalance.setResult(result);
 }

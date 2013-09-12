@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-telephony-rt-sib</id>
+<api flags="no_browser" />
+  <id version="3">ab-telephony-rt-sib</id>
   <name>Ростелеком Сибирь</name>
   <description>
     Получает баланс и информацию о тарифном плане для сибирского оператора проводной телефонии Ростелеком-сибирский филиал (http://sibirtelecom.ru)

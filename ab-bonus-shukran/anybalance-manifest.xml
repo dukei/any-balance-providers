@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<api flags="no_browser" />
+	<id version="1">ab-bonus-shukran</id>
+	<name>Shukran</name>
+	<description>
+	Obtains information from Shukran (http://www.shukranrewards.com/en/lang/members/home)
+	</description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Balance"/>
+		<counter id="fio" name="Name" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>bonus</type>
+	<country>ae</country>
+</provider>

@@ -41,9 +41,7 @@ function main(){
         isAvailable('explastupdated') ||
         isAvailable('expbalance1') ||
         isAvailable('expbalance2') ||
-        isAvailable('expbalance3') ||
         isAvailable('expmonth1') ||
-        isAvailable('expmonth2') ||
         isAvailable('expmonth2') ||
         isAvailable('expiration'))
     {
@@ -52,20 +50,20 @@ function main(){
         getParam(html, result, 'statusbalance', /<span>([^<>]*?)<\/span>[\s]*?Status Points/i, replaceTagsAndSpaces, parseBalance);
         getParam(html, result, 'card', /Your BalticMiles card number:[\s\S]*?<span>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
         getParam(html, result, 'explastupdated', /Point expiry information last updated:[\s\S]*?<span>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseDateISO, 'expiration');
-        expired = html.match(/Will expire[\s\S]*?<span>\s*<span>\s*([^<>]*?)<\/span>\s*in\s([^<>]*?)\s*<\/span>\s*<span>\s*<span>\s*([^<>]*?)<\/span>\s*in\s([^<>]*?)\s*<\/span>\s*<span>\s*<span>\s*([^<>]*?)<\/span>\s*in\s([^<>]*?)\s*<\/span>/i);
-        getParam(expired[1], result, 'expbalance1', null, replaceTagsAndSpaces, parseBalance, 'expiration');
-        getParam(expired[2], result, 'expmonth1', null, replaceTagsAndSpaces, html_entity_decode, 'expiration');
-        getParam(expired[3], result, 'expbalance2', null, replaceTagsAndSpaces, parseBalance, 'expiration');
-        getParam(expired[4], result, 'expmonth2', null, replaceTagsAndSpaces, html_entity_decode, 'expiration');
-        getParam(expired[5], result, 'expbalance3', null, replaceTagsAndSpaces, parseBalance, 'expiration');
-        getParam(expired[6], result, 'expmonth3', null, replaceTagsAndSpaces, html_entity_decode, 'expiration');
-        if (isAvailable('expiration'))
+        expired = html.match(/Will expire[\s\S]*?<span>\s*<span>\s*([^<>]*?)<\/span>\s*in\s([^<>]*?)\s*<\/span>\s*<span>\s*<span>\s*([^<>]*?)<\/span>\s*in\s([^<>]*?)\s*<\/span>/i);
+        if (expired != null && expired.length >= 5)
         {
-            var date = new Date(result['explastupdated']);
-            result['expiration'] = result['expbalance1'] + ' in ' + result['expmonth1'] + ', ' +
-                result['expbalance2'] + ' in ' + result['expmonth2'] + ', ' +
-                result['expbalance3'] + ' in ' + result['expmonth3'] +
-                ', updated at: ' + date.getDate() + '/' + (date.getMonth()+1) + '/' + date.getFullYear();
+        	getParam(expired[1], result, 'expbalance1', null, replaceTagsAndSpaces, parseBalance, 'expiration');
+        	getParam(expired[2], result, 'expmonth1', null, replaceTagsAndSpaces, html_entity_decode, 'expiration');
+        	getParam(expired[3], result, 'expbalance2', null, replaceTagsAndSpaces, parseBalance, 'expiration');
+        	getParam(expired[4], result, 'expmonth2', null, replaceTagsAndSpaces, html_entity_decode, 'expiration');
+        	if (isAvailable('expiration'))
+        	{
+            	var date = new Date(result['explastupdated']);
+            	result['expiration'] = result['expbalance1'] + ' in ' + result['expmonth1'] + ', ' +
+                	result['expbalance2'] + ' in ' + result['expmonth2'] +
+                	', updated at: ' + date.getDate() + '/' + (date.getMonth()+1) + '/' + date.getFullYear();
+        	}
         }
     }
 	

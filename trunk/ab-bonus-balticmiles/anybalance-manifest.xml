@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1" version="1">ab-bonus-balticmiles</id>
+  <id major_version="1" version="2">ab-bonus-balticmiles</id>
   <name>BalticMiles</name>
   <description>
     Reading the information from BalticMiles account (http://www.balticmiles.com)
@@ -29,8 +29,6 @@
     <counter id="expmonth1" name="Current expiration month" type="text"/>
     <counter id="expbalance2" name="Will expire in next month"/>
     <counter id="expmonth2" name="Next expiration month" type="text"/>
-    <counter id="expbalance3" name="Will expire in month after next"/>
-    <counter id="expmonth3" name="Expiration month after next" type="text"/>
     <counter id="explastupdated" name="Expiration information last updated" type="time" format="dd/MM/yyyy"/>
   </counters>
   <keywords>

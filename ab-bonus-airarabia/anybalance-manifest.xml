@@ -2,7 +2,7 @@
 <provider>
 	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser" />
-	<id version="1">ab-bonus-airarabia</id>
+	<id version="2">ab-bonus-airarabia</id>
 	<name>Airarabia</name>
 	<description>
 	Obtains information from Airarabia.com
@@ -19,7 +19,7 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Total balance"/>
-		<counter id="fio" name="Custumer" type="text"/>
+		<counter id="fio" name="Customer" type="text"/>
 	</counters>
 	<keywords></keywords>
 	<type>bonus</type>

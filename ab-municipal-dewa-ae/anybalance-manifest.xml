@@ -3,9 +3,9 @@
 	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser" />
 	<id version="1">ab-municipal-dewa-ae</id>
-	<name>Dubai Electicity and Water Authority</name>
+	<name>Dubai Electricity and Water Authority</name>
 	<description>
-	Obtains information from e-services of Dubai Electicity and Water Authority (https://e-services.dewa.gov.ae/).
+	Obtains information from e-services of Dubai Electricity and Water Authority (https://e-services.dewa.gov.ae/).
 	
 	To register, please folow this link: https://portal.dewa.gov.ae/irj/portal/anonymous/rnew
 	</description>

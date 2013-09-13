@@ -17,7 +17,7 @@ function main(){
     var baseurl = 'https://reservations.airarabia.com/';
     AnyBalance.setDefaultCharset('utf-8'); 
 
-    var html = AnyBalance.requestGet(baseurl + 'ibe/public/showReservation.action?hdnParamData=RU^SI&hdnCarrier=', g_headers);
+    var html = AnyBalance.requestGet(baseurl + 'ibe/public/showReservation.action?hdnParamData=RU'+encodeURIComponent('^')+'SI&hdnCarrier=', g_headers);
 
 	var params = createFormParams(html, function(params, str, name, value){
 		if(name == 'emailId')

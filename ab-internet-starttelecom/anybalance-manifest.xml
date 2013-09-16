@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<api flags="no_browser" />
+	<id version="1">ab-internet-starttelecom</id>
+	<name>Старт Телеком</name>
+	<description>
+	Получает данные для провайдера ОАО Старт Телеком (http://starttelecom.ru/)
+	
+	На данный момент поддерживается только Поволжский филиал, если хотите, чтобы была поддержка Вашего филиала, свяжитесь с автором провайдера.
+	
+	Личный кабинет находится по адресу: https://stat-nnov.starttelecom.ru/index.htms
+	</description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units="р"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

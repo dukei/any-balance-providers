@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change major_version="3.3" version="63" date="2013-09-16">
+	- Исправлен счетчик Срок действия пакета минут
+	</change>
     <change major_version="3.3" version="62" date="2013-07-12">
       - Добавлена совместимость с Balance Widget
     </change>

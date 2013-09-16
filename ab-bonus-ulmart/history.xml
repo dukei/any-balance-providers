@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="5" date="2013-09-16">
+	- Новые счетчики: Кол-во участников, Сводка по участникам
+	</change>
     <change version="4" date="2013-09-09">
 	- Исправлено отображение баланса
 	</change>

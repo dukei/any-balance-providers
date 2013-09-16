@@ -1,10 +1,5 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Получает текущий остаток и другие параметры карт Сбербанка, используя систему Сбербанк-онлайн.
-
-Сайт оператора: http://sbrf.ru/
-Личный кабинет: https://esk.sbrf.ru/
 */
 
 function getViewState(html){
@@ -57,6 +52,11 @@ function main() {
 		'password':prefs.password,
 		'AUTH_METHOD':'FAST_PWA'
     });
+	// Банк просит сменить пароль
+	var error = getParam(html, null, null, /Смена Пароля(?:[\s\S]*?<[^>]*>){2}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+	if(error)
+        throw new AnyBalance.Error(error);
+	
 /*
     error = getParam(html, null, null, /в связи с ошибкой в работе системы[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
     if(error)
@@ -83,7 +83,7 @@ function fetchOldCard(html, baseurl){
     var prefs = AnyBalance.getPreferences();
 
     // Теперь ищем ссылку на карты, точнее сабмит на список карт
-	var page = getParam(html, null, null, /(<form  id='FORM_CARD_LIST'[\s\S]*?<\/form>)/i);
+	var page = getParam(html, null, null, /(<form\s*id='FORM_CARD_LIST'[\s\S]*?<\/form>)/i);
 	if(!page){
 		throw new AnyBalance.Error("Не удаётся найти ссылку на информацию по картам. Пожалуйста, обратитесь к автору провайдера для исправления ситуации.");
 	}	

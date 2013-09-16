@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-bonus-foxtrot</id>
+  <api flags="no_browser"/>
+  <name>Фокстрот</name>
+  <description>
+    Мониторинг накопленной скидки в "Программе комфорта" сети магазинов Фокстрот (Украина)
+  </description>
+  <author>Ignatiy Goloviznin &lt;igoloviznin@gmail.com&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units=" бал."/>
+    <counter id="skidka" name="Размер скидки" units=" %"/>
+    <counter id="balance_left" name="Остаток баланса до увеличения %" units=" бал."/>
+    <counter id="bonus_active" name="Активные бонусы" units=" бон."/>
+    <counter id="bonus_unactive" name="Неактивные бонусы" units=" бон."/>
+    <counter id="data_news" name="Дата последней новости" type="time" format="dd/MM/yyyy"/>
+    <counter id="data_action" name="Дата последней акции" type="time" format="dd/MM/yyyy"/>
+  </counters>
+  <keywords>
+    фокстрот foxtrot техника магазин
+  </keywords>
+  <type>
+    bonus
+  </type>
+  <country>
+    ua
+  </country>
+</provider>

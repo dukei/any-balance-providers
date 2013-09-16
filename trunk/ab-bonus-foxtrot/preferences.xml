@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Номер карты" 
+        positiveButtonText="ОК" 
+        summary="Номер вашей карты||{@s}\n" 
+        dialogTitle="Номер карты" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите номер вашей карты"
+        key="login"
+        inputType="number">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="prefph" 
+        dialogTitle="Код номера телефона"
+        negativeButtonText="Отмена"
+        title="Код номер телефона"
+        summary="Код номера вашей телефона||{@s}\n"
+        dialogMessage="Введите код «0XX» (3 цифры после +38) номера вашего телефона зарегистрированного по карте"
+        inputType="number">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="phone" 
+        dialogTitle="Номер телефона"
+        negativeButtonText="Отмена"
+        title="Номер телефона"
+        summary="Номер вашей телефона||{@s}\n"
+        dialogMessage="Введите последние 7 цифр номера вашего телефона зарегистрированного по карте"
+        inputType="number">
+    </EditTextPreference>
+</PreferenceScreen>

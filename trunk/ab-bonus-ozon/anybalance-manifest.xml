@@ -2,7 +2,7 @@
 <provider>
   <!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
   <api flags="no_browser" />
-  <id version="5">ab-bonus-ozon</id>
+  <id version="6">ab-bonus-ozon</id>
   <name>OZON.ru</name>
   <description>
     Получает баланc счета и количество баллов в интернет магазине OZON.ru (http://www.ozon.ru).

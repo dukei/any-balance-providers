@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<api flags="no_browser" />
+	<id version="1">ab-seo-liveinternet</id>
+	<name>Liveinternet.ru</name>
+	<description>
+	Получает данные по счетчикам в известной статистике рунета http://www.liveinternet.ru/
+	
+	Информация по счетчикам берется по адресу: http://www.liveinternet.ru/stat/
+	</description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="views" name="Просмотры"/>
+		<counter id="viewers" name="Посетители"/>
+	</counters>
+	<keywords></keywords>
+	<type>seo</type>
+	<country>ru</country>
+</provider>

@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-    <change major_version="1" version="2" date="2013-10-13">
-        - Fix for parsing of points expiration information.
-    </change>
+    <change major_version="1" version="3" date="2013-09-16">
+	- Minor fixes
+	</change>
+    <change major_version="1" version="2" date="2013-09-13">
+	- Fix for parsing of points expiration information.
+	</change>
     <change major_version="1" version="1" date="2013-05-13">
-        - Initial version of provider.
-    </change>
+	- Initial version of provider.
+	</change>
 </history>

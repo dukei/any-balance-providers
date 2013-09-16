@@ -41,7 +41,7 @@ function main(){
         Authentication:'Продолжить',
     }, addHeaders({Referer: baseurl + 'context/login/'}));
 
-    if(!/\?context=logoff/i.test(html)){
+    if(!/context.logoff/i.test(html)){
         var error = getParam(html, null, null, /<span[^>]+class="ErrorSpan"[^>]*>([\s\S]*?)<\/span>/i);
         if(error)
             throw new AnyBalance.Error(error);

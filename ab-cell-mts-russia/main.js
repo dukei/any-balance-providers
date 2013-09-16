@@ -74,7 +74,7 @@ function main(){
         }catch(e){
            if(!e.allow_retry)
                throw e;
-           AnyBalance.trace('С личным кабинетам проблема: ' + e.message + " Пробуем обычный помощник...");
+           AnyBalance.trace('С личным кабинетом проблема: ' + e.message + " Пробуем обычный помощник...");
            mainOrdinary();
         }
     }
@@ -87,8 +87,8 @@ function mainMobile(allowRetry){
         var prefs = AnyBalance.getPreferences();
         
         if(!regions[prefs.region]){
-	AnyBalance.trace("Unknown region: " + prefs.region + ", setting to auto");
-            prefs.region = 'auto';
+			AnyBalance.trace("Unknown region: " + prefs.region + ", setting to auto");
+			prefs.region = 'auto';
         }
         
         var baseurl = regions[prefs.region];
@@ -117,8 +117,6 @@ function mainMobile(allowRetry){
                 password: prefs.password
             }, g_headers);
         }
-        
-        
         regexp = /Security\.mvc\/LogOff/;
         if(!regexp.exec(html)){
             //Не вошли. Сначала пытаемся найти вразумительное объяснение этому факту...
@@ -154,7 +152,6 @@ function mainMobile(allowRetry){
             if(error)
 	    throw new AnyBalance.Error(prefs.phone + ": " + error, false); 
         }
-        
         // Тарифный план
         getParam(html, result, '__tariff', /Тарифный план.*?>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
         // Баланс
@@ -163,70 +160,46 @@ function mainMobile(allowRetry){
             AnyBalance.trace(html);
             throw new AnyBalance.Error('Не удалось найти баланс в мобильном помощнике!', allowRetry); 
         }
-
         // Телефон
         getParam (html, result, 'phone', /Ваш телефон:.*?>([^<]*)</i, replaceTagsAndSpaces, html_entity_decode);
-        
         if (isAvailableStatus()) {
-        
             AnyBalance.trace("Fetching status...");
-        
             html = AnyBalance.requestGet(baseurl + "Account.mvc/Status", g_headers);
-        
             fetchAccountStatus(html, result);
         }
-        
         if (AnyBalance.isAvailable ('usedinprevmonth')) {
-        
             AnyBalance.trace("Fetching history...");
-        
             html = AnyBalance.requestPost (baseurl + 'Account.mvc/History', {periodIndex: 0}, g_headers);
-        
             AnyBalance.trace("Parsing history...");
-        
             // Расход за прошлый месяц
             getParam (html, result, 'usedinprevmonth', /За период израсходовано .*?([\d\.,]+)/i, replaceTagsAndSpaces, parseBalance);
         }
-        
-        
         if (AnyBalance.isAvailable ('monthlypay')) {
-        
             AnyBalance.trace("Fetching traffic info...");
-        
             html = AnyBalance.requestGet (baseurl + 'TariffChange.mvc', g_headers);
-        
             AnyBalance.trace("Parsing traffic info...");
-        
             // Ежемесячная плата
             getParam (html, result, 'monthlypay', /Ежемесячная плата[^\d]*([\d\.,]+)/i, replaceTagsAndSpaces, parseBalance);
         }
-
         if(AnyBalance.isAvailable('tourist')){
             AnyBalance.trace("Fetching accumulated info...");
-        
             html = AnyBalance.requestGet (baseurl + 'Account.mvc/AccumulatedCounters', g_headers);
-        
             AnyBalance.trace("Parsing accumulated info...");
-        
             fetchAccumulatedCounters(html, result, true);
 
         }
-        
         if(AnyBalance.isAvailable('abonservice')){
             AnyBalance.trace("Fetching paid services...");
             html = AnyBalance.requestGet(baseurl + "Product.mvc", g_headers);
-        
             sumParam(html, result, 'abonservice', /Стоимость в месяц:([^<]*)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
         }
-
         AnyBalance.setResult(result);
-    }catch(e){
+	}catch(e){
         //Если не установлено требование другой попытки, устанавливаем его в переданное в функцию значение
         if(!isset(e.allow_retry))
             e.allow_retry = allowRetry;
         throw e; 
     }
-
 }
 
 var g_headers = {
@@ -404,7 +377,7 @@ function fetchOrdinary(html, baseurl, resultFromLK){
 function isAvailableStatus(){
     return AnyBalance.isAvailable ('min_left','min_local','min_love','sms_left','mms_left','traffic_left','traffic_left_mb',
         'license','statuslock','credit','usedinthismonth', 'bonus_balance', 'min_left_mts', 'min_used_mts', 'min_used', 'debt',
-        'pay_till');
+        'pay_till', 'min_till');
 }
 
 function fetchAccumulatedCounters(html, result, mobile){
@@ -416,70 +389,49 @@ function fetchAccumulatedCounters(html, result, mobile){
 
 function fetchAccountStatus(html, result){
     AnyBalance.trace("Parsing status...");
-    
     // Ближайший срок истекания пакета минут
-    sumParam (html, result, 'min_till', /мин\.?,?\s*действует до ([^<]*)/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
-
+    sumParam (html, result, 'min_till', [/мин\.?,?\s*действует до ([^<]*)/ig, /Остаток пакета минут:[^<]*действует до([^<]*)/ig], replaceTagsAndSpaces, parseDate, aggregate_min);
     //Территория МТС (3000 минут): Осталось 0 минут
     html = sumParam (html, result, 'min_left_mts', /Территория МТС.*?: Осталось\s*([\d\.,]+)\s*мин/ig, replaceFloat, parseBalance, aggregate_sum, true);
     html = sumParam (html, result, 'min_left_mts', /Осталось\s*([\d\.,]+)\s*мин\S* на МТС/ig, replaceFloat, parseBalance, aggregate_sum, true);
     html = sumParam (html, result, 'min_left_mts', /Остаток:?\s*([\d\.,]+)\s*мин\S* на МТС/ig, replaceFloat, parseBalance, aggregate_sum, true);
-
     //Срочный контракт (15%, 25% как 15%): Осталось 0 минут
     html = sumParam (html, result, 'min_left', /Срочный контракт.*?: Осталось\s*([\d\.,]+)\s*мин/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
-
     // Пакет минут
     html = sumParam (html, result, 'min_left', /Остаток пакета минут:\s*([\d\.,]+)\s*[\.,<]/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
-    
     // Остаток бонуса
     html = sumParam (html, result, 'min_left', /Остаток бонуса:\s*([\d\.,]+?)\s*мин/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
-
     // Остаток минут
     html = sumParam (html, result, 'min_left', /Осталось:?\s*([\d\.,]+)\s*(?:бесплатных\s*)?мин/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
-    
     // Пакет минут Готовый офис: Остаток 149 минут
     // Остаток: минут
     html = sumParam (html, result, 'min_left', /Остаток:?\s*([\d\.,]+)\s*мин/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
-
     // Остаток минут по тарифу "Готовый офис" - 194 минут
     html = sumParam (html, result, 'min_left', /Остаток мин.*?([\d\.,]+)\s*мин/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
-
     // Остаток ежемесячных пакетов: 392 минут
     html = sumParam (html, result, 'min_left', /Остаток ежемесячных пакетов\s*(?:минут\s*)?:?\s*([\d\.,]+)\s*мин/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
-
     // Остаток ежемесячного пакета: 296 мин
     html = sumParam (html, result, 'min_left', /Остаток ежемесячного пакета\s*(?:минут\s*)?:?\s*([\d\.,]+)\s*мин/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
-
     // Остаток пакета: 24 минут
     html = sumParam (html, result, 'min_left', /Остаток пакета:?\s*([\d\.,]+)\s*мин/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
-
     html = sumParam (html, result, 'min_left', /Пакет минут[^:]*:\s*Оста[^\d]*([\d\.,]+)\s*мин/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
-
     // Подбаланс минуты: 73 мин
     html = sumParam (html, result, 'min_left', /Подбаланс минуты\s*:?\s*([\d\.,]+)\s*мин/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
-
     // Остаток пакета минут на ТП "MAXI": 12000 секунд
     html = sumParam (html, result, 'min_left', /Остаток пакета минут[^<]*?([\d\.,]+)\s*сек/ig, replaceTagsAndSpaces, function(str){return Math.round(parseBalance(str)/60)}, aggregate_sum, true);
-
     // Остаток "Бесплатных вызовов при платеже": 29
     html = sumParam (html, result, 'min_left', /"Бесплатных вызовов при платеже":[^<]*?([\d\.,]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
-
     // Осталось минут (Smart):278.
     html = sumParam (html, result, 'min_left', /Осталось минут[^<]*?:\s*([\d\.,]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
-
     //Осталось по опции "Супер Область": 60 мин
     html = sumParam (html, result, 'min_left', /Осталось по опции[^<]*?:\s*([\d\.,]+)\s+мин/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
-
     // Использовано: 0 минут местных и мобильных вызовов.
     // Использовано 1 мин на городские номера Москвы, МТС домашнего региона и МТС России
     sumParam (html, result, 'min_local', /Использовано:?\s*([\d\.,]+)\s*мин[^\s]* (местных|на городские)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-
     // Использовано: 0 минут на любимые номера
     sumParam (html, result, 'min_love', /Использовано:?\s*([\d\.,]+)\s*мин[^\s]* на любимые/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-
-    //Использовано: 17 мин на МТС России 
+	//Использовано: 17 мин на МТС России 
     sumParam (html, result, 'min_used_mts', /Использовано:?\s*(\d+)\s*мин\S* на МТС/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-
     // Остаток СМС Перезвони мне 
     html = sumParam (html, result, 'sms_left_perezvoni', /Осталось:\s*([0-5])\s*(?:sms|смс)/i, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
     // Остаток ежемесячных пакетов: 392 смс
@@ -492,49 +444,37 @@ function fetchAccountStatus(html, result){
     html = sumParam (html, result, 'sms_left', /(?:Осталось|Остаток)[^\d]*(\d+)\s*(?:sms|смс)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
     //Остаток пакета Безлимит М2М SMS: 61
     html = sumParam (html, result, 'sms_left', /Остаток пакета [^<]*?(?:смс|sms):\s*([\d\.,]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
-
     //Использовано: 6 sms
     sumParam (html, result, 'sms_used', /Использовано:\s*([\d\.,]+)\s*(?:смс|sms)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-
     // Остаток ММС
     sumParam (html, result, 'mms_left', /(?:Осталось|Остаток)(?: пакета)? (?:mms|ммс):\s*(\d+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     sumParam (html, result, 'mms_left', /(?:Осталось|Остаток)[^\d]*(\d+)\s*(?:mms|ммс)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-
     // Накоплено 54 мин. в текущем месяце
     sumParam (html, result, 'min_used', /Накоплено\s*(\d+)\s*мин[^\s]*/g, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-
     // Сумма по неоплаченным счетам: 786.02 руб. (оплатить до 24.03.2012)
     getParam (html, result, 'debt', /Сумма по неоплаченным счетам.*?([-\d\.,]+)/i, replaceTagsAndSpaces, parseBalance);
-
     // Сумма по неоплаченным счетам: 786.02 руб. (оплатить до 24.03.2012)
     getParam (html, result, 'pay_till', /оплатить до\s*([\d\.,\/]+)/i, replaceTagsAndSpaces, parseDate);
-
     // Остаток трафика
     getParam (html, result, 'traffic_left', /(?:Осталось|Остаток)[^\d]*(\d+[\.,]?\d* *([kmgкмг][бb]|байт|bytes))/i);
     //Подбаланс gprs: 49,26 Mb
     getParam (html, result, 'traffic_left', /Подбаланс gprs:[^\d]*(\d+[\.,]?\d*\s*([kmgкмг][бb]|байт|bytes))/i);
-//    AnyBalance.trace(html);
-// Остаток трафика
+	//    AnyBalance.trace(html);
+	// Остаток трафика
     sumParam (html, result, 'traffic_left_mb', /(?:Осталось|Остаток)[^\d]*(\d+[\.,]?\d* *([kmgкмг][бb]|байт|bytes))/ig, null, parseTraffic, aggregate_sum);
     //Подбаланс gprs: 49,26 Mb
     sumParam (html, result, 'traffic_left_mb', /Подбаланс gprs:[^\d]*(\d+[\.,]?\d*\s*([kmgкмг][бb]|байт|bytes))/ig, null, parseTraffic, aggregate_sum);
-
     // Лицевой счет
     getParam (html, result, 'license', /№([\s\S]*?)[:<]/, replaceTagsAndSpaces);
-
     // Блокировка
     getParam (html, result, 'statuslock', /class="account-status-lock".*>(Номер [^<]*)</i);
-
     // Сумма кредитного лимита
     getParam (html, result, 'credit', /(?:Лимит|Сумма кредитного лимита)[\s\S]*?([-\d\.,]+)\s*\(?руб/i, replaceTagsAndSpaces, parseBalance);
-
     // Расход за этот месяц
     getParam (html, result, 'usedinthismonth', /Израсходовано [^<]*?(?:<[^>]*>)?([\d\.,]+) \(?руб/i, replaceTagsAndSpaces, parseBalance);
-
     //Остаток бонуса 100 руб
     getParam (html, result, 'bonus_balance', /Остаток бонуса:?\s*([\d\.,]+)\s*р/i, replaceTagsAndSpaces, parseBalance);
 }
-
 
 function isLoggedIn(html){
     return getParam(html, null, null, /(<meta[^>]*name="lkMonitorCheck")/i);

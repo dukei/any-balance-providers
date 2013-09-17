@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-	<!--<change version="1" date="2013-07-21">
+    <!--<change version="2" date="2013-09-16">
+      Добавлен счетчик с номером договора
+    </change>-->
+    <!--<change version="1" date="2013-07-21">
       Первая версия
     </change>-->
 </history>

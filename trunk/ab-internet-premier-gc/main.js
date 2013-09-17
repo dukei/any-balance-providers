@@ -41,7 +41,7 @@ function main(){
     //getParam(html, result, 'tariff',  /Пакет услуг<\/td><td><b>(.*?)<\/b>/i,    replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'balance', /Баланс:<\/td>[^>]*><b>(.*?)<\/b>/i,      replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'status',  /Статус клиента:<\/td>[^>]*?>[^>]*?><FONT[^>]*>(.*?)<\/FONT>/i, replaceTagsAndSpaces, html_entity_decode);
-    //getParam(html, result, 'dogovor', /Договор:<\/td>[^>]*><b>(.*?)<\/b>/i,     replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'dogovor', /Договор:<\/td>[^>]*><b>(.*?)<\/b>/i,     replaceTagsAndSpaces, html_entity_decode);
     //getParam(html, result, 'id',      /ID Клиента:<\/td>[^>]*><b>(.*?)</i,  replaceTagsAndSpaces, parseBalance);
 
     //Возвращаем результат

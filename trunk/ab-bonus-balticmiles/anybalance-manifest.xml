@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1" version="4">ab-bonus-balticmiles</id>
+  <id major_version="1" version="5">ab-bonus-balticmiles</id>
   <api flags="no_browser" />
   <name>BalticMiles</name>
   <description>

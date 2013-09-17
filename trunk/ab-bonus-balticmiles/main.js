@@ -28,7 +28,7 @@ function main(){
     getParam(html, result, '__tariff', /class="userclass"[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'balance', /My Points:[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
 
-    if (isAvailable('card', 'statusbalance', 'explastupdated', 'expbalance1', 'expbalance2', 'expmonth1', 'expmonth2', 'expiration')){
+    if (isAvailable(['card', 'statusbalance', 'explastupdated', 'expbalance1', 'expbalance2', 'expmonth1', 'expmonth2', 'expiration'])){
     	AnyBalance.trace('GET: ' + baseurl + 'my-account/account-statement');
         html = AnyBalance.requestGet(baseurl + 'my-account/account-statement');
         getParam(html, result, 'statusbalance', /<span>([^<]*)<\/span>\s*Status Points/i, replaceTagsAndSpaces, parseBalance);

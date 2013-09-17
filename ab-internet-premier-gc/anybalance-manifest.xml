@@ -2,7 +2,7 @@
 <provider>
   <!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
   <api flags="no_browser" />
-  <id version="1">ab-internet-premier-gc</id>
+  <id version="2">ab-internet-premier-gc</id>
   <name>Премьер Группа Компаний</name>
   <description>
     Получает баланс и информацию о тарифном плане для интернет-провайдера Премьер-ГС (Московская область: г.Пушкино, Тарасовка, Черкизово, Правдинский)
@@ -21,6 +21,7 @@
     <counter id="balance" name="Баланс" units="р"/>
     <counter id="fio" name="ФИО" type="text"/>   
     <counter id="status"  name="Статус клиента" type="text"/>
+    <counter id="dogovor"  name="Договор" type="text"/>
   </counters>
   <keywords>
     premier-gc

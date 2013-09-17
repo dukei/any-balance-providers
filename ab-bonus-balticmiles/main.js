@@ -33,21 +33,19 @@ function main(){
         html = AnyBalance.requestGet(baseurl + 'my-account/account-statement');
         getParam(html, result, 'statusbalance', /<span>([^<]*)<\/span>\s*Status Points/i, replaceTagsAndSpaces, parseBalance);
         getParam(html, result, 'card', /Your BalticMiles card number:(?:[\s\S]*?<[^>]*>){3}([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
-        getParam(html, result, 'explastupdated', /Point expiry information last updated:(?:[\s\S]*?<[^>]*>){1}([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseDateISO, 'expiration');
+        getParam(html, result, ['explastupdated', 'expiration'], /Point expiry information last updated:(?:[\s\S]*?<[^>]*>){1}([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseDateISO, 'expiration');
         expired = html.match(/Will expire[\s\S]*?<span>\s*<span>\s*([^<>]*?)<\/span>\s*in\s([^<>]*?)\s*<\/span>\s*<span>\s*<span>\s*([^<>]*?)<\/span>\s*in\s([^<>]*?)\s*<\/span>/i);
-        if (expired != null && expired.length >= 5)
-        {
-        	getParam(expired[1], result, 'expbalance1', null, replaceTagsAndSpaces, parseBalance, 'expiration');
-        	getParam(expired[2], result, 'expmonth1', null, replaceTagsAndSpaces, html_entity_decode, 'expiration');
-        	getParam(expired[3], result, 'expbalance2', null, replaceTagsAndSpaces, parseBalance, 'expiration');
-        	getParam(expired[4], result, 'expmonth2', null, replaceTagsAndSpaces, html_entity_decode, 'expiration');
+        if (expired && expired.length >= 5) {
+        	getParam(expired[1], result, ['expbalance1', 'expiration'], null, replaceTagsAndSpaces, parseBalance);
+        	getParam(expired[2], result, ['expmonth1', 'expiration'], null, replaceTagsAndSpaces, html_entity_decode);
+        	getParam(expired[3], result, ['expbalance2', 'expiration'], null, replaceTagsAndSpaces, parseBalance);
+        	getParam(expired[4], result, ['expmonth2', 'expiration'], null, replaceTagsAndSpaces, html_entity_decode);
 			if (isAvailable('expiration')) {
             	var date = new Date(result['explastupdated']);
             	result['expiration'] = result['expbalance1'] + ' in ' + result['expmonth1'] + ', ' + result['expbalance2'] + ' in ' + result['expmonth2'] +
-                	', updated at: ' + date.getDate() + '/' + (date.getMonth()+1) + '/' + date.getFullYear();
+					', updated at: ' + date.getDate() + '/' + (date.getMonth()+1) + '/' + date.getFullYear();
         	}
         }
-    }
-	
+    }	
     AnyBalance.setResult(result);
 }

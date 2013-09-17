@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="5">ab-bonus-ulmart</id>
+  <id version="6">ab-bonus-ulmart</id>
   <api flags="no_browser" />
   <name>Ulmart</name>
   <description>
@@ -21,7 +21,7 @@
     <counter id="fio" name="ФИО" type="text"/>
     <counter id="price" name="Колонка цен"/>
 	<counter id="subaccounts" name="Кол-во участников"/>
-	<counter id="subaccountall" name="Сводка по участникам"/>
+	<counter id="subaccountall" name="Сводка по участникам" type="text"/>
   </counters>
   <keywords>
     xxl-bonus

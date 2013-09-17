@@ -35,7 +35,7 @@ function main(){
 	getParam(html, result, 'balance', /баланс[^>]*<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, ['currency', 'balance'], /баланс[^>]*<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseCurrency);
 	
-	if(isAvailable('till', 'all')) {
+	if(isAvailable(['till', 'all'])) {
 		html = AnyBalance.requestGet(baseurl + 'action.php?type=myPackages', g_headers);
 		var table = getParam(html, null, null, /<table(?:[^>]*>){4}Мои(?:&nbsp;| )пакеты[\s\S]*?<\/table>/i);
 		if(!table)

@@ -40,7 +40,7 @@ function main(){
 	getParam(html, result, 'acc_num', /Лицевой счет:(?:[\S\s]*?<td[^>]*>)([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'category', /Категория потребления:(?:[\S\s]*?<td[^>]*>)([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
 
-	if(isAvailable('balance', 'oplata', 'counter_last_val')){
+	if(isAvailable(['balance', 'oplata', 'counter_last_val'])){
 		html = AnyBalance.requestGet(baseurl + 'individual/receipt.php', g_headers);
 		getParam(html, result, 'balance', /Долг на(?:[\S\s]*?<td[^>]*>)([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, 'oplata', /текущем месяце(?:[\S\s]*?<td[^>]*>){2}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<api flags="no_browser" />
+	<id version="1">ab-seo-userator</id>
+	<name>Userator</name>
+	<description>
+	Получает данные для сайта http://userator.ru/
+	</description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units="р"/>
+	</counters>
+	<keywords></keywords>
+	<type>seo</type>
+	<country>ru</country>
+</provider>

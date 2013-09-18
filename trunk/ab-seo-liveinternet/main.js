@@ -31,7 +31,9 @@ function main(){
 
     var result = {success: true};
     getParam(html, result, 'views', /<label\s*for="id_[^>]*>Просмотры<\/label>(?:[\s\S]*?<[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'views_diff', /<label\s*for="id_[^>]*>Просмотры<\/label>(?:[\s\S]*?<[^>]*>){5}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'viewers', /<label for="id_[^>]*>Посетители<\/label>(?:[\s\S]*?<[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'viewers_diff', /<label for="id_[^>]*>Посетители<\/label>(?:[\s\S]*?<[^>]*>){5}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	result.__tariff = prefs.login;
 	
     AnyBalance.setResult(result);

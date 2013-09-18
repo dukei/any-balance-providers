@@ -43,15 +43,17 @@ function main(){
     }
 
     var result = {success: true};
-    getParam(html, result, 'fio', /Здравствуйте,([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, '__tariff', /Здравствуйте,([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'balance', /<a[^>]+accountBalance.page[^>]*>Баланс<(?:[\s\S]*?<\/td>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'fio', /Здравствуйте,([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, '__tariff', /Здравствуйте,([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'daysleft', /<span[^>]+daysLeft_text[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
 
     html = AnyBalance.requestGet(baseurl + 'REPSuite/accountBalance.page', g_headers);
     
     getParam(html, result, 'lastpay', /Последний платеж\s*:([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'credit', /Кредит\s*:([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	if(!result.balance)
+		getParam(html, result, 'balance', /Баланс \+ Пени\s*:([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 
     var table = getParam(html, null, null, /<table[^>]+class="body"[^>]*>(?:[\s\S](?!<\/table>))*?Кампания[\s\S]*?<\/table>/i);
     var tr;

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        key="login" 
+        title="Personnummer" 
+        summary="||{@s}" 
+        dialogTitle="Personnummer" 
+        dialogMessage="Enter personnummer. ÅÅMMDDXXXX"
+        positiveButtonText="Ok" 
+        negativeButtonText="Cancel">
+    </EditTextPreference>
+    <EditTextPreference 
+        key="password" 
+        inputType="textPassword"
+        title="Personlig kod"
+        summary="||***********"
+        dialogTitle="Personlig kod"
+        dialogMessage="Enter Personlig kod."
+        positiveButtonText="Ok"
+        negativeButtonText="Cancel">
+    </EditTextPreference>
+</PreferenceScreen>

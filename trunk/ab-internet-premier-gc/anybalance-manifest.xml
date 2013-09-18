@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
   <!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
-  <api flags="no_browser" />
+  <api flags="no_browser"/>
   <id version="2">ab-internet-premier-gc</id>
   <name>Премьер Группа Компаний</name>
   <description>
-    Получает баланс и информацию о тарифном плане для интернет-провайдера Премьер-ГС (Московская область: г.Пушкино, Тарасовка, Черкизово, Правдинский)
-	
-    Информация берется из личного кабинета http://www.premier-gc.ru/
+  Получает баланс и информацию о тарифном плане для интернет-провайдера Премьер-ГС (Московская область: г.Пушкино, Тарасовка, Черкизово, Правдинский)
+  
+  Информация берется из личного кабинета http://www.premier-gc.ru/
   </description>
   <author>Mikhail Fedotov &lt;anyremote@mail.ru&gt;</author>
   <files>

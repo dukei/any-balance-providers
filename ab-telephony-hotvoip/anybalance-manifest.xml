@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<api flags="no_browser" />
+	<id version="1">ab-telephony-hotvoip</id>
+	<name>Hotvoip.com</name>
+	<description>
+	Получает данные для провайдера IP-телефонии Hotvoip.com (http://www.hotvoip.com/)
+	
+	Личный кабинет находится по адресу: https://www.hotvoip.com/buy_credit2/
+	</description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" prefix="€"/>
+		<counter id="freedays" name="Бесплатные дни"/>
+		<counter id="notifications" name="Сообщения"/>
+		<counter id="autorecharge" name="Автопополнение" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>telephony</type>
+	<country>ru</country>
+</provider>

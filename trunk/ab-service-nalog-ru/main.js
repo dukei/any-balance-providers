@@ -42,7 +42,7 @@ function main(){
         var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error);
-        throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+        throw new AnyBalance.Error('Не удалось получить информацию. Сайт изменен?');
     }
 	var result = {success: true, balance:0, all:''};
 	
@@ -53,7 +53,7 @@ function main(){
 		var curr = json.regions[i];
 		
 		var sum = (curr.pds[0].sum ? curr.pds[0].sum : undefined);
-		result.all += curr.code+ ' '+curr.name+'\n'+ (sum ? curr.pds[0].ifnsName+': '+ curr.pds[0].taxName +'-'+  curr.pds[0].taxKind+ ': ' +sum  : 'Нет задоженности') + '\n\n';
+		result.all += curr.code+ ' '+curr.name+'\n'+ (sum ? curr.pds[0].ifnsName+': '+ curr.pds[0].taxName +'-'+  curr.pds[0].taxKind+ ': ' +sum  : 'Нет задолженности') + '\n\n';
 		
 		sumParam(sum, result, 'balance', /([\s\S]*)/i, null, parseBalance, aggregate_sum);
 	}

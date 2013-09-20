@@ -1,9 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-    <id major_version="3.0" version="13">ab-money-rs</id>
+    <id major_version="3.0" version="14">ab-money-rs</id>
     <api flags="no_browser"/>
     <name>Русский стандарт</name>
-    <description>Информация о карте, счете, депозите или кредите в банке "Русский стандарт".
+    <description>
+Информация о карте, счете, депозите или кредите в банке "Русский стандарт".
+
 В настройках провайдера требуется указать логин и пароль к Интернет-банку. Получить логин и пароль к Интернет-банку можно по следующему адресу: http://online.rsb.ru
 
 ВНИМАНИЕ! Для работы провайдера необходимо отключить СМС-подтверждение на вход в интернет банк. Это безопасно, для проведения операций СМС-подтверждение всё равно будет требоваться. Для отключения СМС-подтверждения на вход зайдите в интернет-банк через браузер, войдите в "Настройки", на вкладку "Безопасность", снимите галочку "Вход по одноразовому паролю".
@@ -18,9 +20,9 @@
         <history>history.xml</history>
     </files>
     <counters>
-	<counter id="credit_balance" name="Остаток по кредиту"/>
-	<counter id="payment_sum" name="Размер следующего платежа"/>
-	<counter id="writeoff_date" name="Дата списания платежа"  type="time" format="dd/MM/yyyy"/>
+		<counter id="credit_balance" name="Остаток по кредиту"/>
+		<counter id="payment_sum" name="Размер следующего платежа"/>
+		<counter id="writeoff_date" name="Дата списания платежа"  type="time" format="dd/MM/yyyy"/>
         <counter id="left" name="До списывания платежа осталось дней" type="text" units="дн"/>
         <counter id="account_balance" name="Остаток на счёте"/>
 		<counter id="account_blocked_balance" name="Заблокированная сумма"/>
@@ -35,13 +37,7 @@
         <counter id="status" name="Статус карты" type="text"/>
         <counter id="accname" name="Название" type="text"/>
     </counters>
-    <keywords>
-        Кредит, банк, Русский стандарт
-    </keywords>
-    <type>
-        money
-    </type>
-    <country>
-        ru
-    </country>
+    <keywords>Кредит, банк, Русский стандарт</keywords>
+    <type>money</type>
+    <country>ru</country>
 </provider>

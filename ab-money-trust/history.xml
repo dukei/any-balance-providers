@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-   <change version="5" date="2013-06-14">
-      обновлена иконка.
-   </change>
+<change version="6" date="2013-09-20">
+- Поддержка изменений в личном кабинете (Stark)
+</change>
+<change version="5" date="2013-06-14">
+- Обновлена иконка.
+</change>
 </history>

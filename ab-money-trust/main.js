@@ -44,8 +44,6 @@ function encryptPass(pass, map){
 var g_headers = {
     'Accept-Language': 'ru, en',
     BSSHTTPRequest:1,
-//    Referer: 'https://homebank.gazprombank.ru/v1/cgi/bsi.dll?T=RT_2Auth.BF&L=RUSSIAN&color=blue',
-//    Origin: 'https://homebank.gazprombank.ru',,
     'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.60 Safari/537.1'
 }
 
@@ -132,20 +130,43 @@ function fetchCard(jsonInfo, baseurl){
     }, g_headers);
 
     var cardnum = prefs.cardnum ? prefs.cardnum : '\\d{4}';
-    var re = new RegExp('(<li[^>]*>(?:[\\s\\S](?!<li))*\\d+\\s+\\d+\\*+\\s+\\*+\\s+' + cardnum + '[\\s\\S]*?</li>)', 'i');
+	// Не понятно что поменялось и везде ли, пока оставим
+    //var re = new RegExp('(<li[^>]*>(?:[\\s\\S](?!<li))*\\d+\\s+\\d+\\*+\\s+\\*+\\s+' + cardnum + '[\\s\\S]*?</li>)', 'i');
+	var re = new RegExp('(<TR[^>]*ID="TRIDR"(?:[\\s\\S](?!<TR))*\\d+\\s+\\d+\\*+\\s+\\*+\\s+' + cardnum + '[\\s\\S]*?</TR>)', 'i');
     var tr = getParam(html, null, null, re);
     if(!tr)
         throw new AnyBalance.Error('Не удаётся найти ' + (prefs.cardnum ? 'карту с последними цифрами ' + prefs.cardnum : 'ни одной карты'));
-
+	
     var result = {success: true};
-    getParam(tr, result, 'cardnum', /<div[^>]+class="number"[^>]*>(?:[\s\S](?!<\/div))*?<p[^>]+class="value"[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
+    /*getParam(tr, result, 'cardnum', /<div[^>]+class="number"[^>]*>(?:[\s\S](?!<\/div))*?<p[^>]+class="value"[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
     getParam(tr, result, 'type', /<div[^>]+class="type"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
     getParam(tr, result, '__tariff', /<div[^>]+class="type"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
     getParam(tr, result, 'status', /<p[^>]+class="status"[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
     getParam(tr, result, 'balance', /<span[^>]+class="amount"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
     getParam(tr, result, ['currency', 'balance'], /<span[^>]+class="currency"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
     getParam(tr, result, 'fio', /<div[^>]+class="holder"[^>]*>(?:[\s\S](?!<\/div))*?<p[^>]+class="value"[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
-    getParam(tr, result, 'till', /<div[^>]+class="expire"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseDate);
+    getParam(tr, result, 'till', /<div[^>]+class="expire"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseDate);*/
+	
+	getParam(tr, result, 'cardnum', /(?:[\s\S]*?<\s*TD[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces);
+    getParam(tr, result, 'type', /(?:[\s\S]*?<\s*TD[^>]*>){1}([^<]*)/i, replaceTagsAndSpaces);
+	result.__tariff = result.type;
+    getParam(tr, result, 'status', /(?:[\s\S]*?<\s*TD[^>]*>){6}([^<]*)/i, replaceTagsAndSpaces);
+    getParam(tr, result, 'balance', /(?:[\s\S]*?<\s*TD[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(tr, result, ['currency', 'balance'], /(?:[\s\S]*?<\s*TD[^>]*>){4}([^<]*)/i, replaceTagsAndSpaces);
+    getParam(tr, result, 'fio', /(?:[\s\S]*?<\s*TD[^>]*>){5}([^<]*)/i, replaceTagsAndSpaces);
+	// Получим дополнительную инфу по карте
+	if(isAvailable('till')){
+		html = AnyBalance.requestPost(baseurl, {
+			SID:jsonInfo.SID,
+			tic:1,
+			T:'RT_2IC.view',
+			nvgt:1,
+			SCHEMENAME:'CARDS',
+			IDR:getParam(tr, null, null, /<\s*TR[^>]*SIDR="([^"]*)/i),
+			FORMACTION:'VIEW'
+		}, g_headers);
+		getParam(tr, result, 'till', /Срок действия(?:[\s\S]*?<\s*TD[^>]*>){1}([^<]*)/i, replaceTagsAndSpaces, parseDate);
+	}
 
     AnyBalance.setResult(result);
 }

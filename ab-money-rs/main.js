@@ -6,6 +6,8 @@
 Сайт: https://online.rsb.ru/
 */
 
+var replaceTagsAndSpacesAndBalances = [replaceTagsAndSpaces, /,\s*(\d)(?!\d)/i, ',0$1'];
+
 function main() {
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
@@ -52,8 +54,8 @@ function fetchCard(baseurl, json){
             var result = {success: true};
 
             getParam(acc.currency, result, ['currency','account_balance','own','gracepay']);
-            getParam(acc.available, result, 'account_balance', null, replaceTagsAndSpaces, parseBalance);
-            getParam(acc.own, result, 'own', null, replaceTagsAndSpaces, parseBalance);
+            getParam(acc.available, result, 'account_balance', null, replaceTagsAndSpacesAndBalances, parseBalance);
+            getParam(acc.own, result, 'own', null, replaceTagsAndSpacesAndBalances, parseBalance);
             getParam(card.title, result, '__tariff');
             getParam(card.num4, result, 'cardnum');
             getParam(acc.name, result, 'accname');
@@ -73,7 +75,7 @@ function fetchCard(baseurl, json){
                 //Договор
                 getParam(html, result, 'contract', />&#1044;&#1086;&#1075;&#1086;&#1074;&#1086;&#1088;<[\s\S]*?<td[^>]*>(?:&#8470; )?([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
                 //Сумма для реализации Льготного периода -
-                getParam(html, result, 'gracepay', /&#1057;&#1091;&#1084;&#1084;&#1072; &#1076;&#1083;&#1103; &#1088;&#1077;&#1072;&#1083;&#1080;&#1079;&#1072;&#1094;&#1080;&#1080; &#1083;&#1100;&#1075;&#1086;&#1090;&#1085;&#1086;&#1075;&#1086; &#1087;&#1077;&#1088;&#1080;&#1086;&#1076;&#1072;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+                getParam(html, result, 'gracepay', /&#1057;&#1091;&#1084;&#1084;&#1072; &#1076;&#1083;&#1103; &#1088;&#1077;&#1072;&#1083;&#1080;&#1079;&#1072;&#1094;&#1080;&#1080; &#1083;&#1100;&#1075;&#1086;&#1090;&#1085;&#1086;&#1075;&#1086; &#1087;&#1077;&#1088;&#1080;&#1086;&#1076;&#1072;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpacesAndBalances, parseBalance);
                 //Дата окончания Льготного периода -
                 getParam(html, result, 'gracetill', /&#1044;&#1072;&#1090;&#1072; &#1086;&#1082;&#1086;&#1085;&#1095;&#1072;&#1085;&#1080;&#1103; &#1083;&#1100;&#1075;&#1086;&#1090;&#1085;&#1086;&#1075;&#1086; &#1087;&#1077;&#1088;&#1080;&#1086;&#1076;&#1072;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
 
@@ -113,7 +115,7 @@ function fetchAccount(baseurl){
     
     var result = {success: true};
     getParam(tr, result, 'currency', /<p[^>]+class="money"[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseCurrency);
-    getParam(tr, result, 'account_balance', /<p[^>]+class="money"[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(tr, result, 'account_balance', /<p[^>]+class="money"[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpacesAndBalances, parseBalance);
     //Статус
     getParam(tr, result, 'status', /&#1057;&#1086;&#1089;&#1090;&#1086;&#1103;&#1085;&#1080;&#1077;\s*-([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(tr, result, 'cardnum', /(\d{20})/, replaceTagsAndSpaces, html_entity_decode);
@@ -168,7 +170,7 @@ function fetchDeposit(baseurl){
     
     var result = {success: true};
     getParam(tr, result, 'currency', /<[^>]*class="b-summ"[^>]*><h4>([\s\S]*?)<\/h4>/i, replaceTagsAndSpaces, parseCurrency);
-    getParam(tr, result, 'account_balance', /<[^>]*class="b-summ"[^>]*><h4>([\s\S]*?)<\/h4>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(tr, result, 'account_balance', /<[^>]*class="b-summ"[^>]*><h4>([\s\S]*?)<\/h4>/i, replaceTagsAndSpacesAndBalances, parseBalance);
     //Дата заключения договора банковского вклада
     getParam(tr, result, 'contract_date', /&#1044;&#1072;&#1090;&#1072; &#1079;&#1072;&#1082;&#1083;&#1102;&#1095;&#1077;&#1085;&#1080;&#1103; &#1076;&#1086;&#1075;&#1086;&#1074;&#1086;&#1088;&#1072; &#1073;&#1072;&#1085;&#1082;&#1086;&#1074;&#1089;&#1082;&#1086;&#1075;&#1086; &#1074;&#1082;&#1083;&#1072;&#1076;&#1072;\s*-([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseDate);
     //Статус
@@ -190,7 +192,7 @@ function fetchDeposit2(baseurl, json){
         if(dep.type == 'deposit'){
             var result = {success: true};
 
-            /*getParam(dep.loan.amount, result, 'credit_sum', null, replaceTagsAndSpaces, parseBalance);
+            /*getParam(dep.loan.amount, result, 'credit_sum', null, replaceTagsAndSpacesAndBalances, parseBalance);
 
             var url = getParam(card.link, null, null, /\/hb\/faces\/(.*)/);
             var html = AnyBalance.requestGet(baseurl + url); //Сразу получаем страницу деталей.
@@ -208,27 +210,27 @@ function fetchDeposit2(baseurl, json){
                     throw new AnyBalance.Error('Не удаётся найти кредит с номером ' + prefs.contract);
 
                 //Сумма кредита
-                getParam(tr, result, 'credit_sum', /<p>Сумма кредита\s*-([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseBalance);
+                getParam(tr, result, 'credit_sum', /<p>Сумма кредита\s*-([\s\S]*?)<\/p>/i, replaceTagsAndSpacesAndBalances, parseBalance);
 
                 //Переходим по ссылке Информация по кредиту
                 html = followLink(baseurl, html, '&#1048;&#1085;&#1092;&#1086;&#1088;&#1084;&#1072;&#1094;&#1080;&#1103; &#1087;&#1086; &#1082;&#1088;&#1077;&#1076;&#1080;&#1090;&#1091;', tr);
             }
 
             //Остаток задолженности
-            getParam(html, result, 'credit_balance', /&#1054;&#1089;&#1090;&#1072;&#1090;&#1086;&#1082; &#1079;&#1072;&#1076;&#1086;&#1083;&#1078;&#1077;&#1085;&#1085;&#1086;&#1089;&#1090;&#1080;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+            getParam(html, result, 'credit_balance', /&#1054;&#1089;&#1090;&#1072;&#1090;&#1086;&#1082; &#1079;&#1072;&#1076;&#1086;&#1083;&#1078;&#1077;&#1085;&#1085;&#1086;&#1089;&#1090;&#1080;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpacesAndBalances, parseBalance);
             getParam(html, result, ['currency', 'credit_sum', 'account_balance', 'payment_sum'], /&#1054;&#1089;&#1090;&#1072;&#1090;&#1086;&#1082; &#1079;&#1072;&#1076;&#1086;&#1083;&#1078;&#1077;&#1085;&#1085;&#1086;&#1089;&#1090;&#1080;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseCurrency);
             //Остаток на счете
-            getParam(html, result, 'account_balance', /&#1054;&#1089;&#1090;&#1072;&#1090;&#1086;&#1082; &#1085;&#1072; &#1089;&#1095;&#1105;&#1090;&#1077;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+            getParam(html, result, 'account_balance', /&#1054;&#1089;&#1090;&#1072;&#1090;&#1086;&#1082; &#1085;&#1072; &#1089;&#1095;&#1105;&#1090;&#1077;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpacesAndBalances, parseBalance);
             //Номер кредита
             getParam(html, result, 'contract', /&#1053;&#1086;&#1084;&#1077;&#1088; &#1082;&#1088;&#1077;&#1076;&#1080;&#1090;&#1072;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
             //Дата заключения договора
             getParam(html, result, 'contract_date', /&#1044;&#1072;&#1090;&#1072; &#1079;&#1072;&#1082;&#1083;&#1102;&#1095;&#1077;&#1085;&#1080;&#1103; &#1076;&#1086;&#1075;&#1086;&#1074;&#1086;&#1088;&#1072;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
             //Следующий платеж
-            getParam(html, result, 'payment_sum', /&#1057;&#1083;&#1077;&#1076;&#1091;&#1102;&#1097;&#1080;&#1081; &#1087;&#1083;&#1072;&#1090;&#1077;&#1078;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+            getParam(html, result, 'payment_sum', /&#1057;&#1083;&#1077;&#1076;&#1091;&#1102;&#1097;&#1080;&#1081; &#1087;&#1083;&#1072;&#1090;&#1077;&#1078;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpacesAndBalances, parseBalance);
             //Оплатить до
             getParam(html, result, 'writeoff_date', /&#1054;&#1087;&#1083;&#1072;&#1090;&#1080;&#1090;&#1100; &#1076;&#1086;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
             //До списывания платежа осталось
-            getParam(html, result, 'left', /&#1044;&#1086; &#1089;&#1087;&#1080;&#1089;&#1099;&#1074;&#1072;&#1085;&#1080;&#1103; &#1087;&#1083;&#1072;&#1090;&#1077;&#1078;&#1072;\s*(?:<[^>]*>\s*)*&#1086;&#1089;&#1090;&#1072;&#1083;&#1086;&#1089;&#1100;\s*(\d+)\s*&#1076;&#1085;/i, replaceTagsAndSpaces, parseBalance);
+            getParam(html, result, 'left', /&#1044;&#1086; &#1089;&#1087;&#1080;&#1089;&#1099;&#1074;&#1072;&#1085;&#1080;&#1103; &#1087;&#1083;&#1072;&#1090;&#1077;&#1078;&#1072;\s*(?:<[^>]*>\s*)*&#1086;&#1089;&#1090;&#1072;&#1083;&#1086;&#1089;&#1100;\s*(\d+)\s*&#1076;&#1085;/i, replaceTagsAndSpacesAndBalances, parseBalance);
             //Название продукта
             getParam(html, result, 'accname', /<div[^>]+class="b-product-item">([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces, html_entity_decode);
             getParam(html, result, '__tariff', /<div[^>]+class="b-product-item">([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces, html_entity_decode);*/
@@ -269,7 +271,7 @@ function fetchCredit(baseurl, json){
         if(card.type == 'loan'){
             var result = {success: true};
 
-            getParam(card.loan.amount, result, 'credit_sum', null, replaceTagsAndSpaces, parseBalance);
+            getParam(card.loan.amount, result, 'credit_sum', null, replaceTagsAndSpacesAndBalances, parseBalance);
 
             var url = getParam(card.link, null, null, /\/hb\/faces\/(.*)/);
             var html = AnyBalance.requestGet(baseurl + url); //Сразу получаем страницу деталей.
@@ -287,27 +289,27 @@ function fetchCredit(baseurl, json){
                     throw new AnyBalance.Error('Не удаётся найти кредит с номером ' + prefs.contract);
 
                 //Сумма кредита
-                getParam(tr, result, 'credit_sum', /<p>Сумма кредита\s*-([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseBalance);
+                getParam(tr, result, 'credit_sum', /<p>Сумма кредита\s*-([\s\S]*?)<\/p>/i, replaceTagsAndSpacesAndBalances, parseBalance);
 
                 //Переходим по ссылке Информация по кредиту
                 html = followLink(baseurl, html, '&#1048;&#1085;&#1092;&#1086;&#1088;&#1084;&#1072;&#1094;&#1080;&#1103; &#1087;&#1086; &#1082;&#1088;&#1077;&#1076;&#1080;&#1090;&#1091;', tr);
             }
 
             //Остаток задолженности
-            getParam(html, result, 'credit_balance', /&#1054;&#1089;&#1090;&#1072;&#1090;&#1086;&#1082; &#1079;&#1072;&#1076;&#1086;&#1083;&#1078;&#1077;&#1085;&#1085;&#1086;&#1089;&#1090;&#1080;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, [replaceTagsAndSpaces, /,\s*(\d)(?!\d)/i, ',0$1'], parseBalance);
+            getParam(html, result, 'credit_balance', /&#1054;&#1089;&#1090;&#1072;&#1090;&#1086;&#1082; &#1079;&#1072;&#1076;&#1086;&#1083;&#1078;&#1077;&#1085;&#1085;&#1086;&#1089;&#1090;&#1080;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpacesAndBalances, parseBalance);
             getParam(html, result, ['currency', 'credit_sum', 'account_balance', 'payment_sum'], /&#1054;&#1089;&#1090;&#1072;&#1090;&#1086;&#1082; &#1079;&#1072;&#1076;&#1086;&#1083;&#1078;&#1077;&#1085;&#1085;&#1086;&#1089;&#1090;&#1080;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseCurrency);
             //Остаток на счете
-            getParam(html, result, 'account_balance', /&#1054;&#1089;&#1090;&#1072;&#1090;&#1086;&#1082; &#1085;&#1072; &#1089;&#1095;&#1105;&#1090;&#1077;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+            getParam(html, result, 'account_balance', /&#1054;&#1089;&#1090;&#1072;&#1090;&#1086;&#1082; &#1085;&#1072; &#1089;&#1095;&#1105;&#1090;&#1077;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpacesAndBalances, parseBalance);
             //Номер кредита
             getParam(html, result, 'contract', /&#1053;&#1086;&#1084;&#1077;&#1088; &#1082;&#1088;&#1077;&#1076;&#1080;&#1090;&#1072;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
             //Дата заключения договора
             getParam(html, result, 'contract_date', /&#1044;&#1072;&#1090;&#1072; &#1079;&#1072;&#1082;&#1083;&#1102;&#1095;&#1077;&#1085;&#1080;&#1103; &#1076;&#1086;&#1075;&#1086;&#1074;&#1086;&#1088;&#1072;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
             //Следующий платеж
-            getParam(html, result, 'payment_sum', /&#1057;&#1083;&#1077;&#1076;&#1091;&#1102;&#1097;&#1080;&#1081; &#1087;&#1083;&#1072;&#1090;&#1077;&#1078;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+            getParam(html, result, 'payment_sum', /&#1057;&#1083;&#1077;&#1076;&#1091;&#1102;&#1097;&#1080;&#1081; &#1087;&#1083;&#1072;&#1090;&#1077;&#1078;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpacesAndBalances, parseBalance);
             //Оплатить до
             getParam(html, result, 'writeoff_date', /&#1054;&#1087;&#1083;&#1072;&#1090;&#1080;&#1090;&#1100; &#1076;&#1086;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
             //До списывания платежа осталось
-            getParam(html, result, 'left', /&#1044;&#1086; &#1089;&#1087;&#1080;&#1089;&#1099;&#1074;&#1072;&#1085;&#1080;&#1103; &#1087;&#1083;&#1072;&#1090;&#1077;&#1078;&#1072;\s*(?:<[^>]*>\s*)*&#1086;&#1089;&#1090;&#1072;&#1083;&#1086;&#1089;&#1100;\s*(\d+)\s*&#1076;&#1085;/i, replaceTagsAndSpaces, parseBalance);
+            getParam(html, result, 'left', /&#1044;&#1086; &#1089;&#1087;&#1080;&#1089;&#1099;&#1074;&#1072;&#1085;&#1080;&#1103; &#1087;&#1083;&#1072;&#1090;&#1077;&#1078;&#1072;\s*(?:<[^>]*>\s*)*&#1086;&#1089;&#1090;&#1072;&#1083;&#1086;&#1089;&#1100;\s*(\d+)\s*&#1076;&#1085;/i, replaceTagsAndSpacesAndBalances, parseBalance);
             //Название продукта
             getParam(html, result, 'accname', /<div[^>]+class="b-product-item">([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces, html_entity_decode);
             getParam(html, result, '__tariff', /<div[^>]+class="b-product-item">([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces, html_entity_decode);

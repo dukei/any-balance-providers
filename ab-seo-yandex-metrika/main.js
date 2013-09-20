@@ -13,7 +13,7 @@ var g_headers = {
 function main(){
     var prefs = AnyBalance.getPreferences();
 	
-    var baseurl = 'http://metrika.yandex.ru/';
+    var baseurl = 'https://metrika.yandex.ru/';
     AnyBalance.setDefaultCharset('utf-8'); 
 
     var html = AnyBalance.requestGet(baseurl + 'stat/?counter_id=' +prefs.login, g_headers);

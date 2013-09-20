@@ -1,33 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="2" version="15">ab-telephony-skype</id>
-  <api flags="no_browser" />
-  <name>Skype</name>
-  <description>
-    Получает текущий баланс, валюту баланса в Skype (https://skype.com).
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-	<js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс"/>
-    <counter id="currency" name="Валюта" type="text"/>
-    <counter id="inactivein" name="Деактивация средств через" units="дней"/>
-    <counter id="subscriptions" name="Число подписок"/>
-    <counter id="minsLeft" name="Остаток минут" units="мин"/>
-    <counter id="landline" name="Звонки за последние 30 дней" units="мин"/>
-    <counter id="sms" name="SMS за последние 30 дней"/>
-    <counter id="wifi" name="Skype WiFi за последние 30 дней" units="мин"/>
-  </counters>
-  <keywords>
-    Скайп IP-телефония
-  </keywords>
-  <type>
-    telephony
-  </type>
+	<id major_version="2" version="16">ab-telephony-skype</id>
+	<api flags="no_browser" />
+	<name>Skype</name>
+	<description>
+Получает текущий баланс, валюту баланса в Skype (https://skype.com).
+	</description>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units="{@currency}"/>
+		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="inactivein" name="Деактивация средств через" units="дней"/>
+		<counter id="subscriptions" name="Число подписок"/>
+		<counter id="minsLeft" name="Остаток минут" units="мин"/>
+		<counter id="landline" name="Звонки за последние 30 дней" units="мин"/>
+		<counter id="sms" name="SMS за последние 30 дней"/>
+		<counter id="wifi" name="Skype WiFi за последние 30 дней" units="мин"/>
+	</counters>
+	<keywords>Скайп, IP-телефония</keywords>
+	<type>telephony</type>
 </provider>

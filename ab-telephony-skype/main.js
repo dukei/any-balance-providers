@@ -4,9 +4,6 @@
 Skype IP-телефония
 Сайт оператора: http://www.skype.com/
 Личный кабинет: https://www.skype.com/
-
-Не отлаживается в AnyBalanceDebugger из-за бага в webkit: 
-http://code.google.com/p/chromium/issues/detail?id=96136
 */
 function main(){
     var prefs = AnyBalance.getPreferences();
@@ -36,22 +33,16 @@ function main(){
     }
 
     if(!/secure\.skype\.com\/account\/logout/i.test(info)){
-        var error = getParam(info, null, null, /<div class="messageBody[^>]*>([\s\S]*?)<\/div>/i, [/<.*?>/g, '', /^\s*|\s*$/g, '']);
+        var error = getParam(info, null, null, /class="messageBody[^>]*>([\s\S]*?)<\/div>/i, [/<.*?>/g, '', /^\s*|\s*$/g, '']);
         if(error)
             throw new AnyBalance.Error(error);
         throw new AnyBalance.Error("Не удается зайти в личный кабинет. Сайт изменен?");
     }
-    var result = {success: true};
-    var matches;
+    var result = {success: true, subscriptions:0};
 
-	getParam(info, result, 'balance', /class="credit[\s\S]*?semibold">([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(info, result, 'currency', /class="credit[\s\S]{1,50}icon[\s\S]*?class="first">([\s\S]*?)<\//i, replaceTagsAndSpaces, parseCurrency);
-    
-    if(AnyBalance.isAvailable('subscriptions')){
-		getParam(info, result, 'subscriptions', /class="subscriptions\s*icon[\s\S]*?screenReaderAcc">([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-		
-        if(!result.subscriptions) result.subscriptions = 0;
-    }
+	getParam(info, result, 'balance', /class="credit(?:[\s\S]*?<span[^>]*>){3}([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(info, result, ['currency', 'balance'], /class="credit(?:[\s\S]*?<span[^>]*>){3}([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseCurrencyMy);
+	getParam(info, result, 'subscriptions', /asideSkypeSubscription[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);    
     sumParam(info, result, 'minsLeft', /<span[^>]+class="(?:minsLeft|link)"[^>]*>([\s\S]*?)<\/span>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     getParam(info, result, 'landline', /<li[^>]+class="landline"[^>]*>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance);
     getParam(info, result, 'sms', /<li[^>]+class="sms"[^>]*>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance);
@@ -70,4 +61,19 @@ function main(){
         }
     }
 	AnyBalance.setResult(result);
+}
+
+function parseCurrencyMy(text){
+	var match = /(\S*?)\s*-?\d[\d.,]*\s*(\S*)/i.exec(text);
+	if(match){
+		var first = match[1];
+		var second = match[2];
+	}else {
+		AnyBalance.trace('Couldn`t parse currency from: ' + text);
+		return text;
+	}
+	
+	var val = getParam(first ? first : second, null, null, null, replaceTagsAndSpaces);
+    AnyBalance.trace('Parsing currency (' + val + ') from: ' + text);
+    return val;
 }

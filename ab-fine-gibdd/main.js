@@ -18,6 +18,18 @@ function main(){
 	var html = AnyBalance.requestGet(baseurl + 'check/fines/');
 
 	var form = getParam(html, null, null, /(<form method="POST" id="tsdataform"[\s\S]*?<\/form>)/i);
+	if(!form){
+		// Попробуем объяснить почему
+		if(/Работа сервиса проверки[^<]*временно приостановлена/i.test(html))
+			throw new AnyBalance.Error('Работа сервиса временно приостановлена! Попробуйте зайти позже');
+		throw new AnyBalance.Error('Не удалось найти форму для запроса!');
+	}
+
+	if(!prefs.login)
+		throw new AnyBalance.Error('Введите гос. номер!');
+	if(!prefs.password)
+		throw new AnyBalance.Error('Введите номер свидетельства о регистрации!');		
+	
     var params = createFormParams(form);
 
 	if(params.captcha_code){

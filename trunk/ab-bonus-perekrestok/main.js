@@ -7,7 +7,61 @@
 Личный кабинет: https://prcab.x5club.ru/cwa/
 */
 
+var g_baseurls = {
+    ordinary: 'https://prcab.x5club.ru/cwa/',
+    vip: 'https://prcab.x5club.ru/green/'
+}
 
+function main () {
+    var prefs = AnyBalance.getPreferences ();
+    var baseurl = g_baseurls[prefs.type] || g_baseurls.ordinary;;
+
+	if(!prefs.login)
+		throw new AnyBalance.Error ('Введите номер карты.');
+	if(!prefs.password)
+		throw new AnyBalance.Error ('Введите пароль.');
+		
+    AnyBalance.trace('Входим в кабинет ' + baseurl);
+    //submitLogin (prefs);
+	
+    var html = AnyBalance.requestGet (baseurl + 'anonymousLogin.do');
+	
+    html = AnyBalance.requestPost (baseurl + 'login.do', {
+        'job':        'LOGIN',
+        'parameter':  formatDate (new Date ()),
+        'pricePlan':  '',
+        'login':      prefs.login,
+        'password':   prefs.password
+    });
+	
+    if(!/logout\.do\?menuId=TML/i.test(html)){
+        var error = getParam(html, null, null, /class="errorBoldText"[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+        if(error)
+            throw new AnyBalance.Error(error);
+        throw new AnyBalance.Error('Неизвестная ошибка. Пожалуйста, свяжитесь с автором провайдера.');
+    }
+	
+    var result = {success: true};
+	getParam(html, result, '__tariff', /Номер карты:[^\d]*(\d+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'balance', /Баланс:[^\d]*(\d*)/i, replaceTagsAndSpaces, parseBalance);
+	
+	if (AnyBalance.isAvailable('customer')) {
+        html = AnyBalance.requestGet (baseurl + 'accountDetails.do');
+        getParam (html, result, 'customer', /(Имя[\s\S]*?<td>([^<]*)[\s\S]*Фамилия[\s\S]*?<td>([^<]*))/i, [/Имя[\s\S]*?<td>(.)[^<]*[\s\S]*Фамилия[\s\S]*?<td>([^<]+)/, '$2 $1.']);
+    }
+    if (AnyBalance.isAvailable('burnInThisMonth')) {
+        html = AnyBalance.requestGet (baseurl + 'balanceStructure.do');
+		var table = getParam(html, null, null, /<table[^>]*id=[^>]*class="results"[\s\S]*?<\/table>/i);
+		if(table){
+			getParam(html, result, 'burnInThisMonth', /Кол-во баллов,\s*подлежащих списанию(?:[\s\S]*?<td[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+		}else{
+			AnyBalance.trace ('Не найдено аннулированных баллов');
+		}
+    }
+    AnyBalance.setResult (result);
+}
+
+// Не совсем понятно, для чего это, можно же просто логин передавать, не?
 function submitLogin (prefs) {
     var login
     login = "";
@@ -17,14 +71,13 @@ function submitLogin (prefs) {
             login += prefs.login.charAt (i);
         } 
     }
-
     prefs.login = login;
-    prefs.password = calcSHA1 (login + prefs.password);
+	// Вроде они теперь передают пароль напрямую, оставим на всякий
+    //prefs.password = calcSHA1 (login + prefs.password);
 }
 
-
 function formatDate (date) {
-    var day = date.getDate ();
+    var day = date.getDate();
     if (day < 10)
         day = '0' + day;
 
@@ -41,95 +94,4 @@ function formatDate (date) {
         minutes = '0' + minutes;
 
     return date.getFullYear () + '-' + month + '-' + day + ' ' + hours + ':' + minutes;
-}
-
-var g_baseurls = {
-    ordinary: 'https://prcab.x5club.ru/cwa/',
-    vip: 'https://prcab.x5club.ru/green/'
-}
-
-function main () {
-    var prefs = AnyBalance.getPreferences ();
-    var baseurl = g_baseurls[prefs.type] || g_baseurls.ordinary;;
-
-    checkEmpty (prefs.login, 'Введите номер карты');
-    checkEmpty (prefs.password, 'Введите пароль');
-
-    AnyBalance.trace("Входим в кабинет " + baseurl);
-
-    submitLogin (prefs);
-
-    AnyBalance.trace ('Trying to enter selfcare at address: ' + baseurl);
-
-    var d = new Date ();
-    var html = AnyBalance.requestGet (baseurl + 'anonymousLogin.do');
-
-    var html = AnyBalance.requestPost (baseurl + 'login.do', {
-        'job':        'LOGIN',
-        'parameter':  formatDate (d),
-        'pricePlan':  '',
-        'login':      prefs.login,
-        'pass':       '',
-        'password':   prefs.password
-    });
-
-    // Проверка неправильной пары логин/пароль
-    var regexp=/class="errorBoldText"[^>]*>([^<]*)/;
-    var res = regexp.exec (html);
-    if (res)
-        throw new AnyBalance.Error (res[1]);
-
-    // Проверка на корректный вход
-    regexp = /logout.do\?menuId=TML/;
-    if (regexp.exec(html))
-    	AnyBalance.trace ('It looks like we are in selfcare...');
-    else {
-        AnyBalance.trace ('Have not found logOff... Unknown error. Please contact author.');
-        throw new AnyBalance.Error ('Неизвестная ошибка. Пожалуйста, свяжитесь с автором скрипта.');
-    }
-
-    var result = {success: true};
-
-    // Баланс
-    getParam (html, result, 'balance', /Баланс:[^\d]*(\d*)/i, [], parseInt);
-
-    if (AnyBalance.isAvailable ('customer')) {
-
-        AnyBalance.trace ('Fetching account details...');
-
-        html = AnyBalance.requestGet (baseurl + 'accountDetails.do');
-
-        AnyBalance.trace ('Parsing account details...');
-
-        // Владелец
-        getParam (html, result, 'customer', /(Имя[\s\S]*?<td>([^<]*)[\s\S]*Фамилия[\s\S]*?<td>([^<]*))/i, [/Имя[\s\S]*?<td>(.)[^<]*[\s\S]*Фамилия[\s\S]*?<td>([^<]+)/, '$2 $1.']);
-    }
-
-
-    if (AnyBalance.isAvailable ('burnInThisMonth')) {
-
-        AnyBalance.trace ('Fetching balance structure...');
-
-        html = AnyBalance.requestGet (baseurl + 'balanceStructure.do');
-
-        AnyBalance.trace ('Parsing balance structure...');
-    
-        matches = /<table[^>]*id=[^>]*class="results"[\s\S]*?<\/table>/.exec (html);
-        if (!matches) {
-            if (html.indexOf ('Не найдено аннулированных баллов') > 0) {
-			    // Ничего не делаем. Есть подозрение, что это сбой на сервере
-			} else {
-                throw new AnyBalance.Error ('Невозможно найти информацию об аккаунте, свяжитесь с автором');
-            }
-        } else {
-
-            var $table = $(matches[0]);
-
-            // Сгорает в этом месяце
-            getParamFind (result, 'burnInThisMonth', $table, 'tr:nth-child(2) td:nth-child(2)', undefined, [], parseInt);
-        }
-    }
-
-
-    AnyBalance.setResult (result);
 }

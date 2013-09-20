@@ -1,15 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-    <change major_version="1.0" version="5" date="2013-04-10">
-      - Перекресток разделил карты «Особое отношение» и обычную. Теперь в настройках можно указать тип карты
-    </change>
-    <change major_version="1.0" version="4" date="2012-07-09">
-      - Слегка подправлена процедура входа, не всегда срабатывала
-    </change>
-    <change major_version="1.0" version="3" date="2012-07-09">
-      - Добавлена история версий.
-    </change>
-    <change major_version="1.0" version="2" date="2012-03-12">
-      - Исправлено получение информации о сгорающих баллах и о владельце.
-    </change>
+<change major_version="1.0" version="6" date="2013-09-20">
+- Избавление от jquery
+- Исправлена процедура входа
+(Stark)
+</change>
+<change major_version="1.0" version="5" date="2013-04-10">
+- Перекресток разделил карты «Особое отношение» и обычную. Теперь в настройках можно указать тип карты
+</change>
+<change major_version="1.0" version="4" date="2012-07-09">
+- Слегка подправлена процедура входа, не всегда срабатывала
+</change>
+<change major_version="1.0" version="3" date="2012-07-09">
+- Добавлена история версий.
+</change>
+<change major_version="1.0" version="2" date="2012-03-12">
+- Исправлено получение информации о сгорающих баллах и о владельце.
+</change>
 </history>

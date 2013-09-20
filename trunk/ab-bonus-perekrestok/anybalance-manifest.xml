@@ -1,32 +1,25 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="5">ab-bonus-perekrestok</id>
-  <name>Перекресток</name>
-  <description>
-    Получает информацию о бонусах на карте Клуба Перекресток ( http://x5club.ru/about/ ) из личного кабинета https://prcab.x5club.ru .
-  </description>
-  <author>iReset &lt;ireset.ag@gmail.com&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>api:jquery.min.js</js>
-    <js>main.js</js>
-    <js>keys.js</js>
-    <js>common_functions.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="б"/>
-    <counter id="burnInThisMonth" name="Сгорает в этом месяце" units="б"/>
-    <counter id="customer" name="Владелец" type="text"/>
-  </counters>
-  <keywords>
-    клуб, перекресток, накопительная программа, накопительная карта, бонус, бонусная карта, продукты, покупки, баллы
-  </keywords>
-  <type>
-    bonus
-  </type>
-  <country>
-    ru
-  </country>
+	<id major_version="1.0" version="6">ab-bonus-perekrestok</id>
+	<api flags="no_browser"/>
+	<name>Перекресток</name>
+	<description>
+	Получает информацию о бонусах на карте Клуба Перекресток (http://x5club.ru/about/) из личного кабинета https://prcab.x5club.ru.
+	</description>
+	<author>iReset &lt;ireset.ag@gmail.com&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units="б"/>
+		<counter id="burnInThisMonth" name="Сгорает в этом месяце" units="б"/>
+		<counter id="customer" name="Владелец" type="text"/>
+	</counters>
+	<keywords>клуб, перекресток, накопительная программа, накопительная карта, бонус, бонусная карта, продукты, покупки, баллы</keywords>
+	<type>bonus</type>
+	<country>ru</country>
 </provider>

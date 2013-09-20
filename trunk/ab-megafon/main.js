@@ -318,7 +318,7 @@ function megafonTrayInfo(filial){
     
     var result = {success: true};
     try{
-        var xml = getTrayXmlText(filial, filinfo.site), val;
+        var xml = getTrayXmlText(filial, filinfo.tray || filinfo.site), val;
         getParam(xml, result, '__tariff', /<RATE_PLAN>([\s\S]*?)<\/RATE_PLAN>/i, replaceTagsAndSpaces, html_entity_decode);
 
         getParam(xml, result, 'balance', /<BALANCE>([\s\S]*?)<\/BALANCE>/i, replaceTagsAndSpaces, parseBalance);
@@ -487,7 +487,10 @@ function megafonTrayInfo(filial){
                throw e;
            if(!errorInTray){
                AnyBalance.trace('Не удалось получить доп. счетчики из Яндекс.виджета: ' + e.message);
-           }else{
+           }else{ 
+               var matches;
+               if(e.message && (matches = e.message.match(/login:(\d+).*wrong_cnt:(\d+)/i)))
+                   throw new AnyBalance.Error('Неправильный номер телефона или пароль. Неудачных входов подряд: ' + matches[2]);
                throw new AnyBalance.Error(errorInTray + '. Яндекс.Виджет: ' + e.message);
            }
         }

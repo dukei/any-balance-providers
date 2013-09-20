@@ -2,10 +2,10 @@
 <provider>
 	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser" />
-	<id version="2">ab-seo-yandex-metrika</id>
+	<id version="3">ab-seo-yandex-metrika</id>
 	<name>Яндекс.Метрика</name>
 	<description>
-Получает данны по id счетчика в системе Яндекс Метрика (http://metrika.yandex.ru/stat/?counter_id=)
+Получает данные по id счетчика в системе Яндекс Метрика (http://metrika.yandex.ru/stat/?counter_id=)
 	</description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
@@ -23,7 +23,7 @@
 		<counter id="visits_yesterday" name="Визитов вчера"/>
 		<counter id="visitors_yesterday" name="Посетителей вчера"/>
 	</counters>
-	<keywords></keywords>
+	<keywords>yandex metrika</keywords>
 	<type>seo</type>
 	<country>ru</country>
 </provider>

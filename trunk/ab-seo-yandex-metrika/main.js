@@ -33,13 +33,13 @@ function main(){
     var result = {success: true};
     getParam(title, result, '__tariff', null, replaceTagsAndSpaces, html_entity_decode);
 	
-	getParam(today.page_views, result, 'views_today', null, null, parseBalance);
-	getParam(today.visits, result, 'visits_today', null, null, parseBalance);
-	getParam(today.visitors, result, 'visitors_today', null, null, parseBalance);
+	getParam(''+today.page_views, result, 'views_today', null, null, parseBalance);
+	getParam(''+today.visits, result, 'visits_today', null, null, parseBalance);
+	getParam(''+today.visitors, result, 'visitors_today', null, null, parseBalance);
 	
-	getParam(yesterday.page_views, result, 'views_yesterday', null, null, parseBalance);
-	getParam(yesterday.visits, result, 'visits_yesterday', null, null, parseBalance);
-	getParam(yesterday.visitors, result, 'visitors_yesterday', null, null, parseBalance);
+	getParam(''+yesterday.page_views, result, 'views_yesterday', null, null, parseBalance);
+	getParam(''+yesterday.visits, result, 'visits_yesterday', null, null, parseBalance);
+	getParam(''+yesterday.visitors, result, 'visitors_yesterday', null, null, parseBalance);
 	
     AnyBalance.setResult(result);
 }

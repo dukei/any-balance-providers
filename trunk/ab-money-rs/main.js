@@ -274,7 +274,7 @@ function fetchCredit(baseurl, json){
             var url = getParam(card.link, null, null, /\/hb\/faces\/(.*)/);
             var html = AnyBalance.requestGet(baseurl + url); //Сразу получаем страницу деталей.
 
-            var num = getParam(html, null, null, /&#1053;&#1086;&#1084;&#1077;&#1088; &#1082;&#1088;&#1077;&#1076;&#1080;&#1090;&#1072;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+            var num = getParam(html, null, null, [/&#1053;&#1086;&#1084;&#1077;&#1088; &#1076;&#1086;&#1075;&#1086;&#1074;&#1086;&#1088;&#1072;(?:[^>]*>){2,4}<td[^>]*>([\s\S]*?)<\/td>/i, /&#1053;&#1086;&#1084;&#1077;&#1088; &#1082;&#1088;&#1077;&#1076;&#1080;&#1090;&#1072;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i], replaceTagsAndSpaces, html_entity_decode);
             if(prefs.contract && prefs.contract != num){
                 AnyBalance.trace('Первый кредит не подошёл, ищем нужный');
                 //Не угадали с кредитом, надо найти нужный. Для этого надо перейти на список всех кредитов

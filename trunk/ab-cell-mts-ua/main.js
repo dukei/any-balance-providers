@@ -144,6 +144,9 @@ function main(){
 
     //К-во Кб загруженных по АПН hyper.net
     sumParam (html, result, 'traffic_hyper_mb', /<li>К-во Кб загруженных по АПН hyper.net:[^<]*Использовано[^\d]*?(\d+,?\d* *(kb|mb|gb|кб|мб|гб|байт|bytes))<\/li>/ig, null, parseTraffic, aggregate_sum);
+    
+    //К-во Кб загруженных по АПН smart.net
+    sumParam (html, result, 'traffic_smart_mb', /<li>К-во Кб загруженных по АПН smart.net:[^<]*Использовано[^\d]*?(\d+,?\d* *(kb|mb|gb|кб|мб|гб|байт|bytes))<\/li>/ig, null, parseTraffic, aggregate_sum);
 
     //К-во Кб загруженных по АПН opera
     sumParam (html, result, 'traffic_opera_mb', /<li>К-во Кб загруженных по АПН opera:[^<]*Использовано[^\d]*?(\d+,?\d* *(kb|mb|gb|кб|мб|гб|байт|bytes))<\/li>/ig, null, parseTraffic, aggregate_sum);

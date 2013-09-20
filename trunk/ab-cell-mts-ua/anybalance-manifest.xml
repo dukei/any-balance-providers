@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.1" version="27">ab-cell-mts-ua</id>
+  <id major_version="1.1" version="28">ab-cell-mts-ua</id>
   <api flags="no_browser"/>
   <name>МТС (Украина)</name>
   <description>
@@ -46,6 +46,7 @@
     <counter id="sms_100" name="Бесплатные смс для отправки на номера в пределах Украины" units=" sms"/>
     <counter id="min_all_60" name="60 минут на все сети за 5 коп" type="time_interval" format="{@MIN}" units=" мин"/>
     <counter id="traffic_hyper_mb" name="hyper.net к-во Кб загруженных по АПН hyper.net" units=" mb"/>
+    <counter id="traffic_smart_mb" name="smart.net к-во Кб загруженных по АПН smart.net" units=" mb"/>
     <counter id="traffic_opera_mb" name="Opera Mini к-во Кб загруженных по АПН opera" units=" mb"/>
     <counter id="traffic_free_mb" name="Бесплатный интернет" units=" mb"/><!-- Актуально до 15.08.2012 для Супер Свободы -->
     <counter id="sms_used" name="Израсходовано SMS" units=" sms"/>

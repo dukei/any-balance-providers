@@ -17,6 +17,11 @@ function main() {
 	var baseurl = 'https://kabinet.xxxxxx.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
+	if(!prefs.login)
+		throw new AnyBalance.Error('Введите логин!');
+	if(!prefs.password)
+		throw new AnyBalance.Error('Введите пароль!');
+		
 	var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
 	
 	var tform = getParam(html, null, null, /<input[^>]+name="t:formdata"[^>]*value="([^"]*)/i, null, html_entity_decode);

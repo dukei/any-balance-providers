@@ -25,7 +25,8 @@ filial_info[MEGA_FILIAL_MOSCOW] = {
   func: megafonServiceGuide,
   site: 	"https://moscowsg.megafon.ru/",
   widget:	'https://moscowsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
-  tray: 	"https://moscowsg.megafon.ru/TRAY_INFO/TRAY_INFO?LOGIN=%LOGIN%&PASSWORD=%PASSWORD%"
+  tray: 	"https://moscowsg.megafon.ru/TRAY_INFO/TRAY_INFO?LOGIN=%LOGIN%&PASSWORD=%PASSWORD%",
+  internet:       "http://user.moscow.megafon.ru/"
 };
 filial_info[MEGA_FILIAL_SIBIR] = {
   name: 'Сибирский филиал',
@@ -249,7 +250,7 @@ function getTrayXmlText(filial, address){
         info = AnyBalance.requestGet(address.replace(/%LOGIN%/g, prefs.login).replace(/%PASSWORD%/g, encodeURIComponent(prefs.password)), g_headers);
         
     if(/<title>Not Found<\/title>/.test(info)){
-      AnyBalance.trace("Server returned: " + info);
+      //AnyBalance.trace("Server returned: " + info);
       throw new AnyBalance.Error('Похоже, автоматический вход временно отсутствует на сервере Мегафона. Попробуйте позднее.');
     }
     if(/<h1>Locked<\/h1>/.test(info)){
@@ -385,7 +386,7 @@ function megafonTrayInfo(filial){
 
     if(AnyBalance.isAvailable('bonus_balance', 'last_pay_sum', 'last_pay_date') 
 		|| errorInTray 
-		|| isAvailableButUnset(result, ['balance','phone','sub_smit','sub_smio','sub_scl','sub_scr','sub_soi','mms_left','mms_total','sms_left','sms_total','mins_left','mins_total','internet_left','internet_cur','internet_total'])){
+		|| isAvailableButUnset(result, ['balance','phone','sub_smit','sub_smio','sub_scl','sub_scr','sub_soi','mms_left','mms_total','sms_left','sms_total','mins_left','mins_total','internet_left','internet_cur','internet_total','gb_with_you'])){
 
         //Некоторую инфу можно получить из яндекс виджета. Давайте попробуем.
         var prefs = AnyBalance.getPreferences();
@@ -427,7 +428,7 @@ function megafonTrayInfo(filial){
                }
            }
 
-           if(errorInTray || isAvailableButUnset(result, ['mms_left','mms_total','sms_left','sms_total','mins_left','mins_total','internet_left','internet_cur','internet_total'])){
+           if(errorInTray || isAvailableButUnset(result, ['mms_left','mms_total','sms_left','sms_total','mins_left','mins_total','internet_left','internet_cur','internet_total','gb_with_you'])){
                var need_mms_left = isAvailableButUnset(result, ['mms_left']),
                    need_mms_total = isAvailableButUnset(result, ['mms_total']),
                    need_sms_left = isAvailableButUnset(result, ['sms_left']),
@@ -495,9 +496,91 @@ function megafonTrayInfo(filial){
            }
         }
     }
+
+    getInternetInfo(filial, result);
     
     AnyBalance.setResult(result);
     
+}
+
+function getInternetInfo(filial, result){
+    var filinfo = filial_info[filial];
+    if(!filinfo.internet)
+         return; //Нет ссылки на инфу по интернету
+
+    var prefs = AnyBalance.getPreferences();
+    var html = AnyBalance.requestGet(filinfo.internet);
+
+    AnyBalance.trace('Попытаемся получить трафик из интернет-кабинета (но это возможно только с мобильного интернета Мегафона)');
+    var counters = ['internet_left', 'internet_total', 'internet_cur', 'gb_with_you', 'balance', '__tariff'];
+
+    var need_int_left = isAvailableButUnset(result, ['internet_left']),
+        need_int_total = isAvailableButUnset(result, ['internet_total']),
+        need_int_cur = isAvailableButUnset(result, ['internet_cur']),
+        need_gb_with_you = isAvailableButUnset(result, ['gb_with_you']);
+
+    var num = getParam(html, null, null, /<p[^>]+class="phone"[^>]*>([\s\S]*?)<\/p>/i, [replaceTagsAndSpaces, /\D/g, '']);
+    if(!num){
+        var error = getParam(html, null, null, /<article[^>]+class="warr?ning error"[^>]*>([\s\S]*?)<\/article>/i, replaceTagsAndSpaces, html_entity_decode);
+        if(error){
+            AnyBalance.trace(error);
+        }else{  
+            AnyBalance.trace('Не удаётся найти номер телефона. Заход не с мобильного интернета?');
+            AnyBalance.trace(html);
+        }
+        ensureNullOrSet(result, counters);
+        return; 
+    }
+
+    if(!endsWith(num, prefs.login)){
+        AnyBalance.trace('Мобильный интернет от другого телефона: ' + num + ', а требуется ' + prefs.login);
+        ensureNullOrSet(result, counters);
+        return; 
+    }
+    
+    AnyBalance.trace('Интернет-кабинет: ' + html);
+
+    if(isAvailableButUnset(result, ['__tariff']))
+        getParam(html, result, '__tariff', /Ваш тарифный план([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
+    if(isAvailableButUnset(result, ['balance']))
+        getParam(html, result, 'balance', /<p[^>]+class="balance"[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseBalance);
+
+    var internets = sumParam(html, null, null, /<h5[^>]*>(?:[\s\S](?!<\/h5>))*.<\/h5>\s*<table[^>]+class="details"[^>]*>[\s\S]*?<\/table>/ig);
+    for(var i=0; i<internets.length; ++i){
+        var internet = internets[i];
+        var name = getParam(internet, null, null, /<h5[^>]*>[\s\S]*?<\/h5>/i, replaceTagsAndSpaces, html_entity_decode);
+        if(/Гигабайт в дорогу/i.test(name)){
+            if(need_gb_with_you)
+            	sumParam(internet, result, 'gb_with_you', /<td[^>]+class="traffic-by"[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
+        }else{
+            var int_left = sumParam(internet, null, null, /<td[^>]+class="traffic-by"[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
+            var int_total = getParam(internet, null, null, /<td[^>]+class="traffic"[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
+            var int_cur;
+
+            if(isset(int_left) && isset(int_total))
+                int_cur = int_total - int_left;
+            if(need_int_left && isset(int_left)){
+                result.internet_left = (result.internet_left || 0) + int_left;
+            }
+            if(need_int_total && isset(int_total)){
+                result.internet_total = (result.internet_total || 0) + int_total;
+            }
+            if(need_int_cur && isset(int_cur)){
+                result.internet_cur = (result.internet_cur || 0) + int_cur;
+            }
+        }
+    }
+
+    ensureNullOrSet(result, counters);
+
+}
+
+function ensureNullOrSet(result, names){
+    for(var i=0; i<names.length; ++i){
+        var name = names[i];
+        if(isAvailableButUnset(result, [name]))
+            result[name] = null;
+    }
 }
 
 function getLeftAndTotal(text, result, needleft, needtotal, left, total, parseFunc){

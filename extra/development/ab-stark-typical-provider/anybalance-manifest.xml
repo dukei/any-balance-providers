@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<api flags="no_browser"/>
 	<id version="1">ab-</id>
-	<name></name>
+	<api flags="no_browser"/>
+	<name>ИмяПровайдера</name>
 	<description>
-	
+Получает данные для провайдера
+
+Личный кабинет находится по адресу
 	</description>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
@@ -15,10 +17,12 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units="р"/>
+		<counter id="balance" name="Баланс" units="{@currency}"/>
+		<counter id="currency" name="Валюта" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="status" name="Статус" type="text"/>
 		<counter id="phone" name="Телефон" type="text"/>
+		<counter id="deadline" name="Дата отключения" type="time" format="dd/MM/yyyy"/>
 	</counters>
 	<keywords></keywords>
 	<type></type>

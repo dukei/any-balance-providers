@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="5">ab-cell-life-by</id>
+  <id version="6">ab-cell-life-by</id>
   <api flags="no_browser" />
-  <name>Life:) Белоруссия</name>
+  <name>Life:) Беларусь</name>
   <description>
-    Мониторинг баланса мобильного оператора Life:) (Белоруссия)
+    Мониторинг баланса мобильного оператора Life:) (Беларусь)
     Данные берутся из личного кабинета https://issa.life.com.by
 
     Если у вас ещё нет доступа к этому личному кабинету, наберите на своём телефоне *120# и следуйте инструкциям.
@@ -14,7 +14,7 @@
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
     <js>library.js</js>
-	<js>main.js</js>
+    <js>main.js</js>
     <history>history.xml</history>
   </files>
   <counters>
@@ -23,7 +23,9 @@
     <counter id="traffic_left" name="Остаток трафика" suffix=" Мб"/>
     <counter id="traffic_night_left" name="Остаток ночного трафика" suffix=" Мб"/>
     <counter id="min_left" name="Остаток минут" suffix=" мин"/>
-	<counter id="sms_left" name="Остаток СМС" suffix=" смс"/>
+    <counter id="min_left_other" name="Минуты на другие сети" suffix=" мин"/>
+    <counter id="sms_left" name="Остаток СМС" suffix=" смс"/>
+    <counter id="mms_left" name="Остаток ММС" suffix=" ммс"/>
   </counters>
   <keywords>
     мобильный оператор лайф белоруссия проверка баланса

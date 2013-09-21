@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="11">ab-cell-velcom</id>
-  <name>Velcom - провайдер сотовой связи (Белоруссия)</name>
+  <id version="12">ab-cell-velcom</id>
+  <api flags="no_browser"/>
+  <name>Velcom (Беларусь)</name>
   <description>
     Получает баланс, минуты, трафик для белорусского оператора сотовой связи Velcom, используя интернет-службу сервиса абонента (ИССА) https://internet.velcom.by/.
 
@@ -15,7 +16,6 @@
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
-    <js>api:jquery.min.js</js>
     <js>library.js</js>
     <js>main.js</js>
     <history>history.xml</history>
@@ -26,6 +26,7 @@
     <counter id="min_velcom" name="Минуты на velcom" units="vc"/>
     <counter id="min_fn" name="Минуты на любимые номера" units="лн"/>
     <counter id="traffic" name="Трафик" units="Mb"/>
+    <counter id="balanceBonus" name="Бонусный баланс" units="р"/>
     <counter id="userName" name="ФИО" type="text"/>
     <counter id="userNum" name="Номер абонента" type="text"/>
     <counter id="status" name="Статус" type="text"/>

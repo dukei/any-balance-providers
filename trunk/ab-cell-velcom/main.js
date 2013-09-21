@@ -29,12 +29,8 @@ function main(){
     if(!form)
 	throw new AnyBalance.Error('Не удалось найти форму входа, похоже, velcom её спрятал. Обратитесь к автору провайдера.');
 
-    var $form = $(form);
-    var params = {};
-    $form.find('input, select').each(function(index){
-	var $inp = $(this);
-	var id=$inp.attr('id');
-	var value = $inp.attr('value');
+    var params = createFormParams(form, function(params, str, name, value){
+	var id=getParam(str, null, null, /\bid="([^"]*)/i, null, html_entity_decode);
 	if(id){
 		if(/PRE/i.test(id)){ //Это префикс
 			value = prefix;
@@ -44,11 +40,8 @@ function main(){
 			value = prefs.password;
 		}
 	}
-	var name = $inp.attr('name');
 	if(!name)
 		return;
-	if(name == 'sid3')
-		sid = value;
 	if(name == 'user_input_0')
 		value = '_next';
 	if(name == 'user_input_timestamp')
@@ -59,7 +52,7 @@ function main(){
 		value = '2';
 	if(name == 'user_input_10')
 		value = '0';
-	params[name] = value || '';
+	return value || '';
     });
 
     var required_headers = {
@@ -70,32 +63,44 @@ function main(){
     
     var html = requestPostMultipart(baseurl + 'work.html', params, required_headers);
 
-    if(!/_root\/MENU0/i.test(html)){
+    var kabinetType, personalInfo;
+    if(/_root\/FIN_INFO/i.test(html)){
+        personalInfo = '_root/USER_INFO';
+        kabinetType = 2;
+    }else if(/_root\/MENU0/i.test(html)){
+        personalInfo = '_root/MENU1/USER_INFO';
+        kabinetType = 1;
+    }
+
+    if(!kabinetType){
         var error = sumParam(html, null, null, /<td[^>]+class="INFO(?:_Error|_caption)?"[^>]*>(.*?)<\/td>/ig, replaceTagsAndSpaces, html_entity_decode, create_aggregate_join(' '));
         if(error)
             throw new AnyBalance.Error(error);
         throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
     }
 
+    AnyBalance.trace('Cabinet type: ' + kabinetType);
+
     var result = {success: true};
 
     var html = requestPostMultipart(baseurl + 'work.html', {
         sid3: sid,
         user_input_timestamp: new Date().getTime(),
-        user_input_0: '_root/MENU1/USER_INFO',
+        user_input_0: personalInfo,
         last_id: ''
     }, required_headers);
          
     getParam(html, result, 'userName', /ФИО:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'userNum', /(?:номер клиента|Номер телефона):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'balance', /(?:Текущий баланс|Баланс):[\s\S]*?<td[^>]*>(-?\d[\s\d,\.]*)/i, replaceFloat, parseFloat);
+    getParam(html, result, 'balance', /(?:Текущий баланс|Баланс|Баланс основного счета):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    sumParam(html, result, 'balanceBonus', /(?:Баланс бонусного счета \d):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     getParam(html, result, 'status', /(?:Текущий статус абонента|Статус абонента):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, '__tariff', /Тарифный план:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'min', /Остаток минут, SMS, MMS, GPRS, включенных в абонплату:[\s\S]*?<td[^>]*>(?:[\s\S](?!<\/td>))*?(-?\d[\d,\.]*) мин(?:ут)?(?:\s*во все сети)?(?:,|\s*<)/i, replaceFloat, parseFloat);
-    getParam(html, result, 'min_fn', /Остаток минут, SMS, MMS, GPRS, включенных в абонплату:[\s\S]*?<td[^>]*>(?:[\s\S](?!<\/td>))*?(-?\d[\d,\.]*) мин(?:ут)? на ЛН/i, replaceFloat, parseFloat);
-    getParam(html, result, 'min_velcom', /Остаток минут, SMS, MMS, GPRS, включенных в абонплату:[\s\S]*?<td[^>]*>(?:[\s\S](?!<\/td>))*?(-?\d[\d,\.]*) мин(?:ут)? на velcom/i, replaceFloat, parseFloat);
+    getParam(html, result, 'min', /Остаток минут, SMS, MMS, GPRS, включенных в абонплату:[\s\S]*?<td[^>]*>(?:[\s\S](?!<\/td>))*?(-?\d[\d,\.]*) мин(?:ут)?(?:\s*во все сети)?(?:,|\s*<)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'min_fn', /Остаток минут, SMS, MMS, GPRS, включенных в абонплату:[\s\S]*?<td[^>]*>(?:[\s\S](?!<\/td>))*?(-?\d[\d,\.]*) мин(?:ут)? на ЛН/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'min_velcom', /Остаток минут, SMS, MMS, GPRS, включенных в абонплату:[\s\S]*?<td[^>]*>(?:[\s\S](?!<\/td>))*?(-?\d[\d,\.]*) мин(?:ут)? на velcom/i, replaceTagsAndSpaces, parseBalance);
 
-    getParam(html, result, 'traffic', /Остаток минут, SMS, MMS, GPRS, включенных в абонплату:[\s\S]*?<td[^>]*>(?:[\s\S](?!<\/td>))*?(-?\d[\d,\.]*)\s*Мб/i, replaceFloat, parseFloat) || 0;
+    getParam(html, result, 'traffic', /Остаток минут, SMS, MMS, GPRS, включенных в абонплату:[\s\S]*?<td[^>]*>(?:[\s\S](?!<\/td>))*?(-?\d[\d,\.]*)\s*Мб/i, replaceTagsAndSpaces, parseBalance);
 /*
     if(AnyBalance.isAvailable('traffic')){
         html = requestPostMultipart(baseurl + 'work.html', {

@@ -7,56 +7,6 @@
 Личный кабинет: https://www.ibank.belapb.byz
 */
 
-function getParam (html, result, param, regexp, replaces, parser) {
-	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
-		return;
-
-	var value = regexp.exec (html);
-	if (value) {
-		value = value[1];
-		if (replaces) {
-			for (var i = 0; i < replaces.length; i += 2) {
-				value = value.replace (replaces[i], replaces[i+1]);
-			}
-		}
-		if (parser)
-			value = parser (value);
-
-    if(param)
-      result[param] = value;
-    else
-      return value
-	}
-}
-
-var replaceTagsAndSpaces = [/\\n/g, ' ', /\[br\]/ig, ' ', /<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
-var replaceFloat = [/\s+/g, '', /,/g, '.'];
-
-function parseBalance(text){
-    var _text = text.replace(/\s+/g, '');
-    var val = getParam(_text, null, null, /(-?\d[\d\.,]*)/, replaceFloat, parseFloat);
-    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
-    return val;
-}
-
-function parseCurrency(text){
-    var _text = text.replace(/\s+/g, '');
-    var val = getParam(_text, null, null, /-?\d[\d\.,]*\s*(\S*)/);
-    AnyBalance.trace('Parsing currency (' + val + ') from: ' + text);
-    return val;
-}
-
-function parseDate(str){
-    var matches = /(\d+)[^\d](\d+)[^\d](\d+)/.exec(str);
-    if(matches){
-          var date = new Date(+matches[3], matches[2]-1, +matches[1]);
-	  var time = date.getTime();
-          AnyBalance.trace('Parsing date ' + date + ' from value: ' + str);
-          return time;
-    }
-    AnyBalance.trace('Failed to parse date from value: ' + str);
-}
-
 function parseStatus(str){
     return getParam(str, null, null, /^([^\(]*)/, replaceTagsAndSpaces);
 }
@@ -191,26 +141,58 @@ function fetchCard(jsonInfo, baseurl){
     var html = AnyBalance.requestPost(baseurl, {
         SID:jsonInfo.SID,
         tic:1,
-        T:'RT_2IC.ShowMultiSchemePage',
+        T:'RT_2IC.form',
         nvgt:1,
-        SCHEMENAME:'CARDS'
+        SCHEMENAME:'COMMPAGE',
+        XACTION:''
     }, g_headers);
 
+    var cards = getParam(html, null, null, /<TBODY[^>]+title="Ваши карточки"[^>]*>([\s\S]*?)<\/TBODY>/i);
+    if(!cards)
+        throw new AnyBalance.Error('Не найдено ни одной карты.');
+
     var cardnum = prefs.cardnum ? prefs.cardnum : '\\d{4}';
-    var re = new RegExp('(<tr[^>]*>(?:[\\s\\S](?!<tr))*\\d+\\s+\\d+\\*+\\s+\\*+\\s+' + cardnum + '[\\s\\S]*?</tr>)', 'i');
-    var tr = getParam(html, null, null, re);
+    var re = new RegExp('(<tr[^>]*>(?:[\\s\\S](?!<tr))*GoToSTMCARD\\s*\\(\\w+,\\s*\\d{12}' + cardnum + '[\\s\\S]*?</tr>)', 'i');
+    var tr = getParam(cards, null, null, re);
     if(!tr)
         throw new AnyBalance.Error('Не удаётся найти ' + (prefs.cardnum ? 'карту с последними цифрами ' + prefs.cardnum : 'ни одной карты'));
 
     var result = {success: true};
-    getParam(tr, result, 'cardnum', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-    getParam(tr, result, 'balance', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(tr, result, 'accnum', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-    getParam(tr, result, 'currency', /(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-    getParam(tr, result, 'type', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-    getParam(tr, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-    getParam(tr, result, 'fio', /(?:[\s\S]*?<td[^>]*>){7}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-    getParam(tr, result, 'status', /(?:[\s\S]*?<td[^>]*>){8}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+    getParam(tr, result, 'cardnum', /GoToSTMCARD[^,]*,([^,]*)/i, replaceTagsAndSpaces);
+    getParam(tr, result, ['currency', 'balance'], /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+    getParam(tr, result, 'type', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)(?:<NOBR>|<\/td>)/i, replaceTagsAndSpaces);
+    getParam(tr, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+    getParam(jsonInfo.CNS, result, 'fio', /(.*)/i, replaceTagsAndSpaces);
+    getParam(tr, result, 'till', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+
+    if(AnyBalance.isAvailable('balance')){
+        var cardinfo = getParam(tr, null, null, /GetRest\(([^)]*)/, null, html_entity_decode);
+        if(!cardinfo){
+            AnyBalance.trace('Card row: ' + tr);
+            throw new AnyBalance.Error('Не удаётся найти ссылку на обновление баланса. Сайт изменен?');
+        }
+        var cardid = getParam(cardinfo, null, null, /,\s*"([^"]*)/i, replaceSlashes);
+        var curr = getParam(cardinfo, null, null, /,[^,]*,([^,]*)/i, parseBalance);
+        if(!cardid || !curr){
+            AnyBalance.trace('Card row: ' + tr);
+            throw new AnyBalance.Error('Не удаётся найти идентификатор карты и валюты. Сайт изменен?');
+        }
+
+        html = AnyBalance.requestPost(baseurl, {
+            SID:jsonInfo.SID,
+            tic:1,
+            T:'RT_2CardRest.doOperation',
+            TIC:1,
+            OPER:'GETREST',
+            CARD:cardid, 
+            CURR:curr,
+            SCHEMENAME:'COMMPAGE'
+        }, g_headers);
+
+        getParam(html, result, 'balance', /RST="([^"]*)/i, replaceTagsAndSpaces, parseBalance);
+    }
+
+
     AnyBalance.setResult(result);
 }
 
@@ -237,18 +219,9 @@ function fetchAccount(jsonInfo, baseurl){
     var result = {success: true};
     getParam(tr, result, 'accnum', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
     getParam(tr, result, 'balance', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(tr, result, 'currency', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+    getParam(tr, result, ['currency', 'balance'], /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
     getParam(tr, result, 'type', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
     getParam(tr, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
     getParam(jsonInfo.CNS, result, 'fio', /(.*)/i, replaceTagsAndSpaces);
     AnyBalance.setResult(result);
 }
-
-function html_entity_decode(str)
-{
-    //jd-tech.net
-    var tarea=document.createElement('textarea');
-    tarea.innerHTML = str;
-    return tarea.value;
-}
-

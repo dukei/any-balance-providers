@@ -406,7 +406,9 @@ function megafonTrayInfo(filial){
            getParam(json.ok.html, result, 'last_pay_sum', /<div[^>]+class="payment_amount"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
            getParam(json.ok.html, result, 'last_pay_date', /<div>([^<]*)<\/div>\s*<div[^>]+class="payment_source"/i, replaceTagsAndSpaces, parseDate);
            
-           if(errorInTray || isAvailableButUnset(result, ['balance','phone','sub_smit','sub_smio','sub_scl','sub_scr','sub_soi'])){
+           var need_int_cur = isAvailableButUnset(result, ['internet_cur']);
+
+           if(errorInTray || isAvailableButUnset(result, ['balance','phone','sub_smit','sub_smio','sub_scl','sub_scr','sub_soi','internet_cur'])){
                getParam(json.ok.html, result, 'balance', /<div[^>]+class="subs_balance[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
                if(isAvailableButUnset(result, ['balance'])){
                    var e = new AnyBalance.Error(errorInTray);
@@ -418,6 +420,8 @@ function megafonTrayInfo(filial){
                getParam(json.ok.html, result, 'sub_scl', /(?:Исходящие вызовы|Начислено за звонки)\s*<\/td>(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
                getParam(json.ok.html, result, 'sub_scr', /Роуминг\s*<\/td>(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
                getParam(json.ok.html, result, 'phone', /<span[^>]+class="login"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+               if(need_int_cur)
+                   getParam(json.ok.html, result, 'internet_cur', /Интернет-траффик \(GPRS\)\s*<\/td>(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTraffic);
                
                var table = getParam(json.ok.html, null, null, /<table[^>]+class="[^>]*rate-plans[^>][\s\S]*?<\/table>/i);
                if(table){
@@ -437,7 +441,6 @@ function megafonTrayInfo(filial){
                    need_mins_total = isAvailableButUnset(result, ['mins_total']),
                    need_int_left = isAvailableButUnset(result, ['internet_left']),
                    need_int_total = isAvailableButUnset(result, ['internet_total']),
-                   need_int_cur = isAvailableButUnset(result, ['internet_cur']),
                    need_gb_with_you = isAvailableButUnset(result, ['gb_with_you']);
      
                //Минуты и прочее получаем только в случае ошибки в сервисгиде, чтобы случайно два раза не сложить

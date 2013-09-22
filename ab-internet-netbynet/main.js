@@ -75,11 +75,18 @@ function mainCenter(){
     getParam (html, result, 'day_left', /Осталось[^\d]*([\d]+)/i, replaceTagsAndSpaces, parseBalance);
 
     //Таблица с тарифными планами
-    var table = getParam(html, null, null, /<table[^>]*>(?:[\s\S](?!<\/table>))*?<th[^>]*>Договор(?:[\s\S](?!<\/table>))*?<th[^>]*>Текущий тариф[\s\S]*?<\/table>/i);
+    var table = getParam(html, null, null, /<table[^>]*>(?:[\s\S](?!<\/table>))*?<th[^>]*>Договор(?:[\s\S](?!<\/table>))*?<th[^>]*>Текущий тариф[\s\S]*?<\/table>/i, [/<!--[\S\s]*?-->/g, '']);
+    
     if(table){
-        getParam(table, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-        // Статус
-        getParam(table, result, 'status', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+        if(/<th[^>]*>\s*Остаток трафика/i.test(table)){
+            AnyBalance.trace('Найден остаток трафика');
+            getParam(table, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+            getParam(table, result, 'status', /(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+            getParam(table, result, 'trafficLeft', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTrafficGb);
+        }else{
+            getParam(table, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+            getParam(table, result, 'status', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+        }
     }else{
         AnyBalance.trace('Не удалось найти таблицу с тарифным планом. Сайт изменен?');
     }
@@ -93,12 +100,27 @@ function mainCenter(){
         AnyBalance.trace("Parsing stats...");
 
         // Обещанные платежи
-        var promised_payments = html.match (/<li>.*?История обещанных платежей[\s\S]*?<li>/i);
+        var promised_payments = getParam(html, null, null, /<a[^>]+rel="promise"[\s\S]*?<li>/i);
         if (promised_payments) {
-            getParam (promised_payments[0], result, 'promised_payment', /<tr>(?:[\s\S]*?< *td *>){5}[^\d]*(\d+\.?\d*)/i, [], parseFloat);
+            getParam (promised_payments, result, 'promised_payment', /<tr>(?:[\s\S]*?<td[^>]*>){5}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
         }
     }
 
+/*  //Работает, но не надо
+    if (AnyBalance.isAvailable ('trafficIn', 'trafficOut')) {
+        AnyBalance.trace ("Fetching traffic periods...");
+        html = AnyBalance.requestGet(baseurl + "ajax/ajax.php?action=contrSelector");
+        AnyBalance.trace("Parsing traffic periods...");
+        var periodId = getParam(html, null, null, /<select[^>]+name="selper"[^>]*>\s*<option[^>]+value="([^"]*)/i, null, html_entity_decode);
+        if(periodId){
+            html = AnyBalance.requestGet(baseurl + "ajax/ajax.php?action=period&period_id=" + periodId);
+            getParam(html, result, 'trafficIn', /<table[^>]+id="periods_details"(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTrafficGb);
+            getParam(html, result, 'trafficOut', /<table[^>]+id="periods_details"(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTrafficGb);
+        }else{
+            AnyBalance.trace('Не удалось найти период для получения трафика');
+        }
+    }
+*/
 //    AnyBalance.requestGet (baseurl + "logout");
 
 

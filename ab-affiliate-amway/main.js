@@ -38,27 +38,22 @@ function main(){
     AnyBalance.setDefaultCharset('utf-8'); 
 
     var html = AnyBalance.requestGet('http://www.amway.ru/login', g_headers);
-
+	
     var tm = new Date().getTime();
-
+	
     var scriptId = getParam(html, null, null, /cmSetClientID\('([^']*)/);
     if(!scriptId)
         throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
-
-    AnyBalance.setCookie('www.amway.ru', 'cmTPSet', 'Y');
-    AnyBalance.setCookie('www.amway.ru', 'CoreID6', cmJSFCreateUserId() + '&ci=' + scriptId);
-    AnyBalance.setCookie('www.amway.ru', scriptId + '_clogin', 'l=' + ('' + tm).substring(0, 10) + '&v=1&e=' + tm);
-	//html = AnyBalance.requestGet('http://www.amway.ru/', g_headers);
-/*
-    var tform = getParam(html, null, null, /<input[^>]+name="t:formdata"[^>]*value="([^"]*)/i, null, html_entity_decode);
-    if(!tform) //Если параметр не найден, то это, скорее всего, свидетельствует об изменении сайта или о проблемах с ним
-        throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
-*/
+		
+	AnyBalance.setCookie('www.amway.ru', 'cmTPSet', 'Y');
+	AnyBalance.setCookie('www.amway.ru', 'CoreID6', cmJSFCreateUserId() + '&ci=' + scriptId);
+	AnyBalance.setCookie('www.amway.ru', scriptId + '_clogin', 'l=' + ('' + tm).substring(0, 10) + '&v=1&e=' + tm);
+	
     html = AnyBalance.requestPost(baseurl + '?action=auth.login', {
         login:prefs.login,
         password:prefs.password,
     }, addHeaders({Referer: baseurl})); 
-
+	
     if(!/logout/i.test(html)){
         var error = getParam(html, null, null, /<div[^>]*error_msg[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
@@ -66,18 +61,19 @@ function main(){
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
 	html = AnyBalance.requestGet(baseurl + 'my-points?flow.flow=my_points', g_headers);
-
+	// Это не ошибка, реально надо два раза переходить сюда, иначе не показывает.
 	html = AnyBalance.requestGet(baseurl + 'my-points?flow.flow=my_points', g_headers);
-    var result = {success: true};
-	getParam(html, result, 'balance', /Групповые\/Лидерские Баллы(?:[\s\S]*?points[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
 	
+	var table = getParam(html, null, null, /(<table[^>]*class="table_data"[\s\S]*?<\/table>)/i);
+	if(!table)
+		AnyBalance.trace('Не нашли таблицу с данными, сайт изменен?');
 	
+	var result = {success: true};
+	getParam(table, result, 'personal_points', /Личные баллы(?:[\s\S]*?<td[^>]*cell_1 is_last[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	getParam(table, result, 'group_points', /Групповые\/Лидерские Баллы(?:[\s\S]*?<td[^>]*cell_1 is_last[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	getParam(table, result, 'personal_sales', /Личная ВО(?:[\s\S]*?<td[^>]*cell_1 is_last[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	getParam(table, result, 'leader_sales', /Лидерская Величина Оборота(?:[\s\S]*?<td[^>]*cell_1 is_last[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);	
+	getParam(table, result, '__tariff', /Месяц и год(?:[\s\S]*?<td[^>]*cell_1 is_last[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
 	
-    getParam(html, result, 'fio', /Имя(?:\s|&nbsp;)*абонента:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, '__tariff', /Тарифный план:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'phone', /Номер:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'balance', /Текущий баланс:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'status', /Статус:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
-
     AnyBalance.setResult(result);
 }

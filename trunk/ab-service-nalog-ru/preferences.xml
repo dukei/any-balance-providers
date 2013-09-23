@@ -7,7 +7,7 @@
         dialogTitle="Имя" 
         negativeButtonText="Отмена" 
         dialogMessage="Введите свое имя."
-        key="name">
+        key="fio_name">
     </EditTextPreference>
     <EditTextPreference 
         title="Фамилия" 

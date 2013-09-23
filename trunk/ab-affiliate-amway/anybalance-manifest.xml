@@ -2,9 +2,13 @@
 <provider>
 	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser" />
-	<id version="1">ab-amway</id>
+	<id version="1">ab-affiliate-amway</id>
 	<name>AmWay</name>
-	<description></description>
+	<description>
+Получает данные из партнерской программы AmWay http://www.amway.ru/
+
+Личный кабинет находится по адресу: http://www.amway.ru/login
+	</description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
@@ -14,12 +18,12 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units="р"/>
-		<counter id="fio" name="ФИО" type="text"/>
-		<counter id="status" name="Статус" type="text"/>
-		<counter id="phone" name="Телефон" type="text"/>
+		<counter id="personal_points" name="Личные Баллы"/>
+		<counter id="group_points" name="Групповые/Лидерские Баллы"/>
+		<counter id="personal_sales" name="Личная Величина Оборота"/>
+		<counter id="leader_sales" name="Лидерская Величина Оборота"/>
 	</counters>
-	<keywords></keywords>
-	<type></type>
+	<keywords>Амвей</keywords>
+	<type>affiliate</type>
 	<country>ru</country>
 </provider>

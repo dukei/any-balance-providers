@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Номер накладной" 
+        positiveButtonText="ОК" 
+        summary="||{@s}" 
+        dialogTitle="Номер накладной" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите номер накладной в следующем формате: мскг-0000000001."
+        key="sender_number">
+    </EditTextPreference>
+	<EditTextPreference 
+        title="Дата отправки" 
+        positiveButtonText="ОК" 
+        summary="||{@s}" 
+        dialogTitle="Дата отправки" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите дату отправки в формате 30.09.2013"
+        key="sender_date">
+    </EditTextPreference>
+	    <EditTextPreference 
+        title="Конечный пункт" 
+        positiveButtonText="ОК" 
+        summary="||{@s}" 
+        dialogTitle="Конечный пункт" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите конечный."
+        key="sender_filial">
+    </EditTextPreference>
+    <EditTextPreference 
+        title="Номер штрих кода" 
+        positiveButtonText="ОК" 
+        summary="||{@s}" 
+        dialogTitle="Номер штрих кода" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите номер штрих кода. Для того чтобы работал поиск по штрих коду, оставьте остальные поля пустыми."
+        key="sender_barcode">
+    </EditTextPreference>
+	
+</PreferenceScreen>

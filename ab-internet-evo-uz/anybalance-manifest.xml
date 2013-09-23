@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-evo-uz</id>
+	<api flags="no_browser"/>
+	<name>EVO (Super iMAX, Узбекистан)</name>
+	<description>
+Получает данные для провайдера EVO (http://evo.uz/)
+
+Компания Super iMAX под торговой маркой EVO —  это быстрое и удобное решение по обеспечению наших клиентов услугами телефонии, доступа в Интернет и беспроводных сетевых решений (VPN), на основе технологии WiMAX.
+
+Личный кабинет находится по адресу http://bill.evo.uz/cab/
+	</description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс"/>
+		<counter id="account" name="Номер счета" type="text"/>
+		<counter id="upload_day" name="Upload (day)" units="Mb"/>
+		<counter id="download_day" name="Download (day)" units="Mb"/>
+		<counter id="upload_night" name="Upload (night)" units="Mb"/>
+		<counter id="download_night" name="Download (night)" units="Mb"/>
+		<counter id="internal" name="Internal (free of charge)" units="Mb"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet</type>
+	<country>uz</country>
+</provider>

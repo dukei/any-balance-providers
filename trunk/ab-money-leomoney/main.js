@@ -48,10 +48,11 @@ function main(){
     //Раз мы здесь, то мы успешно вошли в кабинет
     //Получаем все счетчики
     var result = {success: true};
-    getParam(html, result, '__tariff', /(Кошелек №\s*\d+)/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'balance', /Ваш баланс:([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseBalanceRK);
-    getParam(html, result, 'spent', /Из них израсходовано:([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'limit', /Месячный лимит:([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, '__tariff', /((?:Кошелек №|Wallet No.)\s*\d+)/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'balance', /(?:Ваш баланс|Your balance):([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseBalanceRK);
+    getParam(html, result, 'spent', /(?:Из них израсходовано|Spent):([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'limit', /(?:Месячный лимит|Monthly limit):([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'wallet', /(?:Кошелек №|Wallet No.)\s*(\d+)/i, replaceTagsAndSpaces, html_entity_decode);
 
     //Возвращаем результат
     AnyBalance.setResult(result);

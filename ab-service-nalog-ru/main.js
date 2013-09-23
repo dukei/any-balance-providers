@@ -33,7 +33,7 @@ function main(){
 	    cmd:'find',
 		inn:prefs.inn,
 		fam:prefs.surname,
-		nam:prefs.name,
+		nam:prefs.fio_name,
 		otch:'',
 		cap:captchaa
     }, addHeaders({Referer: baseurl + 'debt/req.do?'})); 
@@ -46,7 +46,7 @@ function main(){
     }
 	var result = {success: true, balance:0, all:''};
 	
-	var errString = 'Не найдена информация по задолженности с данными: ИНН: '+ prefs.inn + ', ФИО: ' + prefs.surname + ' ' + prefs.name + '. Пожалуйста, проверьте правильность ввода. ';
+	var errString = 'Не найдена информация по задолженности с данными: ИНН: '+ prefs.inn + ', ФИО: ' + prefs.surname + ' ' + prefs.fio_name + '. Пожалуйста, проверьте правильность ввода. ';
 	var jsonVar = getParam(html, null, null, /var\s*DEBT\s*=\s*([\s\S]*?\});/i);
 	if(!jsonVar)
 		throw new AnyBalance.Error(errString);

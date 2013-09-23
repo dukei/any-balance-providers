@@ -39,30 +39,33 @@ function main(){
     }, addHeaders({Referer: baseurl + 'debt/req.do?'})); 
 	
     if(!/logout/i.test(html)){
-        var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
+        var error = getParam(html, null, null, [/<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, /div[^>]*"field-error"(?:[^>]*>){2}([\s\S]*?)<\//i], replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error);
         throw new AnyBalance.Error('Не удалось получить информацию. Сайт изменен?');
     }
 	var result = {success: true, balance:0, all:''};
 	
-	var json = getJson(getParam(html, null, null, /var\s*DEBT\s*=\s*([\s\S]*?\});/i))
+	var errString = 'Не найдена информация по задолженности с данными: ИНН: '+ prefs.inn + ', ФИО: ' + prefs.surname + ' ' + prefs.name + '. Пожалуйста, проверьте правильность ввода. ';
+	var jsonVar = getParam(html, null, null, /var\s*DEBT\s*=\s*([\s\S]*?\});/i);
+	if(!jsonVar)
+		throw new AnyBalance.Error(errString);
+
+	var json = getJson(jsonVar);
 	
 	var len = json.regions.length;
 	for(i = 0; i < len; i++){
 		var curr = json.regions[i];
-		
-		var sum = (curr.pds[0].sum ? curr.pds[0].sum : undefined);
-		result.all += curr.code+ ' '+curr.name+'\n'+ (sum ? curr.pds[0].ifnsName+': '+ curr.pds[0].taxName +'-'+  curr.pds[0].taxKind+ ': ' +sum  : 'Нет задолженности') + '\n\n';
-		
-		sumParam(sum, result, 'balance', /([\s\S]*)/i, null, parseBalance, aggregate_sum);
+		var sum = (curr.pds ? curr.pds[0].sum : '');
+		if(curr.message == 'По вашему запросу информация не найдена') {
+			result.all = errString;
+		} else {
+			result.all += curr.code+ ' '+curr.name+'\n'+ 
+				(sum ? curr.pds[0].ifnsName+': '+ curr.pds[0].taxName +'-'+  curr.pds[0].taxKind+ ': ' + sum  : (curr.message ? curr.message : 'Нет задолженности')) + '\n\n';
+
+			sumParam(sum, result, 'balance', /([\s\S]*)/i, null, parseBalance, aggregate_sum);		
+		}
 	}
-
-    getParam(html, result, 'fio', /class="group-client"[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'acc_num', /&#1051;&#1080;&#1094;&#1077;&#1074;&#1086;&#1081; &#1089;&#1095;&#1077;&#1090;:(?:[\s\S]*?<div[^>]*>){2}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'balance', /&#1041;&#1072;&#1083;&#1072;&#1085;&#1089;(?:[\s\S]*?<div[^>]*>){2}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'cred', /&#1050;&#1088;&#1077;&#1076;&#1080;&#1090;&#1085;&#1099;&#1081; &#1083;&#1080;&#1084;&#1080;&#1090;:(?:[\s\S]*?<div[^>]*>){2}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, '__tariff', /&#1058;&#1077;&#1082;&#1091;&#1097;&#1080;&#1081; &#1090;&#1072;&#1088;&#1080;&#1092;&#1085;&#1099;&#1081; &#1087;&#1083;&#1072;&#1085;:(?:[\s\S]*?<div[^>]*>){1}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-
+	
     AnyBalance.setResult(result);
 }

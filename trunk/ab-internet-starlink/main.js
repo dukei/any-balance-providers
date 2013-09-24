@@ -26,7 +26,7 @@ function main(){
 	
 	if(isAvailable('daysleft')){
 		html = AnyBalance.requestGet(baseurl);
-		getParam(html, result, 'daysleft', /Осталось([\s\S]*?)дней/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'daysleft', /Осталось:[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	}
 	if(isAvailable('traffic')){
 		html = AnyBalance.requestGet(baseurl+'statistics/');

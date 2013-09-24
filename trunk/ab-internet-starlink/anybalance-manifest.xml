@@ -1,34 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="3">ab-internet-starlink</id>
-  <name>Starlink (Москва)</name>
-  <description>
-    Получает баланс и информацию о тарифном плане для московского интернет-провайдера Starlink (http://starlink.ru).
+	<id version="4">ab-internet-starlink</id>
+	<api flags="no_browser"/>
+	<name>Starlink (Москва)</name>
+	<description>
+Получает баланс и информацию о тарифном плане для московского интернет-провайдера Starlink (http://starlink.ru).
 
-    Информация берется из личного кабинета https://stat.starlink.ru.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <history>history.xml</history>
-    <js>library.js</js>
-    <js>main.js</js>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <!--<counter id="available" name="Доступно для оплаты услуг" units="р"/>-->
-    <counter id="daysleft" name="До конца отчетного периода" units="д"/>
-    <counter id="traffic" name="Трафик за период" units="Mb"/>
-    <!--<counter id="trafficTurbo" name="Остаток турбо трафика" units="Gb"/>-->
-  </counters>
-  <keywords>
-    интернет, старлинк
-  </keywords>
-  <type>
-    internet
-  </type>
-  <country>
-    ru
-  </country>
+Информация берется из личного кабинета https://stat.starlink.ru.
+	</description>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<history>history.xml</history>
+		<js>library.js</js>
+		<js>main.js</js>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units="р"/>
+		<counter id="daysleft" name="До конца отчетного периода" units="д"/>
+		<counter id="traffic" name="Трафик за период" units="Mb"/>
+		<!--<counter id="available" name="Доступно для оплаты услуг" units="р"/>
+		<counter id="trafficTurbo" name="Остаток турбо трафика" units="Gb"/>-->
+	</counters>
+	<keywords>интернет, старлинк</keywords>
+	<type>internet</type>
+	<country>ru</country>
 </provider>

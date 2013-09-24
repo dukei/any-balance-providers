@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser" />
-	<id version="1">ab-money-imoneybank</id>
+	<id version="2">ab-money-imoneybank</id>
 	<name>АйМаниБанк (ratingoff)</name>
 	<description>
 	Получает данные из интернет-банка https://ratingoff.imoneybank.ru
@@ -24,7 +23,7 @@
 		<counter id="acc_num" name="Номер счета" type="text"/>
 		<counter id="card_num" name="Номер карты" type="text"/>
 	</counters>
-	<keywords></keywords>
-	<type></type>
+	<keywords>imoneybank</keywords>
+	<type>money</type>
 	<country>ru</country>
 </provider>

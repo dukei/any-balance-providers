@@ -19,4 +19,11 @@
         inputType="textPassword"
         positiveButtonText="ОК">
     </EditTextPreference>
+    <ListPreference
+        title="Mirrors"
+        summary="Which of the sites need to use|Select|{@s} selected. "
+        key="site"
+        defaultValue="1"
+        entries="Empfinance.com|Empfinance.org"
+        entryValues="1|2" />
 </PreferenceScreen>

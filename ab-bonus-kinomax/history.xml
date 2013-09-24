@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-	<change version="2" date="2012-11-09">
-		- Исправлена ошибка с кодировкой
-	</change>
+<change version="3" date="2013-09-24">
+- Поддержка изменений в личном кабинете (Stark)
+</change>
+<change version="2" date="2012-11-09">
+- Исправлена ошибка с кодировкой
+</change>
 </history>

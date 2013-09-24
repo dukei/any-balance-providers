@@ -1,43 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="12">ab-cell-velcom</id>
-  <api flags="no_browser"/>
-  <name>Velcom (Беларусь)</name>
-  <description>
-    Получает баланс, минуты, трафик для белорусского оператора сотовой связи Velcom, используя интернет-службу сервиса абонента (ИССА) https://internet.velcom.by/.
+	<id version="13">ab-cell-velcom</id>
+	<api flags="no_browser"/>
+	<name>Velcom (Беларусь)</name>
+	<description>
+Получает баланс, минуты, трафик для белорусского оператора сотовой связи Velcom, используя интернет-службу сервиса абонента (ИССА) https://internet.velcom.by/.
 
-    Как зарегистрироваться в ИССА:
-      1. Перейдите по ссылке Регистрация на странице https://internet.velcom.by
-      2. Введите свой телефон и получите там ВРЕМЕННЫЙ пароль (действует 1 час)
-      3. Зайдите через браузер в ИССА, используя полученный пароль, и смените его на постоянный (действует 1 год) в меню "Дополнительно / Изменить пароль."
-      4. Постоянный пароль можно ввести в этот провайдер, чтобы получить баланс.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="min" name="Минуты" units="мин"/>
-    <counter id="min_velcom" name="Минуты на velcom" units="vc"/>
-    <counter id="min_fn" name="Минуты на любимые номера" units="лн"/>
-    <counter id="traffic" name="Трафик" units="Mb"/>
-    <counter id="balanceBonus" name="Бонусный баланс" units="р"/>
-    <counter id="userName" name="ФИО" type="text"/>
-    <counter id="userNum" name="Номер абонента" type="text"/>
-    <counter id="status" name="Статус" type="text"/>
-  </counters>
-  <keywords>
-    велком, мобильный
-  </keywords>
-  <type>
-    cell
-  </type>
-  <country>
-    by
-  </country>
+Как зарегистрироваться в ИССА:
+1. Перейдите по ссылке Регистрация на странице https://internet.velcom.by
+2. Введите свой телефон и получите там ВРЕМЕННЫЙ пароль (действует 1 час)
+3. Зайдите через браузер в ИССА, используя полученный пароль, и смените его на постоянный (действует 1 год) в меню "Дополнительно / Изменить пароль."
+4. Постоянный пароль можно ввести в этот провайдер, чтобы получить баланс.
+	</description>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units="р"/>
+		<counter id="min" name="Минуты" units="мин"/>
+		<counter id="min_velcom" name="Минуты на velcom" units="vc"/>
+		<counter id="min_fn" name="Минуты на любимые номера" units="лн"/>
+		<counter id="traffic" name="Трафик" units="Mb"/>
+		<counter id="balanceBonus" name="Бонусный баланс" units="р"/>
+		<counter id="userName" name="ФИО" type="text"/>
+		<counter id="userNum" name="Номер абонента" type="text"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="loan_balance" name="Размер ежемесячного платежа" units="р"/>
+		<counter id="loan_left" name="Оставшаяся к выплате сумма по рассрочке" units="р"/>
+		<counter id="loan_end" name="Дата погашения рассрочки" type="time" format="dd/MM/yyyy"/>
+	</counters>
+	<keywords>велком, мобильный</keywords>
+	<type>cell</type>
+	<country>by</country>
 </provider>

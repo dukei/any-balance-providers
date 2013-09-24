@@ -56,9 +56,9 @@ function main(){
     });
 
     var required_headers = {
-	'Origin': 'https://internet.velcom.by',
-	'Referer': 'https://internet.velcom.by/work.html',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.162 Safari/535.19'
+		'Origin': 'https://internet.velcom.by',
+		'Referer': 'https://internet.velcom.by/work.html',
+		'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.162 Safari/535.19'
     };
     
     var html = requestPostMultipart(baseurl + 'work.html', params, required_headers);
@@ -101,7 +101,22 @@ function main(){
     getParam(html, result, 'min_velcom', /Остаток минут, SMS, MMS, GPRS, включенных в абонплату:[\s\S]*?<td[^>]*>(?:[\s\S](?!<\/td>))*?(-?\d[\d,\.]*) мин(?:ут)? на velcom/i, replaceTagsAndSpaces, parseBalance);
 
     getParam(html, result, 'traffic', /Остаток минут, SMS, MMS, GPRS, включенных в абонплату:[\s\S]*?<td[^>]*>(?:[\s\S](?!<\/td>))*?(-?\d[\d,\.]*)\s*Мб/i, replaceTagsAndSpaces, parseBalance);
-/*
+	
+	if(AnyBalance.isAvailable('loan_balance', 'loan_left', 'loan_end')) {
+		var html = requestPostMultipart(baseurl + 'work.html', {
+			sid3: sid,
+			user_input_timestamp: new Date().getTime(),
+			user_input_0: '_root/MENU1/FIN_INFO1/LOAN',
+			user_input_1: 'LOAN',
+			last_id: ''
+		}, required_headers);
+		
+		getParam(html, result, 'loan_balance', /Размер ежемесячного платежа:(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'loan_left', /Оставшаяся к выплате сумма по рассрочке:(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'loan_end', /Дата погашения рассрочки:(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseDate);
+	}
+	
+	/*
     if(AnyBalance.isAvailable('traffic')){
         html = requestPostMultipart(baseurl + 'work.html', {
             sid3: sid,

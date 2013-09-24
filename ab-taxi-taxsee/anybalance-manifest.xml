@@ -1,33 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-taxi-taxsee</id>
-  <name>Такси Максим (клиент)</name>
-  <description>
-    Получает баланс на лицевом счете клиента Такси Максим (http://taximaxim.ru)
+	<id version="2">ab-taxi-taxsee</id>
+	<api flags="no_browser"/>
+	<name>Такси Максим (клиент)</name>
+	<description>
+Получает баланс на лицевом счете клиента Такси Максим (http://taximaxim.ru)
 
-    Информация берется из личного кабинета http://cabinet.taximaxim.ru
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-<!--    <counter id="fio" name="ФИО" type="text"/> -->
-    <counter id="discont" name="Скидка" units="%"/>
-    <counter id="licschet" name="Лицевой счет" type="text"/>
-  </counters>
-  <keywords>
-    taxi
-  </keywords>
-  <type>
-    taxi
-  </type>
-  <country>
-    ru
-  </country>
+Информация берется из личного кабинета http://cabinet.taximaxim.ru
+	</description>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units="р"/>
+		<!--    <counter id="fio" name="ФИО" type="text"/> -->
+		<counter id="discont" name="Скидка" units="%"/>
+		<counter id="licschet" name="Лицевой счет" type="text"/>
+	</counters>
+	<keywords>taxi</keywords>
+	<type>taxi</type>
+	<country>ru</country>
 </provider>

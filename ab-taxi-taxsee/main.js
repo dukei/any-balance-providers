@@ -8,11 +8,11 @@ Operator site: http://taxsee.ru
 */
 
 var g_headers = {
-'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
-'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-'Connection':'keep-alive',
-'User-Agent':'Mozilla/5.0 (BlackBerry; U; BlackBerry 9900; en-US) AppleWebKit/534.11+ (KHTML, like Gecko) Version/7.0.0.187 Mobile Safari/534.11+'
+	'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
+	'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Connection':'keep-alive',
+	'User-Agent':'Mozilla/5.0 (BlackBerry; U; BlackBerry 9900; en-US) AppleWebKit/534.11+ (KHTML, like Gecko) Version/7.0.0.187 Mobile Safari/534.11+'
 };
 
 function main(){
@@ -21,9 +21,9 @@ function main(){
 
     AnyBalance.setDefaultCharset('utf-8'); 
     var html = AnyBalance.requestPost(baseurl + 'webapp/index.php?r=clientCabinet/login', {
-        'LoginForm[username]':prefs.login,
-        'LoginForm[password]':prefs.password,
-        'LoginForm[rememberMe]':0,
+        'NewLoginForm[phone]':prefs.login,
+        'NewLoginForm[password]':prefs.password,
+        'NewLoginForm[rememberMe]':0,
         yt0:''
     }, addHeaders({Referer: baseurl})); 
 
@@ -34,7 +34,6 @@ function main(){
         //Если объяснения ошибки не найдено, при том, что на сайт войти не удалось, то, вероятно, произошли изменения на сайте
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
-
     var result = {success: true};
 
     var json = getParam(html, null, null, /user_profile\s*=\s*(\{[\s\S]*?\});/, null, getJson);

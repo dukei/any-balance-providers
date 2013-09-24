@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<api flags="no_browser" />
+	<id version="1">ab-money-imoneybank-iclick</id>
+	<name>АйМаниБанк (iclick)</name>
+	<description>
+	Получает данные из интернет-банка https://iclick.imoneybank.ru
+	
+	На данный момент поддерживается только баланс карт, если необходимо отображение другой информации связывайтесь с автором провайдера по имейл.
+	</description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Остаток"/>
+		<counter id="type" name="Тип карты" type="text"/>
+		<counter id="deadline" name="Срок действия" type="time" format="dd/MM/yyyy"/>
+		<counter id="acc_num" name="Номер счета" type="text"/>
+		<counter id="card_num" name="Номер карты" type="text"/>
+	</counters>
+	<keywords>imoneybank</keywords>
+	<type>money</type>
+	<country>ru</country>
+</provider>

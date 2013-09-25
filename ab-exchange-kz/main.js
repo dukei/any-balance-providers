@@ -1,22 +1,25 @@
-﻿function getRate(result, item, code){
-        if($(item).find("title").text() == code && AnyBalance.isAvailable(code)){
-                       result[code] = $(item).find("description").text();
-         }
 
-} 
+function getRate(result, info, counter){
+	var regexp = new RegExp(counter+'(?:[\\s\\S]*?<td[^>]*>){2}([^<]*)', 'i');
+	
+	getParam(info, result, counter, regexp, null, parseBalance);
+}
 	
 function main(){
-        AnyBalance.trace('Connecting to www.nationalbank.kz');        
-        var result = {success: true};          
-        var info = AnyBalance.requestGet('http://www.nationalbank.kz/rss/rates_all.xml');
-        var xmlDoc = $.parseXML(info), $xml = $(xmlDoc);
-        $xml.find("item").each(
-                function(){
-                   getRate(result,$(this),'USD');
-                   getRate(result,$(this),'EUR');
-                   getRate(result,$(this),'RUB');
-                }); 
-         AnyBalance.setResult(result);
+	AnyBalance.setDefaultCharset('utf-8');
+	var info = AnyBalance.requestGet('http://halykbank.kz/ru/currency-rates');
+	
+	var table = getParam(info, null, null, /Курсы конвертации для физических[\s\S]*?(<table[\s\S]*?<\/table>)/i);
+	if(!table)
+		throw new AnyBalance.Error('Не удалось найти таблицу с валютами, сайт изменен?');
+
+
+	var result = {success: true};
+	var currs = ['USD', 'EUR', 'RUR', 'GBP', 'CHF', 'XAU', 'XAG'];
+	
+	for(i = 0; i < currs.length; i++) {
+		getRate(result, info, currs[i]);	
+	}
+
+	AnyBalance.setResult(result);
 }
-
-

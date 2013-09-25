@@ -37,4 +37,12 @@
         dialogMessage="Введите цифры лицевой счета, чей баланс вы хотите посмотреть. Чтобы смотреть информацию по первому счету, оставьте это поле пустым."
         inputType="number">
     </EditTextPreference>
+    <ListPreference 
+        key="cab" 
+        title="Кабинет"
+        summary="||{@s}"
+        entries="Новый my.ufanet.ru|Старый stat1.ufanet.ru"
+        entryValues="new|old"
+		defaultValue="new">
+    </ListPreference>	
 </PreferenceScreen>

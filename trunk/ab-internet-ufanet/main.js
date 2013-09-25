@@ -39,39 +39,36 @@ function main(){
         throw new AnyBalance.Error('Укажите цифры номера лицевого счета, по которому вы хотите получить информацию, или не указывайте ничего, чтобы получить информацию по первому лицевому счету.');
 
     var baseurl = 'https://my.ufanet.ru/';
-	var html = '';
-	
-	if(!prefs.__dbg) {
-		html = AnyBalance.requestPost(baseurl + 'login', {
+
+	if(prefs.cab == 'old') {
+		AnyBalance.trace('Запросим старый кабинет');
+		var html = AnyBalance.requestPost(baseurl + 'login', {
 			city: (prefs.city ? prefs.city : 'ufa'),
 			contract:encodeURIComponent1251(prefs.login),
 			password:prefs.password
 		});
-	} else {
-		if(prefs.__dbgCab == 'old')
-			html = AnyBalance.requestGet('http://stat1.ufanet.ru/bgbilling/webexecuter');
-		else
-			html = AnyBalance.requestGet(baseurl);
-	}
-	var result = {success: true};
-	
-	if(AnyBalance.getLastUrl().indexOf('stat1.ufanet.ru') > 0) {
 		AnyBalance.setDefaultCharset('windows-1251');
+		
 		AnyBalance.trace('Попали в старый кабинет, обратите внимание, в старом кабинете игнорируется настройка № договора, для исправления свяжитесь с автором по e-mail');
-		AnyBalance.trace(html);
 		if(!/action=Exit/i.test(html)){
-			var error = getParam(html, null, null, /<div[^>]*class=["']error[^>]*>([\s\S]*?)<\/div>/, replaceTagsAndSpaces, html_entity_decode);
+			var error = getParam(html, null, null, /<h2>ОШИБКА:([\s\S]*?)<\/li/, replaceTagsAndSpaces, html_entity_decode);
 			if(error)
 				throw new AnyBalance.Error(error);
 			throw new AnyBalance.Error('Не удалось войти в личный кабинет. Проблемы на сайте или сайт изменен.');
 		}
 		// http://stat1.ufanet.ru/bgbilling/webexecuter?action=ShowBalance&mid=contract&contractId=488711
 		html = AnyBalance.requestGet('http://stat1.ufanet.ru/bgbilling/webexecuter' + getParam(html, null, null, /href="([^"]*)[^>]*>Просмотр баланса/));
-		
+		var result = {success: true};
 		getParam(html, result, 'balance', /Исходящий остаток на конец месяца(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, 'agreement', /Договор №([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 	} else {
-		AnyBalance.trace('Попали в новый кабинет');
+		AnyBalance.trace('Запросим новый кабинет');
+		var html = AnyBalance.requestPost(baseurl + 'login', {
+			city: (prefs.city ? prefs.city : 'ufa'),
+			contract:prefs.login,
+			password:prefs.password
+		});
+		
 		if(!/\/logout/i.test(html)){
 			var error = getParam(html, null, null, /<div[^>]*class=["']error[^>]*>([\s\S]*?)<\/div>/, replaceTagsAndSpaces, html_entity_decode);
 			if(error)
@@ -87,13 +84,14 @@ function main(){
 				html = AnyBalance.requestGet('https://my.ufanet.ru/' + href);
 			}
 		}
+		var result = {success: true};
 		getParam(html, result, 'balance', /Остаток на счете:[\S\s]*?<p[^>]*>([\S\s]*?)<\/p>/i, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, 'pay', /Рекомендуемая сумма к оплате:[\S\s]*?<p[^>]*>([\S\s]*?)<\/p>/i, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, 'daysleft', /До конца учетного периода:[\S\s]*?<p[^>]*>([\S\s]*?)<\/p>/i, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, 'licschet', /Лицевой счет<\/p>\s*<p[^>]+class="important"[^>]*>([\S\s]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
 		getParam(html, result, 'agreement', /№ договора[\S\s]*?<p[^>]*>([\S\s]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
 
-		html = AnyBalance.requestGet(baseurl + "contract/information");
+		html = AnyBalance.requestGet(baseurl + 'contract/information');
 
 		getParam(html, result, '__tariff', /Тарифный план([\S\s]*?)(?:сменить|<\/p>|\(<a)/i, replaceTagsAndSpaces, html_entity_decode);
 		getParam(html, result, 'abon', /Абонентская плата([\S\s]*?)<\/p>/i, replaceTagsAndSpaces, parseBalance);

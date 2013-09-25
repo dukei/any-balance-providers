@@ -6,7 +6,7 @@
         summary="||{@s}" 
         dialogTitle="Логин" 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите логин в личный кабинет. Логином обычно является нормер телефона, указывайте его без пробелов и только последние 10 цифр, например: 9067775566"
+        dialogMessage="Введите логин в личный кабинет. Логином обычно является номер телефона, указывайте его без пробелов и только последние 10 цифр, например: 9067775566"
         key="login">
     </EditTextPreference>
     <EditTextPreference 
@@ -19,7 +19,7 @@
         dialogMessage="Введите пароль, используемый для входа в личный кабинет."
         inputType="textPassword">
     </EditTextPreference>
-    <EditTextPreference 
+    <!--<EditTextPreference 
         title="Номер карты/счета" 
         positiveButtonText="ОК" 
         summary="|Автоматически|{@s}" 
@@ -28,5 +28,5 @@
         dialogMessage="Введите последние 4 цифры номера карты/счета, информацию по которой вы хотите получить. Оставьте это поле пустым, если хотите получить информацию по первой карте/счету"
         inputType="number"
         key="num">
-    </EditTextPreference>	
+    </EditTextPreference>	-->
 </PreferenceScreen>

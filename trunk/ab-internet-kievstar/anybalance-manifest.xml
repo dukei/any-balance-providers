@@ -1,32 +1,28 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="2.0" version="4">ab-internet-kievstar</id>
-  <name>Киевстар (домашний интернет)</name>
-  <description>
-    Получает баланс, бонусные баллы для домашнего интернета Киевстар.
+	<id major_version="2.0" version="5">ab-internet-kievstar</id>
+	<api flags="no_browser|captcha"/>
+	<name>Киевстар (домашний интернет)</name>
+	<description>
+Получает баланс, бонусные баллы для домашнего интернета Киевстар.
 
-    Данные берутся из личного кабинета https://my.kyivstar.ua
-  </description>
-  <author>Viacheslav Sychov &lt;viacheslav.sychov@gmail.com&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-    <js>library.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="₴"/>
-    <counter id="bonuses" name="Бонусный счет" units="б"/>
-  </counters>
-  <keywords>
-    Домашний интернет, интернет, kyivstar, киевстар, украина
-  </keywords>
-  <type>
-    internet
-  </type>
-  <country>
-    ua
-  </country>
+Данные берутся из личного кабинета https://my.kyivstar.ua
+
+Этот провайдер требует версию AnyBalance API 7+ с поддержкой капчи
+	</description>
+	<author>Viacheslav Sychov &lt;viacheslav.sychov@gmail.com&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>		
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units="₴"/>
+		<counter id="bonuses" name="Бонусный счет" units="б"/>
+	</counters>
+	<keywords>Домашний интернет, интернет, kyivstar, киевстар, украина</keywords>
+	<type>internet</type>
+	<country>ua</country>
 </provider>
-

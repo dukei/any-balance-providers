@@ -15,14 +15,14 @@ var headers = {
 function main() {
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = "https://my.kyivstar.ua/";
-
+	
 	AnyBalance.trace('Connecting to ' + baseurl);
-
+	
 	var html = AnyBalance.requestGet(baseurl + 'tbmb/login/show.do', headers);
 	var form = getParam(html, null, null, /<form[^>]+action="[^"]*perform.do"[^>]*>([\s\S]*?)<\/form>/i);
 	if(!form)
 		throw new AnyBalance.Error('Не удаётся найти форму входа. Проблемы или изменения на сайте?');
-
+	
 	var captchaa;
 	if(AnyBalance.getLevel() >= 7){
 		AnyBalance.trace('Пытаемся ввести капчу');
@@ -46,13 +46,13 @@ function main() {
 			throw new AnyBalance.Error(matches[1]);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
-
+	
 	AnyBalance.trace('Successfully connected');
-
+	
 	var result = {success: true};
 	getParam(html, result, 'balance', /(?:Текущий баланс|Поточний баланс|Current balance):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'bonuses', /(?:Бонусный баланс|Бонусний баланс|Bonuses)[\s\S]*?>\s*(?:Баланс|Balance):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, '__tariff', /(?:Тарифный пакет|Тарифний пакет|Rate package):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-
+	
 	AnyBalance.setResult(result);
 }

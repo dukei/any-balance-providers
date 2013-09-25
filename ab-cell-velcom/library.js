@@ -681,7 +681,7 @@ function requestPostMultipart(url, data, headers){
 		'',
 		data[name]);
 	}
-	parts.push(boundary, '--');
+	parts.push(boundary + '--');
         if(!headers) headers = {};
 	headers['Content-Type'] = 'multipart/form-data; boundary=' + boundary.substr(2);
 	return AnyBalance.requestPost(url, parts.join('\r\n'), headers);

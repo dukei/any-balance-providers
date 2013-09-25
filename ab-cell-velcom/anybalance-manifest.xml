@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="13">ab-cell-velcom</id>
+	<id version="14">ab-cell-velcom</id>
 	<api flags="no_browser"/>
 	<name>Velcom (Беларусь)</name>
 	<description>

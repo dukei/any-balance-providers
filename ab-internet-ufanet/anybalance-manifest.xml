@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="3">ab-internet-ufanet</id>
+	<id version="4">ab-internet-ufanet</id>
 	<name>UFANET (Уфа)</name>
 	<description>
 Получает баланс и информацию о тарифном плане для интернет-провайдера УФАНЕТ (http://ufanet.ru).

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Номер перевода" 
+        positiveButtonText="ОК" 
+        summary="||{@s}"
+        dialogTitle="Номер перевода" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите контрольный номер перевода."
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="lastname" 
+        dialogTitle="Фамилия отправителя"
+        negativeButtonText="Отмена"
+        title="Фамилия отправителя"
+        summary="||{@s}"
+        dialogMessage="Введите фамилию отправителя.">
+    </EditTextPreference>
+</PreferenceScreen>

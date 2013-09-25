@@ -1,35 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-internet-ufanet</id>
-  <name>UFANET (Уфа)</name>
-  <description>
-    Получает баланс и информацию о тарифном плане для интернет-провайдера УФАНЕТ (http://ufanet.ru).
+	<api flags="no_browser"/>
+	<id version="3">ab-internet-ufanet</id>
+	<name>UFANET (Уфа)</name>
+	<description>
+Получает баланс и информацию о тарифном плане для интернет-провайдера УФАНЕТ (http://ufanet.ru).
 
-    УФАНЕТ предоставляет услуги доступа в интернет и телевидения в следующих городах: Ишимбай, Нефтекамск, Октябрьский, Оренбург, Орск, Салават, Стерлитамак, Уфа.
+УФАНЕТ предоставляет услуги доступа в интернет и телевидения в следующих городах: Ишимбай, Нефтекамск, Октябрьский, Оренбург, Орск, Салават, Стерлитамак, Уфа.
 
-    Информация берется из личного кабинета https://my.ufanet.ru.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <history>history.xml</history>
-    <js>main.js</js>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="pay" name="Сумма к оплате" units="р"/>
-    <counter id="abon" name="Абонентская плата" units="р"/>
-    <counter id="daysleft" name="До конца учетного периода" units="дн"/>
-    <counter id="agreement" name="№ договора" type="text"/>
-  </counters>
-  <keywords>
-    интернет
-  </keywords>
-  <type>
-    internet, tv
-  </type>
-  <country>
-    ru
-  </country>
+Информация берется из личного кабинета https://my.ufanet.ru но так же поддерживается и старый кабинет http://stat1.ufanet.ru, обратите внимание, в старом кабинете игнорируется настройка № договора, для исправления свяжитесь с автором по e-mail.
+	</description>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<history>history.xml</history>
+		<js>library.js</js>
+		<js>main.js</js>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units="р"/>
+		<counter id="pay" name="Сумма к оплате" units="р"/>
+		<counter id="abon" name="Абонентская плата" units="р"/>
+		<counter id="daysleft" name="До конца учетного периода" units="дн"/>
+		<counter id="agreement" name="№ договора" type="text"/>
+	</counters>
+	<keywords>интернет</keywords>
+	<type>internet, tv</type>
+	<country>ru</country>
 </provider>

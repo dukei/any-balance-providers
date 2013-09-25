@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-money-zenit</id>
+	<api flags="no_browser"/>
+	<name>Банк Зенит</name>
+	<description>
+Получает данные по картам и счетам банка Зенит (http://www.zenit.ru/)
+
+Данные берутся из системы дистанционного банковского обслуживания (ДБО) по адресу https://bank.zenit.ru/frontend/frontend
+	</description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units="{@currency}"/>
+		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="cardnum" name="Номер карты/счета" type="text"/>
+		<counter id="type" name="Продукт" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>money</type>
+	<country>ru</country>
+</provider>

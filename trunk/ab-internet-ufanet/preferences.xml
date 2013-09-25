@@ -25,7 +25,7 @@
         summary="||{@s}"
         entries="Ишимбай|Нефтекамск|Октябрьский|Оренбург|Орск|Салават|Стерлитамак|Уфа"
         entryValues="ishimbai|neftekamsk|okt|orenburg|orsk|slv|sterlitamak|ufa"
-	      defaultValue="ufa">
+		defaultValue="ufa">
     </ListPreference>
     <EditTextPreference 
         positiveButtonText="ОК"

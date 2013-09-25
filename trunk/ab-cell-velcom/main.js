@@ -46,11 +46,11 @@ function main(){
 		value = '_next';
 	if(name == 'user_input_timestamp')
 		value = new Date().getTime();
-	if(name == 'user_input_8')
+	if(/^user_input_\d+8$/.test(name))
 		value = '5';
-	if(name == 'user_input_9')
+	if(/^user_input_\d+9$/.test(name))
 		value = '2';
-	if(name == 'user_input_10')
+	if(/^user_input_\d+10$/.test(name))
 		value = '0';
 	return value || '';
     });

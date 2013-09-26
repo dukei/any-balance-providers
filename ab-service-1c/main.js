@@ -30,6 +30,10 @@ function main(){
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
     html = AnyBalance.requestGet(baseurl + 'personal.jsp', g_headers);
+	
+	if(/Нет подписки на ИТС/i.test(html))
+		throw new AnyBalance.Error('На данный момент нет активных подписок на ИТС');
+	
 
     var result = {success: true};
     getParam(html, result, 'date', /подписка\s*действует\s*до([^<]*)/i, replaceTagsAndSpaces, parseDate);

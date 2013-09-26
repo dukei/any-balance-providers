@@ -32,11 +32,22 @@ function main(){
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
 
-    var result = {success: true};
+    var result = {success: true, nextbonuses: ''};
     getParam(html, result, 'balance', /баланс<(?:[\s\S]*?[^>]*>){3}([\s\S]*?)<\/span>/, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'fio', /font[^>]*class="t_b6"[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'dogovor', /ctl00_m_rc_ctl00_c_lContract[^>]*>([^:]*)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'acc-num', /ctl00_m_rc_ctl00_c_lContract[^>]*>[^>]*счет\s*\[([\s\S]*?)\]<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+	
+	var table = getParam(html, null, null, /Бонусы будущих периодов[^>]*>\s*(<table[\s\S]*?<\/table>)/i);
+	if(table) {
+		var tr = sumParam(table, null, null, /(<tr>[\s\S]*?<\/tr>)/ig, replaceTagsAndSpaces, html_entity_decode);
+		for(i = 0; i < tr.length; i++) {
+			result.nextbonuses += tr[i] + '\n';
+		}
+	}
+	
+	
+	
 	
     AnyBalance.setResult(result);
 }

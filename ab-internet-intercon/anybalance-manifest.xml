@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="1">ab-internet-intercon</id>
+	<id version="2">ab-internet-intercon</id>
 	<name>Интеркон</name>
 	<description>
-	Получает данные для провайдера Интеркон (http://www.intercon.ru/)
-	
-	Личный кабинет находится по адресу: http://client2.intercon.ru/Client.aspx
+Получает данные для провайдера Интеркон (http://www.intercon.ru/)
+
+Личный кабинет находится по адресу: http://client2.intercon.ru/Client.aspx
 	</description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
@@ -21,6 +21,7 @@
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="dogovor" name="Договор" type="text"/>
 		<counter id="acc-num" name="Номер счета" type="text"/>
+		<counter id="nextbonuses-num" name="Бонусы будущих периодов" type="text"/>
 	</counters>
 	<keywords></keywords>
 	<type>internet</type>

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="1">ab-telephony-hotvoip</id>
+	<id version="2">ab-telephony-hotvoip</id>
 	<name>Hotvoip.com</name>
 	<description>
-	Получает данные для провайдера IP-телефонии Hotvoip.com (http://www.hotvoip.com/)
-	
-	Личный кабинет находится по адресу: https://www.hotvoip.com/buy_credit2/
+Получает данные для провайдера IP-телефонии Hotvoip.com (http://www.hotvoip.com/)
+
+Личный кабинет находится по адресу: https://www.hotvoip.com/buy_credit2/
 	</description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>

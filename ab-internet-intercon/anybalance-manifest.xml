@@ -21,7 +21,7 @@
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="dogovor" name="Договор" type="text"/>
 		<counter id="acc-num" name="Номер счета" type="text"/>
-		<counter id="nextbonuses-num" name="Бонусы будущих периодов" type="text"/>
+		<counter id="nextbonuses" name="Бонусы будущих периодов" type="text"/>
 	</counters>
 	<keywords></keywords>
 	<type>internet</type>

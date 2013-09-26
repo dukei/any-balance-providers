@@ -57,7 +57,7 @@ function isAvailable(param){
 //Замена пробелов и тэгов
 var replaceTagsAndSpaces = [/&nbsp;/ig, ' ', /&minus;/ig, '-', /<!--[\s\S]*?-->/g, '', /<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, ''];
 //Замена для чисел
-var replaceFloat = [/&minus;/ig, '-', /\s+/g, '', /,/g, '.'];
+var replaceFloat = [/&minus;/ig, '-', /\s+/g, '', /,/g, '.', /\.([^.]*)(?=\.)/g, '$1', /^\./, '0.'];
 //Замена для Javascript строк
 var replaceSlashes = [/\\(.?)/g, function(str, n){
         switch (n) {
@@ -103,7 +103,7 @@ function replaceAll(value, replaces){
  * Извлекает числовое значение из переданного текста
  */
 function parseBalance(text){
-    var val = getParam(html_entity_decode(text).replace(/\s+/g, ''), null, null, /(-?\d[\d.,]*)/, replaceFloat, parseFloat);
+    var val = getParam(html_entity_decode(text).replace(/\s+/g, ''), null, null, /(-?\.?\d[\d.,]*)/, replaceFloat, parseFloat);
     AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
     return val;
 }
@@ -122,15 +122,19 @@ function parseCurrency(text){
  */
 function html_entity_decode (string) {
     var entities = get_html_translation_table();
-    var replaced = string.replace(/&(#?)(\w+);/g, function(str, sharp, m){
+    var replaced = string.replace(/&(#(x)?)?(\w+);/ig, function(str, sharp, x, m){
         if(!sharp){
             var ml = m.toLowerCase(m);
             if(entities.hasOwnProperty(ml))
-                return entities[ml];
-        }else{
+                return String.fromCharCode(entities[ml]);
+        }else if(!x){
             if(/^\d+$/.test(m))
                 return String.fromCharCode(parseInt(m));
+        }else{
+            if(/^[0-9a-f]+$/i.test(m))
+		return String.fromCharCode(parseInt(m, 16));
         }
+        return str;
     });
     return replaced;
 }
@@ -272,18 +276,23 @@ function createFormParams(html, process, array){
     html.replace(/<input[^>]+name=['"]([^'"]*)['"][^>]*>|<select[^>]+name=['"]([^'"]*)['"][^>]*>[\s\S]*?<\/select>/ig, function(str, nameInp, nameSel){
         var value = '';
         if(nameInp){
+			if(nameInp == 'ctl00$txtSubsEmail')
+				AnyBalance.trace('last: '+nameInp);
+				
             if(/type=['"]button['"]/i.test(str))
                 value=undefined;
             else
                 value = getParam(str, null, null, /value=['"]([^'"]*)['"]/i, null, html_entity_decode) || '';
             name = nameInp;
+			
         }else if(nameSel){
             value = getParam(str, null, null, /^<[^>]*value=['"]([^'"]*)['"]/i, null, html_entity_decode);
             if(typeof(value) == 'undefined'){
                 var optSel = getParam(str, null, null, /(<option[^>]+selected[^>]*>)/i);
                 if(!optSel)
                     optSel = getParam(str, null, null, /(<option[^>]*>)/i);
-                value = getParam(optSel, null, null, /value=['"]([^'"]*)["']/i, null, html_entity_decode);
+				if(optSel)
+				    value = getParam(optSel, null, null, /value=['"]([^'"]*)["']/i, null, html_entity_decode);
             }
             name = nameSel;
         }

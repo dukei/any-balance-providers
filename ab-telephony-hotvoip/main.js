@@ -18,7 +18,7 @@ function main(){
     
     var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
 	
-    var matches = /id="page_referrer"[^>]*value="login"[^>]*>\s*<input[^>]+name="([0-9a-f]{32})"[^>]*value="([0-9a-f]{32})"[^>]*>/i.exec(html);
+    var matches = /data:\s*[^<]*update_id=&([0-9a-f]{32})=([0-9a-f]{32})/i.exec(html);
     if(!matches)
         throw new AnyBalance.Error("Не удаётся найти идентификатор сессии! Свяжитесь с автором провайдера.");
 

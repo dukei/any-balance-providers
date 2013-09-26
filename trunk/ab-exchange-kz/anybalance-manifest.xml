@@ -1,28 +1,29 @@
+
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="1.0"  version="2">ab-exchange-kz</id>
-	<api flags="no_browser"/>
-	<name>Курсы валют Нацбанка РК</name>
-	<description>
-Текущие курсы валют, установленные Национальным Банком Республики Казахстан. Содержит курс доллара, евро, российского рубля.
-</description>
-	<author>v_stikh &lt;stikhilyas@gmail.com&gt;</author>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
-	<files>
-		<icon>icon.png</icon>
-		<js>library.js</js>
-		<js>main.js</js>
-	</files>
-	<counters>
-		<counter id="USD" name="Курс доллара" prefix="$ "/>
-		<counter id="EUR" name="Курс евро" prefix="€ "/>
-		<counter id="RUR" name="Курс рубля" prefix="Р "/>
-		<counter id="GBP" name="Курс фунта" prefix="£ "/>
-		<counter id="CHF" name="Курс франка" prefix="₣ "/>
-		<counter id="XAU" name="Курс золота" />
-		<counter id="XAG" name="Курс серебра" />
-	</counters>
-	<keywords>Курс валют, национальный банк, Казахстан, доллар, тенге, рубль</keywords>
-	<type>finance, exchange</type>
-	<country>kz</country>
+  <id major_version="1.0"  version="3">ab-exchange-kz</id>
+  <name>Курсы валют Нацбанка РК</name>
+  <description>
+   Текущие курсы валют, установленные Национальным Банком Республики Казахстан. Содержит курс доллара, евро, российского рубля.
+  </description>
+  <author>v_stikh &lt;stikhilyas@gmail.com&gt;</author>
+  <files>
+   <js>api:jquery.min.js</js>
+    <icon>icon.png</icon>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="USD" name="Курс доллара" prefix="$ "/>
+    <counter id="EUR" name="Курс евро" prefix="€ "/>
+    <counter id="RUB" name="Курс рубля" prefix="R "/>
+  </counters>
+  <keywords>
+   Курс валют, национальный банк, Казахстан, доллар, тенге, рубль.
+  </keywords>
+  <type>
+    finance, exchange
+  </type>
+  <country>
+    kz
+  </country>
 </provider>

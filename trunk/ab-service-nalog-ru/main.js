@@ -66,6 +66,7 @@ function main(){
 			sumParam(sum, result, 'balance', /([\s\S]*)/i, null, parseBalance, aggregate_sum);		
 		}
 	}
+	result.all = result.all.trim();
 	
     AnyBalance.setResult(result);
 }

@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-	<change version="5" date="2013-09-18">
-	- Мелочи (Stark)
-	</change>
-	<change version="5" date="2013-09-05">
-	- Исправлено отображение остатка по кредиту и добавлен новый счетчик Сумма кредита (Stark)
-	</change>
-	<change version="4" date="2013-08-06">
-	- Отображение кредита (Stark)
-	</change>
-	<change version="3" date="2013-06-26">
-	- Небольшие исправления (Stark)
-	</change>
-    <change version="2" date="2013-06-17">
-	- Добавлена поддержка карт
-	</change>
+<change version="7" date="2013-09-27">
+- Исправлено отображение дат в некоторых случаях (Stark)
+</change>
+<change version="6" date="2013-09-18">
+- Мелочи (Stark)
+</change>
+<change version="5" date="2013-09-05">
+- Исправлено отображение остатка по кредиту и добавлен новый счетчик Сумма кредита (Stark)
+</change>
+<change version="4" date="2013-08-06">
+- Отображение кредита (Stark)
+</change>
+<change version="3" date="2013-06-26">
+- Небольшие исправления (Stark)
+</change>
+<change version="2" date="2013-06-17">
+- Добавлена поддержка карт
+</change>
 </history>

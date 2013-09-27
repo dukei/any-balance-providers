@@ -81,7 +81,7 @@ function fetchCard(baseurl, html, result){
     getParam(info, result, 'cardnum', /<ax\d+:number>([\s\S]*?)<\/ax\d+:number>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(info, result, 'accnum', /<ax\d+:accountNumber>([\s\S]*?)<\/ax\d+:accountNumber>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(info, result, 'balance', /balance>([\s\S]*?)<\/ax[\s\S]{1,10}:balance>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(info, result, ['currency', 'balance'], /<ax\d+:currency>([\s\S]*?)<\/ax\d+:currency>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(info, result, ['currency', '__tariff'], /<ax\d+:currency>([\s\S]*?)<\/ax\d+:currency>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(info, result, 'minpaytill', /<ax\d+:nextCreditPaymentDate>([\s\S]*?)<\/ax\d+:nextCreditPaymentDate>/i, replaceTagsAndSpaces, parseDateISO);
     getParam(info, result, 'minpay', /<ax\d+:minimalCreditPayment>([\s\S]*?)<\/ax\d+:minimalCreditPayment>/i, replaceTagsAndSpaces, parseBalance);
     getParam(info, result, 'limit', /<ax\d+:creditLimit>([\s\S]*?)<\/ax\d+:creditLimit>/i, replaceTagsAndSpaces, parseBalance);
@@ -116,7 +116,7 @@ function fetchAccount(baseurl, html, result){
     getParam(info, result, '__tariff', /<ax\d+:number>([\s\S]*?)<\/ax\d+:number>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(info, result, 'accnum', /<ax\d+:number>([\s\S]*?)<\/ax\d+:number>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(info, result, 'balance', /<ax\d+:balance>([\s\S]*?)<\/ax\d+:balance>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(info, result, ['currency', 'balance'], /<ax\d+:currency>([\s\S]*?)<\/ax\d+:currency>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(info, result, ['currency', '__tariff'], /<ax\d+:currency>([\s\S]*?)<\/ax\d+:currency>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(info, result, 'minpaytill', /<ax\d+:nextCreditPaymentDate>([\s\S]*?)<\/ax\d+:nextCreditPaymentDate>/i, replaceTagsAndSpaces, parseDateISO);
     getParam(html, result, 'minpay', /<ax\d+:minimalCreditPayment>([\s\S]*?)<\/ax\d+:minimalCreditPayment>/i, replaceTagsAndSpaces, parseBalance);
     getParam(info, result, 'limit', /<ax\d+:creditLimit>([\s\S]*?)<\/ax\d+:creditLimit>/i, replaceTagsAndSpaces, parseBalance);
@@ -150,7 +150,7 @@ function fetchDeposit(baseurl, html, result){
 
     getParam(info, result, 'accnum', /<ax\d+:accountNumber>([\s\S]*?)<\/ax\d+:accountNumber>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(info, result, 'balance', /<ax\d+:initialAmount>([\s\S]*?)<\/ax\d+:initialAmount>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(info, result, ['currency', 'balance'], /<ax\d+:currency>[^<]*?([^<\.]*?)<\/ax\d+:currency>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(info, result, ['currency', '__tariff'], /<ax\d+:currency>[^<]*?([^<\.]*?)<\/ax\d+:currency>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(info, result, '__tariff', /<ax\d+:names>([\s\S]*?)<\/ax\d+:names>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(info, result, 'rate', /<ax\d+:interestRate>([\s\S]*?)<\/ax\d+:interestRate>/i, replaceTagsAndSpaces, parseBalance);
     getParam(info, result, 'pcts', /<ax\d+:totalInterest>([\s\S]*?)<\/ax\d+:totalInterest>/i, replaceTagsAndSpaces, parseBalance);
@@ -180,7 +180,7 @@ function fetchCredit(baseurl, html, result){
 	getParam(html, result, 'balance', /<ax\d+:paymentRest>([\s\S]*?)<\/ax\d+:paymentRest>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'minpay', /<ax\d+:nextPaymentAmount>([\s\S]*?)<\/ax\d+:nextPaymentAmount>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'paid', /<ax\d+:paidLoanAmount>([\s\S]*?)<\/ax\d+:paidLoanAmount>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, ['currency', 'balance'], /<ax\d+:currency>[^<]*?([^<\.]*?)<\/ax\d+:currency>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, ['currency', '__tariff'], /<ax\d+:currency>[^<]*?([^<\.]*?)<\/ax\d+:currency>/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'minpaytill', /<ax\d+:nextPaymentDate>([\s\S]*?)<\/ax\d+:nextPaymentDate>/i, replaceTagsAndSpaces, parseDateISO);
 	getParam(html, result, 'till', /<ax\d+:closeDate>([\s\S]*?)<\/ax\d+:closeDate>/i, replaceTagsAndSpaces, parseDateISO);
 	

@@ -47,7 +47,7 @@ function main() {
 		for(i = 0; i < rows.length; i++) {
 			result.all += rows[i] + '\n\n';
 		}
-		result.all = result.all.trim();
+		result.all = result.all.replace(/^\s+|\s+$/g, '');
 	} else {
 		var err = getParam(html, null, null, /class="empty"[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 		if(!err)

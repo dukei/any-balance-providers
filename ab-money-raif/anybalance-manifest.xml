@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="6">ab-money-raif</id>
+	<id version="7">ab-money-raif</id>
 	<name>Райффайзен</name>
 	<description>
-	Получает текущий остаток и другие параметры счетов и депозитов банка Райффайзенбанк (http://www.raiffeisen.ru), используя интернет-банк https://connect.raiffeisen.ru.
-	
-	Для подключения к Raiffeisen CONNECT обратитесь с документом, удостоверяющим личность, в любое отделение типа «А» Райффайзенбанка и подпишите Заявление на регистрацию в системе Raiffeisen CONNECT. После подписания заявления вы получите:
-	1. Ваше имя пользователя (логин),
-	2. ПИН-конверт, содержащий ваш пароль для доступа в Raiffeisen CONNECT.
-	В настоящее время провайдер поддерживает только карты, счета и депозиты. Для добавления кредитов или других банковских продуктов обращайтесь к автору по е-мейл.
+Получает текущий остаток и другие параметры счетов и депозитов банка Райффайзенбанк (http://www.raiffeisen.ru), используя интернет-банк https://connect.raiffeisen.ru.
+
+Для подключения к Raiffeisen CONNECT обратитесь с документом, удостоверяющим личность, в любое отделение типа «А» Райффайзенбанка и подпишите Заявление на регистрацию в системе Raiffeisen CONNECT. После подписания заявления вы получите:
+   1. Ваше имя пользователя (логин),
+   2. ПИН-конверт, содержащий ваш пароль для доступа в Raiffeisen CONNECT.
+
+В настоящее время провайдер поддерживает только карты, счета и депозиты. Для добавления кредитов или других банковских продуктов обращайтесь к автору по е-мейл.
 	</description>
 	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
 	<files>
@@ -35,7 +36,7 @@
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="all" name="Сводка" type="text"/>
 	</counters>
-	<keywords>raiffaisen raif raifaisen райф</keywords>
+	<keywords>raiffaisen raif raifaisen райф конект</keywords>
 	<type>money</type>
 	<country>ru</country>
 </provider>

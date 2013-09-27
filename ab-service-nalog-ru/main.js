@@ -8,7 +8,6 @@ var g_headers = {
 	'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection':'keep-alive',
 	'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.66 Safari/537.36',
-	'Origin':'https://vg.vainahtelecom.ru'
 };
 
 function main(){
@@ -66,7 +65,7 @@ function main(){
 			sumParam(sum, result, 'balance', /([\s\S]*)/i, null, parseBalance, aggregate_sum);		
 		}
 	}
-	result.all = result.all.trim();
+	result.all = result.all.replace(/^\s+|\s+$/g, '');
 	
     AnyBalance.setResult(result);
 }

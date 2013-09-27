@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="2">ab-internet-intercon</id>
-	<name>Интеркон</name>
+	<id version="3">ab-internet-intercon</id>
+	<name>Интеркон (Воронеж)</name>
 	<description>
-Получает данные для провайдера Интеркон (http://www.intercon.ru/)
+Получает данные для провайдера Интеркон г. Воронеж (http://www.intercon.ru/)
 
 Личный кабинет находится по адресу: http://client2.intercon.ru/Client.aspx
 	</description>
@@ -21,7 +21,8 @@
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="dogovor" name="Договор" type="text"/>
 		<counter id="acc-num" name="Номер счета" type="text"/>
-		<counter id="nextbonuses" name="Бонусы будущих периодов" type="text"/>
+		<counter id="nextbonuses" name="Бонусы будущих периодов - сводка" type="text"/>
+		<counter id="nextbonuses_summ" name="Бонусы будущих периодов - сумма"/>
 	</counters>
 	<keywords></keywords>
 	<type>internet</type>

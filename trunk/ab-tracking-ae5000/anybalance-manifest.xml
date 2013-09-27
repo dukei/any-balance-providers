@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-tracking-ae5000</id>
+	<id version="2">ab-tracking-ae5000</id>
 	<api flags="no_browser"/>
 	<name>Автотрейдинг (Отслеживание грузов)</name>
 	<description>

@@ -1,51 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="18">ab-cell-beeline-new</id>
-  <name>Билайн (новый кабинет)</name>
-  <api flags="no_browser" min_level="5"/>
-  <description>
-    Получает баланс и информацию о тарифном плане для сотового оператора Билайн (http://beeline.ru)
+	<id version="19">ab-cell-beeline-new</id>
+	<name>Билайн (новый кабинет)</name>
+	<api flags="no_browser" min_level="5"/>
+	<description>
+Получает баланс и информацию о тарифном плане для сотового оператора Билайн (http://beeline.ru)
 
-    Информация берется из нового личного кабинета https://my.beeline.ru!
-    ВНИМАНИЕ! Если у вас логин и пароль от старого личного кабинета https://uslugi.beeline.ru, пользуйтесь провайдером Билайн (старый кабинет)!
+Информация берется из нового личного кабинета https://my.beeline.ru!
 
-    Как получить или сменить пароль?
-      1. Со своего мобильного телефона наберите номер *611#
-      2. в ответ придет смс с логином и ВРЕМЕННЫМ паролем в кабинет
-      3. войдите в кабинет https://my.beeline.ru с помощью этих логина и пароля
-      4. смените пароль на постоянный
-      5. логин и постоянный пароль введите в настройки провайдера
-
-    Кабинет новый, поэтому если ваши остатки смс, ммс, минут, трафика не отображаются, обращайтесь к автору провайдера для их добавления
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units=" {@currency}"/>
-    <counter id="prebal" name="Предварительная сумма по договору" units=" {@currency}"/>
-    <counter id="overpay" name="Переплата" units=" {@currency}"/>
-    <counter id="sms_left" name="Остаток SMS" units=" sms"/>
-    <counter id="mms_left" name="Остаток MMS" units=" mms"/>
-    <counter id="rub_bonus" name="Рублей БОНУС" units=" руб"/>
-    <counter id="min_bi" name="Минуты на Билайн" type="time_interval" format="{@H}:{@min}:{@sec}"/>
-    <counter id="min_local" name="Минуты на местные номера" type="time_interval" format="{@H}:{@min}:{@sec}"/>
-    <counter id="rub_opros" name="Рублей за участие в опросе" units=" руб"/>
-    <counter id="fio" name="ФИО" type="text"/>
-    <counter id="phone" name="Телефон" type="text"/>
-  </counters>
-  <keywords>
-    beeline
-  </keywords>
-  <type>
-    cell
-  </type>
-  <country>
-    ru
-  </country>
+ВНИМАНИЕ! Если у вас логин и пароль от старого личного кабинета https://uslugi.beeline.ru, пользуйтесь провайдером Билайн (старый кабинет)!
+Как получить или сменить пароль?
+	1. Со своего мобильного телефона наберите номер *611#
+	2. в ответ придет смс с логином и ВРЕМЕННЫМ паролем в кабинет
+	3. войдите в кабинет https://my.beeline.ru с помощью этих логина и пароля
+	4. смените пароль на постоянный
+	5. логин и постоянный пароль введите в настройки провайдера
+	
+Кабинет новый, поэтому если ваши остатки смс, ммс, минут, трафика не отображаются, обращайтесь к автору провайдера для их добавления
+	</description>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" {@currency}"/>
+		<counter id="prebal" name="Предварительная сумма по договору" units=" {@currency}"/>
+		<counter id="overpay" name="Переплата" units=" {@currency}"/>
+		<counter id="sms_left" name="Остаток SMS" units=" sms"/>
+		<counter id="mms_left" name="Остаток MMS" units=" mms"/>
+		<counter id="rub_bonus" name="Рублей БОНУС" units=" руб"/>
+		<counter id="min_bi" name="Минуты на Билайн" type="time_interval" format="{@H}:{@min}:{@sec}"/>
+		<counter id="min_local" name="Минуты на местные номера" type="time_interval" format="{@H}:{@min}:{@sec}"/>
+		<counter id="rub_opros" name="Рублей за участие в опросе" units=" руб"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="phone" name="Телефон" type="text"/>
+	</counters>
+	<keywords>beeline</keywords>
+	<type>cell</type>
+	<country>ru</country>
 </provider>

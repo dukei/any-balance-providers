@@ -40,6 +40,7 @@ function main() {
 	for(i = 0; i<rows.length; i++) {
 		result.all += rows[i] + '\n';
 	}
+	result.all = result.all.replace(/^\s+|\s+$/g, '');
 	
     AnyBalance.setResult(result);
 }

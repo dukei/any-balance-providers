@@ -1,46 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="4">ab-money-mkb</id>
-  <name>Московский Кредитный Банк</name>
-  <description>
-    Получает текущий остаток и другие параметры карт и кредитов Московского Кредитного Банка, используя систему МКБ Онлайн ( https://online.mkb.ru ).
+	<id version="5">ab-money-mkb</id>
+	<api flags="no_browser"/>
+	<name>Московский Кредитный Банк</name>
+	<description>
+Получает текущий остаток и другие параметры карт и кредитов Московского Кредитного Банка, используя систему МКБ Онлайн ( https://online.mkb.ru ).
 
-    Если у вас нет доступа к МКБ-онлайн: для подключения к комплексу услуг МКБ Онлайн Вам необходимо заполнить заявление в любом отделении Банка.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <js>api:jquery.min.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Остаток"/>
-    <counter id="needpay" name="Обязательный платеж"/>
-    <counter id="needpaytill" name="Обязательный платеж: заплатить до" type="time" format="dd/MM/yyyy"/>
-    <counter id="gracepay" name="Отчетная задолженность"/>
-    <counter id="gracepaytill" name="Отчетная задолженность: заплатить до" type="time" format="dd/MM/yyyy"/>
-	<counter id="deptill" name="Срок вклада до:" type="time" format="dd/MM/yyyy"/>
-    <counter id="pct" name="Срочные проценты"/>
-    <counter id="credit" name="Срочный Кредит"/>
-    <counter id="latedebt" name="Просроченная задолженность"/>
-    <counter id="limit" name="Кредитный лимит"/>
-    <counter id="pctcredit" name="Процентная ставка по кредиту/депозиту" units="%"/>
-    <counter id="currency" name="Валюта" type="text"/>
-    <counter id="cardnum" name="Номер карты/кредита/депозита" type="text"/>
-    <counter id="accnum" name="Номер счета" type="text"/>
-    <counter id="name" name="Тип карты/кредита" type="text"/>
-	<counter id="fio" name="ФИО" type="text"/>
-  </counters>
-  <keywords>
-    мкб онлайн, mkb online, moscow credit bank
-  </keywords>
-  <type>
-    money
-  </type>
-  <country>
-    ru
-  </country>
+Если у вас нет доступа к МКБ-онлайн: для подключения к комплексу услуг МКБ Онлайн Вам необходимо заполнить заявление в любом отделении Банка.
+	</description>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Остаток" units="{@currency}"/>
+		<counter id="needpay" name="Обязательный платеж" units="{@currency}"/>
+		<counter id="needpaytill" name="Обязательный платеж: заплатить до" type="time" format="dd/MM/yyyy"/>
+		<counter id="gracepay" name="Отчетная задолженность" units="{@currency}"/>
+		<counter id="gracepaytill" name="Отчетная задолженность: заплатить до" type="time" format="dd/MM/yyyy"/>
+		<counter id="deptill" name="Срок вклада до:" type="time" format="dd/MM/yyyy"/>
+		<counter id="pct" name="Срочные проценты" units="{@currency}"/>
+		<counter id="credit" name="Срочный Кредит" units="{@currency}"/>
+		<counter id="latedebt" name="Просроченная задолженность" units="{@currency}"/>
+		<counter id="limit" name="Кредитный лимит" units="{@currency}"/>
+		<counter id="pctcredit" name="Процентная ставка по кредиту/депозиту" units="%"/>
+		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="cardnum" name="Номер карты/кредита/депозита" type="text"/>
+		<counter id="accnum" name="Номер счета" type="text"/>
+		<counter id="name" name="Тип карты/кредита" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
+	</counters>
+	<keywords>мкб онлайн, mkb online, moscow credit bank</keywords>
+	<type>money</type>
+	<country>ru</country>
 </provider>

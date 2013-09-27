@@ -111,7 +111,7 @@ function main(){
     var tform = getParam(html, null, null, /<form[^>]+name="loginFormB2C:loginForm"[^>]*>[\s\S]*?<\/form>/i);
     if(!tform){ //Если параметр не найден, то это, скорее всего, свидетельствует об изменении сайта или о проблемах с ним
         if(AnyBalance.getLastStatusCode() > 400){
-            AnyBalance.trace("Beeline returned: " + AnyBalance.getLastStatusString());
+            AnyBalance.trace('Beeline returned: ' + AnyBalance.getLastStatusString());
             throw new AnyBalance.Error('Личный кабинет Билайн временно не работает. Пожалуйста, попробуйте позднее.');
         }
         throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
@@ -148,7 +148,7 @@ function main(){
         if(error)
             throw new AnyBalance.Error(error);
         if(AnyBalance.getLastStatusCode() > 400){
-            AnyBalance.trace("Beeline returned: " + AnyBalance.getLastStatusString());
+            AnyBalance.trace('Beeline returned: ' + AnyBalance.getLastStatusString());
             throw new AnyBalance.Error('Личный кабинет Билайн временно не работает. Пожалуйста, попробуйте позднее.');
         }
         //Если объяснения ошибки не найдено, при том, что на сайт войти не удалось, то, вероятно, произошли изменения на сайте
@@ -164,7 +164,7 @@ function main(){
 
 function fetchPost(baseurl, html){
     //Раз мы здесь, то мы успешно вошли в кабинет
-    AnyBalance.trace("Мы в постоплатном кабинете");
+    AnyBalance.trace('Мы в постоплатном кабинете');
     //Получаем все счетчики
     var result = {success: true, balance: null};
 
@@ -234,8 +234,8 @@ function fetchPre(baseurl, html){
         getParam(xhtml, result, 'balance', /у вас на балансе([\s\S]*)/i, replaceTagsAndSpaces, parseBalance);
         getParam(xhtml, result, ['currency', 'balance'], /у вас на балансе([\s\S]*)/i, replaceTagsAndSpaces, myParseCurrency);
         getParam(xhtml, result, 'fio', /<span[^>]+class="b2c.header.greeting.pre.b2c.ban"[^>]*>([\s\S]*?)(?:<\/span>|,)/i, replaceTagsAndSpaces, html_entity_decode);*/
-	xhtml = getBlock(baseurl + 'c/pre/index.html', html, 'homeBalance');
-/*        var tries = 0; //Почему-то не работает. Сколько раз ни пробовал, если первый раз баланс недоступен, то и остальные оказывается недоступен...
+		xhtml = getBlock(baseurl + 'c/pre/index.html', html, 'homeBalance');
+		/*var tries = 0; //Почему-то не работает. Сколько раз ни пробовал, если первый раз баланс недоступен, то и остальные оказывается недоступен...
         while(/balance-not-found/i.test(xhtml) && tries < 20){
             AnyBalance.trace('Баланс временно недоступен, пробуем обновить: ' + (++tries));
             AnyBalance.sleep(2000);
@@ -279,8 +279,11 @@ function getBonuses(xhtml, result){
                 sumParam(services[i], result, 'min_bi', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
             }else if(/Секунд БОНУС-2|Баланс бесплатных секунд-промо/i.test(name)){
                 sumParam(services[i], result, 'min_local', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+            }else if(/минут в месяц/i.test(name)){
+				var minutes = 60 * getParam(services[i], null, null, /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+                sumParam(minutes+'', result, 'min_local', null, null, null, aggregate_sum);
             }else{
-                AnyBalance.trace("Неизвестная опция: " + bonus_name + ' ' + services[i]);
+                AnyBalance.trace('Неизвестная опция: ' + bonus_name + ' ' + services[i]);
             }
         }
     }

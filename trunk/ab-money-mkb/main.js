@@ -24,71 +24,69 @@ function getEventValidation1(html){
 }
 
 function main(){
-    var prefs = AnyBalance.getPreferences();
-
-    var baseurl = "https://online.mkb.ru";
-    AnyBalance.setDefaultCharset('utf-8');
-
-    var html = AnyBalance.requestGet(baseurl + '/secure/login.aspx?newsession=1');
-    var eventvalidation = getEventValidation(html);
-    var viewstate = getViewState(html);
-
-    html = AnyBalance.requestPost(baseurl + '/secure/login.aspx?newsession=1', {
-      __EVENTTARGET:'',
-      __EVENTARGUMENT:'',
-      __VIEWSTATE:viewstate,
-      __EVENTVALIDATION:eventvalidation,
-      txtLogin:prefs.login,
-      txtPassword:prefs.password,
-      btnLoginStandard:'Войти'
-    });
-
-    error = getParam(html, null, null, /<span[^>]*id="lblErrorMsg"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
-    if(error)
-        throw new AnyBalance.Error(error);
-
-    var logout = getParam(html, null, null, /(\/secure\/logout.aspx)/i);
-    if(!logout)
-        throw new AnyBalance.Error("Не удалось зайти в интернет банк. Неправильный логин-пароль или проблемы на сайте.");
-
-    if(prefs.type == 'card')
-        fetchCard(html, baseurl);
-    else if(prefs.type == 'crd')
-        fetchCredit(html, baseurl);
-    else if(prefs.type == 'dep')
-        fetchDeposit(html, baseurl);
-    else if(prefs.type == 'acc')
-        fetchAccount(html, baseurl);		
-    else
-        fetchCard(html, baseurl);
-    
+	var prefs = AnyBalance.getPreferences();
+	var baseurl = 'https://online.mkb.ru';
+	AnyBalance.setDefaultCharset('utf-8');
+	
+	var html = AnyBalance.requestGet(baseurl + '/secure/login.aspx?newsession=1');
+	var eventvalidation = getEventValidation(html);
+	var viewstate = getViewState(html);
+	html = AnyBalance.requestPost(baseurl + '/secure/login.aspx?newsession=1', {
+		__EVENTTARGET:'',
+		__EVENTARGUMENT:'',
+		__VIEWSTATE:viewstate,
+		__EVENTVALIDATION:eventvalidation,
+		txtLogin:prefs.login,
+		txtPassword:prefs.password,
+		btnLoginStandard:'Войти'
+	});
+	error = getParam(html, null, null, /<span[^>]*id="lblErrorMsg"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+	if(error)
+		throw new AnyBalance.Error(error);
+		
+	var logout = getParam(html, null, null, /(\/secure\/logout.aspx)/i);
+	if(!logout)
+		throw new AnyBalance.Error('Не удалось зайти в интернет банк. Неправильный логин-пароль или проблемы на сайте.');
+		
+	if(prefs.type == 'card')
+		fetchCard(html, baseurl);
+	else if(prefs.type == 'crd')
+		fetchCredit(html, baseurl);
+	else if(prefs.type == 'dep')
+		fetchDeposit(html, baseurl);
+	else if(prefs.type == 'acc')
+		fetchAccount(html, baseurl);
+	else
+		fetchCard(html, baseurl);
 }
 
 function fetchCard(html, baseurl){
     var prefs = AnyBalance.getPreferences();
     if(prefs.num && !/^\d{4}$/.test(prefs.num))
-        throw new AnyBalance.Error("Укажите 4 последних цифры карты или не указывайте ничего, чтобы получить информацию по первой карте.");
+        throw new AnyBalance.Error('Укажите 4 последних цифры карты или не указывайте ничего, чтобы получить информацию по первой карте.');
 
-    var $html = $(html);
-    var $card = $html.find('tr.btnrscards' + (prefs.num ? ':has(td[title*="***' + prefs.num + '"])' : '')).first();
-    if(!$card.size())
-        throw new AnyBalance.Error(prefs.num ? "Не удалось найти карту с последними цифрами " + prefs.num : "Не удалось найти ни одной карты!");
-
+	var cardnum = prefs.num ? prefs.num : '\\d{4}';
+	//                   (<tr[^>]*btnrscards[^>]*><td>[^>]*id=\"hl\"[^>]*6956"[\s\S]*?</tr>)
+	var re = new RegExp('(<tr[^>]*btnrscards[^>]*><td>[^>]*id=\"hl\"[^>]*' + cardnum + '\"[\\s\\S]*?</tr>)', 'i');
+	var tr = getParam(html, null, null, re);
+	if(!tr)
+		throw new AnyBalance.Error(prefs.num ? 'Не удалось найти карту с последними цифрами ' + prefs.num : 'Не удалось найти ни одной карты!');
+	
     var result = {success: true};
     
-    getParam($card.find('td:first-child').attr('title'), result, 'cardnum', null, replaceTagsAndSpaces);
-    getParam($card.find('td:first-child').text(), result, 'type', null, replaceTagsAndSpaces);
-    getParam($card.find('td:first-child').text(), result, '__tariff', null, replaceTagsAndSpaces);
-    getParam($card.find('td.money').text(), result, 'balance', null, replaceTagsAndSpaces, parseBalance);
-    getParam($card.find('td.money').text(), result, 'currency', null, replaceTagsAndSpaces, parseCurrency);
+    getParam(tr, result, 'cardnum', /<td>[^>]*title="([^"]*)/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(tr, result, 'type', /<td>[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(tr, result, '__tariff', /<td>[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(tr, result, 'balance', /class="money"[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(tr, result, ['currency' , '__tariff'], /class="money"[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseCurrency);
 
-    var href = $card.find('td:first-child a').attr('href');
+    var href = getParam(tr, null, null, /href="([^"]*)/i);
     if(!href)
         AnyBalance.trace('Не удалось обнаружить ссылку на подробную информацию по карте');
     
     if(AnyBalance.isAvailable('accnum', 'needpay', 'needpaytill', 'grace', 'gracetill', 'pct', 'credit', 'limit') && href){
         html = AnyBalance.requestGet(baseurl + href);
-        getParam(html, result, 'accnum', /Номер счета:[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+        getParam(html, result, 'accnum', /Номер счета:[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
         getParam(html, result, 'needpay', /Обязательный платеж\.[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
         getParam(html, result, 'needpaytill', /Обязательный платеж\.[^<]*\s+по\s+([^<]*)/i, replaceTagsAndSpaces, parseDate);
         getParam(html, result, 'gracepay', /Отчетная задолженность\.[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
@@ -104,28 +102,27 @@ function fetchCard(html, baseurl){
 function fetchCredit(html, baseurl){
     var prefs = AnyBalance.getPreferences();
     if(prefs.num && !/^[\d\/\\]{2,}$/.test(prefs.num))
-        throw new AnyBalance.Error("Укажите первые цифры (не менее 2) номера кредитного договора или не указывайте ничего, чтобы получить информацию по первому кредитному договору.");
+        throw new AnyBalance.Error('Укажите первые цифры (не менее 2) номера кредитного договора или не указывайте ничего, чтобы получить информацию по первому кредитному договору.');
 
-    var $html = $(html);
-    var $crd = $html.find('tr.btnrsloans' + (prefs.num ? ':has(td[title^="' + prefs.num + '"])' : '')).first();
-    if(!$crd.size())
-        throw new AnyBalance.Error(prefs.num ? "Не удалось найти кредитный договор с первыми цифрами " + prefs.num : "Не удалось найти ни одного кредита!");
+	var cardnum = prefs.num ? prefs.num : '\\d{2,}';
+	//                   (<tr[^>]*btnrsloans[^>]*><td>[^>]*id=\"hl\"[^>]*id=               [\\s\\S]*?</tr>)
+	var re = new RegExp('(<tr[^>]*btnrsloans[^>]*><td>[^>]*id=\"hl\"[^>]*id=' + cardnum + '[\\s\\S]*?</tr>)', 'i');
+	var tr = getParam(html, null, null, re);
+	if(!tr)
+		throw new AnyBalance.Error(prefs.num ? 'Не удалось найти кредитный договор с первыми цифрами ' + prefs.num : 'Не удалось найти ни одного кредита!');	
 
     var result = {success: true};
-    
-    var crdid = getParam($crd.find('td:first-child').attr('title'), null, null, null, replaceTagsAndSpaces);
-    getParam($crd.find('td:first-child').attr('title'), result, 'cardnum', null, replaceTagsAndSpaces);
-    getParam($crd.find('td:first-child').text(), result, 'type', null, replaceTagsAndSpaces);
-    getParam($crd.find('td:first-child').text(), result, '__tariff', null, replaceTagsAndSpaces);
-    getParam($crd.find('td.money').text(), result, 'balance', null, replaceTagsAndSpaces, parseBalance);
-    getParam($crd.find('td.money').text(), result, 'currency', null, replaceTagsAndSpaces, parseCurrency);
+	getParam(tr, result, 'cardnum', /\?id=([^&]*)/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(tr, result, 'type', /<td>[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(tr, result, '__tariff', /<td>[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(tr, result, 'balance', /class="money"[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(tr, result, ['currency' , '__tariff'], /class="money"[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseCurrency);
 
-    var href = $crd.find('td:first-child a').attr('href');
-    AnyBalance.trace('Ссылка на подробную инфу о кредите: ' + href);
+    var href = getParam(tr, null, null, /href="([^"]*)/i);
     if(!href)
         AnyBalance.trace('Не удалось обнаружить ссылку на подробную информацию по кредиту');
     
-    if(AnyBalance.isAvailable('accnum', 'needpay', 'needpaytill', 'pctcredit', 'limit', 'latedebt') && href){
+    if(AnyBalance.isAvailable('accnum', 'needpay', 'needpaytill', 'pctcredit', 'limit', 'latedebt')){
         html = AnyBalance.requestGet(baseurl + href);
 
         var tr = getParam(html, null, null, /<tr[^>]*>(?:[\s\S](?!<\/tr>))*?<input[^>]+name="rbgLoans"[^>]*checked="checked"[\s\S]*?<\/tr>/i);
@@ -163,19 +160,20 @@ function fetchCredit(html, baseurl){
 function fetchAccount(html, baseurl){
     var prefs = AnyBalance.getPreferences();
     if(prefs.num && !/^\d{4}$/.test(prefs.num))
-        throw new AnyBalance.Error("Укажите 4 последних цифры счета или не указывайте ничего, чтобы получить информацию по первому счету.");
-
-    var $html = $(html);
-    var $card = $html.find('tr.btnrsaccs' + (prefs.num ? ':has(td[title*="***' + prefs.num + '"])' : '')).first();
-    if(!$card.size())
-        throw new AnyBalance.Error(prefs.num ? "Не удалось найти счет с последними цифрами " + prefs.num : "Не удалось найти ни одного счета!");
+        throw new AnyBalance.Error('Укажите 4 последних цифры счета или не указывайте ничего, чтобы получить информацию по первому счету.');
+	//                                     Это нужно чтобы отображать Служебный счет, у которого нет номера
+	var cardnum = prefs.num ? prefs.num : '[^>]*';
+	var re = new RegExp('(<tr[^>]*btnrsaccs[^>]*><td>[^>]*id=\"hl\"[^>]*' + cardnum + '[\\s\\S]*?</tr>)', 'i');
+	var tr = getParam(html, null, null, re);
+	if(!tr)
+		throw new AnyBalance.Error(prefs.num ? 'Не удалось найти счет с последними цифрами ' + prefs.num : 'Не удалось найти ни одного счета!');	
 
     var result = {success: true};
-    
-    getParam($card.find('td:first-child').attr('title'), result, 'accnum', null, replaceTagsAndSpaces);
-	
-	getParam($card.find('td:first-child').text(), result, 'fio', null, replaceTagsAndSpaces);
-	getParam($card.find('td.money').text(), result, 'balance', null, replaceTagsAndSpaces, parseBalance);
+	getParam(tr, result, 'cardnum', /\?id=([^&]*)/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(tr, result, 'type', /<td>[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(tr, result, '__tariff', /<td>[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(tr, result, 'balance', /class="money"[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(tr, result, ['currency' , '__tariff'], /class="money"[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseCurrency);
 
 	// Не понятно, надо ли это?
     /*var href = $card.find('td:first-child a').attr('href');
@@ -201,16 +199,18 @@ function fetchDeposit(html, baseurl){
     var prefs = AnyBalance.getPreferences();
 	html = AnyBalance.requestGet(baseurl + '/secure/deps.aspx');
 	
-	var tJson = getParam(html, null, null, /var\s*depdata\s*=\s*\[([\s\S]*?)\]/i, null, null);
-	if(!tJson)
-		throw new AnyBalance.Error('Сайт вернул не верные данные, возможно проблемы на сайте!');
+	var json = getParam(html, null, null, /var\s*depdata\s*=\s*\[([\s\S]*?)\]/i, null, getJson);
+	if(!json) {
+		var err = getParam(html, null, null, /<\/h1><b>([\s\S]*?)<\/b/i, replaceTagsAndSpaces, html_entity_decode);
+		throw new AnyBalance.Error(err ? err : 'Сайт вернул не верные данные, возможно проблемы на сайте!');
+	}
 	
-	var json = getJson(tJson);
+	//var json = getJson(tJson);
 	
     var result = {success: true};
     
-	getParam(json.ac, result, 'accnum', null, replaceTagsAndSpaces);
-	getParam(json.nm, result, 'cardnum', null, replaceTagsAndSpaces);
+	getParam(json.ac, result, 'accnum', null, replaceTagsAndSpaces, html_entity_decode);
+	getParam(json.nm, result, 'cardnum', null, replaceTagsAndSpaces, html_entity_decode);
 	getParam(json.db, result, 'balance', null, replaceTagsAndSpaces, parseBalance);
 	getParam(json.dr, result, 'pctcredit', null, replaceTagsAndSpaces, parseBalance);
 	getParam(json.de, result, 'deptill', null, replaceTagsAndSpaces, parseDateMoment);

@@ -19,4 +19,14 @@
         dialogMessage="Введите пароль, используемый для входа в личный кабинет. Если Вы не знаете пароль, наберите *110*9# со своего мобильного телефона для получения логина и пароля."
         inputType="textPassword">
     </EditTextPreference>
+    <EditTextPreference 
+        title="Доп. номер телефона" 
+        positiveButtonText="ОК" 
+        summary="|Автоматически|{@s}" 
+        dialogTitle="Доп. номер телефона" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Если к вашему договору присоединено несколько номеров, вы можете ввести последние цифры нужного номера, чтобы получить информацию именно по нему. Не вводите ничего, если хотите получить информацию по первому номеру."
+        inputType="number"
+        key="phone">
+    </EditTextPreference>
 </PreferenceScreen>

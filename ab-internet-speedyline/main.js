@@ -16,69 +16,61 @@ function main () {
 
     checkEmpty (prefs.login, 'Введите логин');
     checkEmpty (prefs.password, 'Введите пароль');
-    checkEmpty (prefs.region, 'Выберите регион');
 
-    var loginurl = baseurl + 'general.html';
-    AnyBalance.trace ('Trying to enter selfcare at address: ' + loginurl);
-    var html = AnyBalance.requestPost (loginurl, {
+    AnyBalance.trace ('Trying to enter selfcare at address: ' + baseurl);
+    var html = AnyBalance.requestPost (baseurl, {
         login: prefs.login,
         password: prefs.password,
-        region: prefs.region,
         submit: 'Войти'
         });
 
-    // Проверка неправильной пары логин/пароль
-    var regexp=/class='no-border red'>[\s*]*([^<]+?)\s*</;
-    var res = regexp.exec (html);
-    if (res) {
-        if (res[1].indexOf ('Доступ разрешен только с ip адресов') >= 0)
-            throw new AnyBalance.Error (res[1] + ' Для корректной работы провайдера необходимо в личном кабинете в разделе Настройки включить опцию "Разрешить вход в личный кабинет с чужих ip адресов".');
-		else
-            throw new AnyBalance.Error (res[1]);
-	}
-
     // Проверка на корректный вход
-    regexp = /href="\/logout.html"/;
-    if (regexp.exec(html))
-    	AnyBalance.trace ('It looks like we are in selfcare...');
-    else {
+    if(!/logout.html/i.test(html)){
+        // Проверка неправильной пары логин/пароль
+        var error = getParam(html, null, null, /class='no-border red'>[\s*]*([^<]+?)\s*</i, replaceTagsAndSpaces, html_entity_decode);
+        if (error) {
+            if (error.indexOf ('Доступ разрешен только с ip адресов') >= 0)
+                throw new AnyBalance.Error (error + ' Для корректной работы провайдера необходимо в личном кабинете в разделе Настройки включить опцию "Разрешить вход в личный кабинет с чужих ip адресов".');
+	    else if(error.indexOf('Логин или пароль указаны неверно') >= 0)
+                throw new AnyBalance.Error (error, null, true);
+            throw new AnyBalance.Error (error);
+	}
+    	
         AnyBalance.trace ('Have not found logout... Unknown error. Please contact author.');
-        throw new AnyBalance.Error ('Неизвестная ошибка. Пожалуйста, свяжитесь с автором провайдера.');
+        throw new AnyBalance.Error ('Не удалось войти в личный кабинет. Сайт изменен?');
     }
 
+    AnyBalance.trace ('It looks like we are in selfcare...');
     AnyBalance.trace ('Parsing data...');
 
     var result = {success: true};
 
     // ID пользователя
-    getParam (html, result, 'id', /<th>ID(?:\s|&nbsp;)*пользователя<\/th>\s*[^>]*>(\d+)/i);
+    getParam (html, result, 'id', /<th[^>]*>ID(?:\s|&nbsp;)*пользователя[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
 
     // Клиент
-    getParam (html, result, 'client', /<th>Клиент<\/th>\s*[^>]*>([^<]+)/i);
+    getParam (html, result, 'client', /<th[^>]*>Клиент[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
 
     // Скорость
-    getParam (html, result, 'speed', /<th>Скорость<\/th>\s*[^>]*>([^<]+)/i, [/&nbsp;/g, '', /\s*$/, '']);
+    getParam (html, result, 'speed', /<th[^>]*>Скорость[\s\S]*?<td[^>]*>([\s\S]*?)(?:<a|<\/td>)/i, replaceTagsAndSpaces, html_entity_decode);
 
     // Скачано
-    getParam (html, result, 'download', /<th>Скачано[^<]*<\/th>\s*[^>]*>([^<]+)/i, [], parseFloat);
+    getParam (html, result, 'download', /<th[^>]*>Скачано[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, function(str){return parseTraffic(str, 'мб')});
 
     // Статус
-    getParam (html, result, 'state', /<th>Состояние<\/th>\s*[^>]*>[^>]*>([^<]+)/i);
+    getParam (html, result, 'state', /<th[^>]*>Состояние[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
 
     // Интернет
-    getParam (html, result, 'stateinternet', /<th>Интернет<\/th>\s*[^>]*>[^>]*>([^<]+)/i);
+    getParam (html, result, 'stateinternet', /<th[^>]*>Интернет[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
 
     // Текущий баланс
-    getParam (html, result, 'balance', /<th>Текущий баланс<\/th>\s*[^>]*>[^>]*>([^<]+)/i, [], parseFloat);
+    getParam (html, result, 'balance', /<th[^>]*>Текущий баланс[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 
     // Кредит
-    getParam (html, result, 'credit', /<th>Кредит<\/th>\s*[^>]*>([^\s]+)/i, [], parseFloat);
+    getParam (html, result, 'credit', /<th[^>]*>Кредит[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 
     // Тарифный план
-    regexp=/<th>Тарифный план<\/th>[\s\S]*?<td>([^<]+)/i;
-    if (res = regexp.exec (html)){
-        result.__tariff = res[1];
-    }
+    getParam (html, result, '__tariff', /<th[^>]*>Тарифный план[\s\S]*?<tr[^>]*?>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
 
     AnyBalance.setResult (result);
 }

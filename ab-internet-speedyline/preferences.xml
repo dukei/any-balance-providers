@@ -3,7 +3,7 @@
     <EditTextPreference
         key="login"
         title="Логин"
-        summary="Логин для доступа к личному кабинету||{@s}\n"
+        summary="|Логин для доступа к личному кабинету|{@s}"
         inputType="text"
         dialogTitle="Логин"
         dialogMessage="Введите логин для входа в личный кабинет"
@@ -13,18 +13,11 @@
     <EditTextPreference
         key="password"
         title="Пароль"
-        summary="Пароль для входа в личный кабинет||**********\n"
+        summary="|Пароль для входа в личный кабинет|**********"
         inputType="textPassword"
         dialogTitle="Пароль"
         dialogMessage="Введите пароль, используемый для входа в личный кабинет"
         positiveButtonText="ОК"
         negativeButtonText="Отмена">
     </EditTextPreference>
-    <ListPreference 
-        key="region"
-        title="Регион"
-        summary="Регион для входа в личный кабинет||{@s}\n"
-        entries="Апрелевка|Видное, п.Измайлово|Воскресенское, Ватутинки, Газопровод, Коммунарка|Домодедово|Калининец|Киевский, Яковлевское|Климовск|Кокошкино, Марушкино|Кр. Пахра, Шишкин Лес|Лыткарино|Львовский|Можайск|Московский, Валуево, Маяк, Марьино, Филимонки|Мосрентген|Нахабино|Обнинск|Обнинск(52-ой квартал)|Обнинск3|п. Фабрика 1 Мая, Остафьево, Гарнизон Остафьево|Подольск|Селятино|Серпухов|Солнечногорск|Троицк|Федюково|Щербинка"
-        entryValues="aprelevka|vidnoe|voskresensk|domodedovo|kallinici|kievskiy|klimovsk|kokoshkino|pahra|lytkarino|lvovskiy|mojaisk|moskovskiy|central|nahabino|obninsk|obninsk2|obninsk3|ryasanovo|podolsk|selyatino|serpuhov|solnechnogorsk|troitsk|fedukovo|sherbinka">
-    </ListPreference>
 </PreferenceScreen>

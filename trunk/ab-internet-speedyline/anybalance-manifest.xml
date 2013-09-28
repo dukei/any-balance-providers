@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="2">ab-internet-speedyline</id>
+  <id major_version="2.0" version="3">ab-internet-speedyline</id>
+  <api flags="no_browser"/>
   <name>Спиди-Лайн</name>
   <description>
     Получает информацию о состоянии счета интернет-провайдера Спиди-Лайн (http://www.speedyline.ru) из личного кабинета https://web.speedyline.ru.
@@ -8,12 +9,13 @@
     Для корректной работы провайдера необходимо в личном кабинете в разделе Настройки включить опцию "Разрешить вход в личный кабинет с чужих ip адресов".
   </description>
   <author>iReset &lt;ireset.ag@gmail.com&gt;</author>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
     <history>history.xml</history>
+    <js>library.js</js>
     <js>main.js</js>
-    <js>common_functions.js</js>
   </files>
   <counters>
     <counter id="balance" name="Текущий баланс" units="р"/>

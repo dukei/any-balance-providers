@@ -16,7 +16,7 @@
         summary="|Пароль для входа в личный кабинет|**********"
         inputType="textPassword"
         dialogTitle="Пароль"
-        dialogMessage="Введите пароль для входа в личный кабинет Газпромбонус"
+        dialogMessage="Введите пароль для входа в личный кабинет Газпромнефть"
         positiveButtonText="ОК"
         negativeButtonText="Отмена">
     </EditTextPreference>

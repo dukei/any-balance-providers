@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="1">ab-money-imoneybank-iclick</id>
+	<id version="2">ab-money-imoneybank-iclick</id>
 	<name>АйМаниБанк (iclick)</name>
 	<description>
 Получает данные из интернет-банка https://iclick.imoneybank.ru

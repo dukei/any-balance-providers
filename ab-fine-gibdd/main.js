@@ -76,7 +76,6 @@ function main(){
 		sumParam(curr, result, 'summ', /(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/ig, null, parseBalance, aggregate_sum);
 		
 		result.count = fines.length;
-		//getParam(fines.length+'', result, 'count', null, replaceTagsAndSpaces, parseBalance);
 	}
 	// Нет штрафов
 	else{

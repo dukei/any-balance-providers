@@ -57,7 +57,7 @@ function isAvailable(param){
 //Замена пробелов и тэгов
 var replaceTagsAndSpaces = [/&nbsp;/ig, ' ', /&minus;/ig, '-', /<!--[\s\S]*?-->/g, '', /<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, ''];
 //Замена для чисел
-var replaceFloat = [/&minus;/ig, '-', /\s+/g, '', /,/g, '.'];
+var replaceFloat = [/&minus;/ig, '-', /\s+/g, '', /,/g, '.', /\.([^.]*)(?=\.)/g, '$1', /^\./, '0.'];
 //Замена для Javascript строк
 var replaceSlashes = [/\\(.?)/g, function(str, n){
         switch (n) {
@@ -103,7 +103,7 @@ function replaceAll(value, replaces){
  * Извлекает числовое значение из переданного текста
  */
 function parseBalance(text){
-    var val = getParam(html_entity_decode(text).replace(/\s+/g, ''), null, null, /(-?\d[\d.,]*)/, replaceFloat, parseFloat);
+    var val = getParam(html_entity_decode(text).replace(/\s+/g, ''), null, null, /(-?\.?\d[\d.,]*)/, replaceFloat, parseFloat);
     AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
     return val;
 }
@@ -122,15 +122,19 @@ function parseCurrency(text){
  */
 function html_entity_decode (string) {
     var entities = get_html_translation_table();
-    var replaced = string.replace(/&(#?)(\w+);/g, function(str, sharp, m){
+    var replaced = string.replace(/&(#(x)?)?(\w+);/ig, function(str, sharp, x, m){
         if(!sharp){
             var ml = m.toLowerCase(m);
             if(entities.hasOwnProperty(ml))
                 return String.fromCharCode(entities[ml]);
-        }else{
+        }else if(!x){
             if(/^\d+$/.test(m))
                 return String.fromCharCode(parseInt(m));
+        }else{
+            if(/^[0-9a-f]+$/i.test(m))
+		return String.fromCharCode(parseInt(m, 16));
         }
+        return str;
     });
     return replaced;
 }
@@ -272,18 +276,23 @@ function createFormParams(html, process, array){
     html.replace(/<input[^>]+name=['"]([^'"]*)['"][^>]*>|<select[^>]+name=['"]([^'"]*)['"][^>]*>[\s\S]*?<\/select>/ig, function(str, nameInp, nameSel){
         var value = '';
         if(nameInp){
+			if(nameInp == 'ctl00$txtSubsEmail')
+				AnyBalance.trace('last: '+nameInp);
+				
             if(/type=['"]button['"]/i.test(str))
                 value=undefined;
             else
                 value = getParam(str, null, null, /value=['"]([^'"]*)['"]/i, null, html_entity_decode) || '';
             name = nameInp;
+			
         }else if(nameSel){
             value = getParam(str, null, null, /^<[^>]*value=['"]([^'"]*)['"]/i, null, html_entity_decode);
             if(typeof(value) == 'undefined'){
                 var optSel = getParam(str, null, null, /(<option[^>]+selected[^>]*>)/i);
                 if(!optSel)
                     optSel = getParam(str, null, null, /(<option[^>]*>)/i);
-                value = getParam(optSel, null, null, /value=['"]([^'"]*)["']/i, null, html_entity_decode);
+				if(optSel)
+				    value = getParam(optSel, null, null, /value=['"]([^'"]*)["']/i, null, html_entity_decode);
             }
             name = nameSel;
         }
@@ -400,7 +409,7 @@ function endsWith(str, suffix) {
 
 /**
  * Date.parse with progressive enhancement for ISO 8601 <https://github.com/csnover/js-iso8601>
- * В© 2011 Colin Snover <http://zetafleet.com>
+ * © 2011 Colin Snover <http://zetafleet.com>
  * Released under MIT license.
  */
 (function (Date, undefined) {
@@ -408,12 +417,12 @@ function endsWith(str, suffix) {
     Date.parse = function (date) {
         var timestamp, struct, minutesOffset = 0;
 
-        // ES5 В§15.9.4.2 states that the string should attempt to be parsed as a Date Time String Format string
-        // before falling back to any implementation-specific date parsing, so thatвЂ™s what we do, even if native
+        // ES5 §15.9.4.2 states that the string should attempt to be parsed as a Date Time String Format string
+        // before falling back to any implementation-specific date parsing, so that’s what we do, even if native
         // implementations could be faster
-        //              1 YYYY                2 MM       3 DD           4 HH    5 mm       6 ss        7 msec        8 Z 9 В±    10 tzHH    11 tzmm
-        if ((struct = /^(\d{4}|[+\-]\d{6})(?:-(\d{2})(?:-(\d{2}))?)?(?:(?:T|\s+)(\d{2}):(\d{2})(?::(\d{2})(?:\.(\d{3}))?)?(?:(Z)|([+\-])(\d{2})(?::(\d{2}))?)?)?$/.exec(date))) {
-            // avoid NaN timestamps caused by вЂњundefinedвЂќ values being passed to Date.UTC
+        //              1 YYYY                2 MM       3 DD           4 HH    5 mm       6 ss        7 msec        8 Z 9 ±    10 tzHH    11 tzmm
+        if ((struct = /^(\d{4}|[+\-]\d{6})(?:-(\d{2})(?:-(\d{2}))?)?(?:T(\d{2}):(\d{2})(?::(\d{2})(?:\.(\d{3}))?)?(?:(Z)|([+\-])(\d{2})(?::(\d{2}))?)?)?$/.exec(date))) {
+            // avoid NaN timestamps caused by “undefined” values being passed to Date.UTC
             for (var i = 0, k; (k = numericKeys[i]); ++i) {
                 struct[k] = +struct[k] || 0;
             }
@@ -430,7 +439,7 @@ function endsWith(str, suffix) {
                 }
             }
 
-            timestamp = new Date(struct[1], struct[2], struct[3], struct[4], struct[5] + minutesOffset, struct[6], struct[7]).getTime();
+            timestamp = Date.UTC(struct[1], struct[2], struct[3], struct[4], struct[5] + minutesOffset, struct[6], struct[7]);
         }
         else {
             timestamp = origParse ? origParse(date) : NaN;

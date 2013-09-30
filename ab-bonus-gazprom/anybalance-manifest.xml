@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2.0" version="9">ab-bonus-gazprom</id>
+	<id major_version="2.0" version="10">ab-bonus-gazprom</id>
 	<api flags="captcha|no_browser"/>
 	<name>Газпромнефть Бонус</name>
 	<description>

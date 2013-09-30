@@ -1,33 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
-	<api flags="no_browser" />
-  <id version="4">ab-gambling-marathonbet</id>
-  <name>Марафон</name>
-  <description>
-    Получает информацию о балансе для букмекерской конторы Марафон (https://www.marathonbet.com)
-  </description>
-  <author>Alexandra Shalamova &lt;alexandrashalamova@gmail.com&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Доступный баланс" units=" {@currency}"/>
-    <counter id="fio" name="ФИО" type="text"/>
-    <counter id="ns" name="Нерассчитанные ставки" units=" {@currency}"/>
-    <counter id="out" name="Запрос на выплату" units=" {@currency}"/>
-  </counters>
-  <keywords>
-    marathon букмекерская контора компания Panbet Curasao N.V. 
-  </keywords>
-  <type>
-    gambling
-  </type>
-  <country>
-    ru
-  </country>
+	<api flags="no_browser"/>
+	<id version="5">ab-gambling-marathonbet</id>
+	<name>Марафон</name>
+	<description>
+Получает информацию о балансе для букмекерской конторы Марафон (https://www.marathonbet.com)
+	</description>
+	<author>Alexandra Shalamova &lt;alexandrashalamova@gmail.com&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Доступный баланс" units=" {@currency}"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="ns" name="Нерассчитанные ставки" units=" {@currency}"/>
+		<counter id="out" name="Запрос на выплату" units=" {@currency}"/>
+	</counters>
+	<keywords>marathon букмекерская контора компания Panbet Curasao N.V.</keywords>
+	<type>gambling</type>
+	<country>ru</country>
 </provider>

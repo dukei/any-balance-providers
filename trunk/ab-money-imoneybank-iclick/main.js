@@ -8,7 +8,8 @@ var g_headers = {
 	'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection':'keep-alive',
 	'Origin':'https://iclick.imoneybank.ru',
-	'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:23.0) Gecko/20100101 Firefox/23.0'
+	'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:23.0) Gecko/20100101 Firefox/23.0',
+	'X-Requested-With':'XMLHttpRequest'
 };
 var baseurl = 'https://iclick.imoneybank.ru/';
 
@@ -44,50 +45,60 @@ function main(){
             throw new AnyBalance.Error(error);
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
+	
+	if(prefs.type == 'card')
+		fetchCard(html, baseurl);
+	/*else if(prefs.type == 'crd')
+		fetchCredit(html, baseurl);
+	else if(prefs.type == 'dep')
+		fetchDeposit(html, baseurl);*/
+	else if(prefs.type == 'acc')
+		fetchAccount(html, baseurl);
+	else
+		fetchCard(html, baseurl);
+}
+function fetchAccount(html, baseurl){
+    var prefs = AnyBalance.getPreferences();
+	html = AnyBalance.requestGet(baseurl + 'account/list?_=' + new Date().getTime(), g_headers);
+	var json = getJson(html);
+	
+	var firstAcc = json[0];
 	var result = {success: true};
 	
-	if(!prefs.cardnum) {
-		fetch(html, result);
-	} else {
-		/*var cardnum = prefs.cardnum ? prefs.cardnum : '\\d{4}';
-		var re = new RegExp('class="code"[^>]*>([^<]*)(?:[^>]*>){2,3}[^<]*' + cardnum + '\\s*<', 'i');
-		var code = getParam(html, null, null, re);
-		if(!code)
-			throw new AnyBalance.Error('Не удаётся получить данные, свяжитесь с разработчиком');
-			
-		AnyBalance.trace('Нашли код нужной карты '+code);
+	getParam(firstAcc.rest+'', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
+	getParam(firstAcc.rest+'', result, ['currency', 'balance'], null, replaceTagsAndSpaces, parseCurrency);
+	getParam(firstAcc.name+'', result, 'acc_num', null, replaceTagsAndSpaces);
+	getParam(firstAcc.doc+'', result, 'type', null, replaceTagsAndSpaces);
+	result.__tariff = result.type;
+	/*if(isAvailable(['deadline', 'status', 'acc_num'])) {
+		html = AnyBalance.requestGet(baseurl + 'account/' + firstAcc.id, g_headers);
 		
-		html = AnyBalance.requestPost(baseurl + 'frontend/frontend', {
-			RQ_TYPE:'WORK',
-			Step_ID:3,
-			SCREEN_ID:'MAIN',
-			SID:sid,
-			MENU_ID:'CONTRACT_LIST',
-			ITEM_ID:'SELECT',
-			CONTRACT_TO:code,
-		}, addHeaders({Referer: baseurl + 'frontend/frontend'}));
-
-		fetch(html, result);*/
-	}
-	
-    AnyBalance.setResult(result);
+		getParam(html, result, 'deadline', /Действительна по(?:[\s\S]*?<dd[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseDate);
+		getParam(html, result, 'status', /Статус карты(?:[\s\S]*?<dd[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces);
+		getParam(html, result, 'acc_num', /Счет карты(?:[\s\S]*?<dd[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces);
+	}*/
+	AnyBalance.setResult(result);
 }
 
-function fetch(html, result) {
-	var table = getParam(html, null, null, /<span>Карты<\/span>[^>]*>\s*(<table[\s\S]*?<\/table>)/i);
-	if(!table)
-		throw new AnyBalance.Error('Не удаётся найти ни одной карты или счета');
-		
-	getParam(table, result, 'balance', /Остаток[^>]*>(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	getParam(table, result, ['currency', 'balance'], /Остаток[^>]*>(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseCurrency);
-	getParam(table, result, 'card_num', /Номер[^>]*>(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces);
-	getParam(table, result, 'type', /Продукт[^>]*>(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces);
+function fetchCard(html, baseurl){
+    var prefs = AnyBalance.getPreferences();
+	html = AnyBalance.requestGet(baseurl + 'card/list?_=' + new Date().getTime(), g_headers);
+	var json = getJson(html);
+	
+	var firstCard = json[0];
+	var result = {success: true};
+	
+	getParam(firstCard.rest+'', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
+	getParam(firstCard.rest+'', result, ['currency', 'balance'], null, replaceTagsAndSpaces, parseCurrency);
+	getParam(firstCard.name+'', result, 'card_num', null, replaceTagsAndSpaces);
+	getParam(firstCard.doc+'', result, 'type', null, replaceTagsAndSpaces);
 	result.__tariff = result.type;
 	if(isAvailable(['deadline', 'status', 'acc_num'])) {
-		table = AnyBalance.requestGet(baseurl + getParam(table, null, null, /Остаток[^>]*>(?:[\s\S]*?<td[^>]*>){1}[\s\S]*?href="\/([^"]*)/i), g_headers);
+		html = AnyBalance.requestGet(baseurl + 'card/' + firstCard.id, g_headers);
 		
-		getParam(table, result, 'deadline', /Действительна по(?:[\s\S]*?<dd[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseDate);
-		getParam(table, result, 'status', /Статус карты(?:[\s\S]*?<dd[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces);
-		getParam(table, result, 'acc_num', /Счет карты(?:[\s\S]*?<dd[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces);
+		getParam(html, result, 'deadline', /Действительна по(?:[\s\S]*?<dd[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseDate);
+		getParam(html, result, 'status', /Статус карты(?:[\s\S]*?<dd[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces);
+		getParam(html, result, 'acc_num', /Счет карты(?:[\s\S]*?<dd[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces);
 	}
+	AnyBalance.setResult(result);
 }

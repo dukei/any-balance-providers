@@ -1,43 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-municipal-krasenergo</id>
-  <api flags="no_browser"/>
-  <name>Красноярскэнергосбыт</name>
-  <description>
-    Получает баланс и информацию о последнем платеже в КрасноярскЭнергоСбыт. Получает данные из личного кабинета http://krsk-sbit.ru/quasar.php.
+	<id version="3">ab-municipal-krasenergo</id>
+	<api flags="no_browser"/>
+	<name>Красноярскэнергосбыт</name>
+	<description>
+Получает баланс и информацию о последнем платеже в КрасноярскЭнергоСбыт. Получает данные из личного кабинета http://krsk-sbit.ru/quasar.php.
 
-    Для доступа к данным лицевого счета требуется номер лицевого счета и фамилия (без имени и отчества). 
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-    <js>library.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="cons_tot" name="Потребление" units="Квт*ч"/>
-    <counter id="cost_tot" name="Начисление" units="р"/>
-    <counter id="lastpaysum" name="Сумма последнего платежа" units="р"/>
-    <counter id="lastpaydate" name="Дата последнего платежа" type="time" format="dd/MM/yyyy"/>
-    <counter id="lastbilldate" name="Дата последнего начисления" type="time" format="dd/MM/yyyy"/>
-    <counter id="licschet" name="Лицевой счет" type="text"/>
-    <counter id="indication" name="Показания счетчика" units="Квт*ч"/>
-    <counter id="cons_ind" name="Потребление по индивидуальному прибору учета" units="Квт*ч"/>
-    <counter id="cost_ind" name="Начисление по индивидуальному прибору учета" units="р"/>
-    <counter id="cons_com" name="Потребление по общедомовому прибору учета" units="Квт*ч"/>
-    <counter id="cost_com" name="Начисление по общедомовому прибору учета" units="р"/>
-    <counter id="fio" name="ФИО" type="text"/>
-  </counters>
-  <keywords>
-    краснояскэнерго, краснояск, электричество
-  </keywords>
-  <type>
-    municipal
-  </type>
-  <country>
-    ru
-  </country>
+Для доступа к данным лицевого счета требуется номер лицевого счета и фамилия (без имени и отчества).
+	</description>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<js>library.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units="р"/>
+		<counter id="cons_tot" name="Потребление" units="Квт*ч"/>
+		<counter id="cost_tot" name="Начисление" units="р"/>
+		<counter id="lastpaysum" name="Сумма последнего платежа" units="р"/>
+		<counter id="lastpaydate" name="Дата последнего платежа" type="time" format="dd/MM/yyyy"/>
+		<counter id="lastbilldate" name="Дата последнего начисления" type="time" format="dd/MM/yyyy"/>
+		<counter id="licschet" name="Лицевой счет" type="text"/>
+		<counter id="indication" name="Показания счетчика" units="Квт*ч"/>
+		<counter id="cons_ind" name="Потребление по индивидуальному прибору учета" units="Квт*ч"/>
+		<counter id="cost_ind" name="Начисление по индивидуальному прибору учета" units="р"/>
+		<counter id="cons_com" name="Потребление по общедомовому прибору учета" units="Квт*ч"/>
+		<counter id="cost_com" name="Начисление по общедомовому прибору учета" units="р"/>
+		<counter id="fio" name="ФИО" type="text"/>
+	</counters>
+	<keywords>краснояскэнерго, краснояск, электричество</keywords>
+	<type>municipal</type>
+	<country>ru</country>
 </provider>

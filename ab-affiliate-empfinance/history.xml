@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="4" date="2013-09-30">
+      - Added counter: Amount
+      - Changed all counters to non-optional
+      - Icon changed
+    </change>
     <change version="3" date="2013-09-23">
       - Adaptation to the new design of empfinance.com
       - Added preference: select mirror
       - library.js updated
-      - icon changed
+      - Icon changed
     </change>
     <change version="2" date="2013-07-25">
       - Added counters: Account Balance (PM), Account Balance (Ego), Account Balance (Wire)

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="7">ab-money-svyaznoybank</id>
+  <id version="8">ab-money-svyaznoybank</id>
   <name>Связнойбанк</name>
   <description>
     Получает текущий остаток, бонусные баллы и другие параметры карт, счетов и вкладов Связнойбанка, используя систему Интернет-банк ( https://iqbank.ru ).

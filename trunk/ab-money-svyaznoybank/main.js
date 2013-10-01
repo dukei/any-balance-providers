@@ -17,8 +17,11 @@ var g_headers = {
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-    var baseurl = "https://login.iqbank.ru/";
+    var baseurl = "https://login.qbank.ru/";
     AnyBalance.setDefaultCharset("utf-8");
+
+    checkEmpty(prefs.login, 'Введите ваш персональный клиентский номер!');
+    checkEmpty(prefs.password, 'Введите ваш пароль для входа в интернет банк!');
     
     var html = AnyBalance.requestGet(baseurl + 'auth/UI/Login', g_headers);
 
@@ -37,10 +40,12 @@ function main(){
         'csrf.ts':csrfts
     }, addHeaders({Referer: baseurl + 'auth/UI/Login'}));
 
-    if(!/<meta[^>]+http-equiv="refresh"[^>]*url=https:\/\/iqbank.ru/i.test(html)){
+    if(!/<meta[^>]+http-equiv="refresh"[^>]*url=https:\/\/i?qbank.ru/i.test(html)){
         if(/otpCode/i.test(html))
             throw new AnyBalance.Error('Для работы этого провайдера требуется отключить в настройках интернет-банка подтверждение входа по СМС. Это безопасно, для совершения операций все равно будет требоваться подтверждение по СМС.');
         var error = getParam(html, null, null, /<div[^>]+class="err"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+        if(/Неверный персональный номер или пароль/i.test(html))
+            throw new AnyBalance.Error(error, null, true); //Фатальная ошибка, надо настройки менять
         if(error)
             throw new AnyBalance.Error(error);
         error = getParam(html, null, null, /<div[^>]+class="b_card"[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
@@ -55,7 +60,7 @@ function main(){
         throw new AnyBalance.Error('Не удалось войти в интернет-банк. Сайт изменен?');
     }
 
-    baseurl = "https://iqbank.ru";
+    baseurl = "https://qbank.ru";
     html = AnyBalance.requestGet(baseurl, g_headers);
 
     if(prefs.what == 'card'){

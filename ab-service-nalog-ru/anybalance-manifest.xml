@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser|captcha"/>
-	<id version="6">ab-service-nalog-ru</id>
+	<id version="7">ab-service-nalog-ru</id>
 	<name>Проверка задолженности по налогам</name>
 	<description>
 Получает данные с сайта https://service.nalog.ru/debt/req.do

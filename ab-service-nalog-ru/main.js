@@ -47,8 +47,12 @@ function main(){
 	
 	var errString = 'Не найдена информация по задолженности с данными: ИНН: '+ prefs.inn + ', ФИО: ' + prefs.surname + ' ' + prefs.fio_name + '. Пожалуйста, проверьте правильность ввода. ';
 	var jsonVar = getParam(html, null, null, /var\s*DEBT\s*=\s*([\s\S]*?\});/i);
-	if(!jsonVar)
+	if(!jsonVar) {
+		var error = getParam(html, null, null, [/<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, /div[^>]*"field-error"(?:[^>]*>){2}([\s\S]*?)<\//i], replaceTagsAndSpaces, html_entity_decode);
+		if(error)
+            throw new AnyBalance.Error(error);
 		throw new AnyBalance.Error(errString);
+	}
 
 	var json = getJson(jsonVar);
 	

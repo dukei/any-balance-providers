@@ -53,20 +53,20 @@ function main(){
             throw new AnyBalance.Error(error);
 		throw new AnyBalance.Error(errString);
 	}
-
 	var json = getJson(jsonVar);
 	
-	var len = json.regions.length;
-	for(i = 0; i < len; i++){
+	for(i = 0; i < json.regions.length; i++){
 		var curr = json.regions[i];
-		var sum = (curr.pds ? curr.pds[0].sum : '');
-		if(curr.message == 'По вашему запросу информация не найдена') {
-			result.all = errString;
-		} else {
-			result.all += curr.code+ ' '+curr.name+'\n'+ 
-				(sum ? curr.pds[0].ifnsName+': '+ curr.pds[0].taxName +'-'+  curr.pds[0].taxKind+ ': ' + sum  : (curr.message ? curr.message : 'Нет задолженности')) + '\n\n';
-
-			sumParam(sum, result, 'balance', /([\s\S]*)/i, null, parseBalance, aggregate_sum);		
+		for(j = 0; j < curr.pds.length; j++){
+			var sum = (curr.pds ? curr.pds[j].sum : '');
+			if(curr.message == 'По вашему запросу информация не найдена') {
+				result.all = errString;
+			} else {
+				result.all += curr.code+ ' '+curr.name+'\n'+ 
+					(sum ? curr.pds[j].ifnsName+': '+ curr.pds[j].taxName +'-'+  curr.pds[j].taxKind+ ': ' + sum  : (curr.message ? curr.message : 'Нет задолженности')) + '\n\n';
+				
+				sumParam(sum, result, 'balance', /([\s\S]*)/i, null, parseBalance, aggregate_sum);		
+			}
 		}
 	}
 	result.all = result.all.replace(/^\s+|\s+$/g, '');

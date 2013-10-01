@@ -1,81 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-    <change version="37" date="2013-07-17">
-      - Добавлен Белгород (http://stat.belgorod-net.ru/)
-	</change>
-    <change version="36" date="2013-07-04">
-      - Добавлен Барнаул (https://kabinet.barnaul.mts.ru/)
-	</change>
-    <change version="35" date="2013-07-03">
-      - Добавлен Курган (https://infocentr.ru/)
-	</change>
-    <change version="34" date="2013-06-09">
-      - Изменена Вологда (https://lk.vologda.mts.ru)
-    </change>
-    <change version="33" date="2013-06-01">
-      - Добавлен Миасс (http://stat.miass.multinex.ru)
-    </change>
-    <change version="32" date="2013-05-10">
-      - Добавлен Норильск (https://kabinet.norilsk.mts.ru), Магнитогорск (https://stat.magnitogorsk.multinex.ru)
-    </change>
-    <change version="31" date="2013-05-07">
-      - Добавлен Ульяновск (https://ess.netroad.ru)
-    </change>
-    <change version="30" date="2013-05-04">
-      - Поддержка ТВ баланса для Новосибирска. И счетчик трафика исправлен.
-    </change>
-    <change version="29" date="2013-04-18">
-      - Исправлена Тула (изменен личный кабинет), добавлено Балаково (http://stat.balakovo.comstar-r.ru)
-    </change>
-    <change version="28" date="2013-04-16">
-      - Изменение процедуры входа в московском регионе
-    </change>
-    <change version="27" date="2013-04-04">
-      - Изменен адрес личного кабинета в ростовском регионе
-    </change>
-    <change version="26" date="2013-03-26">
-      - Исправление Комсомольска-на-Амуре и добавлена Тула (http://balance.altair-tv.ru/client/)
-    </change>
-    <change version="25" date="2013-03-12">
-      - Изменение адреса личного кабинета для Перми и Екатеринбурга (https://lka.ural.mts.ru)
-    </change>
-    <change version="24" date="2013-03-04">
-      - Добавлен новый регион - Комсомольск-на-Амуре (http://issa.kms.multinex.ru)
-    </change>
-    <change version="23" date="2013-02-21">
-      - Добавлен новый регион - Пенза (http://client.lanbilling.ptcomm.ru)
-    </change>
-    <change version="22" date="2013-01-16">
-      - Добавлен новый регион - Ижевск (https://lk.izhnt.ru)
-    </change>
-    <change version="21" date="2012-12-27">
-      - Добавлен новый регион - Вологда (https://stats.vologda.comstar-r.ru)
-    </change>
-    <change version="20" date="2012-12-15">
-      - Исправлен счетчик "Хватит на" в московском регионе
-    </change>
-    <change version="19" date="2012-12-11">
-      - Исправлен Киров (изменения в личном кабинете)
-    </change>
-    <change version="18" date="2012-10-09">
-      - Добавлен новый регион - Северодвинск (http://severodvinsk.stream-info.ru/client2)
-    </change>
-    <change version="17" date="2012-10-09">
-      - Добавлен новый регион - Нижний Новгород (http://stat.nnov.comstar-r.ru)
-    </change>
-    <change version="16" date="2012-10-06">
-      - Изменения процедуры входа в столичном регионе
-    </change>
-    <change version="15" date="2012-09-23">
-      - Добавлен новый регион - Киров (https://lk.kirovnet.net)
-    </change>
-    <change version="14" date="2012-08-30">
-      - Для Перми и Екатеринбурга добавлен счетчик Баланс ТВ (требуется AnyBalance 2.8+) и ФИО
-    </change>
-    <change version="13" date="2012-08-29">
-      - Добавлен новый регион - Пермь и Екатеринбург (https://bill.utk.ru/uportf/arm.pl)
-    </change>
-    <change version="12" date="2012-08-16">
-      - Добавлен новый регион - Новосибирск (https://my.citynsk.ru)
-    </change>
+<change version="38" date="2013-10-01">
+- Добавлен Саратов (http://stat.saratov.comstar.ru/)
+</change>
+<change version="37" date="2013-07-17">
+- Добавлен Белгород (http://stat.belgorod-net.ru/)
+</change>
+<change version="36" date="2013-07-04">
+- Добавлен Барнаул (https://kabinet.barnaul.mts.ru/)
+</change>
+<change version="35" date="2013-07-03">
+- Добавлен Курган (https://infocentr.ru/)
+</change>
+<change version="34" date="2013-06-09">
+- Изменена Вологда (https://lk.vologda.mts.ru)
+</change>
+<change version="33" date="2013-06-01">
+- Добавлен Миасс (http://stat.miass.multinex.ru)
+</change>
+<change version="32" date="2013-05-10">
+- Добавлен Норильск (https://kabinet.norilsk.mts.ru), Магнитогорск (https://stat.magnitogorsk.multinex.ru)
+</change>
+<change version="31" date="2013-05-07">
+- Добавлен Ульяновск (https://ess.netroad.ru)
+</change>
+<change version="30" date="2013-05-04">
+- Поддержка ТВ баланса для Новосибирска. И счетчик трафика исправлен.
+</change>
+<change version="29" date="2013-04-18">
+- Исправлена Тула (изменен личный кабинет), добавлено Балаково (http://stat.balakovo.comstar-r.ru)
+</change>
+<change version="28" date="2013-04-16">
+- Изменение процедуры входа в московском регионе
+</change>
+<change version="27" date="2013-04-04">
+- Изменен адрес личного кабинета в ростовском регионе
+</change>
+<change version="26" date="2013-03-26">
+- Исправление Комсомольска-на-Амуре и добавлена Тула (http://balance.altair-tv.ru/client/)
+</change>
+<change version="25" date="2013-03-12">
+- Изменение адреса личного кабинета для Перми и Екатеринбурга (https://lka.ural.mts.ru)
+</change>
+<change version="24" date="2013-03-04">
+- Добавлен новый регион - Комсомольск-на-Амуре (http://issa.kms.multinex.ru)
+</change>
+<change version="23" date="2013-02-21">
+- Добавлен новый регион - Пенза (http://client.lanbilling.ptcomm.ru)
+</change>
+<change version="22" date="2013-01-16">
+- Добавлен новый регион - Ижевск (https://lk.izhnt.ru)
+</change>
+<change version="21" date="2012-12-27">
+- Добавлен новый регион - Вологда (https://stats.vologda.comstar-r.ru)
+</change>
+<change version="20" date="2012-12-15">
+- Исправлен счетчик "Хватит на" в московском регионе
+</change>
+<change version="19" date="2012-12-11">
+- Исправлен Киров (изменения в личном кабинете)
+</change>
+<change version="18" date="2012-10-09">
+- Добавлен новый регион - Северодвинск (http://severodvinsk.stream-info.ru/client2)
+</change>
+<change version="17" date="2012-10-09">
+- Добавлен новый регион - Нижний Новгород (http://stat.nnov.comstar-r.ru)
+</change>
+<change version="16" date="2012-10-06">
+- Изменения процедуры входа в столичном регионе
+</change>
+<change version="15" date="2012-09-23">
+- Добавлен новый регион - Киров (https://lk.kirovnet.net)
+</change>
+<change version="14" date="2012-08-30">
+- Для Перми и Екатеринбурга добавлен счетчик Баланс ТВ (требуется AnyBalance 2.8+) и ФИО
+</change>
+<change version="13" date="2012-08-29">
+- Добавлен новый регион - Пермь и Екатеринбург (https://bill.utk.ru/uportf/arm.pl)
+</change>
+<change version="12" date="2012-08-16">
+- Добавлен новый регион - Новосибирск (https://my.citynsk.ru)
+</change>
 </history>

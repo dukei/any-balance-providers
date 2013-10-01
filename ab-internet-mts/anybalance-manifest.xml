@@ -1,61 +1,56 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="37">ab-internet-mts</id>
-  <name>Домашний Интернет и Телевидение МТС</name>
-  <description>
-    Получает текущий баланс, номера лицевого счета и договора, ФИО владельца, трафик в текущем месяце, абонентскую плату у провайдера "Домашний Интернет и Телевидение МТС"
+	<id version="38">ab-internet-mts</id>
+	<name>Домашний Интернет и Телевидение МТС</name>
+	<description>
+Получает текущий баланс, номера лицевого счета и договора, ФИО владельца, трафик в текущем месяце, абонентскую плату у провайдера "Домашний Интернет и Телевидение МТС"
 
-    Поддерживаются:
-      * Москва (https://kabinet.mts.ru)
-      * Ростов (http://lk.ug.mts.ru) - КОМСТАР-Регионы Южный филиал
-      * Новосибирск (https://my.citynsk.ru) - бывший CityHomeNet
-      * Пермь (https://lka.ural.mts.ru)
-      * Екатеринбург (https://lka.ural.mts.ru)
-      * Киров (https://lk.kirovnet.net)
-      * Нижний Новгород (http://stat.nnov.comstar-r.ru)
-      * Северодвинск (http://severodvinsk.stream-info.ru/client2)
-      * Вологда (https://lk.vologda.mts.ru)
-      * Ижевск (https://lk.izhnt.ru)
-      * Пенза (http://client.lanbilling.ptcomm.ru)
-      * Комсомольск-на-Амуре (http://issa.kms.multinex.ru)
-      * Тула ( https://kabinet.tula.mts.ru)
-      * Балаково (http://stat.balakovo.comstar-r.ru)
-      * Ульяновск (https://ess.netroad.ru)
-      * Норильск (https://kabinet.norilsk.mts.ru)
-      * Магнитогорск (https://stat.magnitogorsk.multinex.ru)
-      * Миасс (http://stat.miass.multinex.ru)
-	  * Курган (https://infocentr.ru/lk/index.php?r=site/login)
-	  * Барнаул (https://kabinet.barnaul.mts.ru/)
-	  * Белгород (http://stat.belgorod-net.ru/)
+Поддерживаются:
+   * Москва (https://kabinet.mts.ru)
+   * Ростов (http://lk.ug.mts.ru) - КОМСТАР-Регионы Южный филиал
+   * Новосибирск (https://my.citynsk.ru) - бывший CityHomeNet
+   * Пермь (https://lka.ural.mts.ru)
+   * Екатеринбург (https://lka.ural.mts.ru)
+   * Киров (https://lk.kirovnet.net)
+   * Нижний Новгород (http://stat.nnov.comstar-r.ru)
+   * Северодвинск (http://severodvinsk.stream-info.ru/client2)
+   * Вологда (https://lk.vologda.mts.ru)
+   * Ижевск (https://lk.izhnt.ru)
+   * Пенза (http://client.lanbilling.ptcomm.ru)
+   * Комсомольск-на-Амуре (http://issa.kms.multinex.ru)
+   * Тула ( https://kabinet.tula.mts.ru)
+   * Балаково (http://stat.balakovo.comstar-r.ru)
+   * Ульяновск (https://ess.netroad.ru)
+   * Норильск (https://kabinet.norilsk.mts.ru)
+   * Магнитогорск (https://stat.magnitogorsk.multinex.ru)
+   * Миасс (http://stat.miass.multinex.ru)
+   * Курган (https://infocentr.ru/lk/index.php?r=site/login)
+   * Барнаул (https://kabinet.barnaul.mts.ru/)
+   * Белгород (http://stat.belgorod-net.ru/)
+   * Саратов (http://stat.saratov.comstar.ru/)
 
-     Для добавления вашего региона обращайтесь к автору на e-mail dco@mail.ru
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>api:jquery.min.js</js> <!-- Используем библиотеку, которая и так входит в AnyBalance -->
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="balance_tv" name="Баланс ТВ" units="р"/>
-    <counter id="internet_cur" name="Трафик в этом месяце" suffix="Mb"/>
-    <counter id="abon" name="Абонентская плата" suffix="р"/>
-    <counter id="daysleft" name="Хватит на" suffix="дн"/>
-    <counter id="license" name="Лицевой счет" type="text"/>
-    <counter id="agreement" name="Номер договора" type="text"/>
-    <counter id="username" name="ФИО" type="text"/>
-  </counters>
-  <keywords>
-    провайдер интернет СитиХоумНет комстар регионы
-  </keywords>
-  <type>
-    internet, tv
-  </type>
-  <country>
-    ru
-  </country>
+Для добавления вашего региона обращайтесь к автору на e-mail dco@mail.ru
+	</description>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>api:jquery.min.js</js> <!-- Используем библиотеку, которая и так входит в AnyBalance -->
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units="р"/>
+		<counter id="balance_tv" name="Баланс ТВ" units="р"/>
+		<counter id="internet_cur" name="Трафик в этом месяце" suffix="Mb"/>
+		<counter id="abon" name="Абонентская плата" suffix="р"/>
+		<counter id="daysleft" name="Хватит на" suffix="дн"/>
+		<counter id="license" name="Лицевой счет" type="text"/>
+		<counter id="agreement" name="Номер договора" type="text"/>
+		<counter id="username" name="ФИО" type="text"/>
+	</counters>
+	<keywords>провайдер интернет СитиХоумНет комстар регионы</keywords>
+	<type>internet, tv</type>
+	<country>ru</country>
 </provider>

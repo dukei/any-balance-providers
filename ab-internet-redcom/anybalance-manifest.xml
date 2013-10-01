@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-redcom</id>
+	<api flags="no_browser"/>
+	<name>Redcom (Хабаровск)</name>
+	<description>
+Получает данные для провайдера Redcom в г. Хабаровск (http://redcom.ru/isp/)
+
+Личный кабинет находится по адресу https://abonent.redcom.ru/
+	</description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units="р"/>
+		<counter id="balance" name="Рекомендуемая сумма платежа" units="р"/>
+		<counter id="fio" name="ФИО" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

@@ -1,47 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="5">ab-money-avangard</id>
-  <name>Банк Авангард</name>
-  <description>
-    Получает текущий остаток и другие параметры карт и счетов банка Авангард, используя систему Интернет-банк ( https://www.avangard.ru/login/logon_enter.html ).
+	<id version="6">ab-money-avangard</id>
+	<name>Банк Авангард</name>
+	<description>
+Получает текущий остаток и другие параметры карт и счетов банка Авангард, используя систему Интернет-банк ( https://www.avangard.ru/login/logon_enter.html ).
 
-    Для входа требуется логин и пароль. Если у вас его нет, получите его на странице https://www.avangard.ru/login/firstlogon_enter.html.
+Для входа требуется логин и пароль. Если у вас его нет, получите его на странице https://www.avangard.ru/login/firstlogon_enter.html.
 
-    Банк присылает СМС на ваш телефон, когда происходит вход в интернет-банк. Этот провайдер для получения счетчиков входит в интернет-банк, так что вы будете получать смс всякий раз, когда провайдер делает запрос счетчиков.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>api:jquery.min.js</js>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Остаток"/>
-    <counter id="currency" name="Валюта" type="text"/>
-    <counter id="minpay" name="Мин.платеж"/>
-    <counter id="minpaydate" name="Дата мин.платежа" type="time" format="dd/MM/yyyy"/>
-    <counter id="freepay" name="Платеж льготного периода"/>
-    <counter id="freepaydate" name="Дата платежа льготного периода" type="time" format="dd/MM/yyyy"/>
-    <counter id="debt" name="Задолженность"/>
-    <counter id="limit" name="Кредитный лимит"/>
-    <counter id="cardnum" name="Номер карты" type="text"/>
-    <counter id="cardname" name="Имя на карте" type="text"/>
-    <counter id="cardtill" name="Срок действия" type="text"/>
-    <counter id="accnum" name="Номер счета" type="text"/>
-    <counter id="accname" name="Имя счета" type="text"/>
-    <counter id="cardtype" name="Тип" type="text"/>
-    <counter id="cardstatus" name="Статус" type="text"/>
-  </counters>
-  <keywords>
-     
-  </keywords>
-  <type>
-    money
-  </type>
-  <country>
-    ru
-  </country>
+Банк присылает СМС на ваш телефон, когда происходит вход в интернет-банк. Этот провайдер для получения счетчиков входит в интернет-банк, так что вы будете получать смс всякий раз, когда провайдер делает запрос счетчиков.
+	</description>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>api:jquery.min.js</js>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Остаток"/>
+		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="minpay" name="Мин.платеж"/>
+		<counter id="minpaydate" name="Дата мин.платежа" type="time" format="dd/MM/yyyy"/>
+		<counter id="freepay" name="Платеж льготного периода"/>
+		<counter id="freepaydate" name="Дата платежа льготного периода" type="time" format="dd/MM/yyyy"/>
+		<counter id="debt" name="Задолженность"/>
+		<counter id="limit" name="Кредитный лимит"/>
+		<counter id="cardnum" name="Номер карты" type="text"/>
+		<counter id="cardname" name="Имя на карте" type="text"/>
+		<counter id="cardtill" name="Срок действия" type="text"/>
+		<counter id="accnum" name="Номер счета" type="text"/>
+		<counter id="accname" name="Имя счета" type="text"/>
+		<counter id="cardtype" name="Тип" type="text"/>
+		<counter id="cardstatus" name="Статус" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>money</type>
+	<country>ru</country>
 </provider>

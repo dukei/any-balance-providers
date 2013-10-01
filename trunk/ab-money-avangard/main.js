@@ -34,8 +34,8 @@ var g_headers = {
     
 function main(){
     var prefs = AnyBalance.getPreferences();
-    var baseurl = "https://www.avangard.ru/";
-    AnyBalance.setDefaultCharset("windows-1251");
+    var baseurl = 'https://www.avangard.ru/';
+    AnyBalance.setDefaultCharset('windows-1251');
     
     var what = prefs.what || 'card';
     if(prefs.num && !/\d{4}/.test(prefs.num))
@@ -167,10 +167,11 @@ function fetchBankPhysic(html, baseurl){
     getParam($acc.find('a.xl').text(), result, 'accnum', /(\d{20})/);
     getParam($acc.find('a.xl').text(), result, '__tariff', /(\d{20})/);
     getParam($acc.find('tr:has(a.xl)').text(), result, 'accname', /([\S\s]*?)\d{20}/, replaceTagsAndSpaces);
-    getParam($acc.find('tr:first-child td:last-child b').text(), result, 'balance', null, replaceTagsAndSpaces, parseBalance);
-    var balance = getParam($acc.find('tr:first-child td:last-child b').text(), null, null, null, replaceTagsAndSpaces, parseBalance);
-    getParam($acc.find('tr:first-child td:last-child b').text(), result, 'currency', null, replaceTagsAndSpaces, parseCurrency);
-
+    
+	getParam($acc.find('tr:first-child td:last-child td:nth-child(5)').text(), result, 'balance', null, replaceTagsAndSpaces, parseBalance);
+    //var balance = getParam($acc.find('tr:first-child td:last-child b').text(), null, null, null, replaceTagsAndSpaces, parseBalance);
+    getParam($acc.find('tr:first-child td:last-child td:last-child').text(), result, 'currency', null, replaceTagsAndSpaces);
+	
     var cardnum = '';
     if(what == 'card'){
         var $card = $acc.find('table.cardListTable tr:contains("' + acccardnum + '")').first();
@@ -214,7 +215,7 @@ function fetchBankPhysic(html, baseurl){
             getParam(html, result, 'freepay', /&#1044;&#1083;&#1103; &#1074;&#1099;&#1087;&#1086;&#1083;&#1085;&#1077;&#1085;&#1080;&#1103; &#1091;&#1089;&#1083;&#1086;&#1074;&#1080;&#1103; &#1083;&#1100;&#1075;&#1086;&#1090;&#1085;&#1086;&#1075;&#1086; &#1087;&#1077;&#1088;&#1080;&#1086;&#1076;&#1072; &#1042;&#1099; &#1084;&#1086;&#1078;&#1077;&#1090;&#1077; &#1074;&#1085;&#1077;&#1089;&#1090;&#1080; &#1089;&#1091;&#1084;&#1084;&#1091; &#1074; &#1088;&#1072;&#1079;&#1084;&#1077;&#1088;&#1077;([^<]*?)&#1087;&#1086;/i, replaceTagsAndSpaces, parseBalance2);
 
             if(AnyBalance.isAvailable('debt') && limit){
-                result.debt = limit - balance; //Задолженность
+                result.debt = limit - result.balance; //Задолженность
             }
 
            

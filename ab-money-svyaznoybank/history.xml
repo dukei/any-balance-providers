@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="8" date="2013-10-01">
+      - Изменение адреса интернет-банка на https://qbank.ru
+    </change>
     <change version="7" date="2013-07-13">
       - Более точное сообщение об ошибках
     </change>

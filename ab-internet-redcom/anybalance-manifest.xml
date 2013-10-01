@@ -18,7 +18,7 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units="р"/>
-		<counter id="balance" name="Рекомендуемая сумма платежа" units="р"/>
+		<counter id="recomend" name="Рекомендуемая сумма платежа" units="р"/>
 		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
 	<keywords></keywords>

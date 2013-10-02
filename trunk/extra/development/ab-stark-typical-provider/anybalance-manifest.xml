@@ -4,9 +4,9 @@
 	<api flags="no_browser"/>
 	<name>ИмяПровайдера</name>
 	<description>
-Получает данные для провайдера
+Получает данные для провайдера 
 
-Личный кабинет находится по адресу
+Личный кабинет находится по адресу 
 	</description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>

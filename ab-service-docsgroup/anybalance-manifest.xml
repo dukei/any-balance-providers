@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-service-docsgroup</id>
+	<api flags="no_browser"/>
+	<name>DOCS Group</name>
+	<description>
+Получает данные для провайдера DOCS Group (http://docs-group.ru)
+
+Личный кабинет находится по адресу http://my.docs-group.ru/cabinet.html
+	</description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units="{@currency}"/>
+		<counter id="sms_russia" name="СМС по России" units="шт"/>
+		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="lastpay_sum" name="Последний платеж" units="{@currency}"/>
+		<counter id="lastpay_date" name="Дата последнего платежа" type="time" format="dd/MM/yyyy"/>
+	</counters>
+	<keywords></keywords>
+	<type>service</type>
+	<country>ru</country>
+</provider>

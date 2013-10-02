@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-service-ooo3t</id>
+	<api flags="no_browser"/>
+	<name>3Т (Электронный дневник)</name>
+	<description>
+Получает данные для провайдера ООО 3Т (http://ooo3t.ru/)
+
+Электронный дневник находится по адресу http://ooo3t.ru/webjournal/ed.php
+	</description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<js>md6.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="all" name="Сводка" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>service</type>
+	<country>ru</country>
+</provider>

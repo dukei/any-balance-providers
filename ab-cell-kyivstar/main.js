@@ -32,8 +32,10 @@ function main(){
   var html = AnyBalance.requestGet(baseurl + 'tbmb/login/show.do', headers);
   var form = getParam(html, null, null, /<form[^>]+action="[^"]*perform.do"[^>]*>([\s\S]*?)<\/form>/i);
  
-  if(!form)
+  if(!form){
+      AnyBalance.trace(html);
       throw new AnyBalance.Error("Не удаётся найти форму входа. Проблемы или изменения на сайте?");
+  }
 
   var params = createFormParams(form);
   params.user = prefs.login;

@@ -17,7 +17,7 @@ function setCounterValue(result,html,field) {
 
 function main() {
     var prefs = AnyBalance.getPreferences();
-    var html = AnyBalance.requestGet('http://wap.chat.didrov.ru/mafiastat.php?setMarkupType=xml&rm=43&id='+prefs.login+'&ps='+prefs.password);
+    var html = AnyBalance.requestGet('http://wap.chat.didrov.ru/mafiastat.php?setMarkupType=xml&rm=43&id='+prefs.login+'&ps='+encodeURIComponent(prefs.password));
 
     var result = {
         success: true

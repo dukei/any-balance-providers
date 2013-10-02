@@ -43,7 +43,7 @@ function main(){
   var html = AnyBalance.requestPost(baseurl + "tbmb/login/perform.do", params, headers);
   
   if(!/\/tbmb\/logout\/perform/i.test(html)){
-      var matches = html.match(/<td class="redError"[\s\S]*?>([\s\S]*?)<\/td>/i);
+      var matches = html.match(/<td class="redError"[^>]*>([\s\S]*?)<\/td>/i);
       if(matches){
           throw new AnyBalance.Error(matches[1]);
       }

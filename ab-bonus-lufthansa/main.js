@@ -20,27 +20,26 @@ function main(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
 
-    var baseurl = "https://mobile.lufthansa.com";
+    var baseurl = 'https://mobile.lufthansa.com';
     //Need to enter a country
-    html = AnyBalance.requestGet(baseurl + "/hpg/cor.do?l=en_US", g_headers);
-
-//    return makeCountries(html);
+    var html = AnyBalance.requestGet(baseurl + "/hpg/cor.do?l=en", g_headers);
+	//return makeCountries(html);
 
     var country = prefs.country || 'ZZ';
     var action = getParam(html, null, null, /action="(\/hpg\/cor.do[^"]*)/i, null, html_entity_decode);
     if(!action)
         throw new AnyBalance.Error('Can not find country form!');
 
-    var sid = getParam(action, null, null, /jsessionid=([^\?;&]+)/i);
-    if(!sid)
-        throw new AnyBalance.Error('Can not find session identifier! Is the site changed?'); 
-
     html = AnyBalance.requestPost(baseurl + action, {
         country: country,
         timezone: jstz.determine_timezone().name()
     }, g_headers);
 
-    var html = AnyBalance.requestPost(baseurl + "/mma/account.do;jsessionid=" + sid + "?l=en_US", {
+	/*var sid = getParam(action, null, null, /jsessionid=([^\?;&]+)/i);
+    if(!sid)
+        throw new AnyBalance.Error('Can not find session identifier! Is the site changed?'); */
+	
+    html = AnyBalance.requestPost(baseurl + "/hpg/login.do?l=en_RU&showOverlay=service_account&viewPortHeight=483", {
         user:prefs.login,
         pass:prefs.password,
         step:'search'
@@ -59,7 +58,7 @@ function main(){
     var result = {success: true};
 
     if(!/<div[^>]*>Award miles/i.test(html)) //Язык не всегда переключается с первого раза. Если баланс не нашли, переключаем силой
-        html = AnyBalance.requestGet(baseurl + "/mma/account.do;jsessionid=" + sid + "?l=en_US", g_headers);
+        html = AnyBalance.requestGet(baseurl + '/mma/account.do?l=en', g_headers);
 
     getParam(html, result, 'balance', /<div[^>]*>Award miles[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'qbalance', /<div[^>]*>Status miles[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);

@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="ID пользователя" 
+        positiveButtonText="ОК" 
+        summary="ID||{@s}\n" 
+        dialogTitle="ID пользователя" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите ваш ID для входа в игру"
+        key="login"
+        inputType="number">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="Пароль для входа в игру||***********\n"
+        dialogMessage="Введите пароль, используемый для входа в игру"
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

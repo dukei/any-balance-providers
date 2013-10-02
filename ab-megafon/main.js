@@ -352,6 +352,7 @@ function megafonTrayInfo(filial){
                 if(units == 'мин'){
                     //Надо попытаться исправить ошибку мегафона с единицами измерения трафика
                     if(/[GM]B/i.test(plan_name)) units = 'мб';
+                    if(/GPRS-Internet трафик/i.test(plan_name)) units='мб'; //Вот ещё такое исключение. Надеюсь, на всём будет работать, хотя сообщили из поволжского филиала
                     else units = 'тар.ед.'; //измеряется в 100кб интервалах
                 }
 
@@ -384,7 +385,7 @@ function megafonTrayInfo(filial){
         errorInTray = e.message || "Unknown error";
     }
 
-    if(AnyBalance.isAvailable('bonus_balance', 'last_pay_sum', 'last_pay_date') 
+    if(AnyBalance.isAvailable('internet_cost', 'bonus_balance', 'last_pay_sum', 'last_pay_date') 
 		|| errorInTray 
 		|| isAvailableButUnset(result, ['balance','phone','sub_smit','sub_smio','sub_scl','sub_scr','sub_soi','mms_left','mms_total','sms_left','sms_total','mins_left','mins_total','internet_left','internet_cur','internet_total','gb_with_you'])){
 
@@ -408,7 +409,7 @@ function megafonTrayInfo(filial){
            
            var need_int_cur = isAvailableButUnset(result, ['internet_cur']);
 
-           if(errorInTray || isAvailableButUnset(result, ['balance','phone','sub_smit','sub_smio','sub_scl','sub_scr','sub_soi','internet_cur'])){
+           if(errorInTray || isAvailableButUnset(result, ['internet_cost', 'balance','phone','sub_smit','sub_smio','sub_scl','sub_scr','sub_soi','internet_cur'])){
                getParam(json.ok.html, result, 'balance', /<div[^>]+class="subs_balance[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
                if(isAvailableButUnset(result, ['balance'])){
                    var e = new AnyBalance.Error(errorInTray);
@@ -422,6 +423,7 @@ function megafonTrayInfo(filial){
                getParam(json.ok.html, result, 'phone', /<span[^>]+class="login"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
                if(need_int_cur)
                    getParam(json.ok.html, result, 'internet_cur', /Интернет-траффик \(GPRS\)\s*<\/td>(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTraffic);
+               getParam(json.ok.html, result, 'internet_cost', /Интернет-траффик \(GPRS\)\s*<\/td>(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
                
                var table = getParam(json.ok.html, null, null, /<table[^>]+class="[^>]*rate-plans[^>][\s\S]*?<\/table>/i);
                if(table){

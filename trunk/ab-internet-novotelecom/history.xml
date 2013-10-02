@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-    <change version="2" date="2012-10-10">
-      - Поддержка изменений в личном кабинете
-    </change>
+<change version="3" date="2013-10-02">
+- Оптимизация для совместимости с Balance Widget
+</change>
+<change version="2" date="2012-10-10">
+- Поддержка изменений в личном кабинете
+</change>
 </history>

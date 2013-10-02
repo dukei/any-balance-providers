@@ -1,33 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-internet-novotelecom</id>
-  <name>Новотелеком (Новосибирск)</name>
-  <description>
-    Получает баланс и информацию о тарифном плане для новосибирского Новотелеком. Информация берется из личного кабинета https://billing.novotelecom.ru.
-    В карту покрытия Новотелеком входят Новосибирск, Бердск, Краснообск, НСО, Кольцово.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="till" name="Хватит на" units="дн"/>
-    <counter id="porog" name="Порог отключения" units="р"/>
-    <counter id="abon" name="Абонентская плата" units="р"/>
-    <counter id="licschet" name="Лицевой счет" type="text"/>
-    <counter id="userName" name="ФИО" type="text"/>
-  </counters>
-  <keywords>
-    интернет, novotelecom, Новосибирск, Бердск, Краснообск, НСО, Кольцово
-  </keywords>
-  <type>
-    internet
-  </type>
-  <country>
-    ru
-  </country>
+	<id version="3">ab-internet-novotelecom</id>
+	<api flags="no_browser"/>
+	<name>Новотелеком (Электронный город, Новосибирск)</name>
+	<description>
+Получает баланс и информацию о тарифном плане для новосибирского Новотелеком. Информация берется из личного кабинета https://billing.novotelecom.ru
+В карту покрытия Новотелеком входят Новосибирск, Бердск, Краснообск, НСО, Кольцово.
+	</description>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units="р"/>
+		<counter id="till" name="Хватит на" units="дн"/>
+		<counter id="porog" name="Порог отключения" units="р"/>
+		<counter id="abon" name="Абонентская плата" units="р"/>
+		<counter id="licschet" name="Лицевой счет" type="text"/>
+		<counter id="userName" name="ФИО" type="text"/>
+	</counters>
+	<keywords>интернет, novotelecom, Новосибирск, Бердск, Краснообск, НСО, Кольцово</keywords>
+	<type>internet</type>
+	<country>ru</country>
 </provider>

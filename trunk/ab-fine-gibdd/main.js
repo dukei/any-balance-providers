@@ -79,7 +79,9 @@ function main(){
 	}
 	// Нет штрафов
 	else{
-		result.descr = 'В базе данных отсутствует информация о неуплаченных штрафах по Вашему запросу';
+		result.descr = result.koap = result.podrazdel = result.postanovlenie = 'В базе данных отсутствует информация о неуплаченных штрафах по Вашему запросу';
+		result.count = result.summ = 0;
 	}
+	result.__tariff = prefs.login;
     AnyBalance.setResult(result);
 }

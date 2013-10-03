@@ -34,17 +34,13 @@ function main(){
         country: country,
         timezone: jstz.determine_timezone().name()
     }, g_headers);
-
-	/*var sid = getParam(action, null, null, /jsessionid=([^\?;&]+)/i);
-    if(!sid)
-        throw new AnyBalance.Error('Can not find session identifier! Is the site changed?'); */
 	
     html = AnyBalance.requestPost(baseurl + "/hpg/login.do?l=en_RU&showOverlay=service_account&viewPortHeight=483", {
         user:prefs.login,
         pass:prefs.password,
         step:'search'
     }, g_headers);
-
+	
     if(!/step=logout/.test(html)){
         var error = getParam(html, null, null, /<span[^>]*class="feedback_neg"[^>]*>([\s\S]*?)<\/span>/, replaceTagsAndSpaces, html_entity_decode);
         if(error)
@@ -54,21 +50,21 @@ function main(){
             throw new AnyBalance.Error(message);
         throw new AnyBalance.Error('Could not enter miles&more site. Is the site changed?');
     }
-
+	
     var result = {success: true};
-
+	
     if(!/<div[^>]*>Award miles/i.test(html)) //Язык не всегда переключается с первого раза. Если баланс не нашли, переключаем силой
         html = AnyBalance.requestGet(baseurl + '/mma/account.do?l=en', g_headers);
-
-    getParam(html, result, 'balance', /<div[^>]*>Award miles[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'qbalance', /<div[^>]*>Status miles[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'hon', /<div[^>]*>HON Circle miles[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	
+    getParam(html, result, 'balance', /<div[^>]*>Award miles[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, [replaceTagsAndSpaces, /\D/ig, ''], parseBalance);
+    getParam(html, result, 'qbalance', /<div[^>]*>Status miles[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, [replaceTagsAndSpaces, /\D/ig, ''], parseBalance);
+    getParam(html, result, 'hon', /<div[^>]*>HON Circle miles[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, [replaceTagsAndSpaces, /\D/ig, ''], parseBalance);
     getParam(html, result, '__tariff', /<div[^>]+class="[^"]*account_box[^>]*>(?:[\s\S]*?<br[^>]*>){2}([\s\S]*?)(?:<\/td>|<br)/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'cardnum', /<div[^>]*>Customer number:([^<]*)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'nextstatus', /To achieve (.*?) status, you still/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'nextstatusmiles', /To achieve (?:.*?) status, you still need (\d+) status miles/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'nextfs', /To achieve (?:.*?) status, you still need (?:.*?)(\d+) flight segments/i, replaceTagsAndSpaces, parseBalance);
-
+	
     AnyBalance.setResult(result);
 }
 

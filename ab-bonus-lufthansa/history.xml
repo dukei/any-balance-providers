@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+<change version="5" date="2013-10-03">
+- Fixed balance parsing (Stark)
+</change>
 <change version="4" date="2013-10-02">
 - Adapted for changes in mobile account (Stark)
 </change>

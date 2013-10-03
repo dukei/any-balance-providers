@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Логин" 
+		key="login"
+        summary="||{@s}" 
+        obligatory="true"
+		dialogTitle="Логин" 
+		positiveButtonText="ОК" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите номер телефона в формате +79061234567.">
+    </EditTextPreference>
+    <EditTextPreference 
+        title="Номер документа" 
+		key="document"
+        summary="||{@s}" 
+        obligatory="true"
+		dialogTitle="Номер документа" 
+		positiveButtonText="ОК" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите номер документа в формате XXX-XXXXXX.">
+    </EditTextPreference>
+</PreferenceScreen>

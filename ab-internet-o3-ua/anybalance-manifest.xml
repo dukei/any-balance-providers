@@ -2,11 +2,11 @@
 <provider>
 	<id version="1">ab-internet-o3-ua</id>
 	<api flags="no_browser"/>
-	<name>ИмяПровайдера</name>
+	<name>O3 (Freenet, Украина)</name>
 	<description>
-Получает данные для провайдера 
+Получает данные для провайдера O3, бывший Freenet в Украине http://o3.ua/
 
-Личный кабинет находится по адресу 
+Личный кабинет находится по адресу http://o3.ua/ru/cabinet.html
 	</description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
@@ -17,14 +17,14 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units="{@currency}"/>
-		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="balance" name="Баланс" units="грн"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="status" name="Статус" type="text"/>
-		<counter id="phone" name="Телефон" type="text"/>
-		<counter id="deadline" name="Дата отключения" type="time" format="dd/MM/yyyy"/>
+		<counter id="dogovor" name="Договор" type="text"/>
+		<counter id="traf_income" name="Входящий трафик" units="Мб"/>
+		<counter id="traf_outgoing" name="Исходящий трафик" units="Мб"/>
 	</counters>
 	<keywords></keywords>
-	<type></type>
-	<country>ru</country>
+	<type>internet</type>
+	<country>ua</country>
 </provider>

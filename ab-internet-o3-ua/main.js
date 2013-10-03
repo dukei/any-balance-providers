@@ -17,13 +17,7 @@ function main() {
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 		
-	var /*html = AnyBalance.requestGet(baseurl + 'ru/cabinet.html', g_headers);
-	
-	var tform = getParam(html, null, null, /<input[^>]+name="t:formdata"[^>]*value="([^"]*)/i, null, html_entity_decode);
-	if(!tform)
-		throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');*/
-	
-	html = AnyBalance.requestPost(baseurl + 'ru/cabinet.html', {
+	var html = AnyBalance.requestPost(baseurl + 'ru/cabinet.html', {
 		redirect:'',
 		logon:'1',
 		login:prefs.login,
@@ -41,12 +35,30 @@ function main() {
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
     var result = {success: true};
-	getParam(html, result, 'fio', /Имя(?:\s|&nbsp;)*абонента:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, '__tariff', /Тарифный план:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'phone', /Номер:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'balance', /Текущий баланс:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, ['currency', 'balance'], /Текущий баланс:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseCurrency);
-	getParam(html, result, 'status', /Статус:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'fio', /Вы вошли как([^<]*)/i, replaceTagsAndSpaces, capitalFirstLenttersDecode);
+	getParam(html, result, '__tariff', /Ваш тариф[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'balance', /Состояние счета\s*<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'status', /Состояние интернет[^>]*>([^<]*)/i, replaceTagsAndSpaces, capitalFirstLenttersDecode);
+	getParam(html, result, 'dogovor', /Ваш номер договора\s*<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
+	
+	if(isAvailable(['traf_income','traf_outgoing'])) {
+		html = AnyBalance.requestGet(baseurl + 'ru/statystyka-zahruzok.html', g_headers);
+	
+		getParam(html, result, 'traf_income', /Всего за период(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'traf_outgoing', /Всего за период(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	}
 	
     AnyBalance.setResult(result);
+}
+
+/** Приводим все к единому виду вместо ИВаНов пишем Иванов */
+function capitalFirstLenttersDecode(str)
+{
+	str = html_entity_decode(str+'');
+	var wordSplit = str.toLowerCase().split(' ');
+	var wordCapital = '';
+	for (i = 0; i < wordSplit.length; i++) {
+		wordCapital += wordSplit[i].substring(0, 1).toUpperCase() + wordSplit[i].substring(1) + ' ';
+	}
+	return wordCapital.replace(/^\s+|\s+$/g, '');	
 }

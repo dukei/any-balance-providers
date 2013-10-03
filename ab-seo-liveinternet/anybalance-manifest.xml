@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="2">ab-seo-liveinternet</id>
+	<id version="3">ab-seo-liveinternet</id>
 	<name>Liveinternet.ru</name>
 	<description>
 	Получает данные по счетчикам в известной статистике рунета http://www.liveinternet.ru/

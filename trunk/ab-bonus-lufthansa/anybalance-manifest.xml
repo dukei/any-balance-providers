@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-bonus-lufthansa</id>
+	<id version="5">ab-bonus-lufthansa</id>
 	<api flags="no_browser"/>
 	<name>Lufthansa Miles&amp;More</name>
 	<description>

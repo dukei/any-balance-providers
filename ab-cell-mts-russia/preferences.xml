@@ -23,7 +23,7 @@
     <ListPreference 
         key="type" 
         title="Личный кабинет"
-        summary="|Автоматически|{@s}\n"
+        summary="|Автоматически|{@s}"
         entries="Автоматически|Личный кабинет МТС|Мобильный интернет-помощник|Обычный интернет-помощник"
         entryValues="auto|lk|mobile|ordinary"
 	defaultValue="auto">

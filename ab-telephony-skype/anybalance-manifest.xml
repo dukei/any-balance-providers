@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2" version="16">ab-telephony-skype</id>
+	<id major_version="2" version="17">ab-telephony-skype</id>
 	<api flags="no_browser" />
 	<name>Skype</name>
-	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о текущем балансе, валюте баланса в Skype (http://skype.com).</p>
-	]]></description>
+	<description>
+		Предоставляет информацию о текущем балансе, валюте баланса в Skype (http://skype.com).
+	</description>
 	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
@@ -18,6 +18,7 @@
 		<counter id="balance" name="Баланс" units="{@currency}"/>
 		<counter id="currency" name="Валюта" type="text"/>
 		<counter id="inactivein" name="Деактивация средств через" units="дней"/>
+		<counter id="inactivedate" name="Дата деактивации средств" type="time" format="dd/MM/yyyy"/>
 		<counter id="subscriptions" name="Число подписок"/>
 		<counter id="minsLeft" name="Остаток минут" units="мин"/>
 		<counter id="landline" name="Звонки за последние 30 дней" units="мин"/>

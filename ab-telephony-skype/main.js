@@ -48,19 +48,20 @@ function main(){
     getParam(info, result, 'sms', /<li[^>]+class="sms"[^>]*>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance);
     getParam(info, result, 'wifi', /<li[^>]+class="wifi"[^>]*>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance);
     
-    if(AnyBalance.isAvailable('inactivein')){
-        getParam(info, result, 'inactivein', /Your Skype Credit becomes inactive in\s*([0-9]*)\s+day/i, replaceTagsAndSpaces, parseBalance);
-        if(!result.inactivein){
-            if(/Your Skype Credit becomes inactive tomorrow/i.test(info)){
-                result.inactivein = 1;
-            }else if(/Your Skype Credit becomes inactive today/i.test(info)){
-                result.inactivein = 0;
-            }else{
-                result.inactivein = 180;
-            }
+    if(AnyBalance.isAvailable('inactivein','inactivedate')){
+        info = AnyBalance.requestGet('https://secure.skype.com/account/credit-reactivate?setlang=ru');
+        var date = getParam(info, null, null, /<span[^>]+class="expiryDate"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseDate);
+        if(date){
+            if(AnyBalance.isAvailable('inactivedate'))
+                result.inactivedate = date;
+            if(AnyBalance.isAvailable('inactivein'))
+                result.inactivein = Math.ceil((date - (new Date().getTime()))/86400/1000);
+        }else{
+            AnyBalance.trace('Не удалось получить дату инактивации денег на счету');
         }
     }
-	AnyBalance.setResult(result);
+
+    AnyBalance.setResult(result);
 }
 
 function parseCurrencyMy(text){

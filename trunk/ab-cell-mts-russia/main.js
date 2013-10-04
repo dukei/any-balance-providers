@@ -41,13 +41,13 @@ function getViewState(html){
 function main(){
     var prefs = AnyBalance.getPreferences();
     if(prefs.phone && !/^\d+$/.test(prefs.phone)){
-	throw new AnyBalance.Error('В качестве номера необходимо ввести 10 цифр номера, например, 9161234567, или не вводить ничего, чтобы получить информацию по основному номеру.');
+	throw new AnyBalance.Error('В качестве номера необходимо ввести 10 цифр номера, например, 9161234567, или не вводить ничего, чтобы получить информацию по основному номеру.', null, true);
     }
 
     if(!prefs.login)
-	throw new AnyBalance.Error('Вы не ввели телефон (логин)');
+	throw new AnyBalance.Error('Вы не ввели телефон (логин)', null, true);
     if(!prefs.password)
-	throw new AnyBalance.Error('Вы не ввели пароль');
+	throw new AnyBalance.Error('Вы не ввели пароль', null, true);
 
     if(prefs.type == 'lk'){
         mainLK();
@@ -65,14 +65,14 @@ function main(){
                 AnyBalance.trace('Требуются бонусные баллы, мобильный помощник не подходит...');
            }
         }catch(e){
-           if(!e.allow_retry)
+           if(!e.allow_retry || e.fatal)
                throw e;
            AnyBalance.trace('С мобильным помощником проблема: ' + e.message + " Пробуем обычный...");
         }
         try{
            mainLK(true);
         }catch(e){
-           if(!e.allow_retry)
+           if(!e.allow_retry || e.fatal)
                throw e;
            AnyBalance.trace('С личным кабинетом проблема: ' + e.message + " Пробуем обычный помощник...");
            mainOrdinary();
@@ -117,13 +117,13 @@ function mainMobile(allowRetry){
                 password: prefs.password
             }, g_headers);
         }
-        regexp = /Security\.mvc\/LogOff/;
-        if(!regexp.exec(html)){
+        if(!/Security\.mvc\/LogOff/.test(html)){
             //Не вошли. Сначала пытаемся найти вразумительное объяснение этому факту...
-            regexp=/<ul class="operation-results-error"><li>(.*?)<\/li>/;
-            if (res=regexp.exec(html)){
-                throw new AnyBalance.Error(res[1], allowRetry);
-            }
+            var error = getParam(html, null, null, /<ul class="operation-results-error"><li>(.*?)<\/li>/i, replaceTagsAndSpaces, html_entity_decode);
+            if (error && /Введен неверный пароль/i.test(error))
+                throw new AnyBalance.Error(error, null, true); //Если неправильный пароль, то ошибка фатальная
+            if (error)
+                throw new AnyBalance.Error(error, allowRetry);
             
             regexp=/<title>Произошла ошибка<\/title>/;
             if(regexp.exec(html)){
@@ -147,18 +147,21 @@ function mainMobile(allowRetry){
             html = AnyBalance.requestGet(baseurl + "MyPhoneNumbers.mvc", g_headers);
             html = AnyBalance.requestGet(baseurl + "MyPhoneNumbers.mvc/Change?phoneNumber=7"+prefs.phone, g_headers);
             if(!html)
-	    throw new AnyBalance.Error(prefs.phone + ": номер, возможно, неправильный или у вас нет к нему доступа", false); 
+	        throw new AnyBalance.Error(prefs.phone + ": номер, возможно, неправильный или у вас нет к нему доступа", false); 
             var error = getParam(html, null, null, /<ul class="operation-results-error">([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
             if(error)
-	    throw new AnyBalance.Error(prefs.phone + ": " + error, false); 
+	        throw new AnyBalance.Error(prefs.phone + ": " + error, false); 
         }
         // Тарифный план
         getParam(html, result, '__tariff', /Тарифный план.*?>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
         // Баланс
         getParam (html, result, 'balance', /Баланс.*?>([-\d\.,\s]+)/i, replaceTagsAndSpaces, parseBalance);
         if(AnyBalance.isAvailable('balance') && !isset(result.balance)){
+            var error = getParam(html, null, null, /<ul class="operation-results-error"><li>(.*?)<\/li>/i, replaceTagsAndSpaces, html_entity_decode);
+            if (error)
+                throw new AnyBalance.Error(error, allowRetry);
             AnyBalance.trace(html);
-            throw new AnyBalance.Error('Не удалось найти баланс в мобильном помощнике!', allowRetry); 
+                throw new AnyBalance.Error('Не удалось найти баланс в мобильном помощнике!', allowRetry); 
         }
         // Телефон
         getParam (html, result, 'phone', /Ваш телефон:.*?>([^<]*)</i, replaceTagsAndSpaces, html_entity_decode);
@@ -267,9 +270,10 @@ function enterOrdinary(region, retVals){
         //Не вошли. Надо сначала попытаться выдать вразумительную ошибку, а только потом уже сдаться
 
         var error = getParam(html, null, null, /<div class="b_error">([\s\S]*?)<\/div>/, replaceTagsAndSpaces);
-        if (error){
+        if (error && /Введен неверный пароль/i.test(error))
+            throw new AnyBalance.Error(error, null, true); //Если неправильный пароль, то ошибка фатальная
+        if (error)
             throw new AnyBalance.Error(error);
-        }
         
         var regexp=/<title>Произошла ошибка<\/title>/;
         if(regexp.exec(html)){
@@ -467,7 +471,7 @@ function fetchAccountStatus(html, result){
     // Лицевой счет
     getParam (html, result, 'license', /№([\s\S]*?)[:<]/, replaceTagsAndSpaces);
     // Блокировка
-    getParam (html, result, 'statuslock', /class="account-status-lock".*>(Номер [^<]*)</i);
+    getParam (html, result, 'statuslock', /<(?:p|div)[^>]+class="account-status-lock"[^>]*>([\s\S]*?)<\/(?:p|div)>/i, replaceTagsAndSpaces, html_entity_decode);
     // Сумма кредитного лимита
     getParam (html, result, 'credit', /(?:Лимит|Сумма кредитного лимита)[\s\S]*?([-\d\.,]+)\s*\(?руб/i, replaceTagsAndSpaces, parseBalance);
     // Расход за этот месяц
@@ -544,13 +548,12 @@ function mainLK(allowRetry){
         
         if(!isLoggedIn(html)){
 //  //        AnyBalance.trace(html);
-        
-            var error = getParam(html, null, null, /<div[^>]+class="field_error"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+            var error = getParam(html, null, null, /<div[^>]+class="(?:msg_error|field_error)"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
             if(error)
                 throw new AnyBalance.Error(error, false);
         
             if(getParam(html, null, null, /(auth-status=0)/i))
-                throw new AnyBalance.Error('Неверный логин или пароль. Повторите попытку или получите новый пароль на сайте https://lk.ssl.mts.ru/.', false);
+                throw new AnyBalance.Error('Неверный логин или пароль. Повторите попытку или получите новый пароль на сайте https://lk.ssl.mts.ru/.', false, true);
         
             AnyBalance.trace(html);
             throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Он изменился или проблемы на сайте.', allowRetry);

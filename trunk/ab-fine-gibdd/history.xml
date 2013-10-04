@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-<change version="6" date="2013-09-30">
+<change version="8" date="2013-10-04">
+- Поддержка изменений на сайте
+</change>
+<change version="7" date="2013-09-30">
 - Исправил логику, когда сначала были штрафы, но потом их оплатили, все вернется в начальное состояние
 </change>
 <change version="6" date="2013-09-30">

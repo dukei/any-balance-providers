@@ -24,24 +24,25 @@ function main(){
 			throw new AnyBalance.Error('Работа сервиса временно приостановлена! Попробуйте зайти позже');
 		throw new AnyBalance.Error('Не удалось найти форму для запроса!');
 	}
-
-	if(!prefs.login)
-		throw new AnyBalance.Error('Введите гос. номер!');
-	if(!prefs.password)
-		throw new AnyBalance.Error('Введите номер свидетельства о регистрации!');		
+	checkEmpty(prefs.login, 'Введите гос. номер!');
+	checkEmpty(prefs.password, 'Введите номер свидетельства о регистрации!');
 	
-    var params = createFormParams(form);
+	var params = createFormParams(form);
 
-	if(params.captcha_code){
-		if(AnyBalance.getLevel() >= 7){
-			AnyBalance.trace('Пытаемся ввести капчу');
-            var captcha = AnyBalance.requestGet(baseurl+ '/bitrix/tools/captcha.php?captcha_code=' + params.captcha_code);
-            params.captcha_word = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
-            AnyBalance.trace('Капча получена: ' + params.captcha_word);
-		}else{
-			throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
-        }
-    }
+	if(AnyBalance.getLevel() >= 7){
+		AnyBalance.trace('Пытаемся ввести капчу');
+		html = AnyBalance.requestPost(baseurl+ 'bitrix/templates/.default/components/nilsrus/basic/check.fines.v1.1/ajax/captchaReload.php', {}, addHeaders( {
+			'X-Requested-With':'XMLHttpRequest',
+			'Referer':baseurl+'check/fines/',
+		}));
+		params.captchaCode = getParam(html, null, null, /code":"([^"]*)/i);
+		var captcha = AnyBalance.requestGet(baseurl+ 'bitrix/tools/captcha.php?captcha_sid=' + params.captchaCode);
+		params.captchaWord = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
+		AnyBalance.trace('Капча получена: ' + params.captchaWord);
+	}else{
+		throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
+	}
+	
 	var found = /(\D{0,1}\d+\D{2})(\d{2,3})/i.exec(prefs.login);
 	if(!found)
 		throw new AnyBalance.Error('Введеный гос. номер не соответствует формату а351со190');
@@ -49,39 +50,50 @@ function main(){
 	params.regnum = found[1];
     params.regreg = found[2];
 	params.stsnum = prefs.password;
-
-	html = AnyBalance.requestPost(baseurl + 'check/fines/', params);	
-
-	var result = {success: true, balance:0 };
-	var table = getParam(html, null, null, /(<table col=[\s\S]*?id='decisList'[\s\S]*?<\/table>)/i);
-	// Если таблицы нет то нет и штрафов
-    if(!table){
-	    var error = getParam(html, null, null, [/class="errormsgs info-message"><li><font color='red'>([\s\S]*?)<\/font><\/ul>/i, /<div class="block_main errorview">\s*([\s\S]*?)\s*<\//i], null, html_entity_decode);
-		if(error && error.indexOf('отсутствует информация о неуплаченных штрафах') < 0)
-			throw new AnyBalance.Error(error);
-    }
-	var fines = sumParam(html, null, null, /(<tr class='fineline'[\s\S]*?<\/tr>)/ig, null, html_entity_decode, null);
+	AnyBalance.trace('Пробуем запросить информацию с данными: '+prefs.login+', ' + prefs.password);
 	
-	if(fines.length > 0){
-		AnyBalance.trace('Штрафов: ' + fines.length);
-		for(var i = 0; i< fines.length; i++){
-			var curr = fines[i];
-			sumParam(curr, result, 'balance', /(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/ig, null, parseBalance, aggregate_sum);
-		}
-		getParam(curr, result, 'descr', /<a\s*href[^>]*title="([\s\S]*?)"/i, null, html_entity_decode);
-		getParam(curr, result, 'date', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, null, parseDate);
-		getParam(curr, result, 'koap', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-		getParam(curr, result, 'podrazdel', /(?:[\s\S]*?<td[^>]*>){4}[\s\S]*?regkod[\s\S]*?>([\s\S]*?)<\//i, null, html_entity_decode);
-		getParam(curr, result, 'postanovlenie', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)</i, null, html_entity_decode);
-		sumParam(curr, result, 'summ', /(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/ig, null, parseBalance, aggregate_sum);
-		
-		result.count = fines.length;
+	html = AnyBalance.requestPost(baseurl + 'bitrix/templates/.default/components/nilsrus/basic/check.fines.v1.1/ajax/checker.php', params, addHeaders({
+		'X-Requested-With':'XMLHttpRequest',
+		'Referer':baseurl+'check/fines/'
+	}));
+	
+	try {
+		var json = getJson(html);
 	}
+	catch(e) {
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось получить информацию, свяжитесь с разработчиком провайдера');
+	}
+	var result = {success: true, balance:0 };
+	
+	if(json.status == 1)
+		throw new AnyBalance.Error('Не верно введены символы с картинки');
+	
+	if(json.request.error == 1)
+		throw new AnyBalance.Error('Указанное Вами свидетельство о регистрации транспортного средства не соответствует государственным регистрационным знакам. Вероятно, Вами допущена ошибка при заполнении полей запроса.');
+
+	else if(json.request.error > 0) 
+		throw new AnyBalance.Error('Неизвестный код ошибки: ' + json.request.error);
+		
+	AnyBalance.trace('Штрафов: ' + json.request.count);
+	if(json.request.count > 0) {
+		for(var i = 0; i< json.request.count; i++){
+			var curr = json.request.data[i];
+			sumParam(curr.Summa+'', result, 'balance', null, null, parseBalance, aggregate_sum);
+		}
+		getParam(curr.DateDecis+'', result, 'date', null, null, parseDateISO);
+		getParam(json.request.count+'', result, 'count', null, null, html_entity_decode);
+		getParam(curr.KoAPtext.toUpperCase().substring(0,1) + curr.KoAPtext.toLowerCase().substring(1), result, 'descr', null, null, html_entity_decode);
+		getParam(curr.KoAPcode, result, 'koap', null, replaceTagsAndSpaces, html_entity_decode);
+		getParam(json.request.DivList[curr.Division]+'', result, 'podrazdel', null, null, html_entity_decode);
+		getParam(curr.NumPost, result, 'postanovlenie', null, null, html_entity_decode);
+		getParam(curr.Summa+'', result, 'summ', null, null, parseBalance);
 	// Нет штрафов
-	else{
+	} else {
 		result.descr = result.koap = result.podrazdel = result.postanovlenie = 'В базе данных отсутствует информация о неуплаченных штрафах по Вашему запросу';
 		result.count = result.summ = 0;
 	}
-	result.__tariff = prefs.login;
+	
+	result.__tariff = prefs.login.toUpperCase();
     AnyBalance.setResult(result);
 }

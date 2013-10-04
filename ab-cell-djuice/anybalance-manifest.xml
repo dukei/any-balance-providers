@@ -4,12 +4,16 @@
   <api flags="no_browser" />
   <id major_version="1.3" version="26">ab-cell-djuice</id>
   <name>Djuice</name>
-  <description>
-    Получает баланс, бонусные минуты, СМС, ММС, остаток интернет-трафика и другие бонусы для мобильного оператора Djuice.
-    Информация берется из системы Мой DJUICE https://my.djuice.com.ua/  
-
-    Если вы не зарегистрированы в системе Мой DJUICE, то для пользования провайдером вам сначала нужно там зарегистрироваться.
-  </description>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе, бонусных минутах, SMS, MMS, остатке интернет-трафика и других бонусах для пользователей мобильного оператора Djuice.</p>
+	<p>Информация берется из системы Мой DJUICE (http://my.djuice.com.ua/).</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Настройки:</p>
+	<ul>
+	<li>Для пользования провайдером необходимо зарегистрироваться в системе Мой DJUICE.</li>
+	</ul>   
+	]]></instruction>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <author>Sergey Bashmanov &lt;sergey.bashmanov@gmail.com&gt;</author>
   <files>

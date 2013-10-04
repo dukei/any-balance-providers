@@ -1,51 +1,55 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="5" major_version="1.1">ab-money-teleinfo</id>
-  <name>ВТБ24: Телеинфо</name>
-  <description>Система «Телеинфо» ВТБ24. Получение баланса пластиковой карты. https://telebank.vtb24.ru/
-
-Если у вас ещё нет доступа к Телеинфо, зарегистрируйтесь здесь: https://www.telebank.ru/WebNew/Front/RegistrationTI.aspx
-
-   Внимание! В ВТБ24 существует две услуги:
-   1. Телебанк - платная, позволяет просматривать счет, осуществлять различные платежные операции, денежные переводы и прочее. Требует ввода одноразового кода.
-   2. Телеинфо - бесплатная, позволяет ТОЛЬКО просматривать состояние счета.
-   При этом существует неприятная проблема - эти услуги взаимоисключающие. То есть, если подключен Телебанк, то из-за дурацкого ограничения на ввод одноразового кода проверить счет через AnyBalance или подобную программу невозможно. Пожалуйста, пожалуйтесь в поддержку банка (по номеру (495) 771-78-24), надеюсь, будет толк.
-</description>
-  <author>Robert Khaliullov &lt;robix@mail.ru&gt;</author>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>api:jquery.min.js</js> <!-- Используем библиотеку, которая и так входит в AnyBalance -->
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units=" {@currency}"/>
-    <counter id="minpay" name="Минимальный платеж" units=" {@currency}"/>
-    <counter id="minpaytill" name="Срок мин.платежа" type="time" format="dd/MM/yyyy"/>
-    <counter id="gracepay" name="Грейс платеж" units=" {@currency}"/>
-    <counter id="gracetill" name="Конец льготного периода" type="time" format="dd/MM/yyyy"/>
-    <counter id="limit" name="Кредитный лимит" units=" {@currency}"/>
-    <counter id="credit_till" name="Срок кредита" type="time" format="dd/MM/yyyy"/>
-    <counter id="accbalance" name="Остаток на счете" units=" {@currency}"/>
-    <counter id="own" name="Собственные средства" units=" {@currency}"/>
-    <counter id="blocked" name="Заблокировано" units=" {@currency}"/>
-    <counter id="accnum" name="Номер счета" type="text"/>
-    <counter id="pct" name="Процентная ставка" units="%"/>
-    <counter id="currency" name="Валюта" type="text"/>
-    <counter id="cardname" name="Название" type="text"/>
-    <counter id="cardnum" name="Номер" type="text"/>
-    <counter id="fio" name="Владелец" type="text"/>
- </counters>
-  <keywords>
-    ВТБ24, Телебанк, телеинфо
-  </keywords>
-  <type>
-    money
-  </type>
-  <country>
-    ru
-  </country>
+	<id version="5" major_version="1.1">ab-money-teleinfo</id>
+	<name>ВТБ24: Телеинфо</name>
+	<description html="true"><![CDATA[
+	<p>Получает информацию о балансе пластиковой карты Системы «Телеинфо» ВТБ24 ( http://telebank.vtb24.ru/ ).</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Получить доступ к Телеинфо можно, пройдя регистрацию по ссылке http://www.telebank.ru/WebNew/Front/RegistrationTI.aspx.</p>     
+	<br>
+	<b>ВНИМАНИЕ!</b> 
+	<p>В ВТБ24 существует две ВЗАИМОИСКЛЮЧАЮЩИЕ услуги:</p>
+	<ol>   
+	 <li>Телебанк - платная, позволяет просматривать счет, осуществлять различные платежные операции, денежные переводы и проч. Требует ввода одноразового кода.</li>    
+	<li>Телеинфо - бесплатная, позволяет ТОЛЬКО просматривать состояние счета.</li>
+	</ol>
+	]]></instruction>	
+	<author>Robert Khaliullov &lt;robix@mail.ru&gt;</author>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>api:jquery.min.js</js> <!-- Используем библиотеку, которая и так входит в AnyBalance -->
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" {@currency}"/>
+		<counter id="minpay" name="Минимальный платеж" units=" {@currency}"/>
+		<counter id="minpaytill" name="Срок мин.платежа" type="time" format="dd/MM/yyyy"/>
+		<counter id="gracepay" name="Грейс платеж" units=" {@currency}"/>
+		<counter id="gracetill" name="Конец льготного периода" type="time" format="dd/MM/yyyy"/>
+		<counter id="limit" name="Кредитный лимит" units=" {@currency}"/>
+		<counter id="credit_till" name="Срок кредита" type="time" format="dd/MM/yyyy"/>
+		<counter id="accbalance" name="Остаток на счете" units=" {@currency}"/>
+		<counter id="own" name="Собственные средства" units=" {@currency}"/>
+		<counter id="blocked" name="Заблокировано" units=" {@currency}"/>
+		<counter id="accnum" name="Номер счета" type="text"/>
+		<counter id="pct" name="Процентная ставка" units="%"/>
+		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="cardname" name="Название" type="text"/>
+		<counter id="cardnum" name="Номер" type="text"/>
+		<counter id="fio" name="Владелец" type="text"/>
+	</counters>
+	<keywords>
+	ВТБ24, Телебанк, телеинфо
+	</keywords>
+	<type>
+	money
+	</type>
+	<country>
+	ru
+	</country>
 </provider>

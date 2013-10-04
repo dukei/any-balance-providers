@@ -3,9 +3,10 @@
 	<id major_version="1.0" version="6">ab-bonus-perekrestok</id>
 	<api flags="no_browser"/>
 	<name>Перекресток</name>
-	<description>
-	Получает информацию о бонусах на карте Клуба Перекресток (http://x5club.ru/about/) из личного кабинета https://prcab.x5club.ru.
-	</description>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о бонусном балансе на карте ""Клуба Перекресток"" (http://x5club.ru/about/).</p>
+	<p>Информация берется из личного кабинета (http://prcab.x5club.ru).</p>
+	]]></description>
 	<author>iReset &lt;ireset.ag@gmail.com&gt;</author>
 	<files>
 		<icon>icon.png</icon>

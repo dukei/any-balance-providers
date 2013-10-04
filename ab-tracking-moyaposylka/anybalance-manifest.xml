@@ -1,31 +1,32 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-tracking-moyaposylka</id>
-  <name>Моя посылка</name>
-  <description>
-    Отслеживание почтового отправления с помощью сервиса https://moyaposylka.ru. Сервис «Моя посылка» предоставляет возможность в одном месте автоматически отслеживать от имени пользователя регистрируемые почтовые отправления (РПО) на сайтах почтовых служб. Информация о статусах прохождения посылки берётся из открытых источников и агрегируется на одной странице.
-    Рекомендуется показывать сводную информацию в текстовом виджете не менее 1х2.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <js>library.js</js>
-    <js>main.js</js>
-    <preferences>preferences.xml</preferences>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="fulltext" name="Сводка" type="html"/>
-    <counter id="date" name="Дата" type="time"/>
-    <counter id="status" name="Статус" type="text"/>
-    <counter id="days" name="Время в пути" units="д"/>
-    <counter id="weight" name="Вес" units="кг"/>
-    <counter id="address" name="Адрес" type="text"/>
-  </counters>
-  <keywords>
-    Почтовое отправление, почта России, моя посылка
-  </keywords>
-  <type>
-    tracking, post
-  </type>
+	<id version="2">ab-tracking-moyaposylka</id>
+	<name>Моя посылка</name>
+	<description html="true"><![CDATA[
+	<p>Отслеживает почтовое отправление с помощью сервиса http://moyaposylka.ru.</p>
+	<p>Сервис «Моя посылка» предоставляет возможность в одном месте автоматически отслеживать от имени пользователя регистрируемые почтовые отправления (РПО) на сайтах почтовых служб.</p>
+	<p>Информация о статусах прохождения посылки берётся из открытых источников и агрегируется на одной странице.</p>
+	]]></description>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<js>library.js</js>
+		<js>main.js</js>
+		<preferences>preferences.xml</preferences>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="fulltext" name="Сводка" type="html"/>
+		<counter id="date" name="Дата" type="time"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="days" name="Время в пути" units="д"/>
+		<counter id="weight" name="Вес" units="кг"/>
+		<counter id="address" name="Адрес" type="text"/>
+	</counters>
+	<keywords>
+	Почтовое отправление, почта России, моя посылка
+	</keywords>
+	<type>
+	tracking, post
+	</type>
 </provider>

@@ -1,32 +1,31 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="2.0" version="5">ab-bonus-mts</id>
-  <name>МТС Бонус</name>
-  <description>
-    Получает бонусные баллы за пользование услугами МТС (http://wap.bonus.mts.ru).
-    Проверено на телефоне Московского региона. В случае некорректной работы в других регионах просьба обращаться к автору.
-    Для экономии трафика используется мобильная версия сайта. Для абонентов МТС трафик бесплатен.
-  </description>
-  <author>iReset &lt;ireset.ag@gmail.com&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс"/>
-    <counter id="customer" name="Телефон" type="text"/>
-    <counter id="lifeInProgram" name="Стаж в программе" type="text"/>
-  </counters>
-  <keywords>
-    бонус, мтс, bonus, mts
-  </keywords>
-  <type>
-    bonus
-  </type>
-  <country>
-    ru
-  </country>
+	<id major_version="2.0" version="5">ab-bonus-mts</id>
+	<name>МТС Бонус</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о бонусных баллах за пользование услугами МТС (http://wap.bonus.mts.ru).</p>
+	<p><small>Для абонентов МТС трафик бесплатный.</small></p>
+	]]></description>
+	<author>iReset &lt;ireset.ag@gmail.com&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс"/>
+		<counter id="customer" name="Телефон" type="text"/>
+		<counter id="lifeInProgram" name="Стаж в программе" type="text"/>
+	</counters>
+	<keywords>
+	бонус, мтс, bonus, mts
+	</keywords>
+	<type>
+	bonus
+	</type>
+	<country>
+	ru
+	</country>
 </provider>

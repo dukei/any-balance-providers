@@ -1,74 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="2.1" version="37">ab-cell-beeline-russia</id>
-  <api flags="no_browser"/>
-  <name>Билайн (старый кабинет)</name>
-  <description>
-    Получает баланс, бонусный баланс, количество бесплатных SMS, MMS и минут, владельца, тарифный план и номер договора из старого личного кабинета Билайн.
-Поддерживает корпоративные тарифные планы и для кредитных тарифов получает сумму, потраченную за текущий отчетный период.
-
-    Поддерживает страны:
-       * Россия ( https://uslugi.beeline.ru )
-       * Узбекистан ( https://uslugi.beeline.uz )
-       * Казахстан ( https://uslugi.beeline.kz )
-
-    ВНИМАНИЕ! Если у вас логин и пароль от нового личного кабинета https://my.beeline.ru, пользуйтесь провайдером Билайн (новый кабинет)!
-
-    Как получить пароль к личному кабинету: 
-    1. Позвоните со своего телефона на бесплатный номер *110*9# и получите SMS с логином и ВРЕМЕННЫМ паролем к системе.
-       Нюансы: 
-         - если пароль и логин не приходят, повторный запрос делайте только через час; 
-         - если приходит сообщение о недоступности услуги, необходимо перерегистрировать аппарат в сети (выключить телефон на 5 минут и включить его заново), после чего повторить запрос. 
-    2. Присланный логин и пароль ввести по адресу: https://uslugi.beeline.ru . Как только войдете, система попросит сменить логин и пароль на ПОСТОЯННЫЙ. 
-       Нюансы:
-         - новый пароль рекомендуется ввести в виде "Ln123456", иначе система может затем не пустить в личный кабинет. Примеры хороших паролей: "Be112233", "Pd054920". 
-         - пароли не должны совпадать с прошлыми тремя вводимыми вами паролями; 
-         - пароль не должен содержать номера вашего телефона; 
-         - если система "тормозит", "долго думает" и т.п. не мучайте ее паролями - она просто висит (особенно по выходным); 
-         - после 3 неудачных попыток входа система временно блокирует доступ на 30 минут; 
-         - после 10 неудачных попыток пароль блокируется навсегда и требуется проделать всю процедуру заново; 
-         - если система сообщает, что у вас нет прав доступа или пишет, что пароль неверен, то вы что-то сделали неправильно, иногда система так же реагирует при отсутствии доступа (связки с биллингом). 
-
-     3. Логин и новый ПОСТОЯННЫЙ пароль введите в настройки этого провайдера для получения информации о балансе.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="{@currency}"/>
-    <counter id="bonus_balance" name="Бонусный баланс" units="{@currency}"/>
-    <counter id="bonus_survey" name="Бонус за опрос" units="{@currency}"/>
-    <counter id="min_left" name="Минуты" units="мин" type="time_interval"/>
-    <counter id="sms_left" name="SMS" units="sms"/>
-    <counter id="mms_left" name="MMS" units="mms"/>
-    <counter id="min_left_till" name="Срок действия пакета минут" type="time" format="dd/MM/yyyy"/>
-    <counter id="expences" name="Потрачено за период (корп.)" units="{@currency}"/>
-    <counter id="billsum" name="Сумма счета (корп.)" units="{@currency}"/>
-    <counter id="billpay" name="Сумма к оплате (корп.)" units="{@currency}"/>
-    <counter id="billpaytill" name="Срок оплаты счета (корп.)" type="time" format="dd/MM/yyyy"/>
-    <counter id="traffic" name="Трафик" units="Мб"/>
-    <counter id="userName" name="Владелец" type="text"/>
-    <counter id="BlockStatus" name="Состояние номера" type="text"/>
-    <counter id="license" name="Номер договора" type="text"/>
-    <counter id="sms_expiration" name="Дата окончания действия смс-пакета" type="time" format="dd/MM/yyyy"/>
-    <counter id="expencesTraffic" name="Начисления за трафик (корп.)" units="{@currency}"/>
-    <counter id="expencesAbon" name="Начисления абон.платы (корп.)" units="{@currency}"/>
-    <counter id="expencesInstant" name="Разовые начисления (корп.)" units="{@currency}"/>
-    <counter id="period_begin" name="Начало расчетного периода (корп.)" type="time" format="dd/MM/yyyy"/>
-    <counter id="period_till" name="Конец расчетного периода (корп.)" type="time" format="dd/MM/yyyy"/>
-  </counters>
-  <keywords>
-    Сотовый телефон, мобильный, мобильник, beeline, россия, узбекистан, казахстан, корпоративный, предоплатный, кредитный
-  </keywords>
-  <type>
-    cell
-  </type>
-  <country>
-    ru, uz, kz
-  </country>
+	<id major_version="2.1" version="37">ab-cell-beeline-russia</id>
+	<api flags="no_browser"/>
+	<name>Билайн (старый кабинет)</name>
+	<description html="true"><![CDATA[
+	<p> Предоставляет  информацию о балансе, бонусных баллах, количестве бесплатных минут, SMS и MMS, тарифном плане и номере договора из старого личного кабинета Билайн.</p>
+	<p> Поддерживает корпоративные тарифные планы и для кредитных тарифов получает сумму, потраченную за текущий отчетный период.</p>
+	<p> Поддерживаются страны:
+	<br>
+	<ul>
+		<li>Россия (http://uslugi.beeline.ru)</li>
+		<li>Узбекистан (http://uslugi.beeline.uz)</li>
+		<li>Казахстан (http://uslugi.beeline.kz)</li>
+	</ul>
+	<b>ВНИМАНИЕ!</b> Если у вас логин и пароль от нового личного кабинета https://my.beeline.ru, используйте провайдер Билайн (новый кабинет).
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Как получить пароль к личному кабинету: </p>
+	<ol>
+		<li> Позвоните со своего телефона на бесплатный номер *110*9# и получите SMS с логином и ВРЕМЕННЫМ паролем к системе. <br>
+		<br>
+	<b> Особенности:</b>
+	<br>
+	<ul>
+		<li>Если пароль и логин не приходят, обращайтесь к провайдеру для совершения повторного запроса;</li>
+		<li>Если приходит сообщение о недоступности услуги, перерегистрируйте аппарат в сети (выключите телефон на 5 минут и включите его заново), после чего повторите запрос.</li>
+	</ul>
+	<br>
+	<li>Присланный логин и пароль введите по адресу https://uslugi.beeline.ru. После совершения входа смените логин и пароль на ПОСТОЯННЫЙ.</li>
+	<br>
+	<b>Особенности:</b>
+	<ul>
+		<li> Рекомендуем вводить новый пароль в виде Ln123456;
+	<br>
+	<small>Примеры хороших паролей: Be112233, Pd054920.</small></li>
+	<li>Пароль не должен совпадать с прошлыми тремя вводимыми вами паролями;</li>
+	<li>Пароль не должен содержать номера вашего телефона;</li>
+	<li>Если система долго выдает ответ, находясь в стадии «загрузки», просто подождите, не предпринимая никаких дополнительных действий;</li> 
+	<li>После 3 неудачных попыток входа система временно блокирует доступ на 30 минут;</li>
+	<li>После 10 неудачных попыток пароль блокируется навсегда, после чего требуется проделать всю процедуру заново;   </li>
+	<li>Если система сообщает, что у вас нет прав доступа, или что пароль неверен, проделайте процедуру заново – возможно, вы совершили ошибку.</li>
+	</ul>
+	<br>
+	<li>Введите логин и новый ПОСТОЯННЫЙ пароль в настройки провайдера для получения информации о балансе.</li>
+	</ol>
+	]]></instruction>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units="{@currency}"/>
+		<counter id="bonus_balance" name="Бонусный баланс" units="{@currency}"/>
+		<counter id="bonus_survey" name="Бонус за опрос" units="{@currency}"/>
+		<counter id="min_left" name="Минуты" units="мин" type="time_interval"/>
+		<counter id="sms_left" name="SMS" units="sms"/>
+		<counter id="mms_left" name="MMS" units="mms"/>
+		<counter id="min_left_till" name="Срок действия пакета минут" type="time" format="dd/MM/yyyy"/>
+		<counter id="expences" name="Потрачено за период (корп.)" units="{@currency}"/>
+		<counter id="billsum" name="Сумма счета (корп.)" units="{@currency}"/>
+		<counter id="billpay" name="Сумма к оплате (корп.)" units="{@currency}"/>
+		<counter id="billpaytill" name="Срок оплаты счета (корп.)" type="time" format="dd/MM/yyyy"/>
+		<counter id="traffic" name="Трафик" units="Мб"/>
+		<counter id="userName" name="Владелец" type="text"/>
+		<counter id="BlockStatus" name="Состояние номера" type="text"/>
+		<counter id="license" name="Номер договора" type="text"/>
+		<counter id="sms_expiration" name="Дата окончания действия смс-пакета" type="time" format="dd/MM/yyyy"/>
+		<counter id="expencesTraffic" name="Начисления за трафик (корп.)" units="{@currency}"/>
+		<counter id="expencesAbon" name="Начисления абон.платы (корп.)" units="{@currency}"/>
+		<counter id="expencesInstant" name="Разовые начисления (корп.)" units="{@currency}"/>
+		<counter id="period_begin" name="Начало расчетного периода (корп.)" type="time" format="dd/MM/yyyy"/>
+		<counter id="period_till" name="Конец расчетного периода (корп.)" type="time" format="dd/MM/yyyy"/>
+	</counters>
+	<keywords>Сотовый телефон, мобильный, мобильник, beeline, россия, узбекистан, казахстан, корпоративный, предоплатный, кредитный</keywords>
+	<type>cell</type>
+	<country>ru, uz, kz</country>
 </provider>

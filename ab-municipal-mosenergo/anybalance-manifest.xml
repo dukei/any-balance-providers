@@ -1,38 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser" />
-  <id version="14">ab-municipal-mosenergo</id>
-  <name>Мосэнергосбыт</name>
-  <description>
-    Получает баланс и информацию о последнем платеже в МосЭнергоСбыт. Получает данные из личного кабинета https://lkkbyt.mosenergosbyt.ru.
-
-    Если у вас еще нет доступа к этому личному кабинету, нажмите ссылку "Регистрация" на странице https://lkkbyt.mosenergosbyt.ru. 
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-    <js>library.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="agreement" name="Лицевой счет" type="text"/>
-    <counter id="lastdate" name="Дата последнего платежа" type="time" format="dd/MM/yyyy"/>
-    <counter id="lastcounter" name="Последние показания счетчика"/>
-    <counter id="lastcounter1" name="Последние показания другого счетчика"/>
-    <counter id="lastcounter2" name="Последние показания третьего счетчика"/>
-    <counter id="lastsum" name="Последний платеж" units="р"/>
-  </counters>
-  <keywords>
-    мосэнерго, москва, электричество
-  </keywords>
-  <type>
-    municipal
-  </type>
-  <country>
-    ru
-  </country>
+	<id version="14">ab-municipal-mosenergo</id>
+	<name>Мосэнергосбыт</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе и последнем платеже в ""МосЭнергоСбыт"".</p> 
+	<p>Информация берется из личного кабинета (http://lkkbyt.mosenergosbyt.ru).</p>
+	]]></description>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<js>library.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units="р"/>
+		<counter id="agreement" name="Лицевой счет" type="text"/>
+		<counter id="lastdate" name="Дата последнего платежа" type="time" format="dd/MM/yyyy"/>
+		<counter id="lastcounter" name="Последние показания счетчика"/>
+		<counter id="lastcounter1" name="Последние показания другого счетчика"/>
+		<counter id="lastcounter2" name="Последние показания третьего счетчика"/>
+		<counter id="lastsum" name="Последний платеж" units="р"/>
+	</counters>
+	<keywords>мосэнерго, москва, электричество</keywords>
+	<type>municipal</type>
+	<country>ru</country>
 </provider>

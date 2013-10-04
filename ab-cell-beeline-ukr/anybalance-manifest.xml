@@ -2,12 +2,16 @@
 <provider>
   <id major_version="2.1" version="15">ab-cell-beeline-ukr</id>
   <name>Билайн Украина</name>
-  <description>
-    Мониторинг баланса для мобильного оператора Билайн (Украина).
-    Информация берется из системы «Личный кабинет» https://poslugy.beeline.ua/
-
-    Если вы не зарегистрированы в системе «Личный кабинет», то для пользования провайдером вам сначала нужно там зарегистрироваться на странице https://poslugy.beeline.ua/tbmb/enroll_beeline/user/show.do
-  </description>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе для пользователей мобильного оператора "Билайн" (Украина).</p> 
+	<p>Информация берется из системы «Личный кабинет» (http://poslugy.beeline.ua/).</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Настройки:</p>
+	<ul>
+	<li>Для пользования провайдером необходимо зарегистрироваться в системе «Личный кабинет» на странице http://poslugy.beeline.ua/tbmb/enroll_beeline/user/show.do.</li>
+	</ul>
+	]]></instruction>
   <author>Ignatiy Goloviznin &lt;igoloviznin@gmail.com&gt;</author>
   <files>
     <icon>icon.png</icon>

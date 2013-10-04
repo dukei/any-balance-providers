@@ -1,35 +1,30 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="2.2" version="13">ab-money-qiwi</id>
-  <api flags="no_browser"/>
-  <name>QIWI Кошелек</name>
-  <description>
-    Получает баланс, номер QVC-карты, срок действия QVC-карты, транзакции по QVC (только новый кабинет), количество сообщений и счетов в QIWI Кошельке. Поддерживает старый личный кабинет (https://w.qiwi.ru) и новый (https://w.qiwi.com).
-  </description>
-  <author>iReset &lt;ireset.ag@gmail.com&gt;</author>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="{@currency}"/>
-	<counter id="qvc_card" name="Номер карты QVC" type="text"/>
-	<counter id="qvc_exp" name="Срок действия QVC" type="time" format="dd/MM/yyyy"/>
-	<counter id="qvc_last" name="Последняя транзакция по QVC" type="text"/>
-    <counter id="messages" name="Сообщения" units=" шт"/>
-    <counter id="bills" name="Счета" units=" шт"/>
-  </counters>
-  <keywords>
-    кошелек, деньги, киви, оплата, платежи, карта, банковская карта, visa, виза
-  </keywords>
-  <type>
-    money
-  </type>
-  <country>
-    ru, ua, kz
-  </country>
+	<id major_version="2.2" version="13">ab-money-qiwi</id>
+	<api flags="no_browser"/>
+	<name>QIWI Кошелек</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе, номере QVC-карты, сроке действия QVC-карты, транзакции по QVC (только новый кабинет), количестве сообщений и счетов в QIWI Кошельке.</p> 
+	<p>Информация берется из старого личного кабинета (http://w.qiwi.ru) и нового (http://w.qiwi.com).</p>
+	]]></description>
+	<author>iReset &lt;ireset.ag@gmail.com&gt;</author>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units="{@currency}"/>
+		<counter id="qvc_card" name="Номер карты QVC" type="text"/>
+		<counter id="qvc_exp" name="Срок действия QVC" type="time" format="dd/MM/yyyy"/>
+		<counter id="qvc_last" name="Последняя транзакция по QVC" type="text"/>
+		<counter id="messages" name="Сообщения" units=" шт"/>
+		<counter id="bills" name="Счета" units=" шт"/>
+	</counters>
+	<keywords>QVC, QVV, кошелек, деньги, киви, оплата, платежи, карта, банковская карта, visa, виза</keywords>
+	<type>money</type>
+	<country>ru, ua, kz</country>
 </provider>

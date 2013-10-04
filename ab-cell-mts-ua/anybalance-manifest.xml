@@ -1,86 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.1" version="28">ab-cell-mts-ua</id>
-  <api flags="no_browser"/>
-  <name>МТС (Украина)</name>
-  <description>
-    Получает баланс, минуты, смс, ммс, информацию о расходах, номер лицевого счета, ежемесячую плату и др.
-Получает данные из PDA версии интернет-помощника https://ihelper-prp.mts.com.ua/SelfCarePda/, потому что на большом помощнике стоит капча.
-
-    Если у вас ещё нет доступа к интернет-помощнику, зарегистрируйтесь здесь: https://ihelper-prp.mts.com.ua/CustomerSelfCare2/logon-registration.aspx
-
-    ВНИМАНИЕ! PDA помощник доступен ТОЛЬКО для предоплатных абонентов, информацию по контрактным абонентам получить НЕЛЬЗЯ, пока МТС не поддержит их в PDA помощнике или не уберет капчу с основного помощника. Кроме того, PDA помощник у МТС чрезвычайно нестабилен, и очень часто не работает. Если провайдер не может получить данные, подождите в течение суток, обычно он через некоторое время снова начинает работать.
-  </description>
-  <author>Ignatiy Goloviznin &lt;igoloviznin@gmail.com&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units=" ₴"/>
-    <counter id="bonus_balance" name="Бонусный баланс" units=" ₴" flags="zero_when_empty"/>
-    <counter id="min_paket" name="Пакет бесплатных минут для внутрисетевых звонков" type="time_interval" format="{@MIN}" units=" мин"/>
-    <counter id="min_net_70" name="70 минут в день для внутрисетевых звонков" type="time_interval" format="{@MIN}" units=" мин"/>
-    <counter id="min_net_30" name="30 минут в день для внутрисетевых звонков" type="time_interval" format="{@MIN}" units=" мин"/>
-    <counter id="min_net_all_33" name="30/33 минуты в день для внутрисетевых звонков во всех областях" type="time_interval" format="{@MIN}" units=" мин"/>
-    <counter id="min_net_100" name="100 минут в день на внутрисетевое направление" type="time_interval" format="{@MIN}" units=" мин"/>
-    <counter id="min_net_200" name="200 минут в день на внутрисетевое направление" type="time_interval" format="{@MIN}" units=" мин"/>
-    <counter id="sms_paket" name="Пакет СМС" units=" sms"/>
-    <counter id="mms_paket" name="Пакет ММС" units=" mms"/>
-    <counter id="traffic_paket_mb" name="Пакет интернета" units=" mb"/>
-    <counter id="traffic_kop_mb" name="Интернет за копейку и другие ежедневные пакеты" units=" mb"/>
-    <counter id="traffic_reg_kop_mb" name="Интернет за копейку региональный и общенациональный" units=" mb"/>
-    <counter id="traffic_maxenergy_mb" name="Интернет Max Energy" units=" mb"/>
-    <counter id="sms_net" name="СМС в сети МТС" units=" sms"/>
-    <counter id="sms_others" name="СМС на сети других мобильных операторов Украины" units=" sms"/>
-    <counter id="min_net_maxenergy" name="Минуты в сети МТС" type="time_interval" format="{@MIN}" units=" мин"/>
-    <counter id="min_reg_3000" name="3000 региональных минут в сети" type="time_interval" format="{@MIN}" units=" мин"/>
-    <counter id="min_all_100" name="100 минут абонентам по Украине" type="time_interval" format="{@MIN}" units=" мин"/>
-    <counter id="min_net" name="Минуты с услугой «Супер без пополнения» в сети МТС" type="time_interval" format="{@MIN}" units=" мин"/>
-    <counter id="min_all_25" name="25 минут на другие сети" type="time_interval" format="{@MIN}" units=" мин"/>
-    <counter id="min_net_2500" name="2500 минут в сети МТС" type="time_interval" format="{@MIN}" units=" мин"/>
-    <counter id="min_ln" name="Расход минут на Любимые Номера" type="time_interval" format="{@MIN}" units=" мин"/>
-    <counter id="sms_100" name="Бесплатные смс для отправки на номера в пределах Украины" units=" sms"/>
-    <counter id="min_all_60" name="60 минут на все сети за 5 коп" type="time_interval" format="{@MIN}" units=" мин"/>
-    <counter id="traffic_hyper_mb" name="hyper.net к-во Кб загруженных по АПН hyper.net" units=" mb"/>
-    <counter id="traffic_smart_mb" name="smart.net к-во Кб загруженных по АПН smart.net" units=" mb"/>
-    <counter id="traffic_opera_mb" name="Opera Mini к-во Кб загруженных по АПН opera" units=" mb"/>
-    <counter id="traffic_free_mb" name="Бесплатный интернет" units=" mb"/><!-- Актуально до 15.08.2012 для Супер Свободы -->
-    <counter id="sms_used" name="Израсходовано SMS" units=" sms"/>
-    <counter id="mms_used" name="Израсходовано MMS" units=" mms"/>
-    <counter id="traffic_used" name="Использованно Мб" units=" mb"/>
-    <counter id="min_used" name="Израсходовано минут" type="time_interval" format="{@MIN}" units=" мин"/>
-    <counter id="PZS_MB_3D" name="ПЗС за Мб по услуге Супер 3D" units=" ₴" flags="zero_when_empty"/>
-    <counter id="PZS_MB_opera" name="ПЗС за первое событие для APN opera" units=" ₴" flags="zero_when_empty"/>
-    <!--Сроки пакетов -->
-    <counter id="termin" name="Срок действия номера" type="time" format="dd/MM/yyyy"/>
-    <counter id="termin_bonus_balance" name="Срок действия бонусного баланса" type="time" format="dd/MM/yyyy HH:mm:ss"/>
-    <counter id="termin_min_paket" name="Срок действия пакета бесплатных минут для внутрисетевых звонков" type="time" format="dd/MM/yyyy HH:mm:ss"/>
-    <counter id="termin_min_net_all_33" name="Срок действия 30/33 минуты в день на внутрисетевое направление" type="time" format="dd/MM/yyyy HH:mm:ss"/>
-    <counter id="termin_min_net_100" name="Срок действия 100/200 минут в день на внутрисетевое направление" type="time" format="dd/MM/yyyy HH:mm:ss"/>
-    <counter id="termin_sms_paket" name="Срок действия пакета СМС" type="time" format="dd/MM/yyyy"/>
-    <counter id="termin_mms_paket" name="Срок действия пакета ММС" type="time" format="dd/MM/yyyy"/>
-    <counter id="termin_traffic_paket_mb" name="Срок действия пакета интернета" type="time" format="dd/MM/yyyy"/>
-    <counter id="termin_traffic_reg_kop_mb" name="Срок действия интернета за копейку регионального и общенационального" type="time" format="dd/MM/yyyy"/>
-    <counter id="termin_sms_100" name="Срок действия бесплатных смс для отправки на номера в пределах Украины" type="time" format="dd/MM/yyyy"/>
-    <counter id="termin_sms_net" name="Срок действия СМС в сети МТС" type="time" format="dd/MM/yyyy HH:mm:ss"/>
-    <counter id="termin_sms_others" name="Срок действия СМС на сети других мобильных операторов Украины" type="time" format="dd/MM/yyyy HH:mm:ss"/>
-    <!--    <counter id="usedinprevmonth" name="Расход за прошлый месяц" units="грн"/> Че-то не показывается в лк -->
-    <counter id="phone" name="Номер телефона" type="text"/>
-    <counter id="usedinthismonth" name="Расход за этот месяц" units=" ₴"/>
-    <counter id="license" name="Лицевой счет" type="text"/>
-    <counter id="monthlypay" name="Ежемесячная плата" units=" ₴"/>
-  </counters>
-  <keywords>
-    Сотовый телефон, мобильный, мобильник, mts, украина
-  </keywords>
-  <type>
-    cell
-  </type>
-  <country>
-    ua
-  </country>
+	<id major_version="1.1" version="28">ab-cell-mts-ua</id>
+	<api flags="no_browser"/>
+	<name>МТС (Украина)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе, использованных минутах,  SMS, MMS и других расходах, номере лицевого счета, ежемесячной плате для пользователей сотового оператора МТС (Украина)</p>
+	<p>Информация берется из PDA версии интернет-помощника (http://ihelper-prp.mts.com.ua/SelfCarePda/).</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Как получить доступ к интернет-помощнику:</p>
+	<ul>
+	<li>Пройдите регистрацию по ссылке https://ihelper-prp.mts.com.ua/CustomerSelfCare2/logon-registration.aspx.</li>
+	</ul>
+	<b>ВНИМАНИЕ!</b> PDA помощник доступен только для предоплатных абонентов. Для 
+	получения информации по контрактным абонентам обратитесь, пожалуйста, к автору 
+	провайдера.
+	]]></instruction>
+	<author>Ignatiy Goloviznin &lt;igoloviznin@gmail.com&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" ₴"/>
+		<counter id="bonus_balance" name="Бонусный баланс" units=" ₴" flags="zero_when_empty"/>
+		<counter id="min_paket" name="Пакет бесплатных минут для внутрисетевых звонков" type="time_interval" format="{@MIN}" units=" мин"/>
+		<counter id="min_net_70" name="70 минут в день для внутрисетевых звонков" type="time_interval" format="{@MIN}" units=" мин"/>
+		<counter id="min_net_30" name="30 минут в день для внутрисетевых звонков" type="time_interval" format="{@MIN}" units=" мин"/>
+		<counter id="min_net_all_33" name="30/33 минуты в день для внутрисетевых звонков во всех областях" type="time_interval" format="{@MIN}" units=" мин"/>
+		<counter id="min_net_100" name="100 минут в день на внутрисетевое направление" type="time_interval" format="{@MIN}" units=" мин"/>
+		<counter id="min_net_200" name="200 минут в день на внутрисетевое направление" type="time_interval" format="{@MIN}" units=" мин"/>
+		<counter id="sms_paket" name="Пакет СМС" units=" sms"/>
+		<counter id="mms_paket" name="Пакет ММС" units=" mms"/>
+		<counter id="traffic_paket_mb" name="Пакет интернета" units=" mb"/>
+		<counter id="traffic_kop_mb" name="Интернет за копейку и другие ежедневные пакеты" units=" mb"/>
+		<counter id="traffic_reg_kop_mb" name="Интернет за копейку региональный и общенациональный" units=" mb"/>
+		<counter id="traffic_maxenergy_mb" name="Интернет Max Energy" units=" mb"/>
+		<counter id="sms_net" name="СМС в сети МТС" units=" sms"/>
+		<counter id="sms_others" name="СМС на сети других мобильных операторов Украины" units=" sms"/>
+		<counter id="min_net_maxenergy" name="Минуты в сети МТС" type="time_interval" format="{@MIN}" units=" мин"/>
+		<counter id="min_reg_3000" name="3000 региональных минут в сети" type="time_interval" format="{@MIN}" units=" мин"/>
+		<counter id="min_all_100" name="100 минут абонентам по Украине" type="time_interval" format="{@MIN}" units=" мин"/>
+		<counter id="min_net" name="Минуты с услугой «Супер без пополнения» в сети МТС" type="time_interval" format="{@MIN}" units=" мин"/>
+		<counter id="min_all_25" name="25 минут на другие сети" type="time_interval" format="{@MIN}" units=" мин"/>
+		<counter id="min_net_2500" name="2500 минут в сети МТС" type="time_interval" format="{@MIN}" units=" мин"/>
+		<counter id="min_ln" name="Расход минут на Любимые Номера" type="time_interval" format="{@MIN}" units=" мин"/>
+		<counter id="sms_100" name="Бесплатные смс для отправки на номера в пределах Украины" units=" sms"/>
+		<counter id="min_all_60" name="60 минут на все сети за 5 коп" type="time_interval" format="{@MIN}" units=" мин"/>
+		<counter id="traffic_hyper_mb" name="hyper.net к-во Кб загруженных по АПН hyper.net" units=" mb"/>
+		<counter id="traffic_smart_mb" name="smart.net к-во Кб загруженных по АПН smart.net" units=" mb"/>
+		<counter id="traffic_opera_mb" name="Opera Mini к-во Кб загруженных по АПН opera" units=" mb"/>
+		<counter id="traffic_free_mb" name="Бесплатный интернет" units=" mb"/><!-- Актуально до 15.08.2012 для Супер Свободы -->
+		<counter id="sms_used" name="Израсходовано SMS" units=" sms"/>
+		<counter id="mms_used" name="Израсходовано MMS" units=" mms"/>
+		<counter id="traffic_used" name="Использованно Мб" units=" mb"/>
+		<counter id="min_used" name="Израсходовано минут" type="time_interval" format="{@MIN}" units=" мин"/>
+		<counter id="PZS_MB_3D" name="ПЗС за Мб по услуге Супер 3D" units=" ₴" flags="zero_when_empty"/>
+		<counter id="PZS_MB_opera" name="ПЗС за первое событие для APN opera" units=" ₴" flags="zero_when_empty"/>
+		<!--Сроки пакетов -->
+		<counter id="termin" name="Срок действия номера" type="time" format="dd/MM/yyyy"/>
+		<counter id="termin_bonus_balance" name="Срок действия бонусного баланса" type="time" format="dd/MM/yyyy HH:mm:ss"/>
+		<counter id="termin_min_paket" name="Срок действия пакета бесплатных минут для внутрисетевых звонков" type="time" format="dd/MM/yyyy HH:mm:ss"/>
+		<counter id="termin_min_net_all_33" name="Срок действия 30/33 минуты в день на внутрисетевое направление" type="time" format="dd/MM/yyyy HH:mm:ss"/>
+		<counter id="termin_min_net_100" name="Срок действия 100/200 минут в день на внутрисетевое направление" type="time" format="dd/MM/yyyy HH:mm:ss"/>
+		<counter id="termin_sms_paket" name="Срок действия пакета СМС" type="time" format="dd/MM/yyyy"/>
+		<counter id="termin_mms_paket" name="Срок действия пакета ММС" type="time" format="dd/MM/yyyy"/>
+		<counter id="termin_traffic_paket_mb" name="Срок действия пакета интернета" type="time" format="dd/MM/yyyy"/>
+		<counter id="termin_traffic_reg_kop_mb" name="Срок действия интернета за копейку регионального и общенационального" type="time" format="dd/MM/yyyy"/>
+		<counter id="termin_sms_100" name="Срок действия бесплатных смс для отправки на номера в пределах Украины" type="time" format="dd/MM/yyyy"/>
+		<counter id="termin_sms_net" name="Срок действия СМС в сети МТС" type="time" format="dd/MM/yyyy HH:mm:ss"/>
+		<counter id="termin_sms_others" name="Срок действия СМС на сети других мобильных операторов Украины" type="time" format="dd/MM/yyyy HH:mm:ss"/>
+		<!--    <counter id="usedinprevmonth" name="Расход за прошлый месяц" units="грн"/> Че-то не показывается в лк -->
+		<counter id="phone" name="Номер телефона" type="text"/>
+		<counter id="usedinthismonth" name="Расход за этот месяц" units=" ₴"/>
+		<counter id="license" name="Лицевой счет" type="text"/>
+		<counter id="monthlypay" name="Ежемесячная плата" units=" ₴"/>
+	</counters>
+	<keywords>Сотовый телефон, мобильный, мобильник, mts, украина</keywords>
+	<type>cell</type>
+	<country>ua</country>
 </provider>

@@ -2,10 +2,10 @@
 <provider>
   <id major_version="2.0" version="7">ab-bonus-malina</id>
   <name>Бонусы Малина</name>
-  <description>
-    Получает информацию по баллам на карте накопительной программы Малина через персональную страницу https://malina.ru/login.php.
-  </description>
-  <author>iReset &lt;ireset.ag@gmail.com&gt;</author>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о баллах на карте накопительной программы "Малина".</p><p>Информация берется с персональной страницы (http://malina.ru/login.php).</p>
+	]]></description>
+	<author>iReset &lt;ireset.ag@gmail.com&gt;</author>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>

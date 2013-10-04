@@ -2,7 +2,9 @@
 <provider>
     <id major_version="1.0" version="4">ab-exchange-sbrf</id>
     <name>Курсы валют СБ РФ</name>
-    <description>Курсы валют от банка "Сбербанк"</description>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о курсах валют от банка "Сбербанк".</p>
+	]]></description>
     <author>BArtWell &lt;web@bartwell.ru&gt;</author>
     <files>
 	<icon>icon.png</icon>

@@ -2,9 +2,10 @@
 <provider>
   <id major_version="2" version="4">ab-telephony-zadarma</id>
   <name>Zadarma</name>
-  <description>
-    Получает текущий баланс в Zadarma (http://zadarma.com), используя личный кабинет.
-  </description>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о текущем балансе в Zadarma (http://zadarma.com).</p>
+	<p>Информация берется из личного кабинета.</p>   
+	]]></description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <author>Puzuma &lt;a.puzuma@gmail.com&gt;</author>
   <files>

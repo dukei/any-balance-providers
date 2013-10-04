@@ -3,7 +3,9 @@
 <api flags="no_browser" />
   <id version="3">ab-bonus-carbon</id>
   <name>Карта Carbon (ТНК)</name>
-  <description>Получает баланс, количество активных и отложенных бонусов.</description>
+  	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе, количестве активных и отложенных бонусов на бонусной карте Carbon (ТНК).</p>
+	]]></description>
   <author>BArtWell &lt;web@bartwell.ru&gt;</author>
   <files>
     <icon>icon.png</icon>

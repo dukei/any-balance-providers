@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="6">ab-money-yandex</id>
-  <api flags="no_browser" />
-  <name>Яндекс.Деньги</name>
-  <description>
-    Получает текущий остаток и номер счета яндекс.денег.
-
-    Внимание! Для работы провайдера требуется ввести пароль только для входа. Платежный пароль вводить не надо!
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <history>history.xml</history>
-    <js>library.js</js>
-    <js>main.js</js>
-  </files>
-  <counters>
-    <counter id="balance" name="Остаток" units="р"/>
-    <counter id="number" name="Номер счета" type="text"/>
-  </counters>
-  <keywords>
-    яндекс-деньги, yandex money
-  </keywords>
-  <type>
-    money
-  </type>
+	<id version="6">ab-money-yandex</id>
+	<api flags="no_browser" />
+	<name>Яндекс.Деньги</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о текущем остатке и номере счета в "Яндекс.деньги".</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Настройки подключения:</p>
+	<ul>
+	<li>Для работы провайдера требуется ввести пароль только для входа. ОБРАТИТЕ ВНИМАНИЕ на то, что платежный пароль вводить не надо.</li>
+	</ul>
+	]]></instruction>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<history>history.xml</history>
+		<js>library.js</js>
+		<js>main.js</js>
+	</files>
+	<counters>
+		<counter id="balance" name="Остаток" units="р"/>
+		<counter id="number" name="Номер счета" type="text"/>
+	</counters>
+	<keywords>яндекс-деньги, yandex money</keywords>
+	<type>money</type>
 </provider>

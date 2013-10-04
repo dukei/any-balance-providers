@@ -3,9 +3,9 @@
 	<id major_version="2.0" version="10">ab-bonus-gazprom</id>
 	<api flags="captcha|no_browser"/>
 	<name>Газпромнефть Бонус</name>
-	<description>
-Получает бонусные баллы, текущий статус в программе, сумму, необходимую для повышения статуса по бонусной карте Газпромнефть.
-	</description>
+	<description html="true"><![CDATA[
+	<p>Получает информацию о бонусных баллах, текущем статусе в программе, сумме, необходимой для повышения статуса по бонусной карте "Газпромнефть".</p>    
+	]]></description>
 	<author>KiLLer13&lt;killer_kondor@pisem.net&gt;</author>
 	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
 	<files>

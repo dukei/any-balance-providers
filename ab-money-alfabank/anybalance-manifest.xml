@@ -1,47 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="21">ab-money-alfabank</id>
-  <name>Альфабанк</name>
-  <description>
-    Получает текущий остаток, дату следующего платежа, минимальный платеж и другие параметры карт, текущих и кредитных счетов Альфабанка, используя систему Альфа.Click ( https://click.alfabank.ru ).
-
-    Для работы провайдера необходимо отключить запрос одноразового пароля при входе в Альфа.Клик. Это безопасно - для совершения переводов средств пароль всё равно будет требоваться. Зайдите в Альфа.Клик через браузер и в меню Настройки - Мой профиль снимите галочку "Использовать одноразовый пароль при входе".
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Остаток" units=" {@currency}"/>
-    <counter id="topay" name="Сумма к оплате" units=" {@currency}"/>
-    <counter id="paytill" name="Оплатить до" type="time" format="dd/MM/yyyy"/>
-    <counter id="debt" name="Общая задолженность" units=" {@currency}"/>
-    <counter id="gracetill" name="Окончание льготного периода" type="time" format="dd/MM/yyyy"/>
-    <counter id="minpay" name="Минимальный платеж" units=" {@currency}"/>
-    <counter id="penalty" name="Штрафы" units=" {@currency}"/>
-    <counter id="till" name="Срок действия" type="text"/>
-    <counter id="cardnum" name="Номер карты" type="text"/>
-    <counter id="userName" name="ФИО владельца" type="text"/>
-    <counter id="accnum" name="Номер счета" type="text"/>
-    <counter id="late" name="Просроченная задолженность" units=" {@currency}"/>
-    <counter id="overdraft" name="Несанкционированный перерасход" units=" {@currency}"/>
-    <counter id="limit" name="Кредитный лимит" units=" {@currency}"/>
-    <counter id="acctype" name="Тип счета" type="text"/>
-    <counter id="cardtype" name="Тип карты" type="text"/>
-    <counter id="status" name="Статус карты" type="text"/>
-    <counter id="currency" name="Валюта" type="text"/>
-  </counters>
-  <keywords>
-    альфабанк, альфаклик, alfa.click, кредит
-  </keywords>
-  <type>
-    money
-  </type>
-  <country>
-    ru
-  </country>
+	<id version="21">ab-money-alfabank</id>
+	<name>Альфабанк</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о текущем остатке, дате следующего платежа, минимальном платеже и других параметрах карт, текущих и кредитных счетов ""Альфабанка"".</p>
+	<p>Информация берется из системы Альфа.Click (http://click.alfabank.ru).</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Настройки:</p>
+	<ol>
+	<li>Отключите запрос одноразового пароля при входе в Альфа.Клик.</li> 
+	<li>Для этого зайдите в Альфа.Клик через браузер, в меню «Настройки - Мой профиль» снимите галочку ""Использовать одноразовый пароль при входе"".</li>
+	</ol>   
+	<br>
+	<small>Отключение подтверждения даёт возможность только зайти в систему, в целях безопасности НЕВОЗМОЖНО отключить подтверждение одноразовым паролем переводов и платежей организациям или частным лицам.</small>
+	]]></instruction>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Остаток" units=" {@currency}"/>
+		<counter id="topay" name="Сумма к оплате" units=" {@currency}"/>
+		<counter id="paytill" name="Оплатить до" type="time" format="dd/MM/yyyy"/>
+		<counter id="debt" name="Общая задолженность" units=" {@currency}"/>
+		<counter id="gracetill" name="Окончание льготного периода" type="time" format="dd/MM/yyyy"/>
+		<counter id="minpay" name="Минимальный платеж" units=" {@currency}"/>
+		<counter id="penalty" name="Штрафы" units=" {@currency}"/>
+		<counter id="till" name="Срок действия" type="text"/>
+		<counter id="cardnum" name="Номер карты" type="text"/>
+		<counter id="userName" name="ФИО владельца" type="text"/>
+		<counter id="accnum" name="Номер счета" type="text"/>
+		<counter id="late" name="Просроченная задолженность" units=" {@currency}"/>
+		<counter id="overdraft" name="Несанкционированный перерасход" units=" {@currency}"/>
+		<counter id="limit" name="Кредитный лимит" units=" {@currency}"/>
+		<counter id="acctype" name="Тип счета" type="text"/>
+		<counter id="cardtype" name="Тип карты" type="text"/>
+		<counter id="status" name="Статус карты" type="text"/>
+		<counter id="currency" name="Валюта" type="text"/>
+	</counters>
+	<keywords>альфабанк, альфаклик, alfa.click, кредит</keywords>
+	<type>money</type>
+	<country>ru</country>
 </provider>

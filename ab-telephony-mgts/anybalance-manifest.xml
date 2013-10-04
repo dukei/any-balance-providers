@@ -2,11 +2,18 @@
 <provider>
   <id version="5">ab-telephony-mgts</id>
   <name>МГТС</name>
-  <description>
-    Получает текущий баланс в МГТС, используя интернет-помощник http://ihelper.mgts.ru/CustomerSelfCare2.
-
-    Для входа в интернет-помощник вам понадобится PIN-код. Если у вас ещё нет PIN-кода, обратитесь в службу Единого контактного центра по телефону +7 495 636-0-636 или в любой Центр услуг связи ОАО МГТС http://mgts.ru/service-centres.
-  </description>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о текущем балансе в МГТС.</p>
+	<p>Информация берется из Интернет-помощника (http://ihelper.mgts.ru/CustomerSelfCare2).</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для входа в Интернет-помощник вам понадобится PIN-код.</p>
+	<p>Как получить PIN-код:</p>
+	<ul>
+	<li>Обратитесь в службу Единого контактного центра по тел. +7 495 636-0-636;</li>
+	<li>Обратитесь в любой Центр услуг связи ОАО МГТС http://mgts.ru/service-centres.</li>
+	</ul>
+	]]></instruction>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <files>
     <icon>icon.png</icon>

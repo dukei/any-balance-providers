@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-social-vkontakte</id>
-  <name>Вконтакте</name>
-  <description>
-    Получает количество голосов в социальной сети Вконтакте (http://vk.com)
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-    <js>library.js</js>
-  </files>
-  <counters>
-    <counter id="balance" name="Голоса"/>
-  </counters>
-  <keywords>
-    vkontakte контакт
-  </keywords>
-  <type>
-    social
-  </type>
-  <country>
-    ru
-  </country>
+	<id version="1">ab-social-vkontakte</id>
+	<name>Вконтакте</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о количестве голосов в социальной сети "Вконтакте" (http://vk.com).</p>
+	]]></description>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<js>library.js</js>
+	</files>
+	<counters>
+		<counter id="balance" name="Голоса"/>
+	</counters>
+	<keywords>
+	vkontakte контакт
+	</keywords>
+	<type>
+	social
+	</type>
+	<country>
+	ru
+	</country>
 </provider>

@@ -1,78 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser" />
-  <id version="8">ab-internet-kabinet-rt</id>
-  <name>Ростелеком (Единый кабинет)</name>
-  <description>
-    Получает баланс и информацию о выбранном лицевом счете из единого личного кабинета Ростелеком (https://kabinet.rt.ru).
+	<id version="8">ab-internet-kabinet-rt</id>
+	<name>Ростелеком (Единый кабинет)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе и выбранном лицевом счете для пользователей оператора связи "Ростелеком".</p> 
+	<p>Информация берется из единого личного кабинета "Ростелеком" (http://kabinet.rt.ru).</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Как зарегистрироваться:</p>
+	<ul>
+	<li> Для регистрации пройдите по ссылке https://kabinet.rt.ru/?action=reg и подключите  свои услуги.</li> 
+	<br>
+	<b>ВНИМАНИЕ!</b> В настоящее время работает бета-версия Личного кабинета 
+	абонента ОАО ""Ростелеком"". В связи с этим функция присоединения услуг для 
+	некоторых регионов недоступна.
+	]]></instruction>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<js>library.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units="р"/>
+		<counter id="balance1" name="Баланс 2" units="р"/>
+		<counter id="balance2" name="Баланс 3" units="р"/>
+		<counter id="balance3" name="Баланс 4" units="р"/>
 
-    Если вы ещё не зарегистрированы в этом кабинете, то зарегистрируйтесь здесь: https://kabinet.rt.ru/?action=reg и присоедините свои услуги. Обращаем Ваше внимание, что в настоящее время работает бета-версия Личного кабинета абонента ОАО "Ростелеком", в связи с чем функция присоединения услуг для части регионов не доступна.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-    <js>library.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="balance1" name="Баланс 2" units="р"/>
-    <counter id="balance2" name="Баланс 3" units="р"/>
-    <counter id="balance3" name="Баланс 4" units="р"/>
+		<counter id="gprs" name="Остаток трафика" units="Мб"/>
+		<counter id="sms" name="Остаток SMS" units="sms"/>
+		<counter id="mms" name="Остаток MMS" units="mms"/>
+		<counter id="min" name="Остаток минут" units="мин"/>
+		<counter id="bonus" name="Бонусы" units="б"/>
 
-    <counter id="gprs" name="Остаток трафика" units="Мб"/>
-    <counter id="sms" name="Остаток SMS" units="sms"/>
-    <counter id="mms" name="Остаток MMS" units="mms"/>
-    <counter id="min" name="Остаток минут" units="мин"/>
-    <counter id="bonus" name="Бонусы" units="б"/>
+		<counter id="gprs1" name="Остаток трафика 2" units="Мб"/>
+		<counter id="sms1" name="Остаток SMS 2" units="sms"/>
+		<counter id="mms1" name="Остаток MMS 2" units="mms"/>
+		<counter id="min1" name="Остаток минут 2" units="мин"/>
+		<counter id="bonus1" name="Бонусы 2" units="б"/>
 
-    <counter id="gprs1" name="Остаток трафика 2" units="Мб"/>
-    <counter id="sms1" name="Остаток SMS 2" units="sms"/>
-    <counter id="mms1" name="Остаток MMS 2" units="mms"/>
-    <counter id="min1" name="Остаток минут 2" units="мин"/>
-    <counter id="bonus1" name="Бонусы 2" units="б"/>
+		<counter id="gprs2" name="Остаток трафика 3" units="Мб"/>
+		<counter id="sms2" name="Остаток SMS 3" units="sms"/>
+		<counter id="mms2" name="Остаток MMS 3" units="mms"/>
+		<counter id="min2" name="Остаток минут 3" units="мин"/>
+		<counter id="bonus2" name="Бонусы 3" units="б"/>
 
-    <counter id="gprs2" name="Остаток трафика 3" units="Мб"/>
-    <counter id="sms2" name="Остаток SMS 3" units="sms"/>
-    <counter id="mms2" name="Остаток MMS 3" units="mms"/>
-    <counter id="min2" name="Остаток минут 3" units="мин"/>
-    <counter id="bonus2" name="Бонусы 3" units="б"/>
+		<counter id="gprs3" name="Остаток трафика 4" units="Мб"/>
+		<counter id="sms3" name="Остаток SMS 4" units="sms"/>
+		<counter id="mms3" name="Остаток MMS 4" units="mms"/>
+		<counter id="min3" name="Остаток минут 4" units="мин"/>
+		<counter id="bonus3" name="Бонусы 4" units="б"/>
 
-    <counter id="gprs3" name="Остаток трафика 4" units="Мб"/>
-    <counter id="sms3" name="Остаток SMS 4" units="sms"/>
-    <counter id="mms3" name="Остаток MMS 4" units="mms"/>
-    <counter id="min3" name="Остаток минут 4" units="мин"/>
-    <counter id="bonus3" name="Бонусы 4" units="б"/>
+		<counter id="status" name="Статус"  type="text"/>
+		<counter id="phone" name="Номер телефона" type="text"/>
+		<counter id="licschet" name="Лицевой счет" type="text"/>
 
-    <counter id="status" name="Статус"  type="text"/>
-    <counter id="phone" name="Номер телефона" type="text"/>
-    <counter id="licschet" name="Лицевой счет" type="text"/>
+		<counter id="status1" name="Статус 2"  type="text"/>
+		<counter id="phone1" name="Номер телефона 2" type="text"/>
+		<counter id="licschet1" name="Лицевой счет 2" type="text"/>
 
-    <counter id="status1" name="Статус 2"  type="text"/>
-    <counter id="phone1" name="Номер телефона 2" type="text"/>
-    <counter id="licschet1" name="Лицевой счет 2" type="text"/>
+		<counter id="status2" name="Статус 3"  type="text"/>
+		<counter id="phone2" name="Номер телефона 3" type="text"/>
+		<counter id="licschet2" name="Лицевой счет 3" type="text"/>
 
-    <counter id="status2" name="Статус 3"  type="text"/>
-    <counter id="phone2" name="Номер телефона 3" type="text"/>
-    <counter id="licschet2" name="Лицевой счет 3" type="text"/>
+		<counter id="status3" name="Статус 4"  type="text"/>
+		<counter id="phone3" name="Номер телефона 4" type="text"/>
+		<counter id="licschet3" name="Лицевой счет 4" type="text"/>
 
-    <counter id="status3" name="Статус 4"  type="text"/>
-    <counter id="phone3" name="Номер телефона 4" type="text"/>
-    <counter id="licschet3" name="Лицевой счет 4" type="text"/>
-
-    <counter id="totalBalancePlus" name="Сумма остатков" units="р"/>
-    <counter id="totalBalanceMinus" name="Сумма задолженностей" units="р"/>
-  </counters>
-  <keywords>
-    интернет
-  </keywords>
-  <type>
-    internet, tv, telephony, cell
-  </type>
-  <country>
-    ru
-  </country>
+		<counter id="totalBalancePlus" name="Сумма остатков" units="р"/>
+		<counter id="totalBalanceMinus" name="Сумма задолженностей" units="р"/>
+	</counters>
+	<keywords>интернет</keywords>
+	<type>internet, tv, telephony, cell</type>
+	<country>ru</country>
 </provider>

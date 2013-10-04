@@ -1,35 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-cell-smarts</id>
-  <name>Смартс</name>
-  <description>
-    Получает баланс и параметры тарифного плана для сотового оператора Смартс. Получает данные из ИССА: http://issa.smarts.ru
-
-    Интернет Система Сервиса Абонентов (ИССА) позволяет с помощью сети Интернет получать доступ к своему лицевому счету. Для входа в систему необходимо ввести свой абонентский номер в 10-значном формате без пробелов (например, 9023727272) и пароль. Для установки нового пароля отправьте SMS c паролем (от 4 до 7 цифр) на номер 333 или обратитесь в абонентский отдел. Пароль может состоять только из цифр. 
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>api:jquery.min.js</js>
-    <js>main.js</js>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="pays" name="Платежи" units="р"/>
-    <counter id="corrections" name="Корректировка" units="р"/>
-    <counter id="average_speed" name="Скорость расходования в день" units="р"/>
-    <counter id="status" name="Состояние" type="text"/>
-    <counter id="agreement" name="Номер договора" type="text"/>
-    <counter id="username" name="ФИО" type="text"/>
-  </counters>
-  <keywords>
-    Сотовый телефон, мобильный, мобильник, смартс
-  </keywords>
-  <type>
-    cell
-  </type>
-  <country>
-    ru
-  </country>
+	<id version="1">ab-cell-smarts</id>
+	<name>Смартс</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе и других параметрах тарифного плана для пользователей сотового оператора "Смартс".</p> 
+	<p>Информация берется из ИССА (Интернет Система Сервиса Абонента) (http://issa.smarts.ru).</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Настройки:</p>
+	<ul>
+	<li>Для входа в систему необходимо ввести свой абонентский номер в 10-значном формате без пробелов (например, 9023727272) и пароль;</li> 
+	<li>Для установки нового пароля отправьте SMS c паролем (от 4 до 7 цифр) на номер 333 или обратитесь в абонентский отдел.</li> 
+	<p><small>Обратите внимание: пароль может состоять только из цифр.</small></p>  
+	</ul>  
+	]]></instruction>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>api:jquery.min.js</js>
+		<js>main.js</js>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units="р"/>
+		<counter id="pays" name="Платежи" units="р"/>
+		<counter id="corrections" name="Корректировка" units="р"/>
+		<counter id="average_speed" name="Скорость расходования в день" units="р"/>
+		<counter id="status" name="Состояние" type="text"/>
+		<counter id="agreement" name="Номер договора" type="text"/>
+		<counter id="username" name="ФИО" type="text"/>
+	</counters>
+	<keywords>
+	Сотовый телефон, мобильный, мобильник, смартс
+	</keywords>
+	<type>
+	cell
+	</type>
+	<country>
+	ru
+	</country>
 </provider>

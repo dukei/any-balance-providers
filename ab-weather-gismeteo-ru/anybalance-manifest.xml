@@ -1,42 +1,42 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="2.1" version="14">ab-weather-gismeteo-ru</id>
-  <name>Gismeteo</name>
-  <description>
-    Получает текущую погоду, прогноз погоды, температуру водоемов, время восхода, захода Солнца, фазы луны для выбранного города.
-    При получении только прогноза погоды существует возможность сэкономить на трафике. Для этого необходимо взять индекс города со страницы http://informer.gismeteo.ru/getcode/xml.php. Для Москвы это будет 27612_1.
-  </description>
-  <author>iReset &lt;ireset.ag@gmail.com&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>api:jquery.min.js</js>
-    <js>main.js</js>
-    <js>common_functions.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="temperature" name="Температура воздуха" units="°C"/>
-    <counter id="atmosphericConditions" name="Атмосферные явления" type="text"/>
-    <counter id="wind" name="Ветер" type="text"/>
-    <counter id="pressure" name="Атмосферное давление" units="мм.рт.ст."/>
-    <counter id="humidity" name="Влажность" units="%"/>
-    <counter id="heat" name="Комфорт" units="°C"/>
-    <counter id="time" name="Время" type="time"/>
+	<id major_version="2.1" version="14">ab-weather-gismeteo-ru</id>
+	<name>Gismeteo</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о прогнозе погоды, текущей погоде, температуре водоемов, времени восхода/захода Солнца, фаз Луны для выбранного города.</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Настройки подключения:</p>
+	<ul>
+	<li>Для экономии трафика вы можете подключить только прогноз погоды. Для этого необходимо взять индекс города со страницы http://informer.gismeteo.ru/getcode/xml.php.
+	<br /><small>Индекс города Москвы 27612_1.</small>
+	</ul>
+	]]></instruction>
+	<author>iReset &lt;ireset.ag@gmail.com&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>api:jquery.min.js</js>
+		<js>main.js</js>
+		<js>common_functions.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="temperature" name="Температура воздуха" units="°C"/>
+		<counter id="atmosphericConditions" name="Атмосферные явления" type="text"/>
+		<counter id="wind" name="Ветер" type="text"/>
+		<counter id="pressure" name="Атмосферное давление" units="мм.рт.ст."/>
+		<counter id="humidity" name="Влажность" units="%"/>
+		<counter id="heat" name="Комфорт" units="°C"/>
+		<counter id="time" name="Время" type="time"/>
 
-    <counter id="waterTemperature" name="Температура воды" units="°C"/>
-    <counter id="rising" name="Восход Солнца" type="time_interval" prefix="В."/>
-    <counter id="setting" name="Закат Солнца" type="time_interval" prefix="З."/>
-    <counter id="dayLength" name="Долгота дня" type="time_interval" prefix="Д."/>
-    <counter id="moonPhase" name="Фаза Луны " type="text"/>
-  </counters>
-  <keywords>
-    прогноз, погода, карты, осадки, ветер, влажность, давление, gismeteo, гисметео, солнце, луна, температура, воздух
-  </keywords>
-  <type>
-    weather
-  </type>
-  <country>
-    ru
-  </country>
+		<counter id="waterTemperature" name="Температура воды" units="°C"/>
+		<counter id="rising" name="Восход Солнца" type="time_interval" prefix="В."/>
+		<counter id="setting" name="Закат Солнца" type="time_interval" prefix="З."/>
+		<counter id="dayLength" name="Долгота дня" type="time_interval" prefix="Д."/>
+		<counter id="moonPhase" name="Фаза Луны " type="text"/>
+	</counters>
+	<keywords>прогноз, погода, карты, осадки, ветер, влажность, давление, gismeteo, гисметео, солнце, луна, температура, воздух</keywords>
+	<type>weather</type>
+	<country>ru</country>
 </provider>

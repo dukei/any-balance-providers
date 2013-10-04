@@ -1,51 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="8">ab-money-svyaznoybank</id>
-  <name>Связнойбанк</name>
-  <description>
-    Получает текущий остаток, бонусные баллы и другие параметры карт, счетов и вкладов Связнойбанка, используя систему Интернет-банк ( https://iqbank.ru ).
-
-    Для входа требуется Персональный Клиентский Номер и пароль к полной версии банка https://iqbank.ru (а не к мобильной версии). Персональный клиентский номер - цифровой код, который получают все клиенты банка при получении банковской карты Связной Банк. Если вы забыли свой ПКН, то для его восстановления, пожалуйста, обратитесь в контакт-центр банка по телефону: 8 (800) 100-00-05.
-    После получения ПКН его надо зарегистрировать на странице https://login.iqbank.ru/auth/UI/Login, нажав на кнопку Зарегистрироваться и получить новый пароль.
-
-    Для работы провайдера необходимо отключить запрос одноразового пароля при входе в Интернет-банк. Это безопасно - для совершения переводов средств пароль всё равно будет требоваться. Зайдите в Интернет-банк через браузер и в меню "Настройки" снимите галочку у опции "SMS-пароли на вход".
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>api:jquery.min.js</js>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Остаток" units="{@currency}"/>
-    <counter id="cardballs" name="Плюсы"/>
-    <counter id="accamount" name="Средств на счете" units="{@currency}"/>
-    <counter id="currency" name="Валюта" type="text"/>
-    <counter id="cardnum" name="Номер карты" type="text"/>
-    <counter id="cardname" name="Тип карты" type="text"/>
-    <counter id="accnum" name="Номер счета" type="text"/>
-    <counter id="accname" name="Имя счета" type="text"/>
-    <counter id="cardnum1" name="Номер карты 2" type="text"/>
-    <counter id="cardname1" name="Тип карты 2" type="text"/>
-    <counter id="cardballs1" name="Баллы 2"/>
-    <counter id="cardnum2" name="Номер карты 3" type="text"/>
-    <counter id="cardname2" name="Тип карты 3" type="text"/>
-    <counter id="cardballs2" name="Баллы 3"/>
-    <counter id="cardnum3" name="Номер карты 4" type="text"/>
-    <counter id="cardname3" name="Тип карты 4" type="text"/>
-    <counter id="cardballs3" name="Баллы 4"/>
-    <counter id="all" name="Сводка" type="text"/>
-  </counters>
-  <keywords>
-    интернет-банк, связной
-  </keywords>
-  <type>
-    money
-  </type>
-  <country>
-    ru
-  </country>
+	<id version="8">ab-money-svyaznoybank</id>
+	<name>Связнойбанк</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о текущем остатке, бонусных баллах и других параметрах карт, счетов и вкладов ""Связной Банка"".</p>
+	<p>Информация берется из системы Интернет-банк (http://iqbank.ru).</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для входа требуется Персональный Клиентский Номер и пароль.</p> 
+	<p>Персональный клиентский номер – это цифровой код, который получают все клиенты банка при получении банковской карты Связной Банк.</p> 
+	<p>Если вы забыли свой ПКН:</p>
+	<ol>
+	<li>Обратитесь в контакт-центр банка по телефону 8 (800) 100-00-05 для его восстановления.</li>
+	<li>После получения ПКН зарегистрируйте его на странице http://login.iqbank.ru/auth/UI/Login, нажав на кнопку «Зарегистрироваться и получить новый пароль».</li>
+	</ol>
+	<br>
+	<b>ВНИМАНИЕ!</b> Для работы провайдера необходимо отключить запрос одноразового пароля при входе в Интернет-банк: 
+	<ul>
+	<li>Зайдите в Интернет-банк через браузер, в меню ""Настройки"" снимите галочку у опции ""SMS-пароли на вход"".</li>
+	</ul>   
+	<p><small>Отключение подтверждения даёт возможность только зайти в систему, в целях безопасности НЕВОЗМОЖНО отключить SMS-подтверждение при совершении платежных операций.</small></p>
+	]]></instruction>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>api:jquery.min.js</js>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Остаток" units="{@currency}"/>
+		<counter id="cardballs" name="Плюсы"/>
+		<counter id="accamount" name="Средств на счете" units="{@currency}"/>
+		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="cardnum" name="Номер карты" type="text"/>
+		<counter id="cardname" name="Тип карты" type="text"/>
+		<counter id="accnum" name="Номер счета" type="text"/>
+		<counter id="accname" name="Имя счета" type="text"/>
+		<counter id="cardnum1" name="Номер карты 2" type="text"/>
+		<counter id="cardname1" name="Тип карты 2" type="text"/>
+		<counter id="cardballs1" name="Баллы 2"/>
+		<counter id="cardnum2" name="Номер карты 3" type="text"/>
+		<counter id="cardname2" name="Тип карты 3" type="text"/>
+		<counter id="cardballs2" name="Баллы 3"/>
+		<counter id="cardnum3" name="Номер карты 4" type="text"/>
+		<counter id="cardname3" name="Тип карты 4" type="text"/>
+		<counter id="cardballs3" name="Баллы 4"/>
+		<counter id="all" name="Сводка" type="text"/>
+	</counters>
+	<keywords>
+	интернет-банк, связной
+	</keywords>
+	<type>
+	money
+	</type>
+	<country>
+	ru
+	</country>
 </provider>

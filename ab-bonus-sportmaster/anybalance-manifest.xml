@@ -1,29 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="5">ab-bonus-sportmaster</id>
-  <name>Спортмастер</name>
-  <description>
-    Получает информацию по бонусной карте Спортмастер. Информация берется из личного кабинета http://www.sportmaster.ru/personal/bonus.php (если у вас есть логин и пароль) или со страницы http://www.sportmaster.ru/club-program/ (если у вас есть номер карты).
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <history>history.xml</history>
-    <js>library.js</js>
-    <js>main.js</js>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="cardnum" name="Номер карты" type="text"/>
-  </counters>
-  <keywords>
-    sportmaster, карта, бонус
-  </keywords>
-  <type>
-    bonus
-  </type>
-  <country>
-    ru
-  </country>
+	<id version="5">ab-bonus-sportmaster</id>
+	<name>Спортмастер</name>
+	<description html="true"><![CDATA[
+   <p>Предоставляет информацию по бонусной карте "Спортмастер".</p> 
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Информация берется из личного кабинета http://www.sportmaster.ru/personal/bonus.php (если у вас есть логин и пароль) или со страницы http://www.sportmaster.ru/club-program/ (если у вас есть номер карты).</p>   
+	]]></instruction>	
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<history>history.xml</history>
+		<js>library.js</js>
+		<js>main.js</js>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units="р"/>
+		<counter id="cardnum" name="Номер карты" type="text"/>
+	</counters>
+	<keywords>sportmaster, карта, бонус</keywords>
+	<type>bonus</type>
+	<country>ru</country>
 </provider>

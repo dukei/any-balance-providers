@@ -1,31 +1,28 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="4">ab-exchange-cbr</id>
-  <name>Курсы валют ЦБ</name>
-  <description>
-    Текущие курсы валют, установленные Центральным Банком РФ. Содержит курс доллара, евро, фунта, белорусского рубля, тенге, юаня, гривны, швейцарского франка, йены.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <js>main.js</js>
-  </files>
-  <counters>
-    <counter id="USD" name="Курс доллара" prefix="$ "/>
-    <counter id="EUR" name="Курс евро" prefix="€ "/>
-    <counter id="GBP" name="Курс фунта" prefix="£ "/>
-    <counter id="BYR" name="Курс бел.рубля" prefix="Br "/>
-    <counter id="KZT" name="Курс тенге" prefix="T "/>
-    <counter id="CNY" name="Курс юаня" prefix="Ұ "/>
-    <counter id="UAH" name="Курс гривны" prefix="₴ "/>
-    <counter id="CHF" name="Курс франка" prefix="₣ "/>
-    <counter id="JPY" name="Курс йены" prefix="¥ "/>
-    <counter id="date" name="Дата курса" type="text"/>
-  </counters>
-  <keywords>
-    Курс валют, центральный банк, центробанк рф, доллар, евро, фунт, белорусский рубль, тенге, юань, гривна, франк, йена, форекс, forex
-  </keywords>
-  <type>
-    finance, exchange
-  </type>
+	<id version="4">ab-exchange-cbr</id>
+	<name>Курсы валют ЦБ</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о текущих курсах валют, установленных ""Центральным Банком РФ"".</p> 
+	<p>Показывает курс доллара, евро, фунта, белорусского рубля, тенге, юаня, гривны, швейцарского франка, йены.</p>
+	]]></description>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<js>main.js</js>
+	</files>
+	<counters>
+		<counter id="USD" name="Курс доллара" prefix="$ "/>
+		<counter id="EUR" name="Курс евро" prefix="€ "/>
+		<counter id="GBP" name="Курс фунта" prefix="£ "/>
+		<counter id="BYR" name="Курс бел.рубля" prefix="Br "/>
+		<counter id="KZT" name="Курс тенге" prefix="T "/>
+		<counter id="CNY" name="Курс юаня" prefix="Ұ "/>
+		<counter id="UAH" name="Курс гривны" prefix="₴ "/>
+		<counter id="CHF" name="Курс франка" prefix="₣ "/>
+		<counter id="JPY" name="Курс йены" prefix="¥ "/>
+		<counter id="date" name="Дата курса" type="text"/>
+	</counters>
+	<keywords>Курс валют, центральный банк, центробанк рф, доллар, евро, фунт, белорусский рубль, тенге, юань, гривна, франк, йена, форекс, forex</keywords>
+	<type>finance, exchange</type>
 </provider>

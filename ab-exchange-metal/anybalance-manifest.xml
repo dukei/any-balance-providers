@@ -1,27 +1,28 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="3">ab-exchange-metal</id>
-  <name>Курсы драгоценных металлов ЦБ</name>
-  <description>
-    Текущие курсы драгоценных металлов, установленные Центральным Банком РФ. Содержит цены золота, серебра, платины и палладия.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <js>api:jquery.min.js</js>
-    <js>main.js</js>
-  </files>
-  <counters>
-    <counter id="Au" name="Золото" prefix="Au "/>
-    <counter id="Ag" name="Серебро" prefix="Ag "/>
-    <counter id="Pt" name="Платина" prefix="Pt "/>
-    <counter id="Pd" name="Палладий" prefix="Pd "/>
-    <counter id="date" name="Дата" type="text"/>
-  </counters>
-  <keywords>
-    Драгоценные металлы, золото, серебро, платина, палладий, центральный банк, центробанк рф
-  </keywords>
-  <type>
-    finance, exchange
-  </type>
+	<id version="3">ab-exchange-metal</id>
+	<name>Курсы драгоценных металлов ЦБ</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о текущих курсах драгоценных металлов, установленных Центральным Банком РФ.</p> 
+	<p>Показывает цены на золото, серебро, платину и палладий.</p>
+	]]></description>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<js>api:jquery.min.js</js>
+		<js>main.js</js>
+	</files>
+	<counters>
+		<counter id="Au" name="Золото" prefix="Au "/>
+		<counter id="Ag" name="Серебро" prefix="Ag "/>
+		<counter id="Pt" name="Платина" prefix="Pt "/>
+		<counter id="Pd" name="Палладий" prefix="Pd "/>
+		<counter id="date" name="Дата" type="text"/>
+	</counters>
+	<keywords>
+	Драгоценные металлы, золото, серебро, платина, палладий, центральный банк, центробанк рф
+	</keywords>
+	<type>
+	finance, exchange
+	</type>
 </provider>

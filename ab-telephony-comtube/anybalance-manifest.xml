@@ -2,10 +2,9 @@
 <provider>
   <id version="4">ab-telephony-comtube</id>
   <name>ComTube</name>
-  <description>
-    Получает текущий баланс, баланс инвестиционного счета, валюту счета и номер внутри системы у провайдера IP-телефонии ComTube.
-    Сайт провайдера: http://www.comtube.com
-  </description>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о текущем балансе, балансе инвестиционного счета, валюте счета и номере внутри системы для пользователей провайдера IP-телефонии ComTube (http://www.comtube.com).</p>   
+	]]></description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <files>
     <icon>icon.png</icon>

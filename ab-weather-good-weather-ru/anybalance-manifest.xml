@@ -1,29 +1,30 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="1">ab-weather-good-weather-ru</id>
-  <name>Good-weather</name>
-  <description>
-    Получает текущую погоду для выбранного города или для текущего местоположения с сайта good-weather.ru
-  </description>
-  <author>Evgeny &lt;tverdiy@gmail.com&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>api:jquery.min.js</js>
-    <js>main.js</js>
-  </files>
-  <counters>
-    <counter id="name" name="Город" type="text"/>
-    <counter id="temp" name="Температура" suffix=" °C" type="numeric"/>
-    <counter id="pressure" name="Давление" suffix=" hpa" type="numeric"/>
-    <counter id="humidity" name="Влажность" suffix=" %" type="numeric"/>
-    <counter id="wind" name="Скорость ветра" suffix=" m/s" type="numeric"/>
-    <counter id="clouds" name="Облачность" suffix=" %" type="numeric"/>
-  </counters>
-  <keywords>
-    прогноз, погода, карты, осадки, ветер, влажность, давление, weather, солнце, луна, температура, воздух
-  </keywords>
-  <type>
-    weather
-  </type>
+	<id major_version="1.0" version="1">ab-weather-good-weather-ru</id>
+	<name>Good-weather</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о текущей погоде для выбранного города или по местоположению.</p>
+	<p> Информация берется с сайта http://good-weather.ru.</p>
+	]]></description>
+	<author>Evgeny &lt;tverdiy@gmail.com&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>api:jquery.min.js</js>
+		<js>main.js</js>
+	</files>
+	<counters>
+		<counter id="name" name="Город" type="text"/>
+		<counter id="temp" name="Температура" suffix=" °C" type="numeric"/>
+		<counter id="pressure" name="Давление" suffix=" hpa" type="numeric"/>
+		<counter id="humidity" name="Влажность" suffix=" %" type="numeric"/>
+		<counter id="wind" name="Скорость ветра" suffix=" m/s" type="numeric"/>
+		<counter id="clouds" name="Облачность" suffix=" %" type="numeric"/>
+	</counters>
+	<keywords>
+	прогноз, погода, карты, осадки, ветер, влажность, давление, weather, солнце, луна, температура, воздух
+	</keywords>
+	<type>
+	weather
+	</type>
 </provider>

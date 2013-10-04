@@ -1,36 +1,35 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="14">ab-tracking-russian-post</id>
-  <name>EMS и Почта России</name>
-  <description>
-    Отслеживание почтового отправления почты россии и EMS по его идентификатору. Может показывать сводную информацию, дату изменения статуса, текущую операцию, местонахождение, атрибуты.
-    Рекомендуется показывать сводную информацию в текстовом виджете не менее 1х2.
-
-    Получает данные с сайта http://www.russianpost.ru или с http://www.emspost.ru
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <js>main.js</js>
-    <js>library.js</js>
-    <preferences>preferences.xml</preferences>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="fulltext" name="Сводка" type="html"/>
-    <counter id="date" name="Дата изменения" type="text"/>
-    <counter id="operation" name="Операция" type="text"/>
-    <counter id="location" name="Местонахождение" type="text"/>
-    <counter id="attribute" name="Атрибут" type="text"/>
-    <counter id="addcost" name="Наложенный платеж" units="р"/>
-  </counters>
-  <keywords>
-    Почтовое отправление, почта России
-  </keywords>
-  <type>
-    tracking, post
-  </type>
-  <country>
-    ru
-  </country>
+	<id version="14">ab-tracking-russian-post</id>
+	<name>EMS и Почта России</name>
+	<description html="true"><![CDATA[
+	<p>Отслеживает почтовое отправление ""Почты России"" и EMS по его идентификатору.</p>
+	<p>Показывает сводную информацию, дату изменения статуса, текущую операцию, местонахождение, атрибуты.</p>
+	<p>Получает данные с сайта http://www.russianpost.ru или с http://www.emspost.ru.</p>
+	]]></description>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<js>main.js</js>
+		<js>library.js</js>
+		<preferences>preferences.xml</preferences>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="fulltext" name="Сводка" type="html"/>
+		<counter id="date" name="Дата изменения" type="text"/>
+		<counter id="operation" name="Операция" type="text"/>
+		<counter id="location" name="Местонахождение" type="text"/>
+		<counter id="attribute" name="Атрибут" type="text"/>
+		<counter id="addcost" name="Наложенный платеж" units="р"/>
+	</counters>
+	<keywords>
+	Почтовое отправление, почта России
+	</keywords>
+	<type>
+	tracking, post
+	</type>
+	<country>
+	ru
+	</country>
 </provider>

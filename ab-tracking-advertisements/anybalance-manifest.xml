@@ -2,9 +2,10 @@
 <provider>
   <id version="8">ab-tracking-advertisements</id>
   <name>Наблюдение за Avito.ru</name>
-  <description>
-    Помогает отслеживать появление новых объявлений по заданной подстроке на Avito.ru, выводит краткую информацию о последних таких объявлениях.
-  </description>
+	<description html="true"><![CDATA[
+	<p>Отслеживает появление новых объявлений по заданной подстроке на Avito.ru</p>
+	<p>Выводит краткую информацию о последних объявлениях.</p>
+	]]></description>
   <author>wtiger &lt;wtiger@mail.ru&gt;</author>
   <files>
     <icon>icon.png</icon>

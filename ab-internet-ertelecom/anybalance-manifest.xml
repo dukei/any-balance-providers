@@ -1,38 +1,31 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="5">ab-internet-ertelecom</id>
-  <name>Дом.ру (Эр-телеком)</name>
-  <description>
-    Получает текущий баланс, номер лицевого счета у интернет провайдера "Эр-телеком" (ДОМ.РУ): http://domru.ru.
-
-    Информацию получает из личного кабинета https://lk.domru.ru.
-  </description>
-  <author>wtiger &lt;wtiger@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-    <js>library.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="bits" name="Биты" units="Ѣ"/>
+	<id version="5">ab-internet-ertelecom</id>
+	<name>Дом.ру (Эр-телеком)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о текущем балансе и номере лицевого счета для пользователей интернет-провайдера ""Эр-телеком"" (ДОМ.РУ), http://domru.ru.</p>
+	<p>Информация берется из личного кабинета (http://lk.domru.ru).</p>
+	]]></description>
+	<author>wtiger &lt;wtiger@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<js>library.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units="р"/>
+		<counter id="bits" name="Биты" units="Ѣ"/>
 <!--    <counter id="name" name="ФИО" type="text"/>
-    <counter id="contract_type" name="Тип контракта" type="text"/>
-    <counter id="last_session_end" name="Конец последней сессии" type="text"/>
-    <counter id="traffic_inner" name="Внутренний (Домашний) трафик" prefix="Дом:" suffix="Гб"/>
-    <counter id="traffic_outer" name="Внешний трафик" prefix="Вн:" suffix="Гб"/> -->
-    <counter id="tariff_number" name="Номер договора" type="text"/>
-    <counter id="status" name="Статус" type="text"/>
-  </counters>
-  <keywords>
-    дом.ру ertelecom citidom эретелеком ситидом
-  </keywords>
-  <type>
-    internet
-  </type>
-  <country>
-    ru
-  </country>
+		<counter id="contract_type" name="Тип контракта" type="text"/>
+		<counter id="last_session_end" name="Конец последней сессии" type="text"/>
+		<counter id="traffic_inner" name="Внутренний (Домашний) трафик" prefix="Дом:" suffix="Гб"/>
+		<counter id="traffic_outer" name="Внешний трафик" prefix="Вн:" suffix="Гб"/> -->
+		<counter id="tariff_number" name="Номер договора" type="text"/>
+		<counter id="status" name="Статус" type="text"/>
+	</counters>
+	<keywords>дом.ру ertelecom citidom эретелеком ситидом</keywords>
+	<type>internet</type>
+	<country>ru</country>
 </provider>

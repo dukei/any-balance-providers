@@ -1,40 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="3">ab-tv-tricolor</id>
-  <name>Триколор ТВ</name>
-  <description>
-    Получает баланс и другую информацию у провайдера спутникового телевидения Триколор ТВ (http://tricolor.tv).
-
-    Информация берется из личного кабинета Триколор ТВ https://lk.tricolor.tv/trcustomer.
-
-    Если у вас ещё нет доступа к личному кабинету Триколор ТВ, то нажмите ссылку "получить пароль" на странице https://lk.tricolor.tv/trcustomer
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-    <js>library.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="agreement" name="Договор" type="text"/>
-    <counter id="device" name="№ оборудования" type="text"/>
-    <counter id="service1" name="Услуга" type="text"/>
-    <counter id="daysleft1" name="Остаток дней" units="дн"/>
-    <counter id="service2" name="Услуга 2" type="text"/>
-    <counter id="daysleft2" name="Остаток дней 2" units="дн"/>
-    <counter id="service3" name="Услуга 3" type="text"/>
-    <counter id="daysleft3" name="Остаток дней 3" units="дн"/>
-  </counters>
-  <keywords>
-    спутник tricolor
-  </keywords>
-  <type>
-    tv
-  </type>
-  <country>
-    ru
-  </country>
+	<id version="3">ab-tv-tricolor</id>
+	<name>Триколор ТВ</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе и другие данные для пользователей провайдера спутникового телевидения ""Триколор ТВ"" (http://tricolor.tv).</p>   
+	<p>Информация берется из личного кабинета ""Триколор ТВ"" (http://lk.tricolor.tv/trcustomer).
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Как получить доступ к личному кабинету:</p>
+	<ul>
+	<li>Для получения доступа пройдите по ссылке ""получить пароль"" на странице http://lk.tricolor.tv/trcustomer.</li>
+	</ul>
+	]]></instruction>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<js>library.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units="р"/>
+		<counter id="agreement" name="Договор" type="text"/>
+		<counter id="device" name="№ оборудования" type="text"/>
+		<counter id="service1" name="Услуга" type="text"/>
+		<counter id="daysleft1" name="Остаток дней" units="дн"/>
+		<counter id="service2" name="Услуга 2" type="text"/>
+		<counter id="daysleft2" name="Остаток дней 2" units="дн"/>
+		<counter id="service3" name="Услуга 3" type="text"/>
+		<counter id="daysleft3" name="Остаток дней 3" units="дн"/>
+	</counters>
+	<keywords>спутник tricolor</keywords>
+	<type>tv</type>
+	<country>ru</country>
 </provider>

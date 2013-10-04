@@ -1,10 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<id version="10" major_version="1.0">ab-money-kykyryza</id>
-	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser" />
 	<name>Платежный кабинет Кукуруза</name>
-	<description>Получает баланс из Платежного кабинета Кукуруза https://oplata.kykyryza.ru/personal/</description>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе из Платежного кабинета "Кукуруза" (http://oplata.kykyryza.ru/personal/).</p>
+	]]></description>
 	<author>Robert Khaliullov &lt;robix@mail.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>

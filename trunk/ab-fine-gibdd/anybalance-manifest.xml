@@ -3,13 +3,12 @@
 	<api flags="no_browser|captcha" />
 	<id version="8">ab-fine-gibdd</id>
 	<name>Штрафы ГИБДД</name>
-	<description>
-Получает данные по штрафам на сайте gibdd.ru.
-
-Для получения информации по штрафам необходимо ввести номер транспортного средства, а так же номер свидетельства о регистрации.
-
-Этот провайдер требует версию AnyBalance API 7+, с поддержкой капчи.
-	</description>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о наличии штрафов с сайта http://gibdd.ru.</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для получения информации по штрафам необходимо ввести номер транспортного средства, а так же номер свидетельства о регистрации.</p>
+	]]></instruction>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>

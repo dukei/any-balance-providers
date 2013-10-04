@@ -24,8 +24,7 @@ function translateError(error){
         'logins.password.incorrect': 'Неправильный логин или пароль',
         'profile.login.first_entry': 'Это ваш первый вход в Райффайзен.Connect. Пожалуйста, зайдите в https://connect.raiffeisen.ru через браузер и установите постоянный пароль'
     };
-
-    if(errors[error])
+    if(errors[error]) 
         return errors[error];
 	
     AnyBalance.trace('Неизвестная ошибка: ' + error);
@@ -37,18 +36,26 @@ function main(){
     var baseurl = 'https://connect.raiffeisen.ru/mobile/services/';
     AnyBalance.setDefaultCharset('utf-8'); 
 
+	checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(prefs.password, 'Введите пароль!');
+	
     var html = AnyBalance.requestPost(baseurl + 'RCAuthorizationService', g_xml_login.replace(/%LOGIN%/g, prefs.login).replace(/%PASSWORD%/g, prefs.password), addHeaders({SOAPAction: 'urn:login'})); 
 
     if(!/<ax21:name>/i.test(html)){
         var error = getParam(html, null, null, /<faultstring>([\s\S]*?)<\/faultstring>/i, replaceTagsAndSpaces, html_entity_decode);
-        if(error)
-            throw new AnyBalance.Error(translateError(error));
+        if(error) {
+			var er = translateError(error);
+			if(er && /Неправильный логин или пароль/i.test(er))
+				throw new AnyBalance.Error(er, null, true);
+
+			throw new AnyBalance.Error(er);
+		}
         AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось зайти в интернет банк. Обратитесь к автору провайдера.');
     }
-
+	
     var result = {success: true};
-    getParam(html, result, 'fio', /<ax\d+:name>([\s\S]*?)<\/ax\d+:name>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'fio', /<ax\d+:name>([\s\S]*?)<\/ax\d+:name>/i, replaceTagsAndSpaces, capitalFirstLenttersDecode);
 
     if(prefs.type == 'card')
         fetchCard(baseurl, html, result);
@@ -197,4 +204,15 @@ function fetchCredit(baseurl, html, result){
         }
         result.all = out.join('\n');
     }*/
+}
+
+/** Приводим все к единому виду вместо ИВаНов пишем Иванов */
+function capitalFirstLenttersDecode(str) {
+	str = html_entity_decode(str+'');
+	var wordSplit = str.toLowerCase().split(' ');
+	var wordCapital = '';
+	for (i = 0; i < wordSplit.length; i++) {
+		wordCapital += wordSplit[i].substring(0, 1).toUpperCase() + wordSplit[i].substring(1) + ' ';
+	}
+	return wordCapital.replace(/^\s+|\s+$/g, '');;
 }

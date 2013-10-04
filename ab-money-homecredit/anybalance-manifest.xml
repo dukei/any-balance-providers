@@ -1,53 +1,48 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-    <id version="6">ab-money-homecredit</id>
-    <name>Хоум Кредит</name>
-    <description>Информация о карте, кредите, депозите в банке Хоум Кредит (http://www.homecredit.ru).
-В настройках провайдера требуется указать логин и пароль к Интернет-банку https://ib.homecredit.ru.
+	<id version="7">ab-money-homecredit</id>
+	<api flags="no_browser"/>
+	<name>Хоум Кредит</name>
+	<description>
+Информация о карте, кредите, депозите в банке Хоум Кредит (http://www.homecredit.ru).
 
-Как подключить Интернет–банк «Хоум Кредит»?
- * Обратитесь к менеджеру в удобном для вас офисе банка Хоум Кредит.
+В настройках провайдера требуется указать логин и пароль к Интернет-банку https://ib.homecredit.ru.
+   Как подключить Интернет–банк «Хоум Кредит»?
+   * Обратитесь к менеджеру в удобном для вас офисе банка Хоум Кредит.
 
 ВНИМАНИЕ! В настоящее время поддерживаются вклады и карты. Если вам нужна поддержка кредитов, обращайтесь к автору провайдера по е-мейл.
 
 Для указания депозита или кредита можно ввести его ID. Получить ID всех депозитов и кредитов можно в счетчике "Сводка".
-</description>
-    <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-    <files>
-	<icon>icon.png</icon>
-        <preferences>preferences.xml</preferences>
-        <js>main.js</js>
-        <js>library.js</js>
-        <history>history.xml</history>
-    </files>
-    <counters>
-	<counter id="balance" name="Баланс"/>
-	<counter id="blocked" name="Заблокировано"/>
-	<counter id="minpay" name="Минимальный платеж"/>
-        <counter id="minpaytill" name="Заплатить до" type="time" format="dd/MM/yyyy"/>
-        <counter id="debt" name="Задолженность"/>
-	<counter id="pcts" name="Начисленные проценты"/>
-	<counter id="notpaid" name="Не выплачено"/> <!-- Это число неоплаченных периодов для кредита, насколько я понимаю -->
-        <counter id="currency" name="Валюта" type="text"/>
-        <counter id="status" name="Статус" type="text"/>
-        <counter id="till" name="Срок действия" type="time" format="dd/MM/yyyy"/>
-	<counter id="rate" name="Процентная ставка" units="%"/>
-        <counter id="all" name="Сводка" type="text"/>
-        <counter id="accnum" name="Номер счета" type="text"/>
-        <counter id="accname" name="Название" type="text"/>
-	<counter id="limit" name="Кредитный лимит"/>
-	<counter id="own" name="Собственные средства"/>
-	<counter id="agreement" name="№ договора" type="text"/>
-        <counter id="overall_debt" name="Общая задолженность"/>
-
-    </counters>
-    <keywords>
-        Кредит, банк, home credit
-    </keywords>
-    <type>
-        money
-    </type>
-    <country>
-        ru
-    </country>
+	</description>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<js>library.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс"/>
+		<counter id="blocked" name="Заблокировано"/>
+		<counter id="minpay" name="Минимальный платеж"/>
+		<counter id="minpaytill" name="Заплатить до" type="time" format="dd/MM/yyyy"/>
+		<counter id="debt" name="Задолженность"/>
+		<counter id="pcts" name="Начисленные проценты"/>
+		<counter id="notpaid" name="Не выплачено"/> <!-- Это число неоплаченных периодов для кредита, насколько я понимаю -->
+		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="till" name="Срок действия" type="time" format="dd/MM/yyyy"/>
+		<counter id="rate" name="Процентная ставка" units="%"/>
+		<counter id="all" name="Сводка" type="text"/>
+		<counter id="accnum" name="Номер счета" type="text"/>
+		<counter id="accname" name="Название" type="text"/>
+		<counter id="limit" name="Кредитный лимит"/>
+		<counter id="own" name="Собственные средства"/>
+		<counter id="agreement" name="№ договора" type="text"/>
+		<counter id="overall_debt" name="Общая задолженность"/>
+	</counters>
+	<keywords>Кредит, банк, home credit</keywords>
+	<type>money</type>
+	<country>ru</country>
 </provider>

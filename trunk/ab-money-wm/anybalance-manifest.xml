@@ -1,36 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-money-wm</id>
-  <name>WebMoney</name>
-  <description>
-    Получает баланс на кошельках WMR, WMZ, WME, WMU и WMB. Если на вашем WM-идентификаторе несколько кошельков одного типа, то балансы на них будут просуммированы.
-
-    Для входа требуется WM-идентификатор и пароль. Данные берутся с сайта https://enter.webmoney.ru/addLP.aspx. К сожалению, не всем удаётся на этот сайт войти с WMID и паролем. Пока не выяснено на 100%, для каких типов кошельков это получается. Если у вас были трудности со входом, но вам удалось их решить, пожалуйста, сообщите о вашем опыте на e-mail автору, чтобы остальным было легче.
-
-    Советы для получения возможности зайти на https://enter.webmoney.ru/addLP.aspx, а значит, и возможности пользования этим провайдером:
-      * Если у вас mini кошелек - зайдите в свой кошелек, перейдите в Настройки. В разделе Управление аккаунтом выберите Light и подключите второй способ управления. После подключения должно отобразиться: Используется в разделе: Управление аккаунтом.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <history>history.xml</history>
-    <js>main.js</js>
-  </files>
-  <counters>
-    <counter id="wmr" name="WMR" units="р"/>
-    <counter id="wmz" name="WMZ" units="$"/>
-    <counter id="wme" name="WME" units="€"/>
-    <counter id="wmu" name="WMU" units="₴"/>
-    <counter id="wmb" name="WMB" units="р"/>
-  </counters>
-  <keywords>
-    вебмани
-  </keywords>
-  <type>
-    money
-  </type>
-  <type>
-    ru, ua, by
-  </type>
+	<id version="2">ab-money-wm</id>
+	<name>WebMoney</name>
+	<description html="true"><![CDATA[
+	<p>Получает информацию о балансе кошельков WMR, WMZ, WME, WMU и WMB.</p> 
+	<p>Если на вашем WM-идентификаторе несколько кошельков одного типа, балансы на них будут суммироваться.</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Настройки:</p>
+	<ul>
+	<li>Для входа вам потребуется WM-идентификатор и пароль, которые вы можете найти на сайте https://enter.webmoney.ru/addLP.aspx.</li> 
+	<li>Если у вас mini кошелек, зайдите в свой кошелек и перейдите в раздел «Настройки». В разделе «Управление аккаунтом» выберите Light и подключите второй способ управления. После подключения должно отобразиться: «Используется в разделе: Управление аккаунтом».</li>
+	</ul>
+	]]></instruction>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<history>history.xml</history>
+		<js>main.js</js>
+	</files>
+	<counters>
+		<counter id="wmr" name="WMR" units="р"/>
+		<counter id="wmz" name="WMZ" units="$"/>
+		<counter id="wme" name="WME" units="€"/>
+		<counter id="wmu" name="WMU" units="₴"/>
+		<counter id="wmb" name="WMB" units="р"/>
+	</counters>
+	<keywords>вебмани</keywords>
+	<type>money</type>
+	<type>ru, ua, by</type>
 </provider>

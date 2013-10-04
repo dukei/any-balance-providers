@@ -1,38 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="5">ab-internet-beeline</id>
-  <name>Beeline интернет</name>
-  <description>
-    Получает баланс, бонусы и информацию о тарифном плане для Beeline интернет. 
-
-    Информация берется из личного кабинета http://lk.beeline.ru.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="bonus" name="Бонусы" units="р"/>
-    <counter id="traffic" name="Включенный трафик" units="Гб"/>
-    <counter id="topay" name="Сумма к оплате" units="р"/>
-    <counter id="abon" name="Ежемесячный платеж" units="р"/>
-    <counter id="till" name="Конец расчетного периода" type="time"/>
-    <counter id="userName" name="ФИО" type="text"/>
-    <counter id="status" name="Статус" type="text"/>
-    <counter id="status_internet" name="Интернет (статус)" type="text"/>
-    <counter id="status_tv" name="Телевидение (статус)" type="text"/>
-  </counters>
-  <keywords>
-    интернет, билайн
-  </keywords>
-  <type>
-    internet
-  </type>
-  <country>
-    ru
-  </country>
+	<id version="5">ab-internet-beeline</id>
+	<name>Beeline интернет</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе, бонусах и тарифном плане для пользователей Beeline интернет.</p>       
+	<p>Информация берется из личного кабинета (http://lk.beeline.ru).</p>
+	]]></description>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units="р"/>
+		<counter id="bonus" name="Бонусы" units="р"/>
+		<counter id="traffic" name="Включенный трафик" units="Гб"/>
+		<counter id="topay" name="Сумма к оплате" units="р"/>
+		<counter id="abon" name="Ежемесячный платеж" units="р"/>
+		<counter id="till" name="Конец расчетного периода" type="time"/>
+		<counter id="userName" name="ФИО" type="text"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="status_internet" name="Интернет (статус)" type="text"/>
+		<counter id="status_tv" name="Телевидение (статус)" type="text"/>
+	</counters>
+	<keywords>интернет, билайн</keywords>
+	<type>internet</type>
+	<country>ru</country>
 </provider>

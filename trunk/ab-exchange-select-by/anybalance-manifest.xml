@@ -2,32 +2,30 @@
 <provider>
   <id version="2">ab-exchange-select-by</id>
   <name>Курсы валют Банков Беларуси</name>
-  <description>
-    Текущие курсы валют в банках республики Беларусь и курс Национального Банка. Есть возможность показать лучшие курсы. Информация берется с сайта select.by.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <js>api:jquery.min.js</js>
-    <js>main.js</js>
-    <preferences>preferences.xml</preferences>
-  </files>
-  <counters>
-    <counter id="usdpok" name="USD покупка" prefix="$↓"/>
-    <counter id="usdprod" name="USD продажа" prefix="$↑"/>
-    <counter id="eurpok" name="EUR покупка" prefix="€↓"/>
-    <counter id="eurprod" name="EUR продажа" prefix="€↑"/>
-    <counter id="rurpok" name="RUR покупка" prefix="р↓"/>
-    <counter id="rurprod" name="RUR продажа" prefix="р↑"/>
-    <counter id="uepok" name="EUR/USD покупка" prefix="€/$↓"/>
-    <counter id="ueprod" name="EUR/USD продажа" prefix="€/$↑"/>
-    <counter id="bank" name="Банк" type="text"/>
-    <counter id="tel" name="Телефон банка" type="text"/>
-  </counters>
-  <keywords>
-    Беларусь, курс валют, евро, доллар, НБ РБ
-  </keywords>
-  <type>
-    finance, exchange
-  </type>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о текущих курсах валют в банках Республики Беларусь и курс ""Национального Банка"".</p> 
+	<p>Есть функция отображения лучших курсов.</p> 
+	<p>Информация берется с сайта select.by.</p>
+	]]></description>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<js>api:jquery.min.js</js>
+		<js>main.js</js>
+		<preferences>preferences.xml</preferences>
+	</files>
+	<counters>
+		<counter id="usdpok" name="USD покупка" prefix="$↓"/>
+		<counter id="usdprod" name="USD продажа" prefix="$↑"/>
+		<counter id="eurpok" name="EUR покупка" prefix="€↓"/>
+		<counter id="eurprod" name="EUR продажа" prefix="€↑"/>
+		<counter id="rurpok" name="RUR покупка" prefix="р↓"/>
+		<counter id="rurprod" name="RUR продажа" prefix="р↑"/>
+		<counter id="uepok" name="EUR/USD покупка" prefix="€/$↓"/>
+		<counter id="ueprod" name="EUR/USD продажа" prefix="€/$↑"/>
+		<counter id="bank" name="Банк" type="text"/>
+		<counter id="tel" name="Телефон банка" type="text"/>
+	</counters>
+	<keywords>Беларусь, курс валют, евро, доллар, НБ РБ</keywords>
+	<type>finance, exchange</type>
 </provider>

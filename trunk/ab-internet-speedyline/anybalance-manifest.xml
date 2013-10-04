@@ -3,11 +3,17 @@
   <id major_version="2.0" version="3">ab-internet-speedyline</id>
   <api flags="no_browser"/>
   <name>Спиди-Лайн</name>
-  <description>
-    Получает информацию о состоянии счета интернет-провайдера Спиди-Лайн (http://www.speedyline.ru) из личного кабинета https://web.speedyline.ru.
-
-    Для корректной работы провайдера необходимо в личном кабинете в разделе Настройки включить опцию "Разрешить вход в личный кабинет с чужих ip адресов".
-  </description>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о состоянии счета для пользователей интернет-провайдера "Спиди-Лайн" (http://www.speedyline.ru).</p>
+	<p>Информация берется из личного кабинета (http://web.speedyline.ru).</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Настройки:</p>
+	<ol>
+	<li>Зайдите в раздел «Настройки» в личном кабинете.</li>
+	<li> Включите опцию "Разрешить вход в личный кабинет с чужих ip адресов".</li>
+	</ol>
+	]]></instruction>
   <author>iReset &lt;ireset.ag@gmail.com&gt;</author>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <files>

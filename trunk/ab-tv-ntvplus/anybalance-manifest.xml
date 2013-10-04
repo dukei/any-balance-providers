@@ -1,35 +1,31 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="4">ab-tv-ntvplus</id>
-  <name>НТВ+</name>
-  <description>
-    Получает баланс, бонусные баллы, сумму доплаты и пакеты услуг НТВ+ (http://ntvplus.ru), используя личный кабинет.
-  </description>
-  <instruction>
-    Чтобы получить логин и пароль, зарегистрируйтесь здесь: http://www.ntvplus.ru/register.xl . В процессе регистрации потребуется ввести номер вашего договора и серийный номер смарт-карты НТВ-ПЛЮС, расположенной в вашем ресивере.
-  </instruction>
-  <author>iReset &lt;ireset.ag@gmail.com&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="bonus" name="Бонус" units="балл"/>
-    <counter id="recom_pay" name="Рекомендуемая доплата" units="р"/>
-    <counter id="abonent" name="ФИО" type="text"/>
-    <counter id="state" name="Состояние" type="text"/>
-    <counter id="packets" name="Пакеты услуг" type="text"/>
-  </counters>
-  <keywords>
-    телевидение, нтв, нтв плюс, нтв+
-  </keywords>
-  <type>
-    tv
-  </type>
-  <country>
-    ru
-  </country>
+	<id major_version="1.0" version="4">ab-tv-ntvplus</id>
+	<name>НТВ+</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе, бонусных баллах, сумме доплаты и пакетах услуг НТВ+ (http://ntvplus.ru).</p>
+	<p>Информация берется из личного кабинета.</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Чтобы получить логин и пароль, зарегистрируйтесь здесь: http://www.ntvplus.ru/register.xl.</p>
+	<p>В процессе регистрации потребуется ввести номер вашего договора и серийный номер смарт-карты НТВ-ПЛЮС, расположенной в вашем ресивере.</p>
+	]]></instruction>
+	<author>iReset &lt;ireset.ag@gmail.com&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units="р"/>
+		<counter id="bonus" name="Бонус" units="балл"/>
+		<counter id="recom_pay" name="Рекомендуемая доплата" units="р"/>
+		<counter id="abonent" name="ФИО" type="text"/>
+		<counter id="state" name="Состояние" type="text"/>
+		<counter id="packets" name="Пакеты услуг" type="text"/>
+	</counters>
+	<keywords>телевидение, нтв, нтв плюс, нтв+</keywords>
+	<type>tv</type>
+	<country>ru</country>
 </provider>

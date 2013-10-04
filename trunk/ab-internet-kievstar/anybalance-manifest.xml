@@ -3,13 +3,10 @@
 	<id major_version="2.0" version="5">ab-internet-kievstar</id>
 	<api flags="no_browser|captcha"/>
 	<name>Киевстар (домашний интернет)</name>
-	<description>
-Получает баланс, бонусные баллы для домашнего интернета Киевстар.
-
-Данные берутся из личного кабинета https://my.kyivstar.ua
-
-Этот провайдер требует версию AnyBalance API 7+ с поддержкой капчи
-	</description>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе и бонусных баллах для пользователей интернет-провайдера "Киевстар".</p> 
+	<p>Информация берется из личного кабинета (http://my.kyivstar.ua).</p>   
+	]]></description>
 	<author>Viacheslav Sychov &lt;viacheslav.sychov@gmail.com&gt;</author>
 	<files>
 		<icon>icon.png</icon>

@@ -1,53 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
-  <api flags="no_browser" />
-  <id version="9">ab-cell-mts-by</id>
-  <name>МТС (Беларусь)</name>
-  <description>
-    Получает баланс, информацию о расходах, статус блокировки, кредит, номер лицевого счета, ежемесячую плату. 
-
-    Получает данные из PDA версии интернет-помощника для уменьшения трафика: https://ihelper.mts.by/SelfCarePda.
-
-    Если вы не знаете пароль к своему интернет-помощнику, на своем мобильном телефоне наберите *111*17# или позвоните по номеру 087021.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units=" р"/>
-    <counter id="bonus" name="Бонусные баллы" units=" б"/>
-    <counter id="min_local" name="Локальные и мобильные минуты" units=" мин"/>
-    <counter id="min_love" name="Любимые минуты" units=" мин"/>
-    <counter id="min_left" name="Бесплатные минуты" units=" мин"/>
-    <counter id="sms_left" name="Бесплатные СМС" units=" sms"/>
-    <counter id="mms_left" name="Бесплатные ММС" units=" mms"/>
-    <counter id="traffic_left" name="Остаток трафика" units=" Mb"/>
-	<counter id="traffic_night" name="Остаток ночного трафика" units=" Mb"/>
-    <counter id="usedinthismonth" name="Расход за этот месяц" units=" р"/>
-    <counter id="min_used" name="Минут накоплено (кред.)" units=" мин"/>
-    <counter id="debt" name="Неоплаченные счета" units=" р"/>
-    <counter id="pay_till" name="Оплатить до" type="time"/>
-    <counter id="statuslock" name="Статус блокировки" type="text"/>
-    <counter id="traffic_left_vpn" name="Остаток VPN трафика" units=" Mb"/>
-    <counter id="credit" name="Кредит" units=" р"/>
-    <!-- <counter id="usedinprevmonth" name="Расход за прошлый месяц" units="р"/> -->
-    <counter id="license" name="Лицевой счет" type="text"/>
-    <counter id="monthlypay" name="Ежемесячная плата" units=" р"/>
-    <counter id="phone" name="Номер телефона" type="text"/>
-  </counters>
-  <keywords>
-    Сотовый телефон, мобильный, мобильник, mts, белоруссия
-  </keywords>
-  <type>
-    cell
-  </type>
-  <country>
-    by
-  </country>
+	<api flags="no_browser" />
+	<id version="9">ab-cell-mts-by</id>
+	<name>МТС (Беларусь)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе, расходах, статусе блокировки, кредите, номере лицевого счета, ежемесячной плате.</p>   
+	<p>Информация берется из PDA версии интернет-помощника (http://ihelper.mts.by/SelfCarePda).</p> 
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Если вы не знаете пароль к своему интернет-помощнику:</p>
+	<ul>
+	<li>На своем мобильном телефоне наберите *111*17# или позвоните по номеру 087021.</li>
+	</ul>   
+	]]></instruction>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="bonus" name="Бонусные баллы" units=" б"/>
+		<counter id="min_local" name="Локальные и мобильные минуты" units=" мин"/>
+		<counter id="min_love" name="Любимые минуты" units=" мин"/>
+		<counter id="min_left" name="Бесплатные минуты" units=" мин"/>
+		<counter id="sms_left" name="Бесплатные СМС" units=" sms"/>
+		<counter id="mms_left" name="Бесплатные ММС" units=" mms"/>
+		<counter id="traffic_left" name="Остаток трафика" units=" Mb"/>
+		<counter id="traffic_night" name="Остаток ночного трафика" units=" Mb"/>
+		<counter id="usedinthismonth" name="Расход за этот месяц" units=" р"/>
+		<counter id="min_used" name="Минут накоплено (кред.)" units=" мин"/>
+		<counter id="debt" name="Неоплаченные счета" units=" р"/>
+		<counter id="pay_till" name="Оплатить до" type="time"/>
+		<counter id="statuslock" name="Статус блокировки" type="text"/>
+		<counter id="traffic_left_vpn" name="Остаток VPN трафика" units=" Mb"/>
+		<counter id="credit" name="Кредит" units=" р"/>
+		<!-- <counter id="usedinprevmonth" name="Расход за прошлый месяц" units="р"/> -->
+		<counter id="license" name="Лицевой счет" type="text"/>
+		<counter id="monthlypay" name="Ежемесячная плата" units=" р"/>
+		<counter id="phone" name="Номер телефона" type="text"/>
+	</counters>
+	<keywords>
+	Сотовый телефон, мобильный, мобильник, mts, белоруссия
+	</keywords>
+	<type>
+	cell
+	</type>
+	<country>
+	by
+	</country>
 </provider>

@@ -2,10 +2,21 @@
 <provider>
     <id major_version="1.1" version="2">ab-other-custom</id>
     <name>Custom provider</name>
-    <description>Провайдер для произвольных данных. Позволяет выводить произвольную информацию в виджет с заданных URL. 
-Принцип работы очень прост: вы указываете в настройках адрес страницы-источника информации и регулярное выражение, по которому 
-происходит поиск данной информации. Для использования вы должны понимать регулярные выражения Javascript.
-Примеры см. на странице http://code.google.com/p/any-balance-providers/wiki/CustomProvider</description>
+	<description html="true"><![CDATA[
+	<p>Провайдер для произвольных данных.</p>
+	<p>Позволяет выводить произвольную информацию в виджет с заданных URL.</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Настройки:</p>
+	<ul>
+	<li>Укажите в настройках адрес страницы-источника информации и регулярное выражение, по которому  происходит поиск данной информации.</li>
+	</ul> 
+	<p><b>Особенности:</b></p>
+	<ul>
+	<li>Для пользования провайдером необходимо понимать регулярные выражения Javascript;</li>
+	<li>Примеры см. на странице http://code.google.com/p/any-balance-providers/wiki/CustomProvider.</li>
+	</ul>
+	]]></instruction>
     <author>BArtWell &lt;web@bartwell.ru&gt;</author>
     <files>
         <preferences>preferences.xml</preferences>

@@ -1,35 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
-  <api flags="no_browser" />
-  <id version="6">ab-bonus-ozon</id>
-  <name>OZON.ru</name>
-  <description>
-    Получает баланc счета и количество баллов в интернет магазине OZON.ru (http://www.ozon.ru).
-
-    Информация берется из личного кабинета. 
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-    <js>library.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Остаток" units="р"/>
-    <counter id="blocked" name="Заблокировано" units="р"/>
-    <counter id="available" name="Доступно" units="р"/>
-    <counter id="bonus" name="Баллы"/>
-  </counters>
-  <keywords>
-    озон
-  </keywords>
-  <type>
-    bonus
-  </type>
-  <country>
-    ru
-  </country>
+	<api flags="no_browser" />
+	<id version="6">ab-bonus-ozon</id>
+	<name>OZON.ru</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о баланcе и количестве баллов в интернет магазине OZON.ru (http://www.ozon.ru).</p>
+	<p>Информация берется из личного кабинета.</p>
+	]]></description>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<js>library.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Остаток" units="р"/>
+		<counter id="blocked" name="Заблокировано" units="р"/>
+		<counter id="available" name="Доступно" units="р"/>
+		<counter id="bonus" name="Баллы"/>
+	</counters>
+	<keywords>озон</keywords>
+	<type>bonus</type>
+	<country>ru</country>
 </provider>

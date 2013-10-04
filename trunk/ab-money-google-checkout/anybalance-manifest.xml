@@ -3,11 +3,11 @@
     <id version="3">ab-money-google-checkout</id>
     <name>Google Wallet (Checkout)</name>
 	<api flags="no_browser"/>
-    <description>
-	Shows current balance in google Wallet account.
-	
-	This provider does not work with 2-steps authorization.
-	</description>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о текущем балансе на Goggle Кошельке.</p>
+	<p><b>Особенности:</b></p>
+	<p>Этот провайдер не работает, если включена 2-этапная авторизация.</p>
+	]]></description>
     <author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>

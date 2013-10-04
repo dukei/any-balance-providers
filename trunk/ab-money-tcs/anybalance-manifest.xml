@@ -1,47 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="9">ab-money-tcs</id>
-  <api flags="no_browser" min_level="4"/>
-  <name>Тинькофф Кредитные Системы</name>
-  <description>
-    Получает текущий остаток и другие параметры карт и депозитов банка Тинькофф Кредитные Системы, используя систему интернет-банк ( https://www.tcsbank.ru/bank ). Для работы провайдера необходимо отключить подтверждение входа в Интернет Банк по SMS. Это безопасно, для проведения операций SMS все равно будут требоваться. Чтобы при каждом входе программы в личный кабинет не приходили SMS оповещения об этом, отключите в личном кабинете банка ещё и опцию "Получение SMS при каждом входе".
-
-    Если у вас нет доступа к интернет-банку, зарегистрируйтесь там по номеру карты на странице https://www.tcsbank.ru/authentication/register. 
-
-    Провайдер пока поддерживает получение информации по картам и депозитам (вкладам). Если вам нужно что-то ещё, например, кредиты, обращайтесь к автору.
-
-    Если у вас больше одного депозита, вы можете указать последние цифры номера счета депозита, который нужно показать. Номер счета можно найти в интернет банке, в реквизитах депозита.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-    <js>library.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Остаток"/>
-    <counter id="minpay" name="Минимальный платеж"/>
-    <counter id="minpaytill" name="Оплатить до" type="time" format="dd/MM/yyyy"/>
-    <counter id="debt" name="Задолженность"/>
-    <counter id="pcts" name="Начислено процентов"/>
-    <counter id="rate" name="Процентная ставка" units="%"/>
-    <counter id="till" name="Дата окончания" type="time" format="dd/MM/yyyy"/>
-    <counter id="limit" name="Кредитный лимит"/>
-    <counter id="freeaddleft" name="Бесплатные пополнения (Остаток)"/>
-    <counter id="currency" name="Валюта" type="text"/>
-    <counter id="cardnum" name="Номер карты" type="text"/>
-    <counter id="name" name="Название" type="text"/>
-    <counter id="accnum" name="Номер счета" type="text"/>
-  </counters>
-  <keywords>
-    ткс онлайн, tcs online, tinkoff
-  </keywords>
-  <type>
-    money
-  </type>
-  <country>
-    ru
-  </country>
+	<id version="9">ab-money-tcs</id>
+	<api flags="no_browser" min_level="4"/>
+	<name>Тинькофф Кредитные Системы</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о текущем остатке и других параметрах карт и депозитов банка ""Тинькофф Кредитные Системы"".</p>
+	<p>Информация берется из системы интернет-банк (http://www.tcsbank.ru/bank).</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера необходимо отключить подтверждение входа в Интернет Банк по SMS.</p> 
+	<small>Отключение подтверждения даёт возможность только зайти в систему, в целях безопасности НЕВОЗМОЖНО отключить подтверждение по SMS при проведении платежных операций.</small>   
+	<p><small>*Чтобы не получать SMS-оповещение при каждом входе программы в личный кабинет, отключите в личном кабинете банка опцию ""Получение SMS при каждом входе"".</small></p>  
+	<p>Как получить доступ к интернет-банку:</p>
+	<ul>
+	 <li>Зарегистрируйтесь по номеру карты на странице https://www.tcsbank.ru/authentication/register.</li>
+	</ul>
+	<br>
+	<b>Особенности:</b>
+	<ul>
+	<li> На данный момент провайдер поддерживает получение информации по картам и депозитам (вкладам). Если вам нужны дополнительные опции, обратитесь, пожалуйста, к автору.</li> 
+	<li>Если у вас больше одного депозита, укажите последние цифры номера счета депозита, который нужно отобразить. Номер счета можно найти в интернет-банке в реквизитах депозита.</li>
+	]]></instruction>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<js>library.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Остаток"/>
+		<counter id="minpay" name="Минимальный платеж"/>
+		<counter id="minpaytill" name="Оплатить до" type="time" format="dd/MM/yyyy"/>
+		<counter id="debt" name="Задолженность"/>
+		<counter id="pcts" name="Начислено процентов"/>
+		<counter id="rate" name="Процентная ставка" units="%"/>
+		<counter id="till" name="Дата окончания" type="time" format="dd/MM/yyyy"/>
+		<counter id="limit" name="Кредитный лимит"/>
+		<counter id="freeaddleft" name="Бесплатные пополнения (Остаток)"/>
+		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="cardnum" name="Номер карты" type="text"/>
+		<counter id="name" name="Название" type="text"/>
+		<counter id="accnum" name="Номер счета" type="text"/>
+	</counters>
+	<keywords>
+	ткс онлайн, tcs online, tinkoff
+	</keywords>
+	<type>
+	money
+	</type>
+	<country>
+	ru
+	</country>
 </provider>

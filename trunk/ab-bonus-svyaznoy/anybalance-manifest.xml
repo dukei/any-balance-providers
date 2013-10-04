@@ -1,35 +1,35 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="4">ab-bonus-svyaznoy</id>
-  <name>Связной Клуб</name>
-  <description>
-    Получает информацию о балансе карты, последней операции, статусе и количестве сообщений.
-  </description>
-  <author>iReset &lt;ireset.ag@gmail.com&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>api:jquery.min.js</js>
-    <js>main.js</js>
-    <js>common_functions.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balanceinpoints" name="Баланс в баллах" units="б"/>
-    <counter id="balanceinrubles" name="Баланс в рублях" units="р"/>
-    <counter id="pointsinlastoper" name="Баллы по последней операции" type="text" units="б"/>
-    <counter id="cardstate" name="Статус карты" type="text"/>
-    <counter id="messages" name="Количество сообщений" type="text" suffix=" сообщ."/>
-    <counter id="cardnumber" name="Номер карты" type="text" prefix="№"/>
-    <counter id="customer" name="Владелец" type="text"/>
-  </counters>
-  <keywords>
-    связной клуб, связной, баланс, бонус, бонусная программа, бонусная карта
-  </keywords>
-  <type>
-    bonus
-  </type>
-  <country>
-    ru
-  </country>
+	<id major_version="1.0" version="4">ab-bonus-svyaznoy</id>
+	<name>Связной Клуб</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе, последней операции, статусе и количестве сообщений по карте программы "Связной Клуб".</p>   
+	]]></description>
+	<author>iReset &lt;ireset.ag@gmail.com&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>api:jquery.min.js</js>
+		<js>main.js</js>
+		<js>common_functions.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balanceinpoints" name="Баланс в баллах" units="б"/>
+		<counter id="balanceinrubles" name="Баланс в рублях" units="р"/>
+		<counter id="pointsinlastoper" name="Баллы по последней операции" type="text" units="б"/>
+		<counter id="cardstate" name="Статус карты" type="text"/>
+		<counter id="messages" name="Количество сообщений" type="text" suffix=" сообщ."/>
+		<counter id="cardnumber" name="Номер карты" type="text" prefix="№"/>
+		<counter id="customer" name="Владелец" type="text"/>
+	</counters>
+	<keywords>
+	связной клуб, связной, баланс, бонус, бонусная программа, бонусная карта
+	</keywords>
+	<type>
+	bonus
+	</type>
+	<country>
+	ru
+	</country>
 </provider>

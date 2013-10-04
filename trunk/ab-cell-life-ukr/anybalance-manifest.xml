@@ -1,54 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="21">ab-cell-life-ukr</id>
-  <api flags="no_browser" />
-  <name>Life:) Украина</name>
-  <description>
-    Мониторинг баланса мобильного оператора Life:) (Украина)
-
-    Для входа в личный кабинет требуется СуперПароль. Получить СуперПароль можно тремя способами (вcё выполнять со своего телефона Life:):
-    * отправить бесплатное SMS с ключевым словом PAROL на номер 124
-    * войти в life:) меню, позвонив *124#, выбрать категорию Upravlenie schetom, а далее услугу SuperParol
-    * позвонить на *124*779#
-
-    Пароль придет в ответном SMS. Полученный СуперПароль можно вводить в настройки провайдера.
-
-    Провайдер умеет получать данные через API для мобильного приложения Life:) (https://play.google.com/store/apps/details?id=com.life.my). Если вы видите, что провайдер не показывает данные, которые есть в мобильном приложении, обращайтесь к автору для исправления.
-  </description>
-  <author>Ignatiy Goloviznin &lt;igoloviznin@gmail.com&gt;</author>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>hmac-sha1.js</js>
-    <js>enc-base64-min.js</js>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="Mbalance" name="Основной счет" suffix=" ₴" type="numeric"/>
-    <counter id="Bbalance" name="Бонусный счет" suffix=" ₴" type="numeric"/>
-    <counter id="gprs" name="Трафик" suffix=" Мб" type="numeric"/>
-    <counter id="sms_uk" name="SMS по Украине" type="numeric" units=" смс"/>
-    <counter id="sms_life" name="SMS в сети Life:)" type="numeric" units=" смс"/>
-    <counter id="mms_uk" name="MMS по Украине" type="numeric" units=" ммс"/>
-    <counter id="mms_life" name="MMS в сети Life:)" type="numeric" units=" ммс"/>
-    <counter id="mins_life" name="Минуты по сети Life:)" type="time_interval" format="{@MIN}" units=" мин"/>
-    <counter id="mins_uk" name="Минуты на номера других операторов и фиксированной связи Украины" type="time_interval" format="{@MIN}" units=" мин"/>
-    <counter id="mins_mob" name="Минуты на номера мобильных операторов Украины" type="time_interval" format="{@MIN}" units=" мин"/>
-    <counter id="mins_fixed" name="Минуты на номера фиксированной связи Украины" type="time_interval" format="{@MIN}" units=" мин"/>
-    <counter id="mins_family" name="Минуты на родные номера" type="time_interval" format="{@MIN}" units=" мин"/>
-    <counter id="till" name="Действителен до" type="time" format="dd/MM/yyyy"/>
-    <counter id="phone" name="Номер телефона" type="text"/>
-  </counters>
-  <keywords>
-    мобильный оператор лайф украина проверка баланса
-  </keywords>
-  <type>
-    cell
-  </type>
-  <country>
-    ua
-  </country>
+	<id version="21">ab-cell-life-ukr</id>
+	<api flags="no_browser" />
+	<name>Life:) Украина</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе для пользователей мобильного оператора Life:) (Украина).</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для входа в личный кабинет требуется СуперПароль.</p> 
+	<p>Три способа получить СуперПароль:</p>
+	<ul>
+	<li>Отправить бесплатное SMS с ключевым словом PAROL на номер 124;</li> 
+	<li>Войти в Life:) меню, позвонив по номеру *124#, выбрать категорию Upravlenie schetom, далее услугу SuperParol;</li> 
+	<li>Позвонить по номеру *124*779#. Пароль придет в ответном SMS.</li>
+	</ul>
+	<br>
+	<small>Провайдер получает данные через API для мобильного приложения Life:) ( https://play.google.com/store/apps/details?id=com.life.my ). Если провайдер не показывает данные, которые есть в мобильном приложении, обратитесь, пожалуйста, к автору провайдера.</small>
+	<br> 
+	<br>  
+	<b>ВНИМАНИЕ!</b> Все вышеуказанные действия нужно выполнять с мобильного 
+	телефона.
+	]]></instruction>
+	<author>Ignatiy Goloviznin &lt;igoloviznin@gmail.com&gt;</author>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>hmac-sha1.js</js>
+		<js>enc-base64-min.js</js>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="Mbalance" name="Основной счет" suffix=" ₴" type="numeric"/>
+		<counter id="Bbalance" name="Бонусный счет" suffix=" ₴" type="numeric"/>
+		<counter id="gprs" name="Трафик" suffix=" Мб" type="numeric"/>
+		<counter id="sms_uk" name="SMS по Украине" type="numeric" units=" смс"/>
+		<counter id="sms_life" name="SMS в сети Life:)" type="numeric" units=" смс"/>
+		<counter id="mms_uk" name="MMS по Украине" type="numeric" units=" ммс"/>
+		<counter id="mms_life" name="MMS в сети Life:)" type="numeric" units=" ммс"/>
+		<counter id="mins_life" name="Минуты по сети Life:)" type="time_interval" format="{@MIN}" units=" мин"/>
+		<counter id="mins_uk" name="Минуты на номера других операторов и фиксированной связи Украины" type="time_interval" format="{@MIN}" units=" мин"/>
+		<counter id="mins_mob" name="Минуты на номера мобильных операторов Украины" type="time_interval" format="{@MIN}" units=" мин"/>
+		<counter id="mins_fixed" name="Минуты на номера фиксированной связи Украины" type="time_interval" format="{@MIN}" units=" мин"/>
+		<counter id="mins_family" name="Минуты на родные номера" type="time_interval" format="{@MIN}" units=" мин"/>
+		<counter id="till" name="Действителен до" type="time" format="dd/MM/yyyy"/>
+		<counter id="phone" name="Номер телефона" type="text"/>
+	</counters>
+	<keywords>мобильный оператор лайф украина проверка баланса</keywords>
+	<type>cell</type>
+	<country>ua</country>
 </provider>

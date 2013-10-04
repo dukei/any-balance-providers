@@ -1,34 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="3">ab-bonus-eldorado</id>
-  <name>Клуб Эльдорадо</name>
-  <description>
-    Получает информацию по бонусной карте клуба постоянных покупателей Эльдорадо. Информация берется из личного кабинета http://www.eldorado.ru/personal/?loyalty.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-  </files>
-  <counters>
-    <counter id="balance" name="Активная сумма" units="р"/>
-    <counter id="reserv" name="Резервная сумма" units="р"/>
-<!--    <counter id="level" name="Статус участия" type="text"/>
-    <counter id="status" name="Статус карты" type="text"/>
-    <counter id="type" name="Тип участия" type="text"/> -->
-    <counter id="userName" name="ФИО владельца" type="text"/>
-    <counter id="cardnum" name="Номер карты" type="text"/>
-    <counter id="phone" name="Телефон" type="text"/>
-  </counters>
-  <keywords>
-    eldorado, карта, бонус
-  </keywords>
-  <type>
-    bonus
-  </type>
-  <country>
-    ru
-  </country>
+	<id version="3">ab-bonus-eldorado</id>
+	<name>Клуб Эльдорадо</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию по бонусной карте Клуба постоянных покупателей "Эльдорадо".</p> <p>Информация берется из личного кабинета (http://www.eldorado.ru/personal/?loyalty).</p>   
+	]]></description>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+	</files>
+	<counters>
+		<counter id="balance" name="Активная сумма" units="р"/>
+		<counter id="reserv" name="Резервная сумма" units="р"/>
+	<!--    <counter id="level" name="Статус участия" type="text"/>
+		<counter id="status" name="Статус карты" type="text"/>
+		<counter id="type" name="Тип участия" type="text"/> -->
+		<counter id="userName" name="ФИО владельца" type="text"/>
+		<counter id="cardnum" name="Номер карты" type="text"/>
+		<counter id="phone" name="Телефон" type="text"/>
+	</counters>
+	<keywords>eldorado, карта, бонус</keywords>
+	<type>bonus</type>
+	<country>ru</country>
 </provider>

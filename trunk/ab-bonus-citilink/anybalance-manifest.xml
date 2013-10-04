@@ -2,13 +2,16 @@
 <provider>
   <id version="3">ab-bonus-citilink</id>
   <name>Ситилинк</name>
-  <description>
-    Получает бонусы в бонусной программе электронного дискаунтера Ситилинк (http://www.citilink.ru/)
-
-    Информация берется из личного кабинета: http://www.citilink.ru/login
-
-    Если у вас нет доступа к личному кабинету, зарегистрируйтесь здесь: http://www.citilink.ru/registration
-  </description>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о количестве бонусов в бонусной программе электронного дискаунтера "Ситилинк" (http://www.citilink.ru/).</p>
+	<p>Информация берется из личного кабинета (http://www.citilink.ru/login).</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Настройки:</p>
+	<ul>
+	<li>Получить доступ к личному кабинету вы можете, пройдя регистрацию по адресу http://www.citilink.ru/registration.</li>
+	</ul>
+	]]></instruction>	
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <files>
     <icon>icon.png</icon>

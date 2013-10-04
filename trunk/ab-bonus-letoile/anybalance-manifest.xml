@@ -1,29 +1,23 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="3">ab-bonus-letoile</id>
-  <name>Л'Этуаль</name>
-  <description>
-    Получает информацию о бонусных баллах на клубных картах сети магазинов Л'Этуаль.	
-  </description>
-  <author>iReset &lt;ireset.ag@gmail.com&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-    <js>common_functions.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="dateOf" name="Дата актуализации" type="time"/>
-  </counters>
-  <keywords>
-    клубная карта, дисконтная карта, бонусная карта, бонус, bonus, лэтуаль, летуаль, л'этуаль, letoile, скидка
-  </keywords>
-  <type>
-    bonus
-  </type>
-  <country>
-    ru
-  </country>
+	<id version="3">ab-bonus-letoile</id>
+	<name>Л'Этуаль</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о бонусных баллах на клубных картах сети магазинов Л'Этуаль.</p>
+	]]></description>
+	<author>iReset &lt;ireset.ag@gmail.com&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<js>common_functions.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units="р"/>
+		<counter id="dateOf" name="Дата актуализации" type="time"/>
+	</counters>
+	<keywords>клубная карта, дисконтная карта, бонусная карта, бонус, bonus, лэтуаль, летуаль, л'этуаль, letoile, скидка</keywords>
+	<type>bonus</type>
+	<country>ru</country>
 </provider>

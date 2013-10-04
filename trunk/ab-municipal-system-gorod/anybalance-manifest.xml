@@ -1,54 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="6">ab-municipal-system-gorod</id>
-  <name>Система Город</name>
-  <description>
-    Получает баланс и значения счетчиков по лицевым счетам, привязанным к карте Система Город.
-
-    Федеральная Система «Город» - автоматизированная система сбора платежей за услуги, которыми Вы пользуетесь каждый день. Несмотря на то, что программа федеральная, в каждом регионе свои карты Система Город, и свои личные кабинеты для проверки их баланса.
-
-    Этот провайдер поддерживает следующие карты Системы Город, номера которых начинаются на:
-      990005-000 - Башкортостан, Ижевск, Кемерово, Екатеринбург и др., Банк УРАЛСИБ ( https://oplata.uralsibbank.ru/gorod_login.asp )
-
-    Не поддерживаются этим провайдером, но для которых есть специализированные провайдеры
-      990002 - Челябинск - используйте провайдер Система Город (Челябинск)
-      990006 - Алтайский край - используйте провайдер Система Город (Алтайский край)
-
-    Для добавления личных кабинетов других карт Системы Город пишите автору на e-mail.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="balance_total" name="Итого" units="р"/>
-    <counter id="strah" name="Страховой взнос" units="р"/>
-    <counter id="strah_ok" name="Согласие на страхование" type="text"/>
-    <counter id="cold" name="Холодная вода" units="м³"/>
-    <counter id="hot" name="Горячая вода" units="м³"/>
-    <counter id="gas_heat" name="Газ+отопление"/>
-    <counter id="electr" name="Электроэнергия"/>
-    <counter id="electr_day" name="Электроэнергия День"/>
-    <counter id="electr_night" name="Электроэнергия Ночь"/>
-    <counter id="gas" name="Газ"/>
-    <counter id="heat" name="Газ.отопление"/>
-    <counter id="fio" name="Владелец" type="text"/>
-    <counter id="address" name="Адрес" type="text"/>
-    <counter id="service" name="Услуга" type="text"/>
-    <counter id="provider" name="Поставщик" type="text"/>
-    <counter id="accnum" name="Лицевой счет" type="text"/>
-  </counters>
-  <keywords>
-    Система город
-  </keywords>
-  <type>
-    municipal
-  </type>
-  <country>
-    ru
-  </country>
+	<id major_version="1.0" version="6">ab-municipal-system-gorod</id>
+	<name>Система Город</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе и значении счетчиков по лицевым счетам, привязанным к карте Системы "Город".</p>
+	<p>Федеральная Система «Город» - автоматизированная система сбора платежей за услуги, которыми вы пользуетесь каждый день.</p> 
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Поддерживаются карты, номера которых начинаются на 990005-000:</p>
+	Башкортостан
+	<br>
+	Ижевск
+	<br>
+	Кемерово
+	<br>
+	Екатеринбург и др.
+	<br>
+	Банк УРАЛСИБ (http://oplata.uralsibbank.ru/gorod_login.asp)    
+	<p><b>ВНИМАНИЕ!</b> Для работы с картами других регионов используйте специализированные провайдеры:</p>
+	990002 -  провайдер Система «Город» (Челябинск) 
+	<br>
+	990006 - провайдер Система «Город» (Алтайский край) 
+	]]></instruction>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units="р"/>
+		<counter id="balance_total" name="Итого" units="р"/>
+		<counter id="strah" name="Страховой взнос" units="р"/>
+		<counter id="strah_ok" name="Согласие на страхование" type="text"/>
+		<counter id="cold" name="Холодная вода" units="м³"/>
+		<counter id="hot" name="Горячая вода" units="м³"/>
+		<counter id="gas_heat" name="Газ+отопление"/>
+		<counter id="electr" name="Электроэнергия"/>
+		<counter id="electr_day" name="Электроэнергия День"/>
+		<counter id="electr_night" name="Электроэнергия Ночь"/>
+		<counter id="gas" name="Газ"/>
+		<counter id="heat" name="Газ.отопление"/>
+		<counter id="fio" name="Владелец" type="text"/>
+		<counter id="address" name="Адрес" type="text"/>
+		<counter id="service" name="Услуга" type="text"/>
+		<counter id="provider" name="Поставщик" type="text"/>
+		<counter id="accnum" name="Лицевой счет" type="text"/>
+	</counters>
+	<keywords>Система город</keywords>
+	<type>municipal</type>
+	<country>ru</country>
 </provider>

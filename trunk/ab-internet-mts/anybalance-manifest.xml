@@ -2,35 +2,35 @@
 <provider>
 	<id version="38">ab-internet-mts</id>
 	<name>Домашний Интернет и Телевидение МТС</name>
-	<description>
-Получает текущий баланс, номера лицевого счета и договора, ФИО владельца, трафик в текущем месяце, абонентскую плату у провайдера "Домашний Интернет и Телевидение МТС"
-
-Поддерживаются:
-   * Москва (https://kabinet.mts.ru)
-   * Ростов (http://lk.ug.mts.ru) - КОМСТАР-Регионы Южный филиал
-   * Новосибирск (https://my.citynsk.ru) - бывший CityHomeNet
-   * Пермь (https://lka.ural.mts.ru)
-   * Екатеринбург (https://lka.ural.mts.ru)
-   * Киров (https://lk.kirovnet.net)
-   * Нижний Новгород (http://stat.nnov.comstar-r.ru)
-   * Северодвинск (http://severodvinsk.stream-info.ru/client2)
-   * Вологда (https://lk.vologda.mts.ru)
-   * Ижевск (https://lk.izhnt.ru)
-   * Пенза (http://client.lanbilling.ptcomm.ru)
-   * Комсомольск-на-Амуре (http://issa.kms.multinex.ru)
-   * Тула ( https://kabinet.tula.mts.ru)
-   * Балаково (http://stat.balakovo.comstar-r.ru)
-   * Ульяновск (https://ess.netroad.ru)
-   * Норильск (https://kabinet.norilsk.mts.ru)
-   * Магнитогорск (https://stat.magnitogorsk.multinex.ru)
-   * Миасс (http://stat.miass.multinex.ru)
-   * Курган (https://infocentr.ru/lk/index.php?r=site/login)
-   * Барнаул (https://kabinet.barnaul.mts.ru/)
-   * Белгород (http://stat.belgorod-net.ru/)
-   * Саратов (http://stat.saratov.comstar.ru/)
-
-Для добавления вашего региона обращайтесь к автору на e-mail dco@mail.ru
-	</description>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о текущем балансе, номере лицевого счета и договора, ФИО владельца, трафике в текущем месяце, абонентской плате для пользователей провайдера ""Домашний Интернет и Телевидение МТС"".</p> 
+	<p>Поддерживаются регионы:</p>
+	Москва (http://kabinet.mts.ru) <br>
+	Ростов (http://lk.ug.mts.ru) - КОМСТАР-Регионы Южный филиал	<br>
+	Новосибирск (http://my.citynsk.ru) - бывший CityHomeNet <br>
+	Пермь (http://lka.ural.mts.ru)<br>
+	Екатеринбург (http://lka.ural.mts.ru)<br>
+	Киров (http://lk.kirovnet.net)<br>
+	Нижний Новгород (http://stat.nnov.comstar-r.ru)<br>
+	Северодвинск (http://severodvinsk.stream-info.ru/client2)<br>
+	Вологда (http://lk.vologda.mts.ru)<br>
+	Ижевск (http://lk.izhnt.ru)<br>
+	Пенза (http://client.lanbilling.ptcomm.ru)<br>
+	Комсомольск-на-Амуре (http://issa.kms.multinex.ru)<br>
+	Тула (http://kabinet.tula.mts.ru)<br>
+	Балаково (http://stat.balakovo.comstar-r.ru)<br>
+	Ульяновск (http://ess.netroad.ru)<br>
+	Норильск (http://kabinet.norilsk.mts.ru)<br>
+	Магнитогорск (http://stat.magnitogorsk.multinex.ru)<br>
+	Миасс (http://stat.miass.multinex.ru)<br>
+	Курган (http://infocentr.ru/lk/index.php?r=site/login)<br>
+	Барнаул (http://kabinet.barnaul.mts.ru)<br>
+	Белгород (http://stat.belgorod-net.ru)<br>
+	Саратов (http://stat.saratov.comstar.ru/)
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для добавления вашего региона обратитесь, пожалуйста, к автору по адресу dco@mail.ru.</p>     
+	]]></instruction>
 	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>

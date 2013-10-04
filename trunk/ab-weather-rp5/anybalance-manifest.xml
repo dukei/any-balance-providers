@@ -1,58 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="10">ab-weather-rp5</id>
-  <api flags="no_browser"/>
-  <name>Прогноз rp5.ru</name>
-  <description>
-   Получает прогноз погоды на завтра и послезавтра с сайта http://rp5.ru. В настройках требуется указать код города.
-
-   Как получить код города:
-   1. Заходим на сайт http://rp5.ru
-   2. В строке поиска вводим название нужного города и нажимаем Enter.
-   3. В списке (если возник) уточняем нужный город - кликаем по нему.
-   4. В результате у вас должен отобразиться прогноз погоды для выбранного города.
-   5. Находим в правом верхнем углу сайта ссылку RSS и кликаем по ней.
-   6. Смотрим в адресную строку браузера. Например, для Москвы в адресной строке будет http://rp5.ru/rss/42468/ru
-   7. Код города - это цифры между / и /ru, то есть 42468.
-   8. Этот номер вводим в настройки провайдера - и получаем прогноз для Москвы.
-
-   Оптимальный интервал обновления прогноза - 6 часов.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <preferences>preferences.xml</preferences>
-    <icon>icon.png</icon>
-    <js>main.js</js>
-    <js>moment.min.js</js>
-    <js>moment.lang.ru.min.js</js>
-    <js>library.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="temp1" name="Температура (завтра)" units="°C"/>
-    <counter id="cloud1" name="Облачность (завтра)" units="%"/>
-    <counter id="falls1" name="Осадки (завтра)" type="text"/>
-    <counter id="pressure1" name="Давление (завтра)" units="мм.рт.ст."/>
-    <counter id="humidity1" name="Влажность (завтра)" units="%"/>
-    <counter id="precipitation1" name="Толщина осадков (завтра)" units="мм"/>
-    <counter id="wind_dir1" name="Откуда ветер (завтра)" type="text"/>
-    <counter id="wind_vel1" name="Скорость ветра (завтра)" units="м/с"/>
-    <counter id="date1" name="Дата (завтра)" type="time" format="dd/MM/yyyy"/>
-    <counter id="temp2" name="Температура (послезавтра)" units="°C"/>
-    <counter id="cloud2" name="Облачность (послезавтра)" units="%"/>
-    <counter id="falls2" name="Осадки (послезавтра)" type="text"/>
-    <counter id="pressure2" name="Давление (послезавтра)" units="мм.рт.ст."/>
-    <counter id="humidity2" name="Влажность (послезавтра)" units="%"/>
-    <counter id="precipitation2" name="Толщина осадков (послезавтра)" units="мм"/>
-    <counter id="wind_dir2" name="Откуда ветер (послезавтра)" type="text"/>
-    <counter id="wind_vel2" name="Скорость ветра (послезавтра)" units="м/с"/>
-    <counter id="date2" name="Дата (послезавтра)" type="time" format="dd/MM/yyyy"/>
-    <counter id="point_name" name="Город" type="text"/>
-  </counters>
-  <keywords>
-    прогноз, погода, температура, воздух, rp5
-  </keywords>
-  <type>
-    weather
-  </type>
+	<id version="10">ab-weather-rp5</id>
+	<api flags="no_browser"/>
+	<name>Прогноз rp5.ru</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о прогнозе погоды на завтра и послезавтра.</p> <p>Информация берется с сайта http://rp5.ru.</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>В настройках требуется указать код города.</p>   
+	 <p>Как получить код города:</p> 
+	<ol>
+	<li>Зайдите на сайт http://rp5.ru.</li> 
+	<li>В строке поиска введите название нужного города и нажмите Enter или выберите нужный город в предложенном списке.</li>
+	<li>Кликните на ссылку RSS в правом верхнем углу сайта.</li> 
+	<li>Переместитесь в адресную строку браузера, которая содержит код нужного вам города.</li>
+	<br>
+	<small>Например, для Москвы в адресной строке будет http://rp5.ru/rss/42468/ru. Код города - это цифры между / и /ru, то есть 42468.</small>  
+	<br>
+	<br>
+	<li>Введите этот номер в настройках провайдера.</li>
+	</ol> 
+	<p>Оптимальный интервал обновления прогноза - 6 часов.</p>
+	]]></instruction>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<preferences>preferences.xml</preferences>
+		<icon>icon.png</icon>
+		<js>main.js</js>
+		<js>moment.min.js</js>
+		<js>moment.lang.ru.min.js</js>
+		<js>library.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="temp1" name="Температура (завтра)" units="°C"/>
+		<counter id="cloud1" name="Облачность (завтра)" units="%"/>
+		<counter id="falls1" name="Осадки (завтра)" type="text"/>
+		<counter id="pressure1" name="Давление (завтра)" units="мм.рт.ст."/>
+		<counter id="humidity1" name="Влажность (завтра)" units="%"/>
+		<counter id="precipitation1" name="Толщина осадков (завтра)" units="мм"/>
+		<counter id="wind_dir1" name="Откуда ветер (завтра)" type="text"/>
+		<counter id="wind_vel1" name="Скорость ветра (завтра)" units="м/с"/>
+		<counter id="date1" name="Дата (завтра)" type="time" format="dd/MM/yyyy"/>
+		<counter id="temp2" name="Температура (послезавтра)" units="°C"/>
+		<counter id="cloud2" name="Облачность (послезавтра)" units="%"/>
+		<counter id="falls2" name="Осадки (послезавтра)" type="text"/>
+		<counter id="pressure2" name="Давление (послезавтра)" units="мм.рт.ст."/>
+		<counter id="humidity2" name="Влажность (послезавтра)" units="%"/>
+		<counter id="precipitation2" name="Толщина осадков (послезавтра)" units="мм"/>
+		<counter id="wind_dir2" name="Откуда ветер (послезавтра)" type="text"/>
+		<counter id="wind_vel2" name="Скорость ветра (послезавтра)" units="м/с"/>
+		<counter id="date2" name="Дата (послезавтра)" type="time" format="dd/MM/yyyy"/>
+		<counter id="point_name" name="Город" type="text"/>
+	</counters>
+	<keywords>прогноз, погода, температура, воздух, rp5</keywords>
+	<type>weather</type>
 </provider>

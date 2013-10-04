@@ -1,40 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
-  <api flags="no_browser" />
-  <id version="3">ab-bonus-lukoil</id>
-  <name>Лукойл (Бонусы)</name>
-  <description>
-	Получает данные по картам Лукойл Ликард (http://my.licard.com/), а так же по картам Лояльности (http://club-lukoil.ru/cabinet/)
-	
-	Вы можете выбрать в настройках кабинет в котором Вы зарегистрированы, по умолчанию используется Лукойл-Клуб.
-  </description>
-  <author>Dmitry Reshetnikov (korleone) &lt;rdb@inbox.ru&gt;</author>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <author>Stark &lt;support@starksoft.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units=" р"/>
-    <counter id="last_payment" name="Последний платеж" units=" р"/>
-    <counter id="cardnum" name="Номер карты" type="text"/>
-    <counter id="name" name="Имя" type="text"/>
-    <counter id="region" name="Регион программы" type="text"/>
-    <counter id="status" name="Статус карты" type="text"/>
-    <counter id="phonenumber" name="Номер телефона" type="text"/>
-  </counters>
-  <keywords>
-    
-  </keywords>
-  <type>
-    bonus
-  </type>
-  <country>
-    ru
-  </country>
+	<api flags="no_browser" />
+	<id version="3">ab-bonus-lukoil</id>
+	<name>Лукойл (Бонусы)</name>
+	<description html="true"><![CDATA[
+	<p>Получает информацию по картам "Лукойл Ликард" (http://my.licard.com/), а также по картам Лояльности (http://club-lukoil.ru/cabinet/).</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Настройки:</p>
+	<ul>
+	<li>Выберите в настройках кабинет, в котором вы зарегистрированы.</li>
+	</ul>
+	<p><small>По умолчанию используется ""Ликард"".</small></p>
+	]]></instruction>
+	<author>Dmitry Reshetnikov (korleone) &lt;rdb@inbox.ru&gt;</author>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="last_payment" name="Последний платеж" units=" р"/>
+		<counter id="cardnum" name="Номер карты" type="text"/>
+		<counter id="name" name="Имя" type="text"/>
+		<counter id="region" name="Регион программы" type="text"/>
+		<counter id="status" name="Статус карты" type="text"/>
+		<counter id="phonenumber" name="Номер телефона" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>bonus</type>
+	<country>ru</country>
 </provider>

@@ -1,26 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-bonus-aeroflot</id>
-  <name>Аэрофлот Бонус</name>
-  <description>
-    Получает бонусные мили, квалификационные мили и уровень для программы Аэрофлот Бонус. Информация берется из личного кабинета http://aeroflotbonus.ru
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <history>history.xml</history>
-    <js>main.js</js>
-  </files>
-  <counters>
-    <counter id="balance" name="Мили"/>
-    <counter id="qmiles" name="Квалификационные мили"/>
-    <counter id="level" name="Уровень" type="text"/>
-  </counters>
-  <keywords>
-    aeroflot, miles
-  </keywords>
-  <type>
-    bonus
-  </type>
+	<id version="2">ab-bonus-aeroflot</id>
+	<name>Аэрофлот Бонус</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о бонусных милях, квалификационных милях и уровне клиента для пользователей программы ""Аэрофлот Бонус"".</p>
+	<p>Информация берется из личного кабинета (http://aeroflotbonus.ru).</p>
+	]]></description>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<history>history.xml</history>
+		<js>main.js</js>
+	</files>
+	<counters>
+		<counter id="balance" name="Мили"/>
+		<counter id="qmiles" name="Квалификационные мили"/>
+		<counter id="level" name="Уровень" type="text"/>
+	</counters>
+	<keywords>
+	aeroflot, miles
+	</keywords>
+	<type>
+	bonus
+	</type>
 </provider>

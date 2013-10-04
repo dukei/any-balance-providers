@@ -2,9 +2,9 @@
 <provider>
   <id version="2">ab-telephony-sipnet</id>
   <name>SIPNET</name>
-  <description>
-    Получает текущий баланс в Sipnet.
-  </description>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о текущем балансе в Sipnet.</p>
+	]]></description>
   <author>Vit@liy &lt;vitaliy@root.ua&gt;</author>
   <files>
     <icon>icon.png</icon>

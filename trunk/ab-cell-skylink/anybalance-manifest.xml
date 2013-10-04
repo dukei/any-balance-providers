@@ -1,38 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="14" major_version="3.0">ab-cell-skylink</id>
-  <name>Skylink</name>
-  <description>
-    Получает баланс для оператора сотовой связи Skylink, используя личные кабинеты (свои в каждом регионе).
-
-    Поддерживается:
-      - Москва (https://www.skypoint.ru): Баланс, ФИО, Лицевой счет, Начисления по договору за период
-      - Алтайский край, Владимир, Волгоград, Воронеж, Екатеринбург, Калуга, Кемерово, Киров, Нижний новгород, Новосибирск, Омск, Ростов, Ульяновск (https://www2.skypoint.ru): Баланс, Трафик (автор Robert Khaliullov &lt;ulrobix@gmail.com&gt;)
-      - Краснодарский край и республика Адыгея (http://stat.kuban.skypoint.ru): Баланс, Трафик, Льготный трафик, ФИО
-      - Вологда, Калининград, Карелия, Мурманск, Новгород Великий, Псков, Санкт-Петербург (https://app.spb.skylink.ru:7772/internetBalance): Баланс, Трафик в день, ФИО, Лицевой счет, Статус, Начисления по договору за период
-      - Рязань (https://skylink.ryazan.ru/balance): Баланс, Трафик. Вместо пароля необходимо указывать номер договора
-
-    Для добавления других регионов или доработки существующих пишите авторам на почту.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="traffic" name="Трафик за месяц" units="mb" />
-    <counter id="trafficDay" name="Трафик в день" units="mb" />
-    <counter id="trafficPack" name="Льготный трафик" units="mb" />
-    <counter id="min_left" name="Остаток минут" units=" мин" />
-    <counter id="userName" name="ФИО" type="text"/>
-    <counter id="userNum" name="Лицевой счет" type="text"/>
-    <counter id="status" name="Статус" type="text"/>
-    <counter id="charged" name="Начисления по договору за период" units="р"/>
-  </counters>
+	<id version="14" major_version="3.0">ab-cell-skylink</id>
+	<name>Skylink</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе для пользователей оператора сотовой связи Skylink.</p>
+	<p>Информация берется из личных кабинетов (разных для каждого региона).</p>   
+	<br>
+	<p>Поддерживаются регионы:</p>
+	<p>Москва (http://www.skypoint.ru) - баланс, ФИО, лицевой счет, начисления по договору за период;</p>  
+	<p>Алтайский край, Владимир, Волгоград, Воронеж, Екатеринбург, Калуга, Кемерово, Киров, Нижний Новгород, Новосибирск, Омск, Ростов, Ульяновск (http://www2.skypoint.ru) - баланс, трафик (автор Robert Khaliullov <ulrobix@gmail.com>);</p> 
+	<p>Краснодарский край и республика Адыгея (http://stat.kuban.skypoint.ru) - баланс, трафик, льготный трафик, ФИО;</p>
+	<p>Вологда, Калининград, Карелия, Мурманск, Новгород Великий, Псков, Санкт-Петербург (http://app.spb.skylink.ru:7772/internetBalance) - баланс, дневной трафик, ФИО, лицевой счет, статус, начисления по договору за период;</p> 
+	<p>Рязань (http://skylink.ryazan.ru/balance) - баланс, трафик.</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p><b>Особенности:</b></p>
+	<ul>
+	<li>Вместо пароля необходимо указывать номер договора</li>   
+	<li>Для добавления других регионов или доработки существующих, обратитесь, пожалуйста, к автору по e-mail.</li>
+	</ul>
+	]]></instruction>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units="р"/>
+		<counter id="traffic" name="Трафик за месяц" units="mb" />
+		<counter id="trafficDay" name="Трафик в день" units="mb" />
+		<counter id="trafficPack" name="Льготный трафик" units="mb" />
+		<counter id="min_left" name="Остаток минут" units=" мин" />
+		<counter id="userName" name="ФИО" type="text"/>
+		<counter id="userNum" name="Лицевой счет" type="text"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="charged" name="Начисления по договору за период" units="р"/>
+	</counters>
   <keywords>
     скайлинк, мобильный
   </keywords>

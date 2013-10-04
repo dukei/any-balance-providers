@@ -2,9 +2,9 @@
 <provider>
 	<id version="14">ab-game-wot</id>
 	<name>World of Tanks</name>
-	<description>
-		Показывает ник и клан-тэг, общее количество боев и побед, рейтинги эффективности в игре World of Tanks, а также информацию о количестве боев и побед на выбранном танке
-	</description>
+	<description html="true"><![CDATA[
+	<p>Показывает ник и клан-тэг, общее количество боев и побед, рейтинги эффективности в игре World of Tanks, а также информацию о количестве боев и побед на выбранном танке.</p>
+	]]></description>
 	<author>Vitaliy Poluphanov &lt;vitaliy@root.ua&gt;</author>
 	<files>
 		<icon>icon.png</icon>

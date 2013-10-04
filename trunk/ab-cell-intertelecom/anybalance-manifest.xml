@@ -4,12 +4,17 @@
   <!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
   <api flags="no_browser" />
   <name>Интертелеком</name>
-  <description>
-    Мониторинг баланса мобильного оператора Интертелекома, первого национального CDMA оператора Украины (http://www.intertelecom.ua). Получает данные из системы самообслуживания https://assa.intertelecom.ua.
-
-    Для получения пароля к системе самообслуживания необходимо зарегистрироваться на странице https://assa.intertelecom.ua/ru/reg.
-    Для получения утерянного пароля, зайдите в раздел восстановления пароля: https://assa.intertelecom.ua/ru/recovery.
-  </description>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе для пользователей мобильного оператора "Интертелеком", первого национального CDMA оператора Украины (http://www.intertelecom.ua).</p> 
+	<p>Информация берется из cистемы самообслуживания (http://assa.intertelecom.ua).</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Настройки:</p>
+	<ul>
+	<li>Для получения пароля к системе самообслуживания необходимо зарегистрироваться на странице http://assa.intertelecom.ua/ru/reg;</li> 
+	<li>Для получения утерянного пароля зайдите в раздел восстановления пароля http://assa.intertelecom.ua/ru/recovery.</li>
+	</ul>   
+	]]></instruction>
   <author>Ignatiy Goloviznin &lt;igoloviznin@gmail.com&gt;</author>
   <files>
     <icon>icon.png</icon>

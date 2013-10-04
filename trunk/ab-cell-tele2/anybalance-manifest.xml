@@ -1,34 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="10">ab-cell-tele2</id>
-  <name>Tele2</name>
-  <description>
-    Получает баланс, количество использованных в текущем месяце SMS, минут и трафика, владельца и тарифный план.
-    Этот провайдер будет работать у вас, если у вас работает сайт https://my.tele2.ru.
-
-    Если у вас ещё нет пароля в личный кабинет, получите его на сайте https://my.tele2.ru.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="min_used" name="Минут за текущий месяц" units="мин"/>
-    <counter id="sms_used" name="SMS за текущий месяц" units="sms"/>
-    <counter id="traffic_used" name="Трафик за текущий месяц" units="Мб"/>
-    <counter id="userName" name="Владелец" type="text"/>
-  </counters>
-  <keywords>
-    Сотовый телефон, мобильный, мобильник, теле2, россия
-  </keywords>
-  <type>
-    cell
-  </type>
-  <country>
-    ru
-  </country>
+	<id version="10">ab-cell-tele2</id>
+	<name>Tele2</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет  информацию о балансе, тарифном плане, количестве использованных в текущем месяце SMS, минут и трафика для пользователей оператора сотовой связи Tele2.</p>  
+	<p>Этот провайдер будет работать, если у вас работает сайт http://my.tele2.ru.</p>
+	]]></description>
+	  <instruction html="true"><![CDATA[
+	<p>Как получить пароль к личному кабинету:</p>
+	<ul>
+	<li>Если у вас ещё нет пароля в личный кабинет, получите его на сайте http://my.tele2.ru.</li>
+	</ul>
+	]]></instruction>	
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units="р"/>
+		<counter id="min_used" name="Минут за текущий месяц" units="мин"/>
+		<counter id="sms_used" name="SMS за текущий месяц" units="sms"/>
+		<counter id="traffic_used" name="Трафик за текущий месяц" units="Мб"/>
+		<counter id="userName" name="Владелец" type="text"/>
+	</counters>
+	<keywords>Сотовый телефон, мобильный, мобильник, теле2, россия</keywords>
+	<type>cell</type>
+	<country>ru</country>
 </provider>

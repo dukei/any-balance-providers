@@ -2,11 +2,10 @@
 <provider>
   <id version="4">ab-shop-exist</id>
   <name>Exist.ru</name>
-  <description>
-    Получает баланс и другую информацию для магазина автозапчастей http://exist.ru.
-
-    Информация берется из личного кабинета.
-  </description>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе и другие данные для клиентов магазина автозапчастей http://exist.ru.</p> 
+	<p>Информация берется из личного кабинета.</p>   
+	]]></description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <files>
     <icon>icon.png</icon>

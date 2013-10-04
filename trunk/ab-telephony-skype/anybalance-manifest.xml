@@ -3,9 +3,9 @@
 	<id major_version="2" version="16">ab-telephony-skype</id>
 	<api flags="no_browser" />
 	<name>Skype</name>
-	<description>
-Получает текущий баланс, валюту баланса в Skype (https://skype.com).
-	</description>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о текущем балансе, валюте баланса в Skype (http://skype.com).</p>
+	]]></description>
 	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>

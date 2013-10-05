@@ -34,9 +34,16 @@ function main() {
 	
     var result = {success: true};
 	getParam(html, result, 'current_temp', /<yweather:condition[^>]*temp="([^"]*)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'current_pressure', /<yweather:atmosphere [^>]*pressure="([^"]*)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'current_text', /<yweather:condition[^>]*text="([^"]*)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'current_pressure', /<yweather:atmosphere[^>]*pressure="([^"]*)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'current_humidity', /<yweather:atmosphere[^>]*humidity="([^"]*)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'sunrise', /<yweather:astronomy[^>]*sunrise="([^"]*)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'sunset', /<yweather:astronomy[^>]*sunset="([^"]*)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'wind', /<yweather:wind[^>]*speed="([^"]*)/i, replaceTagsAndSpaces, parseBalance);
+
 	result.degrees_units = prefs.Degree_units == 'c' ? 'C°' : 'F°';
-	result.pressure_units = getParam(html, null, null, /<yweather:units [^>]*pressure="([^"]*)/i); 
+	result.pressure_units = getParam(html, null, null, /<yweather:units[^>]*pressure="([^"]*)/i); 
+	result.wind_units = getParam(html, null, null, /<yweather:units[^>]*speed="([^"]*)/i); 
 	result.__tariff = getParam(html, null, null, /<yweather:location[^>]*city="([^"]*)/i) + ', ' + getParam(html, null, null, /<yweather:location[^>]*country="([^"]*)/i)
 	
     AnyBalance.setResult(result);

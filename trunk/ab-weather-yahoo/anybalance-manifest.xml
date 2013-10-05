@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-weather-yahoo</id>
+	<id version="2">ab-weather-yahoo</id>
 	<api flags="no_browser"/>
 	<name>Yahoo! Weather</name>
 	<description html="true"><![CDATA[
@@ -17,6 +17,11 @@
 	<counters>
 		<counter id="current_temp" name="Сurrent temperature" units="{@degrees_units}"/>
 		<counter id="current_pressure" name="Сurrent pressure" units="{@pressure_units}"/>
+		<counter id="current_humidity" name="Сurrent humidity" units="%"/>
+		<counter id="current_text" name="Сurrent condition" type="text"/>
+		<counter id="sunrise" name="Sunrise" type="text"/>
+		<counter id="sunset" name="Sunset" type="text"/>
+		<counter id="wind" name="Wind speed" units="{@wind_units}"/>
 	</counters>
 	<keywords></keywords>
 	<type>weather</type>

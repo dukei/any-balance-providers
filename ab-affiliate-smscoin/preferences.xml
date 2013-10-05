@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="ID" 
+        positiveButtonText="ОК" 
+        summary="ID вашего аккаунта||{@s}\n" 
+        dialogTitle="Введите ID" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите ID, который отображается в вашем профиле"
+        key="id"
+        inputType="number">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="hash" 
+        dialogTitle="Введите хэш доступа"
+        negativeButtonText="Отмена"
+        title="Хэш доступа"
+        summary="Хэш доступа к статистике||***********\n"
+        dialogMessage="Введите хэш доступа, который отображается в вашем профиле"
+        inputType="text">
+    </EditTextPreference>
+</PreferenceScreen>

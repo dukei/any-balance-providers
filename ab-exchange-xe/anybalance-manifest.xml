@@ -4,7 +4,7 @@
 	<api flags="no_browser"/>
 	<name>XE Live Exchange Rates</name>
 	<description html="true"><![CDATA[
-	<p>Shows XE Live Exchange Rates from <a href="http://www.xe.com/">http://www.xe.com/</a></p>
+	<p>Shows XE Live Exchange Rates from http://www.xe.com/</a></p>
 	]]></description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>

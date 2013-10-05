@@ -29,30 +29,40 @@ function main(){
         login:prefs.login
     }, g_headers);
     AnyBalance.trace(html);*/
-     
-    html = AnyBalance.requestPost("https://login.vk.com", {
-        act:'login',
-        to:getParam(html, null, null, /<input[^>]+name="to"[^>]*value="([^"]*)/i, null, html_entity_decode),
-        _origin:baseurl, 
-        ip_h:getParam(html, null, null, /<input[^>]+name="ip_h"[^>]*value="([^"]*)/i, null, html_entity_decode),
-        email:prefs.login,
-        pass:prefs.password,
-        expire:''
-    }, g_headers);
-//    AnyBalance.trace(html);
-   
+    if(!prefs.dbg) {
+		html = AnyBalance.requestPost("https://login.vk.com", {
+			act:'login',
+			to:getParam(html, null, null, /<input[^>]+name="to"[^>]*value="([^"]*)/i, null, html_entity_decode),
+			_origin:baseurl, 
+			ip_h:getParam(html, null, null, /<input[^>]+name="ip_h"[^>]*value="([^"]*)/i, null, html_entity_decode),
+			email:prefs.login,
+			pass:prefs.password,
+			expire:''
+		}, g_headers);
+	}
+	else
+		html = AnyBalance.requestGet(baseurl + '/settings?act=balance', g_headers);
+	
     if(!/\?act=logout/.test(html)){
         var error = getParam(html, null, null, /<div[^>]+id="message"[^>]*>([\s\S]*?)(?:<\/div>|<\/ul>)/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error);
         throw new AnyBalance.Error('Не удалось зайти. Сайт изменен?');
     }
-
     var result = {success: true};
-
     getParam(html, result, 'balance', /<b[^>]+id="balance_str"[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseBalance);
-    result.__tariff = prefs.login;
+	
+	if(isAvailable(['messages', 'new_friends', 'vk_name'])) {
+		var href = getParam(html, null, null, /<a[^>]*href="([^"]*)[^>]*>[^>]*>\s*Моя Страница/i);
+		html = AnyBalance.requestGet(baseurl + href, g_headers);
+		getParam(html, result, 'messages', /<li[^>]*id="l_msg"(?:[^>]*>){5}([\s\S]*?)<\/span>(?:[^>]*>){3}\s*Мои\s*Сообщения\s*<\/span>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'new_friends', /<li[^>]*id="l_fr"(?:[^>]*>){5}([\s\S]*?)<\/span>(?:[^>]*>){3}\s*Мои\s*Друзья\s*<\/span>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'vk_name', /<title>([\s\S]*?)<\/title>/i, replaceTagsAndSpaces, html_entity_decode);
+	}
+	if(result.vk_name)
+		result.__tariff = result.vk_name;
     
     AnyBalance.setResult(result);
 }
+
 

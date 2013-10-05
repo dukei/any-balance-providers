@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change major_version="1.2" version="36" date="2013-10-05">
+      Поддержка автоматического входа через мобильный интернет в сети Киевстар.
+    </change>
     <change major_version="1.2" version="35" date="2013-10-02">
       Диагностическая информация
     </change>
-<change major_version="1.2" version="34" date="2013-09-26">
-- Исправлен счетчик Домашний Интернет, срок действия (Stark)
-</change>
+    <change major_version="1.2" version="34" date="2013-09-26">
+    - Исправлен счетчик Домашний Интернет, срок действия (Stark)
+    </change>
     <change major_version="1.2" version="33" date="2013-09-20">
       Исправлено отображение ошибок входа
     </change>

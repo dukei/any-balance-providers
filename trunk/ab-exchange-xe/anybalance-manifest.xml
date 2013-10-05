@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-exchange-xe</id>
+	<api flags="no_browser"/>
+	<name>XE Live Exchange Rates</name>
+	<description html="true"><![CDATA[
+	<p>Shows XE Live Exchange Rates from <a href="http://www.xe.com/">http://www.xe.com/</a></p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="EURUSD" name="EUR to USD" units="USD"/>
+		<counter id="GBPUSD" name="GBP to USD" units="USD"/>
+		<counter id="INRUSD" name="INR to USD" units="USD"/>
+		<counter id="AUDUSD" name="AUD to USD" units="USD"/>
+		<counter id="CADUSD" name="CAD to USD" units="USD"/>
+		<counter id="ZARUSD" name="ZAR to USD" units="USD"/>
+		<counter id="NZDUSD" name="NZD to USD" units="USD"/>
+		<counter id="JPYUSD" name="JPY to USD" units="USD"/>
+		<counter id="USDEUR" name="USD to EUR" units="EUR"/>
+		<counter id="GBPEUR" name="GBP to EUR" units="EUR"/>
+		<counter id="INREUR" name="INR to EUR" units="EUR"/>
+		<counter id="AUDEUR" name="AUD to EUR" units="EUR"/>
+		<counter id="CADEUR" name="CAD to EUR" units="EUR"/>
+		<counter id="ZAREUR" name="ZAR to EUR" units="EUR"/>
+		<counter id="NZDEUR" name="NZD to EUR" units="EUR"/>
+		<counter id="JPYEUR" name="JPY to EUR" units="EUR"/>
+		<counter id="USDGBP" name="USD to GBP" units="GBP"/>
+		<counter id="EURGBP" name="EUR to GBP" units="GBP"/>
+		<counter id="INRGBP" name="INR to GBP" units="GBP"/>
+		<counter id="AUDGBP" name="AUD to GBP" units="GBP"/>
+		<counter id="CADGBP" name="CAD to GBP" units="GBP"/>
+		<counter id="ZARGBP" name="ZAR to GBP" units="GBP"/>
+		<counter id="NZDGBP" name="NZD to GBP" units="GBP"/>
+		<counter id="JPYGBP" name="JPY to GBP" units="GBP"/>
+	</counters>
+	<keywords></keywords>
+	<type>exchange</type>
+	<country></country>
+</provider>

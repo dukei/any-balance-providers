@@ -5,12 +5,12 @@
 Сайт оператора: http://www.kyivstar.ua/
 Личный кабинет: https://my.kyivstar.ua/
 */
-
+//------------------------------------------------------------------------------
 function parseMinutes(str){
   var val = getParam(str.replace(/\s+/g, ''), null, null, /(-?\d[\d.,]*)/, replaceFloat, parseFloat);
   if(typeof(val) != 'undefined'){
-     val *= 60; //Переводим в секунды
-     AnyBalance.trace('Parsed ' + val + ' seconds from value: ' + str);
+    val *= 60; //Переводим в секунды
+    AnyBalance.trace('Parsed ' + val + ' seconds from value: ' + str);
   }
   return val; 
 }
@@ -26,36 +26,52 @@ function main(){
     'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Intel Mac OS X 10.6; rv:7.0.1) Gecko/20100101 Firefox/7.0.1',
     Connection: 'keep-alive'
   };
-
-  AnyBalance.trace('Connecting to ' + baseurl);
-
-  var html = AnyBalance.requestGet(baseurl + 'tbmb/login/show.do', headers);
-  var form = getParam(html, null, null, /<form[^>]+action="[^"]*perform.do"[^>]*>([\s\S]*?)<\/form>/i);
- 
-  if(!form){
-      AnyBalance.trace(html);
-      throw new AnyBalance.Error("Не удаётся найти форму входа. Проблемы или изменения на сайте?");
-  }
-
-  var params = createFormParams(form);
-  params.user = prefs.login;
-  params.password = prefs.password;
-  var html = AnyBalance.requestPost(baseurl + "tbmb/login/perform.do", params, headers);
   
-  if(!/\/tbmb\/logout\/perform/i.test(html)){
+  AnyBalance.trace('Соединение с ' + baseurl);
+  var html = AnyBalance.requestGet(baseurl + 'tbmb/login/show.do', headers);
+  AnyBalance.trace('Успешное соединение.');
+  
+  if(/\/tbmb\/logout\/perform/i.test(html)){
+    AnyBalance.trace('Уже в системе.');
+    if(!~html.indexOf(prefs.login)){
+      AnyBalance.trace('Не тот аккаунт, выход.');
+      var html = AnyBalance.requestGet(baseurl + 'tbmb/logout/perform.do', headers);
+      AnyBalance.trace('Переход на страницу входа.');
+      var html = AnyBalance.requestGet(baseurl + 'tbmb/login/show.do', headers);
+    }
+  }
+  
+  // Login
+  var form = getParam(html, null, null, /<form[^>]+action="[^"]*perform.do"[^>]*>([\s\S]*?)<\/form>/i);
+  if(form){
+    AnyBalance.trace('Вход в систему.');
+    var params = createFormParams(form);
+    params.user = prefs.login;
+    params.password = prefs.password;
+    var html = AnyBalance.requestPost(baseurl + "tbmb/login/perform.do", params, headers);
+    if(!/\/tbmb\/logout\/perform/i.test(html)){
       var matches = html.match(/<td class="redError"[^>]*>([\s\S]*?)<\/td>/i);
       if(matches){
-          throw new AnyBalance.Error(matches[1]);
+        throw new AnyBalance.Error(matches[1]);
       }
-      throw new AnyBalance.Error("Не удалось зайти в личный кабинет. Сайт изменен?");
-  }
-
-  if(!/\/tbmb\/payment\/activity\//i.test(html)){
-      //Не нашли ссылку на платежи. Очень вероятно, что это корпоративный аккаунт
-      throw new AnyBalance.Error("Похоже, у вас корпоративный личный кабинет. Пожалуйста, воспользуйтесь провайдером Киевстар для корпоративных тарифов");
+      throw new AnyBalance.Error("Не удалось зайти в систему. Сайт изменен?");
+    }
+    if(!~html.indexOf(prefs.login)){
+      throw new AnyBalance.Error("Ошибка входа в систему.");
+    }
   }
   
-  AnyBalance.trace('Successfully connected');
+  /**
+    AnyBalance.trace(html);
+    throw new AnyBalance.Error("Не удаётся найти форму входа. Проблемы или изменения на сайте?");
+  */
+  
+  if(!/\/tbmb\/payment\/activity\//i.test(html)){
+    //Не нашли ссылку на платежи. Очень вероятно, что это корпоративный аккаунт
+    throw new AnyBalance.Error("Похоже, у вас корпоративный аккаунт. Пожалуйста, воспользуйтесь провайдером Киевстар для корпоративных тарифов");
+  }
+  
+  AnyBalance.trace('Успешный вход.');
   
   var result = {success: true};
   var str_tmp;
@@ -72,20 +88,20 @@ function main(){
   sumParam(html, result, 'bonus_mins_1', /(?:Єдина абонентська група:|Единая абонентская группа:)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
   sumParam(html, result, 'bonus_mins_1', /(?:Залишок хвилин для дзвінків на Ки.встар:|Остаток минут для звонков на Ки.встар:)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
   sumParam(html, result, 'bonus_mins_1', /(?:Залишок хвилин для дзвінків абонентам Ки.встар та Beeline:|Остаток минут для звонков абонентам Ки.встар и Beeline:)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
-
+  
   //Бонусные минуты (2)
   sumParam(html, result, 'bonus_mins_2', /(?:Залишок хвилин для дзвінків абонентам Ки.встар та DJUICE:|Остаток минут для звонков абонентам Ки.встар и DJUICE:)[\s\S]*?<b>([^<]*)/ig, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
   sumParam(html, result, 'bonus_mins_2', /(?:Залишок Хвилини на КС 500 хв:|Остаток Минуты на КС 500 мин:)[\s\S]*?<b>([^<]*)/ig, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
   sumParam(html, result, 'bonus_mins_2', /(?:Залишок тарифних хвилин для дзвінків в межах України:|Остаток тарифних минут для звонков в пределах Украин[иы]\s*:)[\s\S]*?<b>([^<]*)/ig, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
   sumParam(html, result, 'bonus_mins_2', /(?:Залишок хвилин для дзвінків в межах України:|Остаток минут для звонков в пределах Украини :)[\s\S]*?<b>([^<]*)/ig, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
   sumParam(html, result, 'bonus_mins_2', /(?:Залишок хвилин для дзвінків по Україні:|Остаток минут для звонков по Украине:)[\s\S]*?<b>([^<]*)/ig, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
-
+  
   //Тарифные минуты:
   sumParam(html, result, 'mins_tariff', /(?:Тарифні хвилини:|Тарифные минуты:)[\s\S]*?<b>([^<]*)/ig, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
   
   //Доплата за входящие:
   sumParam(html, result, 'inc_pay', /(?:Доплата за входящие звонки:|Доплата за входящие звонки:)[\s\S]*?<b>([^<]*)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-
+  
   //MMS
   sumParam(html, result, 'mms', />(?:Бонусні MMS:|Бонусные MMS:)[\s\S]*?<b>(.*?)</, replaceTagsAndSpaces, parseBalance, aggregate_sum);
   sumParam(html, result, 'mms', />MMS:[\s\S]*?<b>(.*?)</, replaceTagsAndSpaces, parseBalance, aggregate_sum);
@@ -100,7 +116,7 @@ function main(){
   sumParam(html, result, 'bonus_money', /(?:Бонусні кошти:|Бонусные средства:)[\s\S]*?<b>(.*?)</ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
   sumParam(html, result, 'bonus_money', /(?:Бонуси за умовами тарифного плану "Єдина ціна":|Бонусы по условиям тарифного плана "Единая цена":)[\s\S]*?<b>(.*?)</ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
   sumParam(html, result, 'bonus_money', /(?:Кошти по послузі "Екстра кошти"|Средства по услуге "Экстра деньги"):[\s\S]*?<b>(.*?)</ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-
+  
   sumParam(html, result, 'bonus_money_till', /(?:Бонусні кошти:|Бонусные средства:)(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
   sumParam(html, result, 'bonus_money_till', /(?:Бонуси за умовами тарифного плану "Єдина ціна":|Бонусы по условиям тарифного плана "Единая цена":)(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
   sumParam(html, result, 'bonus_money_till', /(?:Кошти по послузі "Екстра кошти"|Средства по услуге "Экстра деньги"):(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
@@ -119,21 +135,17 @@ function main(){
   sumParam(html, result, 'internet', /(?:Остаток Мб для пользования услугой Интернет GPRS\s*:|Залишок Мб для користування послугою Інтернет GPRS\s*:)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
   sumParam(html, result, 'internet', /(?:Мб для Мобильного Интернета|Мб для Мобільного Інтернету)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
   
-  
-  
   //Домашний Интернет
   sumParam(html, result, 'home_internet', /(?:Від послуги "Домашній Інтернет"|От услуги "Домашний Интернет"|Бонусні кошти послуги "Домашній Інтернет"|Бонусные средства услуги "Домашний Интернет"):[\s\S]*?<b>(.*?)</ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
   getParam(html, result, 'home_internet_date', /(?:Від послуги "Домашній Інтернет"|От услуги "Домашний Интернет"|Бонусні кошти послуги "Домашній Інтернет"|Бонусные средства услуги "Домашний Интернет"):(?:[^>]*>){8}\s*<nobr>([^<]*)/i, replaceTagsAndSpaces, parseDate);
-	
   
   //Порог отключения
   sumParam(html, result, 'limit', /(?:Поріг відключення:|Порог отключения:)[\s\S]*?<b>([^<]*)/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
   
   //Срок действия номера
   sumParam(html, result, 'till', /(?:Номер діє до:|Номер действует до:)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate, aggregate_sum);
-
   getParam(html, result, 'phone', /(?:Номер|Номер):[\s\S]*?<td[^>]*>([\s\S]*?)(?:\(|<\/td>)/i, replaceTagsAndSpaces, html_entity_decode);
-
+  
   //Срок действия услуги Комфортный переход
   if(AnyBalance.isAvailable('comfort_till')){
     html = AnyBalance.requestGet(baseurl + "tbmb/tsm/overview.do", headers);
@@ -142,7 +154,7 @@ function main(){
       sumParam(html, result, 'comfort_till', /(?:Послуга буде автоматично відключена&nbsp;|Услуга будет автоматически отключена&nbsp;)([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
     }
   }
-
+  
   //Пакет SMS
   if(AnyBalance.isAvailable('sms_packet', 'sms_packet_till', 'sms_packet_left')){
     html = AnyBalance.requestGet(baseurl + "tbmb/tsm/overview.do", headers);
@@ -153,6 +165,7 @@ function main(){
       sumParam(html, result, 'sms_packet_left', /<nobr>(?:Остаток:|Залишок:) <strong> ([\s\S]*?)sms/ig, replaceTagsAndSpaces, parseInt, aggregate_sum);
     }
   }
-
+  
   AnyBalance.setResult(result);
 }
+

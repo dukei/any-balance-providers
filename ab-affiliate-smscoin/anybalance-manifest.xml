@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-    <id version="1">ab-affiliate-plus1-wapstart</id>
-    <name>Plus1 WapStart</name>
+    <id version="1">ab-affiliate-smscoin</id>
+    <name>smscoin</name>
     <description>Статистика SMS-биллинга smscoin.com</description>
     <author>BArtWell &lt;web@bartwell.ru&gt;</author>
     <files>

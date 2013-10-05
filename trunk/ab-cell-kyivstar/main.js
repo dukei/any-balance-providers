@@ -56,15 +56,16 @@ function main(){
       }
       throw new AnyBalance.Error("Не удалось зайти в систему. Сайт изменен?");
     }
-    if(!~html.indexOf(prefs.login)){
-      throw new AnyBalance.Error("Ошибка входа в систему.");
-    }
   }
   
   /**
     AnyBalance.trace(html);
     throw new AnyBalance.Error("Не удаётся найти форму входа. Проблемы или изменения на сайте?");
   */
+  
+    if(!~html.indexOf(prefs.login)){
+      throw new AnyBalance.Error("Ошибка. Информация о номере не найдена.");
+    }
   
   if(!/\/tbmb\/payment\/activity\//i.test(html)){
     //Не нашли ссылку на платежи. Очень вероятно, что это корпоративный аккаунт

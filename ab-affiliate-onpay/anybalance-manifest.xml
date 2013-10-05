@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+    <id version="1">ab-affiliate-onpay</id>
+    <name>OnPay</name>
+    <description>Баланс на OnPay</description>
+    <author>BArtWell &lt;web@bartwell.ru&gt;</author>
+    <files>
+		<icon>icon.png</icon>
+        <preferences>preferences.xml</preferences>
+        <js>main.js</js>
+    </files>
+    <counters>
+
+        <counter id="EUR_delayed" name="EUR - поступило"/>
+        <counter id="EUR_balance" name="EUR - доступно"/>
+
+		<counter id="LIE_delayed" name="LIE - поступило"/>
+        <counter id="LIE_balance" name="LIE - доступно"/>
+
+		<counter id="LIQ_delayed" name="LIQ - поступило"/>
+        <counter id="LIQ_balance" name="LIQ - доступно"/>
+
+		<counter id="LIU_delayed" name="LIU - поступило"/>
+        <counter id="LIU_balance" name="LIU - доступно"/>
+
+		<counter id="LIZ_delayed" name="LIZ - поступило"/>
+        <counter id="LIZ_balance" name="LIZ - доступно"/>
+
+		<counter id="LRU_delayed" name="LRU - поступило"/>
+        <counter id="LRU_balance" name="LRU - доступно"/>
+
+		<counter id="MBR_delayed" name="MBR - поступило"/>
+        <counter id="MBR_balance" name="MBR - доступно"/>
+
+		<counter id="MCZ_delayed" name="MCZ - поступило"/>
+        <counter id="MCZ_balance" name="MCZ - доступно"/>
+
+		<counter id="MMR_delayed" name="MMR - поступило"/>
+        <counter id="MMR_balance" name="MMR - доступно"/>
+
+		<counter id="QWI_delayed" name="QWI - поступило"/>
+        <counter id="QWI_balance" name="QWI - доступно"/>
+
+		<counter id="RUR_delayed" name="RUR - поступило"/>
+        <counter id="RUR_balance" name="RUR - доступно"/>
+
+		<counter id="USD_delayed" name="USD - поступило"/>
+        <counter id="USD_balance" name="USD - доступно"/>
+
+		<counter id="VCU_delayed" name="VCU - поступило"/>
+        <counter id="VCU_balance" name="VCU - доступно"/>
+
+		<counter id="VCZ_delayed" name="VCZ - поступило"/>
+        <counter id="VCZ_balance" name="VCZ - доступно"/>
+
+		<counter id="WMB_delayed" name="WMB - поступило"/>
+        <counter id="WMB_balance" name="WMB - доступно"/>
+
+		<counter id="WME_delayed" name="WME - поступило"/>
+        <counter id="WME_balance" name="WME - доступно"/>
+
+		<counter id="WMR_delayed" name="WMR - поступило"/>
+        <counter id="WMR_balance" name="WMR - доступно"/>
+
+		<counter id="WMU_delayed" name="WMU - поступило"/>
+        <counter id="WMU_balance" name="WMU - доступно"/>
+
+		<counter id="WMZ_delayed" name="WMZ - поступило"/>
+        <counter id="WMZ_balance" name="WMZ - доступно"/>
+
+		<counter id="YDM_delayed" name="YDM - поступило"/>
+        <counter id="YDM_balance" name="YDM - доступно"/>
+
+    </counters>
+    <keywords>
+        Баланс, onpay, заработок
+    </keywords>
+    <type>
+        affiliate
+    </type>
+</provider>

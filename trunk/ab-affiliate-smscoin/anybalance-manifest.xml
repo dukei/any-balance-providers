@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+    <id version="1">ab-affiliate-plus1-wapstart</id>
+    <name>Plus1 WapStart</name>
+    <description>Статистика SMS-биллинга smscoin.com</description>
+    <author>BArtWell &lt;web@bartwell.ru&gt;</author>
+    <files>
+	<icon>icon.png</icon>
+        <preferences>preferences.xml</preferences>
+        <js>main.js</js>
+    </files>
+    <counters>
+        <counter id="month_count" name="Месяц, количество" units="р"/>
+        <counter id="month_amount" name="Месяц, сумма" units="р"/>
+        <counter id="month_profit" name="Месяц, заработок" units="р"/>
+        <counter id="yesterday_count" name="Вчера, количество" units="р"/>
+        <counter id="yesterday_amount" name="Вчера, сумма" units="р"/>
+        <counter id="yesterday_profit" name="Вчера, заработок" units="р"/>
+        <counter id="today_count" name="Сегодня, количество" units="р"/>
+        <counter id="today_amount" name="Сегодня, сумма" units="р"/>
+        <counter id="today_profit" name="Сегодня, заработок" units="р"/>
+    </counters>
+    <keywords>
+        SMS-биллинг, smscoin, заработок
+    </keywords>
+    <type>
+        affiliate
+    </type>
+</provider>

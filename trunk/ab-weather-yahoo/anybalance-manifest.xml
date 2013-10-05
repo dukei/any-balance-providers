@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-weather-yahoo</id>
+	<api flags="no_browser"/>
+	<name>Yahoo! Weather</name>
+	<description html="true"><![CDATA[
+	<p>Shows current weather in entered city. Information obtains from <a href="http:/weather.yahoo.com">http://weather.yahoo.com/</a></p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="current_temp" name="Сurrent temperature" units="{@degrees_units}"/>
+		<counter id="current_pressure" name="Сurrent pressure" units="{@pressure_units}"/>
+	</counters>
+	<keywords></keywords>
+	<type>weather</type>
+	<country></country>
+</provider>

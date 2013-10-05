@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="City" 
+		key="city"
+        summary="||{@s}" 
+        obligatory="true"
+		dialogTitle="City" 
+		positiveButtonText="OK" 
+        negativeButtonText="Cancel" 
+        dialogMessage="Enter city or zip code">
+    </EditTextPreference>
+    <ListPreference 
+        key="Degree_units" 
+        title="Degree units"
+        summary="||{@s}\n"
+        entries="Fahrenheit|Celsius"
+        entryValues="f|c"
+		defaultValue="f">
+    </ListPreference>
+</PreferenceScreen>

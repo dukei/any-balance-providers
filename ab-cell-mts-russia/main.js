@@ -1,11 +1,5 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Текущий баланс у сотового оператора МТС (центр). Вход через PDA-версию.
-Вдохновение почерпано у http://mtsoft.ru
-
-Сайт оператора: http://mts.ru/
-Личный кабинет: https://ip.mts.ru/SELFCAREPDA/
 */
 var regions = {
 	auto: "https://ip.mts.ru/SELFCAREPDA/",
@@ -19,8 +13,8 @@ var regions = {
 };
 
 var region_aliases = {
-        eao: 'primorye',
-        dv: 'primorye'
+	eao: 'primorye',
+	dv: 'primorye'
 };
 
 var regionsOrdinary = {
@@ -568,9 +562,8 @@ function mainLK(allowRetry){
     AnyBalance.trace("Мы в личном кабинете...");
 
     var result = {success: true};
-//    var info = AnyBalance.requestGet(baseurlLogin + '/profile/mobile/get?callback=parseJson', g_headers);
     var info = AnyBalance.requestGet(baseurlLogin + '/profile/header?service=lk&style=2013&update', g_headers);
-    getParam(info, result, 'balance', /Ваш баланс:\s*<a[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(info, result, 'balance', [/Ваш баланс:\s*<a[^>]*>([\s\S]*?)<\/a>/i, /Баланс:\s*<a[^>]*>([\s\S]*?)<\/a>/i], replaceTagsAndSpaces, parseBalance);
     getParam(info, result, '__tariff', /Ваш тариф:\s*<a[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(info, result, 'bonus', /Баллов:\s*<a[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces, parseBalance);
     getParam(info, result, 'phone', /<div[^>]+class="tel"[^>]*>([\s\S]*?)(?:<\/b>|<\/div>)/i, replaceTagsAndSpaces, html_entity_decode);
@@ -616,4 +609,3 @@ function mainLK(allowRetry){
 
     AnyBalance.setResult(result);
 }
-

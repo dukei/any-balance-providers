@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Key Word" 
+		key="kword"
+        summary="||{@s}" 
+        obligatory="true"
+		dialogTitle="Key Word" 
+		positiveButtonText="OK" 
+        negativeButtonText="Cancel" 
+        dialogMessage="Enter key word you want to find on Dubizzle.com">
+    </EditTextPreference>
+    <ListPreference 
+        key="region" 
+        title="Region"
+        summary="||{@s}"
+        entries="All Cities|Abu Dhabi|Ajman|Al Ain|Dubai|Fujairah|Ras al Khaimah|Sharjah|Umm al Quwain"
+        entryValues="uae|abudhabi|ajman|alain|dubai|fujairah|rak|sharjah|uaq"
+		defaultValue="uae">
+    </ListPreference>	
+</PreferenceScreen>

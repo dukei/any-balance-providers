@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-tracking-dubizzle</id>
+	<api flags="no_browser"/>
+	<name>Dubizzle.com (UAE)</name>
+	<description html="true"><![CDATA[
+	<p>Obtains information from http://dubizzle.com.</p>
+	<p>Enter key word to find, and regeion where to find.</p>	
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Total ads" />
+		<counter id="adv_price" name="Price" />
+		<counter id="adv_title" name="Current item" type="text"/>
+		<counter id="adv_category" name="Category" type="text"/>
+		<counter id="adv_date" name="Date" type="text"/>
+		<counter id="adv_location" name="Location" type="text"/>
+		<counter id="adv_age" name="Age" type="text"/>
+		<counter id="adv_usage" name="Usage" type="text"/>
+		<counter id="adv_condition" name="Condition" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type></type>
+	<country>ae</country>
+</provider>

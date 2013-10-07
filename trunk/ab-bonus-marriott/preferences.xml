@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Login" 
+        positiveButtonText="OK" 
+		obligatory="true"
+        summary="||{@s}" 
+        dialogTitle="Login" 
+        negativeButtonText="Cancel" 
+        dialogMessage="Enter login to Mariott Rewards."
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="OK"
+        key="password" 
+		obligatory="true"
+        dialogTitle="Password"
+        negativeButtonText="Cancel"
+        title="Password"
+        summary="||***********"
+        dialogMessage="Enter password to Mariott Rewards."
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

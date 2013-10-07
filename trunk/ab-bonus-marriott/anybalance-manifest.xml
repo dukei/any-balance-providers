@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<api flags="no_browser" />
+	<id version="1">ab-bonus-mariott</id>
+	<name>Mariott Rewards</name>
+	<description html="true"><![CDATA[
+	<p>Obtains information from Marriot Rewards http://www.marriott.com/rewards/rewards-program.mihttp://www.marriott.com/rewards/rewards-program.mi"</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Points Balance"/>
+		<counter id="nights" name="Total membership nights"/>
+	</counters>
+	<keywords></keywords>
+	<type>bonus</type>
+	<country>ae</country>
+</provider>

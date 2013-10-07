@@ -1,11 +1,16 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Получает текущий остаток и другие параметры карт Промсвязьбанка, используя систему интернет-банк PSB-Retail.
-
-Сайт оператора: http://www.psbank.ru/
-Личный кабинет: https://retail.payment.ru/n/Default.aspx
 */
+
+var g_headers = {
+	'Accept':'*/*',
+	'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
+	'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Connection':'keep-alive',
+	'User-Agent':'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+	'X-MicrosoftAjax':'Delta=true',
+	'X-Requested-With':'XMLHttpRequest'
+};
 
 function getViewState(html){
     return getParam(html, null, null, /name="__VIEWSTATE".*?value="([^"]*)"/);
@@ -29,39 +34,42 @@ function main(){
     var baseurl = "https://retail.payment.ru";
     AnyBalance.setDefaultCharset('utf-8');
 
-    if(!prefs.login)
-        throw new AnyBalance.Error("Пожалуйста, укажите логин для входа в интернет-банк Промсвязбанка!");
-    if(!prefs.password)
-        throw new AnyBalance.Error("Пожалуйста, укажите пароль для входа в интернет-банк Промсвязбанка!");
-      
-    var html = AnyBalance.requestGet(baseurl + '/n/Default.aspx');
+	checkEmpty(prefs.login, "Пожалуйста, укажите логин для входа в интернет-банк Промсвязбанка!");
+	checkEmpty(prefs.password, "Пожалуйста, укажите пароль для входа в интернет-банк Промсвязбанка!");
+
+    var html = AnyBalance.requestGet(baseurl + '/n/Default.aspx', g_headers);
     var eventvalidation = getEventValidation(html);
     var viewstate = getViewState(html);
 
-    html = AnyBalance.requestPost(baseurl + '/n/Default.aspx', {
-        ctl00$ScriptManager: 'ctl00$right$RightPanelLogin$upLogin|ctl00$right$RightPanelLogin$btnLogin',
-        __EVENTTARGET: '',
-        __EVENTARGUMENT: '',
-        __VIEWSTATE:viewstate,
-        __VIEWSTATEENCRYPTED: '',
-        __EVENTVALIDATION:eventvalidation,
-        ctl00$right$RightPanelLogin$vtcUserName:prefs.login,
-        ctl00$right$RightPanelLogin$vtcPassword:prefs.password,
-        __ASYNCPOST:true,
-        ctl00$right$RightPanelLogin$btnLogin:'Войти'
-    });
-
+	html = AnyBalance.requestPost(baseurl + '/n/Default.aspx', {
+		'ctl00$ScriptManager':'ctl00$mainArea$upLogin|ctl00$mainArea$btnLogin',
+		'__EVENTTARGET': '',
+		'__EVENTARGUMENT': '',
+		'__VIEWSTATE':viewstate,
+		'__VIEWSTATEENCRYPTED': '',
+		'__EVENTVALIDATION':eventvalidation,
+		'ctl00$mainArea$vtcUserName':prefs.login,
+		'ctl00$mainArea$vtcPassword':prefs.password,
+		'__ASYNCPOST':true,
+		'ctl00$mainArea$btnLogin':'Войти'
+	}, addHeaders({Referer:'https://retail.payment.ru/n/Default.aspx'}));
+		
     var error = getParam(html, null, null, /<div[^>]*class="errorMessage"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-    if(error)
-        throw new AnyBalance.Error(error);
+	if(error)
+		throw new AnyBalance.Error(error);
+	if(!/pageRedirect/i.test(html))
+		throw new AnyBalance.Error("Не удаётся войти в интернет банк (внутренняя ошибка сайта)");
 
-    if(!/pageRedirect/i.test(html))
-        throw new AnyBalance.Error("Не удаётся войти в интернет банк (внутренняя ошибка сайта)");
-    
-    if(/KeyAuth/i.test(html))
-        throw new AnyBalance.Error("Для входа в интернет-банк требуются одноразовые пароли. Зайдите в интернет-банк с компьютера и отключите в Настройках требование одноразовых паролей при входе. Это безопасно, для операций по переводу денег пароли всё равно будут требоваться.");
-    
-    html = AnyBalance.requestGet(baseurl + '/n/Main/Home.aspx');
+	if(/KeyAuth/i.test(html))
+		throw new AnyBalance.Error("Для входа в интернет-банк требуются одноразовые пароли. Зайдите в интернет-банк с компьютера и отключите в Настройках требование одноразовых паролей при входе. Это безопасно, для операций по переводу денег пароли всё равно будут требоваться.");
+
+	var authHref = getParam(html, null, null, /pageRedirect\|\|([^\|]*)/i, replaceTagsAndSpaces, html_entity_decode);
+	AnyBalance.trace('Нашли ссылку ' + authHref);
+	authHref = decodeURIComponent(authHref);
+	AnyBalance.trace('Привели ссылку к нормальному виду ' + authHref);
+	// Они добавили еще один шаг авторизации, эта ссылка ставит кучу кук и возвращает 302, без нее не работает
+	html = AnyBalance.requestGet(baseurl + authHref, g_headers);
+	html = AnyBalance.requestGet(baseurl + '/n/Main/Home.aspx', g_headers);
 
     if(/KeyAuth/i.test(html))
         throw new AnyBalance.Error("Для входа в интернет-банк требуются одноразовые пароли. Зайдите в интернет-банк с компьютера и отключите в Настройках требование одноразовых паролей при входе. Это безопасно, для операций по переводу денег пароли всё равно будут требоваться.");
@@ -75,14 +83,13 @@ function main(){
     }else{
         fetchCard(baseurl, html);
     }
-
 }
 
 function getBonuses(baseurl, result){
-	if(isAvailable('bonuses', 'bonuses_grade')){
+	if(isAvailable(['bonuses', 'bonuses_grade'])) {
 		html = AnyBalance.requestGet(baseurl + '/n/Services/BonusProgram.aspx');
-		getParam(html, result, 'bonuses', /class="bonusAmount"[^>]*>([^<]*)/, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'bonuses_grade', /Уровень\s*"([^"]*)/, replaceTagsAndSpaces, html_entity_decode);
+		getParam(html, result, 'bonuses', [/class="bonusAmount"[^>]*>([^<]*)/i, /"ctl00_ctl00_mainArea_main_lblBonusAmount"[^>]*>([^<]*)/i], replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'bonuses_grade', [/Уровень\s*"([^"]*)/i, /"ctl00_ctl00_mainArea_main_lblStatus"[^>]*>([^<]*)/i], replaceTagsAndSpaces, html_entity_decode);
 	}
 }
 
@@ -95,19 +102,46 @@ function fetchCard(baseurl, html){
         throw new AnyBalance.Error("Надо указывать 4 последних цифры карты или не указывать ничего");
     
     //Инфа о счетах схлопнута, а надо её раскрыть
-    if(!/<[^>]+infoSectionHeaderExpanded[^>]+ctl00_main_cardList_Header/i.test(html)){
+    if(/<div[^>]*isDetExpandBtn[^>]*>\s*подробно/i.test(html)){
         html = AnyBalance.requestPost(baseurl + '/n/Main/Home.aspx', {
-            ctl00$ScriptManager:'ctl00$main$upCards|ctl00$main$cardList',
-            __EVENTTARGET:'ctl00$main$cardList',
-            __EVENTARGUMENT:'exp',
+            ctl00$ScriptManager:'ctl00$ctl00$mainArea$main$upCards|ctl00$ctl00$mainArea$main$cardList',
+            __EVENTTARGET:'ctl00$ctl00$mainArea$main$cardList',
+            __EVENTARGUMENT:'_det_exp',
             __VIEWSTATE:viewstate,
             __EVENTVALIDATION:eventvalidation,
             __VIEWSTATEENCRYPTED:'',
+			'ctl00$ctl00$mainArea$right$OperationSearchRightColumn$OperationSearch$tbSearch':'',
+			'ctl00_ctl00_mainArea_right_OperationSearchRightColumn_OperationSearch_tbSearch_InitialTextMode':'True',
             __ASYNCPOST:true
-        });
+        }, addHeaders({Referer:'https://retail.payment.ru/n/Main/Home.aspx'}));
+		
+		html = AnyBalance.requestGet(baseurl + '/n/Main/Home.aspx', addHeaders({Referer:'https://retail.payment.ru/n/Main/Home.aspx'}));
     }
+	var cardnum = prefs.lastdigits ? prefs.lastdigits : '\\d{4}';
+	//                   (<div[^>]*class="cardAccountBlock"(?:[^>]*>){18,22}\d+\\.\\.       5787    (?:[^>]*>){3})
+    var re = new RegExp('(<div[^>]*class=\"cardAccountBlock\"(?:[^>]*>){18,22}\\d+\\.\\.' + cardnum + '(?:[^>]*>){3})', 'i');
+    var tr = getParam(html, null, null, re);
+    if(!tr)
+        throw new AnyBalance.Error('Не удаётся найти ' + (prefs.contract ? 'карту с последними цифрами ' + prefs.contract : 'ни одной карты'));
+	
+	var result = {success: true};
+    getParam(tr, result, 'balance', /"balanceAmountM"[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(tr, result, ['currency', 'balance', 'blocked', 'balance_own'], /"balanceAmountCurrencyM"[^>]*>([^<]*)/i, replaceTagsAndSpaces);
+	getParam(tr, result, 'accnum', /"infoUnitObject"[^>]*>([\s\S]*?)<\/a>/i, [replaceTagsAndSpaces, /\D/, ''], html_entity_decode);
+	getParam(tr, result, '__tariff', /"cardNumberContainer"[^>]*>[^>]*>([^<]*)/i, replaceTagsAndSpaces);
+	getParam(tr, result, 'cardnum', /"cardNumberContainer"[^>]*>[^>]*>([^<]*)/i, replaceTagsAndSpaces);
+	getParam(tr, result, 'type', /"cardCaption"[^>]*>([^<]*)/i, replaceTagsAndSpaces);
+	
+	if(AnyBalance.isAvailable('balance_own', 'blocked')){
+        var href = getParam(tr, null, null, /"infoUnitObject"[^>]*href="([^"]*)/i);
+        html = AnyBalance.requestGet(baseurl + href, g_headers);
+        
+        getParam(html, result, 'balance_own', /"ctl00_ctl00_mainArea_main_lblAccountBalance"[^>]*>([^<]*)/, replaceTagsAndSpaces, parseBalance);
+        getParam(html, result, 'blocked', /"ctl00_ctl00_mainArea_main_lblReserved"[^>]*>([^<]*)/, replaceTagsAndSpaces, parseBalance);
+    }
+	getBonuses(baseurl, result);
 
-    var lastdigits = prefs.lastdigits ? prefs.lastdigits : '\\d{4}';
+    /*var lastdigits = prefs.lastdigits ? prefs.lastdigits : '\\d{4}';
     
     var $html = $('<div>' + html + '</div>');
     var $card = $html.find("div.cardListUnit").filter(function(){
@@ -138,7 +172,7 @@ function fetchCard(baseurl, html){
         
         getParam(html, result, 'balance_own', /ctl00_main_lblAccountBalance[^>]*>([^<]*)/, replaceTagsAndSpaces, parseBalance);
         getParam(html, result, 'blocked', /ctl00_main_lblReserved[^>]*>([^<]*)/, replaceTagsAndSpaces, parseBalance);
-    }
+    }*/
 
     AnyBalance.setResult(result);
 }
@@ -178,7 +212,7 @@ function fetchAccount(baseurl, html){
     }).first();
 
     if($card.length <= 0)
-        throw new AnyBalance.Error(prefs.lastdigits ? "Не удаётся найти счет с последними цифрами " + prefs.lastdigits : "Не удаётся найти ни одной карты!");
+        throw new AnyBalance.Error(prefs.lastdigits ? "Не удаётся найти счет с последними цифрами " + prefs.lastdigits : "Не удаётся найти ни одного счета!");
     
     var result = {success: true};
 	getBonuses(baseurl, result);

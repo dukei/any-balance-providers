@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Quote" 
+		key="quote"
+        summary="||{@s}" 
+        obligatory="true"
+		dialogTitle="Quote" 
+		positiveButtonText="ОК" 
+        negativeButtonText="Cancel" 
+        dialogMessage="Enter qoute, you wish to see (for example EURUSD).">
+    </EditTextPreference>
+</PreferenceScreen>

@@ -19,7 +19,7 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Ammount" units="{@currency}"/>
+		<counter id="balance" name="Price" units="{@currency}"/>
 		<counter id="trending" name="Trending difference"/>
 		<counter id="trending_pcts" name="Trending pcts" units="%"/>
 		<counter id="currency" name="Currency" type="text"/>

@@ -7,10 +7,8 @@
 	<p>Obtains information from http://www.bloomberg.com</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
-	<p>Obtains information from http://www.bloomberg.com</p>
-	
 	<p>To use this provider you must know the symbols of indexes.</p>
-	<p>You can find them on http://www.bloomberg.com/markets/symbolsearchhttp://www.bloomberg.com/markets/symbolsearch, if you don`t know any</p>
+	<p>You can find them on http://www.bloomberg.com/markets/symbolsearch, if you don`t know any</p>
 	]]></instruction>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
@@ -31,7 +29,7 @@
 		<counter id="days_range" name="Day`s Range" type="text"/>
 		<counter id="52w_range" name="52wk Range" type="text"/>
 	</counters>
-	<keywords></keywords>
+	<keywords>rates, exchange, money, obligations, finance</keywords>
 	<type>exchange</type>
 	<country></country>
 </provider>

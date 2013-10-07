@@ -15,19 +15,20 @@ function main() {
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.quote, 'Please, enter qoute');
+
 	// Ищем котировку
 	var html = AnyBalance.requestGet(baseurl + 'apps/data?pid=symautocomplete&Query='+prefs.quote, g_headers);
 	
 	var href = getParam(html, null, null, /Symbols\s*<\s*\/\s*a>(?:[^>]*>){4}[^>]*href=(?:"|')\/([^("')]*)/i);
 	if(!href) {
-		throw new AnyBalance.Error('Please check entered qoute. The qoute ' + prefs.quote + ' didn`t found');
+		throw new AnyBalance.Error('Please check entered qoute. The quote ' + prefs.quote + ' has not been found');
 	}
 	
 	html = AnyBalance.requestGet(baseurl + href, g_headers);
 	
 	var header = getParam(html, null, null, /(<div[^>]*class="ticker_header(?:[\s\S]*?<div){10})/i);
 	if(!header)
-		throw new AnyBalance.Error('Please check entered qoute. The qoute ' + prefs.quote + ' didn`t found');
+		throw new AnyBalance.Error('Please check entered qoute. The quote ' + prefs.quote + ' has not been found');
 	
 	var result = {success: true};
 	

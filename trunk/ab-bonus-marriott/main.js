@@ -17,7 +17,9 @@ function main(){
     var html = AnyBalance.requestGet(baseurl, g_headers);
 	
 	var secure = getParam(html, null, null, /<img\s*src\s*=\s*"(https:\/\/smetrics[^"]*)/i);
+	checkEmpty(secure, 'Can`t find secure link, site changed?', true);
 	var href = getParam(html, null, null, /href="([^"]*)[^>]*>\s*Rewards account/i);
+	checkEmpty(secure, 'Can`t find link to rewards account, site changed?', true);
 
 	html = AnyBalance.requestGet(secure, addHeaders({Referer: baseurl}));
 	html = AnyBalance.requestGet(href, addHeaders({Referer: baseurl}));

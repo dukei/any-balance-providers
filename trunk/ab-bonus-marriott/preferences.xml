@@ -7,7 +7,7 @@
         summary="||{@s}" 
         dialogTitle="Login" 
         negativeButtonText="Cancel" 
-        dialogMessage="Enter login to Mariott Rewards."
+        dialogMessage="Enter login to Mariott Rewards account."
         key="login">
     </EditTextPreference>
     <EditTextPreference 
@@ -18,7 +18,7 @@
         negativeButtonText="Cancel"
         title="Password"
         summary="||***********"
-        dialogMessage="Enter password to Mariott Rewards."
+        dialogMessage="Enter password to Mariott Rewards account."
         inputType="textPassword">
     </EditTextPreference>
 </PreferenceScreen>

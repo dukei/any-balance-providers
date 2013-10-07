@@ -1,47 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="6">ab-money-promsvaz</id>
-  <name>Промсвязьбанк</name>
-  <description>
-    Получает текущий остаток и другие параметры карт, счетов и депозитов Промсвязьбанка, используя интернет-банк. Для пользования этим провайдером 
-вам необходимо иметь доступ в интернет банк по адресу https://retail.payment.ru . Как подключиться к интернет-банку Промсвязьбанка можно узнать здесь: https://retail.payment.ru
+	<id version="7">ab-money-promsvaz</id>
+	<name>Промсвязьбанк</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о текущем остатке и других параметрах карт, счетов и депозитов для клиентов ""Промсвязьбанка"".</p>
+	<p>Информация берется из Интернет-банка.</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Настройки:</p>
+	<ul>
+	<li>Как подключиться к Интернет-банку, можно узнать по адресу http://retail.payment.ru.</li>
+	</ul>      
 
-    Внимание! Для работы провайдера требуется отказаться от подтверждения входа в систему Интернет-банк
-одноразовым паролем. Но не беспокойтесь, 
-отключение подтверждения даёт возможность только зайти в систему,
-в целях безопасности НЕВОЗМОЖНО отключить подтверждение одноразовым паролем переводов и платежей организациям или частным лицам.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <history>history.xml</history>
-    <js>moment.min.js</js>
-    <js>moment.lang.ru.min.js</js>
-    <js>library.js</js>
-    <js>main.js</js>
-    <js>api:jquery.min.js</js>
-  </files>
-  <counters>
-    <counter id="balance" name="Остаток" units=" {@currency}"/>
-    <counter id="till" name="Срок действия" type="time" format="dd/MM/yyyy"/>
-    <counter id="income" name="Ожидаемый доход" units=" {@currency}"/>
-    <counter id="cardnum" name="Номер карты" type="text"/>
-    <counter id="type" name="Тип карты" type="text"/>
-	<counter id="bonuses" name="Бонусные баллы"/>
-	<counter id="bonuses_grade" name="Уровень участия" type="text"/>
-    <counter id="balance_own" name="Собственные средства" units=" {@currency}"/>
-    <counter id="blocked" name="Заблокировано" units=" {@currency}"/>
-    <counter id="accnum" name="Номер счета" type="text"/>
-    <counter id="currency" name="Валюта" type="text"/>
-  </counters>
-  <keywords>
-    промсвязьбанк, промсвязь, psb retail
-  </keywords>
-  <type>
-    money
-  </type>
-  <country>
-    ru
-  </country>
+	<p><b>ВНИМАНИЕ!</b> 
+	<br><br>Для работы провайдера требуется отказаться от подтверждения входа в систему Интернет-банк одноразовым паролем.</p> 
+
+	<p><small>Отключение подтверждения даёт возможность только зайти в систему, в целях безопасности НЕВОЗМОЖНО отключить подтверждение одноразовым паролем переводов и платежей организациям или частным лицам.</small></p>   
+	]]></instruction>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<history>history.xml</history>
+		<js>moment.min.js</js>
+		<js>moment.lang.ru.min.js</js>
+		<js>library.js</js>
+		<js>main.js</js>
+		<js>api:jquery.min.js</js>
+	</files>
+	<counters>
+		<counter id="balance" name="Остаток" units=" {@currency}"/>
+		<counter id="till" name="Срок действия" type="time" format="dd/MM/yyyy"/>
+		<counter id="income" name="Ожидаемый доход" units=" {@currency}"/>
+		<counter id="cardnum" name="Номер карты" type="text"/>
+		<counter id="type" name="Тип карты" type="text"/>
+		<counter id="bonuses" name="Бонусные баллы"/>
+		<counter id="bonuses_grade" name="Уровень участия" type="text"/>
+		<counter id="balance_own" name="Собственные средства" units=" {@currency}"/>
+		<counter id="blocked" name="Заблокировано" units=" {@currency}"/>
+		<counter id="accnum" name="Номер счета" type="text"/>
+		<counter id="currency" name="Валюта" type="text"/>
+	</counters>
+	<keywords>промсвязьбанк, промсвязь, psb retail</keywords>
+	<type>money</type>
+	<country>ru</country>
 </provider>

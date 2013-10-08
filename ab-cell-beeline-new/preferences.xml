@@ -7,6 +7,7 @@
         dialogTitle="Номер телефона или логин" 
         negativeButtonText="Отмена" 
         dialogMessage="Введите логин или номер Вашего телефона для входа в личный кабинет (10 цифр), например 9031234567"
+        obligatory="true"
         key="login">
     </EditTextPreference>
     <EditTextPreference 
@@ -17,6 +18,7 @@
         title="Пароль"
         summary="||***********"
         dialogMessage="Введите пароль, используемый для входа в личный кабинет. Если Вы не знаете пароль, наберите *110*9# со своего мобильного телефона для получения логина и пароля."
+        obligatory="true"
         inputType="textPassword">
     </EditTextPreference>
     <EditTextPreference 

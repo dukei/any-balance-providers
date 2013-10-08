@@ -26,7 +26,8 @@ filial_info[MEGA_FILIAL_MOSCOW] = {
   site: 	"https://moscowsg.megafon.ru/",
   widget:	'https://moscowsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
   tray: 	"https://moscowsg.megafon.ru/TRAY_INFO/TRAY_INFO?LOGIN=%LOGIN%&PASSWORD=%PASSWORD%",
-  internet:       "http://user.moscow.megafon.ru/"
+  internet:       "http://user.moscow.megafon.ru/",
+  internetRobot:       "https://moscowsg.megafon.ru/MEGAFON_BALANCE/MGFSTF_GET_QOS_PACK_STATUS?MSISDN=%LOGIN%&PASSWORD=%PASSWORD%"
 };
 filial_info[MEGA_FILIAL_SIBIR] = {
   name: 'Сибирский филиал',
@@ -510,6 +511,32 @@ function megafonTrayInfo(filial){
 
 function getInternetInfo(filial, result){
     var filinfo = filial_info[filial];
+    if(!filinfo.internetRobot)
+         return; //Нет ссылки на инфу по интернету
+
+    var prefs = AnyBalance.getPreferences();
+    var xml = AnyBalance.requestGet(filinfo.internetRobot
+	.replace(/%LOGIN%/g, encodeURIComponent(prefs.login))
+	.replace(/%PASSWORD%/g, encodeURIComponent(prefs.password)));
+
+    var need_int_left;
+   
+    if(!need_int_left){
+        AnyBalance.trace('Трафик уже есть, поэтому не будем его дополнительно искать');
+    }
+    
+    if(need_int_left){
+        sumParam(xml, result, 'internet_cur', /<CUR_VOLUME>([\s\S]*?)<\/CUR_VOLUME>/i, replaceTagsAndSpaces, parseTrafficMyMb, aggregate_sum);
+        sumParam(xml, result, 'internet_left', /<LOST_VOLUME>([\s\S]*?)<\/LOST_VOLUME>/i, replaceTagsAndSpaces, parseTrafficMyMb, aggregate_sum);
+        sumParam(xml, result, 'internet_total', /<ALL_VOLUME>([\s\S]*?)<\/ALL_VOLUME>/i, replaceTagsAndSpaces, parseTrafficMyMb, aggregate_sum);
+    }
+}
+
+/*
+//Эта функция получает данные из мобильного кабинета. Но это ненадежно, потому что работает только через соответствующий мобильный интернет.
+
+function getInternetInfo(filial, result){
+    var filinfo = filial_info[filial];
     if(!filinfo.internet)
          return; //Нет ссылки на инфу по интернету
 
@@ -579,7 +606,7 @@ function getInternetInfo(filial, result){
     ensureNullOrSet(result, counters);
 
 }
-
+*/
 function ensureNullOrSet(result, names){
     for(var i=0; i<names.length; ++i){
         var name = names[i];
@@ -1122,6 +1149,10 @@ function strip_tags(str){
 
 function parseTrafficMy(str){
   return parseTrafficExMega(str, 1024, 2, 'b');
+}
+
+function parseTrafficMyMb(str){
+  return parseTrafficExMega(str, 1024, 2, 'mb');
 }
 
 function aggregate_sum_minutes(values){

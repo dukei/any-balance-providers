@@ -7,6 +7,7 @@
         dialogTitle="Номер телефона" 
         negativeButtonText="Отмена" 
         dialogMessage="Введите номер вашего телефона для входа в Сервис-Гид (10 цифр), например 9261234567"
+        obligatory="true"
         key="login"
         inputType="number">
     </EditTextPreference>
@@ -18,9 +19,10 @@
         title="Пароль"
         summary="|Пароль для входа в Сервис-Гид|***********"
         dialogMessage="Введите пароль, используемый для входа в Сервис-Гид"
+        obligatory="true"
         inputType="textPassword">
     </EditTextPreference>
-    <EditTextPreference 
+<!--    <EditTextPreference 
         title="Доп. номер телефона" 
         positiveButtonText="ОК" 
         summary="|Автоматически|{@s}" 
@@ -29,11 +31,11 @@
         dialogMessage="Введите номер телефона (10 цифр), для которого вы хотите получить информацию, если к вашему лицевому счету привязано больше одного телефона. Оставьте поле пустым, чтобы получить информацию по номеру логина."
         key="phone"
         inputType="number">
-    </EditTextPreference>
-    <CheckBoxPreference
+    </EditTextPreference> -->
+<!--    <CheckBoxPreference
         title="Корпоративный портал"
         defaultValue="false"
         summaryOn="Используется корпоративный портал"
         summaryOff="Используется обычный сервис-гид"
-        key="corporate" />
+        key="corporate" /> -->
 </PreferenceScreen>

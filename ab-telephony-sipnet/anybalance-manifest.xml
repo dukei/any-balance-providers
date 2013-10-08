@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-telephony-sipnet</id>
-  <name>SIPNET</name>
+	<id version="3">ab-telephony-sipnet</id>
+	<api flags="no_browser"/>
+	<name>SIPNET</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем балансе в Sipnet.</p>
 	]]></description>
-  <author>Vit@liy &lt;vitaliy@root.ua&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" prefix="$" type="numeric"/>
-  </counters>
-  <keywords>
-    sipnet sip IP-телефония
-  </keywords>
-  <type>
-    telephony
-  </type>
+	<author>Vit@liy &lt;vitaliy@root.ua&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" prefix="$"/>
+		<counter id="sipid" name="SIP ID" type="text"/>
+	</counters>
+	<keywords>sipnet sip IP-телефония</keywords>
+	<type>telephony</type>
 </provider>

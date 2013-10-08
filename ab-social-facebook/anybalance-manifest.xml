@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-social-facebook</id>
+	<api flags="no_browser"/>
+	<name>Facebook</name>
+	<description html="true"><![CDATA[
+	<p>Obtains inforamtion from Facebook account https://m.facebook.com/</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="messages" name="Messages"/>
+		<counter id="friends" name="New friends request"/>
+		<counter id="name" name="Name" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>social</type>
+	<country></country>
+</provider>

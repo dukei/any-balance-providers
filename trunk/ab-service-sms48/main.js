@@ -12,6 +12,9 @@ function main(){
 
     AnyBalance.setDefaultCharset('utf-8');
 
+    checkEmpty(prefs.login, 'Введите логин!');
+    checkEmpty(prefs.password, 'Введите пароль!');
+
     var baseurl = "http://sms48.ru/cabinet.php";
     var html = AnyBalance.requestPost(baseurl, {
         login:prefs.login,
@@ -20,6 +23,8 @@ function main(){
 
     if(!/\?exit/i.test(html)){
         var error = getParam(html, null, null, /<font[^>]*color=['"]?#ff0000[^>]*>([\s\S]*?)<\/font>/i, replaceTagsAndSpaces, html_entity_decode);
+        if(error && /Неправильный логин или пароль/i.test(error))
+            throw new AnyBalance.Error(error, null, true);
         if(error)
             throw new AnyBalance.Error(error);
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
@@ -32,8 +37,7 @@ function main(){
         throw new AnyBalance.Error('Не найден блок Ваш баланс. Сайт изменен?');
 
     result.__tariff = prefs.login;
-    getParam(balance_block, result, 'sms_ru', /Россия:([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-    getParam(balance_block, result, 'sms_ru_smpp', /Россия \(SMPP\):([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(balance_block, result, 'balance', null, replaceTagsAndSpaces, parseBalance);
 
     AnyBalance.setResult(result);
 }

@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+<change major_version="3.3" version="66" date="2013-10-08">
+- Улучшено распознавание минут на тарифе Готовый офис
+</change>
 <change major_version="3.3" version="65" date="2013-10-05">
 - Улучшено получение баланса в личном кабинете МТС (Stark)
 </change>

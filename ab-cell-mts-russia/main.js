@@ -404,8 +404,10 @@ function fetchAccountStatus(html, result){
     // Пакет минут Готовый офис: Остаток 149 минут
     // Остаток: минут
     html = sumParam (html, result, 'min_left', /Остаток:?\s*([\d\.,]+)\s*мин/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
-    // Остаток минут по тарифу "Готовый офис" - 194 минут
-    html = sumParam (html, result, 'min_left', /Остаток мин.*?([\d\.,]+)\s*мин/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
+    // Остаток минут по тарифу "Готовый офис":194 минут МТС России
+    html = sumParam (html, result, 'min_left_mts', /Остаток мин[^<]*?([\d\.,]+)\s*мин[^<]*?МТС России/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
+    // Остаток минут по тарифу "Готовый офис"194 минут.другие операторы
+    html = sumParam (html, result, 'min_left', /Остаток мин[^<]*?([\d\.,]+)\s*мин/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
     // Остаток ежемесячных пакетов: 392 минут
     html = sumParam (html, result, 'min_left', /Остаток ежемесячных пакетов\s*(?:минут\s*)?:?\s*([\d\.,]+)\s*мин/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
     // Остаток ежемесячного пакета: 296 мин

@@ -35,7 +35,8 @@ summary="всегда показывается|показывается, есл�
         dialogTitle="Номер телефона" 
         negativeButtonText="Отмена" 
         dialogMessage="Введите номер вашего телефона для входа в Сервис-Гид (10 цифр), например 9261234567"
-        positiveButtonText="ОК" 
+        positiveButtonText="ОК"
+        obligatory="true" 
         inputType="number">
     </EditTextPreference>
     <EditTextPreference 
@@ -46,6 +47,7 @@ summary="всегда показывается|показывается, есл�
         negativeButtonText="Отмена"
         dialogMessage="Введите пароль, используемый для входа в Сервис-Гид"
         positiveButtonText="ОК"
+        obligatory="true" 
         inputType="textPassword">
     </EditTextPreference>
 </PreferenceScreen>

@@ -519,13 +519,15 @@ function getInternetInfo(filial, result){
 	.replace(/%LOGIN%/g, encodeURIComponent(prefs.login))
 	.replace(/%PASSWORD%/g, encodeURIComponent(prefs.password)));
 
-    var need_int_left;
+    var need_traffic = isAvailableButUnset(result, ['internet_left']) ||
+        isAvailableButUnset(result, ['internet_total']) ||
+        (AnyBalance.isAvailable('internet_cur') && !result.internet_cur);
    
-    if(!need_int_left){
+    if(!need_traffic){
         AnyBalance.trace('Трафик уже есть, поэтому не будем его дополнительно искать');
     }
     
-    if(need_int_left){
+    if(need_traffic){
         sumParam(xml, result, 'internet_cur', /<CUR_VOLUME>([\s\S]*?)<\/CUR_VOLUME>/i, replaceTagsAndSpaces, parseTrafficMyMb, aggregate_sum);
         sumParam(xml, result, 'internet_left', /<LOST_VOLUME>([\s\S]*?)<\/LOST_VOLUME>/i, replaceTagsAndSpaces, parseTrafficMyMb, aggregate_sum);
         sumParam(xml, result, 'internet_total', /<ALL_VOLUME>([\s\S]*?)<\/ALL_VOLUME>/i, replaceTagsAndSpaces, parseTrafficMyMb, aggregate_sum);

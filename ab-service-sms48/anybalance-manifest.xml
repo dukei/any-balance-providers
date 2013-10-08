@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-service-sms48</id>
+  <id version="2">ab-service-sms48</id>
+  <api flags="no_browser"/>
   <name>SMS 48 - сервис SMS-рассылок</name>
   <description>
     Получает баланс и статистику на сервисе рассылки SMS сообщений http://sms48.ru.
@@ -9,12 +10,12 @@
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
+    <history>history.xml</history>
     <js>library.js</js>
     <js>main.js</js>
   </files>
   <counters>
-    <counter id="sms_ru" name="SMS Россия" units=" sms"/>
-    <counter id="sms_ru_smpp" name="SMS Россия (SMPP)" units=" smpp"/>
+    <counter id="balance" name="Баланс" units=" руб"/>
   </counters>
   <keywords>
     смс рассылка, смсц

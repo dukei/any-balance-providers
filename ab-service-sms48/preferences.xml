@@ -7,6 +7,7 @@
         dialogTitle="Логин (e-mail)" 
         negativeButtonText="Отмена" 
         dialogMessage="Введите e-mail, используемый в качестве логина в личный кабинет http://sms48.ru."
+        obligatory="true"
         inputType="textEmailAddress"
         key="login">
     </EditTextPreference>
@@ -18,6 +19,7 @@
         title="Пароль"
         summary="||***********"
         dialogMessage="Введите пароль, используемый для входа в личный кабинет http://sms48.ru."
+        obligatory="true"
         inputType="textPassword">
     </EditTextPreference>
 </PreferenceScreen>

@@ -21,6 +21,7 @@ summary="всегда показывается|показывается, есл�
  * `shouldDisableView` - нужно ли блокировать вид настройки, если сама настройка заблокирована (true/false),[http://developer.android.com/reference/android/preference/Preference.html#attr_android:shouldDisableView оригинал]
  * `selectable` - может ли быть выбрана пользователем (true/false),[http://developer.android.com/reference/android/preference/Preference.html#attr_android:selectable оригинал]
  * `dependency` - зависимость от другой настройки. Здесь должен указываться `key` настройки, от которой зависит данная. Если в той настройке не выставлено значение, то эта настройка будет заблокирована (string),[http://developer.android.com/reference/android/preference/Preference.html#attr_android:dependency оригинал]
+ * `obligatory` - обязательна ли эта настройка для заполнения (true или false)
 
 = Пример =
 {{{

@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+<change version="8" date="2013-10-09">
+- Улучшенная обработка ошибок (Stark)
+</change>
 <change version="7" date="2013-10-03">
 - Обновлен library.js
 </change>

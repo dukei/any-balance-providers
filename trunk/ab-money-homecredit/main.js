@@ -21,9 +21,12 @@ function main() {
 
     var html = AnyBalance.requestGet(baseurl, g_headers);
     var form = getParam(html, null, null, /(<form[^>]+class="aui-form[\s\S]*?<\/form>)/i);
-    if(!form)
+    if(!form) {
+		if(/Услуга временно недоступна\.\s*Приносим извинения за доставленные неудобства\./i.test(html))
+			throw new AnyBalance.Error('Уважаемый Клиент! Услуга временно недоступна. Приносим извинения за доставленные неудобства. Информацию о продуктах и услугах Вы сможете найти на нашем сайте: www.homecredit.ru');
+			
         throw new AnyBalance.Error('Не удаётся найти форму входа. Сайт изменен?');
-
+	}
     var action = getParam(form, null, null, /<form[^>]+action="([^"]*)/i, null, html_entity_decode);
     var params = createFormParams(form, function(params, input, name, value){
         var undef;

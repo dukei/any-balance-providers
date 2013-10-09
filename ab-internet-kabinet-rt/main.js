@@ -169,10 +169,17 @@ function main(){
                 if(AnyBalance.isAvailable('phone' + suffix) && phones.length > 0)
                     result['phone' + suffix] = phones.join(', ');
     
-                if(AnyBalance.isAvailable('bonus' + suffix) && bonuses.length > 0)
-                    result['bonus' + suffix] = aggregate_sum(bonuses);
+                if(AnyBalance.isAvailable('bonus' + suffix)) {
+					if(bonuses.length > 0)
+						result['bonus' + suffix] = aggregate_sum(bonuses);
+					else {
+						AnyBalance.trace('Бонусов не нашли, попробуем получить бонусы другим способом...');
+						var jsonBonus = getJson(AnyBalance.requestPost(baseurl + 'plugins/south-bonus/1.0.2-SNAPSHOT/request', {action: 'getBonusBalance', accountId:acc.__detailedInfo.id}, g_headers));
+						if(jsonBonus.balance)
+							getParam(jsonBonus.balance+'', result, 'bonus' + suffix, null, replaceTagsAndSpaces, parseBalance);
+					}
+				}
             }
-    
             if(balance > 0)
                 totalBalancePlus += balance;
             else

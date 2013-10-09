@@ -63,8 +63,8 @@ function main(){
 		'wzLogin$logOn_Step1$divLogin$btnLoginCaptcha.x':0,
 		'wzLogin$logOn_Step1$divLogin$btnLoginCaptcha.y':0,
 		'wzLogin$logOn_Step1$divLogin$txtCaptcha':captcha_word,
-		'wzLogin$logOn_Step1$divLogin$txtLoginCaptcha':'21314611',
-		'wzLogin$logOn_Step1$divLogin$txtPassCaptcha':'arseniy318',
+		'wzLogin$logOn_Step1$divLogin$txtLoginCaptcha':prefs.login,
+		'wzLogin$logOn_Step1$divLogin$txtPassCaptcha':prefs.password,
     }, g_headers);
 
     if(!/ctl00\$btnLogout/i.test(html)){

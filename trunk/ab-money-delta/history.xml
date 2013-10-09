@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="4" date="2013-10-09">
+	- Исправление входа в интернет-банк
+	</change>
     <change version="3" date="2013-08-27">
 	- Поддержка ввода капчи при входе.
 	</change>

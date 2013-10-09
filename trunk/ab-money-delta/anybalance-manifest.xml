@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
-	<api flags="no_browser" />
-  <id version="3">ab-money-delta</id>
+  <api flags="no_browser" />
+  <id version="4">ab-money-delta</id>
   <name>Дельта Банк</name>
-  <description>
+  <description html="true"><![CDATA[
     Получает текущий остаток и другие параметры счетов Дельта Банка (http://deltabank.com.ua), используя интернет-банк https://online.deltabank.com.ua.
-
+  ]]></description>
+  <instruction html="true"><![CDATA[
     Как подключиться к Интернет-Банку?
-      Нажмите кнопку Регистрация на странице https://online.deltabank.com.ua и выполните приведенные там инструкции.
+    <ul>
+       <li>Нажмите кнопку Регистрация на странице https://online.deltabank.com.ua и выполните приведенные там инструкции.</li>
+    </ul>
 
-    Можно попробовать работу провайдера на тестовой версии интернет-банка, введя логин 1 и пароль 1 в настройки аккаунта.
-  </description>
+    Также можно попробовать работу провайдера на тестовой версии интернет-банка, введя логин 1 и пароль 1 в настройки аккаунта.
+  ]]></instruction>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <files>
     <icon>icon.png</icon>

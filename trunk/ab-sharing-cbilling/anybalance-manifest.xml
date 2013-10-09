@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-sharing-cbilling</id>
+	<api flags="no_browser"/>
+	<name>Сardsharing-server.ru</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию для кардшаринг-сервера http://cardsharing-server.ru/</p>
+	<p>Информация берется из личного кабинета http://cbilling.net/</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units="{@currency}"/>
+		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="days" name="Остаток дней" units="дн"/>
+		<counter id="date" name="Дата окончания" type="time" format="dd/MM/yyyy"/>
+		<counter id="server" name="Сервер" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>sharing</type>
+	<country>ru</country>
+</provider>

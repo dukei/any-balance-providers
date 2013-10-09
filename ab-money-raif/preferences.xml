@@ -2,6 +2,7 @@
 <PreferenceScreen>
     <EditTextPreference 
         title="Логин" 
+		obligatory="true"
         positiveButtonText="ОК" 
         summary="|Введите логин в интернет-банк|{@s}" 
         dialogTitle="Логин" 
@@ -13,6 +14,7 @@
     <EditTextPreference 
         positiveButtonText="ОК"
         key="password" 
+		obligatory="true"
         dialogTitle="Пароль"
         negativeButtonText="Отмена"
         title="Пароль"
@@ -23,10 +25,10 @@
     <ListPreference 
         key="type" 
         title="Банковский продукт"
-        summary="||{@s}\n"
+        summary="||{@s}"
         entries="Счет|Депозит|Карта|Кредит"
         entryValues="acc|dep|card|cred"
-	defaultValue="acc">
+		defaultValue="acc">
     </ListPreference>
     <EditTextPreference 
         positiveButtonText="ОК"

@@ -2,6 +2,7 @@
 <PreferenceScreen>
     <EditTextPreference
         title="Логин" 
+		obligatory="true"
         positiveButtonText="ОК" 
         summary="||{@s}" 
         dialogTitle="Логин" 
@@ -13,6 +14,7 @@
     <EditTextPreference 
         positiveButtonText="ОК"
         key="password" 
+		obligatory="true"
         dialogTitle="Пароль"
         negativeButtonText="Отмена"
         title="Пароль"
@@ -26,7 +28,7 @@
         summary="||{@s}"
         entries="Депозит|Карта|Кредит"
         entryValues="dep|card|crd"
-	defaultValue="dep">
+		defaultValue="dep">
     </ListPreference>
     <EditTextPreference
         title="ID продукта" 

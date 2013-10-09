@@ -66,8 +66,8 @@ function fetchCard(html, baseurl){
         throw new AnyBalance.Error('Укажите 4 последних цифры карты или не указывайте ничего, чтобы получить информацию по первой карте.');
 
 	var cardnum = prefs.num ? prefs.num : '\\d{4}';
-	//                   (<tr[^>]*btnrscards[^>]*><td>[^>]*id=\"hl\"[^>]*6956"[\s\S]*?</tr>)
-	var re = new RegExp('(<tr[^>]*btnrscards[^>]*><td>[^>]*id=\"hl\"[^>]*' + cardnum + '\"[\\s\\S]*?</tr>)', 'i');
+	//                   (<tr[^>]*btnrscards[^>]*>\s*<td>[^>]*id=\"hl\"[^>]*6956"[\s\S]*?</tr>)
+	var re = new RegExp('(<tr[^>]*btnrscards[^>]*>\\s*<td>[^>]*id=\"hl\"[^>]*' + cardnum + '\"[\\s\\S]*?</tr>)', 'i');
 	var tr = getParam(html, null, null, re);
 	if(!tr)
 		throw new AnyBalance.Error(prefs.num ? 'Не удалось найти карту с последними цифрами ' + prefs.num : 'Не удалось найти ни одной карты!');
@@ -199,16 +199,14 @@ function fetchDeposit(html, baseurl){
     var prefs = AnyBalance.getPreferences();
 	html = AnyBalance.requestGet(baseurl + '/secure/deps.aspx');
 	
-	var json = getParam(html, null, null, /var\s*depdata\s*=\s*\[([\s\S]*?)\]/i, null, getJson);
-	if(!json) {
+	var tjson = getParam(html, null, null, /var\s*depdata\s*=\s*\[([\s\S]*?)\]/i);
+	if(!tjson) {
 		var err = getParam(html, null, null, /<\/h1><b>([\s\S]*?)<\/b/i, replaceTagsAndSpaces, html_entity_decode);
-		throw new AnyBalance.Error(err ? err : 'Сайт вернул не верные данные, возможно проблемы на сайте!');
+		throw new AnyBalance.Error(err ? err : 'У Вас нет вкладов в Московском Кредитном Банке, либо сайт изменен!');
 	}
-	
-	//var json = getJson(tJson);
-	
+	var json = getJson(tjson);
+
     var result = {success: true};
-    
 	getParam(json.ac, result, 'accnum', null, replaceTagsAndSpaces, html_entity_decode);
 	getParam(json.nm, result, 'cardnum', null, replaceTagsAndSpaces, html_entity_decode);
 	getParam(json.db, result, 'balance', null, replaceTagsAndSpaces, parseBalance);

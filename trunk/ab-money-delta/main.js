@@ -27,32 +27,36 @@ var g_headers = {
 function main(){
     var prefs = AnyBalance.getPreferences();
 
-    var prefs = AnyBalance.getPreferences();
+    checkEmpty(prefs.login, 'Введите логин!');
+    checkEmpty(prefs.password, 'Введите пароль!');
+
     if(prefs.accnum && !/^\d{4,}$/.test(prefs.accnum))
         throw new AnyBalance.Error("Введите не меньше 4 последних цифр номера счета или не вводите ничего, чтобы показать информацию по первому счету.");
 
-    var baseurl = prefs.login != '1' ? "https://online.deltabank.com.ua/" : "https://online.deltabank.com.ua/DEMO/";
+    var demo = prefs.login == '1';
+    var baseurl = !demo ? "https://online.deltabank.com.ua/" : "https://online.deltabank.com.ua/DEMO/";
     
     var html = AnyBalance.requestGet(baseurl + 'Pages/User/LogOn.aspx', g_headers);
 	
 	//
-	var captcha_word;
-
+    var captcha_word;
+    if(!demo){	
 	if(AnyBalance.getLevel() >= 7){
 		AnyBalance.trace('Пытаемся ввести капчу');
 		var href = getParam(html, null, null, /(CaptchaImage.aspx[^>]*?)"/);
 		var captcha = AnyBalance.requestGet(baseurl+'Pages/'+ href);
             captcha_word = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
             AnyBalance.trace('Капча получена: ' + captcha_word);
-		}else{
-			throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
+	}else{
+		throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
         }
-		
+    }
 		
     var viewstate = getViewState(html);
     var eventvalidation = getEventValidation(html);
-	
-    html = AnyBalance.requestPost(baseurl + 'Pages/User/LogOn.aspx', {
+
+    if(!demo){	
+	    html = AnyBalance.requestPost(baseurl + 'Pages/User/LogOn.aspx', {
 		'__EVENTARGUMENT':'',
 		'__EVENTTARGET':'',
 		'__EVENTVALIDATION':eventvalidation,
@@ -65,7 +69,20 @@ function main(){
 		'wzLogin$logOn_Step1$divLogin$txtCaptcha':captcha_word,
 		'wzLogin$logOn_Step1$divLogin$txtLoginCaptcha':prefs.login,
 		'wzLogin$logOn_Step1$divLogin$txtPassCaptcha':prefs.password,
-    }, g_headers);
+	    }, g_headers);
+    }else{
+	    html = AnyBalance.requestPost(baseurl + 'Pages/User/LogOn.aspx', {
+        	__EVENTTARGET: '',
+        	__EVENTARGUMENT:'',
+        	__VIEWSTATE:viewstate,
+        	__VIEWSTATEENCRYPTED:'',
+        	__EVENTVALIDATION:eventvalidation,
+        	wzLogin$tbLogin:prefs.login,
+        	wzLogin$tbPassword:prefs.password,
+        	'wzLogin$btnLogOn.x':54,
+        	'wzLogin$btnLogOn.y':10,
+	    }, g_headers);
+    }
 
     if(!/ctl00\$btnLogout/i.test(html)){
         var error = getParam(html, null, null, /<span[^>]+id="overlayingErrorMessage_lblMessage">([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);

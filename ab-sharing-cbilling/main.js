@@ -39,10 +39,8 @@ function main() {
 		'recaptcha_challenge_field':challenge,
 		'recaptcha_response_field':captchaa,
 		'do':'Войти',
-		login:'0ee1c0d',
-		password:'e7304e9',
-        //login:prefs.login,
-        //password:prefs.password,
+        login:prefs.login,
+        password:prefs.password,
     }, addHeaders({Referer: baseurl + '?mode=auth'}));
 	
 	if(!/mode=logout/i.test(html)) {

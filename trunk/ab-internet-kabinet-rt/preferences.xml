@@ -4,6 +4,7 @@
         title="Логин" 
         positiveButtonText="ОК" 
         summary="||{@s}" 
+		obligatory="true"
         dialogTitle="Логин" 
         negativeButtonText="Отмена" 
         dialogMessage="Введите логин для входа в личный кабинет https://kabinet.rt.ru."
@@ -12,6 +13,7 @@
     <EditTextPreference 
         positiveButtonText="ОК"
         key="password" 
+		obligatory="true"
         dialogTitle="Пароль"
         negativeButtonText="Отмена"
         title="Пароль"

@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser" />
 	<id version="1">ab-internet-tvingo</id>
 	<name>Твинго Телеком (Владикавказ)</name>
-	<description>
-	Получает данные для интернет-провайдера Твинго Телеком г. Владикавказ http://www.tvingo.ru
-	
-	Информация берется из личного кабинета https://cabinet.tvingo.ru/
-	</description>
+	<description html="true"><![CDATA[
+	<p>Получает данные для интернет-провайдера Твинго Телеком г. Владикавказ http://www.tvingo.ru</p>
+	<p>Информация берется из личного кабинета https://cabinet.tvingo.ru/</p>
+	]]></description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>

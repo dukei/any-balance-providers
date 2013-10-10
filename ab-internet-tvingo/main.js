@@ -14,10 +14,12 @@ function main(){
     var prefs = AnyBalance.getPreferences();
     var baseurl = 'https://cabinet.tvingo.ru/';
     AnyBalance.setDefaultCharset('utf-8'); 
+	checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(prefs.password, 'Введите пароль!');
+	
+    //var html = AnyBalance.requestGet(baseurl, g_headers);
 
-    var html = AnyBalance.requestGet(baseurl, g_headers);
-
-	html = AnyBalance.requestPost(baseurl, {
+	var html = AnyBalance.requestPost(baseurl, {
         username:prefs.login,
         passwd:prefs.password,
         B1:'Вход'
@@ -29,10 +31,12 @@ function main(){
             throw new AnyBalance.Error(error);
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
+	html = AnyBalance.requestGet(baseurl+'start.php?do=doginfo', g_headers);
+	
     var result = {success: true};
-    getParam(html, result, 'balance', /Текущий остаток(?:[\s\S]*?<[^>]*>)([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'status', /Статус(?:[\s\S]*?<[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'acc_num', /Договор&nbsp;№&nbsp;([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'balance', /Текущий остаток:(?:[\s\S]*?<[^>]*>)([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'status', /Статус:(?:[\s\S]*?<[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'acc_num', /Договор[^<]*?(\d+)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'fio', /ФИО(?:[\s\S]*?<[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 
     AnyBalance.setResult(result);

@@ -6,103 +6,21 @@
 Сайт оператора: http://sbrf.ru/
 Личный кабинет: https://esk.sbrf.ru/
 */
-
-function getParam (html, result, param, regexp, replaces, parser) {
-	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
-		return;
-
-	var value = regexp.exec (html);
-	if (value) {
-		value = value[1];
-		if (replaces) {
-			for (var i = 0; i < replaces.length; i += 2) {
-				value = value.replace (replaces[i], replaces[i+1]);
-			}
-		}
-		if (parser)
-			value = parser (value);
-
-    if(param)
-      result[param] = value;
-    else
-      return value
-	}
-}
-
-var replaceTagsAndSpaces = [/<[^>]*>/g, ' ', '&nbsp;', ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
-var replaceFloat = [/\s+/g, '', /,/g, '.'];
-
-function getViewState(html){
-    return getParam(html, null, null, /name="__VIEWSTATE".*?value="([^"]*)"/);
-}
-
-function getEventValidation(html){
-    return getParam(html, null, null, /name="__EVENTVALIDATION".*?value="([^"]*)"/);
-}
-
-function parseBalance(text){
-    var val = getParam(text.replace(/\s+/g, ''), null, null, /(-?\d[\d\s.,]*)/, replaceFloat, parseFloat);
-    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
-    return val;
-}
-
-function parseCurrency(text){
-    var val = getParam(text.replace(/\s+/g, ''), null, null, /-?\d[\d\s.,]*(\S*)/);
-    AnyBalance.trace('Parsing currency (' + val + ') from: ' + text);
-    return val;
-}
-
-function parseDate(str){
-    var matches = /(\d+)[^\d](\d+)[^\d](\d+)(?:[^\d](\d+):(\d+)(?::(\d+))?)?/.exec(str);
-    if(matches){
-          var date = new Date(+matches[3], matches[2]-1, +matches[1], matches[4], matches[5], matches[6]);
-	  var time = date.getTime();
-          AnyBalance.trace('Parsing date ' + date + ' from value: ' + str);
-          return time;
-    }
-    AnyBalance.trace('Failed to parse date from value: ' + str);
-}
-
-function parseSmallDate(str){
-	//Дата
-	if(str.indexOf('сегодня')!=-1) {
-		var date = new Date();
-		return date.getTime();
-	} else if(str.indexOf('вчера')!=-1) {
-		var date = new Date();
-		return date.getTime()-86400000;
-	} else {
-                var matches = /(\d+)[^\d]+(\d+)/i.exec(str);
-                if(!matches){
-                    AnyBalance.trace('Не удалось распарсить дату: ' + str);
-                }else{
-                    var now = new Date();
-                    var year = now.getFullYear();
-                    if(now.getMonth()+1 < +matches[2])
-                        --year; //Если текущий месяц меньше месяца последней операции, скорее всего, то было за прошлый год
-                    var date = new Date(year, +matches[2]-1, +matches[1]);
-                    return date.getTime();
-                }
-        }
-
-}
-
+		
 function main() {
     var prefs = AnyBalance.getPreferences();
 
     var baseurl = "https://online.sberbank.ru/CSAFront/login.do";
     AnyBalance.setDefaultCharset('utf-8');
 
-    if(prefs.__debug == 'esk'){
+    if(prefs.__debug == 'esk') {
       //Чтобы карты оттестировать
       readEskCards();
       return;
     }
-
-    if(!prefs.login)
-        throw new AnyBalance.Error("Пожалуйста, укажите логин для входа в Сбербанк-Онлайн!");
-    if(!prefs.password)
-        throw new AnyBalance.Error("Пожалуйста, укажите пароль для входа в Сбербанк-Онлайн!");
+	checkEmpty(prefs.login, "Пожалуйста, укажите логин для входа в Сбербанк-Онлайн!");
+	checkEmpty(prefs.password, "Пожалуйста, укажите пароль для входа в Сбербанк-Онлайн!");
+	
     if(prefs.lastdigits && !/^\d{4}$/.test(prefs.lastdigits))
         throw new AnyBalance.Error("Надо указывать 4 последних цифры карты или не указывать ничего");
 /*      
@@ -140,9 +58,9 @@ function main() {
         throw new AnyBalance.Error(error);
 
     html = AnyBalance.requestPost(baseurl, {
-	'field(login)':prefs.login,
-	'field(password)':prefs.password,
-	operation:'button.begin'
+		'field(login)':prefs.login,
+		'field(password)':prefs.password,
+		operation:'button.begin'
     });
 
     error = getParam(html, null, null, /в связи с ошибкой в работе системы[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
@@ -170,6 +88,56 @@ function main() {
         throw new AnyBalance.Error("В настоящее время услуга Сбербанк ОнЛ@йн временно недоступна по техническим причинам. Сбербанк приносит свои извинения за доставленные неудобства.");
     else
         throw new AnyBalance.Error("К сожалению, ваш вариант Сбербанка-онлайн пока не поддерживается. Пожалуйста, обратитесь к автору провайдера для исправления ситуации.");
+}
+
+
+function getViewState(html){
+    return getParam(html, null, null, /name="__VIEWSTATE".*?value="([^"]*)"/);
+}
+
+function getEventValidation(html){
+    return getParam(html, null, null, /name="__EVENTVALIDATION".*?value="([^"]*)"/);
+}
+/**
+ * Извлекает валюту из переданного текста (типичная реализация)
+ */
+function parseCurrencyMy(text){
+    var val = getParam(html_entity_decode(text).replace(/\s+|[,.]*/g, ''), null, null, /-?\d[\d.,]*(\S*)/);
+    AnyBalance.trace('Parsing currency (' + val + ') from: ' + text);
+    return val;
+}
+/** Приводим все к единому виду вместо ИВаНов пишем Иванов */
+function capitalFirstLenttersDecode(str) {
+	str = html_entity_decode(str+'');
+	var wordSplit = str.toLowerCase().split(' ');
+	var wordCapital = '';
+	for (i = 0; i < wordSplit.length; i++) {
+		wordCapital += wordSplit[i].substring(0, 1).toUpperCase() + wordSplit[i].substring(1) + ' ';
+	}
+	return wordCapital.replace(/^\s+|\s+$/g, '');;
+}
+function parseSmallDate(str){
+	//Дата
+	if(str.indexOf('сегодня')!=-1) {
+		var date = new Date();
+		return date.getTime();
+	} else if(str.indexOf('вчера')!=-1) {
+		var date = new Date();
+		return date.getTime()-86400000;
+	} else {
+                var matches = /(\d+)[^\d]+(\d+)/i.exec(str);
+                if(!matches){
+                    AnyBalance.trace('Не удалось распарсить дату: ' + str);
+                }else{
+                    var now = new Date();
+                    var year = now.getFullYear();
+                    if(now.getMonth()+1 < +matches[2])
+                        --year; //Если текущий месяц меньше месяца последней операции, скорее всего, то было за прошлый год
+                    var date = new Date(year, +matches[2]-1, +matches[1]);
+                    return date.getTime();
+                }
+        }
+
 }
 
 function doOldAccount(page){
@@ -218,25 +186,25 @@ function fetchOldAcc(html){
     var tr = getParam(html, null, null, re);
     if(!tr){
         if(prefs.lastdigits)
-          throw new AnyBalance.Error("Не удаётся найти ссылку на информацию по счету с последними цифрами " + prefs.lastdigits);
+			throw new AnyBalance.Error("Не удаётся найти ссылку на информацию по счету с последними цифрами " + prefs.lastdigits);
         else
-          throw new AnyBalance.Error("Не удаётся найти ни одного счета");
+			throw new AnyBalance.Error("Не удаётся найти ни одного счета");
     }
 
     var result = {success: true};
 
     getParam(tr, result, 'cardNumber', /(\d{20})/);
     getParam(tr, result, 'balance', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(tr, result, 'currency', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseCurrency);
+    getParam(tr, result, ['currency', 'balance', 'cash', 'electrocash', 'debt', 'maxlimit'], /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseCurrencyMy);
     getParam(tr, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)(?:<\/td>|<div)/i, replaceTagsAndSpaces);
 
     fetchOldThanks(html, result);
 
     var cardref = getParam(tr, null, null, /<a[^>]+href="([^"]*)/i, null, html_entity_decode);
     
-    if(AnyBalance.isAvailable('userName')){
-      html = AnyBalance.requestGet('https://esk.zubsb.ru/pay/sbrf/AccountsMain'+cardref);
-      getParam(html, result, 'userName', /Владелец(?:&nbsp;|\s+)счета:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+    if(AnyBalance.isAvailable('userName')) {
+		html = AnyBalance.requestGet('https://esk.zubsb.ru/pay/sbrf/AccountsMain'+cardref);
+		getParam(html, result, 'userName', /Владелец(?:&nbsp;|\s+)счета:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, capitalFirstLenttersDecode);
     }
 
     AnyBalance.setResult(result);
@@ -273,10 +241,10 @@ function fetchOldCard(html){
         
     var result = {success: true};
     getParam(html, result, 'cardNumber', reCardNumber);
-    getParam(html, result, 'userName', reOwner, replaceTagsAndSpaces);
+    getParam(html, result, 'userName', reOwner, replaceTagsAndSpaces, capitalFirstLenttersDecode);
     getParam(html, result, 'cardName', reEngOwner, replaceTagsAndSpaces);
     getParam(html, result, 'balance', reBalanceContainer, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'currency', reBalanceContainer, replaceTagsAndSpaces, parseCurrency);
+    getParam(html, result, ['currency', 'balance', 'cash', 'electrocash', 'debt', 'maxlimit'], reBalanceContainer, replaceTagsAndSpaces, parseCurrencyMy);
     getParam(html, result, '__tariff', reCardNumber, replaceTagsAndSpaces);
     
     if(AnyBalance.isAvailable('till','status','cash','debt','minpay','electrocash','maxcredit','lastPurchDate','lastPurchSum','lastPurchPlace')){
@@ -314,12 +282,12 @@ function doNewAccount(page){
     if(/StartMobileBankRegistrationForm/i.test(html)){
         //Сбербанк хочет, чтобы вы приняли решение о подключении мобильного банка. Откладываем решение.
         html = AnyBalance.requestPost('https://online.sberbank.ru/PhizIC/login/register-mobilebank/start.do', {operation: 'skip'});
-//        throw new AnyBalance.Error('Сбербанк хочет, чтобы вы приняли решение о подключении мобильного банка. Пожалуйста, зайдите в Сбербанк ОнЛ@йн через браузер и сделайте выбор.');
+		//throw new AnyBalance.Error('Сбербанк хочет, чтобы вы приняли решение о подключении мобильного банка. Пожалуйста, зайдите в Сбербанк ОнЛ@йн через браузер и сделайте выбор.');
     }
     if(/PhizIC/.test(html)){
-      return doNewAccountPhysic(html);
+		return doNewAccountPhysic(html);
     }else{
-      return doNewAccountEsk(html);
+		return doNewAccountEsk(html);
     }
 }
 
@@ -373,22 +341,21 @@ function readEskCards(){
     var result = {success: true};
     getParam(html, result, 'cardNumber', reCardNumber);
     getParam(html, result, 'balance', reBalanceContainer, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'currency', reBalanceContainer, replaceTagsAndSpaces, parseCurrency);
+    getParam(html, result, ['currency', 'balance', 'cash', 'electrocash', 'debt', 'maxlimit'], reBalanceContainer, replaceTagsAndSpaces, parseCurrencyMy);
     getParam(html, result, '__tariff', reCardNumber, replaceTagsAndSpaces);
     
-    if(AnyBalance.isAvailable('userName', 'cardName', 'till','status','cash','debt','minpay','electrocash','maxcredit')){
-      html = AnyBalance.requestGet(baseurl+'/esClient/_s/' + cardref);
-      getParam(html, result, 'userName', /Имя держателя:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-      getParam(html, result, 'status', /Статус:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-      getParam(html, result, 'till', /Срок действия:[\s\S]*?<td[^>]*>\s*по\s*([^<\s]*)/i, replaceTagsAndSpaces);
-      getParam(html, result, 'cash', /Доступно наличных[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-      getParam(html, result, 'electrocash', /Доступно для покупок[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-      getParam(html, result, 'debt', /Сумма задолженности[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-      getParam(html, result, 'minpay', /Сумма минимального платежа[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-      getParam(html, result, 'maxcredit', /Лимит кредита[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    }
-
-    AnyBalance.setResult(result);
+    if(AnyBalance.isAvailable('userName', 'cardName', 'till','status','cash','debt','minpay','electrocash','maxcredit')) {
+		html = AnyBalance.requestGet(baseurl+'/esClient/_s/' + cardref);
+		getParam(html, result, 'userName', /Имя держателя:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, capitalFirstLenttersDecode);
+		getParam(html, result, 'status', /Статус:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+		getParam(html, result, 'till', /Срок действия:[\s\S]*?<td[^>]*>\s*по\s*([^<\s]*)/i, replaceTagsAndSpaces);
+		getParam(html, result, 'cash', /Доступно наличных[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'electrocash', /Доступно для покупок[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'debt', /Сумма задолженности[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'minpay', /Сумма минимального платежа[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'maxcredit', /Лимит кредита[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	}
+	AnyBalance.setResult(result);
 }
 
 function doNewAccountPhysic(html){
@@ -458,13 +425,13 @@ function fetchNewAccountCard(html){
     getParam(html, result, 'balance', reBalance, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'cardNumber', reCardNumber, replaceTagsAndSpaces);
     getParam(html, result, '__tariff', reCardNumber, replaceTagsAndSpaces);
-    getParam(html, result, 'currency', reBalance, replaceTagsAndSpaces, parseCurrency);
+    getParam(html, result, ['currency', 'balance', 'cash', 'electrocash', 'debt', 'maxlimit'], reBalance, replaceTagsAndSpaces, parseCurrencyMy);
 
     fetchRates(html, result);
     
     if(AnyBalance.isAvailable('userName', 'till', 'cash', 'electrocash')){
         html = AnyBalance.requestGet(baseurl + '/PhizIC/private/cards/detail.do?id=' + cardId);
-        getParam(html, result, 'userName', /ФИО Держателя карты:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/, replaceTagsAndSpaces);
+        getParam(html, result, 'userName', /ФИО Держателя карты:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/, replaceTagsAndSpaces, capitalFirstLenttersDecode);
         getParam(html, result, 'till', /Срок действия до:[\s\S]*?(\d\d\/\d{4})/, replaceTagsAndSpaces);
         getParam(html, result, 'cash', /для снятия наличных:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/, replaceTagsAndSpaces, parseBalance);
         getParam(html, result, 'electrocash', /для покупок:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/, replaceTagsAndSpaces, parseBalance);
@@ -519,7 +486,7 @@ function fetchNewAccountAcc(html){
     getParam(html, result, 'balance', reBalance, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'cardNumber', reCardNumber, replaceTagsAndSpaces);
     getParam(html, result, '__tariff', new RegExp("\\?id=" + cardId + "[\\s\\S]*?<span[^>]+class=\"mainProductTitle\"[^>]*>([\\s\\S]*?)<\\/span>", "i"), replaceTagsAndSpaces);
-    getParam(html, result, 'currency', reBalance, replaceTagsAndSpaces, parseCurrency);
+    getParam(html, result, ['currency', 'balance', 'cash', 'electrocash', 'debt', 'maxlimit'], reBalance, replaceTagsAndSpaces, parseCurrencyMy);
     
     fetchRates(html, result);
     
@@ -550,218 +517,3 @@ function fetchNewAccountAcc(html){
 
     AnyBalance.setResult(result);
 }
-
-/**
- * Заменяет HTML сущности в строке на соответствующие им символы
- */
- function html_entity_decode (string) {
-  // http://kevin.vanzonneveld.net
-  // +   original by: john (http://www.jd-tech.net)
-  // +      input by: ger
-  // +   improved by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-  // +    revised by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-  // +   bugfixed by: Onno Marsman
-  // +   improved by: marc andreu
-  // +    revised by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-  // +      input by: Ratheous
-  // +   bugfixed by: Brett Zamir (http://brett-zamir.me)
-  // +      input by: Nick Kolosov (http://sammy.ru)
-  // +   bugfixed by: Fox
-  // -    depends on: get_html_translation_table
-  // *     example 1: html_entity_decode('Kevin &amp; van Zonneveld');
-  // *     returns 1: 'Kevin & van Zonneveld'
-  // *     example 2: html_entity_decode('&amp;lt;');
-  // *     returns 2: '&lt;'
-  var hash_map = {},
-    symbol = '',
-    tmp_str = '',
-    entity = '';
-  tmp_str = string.toString();
-  var quote_style = '';
-  if (false === (hash_map = get_html_translation_table('HTML_ENTITIES', quote_style))) {
-    return false;
-  }
-
-  // fix &amp; problem
-  // http://phpjs.org/functions/get_html_translation_table:416#comment_97660
-  delete(hash_map['&']);
-  hash_map['&'] = '&amp;';
-
-  for (symbol in hash_map) {
-    entity = hash_map[symbol];
-    tmp_str = tmp_str.split(entity).join(symbol);
-  }
-  tmp_str = tmp_str.split('&#039;').join("'");
-
-  return tmp_str;
-}
-function get_html_translation_table (table, quote_style) {
-  // http://kevin.vanzonneveld.net
-  // +   original by: Philip Peterson
-  // +    revised by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-  // +   bugfixed by: noname
-  // +   bugfixed by: Alex
-  // +   bugfixed by: Marco
-  // +   bugfixed by: madipta
-  // +   improved by: KELAN
-  // +   improved by: Brett Zamir (http://brett-zamir.me)
-  // +   bugfixed by: Brett Zamir (http://brett-zamir.me)
-  // +      input by: Frank Forte
-  // +   bugfixed by: T.Wild
-  // +      input by: Ratheous
-  // %          note: It has been decided that we're not going to add global
-  // %          note: dependencies to php.js, meaning the constants are not
-  // %          note: real constants, but strings instead. Integers are also supported if someone
-  // %          note: chooses to create the constants themselves.
-  // *     example 1: get_html_translation_table('HTML_SPECIALCHARS');
-  // *     returns 1: {'"': '&quot;', '&': '&amp;', '<': '&lt;', '>': '&gt;'}
-  var entities = {},
-    hash_map = {},
-    decimal;
-  var constMappingTable = {},
-    constMappingQuoteStyle = {};
-  var useTable = {},
-    useQuoteStyle = {};
-
-  // Translate arguments
-  constMappingTable[0] = 'HTML_SPECIALCHARS';
-  constMappingTable[1] = 'HTML_ENTITIES';
-  constMappingQuoteStyle[0] = 'ENT_NOQUOTES';
-  constMappingQuoteStyle[2] = 'ENT_COMPAT';
-  constMappingQuoteStyle[3] = 'ENT_QUOTES';
-
-  useTable = !isNaN(table) ? constMappingTable[table] : table ? table.toUpperCase() : 'HTML_SPECIALCHARS';
-  useQuoteStyle = !isNaN(quote_style) ? constMappingQuoteStyle[quote_style] : quote_style ? quote_style.toUpperCase() : 'ENT_COMPAT';
-
-  if (useTable !== 'HTML_SPECIALCHARS' && useTable !== 'HTML_ENTITIES') {
-    throw new Error("Table: " + useTable + ' not supported');
-    // return false;
-  }
-
-  entities['38'] = '&amp;';
-  if (useTable === 'HTML_ENTITIES') {
-    entities['160'] = '&nbsp;';
-    entities['161'] = '&iexcl;';
-    entities['162'] = '&cent;';
-    entities['163'] = '&pound;';
-    entities['164'] = '&curren;';
-    entities['165'] = '&yen;';
-    entities['166'] = '&brvbar;';
-    entities['167'] = '&sect;';
-    entities['168'] = '&uml;';
-    entities['169'] = '&copy;';
-    entities['170'] = '&ordf;';
-    entities['171'] = '&laquo;';
-    entities['172'] = '&not;';
-    entities['173'] = '&shy;';
-    entities['174'] = '&reg;';
-    entities['175'] = '&macr;';
-    entities['176'] = '&deg;';
-    entities['177'] = '&plusmn;';
-    entities['178'] = '&sup2;';
-    entities['179'] = '&sup3;';
-    entities['180'] = '&acute;';
-    entities['181'] = '&micro;';
-    entities['182'] = '&para;';
-    entities['183'] = '&middot;';
-    entities['184'] = '&cedil;';
-    entities['185'] = '&sup1;';
-    entities['186'] = '&ordm;';
-    entities['187'] = '&raquo;';
-    entities['188'] = '&frac14;';
-    entities['189'] = '&frac12;';
-    entities['190'] = '&frac34;';
-    entities['191'] = '&iquest;';
-    entities['192'] = '&Agrave;';
-    entities['193'] = '&Aacute;';
-    entities['194'] = '&Acirc;';
-    entities['195'] = '&Atilde;';
-    entities['196'] = '&Auml;';
-    entities['197'] = '&Aring;';
-    entities['198'] = '&AElig;';
-    entities['199'] = '&Ccedil;';
-    entities['200'] = '&Egrave;';
-    entities['201'] = '&Eacute;';
-    entities['202'] = '&Ecirc;';
-    entities['203'] = '&Euml;';
-    entities['204'] = '&Igrave;';
-    entities['205'] = '&Iacute;';
-    entities['206'] = '&Icirc;';
-    entities['207'] = '&Iuml;';
-    entities['208'] = '&ETH;';
-    entities['209'] = '&Ntilde;';
-    entities['210'] = '&Ograve;';
-    entities['211'] = '&Oacute;';
-    entities['212'] = '&Ocirc;';
-    entities['213'] = '&Otilde;';
-    entities['214'] = '&Ouml;';
-    entities['215'] = '&times;';
-    entities['216'] = '&Oslash;';
-    entities['217'] = '&Ugrave;';
-    entities['218'] = '&Uacute;';
-    entities['219'] = '&Ucirc;';
-    entities['220'] = '&Uuml;';
-    entities['221'] = '&Yacute;';
-    entities['222'] = '&THORN;';
-    entities['223'] = '&szlig;';
-    entities['224'] = '&agrave;';
-    entities['225'] = '&aacute;';
-    entities['226'] = '&acirc;';
-    entities['227'] = '&atilde;';
-    entities['228'] = '&auml;';
-    entities['229'] = '&aring;';
-    entities['230'] = '&aelig;';
-    entities['231'] = '&ccedil;';
-    entities['232'] = '&egrave;';
-    entities['233'] = '&eacute;';
-    entities['234'] = '&ecirc;';
-    entities['235'] = '&euml;';
-    entities['236'] = '&igrave;';
-    entities['237'] = '&iacute;';
-    entities['238'] = '&icirc;';
-    entities['239'] = '&iuml;';
-    entities['240'] = '&eth;';
-    entities['241'] = '&ntilde;';
-    entities['242'] = '&ograve;';
-    entities['243'] = '&oacute;';
-    entities['244'] = '&ocirc;';
-    entities['245'] = '&otilde;';
-    entities['246'] = '&ouml;';
-    entities['247'] = '&divide;';
-    entities['248'] = '&oslash;';
-    entities['249'] = '&ugrave;';
-    entities['250'] = '&uacute;';
-    entities['251'] = '&ucirc;';
-    entities['252'] = '&uuml;';
-    entities['253'] = '&yacute;';
-    entities['254'] = '&thorn;';
-    entities['255'] = '&yuml;';
-  }
-
-  if (useQuoteStyle !== 'ENT_NOQUOTES') {
-    entities['34'] = '&quot;';
-  }
-  if (useQuoteStyle === 'ENT_QUOTES') {
-    entities['39'] = '&#39;';
-  }
-  entities['60'] = '&lt;';
-  entities['62'] = '&gt;';
-
-
-  // ascii decimals to real symbols
-  for (decimal in entities) {
-    if (entities.hasOwnProperty(decimal)) {
-      hash_map[String.fromCharCode(decimal)] = entities[decimal];
-    }
-  }
-
-  return hash_map;
-}
-/*function html_entity_decode(str)
-{
-	//return str;
-    //jd-tech.net
-    var tarea = document.createElement('textarea');
-    tarea.innerHTML = str;
-    return tarea.value;
-}*/

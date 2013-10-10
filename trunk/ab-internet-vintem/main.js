@@ -19,8 +19,9 @@ var g_headers = {
 function main(){
     var prefs = AnyBalance.getPreferences();
     var baseurl = "https://stat.vintem.ru/";
-	
-    AnyBalance.setDefaultCharset('iso-8859-1'); 
+	checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(prefs.password, 'Введите пароль!');
+	AnyBalance.setDefaultCharset('iso-8859-1');
 	
     var html = AnyBalance.requestPost(baseurl + 'cgi-bin/utm5/aaa5', {
         login:prefs.login,
@@ -39,8 +40,7 @@ function main(){
     getParam(html, result, 'fio', /<td[^>]*>Полное имя<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'account', /<td[^>]*>Основной счет<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'id', /<td[^>]*>ID<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-	var balance = getParam(html, null, null, /<td[^>]*>Баланс основного счета<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-	result.balance = balance;
+	getParam(html, result, 'balance', /<td[^>]*>Баланс основного счета<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'balanceCredit', /<td[^>]*>Кредит основного счета<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'nds', /<td[^>]*>Ставка НДС, %<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'block', /<td[^>]*>Блокировка<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
@@ -54,12 +54,12 @@ function main(){
 	if(isAvailable('deadline')){
 		var monthlyFee = getParam(html, null, null, /<TD[^>]*>Тарифный план<\/TD>(?:[\s\S]*?<td[^>]*>){9}([\s\S]*?)<\/td>/i, null, parseBalance);
 		var date = new Date();
-		var dayCount = 32 - new Date(date.getYear(), date.getMonth(), 32).getDate();
+		// Они просто на 30 делят и не парятся
+		var dayCount = 30;//32 - new Date(date.getYear(), date.getMonth(), 32).getDate();
 		// Теперь мы знаем сумму абонентской платы и количество дней в месяце, так что можем посчитать дату отключения
-		var daysToDeadline = Math.round(balance/(monthlyFee/dayCount));
-		date = date.getTime() + 86400000 * daysToDeadline;
-		
-		result.deadline = date;
+		if(result.balance) {
+			result.deadline = date.getTime() + (86400000 * Math.round(result.balance/(monthlyFee/dayCount)));
+		}
 	}
     AnyBalance.setResult(result);
 }

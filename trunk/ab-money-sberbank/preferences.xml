@@ -5,6 +5,7 @@
         positiveButtonText="ОК" 
         summary="ID пользователя или логин||{@s}\n" 
         dialogTitle="Логин" 
+		obligatory="true"
         negativeButtonText="Отмена" 
         dialogMessage="Введите идентификатор пользователя или логин для входа в систему Сбербанк-онлайн."
         key="login">
@@ -12,6 +13,7 @@
     <EditTextPreference 
         positiveButtonText="ОК"
         key="password" 
+		obligatory="true"
         dialogTitle="Пароль"
         negativeButtonText="Отмена"
         title="Пароль"

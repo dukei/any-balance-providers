@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="20">ab-money-sberbank</id>
+	<id version="21">ab-money-sberbank</id>
 	<api flags="no_browser"/>
 	<name>Сбербанк ОнЛ@йн</name>
 	<description html="true"><![CDATA[
@@ -10,9 +10,9 @@
 	  <instruction html="true"><![CDATA[
 	<p>Как получить доступ к ""Сбербанк-Онлайн"":</p>
 	<ul> 
-	<li>Перейдите на страницу http://sberbank.ru/moscow/ru/person/dist_services/electronic_savings_bank/ и нажмите кнопку ""Как пользоваться Сбербанк ОнЛ@йн"".</li>
+		<li>Перейдите на страницу http://sberbank.ru/moscow/ru/person/dist_services/electronic_savings_bank/ и нажмите кнопку "Как пользоваться Сбербанк ОнЛ@йн".</li>
 	<br>
-	<b>ВНИМАНИЕ!</b> Для работы провайдера требуется отказаться от подтверждения входа в систему ""Сбербанк ОнЛ@йн""  одноразовым паролем в разделе ""Настройки - Настройка безопасности"".
+	<b>ВНИМАНИЕ!</b> Для работы провайдера требуется отказаться от подтверждения входа в систему "Сбербанк ОнЛ@йн"  одноразовым паролем в разделе "Настройки - Настройка безопасности".
 	<br>
 	<br>
 	<small>Отключение подтверждения даёт возможность только зайти в систему, в целях безопасности НЕВОЗМОЖНО отключить подтверждение одноразовым паролем переводов и платежей организациям или частным лицам.</small>
@@ -21,20 +21,21 @@
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Остаток"/>
+		<counter id="balance" name="Остаток" units=" {@currency}"/>
 		<counter id="spasibo" name="Спасибо"/>
-		<counter id="cash" name="Наличные"/>
-		<counter id="electrocash" name="Для покупок"/>
+		<counter id="cash" name="Наличные" units=" {@currency}"/>
+		<counter id="electrocash" name="Для покупок" units=" {@currency}"/>
 		<counter id="currency" name="Валюта" type="text"/>
 		<counter id="cardNumber" name="Номер карты" type="text"/>
 		<counter id="userName" name="ФИО" type="text"/>
 		<counter id="till" name="Срок действия" type="text"/>
-		<counter id="debt" name="Задолженность"/>
-		<counter id="maxlimit" name="Кредитный лимит"/>
+		<counter id="debt" name="Задолженность" units=" {@currency}"/>
+		<counter id="maxlimit" name="Кредитный лимит" units=" {@currency}"/>
 		<counter id="cardName" name="Имя на карте" type="text"/>
 		<counter id="status" name="Статус" type="text"/>
 		<counter id="lastPurchSum" name="Сумма последней операции" type="text"/>

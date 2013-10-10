@@ -6,7 +6,7 @@
         summary="Логин в SIPNET||{@s}\n" 
         dialogTitle="Логин" 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите ваш логин в SIPNET"
+        dialogMessage="Введите ваш логин или SIP ID"
         key="login">
     </EditTextPreference>
     <EditTextPreference 

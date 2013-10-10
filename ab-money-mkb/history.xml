@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+<change version="7" date="2013-10-10">
+- Исправлено получение баланса по кредитам и депозитам (Stark)
+</change>
 <change version="6" date="2013-10-09">
 - Исправлено получение баланса по картам (Stark)
 </change>

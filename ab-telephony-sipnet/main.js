@@ -1,30 +1,25 @@
  /** 
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
-var g_headers = {
-	'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-	'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
-	'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-	'Connection':'keep-alive',
-	'User-Agent':'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
-};
 
 function main(){
 	var prefs = AnyBalance.getPreferences();
+	checkEmpty(prefs.login, 'Enter login or SIP ID', true);
+	checkEmpty(prefs.password, 'Enter password', true);
     
-	var info = AnyBalance.requestPost('https://customer.sipnet.ru/cabinet/', {
-		Name: prefs.login,
-		Password: prefs.password,
-		CabinetAction: 'login'
-	}, g_headers);
+	AnyBalance.setAuthentication(prefs.login, prefs.password);
 	
-	if(!/CabinetAction=logout/i.test(info))
-		throw new AnyBalance.Error('Can`t login. Site changed?');
+	var info = AnyBalance.requestGet('https://customer.voipexchange.ru/cgi-bin/Exchange.dll/MTK?oper=3&uid=' + prefs.login);
 	
+	if(!/Информация о клиенте/i.test(info))
+		throw new AnyBalance.Error('Can\'t login. Check login and password');
+		
 	var result = {success: true};
-	getParam(info, result, 'balance', /На Вашем счете[^>]*>[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(info, result, '__tariff', /Ваш SIP ID[^>]*>[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(info, result, 'sipid', /Ваш SIP ID[^>]*>[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+	
+	getParam(info, result, '__tariff', /<td>Тарифный план<\/td><td>(.*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(info, result, 'sipid', /SIP ID<\/td><td><b>(\d*?)<\/b>/i, null, null);
+	getParam(info, result, 'login', /Логин<\/td><td><b>(.*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(info, result, 'balance', /\[Balance\](.*?)\[\/Balance\]/i, replaceTagsAndSpaces, parseBalance);
 	
     AnyBalance.setResult(result);
 }

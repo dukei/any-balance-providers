@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+<change version="4" date="2013-10-10">
+- Полностью изменен способ получения данных;
+- Добавлено отображение тарифного плана;
+- Новые счетчик (логин);
+</change>
 <change version="3" date="2013-10-08">
 - Новый счетчик SIP ID (Stark)
 </change>

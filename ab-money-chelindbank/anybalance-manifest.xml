@@ -1,32 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-money-chelindbank</id>
-  <name>Челиндбанк</name>
-  <description>
-    Получает текущий остаток и другие параметры карт, счетов Челиндбанка (http://www.chelindbank.ru), используя интернет-банк https://www.chelindbank.ru/ib2.
-
-    Для подключения к системе «Интернет-банк» Вам необходимо лично обратиться в Банк для заключения Договора присоединения. При себе необходимо иметь документ, удостоверяющий личность (Паспорт) и мобильный телефон для авторизации в системе «Интернет-банк». Подключение осуществляет любое подразделение ОАО «ЧЕЛИНДБАНК», не зависимо от того, где открыты Ваши счета.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Остаток"/>
-    <counter id="currency" name="Валюта" type="text"/>
-    <counter id="cardnum" name="Номер карты" type="text"/>
-    <counter id="accnum" name="Номер счета" type="text"/>
-  </counters>
-  <keywords>
-    интернет-банкинг
-  </keywords>
-  <type>
-    money
-  </type>
-  <country>
-    ru
-  </country>
+	<id version="2">ab-money-chelindbank</id>
+	<name>Челиндбанк</name>
+	<description html="true"><![CDATA[
+	<p>Получает текущий остаток и другие параметры карт, счетов Челиндбанка (http://www.chelindbank.ru), используя интернет-банк https://www.chelindbank.ru/ib2.</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для подключения к системе «Интернет-банк» Вам необходимо лично обратиться в Банк для заключения Договора присоединения. При себе необходимо иметь документ, удостоверяющий личность (Паспорт) и мобильный телефон для авторизации в системе «Интернет-банк». Подключение осуществляет любое подразделение ОАО «ЧЕЛИНДБАНК», не зависимо от того, где открыты Ваши счета.	<p>Если у вас нет доступа в Интернет-Помощник, необходимо:</p>
+	]]></instruction>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Остаток" units=" {@currency}"/>
+		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="cardnum" name="Номер карты" type="text"/>
+		<counter id="accnum" name="Номер счета" type="text"/>
+	</counters>
+	<keywords>интернет-банкинг</keywords>
+	<type>money</type>
+	<country>ru</country>
 </provider>

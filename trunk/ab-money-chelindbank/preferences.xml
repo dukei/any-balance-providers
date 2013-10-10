@@ -5,6 +5,7 @@
         positiveButtonText="ОК" 
         summary="|Введите логин в интернет-банк|{@s}" 
         dialogTitle="Логин" 
+		obligatory="true"
         negativeButtonText="Отмена" 
         dialogMessage="Введите логин для входа в интернет-банк Челиндбанк."
         key="login">
@@ -12,6 +13,7 @@
     <EditTextPreference 
         positiveButtonText="ОК"
         key="password" 
+		obligatory="true"
         dialogTitle="Пароль"
         negativeButtonText="Отмена"
         title="Пароль"

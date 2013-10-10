@@ -106,7 +106,7 @@ function fetchCredit(html, baseurl){
 
 	var cardnum = prefs.num ? prefs.num : '\\d{2,}';
 	//                   (<tr[^>]*btnrsloans[^>]*><td>[^>]*id=\"hl\"[^>]*id=               [\\s\\S]*?</tr>)
-	var re = new RegExp('(<tr[^>]*btnrsloans[^>]*><td>[^>]*id=\"hl\"[^>]*id=' + cardnum + '[\\s\\S]*?</tr>)', 'i');
+	var re = new RegExp('(<tr[^>]*btnrsloans[^>]*>\\s*<td>[^>]*id=\"hl\"[^>]*id=' + cardnum + '[\\s\\S]*?</tr>)', 'i');
 	var tr = getParam(html, null, null, re);
 	if(!tr)
 		throw new AnyBalance.Error(prefs.num ? 'Не удалось найти кредитный договор с первыми цифрами ' + prefs.num : 'Не удалось найти ни одного кредита!');	
@@ -120,7 +120,7 @@ function fetchCredit(html, baseurl){
 
     var href = getParam(tr, null, null, /href="([^"]*)/i);
     if(!href)
-        AnyBalance.trace('Не удалось обнаружить ссылку на подробную информацию по кредиту');
+        AnyBalance.trace('Не удалось обнаружить ссылку на подробную информацию по кредиту!');
     
     if(AnyBalance.isAvailable('accnum', 'needpay', 'needpaytill', 'pctcredit', 'limit', 'latedebt')){
         html = AnyBalance.requestGet(baseurl + href);
@@ -163,7 +163,7 @@ function fetchAccount(html, baseurl){
         throw new AnyBalance.Error('Укажите 4 последних цифры счета или не указывайте ничего, чтобы получить информацию по первому счету.');
 	//                                     Это нужно чтобы отображать Служебный счет, у которого нет номера
 	var cardnum = prefs.num ? prefs.num : '[^>]*';
-	var re = new RegExp('(<tr[^>]*btnrsaccs[^>]*><td>[^>]*id=\"hl\"[^>]*' + cardnum + '[\\s\\S]*?</tr>)', 'i');
+	var re = new RegExp('(<tr[^>]*btnrsaccs[^>]*>\\s*<td>[^>]*id=\"hl\"[^>]*' + cardnum + '[\\s\\S]*?</tr>)', 'i');
 	var tr = getParam(html, null, null, re);
 	if(!tr)
 		throw new AnyBalance.Error(prefs.num ? 'Не удалось найти счет с последними цифрами ' + prefs.num : 'Не удалось найти ни одного счета!');	

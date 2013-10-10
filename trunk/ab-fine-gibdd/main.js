@@ -21,11 +21,11 @@ function main(){
 	if(!form){
 		// Попробуем объяснить почему
 		if(/Работа сервиса проверки[^<]*временно приостановлена/i.test(html))
-			throw new AnyBalance.Error('Работа сервиса временно приостановлена! Попробуйте зайти позже');
+			throw new AnyBalance.Error('Работа сервиса временно приостановлена! Попробуйте зайти позже.');
 		throw new AnyBalance.Error('Не удалось найти форму для запроса!');
 	}
-	checkEmpty(prefs.login, 'Введите гос. номер!');
-	checkEmpty(prefs.password, 'Введите номер свидетельства о регистрации!');
+	checkEmpty(prefs.login, 'Введите гос. номер. Номер должен быть в формате а351со190 либо 1234ав199, буквы русские!');
+	checkEmpty(prefs.password, 'Введите номер свидетельства о регистрации в формате 50ХХ123456!');
 	
 	var params = createFormParams(form);
 
@@ -45,7 +45,7 @@ function main(){
 	
 	var found = /(\D{0,1}\d+\D{2})(\d{2,3})/i.exec(prefs.login);
 	if(!found)
-		throw new AnyBalance.Error('Введеный гос. номер не соответствует формату а351со190');
+		throw new AnyBalance.Error('Номер должен быть в формате а351со190 либо 1234ав199, буквы русские.');
 
 	params.regnum = found[1];
     params.regreg = found[2];
@@ -81,7 +81,7 @@ function main(){
 			var curr = json.request.data[i];
 			sumParam(curr.Summa+'', result, 'balance', null, null, parseBalance, aggregate_sum);
 		}
-		getParam(curr.DateDecis+'', result, 'date', null, null, parseDateISO);
+		getParam(curr.DatePost+'', result, 'date', null, replaceTagsAndSpaces, parseDateISO);
 		getParam(json.request.count+'', result, 'count', null, null, html_entity_decode);
 		getParam(curr.KoAPtext.toUpperCase().substring(0,1) + curr.KoAPtext.toLowerCase().substring(1), result, 'descr', null, null, html_entity_decode);
 		getParam(curr.KoAPcode, result, 'koap', null, replaceTagsAndSpaces, html_entity_decode);
@@ -90,10 +90,9 @@ function main(){
 		getParam(curr.Summa+'', result, 'summ', null, null, parseBalance);
 	// Нет штрафов
 	} else {
-		result.descr = result.koap = result.podrazdel = result.postanovlenie = 'В базе данных отсутствует информация о неуплаченных штрафах по Вашему запросу';
-		result.count = result.summ = 0;
+		result.descr = 'В базе данных отсутствует информация о неуплаченных штрафах по Вашему запросу';
+		result.count = 0;
 	}
-	
 	result.__tariff = prefs.login.toUpperCase();
     AnyBalance.setResult(result);
 }

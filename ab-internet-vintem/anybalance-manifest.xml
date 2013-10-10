@@ -1,16 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="3">ab-internet-vintem</id>
+	<id version="4">ab-internet-vintem</id>
 	<name>Винтем Телеком (Пушкино)</name>
-	<description>
-	Получает баланс для интернет провайдера Винтем Телеком (http://www.vintem.ru/)
-	
-	Счетчик Предполагаемая дата отключения расчитывает дату основываясь на абонентской плате по текущему тарифу, этот подсчет может быть не точный, если Вы заметили ошибку свяжитесь с автором провайдера по e-mail.
-	
-	Информация берется из личного кабинета (https://stat.vintem.ru/cgi-bin/utm5/aaa5)
-	</description>
-	<author>Alexandra Shalamova &lt;alexandrashalamova@gmail.com&gt;</author>
+	<description html="true"><![CDATA[
+	<p>Получает баланс для интернет провайдера Винтем Телеком (http://www.vintem.ru/)</p>
+	<p>Информация берется из личного кабинета (https://stat.vintem.ru/cgi-bin/utm5/aaa5)</p>
+	<p>Счетчик Предполагаемая дата отключения расчитывает дату основываясь на абонентской плате по текущему тарифу, этот подсчет может быть не точный.</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
@@ -21,7 +19,7 @@
 	<counters>
 		<counter id="balance" name="Баланс основного счета" units="р"/>
 		<counter id="balanceCredit" name="Кредит основного счета" units="р"/>
-		<counter id="nds" name="Ставка НДС, %" type="text"/>
+		<counter id="nds" name="Ставка НДС" type="text" units="%"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="id" name="ID" type="text"/>
 		<counter id="account" name="Основной счет" type="text"/>

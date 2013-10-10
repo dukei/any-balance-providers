@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-	<change version="3" date="2013-09-09">
-	- Новый счетчик: Предполагаемая дата отключения
-	</change>
-	<change version="2" date="2013-07-05">
-	- Добавлена совместимость с Balance Widget
-	</change>
+<change version="4" date="2013-10-10">
+- Оптимизация кода (Stark)
+</change>
+<change version="3" date="2013-09-09">
+- Новый счетчик: Предполагаемая дата отключения
+</change>
+<change version="2" date="2013-07-05">
+- Добавлена совместимость с Balance Widget
+</change>
 </history>

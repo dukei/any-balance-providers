@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-    <change version="6" date="2013-09-16">
-      - Поддержка изменений в личном кабинете
-    </change>
-    <change version="5" date="2013-07-11">
-      - Поддержка изменений в личном кабинете
-    </change>
-    <change version="4" date="2013-06-24">
-      - Изменения в процедуре входа
-    </change>
-    <change version="3" date="2013-06-14">
-      - Изменения в личном кабинете
-    </change>
-    <change version="2" date="2013-05-17">
-      - Предупреждение о капче
-    </change>
+<change version="7" date="2013-10-10">
+- Поддержка изменений в личном кабинете (Stark)
+</change>
+<change version="6" date="2013-09-16">
+- Поддержка изменений в личном кабинете
+</change>
+<change version="5" date="2013-07-11">
+- Поддержка изменений в личном кабинете
+</change>
+<change version="4" date="2013-06-24">
+- Изменения в процедуре входа
+</change>
+<change version="3" date="2013-06-14">
+- Изменения в личном кабинете
+</change>
+<change version="2" date="2013-05-17">
+- Предупреждение о капче
+</change>
 </history>

@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-    <change version="2" date="2013-09-13">
-	- Bugfixes
-	</change>
+<change version="3" date="2013-10-11">
+- Bugfixes
+</change>
+<change version="2" date="2013-09-13">
+- Bugfixes
+</change>
 </history>

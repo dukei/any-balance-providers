@@ -2,20 +2,22 @@
 <PreferenceScreen>
     <EditTextPreference 
         title="Логин" 
-        positiveButtonText="ОК" 
+		key="login"
         summary="||{@s}" 
-        dialogTitle="Логин" 
+        obligatory="true"
+		dialogTitle="Логин" 
+		positiveButtonText="ОК" 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите логин в личный кабинет."
-        key="login">
+        dialogMessage="Введите логин, используемый для входа в личный кабинет.">
     </EditTextPreference>
     <EditTextPreference 
-        positiveButtonText="ОК"
-        key="password" 
-        dialogTitle="Пароль"
-        negativeButtonText="Отмена"
         title="Пароль"
-        summary="||***********"
+		key="password" 
+		summary="||***********"
+        obligatory="true"
+		dialogTitle="Пароль"
+		positiveButtonText="ОК"
+        negativeButtonText="Отмена"
         dialogMessage="Введите пароль, используемый для входа в личный кабинет."
         inputType="textPassword">
     </EditTextPreference>

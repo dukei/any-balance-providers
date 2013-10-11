@@ -12,27 +12,39 @@ var g_headers = {
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-
+	checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(prefs.password, 'Введите пароль!');
+	
     var baseurl = "http://seopult.ru/";
     AnyBalance.setDefaultCharset('utf-8');
 
-    var html = AnyBalance.requestPost(baseurl + 'user.html', {
+	var html = AnyBalance.requestGet(baseurl + 'user.html', g_headers);
+	
+    html = AnyBalance.requestPost(baseurl + 'user.html', {
         uname:prefs.login,
         pass:prefs.password,
+		pass_hash:'',
         op:'login'
-    }, addHeaders({Referer: baseurl + 'login'}));
+    }, addHeaders({Referer: baseurl + 'user.html'}));
+
+	
 	// при успешном логине сайт нас редиректит
-    if(!/Refresh[\s\S]*?http:\/\/seopult.ru\/items.html/i.test(html))
-		// ничего вразумительного сайт не сообщает...
-        throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Проверьте Ваш логин или пароль');
+    if(!/Refresh[\s\S]*?http:\/\/seopult.ru\/items.html/i.test(html)) {
+		var error = getParam(html, null, null, /<div[^>]*background-color:\s*#999999[^>]*>\s*<h4[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+		if(error && /Неверный логин или пароль/i.test(error))
+			throw new AnyBalance.Error(error, null, true);
+		if(error)
+			throw new AnyBalance.Error(error);
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+	}
 	// идем по 302...
-	html = AnyBalance.requestGet('http://seopult.ru/items.html');
+	html = AnyBalance.requestGet('http://seopult.ru/items.html', addHeaders({Referer: baseurl + 'user.html'}));
     //Раз мы здесь, то мы успешно вошли в кабинет
     var result = {success: true};
-    getParam(html, result, 'balance', /Баланс[\s\S]*?([\s\S]*?)\s*руб/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'monthly', /Расход[\s\S]*?([\s\S]*?)\s*руб.\/мес/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'daily', /ежедневный расход[\s\S]*?([\s\S]*?)\s*руб.\/день/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'monthly_income', /доход[\s\S]*?>([\s\S]*?)\s*руб./i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'balance', /Баланс:[^>]*>[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'monthly', /текущий ежемесячный расход[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'daily', /текущий ежедневный расход[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'monthly_income', /ежемесячный реферальный[^>]*доход[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	
     //Возвращаем результат
     AnyBalance.setResult(result);

@@ -6,6 +6,7 @@
         summary="Номер телефона (в формате +380ХХХХХХХХХ)||{@s}\n" 
         dialogTitle="Номер телефона" 
         negativeButtonText="Отмена" 
+		obligatory="true"
         dialogMessage="Введите номер вашего телефона для входа в Мой Киевстар (в формате +380ХХХХХХХХХ), например +380971234567"
         key="login"
         inputType="phone">
@@ -15,6 +16,7 @@
         key="password" 
         dialogTitle="Пароль"
         negativeButtonText="Отмена"
+		obligatory="true"
         title="Пароль"
         summary="Пароль для входа в Мой Киевстар||***********\n"
         dialogMessage="Введите пароль, используемый для входа в Мой Киевстар"

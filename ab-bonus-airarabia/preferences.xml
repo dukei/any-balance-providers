@@ -5,6 +5,7 @@
         positiveButtonText="OK" 
         summary="||{@s}" 
         dialogTitle="Login" 
+		obligatory="true"
         negativeButtonText="Cancel" 
         dialogMessage="Enter login to selfcare."
         key="login">
@@ -15,6 +16,7 @@
         dialogTitle="Password"
         negativeButtonText="Cancel"
         title="Password"
+		obligatory="true"
         summary="||***********"
         dialogMessage="Enter password to selfcare."
         inputType="textPassword">

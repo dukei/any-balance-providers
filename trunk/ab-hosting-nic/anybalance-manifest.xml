@@ -1,43 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-hosting-nic</id>
-  <name>RU-CENTER (центр регистрации доменов)</name>
-  <description>
-    Получает баланс и информацию о доменах из центра регистрации доменов RU-CENTER (http://www.nic.ru).
+	<id version="3">ab-hosting-nic</id>
+	<api flags="no_browser"/>
+	<name>RU-CENTER (центр регистрации доменов)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе и другие данные для пользователей центра регистрации доменов RU-CENTER (http://www.nic.ru).</p>
 
-    Информация берется из личного кабинета https://www.nic.ru/login. Может получать информацию по 4 доменам одновременно.
+	<p>Может получать информацию по 4 доменам одновременно.</p>  
 
-    Пока реализован вход только по номеру договора NIC-D. Если нужна поддержка NIC-REG и NIC-A, пишите на dco@mail.ru.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="domain" name="Домен" type="text"/>
-    <counter id="domain_status" name="Состояние" type="text"/>
-    <counter id="domain_till" name="До" type="time" format="dd/MM/yyyy"/>
-    <counter id="domain1" name="Домен 2" type="text"/>
-    <counter id="domain_status1" name="Состояние 2" type="text"/>
-    <counter id="domain_till1" name="До 2" type="time" format="dd/MM/yyyy"/>
-    <counter id="domain2" name="Домен 3" type="text"/>
-    <counter id="domain_status2" name="Состояние 3" type="text"/>
-    <counter id="domain_till2" name="До 3" type="time" format="dd/MM/yyyy"/>
-    <counter id="domain3" name="Домен 4" type="text"/>
-    <counter id="domain_status3" name="Состояние 4" type="text"/>
-    <counter id="domain_till3" name="До 4" type="time" format="dd/MM/yyyy"/>
-  </counters>
-  <keywords>
-    интернет регистратор ру-центр руцентр
-  </keywords>
-  <type>
-    hosting
-  </type>
-  <country>
-    ru
-  </country>
+	<p>Информация берется из личного кабинета (http://www.nic.ru/login).</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p><b>ВНИМАНИЕ!</b></p>
+	<p>На данный момент реализован вход только по номеру договора NIC-D.</p>
+	<p>Если вам нужна поддержка NIC-REG и NIC-A,  обратитесь, пожалуйста, по адресу dco@mail.ru.</p>   
+	]]></instruction>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units="р"/>
+		<counter id="domain" name="Домен" type="text"/>
+		<counter id="domain_status" name="Состояние" type="text"/>
+		<counter id="domain_till" name="До" type="time" format="dd/MM/yyyy"/>
+		<counter id="domain1" name="Домен 2" type="text"/>
+		<counter id="domain_status1" name="Состояние 2" type="text"/>
+		<counter id="domain_till1" name="До 2" type="time" format="dd/MM/yyyy"/>
+		<counter id="domain2" name="Домен 3" type="text"/>
+		<counter id="domain_status2" name="Состояние 3" type="text"/>
+		<counter id="domain_till2" name="До 3" type="time" format="dd/MM/yyyy"/>
+		<counter id="domain3" name="Домен 4" type="text"/>
+		<counter id="domain_status3" name="Состояние 4" type="text"/>
+		<counter id="domain_till3" name="До 4" type="time" format="dd/MM/yyyy"/>
+	</counters>
+	<keywords>интернет регистратор ру-центр руцентр</keywords>
+	<type>hosting</type>
+	<country>ru</country>
 </provider>

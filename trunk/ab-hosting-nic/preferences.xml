@@ -5,6 +5,7 @@
         positiveButtonText="ОК" 
         summary="||{@s}" 
         dialogTitle="№ договора" 
+		obligatory="true"
         negativeButtonText="Отмена" 
         dialogMessage="Введите номер клиентского договора (NIC-D)"
         inputType="number"
@@ -15,6 +16,7 @@
         key="password" 
         dialogTitle="Пароль"
         negativeButtonText="Отмена"
+		obligatory="true"
         title="Пароль"
         summary="||***********"
         dialogMessage="Введите пароль, административный или технический, для входа в личный кабинет https://nic.ru."
@@ -26,7 +28,7 @@
         summary="||{@s}\n"
         entries="Административный|Технический"
         entryValues="adm|tech"
-	defaultValue="adm">
+		defaultValue="adm">
     </ListPreference>
     <EditTextPreference 
         positiveButtonText="ОК"

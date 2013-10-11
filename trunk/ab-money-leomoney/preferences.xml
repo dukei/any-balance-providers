@@ -6,7 +6,8 @@
         summary="|Номер в международном формате, например, +79262344334|{@s}" 
         dialogTitle="Номер телефона" 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите ваш номер телефона, например, +79261234567. Обязательно + вначале и только цифры потом."
+		obligatory="true"
+        dialogMessage="Введите Ваш номер телефона, например, +79261234567. Обязательно + вначале и только цифры потом."
         inputType="phone"
         key="login">
     </EditTextPreference>
@@ -14,6 +15,7 @@
         positiveButtonText="OK"
         key="password" 
         dialogTitle="Пароль"
+		obligatory="true"
         negativeButtonText="Отмена"
         title="Пароль"
         summary="||***********\n"

@@ -5,7 +5,7 @@
 	<name>SeoPult</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе в автоматизированной рекламной системе SeoPult</p>
-	<p>Информация берется из личного кабинет http://seopult.ru/user.html</p>
+	<p>Информация берется из личного кабинета http://seopult.ru/user.html</p>
 	]]></description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>

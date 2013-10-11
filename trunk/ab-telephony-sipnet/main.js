@@ -4,22 +4,21 @@
 
 function main(){
 	var prefs = AnyBalance.getPreferences();
-	checkEmpty(prefs.login, 'Enter login or SIP ID', true);
-	checkEmpty(prefs.password, 'Enter password', true);
+	checkEmpty(prefs.login, 'Enter login or SIP ID');
+	checkEmpty(prefs.password, 'Enter password');
     
 	AnyBalance.setAuthentication(prefs.login, prefs.password);
 	
-	var info = AnyBalance.requestGet('https://customer.voipexchange.ru/cgi-bin/Exchange.dll/MTK?oper=3&uid=' + prefs.login);
+	var info = AnyBalance.requestGet('https://customer.voipexchange.ru/cgi-bin/Exchange.dll/MTK?oper=3&uid=' + encodeURIComponent(prefs.login));
 	
 	if(!/Информация о клиенте/i.test(info))
-		throw new AnyBalance.Error('Can\'t login. Check login and password');
-		
-	var result = {success: true};
+		throw new AnyBalance.Error('Can`t login. Check login and password');
 	
-	getParam(info, result, '__tariff', /<td>Тарифный план<\/td><td>(.*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(info, result, 'sipid', /SIP ID<\/td><td><b>(\d*?)<\/b>/i, null, null);
-	getParam(info, result, 'login', /Логин<\/td><td><b>(.*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(info, result, 'balance', /\[Balance\](.*?)\[\/Balance\]/i, replaceTagsAndSpaces, parseBalance);
+	var result = {success: true};
+	getParam(info, result, '__tariff', /Тарифный план(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(info, result, 'sipid', /SIP ID(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(info, result, 'login', /Логин(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(info, result, 'balance', /Остаток(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	
     AnyBalance.setResult(result);
 }

@@ -3,11 +3,12 @@
     <EditTextPreference 
         title="Логин" 
         positiveButtonText="ОК" 
-        summary="ID пользователя или логин||{@s}\n" 
+        summary="|ID пользователя или логин|{@s}" 
         dialogTitle="Логин" 
 		obligatory="true"
         negativeButtonText="Отмена" 
         dialogMessage="Введите идентификатор пользователя или логин для входа в систему Сбербанк-онлайн."
+        obligatory="true"
         key="login">
     </EditTextPreference>
     <EditTextPreference 
@@ -18,6 +19,7 @@
         negativeButtonText="Отмена"
         title="Пароль"
         summary="||***********"
+        obligatory="true"
         dialogMessage="Введите пароль, используемый для входа в систему Сбербанк-онлайн."
         inputType="textPassword">
     </EditTextPreference>

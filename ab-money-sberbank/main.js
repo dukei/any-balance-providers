@@ -22,7 +22,7 @@ function main() {
 	checkEmpty(prefs.password, "Пожалуйста, укажите пароль для входа в Сбербанк-Онлайн!");
 	
     if(prefs.lastdigits && !/^\d{4}$/.test(prefs.lastdigits))
-        throw new AnyBalance.Error("Надо указывать 4 последних цифры карты или не указывать ничего");
+        throw new AnyBalance.Error("Надо указывать 4 последних цифры карты или не указывать ничего", null, true);
 /*      
     var html = AnyBalance.requestGet(baseurl + 'esClient/_logon/LogonContent.aspx');
     var error = getParam(html, null, null, /techBreakMsgLabel[^>]*>([\s\S]*?)<\/span>/i);

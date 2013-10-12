@@ -44,19 +44,21 @@ function main(){
         if(/otpCode/i.test(html))
             throw new AnyBalance.Error('Для работы этого провайдера требуется отключить в настройках интернет-банка подтверждение входа по СМС. Это безопасно, для совершения операций все равно будет требоваться подтверждение по СМС.');
         var error = getParam(html, null, null, /<div[^>]+class="err"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-        if(/Неверный персональный номер или пароль/i.test(html))
+        if(error && /Неверный персональный номер или пароль/i.test(error))
             throw new AnyBalance.Error(error, null, true); //Фатальная ошибка, надо настройки менять
         if(error)
             throw new AnyBalance.Error(error);
-        error = getParam(html, null, null, /<div[^>]+class="b_card"[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
-        if(error)
-            throw new AnyBalance.Error(error);
         error = getParam(html, null, null, /<h2[^>]*>([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces, html_entity_decode);
+        if(error && /Срок действия пароля истек/i.test(error))
+            throw new AnyBalance.Error('Банк сообщает, что срок действия пароля истек. Пожалуйста, зайдите в интернет банк через браузер, смените пароль, затем введите новый пароль в настройки этого провайдера.', null, true);
         if(error){
             var error1 = getParam(html, null, null, /<div[^>]+class="recover"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
             if(error1) error += ' ' + error1;
             throw new AnyBalance.Error(error);
         }
+        error = getParam(html, null, null, /<div[^>]+class="b_card"[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
+        if(error)
+            throw new AnyBalance.Error(error);
         throw new AnyBalance.Error('Не удалось войти в интернет-банк. Сайт изменен?');
     }
 

@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+<change version="22" date="2013-10-12">
+- Добавлены счетчики "Минимальный платеж" и "Дата минимального платежа"
+</change>
 <change version="21" date="2013-10-10">
 - Добавлено отображение валюты (Stark)
 </change>

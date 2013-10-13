@@ -12,7 +12,7 @@ URL1: "http://yaca.yandex.ru/yca/cy/ch/yoursite.ru/"
 function main() {
     var prefs = AnyBalance.getPreferences();
 	var data="";
-	var r2 = new RegExp("[^0-9.]");
+	var r2 = new RegExp("[^0-9.-]");
 
     var result = {
         success: true
@@ -20,16 +20,17 @@ function main() {
 
 	for(var i=1;i<=4;i++) {
 		if(i==1 && prefs['url'+i]=='') throw new AnyBalance.Error('Для первого счетчика URL должен быть указан обязательно.');
-
 		if(AnyBalance.isAvailable('counter'+i)) {
 			if(prefs['url'+i] && prefs['url'+i].length>0) data = AnyBalance.requestGet(prefs['url'+i]);
 			if(prefs['regexp'+i] && prefs['regexp'+i].length>0) {
 				var flags=(prefs['flags'+i] && prefs['flags'+i].length>0)?prefs['flags'+i]:'';
 				var r = new RegExp(prefs['regexp'+i],flags);
 				var matches=r.exec(data);
-				matches[1]=matches[1].replace(",",".");
-				matches[1]=matches[1].replace(r2,"");
-				result['counter'+i]=parseFloat(matches[1]);
+				if(matches!=null) {
+					matches[1]=matches[1].replace(",",".");
+					matches[1]=matches[1].replace(r2,"");
+					result['counter'+i]=parseFloat(matches[1]);
+				}
 			}
 		}
 	}

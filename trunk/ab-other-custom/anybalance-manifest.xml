@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-    <id major_version="1.1" version="2">ab-other-custom</id>
+    <id version="3">ab-other-custom</id>
     <name>Custom provider</name>
 	<description html="true"><![CDATA[
 	<p>Провайдер для произвольных данных.</p>
@@ -21,6 +21,7 @@
     <files>
         <preferences>preferences.xml</preferences>
         <js>main.js</js>
+        <history>history.xml</history>
     </files>
     <counters>
         <counter id="counter1" name="Счетчик 1"/>

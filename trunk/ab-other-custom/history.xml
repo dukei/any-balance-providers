@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<history>
+<change version="3" date="2013-10-13">
+- Исправлена ошибка когда не отображался минус в отрицательных числах
+</change>
+</history>

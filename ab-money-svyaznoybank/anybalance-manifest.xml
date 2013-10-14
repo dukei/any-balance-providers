@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="9">ab-money-svyaznoybank</id>
-        <api flags="no_browser"/>
+	<id version="10">ab-money-svyaznoybank</id>
+	<api flags="no_browser"/>
 	<name>Связнойбанк</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем остатке, бонусных баллах и других параметрах карт, счетов и вкладов ""Связной Банка"".</p>
@@ -26,7 +26,6 @@
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>api:jquery.min.js</js>
 		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
@@ -51,13 +50,7 @@
 		<counter id="cardballs3" name="Баллы 4"/>
 		<counter id="all" name="Сводка" type="text"/>
 	</counters>
-	<keywords>
-	интернет-банк, связной
-	</keywords>
-	<type>
-	money
-	</type>
-	<country>
-	ru
-	</country>
+	<keywords>интернет-банк, связной</keywords>
+	<type>money</type>
+	<country>ru</country>
 </provider>

@@ -1,9 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1" version="3">ab-affiliate-vladimirfx</id>
+  <id version="4">ab-affiliate-vladimirfx</id>
   <name>VladimirFX</name>
   <description>
-    Помогает отслеживать состояние депозита инвестора на сайте www.vladimirfx.ru.
+    Помогал отслеживать состояние депозита инвестора на сайте www.vladimirfx.ru.
+    К сожалению, проект прекратил работу. Вы можете удалить этот провайдер. Все средства, остававшиеся в проекте, утрачены.
+    Пожалуйста, не забывайте основные правила инвестирования: 1) Не вкладывайте последнее. 2) Не вкладывайте заемные средства. 
+    3) Вкладывайте то, чего не боитесь потерять. 4) Всегда будьте готовы к форс-мажору. 5) Не кладите все яйца в одну корзину.
   </description>
   <author>wtiger &lt;wtiger@mail.ru&gt;</author>
   <files>
@@ -12,6 +15,7 @@
     <js>api:jquery.min.js</js>
     <js>library.js</js>
     <js>main.js</js>
+    <history>history.xml</history>
   </files>
   <counters>
     <counter id="total_investors" name="*Всего инвесторов"/>

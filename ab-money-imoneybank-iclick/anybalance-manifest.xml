@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="2">ab-money-imoneybank-iclick</id>
+	<id version="3">ab-money-imoneybank-iclick</id>
 	<name>АйМаниБанк (iclick)</name>
-	<description>
-Получает данные из интернет-банка https://iclick.imoneybank.ru
-
-На данный момент поддерживается только баланс первой карты в личном кабинете, если необходимо отображение другой информации связывайтесь с автором провайдера по имейл.
-	</description>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе на счете или карте для клиентов iMoneyBank (бывший «АлтайЭнергоБанк») (http://imoneybank.ru).</p>
+	<p>Информация берется из системы интернет-банкинга HandyBank (https://iclick.imoneybank.ru).</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Настройки:</p>
+	<ul>
+		<li>Для получения или смены пароля обратитесь в службу поддержки банка по тел. 8 800 510-00-00.</li>
+	</ul>   
+	]]></instruction>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>

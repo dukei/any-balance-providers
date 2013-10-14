@@ -1,30 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-bonus-leadermt</id>
-  <name>Лидер Бонус</name>
-  <description>
-    Получает баланс и количество выбранных подарков для бонусной карты Лидер (http://bonus.leadermt.ru/)
-  </description>
-  <author>Alexandra Shalamova &lt;alexandrashalamova@gmail.com&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units=" Б"/>
-    <counter id="cart" name="В корзине" type="text"/>
-    <counter id="fio" name="ФИО" type="text"/>
-  </counters>
-  <keywords>
-    бонус
-  </keywords>
-  <type>
-    bonus
-  </type>
-  <country>
-    ru
-  </country>
+	<id version="3">ab-bonus-leadermt</id>
+	<name>Leader Bonus</name>
+	<description html="true"><![CDATA[
+	<p>Obtains information about balance and number of selected gifts for owners of Leader bonus card (http://bonus.leadermt.ru/).</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Bonus points"/>
+		<counter id="cart" name="In cart" type="text"/>
+		<counter id="fio" name="Name" type="text"/>
+	</counters>
+	<keywords>бонус, bonus</keywords>
+	<type>bonus</type>
+	<country>ru, ae, kz, ua</country>
 </provider>

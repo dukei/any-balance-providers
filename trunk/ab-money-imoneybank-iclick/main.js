@@ -61,10 +61,24 @@ function fetchAccount(html, baseurl){
     var prefs = AnyBalance.getPreferences();
 	html = AnyBalance.requestGet(baseurl + 'account/list?_=' + new Date().getTime(), g_headers);
 	var json = getJson(html);
+	if(!json)
+		throw new AnyBalance.Error('Не удалось найти инофрмацию по счетам. Сайт изменен?');
+	// Если что-то указано то будем искать, если нет, то надо просто взять первый объект
+	if(prefs.num) {
+		for(i=0; i<json.length; i++) {
+			if(endsWith(json[i].name, prefs.num)) {
+				var firstAcc = json[i];
+				break;
+			}
+		}
+	}
+	else 
+		var firstAcc = json[0];
 	
-	var firstAcc = json[0];
+	if(!firstAcc)
+		throw new AnyBalance.Error(prefs.num ? 'Не удалось найти счет с номером ' + prefs.num : 'Не удалось найти ни одного счета');
+
 	var result = {success: true};
-	
 	getParam(firstAcc.rest+'', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
 	getParam(firstAcc.rest+'', result, ['currency', 'balance'], null, replaceTagsAndSpaces, parseCurrency);
 	getParam(firstAcc.name+'', result, 'acc_num', null, replaceTagsAndSpaces);
@@ -84,8 +98,23 @@ function fetchCard(html, baseurl){
     var prefs = AnyBalance.getPreferences();
 	html = AnyBalance.requestGet(baseurl + 'card/list?_=' + new Date().getTime(), g_headers);
 	var json = getJson(html);
+	if(!json)
+		throw new AnyBalance.Error('Не удалось найти инофрмацию по картам. Сайт изменен?');
+	// Если что-то указано то будем искать, если нет, то надо просто взять первый объект
+	if(prefs.num) {
+		for(i=0; i<json.length; i++) {
+			if(endsWith(json[i].name, prefs.num)) {
+				var firstCard = json[i];
+				break;
+			}
+		}
+	}
+	else 
+		var firstCard = json[0];
 	
-	var firstCard = json[0];
+	if(!firstCard)
+		throw new AnyBalance.Error(prefs.num ? 'Не удалось найти карту с номером ' + prefs.num : 'Не удалось найти ни одной карты!');
+
 	var result = {success: true};
 	
 	getParam(firstCard.rest+'', result, 'balance', null, replaceTagsAndSpaces, parseBalance);

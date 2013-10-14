@@ -45,6 +45,11 @@ function getParam (html, result, param, regexp, replaces, parser) {
 	return value;
 }
 
+function checkEmpty (param, error, notfatal) {
+    if (!param)
+        throw new AnyBalance.Error (error, null, !notfatal);
+}
+
 function isAvailable(param){
     if(!param)
         return true;
@@ -391,7 +396,7 @@ function getJson(html){
 function getJsonEval(html){
    try{
        //Запрещаем использование следующих переменных из функции:
-       var json = new Function('window', 'AnyBalance', 'g_AnyBalanceApiParams', '_AnyBalanceApi', 'document', 'return ' + html).apply(null);
+       var json = new Function('window', 'AnyBalance', 'g_AnyBalanceApiParams', '_AnyBalanceApi', 'document', 'self', 'return ' + html).apply(null);
        return json;
    }catch(e){
        AnyBalance.trace('Bad json (' + e.message + '): ' + html);
@@ -681,7 +686,7 @@ function requestPostMultipart(url, data, headers){
 		'',
 		data[name]);
 	}
-	parts.push(boundary, '--');
+	parts.push(boundary + '--');
         if(!headers) headers = {};
 	headers['Content-Type'] = 'multipart/form-data; boundary=' + boundary.substr(2);
 	return AnyBalance.requestPost(url, parts.join('\r\n'), headers);

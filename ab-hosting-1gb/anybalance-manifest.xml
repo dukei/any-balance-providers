@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-hosting-1gb</id>
+	<api flags="no_browser"/>
+	<name>1GB.ru</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе хостинг-провайдера 1GB.ru</p>
+	<p>Информация берется из личного кабинета http://www.1gb.ru/registered.php</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс хостинга"/>
+		<counter id="period_end" name="Окончание периода" type="time" format="dd/MM/yyyy"/>
+	</counters>
+	<keywords></keywords>
+	<type>hosting</type>
+	<country>ru</country>
+</provider>

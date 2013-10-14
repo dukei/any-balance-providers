@@ -1,9 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="8">ab-affiliate-landora</id>
+  <id major_version="2">ab-affiliate-landora</id>
   <name>Партнерская программа Landora Investing LTD</name>
   <description>
-    Помогает отслеживать состояние депозита инвестора на сайте www.landora-investing.com
+    Помогал отслеживать состояние депозита инвестора на сайте www.landora-investing.com
+    К сожалению, проект прекратил работу. Вы можете удалить этот провайдер. Все средства, остававшиеся в проекте, утрачены.
+    Пожалуйста, не забывайте основные правила инвестирования: 1) Не вкладывайте последнее. 2) Не вкладывайте заемные средства. 
+    3) Вкладывайте то, чего не боитесь потерять. 4) Всегда будьте готовы к форс-мажору. 5) Не кладите все яйца в одну корзину.
   </description>
   <author>wtiger &lt;wtiger@mail.ru&gt;</author>
   <files>

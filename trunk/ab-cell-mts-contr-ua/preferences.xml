@@ -3,10 +3,10 @@
     <EditTextPreference 
         title="Логин" 
         positiveButtonText="ОК" 
-        summary="Номер телефона (9 цифр)||{@s}\n" 
+        summary="Номер телефона||{@s}\n" 
         dialogTitle="Номер телефона" 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите номер вашего телефона для входа в Интернет-Помощник (9 цифр), например 661234567"
+        dialogMessage="Введите номер вашего телефона для входа в Интернет-Помощник."
         key="login"
         inputType="number">
     </EditTextPreference>
@@ -19,15 +19,5 @@
         summary="Пароль для входа в Интернет-Помощник||***********\n"
         dialogMessage="Введите пароль, используемый для входа в Интернет-Помощник"
         inputType="textPassword">
-    </EditTextPreference>
-    <EditTextPreference 
-        positiveButtonText="ОК"
-        key="phone" 
-        dialogTitle="Номер телефона"
-        negativeButtonText="Отмена"
-        title="Номер телефона"
-        summary="Номер телефона, чей баланс показывать|Автоматически\n|{@s}\n"
-        dialogMessage="Введите 9 цифр номера телефона, чей баланс вы хотите посмотреть. Например, 661234567. Этот номер должен быть виден в вашем личном кабинете. Чтобы смотреть информацию по основному номеру, оставьте это поле пустым."
-        inputType="number">
     </EditTextPreference>
 </PreferenceScreen>

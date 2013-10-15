@@ -35,6 +35,8 @@ function main() {
 	}, addHeaders({Referer: baseurl}));
 
 	if (!/logout/i.test(html)) {
+		if(/Невірний код безпеки/i.test(html))
+			throw new AnyBalance.Error('Не верно введены символы с картинки!');
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	var result = {success: true};
@@ -52,7 +54,7 @@ function main() {
 	if(isAvailable(['bonus'])) {
 		html = AnyBalance.requestGet(baseurl + 'bonus/bonusHistory.do', g_headers);
 		
-		getParam(html, result, 'bonus', /Загальна кількість бонусів(?:[\s\S]*?<td[^>]*>){1}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'bonus', /Загальна кількість бонусів(?:[\s\S]*?<td[^>]*>){1}([^<]*)/i, [/\./i, '', replaceTagsAndSpaces], parseBalance);
 	}
 	//getParam(html, result, '__tariff', /Тарифный план:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
 	

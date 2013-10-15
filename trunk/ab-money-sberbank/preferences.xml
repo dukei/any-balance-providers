@@ -1,44 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <EditTextPreference 
-        title="Логин" 
-        positiveButtonText="ОК" 
-        summary="|ID пользователя или логин|{@s}" 
-        dialogTitle="Логин" 
+	<EditTextPreference
+		title="Логин"
+		positiveButtonText="ОК"
+		summary="|ID пользователя или логин|{@s}"
+		dialogTitle="Логин"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите идентификатор пользователя или логин для входа в систему Сбербанк-онлайн."
 		obligatory="true"
-        negativeButtonText="Отмена" 
-        dialogMessage="Введите идентификатор пользователя или логин для входа в систему Сбербанк-онлайн."
-        obligatory="true"
-        key="login">
-    </EditTextPreference>
-    <EditTextPreference 
-        positiveButtonText="ОК"
-        key="password" 
+		key="login">
+	</EditTextPreference>
+	<EditTextPreference
+		positiveButtonText="ОК"
+		key="password"
+		dialogTitle="Пароль"
+		negativeButtonText="Отмена"
+		title="Пароль"
+		summary="||***********"
 		obligatory="true"
-        dialogTitle="Пароль"
-        negativeButtonText="Отмена"
-        title="Пароль"
-        summary="||***********"
-        obligatory="true"
-        dialogMessage="Введите пароль, используемый для входа в систему Сбербанк-онлайн."
-        inputType="textPassword">
-    </EditTextPreference>
-    <ListPreference 
-        key="type" 
-        title="Что смотреть"
-        summary="||{@s}"
-        entries="Карта|Счет"
-        entryValues="card|acc"
-	defaultValue="card">
-    </ListPreference>
-    <EditTextPreference 
-        positiveButtonText="ОК"
-        key="lastdigits" 
-        dialogTitle="Номер карты/счета"
-        negativeButtonText="Отмена"
-        title="Номер карты"
-        summary="Последние 4 цифры карты/счета|Автоматически\n|{@s}\n"
-        dialogMessage="Введите последние 4 цифры карты(счета), по которой вы хотите получить информацию. Если это поле оставить пустым, то будет показана информация по первой карте(счету)."
-        inputType="number">
-    </EditTextPreference>
+		dialogMessage="Введите пароль, используемый для входа в систему Сбербанк-онлайн."
+		inputType="textPassword">
+	</EditTextPreference>
+	<ListPreference
+		key="type"
+		title="Что смотреть"
+		summary="||{@s}"
+		entries="Карта|Счет"
+		entryValues="card|acc"
+		defaultValue="card">
+	</ListPreference>
+	<EditTextPreference
+		positiveButtonText="ОК"
+		key="lastdigits"
+		dialogTitle="Номер карты/счета"
+		negativeButtonText="Отмена"
+		title="Номер карты"
+		summary="Последние 4 цифры карты/счета|Автоматически\n|{@s}\n"
+		dialogMessage="Введите последние 4 цифры карты(счета), по которой вы хотите получить информацию. Если это поле оставить пустым, то будет показана информация по первой карте(счету)."
+		inputType="number">
+	</EditTextPreference>
 </PreferenceScreen>

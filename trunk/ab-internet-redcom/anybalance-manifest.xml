@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-internet-redcom</id>
+	<id version="2">ab-internet-redcom</id>
 	<api flags="no_browser"/>
 	<name>Redcom (Хабаровск)</name>
-	<description>
-Получает данные для провайдера Redcom в г. Хабаровск (http://redcom.ru/isp/)
+	<description html="true"><![CDATA[
+	<p>Получает данные для провайдера Redcom в г. Хабаровск (http://redcom.ru/isp/)</p>
 
-Личный кабинет находится по адресу https://abonent.redcom.ru/
-	</description>
+	<p>Личный кабинет находится по адресу https://abonent.redcom.ru/</p>
+	]]></description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>

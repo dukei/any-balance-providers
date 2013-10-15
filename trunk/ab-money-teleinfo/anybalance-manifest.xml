@@ -1,26 +1,26 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="5" major_version="1.1">ab-money-teleinfo</id>
+	<id version="6" major_version="2">ab-money-teleinfo</id>
 	<name>ВТБ24: Телеинфо</name>
+	<api flags="no_browser"/>
 	<description html="true"><![CDATA[
 	<p>Получает информацию о балансе пластиковой карты Системы «Телеинфо» ВТБ24 ( http://telebank.vtb24.ru/ ).</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
-	<p>Получить доступ к Телеинфо можно, пройдя регистрацию по ссылке http://www.telebank.ru/WebNew/Front/RegistrationTI.aspx.</p>     
+	<p>Получить доступ к Телеинфо можно, пройдя регистрацию по ссылке http://www.telebank.ru/WebNew/Front/RegistrationTI.aspx.</p>
 	<br>
-	<b>ВНИМАНИЕ!</b> 
+	<b>ВНИМАНИЕ!</b>
 	<p>В ВТБ24 существует две ВЗАИМОИСКЛЮЧАЮЩИЕ услуги:</p>
-	<ol>   
-	 <li>Телебанк - платная, позволяет просматривать счет, осуществлять различные платежные операции, денежные переводы и проч. Требует ввода одноразового кода.</li>    
+	<ol>
+		<li>Телебанк - платная, позволяет просматривать счет, осуществлять различные платежные операции, денежные переводы и проч. Требует ввода одноразового кода.</li>
 	<li>Телеинфо - бесплатная, позволяет ТОЛЬКО просматривать состояние счета.</li>
 	</ol>
-	]]></instruction>	
+	]]></instruction>
 	<author>Robert Khaliullov &lt;robix@mail.ru&gt;</author>
 	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>api:jquery.min.js</js> <!-- Используем библиотеку, которая и так входит в AnyBalance -->
 		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
@@ -43,13 +43,7 @@
 		<counter id="cardnum" name="Номер" type="text"/>
 		<counter id="fio" name="Владелец" type="text"/>
 	</counters>
-	<keywords>
-	ВТБ24, Телебанк, телеинфо
-	</keywords>
-	<type>
-	money
-	</type>
-	<country>
-	ru
-	</country>
+	<keywords>ВТБ24, Телебанк, телеинфо</keywords>
+	<type>money</type>
+	<country>ru</country>
 </provider>

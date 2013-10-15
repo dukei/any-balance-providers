@@ -6,12 +6,14 @@
         summary="|УНК или псевдоним|{@s}\n" 
         dialogTitle="УНК или псевдоним" 
         negativeButtonText="Отмена" 
+		obligatory="true"
         dialogMessage="УНК или псевдоним"
         key="login">
     </EditTextPreference>
     <EditTextPreference 
         positiveButtonText="ОК"
         key="password" 
+		obligatory="true"
         dialogTitle="Пароль"
         negativeButtonText="Отмена"
         title="Пароль"
@@ -25,7 +27,7 @@
         summary="||{@s}"
         entries="Карта|Счет в АБС"
         entryValues="card|abs"
-	defaultValue="card">
+		defaultValue="card">
     </ListPreference>
     <EditTextPreference
         title="Номер карты/счета" 

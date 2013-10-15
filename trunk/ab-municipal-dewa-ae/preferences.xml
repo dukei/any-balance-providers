@@ -4,6 +4,7 @@
         title="Login" 
         positiveButtonText="OK" 
         summary="||{@s}" 
+		obligatory="true"
         dialogTitle="Login" 
         negativeButtonText="Cancel" 
         dialogMessage="Enter your login to DEWA."
@@ -16,7 +17,8 @@
         negativeButtonText="Cancel"
         title="Password"
         summary="||***********"
-        dialogMessage="Enter your password  to DEWA."
+		obligatory="true"
+        dialogMessage="Enter your password to DEWA."
         inputType="textPassword">
     </EditTextPreference>
 </PreferenceScreen>

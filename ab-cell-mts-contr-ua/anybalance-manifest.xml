@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-cell-mts-contr-ua</id>
+	<id version="2">ab-cell-mts-contr-ua</id>
 	<api flags="no_browser|captcha"/>
 	<name>МТС Украина (Контракт)</name>
 	<description html="true"><![CDATA[
@@ -27,7 +27,7 @@
 		<counter id="balance" name="Сумарний баланс" units=" ₴"/>
 		<counter id="balance_calls" name="Сума розмов у поточному місяці" units=" ₴"/>
 		<counter id="balance_at_month_begin" name="Залишок на 1-е число" units=" ₴"/>
-		<counter id="bonus" name="Бонусний баланс" units=" ₴" flags="zero_when_empty"/>
+		<counter id="bonus" name="Бонусний баланс"/>
 		<counter id="fio" name="Ім'я користувача" type="text"/>
 		<counter id="acc_num" name="Особовий рахунок" type="text"/>
 	</counters>

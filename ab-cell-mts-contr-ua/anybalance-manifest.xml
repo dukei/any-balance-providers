@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-cell-mts-contr-ua</id>
+	<api flags="no_browser|captcha"/>
+	<name>МТС Украина (Контракт)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе, номере лицевого счета, бонусах для пользователей сотового оператора МТС Украина (для контрактных абонентов)</p>
+	<p>Информация берется из интернет-помощника (https://ihelper.mts.com.ua/).</p>
+	
+	<p>ВНИМАНИЕ! На данный момент поддерживаются только GSM-абоненты!</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Как получить доступ к интернет-помощнику:</p>
+	<ul>
+		<li>Пройдите регистрацию по ссылке https://ihelper.mts.com.ua/help/helpWhatIsMyUMC.do</li>
+	</ul>
+	]]></instruction>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Сумарний баланс" units=" ₴"/>
+		<counter id="balance_calls" name="Сума розмов у поточному місяці" units=" ₴"/>
+		<counter id="balance_at_month_begin" name="Залишок на 1-е число" units=" ₴"/>
+		<counter id="bonus" name="Бонусний баланс" units=" ₴" flags="zero_when_empty"/>
+		<counter id="fio" name="Ім'я користувача" type="text"/>
+		<counter id="acc_num" name="Особовий рахунок" type="text"/>
+	</counters>
+	<keywords>Сотовый телефон, мобильный, мобильник, mts, украина</keywords>
+	<type>cell</type>
+	<country>ua</country>
+</provider>

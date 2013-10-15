@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="2">ab-municipal-dewa-ae</id>
+	<id version="3">ab-municipal-dewa-ae</id>
 	<name>Dubai Electricity and Water Authority</name>
 	<description html="true"><![CDATA[
 	<p>Obtains information from e-services of Dubai Electricity and Water Authority (https://e-services.dewa.gov.ae/).</p>

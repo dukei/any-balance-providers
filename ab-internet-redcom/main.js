@@ -34,7 +34,7 @@ function main() {
 	html = AnyBalance.requestGet(baseurl + 'fastcom/!w3_p_main.showform' + href, g_headers);
 	
     var result = {success: true};
-	getParam(html, result, 'fio', /Клиент([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'fio', /Клиент:[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'balance', /Текущий баланс(?:[^>]*>){4}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'recomend', /Рекомендуемая сумма платежа[^>]*>\s*<TD[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	

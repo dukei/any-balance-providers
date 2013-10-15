@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<id version="3">ab-exchange-metal</id>
-	<name>Курсы драгоценных металлов ЦБ</name>
+	<name>Курсы драгоценных металлов ЦБ России</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущих курсах драгоценных металлов, установленных Центральным Банком РФ.</p> 
 	<p>Показывает цены на золото, серебро, платину и палладий.</p>
@@ -19,10 +19,7 @@
 		<counter id="Pd" name="Палладий" prefix="Pd "/>
 		<counter id="date" name="Дата" type="text"/>
 	</counters>
-	<keywords>
-	Драгоценные металлы, золото, серебро, платина, палладий, центральный банк, центробанк рф
-	</keywords>
-	<type>
-	finance, exchange
-	</type>
+	<keywords>Драгоценные металлы, золото, серебро, платина, палладий, центральный банк, центробанк рф</keywords>
+	<type>finance, exchange</type>
+	<country>ru</country>
 </provider>

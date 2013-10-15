@@ -6,7 +6,7 @@
         summary="Логин в SIPNET||{@s}\n" 
         dialogTitle="Логин" 
         negativeButtonText="Отмена" 
-		obligatory="true"
+        obligatory="true"
         dialogMessage="Введите Ваш логин или SIP ID"
         key="login">
     </EditTextPreference>
@@ -16,7 +16,7 @@
         dialogTitle="Пароль"
         negativeButtonText="Отмена"
         title="Пароль"
-		obligatory="true"
+        obligatory="true"
         summary="Введите пароль||************\n"
         dialogMessage="Введите Ваш пароль в SIPNET"
         inputType="textPassword">

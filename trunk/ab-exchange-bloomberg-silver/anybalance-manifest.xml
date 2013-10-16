@@ -2,7 +2,7 @@
 <provider>
 	<id version="1">ab-exchange-bloomberg-silver</id>
 	<api flags="no_browser"/>
-	<name>Bloomberg Gold</name>
+	<name>Bloomberg Silver</name>
 	<description html="true"><![CDATA[
 	<p>Obtains information of current Silver Prices from http://www.bloomberg.com/markets/commodities/futures/metals/</p>
 	]]></description>

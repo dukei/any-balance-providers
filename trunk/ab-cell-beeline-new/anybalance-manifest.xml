@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="20">ab-cell-beeline-new</id>
+	<id version="21">ab-cell-beeline-new</id>
 	<name>Билайн (новый кабинет)</name>
 	<api flags="no_browser" min_level="5"/>
 	<description html="true"><![CDATA[
@@ -12,11 +12,11 @@
 	<instruction html="true"><![CDATA[
 	<p> Как получить или сменить пароль:</p>
 	<ol>
-	 <li>Со своего мобильного телефона наберите номер *110*9#.</li>    
+		<li>Со своего мобильного телефона наберите номер *110*9#.</li>    
 	<li>Получите SMS с логином и ВРЕМЕННЫМ паролем в кабинет.</li>     
-	<li>Войдите в кабинет https://my.beeline.ru с помощью этих логина и пароля.</li>     
-	 <li>Смените пароль на ПОСТОЯННЫЙ.</li>     
-	 <li>Введите логин и ПОСТОЯННЫЙ пароль в настройки провайдера.</li> 
+	<li>Войдите в кабинет https://my.beeline.ru с помощью этих логина и пароля.</li>
+		<li>Смените пароль на ПОСТОЯННЫЙ.</li>
+		<li>Введите логин и ПОСТОЯННЫЙ пароль в настройки провайдера.</li>
 	<br>
 	<small>Если данные об оставшихся SMS, MMS, минутах и трафике не отображаются, обратитесь к автору провайдера.</small>
 	]]></instruction>	
@@ -32,6 +32,7 @@
 		<counter id="balance" name="Баланс" units=" {@currency}"/>
 		<counter id="prebal" name="Предварительная сумма по договору" units=" {@currency}"/>
 		<counter id="overpay" name="Переплата" units=" {@currency}"/>
+		<counter id="currency" name="Валюта" type="text"/>
 		<counter id="sms_left" name="Остаток SMS" units=" sms"/>
 		<counter id="mms_left" name="Остаток MMS" units=" mms"/>
 		<counter id="rub_bonus" name="Рублей БОНУС" units=" руб"/>

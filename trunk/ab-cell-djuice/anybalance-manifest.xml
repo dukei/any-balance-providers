@@ -34,7 +34,7 @@
 		<counter id="bonus_left" name="Остаток бонусов" suffix=" ₴" type="numeric"/>
 		<counter id="internet" name="Интернет" units=" Mb"/>
 		<counter id="home_internet" name="Домашний Интернет" suffix=" ₴" type="numeric"/>
-		<counter id="home_internet_to_date" name="Домашний Интернет действует до" prefix="до:" type="time" format="dd/MM/yyyy"/>
+		<counter id="home_internet_date" name="Домашний Интернет, срок действия" type="time" format="dd/MM/yyyy"/>
 		<counter id="till" name="Срок действия номера" type="time" format="dd/MM/yyyy"/>
 		<counter id="lastpaysum" name="Сумма посл. платежа" suffix=" ₴" type="numeric"/>
 		<counter id="lastpaydate" name="Дата посл. платежа" type="time" format="dd/MM/yyyy"/>

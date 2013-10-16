@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<ListPreference
+		key="type"
+		title="Type of oil"
+		summary="||{@s}"
+		entries="WTI|BRENT"
+		entryValues="WTI|BRENT"
+		defaultValue="WTI">
+	</ListPreference>
+</PreferenceScreen>

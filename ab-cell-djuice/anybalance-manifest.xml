@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
-  <api flags="no_browser" />
-  <id major_version="1.3" version="26">ab-cell-djuice</id>
-  <name>Djuice</name>
+	<api flags="no_browser" />
+	<id major_version="1.3" version="27">ab-cell-djuice</id>
+	<name>Djuice</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе, бонусных минутах, SMS, MMS, остатке интернет-трафика и других бонусах для пользователей мобильного оператора Djuice.</p>
 	<p>Информация берется из системы Мой DJUICE (http://my.djuice.com.ua/).</p>
@@ -14,43 +13,36 @@
 	<li>Для пользования провайдером необходимо зарегистрироваться в системе Мой DJUICE.</li>
 	</ul>   
 	]]></instruction>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <author>Sergey Bashmanov &lt;sergey.bashmanov@gmail.com&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" suffix=" ₴" type="numeric"/>
-    <counter id="bonus_mins_kyiv" name="Минуты на Киевстар" units=" мин" type="time_interval" format="{@MIN}"/>
-    <counter id="bonus_mins_country" name="Минуты по Украине" units=" мин" type="time_interval" format="{@MIN}"/>
-    <counter id="bonus_mins_dj" name="Минуты на DJUICE" units=" мин" type="time_interval" format="{@MIN}"/>
-    <counter id="bonus_mins" name="Другие бонусные минуты" units=" мин" type="time_interval" format="{@MIN}"/>
-    <counter id="bonus_mms" name="Бонусные MMS" type="numeric"/>
-    <counter id="bonus_sms" name="Бонусные SMS" type="numeric"/>
-    <counter id="bonus_money" name="Бонусные средства" suffix=" ₴" type="numeric"/>
-    <counter id="bonus_left" name="Остаток бонусов" suffix=" ₴" type="numeric"/>
-    <counter id="internet" name="Интернет" units=" Mb"/>
-    <counter id="home_internet" name="Домашний Интернет" suffix=" ₴" type="numeric"/>
-    <counter id="home_internet_to_date" name="Домашний Интернет действует до" prefix="до:" type="time" format="dd/MM/yyyy"/>
-    <counter id="till" name="Срок действия номера" type="time" format="dd/MM/yyyy"/>
-    <counter id="lastpaysum" name="Сумма посл. платежа" suffix=" ₴" type="numeric"/>
-    <counter id="lastpaydate" name="Дата посл. платежа" type="time" format="dd/MM/yyyy"/>
-    <counter id="lastpaydesc" name="Тип посл. платежа" units=" ₴" type="text"/>
-    <counter id="paydate40end" name="Срок действия трафика (АЛЬО КВАРТАЛ! МІЙ РЕГІОН)" type="time" format="dd/MM/yyyy"/>
-    <counter id="phone" name="Номер телефона" type="text"/>
-  </counters>
-  <keywords>
-    Сотовый телефон, мобильный, мобильник, djuice, kyivstar, диджус, киевстар, Украина
-  </keywords>
-  <type>
-    cell
-  </type>
-  <country>
-    ua
-  </country>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>Sergey Bashmanov &lt;sergey.bashmanov@gmail.com&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" suffix=" ₴" type="numeric"/>
+		<counter id="bonus_mins_kyiv" name="Минуты на Киевстар" units=" мин" type="time_interval" format="{@MIN}"/>
+		<counter id="bonus_mins_country" name="Минуты по Украине" units=" мин" type="time_interval" format="{@MIN}"/>
+		<counter id="bonus_mins_dj" name="Минуты на DJUICE" units=" мин" type="time_interval" format="{@MIN}"/>
+		<counter id="bonus_mins" name="Другие бонусные минуты" units=" мин" type="time_interval" format="{@MIN}"/>
+		<counter id="bonus_mms" name="Бонусные MMS" type="numeric"/>
+		<counter id="bonus_sms" name="Бонусные SMS" type="numeric"/>
+		<counter id="bonus_money" name="Бонусные средства" suffix=" ₴" type="numeric"/>
+		<counter id="bonus_left" name="Остаток бонусов" suffix=" ₴" type="numeric"/>
+		<counter id="internet" name="Интернет" units=" Mb"/>
+		<counter id="home_internet" name="Домашний Интернет" suffix=" ₴" type="numeric"/>
+		<counter id="home_internet_to_date" name="Домашний Интернет действует до" prefix="до:" type="time" format="dd/MM/yyyy"/>
+		<counter id="till" name="Срок действия номера" type="time" format="dd/MM/yyyy"/>
+		<counter id="lastpaysum" name="Сумма посл. платежа" suffix=" ₴" type="numeric"/>
+		<counter id="lastpaydate" name="Дата посл. платежа" type="time" format="dd/MM/yyyy"/>
+		<counter id="lastpaydesc" name="Тип посл. платежа" units=" ₴" type="text"/>
+		<counter id="paydate40end" name="Срок действия трафика (АЛЬО КВАРТАЛ! МІЙ РЕГІОН)" type="time" format="dd/MM/yyyy"/>
+		<counter id="phone" name="Номер телефона" type="text"/>
+	</counters>
+	<keywords>Сотовый телефон, мобильный, мобильник, djuice, kyivstar, диджус, киевстар, Украина</keywords>
+	<type>cell</type>
+	<country>ua</country>
 </provider>
-

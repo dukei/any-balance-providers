@@ -8,6 +8,7 @@
         negativeButtonText="Отмена" 
         dialogMessage="Введите номер вашего телефона для входа в Мой DJUICE (в формате +380ХХХХХХХХХ), например +380971234567"
         key="login"
+		obligatory="true"
         inputType="phone">
     </EditTextPreference>
     <EditTextPreference 
@@ -16,6 +17,7 @@
         dialogTitle="Пароль"
         negativeButtonText="Отмена"
         title="Пароль"
+		obligatory="true"
         summary="Пароль для входа в Мій DJUICE||***********\n"
         dialogMessage="Введите пароль, используемый для входа в Мой DJUICE"
         inputType="textPassword">

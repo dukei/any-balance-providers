@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-exchange-bloomberg-silver</id>
+	<api flags="no_browser"/>
+	<name>Bloomberg Gold</name>
+	<description html="true"><![CDATA[
+	<p>Obtains information of current Silver Prices from http://www.bloomberg.com/markets/commodities/futures/metals/</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Price"/>
+		<counter id="change" name="Change"/>
+		<counter id="change_pcts" name="% Change"/>
+		<counter id="contract" name="Contract"/>
+		<counter id="contract_time" name="Time(ET)"/>
+	</counters>
+	<keywords>rates, exchange, money, obligations, finance, silver</keywords>
+	<type>exchange</type>
+	<country></country>
+</provider>

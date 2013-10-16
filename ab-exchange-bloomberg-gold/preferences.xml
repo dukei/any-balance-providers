@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<ListPreference
+		key="type"
+		title="Type of gold"
+		summary="||{@s}"
+		entries="COMEX|TOCOM"
+		entryValues="COMEX|TOCOM"
+		defaultValue="COMEX">
+	</ListPreference>
+</PreferenceScreen>

@@ -17,9 +17,9 @@
 	<counters>
 		<counter id="balance" name="Price"/>
 		<counter id="change" name="Change"/>
-		<counter id="change_pcts" name="% Change"/>
-		<counter id="contract" name="Contract"/>
-		<counter id="contract_time" name="Time(ET)"/>
+		<counter id="change_pcts" name="Change, %"/>
+		<counter id="contract" name="Contract" type="text"/>
+		<counter id="contract_time" name="Time(ET)" type="text"/>
 	</counters>
 	<keywords>rates, exchange, money, obligations, finance, gold</keywords>
 	<type>exchange</type>

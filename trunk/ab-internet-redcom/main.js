@@ -13,11 +13,11 @@ function main() {
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'https://abonent.redcom.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
+	//Старый сервер оракл 10g имеет баг в TSL, приходится явно перейти на SSL
+	AnyBalance.setOptions({SSL_ENABLED_PROTOCOLS: ['SSLv3']});
 	
-	if(!prefs.login)
-		throw new AnyBalance.Error('Введите логин!');
-	if(!prefs.password)
-		throw new AnyBalance.Error('Введите пароль!');
+	checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(prefs.password, 'Введите пароль!');
 	
 	var html = AnyBalance.requestPost(baseurl + 'fastcom/!w3_p_main.showform?CONFIG=CONTRACT', {
 		'IDENTIFICATION':'CONTRACT',

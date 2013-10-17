@@ -28,6 +28,20 @@ function getEventValidation1(html){
     return getParam(html, null, null, /__EVENTVALIDATION\|([^\|]*)/);
 }
 
+function checkForErrors(html) {
+
+Auth/LogOut.aspx
+
+
+    var error = getParam(html, null, null, /<div[^>]*class="errorMessage"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+	if(error)
+		throw new AnyBalance.Error(error);
+	if(!/pageRedirect/i.test(html))
+		throw new AnyBalance.Error("Не удаётся войти в интернет банк (внутренняя ошибка сайта)");
+	if(/KeyAuth/i.test(html))
+		throw new AnyBalance.Error("Для входа в интернет-банк требуются одноразовые пароли. Зайдите в интернет-банк с компьютера и отключите в Настройках требование одноразовых паролей при входе. Это безопасно, для операций по переводу денег пароли всё равно будут требоваться.");
+}
+
 function main(){
     var prefs = AnyBalance.getPreferences();
 
@@ -53,13 +67,9 @@ function main(){
 		'__ASYNCPOST':true,
 		'ctl00$mainArea$btnLogin':'Войти'
 	}, addHeaders({Referer:'https://retail.payment.ru/n/Default.aspx'}));
-		
-    var error = getParam(html, null, null, /<div[^>]*class="errorMessage"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-	if(error)
-		throw new AnyBalance.Error(error);
+	
 	if(!/pageRedirect/i.test(html))
 		throw new AnyBalance.Error("Не удаётся войти в интернет банк (внутренняя ошибка сайта)");
-
 	if(/KeyAuth/i.test(html))
 		throw new AnyBalance.Error("Для входа в интернет-банк требуются одноразовые пароли. Зайдите в интернет-банк с компьютера и отключите в Настройках требование одноразовых паролей при входе. Это безопасно, для операций по переводу денег пароли всё равно будут требоваться.");
 
@@ -69,10 +79,10 @@ function main(){
 	AnyBalance.trace('Привели ссылку к нормальному виду ' + authHref);
 	// Они добавили еще один шаг авторизации, эта ссылка ставит кучу кук и возвращает 302, без нее не работает
 	html = AnyBalance.requestGet(baseurl + authHref, g_headers);
+    var error = getParam(html, null, null, /<div[^>]*class="errorMessage"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+	if(error)
+		throw new AnyBalance.Error(error);	
 	html = AnyBalance.requestGet(baseurl + '/n/Main/Home.aspx', g_headers);
-
-    if(/KeyAuth/i.test(html))
-        throw new AnyBalance.Error("Для входа в интернет-банк требуются одноразовые пароли. Зайдите в интернет-банк с компьютера и отключите в Настройках требование одноразовых паролей при входе. Это безопасно, для операций по переводу денег пароли всё равно будут требоваться.");
 
     if(prefs.type == 'card'){
         fetchCard(baseurl, html);
@@ -122,12 +132,12 @@ function fetchCard(baseurl, html){
     var re = new RegExp('(<div[^>]*class=\"cardAccountBlock\"(?:[^>]*>){18,22}\\d+\\.\\.' + cardnum + '(?:[^>]*>){3})', 'i');
     var tr = getParam(html, null, null, re);
     if(!tr)
-        throw new AnyBalance.Error('Не удаётся найти ' + (prefs.contract ? 'карту с последними цифрами ' + prefs.contract : 'ни одной карты'));
+		throw new AnyBalance.Error('Не удаётся найти ' + (prefs.lastdigits ? 'карту с последними цифрами ' + prefs.lastdigits : 'ни одной карты'));
 	
 	var result = {success: true};
     getParam(tr, result, 'balance', /"balanceAmountM"[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(tr, result, ['currency', 'balance', 'blocked', 'balance_own'], /"balanceAmountCurrencyM"[^>]*>([^<]*)/i, replaceTagsAndSpaces);
-	getParam(tr, result, 'accnum', /"infoUnitObject"[^>]*>([\s\S]*?)<\/a>/i, [replaceTagsAndSpaces, /\D/, ''], html_entity_decode);
+	getParam(tr, result, 'accnum', /"infoUnitObject"[^>]*>([\s\S]*?)<\/a>/i, [replaceTagsAndSpaces, /\D/g, ''], html_entity_decode);
 	getParam(tr, result, '__tariff', /"cardNumberContainer"[^>]*>[^>]*>([^<]*)/i, replaceTagsAndSpaces);
 	getParam(tr, result, 'cardnum', /"cardNumberContainer"[^>]*>[^>]*>([^<]*)/i, replaceTagsAndSpaces);
 	getParam(tr, result, 'type', /"cardCaption"[^>]*>([^<]*)/i, replaceTagsAndSpaces);
@@ -141,39 +151,6 @@ function fetchCard(baseurl, html){
     }
 	getBonuses(baseurl, result);
 
-    /*var lastdigits = prefs.lastdigits ? prefs.lastdigits : '\\d{4}';
-    
-    var $html = $('<div>' + html + '</div>');
-    var $card = $html.find("div.cardListUnit").filter(function(){
-        var num = $('.cardNumber', this).first().text();
-        return new RegExp(lastdigits + '$').test(num);
-    }).first();
-
-    if($card.length <= 0)
-        throw new AnyBalance.Error(prefs.lastdigits ? "Не удаётся найти карту с последними цифрами " + prefs.lastdigits : "Не удаётся найти ни одной карты!");
-    
-    var result = {success: true};
-	getBonuses(baseurl, result);
-    result.__tariff = $card.find(".cardNumber").text();
-    if(AnyBalance.isAvailable('cardnum'))
-        result.cardnum = $card.find(".cardNumber").text();
-    if(AnyBalance.isAvailable('type'))
-        result.type = $card.find(".infoUnitInlineAddDesc").text();
-    getParam($card.find("a.cardAccount").text(), result, 'accnum', /(.*)/, replaceTagsAndSpaces);
-    getParam($card.find(".infoUnitAmount").text(), result, 'balance', /(.*)/, replaceTagsAndSpaces, parseBalance);
-    getParam($card.find(".infoUnitAmount").text(), result, ['currency', 'balance', 'blocked', 'balance_own'], /(.*)/, replaceTagsAndSpaces, parseCurrency);
-    
-    if(AnyBalance.isAvailable('balance_own', 'blocked')){
-        eventvalidation = getEventValidation1(html);
-        viewstate = getViewState1(html);
-        
-        var href = $card.find('a.cardAccount').attr('href');
-        html = AnyBalance.requestGet(baseurl + href);
-        
-        getParam(html, result, 'balance_own', /ctl00_main_lblAccountBalance[^>]*>([^<]*)/, replaceTagsAndSpaces, parseBalance);
-        getParam(html, result, 'blocked', /ctl00_main_lblReserved[^>]*>([^<]*)/, replaceTagsAndSpaces, parseBalance);
-    }*/
-
     AnyBalance.setResult(result);
 }
 
@@ -185,119 +162,92 @@ function fetchAccount(baseurl, html){
     if(prefs.lastdigits && !/^\d{4}$/.test(prefs.lastdigits))
         throw new AnyBalance.Error("Надо указывать от 4 последних цифр счета или не указывать ничего");
     
-    if(!/<[^>]+infoSectionHeaderExpanded[^>]+ctl00_main_accountList_Header/i.test(html)){
-        html = AnyBalance.requestPost(baseurl + '/n/Main/Home.aspx', {
-            ctl00$ScriptManager:'ctl00$main$upAccounts|ctl00$main$accountList',
-            __EVENTTARGET:'ctl00$main$accountList',
-            __EVENTARGUMENT:'exp',
-            __VIEWSTATE:viewstate,
-            __EVENTVALIDATION:eventvalidation,
-            __VIEWSTATEENCRYPTED:'',
-            __ASYNCPOST:true
-        });
+    //Инфа о счетах схлопнута, а надо её раскрыть
+    if(/<div[^>]*isDetExpandBtn[^>]*>\s*подробно/i.test(html)){
+        html = AnyBalance.requestPost('https://retail.payment.ru/n/Main/Home.aspx', {
+			'ctl00$ctl00$ScriptManager':'ctl00$ctl00$mainArea$main$upAccounts|ctl00$ctl00$mainArea$main$accountList',
+			'__EVENTTARGET':'ctl00$ctl00$mainArea$main$accountList',
+			'__EVENTARGUMENT':'_det_exp',
+			'__VIEWSTATE':viewstate,
+			'__VIEWSTATEENCRYPTED':'',
+			'__EVENTVALIDATION':eventvalidation,
+			'ctl00$ctl00$mainArea$right$OperationSearchRightColumn$OperationSearch$tbSearch':'',
+			'ctl00_ctl00_mainArea_right_OperationSearchRightColumn_OperationSearch_tbSearch_InitialTextMode':'True',
+			'__ASYNCPOST':'true',
+			'':''
+        }, addHeaders({Referer:'https://retail.payment.ru/n/Main/Home.aspx'}));
     }
-
-    //Сколько цифр осталось, чтобы дополнить до 20
-    var accnum = prefs.lastdigits || '';
-    var accprefix = accnum.length;
-    accprefix = 20 - accprefix;
-
-    var re = new RegExp((accprefix > 0 ? '\\d{' + accprefix + '}' : '') + accnum, 'i');
-    var lastdigits = prefs.lastdigits ? prefs.lastdigits : '\\d{4}';
-    
-    var $html = $('<div>' + html + '</div>');
-    var $card = $html.find("#ctl00_main_accountList div.infoUnit").filter(function(){
-        var num = replaceAll($('.infoUnitObject', this).first().text(), replaceTagsAndSpaces);
-        return re.test(num);
-    }).first();
-
-    if($card.length <= 0)
-        throw new AnyBalance.Error(prefs.lastdigits ? "Не удаётся найти счет с последними цифрами " + prefs.lastdigits : "Не удаётся найти ни одного счета!");
-    
-    var result = {success: true};
+	var cardnum = prefs.lastdigits ? prefs.lastdigits : '\\d{4}';
+	//                   (<div[^>]*class="infoUnit"(?:[^>]*>){4}\d+(?:[^>]*>|)\d+8673(?:[\s\S]*?</div[^>]*>){2})
+    var re = new RegExp('(<div[^>]*class="infoUnit"(?:[^>]*>){4}\\d+(?:[^>]*>|)\\d+' + cardnum + '(?:[\\s\\S]*?</div[^>]*>){2})', 'i');
+    var tr = getParam(html, null, null, re);
+    if(!tr)
+        throw new AnyBalance.Error('Не удаётся найти ' + (prefs.lastdigits ? 'счет с последними цифрами ' + prefs.lastdigits : 'ни одного счета'));
+	
+	var result = {success: true};
+    getParam(tr, result, 'balance', /"balanceAmountM"[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(tr, result, ['currency', 'balance', 'blocked', 'balance_own'], /"balanceAmountCurrencyM"[^>]*>([^<]*)/i, replaceTagsAndSpaces);
+	getParam(tr, result, 'accnum', /"infoUnitObject"[^>]*>([\s\S]*?)<\/a>/i, [replaceTagsAndSpaces, /\D/g, ''], html_entity_decode);
+	getParam(tr, result, '__tariff', /"infoUnitObject"[^>]*>([\s\S]*?)<\/a>/i, [replaceTagsAndSpaces, /\D/g, ''], html_entity_decode);
+	
+	if(AnyBalance.isAvailable('balance_own', 'blocked')){
+        var href = getParam(tr, null, null, /"infoUnitObject"[^>]*href="([^"]*)/i);
+        html = AnyBalance.requestGet(baseurl + href, g_headers);
+        getParam(html, result, 'blocked', /"ctl00_ctl00_mainArea_main_lblReserved"[^>]*>([^<]*)/, replaceTagsAndSpaces, parseBalance);
+    }
 	getBonuses(baseurl, result);
-    result.__tariff = replaceAll($card.find(".infoUnitCaption").text(), replaceTagsAndSpaces);;
-    if(AnyBalance.isAvailable('accnum'))
-        result.cardnum = $card.find(".infoUnitObject").text();
-    if(AnyBalance.isAvailable('type'))
-        result.type = result.__tariff;
-    getParam($card.find(".infoUnitAmount").text(), result, 'balance', /(.*)/, replaceTagsAndSpaces, parseBalance);
-    getParam($card.find(".infoUnitAmount").text(), result, ['currency', 'balance', 'blocked'], /(.*)/, replaceTagsAndSpaces, parseCurrency);
-    
-    if(AnyBalance.isAvailable('balance_own', 'blocked')){
-        eventvalidation = getEventValidation1(html);
-        viewstate = getViewState1(html);
-        
-        var href = $card.find('a.infoUnitObject').attr('href');
-        html = AnyBalance.requestGet(baseurl + href);
-        
-        getParam(html, result, 'blocked', /ctl00_main_lblReserved[^>]*>([^<]*)/, replaceTagsAndSpaces, parseBalance);
-    }
-    
-    AnyBalance.setResult(result);
+
+    AnyBalance.setResult(result);	
 }
 
-
+// Парсит дату из такого вида в мс 27 июля 2013
 function parseDateMoment(str){
-    var mom = moment(str, 'DD MMM YYYY');
-    if(!mom || !mom.isValid()){
-        AnyBalance.trace('Failed to parse date from ' + str);
-    }else{
-        var val = mom.toDate();
-        AnyBalance.trace('Parsed date ' + val + ' from ' + str);
-        return val.getTime();
-    }
+	AnyBalance.trace('Trying to parse date from ' + str);
+	return getParam(str, null, null, null, [replaceTagsAndSpaces, /января/i, '.01.', /февраля/i, '.02.', /марта/i, '.03.', /апреля/i, '.04.', /мая/i, '.05.', /июня/i, '.06.', /июля/i, '.07.', /августа/i, '.08.', /сентября/i, '.09.', /октября/i, '.10.', /ноября/i, '.11.', /декабря/i, '.12.', /\s/g, ''], parseDate);
 }
 
 function fetchDeposit(baseurl, html){
     var prefs = AnyBalance.getPreferences();
-
-    moment.lang('ru');
-
     var eventvalidation = getEventValidation(html);
     var viewstate = getViewState(html);
     
-    if(!/<[^>]+infoSectionHeaderExpanded[^>]+ctl00_main_depositList_Header/i.test(html)){
-        html = AnyBalance.requestPost(baseurl + '/n/Main/Home.aspx', {
-            ctl00$ScriptManager:'ctl00$main$upDeposits|ctl00$main$depositList',
-            __EVENTTARGET:'ctl00$main$depositList',
-            __EVENTARGUMENT:'exp',
-            __VIEWSTATE:viewstate,
-            __EVENTVALIDATION:eventvalidation,
-            __VIEWSTATEENCRYPTED:'',
-            __ASYNCPOST:true
-        });
+    //Инфа о депозитах схлопнута, а надо её раскрыть
+    if(/<div[^>]*isDetExpandBtn[^>]*>\s*подробно/i.test(html)){
+        html = AnyBalance.requestPost('https://retail.payment.ru/n/Main/Home.aspx', {
+			'ctl00$ctl00$ScriptManager':'ctl00$ctl00$mainArea$main$upDeposits|ctl00$ctl00$mainArea$main$depositList',
+			'__EVENTTARGET':'ctl00$ctl00$mainArea$main$depositList',
+			'__EVENTARGUMENT':'_det_exp',
+			'__VIEWSTATE':viewstate,
+			'__VIEWSTATEENCRYPTED':'',
+			'__EVENTVALIDATION':eventvalidation,
+			'ctl00$ctl00$mainArea$right$OperationSearchRightColumn$OperationSearch$tbSearch':'',
+			'ctl00_ctl00_mainArea_right_OperationSearchRightColumn_OperationSearch_tbSearch_InitialTextMode':'True',
+			'__ASYNCPOST':'true',
+			'':'',
+        }, addHeaders({Referer:'https://retail.payment.ru/n/Main/Home.aspx'}));
     }
+	var deposit = prefs.lastdigits ? getParam(prefs.lastdigits, null, null, null, [/\(/ig, '\\(', /\)/ig, '\\)']) : '>';
+	//                   (<div[^>]*class="infoUnit"(?:[^>]*>){4}[^>]*Офис(?:[\s\S]*?</div[^>]*>){2})
+    var re = new RegExp('(<div[^>]*class="infoUnit"(?:[^>]*>){4}[^>]*' + deposit + '(?:[\\s\\S]*?</div[^>]*>){2})', 'i');
+    var tr = getParam(html, null, null, re);
+    if(!tr)
+        throw new AnyBalance.Error('Не удаётся найти ' + (prefs.lastdigits ? 'депозит с именем ' + prefs.lastdigits : 'ни одного депозита'));
+	
+	var result = {success: true};
+    getParam(tr, result, 'balance', /"balanceAmountM"[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(tr, result, ['currency', 'balance', 'blocked', 'balance_own'], /"balanceAmountCurrencyM"[^>]*>([^<]*)/i, replaceTagsAndSpaces);
+	getParam(tr, result, 'accnum', /"infoUnitObject"[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(tr, result, '__tariff', /"infoUnitObject"[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces, html_entity_decode);
+	
+	if(AnyBalance.isAvailable('balance_own', 'blocked')) {
+        var href = getParam(tr, null, null, /"infoUnitObject"[^>]*href="([^"]*)/i);
+        html = AnyBalance.requestGet(baseurl + href, g_headers);
 
-    //Сколько цифр осталось, чтобы дополнить до 20
-    var $html = $('<div>' + html + '</div>');
-    var $card = $html.find("#ctl00_main_depositList div.twoColumnBlock").filter(function(){
-        var num = replaceAll($('.twoColumnBlockCaption', this).first().text(), replaceTagsAndSpaces);
-        return prefs.lastdigits ? num.indexOf(prefs.lastdigits) >= 0 : true;
-    }).first();
+		getParam(html, result, 'income', /Ожидаемый доход(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'accnum', /Депозитный счет(?:[^>]*>){3}([\s\S]*?)<\/td>/i, [replaceTagsAndSpaces, /\D/g, ''], html_entity_decode);
+		getParam(html, result, 'till', /Фактическая дата закрытия(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, parseDateMoment);
+    }
+	getBonuses(baseurl, result);
 
-    if($card.length <= 0)
-        throw new AnyBalance.Error(prefs.lastdigits ? "Не удаётся найти депозит с названием " + prefs.lastdigits : "Не удаётся найти ни одного депозита!");
-    
-    var result = {success: true};
-	getBonuses(baseurl, result);	
-    result.__tariff = $.trim($card.find(".twoColumnBlockCaption").text());
-    if(AnyBalance.isAvailable('type'))
-        result.type = $.trim($card.find(".depositReplenishment").text());
-    getParam($card.find(".depositEndDate").text(), result, 'till', /(\d+.*)/, replaceTagsAndSpaces, parseDateMoment);
-    getParam($card.find(".depositBalanceAmount").text(), result, 'balance', /(.*)/, replaceTagsAndSpaces, parseBalance);
-    getParam($card.find(".depositBalanceAmount").text(), result, ['currency', 'balance', 'income'], /(.*)/, replaceTagsAndSpaces, parseCurrency);
-    
-    if(AnyBalance.isAvailable('accnum','income')){
-        eventvalidation = getEventValidation1(html);
-        viewstate = getViewState1(html);
-        
-        var href = $card.find('a.twoColumnBlockCaption').attr('href');
-        html = AnyBalance.requestGet(baseurl + href);
-        
-        getParam(html, result, 'accnum', /Депозитный счет[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-        getParam(html, result, 'income', /Ожидаемый доход[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-   }
-    
-    AnyBalance.setResult(result);
+    AnyBalance.setResult(result);		
 }

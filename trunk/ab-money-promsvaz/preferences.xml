@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
     <EditTextPreference 
+		obligatory="true"
         title="Логин" 
         positiveButtonText="ОК" 
         summary="Номер клиента или псевдоним||{@s}\n" 
@@ -9,32 +10,33 @@
         dialogMessage="Введите Номер клиента или псевдоним для входа в систему Промсвязьбанк интернет-банк."
         key="login">
     </EditTextPreference>
-    <EditTextPreference 
-        positiveButtonText="ОК"
-        key="password" 
-        dialogTitle="Пароль"
-        negativeButtonText="Отмена"
-        title="Пароль"
-        summary="||***********"
-        dialogMessage="Введите пароль, используемый для входа в систему Промсвязьбанк интернет-банк."
-        inputType="textPassword">
-    </EditTextPreference>
-    <ListPreference 
-        key="type" 
-        title="Что смотреть"
-        summary="||{@s}\n"
-        entries="Карта|Счет|Депозит"
-        entryValues="card|acc|dep"
-	defaultValue="card">
-    </ListPreference>
-    <EditTextPreference 
-        positiveButtonText="ОК"
-        key="lastdigits" 
-        dialogTitle="Номер или название"
-        negativeButtonText="Отмена"
-        title="Номер или название"
-        summary="Номер карты/счета или название депозита|Автоматически\n|{@s}\n"
-        dialogMessage="Введите последние 4 цифры карты, последние цифры номера счета или часть названия депозита, по которому вы хотите получить информацию. Если это поле оставить пустым, то будет показана информация по первому карте/счету/депозиту."
-        inputType="text">
-    </EditTextPreference>
+    <EditTextPreference
+		obligatory="true"
+		positiveButtonText="ОК"
+		key="password"
+		dialogTitle="Пароль"
+		negativeButtonText="Отмена"
+		title="Пароль"
+		summary="||***********"
+		dialogMessage="Введите пароль, используемый для входа в систему Промсвязьбанк интернет-банк."
+		inputType="textPassword">
+	</EditTextPreference>
+	<ListPreference
+		key="type"
+		title="Что смотреть"
+		summary="||{@s}\n"
+		entries="Карта|Счет|Депозит"
+		entryValues="card|acc|dep"
+		defaultValue="card">
+	</ListPreference>
+	<EditTextPreference
+		positiveButtonText="ОК"
+		key="lastdigits"
+		dialogTitle="Номер или название"
+		negativeButtonText="Отмена"
+		title="Номер или название"
+		summary="Номер карты/счета или название депозита|Автоматически\n|{@s}\n"
+		dialogMessage="Введите последние 4 цифры карты, последние цифры номера счета или часть названия депозита, по которому вы хотите получить информацию. Если это поле оставить пустым, то будет показана информация по первому карте/счету/депозиту."
+		inputType="text">
+	</EditTextPreference>
 </PreferenceScreen>

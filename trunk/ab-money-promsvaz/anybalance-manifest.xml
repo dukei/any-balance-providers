@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="7">ab-money-promsvaz</id>
+	<id version="8">ab-money-promsvaz</id>
 	<name>Промсвязьбанк</name>
+	<api flags="no_browser"/>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем остатке и других параметрах карт, счетов и депозитов для клиентов ""Промсвязьбанка"".</p>
 	<p>Информация берется из Интернет-банка.</p>
@@ -11,10 +12,8 @@
 	<ul>
 	<li>Как подключиться к Интернет-банку, можно узнать по адресу http://retail.payment.ru.</li>
 	</ul>      
-
 	<p><b>ВНИМАНИЕ!</b> 
 	<br><br>Для работы провайдера требуется отказаться от подтверждения входа в систему Интернет-банк одноразовым паролем.</p> 
-
 	<p><small>Отключение подтверждения даёт возможность только зайти в систему, в целях безопасности НЕВОЗМОЖНО отключить подтверждение одноразовым паролем переводов и платежей организациям или частным лицам.</small></p>   
 	]]></instruction>
 	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
@@ -22,11 +21,8 @@
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
 		<history>history.xml</history>
-		<js>moment.min.js</js>
-		<js>moment.lang.ru.min.js</js>
 		<js>library.js</js>
 		<js>main.js</js>
-		<js>api:jquery.min.js</js>
 	</files>
 	<counters>
 		<counter id="balance" name="Остаток" units=" {@currency}"/>

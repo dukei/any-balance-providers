@@ -1,35 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-money-w1</id>
-  <name>W1 Единый Кошелек</name>
-  <description>
-    Получает баланс из Единого Кошелька W1(http://www.w1.ru/)
-
-    Информация берется из личного кабинета: https://www.walletone.com/client/
-
-  </description>
-  <author>Alexandra Shalamova &lt;alexandrashalamova@gmail.com&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>basis.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="{@currency}"/>
-    <counter id="SafeAmount" name="Неснижаемая сумма" units="{@currency}"/>
-    <counter id="HoldAmount" name="Заблокированная сумма" units="{@currency}"/>
-    <counter id="Overdraft" name="Превышение кредита" units="{@currency}"/>
-  </counters>
-  <keywords>
-    W1 Единый Кошелек
-  </keywords>
-  <type>
-    money
-  </type>
-  <country>
-    ru
-  </country>
+	<id version="3">ab-money-w1</id>
+	<name>W1 Единый Кошелек</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе  для пользователей «Единого Кошелька W1» (http://www.w1.ru/).</p>
+	<p>Информация берется из личного кабинета (http://www.walletone.com/client/).</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>basis.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units="{@currency}"/>
+		<counter id="SafeAmount" name="Неснижаемая сумма" units="{@currency}"/>
+		<counter id="HoldAmount" name="Заблокированная сумма" units="{@currency}"/>
+		<counter id="Overdraft" name="Превышение кредита" units="{@currency}"/>
+	</counters>
+	<keywords>W1 Единый Кошелек</keywords>
+	<type>money</type>
+	<country>ru</country>
 </provider>

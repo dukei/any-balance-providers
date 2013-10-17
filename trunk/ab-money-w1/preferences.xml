@@ -6,6 +6,7 @@
         summary="||{@s}" 
         dialogTitle="Логин" 
         negativeButtonText="Отмена" 
+		obligatory="true"
         dialogMessage="Введите логин в личный кабинет."
         key="login">
     </EditTextPreference>
@@ -15,6 +16,7 @@
         dialogTitle="Пароль"
         negativeButtonText="Отмена"
         title="Пароль"
+		obligatory="true"
         summary="||***********"
         dialogMessage="Введите пароль, используемый для входа в личный кабинет."
         inputType="textPassword">
@@ -23,7 +25,7 @@
         key="currency"
         dialogTitle="Валюта"
         title="Валюта"
-        defaultValue="RUB"
+        defaultValue="643"
         entries="Гривна|Тенге|Российский рубль|Рэнд|Доллар США|Евро"
         summary="|Выберите валюту|{@s}"
         entryValues="980|398|643|710|840|978">

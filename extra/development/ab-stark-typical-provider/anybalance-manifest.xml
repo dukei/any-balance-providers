@@ -37,7 +37,7 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units="{@currency}"/>
+		<counter id="balance" name="Баланс" units=" {@currency}"/>
 		<counter id="currency" name="Валюта" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="status" name="Статус" type="text"/>

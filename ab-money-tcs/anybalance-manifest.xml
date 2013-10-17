@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="9">ab-money-tcs</id>
+	<id version="10">ab-money-tcs</id>
 	<api flags="no_browser" min_level="4"/>
 	<name>Тинькофф Кредитные Системы</name>
 	<description html="true"><![CDATA[
@@ -44,13 +44,7 @@
 		<counter id="name" name="Название" type="text"/>
 		<counter id="accnum" name="Номер счета" type="text"/>
 	</counters>
-	<keywords>
-	ткс онлайн, tcs online, tinkoff
-	</keywords>
-	<type>
-	money
-	</type>
-	<country>
-	ru
-	</country>
+	<keywords>ткс онлайн, tcs online, tinkoff</keywords>
+	<type>money</type>
+	<country>ru</country>
 </provider>

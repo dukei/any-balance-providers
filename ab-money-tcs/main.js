@@ -26,6 +26,10 @@ function main(){
     var html, sessionid;
     html = AnyBalance.requestGet(baseurl + '/api/v1/session/?username=' + encodeURIComponent(prefs.login) + '&password=' + encodeURIComponent(prefs.password), g_headers);
 
+	if(/технические работы/i.test(html)) {
+		throw new AnyBalance.Error('В настоящий момент на сайте проводятся технические работы. Попробуйте запустить обновление позже.');
+	}	
+	
     json = getJson(html);
     if(json.resultCode == 'AUTHENTICATION_FAILED')
         throw new AnyBalance.Error(json.errorMessage || 'Авторизация прошла неуспешно. Проверьте логин и пароль.');
@@ -93,6 +97,10 @@ function main(){
         Referer: baseurl + '/bank/accounts/'
     }));
     
+	if(/технические работы/i.test(accounts)) {
+		throw new AnyBalance.Error('В настоящий момент на сайте проводятся технические работы. Попробуйте запустить обновление позже.');
+	}
+	
     accounts = getJson(accounts);
 
     if(accounts.resultCode != 'OK')

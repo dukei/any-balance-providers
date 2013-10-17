@@ -24,6 +24,9 @@
 	<keywords>
 	прогноз, погода, карты, осадки, ветер, влажность, давление, weather, солнце, луна, температура, воздух
 	</keywords>
+    <country>
+    by
+  </country>  
 	<type>
 	weather
 	</type>

@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-exchange-select-by</id>
-  <name>Курсы валют Банков Беларуси</name>
+	<id version="2">ab-exchange-select-by</id>
+	<name>Курсы валют Банков Беларуси</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущих курсах валют в банках Республики Беларусь и курс ""Национального Банка"".</p> 
 	<p>Есть функция отображения лучших курсов.</p> 
@@ -27,8 +27,6 @@
 		<counter id="tel" name="Телефон банка" type="text"/>
 	</counters>
 	<keywords>Беларусь, курс валют, евро, доллар, НБ РБ</keywords>
-  <country>
-    by
-  </country>
+	<country>by</country>
 	<type>finance, exchange</type>
 </provider>

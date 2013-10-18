@@ -52,6 +52,7 @@ function main(){
     html = AnyBalance.requestPost(baseurl + '?action=auth.login', {
         login:prefs.login,
         password:prefs.password,
+		country_code:'ru',
     }, addHeaders({Referer: baseurl})); 
 	
     if(!/logout/i.test(html)){

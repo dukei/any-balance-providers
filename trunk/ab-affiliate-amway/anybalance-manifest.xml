@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser" />
-	<id version="1">ab-affiliate-amway</id>
+	<id version="2">ab-affiliate-amway</id>
 	<name>AmWay</name>
 	<description>
 Получает данные из партнерской программы AmWay http://www.amway.ru/

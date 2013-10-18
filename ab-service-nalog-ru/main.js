@@ -54,7 +54,9 @@ function main(){
 		throw new AnyBalance.Error(errString);
 	}
 	var json = getJson(jsonVar);
-	
+	if(!json || !json.regions)
+		throw new AnyBalance.Error('Не удалось получить таблицу с данными');
+		
 	for(i = 0; i < json.regions.length; i++){
 		var curr = json.regions[i];
 		for(j = 0; j < curr.pds.length; j++){

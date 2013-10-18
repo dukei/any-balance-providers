@@ -14,25 +14,26 @@ function main() {
 	var baseurl = 'http://www.bloomberg.com/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
-	checkEmpty(prefs.quote, 'Please, enter qoute');
+	checkEmpty(prefs.quote, 'Please, enter quote!');
 
 	// Ищем котировку
 	var html = AnyBalance.requestGet(baseurl + 'apps/data?pid=symautocomplete&Query='+prefs.quote, g_headers);
 	
 	var href = getParam(html, null, null, /Symbols\s*<\s*\/\s*a>(?:[^>]*>){4}[^>]*href=(?:"|')\/([^("')]*)/i);
 	if(!href) {
-		throw new AnyBalance.Error('Please check entered qoute. The quote ' + prefs.quote + ' has not been found');
+		throw new AnyBalance.Error('Please check entered quote. The quote ' + prefs.quote + ' has not been found');
 	}
 	
 	html = AnyBalance.requestGet(baseurl + href, g_headers);
 	
 	var header = getParam(html, null, null, /(<div[^>]*class="ticker_header(?:[\s\S]*?<div){10})/i);
 	if(!header)
-		throw new AnyBalance.Error('Please check entered qoute. The quote ' + prefs.quote + ' has not been found');
+		throw new AnyBalance.Error('Please check entered quote. The quote ' + prefs.quote + ' has not been found');
 	
 	var result = {success: true};
 	
 	getParam(header, result, '__tariff', /<h2>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(header, result, 'quote_show', /<h2>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(header, result, 'balance', /class\s*=\s*"\s*price[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
 	
 	var currency = getParam(header, null, null, /class\s*=\s*"\s*price[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, parseCurrency);

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-exchange-bloomberg</id>
+	<id version="2">ab-exchange-bloomberg</id>
 	<api flags="no_browser"/>
 	<name>Bloomberg</name>
 	<description html="true"><![CDATA[
@@ -23,6 +23,7 @@
 		<counter id="trending" name="Trending difference"/>
 		<counter id="trending_pcts" name="Trending pcts" units="%"/>
 		<counter id="currency" name="Currency" type="text"/>
+		<counter id="quote_show" name="Name" type="text"/>
 		<counter id="open" name="Open"/>
 		<counter id="volume" name="Volume"/>
 		<counter id="prev_close" name="Previous Close"/>

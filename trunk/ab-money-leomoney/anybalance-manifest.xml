@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-money-leomoney</id>
+	<id version="5">ab-money-leomoney</id>
 	<api flags="no_browser"/>
 	<name>Leomoney</name>
 	<description html="true"><![CDATA[
@@ -15,12 +15,12 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units="р"/>
-		<counter id="spent" name="Потрачено в текущем месяце" units="р"/>
-		<counter id="limit" name="Месячный лимит" units="р"/>
-		<counter id="wallet" name="Номер кошелька" type="text"/>
+		<counter id="balance" name="Balance" units=" {@currency}"/>
+		<counter id="spent" name="Spent in current month" units=" {@currency}"/>
+		<counter id="limit" name="Month limit" units=" {@currency}"/>
+		<counter id="wallet" name="Wallet number" type="text"/>
 	</counters>
 	<keywords>леомани</keywords>
 	<type>money</type>
-	<country>ru</country>
+	<country>ru,ae</country>
 </provider>

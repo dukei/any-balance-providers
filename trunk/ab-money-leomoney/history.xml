@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+<change version="6" date="2013-10-20">
+- Все на английском
+</change>
 <change version="5" date="2013-10-19">
 - Поддержка эмиратских кошельков
 </change>

@@ -19,6 +19,7 @@ function main() {
 	var result = {success: true};
 	
 	getParam(html, result, 'balance', new RegExp('Crude Oil \\('+ (prefs.type || 'WTI') +'\\)(?:[^>]*>){4}([^<]*)', 'i'), replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'currency', new RegExp('Crude Oil \\('+ (prefs.type || 'WTI') +'\\)(?:[^>]*>){2}([^<]*)', 'i'), replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'change', new RegExp('Crude Oil \\('+ (prefs.type || 'WTI') +'\\)(?:[^>]*>){6}([^<]*)', 'i'), replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'change_pcts', new RegExp('Crude Oil \\('+ (prefs.type || 'WTI') +'\\)(?:[^>]*>){8}([^<]*)', 'i'), replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'contract', new RegExp('Crude Oil \\('+ (prefs.type || 'WTI') +'\\)(?:[^>]*>){10}([^<]*)', 'i'), replaceTagsAndSpaces);

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-exchange-bloomberg-silver</id>
+	<id version="2">ab-exchange-bloomberg-silver</id>
 	<api flags="no_browser"/>
 	<name>Bloomberg Silver</name>
 	<description html="true"><![CDATA[
@@ -15,7 +15,7 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Price"/>
+		<counter id="balance" name="Price" units=" {@currency}"/>
 		<counter id="change" name="Change"/>
 		<counter id="change_pcts" name="Change, %"/>
 		<counter id="contract" name="Contract" type="text"/>

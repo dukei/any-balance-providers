@@ -32,6 +32,7 @@ function main() {
 	
 	var result = {success: true};
 	
+	getParam(href, result, 'quote', /quote\/(.*)/i, null, html_entity_decode);
 	getParam(header, result, '__tariff', /<h2>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(header, result, 'quote_show', /<h2>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(header, result, 'balance', /class\s*=\s*"\s*price[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);

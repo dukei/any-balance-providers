@@ -19,6 +19,7 @@ function main() {
 	var result = {success: true};
 	
 	getParam(html, result, 'balance', new RegExp((prefs.type || 'COMEX') +' Silver(?:[^>]*>){4}([^<]*)', 'i'), replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'currency', new RegExp((prefs.type || 'COMEX') +' Silver(?:[^>]*>){2}([^<]*)', 'i'), replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'change', new RegExp((prefs.type || 'COMEX') +' Silver(?:[^>]*>){6}([^<]*)', 'i'), replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'change_pcts', new RegExp((prefs.type || 'COMEX') +' Silver(?:[^>]*>){8}([^<]*)', 'i'), replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'contract', new RegExp((prefs.type || 'COMEX') +' Silver(?:[^>]*>){10}([^<]*)', 'i'), replaceTagsAndSpaces);

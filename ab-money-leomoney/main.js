@@ -27,9 +27,10 @@ function main(){
 	
     var matches = prefs.login.match(rePrefixes);
 	
-    if(matches[1] != '7')
-        throw new AnyBalance.Error('Провайдер пока поддерживает только российские номера. Для поддержки других стран обращайтесь к автору провайдера.');
+    if(matches[1] != '7' && matches[1] != '971')
+        throw new AnyBalance.Error('Провайдер пока поддерживает только российские и эмиратские номера. Для поддержки других стран обращайтесь к автору провайдера.');
 	
+    if(matches[1] == '7'){
     var html = AnyBalance.requestPost(baseurl + 'security/signin', {
 		flags0:matches[1],
 		LoginClear:matches[2],
@@ -48,15 +49,45 @@ function main(){
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
     //Раз мы здесь, то мы успешно вошли в кабинет
-    //Получаем все счетчики
+    // все счетчики
     var result = {success: true};
     getParam(html, result, '__tariff', /((?:Кошелек №|Wallet No.)\s*\d+)/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam('р', result, ['currency', 'balance', 'spent', 'limit']);
     getParam(html, result, 'balance', /(?:Ваш баланс|Your balance):([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseBalanceRK);
     getParam(html, result, 'spent', /(?:Из них израсходовано|Spent):([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'limit', /(?:Месячный лимит|Monthly limit):([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'wallet', /(?:Кошелек №|Wallet No.)\s*(\d+)/i, replaceTagsAndSpaces, html_entity_decode);
     //Возвращаем результат
     AnyBalance.setResult(result);
+
+    }else{
+    var baseurl = "https://leomoney.com/";
+    var html = AnyBalance.requestPost(baseurl + 'security/signin2', {
+		login:prefs.login,
+		password:prefs.password
+    }, addHeaders({Origin: baseurl, Referer: baseurl}));
+
+    var json = getJson(html); 
+	
+    if(json.Code != 0){
+        var error = json.Details;
+        if(error)
+            throw new AnyBalance.Error(error);
+        //Если объяснения ошибки не найдено, при том, что на сайт войти не удалось, то, вероятно, произошли изменения на сайте
+        throw new AnyBalance.Error('Could not enter personal accont. Is the site changed?');
+    }
+
+    html = AnyBalance.requestGet(baseurl, addHeaders({Origin: baseurl, Referer: baseurl}));
+    //Раз мы здесь, то мы успешно вошли в кабинет
+    // все счетчики
+    var result = {success: true};
+    getParam(html, result, '__tariff', /<span[^<]+class="auth_ewallet_num"[^<]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'balance', /<div[^<]+class="auth_money_count"[^<]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, ['currency', 'balance'], /<div[^<]+class="auth_money_count"[^<]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseCurrency);
+    getParam(html, result, 'wallet', /<span[^<]+class="auth_ewallet_num"[^<]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+    //Возвращаем результат
+    AnyBalance.setResult(result);
+    }
 }
 
 function parseBalanceRK(_text){

@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+<change version="5" date="2013-10-19">
+- Поддержка эмиратских кошельков
+</change>
 <change version="4" date="2013-10-11">
 - Поддержка изменений в процедуре входа (Stark)
 </change>

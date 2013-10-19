@@ -61,7 +61,7 @@ function main(){
     AnyBalance.setResult(result);
 
     }else{
-    var baseurl = "https://leomoney.com/";
+    var baseurl = "http://leomoney.com/";
     var html = AnyBalance.requestPost(baseurl + 'security/signin2', {
 		login:prefs.login,
 		password:prefs.password

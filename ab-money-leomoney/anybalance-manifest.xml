@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="5">ab-money-leomoney</id>
+	<id version="6">ab-money-leomoney</id>
 	<api flags="no_browser"/>
 	<name>Leomoney</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе на электронном кошельке Leomoney (http://leomoney.ru).</p>
+	<p>Shows balance and monthly limits on e-wallet Leomoney (http://leomoney.com).</p>
 	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>To register a wallet go to http://leomoney.com/security/registration.</p>
+        <p>To recover your password go to http://leomoney.com/security/recoverypassword.</p>
+	]]></instruction>
 	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>

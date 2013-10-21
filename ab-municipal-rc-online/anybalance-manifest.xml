@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-municipal-rc-online</id>
+	<id version="2">ab-municipal-rc-online</id>
 	<api flags="no_browser"/>
 	<name>Расчетный центр Онлайн</name>
 	<description html="true"><![CDATA[
@@ -16,7 +16,10 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units="р"/>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="nachisl" name="Всего начислено" units=" р"/>
+		<counter id="last_pay_date" name="Дата последнего платежа" type="time" format="dd/MM/yyyy"/>
+		<counter id="last_pay_sum" name="Сумма последнего платежа" units=" р"/>
 		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
 	<keywords></keywords>

@@ -31,5 +31,15 @@ function main() {
 	getParam(html, result, 'balance', /"header-site_object"[^>]*>[^>]*>[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'fio', /Абонент:[^>]*>[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 	
+	if(isAvailable(['nachisl'])) {
+		html = AnyBalance.requestGet(baseurl+'go/charges', g_headers);
+		getParam(html, result, 'nachisl', /Итого:(?:[^>]*>){24}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	}
+	if(isAvailable(['last_pay_date','last_pay_sum'])) {
+		html = AnyBalance.requestGet(baseurl+'go/pays_history', g_headers);
+		getParam(html, result, 'last_pay_date', /<table[^>]*class="list_table"(?:[\s\S]*?<td[^>]*>){1}([^<]*)/i, replaceTagsAndSpaces, parseDate);
+		getParam(html, result, 'last_pay_sum', /<table[^>]*class="list_table"(?:[\s\S]*?<td[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	}	
+	
     AnyBalance.setResult(result);
 }

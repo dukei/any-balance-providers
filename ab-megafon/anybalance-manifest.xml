@@ -41,7 +41,7 @@
 		<counter id="mins_left" name="Бесплатные минуты" units=" мин" type="time_interval" format="{@MIN}"/>
 		<counter id="mins_country_left" name="Минуты по России" units=" мин" type="time_interval" format="{@MIN}"/>
 		<counter id="mins_sng_left" name="Минуты по СНГ" units=" мин" type="time_interval" format="{@MIN}"/>
-		<counter id="mins_compet_left" name="Минуты на МТС,Билайн,Скайлинк" units="мин" type="time_interval" format="{@MIN}"/>
+		<counter id="mins_compet_left" name="Минуты на МТС,Билайн,Скайлинк" units=" мин" type="time_interval" format="{@MIN}"/>
 		<counter id="mins_net_left" name="Минуты внутри сети" units=" мин" type="time_interval" format="{@MIN}"/>
 		<counter id="internet_left" name="Интернет (осталось)" units=" Mb"/>
 		<counter id="sms_left" name="SMS включенные" units=" sms"/>
@@ -55,7 +55,7 @@
 		<counter id="internet_till" name="Срок действия пакета интернет" type="time" format="dd/MM/yyyy"/>
 		<counter id="mins_total" name="Бесплатные минуты (всего)" units=" мин" type="time_interval" format="{@MIN}"/>
 		<counter id="mins_country_total" name="Минуты по России (всего)" units=" мин" type="time_interval" format="{@MIN}"/>
-		<counter id="mins_sng_total" name="Минуты по СНГ (всего)" units="мин" type="time_interval" format="{@MIN}"/>
+		<counter id="mins_sng_total" name="Минуты по СНГ (всего)" units=" мин" type="time_interval" format="{@MIN}"/>
 		<counter id="mins_compet_total" name="Минуты на МТС,Билайн,Скайлинк (всего)" units=" мин" type="time_interval" format="{@MIN}"/>
 		<counter id="mins_net_total" name="Минуты внутри сети (всего)" units=" мин" type="time_interval" format="{@MIN}"/>
 		<counter id="sms_total" name="Включенные SMS (всего)" units=" sms"/>

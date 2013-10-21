@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-tv-itce</id>
+	<api flags="no_browser"/>
+	<name>Группа Компаний Электрон (Цифровое ТВ)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе ГК Электрон (Цифровое ТВ)</p>
+	<p>Информация берется из личного кабинета http://tv.itce.ru/?page=billing</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="fio" name="ФИО" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>tv</type>
+	<country>ru</country>
+</provider>

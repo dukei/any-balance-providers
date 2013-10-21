@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-tracking-moyaposylka</id>
+	<id version="3">ab-tracking-moyaposylka</id>
 	<name>Моя посылка</name>
 	<description html="true"><![CDATA[
 	<p>Отслеживает почтовое отправление с помощью сервиса http://moyaposylka.ru.</p>
@@ -23,10 +23,6 @@
 		<counter id="weight" name="Вес" units="кг"/>
 		<counter id="address" name="Адрес" type="text"/>
 	</counters>
-	<keywords>
-	Почтовое отправление, почта России, моя посылка
-	</keywords>
-	<type>
-	tracking, post
-	</type>
+	<keywords>Почтовое отправление, почта России, моя посылка</keywords>
+	<type>tracking, post</type>
 </provider>

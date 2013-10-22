@@ -22,14 +22,13 @@ function main(){
 			return prefs.login;
 		else if(name == 'password')
 			return prefs.password;		
-		
 		return value;
 	});
 	
 	html = AnyBalance.requestPost(baseurl + 'byt/ru/login', params, g_headers); 
 	
     if(!/\/Logout/i.test(html)){
-        var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
+        var error = getParam(html, null, null, [/<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, /class="page-error"[^>]*>([^<]*)/i], replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error);
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');

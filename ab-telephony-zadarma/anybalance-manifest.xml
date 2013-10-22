@@ -1,36 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="2" version="4">ab-telephony-zadarma</id>
-  <name>Zadarma</name>
+	<id major_version="2" version="5">ab-telephony-zadarma</id>
+	<name>Zadarma</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем балансе в Zadarma (http://zadarma.com).</p>
 	<p>Информация берется из личного кабинета.</p>   
 	]]></description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <author>Puzuma &lt;a.puzuma@gmail.com&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" prefix="$" type="numeric"/>
-    <counter id="phone0" name="Прямой номер" type="text"/>
-    <counter id="phone0till" name="Срок действия прямого номера" type="time" format="dd/MM/yyyy"/>
-    <counter id="phone1" name="Прямой номер 2" type="text"/>
-    <counter id="phone1till" name="Срок действия прямого номера 2" type="time" format="dd/MM/yyyy"/>
-    <counter id="phone2" name="Прямой номер 3" type="text"/>
-    <counter id="phone2till" name="Срок действия прямого номера 3" type="time" format="dd/MM/yyyy"/>
- </counters>
-  <keywords>
-    zadarma sip IP-телефония
-  </keywords>
-  <type>
-    telephony
-  </type>
-  <country>
-    ru, ua
-  </country>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>Puzuma &lt;a.puzuma@gmail.com&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" prefix="$" type="numeric"/>
+		<counter id="phone0" name="Прямой номер" type="text"/>
+		<counter id="phone0status" name="Прямой номер - статус" type="text"/>
+		<counter id="phone0till" name="Срок действия прямого номера" type="time" format="dd/MM/yyyy"/>
+		<counter id="phone1" name="Прямой номер 2" type="text"/>
+		<counter id="phone1status" name="Прямой номер 2 - статус" type="text"/>
+		<counter id="phone1till" name="Срок действия прямого номера 2" type="time" format="dd/MM/yyyy"/>
+		<counter id="phone2" name="Прямой номер 3" type="text"/>
+		<counter id="phone2status" name="Прямой номер 3 - статус" type="text"/>
+		<counter id="phone2till" name="Срок действия прямого номера 3" type="time" format="dd/MM/yyyy"/>
+	</counters>
+	<keywords>zadarma sip IP-телефония</keywords>
+	<type>telephony</type>
+	<country>ru, ua</country>
 </provider>

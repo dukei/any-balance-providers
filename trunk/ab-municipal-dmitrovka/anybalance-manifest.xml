@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-municipal-dmitrovka</id>
+	<api flags="no_browser"/>
+	<name>Дмитров-ка</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о последнем выставленном счете в личном кабинете компании Дмитров-ка</p>
+	<p>Информация берется по адресу http://dmitrov-ka.ru/life/home/bills/</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="bill_summ" name="Сумма счета" units=" р"/>
+		<counter id="bill_num" name="Номер счета" type="text"/>
+		<counter id="bill_date" name="Дата счета" type="time" format="dd/MM/yyyy"/>
+		<counter id="fio" name="ФИО" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>municipal</type>
+	<country>ru</country>
+</provider>

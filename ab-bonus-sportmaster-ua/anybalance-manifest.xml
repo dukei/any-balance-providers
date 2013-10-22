@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-bonus-sportmaster-ua</id>
+	<name>Спортмастер (Украина)</name>
+	<api flags="no_browser"/>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию по бонусной карте "Спортмастер-Украина".</p>
+	<p>Поддерживается получение данных только по номеру карты</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<history>history.xml</history>
+		<js>library.js</js>
+		<js>main.js</js>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс"/>
+		<counter id="cardnum" name="Номер карты" type="text"/>
+	</counters>
+	<keywords>sportmaster, карта, бонус</keywords>
+	<type>bonus</type>
+	<country>ua</country>
+</provider>

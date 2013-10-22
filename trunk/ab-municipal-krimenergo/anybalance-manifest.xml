@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser" />
-	<id version="2">ab-municipal-krimenergo</id>
+	<id version="3">ab-municipal-krimenergo</id>
 	<name>Интернет-магазин коммунальных услуг (Мегасофт)</name>
-	<description>
-	Получает данные в системе Мегасофт (http://www.krymenergo.com/)
-	На данный момент поддерживаются: Крымэнерго, Киевэнерго
-	
-	Информация берется из личного кабинета https://secure.mega-billing.com/byt/ru/energo
-	</description>
+	<description html="true"><![CDATA[
+	<p>Получает данные в системе Мегасофт (http://www.krymenergo.com/)</p>
+
+	<p>На данный момент поддерживаются: Крымэнерго, Киевэнерго</p>
+
+	<p>Информация берется из личного кабинета https://secure.mega-billing.com/byt/ru/energo</p>
+	]]></description>	
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>

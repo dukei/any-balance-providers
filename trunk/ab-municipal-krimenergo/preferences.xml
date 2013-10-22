@@ -6,12 +6,14 @@
         summary="||{@s}" 
         dialogTitle="Логин" 
         negativeButtonText="Отмена" 
+		obligatory="true"
         dialogMessage="Введите логин в личный кабинет."
         key="login">
     </EditTextPreference>
     <EditTextPreference 
         positiveButtonText="ОК"
-        key="password" 
+        obligatory="true"
+		key="password" 
         dialogTitle="Пароль"
         negativeButtonText="Отмена"
         title="Пароль"

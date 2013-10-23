@@ -65,7 +65,7 @@ function main(){
 }
 
 function hideNumber(str) {
-	str = str.replace(/(\d{7})\d{5}(\d+)/i, '$1***$2');
+	return str.replace(/(\d{7})\d{5}(\d+)/i, '$1***$2');
 }
 
 function processCard(html, result){

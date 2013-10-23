@@ -1,46 +1,51 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Текущий баланс у сотового оператора БайкалВестКом.
-
-Сайт оператора: https://issa.bwc.ru
 */
 
-function main(){
-    var prefs = AnyBalance.getPreferences();
-    
-    var baseurl = "https://issa.bwc.ru/cgi-bin/cgi.exe?";
-
-    AnyBalance.trace("Trying to enter issa at address: " + baseurl + "function=is_login");
-    var html = AnyBalance.requestPost(baseurl + "function=is_login", {
-        mobnum: prefs.login,
-        Password: prefs.password
-    });
-    
-    var matches = html.match(/<td class=error>([\s\S]*?)<\/td>/i);
-    if(matches){
-        throw new AnyBalance.Error(matches[1].replace(/^\s*|\s*$/g, ''));
-    }
-    
-    var result = {success: true};
-    
-    html = AnyBalance.requestGet(baseurl + "function=is_account");
-    var $html = $(html);
-    var $tableBalance = $html.find('h2:contains("Информация о лицевом счете")').next();
-    
-    if(AnyBalance.isAvailable('balance')){
-        result.balance = parseFloat($tableBalance.find('td:contains("Актуальный баланс")').next().find('em').text());
-    }
-    
-    if(AnyBalance.isAvailable('average_speed')){
-        var val = $tableBalance.find('td:contains("Средняя скорость расходования средств по лицевому счету в день")').next().text();
-	AnyBalance.trace("Speed: " + val);
-        if(val && (matches = val.match(/([\d\.]+)/))){
-            result.average_speed = parseFloat(matches[1]);
-        }
-    }
-    
-    var $tableCounters = $html.find('h2:contains("Общая продолжительность разговоров")').next();
+function main() {
+	var prefs = AnyBalance.getPreferences();
+	var baseurl = "https://issa.bwc.ru/cgi-bin/cgi.exe?";
+	
+	var html = AnyBalance.requestPost(baseurl + "function=is_login", {
+		mobnum: prefs.login,
+		Password: prefs.password
+	});
+	
+	if (!/Осуществляется вход в систему/i.test(html)) {
+		var error = getParam(html, null, null, /<td class=error>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+		if (error) throw new AnyBalance.Error(error);
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+	}
+	var result = {success: true};
+	
+	html = AnyBalance.requestGet(baseurl + 'function=is_account');
+	
+	getParam(html, result, 'balance', /Актуальный баланс:(?:[^>]*>){4}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'average_speed', /Средняя\s*скорость\s*расходования\s*средств\s*по\s*лицевому\s*счету\s*в\s*день:(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	
+	var table = getParam(html, null, null, /Общая продолжительность разговоров[^>]*>\s*(<table[\s\S]*?<\/table>)/i);
+	if (table) {
+		var options = sumParam(table, null, null, /(<tr\s*valign="top"\s*class=light>[\s\S]*?<\/tr>)/ig);
+		for (i = 0; i < options.length; i++) {
+			var option = options[i];
+			var name = getParam(option, null, null, /(?:[^>]*>){4}([^<]*)/i);
+			AnyBalance.trace('Нашли опцию ' + name);
+			// Интернет 
+			if (/3G|GPRS|\d+\s+Мб/i.test(name)) {
+				sumParam(option, result, 'traffic_total', /(?:[^>]*>){6}([^<]*)/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+				sumParam(option, result, 'traffic_used', /(?:[^>]*>){8}([^<]*)/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+				getParam((result.traffic_total - result.traffic_used) + '', result, 'traffic_left');
+			} // Пакеты минут
+			else if (/\d+\s+мин/i.test(name)) {
+				sumParam(option, result, 'min_total', /(?:[^>]*>){6}([^<]*)/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+				sumParam(option, result, 'min_used', /(?:[^>]*>){8}([^<]*)/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+				getParam((result.min_total - result.min_used) + '', result, 'min_left');
+			} else {
+				AnyBalance.trace('Неизвестная опция ' + name + ' свяжитесь с разработчиком! ' + option);
+			}
+		}
+	}
+	/*var $tableCounters = $html.find('h2:contains("Общая продолжительность разговоров")').next();
     $tableCounters.find('tr').each(function(index){
         var str = $('td:nth-child(2)', this).text();
         if(!str)
@@ -73,7 +78,6 @@ function main(){
     var val = $(html).find('h2:contains("Тарифный план:")').text();
     if(val && (matches = val.match(/:\s*(.*)/))){
         result.__tariff = matches[1];
-    }
-    
-    AnyBalance.setResult(result);
+    }*/
+	AnyBalance.setResult(result);
 }

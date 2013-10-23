@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="2">ab-money-mashreq</id>
+	<id version="3">ab-money-mashreq</id>
 	<name>Mashreq Online Banking UAE</name>
 	<description html="true"><![CDATA[
 	<p>Obtains balance of accounts and cards in Mashreq Online Banking UAE http://mashreqbank.com/uae/en/</p>

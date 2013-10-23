@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-municipal-dmitrovka</id>
+	<id version="2">ab-municipal-dmitrovka</id>
 	<api flags="no_browser"/>
 	<name>Дмитров-ка</name>
 	<description html="true"><![CDATA[
@@ -16,9 +16,10 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="bill_summ" name="Сумма счета" units=" р"/>
-		<counter id="bill_num" name="Номер счета" type="text"/>
-		<counter id="bill_date" name="Дата счета" type="time" format="dd/MM/yyyy"/>
+		<counter id="balance" name="Сумма всех не оплаченных счетов" units=" р"/>
+		<counter id="bill_summ" name="Сумма не оплаченного счета" units=" р"/>
+		<counter id="bill_num" name="Номер не оплаченного счета" type="text"/>
+		<counter id="bill_date" name="Дата не оплаченного счета" type="time" format="dd/MM/yyyy"/>
 		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
 	<keywords></keywords>

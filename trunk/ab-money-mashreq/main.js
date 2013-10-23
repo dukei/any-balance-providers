@@ -64,6 +64,10 @@ function main(){
 		processCard(html, result);
 }
 
+function hideNumber(str) {
+	str = str.replace(/(\d{7})\d{5}(\d+)/i, '$1***$2');
+}
+
 function processCard(html, result){
     var prefs = AnyBalance.getPreferences();
     if(prefs.cardnum && !/^\d{4}$/.test(prefs.cardnum))
@@ -78,8 +82,8 @@ function processCard(html, result){
     if(!tr)
         throw new AnyBalance.Error('Cant find ' + (prefs.cardnum ? 'card with digits ' + prefs.cardnum : 'any card'));
 	//AnyBalance.trace(tr);
-    getParam(tr, result, 'cardnum', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(tr, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(tr, result, 'cardnum', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, hideNumber);
+    getParam(tr, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, hideNumber);
 	getParam(tr, result, 'cardtype', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(tr, result, 'cred_limit', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(tr, result, 'balance', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
@@ -103,8 +107,8 @@ function processAccount(html, result){
         throw new AnyBalance.Error('Cant find ' + (prefs.cardnum ? 'card with digits ' + prefs.cardnum : 'any card'));*/
 	var tr = table;
 	
-    getParam(tr, result, 'accnum', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(tr, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(tr, result, 'accnum', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, hideNumber);
+    getParam(tr, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, hideNumber);
 	
 	getParam(tr, result, 'iban', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(tr, result, 'currency', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);

@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-cell-bwc</id>
-  <name>БайкалВестКом (Ростелеком)</name>
+	<id version="3">ab-cell-bwc</id>
+	<api flags="no_browser"/>
+	<name>БайкалВестКом (Ростелеком)</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе, остатке минут, интернет-трафика, SMS для пользователей корпоративных тарифов сотового оператора ""БайкалВестКом"", ныне ""Ростелеком"" (http://www.bwc.ru).</p>
+	<p>Предоставляет информацию о балансе, остатке минут, интернет-трафика, SMS для пользователей корпоративных тарифов сотового оператора "БайкалВестКом", ныне "Ростелеком" (http://www.bwc.ru).</p>
 	<p>Информация берется из ИССА (http://issa.bwc.ru).</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
-	<p>Пароль для входа в ИССА совпадает с вашим паролем для входа в ""автоматическую службу сервиса абонента"" (АССА).</p> 
+	<p>Пароль для входа в ИССА совпадает с вашим паролем для входа в "автоматическую службу сервиса абонента" (АССА).</p> 
 	<p>Как получить пароль:</p>
 	<ul>
 	<li>Позвоните с вашего мобильного телефона по номеру 7172 и следуйте голосовой инструкции;</li> 
@@ -23,31 +24,25 @@
 	<li>После четырех неудачных попыток авторизации личный кабинет ИССА блокируется на 3 часа.</li>
 	</ul>
 	]]></instruction>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>api:jquery.min.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="min_left" name="Минуты (осталось)" units="мин"/>
-    <counter id="traffic_left" name="Трафик (осталось)" units="Мб"/>
-    <counter id="min_used" name="Минуты (использовано)" units="мин"/>
-    <counter id="traffic_used" name="Трафик (использовано)" units="Мб"/>
-    <counter id="average_speed" name="Скорость расходования в день" units="р"/>
-    <counter id="traffic_total" name="Трафик (всего)" units="Мб"/>
-    <counter id="min_total" name="Минуты (всего)" units="мин"/>
-  </counters>
-  <keywords>
-    Сотовый телефон, мобильный, мобильник, bwc, байкал
-  </keywords>
-  <type>
-    cell
-  </type>
-  <country>
-    ru
-  </country>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="min_left" name="Минуты (осталось)" units=" мин"/>
+		<counter id="min_used" name="Минуты (использовано)" units=" мин"/>
+		<counter id="min_total" name="Минуты (всего)" units=" мин"/>
+		<counter id="traffic_left" name="Трафик (осталось)" units=" Мб"/>
+		<counter id="traffic_used" name="Трафик (использовано)" units=" Мб"/>
+		<counter id="traffic_total" name="Трафик (всего)" units=" Мб"/>
+		<counter id="average_speed" name="Скорость расходования в день" units=" р"/>
+	</counters>
+	<keywords>Сотовый телефон, мобильный, мобильник, bwc, байкал</keywords>
+	<type>cell</type>
+	<country>ru</country>
 </provider>

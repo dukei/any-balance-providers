@@ -36,4 +36,11 @@
         positiveButtonText="ОК"
         negativeButtonText="Отмена">
     </EditTextPreference>
+    <ListPreference
+	title="Формат даты"
+	summary="|По умолчанию стоит DD MMM YYYY.|Выбрано {@s}."
+	key="format_date"
+        defaultValue="2"
+        entries="YYYY MMM DD|DD MMM YYYY|YYYY-MM-DD|DD-MM-YYYY"
+        entryValues="1|2|3|4" />
 </PreferenceScreen>

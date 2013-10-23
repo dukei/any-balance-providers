@@ -14,6 +14,27 @@ function addzero(i) {
 return (i < 10)? "0" + i: i;
 }
 
+function format_date(d,format){
+	var m;
+	if(d[4]+d[5]=="01"){m="янв";}
+	if(d[4]+d[5]=="02"){m="фев";}
+	if(d[4]+d[5]=="03"){m="мар";}
+	if(d[4]+d[5]=="04"){m="апр";}
+	if(d[4]+d[5]=="05"){m="май";}
+	if(d[4]+d[5]=="06"){m="июн";}
+	if(d[4]+d[5]=="07"){m="июл";}
+	if(d[4]+d[5]=="08"){m="авг";}
+	if(d[4]+d[5]=="09"){m="сен";}
+	if(d[4]+d[5]=="10"){m="окт";}
+	if(d[4]+d[5]=="11"){m="ноя";}
+	if(d[4]+d[5]=="12"){m="дек";}
+	if(format == 1){d=d[0]+d[1]+d[2]+d[3]+' '+m+' '+d[6]+d[7];}              //          YYYY MMM DD
+	if(format == 2){d=d[6]+d[7]+' '+m+' '+d[0]+d[1]+d[2]+d[3];}              //          DD MMM YYYY
+	if(format == 3){d=d[0]+d[1]+d[2]+d[3]+'-'+d[4]+d[5]+'-'+d[6]+d[7];}//          YYYY-MM-DD
+	if(format == 4){d=d[6]+d[7]+'-'+d[4]+d[5]+'-'+d[0]+d[1]+d[2]+d[3];}//          DD-MM-YYYY
+	return d;
+}
+
 function main(){
 
 
@@ -75,36 +96,39 @@ function main(){
 	var result = {success: true};
 
 //Бонусная шкала
-        if(AnyBalance.isAvailable('bonus_scale')){
-		tmp=/Ваша бонусная шкала:.*?\n.*?blk\"><b>(.*?<\/b>.*?<b>.*?<\/b>.*?)<\/div>/m.exec(html)[1];
-		tmp=tmp.replace(/<.?b>/g,'');
-		result.bonus_scale=tmp;
-		result.__tariff=result.bonus_scale
-		AnyBalance.trace(result.bonus_scale);
-	}
+//        if(AnyBalance.isAvailable('bonus_scale')){
+//		tmp=/Ваша бонусная шкала:.*?\n.*?blk\"><b>(.*?<\/b>.*?<b>.*?<\/b>.*?)<\/div>/m.exec(html)[1];
+//		tmp=tmp.replace(/<.?b>/g,'');
+//		result.bonus_scale=tmp;
+//		result.__tariff=result.bonus_scale
+//		AnyBalance.trace(result.bonus_scale);
+//	}
+
+
 	
 //Баланс бонусов
-        if(AnyBalance.isAvailable('balance_bonus')){
+        if(AnyBalance.isAvailable('balance_all')){
 		html=html.replace(/\n/,"");
-		tmp=/Баланс[\s\S]*бонусов/.exec(html);
-                result.balance_bonus='';
-		var regexp=/<i class=\"n(.)\">/g;	
-		while ((res = regexp.exec(tmp)) != null){result.balance_bonus += res[1];}
-		AnyBalance.trace(result.balance_bonus);
+		tmp=/bonusrurs[\s\S]*/.exec(html);
+                result.balance_all='';
+		var regexp=/<div class=\"digits\">(\d*)/g;	
+		while ((res = regexp.exec(tmp)) != null){result.balance_all += res[1];}
+		AnyBalance.trace(result.balance_all);
 	}
 
 //Баланс бонусных рублей
         if(AnyBalance.isAvailable('balance')){
-
-		tmp=/bonusrurs[\s\S]*dots/.exec(html);
+		html=html.replace(/\n/,"");
+		tmp=/bonusdscnt[\s\S]*/.exec(html);
 		result.balance='';
+		var regexp=/<div class=\"digits\">\s*(\d*)/g;	
 		while ((res = regexp.exec(tmp)) != null){result.balance += res[1];}
 		AnyBalance.trace(result.balance);
 	}
 
 //Даты сгорания бонусных рублей
 	if(AnyBalance.isAvailable('burn_date')){
-		tmp=/Баланс бонусных рублей.*\n((.*\n)*).*?<div class=\"balance_summ\">/m.exec(html)[1];
+		tmp=/Баланс бонусных рублей.*\n((.*\n)*).*?<tr class=\"balance_summ\">/m.exec(html)[1];
 		var i=0;
 		var d={};
 		regexp = /<td>.*?<\/td><td>(.*?)<\/td>/g;
@@ -112,7 +136,7 @@ function main(){
 			d[i] = res[1][6]+res[1][7]+res[1][8]+res[1][9]+res[1][3]+res[1][4]+res[1][0]+res[1][1];
 			i+=1;
 		}
-	//Сортировка дат по возрастанию
+		//Сортировка дат по возрастанию
 		for (var j=0;j<i;j++){
 			for (var k=0;k<i;k++){
 				if (d[k]>d[j]){
@@ -122,31 +146,12 @@ function main(){
 				}
 			}
 		}
-	//Наводим красату
-		var m;
+		AnyBalance.trace(d[0]);
 		for (var j=0;j<i;j++){
-			if(d[j][4]+d[j][5]=="01"){m="янв";}
-			if(d[j][4]+d[j][5]=="02"){m="фев";}
-			if(d[j][4]+d[j][5]=="03"){m="мар";}
-			if(d[j][4]+d[j][5]=="04"){m="апр";}
-			if(d[j][4]+d[j][5]=="05"){m="май";}
-			if(d[j][4]+d[j][5]=="06"){m="июн";}
-			if(d[j][4]+d[j][5]=="07"){m="июл";}
-			if(d[j][4]+d[j][5]=="08"){m="авг";}
-			if(d[j][4]+d[j][5]=="09"){m="сен";}
-			if(d[j][4]+d[j][5]=="10"){m="окт";}
-			if(d[j][4]+d[j][5]=="11"){m="ноя";}
-			if(d[j][4]+d[j][5]=="12"){m="дек";}
-//			d[j]=d[j][0]+d[j][1]+d[j][2]+d[j][3]+' '+m+' '+d[j][6]+d[j][7];              //          YYYY MMM DD
-			d[j]=d[j][6]+d[j][7]+' '+m+' '+d[j][0]+d[j][1]+d[j][2]+d[j][3];              //          DD MMM YYYY
-//			d[j]=d[j][0]+d[j][1]+d[j][2]+d[j][3]+'-'+d[j][4]+d[j][5]+'-'+d[j][6]+d[j][7];//          YYYY-MM-DD
-//			d[j]=d[j][6]+d[j][7]+'-'+d[j][4]+d[j][5]+'-'+d[j][0]+d[j][1]+d[j][2]+d[j][3];//          DD-MM-YYYY
-
-
+			d[j]=format_date(d[j],prefs.format_date)
 		}
 		result.burn_date=d[0];
-	}
-
+	}	
 
 // Стратегия
         if(AnyBalance.isAvailable('strategy')){
@@ -157,8 +162,9 @@ function main(){
 			var tmp=/MVStrategy\">\r\n(.*)\r\n(.*)\r\n(.*)\r\n(.*)\r\n(.*)<\/select>/m.exec(html)[j];
 			if(/select/.exec(tmp)){s=j;}
 		}
-		var strategy=['500 р. за 15000 Бонусов','2х500 р. за 30000 Бонусов','3х500 р. за 45000 Бонусов','4х500 р. за 60000 Бонусов'];
+		var strategy=['500 бонусных рублей','2х500 бонусных рублей','3х500 бонусных рублей','4х500 бонусных рублей'];
 		AnyBalance.trace(strategy[s-1]);
+		result.__tariff=strategy[s-1];
 		result.strategy=strategy[s-1];
 	}
 // Дата последней операции по счету
@@ -166,8 +172,8 @@ function main(){
 		url='http://www.mvideo-bonus.ru/personal/detail/';
 		html = AnyBalance.requestGet(url, header);
 		tmp=/<td class=\"tdl\">(.*)<\/td>/.exec(html)[1];
-		AnyBalance.trace(tmp);
-		result.last_date=tmp;
+		tmp = tmp[6]+tmp[7]+tmp[8]+tmp[9]+tmp[3]+tmp[4]+tmp[0]+tmp[1];
+		result.last_date=format_date(tmp,prefs.format_date);
 
 	}
 

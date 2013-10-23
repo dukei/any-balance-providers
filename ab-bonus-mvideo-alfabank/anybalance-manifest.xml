@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="1.0" version="4">ab-bonus-mvideo-alfabank</id>
+	<id major_version="1.0" version="5">ab-bonus-mvideo-alfabank</id>
 	<name>М.Видео-БОНУС</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о бонусных баллах и бонусных рублях по бонусной картам "М.Видео-БОНУС" и "М.Видео-БОНУС - Альфа-Банк".</p>
@@ -13,10 +13,9 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс бонусных рублей" suffix=" р"/>
-		<counter id="balance_bonus" name="Баланс бонусов"/>
+		<counter id="balance" name="Доступные бонусные рубли" suffix=" р"/>
+		<counter id="balance_all" name="Всего бонусных рублей"/>
 		<counter id="burn_date" name="Ближайшая дата сгорания бонусных рублей" type="text"/>
-		<counter id="bonus_scale" name="Ваша бонусная шкала" type="text"/>
 		<counter id="strategy" name="Ваша стратегия начисления" type="text"/>
 		<counter id="last_date" name="Дата последней операции по счету" type="text"/>
 	</counters>

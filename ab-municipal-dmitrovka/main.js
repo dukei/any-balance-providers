@@ -7,9 +7,6 @@ var g_headers = {
 	'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection':'keep-alive',
-	// Mobile
-	//'User-Agent':'Mozilla/5.0 (BlackBerry; U; BlackBerry 9900; en-US) AppleWebKit/534.11+ (KHTML, like Gecko) Version/7.0.0.187 Mobile Safari/534.11+',
-	// Desktop
 	'User-Agent':'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
 };
 function main() {
@@ -40,17 +37,24 @@ function main() {
 	getParam(html, result, 'fio', /class=[^>]*poselkiListing[^>]*>[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, '__tariff', /class=[^>]*poselkiListing(?:[^>]*>){4}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 	
-	if(isAvailable(['bill_num','bill_date','bill_summ'])) {
+	if(isAvailable(['balance','bill_num','bill_date','bill_summ'])) {
 		html = AnyBalance.requestGet(baseurl + 'life/home/bills/', g_headers);
 		
-		getParam(html, result, 'bill_num', /class="bills_row cl"(?:[^>]*>){7}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-		getParam(html, result, 'bill_date', /class="bills_row cl"(?:[^>]*>){10}([^<]*)/i, replaceTagsAndSpaces, parseDateW);
-		getParam(html, result, 'bill_summ', /class="bills_row cl"(?:[^>]*>){16}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+		var nonPayed = sumParam(html, null, null, /(<div\s+class="bills_row(?:[^>]*>){2}[^>]*img_re\.jpg(?:[^>]*>){19})/i);
+		
+		if(nonPayed && nonPayed.length > 0) {
+			AnyBalance.trace('Нашли неоплаченные счета: ' + nonPayed.length);
+			for(i=0; i<nonPayed.length; i++) {
+				var curr = nonPayed[i];
+				sumParam(curr, result, 'balance', /(?:[^>]*>){16}([^<]*)/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+			}
+			getParam(nonPayed[0], result, 'bill_num', /(?:[^>]*>){7}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+			getParam(nonPayed[0], result, 'bill_date', /(?:[^>]*>){10}([^<]*)/i, replaceTagsAndSpaces, parseDateW);
+			getParam(nonPayed[0], result, 'bill_summ', /(?:[^>]*>){16}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+		}
 	}
-	
     AnyBalance.setResult(result);
 }
-
 // Парсит дату из такого вида в мс 27 июля 2013
 function parseDateW(str){
 	AnyBalance.trace('Trying to parse date from ' + str);

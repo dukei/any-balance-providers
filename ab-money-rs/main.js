@@ -54,8 +54,8 @@ function fetchCard(baseurl, json){
             var result = {success: true};
 
             getParam(acc.currency, result, ['currency','account_balance','own','gracepay']);
-            getParam(acc.available, result, 'account_balance', null, replaceTagsAndSpacesAndBalances, parseBalance);
-            getParam(acc.own, result, 'own', null, replaceTagsAndSpacesAndBalances, parseBalance);
+            getParam(acc.available+'', result, 'account_balance', null, replaceTagsAndSpacesAndBalances, parseBalance);
+            getParam(acc.own+'', result, 'own', null, replaceTagsAndSpacesAndBalances, parseBalance);
             getParam(card.title, result, '__tariff');
             getParam(card.num4, result, 'cardnum');
             getParam(acc.name, result, 'accname');
@@ -78,14 +78,10 @@ function fetchCard(baseurl, json){
                 getParam(html, result, 'gracepay', /&#1057;&#1091;&#1084;&#1084;&#1072; &#1076;&#1083;&#1103; &#1088;&#1077;&#1072;&#1083;&#1080;&#1079;&#1072;&#1094;&#1080;&#1080; &#1083;&#1100;&#1075;&#1086;&#1090;&#1085;&#1086;&#1075;&#1086; &#1087;&#1077;&#1088;&#1080;&#1086;&#1076;&#1072;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpacesAndBalances, parseBalance);
                 //Дата окончания Льготного периода -
                 getParam(html, result, 'gracetill', /&#1044;&#1072;&#1090;&#1072; &#1086;&#1082;&#1086;&#1085;&#1095;&#1072;&#1085;&#1080;&#1103; &#1083;&#1100;&#1075;&#1086;&#1090;&#1085;&#1086;&#1075;&#1086; &#1087;&#1077;&#1088;&#1080;&#1086;&#1076;&#1072;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
-
-				// Сумма заблокированных среддств
+				// Сумма заблокированных средств
 				getParam(html, result, 'account_blocked_balance', /&#1047;&#1072;&#1073;&#1083;&#1086;&#1082;&#1080;&#1088;&#1086;&#1074;&#1072;&#1085;&#1085;&#1072;&#1103; &#1089;&#1091;&#1084;&#1084;&#1072;[\s\S]*?<span class="summ">([\s\S]*?)<\/span>/i, [/&nbsp;/ig, '', /&minus;/ig, '-', /<!--[\s\S]*?-->/g, '', /<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /\s+/ig, '',], parseBalance);
-				
             }
-
             AnyBalance.setResult(result);
-
             break;
         }
     }
@@ -94,52 +90,52 @@ function fetchCard(baseurl, json){
         throw new AnyBalance.Error('Не удаётся найти ' + (prefs.contract ? 'карту с последними цифрами ' + prefs.contract : 'ни одной карты'));
 }
 
-function fetchAccount(baseurl){
-    throw new AnyBalance.Error('В связи с изменениями в интернет банке счета временно не поддерживаются. Обращайтесь на dco@mail.ru для поддержки счетов.');
-/*
+function fetchAccount(baseurl, json){
     var prefs = AnyBalance.getPreferences();
-    if(prefs.contract && !/^\d{4,20}$/.test(prefs.contract))
-        throw new AnyBalance.Error('Пожалуйста, введите не менее 4 последних цифр номера счета, по которому вы хотите получить информацию, или не вводите ничего, чтобы получить информацию по первому счету.');
+    if(prefs.contract && !/^\d{4}$/.test(prefs.contract))
+        throw new AnyBalance.Error('Пожалуйста, введите 4 последних цифры номера счета, по которому вы хотите получить информацию, или не вводите ничего, чтобы получить информацию по первому счету.');
 
-    var html = AnyBalance.requestGet(baseurl + 'rs/accounts/RSAccounts.jspx');
+    for(var i=0; i<json.data.length; ++i) {
+        var card = json.data[i];
+        if(card.type == 'account' && (!prefs.contract || endsWith(card.num, prefs.contract))){
+            var acc = card.acc[0];
+            var result = {success: true};
 
-    //Сколько цифр осталось, чтобы дополнить до 20
-    var accnum = prefs.contract || '';
-    var accprefix = accnum.length;
-    accprefix = 20 - accprefix;
+            getParam(acc.currency, result, ['currency','account_balance','own','gracepay']);
+            getParam(acc.available+'', result, 'account_balance', null, replaceTagsAndSpacesAndBalances, parseBalance);
+            getParam(acc.own+'', result, 'own', null, replaceTagsAndSpacesAndBalances, parseBalance);
+            getParam(card.title, result, '__tariff');
+            getParam(card.num, result, 'cardnum');
+            getParam(acc.name, result, 'accname');
 
-    var re = new RegExp('(<tr[^>]*>(?:[\\s\\S](?!<\\/tr>))*' + (accprefix > 0 ? '\\d{' + accprefix + '}' : '') + accnum + '\\s*<[\\s\\S]*?<\\/tr>)', 'i');
-    var tr = getParam(html, null, null, re);
-    if(!tr)
-        throw new AnyBalance.Error('Не удаётся найти ' + (prefs.contract ? 'счет с последними цифрами ' + prefs.contract : 'ни одного счета'));
-    
-    var result = {success: true};
-    getParam(tr, result, 'currency', /<p[^>]+class="money"[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseCurrency);
-    getParam(tr, result, 'account_balance', /<p[^>]+class="money"[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpacesAndBalances, parseBalance);
-    //Статус
-    getParam(tr, result, 'status', /&#1057;&#1086;&#1089;&#1090;&#1086;&#1103;&#1085;&#1080;&#1077;\s*-([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(tr, result, 'cardnum', /(\d{20})/, replaceTagsAndSpaces, html_entity_decode);
-    getParam(tr, result, '__tariff', /<a[^>]+class="xl"[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(tr, result, 'accname', /<a[^>]+class="xl"[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces, html_entity_decode);
-
-    // * Работает, но получать тарифный план, наверное, смысла нет
-
-    var sourceData = getParam(tr, null, null, /<a[^>]+onclick="submitForm[^"]*source:'([^'"]*)'[^"]*"[^>]+class="xl"/i, replaceTagsAndSpaces);
-    var token = getParam(html, null, null, /<input[^>]+name="oracle.adf.faces.STATE_TOKEN"[^>]*value="([^"]*)/i, null, html_entity_decode);
-
-    if(AnyBalance.isAvailable('contract')){
-        html = AnyBalance.requestPost(baseurl + 'rs/accounts/RSAccounts.jspx', {
-            'oracle.adf.faces.FORM': 'mainform',
-            'oracle.adf.faces.STATE_TOKEN': token,
-            'source': sourceData
-        });
-        //Тарифный план - №
-        getParam(html, result, 'contract', /&#1058;&#1072;&#1088;&#1080;&#1092;&#1085;&#1099;&#1081; &#1087;&#1083;&#1072;&#1085;\s*-?\s*([^<]*)/, replaceTagsAndSpaces, html_entity_decode);
+            /*if(AnyBalance.isAvailable('till', 'contract_date', 'status', 'gracepay', 'gracetill', 'account_blocked_balance')){
+                var url = getParam(card.link, null, null, /\/hb\/faces\/(.*)/);
+                
+                var html = AnyBalance.requestGet(baseurl + url);
+                //Дата окончания срока действия карты
+                getParam(html, result, 'till', /&#1044;&#1072;&#1090;&#1072; &#1086;&#1082;&#1086;&#1085;&#1095;&#1072;&#1085;&#1080;&#1103; &#1089;&#1088;&#1086;&#1082;&#1072; &#1076;&#1077;&#1081;&#1089;&#1090;&#1074;&#1080;&#1103; &#1082;&#1072;&#1088;&#1090;&#1099;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+                //Дата заключения договора
+                getParam(html, result, 'contract_date', /&#1044;&#1072;&#1090;&#1072; &#1079;&#1072;&#1082;&#1083;&#1102;&#1095;&#1077;&#1085;&#1080;&#1103; &#1076;&#1086;&#1075;&#1086;&#1074;&#1086;&#1088;&#1072;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+                //Статус
+                getParam(html, result, 'status', /&#1057;&#1090;&#1072;&#1090;&#1091;&#1089;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+                //Номер карты
+                getParam(html, result, 'cardnum', /&#1053;&#1086;&#1084;&#1077;&#1088; &#1082;&#1072;&#1088;&#1090;&#1099;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/, replaceTagsAndSpaces, html_entity_decode);
+                //Договор
+                getParam(html, result, 'contract', />&#1044;&#1086;&#1075;&#1086;&#1074;&#1086;&#1088;<[\s\S]*?<td[^>]*>(?:&#8470; )?([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+                //Сумма для реализации Льготного периода -
+                getParam(html, result, 'gracepay', /&#1057;&#1091;&#1084;&#1084;&#1072; &#1076;&#1083;&#1103; &#1088;&#1077;&#1072;&#1083;&#1080;&#1079;&#1072;&#1094;&#1080;&#1080; &#1083;&#1100;&#1075;&#1086;&#1090;&#1085;&#1086;&#1075;&#1086; &#1087;&#1077;&#1088;&#1080;&#1086;&#1076;&#1072;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpacesAndBalances, parseBalance);
+                //Дата окончания Льготного периода -
+                getParam(html, result, 'gracetill', /&#1044;&#1072;&#1090;&#1072; &#1086;&#1082;&#1086;&#1085;&#1095;&#1072;&#1085;&#1080;&#1103; &#1083;&#1100;&#1075;&#1086;&#1090;&#1085;&#1086;&#1075;&#1086; &#1087;&#1077;&#1088;&#1080;&#1086;&#1076;&#1072;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+				// Сумма заблокированных средств
+				getParam(html, result, 'account_blocked_balance', /&#1047;&#1072;&#1073;&#1083;&#1086;&#1082;&#1080;&#1088;&#1086;&#1074;&#1072;&#1085;&#1085;&#1072;&#1103; &#1089;&#1091;&#1084;&#1084;&#1072;[\s\S]*?<span class="summ">([\s\S]*?)<\/span>/i, [/&nbsp;/ig, '', /&minus;/ig, '-', /<!--[\s\S]*?-->/g, '', /<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /\s+/ig, '',], parseBalance);
+            }*/
+            AnyBalance.setResult(result);
+            break;
+        }
     }
-    //* /
-    AnyBalance.setResult(result);
-*/
-    
+	
+    if(!AnyBalance.isSetResultCalled())
+        throw new AnyBalance.Error('Не удаётся найти ' + (prefs.contract ? 'карту с последними цифрами ' + prefs.contract : 'ни одной карты'));	
 }
 
 function fetchDeposit(baseurl){

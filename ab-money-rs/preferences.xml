@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
 	<EditTextPreference
+		obligatory="true"
         title="Логин" 
         positiveButtonText="ОК" 
         summary="||{@s}" 
@@ -10,7 +11,8 @@
         key="login"
         inputType="text">
     </EditTextPreference>
-    <EditTextPreference 
+    <EditTextPreference
+		obligatory="true"
         positiveButtonText="ОК"
         key="password" 
         dialogTitle="Пароль"
@@ -26,7 +28,7 @@
         summary="||{@s}"
         entries="Карта|Кредит|Депозит|Счет"
         entryValues="card|crd|dep|acc"
-	defaultValue="crd">
+		defaultValue="crd">
     </ListPreference>
     <EditTextPreference
         title="№ договора/карты/счета" 

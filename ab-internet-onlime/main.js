@@ -12,9 +12,6 @@ function main(){
 
     AnyBalance.setDefaultCharset('utf-8');
 
-	prefs.login = '15191492';
-	prefs.password = 'АВЕРИН';
-	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 

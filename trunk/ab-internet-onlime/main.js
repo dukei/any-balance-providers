@@ -12,8 +12,11 @@ function main(){
 
     AnyBalance.setDefaultCharset('utf-8');
 
-    if(!prefs.login || !prefs.password)
-        throw new AnyBalance.Error('Пожалуйста, установите в настройках провайдера логин и пароль.');
+	prefs.login = '15191492';
+	prefs.password = 'АВЕРИН';
+	
+	checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(prefs.password, 'Введите пароль!');
 
     if(prefs.num && !/^\d+$/.test(prefs.num))
         throw new AnyBalance.Error('Пожалуйста, введите номер лицевого счета или договора, по которому вы хотите получить информацию, или не вводите ничего, чтобы получить информацию по первому счету.');
@@ -68,36 +71,35 @@ function main(){
     if(AnyBalance.isAvailable('license'))
         result.license = oInfo.account;
     
-    if((AnyBalance.isAvailable('balance') && !isset(result.balance)) ||
-        (AnyBalance.isAvailable('bonus_balance') && !isset(result.bonus_balance)) ||
-        (AnyBalance.isAvailable('lock') && !isset(result.lock))){
+    if((AnyBalance.isAvailable('balance') && !isset(result.balance)) || (AnyBalance.isAvailable('bonus_balance') && !isset(result.bonus_balance)) || (AnyBalance.isAvailable('lock') && !isset(result.lock))) {
         //Странно, json не вернул то, что надо, придется из html вырезать
         var html = AnyBalance.requestGet(baseurl + 'billing/balance');
         getParam(html, result, 'balance', /Баланс:[\s\S]*?<dd[^>]*>([\s\S]*?)<\/dd>/i, replaceTagsAndSpaces, parseBalance);
         getParam(html, result, 'lock', /Количество дней до блокировки:[\s\S]*?<dd[^>]*>([\s\S]*?)<\/dd>/i, replaceTagsAndSpaces, parseBalance);
     }
-
-    if((AnyBalance.isAvailable('bonus_balance') && !isset(result.bonus_balance))){
+	
+    if((AnyBalance.isAvailable('bonus_balance') && !isset(result.bonus_balance))) {
         //Странно, json не вернул то, что надо, придется из html вырезать
         var html = AnyBalance.requestGet(baseurl + 'bonus/account/');
         getParam(html, result, 'bonus_balance', /Бонусный счет:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     }
-
-    if(AnyBalance.isAvailable('internet_total', 'internet_up', 'internet_down')){
-        try{
+	
+    if(AnyBalance.isAvailable('internet_total', 'internet_up', 'internet_down')) {
+        try {
             info = AnyBalance.requestGet(baseurl + "statistics/inet_statistics");
-            var $info = $(info);
-            if(AnyBalance.isAvailable('internet_total', 'internet_down')){
-                var val = $info.find('table.streifig tr:nth-child(2) th:nth-child(2)').text();
+			
+			if(AnyBalance.isAvailable('internet_total', 'internet_down')){
+                var val = getParam(info, null, null, /Входящий трафик(?:[\s\S]*?<th[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
                 if(val)
                     result.internet_down = Math.round(parseFloat(val)/1024*100)/100; //Переводим в Гб с двумя точками после запятой
             }
+			
             if(AnyBalance.isAvailable('internet_total', 'internet_up')){
-                var val = $info.find('table.streifig tr:nth-child(2) th:nth-child(3)').text();
+                var val = getParam(info, null, null, /Входящий трафик(?:[\s\S]*?<th[^>]*>){4}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
                 if(val)
                     result.internet_up = Math.round(parseFloat(val)/1024*100)/100; //Переводим в Гб с двумя точками после запятой
             }
-            if(AnyBalance.isAvailable('internet_total')){
+			if(AnyBalance.isAvailable('internet_total')){
                 if(result.internet_down && result.internet_up)
                     result.internet_total = result.internet_down + result.internet_up;
             }
@@ -108,4 +110,3 @@ function main(){
     
     AnyBalance.setResult(result);
 }
-

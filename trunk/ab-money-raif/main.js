@@ -22,7 +22,8 @@ var g_xml_login = '<?xml version="1.0" encoding="UTF-8" standalone="yes" ?><soap
 function translateError(error){
     var errors = {
         'logins.password.incorrect': 'Неправильный логин или пароль',
-        'profile.login.first_entry': 'Это ваш первый вход в Райффайзен.Connect. Пожалуйста, зайдите в https://connect.raiffeisen.ru через браузер и установите постоянный пароль'
+        'profile.login.first_entry': 'Это ваш первый вход в Райффайзен.Connect. Пожалуйста, зайдите в https://connect.raiffeisen.ru через браузер и установите постоянный пароль',
+		'profile.login.expired': 'Уважаемый клиент, срок действия Вашего пароля истёк, так как Вы не меняли Ваше имя пользователя и/или пароль в течение последних 180 дней. Для доступа к системе требуется изменить ваше имя пользователя и/или пароль на новые значения.',
     };
     if(errors[error]) 
         return errors[error];

@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+<change major_version="3.0" version="16" date="2013-10-24">
+- Исправлено отображение данных по счетам. (Stark)
+</change>
 <change major_version="3.0" version="15" date="2013-09-20">
 - Исправлено отображение баланса кредита, формата 1123, 4 (Stark)
 </change>

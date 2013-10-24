@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-    <id major_version="3.0" version="15">ab-money-rs</id>
+    <id major_version="3.0" version="16">ab-money-rs</id>
     <api flags="no_browser"/>
     <name>Русский стандарт</name>
 	<description html="true"><![CDATA[
@@ -14,7 +14,7 @@
 	</ul>
 	<p><b>ВНИМАНИЕ!</b> Для работы провайдера необходимо отключить SMS-подтверждение на вход в Интернет банк:</p>
 	<ul>
-	<li>Зайдите в Интернет-банк через браузер, войдите в ""Настройки"", откройте вкладку ""Безопасность"" и снимите галочку ""Вход по одноразовому паролю"".</li>
+	<li>Зайдите в Интернет-банк через браузер, войдите в "Настройки", откройте вкладку "Безопасность" и снимите галочку "Вход по одноразовому паролю".</li>
 	</ul> 
 	<p><small>Отключение подтверждения даёт возможность только зайти в систему, в целях безопасности НЕВОЗМОЖНО отключить SMS-подтверждение при проведении платежных операций.</small></p>
 	]]></instruction>
@@ -31,16 +31,16 @@
 		<counter id="credit_balance" name="Остаток по кредиту"/>
 		<counter id="payment_sum" name="Размер следующего платежа"/>
 		<counter id="writeoff_date" name="Дата списания платежа"  type="time" format="dd/MM/yyyy"/>
-        <counter id="left" name="До списывания платежа осталось дней" type="text" units="дн"/>
-        <counter id="account_balance" name="Остаток на счёте"/>
-		<counter id="account_blocked_balance" name="Заблокированная сумма"/>
+        <counter id="left" name="До списывания платежа осталось дней" type="text" units=" дн"/>
+        <counter id="account_balance" name="Остаток на счёте" units=" {@currency}"/>
+		<counter id="account_blocked_balance" name="Заблокированная сумма" units=" {@currency}"/>
         <counter id="gracepay" name="Льготный платеж"/>
         <counter id="gracetill" name="Дата окончания льготного периода" type="time" format="dd/MM/yyyy"/>
         <counter id="currency" name="Валюта" type="text"/>
         <counter id="contract" name="Номер договора" type="text"/>
-        <counter id="cardnum" name="Номер карты" type="text"/>
+        <counter id="cardnum" name="Номер карты/счета" type="text"/>
         <counter id="contract_date" name="Дата заключения договора" type="time" format="dd/MM/yyyy"/>
-        <counter id="credit_sum" name="Сумма кредита" units="р"/>
+        <counter id="credit_sum" name="Сумма кредита" units=" {@currency}"/>
         <counter id="till" name="Окончание срока действия карты" type="time" format="dd/MM/yyyy"/>
         <counter id="status" name="Статус карты" type="text"/>
         <counter id="accname" name="Название" type="text"/>

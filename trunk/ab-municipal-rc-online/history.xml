@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+<change version="3" date="2013-10-24">
+- Различение долга и переплаты на счету. (Stark)
+</change>
 <change version="2" date="2013-10-21">
 - Новые счетчики: Всего начислено, Дата последнего платежа, Сумма последнего платежа. (Stark)
 </change>

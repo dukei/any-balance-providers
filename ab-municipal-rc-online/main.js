@@ -18,8 +18,12 @@ function main() {
 	checkEmpty(prefs.password, 'Введите пароль!');
 		
 	var html = AnyBalance.requestPost(baseurl + 'go/', {
-        e_login:prefs.login,
-        e_password:prefs.password,
+        //e_login:prefs.login,
+        //e_password:prefs.password,
+		
+		e_login:'1005186590',
+        e_password:'Fktr$tq99',
+		
 		e_cookie:'on',
         form_logon_submitted:'yes'
     }, addHeaders({Referer: baseurl + 'login'}));
@@ -28,7 +32,13 @@ function main() {
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
     var result = {success: true};
-	getParam(html, result, 'balance', /"header-site_object"[^>]*>[^>]*>[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	
+	var balance = getParam(html, null, null, /Переплата[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	if(!balance)
+		balance = getParam(html, null, null, /Долг[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance) * -1;
+	
+	getParam(balance, result, 'balance');
+	
 	getParam(html, result, 'fio', /Абонент:[^>]*>[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 	
 	if(isAvailable(['nachisl'])) {

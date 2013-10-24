@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="9">ab-internet-onlime</id>
+	<api flags="no_browser"/>
+	<id version="10">ab-internet-onlime</id>
 	<name>Onlime (Москва)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем балансе, бонусных баллах, номерах лицевого счета и договора, статусе и трафике в текущем месяце для пользователей провайдера ""Onlime"" (http://onlime.ru).</p>
@@ -14,13 +15,12 @@
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>api:jquery.min.js</js> <!-- Используем библиотеку, которая и так входит в AnyBalance -->
 		<js>main.js</js>
 		<js>library.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units="р"/>
+		<counter id="balance" name="Баланс" units=" р"/>
 		<counter id="bonus_balance" name="Бонусный баланс" units=" Б"/>
 		<counter id="lock" name="Количество дней до блокировки" units=" дн."/>
 		<counter id="internet_total" name="Трафик (всего)" suffix=" Гб"/>

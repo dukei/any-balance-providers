@@ -1,23 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <EditTextPreference 
-        title="Номер карты" 
-        positiveButtonText="ОК" 
-        summary="|Полный номер карты без пробелов и разделителей|{@s}" 
-        dialogTitle="Номер карты" 
-        negativeButtonText="Отмена" 
-        dialogMessage="Введите полный номер вашей бонусной карты без пробелов и разделителей, например, 70043608012069619."
-        inputType="number"
-        key="login">
-    </EditTextPreference>
-    <EditTextPreference 
-        positiveButtonText="ОК"
-        key="password" 
-        dialogTitle="Пароль"
-        negativeButtonText="Отмена"
-        title="Пароль"
-        summary="||***********"
-        dialogMessage="Введите пароль, используемый для входа в личный кабинет."
-        inputType="textPassword">
+    <EditTextPreference
+		obligatory="true"
+		title="Номер карты"
+		positiveButtonText="ОК"
+		summary="|Полный номер карты без пробелов и разделителей|{@s}"
+		dialogTitle="Номер карты"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите полный номер вашей бонусной карты без пробелов и разделителей, например, 70043608012069619."
+		inputType="number"
+		key="login">
+	</EditTextPreference>
+	<EditTextPreference
+		positiveButtonText="ОК"
+		key="password"
+		dialogTitle="Пароль"
+		negativeButtonText="Отмена"
+		title="Пароль"
+		summary="||***********"
+		dialogMessage="Введите пароль, используемый для входа в личный кабинет."
+		inputType="textPassword">
     </EditTextPreference>
 </PreferenceScreen>

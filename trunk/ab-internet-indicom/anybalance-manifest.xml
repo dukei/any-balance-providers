@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<api flags="no_browser" />
+	<id version="1">ab-internet-indicom</id>
+	<name>Индиком (Мытищи)</name>
+	<description html="true"><![CDATA[
+	<p>Получает баланс для интернет провайдера Индиком http://indikom.ru/</p>
+	<p>Информация берется из личного кабинета http://stat.indikom.ru/</p>
+	<p>Счетчик Предполагаемая дата отключения расчитывает дату основываясь на абонентской плате по текущему тарифу, этот подсчет может быть не точный.</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="balanceCredit" name="Кредит" units=" р"/>
+		<counter id="nds" name="Ставка НДС" type="text" units=" %"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="id" name="ID" type="text"/>
+		<counter id="account" name="Основной счет" type="text"/>
+	</counters>
+	<keywords>indicom</keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

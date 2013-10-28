@@ -325,7 +325,7 @@ function getBonuses(xhtml, result) {
 		var services = sumParam(bonus, null, null, /<tr[^>]*>\s*<td[^>]+class="title"(?:[\s\S](?!<\/tr>))*?<td[^>]+class="value"[\s\S]*?<\/tr>/ig);
 		for (var i = 0; i < services.length; ++i) {
 			var name = '' + getParam(services[i], null, null, /<td[^>]+class="title"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode) + ' ' + bonus_name;
-			if (/SMS/i.test(name)) {
+			if (/SMS|штук/i.test(name)) {
 				sumParam(services[i], result, 'sms_left', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 			} else if (/MMS/i.test(name)) {
 				sumParam(services[i], result, 'mms_left', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
@@ -339,9 +339,9 @@ function getBonuses(xhtml, result) {
 				sumParam(services[i], result, 'min_bi', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 			} else if (/Секунд БОНУС-2|Баланс бесплатных секунд-промо/i.test(name)) {
 				sumParam(services[i], result, 'min_local', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-			} else if (/минут в месяц/i.test(name)) {
+			} else if (/минут в месяц|мин\./i.test(name)) {
 				var minutes = 60 * getParam(services[i], null, null, /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-				sumParam(minutes + '', result, 'min_local', null, null, null, aggregate_sum);
+				sumParam(minutes, result, 'min_local', null, null, null, aggregate_sum);
 			} else {
 				AnyBalance.trace('Неизвестная опция: ' + bonus_name + ' ' + services[i]);
 			}

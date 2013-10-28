@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+<change major_version="1.2" version="38" date="2013-10-28">
+- Исправлено получение бонусных минут (Stark)
+</change>
 <change major_version="1.2" version="37" date="2013-10-11">
 - Исправлено получение бонусов для услуги Домашний интернет (Stark)
 </change>

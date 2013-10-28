@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-money-binbank</id>
+	<api flags="no_browser"/>
+	<name>Бинбанк</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию по картам Бин Банка Москва.</p>
+	<p>Информация берется из интернет-банка https://online.binbank.ru/lite/app/pub/Login</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>В настоящий момент Интернет-банком могут воспользоваться клиенты Банка, обслуживающиеся в следующих регионах:</p>
+	<ol>
+		<li>Москва</li>
+		<li>Владимир</li>
+		<li>Орехово-Зуево</li>
+		<li>Кострома</li>
+		<li>Иваново</li>
+		<li>Ярославль</li>
+		<li>Новосибирск</li>
+		<li>Томск</li>
+		<li>Омск</li>
+		<li>Кемерово</li>
+		<li>Барнаул</li>
+		<li>Ульяновск</li>
+		<li>Самара</li>
+		<li>Йошкар-Ола</li>
+		<li>Ставрополь</li>
+		<li>Саратов</li>
+		<li>Саранск</li>
+		<li>Екатеринбург</li>
+		<li>Казань</li>
+		<li>Нижний Новгород</li>
+		<li>Иркутск</li>
+	</ol>
+	<p>Для подключения к Интернет-банку необходимо обратиться в любой из офисов Банка, расположенных в этих городах.</p>
+	]]></instruction>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" {@currency}"/>
+		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="cardnum" name="Номер карты" type="text"/>
+		<counter id="accnum" name="Номер счета" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>money</type>
+	<country>ru</country>
+</provider>

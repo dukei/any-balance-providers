@@ -1,33 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-bonus-shell</id>
-  <name>Shell CLUBSMART</name>
-  <description>
-    Получает баланс на бонусной карте сети АЗС Shell (https://www.shellsmart.com)
-
-    Если у вас ещё нет карты, вы можете получить её на любой АЗС «Шелл».
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units=" Б"/>
-  <!--  <counter id="fio" name="ФИО" type="text"/> -->
-    <counter id="reserved" name="Зарезерировано" units=" Б"/>
-    <counter id="available" name="Доступно" units=" Б"/>
-  </counters>
-  <keywords>
-    заправки бензин
-  </keywords>
-  <type>
-    bonus
-  </type>
-  <country>
-    ru
-  </country>
+	<id version="2">ab-bonus-shell</id>
+	<api flags="no_browser"/>
+	<name>Shell CLUBSMART</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе на бонусной карте сети АЗС Shell (http://www.shellsmart.com).</p>
+	<p>Бонусную карту программы Shell CLUBSMART вы можете получить на любой АЗС Shell.</p>
+	]]></description>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" Б"/>
+		<!--<counter id="reserved" name="Зарезерировано" units=" Б"/>
+		<counter id="available" name="Доступно" units=" Б"/>-->
+	</counters>
+	<keywords>заправки бензин</keywords>
+	<type>bonus</type>
+	<country>ru</country>
 </provider>

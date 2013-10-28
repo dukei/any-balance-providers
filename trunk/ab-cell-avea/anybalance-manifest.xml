@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-cell-avea</id>
+	<api flags="no_browser"/>
+	<name>AVEA</name>
+	<description html="true"><![CDATA[
+	<p>Obtains information from AVEA personal account https://www.avea.com.tr/mps/portal?cmd=onlineTransactionsHome&lang=tr&tb=redTab</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>To register follow this link https://www.avea.com.tr/mps/portal?cmd=onlineTransactionsHome&lang=tr&tb=redTab</p>
+	]]></instruction>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Güncel Fatura" prefix="£ "/>
+		<counter id="minutes" name="Kalan Süre" units=" m"/>
+		<counter id="traf" name="Kalan Data" units=" mb"/>
+		<counter id="sms" name="Kalan SMS" units=" sms"/>
+	</counters>
+	<keywords></keywords>
+	<type>cell</type>
+	<country>tr</country>
+</provider>

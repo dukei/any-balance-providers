@@ -21,4 +21,10 @@
 		dialogMessage="Enter password to your personal account."
 		inputType="textPassword">
 	</EditTextPreference>
+    <CheckBoxPreference
+        title="Billing type"
+        defaultValue="true"
+        summaryOn="Prepayed"
+        summaryOff="Postpayed"
+        key="billing" />
 </PreferenceScreen>

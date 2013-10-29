@@ -17,8 +17,26 @@
         negativeButtonText="Отмена" 
         dialogMessage="Введите Ваше имя."
         key="first_name">
-    </EditTextPreference>	
-    <ListPreference 
+    </EditTextPreference>
+    <EditTextPreference 
+        title="Отчество" 
+        positiveButtonText="ОК" 
+        summary="||{@s}" 
+        dialogTitle="Отчество" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите отчество."
+        key="otchestvo">
+    </EditTextPreference>
+    <EditTextPreference 
+        title="Дата рождения" 
+        positiveButtonText="ОК" 
+        summary="||{@s}" 
+        dialogTitle="Дата рождения" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите дату рождения в формате ДД.ММ.ГГГГ"
+        key="birthdate">
+    </EditTextPreference>
+	<ListPreference 
         key="region_id" 
         title="Регион"
         summary="||{@s}"

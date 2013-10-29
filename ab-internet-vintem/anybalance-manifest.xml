@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="4">ab-internet-vintem</id>
+	<id version="5">ab-internet-vintem</id>
 	<name>Винтем Телеком (Пушкино)</name>
 	<description html="true"><![CDATA[
 	<p>Получает баланс для интернет провайдера Винтем Телеком (http://www.vintem.ru/)</p>
@@ -17,9 +17,9 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс основного счета" units="р"/>
-		<counter id="balanceCredit" name="Кредит основного счета" units="р"/>
-		<counter id="nds" name="Ставка НДС" type="text" units="%"/>
+		<counter id="balance" name="Баланс основного счета" units=" р"/>
+		<counter id="balanceCredit" name="Кредит основного счета" units=" р"/>
+		<counter id="nds" name="Ставка НДС" type="text" units=" %"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="id" name="ID" type="text"/>
 		<counter id="account" name="Основной счет" type="text"/>

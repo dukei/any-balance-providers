@@ -64,7 +64,7 @@ function main() {
 	var result = {success: true};
 	
 	// Предоплата
-	if((prefs.billing || true)) {
+	if(prefs.billing) {
 		html = AnyBalance.requestGet(baseurl + 'mps/portal?cmd=dashboard&lang=tr&pagemenu=paket.mevcutPaket', g_headers);
 		
 		getParam(html, result, '__tariff', /Tarifeniz:(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);

@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-service-fssp</id>
+	<id version="2">ab-service-fssp</id>
 	<api flags="no_browser|captcha" min_level="7"/>
 	<name>Банк данных исполнительных производств</name>
-	<description>
-Получает данные из банка данных исполнительных производств Федеральной Службы Судебных Приставов
-
-Для получения данных необходимо ввести Фамилию, Имя и выбрать территориальные органы.
-
-Данный провайдер требует AnyBalance API v7+ с поддержкой капчи.
-	</description>
+	<description html="true"><![CDATA[
+	<p>Получает данные из банка данных исполнительных производств Федеральной Службы Судебных Приставов</p>
+	<p>Для получения данных необходимо ввести ФИО и выбрать территориальные органы.</p>
+	<b>Данный провайдер требует AnyBalance API v7+ с поддержкой капчи.</b>
+	]]></description>	
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
@@ -19,7 +17,7 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Всего производств" units="шт"/>
+		<counter id="balance" name="Всего производств" units=" шт"/>
 		<counter id="all" name="Сводка" type="text"/>
 	</counters>
 	<keywords>ФССП</keywords>

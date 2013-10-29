@@ -15,11 +15,13 @@ function main() {
 	var baseurl = 'http://www.fssprus.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
-	var url = baseurl + 'is/ajax-iss.php?s=ip&is%5Bextended%5D=1&is%5Bvariant%5D=1&is%5Bregion_id%5D%5B0%5D=' + (prefs.region_id ? prefs.region_id : '77') +
+	var url = baseurl + 'is/ajax-iss.php?s=ip&is%5Bextended%5D=1&is%5Bvariant%5D=1&is%5Bregion_id%5D%5B0%5D=' + (prefs.region_id || '77') +
 		'&is%5Blast_name%5D=' + encodeURIComponent(prefs.last_name) +
 		'&is%5Bfirst_name%5D=' + encodeURIComponent(prefs.first_name) +
-		'&is%5Bpatronymic%5D=&is%5Bdate%5D=&nocache=1&is%5Bsort_field%5D=&is%5Bsort_direction%5D=';
-	
+		'&is%5Bpatronymic%5D=' + (prefs.otchestvo ? encodeURIComponent(prefs.otchestvo) : '') +
+		'&is%5Bdate%5D=' + (prefs.otchestvo ? encodeURIComponent(prefs.birthdate) : '') +
+		'&nocache=1&is%5Bsort_field%5D=&is%5Bsort_direction%5D=';
+
 	var html = AnyBalance.requestGet(url, g_headers);
 	
 	var captchaa = getParam(html, null, null, /<img\s*src=".{1}([^"]*)/i);

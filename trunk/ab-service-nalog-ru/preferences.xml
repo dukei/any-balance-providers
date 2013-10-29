@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
 	<EditTextPreference
+		title="Фамилия"
+		positiveButtonText="ОК"
+		summary="||{@s}"
+		dialogTitle="Фамилия"
+		obligatory="true"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите свою фамилию."
+		key="surname">
+	</EditTextPreference>
+	<EditTextPreference
 		title="Имя"
 		positiveButtonText="ОК"
 		summary="||{@s}"
@@ -11,14 +21,14 @@
 		key="fio_name">
 	</EditTextPreference>
 	<EditTextPreference
-		title="Фамилия"
+		title="Отчество"
 		positiveButtonText="ОК"
 		summary="||{@s}"
-		dialogTitle="Фамилия"
+		dialogTitle="Отчество"
 		obligatory="true"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите свою фамилию."
-		key="surname">
+		dialogMessage="Введите отчество."
+		key="otchestvo">
 	</EditTextPreference>
 	<EditTextPreference
 		title="ИНН"

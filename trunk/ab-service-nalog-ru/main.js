@@ -7,6 +7,7 @@ var g_headers = {
 	'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection':'keep-alive',
+	'Origin':'https://service.nalog.ru',
 	'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.66 Safari/537.36',
 };
 
@@ -28,14 +29,15 @@ function main(){
 		throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
 	}
     AnyBalance.setDefaultCharset('utf-8');
+	
 	html = AnyBalance.requestPost(baseurl + 'debt/req.do?', {
 	    cmd:'find',
 		inn:prefs.inn,
 		fam:prefs.surname,
 		nam:prefs.fio_name,
-		otch:'',
+		otch:prefs.otchestvo,
 		cap:captchaa
-    }, addHeaders({Referer: baseurl + 'debt/req.do?'})); 
+    }, addHeaders({Referer: baseurl + 'debt/req.do'})); 
 	
     if(!/logout/i.test(html)){
         var error = getParam(html, null, null, [/<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, /div[^>]*"field-error"(?:[^>]*>){2}([\s\S]*?)<\//i], replaceTagsAndSpaces, html_entity_decode);
@@ -45,9 +47,10 @@ function main(){
     }
 	var result = {success: true, balance:0, all:''};
 	
-	var errString = 'Не найдена информация по задолженности с данными: ИНН: '+ prefs.inn + ', ФИО: ' + prefs.surname + ' ' + prefs.fio_name + '. Пожалуйста, проверьте правильность ввода. ';
+	var errString = 'Не найдена информация по задолженности с данными: ИНН: '+ prefs.inn + ', ФИО: ' + prefs.surname + ' ' + prefs.fio_name + ' ' + prefs.otchestvo +  '. Пожалуйста, проверьте правильность ввода. ';
 	var jsonVar = getParam(html, null, null, /var\s*DEBT\s*=\s*([\s\S]*?\});/i);
 	if(!jsonVar) {
+		AnyBalance.trace(html);
 		var error = getParam(html, null, null, [/<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, /div[^>]*"field-error"(?:[^>]*>){2}([\s\S]*?)<\//i], replaceTagsAndSpaces, html_entity_decode);
 		if(error)
             throw new AnyBalance.Error(error);

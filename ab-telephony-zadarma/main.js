@@ -30,5 +30,15 @@ function main() {
 			
 		}
 	}
+	
+	if (isAvailable(['shortphone0', 'shortphone1', 'shortphone2', 'shortphone3', 'shortphone4'])) {
+	
+		info = AnyBalance.requestGet(baseurl + 'mysip/');
+		
+		var numbers = sumParam(info, null, null, /<li>\s*<a href="#\d+"[^>]*>([^<]*)/ig);
+		for (var i = 0; i < Math.min(numbers.length, 5); ++i) {
+			getParam(numbers[i], result, 'shortphone' + i, null, replaceTagsAndSpaces, html_entity_decode);
+		}
+	}
 	AnyBalance.setResult(result);
 }

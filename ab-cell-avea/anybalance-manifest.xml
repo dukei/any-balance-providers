@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-cell-avea</id>
+	<id version="3">ab-cell-avea</id>
 	<api flags="no_browser"/>
 	<name>AVEA</name>
 	<description html="true"><![CDATA[
@@ -18,10 +18,11 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Güncel Fatura" units=" TL"/>
-		<counter id="minutes" name="Kalan Süre" units=" dk"/>
-		<counter id="traf" name="Kalan Data" units=" mb"/>
-		<counter id="sms" name="Kalan SMS" units=" sms"/>
+		<counter id="balance" name="Balance" units=" TL"/>
+		<counter id="fatura" name="Güncel Fatura" units=" TL"/>
+		<counter id="minutes" name="Minutes left" units=" dk"/>
+		<counter id="traf" name="Data left" units=" mb"/>
+		<counter id="sms" name="SMS left" units=" sms"/>
 	</counters>
 	<keywords></keywords>
 	<type>cell</type>

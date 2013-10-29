@@ -1,40 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-money-sberbank-kz</id>
-  <api flags="no_browser"/>
-  <name>Сбербанк ОнЛ@йн (Казахстан)</name>
-  <description>
-	Получает текущий остаток и другие параметры карт Сбербанка в Казахстане, используя систему Сбербанк-онлайн ().
-	
-	Если у вас нет доступа к Сбербанк-онлайн: перейдите на страницу https://www.sob.kz/frontend/static-2.7.22/rainbow/docs/UserGuide.pdf это руководство пользователя в формате pdf.
-  </description>
-  <author>Stark &lt;support@starksoft.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-	<js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Остаток"/>
-    <counter id="currency" name="Валюта" type="text"/>
-    <counter id="cardNumber" name="Номер карты" type="text"/>
-    <counter id="userName" name="ФИО" type="text"/>
-    <!--<counter id="till" name="Срок действия" type="text"/>
-    <counter id="debt" name="Задолженность"/>
-    <counter id="maxlimit" name="Кредитный лимит"/>
-    <counter id="cardName" name="Имя на карте" type="text"/>
-    <counter id="status" name="Статус" type="text"/>-->
-
-  </counters>
-  <keywords>
-    сбербанк онлайн, sberbank online, сберегательный банк
-  </keywords>
-  <type>
-    money
-  </type>
-  <country>
-    kz
-  </country>
+	<id version="3">ab-money-sberbank-kz</id>
+	<api flags="no_browser"/>
+	<name>Сбербанк ОнЛ@йн (Казахстан)</name>
+	<description html="true"><![CDATA[
+	<p>Получает текущий остаток и другие параметры карт Сбербанка в Казахстане, используя систему Сбербанк-онлайн https://www.sob.kz/frontend/frontend.</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Если у вас нет доступа к Сбербанк-онлайн: перейдите на страницу https://www.sob.kz/frontend/static-2.7.22/rainbow/docs/UserGuide.pdf это руководство пользователя в формате pdf.</p>
+	]]></instruction>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Остаток" units=" {@currency}"/>
+		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="cardNumber" name="Номер карты" type="text"/>
+		<counter id="userName" name="ФИО" type="text"/>
+	</counters>
+	<keywords>сбербанк онлайн, sberbank online, сберегательный банк</keywords>
+	<type>money</type>
+	<country>kz</country>
 </provider>

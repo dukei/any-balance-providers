@@ -1,23 +1,24 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <EditTextPreference 
-        title="Номер телефона" 
-        positiveButtonText="ОК" 
-        summary="Номер телефона (10 цифр)||{@s}\n" 
-        dialogTitle="Номер телефона" 
-        negativeButtonText="Отмена" 
-        dialogMessage="Введите цифры вашего номера телефона с кодом города (10 цифр)"
-	inputType="number"
-        key="login">
-    </EditTextPreference>
-    <EditTextPreference 
-        positiveButtonText="ОК"
-        key="password" 
-        dialogTitle="PIN-код"
-        negativeButtonText="Отмена"
-        title="PIN-код"
-        summary="Введите PIN-код||************\n"
-        dialogMessage="Получить PIN-код Вы можете по телефону Единого контактного центра 495-636-0-636 или в любом клиентском зале ОАО МГТС."
-        inputType="numberPassword">
-    </EditTextPreference>
+	<EditTextPreference
+		obligatory="true"
+		title="Номер телефона/логин"
+		positiveButtonText="ОК"
+		summary="Номер телефона (10 цифр) или логин||{@s}\n"
+		dialogTitle="Номер телефона/логин"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите цифры вашего номера телефона с кодом города (10 цифр) или логин."
+		key="login">
+	</EditTextPreference>
+	<EditTextPreference
+		obligatory="true"
+		positiveButtonText="ОК"
+		key="password"
+		dialogTitle="PIN-код"
+		negativeButtonText="Отмена"
+		title="PIN-код"
+		summary="Введите PIN-код||************\n"
+		dialogMessage="Получить PIN-код Вы можете по телефону Единого контактного центра 495-636-0-636 или в любом клиентском зале ОАО МГТС."
+		inputType="numberPassword">
+	</EditTextPreference>
 </PreferenceScreen>

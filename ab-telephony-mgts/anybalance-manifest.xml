@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="5">ab-telephony-mgts</id>
-  <name>МГТС</name>
+	<id version="6">ab-telephony-mgts</id>
+	<name>МГТС</name>
+	<api flags="no_browser"/>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем балансе в МГТС.</p>
 	<p>Информация берется из Интернет-помощника (http://ihelper.mgts.ru/CustomerSelfCare2).</p>
@@ -14,26 +15,20 @@
 	<li>Обратитесь в любой Центр услуг связи ОАО МГТС http://mgts.ru/service-centres.</li>
 	</ul>
 	]]></instruction>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>api:jquery.min.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="fio" name="ФИО" type="text"/>
-    <counter id="licschet" name="Лицевой счет" type="text"/>
-  </counters>
-  <keywords>
-    mgts, московская городская телефонная сеть, проводной телефон
-  </keywords>
-  <type>
-    telephony
-  </type>
-  <country>
-    ru
-  </country>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="licschet" name="Лицевой счет" type="text"/>
+	</counters>
+	<keywords>mgts, московская городская телефонная сеть, проводной телефон</keywords>
+	<type>telephony</type>
+	<country>ru</country>
 </provider>

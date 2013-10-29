@@ -26,6 +26,11 @@
 		<counter id="phone2" name="Прямой номер 3" type="text"/>
 		<counter id="phone2status" name="Прямой номер 3 - статус" type="text"/>
 		<counter id="phone2till" name="Срок действия прямого номера 3" type="time" format="dd/MM/yyyy"/>
+		<counter id="shortphone0" name="Короткий номер 1" type="text"/>
+		<counter id="shortphone1" name="Короткий номер 2" type="text"/>
+		<counter id="shortphone2" name="Короткий номер 3" type="text"/>
+		<counter id="shortphone3" name="Короткий номер 4" type="text"/>
+		<counter id="shortphone4" name="Короткий номер 5" type="text"/>
 	</counters>
 	<keywords>zadarma sip IP-телефония</keywords>
 	<type>telephony</type>

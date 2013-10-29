@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+<change major_version="2" version="6" date="2013-10-29">
+- Добавлено отображение до 5 коротких номеров
+</change>	
 <change major_version="2" version="5" date="2013-10-22">
 - Поправлено получение данных по подключенным номерам, добавлено отображение статуса номеров.
 </change>

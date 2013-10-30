@@ -455,15 +455,16 @@ function fetchAccountStatus(html, result){
     getParam (html, result, 'debt', /Сумма по неоплаченным счетам.*?([-\d\.,]+)/i, replaceTagsAndSpaces, parseBalance);
     // Сумма по неоплаченным счетам: 786.02 руб. (оплатить до 24.03.2012)
     getParam (html, result, 'pay_till', /оплатить до\s*([\d\.,\/]+)/i, replaceTagsAndSpaces, parseDate);
-    // Остаток трафика
+	// Остаток трафика
     getParam (html, result, 'traffic_left', /(?:Осталось|Остаток)[^\d]*(\d+[\.,]?\d* *([kmgкмг][бb]|байт|bytes))/i);
     //Подбаланс gprs: 49,26 Mb
     getParam (html, result, 'traffic_left', /Подбаланс gprs:[^\d]*(\d+[\.,]?\d*\s*([kmgкмг][бb]|байт|bytes))/i);
-	//    AnyBalance.trace(html);
 	// Остаток трафика
     sumParam (html, result, 'traffic_left_mb', /(?:Осталось|Остаток)[^\d]*(\d+[\.,]?\d* *([kmgкмг][бb]|байт|bytes))/ig, null, parseTraffic, aggregate_sum);
     //Подбаланс gprs: 49,26 Mb
     sumParam (html, result, 'traffic_left_mb', /Подбаланс gprs:[^\d]*(\d+[\.,]?\d*\s*([kmgкмг][бb]|байт|bytes))/ig, null, parseTraffic, aggregate_sum);
+    //Подбаланс gprs: 1,17 Mb до 26.11.2013
+    sumParam (html, result, 'traffic_left_till', /Подбаланс gprs:[^<]*?[kmgкмг][бb]\s*до\s*([\s\S]*?)<\//ig, null, parseDate, aggregate_min);	
     // Лицевой счет
     getParam (html, result, 'license', /№([\s\S]*?)[:<]/, replaceTagsAndSpaces);
     // Блокировка

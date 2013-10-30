@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+<change major_version="3.3" version="67" date="2013-10-30">
+- Добавлено отображение срока действия пакета трафика (Stark)
+</change>
 <change major_version="3.3" version="66" date="2013-10-08">
 - Улучшено распознавание минут на тарифе Готовый офис
 </change>

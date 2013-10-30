@@ -1,89 +1,90 @@
-/*
+/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-World of Tanks — бесплатная онлайн игра
-Сайт игры: http://worldoftanks.ru/
 */
 
-function main(){
+var g_headers = {
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
+	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Connection': 'keep-alive',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+	'X-Requested-With': 'XMLHttpRequest',
+};
+
+function main() {
 	var prefs = AnyBalance.getPreferences();
 	checkEmpty(prefs.nick, 'Введите ник или id');
+	prefs.accuracy = prefs.accuracy || 1;
 	
-	// Проверяем правильность id
-	if (prefs.listPref == 'id'){
-		var regexp = /\d+$/;
-		if (!(regexp.test(prefs.nick)))
-			throw new AnyBalance.Error('ID должен состоять только из цифр');
+	// Независимо от того, что ввел юзер, ник или ID нам надо получать ID. функция getID вернет id не зависимо от того что в нее предали
+	var id = getID(prefs.nick);
+
+	var result = {success: true};
+
+	var html = AnyBalance.requestGet('http://worldoftanks.ru/community/accounts/' + id, g_headers);
+	var clan = AnyBalance.requestGet('http://worldoftanks.ru/community/clans/show_clan_block/?spa_id=' + id, g_headers);
+	var clanJS = getJson(clan);
+
+	var name = getParam(html, null, null, /"js-profile-name"[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+	var clanName = getParam(clanJS.data.clan_block, null, null, /<span class="tag"[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+		
+	getParam(clanName ? name + ' ' +clanName : name, result, 'name');
+
+	var wins = getParam(html, null, null, /"td-minor"[^>]*>\s*Побед(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	var battles = getParam(html, null, null, /"td-minor"[^>]*>\s*Проведено боёв(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+
+	getParam(wins, result, 'wins');
+	getParam(battles, result, 'battles');
+
+	if (isAvailable(['win_percent', 'next_perc', 'next_perc_05'])) {
+		var win_percent = (wins / battles) * 100;
+		getParam(win_percent.toFixed(prefs.accuracy), result, 'win_percent');
+
+		if (AnyBalance.isAvailable('next_perc')) {
+			var np = Math.floor(win_percent) + 1;
+			result['next_perc'] = Math.floor((np * battles - 100 * wins) / (100 - np) + 1);
+		}
+		if (AnyBalance.isAvailable('next_perc_05')) var np = Math.floor(win_percent + 0.5) + 0.5;
+		result['next_perc_05'] = Math.floor((np * battles - 100 * wins) / (100 - np) + 1);
 	}
-	
-	// Проверяем нужен ли нам id, при необходимости получаем его
-	if ((AnyBalance.isAvailable('tank_wins', 'tank_battles', 'tank_win_percent', 'er', 'wn6', 'er_armor', 'er_xvm', 'wn6_xvm'))||(prefs.listPref == 'id'))
-		var id = (prefs.listPref == 'id') ? prefs.nick : getID (prefs.nick);
 
-	// Если есть ник и не нужны данные, которые можно получить по id (только общая статистика)
-	if ((!(AnyBalance.isAvailable('tank_wins', 'tank_battles', 'tank_win_percent', 'er', 'wn6', 'er_armor', 'er_xvm', 'wn6_xvm')))&&(prefs.listPref == 'nick')) {
-		var pd = getData('http://worldoftanks.ru/uc/accounts/api/1.1/?source_token=WG-WoT_Assistant-1.1.2&search=' + prefs.nick + '&offset=0&limit=1');
-		var result = {success: true};
-		
-		var pname = pd.data.items[0].clan ? pd.data.items[0].name + '[' + pd.data.items[0].clan.tag + ']' : pd.data.items[0].name;
-		
-		result.__tariff = pname;
-		
-		if(AnyBalance.isAvailable('name'))
-			result['name'] = pname;
-			
-		if(AnyBalance.isAvailable('wins'))
-			result['wins'] = pd.data.items[0].stats.wins;
-			
-		if(AnyBalance.isAvailable('battles'))
-			result['battles'] = pd.data.items[0].stats.battles;
-			
-		if(AnyBalance.isAvailable('win_percent', 'next_perc', 'next_perc_05'))
-			var win_percent = pd.data.items[0].stats.wins / pd.data.items[0].stats.battles * 100
-			
-			if(AnyBalance.isAvailable('win_percent'))
-				result['win_percent'] = win_percent.toFixed(prefs.accuracy);
-				
-			if(AnyBalance.isAvailable('next_perc'))
-				var np = Math.floor(win_percent) + 1;
-				result['next_perc'] = Math.floor((np * pd.data.items[0].stats.battles - 100 * pd.data.items[0].stats.wins) / (100 - np) + 1);
-				
-			if(AnyBalance.isAvailable('next_perc_05'))
-				var np = Math.floor(win_percent + 0.5) + 0.5;
-				result['next_perc_05'] = Math.floor((np * pd.data.items[0].stats.battles - 100 * pd.data.items[0].stats.wins) / (100 - np) + 1);
-		
-		AnyBalance.setResult(result);
 
-	// Если есть id или нужны данные, которые можно получить по id (статистика по танкам)
-	} else {
-		var pd = getData('http://worldoftanks.ru/community/accounts/' + id + '/api/1.9/?source_token=WG-WoT_Assistant-test');
-		var result = {success: true};
-		
-		var pname = pd.data.clan.clan ? pd.data.name + '[' + pd.data.clan.clan.abbreviation + ']' : pd.data.name;
+	if (prefs.tank) {
+		var tanks = sumParam(html, null, null, /(<span\s+class="b-name-vehicle"[^>]*>(?:[\s\S]*?<\/td>){4})/ig);
+		for (i = 0; i < tanks.length; i++) {
+			var tank = tanks[i];
+
+			if (getParam(tank, null, null, /"b-gray-link[^>]*>([^<]*)/i, replaceTagsAndSpaces) == prefs.tank) {
+				// Бои
+				var battles = getParam(tank, null, null, /"t-profile_right"[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+				// Процент побед
+				var battlespcts = getParam(tank, null, null, /"t-profile_center"[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+				getParam(battles, result, 'tank_battles');
+				getParam(battlespcts, result, 'tank_win_percent');
+				getParam((battles / 100 * battlespcts).toFixed(prefs.accuracy), result, 'tank_wins');
+				break;
+			}
+		}
+	}
+	/*if(AnyBalance.isAvailable('er', 'er_armor', 'wn6', 'er_xvm', 'wn6_xvm')) {
+			var DAMAGE = getParam(html, null, null, /"td-minor"[^>]*>\s*Нанесённые\s+повреждения(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance) / battles;
+			var FRAGS = getParam(html, null, null, /"td-minor"[^>]*>\s*Уничтожено(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance) / battles;
+
+
+			
+			var SPOT = getParam(html, null, null, /"td-minor"[^>]*>\s*Обнаружено(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance) / battles;
+			var CAP = pd.data.ratings.ctf_points.value / battles;
+			var DEF = getParam(html, null, null, /"td-minor"[^>]*>\s*Обнаружено(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance) / battles;
+
+			
+			
+			
+			
+		}
+		/*var pname = pd.data.clan.clan ? pd.data.name + '[' + pd.data.clan.clan.abbreviation + ']' : pd.data.name;
 		
 		// Общая статистика
-		if(AnyBalance.isAvailable('name'))
-			result['name'] = pname;
-		
-		if(AnyBalance.isAvailable('wins'))
-			result['wins'] = pd.data.summary.wins;
-			
-		if(AnyBalance.isAvailable('battles'))
-			result['battles'] = pd.data.summary.battles_count;
-			
-		if(AnyBalance.isAvailable('win_percent', 'next_perc', 'next_perc_05'))
-			var win_percent = pd.data.summary.wins / pd.data.summary.battles_count * 100
-			
-			if(AnyBalance.isAvailable('win_percent'))
-				result['win_percent'] = win_percent.toFixed(prefs.accuracy);
-				
-			if(AnyBalance.isAvailable('next_perc'))
-				var np = Math.floor(win_percent) + 1;
-				result['next_perc'] = Math.floor((np * pd.data.summary.battles_count - 100 * pd.data.summary.wins) / (100 - np) + 1);
-				
-			if(AnyBalance.isAvailable('next_perc_05'))
-				var np = Math.floor(win_percent + 0.5) + 0.5;
-				result['next_perc_05'] = Math.floor((np * pd.data.summary.battles_count - 100 * pd.data.summary.wins) / (100 - np) + 1);
+
 				
 			
 		if(AnyBalance.isAvailable('er', 'er_armor', 'wn6', 'er_xvm', 'wn6_xvm'))
@@ -174,7 +175,38 @@ function main(){
 				throw new AnyBalance.Error('Танк не найден');
 		} else {
 			result.__tariff = pname;
+		}*/
+	AnyBalance.setResult(result);
+}
+
+
+function getData(url) {
+	var data = AnyBalance.requestGet(url, g_headers);
+	if (data) {
+		var code = data.match(/<title>(.+?)<\/title>/i);
+		if (code) {
+			throw new AnyBalance.Error(code[1]);
+		} else {
+			var js = getJson(data);
+			var st = js.result
+			if (st == 'ok' || st == 'success') {
+				return js;
+			} else if (st == 'error') {
+				var err = js.error
+				throw new AnyBalance.Error('Ошибка: ' + err);
+			} else {
+				throw new AnyBalance.Error('Неизвестный ответ сервера: ' + st);
+			}
 		}
-		AnyBalance.setResult(result);
+	} else {
+		throw new AnyBalance.Error('Неизвестная ошибка');
 	}
+}
+
+function getID(nick) {
+	if(/^\d+$/.test(nick))
+		return nick;
+		
+	var v = getData('http://worldoftanks.ru/community/accounts/search/?_=1382974324537&offset=0&limit=1&order_by=name&search=' + nick + '&echo=2&id=accounts_index');
+	return v.request_data.items[0].id;
 }

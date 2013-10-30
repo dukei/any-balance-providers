@@ -1,44 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-bonus-fishka</id>
-  <name>FiSHKA</name>
-  <description>
-    FISHKA (http://myfishka.com/) - це Програма для покупців, які бажають отримувати винагороди за те, що вони надають перевагу і залишаються постійними клієнтами наших заправних станцій та магазинів.
-
-    У Програмі FISHKA Ви:
-• накопичуєте бали за кожну повсякденну покупку
-• заробляєте додаткові бали під час акцій
-• обмінюєте бали на винагороди
-• отримуєте вигідні пропозиції та привілеї
-Програма є довготерміновою і відкритою для участі всіх покупців. Програма діє по всій мережі автозаправних комплексів ОККО та постійно розвивається, приєднуючи нових партнерів.
-
-     Провайдер отримує баланс з перстональной сторінки https://cwa.myfishka.com/
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="на Вашому рахунку" units=" Б"/>
-    <counter id="fio" name="Основний учасник" type="text"/>
-    <counter id="licschet" name="Номер рахунку" type="text"/>
-    <counter id="std" name="Набрано стандартних балів" units=" Б"/>
-    <counter id="extra" name="Набрано додаткових балів" units=" Б"/>
-    <counter id="used" name="Всього використаних балів" units=" Б"/>
-    <counter id="corr" name="Виправлено балів" units=" Б"/>
-    <counter id="out" name="Протерміновані бали" units=" Б"/>
-  </counters>
-  <keywords>
-    фишка
-  </keywords>
-  <type>
-    bonus
-  </type>
-  <country>
-    ua
-  </country>
+	<id version="3">ab-bonus-fishka</id>
+	<api flags="no_browser"/>
+	<name>FiSHKA</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе для участников бонусной программы FISHKA (http://myfishka.com/).</p>
+	<p>FISHKA - программа для постоянных клиентов заправочных станций и магазинов автозаправочных комплексов ОККО.</p> 
+	<p>Программа FISHKA позволяет накапливать баллы за каждую покупку,  зарабатывать дополнительные очки во время акций, обмениваться бонусными баллами,  пользоваться выгодными предложениями и привилегиями.</p>
+	<p>Информация берется с персональной страницы (http://cwa.myfishka.com/).</p>
+	]]></description>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="на Вашому рахунку" units=" Б"/>
+		<counter id="fio" name="Основний учасник" type="text"/>
+		<counter id="licschet" name="Номер рахунку" type="text"/>
+		<counter id="std" name="Набрано стандартних балів" units=" Б"/>
+		<counter id="extra" name="Набрано додаткових балів" units=" Б"/>
+		<counter id="used" name="Всього використаних балів" units=" Б"/>
+		<counter id="corr" name="Виправлено балів" units=" Б"/>
+		<counter id="out" name="Протерміновані бали" units=" Б"/>
+	</counters>
+	<keywords>фишка</keywords>
+	<type>bonus</type>
+	<country>ua</country>
 </provider>

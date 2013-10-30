@@ -26,17 +26,28 @@ function getParam (html, result, param, regexp, replaces, parser) {
 	if (!isAvailable(param))
 		return;
 
-	var matches = regexp ? html.match(regexp) : [, html], value;
-	if (matches) {
-                //Если нет скобок, то значение - всё заматченное
-		value = replaceAll(isset(matches[1]) ? matches[1] : matches[0], replaces);
-		if (parser)
-			value = parser (value);
+        var regexps = isArray(regexp) ? regexp : [regexp];
+        for(var i=0; i<regexps.length; ++i){ //Если массив регэкспов, то возвращаем первый заматченный
+                regexp = regexps[i];
+		var matches = regexp ? html.match(regexp) : [, html], value;
+		if (matches) {
+                        //Если нет скобок, то значение - всё заматченное
+			value = replaceAll(isset(matches[1]) ? matches[1] : matches[0], replaces);
+			if (parser)
+				value = parser (value);
+	        
+			if(param && isset(value))
+				result[isArray(param) ? param[0] : param] = value;
+			break;
+		}
+        }
 
-		if(param && isset(value))
-			result[isArray(param) ? param[0] : param] = value;
-	}
 	return value;
+}
+
+function checkEmpty (param, error, notfatal) {
+    if (!param)
+        throw new AnyBalance.Error (error, null, !notfatal);
 }
 
 function isAvailable(param){
@@ -51,7 +62,7 @@ function isAvailable(param){
 //Замена пробелов и тэгов
 var replaceTagsAndSpaces = [/&nbsp;/ig, ' ', /&minus;/ig, '-', /<!--[\s\S]*?-->/g, '', /<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, ''];
 //Замена для чисел
-var replaceFloat = [/&minus;/ig, '-', /\s+/g, '', /,/g, '.'];
+var replaceFloat = [/&minus;/ig, '-', /\s+/g, '', /,/g, '.', /\.([^.]*)(?=\.)/g, '$1', /^\./, '0.'];
 //Замена для Javascript строк
 var replaceSlashes = [/\\(.?)/g, function(str, n){
         switch (n) {
@@ -97,7 +108,7 @@ function replaceAll(value, replaces){
  * Извлекает числовое значение из переданного текста
  */
 function parseBalance(text){
-    var val = getParam(html_entity_decode(text).replace(/\s+/g, ''), null, null, /(-?\d[\d.,]*)/, replaceFloat, parseFloat);
+    var val = getParam(html_entity_decode(text).replace(/\s+/g, ''), null, null, /(-?\.?\d[\d.,]*)/, replaceFloat, parseFloat);
     AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
     return val;
 }
@@ -114,13 +125,139 @@ function parseCurrency(text){
 /**
  * Заменяет HTML сущности в строке на соответствующие им символы
  */
-function html_entity_decode(str)
+function html_entity_decode (string) {
+    var entities = get_html_translation_table();
+    var replaced = string.replace(/&(#(x)?)?(\w+);/ig, function(str, sharp, x, m){
+        if(!sharp){
+            var ml = m.toLowerCase(m);
+            if(entities.hasOwnProperty(ml))
+                return String.fromCharCode(entities[ml]);
+        }else if(!x){
+            if(/^\d+$/.test(m))
+                return String.fromCharCode(parseInt(m));
+        }else{
+            if(/^[0-9a-f]+$/i.test(m))
+		return String.fromCharCode(parseInt(m, 16));
+        }
+        return str;
+    });
+    return replaced;
+}
+
+function get_html_translation_table () {
+  var entities = {
+    amp:	38,
+    nbsp:	160,
+    iexcl:	161,
+    cent:	162,
+    pound:	163,
+    curren:	164,
+    yen:	165,
+    brvbar:	166,
+    sect:	167,
+    uml:	168,
+    copy:	169,
+    ordf:	170,
+    laquo:	171,
+    not:	172,
+    shy:	173,
+    reg:	174,
+    macr:	175,
+    deg:	176,
+    plusmn:	177,
+    sup2:	178,
+    sup3:	179,
+    acute:	180,
+    micro:	181,
+    para:	182,
+    middot:	183,
+    cedil:	184,
+    sup1:	185,
+    ordm:	186,
+    raquo:	187,
+    frac14:	188,
+    frac12:	189,
+    frac34:	190,
+    iquest:	191,
+    agrave:	192,
+    aacute:	193,
+    acirc:	194,
+    atilde:	195,
+    auml:	196,
+    aring:	197,
+    aelig:	198,
+    ccedil:	199,
+    egrave:	200,
+    eacute:	201,
+    ecirc:	202,
+    euml:	203,
+    igrave:	204,
+    iacute:	205,
+    icirc:	206,
+    iuml:	207,
+    eth:	208,
+    ntilde:	209,
+    ograve:	210,
+    oacute:	211,
+    ocirc:	212,
+    otilde:	213,
+    ouml:	214,
+    times:	215,
+    oslash:	216,
+    ugrave:	217,
+    uacute:	218,
+    ucirc:	219,
+    uuml:	220,
+    yacute:	221,
+    thorn:	222,
+    szlig:	223,
+    agrave:	224,
+    aacute:	225,
+    acirc:	226,
+    atilde:	227,
+    auml:	228,
+    aring:	229,
+    aelig:	230,
+    ccedil:	231,
+    egrave:	232,
+    eacute:	233,
+    ecirc:	234,
+    euml:	235,
+    igrave:	236,
+    iacute:	237,
+    icirc:	238,
+    iuml:	239,
+    eth:	240,
+    ntilde:	241,
+    ograve:	242,
+    oacute:	243,
+    ocirc:	244,
+    otilde:	245,
+    ouml:	246,
+    divide:	247,
+    oslash:	248,
+    ugrave:	249,
+    uacute:	250,
+    ucirc:	251,
+    uuml:	252,
+    yacute:	253,
+    thorn:	254,
+    yuml:	255,
+    quot:	34,
+    lt:		60,
+    gt:		62
+  };
+
+  return entities;
+}
+/*function html_entity_decode(str)
 {
+	//return str;
     //jd-tech.net
-    var tarea=document.createElement('textarea');
+    var tarea = document.createElement('textarea');
     tarea.innerHTML = str;
     return tarea.value;
-}
+}*/
 
 /**
  * Получает объект с параметрами форм (ищет в html все <input и <select и возвращает объект с их именами-значениями.
@@ -141,18 +278,26 @@ function html_entity_decode(str)
  */
 function createFormParams(html, process, array){
     var params = array ? [] : {};
-    html.replace(/<input[^>]+name="([^"]*)"[^>]*>|<select[^>]+name="([^"]*)"[^>]*>[\s\S]*?<\/select>/ig, function(str, nameInp, nameSel){
+    html.replace(/<input[^>]+name=['"]([^'"]*)['"][^>]*>|<select[^>]+name=['"]([^'"]*)['"][^>]*>[\s\S]*?<\/select>/ig, function(str, nameInp, nameSel){
         var value = '';
         if(nameInp){
-            value = getParam(str, null, null, /value="([^"]*)"/i, null, html_entity_decode);
+			if(nameInp == 'ctl00$txtSubsEmail')
+				AnyBalance.trace('last: '+nameInp);
+				
+            if(/type=['"]button['"]/i.test(str))
+                value=undefined;
+            else
+                value = getParam(str, null, null, /value=['"]([^'"]*)['"]/i, null, html_entity_decode) || '';
             name = nameInp;
+			
         }else if(nameSel){
-            value = getParam(str, null, null, /^<[^>]*value="([^"]*)"/i, null, html_entity_decode);
+            value = getParam(str, null, null, /^<[^>]*value=['"]([^'"]*)['"]/i, null, html_entity_decode);
             if(typeof(value) == 'undefined'){
                 var optSel = getParam(str, null, null, /(<option[^>]+selected[^>]*>)/i);
                 if(!optSel)
                     optSel = getParam(str, null, null, /(<option[^>]*>)/i);
-                value = getParam(optSel, null, null, /value="([^"]*)"/i, null, html_entity_decode);
+				if(optSel)
+				    value = getParam(optSel, null, null, /value=['"]([^'"]*)["']/i, null, html_entity_decode);
             }
             name = nameSel;
         }
@@ -251,7 +396,7 @@ function getJson(html){
 function getJsonEval(html){
    try{
        //Запрещаем использование следующих переменных из функции:
-       var json = new Function('window', 'AnyBalance', 'g_AnyBalanceApiParams', '_AnyBalanceApi', 'document', 'return ' + html).apply(null);
+       var json = new Function('window', 'AnyBalance', 'g_AnyBalanceApiParams', '_AnyBalanceApi', 'document', 'self', 'return ' + html).apply(null);
        return json;
    }catch(e){
        AnyBalance.trace('Bad json (' + e.message + '): ' + html);
@@ -269,7 +414,7 @@ function endsWith(str, suffix) {
 
 /**
  * Date.parse with progressive enhancement for ISO 8601 <https://github.com/csnover/js-iso8601>
- * В© 2011 Colin Snover <http://zetafleet.com>
+ * © 2011 Colin Snover <http://zetafleet.com>
  * Released under MIT license.
  */
 (function (Date, undefined) {
@@ -277,12 +422,12 @@ function endsWith(str, suffix) {
     Date.parse = function (date) {
         var timestamp, struct, minutesOffset = 0;
 
-        // ES5 В§15.9.4.2 states that the string should attempt to be parsed as a Date Time String Format string
-        // before falling back to any implementation-specific date parsing, so thatвЂ™s what we do, even if native
+        // ES5 §15.9.4.2 states that the string should attempt to be parsed as a Date Time String Format string
+        // before falling back to any implementation-specific date parsing, so that’s what we do, even if native
         // implementations could be faster
-        //              1 YYYY                2 MM       3 DD           4 HH    5 mm       6 ss        7 msec        8 Z 9 В±    10 tzHH    11 tzmm
-        if ((struct = /^(\d{4}|[+\-]\d{6})(?:-(\d{2})(?:-(\d{2}))?)?(?:(?:T|\s+)(\d{2}):(\d{2})(?::(\d{2})(?:\.(\d{3}))?)?(?:(Z)|([+\-])(\d{2})(?::(\d{2}))?)?)?$/.exec(date))) {
-            // avoid NaN timestamps caused by вЂњundefinedвЂќ values being passed to Date.UTC
+        //              1 YYYY                2 MM       3 DD           4 HH    5 mm       6 ss        7 msec        8 Z 9 ±    10 tzHH    11 tzmm
+        if ((struct = /^(\d{4}|[+\-]\d{6})(?:-(\d{2})(?:-(\d{2}))?)?(?:T(\d{2}):(\d{2})(?::(\d{2})(?:\.(\d{3}))?)?(?:(Z)|([+\-])(\d{2})(?::(\d{2}))?)?)?$/.exec(date))) {
+            // avoid NaN timestamps caused by “undefined” values being passed to Date.UTC
             for (var i = 0, k; (k = numericKeys[i]); ++i) {
                 struct[k] = +struct[k] || 0;
             }
@@ -299,7 +444,7 @@ function endsWith(str, suffix) {
                 }
             }
 
-            timestamp = new Date(struct[1], struct[2], struct[3], struct[4], struct[5] + minutesOffset, struct[6], struct[7]).getTime();
+            timestamp = Date.UTC(struct[1], struct[2], struct[3], struct[4], struct[5] + minutesOffset, struct[6], struct[7]);
         }
         else {
             timestamp = origParse ? origParse(date) : NaN;
@@ -364,12 +509,14 @@ function sumParam (html, result, param, regexp, replaces, parser, do_replace, ag
         do_replace = aggregate_old || false;
     }
 
-    if (!isAvailable(param)){
-	if(do_replace){ //Даже если счетчик не требуется, всё равно надо вырезать его матчи, чтобы не мешалось другим счетчикам
-		return regexp ? html.replace(regexp, '') : html;
-        }else
-		return;
+    function replaceIfNeeded(){
+	if(do_replace) 
+		return regexp ? html.replace(regexp, '') : '';
     }
+
+    if (!isAvailable(param))  //Даже если счетчик не требуется, всё равно надо вырезать его матчи, чтобы не мешалось другим счетчикам
+        return replaceIfNeeded();
+
     //После того, как проверили нужность счетчиков, кладем результат в первый из переданных счетчиков. Оставляем только первый
     param = isArray(param) ? param[0] : param;
 
@@ -385,15 +532,21 @@ function sumParam (html, result, param, regexp, replaces, parser, do_replace, ag
         	values.push(value);
     }
 
-    if(!regexp){
-        replaceAndPush(html);
-    }else{
-        regexp.lastIndex = 0; //Удостоверяемся, что начинаем поиск сначала.
-        while(matches = regexp.exec(html)){
+    var regexps = isArray(regexp) ? regexp : [regexp];
+    for(var i=0; i<regexps.length; ++i){ //Пройдемся по массиву регулярных выражений
+        regexp = regexps[i];
+        if(!regexp){
+            replaceAndPush(html);
+        }else{
+            regexp.lastIndex = 0; //Удостоверяемся, что начинаем поиск сначала.
+            while(matches = regexp.exec(html)){
                 replaceAndPush(isset(matches[1]) ? matches[1] : matches[0]);
-        	if(!regexp.global)
-            		break; //Если поиск не глобальный, то выходим из цикла
-	}
+            	if(!regexp.global)
+                    break; //Если поиск не глобальный, то выходим из цикла
+	    }
+        }
+        if(do_replace) //Убираем все матчи, если это требуется
+            html = regexp ? html.replace(regexp, '') : '';
     }
 
     var total_value;
@@ -406,8 +559,7 @@ function sumParam (html, result, param, regexp, replaces, parser, do_replace, ag
       if(isset(total_value)){
           result[param] = total_value;
       }
-      if(do_replace)
-          return regexp ? html.replace(regexp, '') : html;
+      return html;
     }else{
       return total_value;
     }
@@ -423,16 +575,19 @@ function aggregate_sum(values){
     return total_value;
 }
 
-function aggregate_join(values, delimiter){
+function aggregate_join(values, delimiter, allow_empty){
     if(values.length == 0)
         return;
     if(!isset(delimiter))
         delimiter = ', ';
-    return values.join(delimiter);
+    var ret = values.join(delimiter);
+    if(!allow_empty)
+        ret = ret.replace(/^(?:\s*,\s*)+|(?:\s*,\s*){2,}|(?:\s*,\s*)+$/g, '');
+    return ret;
 }
 
-function create_aggregate_join(delimiter){
-    return function(values){ return aggregate_join(values, delimiter); }
+function create_aggregate_join(delimiter, allow_empty){
+    return function(values){ return aggregate_join(values, delimiter, allow_empty); }
 }
 
 function aggregate_min(values){
@@ -481,7 +636,7 @@ function parseTrafficEx(text, thousand, order, defaultUnits){
         AnyBalance.trace("Could not parse traffic value from " + text);
         return;
     }
-    var units = getParam(_text, null, null, /([kmgкмг][бb]?|[бb](?![\wа-я])|байт|bytes)/i);
+    var units = getParam(_text, null, null, /([kmgtкмгт][бb]?|[бb](?![\wа-я])|байт|bytes)/i);
     if(!units && !defaultUnits){
         AnyBalance.trace("Could not parse traffic units from " + text);
         return;
@@ -504,13 +659,17 @@ function parseTrafficEx(text, thousand, order, defaultUnits){
       case 'г':
         val = Math.round(val/Math.pow(thousand, order-3)*100)/100;
         break;
+      case 't':
+      case 'т':
+        val = Math.round(val/Math.pow(thousand, order-4)*100)/100;
+        break;
     }
     var textval = ''+val;
     if(textval.length > 6)
       val = Math.round(val);
     else if(textval.length > 5)
       val = Math.round(val*10)/10;
-    var dbg_units = {0: 'b', 1: 'kb', 2: 'mb', 3: 'gb'};
+    var dbg_units = {0: 'b', 1: 'kb', 2: 'mb', 3: 'gb', 4: 'tb'};
     AnyBalance.trace('Parsing traffic (' + val + dbg_units[order] + ') from: ' + text);
     return val;
 }
@@ -527,7 +686,7 @@ function requestPostMultipart(url, data, headers){
 		'',
 		data[name]);
 	}
-	parts.push(boundary, '--');
+	parts.push(boundary + '--');
         if(!headers) headers = {};
 	headers['Content-Type'] = 'multipart/form-data; boundary=' + boundary.substr(2);
 	return AnyBalance.requestPost(url, parts.join('\r\n'), headers);

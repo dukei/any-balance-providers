@@ -1,23 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-	<ListPreference
-        title="Метод идентификации игрока"
-        summary="Если вы знаете свой id, лучше использовать его, найти id можно в ссылке на свой профиль на официальном сайте||Метод идентификации: {@s}\n"
-        key="listPref"
-        defaultValue="nick"
-        entries="Игровой ник|Игровой ID"
-        entryValues="nick|id" />
-    <EditTextPreference 
+    <EditTextPreference
+		obligatory="true"
         key="nick"
         title="Игровой ник или id" 
         summary="Ваш ник или id в игре||{@s}\n" 
         dialogTitle="Ваш ник или id в игре" 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите ваш игровой ник или id"
+        dialogMessage="Введите ваш игровой ник или id."
         positiveButtonText="ОК" 
         inputType="text">
     </EditTextPreference>
-    <EditTextPreference 
+    <EditTextPreference
         key="tank"
         title="Танк" 
         summary="Отслеживаемый танк||{@s}\n" 

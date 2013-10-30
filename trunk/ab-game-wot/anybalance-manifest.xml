@@ -1,39 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="14">ab-game-wot</id>
+	<id version="15">ab-game-wot</id>
 	<name>World of Tanks</name>
 	<description html="true"><![CDATA[
 	<p>Показывает ник и клан-тэг, общее количество боев и побед, рейтинги эффективности в игре World of Tanks, а также информацию о количестве боев и побед на выбранном танке.</p>
 	]]></description>
 	<author>Vitaliy Poluphanov &lt;vitaliy@root.ua&gt;</author>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
 		<js>main.js</js>
-		<js>common_functions.js</js>
-		<js>api:jquery.min.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
 		<counter id="name" name="Игровой ник[клан]" type="text"/>
 		<counter id="wins" name="Победы" type="numeric"/>
 		<counter id="battles" name="Бои" type="numeric"/>
-		<counter id="win_percent" name="Процент побед" suffix="℅" type="numeric"/>
+		<counter id="win_percent" name="Процент побед" suffix=" ℅" type="numeric"/>
 		<counter id="tank_wins" name="Победы танка" type="numeric"/>
 		<counter id="tank_battles" name="Бои танка" type="numeric"/>
-		<counter id="tank_win_percent" name="Процент побед танка" suffix="℅" type="numeric"/>
+		<counter id="tank_win_percent" name="Процент побед танка" suffix=" ℅" type="numeric"/>
+		<counter id="next_perc" name="Бои до след. проц. побед" type="numeric"/>
+		<counter id="next_perc_05" name="Бои до след. проц. побед (с округл.)" type="numeric"/>
+		<!-- не работают -->
 		<counter id="er" name="Рейтинг эффект." type="numeric"/>
 		<counter id="er_xvm" name="Рейтинг эффект. (шкала XVM)" type="numeric"/>
 		<counter id="er_armor" name="Рейтинг эффект. Бронесайта" type="numeric"/>
 		<counter id="wn6" name="Рейтинг эффект. WN6" type="numeric"/>
 		<counter id="wn6_xvm" name="Рейтинг эффект. WN6 (шкала XVM)" type="numeric"/>
-		<counter id="next_perc" name="Бои до след. проц. побед" type="numeric"/>
-		<counter id="next_perc_05" name="Бои до след. проц. побед (с округл.)" type="numeric"/>
 	</counters>
-	<keywords>
-		игра, game, wot
-	</keywords>
-	<type>
-		game
-	</type>
+	<keywords>игра, game, wot</keywords>
+	<type>game</type>
 </provider>

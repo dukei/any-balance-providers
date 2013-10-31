@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-service-invitro</id>
+	<api flags="no_browser"/>
+	<name>Инвитро</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о анализах в личном кабинете ИНВИТРО https://lk.invitro.ru/lk2/login</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="inz_num" name="ИНЗ №" type="text"/>
+		<counter id="inz_status" name="Статус ИНЗ" type="text"/>
+		<counter id="inz_date" name="Дата ИНЗ" type="time" format="dd/MM/yyyy"/>
+		<counter id="age" name="Возраст"/>
+		<counter id="gender" name="Пол" type="text"/>
+		<counter id="addr" name="Мед. офис" type="text"/>
+		<counter id="total" name="Сводка" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>service</type>
+	<country>ru</country>
+</provider>

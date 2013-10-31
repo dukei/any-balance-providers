@@ -398,7 +398,7 @@ function main(){
 		result['battles'] = pinfo.data[id].statistics.all.battles;
 		
 	if(AnyBalance.isAvailable('win_percent', 'next_perc', 'next_perc_05'))
-		var win_percent = result['wins'] / result['battles'] * 100
+		var win_percent = pinfo.data[id].statistics.all.wins / pinfo.data[id].statistics.all.battles * 100
 		
 		if(AnyBalance.isAvailable('win_percent'))
 			result['win_percent'] = win_percent.toFixed(prefs.accuracy);

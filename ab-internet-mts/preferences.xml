@@ -23,8 +23,8 @@
         key="region" 
         title="Регион"
         summary="|Нужен для определения личного кабинета|{@s}"
-        entries="Барнаул|Балаково|Белгород|Вологда|Екатеринбург|Ижевск|Киров|Комсомольск-на-Амуре|Курган|Магнитогорск|Миасс|Москва|Нижний Новгород|Новосибирск|Норильск|Пенза|Пермь|Ростов|Саратов|Северодвинск|Тула|Ульяновск"
-        entryValues="barnaul|bal|belgorod|vlgd|ekt|izh|krv|kms|kurgan|mag|miass|moscow|nnov|nsk|nor|pnz|prm|rostov|saratov|sdv|tula|uln"
+        entries="Барнаул|Балаково|Белгород|Вологда|Екатеринбург|Ижевск|Киров|Комсомольск-на-Амуре|Курган|Магнитогорск|Миасс|Москва|Нижний Новгород|Новосибирск|Норильск|Пенза|Пермь|Ростов|Саратов|Северодвинск|Тула|Ульяновск|Чита"
+        entryValues="barnaul|bal|belgorod|vlgd|ekt|izh|krv|kms|kurgan|mag|miass|moscow|nnov|nsk|nor|pnz|prm|rostov|saratov|sdv|tula|uln|chita"
 	defaultValue="moscow">
     </ListPreference>
 </PreferenceScreen>

@@ -38,5 +38,8 @@ function main() {
 	getParam(html, result, 'balance', /<td>\s*Текущий баланс(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, '__tariff', /<td>\s*Тарифный план(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 	
+	getParam(html, result, 'traf_inet', /<td>\s*Трафик Интернет(?:[^>]*>){5}([\s\S]*?)<\/td/i, replaceTagsAndSpaces, parseTraffic);
+	getParam(html, result, 'traf_unet', /<td>\s*Трафик UNET\.BY(?:[^>]*>){5}([\s\S]*?)<\/td/i, replaceTagsAndSpaces, parseTraffic);
+	
     AnyBalance.setResult(result);
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-internet-unet</id>
+	<id version="2">ab-internet-unet</id>
 	<api flags="no_browser"/>
 	<name>Unet (Белоруссия)</name>
 	<description html="true"><![CDATA[
@@ -16,8 +16,10 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс"/>
+		<counter id="balance" name="Баланс" units=" р"/>
 		<counter id="accnum" name="Номер счёта" type="text"/>
+		<counter id="traf_inet" name="Трафик Интернет" units=" Mb"/>
+		<counter id="traf_unet" name="Трафик UNET.BY" units=" Mb"/>
 	</counters>
 	<keywords></keywords>
 	<type>internet</type>

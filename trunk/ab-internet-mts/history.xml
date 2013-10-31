@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+<change version="39" date="2013-10-31">
+- Добавлена Чита (https://clb.chita.mts.ru/chita/index.php?r=site/login)
+- Исправлен Комсомольск-на-Амуре
+</change>
 <change version="38" date="2013-10-01">
 - Добавлен Саратов (http://stat.saratov.comstar.ru/)
 </change>

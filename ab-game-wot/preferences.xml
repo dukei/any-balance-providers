@@ -1,29 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <EditTextPreference
-		obligatory="true"
+    <ListPreference
+        title="The player's identification method"
+        summary="If you know your ID, use it. Otherwise you can find your ID in your profile link.||The identification method: {@s}\n"
+        key="listPref"
+        defaultValue="nick"
+        entries="Nickname|ID"
+        entryValues="nick|id" />
+    <EditTextPreference 
         key="nick"
-        title="Игровой ник или id" 
-        summary="Ваш ник или id в игре||{@s}\n" 
-        dialogTitle="Ваш ник или id в игре" 
-        negativeButtonText="Отмена" 
-        dialogMessage="Введите ваш игровой ник или id."
+        title="Nickname or ID" 
+        summary="Your nickname or ID||{@s}\n" 
+        dialogTitle="Your nickname or ID" 
+        negativeButtonText="Cancel" 
+        dialogMessage="Enter your nickname or ID"
         positiveButtonText="ОК" 
         inputType="text">
     </EditTextPreference>
-    <EditTextPreference
+    <ListPreference
+        title="Region"
+        summary="Player's region||Region: {@s}\n"
+        key="region"
+        defaultValue="RU"
+        entries="RU|EU|NA|ASIA}KR"
+        entryValues="RU|EU|NA|ASIA}KR" />
+    <EditTextPreference 
         key="tank"
-        title="Танк" 
-        summary="Отслеживаемый танк||{@s}\n" 
-        dialogTitle="Отслеживаемый танк" 
-        negativeButtonText="Отмена" 
-        dialogMessage="Отслеживаемый танк"
+        title="Tank" 
+        summary="Tracked tank||{@s}\n" 
+        dialogTitle="Tracked tank" 
+        negativeButtonText="Cancel" 
+        dialogMessage="Tracked tank"
         positiveButtonText="ОК" 
         inputType="text">
     </EditTextPreference>
-	<ListPreference
-        title="Точность"
-        summary="Количество цифр после запятой для некоторых счетчиков||Точность: {@s}\n"
+    <ListPreference
+        title="Accuracy"
+        summary="The number of digits after the decimal point to some counters||Accuracy: {@s}\n"
         key="accuracy"
         defaultValue="1"
         entries="0|1|2|3"

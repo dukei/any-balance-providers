@@ -1,23 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <EditTextPreference 
-        title="№ лицевого счета" 
-        positiveButtonText="ОК" 
-        summary="||{@s}" 
-        dialogTitle="№ лицевого счета" 
-        negativeButtonText="Отмена" 
-        dialogMessage="Введите 10 цифр номера лицевого счета без разделителей."
-        inputType="number"
-        key="login">
+    <EditTextPreference
+		obligatory="true"
+		title="№ лицевого счета"
+		positiveButtonText="ОК"
+		summary="||{@s}"
+		dialogTitle="№ лицевого счета"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите 10 цифр номера лицевого счета без разделителей."
+		inputType="number"
+		key="login">
     </EditTextPreference>
-    <EditTextPreference 
-        positiveButtonText="ОК"
-        key="password" 
-        dialogTitle="Пароль"
-        negativeButtonText="Отмена"
-        title="Пароль"
-        summary="||***********"
-        dialogMessage="Введите пароль, используемый для входа в личный кабинет Мосэнергосбыт."
-        inputType="textPassword">
+    <EditTextPreference
+		positiveButtonText="ОК"
+		key="password"
+		dialogTitle="Пароль"
+		negativeButtonText="Отмена"
+		title="Пароль"
+		summary="||***********"
+		dialogMessage="Введите пароль, используемый для входа в личный кабинет Мосэнергосбыт."
+		inputType="textPassword">
     </EditTextPreference>
 </PreferenceScreen>

@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="6">ab-internet-sumtel</id>
-	<api flags="no_browser|captcha" />  
+	<id version="7">ab-internet-sumtel</id>
+	<api flags="no_browser" />  
 	<name>Сумма Телеком</name>
-	<description>
-	Получает баланс у федерального интернет провайдера Сумма Телеком, представленного в городах Санкт-Петербург, Нижний Новгород, Тула, Орел, Воронеж, Липецк, Ростов-на-Дону, Тверь, Краснодар, Махачкала, Каспийск.
-	
-	При первом входе в Личный кабинет http://my.sumtel.ru в качестве пароля необходимо указать последние четыре цифры контактного телефона, который Вы указывали при заключении договора.
-	Например, телефон: 8-123-456-78-90, пароль: 7890. Войдите в личный кабинет через браузер, поменяйте пароль на постоянный, и постоянный пароль введите в настройки провайдера.
-	</description>
+	<description html="true"><![CDATA[
+	<p>Получает баланс у федерального интернет провайдера Сумма Телеком, представленного в городах Санкт-Петербург, Нижний Новгород, Тула, Орел, Воронеж, Липецк, Ростов-на-Дону, Тверь, Краснодар, Махачкала, Каспийск.</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>При первом входе в Личный кабинет http://my.sumtel.ru в качестве пароля необходимо указать последние четыре цифры контактного телефона, который Вы указывали при заключении договора.</p>
+	<p>Например, телефон: 8-123-456-78-90, пароль: 7890. Войдите в личный кабинет через браузер, поменяйте пароль на постоянный, и постоянный пароль введите в настройки провайдера.</p>
+	]]></instruction>	
 	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
@@ -17,20 +18,14 @@
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="abon" name="Абонентская плата" units="р"/>
-    <counter id="status" name="Статус" type="text"/>
-    <counter id="fio" name="Владелец" type="text"/>
-	<counter id="acc_num" name="Лицевой счет" type="text"/>
-  </counters>
-  <keywords>
-    sumtel
-  </keywords>
-  <type>
-    internet
-  </type>
-  <country>
-    ru
-  </country>
-</provider>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="abon" name="Абонентская плата" units=" р"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="fio" name="Владелец" type="text"/>
+		<counter id="acc_num" name="Лицевой счет" type="text"/>
+	</counters>
+	<keywords>sumtel</keywords>
+	<type>internet</type>
+	<country>ru</country>
+ </provider>

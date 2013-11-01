@@ -1,34 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="6">ab-cell-tele2-kz</id>
-  <!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
-  <api flags="no_browser" />
-  <name>Теле2 Казахстан</name>
-  <description>
-	Получает значения из личного кабинета Теле2 Казахстан (http://www.tele2.kz/)
-	 
-	Чтобы получить пароль перейдите по ссылке https://iself.tele2.kz/login и введите свой номер телефона в поле "Регистрация", затем нажмите получить пароль.
-  </description>
-  <author>Stark &lt;support@starksoft.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="〒"/>
-	<counter id="internet_trafic" name="Интернет-пакеты" units=" Мб"/>
-    <counter id="fio" name="ФИО" type="text"/>
-  </counters>
-  <keywords>
-    теле2
-  </keywords>
-  <type>
-    cell
-  </type>
-  <country>
-    kz
-  </country>
+	<id version="7">ab-cell-tele2-kz</id>
+	<api flags="no_browser" />
+	<name>Теле2 Казахстан</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе и остатке пакетов из личного кабинета Теле2 Казахстан (http://www.tele2.kz/)</p>
+	]]></description>	
+	<instruction html="true"><![CDATA[
+	<p>Чтобы получить пароль перейдите по ссылке https://iself.tele2.kz/login и введите свой номер телефона в поле "Регистрация", затем нажмите получить пароль.</p>
+	]]></instruction>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" 〒"/>
+		<counter id="internet_trafic" name="Интернет-пакеты" units=" Мб"/>
+		<counter id="fio" name="ФИО" type="text"/>
+	</counters>
+	<keywords>теле2</keywords>
+	<type>cell</type>
+	<country>kz</country>
 </provider>

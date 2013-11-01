@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="5" date="2013-11-01">
+      - Adaptation to the new design
+    </change>
     <change version="4" date="2013-09-30">
       - Added counter: Amount
       - Changed all counters to non-optional

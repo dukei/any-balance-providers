@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<id version="1">ab-money-priorbank</id>
-	<api flags="no_browser"/>
+	<api flags="no_browser|captcha"/>
 	<name>Приорбанк</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию об остатках на картах и счетах Приорбанка http://www.prior.by</p>

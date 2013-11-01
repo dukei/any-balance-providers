@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-bonus-wog-ua</id>
+	<id version="2">ab-bonus-wog-ua</id>
 	<api flags="no_browser"/>
 	<name>WOG Прайд</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе бонусной карты сети АЗС WOG (http://wog.ua/rus/)</p>
+	<p>Предоставляет информацию о балансе бонусной карты сети АЗС WOG (http://wog.ua/)</p>
 	]]></description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
@@ -19,5 +19,5 @@
 	</counters>
 	<keywords></keywords>
 	<type>bonus</type>
-	<country>ru</country>
+	<country>ua</country>
 </provider>

@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="3">ab-municipal-krimenergo</id>
+	<id version="4">ab-municipal-krimenergo</id>
 	<name>Интернет-магазин коммунальных услуг (Мегасофт)</name>
 	<description html="true"><![CDATA[
 	<p>Получает данные в системе Мегасофт (http://www.krymenergo.com/)</p>
-
 	<p>На данный момент поддерживаются: Крымэнерго, Киевэнерго</p>
-
 	<p>Информация берется из личного кабинета https://secure.mega-billing.com/byt/ru/energo</p>
 	]]></description>	
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
@@ -19,7 +17,7 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units="грн"/>
+		<counter id="balance" name="Баланс" units=" грн"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="lastcounter" name="Последние показания счетчика" type="text"/>
 		<counter id="lastpay" name="Последняя оплата" type="text"/>

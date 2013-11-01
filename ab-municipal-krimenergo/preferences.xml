@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
     <EditTextPreference 
+		obligatory="true"
         title="Логин" 
         positiveButtonText="ОК" 
         summary="||{@s}" 
         dialogTitle="Логин" 
         negativeButtonText="Отмена" 
-		obligatory="true"
         dialogMessage="Введите логин в личный кабинет."
         key="login">
     </EditTextPreference>
     <EditTextPreference 
+		obligatory="true"
         positiveButtonText="ОК"
-        obligatory="true"
 		key="password" 
         dialogTitle="Пароль"
         negativeButtonText="Отмена"

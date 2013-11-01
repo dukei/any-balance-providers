@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+<change version="4" date="2013-11-01">
+- Поддержка отрицательного баланса
+</change>
 <change version="3" date="2013-10-22">
 - Улучшенная обработка ошибок
 </change>

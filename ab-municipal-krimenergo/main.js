@@ -35,12 +35,18 @@ function main(){
     }
 	
     var result = {success: true};
-    getParam(html, result, 'acc', /Лицевой счет\s*№\s*(\d+)/i, replaceTagsAndSpaces, html_entity_decode);
+	
+	var balance = getParam(html, null, null, /Задолженность[^>]*"saldo-value"[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	if(balance)
+		getParam(balance*-1, result, 'balance');
+	else
+		getParam(html, result, 'balance', /saldo debit">[\s\S]*?value">([\s\S]*?)</i, replaceTagsAndSpaces, parseBalance);
+	
+	getParam(html, result, 'acc', /Лицевой счет\s*№\s*(\d+)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'fio', /Потребитель[\s\S]*?">([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'lastpay', /Последняя оплата[\s\S]*?>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'lastcounter', /Последние показания счетчика[\s\S]*?>([\s\S]*?)г\./i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'tarif', /Действующий тариф[\s\S]*?>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'balance', /saldo debit">[\s\S]*?value">([\s\S]*?)</i, replaceTagsAndSpaces, parseBalance);
 	
     AnyBalance.setResult(result);
 }

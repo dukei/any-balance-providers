@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+<change version="40" date="2013-11-01">
+- Добавлена Амурская область г. Благовещенск; г. Белогорск (https://clb.amur.mts.ru/cblg/)
+</change>
 <change version="39" date="2013-10-31">
 - Добавлена Чита (https://clb.chita.mts.ru/chita/index.php?r=site/login)
 - Исправлен Комсомольск-на-Амуре

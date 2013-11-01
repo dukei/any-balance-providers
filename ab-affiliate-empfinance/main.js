@@ -20,7 +20,7 @@ function main(){
 
 	AnyBalance.setDefaultCharset('utf-8');
 
-	AnyBalance.trace('Authorizing on '+baseurl+'...');
+	AnyBalance.trace('Authorizing on '+baseurl);
 	var info = AnyBalance.requestPost(baseurl + "login/", {
 		"username": prefs.username,
 		"password": prefs.password,
@@ -30,7 +30,21 @@ function main(){
 	},
 	{	"Accept-Charset": "UTF-8",
 		"Accept-Language": "en-US;q=0.6,en;q=0.4",
-		"User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64)"
+		"User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64)",
+		"Referer": baseurl+"login/"
+	});
+
+	var info = AnyBalance.requestPost(baseurl + "login/", {
+		"username": prefs.username,
+		"password": prefs.password,
+		"login": "2",
+		"referer": "",
+		"h_submit": "1"
+	},
+	{	"Accept-Charset": "UTF-8",
+		"Accept-Language": "en-US;q=0.6,en;q=0.4",
+		"User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64)",
+		"Referer": baseurl+"login/"
 	});
 
 	var error = $('#errHolder', info).text();
@@ -39,7 +53,7 @@ function main(){
 	}
 
 	if(!(matches = info.match(/Total invested/i))){
-		throw new AnyBalance.Error("Incorrect login or password or error getting data.");}
+		throw new AnyBalance.Error("Incorrect login or password or error getting data. "+info);}
 
 	var result = {success: true};
 

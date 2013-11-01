@@ -25,7 +25,7 @@
         key="type" 
         title="Тип получаемой информации"
         summary="||{@s}"
-        entries="Полная|Только баланс"
+        entries="Полная (С капчей)|Только баланс (Без капчи)"
         entryValues="full|balance"
 		defaultValue="full">
     </ListPreference>	

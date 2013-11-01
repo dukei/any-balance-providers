@@ -3,24 +3,25 @@
 */
 
 var g_headers = {
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:21.0) Gecko/20100101 Firefox/21.0',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/30.0.1599.101 Safari/537.36',
 	'Accept': 'application/json, text/plain, */*',
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3',
 	'X-Requested-With': 'XMLHttpRequest',
-	'Content-Type': 'application/json;charset=utf-8',
-	'Referer': 'https://iself.tele2.kz/login',
+	'Content-Type': 'application/json;charset=UTF-8',
 	'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Connection':'keep-alive',
 };
 
 function main(){
     var prefs = AnyBalance.getPreferences();
+	checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(prefs.password, 'Введите пароль!');
 	
     var baseurl = "https://iself.tele2.kz/";
     AnyBalance.setDefaultCharset('utf-8'); 
 	
 	// Значала зачем-то проверяем номер, какую-то куку ставит еще...
-	var json = {msisdn: prefs.login};
+	/*var json = {msisdn: prefs.login};
     var html = AnyBalance.requestPost(baseurl + 'auth/checkMsisdn.json', JSON.stringify(json), g_headers);
     json = getJson(html);
     if(json.oCurrState == '-1')
@@ -28,28 +29,35 @@ function main(){
 
     if(json.oCurrState != '2' && json.oCurrState != '1')
         throw new AnyBalance.Error('К сожалению, ваш номер обслуживается старым кабинетом и требует капчу. Поддержка этого кабинета появится позднее.');
+*/
 
-    json = {msisdn: prefs.login, password: prefs.password};
-    html = AnyBalance.requestPost(baseurl + 'auth/tele2.json', JSON.stringify(json), g_headers); 
+	var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
+
+	var token = getParam(html, null, null, /constant\("csrf_token",\s+['"]([^"']*)/i);
+
+    var json = {msisdn: prefs.login, password: prefs.password, same_origin_token: token};
+    var html = AnyBalance.requestPost(baseurl + 'auth/tele2', JSON.stringify(json), addHeaders({Referer: baseurl + 'login'})); 
 
     if(/"err"/i.test(html)){
         //Если в кабинет войти не получилось, то в первую очередь надо поискать в ответе сервера объяснение ошибки
         var error = getParam(html, null, null, /err":"([\s\S]*?)"/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error);
-
+		
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
 	// Получаем данные о балансе
 	html = AnyBalance.requestGet(baseurl + 'profile');
-
+	
     var result = {success: true};
     getParam(html, result, 'fio', /"profile">[\s\S]*?([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'balance', /class="profile-balance">([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
 	
 	try{
+		token = getParam(html, null, null, /constant\("csrf_token",\s+['"]([^"']*)/i);
+		json = {same_origin_token: token};
 		// Сайт возвращает JSON c доп. балансами, они -то нам и нужны
-		html = AnyBalance.requestPost(baseurl + 'balanceres', '', addHeaders({Referer: baseurl + 'profile'}));
+		html = AnyBalance.requestPost(baseurl + 'balanceres', JSON.stringify(json), addHeaders({Referer: baseurl + 'profile'}));
 		json = getJson(html);
 		var v;
         if(isset(json.returns[0])){ //Ежемесячные

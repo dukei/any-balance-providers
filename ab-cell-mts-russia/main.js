@@ -512,8 +512,10 @@ function mainLK(allowRetry){
              var info = AnyBalance.requestPost(baseurl + '/GoodokServices/GoodokAjaxGetWidgetInfo/', '', g_headers);
              info = JSON.parse(info);
              if(info.MSISDN != prefs.login){  //Автоматом залогинились не на тот номер
-                 AnyBalance.trace("Залогинены на неправильный номер: " + prefs.MSISDN + ", выходим");
-                 html = AnyBalance.requestGet(baseurlLogin + "/amserver/UI/Logout?goto=" + encodeURIComponent(baseurl + '/'), g_headers);
+                 AnyBalance.trace("Залогинены на неправильный номер: " + info.MSISDN + ", выходим");
+                 html = AnyBalance.requestGet(baseurlLogin + "/amserver/UI/Logout", g_headers);
+                 if(isLoggedIn(html))
+                     throw new AnyBalance.Error('Не удаётся выйти из личного кабинета, чтобы зайти под правильным номером. Сайт изменен?');
              }
         }
         

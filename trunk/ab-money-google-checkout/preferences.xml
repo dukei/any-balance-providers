@@ -1,23 +1,25 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <EditTextPreference 
+    <EditTextPreference
+		obligatory="true"
         title="E-mail" 
         positiveButtonText="OK" 
-        summary="||{@s}\n" 
+        summary="||{@s}" 
         dialogTitle="E-mail" 
         negativeButtonText="Cancel" 
-        dialogMessage="Please enter your e-mail"
+        dialogMessage="Please enter your e-mail."
         key="login"
         inputType="textEmailAddress">
     </EditTextPreference>
-    <EditTextPreference 
+    <EditTextPreference
+		obligatory="true"
         positiveButtonText="OK"
         key="password" 
         dialogTitle="Password"
         negativeButtonText="Cancel"
         title="Password"
-        summary="||***********\n"
-        dialogMessage="Please enter your password for Google Checkout"
+        summary="||***********"
+        dialogMessage="Please enter your password for Google Checkout."
         inputType="textPassword">
     </EditTextPreference>
 </PreferenceScreen>

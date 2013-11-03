@@ -269,7 +269,7 @@ function fetchPost(baseurl, html) {
 
 	if (AnyBalance.isAvailable('fio')) {
 		var xhtml = AnyBalance.requestGet(baseurl + 'm/post/index.html', g_headers);
-		getParam(xhtml, result, 'fio', /<div[^>]+class="abonent-name"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+		getParam(xhtml, result, 'fio', /<div[^>]+class="abonent-name"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, capitalFirstLenttersAndDecode);
 
 	}
 	//Возвращаем результат
@@ -289,7 +289,7 @@ function fetchPre(baseurl, html) {
 	var xhtml = getBlock(baseurl + 'c/pre/index.html', html, 'currentTariffLoaderDetails');
 	getParam(xhtml, result, '__tariff', [/<div[^>]+:tariffInfo[^>]*class="current"[^>]*>(?:[\s\S](?!<\/div>))*?<h2[^>]*>([\s\S]*?)<\/h2>/i, /<h2>Текущий тариф\s*([\s\S]*?)\s*<\/h2>/i], replaceTagsAndSpaces, html_entity_decode);
 
-	if (AnyBalance.isAvailable('balance', 'fio')) {
+	if (AnyBalance.isAvailable('balance'/*, 'fio'*/)) {
 		/*xhtml = getBlock(baseurl + 'c/pre/index.html', html, 'balancePreHeadDetails');
 		getParam(xhtml, result, 'balance', /у вас на балансе([\s\S]*)/i, replaceTagsAndSpaces, parseBalance);
 		getParam(xhtml, result, ['currency', 'balance'], /у вас на балансе([\s\S]*)/i, replaceTagsAndSpaces, myParseCurrency);
@@ -309,6 +309,11 @@ function fetchPre(baseurl, html) {
 		xhtml = getBlock(baseurl + 'c/pre/index.html', html, 'bonusesloaderDetails');
 		getBonuses(xhtml, result);
 	}
+	if (AnyBalance.isAvailable('fio')) {
+		var xhtml = AnyBalance.requestGet(baseurl + 'm/pre/index.html', g_headers);
+		getParam(xhtml, result, 'fio', /<div[^>]+class="abonent-name"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, capitalFirstLenttersAndDecode);
+	}
+	
 	//Возвращаем результат
 	AnyBalance.setResult(result);
 }
@@ -347,4 +352,15 @@ function getBonuses(xhtml, result) {
 			}
 		}
 	}
+}
+
+/** Приводим все к единому виду вместо ИВаНов пишем Иванов */
+function capitalFirstLenttersAndDecode(str) {
+	str = html_entity_decode(str+'');
+	var wordSplit = str.toLowerCase().split(' ');
+	var wordCapital = '';
+	for (i = 0; i < wordSplit.length; i++) {
+		wordCapital += wordSplit[i].substring(0, 1).toUpperCase() + wordSplit[i].substring(1) + ' ';
+	}
+	return wordCapital.replace(/^\s+|\s+$/g, '');
 }

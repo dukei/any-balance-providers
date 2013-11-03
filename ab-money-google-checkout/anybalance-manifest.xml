@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-    <id version="3">ab-money-google-checkout</id>
+    <id version="4">ab-money-google-checkout</id>
     <name>Google Wallet (Checkout)</name>
 	<api flags="no_browser"/>
 	<description html="true"><![CDATA[
@@ -17,15 +17,13 @@
 		<history>history.xml</history>
 	</files>
     <counters>
-        <counter id="balance" name="Balance" units="{@currency}"/>
-		<counter id="last_payment" name="Last payment" units="{@currency}"/>
+        <counter id="balance" name="Balance" units=" {@currency}"/>
+		<counter id="last_payment" name="Last payment" units=" {@currency}"/>
 		<counter id="last_payment_date" name="Last payment date" type="time" format="dd/MM/yyyy" />
 		<counter id="fio" name="Name" type="text"/>
 		<counter id="currency" name="Currency" type="text"/>
 		<counter id="login_email" name="E-Mail" type="text"/>
     </counters>
-    <keywords>
-        Google, Play, Android, market, Checkout
-    </keywords>
+    <keywords>Google, Play, Android, market, Checkout, wallet, walet</keywords>
     <type>money</type>
 </provider>

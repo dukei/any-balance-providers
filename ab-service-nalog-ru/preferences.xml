@@ -25,7 +25,6 @@
 		positiveButtonText="ОК"
 		summary="||{@s}"
 		dialogTitle="Отчество"
-		obligatory="true"
 		negativeButtonText="Отмена"
 		dialogMessage="Введите отчество."
 		key="otchestvo">

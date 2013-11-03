@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser|captcha"/>
-	<id version="9">ab-service-nalog-ru</id>
+	<id version="10">ab-service-nalog-ru</id>
 	<name>Проверка задолженности по налогам</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о задолженности по налогам.</p>
 	<p>Информация берется с сайта https://service.nalog.ru/debt/req.do</p>
-
 	<b>Особенности:</b>
 	<ul>
-		<li>Этот провайдер требует версию AnyBalance API 7+, с поддержкой капчи.</li>
+	<li>Этот провайдер требует версию AnyBalance API 7+, с поддержкой капчи.</li>
 	</ul>
 	]]></description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
@@ -24,7 +23,7 @@
 		<counter id="balance" name="Общая сумма задолженности" units=" р"/>
 		<counter id="all" name="Сводка" type="text"/>
 	</counters>
-	<keywords></keywords>
+	<keywords>налоги, долги, пени, пеня</keywords>
 	<type>service</type>
 	<country>ru</country>
 </provider>

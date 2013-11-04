@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="3">ab-money-mts</id>
+  <id version="4">ab-money-mts</id>
+  <api flags="no_browser"/>
   <name>МТС Банк</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем остатке и других параметрах карт и счетов для клиентов МТС Банка (http://www.mtsbank.ru).</p>
@@ -28,6 +29,7 @@
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
+    <js>library.js</js>
     <js>main.js</js>
     <history>history.xml</history>
   </files>

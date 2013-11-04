@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-internet-tele-vox</id>
+  <id version="3">ab-internet-tele-vox</id>
+  <api flags="no_browser"/>
   <name>Телевокс (Благовещенск)</name>
   <description>
     Получает баланс и информацию о тарифном плане для благовещенского интернет-провайдера Телевокс (http://www.tlvx.ru).

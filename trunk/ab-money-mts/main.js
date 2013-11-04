@@ -7,56 +7,6 @@
 Личный кабинет: https://personalbank.ru
 */
 
-function getParam (html, result, param, regexp, replaces, parser) {
-	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
-		return;
-
-	var value = regexp.exec (html);
-	if (value) {
-		value = value[1];
-		if (replaces) {
-			for (var i = 0; i < replaces.length; i += 2) {
-				value = value.replace (replaces[i], replaces[i+1]);
-			}
-		}
-		if (parser)
-			value = parser (value);
-
-    if(param)
-      result[param] = value;
-    else
-      return value
-	}
-}
-
-var replaceTagsAndSpaces = [/\\n/g, ' ', /\[br\]/ig, ' ', /<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
-var replaceFloat = [/\s+/g, '', /,/g, '.'];
-
-function parseBalance(text){
-    var _text = text.replace(/\s+/g, '');
-    var val = getParam(_text, null, null, /(-?\d[\d\.,]*)/, replaceFloat, parseFloat);
-    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
-    return val;
-}
-
-function parseCurrency(text){
-    var _text = text.replace(/\s+/g, '');
-    var val = getParam(_text, null, null, /-?\d[\d\.,]*\s*(\S*)/);
-    AnyBalance.trace('Parsing currency (' + val + ') from: ' + text);
-    return val;
-}
-
-function parseDate(str){
-    var matches = /(\d+)[^\d](\d+)[^\d](\d+)/.exec(str);
-    if(matches){
-          var date = new Date(+matches[3], matches[2]-1, +matches[1]);
-	  var time = date.getTime();
-          AnyBalance.trace('Parsing date ' + date + ' from value: ' + str);
-          return time;
-    }
-    AnyBalance.trace('Failed to parse date from value: ' + str);
-}
-
 function parseStatus(str){
     return getParam(str, null, null, /^([^\(]*)/, replaceTagsAndSpaces);
 }
@@ -125,6 +75,8 @@ function main(){
     }, headers);
 
     var error = getParam(html, null, null, /<BSS_ERROR>\d*\|?([\s\S]*?)<\/BSS_ERROR>/i, replaceTagsAndSpaces, html_entity_decode);
+    if(error && /Вы ошиблись при вводе логина или пароля/i.test(error))
+        throw new AnyBalance.Error(error, null, true);
     if(error)
         throw new AnyBalance.Error(error);
 
@@ -184,7 +136,7 @@ function fetchCard(jsonInfo, html, headers, baseurl){
     if(!table)
         throw new AnyBalance.Error('У вас нет ни одной карты');
 
-    var re = new RegExp('<td[^>]*>([\\d\\*]{4}\\s*[\\d\\*]{4}\\s*\\*{4}\\s*' + (prefs.cardnum ? prefs.cardnum : '\\d{4}') + ')<\\/td>', 'i');
+    var re = new RegExp('<td[^>]*>(' + (prefs.cardnum ? prefs.cardnum : '\\d{4}') + ')<\\/td>', 'i');
 
     var tr;
     table.replace(/<tr[^>]*>([\s\S]*?)<\/tr>/ig, function(str, str1){
@@ -240,12 +192,3 @@ function fetchAccount(jsonInfo, html, headers, baseurl){
     getParam(jsonInfo.USR, result, 'fio', /(.*)/i, replaceTagsAndSpaces);
     AnyBalance.setResult(result);
 }
-
-function html_entity_decode(str)
-{
-    //jd-tech.net
-    var tarea=document.createElement('textarea');
-    tarea.innerHTML = str;
-    return tarea.value;
-}
-

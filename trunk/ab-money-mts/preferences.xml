@@ -6,6 +6,7 @@
         summary="|Введите логин в интернет-банк|{@s}" 
         dialogTitle="Логин" 
         negativeButtonText="Отмена" 
+        obligatory="true"
         dialogMessage="Введите логин для входа в интернет-банк МТС."
         key="login">
     </EditTextPreference>
@@ -16,13 +17,14 @@
         negativeButtonText="Отмена"
         title="Пароль"
         summary="|Введите пароль в интернет-банк|***********"
+        obligatory="true"
         dialogMessage="Введите пароль, используемый для входа в интернет-банк МТС."
         inputType="textPassword">
     </EditTextPreference>
     <ListPreference 
         key="type" 
         title="Банковский продукт"
-        summary="||{@s}\n"
+        summary="||{@s}"
         entries="Карта|Счет"
         entryValues="card|acc"
 	defaultValue="card">

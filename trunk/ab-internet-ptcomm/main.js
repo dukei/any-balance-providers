@@ -10,9 +10,12 @@
 function main(){
     var prefs = AnyBalance.getPreferences();
 
+    checkEmpty(prefs.login, 'Введите логин!');
+    checkEmpty(prefs.password, 'Введите пароль!');
+
     AnyBalance.setDefaultCharset('utf-8');
 
-    var baseurl = "http://client.lanbilling.ptcomm.ru/index.php?";
+    var baseurl = "https://client.lanbilling.ptcomm.ru/index.php?";
 
     var html = AnyBalance.requestPost(baseurl + 'r=site/login', {
         'LoginForm[login]':prefs.login,

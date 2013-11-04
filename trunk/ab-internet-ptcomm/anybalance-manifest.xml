@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-internet-ptcomm</id>
+  <id version="3">ab-internet-ptcomm</id>
+  <api flags="no_browser"/>
   <name>Пенза-Телеком (МТС)</name>
   <description>
     Получает баланс и информацию о тарифном плане для пензенского интернет-провайдера Пенза-Телеком, а ныне МТС (http://www.penza.mts.ru/mts_stream).
 
-    Информация берется из личного кабинета http://client.lanbilling.ptcomm.ru/ (для физических лиц).
+    Информация берется из личного кабинета https://client.lanbilling.ptcomm.ru/ (для физических лиц).
   </description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <files>

@@ -34,7 +34,7 @@ function main(){
 		"Referer": baseurl+"login/"
 	});
 
-	var info = AnyBalance.requestPost(baseurl + "login/", {
+	var info = AnyBalance.requestPost(baseurl + "template/light", {
 		"username": prefs.username,
 		"password": prefs.password,
 		"login": "2",

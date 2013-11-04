@@ -16,6 +16,9 @@ var g_headers = {
 
 function main(){
     var prefs = AnyBalance.getPreferences();
+
+    checkEmpty(prefs.login, 'Введите номер карты!');
+    checkEmpty(prefs.password, 'Введите PIN-код для входа в личный кабинет!');
     
     var baseurl = "http://www.eldorado.ru/";
 
@@ -31,18 +34,32 @@ function main(){
     }
 
     html = AnyBalance.requestGet(baseurl + '_ajax/getUserCardBonus.php', addHeaders({Referer: baseurl + 'personal/?loyalty', 'X-Requested-With': 'XMLHttpRequest'}));
+    json = getJson(html);
+
+    if(!json.result)
+        throw new AnyBalance.Error('Не удаётся найти бонусы. Сайт изменен?');
 
     var result = {success: true};
 
-    getParam(html, result, 'balance', /(\d+) активных/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'reserv', /(\d+) неактивных/i, replaceFloat, parseBalance);
+    getParam('' + json.result.total, result, 'balance', null, null, parseBalance);
+    getParam('' + json.result.reserved, result, 'reserv', null, null, parseBalance);
+    getParam('' + json.result.inactive, result, 'inactive', null, null, parseBalance);
+
 
     if(AnyBalance.isAvailable('cardnum', 'phone', 'userName')){
-        html = AnyBalance.requestGet(baseurl + 'personal/club/enter/', g_headers);
+        html = AnyBalance.requestGet(baseurl + 'personal/club/form/', g_headers);
 
-        getParam(html, result, 'cardnum', /Номер карты:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-        getParam(html, result, 'userName', /ФИО владельца:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-        getParam(html, result, 'phone', /Телефон:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+        getParam(html, result, 'cardnum', /Карта №([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+    
+        var aggragate_join_space = create_aggregate_join(' ');
+
+        sumParam(html, result, 'userName', /<input[^>]+name="CLUB_USER_FORM_NAME_LAST"[^>]*value="([^"]*)/i, null, html_entity_decode, aggragate_join_space);
+        sumParam(html, result, 'userName', /<input[^>]+name="CLUB_USER_FORM_NAME_FIRST"[^>]*value="([^"]*)/i, null, html_entity_decode, aggragate_join_space);
+        sumParam(html, result, 'userName', /<input[^>]+name="CLUB_USER_FORM_NAMEMIDDLE"[^>]*value="([^"]*)/i, null, html_entity_decode, aggragate_join_space);
+
+        sumParam(html, result, 'phone', /<span[^>]+class=['"]phone_country['"][^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode, aggragate_join_space);
+        sumParam(html, result, 'phone', /<input[^>]+name="CLUB_USER_FORM_MOBPHONE_CODE"[^>]*value="([^"]*)/i, null, html_entity_decode, aggragate_join_space);
+        sumParam(html, result, 'phone', /<input[^>]+name="CLUB_USER_FORM_MOBPHONE_NUMBER"[^>]*value="([^"]*)/i, null, html_entity_decode, aggragate_join_space);
     }
 
     AnyBalance.setResult(result);

@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+<change version="41" date="2013-11-04">
+- Исправлена Пенза в связи с изменениями в ЛК
+</change>
 <change version="40" date="2013-11-01">
 - Добавлена Амурская область г. Благовещенск; г. Белогорск (https://clb.amur.mts.ru/cblg/)
 </change>

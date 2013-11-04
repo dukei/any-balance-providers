@@ -7,17 +7,15 @@
 Личный кабинет: https://www.tele-vox.ru
 */
 
-function parseTrafficGb(str){
-  var val = getParam(str.replace(/\s+/g, ''), null, null, /(-?\d[\d\s.,]*)/, replaceFloat, parseBalance);
-  if(isset(val)){
-      var ret = parseFloat((val/1024/1024/1024).toFixed(2));
-      AnyBalance.trace('Parsed traffic ' + ret + 'Gb from ' + str);
-      return ret;
-  }
+function parseTrafficGbMy(val){
+    return parseTrafficGb(val, 'b');
 }
 
 function main(){
     var prefs = AnyBalance.getPreferences();
+
+    checkEmpty(prefs.login, 'Введите логин!');
+    checkEmpty(prefs.password, 'Введите пароль!');
 
     AnyBalance.setDefaultCharset('utf-8');
 
@@ -44,16 +42,16 @@ function main(){
     if(!contractId)
         throw new AnyBalance.Error("Не удалось найти номер контракта. Личный кабинет изменился или проблемы на сайте.");
 
-    html = AnyBalance.requestGet(baseurl + "?action=ShowBalance&mid=contract&contractId="+contractId);
+    html = AnyBalance.requestGet(baseurl + "?action=GetBalance&mid=0&module=contract&contractId="+contractId);
 
     var result = {success: true};
 
     getParam(html, result, 'balance', /Исходящий остаток на конец месяца[\s\S]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'prihod', /Приход за месяц \(всего\)[\s\S]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 
-    getParam(html, result, 'licschet', /Договор №[\s\S]*?<a[^>]*>([^<]*)/i, replaceTagsAndSpaces);
+    getParam(html, result, 'licschet', /Договор №([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 
-    html = AnyBalance.requestGet(baseurl + "?action=ChangeTariff&mid=contract&contractId="+contractId);
+    html = AnyBalance.requestGet(baseurl + "?action=ChangeTariff&mid=0&module=contract&contractId="+contractId);
     //Тарифный план в последней строчке таблицы
     getParam(html, result, '__tariff', /Тарифный план[\s\S]*<tr[^>]*>\s*<td[^>]*>\s*<font[^>]*>([^<]*?)<\/font>/i, replaceTagsAndSpaces);
 
@@ -61,8 +59,8 @@ function main(){
 
     if(AnyBalance.isAvailable('trafficIn','trafficOut')){
         html = AnyBalance.requestGet(baseurl + "?action=ShowLoginsBalance&mid=1&module=dialup&contractId=" + contractId);
-        getParam(html, result, 'trafficIn', /Итого:(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTrafficGb);
-        getParam(html, result, 'trafficOut', /Итого:(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTrafficGb);
+        getParam(html, result, 'trafficIn', /Итого:(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTrafficGbMy);
+        getParam(html, result, 'trafficOut', /Итого:(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTrafficGbMy);
     }
 
     AnyBalance.setResult(result);

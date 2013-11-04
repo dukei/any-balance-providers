@@ -7,6 +7,7 @@
         dialogTitle="Номер договора" 
         negativeButtonText="Отмена" 
         dialogMessage="Введите номер договора - логин в личный кабинет"
+        obligatory="true"
         inputType="number"
         key="login">
     </EditTextPreference>
@@ -17,6 +18,7 @@
         negativeButtonText="Отмена"
         title="Пароль"
         summary="||***********"
+        obligatory="true"
         dialogMessage="Введите пароль, используемый для входа в личный кабинет"
         inputType="textPassword">
     </EditTextPreference>

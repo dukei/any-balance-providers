@@ -405,11 +405,11 @@ function main(){
 			
 		if(AnyBalance.isAvailable('next_perc'))
 			var np = Math.floor(win_percent) + 1;
-			result['next_perc'] = Math.floor((np * result['battles'] - 100 * result['wins']) / (100 - np) + 1);
+			result['next_perc'] = Math.floor((np * pinfo.data[id].statistics.all.battles - 100 * pinfo.data[id].statistics.all.wins) / (100 - np) + 1);
 			
 		if(AnyBalance.isAvailable('next_perc_05'))
 			var np = Math.floor(win_percent + 0.5) + 0.5;
-			result['next_perc_05'] = Math.floor((np * result['battles'] - 100 * result['wins']) / (100 - np) + 1);
+			result['next_perc_05'] = Math.floor((np * pinfo.data[id].statistics.all.battles - 100 * pinfo.data[id].statistics.all.wins) / (100 - np) + 1);
 			
 	if(AnyBalance.isAvailable('er', 'er_armor', 'wn6', 'er_xvm', 'wn6_xvm'))
 		var battles = pinfo.data[id].statistics.all.battles;

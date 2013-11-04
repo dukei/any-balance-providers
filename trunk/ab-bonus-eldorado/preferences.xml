@@ -6,6 +6,7 @@
         summary="||{@s}" 
         dialogTitle="Номер карты" 
         negativeButtonText="Отмена" 
+        obligatory="true"
         dialogMessage="Введите номер карты"
         inputType="number"
         key="login">
@@ -16,6 +17,7 @@
         dialogTitle="PIN-код"
         negativeButtonText="Отмена"
         title="PIN-код"
+        obligatory="true"
         summary="||***********"
         dialogMessage="Введите PIN-код, используемый для входа в личный кабинет."
         inputType="numberPassword">

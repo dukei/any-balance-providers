@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+<change version="4" date="2013-11-05">
+- Исправлена ошибка в подсчетах остатка минут и трафика (Stark)
+</change>
 <change version="3" date="2013-10-22">
 - Переработано отображение остатка минут и трафика (Stark)
 </change>

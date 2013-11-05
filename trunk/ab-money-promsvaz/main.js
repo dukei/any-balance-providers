@@ -84,6 +84,9 @@ function main(){
 		throw new AnyBalance.Error(error);	
 	html = AnyBalance.requestGet(baseurl + '/n/Main/Home.aspx', g_headers);
 
+	if(/KeyAuth/i.test(html))
+		throw new AnyBalance.Error("Для входа в интернет-банк требуются одноразовые пароли. Зайдите в интернет-банк с компьютера и отключите в Настройках требование одноразовых паролей при входе. Это безопасно, для операций по переводу денег пароли всё равно будут требоваться.");	
+	
     if(prefs.type == 'card'){
         fetchCard(baseurl, html);
     }else if(prefs.type == 'dep'){

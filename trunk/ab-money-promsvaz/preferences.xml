@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <EditTextPreference 
+	<EditTextPreference
 		obligatory="true"
-        title="Логин" 
-        positiveButtonText="ОК" 
-        summary="Номер клиента или псевдоним||{@s}\n" 
-        dialogTitle="Логин" 
-        negativeButtonText="Отмена" 
-        dialogMessage="Введите Номер клиента или псевдоним для входа в систему Промсвязьбанк интернет-банк."
-        key="login">
-    </EditTextPreference>
-    <EditTextPreference
+		title="Логин"
+		positiveButtonText="ОК"
+		summary="Номер клиента или псевдоним||{@s}\n"
+		dialogTitle="Логин"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите Номер клиента или псевдоним для входа в систему Промсвязьбанк интернет-банк."
+		key="login">
+	</EditTextPreference>
+	<EditTextPreference
 		obligatory="true"
 		positiveButtonText="ОК"
 		key="password"

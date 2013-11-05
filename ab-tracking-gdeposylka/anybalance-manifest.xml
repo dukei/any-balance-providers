@@ -1,29 +1,29 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-tracking-gdeposylka</id>
-  <name>Где посылка</name>
+	<id version="2">ab-tracking-gdeposylka</id>
+	<api flags="no_browser"/>
+	<name>Где посылка</name>
 	<description html="true"><![CDATA[
 	<p>Отслеживает почтовое отправление с помощью сервиса http://gdeposylka.ru.</p>
 	<p>ГдеПосылка.ру - это универсальный сервис для отслеживания посылок, который позволяет отслеживать все Ваши посылки.</p>  
 	<p>Сервис уже умеет полноценно отслеживать РПО (регистрируемые почтовые отправления) на Почте США, Почте Китая, Почте Гонконга, Почте России, Почте Украины и Почте Казахстана, а также отображать путь прохождения посылки на карте.</p> 
 	<p>Частично поддерживается отслеживание почтовых отправлений из Германии, Великобритании, Сингапура, Тайваня, Японии, Польши, Таиланда, Австрии, Франции, Кореи.</p>     
 	]]></description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <js>main.js</js>
-    <preferences>preferences.xml</preferences>
-  </files>
-  <counters>
-    <counter id="fulltext" name="Сводка" type="html"/>
-    <counter id="date" name="Дата" type="time"/>
-    <counter id="status" name="Статус" type="text"/>
-    <counter id="days" name="Время в пути" units="д"/>
-  </counters>
-  <keywords>
-    Почтовое отправление, почта России
-  </keywords>
-  <type>
-    tracking, post
-  </type>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="fulltext" name="Сводка" type="html"/>
+		<counter id="date" name="Дата" type="time" format="dd/MM/yyyy"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="days" name="Время в пути" units=" д"/>
+	</counters>
+	<keywords>Почтовое отправление, почта России</keywords>
+	<type>tracking, post</type>
 </provider>

@@ -1,33 +1,6 @@
 /**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Статус почтового отправления с сайта gdeposylka.ru
-
-Сайт оператора: http://gdeposylka.ru
-Личный кабинет: http://gdeposylka.ru
 */
-
-function getParam (html, result, param, regexp, replaces, parser) {
-	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
-		return;
-
-	var value = regexp.exec (html);
-	if (value) {
-		value = value[1];
-		if (replaces) {
-			for (var i = 0; i < replaces.length; i += 2) {
-				value = value.replace (replaces[i], replaces[i+1]);
-			}
-		}
-		if (parser)
-			value = parser (value);
-
-    if(param)
-      result[param] = value;
-    else
-      return value
-	}
-}
 
 function numSize(num, size){
   var str = num + '';
@@ -44,60 +17,29 @@ function getDateString(dt){
 	return numSize(dt.getDate(), 2) + '/' + numSize(dt.getMonth()+1, 2) + '/' + dt.getFullYear() + " " + dt.getHours() + ':' + dt.getMinutes();
 }
 
-function parseDate(str){
-	AnyBalance.trace('Parsing date: ' + str);
-  var matches = /(\d+)[^\d](\d+)[^\d](\d+)\s+(?:(\d+):(\d+))?/.exec(str);
-  var time = 0;
-  if(matches){
-	time = (new Date(+matches[3], matches[2]-1, +matches[1], +matches[4], +matches[5])).getTime();
-  }
-  return time;
-}
-
-var replaceTagsAndSpaces = [/<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, ''];
-var replaceFloat = [/\s+/g, '', /,/g, '.'];
-
 function main(){
-	AnyBalance.trace('Connecting to gdeposylka...');
-	
 	var prefs = AnyBalance.getPreferences();
-	var id = prefs.track_id; //Код отправления, введенный пользователем
-	var origin = prefs.track_origin; //Тип отправления
 
 	var baseurl = "http://gdeposylka.ru/";
-	var html = AnyBalance.requestPost(baseurl);
-	var token = getParam(html, null, null, /name="token" value="([^"]*)"/i);
-	
-	var html = AnyBalance.requestPost(baseurl, {
-		token: token,
-		track_origin: origin,
-		track_id: id
-	});
-	
-	var error = getParam(html, null, null, /<div class="errorBox"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
-	if(error)
-		throw new AnyBalance.Error(error);
-	error = getParam(html, null, null, /<span class="error"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+	var html = AnyBalance.requestGet(baseurl + prefs.track_id);
+
+	var error = getParam(html, null, null, [/<div class="errorBox"[^>]*>([\s\S]*?)<\/div>/i, /<span class="error"[^>]*>([\s\S]*?)<\/span>/i], replaceTagsAndSpaces);
 	if(error)
 		throw new AnyBalance.Error(error);
 	
 	var result = {success: true};
+	var days = getParam(html, null, null, /"parcelin-days"(?:[^>]*>){1}([^<\|]*)/i, replaceTagsAndSpaces, parseBalance);
 	
-	AnyBalance.trace('trying to find status');
-	var table = getParam(html, null, null, /<td\s+class="infopane"([\s\S]*?)<\/td>/i);
+	var table = getParam(html, null, null, /class="parcelin-table"([\s\S]*?)<\/table>/i);
 	if(!table)
 		throw new AnyBalance.Error("Не удалось найти статус посылки, возможно, из-за изменений на сайте");
 
-	var status = getParam(table, null, null, /Статус:.*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
-	var date = getParam(table, null, null, /Дата:.*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseDate);
-	var days = getParam(table, null, null, /Время в пути:\s*(\d+)/i, null, parseFloat);
-
-	if(AnyBalance.isAvailable('status'))
-		result.status = status;
-	if(AnyBalance.isAvailable('date'))
-		result.date = date;
-	if(AnyBalance.isAvailable('days'))
-		result.days = days;
+	var status = getParam(table, null, null, /parcel-info_mod"[^>]*>([^<]*)/i, replaceTagsAndSpaces);
+	var date = getParam(table, null, null, /parcelin-received-date"[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseDateMoment);
+	
+	getParam(status, result, 'status');
+	getParam(date, result, 'date');
+	getParam(days, result, 'days');
 
 	if(AnyBalance.isAvailable('fulltext')){
 		result.fulltext = '<b>' + status + '</b><br/>\n' + 
@@ -105,4 +47,11 @@ function main(){
 	}
 
 	AnyBalance.setResult(result);
+}
+
+// Парсит дату из такого вида в мс 27 июля
+function parseDateMoment(str){
+	var year = new Date().getFullYear()
+	AnyBalance.trace('Trying to parse date from ' + str);
+	return getParam(str, null, null, null, [replaceTagsAndSpaces, /январ(?:я|ь)/i, '.01.'+year, /феврал(?:я|ь)/i, '.02.'+year, /марта|март/i, '.03.'+year, /апрел(?:я|ь)/i, '.04.'+year, /ма(?:я|й)/i, '.05.'+year, /июн(?:я|ь)/i, '.06.'+year, /июл(?:я|ь)/i, '.07.'+year, /августа|август/i, '.08.'+year, /сентябр(?:я|ь)/i, '.09.'+year, /октябр(?:я|ь)/i, '.10.'+year, /ноябр(?:я|ь)/i, '.11.'+year, /декабр(?:я|ь)/i, '.12.'+year, /\s/g, ''], parseDate);
 }

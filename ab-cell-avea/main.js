@@ -77,7 +77,7 @@ function main() {
 				var curr = bonusRows[i];
 				var optionName = getParam(curr, null, null, /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\//i);
 				// Трафик
-				if(/Yikilan Paket \d+GB Data/i.test(optionName)) {
+				if(/Yikilan Paket \d+\s*GB Data/i.test(optionName)) {
 					getParam(curr, result, 'traf', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
 				// SMS 
 				} else if(/Yikilan Paket Her Yone \d+ SMS/i.test(optionName)) {
@@ -95,7 +95,7 @@ function main() {
 	} else {
 		html = AnyBalance.requestGet(baseurl + 'mps/portal?cmd=guncelKullanim&lang=tr&pagemenu=faturaislemleri.guncelfatura', g_headers);
 		
-		getParam(html, result, '__tariff', /Tariff:(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+		getParam(html, result, '__tariff', /Tarife:(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 		getParam(html, result, 'fatura', /<\s*b\s*>\s*G&uuml;ncel Fatura(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, 'bill_date', /<\s*b\s*>\s*Fatura Kesim Tarihi(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, parseDate);
 

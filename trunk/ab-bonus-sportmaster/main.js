@@ -1,16 +1,13 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Данные по бонусной карте Спортмастер
-
-Сайт оператора: http://sportmaster.ru/
-Личный кабинет: http://www.sportmaster.ru/personal/bonus.php
 */
 
 function main(){
     var prefs = AnyBalance.getPreferences();
 
     if(prefs.password){
+		checkEmpty(prefs.login, 'Введите логин!');
+		
         AnyBalance.trace('Введен пароль - получаем данные из личного кабинета');
 
         var baseurl = "http://www.sportmaster.ru/personal/bonus.php?login=yes";
@@ -23,15 +20,19 @@ function main(){
         });
         
         var error = getParam(html, null, null, /<font[^>]*class=['"]errortext['"][^>]*>([\s\S]*?)<\/font>/i, replaceTagsAndSpaces, html_entity_decode);
-        if(error)
-            throw new AnyBalance.Error(error);
+        if(error) {
+			if(/Неверный логин или пароль/i.test(error))
+				throw new AnyBalance.Error(error, null, true);
+			
+			throw new AnyBalance.Error(error);
+		}
         
         var result = {success: true};
-        
-        getParam(html, result, 'cardnum', /Номер бонусной карты:[\s\S]*?>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-        getParam(html, result, '__tariff', /Номер бонусной карты:[\s\S]*?>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-        getParam(html, result, 'balance', /Доступно средств:[\s\S]*?>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-    }else{
+        //getParam(html, result, 'cardnum', /Номер бонусной карты:[\s\S]*?>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+		getParam(html, result, '__tariff', /Уровень вашей бонусной программы:[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+        getParam(html, result, 'balance', /id='mybBonus'[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+    } else {
+		throw new AnyBalance.Error("Спортмастер ввел подтверждение входа по смс, поэтому получение баланса работает только при вводе логина и пароля.");
         AnyBalance.trace('Пароль не введен - получаем данные по номеру карты');
 
         var baseurl = "http://www.sportmaster.ru/club-program/";

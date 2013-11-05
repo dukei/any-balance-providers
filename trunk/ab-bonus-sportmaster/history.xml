@@ -1,15 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-    <change version="5" date="2013-07-09">
-      - Возможность задать тип карты в настройках
-    </change>
-    <change version="4" date="2013-07-04">
-      - Поддержка изменений на сайте
-    </change>
-    <change version="3" date="2013-05-22">
-      - Поддержка изменений на сайте
-    </change>
-    <change version="2" date="2013-01-07">
-      - Получение баланса только по номеру карты, без пароля
-    </change>
+<change version="6" date="2013-11-05">
+- Поддержка изменений на сайте
+</change>
+<change version="5" date="2013-07-09">
+- Возможность задать тип карты в настройках
+</change>
+<change version="4" date="2013-07-04">
+- Поддержка изменений на сайте
+</change>
+<change version="3" date="2013-05-22">
+- Поддержка изменений на сайте
+</change>
+<change version="2" date="2013-01-07">
+- Получение баланса только по номеру карты, без пароля
+</change>
 </history>

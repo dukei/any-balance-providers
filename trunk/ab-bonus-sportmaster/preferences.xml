@@ -1,30 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <EditTextPreference 
-        title="№ карты или логин" 
-        positiveButtonText="ОК" 
-        summary="||{@s}" 
-        dialogTitle="№ карты или логин" 
-        negativeButtonText="Отмена" 
-        dialogMessage="Введите № карты или логин. Если вы введете номер карты, то пароль вводить необязательно."
-        key="login">
-    </EditTextPreference>
-    <EditTextPreference 
-        positiveButtonText="ОК"
-        key="password" 
-        dialogTitle="Пароль"
-        negativeButtonText="Отмена"
-        title="Пароль"
-        summary="|Не требуется, если введен № карты|***********"
-        dialogMessage="Введите пароль, используемый для входа в личный кабинет. Если вы ввели номер карты, то пароль вводить необязательно."
-        inputType="textPassword">
-    </EditTextPreference>
-    <ListPreference 
-        key="type" 
-        title="Тип карты"
-        summary="|Автоматически|{@s}"
-        entries="Автоматически|Синяя карта|Серебряная карта|Золотая карта"
-        entryValues="|300|301|302"
-	defaultValue="">
-    </ListPreference>
+    <EditTextPreference
+		obligatory="true"
+		title="№ карты или логин"
+		positiveButtonText="ОК"
+		summary="||{@s}"
+		dialogTitle="№ карты или логин"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите № карты или логин. Если вы введете номер карты, то пароль вводить необязательно."
+		key="login">
+	</EditTextPreference>
+	<EditTextPreference
+		positiveButtonText="ОК"
+		key="password"
+		dialogTitle="Пароль"
+		negativeButtonText="Отмена"
+		title="Пароль"
+		summary="|Не требуется, если введен № карты|***********"
+		dialogMessage="Введите пароль, используемый для входа в личный кабинет. Если вы ввели номер карты, то пароль вводить необязательно."
+		inputType="textPassword">
+	</EditTextPreference>
+    <ListPreference
+		key="type"
+		title="Тип карты"
+		summary="|Автоматически|{@s}"
+		entries="Автоматически|Синяя карта|Серебряная карта|Золотая карта"
+		entryValues="|300|301|302"
+		defaultValue="">
+	</ListPreference>
 </PreferenceScreen>

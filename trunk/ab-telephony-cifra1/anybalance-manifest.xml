@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-telephony-cifra1</id>
+	<api flags="no_browser"/>
+	<name>Цифра Один (Телефония)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе, 
+	
+	Получает баланс и информацию о тарифном плане для российского интернет-провайдера Цифра Один (http://cifra1.ru).
+	
+	бонусных баллах, использованных минутах на локальные, мобильные и любимые номера, расходах, статусе блокировки, кредите, номере лицевого счета, ежемесячой плате.
+	</p>
+	<p>Информация берется из личного кабинета</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="acc_num" name="Лицевой счёт" type="text"/>
+	</counters>
+	<keywords>телефон 495</keywords>
+	<type>telephony</type>
+	<country>ru</country>
+</provider>

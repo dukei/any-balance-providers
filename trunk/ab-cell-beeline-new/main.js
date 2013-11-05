@@ -268,7 +268,7 @@ function fetchPost(baseurl, html) {
 	}
 
 	if (AnyBalance.isAvailable('fio')) {
-		var xhtml = AnyBalance.requestGet(baseurl + 'm/post/index.html', g_headers);
+		xhtml = AnyBalance.requestGet(baseurl + 'm/post/index.html', g_headers);
 		getParam(xhtml, result, 'fio', /<div[^>]+class="abonent-name"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, capitalFirstLenttersAndDecode);
 
 	}
@@ -310,7 +310,7 @@ function fetchPre(baseurl, html) {
 		getBonuses(xhtml, result);
 	}
 	if (AnyBalance.isAvailable('fio')) {
-		var xhtml = AnyBalance.requestGet(baseurl + 'm/pre/index.html', g_headers);
+		xhtml = AnyBalance.requestGet(baseurl + 'm/pre/index.html', g_headers);
 		getParam(xhtml, result, 'fio', /<div[^>]+class="abonent-name"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, capitalFirstLenttersAndDecode);
 	}
 	
@@ -319,7 +319,7 @@ function fetchPre(baseurl, html) {
 }
 
 function isAvailableBonuses() {
-	return AnyBalance.isAvailable('sms_left', 'mms_left', 'rub_bonus', 'rub_opros', 'min_local', 'min_bi');
+	return AnyBalance.isAvailable('sms_left', 'mms_left', 'rub_bonus', 'rub_opros', 'min_local', 'min_bi', 'min_local_clear');
 }
 
 function getBonuses(xhtml, result) {
@@ -345,8 +345,9 @@ function getBonuses(xhtml, result) {
 			} else if (/Секунд БОНУС-2|Баланс бесплатных секунд-промо/i.test(name)) {
 				sumParam(services[i], result, 'min_local', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 			} else if (/минут в месяц|мин\./i.test(name)) {
-				var minutes = 60 * getParam(services[i], null, null, /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-				sumParam(minutes, result, 'min_local', null, null, null, aggregate_sum);
+				var minutes = getParam(services[i], null, null, /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+				sumParam(60 * minutes, result, 'min_local', null, null, null, aggregate_sum);
+				sumParam(minutes, result, 'min_local_clear', null, null, null, aggregate_sum);
 			} else {
 				AnyBalance.trace('Неизвестная опция: ' + bonus_name + ' ' + services[i]);
 			}

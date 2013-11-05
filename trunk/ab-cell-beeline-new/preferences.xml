@@ -1,34 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <EditTextPreference 
-        title="Номер телефона/логин" 
-        positiveButtonText="ОК" 
-        summary="|Номер телефона (10 цифр) или логин|{@s}" 
-        dialogTitle="Номер телефона или логин" 
-        negativeButtonText="Отмена" 
-        dialogMessage="Введите логин или номер Вашего телефона для входа в личный кабинет (10 цифр), например 9031234567"
-        obligatory="true"
-        key="login">
-    </EditTextPreference>
-    <EditTextPreference 
-        positiveButtonText="ОК"
-        key="password" 
-        dialogTitle="Пароль"
-        negativeButtonText="Отмена"
-        title="Пароль"
-        summary="||***********"
-        dialogMessage="Введите пароль, используемый для входа в личный кабинет. Если Вы не знаете пароль, наберите *110*9# со своего мобильного телефона для получения логина и пароля."
-        obligatory="true"
-        inputType="textPassword">
-    </EditTextPreference>
-    <EditTextPreference 
-        title="Доп. номер телефона" 
-        positiveButtonText="ОК" 
-        summary="|Автоматически|{@s}" 
-        dialogTitle="Доп. номер телефона" 
-        negativeButtonText="Отмена" 
-        dialogMessage="Если к вашему договору присоединено несколько номеров, вы можете ввести последние цифры нужного номера, чтобы получить информацию именно по нему. Не вводите ничего, если хотите получить информацию по первому номеру."
-        inputType="number"
-        key="phone">
-    </EditTextPreference>
+	<EditTextPreference
+		obligatory="true"
+		title="Номер телефона/логин"
+		positiveButtonText="ОК"
+		summary="|Номер телефона (10 цифр) или логин|{@s}"
+		dialogTitle="Номер телефона или логин"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите логин или номер Вашего телефона для входа в личный кабинет (10 цифр), например 9031234567"
+		key="login">
+	</EditTextPreference>
+	<EditTextPreference
+		obligatory="true"
+		positiveButtonText="ОК"
+		key="password"
+		dialogTitle="Пароль"
+		negativeButtonText="Отмена"
+		title="Пароль"
+		summary="||***********"
+		dialogMessage="Введите пароль, используемый для входа в личный кабинет. Если Вы не знаете пароль, наберите *110*9# со своего мобильного телефона для получения логина и пароля."
+		obligatory="true"
+		inputType="textPassword">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Доп. номер телефона"
+		positiveButtonText="ОК"
+		summary="|Автоматически|{@s}"
+		dialogTitle="Доп. номер телефона"
+		negativeButtonText="Отмена"
+		dialogMessage="Если к вашему договору присоединено несколько номеров, вы можете ввести последние цифры нужного номера, чтобы получить информацию именно по нему. Не вводите ничего, если хотите получить информацию по первому номеру."
+		inputType="number"
+		key="phone">
+	</EditTextPreference>
 </PreferenceScreen>

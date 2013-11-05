@@ -1,23 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="23">ab-cell-beeline-new</id>
+	<id version="24">ab-cell-beeline-new</id>
 	<name>Билайн (новый кабинет)</name>
 	<api flags="no_browser" min_level="5"/>
 	<description html="true"><![CDATA[
-	<p>Предоставляет  информацию о балансе и тарифном плане для пользователей сотового оператора ""Билайн"" (http://beeline.ru).</p>   
+	<p>Предоставляет  информацию о балансе и тарифном плане для пользователей сотового оператора "Билайн" (http://beeline.ru).</p>   
 	<p> Информация берется из нового личного кабинета (http://my.beeline.ru).</p>
-	<b>ВНИМАНИЕ!</b> Если у вас логин и пароль от старого личного кабинета 
-	https://uslugi.beeline.ru, используйте провайдер ""Билайн"" (старый кабинет).
+	<b>ВНИМАНИЕ!</b> Если у вас логин и пароль от старого личного кабинета https://uslugi.beeline.ru, используйте провайдер "Билайн" (старый кабинет).
 	]]></description>
 	<instruction html="true"><![CDATA[
 	<p> Как получить или сменить пароль:</p>
 	<ol>
-		<li>Со своего мобильного телефона наберите номер *110*9#.</li>    
-	<li>Получите SMS с логином и ВРЕМЕННЫМ паролем в кабинет.</li>     
+	<li>Со своего мобильного телефона наберите номер *110*9#.</li>
+	<li>Получите SMS с логином и ВРЕМЕННЫМ паролем в кабинет.</li>
 	<li>Войдите в кабинет https://my.beeline.ru с помощью этих логина и пароля.</li>
-		<li>Смените пароль на ПОСТОЯННЫЙ.</li>
-		<li>Введите логин и ПОСТОЯННЫЙ пароль в настройки провайдера.</li>
-	<br>
+	<li>Смените пароль на ПОСТОЯННЫЙ.</li>
+	<li>Введите логин и ПОСТОЯННЫЙ пароль в настройки провайдера.</li><br></ol>
 	<small>Если данные об оставшихся SMS, MMS, минутах и трафике не отображаются, обратитесь к автору провайдера.</small>
 	]]></instruction>	
 	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
@@ -38,6 +36,7 @@
 		<counter id="rub_bonus" name="Рублей БОНУС" units=" руб"/>
 		<counter id="min_bi" name="Минуты на Билайн" type="time_interval" format="{@H}:{@min}:{@sec}"/>
 		<counter id="min_local" name="Минуты на местные номера" type="time_interval" format="{@H}:{@min}:{@sec}"/>
+		<counter id="min_local_clear" name="Минуты на местные номера (как в лк)" units=" мин"/>
 		<counter id="rub_opros" name="Рублей за участие в опросе" units=" руб"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="phone" name="Телефон" type="text"/>

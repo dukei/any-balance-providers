@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
     <EditTextPreference
-        title="Логин"
-		obligatory="true"
+        obligatory="true"
+		title="Логин"
         positiveButtonText="ОК"
         summary="Номер телефона (10 цифр)||{@s}\n"
         dialogTitle="Номер телефона"
@@ -18,7 +18,7 @@
         dialogTitle="Пароль"
         negativeButtonText="Отмена"
         title="Пароль"
-        summary="Пароль для входа в ИССА||***********\n"
+        summary="Пароль для входа в ИССА||***********"
         dialogMessage="Введите пароль, используемый для входа в ИССА"
         inputType="textPassword">
     </EditTextPreference>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-service-car-online</id>
+	<api flags="no_browser"/>
+	<name>Car-online.ru</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию об аккаунте в системе Car-online.ru.</p>
+	<p>Информация берется из личного кабинета http://panel.car-online.ru/.</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс"/>
+		<counter id="power_on_board" name="Бортовое питание" units=" v"/>
+		<counter id="power_reserv" name="Резервное питание" units=" v"/>
+		<counter id="last_online_min" name="Последний выход на связь, мин"/>
+		<counter id="ligthWayBox" name="Пробег" units=" км"/>
+		<counter id="maxSpeedBox" name="Макс. скорость" units=" км/ч"/>
+		<counter id="lightTimeWaysBox" name="Время в пути" type="text"/>
+		<counter id="lightTimeStandsBox" name="Время стоянок" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>service</type>
+	<country>ru</country>
+</provider>

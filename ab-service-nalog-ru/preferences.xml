@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
 	<EditTextPreference
+		obligatory="true"
 		title="Фамилия"
 		positiveButtonText="ОК"
 		summary="||{@s}"
 		dialogTitle="Фамилия"
-		obligatory="true"
 		negativeButtonText="Отмена"
 		dialogMessage="Введите свою фамилию."
 		key="surname">
 	</EditTextPreference>
 	<EditTextPreference
+		obligatory="true"
 		title="Имя"
 		positiveButtonText="ОК"
 		summary="||{@s}"
 		dialogTitle="Имя"
-		obligatory="true"
 		negativeButtonText="Отмена"
 		dialogMessage="Введите свое имя."
 		key="fio_name">
@@ -30,11 +30,11 @@
 		key="otchestvo">
 	</EditTextPreference>
 	<EditTextPreference
+		obligatory="true"
 		title="ИНН"
 		positiveButtonText="ОК"
 		summary="||{@s}"
 		dialogTitle="ИНН"
-		obligatory="true"
 		negativeButtonText="Отмена"
 		dialogMessage="Введите свой ИНН."
 		key="inn">

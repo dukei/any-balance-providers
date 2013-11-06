@@ -83,12 +83,10 @@ function main() {
 			if (curr.message == 'По вашему запросу информация не найдена') {
 				result.all = errString;
 			} else {
-				result.all += '<b>' + curr.code + ' ' + curr.name + '</b><br/>' + (sum ? curr.pds[j].ifnsName + ': ' + curr.pds[j].taxName + '-' + curr.pds[j].taxKind + ': <b>' + sum + '</b>' : (curr.message ? curr.message : 'Нет задолженности')) + '<br/><br/>';
-
+				result.all += '<b>' + curr.code + ' ' + curr.name + '</b><br/>' + (sum ? curr.pds[j].ifnsName + ': ' + curr.pds[j].taxName + '-' + curr.pds[j].taxKind + ': <b>' + sum + '</b>' : (curr.message ? curr.message : 'Нет задолженности')) + (i < json.regions.length-1 ? '<br/><br/>' : '');
 				sumParam(sum, result, 'balance', /([\s\S]*)/i, null, parseBalance, aggregate_sum);
 			}
 		}
 	}
-	result.all = result.all.replace(/^\s+|\s+$/g, '');
 	AnyBalance.setResult(result);
 }

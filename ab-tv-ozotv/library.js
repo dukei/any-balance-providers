@@ -321,8 +321,8 @@ function createFormParams(html, process, array){
 function parseDate(str){
     var matches = /(?:(\d+)[^\d])?(\d+)[^\d](\d{2,4})(?:[^\d](\d+):(\d+)(?::(\d+))?)?/.exec(str);
     if(matches){
-          var year = +matches[1];
-          var date = new Date(year < 1000 ? 2000 + year : year, matches[2]-1, +(matches[3] || 1), matches[4] || 0, matches[5] || 0, matches[6] || 0);
+          var year = +matches[3];
+          var date = new Date(year < 1000 ? 2000 + year : year, matches[2]-1, +(matches[1] || 1), matches[4] || 0, matches[5] || 0, matches[6] || 0);
 	  var time = date.getTime();
           AnyBalance.trace('Parsing date ' + date + ' from value: ' + str);
           return time;

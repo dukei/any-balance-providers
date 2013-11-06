@@ -1,34 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1" version="2">ab-tv-ozotv</id>
-  <api flags="no_browser" />
-  <name>OZO.tv</name>
-  <description>
-	Reads the information from OZO.tv account (http://ozo.tv)
-  </description>
-  <author>valeravi &lt;valeravi@vi-soft.com.ua&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Expired in" type="numeric" units="days"/>
-    <counter id="status" name="Status" type="text"/>
-	<counter id="created" name="Created" type="time" format="dd/MM/yyyy"/>
-	<counter id="activated" name="Activated" type="time" format="dd/MM/yyyy"/>
-	<counter id="cost" name="Cost" units="{@currency}"/>
-	<counter id="currency" name="Currency" type="text"/>
-    <counter id="duration" name="Duration" type="numeric" units="days"/>
-  </counters>
-  <keywords>
-    tv, internettv, iptv
-  </keywords>
-  <type>
-    tv
-  </type>
-  <country>
-  </country>
+	<id major_version="1" version="2">ab-tv-ozotv</id>
+	<api flags="no_browser" />
+	<name>OZO.tv</name>
+	<description html="true"><![CDATA[
+	<p>Reads the information from OZO.tv account (http://ozo.tv)</p>
+	]]></description>
+	<author>valeravi &lt;valeravi@vi-soft.com.ua&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Expired in" units=" days"/>
+		<counter id="status" name="Status" type="text"/>
+		<counter id="created" name="Created" type="time" format="dd/MM/yyyy"/>
+		<counter id="activated" name="Activated" type="time" format="dd/MM/yyyy"/>
+		<counter id="cost" name="Cost" units=" {@currency}"/>
+		<counter id="currency" name="Currency" type="text"/>
+		<counter id="duration" name="Duration" units="days"/>
+	</counters>
+	<keywords>tv, internettv, iptv</keywords>
+	<type>tv</type>
+	<country></country>
 </provider>

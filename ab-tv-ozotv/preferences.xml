@@ -1,22 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <EditTextPreference 
-        key="login" 
-        title="User name (login)" 
-        summary="||{@s}" 
-        dialogTitle="User name (login)" 
-        dialogMessage="Enter the user name (login)."
-        positiveButtonText="Ok" 
-        negativeButtonText="Cancel">
-    </EditTextPreference>
-    <EditTextPreference 
-        key="password" 
-        inputType="textPassword"
-        title="Password"
-        summary="||***********"
-        dialogTitle="Password"
-        dialogMessage="Enter the password"
-        positiveButtonText="Ok"
-        negativeButtonText="Cancel">
-    </EditTextPreference>
+	<EditTextPreference
+		obligatory="true"
+		key="login"
+		title="User name (login)"
+		summary="||{@s}"
+		dialogTitle="User name (login)"
+		dialogMessage="Enter the user name (login)."
+		positiveButtonText="Ok"
+		negativeButtonText="Cancel">
+	</EditTextPreference>
+	<EditTextPreference
+		obligatory="true"
+		key="password"
+		inputType="textPassword"
+		title="Password"
+		summary="||***********"
+		dialogTitle="Password"
+		dialogMessage="Enter the password"
+		positiveButtonText="Ok"
+		negativeButtonText="Cancel">
+	</EditTextPreference>
 </PreferenceScreen>

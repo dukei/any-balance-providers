@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="4">ab-money-mts</id>
+  <id version="5">ab-money-mts</id>
   <api flags="no_browser"/>
   <name>МТС Банк</name>
 	<description html="true"><![CDATA[

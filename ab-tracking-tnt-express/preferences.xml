@@ -1,20 +1,21 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen>
-    <EditTextPreference 
-        title="Tracking number" 
-        positiveButtonText="Ok" 
-        summary="Valid tracking number without white spaces!||{@s}\n" 
-        dialogTitle="Tracking number" 
-        negativeButtonText="Cancel" 
-        dialogMessage="Enter valid tracking number without white spaces"
-        key="code">
-    </EditTextPreference>
-    <ListPreference 
-        key="type" 
-        title="Type of tracking number"
-        summary="Chose type of your tracking number||{@s}\n"
-        entries="Consignment number|Reference number"
-        entryValues="CON|REF"
-	      defaultValue="CON">
-    </ListPreference>
+	<PreferenceScreen>
+	<EditTextPreference
+		obligatory="true"
+		title="Tracking number"
+		positiveButtonText="Ok"
+		summary="Valid tracking number without white spaces!||{@s}\n"
+		dialogTitle="Tracking number"
+		negativeButtonText="Cancel"
+		dialogMessage="Enter valid tracking number without white spaces"
+		key="code">
+	</EditTextPreference>
+	<ListPreference
+		key="type"
+		title="Type of tracking number"
+		summary="Chose type of your tracking number||{@s}\n"
+		entries="Consignment number|Reference number"
+		entryValues="CON|REF"
+		defaultValue="CON">
+	</ListPreference>
 </PreferenceScreen>

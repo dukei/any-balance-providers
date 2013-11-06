@@ -52,7 +52,7 @@ function main() {
 	// Если не получили на странице инфу, пойдем глубже и запросим прямо в базу
 	var token = getParam(html, null, null, /name="token"[^>]*value="([^"]*)/i);
 	
-	var RetryCounts = 5, json;
+	var RetryCounts = 10, json;
 	while(!json && RetryCounts > 0) {
 		AnyBalance.trace('Не нашли информацию, попробуем еще раз, осталось попыток: ' + RetryCounts--);
 		

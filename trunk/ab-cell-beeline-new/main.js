@@ -1,4 +1,4 @@
-﻿/**
+﻿﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
@@ -17,7 +17,7 @@ function getBlock(url, html, name, exact) {
 		html = html[0];
 	}
 
-	var re = new RegExp("PrimeFaces\\.\\w+\\s*\\(\\s*\\{[^}]*update:\\s*'" + (exact ? "" : "[^']*:") + name);
+	var re = new RegExp("PrimeFaces\\.\\w+\\s*\\(\\s*\\{[^}]*update:\\s*'" + (exact ? "" : "[^']*") + name);
 	var data = getParam(html, null, null, re);
 	if (!data) {
 		AnyBalance.trace('Блок ' + name + ' не найден!');
@@ -52,7 +52,7 @@ function getBlock(url, html, name, exact) {
 		'Faces-Request': 'partial/ajax',
 		'X-Requested-With': 'XMLHttpRequest'
 	}));
-	data = getParam(html, null, null, new RegExp('<update[^>]*' + (exact ? 'id="' : '[^>]*:') + name + '"[^>]*>\\s*<!\\[CDATA\\[([\\s\\S]*?)\\]\\]></update>', 'i'));
+	data = getParam(html, null, null, new RegExp('<update[^>]*id="' + (exact ? '' : '[^"]*') + name + '"[^>]*>\\s*<!\\[CDATA\\[([\\s\\S]*?)\\]\\]></update>', 'i'));
 	if (!data) {
 		AnyBalance.trace('Неверный ответ для блока ' + name + ': ' + html);
 		return '';
@@ -143,9 +143,9 @@ function main() {
 		}));
 	}
 	// Ну и тут еще раз проверяем, получилось-таки войти или нет
-	if (/<form[^>]+name="chPassForm"|Ваш пароль временный\.\s*Необходимо изменить его на постоянный/i.test(html)) 
+	if (/<form[^>]+name="(?:chPassForm)"|Ваш пароль временный\.\s*Необходимо изменить его на постоянный/i.test(html)) 
 		throw new AnyBalance.Error('Вы зашли по временному паролю, требуется сменить пароль. Для этого войдите в ваш кабинет https://my.beeline.ru через браузер и смените там пароль. Новый пароль введите в настройки данного провайдера.', null, true);
-	if (/<form[^>]+action="\/changePass.html"/i.test(html))
+	if (/<form[^>]+action="\/(?:changePass|changePassB2C).html"/i.test(html))
 		throw new AnyBalance.Error('Билайн требует сменить пароль. Зайдите в кабинет https://my.beeline.ru через браузер и поменяйте пароль на постоянный.', null, true);
 	//После входа обязательно проверяем маркер успешного входа
 	//Обычно это ссылка на выход, хотя иногда приходится искать что-то ещё
@@ -198,15 +198,15 @@ function fetchPost(baseurl, html) {
 		getParam(html, result, 'phone', /<input[^>]+id="serviceBlock:paymentForm:[^>]*value="([^"]*)/i, replaceTagsAndSpaces, html_entity_decode);
 
 		xhtml = getBlock(baseurl + 'c/post/index.html', html, 'list-contents', true);
-		getParam(xhtml, result, '__tariff', /<h2[^>]*>Текущий тариф([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+		getParam(xhtml, result, '__tariff', /<h2[^>]*>(?:[\s\S](?!<\/h2>))*?Текущий тариф([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces, html_entity_decode);
 
 		getParam(xhtml, result, 'balance', /Расходы по номеру за текущий период с НДС[\s\S]*?<div[^>]+class="balan?ce-summ"[^>]*>([\s\S]*?)<\/div>/i, [replaceTagsAndSpaces, /Баланс временно недоступен/ig, ''], parseBalance);
 		getParam(xhtml, result, ['currency', 'balance'], /Расходы по номеру за текущий период с НДС[\s\S]*?<div[^>]+class="balan?ce-summ"[^>]*>([\s\S]*?)<\/div>/i, [replaceTagsAndSpaces, /Баланс временно недоступен/ig, ''], myParseCurrency);
 
 		if (isAvailableBonuses()) {
-			//xhtml = getBlock(baseurl + 'c/post/index.html', html, 'loadingBonusesAndServicesDetails');
+			xhtml = getBlock(baseurl + 'c/post/index.html', html, 'loadingBonusesAndServicesDetails');
 			xhtml = getBlock(baseurl + 'c/post/index.html', [xhtml, html], 'bonusesloaderDetails');
-			getBonuses(xhtml, result);
+			getBonusesPost(xhtml, result);
 		}
 	} else {
 		AnyBalance.trace('Похоже на кабинет с несколькими номерами.');
@@ -257,7 +257,7 @@ function fetchPost(baseurl, html) {
 		if (isAvailableBonuses()) {
 			xhtml = getBlock(baseurl + 'c/post/index.html', html, 'loadingBonusesAndServicesDetails');
 			xhtml = getBlock(baseurl + 'c/post/index.html', [xhtml, html], 'bonusesloaderDetails');
-			getBonuses(xhtml, result);
+			getBonusesPost(xhtml, result);
 		}
 	}
 
@@ -287,7 +287,7 @@ function fetchPre(baseurl, html) {
 	getParam(html, result, 'phone', /<input[^>]+id="serviceBlock:paymentForm:[^>]*value="([^"]*)/i, replaceTagsAndSpaces, html_entity_decode);
 
 	var xhtml = getBlock(baseurl + 'c/pre/index.html', html, 'currentTariffLoaderDetails');
-	getParam(xhtml, result, '__tariff', [/<div[^>]+:tariffInfo[^>]*class="current"[^>]*>(?:[\s\S](?!<\/div>))*?<h2[^>]*>([\s\S]*?)<\/h2>/i, /<h2>Текущий тариф\s*([\s\S]*?)\s*<\/h2>/i], replaceTagsAndSpaces, html_entity_decode);
+	getParam(xhtml, result, '__tariff', [/<div[^>]+:tariffInfo[^>]*class="current"[^>]*>(?:[\s\S](?!<\/div>))*?<h2[^>]*>([\s\S]*?)<\/h2>/i, /<h2>(?:[\s\S](?!<\/h2>))*?Текущий тариф\s*([\s\S]*?)\s*<\/h2>/i], replaceTagsAndSpaces, html_entity_decode);
 
 	if (AnyBalance.isAvailable('balance'/*, 'fio'*/)) {
 		/*xhtml = getBlock(baseurl + 'c/pre/index.html', html, 'balancePreHeadDetails');
@@ -306,7 +306,7 @@ function fetchPre(baseurl, html) {
 		//getParam(xhtml, result, 'fio', /<span[^>]+class="b2c.header.greeting.pre.b2c.ban"[^>]*>([\s\S]*?)(?:<\/span>|,)/i, replaceTagsAndSpaces, html_entity_decode);
 	}
 	if (isAvailableBonuses()) {
-		xhtml = getBlock(baseurl + 'c/pre/index.html', html, 'bonusesloaderDetails');
+		xhtml = getBlock(baseurl + 'c/pre/index.html', html, 'bonusesForm');
 		getBonuses(xhtml, result);
 	}
 	if (AnyBalance.isAvailable('fio')) {
@@ -323,6 +323,41 @@ function isAvailableBonuses() {
 }
 
 function getBonuses(xhtml, result) {
+	var bonuses = sumParam(xhtml, null, null, /<span[^>]+class="bonuses-accums-list"[^>]*>([\s\S]*?)<\/span>/ig);
+	for (var j = 0; j < bonuses.length; ++j) {
+		var bonus = bonuses[j];
+		var bonus_name = ''; //getParam(bonus, null, null, /<span[^>]+class="bonuses-accums-list"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+		var services = sumParam(bonus, null, null, /<div[^>]+class="item bonus"(?:[\s\S](?!$|<div[^>]+class="item bonus"))*[\s\S]/ig);
+                AnyBalance.trace("Found " + services.length + ' bonuses');
+                var reValue = /<div[^>]+class="column2[^"]*"[^>]*>([\s\S]*?)<\/div>/i;
+		for (var i = 0; i < services.length; ++i) {
+			var name = '' + getParam(services[i], null, null, /<div[^>]+class="column1[^"]*"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode); //+ ' ' + bonus_name;
+			if (/SMS|штук/i.test(name)) {
+				sumParam(services[i], result, 'sms_left', reValue, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+			} else if (/MMS/i.test(name)) {
+				sumParam(services[i], result, 'mms_left', reValue, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+			} else if (/Рублей БОНУС|бонус-баланс/i.test(name)) {
+				sumParam(services[i], result, 'rub_bonus', reValue, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+			} else if (/Рублей за участие в опросе|Счастливое время/i.test(name)) {
+				sumParam(services[i], result, 'rub_opros', reValue, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+			} else if (/Времени общения/i.test(name)) {
+				sumParam(services[i], result, 'min_local', reValue, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+			} else if (/Секунд БОНУС\s*\+|Баланс бонус-секунд/i.test(name)) {
+				sumParam(services[i], result, 'min_bi', reValue, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+			} else if (/Секунд БОНУС-2|Баланс бесплатных секунд-промо/i.test(name)) {
+				sumParam(services[i], result, 'min_local', reValue, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+			} else if (/минут в месяц|мин\./i.test(name)) {
+				var minutes = getParam(services[i], null, null, reValue, replaceTagsAndSpaces, parseBalance);
+				sumParam(60 * minutes, result, 'min_local', null, null, null, aggregate_sum);
+				sumParam(minutes, result, 'min_local_clear', null, null, null, aggregate_sum);
+			} else {
+				AnyBalance.trace('Неизвестная опция: ' + bonus_name + ' ' + services[i]);
+			}
+		}
+	}
+}
+
+function getBonusesPost(xhtml, result) {
 	var bonuses = sumParam(xhtml, null, null, /<div[^>]+class="bonus-heading"[^>]*>[\s\S]*?<\/table>/ig);
 	for (var j = 0; j < bonuses.length; ++j) {
 		var bonus = bonuses[j];
@@ -354,6 +389,7 @@ function getBonuses(xhtml, result) {
 		}
 	}
 }
+
 
 /** Приводим все к единому виду вместо ИВаНов пишем Иванов */
 function capitalFirstLenttersAndDecode(str) {

@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+<change version="25" date="2013-11-06">
+- Исправлены бонусы
+</change>
 <change version="24" date="2013-11-05">
 - Добавлен счетчик Минуты на местные номера (как в лк) (Stark)
 </change>

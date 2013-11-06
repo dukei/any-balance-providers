@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+<change version="11" date="2013-11-06">
+- Исправлена ошибка, теперь работает стабильно.
+- Счетчик Сводка теперь html.
+</change>
 <change version="10" date="2013-11-03">
 - Поддержка изменений на сайте
 </change>

@@ -49,17 +49,33 @@ function main() {
 		all: ''
 	};
 	var errString = 'Не найдена информация по задолженности с данными: ИНН: ' + prefs.inn + ', ФИО: ' + prefs.surname + ' ' + prefs.fio_name + ' ' + prefs.otchestvo + '. Пожалуйста, проверьте правильность ввода. ';
-	var jsonVar = getParam(html, null, null, /var\s*DEBT\s*=\s*([\s\S]*?\});/i);
-	if (!jsonVar) {
+	// Если не получили на странице инфу, пойдем глубже и запросим прямо в базу
+	var token = getParam(html, null, null, /name="token"[^>]*value="([^"]*)/i);
+	
+	var RetryCounts = 5, json;
+	while(!json && RetryCounts > 0) {
+		AnyBalance.trace('Не нашли информацию, попробуем еще раз, осталось попыток: ' + RetryCounts--);
+		
+		var xhtml = AnyBalance.requestPost(baseurl + 'debt/debt-find.do', {
+			t: new Date().getTime(),
+			'token':token,
+		}, addHeaders({
+			Referer: baseurl + 'debt/req.do',
+			'X-Requested-With':'XMLHttpRequest'
+		}));
+		if(xhtml || xhtml != 'null')
+			json = getJson(xhtml);
+	}
+	
+	if (!json || json.STATUS == 'ERROR' ) {
 		var error = getParam(html, null, null, [/<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, /div[^>]*"field-error"(?:[^>]*>){2}([\s\S]*?)<\//i], replaceTagsAndSpaces, html_entity_decode);
 		if (error)
 			throw new AnyBalance.Error(error);
-		AnyBalance.trace(html);
+		//AnyBalance.trace(html);
 		throw new AnyBalance.Error(errString);
 	}
-	var json = getJson(jsonVar);
 	if (!json || !json.regions) 
-		throw new AnyBalance.Error('Не удалось получить таблицу с данными');
+		throw new AnyBalance.Error(errString);
 	for (i = 0; i < json.regions.length; i++) {
 		var curr = json.regions[i];
 		for (j = 0; j < curr.pds.length; j++) {
@@ -67,7 +83,8 @@ function main() {
 			if (curr.message == 'По вашему запросу информация не найдена') {
 				result.all = errString;
 			} else {
-				result.all += curr.code + ' ' + curr.name + '\n' + (sum ? curr.pds[j].ifnsName + ': ' + curr.pds[j].taxName + '-' + curr.pds[j].taxKind + ': ' + sum : (curr.message ? curr.message : 'Нет задолженности')) + '\n\n';
+				result.all += '<b>' + curr.code + ' ' + curr.name + '</b><br/>' + (sum ? curr.pds[j].ifnsName + ': ' + curr.pds[j].taxName + '-' + curr.pds[j].taxKind + ': <b>' + sum + '</b>' : (curr.message ? curr.message : 'Нет задолженности')) + '<br/><br/>';
+
 				sumParam(sum, result, 'balance', /([\s\S]*)/i, null, parseBalance, aggregate_sum);
 			}
 		}

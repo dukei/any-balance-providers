@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-southnetworks</id>
+	<api flags="no_browser"/>
+	<name>Южные сети</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе интернет-провайдера Южные сети http://iphouse.ru/</p>
+	<p>Информация берется из личного кабинета http://stat.iphouse.ru/</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="balanceCredit" name="Кредит" units=" р"/>
+		<counter id="nds" name="НДС" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="id" name="ID" type="text"/>
+		<counter id="account" name="Основной счет" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

@@ -30,13 +30,12 @@ function main() {
 	var html = AnyBalance.requestGet(baseurl + 'tbmb/login/show.do', headers);
 
 	//заготовка для обработки ошибок сайта, надо будет проверить во время следующего сбоя
-	if (<TITLE>error</TITLE>/i.test(html)) {
-		var matches = html.match(/(<H1>[\s\S]*?</p>)/i);
+	if (/<TITLE>error<\/TITLE>/i.test(html)) {
+		var matches = html.match(/(<H1>[\s\S]*?<\/p>)/i);
 		if (matches) {
 			throw new AnyBalance.Error(matches[1]);
 		}
-		throw new AnyBalance.Error("Не известная ошибка на сайте");
-		
+		throw new AnyBalance.Error("Неизвестная ошибка на сайте");
 	}
 
 	AnyBalance.trace('Успешное соединение.');

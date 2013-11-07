@@ -34,6 +34,17 @@ function main(){
 	};
 	AnyBalance.trace('Connecting to ' + baseurl);
 	var html = AnyBalance.requestGet(baseurl + 'tbmb/login_djuice/show.do', headers);
+
+	//заготовка для обработки ошибок сайта, надо будет проверить во время следующего сбоя
+	if (<TITLE>error</TITLE>/i.test(html)) {
+		var matches = html.match(/(<H1>[\s\S]*?</p>)/i);
+		if (matches) {
+			throw new AnyBalance.Error(matches[1]);
+		}
+		throw new AnyBalance.Error("Не известная ошибка на сайте");
+		
+	}
+
 	var form = getParam(html, null, null, /<form[^>]+action="[^"]*perform.do"[^>]*>([\s\S]*?)<\/form>/i);
 
 	if(!form)

@@ -1,9 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-exchange-cbr</id>
+	<id version="5">ab-exchange-cbr</id>
+	<api flags="no_browser"/>
 	<name>Курсы валют ЦБ России</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о текущих курсах валют, установленных ""Центральным Банком РФ"".</p> 
+	<p>Предоставляет информацию о текущих курсах валют, установленных "Центральным Банком РФ".</p> 
 	<p>Показывает курс доллара, евро, фунта, белорусского рубля, тенге, юаня, гривны, швейцарского франка, йены.</p>
 	]]></description>
 	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>

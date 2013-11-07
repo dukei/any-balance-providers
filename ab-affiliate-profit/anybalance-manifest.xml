@@ -1,37 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-affiliate-profit</id>
-  <name>Profit-Partner.ru</name>
-  <description>
-    Получает различные показатели в партнерской программе Profit-Partner.ru (http://profit-partner.ru).
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <history>history.xml</history>
-    <js>library.js</js>
-    <js>main.js</js>
-  </files>
-  <counters>
-    <counter id="income" name="Доход за текущий месяц" units="р"/>
-    <counter id="today" name="Сегодня" units="р"/>
-    <counter id="yesterday" name="Вчера" units="р"/>
-    <counter id="month" name="30 дней" units="р"/>
-    <counter id="estimate" name="Прогноз" units="р"/>
-    <counter id="views" name="Показы за текущий месяц" units=""/>
-    <counter id="clicks" name="Клики за текущий месяц" units=""/>
-    <counter id="ctr" name="CTR за текущий месяц" units=""/>
-    <counter id="cpc" name="CPC за текущий месяц" units=""/>
-    <counter id="cpm" name="CPM за текущий месяц" units=""/>
-  </counters>
-  <keywords>
-    профит
-  </keywords>
-  <type>
-    affiliate
-  </type>
-  <country>
-    ru
-  </country>
+	<id version="3">ab-affiliate-profit</id>
+	<name>Profit-Partner.ru</name>
+	<api flags="no_browser"/>
+	<name>ИмяПровайдера</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет различные показатели в партнерской программе Profit-Partner.ru (http://profit-partner.ru).</p>   
+	]]></description>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="income" name="Доход за текущий месяц" units=" р"/>
+		<counter id="today" name="Сегодня" units=" р"/>
+		<counter id="yesterday" name="Вчера" units=" р"/>
+		<counter id="month" name="30 дней" units=" р"/>
+		<counter id="estimate" name="Прогноз" units=" р"/>
+		<counter id="views" name="Показы за текущий месяц"/>
+		<counter id="clicks" name="Клики за текущий месяц"/>
+		<counter id="ctr" name="CTR за текущий месяц"/>
+		<counter id="cpc" name="CPC за текущий месяц"/>
+		<counter id="cpm" name="CPM за текущий месяц"/>
+	</counters>
+	<keywords>профит</keywords>
+	<type>affiliate</type>
+	<country>ru</country>
 </provider>

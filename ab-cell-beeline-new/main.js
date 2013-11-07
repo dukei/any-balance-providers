@@ -132,9 +132,16 @@ function main() {
 	var action = getParam(tform, null, null, /<form[^>]+action="\/([^"]*)/i, null, html_entity_decode);
 
 	//Теперь, когда секретный параметр есть, можно попытаться войти
-	html = AnyBalance.requestPost(baseurl + (action || 'login.html'), params, addHeaders({
-		Referer: baseurl + 'login.html'
-	}));
+        try{
+		html = AnyBalance.requestPost(baseurl + (action || 'login.html'), params, addHeaders({
+			Referer: baseurl + 'login.html'
+		}));
+        }catch(e){
+        	if(prefs.__debug)
+			html = AnyBalance.requestGet(baseurl + 'c/post/index.html');
+		else
+			throw e;
+        }
 	// Иногда билайн нормальный пароль считает временным и предлагает его изменить, но если сделать еще один запрос, пускает и показывает баланс
 	if (/Ваш пароль временный\.\s*Необходимо изменить его на постоянный/i.test(html)) {
 		AnyBalance.trace('Билайн считает наш пароль временным, но это может быть и не так, попробуем еще раз войти...');
@@ -397,13 +404,13 @@ function getBonuses(xhtml, result) {
 			} else if (/Рублей за участие в опросе|Счастливое время/i.test(name)) {
 				sumParam(services[i], result, 'rub_opros', reValue, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 			} else if (/Времени общения/i.test(name)) {
-				sumParam(services[i], result, 'min_local', reValue, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+				sumParam(services[i], result, 'min_local', reValue, replaceTagsAndSpaces, parseBalanceMins, aggregate_sum);
 			} else if (/Секунд БОНУС\s*\+|Баланс бонус-секунд/i.test(name)) {
-				sumParam(services[i], result, 'min_bi', reValue, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+				sumParam(services[i], result, 'min_bi', reValue, replaceTagsAndSpaces, parseBalanceMins, aggregate_sum);
 			} else if (/Секунд БОНУС-2|Баланс бесплатных секунд-промо/i.test(name)) {
-				sumParam(services[i], result, 'min_local', reValue, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+				sumParam(services[i], result, 'min_local', reValue, replaceTagsAndSpaces, parseBalanceMins, aggregate_sum);
 			} else if (/минут в месяц|мин\./i.test(name)) {
-				var minutes = getParam(services[i], null, null, reValue, replaceTagsAndSpaces, parseBalance);
+				var minutes = getParam(services[i], null, null, reValue, replaceTagsAndSpaces, parseBalanceMins);
 				sumParam(60 * minutes, result, 'min_local', null, null, null, aggregate_sum);
 				sumParam(minutes, result, 'min_local_clear', null, null, null, aggregate_sum);
 			} else {
@@ -411,6 +418,18 @@ function getBonuses(xhtml, result) {
 			}
 		}
 	}
+}
+
+function parseBalanceMins(str){
+    var re = /(?:(\d+)\s*час\D*)?(?:(\d+)\s*мин\D*)?(?:(\d+)\s*сек)?/i;
+    var matches = str.match(re);
+    if(matches && (matches[1] || matches[2] || matches[3])){
+        var secs = (matches[1] || 0)*3600 + (matches[2] || 0)*60 + (matches[3] || 0)*1;
+        AnyBalance.trace('Parsed ' + secs + 'seconds from ' + str);
+        return secs;
+    }
+
+    return parseBalance(str);
 }
 
 function getBonusesPost(xhtml, result) {
@@ -430,13 +449,13 @@ function getBonusesPost(xhtml, result) {
 			} else if (/Рублей за участие в опросе|Счастливое время/i.test(name)) {
 				sumParam(services[i], result, 'rub_opros', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 			} else if (/Времени общения/i.test(name)) {
-				sumParam(services[i], result, 'min_local', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+				sumParam(services[i], result, 'min_local', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalanceMins, aggregate_sum);
 			} else if (/Секунд БОНУС\s*\+|Баланс бонус-секунд/i.test(name)) {
-				sumParam(services[i], result, 'min_bi', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+				sumParam(services[i], result, 'min_bi', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalanceMins, aggregate_sum);
 			} else if (/Секунд БОНУС-2|Баланс бесплатных секунд-промо/i.test(name)) {
-				sumParam(services[i], result, 'min_local', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+				sumParam(services[i], result, 'min_local', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalanceMins, aggregate_sum);
 			} else if (/минут в месяц|мин\./i.test(name)) {
-				var minutes = getParam(services[i], null, null, /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+				var minutes = getParam(services[i], null, null, /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalanceMins);
 				sumParam(60 * minutes, result, 'min_local', null, null, null, aggregate_sum);
 				sumParam(minutes, result, 'min_local_clear', null, null, null, aggregate_sum);
 			} else {

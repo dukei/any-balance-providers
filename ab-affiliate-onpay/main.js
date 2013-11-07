@@ -28,7 +28,7 @@ function main() {
 		'commit':'Войти'
 	});
 	
-	if(html.indexOf('<a href="/logout">')==-1) throw new AnyBalance.Error('Ошибка авторизации. Проверьте логин и пароль');
+	if(html.indexOf('<a href="/logout" class="brand">')==-1) throw new AnyBalance.Error('Ошибка авторизации. Проверьте логин и пароль');
 	
 	html=AnyBalance.requestGet('https://secure.onpay.ru/accounts');	
 	r=new RegExp("<tr id='row-[\\s\\S]+?<td align='right' id='delayed.+?'>([0-9.]+)</td>\\s+<td align='right' id='balance.+?'>([0-9.]+)</td>\\s+<td>([A-Z]{3})</td>[\\s\\S]+?</tr>",'g');

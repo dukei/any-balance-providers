@@ -1,46 +1,44 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Получает различные показатели в партнерской программе Profit-Partner.ru (http://profit-partner.ru).
-
-Сайт оператора: http://profit-partner.ru
-Личный кабинет: http://profit-partner.ru/stats/
 */
 
-var g_baseurl = "http://profit-partner.ru/";
 var g_headers = {
-        'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-        'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
-        'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-        'Cache-Control':'max-age=0',
-        'Connection':'keep-alive',
-        'Referer':g_baseurl,
-        'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.56 Safari/537.17'
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
+	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Cache-Control': 'max-age=0',
+	'Connection': 'keep-alive',
+	'Referer': g_baseurl,
+	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.56 Safari/537.17'
 };
 
-function dateToYMD(date)
-{
-    var d = date.getDate();
-    var m = date.getMonth()+1;
-    var y = date.getFullYear();
-    return '' + y + '-' + (m<=9?'0'+m:m) + '-' + (d<=9?'0'+d:d);
+function dateToYMD(date) {
+	var d = date.getDate();
+	var m = date.getMonth() + 1;
+	var y = date.getFullYear();
+	return '' + y + '-' + (m <= 9 ? '0' + m : m) + '-' + (d <= 9 ? '0' + d : d);
 }
 
 function main(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
 
-    var baseurl = g_baseurl;
+    var baseurl = 'http://profit-partner.ru/';
 
-    var html = AnyBalance.requestPost(baseurl + 'user/auth', {
-        login:prefs.login,
-        pwd:prefs.password,
-        save:0,
-        enter:'Войти'
-    }, g_headers);
+	var html = AnyBalance.requestGet(baseurl + 'sign/in', g_headers);
 
-    //AnyBalance.trace(html);
-    if(!/\/user\/quit\//i.test(html)){
+	var params = createFormParams(html, function(params, str, name, value) {
+		if (name == 'username') 
+			return prefs.login;
+		else if (name == 'password')
+			return prefs.password;
+
+		return value;
+	});	
+	
+    var html = AnyBalance.requestPost(baseurl + 'sign/in', params, g_headers);
+
+    if(!/\/sign\/out/i.test(html)){
         var error = getParam(html, null, null, /<div[^>]+class="error"(?:[^>](?!display:none))*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error);
@@ -49,11 +47,11 @@ function main(){
 
     var result = {success: true};
 
-    getParam(html, result, 'today', /<td[^>]*>Сегодня[\s\S]*?<td[^>]*>([\s\S]*?)<\/a>\s*<\/td>/i, [/"[^"]*"/g, '', replaceTagsAndSpaces], parseBalance);
-    getParam(html, result, 'yesterday', /<td[^>]*>Вчера[\s\S]*?<td[^>]*>([\s\S]*?)<\/a>\s*<\/td>/i, [/"[^"]*"/g, '', replaceTagsAndSpaces], parseBalance);
-    getParam(html, result, 'month', /<td[^>]*>За 30 дней[\s\S]*?<td[^>]*>([\s\S]*?)<\/a>\s*<\/td>/i, [/"[^"]*"/g, '', replaceTagsAndSpaces], parseBalance);
+    getParam(html, result, 'today', /<div[^>]*>Сегодня(?:[^>]*>){26}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'yesterday', /<div[^>]*>Вчера(?:[^>]*>){26}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'month', /<div[^>]*>За 30 дней(?:[^>]*>){26}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
     //getParam(html, result, 'estimate', /<td[^>]*>Прогноз дохода[\s\S]*?<td[^>]*>([\s\S]*?)<\/a>\s*<\/td>/i, [/"[^"]*"/g, '', replaceTagsAndSpaces], parseBalance);
-	getParam(html, result, 'estimate', /Прогноз дохода[\s\S]*?">([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'estimate', /<div[^>]*>Прогноз дохода(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
 	
 
     if(AnyBalance.isAvailable('views','clicks','ctr','cpc','cpm','income')){

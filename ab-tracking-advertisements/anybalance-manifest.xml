@@ -1,33 +1,31 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="8">ab-tracking-advertisements</id>
-  <name>Наблюдение за Avito.ru</name>
+	<id version="9">ab-tracking-advertisements</id>
+	<name>Наблюдение за Avito.ru</name>
 	<description html="true"><![CDATA[
-	<p>Отслеживает появление новых объявлений по заданной подстроке на Avito.ru</p>
-	<p>Выводит краткую информацию о последних объявлениях.</p>
+	<p>Отслеживает появление новых объявлений по заданной подстроке на Avito.ru, а так же позволяет следить за собственными объявлениями при вводе логина и пароля.</p>
 	]]></description>
-  <author>wtiger &lt;wtiger@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>api:jquery.min.js</js>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="found" name="Найдено объявлений" units="шт."/>
-    <counter id="last" name="Последнее" type="text"/>
-    <counter id="date" name="Дата публикации" type="text"/>
-    <counter id="datetime" name="Опубликовано" type="text"/>
-    <counter id="time" name="Время публикации" type="text"/>
-    <counter id="price" name="Стоимость"/>
-    <counter id="currency" name="Валюта" type="text"/>
-  </counters>
-  <keywords>
-    другое трекинг avito.ru
-  </keywords>
-  <type>
-    other
-  </type>
+	<author>wtiger &lt;wtiger@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="found" name="Найдено объявлений" units=" шт."/>
+		<counter id="last" name="Последнее" type="text"/>
+		<counter id="date" name="Дата публикации" type="text"/>
+		<counter id="datetime" name="Опубликовано" type="text"/>
+		<counter id="time" name="Время публикации" type="text"/>
+		<counter id="price" name="Стоимость" units=" {@currency}"/>
+		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="views" name="Просмотров всего" />
+		<counter id="views_today" name="Просмотров сегодня" />
+		<counter id="adv_title" name="Название" type="text"/>
+		<counter id="days_left" name="До истечения срока размещения осталось" />
+	</counters>
+	<keywords>другое трекинг avito.ru</keywords>
+	<type>other, tracking</type>
 </provider>

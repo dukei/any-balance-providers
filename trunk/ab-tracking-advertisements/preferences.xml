@@ -18,4 +18,25 @@
         dialogMessage="Укажите строку для отслеживания объявления так же, как вы ввели бы ее на сайте для поиска."
         positiveButtonText="ОК">
     </EditTextPreference>
+	<EditTextPreference
+		title="Логин"
+		key="login"
+		summary="При вводе логина и пароля будут показаны Ваши объявления||{@s}"
+		obligatory="true"
+		dialogTitle="Логин"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите логин, используемый для входа в личный кабинет. Если указан логин и пароль, поиск будет производится только по Вашим объявлениям. Используйте строку поиска для ввода названия объявления, либо оставьте пустым, чтобы получить информацию по первому.">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Пароль"
+		key="password"
+		summary="При вводе логина и пароля будут показаны Ваши объявления||***********"
+		obligatory="true"
+		dialogTitle="Пароль"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите пароль, используемый для входа в личный кабинет."
+		inputType="textPassword">
+	</EditTextPreference>	
 </PreferenceScreen>

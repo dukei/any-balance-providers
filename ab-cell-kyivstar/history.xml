@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-<change major_version="1.2" version="39" date="2013-11-07">
+<change major_version="1.2" version="39" date="2013-11-08">
 - Исправлено получение бонусных минут.
+- Добавлен показ ошибок сайта.
 </change>
 <change major_version="1.2" version="38" date="2013-10-28">
 - Исправлено получение бонусных минут (Stark)

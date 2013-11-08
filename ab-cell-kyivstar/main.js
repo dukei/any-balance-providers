@@ -33,9 +33,9 @@ function main() {
 	if (/<TITLE>error<\/TITLE>/i.test(html)) {
 		var matches = html.match(/(<H1>[\s\S]*?<\/p>)/i);
 		if (matches) {
-			throw new AnyBalance.Error(matches[1]);
+			throw new AnyBalance.Error(matches[1].replace(/<\/?[^>]+>/g, ''));
 		}
-		throw new AnyBalance.Error("Неизвестная ошибка на сайте");
+		throw new AnyBalance.Error("Неизвестная ошибка на сайте.");
 	}
 
 	AnyBalance.trace('Успешное соединение.');
@@ -64,8 +64,6 @@ function main() {
 			throw new AnyBalance.Error("Не удалось зайти в систему. Сайт изменен?");
 		}
 	}
-	/*AnyBalance.trace(html);
-    throw new AnyBalance.Error("Не удаётся найти форму входа. Проблемы или изменения на сайте?");*/
 	if (!~html.indexOf(prefs.login)) {
 		throw new AnyBalance.Error("Ошибка. Информация о номере не найдена.");
 	}

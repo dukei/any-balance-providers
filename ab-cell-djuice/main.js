@@ -5,8 +5,7 @@ Djuice
 Сайт оператора: http://www.djuice.ua/
 Личный кабинет: https://my.djuice.com.ua/
 */
-
-function parseMinutes(str){
+function parseMinutes(str) {
 	var val = parseBalance(str);
 	if(isset(val)){
 		val *= 60; //Переводим в секунды
@@ -16,54 +15,70 @@ function parseMinutes(str){
 	return val; 
 }
 
-function getToken(html){
+function getToken(html) {
     var token = /name="org.apache.struts.taglib.html.TOKEN"[^>]+value="([\s\S]*?)">/i.exec(html);
     if(!token)
         throw new AnyBalance.Error("Не удаётся найти код безопасности для отправки формы. Проблемы или изменения на сайте?");
     return token[1];
 }
 
-function main(){
+function main() {
 	var prefs = AnyBalance.getPreferences();
+	checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(prefs.password, 'Введите пароль!');
+	
 	var baseurl = 'https://my.djuice.ua/';
 	var headers = {
-		'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
-		'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+		'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
+		'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 		'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Intel Mac OS X 10.6; rv:7.0.1) Gecko/20100101 Firefox/7.0.1',
 		Connection: 'keep-alive'
 	};
-	AnyBalance.trace('Connecting to ' + baseurl);
+	AnyBalance.trace('Соединение с ' + baseurl);
 	var html = AnyBalance.requestGet(baseurl + 'tbmb/login_djuice/show.do', headers);
 
 	//заготовка для обработки ошибок сайта, надо будет проверить во время следующего сбоя
 	if (/<TITLE>error<\/TITLE>/i.test(html)) {
 		var matches = html.match(/(<H1>[\s\S]*?<\/p>)/i);
 		if (matches) {
-			throw new AnyBalance.Error(matches[1]);
+			throw new AnyBalance.Error(matches[1]).replace(/<\/?[^>]+>/g, '');
 		}
-		throw new AnyBalance.Error("Неизвестная ошибка на сайте");
+		throw new AnyBalance.Error("Неизвестная ошибка на сайте.");
 	}
 
+	AnyBalance.trace('Успешное соединение.');
+	if (/\/tbmb\/logout\/perform/i.test(html)) {
+		AnyBalance.trace('Уже в системе.');
+		if (!~html.indexOf(prefs.login)) {
+			AnyBalance.trace('Не тот аккаунт, выход.');
+			html = AnyBalance.requestGet(baseurl + 'tbmb/logout/perform.do', headers);
+			AnyBalance.trace('Переход на страницу входа.');
+			html = AnyBalance.requestGet(baseurl + 'tbmb/login_djuice/show.do', headers);
+		}
+	}
+	// Login
 	var form = getParam(html, null, null, /<form[^>]+action="[^"]*perform.do"[^>]*>([\s\S]*?)<\/form>/i);
-
-	if(!form)
-		throw new AnyBalance.Error("Не удаётся найти форму входа. Проблемы или изменения на сайте?");
-
-	var params = createFormParams(form);
-	params.user = prefs.login;
-	params.password = prefs.password;
-	var html = AnyBalance.requestPost(baseurl + "tbmb/login_djuice/perform.do", params, headers);
-	
-	if(!/\/tbmb\/logout\/perform/i.test(html)){
-		var matches = html.match(/<td class="redError"[^>]*>([\s\S]*?)<\/td>/i);
-		if(matches){
-			throw new AnyBalance.Error(matches[1]);
+	if (form) {
+		AnyBalance.trace('Вход в систему.');
+		var params = createFormParams(form);
+		params.user = prefs.login;
+		params.password = prefs.password;
+		html = AnyBalance.requestPost(baseurl + "tbmb/login_djuice/perform.do", params, headers);
+		if (!/\/tbmb\/logout\/perform/i.test(html)) {
+			var matches = html.match(/<td class="redError"[^>]*>([\s\S]*?)<\/td>/i);
+			if (matches) {
+				throw new AnyBalance.Error(matches[1]);
+			}
+			throw new AnyBalance.Error("Не удалось зайти в систему. Сайт изменен?");
 		}
-		throw new AnyBalance.Error("Не удалось зайти в личный кабинет. Сайт изменен?");
 	}
-	AnyBalance.trace('Successfully connected');
-
-	var result = {success: true};
+	if (!~html.indexOf(prefs.login)) {
+		throw new AnyBalance.Error("Ошибка. Информация о номере не найдена.");
+	}
+	AnyBalance.trace('Успешный вход.');
+	var result = {
+		success: true
+	};
 	var str_tmp;
 	//Тарифный план
 	getParam(html, result, '__tariff', /(?:Тарифний план:|Тарифный план:)[\s\S]*?<td\s+[^>]*>(.*?)\s*<\/td>/i, replaceTagsAndSpaces, html_entity_decode);

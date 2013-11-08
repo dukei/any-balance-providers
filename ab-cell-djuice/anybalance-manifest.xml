@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id major_version="1.3" version="28">ab-cell-djuice</id>
+	<id major_version="1.3" version="29">ab-cell-djuice</id>
 	<name>Djuice</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе, бонусных минутах, SMS, MMS, остатке интернет-трафика и других бонусах для пользователей мобильного оператора Djuice.</p>

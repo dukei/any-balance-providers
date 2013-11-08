@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+<change major_version="1.3" version="29" date="2013-11-08">
+- Поддержка автоматического входа через мобильный интернет в сети Djuice.
+- Добавлен показ ошибок сайта.
+</change>
 <change major_version="1.3" version="28" date="2013-10-16">
 - Исправлено получение бонусов для услуги Домашний интернет (Stark)
 </change>

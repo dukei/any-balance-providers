@@ -1,13 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <EditTextPreference 
-        title="Номер карты" 
-        positiveButtonText="ОК" 
-        summary="Номер транспортной карты (16 цифр)||{@s}\n" 
-        dialogTitle="Номер транспортной карты" 
-        negativeButtonText="Отмена" 
-        dialogMessage="Введите номер вашей транспортной карты, например 0100000001234567"
-        key="CardNumber"
-        inputType="number">
-    </EditTextPreference>
+    <EditTextPreference
+		obligatory="true"
+		title="Номер карты"
+		positiveButtonText="ОК"
+		summary="Номер транспортной карты (16 цифр)||{@s}\n"
+		dialogTitle="Номер транспортной карты"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите номер вашей транспортной карты, например 0100000001234567"
+		key="CardNumber"
+		inputType="number">
+	</EditTextPreference>
 </PreferenceScreen>

@@ -1,11 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-
 <history>
-
-    <change version="2" date="2013-06-22">
-
-      - Исправлена ошибка (не видел копейки на счете)
-
-    </change>
-
+<change version="3" date="2013-11-08">
+- Поддержка изменений на сайте (Stark)
+</change>
+<change version="2" date="2013-06-22">
+- Исправлена ошибка (не видел копейки на счете)
+</change>
 </history>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference
+		obligatory="true"
+		key="cardid"
+		inputType="numberPassword"
+		title="Card ID"
+		summary="||***********"
+		dialogTitle="Card ID"
+		dialogMessage="Enter the card ID (Kort ID). It can be found on your Rikslunchen card"
+		positiveButtonText="Ok"
+		negativeButtonText="Cancel">
+	</EditTextPreference>
+</PreferenceScreen>

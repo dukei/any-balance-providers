@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+<change version="24" date="2013-11-09">
+- Исправление падения AnyBalance
+</change>
 <change version="23" date="2013-10-15">
 - Мелкие улучшения
 </change>

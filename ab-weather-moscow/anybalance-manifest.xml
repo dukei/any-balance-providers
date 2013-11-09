@@ -1,28 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.3" version="6">ab-weather-moscow</id>
-  <name>Температура в Москве</name>
-  <description>Текущая температура в Москве с http://gradus.melda.ru/
-  Подробная инструкция по настройке: http://melda.ru/gradus/android/
-  </description>
-  <author>Erelen Laiquendi &lt;erelen@melda.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="temperature_color" name="Температура с цветом" type="html" />
-    <counter id="temperature" name="Температура" type="text" units="°" />
-  </counters>
-  <keywords>
-    погода, температура, москва, россия
-  </keywords>
-  <type>
-    weather
-  </type>
-  <country>
-    ru
-  </country>
+	<id major_version="2.0" version="7">ab-weather-moscow</id>
+	<name>Температура в Москве</name>
+	<api flags="no_browser"/>
+	<description html="true"><![CDATA[
+	<p>Текущая температура в Москве с http://gradus.melda.ru/</p>
+	<p>Подробная инструкция по настройке: http://melda.ru/gradus/android/</p>
+	]]></description>
+	<author>Erelen Laiquendi &lt;erelen@melda.ru&gt;</author>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="temperature_color" name="Температура с цветом" type="html" />
+		<counter id="temperature" name="Температура" type="text" units="°" />
+	</counters>
+	<keywords>погода, температура, москва</keywords>
+	<type>weather</type>
+	<country>ru</country>
 </provider>

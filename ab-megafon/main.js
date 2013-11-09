@@ -169,9 +169,9 @@ var def_table = {
  */
 function getFilial(number){
     if(typeof(number) != 'string')
-        throw new AnyBalance.Error('Телефон должен быть строкой из 10 цифр!');
+        throw new AnyBalance.Error('Телефон должен быть строкой из 10 цифр!', null, true);
     if(!/^\d{10}$/.test(number))
-        throw new AnyBalance.Error('Телефон должен быть строкой из 10 цифр без пробелов и разделителей!');
+        throw new AnyBalance.Error('Телефон должен быть строкой из 10 цифр без пробелов и разделителей!', null, true);
 
     var html = AnyBalance.requestPost("https://sg.megafon.ru/ps/scc/php/route.php", {
 	CHANNEL:'WWW',
@@ -317,6 +317,8 @@ function isAvailableButUnset(result, params){
 
 function megafonTrayInfo(filial){
     var filinfo = filial_info[filial], errorInTray;
+
+    var internet_totals_was = {};
     
     var result = {success: true};
     try{
@@ -356,6 +358,8 @@ function megafonTrayInfo(filial){
                     if(/GPRS-Internet трафик/i.test(plan_name)) units='мб'; //Вот ещё такое исключение. Надеюсь, на всём будет работать, хотя сообщили из поволжского филиала
                     else units = 'тар.ед.'; //измеряется в 100кб интервалах
                 }
+                if(isset(valTotal)) //Отметим, что этот пакет мы уже посчитали
+                    internet_totals_was[valTotal] = true;
 
                 if(AnyBalance.isAvailable('internet_left') && isset(valAvailable)){
                     result.internet_left = (result.internet_left || 0) + parseTrafficMy(valAvailable + units);
@@ -442,10 +446,10 @@ function megafonTrayInfo(filial){
                    need_sms_total = isAvailableButUnset(result, ['sms_total']),
                    need_mins_left = isAvailableButUnset(result, ['mins_left']),
                    need_mins_total = isAvailableButUnset(result, ['mins_total']),
-                   need_int_left = isAvailableButUnset(result, ['internet_left']),
-                   need_int_total = isAvailableButUnset(result, ['internet_total']),
                    need_gb_with_you = isAvailableButUnset(result, ['gb_with_you']);
      
+               var new_internet_totals_was = {};
+
                //Минуты и прочее получаем только в случае ошибки в сервисгиде, чтобы случайно два раза не сложить
                var discounts = sumParam(json.ok.html, null, null, /<td[^>]+class="cc_discount_row"[^>]*>([\s\S]*?)<\/td>/ig);
                var wasSM = false;
@@ -459,7 +463,7 @@ function megafonTrayInfo(filial){
                    }
                    if(/MMS|ММС/i.test(name)){
                        getLeftAndTotal(val, result, need_mms_left, need_mms_total, 'mms_left', 'mms_total', parseBalance);
-                   }else if(/SMS|СМС/i.test(name)){
+                   }else if(/SMS|СМС|сообщен/i.test(name)){
                        getLeftAndTotal(val, result, need_sms_left, need_sms_total, 'sms_left', 'sms_total', parseBalance);
                    }else if(/Бизнес Микс/i.test(name) && /шт/i.test(val)){
                        getLeftAndTotal(val, result, need_sms_left, need_sms_total, 'sms_left', 'sms_total', parseBalance);
@@ -480,13 +484,22 @@ function megafonTrayInfo(filial){
                    }else if(/Гигабайт в дорогу/i.test(name)){
                        getLeftAndTotal(val, result, need_gb_with_you, false, 'gb_with_you', null, parseTraffic);
                    }else if(/[кгмkgm][бb]/i.test(val)){
-                       var traf = getLeftAndTotal(val, result, need_int_left, need_int_total, 'internet_left', 'internet_total', parseTraffic);
-                       if(need_int_cur && isset(traf.total))
-                       	   result.internet_cur = (result.internet_cur||0) + (traf.total - (traf.left||0));
+                       var traf = getLeftAndTotal(val, result, false, false, null, null, parseTraffic);
+		       if(isset(traf.total) && !isset(internet_totals_was[traf.total])){ //Проверяем, что на предыдущем этапе этот трафик ещё не был учтен
+                           new_internet_totals_was[traf.total] = true;
+                           if(AnyBalance.isAvailable('internet_cur'))
+                       	       result.internet_cur = (result.internet_cur||0) + (traf.total - (traf.left||0));
+                           if(AnyBalance.isAvailable('internet_left'))
+                       	       result.internet_left = (result.internet_left||0) + (traf.left||0);
+                           if(AnyBalance.isAvailable('internet_total'))
+                       	       result.internet_total = (result.internet_total||0) + traf.total;
+                       }
                    }else{
                        AnyBalance.trace('Неизвестная опция ' + name + ': ' + val);
                    }
                }
+
+               internet_totals_was = joinObjects(internet_totals_was, new_internet_totals_was); //Запоминаем весь учтенный на этом этапе трафик
            }
 
         }catch(e){
@@ -503,13 +516,13 @@ function megafonTrayInfo(filial){
         }
     }
 
-    getInternetInfo(filial, result);
+    getInternetInfo(filial, result, internet_totals_was);
     
     AnyBalance.setResult(result);
     
 }
 
-function getInternetInfo(filial, result){
+function getInternetInfo(filial, result, internet_totals_was){
     var filinfo = filial_info[filial];
     if(!filinfo.internetRobot)
          return; //Нет ссылки на инфу по интернету
@@ -519,12 +532,12 @@ function getInternetInfo(filial, result){
 	.replace(/%LOGIN%/g, encodeURIComponent(prefs.login))
 	.replace(/%PASSWORD%/g, encodeURIComponent(prefs.password)));
 
-    var need_traffic = isAvailableButUnset(result, ['internet_left']) ||
-        isAvailableButUnset(result, ['internet_total']) ||
-        (AnyBalance.isAvailable('internet_cur') && !result.internet_cur);
+    var total = getParam(xml, null, null, /<ALL_VOLUME>([\s\S]*?)<\/ALL_VOLUME>/i, replaceTagsAndSpaces, parseTrafficMyMb);
+
+    var need_traffic = !internet_totals_was[total];
    
     if(!need_traffic){
-        AnyBalance.trace('Трафик уже есть, поэтому не будем его дополнительно искать');
+        AnyBalance.trace('Трафик ' + total + ' уже есть, поэтому не будем его дополнительно искать');
     }
     
     if(need_traffic){
@@ -1173,7 +1186,7 @@ function aggregate_sum_minutes(values){
  */
 function parseTrafficExMega(text, thousand, order, defaultUnits){
     var _text = html_entity_decode(text.replace(/\s+/g, ''));
-    var val = getParam(_text, null, null, /(-?\d[\d\.,]*)/, replaceFloat, parseFloat);
+    var val = getParam(_text, null, null, /(-?\.\d[\d\.,]*)/, replaceFloat, parseFloat);
     if(!isset(val)){
         AnyBalance.trace("Could not parse traffic value from " + text);
         return;

@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-<change version="27" date="2013-11-07">
+<change version="28" date="2013-11-09">
 - Исправление бонусных минут
+</change>
+<change version="27" date="2013-11-09">
+- Распознавание трафика при его наличии в личном кабинете
 </change>
 <change version="26" date="2013-11-07">
 - Исправление кабинетов с несколькими номерами

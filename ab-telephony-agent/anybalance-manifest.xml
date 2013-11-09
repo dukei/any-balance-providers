@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-telephony-agent</id>
+  <id version="3">ab-telephony-agent</id>
+  <api flags="no_browser"/>
   <name>агент@mail.ru</name>
   <description>
     Получает текущий баланс в агент@mail.ru из личного кабинета http://agent.mail.ru/phonecalls/cabinet

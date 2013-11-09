@@ -1,22 +1,24 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <EditTextPreference 
-        title="Логин" 
-        positiveButtonText="ОК" 
-        summary="||{@s}" 
-        dialogTitle="Логин" 
-        negativeButtonText="Отмена" 
-        dialogMessage="Введите ваш логин в Skype"
-        key="login">
-    </EditTextPreference>
-    <EditTextPreference 
-        positiveButtonText="ОК"
-        key="password" 
-        dialogTitle="Пароль"
-        negativeButtonText="Отмена"
-        title="Пароль"
-        summary="|Введите пароль|************"
-        dialogMessage="Введите ваш пароль для входа в Skype"
-        inputType="textPassword">
-    </EditTextPreference>
+	<EditTextPreference
+		obligatory="true"
+		title="Логин"
+		positiveButtonText="ОК"
+		summary="||{@s}"
+		dialogTitle="Логин"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите ваш логин в Skype."
+		key="login">
+	</EditTextPreference>
+	<EditTextPreference
+		obligatory="true"
+		positiveButtonText="ОК"
+		key="password"
+		dialogTitle="Пароль"
+		negativeButtonText="Отмена"
+		title="Пароль"
+		summary="|Введите пароль|************"
+		dialogMessage="Введите ваш пароль для входа в Skype."
+		inputType="textPassword">
+	</EditTextPreference>
 </PreferenceScreen>

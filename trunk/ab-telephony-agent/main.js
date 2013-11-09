@@ -7,14 +7,22 @@
 Личный кабинет: http://agent.mail.ru/
 */
 
+var g_headers = {
+'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
+'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+'Connection':'keep-alive',
+'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/30.0.1599.101 Safari/537.36'
+};
+
 function main(){
     var prefs = AnyBalance.getPreferences();
     if(!prefs.login)
-         throw new AnyBalance.Error('Введите е-мейл для входа в личный кабинет agent.mail.ru');
+         throw new AnyBalance.Error('Введите е-мейл для входа в личный кабинет agent.mail.ru', null, true);
 
-    var parts = prefs.login.match(/^(\w+)@((?:mail|inbox|list|bk)\.ru)$/i);
+    var parts = prefs.login.match(/^([\w\-\.]+)@((?:mail|inbox|list|bk)\.ru)$/i);
     if(!parts)
-         throw new AnyBalance.Error('Вы ввели неправильный е-мейл для входа на agent.mail.ru.');
+         throw new AnyBalance.Error('Вы ввели неправильный е-мейл для входа на agent.mail.ru.', null, true);
 
     var baseurlLogin = "https://auth.mail.ru/cgi-bin/auth";
     var baseurl = "http://agent.mail.ru/";

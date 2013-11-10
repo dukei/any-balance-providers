@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="1.0" version="2">ab-hosting-selectel</id>
+	<id major_version="1.0" version="3">ab-hosting-selectel</id>
 	<api flags="no_browser"/>
 	<name>Селектел (Selectel)</name>
 	<description>

@@ -8,40 +8,52 @@
 */
 
 function main(){
-		var prefs = AnyBalance.getPreferences();
+	var prefs = AnyBalance.getPreferences();
 
-		AnyBalance.setDefaultCharset('utf-8');
+	AnyBalance.setDefaultCharset('utf-8');
 
-		var baseurl = 'https://support.selectel.ru/';
+	var baseurl = 'https://support.selectel.ru/';
 
-		var html = AnyBalance.requestPost(baseurl + 'api/login', {
-        		login:prefs.login,
-        		password:prefs.password,
-    	});
+	var html = AnyBalance.requestPost(baseurl + 'api/login', {
+		login:prefs.login,
+		password:prefs.password,
+	});
 
-		html = AnyBalance.requestGet(baseurl);
+	var status = AnyBalance.getLastStatusCode();
 
-		var result = {success: true};
+	if( status != 200){
+		throw new AnyBalance.Error('Ошибка авторизации');
+	}
 
-		getParam(html, result, 'cloudBalance', /"cloud":{"balance":\d+/i, replaceTagsAndSpaces, parseBalance);
-		result['cloudBalance']=result['cloudBalance']/100;
+	html = AnyBalance.requestGet(baseurl);
 
-		getParam(html, result, 'storageBalance', /"storage":{"balance":\d+/i, replaceTagsAndSpaces, parseBalance);
-		result['storageBalance']=result['storageBalance']/100;
-		
-		getParam(html, result, 'Balance', /,"balance":"\d+/i, replaceTagsAndSpaces, parseBalance);
-		result['Balance']=result['Balance']/100;
+	status = AnyBalance.getLastStatusCode();
 
-		getParam(html, result, 'vkBalance', /","vk_balance":"\d+/i, replaceTagsAndSpaces, parseBalance);
+	if( status != 200){
+		throw new AnyBalance.Error('Ошибка получения данных');
+	}
 
-		getParam(html, result, 'id', /{"id":\d+/i, replaceTagsAndSpaces, parseBalance);
-	
-		if(AnyBalance.isAvailable('username')) {
-				getParam(html, result, 'username', /,"username":"[^"]*/i);
-				a=result['username'].split("\":\"");
-				result['username'] = a[a.length-1]
-		}
+	var result = {success: true};
 
-		AnyBalance.setResult(result);
+	getParam(html, result, 'cloudBalance', /"cloud":{"balance":\d+/i, replaceTagsAndSpaces, parseBalance);
+	result['cloudBalance']=result['cloudBalance']/100;
+
+	getParam(html, result, 'storageBalance', /"storage":{"balance":\d+/i, replaceTagsAndSpaces, parseBalance);
+	result['storageBalance']=result['storageBalance']/100;
+
+	getParam(html, result, 'Balance', /,"balance":"\d+/i, replaceTagsAndSpaces, parseBalance);
+	result['Balance']=result['Balance']/100;
+
+	getParam(html, result, 'vkBalance', /","vk_balance":"\d+/i, replaceTagsAndSpaces, parseBalance);
+
+	getParam(html, result, 'id', /{"id":\d+/i, replaceTagsAndSpaces, parseBalance);
+
+	if(AnyBalance.isAvailable('username')) {
+		getParam(html, result, 'username', /,"username":"[^"]*/i);
+		a=result['username'].split("\":\"");
+		result['username'] = a[a.length-1]
+	}
+
+	AnyBalance.setResult(result);
 }
 

@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-		<change major_version="1" version="0.2">
-		- Добавление isAvailable для username
-		</change>
-		<change major_version="1" version="0.1" date="2013-10-10">
-		- Пилотный запуск
-		</change>
+	<change major_version="1" version="0.3">
+	- Добавление проверки на ошибку входа или получения данных
+	</change>
+	<change major_version="1" version="0.2">
+	- Добавление isAvailable для username
+	</change>
+	<change major_version="1" version="0.1" date="2013-11-10">
+	- Пилотный запуск
+	</change>
 </history>

@@ -28,7 +28,9 @@ function main(){
         if(AnyBalance.isAvailable('date')){
                 result.date = $xml.find('date').text(); //Сводим к золоту
         }
-            
+                if(AnyBalance.isAvailable('end')){
+                result.end = $xml.find('end').text(); //Сводим к золоту
+        }    
 
         
 		

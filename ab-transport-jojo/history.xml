@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-    <change major_version="1" version="1" date="2012-12-26">
-        - Initial version of provider. Support of Jojo Reskassa and Jojo Period.
-    </change>
+	<change major_version="1" version="3" date="2013-11-10">
+		- Minor changes.
+	</change>
+	<change major_version="1" version="2" date="2013-11-10">
+		- Support for reading of Jojo card expiration information (you need to exchange the card in Skånetrafiken office to be able use the funds on card after expiration date).
+		- Support for reading currency name.
+	</change>
+	<change major_version="1" version="1" date="2012-12-26">
+		- Initial version of provider. Support of Jojo Reskassa and Jojo Period.
+	</change>
 </history>

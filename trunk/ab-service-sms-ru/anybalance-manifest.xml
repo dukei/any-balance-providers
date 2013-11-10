@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id major_version="1.0" version="2">ab-service-sms-ru</id>
+  <name>SMS.RU</name>
+  <description>
+Получение информации о состоянии баланса и использовании дневного лимита SMS с сайта http://sms.ru
+	</description>
+  <author>xandros &lt;xandrosko@gmail.com&gt;</author>
+  <files>
+	<icon>icon.png</icon>
+    <js>main.js</js>
+	<preferences>preferences.xml</preferences>
+	<history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+	<counter id="sent" name="Отправлено"/>
+  </counters>
+	<keywords>
+    смс рассылка, смс.ру
+  </keywords>
+  <type>
+    service
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

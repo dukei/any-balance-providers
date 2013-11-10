@@ -6,6 +6,7 @@
         summary="Номер телефона (10 цифр)||{@s}\n" 
         dialogTitle="Логин" 
         negativeButtonText="Отмена" 
+	obligatory="true"
         dialogMessage="Введите логин, используемый для входа в личный кабинет http://sms.ru."
         key="login"
 		inputType="phone">
@@ -17,6 +18,7 @@
         negativeButtonText="Отмена"
         title="Пароль"
         summary="Пароль для входа||***********\n"
+	obligatory="true"
         dialogMessage="Введите пароль, используемый для входа в личный кабинет http://sms.ru."
         inputType="textPassword">
     </EditTextPreference>

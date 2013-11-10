@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<history>
+    <change major_version="0" version="2">
+        исправлена иконка, исправлены неточности интерфейса
+    </change>
+    <change major_version="0" version="1">
+        первая версия провайдера
+    </change>
+</history>

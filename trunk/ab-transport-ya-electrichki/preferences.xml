@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        key="station_from"
+        title="Станция отправления" 
+        summary="Станция отправления||{@s}\n" 
+        dialogTitle="Станция отправления" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите станцию отправления"
+        positiveButtonText="ОК" 
+        inputType="text">
+    </EditTextPreference>
+    <EditTextPreference 
+        key="station_to"
+        title="Станция назначения" 
+        summary="Станция назначения||{@s}\n" 
+        dialogTitle="Станция назначения" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите станцию назначения"
+        positiveButtonText="ОК" 
+        inputType="text">
+    </EditTextPreference>
+</PreferenceScreen>

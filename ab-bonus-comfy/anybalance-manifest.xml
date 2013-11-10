@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<api flags="no_browser"/>
+	<id major_version="1.0" version="1">ab-bonus-comfy</id>
+	<name>Comfy - клуб Суперпокупателей</name>
+	<description html="true"><![CDATA[
+		<p>Предоставляет информацию о бонусах для участников клуба Суперпокупателей от Comfy (http://club.comfy.ua/).</p>
+		<p>COMFY — лидер розничного рынка бытовой техники и электроники в сетевом сегменте. На сегодняшний день сеть представлена в 40-ка городах Украины, открыт 81 магазин.</p>
+		<p>Клуб Суперпокупателей - это специальная программа для постоянных клиентов магазина Comfy.</p>
+		<p>Она позволяет участникам Клуба накапливать бонусы за каждую покупку и использовать их при оплате новых покупок, а также получать дополнительные привилегии (бонусы за покупку акционных товаров, индивидуальные предложения, приглашения на специальные мероприятия и т.д.).</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+		</p>Как стать участником клуба Суперпокупателей?</p>
+		<ol>
+		<li>Сделайте покупку на сумму от 500 грн. (или обменяйте дисконтную карту на бонусную);</li>
+		<li>Отправьте SMS с кодом, который напечатан в Вашем чеке;</li>
+		<li>Войдите в личный кабинет на сайте http://club.comfy.ua/, использую номер телефона как пароль, и заполните анкету участника.</li>
+		</ol>
+	]]></instruction>
+	<author>Sergey Bashmanov &lt;sergey.bashmanov@gmail.com&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Бонусы" suffix=" ₴" type="numeric"/>
+	</counters>
+	<keywords>comfy, бонусы, Украина Клуб Комфи, Клуб Comfy, комфи, клуб суперпокупателей</keywords>
+	<type>bonus</type>
+	<country>ua</country>
+</provider>

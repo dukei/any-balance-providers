@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id major_version="1.0" version="2">ab-service-selectel</id>
+	<name>Селектел (Selectel)</name>
+	<description>
+Получает баланс и информацию об абоненте для хостинга Селектел. Информация берется из личного кабинета https://support.selectel.ru.
+	</description>
+	<author>xandros &lt;xandrosko@gmail.com&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="cloudBalance" name="Баланс на облаке" units="р"/>
+		<counter id="storageBalance" name="Хранилище" units="р"/>
+		<counter id="Balance" name="Баланс" units="р"/>
+		<counter id="vkBalance" name="На приложении" units="голосов"/>
+		<counter id="id" name="Номер договора"/>
+		<counter id="username" name="ФИО" type="text"/>
+	</counters>
+	<keywords>интернет, хостинг, облако, сервер</keywords>
+	<type>service</type>
+	<country>ru</country>
+</provider>

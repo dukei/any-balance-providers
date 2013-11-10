@@ -9,7 +9,7 @@
 	obligatory="true"
         dialogMessage="Введите логин, используемый для входа в личный кабинет http://sms.ru."
         key="login"
-		inputType="phone">
+	inputType="phone">
     </EditTextPreference>
     <EditTextPreference 
         positiveButtonText="ОК"

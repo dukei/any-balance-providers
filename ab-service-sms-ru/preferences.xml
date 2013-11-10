@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Логин" 
+        positiveButtonText="ОК" 
+        summary="Номер телефона (10 цифр)||{@s}\n" 
+        dialogTitle="Логин" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите логин, используемый для входа в личный кабинет http://sms.ru."
+        key="login"
+		inputType="phone">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="Пароль для входа||***********\n"
+        dialogMessage="Введите пароль, используемый для входа в личный кабинет http://sms.ru."
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

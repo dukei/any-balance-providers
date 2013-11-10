@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="1" version="0.3">
+      - Упрощение процедуры извлечения результата, добавление счетчиков, добавление обработки ошибок получения данных, новая иконка
+    </change>
 	<change major_version="1" version="0.2">
       - Получение требуемых результатов в AnyBalanceDebugger
     </change>

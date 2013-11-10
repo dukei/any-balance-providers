@@ -13,6 +13,7 @@
     <js>main.js</js>
   </files>
   <counters>
+  <counter id="left" name="Осталось " suffix=" дней" type="numeric"/>
     <counter id="date" name="Срок окончания услуги" type="text"/>
 
 	<counter id="fio" name="Ф.И.О." type="html"/>

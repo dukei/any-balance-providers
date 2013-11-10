@@ -533,17 +533,21 @@ function getInternetInfo(filial, result, internet_totals_was){
 	.replace(/%PASSWORD%/g, encodeURIComponent(prefs.password)));
 
     var total = getParam(xml, null, null, /<ALL_VOLUME>([\s\S]*?)<\/ALL_VOLUME>/i, replaceTagsAndSpaces, parseTrafficMyMb);
-
-    var need_traffic = !internet_totals_was[total];
-   
-    if(!need_traffic){
-        AnyBalance.trace('Трафик ' + total + ' уже есть, поэтому не будем его дополнительно искать');
-    }
-    
-    if(need_traffic){
-        sumParam(xml, result, 'internet_cur', /<CUR_VOLUME>([\s\S]*?)<\/CUR_VOLUME>/i, replaceTagsAndSpaces, parseTrafficMyMb, aggregate_sum);
-        sumParam(xml, result, 'internet_left', /<LOST_VOLUME>([\s\S]*?)<\/LOST_VOLUME>/i, replaceTagsAndSpaces, parseTrafficMyMb, aggregate_sum);
-        sumParam(xml, result, 'internet_total', /<ALL_VOLUME>([\s\S]*?)<\/ALL_VOLUME>/i, replaceTagsAndSpaces, parseTrafficMyMb, aggregate_sum);
+    if(isset(total)){
+        var need_traffic = !internet_totals_was[total];
+        
+        if(!need_traffic){
+            AnyBalance.trace('Трафик ' + total + ' уже есть, поэтому не будем его дополнительно искать');
+        }
+        
+        if(need_traffic){
+            sumParam(xml, result, 'internet_cur', /<CUR_VOLUME>([\s\S]*?)<\/CUR_VOLUME>/i, replaceTagsAndSpaces, parseTrafficMyMb, aggregate_sum);
+            sumParam(xml, result, 'internet_left', /<LOST_VOLUME>([\s\S]*?)<\/LOST_VOLUME>/i, replaceTagsAndSpaces, parseTrafficMyMb, aggregate_sum);
+            sumParam(xml, result, 'internet_total', /<ALL_VOLUME>([\s\S]*?)<\/ALL_VOLUME>/i, replaceTagsAndSpaces, parseTrafficMyMb, aggregate_sum);
+        }
+    }else{
+        var error = getParam(xml, null, null, /<ERROR>([\s\S]*?)<\/ERROR>/i, replaceTagsAndSpaces, html_entity_decode);
+        AnyBalance.trace('Пакет трафика не найден: ' + error);
     }
 }
 
@@ -1186,7 +1190,7 @@ function aggregate_sum_minutes(values){
  */
 function parseTrafficExMega(text, thousand, order, defaultUnits){
     var _text = html_entity_decode(text.replace(/\s+/g, ''));
-    var val = getParam(_text, null, null, /(-?\.\d[\d\.,]*)/, replaceFloat, parseFloat);
+    var val = getParam(_text, null, null, /(-?\.?\d[\d\.,]*)/, replaceFloat, parseFloat);
     if(!isset(val)){
         AnyBalance.trace("Could not parse traffic value from " + text);
         return;

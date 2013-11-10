@@ -6,9 +6,10 @@
         summary="Номер договора||{@s}\n" 
         dialogTitle="Логин" 
         negativeButtonText="Отмена" 
+	obligatory="true"
         dialogMessage="Введите логин, используемый для входа в личный кабинет https://support.selectel.ru/"
         key="login"
-		inputType="number">
+	inputType="number">
     </EditTextPreference>
     <EditTextPreference 
         positiveButtonText="ОК"
@@ -17,6 +18,7 @@
         negativeButtonText="Отмена"
         title="Пароль"
         summary="Пароль для входа||***********\n"
+	obligatory="true"
         dialogMessage="Введите пароль, используемый для входа в личный кабинет https://support.selectel.ru/"
         inputType="textPassword">
     </EditTextPreference>

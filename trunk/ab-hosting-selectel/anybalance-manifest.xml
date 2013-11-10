@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="1.0" version="2">ab-service-selectel</id>
+	<id major_version="1.0" version="2">ab-hosting-selectel</id>
+	<api flags="no_browser"/>
 	<name>Селектел (Selectel)</name>
 	<description>
 Получает баланс и информацию об абоненте для хостинга Селектел. Информация берется из личного кабинета https://support.selectel.ru.
@@ -22,6 +23,6 @@
 		<counter id="username" name="ФИО" type="text"/>
 	</counters>
 	<keywords>интернет, хостинг, облако, сервер</keywords>
-	<type>service</type>
+	<type>hosting</type>
 	<country>ru</country>
 </provider>

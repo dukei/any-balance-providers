@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="9">ab-provider-liveproxy</id>
+  <name>Liveproxy</name>
+  <description>
+    Проверяет счёт абонентов интернет компании Liveproxy  в г.Армянск
+  </description>
+  <author>Dmitry &lt;dayser@liveproxy.com.ua&gt;</author>
+  <files>
+ <js>api:jquery.min.js</js>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="date" name="Срок окончания услуги" type="text"/>
+
+	<counter id="fio" name="Ф.И.О." type="html"/>
+	<counter id="state" name="Статус" type="html"/>
+  </counters>
+  <keywords>
+    Liveproxy, Армянск, Визит
+  </keywords>
+  <type>
+    internet
+  </type>
+</provider>

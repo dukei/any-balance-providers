@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="1" version="2">ab-tv-ozotv</id>
+	<id major_version="1" version="3">ab-tv-ozotv</id>
 	<api flags="no_browser" />
 	<name>OZO.tv</name>
 	<description html="true"><![CDATA[
@@ -16,12 +16,12 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Expired in" units=" days"/>
+		<counter id="duration" name="Duration" units=" days"/>
 		<counter id="status" name="Status" type="text"/>
-		<counter id="created" name="Created" type="time" format="dd/MM/yyyy"/>
 		<counter id="activated" name="Activated" type="time" format="dd/MM/yyyy"/>
+		<counter id="created" name="Created" type="time" format="dd/MM/yyyy"/>
 		<counter id="cost" name="Cost" units=" {@currency}"/>
 		<counter id="currency" name="Currency" type="text"/>
-		<counter id="duration" name="Duration" units="days"/>
 	</counters>
 	<keywords>tv, internettv, iptv</keywords>
 	<type>tv</type>

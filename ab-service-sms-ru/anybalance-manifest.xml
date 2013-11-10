@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
   <id major_version="1.0" version="2">ab-service-sms-ru</id>
+  <api flags="no_browser"/>
   <name>SMS.RU</name>
   <description>
 Получение информации о состоянии баланса и использовании дневного лимита SMS с сайта http://sms.ru

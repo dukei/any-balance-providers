@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="2">ab-service-sms-ru</id>
+  <id major_version="1.0" version="3">ab-service-sms-ru</id>
   <api flags="no_browser"/>
   <name>SMS.RU</name>
   <description>

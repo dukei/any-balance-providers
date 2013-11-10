@@ -7,14 +7,6 @@
 Личный кабинет: https://sms.ru/
 */
 
-function getValue(result, namein, nameout){
-		var matches, regexp = new RegExp('(?=(\n.*){1}$)', 'i');
-		if(matches = namein.match(regexp)){
-				if(AnyBalance.isAvailable(nameout))
-						result[nameout] = parseFloat(matches[1].replace(',','.'));
-		}
-}
-
 function main(){
 		var prefs = AnyBalance.getPreferences();
 
@@ -27,19 +19,39 @@ function main(){
         		password:prefs.password,
 				token:strToken,
     	});
+		
+		var status = strBalance.substr(0,3);
+
+		AnyBalance.trace(status);
+	
+		if( status > 100){
+				throw new AnyBalance.Error('Ошибка. Что-то пошло не так');
+    	}
 
 		var strLimit = AnyBalance.requestPost(baseurl + 'my/limit', {
         		login:prefs.login,
         		password:prefs.password,
 				token:strToken,
     	});
+
+		if( status > 100){
+				throw new AnyBalance.Error('Ошибка. Что-то пошло не так');
+    	}
 	
 		var result = {success: true};
 
-		getValue(result, strBalance, 'balance');
-		
-		getValue(result, strLimit, 'sent');
-    
+    	strBalance = strBalance.split("\n");
+        result['balance'] = strBalance[strBalance.length-1]
+
+		var strOctatok = strLimit.split("\n");
+        result['octatok'] = strOctatok[strOctatok.length-2]-strOctatok[strOctatok.length-1]
+
+		var strSent = strLimit.split("\n");
+        result['sent'] = strLimit[strLimit.length-1]
+
+		strLimit = strLimit.split("\n");
+        result['limit'] = strLimit[strLimit.length-2]
+
 		AnyBalance.setResult(result);
 }
 

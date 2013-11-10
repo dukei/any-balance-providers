@@ -3,7 +3,7 @@
     <EditTextPreference 
         title="Логин" 
         positiveButtonText="ОК" 
-        summary="Номер телефона (в формате +380ХХХХХХХХХ)||{@s}\n" 
+        summary="|Номер телефона (в формате +380ХХХХХХХХХ)|{@s}" 
         dialogTitle="Номер телефона" 
         negativeButtonText="Отмена" 
 		obligatory="true"
@@ -18,7 +18,7 @@
         negativeButtonText="Отмена"
 		obligatory="true"
         title="Пароль"
-        summary="Пароль для входа в Мой Киевстар||***********\n"
+        summary="|Пароль для входа в Мой Киевстар|***********"
         dialogMessage="Введите пароль, используемый для входа в Мой Киевстар"
         inputType="textPassword">
     </EditTextPreference>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Логин" 
+        positiveButtonText="ОК" 
+        summary="|имя пользователя|{@s}" 
+        dialogTitle="Имя пользователя" 
+        negativeButtonText="Отмена" 
+		obligatory="true" 
+        dialogMessage="Введите имя пользователя, выданные при заключении договора."
+        key="login"
+		inputType="text">
+    </EditTextPreference>
+	 <EditTextPreference 
+        title="Пароль" 
+        positiveButtonText="ОК" 
+        summary="|пароль|{@s}" 
+        dialogTitle="пароль" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите пароль, выданные при заключении договора"
+		obligatory="true" 
+        key="password"
+		inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

@@ -43,7 +43,7 @@ function main(){
         var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error);
-        throw new AnyBalance.Error('Failed to enter to the internet banking. Possibly the website was changed.');
+        throw new AnyBalance.Error('Failed to enter to the internet banking. Web site may changed or temporarily down.');
     }
     
     konton = html.match(/<a[\s\S]*?href="\/([\s\S]*?)"[\s\S]*?<span class="menu-text">Konton<\/span>/i)[1];
@@ -51,13 +51,13 @@ function main(){
 
    	AnyBalance.trace('GET: ' + baseurl + konton);
     html = AnyBalance.requestGet(baseurl + konton, addHeaders({Referer: baseurl + loggain}));
-   	AnyBalance.trace('GET: ' + baseurl + konton + ' ... OK' + html);
+   	AnyBalance.trace('GET: ' + baseurl + konton + ' ... OK');
     
     var result = {success: true};
     getParam(html, result, '__tariff', /item_1[\s\S]*?block-link[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'accnum', /item_1[\s\S]*?link-list-left[\s\S]*?>([\S\s]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'balance', /item_1[\s\S]*?link-list-right[\s\S]*?> [a-z]*([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'currency', /item_1[\s\S]*?link-list-right[\s\S]*?> ([a-z]*)[\S\s]*?<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, ['currency','balance'], /item_1[\s\S]*?link-list-right[\s\S]*?> ([a-z]*)[\S\s]*?<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
 
     AnyBalance.setResult(result);
 }

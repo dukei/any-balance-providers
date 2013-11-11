@@ -36,7 +36,7 @@ function main(){
 		}
 		var req = prefs.pattern ? prefs.pattern : '';
 		//                   (<div\s+class="[^"]*title"(?:[^>]*>){2}[^>]*Перейти на страницу объявления[^>]*>[^>]*АКПП tiptronik(?:[\s\S]*?<\/div){4})
-		var re = new RegExp('(<div\\s+class=\\"[^\\"]*title\\"(?:[^>]*>){2}[^>]*Перейти на страницу объявления[^>]*>[^>]*'+ req +'(?:[\\s\\S]*?</div){4})', 'i');
+		var re = new RegExp('(<div\\s+class=\\"[^\\"]*description\\"(?:[^>]*>){2}[^>]*Перейти на страницу объявления[^>]*>[^>]*'+ req +'(?:[\\s\\S]*?</div){4})', 'i');
 		var div = getParam(html, null, null, re);
 		if(!div)
 			throw new AnyBalance.Error('Не удаётся найти ' + (prefs.pattern ? 'объявления с именем ' + prefs.pattern : 'ни одного объявления'));

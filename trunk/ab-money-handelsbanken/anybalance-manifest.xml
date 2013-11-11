@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1" version="1">ab-money-handelsbanken</id>
+  <id major_version="1" version="2">ab-money-handelsbanken</id>
   <api flags="no_browser" />
   <name>Handelsbanken</name>
   <description>
@@ -15,9 +15,9 @@
     <history>history.xml</history>
   </files>
   <counters>
-    <counter id="balance" name="Balance" type="numeric"/>
-    <counter id="currency" name="Currency" type="text"/>
+    <counter id="balance" name="Balance" units=" {@currency}"/>
     <counter id="accnum" name="Account number" type="text"/>
+    <counter id="currency" name="Currency" type="text"/>
   </counters>
   <keywords>
     money, bank, handelsbanken

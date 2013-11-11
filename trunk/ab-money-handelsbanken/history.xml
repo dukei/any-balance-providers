@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change major_version="1" version="2" date="2013-11-11">
+	- Currency name near balance amount.
+	</change>
     <change major_version="1" version="1" date="2013-09-18">
 	- Initial version of provider.
 	</change>

@@ -22,72 +22,6 @@ if (typeof String.prototype.trim != 'function') { // detect native implementatio
   };
 }
 
-function getParam (html, result, param, regexp, replaces, parser) {
-    if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
-        return;
-
-    var value = regexp ? regexp.exec (html) : html;
-    if (value) {
-                if(regexp)
-            value = value[1];
-        if (replaces) {
-            for (var i = 0; i < replaces.length; i += 2) {
-                value = value.replace (replaces[i], replaces[i+1]);
-            }
-        }
-        if (parser)
-            value = parser (value);
-
-    if(param)
-      result[param] = value;
-    else
-      return value
-    }
-}
-
-var replaceTagsAndSpaces = [/<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
-var replaceFloat = [/\s+/g, '', /,/g, '.', /(\d)\-(\d)/g, '$1.$2'];
-
-// parce balance with ' ' (space) as delimitier for thousands and ',' as delimitier for one hundredth (ex. 10 234,56)
-function parseBalance(text){
-    var _text = text.replace(/\s+/g, '');
-    var val = getParam(_text, null, null, /(-?\d[\d\.,\-]*)/, replaceFloat, parseFloat);
-    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
-    return val;
-}
-
-var replaceFloat2 = [/\s+/g, '', /,/g, '', /(\d)\-(\d)/g, '$1.$2'];
-
-// parce balance with ',' as delimitier for thousands and '.' as delimitier for one hundredth (ex. 10,234.56)
-function parseBalance2(text){
-    var _text = text.replace(/\s+/g, '');
-    var val = getParam(_text, null, null, /(-?\d[\d\.,\-]*)/, replaceFloat2, parseFloat);
-    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
-    return val;
-}
-
-// parce date in form of DAY<any_symbol>MONTH<any_symbol>YEAR4DIG, for ex. 20.01.2012
-function parseDate(str){
-    var matches = /(\d+)[^\d](\d+)[^\d](\d+)/.exec(str);
-    var time;
-    if(matches){
-      time = (new Date(+matches[3], matches[2]-1, +matches[1])).getTime();
-    }
-    AnyBalance.trace('Parsing date ' + new Date(time) + ' from value: ' + str);
-    return time;
-}
-
-// parce date in form of YEAR4DIG<any_symbol>MONTH<any_symbol>DAY, for ex. 2012-01-20
-function parseDate2(str){
-    var matches = /(\d+)[^\d](\d+)[^\d](\d+)/.exec(str);
-    var time;
-    if(matches){
-      time = (new Date(+matches[1], matches[2]-1, +matches[3])).getTime();
-    }
-    AnyBalance.trace('Parsing date ' + new Date(time) + ' from value: ' + str);
-    return time;
-}
-
 function main(){
     var prefs = AnyBalance.getPreferences();
     //if(prefs.card)
@@ -172,10 +106,10 @@ function main(){
     if (!matches)
         throw new AnyBalance.Error("Account number, specified in settings, was not found. Correct it or set it to blank and try again.");
     AnyBalance.trace("Account selected: name=" + accName + " num=*" + accNum.slice(-4) + " avail=*" + accAvail.slice(-5) + " availcurrency=" + accAvailCurrency);
-        
+
     getParam(accName, result, '__tariff', null, replaceTagsAndSpaces);
     getParam(accAvail, result, 'balance', null, replaceTagsAndSpaces, parseBalance);
-    getParam(accAvailCurrency, result, 'currency', null, replaceTagsAndSpaces);
-    
+    getParam(accAvailCurrency, result, ['currency','balance'], null, replaceTagsAndSpaces);
+
     AnyBalance.setResult(result);
 }

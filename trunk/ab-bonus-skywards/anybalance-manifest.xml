@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="3">ab-bonus-skywards</id>
+  <id version="4">ab-bonus-skywards</id>
+  <api flags="no_browser"/>
   <name>Emirates Skywards</name>
   <description>
     Obtains Emirates Skywards bonus miles from your personal account at https://www.skywards.com.

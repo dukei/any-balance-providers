@@ -36,37 +36,32 @@ function main(){
     var baseurl = "https://www.emirates.com/account/english/login/login.aspx?mode=ssl";
     AnyBalance.setDefaultCharset('utf-8'); 
 
+    checkEmpty(prefs.login, "Please enter your Emirates ID");
+    checkEmpty(prefs.password, "Please enter your password");
+
     moment.lang('en');
 
     var html = AnyBalance.requestGet(baseurl, g_headers);
 
-    var vs = getViewState(html);
-    if(!vs) //Если параметр не найден, то это, скорее всего, свидетельствует об изменении сайта или о проблемах с ним
+    var form = getParam(html, null, null, /<form[^>]+id="aspnetForm"[^>]*>([\s\S]*?)<\/form>/i);
+
+    if(!form) //Если параметр не найден, то это, скорее всего, свидетельствует об изменении сайта или о проблемах с ним
         throw new AnyBalance.Error('Could not find login form. Is the site changed?');
 
+    var params = createFormParams(form);
+    params.txtMembershipNo = prefs.login;
+    params.txtPassword = prefs.password;
+    params.btnHeaderSearch = params.siteSelectorSubmit = params.chkRememberMe = params.btnForgotPasswordSubmit = params.btnMembershipNoSubmit = undefined;
+
     //Теперь, когда секретный параметр есть, можно попытаться войти
-    html = AnyBalance.requestPost(baseurl, {
-        __VIEWSTATE:vs,
-        __EVENTTARGET:'',
-        __EVENTARGUMENT:'',
-        __VIEWSTATEENCRYPTED:'',
-        txtHeaderSearch:'',
-        siteSelectorID:0,
-        txtMembershipNo:prefs.login,
-        txtPassword:prefs.password,
-        cptLogin_captcha:'',
-        txtCaptcha:'',
-        ctl00$MainContent$SSLogin$btnSubmit:'Log In',
-        txtForgotMembershipNumber:'',
-        txtFirstName:'',
-        txtFamilyName:'',
-        txtEmailAddress:'',
-        ddlDay:'',
-        ddlMonth:'',
-        ddlYear:'',
-        ctl00$MainContent$SSLogin$hdnSUrl1:'',
-        currentPanelOpen:''
-    }, addHeaders({Referer: baseurl})); 
+    try{
+    	html = AnyBalance.requestPost(baseurl, params, addHeaders({Referer: baseurl})); 
+    }catch(e){
+	if(prefs.__debug)
+            html = AnyBalance.requestGet("http://www.emirates.com/english/index.aspx", g_headers);
+        else
+	    throw e;
+    }
 
     if(!/Log out/i.test(html)){
         var error = getParam(html, null, null, /<div[^>]+class="errorPanel"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);

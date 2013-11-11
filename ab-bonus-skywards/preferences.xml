@@ -7,6 +7,7 @@
         dialogTitle="Membership Number" 
         negativeButtonText="Cancel" 
         dialogMessage="Please enter your Membership Number."
+        obligatory="true"
         inputType="number"
         key="login">
     </EditTextPreference>
@@ -17,6 +18,7 @@
         negativeButtonText="Cancel"
         title="Password"
         summary="||***********"
+        obligatory="true"
         dialogMessage="Enter password to login to your Skywards personal account."
         inputType="textPassword">
     </EditTextPreference>

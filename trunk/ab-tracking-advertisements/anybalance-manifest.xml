@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="9">ab-tracking-advertisements</id>
+	<id version="10">ab-tracking-advertisements</id>
 	<name>Наблюдение за Avito.ru</name>
 	<description html="true"><![CDATA[
 	<p>Отслеживает появление новых объявлений по заданной подстроке на Avito.ru, а так же позволяет следить за собственными объявлениями при вводе логина и пароля.</p>
@@ -24,7 +24,7 @@
 		<counter id="views" name="Просмотров всего" />
 		<counter id="views_today" name="Просмотров сегодня" />
 		<counter id="adv_title" name="Название" type="text"/>
-		<counter id="days_left" name="До истечения срока размещения осталось" />
+		<counter id="days_left" name="До истечения срока размещения осталось" units=" дн."/>
 	</counters>
 	<keywords>другое трекинг avito.ru</keywords>
 	<type>other, tracking</type>

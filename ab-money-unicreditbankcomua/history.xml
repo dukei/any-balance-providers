@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change major_version="1" version="2" date="2013-11-11">
+        - Найменування валюти біля баланса.
+    </change>
     <change major_version="1" version="1" date="2012-12-28">
         - Перша версія провайдера. Показ тільки кількості доступних коштів по рахункам.
     </change>

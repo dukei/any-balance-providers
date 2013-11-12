@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-bonus-caravan</id>
+	<api flags="no_browser"/>
+	<name>Гипермаркет Караван</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о бонусной программе сети гипермаркетов Краван http://icaravan.com.ua</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Бонусы" units=" б"/>
+		<counter id="balance_money" name="Деньги" units=" грн"/>
+	</counters>
+	<keywords></keywords>
+	<type>bonus</type>
+	<country>ua</country>
+</provider>

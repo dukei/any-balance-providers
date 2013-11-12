@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-municipal-kvartplata24</id>
+	<api flags="no_browser"/>
+	<name>Квартплата 24</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию из системы Квартплата 24 http://kvp24.ru/</p>
+	<p>Информация берется из личного кабинета http://lk.kvp24.ru/lk/login.jsp</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Сумма последнего начисления" units=" р"/>
+		<counter id="date" name="Дата последнего начисления" type="time" format="dd/MM/yyyy"/>
+	</counters>
+	<keywords></keywords>
+	<type>municipal</type>
+	<country>ru</country>
+</provider>

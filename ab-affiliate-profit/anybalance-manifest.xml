@@ -2,7 +2,7 @@
 <provider>
 	<id version="4">ab-affiliate-profit</id>
 	<name>Profit-Partner.ru</name>
-	<api flags="no_browser"/>
+	<api flags="no_browser|captcha"/>
 	<description html="true"><![CDATA[
 	<p>Предоставляет различные показатели в партнерской программе Profit-Partner.ru (http://profit-partner.ru).</p>   
 	]]></description>

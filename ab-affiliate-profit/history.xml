@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+<change version="5" date="2013-11-12">
+- Исправлено получение дохода за текущий месяц (Stark)
+</change>
 <change version="4" date="2013-11-07">
 - Поддержка изменений на сайте
 </change>

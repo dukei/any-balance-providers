@@ -23,10 +23,23 @@ function main(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
 
+	prefs.login = 'Alexxxander2012';
+    prefs.password = 'ttfMPg12Km712';
+		  
     var baseurl = 'http://profit-partner.ru/';
 
 	var html = AnyBalance.requestGet(baseurl + 'sign/in', g_headers);
 
+	/*var captchaa;
+	if(AnyBalance.getLevel() >= 7){
+		AnyBalance.trace('Пытаемся ввести капчу');
+		var captcha = AnyBalance.requestGet(baseurl+ '/ps/scc/php/cryptographp.php');
+		captchaa = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
+		AnyBalance.trace('Капча получена: ' + captchaa);
+	}else{
+		throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
+	}*/
+	
 	var params = createFormParams(html, function(params, str, name, value) {
 		if (name == 'username') 
 			return prefs.login;
@@ -53,7 +66,8 @@ function main(){
     //getParam(html, result, 'estimate', /<td[^>]*>Прогноз дохода[\s\S]*?<td[^>]*>([\s\S]*?)<\/a>\s*<\/td>/i, [/"[^"]*"/g, '', replaceTagsAndSpaces], parseBalance);
 	getParam(html, result, 'estimate', /<div[^>]*>Прогноз дохода(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
 	
-
+	getParam(html, result, 'income', /">([^<]*)(?:[^>]*>){4}Прогноз дохода/i, replaceTagsAndSpaces, parseBalance);
+	
     if(AnyBalance.isAvailable('views','clicks','ctr','cpc','cpm','income')){
         var now = new Date();
         var startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -79,7 +93,7 @@ function main(){
         getParam(html, result, 'ctr', /Итого:(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
         getParam(html, result, 'cpc', /Итого:(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
         getParam(html, result, 'cpm', /Итого:(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-        getParam(html, result, 'income', /Итого:(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+        //getParam(html, result, 'income', /Итого:(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     }
     
     AnyBalance.setResult(result);

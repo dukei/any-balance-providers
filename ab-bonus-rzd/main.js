@@ -22,7 +22,6 @@ function main(){
     if(redirect)
         html = AnyBalance.requestGet(redirect);
 
-    //AnyBalance.trace(html);
     if(!/logouturl/.test(html)){
         var error = getParam(html, null, null, /<div[^>]*failure[^>]*>([\s\S]*?)<\/div>/, replaceTagsAndSpaces, html_entity_decode);
         if(error)
@@ -30,8 +29,12 @@ function main(){
         throw new AnyBalance.Error('Не удалось войти в личный кабинет. Проблемы на сайте или сайт изменен.');
     }
 
+	if(/Подтверждение временного пароля/.test(html)) {
+		throw new AnyBalance.Error('Сайт требует заполнить профиль. Зайдите в личный кабинет через браузер и выполните все необходимые действия.');
+	}
+	
     var result = {success: true};
-
+	
     getParam(html, result, 'balance', /Премиальные баллы:[\s\S]*?<dd[^>]*>([\s\S]*?)<\/dd>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'qballs1', /Квалификационные баллы за \d+:[\s\S]*?<dd[^>]*>([\s\S]*?)<\/dd>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'qballs2', /Квалификационные баллы за \d+:[\s\S]*?Квалификационные баллы за \d+:[\s\S]*?<dd[^>]*>([\s\S]*?)<\/dd>/i, replaceTagsAndSpaces, parseBalance);

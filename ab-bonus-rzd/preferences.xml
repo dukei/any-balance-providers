@@ -1,23 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <EditTextPreference 
-        title="№ карты" 
-        positiveButtonText="ОК" 
-        summary="||{@s}" 
-        dialogTitle="№ карты" 
-        negativeButtonText="Отмена" 
-        dialogMessage="Введите номер бонусной карты РЖД для входа в личный кабинет https://rzd-bonus.ru."
-        inputType="number"
-        key="login">
-    </EditTextPreference>
-    <EditTextPreference 
-        positiveButtonText="ОК"
-        key="password" 
-        dialogTitle="Пароль"
-        negativeButtonText="Отмена"
-        title="Пароль"
-        summary="||***********"
-        dialogMessage="Введите ПИН или пароль, используемый для входа в личный кабинет https://rzd-bonus.ru."
-        inputType="textPassword">
-    </EditTextPreference>
+	<EditTextPreference
+		obligatory="true"
+		title="№ карты"
+		positiveButtonText="ОК"
+		summary="||{@s}"
+		dialogTitle="№ карты"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите номер бонусной карты РЖД для входа в личный кабинет https://rzd-bonus.ru."
+		inputType="number"
+		key="login">
+	</EditTextPreference>
+	<EditTextPreference
+		obligatory="true"
+		positiveButtonText="ОК"
+		key="password"
+		dialogTitle="Пароль"
+		negativeButtonText="Отмена"
+		title="Пароль"
+		summary="||***********"
+		dialogMessage="Введите ПИН или пароль, используемый для входа в личный кабинет https://rzd-bonus.ru."
+		inputType="textPassword">
+	</EditTextPreference>
 </PreferenceScreen>

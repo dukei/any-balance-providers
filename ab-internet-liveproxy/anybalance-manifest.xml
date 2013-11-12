@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-internet-liveproxy</id>
+  <id version="3">ab-internet-liveproxy</id>
   <name>Liveproxy (Армянск)</name>
   <description>
     Проверяет счёт абонентов интернет компании Liveproxy  в г.Армянск

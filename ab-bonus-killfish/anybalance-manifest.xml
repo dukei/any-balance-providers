@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-bonus-killfish</id>
+	<api flags="no_browser"/>
+	<name>KillFish</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе бонусной карты KillFish http://killfish.ru/my.html</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" {@currency}"/>
+		<counter id="total" name="Всего бонусных начислений" units=" {@currency}"/>
+		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="friends" name="Вы привели к нам друзей"/>
+	</counters>
+	<keywords></keywords>
+	<type>bonus</type>
+	<country>ru</country>
+</provider>

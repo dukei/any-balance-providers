@@ -23,9 +23,6 @@ function main(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
 
-	prefs.login = 'Alexxxander2012';
-    prefs.password = 'ttfMPg12Km712';
-		  
     var baseurl = 'http://profit-partner.ru/';
 
 	var html = AnyBalance.requestGet(baseurl + 'sign/in', g_headers);

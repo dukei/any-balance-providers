@@ -1,37 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-bonus-rzd</id>
-  <name>РЖД Бонус</name>
-  <description>
-    Получает баланc баллов и другую информацию по бонусной карте РЖД (https://rzd-bonus.ru).
-
-    Информация берется из личного кабинета. 
-
-    Регистрация в программе осуществляется здесь: https://rzd-bonus.ru/registration.html.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-    <js>library.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Премиальные баллы" units="б"/>
-    <counter id="qballs1" name="Квалификационные баллы за текущий год" units="б"/>
-    <counter id="qballs2" name="Квалификационные баллы за прошлый год" units="б"/>
-    <counter id="cardnum" name="Номер карты" type="text"/>
-    <counter id="balls_total" name="Всего набрано" units="б"/>
-    <counter id="balls_spent" name="Всего потрачено" units="б"/>
-  </counters>
-  <keywords>
-    rzd, российские железные дороги
-  </keywords>
-  <type>
-    bonus
-  </type>
-  <country>
-    ru
-  </country>
+	<id version="2">ab-bonus-rzd</id>
+	<name>РЖД Бонус</name>
+	<description html="true"><![CDATA[
+	<p>Получает баланc баллов и другую информацию по бонусной карте РЖД (https://rzd-bonus.ru).</p>
+	<p>Информация берется из личного кабинета. </p>
+	]]></description>	
+	<instruction html="true"><![CDATA[
+	<p>Регистрация в программе осуществляется здесь: https://rzd-bonus.ru/registration.html.</p>
+	]]></instruction>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<js>library.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Премиальные баллы" units=" б"/>
+		<counter id="qballs1" name="Квалификационные баллы за текущий год" units=" б"/>
+		<counter id="qballs2" name="Квалификационные баллы за прошлый год" units=" б"/>
+		<counter id="cardnum" name="Номер карты" type="text"/>
+		<counter id="balls_total" name="Всего набрано" units=" б"/>
+		<counter id="balls_spent" name="Всего потрачено" units=" б"/>
+	</counters>
+	<keywords>rzd, российские железные дороги</keywords>
+	<type>bonus</type>
+	<country>ru</country>
 </provider>

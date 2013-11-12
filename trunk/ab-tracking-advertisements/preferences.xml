@@ -21,7 +21,7 @@
 	<EditTextPreference
 		title="Логин"
 		key="login"
-		summary="При вводе логина и пароля будут показаны Ваши объявления||{@s}"
+		summary="При вводе логина и пароля будут показаны Ваши объявления||{@s}\n"
 		dialogTitle="Логин"
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
@@ -30,7 +30,7 @@
 	<EditTextPreference
 		title="Пароль"
 		key="password"
-		summary="При вводе логина и пароля будут показаны Ваши объявления||***********"
+		summary="При вводе логина и пароля будут показаны Ваши объявления||***********\n"
 		dialogTitle="Пароль"
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="3">ab-bonus-citilink</id>
-  <name>Ситилинк</name>
+	<id version="4">ab-bonus-citilink</id>
+	<name>Ситилинк</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о количестве бонусов в бонусной программе электронного дискаунтера "Ситилинк" (http://www.citilink.ru/).</p>
 	<p>Информация берется из личного кабинета (http://www.citilink.ru/login).</p>
@@ -11,28 +11,29 @@
 	<ul>
 	<li>Получить доступ к личному кабинету вы можете, пройдя регистрацию по адресу http://www.citilink.ru/registration.</li>
 	</ul>
-	]]></instruction>	
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Бонусы" units=" Б"/>
-    <counter id="new" name="Бонусы к начислению" units=" Б"/>
-    <counter id="num" name="Товаров в текущем квартале" units=" т"/>
-    <counter id="sum" name="Покупки в текущем квартале" units=" р"/>
-  </counters>
-  <keywords>
-    ситилинк
-  </keywords>
-  <type>
-    bonus
-  </type>
-  <country>
-    ru
-  </country>
+	]]></instruction>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Бонусы" units=" Б"/>
+		<counter id="new" name="Бонусы к начислению" units=" Б"/>
+		<counter id="num" name="Товаров в текущем квартале" units=" т"/>
+		<counter id="sum" name="Покупки в текущем квартале" units=" р"/>
+		<counter id="obrabotannie" name="Количество обработанных вопросов"/>
+		<counter id="pomosh" name="Скольким людям помогли ответы"/>
+		<counter id="reshennie" name="Количество решенных вопросов"/>
+		<counter id="zhalobi" name="Количество жалоб на эксперта"/>
+		<counter id="rating" name="Ваш рейтинг"/>
+		<counter id="position" name="Ваше место"/>
+		<counter id="nachisleno" name="Начислено бонусов"/>
+	</counters>
+	<keywords>ситилинк</keywords>
+	<type>bonus</type>
+	<country>ru</country>
 </provider>

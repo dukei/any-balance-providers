@@ -463,7 +463,7 @@ function megafonTrayInfo(filial){
                    }
                    if(/MMS|ММС/i.test(name)){
                        getLeftAndTotal(val, result, need_mms_left, need_mms_total, 'mms_left', 'mms_total', parseBalance);
-                   }else if(/SMS|СМС|сообщен/i.test(name)){
+                   }else if(/SMS|СМС|сообщен/i.test(name) && !/минут/i.test(name)){
                        getLeftAndTotal(val, result, need_sms_left, need_sms_total, 'sms_left', 'sms_total', parseBalance);
                    }else if(/Бизнес Микс/i.test(name) && /шт/i.test(val)){
                        getLeftAndTotal(val, result, need_sms_left, need_sms_total, 'sms_left', 'sms_total', parseBalance);

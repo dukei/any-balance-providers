@@ -97,6 +97,8 @@ function parseTraffic(text){
 }
 
 function main(){
+     throw new AnyBalance.Error('В связи со сменой личного кабинета у камчатского филиала ОАО "Ростелеком" провайдер больше не поддерживается, вместо него пользуйтесь провайдером Ростелеком (старые кабинеты) и выбирайте в настройках регион Камчатка.');
+     
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'http://issa.kamchatka.ru/cgi-bin/cgi.exe?';
     // Заходим на главную страницу

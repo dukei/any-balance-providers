@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <EditTextPreference 
+    <EditTextPreference
+		obligatory="true"
         title="Логин" 
         positiveButtonText="ОК" 
         summary="||{@s}" 
@@ -9,7 +10,8 @@
         dialogMessage="Введите логин в личный кабинет. Логином обычно является номер телефона, указывайте его без пробелов и только последние 10 цифр, например: 9067775566"
         key="login">
     </EditTextPreference>
-    <EditTextPreference 
+    <EditTextPreference
+		obligatory="true"
         positiveButtonText="ОК"
         key="password" 
         dialogTitle="Пароль"

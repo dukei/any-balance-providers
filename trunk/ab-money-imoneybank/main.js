@@ -15,12 +15,6 @@ function main(){
     var baseurl = 'https://ratingoff.imoneybank.ru/';
     AnyBalance.setDefaultCharset('utf-8'); 
 
-    /*var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
-
-    var tform = getParam(html, null, null, /<input[^>]+name="t:formdata"[^>]*value="([^"]*)/i, null, html_entity_decode);
-    if(!tform) //Если параметр не найден, то это, скорее всего, свидетельствует об изменении сайта или о проблемах с ним
-        throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
-*/
 	var phoneNumber;
 	//
 	var found = /(\d{3})(\d{3})(\d{4})/i.exec(prefs.login);
@@ -48,6 +42,9 @@ function main(){
 	var json = getJson(html);
 	
 	var result = {success: true};
+	
+	if(!json || !json.accounts)
+		throw new AnyBalance.Error('Не удалось получить данные, свяжитесь с разработчиком.');
 	// Читаем в цикле
 	for(var i = 0; i < json.accounts.length; i++)
 	{

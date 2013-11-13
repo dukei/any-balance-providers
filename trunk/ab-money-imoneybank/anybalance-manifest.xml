@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="2">ab-money-imoneybank</id>
+	<id version="3">ab-money-imoneybank</id>
 	<name>АйМаниБанк (ratingoff)</name>
-	<description>
-	Получает данные из интернет-банка https://ratingoff.imoneybank.ru
-	
-	На данный момент поддерживается только баланс карт, если необходимо отображение другой информации связывайтесь с автором провайдера по имейл.
-	</description>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе интернет-банка АйМаниБанк (ratingoff) https://ratingoff.imoneybank.ru</p>
+	]]></description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>

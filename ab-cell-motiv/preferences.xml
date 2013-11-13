@@ -1,23 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <EditTextPreference 
-        title="Телефон" 
-        positiveButtonText="ОК" 
-        summary="10 цифр номера телефона||{@s}\n" 
-        dialogTitle="Телефон" 
-        negativeButtonText="Отмена" 
-        dialogMessage="Введите 10 цифр вашего номера телефона, например, 9081234567."
-        inputType="number"
-        key="login">
-    </EditTextPreference>
-    <EditTextPreference 
-        positiveButtonText="ОК"
-        key="password" 
-        dialogTitle="Пароль"
-        negativeButtonText="Отмена"
-        title="Пароль"
-        summary="Пароль для входа в ЛИСА||***********\n"
-        dialogMessage="Введите пароль, используемый для входа в ЛИСА (https://lisa.motivtelecom.ru). Если Вы не знаете свой пароль, отправьте пустое сообщение на номер 1070."
-        inputType="textPassword">
-    </EditTextPreference>
+	<EditTextPreference
+		obligatory="true"
+		title="Телефон"
+		positiveButtonText="ОК"
+		summary="10 цифр номера телефона||{@s}\n"
+		dialogTitle="Телефон"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите 10 цифр вашего номера телефона, например, 9081234567."
+		inputType="number"
+		key="login">
+	</EditTextPreference>
+	<EditTextPreference
+		obligatory="true"
+		positiveButtonText="ОК"
+		key="password"
+		dialogTitle="Пароль"
+		negativeButtonText="Отмена"
+		title="Пароль"
+		summary="Пароль для входа в ЛИСА||***********\n"
+		dialogMessage="Введите пароль, используемый для входа в ЛИСА (https://lisa.motivtelecom.ru). Если Вы не знаете свой пароль, отправьте пустое сообщение на номер 1070."
+		inputType="textPassword">
+	</EditTextPreference>
 </PreferenceScreen>

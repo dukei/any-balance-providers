@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-    <change version="2" date="2013-01-03">
-      - Добавлены счетчики минут, смс, ммс
-    </change>
+<change version="3" date="2013-11-13">
+- Поддержка изменений на сайте (Stark)
+</change>
+<change version="2" date="2013-01-03">
+- Добавлены счетчики минут, смс, ммс
+</change>
 </history>

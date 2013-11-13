@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-municipal-stroisouz-s</id>
+	<api flags="no_browser"/>
+	<name>Стройсоюз-сервис</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию из личного кабинета Стройсоюз-сервис http://stroisouz-s.ru.omega.mtw.ru/</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="db_usluga" name="Услуга" type="text"/>
+		<counter id="db_nachisleno" name="Начислено по услуге" units=" р"/>
+		<counter id="db_k_oplate" name="К оплате по услуге" units=" р"/>
+		<counter id="db_counter_name" name="Счетчик" type="text"/>
+		<counter id="last_val" name="Предыдущее значение счетчика"/>
+		<counter id="curr_val" name="Текущее значение счетчика"/>
+	</counters>
+	<keywords></keywords>
+	<type>municipal</type>
+	<country>ru</country>
+</provider>

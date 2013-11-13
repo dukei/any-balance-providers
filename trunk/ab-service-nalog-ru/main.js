@@ -52,7 +52,7 @@ function main() {
 	// Если не получили на странице инфу, пойдем глубже и запросим прямо в базу
 	var token = getParam(html, null, null, /name="token"[^>]*value="([^"]*)/i);
 	
-	var RetryCounts = 30, json;
+	var RetryCounts = 40, json;
 	while(!json && RetryCounts > 0) {
 		AnyBalance.trace('Не нашли информацию, попробуем еще раз, осталось попыток: ' + RetryCounts--);
 		
@@ -86,11 +86,16 @@ function main() {
 				if (curr.message == 'По вашему запросу информация не найдена') {
 					result.all = errString;
 				} else {
-					result.all += '<b>' + curr.code + ' ' + curr.name + '</b><br/>' + (sum ? curr.pds[j].ifnsName + ': ' + curr.pds[j].taxName + '-' + curr.pds[j].taxKind + ': <b>' + sum + '</b>' : (curr.message ? curr.message : 'Нет задолженности')) + (i < json.regions.length-1 ? '<br/><br/>' : '');
+					result.all += '<b>' + curr.code + ' ' + curr.name + '</b><br/>' + (sum ? curr.pds[j].ifnsName + ': ' + curr.pds[j].taxName + '-' + curr.pds[j].taxKind + ': <b>' + sum + '</b>' : (curr.message ? curr.message : 'Нет задолженности')) + '<br/><br/>';
 					sumParam(sum, result, 'balance', /([\s\S]*)/i, null, parseBalance, aggregate_sum);
 				}
 			}
 		}
 	}
+	
+	if(result.all) {
+		result.all= result.all.replace(/<br\/><br\/>$/i, '');
+	}
+	
 	AnyBalance.setResult(result);
 }

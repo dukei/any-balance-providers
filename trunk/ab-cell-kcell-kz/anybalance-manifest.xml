@@ -3,14 +3,12 @@
 	<id version="6">ab-cell-kcell-kz</id>
 	<api flags="no_browser"/>
 	<name>Kcell (Казахстан)</name>
-	<description>
-Получает баланс и информацию о тарифном плане для сотового оператора Kcell (http://www.kcell.kz).
-Информация берется из личного кабинета http://www.kcell.kz/ru/ics.security/login/false, если на странице будет найден PUK-код, то попробует перейти на https://i.kcell.kz/ для получения бонусных балансов.
-
-Если у вас ещё нет пароля для входа в личный кабинет, вы можете его получить. Отправьте любое непустое SMS-сообщение на номер 245 - в ответ Вы получите SMS-сообщение с паролем для входа в систему.
-
-ВНИМАНИЕ! Если вы абонент Activ, то воспользуйтесь провайдером Activ (Казахстан).
-	</description>
+	<description html="true"><![CDATA[
+	<p>Получает баланс и информацию о тарифном плане для сотового оператора Kcell (http://www.kcell.kz).</p>
+	<p>Информация берется из личного кабинета http://www.kcell.kz/ru/ics.security/login/false, если на странице будет найден PUK-код, то попробует перейти на https://i.kcell.kz/ для получения бонусных балансов.</p>
+	<p>Если у вас ещё нет пароля для входа в личный кабинет, вы можете его получить. Отправьте любое непустое SMS-сообщение на номер 245 - в ответ Вы получите SMS-сообщение с паролем для входа в систему.</p>
+	<p>ВНИМАНИЕ! Если вы абонент Activ, то воспользуйтесь провайдером Activ (Казахстан).</p>
+	]]></description>	
 	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
@@ -20,11 +18,11 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units="〒"/>
+		<counter id="balance" name="Баланс" units=" 〒"/>
 		<counter id="internet" name="GPRS" units=" Mb"/>
 		<counter id="min_left" name="Минуты" units=" мин"/>
 		<counter id="sms_left" name="SMS" units=" sms"/>
-		<counter id="inet_unlim" name="Безлимитный интернет (Мб до снижения скорости)" units="Мб"/>
+		<counter id="inet_unlim" name="Безлимитный интернет (Мб до снижения скорости)" units=" Мб"/>
 		<counter id="licschet" name="Лицевой счет" type="text"/>
 		<counter id="userName" name="Имя" type="text"/>
 	</counters>

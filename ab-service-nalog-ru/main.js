@@ -63,8 +63,8 @@ function main() {
 			Referer: baseurl + 'debt/req.do',
 			'X-Requested-With':'XMLHttpRequest'
 		}));
-		if(xhtml || xhtml != 'null')
-			json = getJson(xhtml);
+		//if(xhtml || xhtml != 'null')
+		json = getJson(xhtml);
 	}
 	
 	if (!json || json.STATUS == 'ERROR' ) {
@@ -78,13 +78,17 @@ function main() {
 		throw new AnyBalance.Error(errString);
 	for (i = 0; i < json.regions.length; i++) {
 		var curr = json.regions[i];
-		for (j = 0; j < curr.pds.length; j++) {
-			var sum = (curr.pds ? curr.pds[j].sum : '');
-			if (curr.message == 'По вашему запросу информация не найдена') {
-				result.all = errString;
-			} else {
-				result.all += '<b>' + curr.code + ' ' + curr.name + '</b><br/>' + (sum ? curr.pds[j].ifnsName + ': ' + curr.pds[j].taxName + '-' + curr.pds[j].taxKind + ': <b>' + sum + '</b>' : (curr.message ? curr.message : 'Нет задолженности')) + (i < json.regions.length-1 ? '<br/><br/>' : '');
-				sumParam(sum, result, 'balance', /([\s\S]*)/i, null, parseBalance, aggregate_sum);
+		if(!curr.pds) {
+			AnyBalance.trace('По региону ' +curr.name + ' информация времено не доступна, скоро все заработает снова.');
+		} else {
+			for (j = 0; j < curr.pds.length; j++) {
+				var sum = (curr.pds ? curr.pds[j].sum : '');
+				if (curr.message == 'По вашему запросу информация не найдена') {
+					result.all = errString;
+				} else {
+					result.all += '<b>' + curr.code + ' ' + curr.name + '</b><br/>' + (sum ? curr.pds[j].ifnsName + ': ' + curr.pds[j].taxName + '-' + curr.pds[j].taxKind + ': <b>' + sum + '</b>' : (curr.message ? curr.message : 'Нет задолженности')) + (i < json.regions.length-1 ? '<br/><br/>' : '');
+					sumParam(sum, result, 'balance', /([\s\S]*)/i, null, parseBalance, aggregate_sum);
+				}
 			}
 		}
 	}

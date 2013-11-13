@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change major_version="3" version="27" date="2013-11-13">
+       - Добавлен Ростелеком-Камчатка
+    </change>
     <change major_version="3" version="26" date="2013-08-20">
        - Исправлен ростелеком Удмуртия - иногда не получалась сумма последнего платежа
     </change>

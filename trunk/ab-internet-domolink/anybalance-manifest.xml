@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="3" version="26">ab-internet-domolink</id>
-	<name>Ростелеком - Домолинк</name>
+	<id major_version="3" version="27">ab-internet-domolink</id>
+	<name>Ростелеком (старые кабинеты)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем балансе, номере лицевого счета, ФИО владельца или названии организации, размере ежемесячной платы, дате, сумме и описании последней оплаты, трафике в текущем месяце для пользователей оператора ""Ростелеком - Домолинк"".</p>   
 	<p>Поддерживаются регионы:</p>   
-	<p>Старый личный кабинет -  Москва, Липецк, Калуга, Белгород, Курск, Тверь, Воронеж (http://room.centertelecom.ru), Тула (http://cabinet.tulatelecom.ru), Киров (http://j-cabinet.kirov.ru:4459/pls/base/), Нижний Новгород (http://abonent.nnov.volga.rt.ru), Мордовия (http://billing.saransk.ru), Удмуртия (http://statservip.udmvt.ru), Марий-Эл (http://www.stat.mari-el.ru), Самара (http://lk.samara.volga.rt.ru), Чувашия (http://newstat.chtts.ru).</p>
+	<p>Старый личный кабинет -  Москва, Липецк, Калуга, Белгород, Курск, Тверь, Воронеж (http://room.centertelecom.ru), Тула (http://cabinet.tulatelecom.ru), Камчатка (http://85.28.194.62/pls/startip/www.pageviewer?page_name=S*START_PAGE) - бывший issa.kamchatka.ru, Киров (http://j-cabinet.kirov.ru:4459/pls/base/), Нижний Новгород (http://abonent.nnov.volga.rt.ru), Мордовия (http://billing.saransk.ru), Удмуртия (http://statservip.udmvt.ru), Марий-Эл (http://www.stat.mari-el.ru), Самара (http://lk.samara.volga.rt.ru), Чувашия (http://newstat.chtts.ru).</p>
 	<p>Новый личный кабинет (http://portal.center.rt.ru) -  Белгородский, Брянский, Владимирский, Воронежский, Ивановский, Калужский, Костромской, Курский, Липецкий, Московский, Орловский, Рязанский, Смоленский, Тамбовский, Тверской, Тульский, Ярославский.</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
@@ -42,7 +42,7 @@
 		<counter id="traffic" name="Трафик за период" type="text"/>
 		<counter id="username" name="ФИО/Название организации" type="text"/>
 	</counters>
-	<keywords>провайдер интернет Московская область телевидение телефония</keywords>
+	<keywords>провайдер интернет телевидение телефония домолинк domolink</keywords>
 	<type>internet</type>
 	<country>ru</country>
 </provider>

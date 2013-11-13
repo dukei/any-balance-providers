@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<api flags="no_browser" />
+	<id version="1">ab-internet-serpuhov-biz</id>
+	<name>МОУ ИИФ (Серпухов)</name>
+	<description html="true"><![CDATA[
+	<p>Получает баланс для интернет провайдера МОУ ИИФ г.Серпухов http://internet.serpuhov.biz/</p>
+	<p>Информация берется из личного кабинета https://billing.serpuhov.biz/</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="balanceCredit" name="Кредит" units=" р"/>
+		<counter id="nds" name="НДС" type="text" />
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="id" name="ID" type="text"/>
+		<counter id="account" name="Основной счет" type="text"/>
+	</counters>
+	<keywords>serpuhov</keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

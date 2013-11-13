@@ -21,4 +21,15 @@
 		dialogMessage="Введите пароль, используемый для входа в личный кабинет."
 		inputType="textPassword">
 	</EditTextPreference>
+	<EditTextPreference
+		title="Услуга"
+		key="usluga"
+		summary="||{@s}"
+		dialogTitle="Услуга"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите название услуги за которой хотите следить, либо не вводите ничего, чтобы получить информацию по первой услуге.">
+	</EditTextPreference>
 </PreferenceScreen>
+
+

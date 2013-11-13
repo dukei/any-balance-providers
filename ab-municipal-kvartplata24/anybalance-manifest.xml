@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-municipal-kvartplata24</id>
+	<id version="2">ab-municipal-kvartplata24</id>
 	<api flags="no_browser"/>
 	<name>Квартплата 24</name>
 	<description html="true"><![CDATA[
@@ -18,6 +18,9 @@
 	<counters>
 		<counter id="balance" name="Сумма последнего начисления" units=" р"/>
 		<counter id="date" name="Дата последнего начисления" type="time" format="dd/MM/yyyy"/>
+		<counter id="usluga_balance" name="Показания прибора за прошлый месяц"/>
+		<counter id="facilityGroup" name="Услуга" type="text"/>
+		<counter id="serialNumber" name="Серийный номер" type="text"/>
 	</counters>
 	<keywords></keywords>
 	<type>municipal</type>

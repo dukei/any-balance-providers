@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="1">ab-seo-userator</id>
+	<id version="2">ab-seo-userator</id>
 	<name>Userator</name>
-	<description>
-	Получает данные для сайта http://userator.ru/
-	</description>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе Userator http://userator.ru/</p>
+	<p>Информация берется из личного кабинета http://userator.ru/cgi-bin/plogin.cgi</p>
+	]]></description>	
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
@@ -15,7 +16,8 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units="р"/>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="rating" name="Рейтинг пользователя"/>
 	</counters>
 	<keywords></keywords>
 	<type>seo</type>

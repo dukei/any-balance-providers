@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-tv-vdali</id>
+	<id version="2">ab-tv-vdali</id>
 	<api flags="no_browser"/>
 	<name>ВДАЛИ TV</name>
 	<description html="true"><![CDATA[
@@ -19,6 +19,7 @@
 		<counter id="balance" name="Баланс" units=" р"/>
 		<counter id="dogovor" name="Договор" type="text"/>
 		<counter id="paketi" name="Пакеты" type="text"/>
+		<counter id="deadline" name="Дата списания" type="time" format="dd/MM/yyyy"/>
 	</counters>
 	<keywords></keywords>
 	<type>tv</type>

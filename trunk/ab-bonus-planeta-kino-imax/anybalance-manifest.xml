@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<api flags="no_browser"/>
+	<id version="1">ab-bonus-planeta-kino-imax</id>
+	<name>Планета Кино IMAX</name>
+	<description html="true"><![CDATA[
+<p>Предоставляет информацию о бонусном счете сети кинотеатров «Планета кино» http://planeta-kino.com.ua/</p>
+<p>Адрес личного кабинета https://cabinet.planeta-kino.com.ua/</p>
+
+<p>Сеть "Планета Кино IMAX" - это лучшие кинотеатры Киева, Одессы и Львова и новейшие фильмы в максимальном качестве с самым реалистичным звуковым сопровождением. Следите за афишей кинотеатров и покупайте, бронируйте билеты онлайн.</p>
+<p>Клуб «Планета кино ІМАХ» — программа лояльности сети кинотеатров «Планета кино IMAX». Участник клуба использует индивидуальную накопительную карту, на которую начисляются бонусы при покупке билетов в кинотеатр и продукции в баре. Накопленные бонусы можно обменивать на бесплатные билеты в кино и товары в баре. Для участников клуба действуют выгодные предложения и акции, организуются премьерные показы фильмов.</p>
+
+	]]></description>
+	<author>Sergey Bashmanov &lt;sergey.bashmanov@gmail.com&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Бонусный счет" type="numeric"/>
+	</counters>
+	<keywords>Планета Кино IMAX, IMAX, Планета Кино, planeta-kino, имакс, кино, кинотеатр</keywords>
+	<type>bonus</type>
+	<country>ua</country>
+</provider>

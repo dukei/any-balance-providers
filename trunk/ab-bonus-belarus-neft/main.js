@@ -12,7 +12,7 @@ var g_headers = {
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-    var baseurl = "http://wbi.beloil.by/";
+    var baseurl = "http://www.beloil.by/";
     AnyBalance.setDefaultCharset('utf-8'); 
 	
 	//Пароль в SHA-1
@@ -20,7 +20,7 @@ function main(){
 	var key = prefs.login;
     
     pass = rstr2hex(rstr_hmac_sha1(pass, key));
-		
+	
 	AnyBalance.requestGet(baseurl + 'lprogram/index.jsp', g_headers);
 	
 	var html = AnyBalance.requestPost(baseurl + 'lprogram/login', {
@@ -28,24 +28,24 @@ function main(){
 		loginPwd:'',
         passHesh:pass,
     }, addHeaders({Referer: baseurl + 'lprogram/index.jsp', Origin:baseurl})); 
-
+	
     if(!/lprogram\/logout/i.test(html)){
-        var error = getParam(html, null, null, /"errspan" id="login_error">\s*([\s\S]*?)\s*<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+        var error = getParam(html, null, null, /id="login_error"[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+		if (error && /Данной комбинации логина и пароля не существует/i.test(error))
+			throw new AnyBalance.Error(error, null, true);		
         if(error)
             throw new AnyBalance.Error(error);
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
-    var result = {success: true};
-    getParam(html, result, 'fio', /Здравствуйте[\s\S]*?<br\/>\s*([\s\S]*?)\s*\(/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'balance', /НА ВАШЕМ СЧЕТУ([\s\S]*?)БАЛЛОВ/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'discount', /РАЗМЕР ВАШЕЙ СКИДКИ[\s\S]{1,20}В ТЕКУЩЕМ МЕСЯЦЕ[\s\S]{1,20}СОСТАВЛЯЕТ([\s\S]*?)percent/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'card_num', /№ карты\s*(\d+)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, '__tariff', /№ карты\s*(\d+)/i, replaceTagsAndSpaces, html_entity_decode);
-
-	getParam(html, result, 'discount_next', /ДЛЯ ПОЛУЧЕНИЯ[\s\S]{1,100}СЛЕДУЮЩЕЙ СКИДКИ[\s\S]{1,100}<span class="board-value">([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'discount_bal_next', /ВАМ ОСТАЛОСЬ[\s\S]{1,100}НАБРАТЬ[\s\S]{1,100}<span class="board-value">([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
 	
-
-    
+    var result = {success: true};
+    getParam(html, result, 'fio', /Здравствуйте,[^>]*>([^\(<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'balance', /НА ВАШЕМ СЧЕТУ(?:[^>]*>){4}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'discount', /РАЗМЕР ВАШЕЙ СКИДКИ(?:[^>]*>){6}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'card_num', /№ карты([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, '__tariff', /№ карты([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'discount_next', /СЛЕДУЮЩЕЙ СКИДКИ(?:[^>]*>){4}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'discount_bal_next', /СЛЕДУЮЩЕЙ СКИДКИ(?:[^>]*>){15}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	
     AnyBalance.setResult(result);
 }

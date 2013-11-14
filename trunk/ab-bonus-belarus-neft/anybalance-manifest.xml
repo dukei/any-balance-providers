@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser" />
-	<id version="3">ab-bonus-belarus-neft</id>
+	<id version="4">ab-bonus-belarus-neft</id>
 	<name>Беларусь Нефть</name>
-	<description>Получает данные по карте Беларусь Нефть. Адрес личного кабинета http://wbi.beloil.by/lprogram/login</description>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию по карте Беларусь Нефть http://beloil.by/.</p>
+	<p>Информация берется из личного кабинета http://beloil.by/lprogram/login</p>
+	]]></description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
@@ -16,14 +18,14 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс"/>
-		<counter id="discount" name="Размер скидки в текущем месяце" units="%"/>
-		<counter id="discount_next" name="Размер следующей скидки" units="%"/>
+		<counter id="discount" name="Размер скидки в текущем месяце" units=" %"/>
+		<counter id="discount_next" name="Размер следующей скидки" units=" %"/>
 		<counter id="discount_bal_next" name="Баллов до следующей скидки"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="card_num" name="№ карты" type="text"/>
 		<counter id="all" name="Сводка" type="text"/>
 	</counters>
-	<keywords></keywords>
+	<keywords>Беларусь, Нефть, бензин, топливо</keywords>
 	<type>bonus</type>
 	<country>by</country>
 </provider>

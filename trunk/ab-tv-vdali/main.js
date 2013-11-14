@@ -36,6 +36,7 @@ function main() {
 	getParam(html, result, 'dogovor', /Договор:(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, '__tariff', /Тариф:(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'paketi', /Пакеты:(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'deadline', /дата списания([^<]*)/i, replaceTagsAndSpaces, parseDate);
 	
 	AnyBalance.setResult(result);
 }

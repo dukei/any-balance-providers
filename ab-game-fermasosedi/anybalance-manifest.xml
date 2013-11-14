@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-game-fermasosedi</id>
+	<api flags="no_browser|captcha"/>
+	<name>Fermasosedi</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о рейтинге в игре Fermasosedi (http://fermasosedi.ru/)</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance_pay" name="Баланс для оплаты"/>
+		<counter id="balance_out" name="Баланс для вывода"/>
+		<counter id="energy" name="Энергия" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>game</type>
+	<country>ru</country>
+</provider>

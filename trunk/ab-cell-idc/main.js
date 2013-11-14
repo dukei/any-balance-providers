@@ -12,22 +12,25 @@ var g_headers = {
 function main(){
     var prefs = AnyBalance.getPreferences();
     var baseurl = 'https://my.idc.md/';
-    AnyBalance.setDefaultCharset('UTF-8');
+	// Это не ошибка, смена кодировок между запросами реализована на сайте, уже не знаю зачем.
+	AnyBalance.setOptions({forceCharset: 'UTF-8'});
 	
 	var html = AnyBalance.requestGet(baseurl, g_headers);
-
+	
 	var captchaa;
 	if(AnyBalance.getLevel() >= 7){
 		AnyBalance.trace('Пытаемся ввести капчу');
-
+		// Это не ошибка, смена кодировок между запросами реализована на сайте, уже не знаю зачем.
+		AnyBalance.setOptions({forceCharset: 'base64'});
 		var captcha = AnyBalance.requestGet(baseurl+ 'keypic.php?r=' + Math.random(), g_headers);
 		captchaa = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
 		AnyBalance.trace('Капча получена: ' + captchaa);
 	}else{
 		throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
 	}
-
+	// Это не ошибка, смена кодировок между запросами реализована на сайте, уже не знаю зачем.
 	AnyBalance.setOptions({forceCharset: 'UTF-8'});
+	
 	
 	html = AnyBalance.requestPost(baseurl, {
         user:prefs.login,

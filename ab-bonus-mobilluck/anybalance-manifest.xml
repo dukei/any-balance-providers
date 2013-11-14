@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-bonus-mobilluck</id>
+	<api flags="no_browser"/>
+	<name>Мобиллак (Украина)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию по бонусной карте сети магазинов Мобиллак Украина http://www.mobilluck.com.ua</p>
+	<p>Информация берется из личного кабинета http://www.mobilluck.com.ua/user_room.php</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Бонусные баллы" units=" б"/>
+		<counter id="money" name="Сумма скидки" units=" грн"/>
+		<counter id="card_num" name="Дисконтная карта" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>bonus</type>
+	<country>ua</country>
+</provider>

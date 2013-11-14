@@ -23,8 +23,10 @@ function main(){
     };
 
     var prefs = AnyBalance.getPreferences();
+    checkEmpty(prefs.login, 'Введите номер телефона');
+    checkEmpty(prefs.password, 'Введите пароль');
 
-    var baseurl = "https://www.activ.kz/";
+    var baseurl = "http://www.activ.kz/";
 
     AnyBalance.setDefaultCharset('utf-8');
 
@@ -58,7 +60,9 @@ function main(){
     //(?:Теңгерім|Баланс|Balance):
     getParam(html, result, 'balance', /(?:Ваш баланс|Сіздің теңгеріміңіз|Your balance is)([^<]*)/i, replaceTagsAndSpaces, parseBalance);
     //(?:интернет плюс|internet plus)
-    getParam(html, result, 'internet_plus', /(?:Ваш баланс|Сіздің теңгеріміңіз|Your balance is)[^<]*?\+([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'internet_plus', /(?:Ваш баланс|Сіздің теңгеріміңіз|Your balance is)[^<]*?\+\s*([\d\s.,]*\s*[Mм][Bб])/i, replaceTagsAndSpaces, parseTraffic);
+    //(?:бонусные единицы)
+    getParam(html, result, 'bonus', /(\d+)\s*(?:бонусных единиц|бонустық бірлік|bonus units)/i, replaceTagsAndSpaces, parseBalance);
     //(?:Шот қалпы|Статус номера|Account status):
     getParam(html, result, 'status', /(?:Статус|Қалпы|Status):[\s\S]*?<font[^>]*>([\s\S]*?)<\/font>/i, replaceTagsAndSpaces, html_entity_decode);
     //(?:Шот қалпы|Статус номера|Account status):

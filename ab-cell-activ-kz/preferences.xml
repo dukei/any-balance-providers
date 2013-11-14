@@ -5,6 +5,7 @@
         positiveButtonText="ОК" 
         summary="|Введите 10 цифр номера телефона|{@s}" 
         dialogTitle="Телефон" 
+	obligatory="true"
         negativeButtonText="Отмена" 
         dialogMessage="Введите 10 цифр вашего номера телефона в формате 701XXXXXXX, 702XXXXXXX, 775XXXXXXX или 778ХХХХХХХ, например, 7011234567."
         inputType="number"
@@ -13,6 +14,7 @@
     <EditTextPreference 
         positiveButtonText="ОК"
         key="password" 
+	obligatory="true"
         dialogTitle="Пароль"
         negativeButtonText="Отмена"
         title="Пароль"

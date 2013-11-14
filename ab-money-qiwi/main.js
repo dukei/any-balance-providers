@@ -129,7 +129,7 @@ function mainNew () {
                 throw getFatalError(error.replace(/href="\//ig, 'href="https://w.qiwi.com/'));
             throw getFatalError('Срок действия пароля истек. Смените пароль, зайдя в свой QIWI-кошелек (https://w.qiwi.com) через браузер.');
         }
-    }else if(/passwordchangesuccess.action/i.test(html)){
+    }else if(/passwordchangesuccess.action|password.action/i.test(html)){
         throw getFatalError('Срок действия пароля истек. Смените пароль, зайдя в свой QIWI-кошелек (https://w.qiwi.com) через браузер.');
     }else {
         AnyBalance.trace ('Have not found logout... Unknown error. Please contact author.');

@@ -1,19 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="8">ab-internet-rostelekom-kamchatka</id>
+  <id version="9">ab-internet-rostelekom-kamchatka</id>
+  <api flags="no_browser"/>
   <name>Интернет Ростелеком (Камчатка)</name>
   <description>
-    ВНИМАНИЕ: В связи со сменой личного кабинета у камчатского филиала ОАО "Ростелеком" провайдер больше не поддерживается, вместо него пользуйтесь провайдером Ростелеком (старые кабинеты) и выбирайте регион Камчатка.
-
     Получает данные из ИССА Камчатского филиала ОАО "Ростелеком": баланс, счетчики трафика.
 
-    Данные берутся из личного кабинета http://issa.kamchatka.ru
+    Данные берутся из личного кабинета http://issa.kamchatka.ru, который, на самом деле, переехал на http://85.28.194.62/pls/startip/www.pageviewer?page_name=S*START_PAGE
   </description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
-    <js>api:jquery.min.js</js> <!-- Используем библиотеку, которая и так входит в AnyBalance -->
+    <js>library.js</js>
     <js>main.js</js>
     <history>history.xml</history>
   </files>
@@ -24,13 +23,16 @@
     <counter id="traffic_global_in" name="Входящий внешний трафик" suffix="Мб"/>
     <counter id="traffic_included" name="Предоплаченый трафик" suffix="Мб"/>
     <counter id="traffic_kamchatka" name="Безлимитная Камчатка" suffix="Мб"/>
-    <counter id="traffic_ext_total" name="Доп. пакет внеш. трафика (всего)" suffix="Мб"/>
-    <counter id="traffic_1000" name="Доп. пакет внеш. трафика (использовано)" suffix="Мб"/>
+<!--    <counter id="traffic_ext_total" name="Доп. пакет внеш. трафика (всего)" suffix="Мб"/>
+    <counter id="traffic_1000" name="Доп. пакет внеш. трафика (использовано)" suffix="Мб"/> -->
     <counter id="traffic_ext_left" name="Доп. пакет внеш. трафика (осталось)" suffix="Мб"/>
-    <counter id="traffic_night_in" name="Вх. ночной безлимит в тек. месяце" suffix="Мб"/>
-    <counter id="traffic_night_out" name="Исх. ночной безлимит в тек. месяце" suffix="Мб"/>
+<!--    <counter id="traffic_night_in" name="Вх. ночной безлимит в тек. месяце" suffix="Мб"/>
+    <counter id="traffic_night_out" name="Исх. ночной безлимит в тек. месяце" suffix="Мб"/> 
     <counter id="time_off" name="Время отключения" suffix="дн"/>
-    <counter id="average_speed" name="Скорость расходования" suffix="р"/>
+    <counter id="average_speed" name="Скорость расходования" suffix="р"/> -->
+    <counter id="lastpaysum" name="Сумма последней оплаты" units="р"/>
+    <counter id="lastpaydata" name="Дата последней оплаты" type="text"/>
+    <counter id="lastpaydesc" name="Описание последней оплаты" type="text"/>
     <counter id="agreement" name="Номер договора" type="text"/>
     <counter id="username" name="ФИО" type="text"/>
  </counters>

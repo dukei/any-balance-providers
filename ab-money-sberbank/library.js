@@ -364,8 +364,7 @@ function addHeaders(newHeaders, oldHeaders) {
 	if (bOldArray && !bNewArray) { //Если старый массив, а новый объект, то это специальный объект {index: [name, value], ...}!
 		var headers = oldHeaders.slice();
 		for (i in newHeaders)
-			headers[i] = newHeaders[i];
-		
+	           headers.push([i, newHeaders[i]]);		
 		return headers;
 	}
 }
@@ -609,8 +608,8 @@ function parseTrafficGb(text, defaultUnits) {
 /** Вычисляет трафик в нужных единицах из переданной строки. */
 function parseTrafficEx(text, thousand, order, defaultUnits) {
 	var _text = html_entity_decode(text.replace(/\s+/g, ''));
-	var val = getParam(_text, null, null, /(-?\d[\d\.,]*)/, replaceFloat, parseFloat);
-	if (!isset(val)) {
+	var val = getParam(_text, null, null, /(-?\.?\d[\d\.,]*)/, replaceFloat, parseFloat);
+	if (!isset(val) || val === '') {
 		AnyBalance.trace("Could not parse traffic value from " + text);
 		return;
 	}

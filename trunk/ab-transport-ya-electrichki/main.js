@@ -53,13 +53,20 @@ function getTrainTableRows(inputText)
     return result;
 }
 
-function getTrainDepartureTime (inputText) {
+function getTrainDepartureTime (inputText) 
+{
     var re = /<td class="b-timetable__cell.+?b-timetable__cell_type_departure".+?<strong>.+?<\/strong>/;
     var cell = re.exec(inputText);
     if (cell === null) {
         return "н/д";
     }
     else {
-        return /<strong>.+?<\/strong>/.exec(cell[0])[0].substr(8,5);
+        var express = isExpress(inputText) ? " (э)" : "";
+        return /<strong>.+?<\/strong>/.exec(cell[0])[0].substr(8,5) + express;
     }
+}
+
+function isExpress(inputText)
+{
+    return inputText.indexOf("b-timetable__express") >= 0;
 }

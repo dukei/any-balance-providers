@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-router-ec5321</id>
+  <name>Роутер Huawei EC 5321</name>
+  <description>
+    Мониторинг параметров безпроводного роутера Huawei EC 5321. Получает данные из странички статистики роутера по адресу http://192.168.1.1 или по другому адресу установленному пользователем.
+
+    Обратите внимание: Данный провайдер не может точно отображать данные использованного трафика. Для контроля расхода денежных средств используйте провайдер того оператора, к которому подключено устройство.
+    
+    Работоспособность провайдера проверялась на модели EC 5321u-1. Если у вас работает или не работет на других моделях, то просьба сообщить автору провайдера.
+  </description>
+  <author>Ignatiy Goloviznin &lt;igoloviznin@gmail.com&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="connect_status_3g" name="Статус подключения" type="text"/>
+    <counter id="network_level" name="Уровень сигнала %" suffix=" %" type="numeric"/>
+    <counter id="users" name="Количество подключенных пользователей" type="numeric"/>
+    <counter id="battery" name="Заряд батареи" suffix=" %" type="numeric"/>
+    <counter id="battery_status" name="Состояние батареи" type="text"/>
+    <counter id="traffic_download" name="Текущий загруженный трафик" units=" mb"/>
+    <counter id="traffic_upload" name="Текущий отправленный трафик" units=" mb"/>
+    <counter id="traffic_download_all" name="Общий загруженный трафик" units=" mb"/>
+    <counter id="traffic_upload_all" name="Общий отправленный трафик" units=" mb"/>
+    <counter id="connected_time" name="Текущее время соединения" type="time_interval" format="{@H}:{@min}:{@sec}"/>
+    <counter id="connected_time_all" name="Общее время соединения" type="time_interval" format="{@H}:{@min}:{@sec}"/>
+    <counter id="sms_unread" name="Непрочитанные SMS" type="numeric"/>
+    <counter id="sms_inbox" name="Входящие SMS" type="numeric"/>
+    <counter id="sms_outbox" name="Отправленные SMS" type="numeric"/>
+    <counter id="sms_draft" name="Черновики SMS" type="numeric"/>
+  </counters>
+  <keywords>
+    роутер Huawei EC 5321u-1 3G Wi-Fi CDMA EVDO
+  </keywords>
+  <type>
+    router
+  </type>
+  <country>
+    ua
+  </country>
+</provider>

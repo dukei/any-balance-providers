@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-money-myskb</id>
+	<api flags="no_browser"/>
+	<name>СКБ-БАНК</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе на картах и счетах СКБ-БАНК (Банк на диване) https://retail.myskb.ru/</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Остаток" units=" {@currency}"/>
+		<counter id="cardnum" name="Номер карты" type="text"/>
+		<counter id="fio" name="Владелец" type="text"/>
+		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="type" name="Название" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>money</type>
+	<country>ru</country>
+</provider>

@@ -5,6 +5,7 @@
         positiveButtonText="ОК" 
         summary="Код абонента, например 1234567||{@s}\n" 
         dialogTitle="Код абонента" 
+        obligatory="true"
         negativeButtonText="Отмена" 
         dialogMessage="Код абонента для входа в личный кабинет Ростелеком Камчатка, например, 1234567"
         key="login">
@@ -15,6 +16,7 @@
         dialogTitle="Пароль"
         negativeButtonText="Отмена"
         title="Пароль"
+        obligatory="true"
         summary="Пароль для входа в личный кабинет||***********\n"
         dialogMessage="Введите пароль, используемый для входа в личный кабинет Ростелеком Камчатка"
         inputType="textPassword">

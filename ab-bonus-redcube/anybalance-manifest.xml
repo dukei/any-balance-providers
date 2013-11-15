@@ -1,32 +1,27 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="2.1" version="4">ab-bonus-redcube</id>
-  <name>Красный Куб</name>
-  <description>
-    Получает информацию о бонусах на накопительной карте сети магазинов Красный Куб (http://club.redcube.ru).
-  </description>
-  <author>iReset &lt;ireset.ag@gmail.com&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="bonus" name="Бонусы" units=" Б"/>
-    <counter id="costPurchase" name="Сумма покупок" units="р"/>
-    <counter id="dateLastOperation" name="Дата последней операции" type="text"/>
-    <counter id="customer" name="Владелец" type="text"/>
-    <counter id="cardNumber" name="Номер карты" type="text"/>
-  </counters>
-  <keywords>
-    бонус, накопительная карта, бонусная карта, магазин, красный куб
-  </keywords>
-  <type>
-    bonus
-  </type>
-  <country>
-    ru
-  </country>
+	<id major_version="3.0" version="5">ab-bonus-redcube</id>
+	<api flags="no_browser"/>
+	<name>Красный Куб</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о бонусах на накопительной карте сети магазинов Красный Куб (http://club.redcube.ru).</p>
+	]]></description>
+	<author>iReset &lt;ireset.ag@gmail.com&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="bonus" name="Бонусы" units=" Б"/>
+		<counter id="costPurchase" name="Сумма покупок" units=" р"/>
+		<counter id="dateLastOperation" name="Дата последней операции" type="text"/>
+		<counter id="customer" name="Владелец" type="text"/>
+		<counter id="cardNumber" name="Номер карты" type="text"/>
+	</counters>
+	<keywords>бонус, накопительная карта, бонусная карта, магазин, красный куб</keywords>
+	<type>bonus</type>
+	<country>ru</country>
 </provider>

@@ -29,7 +29,7 @@ function main() {
 		else if(name == Xpass)
 			return prefs.password;
 		return value;
-	});	
+	});
 	html = AnyBalance.requestPost(baseurl + 'mps/portal?cmd=Login&lang=tr', params, addHeaders({Referer: baseurl + 'mps/portal?cmd=Login&lang=tr'}));
 
 	if(!/logout/i.test(html)) {
@@ -108,12 +108,17 @@ function main() {
 		getParam(html, result, '__tariff', /Tarife:(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 		getParam(html, result, 'fatura', /<\s*b\s*>\s*G&uuml;ncel Fatura(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, 'bill_date', /<\s*b\s*>\s*Fatura Kesim Tarihi(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, parseDate);
-
-		getParam(html, result, 'bonus_minutes', /Kalan S\&uuml;re:(?:[^>]*>){3}[^<]*?kadar gecerli([^<]*?)DKniz/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'minutes', /Kalan S\&uuml;re:(?:[^>]*>){3}[^<]*kadar gecerli([^<]*?)DKniz/i, replaceTagsAndSpaces, parseBalance);
+		// не работает больше
+		//getParam(html, result, 'bonus_minutes', /Kalan S\&uuml;re:(?:[^>]*>){3}[^<]*?kadar gecerli([^<]*?)DKniz/i, replaceTagsAndSpaces, parseBalance);
+		//getParam(html, result, 'minutes', /Kalan S\&uuml;re:(?:[^>]*>){3}[^<]*kadar gecerli([^<]*?)DKniz/i, replaceTagsAndSpaces, parseBalance);
 		
-		/*var time = getParam(html, null, null, /Kalan S\&uuml;re:(?:[^>]*>){3}([^<]*)/i);
-		sumParam(time, result, 'minutes', /kadar gecerli([^<]*?)DKniz/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);*/
+		var time = getParam(html, null, null, /Kalan S\&uuml;re:(?:[^>]*>){3}([^<]*)/i);
+		// Это минуты на все звонки, есть еще внутри сетевые вызовы, но пока таких тарифов нет
+		sumParam(time, result, 'minutes', /Heryone([^<]*?)DKniz/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+		sumParam(time, result, 'minutes_local', /Grup ici([^<]*?)DKniz/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+		getParam(time, result, 'total_minutes', null, replaceTagsAndSpaces, html_entity_decode);
+		
+		// Это переделывать надо
 		sumParam(html, result, 'traf', /kadar gecerli([^<]*MB)/ig, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
 		sumParam(html, result, 'sms', /kadar gecerli([^<]*)SMS/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	}

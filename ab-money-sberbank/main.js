@@ -11,6 +11,7 @@ function main() {
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = "https://online.sberbank.ru/CSAFront/login.do";
 	AnyBalance.setDefaultCharset('utf-8');
+	
 	if (prefs.__debug == 'esk') {
 		//Чтобы карты оттестировать
 		readEskCards();
@@ -381,7 +382,12 @@ function fetchNewAccountCard(html) {
 		getParam(html, result, 'cash', /для снятия наличных:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, 'electrocash', /для покупок:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, 'minpay', /Минимальный платеж:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'minpaydate', /Дата минимального платежа:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/, replaceTagsAndSpaces, parseBalance);
+		
+		/* приходит вот такая штука:
+		<td class="align-right field">Дата минимального платежа:</td><td><span class="bold">
+		Thu Nov 28 00:00:00 MSK 2013 &nbsp;</span>
+		*/
+		getParam(html, result, 'minpaydate', /Дата минимального платежа:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/, replaceTagsAndSpaces, parseDateForWord);
 	}
 	fetchNewThanks(baseurl, result);
 	if (AnyBalance.isAvailable('lastPurchSum') || AnyBalance.isAvailable('lastPurchPlace') || AnyBalance.isAvailable('lastPurchDate')) {
@@ -401,6 +407,17 @@ function fetchNewAccountCard(html) {
 	}
 	AnyBalance.setResult(result);
 }
+
+function parseDateForWord(str){
+	AnyBalance.trace('Parsing date from ' + str);
+	var date = /(?:mon|tue|wed|Thu|fri|sat|sun)\s*([\w]*)\s*(\d+)[\s\S]*?(\d{4})/i.exec(str);
+	if(!date)
+		AnyBalance.trace('Failed to parse date from ' + str);
+	else {
+		return parseDateWordEn(date[2] + ' ' + date[1] + ' ' + date[3]);
+	}
+}
+
 function fetchNewAccountAcc(html) {
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = "https://online.sberbank.ru";

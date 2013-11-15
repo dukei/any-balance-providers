@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="0" version="2">ab-transport-ya-electrichki</id>
+  <id major_version="0" version="3">ab-transport-ya-electrichki</id>
   <name>Ближайшие электрички</name>
   <description>
     Отображает ближайшие электрички по указанному маршруту на основании данных, полученных с сервиса Яндекс.Расписания

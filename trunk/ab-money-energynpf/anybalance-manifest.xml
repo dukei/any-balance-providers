@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-money-energynpf</id>
+	<api flags="no_browser"/>
+	<name>НПФ Электроэнергетики</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе в пенисоноом фонде Электроэнергетики</p>
+	<p>Информация берется из личного кабинета https://online.npfe.ru/poffice/login</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="На всех моих счетах" units=" р"/>
+		<counter id="balance_income" name="Инвестиционный доход" units=" р"/>
+	</counters>
+	<keywords></keywords>
+	<type>money</type>
+	<country>ru</country>
+</provider>

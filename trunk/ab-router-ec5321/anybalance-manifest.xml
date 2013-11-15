@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
   <id version="1">ab-router-ec5321</id>
+  <api flags="no_browser|private"/>
   <name>Роутер Huawei EC 5321</name>
   <description>
     Мониторинг параметров безпроводного роутера Huawei EC 5321. Получает данные из странички статистики роутера по адресу http://192.168.1.1 или по другому адресу установленному пользователем.

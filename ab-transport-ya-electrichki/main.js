@@ -5,8 +5,8 @@ function main () {
     //Получим настройки аккаунта
     var prefs = AnyBalance.getPreferences();
     var url ="http://rasp.yandex.ru/search/suburban/?fromName=" +
-             prefs.station_from + "&toName=" +
-             prefs.station_to;
+             encodeURIComponent(prefs.station_from) + "&toName=" +
+             encodeURIComponent(prefs.station_to);
     
     
     //Получаем значения счетчиков

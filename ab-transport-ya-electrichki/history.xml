@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change major_version="0" version="4">
+        исправлены проблемы с названиями станций из нескольких слов
+    </change>
     <change major_version="0" version="3">
         для экспрессов в счетчик добавляется обозначение "(э)"
     </change>

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="21">ab-money-alfabank</id>
+	<id version="22">ab-money-alfabank</id>
+        <api flags="no_browser"/>
 	<name>Альфабанк</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем остатке, дате следующего платежа, минимальном платеже и других параметрах карт, текущих и кредитных счетов ""Альфабанка"".</p>

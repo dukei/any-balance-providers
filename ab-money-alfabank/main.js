@@ -8,11 +8,11 @@
 */
 
 function main(){
+    AnyBalance.setOptions({cookiePolicy: 'rfc2109'});
+
     var prefs = AnyBalance.getPreferences();
-    if(!prefs.login)
-        throw new AnyBalance.Error('Введите логин в альфа.клик!');
-    if(!prefs.password)
-        throw new AnyBalance.Error('Введите пароль для входа в альфа.клик!');
+//    checkEmpty(prefs.login, 'Введите логин в альфа.клик!');
+//    checkEmpty(prefs.password, 'Введите пароль для входа в альфа.клик!');
     if(prefs.usemobile)
         processMobile();
     else
@@ -186,10 +186,10 @@ function processClick(){
         //Мы остались на странице входа. какая-то ошибка
         var error = getParam(html, null, null, /<div[^>]+class="[^"]*\bred"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
-            throw new AnyBalance.Error(error);
+            throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
         error = getParam(html, null, null, /(Неверный логин или пароль)/i);
         if(error)
-            throw new AnyBalance.Error(error);
+            throw new AnyBalance.Error(error, null, true);
         throw new AnyBalance.Error("Не удалось зайти в интернет-банк. Проверьте, что сайт доступен.");
     }
 

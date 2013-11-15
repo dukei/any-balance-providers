@@ -359,8 +359,7 @@ function addHeaders(newHeaders, oldHeaders) {
 	if (bOldArray && !bNewArray) { //Если старый массив, а новый объект, то это специальный объект {index: [name, value], ...}!
 		var headers = oldHeaders.slice();
 		for (i in newHeaders)
-			headers[i] = newHeaders[i];
-		
+	           headers.push([i, newHeaders[i]]);		
 		return headers;
 	}
 }

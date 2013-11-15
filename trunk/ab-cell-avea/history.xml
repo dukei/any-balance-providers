@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+<change major_version="2.0" version="8" date="2013-11-15">
+- Bonuses improved again.
+</change>
 <change version="7" date="2013-11-06">
-- Bonuses improved
+- Bonuses improved.
 </change>
 <change version="6" date="2013-11-05">
 - New tarifs added.
 </change>
 <change version="5" date="2013-10-29">
-- Minor changes
+- Minor changes.
 </change>
 <change version="4" date="2013-10-29">
 - New counters added and new tarif plans are supported.

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="7">ab-cell-avea</id>
+	<id major_version="2.0" version="8">ab-cell-avea</id>
 	<api flags="no_browser"/>
 	<name>AVEA</name>
 	<description html="true"><![CDATA[
-	<p>Obtains information from AVEA personal account https://www.avea.com.tr/mps/portal?cmd=onlineTransactionsHome&lang=tr&tb=redTab</p>
+	<p>AVEA Online İşlemlerinden bilgileri temin eder https://www.avea.com.tr/mps/portal?cmd=onlineTransactionsHome&lang=tr&tb=redTab</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
-	<p>To register follow this link https://www.avea.com.tr/mps/portal?cmd=onlineTransactionsHome&lang=tr&tb=redTab</p>
+	<p>Kayıt olmak için linke basınız: https://www.avea.com.tr/mps/portal?cmd=onlineTransactionsHome&lang=tr&tb=redTab</p>
 	]]></instruction>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
@@ -18,16 +18,17 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Balance" units=" TL"/>
+		<counter id="balance" name="Bakiye" units=" TL"/>
 		<counter id="fatura" name="Güncel Fatura" units=" TL"/>
-		<counter id="minutes" name="Minutes left" units=" dk"/>
-		<counter id="bonus_minutes" name="Minutes left (Bonus)" units=" dk"/>
-		<counter id="traf" name="Data left" units=" mb"/>
-		<counter id="bonus_traf" name="Data left (Bonus)" units=" mb"/>
-		<counter id="sms" name="SMS left" units=" sms"/>
-		<counter id="bonus_sms" name="SMS left (Bonus)" units=" sms"/>
-		
-		<counter id="bill_date" name="Bill date" type="time" format="dd/MM/yyyy"/>
+		<counter id="minutes" name="Kalan Dakika" units=" dk"/>
+		<counter id="minutes_local" name="Kalan Dakika (Operatör İçi)" units=" dk"/>
+		<counter id="bonus_minutes" name="Kalan Dakika (Hediye)" units=" dk"/>
+		<counter id="total_minutes" name="Kalan Dakika Ayrıntıları" type="text"/>
+		<counter id="traf" name="Kalan Internet" units=" Mb"/>
+		<counter id="bonus_traf" name="Kalan Internet (Hediye)" units=" Mb"/>
+		<counter id="sms" name="Kalan SMS" units=" sms"/>
+		<counter id="bonus_sms" name="Kalan SMS (Hediye)" units=" sms"/>
+		<counter id="bill_date" name="Fatura Tarihi" type="time" format="dd/MM/yyyy"/>
 	</counters>
 	<keywords></keywords>
 	<type>cell</type>

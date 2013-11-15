@@ -12,21 +12,6 @@ function getViewState(html){
     return getParam(html, null, null, /name="__VIEWSTATE".*?value="([^"]*)"/);
 }
 
-function requestPostMultipart(url, data, headers){
-	var parts = [];
-	var boundary = '------WebKitFormBoundaryrceZMlz5Js39A2A6';
-	for(var name in data){
-		parts.push(boundary, 
-		'Content-Disposition: form-data; name="' + name + '"',
-		'',
-		data[name]);
-	}
-	parts.push(boundary, '--');
-        headers = headers || {};
-	headers['Content-Type'] = 'multipart/form-data; boundary=' + boundary.substr(2);
-	return AnyBalance.requestPost(url, parts.join('\r\n'), headers);
-}
-
 function main () {
     if (AnyBalance.getLevel () < 3) {
         throw new AnyBalance.Error ('Для этого провайдера необходима версия программы не ниже 1.2.436. Пожалуйста, обновите программу.');
@@ -48,23 +33,15 @@ function main () {
     if(!form)
 	throw new AnyBalance.Error('Не удалось найти форму входа, похоже, связной её спрятал. Обратитесь к автору провайдера.');
 
-    var $form = $(form);
-    var params = {};
-    $form.find('input, select').each(function(index){
-	var $inp = $(this);
-	var id=$inp.attr('id');
-	var value = $inp.attr('value');
-	if(id){
-		if(/tbUserName/i.test(id)){ //Это имя
-			value = prefs.login;
-		}else if(/tbUserPassword/i.test(id)){ //Это пароль
-			value = prefs.password;
-		}
+    var params = createFormParams(html, function(params, str, name, value) {
+        var id = getParam(str, null, null, /\bid="([^"]*)/i, null, html_entity_decode) || '';
+	if(/tbUserName/i.test(id)){ //Это имя
+		value = prefs.login;
+	}else if(/tbUserPassword/i.test(id)){ //Это пароль
+		value = prefs.password;
 	}
-	var name = $inp.attr('name');
-	if(!name)
-		return;
-	params[name] = value || '';
+    
+    	return value;
     });
 
     AnyBalance.trace ('Trying to enter selfcare at address: ' + baseurl);
@@ -73,7 +50,7 @@ function main () {
     // Проверка неправильной пары логин/пароль
     var error = getParam(html, null, null, /<input[^>]*id="shouldOpenPopup"[^>]*value="(1)"/i);
     if (error)
-        throw new AnyBalance.Error ("Неверный логин или пароль. Проверьте введенные данные");
+        throw new AnyBalance.Error ("Неверный логин или пароль. Проверьте введенные данные", null, true);
 
     // Редирект при необходимости
     var regexp = /window.location.replace\("([^"]*)"\)/;
@@ -97,7 +74,7 @@ function main () {
     getParam (html, result, 'customer', /<a href="\/YourAccountMain.aspx">([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
 
     // Баланс в баллах
-    getParam (html, result, 'balanceinpoints', /CurrentBalance: '(\d*)/i, replaceTagsAndSpaces, parseBalance);
+    getParam (html, result, 'balanceinpoints', /CurrentBalance: '([^']*)/i, replaceTagsAndSpaces, parseBalance);
 
     // Баланс в рублях
     getParam (html, result, 'balanceinrubles', /\(скидка ([\s\S]*?)<span[^>]+class="rur[^>]*>/i, replaceTagsAndSpaces, parseBalance);

@@ -120,6 +120,7 @@ function main() {
 			AnyBalance.trace('Beeline returned: ' + AnyBalance.getLastStatusString());
 			throw new AnyBalance.Error('Личный кабинет Билайн временно не работает. Пожалуйста, попробуйте позднее.');
 		}
+		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
 	}
 
@@ -138,7 +139,7 @@ function main() {
 		}));
         }catch(e){
         	if(prefs.__debug)
-			html = AnyBalance.requestGet(baseurl + 'c/pre/index.html');
+			html = AnyBalance.requestGet(baseurl + 'c/' + prefs.__debug + '/index.html');
 		else
 			throw e;
         }

@@ -1,9 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
     <EditTextPreference
+		obligatory="true"
         key="number"
         title="Номер карты"
-        summary="Номер карты для доступа к личному кабинету||{@s}"
+        summary="Номер карты для доступа к личному кабинету||{@s}\n"
         inputType="text"
         dialogTitle="Номер карты"
         dialogMessage="Введите номер карты для входа в личный кабинет"
@@ -11,12 +12,13 @@
         negativeButtonText="Отмена">
     </EditTextPreference>
     <EditTextPreference
-        key="date"
+		obligatory="true"
+        key="db_date"
         title="Дата рождения"
-        summary="|Введите в формате ДД.ММ.ГГ|{@s}"
+        summary="|Введите в формате ДД.ММ.ГГГГ|{@s}\n"
         inputType="text"
         dialogTitle="Дата рождения"
-        dialogMessage="Введите дату рождения, используемую для входа в личный кабинет, в формате ДД.ММ.ГГ, например, 19.08.76"
+        dialogMessage="Введите дату рождения, используемую для входа в личный кабинет, в формате ДД.ММ.ГГГГ, например, 19.08.1976"
         positiveButtonText="ОК"
         negativeButtonText="Отмена">
     </EditTextPreference>

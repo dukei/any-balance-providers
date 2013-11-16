@@ -4,7 +4,7 @@
 	<api flags="no_browser"/>
 	<name>НПФ Электроэнергетики</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе в пенисоноом фонде Электроэнергетики</p>
+	<p>Предоставляет информацию о балансе в пенсионном фонде Электроэнергетики</p>
 	<p>Информация берется из личного кабинета https://online.npfe.ru/poffice/login</p>
 	]]></description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>

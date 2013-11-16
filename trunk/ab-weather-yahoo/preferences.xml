@@ -12,7 +12,7 @@
     </EditTextPreference>
     <ListPreference 
         key="Degree_units" 
-        title="Degree units"
+        title="Degrees units"
         summary="||{@s}\n"
         entries="Fahrenheit|Celsius"
         entryValues="f|c"

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-weather-yahoo</id>
+	<id version="3">ab-weather-yahoo</id>
 	<api flags="no_browser"/>
 	<name>Yahoo! Weather</name>
 	<description html="true"><![CDATA[
-	<p>Shows current weather in entered city. Information obtains from <a href="http:/weather.yahoo.com">http://weather.yahoo.com/</a></p>
+	<p>Shows current weather in entered city. Obtains information from http://weather.yahoo.com/</a></p>
 	]]></description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
@@ -15,15 +15,15 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="current_temp" name="Сurrent temperature" units="{@degrees_units}"/>
-		<counter id="current_pressure" name="Сurrent pressure" units="{@pressure_units}"/>
-		<counter id="current_humidity" name="Сurrent humidity" units="%"/>
+		<counter id="current_temp" name="Сurrent temperature" units=" {@degrees_units}"/>
+		<counter id="current_pressure" name="Сurrent pressure" units=" {@pressure_units}"/>
+		<counter id="current_humidity" name="Сurrent humidity" units=" %"/>
 		<counter id="current_text" name="Сurrent condition" type="text"/>
 		<counter id="sunrise" name="Sunrise" type="text"/>
 		<counter id="sunset" name="Sunset" type="text"/>
-		<counter id="wind" name="Wind speed" units="{@wind_units}"/>
+		<counter id="wind" name="Wind speed" units=" {@wind_units}"/>
 	</counters>
-	<keywords></keywords>
+	<keywords>weather yahoo, яху, яхуу</keywords>
 	<type>weather</type>
 	<country></country>
 </provider>

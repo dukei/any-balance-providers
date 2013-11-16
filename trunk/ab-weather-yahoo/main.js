@@ -15,7 +15,7 @@ function main() {
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	// Сначала ищем город
-	checkEmpty(prefs.city, 'Please, enter the city in settings');
+	checkEmpty(prefs.city, 'Please, enter the city in settings!');
 	
 	var html = AnyBalance.requestGet('http://sugg.us.search.yahoo.net/gossip-gl-location/?appid=weather&output=sd1&p2=cn,t,pt,z&callback=YUI.Env.JSONP.yui_3_9_1_1_1380964963051_1216&lc=en-US&p1=26.24441909790039,50.61938858032227&command='+
 		encodeURIComponent(prefs.city), g_headers);
@@ -41,9 +41,10 @@ function main() {
 	getParam(html, result, 'sunset', /<yweather:astronomy[^>]*sunset="([^"]*)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'wind', /<yweather:wind[^>]*speed="([^"]*)/i, replaceTagsAndSpaces, parseBalance);
 
-	result.degrees_units = prefs.Degree_units == 'c' ? 'C°' : 'F°';
+	result.degrees_units = (prefs.Degree_units == 'c' ? 'C°' : 'F°');
+	
 	result.pressure_units = getParam(html, null, null, /<yweather:units[^>]*pressure="([^"]*)/i); 
-	result.wind_units = getParam(html, null, null, /<yweather:units[^>]*speed="([^"]*)/i); 
+	result.wind_units = getParam(html, null, null, /<yweather:units[^>]*speed="([^"]*)/i);
 	result.__tariff = getParam(html, null, null, /<yweather:location[^>]*city="([^"]*)/i) + ', ' + getParam(html, null, null, /<yweather:location[^>]*country="([^"]*)/i)
 	
     AnyBalance.setResult(result);

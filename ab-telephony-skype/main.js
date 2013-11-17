@@ -42,6 +42,7 @@ Skype IP-телефония
  	getParam(info, result, 'landline', /<li[^>]+class="landline"[^>]*>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance);
  	getParam(info, result, 'sms', /<li[^>]+class="sms"[^>]*>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance);
  	getParam(info, result, 'wifi', /<li[^>]+class="wifi"[^>]*>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(info, result, '__tariff', /<div id="overviewSkypeName".*?>(.*?)<\/div>/i, replaceTagsAndSpaces, null);
  	
 	if (AnyBalance.isAvailable('inactivein', 'inactivedate')) {
  		info = AnyBalance.requestGet('https://secure.skype.com/account/credit-reactivate?setlang=ru');

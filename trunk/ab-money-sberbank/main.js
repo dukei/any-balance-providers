@@ -375,14 +375,14 @@ function fetchNewAccountCard(html) {
 	getParam(html, result, '__tariff', reCardNumber, replaceTagsAndSpaces);
 	getParam(html, result, ['currency', 'balance', 'cash', 'electrocash', 'debt', 'maxlimit'], reBalance, replaceTagsAndSpaces, parseCurrencyMy);
 	fetchRates(html, result);
-	if (AnyBalance.isAvailable('userName', 'till', 'cash', 'electrocash')) {
+	if (AnyBalance.isAvailable('userName', 'till', 'cash', 'electrocash', 'minpay', 'minpaydate', 'maxlimit')) {
 		html = AnyBalance.requestGet(baseurl + '/PhizIC/private/cards/detail.do?id=' + cardId);
 		getParam(html, result, 'userName', /ФИО Держателя карты:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/, replaceTagsAndSpaces, capitalFirstLenttersDecode);
 		getParam(html, result, 'till', /Срок действия до:[\s\S]*?(\d\d\/\d{4})/, replaceTagsAndSpaces);
 		getParam(html, result, 'cash', /для снятия наличных:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, 'electrocash', /для покупок:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, 'minpay', /Минимальный платеж:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/, replaceTagsAndSpaces, parseBalance);
-		
+		getParam(html, result, 'maxlimit', /Кредитный лимит:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/, replaceTagsAndSpaces, parseBalance);
 		/* приходит вот такая штука:
 		<td class="align-right field">Дата минимального платежа:</td><td><span class="bold">
 		Thu Nov 28 00:00:00 MSK 2013 &nbsp;</span>

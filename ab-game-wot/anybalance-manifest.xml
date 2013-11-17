@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="18">ab-game-wot</id>
+	<id version="19">ab-game-wot</id>
 	<name>World of Tanks</name>
 	<description>
-		Показывает ник и клан-тэг, общее количество боев и побед, рейтинги эффективности в игре World of Tanks, а также информацию о количестве боев и побед на выбранном танке
+		Показывает ник и клан-тэг, общее количество боев и побед, средний опыт, рейтинги эффективности в игре World of Tanks, а также информацию о количестве боев и побед на выбранном танке
 	</description>
 	<author>Vitaliy Poluphanov &lt;vitaliy@root.ua&gt;</author>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
@@ -30,6 +30,7 @@
 		<counter id="wn6_xvm" name="Рейтинг эффект. WN6 (шкала XVM)" type="numeric"/>
 		<counter id="next_perc" name="Бои до след. проц. побед" type="numeric"/>
 		<counter id="next_perc_05" name="Бои до след. проц. побед (с округл.)" type="numeric"/>
+		<counter id="avg_exp" name="Средний опыт" type="numeric"/>
 	</counters>
 	<keywords>
 		игра, game, wot

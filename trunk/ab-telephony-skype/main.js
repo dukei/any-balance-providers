@@ -1,20 +1,20 @@
  /**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Skype IP-телефония
-Сайт оператора: http://www.skype.com/
-Личный кабинет: https://www.skype.com/
 */
 
  function main() {
  	var prefs = AnyBalance.getPreferences();
+	
+	checkEmpty(prefs.login, 'Please, enter login!');
+	checkEmpty(prefs.password, 'Please, enter password!');	
+	
  	AnyBalance.setDefaultCharset('utf-8');
  	var baseLogin = 'https://login.skype.com/login?application=account&intcmp=sign-in&return_url=https%3A%2F%2Fsecure.skype.com%2Faccount%2Flogin', info = '';
  	if (!prefs.__dbg) {
  		info = AnyBalance.requestGet(baseLogin);
  		var form = getParam(info, null, null, /<form[^>]+id="LoginForm[^>]*>([\s\S]*?)<\/form>/i);
  		if (!form) 
-			throw new AnyBalance.Error("Не удаётся найти форму входа. Сайт изменен или проблемы на сайте.");
+			throw new AnyBalance.Error("Can`t find login form. Is site changed or down?");
  		var params = createFormParams(form, function(params, input, name, value) {
  			if (name == 'username') 
 				value = prefs.login;
@@ -31,7 +31,7 @@ Skype IP-телефония
  		var error = getParam(info, null, null, [/class="messageBody[^>]*>([\s\S]*?)<\/div>/i, /message_error"(?:[^>]*>){3}([^<]*)/i], [/<.*?>/g, '', /^\s*|\s*$/g, '']);
  		if (error)
 			throw new AnyBalance.Error(error);
- 		throw new AnyBalance.Error("Не удается зайти в личный кабинет. Сайт изменен?");
+ 		throw new AnyBalance.Error("Can`t login in skype account. Maybe site is changed?");
  	}
  	var result = {success: true, subscriptions: 0};
 	
@@ -42,7 +42,7 @@ Skype IP-телефония
  	getParam(info, result, 'landline', /<li[^>]+class="landline"[^>]*>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance);
  	getParam(info, result, 'sms', /<li[^>]+class="sms"[^>]*>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance);
  	getParam(info, result, 'wifi', /<li[^>]+class="wifi"[^>]*>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(info, result, '__tariff', /<div id="overviewSkypeName".*?>(.*?)<\/div>/i, replaceTagsAndSpaces, null);
+	getParam(info, result, '__tariff', /<div\s+id="overviewSkypeName"[^>]*>([^<]*)/i, replaceTagsAndSpaces);
  	
 	if (AnyBalance.isAvailable('inactivein', 'inactivedate')) {
  		info = AnyBalance.requestGet('https://secure.skype.com/account/credit-reactivate?setlang=ru');
@@ -53,7 +53,7 @@ Skype IP-телефония
  			if (AnyBalance.isAvailable('inactivein'))
 				result.inactivein = Math.ceil((date - (new Date().getTime())) / 86400 / 1000);
  		} else {
- 			AnyBalance.trace('Не удалось получить дату инактивации денег на счету');
+ 			AnyBalance.trace('Can`t find inactive date.');
  		}
  	}
  	AnyBalance.setResult(result);

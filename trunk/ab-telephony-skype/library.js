@@ -320,6 +320,11 @@ function parseDateWord(str){
 	return getParam(str, null, null, null, [replaceTagsAndSpaces, /январ(?:я|ь)/i, '.01.', /феврал(?:я|ь)/i, '.02.', /марта|март/i, '.03.', /апрел(?:я|ь)/i, '.04.', /ма(?:я|й)/i, '.05.', /июн(?:я|ь)/i, '.06.', /июл(?:я|ь)/i, '.07.', /августа|август/i, '.08.', /сентябр(?:я|ь)/i, '.09.', /октябр(?:я|ь)/i, '.10.', /ноябр(?:я|ь)/i, '.11.', /декабр(?:я|ь)/i, '.12.', /\s/g, ''], parseDate);
 }
 
+function parseDateWordEn(str){
+	AnyBalance.trace('Trying to parse date from ' + str);
+	return getParam(str, null, null, null, [replaceTagsAndSpaces, /(?:january|jan)/i, '.01.', /(?:febrary|feb)/i, '.02.', /march|mar/i, '.03.', /(?:april|apr)/i, '.04.', /may/i, '.05.', /(?:june|jun)/i, '.06.', /(?:july|jul)/i, '.07.', /august|aug/i, '.08.', /(?:september|sep)/i, '.09.', /(?:october|oct)/i, '.10.', /(?:november|nov)/i, '.11.', /(?:december|dec)/i, '.12.', /\s/g, ''], parseDate);
+}
+
 /** Объединяет два объекта. Свойства с общими именами берутся из newObject */
 function joinObjects(newObject, oldObject) {
 	var obj = {};
@@ -359,8 +364,7 @@ function addHeaders(newHeaders, oldHeaders) {
 	if (bOldArray && !bNewArray) { //Если старый массив, а новый объект, то это специальный объект {index: [name, value], ...}!
 		var headers = oldHeaders.slice();
 		for (i in newHeaders)
-			headers[i] = newHeaders[i];
-		
+	           headers.push([i, newHeaders[i]]);		
 		return headers;
 	}
 }
@@ -604,8 +608,8 @@ function parseTrafficGb(text, defaultUnits) {
 /** Вычисляет трафик в нужных единицах из переданной строки. */
 function parseTrafficEx(text, thousand, order, defaultUnits) {
 	var _text = html_entity_decode(text.replace(/\s+/g, ''));
-	var val = getParam(_text, null, null, /(-?\d[\d\.,]*)/, replaceFloat, parseFloat);
-	if (!isset(val)) {
+	var val = getParam(_text, null, null, /(-?\.?\d[\d\.,]*)/, replaceFloat, parseFloat);
+	if (!isset(val) || val === '') {
 		AnyBalance.trace("Could not parse traffic value from " + text);
 		return;
 	}

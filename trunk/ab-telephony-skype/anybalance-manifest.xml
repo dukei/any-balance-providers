@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2" version="18">ab-telephony-skype</id>
+	<id major_version="2" version="19">ab-telephony-skype</id>
 	<api flags="no_browser" />
 	<name>Skype</name>
 	<description html="true"><![CDATA[

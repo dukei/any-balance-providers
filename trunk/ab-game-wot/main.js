@@ -1,4 +1,4 @@
-/*
+/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 
 World of Tanks — бесплатная онлайн игра
@@ -371,15 +371,15 @@ function main(){
 	
 	// Получаем информацию по ироку
 	// Player info
-	var pinfo = getData(API_ADDR + '/2.0/account/info/?application_id=' + APP_ID + '&account_id=' + id);
+	var pinfo = getData(API_ADDR + '/2.0/account/info/?application_id=' + APP_ID + '&account_id=' + id + '&limit=1');
 	// Player vehicles
 	if(AnyBalance.isAvailable('er', 'wn6', 'er_xvm', 'wn6_xvm', 'tank_wins', 'tank_battles', 'tank_win_percent'))
-		var pvehicles = getData(API_ADDR + '/2.0/account/tanks/?application_id=' + APP_ID + '&account_id=' + id);
+		var pvehicles = getData(API_ADDR + '/2.0/account/tanks/?application_id=' + APP_ID + '&account_id=' + id + '&fields=statistics,tank_id');
 	// Player stats slice (на будущее)
 	// var pstatsslice = getData(API_ADDR + '/2.0/stats/accountbytime/?application_id=' + APP_ID + '&account_id=' + id + '&hours_ago=24');
 	// Get clan name
 	if (pinfo.data[id].clan) {
-		var cinfo = getData(API_ADDR + '/2.0/clan/info//?application_id=' + APP_ID + '&clan_id=' + pinfo.data[id].clan.clan_id);
+		var cinfo = getData(API_ADDR + '/2.0/clan/info//?application_id=' + APP_ID + '&clan_id=' + pinfo.data[id].clan.clan_id + '&fields=abbreviation');
 		var cname = cinfo.data[pinfo.data[id].clan.clan_id].abbreviation;
 	}
 	
@@ -450,8 +450,11 @@ function main(){
 				result['er_xvm'] = (Math.max(Math.min(er*(er*(er*(er*(er*(4.5254e-17*er - 3.3131e-13) + 9.4164e-10) - 1.3227e-6) + 9.5664e-4) - 0.2598) + 13.23, 100), 0)).toFixed(prefs.accuracy);
 			}
 
-	if(AnyBalance.isAvailable('er_armor'))
+	if(AnyBalance.isAvailable('er_armor', 'avg_exp'))
 		var avg_exp = pinfo.data[id].statistics.all.battle_avg_xp;
+		
+		if(AnyBalance.isAvailable('avg_exp'))
+			result['avg_exp'] = avg_exp;
 		
 		// http://armor.kiev.ua/wot/rating/
 		result['er_armor'] = (Math.log(battles) / 10 * (avg_exp + DAMAGE * (WINRATE * 2 + FRAGS * 0.9 + (SPOT + CAP + DEF) * 0.5))).toFixed(0);

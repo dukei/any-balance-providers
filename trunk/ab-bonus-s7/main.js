@@ -1,10 +1,5 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Получает информацию по бонусной карте s7
-
-Сайт оператора: http://www.s7.ru
-Личный кабинет: https://www.s7.ru/home/priority/ffpAbout.dot
 */
 
 var g_headers = {
@@ -63,7 +58,7 @@ function main(){
 	
 	//html = AnyBalance.requestGet(baseurl, g_headers);
 	
-    //AnyBalance.trace(html);
+    AnyBalance.trace(html);
     if(!/priority\/logout/.test(html)){
         var error = getParam(html, null, null, /<div[^>]*class=["']error[^>]*>([\s\S]*?)<\/div>/, replaceTagsAndSpaces, html_entity_decode);
         if(error)
@@ -73,16 +68,17 @@ function main(){
 
     var result = {success: true};
 
-    getParam(html, result, 'balance', /(?:Мили|Miles):[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'cardnum', /(?:Номер|Number):[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
-    getParam(html, result, 'status', /(?:Статус|Status):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+    getParam(html, result, 'balance', />\s*(?:Мили|Miles):(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'userName', /<div[^>]+class="ffp_username"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 
-    var cn = getParam(html, null, null, /(?:Номер|Number):[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+    var cardNum = getParam(html, null, null, />\s*(?:Номер|Number):(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces);
     var status = getParam(html, null, null, /(?:Статус|Status):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
 
-    result.__tariff = status + ', №' + cn;
+	getParam(cardNum, result, 'cardnum');
+	getParam(status, result, 'status');
 
+	result.__tariff = status + ', №' + cardNum;	
+	
     if(AnyBalance.isAvailable('qmiles', 'flights')){
         html = AnyBalance.requestGet(baseurl + 'home/priority/ffpMyMiles.dot');
         getParam(html, result, 'qmiles', /<td[^>]+class="balance"[^>]*>([\s\S]*?)(?:<\/td>|\/)/i, replaceTagsAndSpaces, parseBalance);

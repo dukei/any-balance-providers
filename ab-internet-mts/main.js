@@ -37,6 +37,7 @@ var regions = {
    saratov: getSaratov,
    chita: getChita,
    amur: getAmur,
+   orel: getOrel,
 };
 
 function main(){
@@ -1174,6 +1175,31 @@ function getAmur(){
     getParam(html, result, 'abon', /Абонентская плата:([^<]*)/i, replaceTagsAndSpaces, parseBalance2);
     getParam(html, result, 'username', /Мои аккаунты\s*\/([^<]*)/i, replaceTagsAndSpaces);
     getParam(html, result, 'internet_cur', /Израсходовано:([^<]*)/i, replaceTagsAndSpaces, parseBalance2);
+
+    AnyBalance.setResult(result);
+}
+
+function getOrel(){
+    var prefs = AnyBalance.getPreferences();
+    AnyBalance.setDefaultCharset('utf-8');
+
+    var baseurl = 'http://lbc.oreltv.ru/';
+
+    var html = AnyBalance.requestPost(baseurl + 'index.php', {
+        'login':prefs.login,
+        'password':prefs.password
+    });
+
+    if(!/>Выход</i.test(html)){
+        throw new AnyBalance.Error("Не удалось войти в личный кабинет. Неправильный логин-пароль?");
+    }
+
+    var result = {success: true};
+	
+	getParam(html, result, 'username', /Вы:(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces);
+	getParam(html, result, 'agreement', /Номер договора(?:[\s\S]*?<td[^>]*>){5}([^<]*)/i, replaceTagsAndSpaces);
+	getParam(html, result, 'balance', />Баланс(?:[\s\S]*?<td[^>]*>){5}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, '__tariff', />Тариф(?:[\s\S]*?<td[^>]*>){7}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 
     AnyBalance.setResult(result);
 }

@@ -1,30 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-hosting-reg-ru</id>
-  <name>reg.ru</name>
-  <description>
-    Получает баланс регистратора reg.ru (http://www.reg.ru)
-
-    Информация берется из личного кабинетаклиента (https://www.reg.ru/)
-  </description>
-  <author>Alexandra Shalamova &lt;alexandrashalamova@gmail.com&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-  </counters>
-  <keywords>
-    рег ру
-  </keywords>
-  <type>
-    hosting
-  </type>
-  <country>
-    ru
-  </country>
+	<id version="2">ab-hosting-reg-ru</id>
+	<name>Reg.ru</name>
+	<api flags="no_browser"/>
+	<description html="true"><![CDATA[
+	<p>Получает баланс регистратора reg.ru (http://www.reg.ru)</p>
+	<p>Информация берется из личного кабинетаклиента (https://www.reg.ru/)</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>  
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+	</counters>
+	<keywords>рег ру</keywords>
+	<type>hosting</type>
+	<country>ru</country>
 </provider>

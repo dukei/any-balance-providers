@@ -1,23 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <EditTextPreference 
-        title="E-mail/№ карты" 
-        positiveButtonText="ОК" 
-        summary="||{@s}" 
-        dialogTitle="E-mail/№ карты" 
-        negativeButtonText="Отмена" 
-        dialogMessage="Введите номер карты или e-mail для входа в личный кабинет S7."
-        inputType="textEmailAddress"
-        key="login">
-    </EditTextPreference>
-    <EditTextPreference 
-        positiveButtonText="ОК"
-        key="password" 
-        dialogTitle="Пароль/ПИН"
-        negativeButtonText="Отмена"
-        title="Пароль/ПИН"
-        summary="||***********"
-        dialogMessage="Введите ПИН или пароль, используемый для входа в личный кабинет S7."
-        inputType="textPassword">
-    </EditTextPreference>
+	<EditTextPreference
+		obligatory="true"
+		title="E-mail/№ карты"
+		positiveButtonText="ОК"
+		summary="||{@s}"
+		dialogTitle="E-mail/№ карты"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите номер карты или e-mail для входа в личный кабинет S7."
+		inputType="textEmailAddress"
+		key="login">
+	</EditTextPreference>
+	<EditTextPreference
+		obligatory="true"
+		positiveButtonText="ОК"
+		key="password"
+		dialogTitle="Пароль/ПИН"
+		negativeButtonText="Отмена"
+		title="Пароль/ПИН"
+		summary="||***********"
+		dialogMessage="Введите ПИН или пароль, используемый для входа в личный кабинет S7."
+		inputType="textPassword">
+	</EditTextPreference>
 </PreferenceScreen>

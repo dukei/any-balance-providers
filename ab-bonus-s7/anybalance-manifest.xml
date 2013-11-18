@@ -1,39 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser" />
-  <id version="5">ab-bonus-s7</id>
-  <name>S7 Приоритет</name>
-  <description>
-    Получает баланс миль и другую информацию по бонусной карте авиакомпании S7 (http://www.s7.ru).
+	<id version="6">ab-bonus-s7</id>
+	<name>S7 Приоритет</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе миль и другую информацию по бонусной карте авиакомпании S7 (http://www.s7.ru).</p>
+	<p>Информация берется из личного кабинета https://www.s7.ru/home/priority/ffpAbout.dot</p>
 
-    Информация берется из личного кабинета https://www.s7.ru/home/priority/ffpAbout.dot. 
-
-    Как получить накопительную карту и пароль к личному кабинету написано здесь: http://www.s7.ru/home/priority/ffpEnrollment.dot.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-    <js>library.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Мили"/>
-    <counter id="qmiles" name="Статусные мили"/>
-    <counter id="flights" name="Полеты"/>
-    <counter id="status" name="Статус" type="text"/>
-    <counter id="cardnum" name="Номер карты" type="text"/>
-    <counter id="userName" name="Имя" type="text"/>
-  </counters>
-  <keywords>
-    с7 эссевен sseven
-  </keywords>
-  <type>
-    bonus
-  </type>
-  <country>
-    ru
-  </country>
+	<b>Особенности:</b>
+	<ul>
+		<li>Счетчики "Расход за прошлый месяц" и "Ежемесячная плата" доступны только при использовании мобильного интернет помощника.</li>
+		<li>Счетчик "Бонусные баллы" доступнен только при использовании Личного Кабинета МТС.</li>
+		<li>Если получение данных настроено через интернет-помощник, рекомендуется устанавливать в настройках свой регион явно. Это экономит трафик и не зависит от поведения московского интернет-помощника.</li>
+	</ul>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Как получить накопительную карту и пароль к личному кабинету, инструкция: https://www.s7.ru/home/priority/ffpEnrollment.dot</p>
+	]]></instruction>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Мили"/>
+		<counter id="qmiles" name="Статусные мили"/>
+		<counter id="flights" name="Полеты"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="cardnum" name="Номер карты" type="text"/>
+		<counter id="userName" name="Имя" type="text"/>
+	</counters>
+	<keywords>с7 эссевен sseven</keywords>
+	<type>bonus</type>
+	<country>ru</country>
 </provider>

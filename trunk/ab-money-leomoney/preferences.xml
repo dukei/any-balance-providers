@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <EditTextPreference 
-        title="Phone number" 
-        positiveButtonText="OK" 
-        summary="|Phone number in international form, for example, +971552344334|{@s}" 
-        dialogTitle="Phone number" 
-        negativeButtonText="Cancel" 
+	<EditTextPreference
 		obligatory="true"
-        dialogMessage="Enter your phone number, for example, +971552344334. It should begin with + and contain only numbers."
-        inputType="phone"
-        key="login">
-    </EditTextPreference>
-    <EditTextPreference 
-        positiveButtonText="OK"
-        key="password" 
-        dialogTitle="Password"
+		title="Phone number"
+		positiveButtonText="OK"
+		summary="|Phone number in international form, for example, +971552344334|{@s}"
+		dialogTitle="Phone number"
+		negativeButtonText="Cancel"
+		dialogMessage="Enter your phone number, for example, +971552344334. It should begin with + and contain only numbers."
+		inputType="phone"
+		key="login">
+	</EditTextPreference>
+	<EditTextPreference
 		obligatory="true"
-        negativeButtonText="Cancel"
-        title="Password"  
-        summary="||***********\n"
-        dialogMessage="Enter password to enter Leomoney personal account."
-        inputType="textPassword">
-    </EditTextPreference>
+		positiveButtonText="OK"
+		key="password"
+		dialogTitle="Password"
+		negativeButtonText="Cancel"
+		title="Password"
+		summary="||***********\n"
+		dialogMessage="Enter password to enter Leomoney personal account."
+		inputType="textPassword">
+	</EditTextPreference>
 </PreferenceScreen>

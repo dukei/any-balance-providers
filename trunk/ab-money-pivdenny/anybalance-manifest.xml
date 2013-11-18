@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-money-pivdenny</id>
+	<id version="2">ab-money-pivdenny</id>
 	<api flags="no_browser"/>
 	<name>Акционерный банк "Пивденный"</name>
 	<description html="true"><![CDATA[
@@ -19,7 +19,7 @@
 		<counter id="balance" name="Баланс" units=" {@currency}"/>
 		<counter id="currency" name="Валюта" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>
-		<counter id="card_number" name="Номер карты" type="text"/>
+		<counter id="card_number" name="Номер счета" type="text"/>
 		<counter id="dogovor" name="Договор" type="text"/>
 		<counter id="acc_name" name="Название счета" type="text"/>
 	</counters>

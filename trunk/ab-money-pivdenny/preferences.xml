@@ -22,12 +22,12 @@
 		inputType="textPassword">
 	</EditTextPreference>
 	<EditTextPreference
-		title="Последние цифры карты"
+		title="Последние цифры счета"
 		key="card_num"
 		summary="||{@s}"
-		dialogTitle="Последние цифры карты"
+		dialogTitle="Последние цифры счета"
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите последние 4 цифры карты, по которой хотите получать информацию, либо не вводите ничего, чтобы получить данные по первой карте.">
+		dialogMessage="Введите последние 4 цифры счета, по которому хотите получать информацию, либо не вводите ничего, чтобы получить данные по первому счету.">
 	</EditTextPreference>	
 </PreferenceScreen>

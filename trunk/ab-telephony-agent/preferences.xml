@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <EditTextPreference 
-        title="Е-мейл" 
-        positiveButtonText="ОК" 
-        summary="|Введите ваш е-мейл для входа в агент@mail.ru|{@s}\n" 
-        dialogTitle="Логин" 
-        negativeButtonText="Отмена" 
-        dialogMessage="Введите ваш е-мейл для входа в личный кабинет http://agent.mail.ru."
-        obligatory="true"
-        inputType="textEmailAddress"
-        key="login">
-    </EditTextPreference>
-    <EditTextPreference 
-        positiveButtonText="ОК"
-        key="password" 
-        dialogTitle="Пароль"
-        negativeButtonText="Отмена"
-        obligatory="true"
-        title="Пароль"
-        summary="|Введите пароль|***********"
-        dialogMessage="Введите пароль, используемый для входа в личный кабинет http://agent.mail.ru."
-        inputType="textPassword">
-    </EditTextPreference>
+	<EditTextPreference
+		obligatory="true"
+		title="Е-мейл"
+		positiveButtonText="ОК"
+		summary="|Введите е-мейл, используемый для входа в агент@mail.ru|{@s}\n"
+		dialogTitle="Логин"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите е-мейл, используемый для входа в агент@mail.ru http://agent.mail.ru."
+		inputType="textEmailAddress"
+		key="login">
+	</EditTextPreference>
+	<EditTextPreference
+		obligatory="true"
+		positiveButtonText="ОК"
+		key="password"
+		dialogTitle="Пароль"
+		negativeButtonText="Отмена"
+		title="Пароль"
+		summary="|Введите пароль, используемый для входа в агент@mail.ru|***********"
+		dialogMessage="Введите пароль, используемый для входа в агент@mail.ru http://agent.mail.ru."
+		inputType="textPassword">
+	</EditTextPreference>
 </PreferenceScreen>

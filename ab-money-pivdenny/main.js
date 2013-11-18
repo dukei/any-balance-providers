@@ -45,7 +45,7 @@ function main() {
 	var tr = getParam(html, null, null, trRegExp);
 	
 	if(!tr)
-		throw new AnyBalance.Error('Не удалось найти ' + (prefs.card_num ? 'карту с последними цифрами ' + prefs.card_num : 'ни одной карты!'));
+		throw new AnyBalance.Error('Не удалось найти ' + (prefs.card_num ? 'счет с последними цифрами ' + prefs.card_num : 'ни одного счета!'));
 
 	var result = {success: true};
 	

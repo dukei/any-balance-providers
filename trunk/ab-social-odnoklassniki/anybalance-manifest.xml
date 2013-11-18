@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-social-odnoklassniki</id>
+	<id version="2">ab-social-odnoklassniki</id>
 	<api flags="no_browser"/>
 	<name>Одноклассники</name>
-	<description>
-Получает данные о балансе OK из социальной сети Одноклассники (http://www.odnoklassniki.ru)
-	</description>
+	<description html="true"><![CDATA[
+	<p>Получает данные о балансе OK из социальной сети Одноклассники (http://www.odnoklassniki.ru)</p>
+	]]></description>	
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
@@ -15,7 +15,8 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units="OK"/>
+		<counter id="balance" name="Баланс" units=" OK"/>
+		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
 	<keywords></keywords>
 	<type>social</type>

@@ -15,11 +15,9 @@ function main() {
 	var baseurl = 'http://m.odnoklassniki.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
-	if(!prefs.login)
-		throw new AnyBalance.Error('Введите логин!');
-	if(!prefs.password)
-		throw new AnyBalance.Error('Введите пароль!');
-		
+	checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(prefs.password, 'Введите пароль!');
+	
 	var html = AnyBalance.requestPost(baseurl + 'dk?bk=GuestMain&st.cmd=main&_prevCmd=main&tkn=9519', {
 		'button_login':'Войти',
 		'fr.login':prefs.login,
@@ -27,17 +25,25 @@ function main() {
 		'fr.password':prefs.password,
 		'fr.posted':'set',
     }, addHeaders({Referer: baseurl + ''}));
-
-	if(!/cmd=logoff/i.test(html)) {
+	
+	if (!/cmd=logoff/i.test(html)) {
+		var error = getParam(html, null, null, /role="alert"[^>]*>([\s\S]*?)<\/ul/i, replaceTagsAndSpaces, html_entity_decode);
+		if (error && /Неверный логин или пароль/i.test(error))
+			throw new AnyBalance.Error(error, null, true);
+		if (error)
+			throw new AnyBalance.Error(error);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
+	var result = {success: true};
+	
+	getParam(html, result, 'fio', /"Страница пользователя"(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, '__tariff', /"Страница пользователя"(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 	
 	var href = getParam(html, null, null, /href="\/([^"]*selectBadge[^"]*)">\s*Прикрепить значок/i, replaceTagsAndSpaces, html_entity_decode);
 	if(!href)
 		throw new AnyBalance.Error('Не удалось найти ссылку на баланс. Сайт изменен?');
 	html = AnyBalance.requestGet(baseurl + href, g_headers);
-
-    var result = {success: true};
+	
 	getParam(html, result, 'balance', /На счёте:\s*(\d*)\s*OK/i, replaceTagsAndSpaces, parseBalance);
 	
     AnyBalance.setResult(result);

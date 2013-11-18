@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="1" version="1">ab-money-rikslunchen</id>
+	<id major_version="1" version="2">ab-money-rikslunchen</id>
 	<api flags="no_browser" />
 	<name>Rikslunchen</name>
 	<description html="true"><![CDATA[
@@ -18,7 +18,6 @@
 		<counter id="balance" name="Balance" units=" {@currency}"/>
 		<counter id="currency" name="Currency" type="text"/>
 		<counter id="topuplast" name="Last top-up" type="time" format="dd/MM/yyyy"/>
-		<counter id="transactions" name="Transactions count"/>
 	</counters>
 	<keywords>subsidized, lunch, food, subventionerar, lunchen</keywords>
 	<type>money</type>

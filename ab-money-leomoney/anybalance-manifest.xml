@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="6">ab-money-leomoney</id>
+	<id version="7">ab-money-leomoney</id>
 	<api flags="no_browser"/>
 	<name>Leomoney</name>
 	<description html="true"><![CDATA[
@@ -8,7 +8,7 @@
 	]]></description>
 	<instruction html="true"><![CDATA[
 	<p>To register a wallet go to http://leomoney.com/security/registration.</p>
-        <p>To recover your password go to http://leomoney.com/security/recoverypassword.</p>
+	<p>To recover your password go to http://leomoney.com/security/recoverypassword.</p>
 	]]></instruction>
 	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
 	<files>

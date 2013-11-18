@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-    <change version="3" date="2013-11-09">
-      Исправлена проверка е-мейла на правильность
-    </change>
-    <change version="2" date="2013-06-08">
-      поддержка изменений в личном кабинете
-    </change>
+<change version="4" date="2013-11-18">
+- Возможность ввести e-mail с доменом не принадлежащим Mail.ru Group. (Stark)
+</change>
+<change version="3" date="2013-11-09">
+- Исправлена проверка е-мейла на правильность.
+</change>
+<change version="2" date="2013-06-08">
+- Поддержка изменений в личном кабинете.
+</change>
 </history>

@@ -62,6 +62,5 @@ function main() {
 	getParam(html, result, '__tariff', /cardNo:([\s\S]*?),/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'balance', /balance:"([\s\S]*?)",/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'topuplast', /lastTopupDateStr:"([\s\S]*?)",/i, replaceTagsAndSpaces, parseDateISO);
-	getParam(html, result, 'transactions', /transfered:([\s\S]*?),/i, replaceTagsAndSpaces, html_entity_decode);
     AnyBalance.setResult(result);
 }

@@ -1,38 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-money-rusfin</id>
-  <name>Русфинанс банк</name>
-  <description>
-    Получает остаток ссудной задолженности и другие параметры по кредиту от банка Русфинанс, используя ИНФО-Банк (http://www.rusfinancebank.ru/ru/info-bank.html).
-
-Если у вас нет доступа к ИНФО-Банку, перейдите по ссылке "Создать пользователя ИНФО-Банка" на странице https://info-msk.rusfinance.ru:7779/jsso/SSOLogin.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <history>history.xml</history>
-    <js>library.js</js>
-    <js>main.js</js>
-  </files>
-  <counters>
-    <counter id="balance" name="Остаток задолженности" units=" {@currency}"/>
-    <counter id="minpay" name="Ежемесячный платеж" units=" {@currency}"/>
-    <counter id="minpaytill" name="Срок ежемесячного платежа" type="time" format="dd/MM/yyyy"/>
-    <counter id="lastopdate" name="Последнее списание" type="time" format="dd/MM/yyyy"/>
-    <counter id="lastoppct" name="Последнее списание процентов" units=" {@currency}"/>
-    <counter id="lastopcrd" name="Последнее списание долга" units=" {@currency}"/>
-    <counter id="limit" name="Сумма кредита" units=" {@currency}"/>
-    <counter id="agreement" name="Номер договора" type="text"/>
-    <counter id="currency" name="Валюта" type="text"/>
-  </counters>
-  <keywords>
-    
-  </keywords>
-  <type>
-    money
-  </type>
-  <country>
-    ru
-  </country>
+	<id version="2">ab-money-rusfin</id>
+	<api flags="no_browser"/>
+	<name>Русфинанс банк</name>
+	<description html="true"><![CDATA[
+	<p>Получает остаток ссудной задолженности и другие параметры по кредиту от банка Русфинанс, используя ИНФО-Банк (http://www.rusfinancebank.ru/ru/info-bank.html).</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Если у вас нет доступа к ИНФО-Банку, перейдите по ссылке "Создать пользователя ИНФО-Банка" на странице https://info-msk.rusfinance.ru:7779/jsso/SSOLogin.</p>
+	]]></instruction>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Остаток задолженности" units=" {@currency}"/>
+		<counter id="minpay" name="Ежемесячный платеж" units=" {@currency}"/>
+		<counter id="minpaytill" name="Срок ежемесячного платежа" type="time" format="dd/MM/yyyy"/>
+		<counter id="lastopdate" name="Последнее списание" type="time" format="dd/MM/yyyy"/>
+		<counter id="lastoppct" name="Последнее списание процентов" units=" {@currency}"/>
+		<counter id="lastopcrd" name="Последнее списание долга" units=" {@currency}"/>
+		<counter id="limit" name="Сумма кредита" units=" {@currency}"/>
+		<counter id="agreement" name="Номер договора" type="text"/>
+		<counter id="currency" name="Валюта" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>money</type>
+	<country>ru</country>
 </provider>

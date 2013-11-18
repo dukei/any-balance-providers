@@ -8,11 +8,11 @@ Operator site: http://www.reg.ru
 */
 
 var g_headers = {
-'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
-'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-'Connection':'keep-alive',
-'User-Agent':'Mozilla/5.0 (BlackBerry; U; BlackBerry 9900; en-US) AppleWebKit/534.11+ (KHTML, like Gecko) Version/7.0.0.187 Mobile Safari/534.11+'
+	'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
+	'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Connection':'keep-alive',
+	'User-Agent':'Mozilla/5.0 (BlackBerry; U; BlackBerry 9900; en-US) AppleWebKit/534.11+ (KHTML, like Gecko) Version/7.0.0.187 Mobile Safari/534.11+'
 };
 
 function main(){
@@ -21,26 +21,30 @@ function main(){
 
     var baseurl = "https://www.reg.ru/";
 
-    var html = AnyBalance.requestGet(baseurl);
+    var html = AnyBalance.requestGet(baseurl + 'user/', g_headers);
         
-    var form = getParam(html, null, null, /<form[^>]+id="personal"[^>]*>([\s\S]*?)<\/form>/i);    
+    var form = getParam(html, null, null, /<form[^>]+action="\/user\/login"[^>]*>([\s\S]*?)<\/form>/i);    
     if(!form)
         throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
 
     var params = createFormParams(form);
-    if (!params['mode']) params['mode'] = 'login';
-    if (!params['ajax']) params['ajax'] = '1';
-    if (!params['callback']) params['callback'] = "jQuery183010454580537043512_1369032173223";
-    if (!params['_']) params['_'] = '1369032378626';
-    console.log(params);
+	
+    if (!params['mode'])
+		params['mode'] = 'login';
+    if (!params['ajax'])
+		params['ajax'] = '1';
+    if (!params['callback']) 
+		params['callback'] = "jQuery183010454580537043512_1369032173223";
+    if (!params['_']) 
+		params['_'] = '1369032378626';
 
-    html = AnyBalance.requestGet(baseurl + 'user/login?login=' + prefs.login 
-        + '&password=' + prefs.password 
-        + '&mode=' + params['mode']
-        + '&ajax=' + params['ajax']
-        + '&callback=' + params['callback']
-        + '&_=' + params['_'], 
-        g_headers);
+	html = AnyBalance.requestGet(baseurl + 'user/login?login=' + prefs.login
+		+ '&password=' + prefs.password
+		+ '&mode=' + params['mode']
+		+ '&ajax=' + params['ajax']
+		+ '&callback=' + params['callback']
+		+ '&_=' + params['_'],
+	g_headers);
 
 
     if(/"errors":/i.test(html)){
@@ -50,10 +54,10 @@ function main(){
         throw new AnyBalance.Error('Не удалось войти в личный кабинет. Проблемы на сайте или сайт изменен.');
     }
 
-    html = AnyBalance.requestGet(baseurl, g_headers);
+    //html = AnyBalance.requestGet(baseurl, g_headers);
     var result = {success: true};
 
-    getParam(html, result, 'balance', /<span[^>]+id="user_balance_total"[^>]*>([\S\s]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'balance', /<!--\s*баланс\s*-->(?:[^>]*>){5}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 
     // if(prefs.domains){
     //     var notfound = [];

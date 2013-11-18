@@ -115,7 +115,7 @@ function main() {
 		var time = getParam(html, null, null, /Kalan S\&uuml;re:(?:[^>]*>){3}([^<]*)/i);
 		// Это минуты на все звонки, есть еще внутри сетевые вызовы, но пока таких тарифов нет
 		sumParam(time, result, 'minutes', /Heryone([^<]*?)DKniz/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-		sumParam(time, result, 'minutes_local', /Grup ici([^<]*?)DKniz/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+		sumParam(time, result, 'minutes_local', /\s+ici([^<]*?)DKniz/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 		getParam(time, result, 'total_minutes', null, replaceTagsAndSpaces, html_entity_decode);
 		
 		// Это переделывать надо

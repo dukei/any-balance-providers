@@ -1,40 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-money-rencred</id>
-  <name>Ренессанс Кредит</name>
-  <description>
-    Получает текущий остаток и другие параметры карт, счетов банка Ренессанс Кредит (http://rencredit.ru), используя интернет-банк https://online.rencredit.ru.
+	<id version="2">ab-money-rencred</id>
+	<api flags="no_browser"/>
+	<name>Ренессанс Кредит</name>
+	<description html="true"><![CDATA[
+	<p>Получает текущий остаток и другие параметры карт, счетов банка Ренессанс Кредит (http://rencredit.ru), используя интернет-банк https://online.rencredit.ru.</p>
+	<p>Информация берется из личного кабинета http:\\...</p>
 
-    Для подключения к системе «Интернет-банк» Вам необходимо необходимо оформить договор в любом офисе Банка в Москве или Московской области.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Остаток"/>
-    <counter id="minpay" name="Минимальный платеж"/>
-    <counter id="minpaytill" name="Заплатить до" type="time" format="dd/MM/yyyy"/>
-    <counter id="currency" name="Валюта" type="text"/>
-    <counter id="limit" name="Кредитный лимит"/>
-    <counter id="cardnum" name="Номер карты" type="text"/>
-    <counter id="accnum" name="Номер счета" type="text"/>
-    <counter id="accname" name="Название счета" type="text"/>
-    <counter id="сontract" name="№ договора" type="text"/>
-    <counter id="userName" name="ФИО" type="text"/>
-    <counter id="status" name="Статус карты" type="text"/>
-    <counter id="available" name="Доступно"/>
-  </counters>
-  <keywords>
-    интернет-банкинг                                                      
-  </keywords>
-  <type>
-    money
-  </type>
-  <country>
-    ru
-  </country>
+	<b>Особенности:</b>
+	<ul>
+		<li>Счетчики "Расход за прошлый месяц" и "Ежемесячная плата" доступны только при использовании мобильного интернет помощника.</li>
+		<li>Счетчик "Бонусные баллы" доступнен только при использовании Личного Кабинета МТС.</li>
+		<li>Если получение данных настроено через интернет-помощник, рекомендуется устанавливать в настройках свой регион явно. Это экономит трафик и не зависит от поведения московского интернет-помощника.</li>
+	</ul>
+	]]></description>	
+	<instruction html="true"><![CDATA[
+	<p>Для подключения к системе «Интернет-банк» Вам необходимо необходимо оформить договор в любом офисе Банка в Москве или Московской области.</p>
+	]]></instruction>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Остаток" units=" {@currency}"/>
+		<counter id="minpay" name="Минимальный платеж"/>
+		<counter id="minpaytill" name="Заплатить до" type="time" format="dd/MM/yyyy"/>
+		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="limit" name="Кредитный лимит"/>
+		<counter id="cardnum" name="Номер карты" type="text"/>
+		<counter id="accnum" name="Номер счета" type="text"/>
+		<counter id="accname" name="Название счета" type="text"/>
+		<counter id="сontract" name="№ договора" type="text"/>
+		<counter id="userName" name="ФИО" type="text"/>
+		<counter id="status" name="Статус карты" type="text"/>
+		<counter id="available" name="Доступно"/>
+	</counters>
+	<keywords>интернет-банкинг</keywords>
+	<type>money</type>
+	<country>ru</country>
 </provider>

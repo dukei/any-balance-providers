@@ -1,61 +1,6 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Получает текущий остаток и другие параметры карт и счетов Банка Ренессанс Кредит
-
-Сайт оператора: http://rencredit.ru/
-Личный кабинет: https://online.rencredit.ru
 */
-
-function getParam (html, result, param, regexp, replaces, parser) {
-	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
-		return;
-
-	var value = regexp.exec (html);
-	if (value) {
-		value = value[1];
-		if (replaces) {
-			for (var i = 0; i < replaces.length; i += 2) {
-				value = value.replace (replaces[i], replaces[i+1]);
-			}
-		}
-		if (parser)
-			value = parser (value);
-
-    if(param)
-      result[param] = value;
-    else
-      return value
-	}
-}
-
-var replaceTagsAndSpaces = [/\\n/g, ' ', /\[br\]/ig, ' ', /<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
-var replaceFloat = [/\s+/g, '', /,/g, '.'];
-
-function parseBalance(text){
-    var _text = text.replace(/\s+/g, '');
-    var val = getParam(_text, null, null, /(-?\d[\d\.,]*)/, replaceFloat, parseFloat);
-    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
-    return val;
-}
-
-function parseCurrency(text){
-    var _text = html_entity_decode(text.replace(/\s+/g, ''));
-    var val = getParam(_text, null, null, /-?\d[\d\.,]*\s*(\S*)/);
-    AnyBalance.trace('Parsing currency (' + val + ') from: ' + text);
-    return val;
-}
-
-function parseDate(str){
-    var matches = /(\d+)[^\d](\d+)[^\d](\d+)/.exec(str);
-    if(matches){
-          var date = new Date(+matches[3], matches[2]-1, +matches[1]);
-	  var time = date.getTime();
-          AnyBalance.trace('Parsing date ' + date + ' from value: ' + str);
-          return time;
-    }
-    AnyBalance.trace('Failed to parse date from value: ' + str);
-}
 
 var g_headers = {
     'Accept-Language': 'ru, en',
@@ -128,7 +73,7 @@ function fetchCard(html, baseurl){
     //Размер кредитного лимита по карте
     getParam(html, result, 'limit', /&#1056;&#1072;&#1079;&#1084;&#1077;&#1088; &#1082;&#1088;&#1077;&#1076;&#1080;&#1090;&#1085;&#1086;&#1075;&#1086; &#1083;&#1080;&#1084;&#1080;&#1090;&#1072; &#1087;&#1086; &#1082;&#1072;&#1088;&#1090;&#1077;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     //Доступный лимит
-    getParam(html, result, 'balance', /&#1044;&#1086;&#1089;&#1090;&#1091;&#1087;&#1085;&#1099;&#1081; &#1083;&#1080;&#1084;&#1080;&#1090;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance', /&#1044;&#1086;&#1089;&#1090;&#1091;&#1087;&#1085;&#1099;&#1081; &#1083;&#1080;&#1084;&#1080;&#1090;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     //Статус карты
     getParam(html, result, 'status', /&#1057;&#1090;&#1072;&#1090;&#1091;&#1089; &#1082;&#1072;&#1088;&#1090;&#1099;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
 
@@ -153,7 +98,24 @@ function fetchCard(html, baseurl){
             getParam(html, result, 'minpaytill', /&#1055;&#1086;&#1089;&#1090;&#1091;&#1087;&#1083;&#1077;&#1085;&#1080;&#1077; &#1087;&#1083;&#1072;&#1090;&#1077;&#1078;&#1072; &#1085;&#1072; &#1089;&#1095;&#1077;&#1090; &#1085;&#1077; &#1087;&#1086;&#1079;&#1076;&#1085;&#1077;&#1077;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
         }
     }
-
+	
+	if(isAvailable('balance')) {
+		// Тут очень не понятно, кабинета с двумя картами нет, оттестировать все равно не получается, тот баланс который есть, он не правильный, нужно брать его отсюда
+		sourceData = getParam(html, null, null, /<a[^>]+onclick="submitForm[^"]*source:'([^'"]*)'[^>]*>\s*&#1041;&#1072;&#1083;&#1072;&#1085;&#1089;/i, replaceTagsAndSpaces);
+		
+		html = AnyBalance.requestPost(baseurl + 'faces/renk/cards/CardDetails.jspx', {
+			'oracle.adf.faces.FORM': 'mainform',
+			'oracle.adf.faces.STATE_TOKEN': token,
+			'source': sourceData
+		}, g_headers);
+		
+		var balance = result.balance || 0;
+		var newBalance = getParam(html, null, null, /&#1041;&#1072;&#1083;&#1072;&#1085;&#1089; &#1087;&#1086; &#1082;&#1072;&#1088;&#1090;&#1077;(?:[^>]*>){4}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+		
+		if(balance != newBalance)
+			result.balance = newBalance;
+	}
+	
     AnyBalance.setResult(result);
 }
 
@@ -161,15 +123,15 @@ function fetchAccount(html, baseurl){
     var prefs = AnyBalance.getPreferences();
     if(prefs.cardnum && !/^\d{4,20}$/.test(prefs.cardnum))
         throw new AnyBalance.Error('Пожалуйста, введите не менее 4 последних цифр номера счета, по которому вы хотите получить информацию, или не вводите ничего, чтобы получить информацию по первому счету.');
-
+	
     //Она сразу сюда приходит, можно явно не переходить
     //var html = AnyBalance.requestGet(baseurl + 'aces/renk/accounts/AccountList.jspx', g_headers);
-
+	
     //Сколько цифр осталось, чтобы дополнить до 20
     var accnum = prefs.cardnum || '';
     var accprefix = accnum.length;
     accprefix = 20 - accprefix;
-
+	
     var re = new RegExp('(<tr[^>]*>(?:[\\s\\S](?!<\\/tr>))*' + (accprefix > 0 ? '\\d{' + accprefix + '}' : '') + accnum + '\\s*<[\\s\\S]*?<\\/tr>)', 'i');
     var tr = getParam(html, null, null, re);
     if(!tr)
@@ -181,10 +143,10 @@ function fetchAccount(html, baseurl){
     getParam(tr, result, 'currency', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(tr, result, 'accnum', /(\d{20})/, replaceTagsAndSpaces, html_entity_decode);
     getParam(tr, result, '__tariff', /(\d{20})/, replaceTagsAndSpaces, html_entity_decode);
-
+	
     var sourceData = getParam(tr, null, null, /<a[^>]+onclick="submitForm[^"]*source:'([^'"]*)'[^"]*"[^>]+class="xl"/i, replaceTagsAndSpaces);
     var token = getParam(html, null, null, /<input[^>]+name="oracle.adf.faces.STATE_TOKEN"[^>]*value="([^"]*)/i, null, html_entity_decode);
-
+	
     if(AnyBalance.isAvailable('accname', 'userName')){
         html = AnyBalance.requestPost(baseurl + 'faces/renk/accounts/AccountList.jspx', {
             'oracle.adf.faces.FORM': 'mainform',
@@ -196,15 +158,6 @@ function fetchAccount(html, baseurl){
         //ФИО владельца счета
         getParam(html, result, 'userName', /&#1060;&#1048;&#1054; &#1074;&#1083;&#1072;&#1076;&#1077;&#1083;&#1100;&#1094;&#1072; &#1089;&#1095;&#1077;&#1090;&#1072;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     }
-
+	
     AnyBalance.setResult(result);
 }
-
-function html_entity_decode(str)
-{
-    //jd-tech.net
-    var tarea=document.createElement('textarea');
-    tarea.innerHTML = str;
-    return tarea.value;
-}
-

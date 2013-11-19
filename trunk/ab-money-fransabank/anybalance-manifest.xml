@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-money-fransabank</id>
+	<api flags="no_browser"/>
+	<name>Франсабанк</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе на картах Франсбанка http://fransabank.by/</p>
+	<p>Информация берется из интернет-банкинга https://ibank.fransabank.by/v1/cgi/bsi.dll?T=RT_2Auth.BF</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Остаток" units=" {@currency}"/>
+		<counter id="limit" name="Лимит кредита" units=" {@currency}"/>
+		<counter id="type" name="Тип" type="text"/>
+		<counter id="cardnum" name="Номер карты" type="text"/>
+		<counter id="fio" name="Владелец" type="text"/>
+		<counter id="currency" name="Валюта" type="text"/>
+	</counters>
+	<keywords>интернет-банкинг</keywords>
+	<type>money</type>
+	<country>by</country>
+</provider>

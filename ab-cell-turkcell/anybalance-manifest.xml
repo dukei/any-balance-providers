@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="1.0" version="2">ab-cell-turkcell</id>
+	<id major_version="1.0" version="3">ab-cell-turkcell</id>
 	<api flags="no_browser"/>
 	<name>Turkcell</name>
 	<description html="true"><![CDATA[
@@ -34,6 +34,7 @@
 		<counter id="data_total" name="Data total" units=" Mb"/>
 		<counter id="data_used" name="Data used" units=" Mb"/>
 		<counter id="data_days" name="Data days left" units=" d"/>
+		<counter id="deadline" name="Last payment date" type="time" format="dd/MM/yyyy"/>
 	</counters>
 	<keywords></keywords>
 	<type>cell</type>

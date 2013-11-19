@@ -87,7 +87,10 @@ function main() {
 					var total = sumParam(minutes, null, null, /class="info"[^>]*>\s*\d+\s*\/\s([\d\.]*)\s*DK(?:[^>]*>){4}Turkcelllilerle/ig, [replaceTagsAndSpaces, /\./, ''], parseBalance, aggregate_sum);
 					var used = sumParam(minutes, null, null, /class="info"[^>]*>\s*([\d\.]*)\s*\/\s[\d\.]*\s*DK(?:[^>]*>){4}Turkcelllilerle/ig, [replaceTagsAndSpaces, /\./, ''], parseBalance, aggregate_sum);
 					sumParam(minutes, result, 'minutes_local_days', /Kalan Gün[^\d]*(\d+)(?:[^>]*>){6,8}Turkcelllilerle/ig, replaceTagsAndSpaces, parseBalance, aggregate_min);
-					
+					// Нет даты у этого пакета, это совместный пакет
+					if(!result.minutes_local_days) {
+						getParam(result.minutes_days, result, 'minutes_local_days');
+					}					
 					if(total >= 0 && used >= 0) {
 						getParam(total-used, result, 'minutes_local_left');
 						getParam(total, result, 'minutes_local_total');
@@ -99,9 +102,12 @@ function main() {
 				// Это минуты кому угодно
 				if(isAvailable(['minutes_days', 'minutes_left', 'minutes_total', 'minutes_used'])) {
 					var total = sumParam(minutes, null, null, /class="info"[^>]*>\s*\d+\s*\/\s([\d\.]*)\s*DK(?:[^>]*>){4}Heryone/ig, [replaceTagsAndSpaces, /\./, ''], parseBalance, aggregate_sum);
-					var used = sumParam(minutes, null, null, /class="info"[^>]*>\s*([\d\.]*)\s*\/\s[\d\.]*\s*DK(?:[^>]*>){4}Heryone/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+					var used = sumParam(minutes, null, null, /class="info"[^>]*>\s*([\d\.]*)\s*\/\s[\d\.]*\s*DK(?:[^>]*>){4}Heryone/ig, [replaceTagsAndSpaces, /\./, ''], parseBalance, aggregate_sum);
 					sumParam(minutes, result, 'minutes_days', /Kalan Gün[^\d]*(\d+)(?:[^>]*>){6,8}Heryone/ig, replaceTagsAndSpaces, parseBalance, aggregate_min);
-					
+					// Нет даты у этого пакета, это совместный пакет
+					if(!result.minutes_days) {
+						getParam(result.minutes_local_days, result, 'minutes_days');
+					}
 					if(total >= 0 && used >= 0) {
 						getParam(total-used, result, 'minutes_left');
 						getParam(total, result, 'minutes_total');
@@ -132,12 +138,13 @@ function main() {
 		}
 	}
 	
-	if(isAvailable(['balance', 'fio', 'phone'])) {
+	if(isAvailable(['balance', 'fio', 'phone', 'deadline'])) {
 		html = AnyBalance.requestGet('http://m.turkcell.com.tr/faturam.aspx', addHeaders({'X-Requested-With':'XMLHttpRequest', Referer: 'http://m.turkcell.com.tr/InvoiceLogin.aspx?ReturnUrl=/faturam.aspx'}));
 		
 		getParam(html, result, 'balance', /Güncel Fatura Tutarınız(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, 'fio', /"clsCustName"(?:[^>]*>){1}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 		getParam(html, result, 'phone', /"clsCustTel"(?:[^>]*>){1}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+		getParam(html, result, 'deadline', /Son Ödeme Tarihi(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseDate);
 	}
 	
     AnyBalance.setResult(result);

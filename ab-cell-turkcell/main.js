@@ -11,6 +11,13 @@ var g_headers = {
 	'Origin':'http://csi.turkcell.com.tr',
 };
 
+function requestBonuses() {
+	return AnyBalance.requestPost('http://m.turkcell.com.tr/accountremainingusage.json?t2=' + new Date().getTime(), {
+		'title':'TURKCELL - Hat Özetim',
+		'uri':'/accountsummary.aspx',
+	}, addHeaders({Referer: 'http://m.turkcell.com.tr/accountsummary.aspx', Accept: 'application/json, text/javascript, */*; q=0.01'}));
+}
+
 function main() {
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'http://csi.turkcell.com.tr/';
@@ -19,7 +26,8 @@ function main() {
 	checkEmpty(prefs.login, 'Enter login!');
 	checkEmpty(prefs.password, 'Enter password!');
 	
-	var html = AnyBalance.requestGet('http://m.turkcell.com.tr/genericlogin.aspx?loginPageTypeEnum=4&t=1383215282085', addHeaders({'X-Requested-With':'XMLHttpRequest', Referer: 'http://m.turkcell.com.tr/accountsummary.aspx'}));
+	var time = new Date().getTime();
+	var html = AnyBalance.requestGet('http://m.turkcell.com.tr/genericlogin.aspx?loginPageTypeEnum=4&t='+time, addHeaders({'X-Requested-With':'XMLHttpRequest', Referer: 'http://m.turkcell.com.tr/accountsummary.aspx'}));
 	
 	html = AnyBalance.requestPost('https://www.turkcell.com.tr/_layouts/TurkcellWeb.SharePoint/LoginForm.aspx', {
         Msisdn:prefs.login,
@@ -30,7 +38,7 @@ function main() {
 		'operation':'login',
     }, addHeaders({Referer: 'http://m.turkcell.com.tr/accountsummary.aspx'}));
 	
-	html = AnyBalance.requestPost('http://m.turkcell.com.tr/formsauthenticationlogin.json?t2=1383208173532', {
+	html = AnyBalance.requestPost('http://m.turkcell.com.tr/formsauthenticationlogin.json?t2='+time, {
 		'uri':'/accountsummary.aspx',
 		'authenticationCookieKeys':'["BIGipServerSSO-Prod-pool-http","OAM_ID","ORA_WX_SESSION","iPlanetDirectoryPro"]',
 		'last2Digits':'',
@@ -47,10 +55,7 @@ function main() {
 	
 	// Пакеты минут
 	if(isAvailable(['sms_days', 'sms_left', 'sms_total', 'sms_used', 'minutes_local_days', 'minutes_local_left', 'minutes_local_total', 'minutes_local_used', 'minutes_days', 'minutes_left', 'minutes_total', 'minutes_used', 'data_days', 'data_left', 'data_total', 'data_used'])) {
-		html = AnyBalance.requestPost('http://m.turkcell.com.tr/accountremainingusage.json?t2=1383208244175', {
-			'title':'TURKCELL - Hat Özetim',
-			'uri':'/accountsummary.aspx',
-		}, addHeaders({Referer: 'http://m.turkcell.com.tr/accountsummary.aspx', Accept: 'application/json, text/javascript, */*; q=0.01'}));
+		html = requestBonuses();
 
 		var json = getJson(html);
 		// Не бросаем исключение! Может есть только баланс?
@@ -58,15 +63,14 @@ function main() {
 			// Остаток СМС
 			var sms = json.sms;
 			if(sms) {
-				AnyBalance.trace('Found sms ' + sms);
-				
+				//AnyBalance.trace('Found sms ' + sms);
 				// Это смс кому угодно, могут быть еще и внутри сети
 				var total = sumParam(sms, null, null, /class="info"[^>]*>\s*\d+\s*\/\s(\d*)\s*ADET(?:[^>]*>){4}SMSHeryone/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 				var used = sumParam(sms, null, null, /class="info"[^>]*>\s*(\d+)\s*\/\s\d*\s*ADET(?:[^>]*>){4}SMSHeryone/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 				
 				sumParam(sms, result, 'sms_days', /Kalan Gün[^\d]*(\d+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_min);
 				
-				if(total && used) {
+				if(total >= 0 && used >= 0) {
 					getParam(total-used, result, 'sms_left');
 					getParam(total, result, 'sms_total');
 					getParam(used, result, 'sms_used');
@@ -84,7 +88,7 @@ function main() {
 					var used = sumParam(minutes, null, null, /class="info"[^>]*>\s*([\d\.]*)\s*\/\s[\d\.]*\s*DK(?:[^>]*>){4}Turkcelllilerle/ig, [replaceTagsAndSpaces, /\./, ''], parseBalance, aggregate_sum);
 					sumParam(minutes, result, 'minutes_local_days', /Kalan Gün[^\d]*(\d+)(?:[^>]*>){6,8}Turkcelllilerle/ig, replaceTagsAndSpaces, parseBalance, aggregate_min);
 					
-					if(total && used) {
+					if(total >= 0 && used >= 0) {
 						getParam(total-used, result, 'minutes_local_left');
 						getParam(total, result, 'minutes_local_total');
 						getParam(used, result, 'minutes_local_used');
@@ -98,7 +102,7 @@ function main() {
 					var used = sumParam(minutes, null, null, /class="info"[^>]*>\s*([\d\.]*)\s*\/\s[\d\.]*\s*DK(?:[^>]*>){4}Heryone/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 					sumParam(minutes, result, 'minutes_days', /Kalan Gün[^\d]*(\d+)(?:[^>]*>){6,8}Heryone/ig, replaceTagsAndSpaces, parseBalance, aggregate_min);
 					
-					if(total && used) {
+					if(total >= 0 && used >= 0) {
 						getParam(total-used, result, 'minutes_left');
 						getParam(total, result, 'minutes_total');
 						getParam(used, result, 'minutes_used');
@@ -115,7 +119,7 @@ function main() {
 				var used = sumParam(data, null, null, /class="info"[^>]*>\s*(\d+)\s*\/\s\d*\s*MB/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 				sumParam(data, result, 'data_days', /Kalan Gün[^\d]*(\d+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_min);
 				
-				if(total && used) {
+				if(total >= 0 && used >= 0) {
 					getParam(total-used, result, 'data_left');
 					getParam(total, result, 'data_total');
 					getParam(used, result, 'data_used');

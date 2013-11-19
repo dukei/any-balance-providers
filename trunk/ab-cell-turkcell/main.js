@@ -67,7 +67,6 @@ function main() {
 				// Это смс кому угодно, могут быть еще и внутри сети
 				var total = sumParam(sms, null, null, /class="info"[^>]*>\s*\d+\s*\/\s(\d*)\s*ADET(?:[^>]*>){4}SMSHeryone/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 				var used = sumParam(sms, null, null, /class="info"[^>]*>\s*(\d+)\s*\/\s\d*\s*ADET(?:[^>]*>){4}SMSHeryone/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-				
 				sumParam(sms, result, 'sms_days', /Kalan Gün[^\d]*(\d+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_min);
 				
 				if(total >= 0 && used >= 0) {
@@ -86,7 +85,8 @@ function main() {
 				if(isAvailable(['minutes_local_days', 'minutes_local_left', 'minutes_local_total', 'minutes_local_used'])) {
 					var total = sumParam(minutes, null, null, /class="info"[^>]*>\s*\d+\s*\/\s([\d\.]*)\s*DK(?:[^>]*>){4}Turkcelllilerle/ig, [replaceTagsAndSpaces, /\./, ''], parseBalance, aggregate_sum);
 					var used = sumParam(minutes, null, null, /class="info"[^>]*>\s*([\d\.]*)\s*\/\s[\d\.]*\s*DK(?:[^>]*>){4}Turkcelllilerle/ig, [replaceTagsAndSpaces, /\./, ''], parseBalance, aggregate_sum);
-					sumParam(minutes, result, 'minutes_local_days', /Kalan Gün[^\d]*(\d+)(?:[^>]*>){6,8}Turkcelllilerle/ig, replaceTagsAndSpaces, parseBalance, aggregate_min);
+					var mins = sumParam(minutes, null, null, /Kalan Gün[^\d]*(\d+)(?:[^>]*>){6,8}Turkcelllilerle/ig, replaceTagsAndSpaces, parseBalance, aggregate_min);
+					result.minutes_local_days = mins;
 					// Нет даты у этого пакета, это совместный пакет
 					if(!result.minutes_local_days) {
 						getParam(result.minutes_days, result, 'minutes_local_days');
@@ -103,7 +103,8 @@ function main() {
 				if(isAvailable(['minutes_days', 'minutes_left', 'minutes_total', 'minutes_used'])) {
 					var total = sumParam(minutes, null, null, /class="info"[^>]*>\s*\d+\s*\/\s([\d\.]*)\s*DK(?:[^>]*>){4}Heryone/ig, [replaceTagsAndSpaces, /\./, ''], parseBalance, aggregate_sum);
 					var used = sumParam(minutes, null, null, /class="info"[^>]*>\s*([\d\.]*)\s*\/\s[\d\.]*\s*DK(?:[^>]*>){4}Heryone/ig, [replaceTagsAndSpaces, /\./, ''], parseBalance, aggregate_sum);
-					sumParam(minutes, result, 'minutes_days', /Kalan Gün[^\d]*(\d+)(?:[^>]*>){6,8}Heryone/ig, replaceTagsAndSpaces, parseBalance, aggregate_min);
+					var mins = sumParam(minutes, null, null, /Kalan Gün[^\d]*(\d+)(?:[^>]*>){6,8}Turkcelllilerle/ig, replaceTagsAndSpaces, parseBalance, aggregate_min);
+					result.minutes_days = mins;					
 					// Нет даты у этого пакета, это совместный пакет
 					if(!result.minutes_days) {
 						getParam(result.minutes_local_days, result, 'minutes_days');

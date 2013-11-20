@@ -12,6 +12,9 @@ var g_headers = {
 
 function main(){
     var prefs = AnyBalance.getPreferences();
+	checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(prefs.password, 'Введите пароль!');
+	
     var baseurl = 'https://cabinet.whsd.ru/';
     AnyBalance.setDefaultCharset('utf-8'); 
 
@@ -32,11 +35,17 @@ function main(){
 		'txtUsername':prefs.login,
 	}, addHeaders({Referer: baseurl + 'login.aspx'})); 
 
-    if(!/Добро пожаловать в Ваш личный кабинет/i.test(html)){
-        throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-    }
-
-    var result = {success: true};
+	if (!/Добро пожаловать в Ваш личный кабинет/i.test(html)) {
+		var error = getParam(html, null, null, /"lblErrorLogin"(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+		if (error && /введены некорректно/i.test(error))
+			throw new AnyBalance.Error(error, null, true);
+		if (error)
+			throw new AnyBalance.Error(error);
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+	}
+	
+	var result = {success: true};
+	
 	getParam(html, result, 'acc', /Договор №[\s\S]*?left">([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'status', /Статус[\s\S]*?left">([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'bsk', /Количество БСК[\s\S]*?left">([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);

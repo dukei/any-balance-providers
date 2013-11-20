@@ -54,5 +54,21 @@ function main() {
 	getParam(html, result, 'srv_name', /Selected Server IP:(?:[^>]*>){5}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, '__tariff', /Selected Server IP:(?:[^>]*>){5}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 	
+	if(isAvailable(['subscription_0', 'subscription_1', 'subscription_2', 'subscription_date_0', 'subscription_date_1', 'subscription_date_2'])) {
+		html = AnyBalance.requestGet(baseurl + 'packets.php', g_headers);
+		
+		var allSubscr = sumParam(html, null, null, /(<tr\s*class="norm">(?:[^>]*>){9}[^>]*"timeTill">\s*\d+\.\d+\.\d{2,4}(?:[^>]*>){2})/ig);
+		AnyBalance.trace('Найдено подписок с датами: ' + allSubscr.length);
+		
+		for(var i = 0; i < allSubscr.length; i++) {
+			var curr = allSubscr[i];
+			getParam(curr, result, 'subscription_'+i, /<a [^>]*>([^<]*)<\/a>/i, [replaceTagsAndSpaces, /◄{1,}\s{1}/i, ''], html_entity_decode);
+			getParam(curr, result, 'subscription_date_'+i, /class="timeTill"[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseDate);
+			// В манифесте только 3 объявлено
+			if(i >= 3)
+				break;
+		}
+	}
+	
 	AnyBalance.setResult(result);
 }

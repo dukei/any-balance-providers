@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-tv-plitv</id>
+	<id version="2">ab-tv-plitv</id>
 	<api flags="no_browser|captcha"/>
 	<name>PliTV.TV</name>
 	<description html="true"><![CDATA[
@@ -15,10 +15,16 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс"/>
-		<counter id="srv_number" name="Server №" type="text"/>
-		<counter id="srv_name" name="Selected Server IP" type="text"/>
+		<counter id="srv_number" name="№ сервера" type="text"/>
+		<counter id="srv_name" name="IP сервера" type="text"/>
+		<counter id="subscription_0" name="Подписка 1" type="text"/>
+		<counter id="subscription_date_0" name="Дата подписки 1" type="time" format="dd/MM/yyyy"/>
+		<counter id="subscription_1" name="Подписка 2" type="text"/>
+		<counter id="subscription_date_1" name="Дата подписки 2" type="time" format="dd/MM/yyyy"/>
+		<counter id="subscription_2" name="Подписка 3" type="text"/>
+		<counter id="subscription_date_2" name="Дата подписки 3" type="time" format="dd/MM/yyyy"/>		
 	</counters>
 	<keywords></keywords>
-	<type></type>
+	<type>tv</type>
 	<country>ru</country>
 </provider>

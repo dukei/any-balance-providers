@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <EditTextPreference 
+<!--     <EditTextPreference 
         title="Фамилия" 
         positiveButtonText="ОК" 
         summary="||{@s}" 
@@ -9,18 +9,20 @@
         dialogMessage="Введите фамилию для входа в личный кабинет."
         inputType="text"
         key="surname">
-    </EditTextPreference>
-    <EditTextPreference 
+    </EditTextPreference> -->
+    <EditTextPreference
+		obligatory="true"
         title="№ карты" 
         positiveButtonText="ОК" 
         summary="||{@s}" 
         dialogTitle="№ карты" 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите номер карты для входа в личный кабинет."
+        dialogMessage="Введите номер карты, используемый для входа в личный кабинет."
         inputType="number"
         key="login">
     </EditTextPreference>
-    <EditTextPreference 
+    <EditTextPreference
+		obligatory="true"
         positiveButtonText="ОК"
         key="password" 
         dialogTitle="ПИН"

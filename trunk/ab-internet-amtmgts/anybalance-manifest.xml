@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-internet-netronik</id>
+	<id version="1">ab-internet-amtmgts</id>
 	<api flags="no_browser"/>
-	<name>Нетроник</name>
+	<name>АМТ-МГТС</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе интернет-провайдера Нетроник</p>
-	<p>Информация берется из личного кабинета https://cabinet.netronik.ru/</p>
+	<p>Предоставляет информацию о балансе интернет - провайдера АМТ-МГТС http://www.amtmgts.com/home/</p>
+	<p>Информация берется из личного кабинета http://81.22.194.180/broadband/myoffice/</p>
 	]]></description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
@@ -17,6 +17,7 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="acc_num" name="Лицевой счет" type="text"/>
 	</counters>
 	<keywords></keywords>
 	<type>internet</type>

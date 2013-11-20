@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-hosting-reg-ru</id>
+	<id version="3">ab-hosting-reg-ru</id>
 	<name>Reg.ru</name>
 	<api flags="no_browser"/>
 	<description html="true"><![CDATA[
@@ -17,6 +17,18 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="domain_0" name="Домен 1" type="text"/>
+		<counter id="domain_date_0" name="Дата окончания домена 1" type="time" format="dd/MM/yyyy"/>
+		<counter id="domain_1" name="Домен 2" type="text"/>
+		<counter id="domain_date_1" name="Дата окончания домена 2" type="time" format="dd/MM/yyyy"/>
+		<counter id="domain_2" name="Домен 3" type="text"/>
+		<counter id="domain_date_2" name="Дата окончания домена 3" type="time" format="dd/MM/yyyy"/>
+		<counter id="service_0" name="Услуга1" type="text"/>
+		<counter id="service_date_0" name="Дата окончания услуги 1" type="time" format="dd/MM/yyyy"/>
+		<counter id="service_1" name="Услуга2" type="text"/>
+		<counter id="service_date_1" name="Дата окончания услуги 2" type="time" format="dd/MM/yyyy"/>
+		<counter id="service_2" name="Услуга3" type="text"/>
+		<counter id="service_date_2" name="Дата окончания услуги 3" type="time" format="dd/MM/yyyy"/>
 	</counters>
 	<keywords>рег ру</keywords>
 	<type>hosting</type>

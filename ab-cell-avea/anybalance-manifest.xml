@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2.0" version="9">ab-cell-avea</id>
+	<id major_version="2.0" version="10">ab-cell-avea</id>
 	<api flags="no_browser"/>
 	<name>AVEA</name>
 	<description html="true"><![CDATA[
 	<p>AVEA Online İşlemlerinden bilgileri temin eder: https://www.avea.com.tr/mps/portal?cmd=onlineTransactionsHome&lang=tr&tb=redTab</p>
+	<p>Bu servis sağlayıcı, AVEA altyapısını kullanan BİMCell ve PTTCell hatlarıyla uyumludur.</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
 	<p>Kayıt olmak için linke basınız: https://www.avea.com.tr/mps/portal?cmd=onlineTransactionsHome&lang=tr&tb=redTab</p>

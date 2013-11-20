@@ -69,7 +69,7 @@ function main() {
 				if(/bonus/i.test(optionName)) {
 					//AnyBalance.trace('Found bonuses: ' + curr);
 					// Трафик
-					if(/\d+\s*GB/i.test(optionName)) {
+					if(/\d+\s*(?:K|M|G)B/i.test(optionName)) {
 						sumParam(curr, result, 'bonus_traf', /(?:[\s\S]*?<td[^>]*>){5}[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
 					// SMS 
 					} else if(/\d+\s*SMS/i.test(optionName)) {
@@ -85,7 +85,7 @@ function main() {
 				// это обычные пакеты
 				} else {
 					// Трафик
-					if(/\d+\s*GB/i.test(optionName)) {
+					if(/\d+\s*(?:K|M|G)B/i.test(optionName)) {
 						sumParam(curr, result, 'traf', /(?:[\s\S]*?<td[^>]*>){5}[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
 					// SMS 
 					} else if(/\d+\s*SMS/i.test(optionName)) {

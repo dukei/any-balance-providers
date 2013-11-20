@@ -1,10 +1,5 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Получает баланс регистратора reg.ru 
-
-Operator site: http://www.reg.ru
-Личный кабинет: https://www.reg.ru
 */
 
 var g_headers = {
@@ -45,19 +40,53 @@ function main(){
 		+ '&callback=' + params['callback']
 		+ '&_=' + params['_'],
 	g_headers);
-
-
+	
     if(/"errors":/i.test(html)){
         var error = getParam(html, null, null, /"error":\"([\s\S]*?)\"}/, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error);
         throw new AnyBalance.Error('Не удалось войти в личный кабинет. Проблемы на сайте или сайт изменен.');
     }
-
     //html = AnyBalance.requestGet(baseurl, g_headers);
     var result = {success: true};
 
     getParam(html, result, 'balance', /<!--\s*баланс\s*-->(?:[^>]*>){5}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+
+	if(isAvailable(['domain_0', 'domain_1', 'domain_2', 'domain_date_0', 'domain_date_1', 'domain_date_2', ])) {
+		html = AnyBalance.requestGet(baseurl + 'user/domain_list?nocache=1597782', g_headers);
+		
+		var allDomains = sumParam(html, null, null, /<tr\s+valign="middle"(?:[^>]*>){4}[^>]*номер сервиса в таблице(?:[\s\S]*?<\/tr[^>]*>){1}/ig);
+		AnyBalance.trace('Найдено доменов: ' + allDomains.length);
+		
+		for(var i = 0; i < allDomains.length; i++) {
+			var curr = allDomains[i];
+			getParam(curr, result, 'domain_'+i, /<tr\s+valign="middle"(?:[^>]*>){16}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+			getParam(curr, result, 'domain_date_'+i, /--\s*окончание\s*--(?:[^>]*>){1}([^<]*)/i, replaceTagsAndSpaces, parseDate);
+			
+			// В манифесте только 3 объявлено
+			if(i >= 3)
+				break;
+		}
+	}
+	// Услуги
+	if(isAvailable(['service_0', 'service_1', 'service_2', 'service_date_0', 'service_date_1', 'service_date_2', ])) {
+		html = AnyBalance.requestGet(baseurl + 'user/service_list?nocache=6968795', g_headers);
+		
+		var allServices = sumParam(html, null, null, /<tr\s+valign="middle"(?:[^>]*>){4}[^>]*номер сервиса в таблице(?:[\s\S]*?<\/tr[^>]*>){1}/ig);
+		AnyBalance.trace('Найдено услуг: ' + allServices.length);
+		
+		for(var i = 0; i < allServices.length; i++) {
+			var curr = allServices[i];
+			getParam(curr, result, 'service_'+i, /<tr\s+valign="middle"(?:[^>]*>){16}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+			getParam(curr, result, 'service_date_'+i, /--\s*окончание\s*--(?:[^>]*>){1}([^<]*)/i, replaceTagsAndSpaces, parseDate);
+			
+			// В манифесте только 3 объявлено
+			if(i >= 3)
+				break;
+		}
+	}
+
+
 
     // if(prefs.domains){
     //     var notfound = [];

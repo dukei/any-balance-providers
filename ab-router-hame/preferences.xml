@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        key="ipaddress"
+        title="IP-адрес устройства" 
+        summary="IP-адрес устройства" 
+        dialogTitle="IP-адрес устройства" 
+        defaultValue="192.168.169.1"
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите IP-адрес устройства (Стандартный 192.168.169.1)"
+        positiveButtonText="ОК" 
+        inputType="text">
+    </EditTextPreference>
+    <EditTextPreference
+        key="admpass"
+        title="Пароль"
+	summary="Пароль для авторизации||***********\n"
+	dialogTitle="Пароль"
+	defaultValue="hame"
+	negativeButtonText="Отмена"
+	dialogMessage="Введите пароль, используемый для авторизации"
+        positiveButtonText="ОК"
+	inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

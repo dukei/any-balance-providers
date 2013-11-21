@@ -53,7 +53,8 @@ function main() {
 	var result = {success: true};
 	
 	// Предоплата
-	if(prefs.billing) {
+	if(!/Fatura Bilgisi/i.test(html)) {
+		AnyBalance.trace('It looks like we are in pre paid selfcare...');
 		html = AnyBalance.requestGet(baseurl + 'mps/portal?cmd=dashboard&lang=tr&pagemenu=paket.mevcutPaket', g_headers);
 		
 		getParam(html, result, '__tariff', /Tarifeniz:(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
@@ -103,6 +104,7 @@ function main() {
 		}
 	// Постоплата
 	} else {
+		AnyBalance.trace('It looks like we are in post paid selfcare...');
 		html = AnyBalance.requestGet(baseurl + 'mps/portal?cmd=guncelKullanim&lang=tr&pagemenu=faturaislemleri.guncelfatura', g_headers);
 		
 		getParam(html, result, '__tariff', /Tarife:(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
@@ -113,14 +115,18 @@ function main() {
 		//getParam(html, result, 'minutes', /Kalan S\&uuml;re:(?:[^>]*>){3}[^<]*kadar gecerli([^<]*?)DKniz/i, replaceTagsAndSpaces, parseBalance);
 		
 		var time = getParam(html, null, null, /Kalan S\&uuml;re:(?:[^>]*>){3}([^<]*)/i);
-		// Это минуты на все звонки, есть еще внутри сетевые вызовы, но пока таких тарифов нет
-		sumParam(time, result, 'minutes', /Heryone([^<]*?)DKniz/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-		sumParam(time, result, 'minutes_local', /\s+ici([^<]*?)DKniz/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-		getParam(time, result, 'total_minutes', null, replaceTagsAndSpaces, html_entity_decode);
-		
-		// Это переделывать надо
-		sumParam(html, result, 'traf', /kadar gecerli([^<]*MB)/ig, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
-		sumParam(html, result, 'sms', /kadar gecerli([^<]*)SMS/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+		if(time) {
+			// Это минуты на все звонки, есть еще внутри сетевые вызовы, но пока таких тарифов нет
+			sumParam(time, result, 'minutes', /Heryone([^<]*?)DKniz/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+			sumParam(time, result, 'minutes_local', /\s+ici([^<]*?)DKniz/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+			getParam(time, result, 'total_minutes', null, replaceTagsAndSpaces, html_entity_decode);
+			
+			// Это переделывать надо
+			sumParam(html, result, 'traf', /kadar gecerli([^<]*MB)/ig, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
+			sumParam(html, result, 'sms', /kadar gecerli([^<]*)SMS/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+		} else {
+			AnyBalance.trace('Can`t find minutes table!');
+		}
 	}
 	
     AnyBalance.setResult(result);

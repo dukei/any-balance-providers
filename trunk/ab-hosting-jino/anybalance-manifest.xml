@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="5">ab-hosting-jino</id>
+	<id version="6">ab-hosting-jino</id>
 	<name>Джино</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе, остатке дискового и почтового пространства.</p>

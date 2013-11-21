@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+<change major_version="2.0" version="11" date="2013-11-21">
+- Removed billing type settings.
+</change>
 <change major_version="2.0" version="10" date="2013-11-20">
-- Minor bugs fixed
+- Minor bugs fixed.
 </change>
 <change major_version="2.0" version="9" date="2013-11-18">
 - Bonuses improved again, again :)

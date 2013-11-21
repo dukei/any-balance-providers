@@ -26,14 +26,14 @@ function main() {
 				return prefs.login;
 			else if (name == 'password')
 				return prefs.password;
-
+			
 			return value;
 		});
 		
 		html = AnyBalance.requestPost(baseurl + 'login/cpanel/', params, addHeaders({Referer: baseurl + 'login/cpanel/'})); 		
 		
 		if(!/logout=true/i.test(html)){
-			var error = getParam(html, null, null, /msgs"[^>]*>[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+			var error = sumParam(html, null, null, /"form-errors"[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
 			if(error)
 				throw new AnyBalance.Error(error);
 			throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');

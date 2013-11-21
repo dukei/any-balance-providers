@@ -1,9 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="6">ab-affiliate-empfinance</id>
+  <id version="7">ab-affiliate-empfinance</id>
   <name>Empire Finance Group</name>
   <description>
-    This provider helps you to check status of your Empire Finance Group's account on https://empfinance.com/
+    This provider helped you to check status of your Empire Finance Group's account on https://empfinance.com/
+    Unfortunately the project is closed. You can delete this provider. Please don't remember general rules of
+    investment: 1) Don't invest your last funds. 2) Don't invest credits. 3) Invest only that you don't afraid
+    to lose. 4) Always be ready to force-majeur. 5) Diversificate.
   </description>
   <author>wtiger &lt;wtiger@mail.ru&gt;</author>
   <files>

@@ -1,30 +1,27 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="1">ab-bonus-rivegauche</id>
-  <name>Рив Гош</name>
-  <description>
-    Получает сумму накоплений, сумму бонуса к Дню рождения для золотой карты, дата последней операции по карте.
-	1.0.1 - Начало.
-  </description>
-  <author>KiLLer13&lt;killer_kondor@pisem.net&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-  </files>
-  <counters>
-    <counter id="balance" name="Сумма накоплений"/>
-    <counter id="bonus" name="Сумма бонусов" />
-    <counter id="date" name="Последняя операция по карте" type="text" />
-    <counter id="status" name="Статус карты" type="text"/>
-  </counters>
-  <keywords>
-    бонус, ривгош, bonus, rivegauche
-  </keywords>
-  <type>
-    bonus
-  </type>
-  <country>
-    ru
-  </country>
+	<id major_version="2.0" version="2">ab-bonus-rivegauche</id>
+	<api flags="no_browser"/>
+	<name>Рив Гош</name>
+	<description html="true"><![CDATA[
+	<p>Получает сумму накоплений, сумму бонуса к Дню рождения для золотой карты, дата последней операции по карте.</p>
+	]]></description>
+	<author>KiLLer13&lt;killer_kondor@pisem.net&gt;</author>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="db_balance" name="Сумма накоплений"/>
+		<counter id="db_bonus" name="Сумма бонусов" />
+		<counter id="db_date" name="Последняя операция по карте" type="time" format="dd/MM/yyyy" />
+		<counter id="db_status" name="Статус карты" type="text"/>
+	</counters>
+	<keywords>бонус, ривгош, bonus, rivegauche</keywords>
+	<type>bonus</type>
+	<country>ru</country>
 </provider>

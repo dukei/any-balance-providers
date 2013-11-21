@@ -21,10 +21,10 @@
 		dialogMessage="Online İşlemler hesabınız için şifre girin."
 		inputType="textPassword">
 	</EditTextPreference>
-<!--     <CheckBoxPreference
+    <CheckBoxPreference
         title="Hat Türü"
         defaultValue="true"
         summaryOn="Faturasız"
         summaryOff="Faturalı"
-        key="billing" /> -->
+        key="billing" />
 </PreferenceScreen>

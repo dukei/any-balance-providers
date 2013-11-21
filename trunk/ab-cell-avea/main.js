@@ -49,11 +49,10 @@ function main() {
 			throw new AnyBalance.Error('Login failed, is site changed?');
 		}
 	}
-	
+
 	var result = {success: true};
-	
 	// Предоплата
-	if(!/Fatura Bilgisi/i.test(html)) {
+	if(prefs.billing) {
 		AnyBalance.trace('It looks like we are in pre paid selfcare...');
 		html = AnyBalance.requestGet(baseurl + 'mps/portal?cmd=dashboard&lang=tr&pagemenu=paket.mevcutPaket', g_headers);
 		

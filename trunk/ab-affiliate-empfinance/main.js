@@ -11,6 +11,9 @@ function main(){
 
 	var baseurl;
 
+	throw new AnyBalance.Error("This provider helped you to check status of your Empire Finance Group's account on https://empfinance.com/ Unfortunately the project is closed. You can delete this provider. Please don't remember general rules of investment: 1) Don't invest your last funds. 2) Don't invest credits. 3) Invest only that you don't afraid to lose. 4) Always be ready to force-majeur. 5) Diversificate.");
+
+
 	if(prefs.site==2){baseurl= 'https://empfinance.org/';}
 	else{baseurl= 'https://empfinance.com/';}
 

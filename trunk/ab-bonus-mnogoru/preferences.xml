@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <EditTextPreference 
+    <EditTextPreference
+		obligatory="true"
         title="Номер карты" 
         positiveButtonText="ОК" 
         summary="Номер карты Mnogo.ru||{@s}\n" 
@@ -10,7 +11,8 @@
         key="login"
         inputType="number">
     </EditTextPreference>
-    <EditTextPreference 
+    <EditTextPreference
+		obligatory="true"
         positiveButtonText="ОК"
         key="birthday" 
         dialogTitle="День рождения"

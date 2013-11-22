@@ -1,57 +1,44 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Накопительная программа много.ру
-
-Сайт оператора: http://mnogo.ru/
-Личный кабинет: https://mnogo.ru/
 */
 
 function main(){
-    var prefs = AnyBalance.getPreferences();
-    var baseurl = 'http://mnogo.ru/';
-  
-    var matches = /(\d{1,2})[^\d](\d{1,2})[^\d](\d\d\d\d)/.exec('' + prefs.birthday);
-    if(!matches)
-        throw new AnyBalance.Error('День рождения должен быть в формате DD-MM-YYYY, например, 28-04-1980');
-  
-    var dt = new Date(matches[2]+'/'+matches[1]+'/'+matches[3]);
-    if(isNaN(dt))
-        throw new AnyBalance.Error('Неверная дата ' + prefs.birthday);
-  
-    var html = AnyBalance.requestPost(baseurl + 'enterljs.html', {
-        UserLogin: prefs.login,
-        'UserBirth[d]': dt.getDate(),
-        'UserBirth[m]': dt.getMonth()+1,
-        'UserBirth[y]': dt.getFullYear()
-    });
+	var prefs = AnyBalance.getPreferences();
+	var baseurl = 'http://www.mnogo.ru/';
+	
+	var matches = /(\d{2})-(\d{2})-(\d{4})/.exec(prefs.birthday);
+	if(!matches)
+		throw new AnyBalance.Error('День рождения должен быть в формате DD-MM-YYYY, например, 28-04-1980');
 
-    
-    AnyBalance.trace('got from login (' + typeof(html) + '): ' + html);
-
-    if($.trim(html) != "OK")
-        throw new AnyBalance.Error($.trim(html.replace(/<[^>]*>/g, ' ').replace(/\s{2,}/g, ' ')));
-    
-    html = AnyBalance.requestGet(baseurl + 'index.html');
-    
-    matches = /<!--\s*авторизованный\s*-->[\s\S]*<!--\s*?\/авторизованный\s*?-->/.exec(html);
-    if(!matches)
-        throw new AnyBalance.Error("Can not find account info (design changed?), contact the author");
-
-    var result = {
-        success: true
-    };
-  
-    var $table = $(matches[0]);
-    if(AnyBalance.isAvailable('username'))
-        result.username = $table.find('td.authorized2012 font').first().text().replace(/\s*[cс]\s+картой\s*/g, '');
-  
-    if(AnyBalance.isAvailable('cardnum'))
-        result.cardnum = $table.find('td.authorized2012 a').first().text();
-  
-    if(AnyBalance.isAvailable('balance'))
-        result.balance = parseInt($table.find('td.authorized2012 a:contains("бонус")').text().replace(/[^\d]+/g, ''));
-    
-    AnyBalance.setResult(result);
+	var dt = new Date(matches[2]+'/'+matches[1]+'/'+matches[3]);
+	if(isNaN(dt))
+		throw new AnyBalance.Error('Неверная дата ' + prefs.birthday);
+	
+	var html = AnyBalance.requestPost(baseurl + 'enterljs.html', {
+		UserLogin: prefs.login,
+		'UserBirth[d]': dt.getDate(),
+		'UserBirth[m]': dt.getMonth()+1,
+		'UserBirth[y]': dt.getFullYear()
+	});
+	
+	//AnyBalance.trace('got from login (' + typeof(html) + '): ' + html);
+	if (!/OK/i.test(html)) {
+		var error = html;
+		if (error && /Неверный логин или пароль/i.test(error))
+			throw new AnyBalance.Error(error, null, true);
+		if (error)
+			throw new AnyBalance.Error(error);
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+	}
+	
+	html = AnyBalance.requestGet(baseurl + 'index.html');
+	
+	var result = {success: true};
+	
+	getParam(html, result, 'balance', />\s*(\d+) бонусов\s*</i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'username', /class="authorized[^>]*>\s*Ура[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'cardnum', /class="authorized[^>]*>\s*Ура(?:[^>]*>){4}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);	
+	
+	AnyBalance.setResult(result);
 }
 

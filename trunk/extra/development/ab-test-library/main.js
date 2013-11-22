@@ -1,6 +1,5 @@
 ﻿/**
-Это тест для библиотеки library.js
-
+Тест для library.js
 */
 
 function main() {
@@ -28,11 +27,14 @@ function main() {
 	AnyBalance.trace(result.traf_kb == 2 ? 'Проверяем функцию parseTraffic в килобайтах... все работает нормально!' : 'Что-то не работает, надо проверить код! ' + result.traf_kb);
 	// Тестируем parseDateWord
 	AnyBalance.trace('Проверяем функцию parseDateWord... проверьте правильность парсинга дат!');
-	var months = ['январь', 'января', 'февраль', 'февраля','март', 'марта','апрель', 'апреля','май', 'мая','июнь', 'июня','июль', 'июля','август', 'августа','сентября', 'сентябрь','октября', 'октябрь','ноября', 'ноябрь','декабря', 'декабрь'];
+	var months = ['янв', 'jan', 'январь', 'января', 'февраль', 'февраля','март', 'марта','апрель', 'апреля','май', 'мая','июнь', 'июня','июль', 'июля','август', 'августа','сентября', 'сентябрь','октября', 'октябрь','ноября', 'ноябрь','декабря', 'декабрь'];
 	for (i = 0; i < months.length; i++) {
 		var date = parseDateWord('11 ' + months[i] + ' 2013');
-	}	
+	}
 	var prefs = AnyBalance.getPreferences();
+	
+	
+	
 	
 	
 	AnyBalance.trace('Проверяем функцию createFormParams...');
@@ -60,16 +62,6 @@ function main() {
 	getParam(html, result, 'status', /Статус:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);*/
 
 	AnyBalance.setResult(result);
-}
-
-function parseDateForWord(str){
-	AnyBalance.trace('Parsing date from ' + str);
-	var date = /(?:mon|tue|wed|Thu|fri|sat|sun)\s*([\w]*)\s*(\d+)[\s\S]*?(\d{4})/i.exec(str);
-	if(!date)
-		AnyBalance.trace('Failed to parse date from ' + str);
-	else {
-		return parseDateWordEn(date[2] + ' ' + date[1] + ' ' + date[3]);
-	}
 }
 
 var formParamsHtml = '<table class="block" border="0" cellspacing="0" cellpadding="0" align="center">\

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="15">ab-tracking-russian-post</id>
+	<id version="16">ab-tracking-russian-post</id>
 	<api flags="no_browser|captcha"/>
 	<name>EMS и Почта России</name>
 	<description html="true"><![CDATA[
@@ -22,7 +22,7 @@
 		<counter id="operation" name="Операция" type="text"/>
 		<counter id="location" name="Местонахождение" type="text"/>
 		<counter id="attribute" name="Атрибут" type="text"/>
-		<counter id="addcost" name="Наложенный платеж" units="р"/>
+		<counter id="addcost" name="Наложенный платеж" units=" р"/>
 	</counters>
 	<keywords>Почтовое отправление, почта России</keywords>
 	<type>tracking, post</type>

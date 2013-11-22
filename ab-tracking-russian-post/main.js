@@ -1,11 +1,7 @@
 /**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Статус почтового отправления Почты России
-
-Сайт оператора: http://www.russianpost.ru
-Личный кабинет: http://www.russianpost.ru/resp_engine.aspx?Path=rp/servise/ru/home/postuslug/trackingpo
 */
+
 function main() {
 	var prefs = AnyBalance.getPreferences();
 	if (!prefs.code) //Код отправления, введенный пользователем
@@ -73,7 +69,7 @@ function mainEms() {
 
 function checkForErrors(info) {
 	var matches;
-	if (matches = /<p[^>]*class="red"[^>]*>([\s\S]*?)<\/p>/i.exec(info)) //Проверяем на сообщение об ошибке
+	if (matches = /color:\s*red[^>]*>([^<]*)<\/div/i.exec(info)) //Проверяем на сообщение об ошибке
 		throw new AnyBalance.Error(matches[1]);
 	if (/<h1>Server is too busy<\/h1>/i.test(info))
 		throw new AnyBalance.Error("Сервер russianpost.ru перегружен. Попробуйте позже.");
@@ -102,10 +98,10 @@ function checkForRedirect(info, baseurl) {
 function mainRussianPost() {
 	var prefs = AnyBalance.getPreferences();
 	AnyBalance.trace('Connecting to russianpost...');
-	var baseurl = 'http://www.russianpost.ru/resp_engine.aspx?Path=rp/servise/ru/home/postuslug/trackingpo';
+	var baseurl = 'http://www.russianpost.ru/Tracking/';
 	var info = AnyBalance.requestGet(baseurl);
 	info = checkForRedirect(info, baseurl);
-	var form = getParam(info, null, null, /<form[^>]+name="F1"[^>]*>([\s\S]*?)<\/form>/i);
+	var form = getParam(info, null, null, /<form[^>]+id="Form1"[^>]*>([\s\S]*?)<\/form>/i);
 	if (!form) {
 		checkForErrors(info);
 		throw new AnyBalance.Error('Не удалось найти форму запроса. На сайте обед?');
@@ -118,6 +114,7 @@ function mainRussianPost() {
 			captcha = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки. Если вы хотите получать статус отправления Почты России без ввода кода, воспользуйтесь провайдером \"Моя посылка\".", captchaimg);
 		}
 	}
+
 	var params = createFormParams(info, function(params, input, name, value) {
 		var undef;
 		if (name == 'BarCode')
@@ -126,7 +123,7 @@ function mainRussianPost() {
 			value = 1;
 		else if (name == 'searchbarcode')
 			value = undef;
-		else if (name == 'InputedCaptchaCode')
+		else if (name == 'CaptchaCode')
 			value = captcha;
 		return value;
 	});
@@ -150,7 +147,7 @@ function mainRussianPost() {
 		info = alltable.substring(lasttr);
 		AnyBalance.trace(info);
 		//Потом найдем отдельные поля
-		if (matches = info.match(/<tr[^>]*><td>(.*?)<\/td><td>(.*?)<\/td><td>(.*?)<\/td><td>(.*?)<\/td><td>(.*?)<\/td><td>(.*?)<\/td><td>(.*?)<\/td><td>(.*?)<\/td><td>(.*?)<\/td><td>(.*?)<\/td><\/tr>/i)) {
+		if (matches = info.match(/<tr[^>]*>\s*<td>(.*?)<\/td>\s*<td>(.*?)<\/td>\s*<td>(.*?)<\/td>\s*<td>(.*?)<\/td>\s*<td>(.*?)<\/td>\s*<td>(.*?)<\/td>\s*<td>(.*?)<\/td>\s*<td>(.*?)<\/td>\s*<td>(.*?)<\/td>\s*<td>(.*?)<\/td>\s*<\/tr>/i)) {
 			AnyBalance.trace('parsed fields');
 			var operation, date, location, attribute;
 			if (AnyBalance.isAvailable('fulltext', 'operation'))

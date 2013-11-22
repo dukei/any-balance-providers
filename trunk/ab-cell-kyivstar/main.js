@@ -5,14 +5,14 @@
 Сайт оператора: http://www.kyivstar.ua/
 Личный кабинет: https://my.kyivstar.ua/
 */
-function parseMinutes(str) {
+/*function parseMinutes(str) {
 	var val = getParam(str.replace(/\s+/g, ''), null, null, /(-?\d[\d.,]*)/, replaceFloat, parseFloat);
 	if (typeof(val) != 'undefined') {
 		val *= 60; //Переводим в секунды
 		AnyBalance.trace('Parsed ' + val + ' seconds from value: ' + str);
 	}
 	return val;
-}
+}*/
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
@@ -67,15 +67,12 @@ function main() {
 	if (!~html.indexOf(prefs.login)) {
 		throw new AnyBalance.Error("Ошибка. Информация о номере не найдена.");
 	}
-	if (!/\/tbmb\/payment\/activity\//i.test(html)) {
+	if (!/payment\/activity\//i.test(html)) {
 		//Не нашли ссылку на платежи. Очень вероятно, что это корпоративный аккаунт
 		throw new AnyBalance.Error("Похоже, у вас корпоративный аккаунт. Пожалуйста, воспользуйтесь провайдером Киевстар для корпоративных тарифов");
 	}
 	AnyBalance.trace('Успешный вход.');
-	var result = {
-		success: true
-	};
-	var str_tmp;
+	var result = {success: true};
 	//Тарифный план
 	getParam(html, result, '__tariff', /(?:Тарифний план:|Тарифный план:)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
 	// Баланс

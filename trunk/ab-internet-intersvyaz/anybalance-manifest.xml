@@ -1,32 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-intersvyaz</id>
-  <name>Интерсвязь (Челябинск)</name>
-  <description>
-    Получает текущий баланс лицевого счета, бонусы и другую информацию провайдера "Интерсвязь" г. Челябинск
-	Данные берутся из личного кабинета (https://ooointersvyaz2.lk.is74.ru/auth/login)
-  </description>
-  <author>Dmitry Reshetnikov (korleone) &lt;rdb@inbox.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balans" name="Баланс"/>
-    <counter id="bonuspr" name="Текущий бонус в %"/>
-    <counter id="econom" name="Экономия (руб/мес)"/>
-    <counter id="nls" name="Лицевой счет" type="text"/>
-    <counter id="fio" name="Абонент" type="text"/>
-  </counters>
-  <keywords>
-	провайдер, интерсвязь
-  </keywords>
-  <type>
-    internet
-  </type>
-  <country>
-  ru
-</country>
+	<id major_version="2.0" version="2">ab-internet-intersvyaz</id>
+	<name>Интерсвязь (Челябинск)</name>
+	<description html="true"><![CDATA[
+	<p>Получает текущий баланс лицевого счета, бонусы и другую информацию провайдера "Интерсвязь" г. Челябинск</p>
+	<p>Данные берутся из личного кабинета (https://lk.is74.ru/auth/login)</p>
+	]]></description>
+	<author>Dmitry Reshetnikov (korleone) &lt;rdb@inbox.ru&gt;</author>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balans" name="Баланс" units=" р"/>
+		<counter id="bonuspr" name="Текущий бонус" units=" %"/>
+		<counter id="econom" name="Экономия" units=" р/мес"/>
+		<counter id="nls" name="Лицевой счет" type="text"/>
+		<counter id="fio" name="Абонент" type="text"/>
+	</counters>
+	<keywords>провайдер, интерсвязь, интернет</keywords>
+	<type>internet</type>
+	<country>ru</country>
 </provider>

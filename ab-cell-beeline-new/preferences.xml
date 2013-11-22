@@ -11,6 +11,7 @@
 		key="login">
 	</EditTextPreference>
 	<EditTextPreference
+		obligatory="true"
 		positiveButtonText="ОК"
 		key="password"
 		dialogTitle="Пароль"
@@ -18,7 +19,6 @@
 		title="Пароль"
 		summary="||***********"
 		dialogMessage="Введите пароль, используемый для входа в личный кабинет. Если Вы не знаете пароль, наберите *110*9# со своего мобильного телефона для получения логина и пароля."
-		obligatory="true"
 		inputType="textPassword">
 	</EditTextPreference>
 	<EditTextPreference

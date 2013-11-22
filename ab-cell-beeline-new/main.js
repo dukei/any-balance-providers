@@ -133,16 +133,15 @@ function main() {
 	var action = getParam(tform, null, null, /<form[^>]+action="\/([^"]*)/i, null, html_entity_decode);
 
 	//Теперь, когда секретный параметр есть, можно попытаться войти
-        try{
-		html = AnyBalance.requestPost(baseurl + (action || 'login.html'), params, addHeaders({
-			Referer: baseurl + 'login.html'
-		}));
-        }catch(e){
-        	if(prefs.__debug)
+	try {
+		html = AnyBalance.requestPost(baseurl + (action || 'login.html'), params, addHeaders({Referer: baseurl + 'login.html'}));
+	} catch(e) {
+		if(prefs.__debug) {
 			html = AnyBalance.requestGet(baseurl + 'c/' + prefs.__debug + '/index.html');
-		else
+		} else {
 			throw e;
-        }
+		}
+	}
 	// Иногда билайн нормальный пароль считает временным и предлагает его изменить, но если сделать еще один запрос, пускает и показывает баланс
 	if (/Ваш пароль временный\.\s*Необходимо изменить его на постоянный/i.test(html)) {
 		AnyBalance.trace('Билайн считает наш пароль временным, но это может быть и не так, попробуем еще раз войти...');
@@ -191,18 +190,15 @@ function parseBalanceNegative(str) {
 
 function fetchPost(baseurl, html) {
 	var prefs = AnyBalance.getPreferences();
-	//Раз мы здесь, то мы успешно вошли в кабинет
 	AnyBalance.trace('Мы в постоплатном кабинете');
-	//Получаем все счетчики
-	var result = {success: true, balance: null};
 
+	var result = {success: true, balance: null};
 	var multi = /<span[^>]+class="selected"[^>]*>/i.test(html), xhtml='';
 
 	getParam(html, result, 'agreement', /<h2[^>]*>\s*Договор №([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces, html_entity_decode);
-
 //	xhtml = getBlock(baseurl + 'c/post/index.html', html, 'list-contents', true); //Это строка вообще приводила к созданию/отмене заявки на смену тарифного плана
 //	getParam(xhtml, result, '__tariff', /<h2[^>]*>(?:[\s\S](?!<\/h2>))*?Текущий тариф([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces, html_entity_decode);
-        getParam(html, result, '__tariff', /<h2[^>]*>(?:[\s\S](?!<\/h2>))*?Текущий тариф([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, '__tariff', /<h2[^>]*>(?:[\s\S](?!<\/h2>))*?Текущий тариф([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces, html_entity_decode);
 
 	if (!multi) {
 		AnyBalance.trace('Похоже на кабинет с одним номером.');
@@ -217,12 +213,13 @@ function fetchPost(baseurl, html) {
 			var regnumber = prefs.phone.replace(/(\d)/g, '$1[\\s\\-()]*');
 			var re = new RegExp('(?:<a[^>]*>\\s*)?<span[^>]*>\\+7[0-9\\s\\-()]*' + regnumber + '</span>', 'i');
 			var numinfo = getParam(html, null, null, re);
-			if (!numinfo) throw new AnyBalance.Error('Не найден присоединенный к договору номер телефона, оканчивающийся на ' + prefs.phone);
+			if (!numinfo) 
+				throw new AnyBalance.Error('Не найден присоединенный к договору номер телефона, оканчивающийся на ' + prefs.phone);
 
 			var num = getParam(numinfo, null, null, null, replaceTagsAndSpaces, html_entity_decode);
-			if (/class="selected"/i.test(numinfo))
+			if (/class="selected"/i.test(numinfo)) {
 				AnyBalance.trace('Дополнительный номер ' + num + ' уже выбран');
-			else {
+			} else {
 				AnyBalance.trace('Переключаемся на номер ' + num);
 				var formid = getParam(numinfo, null, null, /addSubmitParam\('([^']*)/, replaceSlashes);
 				var params = getParam(numinfo, null, null, /addSubmitParam\('[^']*',(\{.*?\})\)/, null, getJsonEval);
@@ -235,13 +232,9 @@ function fetchPost(baseurl, html) {
 				var fparams = createFormParams(form);
 				params = joinObjects(fparams, params);
 
-				html = AnyBalance.requestPost(baseurl + 'c/post/index.html', params, addHeaders({
-					Referer: baseurl + 'c/post/index.html'
-				}));
+				html = AnyBalance.requestPost(baseurl + 'c/post/index.html', params, addHeaders({Referer: baseurl + 'c/post/index.html'}));
 			}
-
 		}
-
 		//Если несколько номеров в кабинете, то почему-то баланс надо брать отсюда
 		if (AnyBalance.isAvailable('balance', 'currency')) {
 			xhtml = getBlock(baseurl + 'c/post/index.html', html, 'homeBalance');
@@ -258,30 +251,32 @@ function fetchPost(baseurl, html) {
 		getBonusesPost(xhtml, result);
 	}
 
-	if (AnyBalance.isAvailable('overpay', 'prebal')) {
-		xhtml = getBlock(baseurl + 'c/post/index.html', html, 'callDetailsDetails');
-		getParam(xhtml, result, 'overpay', /<h4[^>]*>Переплата[\s\S]*?<span[^>]+class="price[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-		getParam(xhtml, result, 'overpay', /<h4[^>]*>Осталось к оплате[\s\S]*?<span[^>]+class="price[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalanceNegative);
-
-	        getParam(xhtml, result, 'prebal', /Расходы по договору за текущий период:[\S\s]*?<div[^<]+class="balan?ce-summ"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-	        getParam(xhtml, result, ['currency', 'prebal', 'overpay'], /Расходы по договору за текущий период:[\S\s]*?<div[^<]+class="balan?ce-summ"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, myParseCurrency);
-
-	}
+    if (AnyBalance.isAvailable('overpay', 'prebal')) {
+    	xhtml = getBlock(baseurl + 'c/post/index.html', html, 'callDetailsDetails');
+    	getParam(xhtml, result, 'overpay', /<h4[^>]*>Переплата[\s\S]*?<span[^>]+class="price[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+    	getParam(xhtml, result, 'overpay', /<h4[^>]*>Осталось к оплате[\s\S]*?<span[^>]+class="price[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalanceNegative);
+    	getParam(xhtml, result, 'prebal', /Расходы по договору за текущий период:[\S\s]*?<div[^<]+class="balan?ce-summ"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+    	getParam(xhtml, result, ['currency', 'prebal', 'overpay'], /Расходы по договору за текущий период:[\S\s]*?<div[^<]+class="balan?ce-summ"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, myParseCurrency);
+    }
 
 	if (!multi && AnyBalance.isAvailable('fio', 'balance', 'currency')) {
 		//Это надо в конце, потому что после перехода на m/ куки, видимо, портится.
 		xhtml = AnyBalance.requestGet(baseurl + 'm/post/index.html', g_headers);
 		getParam(xhtml, result, 'fio', /<div[^>]+class="abonent-name"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, capitalFirstLenttersAndDecode);
-		getParam(xhtml, result, 'balance', /class="price[^>]*>([\s\S]*?)<\/h3>/i, [replaceTagsAndSpaces, /Баланс временно недоступен/ig, ''], parseBalance);
-		getParam(xhtml, result, ['currency', 'balance'], /class="price[^>]*>([\s\S]*?)<\/h3>/i, [replaceTagsAndSpaces, /Баланс временно недоступен/ig, ''], myParseCurrency);
+		// Вроде бы все хорошо, но: {"sms_left":3463,"min_local":24900,"balance":0,"phone":"+7 909 169-24-86","agreement":"248260674","__time":1385043751223,"fio":"Максим Крылов","overpay":619.07,"min_local_clear":415,"currency":"рубвмесяцОтключитьБудьвкурсе","__tariff":"«Всё включено L 2013»"}
+		getParam(xhtml, result, 'balance', /class="price[^>]*>((?:[\s\S]*?span[^>]*>){3})/i, replaceTagsAndSpaces, parseBalance);
+		// Если баланса нет, не надо получать и валюту
+		if(isset(result.balance)) {
+			getParam(xhtml, result, ['currency', 'balance'], /class="price[^>]*>((?:[\s\S]*?span[^>]*>){3})/i, replaceTagsAndSpaces, myParseCurrency);
+		}
 	}
-
-        if(prefs.__debug){
-	    //Проверяем, не создалась ли лишняя заявка в процессе просмотра личного кабинета
-            html = AnyBalance.requestGet(baseurl + 'c/operations/operationsHistory.html');
-            var last_time = getParam(html, null, null, /<span[^>]+class="date"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
-            AnyBalance.trace('Последняя заявка: ' + last_time);
-        }
+	
+	if(prefs.__debug){
+		//Проверяем, не создалась ли лишняя заявка в процессе просмотра личного кабинета
+        html = AnyBalance.requestGet(baseurl + 'c/operations/operationsHistory.html');
+        var last_time = getParam(html, null, null, /<span[^>]+class="date"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+        AnyBalance.trace('Последняя заявка: ' + last_time);
+    }
 
 	//Возвращаем результат
 	AnyBalance.setResult(result);
@@ -289,15 +284,10 @@ function fetchPost(baseurl, html) {
 
 function fetchPre(baseurl, html) {
 	var prefs = AnyBalance.getPreferences();
-	//Раз мы здесь, то мы успешно вошли в кабинет предоплатный
 	AnyBalance.trace('Мы в предоплатном кабинете');
-	//Получаем все счетчики
-	var result = {
-		success: true,
-		balance: null
-	};
-
-        
+	
+	var result = {success: true,balance: null};
+	
 	if (prefs.phone) { //Если задан номер, то надо сделать из него регулярное выражение
 		if (!/^\d{4,10}$/.test(prefs.phone))
 			throw new AnyBalance.Error('Введите от 4 до 10 последних цифр номера дополнительного телефона без пробелов и разделителей или не вводите ничего, чтобы получить информацию по первому номеру!', null, true);
@@ -326,26 +316,21 @@ function fetchPre(baseurl, html) {
 				'javax.faces.partial.execute':'@all',
 				newSsoLogin: num
 			});
-                        params[source] = source;
+			params[source] = source;
 
-			var xhtml = AnyBalance.requestPost(baseurl + 'c/pre/index.html', params, addHeaders({
-				Referer: baseurl + 'c/pre/index.html'
-			}));
+			var xhtml = AnyBalance.requestPost(baseurl + 'c/pre/index.html', params, addHeaders({Referer: baseurl + 'c/pre/index.html'}));
 			var url = getParam(xhtml, null, null, /<redirect[^>]+url="\/([^"]*)/i, null, html_entity_decode);
-                        if(!url)
-                            AnyBalance.trace('Не удалось переключить номер: ' + xhtml);
-                        else
-                            html = AnyBalance.requestGet(baseurl + url, addHeaders({Referer: baseurl + 'c/pre/index.html'}));
+			if(!url)
+				AnyBalance.trace('Не удалось переключить номер: ' + xhtml);
+			else
+				html = AnyBalance.requestGet(baseurl + url, addHeaders({Referer: baseurl + 'c/pre/index.html'}));
 		}
-
 	}
-
-
 	getParam(html, result, 'phone', /<h1[^>]+class="phone-number"[^>]*>([\s\S]*?)<\/h1>/i, replaceTagsAndSpaces, html_entity_decode);
-
+	
 	var xhtml = getBlock(baseurl + 'c/pre/index.html', html, 'currentTariffLoaderDetails');
 	getParam(xhtml, result, '__tariff', [/<div[^>]+:tariffInfo[^>]*class="current"[^>]*>(?:[\s\S](?!<\/div>))*?<h2[^>]*>([\s\S]*?)<\/h2>/i, /<h2>(?:[\s\S](?!<\/h2>))*?Текущий тариф\s*([\s\S]*?)\s*<\/h2>/i], replaceTagsAndSpaces, html_entity_decode);
-
+	
 	if (AnyBalance.isAvailable('balance'/*, 'fio'*/)) {
 		/*xhtml = getBlock(baseurl + 'c/pre/index.html', html, 'balancePreHeadDetails');
 		getParam(xhtml, result, 'balance', /у вас на балансе([\s\S]*)/i, replaceTagsAndSpaces, parseBalance);
@@ -358,9 +343,13 @@ function fetchPre(baseurl, html) {
 			AnyBalance.sleep(2000);
 			xhtml = refreshBalance(baseurl + 'c/pre/index.html', html, xhtml) || xhtml;
 		} */
-		getParam(xhtml, result, 'balance', /class="price[^>]*>([\s\S]*?)<\/h3>/i, [replaceTagsAndSpaces, /Баланс временно недоступен/ig, ''], parseBalance);
-		getParam(xhtml, result, ['currency', 'balance'], /class="price[^>]*>([\s\S]*?)<\/h3>/i, [replaceTagsAndSpaces, /Баланс временно недоступен/ig, ''], myParseCurrency);
-		//getParam(xhtml, result, 'fio', /<span[^>]+class="b2c.header.greeting.pre.b2c.ban"[^>]*>([\s\S]*?)(?:<\/span>|,)/i, replaceTagsAndSpaces, html_entity_decode);
+
+		// Вроде бы все хорошо, но: {"sms_left":3463,"min_local":24900,"balance":0,"phone":"+7 909 169-24-86","agreement":"248260674","__time":1385043751223,"fio":"Максим Крылов","overpay":619.07,"min_local_clear":415,"currency":"рубвмесяцОтключитьБудьвкурсе","__tariff":"«Всё включено L 2013»"}
+		getParam(xhtml, result, 'balance', /class="price[^>]*>((?:[\s\S]*?span[^>]*>){3})/i, replaceTagsAndSpaces, parseBalance);
+		// Если баланса нет, не надо получать и валюту
+		if(isset(result.balance)) {
+			getParam(xhtml, result, ['currency', 'balance'], /class="price[^>]*>((?:[\s\S]*?span[^>]*>){3})/i, replaceTagsAndSpaces, myParseCurrency);
+		}
 	}
 	if (isAvailableBonuses()) {
 		xhtml = getBlock(baseurl + 'c/pre/index.html', html, 'bonusesForm');
@@ -371,7 +360,6 @@ function fetchPre(baseurl, html) {
 		getParam(xhtml, result, 'fio', /<div[^>]+class="abonent-name"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, capitalFirstLenttersAndDecode);
 	}
 	
-	//Возвращаем результат
 	AnyBalance.setResult(result);
 }
 
@@ -385,8 +373,8 @@ function getBonuses(xhtml, result) {
 		var bonus = bonuses[j];
 		var bonus_name = ''; //getParam(bonus, null, null, /<span[^>]+class="bonuses-accums-list"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
 		var services = sumParam(bonus, null, null, /<div[^>]+class="item bonus"(?:[\s\S](?!$|<div[^>]+class="item bonus"))*[\s\S]/ig);
-                AnyBalance.trace("Found " + services.length + ' bonuses');
-                var reValue = /<div[^>]+class="column2[^"]*"[^>]*>([\s\S]*?)<\/div>/i;
+		AnyBalance.trace("Found " + services.length + ' bonuses');
+		var reValue = /<div[^>]+class="column2[^"]*"[^>]*>([\s\S]*?)<\/div>/i;
 		for (var i = 0; i < services.length; ++i) {
 			var name = '' + getParam(services[i], null, null, /<div[^>]+class="column1[^"]*"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode); //+ ' ' + bonus_name;
 			if (/SMS|штук/i.test(name)) {
@@ -462,7 +450,6 @@ function getBonusesPost(xhtml, result) {
 		}
 	}
 }
-
 
 /** Приводим все к единому виду вместо ИВаНов пишем Иванов */
 function capitalFirstLenttersAndDecode(str) {

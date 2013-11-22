@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference
+		title="Логин (СНИЛС)"
+		key="login"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Логин (СНИЛС)"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите логин (СНИЛС) без разделителей, 11 цифр подряд.">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Пароль"
+		key="password"
+		summary="||***********"
+		obligatory="true"
+		dialogTitle="Пароль"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите пароль, используемый для входа в личный кабинет."
+		inputType="textPassword">
+	</EditTextPreference>
+</PreferenceScreen>

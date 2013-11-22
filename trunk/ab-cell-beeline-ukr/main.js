@@ -39,7 +39,9 @@ function aggregate_sum_mins(mins){
 }
 
 function main(){
-  var prefs = AnyBalance.getPreferences();
+	throw new AnyBalance.Error('Личный кабинет переехал на новый адрес https://my.kyivstar.ua, воспользуйтесь провайдером Киевстар для получения баланса.');
+
+	var prefs = AnyBalance.getPreferences();
   var baseurl = "https://poslugy.beeline.ua/";
   var headers = {
     'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',

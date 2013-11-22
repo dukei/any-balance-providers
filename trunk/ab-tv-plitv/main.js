@@ -57,7 +57,7 @@ function main() {
 	if(isAvailable(['subscription_0', 'subscription_1', 'subscription_2', 'subscription_date_0', 'subscription_date_1', 'subscription_date_2'])) {
 		html = AnyBalance.requestGet(baseurl + 'packets.php', g_headers);
 		
-		var allSubscr = sumParam(html, null, null, /(<tr\s*class="norm">(?:[^>]*>){9}[^>]*"timeTill">\s*\d+\.\d+\.\d{2,4}(?:[^>]*>){2})/ig);
+		var allSubscr = sumParam(html, null, null, /<tr[^>]*>(?:[^>]*>){9}[^>]*"timeTill">\s*\d+\.\d+\.\d{2,4}(?:[^>]*>){2}/ig);
 		AnyBalance.trace('Найдено подписок с датами: ' + allSubscr.length);
 		
 		for(var i = 0; i < allSubscr.length; i++) {

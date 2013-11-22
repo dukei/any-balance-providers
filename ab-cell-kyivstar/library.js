@@ -3,6 +3,11 @@ AnyBalance (http://any-balance-providers.googlecode.com)
 
 Содержит некоторые полезные для извлечения значений с сайтов функции.
 Для конкретного провайдера рекомендуется оставлять в этом файле только те функции, которые используются.
+
+library.js v0.01 22.11.13
+
+changelog:
+22.11.13: -added: function parseMinutes().
 */
 
 /**
@@ -112,6 +117,17 @@ function parseCurrency(text) {
 	var val = getParam(html_entity_decode(text).replace(/\s+/g, ''), null, null, /-?\d[\d.,]*(\S*)/);
 	AnyBalance.trace('Parsing currency (' + val + ') from: ' + text);
 	return val;
+}
+
+/** Извлекает секунды из переданного текста результат вернется в секундах*/
+function parseMinutes(_text){
+    var text = _text.replace(/\s+/g, '');
+    var min = getParam(text, null, null, [/(-?\d[\d\.,]*)(?:мин|м)/i, /^\d+$/i], replaceFloat, parseFloat) || 0;
+    var sec = getParam(text, null, null, /(-?\d[\d\.,]*)(?:сек|с)/i, replaceFloat, parseFloat) || 0;
+	
+    var val = (min*60)+sec;
+    AnyBalance.trace('Parsing seconds (' + val + ') from: ' + _text);
+    return val;
 }
 
 /** Заменяет HTML сущности в строке на соответствующие им символы */
@@ -320,6 +336,11 @@ function parseDateWord(str){
 	return getParam(str, null, null, null, [replaceTagsAndSpaces, /январ(?:я|ь)/i, '.01.', /феврал(?:я|ь)/i, '.02.', /марта|март/i, '.03.', /апрел(?:я|ь)/i, '.04.', /ма(?:я|й)/i, '.05.', /июн(?:я|ь)/i, '.06.', /июл(?:я|ь)/i, '.07.', /августа|август/i, '.08.', /сентябр(?:я|ь)/i, '.09.', /октябр(?:я|ь)/i, '.10.', /ноябр(?:я|ь)/i, '.11.', /декабр(?:я|ь)/i, '.12.', /\s/g, ''], parseDate);
 }
 
+function parseDateWordEn(str){
+	AnyBalance.trace('Trying to parse date from ' + str);
+	return getParam(str, null, null, null, [replaceTagsAndSpaces, /(?:january|jan)/i, '.01.', /(?:febrary|feb)/i, '.02.', /march|mar/i, '.03.', /(?:april|apr)/i, '.04.', /may/i, '.05.', /(?:june|jun)/i, '.06.', /(?:july|jul)/i, '.07.', /august|aug/i, '.08.', /(?:september|sep)/i, '.09.', /(?:october|oct)/i, '.10.', /(?:november|nov)/i, '.11.', /(?:december|dec)/i, '.12.', /\s/g, ''], parseDate);
+}
+
 /** Объединяет два объекта. Свойства с общими именами берутся из newObject */
 function joinObjects(newObject, oldObject) {
 	var obj = {};
@@ -359,8 +380,7 @@ function addHeaders(newHeaders, oldHeaders) {
 	if (bOldArray && !bNewArray) { //Если старый массив, а новый объект, то это специальный объект {index: [name, value], ...}!
 		var headers = oldHeaders.slice();
 		for (i in newHeaders)
-			headers[i] = newHeaders[i];
-		
+	           headers.push([i, newHeaders[i]]);		
 		return headers;
 	}
 }

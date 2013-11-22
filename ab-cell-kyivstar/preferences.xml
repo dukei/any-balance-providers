@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <EditTextPreference 
-        title="Логин" 
-        positiveButtonText="ОК" 
-        summary="|Номер телефона (в формате +380ХХХХХХХХХ)|{@s}" 
-        dialogTitle="Номер телефона" 
-        negativeButtonText="Отмена" 
+	<EditTextPreference
 		obligatory="true"
-        dialogMessage="Введите номер вашего телефона для входа в Мой Киевстар (в формате +380ХХХХХХХХХ), например +380971234567"
-        key="login"
-        inputType="phone">
-    </EditTextPreference>
-    <EditTextPreference 
-        positiveButtonText="ОК"
-        key="password" 
-        dialogTitle="Пароль"
-        negativeButtonText="Отмена"
+		title="Логин"
+		positiveButtonText="ОК"
+		summary="|Номер телефона (в формате +380ХХХХХХХХХ)|{@s}"
+		dialogTitle="Номер телефона"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите номер вашего телефона для входа в Мой Киевстар (в формате +380ХХХХХХХХХ), например +380971234567"
+		key="login"
+		inputType="phone">
+	</EditTextPreference>
+	<EditTextPreference
 		obligatory="true"
-        title="Пароль"
-        summary="|Пароль для входа в Мой Киевстар|***********"
-        dialogMessage="Введите пароль, используемый для входа в Мой Киевстар"
-        inputType="textPassword">
-    </EditTextPreference>
+		positiveButtonText="ОК"
+		key="password"
+		dialogTitle="Пароль"
+		negativeButtonText="Отмена"
+		title="Пароль"
+		summary="|Пароль для входа в Мой Киевстар|***********"
+		dialogMessage="Введите пароль, используемый для входа в Мой Киевстар"
+		inputType="textPassword">
+	</EditTextPreference>
 </PreferenceScreen>

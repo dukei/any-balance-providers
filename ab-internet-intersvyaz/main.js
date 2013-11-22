@@ -1,99 +1,61 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-    Получает данные из личного кабинета провайдера Интерсвязь
-	Данные берутся из личного кабинете программы (https://ooointersvyaz2.lk.is74.ru/auth/login)
 */
 
-function main(){
-        var prefs = AnyBalance.getPreferences();
-		var url='https://ooointersvyaz2.lk.is74.ru/auth/login';
-		var url2='https://ooointersvyaz2.lk.is74.ru/profile';
-		var result = {success: true};
-		AnyBalance.trace('Получение доступа.');
-        var html = AnyBalance.requestPost(url, {
-			YII_CSRF_TOKEN:'58ab76f2d4bc25fd038f1914246df898efe0fc02',
-			u:prefs.login,
-			p:prefs.password,
-			yt0:'Войти'
-		});
+var g_headers = {
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
+	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Connection': 'keep-alive',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+};
 
-		regexp=/Ваш статус/m;
-		regexp2=/Неправильный логин или пароль/m;
-		if (str=regexp.exec(html)){	
-			AnyBalance.trace('Доступ получен');
-			}
-		else if (str=regexp2.exec(html)){	
-			AnyBalance.trace('Неправильная пара логин-пароль!');
-			throw new AnyBalance.Error ('Неправильный логин-пароль.');
-			}
-		else	
-			{
-			AnyBalance.trace('Нет доступа');
-           throw new AnyBalance.Error ('Доступ не получен.');
-		};
-			
-		AnyBalance.trace('Разбор полученных данных:');
-			
-//Баланс
-		 regexp=/Баланс на .*\n.*\n.*\t(.*) руб/m;
-		 if (str=regexp.exec(html)){
-			perevod=str[1].replace(',','.');
-			result.balans=parseFloat(perevod);
-        	AnyBalance.trace('Баланс счета = ' + parseFloat(perevod));
-			}
-		else	
-			{
-			AnyBalance.trace('Ошибка в запросе баланса');
-		};
+function main() {
+	var prefs = AnyBalance.getPreferences();
+	var baseurl = 'https://lk.is74.ru/';
+	AnyBalance.setDefaultCharset('utf-8');
+	
+	checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(prefs.password, 'Введите пароль!');
+	
+	var html = AnyBalance.requestGet(baseurl + 'auth/login', g_headers);
+	
+	var params = createFormParams(html, function(params, str, name, value) {
+		if (name == 'u') 
+			return prefs.login;
+		else if (name == 'p')
+			return prefs.password;
 
-//Бонус в %
-		regexp=/Ваш текущий бонус.*\n.*\n.*\n.\t(.*)%/m;
-		if (str=regexp.exec(html)){
-			result.bonuspr=parseFloat(str[1]);
-        	AnyBalance.trace('Бонус в % = ' + parseFloat(str[1]));
-			}
-		else	
-			{
-			AnyBalance.trace('Ошибка в запросе бонуса');
-		};
-
-//Экономия
-		regexp=/Ваш текущий бонус.*\n.*\n.*\n.*\n.*\n.*\n.* (.*) руб/m;
-		if (str=regexp.exec(html)){
-			result.econom=parseFloat(str[1]);
-        	AnyBalance.trace('Экономия = ' + str[1]);
-			}
-		else	
-			{
-			AnyBalance.trace('Ошибка в запросе экономии');
-		};
-
-//Получение личных данных
-		var html2 = AnyBalance.requestGet(url2);
-
-//Абонент
-		regexp=/Договор.*\n.*\n.*\n.*user-name.>(.*)</m;
-		if (str=regexp.exec(html2)){
-			result.fio=str[1];
-			AnyBalance.trace('Абонент = ' + str[1]);
-			}
-		else	
-			{
-			AnyBalance.trace('Ошибка в запросе абонента');
-		};
-
-//Номер лицевого счета
-		regexp=/Лицевой счет.*\n.*>(.*)</m;
-		if (str=regexp.exec(html2)){
-			result.nls=str[1];
-			AnyBalance.trace('Номер лицевого счета = ' + result.nls);
-			}
-		else	
-			{
-			AnyBalance.trace('Ошибка в запросе лицевого счета');
-		};
-		
-		AnyBalance.trace("Разбор завершен.");
-		AnyBalance.setResult(result);
+		return value;
+	});
+	if(!prefs.dbg) {
+		html = AnyBalance.requestPost(baseurl + 'auth/login', params, addHeaders({Referer: baseurl + 'auth/login'}));
+	} else {
+		html = AnyBalance.requestGet('https://ooointersvyaz6.lk.is74.ru/balance', g_headers);
+	}
+	var lastUrl = AnyBalance.getLastUrl();
+	AnyBalance.trace('Last url was: '+lastUrl);
+	
+	var subDomain = getParam(lastUrl, null, null, /https:\/\/([^\.]*)\.lk/i);
+	AnyBalance.trace('Sub domain is: '+subDomain);
+	
+	if (!/logout/i.test(html)) {
+		var error = getParam(html, null, null, /class="auth-error-summary"[^>]*>([\s\S]*)<\/ul/i, replaceTagsAndSpaces, html_entity_decode);
+		if (error)
+			throw new AnyBalance.Error(error);
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+	}
+	var result = {success: true};
+	
+	getParam(html, result, 'balans', /Баланс на\s*(?:\d+\.){2}\d{4}(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'bonuspr', /Ваш текущий бонус(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'econom', /Ваш текущий бонус(?:[^>]*>){4}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'fio', /Здравствуйте,(?:[^>]*>){1}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+	
+	if(isAvailable('nls')) {
+		html = AnyBalance.requestGet('https://'+subDomain+'.lk.is74.ru/profile', g_headers);
+		getParam(html, result, 'nls', /Лицевой счет №:(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+	}
+	
+	AnyBalance.setResult(result);
 }

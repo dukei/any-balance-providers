@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-bonus-mnogoru</id>
+	<id version="5">ab-bonus-mnogoru</id>
+	<api flags="no_browser"/>
 	<name>Бонусы Mnogo.ru</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о количестве баллов на карте накопительной программы mnogo.ru.</p>
@@ -9,8 +10,9 @@
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>api:jquery.min.js</js>
+		<js>library.js</js>
 		<js>main.js</js>
+		<history>history.xml</history>
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс"/>

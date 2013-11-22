@@ -4,9 +4,10 @@ AnyBalance (http://any-balance-providers.googlecode.com)
 Содержит некоторые полезные для извлечения значений с сайтов функции.
 Для конкретного провайдера рекомендуется оставлять в этом файле только те функции, которые используются.
 
-library.js v0.01 22.11.13
+library.js v0.02 22.11.13
 
 changelog:
+22.11.13: -fixed: function parseMinutes, добавлена локализация, 5m3sec, 5хв3сек.
 22.11.13: -added: function parseMinutes().
 */
 
@@ -122,8 +123,8 @@ function parseCurrency(text) {
 /** Извлекает секунды из переданного текста результат вернется в секундах*/
 function parseMinutes(_text){
     var text = _text.replace(/\s+/g, '');
-    var min = getParam(text, null, null, [/(-?\d[\d\.,]*)(?:мин|м)/i, /^\d+$/i], replaceFloat, parseFloat) || 0;
-    var sec = getParam(text, null, null, /(-?\d[\d\.,]*)(?:сек|с)/i, replaceFloat, parseFloat) || 0;
+    var min = getParam(text, null, null, [/(-?\d[\d\.,]*)(?:мин|м|хв|min|m)/i, /^\d+$/i], replaceFloat, parseFloat) || 0;
+    var sec = getParam(text, null, null, /(-?\d[\d\.,]*)(?:сек|с|sec|s)/i, replaceFloat, parseFloat) || 0;
 	
     var val = (min*60)+sec;
     AnyBalance.trace('Parsing seconds (' + val + ') from: ' + _text);

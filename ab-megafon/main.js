@@ -358,14 +358,17 @@ function megafonTrayInfo(filial){
                     else if(/GPRS-Internet трафик/i.test(plan_name)) units='мб'; //Вот ещё такое исключение. Надеюсь, на всём будет работать, хотя сообщили из поволжского филиала
                     else units = 'тар.ед.'; //измеряется в 100кб интервалах
                 }
-                if(isset(valTotal)) //Отметим, что этот пакет мы уже посчитали
-                    internet_totals_was[valTotal] = true;
+                
+                if(isset(valTotal)){ //Отметим, что этот пакет мы уже посчитали
+                    var _valTotal = parseTrafficMy(valTotal + units);
+                    internet_totals_was[_valTotal] = true;
+                }
 
                 if(AnyBalance.isAvailable('internet_left') && isset(valAvailable)){
                     result.internet_left = (result.internet_left || 0) + parseTrafficMy(valAvailable + units);
                 }
-                if(AnyBalance.isAvailable('internet_total') && isset(valTotal)){
-                    result.internet_total = (result.internet_total || 0) + parseTrafficMy(valTotal + units);
+                if(AnyBalance.isAvailable('internet_total') && isset(_valTotal)){
+                    result.internet_total = (result.internet_total || 0) + _valTotal;
                 }
                 if(AnyBalance.isAvailable('internet_cur') && isset(valAvailable) && isset(valTotal)){
                     result.internet_cur = (result.internet_cur || 0) + parseTrafficMy((valTotal - valAvailable) + units);
@@ -439,12 +442,13 @@ function megafonTrayInfo(filial){
                }
            }
 
-           if(errorInTray || isAvailableButUnset(result, ['mms_left','mms_total','sms_left','sms_total','mins_left','mins_total','internet_left','internet_cur','internet_total','gb_with_you'])){
+           if(errorInTray || isAvailableButUnset(result, ['mms_left','mms_total','sms_left','sms_total','mins_left','mins_net_left','mins_total','internet_left','internet_cur','internet_total','gb_with_you'])){
                var need_mms_left = isAvailableButUnset(result, ['mms_left']),
                    need_mms_total = isAvailableButUnset(result, ['mms_total']),
                    need_sms_left = isAvailableButUnset(result, ['sms_left']),
                    need_sms_total = isAvailableButUnset(result, ['sms_total']),
                    need_mins_left = isAvailableButUnset(result, ['mins_left']),
+                   need_mins_net_left = isAvailableButUnset(result, ['mins_net_left']),
                    need_mins_total = isAvailableButUnset(result, ['mins_total']),
                    need_gb_with_you = isAvailableButUnset(result, ['gb_with_you']);
      
@@ -473,6 +477,13 @@ function megafonTrayInfo(filial){
                            wasSM = true;
                        }else{
                            AnyBalance.trace('Пропускаем дублированные смс до сниженной цены: ' + val);
+                       }
+                   }else if(/мин на номера МегаФон/i.test(name)){
+                       var mins = getLeftAndTotal(val, result, false, false, 'mins_net_left', null, parseMinutes);
+                       if(!isset(mins.left) || mins.left < 1000000){ //Большие значения, считай, безлимит. Че его показывать...
+                           addLeftAndTotal(mins, result, need_mins_net_left, false, 'mins_net_left');
+                       }else{
+                           AnyBalance.trace('Пропускаем безлимитные внутрисетевые минуты: ' + val);
                        }
                    }else if(/мин/i.test(val) || /минут/i.test(name)){
                        var mins = getLeftAndTotal(val, result, false, false, 'mins_left', 'mins_total', parseMinutes);
@@ -1058,10 +1069,17 @@ function getPropVal(html, text){
 
 function parseMinutes(str){
     var _str = html_entity_decode(str);
-    var matches = /(\d+)(?::(\d+))?/i.exec(_str), val;
-    if(matches){
-        val = matches[1]*60 + (matches[2] ? +matches[2] : 0);
-    }
+    var matches = /(\d+)\s*мин\w*\s*(\d+)\s*сек/i.exec(_str), val;
+    if(!matches || matches[0]=='')
+        matches = /(\d+):(\d+)/i.exec(_str);
+    if(!matches)
+        matches = /(\d+)\s*мин/i.exec(_str);
+    if(!matches)
+        matches = /()(\d+)\s*сек/i.exec(_str);
+    if(!matches)
+        matches = /(\d+)/i.exec(_str);
+    if(matches)
+        val = (matches[1] ? +matches[1] : 0)*60 + (matches[2] ? +matches[2] : 0);
     if(isset(val))
         AnyBalance.trace('Parsed ' + val + ' seconds from ' + str + ' (' + _str + ')');
     else

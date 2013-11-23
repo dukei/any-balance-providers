@@ -1,33 +1,22 @@
 /**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Киевстар
-Сайт оператора: http://www.kyivstar.ua/
-Личный кабинет: https://my.kyivstar.ua/
 */
-/*function parseMinutes(str) {
-	var val = getParam(str.replace(/\s+/g, ''), null, null, /(-?\d[\d.,]*)/, replaceFloat, parseFloat);
-	if (typeof(val) != 'undefined') {
-		val *= 60; //Переводим в секунды
-		AnyBalance.trace('Parsed ' + val + ' seconds from value: ' + str);
-	}
-	return val;
-}*/
+
+var g_headers = {
+	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
+	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Intel Mac OS X 10.6; rv:7.0.1) Gecko/20100101 Firefox/7.0.1',
+	Connection: 'keep-alive'
+};
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(prefs.login, 'Введите номер вашего телефона для входа в Мой Киевстар (в формате +380ХХХХХХХХХ), например +380971234567');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
 	var baseurl = "https://my.kyivstar.ua/";
-	var headers = {
-		'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
-		'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-		'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Intel Mac OS X 10.6; rv:7.0.1) Gecko/20100101 Firefox/7.0.1',
-		Connection: 'keep-alive'
-	};
 	AnyBalance.trace('Соединение с ' + baseurl);
-	var html = AnyBalance.requestGet(baseurl + 'tbmb/login/show.do', headers);
+	var html = AnyBalance.requestGet(baseurl + 'tbmb/login/show.do', g_headers);
 
 	//заготовка для обработки ошибок сайта, надо будет проверить во время следующего сбоя
 	if (/<TITLE>error<\/TITLE>/i.test(html)) {
@@ -43,9 +32,9 @@ function main() {
 		AnyBalance.trace('Уже в системе.');
 		if (!~html.indexOf(prefs.login)) {
 			AnyBalance.trace('Не тот аккаунт, выход.');
-			html = AnyBalance.requestGet(baseurl + 'tbmb/logout/perform.do', headers);
+			html = AnyBalance.requestGet(baseurl + 'tbmb/logout/perform.do', g_headers);
 			AnyBalance.trace('Переход на страницу входа.');
-			html = AnyBalance.requestGet(baseurl + 'tbmb/login/show.do', headers);
+			html = AnyBalance.requestGet(baseurl + 'tbmb/login/show.do', g_headers);
 		}
 	}
 	// Login
@@ -55,7 +44,7 @@ function main() {
 		var params = createFormParams(form);
 		params.user = prefs.login;
 		params.password = prefs.password;
-		html = AnyBalance.requestPost(baseurl + "tbmb/login/perform.do", params, headers);
+		html = AnyBalance.requestPost(baseurl + "tbmb/login/perform.do", params, g_headers);
 		if (!/\/tbmb\/logout\/perform/i.test(html)) {
 			var matches = html.match(/<td class="redError"[^>]*>([\s\S]*?)<\/td>/i);
 			if (matches) {
@@ -130,17 +119,17 @@ function main() {
 	getParam(html, result, 'phone', /(?:Номер|Номер):[\s\S]*?<td[^>]*>([\s\S]*?)(?:\(|<\/td>)/i, replaceTagsAndSpaces, html_entity_decode);
 	//Срок действия услуги Комфортный переход
 	if (AnyBalance.isAvailable('comfort_till')) {
-		html = AnyBalance.requestGet(baseurl + "tbmb/tsm/overview.do", headers);
+		html = AnyBalance.requestGet(baseurl + "tbmb/tsm/overview.do", g_headers);
 		if (/show.do\?featureId=99&amp;in=1/i.test(html)) {
-			html = AnyBalance.requestGet(baseurl + "tbmb/tsm/complexFeature/show.do?featureId=99&in=1", headers);
+			html = AnyBalance.requestGet(baseurl + "tbmb/tsm/complexFeature/show.do?featureId=99&in=1", g_headers);
 			sumParam(html, result, 'comfort_till', /(?:Послуга буде автоматично відключена&nbsp;|Услуга будет автоматически отключена&nbsp;)([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
 		}
 	}
 	//Пакет SMS
 	if (AnyBalance.isAvailable('sms_packet', 'sms_packet_till', 'sms_packet_left')) {
-		html = AnyBalance.requestGet(baseurl + "tbmb/tsm/overview.do", headers);
+		html = AnyBalance.requestGet(baseurl + "tbmb/tsm/overview.do", g_headers);
 		if (/show.do\?featureId=349&amp;in=1/i.test(html)) {
-			html = AnyBalance.requestGet(baseurl + "tbmb/tsm/complexFeature/show.do?featureId=349&in=1", headers);
+			html = AnyBalance.requestGet(baseurl + "tbmb/tsm/complexFeature/show.do?featureId=349&in=1", g_headers);
 			getParam(html, result, 'sms_packet', /<nobr>(?:Пакет: |Пакет: )<strong> ([\s\S]*?) <\/strong>/i, replaceTagsAndSpaces);
 			sumParam(html, result, 'sms_packet_till', /<nobr>(?:Срок действия:|Строк дії:) <strong> ([\s\S]*?)<\/strong>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
 			sumParam(html, result, 'sms_packet_left', /<nobr>(?:Остаток:|Залишок:) <strong> ([\s\S]*?)sms/ig, replaceTagsAndSpaces, parseInt, aggregate_sum);

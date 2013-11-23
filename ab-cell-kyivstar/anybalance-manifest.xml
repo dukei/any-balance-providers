@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id major_version="2.0" version="42">ab-cell-kyivstar</id>
+	<id major_version="2.0" version="43">ab-cell-kyivstar</id>
 	<name>Киевстар</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе, бонусных минутах, SMS, MMS, остатке интернет-трафика и других бонусах для пользователей мобильного оператора ""Киевстар"".</p>
+	<p>Предоставляет информацию о балансе, бонусных минутах, SMS, MMS, остатке интернет-трафика и других бонусах для пользователей мобильного оператора "Киевстар".</p>
 	<p>Информация берется из системы Мой Київстар (http://my.kyivstar.ua/).</p>
-	<br>
-	<b>ВНИМАНИЕ!</b> Данные предоставляются только для некорпоративных тарифных 
-	планов. Если у вас корпоративный тариф, воспользуйтесь провайдером ""Киевстар 
-	Корпоративный"".
+	<br><b>ВНИМАНИЕ!</b> Данные предоставляются только для некорпоративных тарифных планов. Если у вас корпоративный тариф, воспользуйтесь провайдером "Киевстар Корпоративный".
 	]]></description>
 	<instruction html="true"><![CDATA[
 	<p>Как зарегистрироваться:</p>
@@ -27,8 +24,8 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" suffix=" ₴" />
-		<counter id="bonus_mins_1" name="Бонусные минуты (1)" units=" мин" type="time_interval" format="{@MIN}"/>
-		<counter id="bonus_mins_2" name="Бонусные минуты (2)" units=" мин" type="time_interval" format="{@MIN}"/>
+		<counter id="bonus_mins_1" name="Бонусные минуты (1)" type="time_interval" format="{@MIN}:{@s}"/>
+		<counter id="bonus_mins_2" name="Бонусные минуты (2)" type="time_interval" format="{@MIN}:{@s}"/>
 		<counter id="mins_tariff" name="Тарифные минуты" units=" мин" type="time_interval" format="{@MIN}"/>
 		<counter id="mms" name="MMS" />
 		<counter id="sms" name="SMS" />

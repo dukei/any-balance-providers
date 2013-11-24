@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change major_version="3.0" version="102" date="2013-11-24">
+      - Исправлено получение минут, когда оно в дробном виде
+    </change>
     <change major_version="3.0" version="101" date="2013-11-23">
       - Убрано дублирование трафика в некоторых случаях
     </change>

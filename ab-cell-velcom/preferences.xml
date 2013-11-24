@@ -3,9 +3,10 @@
     <EditTextPreference 
         title="Номер телефона" 
         positiveButtonText="ОК" 
-        summary="Номер телефона в международном формате||{@s}\n" 
+        summary="|Номер телефона в международном формате|{@s}" 
         dialogTitle="Логин" 
         negativeButtonText="Отмена" 
+        obligatory="true"
         dialogMessage="Введите ваш номер телефона в международном формате без пробелов и разделителей, например, +375441234567."
 	inputType="phone"
         key="login">
@@ -16,7 +17,8 @@
         dialogTitle="Пароль"
         negativeButtonText="Отмена"
         title="Пароль"
-        summary="Пароль для входа в ИССА||***********\n"
+        obligatory="true"
+        summary="|Пароль для входа в ИССА|***********"
         dialogMessage="Введите пароль, используемый для входа в ИССА https://internet.velcom.by."
         inputType="numberPassword">
     </EditTextPreference>

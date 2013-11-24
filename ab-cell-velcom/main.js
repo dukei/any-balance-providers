@@ -13,6 +13,9 @@ function main(){
     var baseurl = "https://internet.velcom.by/";
     AnyBalance.setDefaultCharset('windows-1251');
 
+    checkEmpty(prefs.login, 'Введите номер телефона в международном формате!');
+    checkEmpty(prefs.password, 'Введите пароль к ИССА!');
+
     var matches;
     if(!(matches = /^\+375(\d\d)(\d{7})$/.exec(prefs.login)))
 	throw new AnyBalance.Error('Неверный номер телефона. Необходимо ввести номер в международном формате без пробелов и разделителей!');
@@ -37,7 +40,7 @@ function main(){
 		}else if(/NUMBER/i.test(id)){ //Это номер
 			value = phone;
 		}else if(/PWD/i.test(id)){ //Это пароль
-			value = prefs.password;
+			value = prefs.password.substr(0, 8);  //Велкам принимает только первые 8 символов всё равно.
 		}
 	}
 	if(!name)

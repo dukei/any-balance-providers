@@ -16,7 +16,7 @@
         negativeButtonText="Отмена"
         title="Секретный код"
         summary="||***********"
-        dialogMessage="Введите cекретный код, используемый для входа в личный кабинет."
+        dialogMessage="Введите секретный код, используемый для входа в личный кабинет."
         inputType="textPassword">
     </EditTextPreference>
 	<EditTextPreference 

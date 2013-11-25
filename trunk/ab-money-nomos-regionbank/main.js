@@ -12,6 +12,9 @@ var g_headers = {
 
 function main(){
     var prefs = AnyBalance.getPreferences();
+	checkEmpty(prefs.login, 'Введите идентификатор клиента!');
+	checkEmpty(prefs.password, 'Введите секретный код!');
+	
     var baseurl = 'https://m.regiobank.ru/';
     AnyBalance.setDefaultCharset('utf-8'); 
 
@@ -20,53 +23,49 @@ function main(){
 	html = AnyBalance.requestPost(baseurl + 'logon', {
         username:prefs.login,
         password:prefs.password,
-        authtype:'tbp', /*authtype:user         authtype:card */
+        authtype:'tbp', 
 		submit:''
     }, addHeaders({Referer: baseurl + 'logon'}));
 
 	var json = getJson(html);
+	if(!json)
+		throw new AnyBalance.Error('Не удалось войти в кабинет, проверьте идентификатор и секрентый код!');
 	if(!json.personName){
         throw new AnyBalance.Error(json.message);
     }
 	html = AnyBalance.requestGet(baseurl + 'accounts?_=', g_headers);
 	
 	json = getJson(html);
+	if(!json)
+		throw new AnyBalance.Error('Не удалось найти информацию по картам, сайт изменен?');
+	
 	var result = {success: true};
-	for(var i = 0; i<json.cardinfo.length; i++)
-	{
+
+	// Первичная инфа завернута в счет, его и будем искать
+	for(var i = 0; i < json.cardinfo.length; i++) {
 		var current = json.cardinfo[i];
 		// Если есть счет, то начинаем искать нужный
-		if(prefs.acc)
-		{
-			if(endsWith(current.acctnumb, prefs.acc))
-			{
-				getCardMain(current, result);
-				break;
-			}
-		}
-		// Не указан счет, берем первый попавшийся
-		else
-		{
+		if(prefs.acc ? endsWith(current.acctnumb, prefs.acc) : true) {
 			getCardMain(current, result);
-			break;
+			break;			
+		} else {
+			throw new AnyBalance.Error('Не удалось найти счет с последними цифрами '+prefs.acc);
 		}
 	}
     AnyBalance.setResult(result);
 }
 
-function getCardMain(current, result)
-{
-	getParam(current.acctnumb, result, '__tariff', null, null, null);
-	getParam(current.acctnumb, result, 'acc_num', null, null, null);
-	getParam(current.balance, result, 'balance', null, null, null);
-	getParam(current.accttitle, result, 'accttitle', null, null, null);
-	getParam(current.currency, result, 'currency', null, null, null);
-	
-	for(var i = 0; i<current.cards.length; i++)
-	{
+function getCardMain(current, result) {
+	getParam(current.acctnumb+'', result, '__tariff');
+	getParam(current.acctnumb+'', result, 'acc_num');
+	getParam(current.balance+'', result, 'balance', null, null, parseBalance);
+	getParam(current.accttitle+'', result, 'accttitle');
+	getParam(current.currency+'', result, ['currency', 'balance']);
+
+	for (var i = 0; i < current.cards.length; i++) {
 		var card = current.cards[i];
-		getParam(card.cardnumb, result, 'cardnumb', null, null, null);
-		getParam(card.expdate, result, 'card_expdate', null, null, parseDate);
+		getParam(card.cardnumb+'', result, 'cardnumb');
+		getParam(card.expdate+'', result, 'card_expdate', null, null, parseDate);
 		// пока ломаем, получаем только первую карту
 		break;
 	}

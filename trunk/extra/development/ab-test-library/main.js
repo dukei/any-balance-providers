@@ -50,7 +50,57 @@ function main() {
 		AnyBalance.trace('createFormParams все сделала правильно, она молодец :)');
 	else 
 		AnyBalance.trace('createFormParams что-то не правильно разобрала, проверьте код! ' + JSON.stringify(params));
-
+	
+	AnyBalance.trace('Проверяем parseMinutes...');
+	// в array четные (начиная с 0) это что парсить, не четные результат для сравнения
+	var times = [
+		// отдельно часы, минуты, секунды
+		'1 ч', '3600',
+		'2 h', '7200',
+		'3 часа', '10800',
+		'4 hour', '14400',
+		// минуты
+		'1 м', '60',
+		'2 m', '120',
+		'3 минуты', '180',
+		'4 minutes', '240',
+		// секунды
+		'1 с', '1',
+		'2 s', '2',
+		'3 секунды', '3',
+		'4 seconds', '4',
+		// Часы и минуты
+		'1 ч 2 м', '3720',
+		'2 h 3 m', '7380',
+		'3 часа 4 минуты', '11040',
+		'4 hours 5 minutes', '14700',
+		// через двоеточие
+		'01:02', '62',
+		'02:03', '123',
+		'03:04', '184',
+		'04:05', '245',
+		// часы минуты и секунды
+		'1 ч 2 м 3 c', '3723',
+		'2 h 3 m 4 s', '7384',
+		'3 часа 4 минуты 5 секунд', '11045',
+		'4 hours 5 minutes 6 seconds', '14706',
+		// через двоеточие
+		'01:02:03', '3723',
+		'02:03:04', '7384',
+		'03:04:05', '11045',
+		'04:05:06', '14706',
+	];
+	var temp = 0;
+	for (var i = 0; i < times.length; i++) {
+		var parsed = parseMinutes(times[i]);
+		var res = times[++i];
+		
+		if(res == parsed)
+			AnyBalance.trace('Item ' + (temp++) + ' parsed ok');
+		else
+			AnyBalance.trace('Item ' + (temp++) + ' parsing failed!!!');
+	}		
+		
 	//checkEmpty(prefs.s, 'checkEmpty работает нормально!');
 
 	/*getParam(html, result, 'fio', /Имя абонента:(?:[\s\S]*?<b[^>]*>){1}([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);

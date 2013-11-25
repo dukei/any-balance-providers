@@ -123,30 +123,30 @@ function parseCurrency(text) {
 	return val;
 }
 
-/** Извлекает секунды из переданного текста, на разных языках, из разных форматов (1:30, 01:02:03, 1 м 3 сек, 3 сек, 1 час...) 
+/** Извлекает время в секундах из переданного текста, на разных языках, из разных форматов (1:30, 01:02:03, 1 м 3 сек, 3 сек, 1 час...) 
 Если на входе будет просто число - вернет минуты.
-Если на входе будет 02:03 будет принят формат ММ:СС
-*/
+Если на входе будет 02:03 будет принят формат ММ:СС*/
 function parseMinutes(_text) {
 	var text = html_entity_decode(_text).replace(/\s+/g, '');
 	
 	var hour = -1, min = -1, sec = -1;
-	// Это формат ММ:СС
-	if(/^\d{1,2}:\d{1,2}$/i.test(text)) {
-		var regExp = /^(\d{1,2}):(\d{1,2})$/i.exec(text);
-		hour = 0;
-		min = parseFloat(regExp[1]);
-		sec = parseFloat(regExp[2]);		
-	// Это формат ЧЧ:ММ:СС
-	} else if(/^\d{1,2}:\d{1,2}:\d{1,2}$/i.test(text)) {
+	
+	// Это формат ЧЧ:ММ:СС	
+	if(/^\d{1,2}:\d{1,2}:\d{1,2}$/i.test(text)) {
 		var regExp = /^(\d{1,2}):(\d{1,2}):(\d{1,2})$/i.exec(text);
 		hour = parseFloat(regExp[1]);
 		min = parseFloat(regExp[2]);
 		sec = parseFloat(regExp[3]);
-	} else {
-		hour = getParam(text, null, null, /(-?[\d\.,]*)\s*(?:час|ч|hour|h)/i, replaceFloat, parseFloat) || 0;
+	// Это формат ММ:СС
+	} else if(/^\d{1,2}:\d{1,2}/i.test(text)) {
+		var regExp = /^(\d{1,2}):(\d{1,2})/i.exec(text);
+		hour = 0;
+		min = parseFloat(regExp[1]);
+		sec = parseFloat(regExp[2]);
 	}
 
+	if(hour == -1)
+		hour = getParam(text, null, null, /(-?[\d\.,]*)\s*(?:час|ч|hour|h)/i, replaceFloat, parseFloat) || 0;
 	if(min == -1)
 		min = getParam(text, null, null, [/([\d.,]*)\s*(?:мин|м|хв|min|m)/i, /^\d+$/i], replaceFloat, parseFloat) || 0;
 	if(sec == -1)

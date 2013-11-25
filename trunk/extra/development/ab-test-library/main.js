@@ -33,19 +33,13 @@ function main() {
 	}
 	var prefs = AnyBalance.getPreferences();
 	
-	
-	
-	
-	
 	AnyBalance.trace('Проверяем функцию createFormParams...');
-	
 	var params = createFormParams(formParamsHtml, function(params, str, name, value) {
 		if (name == 'ULOGIN') 
 			return 'TEST_LOGIN';
 
 		return value;
 	});	
-	
 	if(params.CHANNEL == 'WWW' && params.CHANNELTYPE == 'COMMON' && params.PREFIX == '' && params.P_ISOC_ID == '' && params.SESSION_ID == '' && params.ULOGIN == 'TEST_LOGIN')
 		AnyBalance.trace('createFormParams все сделала правильно, она молодец :)');
 	else 
@@ -89,17 +83,21 @@ function main() {
 		'02:03:04', '7384',
 		'03:04:05', '11045',
 		'04:05:06', '14706',
+		// Просто число
+		'1', '60',
+		'2', '120',
 	];
 	var temp = 0;
 	for (var i = 0; i < times.length; i++) {
 		var parsed = parseMinutes(times[i]);
 		var res = times[++i];
 		
-		if(res == parsed)
+		if(res == parsed) {
 			AnyBalance.trace('Item ' + (temp++) + ' parsed ok');
-		else
+		} else {
 			AnyBalance.trace('Item ' + (temp++) + ' parsing failed!!!');
-	}		
+		}
+	}
 		
 	//checkEmpty(prefs.s, 'checkEmpty работает нормально!');
 

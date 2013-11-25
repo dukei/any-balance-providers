@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-cell-happy-movil</id>
+	<api flags="no_browser"/>
+	<name>Happymovil.es</name>
+	<description html="true"><![CDATA[
+	<p>Obtains information from Happymovil cell - provider at http://www.happymovil.es/es/</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Balance" units=" €"/>
+	</counters>
+	<keywords></keywords>
+	<type>cell</type>
+	<country>es</country>
+</provider>

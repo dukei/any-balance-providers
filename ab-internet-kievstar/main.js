@@ -23,7 +23,7 @@ function main() {
 	if(!form)
 		throw new AnyBalance.Error('Не удаётся найти форму входа. Проблемы или изменения на сайте?');
 	
-	var captchaa;
+	/*var captchaa;
 	if(AnyBalance.getLevel() >= 7){
 		AnyBalance.trace('Пытаемся ввести капчу');
 		var captcha = AnyBalance.requestGet(baseurl+ getParam(html, null, null, /<img src="\/(tbmb\/jcaptcha[^"]*)/i));
@@ -31,12 +31,12 @@ function main() {
 		AnyBalance.trace('Капча получена: ' + captchaa);
 	}else{
 		throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
-	}
+	}*/
 	
 	var params = createFormParams(form);
 	params.user = prefs.login;
 	params.password = prefs.password;
-	params.captcha = captchaa;	
+	//params.captcha = captchaa;	
 	
 	html = AnyBalance.requestPost(baseurl + 'tbmb/login/perform.do', params, headers);
 	

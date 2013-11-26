@@ -10,12 +10,12 @@ function main(){
     var parts = prefs.login.match(/^([\s\S]*?)@((?:mail|inbox|list|bk)\.ru)$/i);
     if(!parts)
          throw new AnyBalance.Error('Вы ввели неправильный е-мейл для входа на money.mail.ru.');
-
-    var baseurlLogin = "https://auth.mail.ru/cgi-bin/auth";
+	
+	var baseurlLogin = "https://auth.mail.ru/cgi-bin/auth";
     var baseurl = "https://money.mail.ru/";
-
+	
     AnyBalance.setDefaultCharset('utf-8');
-
+	
     var html = AnyBalance.requestPost(baseurlLogin, {
 		FailPage:'https://money.mail.ru/nologin',
         Page:baseurl,
@@ -33,6 +33,8 @@ function main(){
 
 	var result = {success: true};
     getParam(prefs.login, result, 'login');
+	
+	getParam(html, result, '__tariff', /Ваш счет[^>]*>№((?:[^>]*>){9})/i, [/\D/g, '', /(\d{4})\d{8}(\d{4})/i, '$1 **** **** $2']);
     getParam(html, result, 'balance', /AccountBalanceInfo">[\s\S]*?([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
     
     AnyBalance.setResult(result);

@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+<change major_version="3.0" version="17" date="2013-11-26">
+- Поддержка изменений на сайте
+</change>
 <change major_version="3.0" version="16" date="2013-10-24">
 - Исправлено отображение данных по счетам. (Stark)
 </change>

@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+<change version="6" date="2013-11-26">
+- Исправлена ошибка.
+</change>
 <change version="5" date="2013-11-21">
-- Поддержка изменений на сайте
+- Поддержка изменений на сайте.
 </change>
 </history>

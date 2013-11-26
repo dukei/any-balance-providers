@@ -6,7 +6,7 @@ function main(){
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'http://www.mnogo.ru/';
 	
-	var matches = /(\d{2})-(\d{2})-(\d{4})/.exec(prefs.birthday);
+	var matches = /(\d{2})\D(\d{2})\D(\d{4})/.exec(prefs.birthday);
 	if(!matches)
 		throw new AnyBalance.Error('День рождения должен быть в формате DD-MM-YYYY, например, 28-04-1980');
 
@@ -21,8 +21,7 @@ function main(){
 		'UserBirth[y]': dt.getFullYear()
 	});
 	
-	//AnyBalance.trace('got from login (' + typeof(html) + '): ' + html);
-	if (!/OK/i.test(html)) {
+	if (!/^OK$/i.test(html)) {
 		var error = html;
 		if (error && /Неверный логин или пароль/i.test(error))
 			throw new AnyBalance.Error(error, null, true);
@@ -35,7 +34,7 @@ function main(){
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'balance', />\s*(\d+) бонусов\s*</i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance', />\s*(\d+)\s*бонусов\s*</i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'username', /class="authorized[^>]*>\s*Ура[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'cardnum', /class="authorized[^>]*>\s*Ура(?:[^>]*>){4}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);	
 	

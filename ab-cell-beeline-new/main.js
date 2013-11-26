@@ -384,7 +384,8 @@ function getBonuses(xhtml, result) {
 	for (var j = 0; j < bonuses.length; ++j) {
 		var bonus = bonuses[j];
 		var bonus_name = ''; //getParam(bonus, null, null, /<span[^>]+class="bonuses-accums-list"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
-		var services = sumParam(bonus, null, null, /<div[^>]+class="item bonus"(?:[\s\S](?!$|<div[^>]+class="item bonus"))*[\s\S]/ig);
+													// Эта регулярка вроде не работает, но оставил для совместимости
+		var services = sumParam(bonus, null, null, [/<div[^>]+class="item bonus"(?:[\s\S](?!$|<div[^>]+class="item bonus"))*[\s\S]/ig, /<div[^>]+class="item"(?:[\s\S](?!$|<div[^>]+class="item"))*/ig]);
 		AnyBalance.trace("Found " + services.length + ' bonuses');
 		var reValue = /<div[^>]+class="column2[^"]*"[^>]*>([\s\S]*?)<\/div>/i;
 		for (var i = 0; i < services.length; ++i) {

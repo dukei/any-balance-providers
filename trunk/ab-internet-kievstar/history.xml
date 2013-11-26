@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+<change major_version="2.0" version="6" date="2013-11-26">
+- На сайте убрали капчу, убрал запрос (Stark)
+</change>
 <change major_version="2.0" version="5" date="2013-09-25">
 - На сайте ввели капчу, добавил ее поддержку (Stark)
 </change>

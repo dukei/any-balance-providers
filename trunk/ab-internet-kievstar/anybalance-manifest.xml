@@ -1,7 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2.0" version="5">ab-internet-kievstar</id>
-	<api flags="no_browser|captcha"/>
+	<id major_version="2.0" version="6">ab-internet-kievstar</id>
+	<!-- <api flags="no_browser|captcha"/> -->
+	<api flags="no_browser"/>
 	<name>Киевстар (домашний интернет)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе и бонусных баллах для пользователей интернет-провайдера "Киевстар".</p> 
@@ -16,8 +17,8 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units="₴"/>
-		<counter id="bonuses" name="Бонусный счет" units="б"/>
+		<counter id="balance" name="Баланс" units=" ₴"/>
+		<counter id="bonuses" name="Бонусный счет" units=" б"/>
 	</counters>
 	<keywords>Домашний интернет, интернет, kyivstar, киевстар, украина</keywords>
 	<type>internet</type>

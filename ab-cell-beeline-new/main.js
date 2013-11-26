@@ -204,7 +204,7 @@ function fetchPost(baseurl, html) {
 	var prefs = AnyBalance.getPreferences();
 	AnyBalance.trace('Мы в постоплатном кабинете');
 
-	var result = {success: true, balance: null};
+	var result = {success: true, balance: null, currency: null};
 	var multi = /<span[^>]+class="selected"[^>]*>/i.test(html), xhtml='';
 
 	getParam(html, result, 'agreement', /<h2[^>]*>\s*Договор №([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces, html_entity_decode);
@@ -298,7 +298,7 @@ function fetchPre(baseurl, html) {
 	var prefs = AnyBalance.getPreferences();
 	AnyBalance.trace('Мы в предоплатном кабинете');
 	
-	var result = {success: true,balance: null};
+	var result = {success: true, balance: null, currency: null};
 	
 	if (prefs.phone) { //Если задан номер, то надо сделать из него регулярное выражение
 		if (!/^\d{4,10}$/.test(prefs.phone))

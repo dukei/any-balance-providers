@@ -34,23 +34,23 @@
 		<counter id="min" name="Остаток минут" units=" мин"/>
 		<counter id="bonus" name="Бонусы" units=" б"/>
 
-		<counter id="gprs1" name="Остаток трафика 2" units=" Мб"""/>
-		<counter id="sms1" name="Остаток SMS 2" units=" sms""/>
-		<counter id="mms1" name="Остаток MMS 2" units=" mms""/>
-		<counter id="min1" name="Остаток минут 2" units=" мин""/>
+		<counter id="gprs1" name="Остаток трафика 2" units=" Мб"/>
+		<counter id="sms1" name="Остаток SMS 2" units=" sms"/>
+		<counter id="mms1" name="Остаток MMS 2" units=" mms"/>
+		<counter id="min1" name="Остаток минут 2" units=" мин"/>
 		<counter id="bonus1" name="Бонусы 2" units=" б""/>
 
-		<counter id="gprs2" name="Остаток трафика 3" units=" Мб""/>
-		<counter id="sms2" name="Остаток SMS 3" units=" sms""/>
-		<counter id="mms2" name="Остаток MMS 3" units=" mms""/>
-		<counter id="min2" name="Остаток минут 3" units=" мин""/>
-		<counter id="bonus2" name="Бонусы 3" units=" б""/>
+		<counter id="gprs2" name="Остаток трафика 3" units=" Мб"/>
+		<counter id="sms2" name="Остаток SMS 3" units=" sms"/>
+		<counter id="mms2" name="Остаток MMS 3" units=" mms"/>
+		<counter id="min2" name="Остаток минут 3" units=" мин"/>
+		<counter id="bonus2" name="Бонусы 3" units=" б"/>
 
-		<counter id="gprs3" name="Остаток трафика 4" units=" Мб""/>
-		<counter id="sms3" name="Остаток SMS 4" units=" sms""/>
-		<counter id="mms3" name="Остаток MMS 4" units=" mms""/>
-		<counter id="min3" name="Остаток минут 4" units=" мин""/>
-		<counter id="bonus3" name="Бонусы 4" units=" б""/>
+		<counter id="gprs3" name="Остаток трафика 4" units=" Мб"/>
+		<counter id="sms3" name="Остаток SMS 4" units=" sms"/>
+		<counter id="mms3" name="Остаток MMS 4" units=" mms"/>
+		<counter id="min3" name="Остаток минут 4" units=" мин"/>
+		<counter id="bonus3" name="Бонусы 4" units=" б"/>
 
 		<counter id="status" name="Статус"  type="text"/>
 		<counter id="phone" name="Номер телефона" type="text"/>
@@ -68,8 +68,8 @@
 		<counter id="phone3" name="Номер телефона 4" type="text"/>
 		<counter id="licschet3" name="Лицевой счет 4" type="text"/>
 
-		<counter id="totalBalancePlus" name="Сумма остатков" units=" р""/>
-		<counter id="totalBalanceMinus" name="Сумма задолженностей" units=" р""/>
+		<counter id="totalBalancePlus" name="Сумма остатков" units=" р"/>
+		<counter id="totalBalanceMinus" name="Сумма задолженностей" units=" р"/>
 	</counters>
 	<keywords>интернет</keywords>
 	<type>internet, tv, telephony, cell</type>

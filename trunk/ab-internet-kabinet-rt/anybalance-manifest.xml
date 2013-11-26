@@ -38,7 +38,7 @@
 		<counter id="sms1" name="Остаток SMS 2" units=" sms"/>
 		<counter id="mms1" name="Остаток MMS 2" units=" mms"/>
 		<counter id="min1" name="Остаток минут 2" units=" мин"/>
-		<counter id="bonus1" name="Бонусы 2" units=" б""/>
+		<counter id="bonus1" name="Бонусы 2" units=" б"/>
 
 		<counter id="gprs2" name="Остаток трафика 3" units=" Мб"/>
 		<counter id="sms2" name="Остаток SMS 3" units=" sms"/>

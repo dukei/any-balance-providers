@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change major_version="3.0" version="103" date="2013-11-26">
+      - Мегафон испортил яндекс виджет в Уральском филиале, обход проблемы
+    </change>
     <change major_version="3.0" version="102" date="2013-11-24">
       - Исправлено получение минут, когда оно в дробном виде
     </change>

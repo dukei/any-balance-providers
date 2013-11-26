@@ -1,32 +1,27 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Получает баланс и информацию о тарифном плане для ростелкома (https://kabinet.rt.ru)
-
-Сайт оператора: www.rt.ru
-Личный кабинет: https://kabinet.rt.ru
 */
 
 var g_ServiceStatus = {
-  ACTIVE: "активна",
-  CONNECTED: "активна",
-  INACTIVE: "неактивна",
-  NOT_CONNECTED: "неактивна",
-  BLOCKED: "отключена за неуплату",
-  OPERATOR_BLOCK: "включена добровольная блокировка",
-  ENABLED: "включена",
-  DISABLED: "отключена",
-  RESERVED: "забронирована",
-  WAIT_CONFIRM: "ожидание подключения",
-  UNKNOWN_STATUS: "не определен"
+	ACTIVE: "активна",
+	CONNECTED: "активна",
+	INACTIVE: "неактивна",
+	NOT_CONNECTED: "неактивна",
+	BLOCKED: "отключена за неуплату",
+	OPERATOR_BLOCK: "включена добровольная блокировка",
+	ENABLED: "включена",
+	DISABLED: "отключена",
+	RESERVED: "забронирована",
+	WAIT_CONFIRM: "ожидание подключения",
+	UNKNOWN_STATUS: "не определен"
 };
 
 var g_headers = {
-    Accept:'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-    'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
-    'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-    Connection:'keep-alive',
-    'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11'
+	Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
+	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	Connection: 'keep-alive',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11'
 };
 
 function main(){
@@ -170,13 +165,15 @@ function main(){
                     result['phone' + suffix] = phones.join(', ');
     
                 if(AnyBalance.isAvailable('bonus' + suffix)) {
-					if(bonuses.length > 0)
+					if(bonuses.length > 0) {
 						result['bonus' + suffix] = aggregate_sum(bonuses);
-					else {
+					} else {
 						AnyBalance.trace('Бонусов не нашли, попробуем получить бонусы другим способом...');
-						var jsonBonus = getJson(AnyBalance.requestPost(baseurl + 'plugins/south-bonus/1.0.2-SNAPSHOT/request', {action: 'getBonusBalance', accountId:acc.__detailedInfo.id}, g_headers));
-						if(jsonBonus.balance)
-							getParam(jsonBonus.balance+'', result, 'bonus' + suffix, null, replaceTagsAndSpaces, parseBalance);
+						try {
+							var jsonBonus = JSON.parse(AnyBalance.requestPost(baseurl + 'plugins/south-bonus/1.0.2-SNAPSHOT/request', {action: 'getBonusBalance', accountId:acc.__detailedInfo.id}, g_headers));
+							if(jsonBonus.balance)
+								getParam(jsonBonus.balance+'', result, 'bonus' + suffix, null, replaceTagsAndSpaces, parseBalance);						
+						} catch(e) {}
 					}
 				}
             }

@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change major_version="1.1" version="29" date="2013-11-26">
+      Добавлно распознавание использованного трафика в тарифе «Супер Интернет 3G» в счетчик "Использованно Мб".
+    </change>
     <change major_version="1.1" version="28" date="2013-09-20">
-      Добавлен счетчик ""smart.net к-во Кб загруженных по АПН smart.net"".
+      Добавлен счетчик "smart.net к-во Кб загруженных по АПН smart.net".
     </change>
     <change major_version="1.1" version="27" date="2013-09-11">
       Добавлены счетчики "Израсходовано MMS" и "Израсходовано минут".

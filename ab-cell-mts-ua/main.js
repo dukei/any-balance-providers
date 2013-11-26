@@ -215,6 +215,8 @@ function main(){
     
     // Интернет С услугой «Супер 3D Ноль»
     sumParam (html, result, 'traffic_used', /<li>Использовано[^\d]*?(\d+,?\d* *(kb|mb|gb|кб|мб|гб|байт|bytes)).<\/li>/ig, null, parseTraffic, aggregate_sum);
+    // Интернет «Супер Интернет 3G»
+    sumParam (html, result, 'traffic_used', /<li>Стандартные условия[^\d]*?использовано[^\d]*?(\d+,?\d* *(kb|mb|gb|кб|мб|гб|байт|bytes)).<\/li>/ig, null, parseTraffic, aggregate_sum);    
     
     // Тариф 3d команда
     sumParam (html, result, 'min_used', /<li>Израсходовано\s*([\d\.,]+) сек.<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);

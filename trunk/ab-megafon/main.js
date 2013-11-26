@@ -455,12 +455,12 @@ function megafonTrayInfo(filial){
                var new_internet_totals_was = {};
 
                //Минуты и прочее получаем только в случае ошибки в сервисгиде, чтобы случайно два раза не сложить
-               var discounts = sumParam(json.ok.html, null, null, /<td[^>]+class="cc_discount_row"[^>]*>([\s\S]*?)<\/td>/ig);
+               var discounts = sumParam(json.ok.html, null, null, /<td[^>]*class="cc_discount_row"[^>]*>([\s\S]*?)<\/td>/ig);
                var wasSM = false;
                for(var i=0; i<discounts.length; ++i){
                    var discount = discounts[i];
                    var name = getParam(discount, null, null, /<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-                   var val = getParam(discount, null, null, /<div[^>]+class="discount_volume"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+                   var val = getParam(discount, null, null, /<div[^>]*class="discount_volume"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
                    if(!isset(val)){
                        AnyBalance.trace('Опция без значений: ' + discount);
                        continue;

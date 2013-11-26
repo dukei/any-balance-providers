@@ -4,9 +4,11 @@ AnyBalance (http://any-balance-providers.googlecode.com)
 Содержит некоторые полезные для извлечения значений с сайтов функции.
 Для конкретного провайдера рекомендуется оставлять в этом файле только те функции, которые используются.
 
-library.js v0.04 от 25.11.13
+library.js v0.05 от 26.11.13
 
 changelog:
+26.11.13: подправлена parseMinutes(), правильное получение данных, если на входе "300 &#65533;мин"
+
 25.11.13: унифицирована parseMinutes() теперь поддерживает все подряд
 
 22.11.13: parseDateWord, добавлена локализация (25 jan 2013, 25 января 2013, 25 янв 2013...), удалена parseDateWordEn, т.к. теперь все есть в parseDateWord
@@ -127,10 +129,8 @@ function parseCurrency(text) {
 Если на входе будет просто число - вернет минуты.
 Если на входе будет 02:03 будет принят формат ММ:СС*/
 function parseMinutes(_text) {
-	var text = html_entity_decode(_text).replace(/\s+/g, '');
-	
-	var hour = -1, min = -1, sec = -1;
-	
+	var text = html_entity_decode(_text).replace(/[\s�]*/g, '');
+	var hour = 0, min = 0, sec = 0;
 	// Это формат ЧЧ:ММ:СС	
 	if(/^\d{1,2}:\d{1,2}:\d{1,2}$/i.test(text)) {
 		var regExp = /^(\d{1,2}):(\d{1,2}):(\d{1,2})$/i.exec(text);
@@ -143,15 +143,12 @@ function parseMinutes(_text) {
 		hour = 0;
 		min = parseFloat(regExp[1]);
 		sec = parseFloat(regExp[2]);
-	}
-
-	if(hour == -1)
+	// Это любой другой формат, со словами либо просто число
+	} else {
 		hour = getParam(text, null, null, /(-?[\d\.,]*)\s*(?:час|ч|hour|h)/i, replaceFloat, parseFloat) || 0;
-	if(min == -1)
 		min = getParam(text, null, null, [/([\d.,]*)\s*(?:мин|м|хв|min|m)/i, /^\d+$/i], replaceFloat, parseFloat) || 0;
-	if(sec == -1)
-		sec = getParam(text, null, null, /([\d.,]+)(?:сек|c|с|sec|s)/i, replaceFloat, parseFloat) || 0;
-	
+		sec = getParam(text, null, null, /([\d.,]+)\s*(?:сек|c|с|sec|s)/i, replaceFloat, parseFloat) || 0;
+	}
 	var val = (hour*3600) + (min * 60) + sec;
 	AnyBalance.trace('Parsed seconds (' + val + ') from: ' + _text);
 	return val;

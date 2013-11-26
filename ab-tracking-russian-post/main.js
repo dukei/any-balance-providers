@@ -68,9 +68,6 @@ function mainEms() {
 }
 
 function checkForErrors(info) {
-	var matches;
-	if (matches = /color:\s*red[^>]*>([^<]*)<\/div/i.exec(info)) //Проверяем на сообщение об ошибке
-		throw new AnyBalance.Error(matches[1]);
 	if (/<h1>Server is too busy<\/h1>/i.test(info))
 		throw new AnyBalance.Error("Сервер russianpost.ru перегружен. Попробуйте позже.");
 	var error = getParam(info, null, null, /<div[^>]+id="CaptchaErrorCodeContainer"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="21">ab-cell-intertelecom</id>
+  <id version="22">ab-cell-intertelecom</id>
   <!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
   <api flags="no_browser" />
   <name>Интертелеком</name>
@@ -37,7 +37,7 @@
     <counter id="traffic_night" name="Трафик ночной" units=" mb"/>
     <counter id="traffic_it" name="Трафик IT" units=" mb"/>
     <counter id="traffic_3g_turbo" name="Трафик 3G_TURBO" units=" mb"/>
-    <counter id="bonus_fb" name="Бонус facebook" suffix=" ₴" type="numeric" flags="zero_when_empty"/>
+    <counter id="bonus_fb" name="Бонус по акциям" suffix=" ₴" type="numeric" flags="zero_when_empty"/>
     <counter id="bonus_vd" name="Бонус «Вільний доступ»" suffix=" ₴" type="numeric" flags="zero_when_empty"/>
     <counter id="traffic_action" name="Трафик по акции" units=" mb" flags="zero_when_empty"/>
     <counter id="bonus_action_current" name="Акционный счет на текущий месяц" suffix=" ₴" type="numeric" flags="zero_when_empty"/>

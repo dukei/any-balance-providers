@@ -113,33 +113,45 @@ function main() {
 	AnyBalance.setDefaultCharset('utf-8');
 
 	var html = AnyBalance.requestGet(baseurl + 'login.html', g_headers);
-
-	var tform = getParam(html, null, null, /<form[^>]+name="loginFormB2C:loginForm"[^>]*>[\s\S]*?<\/form>/i);
-	if (!tform) { //Если параметр не найден, то это, скорее всего, свидетельствует об изменении сайта или о проблемах с ним
-		if (AnyBalance.getLastStatusCode() > 400) {
-			AnyBalance.trace('Beeline returned: ' + AnyBalance.getLastStatusString());
-			throw new AnyBalance.Error('Личный кабинет Билайн временно не работает. Пожалуйста, попробуйте позднее.');
+	
+	// Похоже что обновляемся через мобильный инет, значит авторизацию надо пропустить
+	if(/logOutLink/i.test(html)) {
+		var phone = getParam(html, null, null, /<h1[^>]+class="phone-number"[^>]*>([\s\S]*?)<\/h1>/i, [/\D/g, '']);
+		AnyBalance.trace('Судя по всему, мы уже залогинены на номер ' + phone);
+		
+		if(!endsWith(phone, prefs.phone || prefs.login)) {
+			AnyBalance.trace('Залогинены на неправильный номер ' + phone);
+			throw new AnyBalance.Error('Билайн ввел автоматическую авторизацию при обновлении через мобильный интернет. Пока обновить можно только номер, с которого выходите в сеть.');
 		}
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
-	}
+		AnyBalance.trace('Залогинены на правильный номер ' + phone);
+	} else {
+		var tform = getParam(html, null, null, /<form[^>]+name="loginFormB2C:loginForm"[^>]*>[\s\S]*?<\/form>/i);
+		if (!tform) { //Если параметр не найден, то это, скорее всего, свидетельствует об изменении сайта или о проблемах с ним
+			if (AnyBalance.getLastStatusCode() > 400) {
+				AnyBalance.trace('Beeline returned: ' + AnyBalance.getLastStatusString());
+				throw new AnyBalance.Error('Личный кабинет Билайн временно не работает. Пожалуйста, попробуйте позднее.');
+			}
+			AnyBalance.trace(html);
+			throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
+		}
 
-	var params = createFormParams(tform);
-	params['loginFormB2C:loginForm:login'] = prefs.login;
-	params['loginFormB2C:loginForm:password'] = prefs.password;
-	params['loginFormB2C:loginForm:passwordVisible'] = prefs.password;
-	params['loginFormB2C:loginForm:loginButton'] = '';
+		var params = createFormParams(tform);
+		params['loginFormB2C:loginForm:login'] = prefs.login;
+		params['loginFormB2C:loginForm:password'] = prefs.password;
+		params['loginFormB2C:loginForm:passwordVisible'] = prefs.password;
+		params['loginFormB2C:loginForm:loginButton'] = '';
 
-	var action = getParam(tform, null, null, /<form[^>]+action="\/([^"]*)/i, null, html_entity_decode);
+		var action = getParam(tform, null, null, /<form[^>]+action="\/([^"]*)/i, null, html_entity_decode);
 
-	//Теперь, когда секретный параметр есть, можно попытаться войти
-	try {
-		html = AnyBalance.requestPost(baseurl + (action || 'login.html'), params, addHeaders({Referer: baseurl + 'login.html'}));
-	} catch(e) {
-		if(prefs.__debug) {
-			html = AnyBalance.requestGet(baseurl + 'c/' + prefs.__debug + '/index.html');
-		} else {
-			throw e;
+		//Теперь, когда секретный параметр есть, можно попытаться войти
+		try {
+			html = AnyBalance.requestPost(baseurl + (action || 'login.html'), params, addHeaders({Referer: baseurl + 'login.html'}));
+		} catch(e) {
+			if(prefs.__debug) {
+				html = AnyBalance.requestGet(baseurl + 'c/' + prefs.__debug + '/index.html');
+			} else {
+				throw e;
+			}
 		}
 	}
 	// Иногда билайн нормальный пароль считает временным и предлагает его изменить, но если сделать еще один запрос, пускает и показывает баланс
@@ -184,7 +196,7 @@ function main() {
 
 function parseBalanceNegative(str) {
 	var val = parseBalance(str);
-	if (isset(val)) 
+	if (isset(val))
 		return -val;
 }
 
@@ -266,7 +278,7 @@ function fetchPost(baseurl, html) {
 		// Вроде бы все хорошо, но: {"sms_left":3463,"min_local":24900,"balance":0,"phone":"+7 909 169-24-86","agreement":"248260674","__time":1385043751223,"fio":"Максим Крылов","overpay":619.07,"min_local_clear":415,"currency":"рубвмесяцОтключитьБудьвкурсе","__tariff":"«Всё включено L 2013»"}
 		getParam(xhtml, result, 'balance', /class="price[^>]*>((?:[\s\S]*?span[^>]*>){3})/i, replaceTagsAndSpaces, parseBalance);
 		// Если баланса нет, не надо получать и валюту
-		if(isset(result.balance)) {
+		if(isset(result.balance) && result.balance != null) {
 			getParam(xhtml, result, ['currency', 'balance'], /class="price[^>]*>((?:[\s\S]*?span[^>]*>){3})/i, replaceTagsAndSpaces, myParseCurrency);
 		}
 	}
@@ -347,7 +359,7 @@ function fetchPre(baseurl, html) {
 		// Вроде бы все хорошо, но: {"sms_left":3463,"min_local":24900,"balance":0,"phone":"+7 909 169-24-86","agreement":"248260674","__time":1385043751223,"fio":"Максим Крылов","overpay":619.07,"min_local_clear":415,"currency":"рубвмесяцОтключитьБудьвкурсе","__tariff":"«Всё включено L 2013»"}
 		getParam(xhtml, result, 'balance', /class="price[^>]*>((?:[\s\S]*?span[^>]*>){3})/i, replaceTagsAndSpaces, parseBalance);
 		// Если баланса нет, не надо получать и валюту
-		if(isset(result.balance)) {
+		if(isset(result.balance) && result.balance != null) {
 			getParam(xhtml, result, ['currency', 'balance'], /class="price[^>]*>((?:[\s\S]*?span[^>]*>){3})/i, replaceTagsAndSpaces, myParseCurrency);
 		}
 	}
@@ -388,15 +400,15 @@ function getBonuses(xhtml, result) {
 			} else if (/Рублей за участие в опросе|Счастливое время/i.test(name)) {
 				sumParam(services[i], result, 'rub_opros', reValue, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 			} else if (/Времени общения/i.test(name)) {
-				sumParam(services[i], result, 'min_local', reValue, replaceTagsAndSpaces, parseBalanceMins, aggregate_sum);
+				sumParam(services[i], result, 'min_local', reValue, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
 			} else if (/Секунд БОНУС\s*\+|Баланс бонус-секунд/i.test(name)) {
-				sumParam(services[i], result, 'min_bi', reValue, replaceTagsAndSpaces, parseBalanceMins, aggregate_sum);
+				sumParam(services[i], result, 'min_bi', reValue, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
 			} else if (/Секунд БОНУС-2|Баланс бесплатных секунд-промо/i.test(name)) {
-				sumParam(services[i], result, 'min_local', reValue, replaceTagsAndSpaces, parseBalanceMins, aggregate_sum);
+				sumParam(services[i], result, 'min_local', reValue, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
 			} else if (/минут в месяц|мин\./i.test(name)) {
-				var minutes = getParam(services[i], null, null, reValue, replaceTagsAndSpaces, parseBalanceMins);
-				sumParam(60 * minutes, result, 'min_local', null, null, null, aggregate_sum);
-				sumParam(minutes, result, 'min_local_clear', null, null, null, aggregate_sum);
+				var minutes = getParam(services[i], null, null, reValue, replaceTagsAndSpaces, parseMinutes);
+				sumParam(minutes, result, 'min_local', null, null, null, aggregate_sum);
+				sumParam(minutes/60, result, 'min_local_clear', null, null, null, aggregate_sum);
 			} else {
 				AnyBalance.trace('Неизвестная опция: ' + bonus_name + ' ' + services[i]);
 			}
@@ -404,7 +416,7 @@ function getBonuses(xhtml, result) {
 	}
 }
 
-function parseBalanceMins(str){
+/*function parseBalanceMins(str){
     var re = /(?:(\d+)\s*час\D*)?(?:(\d+)\s*мин\D*)?(?:(\d+)\s*сек)?/i;
     var matches = str.match(re);
     if(matches && (matches[1] || matches[2] || matches[3])){
@@ -414,7 +426,7 @@ function parseBalanceMins(str){
     }
 
     return parseBalance(str);
-}
+}*/
 
 function getBonusesPost(xhtml, result) {
 	var bonuses = sumParam(xhtml, null, null, /<div[^>]+class="bonus-heading"[^>]*>[\s\S]*?<\/table>/ig);
@@ -435,15 +447,15 @@ function getBonusesPost(xhtml, result) {
 			} else if (/Рублей за участие в опросе|Счастливое время/i.test(name)) {
 				sumParam(services[i], result, 'rub_opros', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 			} else if (/Времени общения/i.test(name)) {
-				sumParam(services[i], result, 'min_local', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalanceMins, aggregate_sum);
+				sumParam(services[i], result, 'min_local', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
 			} else if (/Секунд БОНУС\s*\+|Баланс бонус-секунд/i.test(name)) {
-				sumParam(services[i], result, 'min_bi', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalanceMins, aggregate_sum);
+				sumParam(services[i], result, 'min_bi', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
 			} else if (/Секунд БОНУС-2|Баланс бесплатных секунд-промо/i.test(name)) {
-				sumParam(services[i], result, 'min_local', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalanceMins, aggregate_sum);
+				sumParam(services[i], result, 'min_local', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
 			} else if (/минут в месяц|мин\./i.test(name)) {
-				var minutes = getParam(services[i], null, null, /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalanceMins);
-				sumParam(60 * minutes, result, 'min_local', null, null, null, aggregate_sum);
-				sumParam(minutes, result, 'min_local_clear', null, null, null, aggregate_sum);
+				var minutes = getParam(services[i], null, null, /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseMinutes);
+				sumParam(minutes, result, 'min_local', null, null, null, aggregate_sum);
+				sumParam(minutes/60, result, 'min_local_clear', null, null, null, aggregate_sum);
 			} else {
 				AnyBalance.trace('Неизвестная опция: ' + bonus_name + ' ' + services[i]);
 			}

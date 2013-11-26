@@ -86,6 +86,9 @@ function main() {
 		// Просто число
 		'1', '60',
 		'2', '120',
+		// Извращения
+		'5:01&#65533мин', '301',
+		'300 &#65533;мин ', '18000',
 	];
 	var temp = 0;
 	for (var i = 0; i < times.length; i++) {
@@ -95,7 +98,7 @@ function main() {
 		if(res == parsed) {
 			AnyBalance.trace('Item ' + (temp++) + ' parsed ok');
 		} else {
-			AnyBalance.trace('Item ' + (temp++) + ' parsing failed!!!');
+			AnyBalance.trace('___Item ' + (temp++) + ' parsing failed!!!___');
 		}
 	}
 		

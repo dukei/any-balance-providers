@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <EditTextPreference 
+    <EditTextPreference
+		obligatory="true"
         title="Е-мейл" 
         positiveButtonText="ОК" 
         summary="|Введите ваш е-мейл для входа в деньги@mail.ru|{@s}\n" 
@@ -10,14 +11,15 @@
         inputType="textEmailAddress"
         key="login">
     </EditTextPreference>
-    <EditTextPreference 
-        positiveButtonText="ОК"
-        key="password" 
-        dialogTitle="Пароль"
-        negativeButtonText="Отмена"
-        title="Пароль"
-        summary="|Введите пароль|***********"
-        dialogMessage="Введите пароль, используемый для входа в личный кабинет https://money.mail.ru."
-        inputType="textPassword">
-    </EditTextPreference>
+    <EditTextPreference
+		obligatory="true"
+		positiveButtonText="ОК"
+		key="password"
+		dialogTitle="Пароль"
+		negativeButtonText="Отмена"
+		title="Пароль"
+		summary="|Введите пароль|***********"
+		dialogMessage="Введите пароль, используемый для входа в личный кабинет https://money.mail.ru."
+		inputType="textPassword">
+	</EditTextPreference>
 </PreferenceScreen>

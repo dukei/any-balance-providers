@@ -1,29 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-money-money-mail-ru</id>
-  <name>деньги@mail.ru</name>
-  <description>
-    Получает текущий баланс в деньги@mail.ru из личного кабинета https://money.mail.ru/
-  </description>
-  <author>Stark &lt;support@starksoft.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-    <js>library.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units=" р"/>
-    <counter id="login" name="Учетная запись" type="text"/>
-  </counters>
-  <keywords>
-    мейл ру
-  </keywords>
-  <type>
-    money
-  </type>
-  <country>
-    ru
-  </country>
+	<id version="2">ab-money-money-mail-ru</id>
+	<api flags="no_browser"/>
+	<name>Деньги@mail.ru</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе в системе Деньги@mail.ru (https://money.mail.ru/)</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<js>library.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="login" name="Учетная запись" type="text"/>
+	</counters>
+	<keywords>мейл ру</keywords>
+	<type>money</type>
+	<country>ru</country>
 </provider>

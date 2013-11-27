@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+<change version="14" date="2013-11-27">
+- Улучшен запрос к серверу
+</change>
 <change version="13" date="2013-11-13">
 - Исправлена ошибка при отсутствии данных на сайте.
 </change>

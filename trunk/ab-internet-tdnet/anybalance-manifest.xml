@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-internet-tdnet</id>
+	<id version="2">ab-internet-tdnet</id>
 	<api flags="no_browser"/>
 	<name>TD-net (Комсомольск-на-Амуре)</name>
 	<description html="true"><![CDATA[
@@ -16,8 +16,11 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" р"/>
-		<counter id="dogovor1" name="Договор" type="text"/>
+		<counter id="balance" name="Общий баланс" units=" р"/>
+		<counter id="dogovor1" name="Договор 1" type="text"/>
+		<counter id="balance1" name="Баланс 1" units=" р"/>
+		<counter id="dogovor2" name="Договор 2" type="text"/>
+		<counter id="balance2" name="Баланс 2" units=" р"/>
 		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
 	<keywords></keywords>

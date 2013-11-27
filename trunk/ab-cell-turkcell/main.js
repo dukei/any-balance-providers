@@ -22,8 +22,6 @@ function main() {
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'https://m.turkcell.com.tr/';
 	AnyBalance.setDefaultCharset('utf-8');
-	prefs.login = '5333302879';
-	prefs.password = '933387';
 	
 	checkEmpty(prefs.login, 'Enter login!');
 	checkEmpty(prefs.password, 'Enter password!');

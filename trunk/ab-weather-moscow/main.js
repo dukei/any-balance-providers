@@ -22,8 +22,9 @@ function main() {
 
 	var dt = new Date(parseInt(data.ts.data)*1000);
 	if(dt)
-		getParam((dt.getDate() < 10 ? '0'+dt.getDate() : dt.getDate())+'/'+(dt.getMonth()+1 < 10 ? '0'+dt.getMonth()+1 : dt.getMonth()+1)+'/'+dt.getFullYear() + ' ' + dt.getHours()+':' + dt.getMinutes(), result, '__tariff');
-    
+		getParam((dt.getDate() < 10 ? '0'+dt.getDate() : dt.getDate())+'/'+(dt.getMonth()+1 < 10 ? '0'+dt.getMonth()+1 : dt.getMonth()+1)+'/'+dt.getFullYear() + ' ' + dt.getHours()+':' + (dt.getMinutes() < 10 ? '0'+dt.getMinutes() : dt.getMinutes()), result, '__tariff');
+		
+		
 	//result['__tariff'] = "http://gradus.melda.ru/";
 	AnyBalance.setResult(result);
 }

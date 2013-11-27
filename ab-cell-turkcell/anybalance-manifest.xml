@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2.0" version="5">ab-cell-turkcell</id>
+	<id major_version="2.0" version="6">ab-cell-turkcell</id>
 	<api flags="no_browser"/>
 	<name>Turkcell</name>
 	<description html="true"><![CDATA[
@@ -22,14 +22,21 @@
 		<counter id="sms_total" name="SMS Total" units=" sms"/>
 		<counter id="sms_used" name="SMS Used" units=" sms"/>
 		<counter id="sms_days" name="SMS Days left" units=" d"/>
+		
 		<counter id="minutes_local_left" name="Minutes Turkcell left" units=" dk"/>
 		<counter id="minutes_local_total" name="Minutes Turkcell total" units=" dk"/>
 		<counter id="minutes_local_used" name="Minutes Turkcell used" units=" dk"/>
 		<counter id="minutes_local_days" name="Minutes Turkcell days left" units=" d"/>
+		
 		<counter id="minutes_left" name="Minutes left" units=" dk"/>
 		<counter id="minutes_total" name="Minutes total" units=" dk"/>
 		<counter id="minutes_used" name="Minutes used" units=" dk"/>
 		<counter id="minutes_days" name="Minutes days left" units=" d"/>
+		
+		<counter id="minutes_group_left" name="Minutes Group left" units=" dk"/>
+		<counter id="minutes_group_total" name="Minutes Group total" units=" dk"/>
+		<counter id="minutes_group_used" name="Minutes Group used" units=" dk"/>
+		
 		<counter id="data_left" name="Data left" units=" Mb"/>
 		<counter id="data_total" name="Data total" units=" Mb"/>
 		<counter id="data_used" name="Data used" units=" Mb"/>

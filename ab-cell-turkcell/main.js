@@ -22,8 +22,8 @@ function main() {
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'https://m.turkcell.com.tr/';
 	AnyBalance.setDefaultCharset('utf-8');
-	//prefs.login = '5425024318';
-	//prefs.password = '616461';
+	prefs.login = '5333302879';
+	prefs.password = '933387';
 	
 	checkEmpty(prefs.login, 'Enter login!');
 	checkEmpty(prefs.password, 'Enter password!');
@@ -57,33 +57,41 @@ function main() {
 	getParam(html, result, 'phone', /"media__number"(?:[^>]*>){1}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 	
 	// Пакеты
-	if(isAvailable(['sms_days', 'sms_left', 'sms_total', 'sms_used', 'minutes_local_days', 'minutes_local_left', 'minutes_local_total', 'minutes_local_used', 'minutes_days', 'minutes_left', 'minutes_total', 'minutes_used', 'data_days', 'data_left', 'data_total', 'data_used'])) {
+	if(isAvailable(['sms_days', 'sms_left', 'sms_total', 'sms_used', 
+		'minutes_local_days', 'minutes_local_left', 'minutes_local_total', 'minutes_local_used', 
+		'minutes_days', 'minutes_left', 'minutes_total', 'minutes_used', 
+		'minutes_group_total', 'minutes_group_used', 'minutes_group_left', 
+		'data_days', 'data_left', 'data_total', 'data_used'])) {
+		
 		html = AnyBalance.requestGet(baseurl + 'hesabim', g_headers);
 
-		sumParam(html, result, 'minutes_local_total', /class="media__body"(?:[\s\S]*?<\/div)(?:[^>]*>){2}TURKCELL'LİLERLE\s*-([^<]*DK)/ig, [replaceTagsAndSpaces, /\./, ''], parseBalance, aggregate_sum)
-		sumParam(html, result, 'minutes_local_used', /(\d+)(?:<[^<]*){6}TURKCELL'LİLERLE/ig, [replaceTagsAndSpaces, /\./, ''], parseBalance, aggregate_sum)
-		sumParam(html, result, 'minutes_local_left', /(\d+)(?:<[^<]*){13}TURKCELL'LİLERLE/ig, [replaceTagsAndSpaces, /\./, ''], parseBalance, aggregate_sum)
-
+		sumParam(html, result, 'minutes_local_total', /class="media__body"(?:[\s\S]*?<\/div)(?:[^>]*>){2}TURKCELL'LİLERLE\s*-([^<]*DK)/ig, [replaceTagsAndSpaces, /\./, ''], parseBalance, aggregate_sum);
+		sumParam(html, result, 'minutes_local_used', /([\d.,]+)(?:<[^<]*){6}TURKCELL'LİLERLE[^<]*DK/ig, [replaceTagsAndSpaces, /\./, ''], parseBalance, aggregate_sum);
+		sumParam(html, result, 'minutes_local_left', /([\d.,]+)(?:<[^<]*){13}TURKCELL'LİLERLE[^<]*DK/ig, [replaceTagsAndSpaces, /\./, ''], parseBalance, aggregate_sum);
 		
-		sumParam(html, result, 'minutes_total', /class="media__body"(?:[\s\S]*?<\/div)(?:[^>]*>){2}HER YÖNE\s*-([^<]*DK)/ig, [replaceTagsAndSpaces, /\./, ''], parseBalance, aggregate_sum)
-		sumParam(html, result, 'minutes_used', /(\d+)(?:<[^<]*){6}HER YÖNE/ig, [replaceTagsAndSpaces, /\./, ''], parseBalance, aggregate_sum)
-		sumParam(html, result, 'minutes_left', /(\d+)(?:<[^<]*){13}HER YÖNE/ig, [replaceTagsAndSpaces, /\./, ''], parseBalance, aggregate_sum)
+		sumParam(html, result, 'minutes_total', /class="media__body"(?:[\s\S]*?<\/div)(?:[^>]*>){2}HER YÖNE\s*-([^<]*DK)/ig, [replaceTagsAndSpaces, /\./, ''], parseBalance, aggregate_sum);
+		sumParam(html, result, 'minutes_used', /([\d.,]+)(?:<[^<]*){6}HER YÖNE[^<]*DK/ig, [replaceTagsAndSpaces, /\./, ''], parseBalance, aggregate_sum);
+		sumParam(html, result, 'minutes_left', /([\d.,]+)(?:<[^<]*){13}HER YÖNE[^<]*DK/ig, [replaceTagsAndSpaces, /\./, ''], parseBalance, aggregate_sum);
 		
-		
-		
-		
-		
-		//sumParam(html, result, 'minutes_local_used', /(\d+)(?:<[^<]*){13}TURKCELL'LİLERLE/ig, [replaceTagsAndSpaces, /\./, ''], parseBalance, aggregate_sum)
-		
-		/*for(var i = 0; i < bonuses.length; i++) {
-			var current = bonuses[i];
-
-			// Минут всего внутри сети
-			
-		
-			getParam(total, result, 'minutes_local_total');
-		}*/
-
+		sumParam(html, result, 'minutes_group_total', /class="media__body"(?:[\s\S]*?<\/div)(?:[^>]*>){2}GRUP[^-]*-([^<]*DK)/ig, [replaceTagsAndSpaces, /\./, ''], parseBalance, aggregate_sum);
+		sumParam(html, result, 'minutes_group_used', /([\d.,]+)(?:<[^<]*){6}GRUP[^<]*DK/ig, [replaceTagsAndSpaces, /\./, ''], parseBalance, aggregate_sum);
+		sumParam(html, result, 'minutes_group_left', /([\d.,]+)(?:<[^<]*){13}GRUP[^<]*DK/ig, [replaceTagsAndSpaces, /\./, ''], parseBalance, aggregate_sum);
+		// Интернет 
+		var dataTable = getParam(html, null, null, /<h3(?:[^>]*>){3}\s*İNTERNET\s*<\/h3>\s*<div[^>]*data-toggle="carousel"[\s\S]*?<\/ul>/i, [/<!--[\s\S]*?-->/ig, '']);
+		if(dataTable) {
+			sumParam(dataTable, result, 'data_used', /((?:<[^<]*){2})(?:[^>]*>){1}MB KULLANILDI/ig, [replaceTagsAndSpaces, /\./, ''], parseBalance, aggregate_sum);
+			sumParam(dataTable, result, 'data_left', /((?:<[^<]*){2})(?:[^>]*>){1}MB KALDI/ig, [replaceTagsAndSpaces, /\./, ''], parseBalance, aggregate_sum);
+			if(isset(result.data_left) && isset(result.data_used))
+				getParam(result.data_left+result.data_used, result, 'data_total');
+		}
+		// SMS
+		var smsTable = getParam(html, null, null, /<h3(?:[^>]*>){3}\s*SMS\s*<\/h3>\s*<div[^>]*data-toggle="carousel"[\s\S]*?<\/ul>/i, [/<!--[\s\S]*?-->/ig, '']);
+		if(smsTable) {
+			sumParam(smsTable, result, 'sms_used', /((?:<[^<]*){2})(?:[^>]*>){1}ADET KULLANILDI/ig, [replaceTagsAndSpaces, /\./, ''], parseBalance, aggregate_sum);
+			sumParam(smsTable, result, 'sms_left', /((?:<[^<]*){2})(?:[^>]*>){1}ADET KALDI/ig, [replaceTagsAndSpaces, /\./, ''], parseBalance, aggregate_sum);
+			if(isset(result.sms_left) && isset(result.sms_used))
+				getParam(result.sms_left+result.sms_used, result, 'sms_total');
+		}		
 	}
 	
 	
@@ -186,15 +194,7 @@ function main() {
 				AnyBalance.trace('Can`t find bonuses!');
 			}
 		}
-		
-
-	
-	
 	}
 	
-	
-
-	
-
     AnyBalance.setResult(result);
 }

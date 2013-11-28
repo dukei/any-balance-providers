@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <EditTextPreference 
+    <EditTextPreference
+		obligatory="true"
         title="Email / Mobile Number" 
         positiveButtonText="OK" 
         summary="|Enter your login to MyLebara|{@s}" 
@@ -10,7 +11,8 @@
         inputType="textEmailAddress"
         key="login">
     </EditTextPreference>
-    <EditTextPreference 
+    <EditTextPreference
+		obligatory="true"
         positiveButtonText="OK"
         key="password" 
         dialogTitle="Password"

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-municipal-ivc-gkhitek</id>
+	<api flags="no_browser|capthca"/>
+	<name>ОАО "ИВЦ ЖКХ и ТЭК"</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера в личном кабинете ОАО "ИВЦ ЖКХ и ТЭК"</p>
+	<p>Информация берется из личного кабинета https://lk.ivc34.ru/stack-ls-info.php</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс счета" units=" р"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="acc_num" name="Номер счета" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>municipal</type>
+	<country>ru</country>
+</provider>

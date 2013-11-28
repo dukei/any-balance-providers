@@ -1,34 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="6">ab-bonus-ulmart</id>
-  <api flags="no_browser" />
-  <name>Ulmart</name>
+	<id version="7">ab-bonus-ulmart</id>
+	<api flags="no_browser" />
+	<name>Ulmart</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе XXL-бонусов в бонусной программе магазина электроники Ulmart (http://www.ulmart.ru).</p>
 	<p>Информация берется из личного кабинета.</p>
 	]]></description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-	<js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="XXL-Бонус"/>
-    <counter id="fio" name="ФИО" type="text"/>
-    <counter id="price" name="Колонка цен"/>
-	<counter id="subaccounts" name="Кол-во участников"/>
-	<counter id="subaccountall" name="Сводка по участникам" type="text"/>
-  </counters>
-  <keywords>
-    xxl-bonus
-  </keywords>
-  <type>
-    bonus
-  </type>
-  <country>
-    ru
-  </country>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="XXL-Бонус"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="price" name="Колонка цен"/>
+		<counter id="subaccounts" name="Кол-во участников"/>
+		<counter id="subaccountall" name="Сводка по участникам" type="text"/>
+	</counters>
+	<keywords>xxl-bonus</keywords>
+	<type>bonus</type>
+	<country>ru</country>
 </provider>

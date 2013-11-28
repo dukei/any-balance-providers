@@ -25,6 +25,8 @@
 		<counter id="number" name="Телефон" type="text"/>
 		<counter id="status" name="Статус" type="text"/>
 		<counter id="fio" name="Абонент" type="text"/>
+		<counter id="balance_date" name="Дата баланса" type="time" format="dd/MM/yyyy"/>
+		<counter id="toPay" name="Сумма к оплате на 1-е число текущего месяца" units=" ₴"/>
 	</counters>
 	<keywords>вега</keywords>
 	<type>telephony, internet</type>

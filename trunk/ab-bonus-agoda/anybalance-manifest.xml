@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-bonus-agoda</id>
+	<api flags="no_browser"/>
+	<name>Agoda bonuses</name>
+	<description html="true"><![CDATA[
+	<p>Obtains information from Agode personal account (https://www.agoda.com/rewards/login.html)</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Points" />
+	</counters>
+	<keywords></keywords>
+	<type>bonus</type>
+	<country></country>
+</provider>

@@ -1,18 +1,13 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Получает информацию по бонусной программе Ulmart
-
-Сайт оператора: http://ulmart.ru
-Личный кабинет: http://www.ulmart.ru/cabinet/
 */
+
 var g_headers = {
 	'Accept':'text/html, */*; q=0.01',
 	'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection':'keep-alive',
 	'X-Requested-With':'XMLHttpRequest',
-	//'User-Agent':'Mozilla/5.0 (BlackBerry; U; BlackBerry 9900; en-US) AppleWebKit/534.11+ (KHTML, like Gecko) Version/7.0.0.187 Mobile Safari/534.11+',
 	'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.62 Safari/537.36',
 };
 
@@ -37,7 +32,8 @@ function main(){
 
     var result = {success: true, subaccountall:''};
 	
-    getParam(html, result, 'balance', /class="title"[^>]*>XXL-Бонус[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'balance', /XXL-Бонус(?:[^>]*>){4}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	
     getParam(html, result, 'fio', /<div[^>]+class="name"[^>]*>([\s\S]*?)(?:▼|<\/div>)/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'price', /цена(?:&nbsp;|\s)+(\d+)/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, '__tariff', /<div[^>]+class="b-dropdown-popup__info"[^>]*>[\s\S]*?<\/div>([\s\S]*?)<ul/i, replaceTagsAndSpaces, html_entity_decode);

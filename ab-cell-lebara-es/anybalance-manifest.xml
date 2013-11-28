@@ -1,34 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-cell-lebara-es</id>
-  <name>Lebara Móvil</name>
-  <description>
-    Obtains balance on Lebara Mobile account (Spain). Gets data via MyLebara: https://www.lebara.es/dashboard.
-
-    First Time you Login to MyLebara
-    Login: Enter the Lebara Móvil number (9 digits) you want to sign up on MyLebara
-    Password: Use the PUK code stated on the back of your SIM pack
-
-    Important:
-    * When you log in for the first time, if you did not receive the validation e-mail, you can resubmit it by login your chosen e-mail and password.
-    * Before login to MyLebara, you should have activated your Lebara SIM by registering in a Lebara Movil's authorized point of sale. Find more information on how to register by clicking here
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Balance" units="€"/>
-  </counters>
-  <keywords>
-  </keywords>
-  <type>
-    cell
-  </type>
-  <country>
-    es
-  </country>
+	<id version="2">ab-cell-lebara-es</id>
+	<name>Lebara Móvil</name>
+	<description html="true"><![CDATA[
+	<p>Obtains balance on Lebara Mobile account (Spain). Gets data via MyLebara: https://www.lebara.es/dashboard.</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>First Time you Login to MyLebara:</p>
+	<p>Login: Enter the Lebara Móvil number (9 digits) you want to sign up on MyLebara</p>
+	<p>Password: Use the PUK code stated on the back of your SIM pack</p>
+	<p><b>Important:</b></p>
+	<p>* When you log in for the first time, if you did not receive the validation e-mail, you can resubmit it by login your chosen e-mail and password.</p>
+	<p>* Before login to MyLebara, you should have activated your Lebara SIM by registering in a Lebara Movil's authorized point of sale. Find more information on how to register by clicking here</p>
+	]]></instruction>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Balance" units=" €"/>
+	</counters>
+	<keywords></keywords>
+	<type>cell</type>
+	<country>es</country>
 </provider>

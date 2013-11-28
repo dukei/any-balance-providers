@@ -1,41 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="5">ab-telephony-vegatele</id>
-  <name>Vega телефония</name>
-  <description>
-    Получает текущий баланс и другие параметы у украинского провайдера проводной телефонии Vega (http://www.vegatele.com).
-
-    Провайдер получает данные из личного кабинета https://my.vegatele.com.
-
-Новые абоненты телефонии, как физические, так и юридические лица, получают доступ в Личный кабинет при подключении услуги.
-
-Абоненты-физические лица смогут заполнить заявку на странице Личного кабинета (https://my.vegatele.com/login_pc_tel) и получить пароль доступа на свой контактный e-mail. Тем, у кого есть Персональный код, для регистрации в Личном кабинете достаточно ввести свой номер телефона, Персональный код и контактный e-mail, на который высылается логин и пароль для входа.
-
-Абонентам-юридическим лицам для получения доступа в Личный кабинет телефонии необходимо обратиться с заявлением в центре продаж и обслуживания Vega.
-
-Личный кабинет для пользователей услуги «Телефония» доступен абонентам Vega, физическим и юридическим лицам, во всех городах, где предоставляется услуга фиксированной телефонии.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units=" ₴"/>
-    <counter id="number" name="Телефон" type="text"/>
-    <counter id="status" name="Статус" type="text"/>
-    <counter id="fio" name="Абонент" type="text"/>
-  </counters>
-  <keywords>
-    вега
-  </keywords>
-  <type>
-    telephony
-  </type>
-  <country>
-    ua
-  </country>
+	<id major_version="2" version="6">ab-telephony-vegatele</id>
+	<name>Vega (Телефония, Интернет)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе и других параметров у украинского провайдера проводной телефонии и интернет Vega (http://www.vegatele.com).</p>
+	<p>Информация берется из личного кабинета https://my.vegatele.com.</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Новые абоненты телефонии, как физические, так и юридические лица, получают доступ в Личный кабинет при подключении услуги.</p>
+	<p>Абоненты-физические лица смогут заполнить заявку на странице Личного кабинета (https://my.vegatele.com/login_pc_tel) и получить пароль доступа на свой контактный e-mail. Тем, у кого есть Персональный код, для регистрации в Личном кабинете достаточно ввести свой номер телефона, Персональный код и контактный e-mail, на который высылается логин и пароль для входа.</p>
+	<p>Абонентам-юридическим лицам для получения доступа в Личный кабинет телефонии необходимо обратиться с заявлением в центре продаж и обслуживания Vega.</p>
+	<p>Личный кабинет для пользователей услуги «Телефония» доступен абонентам Vega, физическим и юридическим лицам, во всех городах, где предоставляется услуга фиксированной телефонии.</p>
+	]]></instruction>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" ₴"/>
+		<counter id="number" name="Телефон" type="text"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="fio" name="Абонент" type="text"/>
+	</counters>
+	<keywords>вега</keywords>
+	<type>telephony, internet</type>
+	<country>ua</country>
 </provider>

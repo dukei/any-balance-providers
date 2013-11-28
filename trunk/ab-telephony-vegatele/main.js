@@ -1,18 +1,13 @@
  /**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-VEGA — телефонная фиксированная связь в городах Украины
-Сайт оператора: http://www.vegatele.com
-Личный кабинет: https://my.vegatele.com
-
 */
 
 var g_headers = {
-'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
-'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-'Connection':'keep-alive',
-'User-Agent':'Mozilla/5.0 (Windows NT 5.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/27.0.1453.94 Safari/537.36'
+	'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
+	'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Connection':'keep-alive',
+	'User-Agent':'Mozilla/5.0 (Windows NT 5.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/27.0.1453.94 Safari/537.36'
 };
 
 function main(){
@@ -43,11 +38,8 @@ function main(){
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Проблемы на сайте или сайт изменен.');
     }
     
-    var result = {
-        success: true
-    };
-
-
+    var result = {success: true};
+	
     html = AnyBalance.requestGet(baseurl + 'finance/client_info', g_headers);
 
     getParam(html, result, 'balance', /<span[^>]+id="balance"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);

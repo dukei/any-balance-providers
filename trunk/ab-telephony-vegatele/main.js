@@ -48,5 +48,11 @@ function main(){
     getParam(html, result, 'status', /<span[^>]+id="ConnectionStatus"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, '__tariff', /<span[^>]+id="tmName"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
 
+	
+	getParam(html, result, 'balance_date', /"balanceDate"[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseDateISO);
+	
+	getParam(html, result, 'toPay', /Сумма к оплате на 1-е число текущего месяца:(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	
+	
     AnyBalance.setResult(result);
 }

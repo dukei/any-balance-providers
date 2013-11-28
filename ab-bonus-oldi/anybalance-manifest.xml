@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="1">ab-bonus-oldi</id>
+	<id version="2">ab-bonus-oldi</id>
 	<name>Олди (Бонусы)</name>
-	<description>
-	Получает данные по бонусным картам сети магазинов Олди (http://www.oldi.ru/)
-	
-	Личный кабинет находится по адресу: http://www.oldi.ru/personal/ 
-	</description>
+	<description html="true"><![CDATA[
+	<p>Получает данные по бонусным картам сети магазинов Олди (http://www.oldi.ru/)</p>
+	<p>Информация берется из личного кабинета http://www.oldi.ru/personal/</p>
+	]]></description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
@@ -21,7 +20,7 @@
 		<counter id="suumazakazov" name="Сумма заказов"/>
 		<counter id="zakazy" name="Количество заказов"/>
 	</counters>
-	<keywords></keywords>
+	<keywords>oldi</keywords>
 	<type>bonus</type>
 	<country>ru</country>
 </provider>

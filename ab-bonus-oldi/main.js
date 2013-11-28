@@ -7,7 +7,6 @@ var g_headers = {
 	'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection':'keep-alive',
-	//'User-Agent':'Mozilla/5.0 (BlackBerry; U; BlackBerry 9900; en-US) AppleWebKit/534.11+ (KHTML, like Gecko) Version/7.0.0.187 Mobile Safari/534.11+',
 	'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.62 Safari/537.36',
 };
 
@@ -35,9 +34,10 @@ function main(){
     }
 
     var result = {success: true};
-    getParam(html, result, '__tariff', /№ карты покупателя(?:[\s\S]*?<[^>]*>){2}[^>]*value="([^"]*)/i, replaceTagsAndSpaces, html_entity_decode);
+	// parseFloat используется намеренно, т.к. value="1.11242e+06" что на самом деле значит 1 112 420
+    getParam(html, result, 'suumazakazov', /Сумма заказов, руб(?:[\s\S]*?<[^>]*>){2}[^>]*value="([^"]*)/i, replaceTagsAndSpaces, parseFloat);
+	getParam(html, result, '__tariff', /№ карты покупателя(?:[\s\S]*?<[^>]*>){2}[^>]*value="([^"]*)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'zakazy', /Количество заказов[\s\S]*?Количество заказов<\/span>(?:[\s\S]*?<[^>]*>){1}[^>]*value="([^"]*)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'suumazakazov', /Количество заказов[\s\S]*?Количество заказов<\/span>(?:[\s\S]*?<[^>]*>){2}[^>]*value="([^"]*)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'bonus', /Накоплено бонусов(?:[\s\S]*?<[^>]*>){2}[^>]*value="([^"]*)/i, replaceTagsAndSpaces, parseBalance);
 	
     AnyBalance.setResult(result);

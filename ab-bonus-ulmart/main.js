@@ -32,15 +32,14 @@ function main(){
 
     var result = {success: true, subaccountall:''};
 	
-    getParam(html, result, 'balance', /XXL-Бонус(?:[^>]*>){4}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-	
-    getParam(html, result, 'fio', /<div[^>]+class="name"[^>]*>([\s\S]*?)(?:▼|<\/div>)/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'fio', />Личный кабинет<(?:[\s\S]*?<div[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'price', /цена(?:&nbsp;|\s)+(\d+)/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, '__tariff', /<div[^>]+class="b-dropdown-popup__info"[^>]*>[\s\S]*?<\/div>([\s\S]*?)<ul/i, replaceTagsAndSpaces, html_entity_decode);
 	
-	if(isAvailable(['subaccountall', 'subaccounts'])){
+	if(isAvailable(['subaccountall', 'subaccounts', 'balance'])){
 		html = AnyBalance.requestGet(baseurl + 'cabinet/xxlBonus', addHeaders({Referer:'http://www.ulmart.ru/cabinet?v=bonus'}));
 		
+		getParam(html, result, 'balance', /XXL-Бонус(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, 'subaccounts', /вашей сети[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 		
 		var list = getParam(html, null, null, /(<ul>[\s\S]*?<\/ul>)/i, replaceTagsAndSpaces, html_entity_decode);

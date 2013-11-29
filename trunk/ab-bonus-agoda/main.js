@@ -3,35 +3,51 @@
 */
 
 var g_headers = {
-	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'Accept': '*/*',
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.57 Safari/537.36',
+	'Origin':'https://www.agoda.com'
 };
+
+function getViewState(html) {
+	return getParam(html, null, null, /"__VIEWSTATE"[^>]*value="([^"]*)/i);
+}
+
+function getEventValidation(html) {
+	return getParam(html, null, null, /"__EVENTVALIDATION"[^>]*value="([^"]*)/i);
+}
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'https://www.agoda.com/';
 	AnyBalance.setDefaultCharset('utf-8');
-
-	checkEmpty(prefs.login, 'Введите логин!');
-	checkEmpty(prefs.password, 'Введите пароль!');
+	
+	checkEmpty(prefs.login, 'Enter login!');
+	checkEmpty(prefs.password, 'Enter password!');
 
 	var html = AnyBalance.requestGet(baseurl + 'rewards/login.html', g_headers);
+	
+	html = AnyBalance.requestPost(baseurl + 'rewards/login.html', {
+		'ctl00$ctl00$scriptmanager1':'ctl00$ctl00$MainContent$ContentMain$udpMain|ctl00$ctl00$MainContent$ContentMain$RewardLogin1$btnSignIn',
+		'ctl00_ctl00_scriptmanager1_HiddenField':'',
+		'__EVENTTARGET':'',
+		'__EVENTARGUMENT':'',
+		'__VIEWSTATE':getViewState(html),
+		'__EVENTVALIDATION':getEventValidation(html),
+		'ctl00$ctl00$Googlesearch$txtSearch':'',
+		'ctl00$ctl00$MainContent$ContentMain$RewardLogin1$txtEmail':prefs.login,
+		'ctl00$ctl00$MainContent$ContentMain$RewardLogin1$txtPassword':prefs.password,
+		'__ASYNCPOST':'true',
+		'ctl00$ctl00$MainContent$ContentMain$RewardLogin1$btnSignIn':'Sign In',
+	}, addHeaders({
+		Referer: baseurl + 'rewards/login.html',
+		'X-MicrosoftAjax':'Delta=true',
+		'X-Requested-With':'XMLHttpRequest'
+	}));
 
-	var params = createFormParams(html, function(params, str, name, value) {
-		if (name == 'ctl00$ctl00$MainContent$ContentMain$RewardLogin1$txtEmail') 
-			return prefs.login;
-		else if (name == 'ctl00$ctl00$MainContent$ContentMain$RewardLogin1$txtPassword')
-			return prefs.password;
-
-		return value;
-	});	
-
-	html = AnyBalance.requestPost(baseurl + 'rewards/login.html', params, addHeaders({Referer: baseurl + 'rewards/login.html'}));
-
-	if (!/sign out/i.test(html)) {
+	if (!/pageRedirect||%2frewards%2fmanagebooking.html/i.test(html)) {
 		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error && /Неверный логин или пароль/i.test(error))
 			throw new AnyBalance.Error(error, null, true);
@@ -39,8 +55,25 @@ function main() {
 			throw new AnyBalance.Error(error);
 		throw new AnyBalance.Error('Can`t login! Is the site is changed?');
 	}
-	html = AnyBalance.requestGet(baseurl + 'rewards/transactions.html', g_headers);
 	
+	html = AnyBalance.requestPost(baseurl + 'rewards/managebooking.html', {
+		'ctl00$ctl00$scriptmanager1':'ctl00$ctl00$MainContent$leftMenu1$udpMenu|ctl00$ctl00$MainContent$leftMenu1$lbtMyReward',
+		'ctl00_ctl00_scriptmanager1_HiddenField':'',
+		'__EVENTTARGET':'ctl00$ctl00$MainContent$leftMenu1$lbtMyReward',
+		'__EVENTARGUMENT':'',
+		'__VIEWSTATE':getViewState(html),
+		'__EVENTVALIDATION':getEventValidation(html),
+		'ctl00$ctl00$Googlesearch$txtSearch':'',
+		'__ASYNCPOST':'true',
+		'':''
+	}, addHeaders({
+		Referer: baseurl + 'rewards/managebooking.html',
+		'X-MicrosoftAjax':'Delta=true',
+		'X-Requested-With':'XMLHttpRequest'
+	}));
+
+	html = AnyBalance.requestGet(baseurl + 'rewards/transactions.html', g_headers);
+
 	var result = {success: true};
 	
 	getParam(html, result, 'balance', />Available Points(?:[\s\S]*?<td[^>]*>){3}([^<]*)/i, [replaceTagsAndSpaces, /\D/, ''], parseBalance);

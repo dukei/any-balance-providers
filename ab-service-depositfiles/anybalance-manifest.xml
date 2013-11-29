@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-service-depositfiles</id>
+	<api flags="no_browser|captcha"/>
+	<name>Depositfiles</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе в систмеме Depositfiles (http://www.dfiles.ru/)</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Текущий баланс" units=" $"/>
+		<counter id="outpay_balance" name="Запрошенная выплата" units=" $"/>
+		<counter id="earned_today" name="Заработано сегодня" units=" $"/>
+		<counter id="earned_estoday" name="Заработано вчера" units=" $"/>
+	</counters>
+	<keywords></keywords>
+	<type>service</type>
+	<country>ru</country>
+</provider>

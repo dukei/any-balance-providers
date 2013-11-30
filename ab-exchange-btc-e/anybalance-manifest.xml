@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
   <id version="2">ab-exchange-btc-e</id>
   <name>BTC-E</name>
   <description>
-    Получает курс на бирже BTC-E (https://btc-e.com)
+    Obtains BitCoin exchange rates at BTC-E (https://btc-e.com)
   </description>
   <author>Alexandra Shalamova &lt;alexandrashalamova@gmail.com&gt;</author>
   <files>
@@ -25,12 +25,11 @@
     <counter id="servertime" name="Server time" type="time"/>
   </counters>
   <keywords>
-    бтс е
+    бтс е биткоин
   </keywords>
   <type>
     exchange
   </type>
   <country>
-    en
   </country>
 </provider>

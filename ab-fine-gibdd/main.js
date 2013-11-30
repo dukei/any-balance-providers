@@ -19,6 +19,10 @@ function main(){
 
 	var form = getParam(html, null, null, /(<form method="POST" id="tsdataform"[\s\S]*?<\/form>)/i);
 	if(!form){
+		if (AnyBalance.getLastStatusCode() > 400) {
+			AnyBalance.trace('Server returned: ' + AnyBalance.getLastStatusString());
+			throw new AnyBalance.Error('Сервис проверки штрафов временно недоступен, скоро все снова будет работать.');
+		}
 		// Попробуем объяснить почему
 		if(/Работа сервиса проверки[^<]*временно приостановлена/i.test(html))
 			throw new AnyBalance.Error('Работа сервиса временно приостановлена! Попробуйте зайти позже.');
@@ -58,30 +62,30 @@ function main(){
 	}));
 	
 	try {
-		var json = getJson(html);
+		var json = JSON.parse(html);
 	}
 	catch(e) {
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось получить информацию, свяжитесь с разработчиком провайдера');
 	}
-	var result = {success: true, balance:0 };
+	var result = {success: true, balance:0} ;
 	
 	if(json.status == 1)
 		throw new AnyBalance.Error('Не верно введены символы с картинки');
 	
 	if(json.request.error == 1)
 		throw new AnyBalance.Error('Указанное Вами свидетельство о регистрации транспортного средства не соответствует государственным регистрационным знакам. Вероятно, Вами допущена ошибка при заполнении полей запроса.');
-
+	
 	else if(json.request.error > 0) 
 		throw new AnyBalance.Error('Неизвестный код ошибки: ' + json.request.error);
-		
+	
 	AnyBalance.trace('Штрафов: ' + json.request.count);
 	if(json.request.count > 0) {
 		for(var i = 0; i< json.request.count; i++){
 			var curr = json.request.data[i];
 			sumParam(curr.Summa+'', result, 'balance', null, null, parseBalance, aggregate_sum);
 		}
-		getParam(curr.DatePost+'', result, 'date', null, replaceTagsAndSpaces, parseDateISO);
+		getParam(curr.DateDecis+'', result, 'date', null, replaceTagsAndSpaces, parseDateGibdd);
 		getParam(json.request.count+'', result, 'count', null, null, html_entity_decode);
 		getParam(curr.KoAPtext.toUpperCase().substring(0,1) + curr.KoAPtext.toLowerCase().substring(1), result, 'descr', null, null, html_entity_decode);
 		getParam(curr.KoAPcode, result, 'koap', null, replaceTagsAndSpaces, html_entity_decode);
@@ -95,4 +99,19 @@ function main(){
 	}
 	result.__tariff = prefs.login.toUpperCase();
     AnyBalance.setResult(result);
+}
+
+/** Получает дату из строки, почему-то parseDateISO на устройстве не может распарсить вот такую дату 2013-11-23 21:16:00 */
+function parseDateGibdd(str){
+	//new Date(year, month, date[, hours, minutes, seconds, ms] )
+	//2013-11-23 21:16:00
+
+    var matches = /(\d{4})\D(\d{2})\D(\d{2})\D(\d{1,2}):(\d{1,2}):(\d{1,2})/.exec(str);
+    if(matches){
+          var date = new Date(matches[1], matches[2]-1, +matches[3], matches[4] || 0, matches[5] || 0, matches[6] || 0);
+	  var time = date.getTime();
+          AnyBalance.trace('Parsing date ' + date + ' from value: ' + str);
+          return time;
+    }
+    AnyBalance.trace('Failed to parse date from value: ' + str);
 }

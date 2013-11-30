@@ -37,19 +37,19 @@ function main() {
 		if (!/\/security\/signout/i.test(html)) {
 			var error = getParam(html, null, null, /\$\('#window1'\)\.html\('([\s\S]*?)'\)/i, replaceSlashes);
 			if (error) 
-				throw new AnyBalance.Error(error);
+				throw new AnyBalance.Error(error, null, /Неверный пароль или логин/i.test(error));
 			//Если объяснения ошибки не найдено, при том, что на сайт войти не удалось, то, вероятно, произошли изменения на сайте
 			throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 		}
 		//Раз мы здесь, то мы успешно вошли в кабинет
 		var result = {success: true};
 		
-		getParam(html, result, '__tariff', /((?:Кошелек №|Wallet No.)\s*\d+)/i, replaceTagsAndSpaces, html_entity_decode);
-		getParam('р', result, ['currency', 'balance', 'spent', 'limit']);
-		getParam(html, result, 'balance', /(?:Ваш баланс|Your balance):([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseBalanceRK);
+		getParam(html, result, '__tariff', /<span[^>]+class="auth_ewallet_num"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+		getParam(html, result, 'balance', /<div[^>]+class="auth_money_count"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, ['currency', 'balance', 'spent', 'limit'], /<div[^>]+class="auth_money_count"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseCurrency);
 		getParam(html, result, 'spent', /(?:Из них израсходовано|Spent):([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, 'limit', /(?:Месячный лимит|Monthly limit):([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'wallet', /(?:Кошелек №|Wallet No.)\s*(\d+)/i, replaceTagsAndSpaces, html_entity_decode);
+		getParam(html, result, 'wallet', /<span[^>]+class="auth_ewallet_num"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
 		
 		AnyBalance.setResult(result);
 	} else {
@@ -79,13 +79,4 @@ function main() {
 		
 		AnyBalance.setResult(result);
 	}
-}
-
-function parseBalanceRK(_text) {
-	var text = _text.replace(/\s+/g, '');
-	var rub = getParam(text, null, null, /(-?\d[\d\.,]*)руб/i, replaceFloat, parseFloat) || 0;
-	var kop = getParam(text, null, null, /(-?\d[\d\.,]*)коп/i, replaceFloat, parseFloat) || 0;
-	var val = rub + kop / 100;
-	AnyBalance.trace('Parsing balance (' + val + ') from: ' + _text);
-	return val;
 }

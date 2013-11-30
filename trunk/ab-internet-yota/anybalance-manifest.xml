@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="6">ab-internet-yota</id>
+	<id version="7">ab-internet-yota</id>
 	<name>Yota (Россия)</name>
 	<description html="true"><![CDATA[
 	<p>Получает информацию о балансе и тарифном плане для пользователей интернет-провайдера LTE и WiMAX Yota http://yota.ru.</p> 
@@ -19,15 +19,16 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units="р"/>
-		<counter id="abon" name="Абонентская плата" units="р"/>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="abon" name="Абонентская плата" units=" р"/>
 		<counter id="speed" name="Скорость" type="text"/>
 		<counter id="timeleft" name="Осталось времени" type="time_interval" format="{@D}дн, {@h}:{@min}"/>
 		<counter id="licschet" name="Лицевой счет" type="text"/>
-		<counter id="abon1" name="Абонентская плата 2" units="р"/>
+		<counter id="abon1" name="Абонентская плата 2" units=" р"/>
 		<counter id="speed1" name="Скорость 2" type="text"/>
 		<counter id="timeleft1" name="Осталось времени 2" type="time_interval" format="{@D}дн, {@h}:{@min}"/>
 		<counter id="agreement" name="Тип договора" type="text"/>
+		<counter id="fio" name="Имя" type="text"/>
 		<counter id="email" name="E-mail" type="text"/>
 		<counter id="phone" name="Телефон" type="text"/>
 	</counters>

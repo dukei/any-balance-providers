@@ -65,6 +65,7 @@ function main(){
     } else {
         html = AnyBalance.requestGet(baseurl + 'devices');
     }
+	var lastUrl = AnyBalance.getLastUrl();
 	
     if(!/\/selfcare\/logout/.test(html)){
         var error = getParam(html, null, null, /id="site-fastclick"[^>]*>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, html_entity_decode);
@@ -72,7 +73,7 @@ function main(){
             error = getParam(html, null, null, /id="selfcare-not-available"[^>]*>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error);
-		if(!/404 not found/.test(html))
+		if(/404 not found/i.test(html) || /error-site-fastclick/i.test(lastUrl))
 			throw new AnyBalance.Error("В данный момент превышено допустимое количество подключений к серверу. Попробуйте обновить данные позже.");
 		
 		AnyBalance.trace(html);
@@ -80,8 +81,6 @@ function main(){
     }
 
     var result = {success: true};
-
-	var lastUrl = AnyBalance.getLastUrl();
 	
 	if(/corp\./i.test(lastUrl)) {
 		AnyBalance.trace('Это корпоративный кабинет.');

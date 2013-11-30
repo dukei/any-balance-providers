@@ -170,10 +170,13 @@ function main(){
 					} else {
 						AnyBalance.trace('Бонусов не нашли, попробуем получить бонусы другим способом...');
 						try {
-							var jsonBonus = JSON.parse(AnyBalance.requestPost(baseurl + 'plugins/south-bonus/1.0.2-SNAPSHOT/request', {action: 'getBonusBalance', accountId:acc.__detailedInfo.id}, g_headers));
+							html = AnyBalance.requestPost(baseurl + 'plugins/south-bonus/1.0.2-SNAPSHOT/request', {action: 'getBonusBalance', accountId:acc.__detailedInfo.id}, g_headers);
+							var jsonBonus = JSON.parse(html);
 							if(jsonBonus.balance)
 								getParam(jsonBonus.balance+'', result, 'bonus' + suffix, null, replaceTagsAndSpaces, parseBalance);						
-						} catch(e) {}
+						} catch (e) {
+							AnyBalance.trace('Can`t parse json from: ' + html);
+						}
 					}
 				}
             }

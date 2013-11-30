@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<id version="1">ab-bonus-ecolines</id>
 	<api flags="no_browser"/>
@@ -20,5 +20,5 @@
 	</counters>
 	<keywords></keywords>
 	<type>bonus</type>
-	<country>ru, lv, en, lt, est, pl, de, bg</country>
+	<country>ru, lv, lt, ee, pl, de, bg</country>
 </provider>

@@ -81,18 +81,18 @@ function main(){
 
 		if(result.found == null){throw new AnyBalance.Error("Ошибка при получении данных с сайта.");}
 
-		if(AnyBalance.isAvailable('last') && (matches = info.match(/<div class="t_i_i (t_i_odd )?t_i_e_r">[\s\S]*?<div class="t_i_description">[\s\S]*?<\/div>/i))){
+		if(AnyBalance.isAvailable('last') && (matches = info.match(/<div class="item \S*?">[\s\S]*?<div class="description">[\s\S]*?<\/div>/i))){
 			info=matches[0];
 
-			result.date = getParam(info, null, null, /<div class="t_i_date">\s+(\S*?)\s*<span/i, replaceTagsAndSpaces, html_entity_decode);
-			result.time = getParam(info, null, null, / <span class="t_i_time">(.*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+			result.date = getParam(info, null, null, /<div class="date">\s+(\S*?)\s*<span/i, replaceTagsAndSpaces, html_entity_decode);
+			result.time = getParam(info, null, null, /<span class="time">(.*?)<\/span/i, replaceTagsAndSpaces, html_entity_decode);
 			if(result.date != null && result.time != null){result.datetime = result.date + ' ' + result.time;}
 			else if(result.date != null){result.datetime = result.date;}
 			else if(result.time != null){result.datetime = result.time;}
 
 			getParam(info, result, 'last', /<a class="second-link".*?>\s+(.*?)<\/a>/i, replaceTagsAndSpaces, html_entity_decode);
-			getParam(info, result, 'price', /<div class="t_i_description">\s+<span>(.*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-			getParam(info, result, 'currency', /<div class="t_i_description">\s+<span.*?span>\s*<span>(.*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+			getParam(info, result, 'price', /<div class="about">\s+<span>(.*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+			getParam(info, result, 'currency', /<div class="about">\s+<span>.*?<\/span>\s+<span>(.*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
 
 		}else {throw new AnyBalance.Error("Ошибка при разборе ответа с сайта.");}
 

@@ -358,16 +358,16 @@ function fetchNewAccountCard(html) {
 	var baseurl = "https://online.sberbank.ru";
 	html = AnyBalance.requestGet(baseurl + '/PhizIC/private/cards/list.do');
 	var lastdigits = prefs.lastdigits ? prefs.lastdigits.replace(/(\d)/g, '$1\\s*') : '(?:\\d\\s*){3}\\d';
-	var baseFind = '<span[^>]*class="accountNumber\\b[^"]*">[^<]*' + lastdigits + '<';
-	var reCardId = new RegExp(baseFind + '[\\s\\S]*?<span[^>]*class\\s*=\\s*"roundPlate[^>]*onclick\\s*=\\s*"[^"]*info.do\\?id=(\\d+)', 'i');
+	var baseFind = '<[^>]*class="accountNumber\\b[^"]*">[^<]*' + lastdigits + '<';
+	var reCardId = new RegExp(baseFind + '[\\s\\S]*?<div[^>]+id="card_(\\d+)', 'i');
 	//    AnyBalance.trace('Пытаемся найти карту: ' + reCardId);
 	var cardId = getParam(html, null, null, reCardId);
 	if (!cardId) {
 		if (prefs.lastdigits) throw new AnyBalance.Error("Не удаётся идентификатор карты с последними цифрами " + prefs.lastdigits);
 		else throw new AnyBalance.Error("Не удаётся найти ни одной карты");
 	}
-	var reCardNumber = new RegExp('<span[^>]*class="accountNumber\\b[^"]*">\s*([^<]*' + lastdigits + ')<', 'i');
-	var reBalance = new RegExp(baseFind + '[\\s\\S]*?<span class="data[^>]*>([^<]*)', 'i');
+	var reCardNumber = new RegExp('<[^>]*class="accountNumber\\b[^"]*">([^<]*' + lastdigits + ')<', 'i');
+	var reBalance = new RegExp('<a[^>]+href="[^"]*info.do\\?id=' + cardId + '"[\\s\\S]*?<span[^>]+class="overallAmount\\b[^>]*>([\\s\\S]*?)</span>', 'i');
 	var result = {success: true};
 	
 	getParam(html, result, 'balance', reBalance, replaceTagsAndSpaces, parseBalance);

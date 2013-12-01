@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="19">ab-game-wot</id>
+	<id version="20">ab-game-wot</id>
 	<name>World of Tanks</name>
 	<description>
 		Показывает ник и клан-тэг, общее количество боев и побед, средний опыт, рейтинги эффективности в игре World of Tanks, а также информацию о количестве боев и побед на выбранном танке

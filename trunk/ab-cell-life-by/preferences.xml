@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <EditTextPreference 
+    <EditTextPreference 	
+		obligatory="true"
         key="login"
         title="Номер телефона" 
         summary="9 цифр номера (без +375)||{@s}\n" 
@@ -11,6 +12,7 @@
         inputType="number">
     </EditTextPreference>
     <EditTextPreference 
+		obligatory="true"
         key="password" 
         title="Пароль"
         summary="Пароль для входа в ИССА Life:)||***********\n"

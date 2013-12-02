@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="6">ab-cell-life-by</id>
-  <api flags="no_browser" />
-  <name>Life:) Беларусь</name>
+	<id version="7">ab-cell-life-by</id>
+	<api flags="no_browser" />
+	<name>Life:) Беларусь</name>
 	<description html="true"><![CDATA[
 	<p>Получает информацию о балансе для пользователей мобильного оператора Life:) (Белоруссия).</p>
 	<p>Информация берется из личного кабинета http://issa.life.com.by.</p>  
@@ -13,31 +13,25 @@
 	<li>Наберите на своём телефоне *120# и следуйте инструкциям.</li>
 	</ul>
 	]]></instruction>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" suffix=" р"/>
-    <counter id="balance_bonus" name="Бонусы" suffix=" р"/>
-    <counter id="traffic_left" name="Остаток трафика" suffix=" Мб"/>
-    <counter id="traffic_night_left" name="Остаток ночного трафика" suffix=" Мб"/>
-    <counter id="min_left" name="Остаток минут" suffix=" мин"/>
-    <counter id="min_left_other" name="Минуты на другие сети" suffix=" мин"/>
-    <counter id="sms_left" name="Остаток СМС" suffix=" смс"/>
-    <counter id="mms_left" name="Остаток ММС" suffix=" ммс"/>
-  </counters>
-  <keywords>
-    мобильный оператор лайф белоруссия проверка баланса
-  </keywords>
-  <type>
-    cell
-  </type>
-  <country>
-    by
-  </country>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" suffix=" р"/>
+		<counter id="balance_bonus" name="Бонусы" suffix=" р"/>
+		<counter id="traffic_left" name="Остаток трафика" suffix=" Мб"/>
+		<counter id="traffic_night_left" name="Остаток ночного трафика" suffix=" Мб"/>
+		<counter id="min_left" name="Остаток минут" suffix=" мин"/>
+		<counter id="min_left_other" name="Минуты на другие сети" suffix=" мин"/>
+		<counter id="sms_left" name="Остаток СМС" suffix=" смс"/>
+		<counter id="mms_left" name="Остаток ММС" suffix=" ммс"/>
+	</counters>
+	<keywords>мобильный оператор лайф белоруссия проверка баланса</keywords>
+	<type>cell</type>
+	<country>by</country>
 </provider>

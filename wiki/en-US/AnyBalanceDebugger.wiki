@@ -1,0 +1,66 @@
+#summary Step-by-step provider debugger  in Google Chrome
+
+= Introduction =
+
+Step-by-step provider debugger represents [http://code.google.com/p/any-balance-providers/downloads/list?q=OpSys-Chrome  Google Chrome extention], which simulates a runtime enviroment of a provider in AnyBalance. It's not complete simulation, so if a provider works in the debugger, it should be checked directly in AnyBalance.
+
+= Installation =
+
+To install the debugger download via Google Chrome [http://code.google.com/p/any-balance-providers/downloads/list?q=OpSys-Chrome extention]. If you download it via [https://www.google.com/chrome/ Google Chrome browser], it will be installed automatically. If it was not downloaded (it could be forbidden to install extentions not from the extentions shop), take the following actions.
+
+ #. In Chrome follow a link *chrome://settings/extensions*.
+ #. Find previously downloaded extention file and dgar it to the page "Extentions".
+ #. In the opened dialog box click Install.
+ #. For extention AnyBalanceDebugger put ticks *Allow the use in incognito mode* and *Allow to open files by reference*.
+
+= Preparations for debagging =
+
+For debugging you should create a special local html-file that should be linked to provider scripts and provided with the settings nessesary for it. The file should have a name ended by
+
+*`-anybalance.html`*, for example, `myprovider-anybalance.html`
+
+otherwise the debugger won't be attached. This page should be saved on the local disk from the link *chrome-extension://nkphlblmakkphcnnbklcnblgijohjdif/provider-anybalance.html* or copied from the listing below. Comments show where modifications should be made.
+
+{{{
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <script src="chrome-extension://nkphlblmakkphcnnbklcnblgijohjdif/json2.js"></script>
+  <script src="chrome-extension://nkphlblmakkphcnnbklcnblgijohjdif/jquery.min.js"></script>
+  <script src="chrome-extension://nkphlblmakkphcnnbklcnblgijohjdif/api-adapter.js"></script>
+  <script src="chrome-extension://nkphlblmakkphcnnbklcnblgijohjdif/api.js"></script>
+  <script>
+	var g_api_preferences = {
+          //Enter setting here needed for your provider
+          //For example:
+          //  login: 'username',
+          //  password: 'secretpass'
+	};
+  </script>
+  <!-- List all scripts specified in the manifest of your provider.
+       Specify local paths to the files. JQuery library is already turned on,
+       you shouldn't specify it separately.
+       For example, -->
+  <script src="file://E:\SrcRep\AnyBalanceProviders\ab-exchange-cbr\main.js"></script>
+</head>
+<body onload="">
+  <div style="display:none" id="AnyBalanceDebuggerRPCContainer"></div>
+  <button onclick="api_onload()">Execute</button>
+  <div id="AnyBalanceDebuggerLog"></div>
+</body>
+</html>
+}}}
+
+This file can be written at any place on a local disk. After that it should be opened in Google Chrome. If the extention is installed, after pressing the button Execute the function `main()` of the provider should be axecuted. Debugging messages are sent to console Chrome and to the screen. If you changed source files of the provider, don't forget to update the debugging page in Chrome, otherwise it won't see your modifications!
+
+= Step-by-step debugging =
+
+Step-by-step debugging is made via JavaScript debugger embedded in Google Chrome.  JavaScript console can be called by key combination in Windows: CTRL-SHIFT-J, on Mac: ALT-⌘-J . Or in the menu Instruments-Console JavaScript. You can install breakpoints (by clicking the number of appropriate line in the JavaScript file window).
+
+= Specifications of debugger runtime enviroment =
+
+Decoding  of the answer via [AnyBalanceAPI#setDefaultCharset AnyBalance.setDefaultCharset] doesn't work in debugger. Normally the browser should correctly decode a page using the encoding prompts in the text of the page. But in AnyBalance you will possibly need to use the function [AnyBalanceAPI#setDefaultCharset AnyBalance.setDefaultCharset].
+
+Coolies and authorization are saved between consecutive requests to [AnyBalanceAPI#requestGet AnyBalance.requestGet] and [AnyBalanceAPI#requestPost AnyBalance.requestPost] the same way as in AnyBalance. Moreover cookies are saved between several calls of debugger. That can influence the procedure of login and navigation in provider website. So you can open new window incognito and execute a provider there - incognito is opened clear as if you have never visited the website before. But be attentive, because all open Google Chrome Incognito windows  devide the cookies among themselves. They will be cleared only after closing of *all* Incognito windows and opening of the one again.
+
+As the Google Chrome extention is just signed `Zip`, you can always see the source code of this extention just by opening [http://code.google.com/p/any-balance-providers/downloads/list?q=OpSys-Chrome extention file] as `zip` file. In case you have any questions or suggestions in the process welcome to [http://groups.google.com/group/any-balance-providers-discuss group].

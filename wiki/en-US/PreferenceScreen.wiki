@@ -1,0 +1,49 @@
+#summary Description PreferenceScreen
+
+= Description =
+`PreferenceScreen` represents a display with settings. When one PreferenceScreen is inserted in another, a new display with settings opens. original description [http://developer.android.com/reference/android/preference/PreferenceScreen.html here].
+
+= Attributes =
+ * `key` - id settings that can be used in other settings or in JavaScript (row), [http://developer.android.com/reference/android/preference/Preference.html#attr_android:key original]
+ * `title` - setting name (row), [http://developer.android.com/reference/android/preference/Preference.html#attr_android:title original]
+ * `summary` - a prompt by a setting display (row), [http://developer.android.com/reference/android/preference/Preference.html#attr_android:summary original]
+ * `enabled` - whether the setting is blocked (true/false),[http://developer.android.com/reference/android/preference/Preference.html#attr_android:enabled original]
+ * `shouldDisableView` - whether the type of setting should be blocked, if the setting itself is blocked (true/false),[http://developer.android.com/reference/android/preference/Preference.html#attr_android:shouldDisableView original]
+ * `selectable` - whether it can be selected by the user (true/false),[http://developer.android.com/reference/android/preference/Preference.html#attr_android:selectable original]
+ * `dependency` - dependency on another setting. A setting `key`, which an item depends on, must be specified here. If the value is not specified in that setting, the setting will be disabled (string),[http://developer.android.com/reference/android/preference/Preference.html#attr_android:dependency original]
+
+= Example =
+{{{
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+        <PreferenceCategory
+                title="First Category">
+                <CheckBoxPreference
+                        title="Checkbox Preference"
+                        defaultValue="false"
+                        summaryOn="This preference is true"
+                        summaryOff="This preference is false"
+                        key="checkboxPref" />
+                <ListPreference
+                        title="List Preference"
+                        summary="This preference allows to select an item in a array|Choose some|Chosen {@s}"
+                        key="listPref"
+                        defaultValue="2"
+                        entries="One|Two|Three"
+                        entryValues="1|2|3 />
+        </PreferenceCategory>
+        <PreferenceCategory
+                title="Second Category">
+                <PreferenceScreen
+                        key="SecondPrefScreen"
+                        title="Second PreferenceScreen"
+                        summary="This is a second PreferenceScreen">
+                        <EditTextPreference
+                                name="Another EditText Preference"
+                                summary="This is a preference in the second PreferenceScreen|Empty|{@s}"
+                                title="Edit text"
+                                key="SecondEditTextPref" />
+                </PreferenceScreen>
+        </PreferenceCategory>
+</PreferenceScreen>
+}}}

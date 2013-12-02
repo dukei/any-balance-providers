@@ -1,0 +1,618 @@
+#summary AnyBalance API
+
+= Introduction =
+
+JavaScript API is available for provider for interaction with AnyBalance. Besides it provides functions for sending requests to Internet.
+
+= Functions description =
+
+All functions are provided through global object `AnyBalance`. Every function contains the number of API version, which it is available from.
+
+<wiki:toc max_depth="3" />
+
+==getLevel==
+{{{
+AnyBalance.getLevel() //since level 1
+}}}
+Returns the number of version of current AnyBalance API.
+
+==getLastError==
+{{{
+AnyBalance.getLastError() //since level 1
+}}}
+Returns the line - the description of the last error. Useful when exceptions are turned off by the function [AnyBalanceAPI#setExceptions setExceptions(false)].
+
+==trace==
+{{{
+AnyBalance.trace(/*string*/ msg, /*string or null*/ caller) //since level 1
+}}}
+
+Records the message `msg` in account log. If  `caller` is not `null`, it is specified as additional information. If it is `null`, the `caller` will be specified as `trace`.
+
+ AnyBalance keeps the logs of such messages for each account from the moment of the last start of `main()`. This log can be seen right in AnyBalance. Useful for debugging. <a href="http://any-balance-providers.googlecode.com/svn/wiki/images/log.png">Пример лога.</a>
+
+==setExceptions==
+{{{
+AnyBalance.setExceptions(/*bool*/ use) //since level 1
+}}}
+
+Switches the exception mode (`use = true` - turn on, `use = false` - turn off). The exceptions are turned on by default, so in case of the error in AnyBalance API interior, the error [AnyBalanceAPI#Error AnyBalance.Error]) will appear. It's convenient, because in this case, if the exception is not intercepted by the provider, it will be completed automatically and will return the error description to AnyBalance.
+
+If you turn off the exceptions, in case of the error the functions will return the false value (usually `null` or `false` depending on the function), and you can get the error description by invoking to [AnyBalanceAPI#getLastError getLastError()].
+
+==requestGet==
+{{{
+AnyBalance.requestGet(/*string*/ url, /*object or null*/headers, /*object or null*/options) throws AnyBalance.Error //since level 1,3,7
+}}}
+
+Sends GET request to `url` address. returns the line - the body of the answer.
+
+`headers` - (optional parameter, supported starting from API v.3) an object with additional request headings, for example,
+{{{
+{
+  "Content-Type": "multipart/form-data; boundary=----WebKitFormBoundaryIu4PwUJhm5qcpsdI",
+  "User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64)"
+}
+}}}
+
+`options` - (optional parameter, supported starting from API v.7)
+an object with additional settings.
+{{{
+{
+   "callback": function(info){}, //Asynchronous call to request, 
+      //the result will come to function in form of 
+      //{success: true|false, content: '', error: ''}
+      //This parameter works for calls from settings section
+}
+}}}
+
+Example:
+{{{
+  var xml = AnyBalance.requestGet('http://dgame.ru/api.php');
+}}}
+
+In case of the error returns `null` or throwns exception [AnyBalanceAPI#Error AnyBalance.Error], depending on exception mode set by [AnyBalanceAPI#setExceptions setExceptions()]. 
+
+==requestPost==
+{{{
+AnyBalance.requestPost(/*string*/ url, /*string, object or null*/ data, /*object or null*/headers, /*object or null*/options) throws AnyBalance.Error //since level 1,3,7
+}}}
+
+Sends POST request to `url` address with `data` body if it is a line. If `data` is an object, the request body represents the shapes parameters with names and values of all properties of the `data` object.
+
+`headers` - (optional parameter, supported starting from API v.3) an object with additional request headings, for example:
+{{{
+{
+  "Content-Type": "multipart/form-data; boundary=----WebKitFormBoundaryIu4PwUJhm5qcpsdI",
+  "User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64)"
+}
+}}}
+
+returns a line - body of the answer.
+
+Example:
+{{{
+  var str = AnyBalance.requestPost('http://haddan.ru/member.php', {
+    username: 'dukei',
+    passwd: 'strongpass'
+  });
+}}}
+
+In case of the error returns `null` or throws the exception [AnyBalanceAPI#Error AnyBalance.Error], depending on exception mode set by [AnyBalanceAPI#setExceptions setExceptions()]. 
+
+*Annotation*
+ * Parameter `headers` added to API v.3. Works similar to [AnyBalanceAPI#requestGet requestGet()]
+ * Starting from API v.3 `requestPost` takes by default into consideration the encoding set by the function [AnyBalance.setDefaultCharset AnyBalanceAPI#setDefaultCharset]
+ * Parameter `options` added to API v.7. Works similar to [AnyBalanceAPI#requestGet requestGet()]
+
+==setAuthentication==
+{{{
+AnyBalance.setAuthentication(/*string*/ name, /*string*/ pass, /*object or null*/ authscope) throws AnyBalance.Error //since level 1
+}}}
+
+Sets the parameters of HTTP authorization for all following requests [AnyBalanceAPI#requestGet requestGet()] and [AnyBalanceAPI#requestPost requestPost()]. `name` and `pass` - login and password for authorization, 
+
+`authscope` - an optional parameter assigning the authorization boundaries (completely repeats [http://developer.android.com/reference/org/apache/http/auth/AuthScope.html AuthScope] from Android). The default values below don't apply any restrictions.
+{{{
+{
+  host: null, /*string or null or undefined - host name */
+  realm: null, /*string or null or undefined - authorization area name */
+  scheme: null, /*string or null or undefined - authorization scheme */
+  port: -1 /*integer or null or undefined - port number */
+}
+}}}
+
+Example:
+{{{
+  AnyBalance.setAuthentication('dukei','strongpass');
+}}}
+
+In case of success returns `true`, in other cases `false` or thorows exception [AnyBalanceAPI#Error AnyBalance.Error], depending on exception mode set by [AnyBalanceAPI#setExceptions setExceptions()]. 
+
+Remarks:
+ * Before API of version 2 (AnyBalance 1.1.416) there was an error that didn't allow not to pass the third patameter. To avoid this error in API v.1 you should pass an empty line as a third parameter ''
+
+==clearAuthentication==
+{{{
+AnyBalance.clearAuthentication() throws AnyBalance.Error //since level 1
+}}}
+
+Clear all previously set parameters of HTTP authorization set by [AnyBalanceAPI#setAuthentication setAuthentication()].
+
+In case of success returns `true`, in other cases `false` or throws exception [AnyBalanceAPI#Error AnyBalance.Error], depending on exception mode set by [AnyBalanceAPI#setExceptions setExceptions()].
+
+==setResult==
+{{{
+AnyBalance.setResult(/*object*/ result) throws AnyBalance.Error //since level 1
+}}}
+
+A function that sets the output of provider script. It can set a true status and pass counter value as well as a false status and pass the error description. 
+In case of success the “success: true” property and all counter values should be set up in “result” object. The property name for a counter value should match the counter's ID described in [Manifest manifest].
+
+In case of the error you should set up in the “result” object “error: true” property as well as “message: 'error description'” and optionally “allow_retry: true” if the error is not fatal and the function “main()” should be just started one more time. For example, if the website that counters are axtracted from informs that it is overloaded and you should repeat requests until you get an answer.  Don’t misuse this opportunity otherwise you can face the situation when the account is constantly in updating mode.
+
+If neither “error: true”, nor “success: true” are set up in ‘result”, the situation should be considered as an error.
+
+For example, for counts from the manifest:
+{{{
+<counters>
+  <counter id="counter1" name="Counter 1"/>
+  <counter id="counter2" name="Counter 2"/>
+</counters>
+}}}
+Requires the following code:
+{{{
+  AnyBalance.setResult({success: true, counter1: 123, counter2: 456}); 
+}}}
+
+=== Specifications === 
+ * this function can be called only *one* time, because after you get the result AnyBalance considers the work of provider as completed and can stop the prosecution at any moment.
+ * Attention! To save the resources of the mobile device you shouldn't receive and return the counters values, which are not chosen by the user. You can check if the conter is chosen by the user with the function [AnyBalanceAPI#isAvailable isAvailable].
+ * In case of success you can set a special text property `__tariff`. The value of this property will be displayed in account list. For telephone belance providers it can be used for display of the current tariff's name.
+ * Starting from API v.3 (AnyBalance 1.2.436) in case of returning of null as a conter value, the value of this counter will be copied from the previous result. This should be used for counters that must but can't be taken for some reasons (for example, the failure of a certain website page), in order their value won't be cleared for users in 0.
+
+=== Returnable value ===
+In case of success returns `true`, in other cases `false` or throws exception [AnyBalanceAPI#Error AnyBalance.Error], depending on exception mode set by [AnyBalanceAPI#setExceptions setExceptions()]. After returning of this function it's not recommended to take any important actions, because the provider code can be unloaded at any moment. 
+
+==isSetResultCalled==
+{{{
+AnyBalance.isSetResultCalled() //since level 1
+}}}
+
+Returns `true`, if [AnyBalanceAPI#setResult setResult()] has already been called. AnyBalance doesn't give a guarantee to continue the perfoming of JavaScript provider after it has called [AnyBalanceAPI#setResult setResult()]. 
+
+==isAvailable==
+{{{
+AnyBalance.isAvailable(/*array or string*/ countername, ...) //since level 1
+}}}
+
+Returns `true`, if at least one of passed counters is allowed by the user. The user can disallow the display of some counters in account settings. In order to save resources of the user's mobile device, it's not recommended to extract and return the values of disallowed counters. 
+
+Example:
+{{{
+//If you need to make a separate request for the counters,
+//let's explore whether we need this counters?
+if(AnyBalance.isAvailable('counter1', 'counter2')){
+  var str = AnyBalance.requestGet(url1);
+  if(AnyBalance.isAvailable('counter1')) //If you need this counter
+    result.counter1 = str.substr(1,5); //Somehow extracting the counter value
+  if(AnyBalance.isAvailable('counter2')) //If you need this couner
+    result.counter1 = str.substr(8,9); //Somehow extracting the counter value
+}
+}}}
+
+==getPreferences==
+{{{
+AnyBalance.getPreferences() //since level 1
+}}}
+
+Returns `object` that contains all account settings made by the user. Includes the settings provided in the file of the category [Preferences preferences] [Manifest manifest]. Provider code can receive its settings  from this object by names specified in `key` attributes of settings from xml-file [Preferences settings].
+
+For example, settings file:
+{{{
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Login" 
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        key="password" 
+        title="Password"
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>
+}}}
+Receiving these properties:
+{{{
+var prefs = AnyBalance.getPreferences();
+var pass = prefs.password;
+var login = prefs.login;
+}}}
+
+==setDefaultCharset==
+{{{
+AnyBalance.setDefaultCharset(/*string*/ charset) //since level 1
+}}}
+Sets the coded answer page of the server by default. This coding will be used if it's not possible to extract the text code from heading `Content-Type`. `Charset` should be specified as a appropriate encoding, for example `utf-8`. [http://www.iana.org/assignments/character-sets Value list `charset`].
+
+==Error==
+{{{
+AnyBalance.Error(/*string*/ message, /*bool*/ allowRetry) //since level 1
+}}}
+
+Exception constructor. `message` - an error description, `allowRetry` -  a flag that orders AnyBalance to call again the update for this account. More details about `allowRetry` see [AnyBalanceAPI#setResult setResult()].
+
+Uncought exception leads to provider's completion with an error. That's why it's convenient to use exception, for example, in this way:
+
+{{{
+var matches;
+if(matches = session.match(/<ERROR_ID>(.*?)<\/ERROR_ID>/i)){
+	AnyBalance.trace('Got error from sg: ' + matches[1]);
+	//An error occured, may be we could even see its description
+	if(matches = session.match(/<ERROR_MESSAGE>(.*?)<\/ERROR_MESSAGE>/i)){
+		AnyBalance.trace('Got error message from sg: ' + matches[1]);
+		throw new AnyBalance.Error(matches[1]);
+	}
+	AnyBalance.trace('Got unknown error from sg');
+	throw new AnyBalance.Error('Unknown error');
+}
+if(!(matches = session.match(/<SESSION_ID>(.*?)<\/SESSION_ID>/i))){
+        //Strange answer, may be it's possible to reconnect...
+	throw new AnyBalance.Error('Failed to receive a session', true); }
+
+}}}
+
+Remarks:
+ * Starting from API of version 2 (AnyBalance 1.1.416) HTML tags, for example, links are allowed in the error text. HTML support is very restricted, use it carefully.
+
+==getCookies==
+{{{
+AnyBalance.getCookies() //since level 4
+}}}
+
+returns all cookies (massive), that are set in a local network. This massive looks something like:
+{{{
+[
+ {"name":"myowncookie","value":"myvalue","domain":"192.168.1.101","path":"/","persistent":false},
+ {"name":"anothercookie","value":"someval","domain":"192.168.1.101","path":"/","expires":"Wed, 28 Nov 2012 23:04:05 GMT","persistent":true}
+]
+}}}
+
+==getCookie==
+{{{
+AnyBalance.getCookie(/*string*/ name, /*object or null*/ params) //since level 4
+}}}
+
+Returns the value of the first cookie with a specified name. Hereby you can specify the additional restrictions on domain and a path in `params` object (all fields are optional).
+
+{{{
+var params = {
+    domain: 'example.com', //Cookie domain
+    path: '/', //Cookie path
+    allcookies: [] //If before that you had received all cookies by function AnyBalance.getCookies(), 
+                   //it's recommended to pass a massive cookie in this parameter
+};
+}}}
+
+Returns a line - a cookie value.
+
+==setCookie==
+{{{
+AnyBalance.setCookie(/*string*/ domain, /*string*/ name, /*string or null*/ value, /*object or null*/ params) //since level 4
+}}}
+
+Sets (replaces) cookies with specified name and parameters. Or deletes it (if `value == null`).
+
+{{{
+var params = {
+    path: '/', //Cookie path
+    expires: 'GMT Time String', //Aging period
+    secure: false //Safety of the cookie
+};
+}}}
+
+==getLastResponseParameters==
+{{{
+AnyBalance.getLastResponseParameters() //since level 5
+}}}
+
+Receives parameters linked with the last request. Returns an object:
+
+{{{
+var params = {
+    url: 'http://somedomain.com/path', //Final URL (after all redirections)
+    status: 'HTTP/1.1 200 OK', //HTTP status
+    headers: [ //HTTP answer headings set
+        ['name', 'value'],
+        ...
+    ]
+};
+}}}
+
+Instead of this function it's recommended to use a set of local functions that get separate elements of this structure, such as: [AnyBalanceAPI#getLastUrl getLastUrl()], [AnyBalanceAPI#getLastStatusString getLastStatusString()], [AnyBalanceAPI#getLastStatusCode getLastStatusCode()], [AnyBalanceAPI#getLastResponseHeaders getLastResponseHeaders()] и [AnyBalanceAPI#getLastResponseHeader getLastResponseHeader()]
+
+===getLastUrl===
+{{{
+AnyBalance.getLastUrl() //since level 5
+}}}
+
+Receives a final url,  which was received or which is the address of the last requst [AnyBalanceAPI#requestGet requestGet()] или [AnyBalanceAPI#requestPost requestPost()].
+
+===getLastStatusString===
+{{{
+AnyBalance.getLastStatusString() //since level 5
+}}}
+
+Receives the line of HTTP status, which was received with the last request [AnyBalanceAPI#requestGet requestGet()] или [AnyBalanceAPI#requestPost requestPost()].
+
+===getLastStatusCode===
+{{{
+AnyBalance.getLastStatusCode() //since level 5
+}}}
+
+Receives the code of HTTP answer to the last request [AnyBalanceAPI#requestGet requestGet()] или [AnyBalanceAPI#requestPost requestPost()].
+
+===getLastResponseHeaders===
+{{{
+AnyBalance.getLastResponseHeaders() //since level 5
+}}}
+
+Receives the massive of all HTTP answer headings according to the last request [AnyBalanceAPI#requestGet requestGet()] or [AnyBalanceAPI#requestPost requestPost()]. The massives returns:
+
+{{{
+    var headers = [ //HTTP answer headings set
+        ['name', 'value'], //heading name, its value
+        ...
+    ]
+}}}
+
+===getLastResponseHeader===
+{{{
+AnyBalance.getLastResponseHeader(/*string*/ name) //since level 5
+}}}
+
+Receives the line value of the first heading with specified name `name`. The heading is searched among all answer headings according to the last request [AnyBalanceAPI#requestGet requestGet()] or [AnyBalanceAPI#requestPost requestPost()]. If it doesn't exist, `null` returns.
+
+==retrieveCode==
+{{{
+AnyBalance.retrieveCode(/*string*/ comment, /*string*/ image) //since level 7
+}}}
+
+Requests to enter a code from a picture. At the moment this function opens  a window in the program with a picture and entry field, where you should eter a code within a minute.
+
+Example use:
+{{{
+var captchaimg = AnyBalance.requestGet(baseurl + 'captcha.php');
+var value = AnyBalance.retrieveCode("Please, enter a code from a picture.", captchaimg);
+}}}
+
+More use examples you can see, for instance, in providers [http://code.google.com/p/any-balance-providers/source/browse/trunk/ab-bonus-gazprom/main.js Gazprombonus], [http://code.google.com/p/any-balance-providers/source/browse/trunk/ab-bonus-euroopt/main.js Euroopt] и [http://code.google.com/p/any-balance-providers/source/browse/trunk/ab-tracking-russian-post/main.js Russian Post]
+ 
+=Manage settings=
+
+Starting from API v.7 you can manage the process of provider settings, there are the following API functions for it.
+
+==Preference==
+
+Represents the settings object. Contains properties and methods for settings management. As a rule, not created directly, but returned by other methods and properties that can return settings.
+
+Settings can be of a kind that is described in `xml`,  they have almost the same properties. Types form the hierachy of property inheritance. The basic type - Preference, all others are inherited from it. 
+
+===Types of settings and supported properties===
+{{{
+{
+    Preference: {
+    	properties: ['key','title',
+                     'summary', //Primary summary as it used to be in xml
+                     'summaryPlain', //Current summary
+    	             'enabled', 'dependency','order','defaultValue',
+    	             'visible','parent','preference'],
+    },
+    DialogPreference: {
+    	properties: ['dialogTitle','dialogMessage',
+    	             'positiveButtonText','negativeButtonText'],
+    	parent: 'Preference' 
+    },
+    EditTextPreference: {
+    	properties: ['inputType','text'],
+    	parent: 'DialogPreference' 
+    },
+    ListPreference: {
+    	properties: ['entries','value'],
+    	parent: 'DialogPreference' 
+    },
+    CheckBoxPreference: {
+    	properties: ['summaryOff','summaryOn',
+    	             'disableDependentsState','checked'],
+    	parent: 'Preference' 
+    },
+    PreferenceGroup: {
+    	properties: ['preferences'],
+    	parent: 'Preference' 
+    },
+    PreferenceCategory: {
+    	properties: [],
+    	parent: 'PreferenceGroup' 
+    },
+    PreferenceScreen: {
+    	properties: [],
+    	parent: 'PreferenceGroup' 
+    },
+}
+}}}
+
+Each type has its own properties and a link to a basic type. The basic type settings are also inherited.
+
+===get===
+{{{
+pref.get(/*string or object*/ prop) //since level 7
+}}}
+
+Receives a property with the name `prop`. In this case returns the property value. You can receive the value of several properties at once, if you pass as `prop` an object with keys. For example,
+
+Example:
+{{{
+   var title = pref.get('title');
+
+   var props = pref.get({title: '', summary: '', enabled: '', visible: ''});
+   //props will be {title: 'Login', summary: '||{@s}', enabled: true, visible: true}
+}}}
+
+===set===
+{{{
+pref.set(/*string or object*/ prop, value) //since level 7
+}}}
+
+Sets a property with a name `prop` in a value. In this case returns the property value. You can set the value of several properties at once if you pass as `prop` an object with keys - properties names and values -properties values. For example,
+
+Example:
+{{{
+   var title = pref.set('entries');
+
+   //Create a value set for the list ListPreference and choose one value
+   var props = pref.set({entries: [{n: 'Пункт 1', v: 'p1'}, {n: 'Пункт 2', v: 'p2'}], value: 'p1']});
+}}}
+
+===add===
+{{{
+pref.add(/*object*/ props) //since level 7
+}}}
+
+The method adds new setting. This method only goes with the settings like `PreferenceGroup` (`CategoryPreference` and `ScreenPreference`). Property values of the new setting are specified in `props`.
+
+Example:
+{{{
+var group = AnyBalance.getPreference();
+
+var pref = g_group.add({
+    type: 'EditTextPreference',
+    title: 'New setting',
+    key: 'newEdit',
+    summary: '||{@s}',
+    value: 'test'
+});
+}}}
+
+===remove===
+{{{
+pref.remove() //since level 7
+}}}
+
+The method clears the setting. After you called this method you can't use this settings, because the setting will be deleted.
+
+===getSubPreferences===
+{{{
+pref.getSubPreferences() //since level 7
+}}}
+
+The method receives child settings. This method goes only with settings like `PreferenceGroup` (`CategoryPreference` and `ScreenPreference`). 
+
+Returns the massive of child settings in the form of `Preference` objects.
+
+===getType===
+{{{
+pref.getType() //since level 7
+}}}
+
+The method receives the type of setting. 
+
+==getTopPreferences==
+{{{
+AnyBalance.getTopPreferences() //since level 7
+}}}
+
+The method receives upper level settings. 
+
+Returns the massive of settings in the form of `Preference` objects.
+
+==getPreference==
+{{{
+AnyBalance.getPreference(/*string*/ key) //since level 7
+}}}
+
+Returns the setting in the form of `Preference` object with a key `key`.
+
+==setPreferenceProperties==
+{{{
+AnyBalance.setPreferenceProperties(/*object*/ prefs) //since level 7
+}}}
+
+This function is made for quick property setting for several settings at once. The properties that are set up for each setting are passed in the form of the object `{propname: propvalue, ...}`
+
+Parameter `prefs` are passed in a format  
+{{{
+{
+   key: { //Setting key
+       propname: propvalue,
+       ...
+   }, ...
+}
+}}}
+
+Example:
+{{{
+var props = AnyBalance.getPreferenceProperties({
+    locality: {
+        value: ''
+    }
+});
+
+var surgut = (props.locality.value == 'Сургут');
+
+AnyBalance.setPreferenceProperties({
+    street: {visible: surgut},
+    house: {visible: surgut},
+    flat: {visible: surgut},
+    account: {visible: !surgut},
+});
+}}}
+
+==getPreferenceProperties==
+{{{
+AnyBalance.getPreferenceProperties(/*object*/ prefs) //since level 7
+}}}
+
+This function is made for quick extraction of properties for several settings at once. 
+
+Example:
+{{{
+var props = AnyBalance.getPreferenceProperties({
+    locality: {
+        value: '',
+        enabled: ''
+    },
+    street: {
+        enabled: ''
+    }
+});
+
+//Now it's easy to receive a value of setting properties like that:
+AnyBalance.trace(props.locality.enabled);
+AnyBalance.trace(props.street.enabled);
+}}}
+
+==addCallback==
+{{{
+AnyBalance.addCallback(/*string*/ event, /*function*/ func) //since level 7
+}}}
+
+Pairs a function and an event. There are the following events:
+ * `change#` - works after any setting is changed 
+ * `change#key` - works after the setting with the key `key` is changed
+
+Example:
+{{{
+AnyBalance.addCallback('change#country', onChangeCountry);
+AnyBalance.addCallback('change#city', onChangeCity);
+AnyBalance.addCallback('change#amountOut', recomputeComission);
+AnyBalance.addCallback('change#tarif', onChangeTariff);
+AnyBalance.addCallback('change#currency', onChangeCurrency);
+}}}
+
+==removeCallback==
+{{{
+AnyBalance.removeCallback(/*string*/ event, /*function*/ func) //since level 7
+}}}
+
+Unpairs the specified function from the event.

@@ -1,0 +1,58 @@
+#summary Example Hello World
+
+= Introduction =
+
+In this example we will create the simpliest AnyBalance provider, which will contain only one textual counter returning the classic text `Hello, World!`.
+
+There is no ready example of it in [http://code.google.com/p/any-balance-providers/source/browse/#svn%2Ftrunk repository], it is so simple that you can create all files by yourself.
+
+= Creating [Manifest a manifest] =
+
+Create a file `anybalance-manifest.xml` and put the following text into it.
+
+{{{
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">hello-world</id>
+  <name>Hello world</name>
+  <description>
+    Hello, world!
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="mycounter" name="Greeting" type="text"/>
+  </counters>
+</provider>
+}}}
+
+Besides the name and the description of our provider, the file is specified in the manifest, which does a job of extracting the value of our counter  - `main.js`,  as well as the name and the type of a counter, provided by us - `mycounter`.
+
+= Creating JavaScript =
+
+Now let's create JavaScript that receives our counter. Create a file `main.js` next to the manifest file.
+
+{{{
+function main(){
+  AnyBalance.setResult({success: true, mycounter: 'Hello, World!'});
+}
+}}}
+
+That's all, now our provider, when AnyBalance calls a  main() function for counter update, will return the phrase Hello, World!
+
+= Squeezing in zip = 
+
+Squeeze `anybalance-manifest.xml` and `main.js` that you have just created into `hello-world.zip`.
+
+= Starting in AnyBalance = 
+
+Copy `hello-world.zip` on your Android device in a folder `/sdcard/AnyBalance` or `/sdcard/Download`. These are the folders where AnyBalance tries to find the files of providers when choosing a menu "Add from a file". Start AnyBalance and choose Menu -> "Add account" ->  Menu -> "Add from a file...", put a tick against Hello world (v.1) and click Back. The provider will be installed. You can create it on a base of the account, where the value of the main counter after update will equal Hello, World!
+
+= Other examples =
+
+Of course, this is not much use of such provider, it always shows the same. But now you know how to create the simpliest AnyBalance provider. You can also see another examples.
+ * [TutorialExchangeCbr Currency rates]
+ * [TutorialTrackingRussianPost Postal tracking]
+ * [TutorialXML  XML processing]

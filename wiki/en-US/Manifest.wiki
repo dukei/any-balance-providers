@@ -1,0 +1,96 @@
+#summary Description of the format of anybalance-manifest.xml manifest
+
+= Introduction =
+
+Manifest - xml-file, that describes all parameters of the provider. It must be named `anybalance-manifest.xml` obligatory. If you failed to find this file in zip archive of the provider, it won't be shown in providers list for providers installation in AnyBalance.
+
+= Manifest structure =
+
+{{{
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id major_version="string" version="integer">provider-text-id</id>
+  <name>Provider's name</name>
+  <description>
+    Provider's description
+  </description>
+  <author>Author namr &lt;author@email.com&gt;</author>
+  <files>
+    <icon>icon.png</icon> <!-- icon file -->
+    <preferences>preferences.xml</preferences> <!-- Settings file -->
+    <js>main.js</js> <!-- at least one file with main() function is needed -->
+    <js>lib.js</js> <!-- You can (optionally) specify additional js files -->
+    <js target="preferences|parser">preferences.js</js> <!-- You can (optionally) list in what cases the file js (API v.7+) should turn on -->
+    <history>history.xml</history> <!-- The history of changes of provider's versions -->
+  </files>
+  <counters> <!-- description of counters of this provider -->
+    <counter id="counter-id" name="Counter's name" prefix="префикс " suffix=" suffix" type="counter-type"/>
+    <!-- There can be any number of counters -->
+  </counters>
+  <keywords>
+    <!-- a set of words or phrases that can be used when searching this provider, but that are not contained in the name or description -->
+  </keywords>
+  <type>
+    <!-- some set of keywords for distribution in the catalogues -->
+    internet, tv 
+  </type>
+  <country>
+    <!-- listing of the countries which this provider is related to, according to ISO_3166-1 -->
+    ru, ua 
+  </country>
+</provider>
+}}}
+
+== <id> ==
+Contains the textual identifier of a provider. It should match the name of the catalogue of a provider in [http://code.google.com/p/any-balance-providers/source/browse/#svn%2Ftrunk repository], in that way its uniqueness will be guaranteed. The version of provider - textual (`major_version`) for a user and a whole number (`version`) for everybody - should be specified as the attributes at `id`. The user will be shown the bonded version: `major_version.version`, but not all operations in comparison with the version inside AnyBalance are connected to `version`.
+
+<b>Attention!</b> all changes of the provider that require to publish the provider in downloadable list should be accompanied by *value increase in the `version`* attribute!
+
+== <description> ==
+Description of a provider and its functions
+
+== <author> ==
+The author of a provider and his e-mail for contact with grateful and furious users :)
+
+== <files> ==
+Contains the list of all file that make a provider with specification of the category (function) of this file. Now we habe the following categories:
+
+=== <icon> ===
+File that contains [Icon provider icon]. Make it in high resolution in order it looks good on the modern devices. There can be only one file with this category.
+
+=== <preferences> ===
+xml-file that describes [Preferences provider settings of the user]. The whole settings are displayed to the user when he is setting up the account based on this provider. The user's choice is passed every time to JavaScript of the provider upon request for the counters. This file is similar to xml-files of Android settings, but is more simple. There can be only one file of this category.
+
+=== <js> ===
+JavaScript of a provider that receives counters value from somewhere and passes them to AnyBalance. There can be several files of this type, each should be declared in a separate `js` tag. But there must be one file that will specify the main() function, that takes charge upon request for the counters. 
+
+=== <history> ===
+xml-file, that contains [History history of versions changes] of providers. If there is such file, the user will be shown the changes in new version from the time of the old one when updating the provider version in AnyBalance. Introduced to AnyBalance v.2.5.521
+
+== <counters> ==
+Specifies the list of counters - an information item given by this provider. There must be any number of counters but minimum one. Let's see the description of a counter in more detail.
+
+== <counter> ==
+Counter must have `id` and `name`. Other attributes are optional and have value by default. 
+
+ * `name` - specifies a name of the counter available for the user.
+ * `id` - specifies the variable name in JavaScript in which the counter value is passed.
+ * `prefix` - optional attribute that specifies the performing of counter value output. `prefix` is added before the value. For example, if a numeric counter is specified with prefix `prefix="$"`, the counter value in AnyBalance will be displayed as, for instance, $123.45.
+ * `suffix` - optional attribute that specifies the performing of counter value output. `suffix` is added before the value. For example, if a numeric counter is specified with suffix `suffix=" р"`, the counter value in AnyBalance will be displayed as, for instance. 123.45 р.
+ * `units` - synonym to `suffix`.
+
+Remark. `prefix`, `suffix` and `units` can contain the links to other counters in the form of `{@counterid}`. As a result you can dynamically put the units of measure from the content of other counters. Instead of `{@counterid}` you can put the counter value with `id="counterid"`, framed by its refix and suffix. However, the specified counter is not obliged to be declared in the manifest. Examples see [https://code.google.com/p/any-balance-providers/source/browse/trunk/ab-cell-beeline-russia/anybalance-manifest.xml?spec=svn1949&r=1725#40 here].
+ 
+ * `type` - counter type (`numeric` by default). There are different types of the counters, for example, numeric, textual, time slices and others. The following types are supported:
+   * `numeric` - numeric, this counter can be displayed on graphic, the difference with the pervious values is calculated for it. 
+   * `text` - textual, not displayed on graphic, the difference in meaning is not considered for obvious reasons.
+   * `html` - the same as textual, but html markup is allowed. The carrying forward of the rows are perceived as `<br/>`. Very restricted markup set is supported, `img` is not supported. [http://commonsware.com/blog/Android/2010/05/26/html-tags-supported-by-textview.html  List of supported tags].
+   * `time_interval` - numeric counter measured in_seconds_. Is displayed on graphic, the difference is considered. Is displayed as H:mm:ss by default if there are zero seconds, and as a whole number of minutes if there are zero seconds. If the default format of display doesn't suit you, you can directly specify it in `format` attribute of a counter. [TimeIntervalFormat More details of time slice format].
+   * `time` - дата (миллисекунды с 1970 года). У этого счетчика также можно указать формат отображения [http://docs.oracle.com/javase/1.4.2/docs/api/java/text/SimpleDateFormat.html в этом виде].
+ * `flags` - some flags that influence the counter's behavior.
+   * `zero_when_empty` - in case there is no counter in the personal account, it should be considered as equivalent to 0, this should be written in the history, the changes should be tracked.  If there is no such flag (by default), the counters, that were not found in the personal account, shouldn't be written in the history, the spending sums and refundings are not considered in statistics.
+
+In order to make settings of displaying the counters available, the counters should be declared in the manifest.
+
+== <country> ==
+List of countries according to [http://en.wikipedia.org/wiki/ISO_3166-1 ISO_3166-1]. Is used for filtering of providers by countries in the catalogue.

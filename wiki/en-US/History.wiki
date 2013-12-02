@@ -1,0 +1,28 @@
+#summary The history of provider versions' changes
+
+It's concidered good form to keep the history of changes of provider versions. It helps the users to know what advantages and new possibilities they get when installing a new version of a provider.
+
+For that you should add to provider a file `history.xml`, outline it in the section `files` [Manifest of the manifest] under `history` tag. When making changes in the provider and increasing its version in file `history.xml` you should jot down what changes have been made.
+
+History file has the following structure
+{{{
+<?xml version="1.0" encoding="utf-8"?>
+<history>
+    <change major_version="1.2" version="18" date="2012-07-07">
+      - Modified for keeping the versions history
+    </change>
+    <change major_version="1.1" version="17">
+      - Displaying an error when having problems with website
+    </change>
+    <change major_version="1.1" version="16">
+      - Dispalying traffic by numeric counter (in Mb). To display you should choose the counter again.
+    </change>
+</history>
+}}}
+
+As you can see this is just the listing of  `change` tags, each of that contains information about changes in version specified in the `version` attribute. Just the essence of changes in text format is written in the boby of `change` tag.
+
+`change` may contain the following attributes
+ * `version` - an obligatory attribute (a whole number), specifies the provider version, the changes for which are located this `change`. Should match the  `version` attribute of 'id` tag[Manifest of the manifest].
+ * `major_version` - a textual part of the version, that was in the provider version for which the changes are described. Matches the attribute `major_version` of `id` tag [Manifest of the manifest]. Optional attribute. Should be specified if the textual part of the version is outlined in the manifest.
+ * `date` - the date of version changing. In format `YYYY-MM-DD`. Optional attribute.

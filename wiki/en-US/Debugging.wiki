@@ -1,0 +1,55 @@
+#summary Provider debugging
+
+= Introduction =
+
+Development process is always involved with debugging. It's all the same with prodivers for AnyBalance. In provider installation process you could have to upload it to your telephone many times as well as set it up and check. In Android not above Gingerbread when connecting a telephone as a USB disc the telephone itself quits seeing a card, so in order to start a provider you have to connect the telephone for copying and after that disconnect it to install a provider in AnyBalance. Below you will find useful techniques that can make the process easier.
+
+= Rough provider debugging via Google Chrome extention =
+
+Via AnyBalanceDebugger extention for [https://www.google.com/chrome/ Google Chrome browser] can be done the premilinary debugging of JavaScript providers. Besides via Google Chrome you can also track step-by-step the providers code as well as see their internal variables in execution process. Although it's very convenient, the Google Chrome enviroment doesn't 100% copy the runtime enviroment of providers in AnyBalance. That's why after debugging of provider's work in Google Chrome the finishing debugging directly in AnyBalance should be done. More details about AnyBalanceDebugger see [AnyBalanceDebugger here].
+
+= Escape of necessity to install a USB disk =
+
+The installation-deinstallation of a disk is the most difficult, because it takes a long time. And after you disconnected a disk Android likes to start a card scanning process for disclosing new media files, it hampers a lot. So first you should escape the necessity to install a USB for recording on the telephone.
+
+== Use of WiFi ==
+There are several ways. The easiest one is to install on the telephone, for example, [https://market.android.com/details?id=org.swiftp SwiFtp]. This program allows to copy files on your telephone using WiFi (if your computer and telephone can be connected to one WiFi-router). After you installed and set up this program you can copy providers directly into the folder /sdcard/Download as well as set up and start it immediately.
+
+== use of Dropbox ==
+If for some reason you can't use WiFi, you can use cloud service, for example, [http://www.dropbox.com/ Dropbox]. Fot that you will have to install Dropbox client on your [http://www.dropbox.com/install computer] and on your [http://www.dropbox.com/android telephone]. After program settings are made you will be able to drag on your computer a new provider to the folder that is synchronized with a cloud, and in mobile version export this file into the folder /sdcard/AnyBalance или /sdcard/Download on your telephone.
+Unfortunately there is a weakness in 2.0.1 mobile version: it's not enough to make updating of (Refresh) files - in this case only information about files, but not files themselves are updated, and old version is exported. I solved this program by clicking the appropriate provider file, it was dowmloaded from the server and after that there was eigher a choice what program to use for its start or the program associated with archives was started. I came back to Dropbox and after that the export was made successfully.
+
+== Use of Android SDK ==
+If the previous two options wasn't efficient you can copy files on your telephonevia  [http://developer.android.com/sdk/installing.html Android SDK]. For that you should turn on USB Debugging (Settings > Applications > Development and turn on USB Debugging), after that connect your telephone to computer with USB-cable. For correct work of USB Debugging you may need to install USB drivers for your telephone. You can find these drivers on the website of your telephone's manufacturer.
+
+[http://developer.android.com/sdk/installing.html Android SDK] contains `ADB` utility. You can use it to do [http://forum.androidfan.ru/index.php?showtopic=5498 a lot of things]  with Android device, to copy files in particular.
+
+ * Install Android SDK following descriptions [http://developer.android.com/sdk/installing.html here] (1 or 2 steps is enough) 
+ * Connect a telephone with USB Debugging turned on
+ * start from command-line adb devices (`adb.exe` program is located in the folder `android-sdk/platform-tools`)
+ * if you telephone is in the list of connected devices, you can copy something on it :)
+ * for copying use a command (instead provider.zip specify the file's name of your provider)
+{{{
+  adb push provider.zip /sdcard/Download/provider.zip
+}}}
+ * the file will be copied on the telephone and you will be able to install it in AnyBalance immediately.
+
+For your convenience you can write a `.bat` file, that compresses files of the providers in `.zip` and sends them to your phone by "one click".
+
+= Use of emulator =
+
+You can also pay in favor of providers not just from the real telephone, but from emulator which is part of Android SDK. To create emulator make step 4 [http://developer.android.com/sdk/installing.html installation of Android SDK]. When choosing a platform for emulator specify Android 2.1, it bulks least :) . After the platform is downloaded atart a program `android-sdk/AVD Manager.exe`, создавайте и запускайте эмулятор на основе Android 2.1. Когда эмулятор запустится, он будет виден `adb` как обычный телефон, и на него точно так же можно будет копировать файлы. На эмуляторе нет Android Market, поэтому для установки на него AnyBalance скачайте `apk` [http://code.google.com/p/any-balance-providers/downloads/list?q=OpSys%3DAndroid отсюда] и установите на эмулятор командой (вместо  `AnyBalance-375.apk` подставьте путь к скачанному вами `apk`)
+{{{
+  adb install -r AnyBalance-375.apk
+}}}
+
+= Debugging messages =
+In order you understant what exactly went wrong in provider it can inform about problems and its internal status with the help of the function [AnyBalanceAPI#trace AnyBalance.trace()]. The information taken out by this function is saved in account log in AnyBalance ([http://any-balance-providers.googlecode.com/svn/wiki/images/log.png example of log]). For that you should call in AnyBalance a context menu of account by long press and choose item "Show the last log". Only the last log of provider's request for information is saved.
+= Caching problems =
+For providers code execution should be used the browser built in Android. The chaching of uploaded files is built in it very deeply, it's impossible to turn it off. As a result if you upload a provider on your telephone (or emulator), execute it, then change something in the code and upload it on the telephone again, it's more likely that the old version will be executed.
+
+To avoid that you should increase 'version' in the manifest every time you install a provider. In this case it's guaranteed that the new version of the provider will be uploaded. Be attentive, before placing the provider in repository don't forget to lower the number of version back to the 'previous version + 1` to avoid too large numbers.
+
+= Separate development enviroment of providers =
+
+Of course it would be convenient to have a separate development enviroment of providers not tied up with a telephone. I hope it will appear in future. But for now we have to be satisfied with the options mentioned above...

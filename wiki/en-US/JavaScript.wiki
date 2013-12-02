@@ -1,0 +1,42 @@
+#summary JavaScript files of provider
+
+The process of receiving the counter values of providers is made in the language [http://ru.wikipedia.org/wiki/Javascript JavaScript] using [AnyBalanceAPI AnyBalance API].
+
+Provider can have one or several [http://ru.wikipedia.org/wiki/Javascript JavaScript] files, the main thing one of them should contain the main function, for example,
+
+{{{
+function main(){
+  //We will get account settings
+  var prefs = AnyBalance.getPreferences();
+
+  //getting counter values
+  //doing something for it
+  var strGet = AnyBalance.requestGet(url);
+  var strPost = AnyBalance.requestGet(url, {login: prefs.login, pass: prefs.pass});
+
+  //extracting from counter value rows
+  //...
+
+  //returning the result
+  AnyBalance.setResult({success: true, counter: counter});
+}
+}}}
+
+All files declared in [Manifest the manifest] under `js` category will be uploaded when the update of AnyBalance account in Android [http://developer.android.com/reference/android/webkit/WebView.html WebView] is made and main() function is called. After it received counter values, the provider must call [AnyBalanceAPI#setResult AnyBalance.setResult()], to pass the received counters to AnyBalance program.
+
+In order to receive counters providers should use [AnyBalanceAPI AnyBalance API]. The usual working scheme of main function:
+ * Receiving the settings via [AnyBalanceAPI#getPreferences AnyBalance.getPreferences]
+ * receiving the pages with appropriate values with the help of the function [AnyBalanceAPI#requestGet AnyBalance.requestGet] and [AnyBalanceAPI#requestPost AnyBalance.requestPost]
+ * Extracting counter values from them, keeping in mind the optimization ([AnyBalanceAPI#isAvailable AnyBalance.isAvailable])
+ * Returning the result - [AnyBalanceAPI#setResult AnyBalance.setResult]
+
+Nothing difficult. You can see the examples: 
+ * [TutorialHelloWorld Hello, World!]
+ * [TutorialExchangeCbr Currency rates]
+ * [TutorialTrackingRussianPost Postal tracking]
+ * [TutorialXML Processing of XML]
+
+Here you can find a very useful guide and a catalogue of javascript in Russian:
+
+ * http://learn.javascript.ru/
+ * http://javascript.ru/manual

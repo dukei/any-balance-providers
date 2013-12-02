@@ -423,19 +423,23 @@ function fetchNewAccountAcc(html) {
 	var baseurl = "https://online.sberbank.ru";
 	html = AnyBalance.requestGet(baseurl + '/PhizIC/private/accounts/list.do');
 	var lastdigits = prefs.lastdigits ? prefs.lastdigits.replace(/(\d)/g, '$1\\s*') : '(?:\\d\\s*){3}\\d';
-	var baseFind = '<span[^>]*class="productNumber\\b[^"]*">[^<]*' + lastdigits + '<';
-	var reCardId = new RegExp(baseFind + '[\\s\\S]*?<span[^>]*class\\s*=\\s*"roundPlate[^>]*onclick\\s*=\\s*"[^"]*(?:operations|info).do\\?id=(\\d+)', 'i');
-	//    AnyBalance.trace('Пытаемся найти карту: ' + reCardId);
+	// class="productNumber\b[^"]*">[^<]*
+	var baseFind = 'class="productNumber\\b[^"]*">[^<]*' + lastdigits + '<';
+	// [\s\S]*?onclick\s*=\s*"[^"]*(?:operations|info)[^']*'(\d+)
+	var reCardId = new RegExp(baseFind + '[\\s\\S]*?onclick\\s*=\\s*"[^"]*(?:operations|info)[^\']*\'(\\d+)', 'i');
+	
+	//AnyBalance.trace('Пытаемся найти карту: ' + reCardId);
+	
 	var cardId = getParam(html, null, null, reCardId);
 	if (!cardId) {
 		if (prefs.lastdigits) throw new AnyBalance.Error("Не удаётся идентификатор счета с последними цифрами " + prefs.lastdigits);
 		else throw new AnyBalance.Error("Не удаётся найти ни одного счета");
 	}
-	var reCardNumber = new RegExp('<span[^>]*class="productNumber\\b[^"]*">\s*([^<]*' + lastdigits + ')<', 'i');
-	var reBalance = new RegExp(baseFind + '[\\s\\S]*?<span class="data[^>]*>([^<]*)', 'i');
+	var reCardNumber = new RegExp('class="productNumber\\b[^"]*">([^<]*' + lastdigits + ')<', 'i');
+	var reBalance = new RegExp('"overallAmount"[^>]*>([^<]*)[\\s\\S]*'+baseFind, 'i');
 	var result = {success: true};
 	getParam(html, result, 'balance', reBalance, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'cardNumber', reCardNumber, replaceTagsAndSpaces);
+	getParam(html, result, 'cardNumber', reCardNumber, [replaceTagsAndSpaces, /\D/, '']);
 	getParam(html, result, '__tariff', new RegExp("\\?id=" + cardId + "[\\s\\S]*?<span[^>]+class=\"mainProductTitle\"[^>]*>([\\s\\S]*?)<\\/span>", "i"), replaceTagsAndSpaces);
 	getParam(html, result, ['currency', 'balance', 'cash', 'electrocash', 'debt', 'maxlimit'], reBalance, replaceTagsAndSpaces, parseCurrencyMy);
 	fetchRates(html, result);

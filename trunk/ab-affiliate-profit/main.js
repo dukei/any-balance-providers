@@ -19,6 +19,18 @@ function dateToYMD(date) {
 	return '' + y + '-' + (m <= 9 ? '0' + m : m) + '-' + (d <= 9 ? '0' + d : d);
 }
 
+function toNumbers(d) {
+	var e = [];
+	d.replace(/(..)/g, function(d) {
+		e.push(parseInt(d, 16))
+	});
+	return e
+}
+function toHex() {
+	for (var d = [], d = 1 == arguments.length && arguments[0].constructor == Array ? arguments[0] : arguments, e = "", f = 0; f < d.length; f++) e += (16 > d[f] ? "0" : "") + d[f].toString(16);
+	return e.toLowerCase()
+}
+
 function main(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
@@ -27,6 +39,13 @@ function main(){
 
 	var html = AnyBalance.requestGet(baseurl + 'sign/in', g_headers);
 
+	var a = toNumbers("34b6df80b370ea1d139e9ff53c0e569e"),
+		b = toNumbers("3579ba912ceb30beb21135fc5defb40b"),
+		c = toNumbers("da96a44a86a5a28ba38ce3d38bb89cd3");
+
+	AnyBalance.setCookie('profit-partner.ru', 'sissioncookie', toHex(slowAES.decrypt(c, 2, a, b)) + "; expires=Thu, 31-Dec-37 23:55:55 GMT; path=/");
+	
+	html = AnyBalance.requestGet(baseurl + 'sign/in', g_headers);
 	/*var captchaa;
 	if(AnyBalance.getLevel() >= 7){
 		AnyBalance.trace('Пытаемся ввести капчу');

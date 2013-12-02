@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser|captcha" />
-	<id version="10">ab-fine-gibdd</id>
+	<id version="11">ab-fine-gibdd</id>
 	<name>Штрафы ГИБДД</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о наличии штрафов с сайта http://gibdd.ru.</p>

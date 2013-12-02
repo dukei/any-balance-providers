@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="5">ab-affiliate-profit</id>
+	<id version="6">ab-affiliate-profit</id>
 	<name>Profit-Partner.ru</name>
 	<api flags="no_browser|captcha"/>
 	<description html="true"><![CDATA[
@@ -11,6 +11,7 @@
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
 		<js>library.js</js>
+		<js>aes.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="6">ab-money-avangard</id>
+	<id version="7">ab-money-avangard</id>
 	<name>Банк Авангард</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о текущем остатке и других параметрах карт и счетов для пользователей банка ""Авангард"".</p>
+	<p>Предоставляет информацию о текущем остатке и других параметрах карт и счетов для пользователей банка "Авангард".</p>
 	<p>Информация берется из системы Интернет-банк (http://www.avangard.ru/login/logon_enter.html).</p>
 	]]></description>
 	<instruction html="true"><![CDATA[

@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+<change major_version="3.3" version="69" date="2013-12-03">
+- Улучшено получение счетчика Срок действия пакета трафика в некоторых случаях.
+</change>
 <change major_version="3.3" version="68" date="2013-11-02">
 - Исправлено получение баланса для чужого номера с мобильного интернета МТС
 </change>

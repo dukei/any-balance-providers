@@ -464,7 +464,7 @@ function fetchAccountStatus(html, result){
     //Подбаланс gprs: 49,26 Mb
     sumParam (html, result, 'traffic_left_mb', /Подбаланс gprs:[^\d]*(\d+[\.,]?\d*\s*([kmgкмг][бb]|байт|bytes))/ig, null, parseTraffic, aggregate_sum);
     //Подбаланс gprs: 1,17 Mb до 26.11.2013
-    sumParam (html, result, 'traffic_left_till', /Подбаланс gprs:[^<]*?[kmgкмг][бb]\s*до\s*([\s\S]*?)<\//ig, null, parseDate, aggregate_min);	
+    sumParam (html, result, 'traffic_left_till', [/Подбаланс gprs:[^<]*?[kmgкмг][бb]\s*до\s*([\s\S]*?)<\//ig, /Остаток GPRS-пакета[^<]*[мm][бb][^<]*действует до([^<]*)/ig], null, parseDate, aggregate_min);	
     // Лицевой счет
     getParam (html, result, 'license', /№([\s\S]*?)[:<]/, replaceTagsAndSpaces);
     // Блокировка

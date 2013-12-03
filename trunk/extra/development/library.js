@@ -4,9 +4,11 @@ AnyBalance (http://any-balance-providers.googlecode.com)
 Содержит некоторые полезные для извлечения значений с сайтов функции.
 Для конкретного провайдера рекомендуется оставлять в этом файле только те функции, которые используются.
 
-library.js v0.05 от 26.11.13
+library.js v0.06 от 03.12.13
 
 changelog:
+03.12.13 опять поправил parseMinutes, не парсились значения типа 252:22 мин
+
 26.11.13: подправлена parseMinutes(), правильное получение данных, если на входе "300 &#65533;мин"
 
 25.11.13: унифицирована parseMinutes() теперь поддерживает все подряд
@@ -132,14 +134,14 @@ function parseMinutes(_text) {
 	var text = html_entity_decode(_text).replace(/[\s�]*/g, '');
 	var hour = 0, min = 0, sec = 0;
 	// Это формат ЧЧ:ММ:СС	
-	if(/^\d{1,2}:\d{1,2}:\d{1,2}$/i.test(text)) {
-		var regExp = /^(\d{1,2}):(\d{1,2}):(\d{1,2})$/i.exec(text);
+	if(/^\d+:\d+:\d+$/i.test(text)) {
+		var regExp = /^(\d+):(\d+):(\d+)$/i.exec(text);
 		hour = parseFloat(regExp[1]);
 		min = parseFloat(regExp[2]);
 		sec = parseFloat(regExp[3]);
 	// Это формат ММ:СС
-	} else if(/^\d{1,2}:\d{1,2}/i.test(text)) {
-		var regExp = /^(\d{1,2}):(\d{1,2})/i.exec(text);
+	} else if(/^\d+:\d+/i.test(text)) {
+		var regExp = /^(\d+):(\d+)/i.exec(text);
 		hour = 0;
 		min = parseFloat(regExp[1]);
 		sec = parseFloat(regExp[2]);

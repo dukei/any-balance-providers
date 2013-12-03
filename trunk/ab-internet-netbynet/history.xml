@@ -1,27 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-    <change major_version="2.0" version="11" date="2013-09-22">
-      - Добавлен остаток трафика для некоторых тарифов
-    </change>
-    <change major_version="2.0" version="10" date="2013-05-10">
-      - Поддержка Липецка
-    </change>
-    <change major_version="2.0" version="9" date="2013-04-26">
-      - Поддержка Старого Оскола
-    </change>
-    <change major_version="2.0" version="8" date="2013-04-19">
-      - Поддержка Орла, исправление Белгорода
-    </change>
-    <change major_version="2.0" version="7" date="2013-03-17">
-      - Поддержка Белгорода
-    </change>
-    <change major_version="2.0" version="6" date="2013-02-03">
-      - Исправление Москвы (поддержка изменений в личном кабинете)
-    </change>
-    <change major_version="1.0" version="5" date="2013-02-02">
-      - Исправление Воронежа (поддержка изменений в личном кабинете)
-    </change>
-    <change major_version="1.0" version="4" date="2012-10-08">
-      - Поддержка Воронежа
-    </change>
+<change major_version="2.0" version="12" date="2013-12-03">
+- Поддержка изменений на сайте Воронежского NetByNet
+</change>
+<change major_version="2.0" version="11" date="2013-09-22">
+- Добавлен остаток трафика для некоторых тарифов
+</change>
+<change major_version="2.0" version="10" date="2013-05-10">
+- Поддержка Липецка
+</change>
+<change major_version="2.0" version="9" date="2013-04-26">
+- Поддержка Старого Оскола
+</change>
+<change major_version="2.0" version="8" date="2013-04-19">
+- Поддержка Орла, исправление Белгорода
+</change>
+<change major_version="2.0" version="7" date="2013-03-17">
+- Поддержка Белгорода
+</change>
+<change major_version="2.0" version="6" date="2013-02-03">
+- Исправление Москвы (поддержка изменений в личном кабинете)
+</change>
+<change major_version="1.0" version="5" date="2013-02-02">
+- Исправление Воронежа (поддержка изменений в личном кабинете)
+</change>
+<change major_version="1.0" version="4" date="2012-10-08">
+- Поддержка Воронежа
+</change>
 </history>

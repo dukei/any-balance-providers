@@ -19,11 +19,8 @@ var g_regions = {
 function main(){
     var prefs = AnyBalance.getPreferences();
 
-    if (!prefs.login || prefs.login == '')
-        throw new AnyBalance.Error ('Введите логин');
-
-    if (!prefs.password || prefs.password == '')
-        throw new AnyBalance.Error ('Введите пароль');
+	checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(prefs.password, 'Введите пароль!');
 
     var func = g_regions[prefs.region] || g_regions.center;
     var region = (g_regions[prefs.region] && prefs.region) || 'center';
@@ -129,7 +126,7 @@ function mainCenter(){
 
 function mainVoronezh(){
     var prefs = AnyBalance.getPreferences();
-    var baseurl = 'https://selfcare.puzzle.su/voronezh/index.php';
+    var baseurl = 'https://selfcare.netbynet.ru/voronezh/';
 
     AnyBalance.trace ("Trying to enter selfcare at address: " + baseurl);
     var html = requestPostMultipart (baseurl + "?", {
@@ -139,39 +136,23 @@ function mainVoronezh(){
     	'pr[form][auto][form_event]': 'Войти'
     }, {'Accept-Charset': 'windows-1251'});
 
-    if(!/\?exit=1/i.test(html)){
-        var error = getParam (html, null, null, /<font[^>]+color=['"]red['"][^>]*>([\s\S]*?)<\/font>/i, replaceTagsAndSpaces);
+    if(!/'\?exit=1'/i.test(html)){
+        var error = sumParam (html, null, null, /<font[^>]+color=['"]red['"][^>]*>([\s\S]*?)<\/font>/ig, replaceTagsAndSpaces, null, aggregate_join);
         if (error){
             throw new AnyBalance.Error (error);
         }
         throw new AnyBalance.Error ("Не удаётся войти в личный кабинет. Сайт изменен?");
     }
-
-    AnyBalance.trace ("It looks like we are in selfcare...");
-
-    var result = {success: true};
-
-    html = AnyBalance.requestGet(baseurl + '?pr%5Bcontrol%5D%5Bkernel%5D%5Brecord%5D=23&pr%5Bcontrol%5D%5Bkernel%5D%5Bparent%5D=19&menu=19');
-
-    AnyBalance.trace("Parsing data...");
-
-    // Баланс
-    getParam (html, result, 'balance', /Лицевой счет:[\s\S]*?баланс:([\s\S]*?)<br/i, replaceTagsAndSpaces, parseBalance);
-
-    // Абонент
+	html = AnyBalance.requestGet(baseurl + '?pr%5Bcontrol%5D%5Bkernel%5D%5Brecord%5D=23&pr%5Bcontrol%5D%5Bkernel%5D%5Bparent%5D=19&menu=19');
+    
+	var result = {success: true};
+	
+    getParam (html, result, 'balance', /Лицевой счет:(?:[^>]*>){4}баланс(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
     getParam (html, result, 'subscriber', /Приветствуем Вас,([^<]*)/i, replaceTagsAndSpaces);
-
-    // Номер договора
-    getParam (html, result, 'contract', /Лицевой счет:([\s\S]*?),/i, replaceTagsAndSpaces);
-
-    // Расчетный период - остаток
-    getParam (html, result, 'day_left', /До списания абонентской платы осталось:([\s\S]*?)<br/i, replaceTagsAndSpaces, parseBalance);
-
-    // Бонусный баланс 
-    getParam (html, result, 'bonus_balance', /Бонусный счет[\s\S]*?Баланс:([\s\S]*?)<br/i, replaceTagsAndSpaces, parseBalance);
-
-    sumParam(html, result, '__tariff', /Тарифный план:([\s\S]*?)(?:<\/span>|<a)/i, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
-    // Бонусный статус
+    getParam (html, result, 'contract', /<b>\s*Лицевой счет:(?:[^>]*>){2}([^<,]*)/i, replaceTagsAndSpaces);
+    getParam (html, result, 'day_left', /дней до ухода в финансовую блокировку:(?:[^>]*>){2}\s*(\d+)/i, replaceTagsAndSpaces, parseBalance);
+	sumParam(html, result, '__tariff', /Тарифный план:([\s\S]*?)(?:<\/span>|<a)/i, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+    getParam (html, result, 'bonus_balance', /Баланс:([^<]*)балл/i, replaceTagsAndSpaces, parseBalance);
     sumParam (html, result, '__tariff', /(<strong[^>]*>\s*Бонусный счет[\s\S]*?)Баланс/i, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
 
     AnyBalance.setResult(result);

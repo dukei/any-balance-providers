@@ -37,7 +37,7 @@ function main(){
 
 	if(AnyBalance.getLevel() >= 7){
 		AnyBalance.trace('Пытаемся ввести капчу');
-		html = AnyBalance.requestPost(baseurl+ 'bitrix/templates/.default/components/gai/check/fines.v1.1/ajax/captchaReload.php', {}, addHeaders( {
+		html = AnyBalance.requestPost(baseurl+ 'bitrix/templates/.default/components/gai/check/fines.v1.2/ajax/captchaReload.php', {}, addHeaders( {
 			'X-Requested-With':'XMLHttpRequest',
 			'Referer':baseurl+'check/fines/',
 		}));
@@ -59,7 +59,7 @@ function main(){
 	params.stsnum = prefs.password;
 	AnyBalance.trace('Пробуем запросить информацию с данными: '+prefs.login+', ' + prefs.password);
 	
-	html = AnyBalance.requestPost(baseurl + 'bitrix/templates/.default/components/gai/check/fines.v1.1/ajax/checker.php', params, addHeaders({
+	html = AnyBalance.requestPost(baseurl + 'bitrix/templates/.default/components/gai/check/fines.v1.2/ajax/checker.php', params, addHeaders({
 		'X-Requested-With':'XMLHttpRequest',
 		'Referer':baseurl+'check/fines/'
 	}));

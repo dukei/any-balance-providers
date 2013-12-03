@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-cell-moldcell</id>
+	<api flags="no_browser|captcha"/>
+	<name>Moldcell</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Moldcell </p>
+	<p>Информация берется из личного кабинета https://contulmeu.moldcell.md/ps/selfcare_uni/</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" {@currency}"/>
+		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="mins_net_left" name="Минуты внутри сети" units=" мин" type="time_interval" format="{@MIN}:{@sec}"/>
+		<counter id="mins_left" name="Минуты на все номера" units=" мин" type="time_interval" format="{@MIN}:{@sec}"/>
+		<counter id="traf_left" name="Трафик" units=" Mb"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="acc_name" name="№ счета" type="text"/>
+		<counter id="phone" name="Телефон" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>cell</type>
+	<country>ru, md</country>
+</provider>

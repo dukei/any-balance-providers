@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <EditTextPreference 
+    <EditTextPreference
+		obligatory="true"
         title="Логин" 
         positiveButtonText="ОК" 
         summary="|Введите ваш Логин|{@s}" 
@@ -9,7 +10,8 @@
         dialogMessage="Введите ваш Логин для входа в систему Интернет-Банк. Если у вас его нет, получите его на сайте https://www.avangard.ru/login/firstlogon_enter.html"
         key="login">
     </EditTextPreference>
-    <EditTextPreference 
+    <EditTextPreference
+		obligatory="true"
         positiveButtonText="ОК"
         key="password" 
         dialogTitle="Пароль"

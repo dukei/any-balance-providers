@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="7">ab-money-avangard</id>
+	<id version="8">ab-money-avangard</id>
 	<name>Банк Авангард</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем остатке и других параметрах карт и счетов для пользователей банка "Авангард".</p>
@@ -24,14 +24,14 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Остаток"/>
+		<counter id="balance" name="Остаток" units=" {@currency}"/>
 		<counter id="currency" name="Валюта" type="text"/>
-		<counter id="minpay" name="Мин.платеж"/>
+		<counter id="minpay" name="Мин.платеж" units=" {@currency}"/>
 		<counter id="minpaydate" name="Дата мин.платежа" type="time" format="dd/MM/yyyy"/>
 		<counter id="freepay" name="Платеж льготного периода"/>
 		<counter id="freepaydate" name="Дата платежа льготного периода" type="time" format="dd/MM/yyyy"/>
-		<counter id="debt" name="Задолженность"/>
-		<counter id="limit" name="Кредитный лимит"/>
+		<counter id="debt" name="Задолженность" units=" {@currency}"/>
+		<counter id="limit" name="Кредитный лимит" units=" {@currency}"/>
 		<counter id="cardnum" name="Номер карты" type="text"/>
 		<counter id="cardname" name="Имя на карте" type="text"/>
 		<counter id="cardtill" name="Срок действия" type="text"/>

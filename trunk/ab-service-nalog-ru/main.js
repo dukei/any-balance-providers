@@ -45,7 +45,7 @@ function main() {
 	}
 	var result = {
 		success: true,
-		balance: 0,
+		balance: null,
 		all: ''
 	};
 	var errString = 'Не найдена информация по задолженности с данными: ИНН: ' + prefs.inn + ', ФИО: ' + prefs.surname + ' ' + prefs.fio_name + ' ' + prefs.otchestvo + '. Пожалуйста, проверьте правильность ввода. ';
@@ -79,6 +79,7 @@ function main() {
 		var curr = json.regions[i];
 		if(!curr.pds) {
 			AnyBalance.trace('По региону ' +curr.name + ' информация времено не доступна, скоро все заработает снова.');
+			result.all = undefined;
 		} else {
 			for (j = 0; j < curr.pds.length; j++) {
 				var sum = (curr.pds ? curr.pds[j].sum : '');

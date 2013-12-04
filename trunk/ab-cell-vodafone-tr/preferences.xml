@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+  <EditTextPreference
+		title="Telefon no"
+		key="login"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Telefon no"
+		positiveButtonText="Tamam"
+		negativeButtonText="İptal"
+		dialogMessage="Self Servis hesabınız için telefon numaranızı 10 hane girin.">
+  </EditTextPreference>
+  <EditTextPreference
+		title="Şifre"
+		key="password"
+		summary="||***********"
+		obligatory="true"
+		dialogTitle="Şifre"
+		positiveButtonText="Tamam"
+		negativeButtonText="İptal"
+		dialogMessage="Self Servis hesabınız için şifre girin."
+		inputType="textPassword">
+  </EditTextPreference>
+</PreferenceScreen>

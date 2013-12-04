@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="23">ab-cell-intertelecom</id>
+  <id version="24">ab-cell-intertelecom</id>
   <!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
   <api flags="no_browser" />
   <name>Интертелеком</name>

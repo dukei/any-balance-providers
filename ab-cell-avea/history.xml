@@ -1,30 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
 <change major_version="2.0" version="12" date="2013-11-21">
-- Minor bugs fixed.
+- Bazı hatalar düzeltildi.
 </change>
 <change major_version="2.0" version="10" date="2013-11-20">
-- Minor bugs fixed.
+- Bazı hatalar düzeltildi.
 </change>
 <change major_version="2.0" version="9" date="2013-11-18">
-- Bonuses improved again, again :)
+- Hediye dakikalar düzenlendi
 </change>
 <change major_version="2.0" version="8" date="2013-11-15">
-- Bonuses improved again.
+- Hediye dakikalar düzenlendi.
 </change>
 <change version="7" date="2013-11-06">
-- Bonuses improved.
+- Hediye dakikalar düzenlendi.
 </change>
 <change version="6" date="2013-11-05">
-- New tarifs added.
+- BİMCell ve PTTCell hat desteği eklendi.
 </change>
 <change version="5" date="2013-10-29">
-- Minor changes.
+- Bazı hatalar düzeltildi.
 </change>
 <change version="4" date="2013-10-29">
-- New counters added and new tarif plans are supported.
+- Yeni sayaçlar eklendi ve tarife ismi artık görüntüleniyor.
 </change>
 <change version="2" date="2013-10-28">
-- Minor changes.
+- Bazı hatalar düzeltildi.
 </change>
 </history>

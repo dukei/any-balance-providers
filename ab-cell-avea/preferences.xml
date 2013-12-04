@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-	<EditTextPreference
-		title="Kullanıcı adı"
+  <EditTextPreference
+		title="Telefon no"
 		key="login"
 		summary="||{@s}"
 		obligatory="true"
-		dialogTitle="Kullanıcı adı"
+		dialogTitle="Telefon no"
 		positiveButtonText="Tamam"
 		negativeButtonText="İptal"
-		dialogMessage="Online İşlemler hesabınız için kullanıcı adını girin.">
-	</EditTextPreference>
-	<EditTextPreference
+		dialogMessage="Telefon numaranızı 10 rakam olarak girin.">
+  </EditTextPreference>
+  <EditTextPreference
 		title="Şifre"
 		key="password"
 		summary="||***********"
@@ -18,9 +18,9 @@
 		dialogTitle="Şifre"
 		positiveButtonText="Tamam"
 		negativeButtonText="İptal"
-		dialogMessage="Online İşlemler hesabınız için şifre girin."
+		dialogMessage="Şifrenizi girin. Şifrenizi bilmiyorsanız telefonunuzda *952# yazıp arama tuşuna basın."
 		inputType="textPassword">
-	</EditTextPreference>
+  </EditTextPreference>
     <CheckBoxPreference
         title="Hat Türü"
         defaultValue="true"

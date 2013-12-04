@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-	<EditTextPreference
-		title="Login"
+  <EditTextPreference
+		title="Telefon no"
 		key="login"
 		summary="||{@s}"
 		obligatory="true"
-		dialogTitle="Login"
-		positiveButtonText="OK"
-		negativeButtonText="Cancel"
-		dialogMessage="Enter login to your Turkcell account.">
-	</EditTextPreference>
-	<EditTextPreference
-		title="Password"
+		dialogTitle="Telefon no"
+		positiveButtonText="Tamam"
+		negativeButtonText="İptal"
+		dialogMessage="Telefon numaranızı 10 rakam olarak girin.">
+  </EditTextPreference>
+  <EditTextPreference
+		title="Şifre"
 		key="password"
 		summary="||***********"
 		obligatory="true"
-		dialogTitle="Password"
-		positiveButtonText="OK"
-		negativeButtonText="Cancel"
-		dialogMessage="Enter password to your Turkcell account."
+		dialogTitle="Şifre"
+		positiveButtonText="Tamam"
+		negativeButtonText="İptal"
+		dialogMessage="Şifrenizi girin. Şifrenizi bilmiyorsanız SIFRE yazıp 2222'ye kısa mesaj gönderin."
 		inputType="textPassword">
-	</EditTextPreference>
+  </EditTextPreference>
 </PreferenceScreen>

@@ -4,11 +4,11 @@
 	<api flags="no_browser"/>
 	<name>AVEA</name>
 	<description html="true"><![CDATA[
-	<p>AVEA Online İşlemlerinden bilgileri temin eder: https://www.avea.com.tr/mps/portal?cmd=onlineTransactionsHome&lang=tr&tb=redTab</p>
-	<p>Bu servis sağlayıcı, AVEA altyapısını kullanan BİMCell ve PTTCell hatlarıyla uyumludur.</p>
+	<p>AVEA hattınızda bulunan Konuşma, SMS ve Internet paketlerinin kalan miktarlarını gösterir.</p>
+	<p>Bu servis sağlayıcı, AVEA altyapısını kullanan BİMCell ve PTTCell hatlarıyla da uyumludur.</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
-	<p>Kayıt olmak için linke basınız: https://www.avea.com.tr/mps/portal?cmd=onlineTransactionsHome&lang=tr&tb=redTab</p>
+	<p>Online İşlemler şifrenizi almak için telefonunuzda *952# yazıp arama tuşuna basın.</p>
 	]]></instruction>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
@@ -22,13 +22,13 @@
 		<counter id="balance" name="Bakiye" units=" TL"/>
 		<counter id="fatura" name="Güncel Fatura" units=" TL"/>
 		<counter id="minutes" name="Kalan Dakika" units=" dk"/>
-		<counter id="minutes_local" name="Kalan Dakika (Operatör İçi)" units=" dk"/>
-		<counter id="bonus_minutes" name="Kalan Dakika (Hediye)" units=" dk"/>
+		<counter id="minutes_local" name="Operatör İçi kalan Dakika" units=" dk"/>
+		<counter id="bonus_minutes" name="Kalan Hediye Dakika" units=" dk"/>
 		<counter id="total_minutes" name="Kalan Dakika Ayrıntıları" type="text"/>
-		<counter id="traf" name="Kalan Internet" units=" Mb"/>
-		<counter id="bonus_traf" name="Kalan Internet (Hediye)" units=" Mb"/>
+		<counter id="traf" name="Kalan İnternet" units=" Mb"/>
+		<counter id="bonus_traf" name="Kalan Hediye İnternet" units=" Mb"/>
 		<counter id="sms" name="Kalan SMS" units=" sms"/>
-		<counter id="bonus_sms" name="Kalan SMS (Hediye)" units=" sms"/>
+		<counter id="bonus_sms" name="Kalan Hediye SMS" units=" sms"/>
 		<counter id="bill_date" name="Fatura Tarihi" type="time" format="dd/MM/yyyy"/>
 	</counters>
 	<keywords></keywords>

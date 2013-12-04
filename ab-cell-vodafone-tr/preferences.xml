@@ -8,7 +8,7 @@
 		dialogTitle="Telefon no"
 		positiveButtonText="Tamam"
 		negativeButtonText="İptal"
-		dialogMessage="Self Servis hesabınız için telefon numaranızı 10 hane girin.">
+		dialogMessage="Telefon numaranızı 10 rakam olarak girin.">
   </EditTextPreference>
   <EditTextPreference
 		title="Şifre"
@@ -18,7 +18,7 @@
 		dialogTitle="Şifre"
 		positiveButtonText="Tamam"
 		negativeButtonText="İptal"
-		dialogMessage="Self Servis hesabınız için şifre girin."
+		dialogMessage="Şifrenizi girin. Şifrenizi bilmiyorsanız S yazıp 7000'e kısa mesaj gönderin."
 		inputType="textPassword">
   </EditTextPreference>
 </PreferenceScreen>

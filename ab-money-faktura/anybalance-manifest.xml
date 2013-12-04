@@ -1,39 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="4">ab-money-faktura</id>
-  <name>Фактура</name>
-  <description>
-    Получает текущий остаток, бонусные баллы и другие параметры карт банков, работающих через factura.ru, используя систему Интернет-банк ( https://www.faktura.ru/lite/app ).
-
-    Если у вас нет доступа к интернет-банку, выполните условия на странице https://www.faktura.ru/lite/app/pub/Register . 
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>api:jquery.min.js</js>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Остаток"/>
-    <counter id="accamount" name="Средств на счете"/>
-    <counter id="currency" name="Валюта" type="text"/>
-    <counter id="free" name="Свободных средств (не на картах)"/>
-    <counter id="blocked" name="Необработанные операции"/>
-    <counter id="cardnum" name="Номер карты" type="text"/>
-    <counter id="cardname" name="Тип карты" type="text"/>
-    <counter id="accnum" name="Номер счета" type="text"/>
-    <counter id="accname" name="Имя счета" type="text"/>
-  </counters>
-  <keywords>
-    интернет-банк, фактура, левобережный
-  </keywords>
-  <type>
-    money
-  </type>
-  <country>
-    ru
-  </country>
+	<id major_version="2.0" version="5">ab-money-faktura</id>
+	<name>Фактура</name>
+	<description html="true"><![CDATA[
+	<p>Получает текущий остаток, бонусные баллы и другие параметры карт банков, работающих через factura.ru, используя систему Интернет-банк (https://www.faktura.ru/lite/app).</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Если у вас нет доступа к интернет-банку, выполните условия на странице https://www.faktura.ru/lite/app/pub/Register.</p>
+	]]></instruction>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>api:jquery.min.js</js>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Остаток" units=" {@currency}"/>
+		<counter id="credit_used" name="Использованный кредит" units=" {@currency}"/>
+		<counter id="credit_pay_to" name="Оплатить до" type="time" format="dd/MM/yyyy"/>
+		<counter id="credit_pay_sum" name="Сумма платежа по кредиту" units=" {@currency}"/>
+		<counter id="accamount" name="Средств на счете"/>
+		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="free" name="Свободных средств (не на картах)"/>
+		<counter id="blocked" name="Необработанные операции"/>
+		<counter id="cardnum" name="Номер карты" type="text"/>
+		<counter id="cardname" name="Тип карты" type="text"/>
+		<counter id="accnum" name="Номер счета" type="text"/>
+		<counter id="accname" name="Имя счета" type="text"/>
+	</counters>
+	<keywords>интернет-банк, фактура, левобережный, 2Т банк</keywords>
+	<type>money</type>
+	<country>ru</country>
 </provider>

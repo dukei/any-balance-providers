@@ -10,6 +10,15 @@
         key="login">
     </EditTextPreference>
     <EditTextPreference 
+        title="Номер В/У"
+        positiveButtonText="ОК"
+        summary="||{@s}"
+        dialogTitle="Введите номер водительского удостоверения."
+        negativeButtonText="Отмена"
+        dialogMessage="Введите номер в формате 50ХХ028333, буквы русские."
+        key="license">
+    </EditTextPreference>	
+    <EditTextPreference 
         positiveButtonText="ОК"
         key="password" 
         dialogTitle="Св-во о регистрации."

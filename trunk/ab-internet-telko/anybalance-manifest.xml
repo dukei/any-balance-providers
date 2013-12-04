@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-telko</id>
+	<api flags="no_browser"/>
+	<name>Телко (Ставрополь)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Телко в г. Ставрополь</p>
+	<p>Информация берется из личного кабинета http://customer.telko.ru/</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="payments" name="Платежи в текущем месяце" units=" р"/> 
+		<counter id="trafficIn" name="Входящий трафик в текущем месяце" units=" Gb"/>
+		<counter id="trafficOut" name="Исходящий трафик в текущем месяце" units=" Gb"/>
+		<counter id="credit" name="Кредит" units=" р"/>
+		<counter id="licschet" name="Лицевой счет" type="text"/>
+		<counter id="userName" name="ФИО" type="text"/>	
+	</counters>
+	<keywords></keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

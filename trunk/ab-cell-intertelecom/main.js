@@ -49,7 +49,7 @@ function main(){
 	sumParam(html, result, 'date_bonus_fb', /<td[^>]*>\s*Бонус [^>]*Угадай код[^>]*\s*<\/td>\s*<td[^>]*>\s*.* \(по ([^<]*)\)\s*<\/td>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
 	
 	//Пакетный трафик (получаем в локальную переменную, и независимо от включенности счетчика 'traffic_paket')
-        var traffic_paket = getParam(html, null, null, /<td[^>]*>\s*пакетный трафик \(Rev.A\)\s*<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+        var traffic_paket = sumParam(html, null, null, /<td[^>]*>\s*пакетный трафи(?:к|к \(Rev.A\)|к \(Rev.A\/Rev.B\))\s*<\/td>\s*<td[^>]*>([\s\S]*?)\s/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
         //Пакетный трафик (Rev.B)
         var traffic_paket_revb = getParam(html, null, null, /пакетный трафик \(Rev.B\)\s*<[\s\S]*?<td[^>]*>([\s\S]*?) по/i, replaceTagsAndSpaces, parseBalance);
 	//Трафик использованный за текущую интернет сессию  (получаем в локальную переменную, и независимо от включенности счетчика 'traffic_paket_session')

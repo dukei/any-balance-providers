@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
 <change version="8" date="2013-12-03">
-- Improved parsing
+- Veri işleme mekanizması düzenlendi
 </change>
 <change version="5" date="2013-11-26">
-- Improved stability, bugs fixed
+- Stabilite arttırıldı
 </change>
 <change version="4" date="2013-11-19">
-- Minor bugs fixed
+- Bazı hatalar giderildi
 </change>
 </history>

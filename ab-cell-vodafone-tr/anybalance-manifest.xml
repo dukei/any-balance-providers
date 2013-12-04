@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id major_version="1.0" version="1">ab-cell-vodafone-tr</id>
+	<api flags="no_browser"/>
+	<name>Vodafone Turkey</name>
+	<description html="true">
+    <![CDATA[
+	<p>Vodafone Self Servis 'den hattınızın Konuşma, SMS ve Internet paketinde kalan miktarları gösterir.</p>
+	<p>Bu servis sadece bireysel Vodafone hatları içindir kurumsal aboneler bu hizmetten faydalanamaz.</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Tüm Self Servis kanallarında kullanacağınız şifrenizi: 'S' yada 'SIFRE' yazıp 7048'e ücretsiz kısa mesaj göndererek veya, Vodafone Türkiye web sayfası http://www.vodafone.com.tr 'ye girip, Online Self Servis “Ücretsiz Üye Ol” adımı ile talep edebilirsiniz.</p>
+	]]></instruction>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Balance" units=" TL"/>
+
+		<counter id="minutes" name="Kalan Dakika" type="time_interval" format="{@MIN}:{@sec}" units=" dk"/>
+		<counter id="minutes_local" name="Kalan Dakika Vodafone İçi" type="time_interval" format="{@MIN}:{@sec}" units=" dk"/>
+	
+		<counter id="sms" name="Kalan SMS" units=" sms"/>
+		<counter id="sms_local" name="Kalan SMS Vodafone İçi" units=" sms"/>
+
+		<counter id="data" name="Kalan Internet" units=" mb"/>
+	</counters>
+	<keywords></keywords>
+	<type>cell</type>
+	<country>tr</country>
+</provider>

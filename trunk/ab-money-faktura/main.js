@@ -2,15 +2,6 @@
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
-/*function parseBalanceEx(_text)
-{
-    var text = _text.replace(/\s+/g, '');
-    var rub = getParam(text, null, null, /(-?\d[\d\s]*[.,-]?\d*[.,]?\d*)/i, [/[^\d]/, ''], parseFloat) || 0;
-    var val = rub/100;
-    AnyBalance.trace('Parsing balance (' + val + ') from: ' + _text);
-    return val;
-}*/
-
 var g_phrases = {
    karty: {card: 'карты', acc: 'счета', dep: 'договора на вклад'},
    kartu: {card: 'карту', acc: 'счет', dep: 'договор на вклад'},
@@ -72,7 +63,7 @@ function mainCardAcc(what, baseurl){
     var pattern;
     if(what == 'card')
 		// \d{4}\s*(?:\*{4}\s*){2}4984[\s\S]*?class="card-amounts"(?:[\s\S]*?</div[^>]*>){4,6}
-        pattern = new RegExp('<div\\s+class="card-info">[^>]*>\\s*\\d{4}\\s*(?:\\*{4}\\s*){2}' + (prefs.num || '\\d{4}')+ '[\\s\\S]*?class="card-amounts"(?:[\\s\\S]*?</div[^>]*>){4,6}');
+        pattern = new RegExp('<div\\s+class="card-info">[^>]*>\\s*\\d{4}\\s*(?:\\*{4}\\s*){2}' + (prefs.num || '\\d{4}')+ '[\\s\\S]*class=(?:"grouped-amount"|"card-amounts")(?:[\\s\\S]*?</div[^>]*>){4,6}');
     else
 		// <div\s+class="account-block"(?:[^>]*>){3}[^>]*acc_\d+221738(?:[\s\S]*?</div[^>]*>){12}
         pattern = new RegExp('<div\\s+class="account-block"(?:[^>]*>){3}[^>]*acc_\\d+' + (prefs.num || '') + '[\\s\\S]*?class="account-amounts"(?:[\\s\\S]*?</div[^>]*>){12}', 'i');
@@ -90,13 +81,12 @@ function mainCardAcc(what, baseurl){
 	
 	var result = {success: true};
 	
-	// Первые регулярки в массивах оставлены для совместимости, можно удалить их
 	getParam(account, result, 'accnum', /Счет\s*№(\d+)/i, replaceTagsAndSpaces);
 	getParam(account, result, 'accname', /bind\(this\)\);">([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
-	getParam(account, result, 'balance', [/card-amounts[\s\S]{1,70}class="amount">([\s\S]*?)<\/span>/i, 
+	getParam(account, result, 'balance', [/"card-amounts[^>]*>[^>]*class="amount">[^>]*>((?:[\s\S]*?<\/span>){2})/i, 
 		/Остаток собственных средств на карте(?:[^>]*>){4}([^<]*)/i], myReplaceTagsAndSpaces, parseBalance);
 	
-	getParam(account, result, ['currency', 'balance'], /"currency"[^>]*>([^<]*)/i, replaceTagsAndSpaces);
+	getParam(account, result, ['currency', 'balance'], [/"card-amounts[^>]*>[^>]*class="amount">[^>]*>([\s\S]*?<\/span>){2}/i, /"currency"[^>]*>([^<]*)/i], replaceTagsAndSpaces);
 	getParam(account, result, 'cardnum', /<div class="card-info">\s*<span>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
 	getParam(account, result, '__tariff', /<div class="card-info">\s*<span>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
 	// Это актуально только для счета

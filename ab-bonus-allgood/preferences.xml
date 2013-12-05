@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference
+		title="Номер карты"
+		key="login"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Номер карты"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите номер карты.">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Дата рождения"
+		key="password"
+		summary="||***********"
+		obligatory="true"
+		dialogTitle="Дата рождения"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите дату рождения в формате ДДММГГГГ без разделителей, например 01051968."
+		inputType="textPassword">
+	</EditTextPreference>
+</PreferenceScreen>

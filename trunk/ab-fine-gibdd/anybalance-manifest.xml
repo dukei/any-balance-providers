@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id major_version="2.0" version="13">ab-fine-gibdd</id>
+	<id major_version="2.0" version="14">ab-fine-gibdd</id>
 	<name>Штрафы ГИБДД</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о наличии штрафов с сайта http://shtrafy-gibdd.ru/.</p>
@@ -21,7 +21,7 @@
 	<counters>
 		<counter id="balance" name="Общая сумма штрафов" units=" р"/>
 		<counter id="count" name="Колличество штрафов" units=" шт"/>
-		<counter id="date" name="Дата последнего нарушения" type="time"/>
+		<counter id="date" name="Дата последнего нарушения" type="time" format="dd/MM/yyyy"/>
 		<counter id="koap" name="Статья КоАП последнего штрафа" type="text"/>
 		<counter id="descr" name="Описание последнего штрафа" type="text"/>
 		<!-- <counter id="podrazdel" name="Подразделение последнего штрафа" type="text"/> -->

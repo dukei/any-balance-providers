@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <EditTextPreference 
+    <EditTextPreference
+		obligatory="true"
         title="Гос. номер" 
         positiveButtonText="ОК" 
         summary="||{@s}" 
@@ -9,7 +10,8 @@
         dialogMessage="Номер должен быть в формате а351со190 либо 1234ав199, буквы русские."
         key="login">
     </EditTextPreference>
-    <EditTextPreference 
+    <EditTextPreference
+		obligatory="true"
         title="Номер В/У"
         positiveButtonText="ОК"
         summary="||{@s}"
@@ -18,7 +20,8 @@
         dialogMessage="Введите номер в формате 50ХХ028333, буквы русские."
         key="license">
     </EditTextPreference>	
-    <EditTextPreference 
+    <EditTextPreference
+		obligatory="true"
         positiveButtonText="ОК"
         key="password" 
         dialogTitle="Св-во о регистрации."

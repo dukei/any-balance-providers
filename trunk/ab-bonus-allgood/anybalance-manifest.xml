@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-bonus-allgood</id>
+	<api flags="no_browser"/>
+	<name>Ол!Гуд</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Ол!Гуд (http://corp.ol-gud.ru/)</p>
+	<p>Информация берется из личного кабинета http://corp.ol-gud.ru/personal.php</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Накопленная сумма покупок" units=" р"/>
+		<counter id="count" name="Количество покупок"/>
+		<counter id="discount" name="Скидка по данной карте составляет" type="text"/>
+		<counter id="fio" name="Владелец карты" type="text"/>
+		<counter id="cardNum" name="Номер карты" type="text"/>
+		<counter id="lastDate" name="Дата последней покупки" type="time" format="dd/MM/yyyy"/>
+		<counter id="status" name="Статус карты" type="text"/>
+		<counter id="type" name="Тип карты" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>bonus</type>
+	<country>ru</country>
+</provider>

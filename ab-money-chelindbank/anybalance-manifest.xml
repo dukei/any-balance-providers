@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-money-chelindbank</id>
+	<api flags="no_browser"/>
+	<id version="3">ab-money-chelindbank</id>
 	<name>Челиндбанк</name>
 	<description html="true"><![CDATA[
 	<p>Получает текущий остаток и другие параметры карт, счетов Челиндбанка (http://www.chelindbank.ru), используя интернет-банк https://www.chelindbank.ru/ib2.</p>

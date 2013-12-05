@@ -551,7 +551,7 @@ function getSdv(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
 
-    var baseurl = 'http://severodvinsk.stream-info.ru/client2/';
+    var baseurl = 'https://lk.arkhangelsk.mts.ru/client/';
 
     var html = AnyBalance.requestPost(baseurl + 'index.php?r=site/login', {
         'LoginForm[login]':prefs.login,

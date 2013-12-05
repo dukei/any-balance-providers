@@ -15,7 +15,7 @@ function main(){
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-    var baseurl = 'https://cabinet.whsd.ru/';
+    var baseurl = 'http://cabinet.nch-spb.com/';
     AnyBalance.setDefaultCharset('utf-8'); 
 
     var html = AnyBalance.requestGet(baseurl + 'login.aspx', g_headers);

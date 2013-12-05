@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-exchange-metal</id>
+	<api flags="no_browser"/>
+	<id version="4">ab-exchange-metal</id>
 	<name>Курсы драгоценных металлов ЦБ России</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущих курсах драгоценных металлов, установленных Центральным Банком РФ.</p> 
@@ -9,7 +10,7 @@
 	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
-		<js>api:jquery.min.js</js>
+		<js>library.js</js>
 		<js>main.js</js>
 	</files>
 	<counters>

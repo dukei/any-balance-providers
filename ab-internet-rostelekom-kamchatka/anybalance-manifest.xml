@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="9">ab-internet-rostelekom-kamchatka</id>
+  <id version="10">ab-internet-rostelekom-kamchatka</id>
   <api flags="no_browser"/>
   <name>Интернет Ростелеком (Камчатка)</name>
   <description>

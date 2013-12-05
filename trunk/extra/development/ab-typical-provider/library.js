@@ -131,7 +131,7 @@ function parseCurrency(text) {
 Если на входе будет просто число - вернет минуты.
 Если на входе будет 02:03 будет принят формат ММ:СС*/
 function parseMinutes(_text) {
-	var text = html_entity_decode(_text).replace(/[\s�]*/g, '');
+	var text = html_entity_decode(_text).replace(/[\s�]+/g, '');
 	var hour = 0, min = 0, sec = 0;
 	// Это формат ЧЧ:ММ:СС	
 	if(/^\d+:\d+:\d+$/i.test(text)) {
@@ -148,7 +148,7 @@ function parseMinutes(_text) {
 	// Это любой другой формат, со словами либо просто число
 	} else {
 		hour = getParam(text, null, null, /(-?[\d\.,]*)\s*(?:час|ч|hour|h)/i, replaceFloat, parseFloat) || 0;
-		min = getParam(text, null, null, [/([\d.,]*)\s*(?:мин|м|хв|min|m)/i, /^\d+$/i], replaceFloat, parseFloat) || 0;
+		min = getParam(text, null, null, [/([\d.,]*)\s*(?:мин|м|хв|min|m)/i, /^[\d.,]+$/i], replaceFloat, parseFloat) || 0;
 		sec = getParam(text, null, null, /([\d.,]+)\s*(?:сек|c|с|sec|s)/i, replaceFloat, parseFloat) || 0;
 	}
 	var val = (hour*3600) + (min * 60) + sec;

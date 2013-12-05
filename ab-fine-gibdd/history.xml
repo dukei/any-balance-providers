@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+<change version="14" date="2013-12-05">
+- Данные с сайта gibdd.ru получать больше нет возможности, теперь все данные берутся с сайта http://shtrafy-gibdd.ru/
+</change>
 <change version="12" date="2013-12-03">
 - На сайте снова поменяли структуру запросов..
 </change>

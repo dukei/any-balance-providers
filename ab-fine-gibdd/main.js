@@ -175,7 +175,7 @@ function mainGibdd() {
 	var result = {success: true, balance:0} ;
 	
 	if(json.status == 1)
-		throw new AnyBalance.Error('Не верно введены символы с картинки');
+		throw new AnyBalance.Error("Неверно введены символы с картинки");
 	
 	if(json.request.error == 1)
 		throw new AnyBalance.Error('Указанное Вами свидетельство о регистрации транспортного средства не соответствует государственным регистрационным знакам. Вероятно, Вами допущена ошибка при заполнении полей запроса.');

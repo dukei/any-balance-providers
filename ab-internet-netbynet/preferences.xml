@@ -12,6 +12,7 @@
         negativeButtonText="Отмена">
     </EditTextPreference>
     <EditTextPreference
+		obligatory="true"
         key="password"
         title="Пароль"
         summary="||**********"
@@ -27,6 +28,6 @@
         summary="|Нужен для определения личного кабинета|{@s}"
         entries="Москва и МО|Воронеж|Белгород|Липецк|Орел|Старый Оскол"
         entryValues="moscow|voronezh|belgorod|lipetsk|orel|oskol"
-	      defaultValue="moscow">
+		defaultValue="moscow">
     </ListPreference>
 </PreferenceScreen>

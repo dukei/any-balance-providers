@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="15">ab-municipal-mosenergo</id>
+	<id version="16">ab-municipal-mosenergo</id>
 	<name>Мосэнергосбыт</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе и последнем платеже в ""МосЭнергоСбыт"".</p> 
-	<p>Информация берется из личного кабинета (http://lkkbyt.mosenergosbyt.ru).</p>
+	<p>Предоставляет информацию о балансе и последнем платеже в "МосЭнергоСбыт".</p> 
+	<p>Информация берется из личного кабинета http://lkkbyt.mosenergosbyt.ru</p>
 	]]></description>
 	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
 	<files>
@@ -16,14 +16,14 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units="р"/>
+		<counter id="balance" name="Баланс" units=" р"/>
 		<counter id="agreement" name="Лицевой счет" type="text"/>
 		<counter id="lastdate" name="Дата последнего платежа" type="time" format="dd/MM/yyyy"/>
 		<counter id="lastcounterdate" name="Дата последнего показания счетчика" type="time" format="dd/MM/yyyy"/>
 		<counter id="lastcounter" name="Последние показания счетчика"/>
 		<counter id="lastcounter1" name="Последние показания другого счетчика"/>
 		<counter id="lastcounter2" name="Последние показания третьего счетчика"/>
-		<counter id="lastsum" name="Последний платеж" units="р"/>
+		<counter id="lastsum" name="Последний платеж" units=" р"/>
 	</counters>
 	<keywords>мосэнерго, москва, электричество</keywords>
 	<type>municipal</type>

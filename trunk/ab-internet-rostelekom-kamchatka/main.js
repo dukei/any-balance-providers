@@ -75,7 +75,11 @@ function main(){
     }
 
     if(AnyBalance.isAvailable('traffic_local_in','traffic_global_out','traffic_global_in','traffic_included','traffic_kamchatka','traffic_ext_left')){
-        html = AnyBalance.requestGet(regionurl + 'www.PageViewer?page_name=S*ADM_DIALUP_REP_INV_FULL' + authorization + '&n1=p_start_month&n2=p_start_year&n3=p_finish_month&n4=p_finish_year&n5=p_adm&v6=Y&n7=p_username&n8=p_row_count&n9=p_page_num&v9=1&n10=p_page_go&v10=S*ADM_DIALUP_REP_INV&v1=11&v2=2013&v3=11&v4=2013&v7=-2&v8=100');
+        var dt = new Date();
+        var month = dt.getMonth() + 1;
+        var year = dt.getFullYear();
+
+        html = AnyBalance.requestGet(regionurl + 'www.PageViewer?page_name=S*ADM_DIALUP_REP_INV_FULL' + authorization + '&n1=p_start_month&n2=p_start_year&n3=p_finish_month&n4=p_finish_year&n5=p_adm&v6=Y&n7=p_username&n8=p_row_count&n9=p_page_num&v9=1&n10=p_page_go&v10=S*ADM_DIALUP_REP_INV&v1=' + month + '&v2=' + year + '&v3=' + month + '&v4=' + year + '&v7=-2&v8=100');
 
         getParam(html, result, 'traffic_local_in', /Зоновый входящий трафик(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTraffic);
         getParam(html, result, 'traffic_global_out', /Внешний исходящий трафик(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTraffic);

@@ -16,7 +16,7 @@ function main(){
     var baseurl = 'http://shtrafy-gibdd.ru/';
     AnyBalance.setDefaultCharset('utf-8'); 
 
-	checkEmpty(prefs.login, 'Введите гос. номер. Номер должен быть в формате а351со190 либо 1234ав199, буквы русские!');
+	checkEmpty(prefs.login, 'Введите гос. номер! Номер должен быть в формате а351со190 либо 1234ав199, буквы русские!');
 	checkEmpty(prefs.password, 'Введите номер свидетельства о регистрации в формате 50ХХ123456!');
 	checkEmpty(prefs.license, 'Введите номер водительского удостоверения в формате 50ХХ028333!');	
 	

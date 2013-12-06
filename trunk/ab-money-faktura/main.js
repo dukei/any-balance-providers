@@ -62,8 +62,9 @@ function mainCardAcc(what, baseurl){
 	
     var pattern;
     if(what == 'card')
-		// \d{4}\s*(?:\*{4}\s*){2}4984[\s\S]*?class="card-amounts"(?:[\s\S]*?</div[^>]*>){4,6}
-        pattern = new RegExp('<div\\s+class="card-info">[^>]*>\\s*\\d{4}\\s*(?:\\*{4}\\s*){2}' + (prefs.num || '\\d{4}')+ '[\\s\\S]*class=(?:"grouped-amount"|"card-amounts")(?:[\\s\\S]*?</div[^>]*>){4,6}');
+		// Я маньяк :)
+		// <div\s+class="account-block"(?:[^>]*>){3}[^>]*acc_\d+(?:[^>]*>){1,200}\d{4}\s*(?:\*{4}\s*){1,3}3998[\s\S]*?class="account-amounts"(?:[\s\S]*?</div[^>]*>){12}
+        pattern = new RegExp('<div\\s+class="account-block"(?:[^>]*>){3}[^>]*acc_\\d+(?:[^>]*>){1,200}\\d{4}\\s*(?:\\*{4}\\s*){1,3}' + (prefs.num || '\\d{4}')+ '[\\s\\S]*?class="account-amounts"(?:[\\s\\S]*?</div[^>]*>){12}');
     else
 		// <div\s+class="account-block"(?:[^>]*>){3}[^>]*acc_\d+221738(?:[\s\S]*?</div[^>]*>){12}
         pattern = new RegExp('<div\\s+class="account-block"(?:[^>]*>){3}[^>]*acc_\\d+' + (prefs.num || '') + '[\\s\\S]*?class="account-amounts"(?:[\\s\\S]*?</div[^>]*>){12}', 'i');
@@ -83,14 +84,19 @@ function mainCardAcc(what, baseurl){
 	
 	getParam(account, result, 'accnum', /Счет\s*№(\d+)/i, replaceTagsAndSpaces);
 	getParam(account, result, 'accname', /bind\(this\)\);">([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
-	getParam(account, result, 'balance', [/"card-amounts[^>]*>[^>]*class="amount">[^>]*>((?:[\s\S]*?<\/span>){2})/i, 
-		/Остаток собственных средств на карте(?:[^>]*>){4}([^<]*)/i], myReplaceTagsAndSpaces, parseBalance);
 	
-	getParam(account, result, ['currency', 'balance'], [/"card-amounts[^>]*>[^>]*class="amount">[^>]*>([\s\S]*?<\/span>){2}/i, /"currency"[^>]*>([^<]*)/i], replaceTagsAndSpaces);
-	getParam(account, result, 'cardnum', /<div class="card-info">\s*<span>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
-	getParam(account, result, '__tariff', /<div class="card-info">\s*<span>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+	getParam(account, result, '__tariff', new RegExp('\\d{4}\\s*(?:\\*{4}\\s*){2}' + (prefs.num || '\\d{4}'), 'i'), replaceTagsAndSpaces);
+	getParam(result.__tariff, result, 'cardnum');
+	
+	var balancesArray = [/Средств на счете(?:[^>]*>){5}([\s\S]*?)<\/div/i, /Доступно по картам(?:[^>]*>){2}([\s\S]*?)<\/div/i, 
+		/"card-amounts[^>]*>[^>]*class="amount">[^>]*>((?:[\s\S]*?<\/span>){2})/i, 
+		/Остаток собственных средств на карте(?:[^>]*>){4}([^<]*)/i];
+	
+	getParam(account, result, ['currency', 'balance'], balancesArray, myReplaceTagsAndSpaces, parseCurrency);
+	getParam(account, result, 'balance', balancesArray, myReplaceTagsAndSpaces, parseBalance);
 	// Это актуально только для счета
-	getParam(account, result, 'accamount', /Средств на счете(?:[^>]*>){5}([^<]*)/i, myReplaceTagsAndSpaces, parseBalance);
+	if(what == 'acc')
+		getParam(account, result, 'accamount', balancesArray, myReplaceTagsAndSpaces, parseBalance);
 	// Это только для кредита
 	getParam(account, result, 'credit_used', /Использованный кредит(?:[^>]*>){4}([^<]*)/i, myReplaceTagsAndSpaces, parseBalance);
 	getParam(account, result, 'credit_pay_to', /Оплатить до([^<]*)/i, myReplaceTagsAndSpaces, parseDate);

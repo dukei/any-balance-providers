@@ -89,7 +89,8 @@ function main() {
 		// Извращения
 		'5:01&#65533мин', '301',
 		'300 &#65533;мин ', '18000',
-		'295:40 мин', '17740'
+		'295:40 мин', '17740',
+		'49.25', '2955'
 	];
 	var temp = 0;
 	for (var i = 0; i < times.length; i++) {
@@ -99,7 +100,7 @@ function main() {
 		if(res == parsed) {
 			AnyBalance.trace('Item ' + (temp++) + ' parsed ok');
 		} else {
-			AnyBalance.trace('___Item ' + (temp++) + ' parsing failed!!!___');
+			AnyBalance.trace('____________________________________________________________Item ' + (temp++) + ' parsing failed!!!');
 		}
 	}
 		

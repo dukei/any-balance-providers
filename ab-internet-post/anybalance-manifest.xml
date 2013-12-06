@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="1">ab-internet-post</id>
+	<id version="2">ab-internet-post</id>
 	<name>Post ltd. (Пятигорск)</name>
-	<description>
-	Получает данные для провайдера Post ltd. г.Пятигорск, г.Ессентуки, г.Георгиевск (ПОСТ Лтд, http://www.kmv.ru/) 
-	
-	Личный кабинет находится по адресу: https://lk.kmv.ru/login
-	</description>
+	<description html="true"><![CDATA[
+	<p>Получает данные для провайдера Post ltd. г.Пятигорск, г.Ессентуки, г.Георгиевск (ПОСТ Лтд, http://www.kmv.ru/)</p>
+	<p>Личный кабинет находится по адресу: https://lk.kmv.ru/login</p>
+	]]></description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
@@ -17,7 +16,7 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units="р"/>
+		<counter id="balance" name="Баланс" units=" р"/>
 		<counter id="acc_num" name="Лицевой счет" type="text"/>
 	</counters>
 	<keywords></keywords>

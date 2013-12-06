@@ -128,7 +128,7 @@ function SHA1(str)
 // public domain.  It would be nice if you left this header intact.
 // Base64 code from Tyler Akins -- http://rumkin.com
 
-var ua = navigator.userAgent.toLowerCase();
+var ua = " chrome/";//navigator.userAgent.toLowerCase();
 if (ua.indexOf(" chrome/") >= 0 || ua.indexOf(" firefox/") >= 0 || ua.indexOf(' gecko/') >= 0) {
 	var StringMaker = function () {
 		this.str = "";

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2.0" version="6">ab-money-faktura</id>
+	<id major_version="2.0" version="7">ab-money-faktura</id>
 	<name>Фактура</name>
 	<description html="true"><![CDATA[
 	<p>Получает текущий остаток, бонусные баллы и другие параметры карт банков, работающих через factura.ru, используя систему Интернет-банк https://www.faktura.ru/lite/app</p>
@@ -19,10 +19,10 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Остаток" units=" {@currency}"/>
-		<counter id="credit_used" name="Использованный кредит"/>
+		<counter id="credit_used" name="Использованный кредит" units=" {@currency}"/>
 		<counter id="credit_pay_to" name="Оплатить до" type="time" format="dd/MM/yyyy"/>
-		<counter id="credit_pay_sum" name="Сумма платежа по кредиту"/>
-		<counter id="accamount" name="Средств на счете"/>
+		<counter id="credit_pay_sum" name="Сумма платежа по кредиту" units=" {@currency}"/>
+		<counter id="accamount" name="Средств на счете" units=" {@currency}"/>
 		<counter id="currency" name="Валюта" type="text"/>
 		<counter id="free" name="Свободных средств (не на картах)"/>
 		<counter id="blocked" name="Необработанные операции"/>

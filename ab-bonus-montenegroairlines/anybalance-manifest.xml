@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-bonus-montenegroairlines</id>
+	<id version="2">ab-bonus-montenegroairlines</id>
 	<api flags="no_browser"/>
 	<name>Черногорские авиалинии</name>
 	<description html="true"><![CDATA[

@@ -414,7 +414,7 @@ function parseDateForWord(str){
 	if(!date)
 		AnyBalance.trace('Failed to parse date from ' + str);
 	else {
-		return parseDateWordEn(date[2] + ' ' + date[1] + ' ' + date[3]);
+		return parseDateWord(date[2] + ' ' + date[1] + ' ' + date[3]);
 	}
 }
 

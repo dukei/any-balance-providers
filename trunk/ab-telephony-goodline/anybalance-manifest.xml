@@ -1,38 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="9">ab-telephony-goodline</id>
-  <name>ГудЛайн</name>
-  <description>
-    Получает текущий баланс, валюту счета у роумингового провайдера телефонии ГудЛайн.
-    Туристическая сим-карта ГудЛайн это сим-карта, которая вставляется в ваш мобильный телефон на время поездки за границу для экономии на звонках в роуминге.
-    Сайт провайдера: (для России) http://goodline.ru, (для Украины) http://goodline.com.ua
-
-    Для России провайдер получает данные через «Кабинет абонента» http://goodline.ru/ru/abonents/entercabinet/. Если у вас ещё нет доступа в личный кабинет, вам необходимо зарегистрироваться на странице http://goodline.ru/ru/abonents/entercabinet/registration/. Для украины испльзуются те же адреса, только .ru надо заменить на .com.ua.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>rsasecurity.js</js>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс"/>
-    <counter id="currency" name="Валюта" type="text"/>
-    <counter id="number" name="Номер" type="text"/>
-    <counter id="lastpay" name="Последний платеж"/>
-    <counter id="lastpaydate" name="Дата последнего платежа" type="time" format="dd/MM/yyyy"/>
-    <counter id="status" name="Статус" type="text"/>
-  </counters>
-  <keywords>
-    роуминг goodline
-  </keywords>
-  <type>
-    cell
-  </type>
-  <country>
-    ru, ua
-  </country>
+	<id version="10">ab-telephony-goodline</id>
+	<api flags="no_browser"/>
+	<name>ГудЛайн</name>
+	<description html="true"><![CDATA[
+	<p>Получает текущий баланс, валюту счета у роумингового провайдера телефонии ГудЛайн.</p>
+	<p>Туристическая сим-карта ГудЛайн это сим-карта, которая вставляется в ваш мобильный телефон на время поездки за границу для экономии на звонках в роуминге.</p>
+	<p>Сайт провайдера: (для России) http://goodline.ru, (для Украины) http://goodline.com.ua</p>
+	<p>Для России провайдер получает данные через «Кабинет абонента» http://goodline.ru/ru/abonents/entercabinet/</p>
+	]]></description>	
+	<instruction html="true"><![CDATA[
+	<p>Если у вас ещё нет доступа в личный кабинет, вам необходимо зарегистрироваться на странице http://goodline.ru/ru/abonents/entercabinet/registration/. Для украины испльзуются те же адреса, только .ru надо заменить на .com.ua.</p>
+	]]></instruction>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>rsasecurity.js</js>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" {@currency}"/>
+		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="number" name="Номер" type="text"/>
+		<counter id="lastpay" name="Последний платеж" units=" {@currency}"/>
+		<counter id="lastpaydate" name="Дата последнего платежа" type="time" format="dd/MM/yyyy"/>
+		<counter id="status" name="Статус" type="text"/>
+	</counters>
+	<keywords>роуминг goodline</keywords>
+	<type>cell</type>
+	<country>ru, ua</country>
 </provider>

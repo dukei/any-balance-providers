@@ -3,7 +3,7 @@
 */
 
 var g_headers = {
-	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'Accept': '*/*',
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection': 'keep-alive',
@@ -14,18 +14,20 @@ function main() {
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'http://visionteam.mgx.me/';
 	AnyBalance.setDefaultCharset('utf-8');
-
+	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
 	var html = AnyBalance.requestGet(baseurl + 'login.php', g_headers);
-
+	
+	html = AnyBalance.requestGet(baseurl + 'lib/checkCardNoPass.php?cardNo='+prefs.login+'&pin='+prefs.password+'&lng=EN&sid='+ Math.random(), g_headers);
+	
 	html = AnyBalance.requestPost(baseurl + 'login.php', {
 		'Submt': '0',
 		cardNo: prefs.login,
 		pin: prefs.password,
 	}, addHeaders({Referer: baseurl + 'login.php'}));
-
+	
 	if (!/logoff/i.test(html)) {
 		throw new AnyBalance.Error('Can`t login, is the site changed?');
 	}

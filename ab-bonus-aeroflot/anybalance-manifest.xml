@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-bonus-aeroflot</id>
+	<id version="3">ab-bonus-aeroflot</id>
+	<api flags="no_browser"/>
 	<name>Аэрофлот Бонус</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о бонусных милях, квалификационных милях и уровне клиента для пользователей программы ""Аэрофлот Бонус"".</p>
+	<p>Предоставляет информацию о бонусных милях, квалификационных милях и уровне клиента для пользователей программы "Аэрофлот Бонус".</p>
 	<p>Информация берется из личного кабинета (http://aeroflotbonus.ru).</p>
 	]]></description>
 	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
@@ -11,6 +12,7 @@
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
 		<history>history.xml</history>
+		<js>library.js</js>
 		<js>main.js</js>
 	</files>
 	<counters>
@@ -24,4 +26,7 @@
 	<type>
 	bonus
 	</type>
+	<country>
+		ru, ua, by, kz, uz
+	</country>
 </provider>

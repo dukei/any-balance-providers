@@ -31,13 +31,28 @@ var g_headers = {
 
 function getMyPosylkaResult(prefs) {
 	AnyBalance.trace('Connecting to moyaposylka...');
+	checkEmpty(prefs.track_id, 'Введите код почтового отправления');
+	checkEmpty(prefs.track_dest, 'Выберите страну назначения');
+
 	var id = prefs.track_id; //Код отправления, введенный пользователем
 	var dest = prefs.track_dest; //Страна назначения
 	var baseurl = "https://moyaposylka.ru";
 	var html = AnyBalance.requestGet(baseurl, g_headers);
+        html = AnyBalance.requestPost(baseurl + '/tracker-type/', {
+		number:prefs.track_id
+        }, addHeaders({
+		Origin: baseurl,
+		Referer: baseurl + '/',
+		'X-Requested-With': 'XMLHttpRequest'
+	}));
+	var types = getJson(html);
+	if(!types.types || types.types.length == 0)
+		throw new AnyBalance.Error('Неизвестный или неверный тип отправления', null, true);
+
 	html = AnyBalance.requestPost(baseurl + '/quick-check/', {
 		'number': prefs.track_id,
 		'destinationCountry': prefs.track_dest || 'RU',
+		'type': types.types[0].type,
 	}, addHeaders({
 		Origin: baseurl,
 		Referer: baseurl + '/',

@@ -7,61 +7,38 @@
 Личный кабинет: https://www.aeroflot.ru/personal/
 */
 
-function getParam (html, result, param, regexp, replaces, parser) {
-	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
-		return;
-
-	var value = regexp.exec (html);
-	if (value) {
-		value = value[1];
-		if (replaces) {
-			for (var i = 0; i < replaces.length; i += 2) {
-				value = value.replace (replaces[i], replaces[i+1]);
-			}
-		}
-		if (parser)
-			value = parser (value);
-
-    if(param)
-      result[param] = value;
-    else
-      return value
-	}
-}
-
-var replaceTagsAndSpaces = [/<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, ''];
-var replaceFloat = [/\s+/g, '', /,/g, '.'];
-
+var g_headers = {
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
+	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Connection': 'keep-alive',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36'
+};
 
 function main(){
     var prefs = AnyBalance.getPreferences();
+    checkEmpty(prefs.login, 'Введите логин');
+    checkEmpty(prefs.login, 'Введите пароль');
 
     var baseurl = "https://www.aeroflot.ru/personal/";
     AnyBalance.setDefaultCharset('utf-8');
     
-    var html = AnyBalance.requestPost(baseurl + 'login?_preferredLanguage=ru',
-'------WebKitFormBoundaryHXZ9BsjPzb7lGL4m\n\
-Content-Disposition: form-data; name="email_or_sabre_id"\n\
-\n\
-' + prefs.login + '\n\
-------WebKitFormBoundaryHXZ9BsjPzb7lGL4m\n\
-Content-Disposition: form-data; name="password"\n\
-\n\
-' + prefs.password + '\n\
-------WebKitFormBoundaryHXZ9BsjPzb7lGL4m\n\
-Content-Disposition: form-data; name="submit0"\n\
-\n\
-Подождите...\n\
-------WebKitFormBoundaryHXZ9BsjPzb7lGL4m\n\
-Content-Disposition: form-data; name="return_url"\n\
-\n\
-\n\
-------WebKitFormBoundaryHXZ9BsjPzb7lGL4m--\n\
-', {'Content-Type': 'multipart/form-data; boundary=----WebKitFormBoundaryHXZ9BsjPzb7lGL4m'});
+    var html = requestPostMultipart(baseurl + 'login', {
+	login: prefs.login,
+	password: prefs.password,
+	submit0: 'Подождите...',
+	return_url: ''
+    }, addHeaders({Origin: "https://www.aeroflot.ru", Referer: baseurl + 'login'}));
 
-    var error = getParam(html, null, null, /<!-- :: errors :: -->\s*<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-    if(error)
-        throw new AnyBalance.Error(error);
+    if(!/\/personal\/logout/i.test(html)){
+        var error = getParam(html, null, null, /<div[^>]+class="[^"]*error[^>]*>([\s\S]*?)(?:<p|<\/div>)/i, replaceTagsAndSpaces, html_entity_decode);
+        if(error)
+            throw new AnyBalance.Error(error);
+        error = getParam(html, null, null, /<!-- :: errors :: -->\s*<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+        if(error)
+            throw new AnyBalance.Error(error, null, /указали неправильные реквизиты/.test(error));
+	throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
+    }
 
     var result = {success: true};
 
@@ -74,12 +51,3 @@ Content-Disposition: form-data; name="return_url"\n\
 
     AnyBalance.setResult(result);
 }
-
-function html_entity_decode(str)
-{
-    //jd-tech.net
-    var tarea=document.createElement('textarea');
-    tarea.innerHTML = str;
-    return tarea.value;
-}
-

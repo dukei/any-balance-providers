@@ -711,7 +711,7 @@ function requestPostMultipart(url, data, headers) {
 	for (var name in data) {
 		parts.push(boundary, 'Content-Disposition: form-data; name="' + name + '"', '', data[name]);
 	}
-	parts.push(boundary + '--');
+	parts.push(boundary + '--\r\n');
 	if (!headers)
 		headers = {};
 	headers['Content-Type'] = 'multipart/form-data; boundary=' + boundary.substr(2);

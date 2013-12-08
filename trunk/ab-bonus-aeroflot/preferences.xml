@@ -7,6 +7,7 @@
         dialogTitle="Логин" 
         negativeButtonText="Отмена" 
         dialogMessage="Введите логин в личный кабинет Аэрофлот бонус."
+	obligatory="true"
         key="login">
     </EditTextPreference>
     <EditTextPreference 
@@ -17,6 +18,7 @@
         title="Пароль"
         summary="Пароль||***********\n"
         dialogMessage="Введите пароль, используемый для входа в личный кабинет Аэрофлот бонус."
+	obligatory="true"
         inputType="textPassword">
     </EditTextPreference>
 </PreferenceScreen>

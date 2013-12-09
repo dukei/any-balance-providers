@@ -2,7 +2,7 @@
 <provider>
 	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser" />
-	<id version="1">ab-internet-teleos-bratsk</id>
+	<id version="2">ab-internet-teleos-bratsk</id>
 	<name>Телеос (Братск)</name>
 	<description>Получает данные для интернет провайдера Телеос-1 г. Братск по адресу https://stat.teleos.ru/</description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>

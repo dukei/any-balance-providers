@@ -81,7 +81,7 @@ function main(){
 
 		if(result.found == null){throw new AnyBalance.Error("Ошибка при получении данных с сайта.");}
 
-		if(AnyBalance.isAvailable('last') && (matches = info.match(/<div class="item \S*?">[\s\S]*?<div class="description">[\s\S]*?<\/div>/i))){
+		if(AnyBalance.isAvailable('last') && (matches = info.match(/<div class="item \S*?".*?>[\s\S]*?<div class="description">[\s\S]*?<\/div>/i))){
 			info=matches[0];
 
 			result.date = getParam(info, null, null, /<div class="date">\s+(\S*?)\s*<span/i, replaceTagsAndSpaces, html_entity_decode);

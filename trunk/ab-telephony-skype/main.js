@@ -9,12 +9,14 @@
 	checkEmpty(prefs.password, 'Please, enter password!');	
 	
  	AnyBalance.setDefaultCharset('utf-8');
- 	var baseLogin = 'https://login.skype.com/login?application=account&intcmp=sign-in&return_url=https%3A%2F%2Fsecure.skype.com%2Faccount%2Flogin', info = '';
+ 	var baseLogin = 'https://login.skype.com/login?method=skype&application=account&intcmp=sign-in&return_url=https%3A%2F%2Fsecure.skype.com%2Faccount%2Flogin', info = '';
  	if (!prefs.__dbg) {
  		info = AnyBalance.requestGet(baseLogin);
  		var form = getParam(info, null, null, /<form[^>]+id="LoginForm[^>]*>([\s\S]*?)<\/form>/i);
- 		if (!form) 
+ 		if (!form){ 
+			AnyBalance.trace(info);
 			throw new AnyBalance.Error("Can`t find login form. Is site changed or down?");
+		}
  		var params = createFormParams(form, function(params, input, name, value) {
  			if (name == 'username') 
 				value = prefs.login;
@@ -27,10 +29,11 @@
  	} else {
  		info = AnyBalance.requestGet('https://secure.skype.com/portal/overview');
  	}
- 	if (!/secure\.skype\.com\/account\/logout/i.test(info)) {
+ 	if (!/skype\.com\/(?:account\/)?logout/i.test(info)) {
  		var error = getParam(info, null, null, [/class="messageBody[^>]*>([\s\S]*?)<\/div>/i, /message_error"(?:[^>]*>){3}([^<]*)/i], [/<.*?>/g, '', /^\s*|\s*$/g, '']);
  		if (error)
 			throw new AnyBalance.Error(error);
+		AnyBalance.trace(info);
  		throw new AnyBalance.Error("Can`t login in skype account. Maybe site is changed?");
  	}
  	var result = {success: true, subscriptions: 0};

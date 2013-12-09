@@ -13,6 +13,10 @@ var g_headers = {
 function main(){
     var prefs = AnyBalance.getPreferences();
     var baseurl = 'https://stat.teleos.ru/';
+
+    checkEmpty(prefs.login, 'Введите логин');
+    checkEmpty(prefs.password, 'Введите пароль');
+
     AnyBalance.setDefaultCharset('utf-8'); 
 	
 	var html = AnyBalance.requestPost(baseurl + 'login', {
@@ -25,13 +29,13 @@ function main(){
     if(!/logout/i.test(html)){
         var error = getParam(html, null, null, /class="errorMessage">([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
-            throw new AnyBalance.Error(error);
+            throw new AnyBalance.Error(error, null, /номер лицевого счета или пароль/i.test(error));
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
     var result = {success: true};
     getParam(html, result, 'acc_num', /Лицевой счет[\s\S]{1,100}value">([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'abon', /Абонентская плата[\s\S]*?([\s\S]*?)Р./i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'balance', /Баланс[\s\S]*?([\s\S]*?)Р./i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance', /Баланс[\s\S]*?([\s\S]*?)Р./i, [replaceTagsAndSpaces, /−/g, '-'], parseBalance);
 	getParam(html, result, '__tariff', /service-item-tariff">([\s\S]*?)<\/span/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'status', /service-item-params-caption service-item-params-cel[\s\S]{1,50}(Интернет[\s\S]*?)\s*<\//i, replaceTagsAndSpaces, html_entity_decode);
 

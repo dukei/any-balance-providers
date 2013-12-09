@@ -7,6 +7,7 @@
         dialogTitle="Логин" 
         negativeButtonText="Отмена" 
         dialogMessage="Введите логин в личный кабинет."
+	obligatory="true"
         key="login">
     </EditTextPreference>
     <EditTextPreference 
@@ -15,6 +16,7 @@
         dialogTitle="Пароль"
         negativeButtonText="Отмена"
         title="Пароль"
+	obligatory="true"
         summary="||***********"
         dialogMessage="Введите пароль, используемый для входа в личный кабинет."
         inputType="textPassword">

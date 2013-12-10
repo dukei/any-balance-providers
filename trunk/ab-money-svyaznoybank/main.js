@@ -40,14 +40,12 @@ function main(){
         'csrf.ts':csrfts
     }, addHeaders({Referer: baseurl + 'auth/UI/Login'}));
 
-    if(!/<meta[^>]+http-equiv="refresh"[^>]*url=https:\/\/i?qbank.ru/i.test(html)){
+    if(!/qbank.ru\/auth\/UI\/Logout/i.test(html)){
         if(/otpCode/i.test(html))
             throw new AnyBalance.Error('Для работы этого провайдера требуется отключить в настройках интернет-банка подтверждение входа по СМС. Это безопасно, для совершения операций все равно будет требоваться подтверждение по СМС.');
         var error = getParam(html, null, null, /<div[^>]+class="err"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-        if(error && /Неверный персональный номер или пароль/i.test(error))
-            throw new AnyBalance.Error(error, null, true); //Фатальная ошибка, надо настройки менять
         if(error)
-            throw new AnyBalance.Error(error);
+            throw new AnyBalance.Error(error, null, /Неверный персональный номер или пароль/i.test(error)); //Фатальная ошибка, надо настройки менять
         error = getParam(html, null, null, /<h2[^>]*>([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error && /Срок действия пароля истек/i.test(error))
             throw new AnyBalance.Error('Банк сообщает, что срок действия пароля истек. Пожалуйста, зайдите в интернет банк через браузер, смените пароль, затем введите новый пароль в настройки этого провайдера.', null, true);
@@ -63,7 +61,7 @@ function main(){
     }
 
     baseurl = "https://qbank.ru";
-    html = AnyBalance.requestGet(baseurl, g_headers);
+//    html = AnyBalance.requestGet(baseurl, g_headers);
 
     if(prefs.what == 'card'){
         fetchCard(baseurl, html);

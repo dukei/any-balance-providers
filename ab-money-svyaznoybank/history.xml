@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+<change version="11" date="2013-12-10">
+- Изменения в процедуре входа в интернет-банк
+</change>
 <change version="10" date="2013-10-14">
 - Мелкие изменения
 </change>

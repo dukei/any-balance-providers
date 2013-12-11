@@ -78,7 +78,7 @@ function main(){
     html.replace(/<tr[^>]*>(?:[\s\S](?!<\/tr))*Активная услуга[\s\S]*?<\/tr>/ig, function(tr) {
         var name = getParam(tr, null, null, /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
         var days = getParam(tr, null, null, /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-        services[services.length] = name + ' (' + days + 'дн)';
+        services[services.length] = name + ' (' + days + ' дн)';
         getParam(tr, result, 'service' + n, /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
         getParam(tr, result, 'daysleft' + n, /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
         ++n;

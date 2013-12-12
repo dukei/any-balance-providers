@@ -31,6 +31,7 @@ function main(){
     if(!csrfsign)
         throw new AnyBalance.Error('Не найдена форма входа! Сайт изменен?');
 
+    try{
     html = AnyBalance.requestPost(baseurl + 'auth/UI/Login', {
         r:'',
         IDToken1:prefs.login,
@@ -39,6 +40,12 @@ function main(){
         'csrf.sign':csrfsign,
         'csrf.ts':csrfts
     }, addHeaders({Referer: baseurl + 'auth/UI/Login'}));
+    }catch(e){
+	if(prefs.__dbg)
+		html = AnyBalance.requestGet("https://qbank.ru");
+        else
+		throw e;
+    }
 
     if(!/qbank.ru\/auth\/UI\/Logout/i.test(html)){
         if(/otpCode/i.test(html))
@@ -118,7 +125,7 @@ function fetchCard(baseurl, html){
         }
 
         if((AnyBalance.isAvailable('balance') && !isset(result.balance)) || (AnyBalance.isAvailable('accamount') && !isset(result.balance)) || AnyBalance.isAvailable('cardname' + suffix)){
-            var html = AnyBalance.requestGet(baseurl + p.DetailsUrl, g_headers);
+            var html = AnyBalance.requestPost(baseurl + p.DetailsUrl, '', g_headers);
             var json = getJson(html);
             if(!isset(result.balance))
                 getParam(json.balance, result, 'balance', null, replaceTagsAndSpaces, parseBalance);

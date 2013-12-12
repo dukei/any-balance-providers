@@ -1,4 +1,4 @@
 #summary Reference to provider catalog
 
-You can now search and download providers directly from the [http://anybalance.ru/catalog.php?inapp=1 catalog].
+You can now search and download providers directly from the [http://anybalance.ru/catalog.php?inapp=0 catalog].
 

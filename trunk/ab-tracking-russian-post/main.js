@@ -77,16 +77,17 @@ function checkForErrors(info) {
 
 function checkForRedirect(info, baseurl) {
 	//<html><head></head><body onload="document.myform.submit();"><form method="post" name="myform" style="visibility:hidden;"><input id="key" name="key" value="288041"/><input type="submit"/></form></body></html> 
-	var form = getParam(info, null, null, /<form[^>]+name="myform"[^>]*>([\s\S]*?)<\/form>/i);
+	var form = getParam(info, null, null, /<form[^>]+name="myform"[^>]*>[\s\S]*?<\/form>/i);
 	if (form) { //Зачем-то редирект. Что придумали, зачем?...
+	        var action = getParam(form, null, null, /<form[^>]+action="([^"]*)/i, null, html_entity_decode);
 		AnyBalance.trace('Вернули форму редиректа...');
 		var params = createFormParams(form);
-		info = AnyBalance.requestPost(baseurl, params);
+		info = AnyBalance.requestPost(baseurl + action, params);
 		checkForErrors(info);
 	}
 	if (/window.location.replace\(window.location.toString/.test(info)) {
 		AnyBalance.trace('Ещё разок редиректнули...');
-		info = AnyBalance.requestGet(baseurl);
+		info = AnyBalance.requestGet(baseurl + '/Tracking/');
 		checkForErrors(info);
 	}
 	return info;
@@ -95,10 +96,10 @@ function checkForRedirect(info, baseurl) {
 function mainRussianPost() {
 	var prefs = AnyBalance.getPreferences();
 	AnyBalance.trace('Connecting to russianpost...');
-	var baseurl = 'http://www.russianpost.ru/Tracking/';
-	var info = AnyBalance.requestGet(baseurl);
+	var baseurl = 'http://www.russianpost.ru';
+	var info = AnyBalance.requestGet(baseurl + '/Tracking/');
 	info = checkForRedirect(info, baseurl);
-	var form = getParam(info, null, null, /<form[^>]+id="Form1"[^>]*>([\s\S]*?)<\/form>/i);
+	var form = getParam(info, null, null, /<form[^>]+name="F(?:orm)?1"[^>]*>[\s\S]*?<\/form>/i);
 	if (!form) {
 		checkForErrors(info);
 		throw new AnyBalance.Error('Не удалось найти форму запроса. На сайте обед?');
@@ -112,7 +113,7 @@ function mainRussianPost() {
 		}
 	}
 
-	var params = createFormParams(info, function(params, input, name, value) {
+	var params = createFormParams(form, function(params, input, name, value) {
 		var undef;
 		if (name == 'BarCode')
 			value = prefs.code.toUpperCase();
@@ -120,12 +121,13 @@ function mainRussianPost() {
 			value = 1;
 		else if (name == 'searchbarcode')
 			value = undef;
-		else if (name == 'CaptchaCode')
+		else if (name == 'InputedCaptchaCode')
 			value = captcha;
 		return value;
 	});
 	var dt = new Date();
-	var info = AnyBalance.requestPost(baseurl, params);
+        var action = getParam(form, null, null, /<form[^>]+action="([^"]*)/i, null, html_entity_decode);
+	var info = AnyBalance.requestPost(baseurl + action, params);
 	AnyBalance.trace('Проверяем, нет ли ошибок...');
 	checkForErrors(info);
 	info = checkForRedirect(info, baseurl);

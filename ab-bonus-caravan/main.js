@@ -7,7 +7,7 @@ var g_headers = {
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.63 Safari/537.36',
 	//'X-Requested-With':'XMLHttpRequest',
 };
 
@@ -37,17 +37,22 @@ function main() {
 	var client = getParam(html, null, null, /"str"\s*:\s*"([^"]*)/i);
 	if(!client)
 		throw new AnyBalance.Error('Не удалось найти форму входа, свяжитесь с разработчиком.');
-		
+
 	AnyBalance.setCookie('kiev-s-sosninykh.icaravan.com.ua', 'client', encodeURIComponent(client));
 
 	//html = AnyBalance.requestGet(baseurl + 'profile.html', addHeaders({Referer: baseurl}));
-	
+
 	html = AnyBalance.requestGet(baseurl + 'profile/my.html', g_headers);
-	
+
 	var result = {success: true};
-	
+
 	getParam(html, result, 'balance', /<h1>Мои баллы(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'balance_money', /<h1>Мои баллы(?:[^>]*>){4}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+
+	html = AnyBalance.requestGet(baseurl + 'profile/data.html', g_headers);
+	
+	sumParam(html, result, '__tariff', /Фамилия<span>\*<\/span><\/div>[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/ig, replaceTagsAndSpaces, html_entity_decode, create_aggregate_join(' '));
+	sumParam(html, result, '__tariff', /(?:Имя|Отчество)<span>\*<\/span><\/div>[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/ig, replaceTagsAndSpaces, html_entity_decode, create_aggregate_join(' '));
 
 	AnyBalance.setResult(result);
 }

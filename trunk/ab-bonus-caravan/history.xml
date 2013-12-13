@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-<!--
-<change version="2" date="2013-09-21">
-- 
-</change>
--->
+    <change version="2" date="2013-12-13">
+      - Добавлено отображение персональных данных.
+      - Мелкие изменения.
+    </change>
+    <change version="1" date="2013-11-12">
+      - Первая версия провайдера.
+      - Доступные счетчики: "Бонусы" и "Деньги".
+    </change>
 </history>

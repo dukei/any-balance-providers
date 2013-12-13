@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-bonus-caravan</id>
+	<id version="2">ab-bonus-caravan</id>
 	<api flags="no_browser"/>
 	<name>Гипермаркет Караван</name>
 	<description html="true"><![CDATA[
@@ -15,8 +15,8 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Бонусы" units=" б"/>
-		<counter id="balance_money" name="Деньги" units=" грн"/>
+		<counter id="balance" name="Бонусы" units=" бал."/>
+		<counter id="balance_money" name="Деньги" units=" ₴"/>
 	</counters>
 	<keywords></keywords>
 	<type>bonus</type>

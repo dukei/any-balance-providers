@@ -426,9 +426,9 @@ function fetchNewAccountAcc(html) {
 	// class="productNumber\b[^"]*">[^<]*
 	var baseFind = 'class="productNumber\\b[^"]*">[^<]*' + lastdigits + '<';
 	// [\s\S]*?onclick\s*=\s*"[^"]*(?:operations|info)[^']*'(\d+)
-	var reCardId = new RegExp(baseFind + '[\\s\\S]*?onclick\\s*=\\s*"[^"]*(?:operations|info)[^\']*\'(\\d+)', 'i');
+	var reCardId = new RegExp(baseFind + '[\\s\\S]*?<div[^>]+id="account_(\\d+)', 'i');
 	
-	//AnyBalance.trace('Пытаемся найти карту: ' + reCardId);
+	AnyBalance.trace('Пытаемся найти счет: ' + reCardId);
 	
 	var cardId = getParam(html, null, null, reCardId);
 	if (!cardId) {
@@ -436,7 +436,7 @@ function fetchNewAccountAcc(html) {
 		else throw new AnyBalance.Error("Не удаётся найти ни одного счета");
 	}
 	var reCardNumber = new RegExp('class="productNumber\\b[^"]*">([^<]*' + lastdigits + ')<', 'i');
-	var reBalance = new RegExp('"overallAmount"[^>]*>([^<]*)[\\s\\S]*'+baseFind, 'i');
+	var reBalance = new RegExp('<a[^>]+href="[^"]*operations.do\\?id=' + cardId + '"[\\s\\S]*?<span[^>]+class="overallAmount\\b[^>]*>([\\s\\S]*?)</span>', 'i');
 	var result = {success: true};
 	getParam(html, result, 'balance', reBalance, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'cardNumber', reCardNumber, [replaceTagsAndSpaces, /\D/, '']);

@@ -63,6 +63,10 @@ function main () {
     if (regexp.exec (html))
     	AnyBalance.trace ('It looks like we are in selfcare...');
     else {
+	//Оказывается, иногда карта может быть заблокирована. Обработаем эту ситуацию
+	var blocked = getParam(html, null, null, /card_block.jpg[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+        if(blocked)
+		throw new AnyBalance.Error(blocked);
         AnyBalance.trace ('Have not found logout... Unknown error. Please contact author.');
 //        AnyBalance.trace (html);
         throw new AnyBalance.Error ('Неизвестная ошибка. Пожалуйста, свяжитесь с автором провайдера.');

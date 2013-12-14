@@ -21,14 +21,14 @@ function main() {
 	
 	var href = getParam(html, null, null, /Symbols\s*<\s*\/\s*a>(?:[^>]*>){4}[^>]*href=(?:"|')\/([^("')]*)/i);
 	if(!href) {
-		throw new AnyBalance.Error('Please check entered quote. The quote ' + prefs.quote + ' has not been found');
+		throw new AnyBalance.Error('Please check entered quote. The quote ' + prefs.quote + ' has not been found!');
 	}
 	
 	html = AnyBalance.requestGet(baseurl + href, g_headers);
 	
 	var header = getParam(html, null, null, /(<div[^>]*class="ticker_header(?:[\s\S]*?<div){10})/i);
 	if(!header)
-		throw new AnyBalance.Error('Please check entered quote. The quote ' + prefs.quote + ' has not been found');
+		throw new AnyBalance.Error('Please check entered quote. The quote ' + prefs.quote + ' has not been found!');
 	
 	var result = {success: true};
 	

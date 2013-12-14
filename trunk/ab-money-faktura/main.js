@@ -88,7 +88,7 @@ function mainCardAcc(what, baseurl){
 	getParam(account, result, '__tariff', new RegExp('\\d{4}\\s*(?:\\*{4}\\s*){2}' + (prefs.num || '\\d{4}'), 'i'), replaceTagsAndSpaces);
 	getParam(result.__tariff, result, 'cardnum');
 	
-	var balancesArray = [/Средств на счете(?:[^>]*>){5}([\s\S]*?)<\/div/i, /Доступно по картам(?:[^>]*>){2}([\s\S]*?)<\/div/i, 
+	var balancesArray = [/Средств на счете[\s\S]*?<span[^>]+class="amount"[^>]*>([\s\S]*?)<\/div/i, /Доступно по картам(?:[^>]*>){2}([\s\S]*?)<\/div/i, 
 		/"card-amounts[^>]*>[^>]*class="amount">[^>]*>((?:[\s\S]*?<\/span>){2})/i, 
 		/Остаток собственных средств на карте(?:[^>]*>){4}([^<]*)/i];
 	

@@ -35,7 +35,12 @@ function main() {
 		Connection: 'keep-alive'
 	};
 	AnyBalance.trace('Соединение с ' + baseurl);
-	var html = AnyBalance.requestGet(baseurl + 'tbmb/login_djuice/show.do', headers);
+
+        var html;
+	if(prefs.__dbg == 'autologin')
+		html = AnyBalance.requestGet(baseurl + 'tbmb/b2c/hierarchy/main/dashboard/show.do');
+	else
+		html = AnyBalance.requestGet(baseurl + 'tbmb/login_djuice/show.do', headers);
 
 	//заготовка для обработки ошибок сайта, надо будет проверить во время следующего сбоя
 	if (/<TITLE>error<\/TITLE>/i.test(html)) {
@@ -49,32 +54,37 @@ function main() {
 	AnyBalance.trace('Успешное соединение.');
 	if (/\/tbmb\/logout\/perform/i.test(html)) {
 		AnyBalance.trace('Уже в системе.');
-		if (!~html.indexOf(prefs.login)) {
-			AnyBalance.trace('Не тот аккаунт, выход.');
+		if (!html.indexOf(prefs.login)) {
+			AnyBalance.trace('Не тот номер, выход.');
 			html = AnyBalance.requestGet(baseurl + 'tbmb/logout/perform.do', headers);
 			AnyBalance.trace('Переход на страницу входа.');
 			html = AnyBalance.requestGet(baseurl + 'tbmb/login_djuice/show.do', headers);
+		}else{
+			AnyBalance.trace('Залогинены на правильный номер, продолжаем.');
 		}
 	}
-	// Login
-	var form = getParam(html, null, null, /<form[^>]+action="[^"]*perform.do"[^>]*>([\s\S]*?)<\/form>/i);
-	if (form) {
-		AnyBalance.trace('Вход в систему.');
-		var params = createFormParams(form);
-		params.user = prefs.login;
-		params.password = prefs.password;
-		html = AnyBalance.requestPost(baseurl + "tbmb/login_djuice/perform.do", params, headers);
-		if (!/\/tbmb\/logout\/perform/i.test(html)) {
-			var matches = html.match(/<td class="redError"[^>]*>([\s\S]*?)<\/td>/i);
-			if (matches) {
-				throw new AnyBalance.Error(matches[1]);
-			}
-			throw new AnyBalance.Error("Не удалось зайти в систему. Сайт изменен?");
+
+	if (!/\/tbmb\/logout\/perform/i.test(html)) {
+		// Login
+		var form = getParam(html, null, null, /<form[^>]+action="[^"]*perform.do"[^>]*>([\s\S]*?)<\/form>/i);
+		if (form) {
+			AnyBalance.trace('Вход в систему.');
+			var params = createFormParams(form);
+			params.user = prefs.login;
+			params.password = prefs.password;
+			html = AnyBalance.requestPost(baseurl + "tbmb/login_djuice/perform.do", params, headers);
 		}
+        }
+
+	if (!/\/tbmb\/logout\/perform/i.test(html)) {
+		var matches = html.match(/<td class="redError"[^>]*>([\s\S]*?)<\/td>/i);
+		if (matches) {
+			//В случае неверного логина или пароля возвращаем фатальную ошибку. Чтобы не заблокировать аккаунт неправильным вводом пароля
+			throw new AnyBalance.Error(matches[1], null, /Логін введений невірно|введіть правильний пароль/i.test(matches[1]));
+		}
+		throw new AnyBalance.Error("Не удалось зайти в систему. Сайт изменен?");
 	}
-	if (!~html.indexOf(prefs.login)) {
-		throw new AnyBalance.Error("Ошибка. Информация о номере не найдена.");
-	}
+
 	AnyBalance.trace('Успешный вход.');
 	var result = {
 		success: true

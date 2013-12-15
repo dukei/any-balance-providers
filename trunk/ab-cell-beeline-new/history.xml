@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+<change version="36" date="2013-12-15">
+- Исправлено получение доп. счетчиков в предоплатном кабинете
+</change>
 <change version="35" date="2013-12-05">
 - Исправлен получение дробных минут
 </change>

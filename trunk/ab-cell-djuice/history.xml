@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-<change major_version="1.3" version="31" date="2013-12-15">
+<change major_version="1.3" version="32" date="2013-12-15">
 - Добавлена диагностическая информация, чтобы исправить автовход через мобильный интернет в сети Djuice.
 </change>
 <change major_version="1.3" version="30" date="2013-12-14">

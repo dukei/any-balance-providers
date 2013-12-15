@@ -73,6 +73,9 @@ function main() {
 			params.user = prefs.login;
 			params.password = prefs.password;
 			html = AnyBalance.requestPost(baseurl + "tbmb/login_djuice/perform.do", params, headers);
+		}else{
+			AnyBalance.trace(AnyBalance.getLastUrl() + ': ' + html);
+			throw AnyBalance.Error('Не удалось найти форму для входа в личный кабинет. Сайт изменен?');
 		}
         }
 
@@ -82,6 +85,7 @@ function main() {
 			//В случае неверного логина или пароля возвращаем фатальную ошибку. Чтобы не заблокировать аккаунт неправильным вводом пароля
 			throw new AnyBalance.Error(matches[1], null, /Логін введений невірно|введіть правильний пароль/i.test(matches[1]));
 		}
+		AnyBalance.trace(AnyBalance.getLastUrl() + ': ' + html);
 		throw new AnyBalance.Error("Не удалось зайти в систему. Сайт изменен?");
 	}
 

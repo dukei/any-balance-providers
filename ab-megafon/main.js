@@ -167,29 +167,27 @@ var def_table = {
 /**
  * Ищет филиал для переданного в виде строки номера
  */
-function getFilial(number){
-    if(typeof(number) != 'string')
-        throw new AnyBalance.Error('Телефон должен быть строкой из 10 цифр!', null, true);
-    if(!/^\d{10}$/.test(number))
-        throw new AnyBalance.Error('Телефон должен быть строкой из 10 цифр без пробелов и разделителей!', null, true);
-
-    var html = AnyBalance.requestPost("https://sg.megafon.ru/ps/scc/php/route.php", {
-	CHANNEL:'WWW',
-	ULOGIN:number
-    });
-
-//    Мегафон сделал сервис для определения филиала, так что попытаемся обойтись им    
-    var region = getParam(html, null, null, /<URL>https?:\/\/(\w+)\./i);
-    if(region && filial_info[region]){
-	return filial_info[region];
-    }else{
-       //Филиал не определился, попробуем по префиксу понять
-        var prefix = parseInt(number.substr(0, 3));
-        var num = parseInt(number.substr(3).replace(/^0+(\d+)$/, '$1')); //Не должно начинаться с 0, иначе воспринимается как восьмеричное число
-        return getFilialByPrefixAndNumber(prefix, num);
-    }
+function getFilial(number) {
+	if (typeof(number) != 'string')
+		throw new AnyBalance.Error('Телефон должен быть строкой из 10 цифр!', null, true);
+	if (!/^\d{10}$/.test(number)) 
+		throw new AnyBalance.Error('Телефон должен быть строкой из 10 цифр без пробелов и разделителей!', null, true);
+		
+	var html = AnyBalance.requestPost("https://sg.megafon.ru/ps/scc/php/route.php", {
+		CHANNEL: 'WWW',
+		ULOGIN: number
+	});
+	//    Мегафон сделал сервис для определения филиала, так что попытаемся обойтись им    
+	var region = getParam(html, null, null, /<URL>https?:\/\/(\w+)\./i);
+	if (region && filial_info[region]) {
+		return filial_info[region];
+	} else {
+		//Филиал не определился, попробуем по префиксу понять
+		var prefix = parseInt(number.substr(0, 3));
+		var num = parseInt(number.substr(3).replace(/^0+(\d+)$/, '$1')); //Не должно начинаться с 0, иначе воспринимается как восьмеричное число
+		return getFilialByPrefixAndNumber(prefix, num);
+	}
 }
-
 /**
  * Ищет филиал для переданного префикса и номера в таблице def_table
  */
@@ -379,8 +377,22 @@ function megafonTrayInfo(filial){
                 sumParam(d, result, 'mins_net_left', /<VOLUME_AVAILABLE>([\s\S]*?)<\/VOLUME_AVAILABLE>/i, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
             }else if(/телефония исходящая|исходящая телефония| мин|Переходи на ноль/i.test(names) || /мин/i.test(plan_si)){
                 AnyBalance.trace('Найдены минуты: ' + names + ', ' + plan_si);
-                sumParam(d, result, 'mins_left', /<VOLUME_AVAILABLE>([\s\S]*?)<\/VOLUME_AVAILABLE>/i, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
-                sumParam(d, result, 'mins_total', /<VOLUME_TOTAL>([\s\S]*?)<\/VOLUME_TOTAL>/i, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
+				// Это такой, армянский фикс :)
+				if(/шт/i.test(plan_si)) {
+					AnyBalance.trace('Найдены смс которые прикидываются минутами: ' + names + ', ' + plan_si);
+	                sumParam(d, result, 'sms_left', /<VOLUME_AVAILABLE>([\s\S]*?)<\/VOLUME_AVAILABLE>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+					sumParam(d, result, 'sms_total', /<VOLUME_TOTAL>([\s\S]*?)<\/VOLUME_TOTAL>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+				} else {
+					// Если нашли эти минуты, то суммировать их не надо
+					if(/РЯ/.test(names)) {
+						// Минуты РЯ
+						sumParam(d, result, 'mins_rya_left', /<VOLUME_AVAILABLE>([\s\S]*?)<\/VOLUME_AVAILABLE>/i, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
+						sumParam(d, result, 'mins_rya_total', /<VOLUME_TOTAL>([\s\S]*?)<\/VOLUME_TOTAL>/i, replaceTagsAndSpaces, parseMinutes, aggregate_sum);					
+					} else {
+						sumParam(d, result, 'mins_left', /<VOLUME_AVAILABLE>([\s\S]*?)<\/VOLUME_AVAILABLE>/i, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
+						sumParam(d, result, 'mins_total', /<VOLUME_TOTAL>([\s\S]*?)<\/VOLUME_TOTAL>/i, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
+					}
+				}
             }else{
                 AnyBalance.trace('Неизвестный discount: ' + d);
             }
@@ -429,7 +441,8 @@ function megafonTrayInfo(filial){
                getParam(json.ok.html, result, 'sub_soi', /(?:Исходящие SMS\/MMS|Начислено за услуги)\s*<\/td>(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
                getParam(json.ok.html, result, 'sub_scl', /(?:Исходящие вызовы|Начислено за звонки)\s*<\/td>(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
                getParam(json.ok.html, result, 'sub_scr', /Роуминг\s*<\/td>(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-               getParam(json.ok.html, result, 'phone', /<span[^>]+class="login"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+			   // 																										Заменяем строку вида $[widgets.current.user($msisdn)]
+               getParam(json.ok.html, result, 'phone', /<span[^>]+class="login"[^>]*>([\s\S]*?)<\/span>/i, [replaceTagsAndSpaces, /\$\[[\s\S]*?\]/i, ''], html_entity_decode);
                if(need_int_cur)
                    getParam(json.ok.html, result, 'internet_cur', /Интернет-траффик \(GPRS\)\s*<\/td>(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTraffic);
                getParam(json.ok.html, result, 'internet_cost', /Интернет-траффик \(GPRS\)\s*<\/td>(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);

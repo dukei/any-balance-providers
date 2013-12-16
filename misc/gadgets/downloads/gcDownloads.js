@@ -44,6 +44,7 @@ function handleFeed(response, prefs) {
   $( styles[0] ).appendTo( "head" )
   var content = '<div id="content">' + matches[0]
 	.replace(/catalog.php\?/ig, MORE_TMPL + '&') 
+	.replace(/<tr[^>]*howtoadd[\s\S]*?<\/tr>/ig, '') 
 	.replace(/(<a[^>]+)name="ab-/ig, '$1 target="_blank" name="ab-') 
 	+ '</div>';
 

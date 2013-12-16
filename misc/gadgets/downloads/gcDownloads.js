@@ -41,7 +41,8 @@ function handleFeed(response, prefs) {
     return;
   }
   
-  var content = styles[0] + matches[0].replace(/(<a[^>]+)name="ab-/ig, '$1 target="_blank" name="ab-');
+  $( styles[0] ).appendTo( "head" )
+  var content = matches[0].replace(/(<a[^>]+)name="ab-/ig, '$1 target="_blank" name="ab-');
 
   //content = JSON.stringify(response.data);
 

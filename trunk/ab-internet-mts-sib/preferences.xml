@@ -1,30 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <ListPreference 
+    <ListPreference
         key="type" 
         title="Тип подключения"
         summary="||{@s}\n"
         entries="Лицевой счёт|Netflow|ADSL|DialUp|Wi-Fi|PPPoE|Netflow ADSL"
         entryValues="0|500|100|200|300|400|550"
-	defaultValue="0">
+		defaultValue="0">
     </ListPreference>
-    <EditTextPreference 
-        title="Логин (лицевой счет)" 
-        positiveButtonText="ОК" 
-        summary="||{@s}" 
-        dialogTitle="Логин (лицевой счет)" 
-        negativeButtonText="Отмена" 
-        dialogMessage="Введите логин (лицевой счет) для входа в личный кабинет lka.sib.comstar-r.ru."
-        key="login">
-    </EditTextPreference>
-    <EditTextPreference 
+    <EditTextPreference
+		obligatory="true"
+		title="Логин (лицевой счет)"
+		positiveButtonText="ОК"
+		summary="||{@s}"
+		dialogTitle="Логин (лицевой счет)"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите логин (лицевой счет) для входа в личный кабинет lka.ural.mts.ru."
+		key="login">
+	</EditTextPreference>
+    <EditTextPreference
+		obligatory="true"
         positiveButtonText="ОК"
         key="password" 
         dialogTitle="Пароль"
         negativeButtonText="Отмена"
         title="Пароль"
         summary="||***********"
-        dialogMessage="Введите пароль, используемый для входа в личный кабинет lka.sib.comstar-r.ru."
+        dialogMessage="Введите пароль, используемый для входа в личный кабинет lka.ural.mts.ru."
         inputType="textPassword">
     </EditTextPreference>
 	<EditTextPreference 
@@ -41,9 +43,8 @@
         key="city" 
         title="Город"
         summary="|Автоматически|{@s}\n"
-        entries="Автоматически|Бугуруслан|Бузулук|Кемерово|Нефтеюганск|Нижневартовск|Новокузнецк|Новотроицк|Ноябрьск|Нягань|Оренбург|Пермский край|Первомайский|Пригородный|Пыть-Ях|Радужный|Сорочинск|Сургут|Тобольск|Тюмень"
-        entryValues="|bug|buz|kem|nef|nizv|novk|novt|noy|nyg|orn|perm|prm|prg|pyh|rad|sor|sur|tob|tum"
-	defaultValue="">
+        entries="Автоматически|Бугуруслан|Бузулук|Кемерово|Нефтеюганск|Нижневартовск|Новокузнецк|Новотроицк|Ноябрьск|Нягань|Оренбург|Пермский край|Первомайский|Пригородный|Пыть-Ях|Радужный|Сорочинск|Сургут|Тобольск|Тюмень|Ямало-Ненецкий АО"
+        entryValues="|bug|buz|kem|nef|nizv|novk|novt|noy|nyg|orn|perm|prm|prg|pyh|rad|sor|sur|tob|tum|yamal"
+		defaultValue="">
     </ListPreference>
-
 </PreferenceScreen>

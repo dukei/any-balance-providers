@@ -17,7 +17,7 @@ function main() {
 	var baseurl = "https://my.kyivstar.ua/";
 	AnyBalance.trace('Соединение с ' + baseurl);
 	var html = AnyBalance.requestGet(baseurl + 'tbmb/login/show.do', g_headers);
-
+	
 	//заготовка для обработки ошибок сайта, надо будет проверить во время следующего сбоя
 	if (/<TITLE>error<\/TITLE>/i.test(html)) {
 		var matches = html.match(/(<H1>[\s\S]*?<\/p>)/i);
@@ -26,7 +26,7 @@ function main() {
 		}
 		throw new AnyBalance.Error("Неизвестная ошибка на сайте.");
 	}
-
+	
 	AnyBalance.trace('Успешное соединение.');
 	if (/\/tbmb\/logout\/perform/i.test(html)) {
 		AnyBalance.trace('Уже в системе.');
@@ -66,19 +66,20 @@ function main() {
 	getParam(html, result, '__tariff', /(?:Тарифний план:|Тарифный план:)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
 	// Баланс
 	getParam(html, result, 'balance', /(?:Залишок на рахунку:|Остаток на счету:|Поточний баланс:|Текущий баланс:)[\s\S]*?<b>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-	//Бонусные минуты (1)
+	//Бонусные минуты (1) на номера внутри сети
 	sumParam(html, result, 'bonus_mins_1', /(?:Кількість хвилин для дзвінків|Количество минут для звонков)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
 	sumParam(html, result, 'bonus_mins_1', /(?:Хвилини всередині мережі ["«»]?Ки.встар["«»]?:|Минуты внутри сети ["«»]?Ки.встар["«»]?:)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
 	sumParam(html, result, 'bonus_mins_1', /(?:Єдина абонентська група:|Единая абонентская группа:)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
 	sumParam(html, result, 'bonus_mins_1', /(?:Залишок хвилин для дзвінків на Ки.встар:|Остаток минут для звонков на Ки.встар:)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
 	sumParam(html, result, 'bonus_mins_1', /(?:Залишок хвилин для дзвінків абонентам Ки.встар та Beeline:|Остаток минут для звонков абонентам Ки.встар и Beeline:)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
-	//Бонусные минуты (2)
+	//Бонусные минуты (2) на любые номера
 	sumParam(html, result, 'bonus_mins_2', /(?:Залишок хвилин для дзвінків абонентам Ки.встар та DJUICE:|Остаток минут для звонков абонентам Ки.встар и DJUICE:)[\s\S]*?<b>([^<]*)/ig, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
 	sumParam(html, result, 'bonus_mins_2', /(?:Залишок Хвилини на КС 500 хв:|Остаток Минуты на КС 500 мин:)[\s\S]*?<b>([^<]*)/ig, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
 	sumParam(html, result, 'bonus_mins_2', /(?:Залишок тарифних хвилин для дзвінків в межах України:|Остаток тарифних минут для звонков в пределах Украин[иы]\s*:)[\s\S]*?<b>([^<]*)/ig, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
 	sumParam(html, result, 'bonus_mins_2', /(?:Залишок хвилин для дзвінків в межах України:|Остаток минут для звонков в пределах Украин[иы]\s*:)[\s\S]*?<b>([^<]*)/ig, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
 	sumParam(html, result, 'bonus_mins_2', /(?:Залишок хвилин для дзвінків по Україні:|Остаток минут для звонков по Украине:)[\s\S]*?<b>([^<]*)/ig, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
 	sumParam(html, result, 'bonus_mins_2', /(?:Залишок хвилин для дзвінків на інших операторів та номери фіксованого зв"язку|Остаток минут для звонков на других операторов)(?:[^>]*>){3}(.*)/ig, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
+	sumParam(html, result, 'bonus_mins_2', /(?:Залишок хвилин|Остаток минут)(?:[^>]*>){3}(.*)/ig, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
 	//Тарифные минуты:
 	sumParam(html, result, 'mins_tariff', /(?:Тарифні хвилини:|Тарифные минуты:)[\s\S]*?<b>([^<]*)/ig, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
 	//Доплата за входящие:
@@ -91,6 +92,7 @@ function main() {
 	sumParam(html, result, 'sms', />SMS:[\s\S]*?<b>(.*?)</ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	sumParam(html, result, 'sms', /(?:Остаток текстових сообщений для отправки абонентам Киевстар и Beeline|Залишок текстових повідомлень для відправки абонентам Київстар та Beeline):[\s\S]*?<b>(.*?)</ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	sumParam(html, result, 'sms', />(?:СМС за умовами ТП:|СМС по условиям ТП:)[\s\S]*?<b>(.*?)</, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+	sumParam(html, result, 'sms', />(?:Залишок смс|Остаток смс):[\s\S]*?<b>(.*?)</i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	//Бонусные средства 
 	sumParam(html, result, 'bonus_money', /(?:Бонусні кошти:|Бонусные средства:)[\s\S]*?<b>(.*?)</ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	sumParam(html, result, 'bonus_money', /(?:Бонуси за умовами тарифного плану ["«»]Єдина ціна["«»]:|Бонусы по условиям тарифного плана ["«»]Единая цена["«»]:)[\s\S]*?<b>(.*?)</ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);

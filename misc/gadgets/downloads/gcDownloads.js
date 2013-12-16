@@ -33,8 +33,15 @@ function handleFeed(response, prefs) {
     adjustIFrameHeight();
     return;
   }
+
+  var styles = response.text.match(/<style>[\s\S]*?<\/style>/i);
+  if(!styles){
+    $("#content_div").html("Could not find styles!");
+    adjustIFrameHeight();
+    return;
+  }
   
-  var content = matches[0].replace(/(<a[^>]+)name="ab-/ig, '$1 target="_blank" name="ab-');
+  var content = styles[0] + matches[0].replace(/(<a[^>]+)name="ab-/ig, '$1 target="_blank" name="ab-');
 
   //content = JSON.stringify(response.data);
 

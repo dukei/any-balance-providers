@@ -42,7 +42,10 @@ function handleFeed(response, prefs) {
   }
   
   $( styles[0] ).appendTo( "head" )
-  var content = matches[0].replace(/(<a[^>]+)name="ab-/ig, '$1 target="_blank" name="ab-');
+  var content = '<div id="content">' + matches[0]
+	.replace(/catalog.php\?/ig, MORE_TMPL + '&') 
+	.replace(/(<a[^>]+)name="ab-/ig, '$1 target="_blank" name="ab-') 
+	+ '</div>';
 
   //content = JSON.stringify(response.data);
 

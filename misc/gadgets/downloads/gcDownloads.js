@@ -16,50 +16,25 @@
  */
 
 var ROW_TMPL = "<tr><td valign='top' style='white-space: nowrap;'>%DATE%</td><td valign='center'><img width='20' src='%IMAGE%'/></td><td valign='top'><a href='%LINK%' target='_blank'>%FILENAME%</a></td></tr>";
-var MORE_TMPL = "https://code.google.com/p/%PROJECT%/downloads/list";
+var MORE_TMPL = "http://anybalance.ru/catalog.php?inapp=0";
 var MONTHS = new Array("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec");
 var ITEMS_PER_PAGE = 10;
 
 function handleFeed(response, prefs) {
-  if (!response.data) {
-    $("#content_div").html("Oops, can't fetch downloads.  Try again later!");
+  if (!response.text) {
+    $("#content_div").html("Oops, can't fetch recent changes.  Try again later!");
     adjustIFrameHeight();
     return;
   }
 
-  var num_entries = response.data.Entry.length;
-  if (num_entries == 0) {
-    $("#content_div").html("This project does not have any downloads.");
+  var matches = response.text.match(/<table[\s\S]*?<\/table>/i);
+  if(!matches){
+    $("#content_div").html("Could not find recent providers table!");
     adjustIFrameHeight();
     return;
   }
-
-  var prefs = new gadgets.Prefs();
-  var lastCount = prefs.getInt("lastCount");
-
-  var content = "<center><table cellspacing='0' cellpadding='0'>";
-  for (var i = 0; i < Math.min(num_entries, lastCount || ITEMS_PER_PAGE); i++) {
-    var entry = response.data.Entry[i];
-    var when = new Date(entry.Date);
-    var formatted_when = MONTHS[when.getMonth()] + " " + when.getDate();
-    var matches = entry.Title.match(/(ab-[\w\-]+)_(\d+)\.zip/);
-    var provname, provrev;
-    if(matches){ //If the filename doesn't match, then it is not a provider file
-        provname = matches[1];
-        provrev = matches[2];
-    }else{
-        continue;
-    }
-    var title = entry.Summary.replace(/<pre>\s*([^\n]*)\n[\s\S]*/, '$1');
-    var html = ROW_TMPL.replace(/%DATE%/g, formatted_when)
-                       .replace(/%LINK%/g, entry.Link)
-		       .replace(/%IMAGE%/g, 'https://any-balance-providers.googlecode.com/svn-history/r%REVISION%/trunk/%PROVNAME%/icon.png')
-                       .replace(/%REVISION%/g, provrev)
-                       .replace(/%PROVNAME%/g, provname)
-                       .replace(/%FILENAME%/g, title);
-    content += html;
-  }
-  content += "</table>";
+  
+  var content = matches[0].replace(/(<a[^>]+)name="ab-/ig, '$1 target="_blank" name="ab-');
 
   //content = JSON.stringify(response.data);
 
@@ -68,7 +43,6 @@ function handleFeed(response, prefs) {
     var more_downloads_link = MORE_TMPL.replace(/%PROJECT%/g, projectName);
     content += "<br><a target='_blank' href='" + more_downloads_link + "'>More &gt;</a>";
   }
-  content += "</center>";
   $("#content_div").html(content);
   
   localAdjust();
@@ -90,12 +64,10 @@ function localInit() {
   var lastCount = prefs.getInt("lastCount");
   // There seems to be some disagreement between OpenSocial containers about
   // whether prefs.getString() returns an escaped string or not.  Let's be paranoid.
-  var url = "https://code.google.com/feeds/p/" + escape(projectName) + "/downloads/basic";
+  var url = "http://anybalance.ru/catalog.php?key=__new&inapp=0";
 
   var params = {};
-  params[gadgets.io.RequestParameters.CONTENT_TYPE] = gadgets.io.ContentType.FEED;
-  params[gadgets.io.RequestParameters.NUM_ENTRIES] = lastCount || (ITEMS_PER_PAGE + 1);
-  params[gadgets.io.RequestParameters.GET_SUMMARIES] = true;
+  params[gadgets.io.RequestParameters.CONTENT_TYPE] = gadgets.io.ContentType.TEXT;
   gadgets.io.makeRequest(url, function(resp) { handleFeed(resp, prefs); }, params);
 }
 

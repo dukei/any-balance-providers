@@ -36,6 +36,7 @@ function main(){
 	
 	getParam(html, result, '__tariff', /Ваш счет[^>]*>№((?:[^>]*>){9})/i, [/\D/g, '', /(\d{4})\d{8}(\d{4})/i, '$1 **** **** $2']);
     getParam(html, result, 'balance', /AccountBalanceInfo">[\s\S]*?([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance_used', /Всего израсходовано с начала месяца(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
     
     AnyBalance.setResult(result);
 }

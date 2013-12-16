@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-money-money-mail-ru</id>
+	<id version="3">ab-money-money-mail-ru</id>
 	<api flags="no_browser"/>
 	<name>Деньги@mail.ru</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе в системе Деньги@mail.ru (https://money.mail.ru/)</p>
+	<p>Предоставляет информацию о балансе в системе Деньги@mail.ru https://money.mail.ru/</p>
 	]]></description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
@@ -16,6 +16,7 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="balance_used" name="Израсходовано с начала месяца" units=" р"/>
 		<counter id="login" name="Учетная запись" type="text"/>
 	</counters>
 	<keywords>мейл ру</keywords>

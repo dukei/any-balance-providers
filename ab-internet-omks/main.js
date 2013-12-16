@@ -23,6 +23,8 @@ function main(){
         fldEmail:''
     }, addHeaders({Referer: baseurl + 'index.php'})); 
 
+	html = AnyBalance.requestGet(baseurl + 'index.php?parm=1', g_headers);
+	
     if(!/parm=exit/i.test(html)){
         var error = getParam(html, null, null, /<[^>]*"page"[^>]*>[^>]*>[^>]*>([\s\S]*?<\/td>){2}/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)

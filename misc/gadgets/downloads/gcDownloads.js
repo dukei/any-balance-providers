@@ -27,7 +27,7 @@ function handleFeed(response, prefs) {
     return;
   }
 
-  var matches = response.text.match(/<table[\s\S]*?<\/table>/i);
+  var matches = response.text.match(/<table(?:[\s\S](?!<\/table))*?class="provider"[\s\S]*?<\/table>/i);
   if(!matches){
     $("#content_div").html("Could not find recent providers table!");
     adjustIFrameHeight();

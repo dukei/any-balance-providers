@@ -39,7 +39,7 @@ limitations under the License.
 <script type="text/javascript" src="https://jqueryjs.googlecode.com/files/jquery-1.2.6.pack.js"></script>    
 <script type="text/javascript" src="https://google-code-project-hosting-gadgets.googlecode.com/svn/trunk/common/codegadgets.js"></script>
 <!-- <script type="text/javascript" src="https://raw.github.com/douglascrockford/JSON-js/master/json2.js"></script> -->
-<script type="text/javascript" src="https://any-balance-providers.googlecode.com/svn/misc/gadgets/downloads/gcDownloads.js?1"></script>
+<script type="text/javascript" src="https://any-balance-providers.googlecode.com/svn/misc/gadgets/downloads/gcDownloads.js?2"></script>
 
 <div style="width:100%; height:100%; overflow: hidden;">
 <div id="content_div">

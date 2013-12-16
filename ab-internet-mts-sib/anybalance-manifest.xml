@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
-  <api flags="no_browser" />
-  <id version="5">ab-internet-mts-sib</id>
-  <name>МТС Комстар-регионы (Сибирь)</name>
+	<api flags="no_browser" />
+	<id version="6">ab-internet-mts-sib</id>
+	<name>МТС Комстар-регионы (Сибирь, Урал)</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе и тарифном плане для пользователей сибирского филиала Комстар-регионы (МТС) (http://ural.mts.ru).</p>
+	<p>Предоставляет информацию о балансе и тарифном плане для пользователей Комстар-регионы (МТС) (http://ural.mts.ru).</p>
 	<p>Информация берется из личного кабинета (http://lka.ural.mts.ru).</p> 
-	<p>Провайдер предоставляет услуги только при входе в личный кабинет.</p>   
+	<p>Провайдер предоставляет услуги только при входе в личный кабинет.</p>
 	<p>Поддерживаются города:</p>
 	Бугуруслан<br>
 	Бузулук<br>
@@ -29,26 +28,23 @@
 	Сургут<br>
 	Тобольск<br>
 	Тюмень<br>
+	Ямало-Ненецкий АО<br>
+	<p>Обратите внимание, в свзяи с изменениями на сайте возможны проблемы с определением региона, свзяывайтесь с разработчиками для исправления ситуации.</p>
 	]]></description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="status" name="Состояние" type="text"/>
-    <counter id="licschet" name="Лицевой счет" type="text"/>
-  </counters>
-  <keywords>
-    интернет
-  </keywords>
-  <type>
-    internet
-  </type>
-  <country>
-    ru
-  </country>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="status" name="Состояние" type="text"/>
+		<counter id="licschet" name="Лицевой счет" type="text"/>
+	</counters>
+	<keywords>интернет</keywords>
+	<type>internet</type>
+	<country>ru</country>
 </provider>

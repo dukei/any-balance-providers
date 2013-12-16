@@ -10,8 +10,8 @@
 function main(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
-
-    var baseurl = 'https://stat.7-sky.info/cgi-bin/clients/';
+	
+    var baseurl = 'https://stat.seven-sky.net/cgi-bin/clients/';
 
     var html = AnyBalance.requestPost(baseurl + 'login', {
         action:'validate',

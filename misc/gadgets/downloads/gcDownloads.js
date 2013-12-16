@@ -38,11 +38,9 @@ function handleFeed(response, prefs) {
 
   //content = JSON.stringify(response.data);
 
-  if (num_entries > ITEMS_PER_PAGE) {
-    var projectName = escape(prefs.getString("projectName"));
-    var more_downloads_link = MORE_TMPL.replace(/%PROJECT%/g, projectName);
-    content += "<br><a target='_blank' href='" + more_downloads_link + "'>More &gt;</a>";
-  }
+  var projectName = escape(prefs.getString("projectName"));
+  var more_downloads_link = MORE_TMPL.replace(/%PROJECT%/g, projectName);
+  content += "<br><a target='_blank' href='" + more_downloads_link + "'>More &gt;</a>";
   $("#content_div").html(content);
   
   localAdjust();

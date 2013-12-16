@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-<change version="2" date="2013-11-26">
-- Мелкие улучшения.
-</change>
+	<change version="3" date="2013-12-16">
+	- Новый счетчик: Израсходовано с начала месяца.
+	</change>
+	<change version="2" date="2013-11-26">
+	- Мелкие улучшения.
+	</change>
 </history>

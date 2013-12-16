@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="12">ab-money-svyaznoybank</id>
+	<id version="13">ab-money-svyaznoybank</id>
 	<api flags="no_browser"/>
 	<name>Связнойбанк</name>
 	<description html="true"><![CDATA[

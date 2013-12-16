@@ -179,7 +179,7 @@ function fetchDep(baseurl, html){
     getParam(html, result, '__tariff', /<h2[^>]*>([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces, html_entity_decode);
 
     if(AnyBalance.isAvailable('balance', 'accnum')){
-        var html = AnyBalance.requestGet(baseurl + product.DetailsUrl);
+        var html = AnyBalance.requestPost(baseurl + product.DetailsUrl, '', g_headers);
         var json = getJson(html);
         getParam(json.html, result, 'accnum', /Номер счета:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
         getParam(json.html, result, 'balance', /Баланс:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);

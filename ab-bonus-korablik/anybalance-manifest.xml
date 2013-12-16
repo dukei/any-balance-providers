@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-bonus-korablik</id>
+	<id version="2">ab-bonus-korablik</id>
 	<api flags="no_browser"/>
 	<name>Кораблик (Бонусы)</name>
-	<description>
-Получает баланс бонусной карты сети магазинов Кораблик http://www.korablik.ru/
-	</description>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе бонусной карты сети магазинов Кораблик http://www.korablik.ru/</p>
+	]]></description>	
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
@@ -16,6 +16,8 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс"/>
+		<counter id="cardnum" name="Номер бонусной карты" type="text"/>
+		<counter id="cardbalance" name="Баланс бонусной карты"/>
 	</counters>
 	<keywords></keywords>
 	<type>bonus</type>

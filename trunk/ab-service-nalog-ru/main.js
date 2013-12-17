@@ -21,7 +21,7 @@ function main() {
 	if (AnyBalance.getLevel() >= 7) {
 		AnyBalance.trace('Пытаемся ввести капчу');
 		AnyBalance.setDefaultCharset('base64');
-		var captcha = AnyBalance.requestGet(baseurl + 'debt/req.do?captcha=1');
+		var captcha = AnyBalance.requestGet(baseurl + 'debt/captcha.do');
 		captchaa = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
 		AnyBalance.trace('Капча получена: ' + captchaa);
 	} else {
@@ -29,18 +29,36 @@ function main() {
 	}
 	AnyBalance.setDefaultCharset('utf-8');
 	
-	html = AnyBalance.requestPost(baseurl + 'debt/req.do?', {
-		cmd: 'find',
+	html = AnyBalance.requestPost(baseurl + 'debt/req-edit.do', {
 		inn: prefs.inn,
 		fam: prefs.surname,
 		nam: prefs.fio_name,
 		otch: prefs.otchestvo,
 		cap: captchaa
-	}, addHeaders({Referer: baseurl + 'debt/req.do'}));
+	}, addHeaders({Referer: baseurl + 'debt/req.do?'}));
 	
-	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, [/<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, /div[^>]*"field-error"(?:[^>]*>){2}([\s\S]*?)<\//i], replaceTagsAndSpaces, html_entity_decode);
-		if (error) throw new AnyBalance.Error(error);
+	var token = getParam(html, null, null, /^"([0-9A-Fa-f]*)"$/i);
+	
+	if (!token) {
+		if(/{"ERRORS[\s\S]*?}/i.test(html)) {
+			var json = getJson(html);
+			if(json) {
+				if(json.ERRORS) {
+					var errorsString = '';
+					
+					if(json.ERRORS.cap)
+						errorsString +=	json.ERRORS.cap.join(', ');
+					if(json.ERRORS.inn)
+						errorsString +=	json.ERRORS.inn.join(', ');
+					if(json.ERRORS.fam)
+						errorsString +=	json.ERRORS.fam.join(', ');
+					if(json.ERRORS.nam)
+						errorsString +=	json.ERRORS.nam.join(', ');
+
+					throw new AnyBalance.Error(errorsString);
+				}
+			}
+		}
 		throw new AnyBalance.Error('Не удалось получить информацию. Сайт изменен?');
 	}
 	var result = {
@@ -49,18 +67,16 @@ function main() {
 		all: ''
 	};
 	var errString = 'Не найдена информация по задолженности с данными: ИНН: ' + prefs.inn + ', ФИО: ' + prefs.surname + ' ' + prefs.fio_name + ' ' + prefs.otchestvo + '. Пожалуйста, проверьте правильность ввода. ';
-	// Если не получили на странице инфу, пойдем глубже и запросим прямо в базу
-	var token = getParam(html, null, null, /name="token"[^>]*value="([^"]*)/i);
-	
+
 	var RetryCounts = 15, json;
 	while(!json && RetryCounts > 0) {
 		AnyBalance.trace('Не нашли информацию, попробуем еще раз, осталось попыток: ' + RetryCounts--);
 		AnyBalance.sleep(3000);
 		
-		var xhtml = AnyBalance.requestPost(baseurl + 'debt/debt-find.do', {
+		var xhtml = AnyBalance.requestPost(baseurl + '/debt/debt-find.do', {
 			t: new Date().getTime(),
 			'token':token,
-		}, addHeaders({Referer: baseurl + 'debt/req.do', 'X-Requested-With':'XMLHttpRequest'}));
+		}, addHeaders({Referer: baseurl + 'debt/debts.do', 'X-Requested-With':'XMLHttpRequest'}));
 
 		json = getJson(xhtml);
 	}

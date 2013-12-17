@@ -1,40 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-municipal-nskenergo</id>
-  <name>Новосибирскэнергосбыт</name>
-  <description>
-    Получает баланс и информацию о последнем платеже в НовосибирскЭнергоСбыт. Получает данные из личного кабинета https://narod.nskes.ru.
-
-    Если у вас еще нет доступа к этому личному кабинету, зарегистрируйтесь здесь: https://narod.nskes.ru/registration.php. 
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-    <js>library.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс (Электричество)" units="р"/>
-    <counter id="pen" name="Пеня (Электричество)" units="р"/>
-    <counter id="lastpaydate" name="Дата последнего платежа (Электричество)" type="time" format="dd/MM/yyyy"/>
-    <counter id="balance_otop" name="Баланс (Отопление)" units="р"/>
-    <counter id="pen_otop" name="Пеня (Отопление)" units="р"/>
-    <counter id="lastpaydate_otop" name="Дата последнего платежа (Отопление)" type="time" format="dd/MM/yyyy"/>
-    <counter id="balance_gor" name="Баланс (ГВ)" units="р"/>
-    <counter id="pen_gor" name="Пеня (ГВ)" units="р"/>
-    <counter id="lastpaydate_gor" name="Дата последнего платежа (ГВ)" type="time" format="dd/MM/yyyy"/>
-    <counter id="indication" name="Показания счетчика (Электричество)" units="Квт*ч"/>
-    <counter id="fio" name="ФИО" type="text"/>
-  </counters>
-  <keywords>
-    новосибирскэнерго, новосибирск, электричество, горячая вода, отопление
-  </keywords>
-  <type>
-    municipal
-  </type>
-  <country>
-    ru
-  </country>
+	<id version="3">ab-municipal-nskenergo</id>
+	<name>Новосибирскэнергосбыт</name>
+	<api flags="no_browser"/>
+	<description html="true"><![CDATA[
+	<p>Получает баланс и информацию о последнем платеже в НовосибирскЭнергоСбыт. Получает данные из личного кабинета https://narod.nskes.ru.</p>
+	<p>Если у вас еще нет доступа к этому личному кабинету, зарегистрируйтесь здесь: https://narod.nskes.ru/registration.php. </p>
+	]]></description>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс (Электричество)" units=" р"/>
+		<counter id="pen" name="Пеня (Электричество)" units=" р"/>
+		<counter id="lastpaydate" name="Дата последнего платежа (Электричество)" type="time" format="dd/MM/yyyy"/>
+		<counter id="balance_otop" name="Баланс (Отопление)" units=" р"/>
+		<counter id="pen_otop" name="Пеня (Отопление)" units=" р"/>
+		<counter id="lastpaydate_otop" name="Дата последнего платежа (Отопление)" type="time" format="dd/MM/yyyy"/>
+		<counter id="balance_gor" name="Баланс (ГВ)" units=" р"/>
+		<counter id="pen_gor" name="Пеня (ГВ)" units=" р"/>
+		<counter id="lastpaydate_gor" name="Дата последнего платежа (ГВ)" type="time" format="dd/MM/yyyy"/>
+		<counter id="indication" name="Показания счетчика (Электричество)" units=" Квт*ч"/>
+		<counter id="fio" name="ФИО" type="text"/>
+	</counters>
+	<keywords>новосибирскэнерго, новосибирск, электричество, горячая вода, отопление</keywords>
+	<type>municipal</type>
+	<country>ru</country>
 </provider>

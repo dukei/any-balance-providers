@@ -1,42 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <EditTextPreference 
-        title="Логин" 
-        positiveButtonText="ОК" 
-        summary="|Введите логин в Альфа.Click|{@s}" 
-	obligatory="true"
-        dialogTitle="Логин" 
-        negativeButtonText="Отмена" 
-        dialogMessage="Введите логин для входа в систему Альфа.Click."
-        key="login">
-    </EditTextPreference>
-    <EditTextPreference 
-        positiveButtonText="ОК"
-        key="password" 
-        dialogTitle="Пароль"
-        negativeButtonText="Отмена"
-	obligatory="true"
-        title="Пароль"
-        summary="|Введите пароль в Альфа.Click|***********"
-        dialogMessage="Введите пароль, используемый для входа в систему Альфа.Click."
-        inputType="textPassword">
-    </EditTextPreference>
-    <ListPreference 
-        key="type" 
-        title="Что смотреть"
-        summary="||{@s}\n"
-        entries="Карта|Кредитный счет|Счет|Депозит"
-        entryValues="card|crd|acc|dep"
-	defaultValue="card">
-    </ListPreference>
-    <EditTextPreference 
-        positiveButtonText="ОК"
-        key="cardnum" 
-        dialogTitle="Номер карты/счета"
-        negativeButtonText="Отмена"
-        title="Номер карты/счета"
-        summary="Последние 4 цифры карты или счета|Автоматически\n|{@s}\n"
-        dialogMessage="Введите последние цифры карты или кредитного, текущего или депозитного счета, по которому вы хотите получить информацию. Для счетов можно ввести больше 4 последних цифр, если это необходимо. Если это поле оставить пустым, то будет показана информация по первой карте/счету."
-        inputType="number">
-    </EditTextPreference>
+	<EditTextPreference
+		title="Логин"
+		positiveButtonText="ОК"
+		summary="|Введите логин в Альфа.Click|{@s}"
+		obligatory="true"
+		dialogTitle="Логин"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите логин для входа в систему Альфа.Click."
+		key="login">
+	</EditTextPreference>
+	<EditTextPreference
+		positiveButtonText="ОК"
+		key="password"
+		dialogTitle="Пароль"
+		negativeButtonText="Отмена"
+		obligatory="true"
+		title="Пароль"
+		summary="|Введите пароль в Альфа.Click|***********"
+		dialogMessage="Введите пароль, используемый для входа в систему Альфа.Click."
+		inputType="textPassword">
+	</EditTextPreference>
+	<ListPreference
+		key="type"
+		title="Что смотреть"
+		summary="||{@s}\n"
+		entries="Карта|Кредитный счет|Счет|Депозит"
+		entryValues="card|crd|acc|dep"
+		defaultValue="card">
+	</ListPreference>
+	<EditTextPreference
+		positiveButtonText="ОК"
+		key="cardnum"
+		dialogTitle="Номер карты/счета"
+		negativeButtonText="Отмена"
+		title="Номер карты/счета"
+		summary="Последние 4 цифры карты или счета|Автоматически\n|{@s}\n"
+		dialogMessage="Введите последние цифры карты или кредитного, текущего или депозитного счета, по которому вы хотите получить информацию. Для счетов можно ввести больше 4 последних цифр, если это необходимо. Если это поле оставить пустым, то будет показана информация по первой карте/счету."
+		inputType="number">
+	</EditTextPreference>
 </PreferenceScreen>

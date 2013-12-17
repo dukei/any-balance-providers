@@ -93,42 +93,71 @@ function getMainPageOrModule(html, type, baseurl){
    return getParam(html, null, null, /<fragment><!\[CDATA\[([\s\S]*?)\]\]>/); //Вычленяем html;
 }
 
-function getMainPageOrModule2(html, type, baseurl){
-   var commands = {
-       card: 'pt1:menu:ATP2_r1:0:i1:1:cl2',
-       acc: 'pt1:menu:ATP2_r1:0:i1:0:cl2',
-       dep: 'pt1:menu:ATP2_r1:0:i1:3:cl2',
-       crd: 'pt1:menu:ATP2_r1:0:i1:2:cl2' 
-   };
-
-   var event = commands[type] ? commands[type] : type;
-   return getNextPage(html, event, baseurl, [
-	['oracle.adf.view.rich.RENDER', 'pt1:menu:ATP2_r1'],
-	['oracle.adf.view.rich.DELTAS', ''],
-	['event', '%EVENT%'],
-	['event.%EVENT%', '<m xmlns="http://oracle.com/richClient/comm"><k v="type"><s>action</s></k></m>'],
-	['oracle.adf.view.rich.PROCESS', 'pt1:menu:ATP2_r1']
-   ]);
+function getMainPageOrModule2(html, type, baseurl) {
+	var commands = {
+		card: 'pt1:menu:ATP2_r1:0:i1:1:cl2',
+		acc: 'pt1:menu:ATP2_r1:0:i1:0:cl2',
+		dep: 'pt1:menu:ATP2_r1:0:i1:3:cl2',
+		crd: 'pt1:menu:ATP2_r1:0:i1:3:cl2'
+	};
+	
+	/*
+	pt1:header:it1:
+	pt1:r4:0:t3:rangeStart:0
+	pt1:r2:0:t4:rangeStart:0
+	pt1:r3:0:t3:rangeStart:0
+	pt1:r1:0:w1:id1:26.11.2013
+	pt1:r1:0:w1:id2:13.12.2013
+	pt1:r1:0:w1:sos1:
+	pt1:r1:0:w1:t1:rangeStart:0
+	pt1:r7:0:t1:rangeStart:0
+	org.apache.myfaces.trinidad.faces.FORM:f1
+	javax.faces.ViewState:!-57wunlap7
+	oracle.adf.view.rich.RENDER:pt1:menu:ATP2_r1
+	oracle.adf.view.rich.DELTAS:{pt1:menu:ATP2_r1:0:i1:3:p1={_shown=}}
+	event:pt1:menu:ATP2_r1:0:i1:3:cl2
+	event.pt1:menu:ATP2_r1:0:i1:3:cl2:<m xmlns="http://oracle.com/richClient/comm"><k v="type"><s>action</s></k></m>
+	oracle.adf.view.rich.PROCESS:pt1:menu:ATP2_r1
+	*/	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	var event = commands[type] ? commands[type] : type;
+	return getNextPage(html, event, baseurl, [
+		['oracle.adf.view.rich.RENDER', 'pt1:menu:ATP2_r1'],
+		['oracle.adf.view.rich.DELTAS', '{pt1:menu:ATP2_r1:0:i1:3:p1={_shown=}}'],
+		['event', '%EVENT%'],
+		['event.%EVENT%', '<m xmlns="http://oracle.com/richClient/comm"><k v="type"><s>action</s></k></m>'],
+		['oracle.adf.view.rich.PROCESS', 'pt1:menu:ATP2_r1']
+	]);
 }
 
-function getNextPage(html, event, baseurl, extra_params){
-   var form = getParam(html, null, null, /<form[^>]*name="f1"[^>]*>([\s\S]*?)<\/form>/i);
-   var action = getParam(html, null, null, /<form[^>]*name="f1"[^>]*action="\/(ALFAIBSR[^"]*)/i, null, html_entity_decode);
-   if(!action)
-       throw new AnyBalance.Error('Не удаётся найти форму ввода команды. Сайт изменен?');
-   var params = createFormParams(form, function(params, str, name, value){
-       if(/::input$/.test(name))
-           return; //Ненужные поля
-       return value;
-   }, true);
-
-   var paramsModule = createParams(joinArrays(params, extra_params), event);
-
-   html = AnyBalance.requestPost(baseurl + action, paramsModule, addHeaders({"Adf-Rich-Message": "true"}));
-   return getParam(html, null, null, /<fragment><!\[CDATA\[([\s\S]*?)\]\]>/); //Вычленяем html;
+function getNextPage(html, event, baseurl, extra_params) {
+	var form = getParam(html, null, null, /<form[^>]*name="f1"[^>]*>([\s\S]*?)<\/form>/i);
+	var action = getParam(html, null, null, /<form[^>]*name="f1"[^>]*action="\/(ALFAIBSR[^"]*)/i, null, html_entity_decode);
+	if (!action)
+		throw new AnyBalance.Error('Не удаётся найти форму ввода команды. Сайт изменен?');
+	
+	var params = createFormParams(form, function(params, str, name, value) {
+		if (/::input$/.test(name)) 
+			return; //Ненужные поля
+		return value;
+	}, true);
+	
+	var paramsModule = createParams(joinArrays(params, extra_params), event);
+	html = AnyBalance.requestPost(baseurl + action, paramsModule, addHeaders({"Adf-Rich-Message": "true"}));
+	
+	return getParam(html, null, null, /<fragment>\s*<!\[CDATA\[([\s\S]*?)\]\]>/); //Вычленяем html;
 }
 
-function getDetailes(html, event, baseurl, renderAndProcess){
+function getDetails(html, event, baseurl, renderAndProcess){
    var action = getParam(html, null, null, /<form[^>]*name="f1"[^>]*action="\/(ALFAIBSR[^"]*)/i, null, html_entity_decode);
    if(!action)
        throw new AnyBalance.Error('Не удаётся найти форму ввода команды для получения деталей. Сайт изменен?');
@@ -270,7 +299,7 @@ function processCard(html, baseurl){
         throw new AnyBalance.Error('Не удается найти ID карты ' + cardnum);
     }
 
-    html = getDetailes(html, id, baseurl);
+    html = getDetails(html, id, baseurl);
     //ФИО
     getParam(html, result, 'userName', /&#1060;&#1048;&#1054;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     //Статус
@@ -433,13 +462,32 @@ function processCredit2(html, baseurl, _accnum, result){
         throw new AnyBalance.Error("Введите не меньше 4 последних цифр номера счета кредита или не вводите ничего, чтобы показать информацию по первому кредиту");
 
     html = getMainPageOrModule2(html, 'crd', baseurl);
+	/*
+	pt1:header:it1:
+	pt1:r4:0:t3:rangeStart:0
+	pt1:r2:0:t4:rangeStart:0
+	pt1:r3:0:t3:rangeStart:0
+	pt1:r1:0:w1:id1:26.11.2013
+	pt1:r1:0:w1:id2:13.12.2013
+	pt1:r1:0:w1:sos1:
+	pt1:r1:0:w1:t1:rangeStart:0
+	pt1:r7:0:t1:rangeStart:0
+	org.apache.myfaces.trinidad.faces.FORM:f1
+	javax.faces.ViewState:!-57wunlap7
+	oracle.adf.view.rich.RENDER:pt1:menu:ATP2_r1
+	oracle.adf.view.rich.DELTAS:{pt1:menu:ATP2_r1:0:i1:3:p1={_shown=}}
+	event:pt1:menu:ATP2_r1:0:i1:3:cl2
+	event.pt1:menu:ATP2_r1:0:i1:3:cl2:<m xmlns="http://oracle.com/richClient/comm"><k v="type"><s>action</s></k></m>
+	oracle.adf.view.rich.PROCESS:pt1:menu:ATP2_r1
+	*/	
     
     //Сколько цифр осталось, чтобы дополнить до 20
     var accnum = _accnum || prefs.cardnum || '';
     var accprefix = accnum.length;
     accprefix = 20 - accprefix;
 
-    var re = new RegExp('<table[^>]+table-layout:\\s*fixed[^>]*>(?:[\\s\\S](?!<table[^>]+table-layout:\\s*fixed))*?>' + (accprefix > 0 ? '\\d{' + accprefix + '}' : '') + accnum + '<', 'i');
+	// <table[^>]+table-layout:\s*fixed[^>]*>\s*<tr[^>]*>(?:[\s\S]*?<td[^>]*>){2}\d+<
+    var re = new RegExp('<table[^>]+table-layout:\\s*fixed[^>]*>\\s*<tr[^>]*>(?:[\\s\\S]*?<td[^>]*>){2}\\d+' + accnum + '<', 'i');
     var tr = getParam(html, null, null, re);
     if(!tr)
         throw new AnyBalance.Error('Не удаётся найти ' + (accnum ? 'кредит с последними цифрами ' + accnum : 'ни одного кредита'));
@@ -515,7 +563,7 @@ function getCreditInfo(html, result, accnum, baseurl, creditonly){
         throw new AnyBalance.Error('Не удается найти ID счета ' + accnum);
     }
 
-    html = getDetailes(html, id, baseurl);
+    html = getDetails(html, id, baseurl);
 
     //Сумма к оплате:
     getParam(html, result, 'topay', /&#1057;&#1091;&#1084;&#1084;&#1072;\s*&#1082;\s*&#1086;&#1087;&#1083;&#1072;&#1090;&#1077;:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);

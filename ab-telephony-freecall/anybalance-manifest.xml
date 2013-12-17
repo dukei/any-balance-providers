@@ -1,28 +1,25 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-telephony-freecall</id>
-  <name>FreeCall</name>
-  <description>
-    Gets information from http://www.freecall.com/ such as your credit, freedays. 
-  </description>
-  <author>Alexandra Shalamova &lt;alexandrashalamova@gmail.com&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Your credit" units=" {@currency}"/>
-    <counter id="fio" name="ФИО" type="text"/>
-    <counter id="freedays" name="Freedays" type="text"/>
-  </counters>
-  <keywords>
-    фрикол
-  </keywords>
-  <type>
-    telephony
-  </type>
-  <country></country>
+	<id version="2">ab-telephony-freecall</id>
+	<api flags="no_browser|captcha"/>
+	<name>FreeCall</name>
+	<description html="true"><![CDATA[
+	<p>Obtains information from http://www.freecall.com/ such as your credit, freedays.</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Your credit" units=" {@currency}"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="freedays" name="Freedays" type="text"/>
+	</counters>
+	<keywords>фрикол, clone</keywords>
+	<type>telephony</type>
+	<country></country>
 </provider>

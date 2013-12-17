@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-<change version="6" date="2013-11-20">
-- Поддержка изменений на сайте.
-</change>
-<change version="5" date="2013-11-06">
-- Поддержка изменений на сайте.
-</change>
-<change version="4" date="2013-09-06">
-- Много новых счетчиков, поддержка почты.
-</change>
-<change version="3" date="2013-07-12">
-- Добавлена совместимость с Balance Widget.
-</change>
-<change version="2" date="2013-07-03">
-- Добавлено отображение даты отключения, оплаты в сутки, оплаты в месяц, статус аккаунта.
-</change>
+	<change version="7" date="2013-12-17">
+	- Поддержка изменений на сайте.
+	</change>
+	<change version="6" date="2013-11-20">
+	- Поддержка изменений на сайте.
+	</change>
+	<change version="5" date="2013-11-06">
+	- Поддержка изменений на сайте.
+	</change>
+	<change version="4" date="2013-09-06">
+	- Много новых счетчиков, поддержка почты.
+	</change>
+	<change version="3" date="2013-07-12">
+	- Добавлена совместимость с Balance Widget.
+	</change>
+	<change version="2" date="2013-07-03">
+	- Добавлено отображение даты отключения, оплаты в сутки, оплаты в месяц, статус аккаунта.
+	</change>
 </history>

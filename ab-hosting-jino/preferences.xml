@@ -8,7 +8,7 @@
 		dialogTitle="Логин"
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите логин, используемый для входа в контрольную панель.">
+		dialogMessage="Введите логин, используемый для входа в контрольную панель Джино.">
 	</EditTextPreference>
 	<EditTextPreference
 		title="Пароль"
@@ -18,7 +18,7 @@
 		dialogTitle="Пароль"
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите пароль, используемый для входа в контрольную панель."
+		dialogMessage="Введите пароль, используемый для входа в контрольную панель Джино."
 		inputType="textPassword">
 	</EditTextPreference>
 </PreferenceScreen>

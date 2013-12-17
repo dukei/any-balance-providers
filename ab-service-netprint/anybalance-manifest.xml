@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-service-netprint</id>
+	<api flags="no_browser"/>
+	<name>NetPrint</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера NetPrint http://www.netprint.ru/moscow</p>
+	<p>Информация берется из личного кабинета http://www.netprint.ru/moscow/73/</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="bonuses" name="Бонусы"/>
+	</counters>
+	<keywords></keywords>
+	<type>service</type>
+	<country>ru</country>
+</provider>

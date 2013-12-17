@@ -15,11 +15,12 @@ function main() {
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 
-    var baseurl = 'https://auth.jino.ru/';
+    var baseurlLogin = 'https://auth.jino.ru/';
+	var baseurl = 'https://cp-hosting.jino.ru/';
     AnyBalance.setDefaultCharset('utf-8'); 
 
 	if(!prefs.dbg) {
-		var html = AnyBalance.requestGet(baseurl + 'login/cpanel/', g_headers);
+		var html = AnyBalance.requestGet(baseurlLogin + 'login/hosting/', g_headers);
 		
 		var params = createFormParams(html, function(params, str, name, value) {
 			if (name == 'login') 
@@ -30,64 +31,60 @@ function main() {
 			return value;
 		});
 		
-		html = AnyBalance.requestPost(baseurl + 'login/cpanel/', params, addHeaders({Referer: baseurl + 'login/cpanel/'})); 		
+		html = AnyBalance.requestPost(baseurlLogin + 'login/hosting/', params, addHeaders({Referer: baseurlLogin + 'login/hosting/'})); 		
 		
-		if(!/logout=true/i.test(html)){
+		if(!/jauth\/logout/i.test(html)){
 			var error = sumParam(html, null, null, /"form-errors"[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
 			if(error)
 				throw new AnyBalance.Error(error);
 			throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 		}
 	} else {
-		var html = AnyBalance.requestGet('https://cp.jino.ru/', g_headers);
+		var html = AnyBalance.requestGet(baseurl, g_headers);
 	}
 	
     var result = {success: true};
 	
-    getParam(html, result, 'balance', /Баланс[^>]*>:\s*[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'deadline', /Истекает[^>]*>:\s*[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseDateWord);
-	getParam(html, result, 'state', /Статус[^>]*>:\s*[^>]*>\s*([^<]*?)\s*</i, replaceTagsAndSpaces, html_entity_decode);
+	if(isAvailable('deadline', 'balance', 'daily_fee', 'monthly_fee', 'state')) {
+		var json = {};
+		try {
+			html = AnyBalance.requestGet(baseurl+'balance/', g_headers);
+			json = getJson(html);
+		} catch(e){
+			AnyBalance.trace('Error while getting JSON!');
+			AnyBalance.trace(html);
+		}
+		if(json.status == 'success') {
+			getParam(json.data.funds+'', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
+			getParam(json.data.payment_by_month+'', result, 'monthly_fee', null, replaceTagsAndSpaces, parseBalance);
+			getParam(json.data.payment_by_day+'', result, 'daily_fee', null, replaceTagsAndSpaces, parseBalance);
+			getParam(json.data.expiration_date+'', result, 'deadline', null, replaceTagsAndSpaces, parseDateISO);
+			getParam(json.data.state+'', result, 'state');
+		} else {
+			throw new AnyBalance.Error('Сервре вернул ошибочные данные, сайт изменился?');
+		}
+	}
+	// Статистика
+	html = AnyBalance.requestGet(baseurl + 'statistics/resources/');
 	// Дисковое простанство
-	if(isAvailable(['storage_percent','storage_used','monthly_fee','daily_fee', 'storage_percent_left', 'storage_total', 'storage_left'])) {
-		html = AnyBalance.requestGet('https://cp.jino.ru/?area=services_srv&srv=disk');
-		
-		getParam(html, result, 'monthly_fee', /Оплата в месяц(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'daily_fee', /Оплата в сутки(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-		
-		var ptc = getParam(html, null, null, /Использование услуги:(?:[\s\S]*?<p[^>]*>){1}[\s\S]*?(\d[\d.,]*)%/i, replaceTagsAndSpaces, parseBalance);
-		if(ptc){
-			getParam(ptc, result, 'storage_percent');
-			getParam(100-ptc, result, 'storage_percent_left');
-		}
-		var storageTotal = getParam(html, null, null, /Использование услуги:(?:[\s\S]*?<p[^>]*>)[^<]*Мб{1}([^<]*)Мб/i, replaceTagsAndSpaces, parseBalance);
-		var storageUsed = getParam(html, null, null, /Использование услуги:(?:[\s\S]*?<p[^>]*>){1}([^<]*)Мб/i, replaceTagsAndSpaces, parseBalance);
-		
-		getParam(storageTotal, result, 'storage_total');
-		getParam(storageUsed, result, 'storage_used');
-
-		if(storageTotal && storageUsed){
-			getParam(storageTotal-storageUsed, result, 'storage_left');
-		}
-	}
+	getService(html, result, 'storage', 'Дисковое пространство');
 	// Почтовый сервис
-	if(isAvailable(['mail_used','mail_total','mail_left','mail_percent', 'mail_percent_left'])){
-		html = AnyBalance.requestGet('https://cp.jino.ru/?area=services_srv&srv=mail');
-		
-		var ptc = getParam(html, null, null, /Использование услуги:(?:[\s\S]*?<p[^>]*>){1}[\s\S]*?(\d[\d.,]*)%/i, replaceTagsAndSpaces, parseBalance);
-		if(ptc){
-			getParam(ptc, result, 'mail_percent');
-			getParam(100-ptc, result, 'mail_percent_left');
-		}
-		var mail_total = getParam(html, null, null, /Использование услуги:(?:[\s\S]*?<p[^>]*>)[^<]*Мб{1}([^<]*)Мб/i, null, parseBalance);
-		var mail_used = getParam(html, null, null, /Использование услуги:(?:[\s\S]*?<p[^>]*>){1}([^<]*)Мб/i, null, parseBalance);
-		
-		getParam(mail_total, result, 'mail_total');
-		getParam(mail_used, result, 'mail_used');
-		
-		if(mail_total && mail_used){
-			getParam(mail_total-mail_used, result, 'mail_left');
-		}
-	}
+	getService(html, result, 'mail', 'Место под Почту');
 	
     AnyBalance.setResult(result);
+}
+
+function getService(html, result, counterPrefix, regExpPrefix) {
+	if(isAvailable([counterPrefix+'_percent',counterPrefix+'_used', counterPrefix+'_percent_left', counterPrefix+'_total', counterPrefix+'_left'])) {
+
+		var ptc = getParam(html, null, null, new RegExp(regExpPrefix+'[\\s\\S]*?quantitative-graph[^>]*title="([^"]*)','i'), replaceTagsAndSpaces, parseBalance);
+		if(isset(ptc)){
+			getParam(ptc, result, counterPrefix+'_percent');
+			getParam(100-ptc, result, counterPrefix+'_percent_left');
+		}
+		
+		getParam(html, result, counterPrefix+'_total', new RegExp(regExpPrefix+'[\\s\\S]*?Всего:(?:[^>]*>){2}([^<]*)','i'), replaceTagsAndSpaces, parseTraffic);
+		getParam(html, result, counterPrefix+'_used', new RegExp(regExpPrefix+'[\\s\\S]*?Занято:(?:[^>]*>){2}([^<]*)','i'), replaceTagsAndSpaces, parseTraffic);
+		getParam(html, result, counterPrefix+'_left', new RegExp(regExpPrefix+'[\\s\\S]*?Свободно:(?:[^>]*>){2}([^<]*)','i'), replaceTagsAndSpaces, parseTraffic);
+	}
 }

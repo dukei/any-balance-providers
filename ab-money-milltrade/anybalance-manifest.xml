@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-money-milltrade</id>
+	<api flags="no_browser"/>
+	<name>Mill Trade</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Mill Trade http://milltrade.net</p>
+	<p>Информация берется из личного кабинета https://milltrade.net/cabinet/accounts/</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Всего на счете" units=" {@currency}"/>
+		<counter id="avail_balance" name="Доступно для снятия" units=" {@currency}"/>
+		<counter id="trade_bills" name="Торговые счета" units=" {@currency}"/>
+		<counter id="inv_goldseven" name="Инвестировано в Золотая 7" units=" {@currency}"/>
+		<counter id="inv_mill_invest" name="Инвестировано в Mill-invest" units=" {@currency}"/>
+		<counter id="bonuses" name="Бонусы" units=" {@currency}"/>
+		<counter id="currency" name="Валюта" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>money</type>
+	<country>ru</country>
+</provider>

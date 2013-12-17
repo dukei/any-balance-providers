@@ -99,7 +99,7 @@ function mainRussianPost() {
 	var baseurl = 'http://www.russianpost.ru';
 	var info = AnyBalance.requestGet(baseurl + '/Tracking/');
 	info = checkForRedirect(info, baseurl);
-	var form = getParam(info, null, null, /<form[^>]+name="F(?:orm)?1"[^>]*>[\s\S]*?<\/form>/i);
+	var form = getParam(info, null, null, /<form[^>]+(?:name|id)="F(?:orm)?1"[^>]*>[\s\S]*?<\/form>/i);
 	if (!form) {
 		checkForErrors(info);
 		throw new AnyBalance.Error('Не удалось найти форму запроса. На сайте обед?');
@@ -127,7 +127,7 @@ function mainRussianPost() {
 	});
 	var dt = new Date();
         var action = getParam(form, null, null, /<form[^>]+action="([^"]*)/i, null, html_entity_decode);
-	var info = AnyBalance.requestPost(baseurl + action, params);
+	var info = AnyBalance.requestPost(baseurl + (action || '/Tracking/'), params);
 	AnyBalance.trace('Проверяем, нет ли ошибок...');
 	checkForErrors(info);
 	info = checkForRedirect(info, baseurl);

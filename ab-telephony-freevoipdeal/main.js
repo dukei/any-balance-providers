@@ -21,7 +21,7 @@ function main(){
 	
     var form = getParam(html, null, null, /<form[^>]*action="https:\/\/www\.freevoipdeal\.com\/en\/login"([\s\S]*?)<\/form>/i);    
     if(!form)
-        throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
+        throw new AnyBalance.Error('Can`t find login form, is the site changed?');
 	
 	var params = createFormParams(html, function(params, str, name, value) {
 		if (name == 'login[username]') 
@@ -34,14 +34,14 @@ function main(){
 	// т.к. генерируется 20 форм чтобы запутать нас, мы возьмем нужные данные из скрипта
     var matches = /data:\s*"login=login&module=webcall&component=show_webclient&update_id=&([^&=]*)=([^&="]*)/i.exec(html);
     if(!matches)
-        throw new AnyBalance.Error("Не удаётся найти идентификатор сессии! Свяжитесь с автором провайдера.");
+        throw new AnyBalance.Error("Can`t find session id!");
 
 	params[matches[1]] = matches[2];
 	
    	if(/Security code/i.test(html)) {
 		var captchaa;
 		if(AnyBalance.getLevel() >= 7) {
-			AnyBalance.trace('Пытаемся ввести капчу');
+			AnyBalance.trace('Trying to enter the captcha code.');
 			
 			var mcid = AnyBalance.requestGet(baseurl + 'captcha/reload_captcha', addHeaders({
 				'X-Requested-With':'XMLHttpRequest',
@@ -52,10 +52,10 @@ function main(){
 				'X-Requested-With':'XMLHttpRequest',
 				'Referer':baseurl + 'login'
 			}));
-			captchaa = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
-			AnyBalance.trace('Капча получена: ' + captchaa);
+			captchaa = AnyBalance.retrieveCode("Please, enter the code.", captcha);
+			AnyBalance.trace('Got code: ' + captchaa);
 		} else {
-			throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
+			throw new AnyBalance.Error('You need AnyBalance API v7+ installed, update the application please.');
 		}
 		params["login[usercode]"] = captchaa;
 		params["login[mcid]"] = mcid;
@@ -67,7 +67,7 @@ function main(){
         var error = getParam(html, null, null, /<div[^>]+class="notification error png_bg"[^>]*>[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error);
-        throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+        throw new AnyBalance.Error('Can`t login, unknown error. Contact the developers, please.');
     }
 	
     var result = {success: true};

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="1.1" version="29">ab-cell-mts-ua</id>
+	<id major_version="1.1" version="30">ab-cell-mts-ua</id>
 	<api flags="no_browser"/>
 	<name>МТС (Украина)</name>
 	<description html="true"><![CDATA[
@@ -41,6 +41,7 @@
 		<counter id="traffic_maxenergy_mb" name="Интернет Max Energy" units=" mb"/>
 		<counter id="sms_net" name="СМС в сети МТС" units=" sms"/>
 		<counter id="sms_others" name="СМС на сети других мобильных операторов Украины" units=" sms"/>
+		<counter id="mms_others" name="ММС на сети других мобильных операторов Украины" units=" mms"/>
 		<counter id="min_net_maxenergy" name="Минуты в сети МТС" type="time_interval" format="{@MIN}" units=" мин"/>
 		<counter id="min_reg_3000" name="3000 региональных минут в сети" type="time_interval" format="{@MIN}" units=" мин"/>
 		<counter id="min_all_100" name="100 минут абонентам по Украине" type="time_interval" format="{@MIN}" units=" мин"/>
@@ -53,7 +54,7 @@
 		<counter id="traffic_hyper_mb" name="hyper.net к-во Кб загруженных по АПН hyper.net" units=" mb"/>
 		<counter id="traffic_smart_mb" name="smart.net к-во Кб загруженных по АПН smart.net" units=" mb"/>
 		<counter id="traffic_opera_mb" name="Opera Mini к-во Кб загруженных по АПН opera" units=" mb"/>
-		<counter id="traffic_free_mb" name="Бесплатный интернет" units=" mb"/><!-- Актуально до 15.08.2012 для Супер Свободы -->
+		<counter id="traffic_free_mb" name="Бесплатный интернет" units=" mb"/>
 		<counter id="sms_used" name="Израсходовано SMS" units=" sms"/>
 		<counter id="mms_used" name="Израсходовано MMS" units=" mms"/>
 		<counter id="traffic_used" name="Использованно Мб" units=" mb"/>
@@ -70,6 +71,7 @@
 		<counter id="termin_mms_paket" name="Срок действия пакета ММС" type="time" format="dd/MM/yyyy"/>
 		<counter id="termin_traffic_paket_mb" name="Срок действия пакета интернета" type="time" format="dd/MM/yyyy"/>
 		<counter id="termin_traffic_reg_kop_mb" name="Срок действия интернета за копейку регионального и общенационального" type="time" format="dd/MM/yyyy"/>
+		<counter id="termin_traffic_free_mb" name="Срок действия бесплатного интернета" type="time" format="dd/MM/yyyy HH:mm:ss"/>
 		<counter id="termin_sms_100" name="Срок действия бесплатных смс для отправки на номера в пределах Украины" type="time" format="dd/MM/yyyy"/>
 		<counter id="termin_sms_net" name="Срок действия СМС в сети МТС" type="time" format="dd/MM/yyyy HH:mm:ss"/>
 		<counter id="termin_sms_others" name="Срок действия СМС на сети других мобильных операторов Украины" type="time" format="dd/MM/yyyy HH:mm:ss"/>

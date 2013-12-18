@@ -163,6 +163,9 @@ function main(){
     sumParam (html, result, 'sms_others', /<li>Осталось: (\d+) смс. Срок действия до[^<]*<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     //Срок СМС на сети других мобильных операторов Украины
     sumParam (html, result, 'termin_sms_others', /<li>Осталось: \d+ смс. Срок действия до([^<]*)<\/li>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
+    
+    // MMC на сети других мобильных операторов Украины
+    sumParam (html, result, 'mms_others', /<li>Осталось (\d+) ммс.<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 
     // Минуты в сети МТС
     sumParam (html, result, 'min_net_maxenergy', /<li>Осталось ([\d\.,]+) бесплатных секунд.\s?<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
@@ -198,8 +201,12 @@ function main(){
         }
     }
 
-    // Бесплатный интернет
+    // Бесплатный интернет Актуально до 15.08.2012 для Супер Свободы
     sumParam (html, result, 'traffic_free_mb', /<li>К-во Кб на GPRS-Internet:[^<]*Осталось[^\d]*?(\d+,?\d* *(kb|mb|gb|кб|мб|гб|байт|bytes)).<\/li>/ig, null, parseTraffic, aggregate_sum);
+    // Подарок для тарифа Смартфон
+    sumParam (html, result, 'traffic_free_mb', /<li>5 МБ для тарифа 'Смартфон'. Осталось:(\d+,?\d* *(kb|mb|gb|кб|мб|гб|байт|bytes)). Срок действия до [^<]*<\/li>/ig, null, parseTraffic, aggregate_sum);
+    //Срок действия бесплатного трафика для тарифа Смартфон
+    sumParam (html, result, 'termin_traffic_free_mb', /<li>5 МБ для тарифа 'Смартфон'. Осталось:[^\d]*?[^<]*. Срок действия до([^<]*)<\/li>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
 
     // Лицевой счет
     getParam (html, result, 'license', /№ (.*?):/, replaceTagsAndSpaces, html_entity_decode);

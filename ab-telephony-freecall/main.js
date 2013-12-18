@@ -7,7 +7,6 @@ var g_headers = {
 	'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language':'ru,en;q=0.8',
 	'Connection':'keep-alive',
-	'Origin':'https://www.freecall.com',
 	'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.63 Safari/537.36'
 };
 
@@ -44,14 +43,14 @@ function main(){
 		if(AnyBalance.getLevel() >= 7) {
 			AnyBalance.trace('Пытаемся ввести капчу');
 			
-			var mcid = AnyBalance.requestGet('https://www.freecall.com/captcha/reload_captcha', addHeaders({
+			var mcid = AnyBalance.requestGet(baseurl + 'captcha/reload_captcha', addHeaders({
 				'X-Requested-With':'XMLHttpRequest',
-				'Referer':'https://www.freecall.com/login'
+				'Referer':baseurl + 'login'
 			}));
 			
-			var captcha = AnyBalance.requestGet('https://www.freecall.com/captcha?numchars=6&mcid='+mcid, addHeaders({
+			var captcha = AnyBalance.requestGet(baseurl + 'captcha?numchars=6&mcid='+mcid, addHeaders({
 				'X-Requested-With':'XMLHttpRequest',
-				'Referer':'https://www.freecall.com/login'
+				'Referer':baseurl + 'login'
 			}));
 			captchaa = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
 			AnyBalance.trace('Капча получена: ' + captchaa);
@@ -62,12 +61,9 @@ function main(){
 		params["login[mcid]"] = mcid;
 	}
 	
-    html = AnyBalance.requestPost(baseurl + 'login', params, addHeaders({Referer: 'https://www.freecall.com/login'})); 
+    html = AnyBalance.requestPost(baseurl + 'login', params, addHeaders({Referer: baseurl + 'login'})); 
 	
-	html = AnyBalance.requestGet('https://www.freecall.com/buy_credit2/', addHeaders({'Referer':'https://www.freecall.com/login'	}));
-			
-	
-	
+	// html = AnyBalance.requestGet('https://www.freecall.com/buy_credit2/', addHeaders({'Referer':'https://www.freecall.com/login'	}));
 	
     if(!/\/logout/i.test(html)){
         var error = getParam(html, null, null, /<div[^>]+class="notification error png_bg"[^>]*>[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);

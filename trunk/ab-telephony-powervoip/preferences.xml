@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
     <EditTextPreference 
+		obligatory="true"
         title="Login" 
         positiveButtonText="OK" 
         summary="||{@s}" 
@@ -10,12 +11,13 @@
         key="login">
     </EditTextPreference>
     <EditTextPreference 
+		obligatory="true"
         positiveButtonText="OK"
         key="password" 
         dialogTitle="Password"
         negativeButtonText="Cancel"
         title="Password"
-        summary="||***********\n"
+        summary="||***********"
         dialogMessage="Please enter your password"
         inputType="textPassword">
     </EditTextPreference>

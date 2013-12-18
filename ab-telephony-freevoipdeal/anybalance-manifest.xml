@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-telephony-freecall</id>
+	<id version="1">ab-telephony-freevoipdeal</id>
 	<api flags="no_browser|captcha"/>
-	<name>FreeCall</name>
+	<name>Freevoipdeal</name>
 	<description html="true"><![CDATA[
-	<p>Obtains information from http://www.freecall.com/ such as your credit, freedays.</p>
+	<p>Obtains information from http://www.freevoipdeal.com such as your credit, freedays.</p>
 	]]></description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
@@ -19,7 +19,7 @@
 		<counter id="freedays" name="Freedays" type="text"/>
 	</counters>
 	<!-- этот провайдер, один из множества клонов nonoh.net -->
-	<keywords>фрикол, clone, nonoh</keywords>	
+	<keywords>clone, nonoh</keywords>
 	<type>telephony</type>
 	<country></country>
 </provider>

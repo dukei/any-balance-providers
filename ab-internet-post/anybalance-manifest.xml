@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="2">ab-internet-post</id>
+	<id version="3">ab-internet-post</id>
 	<name>Post ltd. (Пятигорск)</name>
 	<description html="true"><![CDATA[
 	<p>Получает данные для провайдера Post ltd. г.Пятигорск, г.Ессентуки, г.Георгиевск (ПОСТ Лтд, http://www.kmv.ru/)</p>

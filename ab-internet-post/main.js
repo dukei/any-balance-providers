@@ -27,7 +27,7 @@ function main(){
 	
 	html = AnyBalance.requestPost(baseurl + 'login', params, addHeaders({Referer: baseurl + 'login'})); 
 	
-    if(!/new HupoApp({/i.test(html)){
+    if(!/new HupoApp\(\{/i.test(html)){
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
 	

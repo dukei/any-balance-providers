@@ -16,7 +16,7 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Your credit" units=" {@currency}"/>
-		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="fio" name="Name" type="text"/>
 		<counter id="freedays" name="Freedays" type="text"/>
 	</counters>
 	<keywords>фрикол, clone</keywords>

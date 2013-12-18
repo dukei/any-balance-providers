@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-money-sber-ua</id>
+	<api flags="no_browser"/>
+	<name>Сбербанк ОнЛ@йн (Украина)</name>
+	<description html="true"><![CDATA[
+	<p>Получает информацию о текущем остатке и других параметрах карт и счетов "Сбербанка Украины".</p> 
+	<p>Информация берется из системы "Сбербанк-Онлайн" (https://ibank.sbrf.com.ua/ifobsClientSBRF/LoginForm.action).</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Как получить доступ к "Сбербанк-Онлайн":</p>
+	<ul><li>Перейдите на страницу https://ibank.sbrf.com.ua/ifobsClientSBRF/FAQ.action и следуйте инструкции.</li><br>
+	<b>ВНИМАНИЕ!</b> Для работы провайдера требуется отказаться от подтверждения входа в систему "Сбербанк ОнЛ@йн"  одноразовым паролем в разделе "Настройки - Настройка безопасности".<br><br>
+	<small>Отключение подтверждения даёт возможность только зайти в систему, в целях безопасности НЕВОЗМОЖНО отключить подтверждение одноразовым паролем переводов и платежей организациям или частным лицам.</small>
+	]]></instruction>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Остаток" units=" {@currency}"/>
+		<!-- <counter id="spasibo" name="Спасибо"/> -->
+		<!-- <counter id="cash" name="Наличные" units=" {@currency}"/> -->
+		<!-- <counter id="electrocash" name="Для покупок" units=" {@currency}"/> -->
+		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="cardNumber" name="Номер карты" type="text"/>
+		<counter id="accNum" name="Номер счета" type="text"/>
+		<counter id="userName" name="ФИО" type="text"/>
+		<counter id="cardName" name="Имя на карте" type="text"/>
+		<counter id="status" name="Статус" type="text"/>
+		
+		
+		<counter id="till" name="Срок действия" type="text"/>
+		<counter id="debt" name="Задолженность" units=" {@currency}"/>
+		<counter id="maxlimit" name="Кредитный лимит" units=" {@currency}"/>
+		<counter id="minpay" name="Минимальный платеж" units=" {@currency}"/>
+		<counter id="minpaydate" name="Дата минимального платежа" type="time" format="dd/MM/yyyy"/>
+		
+		
+		<counter id="lastPurchSum" name="Сумма последней операции" type="text"/>
+		<counter id="lastPurchPlace" name="Место последней операции" type="text"/>
+		<counter id="lastPurchDate" name="Дата последней операции" type="time" format="dd/MM"/>
+	</counters>
+	<keywords>сбербанк онлайн, sberbank online, сберегательный банк, спасибо</keywords>
+	<type>money</type>
+	<country>ua</country>
+</provider>

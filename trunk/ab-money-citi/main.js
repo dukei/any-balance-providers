@@ -1,10 +1,5 @@
 /**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Информация о карте, счете в банке "Ситибанк".
-
-Сайт: https://www.citibank.ru
-ЛК: https://www.citibank.ru/RUGCB/JSO/signon/DisplayUsernameSignon.do
 */
 
 var g_headers = {
@@ -96,11 +91,15 @@ function main() {
         if(acc.balances && acc.balances.balance){
             for(var j=0; j<acc.balances.balance.length; ++j){
                 var bal = acc.balances.balance[j];
-                if(!bal.rawBalance || bal.rawBalance == 'BalUnAvail')
+				if(!bal.rawBalance || bal.rawBalance == 'BalUnAvail') {
+					// В случае когда bal.rawBalance == 'BalUnAvail' кредитный лимит можно посчитать если есть баланс и использованный кредит
+					if(isset(result.balance) && isset(result.credit) && !isset(result.limit)) {
+						getParam(result.balance + result.credit, result, 'limit');
+					}
                     continue;
-
+				}
                 var val = parseBalance(bal.rawBalance);
-                if(!isset(val)){
+                if(!isset(val)) {
                     AnyBalance.trace('Could not parse value for ' + bal.balText);
                     continue;
                 }

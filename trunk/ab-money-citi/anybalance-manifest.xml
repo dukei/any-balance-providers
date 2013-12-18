@@ -1,39 +1,35 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-    <id version="5">ab-money-citi</id>
+    <id version="6">ab-money-citi</id>
     <name>Ситибанк</name>
-    <description>Информация о картах и счетах в Ситибинке (https://www.citibank.ru).
-В настройках провайдера требуется указать логин и пароль к Интернет-банку.
-
-Если у вас нет логина и пароля, вы можете получить их на этой странице: https://www.citibank.ru/RUGCB/JSO/reg/Setup.do
-</description>
-    <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-    <files>
-	<icon>icon.png</icon>
-        <preferences>preferences.xml</preferences>
-        <js>main.js</js>
-        <js>library.js</js>
-        <history>history.xml</history>
-    </files>
-    <counters>
-	<counter id="balance" name="Доступно"/>
-	<counter id="ondeposit" name="Текущий баланс"/>
-        <counter id="currency" name="Валюта" type="text"/>
-        <counter id="limit" name="Кредитный лимит"/>
-        <counter id="credit" name="Использованный кредит"/>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о на картах и счетах в Ситибинке (https://www.citibank.ru).</p>
+	<p>В настройках провайдера требуется указать логин и пароль к Интернет-банку.</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Если у вас нет логина и пароля, вы можете получить их на этой странице: https://www.citibank.ru/RUGCB/JSO/reg/Setup.do</p>
+	]]></instruction>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Доступно"/>
+		<counter id="ondeposit" name="Текущий баланс"/>
+		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="limit" name="Кредитный лимит"/>
+		<counter id="credit" name="Использованный кредит"/>
 		<counter id="credit_total" name="Сумма к погашению"/>
-        <counter id="credit_next_payment" name="Сумма следующего платежа"/>
-        <counter id="accnum" name="Номер" type="text"/>
-        <counter id="accname" name="Название" type="text"/>
-    </counters>
-    <keywords>
-        Кредит, банк, citi
-    </keywords>
-    <type>
-        money
-    </type>
-    <country>
-        ru
-    </country>
+		<counter id="credit_next_payment" name="Сумма следующего платежа"/>
+		<counter id="accnum" name="Номер" type="text"/>
+		<counter id="accname" name="Название" type="text"/>
+	</counters>
+	<keywords>Кредит, банк, citi</keywords>
+	<type>money</type>
+	<country>ru</country>
 </provider>

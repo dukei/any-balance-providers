@@ -1,32 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-planeta</id>
-  <name>Планета (Екатеринбург)</name>
-  <description>
-    Получает баланс и информацию о тарифном плане для екатеринбургского интернет-провайдера Планета ( https://weburg.me/planeta ). 
-    
-    Информация берется из личного кабинета https://weburg.me/planeta. Будьте внимательны - в номере договора есть русские буквы! Если вы получаете ошибку "Введен неправильный № договора и/или пароль", проверьте, что вы набираете номер договора и пароль на нужном языке.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="chatles" name="Чатлы" units=""/>
-    <counter id="trafficIn" name="Вх.трафик" units="Gb"/>
-    <counter id="trafficOut" name="Исх.трафик" units="Gb"/>
-    <counter id="licschet" name="Договор" type="text"/>
-  </counters>
-  <keywords>
-    интернет, planeta
-  </keywords>
-  <type>
-    internet
-  </type>
-  <country>
-    ru
-  </country>
+	<id version="2">ab-internet-planeta</id>
+	<api flags="no_browser"/>
+	<name>Планета (Екатеринбург)</name>
+	<description html="true"><![CDATA[
+	<p>Получает баланс и информацию о тарифном плане для екатеринбургского интернет-провайдера Планета ( https://weburg.me/planeta ). </p>
+	<p>Информация берется из личного кабинета https://weburg.me/planeta. Будьте внимательны - в номере договора есть русские буквы! Если вы получаете ошибку "Введен неправильный № договора и/или пароль", проверьте, что вы набираете номер договора и пароль на нужном языке.</p>
+	]]></description>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="chatles" name="Чатлы" units=""/>
+		<counter id="trafficIn" name="Вх.трафик" units="Gb"/>
+		<counter id="trafficOut" name="Исх.трафик" units="Gb"/>
+		<counter id="licschet" name="Договор" type="text"/>
+	</counters>
+	<keywords>интернет, planeta</keywords>
+	<type>internet</type>
+	<country>ru</country>
 </provider>

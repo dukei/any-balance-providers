@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-bonus-rosneft</id>
+	<id version="2">ab-bonus-rosneft</id>
 	<api flags="no_browser"/>
 	<name>Роснефть (Бонусы)</name>
 	<description html="true"><![CDATA[

@@ -1,24 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
 	<EditTextPreference
-		title="Логин"
+		title="Номер карты"
 		key="login"
 		summary="||{@s}"
 		obligatory="true"
-		dialogTitle="Логин"
+		dialogTitle="Номер карты"
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите логин, используемый для входа в личный кабинет.">
-	</EditTextPreference>
-	<EditTextPreference
-		title="Пароль"
-		key="password"
-		summary="||***********"
-		obligatory="true"
-		dialogTitle="Пароль"
-		positiveButtonText="ОК"
-		negativeButtonText="Отмена"
-		dialogMessage="Введите пароль, используемый для входа в личный кабинет."
-		inputType="textPassword">
+		dialogMessage="Введите номер карты.">
 	</EditTextPreference>
 </PreferenceScreen>

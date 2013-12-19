@@ -1,22 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-<change major_version="2" version="6" date="2013-10-15">
-- Избавление от Jquery
-- Улучшенная обработка ошибок
-(Stark)
-</change>
-<change major_version="1.1" version="5" date="2013-02-09">
-- Добавлены данные по кредитным картам
-</change>
-<change major_version="1.1" version="4" date="2013-02-03">
-- Распознавание требования Телеинфо о смене пароля
-</change>
-<change major_version="1.1" version="3" date="2013-01-24">
-- Добавлен счетчик Владелец
-- Добавлена возможность получения информации по счетам в АБС
-</change>
-<change major_version="1.0" version="2" date="2012-09-08">
-- Добавлены счетчики номер карты, название карты и валюта карты
-- Исправлена проблема с пониманием только первой карты
-</change>
+	<change major_version="2" version="7" date="2013-12-18">
+	- Поддержка изменений на сайте.
+	</change>
+	<change major_version="2" version="6" date="2013-10-15">
+	- Избавление от Jquery.
+	- Улучшенная обработка ошибок.
+	(Stark)
+	</change>
+	<change major_version="1.1" version="5" date="2013-02-09">
+	- Добавлены данные по кредитным картам.
+	</change>
+	<change major_version="1.1" version="4" date="2013-02-03">
+	- Распознавание требования Телеинфо о смене пароля.
+	</change>
+	<change major_version="1.1" version="3" date="2013-01-24">
+	- Добавлен счетчик Владелец.
+	- Добавлена возможность получения информации по счетам в АБС.
+	</change>
+	<change major_version="1.0" version="2" date="2012-09-08">
+	- Добавлены счетчики номер карты, название карты и валюта карты.
+	- Исправлена проблема с пониманием только первой карты.
+	</change>
 </history>

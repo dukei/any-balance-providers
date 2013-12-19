@@ -1,10 +1,8 @@
 /**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Телеинфо ВТБ24
-Сайт оператора: https://telebank.vtb24.ru/
-Личный кабинет: https://telebank.vtb24.ru/WebNew/
+для отладки используем debug:'new'
 */
+
 function getViewState(html) {
 	return getParam(html, null, null, /name="__VIEWSTATE".*?value="([^"]*)"/);
 }
@@ -17,36 +15,45 @@ function main() {
 	var prefs = AnyBalance.getPreferences();
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
-	var baseurl = 'https://telebank.vtb24.ru/WebNew/';
+	var baseurl = 'https://www.telebank.ru/WebNew/';
 	var html = AnyBalance.requestGet(baseurl + 'Login.aspx');
 	
-	html = AnyBalance.requestPost(baseurl + 'Login.aspx', {
-		__EVENTVALIDATION: getEventValidation(html),
-		__VIEWSTATE: getViewState(html),
-		js: 1,
-		m: 1,
-		__LASTFOCUS: '',
-		__EVENTTARGET: '',
-		__EVENTARGUMENT: '',
-		Action: '',
-		ButtonLogin: '',
-		TextBoxName: prefs.login,
-		TextBoxPassword: prefs.password
-	});
-	if (!/location.href\s*=\s*"[^"]*Accounts.aspx/i.test(html)) {
-		if (/id="ItemNewPassword"/i.test(html))
-			throw new AnyBalance.Error('Телеинфо требует поменять пароль. Пожалуйста, войдите в Телеинфо через браузер, поменяйте пароль, а затем введите новый пароль в настройки провайдера.');
-		if (/Проверка переменного кода/i.test(html))
-			throw new AnyBalance.Error('Телеинфо требует ввести переменный код. Для использования данного провайдера, проверку кода необходимо отключить.');
-		if (/id="LabelError"/i.test(html))
-			throw new AnyBalance.Error(getParam(html, null, null, /id="LabelMessage"(?:[^>]*>){3}([^<]*)/i));
-			
-		throw new AnyBalance.Error('Не удалось зайти в Телеинфо. Сайт изменен?');
-	}
-	if (prefs.type == 'abs') {
-		fetchAccountABS(baseurl);
-	} else { //card
-		fetchCard(baseurl);
+	if(!prefs.debug) {
+		html = AnyBalance.requestPost(baseurl + 'Login.aspx', {
+			__EVENTVALIDATION: getEventValidation(html),
+			__VIEWSTATE: getViewState(html),
+			js: 1,
+			m: 1,
+			__LASTFOCUS: '',
+			__EVENTTARGET: '',
+			__EVENTARGUMENT: '',
+			Action: '',
+			ButtonLogin: '',
+			TextBoxName: prefs.login,
+			TextBoxPassword: prefs.password
+		});
+	}	
+	/*if(/new\.telebank\.ru/i.test(AnyBalance.getLastUrl()) || prefs.debug == 'new') {
+		AnyBalance.trace('Определен новый тип банка, пробуем авторизоваться вновь.');
+		
+		//https://new.telebank.ru/content/telebank-client/ru/login.html
+	} else */{
+		AnyBalance.trace('Определен старый тип банка, перходим к получению данных.');
+		if (!/location.href\s*=\s*"[^"]*Accounts.aspx/i.test(html)) {
+			if (/id="ItemNewPassword"/i.test(html))
+				throw new AnyBalance.Error('Телеинфо требует поменять пароль. Пожалуйста, войдите в Телеинфо через браузер, поменяйте пароль, а затем введите новый пароль в настройки провайдера.');
+			if (/Проверка переменного кода/i.test(html))
+				throw new AnyBalance.Error('Телеинфо требует ввести переменный код. Для использования данного провайдера, проверку кода необходимо отключить.');
+			if (/id="LabelError"/i.test(html))
+				throw new AnyBalance.Error(getParam(html, null, null, /id="LabelMessage"(?:[^>]*>){3}([^<]*)/i));
+				
+			throw new AnyBalance.Error('Не удалось зайти в Телеинфо. Сайт изменен?');
+		}
+		if (prefs.type == 'abs') {
+			fetchAccountABS(baseurl);
+		} else { //card
+			fetchCard(baseurl);
+		}		
 	}
 }
 

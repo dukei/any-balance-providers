@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="6" major_version="2">ab-money-teleinfo</id>
+	<id version="7" major_version="2">ab-money-teleinfo</id>
 	<name>ВТБ24: Телеинфо</name>
 	<api flags="no_browser"/>
 	<description html="true"><![CDATA[
@@ -8,12 +8,11 @@
 	]]></description>
 	<instruction html="true"><![CDATA[
 	<p>Получить доступ к Телеинфо можно, пройдя регистрацию по ссылке http://www.telebank.ru/WebNew/Front/RegistrationTI.aspx.</p>
-	<br>
 	<b>ВНИМАНИЕ!</b>
 	<p>В ВТБ24 существует две ВЗАИМОИСКЛЮЧАЮЩИЕ услуги:</p>
 	<ol>
 		<li>Телебанк - платная, позволяет просматривать счет, осуществлять различные платежные операции, денежные переводы и проч. Требует ввода одноразового кода.</li>
-	<li>Телеинфо - бесплатная, позволяет ТОЛЬКО просматривать состояние счета.</li>
+		<li>Телеинфо - бесплатная, позволяет ТОЛЬКО просматривать состояние счета.</li>
 	</ol>
 	]]></instruction>
 	<author>Robert Khaliullov &lt;robix@mail.ru&gt;</author>

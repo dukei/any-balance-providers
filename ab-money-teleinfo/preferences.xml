@@ -1,41 +1,41 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <EditTextPreference 
-        title="Логин" 
-        positiveButtonText="ОК" 
-        summary="|УНК или псевдоним|{@s}\n" 
-        dialogTitle="УНК или псевдоним" 
-        negativeButtonText="Отмена" 
+	<EditTextPreference
+		title="Логин"
+		positiveButtonText="ОК"
+		summary="|УНК или псевдоним|{@s}\n"
+		dialogTitle="УНК или псевдоним"
+		negativeButtonText="Отмена"
 		obligatory="true"
-        dialogMessage="УНК или псевдоним"
-        key="login">
-    </EditTextPreference>
-    <EditTextPreference 
-        positiveButtonText="ОК"
-        key="password" 
+		dialogMessage="УНК или псевдоним"
+		key="login">
+	</EditTextPreference>
+	<EditTextPreference
+		positiveButtonText="ОК"
+		key="password"
 		obligatory="true"
-        dialogTitle="Пароль"
-        negativeButtonText="Отмена"
-        title="Пароль"
-        summary="|Введите пароль|***********\n"
-        dialogMessage="Введите пароль для входа в телебанк"
-        inputType="textPassword">
-    </EditTextPreference>
-    <ListPreference 
-        key="type" 
-        title="Что смотреть"
-        summary="||{@s}"
-        entries="Карта|Счет в АБС"
-        entryValues="card|abs"
+		dialogTitle="Пароль"
+		negativeButtonText="Отмена"
+		title="Пароль"
+		summary="|Введите пароль|***********\n"
+		dialogMessage="Введите пароль для входа в телебанк"
+		inputType="textPassword">
+	</EditTextPreference>
+	<ListPreference
+		key="type"
+		title="Что смотреть"
+		summary="||{@s}"
+		entries="Карта|Счет в АБС"
+		entryValues="card|abs"
 		defaultValue="card">
-    </ListPreference>
-    <EditTextPreference
-        title="Номер карты/счета" 
-        positiveButtonText="ОК" 
-        summary="|Автоматически|{@s}\n" 
-        dialogTitle="Номер карты/счета" 
-        negativeButtonText="Отмена" 
-        dialogMessage="В зависимости от настройки Что смотреть, введите сюда последние цифры номера карты или счета. Если оставить поле пустым, то будет показана информация по первому счету/карте."
-        key="card">
-    </EditTextPreference>
+	</ListPreference>
+	<EditTextPreference
+		title="Номер карты/счета"
+		positiveButtonText="ОК"
+		summary="|Автоматически|{@s}\n"
+		dialogTitle="Номер карты/счета"
+		negativeButtonText="Отмена"
+		dialogMessage="В зависимости от настройки Что смотреть, введите сюда последние цифры номера карты или счета. Если оставить поле пустым, то будет показана информация по первому счету/карте."
+		key="card">
+	</EditTextPreference>
 </PreferenceScreen>

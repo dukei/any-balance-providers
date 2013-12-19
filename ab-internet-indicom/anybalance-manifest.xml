@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="1">ab-internet-indicom</id>
+	<id version="2">ab-internet-indicom</id>
 	<name>Индиком (Мытищи)</name>
 	<description html="true"><![CDATA[
 	<p>Получает баланс для интернет провайдера Индиком http://indikom.ru/</p>

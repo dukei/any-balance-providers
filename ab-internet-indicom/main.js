@@ -16,7 +16,7 @@ function main(){
     var baseurl = "http://stat.indikom.ru/";
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
-	AnyBalance.setDefaultCharset('UTF-8');
+	AnyBalance.setOptions({forceCharset: 'UTF-8'});
 	
     var html = AnyBalance.requestPost(baseurl, {
         login:prefs.login,
@@ -24,7 +24,7 @@ function main(){
         cmd:'login'
     }, addHeaders({Referer: baseurl})); 
 	
-    if(!/logout/i.test(html)){
+    if(!/logout/i.test(html)) {
         var error = getParam(html, null, null, /<p[^>]*style='color:red'[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error);
@@ -38,12 +38,12 @@ function main(){
 	getParam(html, result, 'balance', /<td[^>]*>Баланс<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'balanceCredit', /<td[^>]*>Кредит<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'nds', /<td[^>]*>НДС<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-
+	
     var href = getParam(html, null, null, /menu-inact'[^>]*>\s*<a\s+href='\/([^']*)[^>]*>\s*Тарифы/i, replaceTagsAndSpaces, html_entity_decode);
-
-    html = AnyBalance.requestGet(baseurl + href, g_headers);
-
-    getParam(html, result, '__tariff', /Текущий ТП<\/td>(?:[\s\S]*?<td[^>]*>){7}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);    
-
+	if(href) {
+		html = AnyBalance.requestGet(baseurl + href, g_headers);
+		getParam(html, result, '__tariff', /Текущий ТП<\/td>(?:[\s\S]*?<td[^>]*>){7}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);    
+	}
+	
     AnyBalance.setResult(result);
 }

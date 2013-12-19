@@ -1,10 +1,5 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Получает баланс на картах и счетах Райффайзен-банка
-
-Site: http://www.raiffeisen.ru
-Личный кабинет: https://connect.raiffeisen.ru
 */
 
 var g_headers = {

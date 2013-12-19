@@ -45,7 +45,8 @@ var g_lks = {
     },
     pes: {
        url: 'https://ikus.pes.spb.ru/IKUSUser/',
-       uid: '82133025EC649C66FFD6B00CF20FDAA9'
+       uid: 'BA2D39EE78C67FD4DE935035CA67FEC0'
+//       uid: '82133025EC649C66FFD6B00CF20FDAA9'
     }
 }
 

@@ -1,40 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <EditTextPreference 
-        title="Логин" 
-        positiveButtonText="ОК" 
-        summary="||{@s}" 
-        dialogTitle="Логин" 
-        negativeButtonText="Отмена" 
-        dialogMessage="Введите логин для входа в систему МКБ-онлайн."
-        key="login">
-    </EditTextPreference>
-    <EditTextPreference 
-        positiveButtonText="ОК"
-        key="password" 
-        dialogTitle="Пароль"
-        negativeButtonText="Отмена"
-        title="Пароль"
-        summary="||***********"
-        dialogMessage="Введите пароль, используемый для входа в систему МКБ-онлайн."
-        inputType="textPassword">
-    </EditTextPreference>
-    <ListPreference 
-        key="type" 
-        title="Банковский продукт"
-        summary="||{@s}\n"
-        entries="Карта|Кредит|Депозит|Счет"
-        entryValues="card|crd|dep|acc"
-	defaultValue="card">
-    </ListPreference>
-    <EditTextPreference 
-        positiveButtonText="ОК"
-        key="num" 
-        dialogTitle="Номер"
-        negativeButtonText="Отмена"
-        title="Номер карты/кредита"
-        summary="Последние 4 цифры карты или начало номера кредита|Автоматически\n|{@s}\n"
-        dialogMessage="Введите последние 4 цифры карты или начало номера кредита (в зависимости от настройки банковский продукт), по которому вы хотите получить данные. Если это поле оставить пустым, то будет показана информация по первому банковскому продукту."
-        >
-    </EditTextPreference>
+	<EditTextPreference
+		obligatory="true"
+		title="Логин"
+		positiveButtonText="ОК"
+		summary="||{@s}"
+		dialogTitle="Логин"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите логин для входа в систему МКБ-онлайн."
+		key="login">
+	</EditTextPreference>
+	<EditTextPreference
+		obligatory="true"
+		positiveButtonText="ОК"
+		key="password"
+		dialogTitle="Пароль"
+		negativeButtonText="Отмена"
+		title="Пароль"
+		summary="||***********"
+		dialogMessage="Введите пароль, используемый для входа в систему МКБ-онлайн."
+		inputType="textPassword">
+	</EditTextPreference>
+	<ListPreference
+		key="type"
+		title="Банковский продукт"
+		summary="||{@s}\n"
+		entries="Карта|Кредит|Депозит|Счет"
+		entryValues="card|crd|dep|acc"
+		defaultValue="card">
+	</ListPreference>
+	<EditTextPreference
+		positiveButtonText="ОК"
+		key="num"
+		dialogTitle="Номер"
+		negativeButtonText="Отмена"
+		title="Номер карты/кредита"
+		summary="Последние 4 цифры карты или начало номера кредита|Автоматически\n|{@s}\n"
+		dialogMessage="Введите последние 4 цифры карты или начало номера кредита (в зависимости от настройки банковский продукт), по которому вы хотите получить данные. Если это поле оставить пустым, то будет показана информация по первому банковскому продукту.">
+	</EditTextPreference>
 </PreferenceScreen>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="7">ab-money-mkb</id>
+	<id version="8">ab-money-mkb</id>
 	<api flags="no_browser"/>
 	<name>Московский Кредитный Банк</name>
 	<description html="true"><![CDATA[
@@ -18,17 +18,18 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Остаток" units="{@currency}"/>
-		<counter id="needpay" name="Обязательный платеж" units="{@currency}"/>
+		<counter id="balance" name="Остаток" units=" {@currency}"/>
+		<counter id="bonuses" name="МКБ Бонус"/>
+		<counter id="needpay" name="Обязательный платеж" units=" {@currency}"/>
 		<counter id="needpaytill" name="Обязательный платеж: заплатить до" type="time" format="dd/MM/yyyy"/>
-		<counter id="gracepay" name="Отчетная задолженность" units="{@currency}"/>
+		<counter id="gracepay" name="Отчетная задолженность" units=" {@currency}"/>
 		<counter id="gracepaytill" name="Отчетная задолженность: заплатить до" type="time" format="dd/MM/yyyy"/>
 		<counter id="deptill" name="Срок вклада до:" type="time" format="dd/MM/yyyy"/>
-		<counter id="pct" name="Срочные проценты" units="{@currency}"/>
-		<counter id="credit" name="Срочный Кредит" units="{@currency}"/>
-		<counter id="latedebt" name="Просроченная задолженность" units="{@currency}"/>
-		<counter id="limit" name="Кредитный лимит" units="{@currency}"/>
-		<counter id="pctcredit" name="Процентная ставка по кредиту/депозиту" units="%"/>
+		<counter id="pct" name="Срочные проценты" units=" {@currency}"/>
+		<counter id="credit" name="Срочный Кредит" units=" {@currency}"/>
+		<counter id="latedebt" name="Просроченная задолженность" units=" {@currency}"/>
+		<counter id="limit" name="Кредитный лимит" units=" {@currency}"/>
+		<counter id="pctcredit" name="Процентная ставка по кредиту/депозиту" units=" %"/>
 		<counter id="currency" name="Валюта" type="text"/>
 		<counter id="cardnum" name="Номер карты/кредита/депозита" type="text"/>
 		<counter id="accnum" name="Номер счета" type="text"/>

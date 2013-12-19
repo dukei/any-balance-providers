@@ -1,10 +1,5 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Получает текущий остаток и другие параметры карт и кредитов Московского Кредитного Банка, используя систему Интернет-Банк.
-
-Сайт оператора: http://mkb.ru/
-Личный кабинет: https://online.mkb.ru
 */
 
 function getViewState(html){
@@ -47,20 +42,24 @@ function main(){
 	var logout = getParam(html, null, null, /(\/secure\/logout.aspx)/i);
 	if(!logout)
 		throw new AnyBalance.Error('Не удалось зайти в интернет банк. Неправильный логин-пароль или проблемы на сайте.');
-		
+	
+	var result = {success: true};
+		// Бонусы всегда нужны
+	getParam(html, result, 'bonuses', /МКБ Бонус(?:[^>]*>){3,}Всего бонусных баллов(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+
 	if(prefs.type == 'card')
-		fetchCard(html, baseurl);
+		fetchCard(html, baseurl, result);
 	else if(prefs.type == 'crd')
-		fetchCredit(html, baseurl);
+		fetchCredit(html, baseurl, result);
 	else if(prefs.type == 'dep')
-		fetchDeposit(html, baseurl);
+		fetchDeposit(html, baseurl, result);
 	else if(prefs.type == 'acc')
-		fetchAccount(html, baseurl);
+		fetchAccount(html, baseurl, result);
 	else
-		fetchCard(html, baseurl);
+		fetchCard(html, baseurl, result);
 }
 
-function fetchCard(html, baseurl){
+function fetchCard(html, baseurl, result) {
     var prefs = AnyBalance.getPreferences();
     if(prefs.num && !/^\d{4}$/.test(prefs.num))
         throw new AnyBalance.Error('Укажите 4 последних цифры карты или не указывайте ничего, чтобы получить информацию по первой карте.');
@@ -72,8 +71,6 @@ function fetchCard(html, baseurl){
 	if(!tr)
 		throw new AnyBalance.Error(prefs.num ? 'Не удалось найти карту с последними цифрами ' + prefs.num : 'Не удалось найти ни одной карты!');
 	
-    var result = {success: true};
-    
     getParam(tr, result, 'cardnum', /<td>[^>]*title="([^"]*)/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(tr, result, 'type', /<td>[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(tr, result, '__tariff', /<td>[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
@@ -99,7 +96,7 @@ function fetchCard(html, baseurl){
     AnyBalance.setResult(result);
 }
 
-function fetchCredit(html, baseurl){
+function fetchCredit(html, baseurl, result) {
     var prefs = AnyBalance.getPreferences();
     if(prefs.num && !/^[\d\/\\]{2,}$/.test(prefs.num))
         throw new AnyBalance.Error('Укажите первые цифры (не менее 2) номера кредитного договора или не указывайте ничего, чтобы получить информацию по первому кредитному договору.');
@@ -111,7 +108,6 @@ function fetchCredit(html, baseurl){
 	if(!tr)
 		throw new AnyBalance.Error(prefs.num ? 'Не удалось найти кредитный договор с первыми цифрами ' + prefs.num : 'Не удалось найти ни одного кредита!');	
 
-    var result = {success: true};
 	getParam(tr, result, 'cardnum', /\?id=([^&]*)/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(tr, result, 'type', /<td>[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(tr, result, '__tariff', /<td>[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
@@ -157,7 +153,7 @@ function fetchCredit(html, baseurl){
     AnyBalance.setResult(result);
 }
 
-function fetchAccount(html, baseurl){
+function fetchAccount(html, baseurl, result) {
     var prefs = AnyBalance.getPreferences();
     if(prefs.num && !/^\d{4}$/.test(prefs.num))
         throw new AnyBalance.Error('Укажите 4 последних цифры счета или не указывайте ничего, чтобы получить информацию по первому счету.');
@@ -168,7 +164,6 @@ function fetchAccount(html, baseurl){
 	if(!tr)
 		throw new AnyBalance.Error(prefs.num ? 'Не удалось найти счет с последними цифрами ' + prefs.num : 'Не удалось найти ни одного счета!');	
 
-    var result = {success: true};
 	getParam(tr, result, 'cardnum', /\?id=([^&]*)/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(tr, result, 'type', /<td>[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(tr, result, '__tariff', /<td>[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
@@ -195,7 +190,7 @@ function fetchAccount(html, baseurl){
     AnyBalance.setResult(result);
 }
 
-function fetchDeposit(html, baseurl){
+function fetchDeposit(html, baseurl, result) {
     var prefs = AnyBalance.getPreferences();
 	html = AnyBalance.requestGet(baseurl + '/secure/deps.aspx');
 	
@@ -206,53 +201,11 @@ function fetchDeposit(html, baseurl){
 	}
 	var json = getJson(tjson);
 
-    var result = {success: true};
 	getParam(json.ac, result, 'accnum', null, replaceTagsAndSpaces, html_entity_decode);
 	getParam(json.nm, result, 'cardnum', null, replaceTagsAndSpaces, html_entity_decode);
 	getParam(json.db, result, 'balance', null, replaceTagsAndSpaces, parseBalance);
 	getParam(json.dr, result, 'pctcredit', null, replaceTagsAndSpaces, parseBalance);
-	getParam(json.de, result, 'deptill', null, replaceTagsAndSpaces, parseDateMoment);
+	getParam(json.de, result, 'deptill', null, replaceTagsAndSpaces, parseDateWord);
 	
     AnyBalance.setResult(result);
-}
-
-// Парсит дату из такого вида в мс 27 июля 2013
-function parseDateMoment(str){
-	
-	var found = /(\d{1,2})\s*([\s\S]*?)\s*(\d{1,4})/i.exec(str);
-	if(found)
-	{
-		var day = found[1];
-		var month = found[2];
-		var year = found[3];
-
-		if(month == 'января')
-			month = '01';
-		else if(month == 'февраля')
-			month = '02';
-		else if(month == 'марта')
-			month = '03';
-		else if(month == 'апреля')
-			month = '04';
-		else if(month == 'мая')
-			month = '05';
-		else if(month == 'июня')
-			month = '06';
-		else if(month == 'июля')
-			month = '07';
-		else if(month == 'августа')
-			month = '08';
-		else if(month == 'сентября')
-			month = '09';
-		else if(month == 'октября')
-			month = '10';
-		else if(month == 'ноября')
-			month = '11';
-		else if(month == 'декабря')
-			month = '12';
-
-		return getParam(day+'.'+month+'.'+ year, null, null, null, replaceTagsAndSpaces, parseDate);
-	}
-	else
-		AnyBalance.trace('Failed to parse date from ' + str);
 }

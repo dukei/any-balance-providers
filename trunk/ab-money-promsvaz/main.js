@@ -134,9 +134,10 @@ function fetchCard(baseurl, html){
 	//                   (<div[^>]*class="cardAccountBlock"(?:[^>]*>){18,22}\d+\\.\\.       5787    (?:[^>]*>){3})
     var re = new RegExp('(<div[^>]*class=\"cardAccountBlock\"(?:[^>]*>){18,22}\\d+\\.\\.' + cardnum + '(?:[^>]*>){3})', 'i');
     var tr = getParam(html, null, null, re);
-    if(!tr)
+    if(!tr) {
+		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удаётся найти ' + (prefs.lastdigits ? 'карту с последними цифрами ' + prefs.lastdigits : 'ни одной карты'));
-	
+	}
 	var result = {success: true};
     getParam(tr, result, 'balance', /"balanceAmountM"[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(tr, result, ['currency', 'balance', 'blocked', 'balance_own'], /"balanceAmountCurrencyM"[^>]*>([^<]*)/i, replaceTagsAndSpaces);
@@ -184,8 +185,10 @@ function fetchAccount(baseurl, html){
 	//                   (<div[^>]*class="infoUnit"(?:[^>]*>){4}\d+(?:[^>]*>|)\d+8673(?:[\s\S]*?</div[^>]*>){2})
     var re = new RegExp('(<div[^>]*class="infoUnit"(?:[^>]*>){4}\\d+(?:[^>]*>|)\\d+' + cardnum + '(?:[\\s\\S]*?</div[^>]*>){2})', 'i');
     var tr = getParam(html, null, null, re);
-    if(!tr)
+    if(!tr) {
+		AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удаётся найти ' + (prefs.lastdigits ? 'счет с последними цифрами ' + prefs.lastdigits : 'ни одного счета'));
+	}
 	
 	var result = {success: true};
     getParam(tr, result, 'balance', /"balanceAmountM"[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);

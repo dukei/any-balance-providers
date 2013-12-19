@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser" />
-	<id version="1">ab-hosting-timeweb</id>
+	<id version="2">ab-hosting-timeweb</id>
 	<name>Time WEB</name>
-	<description>
-	Получает данные для хостинг-провайдера Time WEB по адресу https://cp.timeweb.ru/
-	</description>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера хостинг-провайдера Time WEB (http://timeweb.ru/)</p>
+	<p>Информация берется из личного кабинета https://cp.timeweb.ru/</p>
+	]]></description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
@@ -16,9 +16,8 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units="р"/>
+		<counter id="balance" name="Баланс" units=" р"/>
 		<counter id="deadline" name="Дата блокирования" type="time" format="dd/MM/yyyy"/>
-		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
 	<keywords></keywords>
 	<type>hosting</type>

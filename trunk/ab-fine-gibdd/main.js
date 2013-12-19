@@ -4,10 +4,8 @@
 
 var g_headers = {
 	'Accept':'application/json, text/javascript, */*; q=0.01',
-	// 'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language':'ru,en;q=0.8',
 	'Connection':'keep-alive',
-	// 'Origin':'http://www.gibdd.ru',
 	'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.57 Safari/537.36'
 };
 
@@ -66,12 +64,12 @@ function main(){
 		for(var i = 0; i< fines.length; i++) {
 			var curr = fines[i];
 			// Создаем сводку
-			result.all += '<b>' + getParam(curr, null, null, /"date[^>]*>([^<]*)/i, replaceTagsAndSpaces) + ':</b> ' + getParam(curr, null, null, /"ArticleTip[^>]*title=['"]([^'"]*)/i, replaceTagsAndSpaces, html_entity_decode) + ' (' + getParam(curr, null, null, /"ArticleTip[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode) + '): <b>' + getParam(curr, null, null, /"Sum[^>]*>([^<]*)/i, replaceTagsAndSpaces) + ' р</b>' + 
+			result.all += '<b>' + getParam(curr, null, null, /"Date2[^>]*>([\s\S]*?)<\/td/i, replaceTagsAndSpaces) + ':</b> ' + getParam(curr, null, null, /"ArticleTip[^>]*title=['"]([^'"]*)/i, replaceTagsAndSpaces, html_entity_decode) + ' (' + getParam(curr, null, null, /"ArticleTip[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode) + '): <b>' + getParam(curr, null, null, /"Sum[^>]*>([^<]*)/i, replaceTagsAndSpaces) + ' р</b>' + 
 				(i >= fines.length-1 ? '<br/><br/><b>Итого:</b> ' + fines.length + ' шт. на сумму: <b>' + result.balance + ' р</b>' : '<br/><br/>');
 			
 			// Только последний интересует
 			if(i >= fines.length-1) {
-				getParam(curr, result, 'date', /"date[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseDate);
+				getParam(curr, result, 'date', /"Date2[^>]*>([\s\S]*?)<\/td/i, replaceTagsAndSpaces, parseDate);
 				getParam(curr, result, 'postanovlenie', /"Protocol[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 				getParam(curr, result, 'koap', /"ArticleTip[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 				getParam(curr, result, 'descr', /"ArticleTip[^>]*title=['"]([^'"]*)/i, replaceTagsAndSpaces, html_entity_decode);

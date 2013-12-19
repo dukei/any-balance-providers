@@ -317,6 +317,7 @@ function megafonTrayInfo(filial){
     var filinfo = filial_info[filial], errorInTray;
 
     var internet_totals_was = {};
+    var mins_totals_was = {};
     
     var result = {success: true};
     try{
@@ -374,25 +375,29 @@ function megafonTrayInfo(filial){
                 }
             }else if(/вызовы внутри спг/i.test(names) && /мин/i.test(plan_si)){
                 AnyBalance.trace('Найдены минуты внутри группы: ' + names + ', ' + plan_si);
+		var total = getParam(d, null, null, /<VOLUME_TOTAL>([\s\S]*?)<\/VOLUME_TOTAL>/i, replaceTagsAndSpaces, parseMinutes);
+		mins_totals_was[''+total] = true;
                 sumParam(d, result, 'mins_net_left', /<VOLUME_AVAILABLE>([\s\S]*?)<\/VOLUME_AVAILABLE>/i, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
             }else if(/телефония исходящая|исходящая телефония| мин|Переходи на ноль/i.test(names) || /мин/i.test(plan_si)){
                 AnyBalance.trace('Найдены минуты: ' + names + ', ' + plan_si);
-				// Это такой, армянский фикс :)
-				if(/шт/i.test(plan_si)) {
-					AnyBalance.trace('Найдены смс которые прикидываются минутами: ' + names + ', ' + plan_si);
-	                sumParam(d, result, 'sms_left', /<VOLUME_AVAILABLE>([\s\S]*?)<\/VOLUME_AVAILABLE>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-					sumParam(d, result, 'sms_total', /<VOLUME_TOTAL>([\s\S]*?)<\/VOLUME_TOTAL>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-				} else {
-					// Если нашли эти минуты, то суммировать их не надо
-					if(/РЯ/.test(names)) {
-						// Минуты РЯ
-						sumParam(d, result, 'mins_rya_left', /<VOLUME_AVAILABLE>([\s\S]*?)<\/VOLUME_AVAILABLE>/i, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
-						sumParam(d, result, 'mins_rya_total', /<VOLUME_TOTAL>([\s\S]*?)<\/VOLUME_TOTAL>/i, replaceTagsAndSpaces, parseMinutes, aggregate_sum);					
-					} else {
-						sumParam(d, result, 'mins_left', /<VOLUME_AVAILABLE>([\s\S]*?)<\/VOLUME_AVAILABLE>/i, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
-						sumParam(d, result, 'mins_total', /<VOLUME_TOTAL>([\s\S]*?)<\/VOLUME_TOTAL>/i, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
-					}
-				}
+		// Это такой, армянский фикс :)
+		if(/шт/i.test(plan_si)) {
+			AnyBalance.trace('Найдены смс которые прикидываются минутами: ' + names + ', ' + plan_si);
+		        sumParam(d, result, 'sms_left', /<VOLUME_AVAILABLE>([\s\S]*?)<\/VOLUME_AVAILABLE>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+			sumParam(d, result, 'sms_total', /<VOLUME_TOTAL>([\s\S]*?)<\/VOLUME_TOTAL>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+		} else {
+			// Если нашли эти минуты, то суммировать их не надо
+			var total = getParam(d, null, null, /<VOLUME_TOTAL>([\s\S]*?)<\/VOLUME_TOTAL>/i, replaceTagsAndSpaces, parseMinutes);
+			mins_totals_was[''+total] = true;
+			if(/РЯ/.test(names)) {
+				// Минуты РЯ
+				sumParam(d, result, 'mins_rya_left', /<VOLUME_AVAILABLE>([\s\S]*?)<\/VOLUME_AVAILABLE>/i, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
+				sumParam(d, result, 'mins_rya_total', /<VOLUME_TOTAL>([\s\S]*?)<\/VOLUME_TOTAL>/i, replaceTagsAndSpaces, parseMinutes, aggregate_sum);					
+			} else {
+				sumParam(d, result, 'mins_left', /<VOLUME_AVAILABLE>([\s\S]*?)<\/VOLUME_AVAILABLE>/i, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
+				sumParam(d, result, 'mins_total', /<VOLUME_TOTAL>([\s\S]*?)<\/VOLUME_TOTAL>/i, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
+			}
+		}
             }else{
                 AnyBalance.trace('Неизвестный discount: ' + d);
             }
@@ -406,9 +411,9 @@ function megafonTrayInfo(filial){
         errorInTray = e.message || "Unknown error";
     }
 
-    if(AnyBalance.isAvailable('internet_cost', 'bonus_balance', 'last_pay_sum', 'last_pay_date') 
+    if(AnyBalance.isAvailable('internet_cost', 'bonus_balance', 'last_pay_sum', 'last_pay_date', 'mins_left', 'mins_net_left', 'mins_total', 'internet_left', 'internet_total', 'internet_cur') 
 		|| errorInTray 
-		|| isAvailableButUnset(result, ['balance','phone','sub_smit','sub_smio','sub_scl','sub_scr','sub_soi','mms_left','mms_total','sms_left','sms_total','mins_left','mins_total','internet_left','internet_cur','internet_total','gb_with_you'])){
+		|| isAvailableButUnset(result, ['balance','phone','sub_smit','sub_smio','sub_scl','sub_scr','sub_soi','sms_left','sms_total','mins_left','mins_total','gb_with_you'])){
 
         //Некоторую инфу можно получить из яндекс виджета. Давайте попробуем.
         var prefs = AnyBalance.getPreferences();
@@ -424,13 +429,16 @@ function megafonTrayInfo(filial){
            json = getJsonEval(json);
            if(!json.ok)
                throw new AnyBalance.Error(json.error.text2);
-           getParam(json.ok.html, result, 'bonus_balance', /<div[^>]+class="bonus"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-           getParam(json.ok.html, result, 'last_pay_sum', /<div[^>]+class="payment_amount"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+           getParam(json.ok.html, result, 'bonus_balance', /<div[^>]*class="bonus"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+           getParam(json.ok.html, result, 'last_pay_sum', /<div[^>]*class="payment_amount"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
            getParam(json.ok.html, result, 'last_pay_date', /<div>([^<]*)<\/div>\s*<div[^>]+class="payment_source"/i, replaceTagsAndSpaces, parseDate);
            
            var need_int_cur = isAvailableButUnset(result, ['internet_cur']);
 
-           if(errorInTray || isAvailableButUnset(result, ['internet_cost', 'balance','phone','sub_smit','sub_smio','sub_scl','sub_scr','sub_soi','internet_cur'])){
+           if(errorInTray || 
+			isAvailableButUnset(result, ['internet_cost', 'balance','phone','sub_smit','sub_smio','sub_scl','sub_scr','sub_soi']) || 
+			AnyBalance.isAvailable('mins_left', 'mins_net_left', 'mins_total', 'internet_left', 'internet_total', 'internet_cur')){
+
                getParam(json.ok.html, result, 'balance', /<div[^>]+class="subs_balance[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
                if(isAvailableButUnset(result, ['balance'])){
                    var e = new AnyBalance.Error(errorInTray);
@@ -442,12 +450,12 @@ function megafonTrayInfo(filial){
                getParam(json.ok.html, result, 'sub_scl', /(?:Исходящие вызовы|Начислено за звонки)\s*<\/td>(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
                getParam(json.ok.html, result, 'sub_scr', /Роуминг\s*<\/td>(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 			   // 																										Заменяем строку вида $[widgets.current.user($msisdn)]
-               getParam(json.ok.html, result, 'phone', /<span[^>]+class="login"[^>]*>([\s\S]*?)<\/span>/i, [replaceTagsAndSpaces, /\$\[[\s\S]*?\]/i, ''], html_entity_decode);
+               getParam(json.ok.html, result, 'phone', /<span[^>]*class="login"[^>]*>([\s\S]*?)<\/span>/i, [replaceTagsAndSpaces, /\$\[[\s\S]*?\]/i, ''], html_entity_decode);
                if(need_int_cur)
                    getParam(json.ok.html, result, 'internet_cur', /Интернет-траффик \(GPRS\)\s*<\/td>(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTraffic);
                getParam(json.ok.html, result, 'internet_cost', /Интернет-траффик \(GPRS\)\s*<\/td>(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
                
-               var table = getParam(json.ok.html, null, null, /<table[^>]+class="[^>]*rate-plans[^>][\s\S]*?<\/table>/i);
+               var table = getParam(json.ok.html, null, null, /<table[^>]*class="[^>]*rate-plans[^>][\s\S]*?<\/table>/i);
                if(table){
                    if(isAvailableButUnset(result, ['__tariff']))
                        sumParam(table, result, '__tariff', /<tr[^>]*>\s*<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
@@ -456,17 +464,16 @@ function megafonTrayInfo(filial){
                }
            }
 
-           if(errorInTray || isAvailableButUnset(result, ['mms_left','mms_total','sms_left','sms_total','mins_left','mins_net_left','mins_total','internet_left','internet_cur','internet_total','gb_with_you'])){
+           if(errorInTray || isAvailableButUnset(result, ['mms_left','mms_total','sms_left','sms_total','gb_with_you'])
+			|| AnyBalance.isAvailable('mins_left', 'mins_net_left', 'mins_total', 'internet_left', 'internet_total', 'internet_cur')){
                var need_mms_left = isAvailableButUnset(result, ['mms_left']),
                    need_mms_total = isAvailableButUnset(result, ['mms_total']),
                    need_sms_left = isAvailableButUnset(result, ['sms_left']),
                    need_sms_total = isAvailableButUnset(result, ['sms_total']),
-                   need_mins_left = isAvailableButUnset(result, ['mins_left']),
-                   need_mins_net_left = isAvailableButUnset(result, ['mins_net_left']),
-                   need_mins_total = isAvailableButUnset(result, ['mins_total']),
                    need_gb_with_you = isAvailableButUnset(result, ['gb_with_you']);
      
                var new_internet_totals_was = {};
+               var new_mins_totals_was = {};
 
                //Минуты и прочее получаем только в случае ошибки в сервисгиде, чтобы случайно два раза не сложить
                var discounts = sumParam(json.ok.html, null, null, /<td[^>]*class="cc_discount_row"[^>]*>([\s\S]*?)<\/td>/ig);
@@ -495,14 +502,20 @@ function megafonTrayInfo(filial){
                    }else if(/мин на номера МегаФон/i.test(name)){
                        var mins = getLeftAndTotal(val, result, false, false, 'mins_net_left', null, parseMinutes);
                        if(!isset(mins.left) || mins.left < 1000000){ //Большие значения, считай, безлимит. Че его показывать...
-                           addLeftAndTotal(mins, result, need_mins_net_left, false, 'mins_net_left');
+			   if(isset(mins.total) && !isset(mins_totals_was[mins.total])){
+                               addLeftAndTotal(mins, result, AnyBalance.isAvailable('mins_net_left'), false, 'mins_net_left');
+                               new_mins_totals_was[mins.total] = true;
+			   }
                        }else{
                            AnyBalance.trace('Пропускаем безлимитные внутрисетевые минуты: ' + val);
                        }
                    }else if(/мин/i.test(val) || /минут/i.test(name)){
                        var mins = getLeftAndTotal(val, result, false, false, 'mins_left', 'mins_total', parseMinutes);
                        if(!isset(mins.left) || mins.left < 1000000){ //Большие значения, считай, безлимит. Че его показывать...
-                           addLeftAndTotal(mins, result, need_mins_left, need_mins_total, 'mins_left', 'mins_total');
+			   if(isset(mins.total) && !isset(mins_totals_was[mins.total])){
+                               addLeftAndTotal(mins, result, AnyBalance.isAvailable('mins_left'), AnyBalance.isAvailable('mins_total'), 'mins_left', 'mins_total');
+                               new_mins_totals_was[mins.total] = true;
+			   }
                        }else{
                            AnyBalance.trace('Пропускаем безлимитные минуты: ' + val);
                        }
@@ -525,6 +538,7 @@ function megafonTrayInfo(filial){
                }
 
                internet_totals_was = joinObjects(internet_totals_was, new_internet_totals_was); //Запоминаем весь учтенный на этом этапе трафик
+               mins_totals_was = joinObjects(mins_totals_was, new_mins_totals_was); //Запоминаем весь учтенный на этом этапе трафик
            }
 
         }catch(e){

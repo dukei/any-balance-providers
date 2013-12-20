@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-cell-tmobile-me</id>
+	<api flags="no_browser"/>
+	<name>T-Mobile (Montenegro)</name>
+	<description html="true"><![CDATA[
+	<p>Obtains information from T-Mobile Montenegro.</p>
+	<p>Selfcare located at https://mojtportal.me/</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Account balance" units=" €"/>
+		<counter id="phone" name="Phone" type="text"/>
+		<counter id="traffic" name="Data" units=" Mb"/>
+		<counter id="traffic_till" name="Data till" type="time" format="dd/MM/yyyy"/>
+	</counters>
+	<keywords></keywords>
+	<type></type>
+	<country>me</country>
+</provider>

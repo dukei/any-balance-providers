@@ -1,4 +1,8 @@
-﻿var g_headers = {
+﻿/**
+Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
+*/
+
+var g_headers = {
 	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
@@ -7,20 +11,49 @@
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	checkEmpty(prefs.login, 'Phone number in international form, for example, +971552344334');
-	checkEmpty(prefs.password, 'Enter password!');
+	checkEmpty(prefs.login, 'Please, enter the phone number in international form, for example, +971552344334');
+	checkEmpty(prefs.password, 'Please, enter the password!');
 	
-	var baseurl = "https://leomoney.ru/";
+	var baseurl = "https://leomoney.";
 	AnyBalance.setDefaultCharset('utf-8');
 	var rePrefixes = /^\+(1|7|44|373|374|375|380|971|992|993|994|996|998)(\d+)$/;
-	if (!prefs.login || !rePrefixes.test(prefs.login)) throw new AnyBalance.Error('Номер ' + prefs.login + ' введен неправильно или имеет неправильный код страны.');
+	if (!prefs.login || !rePrefixes.test(prefs.login))
+		throw new AnyBalance.Error('Number ' + prefs.login + ' is wrong or has incorect prefix.');
 	
 	var matches = prefs.login.match(rePrefixes);
 	
 	if (matches[1] != '7' && matches[1] != '971') 
-		throw new AnyBalance.Error('Провайдер пока поддерживает только российские и эмиратские номера. Для поддержки других стран обращайтесь к автору провайдера.');
+		throw new AnyBalance.Error('Провайдер пока поддерживает только российские и эмиратские номера. Для поддержки других стран обращайтесь к разработчикам.');
 	
-	if (matches[1] == '7') {
+	baseurl = baseurl + (matches[1] == '7' ? 'ru' : 'ae') + '/';
+	
+	var html = AnyBalance.requestPost(baseurl + 'api/GetWalletBalanceByLogin', {
+		"Phone":matches[1] + matches[2], 
+		"Password":prefs.password,
+	}, g_headers);
+	
+	var ret = getParam(html, null, null, /<Code>([^<]*)<\/Code>/i, replaceTagsAndSpaces, parseBalance);
+	if(ret != 0) {
+		var error = getParam(html, null, null, /<Details>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+		if (error)
+			throw new AnyBalance.Error(error);
+		
+		throw new AnyBalance.Error(matches[1] == '7' ? 'Не удалось зайти в личный кабинет. Сайт изменен?' : 'Can`t login, is the site changed?');
+	}
+
+	var result = {success: true};
+	
+	getParam(html, result, '__tariff', /<AccountId>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(result.__tariff, result, 'wallet');
+	
+	getParam(html, result, 'balance', /<Amount>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, ['currency', 'balance', 'spent', 'limit'], /<Currency>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'spent', /<TotalAmount>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'limit', /<MonthLimit>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	
+	AnyBalance.setResult(result);
+
+	/*if (matches[1] == '7') {
 		var html = AnyBalance.requestPost(baseurl + 'security/signin', {
 			flags0: matches[1],
 			LoginClear: matches[2],
@@ -78,5 +111,5 @@ function main() {
 		getParam(html, result, 'wallet', /<span[^<]+class="auth_ewallet_num"[^<]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
 		
 		AnyBalance.setResult(result);
-	}
+	}*/
 }

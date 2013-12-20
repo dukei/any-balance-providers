@@ -18,8 +18,8 @@
 		dialogTitle="Password"
 		negativeButtonText="Cancel"
 		title="Password"
-		summary="||***********\n"
-		dialogMessage="Enter password to enter Leomoney personal account."
+		summary="||***********"
+		dialogMessage="Enter password to Leomoney personal account."
 		inputType="textPassword">
 	</EditTextPreference>
 </PreferenceScreen>

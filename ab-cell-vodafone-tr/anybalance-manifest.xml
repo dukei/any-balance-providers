@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="1.0" version="1">ab-cell-vodafone-tr</id>
+	<id major_version="1.0" version="2">ab-cell-vodafone-tr</id>
 	<api flags="no_browser"/>
 	<name>Vodafone Türkiye</name>
 	<description html="true">
@@ -20,14 +20,11 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Bakiye/Güncel Fatura" units=" TL"/>
-
 		<counter id="minutes" name="Kalan Dakika" type="time_interval" format="{@MIN}:{@sec}" units=" dk"/>
 		<counter id="minutes_local" name="Operatör içi kalan Dakika" type="time_interval" format="{@MIN}:{@sec}" units=" dk"/>
-	
 		<counter id="sms" name="Kalan SMS" units=" sms"/>
 		<counter id="sms_local" name="Operatör içi kalan SMS" units=" sms"/>
-
-		<counter id="data" name="Kalan Internet" units=" MB"/>
+		<counter id="data_left" name="Kalan Internet" units=" MB"/>
 	</counters>
 	<keywords></keywords>
 	<type>cell</type>

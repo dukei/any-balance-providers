@@ -1,5 +1,5 @@
 ﻿/**
-
+Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
 var g_headers = {

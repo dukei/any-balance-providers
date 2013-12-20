@@ -1,23 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-bonus-eva</id>
-	<api flags="no_browser"/>
-	<name>EVA (Украина)</name>
-	<description html="true"><![CDATA[
+  <id version="2">ab-bonus-eva</id>
+  <api flags="no_browser"/>
+  <name>EVA (Украина)</name>
+  <description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе бонусной карты сети магазинов EVA (Украина) http://www.eva.dp.ua/</p>
-	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
-	<files>
-		<icon>icon.png</icon>
-		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
-		<js>main.js</js>
-		<history>history.xml</history>
-	</files>
-	<counters>
-		<counter id="balance" name="Баланс"/>
-	</counters>
-	<keywords></keywords>
-	<type>bonus</type>
-	<country>ua</country>
+	]]>
+  </description>
+  <author>Stark &lt;support@starksoft.ru&gt;</author>
+  <author>Ignatiy Goloviznin &lt;igoloviznin@gmail.com&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс"/>
+    <counter id="balance_available" name="Баланс доступный к списанию"/>
+    <counter id="balance_inactive" name="Баланс доступный в ближайшее время"/>
+    <counter id="balance_discount" name="Баланс сгорающий"/>
+    <counter id="cards" name="Номер карты"/>
+  </counters>
+  <keywords>магазин EVA косметика парфумерия побутова хімія</keywords>
+  <type>bonus</type>
+  <country>ua</country>
 </provider>

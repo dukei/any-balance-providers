@@ -20,7 +20,7 @@
 		<counter id="balance" name="Баланс" units=" р"/>
 		<counter id="licschet" name="Лицевой счет" type="text"/>
 	</counters>
-	<keywords>интернет севен скай</keywords>
+	<keywords>интернет севен скай, 7, sky</keywords>
 	<type>internet</type>
 	<country>ru</country>
 </provider>

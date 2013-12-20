@@ -8,6 +8,8 @@
 */
 
 function main(){
+	throw new AnyBalance.Error("Данный провайдер является дубликатом провайдера \"Seven Sky (Москва)\", найдите данного провайдера в каталоге и установите.");
+	
     var prefs = AnyBalance.getPreferences();
 
     AnyBalance.setDefaultCharset('utf-8');

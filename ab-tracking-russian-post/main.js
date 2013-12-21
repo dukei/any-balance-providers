@@ -104,13 +104,14 @@ function mainRussianPost() {
 		checkForErrors(info);
 		throw new AnyBalance.Error('Не удалось найти форму запроса. На сайте обед?');
 	}
-	var captcha = '';
+	var captcha = '', captchaId = '';
 	if (AnyBalance.getLevel() >= 7) {
-		var captchaimg = getParam(form, null, null, /<img[^>]+id='captchaImage'[^>]*src=['"]([^'"]*)/, null, html_entity_decode);
-		if (captchaimg) {
-			captchaimg = AnyBalance.requestGet('http://www.russianpost.ru' + captchaimg);
-			captcha = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки. Если вы хотите получать статус отправления Почты России без ввода кода, воспользуйтесь провайдером \"Моя посылка\".", captchaimg);
-		}
+	    var xinfo = AnyBalance.requestGet(baseurl + '/Tracking/SetCaptcha.js.ashx?' + Math.random());
+	    captchaId = getParam(xinfo, null, null, /SetCaptcha\((\d+)/i);
+	    if(!captchaId)
+	        throw new AnyBalance.Error('Не удалось найти идентификатор капчи. Сайт изменен?');
+	    var captchaimg = AnyBalance.requestGet(baseurl + '/Tracking/Captcha.png.ashx?id=' + captchaId);
+	    captcha = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки. Если вы хотите получать статус отправления Почты России без ввода кода, воспользуйтесь провайдером \"Моя посылка\".", captchaimg);
 	}
 
 	var params = createFormParams(form, function(params, input, name, value) {
@@ -121,7 +122,9 @@ function mainRussianPost() {
 			value = 1;
 		else if (name == 'searchbarcode')
 			value = undef;
-		else if (name == 'InputedCaptchaCode')
+		else if (name == 'CaptchaId')
+			value = captchaId;
+		else if (name == 'CaptchaCode')
 			value = captcha;
 		return value;
 	});

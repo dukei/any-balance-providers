@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-<change version="31" date="2013-12-14">
-- Исправлено получение данных по счетам.
+<change version="32" date="2013-12-23">
+- Исправлено описание и инструкция
 </change>
 <change version="30" date="2013-12-06">
 - Исправлено получение данных по картам.

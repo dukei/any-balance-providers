@@ -10,7 +10,7 @@ function main() {
 	
 	if(!isset(temp)) {
 		AnyBalance.trace(text);
-		throw new AnyBalance.Error('Не получить температуру, проблемы на сайте или сайт изменен?');
+		throw new AnyBalance.Error('Не удалось получить температуру, проблемы на сайте или сайт изменен?');
 	}
 	
 	getParam(temp, result, 'temperature');

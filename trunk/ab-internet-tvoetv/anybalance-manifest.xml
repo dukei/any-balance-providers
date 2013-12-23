@@ -1,36 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-tvoetv</id>
-  <name>Твоё ТВ</name>
-  <description>
-    Получает баланс для санкт-петербургского провайдера интернет, телевидения и телефонии Твоё ТВ.
-    Информация берется из личного кабинета http://www.spb.tvoe.tv/cabinet/.
-
-    Если вы забыли пароль:
-      Отправьте SMS-сообщение с телефона, зарегистрированного на ваш номер договора, со следующим текстом: 
-      Номер договора*300# на телефон +7(902)111-88-01, например, 44444*300# 
-      В течение 5 минут вам будет направлено ответное сообщение с вашим новым паролем.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="credit" name="Кредит" units="р"/>
-    <counter id="status" name="Состояние" type="text"/>
-    <counter id="agreement" name="Номер договора" type="text"/>
-    <counter id="userName" name="ФИО" type="text"/>
-  </counters>
-  <keywords>
-    интернет, tvoe tv, питер
-  </keywords>
-  <type>
-    internet, telephony, tv
-  </type>
-  <country>
-    ru
-  </country>
+	<id version="2">ab-internet-tvoetv</id>
+	<api flags="no_browser"/>
+	<name>Твоё ТВ</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе санкт-петербургского провайдера интернет, телевидения и телефонии Твоё ТВ.</p>
+	<p>Информация берется из личного кабинета http://www.spb.tvoe.tv/cabinet/.</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Если вы забыли пароль:</p>
+	<p>Отправьте SMS-сообщение с телефона, зарегистрированного на ваш номер договора, со следующим текстом: </p>
+	<p>Номер договора*300# на телефон +7(902)111-88-01, например, 44444*300#</p>
+	<p>В течение 5 минут вам будет направлено ответное сообщение с вашим новым паролем.</p>
+	]]></instruction>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="credit" name="Кредит" units=" р"/>
+		<counter id="status" name="Состояние" type="text"/>
+		<counter id="agreement" name="Номер договора" type="text"/>
+		<counter id="userName" name="ФИО" type="text"/>
+	</counters>
+	<keywords>интернет, tvoe tv, питер</keywords>
+	<type>internet, telephony, tv</type>
+	<country>ru</country>
 </provider>

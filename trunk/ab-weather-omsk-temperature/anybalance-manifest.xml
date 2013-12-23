@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="1.0" version="1">ab-weather-omsk-temperature</id>
+	<id major_version="1.0" version="2">ab-weather-omsk-temperature</id>
 	<api flags="no_browser"/>
 	<name>Температура в Омске</name>
 	<description html="true"><![CDATA[
@@ -13,7 +13,7 @@
 		<js>main.js</js>
 	</files>
 	<counters>
-		<counter id="temperature" name="Температура" units=" C°"/>
+		<counter id="temperature" name="Температура" units="℃"/>
 	</counters>
 	<keywords>погода, температура, омск</keywords>
 	<type>weather</type>

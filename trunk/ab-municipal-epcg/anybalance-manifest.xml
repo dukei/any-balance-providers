@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-municipal-epcg</id>
+	<api flags="no_browser"/>
+	<name>Elektroprivreda Crne Gore AD Niksic</name>
+	<description html="true"><![CDATA[
+	<p>Obtains information from Elektroprivreda Crne Gore AD Niksic (http://www.epcg.co.me/en02_12.html).</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Saldo"/>
+		<counter id="topay" name="Iznos zadnje fakture"/>
+		<counter id="topay_date" name="Datum zadnje fakture" type="time" format="dd/MM/yyyy"/>
+		<counter id="meter_num" name="Broj brojila" type="text"/>
+		<counter id="fio" name="Naziv" type="text"/>
+		<counter id="adress" name="Adresa" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>municipal</type>
+	<country>me</country>
+</provider>

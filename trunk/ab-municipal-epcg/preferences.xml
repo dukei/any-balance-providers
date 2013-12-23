@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference
+		title="Subscriber's number"
+		key="login"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Subscriber's number"
+		positiveButtonText="OK"
+		negativeButtonText="Cancel"
+		dialogMessage="Enter the subscriber's number.">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Meter no."
+		key="meterno"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Meter no."
+		positiveButtonText="OK"
+		negativeButtonText="Cancel"
+		dialogMessage="Enter the meter number.">
+	</EditTextPreference>	
+    <ListPreference 
+        key="typeofuser" 
+        title="Type of consumption"
+        summary="||{@s}"
+        entries="Personal|Legal entities"
+        entryValues="dom|vel"
+		defaultValue="dom">
+    </ListPreference>	
+    <ListPreference 
+        key="municipality" 
+        title="Municipality"
+        summary="||{@s}"
+        entries="Bar|Bijelo Polje|Berane|Budva|Cetinje|Herceg Novi|Kolašin|Kotor|Mojkovac|Nikšić|Pljevlja|Podgorica|Rožaje|Tivat|Ulcinj|Žabljak"
+        entryValues="Bar|Bijelo Polje|Berane|Budva|Cetinje|Hercegnovi|Kolasin|Kotor|Mojkovac|Niksic|Pljevlja|Podgorica|Rozaje|Tivat|Ulcinj|Zabljak"
+		defaultValue="Budva">
+    </ListPreference>	
+</PreferenceScreen>

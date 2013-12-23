@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id major_version="1.0" version="1">ab-weather-omsk-temperature</id>
+	<api flags="no_browser"/>
+	<name>Температура в Омске</name>
+	<description html="true"><![CDATA[
+	<p>Температура в Омске с http://myxa.opsb.ru/</p>
+	]]></description>
+	<author>Evgeny Moysevich &lt;moysevich@gmail.com&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<js>library.js</js>
+		<js>main.js</js>
+	</files>
+	<counters>
+		<counter id="temperature" name="Температура" units=" C°"/>
+	</counters>
+	<keywords>погода, температура, омск</keywords>
+	<type>weather</type>
+	<country>ru</country>
+</provider>

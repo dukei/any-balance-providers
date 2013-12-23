@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-taxi-leader</id>
+	<api flags="no_browser"/>
+	<name>Такси Лидер</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе из личного кабинета Такси Лидер http://taxi-leader.ru/</p>
+	<p>Информация берется из двух личных кабинетов, если вход в http://taxi-leader.ru/enter.html не удался, будет отправлен запрос на http://sterl.rutaxi.ru/enter.html</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="acc_num" name="Номер счёта" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>taxi</type>
+	<country>ru</country>
+</provider>

@@ -1,33 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-netis</id>
-  <name>NETIS (Ярославль)</name>
-  <description>
-    Получает баланс и информацию о тарифном плане для ярославского интернет-провайдера НЕТИС Телеком (http://netis.ru).
-
-    Информация берется из личного кабинета http://www.netis.ru/clients/stat.php.
-
-    Для входа на сервер статистики по услугам NETIS вам нужно получить идентификатор и пароль в службе технической поддержки. Этот идентификатор и пароль могут не совпадать с вашим логином и паролем, который вы используете для подключения.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="licschet" name="Лицевой счет" type="text"/>
-    <counter id="agreement" name="Номер договора" type="text"/>
-    <counter id="traffic" name="Трафик в текущем месяце" units="Gb"/>
-  </counters>
-  <keywords>
-    интернет
-  </keywords>
-  <type>
-    internet
-  </type>
-  <country>
-    ru
-  </country>
+	<api flags="no_browser"/>
+	<id version="1">ab-internet-netis</id>
+	<name>NETIS (Ярославль)</name>
+	<description html="true"><![CDATA[
+	<p>Получает баланс и информацию о тарифном плане для ярославского интернет-провайдера НЕТИС Телеком (http://netis.ru).</p>
+	<p>Информация берется из личного кабинета http://www.netis.ru/clients/stat.php.</p>
+	<p>Для входа на сервер статистики по услугам NETIS вам нужно получить идентификатор и пароль в службе технической поддержки. Этот идентификатор и пароль могут не совпадать с вашим логином и паролем, который вы используете для подключения.</p>
+	]]></description>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="licschet" name="Лицевой счет" type="text"/>
+		<counter id="agreement" name="Номер договора" type="text"/>
+		<counter id="traffic" name="Трафик в текущем месяце" units=" Gb"/>
+	</counters>
+	<keywords>интернет</keywords>
+	<type>internet</type>
+	<country>ru</country>
 </provider>

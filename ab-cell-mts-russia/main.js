@@ -443,7 +443,9 @@ function fetchAccountStatus(html, result){
     // Остаток СМС
     html = sumParam (html, result, 'sms_left', /(?:Осталось|Остаток)[^\d]*(\d+)\s*(?:sms|смс)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
     //Остаток пакета Безлимит М2М SMS: 61
-    html = sumParam (html, result, 'sms_left', /Остаток пакета [^<]*?(?:смс|sms):\s*([\d\.,]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
+    html = sumParam (html, result, 'sms_left', /Остаток пакета[^<]*?(?:смс|sms):\s*([\d\.,]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
+    //Остаток пакета SMS в Европе: 22. Пакет действует до 21.01.2014
+    html = sumParam (html, result, 'sms_europe', /Остаток\s+пакета\s+SMS\s+в\s+Европе:([\s\d]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
     //Использовано: 6 sms
     sumParam (html, result, 'sms_used', /Использовано:\s*([\d\.,]+)\s*(?:смс|sms)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     // Остаток ММС

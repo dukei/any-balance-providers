@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="1.1" version="30">ab-cell-mts-ua</id>
+	<id major_version="1.2" version="31">ab-cell-mts-ua</id>
 	<api flags="no_browser"/>
 	<name>МТС (Украина)</name>
 	<description html="true"><![CDATA[
@@ -12,9 +12,6 @@
 	<ul>
 	<li>Пройдите регистрацию по ссылке https://ihelper-prp.mts.com.ua/CustomerSelfCare2/logon-registration.aspx.</li>
 	</ul>
-	<b>ВНИМАНИЕ!</b> PDA помощник доступен только для предоплатных абонентов. Для 
-	получения информации по контрактным абонентам обратитесь, пожалуйста, к автору 
-	провайдера.
 	]]></instruction>
 	<author>Ignatiy Goloviznin &lt;igoloviznin@gmail.com&gt;</author>
 	<files>

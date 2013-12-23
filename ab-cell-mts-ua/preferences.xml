@@ -7,6 +7,7 @@
         dialogTitle="Номер телефона" 
         negativeButtonText="Отмена" 
         dialogMessage="Введите номер вашего телефона для входа в Интернет-Помощник (9 цифр), например 661234567"
+	obligatory="true"
         key="login"
         inputType="number">
     </EditTextPreference>
@@ -17,6 +18,7 @@
         negativeButtonText="Отмена"
         title="Пароль"
         summary="Пароль для входа в Интернет-Помощник||***********\n"
+	obligatory="true"
         dialogMessage="Введите пароль, используемый для входа в Интернет-Помощник"
         inputType="textPassword">
     </EditTextPreference>

@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-    <change version="3" date="2013-09-12">
+	<change version="4" date="2013-12-23">
+	- Поддержка изменений на сайте.
+	</change>
+	<change version="3" date="2013-09-12">
 	- Мелкие улучшения
 	</change>
-    <change version="2" date="2013-03-27">
+	<change version="2" date="2013-03-27">
 	- Добавлено число, длительность и стоимость разговоров в текущем месяце
 	</change>
 </history>

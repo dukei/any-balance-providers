@@ -1,37 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-<api flags="no_browser" />
-  <id version="3">ab-telephony-rt-sib</id>
-  <name>Ростелеком Сибирь</name>
-  <description>
-    Получает баланс и информацию о тарифном плане для сибирского оператора проводной телефонии Ростелеком-сибирский филиал (http://sibirtelecom.ru)
-
-    Информация берется из личного кабинета: https://ispa.sibirtelecom.ru
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Сумма к оплате" units="р"/>
-    <counter id="recom" name="Рекомендованный платеж" units="р"/>
-    <counter id="count" name="Число звонков в текущем месяце" units=""/>
-    <counter id="dur" name="Длительность звонков в текущем месяце" units=" мин"/>
-    <counter id="cost" name="Стоимость звонков в текущем месяце" units="р"/>
-    <counter id="fio" name="ФИО" type="text"/>
-    <counter id="licschet" name="Лицевой счет" type="text"/>
-  </counters>
-  <keywords>
-    сибирьтелеком
-  </keywords>
-  <type>
-    telephony
-  </type>
-  <country>
-    ru
-  </country>
+	<api flags="no_browser" />
+	<id version="4">ab-telephony-rt-sib</id>
+	<name>Ростелеком Сибирь</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе сибирского оператора проводной телефонии Ростелеком-сибирский филиал (http://sibirtelecom.ru)</p>
+	<p>Информация берется из личного кабинета https://ispa.sibirtelecom.ru</p>
+	]]></description>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Сумма к оплате" units=" р"/>
+		<counter id="recom" name="Рекомендованный платеж" units=" р"/>
+		<counter id="count" name="Число звонков в текущем месяце"/>
+		<counter id="dur" name="Длительность звонков в текущем месяце" units=" мин"/>
+		<counter id="cost" name="Стоимость звонков в текущем месяце" units=" р"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="licschet" name="Лицевой счет" type="text"/>
+	</counters>
+	<keywords>сибирьтелеком</keywords>
+	<type>telephony</type>
+	<country>ru</country>
 </provider>

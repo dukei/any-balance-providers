@@ -10,6 +10,9 @@
 function main(){
     var prefs = AnyBalance.getPreferences();
 
+    checkEmpty(prefs.login, 'Введите номер телефона для входа в интернет-помощник!');
+    checkEmpty(prefs.password, 'Введите пароль для входа в интернет-помощник!');
+
     if(prefs.phone && !/^\d+$/.test(prefs.phone)){
 	throw new AnyBalance.Error('В качестве номера необходимо ввести 9 цифр номера, например, 501234567, или не вводить ничего, чтобы получить информацию по основному номеру.');
     }
@@ -22,6 +25,27 @@ function main(){
         password: prefs.password
     });
     
+    var error=getParam(html, null, null, /<ul class="operation-results-error"><li>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, html_entity_decode);
+    if (error)
+        throw new AnyBalance.Error(error, null, /Введен неизвестный номер телефона|Введен неверный пароль/i.test(error));
+    
+    if(/<title>Произошла ошибка<\/title>/i.test(html)){
+        throw new AnyBalance.Error("Интернет-помощник временно недоступен");
+    }
+
+    if(/<TITLE>The page cannot be found<\/TITLE>/.test(html)){
+        throw new AnyBalance.Error("Интернет-помощник отсутствует по адресу " + baseurl);
+    }
+
+    error = getParam(html, null, null, /<h1>\s*Ошибка\s*<\/h1>\s*<p>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
+    if(error)
+        throw new AnyBalance.Error(error);
+
+    if(!/Security\.mvc\/LogOff/.test(html))
+    	throw new AnyBalance.Error("Не удалось войти в мобильный интернет-помощник. Проблемы на сайте?");
+   
+    AnyBalance.trace("It looks like we are in selfcare (found logOff)...");
+
     if(prefs.phone && prefs.phone != prefs.login){
         html = AnyBalance.requestGet(baseurl + "MyPhoneNumbers.mvc");
         html = AnyBalance.requestGet(baseurl + "MyPhoneNumbers.mvc/Change?phoneNumber=380"+prefs.phone);
@@ -32,34 +56,9 @@ function main(){
 		throw new AnyBalance.Error(prefs.phone + ": " + error); 
     }
 
-    var regexp=/<ul class="operation-results-error"><li>(.*?)<\/li>/;
-    if (res=regexp.exec(html)){
-        throw new AnyBalance.Error(res[1]);
-    }
-    
-    regexp=/<title>Произошла ошибка<\/title>/;
-    if(regexp.exec(html)){
-        throw new AnyBalance.Error("Интернет-помощник временно недоступен");
-    }
-
-    regexp=/<TITLE>The page cannot be found<\/TITLE>/;
-    if(regexp.exec(html)){
-        throw new AnyBalance.Error("Интернет-помощник отсутствует по адресу " + baseurl);
-    }
-
-    var error = getParam(html, null, null, /<h1>\s*Ошибка\s*<\/h1>\s*<p>(.*?)<\/p>/i);
-    if(error){
-        throw new AnyBalance.Error(error);
-    }
-
     var result = {success: true};
     
     var min_all_60_isp;
-
-    regexp = /Security\.mvc\/LogOff/;
-    if(!regexp.test(html))
-    	throw new AnyBalance.Error("Не удалось войти в мобильный интернет-помощник. Проблемы на сайте?");
-    	AnyBalance.trace("It looks like we are in selfcare (found logOff)...");
 
     // Тарифный план
     regexp=/(?:Тарифн[ыи]й план|tariff plan):.*?>(.*?)</;
@@ -77,6 +76,11 @@ function main(){
     html = AnyBalance.requestGet(baseurl + "Account.mvc/Status");
 
     AnyBalance.trace("Parsing status...");
+
+    if(/<h1[^>]*>\s*Ошибка\s*<\/h1>/i.test(html)){
+        var error = getParam(html, null, null, /<h1[^>]*>\s*Ошибка\s*<\/h1>\s*<p[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
+	AnyBalance.trace('При получении статуса МТС вернул ошибку: ' + error + '\n Проверьте, можно ли перейти на состояние счета в мобильном интернет-помощнике');
+    }
     
     //Срок действия (баланса) номера (!!!пропал из интернет помощника)
     getParam (html, result, 'termin', /Термін життя балансу:([^<]*)/i, replaceTagsAndSpaces, parseDate);

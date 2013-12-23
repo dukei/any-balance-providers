@@ -29,10 +29,6 @@ function getEventValidation1(html){
 }
 
 function checkForErrors(html) {
-
-Auth/LogOut.aspx
-
-
     var error = getParam(html, null, null, /<div[^>]*class="errorMessage"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
 	if(error)
 		throw new AnyBalance.Error(error);

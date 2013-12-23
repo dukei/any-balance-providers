@@ -1,39 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="4">ab-shop-exist</id>
-  <name>Exist.ru</name>
+	<id version="5">ab-shop-exist</id>
+	<name>Exist.ru</name>
+	<api flags="no_browser"/>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе и другие данные для клиентов магазина автозапчастей http://exist.ru.</p> 
 	<p>Информация берется из личного кабинета.</p>   
 	]]></description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="debt" name="Долг по заказам" units="р"/>
-    <counter id="card" name="Баланс карты" units="р"/>
-    <counter id="carddebt" name="Долг по карте" units="р"/>
-    <counter id="orderstatus" name="Статус заказа" type="text"/>
-    <counter id="orderexpect" name="Ожидается" type="time" format="dd/MM/yyyy"/>
-    <counter id="orderdesc" name="Описание заказа" type="text"/>
-    <counter id="ordernum" name="Номер заказа" type="text"/>
-    <counter id="ordersum" name="Сумма заказа" type="numeric" units="р"/>
-    <counter id="code" name="Код клиента" type="text"/>
-    <counter id="balancebez" name="Безналичный счёт" units="р"/>
-  </counters>
-  <keywords>
-    экзист
-  </keywords>
-  <type>
-    shop
-  </type>
-  <country>
-    ru
-  </country>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="debt" name="Долг по заказам" units=" р"/>
+		<counter id="card" name="Баланс карты" units=" р"/>
+		<counter id="carddebt" name="Долг по карте" units=" р"/>
+		<counter id="orderstatus" name="Статус заказа" type="text"/>
+		<counter id="orderexpect" name="Ожидается" type="time" format="dd/MM/yyyy"/>
+		<counter id="orderdesc" name="Описание заказа" type="text"/>
+		<counter id="ordernum" name="Номер заказа" type="text"/>
+		<counter id="ordersum" name="Сумма заказа" type="numeric" units=" р"/>
+		<counter id="code" name="Код клиента" type="text"/>
+		<counter id="balancebez" name="Безналичный счёт" units=" р"/>
+	</counters>
+	<keywords>экзист</keywords>
+	<type>shop</type>
+	<country>ru</country>
 </provider>

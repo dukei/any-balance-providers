@@ -1,18 +1,13 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Получает баланс и информацию об остатке на счету для магазина автозапчастей exist
-
-Operator site: http://exist.ru
-Личный кабинет: http://exist.ru
 */
 
 var g_headers = {
-'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
-'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-'Connection':'keep-alive',
-'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.64 Safari/537.31'
+	'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
+	'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Connection':'keep-alive',
+	'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.64 Safari/537.31'
 };
 
 function getViewState(html){
@@ -78,12 +73,12 @@ function main(){
 
     var result = {success: true};
     getParam(html, result, 'balance', /Наличный счёт:[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-//Безналичный счёт
+	//Безналичный счёт
     getParam(html, result, 'balancebez', /Безналичный счёт:[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'code', /&laquo;код клиента&raquo;\s*<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, '__tariff', /&laquo;код клиента&raquo;\s*<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'debt', /Долг по заказам:[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'card', /Счёт кредитной карты:[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'card', /Счёт[^>]*карты:[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'carddebt', /Долг по счёту кредитной карты:[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 
     if(AnyBalance.isAvailable('ordernum', 'ordersum', 'orderdesc', 'orderstatus', 'orderexpect')){

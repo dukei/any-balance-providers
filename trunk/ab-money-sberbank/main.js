@@ -6,7 +6,7 @@
 Сайт оператора: http://sbrf.ru/
 Личный кабинет: https://esk.sbrf.ru/
 */
-		
+
 function main() {
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = "https://online.sberbank.ru/CSAFront/login.do";
@@ -69,6 +69,7 @@ function main() {
 		throw new AnyBalance.Error("Не удаётся найти ссылку на информацию по картам. Пожалуйста, обратитесь к автору провайдера для исправления ситуации.");
 	}
 	AnyBalance.trace("About to authorize: " + page);
+	
 	if (/esk.zubsb.ru/.test(page)) //Пока только это поддерживается
 		doOldAccount(page);
 	else if (/online.sberbank.ru\/PhizIC/.test(page))
@@ -315,6 +316,7 @@ function readEskCards() {
 
 function doNewAccountPhysic(html) {
 	AnyBalance.trace('Entering physic account...');
+	
 	if (/confirmTitle/.test(html))
 		throw new AnyBalance.Error("Ваш личный кабинет требует одноразовых паролей для входа. Пожалуйста, отмените в настройках кабинета требование одноразовых паролей при входе. Это безопасно: для совершения денежных операций требование одноразового пароля всё равно останется.");
 	if (/Откроется справочник регионов, в котором щелкните по названию выбранного региона/.test(html)) {
@@ -334,10 +336,11 @@ function doNewAccountPhysic(html) {
 }
 
 function fetchRates(html, result) {
-	getParam(html, result, 'eurPurch', new RegExp('<tr class="courseRow1">\\s+<td[^>]+>[\\s\\S]+?</td>\\s+<td[^>]+>\\s+([0-9.]+)\\s+'), null, parseFloat);
-	getParam(html, result, 'eurSell', new RegExp('<tr class="courseRow1">(?:\\s+<td[^>]+>[\\s\\S]+?</td>){2}\\s+<td[^>]+>\\s+([0-9.]+)\\s+'), null, parseFloat);
-	getParam(html, result, 'usdPurch', new RegExp('<tr class="courseRow2">\\s+<td[^>]+>[\\s\\S]+?</td>\\s+<td[^>]+>\\s+([0-9.]+)\\s+'), null, parseFloat);
-	getParam(html, result, 'usdSell', new RegExp('<tr class="courseRow2">(?:\\s+<td[^>]+>[\\s\\S]+?</td>){2}\\s+<td[^>]+>\\s+([0-9.]+)\\s+'), null, parseFloat);
+	AnyBalance.trace('Fetching rates...');
+	getParam(html, result, 'eurPurch', /"currencyRateName"[^>]*>EUR(?:[^>]*>){2}([^<]*)/i, null, parseBalance);
+	getParam(html, result, 'eurSell', /"currencyRateName"[^>]*>EUR(?:[^>]*>){5}([^<]*)/i, null, parseBalance);
+	getParam(html, result, 'usdPurch', /"currencyRateName"[^>]*>USD(?:[^>]*>){2}([^<]*)/i, null, parseBalance);
+	getParam(html, result, 'usdSell', /"currencyRateName"[^>]*>USD(?:[^>]*>){5}([^<]*)/i, null, parseBalance);
 }
 
 function fetchNewThanks(baseurl, result) {
@@ -356,6 +359,10 @@ function fetchNewThanks(baseurl, result) {
 function fetchNewAccountCard(html) {
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = "https://online.sberbank.ru";
+	// Теперь только здесь есть курсы валют
+	var result = {success: true};
+	fetchRates(html, result);
+	
 	html = AnyBalance.requestGet(baseurl + '/PhizIC/private/cards/list.do');
 	var lastdigits = prefs.lastdigits ? prefs.lastdigits.replace(/(\d)/g, '$1\\s*') : '(?:\\d\\s*){3}\\d';
 	var baseFind = '<[^>]*class="accountNumber\\b[^"]*">[^<]*' + lastdigits + '<';
@@ -368,7 +375,6 @@ function fetchNewAccountCard(html) {
 	}
 	var reCardNumber = new RegExp('<[^>]*class="accountNumber\\b[^"]*">([^<]*' + lastdigits + ')<', 'i');
 	var reBalance = new RegExp('<a[^>]+href="[^"]*info.do\\?id=' + cardId + '"[\\s\\S]*?<span[^>]+class="overallAmount\\b[^>]*>([\\s\\S]*?)</span>', 'i');
-	var result = {success: true};
 	
 	getParam(html, result, 'balance', reBalance, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'cardNumber', reCardNumber, replaceTagsAndSpaces);
@@ -421,6 +427,10 @@ function parseDateForWord(str){
 function fetchNewAccountAcc(html) {
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = "https://online.sberbank.ru";
+	// Теперь только здесь есть курсы валют
+	var result = {success: true};
+	fetchRates(html, result);
+	
 	html = AnyBalance.requestGet(baseurl + '/PhizIC/private/accounts/list.do');
 	var lastdigits = prefs.lastdigits ? prefs.lastdigits.replace(/(\d)/g, '$1\\s*') : '(?:\\d\\s*){3}\\d';
 	// class="productNumber\b[^"]*">[^<]*
@@ -437,12 +447,12 @@ function fetchNewAccountAcc(html) {
 	}
 	var reCardNumber = new RegExp('class="productNumber\\b[^"]*">([^<]*' + lastdigits + ')<', 'i');
 	var reBalance = new RegExp('<a[^>]+href="[^"]*operations.do\\?id=' + cardId + '"[\\s\\S]*?<span[^>]+class="overallAmount\\b[^>]*>([\\s\\S]*?)</span>', 'i');
-	var result = {success: true};
+	
 	getParam(html, result, 'balance', reBalance, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'cardNumber', reCardNumber, [replaceTagsAndSpaces, /\D/, '']);
 	getParam(html, result, '__tariff', new RegExp("\\?id=" + cardId + "[\\s\\S]*?<span[^>]+class=\"mainProductTitle\"[^>]*>([\\s\\S]*?)<\\/span>", "i"), replaceTagsAndSpaces);
 	getParam(html, result, ['currency', 'balance', 'cash', 'electrocash', 'debt', 'maxlimit'], reBalance, replaceTagsAndSpaces, parseCurrencyMy);
-	fetchRates(html, result);
+	
 	if (AnyBalance.isAvailable('till', 'cash')) {
 		html = AnyBalance.requestGet(baseurl + '/PhizIC/private/accounts/info.do?id=' + cardId);
 		getParam(html, result, 'till', /Дата окончания срока действия:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);

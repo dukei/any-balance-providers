@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="32">ab-money-sberbank</id>
+	<id version="33">ab-money-sberbank</id>
 	<api flags="no_browser"/>
 	<name>Сбербанк ОнЛ@йн</name>
 	<description html="true"><![CDATA[
@@ -10,7 +10,7 @@
 	То есть, вам будет приходить СМС всякий раз, когда провайдер будет проверять ваш баланс. Это можно отключить, заменив уведомление на е-мейл, 
 	для этого необходимо прийти в отделение Сбербанка.
 	]]></description>
-	  <instruction html="true"><![CDATA[
+	<instruction html="true"><![CDATA[
 	<p>Как получить доступ к "Сбербанк-Онлайн":</p>
 	<ol> 
 		<li>Получите банковскую карту Сбербанка с подключенной услугой «Мобильный банк»</li>

@@ -114,6 +114,9 @@ function main() {
 
 	var html = AnyBalance.requestGet(baseurl + 'login.html', g_headers);
 	
+	AnyBalance.trace('Запрашиваем данные /login.html');
+	AnyBalance.trace(html);
+	
 	// Похоже что обновляемся через мобильный инет, значит авторизацию надо пропустить
 	if(/logOutLink/i.test(html)) {
 		var phone = getParam(html, null, null, /<h1[^>]+class="phone-number"[^>]*>([\s\S]*?)<\/h1>/i, [/\D/g, '']);
@@ -125,6 +128,8 @@ function main() {
 		}
 		AnyBalance.trace('Залогинены на правильный номер ' + phone);
 	} else {
+		AnyBalance.trace('Похоже, что обновление происходит НЕ через мобильный интернет.');
+		
 		var tform = getParam(html, null, null, /<form[^>]+name="loginFormB2C:loginForm"[^>]*>[\s\S]*?<\/form>/i);
 		if (!tform) { //Если параметр не найден, то это, скорее всего, свидетельствует об изменении сайта или о проблемах с ним
 			if (AnyBalance.getLastStatusCode() > 400) {

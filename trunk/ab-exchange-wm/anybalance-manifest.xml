@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-exchange-wm</id>
+	<api min_level="5"/>
+	<name>WM exchange</name>
+	<description html="true"><![CDATA[
+	<p>Статистика прямых курсов обмена валют Webmoney WMZ-&gt;WMR, WMR-&gt;WMZ, WMZ-&gt;WME, WME-&gt;WMZ, WME-&gt;WMR, WMR-&gt;WME, WMZ-&gt;WMU, WMU-&gt;WMZ, WMR-&gt;WMU, WMU-&gt;WMR, WMU-&gt;WME, WME-&gt;WMU, WMB-&gt;WMZ, WMZ-&gt;WMB, WMB-&gt;WME, WME-&gt;WMB, WMR-&gt;WMB, WMB-&gt;WMR.</p>
+	<p>Информация берется со страницы http://wm.exchanger.ru/asp/default.asp</p>
+	]]></description>
+	<author>Oleg Medinskiy &lt;grf@ukr.net&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<js>api:jquery.min.js</js>
+		<js>main.js</js>
+	</files>
+	<counters>
+		<counter id="WMZWMR" name="WMZ&gt;WMR" prefix="Z→R:"/>
+		<counter id="WMRWMZ" name="WMR&gt;WMZ" prefix="R→Z:"/>
+		<counter id="WMZWME" name="WMZ&gt;WME" prefix="Z→E:"/>
+		<counter id="WMEWMZ" name="WME&gt;WMZ" prefix="E→Z:"/>
+		<counter id="WMEWMR" name="WME&gt;WMR" prefix="E→R:"/>
+		<counter id="WMRWME" name="WMR&gt;WME" prefix="R→E:"/>
+		<counter id="WMZWMU" name="WMZ&gt;WMU" prefix="Z→U:"/>
+		<counter id="WMUWMZ" name="WMU&gt;WMZ" prefix="U→Z:"/>
+		<counter id="WMRWMU" name="WMR&gt;WMU" prefix="R→U:"/>
+		<counter id="WMUWMR" name="WMU&gt;WMR" prefix="U→R:"/>
+		<counter id="WMUWME" name="WMU&gt;WME" prefix="U→E:"/>
+		<counter id="WMEWMU" name="WME&gt;WMU" prefix="E→U:"/>
+		<counter id="WMBWMZ" name="WMB&gt;WMZ" prefix="B→Z:"/>
+		<counter id="WMZWMB" name="WMZ&gt;WMB" prefix="Z→B:"/>
+		<counter id="WMBWME" name="WMB&gt;WME" prefix="B→E:"/>
+		<counter id="WMEWMB" name="WME&gt;WMB" prefix="E→B:"/>
+		<counter id="WMRWMB" name="WMR&gt;WMB" prefix="R→B:"/>
+		<counter id="WMBWMR" name="WMB&gt;WMR" prefix="B→R:"/>
+	</counters>
+	<keywords>Webmoney, курс валют Webmoney, курс Webmoney, валюта, финансы, обмен валют, WMZ, WMR, WME, WMU, WMB</keywords>
+	<type>finance, exchange</type>
+	<country>ua</country>
+</provider>

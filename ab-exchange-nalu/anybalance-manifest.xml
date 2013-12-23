@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-exchange-nalu</id>
+	<api min_level="5"/>
+	<name>Наличный курс валют Украины</name>
+	<description html="true"><![CDATA[
+	<p>Наличные курсы валют Украинских банков Доллар США, Российский рубль, Евро.</p>
+	<p>Информация берется со страницы http://banker.ua/marketindex/course/</p>
+	]]></description>
+	<author>Oleg Medinskiy &lt;grf@ukr.net&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<js>api:jquery.min.js</js>
+		<js>main.js</js>
+	</files>
+	<counters>
+		<counter id="USDs" name="USD продажа" prefix="$↑ "/>
+		<counter id="USDp" name="USD покупка" prefix="$↓ "/>
+		<counter id="EURs" name="EUR продажа" prefix="€↑ "/>
+		<counter id="EURp" name="EUR покупка" prefix="€↓ "/>
+		<counter id="RUBs" name="RUB продажа" prefix="р↑ "/>
+		<counter id="RUBp" name="RUB покупка" prefix="р↓ "/>
+	</counters>
+	<keywords>Украина, курс валют, валюта, финансы, обмен валют, наличный курс валют, доллар, евро, гривна</keywords>
+	<type>finance, exchange</type>
+	<country>ua</country>
+</provider>

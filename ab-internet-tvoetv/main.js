@@ -1,42 +1,14 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Текущий баланс у питерского интернет, телефония, тв - провайдера Твоё ТВ.
-
-Сайт оператора: http://www.spb.tvoe.tv
-Личный кабинет: http://www.spb.tvoe.tv/cabinet/
 */
 
-function getParam (html, result, param, regexp, replaces, parser) {
-	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
-		return;
-
-	var value = regexp.exec (html);
-	if (value) {
-		value = value[1];
-		if (replaces) {
-			for (var i = 0; i < replaces.length; i += 2) {
-				value = value.replace (replaces[i], replaces[i+1]);
-			}
-		}
-		if (parser)
-			value = parser (value);
-
-    if(param)
-      result[param] = value;
-    else
-      return value
-	}
-}
-
-var replaceTagsAndSpaces = [/&nbsp;/g, ' ', /<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, ''];
-var replaceFloat = [/\s+/g, '', /,/g, '.'];
-
-function parseBalance(text){
-    var val = getParam(text.replace(/\s+/g, ''), null, null, /(-?\d[\d\s.,]*)/, replaceFloat, parseFloat);
-    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
-    return val;
-}
+var g_headers = {
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
+	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Connection': 'keep-alive',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+};
 
 g_services = {
     tv: {
@@ -61,18 +33,21 @@ g_services = {
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-
+	checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(prefs.password, 'Введите пароль!');
     AnyBalance.setDefaultCharset('utf-8');
 
     var baseurl = "http://www.spb.tvoe.tv/cabinet/";
 
-    var html = AnyBalance.requestPost(baseurl, {
+	var html = AnyBalance.requestGet(baseurl + 'auth.php', g_headers);
+	
+	
+    var html = AnyBalance.requestPost(baseurl + 'auth.php', {
         login: prefs.login,
         password: prefs.password,
         submit: 'Продолжить'
     });
 
-    //AnyBalance.trace(html);
     var error = getParam(html, null, null, /(<form[^>]*name="auth")/i);
     if(error)
         throw new AnyBalance.Error("Не удаётся войти в личный кабинет. Неправильный логин/пароль?");
@@ -105,12 +80,3 @@ function main(){
 
     AnyBalance.setResult(result);
 }
-
-function html_entity_decode(str)
-{
-    //jd-tech.net
-    var tarea=document.createElement('textarea');
-    tarea.innerHTML = str;
-    return tarea.value;
-}
-

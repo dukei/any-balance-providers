@@ -373,6 +373,8 @@ function megafonTrayInfo(filial){
                 if(AnyBalance.isAvailable('internet_cur') && isset(valAvailable) && isset(valTotal)){
                     result.internet_cur = (result.internet_cur || 0) + parseTrafficMy((valTotal - valAvailable) + units);
                 }
+	    }else if(/Зона "Магнитогорск"/i.test(names)){
+                AnyBalance.trace('Зону магнитогорск пропускаем. Похоже, она никому не нужна: ' + d);
             }else if(/вызовы внутри спг/i.test(names) && /мин/i.test(plan_si)){
                 AnyBalance.trace('Найдены минуты внутри группы: ' + names + ', ' + plan_si);
 		var total = getParam(d, null, null, /<VOLUME_TOTAL>([\s\S]*?)<\/VOLUME_TOTAL>/i, replaceTagsAndSpaces, parseMinutes);
@@ -450,7 +452,7 @@ function megafonTrayInfo(filial){
                getParam(json.ok.html, result, 'sub_scl', /(?:Исходящие вызовы|Начислено за звонки)\s*<\/td>(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
                getParam(json.ok.html, result, 'sub_scr', /Роуминг\s*<\/td>(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 			   // 																										Заменяем строку вида $[widgets.current.user($msisdn)]
-               getParam(json.ok.html, result, 'phone', /<span[^>]*class="login"[^>]*>([\s\S]*?)<\/span>/i, [replaceTagsAndSpaces, /\$\[[\s\S]*?\]/i, ''], html_entity_decode);
+               getParam(json.ok.html, result, 'phone', /<span[^>]*class="login"[^>]*>([\s\S]*?)<\/span>/i, [/\uFFFD/g, ' ', replaceTagsAndSpaces, /\$\[[\s\S]*?\]/i, ''], html_entity_decode);
                if(need_int_cur)
                    getParam(json.ok.html, result, 'internet_cur', /Интернет-траффик \(GPRS\)\s*<\/td>(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTraffic);
                getParam(json.ok.html, result, 'internet_cost', /Интернет-траффик \(GPRS\)\s*<\/td>(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
@@ -499,6 +501,8 @@ function megafonTrayInfo(filial){
                        }else{
                            AnyBalance.trace('Пропускаем дублированные смс до сниженной цены: ' + val);
                        }
+		   }else if(/Зона "Магнитогорск"/i.test(name)){
+                       AnyBalance.trace('Зону магнитогорск пропускаем. Похоже, она никому не нужна: ' + discount);
                    }else if(/мин на номера МегаФон/i.test(name)){
                        var mins = getLeftAndTotal(val, result, false, false, 'mins_net_left', null, parseMinutes);
                        if(!isset(mins.left) || mins.left < 1000000){ //Большие значения, считай, безлимит. Че его показывать...

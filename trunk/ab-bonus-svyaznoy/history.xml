@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change major_version="1.0" version="7" date="2013-12-24">
+      - Обработка ошибки входа в необходимости подтвердить е-мейл
+    </change>
     <change major_version="1.0" version="6" date="2013-12-14">
       - Обработка ошибки входа в случае блокированной карты
     </change>

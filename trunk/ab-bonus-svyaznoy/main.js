@@ -67,8 +67,13 @@ function main () {
 	var blocked = getParam(html, null, null, /card_block.jpg[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
         if(blocked)
 		throw new AnyBalance.Error(blocked);
+        var error = getParam(html, null, null, /<div[^>]+class="info"[^>]*>\s*<p[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
+        if(error && /вам нужно подтвердить ваш e-mail/i.test(error))
+            error += ' Войдите в личный кабинет через браузер и подтвердите свой е-мейл.';
+        if(error)
+		throw new AnyBalance.Error(error);
         AnyBalance.trace ('Have not found logout... Unknown error. Please contact author.');
-//        AnyBalance.trace (html);
+        AnyBalance.trace (html);
         throw new AnyBalance.Error ('Неизвестная ошибка. Пожалуйста, свяжитесь с автором провайдера.');
     }
 

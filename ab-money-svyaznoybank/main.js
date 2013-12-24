@@ -53,6 +53,9 @@ function main(){
         var error = getParam(html, null, null, /<div[^>]+class="err"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error, null, /Неверный персональный номер или пароль/i.test(error)); //Фатальная ошибка, надо настройки менять
+        error = getParam(html, null, null, /<div[^>]+class="captcha"/i);
+	if(error)
+	    throw new AnyBalance.Error("С вашего IP адреса осуществлено слишком много неудачных попыток входа в интернет-банк. Пожалуйста, подождите часок и попробуйте ещё раз.", null, true);
         error = getParam(html, null, null, /<h2[^>]*>([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error && /Срок действия пароля истек/i.test(error))
             throw new AnyBalance.Error('Банк сообщает, что срок действия пароля истек. Пожалуйста, зайдите в интернет банк через браузер, смените пароль, затем введите новый пароль в настройки этого провайдера.', null, true);

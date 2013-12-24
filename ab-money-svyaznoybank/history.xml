@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+<change version="14" date="2013-12-17">
+- Сообщение о блокировке по IP
+</change>
 <change version="13" date="2013-12-16">
 - Изменения в получении подробностей по счету
 </change>

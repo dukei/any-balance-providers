@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="5">ab-gambling-marathonbet</id>
+	<id version="6">ab-gambling-marathonbet</id>
 	<name>Марафон</name>
-	<description>
-Получает информацию о балансе для букмекерской конторы Марафон (https://www.marathonbet.com)
-	</description>
-	<author>Alexandra Shalamova &lt;alexandrashalamova@gmail.com&gt;</author>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе в личном кабинете букмекерской конторы Марафон (https://www.marathonbet.com)</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

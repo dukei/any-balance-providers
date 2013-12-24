@@ -44,12 +44,12 @@ function main(){
     getParam(html, result, 'balance', /id='balance'[^>]*>([\s\S]*?)</i, [/,/g, '', replaceTagsAndSpaces], parseBalance);
     getParam(html, result, ['currency', 'balance'], /id='balance'[^>]*>([\s\S]*?)</i, replaceTagsAndSpaces, parseMyCurrency);
 
-    if(AnyBalance.isAvailable('ns'/*, 'out'*/)){
-        html = AnyBalance.requestPost(baseurl + 'ru/myaccount/getunsettledbetssumm.htm', '', g_headers);
+    if(isAvailable(['ns', 'out'])){
+        html = AnyBalance.requestGet(baseurl + 'ru/myaccount/myaccount.htm', g_headers);
         //Нерассчитанные ставки
-        getParam(html, result, 'ns', /"ubs":"([\s\S]*?)"/i, null, parseBalance);
+        getParam(html, result, 'ns', /Нерассчитанные ставки:(?:[^>]*>){8}([^<]*)/i, [/,/g, '', replaceTagsAndSpaces], parseBalance);
         //Запрошено на выплату
-        //getParam(html, result, 'out', /<td[^>]+class="value"(?:[\s\S]*?<span[^>]+class=['"]balance-value[^>]*>|[\s\S]*?<b>){3}([\s\S]*?)</i, [/,/g, '', replaceTagsAndSpaces], parseBalance);
+        getParam(html, result, 'out', /Запрошено на выплату:(?:[^>]*>){9}([^<]*)/i, [/,/g, '', replaceTagsAndSpaces], parseBalance);
     }
 
     AnyBalance.setResult(result);

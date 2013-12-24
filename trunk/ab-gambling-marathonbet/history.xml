@@ -1,15 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-<change version="5" date="2013-09-30">
-- Мелкие исправления
-</change>
-<change version="4" date="2013-08-26">
-- Исправлен счетчик Нерассчитанные ставки
-</change>
-<change version="3" date="2013-08-21">
-- Мелкие исправления
-</change>
-<change version="2" date="2013-05-20">
-- Вход по номеру, пара ошибок исправлена и добавлена пара счетчиков
-</change>
+	<change version="6" date="2013-12-24">
+	- Поддержка изменений на сайте.
+	</change>
+	<change version="5" date="2013-09-30">
+	- Мелкие исправления.
+	</change>
+	<change version="4" date="2013-08-26">
+	- Исправлен счетчик Нерассчитанные ставки.
+	</change>
+	<change version="3" date="2013-08-21">
+	- Мелкие исправления.
+	</change>
+	<change version="2" date="2013-05-20">
+	- Вход по номеру, пара ошибок исправлена и добавлена пара счетчиков.
+	</change>
 </history>

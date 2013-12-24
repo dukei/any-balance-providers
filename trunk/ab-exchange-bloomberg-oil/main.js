@@ -18,12 +18,14 @@ function main() {
 
 	var result = {success: true};
 	
-	getParam(html, result, 'balance', new RegExp('Crude Oil \\('+ (prefs.type || 'WTI') +'\\)(?:[^>]*>){4}([^<]*)', 'i'), replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'currency', new RegExp('Crude Oil \\('+ (prefs.type || 'WTI') +'\\)(?:[^>]*>){2}([^<]*)', 'i'), replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'change', new RegExp('Crude Oil \\('+ (prefs.type || 'WTI') +'\\)(?:[^>]*>){6}([^<]*)', 'i'), replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'change_pcts', new RegExp('Crude Oil \\('+ (prefs.type || 'WTI') +'\\)(?:[^>]*>){8}([^<]*)', 'i'), replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'contract', new RegExp('Crude Oil \\('+ (prefs.type || 'WTI') +'\\)(?:[^>]*>){10}([^<]*)', 'i'), replaceTagsAndSpaces);
-	getParam(html, result, 'contract_time', new RegExp('Crude Oil \\('+ (prefs.type || 'WTI') +'\\)(?:[^>]*>){12}([^<]*)', 'i'), replaceTagsAndSpaces);
+	var type = prefs.type || 'WTI';
+	
+	getParam(html, result, 'balance', new RegExp('Crude Oil \\('+ type +'\\)(?:[^>]*>){4}([^<]*)', 'i'), replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, ['currency', 'balance'], new RegExp('Crude Oil \\('+ type +'\\)(?:[^>]*>){2}([^<]*)', 'i'), replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'change', new RegExp('Crude Oil \\('+ type +'\\)(?:[^>]*>){6}([^<]*)', 'i'), replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'change_pcts', new RegExp('Crude Oil \\('+ type +'\\)(?:[^>]*>){8}([^<]*)', 'i'), replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'contract', new RegExp('Crude Oil \\('+ type +'\\)(?:[^>]*>){10}([^<]*)', 'i'), replaceTagsAndSpaces);
+	getParam(html, result, 'contract_time', new RegExp('Crude Oil \\('+ type +'\\)(?:[^>]*>){12}([^<]*)', 'i'), replaceTagsAndSpaces);
 	getParam(html, result, '__tariff', /<h2>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 	
     AnyBalance.setResult(result);

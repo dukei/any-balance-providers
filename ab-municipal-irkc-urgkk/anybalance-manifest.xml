@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-municipal-irkc-urgkk</id>
+	<api flags="no_browser"/>
+	<name>МУП "ИРКЦ" (Междуреченск)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе в системе МУП "Информационный расчетно-кассовый центр" г. Междуреченск.</p>
+	<p>Информация берется из личного кабинета http://irkc.urgkk.ru/index.php?Itemid=72&option=com_irkc&view=irkc</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс + Пени" units=" р"/>
+		<counter id="month_start" name="Остаток на начало месяца" units=" р"/>
+	</counters>
+	<keywords></keywords>
+	<type>municipal</type>
+	<country>ru</country>
+</provider>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-exchange-bloomberg-oil</id>
+	<id version="3">ab-exchange-bloomberg-oil</id>
 	<api flags="no_browser"/>
 	<name>Bloomberg OIL</name>
 	<description html="true"><![CDATA[

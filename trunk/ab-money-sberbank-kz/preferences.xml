@@ -27,16 +27,16 @@
         summary="||{@s}"
         entries="Карта|Счет"
         entryValues="card|acc"
-	defaultValue="card">
+		defaultValue="card">
     </ListPreference>
-    <!--<EditTextPreference 
+    <EditTextPreference 
         positiveButtonText="ОК"
         key="lastdigits" 
         dialogTitle="Номер карты/счета"
         negativeButtonText="Отмена"
         title="Номер карты"
-        summary="Последние 4 цифры карты/счета|Автоматически\n|{@s}\n"
-        dialogMessage="Введите последние 4 цифры карты(счета), по которой вы хотите получить информацию. Если это поле оставить пустым, то будет показана информация по первой карте(счету)."
+        summary="Последние 3 цифры карты/счета|Автоматически\n|{@s}\n"
+        dialogMessage="Введите последние 3 цифры карты(счета), по которой вы хотите получить информацию. Если это поле оставить пустым, то будет показана информация по первой карте(счету)."
         inputType="number">
-    </EditTextPreference>-->
+    </EditTextPreference>
 </PreferenceScreen>

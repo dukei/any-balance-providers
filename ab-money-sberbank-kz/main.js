@@ -49,26 +49,54 @@ function main() {
 		fetchCard(html, baseurl);
 }
 
+function getSID(html) {
+	var sid = getParam(html, null, null, /'SID'[^>]*value='([^']*)/i, replaceTagsAndSpaces, html_entity_decode);
+	return sid;
+}
+
 function fetchCard(html, baseurl) {
 	var prefs = AnyBalance.getPreferences();
 	if (prefs.lastdigits && !/^\d{4}$/.test(prefs.lastdigits)) 
 		throw new AnyBalance.Error("Надо указывать 4 последних цифры карты или не указывать ничего");
-	// Теперь ищем ссылку на карты, точнее сабмит на список карт
-	var page = getParam(html, null, null, /(<form\s*id='FORM_CARD_LIST'[\s\S]*?<\/form>)/i);
-	if (!page) {
-		throw new AnyBalance.Error("Не удаётся найти ссылку на информацию по картам. Пожалуйста, обратитесь к автору провайдера для исправления ситуации.");
-	}
-	var params = createFormParams(page, null);
-	html = AnyBalance.requestPost(baseurl + 'frontend/frontend', params);
-	// Пока мы не знаем как выглядит счет с несколькими картами, поэтому париться им сейчас нет смысла
+	
 	var result = {success: true};
+	// Иногда мы не переходим на нужную страницу, из-за каких-то глюков.
+	html = AnyBalance.requestPost(baseurl + 'frontend/frontend', {
+		'RQ_TYPE':'WORK',
+		'SCREEN_ID':'MAIN',
+		'MENU_ID':'MENU',
+		'ITEM_ID':'MENU_CLICK',
+		SID:getSID(html),
+		'Step_ID':'0',
+		'CP_MENU_ITEM_ID':'SFMAIN_MENU.WB_PRODUCTS_ALL',
+	}, addHeaders({Referer: baseurl + 'frontend/frontend'}));
 	
-	getParam(html, result, 'cardNumber', /ibec_submit_emulator form_owwb_ws_entryCardsDoing-2_1'>([\s\S]*?),/i);
-	getParam(html, result, '__tariff', /ibec_submit_emulator form_owwb_ws_entryCardsDoing-2_1'>([\s\S]*?),/i);
+	html = AnyBalance.requestPost(baseurl + 'frontend/frontend', {
+		'RQ_TYPE':'WORK',
+		'SCREEN_ID':'MAIN',
+		'MENU_ID':'MENU',
+		'ITEM_ID':'MENU_CLICK',
+		SID:getSID(html),
+		'Step_ID':'1',
+		'CP_MENU_ITEM_ID':'CARDS.CARD_LIST',
+	}, addHeaders({Referer: baseurl + 'frontend/frontend'}));
+	
 	getParam(html, result, 'userName', /ibec_header_right">\s*<b>([\s\S]*?)<\//i, replaceTagsAndSpaces);
-	getParam(html, result, 'balance', /<item parent_id='[\s\S]*?_balance' class='ibec_balance'>\s*<content>\s*<name>([\s\S]*?)<\//i, null, parseBalance);
-	getParam(html, result, ['currency', 'balance'], /<item parent_id='[\s\S]*?_balance' class='ibec_balance'>\s*<content>\s*<name>([\s\S]*?)<\//i, null, parseCurrency);
 	
+	// Пока мы не знаем как выглядит счет с несколькими картами, поэтому сделал как было, вроде должно сработать если что.
+	var cardnum = prefs.lastdigits || '\\d{3}';
+	var regExp = new RegExp('<root>(?:[\\s\\S]*?<name[^>]*>){12}\\d{3}\\*+' + cardnum + '[\\s\\S]*?</root>','i');
+	
+	var root = getParam(html, null, null, regExp);
+	if(!root){
+		throw new AnyBalance.Error('Не удалось найти ' + (prefs.lastdigits ? 'карту с последними цифрами ' + prefs.lastdigits : 'ни одной карты!'));
+	}
+	
+	getParam(root, result, 'balance', /\d{3}\*+\d{3}[\s\S]*?class='ibec_balance'(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(root, result, ['currency', 'balance'], /\d{3}\*+\d{3}[\s\S]*?class='ibec_balance'(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, parseCurrency);
+	getParam(root, result, '__tariff', /(\d{3}\*+\d{3})/i);
+	result.cardNumber = result.__tariff;
+
 	AnyBalance.setResult(result);
 }
 

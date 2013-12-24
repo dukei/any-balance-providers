@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="1">ab-internet-netis</id>
+	<id version="2">ab-internet-netis</id>
 	<name>NETIS (Ярославль)</name>
 	<description html="true"><![CDATA[
 	<p>Получает баланс и информацию о тарифном плане для ярославского интернет-провайдера НЕТИС Телеком (http://netis.ru).</p>
@@ -23,6 +23,6 @@
 		<counter id="traffic" name="Трафик в текущем месяце" units=" Gb"/>
 	</counters>
 	<keywords>интернет</keywords>
-	<type>internet</type>
+	<type>internet, telephony</type>
 	<country>ru</country>
 </provider>

@@ -7,6 +7,7 @@
         dialogTitle="Логин" 
         negativeButtonText="Отмена" 
         dialogMessage="Логин для входа в личный кабинет Петербургской Сбытовой Компании"
+	obligatory="true"
         key="login">
     </EditTextPreference>
     <EditTextPreference 
@@ -14,6 +15,7 @@
         key="password" 
         dialogTitle="Пароль"
         negativeButtonText="Отмена"
+	obligatory="true"
         title="Пароль"
         summary="|Введите пароль|***********"
         dialogMessage="Введите пароль, используемый для входа в личный кабинет"
@@ -22,7 +24,7 @@
     <ListPreference 
         key="type" 
         title="Личный кабинет"
-        summary="||{@s}\n"
+        summary="||{@s}"
         entries="Петербургская Сбытовая Компания|Петроэлектросбыт"
         entryValues="pesc|pes"
 	defaultValue="pesc">

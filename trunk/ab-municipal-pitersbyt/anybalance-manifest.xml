@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="6">ab-municipal-pitersbyt</id>
+  <id version="7">ab-municipal-pitersbyt</id>
   <api flags="no_browser"/>
   <name>Петербургская сбытовая компания</name>
   <description>
     Получает текущую задолженность в Петербургской Сбытовой Компании (http://pesc.ru) и Петроэлектросбыте (http://www.pes.spb.ru).
     
     Получает данные из личного кабинета для физических лиц Петербургской сбытовой компании (http://ikus.pesc.ru:8080/IKUSUser) и Петроэлектросбыта (https://ikus.pes.spb.ru/IKUSUser).
-
+  </description>
+  <instruction>
     Если у вас еще нет доступа к этому личному кабинету, или данные не отображаются, выполните инструкции по регистрации по ссылкам:
        http://www.pesc.ru/lk/poryadok_registracii (для Петербургской Сбытовой Компании),
        http://www.pes.spb.ru/consumers/11/ (для Петроэлектросбыта) 
-  </description>
+  </instruction>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <files>
     <icon>icon.png</icon>

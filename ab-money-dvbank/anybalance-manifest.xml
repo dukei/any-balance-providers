@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-money-dvbank</id>
+	<api flags="no_browser"/>
+	<name>DVBank (Украина)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию об остатках на картах DV банка Украины http://www.dvbank.ua/</p>
+	<p>Информация берется из личного кабинета https://ifobs.dvbank.ua/ifobsClientDVBank/</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>md5.js</js>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Остаток" units=" {@currency}"/>
+		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="cardNumber" name="Номер карты" type="text"/>
+		<counter id="acc_num" name="Номер счета" type="text"/>
+		<counter id="cardName" name="Имя на карте" type="text"/>
+		<counter id="status" name="Статус" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>money</type>
+	<country>ua</country>
+</provider>

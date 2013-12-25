@@ -1,46 +1,47 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <ListPreference
-    	title="Тип бонусной карты"
-	summary="|Выберите тип бонусной карты|Сейчас выбран тип:\n{@s}"
-	key="type"
-	entries="М.Видео-БОНУС|М.Видео-БОНУС - Альфа-Банк"
-	entryValues="0|1" />	
-    <EditTextPreference
-        key="card"
-        title="Номер Карты"
-        summary="Номер карты||{@s}\n"
-        inputType="number"
-        dialogTitle="Номер карты"
-        dialogMessage="Введите номер карты для входа в личный кабинет, для карт Альфа-банк: с восьмой цифры восемь цифр, например: номер карты XXXX-XXX1-2345-678X , вводим 12345678"
-        positiveButtonText="ОК"
-        negativeButtonText="Отмена">
-    </EditTextPreference>
-    <EditTextPreference
-        positiveButtonText="ОК"
-        key="birthday" 
-        dialogTitle="День рождения"
-        negativeButtonText="Отмена"
-        title="День рождения"
-        summary="Ваш день рождения ||{@s}\n"
-        dialogMessage="Введите ваш день рождения в формате DD-MM-YYYY, например, 28-04-1980"
-        inputType="date">
-    </EditTextPreference>
-    <EditTextPreference
-        key="zip"
-        title="ZIP-код, для карт М.Видео-БОНУС"
-        summary="|Введите ZIP-код|ZIP-код: {@s}\n"
-        inputType="textPassword"
-        dialogTitle="ZIP-код, только для карт М.Видео-БОНУС"
-        dialogMessage="Введите ZIP-код, только для карт М.Видео-БОНУС, если у вас карта М.Видео-БОНУС - Альфа-Банк, то оставте поле пустым."
-        positiveButtonText="ОК"
-        negativeButtonText="Отмена">
-    </EditTextPreference>
-    <ListPreference
-	title="Формат даты"
-	summary="|По умолчанию стоит DD MMM YYYY.|Выбрано {@s}."
-	key="format_date"
-        defaultValue="2"
-        entries="YYYY MMM DD|DD MMM YYYY|YYYY-MM-DD|DD-MM-YYYY"
-        entryValues="1|2|3|4" />
+	<ListPreference
+		title="Тип бонусной карты"
+		summary="|Выберите тип бонусной карты|Сейчас выбран тип:\n{@s}"
+		key="type"
+		entries="М.Видео-БОНУС|М.Видео-БОНУС - Альфа-Банк"
+		entryValues="0|1"
+		defaultValue="1"/>
+	<EditTextPreference
+		key="card"
+		title="Номер Карты"
+		summary="Номер карты||{@s}\n"
+		inputType="number"
+		dialogTitle="Номер карты"
+		dialogMessage="Введите номер карты для входа в личный кабинет, для карт Альфа-банк: с восьмой цифры восемь цифр, например: номер карты XXXX-XXX1-2345-678X , вводим 12345678"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена">
+	</EditTextPreference>
+	<EditTextPreference
+		positiveButtonText="ОК"
+		key="birthday"
+		dialogTitle="День рождения"
+		negativeButtonText="Отмена"
+		title="День рождения"
+		summary="Ваш день рождения ||{@s}\n"
+		dialogMessage="Введите ваш день рождения в формате DD-MM-YYYY, например, 28-04-1980"
+		inputType="date">
+	</EditTextPreference>
+	<EditTextPreference
+		key="zip"
+		title="ZIP-код, для карт М.Видео-БОНУС"
+		summary="|Введите ZIP-код|ZIP-код: {@s}\n"
+		inputType="textPassword"
+		dialogTitle="ZIP-код, только для карт М.Видео-БОНУС"
+		dialogMessage="Введите ZIP-код, только для карт М.Видео-БОНУС, если у вас карта М.Видео-БОНУС - Альфа-Банк, то оставте поле пустым."
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена">
+	</EditTextPreference>
+<!-- 	<ListPreference
+		title="Формат даты"
+		summary="|По умолчанию стоит DD MMM YYYY.|Выбрано {@s}."
+		key="format_date"
+		defaultValue="2"
+		entries="YYYY MMM DD|DD MMM YYYY|YYYY-MM-DD|DD-MM-YYYY"
+		entryValues="1|2|3|4" /> -->
 </PreferenceScreen>

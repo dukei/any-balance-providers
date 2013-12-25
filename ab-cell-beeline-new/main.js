@@ -118,8 +118,11 @@ function main() {
 	AnyBalance.trace(html);
 	
 	// Похоже что обновляемся через мобильный инет, значит авторизацию надо пропустить
-	if(/logOutLink/i.test(html)) {
-		var phone = getParam(html, null, null, /<h1[^>]+class="phone-number"[^>]*>([\s\S]*?)<\/h1>/i, [/\D/g, '']);
+	if(/logOutLink|Загрузка баланса\.\.\./i.test(html)) {
+		var phone = getParam(html, null, null, [/"sso-number"[^>]*>([^<]*)/i, /<h1[^>]+class="phone-number"[^>]*>([\s\S]*?)<\/h1>/i], [/\D/g, '']);
+		if(!phone)
+			throw new AnyBalance.Error('Не удалось выяснить на какой номер мы залогинились автоматически, сайт изменен?');
+		
 		AnyBalance.trace('Судя по всему, мы уже залогинены на номер ' + phone);
 		
 		if(!endsWith(phone, prefs.phone || prefs.login)) {

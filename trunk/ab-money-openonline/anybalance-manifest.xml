@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-money-openonline</id>
+	<api flags="no_browser"/>
+	<name>Банк Открытие</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию об остатке на картах и счетах крупного коммерческого Банка - Открытие</p>
+	<p>Информация берется из личного кабинета https://www.openonline.ru/logon</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" {@currency}"/>
+		<counter id="blocked_balance" name="Заблокировано" units=" {@currency}"/>
+		<counter id="limit" name="Кредитный лимит" units=" {@currency}"/>
+		<counter id="cardNumber" name="Номер карты" type="text"/>
+		<counter id="accNum" name="Номер счета" type="text"/>
+		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="till" name="Карта действительна до" type="time" format="dd/MM/yyyy"/>
+		<counter id="cardName" name="Название карты" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>money</type>
+	<country>ru</country>
+</provider>

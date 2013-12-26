@@ -16,7 +16,9 @@ function main() {
 	var baseurl = 'https://service.nalog.ru/';
 	var html = AnyBalance.requestGet(baseurl + 'debt/req.do?');
 	var session = getParam(html, null, null, /name="PHPSESSID"[^>]*value="([^"]*)/i);
-	
+	if(!session)
+		throw new AnyBalance.Error('Сайт временно недоступен, попробуйте проверить данные позже.');
+		
 	var captchaa;
 	if (AnyBalance.getLevel() >= 7) {
 		AnyBalance.trace('Пытаемся ввести капчу');

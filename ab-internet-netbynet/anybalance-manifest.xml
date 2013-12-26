@@ -1,17 +1,20 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2.0" version="13">ab-internet-netbynet</id>
+	<id major_version="2.0" version="14">ab-internet-netbynet</id>
 	<api flags="no_browser"/>
 	<name>NetByNet</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе, остатке дней, статусе и обещанном платеже для пользователей  интернет-провайдера NetByNet.</p>  
-	<p>Поддерживает регионы:</p> 
-	Москва и МО<br>
-	Воронеж<br>
-	Белгород<br>
-	Липецк<br>
-	Орел<br>
-	Старый Оскол
+	<p>Поддерживает регионы:
+	<ul>
+		<li>Москва и МО</li>
+		<li>Воронеж</li>
+		<li>Белгород</li>
+		<li>Липецк</li>
+		<li>Орел</li>
+		<li>Старый Оскол</li>
+		<li>Тверь</li>
+	</ul>
 	<p><small>В разных регионах личные кабинеты отличаются, в связи с чем могут быть доступны не все счетчики.</small></p>
 	]]></description>
 	<author>iReset &lt;ireset.ag@gmail.com&gt;</author>

@@ -97,7 +97,7 @@ function mainRussianPost() {
 	var prefs = AnyBalance.getPreferences();
 	AnyBalance.trace('Connecting to russianpost...');
 	var baseurl = 'http://www.russianpost.ru';
-	var info = AnyBalance.requestGet(baseurl + '/Tracking/');
+	var info = AnyBalance.requestGet(baseurl + '/Tracking/?' + Math.random());
 	info = checkForRedirect(info, baseurl);
 	var form = getParam(info, null, null, /<form[^>]+(?:name|id)="F(?:orm)?1"[^>]*>[\s\S]*?<\/form>/i);
 	if (!form) {
@@ -106,11 +106,10 @@ function mainRussianPost() {
 	}
 	var captcha = '', captchaId = '';
 	if (AnyBalance.getLevel() >= 7) {
-	    var xinfo = AnyBalance.requestGet(baseurl + '/Tracking/SetCaptcha.js.ashx?' + Math.random());
-	    captchaId = getParam(xinfo, null, null, /SetCaptcha\((\d+)/i);
+	    captchaId = getParam(form, null, null, /<input[^>]+name="CaptchaId"[^>]*value="([^"]*)/i, null, html_entity_decode);
 	    if(!captchaId)
 	        throw new AnyBalance.Error('Не удалось найти идентификатор капчи. Сайт изменен?');
-	    var captchaimg = AnyBalance.requestGet(baseurl + '/Tracking/Captcha.png.ashx?id=' + captchaId);
+	    var captchaimg = AnyBalance.requestGet(baseurl + '/CaptchaService/CaptchaImage.ashx?ID=' + captchaId);
 	    captcha = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки. Если вы хотите получать статус отправления Почты России без ввода кода, воспользуйтесь провайдером \"Моя посылка\".", captchaimg);
 	}
 

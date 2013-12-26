@@ -2,24 +2,26 @@
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
-function getRate(result, info) {
-	var dan = $('div.block_480x200 td:eq(7),div.block_480x200 td:eq(8),div.block_480x200 td:eq(11),div.block_480x200 td:eq(12),div.block_480x200 td:eq(15),div.block_480x200 td:eq(16)', info).text();
-	var inner = dan.split(/\s+/ig);
-	result['USDs'] = inner[3];
-	result['USDp'] = inner[1];
-	result['EURs'] = inner[7];
-	result['EURp'] = inner[5];
-	result['RUBs'] = inner[11];
-	result['RUBp'] = inner[9];
+function getRate(result, info, currency) {
+	// $1 - покупка $2 - продажа
+	var match = new RegExp('"currency_'+currency+'"(?:[^>]*>){2}[^>]*bid_value[^>]*>([^<]+)(?:[^>]*>){6}([^<]+)', 'i').exec(info);
+	if(!match)
+		throw new AnyBalance.Error("Не удалось получить данные, свяжитесь с разработчиком.");
+	
+	getParam(match[1], result, currency + 's', null, replaceTagsAndSpaces, parseBalance);
+	getParam(match[2], result, currency + 'p', null, replaceTagsAndSpaces, parseBalance);
 }
 
 function main() {
 	if (AnyBalance.getLevel() < 5)
 		throw new AnyBalance.Error("Для этого провайдера необходимо AnyBalance API v.5+");
 
-	AnyBalance.trace('Connecting to http://banker.ua/marketindex/course/...');
 	var info = AnyBalance.requestGet('http://banker.ua/marketindex/course/');
 	var result = {success: true};
-	getRate(result, info);
+	
+	getRate(result, info, 'USD');
+	getRate(result, info, 'EUR');
+	getRate(result, info, 'RUB');
+	
 	AnyBalance.setResult(result);
 }

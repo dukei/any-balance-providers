@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-exchange-nalu</id>
+	<id version="2">ab-exchange-nalu</id>
+	<api flags="no_browser"/>
 	<api min_level="5"/>
 	<name>Наличный курс валют Украины</name>
 	<description html="true"><![CDATA[
@@ -8,9 +9,10 @@
 	<p>Информация берется со страницы http://banker.ua/marketindex/course/</p>
 	]]></description>
 	<author>Oleg Medinskiy &lt;grf@ukr.net&gt;</author>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
-		<js>api:jquery.min.js</js>
+		<js>library.js</js>
 		<js>main.js</js>
 	</files>
 	<counters>

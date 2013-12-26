@@ -355,6 +355,7 @@ function megafonTrayInfo(filial){
                     //Надо попытаться исправить ошибку мегафона с единицами измерения трафика
                     if(/[GM]B/i.test(plan_name)) units = 'мб';
                     else if(/GPRS-Internet трафик/i.test(plan_name)) units='мб'; //Вот ещё такое исключение. Надеюсь, на всём будет работать, хотя сообщили из поволжского филиала
+		    else if(/100\s*мб/i.test(plan_name)) units='тар.ед.';
 		    else if(/Все включено/i.test(plan_name)) units='мб'; //Из дальневосточного филиала сообщили
                     else units = 'тар.ед.'; //измеряется в 100кб интервалах
                 }
@@ -524,9 +525,9 @@ function megafonTrayInfo(filial){
                            AnyBalance.trace('Пропускаем безлимитные минуты: ' + val);
                        }
                    }else if(/Гигабайт в дорогу/i.test(name)){
-                       getLeftAndTotal(val, result, need_gb_with_you, false, 'gb_with_you', null, parseTraffic);
-                   }else if(/[кгмkgm][бb]/i.test(val)){
-                       var traf = getLeftAndTotal(val, result, false, false, null, null, parseTraffic);
+                       getLeftAndTotal(val, result, need_gb_with_you, false, 'gb_with_you', null, parseTrafficMy);
+                   }else if(/[кгмkgm][бb]|тар\.\s*ед/i.test(val)){
+                       var traf = getLeftAndTotal(val, result, false, false, null, null, parseTrafficMy);
 		       if(isset(traf.total) && !isset(internet_totals_was[traf.total])){ //Проверяем, что на предыдущем этапе этот трафик ещё не был учтен
                            new_internet_totals_was[traf.total] = true;
                            if(AnyBalance.isAvailable('internet_cur'))

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="14" major_version="3.0">ab-cell-skylink</id>
+	<id version="15" major_version="3.0">ab-cell-skylink</id>
 	<name>Skylink</name>
+	<api flags="no_browser"/>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе для пользователей оператора сотовой связи Skylink.</p>
 	<p>Информация берется из личных кабинетов (разных для каждого региона).</p>   
@@ -24,28 +25,25 @@
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
+		<js>sha256.js</js>
+		<js>enc-base64-min.js</js>
 		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units="р"/>
-		<counter id="traffic" name="Трафик за месяц" units="mb" />
-		<counter id="trafficDay" name="Трафик в день" units="mb" />
-		<counter id="trafficPack" name="Льготный трафик" units="mb" />
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="traffic" name="Трафик за месяц" units=" mb" />
+		<counter id="trafficDay" name="Трафик в день" units=" mb" />
+		<counter id="trafficPack" name="Льготный трафик" units=" mb" />
 		<counter id="min_left" name="Остаток минут" units=" мин" />
 		<counter id="userName" name="ФИО" type="text"/>
 		<counter id="userNum" name="Лицевой счет" type="text"/>
 		<counter id="status" name="Статус" type="text"/>
-		<counter id="charged" name="Начисления по договору за период" units="р"/>
+		<counter id="acc_num" name="Номер счета" type="text"/>
+		<counter id="charged" name="Начисления по договору за период" units=" р"/>
 	</counters>
-  <keywords>
-    скайлинк, мобильный
-  </keywords>
-  <type>
-    cell
-  </type>
-  <country>
-    ru
-  </country>
+	<keywords>скайлинк, мобильный</keywords>
+	<type>cell</type>
+	<country>ru</country>
 </provider>

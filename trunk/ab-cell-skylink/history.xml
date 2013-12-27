@@ -1,42 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-    <change version="14" major_version="3.0" date="2013-04-03">
-      - Добавлен счетчик остатка минут для московского филиала
-    </change>
-    <change version="13" major_version="3.0" date="2013-03-16">
-      - Добавлен Скайлинк Рязань
-    </change>
-    <change version="12" major_version="3.0" date="2013-01-03">
-      - Добавлен Скайлинк Екатеринбург
-    </change>
-    <change version="11" major_version="3.0" date="2012-11-22">
-      - Исправлен счетчик "Начисления по договору за период" для Санкт-Петербурга
-    </change>
-    <change version="10" major_version="3.0" date="2012-11-17">
-      - Поддержка всех регионов
-    </change>
-    <change version="9" major_version="2.7" date="2012-11-17">
-      - Добавлен Скайлинк Калуга
-    </change>
-    <change version="8" major_version="2.6" date="2012-11-07">
-      - Для Скайлинк Москва добавлен счетчик Начисления по договору за период
-    </change>
-    <change version="7" major_version="2.6" date="2012-11-07">
-      - Для Скайлинк Санкт-Петербург добавлен счетчик Начисления по договору за период
-    </change>
-    <change version="6" major_version="2.6" date="2012-11-07">
-      - Добавлен Скайлинк Санкт-Петербург
-    </change>
-    <change version="5" major_version="2.4" date="2012-11-04">
-      - Добавлен Скайлинк Краснодарский край и республика Адыгея
-    </change>
-    <change version="4" major_version="2.3" date="2012-10-14">
-      - Исправлен Скайлинк Москва (изменения в процедуре входа)
-    </change>
-    <change version="3" major_version="2.2" date="2012-10-11">
-      - Исправлен Скайлинк Москва (новый личный кабинет)
-    </change>
-    <change version="2" major_version="2.1" date="2012-07-24">
-      - Добавлен Скайлинк Ульяновск
-    </change>
+	<change version="15" major_version="3.0" date="2013-12-27">
+	- На сайте skypoint для Москвы ввели защиту от роботов, теперь данные получаются аналогично приложению SkyPoint для компьютера.
+	</change>
+	<change version="14" major_version="3.0" date="2013-04-03">
+	- Добавлен счетчик остатка минут для московского филиала
+	</change>
+	<change version="13" major_version="3.0" date="2013-03-16">
+	- Добавлен Скайлинк Рязань
+	</change>
+	<change version="12" major_version="3.0" date="2013-01-03">
+	- Добавлен Скайлинк Екатеринбург
+	</change>
+	<change version="11" major_version="3.0" date="2012-11-22">
+	- Исправлен счетчик "Начисления по договору за период" для Санкт-Петербурга
+	</change>
+	<change version="10" major_version="3.0" date="2012-11-17">
+	- Поддержка всех регионов
+	</change>
+	<change version="9" major_version="2.7" date="2012-11-17">
+	- Добавлен Скайлинк Калуга
+	</change>
+	<change version="8" major_version="2.6" date="2012-11-07">
+	- Для Скайлинк Москва добавлен счетчик Начисления по договору за период
+	</change>
+	<change version="7" major_version="2.6" date="2012-11-07">
+	- Для Скайлинк Санкт-Петербург добавлен счетчик Начисления по договору за период
+	</change>
+	<change version="6" major_version="2.6" date="2012-11-07">
+	- Добавлен Скайлинк Санкт-Петербург
+	</change>
+	<change version="5" major_version="2.4" date="2012-11-04">
+	- Добавлен Скайлинк Краснодарский край и республика Адыгея
+	</change>
+	<change version="4" major_version="2.3" date="2012-10-14">
+	- Исправлен Скайлинк Москва (изменения в процедуре входа)
+	</change>
+	<change version="3" major_version="2.2" date="2012-10-11">
+	- Исправлен Скайлинк Москва (новый личный кабинет)
+	</change>
+	<change version="2" major_version="2.1" date="2012-07-24">
+	- Добавлен Скайлинк Ульяновск
+	</change>
 </history>

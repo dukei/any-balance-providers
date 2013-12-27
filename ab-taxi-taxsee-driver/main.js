@@ -1,10 +1,5 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Получает баланс в такси Максим
-
-Operator site: http://taxsee.ru
-Личный кабинет: http://www.taxsee.ru/drivercabinet/
 */
 
 var g_headers = {
@@ -17,21 +12,24 @@ var g_headers = {
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-    var baseurl = "http://www.taxsee.ru/drivercabinet/";
+    var baseurl = "http://taxsee.ru/drivercabinet/";
 
     AnyBalance.setDefaultCharset('utf-8'); 
     var html = AnyBalance.requestGet(baseurl + 'index.php', g_headers);
     
-    var form = getParam(html, null, null, /<form[^>]+id="login-form"[^>]*>([\s\S]*?)<\/form>/i);
-    var params = createFormParams(form, function(params, str, name, value){
-            if(name == 'username')
-                return prefs.login;
-            if(name == 'password')
-                return prefs.password;
-            return value;
-        });
-
-    html = AnyBalance.requestPost(baseurl + 'index.php', params, addHeaders({Referer: baseurl})); 
+    var form = getParam(html, null, null, /<form[^>]+id="loginForm"[^>]*>([\s\S]*?)<\/form>/i);
+	if(!form)
+		throw new AnyBalance.Error('Не удалось найти форму входа, сайт изменен?');
+	
+    var params = createFormParams(form, function(params, str, name, value) {
+		if(name == 'LoginForm[username]')
+			return prefs.login;
+		if(name == 'LoginForm[password]')
+			return prefs.password;
+		return value;
+	});
+	
+	html = AnyBalance.requestPost(baseurl + 'index.php', params, addHeaders({Referer: baseurl})); 
 
     if(!/.>Выход</i.test(html)){
         var error = getParam(html, null, null, /<div[^>]+alert-error[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
@@ -43,10 +41,9 @@ function main(){
 
     var result = {success: true};
 
-    var json = getParam(html, null, null, /user_profile\s*=\s*(\{[\s\S]*?\});/, null, getJson);
-//    getParam(html, result, 'fio', /ФИО[\s\S]*?<div[^>]+class="controls"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, '__tariff', /ФИО[\s\S]*?<div[^>]+class="controls"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'balance', /Доступный баланс[\s\S]*?<div[^>]+class="controls"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, '__tariff', /"Profile\[C_FIO\]"[^>]*value="([^"]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(result.__tariff, result, 'fio');
+    getParam(html, result, 'balance', /"Profile\[C_SALDO\]"[^>]*value="([^"]+)/i, replaceTagsAndSpaces, parseBalance);
 
     AnyBalance.setResult(result);
 }

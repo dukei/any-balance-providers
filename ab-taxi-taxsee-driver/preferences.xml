@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <EditTextPreference 
+    <EditTextPreference
+		obligatory="true"
         title="Позывной" 
         positiveButtonText="ОК" 
         summary="||{@s}" 
@@ -9,7 +10,8 @@
         dialogMessage="Введите свой позывной для входа в личный кабинет."
         key="login">
     </EditTextPreference>
-    <EditTextPreference 
+    <EditTextPreference
+		obligatory="true"
         positiveButtonText="ОК"
         key="password" 
         dialogTitle="Пароль"

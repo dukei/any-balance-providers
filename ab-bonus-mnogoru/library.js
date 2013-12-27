@@ -4,9 +4,15 @@ AnyBalance (http://any-balance-providers.googlecode.com)
 Содержит некоторые полезные для извлечения значений с сайтов функции.
 Для конкретного провайдера рекомендуется оставлять в этом файле только те функции, которые используются.
 
-library.js v0.05 от 26.11.13
+library.js v0.08 от 17.12.13
 
 changelog:
+17.12.13 parseMinutes - улучшена обработка минут с точками (28мин.40сек)
+
+05.12.13 parseMinutes - парсинг минут вида 49,25 (т.е. 49 минут и 15 секунд) (Д. Кочин)
+
+03.12.13 опять поправил parseMinutes, не парсились значения типа 252:22 мин
+
 26.11.13: подправлена parseMinutes(), правильное получение данных, если на входе "300 &#65533;мин"
 
 25.11.13: унифицирована parseMinutes() теперь поддерживает все подряд
@@ -129,25 +135,25 @@ function parseCurrency(text) {
 Если на входе будет просто число - вернет минуты.
 Если на входе будет 02:03 будет принят формат ММ:СС*/
 function parseMinutes(_text) {
-	var text = html_entity_decode(_text).replace(/[\s�]*/g, '');
+	var text = html_entity_decode(_text).replace(/[\s�]+/g, '');
 	var hour = 0, min = 0, sec = 0;
 	// Это формат ЧЧ:ММ:СС	
-	if(/^\d{1,2}:\d{1,2}:\d{1,2}$/i.test(text)) {
-		var regExp = /^(\d{1,2}):(\d{1,2}):(\d{1,2})$/i.exec(text);
+	if(/^\d+:\d+:\d+$/i.test(text)) {
+		var regExp = /^(\d+):(\d+):(\d+)$/i.exec(text);
 		hour = parseFloat(regExp[1]);
 		min = parseFloat(regExp[2]);
 		sec = parseFloat(regExp[3]);
 	// Это формат ММ:СС
-	} else if(/^\d{1,2}:\d{1,2}/i.test(text)) {
-		var regExp = /^(\d{1,2}):(\d{1,2})/i.exec(text);
+	} else if(/^\d+:\d+/i.test(text)) {
+		var regExp = /^(\d+):(\d+)/i.exec(text);
 		hour = 0;
 		min = parseFloat(regExp[1]);
 		sec = parseFloat(regExp[2]);
 	// Это любой другой формат, со словами либо просто число
 	} else {
 		hour = getParam(text, null, null, /(-?[\d\.,]*)\s*(?:час|ч|hour|h)/i, replaceFloat, parseFloat) || 0;
-		min = getParam(text, null, null, [/([\d.,]*)\s*(?:мин|м|хв|min|m)/i, /^\d+$/i], replaceFloat, parseFloat) || 0;
-		sec = getParam(text, null, null, /([\d.,]+)\s*(?:сек|c|с|sec|s)/i, replaceFloat, parseFloat) || 0;
+		min = getParam(text, null, null, [/([\d.,]*)\s*(?:мин|м|хв|min|m)/i, /^[\d.,]+$/i], replaceFloat, parseFloat) || 0;
+		sec = getParam(text, null, null, /([\d]+)\s*(?:сек|c|с|sec|s)/i, [/&minus;/ig, '-', /\s+/g, '', /,/g, '.'], parseFloat) || 0;
 	}
 	var val = (hour*3600) + (min * 60) + sec;
 	AnyBalance.trace('Parsed seconds (' + val + ') from: ' + _text);
@@ -707,7 +713,7 @@ function requestPostMultipart(url, data, headers) {
 	for (var name in data) {
 		parts.push(boundary, 'Content-Disposition: form-data; name="' + name + '"', '', data[name]);
 	}
-	parts.push(boundary + '--');
+	parts.push(boundary + '--\r\n');
 	if (!headers)
 		headers = {};
 	headers['Content-Type'] = 'multipart/form-data; boundary=' + boundary.substr(2);

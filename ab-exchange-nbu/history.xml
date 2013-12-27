@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-    <change version="2" date="2012-12-18">
-      - Возможность показывать курсы на единицу валюты
-    </change>
+	<change version="3" date="2013-12-27">
+	- Исправлено описание.
+	</change>
+	<change version="2" date="2012-12-18">
+	- Возможность показывать курсы на единицу валюты
+	</change>
 </history>

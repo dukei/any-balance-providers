@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <CheckBoxPreference
-        title="Курсы на единицу валюты"
-        defaultValue="false"
-        summaryOn="Показываются курсы на единицу валюты"
-        summaryOff="Показываются курсы как есть на странице НБУ"
-        key="normalize" />
+	<CheckBoxPreference
+		title="Курсы на единицу валюты"
+		defaultValue="false"
+		summaryOn="Показываются курсы на единицу валюты"
+		summaryOff="Показываются курсы как есть на странице НБУ"
+		key="normalize" />
 </PreferenceScreen>

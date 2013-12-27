@@ -34,7 +34,7 @@ function main(){
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'balance', />\s*(\d+)\s*бонусов\s*</i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance', />([^<]*)бонус/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'username', /class="authorized[^>]*>\s*Ура[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'cardnum', /class="authorized[^>]*>\s*Ура(?:[^>]*>){4}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);	
 	

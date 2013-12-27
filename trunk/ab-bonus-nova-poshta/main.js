@@ -18,7 +18,15 @@ function main(){
     });
 
     var result = {success: true};
-    
+
+    if(!/\/logout/i.test(html)){
+
+    var error = getParam(html, null, null, /<div id=\"error_list\">\s*([^<]*)<br \/>/i, replaceTagsAndSpaces, html_entity_decode);
+    if(error)
+        throw new AnyBalance.Error(error);
+        throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+    }
+
     // Номер карты
     sumParam(html, result, '__tariff', /Всі документи по картці (\d+)<br>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 

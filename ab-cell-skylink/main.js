@@ -1,11 +1,75 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Текущий баланс у сотового оператора Skylink.
-
-Сайт оператора: http://www.skylink.ru/
-Личный кабинет: https://www.skypoint.ru/
 */
+
+var g_headers = {
+	'Content-Type': 'text/xml; charset=utf-8',
+	'User-Agent': 'Mozilla/4.0 (compatible; MSIE 6.0; MS Web Services Client Protocol 2.0.50727.5472)',
+	'Connection': 'keep-alive',
+};
+
+function main(){
+    var prefs = AnyBalance.getPreferences();
+
+    var region = prefs.region || 'moscow';
+    var regionFunc = g_regions[region] || g_regions.moscow;
+
+    AnyBalance.trace("Entering region: " + region);
+
+    regionFunc();
+}
+
+function reqSkypoint(url, action, soapAction) {
+	return AnyBalance.requestPost(url, action, addHeaders({
+		SOAPAction: soapAction || 'http://www.skylink.ru/UWS/InvokeMethod21',
+		Expect: '100-continue',
+	}));	
+}
+
+function mainSkyPoint(prefs) {
+	
+	var hash = CryptoJS.SHA256(prefs.password);
+	var pass = hash.toString(CryptoJS.enc.Base64);
+	
+	var html = reqSkypoint('https://uws.skypoint.ru/sc/sc.asmx',
+	'<?xml version="1.0" encoding="utf-8"?><soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><soap:Body><Verify1 xmlns="http://www.skylink.ru/SC"><phone>'+prefs.login+'</phone><password>'+pass+'</password><users /></Verify1></soap:Body></soap:Envelope>',
+	'http://www.skylink.ru/SC/Verify1');
+
+	if (!/Verify1Result[^>]*Value\s*=\s*"\s*True/i.test(html)) {
+		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
+		if (error && /Неверный логин или пароль/i.test(error))
+			throw new AnyBalance.Error(error, null, true);
+		if (error)
+			throw new AnyBalance.Error(error);
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+	}	
+	var result = {success: true};
+	
+	html = reqSkypoint('https://uws.skypoint.ru/uws.asmx',
+	'<?xml version="1.0" encoding="utf-8"?><soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><soap:Body><InvokeMethod21 xmlns="http://www.skylink.ru/UWS"><dn>'+prefs.login+'</dn><pwd>'+pass+'</pwd><guid>f1e07de2-2fc5-4beb-bf9c-b997124658a4</guid><Parameters>I_DN='+prefs.login+',i_ExtParam=$SUBSYSTEM=WindowsSkyPoint</Parameters><Delimiter>,</Delimiter></InvokeMethod21></soap:Body></soap:Envelope>');
+	getParam(html, result, '__tariff', /<TARIFF_PLAN>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	
+	if(isAvailable('balance')) {
+		html = reqSkypoint('https://uws.skypoint.ru/uws.asmx',
+		'<?xml version="1.0" encoding="utf-8"?><soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><soap:Body><InvokeMethod21 xmlns="http://www.skylink.ru/UWS"><dn>'+prefs.login+'</dn><pwd>'+pass+'</pwd><guid>44e7a309-b54d-4cfb-b169-efe06fdd9f35</guid><Parameters>I_DN='+prefs.login+',i_ExtParam=$SUBSYSTEM=WindowsSkyPoint</Parameters><Delimiter>,</Delimiter></InvokeMethod21></soap:Body></soap:Envelope>');
+		
+		getParam(html, result, 'balance', /<BALANCE>([^<]+)/i, replaceTagsAndSpaces, parseBalance);		
+	}
+	if(isAvailable('acc_num')) {
+		html = reqSkypoint('https://uws.skypoint.ru/uws.asmx',
+		'<?xml version="1.0" encoding="utf-8"?><soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><soap:Body><InvokeMethod21 xmlns="http://www.skylink.ru/UWS"><dn>'+prefs.login+'</dn><pwd>'+pass+'</pwd><guid>ff644d4c-0dc5-4687-a481-868dc87a685c</guid><Parameters>I_DN='+prefs.login+',i_ExtParam=$SUBSYSTEM=WindowsSkyPoint</Parameters><Delimiter>,</Delimiter></InvokeMethod21></soap:Body></soap:Envelope>');
+		
+		getParam(html, result, 'acc_num', /<ACCOUNT_ID>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);		
+	}
+	if(isAvailable('userName')) {
+		html = reqSkypoint('https://uws.skypoint.ru/uws.asmx',
+		'<?xml version="1.0" encoding="utf-8"?><soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><soap:Body><InvokeMethod21 xmlns="http://www.skylink.ru/UWS"><dn>'+prefs.login+'</dn><pwd>'+pass+'</pwd><guid>6078690c-024d-4a32-8789-84c976adf62c</guid><Parameters>I_DN='+prefs.login+',i_ExtParam=$SUBSYSTEM=WindowsSkyPoint</Parameters><Delimiter>,</Delimiter></InvokeMethod21></soap:Body></soap:Envelope>');
+
+		getParam(html, result, 'userName', /<CLIENT_NAME>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	}
+	
+	AnyBalance.setResult(result);
+}
 
 function getViewState(html){
     return getParam(html, null, null, /name="__VIEWSTATE".*?value="([^"]*)"/);
@@ -50,20 +114,12 @@ var g_regions = {
     ryaz: mainRyaz
 };
 
-function main(){
-    var prefs = AnyBalance.getPreferences();
-    
-    var region = prefs.region || 'moscow';
-    var regionFunc = g_regions[region] || g_regions.moscow;
-
-    AnyBalance.trace("Entering region: " + region);
-
-    regionFunc();
-}
-
 function mainMoscow(){
-    var prefs = AnyBalance.getPreferences();
-
+	var prefs = AnyBalance.getPreferences();
+	
+	mainSkyPoint(prefs);
+	return;
+	// Тут ввели капчу, пока не будем получать отсюда
     var baseurl = "https://www.skypoint.ru/";
     AnyBalance.setDefaultCharset('utf-8');
 

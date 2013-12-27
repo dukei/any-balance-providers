@@ -55,11 +55,11 @@ function mainSkyPoint(prefs) {
 		
 		getParam(html, result, 'balance', /<BALANCE>([^<]+)/i, replaceTagsAndSpaces, parseBalance);		
 	}
-	if(isAvailable('acc_num')) {
+	if(isAvailable('userNum')) {
 		html = reqSkypoint('https://uws.skypoint.ru/uws.asmx',
 		'<?xml version="1.0" encoding="utf-8"?><soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><soap:Body><InvokeMethod21 xmlns="http://www.skylink.ru/UWS"><dn>'+prefs.login+'</dn><pwd>'+pass+'</pwd><guid>ff644d4c-0dc5-4687-a481-868dc87a685c</guid><Parameters>I_DN='+prefs.login+',i_ExtParam=$SUBSYSTEM=WindowsSkyPoint</Parameters><Delimiter>,</Delimiter></InvokeMethod21></soap:Body></soap:Envelope>');
 		
-		getParam(html, result, 'acc_num', /<ACCOUNT_ID>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);		
+		getParam(html, result, 'userNum', /<ACCOUNT_ID>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);		
 	}
 	if(isAvailable('userName')) {
 		html = reqSkypoint('https://uws.skypoint.ru/uws.asmx',

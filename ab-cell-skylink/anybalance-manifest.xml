@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="15" major_version="3.0">ab-cell-skylink</id>
+	<id version="16" major_version="3.0">ab-cell-skylink</id>
 	<name>Skylink</name>
 	<api flags="no_browser"/>
 	<description html="true"><![CDATA[
@@ -40,7 +40,6 @@
 		<counter id="userName" name="ФИО" type="text"/>
 		<counter id="userNum" name="Лицевой счет" type="text"/>
 		<counter id="status" name="Статус" type="text"/>
-		<counter id="acc_num" name="Номер счета" type="text"/>
 		<counter id="charged" name="Начисления по договору за период" units=" р"/>
 	</counters>
 	<keywords>скайлинк, мобильный</keywords>

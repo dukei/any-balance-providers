@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="16" major_version="3.0" date="2013-12-27">
+	- Исправлено отображение счетчика Лицевой счет.
+	</change>
 	<change version="15" major_version="3.0" date="2013-12-27">
 	- На сайте skypoint для Москвы ввели защиту от роботов, теперь данные получаются аналогично приложению SkyPoint для компьютера.
 	</change>

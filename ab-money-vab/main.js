@@ -7,62 +7,6 @@
 Личный кабинет: https://online.deltabank.com.ua
 */
 
-function getParam (html, result, param, regexp, replaces, parser) {
-	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
-		return;
-
-        var value;
-        if(regexp){
-            var matches = regexp.exec (html);
-            if(matches)
-                value = (matches.length <= 1 ? matches[0] : matches[1]);
-        }else{
-            value = html;
-        }
-
-	if (typeof(value) != 'undefined') {
-		if (replaces) {
-			for (var i = 0; i < replaces.length; i += 2) {
-				value = value.replace (replaces[i], replaces[i+1]);
-			}
-		}
-		if (parser)
-			value = parser (value);
-
-		if(param)
-			result[param] = value;
-		return value
-	}
-}
-
-var replaceTagsAndSpaces = [/\\n/g, ' ', /\[br\]/ig, ' ', /<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
-var replaceFloat = [/\s+/g, '', /,/g, '.'];
-
-function parseBalance(text){
-    var _text = text.replace(/\s+/g, '');
-    var val = getParam(_text, null, null, /(-?\d[\d\.,]*)/, replaceFloat, parseFloat);
-    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
-    return val;
-}
-
-function parseCurrency(text){
-    var _text = text.replace(/\s+/g, '');
-    var val = getParam(_text, null, null, /-?\d[\d\.,]*\s*(\S*)/);
-    AnyBalance.trace('Parsing currency (' + val + ') from: ' + text);
-    return val;
-}
-
-function parseDate(str){
-    var matches = /(\d+)[^\d](\d+)[^\d](\d+)/.exec(str);
-    if(matches){
-          var date = new Date(+matches[3], matches[2]-1, +matches[1]);
-	  var time = date.getTime();
-          AnyBalance.trace('Parsing date ' + date + ' from value: ' + str);
-          return time;
-    }
-    AnyBalance.trace('Failed to parse date from value: ' + str);
-}
-
 function getViewState(html){
     return getParam(html, null, null, /name="__VSTATE".*?value="([^"]*)"/);
 }
@@ -104,10 +48,33 @@ function main(){
         wzLogin$tbPassword:prefs.password
     }, g_headers);
 
+    if(!/ctl00\$btnLogout|tbOneTimePassword/i.test(html)){
+        var error = getParam(html, null, null, /<span[^>]+id="globalErrorMessage"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+        if(error)
+            throw new AnyBalance.Error(error, null, /Обліковий запис не знайдено|некоректні логін чи пароль|Помилковий пароль|Помилковий security-пароль/i.test(error));
+        throw new AnyBalance.Error("Не удалось зайти в интернет-банк. Сайт изменен?");
+    }
+
+    if(/tbOneTimePassword/i.test(html)){
+    	if(!prefs.smspass)
+    		throw new AnyBalance.Error('Для входа в интернет банк требуется ввести временный код из смс. Он действует несколько дней. Введите его в настройки провайдера.', null, true);
+
+        html = AnyBalance.requestPost(baseurl + 'Pages/LogOn.aspx', {
+            __LASTFOCUS:'',
+            __EVENTTARGET: 'wzLogin$btnConfirm',
+            __EVENTARGUMENT:'',
+            __VSTATE:getViewState(html),
+            __VIEWSTATE:'',
+            __VIEWSTATEENCRYPTED:'',
+            __EVENTVALIDATION:getEventValidation(html),
+            wzLogin$ucLogOnOneTimePassword$ucOneTimePassword$fldOneTimePassword$tbOneTimePassword:prefs.smspass
+        }, addHeaders({Referer: baseurl + 'Pages/LogOn.aspx'}));
+    }
+
     if(!/ctl00\$btnLogout/i.test(html)){
         var error = getParam(html, null, null, /<span[^>]+id="globalErrorMessage"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
-            throw new AnyBalance.Error(error);
+            throw new AnyBalance.Error(error, null, /Обліковий запис не знайдено|некоректні логін чи пароль|Помилковий пароль|Помилковий security-пароль/i.test(error));
         throw new AnyBalance.Error("Не удалось зайти в интернет-банк. Сайт изменен?");
     }
 
@@ -248,27 +215,3 @@ function fetchCredit(html, baseurl, result){
 
     AnyBalance.setResult(result);
 }
-
-function requestPostMultipart(url, data, headers){
-	var parts = [];
-	var boundary = '------WebKitFormBoundaryrceZMlz5Js39A2A6';
-	for(var name in data){
-		parts.push(boundary, 
-		'Content-Disposition: form-data; name="' + name + '"',
-		'',
-		data[name]);
-	}
-	parts.push(boundary);
-        if(!headers) headers = {};
-	headers['Content-Type'] = 'multipart/form-data; boundary=' + boundary.substr(2);
-	return AnyBalance.requestPost(url, parts.join('\r\n'), headers);
-}
-
-function html_entity_decode(str)
-{
-    //jd-tech.net
-    var tarea=document.createElement('textarea');
-    tarea.innerHTML = str;
-    return tarea.value;
-}
-

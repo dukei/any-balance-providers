@@ -117,8 +117,10 @@ function main() {
 	AnyBalance.trace('Запрашиваем данные /login.html');
 	AnyBalance.trace(html);
 	
+	var tform = getParam(html, null, null, /<form[^>]+name="loginFormB2C:loginForm"[^>]*>[\s\S]*?<\/form>/i);
+
 	// Похоже что обновляемся через мобильный инет, значит авторизацию надо пропустить
-	if(/logOutLink|Загрузка баланса\.\.\./i.test(html)) {
+	if(!tform && /logOutLink|Загрузка баланса\.\.\./i.test(html)) {
 		var phone = getParam(html, null, null, [/"sso-number"[^>]*>([^<]*)/i, /<h1[^>]+class="phone-number"[^>]*>([\s\S]*?)<\/h1>/i], [/\D/g, '']);
 		if(!phone)
 			throw new AnyBalance.Error('Не удалось выяснить на какой номер мы залогинились автоматически, сайт изменен?');
@@ -131,16 +133,17 @@ function main() {
 		}
 		AnyBalance.trace('Залогинены на правильный номер ' + phone);
 	} else {
-		AnyBalance.trace('Похоже, что обновление происходит НЕ через мобильный интернет.');
 		
-		var tform = getParam(html, null, null, /<form[^>]+name="loginFormB2C:loginForm"[^>]*>[\s\S]*?<\/form>/i);
 		if (!tform) { //Если параметр не найден, то это, скорее всего, свидетельствует об изменении сайта или о проблемах с ним
+		    AnyBalance.trace('Похоже, форма авторизации отсутствует.');
 			if (AnyBalance.getLastStatusCode() > 400) {
 				AnyBalance.trace('Beeline returned: ' + AnyBalance.getLastStatusString());
 				throw new AnyBalance.Error('Личный кабинет Билайн временно не работает. Пожалуйста, попробуйте позднее.');
 			}
 			AnyBalance.trace(html);
 			throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
+		}else{
+		    AnyBalance.trace('Похоже, что форма авторизации присутствует.');
 		}
 
 		var params = createFormParams(tform);

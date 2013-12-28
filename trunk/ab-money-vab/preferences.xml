@@ -3,6 +3,7 @@
     <EditTextPreference 
         title="Логин" 
         positiveButtonText="ОК" 
+        obligatory="true"
         summary="|Введите логин в интернет-банк|{@s}" 
         dialogTitle="Логин" 
         negativeButtonText="Отмена" 
@@ -13,11 +14,21 @@
         positiveButtonText="ОК"
         key="password" 
         dialogTitle="Пароль"
+        obligatory="true"
         negativeButtonText="Отмена"
         title="Пароль"
         summary="|Введите пароль в интернет-банк|***********"
         dialogMessage="Введите пароль, используемый для входа в VAB Интернет Банк."
         inputType="textPassword">
+    </EditTextPreference>
+    <EditTextPreference 
+        title="Временный SMS-пароль" 
+        positiveButtonText="ОК" 
+        summary="|Введите временный SMS-пароль для входа в интернет-банк|{@s}" 
+        dialogTitle="Временные SMS-пароль" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Теперь VAB требует для входа ввода временного SMS-пароля, который действует несколько дней. Введите его в настройки провайдера, чтобы хоть немного понаслаждаться автоматической проверкой баланса"
+        key="smspass">
     </EditTextPreference>
     <ListPreference 
         key="type" 

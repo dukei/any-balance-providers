@@ -37,6 +37,9 @@ function main(){
     var prefs = AnyBalance.getPreferences();
     var baseurl = 'https://www.avangard.ru/';
     AnyBalance.setDefaultCharset('windows-1251');
+
+    checkEmpty(prefs.login, 'Введите логин в интернет-банк!');
+    checkEmpty(prefs.password, 'Введите пароль в интернет-банк!');
     
     var what = prefs.what || 'card';
     if(prefs.num && !/\d{4}/.test(prefs.num))
@@ -51,7 +54,7 @@ function main(){
 
     var error = getParam(html, null, null, /<!--WAS_ERROR-->([\s\S]*?)<!--\/WAS_ERROR-->/i, replaceTagsAndSpaces);
     if(error)
-        throw new AnyBalance.Error(error);
+        throw new AnyBalance.Error(error, null, /Вы ошиблись в логине или пароле/i.test(error));
 
     var firstpage = getParam(html, null, null, /window.location\s*=\s*"([^"]*)"/i);
     if(!firstpage)

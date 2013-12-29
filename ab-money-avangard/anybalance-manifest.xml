@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="10">ab-money-avangard</id>
+	<id version="11">ab-money-avangard</id>
+	<api flags="no_browser"/>
 	<name>Банк Авангард</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем остатке и других параметрах карт и счетов для пользователей банка "Авангард".</p>
-	<p>Информация берется из системы Интернет-банк (http://www.avangard.ru/login/logon_enter.html).</p>
+	<p>Информация берется из системы Интернет-банк (https://www.avangard.ru/login/www/ibank_enter.php).</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
 	<p>Для входа в Интернет-банк потребуется логин и пароль:</p>
 	<ul> 
-	<li>Получить логин и пароль вы можете на странице http://www.avangard.ru/login/firstlogon_enter.html.</li>
+	<li>Получить логин и пароль вы можете на странице https://www.avangard.ru/login/www/ibank_enter.php?fl=1.</li>
 	</ul> 
 	<p><b>Особенности:</b></p>
 	<p>Когда происходит вход в Интернет-банк, банк присылает SMS на ваш телефон. Так как для получения счетчиков этот провайдер входит в Интернет-банк, вы будете получать SMS каждый раз, когда провайдер делает запрос счетчиков.</p>   
@@ -18,7 +19,6 @@
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>api:jquery.min.js</js>
 		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
@@ -31,6 +31,7 @@
 		<counter id="freepay" name="Платеж льготного периода"/>
 		<counter id="freepaydate" name="Дата платежа льготного периода" type="time" format="dd/MM/yyyy"/>
 		<counter id="debt" name="Задолженность" units=" {@currency}"/>
+		<counter id="miles" name="Бонусные мили" units=" миль"/>
 		<counter id="limit" name="Кредитный лимит" units=" {@currency}"/>
 		<counter id="cardnum" name="Номер карты" type="text"/>
 		<counter id="cardname" name="Имя на карте" type="text"/>
@@ -39,6 +40,8 @@
 		<counter id="accname" name="Имя счета" type="text"/>
 		<counter id="cardtype" name="Тип" type="text"/>
 		<counter id="cardstatus" name="Статус" type="text"/>
+		<counter id="miles_avail" name="Доступные мили" units=" миль"/>
+		<counter id="miles_due" name="Ожидаемые мили" units=" миль"/>
 	</counters>
 	<keywords></keywords>
 	<type>money</type>

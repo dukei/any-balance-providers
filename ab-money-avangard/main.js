@@ -131,9 +131,14 @@ function fetchBankYur(html, baseurl){
     AnyBalance.setResult(result);
 }
 
+var g_lastToken;
 function getStateToken(html){
+       //Всегда запоминаем предыдущий токен, на случай, если он понадобится в дальнейшем
+       //Потому что иногда получаемые страницы токена не содержат
        var token = getParam(html, null, null, /<input[^>]*name="oracle\.adf\.faces\.STATE_TOKEN"[^>]*value="([^"]*)/i);
-       return token;
+       if(token)
+           g_lastToken = token;
+       return g_lastToken;
 }
 
 function fetchAccountPhysic(html, baseurl) {
@@ -141,6 +146,41 @@ function fetchAccountPhysic(html, baseurl) {
 	var cardNum = prefs.num || '';
 	
 	var pattern = new RegExp('<table\\s+width="700"[^>]*>(?:[^>]*>){8,25}\\d{5,}'+cardNum+'(?:[\\s\\S]*?</table>){2,4}', 'i');
+}
+
+function formatDate (date) {
+    var day = date.getDate();
+    if (day < 10)
+        day = '0' + day;
+
+    var month = date.getMonth () + 1;
+    if (month < 10)
+        month = '0' + month;
+
+    return day + '.' + month + '.' + date.getFullYear();
+}
+
+function submitForm(html, baseurl, source){
+    var form = getParam(html, null, null, /<form[^>]+name="f"[^>]*>[\s\S]*?<\/form>/i);
+    if(!form){
+        AnyBalance.trace(html);
+        throw new AnyBalance.Error('Не удалось найти форму на странице. Сайт изменен?');
+    }
+
+    var params = createFormParams(form, function(params, str, name, value) {
+		if (/type="submit"/i.test(str)) //Все сабмиты пропускаем
+			return;
+		return value;
+	});
+    params.source = source;
+
+    var action = getParam(form, null, null, /<form[^>]+action="\/\w+Avn(\/[^"]*)/i, null, html_entity_decode); 
+    if(!action){
+        AnyBalance.trace(form);
+        throw new AnyBalance.Error('Не удалось найти адрес передачи формы. Сайт изменен?');
+    }
+
+    return AnyBalance.requestPost(baseurl + action, params, g_headers);
 }
 
 function fetchBankPhysic(html, baseurl){
@@ -199,9 +239,12 @@ function fetchBankPhysic(html, baseurl){
 			}
 			// Это кредит
 			if(isAvailable('minpaydate', 'minpay', 'limit', 'freepaydate', 'freepay', 'debt')) {
+				var dt = new Date();
+				var mdt = new Date(dt.getFullYear(), dt.getMonth(), 1);
+
                 html = AnyBalance.requestPost(baseurl + '/faces/pages/accounts/acc_state_curr_debt_v.jspx', {
-                    'f:startdate':'01.12.2013',
-					'f:finishdate':'18.12.2013',
+                    'f:startdate':formatDate(mdt),
+					'f:finishdate':formatDate(dt),
                     'oracle.adf.faces.FORM':'f',
                     'oracle.adf.faces.STATE_TOKEN':getStateToken(html),
 					// Выписки и отчеты
@@ -210,8 +253,8 @@ function fetchBankPhysic(html, baseurl){
                 }, addHeaders({Referer: baseurl + '/faces/pages/sms/history.jspx'}));
 
                 html = AnyBalance.requestPost(baseurl + '/faces/pages/sms/history.jspx', {
-                    'f:startdate':'01.12.2013',
-					'f:finishdate':'18.12.2013',
+                    'f:startdate':formatDate(mdt),
+					'f:finishdate':formatDate(dt),
                     'oracle.adf.faces.FORM':'f',
                     'oracle.adf.faces.STATE_TOKEN':getStateToken(html),
 					// Текущая задолженость
@@ -245,108 +288,35 @@ function fetchBankPhysic(html, baseurl){
                     source:getParam(html, null, null, /info_card_preference_enabled.gif[\s\S]*?\{source:'([^']*)/i)
                 }, g_headers);
 
-                html = AnyBalance.requestPost(baseurl + '/faces/pages/accounts/preference_info_inner.jspx', {time: new Date().getTime()}, addHeaders({
+                var _html = AnyBalance.requestPost(baseurl + '/faces/pages/accounts/preference_info_inner.jspx', {time: new Date().getTime()}, addHeaders({
                     'Referer':baseurl + '/faces/pages/accounts/preference_info.jspx',
                     'X-Requested-With':'XMLHttpRequest'
                 }));
-				getParam(html, result, 'lgotsum', /Для получения льготы необходимо сделать покупок на сумму\s*<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-				getParam(html, result, 'lgottill', /Для получения льготы необходимо сделать покупок на сумму(?:[\s\S]*?<span[^>]*>){2}([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseDate);
+				getParam(_html, result, 'lgotsum', /Для получения льготы необходимо сделать покупок на сумму\s*<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+				getParam(_html, result, 'lgottill', /Для получения льготы необходимо сделать покупок на сумму(?:[\s\S]*?<span[^>]*>){2}([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseDate);
             }
        }
     }
-	/*	var $html = $(html);
-    var acccardnum = null;
-	
-    var $acc = $html.find('table[width="700"]').filter(function(i){
-        var matches = pattern.exec($(this).text());
-        if(matches && !acccardnum)
-            acccardnum = matches[1];
-        return !!matches;
-    }).first();
 
-    if(!$acc.size()){
-        if(prefs.num)
-            throw new AnyBalance.Error('Не удалось найти ' + g_phrases.kartu[what] + ' с последними цифрами ' + prefs.num);
-        else
-            throw new AnyBalance.Error('Не удалось найти ни ' + g_phrases.karty1[what] + '!');
-    }
+	if(AnyBalance.isAvailable('miles', 'miles_avail', 'miles_due')) {
+        html = submitForm(html, baseurl, 'f:airNotSelectedButton');
+        //Бонусные мили
+        var bonusSource = getParam(html, null, null, /<input[^>]+name="([^"]*)[^>]*value="&#1041;&#1086;&#1085;&#1091;&#1089;&#1085;&#1099;&#1077; &#1084;&#1080;&#1083;&#1080;"/i, null, html_entity_decode);
+        if(!bonusSource){
+        	AnyBalance.trace(html);
+            AnyBalance.trace('Не удалось найти ссылку на Бонусные мили.');
+        }else{
+            html = submitForm(html, baseurl, bonusSource);
 
-    var result = {success: true};
-
-    getParam($acc.find('a.xl').text(), result, 'accnum', /(\d{20})/);
-    getParam($acc.find('a.xl').text(), result, '__tariff', /(\d{20})/);
-    getParam($acc.find('tr:has(a.xl)').text(), result, 'accname', /([\S\s]*?)\d{20}/, replaceTagsAndSpaces);
-    
-	getParam($acc.find('tr:first-child td:last-child td:nth-child(5)').text(), result, 'balance', null, replaceTagsAndSpaces, parseBalance);
-    //var balance = getParam($acc.find('tr:first-child td:last-child b').text(), null, null, null, replaceTagsAndSpaces, parseBalance);
-    getParam($acc.find('tr:first-child td:last-child td:last-child').text(), result, 'currency', null, replaceTagsAndSpaces);
-	
-    var cardnum = '';
-    if(what == 'card'){
-        var $card = $acc.find('table.cardListTable tr:contains("' + acccardnum + '")').first();
-        if($card.size()){
-            cardnum = getParam($card.find('td:nth-child(2)').text(), null, null, null, replaceTagsAndSpaces);
-            getParam($card.find('td:nth-child(2)').text(), result, 'cardnum', null, replaceTagsAndSpaces);
-            getParam($card.find('td:nth-child(2)').text(), result, '__tariff', null, replaceTagsAndSpaces);
-            getParam($card.find('td:nth-child(3)').text(), result, 'cardname', null, replaceTagsAndSpaces);
-            getParam($card.find('td:nth-child(4)').text(), result, 'cardtill', null, replaceTagsAndSpaces);
-            getParam($card.find('td:nth-child(5)').text(), result, 'cardtype', null, replaceTagsAndSpaces);
-            getParam($card.find('td:nth-child(6)').text(), result, 'cardstatus', null, replaceTagsAndSpaces);
+            //Всего бонусных миль на
+            getParam(html, result, 'miles', /&#1042;&#1089;&#1077;&#1075;&#1086; &#1073;&#1086;&#1085;&#1091;&#1089;&#1085;&#1099;&#1093; &#1084;&#1080;&#1083;&#1100; &#1085;&#1072;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+            //доступных миль
+            getParam(html, result, 'miles_avail', />&#1076;&#1086;&#1089;&#1090;&#1091;&#1087;&#1085;&#1099;&#1093; &#1084;&#1080;&#1083;&#1100;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+            //ожидаемых миль
+            getParam(html, result, 'miles_due', />&#1086;&#1078;&#1080;&#1076;&#1072;&#1077;&#1084;&#1099;&#1093; &#1084;&#1080;&#1083;&#1100;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
         }
-    }
 
-    if(AnyBalance.isAvailable('limit', 'minpay', 'minpaydate', 'freepay', 'freepaydate', 'debt')){
-       //{source:'f:_id164:0:_id180'}
-       var source = getParam($acc.find('a.xl').attr('onclick'), null, null, /\{source:'([^']*)/i);
-       //<input type="hidden" name="oracle.adf.faces.STATE_TOKEN" value="-118qdrmfn5">
-       var token = getStateToken(html);
-       if(source && token){
-//            AnyBalance.setCookie('www.avangard.ru', 'oracle.uix', '0^^GMT+4:00');
-//            AnyBalance.setCookie('www.avangard.ru', 'xscroll-faces/pages/accounts/all_acc.jspx', '0:1354528466127');
-//            AnyBalance.setCookie('www.avangard.ru', 'yscroll-faces/pages/accounts/all_acc.jspx', '0:1354528466130');
+	}
 
-            html = AnyBalance.requestPost(baseurl + '/faces/pages/accounts/all_acc.jspx', {
-                'oracle.adf.faces.FORM':'f',
-                'oracle.adf.faces.STATE_TOKEN': token,
-                source: source
-            }, g_headers/*, {Referer: baseurl + '/faces/pages/accounts/all_acc.jspx'}*);
-       
-            //До 31.08.2012 для уплаты минимального платежа необходимо внести 1,675.05 RUR     
-            //&#1044;&#1086; 31.08.2012 &#1076;&#1083;&#1103; &#1091;&#1087;&#1083;&#1072;&#1090;&#1099; &#1084;&#1080;&#1085;&#1080;&#1084;&#1072;&#1083;&#1100;&#1085;&#1086;&#1075;&#1086; &#1087;&#1083;&#1072;&#1090;&#1077;&#1078;&#1072; &#1085;&#1077;&#1086;&#1073;&#1093;&#1086;&#1076;&#1080;&#1084;&#1086; &#1074;&#1085;&#1077;&#1089;&#1090;&#1080; 1,675.05 RUR
-            getParam(html, result, 'minpaydate', /&#1044;&#1086;\s*([\d\.]+)\s*&#1076;&#1083;&#1103; &#1091;&#1087;&#1083;&#1072;&#1090;&#1099; &#1084;&#1080;&#1085;&#1080;&#1084;&#1072;&#1083;&#1100;&#1085;&#1086;&#1075;&#1086; &#1087;&#1083;&#1072;&#1090;&#1077;&#1078;&#1072; &#1085;&#1077;&#1086;&#1073;&#1093;&#1086;&#1076;&#1080;&#1084;&#1086; &#1074;&#1085;&#1077;&#1089;&#1090;&#1080;/i, null, parseDate);
-            getParam(html, result, 'minpay', /&#1044;&#1086;\s*[\d\.]+\s*&#1076;&#1083;&#1103; &#1091;&#1087;&#1083;&#1072;&#1090;&#1099; &#1084;&#1080;&#1085;&#1080;&#1084;&#1072;&#1083;&#1100;&#1085;&#1086;&#1075;&#1086; &#1087;&#1083;&#1072;&#1090;&#1077;&#1078;&#1072; &#1085;&#1077;&#1086;&#1073;&#1093;&#1086;&#1076;&#1080;&#1084;&#1086; &#1074;&#1085;&#1077;&#1089;&#1090;&#1080;([^<]*)/i, replaceTagsAndSpaces, parseBalance2);
-            //Кредитный лимит
-            getParam(html, result, 'limit', /&#1050;&#1088;&#1077;&#1076;&#1080;&#1090;&#1085;&#1099;&#1081; &#1083;&#1080;&#1084;&#1080;&#1090;:[\s\S]*?<td[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-            var limit = getParam(html, null, null, /&#1050;&#1088;&#1077;&#1076;&#1080;&#1090;&#1085;&#1099;&#1081; &#1083;&#1080;&#1084;&#1080;&#1090;:[\s\S]*?<td[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-            //Для выполнения условия льготного периода Вы можете внести сумму в размере 14,656.58 RUR по 20.08.2012 включительно
-            //&#1044;&#1083;&#1103; &#1074;&#1099;&#1087;&#1086;&#1083;&#1085;&#1077;&#1085;&#1080;&#1103; &#1091;&#1089;&#1083;&#1086;&#1074;&#1080;&#1103; &#1083;&#1100;&#1075;&#1086;&#1090;&#1085;&#1086;&#1075;&#1086; &#1087;&#1077;&#1088;&#1080;&#1086;&#1076;&#1072; &#1042;&#1099; &#1084;&#1086;&#1078;&#1077;&#1090;&#1077; &#1074;&#1085;&#1077;&#1089;&#1090;&#1080; &#1089;&#1091;&#1084;&#1084;&#1091; &#1074; &#1088;&#1072;&#1079;&#1084;&#1077;&#1088;&#1077; 14,656.58 RUR &#1087;&#1086; 20.08.2012
-            getParam(html, result, 'freepaydate', /&#1044;&#1083;&#1103; &#1074;&#1099;&#1087;&#1086;&#1083;&#1085;&#1077;&#1085;&#1080;&#1103; &#1091;&#1089;&#1083;&#1086;&#1074;&#1080;&#1103; &#1083;&#1100;&#1075;&#1086;&#1090;&#1085;&#1086;&#1075;&#1086; &#1087;&#1077;&#1088;&#1080;&#1086;&#1076;&#1072; &#1042;&#1099; &#1084;&#1086;&#1078;&#1077;&#1090;&#1077; &#1074;&#1085;&#1077;&#1089;&#1090;&#1080; &#1089;&#1091;&#1084;&#1084;&#1091; &#1074; &#1088;&#1072;&#1079;&#1084;&#1077;&#1088;&#1077;[^<]*?&#1087;&#1086;\s*([\d\.]+)/i, null, parseDate);
-            getParam(html, result, 'freepay', /&#1044;&#1083;&#1103; &#1074;&#1099;&#1087;&#1086;&#1083;&#1085;&#1077;&#1085;&#1080;&#1103; &#1091;&#1089;&#1083;&#1086;&#1074;&#1080;&#1103; &#1083;&#1100;&#1075;&#1086;&#1090;&#1085;&#1086;&#1075;&#1086; &#1087;&#1077;&#1088;&#1080;&#1086;&#1076;&#1072; &#1042;&#1099; &#1084;&#1086;&#1078;&#1077;&#1090;&#1077; &#1074;&#1085;&#1077;&#1089;&#1090;&#1080; &#1089;&#1091;&#1084;&#1084;&#1091; &#1074; &#1088;&#1072;&#1079;&#1084;&#1077;&#1088;&#1077;([^<]*?)&#1087;&#1086;/i, replaceTagsAndSpaces, parseBalance2);
-
-            if(AnyBalance.isAvailable('debt') && limit){
-                result.debt = limit - result.balance; //Задолженность
-            }
-
-           
-            if(AnyBalance.isAvailable('lgotsum', 'lgottill')){
-                html = AnyBalance.requestPost(baseurl + '/faces/pages/accounts/card_acc_detailed.jspx', {
-                    'f:_id216:rangeStart':0,
-                    'oracle.adf.faces.FORM':'f',
-                    'oracle.adf.faces.STATE_TOKEN':getStateToken(html),
-                    source:getParam(html, null, null, /info_card_preference_enabled.gif[\s\S]*?\{source:'([^']*)/i)
-                }, g_headers);
-
-                html = AnyBalance.requestPost(baseurl + '/faces/pages/accounts/preference_info_inner.jspx', {time: new Date().getTime()}, addHeaders({
-                    'Referer':baseurl + '/faces/pages/accounts/preference_info.jspx',
-                    'X-Requested-With':'XMLHttpRequest'
-                }));
-            
-                getParam(html, result, 'lgotsum', /Для получения льготы необходимо сделать покупок на сумму\s*<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-                getParam(html, result, 'lgottill', /Для получения льготы необходимо сделать покупок на сумму(?:[\s\S]*?<span[^>]*>){2}([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseDate);
-                 
-            }
-       }
-    }
-*/
     AnyBalance.setResult(result);
 }

@@ -7,7 +7,7 @@
         summary="|Введите ваш Логин|{@s}" 
         dialogTitle="Логин" 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите ваш Логин для входа в систему Интернет-Банк. Если у вас его нет, получите его на сайте https://www.avangard.ru/login/firstlogon_enter.html"
+        dialogMessage="Введите ваш Логин для входа в систему Интернет-Банк. Если у вас его нет, получите его на сайте https://www.avangard.ru."
         key="login">
     </EditTextPreference>
     <EditTextPreference
@@ -24,7 +24,7 @@
     <ListPreference 
         key="what" 
         title="Что смотреть"
-        summary="||{@s}\n"
+        summary="||{@s}"
         entries="Карта|Счет"
         entryValues="card|acc"
 	defaultValue="card">

@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1" version="3">ab-transport-jojo</id>
+  <id major_version="2" version="1">ab-transport-jojo</id>
   <name>Skanetrafiken Jojo card</name>
   <description>
 	Retrieves the balance and other info of the Skånetrafiken Jojo transport card.
-
-	You need to have registered account at https://www.skanetrafiken.se with needed Jojo card registered there.
   </description>
   <author>valeravi &lt;valeravi@vi-soft.com.ua&gt;</author>
   <files>
@@ -19,14 +17,13 @@
 	<counter id="balance" name="Balance" units=" {@currency}"/>
 	<counter id="expiresat" name="Card expires at" type="time" format="dd/MM/yyyy"/>
 	<counter id="validtill" name="Paid till"  type="time" format="dd/MM/yyyy"/>
-	<counter id="status" name="Status" type="text"/>
 	<counter id="cardnum" name="Card number" type="text"/>
-	<counter id="zoneslist" name="Zones list" type="text"/>
+	<counter id="zonesnum" name="Number of zones"/>
+	<counter id="balancenow" name="Available now" units=" {@currency}"/>
+	<counter id="balancedownload" name="To download" units=" {@currency}"/>
 	<counter id="expirestate" name="Card expire state" type="text"/>
 	<counter id="validfrom" name="Paid from"  type="time" format="dd/MM/yyyy"/>
 	<counter id="expiresin" name="Card expires in" units=" days"/>
-	<counter id="zonearea" name="Zone area" type="text"/>
-	<counter id="info" name="Info" type="text"/>
 	<counter id="currency" name="Currency" type="text"/>
   </counters>
   <keywords>

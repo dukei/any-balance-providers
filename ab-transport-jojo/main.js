@@ -23,9 +23,8 @@ if (typeof String.prototype.trim != 'function') { // detect native implementatio
 function main(){
 	var prefs = AnyBalance.getPreferences();
 	var result = {success: true};
-	if(prefs.cardnum)
-		if(!/^\d{10}$/.test(prefs.cardnum))
-			throw new AnyBalance.Error("Enter only first 10 digits of the card.");
+	if(!prefs.cardnum || !/^\d{10}$/.test(prefs.cardnum))
+		throw new AnyBalance.Error("Enter only first 10 digits of the card.");
 
 	var baseurl = "http://www.shop.skanetrafiken.se/";
 	AnyBalance.setDefaultCharset("ISO-8859-1");

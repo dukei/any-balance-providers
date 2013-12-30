@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="20">ab-game-wot</id>
+	<id version="21">ab-game-wot</id>
 	<name>World of Tanks</name>
-	<description>
-		Показывает ник и клан-тэг, общее количество боев и побед, средний опыт, рейтинги эффективности в игре World of Tanks, а также информацию о количестве боев и побед на выбранном танке
-	</description>
+	<description html="true"><![CDATA[
+	<p>Показывает ник и клан-тэг, общее количество боев и побед, средний опыт, рейтинги эффективности в игре World of Tanks, а также информацию о количестве боев и побед на выбранном танке.</p>
+	]]></description>	
 	<author>Vitaliy Poluphanov &lt;vitaliy@root.ua&gt;</author>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
@@ -32,10 +31,6 @@
 		<counter id="next_perc_05" name="Бои до след. проц. побед (с округл.)" type="numeric"/>
 		<counter id="avg_exp" name="Средний опыт" type="numeric"/>
 	</counters>
-	<keywords>
-		игра, game, wot
-	</keywords>
-	<type>
-		game
-	</type>
+	<keywords>игра, game, wot</keywords>
+	<type>game</type>
 </provider>

@@ -1,42 +1,111 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Получает текущую погоду или прогноз погоды для выбранного города.
-
-Сайты компании: http://www.gismeteo.ru
-                http://www.gismeteo.ua
-                http://www.gismeteo.lt
-                http://www.gismeteo.by
-                http://www.gismeteo.com - не реализовано
-                http://www.gismeteo.md
 */
 
+function main () {
+    var prefs = AnyBalance.getPreferences ();
+    // Защита от undefined для уже созданных аккаунтов
+    if (!prefs.domen) {
+		prefs.domen = 'ru';
+    }
+    if (!prefs.lang) {
+		prefs.lang = 'ru';  // В текущей версии провайдера информация берется только на русском языке
+    }
+    if (prefs.domen == 'lt' && prefs.lang == 'ru') {
+        prefs.domen = 'lt/ru'
+    }
+    checkEmpty (prefs.city, 'Введите индекс или название города!');
+	// Базовый линк
+	var baseurl = 'http://www.gismeteo.' + prefs.domen + '/';
+	// Если не числа, значит надо сделать доп запрос для поиска индекса города
+	if(!/^\d$/i.test(prefs.city)) {
+		html = AnyBalance.requestGet (baseurl + 'ajax/city_search/?searchQuery=x' + prefs.city);
+		
+		var id = getParam(html, null, null, /['"]*(\d+)/i, [/\D/g, '']);
+		AnyBalance.trace('Нашли ID города ' + prefs.city + ': ' + id);
+		prefs.city = id;
+	}
+	
+    var result = {success: false};
 
-function hhmm2sec (value) {
-    if (!value)
-        return undefined;
+    switch (prefs.tod) {
+        case '-2':
+        case '0':
+        case '1':
+        case '2':
+        case '3':
+            if (prefs.city.indexOf ('_1') > 0) {
+                result = getWeatherFromXML (prefs);
+                break;
+            }
 
-    var res = /(\d{2}):(\d{2})/.exec (value);
-    return (parseInt (res[1], 10) * 60 + parseInt (res[2], 10));
+        case '-1':
+            if (prefs.city.indexOf ('_1') > 0) {
+                throw new AnyBalance.Error ('По текущему индексу города можно получить только прогноз погоды. Для получения текущей погоды введите индекс со страницы <a href="http://www.gismeteo.' + prefs.domen + '">Gismeteo.' + prefs.domen + '</a>.');
+            }
+            result = getWeatherFromHTML (prefs);
+            break;
+
+        default:
+            throw new AnyBalance.Error ("Ошибка получения выбранного прогноза. Пожалуйста, свяжитесь с разработчиками.");
+            break;
+    }
+
+    AnyBalance.setResult (result);
 }
 
+function getWeatherFromHTML (prefs) {
+    var baseurl = 'http://www.gismeteo.' + prefs.domen + '/city/daily/';
+
+    AnyBalance.trace ('Trying open address: ' + baseurl + prefs.city);
+    var html = AnyBalance.requestGet (baseurl + prefs.city);
+
+    // Проверка неправильной пары логин/пароль
+    var regexp=/<h2>Ошибка[\s\S]*?<p>([^<]*)/i;
+    var res = regexp.exec (html);
+    if (res)
+        throw new AnyBalance.Error (res[1]);
+
+    // Проверка на корректный вход
+    //regexp = />Погода за окном<([\s\S]*)>Прогноз</i;
+    regexp = /<h3\s+class=.type\w.\s*>([^<]*)/i;
+    if (regexp.exec (html))
+    	AnyBalance.trace ('It looks like we are in selfcare...');
+    else {
+        AnyBalance.trace ('Have not found weather info... Unknown error. Please contact author.');
+        throw new AnyBalance.Error ('Неизвестная ошибка. Пожалуйста, свяжитесь с автором провайдера.');
+    }
+
+	var result = {success: true};
+	// Город
+    getParam (html, result, '__tariff', /<h3[^>]*>([^<]*)/i);
+	
+	result = (prefs.tod == '-1') ? getCurrentWeather (html, result) : getWeatherForecast (html, result, prefs.tod);
+	// Температура воды
+    getParam (html, result, 'waterTemperature', /<div[^>]+class="wicon water"[^>]*>\s*<dd[^>]+class="value m_temp c">([-+]?\d+)/i, null, parseFloat);
+    // Восход Солнца
+    getParam (html, result, 'rising', /Восход[^\d]*(\d{2}:\d{2})/i, null, parseMinutes);
+    // Закат Солнца
+    getParam (html, result, 'setting', /Заход[^\d]*(\d{2}:\d{2})/i, null, parseMinutes);
+    // Долгота дня
+    getParam (html, result, 'dayLength', /Долгота[^\d]*(\d{2}:\d{2})/i, null, parseMinutes);
+    // Фаза Луны
+    getParam (html, result, 'moonPhase', /Фаза[^\d]*((\d+%)[\s\S]*?<strong>([^<]+))/i, [/(\d+%)[\s\S]*?<strong>([^<]+)/, '$2 $1']);
+
+    return result;
+}
 
 function getCurrentWeather (html, result) {
     // Атмосферные явления
     getParam (html, result, 'atmosphericConditions', /class="cloudness">[\s\S]*?>([^\s<]+[^<]*)/i);
-
     // Температура
     getParam (html, result, 'temperature', /class='value\sm_temp\sc'>((?:[-+]?|&minus;|&plus;)\d+[,.]?\d*)/i, ['&minus;', '-', '&plus;', '+'], parseFloat);
-
     // Атмосферное давление
     getParam (html, result, 'pressure', /class='value m_press torr'>(\d+)/i, [], parseInt);
-
     // Ветер
     getParam (html, result, 'wind', /<dd[^>]* ms'[^>]*>((\d+)[\s\S]*?<dt>([^<]*))/i, [/(\d+)[\s\S]*?<dt>([^<]*)/, '$2 $1м/с']);
-
     // Влажность
     getParam (html, result, 'humidity', /title="Влажность">(\d+)/i, [], parseInt);
-
     // Время обновления
     getParam (html, result, 'time', /class="icon date">([^<]*)/i,
         [/(\d{1,2})\s+(\S+)\s+(\d{4})\s+(.*)/, '$3/$2/$1 $4',
@@ -57,11 +126,37 @@ function getCurrentWeather (html, result) {
     return result;
 }
 
-
 function getWeatherForecast (html, result, tod) {
-    html = html.match (/<tr class="wrow forecast"[\s\S]*?<\/tr>/g);
+	var regExpPrefix = '';
+	var array = ['Утро', 'День', 'Вечер', 'Ночь'];
+	if(tod >= 0) {
+		regExpPrefix = array[tod];
+		
+		// Фактические данные(?:[^>]*>){1}[^>]*День[\s\S]*?</tr
+		var regExp = new RegExp('(?:Фактические данные|Прогноз)(?:[^>]*>){1}[^>]*' + regExpPrefix + '[\\s\\S]*?</tr>', 'i');
+	
+		var tr = getParam (html, null, null, regExp);
+		if(!tr)
+			throw new AnyBalance.Error ('Не найден прогноз погоды. Пожалуйста, обратитесь к разработчикам.');
+		
+		getParam (tr, result, 'atmosphericConditions', /"cltext"[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+		getParam (tr, result, 'temperature', /temp\s*c[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+		getParam (tr, result, 'pressure', /m_press torr[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+		getParam (tr, result, 'wind', /wind[^>]*>([\s\S]*?)<\/span/i, [replaceTagsAndSpaces, /([\s\S]*)/i, '$1 м/с'], html_entity_decode);
+		getParam (tr, result, 'humidity', /<td>(\d+)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+		getParam (tr, result, 'heat', /m_temp c[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+		getParam (tr, result, 'time', /Local:\s*(\d{4}-\d{2}-\d{2}\s+\d+:\d{2})/i, [/(\d{4})-(\d{2})-(\d{2})\s+(\d+:\d{2})/, '$3/$2/$1 $4'], parseDate);
+	} else {
+		// ... 
+	}
+
+	return result;
+
+
+	// Не правильно же все, частенько показывает не то что указано в настройках
+    /*html = html.match (/<tr class="wrow forecast"[\s\S]*?<\/tr>/g);
     if (!html) {
-        throw new AnyBalance.Error ('Не найден прогноз погоды. Пожалуйста, обратитесь к автору провайдера.');
+        throw new AnyBalance.Error ('Не найден прогноз погоды. Пожалуйста, обратитесь к разработчикам.');
     }
 
     if (tod == '-2') {
@@ -81,6 +176,9 @@ function getWeatherForecast (html, result, tod) {
         }
     }
 
+	
+	
+	
     var $table = $(html);
 
     // Атмосферные явления
@@ -107,69 +205,44 @@ function getWeatherForecast (html, result, tod) {
     getParam (html, result, 'time', /id="wrow-(\d{4}-\d{2}-\d{2}-\d{2})/i, [/(\d{4})-(\d{2})-(\d{2})-(\d{2})/, '$1/$2/$3 $4:00:00'], Date.parse);
 
 
-    return result;
+    return result;*/
 }
+/*
+function getParamFind (result, param, obj, search_str, regexp, replaces, parser)
+{
+    if (param && !AnyBalance.isAvailable (param))
+        return;
 
+    var value = obj.find (search_str).text();
+    if (!value)
+        return;
 
-function getWeatherFromHTML (prefs) {
-    var baseurl = 'http://www.gismeteo.' + prefs.domen + '/city/daily/';
-
-    AnyBalance.trace ('Trying open address: ' + baseurl + prefs.city);
-    var html = AnyBalance.requestGet (baseurl + prefs.city);
-
-    // Проверка неправильной пары логин/пароль
-    var regexp=/<h2>Ошибка[\s\S]*?<p>([^<]*)/i;
-    var res = regexp.exec (html);
-    if (res)
-        throw new AnyBalance.Error (res[1]);
-
-    // Проверка на корректный вход
-    //regexp = />Погода за окном<([\s\S]*)>Прогноз</i;
-    regexp = /<h3\s+class=.type\w.\s*>([^<]*)/i;
-    if (regexp.exec (html))
-    	AnyBalance.trace ('It looks like we are in selfcare...');
-    else {
-        AnyBalance.trace ('Have not found weather info... Unknown error. Please contact author.');
-        throw new AnyBalance.Error ('Неизвестная ошибка. Пожалуйста, свяжитесь с автором провайдера.');
+    if (regexp) {
+        if (regexp.test (value))
+            value = regexp.exec (value)[0];
+        else
+            return;
     }
 
+    if (replaces) {
+        for (var i = 0; i < replaces.length; i += 2) {
+            value = value.replace (replaces[i], replaces[i+1]);
+        }
+    }
 
-    var result = {success: false};
+    if (parser)
+        value = parser (value);
 
-    // Город
-    getParam (html, result, '__tariff', /<h3[^>]*>([^<]*)/i);
+    if (result && param)
+        result[param] = value;
 
-    if (prefs.tod == '-1')
-      result = getCurrentWeather (html, result);
-    else
-      result = getWeatherForecast (html, result, prefs.tod);
-
-
-    // Температура воды
-    getParam (html, result, 'waterTemperature', /<div[^>]+class="wicon water"[^>]*>\s*<dd[^>]+class="value m_temp c">([-+]?\d+)/i, [], parseFloat);
-
-    // Восход Солнца
-    getParam (html, result, 'rising', /Восход[^\d]*(\d{2}:\d{2})/i);
-    result.rising = hhmm2sec (result.rising);
-
-    // Закат Солнца
-    getParam (html, result, 'setting', /Заход[^\d]*(\d{2}:\d{2})/i);
-    result.setting = hhmm2sec (result.setting);
-
-    // Долгота дня
-    getParam (html, result, 'dayLength', /Долгота[^\d]*(\d{2}:\d{2})/i);
-    result.dayLength = hhmm2sec (result.dayLength);
-
-    // Фаза Луны
-    getParam (html, result, 'moonPhase', /Фаза[^\d]*((\d+%)[\s\S]*?<strong>([^<]+))/i, [/(\d+%)[\s\S]*?<strong>([^<]+)/, '$2 $1']);
+    return value;
+}*/
 
 
-    result.success = true;
-    return result;
-}
 
 
-function win2utf (str) {
+/*function win2utf (str) {
     if (str == null)
         return null;
 
@@ -194,10 +267,10 @@ function win2utf (str) {
      }                                                
 
      return result;
-}
+}*/
 
 
-function getWeatherFromXML (prefs) {
+/*function getWeatherFromXML (prefs) {
     var baseurl = 'http://informer.gismeteo.' + prefs.domen + '/xml/';
 
     AnyBalance.trace ('Trying open address: ' + baseurl + prefs.city + '.xml');
@@ -302,50 +375,7 @@ function getWeatherFromXML (prefs) {
 
     result.success = true;
     return result;
-}
+}*/
 
 
-function main () {
-    var prefs = AnyBalance.getPreferences ();
 
-    // Защита от undefined для уже созданных аккаунтов
-    if (!prefs.domen) {
-      prefs.domen = 'ru';
-    }
-    if (!prefs.lang) {
-      prefs.lang = 'ru';  // В текущей версии провайдера информация берется только на русском языке
-    }
-
-    if (prefs.domen == 'lt' && prefs.lang == 'ru') {
-        prefs.domen = 'lt/ru'
-    }
-
-    checkEmpty (prefs.city, 'Введите индекс города');
-
-    var result = {success: false};
-
-    switch (prefs.tod) {
-        case '-2':
-        case '0':
-        case '1':
-        case '2':
-        case '3':
-            if (prefs.city.indexOf ('_1') > 0) {
-                result = getWeatherFromXML (prefs);
-                break;
-            }
-
-        case '-1':
-            if (prefs.city.indexOf ('_1') > 0) {
-                throw new AnyBalance.Error ('По текущему индексу города можно получить только прогноз погоды. Для получения текущей погоды введите индекс со страницы <a href="http://www.gismeteo.' + prefs.domen + '">Gismeteo.' + prefs.domen + '</a>.');
-            }
-            result = getWeatherFromHTML (prefs);
-            break;
-
-        default:
-            throw new AnyBalance.Error ("Ошибка получения выбранного прогноза. Пожалуйста, свяжитесь с автором провайдера.");
-            break;
-    }
-
-    AnyBalance.setResult (result);
-}

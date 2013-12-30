@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
 	<EditTextPreference
-		title="Логин"
+		title="Login"
 		key="login"
 		summary="||{@s}"
 		obligatory="true"
-		dialogTitle="Логин"
-		positiveButtonText="ОК"
-		negativeButtonText="Отмена"
-		dialogMessage="Введите логин, используемый для входа в личный кабинет.">
+		dialogTitle="Login"
+		positiveButtonText="OK"
+		negativeButtonText="Cancel"
+		dialogMessage="Enter login to https://my.dx.com/.">
 	</EditTextPreference>
 	<EditTextPreference
-		title="Пароль"
+		title="Password"
 		key="password"
 		summary="||***********"
 		obligatory="true"
-		dialogTitle="Пароль"
-		positiveButtonText="ОК"
-		negativeButtonText="Отмена"
-		dialogMessage="Введите пароль, используемый для входа в личный кабинет."
+		dialogTitle="Password"
+		positiveButtonText="OK"
+		negativeButtonText="Cancel"
+		dialogMessage="Enter password to https://my.dx.com/.">
 		inputType="textPassword">
 	</EditTextPreference>
 </PreferenceScreen>

@@ -126,19 +126,21 @@ function main(){
 		result['avg_exp'] = pinfo.data[id].statistics.all.battle_avg_xp;
 			
 	if(AnyBalance.isAvailable('er_armor'))
-		var stat = pinfo.data[id].statistics;
-		
-		var BATTLES_RND = stat_rnd('battles', stat);
-		var DAMAGE_RND = stat_rnd('damage_dealt', stat) / BATTLES_RND;
-		var AVG_EXP_RND = stat_rnd('xp', stat) / BATTLES_RND;
-		var WINS_RND = stat_rnd('wins', stat) / BATTLES_RND;
-		var FRAGS_RND = stat_rnd('frags', stat) / BATTLES_RND;
-		var SPOT_RND = stat_rnd('spotted', stat) / BATTLES_RND;
-		var CAP_RND = stat_rnd('capture_points', stat) / BATTLES_RND;
-		var DEF_RND = stat_rnd('dropped_capture_points', stat) / BATTLES_RND;
-		
-		result['er_armor'] = (Math.log(BATTLES_RND) / 10 * (AVG_EXP_RND + DAMAGE_RND * (WINS_RND * 2 + FRAGS_RND * 0.9 + (SPOT_RND + CAP_RND + DEF_RND) * 0.5))).toFixed(prefs.accuracy);
-		
+		try {
+			var stat = pinfo.data[id].statistics;
+			
+			var BATTLES_RND = stat_rnd('battles', stat);
+			var DAMAGE_RND = stat_rnd('damage_dealt', stat) / BATTLES_RND;
+			var AVG_EXP_RND = stat_rnd('xp', stat) / BATTLES_RND;
+			var WINS_RND = stat_rnd('wins', stat) / BATTLES_RND;
+			var FRAGS_RND = stat_rnd('frags', stat) / BATTLES_RND;
+			var SPOT_RND = stat_rnd('spotted', stat) / BATTLES_RND;
+			var CAP_RND = stat_rnd('capture_points', stat) / BATTLES_RND;
+			var DEF_RND = stat_rnd('dropped_capture_points', stat) / BATTLES_RND;
+			
+			result['er_armor'] = (Math.log(BATTLES_RND) / 10 * (AVG_EXP_RND + DAMAGE_RND * (WINS_RND * 2 + FRAGS_RND * 0.9 + (SPOT_RND + CAP_RND + DEF_RND) * 0.5))).toFixed(prefs.accuracy);		
+		} catch (e) {
+		}
 	if(AnyBalance.isAvailable('wn6', 'wn6_xvm'))
 	
 		var wn6 = (1240 - 1040 / Math.pow((Math.min(TIER, 6)), 0.164)) * FRAGS + DAMAGE * 530 / (184 * Math.exp(0.24 * TIER) + 130) + SPOT * 125 + Math.min(DEF, 2.2) * 100 + ((185 / (0.17 + Math.exp((WINRATE * 100 - 35) * -0.134))) - 500) * 0.45 + (6 - Math.min(TIER, 6)) * -60
@@ -155,7 +157,6 @@ function main(){
 			}
 		
 	if (prefs.tank) {
-
 		var tmp = pvehicles.data[id]
 		var f = 0;
 		for (q in tmp){

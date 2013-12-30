@@ -8,6 +8,7 @@
         entries="Nickname|ID"
         entryValues="nick|id" />
     <EditTextPreference 
+		obligatory="true"
         key="nick"
         title="Nickname or ID" 
         summary="Your nickname or ID||{@s}\n" 

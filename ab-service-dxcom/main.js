@@ -15,8 +15,8 @@ function main() {
 	var baseurl = 'https://passport.dx.com/';
 	AnyBalance.setDefaultCharset('utf-8');
 
-	checkEmpty(prefs.login, 'Введите логин!');
-	checkEmpty(prefs.password, 'Введите пароль!');
+	checkEmpty(prefs.login, 'Enter login!');
+	checkEmpty(prefs.password, 'Enter password!');
 
 	var html = AnyBalance.requestGet(baseurl + 'accounts/default.dx?redirect=http%3A%2F%2Fdx.com%2F', g_headers);
 
@@ -31,13 +31,14 @@ function main() {
 
 	html = AnyBalance.requestPost(baseurl + 'accounts/default.dx?redirect=http%3A%2F%2Fdx.com%2F', params, addHeaders({Referer: baseurl + 'accounts/default.dx?redirect=http%3A%2F%2Fdx.com%2F'}));
 
-	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
-		if (error && /Неверный логин или пароль/i.test(error))
+	if (!/logout|выход/i.test(html)) {
+		var error = sumParam(html, null, null, /<div>\s*<\s*span[^>]*color:Red[^>]*>([^<]+)/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+		if (error && /appears to be invalid/i.test(error))
 			throw new AnyBalance.Error(error, null, true);
 		if (error)
 			throw new AnyBalance.Error(error);
-		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Can`t login, is the site changed?');
 	}
 	
 	html = AnyBalance.requestGet('https://my.dx.com/', g_headers);
@@ -53,7 +54,7 @@ function main() {
 		getParam(html, result, 'order_sum', /<tr\s*class="(?:on|)">(?:[^>]+>){7}([\s\S]*?)<\/td/i, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, 'order_status', /<tr\s*class="(?:on|)">(?:[^>]+>){9}([\s\S]*?)<\/td/i, replaceTagsAndSpaces, html_entity_decode);
 	} else {
-		AnyBalance.trace('Нет ни одного заказа или сайт изменен.');
+		AnyBalance.trace('Can`t find any orded.');
 	}
 	
 	AnyBalance.setResult(result);

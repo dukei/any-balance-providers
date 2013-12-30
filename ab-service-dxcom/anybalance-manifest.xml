@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-service-dxcom</id>
+	<id version="2">ab-service-dxcom</id>
 	<api flags="no_browser"/>
 	<name>Dx.com</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе и последнем заказе на сайте dx.com</p>
-	<p>Информация берется из личного кабинета https://my.dx.com/</p>
+	<p>Obtains information about last order and DX Points from https://my.dx.com/</p>
 	]]></description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>

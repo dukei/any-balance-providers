@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
     <EditTextPreference 
-        title="Login" 
+        title="Orange number" 
 	obligatory="true"
         positiveButtonText="OK" 
         summary="||{@s}" 
-        dialogTitle="Login" 
+        dialogTitle="Orange number" 
         negativeButtonText="Cancel" 
-        dialogMessage="Enter login."
+        dialogMessage="Enter orange number 6XXXXXXX."
+	inputType="number"
         key="login">
     </EditTextPreference>
     <EditTextPreference 
         positiveButtonText="OK"
-	obligatory="true"
         key="password" 
+	obligatory="true"
         dialogTitle="Password"
         negativeButtonText="Cancel"
         title="Password"

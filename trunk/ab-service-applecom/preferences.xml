@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference
+		title="Serial number"
+		key="login"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Serial number"
+		positiveButtonText="OK"
+		negativeButtonText="Cancel"
+		dialogMessage="Enter your hardware serial number.">
+	</EditTextPreference>
+</PreferenceScreen>

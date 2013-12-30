@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-service-applecom</id>
+	<api flags="no_browser"/>
+	<name>Apple.com (Warranty and activation)</name>
+	<description html="true"><![CDATA[
+	<p>Obtains information from the official Apple service site (https://selfsolve.apple.com/)</p>
+	<p>Shows current service and support coverage.</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="status" name="Activation status" type="text"/>
+		<counter id="device" name="Device name" type="text"/>
+		<counter id="support" name="Telephone Technical Support" type="text"/>
+		<counter id="support_till" name="Telephone Technical Support till" type="time" format="dd/MM/yyyy"/>
+		<counter id="repair" name="Repairs and Service Coverage" type="text"/>
+		<counter id="repair_till" name="Repairs and Service Coverage till" type="time" format="dd/MM/yyyy"/>
+	</counters>
+	<keywords>apple, iphone, ipad, ipod, imac</keywords>
+	<type>service</type>
+	<!-- <country>ru</country> -->
+</provider>

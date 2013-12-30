@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2.1" version="14">ab-weather-gismeteo-ru</id>
+	<id major_version="2.2" version="15">ab-weather-gismeteo-ru</id>
 	<name>Gismeteo</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о прогнозе погоды, текущей погоде, температуре водоемов, времени восхода/захода Солнца, фаз Луны для выбранного города.</p>
@@ -13,27 +13,27 @@
 	</ul>
 	]]></instruction>
 	<author>iReset &lt;ireset.ag@gmail.com&gt;</author>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
 		<js>api:jquery.min.js</js>
 		<js>main.js</js>
-		<js>common_functions.js</js>
+		<js>library.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="temperature" name="Температура воздуха" units="°C"/>
+		<counter id="temperature" name="Температура воздуха" units=" ℃"/>
 		<counter id="atmosphericConditions" name="Атмосферные явления" type="text"/>
 		<counter id="wind" name="Ветер" type="text"/>
-		<counter id="pressure" name="Атмосферное давление" units="мм.рт.ст."/>
-		<counter id="humidity" name="Влажность" units="%"/>
-		<counter id="heat" name="Комфорт" units="°C"/>
+		<counter id="pressure" name="Атмосферное давление" units=" мм.рт.ст."/>
+		<counter id="humidity" name="Влажность" units=" %"/>
+		<counter id="heat" name="Комфорт" units=" ℃"/>
 		<counter id="time" name="Время" type="time"/>
-
-		<counter id="waterTemperature" name="Температура воды" units="°C"/>
-		<counter id="rising" name="Восход Солнца" type="time_interval" prefix="В."/>
-		<counter id="setting" name="Закат Солнца" type="time_interval" prefix="З."/>
-		<counter id="dayLength" name="Долгота дня" type="time_interval" prefix="Д."/>
+		<counter id="waterTemperature" name="Температура воды" units=" ℃"/>
+		<counter id="rising" name="Восход Солнца" type="time_interval" prefix=" В."/>
+		<counter id="setting" name="Закат Солнца" type="time_interval" prefix=" З."/>
+		<counter id="dayLength" name="Долгота дня" type="time_interval" prefix=" Д."/>
 		<counter id="moonPhase" name="Фаза Луны " type="text"/>
 	</counters>
 	<keywords>прогноз, погода, карты, осадки, ветер, влажность, давление, gismeteo, гисметео, солнце, луна, температура, воздух</keywords>

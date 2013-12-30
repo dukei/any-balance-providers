@@ -1,22 +1,24 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
     <ListPreference
+		obligatory="true"
         title="Погода"
         summary="Погоду на какое время вы хотели бы видеть||{@s}\n"
         key="tod"
         defaultValue="-1"
-        entries="текущая|ближайшая|на утро|на день|на вечер|на ночь"
+        entries="Текущая|Ближайшая|На утро|На день|На вечер|На ночь"
         entryValues="-1|-2|0|1|2|3" />
     <EditTextPreference
+		obligatory="true"
         key="city"
-        title="Индекс города"
-        summary="Индекс города для отображения погоды||{@s}\n"
-        inputType="number"
-        dialogTitle="Индекс города"
-        dialogMessage="Введите индекс города. Его можно получить из адресной строки браузера, выбрав на сайте http://www.gismeteo.ru нужный вам город. Например, для Москвы это 4368."
+        title="Индекс или название города"
+        summary="Индекс или название города для отображения погоды||{@s}\n"
+        dialogTitle="Индекс или название города"
+        dialogMessage="Введите индекс или название города. Его можно получить из адресной строки браузера, выбрав на сайте http://www.gismeteo.ru нужный вам город. Например, для Москвы это 4368."
         positiveButtonText="ОК"
         negativeButtonText="Отмена" />
     <ListPreference
+		obligatory="true"
         title="Домен"
         summary="Домен, с которого будет получена погода||{@s}\n"
         key="domen"

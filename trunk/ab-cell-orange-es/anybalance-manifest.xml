@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-cell-orange-es</id>
-  <name>Orange Espania</name>
+  <id version="2">ab-cell-orange-es</id>
+  <api flags="no_browser"/>
+  <name>Orange (Espania)</name>
   <description>
 	Cell provider Orange Espania (http://m.orange.es/area_clientes)
   </description>
@@ -19,10 +20,10 @@
 	<counter id="valid" name="Valid to" type="time" format="dd/MM/yyyy" />
   </counters>
   <keywords>
-    
+    spain
   </keywords>
   <type>
-    
+    cell
   </type>
   <country>
     es

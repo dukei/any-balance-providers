@@ -13,6 +13,9 @@ var g_headers = {
 function main(){
     var prefs = AnyBalance.getPreferences();
 
+    checkEmpty(prefs.login, 'Enter login!');
+    checkEmpty(prefs.password, 'Enter password!');
+
 	var baseurl = 'https://areaprivada.orange.es/';
 	var baseurlLogin = 'https://sso.orange.es/';
 	var html;

@@ -18,7 +18,7 @@ function main () {
 	// Базовый линк
 	var baseurl = 'http://www.gismeteo.' + prefs.domen + '/';
 	// Если не числа, значит надо сделать доп запрос для поиска индекса города
-	if(!/^\d$/i.test(prefs.city)) {
+	if(!/^\d+$/i.test(prefs.city)) {
 		html = AnyBalance.requestGet (baseurl + 'ajax/city_search/?searchQuery=x' + prefs.city);
 		
 		var id = getParam(html, null, null, /['"]*(\d+)/i, [/\D/g, '']);

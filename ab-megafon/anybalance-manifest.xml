@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="3.0" version="108">ab-megafon</id>
+	<id major_version="3.0" version="109">ab-megafon</id>
 	<api flags="no_browser"/>
 	<name>Мегафон</name>
 	<description html="true"><![CDATA[
@@ -71,7 +71,7 @@
 		<counter id="last_pay_sum" name="Последний платеж" units=" р"/>
 		<counter id="last_pay_date" name="Дата посл. платежа" type="time" format="dd/MM/yyyy"/>
 		<counter id="bonus_burn" name="Бонусные баллы, сгорающие в конце текущего месяца" units=" Б"/>
-		<counter id="phone" name="Телефон" type="text" format="dd/MM/yyyy"/>
+		<counter id="phone" name="Телефон" type="text"/>
 	</counters>
 	<keywords>Сотовый телефон, мобильный, мобильник, megafon, интернет, россия</keywords>
 	<type>cell</type>

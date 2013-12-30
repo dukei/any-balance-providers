@@ -328,61 +328,68 @@ function megafonTrayInfo(filial){
         getParam(xml, result, 'phone', /<NUMBER>([\s\S]*?)<\/NUMBER>/i, replaceTagsAndSpaces, html_entity_decode);
         getParam(xml, result, 'prsnl_balance', /<PRSNL_BALANCE>([\s\S]*?)<\/PRSNL_BALANCE>/i, replaceTagsAndSpaces, parseBalance);
 
-        var discounts = sumParam(xml, null, null, /<DISCOUNT>([\s\S]*?)<\/DISCOUNT>/ig);
-        AnyBalance.trace('Found discounts: ' + discounts.length);
-
-        for(var i=0; i<discounts.length; ++i){
-            var d = discounts[i];
-            var name = getParam(d, null, null, /<NAME>([\s\S]*?)<\/NAME>/i) || '';
-            var plan_name = getParam(d, null, null, /<PLAN_NAME>([\s\S]*?)<\/PLAN_NAME>/i) || '';
-            var plan_si = getParam(d, null, null, /<PLAN_SI>([\s\S]*?)<\/PLAN_SI>/i) || '';
-            var name_service = getParam(d, null, null, /<NAME_SERVICE>([\s\S]*?)<\/NAME_SERVICE>/i) || '';
-            var names = name + ',' + plan_name;
-            if(/sms|смс/i.test(names)){
-                AnyBalance.trace('Найдены SMS: ' + names);
-                sumParam(d, result, 'sms_left', /<VOLUME_AVAILABLE>([\s\S]*?)<\/VOLUME_AVAILABLE>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-                sumParam(d, result, 'sms_total', /<VOLUME_TOTAL>([\s\S]*?)<\/VOLUME_TOTAL>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-            }else if(/mms|ммс/i.test(names)){
-                AnyBalance.trace('Найдены MMS: ' + names);
-                sumParam(d, result, 'mms_left', /<VOLUME_AVAILABLE>([\s\S]*?)<\/VOLUME_AVAILABLE>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-                sumParam(d, result, 'mms_total', /<VOLUME_TOTAL>([\s\S]*?)<\/VOLUME_TOTAL>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-            }else if(/GPRS| Байт|интернет|мб|Пакетная передача данных/i.test(names) || /Пакетная передача данных/i.test(name_service) || /Байт|Тар.ед./i.test(plan_si)){
-                AnyBalance.trace('Найден интернет: ' + names + ', ' + plan_si);
-                var valAvailable = getParam(d, null, null, /<VOLUME_AVAILABLE>([\s\S]*?)<\/VOLUME_AVAILABLE>/i, replaceTagsAndSpaces, parseBalance);
-                var valTotal = getParam(d, null, null, /<VOLUME_TOTAL>([\s\S]*?)<\/VOLUME_TOTAL>/i, replaceTagsAndSpaces, parseBalance);
-                var units = plan_si;
-                if(units == 'мин'){
-                    //Надо попытаться исправить ошибку мегафона с единицами измерения трафика
+        var packs = xml.split(/<PACK>/ig);
+        AnyBalance.trace('Packs: ' + packs.length);
+        for(var ipack=0; ipack<packs.length; ++ipack){
+            var pack = packs[ipack];
+            var pack_name = getParam(pack, null, null, /<PACK_NAME>([\s\S]*?)<\/PACK_NAME>/i, null, html_entity_decode) || '';
+            var discounts = sumParam(pack, null, null, /<DISCOUNT>([\s\S]*?)<\/DISCOUNT>/ig);
+            AnyBalance.trace('Pack: ' + pack_name + ', discounts: ' + discounts.length);
+            
+            for(var i=0; i<discounts.length; ++i){
+                var d = discounts[i];
+                var name = getParam(d, null, null, /<NAME>([\s\S]*?)<\/NAME>/i) || '';
+                var plan_name = getParam(d, null, null, /<PLAN_NAME>([\s\S]*?)<\/PLAN_NAME>/i) || '';
+                var plan_si = getParam(d, null, null, /<PLAN_SI>([\s\S]*?)<\/PLAN_SI>/i) || '';
+                var name_service = getParam(d, null, null, /<NAME_SERVICE>([\s\S]*?)<\/NAME_SERVICE>/i) || '';
+                var names = name + ',' + plan_name + ',' + pack_name;
+                if(/sms|смс/i.test(names)){
+                    AnyBalance.trace('Найдены SMS: ' + names);
+                    sumParam(d, result, 'sms_left', /<VOLUME_AVAILABLE>([\s\S]*?)<\/VOLUME_AVAILABLE>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+                    sumParam(d, result, 'sms_total', /<VOLUME_TOTAL>([\s\S]*?)<\/VOLUME_TOTAL>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+                }else if(/mms|ммс/i.test(names)){
+                    AnyBalance.trace('Найдены MMS: ' + names);
+                    sumParam(d, result, 'mms_left', /<VOLUME_AVAILABLE>([\s\S]*?)<\/VOLUME_AVAILABLE>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+                    sumParam(d, result, 'mms_total', /<VOLUME_TOTAL>([\s\S]*?)<\/VOLUME_TOTAL>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+                }else if(/GPRS| Байт|интернет|мб|Пакетная передача данных/i.test(names) || /Пакетная передача данных/i.test(name_service) || /Байт|Тар.ед./i.test(plan_si)){
+                    AnyBalance.trace('Найден интернет: ' + names + ', ' + plan_si);
+                    var valAvailable = getParam(d, null, null, /<VOLUME_AVAILABLE>([\s\S]*?)<\/VOLUME_AVAILABLE>/i, replaceTagsAndSpaces, parseBalance);
+                    var valTotal = getParam(d, null, null, /<VOLUME_TOTAL>([\s\S]*?)<\/VOLUME_TOTAL>/i, replaceTagsAndSpaces, parseBalance);
+                    var units = plan_si;
+                    if(units == 'мин'){
+                        //Надо попытаться исправить ошибку мегафона с единицами измерения трафика
                     if(/[GM]B/i.test(plan_name)) units = 'мб';
                     else if(/GPRS-Internet трафик/i.test(plan_name)) units='мб'; //Вот ещё такое исключение. Надеюсь, на всём будет работать, хотя сообщили из поволжского филиала
 		    else if(/100\s*мб/i.test(plan_name)) units='тар.ед.';
+                    else if(/Интернет (?:S|M|L|XL)/i.test(names)) units = 'мб';
 		    else if(/Все включено/i.test(plan_name)) units='мб'; //Из дальневосточного филиала сообщили
                     else units = 'тар.ед.'; //измеряется в 100кб интервалах
-                }
-                
-                if(isset(valTotal)){ //Отметим, что этот пакет мы уже посчитали
-                    var _valTotal = parseTrafficMy(valTotal + units);
-                    internet_totals_was[_valTotal] = true;
-                }
-
-                if(AnyBalance.isAvailable('internet_left') && isset(valAvailable)){
-                    result.internet_left = (result.internet_left || 0) + parseTrafficMy(valAvailable + units);
-                }
-                if(AnyBalance.isAvailable('internet_total') && isset(_valTotal)){
-                    result.internet_total = (result.internet_total || 0) + _valTotal;
-                }
-                if(AnyBalance.isAvailable('internet_cur') && isset(valAvailable) && isset(valTotal)){
-                    result.internet_cur = (result.internet_cur || 0) + parseTrafficMy((valTotal - valAvailable) + units);
-                }
+                    }
+                    
+                    if(isset(valTotal)){ //Отметим, что этот пакет мы уже посчитали
+                        var _valTotal = parseTrafficMy(valTotal + units);
+                        internet_totals_was[_valTotal] = true;
+		    internet_totals_was.total = (internet_totals_was.total || 0) + _valTotal;
+                    }
+            
+                    if(AnyBalance.isAvailable('internet_left') && isset(valAvailable)){
+                        result.internet_left = (result.internet_left || 0) + parseTrafficMy(valAvailable + units);
+                    }
+                    if(AnyBalance.isAvailable('internet_total') && isset(_valTotal)){
+                        result.internet_total = (result.internet_total || 0) + _valTotal;
+                    }
+                    if(AnyBalance.isAvailable('internet_cur') && isset(valAvailable) && isset(valTotal)){
+                        result.internet_cur = (result.internet_cur || 0) + parseTrafficMy((valTotal - valAvailable) + units);
+                    }
 	    }else if(/Зона "Магнитогорск"/i.test(names)){
-                AnyBalance.trace('Зону магнитогорск пропускаем. Похоже, она никому не нужна: ' + d);
-            }else if(/вызовы внутри спг/i.test(names) && /мин/i.test(plan_si)){
-                AnyBalance.trace('Найдены минуты внутри группы: ' + names + ', ' + plan_si);
+                    AnyBalance.trace('Зону магнитогорск пропускаем. Похоже, она никому не нужна: ' + d);
+                }else if(/вызовы внутри спг/i.test(names) && /мин/i.test(plan_si)){
+                    AnyBalance.trace('Найдены минуты внутри группы: ' + names + ', ' + plan_si);
 		var total = getParam(d, null, null, /<VOLUME_TOTAL>([\s\S]*?)<\/VOLUME_TOTAL>/i, replaceTagsAndSpaces, parseMinutes);
 		mins_totals_was[''+total] = true;
-                sumParam(d, result, 'mins_net_left', /<VOLUME_AVAILABLE>([\s\S]*?)<\/VOLUME_AVAILABLE>/i, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
-            }else if(/телефония исходящая|исходящая телефония| мин|Переходи на ноль/i.test(names) || /мин/i.test(plan_si)){
-                AnyBalance.trace('Найдены минуты: ' + names + ', ' + plan_si);
+                    sumParam(d, result, 'mins_net_left', /<VOLUME_AVAILABLE>([\s\S]*?)<\/VOLUME_AVAILABLE>/i, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
+                }else if(/телефония исходящая|исходящая телефония| мин|Переходи на ноль/i.test(names) || /мин/i.test(plan_si)){
+                    AnyBalance.trace('Найдены минуты: ' + names + ', ' + plan_si);
 		// Это такой, армянский фикс :)
 		if(/шт/i.test(plan_si)) {
 			AnyBalance.trace('Найдены смс которые прикидываются минутами: ' + names + ', ' + plan_si);
@@ -401,10 +408,13 @@ function megafonTrayInfo(filial){
 				sumParam(d, result, 'mins_total', /<VOLUME_TOTAL>([\s\S]*?)<\/VOLUME_TOTAL>/i, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
 			}
 		}
-            }else{
-                AnyBalance.trace('Неизвестный discount: ' + d);
+                }else{
+                    AnyBalance.trace('Неизвестный discount: ' + d);
+                }
             }
+
         }
+
        
         AnyBalance.trace('Ищем агрегированные параметры...');
         read_sum_parameters_text(result, xml);
@@ -530,6 +540,7 @@ function megafonTrayInfo(filial){
                        var traf = getLeftAndTotal(val, result, false, false, null, null, parseTrafficMy);
 		       if(isset(traf.total) && !isset(internet_totals_was[traf.total])){ //Проверяем, что на предыдущем этапе этот трафик ещё не был учтен
                            new_internet_totals_was[traf.total] = true;
+		           new_internet_totals_was.total = (new_internet_totals_was.total || 0) + traf.total;
                            if(AnyBalance.isAvailable('internet_cur'))
                        	       result.internet_cur = (result.internet_cur||0) + (traf.total - (traf.left||0));
                            if(AnyBalance.isAvailable('internet_left'))
@@ -578,7 +589,7 @@ function getInternetInfo(filial, result, internet_totals_was){
 
     var total = getParam(xml, null, null, /<ALL_VOLUME>([\s\S]*?)<\/ALL_VOLUME>/i, replaceTagsAndSpaces, parseTrafficMyMb);
     if(isset(total)){
-        var need_traffic = !internet_totals_was[total];
+        var need_traffic = !internet_totals_was[total] && internet_totals_was.total != total;
         
         if(!need_traffic){
             AnyBalance.trace('Трафик ' + total + ' уже есть, поэтому не будем его дополнительно искать');

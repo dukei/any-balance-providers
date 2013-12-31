@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="3.0" version="109">ab-megafon</id>
+	<id major_version="3.0" version="110">ab-megafon</id>
 	<api flags="no_browser"/>
 	<name>Мегафон</name>
 	<description html="true"><![CDATA[
@@ -42,6 +42,7 @@
 		<counter id="mins_sng_left" name="Минуты по СНГ" units=" мин" type="time_interval" format="{@MIN}"/>
 		<counter id="mins_compet_left" name="Минуты на МТС,Билайн,Скайлинк" units=" мин" type="time_interval" format="{@MIN}"/>
 		<counter id="mins_net_left" name="Минуты внутри сети" units=" мин" type="time_interval" format="{@MIN}"/>
+		<counter id="mins_n_free" name="Бесплатные минуты (после порога)" units=" мин" type="time_interval" format="{@MIN}"/>
 		<counter id="internet_left" name="Интернет (осталось)" units=" Mb"/>
 		<counter id="sms_left" name="SMS включенные" units=" sms"/>
 		<counter id="mms_left" name="MMS включенные" units=" mms"/>

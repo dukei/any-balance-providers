@@ -381,12 +381,16 @@ function megafonTrayInfo(filial){
                     if(AnyBalance.isAvailable('internet_cur') && isset(valAvailable) && isset(valTotal)){
                         result.internet_cur = (result.internet_cur || 0) + parseTrafficMy((valTotal - valAvailable) + units);
                     }
-	    }else if(/Зона "Магнитогорск"/i.test(names)){
+	        }else if(/Зона "Магнитогорск"/i.test(names)){
                     AnyBalance.trace('Зону магнитогорск пропускаем. Похоже, она никому не нужна: ' + d);
+		}else if(/[36]0 мин\. бесплатно/i.test(names)){
+		    var total = getParam(d, null, null, /<VOLUME_TOTAL>([\s\S]*?)<\/VOLUME_TOTAL>/i, replaceTagsAndSpaces, parseMinutes);
+		    mins_totals_was[''+total] = true;
+                    sumParam(d, result, 'mins_n_free', /<VOLUME_AVAILABLE>([\s\S]*?)<\/VOLUME_AVAILABLE>/i, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
                 }else if(/вызовы внутри спг/i.test(names) && /мин/i.test(plan_si)){
                     AnyBalance.trace('Найдены минуты внутри группы: ' + names + ', ' + plan_si);
-		var total = getParam(d, null, null, /<VOLUME_TOTAL>([\s\S]*?)<\/VOLUME_TOTAL>/i, replaceTagsAndSpaces, parseMinutes);
-		mins_totals_was[''+total] = true;
+		    var total = getParam(d, null, null, /<VOLUME_TOTAL>([\s\S]*?)<\/VOLUME_TOTAL>/i, replaceTagsAndSpaces, parseMinutes);
+		    mins_totals_was[''+total] = true;
                     sumParam(d, result, 'mins_net_left', /<VOLUME_AVAILABLE>([\s\S]*?)<\/VOLUME_AVAILABLE>/i, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
                 }else if(/телефония исходящая|исходящая телефония| мин|Переходи на ноль/i.test(names) || /мин/i.test(plan_si)){
                     AnyBalance.trace('Найдены минуты: ' + names + ', ' + plan_si);
@@ -424,7 +428,7 @@ function megafonTrayInfo(filial){
         errorInTray = e.message || "Unknown error";
     }
 
-    if(AnyBalance.isAvailable('internet_cost', 'bonus_balance', 'last_pay_sum', 'last_pay_date', 'mins_left', 'mins_net_left', 'mins_total', 'internet_left', 'internet_total', 'internet_cur') 
+    if(AnyBalance.isAvailable('internet_cost', 'bonus_balance', 'last_pay_sum', 'last_pay_date', 'mins_left', 'mins_net_left', 'mins_n_free', 'mins_total', 'internet_left', 'internet_total', 'internet_cur') 
 		|| errorInTray 
 		|| isAvailableButUnset(result, ['balance','phone','sub_smit','sub_smio','sub_scl','sub_scr','sub_soi','sms_left','sms_total','mins_left','mins_total','gb_with_you'])){
 
@@ -450,7 +454,7 @@ function megafonTrayInfo(filial){
 
            if(errorInTray || 
 			isAvailableButUnset(result, ['internet_cost', 'balance','phone','sub_smit','sub_smio','sub_scl','sub_scr','sub_soi']) || 
-			AnyBalance.isAvailable('mins_left', 'mins_net_left', 'mins_total', 'internet_left', 'internet_total', 'internet_cur')){
+			AnyBalance.isAvailable('mins_left', 'mins_net_left', 'mins_n_free', 'mins_total', 'internet_left', 'internet_total', 'internet_cur')){
 
                getParam(json.ok.html, result, 'balance', /<div[^>]+class="subs_balance[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
                if(isAvailableButUnset(result, ['balance'])){
@@ -478,7 +482,7 @@ function megafonTrayInfo(filial){
            }
 
            if(errorInTray || isAvailableButUnset(result, ['mms_left','mms_total','sms_left','sms_total','gb_with_you'])
-			|| AnyBalance.isAvailable('mins_left', 'mins_net_left', 'mins_total', 'internet_left', 'internet_total', 'internet_cur')){
+			|| AnyBalance.isAvailable('mins_left', 'mins_net_left', 'mins_n_free', 'mins_total', 'internet_left', 'internet_total', 'internet_cur')){
                var need_mms_left = isAvailableButUnset(result, ['mms_left']),
                    need_mms_total = isAvailableButUnset(result, ['mms_total']),
                    need_sms_left = isAvailableButUnset(result, ['sms_left']),
@@ -514,6 +518,12 @@ function megafonTrayInfo(filial){
                        }
 		   }else if(/Зона "Магнитогорск"/i.test(name)){
                        AnyBalance.trace('Зону магнитогорск пропускаем. Похоже, она никому не нужна: ' + discount);
+		   }else if(/[36]0 мин\. бесплатно/i.test(name)){
+                       var mins = getLeftAndTotal(val, result, false, false, 'mins_n_free', null, parseMinutes);
+		       if(isset(mins.total) && !isset(mins_totals_was[mins.total])){
+                            addLeftAndTotal(mins, result, AnyBalance.isAvailable('mins_n_free'), false, 'mins_n_free');
+                            new_mins_totals_was[mins.total] = true;
+		       }
                    }else if(/мин на номера МегаФон/i.test(name)){
                        var mins = getLeftAndTotal(val, result, false, false, 'mins_net_left', null, parseMinutes);
                        if(!isset(mins.left) || mins.left < 1000000){ //Большие значения, считай, безлимит. Че его показывать...

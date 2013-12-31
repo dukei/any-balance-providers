@@ -129,6 +129,22 @@ function getCurrentWeather (html, result) {
 function getWeatherForecast (html, result, tod) {
 	var regExpPrefix = '';
 	var array = ['Утро', 'День', 'Вечер', 'Ночь'];
+        if(tod < 0){
+		//Если нам нужна текущая или ближайшая, то надо выбрать нужный индекс
+		var dt = new Date();
+		var hour = dt.getHours();
+		if(0 <= hour && hour < 6){ //Ночь
+			tod = tod == -1 ? 3 : 0;
+		}else if(6 <= hour && hour < 12){ //Утро
+			tod = tod == -1 ? 0 : 1;
+		}else if(12 <= hour && hour < 18){ //День
+			tod = tod == -1 ? 1 : 2;
+		}else{ //Вечер
+			tod = tod == -1 ? 2 : 3;
+		}
+		AnyBalance.trace('Выбираем прогноз на ' + array[tod]);
+        }
+
 	if(tod >= 0) {
 		regExpPrefix = array[tod];
 		
@@ -146,8 +162,6 @@ function getWeatherForecast (html, result, tod) {
 		getParam (tr, result, 'humidity', /<td>(\d+)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 		getParam (tr, result, 'heat', /m_temp c[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 		getParam (tr, result, 'time', /Local:\s*(\d{4}-\d{2}-\d{2}\s+\d+:\d{2})/i, [/(\d{4})-(\d{2})-(\d{2})\s+(\d+:\d{2})/, '$3/$2/$1 $4'], parseDate);
-	} else {
-		// ... 
 	}
 
 	return result;

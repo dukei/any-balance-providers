@@ -31,6 +31,9 @@ function main(){
     if(AnyBalance.getLevel() < 4)
         throw new AnyBalance.Error('Этот провайдер требует API v.4+');
 
+    checkEmpty(prefs.login, 'Введите логин!');
+    checkEmpty(prefs.password, 'Введите пароль!');
+
     var baseurl = "https://kabinet.rt.ru/";
 
     var html = AnyBalance.requestPost(baseurl + 'serverLogic/login', {
@@ -41,7 +44,7 @@ function main(){
 
     var json = getJson(html);
     if(json.isError)
-        throw new AnyBalance.Error(json.errorMsg);
+        throw new AnyBalance.Error(json.errorMsg, null, /Вы ввели несуществующую пару логин-пароль/.test(json.errorMsg));
     if(!json.sessionKey)
         throw new AnyBalance.Error("Не удалось получить идентификатор сессии!");
 
@@ -134,19 +137,27 @@ function main(){
                     phones.push(service.number);
     
                     if(AnyBalance.isAvailable('bonus' + suffix)){
+					    AnyBalance.trace('Пробуем найти бонусную программу Премия...');
                         var jsonBonus = getJson(AnyBalance.requestPost(baseurl + 'serverLogic/getBonusProgramStatus', {serviceId: service.id}, g_headers));
-                        if(jsonBonus.balance)
-                            bonuses.push(parseInt(jsonBonus.balance));
+						if(!jsonBonus.isError){
+							sumParam(jsonBonus.balance+'', result, 'bonus' + suffix, null, replaceTagsAndSpaces, parseBalance, aggregate_sum);						
+						}else{
+						    AnyBalance.trace('Не удалось бонусную программу Премия: ' + jsonBonus.errorMsg);
+						}
                     }
                     if(AnyBalance.isAvailable('sms' + suffix, 'mms' + suffix, 'min' + suffix, 'gprs' + suffix)){
                         var jsonPackets = getJson(AnyBalance.requestPost(baseurl + 'serverLogic/viewCurrentBonus', {serviceId: service.id}, g_headers));
                         if(jsonPackets.bonusCurrent){
                             for(var j1=0; j1<jsonPackets.bonusCurrent.length; ++j1){
                                 var _packet = jsonPackets.bonusCurrent[j1];
-                                sumParam(_packet.currentCount, result, 'sms'+suffix, /(\d+)\s*SMS/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-                                sumParam(_packet.currentCount, result, 'mms'+suffix, /(\d+)\s*MMS/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-                                sumParam(_packet.currentCount, result, 'min'+suffix, /(\d+)\s*мин/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-                                sumParam(_packet.currentCount, result, 'gprs'+suffix, /([\d.,]+)\s*(?:[мmkкгg][бb]|байт|bytes)/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+                                if(/SMS/i.test(_packet.title))
+                                	sumParam(_packet.currentCount, result, 'sms'+suffix, null, null, parseBalance, aggregate_sum);
+                                else if(/MMS/i.test(_packet.title))
+                                	sumParam(_packet.currentCount, result, 'mms'+suffix, null, null, parseBalance, aggregate_sum);
+                                else if(/мин/i.test(_packet.title))
+                                	sumParam(_packet.currentCount, result, 'min'+suffix, null, null, parseBalance, aggregate_sum);
+                                else if(/[мmkкгg][бb]|байт|bytes/i.test(_packet.title))
+                                	sumParam(_packet.currentCount, result, 'gprs'+suffix, null, null, parseBalance, aggregate_sum);
                             }
                         }
                     }
@@ -167,18 +178,27 @@ function main(){
                 if(AnyBalance.isAvailable('bonus' + suffix)) {
 					if(bonuses.length > 0) {
 						result['bonus' + suffix] = aggregate_sum(bonuses);
-					} else {
-						AnyBalance.trace('Бонусов не нашли, попробуем получить бонусы другим способом...');
-						try {
-							html = AnyBalance.requestPost(baseurl + 'plugins/south-bonus/1.0.2-SNAPSHOT/request', {action: 'getBonusBalance', accountId:acc.__detailedInfo.id}, g_headers);
-							var jsonBonus = JSON.parse(html);
-							if(jsonBonus.balance)
-								getParam(jsonBonus.balance+'', result, 'bonus' + suffix, null, replaceTagsAndSpaces, parseBalance);						
-						} catch (e) {
-							AnyBalance.trace('Can`t parse json from: ' + html);
-						}
 					}
 				}
+
+                if(AnyBalance.isAvailable('bonusInt' + suffix)){
+					AnyBalance.trace('Пробуем найти бонусную программу Интернет-Бонус...');
+					try {
+						var sbversion = getSouthBonusVersion(baseurl);
+						html = '';
+						html = AnyBalance.requestPost(baseurl + 'plugins/south-bonus/' + sbversion + '/request', {action: 'getBonusBalance', accountId:acc.__detailedInfo.id}, g_headers);
+						var jsonBonus = JSON.parse(html);
+						if(!jsonBonus.isError){
+							getParam(jsonBonus.balance+'', result, 'bonusInt' + suffix, null, replaceTagsAndSpaces, parseBalance);						
+						}else{
+						    AnyBalance.trace('Не удалось получить Интернет-Бонус: ' + jsonBonus.errorMsg);
+						}
+					} catch (e) {
+						AnyBalance.trace(e.message + ': can`t parse json from: ' + html);
+					}
+				}
+
+
             }
             if(balance > 0)
                 totalBalancePlus += balance;
@@ -189,6 +209,23 @@ function main(){
 
     if(tariffs.length)
         result.__tariff = tariffs.join(', ');
+
+    if(AnyBalance.isAvailable('bonusFPL')){
+		AnyBalance.trace('Пробуем найти программу "Бонус"...');
+		try {
+			html = '';
+			html = AnyBalance.requestPost(baseurl + 'serverLogic/bonusFPLGetProgram', '', g_headers);
+			var jsonBonus = JSON.parse(html);
+			if(!jsonBonus.isError){
+				if(jsonBonus.masterFPL)
+					getParam(jsonBonus.masterFPL.points+'', result, 'bonusFPL', null, replaceTagsAndSpaces, parseBalance);						
+			}else{
+			    AnyBalance.trace('Не удалось получить программу "Бонус": ' + jsonBonus.errorMsg);
+			}
+		} catch (e) {
+			AnyBalance.trace(e.message + ': can`t parse json from: ' + html);
+		}
+	}
 
     //Получим баланс для остальных л\с, если юзер запросил
     if(AnyBalance.isAvailable('totalBalancePlus', 'totalBalanceMinus')){
@@ -214,6 +251,22 @@ function main(){
     }
 
     AnyBalance.setResult(result);
+}
+
+var g_south_bonus_version;
+function getSouthBonusVersion(baseurl){
+    if(!isset(g_south_bonus_version)){
+        var html = AnyBalance.requestPost(baseurl + 'plugins/configuration', '', g_headers);
+        var json = getJson(html);
+        for(var i=0; i<json.length; ++i){
+            if(json[i].name == 'south-bonus'){
+                return g_south_bonus_version = json[i].cononcialVersion;
+            }
+        }
+        g_south_bonus_version = '???';
+        AnyBalance.trace('Could not find cononcialVersion for south-bonus: ' + html);
+    }
+    return g_south_bonus_version;
 }
 
 function getAccBalance(json){

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="11">ab-internet-kabinet-rt</id>
+	<id version="12">ab-internet-kabinet-rt</id>
 	<name>Ростелеком (Единый кабинет)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе и выбранном лицевом счете для пользователей оператора связи "Ростелеком".</p> 
@@ -27,30 +27,35 @@
 		<counter id="balance1" name="Баланс 2" units=" р"/>
 		<counter id="balance2" name="Баланс 3" units=" р"/>
 		<counter id="balance3" name="Баланс 4" units=" р"/>
+		<counter id="bonusFPL" name="Программа &quot;БОНУС&quot;" units=" Б"/>
 
 		<counter id="gprs" name="Остаток трафика" units=" Мб"/>
 		<counter id="sms" name="Остаток SMS" units=" sms"/>
 		<counter id="mms" name="Остаток MMS" units=" mms"/>
 		<counter id="min" name="Остаток минут" units=" мин"/>
-		<counter id="bonus" name="Бонусы" units=" б"/>
+		<counter id="bonus" name="Премия" units=" б"/>
+		<counter id="bonusInt" name="Интернет бонус" units=" Б"/>
 
 		<counter id="gprs1" name="Остаток трафика 2" units=" Мб"/>
 		<counter id="sms1" name="Остаток SMS 2" units=" sms"/>
 		<counter id="mms1" name="Остаток MMS 2" units=" mms"/>
 		<counter id="min1" name="Остаток минут 2" units=" мин"/>
-		<counter id="bonus1" name="Бонусы 2" units=" б"/>
+		<counter id="bonus1" name="Премия 2" units=" б"/>
+		<counter id="bonusInt1" name="Интернет бонус 2" units=" Б"/>
 
 		<counter id="gprs2" name="Остаток трафика 3" units=" Мб"/>
 		<counter id="sms2" name="Остаток SMS 3" units=" sms"/>
 		<counter id="mms2" name="Остаток MMS 3" units=" mms"/>
 		<counter id="min2" name="Остаток минут 3" units=" мин"/>
-		<counter id="bonus2" name="Бонусы 3" units=" б"/>
+		<counter id="bonus2" name="Премия 3" units=" б"/>
+		<counter id="bonusInt2" name="Интернет бонус 3" units=" Б"/>
 
 		<counter id="gprs3" name="Остаток трафика 4" units=" Мб"/>
 		<counter id="sms3" name="Остаток SMS 4" units=" sms"/>
 		<counter id="mms3" name="Остаток MMS 4" units=" mms"/>
 		<counter id="min3" name="Остаток минут 4" units=" мин"/>
-		<counter id="bonus3" name="Бонусы 4" units=" б"/>
+		<counter id="bonus3" name="Премия 4" units=" б"/>
+		<counter id="bonusInt3" name="Интернет бонус 4" units=" Б"/>
 
 		<counter id="status" name="Статус"  type="text"/>
 		<counter id="phone" name="Номер телефона" type="text"/>

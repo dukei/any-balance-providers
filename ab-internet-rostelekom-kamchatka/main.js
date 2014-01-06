@@ -84,8 +84,8 @@ function main(){
         getParam(html, result, 'traffic_local_in', /Зоновый входящий трафик(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTraffic);
         getParam(html, result, 'traffic_global_out', /Внешний исходящий трафик(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTraffic);
         getParam(html, result, 'traffic_global_in', /Внешний входящий трафик(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTraffic);
-        getParam(html, result, 'traffic_included', /Входящий безлимитный трафик \(прочий\)(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTraffic);
-        getParam(html, result, 'traffic_kamchatka', /Входящий трафик UnlimCity(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTraffic);
+        sumParam(html, result, 'traffic_kamchatka', /Входящий безлимитный трафик \(прочий\)(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
+        sumParam(html, result, 'traffic_kamchatka', /Входящий трафик UnlimCity(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
         getParam(html, result, 'traffic_ext_left', /Пакет трафика \(байты\)(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTraffic);
     }
     

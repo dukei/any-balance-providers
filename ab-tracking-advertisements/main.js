@@ -84,14 +84,14 @@ function main(){
 		if(AnyBalance.isAvailable('last') && (matches = info.match(/<div class="item \S*?".*?>[\s\S]*?<div class="description">[\s\S]*?<\/div>/i))){
 			info=matches[0];
 
-			result.date = getParam(info, null, null, /<div class="date">\s+(\S*?)\s*<span/i, replaceTagsAndSpaces, html_entity_decode);
+			result.date = getParam(info, null, null, /<div class="date">\s+(.*?)\s*<span/i, replaceTagsAndSpaces, html_entity_decode);
 			result.time = getParam(info, null, null, /<span class="time">(.*?)<\/span/i, replaceTagsAndSpaces, html_entity_decode);
 			if(result.date != null && result.time != null){result.datetime = result.date + ' ' + result.time;}
 			else if(result.date != null){result.datetime = result.date;}
 			else if(result.time != null){result.datetime = result.time;}
 
-			getParam(info, result, 'last', /<a class="second-link".*?>\s+(.*?)<\/a>/i, replaceTagsAndSpaces, html_entity_decode);
-			getParam(info, result, 'price', /<div class="about">\s+<span>(.*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+			getParam(info, result, 'last', /<h3 class="title">([\s\S]*?)<\/h3>/i, replaceTagsAndSpaces, html_entity_decode);
+			getParam(info, result, 'price', /<div class="about">([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 			getParam(info, result, 'currency', /<div class="about">\s+<span>.*?<\/span>\s+<span>(.*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
 
 		}else {throw new AnyBalance.Error("Ошибка при разборе ответа с сайта.");}

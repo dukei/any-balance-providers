@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        key="login"
+        title="Login"
+        summary="||{@s}" 
+        dialogTitle="Login" 
+        negativeButtonText="Cancel" 
+        dialogMessage="Enter your FX-Trend's login."
+        positiveButtonText="ОК">
+    </EditTextPreference>
+    <EditTextPreference 
+        key="pass"
+        title="Password" 
+        summary="||***********" 
+        dialogTitle="Password" 
+        negativeButtonText="Cancel" 
+        dialogMessage="Enter the passphrase for access to the account."
+        inputType="textPassword"
+        positiveButtonText="ОК">
+    </EditTextPreference>
+    <EditTextPreference 
+        key="account"
+        title="Account number"
+        summary="||{@s}" 
+        dialogTitle="Account number" 
+        negativeButtonText="Cancel" 
+        dialogMessage="Enter your FX-Trend's account for fetching data."
+        positiveButtonText="ОК">
+    </EditTextPreference>
+</PreferenceScreen>

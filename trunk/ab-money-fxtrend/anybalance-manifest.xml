@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-money-fxtrend</id>
+  <name>FX-Trend</name>
+  <description>
+    This provider helps you to check balances on your FX-Trend's account.
+  </description>
+  <author>wtiger &lt;wtiger@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>api:jquery.min.js</js>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="open" name="Open date" type="text"/>
+    <counter id="currency" name="Currency" type="text"/>
+    <counter id="leverage" name="Leverage" type="text"/>
+    <counter id="balance" name="Balance"/>
+    <counter id="equity" name="Equity"/>
+    <counter id="margin" name="Margin"/>
+    <counter id="free" name="Free"/>
+    <counter id="mlevel" name="MLevel" units="%"/>
+    <counter id="profit" name="Profit"/>
+  </counters>
+  <keywords>
+    money fx-trend forex
+  </keywords>
+  <type>
+    money
+  </type>
+</provider>

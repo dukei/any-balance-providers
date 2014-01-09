@@ -10,6 +10,14 @@ var g_headers = {
 	'User-Agent':'Mozilla/5.0 (BlackBerry; U; BlackBerry 9900; en-US) AppleWebKit/534.11+ (KHTML, like Gecko) Version/7.0.0.187 Mobile Safari/534.11+'
 };
 
+function getOptionByName(html, name, result, counterSuffix) {
+	var div = getParam(html, null, null, new RegExp('"options"(?:[^>]*>){5}'+name+'(?:[\\s\\S]*?</div[^>]*>){17,19}', 'i'));
+	if(div) {
+		getParam(div, result, 'status'+counterSuffix, /turn(?:off|on)[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+		getParam(div, result, 'balance'+counterSuffix, /<div[^>]*>Баланс(?:[\s\S]*?<div[^>]*>){1}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	}
+}
+
 function main(){
     var prefs = AnyBalance.getPreferences();
     var baseurl = 'https://lk.quartztelecom.ru/';
@@ -31,9 +39,12 @@ function main(){
 	html = AnyBalance.requestGet(baseurl + 'services', g_headers);
 	
     var result = {success: true};
-    getParam(html, result, 'fio', /<div[^>]*class="customer_name"><p>([^<]*)/i, null, html_entity_decode);
-	getParam(html, result, 'status', /<label[^>]*>Интернет(?:[\s\S]*?<div[^>]*>){1}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'balance', /<div[^>]*>Баланс(?:[\s\S]*?<div[^>]*>){1}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, '__tariff', /<div[^>]*>Тариф(?:[\s\S]*?<div[^>]*>){2}([\s\S]*?мес)/i, replaceTagsAndSpaces, html_entity_decode);
+	
+	getParam(html, result, 'fio', /<div[^>]*class="customer_name"><p>([^<]*)/i, null, html_entity_decode);
+	sumParam(html, result, '__tariff', /Тариф(?:[\s\S]*?<div[^>]*>){2}((?:[^>]*>){8})/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+	
+	getOptionByName(html, 'Интернет', result, '');
+	getOptionByName(html, 'КТВ', result, '_tv');
+
     AnyBalance.setResult(result);
 }

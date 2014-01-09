@@ -7,6 +7,26 @@
         dialogTitle="ID Счетчика" 
         negativeButtonText="Отмена" 
         dialogMessage="Введите id счетчика (id можно посмотреть в адресной строке браузера ?counter_id=12345678)"
+        obligatory="true"
         key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        title="Логин" 
+        positiveButtonText="ОК" 
+        summary="|Логин в Яндекс.Метрику (если счетчик не требует авторизации, то оставьте пустым)|{@s}" 
+        dialogTitle="Логин" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите логин для входа в Яндекс.Метрику. Если ваш счетчик публичный, то это поле можно оставить пустым."
+        key="yalogin">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль для входа"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="||***********"
+        dialogMessage="Введите пароль, используемый для входа в Яндекс.Метрику. Если ваш счетчик публичный, то это поле можно оставить пустым."
+        inputType="textPassword">
     </EditTextPreference>
 </PreferenceScreen>

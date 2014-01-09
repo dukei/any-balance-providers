@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser" />
-	<id version="3">ab-seo-yandex-metrika</id>
+	<id version="4">ab-seo-yandex-metrika</id>
 	<name>Яндекс.Метрика</name>
 	<description>
 Получает данные по id счетчика в системе Яндекс Метрика (http://metrika.yandex.ru/stat/?counter_id=)

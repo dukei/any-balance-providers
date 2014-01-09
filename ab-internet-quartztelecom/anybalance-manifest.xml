@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser" />
-	<id version="1">ab-internet-quartztelecom</id>
+	<id version="2">ab-internet-quartztelecom</id>
 	<name>Кварц Телеком</name>
-	<description>
-	Получает данные интернет провайдера г. Подольск и Подольского района Кварц Телеком http://quartztelecom.ru/
-	
-	Личный кабинет находится по адресу: https://lk.quartztelecom.ru/login
-	</description>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе интернет провайдера г. Подольск и Подольского района Кварц Телеком http://quartztelecom.ru</p>
+	<p>Информация берется из личного кабинета https://lk.quartztelecom.ru/login</p>
+	]]></description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
@@ -18,7 +16,7 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units="р"/>
+		<counter id="balance" name="Баланс" units=" р"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="status" name="Интернет" type="text"/>
 	</counters>

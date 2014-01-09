@@ -17,14 +17,14 @@ var g_headers = {
     'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
     'Cache-Control':'max-age=0',
     Connection:'keep-alive',
-    'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.60 Safari/537.1'
+    'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.63 Safari/537.36'
 };
 
 function main(){
     var prefs = AnyBalance.getPreferences();
 
     if(!prefs.login || !/^\d{16}$/.test(prefs.login))
-        throw new AnyBalance.Error("Введите полный номер карты Системы Город. Только цифры без пробелов и разделителей.");
+        throw new AnyBalance.Error("Введите полный номер карты Системы Город. Только цифры без пробелов и разделителей.", null, true);
     
 //    if(prefs.accnum && !/^\d+$/.test(prefs.accnum))
 //        throw new AnyBalance.Error("Введите полный номер лицевого счета, по которому вы хотите получить информацию, или не вводите ничего, если хотите получить информацию по первому счету.");
@@ -43,6 +43,7 @@ function main(){
 function altai(prefix){
     var prefs = AnyBalance.getPreferences();
     var pan = prefs.login.substr(6);
+    checkEmpty(prefs.password, 'Введите ПИН.');
 
     var baseurl = "https://www.sistemagorod.ru/lk/";
     AnyBalance.requestGet(baseurl, g_headers);
@@ -57,15 +58,15 @@ function altai(prefix){
     if(!/<state>ok<\/state>/i.test(html)){
       var error = getParam(html, null, null, /<error>([\s\S]*?)<\/error>/i, replaceTagsAndSpaces, html_entity_decode);
       if(error)
-          throw new AnyBalance.Error(error);
+          throw new AnyBalance.Error(error, null, /Неверный логин, либо пароль/i.test(error));
       throw new AnyBalance.Error("Не удалось войти в личный кабинет по неизвестной причине. Сайт изменен?");
     }
 
-    html = AnyBalance.requestGet(baseurl);
+    html = AnyBalance.requestGet(baseurl, g_headers);
 
     var result = {success: true};
 
-    var table = getParam(html, null, null, /<table[^>]+id="serv_table"[^>]*>([\s\S]*?)<\/table>/i);
+    var table = getParam(html, null, null, /<table[^>]+serv-table[^>]*>([\s\S]*?)<\/table>/i);
     if(!table)
         throw new AnyBalance.Error('Не найдена таблица услуг.');
 

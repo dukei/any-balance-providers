@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="7" date="2014-01-09">
+      - Поддержка изменений в личном кабинете
+    </change>
     <change version="6" date="2013-07-09">
       - Удалены лишние счетчики, добавлен счетчик Полседняя оплата
     </change>

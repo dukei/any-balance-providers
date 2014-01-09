@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="43">ab-internet-mts</id>
+	<id version="44">ab-internet-mts</id>
 	<name>Домашний Интернет и Телевидение МТС</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем балансе, номере лицевого счета и договора, ФИО владельца, трафике в текущем месяце, абонентской плате для пользователей провайдера ""Домашний Интернет и Телевидение МТС"".</p> 
@@ -30,9 +30,10 @@
 	Чита (https://clb.chita.mts.ru/chita/)<br>
 	Амурская область г. Благовещенск; г. Белогорск (https://clb.amur.mts.ru/cblg/)
 	Орел (http://lbc.oreltv.ru/index.php)
+	Санкт-Петербург (https://lk.spb.mts.ru/index.php)
 	]]></description>
 	<instruction html="true"><![CDATA[
-	<p>Для добавления вашего региона обратитесь, пожалуйста, к автору по адресу dco@mail.ru.</p>     
+	<p>Для добавления вашего региона обратитесь, пожалуйста, к разработчикам</p>
 	]]></instruction>
 	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
 	<files>

@@ -3,6 +3,23 @@ AnyBalance (http://any-balance-providers.googlecode.com)
 
 Содержит некоторые полезные для извлечения значений с сайтов функции.
 Для конкретного провайдера рекомендуется оставлять в этом файле только те функции, которые используются.
+
+library.js v0.08 от 17.12.13
+
+changelog:
+17.12.13 parseMinutes - улучшена обработка минут с точками (28мин.40сек)
+
+05.12.13 parseMinutes - парсинг минут вида 49,25 (т.е. 49 минут и 15 секунд) (Д. Кочин)
+
+03.12.13 опять поправил parseMinutes, не парсились значения типа 252:22 мин
+
+26.11.13: подправлена parseMinutes(), правильное получение данных, если на входе "300 &#65533;мин"
+
+25.11.13: унифицирована parseMinutes() теперь поддерживает все подряд
+
+22.11.13: parseDateWord, добавлена локализация (25 jan 2013, 25 января 2013, 25 янв 2013...), удалена parseDateWordEn, т.к. теперь все есть в parseDateWord
+22.11.13: parseMinutes, добавлена локализация, 5m3sec, 5хв3сек.
+22.11.13: добавлена parseMinutes().
 */
 
 /**
@@ -114,6 +131,35 @@ function parseCurrency(text) {
 	return val;
 }
 
+/** Извлекает время в секундах из переданного текста, на разных языках, из разных форматов (1:30, 01:02:03, 1 м 3 сек, 3 сек, 1 час...) 
+Если на входе будет просто число - вернет минуты.
+Если на входе будет 02:03 будет принят формат ММ:СС*/
+function parseMinutes(_text) {
+	var text = html_entity_decode(_text).replace(/[\s�]+/g, '');
+	var hour = 0, min = 0, sec = 0;
+	// Это формат ЧЧ:ММ:СС	
+	if(/^\d+:\d+:\d+$/i.test(text)) {
+		var regExp = /^(\d+):(\d+):(\d+)$/i.exec(text);
+		hour = parseFloat(regExp[1]);
+		min = parseFloat(regExp[2]);
+		sec = parseFloat(regExp[3]);
+	// Это формат ММ:СС
+	} else if(/^\d+:\d+/i.test(text)) {
+		var regExp = /^(\d+):(\d+)/i.exec(text);
+		hour = 0;
+		min = parseFloat(regExp[1]);
+		sec = parseFloat(regExp[2]);
+	// Это любой другой формат, со словами либо просто число
+	} else {
+		hour = getParam(text, null, null, /(-?[\d\.,]*)\s*(?:час|ч|hour|h)/i, replaceFloat, parseFloat) || 0;
+		min = getParam(text, null, null, [/([\d.,]*)\s*(?:мин|м|хв|min|m)/i, /^[\d.,]+$/i], replaceFloat, parseFloat) || 0;
+		sec = getParam(text, null, null, /([\d]+)\s*(?:сек|c|с|sec|s)/i, [/&minus;/ig, '-', /\s+/g, '', /,/g, '.'], parseFloat) || 0;
+	}
+	var val = (hour*3600) + (min * 60) + sec;
+	AnyBalance.trace('Parsed seconds (' + val + ') from: ' + _text);
+	return val;
+}
+
 /** Заменяет HTML сущности в строке на соответствующие им символы */
 function html_entity_decode(string) {
 	var entities = get_html_translation_table();
@@ -136,106 +182,106 @@ function html_entity_decode(string) {
 
 function get_html_translation_table() {
 	var entities = {
-		amp: 38,
-		nbsp: 160,
-		iexcl: 161,
-		cent: 162,
-		pound: 163,
-		curren: 164,
-		yen: 165,
-		brvbar: 166,
-		sect: 167,
-		uml: 168,
-		copy: 169,
-		ordf: 170,
-		laquo: 171,
-		not: 172,
-		shy: 173,
-		reg: 174,
-		macr: 175,
-		deg: 176,
-		plusmn: 177,
-		sup2: 178,
-		sup3: 179,
-		acute: 180,
-		micro: 181,
-		para: 182,
-		middot: 183,
-		cedil: 184,
-		sup1: 185,
-		ordm: 186,
-		raquo: 187,
-		frac14: 188,
-		frac12: 189,
-		frac34: 190,
-		iquest: 191,
-		agrave: 192,
-		aacute: 193,
-		acirc: 194,
-		atilde: 195,
-		auml: 196,
-		aring: 197,
-		aelig: 198,
-		ccedil: 199,
-		egrave: 200,
-		eacute: 201,
-		ecirc: 202,
-		euml: 203,
-		igrave: 204,
-		iacute: 205,
-		icirc: 206,
-		iuml: 207,
-		eth: 208,
-		ntilde: 209,
-		ograve: 210,
-		oacute: 211,
-		ocirc: 212,
-		otilde: 213,
-		ouml: 214,
-		times: 215,
-		oslash: 216,
-		ugrave: 217,
-		uacute: 218,
-		ucirc: 219,
-		uuml: 220,
-		yacute: 221,
-		thorn: 222,
-		szlig: 223,
-		agrave: 224,
-		aacute: 225,
-		acirc: 226,
-		atilde: 227,
-		auml: 228,
-		aring: 229,
-		aelig: 230,
-		ccedil: 231,
-		egrave: 232,
-		eacute: 233,
-		ecirc: 234,
-		euml: 235,
-		igrave: 236,
-		iacute: 237,
-		icirc: 238,
-		iuml: 239,
-		eth: 240,
-		ntilde: 241,
-		ograve: 242,
-		oacute: 243,
-		ocirc: 244,
-		otilde: 245,
-		ouml: 246,
-		divide: 247,
-		oslash: 248,
-		ugrave: 249,
-		uacute: 250,
-		ucirc: 251,
-		uuml: 252,
-		yacute: 253,
-		thorn: 254,
-		yuml: 255,
-		quot: 34,
-		lt: 60,
-		gt: 62
+		amp		: 38,
+		nbsp	: 160,
+		iexcl	: 161,
+		cent	: 162,
+		pound	: 163,
+		curren	: 164,
+		yen		: 165,
+		brvbar	: 166,
+		sect	: 167,
+		uml		: 168,
+		copy	: 169,
+		ordf	: 170,
+		laquo	: 171,
+		not		: 172,
+		shy		: 173,
+		reg		: 174,
+		macr	: 175,
+		deg		: 176,
+		plusmn	: 177,
+		sup2	: 178,
+		sup3	: 179,
+		acute	: 180,
+		micro	: 181,
+		para	: 182,
+		middot	: 183,
+		cedil	: 184,
+		sup1	: 185,
+		ordm	: 186,
+		raquo	: 187,
+		frac14	: 188,
+		frac12	: 189,
+		frac34	: 190,
+		iquest	: 191,
+		agrave	: 192,
+		aacute	: 193,
+		acirc	: 194,
+		atilde	: 195,
+		auml	: 196,
+		aring	: 197,
+		aelig	: 198,
+		ccedil	: 199,
+		egrave	: 200,
+		eacute	: 201,
+		ecirc	: 202,
+		euml	: 203,
+		igrave	: 204,
+		iacute	: 205,
+		icirc	: 206,
+		iuml	: 207,
+		eth		: 208,
+		ntilde	: 209,
+		ograve	: 210,
+		oacute	: 211,
+		ocirc	: 212,
+		otilde	: 213,
+		ouml	: 214,
+		times	: 215,
+		oslash	: 216,
+		ugrave	: 217,
+		uacute	: 218,
+		ucirc	: 219,
+		uuml	: 220,
+		yacute	: 221,
+		thorn	: 222,
+		szlig	: 223,
+		agrave	: 224,
+		aacute	: 225,
+		acirc	: 226,
+		atilde	: 227,
+		auml	: 228,
+		aring	: 229,
+		aelig	: 230,
+		ccedil	: 231,
+		egrave	: 232,
+		eacute	: 233,
+		ecirc	: 234,
+		euml	: 235,
+		igrave	: 236,
+		iacute	: 237,
+		icirc	: 238,
+		iuml	: 239,
+		eth		: 240,
+		ntilde	: 241,
+		ograve	: 242,
+		oacute	: 243,
+		ocirc	: 244,
+		otilde	: 245,
+		ouml	: 246,
+		divide	: 247,
+		oslash	: 248,
+		ugrave	: 249,
+		uacute	: 250,
+		ucirc	: 251,
+		uuml	: 252,
+		yacute	: 253,
+		thorn	: 254,
+		yuml	: 255,
+		quot	: 34,
+		lt		: 60,
+		gt		: 62
 	};
 
 	return entities;
@@ -309,20 +355,22 @@ function parseDate(str) {
 	AnyBalance.trace('Failed to parse date from value: ' + str);
 }
 
-/** Парсит дату из такого вида в мс 27 июля 2013 без использования сторонних библиотек, можно тестировать с помощью кода ниже:
-	var months = ['январь', 'января', 'февраль', 'февраля','март', 'марта','апрель', 'апреля','май', 'мая','июнь', 'июня','июль', 'июля','август', 'августа','сентября', 'сентябрь','октября', 'октябрь','ноября', 'ноябрь','декабря', 'декабрь'];
-	for (i = 0; i < months.length; i++) {
-		parseDateWord('11 ' + months[i] + ' 2013');
-	}
-*/
+/** Парсит дату из такого вида: 27 июля 2013 без использования сторонних библиотек, результат в мс */
 function parseDateWord(str){
 	AnyBalance.trace('Trying to parse date from ' + str);
-	return getParam(str, null, null, null, [replaceTagsAndSpaces, /январ(?:я|ь)/i, '.01.', /феврал(?:я|ь)/i, '.02.', /марта|март/i, '.03.', /апрел(?:я|ь)/i, '.04.', /ма(?:я|й)/i, '.05.', /июн(?:я|ь)/i, '.06.', /июл(?:я|ь)/i, '.07.', /августа|август/i, '.08.', /сентябр(?:я|ь)/i, '.09.', /октябр(?:я|ь)/i, '.10.', /ноябр(?:я|ь)/i, '.11.', /декабр(?:я|ь)/i, '.12.', /\s/g, ''], parseDate);
-}
-
-function parseDateWordEn(str){
-	AnyBalance.trace('Trying to parse date from ' + str);
-	return getParam(str, null, null, null, [replaceTagsAndSpaces, /(?:january|jan)/i, '.01.', /(?:febrary|feb)/i, '.02.', /march|mar/i, '.03.', /(?:april|apr)/i, '.04.', /may/i, '.05.', /(?:june|jun)/i, '.06.', /(?:july|jul)/i, '.07.', /august|aug/i, '.08.', /(?:september|sep)/i, '.09.', /(?:october|oct)/i, '.10.', /(?:november|nov)/i, '.11.', /(?:december|dec)/i, '.12.', /\s/g, ''], parseDate);
+	return getParam(str, null, null, null, [replaceTagsAndSpaces, 
+		/\D*(?:январ(?:я|ь)|янв|january|jan)\D*/i, '.01.', 
+		/\D*(?:феврал(?:я|ь)|фев|febrary|feb)\D*/i, '.02.', 
+		/\D*(?:марта|март|мар|march|mar)\D*/i, '.03.', 
+		/\D*(?:апрел(?:я|ь)|апр|april|apr)\D*/i, '.04.', 
+		/\D*(?:ма(?:я|й)|may)\D*/i, '.05.', 
+		/\D*(?:июн(?:я|ь)|июн|june|jun)\D*/i, '.06.', 
+		/\D*(?:июл(?:я|ь)|июл|july|jul)\D*/i, '.07.', 
+		/\D*(?:августа|август|авг|august|aug)\D*/i, '.08.', 
+		/\D*(?:сентябр(?:я|ь)|сен|september|sep)\D*/i, '.09.', 
+		/\D*(?:октябр(?:я|ь)|окт|october|oct)\D*/i, '.10.', 
+		/\D*(?:ноябр(?:я|ь)|ноя|november|nov)\D*/i, '.11.', 
+		/\D*(?:декабр(?:я|ь)|dec|december|dec)\D*/i, '.12.', /\s/g, ''], parseDate);
 }
 
 /** Объединяет два объекта. Свойства с общими именами берутся из newObject */
@@ -665,7 +713,7 @@ function requestPostMultipart(url, data, headers) {
 	for (var name in data) {
 		parts.push(boundary, 'Content-Disposition: form-data; name="' + name + '"', '', data[name]);
 	}
-	parts.push(boundary + '--');
+	parts.push(boundary + '--\r\n');
 	if (!headers)
 		headers = {};
 	headers['Content-Type'] = 'multipart/form-data; boundary=' + boundary.substr(2);

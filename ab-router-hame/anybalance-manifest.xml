@@ -1,40 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-router-hame</id>
-  <api flags="no_browser|private"/>
-  <name>Роутеры Hame</name>
-  <description>
-    Мониторинг параметров безпроводных роутеров Hame. Получает данные из странички статистики роутера по адресу http://192.168.169.1 или по другому адресу установленному пользователем.
-
-    Обратите внимание: Данный провайдер не может точно отображать данные использованного трафика. Для контроля расхода денежных средств используйте провайдер того оператора, к которому подключено устройство.
-    
-    Работоспособность провайдера проверялась на моделях SPR-A100, MPR-A1, MPR-P1, R1. Если у вас работает на других моделях, то просьба сообщить автору провайдера.
-  </description>
-  <author>Ignatiy Goloviznin &lt;igoloviznin@gmail.com&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>md5-min.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="connect_status" name="Статус подключения модема" type="text"/>
-    <counter id="users" name="Количество подключенных пользователей" type="numeric"/>
-    <counter id="connect_type" name="Тип подключения" type="text"/>
-    <counter id="signal_level" name="Уровень сигнала" units=" %"/>
-    <counter id="traffic_download" name="Загруженный трафик" units=" mb"/>
-    <counter id="traffic_upload" name="Отправленный трафик" units=" mb"/>
-    <counter id="traffic_total" name="Общий трафик" units=" mb"/>
-    <counter id="running_time" name="Время работы роутера" type="time_interval" format="{@H}:{@min}:{@sec}"/>
-    <counter id="connected_time" name="Текущее время соединения" type="time_interval" format="{@H}:{@min}:{@sec}"/>
-    <counter id="connected_time_total" name="Общее время соединения" type="time_interval" format="{@H}:{@min}:{@sec}"/>
-  </counters>
-  <keywords>
-    роутер файловое хранилище SPR-A100 MPR-A1 MPR-P1 3G Wi-Fi CDMA EVDO GSM UMTS WCDMA
-  </keywords>
-  <type>
-    router
-  </type>
+	<id version="1">ab-router-hame</id>
+	<api flags="no_browser|private"/>
+	<name>Роутеры Hame</name>
+	<description html="true"><![CDATA[
+	<p>Мониторинг параметров беcпроводных роутеров Hame. Получает данные из странички статистики роутера по адресу http://192.168.169.1 или по другому адресу установленному пользователем.</p>
+	<p>Обратите внимание: Данный провайдер не может точно отображать данные использованного трафика. Для контроля расхода денежных средств используйте провайдер того оператора, к которому подключено устройство.</p>
+	<p>Работоспособность провайдера проверялась на моделях SPR-A100, MPR-A1, MPR-P1, R1. Если у вас работает на других моделях, то просьба сообщить автору провайдера.</p>
+	]]></description>
+	<author>Ignatiy Goloviznin &lt;igoloviznin@gmail.com&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>md5-min.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="connect_status" name="Статус подключения модема" type="text"/>
+		<counter id="users" name="Количество подключенных пользователей" type="numeric"/>
+		<counter id="connect_type" name="Тип подключения" type="text"/>
+		<counter id="signal_level" name="Уровень сигнала" units=" %"/>
+		<counter id="traffic_download" name="Загруженный трафик" units=" mb"/>
+		<counter id="traffic_upload" name="Отправленный трафик" units=" mb"/>
+		<counter id="traffic_total" name="Общий трафик" units=" mb"/>
+		<counter id="running_time" name="Время работы роутера" type="time_interval" format="{@H}:{@min}:{@sec}"/>
+		<counter id="connected_time" name="Текущее время соединения" type="time_interval" format="{@H}:{@min}:{@sec}"/>
+		<counter id="connected_time_total" name="Общее время соединения" type="time_interval" format="{@H}:{@min}:{@sec}"/>
+	</counters>
+	<keywords>роутер файловое хранилище SPR-A100 MPR-A1 MPR-P1 3G Wi-Fi CDMA EVDO GSM UMTS WCDMA</keywords>
+	<type>router</type>
 </provider>

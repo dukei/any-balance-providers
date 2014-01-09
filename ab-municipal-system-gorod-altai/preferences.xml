@@ -7,6 +7,7 @@
         dialogTitle="Номер карты" 
         negativeButtonText="Отмена" 
         dialogMessage="Введите номер карты Системы Город без пробелов и разделителей."
+        obligatory="true"
         inputType="number"
         key="login">
     </EditTextPreference>
@@ -17,6 +18,7 @@
         negativeButtonText="Отмена"
         title="Пароль"
         summary="||***********"
+        obligatory="true"
         dialogMessage="Введите пароль, используемый для входа в личный кабинет"
         inputType="numberPassword">
     </EditTextPreference>
@@ -26,7 +28,7 @@
         dialogTitle="Номер счета или название услуги"
         negativeButtonText="Отмена"
         title="Счет или услуга"
-        summary="|Автоматически\n|{@s}\n"
+        summary="|Автоматически|{@s}"
         dialogMessage="Введите начало номера лицевого счета или часть названия услуги, по которой вы хотите посмотреть информацию, или оставьте пустым, чтобы получить информацию по первому счету"
         inputType="text">
     </EditTextPreference>

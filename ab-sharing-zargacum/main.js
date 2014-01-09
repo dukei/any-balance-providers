@@ -20,7 +20,9 @@ function getPacket(html, name, result, counter){
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-
+	checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(prefs.password, 'Введите пароль!');
+	
     AnyBalance.setDefaultCharset('utf-8');
 
     var baseurl = "https://billing.zargacum.net/";
@@ -30,16 +32,14 @@ function main(){
         enter_pwd:prefs.password
     });
 
-    //AnyBalance.trace(html);
-
     if(!/\/quit\//i.test(html)){
         throw new AnyBalance.Error("Не удалось войти в личный кабинет. Неправильный логин-пароль?");
     }
-
+	
     html = AnyBalance.requestGet(baseurl + 'cabinet/');
-
+	
     var result = {success: true};
-
+	
     getParam(html, result, 'balance', /Баланс:([\S\s]*?)[\(\|<]/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, '__tariff', /Тип учетки([\S\s]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'bonus', /Бонус\s*<[^>]*>\s*:([\S\s]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);

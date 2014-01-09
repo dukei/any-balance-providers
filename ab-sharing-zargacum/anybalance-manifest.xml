@@ -1,29 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-sharing-zargacum</id>
-  <name>Zargacum</name>
-  <description>
-    Получает баланс и бонусы у провайдера кардшаринга Zargacum (https://billing.zargacum.net).
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="$"/>
-    <counter id="bonus" name="Бонусы" units="$"/>
-  </counters>
-  <keywords>
-    интернет, заргакум
-  </keywords>
-  <type>
-    sharing
-  </type>
-  <country>
-    ru
-  </country>
+	<id version="2">ab-sharing-zargacum</id>
+	<name>Zargacum</name>
+	<api flags="no_browser"/>
+	<description html="true"><![CDATA[
+	<p>Получает баланс и бонусы у провайдера кардшаринга Zargacum (https://billing.zargacum.net).</p>
+	]]></description>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" $"/>
+		<counter id="bonus" name="Бонусы" units=" $"/>
+	</counters>
+	<keywords>интернет, заргакум</keywords>
+	<type>sharing</type>
+	<country>ru</country>
 </provider>

@@ -388,7 +388,11 @@ function fetchAccumulatedCounters(html, result, mobile){
 function fetchAccountStatus(html, result){
     AnyBalance.trace("Parsing status...");
     // Ближайший срок истекания пакета минут
-    sumParam (html, result, 'min_till', [/мин\.?,?\s*действует до ([^<]*)/ig, /Остаток пакета минут:[^<]*действует до([^<]*)/ig], replaceTagsAndSpaces, parseDate, aggregate_min);
+    sumParam (html, result, 'min_till', [/мин\.?,?\s*(?:Пакет\s*)?действует до ([^<]*)/ig, /Остаток пакета минут:[^<]*действует до([^<]*)/ig], replaceTagsAndSpaces, parseDate, aggregate_min);
+    // Ближайший срок истекания пакета SMS
+    sumParam (html, result, 'sms_till', /(?:смс|sms)[.:,]*\s*(?:Пакет\s*)?действует до ([^<]*)/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
+    // Ближайший срок истекания пакета MMS
+    sumParam (html, result, 'mms_till', /(?:ммс|mms)[.:,]*\s*(?:Пакет\s*)?действует до ([^<]*)/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
     //Территория МТС (3000 минут): Осталось 0 минут
     html = sumParam (html, result, 'min_left_mts', /Территория МТС.*?: Осталось\s*([\d\.,]+)\s*мин/ig, replaceFloat, parseBalance, aggregate_sum, true);
     html = sumParam (html, result, 'min_left_mts', /Осталось\s*([\d\.,]+)\s*мин\S* на МТС/ig, replaceFloat, parseBalance, aggregate_sum, true);

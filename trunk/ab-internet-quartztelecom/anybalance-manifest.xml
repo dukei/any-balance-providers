@@ -21,7 +21,6 @@
 		<counter id="balance_tv" name="Баланс ТВ" units=" р"/>
 		<counter id="status_tv" name="Статус ТВ" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>
-		<counter id="status" name="Интернет" type="text"/>
 	</counters>
 	<keywords></keywords>
 	<type>internet</type>

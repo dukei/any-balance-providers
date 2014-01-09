@@ -39,7 +39,7 @@ function main() {
 	
 	var result = {success: true};
 	getParam(json.currency+'', result, ['currency', 'balance'], null, replaceTagsAndSpaces);
-	getParam(json.balance_formatted+'', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
+	getParam(json.balance+'', result, 'balance', null, [replaceTagsAndSpaces, /(\d{2})$/i, '.$1'], parseBalance);
 
 	AnyBalance.setResult(result);
 }

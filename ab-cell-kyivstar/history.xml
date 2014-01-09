@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-	<change major_version="2.0" version="45" date="2013-12-17">
+	<change major_version="2.0" version="46" date="2014-01-09">
 	- Исправлено распознавание минут в некоторых случаях.
 	</change>
 	<change major_version="2.0" version="44" date="2013-12-16">

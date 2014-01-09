@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-money-payza</id>
+	<api flags="no_browser"/>
+	<name>Payza</name>
+	<description html="true"><![CDATA[
+	<p>Obtains information from Payza personal account (https://m.payza.com/Account/Login)</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Balance" units=" {@currency}"/>
+		<counter id="currency" name="Currency" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>money</type>
+	<!-- <country>ru</country> -->
+</provider>

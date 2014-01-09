@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference
+		title="Login"
+		key="login"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Login"
+		positiveButtonText="OK"
+		negativeButtonText="Cancel"
+		dialogMessage="Enter login to Payza personal account.">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Password"
+		key="password"
+		summary="||***********"
+		obligatory="true"
+		dialogTitle="Password"
+		positiveButtonText="OK"
+		negativeButtonText="Cancel"
+		dialogMessage="Enter password to Payza personal account."
+		inputType="textPassword">
+	</EditTextPreference>
+</PreferenceScreen>

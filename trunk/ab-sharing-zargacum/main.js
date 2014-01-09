@@ -13,7 +13,8 @@ function getPacket(html, name, result, counter){
     var tr = getParam(html, null, null, re);
     if(tr){
         //Нашли пакет
-        getParam(tr, result, counter, /\[b_price\] => (.*)/, null, parseBalance);
+        getParam(tr, result, counter, /<td[^>]+class="?vtitle[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+        getParam(tr, result, counter + '_price', /\[b_price\] => (.*)/, null, parseBalance);
         getParam(tr, result, counter + '_till', /\[ActiveTill\] => (.*)/, null, parseDateISO);
     }
 }
@@ -45,8 +46,7 @@ function main(){
     getParam(html, result, 'bonus', /Бонус\s*<[^>]*>\s*:([\S\s]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 
     //Обязательно надо экранировать служебные символы в названии пакета, потому что оно вставляется в регулярное выражение
-    getPacket(html, 'VIP \\(36e\\) ALL', result, 'vip36e');
-    getPacket(html, 'SRG SSR \\+ HD \\(13e\\)', result, 'srgssrhd36e');
+    getPacket(html, '.', result, 'packet');
 
     AnyBalance.setResult(result);
 }

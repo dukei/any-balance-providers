@@ -19,6 +19,20 @@ var g_headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.60 Safari/537.1'
 }
 
+function smsPassAction(baseurl, html, target, smspass){
+    html = AnyBalance.requestPost(baseurl + 'Pages/LogOn.aspx', {
+        __LASTFOCUS:'',
+        __EVENTTARGET: target,
+        __EVENTARGUMENT:'',
+        __VSTATE:getViewState(html),
+        __VIEWSTATE:'',
+        __VIEWSTATEENCRYPTED:'',
+        __EVENTVALIDATION:getEventValidation(html),
+        wzLogin$ucLogOnOneTimePassword$ucOneTimePassword$fldOneTimePassword$tbOneTimePassword:smspass
+    }, addHeaders({Referer: baseurl + 'Pages/LogOn.aspx'}));
+    return html;
+}
+
 
 function main(){
     var prefs = AnyBalance.getPreferences();
@@ -56,23 +70,20 @@ function main(){
     }
 
     if(/tbOneTimePassword/i.test(html)){
-    	if(!prefs.smspass)
-    		throw new AnyBalance.Error('Для входа в интернет банк требуется ввести временный код из смс. Он действует несколько дней. Введите его в настройки провайдера.', null, true);
+    	if(!prefs.smspass){
+            smsPassAction(baseurl, html, 'wzLogin$btnGenerate', '');
+ 	    throw new AnyBalance.Error('Для входа в интернет банк требуется ввести временный код, который выслан вам в SMS. Он действует несколько дней. Введите его в настройки провайдера.', null, true);
+        }
 
-        html = AnyBalance.requestPost(baseurl + 'Pages/LogOn.aspx', {
-            __LASTFOCUS:'',
-            __EVENTTARGET: 'wzLogin$btnConfirm',
-            __EVENTARGUMENT:'',
-            __VSTATE:getViewState(html),
-            __VIEWSTATE:'',
-            __VIEWSTATEENCRYPTED:'',
-            __EVENTVALIDATION:getEventValidation(html),
-            wzLogin$ucLogOnOneTimePassword$ucOneTimePassword$fldOneTimePassword$tbOneTimePassword:prefs.smspass
-        }, addHeaders({Referer: baseurl + 'Pages/LogOn.aspx'}));
+        html = smsPassAction(baseurl, html, 'wzLogin$btnConfirm', prefs.smspass);
     }
 
     if(!/ctl00\$btnLogout/i.test(html)){
         var error = getParam(html, null, null, /<span[^>]+id="globalErrorMessage"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+        if(error && /Помилковий security-пароль/i.test(error)){
+            smsPassAction(baseurl, html, 'wzLogin$btnGenerate', '');
+            throw new AnyBalance.Error(error + ' Новый SMS-пароль сгенерерован и выслан вам. Введите его в настройки провайдера.', null, true);
+        }
         if(error)
             throw new AnyBalance.Error(error, null, /Обліковий запис не знайдено|некоректні логін чи пароль|Помилковий пароль|Помилковий security-пароль/i.test(error));
         throw new AnyBalance.Error("Не удалось зайти в интернет-банк. Сайт изменен?");

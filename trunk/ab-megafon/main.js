@@ -428,9 +428,10 @@ function megafonTrayInfo(filial){
         errorInTray = e.message || "Unknown error";
     }
 
-    if(AnyBalance.isAvailable('internet_cost', 'bonus_balance', 'last_pay_sum', 'last_pay_date', 'mins_left', 'mins_net_left', 'mins_n_free', 'mins_total', 'internet_left', 'internet_total', 'internet_cur') 
+    if(AnyBalance.isAvailable('internet_cost', 'bonus_balance', 'last_pay_sum', 'last_pay_date', 'mins_left', 'mins_net_left', 'mins_n_free', 'mins_total', 'internet_left', 'internet_total', 'internet_cur',
+                              'sub_smit','sub_smio','sub_scl','sub_scr','sub_soi') 
 		|| errorInTray 
-		|| isAvailableButUnset(result, ['balance','phone','sub_smit','sub_smio','sub_scl','sub_scr','sub_soi','sms_left','sms_total','mins_left','mins_total','gb_with_you'])){
+		|| isAvailableButUnset(result, ['balance','phone','sms_left','sms_total','mins_left','mins_total','gb_with_you'])){
 
         //Некоторую инфу можно получить из яндекс виджета. Давайте попробуем.
         var prefs = AnyBalance.getPreferences();
@@ -453,8 +454,8 @@ function megafonTrayInfo(filial){
            var need_int_cur = isAvailableButUnset(result, ['internet_cur']);
 
            if(errorInTray || 
-			isAvailableButUnset(result, ['internet_cost', 'balance','phone','sub_smit','sub_smio','sub_scl','sub_scr','sub_soi']) || 
-			AnyBalance.isAvailable('mins_left', 'mins_net_left', 'mins_n_free', 'mins_total', 'internet_left', 'internet_total', 'internet_cur')){
+			isAvailableButUnset(result, ['internet_cost', 'balance','phone']) || 
+			AnyBalance.isAvailable('mins_left', 'mins_net_left', 'mins_n_free', 'mins_total', 'internet_left', 'internet_total', 'internet_cur','sub_smit','sub_smio','sub_scl','sub_scr','sub_soi')){
 
                getParam(json.ok.html, result, 'balance', /<div[^>]+class="subs_balance[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
                if(isAvailableButUnset(result, ['balance'])){

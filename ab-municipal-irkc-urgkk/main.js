@@ -16,7 +16,6 @@ function main() {
 	AnyBalance.setDefaultCharset('utf-8');
 
 	checkEmpty(prefs.login, 'Введите логин!');
-	checkEmpty(prefs.password, 'Введите пароль!');
 
 	var html = AnyBalance.requestGet(baseurl + 'index.php?Itemid=72&option=com_irkc&view=irkc', g_headers);
 

@@ -32,21 +32,31 @@ function main(){
     }
 
     var result = {success: true, nextbonuses: ''};
-    getParam(html, result, 'balance', /баланс<(?:[\s\S]*?[^>]*>){3}([\s\S]*?)<\/span>/, replaceTagsAndSpaces, parseBalance);
+	
 	getParam(html, result, 'fio', /font[^>]*class="t_b6"[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'dogovor', /ctl00_m_rc_ctl00_c_lContract[^>]*>([^:]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'acc-num', /ctl00_m_rc_ctl00_c_lContract[^>]*>[^>]*счет\s*\[([\s\S]*?)\]<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
 	
-	var table = getParam(html, null, null, /Бонусы будущих периодов[^>]*>\s*(<table[\s\S]*?<\/table>)/i);
-	if(table) {
-		sumParam(table, result, 'nextbonuses_summ', /(?:[\s\S]*?<td[^>]*>){4}([^<]*)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-	
-		var tr = sumParam(table, null, null, /(<tr>[\s\S]*?<\/tr>)/ig, replaceTagsAndSpaces, html_entity_decode);
-		for(i = 0; i < tr.length; i++) {
-			result.nextbonuses += tr[i] + '\n';
-		}
-		result.nextbonuses = result.nextbonuses.replace(/^\s+|\s+$/g, '');
-	}
+	// <div(?:[^>]+>){3}\d+6275(?:[\s\S]*?<\/table){1,2}
+	var digits = prefs.digits || '';
+	var tr = getParam(html, null, null, new RegExp('<div(?:[^>]+>){3}\\d+'+ digits +'(?:[\\s\\S]*?</table){1,2}', 'i'));
+	if(!tr)
+		throw new AnyBalance.Error('Не удалось найти ' + (prefs.digits ? 'счет с последними цифрами ' + prefs.digits : 'ни одного счета. Сайт изменен?'));
 
+	getParam(tr, result, 'balance', /баланс<(?:[\s\S]*?[^>]*>){3}([\s\S]*?)<\/span>/, replaceTagsAndSpaces, parseBalance);
+	getParam(tr, result, 'dogovor', /ctl00_m_rc_ctl01_c_lContract"[^>]*class="tb_1"[^>]*>([^:]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(tr, result, 'acc-num', /ctl00_m_rc_ctl01_c_lContract"[^>]*class="tb_1"[^>]*>[^>]+>(\d+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(tr, result, '__tariff', /ТП:([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	
+	if(isAvailable('nextbonuses_summ')) {
+		var table = getParam(html, null, null, /Бонусы будущих периодов[^>]*>\s*(<table[\s\S]*?<\/table>)/i);
+		if(table) {
+			sumParam(table, result, 'nextbonuses_summ', /(?:[\s\S]*?<td[^>]*>){4}([^<]*)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+		
+			var tr = sumParam(table, null, null, /(<tr>[\s\S]*?<\/tr>)/ig, replaceTagsAndSpaces, html_entity_decode);
+			for(i = 0; i < tr.length; i++) {
+				result.nextbonuses += tr[i] + '\n';
+			}
+			result.nextbonuses = result.nextbonuses.replace(/^\s+|\s+$/g, '');
+		}	
+	}
     AnyBalance.setResult(result);
 }

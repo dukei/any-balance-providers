@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="3">ab-internet-intercon</id>
+	<id version="4">ab-internet-intercon</id>
 	<name>Интеркон (Воронеж)</name>
-	<description>
-Получает данные для провайдера Интеркон г. Воронеж (http://www.intercon.ru/)
-
-Личный кабинет находится по адресу: http://client2.intercon.ru/Client.aspx
-	</description>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Интеркон г. Воронеж (http://www.intercon.ru/)</p>
+	<p>Информация берется из личного кабинета http://client2.intercon.ru/Client.aspx</p>
+	]]></description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
@@ -17,7 +16,7 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units="р"/>
+		<counter id="balance" name="Баланс" units=" р"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="dogovor" name="Договор" type="text"/>
 		<counter id="acc-num" name="Номер счета" type="text"/>

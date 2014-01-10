@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="1.0" version="4" date="2014-01-10">
+	- Оптимизация кода и исправлени ошибок. (Stark)
+	</change>
+	<change major_version="1.0" version="3" date="2013-05-23">
+	- Изменена обработка ошибок.
+	</change>
     <change major_version="1.0" version="2" date="2012-07-09">
-      - Изменен email автора провайдера.
-      - Добавлена история версий.
-    </change>
-    <change version="3" date="2013-05-23">
-      - Изменена обработка ошибок.
-    </change>
+	- Изменен email автора провайдера.
+	- Добавлена история версий.
+	</change>
 </history>

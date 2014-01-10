@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-sharing-zargacum</id>
+	<id version="4">ab-sharing-zargacum</id>
 	<name>Zargacum</name>
 	<api flags="no_browser"/>
 	<description html="true"><![CDATA[
@@ -17,6 +17,9 @@
 	<counters>
 		<counter id="balance" name="Баланс" units=" $"/>
 		<counter id="bonus" name="Бонусы" units=" $"/>
+		<counter id="packet" name="Пакет" type="text"/>
+		<counter id="packet_price" name="Цена пакета" units=" $"/>
+		<counter id="packet_till" name="Срок действия пакета" type="time" format="dd/MM/yyyy"/>
 	</counters>
 	<keywords>интернет, заргакум</keywords>
 	<type>sharing</type>

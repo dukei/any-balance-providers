@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference
+		title="Номер договора"
+		key="login"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Номер договора"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите номер договора.">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Код доступа"
+		key="password"
+		summary="||***********"
+		obligatory="true"
+		dialogTitle="Код доступа"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите код доступа."
+		inputType="textPassword">
+	</EditTextPreference>
+	<ListPreference
+		key="predpr"
+		title="Предприятие"
+		summary="||{@s}"
+		entries="РУП Белоруснефть-Брестоблнефтепродукт|РУП Белоруснефть-Витебскоблнефтепродукт|РУП Белоруснефть-Гомельоблнефтепродукт|РУП Белоруснефть-Гроднооблнефтепродукт|ОАО Лиданефтепродукт|РУП Белоруснефть-Минскоблнефтепродукт|РУП Белоруснефть-Оргнефтехим|РУП Белоруснефть-Минскавтозаправка|ОАО Пуховичинефтепродукт|РУП Белоруснефть-Могилевоблнефтепродукт"
+		entryValues="20|160|370|520|530|600|640|650|720|800"
+		defaultValue="card">
+	</ListPreference>	
+</PreferenceScreen>

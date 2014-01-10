@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<api flags="no_browser" />
+	<id version="1">ab-bonus-belarus-neft-info</id>
+	<name>Беларусь Нефть (АЗС-Инфо)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию из системы отчетов АЗС-Инфо Беларусь Нефть http://beloil.by/sitebeloil/ru/center/azs/center/card/rests</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс"/>
+		<counter id="fio" name="Клиент" type="text"/>
+	</counters>
+	<keywords>Беларусь, Нефть, бензин, топливо</keywords>
+	<type>bonus</type>
+	<country>by</country>
+</provider>

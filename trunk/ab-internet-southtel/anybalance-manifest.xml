@@ -1,35 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-southtel</id>
-  <name>ЮГ-Телеком (Подмосковье)</name>
-  <description>
-    Получает баланс и информацию о тарифном плане для интернет провайдера южного подмосковья ЮГ-ТЕЛЕКОМ (http://southtel.ru). Информация берется из личного кабинета http://bill.southtel.ru:8001.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="accbalance" name="Остаток на л/с" units="р"/>
-    <counter id="blocked" name="Зарезервировано" units="р"/>
-    <counter id="limit" name="Кредитный лимит" units="р"/>
-    <counter id="lastpay" name="Последний платеж" units="р"/>
-    <counter id="lastpaydate" name="Дата последнего платежа" type="time" format="dd/MM/yyyy"/>
-    <counter id="recom" name="Рекомендуемый платеж" units="р"/>
-    <counter id="licschet" name="Лицевой счет" type="text"/>
-    <counter id="agr" name="Номер договора" type="text"/>
-  </counters>
-  <keywords>
-    
-  </keywords>
-  <type>
-    internet
-  </type>
-  <country>
-    ru
-  </country>
+	<id version="2">ab-internet-southtel</id>
+	<api flags="no_browser"/>
+	<name>ЮГ-Телеком (Подмосковье)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе интернет провайдера южного подмосковья ЮГ-ТЕЛЕКОМ (http://southtel.ru)</p>
+	<p>Информация берется из личного кабинета http://bill.southtel.ru:8001</p>
+	]]></description>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="accbalance" name="Остаток на л/с" units=" р"/>
+		<counter id="blocked" name="Зарезервировано" units=" р"/>
+		<counter id="limit" name="Кредитный лимит" units=" р"/>
+		<counter id="lastpay" name="Последний платеж" units=" р"/>
+		<counter id="lastpaydate" name="Дата последнего платежа" type="time" format="dd/MM/yyyy"/>
+		<counter id="recom" name="Рекомендуемый платеж" units=" р"/>
+		<counter id="licschet" name="Лицевой счет" type="text"/>
+		<counter id="agr" name="Номер договора" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet</type>
+	<country>ru</country>
 </provider>

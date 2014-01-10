@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-sip-optioram</id>
+	<api flags="no_browser"/>
+	<name>Optiroam</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе sip-провайдера Optiroam </p>
+	<p>Информация берется из личного кабинета https://customer.optiroam.com/index.php</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" {@currency}"/>
+		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="phone" name="Роум Номер" type="text"/>
+		<counter id="phone2" name="Ваш телефонный номер" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>sip</type>
+	<country>ru</country>
+</provider>

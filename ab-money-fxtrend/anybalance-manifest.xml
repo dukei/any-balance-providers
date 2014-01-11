@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-money-fxtrend</id>
+  <id version="2">ab-money-fxtrend</id>
   <name>FX-Trend</name>
   <description>
     This provider helps you to check balances on your FX-Trend's account.
@@ -20,6 +20,7 @@
     <counter id="leverage" name="Leverage" type="text"/>
     <counter id="balance" name="Balance"/>
     <counter id="equity" name="Equity"/>
+    <counter id="receipts" name="Receipts"/>
     <counter id="margin" name="Margin"/>
     <counter id="free" name="Free"/>
     <counter id="mlevel" name="MLevel" units="%"/>

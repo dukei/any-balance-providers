@@ -10,6 +10,8 @@
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
+		<js>aes.js</js>
+		<js>sha512.js</js>
 		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>

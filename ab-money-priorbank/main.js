@@ -3,15 +3,35 @@
 */
 
 var g_headers = {
-	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-	'Accept-Encoding': 'gzip,deflate,sdch',
-	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-	'Connection': 'keep-alive',
-	'Origin': 'https://www.prior.by',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/30.0.1599.101 Safari/537.36',
+	'User-Agent': 'User-Agent: Dalvik/1.6.0 (Linux; U; Android 4.0.4; sdk Build/MR1)',
 };
 
+var g_baseurl = 'https://www.prior.by/api/ibapi.axd?action=';
+
 function main() {
+        var prefs = AnyBalance.getPreferences();
+        //TODO: Ну там проверки, что логин пароль есть...
+        //....
+
+        var key = CryptoJS.enc.Base64.parse('Nm4wMy5nOiM3JSpWfnwzOXFpNzRcfjB5MVNEKl8mWkw=');
+        var iv  = CryptoJS.enc.Base64.parse('OSMqNE11fGUoLDg5Mmk1WQ==');
+
+        var tokenBase64 = AnyBalance.requestPost(g_baseurl + 'setup', {}, g_headers);
+        //TODO: Проверка, что токен получили
+
+        var token = CryptoJS.enc.Base64.parse(tokenBase64);
+        var encodedToken = CryptoJS.AES.encrypt(token, key, { iv: iv });
+
+        var passHash = CryptoJS.SHA512(prefs.password);
+
+        var xml = AnyBalance.requestPost(g_baseurl + 'login', {UserName: prefs.login, UserPassword: passHash.toString(), Token: encodedToken.toString()}, g_headers);
+
+        //TODO: проверка ошибок логина
+
+        xml = AnyBalance.requestPost(g_baseurl + 'GateWay&Target=Android', {Template: 'CardList'}, addHeaders({Base64Fields: 'XML'}));
+
+        return;
+       
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'https://www.prior.by/';
 	AnyBalance.setDefaultCharset('utf-8');

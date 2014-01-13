@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<id version="1">ab-service-ighost</id>
-	<api flags="no_browser"/>
+	<api flags="no_browser|captcha"/>
 	<name>i-ghost.net</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе провайдера i-ghost.net</p>

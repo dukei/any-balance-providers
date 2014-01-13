@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="10">ab-cell-tele2</id>
+	<id version="11">ab-cell-tele2</id>
+        <api flags="no_browser"/>
 	<name>Tele2</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет  информацию о балансе, тарифном плане, количестве использованных в текущем месяце SMS, минут и трафика для пользователей оператора сотовой связи Tele2.</p>  
@@ -16,6 +17,7 @@
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="11">ab-money-avangard</id>
+	<id version="12">ab-money-avangard</id>
 	<api flags="no_browser"/>
 	<name>Банк Авангард</name>
 	<description html="true"><![CDATA[
@@ -25,7 +25,6 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Остаток" units=" {@currency}"/>
-		<counter id="currency" name="Валюта" type="text"/>
 		<counter id="minpay" name="Мин.платеж" units=" {@currency}"/>
 		<counter id="minpaydate" name="Дата мин.платежа" type="time" format="dd/MM/yyyy"/>
 		<counter id="freepay" name="Платеж льготного периода"/>
@@ -33,7 +32,6 @@
 		<counter id="debt" name="Задолженность" units=" {@currency}"/>
 		<counter id="miles" name="Бонусные мили" units=" миль"/>
 		<counter id="limit" name="Кредитный лимит" units=" {@currency}"/>
-		<counter id="cardnum" name="Номер карты" type="text"/>
 		<counter id="cardname" name="Имя на карте" type="text"/>
 		<counter id="cardtill" name="Срок действия" type="text"/>
 		<counter id="accnum" name="Номер счета" type="text"/>
@@ -42,6 +40,7 @@
 		<counter id="cardstatus" name="Статус" type="text"/>
 		<counter id="miles_avail" name="Доступные мили" units=" миль"/>
 		<counter id="miles_due" name="Ожидаемые мили" units=" миль"/>
+		<counter id="currency" name="Валюта" type="text"/>
 	</counters>
 	<keywords></keywords>
 	<type>money</type>

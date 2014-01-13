@@ -4,7 +4,7 @@
     <name>Google Wallet (Checkout)</name>
 	<api flags="no_browser"/>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о текущем балансе на Goggle Кошельке.</p>
+	<p>Предоставляет информацию о текущем балансе на Google Кошельке.</p>
 	<p><b>Особенности:</b></p>
 	<p>Этот провайдер не работает, если включена 2-этапная авторизация.</p>
 	]]></description>

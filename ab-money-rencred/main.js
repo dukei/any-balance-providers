@@ -10,6 +10,9 @@ var g_headers = {
 function main(){
     var prefs = AnyBalance.getPreferences();
 
+    checkEmpty(prefs.login, 'Введите логин!');
+    checkEmpty(prefs.password, 'Введите пароль!');
+
     var baseurl = "https://online.rencredit.ru/hb/";
     
     var html = AnyBalance.requestGet(baseurl + 'faces/renk/login.jsp', g_headers);
@@ -26,8 +29,15 @@ function main(){
     }, g_headers);
 
     if(!/but_exit\.gif/i.test(html)){
-        throw new AnyBalance.Error('Не удалось зайти в интернет-банк. Неправильный логин-пароль?');
+        var htmlErr = AnyBalance.requestGet(baseurl + 'faces/renk/login.jsp', g_headers);
+        var error = getParam(htmlErr, null, null, /<span[^>]+#DA0764;[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+        if(error)
+            throw new AnyBalance.Error(error, null, /not authenticated/i.test(error));
+        throw new AnyBalance.Error('Не удалось зайти в интернет-банк. Сайт изменен?');
     }
+
+    if(/ChangeLoginPassword.jspx/.test(html))
+        throw new AnyBalance.Error('Интернет банк требует сменить пароль. Войдите в интернет банк https://online.rencredit.ru через браузер, установите новый пароль, а затем введите новый пароль в настройки провайдера.', null, true);
 
     if(prefs.type == 'card')
         fetchCard(html, baseurl);

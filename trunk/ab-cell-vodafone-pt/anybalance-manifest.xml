@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id major_version="1.0" version="1">ab-cell-vodafone-pt</id>
+	<api flags="no_browser"/>
+	<name>Vodafone Portugal</name>
+	<description html="true">
+    <![CDATA[
+	<p>Obtains information from Vodafone Portugal selfcare (http://www.vodafone.pt/)</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Balance" units=" €"/>
+		<counter id="points" name="Pontos Clube Viva" units=" €"/>
+		<counter id="fio" name="Name" type="text"/>
+		<counter id="phone" name="Phone" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>cell</type>
+	<country>pt</country>
+</provider>

@@ -7,43 +7,11 @@
 Личный кабинет: https://my.tele2.ru/
 */
 
-function getParam (html, result, param, regexp, replaces, parser) {
-	if (param && !AnyBalance.isAvailable (param))
-		return;
-
-	var value = regexp.exec (html);
-	if (value) {
-		value = value[1];
-		if (replaces) {
-			for (var i = 0; i < replaces.length; i += 2) {
-				value = value.replace (replaces[i], replaces[i+1]);
-			}
-		}
-		if (parser)
-			value = parser (value);
-
-    if(param)
-      result[param] = value;
-    else
-      return value
-	}
-}
-
-var replaceTagsAndSpaces = [/<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
-var replaceFloat = [/\s+/g, '', /,/g, '.'];
-
-function parseBalance(text){
-    var _text = text.replace(/\s+/, '');
-    var val = getParam(_text, null, null, /(-?\d[\d\.,]*)/, replaceFloat, parseFloat);
-    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
-    return val;
-}
-
 function main(){
-    if(AnyBalance.getLevel() < 3)
-      throw new AnyBalance.Error("Этот провайдер требует AnyBalance API v.3+. Пожалуйста, обновите AnyBalance до последней версии.");
-  
     var prefs = AnyBalance.getPreferences();
+
+    checkEmpty(prefs.login && /^\d{10}$/, 'Введите логин - номера телефона из 10 цифр!');
+    checkEmpty(prefs.password, 'Введите пароль!');
 
     var baseurl = "https://my.tele2.ru/";
 
@@ -55,7 +23,7 @@ function main(){
       var error = getParam(html, null, null, /<div[^>]+id="error-wrapper"[^>]*>([\s\S]*?)(?:<a |<\/div>)/i, replaceTagsAndSpaces, html_entity_decode);
       if(error)
           throw new AnyBalance.Error(error);
-      throw new AnyBalance.Error("Не удаётся найти код безопасности. Свяжитесь с автором провайдера для исправления.");
+      throw new AnyBalance.Error("Не удаётся найти код безопасности для входа. Проблемы на сайте или сайт изменен.");
     }
 
     AnyBalance.trace("Trying to enter selfcare at address: " + baseurl);
@@ -71,11 +39,11 @@ function main(){
 
     var error = getParam(html, null, null, /<div id="error-wrapper">[\s\S]*?<p>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
     if(error)
-      throw new AnyBalance.Error(error);
+      throw new AnyBalance.Error(error, null, /Ошибка в номере телефона|Пароль неправильный/i.test(error));
     
     var json = JSON.parse(html.replace(/[\x0D\x0A]+/g, ' '));
     if(!json.success)
-      throw new AnyBalance.Error(json.error);
+      throw new AnyBalance.Error(json.error, null, /Ошибка в номере телефона|Пароль неправильный/i.test(json.error));
     
     var result = {success: true}; //Баланс нельзя не получить, не выдав ошибку!
     
@@ -148,12 +116,3 @@ function main(){
 
     AnyBalance.setResult(result);
 }
-
-function html_entity_decode(str)
-{
-    //jd-tech.net
-    var tarea=document.createElement('textarea');
-    tarea.innerHTML = str;
-    return tarea.value;
-}
-

@@ -34,13 +34,12 @@ function main(){
 
 	html = AnyBalance.requestGet(baseurl + 'ajax/users/getuserdatafl', addHeaders({Referer: baseurl+'ajax/users/getuserdatafl'})); 
 	var result = {success: true};
-	getParam(html, result, 'date_itog', /date_itog([\s\S]*?)date_itog/i, null, parseDate);
-	getParam(html, result, 'days_left', /days_left([\s\S]*?)days_left/i, null, parseBalance);
-	
-	getParam(html, result, 'fio', /<fio>([\s\S]*?)<\/fio>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'balance', /<deposit>([\s\S]*?)<\/deposit>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'credit', /<credit>([\s\S]*?)<\/credit>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, '__tariff', /<tarif>([\s\S]*?)<\/tarif>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'date_itog', /date_itog\s*=\s*"([^"]+)/i, null, parseDate);
+	getParam(html, result, 'days_left', /days_left\s*=\s*"([^"]+)/i, null, parseBalance);
+	getParam(html, result, 'fio', /fio\s*=\s*"([^"]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'balance', /deposit\s*=\s*"([^"]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'credit', /credit\s*=\s*"([^"]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, '__tariff', /tarif\s*=\s*"([^"]+)/i, replaceTagsAndSpaces, html_entity_decode);
 
     AnyBalance.setResult(result);
 }

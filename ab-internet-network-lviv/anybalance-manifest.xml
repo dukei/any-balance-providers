@@ -1,36 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-internet-network-lviv</id>
-  <name>Network (Украина)</name>
-  <description>
-	Получает данные для интернет провайдера Network Lviv.ua Украина (http://www.network.lviv.ua/)
-	
-	Адрес личного кабинета: https://my.network.lviv.ua/
-  </description>
-  <author>Stark &lt;support@starksoft.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units=" Грн"/>
-	<counter id="credit" name="Кредит" units=" Грн"/>
-	<counter id="days_left" name="Дней до отключения"/>
-	<counter id="date_itog" name="Дата отключения" type="time" format="dd/MM/yyyy"/>
-	
-	
-    <counter id="fio" name="ФИО" type="text"/>
-  </counters>
-  <keywords>
-    
-  </keywords>
-  <type>
-    internet
-  </type>
-  <country>
-    ua
-  </country>
+	<id version="3">ab-internet-network-lviv</id>
+	<name>Network (Украина)</name>
+	<api flags="no_browser"/>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Network Lviv.ua Украина (http://www.network.lviv.ua/)</p>
+	<p>Информация берется из личного кабинета https://my.network.lviv.ua/</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" Грн"/>
+		<counter id="credit" name="Кредит" units=" Грн"/>
+		<counter id="days_left" name="Дней до отключения"/>
+		<counter id="date_itog" name="Дата отключения" type="time" format="dd/MM/yyyy"/>
+		<counter id="fio" name="ФИО" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet</type>
+	<country>ua</country>
 </provider>

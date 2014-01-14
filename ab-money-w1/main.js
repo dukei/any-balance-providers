@@ -11,9 +11,9 @@ var g_headers = {
 };
 
 function encryptPass(pass) {
-	AnyBalance.trace('Trying to encrypt pass: ' + pass);
+	//AnyBalance.trace('Trying to encrypt pass: ' + pass);
 	pass = Basis.Crypt(pass).sha1(!0).base64().toString();
-	AnyBalance.trace('Encrypted pass: ' + pass);
+	//AnyBalance.trace('Encrypted pass: ' + pass);
 	return pass;
 }
 

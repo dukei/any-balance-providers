@@ -102,7 +102,7 @@ function doNewCabinet(prefs) {
 	html = AnyBalance.requestGet(baseurl + 'f?p=10:MAIN:' + loginVar, g_headers);
 	// Все, теперь можно разбирать данные
     if(prefs.type == 'acc')
-        {}//fetchAcc(html, baseurl);
+        fetchAcc(html, baseurl, prefs);
     else
         fetchCard(html, baseurl, prefs);
 }
@@ -145,8 +145,42 @@ function fetchCard(html, baseurl, prefs) {
 	AnyBalance.setResult(result);
 }
 
-function fetchAcc(html, baseurl) {
-	throw new AnyBalance.Error("Отображение информации по счетам пока не поддерживается, свяжитесь с разработчиком для исправления ситуации.");
+function fetchAcc(html, baseurl, prefs) {
+	html = AnyBalance.requestGet(baseurl + getParam(html, null, null, /href="([^"]+ACCOUNTS[^"]+)/i), g_headers);
+	
+	var lastdigits = prefs.lastdigits ? prefs.lastdigits : '\\d{4}';
+	
+	// <li[^>]*class(?:[^>]*>){25}\d{4}[-x]{8,}5821(?:[^>]*>){5}\s*</li>
+	var reCard = new RegExp('<li[^>]*class(?:[^>]*>){25}\\d{4}[-x]{8,}' + lastdigits + '(?:[^>]*>){5}\\s*</li>', 'i');
+	
+	var tr = getParam(html, null, null, reCard);
+	if(!tr)
+		throw new AnyBalance.Error('Не удалось найти ' + (prefs.lastdigits ? 'карту с последними цифрами '+prefs.lastdigits : 'ни одной карты!'));
+	
+	var result = {success: true};
+	
+	getParam(tr, result, '__tariff', /(\d{4}[-x]{8,}\d{4})/i, replaceTagsAndSpaces);
+	getParam(result.__tariff, result, 'cardNumber');
+	getParam(tr, result, 'userName', /"profile-name"(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces);
+	getParam(tr, result, 'balance', /"sum"(?:[^>]*>){1}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(tr, result, ['currency', 'balance'], /"sum"(?:[^>]*>){1}([^<]+)/i, replaceTagsAndSpaces, parseCurrency);
+	getParam(tr, result, 'till', /\d{4}[-x]{8,}\d{4}[^<]*?(\d{1,2}\/\d{1,2})/i, [replaceTagsAndSpaces, /(.*)/i, '01/$1'], parseDate);
+	
+	// Дополнительная инфа по картам.
+	if (isAvailable(['status', 'accnum', 'acctype'])) {
+		var href = getParam(tr, null, null, /<a\s*href="([^"]*)/i);
+		if(href) {
+			html = AnyBalance.requestGet(baseurl + href, g_headers);
+			
+			getParam(html, result, 'status', /Состояние карты(?:[^>]*>){3}([^<]+)/i, replaceTagsAndSpaces);
+			getParam(html, result, 'accnum', /Карточный счет(?:[^>]*>){3}([^<]+)/i, replaceTagsAndSpaces);
+			getParam(html, result, 'acctype', /Тип карты(?:[^>]*>){3}([^<]+)/i, replaceTagsAndSpaces);
+			getParam(html, result, 'blocked', /Заблокировано(?:[^>]*>){10}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+		} else {
+			AnyBalance.trace('Не нашли ссылку на дополнительную информацию по картам, возможно, сайт изменился?');
+		}
+	}
+	AnyBalance.setResult(result);
 }
 
 var g_headersOld = {

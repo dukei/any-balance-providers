@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-money-w1</id>
+	<id version="5">ab-money-w1</id>
 	<name>W1 Единый Кошелек</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе  для пользователей «Единого Кошелька W1» (http://www.w1.ru/).</p>

@@ -1,47 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <api flags="no_browser|captcha" />
-  <id version="4">ab-money-delta</id>
-  <name>Дельта Банк</name>
-  <description html="true"><![CDATA[
-    Получает текущий остаток и другие параметры счетов Дельта Банка (http://deltabank.com.ua), используя интернет-банк https://online.deltabank.com.ua.
-  ]]></description>
-  <instruction html="true"><![CDATA[
-    Как подключиться к Интернет-Банку?
-    <ul>
-       <li>Нажмите кнопку Регистрация на странице https://online.deltabank.com.ua и выполните приведенные там инструкции.</li>
-    </ul>
-
-    Также можно попробовать работу провайдера на тестовой версии интернет-банка, введя логин 1 и пароль 1 в настройки аккаунта.
-  ]]></instruction>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-	<js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Остаток"/>
-    <counter id="currency" name="Валюта" type="text"/>
-    <counter id="pay" name="Ближайший платеж"/>
-    <counter id="paytill" name="Заплатить до" type="time" format="dd/MM/yyyy"/>
-    <counter id="till" name="Срок действия" type="time" format="dd/MM/yyyy"/>
-    <counter id="debt" name="Задолженность"/>
-    <counter id="limit" name="Кредитный лимит"/>
-    <counter id="pct" name="Проценты" units="%"/>
-    <counter id="acctype" name="Название" type="text"/>
-    <counter id="monthlypay" name="Месячный платеж"/>
-    <counter id="agreement" name="№ договора" type="text"/>
-  </counters>
-  <keywords>
-    delta
-  </keywords>
-  <type>
-    money
-  </type>
-  <country>
-    ua
-  </country>
+	<api flags="no_browser|captcha" />
+	<id version="5">ab-money-delta</id>
+	<name>Дельта Банк</name>
+	<description html="true"><![CDATA[
+	Получает текущий остаток и другие параметры счетов Дельта Банка (http://deltabank.com.ua), используя интернет-банк https://online.deltabank.com.ua.
+	]]></description>
+	<instruction html="true"><![CDATA[
+	Как подключиться к Интернет-Банку?
+	<ul>
+		<li>Нажмите кнопку Регистрация на странице https://online.deltabank.com.ua и выполните приведенные там инструкции.</li>
+	</ul>
+	Также можно попробовать работу провайдера на тестовой версии интернет-банка, введя логин 1 и пароль 1 в настройки аккаунта.
+	]]></instruction>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Остаток" units=" {@currency}"/>
+		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="pay" name="Ближайший платеж" units=" {@currency}"/>
+		<counter id="paytill" name="Заплатить до" type="time" format="dd/MM/yyyy"/>
+		<counter id="till" name="Срок действия" type="time" format="dd/MM/yyyy"/>
+		<counter id="debt" name="Задолженность" units=" {@currency}"/>
+		<counter id="limit" name="Кредитный лимит" units=" {@currency}"/>
+		<counter id="pct" name="Проценты" units=" %"/>
+		<counter id="acctype" name="Название" type="text"/>
+		<counter id="monthlypay" name="Месячный платеж" units=" {@currency}"/>
+		<counter id="agreement" name="№ договора" type="text"/>
+	</counters>
+	<keywords>delta</keywords>
+	<type>money</type>
+	<country>ua</country>
 </provider>

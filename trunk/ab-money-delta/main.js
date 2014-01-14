@@ -1,10 +1,5 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Получает текущий остаток и другие параметры карт банка Дельта банк
-
-Сайт оператора: http://deltabank.com.ua/
-Личный кабинет: https://online.deltabank.com.ua
 */
 
 function getViewState(html){
@@ -31,66 +26,63 @@ function main(){
     checkEmpty(prefs.password, 'Введите пароль!');
 
     if(prefs.accnum && !/^\d{4,}$/.test(prefs.accnum))
-        throw new AnyBalance.Error("Введите не меньше 4 последних цифр номера счета или не вводите ничего, чтобы показать информацию по первому счету.");
-
+		throw new AnyBalance.Error("Введите не меньше 4 последних цифр номера счета или не вводите ничего, чтобы показать информацию по первому счету.");
+	
     var demo = prefs.login == '1';
     var baseurl = !demo ? "https://online.deltabank.com.ua/" : "https://online.deltabank.com.ua/DEMO/";
     
     var html = AnyBalance.requestGet(baseurl + 'Pages/User/LogOn.aspx', g_headers);
 	
-	//
-    var captcha_word;
-    if(!demo){	
-	if(AnyBalance.getLevel() >= 7){
-		AnyBalance.trace('Пытаемся ввести капчу');
-		var href = getParam(html, null, null, /(CaptchaImage.aspx[^>]*?)"/);
-		var captcha = AnyBalance.requestGet(baseurl+'Pages/'+ href);
-            captcha_word = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
-            AnyBalance.trace('Капча получена: ' + captcha_word);
-	}else{
-		throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
-        }
+    var captcha_word = '';
+    if (!demo) {
+    	if (AnyBalance.getLevel() >= 7) {
+    		AnyBalance.trace('Пытаемся ввести капчу');
+    		var href = getParam(html, null, null, /(CaptchaImage.aspx[^>]*?)"/);
+    		var captcha = AnyBalance.requestGet(baseurl + 'Pages/' + href);
+    		captcha_word = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
+    		AnyBalance.trace('Капча получена: ' + captcha_word);
+    	} else {
+    		throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
+    	}
     }
-		
     var viewstate = getViewState(html);
     var eventvalidation = getEventValidation(html);
-
-    if(!demo){	
-	    html = AnyBalance.requestPost(baseurl + 'Pages/User/LogOn.aspx', {
-		'__EVENTARGUMENT':'',
-		'__EVENTTARGET':'',
-		'__EVENTVALIDATION':eventvalidation,
-		'__SCROLLPOSITIONX':0,
-		'__SCROLLPOSITIONY':0,
-		'__VIEWSTATE':viewstate,
-		'__VIEWSTATEENCRYPTED':'',
-		'wzLogin$logOn_Step1$divLogin$btnLoginCaptcha.x':0,
-		'wzLogin$logOn_Step1$divLogin$btnLoginCaptcha.y':0,
-		'wzLogin$logOn_Step1$divLogin$txtCaptcha':captcha_word,
-		'wzLogin$logOn_Step1$divLogin$txtLoginCaptcha':prefs.login,
-		'wzLogin$logOn_Step1$divLogin$txtPassCaptcha':prefs.password,
-	    }, g_headers);
-    }else{
-	    html = AnyBalance.requestPost(baseurl + 'Pages/User/LogOn.aspx', {
-        	__EVENTTARGET: '',
-        	__EVENTARGUMENT:'',
-        	__VIEWSTATE:viewstate,
-        	__VIEWSTATEENCRYPTED:'',
-        	__EVENTVALIDATION:eventvalidation,
-        	wzLogin$tbLogin:prefs.login,
-        	wzLogin$tbPassword:prefs.password,
-        	'wzLogin$btnLogOn.x':54,
-        	'wzLogin$btnLogOn.y':10,
-	    }, g_headers);
+    if (!demo) {
+    	html = AnyBalance.requestPost(baseurl + 'Pages/User/LogOn.aspx', {
+    		'__EVENTARGUMENT': '',
+    		'__EVENTTARGET': '',
+    		'__EVENTVALIDATION': eventvalidation,
+    		'__SCROLLPOSITIONX': 0,
+    		'__SCROLLPOSITIONY': 0,
+    		'__VIEWSTATE': viewstate,
+    		'__VIEWSTATEENCRYPTED': '',
+    		'wzLogin$logOn_Step1$divLogin$btnLoginCaptcha.x': 0,
+    		'wzLogin$logOn_Step1$divLogin$btnLoginCaptcha.y': 0,
+    		'wzLogin$logOn_Step1$divLogin$txtCaptcha': captcha_word,
+    		'wzLogin$logOn_Step1$divLogin$txtLoginCaptcha': prefs.login,
+    		'wzLogin$logOn_Step1$divLogin$txtPassCaptcha': prefs.password,
+    	}, g_headers);
+    } else {
+    	html = AnyBalance.requestPost(baseurl + 'Pages/User/LogOn.aspx', {
+    		__EVENTTARGET: '',
+    		__EVENTARGUMENT: '',
+    		__VIEWSTATE: viewstate,
+    		__VIEWSTATEENCRYPTED: '',
+    		__EVENTVALIDATION: eventvalidation,
+    		wzLogin$tbLogin: prefs.login,
+    		wzLogin$tbPassword: prefs.password,
+    		'wzLogin$btnLogOn.x': 54,
+    		'wzLogin$btnLogOn.y': 10,
+    	}, g_headers);
     }
-
-    if(!/ctl00\$btnLogout/i.test(html)){
-        var error = getParam(html, null, null, /<span[^>]+id="overlayingErrorMessage_lblMessage">([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
-        if(error)
-            throw new AnyBalance.Error(error);
-        throw new AnyBalance.Error("Не удалось зайти в интернет-банк. Сайт изменен?");
-    }
-
+	
+	if (!/ctl00\$btnLogout/i.test(html)) {
+		var error = getParam(html, null, null, /<span[^>]+id="overlayingErrorMessage_lblMessage">([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+		if (error)
+			throw new AnyBalance.Error(error);
+		throw new AnyBalance.Error("Не удалось зайти в интернет-банк. Сайт изменен?");
+	}
+	
     //Сколько цифр осталось, чтобы дополнить до 16
     var accnum = prefs.accnum || '';
     var accprefix = accnum.length;
@@ -108,28 +100,28 @@ function main(){
     getParam(tr, result, 'accnum', /(?:[\s\S]*?<td[^>]*>){3}(?:\s*<[^>]*>)*\s*(\d+)/i, replaceTagsAndSpaces);
     getParam(tr, result, 'accname', /(?:[\s\S]*?<td[^>]*>){3}(?:\s*<[^>]*>)*\s*\d+([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
 
-    switch(type){
-    case 'CurrentAccount':
-    case 'DebitAccount':
-        getParam(tr, result, 'balance', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-        getParam(tr, result, 'currency', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseCurrency);
-        break;
-    case 'CreditAccount':
-        getParam(tr, result, 'balance', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-        getParam(tr, result, 'currency', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseCurrency);
-        getParam(tr, result, 'limit', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-        break;
-    case 'Deposit':
-        getParam(tr, result, 'balance', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-        getParam(tr, result, 'currency', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseCurrency);
-        getParam(tr, result, 'till', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
-        break;
-    case 'Loan':
-        getParam(tr, result, 'balance', /(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-        getParam(tr, result, 'currency', /(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseCurrency);
-        getParam(tr, result, 'pay', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-        getParam(tr, result, 'paytill', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
-        break;
+    switch (type) {
+        case 'CurrentAccount':
+        case 'DebitAccount':
+        	getParam(tr, result, 'balance', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+        	getParam(tr, result, 'currency', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseCurrency);
+        	break;
+        case 'CreditAccount':
+        	getParam(tr, result, 'balance', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+        	getParam(tr, result, 'currency', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseCurrency);
+        	getParam(tr, result, 'limit', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+        	break;
+        case 'Deposit':
+        	getParam(tr, result, 'balance', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+        	getParam(tr, result, 'currency', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseCurrency);
+        	getParam(tr, result, 'till', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+        	break;
+        case 'Loan':
+        	getParam(tr, result, 'balance', /(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+        	getParam(tr, result, 'currency', /(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseCurrency);
+        	getParam(tr, result, 'pay', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+        	getParam(tr, result, 'paytill', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+        	break;
     }
 
     if(AnyBalance.isAvailable('agreement', 'pct', 'monthlypay', 'debt', 'pay', 'paytill')){
@@ -161,12 +153,3 @@ function main(){
     AnyBalance.setResult(result);
 
 }
-
-function html_entity_decode(str)
-{
-    //jd-tech.net
-    var tarea=document.createElement('textarea');
-    tarea.innerHTML = str;
-    return tarea.value;
-}
-

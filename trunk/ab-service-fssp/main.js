@@ -7,40 +7,41 @@ var g_headers = {
 	'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection':'keep-alive',
-	'User-Agent':'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
-	'X-Requested-With':'XMLHttpRequest'
+	'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.63 Safari/537.36',
 };
+
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://www.fssprus.ru/';
+	var baseurl = 'https://fssprus.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	var url = baseurl + 'is/ajax-iss.php?s=ip&is%5Bextended%5D=1&is%5Bvariant%5D=1&is%5Bregion_id%5D%5B0%5D=' + (prefs.region_id || '77') +
 		'&is%5Blast_name%5D=' + encodeURIComponent(prefs.last_name) +
 		'&is%5Bfirst_name%5D=' + encodeURIComponent(prefs.first_name) +
 		'&is%5Bpatronymic%5D=' + (prefs.otchestvo ? encodeURIComponent(prefs.otchestvo) : '') +
-		'&is%5Bdate%5D=' + (prefs.otchestvo ? encodeURIComponent(prefs.birthdate) : '') +
+		'&is%5Bdate%5D=' + (prefs.birthdate ? encodeURIComponent(prefs.birthdate) : '') +
 		'&nocache=1&is%5Bsort_field%5D=&is%5Bsort_direction%5D=';
 
 	var html = AnyBalance.requestGet(url, g_headers);
 	
-	var captchaa = getParam(html, null, null, /<img\s*src=".{1}([^"]*)/i);
+	var captchaa = getParam(html, null, null, /<img\s*src=".([^"]*)/i);
 	if(captchaa) {
-		if(AnyBalance.getLevel() >= 7){
+		if(AnyBalance.getLevel() >= 7) {
 			AnyBalance.trace('Пытаемся ввести капчу');
-			var captcha = AnyBalance.requestGet(baseurl+ captchaa);
+			var captcha = AnyBalance.requestGet(baseurl + captchaa);
 			captchaa = AnyBalance.retrieveCode('Пожалуйста, введите код с картинки', captcha);
 			AnyBalance.trace('Капча получена: ' + captchaa);
-		}else{
+		} else {
 			throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
 		}
 		
 		html = AnyBalance.requestPost(url, {
 			code:captchaa,
 			'capcha-submit':'Отправить'
-		}, addHeaders({Referer: baseurl + ''}));
+		}, addHeaders({Referer: url}));
 	}
 	
+	//AnyBalance.trace(html);
 	var table = getParam(html, null, null, /<table[^>]*class="list"[\s\S]*?<\/table>/i);
 	var result = {success: true, all:''};
 	if(table) {

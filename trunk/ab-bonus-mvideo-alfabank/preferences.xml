@@ -33,7 +33,7 @@
 		summary="|Введите ZIP-код|ZIP-код: {@s}\n"
 		inputType="textPassword"
 		dialogTitle="ZIP-код, только для карт М.Видео-БОНУС"
-		dialogMessage="Введите ZIP-код, только для карт М.Видео-БОНУС, если у вас карта М.Видео-БОНУС - Альфа-Банк, то оставте поле пустым."
+		dialogMessage="Введите ZIP-код, только для карт М.Видео-БОНУС, если у вас карта М.Видео-БОНУС - Альфа-Банк, то оставьте поле пустым."
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена">
 	</EditTextPreference>

@@ -6,7 +6,7 @@
         summary="||{@s}" 
         dialogTitle="Фамилия" 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите Вашу фамилию."
+        dialogMessage="Введите фамилию."
         key="last_name">
     </EditTextPreference>
     <EditTextPreference 
@@ -15,7 +15,7 @@
         summary="||{@s}" 
         dialogTitle="Имя" 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите Ваше имя."
+        dialogMessage="Введите имя."
         key="first_name">
     </EditTextPreference>
     <EditTextPreference 

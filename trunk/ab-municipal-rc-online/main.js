@@ -29,13 +29,13 @@ function main() {
 	}
     var result = {success: true};
 	
-	var balance = getParam(html, null, null, /Переплата[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-	if(!balance)
+	var balance = getParam(html, null, null, /(?:Баланс по счету|Переплата)[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	if(!isset(balance))
 		balance = getParam(html, null, null, /Долг[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance) * -1;
 	
 	getParam(balance, result, 'balance');
 	
-	getParam(html, result, 'fio', /Абонент:[^>]*>[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'fio', /Абонент:(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 	
 	if(isAvailable(['nachisl'])) {
 		html = AnyBalance.requestGet(baseurl+'go/charges', g_headers);

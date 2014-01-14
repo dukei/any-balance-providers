@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-    <change version="4" date="2013-10-09">
+	<change version="5" date="2014-01-14">
+	- Добавлено отображение валюты.
+	- Исправлены ошибки.
+	</change>
+	<change version="4" date="2013-10-09">
 	- Исправление входа в интернет-банк
 	</change>
-    <change version="3" date="2013-08-27">
+	<change version="3" date="2013-08-27">
 	- Поддержка ввода капчи при входе.
 	</change>
-    <change version="2" date="2012-12-20">
+	<change version="2" date="2012-12-20">
 	- Распознавание балансов на украинском языке
 	</change>
 </history>

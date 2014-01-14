@@ -22,12 +22,27 @@
     <EditTextPreference 
         positiveButtonText="ОК"
         key="cardnum" 
-        dialogTitle="ID счета"
+        dialogTitle="ID/Номер счета"
         negativeButtonText="Отмена"
-        title="ID счета"
+        title="ID/Номер счета"
         summary="|Автоматически|{@s}"
         inputType="number"
-        dialogMessage="Введите ID счета, по которому вы хотите получить данные. Если это поле оставить пустым, то будет показана информация по первому счету. Чтобы узнать ID имеющихся у вас счетов, выберите в настройках отображение счетчика &quot;Сводка&quot;."
-        >
+        dialogMessage="Введите ID счета или последние 4 цифры карты/счета, по которому вы хотите получить данные. Если это поле оставить пустым, то будет показана информация по первому счету. Чтобы узнать ID имеющихся у вас счетов, выберите в настройках отображение счетчика &quot;Сводка&quot;.">
     </EditTextPreference>
+	<ListPreference
+		key="cabinet"
+		title="Версия интернет-банка"
+		summary="|Нужен для определения версии интернет-банка\n|{@s}\n"
+		entries="Старый|Новый"
+		entryValues="old|new"
+		defaultValue="old">
+	</ListPreference>
+	<ListPreference
+		key="type"
+		title="Что смотреть"
+		summary="||{@s}"
+		entries="Карта|Счет"
+		entryValues="card|acc"
+		defaultValue="card">
+	</ListPreference>	
 </PreferenceScreen>

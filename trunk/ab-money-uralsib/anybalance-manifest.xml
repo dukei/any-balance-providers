@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-money-uralsib</id>
-  <name>Банк УРАЛСИБ</name>
+	<id major_version="2.0" version="3">ab-money-uralsib</id>
+	<name>Банк УРАЛСИБ</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем остатке и других параметрах счетов банка УРАЛСИБ (http://www.bankuralsib.ru).</p>
-	<p>Информация берется из Интернет-банка (http://client.uralsibbank.ru).</p>
+	<p>Информация берется из старого Интернет-банка (http://client.uralsibbank.ru) и нового (https://i.bankuralsib.ru)</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
 	<p>Как указать счет, по которому необходимо получить информацию:</p>
@@ -18,41 +18,40 @@
 	<li>Подпишите в любом отделений Банка УРАЛСИБ заявление «О предоставлении дистанционного банковского обслуживания».</li>
 	</ol>
 	]]></instruction>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>jsbn.js</js>
-    <js>prng4.js</js>
-    <js>rng.js</js>
-    <js>rsa.js</js>
-    <js>base64.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Доступно для операций"/>
-    <counter id="total" name="Всего на счете"/>
-    <counter id="grace_pay" name="Льготный платеж"/>
-    <counter id="grace_till" name="Оплатить до" type="time" format="dd/MM/yyyy"/>
-    <counter id="limit_left" name="Остаток кредитного лимита"/>
-    <counter id="debt" name="Задолженность"/>
-    <counter id="blocked" name="Заблокировано"/>
-    <counter id="currency" name="Валюта" type="text"/>
-    <counter id="acctype" name="Тип счета" type="text"/>
-    <counter id="accnum" name="Номер счета" type="text"/>
-    <counter id="status" name="Статус" type="text"/>
-    <counter id="limit" name="Кредитный лимит"/>
-    <counter id="accnum_pay" name="Номер счета для погашения"/>
-    <counter id="all" name="Сводка" type="text"/>
-  </counters>
-  <keywords>
-    интернет-банкинг
-  </keywords>
-  <type>
-    money
-  </type>
-  <country>
-    ru
-  </country>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>jsbn.js</js>
+		<js>prng4.js</js>
+		<js>rng.js</js>
+		<js>rsa.js</js>
+		<js>base64.js</js>
+		<js>hash.js</js>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Доступно для операций" units=" {@currency}"/>
+		<counter id="total" name="Всего на счете" units=" {@currency}"/>
+		<counter id="grace_pay" name="Льготный платеж" units=" {@currency}"/>
+		<counter id="grace_till" name="Оплатить до" type="time" format="dd/MM/yyyy"/>
+		<counter id="limit_left" name="Остаток кредитного лимита" units=" {@currency}"/>
+		<counter id="debt" name="Задолженность" units=" {@currency}"/>
+		<counter id="blocked" name="Заблокировано" units=" {@currency}"/>
+		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="acctype" name="Тип счета" type="text"/>
+		<counter id="accnum" name="Номер счета" type="text"/>
+		<counter id="cardNumber" name="Номер карты" type="text"/>
+		<counter id="till" name="Срок действия карты" type="time" format="dd/MM/yyyy"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="limit" name="Кредитный лимит" units=" {@currency}"/>
+		<counter id="accnum_pay" name="Номер счета для погашения"/>
+		<counter id="all" name="Сводка" type="text"/>
+		<counter id="userName" name="Имя" type="text"/>
+	</counters>
+	<keywords>интернет-банкинг</keywords>
+	<type>money</type>
+	<country>ru</country>
 </provider>

@@ -126,7 +126,7 @@ function fetchCard(html, baseurl, prefs) {
 	getParam(tr, result, 'userName', /"profile-name"(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces);
 	getParam(tr, result, 'balance', /"sum"(?:[^>]*>){1}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(tr, result, ['currency', 'balance'], /"sum"(?:[^>]*>){1}([^<]+)/i, replaceTagsAndSpaces, parseCurrency);
-	getParam(html, result, 'till', /\d{4}[-x]{8,}\d{4}[^<]*?(\d{1,2}\/\d{1,2})/i, [replaceTagsAndSpaces, /(.*)/i, '01/$1'], parseDate);
+	getParam(tr, result, 'till', /\d{4}[-x]{8,}\d{4}[^<]*?(\d{1,2}\/\d{1,2})/i, [replaceTagsAndSpaces, /(.*)/i, '01/$1'], parseDate);
 	
 	// Дополнительная инфа по картам.
 	if (isAvailable(['status', 'accnum', 'acctype'])) {
@@ -134,9 +134,10 @@ function fetchCard(html, baseurl, prefs) {
 		if(href) {
 			html = AnyBalance.requestGet(baseurl + href, g_headers);
 			
-			getParam(tr, result, 'status', /Состояние карты(?:[^>]*>){3}([^<]+)/i, replaceTagsAndSpaces);
+			getParam(html, result, 'status', /Состояние карты(?:[^>]*>){3}([^<]+)/i, replaceTagsAndSpaces);
 			getParam(html, result, 'accnum', /Карточный счет(?:[^>]*>){3}([^<]+)/i, replaceTagsAndSpaces);
 			getParam(html, result, 'acctype', /Тип карты(?:[^>]*>){3}([^<]+)/i, replaceTagsAndSpaces);
+			getParam(html, result, 'blocked', /Заблокировано(?:[^>]*>){10}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 		} else {
 			AnyBalance.trace('Не нашли ссылку на дополнительную информацию по картам, возможно, сайт изменился?');
 		}

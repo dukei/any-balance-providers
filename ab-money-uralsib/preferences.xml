@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <EditTextPreference 
+    <EditTextPreference
+		obligatory="true"
         title="Имя входа" 
         positiveButtonText="ОК" 
         summary="||{@s}" 
@@ -9,7 +10,8 @@
         dialogMessage="Введите имя входа в интернет-банк Уралсиб."
         key="login">
     </EditTextPreference>
-    <EditTextPreference 
+    <EditTextPreference
+		obligatory="true"
         positiveButtonText="ОК"
         key="password" 
         dialogTitle="Пароль"

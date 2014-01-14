@@ -9,24 +9,25 @@ var g_headers = {
 	'Connection':'keep-alive',
 	'User-Agent':'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
 };
+
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://ru.forex-mmcis.com/';
+	var baseurl = 'https://ru.forex-mmcis.com/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
-		
+	
 	var html = AnyBalance.requestGet(baseurl + 'msg.html?s', g_headers);
-
+	
 	html = AnyBalance.requestPost(baseurl + 'msg.html', {
         username:prefs.login,
-        pass_oth:prefs.password,
+        pass_oths:prefs.password,
         btn:'enter'
     }, addHeaders({Referer: baseurl + 'msg.html?s'}));
 	
 	if(!/menu_pc_exit/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]*class=["']error[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, null, null, /<div[^>]*class=["']error[^>]*>([\s\S]*?)<\/div/i, replaceTagsAndSpaces, html_entity_decode);
 		if(error && /Пользователя с логином[\s\S]*?не найдено/i.test(error))
 			throw new AnyBalance.Error(error, null, true);
 		if(error)

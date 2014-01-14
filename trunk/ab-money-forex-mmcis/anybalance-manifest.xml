@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-money-forex-mmcis</id>
+	<id version="2">ab-money-forex-mmcis</id>
 	<api flags="no_browser"/>
 	<name>MMCIS (Forex)</name>
 	<description html="true"><![CDATA[
@@ -15,10 +15,10 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Всего на счету" units="{@currency}"/>
-		<counter id="dostupno" name="Доступно к снятию" units="{@currency}"/>
-		<counter id="bonus" name="Бонусов" units="{@currency}"/>
-		<counter id="invest" name="Инвестировано в Index TOP20" units="{@currency}"/>
+		<counter id="balance" name="Всего на счету" units=" {@currency}"/>
+		<counter id="dostupno" name="Доступно к снятию" units=" {@currency}"/>
+		<counter id="bonus" name="Бонусов" units=" {@currency}"/>
+		<counter id="invest" name="Инвестировано в Index TOP20" units=" {@currency}"/>
 		<counter id="currency" name="Валюта" type="text"/>
 		<counter id="fio" name="Владелец счёта" type="text"/>
 	</counters>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-sip-optioram</id>
+	<id version="2">ab-sip-optioram</id>
 	<api flags="no_browser"/>
 	<name>Optiroam</name>
 	<description html="true"><![CDATA[
@@ -22,6 +22,6 @@
 		<counter id="phone2" name="Ваш телефонный номер" type="text"/>
 	</counters>
 	<keywords></keywords>
-	<type>sip</type>
+	<type>telephony</type>
 	<country>ru</country>
 </provider>

@@ -33,10 +33,10 @@ function main() {
 	}
 	var result = {success: true};
 	
-	getParam(html, result, 'balance', /Текущий баланс:([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, ['currency', 'balance'], /Текущий баланс:([^<]+)/i, replaceTagsAndSpaces, parseCurrency);
-	getParam(html, result, 'phone', /Роум Номер:([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'phone2', /Ваш телефонный номер:([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'balance', /(?:Current Balance|Текущий баланс):([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, ['currency', 'balance'], /(?:Current Balance|Текущий баланс):([^<]+)/i, replaceTagsAndSpaces, parseCurrency);
+	getParam(html, result, 'phone', /(?:Roam Number|Роум Номер):([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'phone2', /(?:Your Phone number|Ваш телефонный номер):([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
 	
 	AnyBalance.setResult(result);
 }

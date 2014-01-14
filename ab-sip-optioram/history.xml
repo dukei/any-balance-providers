@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-<!--
-<change version="2" date="2014-01-09">
-- 
-</change>
--->
+	<change version="2" date="2014-01-14">
+	- Исправлена ошибка получения баланса.
+	</change>
 </history>

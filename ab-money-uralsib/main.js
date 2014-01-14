@@ -1,70 +1,154 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Получает текущий остаток и другие параметры счетов банка УралСиб
-
-Сайт оператора: http://www.uralsib.ru
-Личный кабинет: https://client.uralsibbank.ru
 */
 
-function getParam (html, result, param, regexp, replaces, parser) {
-	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
-		return;
+var g_headers = {
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
+	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Connection': 'keep-alive',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+};
 
-        var value;
-        if(regexp){
-            var matches = regexp.exec (html);
-            if(matches)
-                value = matches[1];
-        }else{
-            value = html;
-        }
-            
-	if (typeof(value) != 'undefined') {
-		if (replaces) {
-			for (var i = 0; i < replaces.length; i += 2) {
-				value = value.replace (replaces[i], replaces[i+1]);
-			}
-		}
-		if (parser)
-			value = parser (value);
-
-    if(param)
-      result[param] = value;
-    else
-      return value
+function main(){
+    var prefs = AnyBalance.getPreferences();
+	
+	checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(prefs.password, 'Введите пароль!');
+	
+	if(prefs.cabinet == 'new') {
+		doNewCabinet(prefs);
+	} else {
+		doOldCabinet(prefs);
 	}
 }
 
-var replaceTagsAndSpaces = [/\\n/g, ' ', /\[br\]/ig, ' ', /<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
-var replaceFloat = [/\s+/g, '', /,/g, '.'];
-
-function parseBalance(text){
-    var _text = text.replace(/\s+/g, '');
-    var val = getParam(_text, null, null, /(-?\d[\d\.,]*)/, replaceFloat, parseFloat);
-    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
-    return val;
+function getAuthKey(html) {
+	return nvl(getParam(html, null, null, /value="([^"]+)[^<]*id="authkey"/i), '').substr(0, 32).toLowerCase();
 }
 
-function parseCurrency(text){
-    var _text = text.replace(/\s+/g, '');
-    var val = getParam(_text, null, null, /-?\d[\d\.,]*\s*(\S*)/);
-    AnyBalance.trace('Parsing currency (' + val + ') from: ' + text);
-    return val;
+function getP_instance(html) {
+	return getParam(html, null, null, /p_instance[^>]*value=['"]([^'"]+)/i);
 }
 
-function parseDate(str){
-    var matches = /(\d+)[^\d](\d+)[^\d](\d+)/.exec(str);
-    if(matches){
-          var date = new Date(+matches[3], matches[2]-1, +matches[1]);
-	  var time = date.getTime();
-          AnyBalance.trace('Parsing date ' + date + ' from value: ' + str);
-          return time;
+function nvl(a, v, vl, vr) {
+	return a != undefined && a != null ? (vl != undefined && vl != null ? vl : '') + a + (vr != undefined && vr != null ? vr : '') : (v != undefined && v != null ? v : '')
+}
+
+function getRsaN(html) {
+	return getParam(html, null, null, /rsa_N\s*=\s*['"]([^'"]+)/i);
+}
+
+function getRsaE(html) {
+	return getParam(html, null, null, /rsa_E\s*=\s*['"]([^'"]+)/i);
+}
+
+function doNewCabinet(prefs) {
+	var baseurl = 'https://i.bankuralsib.ru/';
+	AnyBalance.setDefaultCharset('utf-8');
+	
+	var html = AnyBalance.requestGet(baseurl + '', g_headers);
+	
+    var authkey = getAuthKey(html);
+	var rsa_N = getRsaN(html);
+	var rsa_E = getRsaE(html);
+	var password = prefs.password;
+	var passwordMD5 = '';
+	var p_instance = getP_instance(html);
+	
+    if (typeof (CryptoJS) != 'undefined' && authkey) {
+		passwordMD5 = CryptoJS.MD5(password).toString(CryptoJS.enc.Hex).substr(0, 30);
+		passwordMD5 = ':' + CryptoJS.MD5(authkey + ':' + passwordMD5).toString(CryptoJS.enc.Hex);
+	}
+	password = CryptoJS.SHA1(password).toString(CryptoJS.enc.Hex);
+	password = CryptoJS.SHA1(authkey + ':' + password).toString(CryptoJS.enc.Hex);
+    
+    if (rsa_N && rsa_E && typeof (RSAKey) != undefined) {
+        var rsa = new RSAKey();
+        rsa.setPublic(rsa_N, rsa_E);
+        authkey = authkey + ':' + rsa.encrypt(password + passwordMD5).toLowerCase();
+        var l = password.length;
+        password = '';
+        for (var i = 0; i < l; i++)
+			password += '*';
     }
-    AnyBalance.trace('Failed to parse date from value: ' + str);
+	
+	html = AnyBalance.requestPost(baseurl + 'wwv_flow.show', {
+		p_request:'APPLICATION_PROCESS=AUTHENTICATE',
+		p_flow_id:'10',
+		p_flow_step_id:'1000',
+		p_instance:p_instance,
+		x01:'AUTH#PASSWORD',
+		x02:prefs.login,
+		x03:password,
+		x04:authkey,
+		x05:'N',
+		x06:'4' // может понадобится переделать
+	}, addHeaders({Referer: baseurl + ''}));
+
+	if (!/Авторизация успешна/i.test(html)) {
+		var error = sumParam(html, null, null, /"err"[^"]+"([^"]+)/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+		if (error && /Неверный логин или пароль/i.test(error))
+			throw new AnyBalance.Error(error, null, true);
+		if (error)
+			throw new AnyBalance.Error(error);
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+	}
+	
+	var loginVar = getParam(html, null, null, /afterLogin\(([^)]+)/i);
+	if(!loginVar)
+		throw new AnyBalance.Error('Не удалось найти ссылку на страницу с данными, сайт изменен?');
+	
+	html = AnyBalance.requestGet(baseurl + 'f?p=10:MAIN:' + loginVar, g_headers);
+	// Все, теперь можно разбирать данные
+    if(prefs.type == 'acc')
+        {}//fetchAcc(html, baseurl);
+    else
+        fetchCard(html, baseurl, prefs);
 }
 
-var g_headers = {
+function fetchCard(html, baseurl, prefs) {
+	html = AnyBalance.requestGet(baseurl + getParam(html, null, null, /href="([^"]+CARDS[^"]+)/i), g_headers);
+	
+	var lastdigits = prefs.lastdigits ? prefs.lastdigits : '\\d{4}';
+	
+	// <li[^>]*class(?:[^>]*>){25}\d{4}[-x]{8,}5821(?:[^>]*>){5}\s*</li>
+	var reCard = new RegExp('<li[^>]*class(?:[^>]*>){25}\\d{4}[-x]{8,}' + lastdigits + '(?:[^>]*>){5}\\s*</li>', 'i');
+	
+	var tr = getParam(html, null, null, reCard);
+	if(!tr)
+		throw new AnyBalance.Error('Не удалось найти ' + (prefs.lastdigits ? 'карту с последними цифрами '+prefs.lastdigits : 'ни одной карты!'));
+	
+	var result = {success: true};
+	
+	getParam(tr, result, '__tariff', /(\d{4}[-x]{8,}\d{4})/i, replaceTagsAndSpaces);
+	getParam(result.__tariff, result, 'cardNumber');
+	getParam(tr, result, 'userName', /"profile-name"(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces);
+	getParam(tr, result, 'balance', /"sum"(?:[^>]*>){1}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(tr, result, ['currency', 'balance'], /"sum"(?:[^>]*>){1}([^<]+)/i, replaceTagsAndSpaces, parseCurrency);
+	getParam(html, result, 'till', /\d{4}[-x]{8,}\d{4}[^<]*?(\d{1,2}\/\d{1,2})/i, [replaceTagsAndSpaces, /(.*)/i, '01/$1'], parseDate);
+	
+	// Дополнительная инфа по картам.
+	if (isAvailable(['status', 'accnum', 'acctype'])) {
+		var href = getParam(tr, null, null, /<a\s*href="([^"]*)/i);
+		if(href) {
+			html = AnyBalance.requestGet(baseurl + href, g_headers);
+			
+			getParam(tr, result, 'status', /Состояние карты(?:[^>]*>){3}([^<]+)/i, replaceTagsAndSpaces);
+			getParam(html, result, 'accnum', /Карточный счет(?:[^>]*>){3}([^<]+)/i, replaceTagsAndSpaces);
+			getParam(html, result, 'acctype', /Тип карты(?:[^>]*>){3}([^<]+)/i, replaceTagsAndSpaces);
+		} else {
+			AnyBalance.trace('Не нашли ссылку на дополнительную информацию по картам, возможно, сайт изменился?');
+		}
+	}
+	AnyBalance.setResult(result);
+}
+
+function fetchAcc(html, baseurl) {
+	throw new AnyBalance.Error("Отображение информации по счетам пока не поддерживается, свяжитесь с разработчиком для исправления ситуации.");
+}
+
+var g_headersOld = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.60 Safari/537.1'
 }
 
@@ -83,12 +167,10 @@ function do_encrypt(password, key, salt) {
 	return ret;
 }
 
-function main(){
-    var prefs = AnyBalance.getPreferences();
-
+function doOldCabinet(prefs) {
     var baseurl = "https://client.uralsibbank.ru";
     
-    var html = AnyBalance.requestGet(baseurl, g_headers);
+    var html = AnyBalance.requestGet(baseurl, g_headersOld);
     var key = getParam(html, null, null, /var n\s*=\s*"([0-9a-f]{128})"/i);
     var salt = getParam(html, null, null, /document.LoginForm.CustAuth.value\s*\+\s*"([^"]*)"/i);
     if(!key)
@@ -102,7 +184,7 @@ function main(){
         CustIdent:prefs.login,
         CustAuth:pwdEncrypted.len,
         CustomerLogin:"Войти в систему"
-    }, g_headers);
+    }, g_headersOld);
 
     if(!/login\.asp\?logout/i.test(html)){
         var error = getParam(html, null, null, /^(?:[\s\S](?!<NOSCRIPT))*?<p[^>]*class="errorb"[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
@@ -154,12 +236,3 @@ function main(){
 
     AnyBalance.setResult(result);
 }
-
-function html_entity_decode(str)
-{
-    //jd-tech.net
-    var tarea=document.createElement('textarea');
-    tarea.innerHTML = str;
-    return tarea.value;
-}
-

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="1" version="3">ab-tv-ozotv</id>
+	<id major_version="1" version="4">ab-tv-ozotv</id>
 	<api flags="no_browser" />
 	<name>OZO.tv</name>
 	<description html="true"><![CDATA[

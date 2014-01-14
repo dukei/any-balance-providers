@@ -66,6 +66,7 @@ function main(){
         var error = getParam(html, null, null, /<span[^>]+id="globalErrorMessage"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error, null, /Обліковий запис не знайдено|некоректні логін чи пароль|Помилковий пароль|Помилковий security-пароль/i.test(error));
+        AnyBalance.trace(html);
         throw new AnyBalance.Error("Не удалось зайти в интернет-банк. Сайт изменен?");
     }
 
@@ -86,7 +87,8 @@ function main(){
         }
         if(error)
             throw new AnyBalance.Error(error, null, /Обліковий запис не знайдено|некоректні логін чи пароль|Помилковий пароль|Помилковий security-пароль/i.test(error));
-        throw new AnyBalance.Error("Не удалось зайти в интернет-банк. Сайт изменен?");
+        AnyBalance.trace(html);
+        throw new AnyBalance.Error("Не удалось зайти в интернет-банк после подтверждения смс-паролем. Сайт изменен?");
     }
 
     var result = {success: true};

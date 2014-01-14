@@ -18,12 +18,8 @@ function main() {
 	checkEmpty(prefs.password, 'Введите пароль!');
 		
 	var html = AnyBalance.requestPost(baseurl + 'go/', {
-        //e_login:prefs.login,
-        //e_password:prefs.password,
-		
-		e_login:'1005186590',
-        e_password:'Fktr$tq99',
-		
+        e_login:prefs.login,
+        e_password:prefs.password,
 		e_cookie:'on',
         form_logon_submitted:'yes'
     }, addHeaders({Referer: baseurl + 'login'}));

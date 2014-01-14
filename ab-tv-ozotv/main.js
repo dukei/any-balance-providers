@@ -67,7 +67,7 @@ function main() {
 	getParam(subs[5], result, 'activated', null, replaceTagsAndSpaces, parseDateISO);
 	getParam(subs[6], result, 'balance', null, replaceTagsAndSpaces, parseBalance);
 	getParam(subs[7], result, 'status', null, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, ['currency','cost'], /STR_AMOUNT-23[\s\S]*?\(([\s\S]*?)\)<\//i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, ['currency','cost'], /STR_AMOUNT-[\s\S]*?\(([\s\S]*?)\)<\//i, replaceTagsAndSpaces, html_entity_decode);
 	
 	AnyBalance.setResult(result);
 }

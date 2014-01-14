@@ -61,7 +61,7 @@ function main() {
 			var href = getParam(firstTr, null, null, /href="\/([^"]+)/i);
 			if(href) {
 				html = AnyBalance.requestGet(baseurl + href, addHeaders({Referer: baseurl + 'accounts'}));
-				getParam(html, result, 'order_sum', /Grand Total:([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+				getParam(html, result, 'order_sum', /Grand Total:([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 			}
 		}
 	} else {

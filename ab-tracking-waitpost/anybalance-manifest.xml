@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-tracking-waitpost</id>
+	<api flags="no_browser"/>
+	<name>Ждем посылку</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о посылке по номеру отправления с сайта http://waitpost.ru/</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="from" name="Страна отправления" type="text"/>
+		<counter id="to" name="Страна получения" type="text"/>
+		<counter id="type" name="Способ доставки" type="text"/>
+		<counter id="days" name="Дней в пути" units=" дн"/>
+		<counter id="all" name="Сводка" type="html"/>
+	</counters>
+	<keywords></keywords>
+	<type>tracking, post</type>
+	<country>by</country>
+</provider>

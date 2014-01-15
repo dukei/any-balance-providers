@@ -12,6 +12,7 @@
     <preferences>preferences.xml</preferences>
     <js>api:jquery.min.js</js> <!-- Используем библиотеку, которая и так входит в AnyBalance -->
     <js>main.js</js>
+    <history>history.xml</history>
   </files>
   <counters>
     <counter id="balance" name="Баланс" units="р"/>

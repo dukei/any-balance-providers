@@ -1,25 +1,25 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen>
-    <EditTextPreference
-        key="login"
-        title="№ карты/e-mail"
-        summary="Номер карты или e-mail для доступа к личному кабинету||{@s}\n"
-        inputType="text"
-	obligatory="true"
-        dialogTitle="№ карты/e-mail"
-        dialogMessage="Введите номер карты или адрес электронной почты для входа в личный кабинет"
-        positiveButtonText="ОК"
-        negativeButtonText="Отмена">
-    </EditTextPreference>
-    <EditTextPreference
-        key="password"
-        title="Пароль"
-        summary="Пароль для входа в личный кабинет||**********\n"
-        inputType="textPassword"
-	obligatory="true"
-        dialogTitle="Пароль"
-        dialogMessage="Введите пароль, используемый для входа в личный кабинет"
-        positiveButtonText="ОК"
-        negativeButtonText="Отмена">
-    </EditTextPreference>
+	<PreferenceScreen>
+	<EditTextPreference
+		key="login"
+		title="№ карты/e-mail"
+		summary="Номер карты или e-mail для доступа к личному кабинету||{@s}\n"
+		inputType="text"
+		obligatory="true"
+		dialogTitle="№ карты/e-mail"
+		dialogMessage="Введите номер карты или адрес электронной почты для входа в личный кабинет"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена">
+	</EditTextPreference>
+	<EditTextPreference
+		key="password"
+		title="Пароль"
+		summary="Пароль для входа в личный кабинет||**********\n"
+		inputType="textPassword"
+		obligatory="true"
+		dialogTitle="Пароль"
+		dialogMessage="Введите пароль, используемый для входа в личный кабинет"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена">
+	</EditTextPreference>
 </PreferenceScreen>

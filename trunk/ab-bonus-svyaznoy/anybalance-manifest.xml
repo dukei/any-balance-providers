@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="1.0" version="7">ab-bonus-svyaznoy</id>
+	<id major_version="2.0" version="8">ab-bonus-svyaznoy</id>
 	<api flags="no_browser"/>
 	<name>Связной Клуб</name>
 	<description html="true"><![CDATA[
@@ -11,6 +11,7 @@
 	]]></instruction>
 	<author>iReset &lt;ireset.ag@gmail.com&gt;</author>
 	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
@@ -19,21 +20,17 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balanceinpoints" name="Баланс в плюсах" units="+"/>
-		<counter id="balanceinrubles" name="Баланс в рублях" units="р"/>
-		<counter id="pointsinlastoper" name="Баллы по последней операции" type="text" units=" Б"/>
+		<counter id="balanceinpoints" name="Баланс в плюсах" units=" +"/>
+		<counter id="balanceinrubles" name="Баланс в рублях" units=" р"/>
+		<counter id="pointsinlastoper" name="Баллы по последней операции" units=" Б"/>
+		<counter id="lastoperationplace" name="Место последней операции" type="text"/>
+		<counter id="lastoperationdate" name="Дата последней операции" type="time" format="dd/MM/yyyy"/>
 		<counter id="cardstate" name="Статус карты" type="text"/>
 		<counter id="messages" name="Количество сообщений" type="text" suffix=" сообщ."/>
-		<counter id="cardnumber" name="Номер карты" type="text" prefix="№"/>
+		<counter id="cardnumber" name="Номер карты" type="text" prefix=" №"/>
 		<counter id="customer" name="Владелец" type="text"/>
 	</counters>
-	<keywords>
-	связной клуб, связной, баланс, бонус, бонусная программа, бонусная карта, svyaznoy, svyaznoi
-	</keywords>
-	<type>
-	bonus
-	</type>
-	<country>
-	ru
-	</country>
+	<keywords>связной клуб, связной, баланс, бонус, бонусная программа, бонусная карта, svyaznoy, svyaznoi</keywords>
+	<type>bonus</type>
+	<country>ru</country>
 </provider>

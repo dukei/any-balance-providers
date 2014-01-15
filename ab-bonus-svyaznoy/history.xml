@@ -1,21 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-    <change major_version="1.0" version="7" date="2013-12-24">
-      - Обработка ошибки входа в необходимости подтвердить е-мейл
-    </change>
-    <change major_version="1.0" version="6" date="2013-12-14">
-      - Обработка ошибки входа в случае блокированной карты
-    </change>
-    <change major_version="1.0" version="5" date="2013-11-15">
-      - Исправлено получение дробных плюсов
-    </change>
-    <change major_version="1.0" version="4" date="2012-11-13">
-      - Исправлено получение суммы последней операции в случае траты баллов
-    </change>
-    <change major_version="1.0" version="3" date="2012-10-29">
-      - Исправлено получение скидки в рублях больше 1000р
-    </change>
-    <change major_version="1.0" version="2" date="2012-08-03">
-      - Поддержка изменений в процедуре входа на сайт
-    </change>
+	<change major_version="2.0" version="8" date="2014-01-15">
+	- Поддержка изменений на сайте.
+	- Добавлены счетчики: Место последней операции, Дата последней операции.
+	(Stark)
+	</change>
+	<change major_version="1.0" version="7" date="2013-12-24">
+	- Обработка ошибки входа в необходимости подтвердить е-мейл
+	</change>
+	<change major_version="1.0" version="6" date="2013-12-14">
+	- Обработка ошибки входа в случае блокированной карты
+	</change>
+	<change major_version="1.0" version="5" date="2013-11-15">
+	- Исправлено получение дробных плюсов
+	</change>
+	<change major_version="1.0" version="4" date="2012-11-13">
+	- Исправлено получение суммы последней операции в случае траты баллов
+	</change>
+	<change major_version="1.0" version="3" date="2012-10-29">
+	- Исправлено получение скидки в рублях больше 1000р
+	</change>
+	<change major_version="1.0" version="2" date="2012-08-03">
+	- Поддержка изменений в процедуре входа на сайт
+	</change>
 </history>

@@ -1,128 +1,113 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Получает информацию о балансе карты, последней операции, статусе и количестве сообщений.
-Использует API версии не ниже 3.
-
-Сайт магазина: http://svyaznoy.ru
-Личный кабинет: http://www.sclub.ru/
 */
 
-function getViewState(html){
-    return getParam(html, null, null, /name="__VIEWSTATE".*?value="([^"]*)"/);
-}
+var g_headers = {
+	'Accept': 'application/json, text/javascript, */*; q=0.01',
+	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
+	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Connection': 'keep-alive',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+	'X-Requested-With':'XMLHttpRequest'
+};
 
 function main () {
     if (AnyBalance.getLevel () < 3) {
         throw new AnyBalance.Error ('Для этого провайдера необходима версия программы не ниже 1.2.436. Пожалуйста, обновите программу.');
     }
-
-    var prefs = AnyBalance.getPreferences ();
-    var baseurl = 'http://www.sclub.ru/';
-
-    checkEmpty (prefs.login, 'Введите № карты');
-    checkEmpty (prefs.password, 'Введите пароль');
-
+	var prefs = AnyBalance.getPreferences ();
+    var baseurl = 'https://www.sclub.ru/';
+	
+    checkEmpty (prefs.login, 'Введите № карты!');
+    checkEmpty (prefs.password, 'Введите пароль!');
+	
     // Разлогин для отладки
-    //AnyBalance.requestGet ('http://www.sclub.ru/LogOut.aspx');
-
+    if (prefs.__dbg) {
+    	AnyBalance.requestGet('https://www.sclub.ru/LogOut.aspx', g_headers);
+    }
     // Необходимо для формирования cookie
-    var html = AnyBalance.requestGet (baseurl);
-
-    var form = getParam(html, null, null, /(<form[^>]*name="Form"[^>]*>[\s\S]*?<\/form>)/i);
-    if(!form)
-	throw new AnyBalance.Error('Не удалось найти форму входа, похоже, связной её спрятал. Обратитесь к автору провайдера.');
-
-    var params = createFormParams(html, function(params, str, name, value) {
-        var id = getParam(str, null, null, /\bid="([^"]*)/i, null, html_entity_decode) || '';
-	if(/tbUserName/i.test(id)){ //Это имя
-		value = prefs.login;
-	}else if(/tbUserPassword/i.test(id)){ //Это пароль
-		value = prefs.password;
-	}
-    
-    	return value;
-    });
-
-    AnyBalance.trace ('Trying to enter selfcare at address: ' + baseurl);
-    var html = requestPostMultipart (baseurl + '?AspxAutoDetectCookieSupport=1', params, {Referer: baseurl + '?AspxAutoDetectCookieSupport=1'});
-
-    // Проверка неправильной пары логин/пароль
-    var error = getParam(html, null, null, /<input[^>]*id="shouldOpenPopup"[^>]*value="(1)"/i);
-    if (error)
-        throw new AnyBalance.Error ("Неверный логин или пароль. Проверьте введенные данные", null, true);
-
-    // Редирект при необходимости
-    var regexp = /window.location.replace\("([^"]*)"\)/;
-    var res = regexp.exec (html);
-    if (res)
-        html = AnyBalance.requestGet (res[1]);
-
-    // Проверка на корректный вход
-    regexp = /'\/LogOut.aspx'/;
-    if (regexp.exec (html))
-    	AnyBalance.trace ('It looks like we are in selfcare...');
-    else {
-	//Оказывается, иногда карта может быть заблокирована. Обработаем эту ситуацию
-	var blocked = getParam(html, null, null, /card_block.jpg[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-        if(blocked)
-		throw new AnyBalance.Error(blocked);
-        var error = getParam(html, null, null, /<div[^>]+class="info"[^>]*>\s*<p[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
-        if(error && /вам нужно подтвердить ваш e-mail/i.test(error))
-            error += ' Войдите в личный кабинет через браузер и подтвердите свой е-мейл.';
-        if(error)
-		throw new AnyBalance.Error(error);
-        AnyBalance.trace ('Have not found logout... Unknown error. Please contact author.');
+    var html = AnyBalance.requestGet(baseurl, g_headers);
+    var form = getParam(html, null, null, /<form[^>]*(?:id="mainLogin"|name="Form")[^>]*>[\s\S]*?<\/form>/i);
+    if (!form)
+		throw new AnyBalance.Error('Не удалось найти форму входа, похоже, связной её спрятал. Обратитесь к автору провайдера.');
+	
+	var AntiForgeryToken = getParam(html, null, null, /antiForgeryToken:[^']*'([^']+)/i);
+	if(!AntiForgeryToken) throw new AnyBalance.Error('Не удалось найти токен авторизации!');
+	
+	html = AnyBalance.requestPost(baseurl + 'account/login', {
+		UserName:prefs.login,
+		Password:prefs.password,
+		StayAuthorized:false,
+		CollectEmailRequestId:'',
+	}, addHeaders({
+		Referer: baseurl,
+		'AntiForgeryToken': AntiForgeryToken
+	}));
+	
+	var jsonRespone = getJson(html);
+	if (!/Success"[^"]+true/i.test(html)) {
+		var errors = ['CollectEmailRequestId', 'LoginError', 'Password', 'StayAuthorized', 'UserName'];
+		var errorsString = '';
+		// Json содержит кучу возможных ошибок
+		if(jsonRespone.Errors) {
+			for(var i = 0; i < errors.length; i++) {
+				var currentType = errors[i];
+				var currentErrosArray = jsonRespone.Errors[currentType];
+				if(currentErrosArray && currentErrosArray.length > 0) {
+					AnyBalance.trace('Найдено ошибок: ' + currentErrosArray.length);
+					for(var j = 0; j < currentErrosArray.length; j++) {
+						var currentError = currentErrosArray[j];
+						errorsString += currentError + ', ';
+					}
+				} else {
+					AnyBalance.trace('Не найдено ошибок:  ' + currentType);
+				}
+			}
+			errorsString = errorsString.replace(/, $/, '');
+		}
+		if(errorsString && errorsString != '') {
+			throw new AnyBalance.Error(errorsString, null, /Неверные данные для авторизации/i.test(html));
+		}
         AnyBalance.trace (html);
-        throw new AnyBalance.Error ('Неизвестная ошибка. Пожалуйста, свяжитесь с автором провайдера.');
-    }
-
+        throw new AnyBalance.Error ('Неизвестная ошибка. Пожалуйста, свяжитесь с разработчиками.');		
+	}
+	
+	// Редирект при необходимости? Не знаю, теперь вроде не нужно, оставим пока.
+	/*var redirect = getParam(html, null, null, /window\.location\.replace\("([^"]*)"\)/i);
+    if (redirect)
+        html = AnyBalance.requestGet(redirect, g_headers);
+	*/
+	
     var result = {success: true};
-
-    // Владелец
-    getParam (html, result, 'customer', /<a href="\/YourAccountMain.aspx">([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
-
-    // Баланс в баллах
-    getParam (html, result, 'balanceinpoints', /CurrentBalance: '([^']*)/i, replaceTagsAndSpaces, parseBalance);
-
-    // Баланс в рублях
-    getParam (html, result, 'balanceinrubles', /\(скидка ([\s\S]*?)<span[^>]+class="rur[^>]*>/i, replaceTagsAndSpaces, parseBalance);
-
-    // Количество сообщений
-    getParam (html, result, 'messages', /title="Мои сообщения">([\s\S]*?)<\/a>/i, replaceTagsAndSpaces, parseBalance);
-
-
-    if (AnyBalance.isAvailable ('cardnumber',
-                                'pointsinlastoper')) {
-
-        AnyBalance.trace ('Fetching account info...');
-
-        html = AnyBalance.requestGet (baseurl + 'YourAccountMain.aspx');
-
-        AnyBalance.trace ('Parsing account info...');
-    
-        // Номер карты
-        getParam (html, result, 'cardnumber', /Номер карты: <nobr>([^<]*)/i);
-    
-        // Баллы по последней операции
-        getParam (html, result, 'pointsinlastoper', /<td[^>]*class="(?:positiv|negativ)-points"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, function(str){
-            str = html_entity_decode(str.replace(/\s+/g, ''));
-            return str.replace(/^(\d)/, '+$1');
-        });
+	
+	getParam (jsonRespone.User.FullName + '', result, 'customer', null, replaceTagsAndSpaces);
+	getParam (jsonRespone.User.Pluses + '', result, 'balanceinpoints', null, replaceTagsAndSpaces, parseBalance);
+	getParam (jsonRespone.User.Discount + '', result, 'balanceinrubles', null, replaceTagsAndSpaces, parseBalance);
+	getParam (jsonRespone.User.UnreadMessagesCount + '', result, 'messages', null, replaceTagsAndSpaces, parseBalance);
+	getParam (jsonRespone.User.ActiveCard.Ean + '', result, 'cardnumber');
+	
+	var state = parseBalance(jsonRespone.User.ActiveCard.CardStatus + '');
+	if(isset(state)) {
+		getParam (state == 1 ? 'Активна' : undefined, result, 'cardstate');
+	}
+	
+    if (isAvailable(['pointsinlastoper'])) {
+		html = AnyBalance.requestPost(baseurl + 'user/GetOperations/', {
+			'ShowNewFirst':'true',
+			'Page':'0',
+			'Type':'',
+		}, addHeaders({Referer: baseurl}));
+		
+		var operationsJson = getJson(html);
+		
+		if(operationsJson.Operations && operationsJson.Operations.length > 0) {
+			var lastOperation = operationsJson.Operations[0];
+			
+			getParam (lastOperation.Amount + '', result, 'pointsinlastoper', null, replaceTagsAndSpaces, parseBalance);
+			getParam (lastOperation.PartnerName + '', result, 'lastoperationplace', null, replaceTagsAndSpaces);
+			getParam (lastOperation.OperationDate + '', result, 'lastoperationdate', null, replaceTagsAndSpaces, parseDate);
+		}
     }
-
-
-    if (AnyBalance.isAvailable ('cardstate')) {
-
-        AnyBalance.trace ('Fetching personal data...');
-
-        html = AnyBalance.requestGet ('https://www.sclub.ru/PersonalCabinet/UserForm.aspx');
-
-        AnyBalance.trace ('Parsing personal data...');
-    
-        // Статус карты
-        getParam (html, result, 'cardstate', /Статус карты:[\s\S]*?<span[^>]*>([^<]*)/i);
-    }
-
+	
     AnyBalance.setResult (result);
 }

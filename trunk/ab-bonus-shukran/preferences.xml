@@ -1,22 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <EditTextPreference 
-        title="Login" 
-        positiveButtonText="OK" 
-        summary="||{@s}" 
-        dialogTitle="Login" 
-        negativeButtonText="Cancel" 
-        dialogMessage="Enter login to selfcare."
-        key="login">
-    </EditTextPreference>
-    <EditTextPreference 
-        positiveButtonText="OK"
-        key="password" 
-        dialogTitle="Password"
-        negativeButtonText="Cancel"
-        title="Password"
-        summary="||***********"
-        dialogMessage="Enter password to selfcare."
-        inputType="textPassword">
-    </EditTextPreference>
+	<EditTextPreference
+		obligatory="true"
+		title="Card number or email"
+		positiveButtonText="OK"
+		summary="||{@s}"
+		dialogTitle="Card number or email"
+		negativeButtonText="Cancel"
+		dialogMessage="Enter login to selfcare."
+		key="login">
+	</EditTextPreference>
+	<EditTextPreference
+		obligatory="true"
+		positiveButtonText="OK"
+		key="password"
+		dialogTitle="Password"
+		negativeButtonText="Cancel"
+		title="Password"
+		summary="||***********"
+		dialogMessage="Enter password to selfcare."
+		inputType="textPassword">
+	</EditTextPreference>
 </PreferenceScreen>

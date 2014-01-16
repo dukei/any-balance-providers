@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="1">ab-bonus-shukran</id>
+	<id version="2">ab-bonus-shukran</id>
 	<name>Shukran</name>
-	<description>
-	Obtains information from Shukran (http://www.shukranrewards.com/en/lang/members/home)
-	</description>
+	<description html="true"><![CDATA[
+	<p>Obtains information from Shukran personal account at http://www.shukranrewards.com</p>
+	]]></description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
@@ -15,7 +15,8 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Balance"/>
+		<counter id="balance" name="Available points"/>
+		<counter id="balance_pending" name="Pending points"/>
 		<counter id="fio" name="Name" type="text"/>
 	</counters>
 	<keywords></keywords>

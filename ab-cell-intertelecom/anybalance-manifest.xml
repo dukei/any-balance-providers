@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="24">ab-cell-intertelecom</id>
-  <!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
+  <id version="25">ab-cell-intertelecom</id>
   <api flags="no_browser" />
   <name>Интертелеком</name>
 	<description html="true"><![CDATA[
@@ -11,7 +10,7 @@
 	<instruction html="true"><![CDATA[
 	<p>Настройки:</p>
 	<ul>
-	<li>Для получения пароля к системе самообслуживания необходимо зарегистрироваться на странице http://assa.intertelecom.ua/ru/reg;</li> 
+	<li>Для получения пароля к системе самообслуживания необходимо зарегистрироваться на странице http://assa.intertelecom.ua/ru/reg</li> 
 	<li>Для получения утерянного пароля зайдите в раздел восстановления пароля http://assa.intertelecom.ua/ru/recovery.</li>
 	</ul>   
 	]]></instruction>
@@ -37,6 +36,7 @@
     <counter id="traffic_night" name="Трафик ночной" units=" mb"/>
     <counter id="traffic_it" name="Трафик IT" units=" mb"/>
     <counter id="traffic_3g_turbo" name="Трафик 3G_TURBO" units=" mb"/>
+    <counter id="traffic_session" name="Трафик за текущую сессию" units=" mb"/>
     <counter id="bonus_fb" name="Бонус по акциям" suffix=" ₴" type="numeric" flags="zero_when_empty"/>
     <counter id="bonus_vd" name="Бонус «Вільний доступ»" suffix=" ₴" type="numeric" flags="zero_when_empty"/>
     <counter id="traffic_action" name="Трафик по акции" units=" mb" flags="zero_when_empty"/>

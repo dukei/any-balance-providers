@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="25" date="2014-01-16">
+      - Добавлен счетчик "Трафик за текущую сессию".
+    </change>
     <change version="24" date="2013-12-04">
       - Исправленно распознавание счетчика "Пакетный трафик".
     </change>

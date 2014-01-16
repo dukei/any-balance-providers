@@ -4,9 +4,11 @@ AnyBalance (http://any-balance-providers.googlecode.com)
 Содержит некоторые полезные для извлечения значений с сайтов функции.
 Для конкретного провайдера рекомендуется оставлять в этом файле только те функции, которые используются.
 
-library.js v0.08 от 17.12.13
+library.js v0.09 от 16.01.14
 
 changelog:
+16.01.14 parseMinutes - Улучшена обработка секунд с запятой 2 340,00 сек
+
 17.12.13 parseMinutes - улучшена обработка минут с точками (28мин.40сек)
 
 05.12.13 parseMinutes - парсинг минут вида 49,25 (т.е. 49 минут и 15 секунд) (Д. Кочин)
@@ -151,9 +153,9 @@ function parseMinutes(_text) {
 		sec = parseFloat(regExp[2]);
 	// Это любой другой формат, со словами либо просто число
 	} else {
-		hour = getParam(text, null, null, /(-?[\d\.,]*)\s*(?:час|ч|hour|h)/i, replaceFloat, parseFloat) || 0;
-		min = getParam(text, null, null, [/([\d.,]*)\s*(?:мин|м|хв|min|m)/i, /^[\d.,]+$/i], replaceFloat, parseFloat) || 0;
-		sec = getParam(text, null, null, /([\d]+)\s*(?:сек|c|с|sec|s)/i, [/&minus;/ig, '-', /\s+/g, '', /,/g, '.'], parseFloat) || 0;
+		hour = getParam(text, null, null, /(-?\d[\d.,]*)\s*(?:час|ч|hour|h)/i, replaceFloat, parseFloat) || 0;
+		min = getParam(text, null, null, [/(-?\d[\d.,]*)\s*(?:мин|м|хв|min|m)/i, /^-?[\d.,]+$/i], replaceFloat, parseFloat) || 0;
+		sec = getParam(text, null, null, /(-?\d[\d.,]*)\s*(?:сек|c|с|sec|s)/i, replaceFloat, parseFloat) || 0;
 	}
 	var val = (hour*3600) + (min * 60) + sec;
 	AnyBalance.trace('Parsed seconds (' + val + ') from: ' + _text);

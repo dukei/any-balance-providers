@@ -55,11 +55,11 @@ function main(){
 	//Трафик использованный за текущую интернет сессию  (получаем в локальную переменную, и независимо от включенности счетчика 'traffic_paket_session')
         var traffic_paket_session = getParam(html,  null, null, /<td[^>]*>\s*Трафик МБ\s*<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 	//Узнаем разницу между имеющимся Пакетным трафиком и израсходованным за текущую сессию
-	if(typeof(traffic_paket) != 'undefined'){
+	if(isset(traffic_paket)){
 		if(AnyBalance.isAvailable('traffic_paket'))
             result.traffic_paket = traffic_paket - (traffic_paket_session || 0); //Если вдруг traffic_paket_session не найден, то считаем его равным 0
         }
-        if(typeof(traffic_paket_revb) != 'undefined'){
+        if(isset(traffic_paket_revb)){
 		if(AnyBalance.isAvailable('traffic_paket_revb'))
             result.traffic_paket_revb = traffic_paket_revb - (traffic_paket_session || 0); //Если вдруг traffic_paket_session не найден, то считаем его равным 0
         }
@@ -77,7 +77,9 @@ function main(){
 	getParam(html, result, 'bonus_action_current', /<td[^>]*>\s*Акционный счет на текущий месяц[^>]*<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'bonus_action_next', /<td[^>]*>\s*Акционный счет на следующие мес.[^>]*<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 	
-	
+	//Трафик использованный за текущую интернет сессию  (получаем в счетчик на всякий случай)
+        getParam(html,  result, 'traffic_session', /<td[^>]*>\s*Трафик МБ\s*<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+
 	//Использованный трафик
 	sumParam(html, result, 'traffic_it', />\s*IT\s*<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	

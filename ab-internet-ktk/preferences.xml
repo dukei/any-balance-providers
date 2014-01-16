@@ -1,23 +1,25 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <EditTextPreference 
-        title="Логин" 
-        positiveButtonText="ОК" 
-        summary="Логин для входа в личный кабинет" 
-        dialogTitle="Логин" 
-        negativeButtonText="Отмена" 
-        dialogMessage="Логин, использующийся для входа в личный кабинет kurskonline"
-	inputType="text"
-        key="login">
-    </EditTextPreference>
-    <EditTextPreference 
-        positiveButtonText="ОК"
-        key="password" 
-        dialogTitle="Пароль"
-        negativeButtonText="Отмена"
-        title="Пароль"
-        summary="Пароль для входа в личный кабинет||***********\n"
-        dialogMessage="Введите пароль, используемый для входа в личный кабинет kurskonline"
-        inputType="textPassword">
-    </EditTextPreference>
+	<EditTextPreference
+		obligatory="true"
+		title="Логин"
+		positiveButtonText="ОК"
+		summary="Логин для входа в личный кабинет"
+		dialogTitle="Логин"
+		negativeButtonText="Отмена"
+		dialogMessage="Логин, использующийся для входа в личный кабинет kurskonline"
+		inputType="text"
+		key="login">
+	</EditTextPreference>
+	<EditTextPreference
+		obligatory="true"
+		positiveButtonText="ОК"
+		key="password"
+		dialogTitle="Пароль"
+		negativeButtonText="Отмена"
+		title="Пароль"
+		summary="Пароль для входа в личный кабинет||***********\n"
+		dialogMessage="Введите пароль, используемый для входа в личный кабинет kurskonline"
+		inputType="textPassword">
+	</EditTextPreference>
 </PreferenceScreen>

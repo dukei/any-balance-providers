@@ -1,31 +1,25 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="3" major_version="1.0" >ab-internet-ktk</id>
-  <name>Kurskonline</name>
-  <description>
-    Получает текущий баланс, номер договора  у провайдера Kurskonline ("Курская телефонная компания"): http://r46.ru
-    Данные берутся из личного кабинета https://kabinet.r46.ru/
-  </description>
-  <author>Andrey Belchikov &lt;belchikovs@gmail.com&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>api:jquery.min.js</js> <!-- Используем библиотеку, которая и так входит в AnyBalance -->
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="agreement" name="Номер договора" type="text"/>
-    <counter id="details" name="Доп. информация" type="text"/>
-  </counters>
-  <keywords>
-    провайдер интернет "Курская телефонная компания" КТК kurskonline
-  </keywords>
-  <type>
-    internet
-  </type>
-  <country>
-     ru
-  </country>
+	<id version="3" major_version="1.0" >ab-internet-ktk</id>
+	<name>Kurskonline</name>
+	<description html="true"><![CDATA[
+	<p>Получает текущий баланс, номер договора  у провайдера Kurskonline ("Курская телефонная компания"): http://r46.ru</p>
+	<p>Информация берется из личного кабинета https://kabinet.r46.ru/</p>
+	]]></description>
+	<author>Andrey Belchikov &lt;belchikovs@gmail.com&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>api:jquery.min.js</js> <!-- Используем библиотеку, которая и так входит в AnyBalance -->
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="agreement" name="Номер договора" type="text"/>
+		<counter id="details" name="Доп. информация" type="text"/>
+	</counters>
+	<keywords>провайдер, интернет, КТК, kurskonline</keywords>
+	<type>internet</type>
+	<country>ru</country>
 </provider>

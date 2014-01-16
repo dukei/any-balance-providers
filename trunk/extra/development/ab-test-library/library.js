@@ -1,4 +1,7 @@
-﻿/**
+﻿/*! AnyBalance Library (http://any-balance-providers.googlecode.com)
+The uncompressed full source code of this library is here: https://code.google.com/p/any-balance-providers/source/browse/trunk/extra/development/ab-test-library/library.js
+*/
+/**
 AnyBalance (http://any-balance-providers.googlecode.com)
 
 Содержит некоторые полезные для извлечения значений с сайтов функции.

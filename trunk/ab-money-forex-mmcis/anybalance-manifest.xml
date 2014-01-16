@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-money-forex-mmcis</id>
+	<id version="3">ab-money-forex-mmcis</id>
 	<api flags="no_browser"/>
 	<name>MMCIS (Forex)</name>
 	<description html="true"><![CDATA[
@@ -21,6 +21,8 @@
 		<counter id="invest" name="Инвестировано в Index TOP20" units=" {@currency}"/>
 		<counter id="currency" name="Валюта" type="text"/>
 		<counter id="fio" name="Владелец счёта" type="text"/>
+		<counter id="income_last_month" name="Доходность за прошлый месяц" units=" %"/>
+		<counter id="average_income_per_month" name="Средняя доходность за месяц" units=" %"/>
 	</counters>
 	<keywords>форекс, биржа, forex, котирвки</keywords>
 	<type>money</type>

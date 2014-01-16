@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-money-alpari</id>
+	<api flags="no_browser"/>
+	<name>Alpari</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе на сайте Alpari.ru</p>
+	<p>Информация берется из личного кабинета https://www.alpari.ru/ru/login/</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance_USD" name="Баланс USD" units=" {@currency_USD}"/>
+		<counter id="balance_EUR" name="Баланс EUR" units=" {@currency_EUR}"/>
+		<counter id="balance_RUR" name="Баланс RUR" units=" {@currency_RUR}"/>
+		<counter id="balance_GLD" name="Баланс GLD" units=" {@currency_GLD}"/>		
+	</counters>
+	<keywords></keywords>
+	<type>money</type>
+	<country>ru</country>
+</provider>

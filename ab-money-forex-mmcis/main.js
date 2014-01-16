@@ -42,5 +42,12 @@ function main() {
 	getParam(html, result, 'bonus', /Бонусов:(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'invest', /Инвестировано в Index TOP(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	
+	if(isAvailable(' ')) {	
+		html = AnyBalance.requestGet(baseurl + 'investment/', g_headers);
+		
+		getParam(html, result, 'income_last_month', /Доходность за прошлый месяц[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'average_income_per_month', /Средняя доходность за месяц[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	}
+	
     AnyBalance.setResult(result);
 }

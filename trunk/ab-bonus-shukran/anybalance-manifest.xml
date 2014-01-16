@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="2">ab-bonus-shukran</id>
+	<id version="3">ab-bonus-shukran</id>
 	<name>Shukran</name>
 	<description html="true"><![CDATA[
 	<p>Obtains information from Shukran personal account at http://www.shukranrewards.com</p>

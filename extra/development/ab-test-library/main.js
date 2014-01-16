@@ -63,6 +63,7 @@ function main() {
 		'2 s', '2',
 		'3 секунды', '3',
 		'4 seconds', '4',
+		'2 340,00 сек.', '2340',
 		// Минуты и секунды
 		'1 м 2 с', '62',
 		'28мин.40сек', '1720',
@@ -95,7 +96,6 @@ function main() {
 		'295:40 мин', '17740',
 		'49.25', '2955',
 		'454.29', '27257.4'
-
 	];
 	var temp = 0;
 	for (var i = 0; i < times.length; i++) {
@@ -105,7 +105,7 @@ function main() {
 		if(res == parsed) {
 			AnyBalance.trace('Item ' + (temp++) + ' parsed ok');
 		} else {
-			AnyBalance.trace('____________________________________________________________Item ' + (temp++) + ' parsing failed!!!');
+			AnyBalance.trace('____________________________________________________________Item ' + (temp++) + ' parsing failed: should be ' + res + ', parsed ' + parsed + '!!!');
 		}
 	}
 		

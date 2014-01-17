@@ -9,9 +9,11 @@ function main() {
 	AnyBalance.trace(result.title == 'Система самообслуживания' ? 'Проверяем функцию декода... все работает нормально!' : 'Что-то не работает, надо проверить код! ' + result.title);
 	// Тестируем парсинг баланса
 	getParam('Текущий баланс: <b>1,000,555,48</b>', result, 'balance', /Текущий баланс:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseBalance);
-	AnyBalance.trace(result.balance == 1000555.48 ? 'Проверяем функцию parseBalance... все работает нормально!' : 'Что-то не работает, надо проверить код! ' + result.balance);
+	AnyBalance.trace(result.balance == 1000555.48 ? 'Проверяем функцию parseBalance... все работает нормально!' : '_________________________________________________Что-то не работает, надо проверить код! ' + result.balance);
 	getParam('Текущий баланс: <b>.48</b>', result, 'balance_bad', /Текущий баланс:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseBalance);
-	AnyBalance.trace(result.balance_bad == 0.48 ? 'Проверяем функцию parseBalance с противными значениями типа (.48)... все работает нормально!' : 'Что-то не работает, надо проверить код! ' + result.balance_bad);
+	AnyBalance.trace(result.balance_bad == 0.48 ? 'Проверяем функцию parseBalance с противными значениями типа (.48)... все работает нормально!' : '_________________________________________________Что-то не работает, надо проверить код! ' + result.balance_bad);
+	getParam("Текущий баланс: <b>1'131,00</b>", result, 'balance', /Текущий баланс:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseBalance);
+	AnyBalance.trace(result.balance == 1131 ? 'Проверяем функцию parseBalance... все работает нормально!' : '_________________________________________________Что-то не работает, надо проверить код! ' + result.balance);
 	// Суммируем
 	sumParam('Текущий баланс: <b>1,000,000,00</b>Текущий баланс: <b>1,000,000,00</b>Текущий баланс: <b>1,000,000,00</b>', result, 'balance_sum', /Текущий баланс:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	AnyBalance.trace(result.balance_sum == 3000000.00 ? 'Проверяем функцию sumParam и aggregate_sum... все работает нормально!' : 'Что-то не работает, надо проверить код! ' + result.balance_sum);

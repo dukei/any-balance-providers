@@ -161,6 +161,34 @@ function main(){
                             }
                         }
                     }
+                    if(/INTERNET|TELEPHONY|IPTV|CDMA/.test(service.serviceType || '') 
+                        && AnyBalance.isAvailable('trafIn' + suffix, 'trafOut' + suffix, 'minOutIC' + suffix)){
+                        //Междугородная исходящая телефония
+                        var dt = new Date();
+                        var jsonStatistics = getJson(AnyBalance.requestPost(baseurl + 'serverLogic/statistic', {action:'get_statistic',serviceId:service.id,month: dt.getMonth(), year: dt.getFullYear()}, g_headers));
+                        AnyBalance.trace('Смотрим статистику');
+                        for(var j1=0; jsonStatistics.statistic && j1<jsonStatistics.statistic.length; ++j1){
+                           var su = jsonStatistics.statistic[j1];
+                           AnyBalance.trace(su.name + ': ' + su.value + ' ' + su.unit);
+                           if(su.statUnit == 'TYPE_TIME'){
+                               if(/Междугородная исходящая/i.test(su.name))
+                                   sumParam(su.value, result, 'minOutIC'+suffix, null, null, parseMinutes, aggregate_sum);
+                               else
+                                   AnyBalance.trace('^^^ а эти минуты пропустили...');
+                           }else if(su.statUnit == 'TYPE_TRAFFIC'){
+                               if(/входящий/i.test(su.name))
+                                   sumParam(su.value + su.unit, result, 'trafIn'+suffix, null, null, parseTrafficGb, aggregate_sum);
+                               else if(/Исходящий/i.test(su.name))
+                                   sumParam(su.value + su.unit, result, 'trafOut'+suffix, null, null, parseTrafficGb, aggregate_sum);
+                               else
+                                   AnyBalance.trace('^^^ а этот трафик пропустили...');
+                           }else{
+                               AnyBalance.trace('^^^ а эту статистику пропустили...');
+                           }
+                        }
+                        if(jsonStatistics.isError)
+                            AnyBalance.trace(jsonStatistics.errorMessage);
+                    }
                 }
     
                 if(AnyBalance.isAvailable('status' + suffix) && statuses.length > 0)

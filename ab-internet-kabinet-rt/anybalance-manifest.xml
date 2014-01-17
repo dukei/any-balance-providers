@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="12">ab-internet-kabinet-rt</id>
+	<id version="13">ab-internet-kabinet-rt</id>
 	<name>Ростелеком (Единый кабинет)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе и выбранном лицевом счете для пользователей оператора связи "Ростелеком".</p> 
@@ -35,6 +35,9 @@
 		<counter id="min" name="Остаток минут" units=" мин"/>
 		<counter id="bonus" name="Премия" units=" б"/>
 		<counter id="bonusInt" name="Интернет бонус" units=" Б"/>
+		<counter id="trafIn" name="Входящий трафик" units=" Гб"/>
+		<counter id="trafOut" name="Исходящий трафик" units=" Гб"/>
+		<counter id="minOutIC" name="Междугородная исходящая телефония" type="time_interval" format="{@MIN}" units=" мин"/>
 
 		<counter id="gprs1" name="Остаток трафика 2" units=" Мб"/>
 		<counter id="sms1" name="Остаток SMS 2" units=" sms"/>
@@ -42,6 +45,9 @@
 		<counter id="min1" name="Остаток минут 2" units=" мин"/>
 		<counter id="bonus1" name="Премия 2" units=" б"/>
 		<counter id="bonusInt1" name="Интернет бонус 2" units=" Б"/>
+		<counter id="trafIn1" name="Входящий трафик 2" units=" Гб"/>
+		<counter id="trafOut1" name="Исходящий трафик 2" units=" Гб"/>
+		<counter id="minOutIC1" name="Междугородная исходящая телефония 2" type="time_interval" format="{@MIN}" units=" мин"/>
 
 		<counter id="gprs2" name="Остаток трафика 3" units=" Мб"/>
 		<counter id="sms2" name="Остаток SMS 3" units=" sms"/>
@@ -49,6 +55,9 @@
 		<counter id="min2" name="Остаток минут 3" units=" мин"/>
 		<counter id="bonus2" name="Премия 3" units=" б"/>
 		<counter id="bonusInt2" name="Интернет бонус 3" units=" Б"/>
+		<counter id="trafIn2" name="Входящий трафик 3" units=" Гб"/>
+		<counter id="trafOut2" name="Исходящий трафик 3" units=" Гб"/>
+		<counter id="minOutIC2" name="Междугородная исходящая телефония 3" type="time_interval" format="{@MIN}" units=" мин"/>
 
 		<counter id="gprs3" name="Остаток трафика 4" units=" Мб"/>
 		<counter id="sms3" name="Остаток SMS 4" units=" sms"/>
@@ -56,6 +65,9 @@
 		<counter id="min3" name="Остаток минут 4" units=" мин"/>
 		<counter id="bonus3" name="Премия 4" units=" б"/>
 		<counter id="bonusInt3" name="Интернет бонус 4" units=" Б"/>
+		<counter id="trafIn3" name="Входящий трафик 4" units=" Гб"/>
+		<counter id="trafOut3" name="Исходящий трафик 4" units=" Гб"/>
+		<counter id="minOutIC3" name="Междугородная исходящая телефония 4" type="time_interval" format="{@MIN}" units=" мин"/>
 
 		<counter id="status" name="Статус"  type="text"/>
 		<counter id="phone" name="Номер телефона" type="text"/>

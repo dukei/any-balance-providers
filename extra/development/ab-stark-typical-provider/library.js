@@ -19,7 +19,7 @@ if(a){j=a(j)
 if((b&&c.indexOf(a)>=0)||(!b&&c=="__tariff")){return true
 }return AnyBalance.isAvailable(c)
 }var replaceTagsAndSpaces=[/&nbsp;/ig," ",/&minus;/ig,"-",/<!--[\s\S]*?-->/g,"",/<[^>]*>/g," ",/\s{2,}/g," ",/^\s+|\s+$/g,""];
-var replaceFloat=[/&minus;/ig,"-",/\s+/g,"",/,/g,".",/\.([^.]*)(?=\.)/g,"$1",/^\./,"0."];
+var replaceFloat=[/&minus;/ig,"-",/\s+/g,"",/'/g,"",/,/g,".",/\.([^.]*)(?=\.)/g,"$1",/^\./,"0."];
 var replaceSlashes=[/\\(.?)/g,function(a,b){switch(b){case"0":return"\0";
 case"":return"";
 default:return b
@@ -32,7 +32,7 @@ a&&b<a.length;
 }else{c=c.replace(a[b],a[b+1]);
 ++b
 }}return c
-}function parseBalance(b){var a=getParam(html_entity_decode(b).replace(/\s+/g,""),null,null,/(-?\.?\d[\d.,]*)/,replaceFloat,parseFloat);
+}function parseBalance(b){var a=getParam(html_entity_decode(b).replace(/\s+/g,""),null,null,/(-?\.?\d[\d'.,]*)/,replaceFloat,parseFloat);
 AnyBalance.trace("Parsing balance ("+a+") from: "+b);
 return a
 }function parseCurrency(b){var a=getParam(html_entity_decode(b).replace(/\s+/g,""),null,null,/-?\d[\d.,]*(\S*)/);

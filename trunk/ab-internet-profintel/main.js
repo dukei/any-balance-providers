@@ -26,8 +26,10 @@ function main() {
 		submit: 'submit'
 	}, addHeaders({Referer: baseurl + 'login'}));
 	
-	// Сайт не дает информации об ошибке
 	if (!/logout/i.test(html)) {
+                var error = getParam(html, null, null, /<span[^>]+class="error_message"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+                if(error)
+                    throw new AnyBalance.Error(error, null, /логин\/пароль неверны/i.test(error));
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	// Иногда нам навязывают какие-то услуги по подписке, пропускаем их

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="7">ab-money-vab</id>
+  <id version="8">ab-money-vab</id>
   <api flags="no_browser"/>
   <name>VAB Банк</name>
   <description html="true">

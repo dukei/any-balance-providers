@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-internet-profintel</id>
+	<id version="2">ab-internet-profintel</id>
 	<api flags="no_browser"/>
 	<name>Инсис (Екатеринбург)</name>
 	<description html="true"><![CDATA[

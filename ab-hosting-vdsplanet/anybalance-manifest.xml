@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-hosting-vdsplanet</id>
+  <id version="1">ab-hosting-vdsplanet</id>
   <name>VDSPlanet (Хостинг)</name>
   <description>
     Получает баланс, прогноз отключения у хостинг-провайдера VDSPlanet (http://vdsplanet.ru).

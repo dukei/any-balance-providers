@@ -23,6 +23,21 @@ function main(){
 	}
 }
 
+function parseCurrencyAndMy(cur){
+        return parseCurrencyMy(parseCurrency(cur));
+}
+
+function parseCurrencyMy(cur){
+        var tbl = {
+            'Российский рубль': 'руб',
+            'Доллар США': '$',
+            'Евро': '€'
+        }
+        if(tbl[cur])
+            return tbl[cur];
+        return cur;
+}
+
 function getAuthKey(html) {
 	return nvl(getParam(html, null, null, /value="([^"]+)[^<]*id="authkey"/i), '').substr(0, 32).toLowerCase();
 }
@@ -134,7 +149,7 @@ function fetchCard(html, baseurl, prefs) {
 	getParam(result.__tariff, result, 'cardNumber');
 	getParam(tr, result, 'userName', /"profile-name"(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces);
 	getParam(tr, result, 'balance', /"sum"(?:[^>]*>){1}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(tr, result, ['currency', 'balance'], /"sum"(?:[^>]*>){1}([^<]+)/i, replaceTagsAndSpaces, parseCurrency);
+	getParam(tr, result, ['currency', 'balance'], /"sum"(?:[^>]*>){1}([^<]+)/i, replaceTagsAndSpaces, parseCurrencyAndMy);
 	getParam(tr, result, 'till', /\d{4}[-x]{8,}\d{4}[^<]*?(\d{1,2}\/\d{1,2})/i, [replaceTagsAndSpaces, /(.*)/i, '01/$1'], parseDate);
 	
 	// Дополнительная инфа по картам.
@@ -189,7 +204,7 @@ function fetchAcc(html, baseurl, prefs, url) {
 	getParam(result.__tariff, result, 'accnum');
 	getParam(tr, result, 'acctype', /ITEM_ID[^>]*>([^<]+)/i, replaceTagsAndSpaces);
 	getParam(tr, result, 'balance', /ITEM_ID(?:[^>]*>){8}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(tr, result, ['currency', 'balance', 'debt'], /ITEM_ID(?:[^>]*>){10}([^<]+)/i, replaceTagsAndSpaces);
+	getParam(tr, result, ['currency', 'balance', 'debt'], /ITEM_ID(?:[^>]*>){10}([^<]+)/i, replaceTagsAndSpaces, parseCurrencyMy);
 	
 	if(isset(result.currency)) {
 		getParam(tr, result, 'debt', new RegExp('([-.,\\d]+)\\s*' + result.currency, 'i'), replaceTagsAndSpaces, parseBalance);
@@ -290,7 +305,7 @@ function doOldCabinet(prefs) {
     getParam(html, result, 'limit_left', /Неиспользованная часть кредитного лимита[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'debt', /Текущая задолженность[\s\S]*?Итого[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'blocked', /Заблокировано по авторизованным транзакциям[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'currency', /Валюта счета[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+    getParam(html, result, 'currency', /Валюта счета[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseCurrencyMy);
     getParam(html, result, 'acctype', /Тип счета[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
     getParam(html, result, 'accnum', /Номер счета[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
     getParam(html, result, 'status', /Статус счета[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);

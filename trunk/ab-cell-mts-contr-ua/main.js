@@ -33,12 +33,18 @@ function main() {
 		login: prefs.login,
 		password: prefs.password,
 	}, addHeaders({Referer: baseurl}));
-
+	
 	if (!/logout/i.test(html)) {
 		if(/Невірний код безпеки/i.test(html))
 			throw new AnyBalance.Error('Не верно введены символы с картинки!');
+
+		var error = getParam(html, null, null, /<span\s*style="color:red;">([\s\S]*?)<\/span/i, replaceTagsAndSpaces, html_entity_decode);
+		if (error)
+			throw new AnyBalance.Error(error, null, /Невірний пароль/i.test(error));
+		
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
+	
 	var result = {success: true};
 	
 	getParam(html, result, 'fio', /Ім'я користувача(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);

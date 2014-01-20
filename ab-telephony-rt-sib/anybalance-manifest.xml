@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="4">ab-telephony-rt-sib</id>
+	<id version="5">ab-telephony-rt-sib</id>
 	<name>Ростелеком Сибирь</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе сибирского оператора проводной телефонии Ростелеком-сибирский филиал (http://sibirtelecom.ru)</p>

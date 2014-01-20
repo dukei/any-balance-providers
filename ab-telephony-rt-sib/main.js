@@ -28,7 +28,8 @@ function main(){
         var error = getParam(html, null, null, /<font[^>]+color="red"[^>]*>([\s\S]*?)<\/font>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error);
-
+		
+		AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
 
@@ -41,7 +42,9 @@ function main(){
 
     if(AnyBalance.isAvailable('dur', 'cost', 'count')){
         var dt = new Date();
-        html = AnyBalance.requestGet(baseurl + 'index.jsp?action=apusd&period_from=' + dt.getFullYear() + (dt.getMonth() < 9 ? '0' : '') + (dt.getMonth()+1), g_headers);
+        
+		html = AnyBalance.requestGet(baseurl + 'index.jsp?action=apusd&period_from=' + dt.getFullYear() + (dt.getMonth() < 9 ? '0' : '') + (dt.getMonth()+1), g_headers);
+		
         getParam(html, result, 'count', /Итого разговоров по телефону[^<]*?:([^<]*)/i, replaceTagsAndSpaces, parseBalance);
         getParam(html, result, 'dur', /Длительность:([^<]*)/i, replaceTagsAndSpaces, parseBalance);
         getParam(html, result, 'cost', /Сумма:[^<]*?[cс] НДС:([^<]*)/i, replaceTagsAndSpaces, parseBalance);

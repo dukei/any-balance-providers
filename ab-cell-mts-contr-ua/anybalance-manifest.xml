@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-cell-mts-contr-ua</id>
+	<id version="3">ab-cell-mts-contr-ua</id>
 	<api flags="no_browser|captcha"/>
 	<name>МТС Украина (Контракт)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе, номере лицевого счета, бонусах для пользователей сотового оператора МТС Украина (для контрактных абонентов)</p>
 	<p>Информация берется из интернет-помощника (https://ihelper.mts.com.ua/).</p>
-	
 	<p>ВНИМАНИЕ! На данный момент поддерживаются только GSM-абоненты!</p>
 	]]></description>
 	<instruction html="true"><![CDATA[

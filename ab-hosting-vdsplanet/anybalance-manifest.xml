@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="2">ab-hosting-vdsplanet</id>
+  <name>VDSPlanet (Хостинг)</name>
+  <description>
+    Получает баланс, прогноз отключения у хостинг-провайдера VDSPlanet (http://vdsplanet.ru).
+
+    Информация берется из личного кабинета https://my.vdsplanet.ru
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <author>Vitaliy Poluphanov &lt;vitaliy@root.ua&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <history>history.xml</history>
+    <js>main.js</js>
+    <js>library.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="$"/>
+    <counter id="currency" name="Валюта" type="text"/>
+    <counter id="forecast" name="Прогноз отключения" type="text"/>
+  </counters>
+  <keywords>
+    интернет hosting
+  </keywords>
+  <type>
+    hosting
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

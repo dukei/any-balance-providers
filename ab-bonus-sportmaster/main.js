@@ -21,16 +21,26 @@ function main(){
         
         var error = getParam(html, null, null, /<font[^>]*class=['"]errortext['"][^>]*>([\s\S]*?)<\/font>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error) {
-			if(/Неверный логин или пароль/i.test(error))
-				throw new AnyBalance.Error(error, null, true);
-			
-			throw new AnyBalance.Error(error);
+			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
 		}
         
         var result = {success: true};
         //getParam(html, result, 'cardnum', /Номер бонусной карты:[\s\S]*?>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 		getParam(html, result, '__tariff', /Уровень вашей бонусной программы:[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
         getParam(html, result, 'balance', /id='mybBonus'[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+		
+		if(isAvailable('all')) {
+			var table = getParam(html, null, null, /<table>\s*<tr>\s*<td[^>]*colspan(?:[\s\S]*?<div[^>]*>){10,30}[\s\S]*<\/table>/i);
+			if(table) {
+				var string = '';
+				var array = sumParam(table, null, null, /<tr>\s*<td valign=top[^>]*>\s*<div[^>]*ListBonusTableName[\s\S]*?<\/tr>/ig, replaceTagsAndSpaces);
+				for(var i = 0; i < array.length; i++) {
+					var current = getParam(array[i], null, null, null, [/(\d{4})$/i, '$1\n', /(\d{2})-(\d{2})-(\d{4})/, '$1/$2/$3']);
+					string += current;
+				}
+				getParam(string, result, 'all');
+			}
+		}
     } else {
 		throw new AnyBalance.Error("Спортмастер ввел подтверждение входа по смс, поэтому получение баланса работает только при вводе логина и пароля.");
         AnyBalance.trace('Пароль не введен - получаем данные по номеру карты');
@@ -72,4 +82,15 @@ function main(){
     }
 
     AnyBalance.setResult(result);
+}
+
+function aggregate_newline(values, delimiter, allow_empty) {
+	if (values.length == 0) 
+		return;
+	if (!isset(delimiter)) 
+		delimiter = ', ';
+	var ret = values.join(delimiter);
+	if (!allow_empty) 
+		ret = ret.replace(/^(?:\s*,\s*)+|(?:\s*,\s*){2,}|(?:\s*,\s*)+$/g, '');
+	return ret;
 }

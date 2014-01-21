@@ -31,10 +31,10 @@ function main(){
     sumParam(html, result, '__tariff', /Всі документи по картці (\d+)<br>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 
     // Баланс
-    sumParam (html, result, 'balance', /Загальна кількість балів на рахунку\s*<\/td>\s*<td class="[^<]*">\s*(\d+)\s*<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    sumParam (html, result, 'balance', /Кількість балів:\s*(\d+)\s*<\/div>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 
     // Количество отправок
-    sumParam (html, result, 'send', /Кількість відправок:\s*<\/td>\s*<td class="[^<]*">\s*(\d+)\s*<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    sumParam (html, result, 'send', /Кількість відправок:\s*(\d+)\s*<\/div>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 
 
     AnyBalance.setResult(result);

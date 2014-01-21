@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="11">ab-internet-rostelekom-kamchatka</id>
-  <api flags="no_browser"/>
+  <id version="12">ab-internet-rostelekom-kamchatka</id>
+  <!-- <api flags="no_browser"/> -->
   <name>Интернет Ростелеком (Камчатка)</name>
   <description>
     Получает данные из ИССА Камчатского филиала ОАО "Ростелеком": баланс, счетчики трафика.
@@ -12,6 +12,7 @@
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
+    <js>api:jquery.min.js</js>
     <js>library.js</js>
     <js>main.js</js>
     <history>history.xml</history>

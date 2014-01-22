@@ -214,7 +214,7 @@ function fetchBankPhysic(html, baseurl) {
     getParam(tr, result, 'balance', /&#1086;&#1089;&#1090;&#1072;&#1090;&#1086;&#1082; &#1085;&#1072; &#1089;&#1095;&#1077;&#1090;&#1077;(?:[^>]*>){4}[^>]*Bold[^>]*>([\s\S]*?)<\/tr/i, replaceTagsAndSpaces, parseBalance);
     getParam(tr, result, ['currency', 'balance'], /&#1086;&#1089;&#1090;&#1072;&#1090;&#1086;&#1082; &#1085;&#1072; &#1089;&#1095;&#1077;&#1090;&#1077;(?:[^>]*>){4}[^>]*Bold[^>]*>([\s\S]*?)<\/tr/i, replaceTagsAndSpaces, parseCurrency);
 
-    if (AnyBalance.isAvailable('limit', 'minpay', 'minpaydate', 'freepay', 'freepaydate', 'debt', 'balance', 'lgotsum', 'lgottill', 'cardname', 'cardtill', 'cardtype', 'cardstatus','lgotsum','lgottill')) {
+    if (AnyBalance.isAvailable('limit', 'minpay', 'minpaydate', 'freepay', 'freepaydate', 'debt', 'balance', 'lgotsum', 'lgottill', 'cardname', 'cardtill', 'cardtype', 'cardstatus')) {
         //{source:'f:_id164:0:_id180'}
         var source = getParam(tr, null, null, /\{source:'([^']*)/i);
         //<input type="hidden" name="oracle.adf.faces.STATE_TOKEN" value="-118qdrmfn5">
@@ -241,7 +241,7 @@ function fetchBankPhysic(html, baseurl) {
                 getParam(html, result, ['currency', 'balance'], /&#1044;&#1086;&#1089;&#1090;&#1091;&#1087;&#1085;&#1086; &#1082; &#1080;&#1089;&#1087;&#1086;&#1083;&#1100;&#1079;&#1086;&#1074;&#1072;&#1085;&#1080;&#1102;(?:[^>]*>){4}([\s\S]*?)<\/td/i, replaceTagsAndSpaces, parseCurrency);
             }
             // Это кредит
-            if (isAvailable('minpaydate', 'minpay', 'limit', 'freepaydate', 'freepay', 'debt')) {
+            if (AnyBalance.isAvailable('minpaydate', 'minpay', 'limit', 'freepaydate', 'freepay', 'debt')) {
                 var dt = new Date();
                 var mdt = new Date(dt.getFullYear(), dt.getMonth(), 1);
 

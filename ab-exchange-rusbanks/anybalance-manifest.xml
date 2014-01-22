@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-exchange-rusbanks</id>
+	<api flags="no_browser"/>
+	<name>Курсы валют Visa и Mastercard</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о курсе валют Visa и Mastercard с сайта http://www.rusbanks.info/finance/atm/</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="VISA_USD_BUY" name="Visa USD buy" units=" USD"/>
+		<counter id="VISA_USD_SELL" name="Visa USD sell" units=" USD"/>
+		<counter id="VISA_EUR_BUY" name="Visa EUR buy" units=" EUR"/>
+		<counter id="VISA_EUR_SELL" name="Visa EUR sell" units=" EUR"/>
+		<counter id="VISA_GBP_BUY" name="Visa GBP buy" units=" GBP"/>
+		<counter id="VISA_GBP_SELL" name="Visa GBP sell" units=" GBP"/>
+		<counter id="VISA_CHF_BUY" name="Visa CHF buy" units=" CHF"/>
+		<counter id="VISA_CHF_SELL" name="Visa CHF sell" units=" CHF"/>
+		<counter id="MC_USD_BUY" name="MasterCard USD buy" units=" USD"/>
+		<counter id="MC_USD_SELL" name="MasterCard USD sell" units=" USD"/>
+		<counter id="MC_EUR_BUY" name="MasterCard EUR buy" units=" EUR"/>
+		<counter id="MC_EUR_SELL" name="MasterCard EUR sell" units=" EUR"/>
+		<counter id="MC_GBP_BUY" name="MasterCard GBP buy" units=" GBP"/>
+		<counter id="MC_GBP_SELL" name="MasterCard GBP sell" units=" GBP"/>
+		<counter id="MC_CHF_BUY" name="MasterCard CHF buy" units=" CHF"/>
+		<counter id="MC_CHF_SELL" name="MasterCard CHF sell" units=" CHF"/>
+	</counters>
+	<keywords></keywords>
+	<type>exchange</type>
+	<country>ru</country>
+</provider>

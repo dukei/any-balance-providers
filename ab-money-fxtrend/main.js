@@ -55,7 +55,7 @@ function main(){
 		result.leverage = matches[3];
 		result.balance = parseBalance(matches[4]);
 		result.equity = parseBalance(matches[5]);
-		result.receipts = result.equity*1 - result.balance*1;
+		result.receipts = Math.round((result.equity*1 - result.balance*1)*100)/100;
 		result.margin = parseBalance(matches[6]);
 		result.free = parseBalance(matches[7]);
 		result.mlevel = parseBalance(matches[8]);

@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="3" date="2014-01-22">
+      - Some correct for Receipts
+    </change>
     <change version="2" date="2014-01-11">
       - Counter added: Receipts (as Equity - Balance)
       - Some error diagnostic added

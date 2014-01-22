@@ -21,6 +21,11 @@ var g_headers = {
 
 function smsPassAction(baseurl, html, target, smspass){
     AnyBalance.trace('Performing pass action: ' + target);
+    var read;
+    if(smspass == 'on'){
+        read = smspass; //Прочитали правила
+        smspass = undefined;
+    }
     html = AnyBalance.requestPost(baseurl + 'Pages/LogOn.aspx', {
         __LASTFOCUS:'',
         __EVENTTARGET: target,
@@ -29,7 +34,8 @@ function smsPassAction(baseurl, html, target, smspass){
         __VIEWSTATE:'',
         __VIEWSTATEENCRYPTED:'',
         __EVENTVALIDATION:getEventValidation(html),
-        wzLogin$ucLogOnOneTimePassword$ucOneTimePassword$fldOneTimePassword$tbOneTimePassword:smspass
+        wzLogin$ucLogOnOneTimePassword$ucOneTimePassword$fldOneTimePassword$tbOneTimePassword:smspass,
+        wzLogin$cbRulesRead: read
     }, addHeaders({Referer: baseurl + 'Pages/LogOn.aspx'}));
     return html;
 }
@@ -80,9 +86,12 @@ function main(){
 
     if(/wzLogin\$cbRulesRead/i.test(html)){ //Если требуется смс-пароль
         if(!/wzLogin\$btnGenerate/i.test(html) || !prefs.smspass){ //Если пароль устарел или в настройки он не введен
-            if(!/wzLogin\$btnGenerate/i.test(html))
-                html = smsPassAction(baseurl, html, 'wzLogin$cbRulesRead');
-            smsPassAction(baseurl, html, 'wzLogin$btnGenerate', '');
+            if(!/wzLogin\$btnGenerate/i.test(html)){
+                html = smsPassAction(baseurl, html, 'wzLogin$cbRulesRead', 'on');
+                smsPassAction(baseurl, html, 'wzLogin$btnGenerate', 'on');
+            }else{
+                smsPassAction(baseurl, html, 'wzLogin$btnGenerate', '');
+            }
  	    throw new AnyBalance.Error(prefs.smspass ? 'СМС-пароль устарел, вам в выслан новый СМС-пароль. Введите его в настройки провайдера.' : 'Для входа в интернет банк требуется ввести временный код, который выслан вам в SMS. Он действует несколько дней. Введите его в настройки провайдера.', null, true);
         }
 

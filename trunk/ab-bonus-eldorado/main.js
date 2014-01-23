@@ -8,7 +8,7 @@
 */
 
 var g_headers = {
-    Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
     'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
     'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
     'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.11 (KHTML, like Gecko) Chrome/20.0.1132.57 Safari/536.11',
@@ -23,10 +23,13 @@ function main(){
     var baseurl = "http://www.eldorado.ru/";
 
     var html = AnyBalance.requestPost(baseurl + '_ajax/userCardAuth.php', {
-        card:prefs.login,
-        pin:prefs.password,
-        auth_popup:true
-    }, addHeaders({Referer: baseurl + 'personal/?loyalty', 'X-Requested-With': 'XMLHttpRequest'}));
+		'AUTH_FORM':'Y',
+		'action':'AUTH',
+		'auth_popup':'1',
+		'backurl':'/personal/club/offers/index.php?login=yes',
+		'USER_LOGIN':prefs.login,
+		'USER_PASSWORD':prefs.password,
+    }, addHeaders({Referer: baseurl + 'personal/club/offers/index.php', 'X-Requested-With': 'XMLHttpRequest'}));
 
     var json = getJson(html);
     if(!json.data){

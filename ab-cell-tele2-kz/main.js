@@ -30,13 +30,25 @@ function main(){
     if(json.oCurrState != '2' && json.oCurrState != '1')
         throw new AnyBalance.Error('К сожалению, ваш номер обслуживается старым кабинетом и требует капчу. Поддержка этого кабинета появится позднее.');
 */
-
+	
 	var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
-
+	
 	var token = getParam(html, null, null, /constant\("csrf_token",\s+['"]([^"']*)/i);
-
-    var json = {msisdn: prefs.login, password: prefs.password, same_origin_token: token};
-    var html = AnyBalance.requestPost(baseurl + 'auth/tele2', JSON.stringify(json), addHeaders({Referer: baseurl + 'login'})); 
+	
+	var html = AnyBalance.requestPost(baseurl + 'captcha', JSON.stringify({same_origin_token: token}), addHeaders({Referer: baseurl + 'login'})); 
+	
+	var captchaa;
+	if(AnyBalance.getLevel() >= 7) {
+		AnyBalance.trace('Пытаемся ввести капчу');
+		var captcha = AnyBalance.requestGet(getParam(html, null, null, /"captcha"[^>]*url":"([^"]*)/i));
+		captchaa = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
+		AnyBalance.trace('Капча получена: ' + captchaa);
+	} else {
+		throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
+	}
+	
+    var json = {msisdn: prefs.login, password: prefs.password, same_origin_token: token, answer: captchaa};
+    html = AnyBalance.requestPost(baseurl + 'auth/tele2', JSON.stringify(json), addHeaders({Referer: baseurl + 'login'})); 
 
     if(/"err"/i.test(html)){
         //Если в кабинет войти не получилось, то в первую очередь надо поискать в ответе сервера объяснение ошибки

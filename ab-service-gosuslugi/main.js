@@ -70,8 +70,11 @@ function main() {
 		getParam(getUnreadMsgJson(), result, 'mails', /"msgCount"\D*(\d+)/i, replaceTagsAndSpaces, parseBalance);
 	}
 	// Штрафы ГИБДД
-	processGibdd(result, html, prefs);
-	
+	if(prefs.gosnumber) {
+		AnyBalance.trace('Указан номер автомобиля, значит надо получать штрафы...');
+		processGibdd(result, html, prefs);
+	}
+
 	/*
 	getParam(html, result, '__tariff', /Тарифный план:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'phone', /Номер:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
@@ -131,7 +134,7 @@ function processGibdd(result, html, prefs) {
 			var fees = sumParam(html, null, null, /<div[^>]*class="text"[^>]*>\s*<table(?:[\s\S]*?<tr[^>]*>){12}(?:[^>]*>){5}\s*<\/table>/ig);
 			var gibdd_info = '';
 			
-			AnyBalance.trace('Найдено штрафов (оплаченных и неоплаченых): ' + fees.length);
+			AnyBalance.trace('Найдено штрафов (оплаченных и неоплаченных): ' + fees.length);
 			
 			for(var i = 0; i < fees.length; i++) {
 				var current = fees[i];

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-bonus-eldorado</id>
-        <api flags="no_browser"/>
+	<id version="5">ab-bonus-eldorado</id>
+	<api flags="no_browser"/>
 	<name>Клуб Эльдорадо</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию по бонусной карте Клуба постоянных покупателей "Эльдорадо".</p> <p>Информация берется из личного кабинета (http://www.eldorado.ru/personal/?loyalty).</p>   
@@ -14,12 +14,9 @@
 		<js>main.js</js>
 	</files>
 	<counters>
-		<counter id="balance" name="Активная сумма" units="р"/>
-		<counter id="reserv" name="Резервная сумма" units="р"/>
-		<counter id="inactive" name="Неактивная сумма" units="р"/>
-	<!--    <counter id="level" name="Статус участия" type="text"/>
-		<counter id="status" name="Статус карты" type="text"/>
-		<counter id="type" name="Тип участия" type="text"/> -->
+		<counter id="balance" name="Активная сумма" units=" р"/>
+		<counter id="reserv" name="Резервная сумма" units=" р"/>
+		<counter id="inactive" name="Неактивная сумма" units=" р"/>
 		<counter id="userName" name="ФИО владельца" type="text"/>
 		<counter id="cardnum" name="Номер карты" type="text"/>
 		<counter id="phone" name="Телефон" type="text"/>

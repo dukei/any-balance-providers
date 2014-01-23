@@ -19,7 +19,6 @@
         title="PIN-код"
         obligatory="true"
         summary="||***********"
-        dialogMessage="Введите PIN-код, используемый для входа в личный кабинет."
-        inputType="numberPassword">
+        dialogMessage="Введите PIN-код, используемый для входа в личный кабинет.">
     </EditTextPreference>
 </PreferenceScreen>

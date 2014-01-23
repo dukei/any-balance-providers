@@ -573,7 +573,7 @@ function getTula(){
     typicalLanBillingInetTv(baseurl + 'client2/index.php?r=site/login');
 }
 
-function typicalLanBillingInetTv(url){
+function typicalLanBillingInetTv(url) {
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
 
@@ -582,29 +582,29 @@ function typicalLanBillingInetTv(url){
         'LoginForm[password]':prefs.password,
         'yt0':'Войти'
     });
-
+	
     if(!/r=site\/logout/i.test(html)){
         throw new AnyBalance.Error("Не удалось войти в личный кабинет. Неправильный логин-пароль?");
     }
-
+	
     var result = {success: true};
     var priority = {active: 0, inactive: 1};
-
+	
     //Вначале попытаемся найти интернет лиц. счет
     var accTv = [], accInet = [];
-    var accs = sumParam(html, null, null, /Номер договора:[\s\S]*?<\/table>/ig);
+    var accs = sumParam(html, null, null, /Номер договора[\s\S]*?<\/table>/ig);
     for(var i=0; i<accs.length; ++i){
         var act = /Состояние:\s+актив/i.test(accs[i]) ? 'active' : 'inactive';
         var pri = priority[act];
-        if(accs[i].indexOf('Израсходовано:') >= 0){
+        if(accs[i].indexOf('Израсходовано:') >= 0) {
             if(!isset(accInet[pri]))
                 accInet[pri] = accs[i];
-        }else{
+        } else {
             if(!isset(accTv[pri]))
                 accTv[pri] = accs[i];
         }
     }
-
+	
     function readAcc(html, isInet){
         if(html){
             var tr = getParam(html, null, null, /<tr[^>]+class="(?:account|odd|even)"[^>]*>((?:[\s\S](?!<\/tr|Нет подключенных услуг))*?Состояние:\s+актив[\s\S]*?)<\/tr>/i);
@@ -626,7 +626,7 @@ function typicalLanBillingInetTv(url){
         }
     }
 
-    function readAccByPriority(arr, isInet){
+    function readAccByPriority(arr, isInet) {
         for(var i=0; i<arr.length; ++i)
             if(arr[i])
                 return readAcc(arr[i], isInet);
@@ -844,7 +844,27 @@ function getOrel(){
     AnyBalance.setResult(result);
 }
 
-function getPiter(){
-    var baseurl = 'https://lk.spb.mts.ru/';
-    typicalLanBillingInetTv(baseurl + 'index.php?r=site/login');
-}
+function getPiter() {
+	var url = 'https://lk.spb.mts.ru/index.php?r=site/login';
+	
+    var prefs = AnyBalance.getPreferences();
+    AnyBalance.setDefaultCharset('utf-8');
+
+    var html = AnyBalance.requestPost(url, {
+        'LoginForm[login]':prefs.login,
+        'LoginForm[password]':prefs.password,
+        'yt0':'Войти'
+    });
+	
+    if(!/r=site\/logout/i.test(html)){
+        throw new AnyBalance.Error("Не удалось войти в личный кабинет. Неправильный логин-пароль?");
+    }
+	
+    var result = {success: true};
+	
+	getParam(html, result, 'username', />([^<]+)(?:<[^<]*){3}Вы вошли как/i, replaceTagsAndSpaces);
+	getParam(html, result, 'agreement', /Вы вошли как(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces);
+	getParam(html, result, 'balance', /Текущий баланс(?:[^>]*>){15}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	
+    AnyBalance.setResult(result);
+} 

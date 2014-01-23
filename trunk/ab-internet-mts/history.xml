@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="46" date="2014-01-23">
+	- Исправлен г. Санкт-Петербург.
+	</change>
 	<change version="45" date="2014-01-13">
 	- Показ баланса ТВ в нескольких регионах
 	</change>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference
+		title="СНИЛС/Логин"
+		key="login"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="СНИЛС/Логин"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите СНИЛС (без пробелов и разделителей, 11 символов подряд) или логин.">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Пароль"
+		key="password"
+		summary="||***********"
+		obligatory="true"
+		dialogTitle="Пароль"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите пароль, используемый для входа в личный кабинет."
+		inputType="textPassword">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Номер автомобиля"
+		key="gosnumber"
+		summary="||{@s}"
+		dialogTitle="Номер автомобиля"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите номер автомобиля, буквы русские.">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Серия и номер ВУ"
+		key="licensenumber"
+		summary="||{@s}"
+		dialogTitle="Серия и номер ВУ"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите серию и номер водительского удостоверения в форматеВУавтомобиля, буквы русские.">
+	</EditTextPreference>	
+</PreferenceScreen>

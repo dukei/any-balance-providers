@@ -7,9 +7,6 @@ var g_headers = {
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection': 'keep-alive',
-	// Mobile
-	//'User-Agent':'Mozilla/5.0 (BlackBerry; U; BlackBerry 9900; en-US) AppleWebKit/534.11+ (KHTML, like Gecko) Version/7.0.0.187 Mobile Safari/534.11+',
-	// Desktop
 	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
 };
 
@@ -25,10 +22,9 @@ function main() {
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'https://newcab.tbt.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
-
-	checkEmpty(prefs.login, 'Введите логин!');
-	checkEmpty(prefs.password, 'Введите пароль!');
-
+	
+	checkEmpty(prefs.login, 'Введите логин или номер счета!');
+	
 	var html = AnyBalance.requestGet(baseurl + 'index.php', g_headers);
 
 	var captchaa;
@@ -43,13 +39,23 @@ function main() {
 		throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
 	}
 	
+	var type = 0;
+	
+	if(prefs.login && !prefs.password) {
+		AnyBalance.trace('Пробуем войти по номеру счета...');
+	} else {
+		AnyBalance.trace('Пробуем войти по логину и паролю...');
+		checkEmpty(prefs.password, 'Введите пароль!');
+		type = 1;
+	}
+	
 	html = AnyBalance.requestPost(baseurl + 'index.php', {
 		page:'2',
 		__EVENTVALIDATION:getEventValidation(html),
 		__VIEWSTATE:getViewState(html),
-		type:'1',
+		type:type,
 		userlogin:prefs.login,
-		userpass:prefs.password,
+		userpass: (type == 1 ? prefs.password : ''),
 		'captcha[id]':captchaID,
 		'captcha[input]':captchaa,
 		Submit:'Войти',
@@ -64,7 +70,7 @@ function main() {
 	}
 	var result = {success: true};
 	
-	getParam(html, result, 'account', /Ваш лицевой счет:[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'account', [/Ваш лицевой счет:[^>]*>([^<]*)/i, /№ Абонемента(?:[^>]*>){17}([^<]*)/i], replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'balance', /Остаток на счете:[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'fio', /size="4"\s*>\s*Баланс(?:[^>]*>){6}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 

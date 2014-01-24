@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-internet-mts-tbt</id>
+	<id version="2">ab-internet-mts-tbt</id>
 	<api flags="no_browser|captcha"/>
 	<name>Домашний интернет МТС (Татарстан)</name>
 	<description html="true"><![CDATA[

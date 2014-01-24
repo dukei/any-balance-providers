@@ -36,7 +36,7 @@ function main(){
     if(json.resultCode && json.resultCode != 'OK')
         throw new AnyBalance.Error("Вход в интернет банк не удался: " + json.resultCode);
 
-    sessionid = json.payload.sessionId;
+    sessionid = json.payload.sessionid || json.payload.sessionId;
 
     if(!sessionid){
         var error = json.errorMessage;
@@ -47,8 +47,7 @@ function main(){
     }
         
     AnyBalance.setCookie(basedomain, 'sessionid', sessionid);
-                                                                                                                                                                   
-/*    
+	/*    
     if(!prefs.__debug){ //Вход в отладчике глючит, поэтому входим вручную, а проверяем только извлечение счетчиков
         //Устанавливает JSESSIONID
         AnyBalance.requestGet(baseurl + '/authentication/?service=' + encodeURIComponent(baseurl + '/bank/'), g_headers);

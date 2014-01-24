@@ -21,12 +21,12 @@
 		dialogMessage="Введите пароль, используемый для входа в личный кабинет."
 		inputType="textPassword">
 	</EditTextPreference>
-    <ListPreference 
+<!--     <ListPreference 
         key="type" 
         title="Тип получаемой информации"
         summary="||{@s}"
         entries="Полная (С капчей)|Только баланс (Без капчи)"
         entryValues="full|balance"
 		defaultValue="full">
-    </ListPreference>	
+    </ListPreference>	 -->
 </PreferenceScreen>

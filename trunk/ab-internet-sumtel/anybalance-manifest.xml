@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="7">ab-internet-sumtel</id>
+	<id version="8">ab-internet-sumtel</id>
 	<api flags="no_browser" />  
 	<name>Сумма Телеком</name>
 	<description html="true"><![CDATA[

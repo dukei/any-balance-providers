@@ -10,8 +10,8 @@ var g_headers = {
 	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
 };
 
-//var g_baseurl = 'http://my.xtratv.com.ua/';
-var g_baseurl = 'http://devmy.xtratv.com.ua/';
+var g_baseurl = 'http://my.xtratv.com.ua/';
+//var g_baseurl = 'http://devmy.xtratv.com.ua/';
 
 function main() {
 	var prefs = AnyBalance.getPreferences();

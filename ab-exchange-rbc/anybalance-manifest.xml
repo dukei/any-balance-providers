@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-exchange-rbc</id>
+	<api flags="no_browser"/>
+	<name>Курсы валют РБК</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о курсе валют с главной страницы сайта РБК http://www.rbc.ru/</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balanceusdspros" name="Нал. USD - спрос" units=" р"/>
+		<counter id="balanceusdpredl" name="Нал. USD - предложение" units=" р"/>
+		<counter id="balanceeurspros" name="Нал. EUR - спрос" units=" р"/>
+		<counter id="balanceeurpredl" name="Нал. EUR - предложение" units=" р"/>
+		<counter id="balanceeur_usdspros" name="EUR/USD - спрос"/>
+		<counter id="balanceeur_usdpredl" name="EUR/USD - предложение"/>
+	</counters>
+	<keywords>валюта</keywords>
+	<type>exchange</type>
+	<country>ru</country>
+</provider>

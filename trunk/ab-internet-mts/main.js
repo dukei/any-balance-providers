@@ -43,12 +43,12 @@ var regions = {
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-    var region = prefs.region;
-    if(!region || !regions[region])
-      region = 'moscow';
-
-    var func = regions[region];
-    AnyBalance.trace('Регион: ' + region);
+	var region = prefs.region;
+	if(!region || !regions[region])
+		region = 'moscow';
+	
+	var func = regions[region];
+	AnyBalance.trace('Регион: ' + region);
     func();
 }
 
@@ -576,7 +576,7 @@ function getTula(){
 function typicalLanBillingInetTv(url) {
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
-
+	
     var html = AnyBalance.requestPost(url, {
         'LoginForm[login]':prefs.login,
         'LoginForm[password]':prefs.password,
@@ -638,11 +638,6 @@ function typicalLanBillingInetTv(url) {
 
     AnyBalance.setResult(result);
 } 
-
-function getBalakovo(){
-    var baseurl = "http://stat.balakovo.comstar-r.ru/";
-    typicalLanBillingInetTv(baseurl + 'client2/index.php?r=site/login');
-}
 
 function parseBalance3(text){
     var val = parseBalance(text.replace(/,/g, ''));
@@ -846,8 +841,9 @@ function getOrel(){
 
 function getPiter() {
 	var url = 'https://lk.spb.mts.ru/index.php?r=site/login';
+	getTypicalCabinet(url);
 	
-    var prefs = AnyBalance.getPreferences();
+    /*var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
 
     var html = AnyBalance.requestPost(url, {
@@ -865,6 +861,132 @@ function getPiter() {
 	getParam(html, result, 'username', />([^<]+)(?:<[^<]*){3}Вы вошли как/i, replaceTagsAndSpaces);
 	getParam(html, result, 'agreement', /Вы вошли как(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces);
 	getParam(html, result, 'balance', /Текущий баланс(?:[^>]*>){15}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	
+    AnyBalance.setResult(result);*/
+}
+
+function getTypicalCabinet(url){
+    var prefs = AnyBalance.getPreferences();
+    AnyBalance.setDefaultCharset('utf-8');
+
+    var html = AnyBalance.requestPost(url, {
+        'LoginForm[login]':prefs.login,
+        'LoginForm[password]':prefs.password,
+        'yt0':'Войти'
+    });
+	
+	if (!/r=site\/logout/i.test(html)) {
+		var error = getParam(html, null, null, /Необходимо исправить следующие ошибки:([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
+		if (error)
+			throw new AnyBalance.Error(error, null, /Неверное имя пользователя или пароль/i.test(error));
+		
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+	}
+	
+    var result = {success: true};
+	
+	getParam(html, result, 'username', />([^<]+)(?:<[^<]*){3}Вы вошли как/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'agreement', /Вы вошли как(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'balance', /Текущий баланс(?:[^>]*>){15}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	
+    AnyBalance.setResult(result);	
+}
+
+function getBalakovo(){
+	var url = 'http://stat.balakovo.comstar-r.ru/';
+	newTypicalLanBillingInetTv(url);
+}
+
+function newTypicalLanBillingInetTv(baseurl) {
+    var prefs = AnyBalance.getPreferences();
+    AnyBalance.setDefaultCharset('utf-8');
+	
+    var html = AnyBalance.requestPost(baseurl + 'client2/index.php?r=site/login', {
+        'LoginForm[login]':prefs.login,
+        'LoginForm[password]':prefs.password,
+        'yt0':'Войти'
+    });
+	
+	if (!/r=site\/logout/i.test(html)) {
+		var error = getParam(html, null, null, /Необходимо исправить следующие ошибки:([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
+		if (error)
+			throw new AnyBalance.Error(error, null, /Неверное имя пользователя или пароль/i.test(error));
+		
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+	}
+	
+    var result = {success: true};
+    var priority = {active: 0, inactive: 1};
+	
+    //Вначале попытаемся найти интернет лиц. счет
+    var accTv = [], accInet = [];
+	
+	var table = getParam(html, null, null, /Номер договора[\s\S]*?<\/table>/i);
+    var accs = sumParam(html, null, null, /<tr[^>]*agreements[^>]*row(?:[^>]*>){15}\s*<\/tr>/ig);
+	AnyBalance.trace('Найдено счетов: ' + accs.length);
+	
+    for(var i=0; i < accs.length; ++i) {
+		var account = getParam(accs[i], null, null, /<strong>\s*(\d+)/i);
+		var accountID = getParam(accs[i], null, null, /<tr[^>]*agreements[^>]*row[^>]*?(\d+)/i);
+		var balance = getParam(accs[i], null, null, /([\s\d.,]+руб)/i, null, parseBalance);
+		
+		var xhtml = AnyBalance.requestGet(baseurl + 'client2/index.php?r=account/vgroups&agrmid=' + accountID);
+		
+		var json = getJson(xhtml);
+		
+		// Может быть несколько услуг по одному счету
+		AnyBalance.trace('Услуг по счету ' + account + ': ' + json.body.length);
+		
+		for(var j = 0; j < json.body.length; j++) {
+			var tarifdescr = json.body[j].tarifdescr + '';  //Цифровое ТВ
+			var state = json.body[j].state.state + ''; //Состояние: активен
+			
+			var response = {
+				bal:balance,
+				acc:account,
+				accId:accountID,
+				'tarifdescr':tarifdescr,
+				'state':state
+			};
+			// Это ТВ
+			/*if(/ТВ/.test(tarifdescr)) {
+				accTv.push(response);
+			// Это интернет
+			} else {
+				accInet.push(response);
+			}*/
+			var act = /Состояние:\s+актив/i.test(state) ? 'active' : 'inactive';
+			var pri = priority[act];
+			// Это ТВ
+			if(/ТВ/.test(tarifdescr)) {
+				if(!isset(accTv[pri]))
+					accTv[pri] = response;
+			// Это интернет
+			} else {
+				if(!isset(accInet[pri]))
+					accInet[pri] = response;				
+			}
+		}
+    }
+	
+    function readAcc(json, isInet){
+        if(json) {
+			getParam(json.bal, result, isInet ? 'balance' : 'balance_tv');
+			sumParam(json.acc, result, 'agreement', null, replaceTagsAndSpaces, html_entity_decode, aggregate_join)
+			sumParam(json.tarifdescr, result, '__tariff', null, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+		}
+    }
+	
+    function readAccByPriority(arr, isInet) {
+        for(var i = 0; i<arr.length; ++i)
+            if(arr[i])
+                return readAcc(arr[i], isInet);
+    }
+	
+    readAccByPriority(accInet, true);
+    readAccByPriority(accTv);
+	
+    getParam(html, result, 'username', /<div[^>]+class="content-aside"[^>]*>[\s\S]*?<p[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
 	
     AnyBalance.setResult(result);
 } 

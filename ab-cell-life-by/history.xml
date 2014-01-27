@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-	<change major_version="2.0" version="10" date="2014-01-20">
+	<change major_version="2.0" version="11" date="2014-01-27">
+	- Исправлено получение баланса.
+	</change>
+	<change major_version="2.0" ver.sion="10" date="2014-01-20">
 	- Исправлено получение минут
 	</change>
 	<change major_version="2.0" version="9" date="2013-12-26">

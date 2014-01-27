@@ -20,10 +20,9 @@ function main() {
 	
 	var html = AnyBalance.requestGet(baseurl + 'msg.html?s', g_headers);
 	
-	html = AnyBalance.requestPost(baseurl + 'msg.html', {
-        username:prefs.login,
-        pass_oths:prefs.password,
-        btn:'enter'
+	html = AnyBalance.requestPost(baseurl + 'user/login/', {
+        login:prefs.login,
+        password:prefs.password,
     }, addHeaders({Referer: baseurl + 'msg.html?s'}));
 	
 	if(!/menu_pc_exit/i.test(html)) {
@@ -42,7 +41,7 @@ function main() {
 	getParam(html, result, 'bonus', /Бонусов:(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'invest', /Инвестировано в Index TOP(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	
-	if(isAvailable(' ')) {	
+	if(isAvailable(['income_last_month', 'average_income_per_month'])) {	
 		html = AnyBalance.requestGet(baseurl + 'investment/', g_headers);
 		
 		getParam(html, result, 'income_last_month', /Доходность за прошлый месяц[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);

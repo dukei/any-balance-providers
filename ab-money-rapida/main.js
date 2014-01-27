@@ -22,7 +22,7 @@ function main() {
 
 	var html = AnyBalance.requestGet('https://pps.rapida.ru/');
 	
-	if(!html.search('<a href="/exit/" class="exit">')) {
+	if(html.indexOf('<a href="/exit/" class="exit">')==-1) {
 		var codes = {"TJ":"+ 992","MD":"+ 373","LT":"+ 370","LV":"+ 371","KG":"+ 996","KZ":"+ 77","GE":"+ 995","BY":"+ 375","AM":"+ 374","AZ":"+ 994","RU":"+ 7","TM":"+ 993","UZ":"+ 998","UA":"+ 380","EE":"+ 372"};
 	
 		var csrfmiddlewaretoken=findValue(html, "<input type='hidden' name='csrfmiddlewaretoken' value='([a-zA-Z0-9]+)'");
@@ -44,9 +44,13 @@ function main() {
 		  }, {
 			Referer: "https://pps.rapida.ru/"
 		  });
+		  
+		if(html.indexOf('<ul class="errorlist"><li>Неверный код</li></ul>')!=-1) {
+			throw new AnyBalance.Error('Неверно введено число с картинки');
+		}
 	}
 
-	if(html.search('<a href="/exit/" class="exit">')) {
+	if(html.indexOf('<a href="/exit/" class="exit">')!=-1) {
 		
 		var tmp=findValue(html, "<div class=\"hello_title\">(.+?)</div>");
 		if(tmp==null) throw new AnyBalance.Error('Ошибка получения значения имени');

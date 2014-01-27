@@ -3,4 +3,7 @@
     <change version="1" date="2014-01-27">
       - Релиз
     </change>
+    <change version="2" date="2014-01-27">
+      - Исправлена ошибка с недоступностью имени
+    </change>
 </history>

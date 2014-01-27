@@ -183,7 +183,7 @@ function main() {
 		//Если в кабинет войти не получилось, то в первую очередь надо поискать в ответе сервера объяснение ошибки
 		var error = getParam(html, null, null, [/<div[^>]+class="error-page[\s|"][^>]*>([\s\S]*?)<\/div>/i, /<span[^>]+class="ui-messages-error-summary"[^>]*>([\s\S]*?)<\/span>/i], replaceTagsAndSpaces, html_entity_decode);
 		if(error)
-			throw new AnyBalance.Error(error, null, /Неправильные логин или пароль/i.test(error));
+			throw new AnyBalance.Error(error, null, /Неправильные логин и\s*(?:\(или\)\s*)?пароль/i.test(error));
 		/*error = getParam(html, null, null, /<div[^>]+class="error-page[\s|"][^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error) 
 			throw new AnyBalance.Error(error);*/

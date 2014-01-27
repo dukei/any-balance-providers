@@ -417,7 +417,11 @@ function getPrm(){
 }
 
 function getKrv(){
-    var prefs = AnyBalance.getPreferences();
+	var urlIndex = 'https://lk.kirovnet.net/?r=site/login';
+	var urlAjax = 'https://lk.kirovnet.net/index.php?r=account/vgroups&agrmid=';
+	
+	newTypicalLanBillingInetTv(urlIndex, urlAjax);
+    /*var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
 
     var baseurl = 'https://lk.kirovnet.net/';
@@ -458,7 +462,7 @@ function getKrv(){
     getParam(html, result, '__tariff', /Текущий тарифный план:([\s\S]*?)<\/strong>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'username', /Общая информация\s+\/([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 
-    AnyBalance.setResult(result);
+    AnyBalance.setResult(result);*/
 }
 
 function getPnz(){

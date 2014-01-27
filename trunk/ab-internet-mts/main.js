@@ -824,7 +824,7 @@ function getOrel(){
         'login':prefs.login,
         'password':prefs.password
     });
-
+	
     if(!/>Выход</i.test(html)){
         throw new AnyBalance.Error("Не удалось войти в личный кабинет. Неправильный логин-пароль?");
     }
@@ -841,9 +841,8 @@ function getOrel(){
 
 function getPiter() {
 	var url = 'https://lk.spb.mts.ru/index.php?r=site/login';
-	getTypicalCabinet(url);
 	
-    /*var prefs = AnyBalance.getPreferences();
+    var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
 
     var html = AnyBalance.requestPost(url, {
@@ -862,46 +861,21 @@ function getPiter() {
 	getParam(html, result, 'agreement', /Вы вошли как(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces);
 	getParam(html, result, 'balance', /Текущий баланс(?:[^>]*>){15}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 	
-    AnyBalance.setResult(result);*/
-}
-
-function getTypicalCabinet(url){
-    var prefs = AnyBalance.getPreferences();
-    AnyBalance.setDefaultCharset('utf-8');
-
-    var html = AnyBalance.requestPost(url, {
-        'LoginForm[login]':prefs.login,
-        'LoginForm[password]':prefs.password,
-        'yt0':'Войти'
-    });
-	
-	if (!/r=site\/logout/i.test(html)) {
-		var error = getParam(html, null, null, /Необходимо исправить следующие ошибки:([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
-		if (error)
-			throw new AnyBalance.Error(error, null, /Неверное имя пользователя или пароль/i.test(error));
-		
-		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-	}
-	
-    var result = {success: true};
-	
-	getParam(html, result, 'username', />([^<]+)(?:<[^<]*){3}Вы вошли как/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'agreement', /Вы вошли как(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'balance', /Текущий баланс(?:[^>]*>){15}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	
-    AnyBalance.setResult(result);	
+    AnyBalance.setResult(result);
 }
 
 function getBalakovo(){
-	var url = 'http://stat.balakovo.comstar-r.ru/';
-	newTypicalLanBillingInetTv(url);
+	var urlIndex = 'http://stat.balakovo.comstar-r.ru/client2/index.php?r=site/login';
+	var urlAjax = 'http://stat.balakovo.comstar-r.ru/client2/index.php?r=account/vgroups&agrmid=';
+	
+	newTypicalLanBillingInetTv(urlIndex, urlAjax);
 }
 
-function newTypicalLanBillingInetTv(baseurl) {
+function newTypicalLanBillingInetTv(urlIndex, urlAjax) {
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
 	
-    var html = AnyBalance.requestPost(baseurl + 'client2/index.php?r=site/login', {
+    var html = AnyBalance.requestPost(urlIndex, {
         'LoginForm[login]':prefs.login,
         'LoginForm[password]':prefs.password,
         'yt0':'Войти'
@@ -930,7 +904,7 @@ function newTypicalLanBillingInetTv(baseurl) {
 		var accountID = getParam(accs[i], null, null, /<tr[^>]*agreements[^>]*row[^>]*?(\d+)/i);
 		var balance = getParam(accs[i], null, null, /([\s\d.,]+руб)/i, null, parseBalance);
 		
-		var xhtml = AnyBalance.requestGet(baseurl + 'client2/index.php?r=account/vgroups&agrmid=' + accountID);
+		var xhtml = AnyBalance.requestGet(urlAjax + accountID);
 		
 		var json = getJson(xhtml);
 		
@@ -938,27 +912,22 @@ function newTypicalLanBillingInetTv(baseurl) {
 		AnyBalance.trace('Услуг по счету ' + account + ': ' + json.body.length);
 		
 		for(var j = 0; j < json.body.length; j++) {
-			var tarifdescr = json.body[j].tarifdescr + '';  //Цифровое ТВ
+			var tarifdescr = json.body[j].tarifdescr + ''; //Цифровое ТВ
 			var state = json.body[j].state.state + ''; //Состояние: активен
+			var services = json.body[j].services[0] + ''; //Нет подключенных услуг
 			
 			var response = {
 				bal:balance,
 				acc:account,
 				accId:accountID,
 				'tarifdescr':tarifdescr,
-				'state':state
+				'state':state,
+				'services':services
 			};
-			// Это ТВ
-			/*if(/ТВ/.test(tarifdescr)) {
-				accTv.push(response);
-			// Это интернет
-			} else {
-				accInet.push(response);
-			}*/
 			var act = /Состояние:\s+актив/i.test(state) ? 'active' : 'inactive';
 			var pri = priority[act];
 			// Это ТВ
-			if(/ТВ/.test(tarifdescr)) {
+			if(/\BТВ\B/.test(tarifdescr)) {
 				if(!isset(accTv[pri]))
 					accTv[pri] = response;
 			// Это интернет
@@ -972,8 +941,11 @@ function newTypicalLanBillingInetTv(baseurl) {
     function readAcc(json, isInet){
         if(json) {
 			getParam(json.bal, result, isInet ? 'balance' : 'balance_tv');
-			sumParam(json.acc, result, 'agreement', null, replaceTagsAndSpaces, html_entity_decode, aggregate_join)
-			sumParam(json.tarifdescr, result, '__tariff', null, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+			sumParam(json.acc, result, 'agreement', null, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+			
+			if(!/Нет подключенных услуг/i.test(json.services)) {
+				sumParam(json.tarifdescr, result, '__tariff', null, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+			}
 		}
     }
 	

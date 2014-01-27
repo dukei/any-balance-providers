@@ -49,7 +49,7 @@ function main(){
         throw new AnyBalance.Error("Не удалось зайти в личный кабинет. Сайт изменен?");
     }
 
-    var result = {success: true};
+    var result = {success: true, balance: null};
 	
 	getParam(html, result, '__tariff', /Тарифный план([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'fio', /ФИО(?:[^>]+>){2}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
@@ -65,8 +65,7 @@ function main(){
 	getParam(html, result, 'balance_bonus', /Бонусный баланс(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 
 	// В новом кабинете нет баланса, очень круто :)
-	// Вроде появился баланс в новом кабинете. Оставим это, если не надем баланс в новом лк, попробуем получить из старого
-	if (AnyBalance.isAvailable('balance', 'balance_bonus') && (!isset(result.balance) || !isset(result.balance_bonus))) {
+	/*if (AnyBalance.isAvailable('balance', 'balance_bonus') && (!isset(result.balance) || !isset(result.balance_bonus))) {
 	    html = AnyBalance.requestPost(baseurlOld, {
 			Code: matches[1],
 			Phone: matches[2],
@@ -81,7 +80,7 @@ function main(){
 		}
 		getParam(html, result, 'balance', /Текущий основной баланс:[\s\S]*?<div[^>]*>\s*(-?\d[\d\., \s]*)/i, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, 'balance_bonus', /Текущий бонусный баланс:[\s\S]*?<div[^>]*>\s*(-?\d[\d\., \s]*)/i, replaceTagsAndSpaces, parseBalance);
-	}
+	}*/
 
     AnyBalance.setResult(result);
 }

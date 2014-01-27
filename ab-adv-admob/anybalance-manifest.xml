@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+    <id version="1">ab-adv-admob</id>
+	<api flags="no_browser" />
+    <name>AdMob</name>
+    <description>Информация из аккаунта AdMob</description>
+    <author>BArtWell &lt;web@bartwell.ru&gt;</author>
+    <files>
+	<icon>icon.png</icon>
+        <preferences>preferences.xml</preferences>
+        <js>main.js</js>
+    	<history>history.xml</history>
+    </files>
+    <counters>
+        <counter id="month" name="Заработок за месяц"/>
+    </counters>
+    <keywords>
+        AdMob Google Реклама
+    </keywords>
+    <type>
+        adv
+    </type>
+</provider>

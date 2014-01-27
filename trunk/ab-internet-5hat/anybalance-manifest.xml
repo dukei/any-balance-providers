@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-5hat</id>
+	<api flags="no_browser"/>
+	<name>5hat.net (Харьков)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе интернет-провайдера 5hat.net г. Харьков, Украина</p>
+	<p>Информация берется из личного кабинета https://stat.5hat.net:9443/</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Депозит"/>
+		<counter id="days_left" name="Осталось дней" units=" дн"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="status" name="Состояние" type="text"/>
+		<counter id="uid" name="UID" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet</type>
+	<country>ua</country>
+</provider>

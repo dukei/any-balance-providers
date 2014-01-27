@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-transport-tcard-ekat</id>
+	<api flags="no_browser"/>
+	<name>Транспортная карта (Екатеринбург)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе транспортной карты в г. Екатеринбург.</p>
+	<p>Информация берется из личного кабинета http://albank.ru/ru/transp_card/</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс карты" units=" р"/>
+	</counters>
+	<keywords></keywords>
+	<type>transport</type>
+	<country>ru</country>
+</provider>

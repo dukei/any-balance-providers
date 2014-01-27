@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="E-mail" 
+        positiveButtonText="ОК" 
+        summary="E-mail||{@s}\n" 
+        dialogTitle="E-mail" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите ваш адрес e-mail"
+        key="login"
+        inputType="text">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="Пароль для входа в Google Adwords||***********\n"
+        dialogMessage="Введите пароль, используемый для входа в Google Adwords"
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

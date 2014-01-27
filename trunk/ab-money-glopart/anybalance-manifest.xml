@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-money-glopart</id>
+	<api flags="no_browser"/>
+	<name>Glopart</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Glopart http://glopart.ru/</p>
+	<p>Сервис Glopart позволяет вам без проблем принимать платежи в Интернете. Клиенты в автоматическом режиме могут переводить вам деньги, а им автоматически отправляется продукт. Прием платежей на сайт ставится буквально за 5 минут...</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance_rur" name="Рубли" units=" руб"/>
+		<counter id="balance_usd" name="Доллары США" units=" USD"/>
+		<counter id="fio" name="ФИО" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>money</type>
+	<country>ru</country>
+</provider>

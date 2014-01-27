@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+
+    <ListPreference
+        defaultValue="RU"
+        entries="Таджикистан +992|Молдавия +373|Литва +370|Латвия +371|Киргизия +996|Казахстан +77|Грузия +995|Белоруссия +375|Армения +374|Азербайджан +994|Российская Федерация +7|Туркменистан +993|Узбекистан +998|Украина +380|Эстония +372"
+        entryValues="TJ|MD|LT|LV|KG|KZ|GE|BY|AM|AZ|RU|TM|UZ|UA|EE"
+        key="code"
+        summary="Код страны, который используется при авторизации|Выберите код страны|{@s}"
+        title="Код страны" />
+
+    <EditTextPreference
+        dialogMessage="Введите ваш номер телефона для входа в Кошелек"
+        dialogTitle="Номер телефона"
+        inputType="number"
+        key="login"
+        negativeButtonText="Отмена"
+        positiveButtonText="ОК"
+        summary="Номер телефона||{@s}\n"
+        title="Номер телефона" >
+    </EditTextPreference>
+
+    <EditTextPreference
+        dialogMessage="Введите пароль, используемый для входа в Кошелек"
+        dialogTitle="Пароль"
+        inputType="textPassword"
+        key="password"
+        negativeButtonText="Отмена"
+        positiveButtonText="ОК"
+        summary="Пароль для входа в Кошелек||***********\n"
+        title="Пароль" >
+    </EditTextPreference>
+
+</PreferenceScreen>

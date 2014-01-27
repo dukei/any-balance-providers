@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+    <id version="1">ab-money-rapida</id>
+    <name>Кошелек Rapida</name>
+    <description>Баланс кошелька Rapida</description>
+    <author>BArtWell &lt;web@bartwell.ru&gt;</author>
+    <files>
+		<icon>icon.png</icon>
+        <preferences>preferences.xml</preferences>
+        <js>main.js</js>
+		<history>history.xml</history>
+    </files>
+    <counters>
+        <counter id="balance" name="Баланс" units="р"/>
+        <counter id="status" name="Статус" type="text"/>
+        <counter id="name" name="ФИО" type="text"/>
+    </counters>
+    <keywords>
+        Кошелек, rapida
+    </keywords>
+    <type>
+        money
+    </type>
+</provider>

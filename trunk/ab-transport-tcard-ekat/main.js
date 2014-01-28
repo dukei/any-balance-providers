@@ -49,6 +49,7 @@ function main() {
 	
 	getParam(html, result, '__tariff', /Баланс карты[\s']+(\d+)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'balance', /Баланс карты[^<]*составляет([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'actual_date', /Баланс карты[^<]*на([\d\s.:]*)/i, replaceTagsAndSpaces, html_entity_decode);
 	
 	AnyBalance.setResult(result);
 }

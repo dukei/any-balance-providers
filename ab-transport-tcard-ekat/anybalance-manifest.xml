@@ -2,9 +2,9 @@
 <provider>
 	<id version="1">ab-transport-tcard-ekat</id>
 	<api flags="no_browser"/>
-	<name>Транспортная карта (Екатеринбург)</name>
+	<name>Транспортная карта (Якутск)</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе транспортной карты в г. Екатеринбург.</p>
+	<p>Предоставляет информацию о балансе транспортной карты в г. Якутск.</p>
 	<p>Информация берется из личного кабинета http://albank.ru/ru/transp_card/</p>
 	]]></description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>

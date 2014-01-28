@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-transport-tcard-ekat</id>
+	<id version="2">ab-transport-tcard-ekat</id>
 	<api flags="no_browser"/>
 	<name>Транспортная карта (Якутск)</name>
 	<description html="true"><![CDATA[
@@ -17,6 +17,7 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс карты" units=" р"/>
+		<counter id="actual_date" name="Дата" type="text"/>
 	</counters>
 	<keywords></keywords>
 	<type>transport</type>

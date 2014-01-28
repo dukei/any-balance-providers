@@ -9,44 +9,29 @@ var g_headers = {
 	'Connection':'keep-alive',
 	'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:21.0) Gecko/20100101 Firefox/21.0',
 };
-function getLastResponseHeader(name){
-	var headers = AnyBalance.getLastResponseHeaders();
-	for(var i=0; i<headers.length; ++i) {
-		var header = headers[i];
-			if(header[0] == name)
-	        	return header[1];
-	}
-   	return false;
-}
-				
+
 function main(){
     var prefs = AnyBalance.getPreferences();
 
     var baseurl = 'http://www.nts.su/';
     AnyBalance.setDefaultCharset('utf-8');
 
-    var html = AnyBalance.requestPost(baseurl + 'my/index.php/auth/login', {
+	var html = AnyBalance.requestGet(baseurl + 'my/index.php/auth/login', g_headers);
+	
+    html = AnyBalance.requestPost(baseurl + 'my/index.php/auth/login', {
         identity:prefs.login,
         password:prefs.password,
         submit:'Вперед!',
-		//remember:'0'
     }, addHeaders({Referer: baseurl + 'my/index.php/auth/login'}));
-	
-	var refresh = getLastResponseHeader('Refresh');
-	
-	if(endsWith(refresh, baseurl+'my/index.php/')){
-		AnyBalance.trace('ok');
-	}else
-		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Проверьте Ваш логин или пароль');
 	
 	// запрашиваем иднекс
 	html = AnyBalance.requestGet(baseurl + 'my/index.php', addHeaders({Referer: baseurl + 'my/index.php/auth/login'}));
 	
 	if(!/my\/auth\/logout/i.test(html))
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Проверьте Ваш логин или пароль');
-
-	//Раз мы здесь, то мы успешно вошли в кабинет
+	
     var result = {success: true};
+	
 	getParam(html, result, 'balance', /Остаток[\s\S]*?table_cell">\s*([\s\S]*?)\s*<\/td/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'account', /Номер счета[\s\S]*?table_cell">\s*([\s\S]*?)\s*<\/td/i, replaceTagsAndSpaces, null);
 	getParam(html, result, 'agreement', /Номер договора[\s\S]*?table_cell">\s*([\s\S]*?)\s*<\/td/i, replaceTagsAndSpaces, null);
@@ -54,26 +39,19 @@ function main(){
 	getParam(html, result, 'credit', /Кредит[\s\S]*?table_cell">\s*([\s\S]*?)\s*<\/td/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'fio', /short_info[\s\S]{1,50}<p>\s*([\s\S]*?)\s*<\/p>/i, replaceTagsAndSpaces, null);
 	
-	try
-	{
-		var found = /getCards[\s\S]{1,100}data:[\s\S]*?subsId:\s*([\s\S]*?),[\s\S]*?parentId:\s*([\s\S]*?),[\s\S]*?acNum:\s*'?([\s\S]*?)'?,[\s\S]*?bill:\s*'?([\s\S]*?)'?\s*\}/i.exec(html);
-		if(found)
-		{
-			html = AnyBalance.requestPost(baseurl + 'my/index.php/ajax/getCards', 
-			{
-				subsId:found[1],
-				parentId:found[2],
-				acNum:found[3],
-				bill:found[4]
-			}, g_headers);
+    try {
+    	var found = /getCards[^<]*?data:\s*\{[\D]*(\d+)\s*[\D]*(\d+)\s*[\D]*(\d+)\s*'[^']*'([^']*)/i.exec(html);
+    	if (found) {
+    		html = AnyBalance.requestPost(baseurl + 'my/index.php/ajax/getCards', {
+    			subsId: found[1],
+    			parentId: found[2],
+    			acNum: found[3],
+    			bill: found[4]
+    		}, g_headers);
 			
-			getParam(html, result, '__tariff', /параметры\s*тарифного\s*плана"\s*target=_blank>([\s\S]*?)<\/a/i, replaceTagsAndSpaces, null);
-		}
-	}
-	catch(e)
-	{
-		
-	}
+    		getParam(html, result, '__tariff', />Тарифный план(?:[\s\S]*?<tr[^>]*>){2}(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces);
+    	}
+    } catch (e) {}
     //Возвращаем результат
     AnyBalance.setResult(result);
 }

@@ -1,33 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-internet-nts-tomsk</id>
-  <name>Новые Телесистемы (Томск)</name>
-  <description>
-	Получает данные из кабинета Новые Телесистемы (Томск) http://www.nts.su/my/index.php/
-  </description>
-  <author>Stark &lt;support@starksoft.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units=" р"/>
-	<counter id="monthly_fee" name="Абонентская плата" units=" р"/>
-	<counter id="credit" name="Кредит" units=" р"/>
-	<counter id="account" name="Номер счета" type="text"/>
-	<counter id="agreement" name="Договор" type="text"/>
-	<counter id="fio" name="ФИО" type="text"/>
-  </counters>
-  <keywords>
-	
-  </keywords>
-  <type>
-    internet
-  </type>
-  <country>
-    ru
-  </country>
+	<api flags="no_browser"/>
+	<id version="3">ab-internet-nts-tomsk</id>
+	<name>Новые Телесистемы (Томск)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Новые Телесистемы (Томск)</p>
+	<p>Информация берется из личного кабинета http://www.nts.su/my/index.php/</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="monthly_fee" name="Абонентская плата" units=" р"/>
+		<counter id="credit" name="Кредит" units=" р"/>
+		<counter id="account" name="Номер счета" type="text"/>
+		<counter id="agreement" name="Договор" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet</type>
+	<country>ru</country>
 </provider>

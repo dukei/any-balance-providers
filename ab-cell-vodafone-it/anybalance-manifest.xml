@@ -1,31 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-cell-vodafone-it</id>
-  <name>Vodafone Italy</name>
-  <description>
-    Obtains balance and other plan information on Vodafone Italy personal account (http://www.vodafone.it)
-
-    If you don't have Vodafone personal account, please register here: https://registrazione.vodafone.it/190/regu/checkLinkAccount.do
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Balance" units="€"/>
-    <counter id="fio" name="User name" type="text"/>
-    <counter id="phone" name="Phone" type="text"/>
-  </counters>
-  <keywords>
-  </keywords>
-  <type>
-    cell
-  </type>
-  <country>
-    it
-  </country>
+	<api flags="no_browser"/>
+	<id version="2">ab-cell-vodafone-it</id>
+	<name>Vodafone Italy</name>
+	<description html="true"><![CDATA[
+	<p>Obtains balance and other plan information on Vodafone Italy personal account (http://www.vodafone.it)</p>
+	<p>If you don't have Vodafone personal account, please register here: https://registrazione.vodafone.it/190/regu/checkLinkAccount.do</p>
+	]]></description>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Balance" units=" €"/>
+		<counter id="fio" name="User name" type="text"/>
+		<counter id="phone" name="Phone" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>cell</type>
+	<country>it</country>
 </provider>

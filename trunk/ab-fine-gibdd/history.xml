@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-	<change version="15" date="2013-12-19">
-	- 
+	<change version="16" date="2014-01-28">
+	- Улучшенная обработка ошибок.
 	</change>
 	<change version="14" date="2013-12-05">
 	- Данные с сайта gibdd.ru получать больше нет возможности, теперь все данные берутся с сайта http://shtrafy-gibdd.ru/

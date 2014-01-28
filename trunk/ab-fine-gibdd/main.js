@@ -48,9 +48,10 @@ function main(){
 	
 	// в удачном случае вернет: { "redirect": "/myfines" }
 	var href = getParam(html, null, null, /"redirect"[^"]*"\/([^"]*)/i);
-	if(!href)
+	if(!href) {
+		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось получить данные о штрафах, проверьте правильность ввода.');
-	
+	}
 	html = AnyBalance.requestGet(baseurl + href, g_headers);
 	
 	var result = {success: true, balance:null} ;

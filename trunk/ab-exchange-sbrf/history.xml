@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-    <change version="2" date="2013-02-01">
-      - Добавлена дата курса
-    </change>
+	<change version="5" date="2014-01-28">
+	- Поддержка изменений на сайте.
+	</change>
+	<change version="2" date="2013-02-01">
+	- Добавлена дата курса.
+	</change>
 </history>

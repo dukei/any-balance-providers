@@ -30,7 +30,9 @@ function main() {
 		var captchaHash=findValue(html, "<input.+name=\"captcha_0\" value=\"([a-zA-Z0-9]+)\" id=\"id_captcha_0\"");
 		if(captchaHash==null) throw new AnyBalance.Error('Ошибка предварительного разбора 2');
 		
-		var captcha = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", "https://pps.rapida.ru/captcha/image/"+captchaHash+"/");
+		var captchaimg = AnyBalance.requestGet("https://pps.rapida.ru/captcha/image/"+captchaHash+"/");
+		
+		var captcha = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captchaimg);
 	
 		var prefs = AnyBalance.getPreferences();
 		html = AnyBalance.requestPost('https://pps.rapida.ru/auth/', {

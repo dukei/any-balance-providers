@@ -27,6 +27,8 @@ function main(){
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
 	
+	html = AnyBalance.requestGet(baseurl + 'webmaster/', g_headers);
+	
 	var table = getParam(html, null, null, /(<table[\s\S]*?>[\s\S]*?<\/table>)/i);
 	if(!table)
 		throw new AnyBalance.Error('Не удалось найти таблицу с данными. Сайт изменен?');

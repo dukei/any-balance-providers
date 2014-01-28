@@ -1,10 +1,5 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Получает баланс и информацию о тарифном плане для томского сотового оператора WellCom (Ростелеком, Томский филиал)
-
-Сайт оператора: http://wellcom.tomsk.ru
-Личный кабинет: https://issa-tomsk.bwc.ru
 */
 
 function main(){

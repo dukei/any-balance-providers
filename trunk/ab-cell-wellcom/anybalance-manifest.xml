@@ -1,39 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="4">ab-cell-wellcom</id>
-  <name>Wellcom (Ростелеком, Томск)</name>
-  <description>
-    Получает баланс и информацию о тарифном плане для томского сотового оператора Wellcom, ныне Ростелеком - Томский филиал (http://wellcom.tomsk.ru).
-
-    Услуги по передачи данных на 3G скоростях на сегодняшний момент предоставляются в г. Томск, Северск, Асино, Колпашево, Стрежевой. В ближайшей перспективе – покрытие всех районных центров Томской области.
-
-    Информация берется из личного кабинета https://issa-tomsk.bwc.ru.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <history>history.xml</history>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="avg" name="Средняя траты в день" units="р"/>
-    <counter id="promise" name="Обещанный платеж" units="р"/>
-    <counter id="daysleft" name="Хватит на" units="дн"/>
-    <counter id="status" name="Состояние" type="text"/>
-    <counter id="licschet" name="Лицевой счет" type="text"/>
-    <counter id="phone" name="Номер телефона" type="text"/>
-    <counter id="traffic_left" name="Остаток трафика" units=" Мб"/>
-  </counters>
-  <keywords>
-    интернет
-  </keywords>
-  <type>
-    cell
-  </type>
-  <country>
-    ru
-  </country>
+	<id version="5">ab-cell-wellcom</id>
+	<api flags="no_browser"/>
+	<name>Wellcom (Ростелеком, Томск)</name>
+	<description html="true"><![CDATA[
+	<p>Получает баланс и информацию о тарифном плане для томского сотового оператора Wellcom, ныне Ростелеком - Томский филиал (http://wellcom.tomsk.ru).</p>
+	<p>Услуги по передачи данных на 3G скоростях на сегодняшний момент предоставляются в г. Томск, Северск, Асино, Колпашево, Стрежевой. В ближайшей перспективе – покрытие всех районных центров Томской области.</p>
+	<p>Информация берется из личного кабинета https://issa-tomsk.bwc.ru.</p>
+	]]></description>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="avg" name="Средняя траты в день" units=" р"/>
+		<counter id="promise" name="Обещанный платеж" units=" р"/>
+		<counter id="daysleft" name="Хватит на" units=" дн"/>
+		<counter id="status" name="Состояние" type="text"/>
+		<counter id="licschet" name="Лицевой счет" type="text"/>
+		<counter id="phone" name="Номер телефона" type="text"/>
+		<counter id="traffic_left" name="Остаток трафика" units=" Мб"/>
+	</counters>
+	<keywords>интернет</keywords>
+	<type>cell</type>
+	<country>ru</country>
 </provider>

@@ -58,7 +58,7 @@ function main() {
 		if(tmp==null) throw new AnyBalance.Error('Ошибка получения значения имени');
 		result.name=tmp;
 		
-		tmp=findValue(html, "<div class=\"hello_status\">Ваш статус:[\\s\\S]+<span><a href=\"/b/help/limits/\">([а-яА-Я]+)</a></span>[\\s\\S]+</div>");
+		tmp=findValue(html, "<div class=\"hello_status\">Ваш статус:[\\s\\S]+?([а-яА-Я]+)[\\s\\S]+?</div>");
 		if(tmp==null) throw new AnyBalance.Error('Ошибка получения значения статуса');
 		result.status=tmp;
 		

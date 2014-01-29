@@ -39,15 +39,15 @@ function main(){
     if(/ChangeLoginPassword.jspx/.test(html))
         throw new AnyBalance.Error('Интернет банк требует сменить пароль. Войдите в интернет банк https://online.rencredit.ru через браузер, установите новый пароль, а затем введите новый пароль в настройки провайдера.', null, true);
 
-    if(prefs.type == 'card')
-        fetchCard(html, baseurl);
-    else if(prefs.type == 'acc')
+	if(prefs.type == 'acc')
         fetchAccount(html, baseurl);
+	else if(prefs.type == 'deposit') 
+		fetchDeposit(html, baseurl);
     else
         fetchCard(html, baseurl); //По умолчанию карты будем получать
 }
 
-function fetchCard(html, baseurl){
+function fetchCard(html, baseurl) {
     var prefs = AnyBalance.getPreferences();
     if(prefs.cardnum && !/^\d{4}$/.test(prefs.cardnum))
         throw new AnyBalance.Error('Пожалуйста, введите 4 последних цифры номера карты, по которой вы хотите получить информацию, или не вводите ничего, чтобы получить информацию по первой карте.');
@@ -170,4 +170,49 @@ function fetchAccount(html, baseurl){
     }
 	
     AnyBalance.setResult(result);
+}
+
+function fetchDeposit(html, baseurl) {
+    var prefs = AnyBalance.getPreferences();
+    if(prefs.cardnum && !/^\d{4,20}$/.test(prefs.cardnum))
+        throw new AnyBalance.Error('Пожалуйста, введите не менее 4 последних цифр номера счета, по которому вы хотите получить информацию, или не вводите ничего, чтобы получить информацию по первому счету.');
+	
+    html = AnyBalance.requestGet(baseurl + 'faces/renk/deposits/DepositList.jspx', g_headers);
+	
+	var num = prefs.cardnum || '\\d+';
+	
+    var tr = getParam(html, null, null, new RegExp('submitForm[^>]*>\\d{5,}' + num + '(?:[^>]*>){11}[^>]*</td>', 'i'));
+    if(!tr)
+        throw new AnyBalance.Error('Не удаётся найти ' + (prefs.cardnum ? 'депозит с последними цифрами ' + prefs.cardnum : 'ни одного депозита!'));
+	
+    var result = {success: true};
+	
+    getParam(tr, result, 'balance', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(tr, result, 'accnum', /href="#"[^>]*>(\d+)/, replaceTagsAndSpaces, html_entity_decode);
+	getParam(tr, result, 'accname', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/, replaceTagsAndSpaces, html_entity_decode);
+	getParam(tr, result, 'currency', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(tr, result, '__tariff', /href="#"[^>]*>(\d+)/, replaceTagsAndSpaces, html_entity_decode)
+	
+/*
+    getParam(tr, result, 'available', /(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    
+    
+    getParam(tr, result, '__tariff', /(\d{20})/, replaceTagsAndSpaces, html_entity_decode);
+	*/
+    /*var sourceData = getParam(tr, null, null, /<a[^>]+onclick="submitForm[^"]*source:'([^'"]*)'[^"]*"[^>]+class="xl"/i, replaceTagsAndSpaces);
+    var token = getParam(html, null, null, /<input[^>]+name="oracle.adf.faces.STATE_TOKEN"[^>]*value="([^"]*)/i, null, html_entity_decode);
+	
+    if(AnyBalance.isAvailable('accname', 'userName')){
+        html = AnyBalance.requestPost(baseurl + 'faces/renk/accounts/AccountList.jspx', {
+            'oracle.adf.faces.FORM': 'mainform',
+            'oracle.adf.faces.STATE_TOKEN': token,
+            'source': sourceData
+        }, g_headers);
+        //Тип счета
+        getParam(html, result, 'accname', /&#1058;&#1080;&#1087; &#1089;&#1095;&#1077;&#1090;&#1072;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+        //ФИО владельца счета
+        getParam(html, result, 'userName', /&#1060;&#1048;&#1054; &#1074;&#1083;&#1072;&#1076;&#1077;&#1083;&#1100;&#1094;&#1072; &#1089;&#1095;&#1077;&#1090;&#1072;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    }*/
+	
+    AnyBalance.setResult(result);	
 }

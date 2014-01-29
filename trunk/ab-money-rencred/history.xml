@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-<change version="3" date="2014-01-13">
-- Улучшенная диагностика ошибок
-</change>
-<change version="2" date="2013-11-18">
-- Добавлено получение баланса из вкладки баланс.
-</change>
+	<change version="4" date="2014-01-29">
+	- Добавлена поддержка Депозитов.
+	</change>
+	<change version="3" date="2014-01-13">
+	- Улучшенная диагностика ошибок.
+	</change>
+	<change version="2" date="2013-11-18">
+	- Добавлено получение баланса из вкладки баланс.
+	</change>
 </history>

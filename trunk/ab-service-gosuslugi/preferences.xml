@@ -18,7 +18,7 @@
 		dialogTitle="Пароль"
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите пароль, используемый для входа в личный кабинет."
+		dialogMessage="Введите пароль, используемый для входа в Госуслуги."
 		inputType="textPassword">
 	</EditTextPreference>
 	<EditTextPreference
@@ -37,6 +37,15 @@
 		dialogTitle="Серия и номер ВУ"
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите серию и номер водительского удостоверения в форматеВУавтомобиля, буквы русские.">
-	</EditTextPreference>	
+		dialogMessage="Введите серию и номер водительского удостоверения в формате 50км123456, буквы русские.">
+	</EditTextPreference>
+	<EditTextPreference
+		title="ИНН"
+		key="inn"
+		summary="||{@s}"
+		dialogTitle="ИНН"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите ИНН.">
+	</EditTextPreference>		
 </PreferenceScreen>

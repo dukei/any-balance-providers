@@ -12,21 +12,11 @@ var g_headers = {
 
 var g_baseurl = 'https://www.gosuslugi.ru/';
 
-function performRedirect(html) {
-	var href = getParam(html, null, null, /url=([^"]+)/i);
-	if(!href) {
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось найти ссылку на переадресацию, сайт изменен?');
-	}
-	AnyBalance.trace('Нашли ссылку на ' + href);
-	return AnyBalance.requestGet(href, addHeaders({Referer: g_baseurl + 'pgu/personcab'}));
-}
-
 function main() {
 	var prefs = AnyBalance.getPreferences();
 	AnyBalance.setDefaultCharset('utf-8');
 	
-	checkEmpty(prefs.login = getParam(prefs.login || '', null, null, null, [/^(\d{3})(\d{3})(\d{3})(\d{2})$/i, '$1-$2-$3 $4']), 'Введите СНИЛС (без пробелов и разделителей, 11 символов подряд, вы ввели: "'+ (prefs.login || 'пустое поле')+'") или логин!');
+	checkEmpty(prefs.login = getParam(prefs.login || '', null, null, null, [/^(\d{3})(\d{3})(\d{3})(\d{2})$/i, '$1-$2-$3 $4']), 'Введите СНИЛС (без пробелов и разделителей, 11 символов подряд), или логин. Вы ввели: "'+ (prefs.login || 'пустое поле')+'"!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
 	var html = AnyBalance.requestGet(g_baseurl + 'pgu/personcab', g_headers);
@@ -74,22 +64,113 @@ function main() {
 		AnyBalance.trace('Указан номер автомобиля, значит надо получать штрафы...');
 		processGibdd(result, html, prefs);
 	}
-
-	/*
-	getParam(html, result, '__tariff', /Тарифный план:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'phone', /Номер:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'balance', /Текущий баланс:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'deadline', /Действителен до:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseDate);
-	getParam(html, result, ['currency', 'balance'], /Текущий баланс:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseCurrency);
-	getParam(html, result, 'status', /Статус:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
-	*/
+	// Налоги
+	if(prefs.inn) {
+		AnyBalance.trace('Указан ИНН, значит надо получать данные по налогам...');
+		processNalogi(result, html, prefs);
+	}	
+	
 	AnyBalance.setResult(result);
 }
 
+function performRedirect(html) {
+	var href = getParam(html, null, null, /url=([^"]+)/i);
+	if(!href) {
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось найти ссылку на переадресацию, сайт изменен?');
+	}
+	AnyBalance.trace('Нашли ссылку ' + href);
+	return AnyBalance.requestGet(href, addHeaders({Referer: g_baseurl + 'pgu/personcab'}));
+}
+
+function createFormParamsById(html, servicesubId) {
+	var form = getParam(html, null, null, new RegExp('<form[^>]*id="s' + servicesubId + '"[\\s\\S]*?</form>'));
+	if(!form) {
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось найти форму для id: ' + servicesubId + ', сайт изменен?');
+	}
+	
+	return createFormParams(form);
+}
+
+function getXmlFileResult(html) {
+	var href = getParam(html, null, null, /\{\s*url:[^"]*"\/([^"]*)/i, [/\s/ig, '%20']);
+	
+	if(!href) {
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось найти ссылку для загрузки файла результата, сайт изменен?');
+	}
+	// https://www.gosuslugi.ru/fed/serviceResult/getFileResult?filename=%D0%A0%D0%B5%D0%B7%D1%83%D0%BB%D1%8C%D1%82%D0%B0%D1%82_1.html&orderId=89560860&serviceId=26&mimeType=docFormat%20docXML&downloadType=download&alternate=text/html&mnemonic=1&fileNo=0
+	return html = AnyBalance.requestGet(g_baseurl + href, {
+		'Accept': 'text/html, * /*',
+		'X-Requested-With': 'XMLHttpRequest',
+		'User-Agent': 'Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.76 Safari/537.36',
+		//'Referer': g_baseurl + action,
+	});	
+}
+
+function processNalogi(result, html, prefs) {
+	if(isAvailable(['nalog_balance', 'nalog_info'])) {
+		// Id сервиса в системе, может меняться в будущем - вынесем отдельно.
+		var serviceID = '10001761551', servicesubId = '99';
+		
+		var url = g_baseurl + 'pgu/service/'+ serviceID +'_' + servicesubId + '.html'
+		
+		html = AnyBalance.requestGet(url, g_headers);
+		
+		var json = postAPICall(g_baseurl + 'fed/service/' + serviceID + '_' + servicesubId + '/checkStatus.json', {}, url);
+		
+		var mainLink = g_baseurl + 'fed/services/s' + servicesubId + '/initForm?serviceTargetExtId=' + serviceID + '&userSelectedRegion=00000000000&rURL=https://www.gosuslugi.ru/pgu/personcab/orders&srcFormProviderId=9952354';
+		
+		html = AnyBalance.requestGet(mainLink, addHeaders({Referer: url}));
+		
+		var stepId = 0;
+		// Нужно подтвердить пользовательское соглашение...
+		var serviceUrl = g_baseurl + 'fed/services/s' + servicesubId + '/s' + (++stepId) + '?serviceTargetExtId=' + serviceID;
+		html = AnyBalance.requestPost(serviceUrl, createFormParamsById(html, servicesubId),	addHeaders({Referer: mainLink}));
+		
+		var params = createFormParamsById(html, servicesubId);
+		
+		params.inn = prefs.inn;
+		// По всем регионам
+		params['region[0]'] = '99';
+		
+		serviceUrl = g_baseurl + 'fed/services/s' + servicesubId + '/s' + (++stepId) + '?serviceTargetExtId=' + serviceID;
+		html = AnyBalance.requestPost(serviceUrl, params, addHeaders({Referer: serviceUrl}));
+		
+		// Проверить что статус у заявления исполнено
+		if(!/>\s*Исполнено\s*</i.test(html))
+			throw new AnyBalance.Error('Не удалось обработать заявление, сайт изменен?');
+			
+		html = getXmlFileResult(html);
+		
+		// Все теперь у нас есть данные, наконец-то..
+		var array = sumParam(html, null, null, /<tr>(\s*<td>(?:[\s\S]*?<td[^>]*){4}[^<]*)<\/t/ig);
+		
+		AnyBalance.trace('Найдено налогов: ' + array.length);
+		var html_resonse = '';
+		
+		for(var i = 0; i < array.length; i++) {
+			var current = array[i];
+			
+			var nalog = getParam(current, null, null, /<td(?:[^>]*>){1}([^<]*)/i) || 'Неизвестный тип налога'; // Транспортный налог
+			//var agency = getParam(current, null, null, /<td(?:[^>]*>){3}([^<]+)/i); // УПРАВЛЕНИЕ ФЕДЕРАЛЬНОГО КАЗНАЧЕЙСТВА ПО МОСКОВСКОЙ ОБЛАСТИ (Межрайонная ИФНС России № 3 по Московской области)
+			var type = getParam(current, null, null, /<td(?:[^>]*>){5}([^<]+)/i); // Пени
+			var summ = getParam(current, null, null, /<td(?:[^>]*>){7}([^<]+)/i); // 5.62
+			//var date = getParam(current, null, null, /<td(?:[^>]*>){9}([^<]+)/i); // 23.01.2014
+			
+			sumParam(summ, result, 'nalog_balance', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+			// Формируем html
+			html_resonse += nalog + ': ' + type + ' <b>' + summ + '</b><br/><br/>';
+		}
+		getParam(html_resonse, result, 'nalog_info', null, [/^\s+|\s+$/g, '', /<br\/><br\/>$/i, '']);
+	}
+}
+
 function processGibdd(result, html, prefs) {
-	checkEmpty(prefs.gosnumber, 'Введите госномер автомобиля!');
 	checkEmpty(prefs.licensenumber, 'Введите серию и номер водительского удостоверения!');
 	
+	result.gibdd_balance = null;
 	if(isAvailable(['gibdd_balance', 'gibdd_info'])) {
 		// Id сервиса в системе, может меняться в будущем - вынесем отдельно.
 		var serviceID = '10000581563';
@@ -98,64 +179,60 @@ function processGibdd(result, html, prefs) {
 		
 		html = AnyBalance.requestGet(url, g_headers);
 		
-		var json = postAPICall('https://www.gosuslugi.ru/fed/service/' + serviceID + '_26/checkStatus.json', {}, url);
+		var json = getJson(postAPICall('https://www.gosuslugi.ru/fed/service/' + serviceID + '_26/checkStatus.json', {}, url));
 		
-		var mainLink = 'https://www.gosuslugi.ru/fed/services/s26/initForm?serviceTargetExtId=' + serviceID + '&userSelectedRegion=00000000000&rURL=https://www.gosuslugi.ru/pgu/personcab/orders&srcFormProviderId=9952354';
-		
-		html = AnyBalance.requestGet(mainLink, addHeaders({Referer: url}));
-		
-		html = AnyBalance.requestGet(mainLink, addHeaders({Referer: mainLink}));
-		
-		var action = getParam(html, null, null, /'action'[^'"]*['"]\/([^'"]*)/i);
-		
-		var params = createFormParams(html, function(params, str, name, value) {
-			if (name == 'tsRz')
-				return prefs.gosnumber;
-			else if (name == 'VU')
-				return prefs.licensenumber;
-			return value;
-		});
-		
-		html = AnyBalance.requestPost(g_baseurl + action, params, addHeaders({Referer: mainLink}));
-		
-		// Проверить что статус у заявления исполнено
-		if(/>\s*Исполнено\s*</i.test(html)) {
-			var href = getParam(html, null, null, /\{\s*url:[^"]*"\/([^"]*)/i, [/\s/ig, '%20']);
+		if(json.errorCode == 0) {
+			var mainLink = 'https://www.gosuslugi.ru/fed/services/s26/initForm?serviceTargetExtId=' + serviceID + '&userSelectedRegion=00000000000&rURL=https://www.gosuslugi.ru/pgu/personcab/orders&srcFormProviderId=9952354';
 			
-			// https://www.gosuslugi.ru/fed/serviceResult/getFileResult?filename=%D0%A0%D0%B5%D0%B7%D1%83%D0%BB%D1%8C%D1%82%D0%B0%D1%82_1.html&orderId=89560860&serviceId=26&mimeType=docFormat%20docXML&downloadType=download&alternate=text/html&mnemonic=1&fileNo=0
-			html = AnyBalance.requestGet(g_baseurl + href, {
-				'Accept': 'text/html, */*',
-				'X-Requested-With': 'XMLHttpRequest',
-				'User-Agent': 'Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.76 Safari/537.36',
-				'Referer': g_baseurl + action,
+			html = AnyBalance.requestGet(mainLink, addHeaders({Referer: url}));
+			
+			//html = AnyBalance.requestGet(mainLink, addHeaders({Referer: mainLink}));
+			
+			var action = getParam(html, null, null, /'action'[^'"]*['"]\/([^'"]*)/i);
+			
+			var params = createFormParams(html, function(params, str, name, value) {
+				if (name == 'tsRz')
+					return prefs.gosnumber;
+				else if (name == 'VU')
+					return prefs.licensenumber;
+				return value;
 			});
 			
-			// Все теперь у нас есть данные, наконец-то..
-			var fees = sumParam(html, null, null, /<div[^>]*class="text"[^>]*>\s*<table(?:[\s\S]*?<tr[^>]*>){12}(?:[^>]*>){5}\s*<\/table>/ig);
-			var gibdd_info = '';
+			html = AnyBalance.requestPost(g_baseurl + action, params, addHeaders({Referer: mainLink}));
 			
-			AnyBalance.trace('Найдено штрафов (оплаченных и неоплаченных): ' + fees.length);
-			
-			for(var i = 0; i < fees.length; i++) {
-				var current = fees[i];
-				var plainText = getParam(current, null, null, null, replaceTagsAndSpaces);
+			// Проверить что статус у заявления исполнено
+			if(/>\s*Исполнено\s*</i.test(html)) {
+				html = getXmlFileResult(html);
 				
-				var feeName = getParam(current, null, null, /<td[^>]*>([^<]+)/i, replaceTagsAndSpaces);
+				// Все теперь у нас есть данные, наконец-то..
+				var fees = sumParam(html, null, null, /<div[^>]*class="text"[^>]*>\s*<table(?:[\s\S]*?<tr[^>]*>){12}(?:[^>]*>){5}\s*<\/table>/ig);
+				var gibdd_info = '';
 				
-				if(/Оплачено/i.test(current)) {
-					AnyBalance.trace('Нашли оплаченный штраф, пропускаем: ' + feeName);
-					gibdd_info += feeName + ' - <b>Оплачен</b><br/><br/>';
-				} else {
-					AnyBalance.trace('Нашли неоплаченный штраф: ' + feeName);
-					gibdd_info += feeName + ' - <b>Неоплачен</b><br/><br/>';
+				AnyBalance.trace('Найдено штрафов (оплаченных и неоплаченных): ' + fees.length);
+				
+				for(var i = 0; i < fees.length; i++) {
+					var current = fees[i];
+					var plainText = getParam(current, null, null, null, replaceTagsAndSpaces);
+					
+					var feeName = getParam(current, null, null, /<td[^>]*>([^<]+)/i, replaceTagsAndSpaces);
+					
+					if(/Оплачено/i.test(current)) {
+						AnyBalance.trace('Нашли оплаченный штраф, пропускаем: ' + feeName);
+						gibdd_info += feeName + ' - <b>Оплачен</b><br/><br/>';
+					} else {
+						AnyBalance.trace('Нашли неоплаченный штраф: ' + feeName);
+						gibdd_info += feeName + ' - <b>Неоплачен</b><br/><br/>';
 
-					sumParam(feeName, result, 'gibdd_balance', /([\d.,]*)\s*руб/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+						sumParam(feeName, result, 'gibdd_balance', /([\d.,]*)\s*руб/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+					}
 				}
-			}
-			// Сводка по штрафам
-			getParam(gibdd_info, result, 'gibdd_info', null, [/^\s+|\s+$/g, '', /<br\/><br\/>$/i, '']);
+				// Сводка по штрафам
+				getParam(gibdd_info, result, 'gibdd_info', null, [/^\s+|\s+$/g, '', /<br\/><br\/>$/i, '']);
+			} else {
+				AnyBalance.trace('Не удалось обработать заявление, сайт изменен?');
+			}		
 		} else {
-			AnyBalance.trace('Не удалось обработать заявление, сайт изменен?');
+			AnyBalance.trace('Не удалось получить данные по штрафам, система ответила сообщением: ' + json.errorMessage);
 		}
 	}	
 }
@@ -173,16 +250,19 @@ var g_apiHeaders = {
 function postAPICall(url, params, referer) {
 	var response = AnyBalance.requestPost(url, JSON.stringify(params), isset(referer) ? addHeaders({Referer: referer}) : g_apiHeaders);
 	
-	if(!response)
+	if(!response) {
+		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось получить информацию об услуге, сайт изменен?');
-	
+	}
 	return response;		
 }
 
 function getUnreadMsgJson() {
 	var response = AnyBalance.requestPost('https://www.gosuslugi.ru/pgu/wsapi/gepsIntegration/getUnreadMessageCount', JSON.stringify({}), g_apiHeaders);
-	if(!response || !/"operation completed"/i.test(response))
+	if(!response || !/"operation completed"/i.test(response)) {
+		AnyBalance.trace(html);
 		AnyBalance.trace('Не удалось получить информацию о госпочте, сайт изменен?');
-
+	}
+	
 	return response;
 }

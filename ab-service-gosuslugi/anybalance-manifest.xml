@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="1.0" version="1">ab-service-gosuslugi</id>
+	<id major_version="1.0" version="2">ab-service-gosuslugi</id>
 	<api flags="no_browser"/>
 	<name>Госуслуги</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию из системы Госуслуги http://www.gosuslugi.ru/</p>
 	<b>Поддерживаемые услуги:</b>
-	<ul>
+	<ol>
 		<li>Проверка штрафов ГИБДД.</li>
-	</ul>
+		<li>Проверка задолженности по налогам.</li>
+	</ol>
 	]]></description>
 	<instruction html="true"><![CDATA[
 	<p>Если у вас нет доступа в Личный кабинет Госуслуг, пройдите регистрацию на странице https://esia.gosuslugi.ru/sia-web/rf/registration/lp/Index.spr</p>
@@ -22,21 +23,14 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<!-- Штрафы -->
 		<counter id="gibdd_balance" name="Сумма штрафов" units=" р"/>
 		<counter id="gibdd_info" name="Сводка по штрафам" type="html"/>
-		
+		<counter id="nalog_balance" name="Сумма налогов" units=" р"/>
+		<counter id="nalog_info" name="Сводка по налогам" type="html"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="mails" name="Госпочта" units=" шт"/>
-		
-<!-- 		<counter id="balance" name="Баланс" units=" {@currency}"/>
-		<counter id="currency" name="Валюта" type="text"/>
-		
-		<counter id="status" name="Статус" type="text"/>
-		<counter id="phone" name="Телефон" type="text"/>
-		<counter id="deadline" name="Дата отключения" type="time" format="dd/MM/yyyy"/> -->
 	</counters>
-	<keywords></keywords>
+	<keywords>штрафы, электронное правительство, гос услуги</keywords>
 	<type>service, government</type>
 	<country>ru</country>
 </provider>

@@ -42,7 +42,7 @@ var regions = {
 };
 
 function main(){
-    var prefs = AnyBalance.getPreferences();
+	var prefs = AnyBalance.getPreferences();
 	var region = prefs.region;
 	if(!region || !regions[region])
 		region = 'moscow';
@@ -879,17 +879,24 @@ function newTypicalLanBillingInetTv(urlIndex, urlAjax) {
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
 	
-    var html = AnyBalance.requestPost(urlIndex, {
-        'LoginForm[login]':prefs.login,
-        'LoginForm[password]':prefs.password,
-        'yt0':'Войти'
-    });
+	if(prefs.__dbg) {
+		var html = AnyBalance.requestGet('https://lk.kirovnet.net/?r=account/index');
+	} else {
+		var html = AnyBalance.requestGet(urlIndex);
+		
+		html = AnyBalance.requestPost(urlIndex, {
+			'LoginForm[login]':prefs.login,
+			'LoginForm[password]':prefs.password,
+			'yt0':'Войти'
+		});
+	}
 	
 	if (!/r=site\/logout/i.test(html)) {
 		var error = getParam(html, null, null, /Необходимо исправить следующие ошибки:([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Неверное имя пользователя или пароль/i.test(error));
 		
+		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	

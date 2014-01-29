@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-billing-lan</id>
+	<api flags="no_browser"/>
+	<name>Объединенные Нахабинские Сети</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Объединенные Нахабинские Сети http://billing-lan.net</p>
+	<p>Информация берется из личного кабинета http://billing-lan.net</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>md5-min.js</js>
+		<js>sha1.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="account" name="Номер договора" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

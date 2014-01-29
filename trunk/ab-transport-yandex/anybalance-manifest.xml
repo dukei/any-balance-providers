@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-transport-yandex</id>
+	<id version="2">ab-transport-yandex</id>
 	<api flags="no_browser"/>
 	<name>Яндекс.Пробки (Москва)</name>
 	<description html="true"><![CDATA[
@@ -9,7 +9,6 @@
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
-		<preferences>preferences.xml</preferences>
 		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>

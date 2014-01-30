@@ -39,7 +39,7 @@ function main() {
 	var result = {success: true};
 	
 	getParam(html, result, 'acc_num', /Ваш номер договра:(?:[^>]*>){1}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'balance', /Состояние счета:(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance', /Состояние счета:[^>]*>([\s\S]*?)<\/span/i, replaceTagsAndSpaces, parseBalance);
 	
 	AnyBalance.setResult(result);
 }

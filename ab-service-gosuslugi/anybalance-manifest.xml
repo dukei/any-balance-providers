@@ -2,7 +2,7 @@
 <provider>
 	<id major_version="1.0" version="2">ab-service-gosuslugi</id>
 	<api flags="no_browser"/>
-	<name>Госуслуги</name>
+	<name>Госуслуги (Штрафы, Налоги)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию из системы Госуслуги http://www.gosuslugi.ru/</p>
 	<b>Поддерживаемые услуги:</b>
@@ -30,7 +30,7 @@
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="mails" name="Госпочта" units=" шт"/>
 	</counters>
-	<keywords>штрафы, электронное правительство, гос услуги</keywords>
+	<keywords>штрафы, электронное правительство, гос услуги, Налоги, ФНС, МВД, ГИБДД</keywords>
 	<type>service, government</type>
 	<country>ru</country>
 </provider>

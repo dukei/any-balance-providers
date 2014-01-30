@@ -6,10 +6,7 @@
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о задолженности по налогам.</p>
 	<p>Информация берется с сайта https://service.nalog.ru/debt/req.do</p>
-	<b>Особенности:</b>
-	<ul>
-	<li>Этот провайдер требует версию AnyBalance API 7+, с поддержкой капчи.</li>
-	</ul>
+	<p>Наиболее точная информация доступна в провайдере Госуслуги (Штрафы, Налоги).</p>
 	]]></description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>

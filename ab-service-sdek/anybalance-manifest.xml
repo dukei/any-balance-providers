@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-service-sdek</id>
+	<id version="2">ab-service-sdek</id>
 	<api flags="no_browser"/>
 	<name>СДЭК</name>
 	<description html="true"><![CDATA[

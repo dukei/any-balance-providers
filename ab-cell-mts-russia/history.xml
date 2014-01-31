@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="3.3" version="73" date="2014-01-31">
+	- Новый счетчик: СМС по миру
+	</change>
 	<change major_version="3.3" version="72" date="2014-01-21">
 	- Исправлены минимальные сроки действия ммс и смс пакетов в некоторых случаях
 	</change>

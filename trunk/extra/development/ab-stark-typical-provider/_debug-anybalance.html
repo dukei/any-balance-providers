@@ -1,27 +1,28 @@
 ﻿<html>
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <script src="chrome-extension://nkphlblmakkphcnnbklcnblgijohjdif/json2.js"></script>
-  <script src="chrome-extension://nkphlblmakkphcnnbklcnblgijohjdif/jquery.min.js"></script>
-  <script src="chrome-extension://nkphlblmakkphcnnbklcnblgijohjdif/api-adapter.js"></script>
-  <script src="chrome-extension://nkphlblmakkphcnnbklcnblgijohjdif/api.js"></script>
-  <script>
-        var g_api_preferences = {
-          login: 'login',
-          password: 'pass'
-        };
-  </script>
-  <!-- Перечислите все скрипты, указанные в манифесте вашего провайдера.
-       Указывайте локальные пути к файлам. Библиотека JQuery уже включена,
-       отдельно указывать её не нужно.
-       Например, -->
-
-  <script src="library.js"></script>
-  <script src="main.js"></script>
-</head>
-<body onload="">
-  <div style="display:none" id="AnyBalanceDebuggerRPCContainer"></div>
-  <button onclick="api_onload()">Execute</button>
-  <div id="AnyBalanceDebuggerLog"></div>
-</body>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<script src="chrome-extension://nkphlblmakkphcnnbklcnblgijohjdif/json2.js"></script>
+		<script src="chrome-extension://nkphlblmakkphcnnbklcnblgijohjdif/jquery.min.js"></script>
+		<script src="chrome-extension://nkphlblmakkphcnnbklcnblgijohjdif/api-adapter.js"></script>
+		<script src="chrome-extension://nkphlblmakkphcnnbklcnblgijohjdif/api.js"></script>
+		<script>
+			var g_api_preferences = {
+				login: 'login',
+				password: 'pass'
+			};
+		</script>
+		<!--
+		Перечислите все скрипты, указанные в манифесте вашего провайдера.
+		Указывайте локальные пути к файлам. Библиотека JQuery уже включена,
+		отдельно указывать её не нужно.
+		Например, 
+		-->
+		<script src="library.js"></script>
+		<script src="main.js"></script>
+	</head>
+	<body onload="">
+		<div style="display:none" id="AnyBalanceDebuggerRPCContainer"></div>
+		<button onclick="api_onload()">Execute</button>
+		<div id="AnyBalanceDebuggerLog"></div>
+	</body>
 </html>

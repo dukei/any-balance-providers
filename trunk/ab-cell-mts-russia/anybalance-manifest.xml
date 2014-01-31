@@ -39,6 +39,7 @@
 		<counter id="min_left" name="Бесплатные минуты" units=" мин"/>
 		<counter id="sms_left" name="Бесплатные СМС" units=" sms"/>
 		<counter id="sms_europe" name="СМС по Европе" units=" sms"/>
+		<counter id="sms_world" name="СМС по миру" units=" sms"/>
 		<counter id="mms_left" name="Бесплатные ММС" units=" mms"/>
 		<counter id="sms_used" name="Использовано СМС" units=" sms"/>
 		<counter id="traffic_left_mb" name="Остаток трафика" units=" Mb"/>

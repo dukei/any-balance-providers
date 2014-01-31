@@ -1,6 +1,8 @@
 var MAX_TRAINS_COUNTERS = 3;
 
 function main () {
+    AnyBalance.setDefaultCharset("utf-8");
+
     var trainCounters = [];
     //Получим настройки аккаунта
     var prefs = AnyBalance.getPreferences();
@@ -29,6 +31,8 @@ function main () {
     for (var t = 0; t < numResults; t++) {
         result['train' + t] = getTrainDepartureTime(trainRows[t]);
     }
+    result['start'] = prefs.station_from;
+    result['finish'] = prefs.station_to;
     //Возвращаем результат
     AnyBalance.setResult(result);
 }
@@ -40,7 +44,7 @@ function main () {
 function getTrainTableRows(inputText)
 {
     var result = [];
-    var re = /<tr class="b-timetable__row b-timetable__row_sortable_yes i-bem".+?<\/tr>/g;
+     var re = /<tr class="b-timetable__row b-timetable__row_sortable_yes i-bem".+?<\/tr>/g;
     for (var i = 0; i < MAX_TRAINS_COUNTERS; i++) {
         var row = re.exec(inputText);
         if (row === null) {
@@ -61,12 +65,24 @@ function getTrainDepartureTime (inputText)
         return "н/д";
     }
     else {
-        var express = isExpress(inputText) ? " (э)" : "";
-        return /<strong>.+?<\/strong>/.exec(cell[0])[0].substr(8,5) + express;
+        var express = isExpress(inputText) ? "э" : "";
+        return /<strong>.+?<\/strong>/.exec(cell[0])[0].substr(8,5) + express + getPlatformInfo(inputText);
     }
 }
 
 function isExpress(inputText)
 {
     return inputText.indexOf("b-timetable__express") >= 0;
+}
+
+function getPlatformInfo(inputText)
+{
+    var re = /<div class="b-timetable__platform.+?<\/div>/;
+    var cell = re.exec(inputText);
+    if (cell === null) {
+        return "";
+    }
+    else {
+        return " (" + cell[0].substring(cell[0].indexOf(">") + 1, cell[0].indexOf("</")) + ")";
+    }
 }

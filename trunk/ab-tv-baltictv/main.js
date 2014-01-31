@@ -23,22 +23,15 @@ function main() {
 	var params = createFormParams(html, function(params, str, name, value) {
 		if (name == 'login') 
 			return prefs.login;
-		else if (name == 'password')
+		else if (name == 'pass')
 			return prefs.password;
 
 		return value;
 	});
 	
-	html = AnyBalance.requestPost(baseurl + 'ca_login.php', {
-		login: prefs.login,
-		pass: prefs.password,
-	}, addHeaders({Referer: baseurl + 'ca_login.php'}));
+	html = AnyBalance.requestPost(baseurl + 'ca_login.php', params, addHeaders({Referer: baseurl + 'ca_login.php'}));
 	
-	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
-		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
-		
+	if (!/>выйти</i.test(html)) {
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	

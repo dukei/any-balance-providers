@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="0" version="4">ab-transport-ya-electrichki</id>
+  <id major_version="0" version="6">ab-transport-ya-electrichki</id>
   <name>Ближайшие электрички</name>
   <description>
     Отображает ближайшие электрички по указанному маршруту на основании данных, полученных с сервиса Яндекс.Расписания
@@ -16,6 +16,8 @@
     <counter id="train0" name="Ближайшая электричка" type="text"/>
     <counter id="train1" name="Вторая электричка" type="text"/>
     <counter id="train2" name="Третья электричка" type="text"/>
+    <counter id="start" name="Станция отправления" type="text" />
+    <counter id="finish" name="Станция назначения" type="text" />
     <!-- Счетчиков может быть сколько угодно -->
   </counters>
   <keywords>

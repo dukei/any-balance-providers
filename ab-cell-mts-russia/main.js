@@ -450,6 +450,8 @@ function fetchAccountStatus(html, result){
     html = sumParam (html, result, 'sms_left', /Остаток пакета[^<]*?(?:смс|sms):\s*([\d\.,]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
     //Остаток пакета SMS в Европе: 22. Пакет действует до 21.01.2014
     html = sumParam (html, result, 'sms_europe', /Остаток\s+пакета\s+SMS\s+в\s+Европе:([\s\d]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
+    //Остаток пакета SMS в поездках по миру: 100. Пакет действует до 10.02.2014
+    html = sumParam (html, result, 'sms_world', /Остаток\s+пакета\s+SMS\s+в\s+поездках\s+по\s+миру:([\s\d]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
     //Использовано: 6 sms
     sumParam (html, result, 'sms_used', /Использовано:\s*([\d\.,]+)\s*(?:смс|sms)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     // Остаток ММС

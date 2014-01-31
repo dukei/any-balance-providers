@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-service-equifax</id>
+	<api flags="no_browser"/>
+	<name>Equifax (Кредитный скоринг)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о скоринге в системе Equifax  http://equifax.ru</p>
+	<p>Информация берется из личного кабинета https://online.equifax.ru/login</p>
+	<p>Скоринг – используемая банками система оценки клиентов, в основе которой заложены статистические методы. Как правило, это компьютерная программа, куда вводятся данные потенциального заемщика. В ответ выдается результат – стоит ли предоставлять ему кредит.</p>
+	<p>От 660 до 1000 это хороший показатель. До 500 – плохой, кредит и кредитную карту скорее всего не дадут.</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Скоринг"/>
+		<counter id="fio" name="ФИО" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>service</type>
+	<country>ru</country>
+</provider>

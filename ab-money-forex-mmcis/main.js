@@ -20,12 +20,18 @@ function main() {
 	
 	var html = AnyBalance.requestGet(baseurl + 'msg.html?s', g_headers);
 	
-	html = AnyBalance.requestPost(baseurl + 'user/login/', {
-        login:prefs.login,
-        password:prefs.password,
-    }, addHeaders({Referer: baseurl + 'msg.html?s'}));
+	var params = createFormParams(html, function(params, str, name, value) {
+		if (/login/i.test(name))
+			return prefs.login;
+		else if (/pass/i.test(name))
+			return prefs.password;
+
+		return value;
+	});	
 	
-	if(!/menu_pc_exit/i.test(html)) {
+	html = AnyBalance.requestPost(baseurl + 'user/login/', params, addHeaders({Referer: baseurl + 'msg.html?s'}));
+	
+	if(!/>\s*Выход\s*</i.test(html)) {
 		var error = getParam(html, null, null, /<div[^>]*class=["']error[^>]*>([\s\S]*?)<\/div/i, replaceTagsAndSpaces, html_entity_decode);
 		if(error && /Пользователя с логином[\s\S]*?не найдено/i.test(error))
 			throw new AnyBalance.Error(error, null, true);
@@ -35,7 +41,7 @@ function main() {
 	}
     var result = {success: true};
 	getParam(html, result, 'fio', /Владелец счёта:(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'balance', /Всего на счету:(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance', /Всего на счет(?:е|у):(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, ['currency', 'balance', 'dostupno', 'bonus'], /Всего на счету:(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, parseCurrency);
 	getParam(html, result, 'dostupno', /Доступно к снятию:(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'bonus', /Бонусов:(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, parseBalance);

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-service-educom</id>
+	<api flags="no_browser"/>
+	<name>Городская Школьная Информационная Система</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию об оценках из Городской Школьной Информационной Системы.</p>
+	<p>Информация берется из личного кабинета http://schoolinfo.educom.ru/Login.aspx</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="english" name="Английский" type="text"/>
+		<counter id="izo" name="Изо" type="text"/>
+		<counter id="IT" name="Информатика" type="text"/>
+		<counter id="matem" name="Математика" type="text"/>
+		<counter id="music" name="Музыка" type="text"/>
+		<counter id="world" name="Окружающий мир" type="text"/>
+		<counter id="russian" name="Русский язык" type="text"/>
+		<counter id="tatarian" name="Татарский язык" type="text"/>
+		<counter id="tech" name="Технология" type="text"/>
+		<counter id="phizics" name="Физическая культура" type="text"/>
+		<counter id="reading" name="Чтение" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>service</type>
+	<country>ru</country>
+</provider>

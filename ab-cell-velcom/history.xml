@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="17" date="2014-02-02">
+      - Обработка ошибки недоступности ИССА
+    </change>
     <change version="16" date="2014-01-08">
       - Улучшена поддержка корпоративных тарифов
     </change>

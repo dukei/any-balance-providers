@@ -42,7 +42,7 @@ var g_lks = {
     pesc: {
        url: 'http://ikus.pesc.ru:8080/IKUSUser/',
        uid: '82CA86D7466828F87336B012396E3F69',
-       auth_uid: '82CA86D7466828F87336B012396E3F69'
+       auth_uid: 'BA2D39EE78C67FD4DE935035CA67FEC0'
     },
     pes: {
 	url: 'https://ikus.pes.spb.ru/IKUSUser/',

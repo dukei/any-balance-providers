@@ -194,12 +194,26 @@ function fetchDeposit(html, baseurl, result) {
     var prefs = AnyBalance.getPreferences();
 	html = AnyBalance.requestGet(baseurl + '/secure/deps.aspx');
 	
-	var tjson = getParam(html, null, null, /var\s*depdata\s*=\s*\[([\s\S]*?)\]/i);
+	var tjson = getParam(html, null, null, /var\s*depdata\s*=\s*([\s\S]*?\}\])/i);
 	if(!tjson) {
 		var err = getParam(html, null, null, /<\/h1><b>([\s\S]*?)<\/b/i, replaceTagsAndSpaces, html_entity_decode);
 		throw new AnyBalance.Error(err ? err : 'У Вас нет вкладов в Московском Кредитном Банке, либо сайт изменен!');
 	}
 	var json = getJson(tjson);
+
+	// Ищем счета в массиве
+	for(var i = 0; i < json.length; i++) {
+		var acc = json[i].ac;
+		if(new RegExp('\\d+' + (prefs.num || '') + '$').test(acc)) {
+			// Нашли нужный счет
+			json = json[i];
+			break;
+		} else {
+			AnyBalance.trace('Счет ' + acc + ' не оканчивается на цифры ' + prefs.num);
+		}
+	}
+	if(!json.ac)
+		throw new AnyBalance.Error(prefs.num ? 'Не удалось найти депозит с последними цифрами счета ' + prefs.num : 'Не удалось найти ни одного депозита!');	
 
 	getParam(json.ac, result, 'accnum', null, replaceTagsAndSpaces, html_entity_decode);
 	getParam(json.nm, result, 'cardnum', null, replaceTagsAndSpaces, html_entity_decode);

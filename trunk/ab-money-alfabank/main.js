@@ -1,22 +1,20 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Получает текущий остаток и другие параметры карт Альфабанка, используя большой Альфа-клик.
-
-Сайт оператора: http://alfabank.ru/
-Личный кабинет: https://m.alfabank.ru/
 */
 
 function main(){
     AnyBalance.setOptions({cookiePolicy: 'rfc2109'});
 
     var prefs = AnyBalance.getPreferences();
-//    checkEmpty(prefs.login, 'Введите логин в альфа.клик!');
-//    checkEmpty(prefs.password, 'Введите пароль для входа в альфа.клик!');
-    if(prefs.usemobile)
+	checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(prefs.password, 'Введите пароль!');
+	
+    /*if(prefs.usemobile)
         processMobile();
     else
-        processClick();
+        processClick();*/
+	
+	processClick();
 }
 
 var g_phrases = {
@@ -97,7 +95,7 @@ function getMainPageOrModule2(html, type, baseurl) {
 	var commands = {
 		card: 'pt1:menu:ATP2_r1:0:i1:1:cl2',
 		acc: 'pt1:menu:ATP2_r1:0:i1:0:cl2',
-		dep: 'pt1:menu:ATP2_r1:0:i1:3:cl2',
+		dep: 'pt1:menu:ATP2_r1:0:i1:4:cl2',
 		crd: 'pt1:menu:ATP2_r1:0:i1:3:cl2'
 	};
 	
@@ -192,18 +190,16 @@ function processClick(){
     var type = prefs.type || 'card'; //По умолчанию карта
     if(prefs.cardnum && !/\d{4}/.test(prefs.cardnum))
         throw new AnyBalance.Error("Введите 4 последних цифры номера " + g_phrases.karty[type] + " или не вводите ничего, чтобы показать информацию по " + g_phrases.karte1[type]);
-
+	
     var baseurl = "https://click.alfabank.ru/";
-
-//    AnyBalance.trace("Before get");    
+	
     var html = AnyBalance.requestGet(baseurl + 'ALFAIBSR/', g_headers);
-//    AnyBalance.trace("After get");    
-
+	
     html = AnyBalance.requestPost(baseurl + 'adfform/security', {
         username: prefs.login,
         password: prefs.password.substr(0, 16),
     }, g_headers);
-
+	
 //    AnyBalance.trace("After first post");    
 
     html = AnyBalance.requestPost(baseurl + 'oam/server/auth_cred_submit', {

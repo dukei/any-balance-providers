@@ -21,10 +21,11 @@ function main(){
 	);
 	var result = {success: true};
 
+        //Первая прошивка
 	//Название
 	sumParam(html, result, '__tariff', /Firmware Version\s*<\/td>\s*<td[^<]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
 	sumParam(html, result, '__tariff', /Hardware Version\s*<\/td>\s*<td[^<]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
-
+	
 	//Модем
 	sumParam(html, result, 'connect_status_3g', /var cellCurStat = \"([\s\S]*?)\";/ig, replaceTagsAndSpaces, html_entity_decode, status2connect, aggregate_join);
 	sumParam(html, result, 'modem_type', /var cellMdmType = \"([\s\S]*?)\";/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
@@ -33,7 +34,28 @@ function main(){
 	//Уровень сигнала
 	getParam(html, result, 'network_level_ch', /var cellMdmCsq = \"(\d*)\";/i, replaceTagsAndSpaces);
 	getParam(html, result, 'network_level', /var cellMdmCsq = \"(\d*)\";/i, replaceTagsAndSpaces, level2pct);
+	
+	//Время работы роутера
+        sumParam(html, result, 'running_time', /System Up Time\s*<\/td>\s*<td[^<]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode, parseSeconds);
+	
+	//Вторая прошивка
+	html = AnyBalance.requestPost('http://' + (prefs.ipaddress || '192.168.169.1') + '/r3g/status.asp', 
+		{"User-Agent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.62 Safari/537.36"}
+	  
+	);
 
+	//Название
+	sumParam(html, result, '__tariff', /Software Version\s*<\/td>\s*<td[^<]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+	sumParam(html, result, '__tariff', /Hardware Version\s*<\/td>\s*<td[^<]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+
+
+
+
+	//Время работы роутера
+        sumParam(html, result, 'running_time', /System Up Time\s*<\/td>\s*<td[^<]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode, parseSeconds2);
+	
+
+        //Первая прошивка
 	html = AnyBalance.requestPost('http://' + (prefs.ipaddress || '192.168.169.1') + '/wireless/stainfo.asp', 
 		{"User-Agent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.62 Safari/537.36"}
 	  
@@ -44,7 +66,20 @@ function main(){
            var macs = sumParam(html, null, null, /(?:[\da-f]{2}:){5}[\da-f]{2}/ig);
            result.users = macs.length;
         }
-        
+
+        //Вторая прошивка
+	html = AnyBalance.requestPost('http://' + (prefs.ipaddress || '192.168.169.1') + '/r3g/dhcpcliinfo.asp', 
+		{"User-Agent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.62 Safari/537.36"}
+	  
+	);
+
+	//Количество подключенных пользователей
+	if(AnyBalance.isAvailable('users')){
+           var macs = sumParam(html, null, null, /(?:[\da-f]{2}:){5}[\da-f]{2}/ig);
+           result.users = macs.length;
+        }
+
+        //Первая прошивка
         html = AnyBalance.requestPost('http://' + (prefs.ipaddress || '192.168.169.1') + '/adm/statistic.asp', 
 		{"User-Agent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.62 Safari/537.36"}
 	  
@@ -116,4 +151,26 @@ function status2support(str){
     else 
         support = 'Не поддерживается';
     return support;
+}
+
+function parseSeconds(str){
+    var matches = /(\d*) .+ (\d*) .+ (\d*) .+/.exec(str);
+    var time;
+    if(matches){
+	  time = (+matches[1])*3600 + (+matches[2])*60 + (+matches[3]);
+          AnyBalance.trace('Parsing seconds ' + time + ' from value: ' + str);
+          return time;
+    }
+    AnyBalance.trace('Could not parse seconds from value: ' + str);
+}
+
+function parseSeconds2(str){
+    var matches = /(\d*)\:?(\d*)\:?(\d*)/.exec(str);
+    var time;
+    if(matches){
+          time = (+matches[1])*3600 + (+matches[2])*60 + (+matches[3]);
+          AnyBalance.trace('Parsing seconds ' + time + ' from value: ' + str);
+	  return time;
+    }
+    AnyBalance.trace('Could not parse seconds from value: ' + str);
 }

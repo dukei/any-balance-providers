@@ -254,6 +254,10 @@ function fetchPost(baseurl, html) {
 				params = joinObjects(fparams, params);
 
 				html = AnyBalance.requestPost(baseurl + 'c/post/index.html', params, addHeaders({Referer: baseurl + 'c/post/index.html'}));
+				if (AnyBalance.getLastStatusCode() > 400) {
+					AnyBalance.trace('Beeline returned: ' + AnyBalance.getLastStatusString());
+					throw new AnyBalance.Error('Переключится на доп. номер не удолось из-за технических проблем в личном кабинете Билайн. Проверьте, что вы можете переключиться на доп. номер, зайдя в личный кабинет через браузер.');
+				}
 			}
 		}
 		//Если несколько номеров в кабинете, то почему-то баланс надо брать отсюда

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-seo-tnx</id>
+	<api flags="no_browser"/>
+	<name>TNX 2.0</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера TNX 2.0 http://tnx.net</p>
+	<p>Информация берется из личного кабинета http://member.tnx.net/index.php</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Ксапов"/>
+		<counter id="zakazov" name="Заказов"/>
+		<counter id="zadaniy" name="Заданий"/>
+		<counter id="kompany" name="Кампаний"/>
+		<counter id="sites" name="Сайтов"/>
+		<counter id="account" name="ID в системе" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>seo</type>
+	<country>ru</country>
+</provider>

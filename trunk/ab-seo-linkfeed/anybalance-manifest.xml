@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-seo-linkfeed</id>
+	<api flags="no_browser"/>
+	<name>LinkFeed</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера LinkFeed http://www.linkfeed.ru/</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс"/>
+		<counter id="expense_day" name="Расход за день"/>
+		<counter id="expense_week" name="Расход за неделю"/>	
+		<counter id="income_day" name="Доход за день"/>
+		<counter id="income_week" name="Доход за неделю"/>		
+		<counter id="partnership_day" name="Партнерка за день"/>
+		<counter id="partnership_week" name="Партнерка за неделю"/>
+		<counter id="summ_day" name="Сумма за день"/>
+		<counter id="summ_week" name="Сумма за неделю"/>
+	</counters>
+	<keywords></keywords>
+	<type>seo</type>
+	<country>ru</country>
+</provider>

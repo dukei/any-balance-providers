@@ -1,10 +1,5 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Получает баланс и информацию о тарифном плане для интернет-провайдера LTE Yota
-
-Сайт оператора: http://www.yota.ru/ru/
-Личный кабинет: https://my.yota.ru/
 */
 
 function aggregateToBalances(vals, result, name){
@@ -28,7 +23,7 @@ function main(){
     var baseurl = "https://my.yota.ru/selfcare/";
 
 	checkEmpty(prefs.login, 'Пожалуйста, введите логин в личный кабинет Yota!');
-	checkEmpty(prefs.password, 'Введите пароль!');
+	checkEmpty(prefs.password, 'Пожалуйста, введите пароль!');
 	
     var html, login, old_token;
     if(!prefs.__dbg){

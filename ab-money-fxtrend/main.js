@@ -32,40 +32,35 @@ function main(){
 		throw new AnyBalance.Error(error);
 	}
 
-
-//	if(matches = info.match(/API is disabled on this account/i)){
-//		throw new AnyBalance.Error("API is disabled. Try to enable API in security section of your account on www.perfectmoney.is and set IP mask to *.*.*.*. PLEASE NOTE THAT ENABLING API IS SERIOUS SECURITY RISK FOR YOUR ACCOUNT.");}
-
-//	if(matches = info.match(/<input name='ERROR' type='hidden' value='(.*?)'>/i)){
-//		throw new AnyBalance.Error(matches[1]);}
-
-
 	var result = {success: true};
 
 	AnyBalance.trace('Parsing... ');
 
 	info = AnyBalance.requestGet(baseurl + 'my/accounts/');
 
-	var re = new RegExp('<td class="mat_number">'+prefs.account+'<\\/td>\\s+<td .*?>(\\S+)<\\/td>\\s+<td>(\\S+)<\\/td>\\s+<td .*?>(\\S+)<\/td>\\s+<td .*?>(.*?)<\\/td>\\s+<td>(\\S+)<\\/td>\\s+<td>(\\S+)<\\/td>\\s+<td>(\\S+)<\\/td>\\s+<td>(.*?)<\\/td>\\s+<td>(\\S+)<\\/td>', 'i');
+	var re = new RegExp('\\{[^\\{\\}]*?"mt_login":\"'+prefs.account+'",.*?\\}', 'i');
 
 	if(matches = info.match(re)){
+		var info = matches[0];
 		result.__tariff = prefs.account;
-		result.open = matches[1];
-		result.currency = matches[2];
-		result.leverage = matches[3];
-		result.balance = parseBalance(matches[4]);
-		result.equity = parseBalance(matches[5]);
+
+		result.open = getParam(info, null, null, /"created_at":"(.*?)"/i, replaceTagsAndSpaces, html_entity_decode);
+		result.currency = getParam(info, null, null, /"currency":"(.*?)"/i, replaceTagsAndSpaces, html_entity_decode);
+		result.leverage = getParam(info, null, null, /"leverage":"(.*?)"/i, replaceTagsAndSpaces, html_entity_decode);
+		result.balance = getParam(info, null, null, /"balance":([\d\.]*)/i, replaceTagsAndSpaces, parseBalance);
+		result.equity = getParam(info, null, null, /"equity":([\d\.]*)/i, replaceTagsAndSpaces, parseBalance);
 		result.receipts = Math.round((result.equity*1 - result.balance*1)*100)/100;
-		result.margin = parseBalance(matches[6]);
-		result.free = parseBalance(matches[7]);
-		result.mlevel = parseBalance(matches[8]);
-		result.profit = parseBalance(matches[9]);
+		result.margin = getParam(info, null, null, /"margin":([\d\.]*)/i, replaceTagsAndSpaces, parseBalance);
+		result.free = getParam(info, null, null, /"free":([\d\.]*)/i, replaceTagsAndSpaces, parseBalance);
+		result.mlevel = getParam(info, null, null, /"mlevel":([\d\.]*)/i, replaceTagsAndSpaces, parseBalance);
+		result.profit = getParam(info, null, null, /"profit":([\d\.]*)/i, replaceTagsAndSpaces, parseBalance);
+
 	}
 	else{
 		if(matches = info.match(/Извините, доступ в личные кабинеты временно приостановлен в связи с проведением периодического ролловера/i)){
 			throw new AnyBalance.Error("Извините, доступ в личные кабинеты временно приостановлен в связи с проведением периодического ролловера.");}
 		else{
-			throw new AnyBalance.Error("Error getting statistics");}
+			throw new AnyBalance.Error("Incorrect number of account or error getting statistics");}
 	}
 
 	

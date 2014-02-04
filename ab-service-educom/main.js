@@ -70,7 +70,7 @@ function main() {
 }
 
 function getRatingsByName(html, name, counterName, result) {
-	var tr = getParam(html, null, null, new RegExp('(<tr>(?:[^>]*>){1}'+ name +'(?:[^>]*>){10,35}\\s*</tr>)', 'i'));
+	var tr = getParam(html, null, null, new RegExp('(<tr>(?:[^>]*>){1}'+ name +'(?:[^>]*>){10,40}\\s*</tr>)', 'i'));
 	if(!tr) {
 		throw new AnyBalance.Error('Не удалось найти предмет '+name+' в таблице.');
 	}

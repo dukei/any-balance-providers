@@ -14,8 +14,8 @@ var g_headers = {
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
+	if(!/\d{10}/i.test(prefs.login)) throw new AnyBalance.Error('Номер телефона должен быть без пробелов и разделителей, в формате 707XXXXXXX или 747XXXXXXX!');
 	
     var baseurl = "https://iself.tele2.kz/";
     AnyBalance.setDefaultCharset('utf-8'); 

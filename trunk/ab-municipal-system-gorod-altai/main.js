@@ -47,10 +47,10 @@ function altai(prefix){
 
     var accnumRe;
     if(prefs.accnum){
-        var matches = prefs.accnum.match(/^~((?:[^~\\]|\\.)*)~(\w*)$/);
+        var matches = prefs.accnum.match(/^\/((?:[^~\\]|\\.)*)\/(\w*)$/);
         if(matches){
             try{
-                accnumRe = new RegExp(matches[1].replace(/\\~/g, '~'), matches[2]);
+                accnumRe = new RegExp(matches[1].replace(/\\\//g, '/'), matches[2]);
             }catch(e){
                 throw new AnyBalance.Error('Ошибка регулярного выражения (' + e.message + '): ' + prefs.accnum, null, true);
             }

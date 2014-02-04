@@ -45,6 +45,18 @@ function altai(prefix){
     var pan = prefs.login.substr(6);
     checkEmpty(prefs.password, 'Введите ПИН.');
 
+    var accnumRe;
+    if(prefs.accnum){
+        var matches = prefs.accnum.match(/^~((?:[^~\\]|\\.)*)~(\w*)$/);
+        if(matches){
+            try{
+                accnumRe = new RegExp(matches[1].replace(/\\~/g, '~'), matches[2]);
+            }catch(e){
+                throw new AnyBalance.Error('Ошибка регулярного выражения (' + e.message + '): ' + prefs.accnum, null, true);
+            }
+        }
+    }
+
     var baseurl = "https://www.sistemagorod.ru/lk/";
     AnyBalance.requestGet(baseurl, g_headers);
 
@@ -79,8 +91,10 @@ function altai(prefix){
         var name = getParam(tr, null, null, /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
         var acc = getParam(tr, null, null, /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
         if(!prefs.accnum || 
-            (name && name.toUpperCase().indexOf(accnum) >= 0) ||
-            (acc && acc.toUpperCase().indexOf(accnum) >= 0)){
+            (!accnumRe && name && name.toUpperCase().indexOf(accnum) >= 0) ||
+            (accnumRe && name && accnumRe.test(name)) ||
+            (!accnumRe && acc && acc.toUpperCase().indexOf(accnum) >= 0) ||
+            (accnumRe && acc && accnumRe.test(acc))){
 
             getParam(tr, result, 'balance', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 			getParam(tr, result, 'last_payment', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);

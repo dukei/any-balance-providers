@@ -12,12 +12,52 @@ function parseTrafficMb(str){
     return val;
 }
 
+function testParseSeconds2() {
+	// Тут в нечетных входные данные, в четных, ответ, функция самодиагностируется на основе этих данных
+	var times = [
+		'1', '1',
+		'33:55', '2035',
+		'02:02:00', '7320',
+	];
+	var temp = 0;
+	for (var i = 0; i < times.length; i++) {
+		var parsed = parseSeconds2(times[i]);
+		var res = times[++i];
+		
+		if(res == parsed) {
+			AnyBalance.trace('Item ' + (temp++) + ' parsed ok');
+		} else {
+			AnyBalance.trace('____________________________________________________________Item ' + (temp++) + ' parsing failed: should be ' + res + ', parsed ' + parsed + '!!!');
+		}
+	}
+}
+
+function parseSeconds2(str){
+	// Получаем данные вида 33:55
+	// в первой группе всегда часы, либо ничего
+	// во второй группе всегда минуты, если их нет, т.е. передана строка 1 то группы не будет.
+	// в третьей группе всегда секунды.
+	var matches = /^()(?:(\d*):?)(\d+)$/.exec(str);
+	// если ничего не нашли, значит формат 02:02:00
+	if(!matches) {
+		matches = /^(\d*)\:?(\d*)\:?(\d*)$/.exec(str);
+	}
+	if(matches) {
+		var time = matches[1]*3600 + matches[2]*60 + (+matches[3]);
+		AnyBalance.trace('Parsing seconds ' + time + ' from value: ' + str);
+		return time;
+    }
+    AnyBalance.trace('Could not parse seconds from value: ' + str);
+}
+
 function main(){
+	// Раскоментировать, чтобы увидеть тест parseSeconds2
+	//testParseSeconds2();
+	//return;
 	var prefs = AnyBalance.getPreferences();
 //	var html = AnyBalance.requestPost('http://' + (prefs.ipaddress || '192.168.169.1') + '/adm/status.asp');
 	var html = AnyBalance.requestPost('http://' + (prefs.ipaddress || '192.168.169.1') + '/adm/status.asp', 
 		{"User-Agent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.62 Safari/537.36"}
-	  
 	);
 	var result = {success: true};
 
@@ -160,17 +200,6 @@ function parseSeconds(str){
 	  time = (+matches[1])*3600 + (+matches[2])*60 + (+matches[3]);
           AnyBalance.trace('Parsing seconds ' + time + ' from value: ' + str);
           return time;
-    }
-    AnyBalance.trace('Could not parse seconds from value: ' + str);
-}
-
-function parseSeconds2(str){
-    var matches = /(\d*)\:?(\d*)\:?(\d*)/.exec(str);
-    var time;
-    if(matches){
-          time = (+matches[1])*3600 + (+matches[2])*60 + (+matches[3]);
-          AnyBalance.trace('Parsing seconds ' + time + ' from value: ' + str);
-	  return time;
     }
     AnyBalance.trace('Could not parse seconds from value: ' + str);
 }

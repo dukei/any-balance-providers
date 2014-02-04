@@ -10,6 +10,7 @@
 	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
+		<js>library.js</js>
 		<js>main.js</js>
 	</files>
 	<counters>

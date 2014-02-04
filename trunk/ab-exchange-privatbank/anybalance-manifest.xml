@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-exchange-privatbank</id>
+	<api flags="no_browser"/>
+	<name>Курсы валют Приватбанка</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о текущих курсах валют, установленных Приватбанком (http://privatbank.ua).</p> 
+	<p>Показывает курс доллара, евро, рубля к гривне.</p>
+	]]></description>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<js>main.js</js>
+	</files>
+	<counters>
+ 		<counter id="USD_buy" name="USD покупка" prefix="$↓ "/>
+		<counter id="USD_sell" name="USD продажа" prefix="$↑ "/>
+		<counter id="EUR_buy" name="EUR покупка" prefix="€↓ "/>
+		<counter id="EUR_sell" name="EUR продажа" prefix="€↑ "/>
+		<counter id="RUR_buy" name="RUR покупка" prefix="р↓ "/>
+		<counter id="RUR_sell" name="RUR продажа" prefix="р↑ "/>
+	</counters>
+	<keywords>Курс валют, приватбанк, украина, доллар, евро, гривна, рубль</keywords>
+	<type>finance, exchange</type>
+	<country>ua</country>
+</provider>

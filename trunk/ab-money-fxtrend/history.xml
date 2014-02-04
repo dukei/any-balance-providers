@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="4" date="2014-02-04">
+      - Adaptation to new design
+    </change>
     <change version="3" date="2014-01-22">
       - Some correct for Receipts
     </change>

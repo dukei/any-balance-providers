@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-router-wd-d50</id>
+  <id version="3">ab-router-wd-d50</id>
   <api flags="no_browser|private"/>
   <name>Роутер WD-D50</name>
   <description>

@@ -254,17 +254,23 @@ function fetchPost(baseurl, html) {
 				params = joinObjects(fparams, params);
 
 				html = AnyBalance.requestPost(baseurl + 'c/post/index.html', params, addHeaders({Referer: baseurl + 'c/post/index.html'}));
-				if (AnyBalance.getLastStatusCode() > 400) {
+				/*if (AnyBalance.getLastStatusCode() > 400) {
 					AnyBalance.trace('Beeline returned: ' + AnyBalance.getLastStatusString());
 					throw new AnyBalance.Error('Переключится на доп. номер не удолось из-за технических проблем в личном кабинете Билайн. Проверьте, что вы можете переключиться на доп. номер, зайдя в личный кабинет через браузер.');
-				}
+				}*/
+				// Вроде помогает переход на главную
+				html = AnyBalance.requestGet(baseurl + 'c/post/index.html', g_headers);
 			}
 		}
 		//Если несколько номеров в кабинете, то почему-то баланс надо брать отсюда
-		if (AnyBalance.isAvailable('balance', 'currency')) {
+		if (AnyBalance.isAvailable('balance')) {
 			xhtml = getBlock(baseurl + 'c/post/index.html', html, 'homeBalance');
-			getParam(xhtml, result, 'balance', /Расходы по номеру за текущий период с НДС[\s\S]*?<div[^>]+class="balan?ce-summ"[^>]*>([\s\S]*?)<\/div>/i, [replaceTagsAndSpaces, /Баланс временно недоступен/ig, ''], parseBalance);
-			getParam(xhtml, result, ['currency', 'balance'], /Расходы по номеру за текущий период с НДС[\s\S]*?<div[^>]+class="balan?ce-summ"[^>]*>([\s\S]*?)<\/div>/i, [replaceTagsAndSpaces, /Баланс временно недоступен/ig, ''], myParseCurrency);
+			
+			var balance = getParam(xhtml, null, null, /Расходы по номеру за текущий период с НДС[\s\S]*?<div[^>]+class="balan?ce-summ"[^>]*>([\s\S]*?)<\/div>/i, [replaceTagsAndSpaces, /Баланс временно недоступен/ig, ''], parseBalance);
+			if(!isset(balance))
+				balance = getParam(html, null, null, /Расходы по номеру за текущий период с НДС[\s\S]*?<div[^>]+class="balan?ce-summ"[^>]*>([\s\S]*?)<\/div>/i, [replaceTagsAndSpaces, /Баланс временно недоступен/ig, ''], parseBalance);
+			
+			getParam(balance || null, result, 'balance');
 		}
 	}
 
@@ -276,7 +282,7 @@ function fetchPost(baseurl, html) {
 		getBonusesPost(xhtml, result);
 	}
 
-    if (AnyBalance.isAvailable('overpay', 'prebal')) {
+    if (AnyBalance.isAvailable('overpay', 'prebal', 'currency')) {
     	xhtml = getBlock(baseurl + 'c/post/index.html', html, 'callDetailsDetails');
     	getParam(xhtml, result, 'overpay', /<h4[^>]*>Переплата[\s\S]*?<span[^>]+class="price[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
     	getParam(xhtml, result, 'overpay', /<h4[^>]*>Осталось к оплате[\s\S]*?<span[^>]+class="price[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalanceNegative);

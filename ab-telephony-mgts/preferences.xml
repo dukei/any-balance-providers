@@ -26,7 +26,7 @@
 		summary="Номер квартиры||{@s}"
 		dialogTitle="Номер квартиры"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите номер квартиры (для получения данных без пароля)."
+		dialogMessage="Введите номер квартиры (для получения данных без пароля). Если у вас есть логин и пароль, здесь ничего указывать не нужно."
 		key="kvart">
 	</EditTextPreference>	
 </PreferenceScreen>

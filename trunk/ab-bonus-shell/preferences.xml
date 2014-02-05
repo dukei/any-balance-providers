@@ -12,6 +12,7 @@
 		key="login">
 	</EditTextPreference>
 	<EditTextPreference
+		obligatory="true"
 		positiveButtonText="ОК"
 		key="password"
 		dialogTitle="Пароль"

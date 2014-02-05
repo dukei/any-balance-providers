@@ -20,7 +20,6 @@ function main(){
 
 	);
 	var result = {success: true};
-	var gmt = 0;
 
         //Первая прошивка
 	//Название
@@ -151,8 +150,10 @@ function main(){
 	);
 
 	if(!/Cannot open URL/i.test(html)){
-        getParam(html, result, 'gmt', /var tz = \"([\s\S]*?)\";/i, replaceTagsAndSpaces, gmt2utc);
-	result.running_time=result.running_time-result.gmt;
+	if(AnyBalance.isAvailable('running_time')){
+        var gmt = getParam(html, null, null, /var tz = \"([\s\S]*?)\";/i, replaceTagsAndSpaces, gmt2utc);
+	result.running_time=result.running_time-gmt;
+	}
 	}
 
 	AnyBalance.setResult(result);

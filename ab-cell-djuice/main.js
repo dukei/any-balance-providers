@@ -74,6 +74,7 @@ function main() {
 			params.password = prefs.password;
 			html = AnyBalance.requestPost(baseurl + "tbmb/login_djuice/perform.do", params, headers);
 		}else{
+			if (AnyBalance.getLastUrl().indexOf('my.kyivstar.ua') > 0) throw new AnyBalance.Error('Ваш личный кабинет теперь на сайте my.kyivstar.ua. Попробуйте использовать провайдер Киевстар');
 			AnyBalance.trace("Searching for login form: " + AnyBalance.getLastUrl() + ': ' + html);
 			throw new AnyBalance.Error('Не удалось найти форму для входа в личный кабинет. Сайт изменен?');
 		}

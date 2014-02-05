@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-service-leonbets</id>
+	<api flags="no_browser"/>
+	<name>Leonbets</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе Leonbets https://ru.leonbets.com/</p>
+	<p>Информация берется из личного кабинета https://ru.leonbets.com/login</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс"/>
+		<counter id="non_played" name="Неразыгранные ставки"/>
+		<counter id="outpay" name="Запрошено к выплате"/>
+		<counter id="bonuses" name="Бонусные очки (леоны)"/>
+		<counter id="bonus_avail" name="Доступный бонус"/>
+	</counters>
+	<keywords></keywords>
+	<type>service</type>
+	<country>ru</country>
+</provider>

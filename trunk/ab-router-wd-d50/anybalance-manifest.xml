@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-router-wd-d50</id>
+  <id version="2">ab-router-wd-d50</id>
+  <api flags="no_browser|private"/>
   <name>Роутер WD-D50</name>
   <description>
     Мониторинг параметров безпроводного роутера WD-D50. Получает данные из странички статистики роутера по адресу http://192.168.169.1 или по другому адресу установленному пользователем.
@@ -21,12 +22,21 @@
     <counter id="network_level_ch" name="Уровень сигнала" type="numeric"/>
     <counter id="network_level" name="Уровень сигнала %" suffix=" %" type="numeric"/>
     <counter id="users" name="Количество подключенных пользователей" type="numeric"/>
-    <counter id="traffic_received_3g" name="Принятый трафик 3G" units=" mb"/>
-    <counter id="traffic_transmitted_3g" name="Отправленный трафик 3G" units=" mb"/>
+    <counter id="running_time" name="Время работы роутера" type="time_interval" format="{@H}:{@min}:{@sec}"/>
+    <counter id="traffic_received_3g" name="Принятый трафик 3G (ppp0)" units=" mb"/>
+    <counter id="traffic_transmitted_3g" name="Отправленный трафик 3G (ppp0)" units=" mb"/>
     <counter id="traffic_received_lan" name="Принятый трафик LAN" units=" mb"/>
     <counter id="traffic_transmitted_lan" name="Отправленный трафик LAN" units=" mb"/>
-    <counter id="traffic_received_wan" name="Принятый трафик WAN" units=" mb"/>
-    <counter id="traffic_transmitted_wan" name="Отправленный трафик WAN" units=" mb"/>
+    <counter id="traffic_received_wan" name="Принятый трафик WAN (eth2.2)" units=" mb"/>
+    <counter id="traffic_transmitted_wan" name="Отправленный трафик WAN (eth2.2)" units=" mb"/>
+    <counter id="traffic_received_ra0" name="Принятый трафик (ra0)" units=" mb"/>
+    <counter id="traffic_transmitted_ra0" name="Отправленный трафик (ra0)" units=" mb"/>
+    <counter id="traffic_received_br0" name="Принятый трафик (br0)" units=" mb"/>
+    <counter id="traffic_transmitted_br0" name="Отправленный трафик (br0)" units=" mb"/>
+    <counter id="traffic_received_eth2" name="Принятый трафик (eth2)" units=" mb"/>
+    <counter id="traffic_transmitted_eth2" name="Отправленный трафик (eth2)" units=" mb"/>
+    <counter id="traffic_received_eth2.1" name="Принятый трафик (eth2.1)" units=" mb"/>
+    <counter id="traffic_transmitted_eth2.1" name="Отправленный трафик (eth2.1)" units=" mb"/>
   </counters>
   <keywords>
     роутер файловое хранилище WD-D50 3G Wi-Fi CDMA EVDO GSM UMTS WCDMA

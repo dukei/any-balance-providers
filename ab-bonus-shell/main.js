@@ -13,18 +13,20 @@ var g_headers = {
 function main(){
     var prefs = AnyBalance.getPreferences();
     var baseurl = "https://www.shellsmart.com/smart/";
-
     AnyBalance.setDefaultCharset('windows-1251'); 
-
-
-	var html = AnyBalance.requestGet(baseurl + 'index.html?site=ru-ru', g_headers);
-
 	
-    html = AnyBalance.requestPost(baseurl + 'login?site=ru-ru', {
-        source_url:'/smart/login?site=ru-ru',
-        cardnumber:prefs.login,
-        password:prefs.password,
-    }, addHeaders({Referer: baseurl + 'index.html'})); 
+	var html = AnyBalance.requestGet(baseurl + 'index.html?site=ru-ru', g_headers);
+	
+	var params = createFormParams(html, function(params, str, name, value) {
+		if (name == 'cardnumber') 
+			return prefs.login;
+		else if (name == 'password')
+			return prefs.password;
+
+		return value;
+	});
+	
+	html = AnyBalance.requestPost(baseurl + 'login?site=ru-ru', params, addHeaders({Referer: baseurl + 'index.html'})); 
 
     if(!/user\/LogOut.html/i.test(html)){
         var error = getParam(html, null, null, /<span[^>]+class="errorMsgText"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);

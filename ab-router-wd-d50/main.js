@@ -12,60 +12,22 @@ function parseTrafficMb(str){
     return val;
 }
 
-function testParseSeconds2() {
-	// Тут в нечетных входные данные, в четных, ответ, функция самодиагностируется на основе этих данных
-	var times = [
-		'1', '1',
-		'33:55', '2035',
-		'02:02:00', '7320',
-	];
-	var temp = 0;
-	for (var i = 0; i < times.length; i++) {
-		var parsed = parseSeconds2(times[i]);
-		var res = times[++i];
-		
-		if(res == parsed) {
-			AnyBalance.trace('Item ' + (temp++) + ' parsed ok');
-		} else {
-			AnyBalance.trace('____________________________________________________________Item ' + (temp++) + ' parsing failed: should be ' + res + ', parsed ' + parsed + '!!!');
-		}
-	}
-}
-
-function parseSeconds2(str){
-	// Получаем данные вида 33:55
-	// в первой группе всегда часы, либо ничего
-	// во второй группе всегда минуты, если их нет, т.е. передана строка 1 то группы не будет.
-	// в третьей группе всегда секунды.
-	var matches = /^()(?:(\d*):?)(\d+)$/.exec(str);
-	// если ничего не нашли, значит формат 02:02:00
-	if(!matches) {
-		matches = /^(\d*)\:?(\d*)\:?(\d*)$/.exec(str);
-	}
-	if(matches) {
-		var time = matches[1]*3600 + matches[2]*60 + (+matches[3]);
-		AnyBalance.trace('Parsing seconds ' + time + ' from value: ' + str);
-		return time;
-    }
-    AnyBalance.trace('Could not parse seconds from value: ' + str);
-}
-
 function main(){
-	// Раскоментировать, чтобы увидеть тест parseSeconds2
-	//testParseSeconds2();
-	//return;
 	var prefs = AnyBalance.getPreferences();
-//	var html = AnyBalance.requestPost('http://' + (prefs.ipaddress || '192.168.169.1') + '/adm/status.asp');
+
 	var html = AnyBalance.requestPost('http://' + (prefs.ipaddress || '192.168.169.1') + '/adm/status.asp', 
 		{"User-Agent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.62 Safari/537.36"}
+
 	);
 	var result = {success: true};
+	var gmt = 0;
 
         //Первая прошивка
 	//Название
+	if(!/Cannot open URL/i.test(html)){
 	sumParam(html, result, '__tariff', /Firmware Version\s*<\/td>\s*<td[^<]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
 	sumParam(html, result, '__tariff', /Hardware Version\s*<\/td>\s*<td[^<]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
-	
+
 	//Модем
 	sumParam(html, result, 'connect_status_3g', /var cellCurStat = \"([\s\S]*?)\";/ig, replaceTagsAndSpaces, html_entity_decode, status2connect, aggregate_join);
 	sumParam(html, result, 'modem_type', /var cellMdmType = \"([\s\S]*?)\";/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
@@ -74,10 +36,11 @@ function main(){
 	//Уровень сигнала
 	getParam(html, result, 'network_level_ch', /var cellMdmCsq = \"(\d*)\";/i, replaceTagsAndSpaces);
 	getParam(html, result, 'network_level', /var cellMdmCsq = \"(\d*)\";/i, replaceTagsAndSpaces, level2pct);
-	
+
 	//Время работы роутера
         sumParam(html, result, 'running_time', /System Up Time\s*<\/td>\s*<td[^<]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode, parseSeconds);
-	
+	}
+
 	//Вторая прошивка
 	html = AnyBalance.requestPost('http://' + (prefs.ipaddress || '192.168.169.1') + '/r3g/status.asp', 
 		{"User-Agent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.62 Safari/537.36"}
@@ -85,27 +48,37 @@ function main(){
 	);
 
 	//Название
+	if(!/Cannot open URL/i.test(html)){
 	sumParam(html, result, '__tariff', /Software Version\s*<\/td>\s*<td[^<]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
 	sumParam(html, result, '__tariff', /Hardware Version\s*<\/td>\s*<td[^<]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
 
-
-
-
 	//Время работы роутера
-        sumParam(html, result, 'running_time', /System Up Time\s*<\/td>\s*<td[^<]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode, parseSeconds2);
-	
+        sumParam(html, result, 'running_time', /System Up Time\s*<\/td>\s*<td[^<]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode, parseSeconds);
+	}
+
+	html = AnyBalance.requestPost('http://' + (prefs.ipaddress || '192.168.169.1') + '/r3g/wan3g.asp', 
+		{"User-Agent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.62 Safari/537.36"}
+	  
+	);
+
+	//Модем
+	if(!/Cannot open URL/i.test(html)){
+	sumParam(html, result, 'modem_type', /3G Mode<\/td>\s*<\/tr>\s*<tr>\s*<td[^>]*>\s*([\s\S]*?)\s*\<\/td>/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+	}
 
         //Первая прошивка
 	html = AnyBalance.requestPost('http://' + (prefs.ipaddress || '192.168.169.1') + '/wireless/stainfo.asp', 
 		{"User-Agent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.62 Safari/537.36"}
 	  
 	);
-	
+
 	//Количество подключенных пользователей
+	if(!/Cannot open URL/i.test(html)){
 	if(AnyBalance.isAvailable('users')){
            var macs = sumParam(html, null, null, /(?:[\da-f]{2}:){5}[\da-f]{2}/ig);
            result.users = macs.length;
         }
+	}
 
         //Вторая прошивка
 	html = AnyBalance.requestPost('http://' + (prefs.ipaddress || '192.168.169.1') + '/r3g/dhcpcliinfo.asp', 
@@ -114,10 +87,12 @@ function main(){
 	);
 
 	//Количество подключенных пользователей
+	if(!/Cannot open URL/i.test(html)){
 	if(AnyBalance.isAvailable('users')){
            var macs = sumParam(html, null, null, /(?:[\da-f]{2}:){5}[\da-f]{2}/ig);
            result.users = macs.length;
         }
+	}
 
         //Первая прошивка
         html = AnyBalance.requestPost('http://' + (prefs.ipaddress || '192.168.169.1') + '/adm/statistic.asp', 
@@ -126,6 +101,7 @@ function main(){
 	);
 
         //Принятый трафик
+	if(!/Cannot open URL/i.test(html)){
         getParam(html, result, 'traffic_received_3g', /statisticCELLRxBytes\">Cell Rx bytes: <\/td>\s*<td[^<]*>([\d,\.]*)<\/td>/i, null, parseTrafficMb);
 	getParam(html, result, 'traffic_received_lan', /statisticLANRxBytes\">LAN Rx bytes: <\/td>\s*<td[^<]*>([\d,\.]*)<\/td>/i, null, parseTrafficMb);
 	getParam(html, result, 'traffic_received_wan', /statisticWANRxBytes\">WAN Rx bytes: <\/td>\s*<td[^<]*>([\d,\.]*)<\/td>/i, null, parseTrafficMb);
@@ -134,7 +110,50 @@ function main(){
         getParam(html, result, 'traffic_transmitted_3g', /statisticCELLTxBytes\">Cell Tx bytes: <\/td>\s*<td[^<]*>([\d,\.]*)<\/td>/i, null, parseTrafficMb);
 	getParam(html, result, 'traffic_transmitted_lan', /statisticLANTxBytes\">LAN Tx bytes: <\/td>\s*<td[^<]*>([\d,\.]*)<\/td>/i, null, parseTrafficMb);
 	getParam(html, result, 'traffic_transmitted_wan', /statisticWANTxBytes\">WAN Tx bytes: <\/td>\s*<td[^<]*>([\d,\.]*)<\/td>/i, null, parseTrafficMb);
+	}
 
+	//Вторая прошивка
+	html = AnyBalance.requestPost('http://' + (prefs.ipaddress || '192.168.169.1') + '/r3g/statistic.asp', 
+		{"User-Agent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.62 Safari/537.36"}
+	  
+	);
+
+	//Модем статус
+	if(!/Cannot open URL/i.test(html)){
+	if(AnyBalance.isAvailable('connect_status_3g')){
+           var ppp = sumParam(html, null, null, /ppp0/ig);
+	   if(ppp.length == 1)
+             result.connect_status_3g = 'Соединено';
+           else
+             result.connect_status_3g = 'Не соединено';
+        }
+
+        //Принятый трафик
+        getParam(html, result, 'traffic_received_3g', /"ppp0","\d+","([\d,\.]*)"/i, null, parseTrafficMb);
+        getParam(html, result, 'traffic_received_ra0', /"ra0","\d+","([\d,\.]*)"/i, null, parseTrafficMb);
+	getParam(html, result, 'traffic_received_br0', /"br0","\d+","([\d,\.]*)"/i, null, parseTrafficMb);
+	getParam(html, result, 'traffic_received_wan', /"eth2.2","\d+","([\d,\.]*)"/i, null, parseTrafficMb);
+	getParam(html, result, 'traffic_received_eth2', /"eth2","\d+","([\d,\.]*)"/i, null, parseTrafficMb);
+	getParam(html, result, 'traffic_received_eth2.1', /"eth2.1","\d+","([\d,\.]*)"/i, null, parseTrafficMb);
+
+        //Отправленный трафик
+        getParam(html, result, 'traffic_transmitted_3g', /"ppp0","\d+","\d+","\d+","([\d,\.]*)"/i, null, parseTrafficMb);
+        getParam(html, result, 'traffic_transmitted_ra0', /"ra0","\d+","\d+","\d+","([\d,\.]*)"/i, null, parseTrafficMb);
+        getParam(html, result, 'traffic_transmitted_br0', /"br0","\d+","\d+","\d+","([\d,\.]*)"/i, null, parseTrafficMb);
+	getParam(html, result, 'traffic_transmitted_wan', /"eth2.2","\d+","\d+","\d+","([\d,\.]*)"/i, null, parseTrafficMb);
+	getParam(html, result, 'traffic_transmitted_eth2', /"eth2","\d+","\d+","\d+","([\d,\.]*)"/i, null, parseTrafficMb);
+	getParam(html, result, 'traffic_transmitted_eth2.1', /"eth2.1","\d+","\d+","\d+","([\d,\.]*)"/i, null, parseTrafficMb);
+	}
+
+	//Коррекция Времени работы роутера для Первой прошивки
+        html = AnyBalance.requestPost('http://' + (prefs.ipaddress || '192.168.169.1') + '/adm/management.asp', 
+		{"User-Agent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.62 Safari/537.36"}
+	);
+
+	if(!/Cannot open URL/i.test(html)){
+        getParam(html, result, 'gmt', /var tz = \"([\s\S]*?)\";/i, replaceTagsAndSpaces, gmt2utc);
+	result.running_time=result.running_time-result.gmt;
+	}
 
 	AnyBalance.setResult(result);
 }
@@ -142,7 +161,7 @@ function main(){
 function level2pct(str){
       var level = parseInt(str);
       var pct;
-      
+
       if(level<5)
         pct = 0;
     else if((level>=10)&&(level<15))
@@ -167,14 +186,14 @@ function level2pct(str){
         pct = 100;
     else 
         pct = 20;
-    
+
     return pct;
 }
 
 function status2connect(str){
     var status = parseInt(str);
     var connect;
-    
+
     if(status==1)
         connect = 'Соединено';
     else 
@@ -185,7 +204,7 @@ function status2connect(str){
 function status2support(str){
     var status = parseInt(str);
     var support;
-    
+
     if(status==1)
         support = 'Поддерживается';
     else 
@@ -193,13 +212,122 @@ function status2support(str){
     return support;
 }
 
-function parseSeconds(str){
-    var matches = /(\d*) .+ (\d*) .+ (\d*) .+/.exec(str);
-    var time;
-    if(matches){
-	  time = (+matches[1])*3600 + (+matches[2])*60 + (+matches[3]);
-          AnyBalance.trace('Parsing seconds ' + time + ' from value: ' + str);
-          return time;
-    }
-    AnyBalance.trace('Could not parse seconds from value: ' + str);
+function parseSeconds(text) {
+        var hour = 0, min = 0, sec = 0;
+        // Это формат ЧЧ:ММ:СС  
+        if(/^\d+:\d+:\d+$/i.test(text)) {
+                var regExp = /^(\d+):(\d+):(\d+)$/i.exec(text);
+                hour = parseFloat(regExp[1]);
+                min = parseFloat(regExp[2]);
+                sec = parseFloat(regExp[3]);
+        } else if(/^\d+ .+ \d+ .+ \d+ .+$/i.test(text)) {
+                var regExp = /^(\d+) .+ (\d+) .+ (\d+) .+$/i.exec(text);
+                hour = parseFloat(regExp[1]);
+                min = parseFloat(regExp[2]);
+                sec = parseFloat(regExp[3]);
+        // Это формат ММ:СС
+        } else if(/^\d+:\d+/i.test(text)) {
+                var regExp = /^(\d+):(\d+)/i.exec(text);
+                hour = 0;
+                min = parseFloat(regExp[1]);
+                sec = parseFloat(regExp[2]);
+        } else if(/^\d+ .+ \d+/i.test(text)) {
+                var regExp = /^(\d+) .+ (\d+)/i.exec(text);
+                hour = 0;
+                min = parseFloat(regExp[1]);
+                sec = parseFloat(regExp[2]);
+        // Это формат СС
+        }else {
+                var regExp = /^(\d+)/i.exec(text);
+                hour = 0;
+                min = 0;
+                sec = parseFloat(regExp[1]);
+        }
+        var val = (hour*3600) + (min * 60) + sec;
+        AnyBalance.trace('Parsed seconds (' + val + ') from: ' + text);
+        return val;
+}
+
+function gmt2utc(str){
+
+      var pct;
+
+      if(str=='UCT_-11')
+        pct = 46800;
+    else if(str=='UCT_-10')
+        pct = 50400;
+    else if(str=='NAS_-09')
+        pct = 54000;
+    else if(str=='PST_-08')
+        pct = 57600;
+    else if(str=='MST_-07')
+        pct = 61200;
+    else if(str=='CST_-06')
+        pct = 64800;
+    else if(str=='UCT_-06')
+        pct = 64800;
+    else if(str=='UCT_-05')
+        pct = 68400;
+    else if(str=='EST_-05')
+        pct = 68400;
+    else if(str=='AST_-04')
+        pct = 72000;
+    else if(str=='UCT_-04')
+        pct = 72000;
+    else if(str=='UCT_-03')
+        pct = 75600;
+    else if(str=='EBS_-03')
+        pct = 75600;
+    else if(str=='NOR_-02')
+        pct = 79200;
+    else if(str=='EUT_-01')
+        pct = 82800;
+    else if(str=='MET_001')
+        pct = 3600;
+    else if(str=='MEZ_001')
+        pct = 3600;
+    else if(str=='UCT_001')
+        pct = 3600;
+    else if(str=='EET_002')
+        pct = 7200;
+    else if(str=='SAS_002')
+        pct = 7200;
+    else if(str=='IST_003')
+        pct = 10800;
+    else if(str=='MSK_003')
+        pct = 10800;
+    else if(str=='UCT_004')
+        pct = 14400;
+    else if(str=='UCT_005')
+        pct = 18000;
+    else if(str=='UCT_006')
+        pct = 21600;
+    else if(str=='UCT_007')
+        pct = 25200;
+    else if(str=='CST_008')
+        pct = 28800;
+    else if(str=='CCT_008')
+        pct = 28800;
+    else if(str=='SST_008')
+        pct = 28800;
+    else if(str=='AWS_008')
+        pct = 28800;
+    else if(str=='JST_009')
+        pct = 32400;
+    else if(str=='KST_009')
+        pct = 32400;
+    else if(str=='UCT_010')
+        pct = 36000;
+    else if(str=='AES_010')
+        pct = 36000;
+    else if(str=='UCT_011')
+        pct = 39600;
+    else if(str=='UCT_012')
+        pct = 43200;
+    else if(str=='NZS_012')
+        pct = 43200;
+    else 
+        pct = 0;
+
+    return pct;
 }

@@ -16,7 +16,7 @@ function main() {
 	
 	var result = {success: true};
 	
-	if(prefs.kvart) {
+	if(prefs.kvart && !prefs.password) {
 		AnyBalance.trace('Получаем информацию по номеру телефона и номеру квартиры...');
 		if(!/^\d{10}$/i.test(prefs.login)) {
 			throw new AnyBalance.Error('Необходим ввести номер телефона в десятизначном формате, например 4951234567');
@@ -35,17 +35,21 @@ function main() {
 		}		
 	} else {
 		AnyBalance.trace('Входим по логину и паролю...');
-
-		var html = AnyBalance.requestGet(baseurl, g_headers);
-		var pin = prefs.password; //.substr(0, 8); //Слишком длинные пины тупо не воспринимаются
-		var params = createFormParams(html, function(params, str, name, value) {
-			if (name == 'IDToken1') 
-				return prefs.login;
-			if (name == 'IDToken2') 
-				return pin;
-			return value;
-		});
-		html = AnyBalance.requestPost(baseurl, params, addHeaders({Referer: 'https://login.mgts.ru/amserver/UI/Login'}));
+		
+		if(prefs.__dbg) {
+			var html = AnyBalance.requestGet('https://lk.mgts.ru/', g_headers);
+		} else {
+			var html = AnyBalance.requestGet(baseurl, g_headers);
+			var pin = prefs.password; //.substr(0, 8); //Слишком длинные пины тупо не воспринимаются
+			var params = createFormParams(html, function(params, str, name, value) {
+				if (name == 'IDToken1') 
+					return prefs.login;
+				if (name == 'IDToken2') 
+					return pin;
+				return value;
+			});
+			html = AnyBalance.requestPost(baseurl, params, addHeaders({Referer: 'https://login.mgts.ru/amserver/UI/Login'}));		
+		}
 		
 		if (!/logout/i.test(html)) {
 			var errors = sumParam(html, null, null, /"auth-error-text"[^>]*>([^<]*)/ig);
@@ -53,9 +57,9 @@ function main() {
 			throw new AnyBalance.Error('Login failed, is site changed?');
 		}
 		
-		getParam(html, result, 'fio', /"cabinet-aside"[^>]*>[^>]*<h3>((?:[^>]*>){6})/i, replaceTagsAndSpaces);
-		getParam(html, result, 'balance', /Баланс:(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'licschet', /Лицевой счет:(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces);
+		getParam(html, result, 'fio', /"cabinet-aside"[^>]*>([\s\S]*?)<\/h3/i, replaceTagsAndSpaces);
+		getParam(html, result, 'balance', /Баланс:([^>]*>){3}/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'licschet', /Лицевой счет:([^>]*>){3}/i, replaceTagsAndSpaces);
 	}
 	
 	AnyBalance.setResult(result);

@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
-	<api flags="no_browser|private" />
-	<id version="1">ab-internet-zukovskiy</id>
+	<api flags="no_browser"/>
+	<id version="2">ab-internet-zukovskiy</id>
 	<name>Жуковский.NET</name>
-	<description>
-		Получает данный для интернет-провайдера Жуковский.NET г. Жуковский (http://zhukovsky.net/)
-	</description>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе интернет-провайдера Жуковский.NET г. Жуковский (http://zhukovsky.net/)</p>
+	]]></description>	
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
@@ -16,7 +15,7 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units="р"/>
+		<counter id="balance" name="Баланс" units=" р"/>
 		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
 	<keywords></keywords>

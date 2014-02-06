@@ -12,22 +12,32 @@ var g_headers = {
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-    var baseurl = 'https://stat.zhukovsky.net/';
-    AnyBalance.setDefaultCharset('utf-8'); 
-
-	var html = AnyBalance.requestPost(baseurl + 'index.php', {
+    var baseurl = 'http://zhukovsky.net/';
+    AnyBalance.setDefaultCharset('windows-1251'); 
+	
+	var html = AnyBalance.requestGet(baseurl, g_headers);
+	
+	html = AnyBalance.requestPost(baseurl, {
         login:prefs.login,
         password:prefs.password,
-    }, addHeaders({Referer: baseurl + 'login'})); 
-
-    if(!/Выход/i.test(html)){
-        throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-    }
-
+    }, addHeaders({Referer: baseurl})); 
+	
+	html = AnyBalance.requestGet(baseurl + 'lk', g_headers);
+	
+	if (!/Выход/i.test(html)) {
+		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
+		if (error)
+			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+		
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+	}	
+	
     var result = {success: true};
-    getParam(html, result, 'fio', /Вы:[\s\S]*?<td>([\s\S]*?)<\/td/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'balance', /Баланс[\s\S]*?style="color: red">([\s\S]*?)</i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, '__tariff', /Изменить тариф[\s\S]*?>([\s\S]*?)</i, replaceTagsAndSpaces, html_entity_decode);
-
+	
+    getParam(html, result, 'fio', /Абонент:[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'balance', /"balance[^>]*>([\d.,-]+)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, '__tariff', /title="Тариф"(?:[^>]*>){1}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	
     AnyBalance.setResult(result);
 }

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-exchange-liqpay</id>
+	<api flags="no_browser"/>
+	<name>Liqpay (Курсы валют)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о курсах валют в системе Liqpay (https://liqpay.com/)</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="EUR-RUR" name="EUR-RUR" units=" RUR"/>
+		<counter id="EUR-UAH" name="EUR-UAH" units=" UAH"/>
+		<counter id="EUR-USD" name="EUR-USD" units=" USD"/>
+		<counter id="RUR-EUR" name="RUR-EUR" units=" EUR"/>
+		<counter id="RUR-UAH" name="RUR-UAH" units=" UAH"/>
+		<counter id="RUR-USD" name="RUR-USD" units=" USD"/>
+		<counter id="UAH-EUR" name="UAH-EUR" units=" EUR"/>
+		<counter id="UAH-RUR" name="UAH-RUR" units=" RUR"/>
+		<counter id="UAH-USD" name="UAH-USD" units=" USD"/>
+		<counter id="USD-EUR" name="USD-EUR" units=" EUR"/>
+		<counter id="USD-RUR" name="USD-RUR" units=" RUR"/>
+		<counter id="USD-UAH" name="USD-UAH" units=" UAH"/>
+	</counters>
+	<keywords></keywords>
+	<type>exchange</type>
+	<country>ru, ua, us</country>
+</provider>

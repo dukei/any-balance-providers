@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="1">ab-service-farpost</id>
+	<id version="2">ab-service-farpost</id>
 	<name>Farpost (Реклама)</name>
-	<description>
-	Получает данные для рекламной сети farpost.ru
-	
-	Личный кабинет находится по адресу: http://www.farpost.ru/personal/
-	</description>
+	<description html="true"><![CDATA[
+	<p>Получает данные для рекламной сети farpost.ru</p>
+	<p>Личный кабинет находится по адресу: http://www.farpost.ru/personal/</p>
+	]]></description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
@@ -17,7 +16,7 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units="р"/>
+		<counter id="balance" name="Баланс" units=" р"/>
 	</counters>
 	<keywords></keywords>
 	<type>service</type>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-bonus-novus</id>
+	<api flags="no_browser"/>
+	<name>NOVUS (Супермаркеты, Украина)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе на карте сети супермаркетов NOVUS http://novus.com.ua/</p>
+	<p>Информация берется из личного кабинета https://my.novus.com.ua/info/</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс"/>
+		<counter id="status" name="Статус" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>bonus</type>
+	<country>ua</country>
+</provider>

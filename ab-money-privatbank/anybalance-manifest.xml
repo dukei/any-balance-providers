@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-money-privatbank</id>
+	<api flags="no_browser|sms"/>
+	<name>Приватбанк (Украина)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе на картах Приватбанка http://privatbank.ua/</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<ul>
+		<li>При первом обновлении баланса на ваш номер будет выслан смс-код для привязки.</li>
+		<li>Введите его во всплывающем окне, больше смс-код приходить не будет для данного логина.</li>
+	</ul>
+	]]></instruction>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>md5-min.js</js>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" {@currency}"/>
+		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="card_number" name="Номер карты" type="text"/>
+		<counter id="card_name" name="Название карты" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>money</type>
+	<country>ua</country>
+</provider>

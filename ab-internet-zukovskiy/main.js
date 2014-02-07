@@ -15,14 +15,15 @@ function main(){
     var baseurl = 'http://zhukovsky.net/';
     AnyBalance.setDefaultCharset('windows-1251'); 
 	
-	var html = AnyBalance.requestGet(baseurl, g_headers);
+	var html = AnyBalance.requestGet(baseurl + '?lk', g_headers);
 	
 	html = AnyBalance.requestPost(baseurl, {
         login:prefs.login,
         password:prefs.password,
-    }, addHeaders({Referer: baseurl})); 
+		login_ok:'войти'
+	}, addHeaders({Referer: baseurl + '?lk'})); 
 	
-	html = AnyBalance.requestGet(baseurl + 'lk', g_headers);
+	//html = AnyBalance.requestGet(baseurl + 'lk', g_headers);
 	
 	if (!/Выход/i.test(html)) {
 		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);

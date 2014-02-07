@@ -14,36 +14,40 @@ function main(){
     var prefs = AnyBalance.getPreferences();
     var baseurl = 'https://uhome.tel.ru/';
     AnyBalance.setDefaultCharset('utf-8'); 
+	
+	checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(prefs.password, 'Введите пароль!');
+	
+	var html = AnyBalance.requestGet(baseurl + 'auth/login', g_headers);
+	
+	var params = createFormParams(html, function(params, str, name, value) {
+		if (name == 'username') 
+			return prefs.login;
+		else if (name == 'password')
+			return prefs.password;
 
-    var html = AnyBalance.requestGet(baseurl + 'login.aspx', g_headers);
-
-    var __VIEWSTATE = getParam(html, null, null, /__VIEWSTATE[^>]*value="([^"]*)/i, null, html_entity_decode);
-    if(!__VIEWSTATE) //Если параметр не найден, то это, скорее всего, свидетельствует об изменении сайта или о проблемах с ним
-        throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
-
-	html = AnyBalance.requestPost(baseurl + 'login.aspx', {
-		__EVENTTARGET:'',
-		__EVENTARGUMENT:'',
-		'__VIEWSTATE':__VIEWSTATE,
-		ASPxRoundPanel1$e_Login:prefs.login,
-		ASPxRoundPanel1$e_Login$CVS:'',
-		ASPxRoundPanel1$e_Pass:prefs.password,
-		ASPxRoundPanel1$e_Pass$CVS:'',
-		ASPxRoundPanel1$bb_Ok:'',
-		DXScript:'1_142,1_80,1_98,1_105,1_135,1_91'
-    }, addHeaders({Referer: baseurl + 'login.aspx'})); 
-
-    if(!/Завершить работу в системе/i.test(html)){
-        throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-    }
-
+		return value;
+	});
+	
+	html = AnyBalance.requestPost(baseurl + 'auth/login', params, addHeaders({Referer: baseurl + 'auth/login'}));	
+	
+	if (!/\/auth\/logout/i.test(html)) {
+		var error = getParam(html, null, null, /"errorMessage"([^>]*>){2}/i, replaceTagsAndSpaces, html_entity_decode);
+		if (error)
+			throw new AnyBalance.Error(error, null, /Неверное имя пользователя или пароль/i.test(error));
+		
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+	}	
+	
     var result = {success: true};
-    getParam(html, result, 'balance', /Доступно([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-	result.__tariff = getParam(html, null, null, /Интернет:([^<]*)/i, replaceTagsAndSpaces, html_entity_decode) 
-		+ ' (' + getParam(html, null, null, /Цена тарифа:([^<]*)/i, replaceTagsAndSpaces, html_entity_decode) + ')';
+    getParam(html, result, 'balance', /Баланс:([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'fio', /Здравствуйте,([^<]+)!/i, replaceTagsAndSpaces, html_entity_decode);
+	sumParam(html, result, '__tariff', /Тариф([^>]*>){3}/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
 
+/*
 	getParam(html, result, 'dogovor', /Договор:([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'fio', /Фамилия, имя:([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+    
     getParam(html, result, 'code', /Код для оплаты услуг через терминалы:([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 	// Попытаемся высчитать дату отключения
 	if(isAvailable('deadline')){
@@ -54,6 +58,6 @@ function main(){
 		var daysToDeadline = Math.round(result.balance/(monthlyFee/dayCount));
 		result.deadline = date.getTime() + 86400000 * daysToDeadline;
 	}
-	
+*/
     AnyBalance.setResult(result);
 }

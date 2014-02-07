@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="1">ab-internet-tel</id>
+	<id version="2">ab-internet-tel</id>
 	<name>TEL (Москва)</name>
-	<description>
-	Получает данные для интернет-провайдера TEL (http://www.tel.ru/)
-	
-	Личный кабинет находится по адресу: https://uhome.tel.ru/default.aspx
-	</description>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе интернет-провайдера TEL г. Москва (http://www.tel.ru/)</p>
+	<p>Информация берется из личного кабинета https://uhome.tel.ru/auth/login</p>
+	]]></description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
@@ -17,11 +16,13 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units="р"/>
+		<counter id="balance" name="Баланс" units=" р"/>
 		<counter id="fio" name="ФИО" type="text"/>
+		<!-- 
 		<counter id="dogovor" name="Договор" type="text"/>
 		<counter id="code" name="Код для оплаты услуг через терминалы" type="text"/>
 		<counter id="deadline" name="Предполагаемая дата отключения" type="time" format="dd/MM/yyyy"/>
+		 -->
 	</counters>
 	<keywords></keywords>
 	<type>internet</type>

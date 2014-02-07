@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="3" date="2014-02-07">
+	- 
+	</change>
     <change version="2" date="2013-08-30">
-	Переименован провайдер
+	- Переименован провайдер.
 	</change>
 </history>

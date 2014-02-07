@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser" />
-	<id version="2">ab-municipal-personal-account-kiev</id>
+	<id version="3">ab-municipal-personal-account-kiev</id>
 	<name>КП ГІОЦ (Киев)</name>
-	<description>
-	Получает данные из личного кабинета Коммунальное предприятие Государственный информационно-вычислительный центр (Киев) https://www.personal-account.kiev.ua/entrance/?rr=/dashboard/
-	</description>
+	<description html="true"><![CDATA[
+	<p>Получает данные из личного кабинета Коммунальное предприятие Государственный информационно-вычислительный центр (Киев) https://www.personal-account.kiev.ua/entrance/?rr=/dashboard/</p>
+	]]></description>	
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>

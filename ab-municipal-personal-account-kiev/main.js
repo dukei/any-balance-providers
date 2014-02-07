@@ -38,9 +38,25 @@ function main(){
     }
 	html = AnyBalance.requestGet(baseurl + 'dashboard/', g_headers);
 	
-	var subrscr = getParam(html, null, null, /subscr_(\d+)/i);
-	html = AnyBalance.requestGet(baseurl + 'dashboard/lastbills/' + subrscr, g_headers);
+	var subrscrArr = sumParam(html, null, null, /subscr_(\d+)/ig);
+	AnyBalance.trace('Найдено счетов: ' + subrscrArr.length);
 	
+	for(var i =0; i < subrscrArr.length; i++) {
+		var subrscr = subrscrArr[i];
+		html = AnyBalance.requestGet(baseurl + 'dashboard/lastbills/' + subrscr, g_headers);
+		// Если не указан счет, берем первый и уходим.
+		if(!prefs.num) {
+			AnyBalance.trace('Не указан счет по которому надо получать данные, берем первый');
+			break;
+		}
+		var account = getParam(html, null, null, /([^>]*>){14}/i, replaceTagsAndSpaces, html_entity_decode);
+		AnyBalance.trace('Счет: ' + account);
+		if(account != prefs.num)
+			AnyBalance.trace('Счет: ' + account + ' не соответствует заданному в настройках: ' + prefs.num);
+		else
+			break;
+	}
+
     var result = {success: true};
 	//ЖЕО
 	getParam(html, result, 'geo', /Показати деталі даного рахунку(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);

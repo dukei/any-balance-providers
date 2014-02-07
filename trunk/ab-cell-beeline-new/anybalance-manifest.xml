@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="43">ab-cell-beeline-new</id>
+	<id version="44">ab-cell-beeline-new</id>
 	<name>Билайн (новый кабинет)</name>
 	<api flags="no_browser" min_level="5"/>
 	<description html="true"><![CDATA[
@@ -48,6 +48,7 @@
 		<counter id="min_local_clear" name="Минуты на местные номера (как в лк)" units=" мин"/>
 		<counter id="rub_opros" name="Рублей за участие в опросе" units=" руб"/>
 		<counter id="traffic_left" name="Остаток трафика" units=" Mb"/>
+		<counter id="traffic_used" name="Использовано трафика" units=" Mb"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="phone" name="Телефон" type="text"/>
 		<counter id="agreement" name="Договор" type="text"/>

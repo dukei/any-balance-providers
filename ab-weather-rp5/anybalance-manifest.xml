@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="10">ab-weather-rp5</id>
+	<id version="11">ab-weather-rp5</id>
 	<api flags="no_browser"/>
 	<name>Прогноз rp5.ru</name>
 	<description html="true"><![CDATA[
@@ -15,7 +15,7 @@
 	<li>Кликните на ссылку RSS в правом верхнем углу сайта.</li> 
 	<li>Переместитесь в адресную строку браузера, которая содержит код нужного вам города.</li>
 	<br>
-	<small>Например, для Москвы в адресной строке будет http://rp5.ru/rss/42468/ru. Код города - это цифры между / и /ru, то есть 42468.</small>  
+	<small>Например, для Москвы в адресной строке будет http://rp5.ru/rss/5483/ru. Код города - это цифры между / и /ru, то есть 5483.</small>  
 	<br>
 	<br>
 	<li>Введите этот номер в настройках провайдера.</li>
@@ -26,10 +26,10 @@
 	<files>
 		<preferences>preferences.xml</preferences>
 		<icon>icon.png</icon>
-		<js>main.js</js>
 		<js>moment.min.js</js>
 		<js>moment.lang.ru.min.js</js>
 		<js>library.js</js>
+		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
@@ -55,4 +55,5 @@
 	</counters>
 	<keywords>прогноз, погода, температура, воздух, rp5</keywords>
 	<type>weather</type>
+        <country>ru, ua, by, kz, uz, md, lt, lv, ee</country>
 </provider>

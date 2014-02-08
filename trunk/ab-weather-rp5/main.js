@@ -31,7 +31,6 @@ function main(){
 
         var retry = false;
         try{
-            var x = y;
             var xml = AnyBalance.requestGet("http://rp5.ru/xml/"+prefs.city+"/00000/ru");
             retry = /404 Not Found/i.test(xml);
         }catch(e){

@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="11" date="2014-02-08">
+      - Исправлен код Москвы, исправлено получение данных из XML
+    </change>
     <change version="10" date="2013-09-05">
       - Исправлена работа вне браузера
     </change>

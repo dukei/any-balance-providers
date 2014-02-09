@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+        <id major_version="2.7" version="49">ab-money-sberbank-ua</id>
+	<api flags="no_browser"/>
+	<name>Ощадбанк ОнЛ@йн (Україна)</name>
+	<description html="true"><![CDATA[
+	<p>Отримує поточний залишок та інші параметри карт Ощадбанку в України, використовуючи систему Ощадбанк-онлайн https://online.oschadnybank.com/frontend/frontend.</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Якщо у вас немає доступу до Ощадбанк-онлайн: перейдіть на сторінку https://online.oschadnybank.com/frontend/auth/userlogin?execution=e1s1 .</p>
+	]]></instruction>
+	<author>antarey;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+                <counter id="cardNumber" name="Номер карти" type="text"/>
+		<counter id="balance" name="Залишок" type="numeric"/>
+		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="till" name="Дата закінчення дії" type="text"/>
+		<counter id="maxlimit" name="Кредитний ліміт" type="numeric"/>
+		<counter id="debt" name="Загальна заборгованість" type="numeric"/>
+		<counter id="rr" name="Розрахунковий рахунок" type="text"/>
+	</counters>
+	<keywords>сбербанк онлайн, sberbank online, сберегательный банк, ощадбанк, ощадний банк</keywords>
+	<type>money</type>
+	<country>ua</country>
+</provider>

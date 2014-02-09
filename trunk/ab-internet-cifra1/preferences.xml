@@ -7,6 +7,8 @@
         dialogTitle="Логин или № договора" 
         negativeButtonText="Отмена" 
         dialogMessage="Введите логин или номер договора для входа в личный кабинет Цифра Один."
+        inputType="number"
+        obligatory="true"
         key="login">
     </EditTextPreference>
     <EditTextPreference 
@@ -16,6 +18,7 @@
         negativeButtonText="Отмена"
         title="Пароль"
         summary="||***********"
+        obligatory="true"
         dialogMessage="Введите пароль, используемый для входа в личный кабинет Цифра Один."
         inputType="textPassword">
     </EditTextPreference>

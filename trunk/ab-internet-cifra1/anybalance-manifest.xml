@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-internet-cifra1</id>
+  <id version="3">ab-internet-cifra1</id>
+  <api flags="no_browser"/>
   <name>Цифра Один</name>
   <description>
     Получает баланс и информацию о тарифном плане для российского интернет-провайдера Цифра Один (http://cifra1.ru).

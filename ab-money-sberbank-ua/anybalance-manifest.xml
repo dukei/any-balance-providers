@@ -9,7 +9,7 @@
 	<instruction html="true"><![CDATA[
 	<p>Якщо у вас немає доступу до Ощадбанк-онлайн: перейдіть на сторінку https://online.oschadnybank.com/frontend/auth/userlogin?execution=e1s1 .</p>
 	]]></instruction>
-	<author>antarey;</author>
+	<author>antarey &lt;antarey@gmail.com&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

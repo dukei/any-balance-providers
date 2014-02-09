@@ -30,7 +30,7 @@ function main(){
         getParam(html, result, 'balance', /id='mybBonus'[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 		
 		if(isAvailable('all')) {
-			var table = getParam(html, null, null, /<table>\s*<tr>\s*<td[^>]*colspan(?:[\s\S]*?<div[^>]*>){10,30}[\s\S]*<\/table>/i);
+			var table = getParam(html, null, null, /<table[^>]*>(?:[\s\S](?!<\/table>))*ListBonusTableName[\s\S]*?<\/table>/i);
 			if(table) {
 				var string = '';
 				var array = sumParam(table, null, null, /<tr>\s*<td valign=top[^>]*>\s*<div[^>]*ListBonusTableName[\s\S]*?<\/tr>/ig, replaceTagsAndSpaces);
@@ -42,7 +42,7 @@ function main(){
 			}
 		}
     } else {
-		throw new AnyBalance.Error("Спортмастер ввел подтверждение входа по смс, поэтому получение баланса работает только при вводе логина и пароля.");
+		throw new AnyBalance.Error("Спортмастер ввел подтверждение входа по смс, поэтому получение баланса работает только при вводе логина и пароля.", null, true);
         AnyBalance.trace('Пароль не введен - получаем данные по номеру карты');
 
         var baseurl = "http://www.sportmaster.ru/club-program/";

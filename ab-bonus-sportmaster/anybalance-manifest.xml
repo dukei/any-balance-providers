@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="7">ab-bonus-sportmaster</id>
+	<id version="8">ab-bonus-sportmaster</id>
 	<name>Спортмастер</name>
 	<description html="true"><![CDATA[
    <p>Предоставляет информацию по бонусной карте "Спортмастер".</p> 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-        <id major_version="2.7" version="49">ab-money-sberbank-ua</id>
+        <id major_version="2.7" version="2">ab-money-sberbank-ua</id>
 	<api flags="no_browser"/>
 	<name>Ощадбанк ОнЛ@йн (Україна)</name>
 	<description html="true"><![CDATA[

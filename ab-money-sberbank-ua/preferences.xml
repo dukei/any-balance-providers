@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference
+		obligatory="true"
+        title="Логін" 
+        positiveButtonText="ОК" 
+        summary="Логін користувача||{@s}\n" 
+        dialogTitle="Логін" 
+        negativeButtonText="Відміна" 
+        dialogMessage="Введіть логін для входа в систему Ощадбанк-онлайн."
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+		obligatory="true"
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Відміна"
+        title="Пароль"
+        summary="||***********"
+        dialogMessage="Введіть пароль для входа в систему Ощадбанк-онлайн."
+        inputType="textPassword">
+    </EditTextPreference>
+    <ListPreference 
+        key="type" 
+        title="Що дивитися"
+        summary="||{@s}"
+        entries="Карта|Рахунок"
+        entryValues="card|acc"
+		defaultValue="card">
+    </ListPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="lastdigits" 
+        dialogTitle="Номер карти/рахунка"
+        negativeButtonText="Відміна"
+        title="Номер карти"
+        summary="Останні 4 цифри карти/рахунка|Автоматично\n|{@s}\n"
+        dialogMessage="Введіть Останні 4 цифри карти(рахунка), по якій Ви бажаете отримати інформацію. Якщо залишити це поле пустим, то буде відображена інформація по першій карті(рахунку)."
+        inputType="number">
+    </EditTextPreference>
+    <ListPreference 
+        key="dz" 
+        title="Спосіб відображення дати закінчення"
+        summary="||{@s}"
+        entries="січень 2000|01.2000"
+        entryValues="mmyy|my"
+		defaultValue="mmyy">
+    </ListPreference>
+</PreferenceScreen>

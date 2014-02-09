@@ -25,19 +25,28 @@ function main(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
 
+    checkEmpty(prefs.login && /^\d{10}$/.test(prefs.login), 'Логин должен состоять из 10 цифр');
+    checkEmpty(prefs.password, 'Введите пароль!');
+
     var params, region;
     if(!prefs.region || prefs.region == 'auto' || !g_regionsById[prefs.region]){
-        var info = AnyBalance.requestGet('http://www.cifra1.ru/?singleAction=get_login_form_action&login=' + encodeURIComponent(prefs.login));
-        var json = getJson(info);
-        if(json.error)
-            throw new AnyBalance.Error('Неверный номер договора: ' + prefs.login);
-        params = {from_url_9: ''};
-        params[json.LOGIN] = prefs.login;
-        params[json.PASSW] = prefs.password;
+        var info = AnyBalance.requestGet('http://www.cifra1.ru/office/sites.json?login=' + encodeURIComponent(prefs.login), addHeaders({
+            Referer: 'http://www.cifra1.ru/r/homeusers/',
+            "X-Requested-With":'XMLHttpRequest'
+        }));
 
-        var region = g_regionsByUrl[json.ACTION];
+        var json = getJson(info);
+        if(json.type != "correct"){
+            AnyBalance.trace(JSON.stringify(json));
+            throw new AnyBalance.Error('Неверный номер договора: ' + prefs.login, null, true);
+        }
+        params = {};
+        params[json.login_var] = prefs.login;
+        params[json.pass_var] = prefs.password;
+
+        var region = g_regionsByUrl[json.url];
         if(!region)
-            throw new AnyBalance.Error('Личный кабинет для вашего номера договора: ' + json.ACTION + '. К сожалению, он пока не поддерживается. Обратитесь к автору провайдера по е-мейл, чтобы добавить его поддержку.');
+            throw new AnyBalance.Error('Личный кабинет для вашего номера договора: ' + json.url + '. К сожалению, он пока не поддерживается. Обратитесь к автору провайдера по е-мейл, чтобы добавить его поддержку.');
     }else{
         region = prefs.region;    
     }
@@ -110,7 +119,7 @@ function getUltranet(region, params){
     if(!/\/login\/destroySessionId/i.test(html)){
         var error = getParam(html, null, null, /<p[^>]*class=["'][^"']*error[^>]*>([\s\S]*?)<\/p>/, replaceTagsAndSpaces, html_entity_decode);
         if(error)
-            throw new AnyBalance.Error(error);
+            throw new AnyBalance.Error(error, null, /неверный логин/i.test(error));
         throw new AnyBalance.Error('Не удалось войти в личный кабинет. Проблемы на сайте или сайт изменен.');
     }
 

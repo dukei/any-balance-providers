@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-    <id major_version="1.0" version="5">ab-exchange-sbrf</id>
+    <id major_version="1.0" version="6">ab-exchange-sbrf</id>
     <name>Курсы валют СБ РФ</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о курсах валют от банка "Сбербанк".</p>
@@ -19,8 +19,9 @@
         <counter id="usd_sell" name="USD продажа" units=" р"/>
         <counter id="eur_purch" name="EUR покупка" units=" р"/>
         <counter id="eur_sell" name="EUR продажа" units=" р"/>
-        <counter id="gbp_purch" name="GBP покупка" units=" р"/>
-        <counter id="gbp_sell" name="GBP продажа" units=" р"/>
+		
+        <!-- <counter id="gbp_purch" name="GBP покупка" units=" р"/>
+        <counter id="gbp_sell" name="GBP продажа" units=" р"/> -->
         <counter id="date" name="Дата курса" type="time" format="dd/MM/yyyy"/>
     </counters>
     <keywords>Курсы, валюта, доллар, евро, фунт, сбербанк</keywords>

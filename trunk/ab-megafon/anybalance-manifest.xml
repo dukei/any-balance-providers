@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="3.0" version="111">ab-megafon</id>
+	<id major_version="3.0" version="112">ab-megafon</id>
 	<api flags="no_browser"/>
 	<name>Мегафон</name>
 	<description html="true"><![CDATA[
@@ -60,6 +60,8 @@
 		<counter id="mins_net_total" name="Минуты внутри сети (всего)" units=" мин" type="time_interval" format="{@MIN}"/>
 		<counter id="mins_rya_total" name="Минуты (РЯ) (всего)" units=" мин" type="time_interval" format="{@MIN}"/>
 		<counter id="mins_rya_left" name="Минуты (РЯ)" units=" мин" type="time_interval" format="{@MIN}"/>
+		<counter id="mins_eao_total" name="Минуты (ЕАО,ХК) (всего)" units=" мин" type="time_interval" format="{@MIN}"/>
+		<counter id="mins_eao_left" name="Минуты (ЕАО,ХК)" units=" мин" type="time_interval" format="{@MIN}"/>		
 		<counter id="sms_total" name="Включенные SMS (всего)" units=" sms"/>
 		<counter id="mms_total" name="Включенные MMS (всего)" units=" mms"/>
 		<counter id="handygift_total" name="Нужный подарок - всего (Поволжье)" units=" р"/>

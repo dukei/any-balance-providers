@@ -67,11 +67,16 @@ function main() {
 	json = requestJson({cookie:sessionCookie, email:'',	registration_id:g_registrationId}, 'props');
 	
 	AnyBalance.trace('Всего карт: ' + json.cards.length);
+	// Баланс не всегда обновляется сам, надо его пнуть
+	requestJson({cookie:sessionCookie}, 'template_getall');
+	// Здесь можно получить детальную информацию по картам
+	var jsonDetailed = requestJson({cookie:sessionCookie}, 'allcard_info');
 	
-	var card;
+	var card, cardDetails, cardId;
 	for(var i = 0; i < json.cards.length; i++) {
 		card = json.cards[i];
 		var number = card.number;
+		cardId = card.card_id;
 		if(!prefs.cardnum) {
 			AnyBalance.trace('Не указан номер карты, получаем только первую.');
 			break;
@@ -84,6 +89,18 @@ function main() {
 			}
 		}
 	}
+	AnyBalance.trace('Card id: ' + cardId);
+	// Теперь найдем детальную информацию, разделил на два цикла, т.к. не всегда json.cards[i] соответвовал jsonDetailed.cards[i];
+	for(var j = 0; j < jsonDetailed.cards.length; j++) {
+		cardDetails = jsonDetailed.cards[j];
+		if(cardId == cardDetails.cardid) {
+			AnyBalance.trace('Нашли детали по карте с ID: ' + cardDetails.cardid);
+			break;
+		} else {
+			AnyBalance.trace('ID: ' + cardDetails.cardid + ' не соответствует заданному: ' + cardId);
+		}
+	}	
+	
 	var result = {success: true};
 	
 	getParam(card.alias + ' ' + card.number, result, '__tariff', null, replaceTagsAndSpaces, html_entity_decode);
@@ -91,6 +108,10 @@ function main() {
 	getParam(card.alias, result, 'card_name', null, replaceTagsAndSpaces, html_entity_decode);
 	getParam(card.balance+'', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
 	getParam(card.currency, result, ['currency', 'balance'], null, replaceTagsAndSpaces, html_entity_decode);
+	// Детали по карте
+	getParam(cardDetails.finlimit+'', result, 'limit', null, replaceTagsAndSpaces, parseBalance);
+	getParam(cardDetails.holded+'', result, 'available', null, replaceTagsAndSpaces, parseBalance);
+	getParam(cardDetails.min_pay+'', result, 'min_pay', null, replaceTagsAndSpaces, parseBalance);
 	
 	AnyBalance.setResult(result);
 }

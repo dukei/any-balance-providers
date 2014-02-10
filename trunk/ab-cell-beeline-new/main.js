@@ -275,6 +275,13 @@ function fetchPost(baseurl, html) {
 	}
 	
 	getParam(html, result, ['phone', 'traffic_used'], /<h1[^>]+class="phone-number"[^>]*>([\s\S]*?)<\/h1>/i, replaceTagsAndSpaces, html_entity_decode);
+	
+	if (isAvailableBonuses()) {
+		xhtml = getBlock(baseurl + 'c/post/index.html', html, 'loadingBonusesAndServicesDetails');
+		xhtml = getBlock(baseurl + 'c/post/index.html', [xhtml, html], 'bonusesloaderDetails');
+		getBonusesPost(xhtml, result);
+	}
+	
 	// Получение трафика из детализации
 	if(result.phone && isAvailable(['traffic_used'])) {
 		var num = getParam(result.phone, null, null, null, [/\+\s*7([\s\d\-]{10,})/i, '$1', /\D/g, '']);
@@ -286,12 +293,6 @@ function fetchPost(baseurl, html) {
 		getParam(xhtml, result, 'traffic_used', /Итоговый объем данных \(MB\):([^>]*>){3}/i, [replaceTagsAndSpaces, /([\s\S]*?)/, '$1 мб'], parseTraffic);
 	}
 	
-	if (isAvailableBonuses()) {
-		xhtml = getBlock(baseurl + 'c/post/index.html', html, 'loadingBonusesAndServicesDetails');
-		xhtml = getBlock(baseurl + 'c/post/index.html', [xhtml, html], 'bonusesloaderDetails');
-		getBonusesPost(xhtml, result);
-	}
-
     if (AnyBalance.isAvailable('overpay', 'prebal', 'currency')) {
     	xhtml = getBlock(baseurl + 'c/post/index.html', html, 'callDetailsDetails');
     	getParam(xhtml, result, 'overpay', /<h4[^>]*>Переплата[\s\S]*?<span[^>]+class="price[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);

@@ -1,8 +1,27 @@
 /**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
+http://www.sberbank.ru/common/js/quote_table.php
 
 function main() {
+	var result = {success: true};
+	
+	var prefs = AnyBalance.getPreferences();
+	
+	var baseurl = 'http://sberbank.ru/';
+	var html = AnyBalance.requestGet(baseurl + (prefs.region || 'moscow') + '/ru/quotes/currencies/');
+	
+	getParam(html, result, 'date', /Курсы иностранных валют([^<]+)/i, replaceTagsAndSpaces, parseDate);
+	getParam(html, result, '__tariff', /Курсы иностранных валют([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'usd_purch', /"Доллар США"([^>]*>){8}/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'usd_sell', /"Доллар США"([^>]*>){13}/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'eur_purch', /"Евро"([^>]*>){8}/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'eur_sell', /"Евро"([^>]*>){13}/i, replaceTagsAndSpaces, parseBalance);
+	
+	AnyBalance.setResult(result);
+}
+
+function mainOld() {
 	var result = {success: true};
 	
 	var prefs = AnyBalance.getPreferences();

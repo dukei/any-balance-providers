@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-	<change version="44" date="2014-02-07">
+	<change version="45" date="2014-02-10">
 	- Добавлено отображение использованного трафика постоплатных тарифов.
 	</change>
 	<change version="43" date="2014-02-05">

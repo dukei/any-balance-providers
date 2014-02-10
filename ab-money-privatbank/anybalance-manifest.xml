@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-money-privatbank</id>
+	<id version="2">ab-money-privatbank</id>
 	<api flags="no_browser|sms"/>
 	<name>Приватбанк (Украина)</name>
 	<description html="true"><![CDATA[
@@ -23,11 +23,14 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" {@currency}"/>
+		<counter id="limit" name="Лимит по карте" units=" {@currency}"/>
+		<counter id="available" name="Доступно" units=" {@currency}"/>
+		<counter id="min_pay" name="Минимальный платеж" units=" {@currency}"/>
 		<counter id="currency" name="Валюта" type="text"/>
 		<counter id="card_number" name="Номер карты" type="text"/>
 		<counter id="card_name" name="Название карты" type="text"/>
 	</counters>
-	<keywords></keywords>
+	<keywords>приват, банк, украина</keywords>
 	<type>money</type>
 	<country>ua</country>
 </provider>

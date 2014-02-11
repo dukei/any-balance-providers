@@ -13,11 +13,14 @@ var g_headers = {
 function main(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
-
+	
+	checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(prefs.password, 'Введите пароль!');
+	
     var baseurl = 'https://www.s7.ru/';
 	var baseurlLogin = 'https://cca.s7.ru/';
 	
-    var html = AnyBalance.requestPost(baseurlLogin + 'cas/login', {
+    var html = AnyBalance.requestPost(baseurl + 'dotCMS/priority/newLogin', {
         renew:true,
         auto:true,
         service:baseurl + 'home/priority/ffpAccount.dot',
@@ -27,44 +30,14 @@ function main(){
         password:prefs.password
     }, g_headers);
 	
-    var params = createFormParams(html, function(params, str, name, value){
-        if(/type="(submit|reset)"/i.test(str))
-            return;
-        if(name == 'username')
-            return prefs.login;
-        if(name == 'password')
-            return prefs.password;
-        return value;
-    });
-	
-    html = AnyBalance.requestPost(baseurlLogin + 'cas/login', params, addHeaders({Referer:'https://cca.s7.ru/cas/login'}));
-	
-	// Странно, но иногда требует дополнительных переходов, пока оставлю, вдруг пригодится
-	/*AnyBalance.trace(html);
-	var key = getParam(html, null, null, /(?:Нажмите|Click)\s*<a\s*href="([\s\S]*?)">(?:на ссылку|here)/i, null, null);
-	if(!key)
-		throw new AnyBalance.Error('Не нашли ссылку на редирект, тут что-то не так...');
-	
-	var href = '';
-	if(/http/.test(key))
-		href = key;
-	else
-		href = baseurl + 'home/priority/ffpAbout.dot' + key;
-		
-		
-	AnyBalance.trace('Нашли линк ' + href);
-
-	html = AnyBalance.requestGet(href, g_headers);*/
-	
-	//html = AnyBalance.requestGet(baseurl, g_headers);
-	
-    AnyBalance.trace(html);
     if(!/priority\/logout/.test(html)){
-        var error = getParam(html, null, null, /<div[^>]*class=["']error[^>]*>([\s\S]*?)<\/div>/, replaceTagsAndSpaces, html_entity_decode);
-        if(error)
-            throw new AnyBalance.Error(error);
-        throw new AnyBalance.Error('Не удалось войти в личный кабинет. Проблемы на сайте или сайт изменен.');
-    }
+		var error = getParam(html, null, null, /<div[^>]*class=["']error[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+		if (error)
+			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+		
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось войти в личный кабинет. Проблемы на сайте или сайт изменен.');
+	}
 
     var result = {success: true};
 
@@ -81,6 +54,7 @@ function main(){
 	
     if(AnyBalance.isAvailable('qmiles', 'flights')){
         html = AnyBalance.requestGet(baseurl + 'home/priority/ffpMyMiles.dot');
+		
         getParam(html, result, 'qmiles', /<td[^>]+class="balance"[^>]*>([\s\S]*?)(?:<\/td>|\/)/i, replaceTagsAndSpaces, parseBalance);
         getParam(html, result, 'flights', /<td[^>]+class="balance"[^>]*>[^<]*\/([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     }

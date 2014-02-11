@@ -19,23 +19,23 @@ var g_phrases = {
 }
 
 var g_headers = {
-    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    'Accept': 'image/webp,*/*;q=0.8',
     'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
-    'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+    'Accept-Language': 'ru,en;q=0.8',
     'Cache-Control': 'max-age=0',
     'Connection': 'keep-alive',
     'Origin': 'https://www.avangard.ru',
-    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.57 Safari/537.36'
+    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.107 Safari/537.36'
 };
 
 function main() {
     var prefs = AnyBalance.getPreferences();
     var baseurl = 'https://www.avangard.ru/';
     AnyBalance.setDefaultCharset('windows-1251');
-
+	
     checkEmpty(prefs.login, 'Введите логин в интернет-банк!');
     checkEmpty(prefs.password, 'Введите пароль в интернет-банк!');
-
+	
     var what = prefs.what || 'card';
     if (prefs.num && !/\d{4}/.test(prefs.num))
         throw new AnyBalance.Error("Введите 4 последних цифры номера " + g_phrases.karty[what] + " или не вводите ничего, чтобы показать информацию по " + g_phrases.karte1[what]);
@@ -51,7 +51,7 @@ function main() {
 		return value;
 	});
 	
-    html = AnyBalance.requestPost(baseurl + "client4/afterlogin", params, g_headers);
+    html = AnyBalance.requestPost(baseurl + "client4/afterlogin", params, addHeaders({Referer: baseurl + 'login/www/ibank_enter.php'}));
 
     var error = getParam(html, null, null, /<!--WAS_ERROR-->([\s\S]*?)<!--\/WAS_ERROR-->/i, replaceTagsAndSpaces);
     if (error)

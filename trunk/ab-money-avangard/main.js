@@ -25,7 +25,8 @@ var g_headers = {
     'Cache-Control': 'max-age=0',
     'Connection': 'keep-alive',
     'Origin': 'https://www.avangard.ru',
-    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.107 Safari/537.36'
+    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.107 Safari/537.36',
+	'Content-Type':'application/x-www-form-urlencoded'	
 };
 
 function main() {

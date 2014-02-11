@@ -18,9 +18,9 @@ function main() {
     var baseurlLogin = 'https://auth.jino.ru/';
 	var baseurl = 'https://cp-hosting.jino.ru/';
     AnyBalance.setDefaultCharset('utf-8'); 
-
+	
 	if(!prefs.dbg) {
-		var html = AnyBalance.requestGet(baseurlLogin + 'login/hosting/', g_headers);
+		var html = AnyBalance.requestGet(baseurl, g_headers);
 		
 		var params = createFormParams(html, function(params, str, name, value) {
 			if (name == 'login') 

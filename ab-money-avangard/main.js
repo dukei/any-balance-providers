@@ -1,10 +1,5 @@
 /**
  Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
- 
- Получает текущий остаток и другие параметры карт Банка Авангард через интернет банк.
- 
- Сайт оператора: http://www.avangard.ru/
- Личный кабинет: https://www.avangard.ru/login/logon_enter.html
  */
 
 var replaceFloat2 = [/\s+/g, '', /,/g, '', /(\d)\-(\d)/g, '$1.$2'];
@@ -44,13 +39,19 @@ function main() {
     var what = prefs.what || 'card';
     if (prefs.num && !/\d{4}/.test(prefs.num))
         throw new AnyBalance.Error("Введите 4 последних цифры номера " + g_phrases.karty[what] + " или не вводите ничего, чтобы показать информацию по " + g_phrases.karte1[what]);
+	
+	var html = AnyBalance.requestGet(baseurl + 'login/www/ibank_enter.php', g_headers);
+	
+	var params = createFormParams(html, function(params, str, name, value) {
+		if (name == 'login') 
+			return prefs.login;
+		else if (name == 'passwd')
+			return prefs.password;
 
-    var html = AnyBalance.requestPost(baseurl + "client4/afterlogin", {
-        login: prefs.login,
-        passwd: prefs.password,
-        x: 38,
-        y: 6,
-    }, g_headers);
+		return value;
+	});
+	
+    html = AnyBalance.requestPost(baseurl + "client4/afterlogin", params, g_headers);
 
     var error = getParam(html, null, null, /<!--WAS_ERROR-->([\s\S]*?)<!--\/WAS_ERROR-->/i, replaceTagsAndSpaces);
     if (error)
@@ -70,7 +71,7 @@ function main() {
     AnyBalance.trace('Тип банка: ' + bankType);
 
     //Зачем-то банк требует удалить эту куку
-    AnyBalance.setCookie('www.avangard.ru', 'JSESSIONID', null, {path: '/' + bankType});
+    //AnyBalance.setCookie('www.avangard.ru', 'JSESSIONID', null, {path: '/' + bankType});
 
     baseurl += bankType;
     html = AnyBalance.requestGet(baseurl + "/" + firstpage, g_headers);

@@ -73,9 +73,9 @@ function refreshBalance(url, html, htmlBalance) {
 		AnyBalance.trace('Не найдена форма для блока headerBalance!');
 		return '';
 	}
-
+	
 	var viewState = getParam(html, null, null, /<input[^>]+name="javax.faces.ViewState"[^>]*value="([^"]*)/i, null, html_entity_decode);
-
+	
 	var formId = getParam(form, null, null, /id="([^"]*)/i, null, html_entity_decode);
 	var params = createFormParams(form);
 	params['javax.faces.partial.ajax'] = true;
@@ -84,7 +84,7 @@ function refreshBalance(url, html, htmlBalance) {
 	params['javax.faces.partial.render'] = render;
 	params[source] = source;
 	params['javax.faces.ViewState'] = viewState;
-
+	
 	html = AnyBalance.requestPost(url, params, addHeaders({
 		Referer: url,
 		'Faces-Request': 'partial/ajax',
@@ -104,6 +104,21 @@ function myParseCurrency(text) {
 	return val;
 }
 
+function checkCorrectNumberLogin(html, prefs) {
+	var phone = getParam(html, null, null, [/"sso-number"[^>]*>([^<]*)/i, /<h1[^>]+class="phone-number"[^>]*>([\s\S]*?)<\/h1>/i], [/\D/g, '']);
+	if(!phone)
+		throw new AnyBalance.Error('Не удалось выяснить на какой номер мы залогинились, сайт изменен?');
+	
+	AnyBalance.trace('Судя по всему, мы уже залогинены на номер ' + phone);
+	
+	var needeedPhone = prefs.phone || prefs.login;
+	if(!endsWith(phone, needeedPhone)) {
+		AnyBalance.trace('Залогинены на неправильный номер ' + phone + ' т.к. в настройках указано, что номер должен заканчиваться на ' + needeedPhone);
+		throw new AnyBalance.Error('В настоящее время Билайн не поддерживает обновление чужого номера через мобильный интернет. Обновите этот аккаунт через Wi-Fi.');
+	}
+	AnyBalance.trace('Залогинены на правильный номер ' + phone);
+}
+
 function main() {
 	var prefs = AnyBalance.getPreferences();
 	checkEmpty(prefs.login, 'Введите логин!');
@@ -111,30 +126,35 @@ function main() {
 	
 	var baseurl = "https://my.beeline.ru/";
 	AnyBalance.setDefaultCharset('utf-8');
-
+	
 	var html = AnyBalance.requestGet(baseurl + 'login.html', g_headers);
 	
-	AnyBalance.trace('Запрашиваем данные /login.html');
+	if (AnyBalance.getLastStatusCode() > 400) {
+		AnyBalance.trace('Beeline returned: ' + AnyBalance.getLastStatusString());
+		throw new AnyBalance.Error('Личный кабинет Билайн временно не работает. Пожалуйста, попробуйте позднее.');
+	}
+	
+	if(prefs.__debug) {
+		try {
+			html = AnyBalance.requestGet('https://my.beeline.ru/c/'+prefs.__debug+'/index.html', g_headers);
+		} catch(e){
+		}
+	}
+	
+	AnyBalance.trace('Запрашиваем login.html');
 	AnyBalance.trace(html);
 	
 	var tform = getParam(html, null, null, /<form[^>]+name="loginFormB2C:loginForm"[^>]*>[\s\S]*?<\/form>/i);
-
+	
 	// Похоже что обновляемся через мобильный инет, значит авторизацию надо пропустить
-	if(!tform && /logOutLink|Загрузка баланса\.\.\./i.test(html)) {
-		var phone = getParam(html, null, null, [/"sso-number"[^>]*>([^<]*)/i, /<h1[^>]+class="phone-number"[^>]*>([\s\S]*?)<\/h1>/i], [/\D/g, '']);
-		if(!phone)
-			throw new AnyBalance.Error('Не удалось выяснить на какой номер мы залогинились автоматически, сайт изменен?');
-		
-		AnyBalance.trace('Судя по всему, мы уже залогинены на номер ' + phone);
-		
-		if(!endsWith(phone, prefs.phone || prefs.login)) {
-			AnyBalance.trace('Залогинены на неправильный номер ' + phone);
-			throw new AnyBalance.Error('В настоящее время Билайн не поддерживает обновление чужого номера через мобильный интернет. Обновите этот аккаунт через вайфай.');
-		}
-		AnyBalance.trace('Залогинены на правильный номер ' + phone);
-	} else {
-		
-		if (!tform) { //Если параметр не найден, то это, скорее всего, свидетельствует об изменении сайта или о проблемах с ним
+	if(/logOutLink|Загрузка баланса\.\.\./i.test(html)) {
+		AnyBalance.trace('Похоже, что мы запустились через мобильный интернет.');
+		// Теперь необходимо проверить, на то номер мы вошли или нет, нужно для обновления через мобильный интернет
+		checkCorrectNumberLogin(html, prefs);
+	}
+	// Авторизуемся, независимо ни от чего, кроме как от наличия формы входа
+	if(tform) {
+		/*if (!tform) { //Если параметр не найден, то это, скорее всего, свидетельствует об изменении сайта или о проблемах с ним
 		    AnyBalance.trace('Похоже, форма авторизации отсутствует.');
 			if (AnyBalance.getLastStatusCode() > 400) {
 				AnyBalance.trace('Beeline returned: ' + AnyBalance.getLastStatusString());
@@ -142,18 +162,18 @@ function main() {
 			}
 			AnyBalance.trace(html);
 			throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
-		}else{
+		} else */{
 		    AnyBalance.trace('Похоже, что форма авторизации присутствует.');
 		}
-
+		
 		var params = createFormParams(tform);
 		params['loginFormB2C:loginForm:login'] = prefs.login;
 		params['loginFormB2C:loginForm:password'] = prefs.password;
 		params['loginFormB2C:loginForm:passwordVisible'] = prefs.password;
 		params['loginFormB2C:loginForm:loginButton'] = '';
-
+		
 		var action = getParam(tform, null, null, /<form[^>]+action="\/([^"]*)/i, null, html_entity_decode);
-
+		
 		//Теперь, когда секретный параметр есть, можно попытаться войти
 		try {
 			html = AnyBalance.requestPost(baseurl + (action || 'login.html'), params, addHeaders({Referer: baseurl + 'login.html'}));
@@ -173,7 +193,7 @@ function main() {
 		}));
 	}
 	// Ну и тут еще раз проверяем, получилось-таки войти или нет
-	if (/<form[^>]+name="(?:chPassForm)"|Ваш пароль временный\.\s*Необходимо изменить его на постоянный/i.test(html)) 
+	if (/<form[^>]+name="(?:chPassForm)"|Ваш пароль временный\.\s*Необходимо изменить его на постоянный/i.test(html))
 		throw new AnyBalance.Error('Вы зашли по временному паролю, требуется сменить пароль. Для этого войдите в ваш кабинет https://my.beeline.ru через браузер и смените там пароль. Новый пароль введите в настройки данного провайдера.', null, true);
 	if (/<form[^>]+action="\/(?:changePass|changePassB2C).html"/i.test(html))
 		throw new AnyBalance.Error('Билайн требует сменить пароль. Зайдите в кабинет https://my.beeline.ru через браузер и поменяйте пароль на постоянный.', null, true);
@@ -184,10 +204,7 @@ function main() {
 		var error = getParam(html, null, null, [/<div[^>]+class="error-page[\s|"][^>]*>([\s\S]*?)<\/div>/i, /<span[^>]+class="ui-messages-error-summary"[^>]*>([\s\S]*?)<\/span>/i], replaceTagsAndSpaces, html_entity_decode);
 		if(error)
 			throw new AnyBalance.Error(error, null, /Неправильные логин и\s*(?:\(или\)\s*)?пароль/i.test(error));
-		/*error = getParam(html, null, null, /<div[^>]+class="error-page[\s|"][^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-		if (error) 
-			throw new AnyBalance.Error(error);*/
-			
+		
 		if (AnyBalance.getLastStatusCode() > 400) {
 			AnyBalance.trace('Beeline returned: ' + AnyBalance.getLastStatusString());
 			throw new AnyBalance.Error('Личный кабинет Билайн временно не работает. Пожалуйста, попробуйте позднее.');
@@ -282,17 +299,6 @@ function fetchPost(baseurl, html) {
 		getBonusesPost(xhtml, result);
 	}
 	
-	// Получение трафика из детализации
-	if(result.phone && isAvailable(['traffic_used'])) {
-		var num = getParam(result.phone, null, null, null, [/\+\s*7([\s\d\-]{10,})/i, '$1', /\D/g, '']);
-		
-		AnyBalance.trace('Пробуем получить данные по трафику из детализации по номеру: ' + num);
-		html = AnyBalance.requestGet(baseurl + 'c/post/fininfo/report/detailUnbilledCalls.html?ctn=' + num, g_headers);
-		xhtml = getBlock(baseurl + 'c/post/fininfo/report/detailUnbilledCalls.html', html, 'retrieveSubCurPeriodDataDetails');
-		
-		getParam(xhtml, result, 'traffic_used', /Итоговый объем данных \(MB\):([^>]*>){3}/i, [replaceTagsAndSpaces, /([\s\S]*?)/, '$1 мб'], parseTraffic);
-	}
-	
     if (AnyBalance.isAvailable('overpay', 'prebal', 'currency')) {
     	xhtml = getBlock(baseurl + 'c/post/index.html', html, 'callDetailsDetails');
     	getParam(xhtml, result, 'overpay', /<h4[^>]*>Переплата[\s\S]*?<span[^>]+class="price[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
@@ -319,6 +325,17 @@ function fetchPost(baseurl, html) {
         var last_time = getParam(html, null, null, /<span[^>]+class="date"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
         AnyBalance.trace('Последняя заявка: ' + last_time);
     }
+	
+	// Получение трафика из детализации
+	if(result.phone && isAvailable(['traffic_used'])) {
+		var num = getParam(result.phone, null, null, null, [/\+\s*7([\s\d\-]{10,})/i, '$1', /\D/g, '']);
+		
+		AnyBalance.trace('Пробуем получить данные по трафику из детализации по номеру: ' + num);
+		html = AnyBalance.requestGet(baseurl + 'c/post/fininfo/report/detailUnbilledCalls.html?ctn=' + num, g_headers);
+		xhtml = getBlock(baseurl + 'c/post/fininfo/report/detailUnbilledCalls.html', html, 'retrieveSubCurPeriodDataDetails');
+		
+		getParam(xhtml, result, 'traffic_used', /Итоговый объем данных \(MB\):([^>]*>){3}/i, [replaceTagsAndSpaces, /([\s\S]*?)/, '$1 мб'], parseTraffic);
+	}
 
 	//Возвращаем результат
 	AnyBalance.setResult(result);
@@ -328,7 +345,7 @@ function fetchPre(baseurl, html) {
 	var prefs = AnyBalance.getPreferences();
 	AnyBalance.trace('Мы в предоплатном кабинете');
 	
-	var result = {success: true, balance: null, currency: null};
+	var result = {success: true, balance: null/*, currency: null*/};
 	
 	if (prefs.phone) { //Если задан номер, то надо сделать из него регулярное выражение
 		if (!/^\d{4,10}$/.test(prefs.phone))
@@ -386,11 +403,9 @@ function fetchPre(baseurl, html) {
 			AnyBalance.sleep(2000);
 			xhtml = refreshBalance(baseurl + 'c/pre/index.html', html, xhtml) || xhtml;
 		} */
-
-		// Вроде бы все хорошо, но: {"sms_left":3463,"min_local":24900,"balance":0,"phone":"+7 909 169-24-86","agreement":"248260674","__time":1385043751223,"fio":"Максим Крылов","overpay":619.07,"min_local_clear":415,"currency":"рубвмесяцОтключитьБудьвкурсе","__tariff":"«Всё включено L 2013»"}
 		getParam(xhtml, result, 'balance', /class="price[^>]*>((?:[\s\S]*?span[^>]*>){3})/i, replaceTagsAndSpaces, parseBalance);
 		// Если баланса нет, не надо получать и валюту
-		if(isset(result.balance) && result.balance != null) {
+		if(result.balance != null) {
 			getParam(xhtml, result, ['currency', 'balance'], /class="price[^>]*>((?:[\s\S]*?span[^>]*>){3})/i, replaceTagsAndSpaces, myParseCurrency);
 		}
 	}
@@ -398,9 +413,15 @@ function fetchPre(baseurl, html) {
 		xhtml = getBlock(baseurl + 'c/pre/index.html', html, 'bonusesForm');
 		getBonuses(xhtml, result);
 	}
-	if (AnyBalance.isAvailable('fio')) {
-		xhtml = AnyBalance.requestGet(baseurl + 'm/pre/index.html', g_headers);
-		getParam(xhtml, result, 'fio', /<div[^>]+class="abonent-name"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, capitalFirstLenttersAndDecode);
+	if (AnyBalance.isAvailable('fio', 'balance')) {
+		html = AnyBalance.requestGet(baseurl + 'm/pre/index.html', g_headers);
+		getParam(html, result, 'fio', /<div[^>]+class="abonent-name"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, capitalFirstLenttersAndDecode);
+		
+		// Если не получили баланс выше, попробуем достать его из мобильной версии
+		if(result.balance == null) {
+			getParam(html, result, 'balance', /class="price[^>]*>((?:[\s\S]*?span[^>]*>){3})/i, replaceTagsAndSpaces, parseBalance);
+			getParam(html, result, ['currency', 'balance'], /class="price[^>]*>((?:[\s\S]*?span[^>]*>){3})/i, replaceTagsAndSpaces, myParseCurrency);
+		}
 	}
 	
 	AnyBalance.setResult(result);

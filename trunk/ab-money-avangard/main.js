@@ -26,7 +26,6 @@ var g_headers = {
     'Connection': 'keep-alive',
     'Origin': 'https://www.avangard.ru',
     'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.107 Safari/537.36',
-	'Content-Type':'application/x-www-form-urlencoded'	
 };
 
 function main() {
@@ -52,7 +51,10 @@ function main() {
 		return value;
 	});
 	
-    html = AnyBalance.requestPost(baseurl + "client4/afterlogin", params, addHeaders({Referer: baseurl + 'login/www/ibank_enter.php'}));
+    html = AnyBalance.requestPost(baseurl + "client4/afterlogin", params, addHeaders({
+		Referer: baseurl + 'login/www/ibank_enter.php',
+		'Content-Type':'application/x-www-form-urlencoded'
+	}));
 	
     var error = getParam(html, null, null, [/<!--WAS_ERROR-->([\s\S]*?)<!--\/WAS_ERROR-->/i, /img\/login_error\.png/i], [replaceTagsAndSpaces, /img\/login_error\.png/i, 'Вы ошиблись в логине или пароле. Будьте внимательны при наборе пароля.']);
     if (error)

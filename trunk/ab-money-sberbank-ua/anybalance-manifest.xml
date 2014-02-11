@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-        <id major_version="2.7" version="2">ab-money-sberbank-ua</id>
+        <id major_version="2.8" version="2">ab-money-sberbank-ua</id>
 	<api flags="no_browser"/>
 	<name>Ощадбанк ОнЛ@йн (Україна)</name>
 	<description html="true"><![CDATA[
@@ -25,6 +25,7 @@
 		<counter id="maxlimit" name="Кредитний ліміт" type="numeric"/>
 		<counter id="debt" name="Загальна заборгованість" type="numeric"/>
 		<counter id="rr" name="Розрахунковий рахунок" type="text"/>
+		<counter id="fio" name="Розрахунковий рахунок" type="text"/>    
 	</counters>
 	<keywords>сбербанк онлайн, sberbank online, сберегательный банк, ощадбанк, ощадний банк</keywords>
 	<type>money</type>

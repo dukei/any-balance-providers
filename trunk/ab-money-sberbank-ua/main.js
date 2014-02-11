@@ -75,7 +75,7 @@ AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не вдалося знайти ' + (prefs.lastdigits ? 'карту с останніми цифрами ' + prefs.lastdigits : 'ні однієї карти!'));
 	}
 	
-	getParam(root, result, 'balance', /(?:Доступно:)(?:\s)(\d+\.\d{2})/i, replaceTagsAndSpaces, parseBalance);
+	      getParam(root, result, 'balance', /(?:Доступно:)(?:\s)(\d+\.\d{2})/i, replaceTagsAndSpaces, parseBalance);
         getParam(root, result, 'maxlimit', /(?:Кредитний ліміт:)(?:\s)(\d+\.\d{2})/i, replaceTagsAndSpaces, parseBalance);
 
 	if (prefs.dz=='mmyy') getParam(root, result, 'till', /(?:Дата закінчення дії)(?:[\s\S]*)((січень|лютий|березень|квітень|травень|червень|липень|серпень|вересень|жовтень|листопад|грудень)(\s\d{4}))/i, replaceTagsAndSpaces);
@@ -89,8 +89,9 @@ AnyBalance.trace(html);
         getParam(root, result, 'rr', /((2625\d+)(_*)(\d+))/i, replaceTagsAndSpaces);
 
 	getParam(root, result, 'currency', /(?:amount-currency..)(.{3})/i, replaceTagsAndSpaces);
-
 	getParam(root, result, '__tariff', /(\d{4}\*+\d{4})/i);
+  getParam(root, result, 'fio', /(?:<span class="owwb-ws-header-user-name">)(?:[\s\S]*i>)((.*)(?:&nbsp;)(.*)(?:<))/i, replaceTagsAndSpaces);    
+  
 	result.cardNumber = result.__tariff;
 
 	AnyBalance.setResult(result);

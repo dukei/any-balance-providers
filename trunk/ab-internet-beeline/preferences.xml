@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
     <EditTextPreference 
+		obligatory="true"
         title="Логин" 
         positiveButtonText="ОК" 
         summary="Логин в личный кабинет:||{@s}\n" 
@@ -10,6 +11,7 @@
         key="login">
     </EditTextPreference>
     <EditTextPreference 
+		obligatory="true"
         positiveButtonText="ОК"
         key="password" 
         dialogTitle="Пароль"

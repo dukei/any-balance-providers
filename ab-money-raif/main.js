@@ -32,8 +32,8 @@ function main(){
     var baseurl = 'https://connect.raiffeisen.ru/mobile/services/';
     AnyBalance.setDefaultCharset('utf-8'); 
 
-	checkEmpty(prefs.login, 'Введите логин!');
-	checkEmpty(prefs.password, 'Введите пароль!');
+	checkEmpty(prefs.login, 'Введите логин в интернет-банк!');
+	checkEmpty(prefs.password, 'Введите пароль в интернет-банк!');
 	
     var html = AnyBalance.requestPost(baseurl + 'RCAuthorizationService', g_xml_login.replace(/%LOGIN%/g, prefs.login).replace(/%PASSWORD%/g, prefs.password), addHeaders({SOAPAction: 'urn:login'})); 
 
@@ -41,13 +41,11 @@ function main(){
         var error = getParam(html, null, null, /<faultstring>([\s\S]*?)<\/faultstring>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error) {
 			var er = translateError(error);
-			if(er && /Неправильный логин или пароль/i.test(er))
-				throw new AnyBalance.Error(er, null, true);
-
-			throw new AnyBalance.Error(er);
+			if(er)
+				throw new AnyBalance.Error(er, null, /Неправильный логин или пароль|срок действия Вашего пароля истёк/i.test(er));
 		}
         AnyBalance.trace(html);
-        throw new AnyBalance.Error('Не удалось зайти в интернет банк. Обратитесь к автору провайдера.');
+        throw new AnyBalance.Error('Не удалось зайти в интернет банк. Обратитесь к разработчикам.');
     }
 	
     var result = {success: true};

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-hosting-ispserver</id>
+	<api flags="no_browser"/>
+	<name>ISPServer (Хостинг)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера http://ispserver.com</p>
+	<p>Информация берется из личного кабинета https://my.ispserver.com/manager/billmgr?startpage=accountinfo</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс"/>
+		<counter id="acc_name" name="Номер счета" type="text"/>
+		<counter id="acc_name" name="Название счета" type="text"/>
+		<counter id="avail_till" name="Оплачено до" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>hosting</type>
+	<country>ru</country>
+</provider>

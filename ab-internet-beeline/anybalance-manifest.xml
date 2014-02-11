@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="5">ab-internet-beeline</id>
+	<id version="6">ab-internet-beeline</id>
 	<name>Beeline интернет</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе, бонусах и тарифном плане для пользователей Beeline интернет.</p>       
@@ -10,15 +10,16 @@
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units="р"/>
-		<counter id="bonus" name="Бонусы" units="р"/>
-		<counter id="traffic" name="Включенный трафик" units="Гб"/>
-		<counter id="topay" name="Сумма к оплате" units="р"/>
-		<counter id="abon" name="Ежемесячный платеж" units="р"/>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="bonus" name="Бонусы" units=" р"/>
+		<counter id="traffic" name="Включенный трафик" units=" Гб"/>
+		<counter id="topay" name="Сумма к оплате" units=" р"/>
+		<counter id="abon" name="Ежемесячный платеж" units=" р"/>
 		<counter id="till" name="Конец расчетного периода" type="time"/>
 		<counter id="userName" name="ФИО" type="text"/>
 		<counter id="status" name="Статус" type="text"/>

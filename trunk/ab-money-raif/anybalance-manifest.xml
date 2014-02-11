@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="10">ab-money-raif</id>
+	<id version="11">ab-money-raif</id>
 	<name>Райффайзен</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем остатке и других параметрах счетов и депозитов для клиентов банка Райффайзенбанк (http://www.raiffeisen.ru).</p>

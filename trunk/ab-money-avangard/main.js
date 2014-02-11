@@ -53,30 +53,30 @@ function main() {
 	});
 	
     html = AnyBalance.requestPost(baseurl + "client4/afterlogin", params, addHeaders({Referer: baseurl + 'login/www/ibank_enter.php'}));
-
-    var error = getParam(html, null, null, /<!--WAS_ERROR-->([\s\S]*?)<!--\/WAS_ERROR-->/i, replaceTagsAndSpaces);
+	
+    var error = getParam(html, null, null, [/<!--WAS_ERROR-->([\s\S]*?)<!--\/WAS_ERROR-->/i, /img\/login_error\.png/i], [replaceTagsAndSpaces, /img\/login_error\.png/i, 'Вы ошиблись в логине или пароле. Будьте внимательны при наборе пароля.']);
     if (error)
         throw new AnyBalance.Error(error, null, /Вы ошиблись в логине или пароле/i.test(error));
-
+	
     var firstpage = getParam(html, null, null, /window.location\s*=\s*"([^"]*)"/i);
     if (!firstpage)
         throw new AnyBalance.Error("Не удалось найти ссылку на первую страницу банка.");
-
+	
     AnyBalance.trace("We seem to enter the bank...");
-
+	
     var url = AnyBalance.getLastUrl();
     //Физики и IP почему-то на разные папки редиректятся... Узнаем, на какую нас занесло
     var bankType = getParam(url, null, null, /avangard.ru\/(\w+Avn)/i);
     if (!bankType)
         throw new AnyBalance.Error('Не удаётся определить тип банка по url: ' + url);
     AnyBalance.trace('Тип банка: ' + bankType);
-
+	
     //Зачем-то банк требует удалить эту куку
     //AnyBalance.setCookie('www.avangard.ru', 'JSESSIONID', null, {path: '/' + bankType});
-
+	
     baseurl += bankType;
     html = AnyBalance.requestGet(baseurl + "/" + firstpage, g_headers);
-
+	
     if (bankType == 'clbAvn') {
         fetchBankYur(html, baseurl);
     } else {

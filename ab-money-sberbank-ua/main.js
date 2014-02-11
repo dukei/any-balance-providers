@@ -90,6 +90,7 @@ AnyBalance.trace(html);
 
 	getParam(root, result, 'currency', /(?:amount-currency..)(.{3})/i, replaceTagsAndSpaces);
 	getParam(root, result, '__tariff', /(\d{4}\*+\d{4})/i);
+
   getParam(root, result, 'fio', /(?:<span class="owwb-ws-header-user-name">)(?:[\s\S]*i>)((.*)(?:&nbsp;)(.*)(?:<))/i, replaceTagsAndSpaces);    
   
 	result.cardNumber = result.__tariff;

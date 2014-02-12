@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="14">ab-adv-advmaker</id>
+	<id version="15">ab-adv-advmaker</id>
 	<name>AdvMaker</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе в рекламной сети AdvMaker https://advmaker.net/</p>
@@ -17,6 +17,7 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Общий баланс" units=" р"/>
+		<counter id="total_balance" name="Общий заработок" units=" р"/>
 		<counter id="click_under " name="Click Under" units=" р"/>
 		<counter id="slide_banner" name="Sliding Banner" units=" р"/>
 		<counter id="banners" name="Banners" units=" р"/>

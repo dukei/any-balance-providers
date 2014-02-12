@@ -34,10 +34,12 @@ function main(){
 		throw new AnyBalance.Error('Не удалось найти таблицу с данными. Сайт изменен?');
 	
 	var result = {success: true};
+	
 	getParam(html, result, 'balance', [/Ваш баланс(?:[^>]*>){2}([^<]+)/i, /Заработано на[\s\S]{15}([\s\S]*?)<\/strong>/i], replaceTagsAndSpaces, parseBalance);
 	getParam(table, result, 'click_under', /Всего:(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(table, result, 'slide_banner', /Всего:(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(table, result, 'banners', /Всего:(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-
+	getParam(table, result, 'total_balance', /Всего:([^>]*>){13}/i, replaceTagsAndSpaces, parseBalance);
+	
     AnyBalance.setResult(result);
 }

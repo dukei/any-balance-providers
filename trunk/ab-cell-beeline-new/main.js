@@ -287,7 +287,7 @@ function fetchPost(baseurl, html) {
 			if(!isset(balance))
 				balance = getParam(html, null, null, /Расходы по номеру за текущий период с НДС[\s\S]*?<div[^>]+class="balan?ce-summ"[^>]*>([\s\S]*?)<\/div>/i, [replaceTagsAndSpaces, /Баланс временно недоступен/ig, ''], parseBalance);
 			
-			getParam(balance || null, result, 'balance');
+			getParam(balance, result, 'balance');
 		}
 	}
 	
@@ -396,6 +396,9 @@ function fetchPre(baseurl, html) {
 		getParam(xhtml, result, 'balance', /у вас на балансе([\s\S]*)/i, replaceTagsAndSpaces, parseBalance);
 		getParam(xhtml, result, ['currency', 'balance'], /у вас на балансе([\s\S]*)/i, replaceTagsAndSpaces, myParseCurrency);
 		getParam(xhtml, result, 'fio', /<span[^>]+class="b2c.header.greeting.pre.b2c.ban"[^>]*>([\s\S]*?)(?:<\/span>|,)/i, replaceTagsAndSpaces, html_entity_decode);*/
+		// Пробуем получить со страницы, при обновлении через мобильный интернет, он там есть
+		getParam(html, result, 'balance', /class="price[^>]*>((?:[\s\S]*?span[^>]*>){3})/i, replaceTagsAndSpaces, parseBalance);
+		// Теперь запросим блок homeBalance
 		xhtml = getBlock(baseurl + 'c/pre/index.html', html, 'homeBalance');
 		/*var tries = 0; //Почему-то не работает. Сколько раз ни пробовал, если первый раз баланс недоступен, то и остальные оказывается недоступен...
 		while(/balance-not-found/i.test(xhtml) && tries < 20){
@@ -403,6 +406,7 @@ function fetchPre(baseurl, html) {
 			AnyBalance.sleep(2000);
 			xhtml = refreshBalance(baseurl + 'c/pre/index.html', html, xhtml) || xhtml;
 		} */
+		// И получим баланс из него
 		getParam(xhtml, result, 'balance', /class="price[^>]*>((?:[\s\S]*?span[^>]*>){3})/i, replaceTagsAndSpaces, parseBalance);
 		// Если баланса нет, не надо получать и валюту
 		if(result.balance != null) {
@@ -414,14 +418,18 @@ function fetchPre(baseurl, html) {
 		getBonuses(xhtml, result);
 	}
 	if (AnyBalance.isAvailable('fio', 'balance')) {
-		html = AnyBalance.requestGet(baseurl + 'm/pre/index.html', g_headers);
-		getParam(html, result, 'fio', /<div[^>]+class="abonent-name"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, capitalFirstLenttersAndDecode);
+		AnyBalance.trace('Переходим в мобильную версию для получения ФИО.');
 		
+		html = AnyBalance.requestGet(baseurl + 'm/pre/index.html', g_headers);
+		AnyBalance.trace(html);
+		
+		getParam(html, result, 'fio', /<div[^>]+class="abonent-name"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, capitalFirstLenttersAndDecode);
 		// Если не получили баланс выше, попробуем достать его из мобильной версии
-		if(result.balance == null) {
+		// Вызывает глюки, надо дождаться логов, из них будет ясно что тут отображается, если в кабинете нет баланса.
+		/*if(result.balance == null) {
 			getParam(html, result, 'balance', /class="price[^>]*>((?:[\s\S]*?span[^>]*>){3})/i, replaceTagsAndSpaces, parseBalance);
 			getParam(html, result, ['currency', 'balance'], /class="price[^>]*>((?:[\s\S]*?span[^>]*>){3})/i, replaceTagsAndSpaces, myParseCurrency);
-		}
+		}*/
 	}
 	
 	AnyBalance.setResult(result);

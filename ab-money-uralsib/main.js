@@ -108,15 +108,15 @@ function doNewCabinet(prefs) {
 		x05:'N',
 		x06:'4' // может понадобится переделать
 	}, addHeaders({Referer: baseurl + ''}));
-
+	
 	if (!/Авторизация успешна/i.test(html)) {
 		var error = sumParam(html, null, null, /"err"[^"]+"([^"]+)/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
-		if (error && /Неверный логин или пароль/i.test(error))
-			throw new AnyBalance.Error(error, null, true);
 		if (error)
-			throw new AnyBalance.Error(error);
+			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+		
+		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-	}
+	}	
 	
 	var loginVar = getParam(html, null, null, /afterLogin\(([^)]+)/i);
 	if(!loginVar)
@@ -126,22 +126,22 @@ function doNewCabinet(prefs) {
 	html = AnyBalance.requestGet(url, g_headers);
 	// Все, теперь можно разбирать данные
     if(prefs.type == 'acc')
-        fetchAcc(html, baseurl, prefs, url);
-    else
-        fetchCard(html, baseurl, prefs);
+		fetchAcc(html, baseurl, prefs, url);
+	else
+		fetchCard(html, baseurl, prefs);
 }
 
 function fetchCard(html, baseurl, prefs) {
 	html = AnyBalance.requestGet(baseurl + getParam(html, null, null, /href="([^"]+CARDS[^"]+)/i), g_headers);
 	
-	var lastdigits = prefs.lastdigits ? prefs.lastdigits : '\\d{4}';
+	var lastdigits = prefs.cardnum ? prefs.cardnum : '\\d{4}';
 	
-	// <li[^>]*class(?:[^>]*>){25}\d{4}[-x]{8,}5821(?:[^>]*>){5}\s*</li>
-	var reCard = new RegExp('<li[^>]*class(?:[^>]*>){25}\\d{4}[-x]{8,}' + lastdigits + '(?:[^>]*>){5}\\s*</li>', 'i');
+	// <li[^>]*class(?:[^>]*>){25,30}\d{4}[\-x]{8,}6445(?:[^>]*>){3,6}\s*</
+	var reCard = new RegExp('<li[^>]*class(?:[^>]*>){25,30}\\d{4}[\\-x]{8,}' + lastdigits + '(?:[^>]*>){3,6}\\s*</', 'i');
 	
 	var tr = getParam(html, null, null, reCard);
 	if(!tr)
-		throw new AnyBalance.Error('Не удалось найти ' + (prefs.lastdigits ? 'карту с последними цифрами '+prefs.lastdigits : 'ни одной карты!'));
+		throw new AnyBalance.Error('Не удалось найти ' + (prefs.cardnum ? 'карту с последними цифрами '+prefs.cardnum : 'ни одной карты!'));
 	
 	var result = {success: true};
 	
@@ -153,7 +153,7 @@ function fetchCard(html, baseurl, prefs) {
 	getParam(tr, result, 'till', /\d{4}[-x]{8,}\d{4}[^<]*?(\d{1,2}\/\d{1,2})/i, [replaceTagsAndSpaces, /(.*)/i, '01/$1'], parseDate);
 	
 	// Дополнительная инфа по картам.
-	if (isAvailable(['status', 'accnum', 'acctype'])) {
+	if (isAvailable(['status', 'accnum', 'acctype', 'blocked'])) {
 		var href = getParam(tr, null, null, /<a\s*href="([^"]*)/i);
 		if(href) {
 			html = AnyBalance.requestGet(baseurl + href, g_headers);
@@ -190,13 +190,13 @@ function fetchAcc(html, baseurl, prefs, url) {
 		}));		
 	}
 	
-	var lastdigits = prefs.lastdigits ? prefs.lastdigits : '\\d{4}';
+	var lastdigits = prefs.cardnum ? prefs.cardnum : '\\d{4}';
 	// <div[^>]*desc(?:[^>]*>){22}\s*\d{14,}6688(?:[^>]*>){1}\s*</div>
 	var reCard = new RegExp('<div[^>]*desc(?:[^>]*>){22}\\s*\\d{14,}' + lastdigits + '(?:[^>]*>){1}\\s*</div>', 'i');
 	
 	var tr = getParam(html, null, null, reCard);
 	if(!tr)
-		throw new AnyBalance.Error('Не удалось найти ' + (prefs.lastdigits ? 'счет с последними цифрами '+prefs.lastdigits : 'ни одного счета!'));
+		throw new AnyBalance.Error('Не удалось найти ' + (prefs.cardnum ? 'счет с последними цифрами '+prefs.cardnum : 'ни одного счета!'));
 	
 	var result = {success: true};
 	
@@ -207,7 +207,7 @@ function fetchAcc(html, baseurl, prefs, url) {
 	getParam(tr, result, ['currency', 'balance', 'debt'], /ITEM_ID(?:[^>]*>){10}([^<]+)/i, replaceTagsAndSpaces, parseCurrencyMy);
 	
 	if(isset(result.currency)) {
-		getParam(tr, result, 'debt', new RegExp('([-.,\\d]+)\\s*' + result.currency, 'i'), replaceTagsAndSpaces, parseBalance);
+		getParam(tr, result, 'debt', new RegExp('([-.,\\d\\s]+)\\s*' + result.currency, 'i'), replaceTagsAndSpaces, parseBalance);
 	}
 	// Дополнительная инфа.
 	/*if (isAvailable(['status', 'accnum', 'acctype'])) {

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-municipal-ykstolica</id>
+	<api flags="no_browser"/>
+	<name>УК Столица</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о состоянии счета в личном кабинете управляющей компании Столица http://lk.ykstolica.ru</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="account" name="Лицевой счет" type="text"/>
+		<counter id="all" name="Сводка по услугам" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>municipal</type>
+	<country>ru</country>
+</provider>

@@ -21,4 +21,12 @@
         dialogMessage="Введите пароль, используемый для входа в личный кабинет https://lk.beeline.ru."
         inputType="textPassword">
     </EditTextPreference>
+	<ListPreference
+		key="type"
+		title="Какой кабинет использовать"
+		summary="||{@s}"
+		entries="lk.beeline.ru|cabinet.beeline.ru"
+		entryValues="lk|cab"
+		defaultValue="lk">
+	</ListPreference>	
 </PreferenceScreen>

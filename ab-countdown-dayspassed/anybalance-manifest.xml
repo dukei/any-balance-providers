@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-countdown-dayspassed</id>
+	<api flags="no_browser"/>
+	<name>Число дней после</name>
+	<description html="true"><![CDATA[
+	<p>Показывает количество дней начиная с указанных дат. Подходит для подсчета дней с момента рождения, покупки машины и т.д.</p>
+	]]></description>
+	<author>BArtWell &lt;web@bartwell.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="counter1" name="Счетчик №1"/>
+		<counter id="counter2" name="Счетчик №2"/>
+		<counter id="counter3" name="Счетчик №3"/>
+		<counter id="counter4" name="Счетчик №4"/>
+		<counter id="counter5" name="Счетчик №5"/>
+		<counter id="counter6" name="Счетчик №6"/>
+		<counter id="counter7" name="Счетчик №7"/>
+	</counters>
+	<keywords>количество дней</keywords>
+	<type>countdown</type>
+</provider>

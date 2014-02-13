@@ -1,0 +1,221 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+
+    <EditTextPreference 
+        title="День для даты №1" 
+        positiveButtonText="ОК" 
+        summary="День, например, 29||{@s}\n"
+        dialogTitle="День 1" 
+        negativeButtonText="Отмена" 
+        dialogMessage="День, например, 29"
+        inputType="number"
+        key="day1">
+    </EditTextPreference>
+ 
+    <ListPreference 
+        key="month1" 
+        title="Месяц для даты №1"
+        summary="Месяц||{@s}\n"
+        entries="Январь|Февраль|Март|Апрель|Май|Июнь|Июль|Август|Сентябрь|Октябрь|Ноябрь|Декабрь"
+        entryValues="1|2|3|4|5|6|7|8|9|10|11|12"
+	defaultValue="1">
+    </ListPreference>
+
+	<EditTextPreference 
+        title="Год для даты №1" 
+        positiveButtonText="ОК" 
+        summary="Год, например, 2013||{@s}\n" 
+        dialogTitle="Год" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Год, например, 2013"
+        inputType="number"
+        key="year1">
+    </EditTextPreference>
+    
+    <EditTextPreference 
+        title="День для даты №2" 
+        positiveButtonText="ОК" 
+        summary="День, например, 29||{@s}\n"
+        dialogTitle="День 2" 
+        negativeButtonText="Отмена" 
+        dialogMessage="День, например, 29"
+        inputType="number"
+        key="day2">
+    </EditTextPreference>
+ 
+    <ListPreference 
+        key="month2" 
+        title="Месяц для даты №2"
+        summary="Месяц||{@s}\n"
+        entries="Январь|Февраль|Март|Апрель|Май|Июнь|Июль|Август|Сентябрь|Октябрь|Ноябрь|Декабрь"
+        entryValues="1|2|3|4|5|6|7|8|9|10|11|12"
+	defaultValue="1">
+    </ListPreference>
+
+	<EditTextPreference 
+        title="Год для даты №2" 
+        positiveButtonText="ОК" 
+        summary="Год, например, 2013||{@s}\n" 
+        dialogTitle="Год" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Год, например, 2013"
+        inputType="number"
+        key="year2">
+    </EditTextPreference>
+    
+    <EditTextPreference 
+        title="День для даты №3" 
+        positiveButtonText="ОК" 
+        summary="День, например, 29||{@s}\n"
+        dialogTitle="День 3" 
+        negativeButtonText="Отмена" 
+        dialogMessage="День, например, 29"
+        inputType="number"
+        key="day3">
+    </EditTextPreference>
+ 
+    <ListPreference 
+        key="month3" 
+        title="Месяц для даты №3"
+        summary="Месяц||{@s}\n"
+        entries="Январь|Февраль|Март|Апрель|Май|Июнь|Июль|Август|Сентябрь|Октябрь|Ноябрь|Декабрь"
+        entryValues="1|2|3|4|5|6|7|8|9|10|11|12"
+	defaultValue="1">
+    </ListPreference>
+
+	<EditTextPreference 
+        title="Год для даты №3" 
+        positiveButtonText="ОК" 
+        summary="Год, например, 2013||{@s}\n" 
+        dialogTitle="Год" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Год, например, 2013"
+        inputType="number"
+        key="year3">
+    </EditTextPreference>
+    
+    <EditTextPreference 
+        title="День для даты №4" 
+        positiveButtonText="ОК" 
+        summary="День, например, 29||{@s}\n"
+        dialogTitle="День 4" 
+        negativeButtonText="Отмена" 
+        dialogMessage="День, например, 29"
+        inputType="number"
+        key="day4">
+    </EditTextPreference>
+ 
+    <ListPreference 
+        key="month4" 
+        title="Месяц для даты №4"
+        summary="Месяц||{@s}\n"
+        entries="Январь|Февраль|Март|Апрель|Май|Июнь|Июль|Август|Сентябрь|Октябрь|Ноябрь|Декабрь"
+        entryValues="1|2|3|4|5|6|7|8|9|10|11|12"
+	defaultValue="1">
+    </ListPreference>
+
+	<EditTextPreference 
+        title="Год для даты №4" 
+        positiveButtonText="ОК" 
+        summary="Год, например, 2013||{@s}\n" 
+        dialogTitle="Год" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Год, например, 2013"
+        inputType="number"
+        key="year4">
+    </EditTextPreference>
+    
+    <EditTextPreference 
+        title="День для даты №5" 
+        positiveButtonText="ОК" 
+        summary="День, например, 29||{@s}\n"
+        dialogTitle="День 5" 
+        negativeButtonText="Отмена" 
+        dialogMessage="День, например, 29"
+        inputType="number"
+        key="day5">
+    </EditTextPreference>
+ 
+    <ListPreference 
+        key="month5" 
+        title="Месяц для даты №5"
+        summary="Месяц||{@s}\n"
+        entries="Январь|Февраль|Март|Апрель|Май|Июнь|Июль|Август|Сентябрь|Октябрь|Ноябрь|Декабрь"
+        entryValues="1|2|3|4|5|6|7|8|9|10|11|12"
+	defaultValue="1">
+    </ListPreference>
+
+	<EditTextPreference 
+        title="Год для даты №5" 
+        positiveButtonText="ОК" 
+        summary="Год, например, 2013||{@s}\n" 
+        dialogTitle="Год" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Год, например, 2013"
+        inputType="number"
+        key="year5">
+    </EditTextPreference>
+    
+    <EditTextPreference 
+        title="День для даты №6" 
+        positiveButtonText="ОК" 
+        summary="День, например, 29||{@s}\n"
+        dialogTitle="День 6" 
+        negativeButtonText="Отмена" 
+        dialogMessage="День, например, 29"
+        inputType="number"
+        key="day6">
+    </EditTextPreference>
+ 
+    <ListPreference 
+        key="month6" 
+        title="Месяц для даты №6"
+        summary="Месяц||{@s}\n"
+        entries="Январь|Февраль|Март|Апрель|Май|Июнь|Июль|Август|Сентябрь|Октябрь|Ноябрь|Декабрь"
+        entryValues="1|2|3|4|5|6|7|8|9|10|11|12"
+	defaultValue="1">
+    </ListPreference>
+
+	<EditTextPreference 
+        title="Год для даты №6" 
+        positiveButtonText="ОК" 
+        summary="Год, например, 2013||{@s}\n" 
+        dialogTitle="Год" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Год, например, 2013"
+        inputType="number"
+        key="year6">
+    </EditTextPreference>
+    
+    <EditTextPreference 
+        title="День для даты №7" 
+        positiveButtonText="ОК" 
+        summary="День, например, 29||{@s}\n"
+        dialogTitle="День 7" 
+        negativeButtonText="Отмена" 
+        dialogMessage="День, например, 29"
+        inputType="number"
+        key="day7">
+    </EditTextPreference>
+ 
+    <ListPreference 
+        key="month7" 
+        title="Месяц для даты №7"
+        summary="Месяц||{@s}\n"
+        entries="Январь|Февраль|Март|Апрель|Май|Июнь|Июль|Август|Сентябрь|Октябрь|Ноябрь|Декабрь"
+        entryValues="1|2|3|4|5|6|7|8|9|10|11|12"
+	defaultValue="1">
+    </ListPreference>
+
+	<EditTextPreference 
+        title="Год для даты №7" 
+        positiveButtonText="ОК" 
+        summary="Год, например, 2013||{@s}\n" 
+        dialogTitle="Год" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Год, например, 2013"
+        inputType="number"
+        key="year7">
+    </EditTextPreference>
+
+</PreferenceScreen>

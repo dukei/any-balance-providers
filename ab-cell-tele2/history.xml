@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="13" date="2014-02-13">
+	- Добавлены счетчики: Пополнения за месяц, Списания за месяц
+	</change>
 	<change version="12" date="2014-02-10">
 	- Добавлен счетчик: История платежей.
 	</change>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-shop-dimex</id>
+	<api flags="no_browser"/>
+	<name>Auto-Dimex (Нижний Новгород)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию об остатках в инетрнет-магзине Auto-Dimex г. Нижний Новгород http://www.auto-dimex.ru</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="cart_items" name="Позиций в корзине"/>
+		<counter id="cart_sum" name="Позиций в корзине на сумму" units=" р"/>
+		<counter id="balance" name="На счету" units=" р"/>
+		<counter id="saldo" name="Сальдо баланса" units=" р"/>
+		<counter id="needtopay" name="В заказе без оплаты" units=" р"/>
+		<counter id="free" name="Остаток средств для заказа" units=" р"/>
+		<counter id="usd" name="Доллар" units=" р"/>
+		<counter id="eur" name="Евро" units=" р"/>
+	</counters>
+	<keywords></keywords>
+	<type>shop</type>
+	<country>ru</country>
+</provider>

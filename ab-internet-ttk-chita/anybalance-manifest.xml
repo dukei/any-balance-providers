@@ -1,33 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-ttk-chita</id>
-  <name>ТТК-Чита - интернет провайдер</name>
-  <description>
-    Получает баланс и информацию о тарифном плане для интернет провайдера ТТК-Чита: http://www.ttk-chita.ru/
-
-    Информация берется из личного кабинета http://newstat.ttk-chita.ru
-  </description>
-  <author>Alexandra Shalamova &lt;alexandrashalamova@gmail.com&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="traffic_time" name="Время соединений за текущий месяц" type="time_interval" format="{@H}:{@min}:{@sec}"/>
-    <counter id="traffic_cost" name="Стоимость трафика за текущий месяц" units="р"/>
-    <counter id="traffic_total" name="Общий трафик за текущий месяц" units="Gb"/>
-  </counters>
-  <keywords>
-    интернет, чита, транстелеком
-  </keywords>
-  <type>
-    internet
-  </type>
-  <country>
-    ru
-  </country>
+	<api flags="no_browser"/>
+	<id version="2">ab-internet-ttk-chita</id>
+	<name>ТТК-Чита - интернет провайдер</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе интернет провайдера ТТК-Чита: http://www.ttk-chita.ru/</p>
+	<p>Информация берется из личного кабинета http://newstat.ttk-chita.ru</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="traffic_time" name="Время соединений за текущий месяц" type="time_interval" format="{@H}:{@min}:{@sec}"/>
+		<counter id="traffic_cost" name="Стоимость трафика за текущий месяц" units=" р"/>
+		<counter id="traffic_total" name="Общий трафик за текущий месяц" units=" Gb"/>
+	</counters>
+	<keywords>интернет, чита, транстелеком</keywords>
+	<type>internet</type>
+	<country>ru</country>
 </provider>

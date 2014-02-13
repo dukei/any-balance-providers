@@ -98,11 +98,16 @@ function main() {
 	}
 	if (AnyBalance.isAvailable('history')) {
 		AnyBalance.trace("Searching for history");
-		html = AnyBalance.requestGet(baseurl + "payments/history/last_10");
+		
+		html = prefs.testPage || AnyBalance.requestGet(baseurl + "payments/history/last_1_month");
 		
 		var table = getParam(html, null, null, /Время платежа([\s\S]*?)<\/table>/i);
 		if(table) {
 			sumParam(table, result, 'history', /<a[^>]*name="pos(?:[^>]*>){2}((?:[^>]*>){3})/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+			// Отрицательные
+			sumParam(table, result, 'history_out', /<a[^>]*name="pos(?:[^>]*>){4}(\s*-\s*[\d,.]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+			// Положительные
+			sumParam(table, result, 'history_income', /<a[^>]*name="pos(?:[^>]*>){4}\s*([\d,.]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 		} else {
 			AnyBalance.trace('Не удалось найти таблицу платежей.');
 		}

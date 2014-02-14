@@ -1,54 +1,13 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Получает параметры кампаний Яндекс.Директ
-
-Сайт оператора: http://direct.yandex.ru/
-Личный кабинет: https://direct.yandex.ru/
 */
 
-function getParam (html, result, param, regexp, replaces, parser) {
-	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
-		return;
-
-	var value = regexp.exec (html);
-	if (value) {
-		value = value[1];
-		if (replaces) {
-			for (var i = 0; i < replaces.length; i += 2) {
-				value = value.replace (replaces[i], replaces[i+1]);
-			}
-		}
-		if (parser)
-			value = parser (value);
-
-    if(param)
-      result[param] = value;
-    else
-      return value
-	}
-}
-
-var replaceTagsAndSpaces = [/<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
-var replaceFloat = [/\s+/g, '', /,/g, '.'];
-
-function parseDate(str){
-    var matches = /(\d+)[^\d](\d+)[^\d](\d+)/.exec(str);
-    var time;
-    if(matches){
-	  time = (new Date(+matches[3], matches[2]-1, +matches[1])).getTime();
-          AnyBalance.trace('Parsing date ' + new Date(time) + ' from value: ' + str);
-          return time;
-    }
-    AnyBalance.trace('Could not parse date from value: ' + str);
-}
-
 var g_headers = {
-    Accept:'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-    'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
-    'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-    Сonnection:'keep-alive',
-    'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.5 (KHTML, like Gecko) Chrome/19.0.1084.52 Safari/536.5'
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
+	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Connection': 'keep-alive',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
 };
 
 function getIdKey(html){
@@ -59,34 +18,34 @@ function main(){
     var prefs = AnyBalance.getPreferences();
     
     AnyBalance.setDefaultCharset('utf-8');
-
-    if(!prefs.login)
-        throw new AnyBalance.Error("Введите логин!");
-    if(!prefs.password)
-        throw new AnyBalance.Error("Введите пароль!");
-    if(prefs.cid && !/\d+/.test(prefs.cid))
+	
+	checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(prefs.password, 'Введите пароль!');
+	
+	if(prefs.cid && !/\d+/.test(prefs.cid))
         throw new AnyBalance.Error("Введите ID рекламной кампании, по которой вы хотите получить информацию. Он должен состоять только из цифр!");
-
-    var baseurl = "https://passport.yandex.ru/passport?mode=auth";
-    
-    var html = AnyBalance.requestGet(baseurl, g_headers);
-    var idKey = getIdKey(html);
+	
+	var baseurl = "https://passport.yandex.ru/passport?mode=auth";
+	
+	var html = AnyBalance.requestGet(baseurl, g_headers);
+	/*var idKey = getIdKey(html);
     if(!idKey)
-        throw new AnyBalance.Error("Не удаётся найти ключ для входа в Яндекс. Процедура входа изменилась или проблемы на сайте.");
- 
+        throw new AnyBalance.Error("Не удаётся найти ключ для входа в Яндекс. Процедура входа изменилась или проблемы на сайте.");*/
+	
     var html = AnyBalance.requestPost(baseurl, {
-        from:'passport',
-        idkey:idKey,
-        display:'page',
+        //from:'passport',
+        //idkey:idKey,
+        //display:'page',
         login:prefs.login,
         passwd:prefs.password,
-        timestamp:new Date().getTime()
+		retpath:'',
+        //timestamp:new Date().getTime()
     }, g_headers);
-
+	
     var error = getParam(html, null, null, /b\-login\-error[^>]*>([\s\S]*?)<\/strong>/i, replaceTagsAndSpaces);
     if(error)
         throw new AnyBalance.Error(error);
-
+	
     if(/Установить постоянную авторизацию на(?:\s|&nbsp;)+данном компьютере\?/i.test(html)){
         //Яндекс задаёт дурацкие вопросы.
         AnyBalance.trace("Яндекс спрашивает, нужно ли запоминать этот компьютер. Отвечаем, что нет... (idkey=" + getIdKey(html) + ")");
@@ -97,26 +56,26 @@ function main(){
             no:1
         }, g_headers);
     }
-
+	
     var yandexuid = getParam(html, null, null, /passport\.yandex\.ru\/passport\?mode=logout&yu=(\d+)/);
     if(!yandexuid)
         throw new AnyBalance.Error("Не удалось зайти. Проверьте логин и пароль.");
-
-    var result={success: true};
-
+	
+    var result = {success: true};
+	
     var jsonInfoStr = AnyBalance.requestGet('http://direct.yandex.ru/widget/export?yandexuid=' + yandexuid + '&cid=' + (prefs.cid || ''), g_headers);
-    if(/Сервис временно недоступен/.test(jsonInfoStr))
-        throw new AnyBalance.Error("Яндекс сообщает: Сервис временно недоступен");
-
-    AnyBalance.trace('Got from yandex: ' + jsonInfoStr);
-    var jsonInfo = JSON.parse(jsonInfoStr);
-   
-    if(jsonInfo.no_campaigns)
+	if(/Сервис временно недоступен/.test(jsonInfoStr))
+		throw new AnyBalance.Error("Яндекс сообщает: Сервис временно недоступен");
+	
+	AnyBalance.trace('Got from yandex: ' + jsonInfoStr);
+	var jsonInfo = JSON.parse(jsonInfoStr);
+	
+	if(jsonInfo.no_campaigns)
         throw new AnyBalance.Error('Рекламные кампании отсутствуют');
-
+	
     if(prefs.cid && (!jsonInfo.camps_info || jsonInfo.camps_info.length == 0))
         throw new AnyBalance.Error('Нет активной рекламной кампании ID:' + prefs.cid);
-
+	
     var sum_rest = jsonInfo.sum_rest;
     var active_camps_num = jsonInfo.active_camps_num;
     var active_camps_list = jsonInfo.camps_list || [];
@@ -126,10 +85,10 @@ function main(){
     var overdraft_rest = (overdraft && 1*overdraft.overdraft_rest) || 0;
     var overdraft_debt = (overdraft && 1*overdraft.debt) || 0;
     var overdraft_pay_date = (overdraft && overdraft.pay_date) || '';
-
+	
     if(AnyBalance.isAvailable('balance'))
         result.balance = sum_rest;
-
+	
     if(has_overdraft){    
         if(AnyBalance.isAvailable('o_rest'))
             result.o_rest = overdraft_rest;
@@ -138,11 +97,11 @@ function main(){
         if(AnyBalance.isAvailable('o_paydate') && overdraft_pay_date)
             result.o_paydate = parseDate(overdraft_pay_date);
     }
-
+	
     if(AnyBalance.isAvailable('cnum')){
         result.cnum = active_camps_num;
     }
-
+	
     if(AnyBalance.isAvailable('clist')){
         var campsNames = [];
         for(var i=0; i<active_camps_list.length; ++i){
@@ -151,7 +110,7 @@ function main(){
         }
         result.clist = campsNames.join(',\n');
     }
-
+	
     var camps_info = jsonInfo.camps_info && jsonInfo.camps_info[0];
     if(camps_info){
         result.__tariff = camps_info.name;
@@ -166,6 +125,6 @@ function main(){
         if(AnyBalance.isAvailable('c_clicks'))
             result.c_clicks = camps_info.clicks_today;
     }
-
+	
     AnyBalance.setResult(result);
 }

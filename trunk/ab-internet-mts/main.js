@@ -57,38 +57,34 @@ function getRostov(){
     var baseurl = 'http://lk.ug.mts.ru/';
 
     // Заходим на главную страницу
-    var info = AnyBalance.requestPost(baseurl + "cgi-bin/billing_auth.pl", {
-        'new': 1,
+    var html = AnyBalance.requestPost(baseurl + "auth/login", {
     	login: prefs.login,
         password: prefs.password
     });
-
-    var error = getParam(info, null, null, /"auth_error"[\s\S]*?"([^"]*)"/i);
-    if(error)
-        throw new AnyBalance.Error(error);
-
-    var html = AnyBalance.requestGet(baseurl);
-
-    var result = {success: true};
-
-    if(AnyBalance.isAvailable('username')){
-       var $parse = $(html);
-       result.username = $parse.find('td.sidebar h3').text();
-    }
-
-    getParam(html, result, 'agreement', /Договор №(.*?)от/i, replaceTagsAndSpaces);
-    getParam(html, result, 'license', /Номер лицевого счета:(.*?)<\/li>/i, replaceTagsAndSpaces);
-    getParam(html, result, 'balance', /Баланс:\s*<[^>]*>(-?\d[\d\.,\s]*)/i, replaceFloat, parseFloat);
-
+	
+	if (!/auth\/logout/i.test(html)) {
+		var error = getParam(html, null, null, /"b_error"([^>]*>){9}/i, replaceTagsAndSpaces, html_entity_decode);
+		if (error)
+			throw new AnyBalance.Error(error, null, /Неправильный лицевой счет или пароль/i.test(error));
+		
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+	}
+	
+	var result = {success: true};
+	
+	getParam(html, result, 'username', /"customer-info"([^>]*>){6}/i, replaceTagsAndSpaces);
+    getParam(html, result, 'agreement', /Договор №([^<]+)/i, replaceTagsAndSpaces);
+    getParam(html, result, 'license', /Номер лицевого счета:([^>]*>){2}/i, replaceTagsAndSpaces);
+    getParam(html, result, 'balance', /Баланс:\s*<[^>]*>(-?\d[\d\.,\s]*)/i, replaceTagsAndSpaces, parseBalance);
+	
     html = AnyBalance.requestGet(baseurl + 'account/resources');
     getParam(html, result, '__tariff', /"with-border">(?:[\s\S]*?<td[^>]*>){3}(.*?)<\/td>/i, replaceTagsAndSpaces);
-
-    if(AnyBalance.isAvailable('abon')){
+	/*if(AnyBalance.isAvailable('abon')){
         html = AnyBalance.requestGet(baseurl + 'account/stat');
         getParam(html, result, 'abon', /Абон[а-я\.]* плата(?:[\s\S]*?<td[^>]*>){2}\s*(-?\d[\d\s\.,]*)/i, replaceFloat, parseFloat);
-    }
-
-    AnyBalance.setResult(result);
+    }*/
+	AnyBalance.setResult(result);
 }
 
 function getMoscow(){

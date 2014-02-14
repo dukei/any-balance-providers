@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-tele-plus</id>
+	<api flags="no_browser"/>
+	<name>Теле-Плюс (Сургут)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Теле-Плюс г. Сургут http://tele-plus.ru/</p>
+	<p>Информация берется из личного кабинета http://stat.tele-plus.ru/main.php</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="paymeny_sum" name="Сумма платежей" units=" р"/>
+		<counter id="credit" name="Кредит" units=" р"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

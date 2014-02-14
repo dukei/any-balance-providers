@@ -142,24 +142,28 @@ function mainNew(baseurl){
     getParam(tr, result, 'currency', /Мой баланс:\s*<[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseCurrency);
     getParam(tr, result, 'status', /Статус:\s*<[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 
-    if(AnyBalance.isAvailable('lastpay', 'lastpaydate')){
-       var dateEnd = new Date();
-       var dateStart = new Date(dateEnd.getTime() - 86400*90*1000); //Три месяца назад
-       var phone = getParam(tr, null, null, /\?phone=(\d+)/i);
-
-       html = AnyBalance.requestPost('http://212.158.163.96/public/glcl/glcl2_cab.php', {
-          started:dateToDMY(dateStart),
-          finished:dateToDMY(dateEnd),
-          command:'history',
-          s:2,
-          number:phone
-       }, g_headers);
-
-       getParam(html, result, 'lastpaydate', /<tr[^>]*>(?:\s*<td[^>]*>[^<]*<\/td>){2}\s*<td[^>]*>([^<]*)<\/td>(?:\s*<td[^>]*>[^<]*<\/td>){4}\s*<\/tr>\s*<\/table>/i, replaceTagsAndSpaces, parseDateISO2);
-       getParam(html, result, 'lastpay', /<tr[^>]*>(?:\s*<td[^>]*>[^<]*<\/td>){4}\s*<td[^>]*>([^<]*)<\/td>(?:\s*<td[^>]*>[^<]*<\/td>){2}\s*<\/tr>\s*<\/table>/i, replaceTagsAndSpaces, parseBalance);
-    }
-
-    AnyBalance.setResult(result);
+    if(AnyBalance.isAvailable('lastpay', 'lastpaydate')) {
+		var dateEnd = new Date();
+		var dateStart = new Date(dateEnd.getTime() - 86400*360*1000); //Год назад
+		var phone = getParam(tr, null, null, /\?phone=(\d+)/i);
+		
+		AnyBalance.setDefaultCharset('windows-1251');
+		html = AnyBalance.requestPost('http://212.158.163.96/public/glcl/glcl2_cab.php', {
+			started:dateToDMY(dateStart),
+			finished:dateToDMY(dateEnd),
+			command:'history',
+			s:2,
+			number:phone
+		}, g_headers);
+		
+		if(/<h2>нет данных<\/h2>/i.test(html)) {
+			AnyBalance.trace('Не найдено информации о последних платежах.');
+		} else {
+			getParam(html, result, 'lastpaydate', /<tr[^>]*>(?:\s*<td[^>]*>[^<]*<\/td>){2}\s*<td[^>]*>([^<]*)<\/td>(?:\s*<td[^>]*>[^<]*<\/td>){4}\s*<\/tr>\s*<\/table>/i, replaceTagsAndSpaces, parseDateISO2);
+			getParam(html, result, 'lastpay', /<tr[^>]*>(?:\s*<td[^>]*>[^<]*<\/td>){4}\s*<td[^>]*>([^<]*)<\/td>(?:\s*<td[^>]*>[^<]*<\/td>){2}\s*<\/tr>\s*<\/table>/i, replaceTagsAndSpaces, parseBalance);		
+		}
+	}
+	AnyBalance.setResult(result);
 }
 
 function mainOld(baseurl){

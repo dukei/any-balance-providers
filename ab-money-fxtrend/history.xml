@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="5" date="2014-02-14">
+      - Counters added from the Summary payments table ('Make deposit' tab): Deposited, Withdrawn, Difference
+      - Counter added: Income (as Equity - Difference)
+      - Some counters changed to optional
+    </change>
     <change version="4" date="2014-02-04">
       - Adaptation to new design
     </change>

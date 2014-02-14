@@ -44,9 +44,9 @@ function main(){
 		var info = matches[0];
 		result.__tariff = prefs.account;
 
-		result.open = getParam(info, null, null, /"created_at":"(.*?)"/i, replaceTagsAndSpaces, html_entity_decode);
-		result.currency = getParam(info, null, null, /"currency":"(.*?)"/i, replaceTagsAndSpaces, html_entity_decode);
-		result.leverage = getParam(info, null, null, /"leverage":"(.*?)"/i, replaceTagsAndSpaces, html_entity_decode);
+		getParam(info, result, 'open', /"created_at":"(.*?)"/i, replaceTagsAndSpaces, html_entity_decode);
+		result.currency = getParam(info, result, 'currency', /"currency":"(.*?)"/i, replaceTagsAndSpaces, html_entity_decode);
+		result.leverage = getParam(info, result, 'leverage', /"leverage":"(.*?)"/i, replaceTagsAndSpaces, html_entity_decode);
 		result.balance = getParam(info, null, null, /"balance":([\d\.]*)/i, replaceTagsAndSpaces, parseBalance);
 		result.equity = getParam(info, null, null, /"equity":([\d\.]*)/i, replaceTagsAndSpaces, parseBalance);
 		result.receipts = Math.round((result.equity*1 - result.balance*1)*100)/100;
@@ -63,6 +63,15 @@ function main(){
 			throw new AnyBalance.Error("Incorrect number of account or error getting statistics");}
 	}
 
+	if(isAvailable('deposited', 'withdrawn', 'difference', 'income')){
+		var info = AnyBalance.requestGet(baseurl + 'my/accounts/deposit/');
+
+		result.deposited = getParam(info, null, null, /<td[^>]*>ВСЕГО<\/td>\s+<td[^>]*>(.*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+		result.withdrawn = getParam(info, null, null, /<td[^>]*>ВСЕГО<\/td>\s+<td[^>]*>.*?<\/td>\s+<td[^>]*>(.*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+		result.difference = getParam(info, null, null, /<td[^>]*>ВСЕГО<\/td>\s+<td[^>]*>.*?<\/td>\s+<td[^>]*>.*?<\/td>\s+<td[^>]*>(.*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+		result.income = Math.round((result.equity*1 - result.difference*1)*100)/100;
+
+	}
 	
 	AnyBalance.setResult(result);
 };

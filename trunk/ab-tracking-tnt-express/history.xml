@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-<change version="2" date="2013-11-06">
-- New counter: Last parcel condition
-</change>
+	<change version="3" date="2014-02-14">
+	- Исправлена ошибка.
+	</change>
+	<change version="2" date="2013-11-06">
+	- New counter: Last parcel condition
+	</change>
 </history>

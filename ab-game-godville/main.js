@@ -49,10 +49,10 @@ function main(){
 		result['godpower'] = js.godpower;
 
 	if(AnyBalance.isAvailable('wood_p'))
-		result['wood_p'] = js.wood ? js.wood.slice(0,-1) : 0;
+		result['wood_p'] = js.wood_cnt ? js.wood_cnt / 10 : 0;
 
 	if(AnyBalance.isAvailable('wood'))
-		result['wood'] = js.wood.slice(0,-1) * 10;
+		result['wood'] = js.wood_cnt;
 		
 	if(js.diary_last){
 

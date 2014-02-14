@@ -144,7 +144,7 @@ function mainNew(baseurl){
 
     if(AnyBalance.isAvailable('lastpay', 'lastpaydate')) {
 		var dateEnd = new Date();
-		var dateStart = new Date(dateEnd.getTime() - 86400*360*1000); //Год назад
+		var dateStart = new Date(dateEnd.getTime() - 86400*365*1000); //Год назад
 		var phone = getParam(tr, null, null, /\?phone=(\d+)/i);
 		
 		AnyBalance.setDefaultCharset('windows-1251');
@@ -163,6 +163,30 @@ function mainNew(baseurl){
 			getParam(html, result, 'lastpay', /<tr[^>]*>(?:\s*<td[^>]*>[^<]*<\/td>){4}\s*<td[^>]*>([^<]*)<\/td>(?:\s*<td[^>]*>[^<]*<\/td>){2}\s*<\/tr>\s*<\/table>/i, replaceTagsAndSpaces, parseBalance);		
 		}
 	}
+	
+    if(AnyBalance.isAvailable('lastcall_duration', 'lastcall_date', 'lastcall_cost')) {
+		var dateEnd = new Date();
+		var dateStart = new Date(dateEnd.getTime() - 86400*365*1000); //Год назад
+		var phone = getParam(tr, null, null, /\?phone=(\d+)/i);
+		
+		AnyBalance.setDefaultCharset('windows-1251');
+		html = AnyBalance.requestPost('http://212.158.163.96/public/glcl/glcl2_cab.php', {
+			started:dateToDMY(dateStart),
+			finished:dateToDMY(dateEnd),
+			command:'cdr',
+			s:2,
+			number:phone
+		}, g_headers);
+		
+		if(/Общее время:\s*<b>\s*0\s*<\/b>\s*мин/i.test(html)) {
+			AnyBalance.trace('Не найдено информации о последних звонках.');
+		} else {
+			getParam(html, result, 'lastcall_date', /<table[^>]*>\s*<tr>\s*<th([^>]*>){20}/i, replaceTagsAndSpaces, parseDateISO2);
+			getParam(html, result, 'lastcall_duration', /<table[^>]*>\s*<tr>\s*<th([^>]*>){32}/i, [replaceTagsAndSpaces, /([\s\S]*)/i, '$1 sec'], parseMinutes);
+			getParam(html, result, 'lastcall_cost', /<table[^>]*>\s*<tr>\s*<th([^>]*>){34}/i, replaceTagsAndSpaces, parseBalance);
+		}
+	}
+	
 	AnyBalance.setResult(result);
 }
 

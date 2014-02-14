@@ -46,8 +46,9 @@ function main() {
 	if (!/logout/i.test(html)) {
 		var error = getParam(html, null, null, /span\s*>\s*(Ошибка авторизации(?:[^>]*>){4})/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
-			throw new AnyBalance.Error(error, null, /Ошибка авторизации/i.test(html));
+			throw new AnyBalance.Error(error/*, null, /Ошибка авторизации/i.test(html)*/);
 		
+		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	

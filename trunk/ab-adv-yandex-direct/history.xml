@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-    <change version="3" date="2012-10-12">
-      - Исправлена процедура входа
-    </change>
-    <change version="2" date="2012-09-22">
-      - Улучшено сообщение об ошибке в случае отсутствия кампаний
-    </change>
+	<change version="4" date="2014-02-14">
+	- Поддежрка изменений на сайте.
+	</change>
+	<change version="3" date="2012-10-12">
+	- Исправлена процедура входа.
+	</change>
+	<change version="2" date="2012-09-22">
+	- Улучшено сообщение об ошибке в случае отсутствия кампаний.
+	</change>
 </history>

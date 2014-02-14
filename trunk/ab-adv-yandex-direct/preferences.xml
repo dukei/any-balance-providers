@@ -1,32 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <EditTextPreference 
-        title="Логин" 
-        positiveButtonText="ОК" 
-        summary="Логин в Яндекс.Директ||{@s}\n" 
-        dialogTitle="Логин" 
-        negativeButtonText="Отмена" 
-        dialogMessage="Введите логин для входа в Яндекс.Директ."
-        key="login">
-    </EditTextPreference>
-    <EditTextPreference 
-        positiveButtonText="ОК"
-        key="password" 
-        dialogTitle="Пароль для входа"
-        negativeButtonText="Отмена"
-        title="Пароль"
-        summary="||***********"
-        dialogMessage="Введите пароль, используемый для входа в систему Яндекс.Директ."
-        inputType="textPassword">
-    </EditTextPreference>
-    <EditTextPreference 
-        positiveButtonText="ОК"
-        key="cid" 
-        dialogTitle="ID кампании"
-        negativeButtonText="Отмена"
-        title="ID кампании"
-        summary="|Только общая информация\n|{@s}\n"
-        dialogMessage="Введите ID кампании (его можно увидеть рядом с названием кампании в вашем Yandex.Direct. Список кампаний можно также получить в одноименном счетчике). Оставьте это поле пустым, чтобы получить только общую информацию."
-        inputType="number">
-    </EditTextPreference>
+	<EditTextPreference
+		obligatory="true"
+		title="Логин"
+		positiveButtonText="ОК"
+		summary="Логин в Яндекс.Директ||{@s}\n"
+		dialogTitle="Логин"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите логин для входа в Яндекс.Директ."
+		key="login">
+	</EditTextPreference>
+	<EditTextPreference
+		obligatory="true"
+		positiveButtonText="ОК"
+		key="password"
+		dialogTitle="Пароль для входа"
+		negativeButtonText="Отмена"
+		title="Пароль"
+		summary="||***********"
+		dialogMessage="Введите пароль, используемый для входа в систему Яндекс.Директ."
+		inputType="textPassword">
+	</EditTextPreference>
+	<EditTextPreference
+		positiveButtonText="ОК"
+		key="cid"
+		dialogTitle="ID кампании"
+		negativeButtonText="Отмена"
+		title="ID кампании"
+		summary="|Только общая информация\n|{@s}\n"
+		dialogMessage="Введите ID кампании (его можно увидеть рядом с названием кампании в вашем Yandex.Direct. Список кампаний можно также получить в одноименном счетчике). Оставьте это поле пустым, чтобы получить только общую информацию."
+		inputType="number">
+	</EditTextPreference>
 </PreferenceScreen>

@@ -1,36 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="3">ab-adv-yandex-direct</id>
-  <name>Яндекс.Директ</name>
-  <description>
-    Получает параметры рекламной кампании Яндекс.Директ.
-
-    Чтобы получить статус рекламной кампании, требуется в настройках провайдера указать её ID. Его можно увидеть рядом с названием кампании в личном кабинете Яндекс.Директ. Список всех активных кампаний также представлен в счетчике "Список кампаний".
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Общий остаток" units="уе"/>
-    <counter id="o_rest" name="Отсрочка платежа" units="уе"/>
-    <counter id="o_debt" name="Задолженность" units="уе"/>
-    <counter id="o_paydate" name="Дата оплаты" type="time" format="dd/MM/yyyy"/>
-    <counter id="c_rest" name="Остаток" units="уе"/>
-    <counter id="c_clicks" name="Кликов сегодня"/>
-    <counter id="c_status" name="Статус" type="text"/>
-    <counter id="cnum" name="Активные кампании"/>
-    <counter id="cid" name="ID кампании" type="text"/>
-    <counter id="c_name" name="Название кампании" type="text"/>
-    <counter id="clist" name="Список кампаний" type="text"/>
-  </counters>
-  <keywords>
-    яндекс-директ, yandex direct
-  </keywords>
-  <type>
-    adv
-  </type>
+	<api flags="no_browser"/>
+	<id version="4">ab-adv-yandex-direct</id>
+	<name>Яндекс.Директ</name>
+	<description html="true"><![CDATA[
+	<p>Получает параметры рекламной кампании Яндекс.Директ.</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Чтобы получить статус рекламной кампании, требуется в настройках провайдера указать её ID. Его можно увидеть рядом с названием кампании в личном кабинете Яндекс.Директ. Список всех активных кампаний также представлен в счетчике "Список кампаний".</p>
+	]]></instruction>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Общий остаток" units=" уе"/>
+		<counter id="o_rest" name="Отсрочка платежа" units=" уе"/>
+		<counter id="o_debt" name="Задолженность" units=" уе"/>
+		<counter id="o_paydate" name="Дата оплаты" type="time" format="dd/MM/yyyy"/>
+		<counter id="c_rest" name="Остаток" units=" уе"/>
+		<counter id="c_clicks" name="Кликов сегодня"/>
+		<counter id="c_status" name="Статус" type="text"/>
+		<counter id="cnum" name="Активные кампании"/>
+		<counter id="cid" name="ID кампании" type="text"/>
+		<counter id="c_name" name="Название кампании" type="text"/>
+		<counter id="clist" name="Список кампаний" type="text"/>
+	</counters>
+	<keywords>яндекс-директ, yandex direct</keywords>
+	<type>adv</type>
 </provider>

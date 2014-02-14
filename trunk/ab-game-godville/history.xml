@@ -20,5 +20,8 @@
     </change>
     <change version="7" date="2013-08-11">
         - Добавлен новый счетчик (бревна);
-    </change>	
+    </change>
+    <change version="8" date="2014-02-14">
+        - Исправлен счетчик бревен (в связи с изменениями в API);
+    </change>
 </history>

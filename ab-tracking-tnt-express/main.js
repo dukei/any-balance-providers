@@ -4,7 +4,7 @@
 
 function main(){
 	var prefs = AnyBalance.getPreferences();
-	checkEmpty(prefs.login, 'Enter valid tracking number without white spaces!');
+	checkEmpty(prefs.code, 'Enter valid tracking number without white spaces!');
 	
 	var baseurl = 'http://www.tnt.com/';
     

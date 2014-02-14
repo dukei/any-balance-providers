@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="11">ab-telephony-goodline</id>
+	<id version="12">ab-telephony-goodline</id>
 	<api flags="no_browser"/>
 	<name>ГудЛайн</name>
 	<description html="true"><![CDATA[
@@ -28,6 +28,9 @@
 		<counter id="lastpay" name="Последний платеж" units=" {@currency}"/>
 		<counter id="lastpaydate" name="Дата последнего платежа" type="time" format="dd/MM/yyyy"/>
 		<counter id="status" name="Статус" type="text"/>
+		<counter id="lastcall_date" name="Дата последнего звонка" type="time" format="dd/MM/yyyy"/>
+		<counter id="lastcall_duration" name="Продолжительность последнего звонка" type="time_interval" format="{@H}:{@min}:{@s}"/>
+		<counter id="lastcall_cost" name="Стоимость последнего звонка" units=" {@currency}"/>
 	</counters>
 	<keywords>роуминг goodline</keywords>
 	<type>cell</type>

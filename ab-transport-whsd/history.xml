@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-<change version="3" date="2013-12-05">
-- Поддержка изменений на сайте
-</change>
-<change version="2" date="2013-11-20">
-- Улучшенная обработка ошибок.
-</change>
+	<change version="4" date="2014-02-14">
+	- Поддержка изменений на сайте
+	</change>
+	<change version="3" date="2013-12-05">
+	- Поддержка изменений на сайте
+	</change>
+	<change version="2" date="2013-11-20">
+	- Улучшенная обработка ошибок.
+	</change>
 </history>

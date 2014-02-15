@@ -12,6 +12,14 @@ var g_headers = {
 
 var g_baseurl = 'https://www.gosuslugi.ru/';
 
+function getLocalizedMsg(msgs, path){
+    var paths = path.split(/\./g);
+    for(var i=0; i<paths.length; ++i){
+        msgs = msgs[paths[i]];
+    }
+    return html_entity_decode(msgs);
+}
+
 function main() {
 	var prefs = AnyBalance.getPreferences();
 	AnyBalance.setDefaultCharset('utf-8');
@@ -33,6 +41,13 @@ function main() {
 		cmsDS:'',
 		isRegCheck:'false'
 	}, addHeaders({Referer: 'https://esia.gosuslugi.ru/idp/Authn/CommonLogin'}));
+
+        //Попытаемся получить ошибку авторизации на раннем этапе. Тогда она точнее.
+        var Authenticationbean = getParam(html, null, null, /Authentication.bean\s*=\s*(\{[\s\S]*?\})\s*;/i, null, getJson);
+        if(Authenticationbean && Authenticationbean.authnErrorCode){
+        	var jsonLocalizationMsg = getParam(html, null, null, /var jsonLocalizationMsg\s*=\s*(\{[\s\S]*?\})\s*;/i, null, getJson);
+		throw new AnyBalance.Error(getLocalizedMsg(jsonLocalizationMsg, Authenticationbean.authnErrorCode.errMsg), null, /invalidCredentials/i.test(Authenticationbean.authnErrorCode));
+	}
 	
 	html = AnyBalance.requestGet('https://www.gosuslugi.ru/pgu/personcab', g_headers);
 	

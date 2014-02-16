@@ -350,8 +350,8 @@ function fetchPre(baseurl, html) {
 	if (prefs.phone) { //Если задан номер, то надо сделать из него регулярное выражение
 		if (!/^\d{4,10}$/.test(prefs.phone))
 			throw new AnyBalance.Error('Введите от 4 до 10 последних цифр номера дополнительного телефона без пробелов и разделителей или не вводите ничего, чтобы получить информацию по первому номеру!', null, true);
-		//   <div[^>]*(?:>)[^>]*onclick="\s*selectAccount\(['"]\d*7437['"][^>]*
-		var re = new RegExp('<div[^>]*(?:>)[^>]*onclick="\\s*selectAccount\\([\'\\"]\\d*' + prefs.phone + '[\'\\"][^>]*', 'i');
+		//   <div[^>]*(?:>)[^>]*onclick="\s*selectAccount\(['"]\d*4114['"][^>]*
+		var re = new RegExp('div[^>]*(?:>)[^>]*onclick="\\s*selectAccount\\([\'\\"]\\d*' + prefs.phone + '[\'\\"][^>]*', 'i');
 		var numinfo = getParam(html, null, null, re);
 		if (!numinfo)
 			throw new AnyBalance.Error('Не найден присоединенный к договору номер телефона, оканчивающийся на ' + prefs.phone);

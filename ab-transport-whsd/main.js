@@ -34,15 +34,15 @@ function main(){
 		'txtPassword':prefs.password,
 		'txtUsername':prefs.login,
 	}, addHeaders({Referer: baseurl + 'login.aspx'})); 
-
+	
 	if (!/Добро пожаловать в Ваш личный кабинет/i.test(html)) {
 		var error = getParam(html, null, null, /"lblErrorLogin"(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-		if (error && /введены некорректно/i.test(error))
-			throw new AnyBalance.Error(error, null, true);
 		if (error)
-			throw new AnyBalance.Error(error);
+			throw new AnyBalance.Error(error, null, /введены некорректно/i.test(error));
+		
+		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-	}
+	}	
 	
 	var result = {success: true};
 	

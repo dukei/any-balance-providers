@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="4">ab-transport-whsd</id>
+	<id version="5">ab-transport-whsd</id>
 	<name>Западный Скоростной Диаметр</name>
 	<description html="true"><![CDATA[
 	<p>Получает данные для оператора платной автомагистрали "Западный Скоростной Диаметр" в г. Санкт-Петербург. http://www.whsd.ru/</p>

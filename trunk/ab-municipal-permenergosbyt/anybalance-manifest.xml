@@ -1,37 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-municipal-permenergosbyt</id>
-  <name>Пермэнергосбыт (Пермь)</name>
-  <description>
-    Получает баланс и информацию о счетчике Пермэнергосбыта (http://permenergosbyt.ru)
-
-    Информация берется из личного кабинета Пермэнергосбыта: http://test.permenergosbyt.ru/Auth/IndividualEnergy
-    
-  </description>
-  <author>Alexandra Shalamova &lt;alexandrashalamova@gmail.com&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="statement" name="Показания новые" units="кВт*ч"/>
-    <counter id="consumption" name="Расход электроэнергии" units="кВт*ч"/>
-    <counter id="account" name="Лицевой счет" type="text"/>
-    <counter id="number" name="Номер счетчика" type="text"/>
-    <counter id="tariffNumber" name="Ставка тарифа" type="text"/>
-    <counter id="fio" name="ФИО" type="text"/>
-  </counters>
-  <keywords>
-    permenergosbyt
-  </keywords>
-  <type>
-    municipal
-  </type>
-  <country>
-    ru
-  </country>
+	<id version="3">ab-municipal-permenergosbyt</id>
+	<api flags="no_browser"/>
+	<name>Пермэнергосбыт (Пермь)</name>
+	<description html="true"><![CDATA[
+	<p>Получает баланс и информацию о счетчике Пермэнергосбыта (https://permenergosbyt.ru)</p>
+	<p>Информация берется из личного кабинета Пермэнергосбыта: https://test.permenergosbyt.ru/Auth/IndividualEnergy</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="statement" name="Показания новые" units=" кВт*ч"/>
+		<counter id="consumption" name="Расход электроэнергии" units=" кВт*ч"/>
+		<counter id="account" name="Лицевой счет" type="text"/>
+		<counter id="number" name="Номер счетчика" type="text"/>
+		<counter id="tariffNumber" name="Ставка тарифа" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
+	</counters>
+	<keywords>permenergosbyt</keywords>
+	<type>municipal</type>
+	<country>ru</country>
 </provider>

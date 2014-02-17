@@ -20,7 +20,7 @@ function sleep(delay) {
       AnyBalance.sleep(delay);
    }
 } 
-
+/*
 function encryptPass(pass, map){
 	if(map){
 		var ch='',i=0,k=0,TempPass='',PassTemplate=map.split(','), Pass='';
@@ -38,7 +38,35 @@ function encryptPass(pass, map){
 	}else{
 		return pass;
 	}
-
+}
+*/
+function encryptPass2(pass, map){
+	// на данный момент мы точно знаем, что символ @ в паролях просто игнорируется
+	pass = pass.replace('@', '');
+	if(map){
+		var ch='',i=0,k=0,TempPass='',PassTemplate = map.split(','), Pass='';
+		TempPass=pass;
+		while(TempPass!=''){
+			ch=TempPass.substr(0, 1);
+			k = ch.charCodeAt(0);
+            if (k > 0xFF)
+                k -= 0x350;
+            if (k == 7622)
+                k = 185;
+            if (k == 257)
+                k = 184;
+            if (k == 177)
+                k = 168;
+			TempPass=TempPass.length > 1 ? TempPass.substr(1, TempPass.length) : '';
+			if(Pass != '')
+				Pass = Pass + ';';
+			
+			Pass = Pass + PassTemplate[k];
+		}
+		return Pass;
+	}else{
+		return pass;
+	}
 }
 
 var g_headers = {
@@ -55,7 +83,7 @@ function main(){
     var html = AnyBalance.requestGet(baseurl + 'T=RT_2Auth.BF');
     var mapId = getParam(html, null, null, /<input[^>]*name="MapID"[^>]*value="([^"]*)"/i);
     var map = getParam(html, null, null, /var\s+PassTemplate\s*=\s*new\s+Array\s*\(([^\)]*)/i);
-    var pass = encryptPass(prefs.password, map);
+    var pass = encryptPass2(prefs.password, map);
 
     html = AnyBalance.requestPost(baseurl, {
         tic: 0,
@@ -66,10 +94,10 @@ function main(){
         C:'',
         IdCaptcha:'',
         IMode:'',
-        sTypeInterface:'default',
+        sTypeInterface:'',
         MapID:mapId || ''
     }, g_headers);
-
+	
     var error = getParam(html, null, null, /<BSS_ERROR>\d*\|?([\s\S]*?)<\/BSS_ERROR>/i, replaceTagsAndSpaces, html_entity_decode);
     if(error)
         throw new AnyBalance.Error(error);

@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="6">ab-money-trust</id>
+	<id version="7">ab-money-trust</id>
 	<name>Траст банк</name>
-	<description>
-Получает текущий остаток и другие параметры карт/счетов/депозитов банка Траст (http://www.trust.ru/), используя интернет-банк https://online.trust.ru/
-	</description>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе карт/счетов/депозитов банка Траст (http://www.trust.ru/)</p>
+	<p>Информация берется из интернет-банка https://online.trust.ru/</p>
+	]]></description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>

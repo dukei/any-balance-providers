@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-<change version="6" date="2013-09-20">
-- Поддержка изменений в личном кабинете (Stark)
-</change>
-<change version="5" date="2013-06-14">
-- Обновлена иконка.
-</change>
+	<change version="7" date="2014-02-17">
+	- Поддержка паролей со спецсимволом @.
+	</change>
+	<change version="6" date="2013-09-20">
+	- Поддержка изменений в личном кабинете (Stark)
+	</change>
+	<change version="5" date="2013-06-14">
+	- Обновлена иконка.
+	</change>
 </history>

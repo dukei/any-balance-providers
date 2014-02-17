@@ -1,23 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <EditTextPreference 
-        title="Логин" 
-        positiveButtonText="ОК" 
-        summary="||{@s}" 
-        dialogTitle="Логин" 
-        negativeButtonText="Отмена" 
-        dialogMessage="Введите логин в личный кабинет."
-        key="login"
-        inputType="number">
-    </EditTextPreference>
-    <EditTextPreference 
-        positiveButtonText="ОК"
-        key="password" 
-        dialogTitle="Пароль"
-        negativeButtonText="Отмена"
-        title="Пароль"
-        summary="||***********"
-        dialogMessage="Введите пароль, используемый для входа в личный кабинет."
-        inputType="textPassword">
-    </EditTextPreference>
+	<EditTextPreference
+		title="Номер карты"
+		key="login"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Номер карты"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите номер карты, без пробелов и разделителей.">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Дата рождения"
+		key="password"
+		summary="||***********"
+		obligatory="true"
+		dialogTitle="Дата рождения"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите дату рождения в формате 10.04.1988."
+		inputType="textPassword">
+	</EditTextPreference>
 </PreferenceScreen>

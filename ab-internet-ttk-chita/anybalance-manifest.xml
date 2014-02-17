@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="2">ab-internet-ttk-chita</id>
+	<id version="3">ab-internet-ttk-chita</id>
 	<name>ТТК-Чита - интернет провайдер</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе интернет провайдера ТТК-Чита: http://www.ttk-chita.ru/</p>

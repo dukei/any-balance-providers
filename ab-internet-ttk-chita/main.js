@@ -10,7 +10,7 @@ function main(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
 
-    var baseurl = "http://newstat.ttk-chita.ru:8080/bgbilling/webexecuter";
+    var baseurl = "https://stat.ttk-chita.ru/bgbilling/webexecuter";
 
     var html = AnyBalance.requestPost(baseurl, {
         midAuth:0,

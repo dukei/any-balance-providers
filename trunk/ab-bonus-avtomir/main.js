@@ -1,18 +1,13 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Получает баланс и информацию о тарифном плане для сотового оператора xxxxxx 
-
-Operator site: http://xxxxxx.ru
-Личный кабинет: https://kabinet.xxxxxx.ru/login
 */
 
 var g_headers = {
-'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
-'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-'Connection':'keep-alive',
-'User-Agent':'Mozilla/5.0 (BlackBerry; U; BlackBerry 9900; en-US) AppleWebKit/534.11+ (KHTML, like Gecko) Version/7.0.0.187 Mobile Safari/534.11+'
+	'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
+	'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Connection':'keep-alive',
+	'User-Agent':'Mozilla/5.0 (BlackBerry; U; BlackBerry 9900; en-US) AppleWebKit/534.11+ (KHTML, like Gecko) Version/7.0.0.187 Mobile Safari/534.11+'
 };
 
 function getMyJson(info){
@@ -33,8 +28,7 @@ function findParam(params, name){
     return -1;
 }
 
-function createSignedParams(params, arData)
-{
+function createSignedParams(params, arData) {
     var key = new rsasec_key(arData.key.E, arData.key.M, arData.key.chunk);
     var data = '__RSA_RAND=' + arData.rsa_rand;
 

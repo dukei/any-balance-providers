@@ -1,41 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-bonus-avtomir</id>
-  <name>Автомир</name>
-  <description>    
-    Получает баланс бонусной карты в системе Автомир (http://www.avtomir.ru/)
-
-    Информация берется из личного кабинета клиента (http://www.avtomir.ru/personal/)
-  </description>
-  <author>Alexandra Shalamova &lt;alexandrashalamova@gmail.com&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>rsasecurity.js</js>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units=" Б"/>
-    <counter id="fio" name="ФИО" type="text"/>
-    <counter id="number" name="Номер карты" type="text"/>
-    <counter id="phone" name="Телефон" type="text"/>
-
-
-    <counter id="balanceLast" name="Начислено бонусов за последний платеж" units=" Б"/>
-    <counter id="sumLast" name="Сумма последнего платежа" units="{@sumCurrencyLast}"/>
-    <counter id="dateLast" name="Дата транзакци последнего платежа" type="time" format="dd/mm/yyyy"/>
-    <counter id="regionLast" name="Регион последнего платежа" type="text"/>
-    <counter id="typeLast" name="Тип операции последнего платежа" type="text"/>
-  </counters>
-  <keywords>
-    бонусы, avtomir
-  </keywords>
-  <type>
-    bonus
-  </type>
-  <country>
-    ru
-  </country>
+	<id version="2">ab-bonus-avtomir</id>
+	<api flags="no_browser"/>
+	<name>Автомир (Бонусы)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе бонусной карты в системе Автомир НДК (http://www.avtomir.ru/)</p>
+	<p>Информация берется из личного кабинета http://www.avtomir.ru/personal/</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>rsasecurity.js</js>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" Б"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="number" name="Номер карты" type="text"/>
+		<counter id="phone" name="Телефон" type="text"/>
+		<counter id="balanceLast" name="Начислено бонусов за последний платеж" units=" Б"/>
+		<counter id="sumLast" name="Сумма последнего платежа" units=" {@sumCurrencyLast}"/>
+		<counter id="dateLast" name="Дата транзакци последнего платежа" type="time" format="dd/MM/yyyy"/>
+		<counter id="regionLast" name="Регион последнего платежа" type="text"/>
+		<counter id="typeLast" name="Тип операции последнего платежа" type="text"/>
+	</counters>
+	<keywords>бонусы, avtomir</keywords>
+	<type>bonus</type>
+	<country>ru</country>
 </provider>

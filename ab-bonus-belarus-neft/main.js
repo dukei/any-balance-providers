@@ -12,7 +12,10 @@ var g_headers = {
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-    var baseurl = "http://www.beloil.by/";
+	checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(prefs.password, 'Введите пароль!');
+	
+    var baseurl = "http://www.belorusneft.by/";
     AnyBalance.setDefaultCharset('utf-8'); 
 	
 	//Пароль в SHA-1
@@ -35,10 +38,13 @@ function main(){
 			throw new AnyBalance.Error(error, null, true);		
         if(error)
             throw new AnyBalance.Error(error);
+		
+		AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
 	
     var result = {success: true};
+	
     getParam(html, result, 'fio', /Здравствуйте,[^>]*>([^\(<]*)/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'balance', /НА ВАШЕМ СЧЕТУ(?:[^>]*>){4}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'discount', /РАЗМЕР ВАШЕЙ СКИДКИ(?:[^>]*>){6}([^<]*)/i, replaceTagsAndSpaces, parseBalance);

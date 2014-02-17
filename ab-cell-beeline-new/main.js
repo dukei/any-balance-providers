@@ -301,10 +301,15 @@ function fetchPost(baseurl, html) {
 	
     if (AnyBalance.isAvailable('overpay', 'prebal', 'currency')) {
     	xhtml = getBlock(baseurl + 'c/post/index.html', html, 'callDetailsDetails');
+		
     	getParam(xhtml, result, 'overpay', /<h4[^>]*>Переплата[\s\S]*?<span[^>]+class="price[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
     	getParam(xhtml, result, 'overpay', /<h4[^>]*>Осталось к оплате[\s\S]*?<span[^>]+class="price[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalanceNegative);
     	getParam(xhtml, result, 'prebal', /Расходы по договору за текущий период:[\S\s]*?<div[^<]+class="balan?ce-summ"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
     	getParam(xhtml, result, ['currency', 'prebal', 'overpay'], /Расходы по договору за текущий период:[\S\s]*?<div[^<]+class="balan?ce-summ"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, myParseCurrency);
+		
+		AnyBalance.trace(xhtml);
+		if(/информация[^<]*недоступна/)
+			AnyBalance.trace('Информация временно недоступна на сайте Билайн, попробуйте позже');
     }
 
 	if (!multi && AnyBalance.isAvailable('fio', 'balance', 'currency')) {
@@ -417,12 +422,18 @@ function fetchPre(baseurl, html) {
 		xhtml = getBlock(baseurl + 'c/pre/index.html', html, 'bonusesForm');
 		getBonuses(xhtml, result);
 	}
-	if (AnyBalance.isAvailable('fio', 'balance')) {
+	if (AnyBalance.isAvailable('fio')) {
 		AnyBalance.trace('Переходим в мобильную версию для получения ФИО.');
 		
 		html = AnyBalance.requestGet(baseurl + 'm/pre/index.html', g_headers);
 		AnyBalance.trace(html);
 		
+		if(/Вход в личный кабинет/i.test(html)) {
+			AnyBalance.trace('Перейти в мобильную версию не удалось, попробуем зайти с логином и паролем...');
+			
+			html = AnyBalance.requestGet(baseurl + 'ext/mAuthorization.html?ret_url=https%3A%2F%2Fmy.beeline.ru%2FmLogin.html&login=' + encodeURIComponent(prefs.login) + '&password=' + encodeURIComponent(prefs.password), g_headers);
+			html = AnyBalance.requestGet(baseurl + 'm/pre/index.html', g_headers);
+		}
 		getParam(html, result, 'fio', /<div[^>]+class="abonent-name"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, capitalFirstLenttersAndDecode);
 		// Если не получили баланс выше, попробуем достать его из мобильной версии
 		// Вызывает глюки, надо дождаться логов, из них будет ясно что тут отображается, если в кабинете нет баланса.

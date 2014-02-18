@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-	<change version="1.0.3" date="2013-07-22">
-        - Получает информацию с официального api.
-    </change>
-    <change version="1.0.2" date="2013-03-24">
-        - Временное исправление. Теперь программа вновь получает информацию с датчиков.
-    </change>
+	<change major_version="1.0" version="4" date="2013-07-22">
+	- 
+	</change>
+	<change major_version="1.0" version="3" date="2013-07-22">
+	- Получает информацию с официального api.
+	</change>
+	<change major_version="1.0" version="2" date="2013-03-24">
+	- Временное исправление. Теперь программа вновь получает информацию с датчиков.
+	</change>
 </history>

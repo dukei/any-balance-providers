@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-    <id version="6">ab-affiliate-onpay</id>
+    <id version="7">ab-affiliate-onpay</id>
     <name>OnPay</name>
     <description>Баланс на OnPay</description>
     <author>BArtWell &lt;web@bartwell.ru&gt;</author>
@@ -11,6 +11,9 @@
         <history>history.xml</history>
     </files>
     <counters>
+
+		<counter id="BTC_delayed" name="BTC - поступило"/>
+        <counter id="BTC_balance" name="BTC - доступно"/>
 
         <counter id="EUR_delayed" name="EUR - поступило"/>
         <counter id="EUR_balance" name="EUR - доступно"/>

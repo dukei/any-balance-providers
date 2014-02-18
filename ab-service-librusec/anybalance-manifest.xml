@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-service-librusec</id>
+	<api flags="no_browser"/>
+	<name>Либрусек</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию об остатке дней абонемента в Либрусек http://lib.rus.ec/</p>
+	<p>Информация берется из личного кабинета http://lib.rus.ec/user/login</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="days" name="Остаток дней"/>
+	</counters>
+	<keywords></keywords>
+	<type>service</type>
+	<country>ru</country>
+</provider>

@@ -747,7 +747,7 @@ function getBarnaul(){
     var result = {success: true};
     //Вначале попытаемся найти активный тариф
     getParam(html, result, '__tariff', /Name[\s\S]{1,20}Тариф\s*'([\s\S]*?)'/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'balance', /\(([\d.\-,]+)[^(]*руб/i, replaceTagsAndSpaces, parseBalance2);
+	getParam(html, result, 'balance', /([\d.\-,]{1,10})(?:\&nbsp;|\s)руб/i, replaceTagsAndSpaces, parseBalance2);
 
 /*	getParam(html, result, 'abon', /Абонентская плата:([^<]*)/i, replaceTagsAndSpaces, parseBalance2);
     getParam(html, result, 'internet_cur', /Израсходовано:([^<]*)/i, replaceTagsAndSpaces, parseBalance2);

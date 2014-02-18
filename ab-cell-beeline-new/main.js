@@ -451,7 +451,7 @@ function isAvailableBonuses() {
 }
 
 function getBonuses(xhtml, result) {
-	var bonuses = sumParam(xhtml, null, null, /<div[^>]+class="item"(?:[\s\S](?!$|<div[^>]+class="item"))*[\s\S]/ig);
+	var bonuses = sumParam(xhtml, null, null, /<div[^>]+class="item(?:[\s\S](?!$|<div[^>]+class="item))*[\s\S]/ig);
 	AnyBalance.trace("Found " + bonuses.length + ' aggregated bonuses');
 	for (var j = 0; j < bonuses.length; ++j) {
 		var bonus = bonuses[j];

@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser" />
-	<id version="1">ab-internet-damavik</id>
+	<id version="2">ab-internet-damavik</id>
 	<name>Шпарки Дамавик</name>
-	<description>
-	Получает данные для интернет-провайдера Шпарки дамавик (Шпаркi дамавiк или Атлант Телеком) http://www.damavik.by/
-	
-	Личный кабинет находится по адресу: 
-	</description>
+	<description html="true"><![CDATA[
+	<p>Получает данные для интернет-провайдера Шпарки дамавик (Шпаркi дамавiк или Атлант Телеком) http://www.damavik.by/</p>
+	]]></description>	
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
@@ -20,6 +17,7 @@
 	<counters>
 		<counter id="balance" name="Баланс"/>
 		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="trafic" name="Трафик" units=" Мб"/>
 		<counter id="acc" name="Номер лицевого счета" type="text"/>
 	</counters>
 	<keywords></keywords>

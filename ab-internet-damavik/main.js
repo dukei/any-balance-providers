@@ -34,5 +34,12 @@ function main(){
 	getParam(html, result, 'fio', /Добро пожаловать,\s*<[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'acc', /Номер лицевого счета[^>]*value="([^"]*)/i, replaceTagsAndSpaces, html_entity_decode);
 	
+	var details = getParam(html, null, null, />Тарифный план<(?:[^>]*>){20}<a href="\/([^"]+)/i);
+	if(details && isAvailable('trafic')) {
+		html = AnyBalance.requestGet(baseurl + details, g_headers);
+		
+		getParam(html, result, 'trafic', /<th>\s*<\/th>\s*<th>([\s\d.]+)<\/th>/i, [replaceTagsAndSpaces, /(.*)/i, '$1 мб'], parseTraffic);
+	}	
+	
     AnyBalance.setResult(result);
 }

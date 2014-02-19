@@ -1,37 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="4">ab-bonus-crazypark</id>
-  <name>Crazy Park</name>
-  <description>
-    Получает баланс и другую информацию по накопительной карте сети развлекательных центров Crazy Park (http://www.crazypark.ru).
-
-    Информация берется из личного кабинета http://www.crazypark.ru/club/. 
-
-    Как получить накопительную карту и пароль к личному кабинету написано здесь: http://www.crazypark.ru/club/login.php.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <history>history.xml</history>
-    <js>library.js</js>
-    <js>main.js</js>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="bonus" name="Бонусы"/>
-    <counter id="crazies" name="Крейзики"/>
-    <counter id="level" name="Уровень"/>
-    <counter id="next" name="До следующего уровня" units="р"/>
-    <counter id="cardnum" name="Номер карты" type="text"/>
-  </counters>
-  <keywords>
-    крейзи парк, аттракционы
-  </keywords>
-  <type>
-    bonus
-  </type>
-  <country>
-    ru
-  </country>
+	<api flags="no_browser"/>
+	<id version="5">ab-bonus-crazypark</id>
+	<name>Crazy Park</name>
+	<description html="true"><![CDATA[
+	<p>Получает баланс и другую информацию по накопительной карте сети развлекательных центров Crazy Park http://www.crazypark.ru</p>
+	<p>Информация берется из личного кабинета http://www.crazypark.ru/club/</p>
+	<p>Как получить накопительную карту и пароль к личному кабинету написано здесь: http://www.crazypark.ru/club/login.php</p>
+	]]></description>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="bonus" name="Бонусы"/>
+		<counter id="crazies" name="Крейзики"/>
+		<counter id="level" name="Уровень"/>
+		<counter id="next" name="До следующего уровня" units=" р"/>
+		<counter id="cardnum" name="Номер карты" type="text"/>
+	</counters>
+	<keywords>крейзи парк, аттракционы</keywords>
+	<type>bonus</type>
+	<country>ru</country>
 </provider>

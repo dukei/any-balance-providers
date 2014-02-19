@@ -4,7 +4,7 @@
 	<name>Beeline интернет</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе, бонусах и тарифном плане для пользователей Beeline интернет.</p>       
-	<p>Информация берется из личного кабинета (http://lk.beeline.ru).</p>
+	<p>Информация берется из личного кабинета http://lk.beeline.ru либо из https://cabinet.beeline.ru</p>
 	]]></description>
 	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
 	<files>

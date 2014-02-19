@@ -1,42 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser" />
-  <id version="3">ab-hosting-2domains</id>
-  <name>2domains (регистрация доменов)</name>
-  <description>
-    Получает баланс и информацию о доменах из центра регистрации доменов 2domains (http://2domains.ru).
-
-    Информация берется из личного кабинета https://2domains/reg. Может получать информацию по 4 доменам одновременно.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-	<js>library.js</js>	
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="domains" name="Всего доменов"/>
-    <counter id="prolong" name="На продление"/>
-    <counter id="domain" name="Домен" type="text"/>
-    <counter id="domain_till" name="До" type="time" format="dd/MM/yyyy"/>
-    <counter id="domain1" name="Домен 2" type="text"/>
-    <counter id="domain_till1" name="До 2" type="time" format="dd/MM/yyyy"/>
-    <counter id="domain2" name="Домен 3" type="text"/>
-    <counter id="domain_till2" name="До 3" type="time" format="dd/MM/yyyy"/>
-    <counter id="domain3" name="Домен 4" type="text"/>
-    <counter id="domain_till3" name="До 4" type="time" format="dd/MM/yyyy"/>
-  </counters>
-  <keywords>
-    интернет регистратор
-  </keywords>
-  <type>
-    hosting
-  </type>
-  <country>
-    ru
-  </country>
+	<id version="4">ab-hosting-2domains</id>
+	<name>2domains (регистрация доменов)</name>
+	<description html="true"><![CDATA[
+	<p>Получает баланс и информацию о доменах из центра регистрации доменов 2domains (http://2domains.ru).</p>
+	<p>Информация берется из личного кабинета https://2domains/reg. Может получать информацию по 4 доменам одновременно.</p>
+	]]></description>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="domains" name="Всего доменов"/>
+		<counter id="prolong" name="На продление"/>
+		<counter id="domain" name="Домен" type="text"/>
+		<counter id="domain_till" name="До" type="time" format="dd/MM/yyyy"/>
+		<counter id="domain1" name="Домен 2" type="text"/>
+		<counter id="domain_till1" name="До 2" type="time" format="dd/MM/yyyy"/>
+		<counter id="domain2" name="Домен 3" type="text"/>
+		<counter id="domain_till2" name="До 3" type="time" format="dd/MM/yyyy"/>
+		<counter id="domain3" name="Домен 4" type="text"/>
+		<counter id="domain_till3" name="До 4" type="time" format="dd/MM/yyyy"/>
+	</counters>
+	<keywords>интернет регистратор</keywords>
+	<type>hosting</type>
+	<country>ru</country>
 </provider>

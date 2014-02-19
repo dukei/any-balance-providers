@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-irbis</id>
+	<api flags="no_browser"/>
+	<name>Ирбис Телеком (Краснодар)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе инетрнет-провайдера Ирбис Телеком г. Краснодар http://www.irbisnet.ru/</p>
+	<p>Информация берется из личного кабинета https://91.210.44.133/client2</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="balance_tv" name="Баланс ТВ" units=" р"/>
+		<counter id="abon" name="Абонентская плата" units=" р"/>
+		<counter id="internet_cur" name="Трафик в этом месяце" units=" Mb"/>
+		<counter id="username" name="Пользователь" type="text"/>
+		<counter id="agreement" name="Номер договора" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

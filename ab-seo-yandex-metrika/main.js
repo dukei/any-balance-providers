@@ -14,7 +14,7 @@ function loginYandex(login, password, html, retpath, from){
     function getIdKey(html){
         return getParam(html, null, null, /<input[^>]*name="idkey"[^>]*value="([^"]*)/i);
     }
-
+	
     var baseurl = "https://passport.yandex.ru/passport?mode=auth";
     if(from)
         baseurl += '&from=' + encodeURIComponent(from);
@@ -24,21 +24,11 @@ function loginYandex(login, password, html, retpath, from){
     if(!html)
         html = AnyBalance.requestGet(baseurl, g_headers);
 
-	/*var idKey = getIdKey(html);
+	var idKey = getIdKey(html);
     if(!idKey)
-        throw new AnyBalance.Error("Не удаётся найти ключ для входа в Яндекс. Процедура входа изменилась или проблемы на сайте.");*/
+        throw new AnyBalance.Error("Не удаётся найти ключ для входа в Яндекс. Процедура входа изменилась или проблемы на сайте.");
  
     var html = AnyBalance.requestPost(baseurl, {
-        //from:'passport',
-        //idkey:idKey,
-        //display:'page',
-        login:login,
-        passwd:password,
-		retpath:'',
-        //timestamp:new Date().getTime()
-    }, g_headers);		
-	 
-    /*var html = AnyBalance.requestPost(baseurl, {
         from:from || 'passport',
         retpath: retpath,
         idkey:idKey,
@@ -46,7 +36,7 @@ function loginYandex(login, password, html, retpath, from){
         login:login,
         passwd:password,
         timestamp:new Date().getTime()
-    }, g_headers);*/
+    }, g_headers);
 
     var error = getParam(html, null, null, /b\-login\-error[^>]*>([\s\S]*?)<\/strong>/i, replaceTagsAndSpaces);
     if(error)
@@ -77,7 +67,7 @@ function main(){
 
     var html = AnyBalance.requestGet(baseurl + 'stat/?counter_id=' +prefs.login, g_headers);
 
-    if(/<form[^>]+name="MainLogin"|К сожалению, у вас нет прав доступа к этому объекту|Авторизация/i.test(html)){
+    if(/<form[^>]+name="MainLogin"|К сожалению, у вас нет прав доступа к этому объекту|Авторизация|войдите под своим именем/i.test(html)){
         AnyBalance.trace('Требуется залогиниться... ');
         //Не залогинены в яндекс... Надо залогиниться
         checkEmpty(prefs.yalogin && prefs.password, 'Для просмотра информации по счетчику Яндекс требует авторизации. Введите в настройки логин и пароль.');

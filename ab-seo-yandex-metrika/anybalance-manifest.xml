@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="5">ab-seo-yandex-metrika</id>
+	<id version="6">ab-seo-yandex-metrika</id>
 	<name>Яндекс.Метрика</name>
 	<description html="true"><![CDATA[
 	<p>Получает данные по id счетчика в системе Яндекс Метрика (http://metrika.yandex.ru/stat/?counter_id=)</p>

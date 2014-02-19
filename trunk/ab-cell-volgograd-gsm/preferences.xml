@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
     <EditTextPreference
+		obligatory="true"
         title="Логин"
         positiveButtonText="ОК"
         summary="|Номер телефона (10 цифр)|{@s}\n"
@@ -11,6 +12,7 @@
         inputType="number">
     </EditTextPreference>
     <EditTextPreference
+		obligatory="true"
 		title="Пароль"
         positiveButtonText="ОК"
         summary="|Пароль для входа в ИССА|***********\n"

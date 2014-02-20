@@ -121,6 +121,7 @@ function checkCorrectNumberLogin(html, prefs) {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
+	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
@@ -513,8 +514,8 @@ function getBonusesPost(xhtml, result) {
 				sumParam(services[i], result, 'sms_left', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 			} else if (/MMS/i.test(name)) {
 				sumParam(services[i], result, 'mms_left', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-			} else if (/Internet|Интернет/i.test(name)) {
-				sumParam(services[i], result, 'traffic_left', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
+			} else if (/Internet|Интернет|Мб в месяц/i.test(name)) {
+				sumParam(services[i], result, 'traffic_left', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, [replaceTagsAndSpaces, /^([\d\s.,]+)$/, '$1 MB'], parseTraffic, aggregate_sum);
 			} else if (/Рублей БОНУС|бонус-баланс/i.test(name)) {
 				sumParam(services[i], result, 'rub_bonus', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 			} else if (/Рублей за участие в опросе|Счастливое время/i.test(name)) {

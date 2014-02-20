@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="3.0" version="113" date="2014-02-20">
+	  - Улучшено получение трафика.
+    </change>
 	<change major_version="3.0" version="112" date="2014-02-10">
 	  - Добавлены новые счетчики минут для ЕАО,ХК.
 	  - Исправлено получение счетчиков начислений за услуги, еще раз.

@@ -33,7 +33,7 @@ function main(){
 
     var json = getJson(html);
     if(!json.data){
-        throw new AnyBalance.Error(json.error || 'Не удаётся войти в личный кабинет. Сайт изменен?');
+        throw new AnyBalance.Error(json.message || 'Не удаётся войти в личный кабинет. Сайт изменен?');
     }
 
     html = AnyBalance.requestGet(baseurl + '_ajax/getUserCardBonus.php', addHeaders({Referer: baseurl + 'personal/?loyalty', 'X-Requested-With': 'XMLHttpRequest'}));

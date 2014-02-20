@@ -540,9 +540,12 @@ function megafonTrayInfo(filial) {
 						if (isset(traf.total) && !isset(internet_totals_was[traf.total])) { //Проверяем, что на предыдущем этапе этот трафик ещё не был учтен
 							new_internet_totals_was[traf.total] = true;
 							new_internet_totals_was.total = (new_internet_totals_was.total || 0) + traf.total;
-							if (AnyBalance.isAvailable('internet_cur')) result.internet_cur = (result.internet_cur || 0) + (traf.total - (traf.left || 0));
-							if (AnyBalance.isAvailable('internet_left')) result.internet_left = (result.internet_left || 0) + (traf.left || 0);
-							if (AnyBalance.isAvailable('internet_total')) result.internet_total = (result.internet_total || 0) + traf.total;
+							if (AnyBalance.isAvailable('internet_cur'))
+								result.internet_cur = (result.internet_cur || 0) + (traf.total - (traf.left || 0));
+							if (AnyBalance.isAvailable('internet_left')) 
+								result.internet_left = (result.internet_left || 0) + (traf.left || 0);
+							if (AnyBalance.isAvailable('internet_total')) 
+								result.internet_total = (result.internet_total || 0) + traf.total;
 						}
 					} else {
 						AnyBalance.trace('Неизвестная опция ' + name + ': ' + val);
@@ -562,7 +565,12 @@ function megafonTrayInfo(filial) {
 			}
 		}
 	}
-	getInternetInfo(filial, result, internet_totals_was);
+	// Возможно фикс грубый, но бывает такое, что в виджете и в internet info трафик различается на 50 мб, из-за этого все суммируется дважды
+	if(!isset(result.internet_total) && !isset(result.internet_left) && result.internet_cur == 0)
+		getInternetInfo(filial, result, internet_totals_was);
+	else
+		AnyBalance.trace('Мы уже получили весь трафик, в getInternetInfo не пойдем, т.к. иначе все просуммируется и трафика станет в два раза больше')
+	
 	AnyBalance.setResult(result);
 }
 

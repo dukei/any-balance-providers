@@ -1,22 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <EditTextPreference 
-        title="Сайт" 
-        positiveButtonText="ОК" 
-        summary="||{@s}" 
-        dialogTitle="Сайт" 
-        negativeButtonText="Отмена" 
-        dialogMessage="Введите URL сайта. Можно вводить так: example.domain.com"
-        key="login">
-    </EditTextPreference>
-    <EditTextPreference 
-        positiveButtonText="ОК"
-        key="password" 
-        dialogTitle="Пароль"
-        negativeButtonText="Отмена"
-        title="Пароль"
-        summary="||***********"
-        dialogMessage="Введите пароль, либо оставьте поле пустым, если счетчик публичный."
-        inputType="textPassword">
-    </EditTextPreference>
+	<EditTextPreference
+		obligatory="true"
+		title="Сайт"
+		positiveButtonText="ОК"
+		summary="||{@s}"
+		dialogTitle="Сайт"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите URL сайта. Можно вводить так: example.domain.com"
+		key="login">
+	</EditTextPreference>
+	<EditTextPreference
+		obligatory="true"
+		positiveButtonText="ОК"
+		key="password"
+		dialogTitle="Пароль"
+		negativeButtonText="Отмена"
+		title="Пароль"
+		summary="||***********"
+		dialogMessage="Введите пароль, либо оставьте поле пустым, если счетчик публичный."
+		inputType="textPassword">
+	</EditTextPreference>
 </PreferenceScreen>

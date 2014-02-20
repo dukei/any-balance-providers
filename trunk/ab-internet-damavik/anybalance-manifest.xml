@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="2">ab-internet-damavik</id>
+	<id version="3">ab-internet-damavik</id>
 	<name>Шпарки Дамавик</name>
 	<description html="true"><![CDATA[
 	<p>Получает данные для интернет-провайдера Шпарки дамавик (Шпаркi дамавiк или Атлант Телеком) http://www.damavik.by/</p>
@@ -18,6 +18,7 @@
 		<counter id="balance" name="Баланс"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="trafic" name="Трафик" units=" Мб"/>
+		<counter id="trafic_total" name="Трафик всего" units=" Мб"/>
 		<counter id="acc" name="Номер лицевого счета" type="text"/>
 	</counters>
 	<keywords></keywords>

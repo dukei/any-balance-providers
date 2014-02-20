@@ -35,9 +35,10 @@ function main(){
     getParam(html, result, 'acc', /Номер лицевого счета[^>]*value="([^"]*)/i, replaceTagsAndSpaces, html_entity_decode);
 	
 	var details = getParam(html, null, null, />Тарифный план<(?:[^>]*>){20}<a href="\/([^"]+)/i);
-	if(details && isAvailable('trafic')) {
+	if(details && isAvailable(['trafic', 'trafic_total'])) {
 		html = AnyBalance.requestGet(baseurl + details, g_headers);
 		
+		getParam(html, result, 'trafic_total', /Кол-во трафика в интернет на услуге([^>]*>){3}/i, replaceTagsAndSpaces, parseTraffic);
 		getParam(html, result, 'trafic', /<th>\s*<\/th>\s*<th>([\s\d.]+)<\/th>/i, [replaceTagsAndSpaces, /(.*)/i, '$1 мб'], parseTraffic);
 	}	
 	

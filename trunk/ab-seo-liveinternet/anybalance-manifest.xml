@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="3">ab-seo-liveinternet</id>
+	<id version="4">ab-seo-liveinternet</id>
 	<name>Liveinternet.ru</name>
-	<description>
-	Получает данные по счетчикам в известной статистике рунета http://www.liveinternet.ru/
-	
-	Информация по счетчикам берется по адресу: http://www.liveinternet.ru/stat/
-	</description>
+	<description html="true"><![CDATA[
+	<p>Получает данные по счетчикам в известной статистике рунета http://www.liveinternet.ru</p>
+	<p>Информация по счетчикам берется по адресу: http://www.liveinternet.ru/stat</p>
+	]]></description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>

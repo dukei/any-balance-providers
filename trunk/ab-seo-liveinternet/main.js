@@ -10,11 +10,13 @@ var g_headers = {
 	'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.62 Safari/537.36',
 };
 
+var replaces = [replaceTagsAndSpaces, /[^\d\-]+/i, ''];
+
 function main(){
     var prefs = AnyBalance.getPreferences();
     var baseurl = 'http://www.liveinternet.ru/';
     AnyBalance.setDefaultCharset('utf-8'); 
-
+	
 	try {
 		var html = AnyBalance.requestGet(baseurl + 'stat/', g_headers);
 	} catch(e) {
@@ -33,10 +35,12 @@ function main(){
 	}
 
 	var result = {success: true};
-	getParam(html, result, 'views', /<label\s*for="id_[^>]*>Просмотры<\/label>(?:[\s\S]*?<[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'views_diff', /<label\s*for="id_[^>]*>Просмотры<\/label>(?:[\s\S]*?<[^>]*>){5}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'viewers', /<label for="id_[^>]*>Посетители<\/label>(?:[\s\S]*?<[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'viewers_diff', /<label for="id_[^>]*>Посетители<\/label>(?:[\s\S]*?<[^>]*>){5}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	
+	getParam(html, result, 'views', /<label\s*for="id_[^>]*>Просмотры<\/label>(?:[\s\S]*?<[^>]*>){2}([^<]*)/i, replaces, parseBalance);
+	getParam(html, result, 'views_diff', /<label\s*for="id_[^>]*>Просмотры<\/label>(?:[\s\S]*?<[^>]*>){5}([^<]*)/i, replaces, parseBalance);
+	getParam(html, result, 'viewers', /<label for="id_[^>]*>Посетители<\/label>(?:[\s\S]*?<[^>]*>){2}([^<]*)/i, replaces, parseBalance);
+	getParam(html, result, 'viewers_diff', /<label for="id_[^>]*>Посетители<\/label>(?:[\s\S]*?<[^>]*>){5}([^<]*)/i, replaces, parseBalance);
+	
 	result.__tariff = prefs.login;
 	
 	AnyBalance.setResult(result);		

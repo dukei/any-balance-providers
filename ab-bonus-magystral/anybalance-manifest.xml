@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-bonus-magystral</id>
+	<api flags="no_browser"/>
+	<name>Магистраль-Карт</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе в системе Магистраль-Карт</p>
+	<p>Информация берется из личного кабинета http:\\...</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Всего средств" units=" р"/>
+		<counter id="ostatok" name="Остаток свободных средств на счёте" units=" р"/>
+		<counter id="zayavki" name="Заявки для зачисления на карты" units=" р"/>
+	</counters>
+	<keywords></keywords>
+	<type>bonus</type>
+	<country>ru</country>
+</provider>

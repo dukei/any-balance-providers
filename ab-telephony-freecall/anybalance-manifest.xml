@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-telephony-freecall</id>
+	<id version="3">ab-telephony-freecall</id>
 	<api flags="no_browser|captcha"/>
 	<name>FreeCall</name>
 	<description html="true"><![CDATA[

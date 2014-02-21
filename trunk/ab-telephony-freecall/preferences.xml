@@ -7,7 +7,7 @@
         summary="||{@s}" 
         dialogTitle="Login" 
         negativeButtonText="Cancel" 
-        dialogMessage="Please enter your username"
+        dialogMessage="Please, enter your username"
         key="login">
     </EditTextPreference>
     <EditTextPreference 
@@ -18,7 +18,7 @@
         negativeButtonText="Cancel"
         title="Password"
         summary="||***********"
-        dialogMessage="Please enter your password"
+        dialogMessage="Please, enter your password"
         inputType="textPassword">
     </EditTextPreference>
 </PreferenceScreen>

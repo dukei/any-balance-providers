@@ -1,31 +1,59 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <EditTextPreference 
-        key="login"
-        title="Login"
-        summary="||{@s}" 
-        dialogTitle="Login" 
-        negativeButtonText="Cancel" 
-        dialogMessage="Enter your FX-Trend's login."
-        positiveButtonText="ОК">
-    </EditTextPreference>
-    <EditTextPreference 
-        key="pass"
-        title="Password" 
-        summary="||***********" 
-        dialogTitle="Password" 
-        negativeButtonText="Cancel" 
-        dialogMessage="Enter the passphrase for access to the account."
-        inputType="textPassword"
-        positiveButtonText="ОК">
-    </EditTextPreference>
-    <EditTextPreference 
-        key="account"
-        title="Account number"
-        summary="||{@s}" 
-        dialogTitle="Account number" 
-        negativeButtonText="Cancel" 
-        dialogMessage="Enter your FX-Trend's account for fetching data."
-        positiveButtonText="ОК">
-    </EditTextPreference>
+	<ListPreference
+		title="Type"
+		summary="||{@s}"
+		dialogTitle="Select what to watch" 
+		key="type"
+		defaultValue="1"
+		entries="1)Personal account|2)PAMM-monitoring|3)PAMM indices"
+		entryValues="1|2|3">
+	</ListPreference>
+	<EditTextPreference 
+		key="login"
+		title="Login"
+		summary="||{@s}" 
+		dialogTitle="Login" 
+		negativeButtonText="Cancel" 
+		dialogMessage="Enter your FX-Trend's login."
+		positiveButtonText="ОК">
+	</EditTextPreference>
+	<EditTextPreference 
+		key="pass"
+		title="Password" 
+		summary="||***********" 
+		dialogTitle="Password" 
+		negativeButtonText="Cancel" 
+		dialogMessage="Enter the passphrase for access to the account."
+		inputType="textPassword"
+		positiveButtonText="ОК">
+	</EditTextPreference>
+	<EditTextPreference 
+		key="account"
+		title="Account number"
+		summary="||{@s}" 
+		dialogTitle="Account number" 
+		negativeButtonText="Cancel" 
+		dialogMessage="Enter your FX-Trend's account for fetching data."
+		positiveButtonText="ОК">
+	</EditTextPreference>
+
+	<EditTextPreference 
+		key="pamm"
+		title="PAMM number"
+		summary="||{@s}" 
+		dialogTitle="PAMM number" 
+		negativeButtonText="Cancel" 
+		dialogMessage="Enter PAMM number for monitoring."
+		positiveButtonText="ОК">
+	</EditTextPreference>
+
+	<ListPreference
+		key="index"
+		title="PAMM index"
+		dialogTitle="Select PAMM index"
+		summary="||{@s}"
+		entries="2010|Aggressive|Balance|Balance2|Balance3|Diamond|Gold|GoldP2|Million|Million2|Platinum|Platinum2|Prize"
+		entryValues="2010|Aggressive|Balance|Balance2|Balance3|Diamond|Gold|GoldP2|Million|Million2|Platinum|Platinum2|Prize">
+	</ListPreference>
 </PreferenceScreen>

@@ -1,18 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="6" date="2014-02-24">
+      - Added types of request: Personal account, PAMM-monitoring, PAMM indices.
+      - Counters depended by PAMM-monitoring added: Trader initial capital, Trader current capital, Amount in management, Relative drawdown, Maximum drawdown, Number of open trades, Expected annualized gain, Previous rollover, Next rollover, Last month, Last month profit, Last month interest, Last week, Last week profit, Last week interest.
+      - Counters depended by PAMM indices added: Index included, Time of starting, Last week, Last week return. It requests last finished week.
+      - Counter depended by Personal account added: Total equity. It calculates the sum of all accounts.
+      - Counter changed: Income (as Total equity - Difference).
+      - Counter removed: Leverage.
+      - Units added for some counters.
+      - Some fixes.
+    </change>
     <change version="5" date="2014-02-14">
-      - Counters added from the Summary payments table ('Make deposit' tab): Deposited, Withdrawn, Difference
-      - Counter added: Income (as Equity - Difference)
-      - Some counters changed to optional
+      - Counters added from the Summary payments table ('Make deposit' tab): Deposited, Withdrawn, Difference.
+      - Counter added: Income (as Equity - Difference).
+      - Some counters changed to optional.
     </change>
     <change version="4" date="2014-02-04">
-      - Adaptation to new design
+      - Adaptation to new design.
     </change>
     <change version="3" date="2014-01-22">
-      - Some correct for Receipts
+      - Some correct for Receipts.
     </change>
     <change version="2" date="2014-01-11">
-      - Counter added: Receipts (as Equity - Balance)
-      - Some error diagnostic added
+      - Counter added: Receipts (as Equity - Balance).
+      - Some error diagnostic added.
     </change>
 </history>

@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="5">ab-money-fxtrend</id>
+  <id version="6">ab-money-fxtrend</id>
   <name>FX-Trend</name>
   <description>
-    This provider helps you to check balances on your FX-Trend's account.
+    This provider helps you to check balances on your FX-Trend's account and to monitor PAMMs and PAMM indices.
   </description>
   <author>wtiger &lt;wtiger@mail.ru&gt;</author>
   <files>
@@ -12,26 +12,46 @@
     <js>api:jquery.min.js</js>
     <js>library.js</js>
     <js>main.js</js>
+    <js target="preferences">preferences.js</js>
     <history>history.xml</history>
   </files>
   <counters>
-    <counter id="open" name="Open date" type="text"/>
-    <counter id="currency" name="Currency" type="text"/>
-    <counter id="leverage" name="Leverage" type="text"/>
-    <counter id="balance" name="Balance"/>
-    <counter id="equity" name="Equity"/>
-    <counter id="receipts" name="Receipts"/>
-    <counter id="margin" name="Margin"/>
-    <counter id="free" name="Free"/>
-    <counter id="mlevel" name="MLevel" units="%"/>
-    <counter id="profit" name="Profit"/>
-    <counter id="deposited" name="Deposited"/>
-    <counter id="withdrawn" name="Withdrawn"/>
-    <counter id="difference" name="Difference"/>
-    <counter id="income" name="Income"/>
+    <counter id="created_at" name="1)Open date" type="text"/>
+    <counter id="currency" name="1)Currency" type="text"/>
+    <counter id="balance" name="1)Balance"/>
+    <counter id="equity" name="1)Equity"/>
+    <counter id="receipts" name="1)Receipts"/>
+    <counter id="margin" name="1)Margin"/>
+    <counter id="free" name="1)Free"/>
+    <counter id="mlevel" name="1)MLevel" units="%"/>
+    <counter id="profit" name="1)Profit"/>
+    <counter id="deposited" name="1)Deposited"/>
+    <counter id="withdrawn" name="1)Withdrawn"/>
+    <counter id="difference" name="1)Difference"/>
+    <counter id="income" name="1)Income"/>
+    <counter id="total" name="1)Total equity"/>
+    <counter id="initial_capital" name="2)Trader initial capital"/>
+    <counter id="current_capital" name="2)Trader current capital"/>
+    <counter id="amount_in_management" name="2)Amount in management"/>
+    <counter id="relative_drawdown" name="2)Relative drawdown" units="%"/>
+    <counter id="maximum_drawdown" name="2)Maximum drawdown" units="%"/>
+    <counter id="open_trades" name="2)Number of open trades"/>
+    <counter id="annualized_gain" name="2)Expected annualized gain" units="%"/>
+    <counter id="previous_rollover" name="2)Previous rollover" type="text"/>
+    <counter id="next_rollover" name="2)Next rollover" type="text"/>
+    <counter id="month" name="2)Last month" type="text"/>
+    <counter id="month_profit" name="2)Last month profit"/>
+    <counter id="month_interest" name="2)Last month interest" units="%"/>
+    <counter id="week" name="2)Last week" type="text"/>
+    <counter id="week_profit" name="2)Last week profit"/>
+    <counter id="week_interest" name="2)Last week interest" units="%"/>
+    <counter id="index_included" name="3)Index included" type="text"/>
+    <counter id="index_started" name="3)Time of starting" type="text"/>
+    <counter id="index_week" name="3)Last week" type="text"/>
+    <counter id="index_return" name="3)Last week return" units="%"/>
   </counters>
   <keywords>
-    money fx-trend forex
+    money fx-trend forex pamm index indices pamm-index pamm-indices
   </keywords>
   <type>
     money

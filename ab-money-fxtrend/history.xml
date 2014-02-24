@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-    <change version="6" date="2014-02-24">
+    <change version="7" date="2014-02-24">
       - Added types of request: Personal account, PAMM-monitoring, PAMM indices.
       - Counters depended by PAMM-monitoring added: Trader initial capital, Trader current capital, Amount in management, Relative drawdown, Maximum drawdown, Number of open trades, Expected annualized gain, Previous rollover, Next rollover, Last month, Last month profit, Last month interest, Last week, Last week profit, Last week interest.
-      - Counters depended by PAMM indices added: Index included, Time of starting, Last week, Last week return. It requests last finished week.
+      - Counters depended by PAMM indices added: Index included, Time of starting, Last week, Last week return, This week, This week return.
       - Counter depended by Personal account added: Total equity. It calculates the sum of all accounts.
       - Counter changed: Income (as Total equity - Difference).
       - Counter removed: Leverage.

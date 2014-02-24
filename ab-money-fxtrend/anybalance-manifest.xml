@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="6">ab-money-fxtrend</id>
+  <id version="7">ab-money-fxtrend</id>
   <name>FX-Trend</name>
   <description>
     This provider helps you to check balances on your FX-Trend's account and to monitor PAMMs and PAMM indices.
@@ -47,8 +47,10 @@
     <counter id="week_interest" name="2)Last week interest" units="%"/>
     <counter id="index_included" name="3)Index included" type="text"/>
     <counter id="index_started" name="3)Time of starting" type="text"/>
-    <counter id="index_week" name="3)Last week" type="text"/>
-    <counter id="index_return" name="3)Last week return" units="%"/>
+    <counter id="index_last_week" name="3)Last week" type="text"/>
+    <counter id="index_last_return" name="3)Last week return" units="%"/>
+    <counter id="index_week" name="3)This week" type="text"/>
+    <counter id="index_return" name="3)This week return" units="%"/>
   </counters>
   <keywords>
     money fx-trend forex pamm index indices pamm-index pamm-indices

@@ -149,8 +149,10 @@ function main(){
 
 		if(matches = info.match(/<h2>weekly investor’s returns<\/h2>[\s\S]+?<\/table>/i)){
 			var info1=matches[0];
-			result.index_week = getParam(info1, null, null, /[\s\S]*<tr>\s+<td>(.*?)<\/td>\s+<td.*?><span.*?>.*?\%<\/span><\/td>\s+<\/tr>\s+<tr>.*?\s+<tr>/i, replaceTagsAndSpaces, html_entity_decode);
-			result.index_return = getParam(info1, null, null, /[\s\S]*<tr>\s+<td>.*?<\/td>\s+<td.*?><span.*?>(.*?)\%<\/span><\/td>\s+<\/tr>\s+<tr>.*?\s+<tr>/i, replaceTagsAndSpaces, parseBalance);
+			result.index_last_week = getParam(info1, null, null, /[\s\S]*<tr>\s+<td>(.*?)<\/td>\s+<td.*?><span.*?>.*?\%<\/span><\/td>\s+<\/tr>\s+<tr>.*?\s+<tr>/i, replaceTagsAndSpaces, html_entity_decode);
+			result.index_last_return = getParam(info1, null, null, /[\s\S]*<tr>\s+<td>.*?<\/td>\s+<td.*?><span.*?>(.*?)\%<\/span><\/td>\s+<\/tr>\s+<tr>.*?\s+<tr>/i, replaceTagsAndSpaces, parseBalance);
+			result.index_week = getParam(info1, null, null, /[\s\S]*<tr>\s+<td>(.*?)<\/td>\s+<td.*?><span.*?>.*?\%<\/span><\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+			result.index_return = getParam(info1, null, null, /[\s\S]*<tr>\s+<td>.*?<\/td>\s+<td.*?><span.*?>(.*?)\%<\/span><\/td>/i, replaceTagsAndSpaces, parseBalance);
 		}
 	}
 	

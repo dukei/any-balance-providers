@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-<change version="2" date="2013-11-05">
-- Поддержка изменений на сайте. (Stark)
-</change>
+	<change version="3" date="2014-02-24">
+	- Доработана ситуация, когда еще нет данных о посылке в системе. (Stark)
+	</change>
+	<change version="2" date="2013-11-05">
+	- Поддержка изменений на сайте. (Stark)
+	</change>
 </history>

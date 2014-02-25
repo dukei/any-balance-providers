@@ -1,23 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <EditTextPreference 
-        title="Email address" 
-        positiveButtonText="OK" 
-        summary="||{@s}" 
-        dialogTitle="Email address" 
-        negativeButtonText="Cancel" 
-        dialogMessage="Enter e-mail to log in PayPal."
-        inputType="textEmailAddress"
-        key="login">
-    </EditTextPreference>
-    <EditTextPreference 
-        positiveButtonText="OK"
-        key="password" 
-        dialogTitle="Password"
-        negativeButtonText="Cancel"
-        title="Enter password"
-        summary="||***********"
-        dialogMessage="Please enter password to log into your PayPal account."
-        inputType="textPassword">
-    </EditTextPreference>
+	<EditTextPreference
+		obligatory="true"
+		title="Email address"
+		positiveButtonText="OK"
+		summary="||{@s}"
+		dialogTitle="Email address"
+		negativeButtonText="Cancel"
+		dialogMessage="Enter e-mail to log in PayPal."
+		inputType="textEmailAddress"
+		key="login">
+	</EditTextPreference>
+	<EditTextPreference
+		obligatory="true"
+		positiveButtonText="OK"
+		key="password"
+		dialogTitle="Password"
+		negativeButtonText="Cancel"
+		title="Enter password"
+		summary="||***********"
+		dialogMessage="Please enter password to log into your PayPal account."
+		inputType="textPassword">
+	</EditTextPreference>
 </PreferenceScreen>

@@ -98,8 +98,7 @@ function main() {
 	}
 	if (AnyBalance.isAvailable('history')) {
 		AnyBalance.trace("Searching for history");
-		
-		html = prefs.testPage || AnyBalance.requestGet(baseurl + "payments/history/last_1_month");
+		html = prefs.testPage || AnyBalance.requestGet(baseurl + "payments/history/last_10");
 		
 		var table = getParam(html, null, null, /Время платежа([\s\S]*?)<\/table>/i);
 		if(table) {

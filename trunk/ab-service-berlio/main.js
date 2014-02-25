@@ -18,28 +18,32 @@ function main() {
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	var html = AnyBalance.requestGet(baseurl + 'enter.php', g_headers);
+	var html = AnyBalance.requestGet(baseurl + 'personal/profile/', g_headers);
 	
-	html = AnyBalance.requestPost(baseurl + 'reg.php', {
-		RUser: prefs.login,
-		RPassword: prefs.password,
-	}, addHeaders({Referer: baseurl + 'enter.php'}));
+	var params = createFormParams(html, function(params, str, name, value) {
+		if (name == 'USER_LOGIN') 
+			return prefs.login;
+		else if (name == 'USER_PASSWORD')
+			return prefs.password;
+
+		return value;
+	});
 	
-	if (!/Перейти к отчетам/i.test(html)) {
+	html = AnyBalance.requestPost(baseurl + 'personal/profile/', params, addHeaders({Referer: baseurl + 'personal/profile/'}));
+
+	if (!/logout=yes/i.test(html)) {
 		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
-		if (error && /Неверный логин или пароль/i.test(error))
-			throw new AnyBalance.Error(error, null, true);
 		if (error)
-			throw new AnyBalance.Error(error);
+			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+		
+		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	
-	var href = getParam(html, null, null, /<a\s*href="([^"]*)">Перейти к отчетам/i);
-	
-	html = AnyBalance.requestGet(baseurl + href, g_headers);
+	html = AnyBalance.requestGet(baseurl + 'personal/profile/balanse/', g_headers);
 	
 	var result = {success: true};
-	getParam(html, result, 'balance', /СУММА НА[\s\S]*?СУММА НА\s*\d{2}\.\d{2}\.\d{2,4}([\s\S]*?)</i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance', /Сумма на([^>]*>){3}\s*<\/dl>\s*<\/div/i, replaceTagsAndSpaces, parseBalance);
 	
 	AnyBalance.setResult(result);
 }

@@ -1,27 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="10" date="2014-02-25">
+	- Улучшенная обработка ошибок.
+	</change>
 	<change version="9" date="2014-02-04">
 	- Поддержка изменений в процедуре входа.
-	 </change>
+	</change>
 	<change version="8" date="2014-01-23">
 	- Поддержка изменений в процедуре входа (ввели капчу).
-	 </change>
+	</change>
 	<change version="7" date="2013-11-01">
 	- Поддержка изменений на сайте (Stark).
-	 </change>
+	</change>
 	<change version="6" date="2013-08-13">
 	- Улучшено распознавание Интернет-Трафика.
-	 </change>
+	</change>
 	<change version="5" date="2013-08-13">
 	- Улучшено распознавание Интернет-Трафика.
-	 </change>
+	</change>
 	<change version="4" date="2013-07-29">
 	- Исправлено распознавание баланса в некоторых случаях.
-	 </change>
+	</change>
 	<change version="3" date="2013-07-01">
 	- Улучшено распознавание Интернет-Трафика.
-	 </change>
+	</change>
 	<change version="2" date="2013-06-26">
 	- Различие между старым и новым личным кабинетом.
-	 </change>
+	</change>
 </history>

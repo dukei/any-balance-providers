@@ -12,6 +12,11 @@ var g_headers = {
 	'Connection':'keep-alive',
 };
 
+var errors = {
+	1: "Ошибка доступа. Введен неверный логин или пароль!",
+	
+}
+
 function main(){
     var prefs = AnyBalance.getPreferences();
 	checkEmpty(prefs.password, 'Введите пароль!');
@@ -53,6 +58,8 @@ function main(){
     if(/"err"/i.test(html)){
         //Если в кабинет войти не получилось, то в первую очередь надо поискать в ответе сервера объяснение ошибки
         var error = getParam(html, null, null, /err":"([\s\S]*?)"/i, replaceTagsAndSpaces, html_entity_decode);
+		if(error in errors)
+            throw new AnyBalance.Error(errors[error]);
         if(error)
             throw new AnyBalance.Error(error);
 		

@@ -1,35 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-goodline</id>
-  <name>GoodLine (Кемерово)</name>
-  <description>
-    Получает баланс и информацию о тарифном плане для Кемеровского интернет-провайдера Good Line, торговая марка ООО "Е-Лайт-Телеком" (http://goodline.info).
-
-    Информация берется из личного кабинета https://stat.eltc.ru. Если вы не помните логин-пароль в личный кабинет, получите его здесь: https://stat.eltc.ru/users/autoreminder
-
-    ВНИМАНИЕ! Личный кабинет недоступен извне сети Good Line, вы не сможете получать баланс через мобильный интернет. Для получения баланса требуется соединиться с домашним роутером по WiFi. Можете смело запретить мобильный интернет для аккаунта, основанном на этом провайдере.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="status" name="Статус" type="text"/>
-    <counter id="pay" name="Рекомендуемый платеж" units="р"/>
-    <counter id="agreement" name="№ договора" type="text"/>
-    <counter id="trafficInter" name="Трафик интернет" units="Gb"/>
-    <counter id="trafficIntra" name="Трафик интранет" units="Gb"/>
-  </counters>
-  <keywords>
-    интернет
-  </keywords>
-  <type>
-    internet
-  </type>
-  <country>
-    ru
-  </country>
+	<id version="2">ab-internet-goodline</id>
+	<api flags="no_browser|private"/>
+	<name>GoodLine (Кемерово)</name>
+	<description html="true"><![CDATA[
+	<p>Получает баланс и информацию о тарифном плане для Кемеровского интернет-провайдера Good Line, торговая марка ООО "Е-Лайт-Телеком" (http://goodline.info).</p>
+	<p>Информация берется из личного кабинета https://stat.eltc.ru. Если вы не помните логин-пароль в личный кабинет, получите его здесь: https://stat.eltc.ru/users/autoreminder</p>
+	<p>ВНИМАНИЕ! Личный кабинет недоступен извне сети Good Line, вы не сможете получать баланс через мобильный интернет. Для получения баланса требуется соединиться с домашним роутером по WiFi. Можете смело запретить мобильный интернет для аккаунта, основанном на этом провайдере.</p>
+	]]></description>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="pay" name="Рекомендуемый платеж" units=" р"/>
+		<counter id="agreement" name="№ договора" type="text"/>
+		<counter id="trafficInter" name="Трафик интернет" units=" Gb"/>
+		<counter id="trafficIntra" name="Трафик интранет" units=" Gb"/>
+	</counters>
+	<keywords>интернет</keywords>
+	<type>internet</type>
+	<country>ru</country>
 </provider>

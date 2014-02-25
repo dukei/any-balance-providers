@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
 	<EditTextPreference
-		title="Login"
+		title="Membership Number"
 		key="login"
 		summary="||{@s}"
 		obligatory="true"
-		dialogTitle="Login"
+		dialogTitle="Membership Number"
 		positiveButtonText="OK"
 		negativeButtonText="Cancel"
-		dialogMessage="Enter login to Etisalat Rewards personal account.">
+		dialogMessage="Enter Membership Number in Etisalat Rewards personal account.">
 	</EditTextPreference>
 	<EditTextPreference
 		title="Password"

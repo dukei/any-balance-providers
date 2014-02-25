@@ -1,10 +1,5 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Получает баланс и информацию о тарифном плане для томского интернет-провайдера Cifra1
-
-Сайт оператора: http://www.cifra1.ru/
-Личный кабинет: http://www.cifra1.ru/
 */
 
 var g_regionsById = {
@@ -24,10 +19,10 @@ var g_headers = {
 function main(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
-
+	
     checkEmpty(prefs.login && /^\d{10}$/.test(prefs.login), 'Логин должен состоять из 10 цифр');
     checkEmpty(prefs.password, 'Введите пароль!');
-
+	
     var params, region;
     if(!prefs.region || prefs.region == 'auto' || !g_regionsById[prefs.region]){
         var info = AnyBalance.requestGet('http://www.cifra1.ru/office/sites.json?login=' + encodeURIComponent(prefs.login), addHeaders({
@@ -50,7 +45,7 @@ function main(){
     }else{
         region = prefs.region;    
     }
-
+	
     AnyBalance.trace('region: ' + region);
     g_regionsById[region](region, params);
 }
@@ -80,13 +75,17 @@ function getCifra1(region, params){
 
     var html = AnyBalance.requestPost(baseurl + 'auth.jsf', params);
  
-    if(!/log__out/i.test(html)){
-        throw new AnyBalance.Error('Не удалось войти в личный кабинет. Неверный логин или пароль, проблемы на сайте или сайт изменен.');
-    }
-
-    var result = {success: true};
-
-    //Баланс
+ 	if (!/log__out/i.test(html)) {
+		var error = getParam(html, null, null, /<tr\s*class="error"([^>]*>){3}/i, replaceTagsAndSpaces, html_entity_decode);
+		if (error)
+			throw new AnyBalance.Error(error, null, /Пользователь не найден/i.test(error));
+		
+		AnyBalance.trace(html_entity_decode(html));
+		throw new AnyBalance.Error('Не удалось войти в личный кабинет. Неверный логин или пароль, проблемы на сайте или сайт изменен.');
+	}
+	
+	var result = {success: true};
+	//Баланс
     getParam(html, result, 'balance', /&#1041;&#1072;&#1083;&#1072;&#1085;&#1089;:([\S\s]*?)(\||<a)/i, replaceTagsAndSpaces, parseBalance);
     //Лицевой счет: 
     getParam(html, result, 'agreement', /&#1051;&#1080;&#1094;&#1077;&#1074;&#1086;&#1081; &#1089;&#1095;&#1105;&#1090;:([\S\s]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);

@@ -1,34 +1,30 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="1">ab-internet-kazgorset</id>
-  <name>Казгорсеть</name>
-  <description>
-    Получает текущий баланс, трафик и время наработки за текущий и прошлый месяцы у провайдера "Казгорсеть" (Казань) http://kazgorset.ru/
-  </description>
-  <author>wtiger &lt;wtiger@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>api:jquery.min.js</js> <!-- Используем библиотеку, которая и так входит в AnyBalance -->
-    <js>main.js</js>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="delimiter" name="Следующий платеж" type="text" prefix="Платить:"/>
-    <counter id="traffic_outer" name="Внешний трафик" prefix="Вн:" suffix="Мб"/>
-    <counter id="uptime" name="Время наработки" type="text" prefix="Время:"/>
-    <counter id="price" name="Стоимость" units="р"/>
-    <counter id="traffic_outer_last" name="Внешний трафик за прошлый месяц" prefix="Пр:" suffix="Мб"/>
-    <counter id="uptime_last" name="Время наработки за прошлый месяц" type="text" prefix="Время:"/>
-    <counter id="price_last" name="Стоимость за прошлый месяц" units="р"/>
-  </counters>
-  <keywords>
-    провайдер интернет Казгорсеть
-  </keywords>
-  <type>
-    internet, tv
-  </type>
-  <country>
-    ru
-  </country>
+	<id major_version="1.0" version="2">ab-internet-kazgorset</id>
+	<name>Казгорсеть</name>
+	<api flags="no_browser"/>
+	<description html="true"><![CDATA[
+	<p>Получает текущий баланс, трафик и время наработки за текущий и прошлый месяцы у провайдера "Казгорсеть" (Казань) http://kazgorset.ru</p>
+	]]></description>
+	<author>wtiger &lt;wtiger@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="delimiter" name="Следующий платеж" type="text" prefix="Платить: "/>
+		<counter id="traffic_outer" name="Внешний трафик" prefix="Вн:" suffix=" Мб"/>
+		<counter id="uptime" name="Время наработки" type="text" prefix="Время: "/>
+		<counter id="price" name="Стоимость" units="р"/>
+		<counter id="traffic_outer_last" name="Внешний трафик за прошлый месяц" prefix="Пр: " suffix=" Мб"/>
+		<counter id="uptime_last" name="Время наработки за прошлый месяц" type="text" prefix="Время: "/>
+		<counter id="price_last" name="Стоимость за прошлый месяц" units=" р"/>
+	</counters>
+	<keywords>провайдер интернет Казгорсеть</keywords>
+	<type>internet, tv</type>
+	<country>ru</country>
 </provider>

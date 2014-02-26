@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-internet-planeta</id>
+	<id version="3">ab-internet-planeta</id>
 	<api flags="no_browser"/>
 	<name>Планета (Екатеринбург)</name>
 	<description html="true"><![CDATA[

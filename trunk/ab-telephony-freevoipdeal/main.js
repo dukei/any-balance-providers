@@ -32,7 +32,7 @@ function main(){
 		return value;
 	});
 	// т.к. генерируется 20 форм чтобы запутать нас, мы возьмем нужные данные из скрипта
-    var matches = /data:\s*"login=login&module=webcall&component=show_webclient&update_id=&([^&=]*)=([^&="]*)/i.exec(html);
+    var matches = /<input type="hidden"[^>]+name="([^"]+)" value="([^"]+)"\s*\/>\s*<\/div>\s*<\/div>/i.exec(html);
     if(!matches)
         throw new AnyBalance.Error("Can`t find session id!");
 

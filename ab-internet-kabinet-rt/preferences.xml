@@ -1,34 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <EditTextPreference 
-        title="Логин" 
-        positiveButtonText="ОК" 
-        summary="||{@s}" 
+	<EditTextPreference
 		obligatory="true"
-        dialogTitle="Логин" 
-        negativeButtonText="Отмена" 
-        dialogMessage="Введите логин для входа в личный кабинет https://kabinet.rt.ru."
-        key="login">
-    </EditTextPreference>
-    <EditTextPreference 
-        positiveButtonText="ОК"
-        key="password" 
+		title="Логин"
+		positiveButtonText="ОК"
+		summary="||{@s}"
+		dialogTitle="Логин"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите логин для входа в личный кабинет https://kabinet.rt.ru."
+		key="login">
+	</EditTextPreference>
+	<EditTextPreference
 		obligatory="true"
-        dialogTitle="Пароль"
-        negativeButtonText="Отмена"
-        title="Пароль"
-        summary="||***********"
-        dialogMessage="Введите пароль, используемый для входа в личный кабинет https://kabinet.rt.ru."
-        inputType="textPassword">
-    </EditTextPreference>
-    <EditTextPreference 
-        title="Номера л/с или телефонов" 
-        positiveButtonText="ОК" 
-        summary="|Автоматически|{@s}" 
-        dialogTitle="Номера л/с или телефонов" 
-        negativeButtonText="Отмена" 
-        dialogMessage="Введите через запятую номера лицевых счетов или телефонов (до 4), по которым вы хотите получить информацию, или оставьте поле пустым, чтобы получить информацию по первым четырем лицевым счетам. Можно вводить номера не целиком, а только несколько последних цифр."
-        inputType="phone"
-        key="num">
-    </EditTextPreference>
+		positiveButtonText="ОК"
+		key="password"
+		dialogTitle="Пароль"
+		negativeButtonText="Отмена"
+		title="Пароль"
+		summary="||***********"
+		dialogMessage="Введите пароль, используемый для входа в личный кабинет https://kabinet.rt.ru."
+		inputType="textPassword">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Номера л/с или телефонов"
+		positiveButtonText="ОК"
+		summary="|Автоматически|{@s}"
+		dialogTitle="Номера л/с или телефонов"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите через запятую номера лицевых счетов или телефонов (до 4), по которым вы хотите получить информацию, или оставьте поле пустым, чтобы получить информацию по первым четырем лицевым счетам. Можно вводить номера не целиком, а только несколько последних цифр."
+		inputType="phone"
+		key="num">
+	</EditTextPreference>
 </PreferenceScreen>

@@ -116,9 +116,9 @@ function main(){
            (i < 4 && AnyBalance.isAvailable('balance' + suffix, 'bonus' + suffix, 'sms' + suffix, 'mms' + suffix, 'min' + suffix, 'gprs' + suffix, 'status' + suffix, 'licschet' + suffix, 'name' + suffix, 'phone' + suffix))){
 
             AnyBalance.trace('Получаем данные для л/с: ' + acc.number);
-            html = AnyBalance.requestPost(baseurl + 'serverLogic/getAccountInfo', {account: acc.id}, g_headers);
+            html = AnyBalance.requestPost(baseurl + 'serverLogic/getAccountInfoOpmz', {account: acc.id}, g_headers);
             json = getJson(html);
-    
+			
             acc.__detailedInfo = json;
 
             var balance = getAccBalance(json);

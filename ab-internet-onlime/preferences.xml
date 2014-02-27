@@ -1,34 +1,34 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <EditTextPreference 
+<EditTextPreference
 		obligatory="true"
-        title="Логин" 
-        positiveButtonText="ОК" 
-        summary="|Логин, например, 15212345|{@s}" 
-        dialogTitle="Номер телефона" 
-        negativeButtonText="Отмена" 
-        dialogMessage="Логин в личный кабинет Онлайм, например, 15212345"
-        key="login">
-    </EditTextPreference>
-    <EditTextPreference 
+		title="Логин"
+		positiveButtonText="ОК"
+		summary="|Логин, например, 15212345|{@s}"
+		dialogTitle="Номер телефона"
+		negativeButtonText="Отмена"
+		dialogMessage="Логин в личный кабинет Онлайм, например, 15212345"
+		key="login">
+	</EditTextPreference>
+	<EditTextPreference
 		obligatory="true"
-        positiveButtonText="ОК"
-        key="password" 
-        dialogTitle="Пароль"
-        negativeButtonText="Отмена"
-        title="Пароль"
-        summary="|Пароль для входа в личный кабинет|***********"
-        dialogMessage="Введите пароль, используемый для входа в личный кабинет Онлайм (my.onlime.ru) не более 16 символов."
-        inputType="textPassword">
-    </EditTextPreference>
-    <EditTextPreference 
-        positiveButtonText="ОК"
-        key="num" 
-        dialogTitle="Номер"
-        negativeButtonText="Отмена"
-        title="Номер л/с"
-        summary="|Автоматически|{@s}"
-        dialogMessage="Введите последние цифры номера лицевого счета или договора, по которому вы хотите получить информацию. Оставьте это поле пустым, если хотите получить информацию по первому счету."
-        inputType="number">
-    </EditTextPreference>
+		positiveButtonText="ОК"
+		key="password"
+		dialogTitle="Пароль"
+		negativeButtonText="Отмена"
+		title="Пароль"
+		summary="|Пароль для входа в личный кабинет|***********"
+		dialogMessage="Введите пароль, используемый для входа в личный кабинет Онлайм (my.onlime.ru) не более 16 символов."
+		inputType="textPassword">
+	</EditTextPreference>
+	<EditTextPreference
+		positiveButtonText="ОК"
+		key="num"
+		dialogTitle="Номер"
+		negativeButtonText="Отмена"
+		title="Номер л/с"
+		summary="|Автоматически|{@s}"
+		dialogMessage="Введите последние цифры номера лицевого счета или договора, по которому вы хотите получить информацию. Оставьте это поле пустым, если хотите получить информацию по первому счету."
+		inputType="number">
+	</EditTextPreference>
 </PreferenceScreen>

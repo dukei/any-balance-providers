@@ -27,23 +27,25 @@ function main() {
 	
 		var csrfmiddlewaretoken=findValue(html, "<input type='hidden' name='csrfmiddlewaretoken' value='([a-zA-Z0-9]+)'");
 		if(csrfmiddlewaretoken==null) throw new AnyBalance.Error('Ошибка предварительного разбора 1');
-		var captchaHash=findValue(html, "<input.+name=\"captcha_0\" value=\"([a-zA-Z0-9]+)\" id=\"id_captcha_0\"");
-		if(captchaHash==null) throw new AnyBalance.Error('Ошибка предварительного разбора 2');
-		
-		var captchaimg = AnyBalance.requestGet("https://pps.rapida.ru/captcha/image/"+captchaHash+"/");
-		
-		var captcha = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captchaimg);
-	
+
 		var prefs = AnyBalance.getPreferences();
-		html = AnyBalance.requestPost('https://pps.rapida.ru/auth/', {
+		var loginRequest={
 			csrfmiddlewaretoken: csrfmiddlewaretoken,
 			def_code: prefs.code,
 			def_code_shdw: codes[prefs.code],
 			login: prefs.login,
-			pin: prefs.password,
-			captcha_0: captchaHash,
-			captcha_1: captcha
-		  }, {
+			pin: prefs.password
+		  };
+
+		var captchaHash=findValue(html, "<input.+name=\"captcha_0\" value=\"([a-zA-Z0-9]+)\" id=\"id_captcha_0\"");
+		if(captchaHash!=null) {
+			var captchaimg = AnyBalance.requestGet("https://pps.rapida.ru/captcha/image/"+captchaHash+"/");
+			var captcha = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captchaimg);
+			loginRequest.captcha_0=captchaHash;
+			loginRequest.captcha_1=captcha;
+		}
+	
+		html = AnyBalance.requestPost('https://pps.rapida.ru/auth/', loginRequest, {
 			Referer: "https://pps.rapida.ru/"
 		  });
 		  

@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="11">ab-internet-onlime</id>
+	<id version="12">ab-internet-onlime</id>
 	<name>Onlime (Москва)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем балансе, бонусных баллах, номерах лицевого счета и договора, статусе и трафике в текущем месяце для пользователей провайдера ""Onlime"" (http://onlime.ru).</p>

@@ -1,9 +1,5 @@
 /**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Московский интернет провайдер ОнЛайм предлагает услуги широкополосного доступа в интернет
-Сайт оператора: http://onlime.ru/
-Личный кабинет: https://my.onlime.ru/
 */
 
 function main(){
@@ -24,13 +20,14 @@ function main(){
         "login_credentials[password]": prefs.password
     });
     
-    if(!/\/session\/logout/i.test(info)){
-        var error = getParam(info, null, null, /<p[^>]+id="errHolder"[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
-        if(error){
-            throw new AnyBalance.Error(error);
-        }
-        throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
-    }
+	if(!/\/session\/logout/i.test(info)) {
+		var error = getParam(info, null, null, /<p[^>]+id="errHolder"[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
+		if (error)
+			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+		
+		AnyBalance.trace(info);
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+	}
     
     var result = {success: true};
 
@@ -50,27 +47,19 @@ function main(){
     info = AnyBalance.requestGet(baseurl + "json/cabinet/");
     AnyBalance.trace('got info: ' + info);
     var oInfo = getJson(info.replace(/:(\-)?\./g, ':$10.')); //А то "balance":-.31 не распарсивается
+	
+	result.__tariff = oInfo.tier;
+	getParam(oInfo.balance, result, 'balance');
+	getParam(oInfo.points, result, 'bonus_balance');
+	//Похоже, 1000 используется, как бесконечное значение, в кабинете показывается >100
+	getParam(oInfo.lock == 1000 ? 100 : oInfo.lock, result, 'lock');
+	getParam(oInfo.contract, result, 'agreement');
+	getParam(oInfo.account, result, 'license');
     
-    if(AnyBalance.isAvailable('balance'))
-        result.balance = oInfo.balance;
-
-    if(AnyBalance.isAvailable('bonus_balance'))
-        result.bonus_balance = oInfo.points;
-
-    result.__tariff = oInfo.tier;
-
-    if(AnyBalance.isAvailable('lock'))
-        result.lock = oInfo.lock == 1000 ? 100 : oInfo.lock; //Похоже, 1000 используется, как бесконечное значение, в кабинете показывается >100
-    
-    if(AnyBalance.isAvailable('agreement'))
-        result.agreement = oInfo.contract;
-    
-    if(AnyBalance.isAvailable('license'))
-        result.license = oInfo.account;
-    
-    if((AnyBalance.isAvailable('balance') && !isset(result.balance)) || (AnyBalance.isAvailable('bonus_balance') && !isset(result.bonus_balance)) || (AnyBalance.isAvailable('lock') && !isset(result.lock))) {
+	if((AnyBalance.isAvailable('balance') && !isset(result.balance)) || (AnyBalance.isAvailable('bonus_balance') && !isset(result.bonus_balance)) || (AnyBalance.isAvailable('lock') && !isset(result.lock))) {
         //Странно, json не вернул то, что надо, придется из html вырезать
         var html = AnyBalance.requestGet(baseurl + 'billing/balance');
+		
         getParam(html, result, 'balance', /Баланс:[\s\S]*?<dd[^>]*>([\s\S]*?)<\/dd>/i, replaceTagsAndSpaces, parseBalance);
         getParam(html, result, 'lock', /Количество дней до блокировки:[\s\S]*?<dd[^>]*>([\s\S]*?)<\/dd>/i, replaceTagsAndSpaces, parseBalance);
     }

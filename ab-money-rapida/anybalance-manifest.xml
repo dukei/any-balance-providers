@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-    <id version="4">ab-money-rapida</id>
+    <id version="5">ab-money-rapida</id>
     <name>Кошелек Rapida</name>
     <description>Баланс кошелька Rapida</description>
     <author>BArtWell &lt;web@bartwell.ru&gt;</author>

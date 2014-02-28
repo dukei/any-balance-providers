@@ -1,32 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-telephony-allo</id>
-  <name>АллоИнкогнито</name>
-  <description>
-    Получает текущий баланс провайдера IP телефонии АллоИнкогнито (http://www.alloincognito.ru). 
-    
-    Данные берутся из личного кабинета https://my.alloincognito.ru/clients/?sc=allo
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-    <js>library.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="уе"/>
-    <counter id="phone" name="Номер АллоИнкогнито" type="text"/>
-    <counter id="fio" name="ФИО" type="text"/>
-  </counters>
-  <keywords>
-    алло инкогнито allo incognito alloincognito
-  </keywords>
-  <type>
-    telephony
-  </type>
-  <country>
-    ru
-  </country>
+	<id version="2">ab-telephony-allo</id>
+	<api flags="no_browser|captcha"/>
+	<name>АллоИнкогнито</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера IP телефонии АллоИнкогнито http://www.alloincognito.ru</p>
+	<p>Информация берется из личного кабинета https://my.alloincognito.ru</p>
+	]]></description>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units="уе"/>
+		<counter id="phone" name="Номер АллоИнкогнито" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
+	</counters>
+	<keywords>алло инкогнито allo incognito alloincognito</keywords>
+	<type>telephony</type>
+	<country>ru</country>
 </provider>

@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
       <ListPreference 
+        key="cabinet"
+        title="Кабинет" 
+        summary="||{@s}"
+		entries="Новый (с вводом капчи)|Старый"
+		entryValues="new|old"
+		defaultValue="old"
+        dialogTitle="Выберите личный кабинет.">
+    </ListPreference>
+	<ListPreference 
         key="prefix"
         title="Префикс номера телефона" 
         summary="|Без префикса|{@s}" 

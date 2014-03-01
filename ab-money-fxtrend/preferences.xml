@@ -56,4 +56,14 @@
 		entries="2010|Aggressive|Balance|Balance2|Balance3|Diamond|Gold|GoldP2|Million|Million2|Platinum|Platinum2|Prize"
 		entryValues="2010|Aggressive|Balance|Balance2|Balance3|Diamond|Gold|GoldP2|Million|Million2|Platinum|Platinum2|Prize">
 	</ListPreference>
+	<EditTextPreference 
+		positiveButtonText="ОК"
+	        key="limit"
+	        dialogTitle="Limit of drawdown"
+	        negativeButtonText="Cancel"
+	        title="Limit of drawdown"
+	        summary="||-{@s}"
+	        dialogMessage="Type the value of limit of drawdown for make the forecast of future drawdowns. WARNING! THIS IS ONLY FORECAST, NOT RECOMMENDATION!"
+	        inputType="number">
+	</EditTextPreference>
 </PreferenceScreen>

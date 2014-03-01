@@ -111,7 +111,7 @@ function main(){
 		getParam(info, result, 'amount_in_management', /Amоunt in management:<\/b><\/td>\s+<td.*?>(.*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 		getParam(info, result, 'relative_drawdown', /Relative drawdоwn:<\/b><\/td>\s+<td.*?>(.*?)\%<\/td>/i, replaceTagsAndSpaces, parseBalance);
 		getParam(info, result, 'maximum_drawdown', /Maximum drawdоwn:<\/b><\/td>\s+<td.*?>(.*?)\%<\/td>/i, replaceTagsAndSpaces, parseBalance);
-		getParam(info, result, 'open_trades', /Number оf оpen trades:<\/b><\/td>\s+<td.*?>(.*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(info, result, 'open_trades', /<tr>\s+<td><b>Number оf оpen trades:<\/b><\/td>\s+<td.*?>(.*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 		getParam(info, result, 'annualized_gain', /Expected annualized gain:<\/b><\/td>\s+<td.*?>(.*?)\%<\/td>/i, replaceTagsAndSpaces, parseBalance);
 		getParam(info, result, 'previous_rollover', /Date of previous periodic rollover:<\/b><\/td>\s+<td.*?>(.*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
 		getParam(info, result, 'next_rollover', /Next periodic rollover:<\/b><\/td>\s+<td.*?>(.*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
@@ -128,6 +128,18 @@ function main(){
 			result.week_profit = getParam(info1, null, null, /[\s\S]*<tr>\s+<td>.*?<\/td>\s+<td.*?>(.*?)<\/td>\s+<td.*?>.*?\%<\/td>\s+<\/tr>/i, replaceTagsAndSpaces, parseBalance);
 			result.week_interest = getParam(info1, null, null, /[\s\S]*<tr>\s+<td>.*?<\/td>\s+<td.*?>.*?<\/td>\s+<td.*?>(.*?)\%<\/td>\s+<\/tr>/i, replaceTagsAndSpaces, parseBalance);
 		}
+
+		if(isAvailable('pamm_forecast') && (matches = info.match(/<h2>rate of return by weeks<\/h2>[\s\S]+?<\/table>/i))){
+			AnyBalance.trace('Trying to analyze for interests...');
+			var interests = [];
+			var regexp = /<tr>\s+<td>.*?<\/td>\s+<td.*?>.*?<\/td>\s+<td.*?>(.*?)\%<\/td>\s+<\/tr>/g;
+			while((r = regexp.exec(matches[0])) != null) {
+	           		interests[interests.length] = Number(r[1]);
+			}
+			result.pamm_forecast = getForecast(interests,prefs.limit);
+		}
+
+
 //PAMM indices (without login)
 	}else if(prefs.type==3){
 
@@ -147,6 +159,31 @@ function main(){
 
 		getParam(info, result, 'index_started', /Time of starting:<\/b><\/td>\s+<td.*?>(.*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
 
+		if(isAvailable('sum_open_trades')){
+			AnyBalance.trace('Getting open trades...');
+			var accs = result.index_included.replace(/ \d+\%$/,'').split(/ \d+\%, /);
+			var sum = 0;
+			for(a in accs){
+				AnyBalance.trace('Getting details for PAMM: '+accs[a]+'...');
+
+				var info1 = AnyBalance.requestGet(baseurl + 'en/pamm/' + accs[a], addHeaders({Referer: baseurl}));
+
+				if((matches = info1.match(/<h2>PAMM account details (.*?)<\/h2>/)) == null){
+					throw new AnyBalance.Error("Error getting data of PAMM '"+accs[a]+"' (may be it not exist?).");
+				}
+
+				AnyBalance.trace('Looking for open trades...');
+				sum += getParam(info1, null, null, /<tr>\s+<td><b>Number оf оpen trades:<\/b><\/td>\s+<td.*?>(.*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+
+				if(matches = info1.match(/<h2>rate of return by weeks<\/h2>[\s\S]+?<\/table>/i)){
+					AnyBalance.trace('Looking for this week interest...');
+					getParam(matches[0], null, null, /[\s\S]*<tr>\s+<td>.*?<\/td>\s+<td.*?>.*?<\/td>\s+<td.*?>(.*?)\%<\/td>\s+<\/tr>/i, replaceTagsAndSpaces, parseBalance);
+				}
+			}
+			result.sum_open_trades = sum;
+			AnyBalance.trace('Sum of open trades: '+sum);
+		}
+
 		if(matches = info.match(/<h2>weekly investor’s returns<\/h2>[\s\S]+?<\/table>/i)){
 			var info1=matches[0];
 			result.index_last_week = getParam(info1, null, null, /[\s\S]*<tr>\s+<td>(.*?)<\/td>\s+<td.*?><span.*?>.*?\%<\/span><\/td>\s+<\/tr>\s+<tr>.*?\s+<tr>/i, replaceTagsAndSpaces, html_entity_decode);
@@ -154,6 +191,17 @@ function main(){
 			result.index_week = getParam(info1, null, null, /[\s\S]*<tr>\s+<td>(.*?)<\/td>\s+<td.*?><span.*?>.*?\%<\/span><\/td>/i, replaceTagsAndSpaces, html_entity_decode);
 			result.index_return = getParam(info1, null, null, /[\s\S]*<tr>\s+<td>.*?<\/td>\s+<td.*?><span.*?>(.*?)\%<\/span><\/td>/i, replaceTagsAndSpaces, parseBalance);
 		}
+
+		if(isAvailable('index_forecast') && (matches = info.match(/<h2>weekly investor’s returns<\/h2>[\s\S]+?<\/table>/i))){
+			AnyBalance.trace('Trying to analyze for interests...');
+			var interests = [];
+			var regexp = /<td align="right"><span.*?>(.*?)\%<\/span><\/td>/g;
+			while((r = regexp.exec(matches[0])) != null) {
+	           		interests[interests.length] = Number(r[1]);
+			}
+			result.index_forecast = getForecast(interests,prefs.limit);
+		}
+
 	}
 	
 	AnyBalance.setResult(result);
@@ -167,4 +215,21 @@ function getEquity(b){
 		a = b.balance;
 	}
 	return a;
-}
+};
+
+function getForecast(a,limit){
+	var last = 0;
+	var minus = 0;
+	var lim = -5;if(limit != null){lim = -Math.abs(limit);}
+	for(i in a){
+		if(i<a.length && a[i]<lim){last=i;minus+=1;}
+	}
+	var delta=last/minus;
+	var f = (a.length - 1 - last)/delta;
+	if(f<.1){f=.1;}else if(f>.9){f=.9;}
+
+	AnyBalance.trace('Get forecast by '+a.length+' week(s), '+minus+' overlimit drawdown(s) with limit '+lim+', last drawdown at '+last+'-th week.');
+
+	return Math.round(f*100);
+};
+

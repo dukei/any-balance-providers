@@ -1,13 +1,10 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Текущий баланс у пензенского интернет-провайдера Пенза Телеком (Ныне МТС уже)
-
-Сайт оператора: http://www.ptcomm.ru/
-Личный кабинет: http://client.lanbilling.ptcomm.ru/
 */
 
 function main(){
+	throw new AnyBalance.Error("Этот провайдер вскоре будет удален, воспользуйтесь провайдером Домашний Интернет и Телевидение МТС", null, true);
+	
     var prefs = AnyBalance.getPreferences();
 
     checkEmpty(prefs.login, 'Введите логин!');

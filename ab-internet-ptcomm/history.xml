@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-    <change version="3" date="2013-11-04">
-      - изменение адреса личного кабинета
-    </change>
-    <change version="2" date="2013-02-21">
-      - Полное изменение личного кабинета
-    </change>
+    <change version="4" date="2013-11-04">
+	- Добавлено предупреждение об удалении провайдера.
+	</change>
+	<change version="3" date="2013-11-04">
+	- изменение адреса личного кабинета
+	</change>
+	<change version="2" date="2013-02-21">
+	- Полное изменение личного кабинета
+	</change>
 </history>

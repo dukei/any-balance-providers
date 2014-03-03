@@ -10,8 +10,8 @@ var g_headers = {
 	'Content-Type':'application/json; charset=UTF-8',
 	'User-Agent':'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
 	'Origin':'https://www.kaspi.kz',
-	'X-Requested-With':'XMLHttpRequest'
 };
+
 function main() {
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'https://www.kaspi.kz/';
@@ -20,19 +20,42 @@ function main() {
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	var login = prefs.login.replace(/(\d{3})(\d{3})(\d{2})(\d{2})/, "($1) $2-$3-$4");
+	var login = prefs.login.replace(/(\d{3})(\d{3})(\d{2})(\d{2})/, "+7 ($1) $2-$3-$4");
 	if(!login)
 		throw new AnyBalance.Error('Не верный формат логина, необходимо вводить логин без +7 в начале и без пробелов.');
 	
 	var html = AnyBalance.requestGet(baseurl + 'auth.aspx', g_headers);
 	
-	html = AnyBalance.requestPost(baseurl + 'AuthExII/AuthenticationBackendService.svc/SignIn', '{ "submitId":"SignIn","webFormValues": [{"name":"FormId","value":"SignInForm"},{"name":"SignInLogin","value":"+7 '+
-		login +'"},{"name":"ShowPassword","value":"false"},{"name":"Password","value":"'+prefs.password+'"}],"timestamp":"/Date('+new Date().getTime()+'-14400000)/"}', 
-	addHeaders({Referer: baseurl + 'auth.aspx'}));
+	var loginParams = { 
+		'submitId':'SignIn',
+		'timestamp':'/Date('+new Date().getTime()+'-14400000)/',
+		'webFormValues': [
+			{'name':'FormId','value':'SignInForm'},
+			{'name':'SignInLogin','value':login},
+			{'name':'ShowPassword','value':'false'},
+			{'name':'Password','value':prefs.password}
+		]
+	};
+	html = AnyBalance.requestPost(baseurl + 'AuthExII/AuthenticationBackendService.svc/SignIn', JSON.stringify(loginParams), addHeaders({
+		Referer: baseurl + 'auth.aspx',
+		'X-Requested-With':'XMLHttpRequest'
+	}));
 	
-	if(!/"errors":null/i.test(html)) {
+	var json = getJson(html);
+	
+	if (json.d.errors) {
+		var errors = '';
+		for(var i = 0; i < json.d.errors.length; i++) {
+			var currnetMessage = getParam(json.d.errors[i].message, null, null, /<h2>([^<]+)/i, replaceTagsAndSpaces);
+			errors += currnetMessage + (i < json.d.errors.length-1 ? ', ' : '');
+		}
+		if (errors != '')
+			throw new AnyBalance.Error(errors, null, /Неверный логин или пароль/i.test(errors));
+		
+		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-	}
+	}	
+	
 	
 	html = AnyBalance.requestGet(baseurl + 'Default.aspx?action=standing', g_headers);
 	
@@ -46,11 +69,12 @@ function fetchCard(html, baseurl){
     var prefs = AnyBalance.getPreferences();
     //if(prefs.cardnum && !/^\d{4}$/.test(prefs.cardnum))
         //throw new AnyBalance.Error("Введите 4 последних цифры номера карты или не вводите ничего, чтобы показать информацию по первой карте");
-
+	
 	var div = getParam(html, null,null, /"content_balance_inner"[^>]*>([\s\S]*?)<\/table/i);
 	if(!div)
-		throw new AnyBalance.Error('Не удаётся данных по картам');
-
+		throw new AnyBalance.Error('Не удаётся найти данные по картам!');
+	
+	// <a\s*id="ctl\d+_rptCards_hlCard_\d+"\s+href="([^"]*)[^>]*>[^<]*Карта
 	var re = new RegExp('<a\\s*id="ctl\\d+_rptCards_hlCard_\\d+"\\s+href="([^"]*)[^>]*>[^<]*' + (prefs.cardnum ? prefs.cardnum : ''), 'i');
     var href = getParam(html, null, null, re, replaceTagsAndSpaces, html_entity_decode);
 	if(!href)
@@ -78,7 +102,7 @@ function fetchAccount(html, headers, baseurl){
     var tr = getParam(html, null, null, re);
 
     if(!tr)
-        throw new AnyBalance.Error('Не удаётся найти ' + (prefs.cardnum ? 'счет с первыми цифрами ' + prefs.cardnum : 'ни одного счета'));
+        throw new AnyBalance.Error('Не удаётся найти ' + (prefs.cardnum ? 'счет с первыми цифрами ' + prefs.cardnum : 'ни одного счета!'));
 
     var result = {success: true};
     getParam(tr, result, 'cardnum', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);

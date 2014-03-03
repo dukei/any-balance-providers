@@ -30,6 +30,11 @@ function main(){
 	var baseurl = 'https://mobile.paypal.com/cgi-bin/wapapp';
 	var html = AnyBalance.requestGet(baseurl, g_headers);
 	
+	if(/<h3>I want to<\/h3>/i.test(html)) {
+		AnyBalance.trace('Требуется дополнительный шаг авторизации - выполняем...');
+		html = followLink(html, 'login=');
+	}
+	
 	html = followLink(html, 'view_balance.x=');
 	
 	var form = getParam(html, null, null, /<form[^>]+name="Login"[\s\S]*?<\/form>/i);

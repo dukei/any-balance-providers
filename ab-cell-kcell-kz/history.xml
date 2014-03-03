@@ -1,19 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-<change version="6" date="2013-10-02">
-- Исправлено получение бонусных минут в некоторых случаях (Stark)
-</change>
-<change version="5" date="2013-09-22">
-- Исправлено получение баланса в некоторых случаях
-</change>
-<change version="4" date="2013-08-07">
-- Исправлен вход в кабинет
-</change>
-<change version="3" date="2013-07-09">
-- Добавлена обработка i.kcell.kz
-</change>
-<change version="2" date="2013-07-08">
-- Исправлен вход в кабинет
-- Добавлены бонусные смс и минуты
-</change>
+	<change version="7" date="2014-03-03">
+	- Поддержка изменений на сайте.
+	</change>
+	<change version="6" date="2013-10-02">
+	- Исправлено получение бонусных минут в некоторых случаях (Stark)
+	</change>
+	<change version="5" date="2013-09-22">
+	- Исправлено получение баланса в некоторых случаях
+	</change>
+	<change version="4" date="2013-08-07">
+	- Исправлен вход в кабинет
+	</change>
+	<change version="3" date="2013-07-09">
+	- Добавлена обработка i.kcell.kz
+	</change>
+	<change version="2" date="2013-07-08">
+	- Исправлен вход в кабинет
+	- Добавлены бонусные смс и минуты
+	</change>
 </history>

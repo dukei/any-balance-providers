@@ -1,10 +1,5 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Текущий баланс у оператора Kcell (Казахстан).
-
-Сайт оператора: http://www.kcell.kz
-Личный кабинет: http://www.kcell.kz/ru/ics.account/dashboard/false
 */
 
 var g_headers = {'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.11 (KHTML, like Gecko) Chrome/20.0.1132.57 Safari/536.11'};
@@ -12,7 +7,7 @@ var g_headers = {'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/5
 function main(){
     var prefs = AnyBalance.getPreferences();
     var lang = prefs.lang || 'kk';
-    var baseurl = "http://www.kcell.kz/" + lang + "/ics.security/authenticate/false";
+    var baseurl = "http://www.kcell.kz/" + lang + "/ics.security/authenticate";
 	var ibaseurl = 'https://i.kcell.kz/';
 	
     AnyBalance.setDefaultCharset('utf-8');
@@ -35,10 +30,11 @@ function main(){
     var result = {success: true};
     getParam(html, result, 'balance', /(?:Доступные средства|Пайдалануға болатын қаржы|Available:|Ваш баланс|Сіздің теңгеріміңіз|Your balance is)([^<]*)/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'licschet', /(?:Номер лицевого счета|Дербес шот нөмірі|Account):[\s\S]*?<font[^>]*>([\s\S]*?)<\/font>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'userName', /<h2[^>]*>([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'userName', [/"cvet account_name"[^>]*>([^<]+)/i, /<h2[^>]*>([\s\S]*?)<\/h2>/i], replaceTagsAndSpaces, html_entity_decode);
+	// Не отображается
     getParam(html, result, '__tariff', /(?:Тарифный план|Тариф|Tariff):[\s\S]*?<font[^>]*>([\s\S]*?)<\/font>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'internet', /(?:Остатки по доп. услугам|Қосымша қызметтер бойынша қалдық|Available for VAS):[^<]*?GPRS\s*-?([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'sms_left', /(?:Остатки по доп. услугам|Қосымша қызметтер бойынша қалдық|Available for VAS):[^<]*?(?:Бонусные смс|Бонустық SMS|Bonus SMS)\s*-?([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'sms_left', /(?:Остатки по доп. услугам|Қосымша қызметтер бойынша қалдық|Available for VAS):[^<]*?(?:Бонусные смс|Бонустық SMS|Bonus SMS)\s*-?([^<]*)/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'min_left', [
 		/(?:Остатки по доп. услугам|Қосымша қызметтер бойынша қалдық|Available for VAS):[^<]*?(\d+)\s*(?:бонусных мин|бонустық минут|bonus on-net min)/i,
 		/(?:Остатки по доп. услугам|Қосымша қызметтер бойынша қалдық|Available for VAS):[^<]*?(?:Бонустық минуттар|Бонусные минуты|Bonus Minutes)\s*-?([^<]*)\s*(?:мин|min)/i

@@ -53,7 +53,7 @@ function main() {
 		throw new AnyBalance.Error('Неверный пароль. Пожалуйста, убедитесь, что вы правильно ввели пароль, и попробуйте ещё раз.');
 	}
 	if (!/Персональные данные/.exec(html)){
-		var error = getParam(html, null, null, /<ul[^>]+class="form-errors"[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html.replace(/<!--[\s\S]*?-->/ig, ''), null, null, /<ul[^>]+class="form-errors"[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
 		if(error)
 			throw new AnyBalance.Error(error);
 		AnyBalance.trace('Что-то не то, возможно проблемы с сайтом');

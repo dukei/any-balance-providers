@@ -1,10 +1,5 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Получает баланс и информацию о тарифном плате для сотового оператора xxxxxx 
-
-Operator site: http://xxxxxx.ru
-Личный кабинет: https://kabinet.xxxxxx.ru/login
 */
 
 var g_headers = {
@@ -72,13 +67,14 @@ function main(){
     getParam(''+json.balance, result, 'balance', null, replaceTagsAndSpaces, parseBalance);
     getParam(''+json.shouldPay, result, '2pay', null, replaceTagsAndSpaces, parseBalance);
     getParam(''+json.contractId, result, 'licschet', null, replaceTagsAndSpaces, html_entity_decode);
-
-    for(var i=0; json.clientinfo && i<json.clientinfo.length; ++i){
+	
+    for(var i = 0; json.clientinfo && i < json.clientinfo.length; ++i){
         var info = json.clientinfo[i];
+		
         sumParam(info.rateName || info.rateClass, result, '__tariff', null, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
         sumParam(''+info.cost, result, 'abon', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     }
-
+	
     //Возвращаем результат
     AnyBalance.setResult(result);           	
 }

@@ -1,34 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-internet-himki</id>
-  <name>BIGtelecom</name>
-  <description>
-    Получает баланс и информацию о тарифном плане для подмосковного интернет провайдера БИГ Телеком (http://himki.net)
-
-    Информация берется из личного кабинета https://stat.bigtelecom.ru
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>md5-min.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="2pay" name="Рекомендуемая сумма оплаты" units="р"/>
-    <counter id="abon" name="Абонентская плата" units="р"/>
-    <counter id="licschet" name="Лицевой счет" type="text"/>
-  </counters>
-  <keywords>
-    химки.нет, big telecom
-  </keywords>
-  <type>
-    internet
-  </type>
-  <country>
-    ru
-  </country>
+	<id version="3">ab-internet-himki</id>
+	<api flags="no_browser"/>
+	<name>BIGtelecom</name>
+	<description html="true"><![CDATA[
+	<p>Получает баланс и информацию о тарифном плане для подмосковного интернет провайдера БИГ Телеком (http://himki.net)</p>
+	<p>Информация берется из личного кабинета https://stat.bigtelecom.ru</p>
+	]]></description>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>md5-min.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+		<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="2pay" name="Рекомендуемая сумма оплаты" units=" р"/>
+		<counter id="abon" name="Абонентская плата" units=" р"/>
+		<counter id="licschet" name="Лицевой счет" type="text"/>
+	</counters>
+	<keywords>химки.нет, big telecom</keywords>
+	<type>internet</type>
+	<country>ru</country>
 </provider>

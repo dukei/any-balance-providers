@@ -1,39 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-internet-kaztel</id>
-  <name>Казахтелеком (Единый кабинет)</name>
-  <description>
-    Получает сумму к оплате в АО Казахтелеком (http://www.telecom.kz)
-
-    Информация берется из единого личного кабинета (ЕЛК): http://cabinet.idport.kz
-    
-    Вопрос: Как мне зарегистрироваться в ЕЛК?
-    Ответ: 
-      Примечание: Если у Вас есть логин и пароль для доступа в любой из кабинетов сайтов – www.telecom.kz, www.megaline.kz, инфокиоски проходить процедуру регистрации не нужно. Используя имеющийся логин и пароль от любого из перечисленных кабинетов вы можете войти в ЕЛК.
-      Шаг 1: Подойти в ближайший пункт сети сервиса АО "Казахтелеком, получить регистрационные коды. (Регистрационные коды выдаются только абонентам АО «Казактелеком» при предъявлении удостоверения личности).
-      Шаг 2: На главной странице www.iDPort.kz нажмите на кнопку «Регистрация» и используя регистрационные коды, пройдите процедуру регистрации.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="〒"/>
-    <counter id="fio" name="ФИО" type="text"/>
-    <counter id="licschet" name="Лицевой счет" type="text"/>
-    <counter id="login" name="Логин" type="text"/>
-  </counters>
-  <keywords>
-    казахстан
-  </keywords>
-  <type>
-    internet
-  </type>
-  <country>
-    kz
-  </country>
+	<id version="3">ab-internet-kaztel</id>
+	<api flags="no_browser"/>
+	<name>Казахтелеком (Единый кабинет)</name>
+	<description html="true"><![CDATA[
+	<p>Получает сумму к оплате в АО Казахтелеком (http://www.telecom.kz)</p>
+	<p>Информация берется из единого личного кабинета (ЕЛК): http://cabinet.idport.kz</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Вопрос: Как мне зарегистрироваться в ЕЛК?</p>
+	<p>Ответ:</p>
+	<p>Примечание: Если у Вас есть логин и пароль для доступа в любой из кабинетов сайтов – www.telecom.kz, www.megaline.kz, инфокиоски проходить процедуру регистрации не нужно. Используя имеющийся логин и пароль от любого из перечисленных кабинетов вы можете войти в ЕЛК.</p>
+	<p>Шаг 1: Подойти в ближайший пункт сети сервиса АО "Казахтелеком, получить регистрационные коды. (Регистрационные коды выдаются только абонентам АО «Казактелеком» при предъявлении удостоверения личности).</p>
+	<p>Шаг 2: На главной странице www.iDPort.kz нажмите на кнопку «Регистрация» и используя регистрационные коды, пройдите процедуру регистрации.</p>
+	]]></instruction>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" 〒"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="licschet" name="Лицевой счет" type="text"/>
+		<counter id="login" name="Логин" type="text"/>
+	</counters>
+	<keywords>казахстан</keywords>
+	<type>internet</type>
+	<country>kz</country>
 </provider>

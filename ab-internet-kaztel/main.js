@@ -45,7 +45,7 @@ function main(){
         ['AuthTypeTextPass','Пароль :'],
         ['j_password',sitetype == 3 ? prefs.password : ''],
     ]), addHeaders({Referer: baseurl + 'index.cfm', 'Content-Type': 'application/x-www-form-urlencoded'})); 
-
+	
     if(!/\?logout=true/i.test(html)){
         //Если в кабинет войти не получилось, то в первую очередь надо поискать в ответе сервера объяснение ошибки
         if(/location.href\s*=\s*'https?:\/\/cabinet.idport.kz(?::\d+)?\/IdPort\/index_error.html'/.test(html))
@@ -53,18 +53,22 @@ function main(){
         //Если объяснения ошибки не найдено, при том, что на сайт войти не удалось, то, вероятно, произошли изменения на сайте
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
-
-    html = AnyBalance.requestGet(baseurl + 'fMain.cfm?Main=true', g_headers);
-
+	
+    html = AnyBalance.requestGet(baseurl + 'index.cfm', g_headers);
+	
     //Раз мы здесь, то мы успешно вошли в кабинет
     //Получаем все счетчики
     var result = {success: true};
-    getParam(html, result, 'fio', /<td[^>]*>\s*(?:ФИО|АЖТ)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, '__tariff', /<td[^>]*>\s*(?:ФИО|АЖТ)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'licschet', /<td[^>]*>\s*(?:Лицевой счет|Дербес шот)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'login', /<td[^>]*>\s*(?:Логин|Логин)[\s\S]*?<td[^>]*>([\s\S]*?)(?:<a|<\/td>)/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'balance', /<input[^>]+id="pay_amount"[^>]*value="([^"]*)/i, replaceTagsAndSpaces, parseBalance);
-
-    //Возвращаем результат
+    getParam(html, result, 'fio', [/>Уважаемый \(ая\)([^,]+)/i, /<td[^>]*>\s*(?:ФИО|АЖТ)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i], replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, '__tariff', [/>Уважаемый \(ая\)([^,]+)/i, /<td[^>]*>\s*(?:ФИО|АЖТ)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i], replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'licschet', [/(?:Лицевой счет|Дербес шот)([^>]*>){3}/i, /<td[^>]*>\s*(?:Лицевой счет|Дербес шот)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i], replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'login', [/(?:Логин|Логин)([^>]*>){3}/i, /<td[^>]*>\s*(?:Логин|Логин)[\s\S]*?<td[^>]*>([\s\S]*?)(?:<a|<\/td>)/i], replaceTagsAndSpaces, html_entity_decode);
+	
+	if(isAvailable('balance')) {
+		html = AnyBalance.requestGet(baseurl + 'presentation/billing/index.cfm?show_only_balance=true', g_headers);
+		
+		getParam(html, result, 'balance', /"pay_amount"[^>]*value="([^"]*)/i, replaceTagsAndSpaces, parseBalance);
+	}
+	//Возвращаем результат
     AnyBalance.setResult(result);
 }

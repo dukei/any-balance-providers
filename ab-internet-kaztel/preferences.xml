@@ -1,38 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <ListPreference 
-        key="authtype" 
-        title="Вход по"
-        summary="||{@s}"
-        entries="Логину|Телефону (10 цифр)"
-        entryValues="1|2"
-	defaultValue="1">
-    </ListPreference>
-    <EditTextPreference 
-        title="Логин" 
-        positiveButtonText="ОК" 
-        summary="||{@s}" 
-        dialogTitle="Логин" 
-        negativeButtonText="Отмена" 
-        dialogMessage="Введите логин или номер телефона (10 цифр) для входа в личный кабинет."
-        key="login">
-    </EditTextPreference>
-    <EditTextPreference 
-        positiveButtonText="ОК"
-        key="password" 
-        dialogTitle="Пароль"
-        negativeButtonText="Отмена"
-        title="Пароль"
-        summary="||***********"
-        dialogMessage="Введите пароль, используемый для входа в личный кабинет."
-        inputType="textPassword">
-    </EditTextPreference>
-    <ListPreference 
-        key="sitetype" 
-        title="Логин с сайта"
-        summary="||{@s}"
-        entries="ID Port|Megaline|telecom.kz"
-        entryValues="1|2|3"
-	defaultValue="1">
-    </ListPreference>
+	<ListPreference
+		key="authtype"
+		title="Вход по"
+		summary="||{@s}"
+		entries="Логину|Телефону (10 цифр)"
+		entryValues="1|2"
+		defaultValue="1">
+	</ListPreference>
+	<EditTextPreference
+		obligatory="true"
+		title="Логин"
+		positiveButtonText="ОК"
+		summary="||{@s}"
+		dialogTitle="Логин"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите логин или номер телефона (10 цифр) для входа в личный кабинет."
+		key="login">
+	</EditTextPreference>
+	<EditTextPreference
+		obligatory="true"
+		positiveButtonText="ОК"
+		key="password"
+		dialogTitle="Пароль"
+		negativeButtonText="Отмена"
+		title="Пароль"
+		summary="||***********"
+		dialogMessage="Введите пароль, используемый для входа в личный кабинет."
+		inputType="textPassword">
+	</EditTextPreference>
+	<ListPreference
+		key="sitetype"
+		title="Логин с сайта"
+		summary="||{@s}"
+		entries="ID Port|Megaline|telecom.kz"
+		entryValues="1|2|3"
+		defaultValue="1">
+	</ListPreference>
 </PreferenceScreen>

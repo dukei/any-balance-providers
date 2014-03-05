@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-cell-orange-pl</id>
+	<api flags="no_browser"/>
+	<name>Orange (Poland)</name>
+	<description html="true"><![CDATA[
+	<p>Obtains information from Orange personal account in Poland Orange.pl from https://m.orange.pl/portal/lecare/home</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Balance" units=" {@currency}"/>
+		<counter id="currency" name="Currency" type="text"/>
+		<counter id="phone" name="Phone" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>cell</type>
+	<country>pl</country>
+</provider>

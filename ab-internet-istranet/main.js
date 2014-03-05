@@ -41,6 +41,7 @@ function main(){
 	getParam(html, result, 'balance', /<td[^>]*>Баланс<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'balanceCredit', /<td[^>]*>Кредит<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'nds', /<td[^>]*>НДС<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'status', /<td[^>]*>Состояние интернета<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, [/<A(?:[^>]*>){2}/ig, '', replaceTagsAndSpaces], html_entity_decode);
 	
     html = AnyBalance.requestGet(baseurl + '?module=40_tariffs', g_headers);
 	

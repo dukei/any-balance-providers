@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<api flags="no_browser" />
+	<id version="1">ab-internet-istranet</id>
+	<name>Истранет (Истра)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Истранет http://istranet.ru/</p>
+	<p>Информация берется из личного кабинета http://lk.istranet.ru/</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="balanceCredit" name="Кредит" units=" р"/>
+		<counter id="nds" name="НДС" type="text" units=" %"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="id" name="ID" type="text"/>
+		<counter id="account" name="Основной счет" type="text"/>
+	</counters>
+	<keywords>vintem</keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

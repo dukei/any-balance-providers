@@ -213,7 +213,7 @@ function fetchAcc(html, baseurl, prefs, url) {
 			html = AnyBalance.requestGet(baseurl + href, g_headers);
 			
 			getParam(html, result, 'blocked', /Заблокировано по операциям с картой([^>]*>){5}/i, replaceTagsAndSpaces, parseBalance);
-			getParam(tr, result, 'balance', /Доступно для операций с картами([^>]*>){5}/i, replaceTagsAndSpaces, parseBalance);
+			getParam(html, result, 'balance', /Доступно для операций с картами([^>]*>){5}/i, replaceTagsAndSpaces, parseBalance);
 			
 			/*getParam(html, result, 'status', /Состояние карты(?:[^>]*>){3}([^<]+)/i, replaceTagsAndSpaces);
 			getParam(html, result, 'accnum', /Карточный счет(?:[^>]*>){3}([^<]+)/i, replaceTagsAndSpaces);

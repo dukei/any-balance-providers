@@ -203,26 +203,25 @@ function fetchAcc(html, baseurl, prefs, url) {
 	getParam(tr, result, '__tariff', /\d{20}/i, replaceTagsAndSpaces);
 	getParam(result.__tariff, result, 'accnum');
 	getParam(tr, result, 'acctype', /ITEM_ID[^>]*>([^<]+)/i, replaceTagsAndSpaces);
-	getParam(tr, result, 'balance', /ITEM_ID(?:[^>]*>){8}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(tr, result, ['currency', 'balance', 'debt'], /ITEM_ID(?:[^>]*>){10}([^<]+)/i, replaceTagsAndSpaces, parseCurrencyMy);
+	getParam(tr, result, 'total', /ITEM_ID(?:[^>]*>){8}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(tr, result, ['currency', 'balance', 'total'], /ITEM_ID(?:[^>]*>){10}([^<]+)/i, replaceTagsAndSpaces, parseCurrencyMy);
 	
-	if(isset(result.currency)) {
-		getParam(tr, result, 'debt', new RegExp('([-.,\\d\\s]+)\\s*' + result.currency, 'i'), replaceTagsAndSpaces, parseBalance);
-	}
 	// Дополнительная инфа.
-	/*if (isAvailable(['status', 'accnum', 'acctype'])) {
-		var href = getParam(tr, null, null, /<a\s*href="([^"]*)/i);
+	if (isAvailable(['balance', 'blocked'])) {
+		var href = getParam(tr, null, null, /href="(f\?p=[^"]+)"/i);
 		if(href) {
 			html = AnyBalance.requestGet(baseurl + href, g_headers);
 			
-			getParam(html, result, 'status', /Состояние карты(?:[^>]*>){3}([^<]+)/i, replaceTagsAndSpaces);
+			getParam(html, result, 'blocked', /Заблокировано по операциям с картой([^>]*>){5}/i, replaceTagsAndSpaces, parseBalance);
+			getParam(tr, result, 'balance', /Доступно для операций с картами([^>]*>){5}/i, replaceTagsAndSpaces, parseBalance);
+			
+			/*getParam(html, result, 'status', /Состояние карты(?:[^>]*>){3}([^<]+)/i, replaceTagsAndSpaces);
 			getParam(html, result, 'accnum', /Карточный счет(?:[^>]*>){3}([^<]+)/i, replaceTagsAndSpaces);
-			getParam(html, result, 'acctype', /Тип карты(?:[^>]*>){3}([^<]+)/i, replaceTagsAndSpaces);
-			getParam(html, result, 'blocked', /Заблокировано(?:[^>]*>){10}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+			getParam(html, result, 'acctype', /Тип карты(?:[^>]*>){3}([^<]+)/i, replaceTagsAndSpaces);*/
 		} else {
 			AnyBalance.trace('Не нашли ссылку на дополнительную информацию по картам, возможно, сайт изменился?');
 		}
-	}*/
+	}
 	AnyBalance.setResult(result);
 }
 

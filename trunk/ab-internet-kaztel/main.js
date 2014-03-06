@@ -1,18 +1,13 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Получает баланс и информацию о тарифном плате для сотового оператора xxxxxx 
-
-Operator site: http://xxxxxx.ru
-Личный кабинет: https://kabinet.xxxxxx.ru/login
 */
 
 var g_headers = {
-'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
-'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-'Connection':'keep-alive',
-'User-Agent':'Mozilla/5.0 (BlackBerry; U; BlackBerry 9900; en-US) AppleWebKit/534.11+ (KHTML, like Gecko) Version/7.0.0.187 Mobile Safari/534.11+'
+	'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
+	'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Connection':'keep-alive',
+	'User-Agent':'Mozilla/5.0 (BlackBerry; U; BlackBerry 9900; en-US) AppleWebKit/534.11+ (KHTML, like Gecko) Version/7.0.0.187 Mobile Safari/534.11+'
 };
 
 function createParamsArray(params){
@@ -24,11 +19,22 @@ function createParamsArray(params){
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-    var baseurl = "https://cabinet.idport.kz:8443/IdPort/";
+	checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(prefs.password, 'Введите пароль!');
+	
+	var baseurl = "https://cabinet.idport.kz:8443/IdPort/";
+	AnyBalance.setDefaultCharset('utf-8'); 
+	
+	var html = AnyBalance.requestGet(baseurl + 'login/login.cfm', g_headers);
+	
+	html = AnyBalance.requestPost(baseurl + 'index.cfm', {
+		AuthType:prefs.authtype || 1,
+		j_username: prefs.login,
+		j_password: prefs.password,
+		'sSubmit': 'ВХОД В КАБИНЕТ'
+	}, addHeaders({Referer: baseurl + 'login/login.cfm'}));
 
-    AnyBalance.setDefaultCharset('utf-8'); 
-
-    var logtype = prefs.authtype == 2 ? 'Телефон :' : 'Логин :';
+    /*var logtype = prefs.authtype == 2 ? 'Телефон :' : 'Логин :';
     var sitetype = prefs.sitetype || 1;
     var html = AnyBalance.requestPost(baseurl + 'index.cfm', createParamsArray([
         ['AuthType',prefs.authtype || 1],
@@ -44,21 +50,28 @@ function main(){
         ['j_username',sitetype == 3 ? prefs.login : ''],
         ['AuthTypeTextPass','Пароль :'],
         ['j_password',sitetype == 3 ? prefs.password : ''],
-    ]), addHeaders({Referer: baseurl + 'index.cfm', 'Content-Type': 'application/x-www-form-urlencoded'})); 
+    ]), addHeaders({Referer: baseurl + 'index.cfm', 'Content-Type': 'application/x-www-form-urlencoded'})); */
 	
-    if(!/\?logout=true/i.test(html)){
-        //Если в кабинет войти не получилось, то в первую очередь надо поискать в ответе сервера объяснение ошибки
-        if(/location.href\s*=\s*'https?:\/\/cabinet.idport.kz(?::\d+)?\/IdPort\/index_error.html'/.test(html))
+	if(!/\?logout=true/i.test(html)){
+		if(/location.href\s*=\s*'https?:\/\/cabinet.idport.kz(?::\d+)?\/IdPort\/index_error.html'/.test(html))
             throw new AnyBalance.Error('Неверно указаны логин или пароль');
-        //Если объяснения ошибки не найдено, при том, что на сайт войти не удалось, то, вероятно, произошли изменения на сайте
-        throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-    }
+			
+		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
+		if (error)
+			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+		
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+	}
+	// Бывает, что требуется смена пароля, при этом /\?logout=true/i.test(html) == true
+	if(/src\s*=\s*"\s*fMain\.cfm\?Registration=true&LangId=\d+/i.test(html)){
+		throw new AnyBalance.Error('Вам требуется сменить пароль! Зайдите в кабинет через браузер и поменяйте ваш пароль.');
+	}
 	
     html = AnyBalance.requestGet(baseurl + 'index.cfm', g_headers);
 	
-    //Раз мы здесь, то мы успешно вошли в кабинет
-    //Получаем все счетчики
     var result = {success: true};
+	
     getParam(html, result, 'fio', [/>Уважаемый \(ая\)([^,]+)/i, /<td[^>]*>\s*(?:ФИО|АЖТ)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i], replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, '__tariff', [/>Уважаемый \(ая\)([^,]+)/i, /<td[^>]*>\s*(?:ФИО|АЖТ)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i], replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'licschet', [/(?:Лицевой счет|Дербес шот)([^>]*>){3}/i, /<td[^>]*>\s*(?:Лицевой счет|Дербес шот)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i], replaceTagsAndSpaces, html_entity_decode);

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-tv-baltictv</id>
+	<id version="3">ab-tv-baltictv</id>
 	<api flags="no_browser"/>
 	<name>Baltic TV</name>
 	<description html="true"><![CDATA[
@@ -19,8 +19,9 @@
 		<counter id="balance" name="Баланс" units=" {@currency}"/>
 		<counter id="currency" name="Валюта" type="text"/>
 		<counter id="status" name="Статус" type="text"/>
+		<counter id="days" name="Остаток дней по активной подписке" units=" дн"/>
 	</counters>
 	<keywords></keywords>
 	<type>tv</type>
-	<country>ru</country>
+	<country>ru, lv</country>
 </provider>

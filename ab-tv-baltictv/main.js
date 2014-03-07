@@ -18,7 +18,7 @@ function main() {
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	var html = AnyBalance.requestGet(baseurl + 'ca_login.php', g_headers);
+	var html = AnyBalance.requestGet(baseurl + 'ca_login.php?lng=ru', g_headers);
 	
 	var params = createFormParams(html, function(params, str, name, value) {
 		if (name == 'login') 
@@ -29,9 +29,14 @@ function main() {
 		return value;
 	});
 	
-	html = AnyBalance.requestPost(baseurl + 'ca_login.php', params, addHeaders({Referer: baseurl + 'ca_login.php'}));
+	html = AnyBalance.requestPost(baseurl + 'ca_login.php', params, addHeaders({Referer: baseurl + 'ca_login.php?lng=ru'}));
 	
 	if (!/>выйти</i.test(html)) {
+		var error = getParam(html, null, null, /raise_error\(["']([^"']+)["']/i, replaceTagsAndSpaces, html_entity_decode);
+		if (error)
+			throw new AnyBalance.Error(error, null, /Логин либо пароль ошибочны/i.test(error));
+		
+		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	
@@ -40,6 +45,20 @@ function main() {
 	getParam(html, result, 'balance', /В кошельке(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, ['currency', 'balance'], /В кошельке(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, parseCurrency);
 	getParam(html, result, 'status', /Статус(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'id', /ID:([^>]*>){3}/i, replaceTagsAndSpaces, html_entity_decode);
+	
+	if(isAvailable(['days'])) {
+		html = AnyBalance.requestGet(baseurl + 'ca_sub.php', g_headers);
+		
+		var subs = sumParam(html, null, null, /<tr>\s*<td[^>]*>\d+<\/td>(?:[^>]*>){11}активна(?:[^>]*>){5}\s*<\/tr>/ig);
+		AnyBalance.trace('Найдено активных подписок: ' + subs.length);
+		
+		sumParam(html, result, 'days', /(\d+)(?:[^>]*>){4}активна(?:[^>]*>){5}\s*<\/tr>/ig, replaceTagsAndSpaces, parseBalance, aggregate_min);
+		// Оставим для нескольких подписок
+		/*for(var i = 0; i < subs.length; i++) {
+			getParam(html, result, 'days', /([^>]*>){11}/i, replaceTagsAndSpaces, parseBalance);
+		}*/
+	}
 	
 	AnyBalance.setResult(result);
 }

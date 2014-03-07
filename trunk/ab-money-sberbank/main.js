@@ -346,7 +346,8 @@ function fetchRates(html, result) {
 function fetchNewThanks(baseurl, result) {
 	if (AnyBalance.isAvailable('spasibo')) {
 		html = AnyBalance.requestGet(baseurl + '/PhizIC/private/async/loyalty.do');
-		var href = getParam(html, null, null, /^\s*(https?:\/\/\S*)/i);
+		
+		var href = getParam(html, null, null, /^\s*(https?:\/\/\S*)/i, replaceTagsAndSpaces, html_entity_decode);
 		if (!href) {
 			AnyBalance.trace('Не удаётся получить ссылку на спасибо от сбербанка: ' + html);
 		} else {

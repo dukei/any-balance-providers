@@ -35,8 +35,10 @@ function main(){
 	if(!table)
 		throw new AnyBalance.Error("Не удалось найти статус посылки, возможно, из-за изменений на сайте");
 	
+	getParam(table, result, 'geo', /class="city"[^>]*>([\s\S]*?)<\/div>/i, [/Неизвестное местоположение/i, '', replaceTagsAndSpaces]);
+	
 	var status = getParam(table, null, null, /parcel-info_mod"[^>]*>([^<]*)/i, replaceTagsAndSpaces);
-	var date = getParam(table, null, null, /parcelin-received-date"[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseDateMoment);
+	var date = getParam(table, null, null, /parcelin-received-date"[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseDateWord);
 	
 	getParam(status, result, 'status');
 	getParam(date, result, 'date');
@@ -52,11 +54,4 @@ function main(){
 	}
 	
 	AnyBalance.setResult(result);
-}
-
-// Парсит дату из такого вида в мс 27 июля
-function parseDateMoment(str){
-	var year = new Date().getFullYear()
-	AnyBalance.trace('Trying to parse date from ' + str);
-	return getParam(str, null, null, null, [replaceTagsAndSpaces, /январ(?:я|ь)/i, '.01.'+year, /феврал(?:я|ь)/i, '.02.'+year, /марта|март/i, '.03.'+year, /апрел(?:я|ь)/i, '.04.'+year, /ма(?:я|й)/i, '.05.'+year, /июн(?:я|ь)/i, '.06.'+year, /июл(?:я|ь)/i, '.07.'+year, /августа|август/i, '.08.'+year, /сентябр(?:я|ь)/i, '.09.'+year, /октябр(?:я|ь)/i, '.10.'+year, /ноябр(?:я|ь)/i, '.11.'+year, /декабр(?:я|ь)/i, '.12.'+year, /\s/g, ''], parseDate);
 }

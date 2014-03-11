@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-tracking-gdeposylka</id>
+	<id version="4">ab-tracking-gdeposylka</id>
 	<api flags="no_browser"/>
 	<name>Где посылка</name>
 	<description html="true"><![CDATA[
@@ -23,6 +23,7 @@
 		<counter id="date" name="Дата" type="time" format="dd/MM/yyyy"/>
 		<counter id="status" name="Статус" type="text"/>
 		<counter id="days" name="Время в пути" units=" д"/>
+		<counter id="geo" name="Место" type="text"/>
 	</counters>
 	<keywords>Почтовое отправление, почта России</keywords>
 	<type>tracking, post</type>

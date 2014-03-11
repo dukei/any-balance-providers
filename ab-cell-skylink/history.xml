@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="17" major_version="3.0" date="2014-03-11">
+	- Добавлено получение данных через SkyBalance, без капчи, но только баланс будет отображаться, это вызвано из-за поломки windows-приложения SkyPoint.
+	</change>
 	<change version="16" major_version="3.0" date="2013-12-27">
 	- Исправлено отображение счетчика Лицевой счет.
 	</change>

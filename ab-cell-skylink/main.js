@@ -26,6 +26,23 @@ function reqSkypoint(url, action, soapAction) {
 	}));	
 }
 
+function mainSkyBalance(prefs) {
+	var headers = {
+		'User-Agent': 'Mozilla/4.0 (compatible; MSIE 6.0; MS Web Services Client Protocol 2.0.50727.5477)',
+		SOAPAction: "http://ws3.Skypoint.ru/Execute1",
+		Expect: '100-continue',
+		'Content-Type': 'text/xml; charset=utf-8',
+	};
+	
+	var html = AnyBalance.requestPost('https://ws3.skypoint.ru/wsskypoint3.asmx', '<?xml version="1.0" encoding="utf-8"?><soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><soap:Body><Execute1 xmlns="http://ws3.Skypoint.ru/"><dn>' + prefs.login + '</dn><pwd>' + prefs.password + '</pwd><QueryName>BS_Balance_Get</QueryName><QueryParam>i_ExtParam=$SUBSYSTEM=SkyBalance $VERSION=2.0.0.1</QueryParam></Execute1></soap:Body></soap:Envelope>', headers);
+	
+	var result = {success: true};
+	
+	getParam(html, result, 'balance', /<BALANCE>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	
+	AnyBalance.setResult(result);
+}
+
 function mainSkyPoint(prefs) {
 	
 	var hash = CryptoJS.SHA256(prefs.password);
@@ -36,13 +53,19 @@ function mainSkyPoint(prefs) {
 	'http://www.skylink.ru/SC/Verify1');
 
 	if (!/Verify1Result[^>]*Value\s*=\s*"\s*True/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
-		if (error && /Неверный логин или пароль/i.test(error))
-			throw new AnyBalance.Error(error, null, true);
+		var error = getParam(html, null, null, /Message="([^"]*)/i, replaceTagsAndSpaces, html_entity_decode);
+		if(/No connection could be made because the target machine actively refused/i.test(error)) {
+			AnyBalance.trace('SkyPoint временно не работает, попробуем войти в SkyBalance...');
+			mainSkyBalance(prefs);
+			return;
+		}
 		if (error)
-			throw new AnyBalance.Error(error);
+			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+		
+		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-	}	
+	}
+	
 	var result = {success: true};
 	
 	html = reqSkypoint('https://uws.skypoint.ru/uws.asmx',

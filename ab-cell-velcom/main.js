@@ -1,10 +1,5 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Текущий баланс у белорусского сотового оператора Velcom.
-
-Сайт оператора: http://velcom.by/
-Личный кабинет: https://internet.velcom.by/
 */
 
 function main(){
@@ -18,7 +13,7 @@ function main(){
 
     var matches;
     if(!(matches = /^\+375(\d\d)(\d{7})$/.exec(prefs.login)))
-	throw new AnyBalance.Error('Неверный номер телефона. Необходимо ввести номер в международном формате без пробелов и разделителей!');
+		throw new AnyBalance.Error('Неверный номер телефона. Необходимо ввести номер в международном формате без пробелов и разделителей!');
 
     var phone = matches[2];
     var prefix = matches[1];
@@ -26,11 +21,11 @@ function main(){
     var html = AnyBalance.requestGet(baseurl/* + 'work.html'*/);
     var sid = getParam(html, null, null, /name="sid3" value="([^"]*)"/i);
     if(!sid)
-	throw new AnyBalance.Error('Не удалось найти идентификатор сессии!');
+		throw new AnyBalance.Error('Не удалось найти идентификатор сессии!');
     
     var form = getParam(html, null, null, /(<form[^>]*name="mainForm"[^>]*>[\s\S]*?<\/form>)/i);
     if(!form)
-	throw new AnyBalance.Error('Не удалось найти форму входа, похоже, velcom её спрятал. Обратитесь к автору провайдера.');
+		throw new AnyBalance.Error('Не удалось найти форму входа, похоже, velcom её спрятал. Обратитесь к автору провайдера.');
 
     var params = createFormParams(form, function(params, str, name, value){
 	var id=getParam(str, null, null, /\bid="([^"]*)/i, null, html_entity_decode);
@@ -74,7 +69,7 @@ function main(){
         personalInfo = '_root/MENU1/USER_INFO';
         kabinetType = 1;
     }
-
+	
     if(!kabinetType){
         var error = sumParam(html, null, null, /<td[^>]+class="INFO(?:_Error|_caption)?"[^>]*>(.*?)<\/td>/ig, replaceTagsAndSpaces, html_entity_decode, create_aggregate_join(' '));
         if(error)
@@ -84,10 +79,21 @@ function main(){
             throw new AnyBalance.Error(error, null, /Неверный пароль или номер телефона|Пароль должен состоять из 8 цифр/i.test(error));
         if(/Сервис временно недоступен/i.test(html))
             throw new AnyBalance.Error('ИССА Velcom временно недоступна. Пожалуйста, попробуйте позже.');
-        AnyBalance.trace(html);
+        
+		AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
     }
-
+	// Иногда сервис недоступен, дальше идти нет смысла
+	if (/По техническим причинам работа с сервисами ограничена|Сервис временно недоступен/i.test(html)) {
+		var message = getParam(html, null, null, /<div class="BREAK">([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+		if(message) {
+			AnyBalance.trace('Сайт ответил: ' + message);
+			throw new AnyBalance.Error('ИССА Velcom временно недоступна.\n ' + message);
+		}
+		
+		throw new AnyBalance.Error('ИССА Velcom временно недоступна. Пожалуйста, попробуйте позже.');
+	}	
+	
     AnyBalance.trace('Cabinet type: ' + kabinetType);
 
     var result = {success: true};

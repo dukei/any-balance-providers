@@ -21,7 +21,9 @@ function main(){
     checkEmpty(prefs.password, 'Введите PIN-код для входа в личный кабинет!');
     
     var baseurl = "http://www.eldorado.ru/";
-
+	
+	var html = AnyBalance.requestGet(baseurl + 'personal/club/offers/index.php', g_headers);
+	
     var html = AnyBalance.requestPost(baseurl + '_ajax/userCardAuth.php', {
 		'AUTH_FORM':'Y',
 		'action':'AUTH',

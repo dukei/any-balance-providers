@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-raduga</id>
+  <id version="2">ab-internet-raduga</id>
   <name>Радуга Интернет</name>
   <description>
     Получает баланс и информацию о тарифном плане для федерального оператора спутниковой связи RADUGA INTERNET (http://radugainternet.ru).

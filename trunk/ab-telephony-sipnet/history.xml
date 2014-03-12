@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+<change version="6" date="2014-03-12">
+- Распространен и на другие страны
+</change>
 <change version="5" date="2013-10-15">
 - Основной баланс округляется до центов (Erelen)
 - Новый счётчик с точным балансом (Erelen)

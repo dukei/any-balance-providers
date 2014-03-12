@@ -52,7 +52,7 @@ function main(){
     getParam(html, result, 'fio', /<div[^>]+id="balance-block"[^>]*>[\s\S]*?<p[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, '__tariff', /<th[^>]*>Тариф:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'balance', /<span[^>]+id="header-balance"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'agreement', /<p[^>]*>\s*Договор\s*<strong[^>]*>([\s\S]*?)<\/strong>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'agreement', /<p[^>]*>\s*Договор\s*<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'limit_traffic', /<h2[^>]*>Ограничение трафика[\s\S]*<th[^>]*>Статус:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'add_traffic', /<th[^>]*>Использовать доп. трафик после окончания включенного[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'autoactive', /<th[^>]*>Автоактивация:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);

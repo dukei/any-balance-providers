@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-rdtc</id>
+	<api flags="no_browser"/>
+	<name>РЦТК (Новокузнецк)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Региональная Цифровая Телекоммуникационная компания (РЦТК, Новокузнецк) http://www.rdtc.ru/</p>
+	<p>Информация берется из личного кабинета http://stat.rdtc.ru/</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="recommended" name="Рекомендованная сумма для оплаты" units=" р"/>
+		<counter id="acc_num" name="Номер договора" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

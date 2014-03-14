@@ -30,10 +30,10 @@ function main(){
         password:prefs.password
     }, g_headers);
 	
-    if(!/priority\/logout/.test(html)){
-		var error = getParam(html, null, null, /<div[^>]*class=["']error[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+    if(!/priority\/logout|"ffp_logout"/.test(html)){
+		var error = getParam(html, null, null, /"error-msg"([^>]*>){3}/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+			throw new AnyBalance.Error(error, null, /Неверный логин\/пароль/i.test(error));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось войти в личный кабинет. Проблемы на сайте или сайт изменен.');

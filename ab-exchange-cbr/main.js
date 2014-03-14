@@ -18,8 +18,8 @@ function getRate(result, info, namein, nameout) {
 
 function main() {
 	AnyBalance.trace('Connecting to forex...');
-
-	var info = AnyBalance.requestGet('http://www.forexpf.ru/_informer_/cbrf.php?id=012345678');
+	
+	var info = AnyBalance.requestGet('http://informers.forexpf.ru/php/cbrf.php?id=012345678');
 	var result = {success: true};
 
 	getRate(result, info, 'usrutm', 'USD');

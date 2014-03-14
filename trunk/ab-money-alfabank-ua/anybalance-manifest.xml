@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser" />
-	<id version="1">ab-money-alfabank-ua</id>
+	<id version="2">ab-money-alfabank-ua</id>
 	<name>Альфабанк (Украина)</name>
-	<description>
-		Получает данные по картам, кредитам и депозитам Альфабанка Украина (https://my.alfabank.com.ua/)
-		
-		Возможно, какие-то данные отобразятся не полностью, в таком случае связывайтесь с автором по имейл.
-	</description>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе на картах, кредитах и депозитах Альфабанка Украина (https://my.alfabank.com.ua/)</p>
+	]]></description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
@@ -18,10 +15,16 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс"/>
+		<counter id="balance" name="Баланс" units=" {@currency}"/>
+		<counter id="limit" name="Лимит" units=" {@currency}"/>
+		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="card_num" name="Номер карты" type="text"/>
+		<counter id="acc_num" name="Номер счета" type="text"/>
+		<counter id="card_name" name="Название" type="text"/>
 		<counter id="next_payment" name="Следующий платеж"/>
 		<counter id="next_payment_date" name="Дата следующего платежа" type="time" format="dd/MM/yyyy"/>
 		<counter id="period" name="Срок кредита" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
 	<keywords></keywords>
 	<type>money</type>

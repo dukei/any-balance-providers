@@ -12,6 +12,9 @@ var g_headers = {
 
 function main(){
     var prefs = AnyBalance.getPreferences();
+	checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(prefs.password, 'Введите пароль!');
+	
     var baseurl = 'https://my.alfabank.com.ua/';
     AnyBalance.setDefaultCharset('utf-8'); 
 
@@ -24,38 +27,49 @@ function main(){
         nonce:'',
 		ok:''
     }, addHeaders({Referer: baseurl + 'login'}));
-
-    if(!/class="logout"/i.test(html)){
-        var error = getParam(html, null, null, /icon exclamation[\s\S]*?"text"[\s\S]*?>\s*([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-        if(error)
-            throw new AnyBalance.Error(error);
-        throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-    }
+	
+	if (!/class="logout"/i.test(html)) {
+		var error = getParam(html, null, null, /icon exclamation[\s\S]*?"text"[\s\S]*?>\s*([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+		if (error)
+			throw new AnyBalance.Error(error, null, /Проверьте, пожалуйста, правильность ввода логина и пароля/i.test(error));
+		
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+	}
+	
 	// Успешно вошли в кабинет, теперь получаем балансы
-	/*if(prefs.type == 'card')
-		processCard2(html, baseurl);
-    else if(prefs.type == 'acc')
-		processAccount(html, baseurl);
-    else */if(prefs.type == 'dep')
+	if(prefs.type == 'dep')
         processDep(html, baseurl);
     else if(prefs.type == 'credit')
         processCredit(html, baseurl);
     else 
         processCard(html, baseurl);
-
 }
 
 function processCard(html, baseurl){
-    html = AnyBalance.requestGet(baseurl + 'get_home_page_block?block=groupCardAccount&_=1374238004632', g_headers);
-    
-    //var prefs = AnyBalance.getPreferences();
-    //if(prefs.cardnum && !/^\d{4}$/.test(prefs.cardnum))
-        //throw new AnyBalance.Error("Введите 4 последних цифры номера карты или не вводите ничего, чтобы показать информацию по первой карте");
-
-	// TODO пока не получилось посмотреть как выглядит более одной карты, парсим первую попавщуюся	
-    var result = {success: true};
-    getParam(html, result, 'balance', /<div class="row regular">[\s\S]*?<div\s*class="data">\s*<nobr>([\s\S]*?)<\/nobr><\/div>/i, replaceTagsAndSpaces, parseBalance);
+	var prefs = AnyBalance.getPreferences();
+	
+    if(prefs.cardnum && !/^\d{4}$/.test(prefs.cardnum))
+        throw new AnyBalance.Error("Введите 4 последних цифры номера карты или не вводите ничего, чтобы показать информацию по первой карте");
+	
+	html = AnyBalance.requestGet(baseurl + 'get_home_page_block?block=groupCardAccount&_=' + new Date().getTime(), g_headers);		
+	
+	//class="card-primary(?:[^>]*>){1}\s*[x\d]{10,}1769(?:[^>]*>){5,9}[^>]*CardContractAction.view\?contract=\d+
+	var card = getParam(html, null, null, new RegExp('class="card-primary(?:[^>]*>){1}\\s*[x\\d]{10,}' + (prefs.cardnum || '') + '(?:[^>]*>){5,9}[^>]*CardContractAction.view\\?contract=(\\d+)', 'i'));
+	checkEmpty(card, 'Не удалось найти ' + (prefs.cardnum ? 'карту с последними цифрами ' + prefs.cardnum : 'ни одной карты!'), true);
+	
+	html = AnyBalance.requestGet(baseurl + 'CardContractAction.view?contract=' + card, g_headers);
+	
+	var result = {success: true};
+	
+	getParam(html, result, 'fio', /<span>Рады Вас видеть,([^>]*>){2}/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'balance', /Общий баланс([^>]*>){5}/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'limit', /лимит:([^>]*>){2}/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, ['currency', 'limit', 'balance'], /Общий баланс([^>]*>){5}/i, replaceTagsAndSpaces, parseCurrency);
     getParam(html, result, '__tariff', /(\d{4}\s*xxxxxxx\s*\d{4})/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'card_num', /(\d{4}\s*xxxxxxx\s*\d{4})/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'acc_num', /Список операций по счету №\s*(\d{10,})/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'card_name', /"defaultSettingsId_productName"([^>]*>){2}/i, replaceTagsAndSpaces, html_entity_decode);
 	
     AnyBalance.setResult(result);
 }

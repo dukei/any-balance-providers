@@ -6,9 +6,9 @@
 		summary="|Введите логин|{@s}" 
 		dialogTitle="Логин" 
 		negativeButtonText="Отмена" 
-		dialogMessage="Введите логин, используемый для входа в личный кабинет ISP Magnus"
+		dialogMessage="Введите логин (номер телефона), используемый для входа в личный кабинет ISP Magnus"
 		inputType="textNoSuggestions"
-		key="usr_log">
+		key="login">
 	</EditTextPreference>
 	<EditTextPreference 
 		title="Пароль" 
@@ -18,6 +18,6 @@
 		negativeButtonText="Отмена" 
 		dialogMessage="Введите пароль, используемый для входа в личный кабинет ISP Magnus"
 		inputType="textPassword"
-		key="usr_pass">
+		key="password">
 	</EditTextPreference>
 </PreferenceScreen>

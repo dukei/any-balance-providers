@@ -262,16 +262,22 @@ function doOldCabinet(prefs) {
         CustAuth:pwdEncrypted.len,
         CustomerLogin:"Войти в систему"
     }, g_headersOld);
-
-    if(!/login\.asp\?logout/i.test(html)){
+	
+	if(/Пароль верный, но время его действия скоро истекает/i.test(html)) {
+		AnyBalance.trace('Пароль верный, но время его действия скоро истекает, попробуем войти...');
+		var href = getParam(html, null, null, /href="([^"]*)"[^>]*>\s*Продолжить работу без смены пароля/i);
+		html = AnyBalance.requestGet(baseurl + href, g_headersOld);
+	} else if(!/login\.asp\?logout/i.test(html)) {
         var error = getParam(html, null, null, /^(?:[\s\S](?!<NOSCRIPT))*?<p[^>]*class="errorb"[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
-        if(error)
-            throw new AnyBalance.Error(error);
+		if (error)
+			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+		
+		AnyBalance.trace(html);
         throw new AnyBalance.Error("Не удалось зайти в интернет-банк. Сайт изменен?");
     }
-
+	
     var result = {success: true};
-
+	
     if(AnyBalance.isAvailable('all')){
         var found = [];
         html.replace(/<a[^>]+href="account_retail\.asp\?AccID=(\d+)"[^>]*>([\s\S]*?)<\/a>/ig, function(str, id, name){

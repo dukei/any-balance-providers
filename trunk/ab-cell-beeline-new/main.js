@@ -52,7 +52,12 @@ function getBlock(url, html, name, exact) {
 		'Faces-Request': 'partial/ajax',
 		'X-Requested-With': 'XMLHttpRequest'
 	}));
-	data = getParam(html, null, null, new RegExp('<update[^>]*id="' + (exact ? '' : '[^"]*') + name + '"[^>]*>\\s*<!\\[CDATA\\[([\\s\\S]*?)\\]\\]></update>', 'i'));
+	// Костыль для бонусов
+	if(/bonusesForm/i.test(name)) {
+		name = getParam(name, null, null, /([^\s]+)/i);
+	}
+	var re = new RegExp('<update[^>]*id="' + (exact ? '' : '[^"]*') + name + '"[^>]*>\\s*<!\\[CDATA\\[([\\s\\S]*?)\\]\\]></update>', 'i');
+	data = getParam(html, null, null, re);
 	if (!data) {
 		AnyBalance.trace('Неверный ответ для блока ' + name + ': ' + html);
 		return '';
@@ -415,12 +420,12 @@ function fetchPre(baseurl, html) {
 		// И получим баланс из него
 		getParam(xhtml, result, 'balance', /class="price[^>]*>((?:[\s\S]*?span[^>]*>){3})/i, replaceTagsAndSpaces, parseBalance);
 		// Если баланса нет, не надо получать и валюту
-		if(result.balance != null) {
+		if(!isset(result.balance)) {
 			getParam(xhtml, result, ['currency', 'balance'], /class="price[^>]*>((?:[\s\S]*?span[^>]*>){3})/i, replaceTagsAndSpaces, myParseCurrency);
 		}
 	}
 	if (isAvailableBonuses()) {
-		xhtml = getBlock(baseurl + 'c/pre/index.html', html, 'bonusesForm');
+		xhtml = getBlock(baseurl + 'c/pre/index.html', html, 'bonusesForm homeServices')
 		getBonuses(xhtml, result);
 	}
 	if (AnyBalance.isAvailable('fio')) {
@@ -453,6 +458,7 @@ function isAvailableBonuses() {
 
 function getBonuses(xhtml, result) {
 	var bonuses = sumParam(xhtml, null, null, /<div[^>]+class="item(?:[\s\S](?!$|<div[^>]+class="item))*[\s\S]/ig);
+	
 	AnyBalance.trace("Found " + bonuses.length + ' aggregated bonuses');
 	for (var j = 0; j < bonuses.length; ++j) {
 		var bonus = bonuses[j];

@@ -12,25 +12,28 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://www.akrin.ru/';
+	var baseurl = 'http://www.akrin.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Введите фамилию!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	var html = AnyBalance.requestGet(baseurl + 'se/login', g_headers);
+	var html = AnyBalance.requestGet(baseurl + 'BPSWeb/login/', g_headers);
 	
-	html = AnyBalance.requestPost(baseurl + 'se/login', {
-		'_utf8':'☃',
-		'lastName':prefs.login,
-		'series':prefs.series,
-		'number':prefs.number,
-		'password':prefs.password,
-		'x':'14',
-		'y':'9'
-	}, addHeaders({Referer: baseurl + 'se/login'}));
+	var params = createFormParams(html, function(params, str, name, value) {
+		if (name == 'lastName') 
+			return prefs.login;
+		else if (name == 'passport')
+			return prefs.series + prefs.number;
+		else if (name == 'password')
+			return prefs.password;
+			
+		return value;
+	});
 	
-	if (!/>Выход</i.test(html)) {
+	html = AnyBalance.requestPost(baseurl + 'BPSWeb/login.form', params, addHeaders({Referer: baseurl + 'BPSWeb/login/'}));
+	
+	if (!/personlayout.exit/i.test(html)) {
 		var error = getParam(html, null, null, /span class="label_value" style="color:red">([^>]*>){1}/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
 			throw new AnyBalance.Error(error, null, /не зарегистрирован в системе/i.test(error));
@@ -41,8 +44,8 @@ function main() {
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'fio', /Вы вошли как([^>]*>){5}/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'balance', /Баланс:([^>]*>){4}/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'fio', /Вы вошли как([^>]*>){2}/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'balance', /Баланс:([^>]*>){2}/i, replaceTagsAndSpaces, parseBalance);
 	
 	AnyBalance.setResult(result);
 }

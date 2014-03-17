@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-<change version="3" date="2013-11-20">
-- Отображение услуг и доменов(Stark)
-</change>
-<change version="2" date="2013-11-18">
-- Поддержка изменений на сайте. (Stark)
-</change>
+	<change version="4" date="2014-03-17">
+	- Поддержка изменений на сайте.
+	</change>
+	<change version="3" date="2013-11-20">
+	- Отображение услуг и доменов(Stark)
+	</change>
+	<change version="2" date="2013-11-18">
+	- Поддержка изменений на сайте. (Stark)
+	</change>
 </history>

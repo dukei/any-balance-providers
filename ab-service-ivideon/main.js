@@ -27,14 +27,15 @@ function main() {
 	}, addHeaders({Referer: baseurl + 'my/service/login'}));
 	
 	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
-		if (error && /Неверный логин или пароль/i.test(error))
-			throw new AnyBalance.Error(error, null, true);
+		var error = getParam(html, null, null, /"errorSummary"([^>]*>){2}/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
-			throw new AnyBalance.Error(error);
+			throw new AnyBalance.Error(error, null, /Неправильная пара логин\/пароль/i.test(error));
+		
+		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
-	html = AnyBalance.requestGet(baseurl + 'my/billing/balance_async', g_headers);
+	
+	html = AnyBalance.requestPost(baseurl + 'my/api/get_user_account_info', addHeaders({'X-Requested-With':'XMLHttpRequest'}));
 	var json = getJson(html);
 	
 	var result = {success: true};

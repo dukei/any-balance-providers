@@ -8,7 +8,7 @@ var g_headers = {
 	'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection':'keep-alive',
 	'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.95 Safari/537.36',
-	'Origin':'https://mobile.paypal.com'
+	//'Origin':'https://mobile.paypal.com'
 };
 
 function followLink(html, signature){
@@ -57,6 +57,11 @@ function main(){
 		throw new AnyBalance.Error('Can not login to PayPal. Is the site changed?');
 	}
 	if(!/<\/h4>([^<]*)<hr/i.test(html)){
+		if(/You can't access View Balance in your country/i.test(html)) {
+			AnyBalance.trace('You cant access View Balance in your country...');
+			logIntoFullVersion(prefs);
+			return;
+		}
 		AnyBalance.trace(html);
         throw new AnyBalance.Error('Can not find PayPal balance. Is the site changed?');
     }
@@ -65,6 +70,44 @@ function main(){
 	
 	getParam(html, result, ['currency','balance'], /<\/h4>([^<]*)<hr/i, [replaceTagsAndSpaces, /in/i, ''], parseCurrency);
     getParam(html, result, 'balance', /<\/h4>([^<]*)<hr/i, replaceTagsAndSpaces, parseBalance);
+	
+    AnyBalance.setResult(result);
+}
+
+function logIntoFullVersion(prefs) {
+	var baseurl = 'https://www.paypal.com/';
+	var html = AnyBalance.requestGet(baseurl + 'cgi-bin/webscr?cmd=_login-run', g_headers);
+	
+	var action = getParam(html, null, null, /action="([^"]*login-submit[^"]*)/i);
+	checkEmpty(action, 'Can`t find action, is the site changed?');
+	
+	AnyBalance.trace('Entering full version...');
+	
+	var form = getParam(html, null, null, /<form[^>]+name="login_form"[\s\S]*?<\/form>/i);
+	if(!form)
+        throw new AnyBalance.Error('Can not find login form! Site is changed?');
+	
+    var params = createFormParams(form);
+    params.login_email = prefs.login;
+    params.login_password = prefs.password;
+	
+	html = AnyBalance.requestPost(action, params, addHeaders({Referer: baseurl + 'cgi-bin/webscr?cmd=_login-run'}));
+	
+	if (!/>\s*Logging in\s*</i.test(html)) {
+		var error = getParam(html, null, null, /messageBox error"(?:[^>]*>){4}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+		if (error)
+			throw new AnyBalance.Error(error, null, /Please make sure you enter your email address and password correctly/i.test(error));
+		
+		AnyBalance.trace(html_entity_decode(html));
+		throw new AnyBalance.Error('Can not login to PayPal. Is the site changed?');
+	}
+	
+	html = AnyBalance.requestGet(baseurl + 'cgi-bin/webscr?cmd=_login-done&login_access=', g_headers);
+	
+	var result = {success: true};
+	
+	getParam(html, result, ['currency','balance'], /PayPal balance\s*:([^>]*>){5}/i, replaceTagsAndSpaces, parseCurrency);
+    getParam(html, result, 'balance', /PayPal balance\s*:([^>]*>){5}/i, replaceTagsAndSpaces, parseBalance);
 	
     AnyBalance.setResult(result);
 }

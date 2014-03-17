@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="2.0" version="10" date="2014-03-17">
+	- Поддержка изменений на сайте для Казахстана.
+	</change>
     <change version="9" date="2014-03-03">
 	- Поддержка изменений на сайте.
 	</change>

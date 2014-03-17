@@ -237,6 +237,12 @@ function main(){
     
     // ПЗС за первое событие для APN opera
     sumParam (html, result, 'PZS_MB_opera', /<li>ПЗС за первое событие для APN opera[^<]*([\d\.,]+)<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    
+    // ПЗС за первое событие
+    sumParam (html, result, 'PZS_first', /<li>Снятие ПЗС за первое событие[^<]*([\d\.,]+)<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    
+    // Единоразовое ПЗС за пределами региона (Смартфон)
+    sumParam (html, result, 'PZS_first_out', /<li>Единоразовое ПЗС за пределами региона \(Смартфон\)[^<]*([\d\.,]+)<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 
     if (AnyBalance.isAvailable ('usedinprevmonth')) {
 

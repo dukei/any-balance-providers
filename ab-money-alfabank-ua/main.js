@@ -54,8 +54,8 @@ function processCard(html, baseurl){
 	
 	html = AnyBalance.requestGet(baseurl + 'get_home_page_block?block=groupCardAccount&_=' + new Date().getTime(), g_headers);		
 	
-	//class="card-primary(?:[^>]*>){1}\s*[x\d]{10,}1769(?:[^>]*>){5,9}[^>]*CardContractAction.view\?contract=\d+
-	var card = getParam(html, null, null, new RegExp('class="card-primary(?:[^>]*>){1}\\s*[x\\d]{10,}' + (prefs.cardnum || '') + '(?:[^>]*>){5,9}[^>]*CardContractAction.view\\?contract=(\\d+)', 'i'));
+	//class="card(?:[^>]*>){1}\s*[x\d]{10,}0105(?:[^>]*>){5,9}[^>]*CardContractAction.view\?contract=\d+
+	var card = getParam(html, null, null, new RegExp('class="card(?:[^>]*>){1}\\s*[x\\d]{10,}' + (prefs.cardnum || '') + '(?:[^>]*>){5,9}[^>]*CardContractAction.view\\?contract=(\\d+)', 'i'));
 	checkEmpty(card, 'Не удалось найти ' + (prefs.cardnum ? 'карту с последними цифрами ' + prefs.cardnum : 'ни одной карты!'), true);
 	
 	html = AnyBalance.requestGet(baseurl + 'CardContractAction.view?contract=' + card, g_headers);

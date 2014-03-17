@@ -18,7 +18,7 @@ function main(){
 
     var html = AnyBalance.requestGet(baseurl + 'user/', g_headers);
         
-    var form = getParam(html, null, null, /<form[^>]+action="\/user\/login"[^>]*>([\s\S]*?)<\/form>/i);    
+    var form = getParam(html, null, null, /<form[^>]+action="\/user\/[^"]*login"[^>]*>([\s\S]*?)<\/form>/i);    
     if(!form)
         throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
 

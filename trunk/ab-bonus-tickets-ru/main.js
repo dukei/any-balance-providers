@@ -12,35 +12,36 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://avia.tickets.ru/';
+	var baseurl = 'https://my.tickets.ru/';
+	
 	AnyBalance.setDefaultCharset('utf-8');
 
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 
-	var html;
-	if(!prefs.dbg) {
-		html = AnyBalance.requestGet(baseurl, g_headers);
+	var html = AnyBalance.requestPost(baseurl + 'ru/login', {
+		'user[email]': prefs.login,
+		'user[pass]': prefs.password,
+	}, addHeaders({
+		Referer: baseurl,
+		'X-Requested-With':'XMLHttpRequest'
+	}));
+	
+	var json = getJson(html);
+	
+	if (!json.success) {
+		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
+		if (error && /Неверный логин или пароль/i.test(error))
+			throw new AnyBalance.Error(error, null, true);
+		if (error)
+			throw new AnyBalance.Error(error);
 		
-		html = AnyBalance.requestPost(baseurl + 'login', {
-			email: prefs.login,
-			password: prefs.password,
-		}, addHeaders({Referer: baseurl}));
-
-		if (!/logout/i.test(html)) {
-			var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
-			if (error && /Неверный логин или пароль/i.test(error))
-				throw new AnyBalance.Error(error, null, true);
-			if (error)
-				throw new AnyBalance.Error(error);
-			throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-		}
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
-	html = AnyBalance.requestGet('https://my.tickets.ru/bonus', addHeaders({Referer: 'https://my.tickets.ru/'}));
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'balance', /Ваш текущий баланс\s*:([^<]*)бон/i, replaceTagsAndSpaces, parseBalance);
+	getParam(json.user.available_bonus+'', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
 	
 	AnyBalance.setResult(result);
 }

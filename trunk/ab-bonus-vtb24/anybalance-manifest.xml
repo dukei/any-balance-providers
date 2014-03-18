@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-bonus-vtb24</id>
+	<id version="2">ab-bonus-vtb24</id>
 	<api flags="no_browser"/>
 	<name>ВТБ24 (Бонусы)</name>
 	<description html="true"><![CDATA[
@@ -16,8 +16,7 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Бонусов получено"/>
-		<counter id="balance_payed" name="Бонусов потрачено"/>
+		<counter id="balance" name="Баланс"/>
 	</counters>
 	<keywords></keywords>
 	<type>bonus</type>

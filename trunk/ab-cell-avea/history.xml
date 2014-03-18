@@ -1,30 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-<change major_version="2.0" version="12" date="2013-11-21">
-- Bazı hatalar düzeltildi.
-</change>
-<change major_version="2.0" version="10" date="2013-11-20">
-- Bazı hatalar düzeltildi.
-</change>
-<change major_version="2.0" version="9" date="2013-11-18">
-- Hediye dakikalar düzenlendi
-</change>
-<change major_version="2.0" version="8" date="2013-11-15">
-- Hediye dakikalar düzenlendi.
-</change>
-<change version="7" date="2013-11-06">
-- Hediye dakikalar düzenlendi.
-</change>
-<change version="6" date="2013-11-05">
-- BİMCell ve PTTCell hat desteği eklendi.
-</change>
-<change version="5" date="2013-10-29">
-- Bazı hatalar düzeltildi.
-</change>
-<change version="4" date="2013-10-29">
-- Yeni sayaçlar eklendi ve tarife ismi artık görüntüleniyor.
-</change>
-<change version="2" date="2013-10-28">
-- Bazı hatalar düzeltildi.
-</change>
+	<change major_version="2.0" version="13" date="2014-03-18">
+	- Improved errors parsing.
+	</change>
+	<change major_version="2.0" version="12" date="2013-11-21">
+	- Bazı hatalar düzeltildi.
+	</change>
+	<change major_version="2.0" version="10" date="2013-11-20">
+	- Bazı hatalar düzeltildi.
+	</change>
+	<change major_version="2.0" version="9" date="2013-11-18">
+	- Hediye dakikalar düzenlendi
+	</change>
+	<change major_version="2.0" version="8" date="2013-11-15">
+	- Hediye dakikalar düzenlendi.
+	</change>
+	<change version="7" date="2013-11-06">
+	- Hediye dakikalar düzenlendi.
+	</change>
+	<change version="6" date="2013-11-05">
+	- BİMCell ve PTTCell hat desteği eklendi.
+	</change>
+	<change version="5" date="2013-10-29">
+	- Bazı hatalar düzeltildi.
+	</change>
+	<change version="4" date="2013-10-29">
+	- Yeni sayaçlar eklendi ve tarife ismi artık görüntüleniyor.
+	</change>
+	<change version="2" date="2013-10-28">
+	- Bazı hatalar düzeltildi.
+	</change>
 </history>

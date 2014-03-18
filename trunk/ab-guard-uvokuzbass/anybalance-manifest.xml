@@ -1,34 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-guard-uvokuzbass</id>
-  <name>УВО МВД Кемерово</name>
-  <description>
-    Получает баланс и информацию о балансе по услуге охраны от Управления вневедомственной охраны
-Главного управления Министерства внутренних дел Российской Федерации по Кемеровской области (http://www.uvokuzbass.ru)
-
-    Информация берется со страницы http://www.uvokuzbass.ru/dolg.html
-
-    Баланс пока можно получить только по лицевому счету. Если вам нужно получать баланс по фамилии и номеру договора, то обращайтесь к автору провайдера для доработки.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="licschet" name="Лицевой счет" type="text"/>
-  </counters>
-  <keywords>
-    
-  </keywords>
-  <type>
-    guard
-  </type>
-  <country>
-    ru
-  </country>
+	<id version="2">ab-guard-uvokuzbass</id>
+	<name>УВО МВД Кемерово</name>
+	<api flags="no_browser"/>
+	<description html="true"><![CDATA[
+	<p>Получает баланс и информацию о балансе по услуге охраны от Управления вневедомственной охраны</p>
+	<p>Главного управления Министерства внутренних дел Российской Федерации по Кемеровской области (http://www.uvokuzbass.ru)</p>
+	<p>Информация берется со страницы http://www.uvokuzbass.ru/dolg.html</p>
+	<p>Баланс пока можно получить только по лицевому счету. Если вам нужно получать баланс по фамилии и номеру договора, то обращайтесь к автору провайдера для доработки.</p>
+	]]></description>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="licschet" name="Договоро (Лицевой счет)" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>guard</type>
+	<country>ru</country>
 </provider>

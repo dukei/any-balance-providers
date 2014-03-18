@@ -1,20 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <EditTextPreference 
-        title="Лицевой счет" 
-        positiveButtonText="ОК" 
-        summary="||{@s}" 
-        dialogTitle="Лицевой счет" 
-        negativeButtonText="Отмена" 
-        dialogMessage="Введите ваш лицевой счет для получения информации по нему."
-        key="login">
-    </EditTextPreference>
-    <ListPreference 
-        key="city" 
-        title="Город"
-        summary="|Выберите ваш город|{@s}"
-        entries="Анжеро-Судженск|Белово|Берёзовский|Гурьевск|Кемерово|Киселевск|Ленинск-Кузнецкий|Мариинск|Междуреченск|Новокузнецк|Осинники|Прокопьевск|Таштагол|Тисуль|Топки|Тяжин|Юрга|Яшкино"
-        entryValues="7|4|2|6|13|14|3|5|15|12|16|17|18|10|1|11|8|9"
-	defaultValue="13">
-    </ListPreference>
+	<EditTextPreference
+		obligatory="true"
+		title="Лицевой счет"
+		positiveButtonText="ОК"
+		summary="||{@s}"
+		dialogTitle="Лицевой счет"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите ваш лицевой счет для получения информации по нему."
+		key="login">
+	</EditTextPreference>
+	<ListPreference
+		key="city"
+		title="Город"
+		summary="|Выберите ваш город|{@s}"
+		entries="Анжеро-Судженск|Белово|Берёзовский|Гурьевск|Кемерово|Киселевск|Ленинск-Кузнецкий|Мариинск|Междуреченск|Новокузнецк|Осинники|Прокопьевск|Таштагол|Тисуль|Топки|Тяжин|Юрга|Яшкино"
+		entryValues="7|4|2|6|13|14|3|5|15|12|16|17|18|10|1|11|8|9"
+		defaultValue="13">
+	</ListPreference>
 </PreferenceScreen>

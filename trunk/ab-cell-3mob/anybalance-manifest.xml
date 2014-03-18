@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-cell-3mob</id>
+	<api flags="no_browser"/>
+	<name>3Mob</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе сотового оператора 3Mob http://3mob.ua/</p>
+	<p>Информация берется из личного кабинета https://3mob.ua/application/customer/balances</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" грн"/>
+		<counter id="minutes_local" name="Минуты внутри сети" type="time_interval" format="{@H}:{@min}:{@sec}"/>
+		<counter id="minutes_roam" name="Минуты внутри сети и нац. роуминг" type="time_interval" format="{@H}:{@min}:{@sec}"/>
+		<counter id="internet_local" name="Интернет внутри сети" units=" Мб"/>
+		<counter id="internet_roam" name="Интернет внутри сети и нац. роуминг" units=" Мб"/>
+		<counter id="deadline" name="Дата деактивации" type="time" format="dd/MM/yyyy"/>
+	</counters>
+	<keywords></keywords>
+	<type>cell</type>
+	<country>ua</country>
+</provider>

@@ -19,7 +19,7 @@ function main() {
 	checkEmpty(prefs.password, 'Enter password!');
 	
 	var html = AnyBalance.requestGet(baseurl + 'mps/portal?cmd=onlineTransactionsHome&lang=tr&tb=redTab', g_headers);
-
+	
 	var Xlogin = getParam(html, null,null, /value="5xxxxxxxxx"[^>]*([0-9a-f]{32})/i);
 	var Xpass = getParam(html, null,null, /focusssPass[^>]*([0-9a-f]{32})/i);
 	
@@ -49,7 +49,9 @@ function main() {
 			throw new AnyBalance.Error('Login failed, is site changed?');
 		}
 	}
-
+	if(/Şifrenizi değiştirmek i&ccedil;in aşağıdaki alanları doldurup G&ouml;nder butonuna tıklamanız gerekmektedir./i.test(html))
+		throw new AnyBalance.Error('Login failed, your password correct, but you need to change it. Please enter seflcare from desktop and change password.');
+	
 	var result = {success: true};
 	// Предоплата
 	if(prefs.billing) {

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <EditTextPreference 
+    <EditTextPreference
+		obligatory="true"
         key="station_from"
         title="Станция отправления" 
         summary="Станция отправления||{@s}\n" 
@@ -10,7 +11,8 @@
         positiveButtonText="ОК" 
         inputType="text">
     </EditTextPreference>
-    <EditTextPreference 
+    <EditTextPreference
+		obligatory="true"
         key="station_to"
         title="Станция назначения" 
         summary="Станция назначения||{@s}\n" 
@@ -20,4 +22,14 @@
         positiveButtonText="ОК" 
         inputType="text">
     </EditTextPreference>
+    <EditTextPreference
+        key="region"
+        title="Регион"
+        summary="Регион||{@s}\n" 
+        dialogTitle="Регион" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите название региона, этот параметр не обязательный, нужен только для уточнения регионов некоторых станций названия которых совпадают (например пл. Весенняя (Москва и Московская область) и пл. Весенняя (г. Владивосток))"
+        positiveButtonText="ОК" 
+        inputType="text">
+    </EditTextPreference>	
 </PreferenceScreen>

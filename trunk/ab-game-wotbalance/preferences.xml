@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <ListPreference
+        title="The player's identification method"
+        summary="If you know your ID, use it. Otherwise you can find your ID in your profile link.||The identification method: {@s}\n"
+        key="method"
+        defaultValue="nick"
+        entries="Nickname|ID"
+        entryValues="nick|id" />
+    <EditTextPreference 
+        obligatory="true"
+        key="nick"
+        title="Nickname or ID" 
+        summary="Your nickname or ID||{@s}\n" 
+        dialogTitle="Your nickname or ID" 
+        negativeButtonText="Cancel" 
+        dialogMessage="Enter your nickname or ID"
+        positiveButtonText="ОК" 
+        inputType="text">
+    </EditTextPreference>
+    <ListPreference
+        title="Region"
+        summary="Player's region||Region: {@s}\n"
+        key="region"
+        defaultValue="RU"
+        entries="RU|EU|NA|ASIA}KR"
+        entryValues="RU|EU|NA|ASIA}KR" />
+    <EditTextPreference 
+        obligatory="true"
+        key="token"
+        title="Access token" 
+        summary="Your access token||{@s}\n" 
+        dialogTitle="Access token" 
+        negativeButtonText="Cancel" 
+        dialogMessage="Enter your access token"
+        positiveButtonText="ОК" 
+        inputType="text">
+    </EditTextPreference>
+</PreferenceScreen>

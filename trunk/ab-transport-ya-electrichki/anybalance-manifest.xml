@@ -1,34 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="0" version="6">ab-transport-ya-electrichki</id>
-  <name>Ближайшие электрички</name>
-  <description>
-    Отображает ближайшие электрички по указанному маршруту на основании данных, полученных с сервиса Яндекс.Расписания
-  </description>
-  <author>theneedtocode &lt;theneedtocode@gmail.com&gt;</author>
-  <files>
-    <icon>icon.png</icon> <!-- файл иконки -->
-    <preferences>preferences.xml</preferences> <!-- Файл настроек -->
-    <js>main.js</js> <!-- необходим как минимум один файл с функцией main() -->
-    <history>history.xml</history>
-  </files>
-  <counters> <!-- описание счетчиков этого провайдера -->
-    <counter id="train0" name="Ближайшая электричка" type="text"/>
-    <counter id="train1" name="Вторая электричка" type="text"/>
-    <counter id="train2" name="Третья электричка" type="text"/>
-    <counter id="start" name="Станция отправления" type="text" />
-    <counter id="finish" name="Станция назначения" type="text" />
-    <!-- Счетчиков может быть сколько угодно -->
-  </counters>
-  <keywords>
-    <!-- набор слов или фраз, по которым может осуществляться поиск этого провайдера, но которых нет в названии или описании -->
-  </keywords>
-  <type>
-    <!-- некоторый набор ключевых слов для разнесения по каталогам -->
-    transport 
-  </type>
-  <country>
-    <!-- перечисление стран, к которым относится этот провайдер, по ISO_3166-1 -->
-    ru
-  </country>
+	<id major_version="1.0" version="7">ab-transport-ya-electrichki</id>
+	<api flags="no_browser"/>
+	<name>Ближайшие электрички</name>
+	<description html="true"><![CDATA[
+	<p>Отображает ближайшие электрички по указанному маршруту на основании данных, полученных с сервиса Яндекс.Расписания.</p>
+	]]></description>
+	<author>theneedtocode &lt;theneedtocode@gmail.com&gt;</author>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="train0" name="Ближайшая электричка" type="text"/>
+		<counter id="train1" name="Вторая электричка" type="text"/>
+		<counter id="train2" name="Третья электричка" type="text"/>
+		<counter id="start" name="Станция отправления" type="text" />
+		<counter id="finish" name="Станция назначения" type="text" />
+	</counters>
+	<keywords></keywords>
+	<type>transport</type>
+	<country>ru</country>
 </provider>

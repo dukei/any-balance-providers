@@ -41,8 +41,7 @@ function main() {
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'balance', /Бонусов получено(?:[\s\S]*?<td[^>]*>\s*<span[^>]*>){1}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'balance_payed', /Бонусов потрачено(?:[\s\S]*?<td[^>]*>\s*<span[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance', />Баланс([^>]*>){2}/i, replaceTagsAndSpaces, parseBalance);
 	
 	AnyBalance.setResult(result);
 }

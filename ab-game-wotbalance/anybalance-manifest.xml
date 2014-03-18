@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-game-wotbalance</id>
+	<name>WoT Balance</name>
+	<description html="true"><![CDATA[
+	<p>Отображение приватной информации игрока - количество золота, кредитов, свободного опыта, срок действия премиум-аккаунта</p>
+	]]></description>	
+	<author>Vitaliy Poluphanov &lt;vitaliy@root.ua&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<js>common_functions.js</js>
+		<js>api:jquery.min.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="gold" name="Золото" type="numeric"/>
+		<counter id="credits" name="Кредиты" type="numeric"/>
+		<counter id="free_xp" name="Свободный опыт" type="numeric"/>
+		<counter id="premium" name="Срок действия премиум-аккаунта" type="text"/>
+	</counters>
+	<keywords>игра, game, wot</keywords>
+	<type>game</type>
+</provider>

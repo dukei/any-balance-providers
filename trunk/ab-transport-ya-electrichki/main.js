@@ -24,11 +24,15 @@ function main () {
 		if(precise_to) {
 			AnyBalance.trace('Требуется уточнить станцию прибытия...');
 			
+			checkEmpty(prefs.region, 'Требуется уточнить станцию прибытия, введите регион в настройках!');
+			if(prefs.region)
+			
 			html = performPrecision(precise_to, prefs);
 		}
 		var precise_from = getParam(html, null, null, /<div class="l-precise__inner"(?:[^>]*>){2}Пожалуйста, уточните(?:[^>]*>){2}место отправления(?:[\s\S]*?<div class="b-precise-list__item[\s\S]*?<\/div){1,2}/i);
 		if(precise_from) {
 			AnyBalance.trace('Требуется уточнить станцию отправления...');
+			checkEmpty(prefs.region, 'Требуется уточнить станцию отправления, введите регион в настройках!');
 			
 			html = performPrecision(precise_from, prefs);
 		}

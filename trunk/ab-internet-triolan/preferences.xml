@@ -1,22 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <EditTextPreference 
-        title="Логин" 
-        positiveButtonText="ОК" 
-        summary="|Логин в https://triolan.name|{@s}\n" 
-        dialogTitle="Логин" 
-        negativeButtonText="Отмена" 
-        dialogMessage="Введите логин для входа в личный кабинет https://triolan.name."
-        key="login">
-    </EditTextPreference>
-    <EditTextPreference 
-        positiveButtonText="ОК"
-        key="password" 
-        dialogTitle="Пароль"
-        negativeButtonText="Отмена"
-        title="Пароль"
-        summary="|Введите пароль|***********"
-        dialogMessage="Введите пароль, используемый для входа в личный кабинет https://triolan.name."
-        inputType="textPassword">
-    </EditTextPreference>
+	<EditTextPreference
+		obligatory="true"
+		title="Логин"
+		positiveButtonText="ОК"
+		summary="|Логин в https://triolan.name|{@s}\n"
+		dialogTitle="Логин"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите логин для входа в личный кабинет https://triolan.name."
+		key="login">
+	</EditTextPreference>
+	<EditTextPreference
+		obligatory="true"
+		positiveButtonText="ОК"
+		key="password"
+		dialogTitle="Пароль"
+		negativeButtonText="Отмена"
+		title="Пароль"
+		summary="|Введите пароль|***********"
+		dialogMessage="Введите пароль, используемый для входа в личный кабинет https://triolan.name."
+		inputType="textPassword">
+	</EditTextPreference>
 </PreferenceScreen>

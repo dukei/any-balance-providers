@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-internet-triolan</id>
+	<api flags="no_browser"/>
+	<id version="3">ab-internet-triolan</id>
 	<name>Triolan (Украина)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем балансе для пользователей интернет-провайдера Triolan (Украина).</p>   
@@ -10,11 +11,12 @@
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units="₴"/>
+		<counter id="balance" name="Баланс" units=" ₴"/>
 		<counter id="license" name="Лицевой счет" type="text"/>
 		<counter id="till" name="Оплачено по" type="time" format="dd/MM/yyyy"/>
 	</counters>

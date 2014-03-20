@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-cell-3mob</id>
+	<id version="2">ab-cell-3mob</id>
 	<api flags="no_browser"/>
 	<name>3Mob</name>
 	<description html="true"><![CDATA[
@@ -8,6 +8,7 @@
 	<p>Информация берется из личного кабинета https://3mob.ua/application/customer/balances</p>
 	]]></description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>Ignatiy Goloviznin &lt;igoloviznin@gmail.com&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
@@ -16,14 +17,21 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" грн"/>
+		<counter id="balance" name="Баланс" units=" ₴"/>
+		<counter id="balance_bonus" name="Бонусный баланс" suffix=" ₴" type="numeric"/>
 		<counter id="minutes_local" name="Минуты внутри сети" type="time_interval" format="{@H}:{@min}:{@sec}"/>
 		<counter id="minutes_roam" name="Минуты внутри сети и нац. роуминг" type="time_interval" format="{@H}:{@min}:{@sec}"/>
 		<counter id="internet_local" name="Интернет внутри сети" units=" Мб"/>
 		<counter id="internet_roam" name="Интернет внутри сети и нац. роуминг" units=" Мб"/>
+		<counter id="internet_roaming" name="Интернет в нац. роумингу" units=" Мб"/>
+		<counter id="balance_sms" name="SMS" suffix=" смс" type="numeric"/>
+		<counter id="money_transfer" name="Money Transfer" suffix=" ₴" type="numeric"/>
 		<counter id="deadline" name="Дата деактивации" type="time" format="dd/MM/yyyy"/>
-	</counters>
-	<keywords></keywords>
+		<counter id="mobphone" name="Номер телефона" type="text"/>
+		</counters>
+	<keywords>
+         мобильный национальный оператор wcdma umts украина
+        </keywords>
 	<type>cell</type>
 	<country>ua</country>
 </provider>

@@ -1,33 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <EditTextPreference 
-        title="Login" 
-        positiveButtonText="OK" 
-        summary="|Enter your login to Etisalat|{@s}" 
-        dialogTitle="Login" 
-        negativeButtonText="Cancel" 
-        dialogMessage="Enter your login to Etisalat personal account"
-        inputType="text"
-        key="login">
-    </EditTextPreference>
-    <EditTextPreference 
-        positiveButtonText="OK"
-        key="password" 
-        dialogTitle="Password"
-        negativeButtonText="Cancel"
-        title="Password"
-        summary="||***********"
-        dialogMessage="Please enter a password you use to enter Etisalat personal account."
-        inputType="textPassword">
-    </EditTextPreference>
-    <EditTextPreference 
-        positiveButtonText="OK"
-        key="num" 
-        dialogTitle="Phone"
-        negativeButtonText="Cancel"
-        title="Phone"
-        summary="|Auto|{@s}"
-        dialogMessage="Please enter a few last digits of prepaid phone number you want to get information on. You can leave this field empty to get information on the first number in your personal account."
-        inputType="number">
-    </EditTextPreference>
+	<EditTextPreference
+		obligatory="true"
+		title="Login"
+		positiveButtonText="OK"
+		summary="|Enter your login to Etisalat|{@s}"
+		dialogTitle="Login"
+		negativeButtonText="Cancel"
+		dialogMessage="Enter your login to Etisalat personal account"
+		inputType="text"
+		key="login">
+	</EditTextPreference>
+	<EditTextPreference
+		obligatory="true"
+		positiveButtonText="OK"
+		key="password"
+		dialogTitle="Password"
+		negativeButtonText="Cancel"
+		title="Password"
+		summary="||***********"
+		dialogMessage="Please enter a password you use to enter Etisalat personal account."
+		inputType="textPassword">
+	</EditTextPreference>
+	<EditTextPreference
+		positiveButtonText="OK"
+		key="num"
+		dialogTitle="Phone"
+		negativeButtonText="Cancel"
+		title="Phone"
+		summary="|Auto|{@s}"
+		dialogMessage="Please enter a few last digits of prepaid phone number you want to get information on. You can leave this field empty to get information on the first number in your personal account."
+		inputType="number">
+	</EditTextPreference>
 </PreferenceScreen>

@@ -1,36 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-cell-etisalat</id>
-  <name>Etisalat</name>
-  <description>
-    Retrieve balance, status and renewal date from Etisalat (http://www.etisalat.ae) personal account on specified prepaid mobile number.
-
-    The personal account address is: https://www.e4me.ae/
-
-    If you still have not got Etisalat personal account please fill in the following form: https://www.e4me.ae/e4me/etisalat/newregistration?SID=1
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Balance" units=" AED"/>
-    <counter id="fio" name="Name" type="text"/>
-    <counter id="status" name="Status" type="text"/>
-    <counter id="phone" name="Phone" type="text"/>
-    <counter id="till" name="Renewal date" type="time" format="dd/MM/yyyy"/>
-  </counters>
-  <keywords>
-    
-  </keywords>
-  <type>
-    cell
-  </type>
-  <country>
-    ae
-  </country>
+	<id version="2">ab-cell-etisalat</id>
+	<api flags="no_browser"/>
+	<name>Etisalat</name>
+	<description html="true"><![CDATA[
+	<p>Retrieve balance, status and renewal date from Etisalat (http://www.etisalat.ae) personal account on specified prepaid mobile number.</p>
+	<p>The personal account address is: https://www.e4me.ae/</p>
+	]]></description>	
+	<instruction html="true"><![CDATA[
+	<p>If you still have not got Etisalat personal account please fill in the following form: https://www.e4me.ae/e4me/etisalat/newregistration?SID=1</p>
+	]]></instruction>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Balance" units=" AED"/>
+		<counter id="fio" name="Name" type="text"/>
+		<counter id="status" name="Status" type="text"/>
+		<counter id="phone" name="Phone" type="text"/>
+		<counter id="till" name="Renewal date" type="time" format="dd/MM/yyyy"/>
+	</counters>
+	<keywords></keywords>
+	<type>cell</type>
+	<country>ae</country>
 </provider>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="24">ab-money-alfabank</id>
+	<id version="25">ab-money-alfabank</id>
 	<api flags="no_browser"/>
 	<name>Альфабанк</name>
 	<description html="true"><![CDATA[

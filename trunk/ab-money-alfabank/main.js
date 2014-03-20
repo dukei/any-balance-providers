@@ -483,7 +483,7 @@ function processCredit2(html, baseurl, _accnum, result){
     accprefix = 20 - accprefix;
 
 	// <table[^>]+table-layout:\s*fixed[^>]*>\s*<tr[^>]*>(?:[\s\S]*?<td[^>]*>){2}\d+<
-    var re = new RegExp('<table[^>]+table-layout:\\s*fixed[^>]*>\\s*<tr[^>]*>(?:[\\s\\S]*?<td[^>]*>){2}\\d+' + accnum + '<', 'i');
+    var re = new RegExp('<table[^>]+table-layout:\\s*fixed[^>]*>\\s*<tr[^>]*>(?:[\\s\\S]*?<td[^>]*>){2}\\d*' + accnum + '<', 'i');
     var tr = getParam(html, null, null, re);
     if(!tr)
         throw new AnyBalance.Error('Не удаётся найти ' + (accnum ? 'кредит с последними цифрами ' + accnum : 'ни одного кредита'));
@@ -531,7 +531,9 @@ function processCredit2(html, baseurl, _accnum, result){
     getParam(html, result, 'late', /&#1055;&#1088;&#1086;&#1089;&#1088;&#1086;&#1095;&#1077;&#1085;&#1085;&#1072;&#1103; &#1079;&#1072;&#1076;&#1086;&#1083;&#1078;&#1077;&#1085;&#1085;&#1086;&#1089;&#1090;&#1100;<(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     //Несанкционированный перерасход
     getParam(html, result, 'overdraft', /&#1053;&#1077;&#1089;&#1072;&#1085;&#1082;&#1094;&#1080;&#1086;&#1085;&#1080;&#1088;&#1086;&#1074;&#1072;&#1085;&#1085;&#1099;&#1081; &#1087;&#1077;&#1088;&#1077;&#1088;&#1072;&#1089;&#1093;&#1086;&#1076;<(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    
+    // Льготный период
+    getParam(html, result, 'gracetill', /&#1044;&#1072;&#1090;&#1072; &#1086;&#1082;&#1086;&#1085;&#1095;&#1072;&#1085;&#1080;&#1103; &#1083;&#1100;&#1075;&#1086;&#1090;&#1085;&#1086;&#1075;&#1086; &#1087;&#1077;&#1088;&#1080;&#1086;&#1076;&#1072;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);	
+	
     AnyBalance.setResult(result);
 }
 

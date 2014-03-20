@@ -1,30 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-   <id major_version="3.0" version="9">ab-weather-moscow</id>
-   <name>Температура в Москве</name>
-   <description>Текущая температура в Москве с http://gradus.melda.ru/
-   Подробная инструкция по настройке: http://melda.ru/gradus/android/
-   </description>
-   <author>Erelen Laiquendi &lt;erelen@melda.ru&gt;</author>
-   <files>
-       <icon>icon.png</icon>
-       <preferences>preferences.xml</preferences>
-       <js>main.js</js>
-       <history>history.xml</history>
-   </files>
-   <counters>
-     <counter id="temperature_color" name="Температура с цветом" type="html" />
-     <counter id="temperature" name="Температура" type="text" units="°" />
-     <counter id="temperature_int" name="Температура (число)" units="°" />
-     <counter id="ts" name="Время генерации данных" type="text" units="" />
-   </counters>
-   <keywords>
-       погода, температура, москва, россия
-   </keywords>
-   <type>
-       weather
-   </type>
-   <country>
-       ru
-   </country>
+    <id major_version="3.0" version="9">ab-weather-moscow</id>
+    <name>Температура в Москве</name>
+    <description html="true"><![CDATA[<p>Текущая температура в Москве с <a href="https://gradus.melda.ru/">https://gradus.melda.ru/</a></p>]]></description>
+    <instruction html="true"><![CDATA[<p>Подробная инструкция по настройке: <a href="https://melda.ru/gradus/android/">https://melda.ru/gradus/android/</a></p>]]></instruction>
+    <author>Erelen Laiquendi &lt;erelen@melda.ru&gt;</author>
+    <files>
+        <icon>icon.png</icon>
+        <preferences>preferences.xml</preferences>
+        <js>main.js</js>
+        <js>library.js</js>
+        <history>history.xml</history>
+    </files>
+    <counters>
+        <counter id="temperature_color" name="Температура с цветом" type="html" />
+        <counter id="temperature" name="Температура" type="text" units="°" />
+        <counter id="temperature_int" name="Температура (число)" units="°" />
+        <counter id="ts" name="Время генерации данных" type="text" units="" />
+    </counters>
+    <keywords>погода, температура, москва, россия</keywords>
+    <type>weather</type>
+    <country>ru</country>
 </provider>

@@ -1,6 +1,7 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
+
 var g_headers = {
     Accept:'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
     'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',

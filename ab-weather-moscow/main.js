@@ -11,12 +11,7 @@ function main() {
     prefs.critical_data_age = 30 * 60; // seconds
 
     json = AnyBalance.requestGet("https://gradus.melda.ru/data.json?anybalance." + prefs.version);
-
-    try {
-        var data = JSON.parse(json);
-    } catch (e) {
-        throw new AnyBalance.Error("Ошибка парсинга JSON-данных.");
-    }
+    var data = getJson(json);
 
     if (data.version.major != 1) {
         throw new AnyBalance.Error("Версия провайдера фатально устарела. Пожалуйста, обновитесь: http://anybalance.ru/catalog.php?id=ab-weather-moscow");
@@ -29,12 +24,11 @@ function main() {
 
     var result = {success: true};
 
-    result['temperature_color'] = '<font color="' + data.temperature_color + '">' + data.temperature + '°</font>';
-    result['temperature'] = data.temperature;
-    result['temperature_int'] = parseFloat(data.temperature);
-
+    getParam('<font color="' + data.temperature_color + '">' + data.temperature + '°</font>', result, 'temperature_color');
+    getParam(data.temperature, result, 'temperature');
+    getParam(data.temperature, result, 'temperature_int', null, null, parseFloat);
     var ts = new Date(data.ts.data * 1000);
-    result['ts'] = ts.getDate() + '.' + (ts.getMonth()+1 < 10 ? '0' : '') + (ts.getMonth()+1) + '.' + ts.getFullYear() + ' ' + ts.getHours() + ':' + (ts.getMinutes() < 10 ? '0' : '') + ts.getMinutes();
+    getParam(ts.getDate() + '.' + (ts.getMonth()+1 < 10 ? '0' : '') + (ts.getMonth()+1) + '.' + ts.getFullYear() + ' ' + ts.getHours() + ':' + (ts.getMinutes() < 10 ? '0' : '') + ts.getMinutes(), result, 'ts');
 
     if (prefs.show_link) {
         result['__tariff'] = "График: https://gradus.melda.ru/";

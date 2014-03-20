@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="53" date="2014-03-20">
+	- Исправлен регион Саратов.
+	</change>
 	<change version="52" date="2014-03-03">
 	- Исправлен регион Пенза.
 	</change>

@@ -7,6 +7,9 @@
 	<p>Предоставляет информацию о балансе сотового оператора 3Mob http://3mob.ua/</p>
 	<p>Информация берется из личного кабинета https://3mob.ua/application/customer/balances</p>
 	]]></description>
+        <instruction>
+	  Для регистрации в Личном кабинете необходимо зайти на сайт http://3mob.ua/ и на главной страничке нажать кнопку «Личный кабинет». В всплывющем окне перейти по ссылке "Зарегистрироваться". Заполнить данные и зарегистрироваться.
+	</instruction>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<author>Ignatiy Goloviznin &lt;igoloviznin@gmail.com&gt;</author>
 	<files>

@@ -41,12 +41,16 @@ function main(){
 	sumParam(html, result, 'bonus_fb', /<td[^>]*>\s*Бонус за контактный номер\s*<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	//Бонус "Угадай код"
 	sumParam(html, result, 'bonus_fb', /<td[^>]*>\s*Бонус [^>]*Угадай код[^>]*\s*<\/td>\s*<td[^>]*>([\s\S]*?) \([^<]*\)\s*<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+	//Бонус "Смартфон за Check-in"
+	sumParam(html, result, 'bonus_fb', /<td[^>]*>\s*Бонус [^>]*Смартфон за Check-in[^>]*\s*<\/td>\s*<td[^>]*>([\s\S]*?) \([^<]*\)\s*<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);	
 	//Бонус «Вільний доступ»    [^>]*<\/td>
 	getParam(html, result, 'bonus_vd', /<td[^>]*>\s*Бонус [^>]*Вільний доступ[^>]*\s*<\/td>\s*<td[^>]*>([\s\S]*?) \([^>]*\)\s*<\/td>/i, replaceTagsAndSpaces, parseBalance);
 	//Дата Бонус контактный номер
 	sumParam(html, result, 'date_bonus_fb', /<td[^>]*>\s*Бонус за контактный номер\s*<\/td>\s*<td[^>]*>\s*.* \(по ([^<]*)\)\s*</ig, replaceTagsAndSpaces, parseDate, aggregate_min);
 	//Дата Бонус "Угадай код"
 	sumParam(html, result, 'date_bonus_fb', /<td[^>]*>\s*Бонус [^>]*Угадай код[^>]*\s*<\/td>\s*<td[^>]*>\s*.* \(по ([^<]*)\)\s*<\/td>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
+	//Дата Бонус "Смартфон за Check-in"
+	sumParam(html, result, 'date_bonus_fb', /<td[^>]*>\s*Бонус [^>]*Смартфон за Check-in[^>]*\s*<\/td>\s*<td[^>]*>\s*.* \(по ([^<]*)\)\s*<\/td>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
 	
 	//Пакетный трафик (получаем в локальную переменную, и независимо от включенности счетчика 'traffic_paket')
         var traffic_paket = sumParam(html, null, null, /<td[^>]*>\s*пакетный трафи(?:к|к \(Rev.A\)|к \(Rev.A\/Rev.B\))\s*<\/td>\s*<td[^>]*>([\s\S]*?)\s/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);

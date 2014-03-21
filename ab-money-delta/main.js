@@ -79,10 +79,17 @@ function main(){
 	if (!/ctl00\$btnLogout/i.test(html)) {
 		var error = getParam(html, null, null, /<span[^>]+id="overlayingErrorMessage_lblMessage">([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
-			throw new AnyBalance.Error(error);
-		throw new AnyBalance.Error("Не удалось зайти в интернет-банк. Сайт изменен?");
+			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+		
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось зайти в интернет-банк. Сайт изменен?');
 	}
 	
+	/*if (prefs.type == 'cred') 
+		fetchAcc(html);
+	else 
+		fetchCard(html, baseurl);*/
+
     //Сколько цифр осталось, чтобы дополнить до 16
     var accnum = prefs.accnum || '';
     var accprefix = accnum.length;
@@ -95,7 +102,11 @@ function main(){
 
     var result = {success: true};
     var type = getParam(tr, null, null, /<input[^>]*name="([^"]*)/i);
-   
+	
+	if(!isset(type) && /Кредитна/i.test(tr)) {
+		type = 'CreditCard';
+	}
+	
     getParam(tr, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
     getParam(tr, result, 'accnum', /(?:[\s\S]*?<td[^>]*>){3}(?:\s*<[^>]*>)*\s*(\d+)/i, replaceTagsAndSpaces);
     getParam(tr, result, 'accname', /(?:[\s\S]*?<td[^>]*>){3}(?:\s*<[^>]*>)*\s*\d+([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
@@ -122,6 +133,18 @@ function main(){
         	getParam(tr, result, 'pay', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
         	getParam(tr, result, 'paytill', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
         	break;
+
+        case 'CreditCard':
+        	getParam(tr, result, 'balance', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+        	getParam(tr, result, 'currency', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseCurrency);
+			
+			getParam(tr, result, 'accnum', /(\d{10,})/i, replaceTagsAndSpaces);
+			getParam(tr, result, 'accname', /\d{10,}([^<]+)/i, replaceTagsAndSpaces);			
+			
+			getParam(tr, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+			
+        	break;			
+		
     }
 
     if(AnyBalance.isAvailable('agreement', 'pct', 'monthlypay', 'debt', 'pay', 'paytill')){
@@ -151,5 +174,51 @@ function main(){
     }
 
     AnyBalance.setResult(result);
+	
+}
 
+function fetchCard(html, baseurl) {
+	var prefs = AnyBalance.getPreferences();
+	if (prefs.lastdigits && !/^\d{4}$/.test(prefs.lastdigits)) 
+		throw new AnyBalance.Error("Надо указывать 4 последних цифры карты или не указывать ничего");
+	
+	var result = {success: true};
+	// Иногда мы не переходим на нужную страницу, из-за каких-то глюков.
+	html = AnyBalance.requestPost(baseurl + 'frontend/frontend', {
+		'RQ_TYPE':'WORK',
+		'SCREEN_ID':'MAIN',
+		'MENU_ID':'MENU',
+		'ITEM_ID':'MENU_CLICK',
+		SID:getSID(html),
+		'Step_ID':'0',
+		'CP_MENU_ITEM_ID':'SFMAIN_MENU.WB_PRODUCTS_ALL',
+	}, addHeaders({Referer: baseurl + 'frontend/frontend'}));
+	
+	html = AnyBalance.requestPost(baseurl + 'frontend/frontend', {
+		'RQ_TYPE':'WORK',
+		'SCREEN_ID':'MAIN',
+		'MENU_ID':'MENU',
+		'ITEM_ID':'MENU_CLICK',
+		SID:getSID(html),
+		'Step_ID':'1',
+		'CP_MENU_ITEM_ID':'CARDS.CARD_LIST',
+	}, addHeaders({Referer: baseurl + 'frontend/frontend'}));
+	
+	getParam(html, result, 'userName', /ibec_header_right">\s*<b>([\s\S]*?)<\//i, replaceTagsAndSpaces);
+	
+	// Пока мы не знаем как выглядит счет с несколькими картами, поэтому сделал как было, вроде должно сработать если что.
+	var cardnum = prefs.lastdigits || '\\d{3}';
+	var regExp = new RegExp('<root>(?:[\\s\\S]*?<name[^>]*>){12}\\d{3}\\*+' + cardnum + '[\\s\\S]*?</root>','i');
+	
+	var root = getParam(html, null, null, regExp);
+	if(!root){
+		throw new AnyBalance.Error('Не удалось найти ' + (prefs.lastdigits ? 'карту с последними цифрами ' + prefs.lastdigits : 'ни одной карты!'));
+	}
+	
+	getParam(root, result, 'balance', /\d{3}\*+\d{3}[\s\S]*?class='ibec_balance'(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(root, result, ['currency', 'balance'], /\d{3}\*+\d{3}[\s\S]*?class='ibec_balance'(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, parseCurrency);
+	getParam(root, result, '__tariff', /(\d{3}\*+\d{3})/i);
+	result.cardNumber = result.__tariff;
+
+	AnyBalance.setResult(result);
 }

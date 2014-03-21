@@ -22,6 +22,14 @@
         obligatory="true"
         inputType="textPassword">
     </EditTextPreference>
+	<ListPreference 
+        key="type" 
+        title="Что смотреть"
+        summary="||{@s}"
+        entries="Карта|Кредит"
+        entryValues="card|cred"
+		defaultValue="card">
+    </ListPreference>
     <EditTextPreference 
         positiveButtonText="ОК"
         key="accnum" 
@@ -29,7 +37,6 @@
         negativeButtonText="Отмена"
         title="Номер счета"
         summary="|Автоматически|{@s}"
-        dialogMessage="Введите не менее 4 последних цифр номера счета, по которому вы хотите получить данные. Если это поле оставить пустым, то будет показана информация по первому счету."
-        >
+        dialogMessage="Введите не менее 4 последних цифр номера счета, по которому вы хотите получить данные. Если это поле оставить пустым, то будет показана информация по первому счету.">
     </EditTextPreference>
 </PreferenceScreen>

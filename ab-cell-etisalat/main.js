@@ -23,6 +23,8 @@ var g_errors = {
     "Login.BlacklistedCustomer": "Login failed. Kindly visit an eShop Coordinator at your nearest Business Center for further assistance"
 };
 
+var g_isPrepayed = true;
+
 function main(){
     var prefs = AnyBalance.getPreferences();
 	checkEmpty(prefs.login, 'Enter login, please!');
@@ -46,8 +48,15 @@ function main(){
             //Если объяснения ошибки не найдено, при том, что на сайт войти не удалось, то, вероятно, произошли изменения на сайте
             throw new AnyBalance.Error('The login attempt has failed. Is the site changed?');
         }
-        
+        // Это предоплата
         html = AnyBalance.requestGet(baseurl + 'accounts?SID=9');
+		// Это пост оплата
+		if(/There is no pre paid account available/i.test(html)) {
+			g_isPrepayed = false;
+			AnyBalance.trace('There is no pre paid account available... We are in post paid selfcare');
+			
+			html = AnyBalance.requestGet(baseurl + 'accounts');
+		}
         
         var re = new RegExp('<tr(?:[\\s\\S](?!</tr>))*?getAccountDetails\\(\'\\d*' + (prefs.num ? prefs.num : '\\d+') + '\'[\\s\\S]*?</tr>', 'i');
         var tr = getParam(html, null, null, re);
@@ -63,18 +72,20 @@ function main(){
         if(AnyBalance.isAvailable('balance')){
             var id = getParam(tr, null, null, /getAccountDetails\s*\(\s*'([^']*)/i);
 			
-            html = AnyBalance.requestPost(baseurl + 'accounts?SID=15&MobileNo=' + id, {
-				'SID':'1',
-				SelectedAccount:''
-			}, addHeaders({'Referer':baseurl + 'accounts?SID=9'}));
+			if(g_isPrepayed) {
+				html = AnyBalance.requestPost(baseurl + 'accounts?SID=15&MobileNo=' + id, {
+					'SID':'1',
+					SelectedAccount:''
+				}, addHeaders({'Referer': baseurl + 'accounts?SID=9'}));
+			} else {
+				html = AnyBalance.requestGet(baseurl + 'accounts?SID=2&NationalNo=' + id, addHeaders({'Referer': baseurl + 'accounts'}));
+			}
 			
-            getParam(html, result, 'balance', />balance(?:[\s\S]*?<td[^>]*>){5}([\d,.\s]+)/i, replaceTagsAndSpaces, parseBalance);
-        
+			getParam(html, result, 'balance', [/>\s*Current Amount Due([^>]*>){4}/i, />balance(?:[\s\S]*?<td[^>]*>){5}([\d,.\s]+)/i], replaceTagsAndSpaces, parseBalance);
         }
     }finally{
         AnyBalance.requestGet(baseurl + 'logoff'); //The logoff is obligatory, because etisalat does not allow double login
     }
-
-    //Возвращаем результат
+	
     AnyBalance.setResult(result);
 }

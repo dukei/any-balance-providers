@@ -21,7 +21,7 @@ function main(){
 	checkEmpty(prefs.login, 'Введите номер телефона!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	var main = 'ru/login/?next=/ru/';
+	var main = 'ru/';
 	var html = AnyBalance.requestGet(baseurl + main, g_headers);
 	
     var matches = prefs.login.match(/^(\d{2})(\d{7})$/);
@@ -44,11 +44,12 @@ function main(){
 			return;
 		}
         var error = getParam(html, null, null, /<div class="validation-summary-errors errorMessage">([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-        if(error)
-            throw new AnyBalance.Error(error);
+		if (error)
+			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+			
         throw new AnyBalance.Error("Не удалось зайти в личный кабинет. Сайт изменен?");
     }
-
+	
     var result = {success: true, balance: null};
 	
 	getParam(html, result, '__tariff', /Тарифный план([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);

@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="9" date="2014-03-22">
+      - New PAMM-index "Prize2" added.
+      - Some improvements in forecast procedure.
+    </change>
     <change version="8" date="2014-03-01">
       - Counter depended by PAMM indices added: Sum of open trades. It calculated by all PAMMs included in PAMM-index. Also, look for more details in provider's log.
       - Counters added both to PAMM-monitoring and PAMM indices sections: Forecast of drawdown. WARNING! THIS IS ONLY FORECAST, NOT RECOMMENDATION!

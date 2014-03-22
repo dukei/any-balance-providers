@@ -224,11 +224,17 @@ function getForecast(a,limit){
 	for(i in a){
 		if(i<a.length && a[i]<lim){last=i;minus+=1;}
 	}
+
+	if(minus == 0){
+		AnyBalance.trace('Get forecast by '+a.length+' week(s), none overlimit drawdowns with limit '+lim+'.');
+		return Math.round(50);
+	}
+
 	var delta=last/minus;
 	var f = (a.length - 1 - last)/delta;
 	if(f<.1){f=.1;}else if(f>.9){f=.9;}
 
-	AnyBalance.trace('Get forecast by '+a.length+' week(s), '+minus+' overlimit drawdown(s) with limit '+lim+', last drawdown at '+last+'-th week.');
+	AnyBalance.trace('Get forecast by '+a.length+' week(s), '+minus+' overlimit drawdown(s) with limit '+lim+', last drawdown at '+(last+1)+'-th week.');
 
 	return Math.round(f*100);
 };

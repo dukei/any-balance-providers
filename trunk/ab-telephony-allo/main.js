@@ -24,6 +24,7 @@ function main(){
 function doNewCabinet(prefs) {
 	AnyBalance.trace('Входим в новый кабинет...');
 	
+        AnyBalance.setDefaultCharset('utf-8');
 	var baseurl = 'https://www.alloincognito.ru/';
 	
 	var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
@@ -67,6 +68,18 @@ function doNewCabinet(prefs) {
 		Referer: baseurl + 'login',
 		'Origin':'https://www.alloincognito.ru',
 	}));
+
+        if(/<form[^>]+name="oferta_authorization"/i.test(html)){
+                AnyBalance.trace("Требуется принять оферту. Принимаем...");
+                //Надо оферту принять, а то в кабинет не пускает
+		html = AnyBalance.requestPost(baseurl + 'ru/cabinet-contractoffer', {
+			oferta:1,
+			task:'setOfertaАuthorization'
+                }, addHeaders({
+			Referer: baseurl + 'ru/cabinet-contractoffer',
+			'Origin':'https://www.alloincognito.ru',
+		}));		
+        }
 	
 	if (!/exit=1"/i.test(html)) {
 		var error = getParam(html, null, null, />Ошибка([^>]*>){4}/i, replaceTagsAndSpaces, html_entity_decode);

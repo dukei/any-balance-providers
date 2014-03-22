@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-telephony-allo</id>
+	<id version="3">ab-telephony-allo</id>
 	<api flags="no_browser|captcha"/>
 	<name>АллоИнкогнито</name>
 	<description html="true"><![CDATA[

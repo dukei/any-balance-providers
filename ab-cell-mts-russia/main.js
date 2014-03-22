@@ -575,11 +575,11 @@ function mainLK(allowRetry){
     AnyBalance.trace("Мы в личном кабинете...");
 
     var result = {success: true};
-    var info = AnyBalance.requestGet(baseurlLogin + '/profile/header?service=lk&style=2013&update', g_headers);
-    getParam(info, result, 'balance', [/Ваш баланс:\s*<a[^>]*>([\s\S]*?)<\/a>/i, /Баланс:\s*<a[^>]*>([\s\S]*?)<\/a>/i], replaceTagsAndSpaces, parseBalance);
-    getParam(info, result, '__tariff', /Ваш тариф:\s*<a[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(info, result, 'bonus', /Баллов:\s*<a[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(info, result, 'phone', /<div[^>]+class="tel"[^>]*>([\s\S]*?)(?:<\/b>|<\/div>)/i, replaceTagsAndSpaces, html_entity_decode);
+    var info = getParam(html, null, null, /var\s+initialProfile\s*=\s*(\{[\s\S]*?\})/, null, getJson);
+    getParam(info.Balance+'', result, 'balance', null, null, parseBalanceRound);
+    getParam(info.Tariff+'', result, '__tariff', null, replaceTagsAndSpaces, html_entity_decode);
+    getParam(info.Bonus+'', result, 'bonus', null, null, parseBalance);
+    getParam(info.FullLogin+'', result, 'phone', null, [/7(\d{3})(\d{3})(\d{2})(\d{2})/, '+7 $1 $2$3$4'], html_entity_decode);
 
     if(isAvailableStatus()){
         var baseurlHelper = "https://ihelper.mts.ru/selfcare/";
@@ -621,4 +621,11 @@ function mainLK(allowRetry){
     }
 
     AnyBalance.setResult(result);
+}
+
+function parseBalanceRound(str){
+    var val = parseBalance(str);
+    if(isset(val))
+        val = Math.round(val*100)/100;
+    return val;
 }

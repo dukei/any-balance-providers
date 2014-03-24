@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-money-iqcard</id>
+	<id version="2">ab-money-iqcard</id>
 	<api flags="no_browser"/>
 	<name>IQCard</name>
 	<description html="true"><![CDATA[

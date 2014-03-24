@@ -56,11 +56,11 @@ function main() {
 	var result = {success: true};
 	
 	// Баланс
-	getParam(json.balance, result, 'balance', null, replaceTagsAndSpaces, parseBalance);
+	getParam(json.balance+'', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
 	// Кредитные средства
-	getParam(json.loanFunds, result, 'loan', null, replaceTagsAndSpaces, parseBalance);
+	getParam(json.loanFunds+'', result, 'loan', null, replaceTagsAndSpaces, parseBalance);
 	// Собственные средства
-	getParam(json.ownFunds, result, 'own', null, replaceTagsAndSpaces, parseBalance);
+	getParam(json.ownFunds+'', result, 'own', null, replaceTagsAndSpaces, parseBalance);
 	
 	getParam(json.brandName + ' ' + json.last4digits, result, '__tariff');
 	getParam(json.ownerFio, result, 'fio');

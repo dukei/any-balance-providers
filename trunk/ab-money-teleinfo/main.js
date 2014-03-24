@@ -93,8 +93,10 @@ function fetchCard(baseurl) {
 	var result = {success: true};
 	
 	var accounts = getParam(html, null, null, /<table[^>]+class="accounts[\s\S]*?<\/table>/i);
-	if (!accounts)
+	if (!accounts) {
+		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не найдена таблица счетов и карт. Сайт изменен?');
+	}
 	var card_tr = getParam(accounts, null, null, new RegExp('<tr[^>]*>(?:[\\s\\S](?!</tr))*?XXXXXX' + (prefs.card ? prefs.card : '\\d{4}') + '[\\s\\S]*?</tr>', 'i'));
 	if (!card_tr)
 		throw new AnyBalance.Error(prefs.card ? 'Не найдена карта с последними цифрами ' + prefs.card : 'Не найдено ни одной карты');

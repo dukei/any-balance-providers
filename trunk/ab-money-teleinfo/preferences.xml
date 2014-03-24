@@ -1,19 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
 	<EditTextPreference
+		obligatory="true"
 		title="Логин"
 		positiveButtonText="ОК"
 		summary="|УНК или псевдоним|{@s}\n"
 		dialogTitle="УНК или псевдоним"
 		negativeButtonText="Отмена"
-		obligatory="true"
 		dialogMessage="УНК или псевдоним"
 		key="login">
 	</EditTextPreference>
 	<EditTextPreference
+		obligatory="true"
 		positiveButtonText="ОК"
 		key="password"
-		obligatory="true"
 		dialogTitle="Пароль"
 		negativeButtonText="Отмена"
 		title="Пароль"

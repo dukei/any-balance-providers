@@ -4,8 +4,7 @@
 
 var g_headers = {
 	'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-	'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
-	'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Accept-Language':'en-US,en;q=0.8,ru;q=0.6',
 	'Connection':'keep-alive',
 	'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.95 Safari/537.36',
 	//'Origin':'https://mobile.paypal.com'
@@ -30,12 +29,15 @@ function main(){
 	var baseurl = 'https://mobile.paypal.com/cgi-bin/wapapp';
 	var html = AnyBalance.requestGet(baseurl, g_headers);
 	
-	if(/<h3>I want to<\/h3>/i.test(html)) {
+	if(/&(?:amp;)?login="/i.test(html)) {
 		AnyBalance.trace('Требуется дополнительный шаг авторизации - выполняем...');
 		html = followLink(html, 'login=');
 	}
 	
-	html = followLink(html, 'view_balance.x=');
+	if(/&(?:amp;)?view_balance\.x="/i.test(html)) {
+		AnyBalance.trace('Идем в просмотр баланса...');
+		html = followLink(html, 'view_balance.x=');
+        }
 	
 	var form = getParam(html, null, null, /<form[^>]+name="Login"[\s\S]*?<\/form>/i);
 	if(!form)
@@ -51,14 +53,14 @@ function main(){
 	if (!/cmd=_wapapp-logout/i.test(html)) {
 		var error = getParam(html, null, null, /<div[^>]+id="crit"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+			throw new AnyBalance.Error(error, null, /Неверный логин или пароль|нужно указать действительный номер телефона или адрес электронной почты|a valid phone number or email address to log in|un número de teléfono o una dirección de correo electrónico válidos para iniciar sesión/i.test(error));
 		
 		AnyBalance.trace(html_entity_decode(html));
 		throw new AnyBalance.Error('Can not login to PayPal. Is the site changed?');
 	}
 	if(!/<\/h4>([^<]*)<hr/i.test(html)){
 		if(/You can't access View Balance in your country/i.test(html)) {
-			AnyBalance.trace('You cant access View Balance in your country...');
+			AnyBalance.trace('You can\'t access View Balance in your country...');
 			logIntoFullVersion(prefs);
 			return;
 		}
@@ -68,7 +70,7 @@ function main(){
 	
 	var result = {success: true};
 	
-	getParam(html, result, ['currency','balance'], /<\/h4>([^<]*)<hr/i, [replaceTagsAndSpaces, /in/i, ''], parseCurrency);
+	getParam(html, result, ['currency','balance'], /<\/h4>([^<]*)<hr/i, [replaceTagsAndSpaces, /\b(?:in|в|en)\b/i, ''], parseCurrency);
     getParam(html, result, 'balance', /<\/h4>([^<]*)<hr/i, replaceTagsAndSpaces, parseBalance);
 	
     AnyBalance.setResult(result);
@@ -79,7 +81,7 @@ function logIntoFullVersion(prefs) {
 	var html = AnyBalance.requestGet(baseurl + 'cgi-bin/webscr?cmd=_login-run', g_headers);
 	
 	var action = getParam(html, null, null, /action="([^"]*login-submit[^"]*)/i);
-	checkEmpty(action, 'Can`t find action, is the site changed?');
+	checkEmpty(action, 'Can\'t find action, is the site changed?');
 	
 	AnyBalance.trace('Entering full version...');
 	

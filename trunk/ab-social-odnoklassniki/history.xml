@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-<change version="2" date="2013-11-18">
-- Новый счетчик: ФИО
-</change>
+	<change version="3" date="2014-03-24">
+	- Исправлено получение баланса ОК.
+	</change>
+	<change version="2" date="2013-11-18">
+	- Новый счетчик: ФИО
+	</change>
 </history>

@@ -1,10 +1,5 @@
 /**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Информация о карте в банке "СМП банк".
-
-Сайт: http://smpbank.ru
-ЛК: https://smponbank.ru/Account/LogOn
 */
 
 var g_headers = {
@@ -16,21 +11,31 @@ var g_headers = {
 };
 
 function main() {
+	AnyBalance.setDefaultCharset('utf-8');
     var prefs = AnyBalance.getPreferences();
+	
+	checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(prefs.password, 'Введите пароль!');
+	
     var baseurl = 'https://smponbank.ru/';
-
-    var html = AnyBalance.requestPost(baseurl + 'Account/LogOn', {
+	
+	var html = AnyBalance.requestGet(baseurl + 'Authorize/LogOn', g_headers);
+	
+	var action = 'Authorize/LogOn';//getParam(html, null, null, /<form action="\/([^"]+)/i);
+	//checkEmpty(action, 'Не удалось найти форму входа, сайт изменен?', true);
+	
+    html = AnyBalance.requestPost(baseurl + action, {
         UserName:prefs.login,
         Password:prefs.password
-    }, g_headers);
+    }, addHeaders({Referer: baseurl + action}));
 
-    if(!/Account\/Logout/i.test(html)){
+    if(!/Authorize\/Logout/i.test(html)){
         var error = getParam(html, null, null, /<div[^>]+validation-summary-errors[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error);
         throw new AnyBalance.Error('Не удалось войти в интернет-банк. Сайт изменен?');
     }
-
+	
     html = AnyBalance.requestPost(baseurl + 'Update/RunCustomerUpdate', addHeaders({
         Accept:'application/json, text/javascript, */*; q=0.01',
         'X-Requested-With':'XMLHttpRequest'

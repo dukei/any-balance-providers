@@ -1,47 +1,38 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-    <id version="2">ab-money-smp</id>
-    <api min_level="5" flags="no_browser"/> <!-- используем динамические единицы изменения -->
-    <name>СМП Банк</name>
-    <description>Информация о карте в банке СМП Банк (http://smpbank.ru/).
-
-Данные берутся из интернет-банка https://smponbank.ru.
-
-ВНИМАНИЕ! В настоящее время поддерживаются только карты. Если вам нужна поддержка еще чего-нибудь, обращайтесь к автору провайдера по е-мейл.
-</description>
-    <instruction>
-        Если Вы не зарегистрированы в системе СМП ON-Банк, вам нужно пройти регистрацию на странице https://smponbank.ru/Account/Register
-
-        ВНИМАНИЕ! Для работы провайдера необходимо в настройках отключить подтверждения входа в интернет-банк SMS-паролями. Это безопасно, эта опция НЕ ОТКЛЮЧАЕТ подтверждение SMS-паролями всех операций. То есть, для всех операций с вашими средствами всё равно будет требоваться SMS-подтверждение, а баланс вы сможете смотреть без SMS-подтверждения.
-    </instruction>
-    <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-    <files>
-	<icon>icon.png</icon>
-        <preferences>preferences.xml</preferences>
-        <js>main.js</js>
-        <js>library.js</js>
-        <history>history.xml</history>
-    </files>
-    <counters>
-	<counter id="balance" name="Остаток" units=" {@currency}"/>
-        <counter id="payTill" name="Заплатить до" type="time" format="dd/MM/yyyy"/>
-        <counter id="payNext" name="Минимальный платеж"/>
-	<counter id="bonus" name="Бонусные баллы" units=" б"/>
-        <counter id="till" name="Срок действия" type="time" format="dd/MM/yyyy"/>
-        <counter id="accnum" name="Номер счета" type="text"/>
-        <counter id="cardnum" name="Номер карты" type="text"/>
-        <counter id="cardname" name="Название карты" type="text"/>
-        <counter id="type" name="Тип" type="text"/>
-        <counter id="fio" name="Владелец" type="text"/>
-        <counter id="currency" name="Валюта" type="text"/>
-    </counters>
-    <keywords>
-        Кредит, банк, смп, smp
-    </keywords>
-    <type>
-        money
-    </type>
-    <country>
-        ru
-    </country>
+	<id version="3">ab-money-smp</id>
+	<api min_level="5" flags="no_browser"/>
+	<name>СМП Банк</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о карте в банке СМП Банк (http://smpbank.ru/).</p>
+	<p>Данные берутся из интернет-банка https://smponbank.ru.</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Если Вы не зарегистрированы в системе СМП ON-Банк, вам нужно пройти регистрацию на странице https://smponbank.ru/Account/Register</p>
+	<p>ВНИМАНИЕ! Для работы провайдера необходимо в настройках отключить подтверждения входа в интернет-банк SMS-паролями. Это безопасно, эта опция НЕ ОТКЛЮЧАЕТ подтверждение SMS-паролями всех операций. То есть, для всех операций с вашими средствами всё равно будет требоваться SMS-подтверждение, а баланс вы сможете смотреть без SMS-подтверждения.</p>
+	]]></instruction>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Остаток" units=" {@currency}"/>
+		<counter id="payTill" name="Заплатить до" type="time" format="dd/MM/yyyy"/>
+		<counter id="payNext" name="Минимальный платеж"/>
+		<counter id="bonus" name="Бонусные баллы" units=" б"/>
+		<counter id="till" name="Срок действия" type="time" format="dd/MM/yyyy"/>
+		<counter id="accnum" name="Номер счета" type="text"/>
+		<counter id="cardnum" name="Номер карты" type="text"/>
+		<counter id="cardname" name="Название карты" type="text"/>
+		<counter id="type" name="Тип" type="text"/>
+		<counter id="fio" name="Владелец" type="text"/>
+		<counter id="currency" name="Валюта" type="text"/>
+	</counters>
+	<keywords>Кредит, банк, смп, smp</keywords>
+	<type>money</type>
+	<country>ru</country>
 </provider>

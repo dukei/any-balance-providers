@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="19">ab-cell-velcom</id>
+	<id version="20">ab-cell-velcom</id>
 	<api flags="no_browser"/>
 	<name>Velcom (Беларусь)</name>
 	<description html="true"><![CDATA[
@@ -25,18 +25,19 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units="р"/>
-		<counter id="min" name="Минуты" units="мин"/>
-		<counter id="min_velcom" name="Минуты на velcom" units="vc"/>
-		<counter id="min_fn" name="Минуты на любимые номера" units="лн"/>
-		<counter id="traffic" name="Трафик" units="Mb"/>
-		<counter id="balanceBonus" name="Бонусный баланс" units="р"/>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="min" name="Минуты" units=" мин"/>
+		<counter id="min_velcom" name="Минуты на velcom" units=" vc"/>
+		<counter id="min_fn" name="Минуты на любимые номера" units=" лн"/>
+		<counter id="traffic" name="Трафик" units=" Mb"/>
+		<counter id="balanceBonus" name="Бонусный баланс" units=" р"/>
 		<counter id="userName" name="ФИО" type="text"/>
 		<counter id="userNum" name="Номер абонента" type="text"/>
 		<counter id="status" name="Статус" type="text"/>
-		<counter id="loan_balance" name="Размер ежемесячного платежа" units="р"/>
-		<counter id="loan_left" name="Оставшаяся к выплате сумма по рассрочке" units="р"/>
+		<counter id="loan_balance" name="Размер ежемесячного платежа" units=" р"/>
+		<counter id="loan_left" name="Оставшаяся к выплате сумма по рассрочке" units=" р"/>
 		<counter id="loan_end" name="Дата погашения рассрочки" type="time" format="dd/MM/yyyy"/>
+		<counter id="call_barring" name="Запрет исходящих с" type="time" format="dd/MM/yyyy"/>
 	</counters>
 	<keywords>велком, мобильный</keywords>
 	<type>cell</type>

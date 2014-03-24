@@ -68,6 +68,7 @@ function main() {
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error("Не удаётся найти ссылку на информацию по картам. Пожалуйста, обратитесь к автору провайдера для исправления ситуации.");
 	}
+	
 	AnyBalance.trace("About to authorize: " + page);
 	
 	if (/esk.zubsb.ru/.test(page)) //Пока только это поддерживается
@@ -244,11 +245,20 @@ function doNewAccount(page) {
 	var html = AnyBalance.requestGet(page);
 	if (/StartMobileBankRegistrationForm/i.test(html)) {
 		//Сбербанк хочет, чтобы вы приняли решение о подключении мобильного банка. Откладываем решение.
+		var pageToken = getParam(html, null, null, /name="PAGE_TOKEN"[^>]*value="([^"]+)/i);
+		checkEmpty(pageToken, 'Попытались отказаться от подключения мобильного банка, но не удалось найти PAGE_TOKEN!', true);
+		
 		html = AnyBalance.requestPost('https://online.sberbank.ru/PhizIC/login/register-mobilebank/start.do', {
+			PAGE_TOKEN:pageToken,
 			operation: 'skip'
 		});
 		//throw new AnyBalance.Error('Сбербанк хочет, чтобы вы приняли решение о подключении мобильного банка. Пожалуйста, зайдите в Сбербанк ОнЛ@йн через браузер и сделайте выбор.');
 	}
+	// А ну другой кейс, пользователь сменил идентификатор на логин
+	if(/Ранее вы[^<]*уже создали свой собственный логин для входа/i.test(html)) {
+		checkEmpty(null, getParam(html, null, null, /Ранее вы[^<]*уже создали свой собственный логин для входа[^<]*/i, replaceTagsAndSpaces, html_entity_decode));
+	}
+	
 	if (/PhizIC/.test(html)) {
 		return doNewAccountPhysic(html);
 	} else {

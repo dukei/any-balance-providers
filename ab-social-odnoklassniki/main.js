@@ -34,12 +34,13 @@ function main() {
 			throw new AnyBalance.Error(error);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
+	
 	var result = {success: true};
 	
 	getParam(html, result, 'fio', /"Страница пользователя"(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, '__tariff', /"Страница пользователя"(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 	
-	var href = getParam(html, null, null, /href="\/([^"]*selectBadge[^"]*)">\s*Прикрепить значок/i, replaceTagsAndSpaces, html_entity_decode);
+	var href = getParam(html, null, null, /href="\/([^"]*UserHiddenOnline[^"]*)">\s*Включить «Невидимку»/i, replaceTagsAndSpaces, html_entity_decode);
 	if(!href)
 		throw new AnyBalance.Error('Не удалось найти ссылку на баланс. Сайт изменен?');
 	html = AnyBalance.requestGet(baseurl + href, g_headers);

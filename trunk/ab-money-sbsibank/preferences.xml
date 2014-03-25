@@ -21,6 +21,14 @@
 		dialogMessage="Введите пароль, используемый для входа в личный кабинет."
 		inputType="textPassword">
 	</EditTextPreference>
+    <ListPreference 
+        key="bank_type" 
+        title="Выберите банк"
+        summary="||{@s}"
+        entries="ОАО Банк БелВЭБ|ОАО Банк Москва-Минск|ЗАО Идея Банк"
+        entryValues="0226|0272|0755"
+		defaultValue="0755">
+    </ListPreference>	
 	<EditTextPreference
 		title="Последние цифры карты"
 		key="lastdigits"
@@ -30,5 +38,5 @@
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
 		dialogMessage="Введите последние 4 цифры карта по которой необходимо получать данные.">
-	</EditTextPreference>	
+	</EditTextPreference>
 </PreferenceScreen>

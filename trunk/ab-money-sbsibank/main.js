@@ -12,6 +12,16 @@ var g_headers = {
 	'Cache-Control': 'max-age=0',
 };
 
+var g_banks = {
+	0226:'imobile/', //ОАО "Банк БелВЭБ"
+	//0182:'', // ОАО "Технобанк"
+	0272:'mmbank/', //ОАО "Банк Москва-Минск"
+	//0175:'', //ЗАО "БелСвиссБанк"
+	//0110:'', //ЗАО "РРБ-Банк"
+	0755:'ideabank/', //ЗАО "Идея Банк"
+	//0270:'', //ЗАО "Альфа-Банк"
+}
+
 function getMessage(html) {
 	return getParam(html, null, null, /var\s+Message\s*=\s*['"]([^'"]+)['"]\s*;/i, replaceTagsAndSpaces, html_entity_decode);
 }
@@ -24,7 +34,7 @@ function getLoginParams(html, prefs) {
 	var params = {
 		'usn':prefs.login,
 		'pwd':prefs.password,
-		'bank':'0226',
+		'bank':prefs.bank_type,
 		'captcha':'',
 		//aapebb5ooug:egqeyownuko
 		'submit':''
@@ -43,14 +53,16 @@ function main() {
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
+	var bankType = g_banks[prefs.bank_type || 0755];
+	checkEmpty(bankType, 'Ну удалось узнать тип банка, сайт изменен?', true);
+	
 	// Запросим страницу логина
-	//var html = '';
-	var html = AnyBalance.requestGet(baseurl + 'ideabank/', g_headers);
+	var html = AnyBalance.requestGet(baseurl + bankType, g_headers);
 	
 	// Сначала пробуем войти напрямую
 	var params = getLoginParams(html, prefs);
 	
-	html = AnyBalance.requestPost(baseurl + 'ideabank/login.ashx', params, addHeaders({Referer: baseurl + 'ideabank/'}));
+	html = AnyBalance.requestPost(baseurl + bankType + 'login.ashx', params, addHeaders({Referer: baseurl + bankType}));
 	
 	if(/Введите код с картинки|Введен неверный код/i.test(getMessage(html))) {
 		AnyBalance.trace('Требуется ввод капчи.');
@@ -61,14 +73,14 @@ function main() {
 		
 		if(AnyBalance.getLevel() >= 7) {
 			AnyBalance.trace('Пытаемся ввести капчу');
-			var captcha = AnyBalance.requestGet(baseurl+ 'ideabank/captcha.ashx?r=' + Math.random());
+			var captcha = AnyBalance.requestGet(baseurl + bankType + 'captcha.ashx?r=' + Math.random());
 			params.captcha = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
 			AnyBalance.trace('Капча получена: ' + params.captcha);
 		} else {
 			throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
 		}
 		
-		html = AnyBalance.requestPost(baseurl + 'ideabank/login.ashx', params, addHeaders({Referer: baseurl + 'ideabank/start.aspx?mode=5'}));
+		html = AnyBalance.requestPost(baseurl + bankType + 'login.ashx', params, addHeaders({Referer: baseurl + bankType + 'start.aspx?mode=5'}));
 	}
 	
 	if (!/quit\.ashx/i.test(html)) {
@@ -80,7 +92,7 @@ function main() {
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	
-	html = AnyBalance.requestGet(baseurl + 'ideabank/services.aspx', g_headers);
+	html = AnyBalance.requestGet(baseurl + bankType +'services.aspx', g_headers);
 	
 	var cardsForm = getParam(html, null, null, /<form\s+id=["']fCrdList["'][\s\S]*?<\/form>/i);
 	checkEmpty(cardsForm, 'Не удалось найти форму с картами, сайт изменен?', true);
@@ -90,44 +102,36 @@ function main() {
 	//https://www.sbsibank.by/mbottom.asp?crd_id=4379318
 	var cards = sumParam(cardsForm, null, null, /<input type=['"]radio[^>]*set_curr_crd\.ashx\?crd=\d+[\s\S]*?<\/label>/ig);
 	checkEmpty(cards, 'Не удалось найти ни одной карты в интернет-банке, сайт изменен?', true);
-	
 	AnyBalance.trace('Найдено карт: ' + cards.length);
-	
 	var result = {success: true};
-	
 	getParam(html, result, 'fio', /Пользователь\s*:([^>]*>){3}/i, replaceTagsAndSpaces, html_entity_decode);
-	
 	var cardCurrent = getParam(html, null, null, />Карточка\s*:(?:[^>]*>){3}([\s\S]*?)<\/td/i, replaceTagsAndSpaces);
-	
+
 	if(!card) {
 		AnyBalance.trace('Не указана карта в настройках, будет показана информация по карте: ' + cardCurrent);
 	} else {
 		//https://www.sbsibank.by/ideabank/balance.ashx?bal_type=B&time=1393586772876
-		
 		for(var i =0; i < cards.length; i++) {
 			// Проверяем карты
-			
 			var id = getParam(cards[i], null, null, new RegExp('set_curr_crd\\.ashx\\?crd=(\\d+)[^>]*>\\s*<label[^>]*>[\\d.]*' + card + '[^<]*</label>', 'i'));
 			if(!id) {
 				AnyBalance.trace('Карта ' + cards[i] + ' не соответствует заданной ' + card);
 			} else {
 				AnyBalance.trace('Карта ' + cards[i] + ' соответствует заданной ' + card);
 				
-				html = AnyBalance.requestPost(baseurl + 'ideabank/aj_set_curr_crd.ashx?crd=' + id + '&time=' + new Date().getTime(), {}, addHeaders({
-					Referer: baseurl + 'ideabank/services.aspx',
+				html = AnyBalance.requestPost(baseurl + bankType + 'aj_set_curr_crd.ashx?crd=' + id + '&time=' + new Date().getTime(), {}, addHeaders({
+					Referer: baseurl + bankType + 'services.aspx',
 					'X-Requested-With':'XMLHttpRequest'
 				}));
 				break;
 			}
 		}
-		
-		html = AnyBalance.requestGet(baseurl + 'ideabank/services.aspx', g_headers);
-		
+		html = AnyBalance.requestGet(baseurl + bankType + 'services.aspx', g_headers);
 		cardCurrent = getParam(html, null, null, />Карточка\s*:(?:[^>]*>){3}([\s\S]*?)<\/td/i, replaceTagsAndSpaces);
 	}
 	
-	html = AnyBalance.requestPost(baseurl + 'ideabank/balance.ashx?bal_type=B&time=' + new Date().getTime(), {}, addHeaders({
-		Referer: baseurl + 'ideabank/services.aspx',
+	html = AnyBalance.requestPost(baseurl + bankType +' balance.ashx?bal_type=B&time=' + new Date().getTime(), {}, addHeaders({
+		Referer: baseurl + bankType + 'services.aspx',
 		'X-Requested-With':'XMLHttpRequest'			
 	}));
 	

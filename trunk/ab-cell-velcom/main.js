@@ -115,8 +115,9 @@ function main(){
     getParam(html, result, '__tariff', /Тарифный план:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     //getParam(html, result, 'min', /Остаток минут, SMS, MMS, (?:МБ|GPRS), включенных в абонплату:[\s\S]*?<td[^>]*>(?:[\s\S](?!<\/td>))*?(-?\d[\d,\.]*) мин(?:ут)?(?:\s*во все сети)?(?:,|\s*<)/i, replaceTagsAndSpaces, parseBalance);
 	sumParam(html, result, 'min', [/Остаток исходящего бонуса:[\s\S]*?<td[^>]*>([\s\S]*?мин)/i, 
-	/Остаток минут, SMS, MMS, (?:МБ|GPRS), включенных в абонплату:[\s\S]*?<td[^>]*>(?:[\s\S](?!<\/td>))*?(-?\d[\d,\.]*) мин(?:ут)?(?:\s*во все сети)?(?:,|\s*<)/i
+	/Остаток минут, SMS, MMS, (?:МБ|GPRS), включенных в абонплату:[\s\S]*?<td[^>]*>(?:[\s\S](?!<\/td>))*?(-?\d[\d,\.]*)\s*мин(?:ут)?(?:\s*во все сети)?/i
 	], replaceTagsAndSpaces, parseBalance, aggregate_sum);
+	sumParam(html, result, 'sms', /Остаток минут, SMS, MMS, (?:МБ|GPRS), включенных в абонплату:[\s\S]*?<td[^>]*>(?:[\s\S](?!<\/td>))*?(-?\d[\d,\.]*)\s*SMS/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	
     getParam(html, result, 'min_fn', /Остаток минут, SMS, MMS, (?:МБ|GPRS), включенных в абонплату:[\s\S]*?<td[^>]*>(?:[\s\S](?!<\/td>))*?(-?\d[\d,\.]*) мин(?:ут)? на ЛН/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'min_velcom', /Остаток минут, SMS, MMS, (?:МБ|GPRS), включенных в абонплату:[\s\S]*?<td[^>]*>(?:[\s\S](?!<\/td>))*?(-?\d[\d,\.]*) мин(?:ут)? на velcom/i, replaceTagsAndSpaces, parseBalance);

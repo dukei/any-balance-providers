@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-money-privatbank</id>
+	<id version="3">ab-money-privatbank</id>
 	<api flags="no_browser|sms"/>
 	<name>Приватбанк (Украина)</name>
 	<description html="true"><![CDATA[

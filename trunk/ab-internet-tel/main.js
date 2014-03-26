@@ -41,23 +41,10 @@ function main(){
 	}	
 	
     var result = {success: true};
-    getParam(html, result, 'balance', /Баланс:([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'fio', /Здравствуйте,([^<]+)!/i, replaceTagsAndSpaces, html_entity_decode);
-	sumParam(html, result, '__tariff', /Тариф([^>]*>){3}/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
-
-/*
-	getParam(html, result, 'dogovor', /Договор:([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
     
-    getParam(html, result, 'code', /Код для оплаты услуг через терминалы:([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	// Попытаемся высчитать дату отключения
-	if(isAvailable('deadline')){
-		var monthlyFee = getParam(html, null, null, /Цена тарифа([^<]*)/i, null, parseBalance);
-		var date = new Date();
-		var dayCount = 32 - new Date(date.getYear(), date.getMonth(), 32).getDate();
-		// Теперь мы знаем сумму абонентской платы и количество дней в месяце, так что можем посчитать дату отключения
-		var daysToDeadline = Math.round(result.balance/(monthlyFee/dayCount));
-		result.deadline = date.getTime() + 86400000 * daysToDeadline;
-	}
-*/
+	getParam(html, result, 'balance', /Баланс:([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'fio', /Здравствуйте,([^<!]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	sumParam(html, result, '__tariff', /Тариф([^>]*>){3}/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+	
     AnyBalance.setResult(result);
 }

@@ -18,11 +18,6 @@
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
 		<counter id="fio" name="ФИО" type="text"/>
-		<!-- 
-		<counter id="dogovor" name="Договор" type="text"/>
-		<counter id="code" name="Код для оплаты услуг через терминалы" type="text"/>
-		<counter id="deadline" name="Предполагаемая дата отключения" type="time" format="dd/MM/yyyy"/>
-		 -->
 	</counters>
 	<keywords></keywords>
 	<type>internet</type>

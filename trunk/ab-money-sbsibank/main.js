@@ -13,12 +13,12 @@ var g_headers = {
 };
 
 var g_banks = {
-	0226:'imobile/', //ОАО "Банк БелВЭБ"
+	'0226':'imobile/', //ОАО "Банк БелВЭБ"
 	//0182:'', // ОАО "Технобанк"
-	0272:'mmbank/', //ОАО "Банк Москва-Минск"
+	'0272':'mmbank/', //ОАО "Банк Москва-Минск"
 	//0175:'', //ЗАО "БелСвиссБанк"
 	//0110:'', //ЗАО "РРБ-Банк"
-	0755:'ideabank/', //ЗАО "Идея Банк"
+	'0755':'ideabank/', //ЗАО "Идея Банк"
 	//0270:'', //ЗАО "Альфа-Банк"
 }
 
@@ -53,7 +53,7 @@ function main() {
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	var bankType = g_banks[prefs.bank_type || 0755];
+	var bankType = g_banks[prefs.bank_type || '0755'];
 	checkEmpty(bankType, 'Ну удалось узнать тип банка, сайт изменен?', true);
 	
 	// Запросим страницу логина

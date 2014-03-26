@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-service-krskstate</id>
+	<api flags="no_browser"/>
+	<name>Очередь в детские сады Красноярского края</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию по идентификатору в очереди на сайте http://www.krskstate.ru/krao/underschool/queue</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Номер в очереди"/>
+		<counter id="total" name="Всего в очереди"/>
+	</counters>
+	<keywords></keywords>
+	<type>service</type>
+	<country>ru</country>
+</provider>

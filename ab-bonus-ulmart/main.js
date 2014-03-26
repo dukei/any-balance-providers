@@ -20,9 +20,9 @@ function main(){
     var html = AnyBalance.requestPost(baseurl + 'j_spring_security_check', {
         j_username:prefs.login,
         j_password:prefs.password,
-        _spring_security_remember_me:''
-    }, g_headers);
-
+        target:'/'
+    }, addHeaders({Referer: baseurl + 'login?target=/'}));
+	
     if(!/\/logout/.test(html)){
         var error = getParam(html, null, null, /<div[^>]+id="loginErrorDiv"[^>]*>([\s\S]*?)(?:Проверьте состояние|<\/div>)/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
@@ -37,7 +37,7 @@ function main(){
     getParam(html, result, '__tariff', /<div[^>]+class="b-dropdown-popup__info"[^>]*>[\s\S]*?<\/div>([\s\S]*?)<ul/i, replaceTagsAndSpaces, html_entity_decode);
 	
 	if(isAvailable(['subaccountall', 'subaccounts', 'balance'])){
-		html = AnyBalance.requestGet(baseurl + 'cabinet/xxlBonus', addHeaders({Referer:'http://www.ulmart.ru/cabinet?v=bonus'}));
+		html = AnyBalance.requestGet(baseurl + 'cabinet/bonus', addHeaders({Referer:'http://www.ulmart.ru/cabinet?v=bonus'}));
 		
 		getParam(html, result, 'balance', /XXL-Бонус(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, 'subaccounts', /вашей сети[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);

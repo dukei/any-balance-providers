@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-money-sbsibank</id>
+	<id version="4">ab-money-sbsibank</id>
 	<api flags="no_browser|captcha"/>
-	<name>Идея Банк (Беларусь)</name>
+	<name>Система Банковского Самообслуживания (Беларусь)</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе на картах Идея Банка </p>
-	<p>Информация берется из личного кабинета https://www.sbsibank.by/ideabank/login.ashx</p>
+	<p>Предоставляет информацию о балансе на картах нескольких банков в системе Банковского Самообслуживания https://www.sbsibank.by</p>
+	<p>Поддерживаемые банки:</p>
+	<ul>
+		<li>ОАО Банк БелВЭБ (https://www.sbsibank.by/imobile)</li>
+		<li>ОАО Банк Москва-Минск (https://www.sbsibank.by/mmbank)</li>
+		<li>ЗАО Идея Банк (https://www.sbsibank.by/ideabank)</li>
+	</ul>
 	]]></description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>

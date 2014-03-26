@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference
+		title="Уникальный идентификатор заявления"
+		key="login"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Уникальный идентификатор заявления"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите уникальный идентификатор заявления.">
+	</EditTextPreference>
+</PreferenceScreen>

@@ -7,9 +7,11 @@ AnyBalance (http://any-balance-providers.googlecode.com)
 Содержит некоторые полезные для извлечения значений с сайтов функции.
 Для конкретного провайдера рекомендуется оставлять в этом файле только те функции, которые используются.
 
-library.js v0.09 от 16.01.14
+library.js v0.10 от 26.03.14
 
 changelog:
+26.03.14 getParam - Добавлено логирование, если счетчик выключен
+
 16.01.14 parseMinutes - Улучшена обработка секунд с запятой 2 340,00 сек
 
 17.12.13 parseMinutes - улучшена обработка минут с точками (28мин.40сек)
@@ -43,23 +45,22 @@ changelog:
  * массивы могут быть вложенными
  * см. например replaceTagsAndSpaces
  */
-
+ 
 function getParam(html, result, param, regexp, replaces, parser) {
-	if (!isAvailable(param))
-        return;
-
+	if (!isAvailable(param)) {
+		AnyBalance.trace(param + ' is disabled!');
+		return;
+	}
 	var regexps = isArray(regexp) ? regexp : [regexp];
 	for (var i = 0; i < regexps.length; ++i) { //Если массив регэкспов, то возвращаем первый заматченный
 		regexp = regexps[i];
-		var matches = regexp ? html.match(regexp) : [, html], value;
+		var matches = regexp ? html.match(regexp) : [, html],
+			value;
 		if (matches) {
 			//Если нет скобок, то значение - всё заматченное
 			value = replaceAll(isset(matches[1]) ? matches[1] : matches[0], replaces);
-			if (parser)
-                value = parser(value);
-
-			if (param && isset(value)) 
-                result[isArray(param) ? param[0] : param] = value;
+			if (parser) value = parser(value);
+			if (param && isset(value)) result[isArray(param) ? param[0] : param] = value;
 			break;
 		}
 	}

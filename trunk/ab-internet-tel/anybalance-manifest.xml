@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="2">ab-internet-tel</id>
+	<id version="3">ab-internet-tel</id>
 	<name>TEL (Москва)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе интернет-провайдера TEL г. Москва (http://www.tel.ru/)</p>

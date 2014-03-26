@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-telephony-ipport</id>
+	<api flags="no_browser"/>
+	<name>ipPort</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера ipPort http://www.ipport.net/</p>
+	<p>Информация берется из личного кабинета https://www.ipport.net/account/</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>md5.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="user_id" name="ID" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>telephony</type>
+	<country>ru</country>
+</provider>

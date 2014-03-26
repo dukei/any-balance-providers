@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-money-sbsibank</id>
+	<id version="3">ab-money-sbsibank</id>
 	<api flags="no_browser|captcha"/>
 	<name>Идея Банк (Беларусь)</name>
 	<description html="true"><![CDATA[

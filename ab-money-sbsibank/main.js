@@ -34,7 +34,7 @@ function getLoginParams(html, prefs) {
 	var params = {
 		'usn':prefs.login,
 		'pwd':prefs.password,
-		'bank':prefs.bank_type,
+		'bank':(prefs.bank_type || '0755'),
 		'captcha':'',
 		//aapebb5ooug:egqeyownuko
 		'submit':''
@@ -73,7 +73,7 @@ function main() {
 		
 		if(AnyBalance.getLevel() >= 7) {
 			AnyBalance.trace('Пытаемся ввести капчу');
-			var captcha = AnyBalance.requestGet(baseurl + bankType + 'captcha.ashx?r=' + Math.random());
+			var captcha = AnyBalance.requestGet(baseurl + bankType + 'captcha.ashx?r=' + Math.random(), addHeaders({Referer: baseurl + bankType + 'start.aspx?mode=5'}));
 			params.captcha = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
 			AnyBalance.trace('Капча получена: ' + params.captcha);
 		} else {

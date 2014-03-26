@@ -8,6 +8,8 @@
 */
 
 function main(){
+	throw new AnyBalance.Error("Провайдер больше не работает, воспользуйтесь провайдером Ростелеком (единый кабинет)");
+	
     var prefs = AnyBalance.getPreferences();
 
     AnyBalance.setDefaultCharset('ISO-8859-5');

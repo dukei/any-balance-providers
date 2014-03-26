@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-telecet</id>
+  <id version="2">ab-internet-telecet</id>
   <name>Телесет (Татарстан)</name>
   <description>
+	ВНИМАНИЕ! Провайдер больше не работает, получение баланса доступно в провайдере Ростелеком (Единый кабинет) http://anybalance.ru/catalog.php?id=ab-internet-kabinet-rt&inapp=0
+	
     Получает баланс и информацию о тарифном плане для интернет-провайдера Телесет Нетворкс (ныне Ростелеком), который осуществляет деятельность в Татарстане (Казань и Набережные Челны) (http://www.telecet.ru).
-
+	
     Информация берется из личного кабинета http://lk.telecet.ru/con
   </description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>

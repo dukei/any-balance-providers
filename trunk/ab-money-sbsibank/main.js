@@ -130,7 +130,7 @@ function main() {
 		cardCurrent = getParam(html, null, null, />Карточка\s*:(?:[^>]*>){3}([\s\S]*?)<\/td/i, replaceTagsAndSpaces);
 	}
 	
-	html = AnyBalance.requestPost(baseurl + bankType +' balance.ashx?bal_type=B&time=' + new Date().getTime(), {}, addHeaders({
+	html = AnyBalance.requestPost(baseurl + bankType + 'balance.ashx?bal_type=B&time=' + new Date().getTime(), {}, addHeaders({
 		Referer: baseurl + bankType + 'services.aspx',
 		'X-Requested-With':'XMLHttpRequest'			
 	}));

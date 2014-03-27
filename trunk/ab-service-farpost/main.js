@@ -32,17 +32,17 @@ function main(){
         sign:prefs.login,
         password:prefs.password,
         radio:'sign'
-    }, addHeaders({Referer: baseurl + 'sign?return=%2F'})); 
-
+    }, addHeaders({Referer: baseurl + 'sign?return=%2F'}));
+	
     if(!/\/Logout/i.test(html)){
         var error = getParam(html, null, null, /sign_errors[^>]*>[^>]*>\s*([\s\S]*?)<\/div/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error);
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
-
+	
     var result = {success: true};
-    getParam(html, result, 'balance', /div[^>]*class="h1"[^>]*title=""[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalanceRK);
+    getParam(html, result, 'balance', />Баланс([^>]*>){3}/i, replaceTagsAndSpaces, parseBalanceRK);
 	getParam(html, result, '__tariff', /Ваш номер пользователя[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 
     AnyBalance.setResult(result);

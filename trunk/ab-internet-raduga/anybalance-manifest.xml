@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-internet-raduga</id>
+	<id version="4">ab-internet-raduga</id>
 	<name>Радуга Интернет</name>
 	<api flags="no_browser"/>
 	<description html="true"><![CDATA[
@@ -18,17 +18,20 @@
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
 		<counter id="bonus" name="Бонус" units=" р"/>
-		<counter id="traffic_left" name="Остаток включенного трафика" units=" Мб"/>
-		<counter id="traffic" name="Трафик в текущем месяце" units=" Мб"/>
-		<counter id="abon" name="Абонентская плата" units=" р"/>
-		<counter id="add_traffic_cost" name="Стоимость доп. трафика" units=" р"/>
-		<counter id="till" name="Списание АП" type="time" format="dd/MM/yyyy"/>
-		<!-- <counter id="limit_traffic" name="Ограничение трафика" type="text"/> -->
-		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="agreement" name="Договор" type="text"/>
-		<counter id="add_traffic" name="Доп.трафик" type="text"/>
-		<!-- <counter id="autoactive" name="Автоактивация" type="text"/> -->
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="till" name="Списание АП" type="time" format="dd/MM/yyyy"/>
+		<counter id="abon" name="Абонентская плата" units=" р"/>
+		<counter id="traffic" name="Трафик в текущем месяце" units=" Мб"/>
 		<counter id="traffic_total" name="Включенный трафик" units=" Мб"/>
+		<counter id="traffic_left" name="Остаток включенного трафика" units=" Мб"/>
+		<counter id="traffic_night" name="Использовано ночного трафика" units=" Мб"/>
+		<counter id="traffic_total_night" name="Включенный ночной трафик" units=" Мб"/>
+		<counter id="traffic_left_night" name="Остаток включенного ночного трафика" units=" Мб"/>
+		<counter id="add_traffic_cost" name="Стоимость доп. трафика" units=" р"/>
+		<counter id="add_traffic" name="Доп.трафик" type="text"/>
+		<!-- <counter id="limit_traffic" name="Ограничение трафика" type="text"/> -->
+		<!-- <counter id="autoactive" name="Автоактивация" type="text"/> -->
 	</counters>
 	<keywords>радуга</keywords>
 	<type>internet</type>

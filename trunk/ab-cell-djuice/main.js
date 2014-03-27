@@ -23,6 +23,9 @@ function getToken(html) {
 }
 
 function main() {
+
+	AnyBalance.Error('Личный кабинет DJUICE закрыт. Все пользователи переведены на Киевстар. Установите провайдер Киевстар.');
+
 	var prefs = AnyBalance.getPreferences();
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');

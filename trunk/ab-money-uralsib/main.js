@@ -191,8 +191,8 @@ function fetchAcc(html, baseurl, prefs, url) {
 	}
 	
 	var lastdigits = prefs.cardnum ? prefs.cardnum : '\\d{4}';
-	// <div[^>]*desc(?:[^>]*>){22}\s*\d{14,}6688(?:[^>]*>){1}\s*</div>
-	var reCard = new RegExp('<div[^>]*desc(?:[^>]*>){22}\\s*\\d{14,}' + lastdigits + '(?:[^>]*>){1}\\s*</div>', 'i');
+	// <div[^>]*desc(?:[^>]*>){20,22}\s*\d{14,}6688(?:[^>]*>){1}\s*</div>
+	var reCard = new RegExp('<div[^>]*desc(?:[^>]*>){20,22}\\s*\\d{14,}' + lastdigits + '(?:[^>]*>){1}\\s*</div>', 'i');
 	
 	var tr = getParam(html, null, null, reCard);
 	if(!tr)

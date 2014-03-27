@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="7">ab-cell-kcell-kz</id>
+	<id version="8">ab-cell-kcell-kz</id>
 	<api flags="no_browser"/>
 	<name>Kcell (Казахстан)</name>
 	<description html="true"><![CDATA[
@@ -8,7 +8,7 @@
 	<p>Информация берется из личного кабинета http://www.kcell.kz/ru/ics.security/login/false, если на странице будет найден PUK-код, то попробует перейти на https://i.kcell.kz/ для получения бонусных балансов.</p>
 	<p>Если у вас ещё нет пароля для входа в личный кабинет, вы можете его получить. Отправьте любое непустое SMS-сообщение на номер 245 - в ответ Вы получите SMS-сообщение с паролем для входа в систему.</p>
 	<p>ВНИМАНИЕ! Если вы абонент Activ, то воспользуйтесь провайдером Activ (Казахстан).</p>
-	]]></description>	
+	]]></description>
 	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>

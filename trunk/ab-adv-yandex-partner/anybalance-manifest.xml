@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-adv-yandex-partner</id>
+  <id version="2">ab-adv-yandex-partner</id>
+  <api flags="no_browser"/>
   <name>Рекламная сеть Яндекс</name>
   <description>
     Получает суммы заработка в рекламной сети Яндекс (https://partner.yandex.ru).
@@ -9,6 +10,7 @@
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
+    <js>library.js</js>
     <js>main.js</js>
     <history>history.xml</history>
   </files>
@@ -22,4 +24,7 @@
   <type>
     adv
   </type>
+  <country>
+    ru ua by kz tj uz
+  </country>
 </provider>

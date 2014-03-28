@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-telephony-dialnet</id>
+	<id version="1">ab-telephony-dialnetinfo</id>
 	<api flags="no_browser"/>
 	<name>Dialnet.info</name>
 	<description html="true"><![CDATA[

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-grin</id>
+	<api flags="no_browser|private"/>
+	<name>Гродненские информационные сети (Grin)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе инетрнет-провайдера Гродненские информационные сети (Grin) в г. Гродно http://grin.by/</p>
+	<p>Информация берется из личного кабинета https://utm.grin.by/</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="balanceCredit" name="Кредит" units=" р"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="account" name="Лицевой счёт для оплаты в банках" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet</type>
+	<country>by</country>
+</provider>

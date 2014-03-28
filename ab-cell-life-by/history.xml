@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-	<change major_version="2.0" version="15" date="2014-03-28">
+	<change major_version="2.0" version="16" date="2014-03-28">
 	- Улучшено определение минут внутри сети и на другие сети.
 	</change>
 	<change major_version="2.0" version="14" date="2014-03-27">

@@ -18,6 +18,23 @@ function main() {
 	AnyBalance.trace('Соединение с ' + baseurl);
 	var html = AnyBalance.requestGet(baseurl + 'tbmb/login/show.do', g_headers);
 	
+	var captchaa;
+	if(/class="captcha"/i.test(html)) {
+		captchaa = true;
+		AnyBalance.trace('Необходимо ввести капчу..');
+		
+		if(AnyBalance.getLevel() >= 7){
+			AnyBalance.trace('Пытаемся ввести капчу');
+			var p = getParam(html, null, null, /src="\/(tbmb\/jcaptcha[^"]+)/i);
+			
+			var captcha = AnyBalance.requestGet(baseurl + p);
+			captchaa = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
+			AnyBalance.trace('Капча получена: ' + captchaa);
+		}else{
+			throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
+		}
+	}
+	
 	//заготовка для обработки ошибок сайта, надо будет проверить во время следующего сбоя
 	if (/<TITLE>error<\/TITLE>/i.test(html)) {
 		var matches = html.match(/(<H1>[\s\S]*?<\/p>)/i);
@@ -44,13 +61,19 @@ function main() {
 		var params = createFormParams(form);
 		params.user = prefs.login;
 		params.password = prefs.password;
+		
+		if(captchaa)
+			params.captcha = captchaa;
+		
 		html = AnyBalance.requestPost(baseurl + "tbmb/login/perform.do", params, g_headers);
+		
 		if (!/\/tbmb\/logout\/perform/i.test(html)) {
-			var matches = html.match(/<td class="redError"[^>]*>([\s\S]*?)<\/td>/i);
-			if (matches) {
-				throw new AnyBalance.Error(matches[1]);
-			}
-			throw new AnyBalance.Error("Не удалось зайти в систему. Сайт изменен?");
+			var error = getParam(html, null, null, /<td class="redError"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+			if (error)
+				throw new AnyBalance.Error(error, null, /Перевірте правильність введення логіну|введіть правильний пароль/i.test(error));
+			
+			AnyBalance.trace(html);
+			throw new AnyBalance.Error('Не удалось зайти в систему. Сайт изменен?');
 		}
 	}
 	if (!~html.indexOf(prefs.login)) {

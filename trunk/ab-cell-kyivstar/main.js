@@ -18,9 +18,13 @@ function main() {
 	AnyBalance.trace('Соединение с ' + baseurl);
 	var html = AnyBalance.requestGet(baseurl + 'tbmb/login/show.do', g_headers);
 	
-	var captchaa;
-	if(/class="captcha"/i.test(html)) {
-		captchaa = true;
+	// Проверим, нужна ли капча?
+	var captchaa = AnyBalance.requestPost(baseurl + "tbmb/checkUser", {
+		action:'isCaptchaNeeded',
+		user:prefs.login
+	}, g_headers);
+	
+	if(captchaa == true) {
 		AnyBalance.trace('Необходимо ввести капчу..');
 		
 		if(AnyBalance.getLevel() >= 7){

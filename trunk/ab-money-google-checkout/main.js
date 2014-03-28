@@ -52,7 +52,7 @@ function main() {
 	getParam(html, result, 'login_email', /Account Options(?:[\s\S]*?<span[^>]*>){8}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 	// Получаем информацию из кошелька гугл
 	html = AnyBalance.requestGet(baseurl + 'merchant/pages/', g_headers);
-	if (/\/merchant\/logout/i.test(html)) {
+	if (/Google Wallet - Merchant Center/i.test(html)) {
 		var href = getParam(html, null, null, /(merchant\/pages\/bcid-[\s\S]{1,200})\/earnings\/display/i);
 		// Переходим на страницу Выплаты:
 		html = AnyBalance.requestGet(baseurl + href + '/transactions/display?selectedrange=LAST_THREE_MONTHS&filterchoice=ALL_TRANSACTIONS', g_headers);

@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-<change version="4" date="2013-11-03">
-- Headers changed to AnyBalance identity (More details in last actions here: https://security.google.com/settings/security/activity?pli=1)
-</change>
-<change version="3" date="2013-09-10">
-- Currency added
-</change>
-<change version="2" date="2013-07-17">
-- Fixed errors, new counters added
-</change>
+	<change version="5" date="2014-03-28">
+	- Minor bugs fixed.
+	</change>
+	<change version="4" date="2013-11-03">
+	- Headers changed to AnyBalance identity (More details in last actions here: https://security.google.com/settings/security/activity?pli=1)
+	</change>
+	<change version="3" date="2013-09-10">
+	- Currency added
+	</change>
+	<change version="2" date="2013-07-17">
+	- Fixed errors, new counters added
+	</change>
 </history>

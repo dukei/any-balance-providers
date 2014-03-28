@@ -30,7 +30,13 @@ function main(){
         password:prefs.password
     }, g_headers);
 	
-    if(!/priority\/logout|"ffp_logout"/.test(html)){
+	htmlJson = AnyBalance.requestGet(baseurl + 'servlets/authorization?action=get_user_info', addHeaders({
+		'X-Requested-With':'XMLHttpRequest'
+	}));
+	
+	var json = getJson(htmlJson);	
+	
+    if(json.stc != 200){
 		var error = getParam(html, null, null, /"error-msg"([^>]*>){3}/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Неверный логин\/пароль/i.test(error));
@@ -38,19 +44,21 @@ function main(){
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось войти в личный кабинет. Проблемы на сайте или сайт изменен.');
 	}
-
+	
+	
     var result = {success: true};
-
-    getParam(html, result, 'balance', />\s*(?:Мили|Miles):(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'userName', /<div[^>]+class="ffp_username"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
-
-    var cardNum = getParam(html, null, null, />\s*(?:Номер|Number):(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces);
-    var status = getParam(html, null, null, /(?:Статус|Status):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-
+	
+    getParam(json.c.milesBalance + '', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
+    getParam(json.c.firstName + ' ' + json.c.lastName, result, 'userName', null, replaceTagsAndSpaces);
+	
+    var cardNum = json.c.cardNumber;
+	var cardType = json.c.cardLevel;
+    //var status = getParam(html, null, null, /(?:Статус|Status):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+	
 	getParam(cardNum, result, 'cardnum');
-	getParam(status, result, 'status');
-
-	result.__tariff = status + ', №' + cardNum;	
+	getParam(cardType, result, 'type');
+	
+	result.__tariff = cardType + ', №' + cardNum;	
 	
     if(AnyBalance.isAvailable('qmiles', 'flights')){
         html = AnyBalance.requestGet(baseurl + 'home/priority/ffpMyMiles.dot');
@@ -58,6 +66,5 @@ function main(){
         getParam(html, result, 'qmiles', /<td[^>]+class="balance"[^>]*>([\s\S]*?)(?:<\/td>|\/)/i, replaceTagsAndSpaces, parseBalance);
         getParam(html, result, 'flights', /<td[^>]+class="balance"[^>]*>[^<]*\/([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     }
-
     AnyBalance.setResult(result);
 }

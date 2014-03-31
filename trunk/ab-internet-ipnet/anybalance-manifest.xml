@@ -1,35 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
-  <api flags="no_browser" />
-  <id version="2">ab-internet-ipnet</id>
-  <name>IPNET (Киев)</name>
-  <description>
-    Получает баланс и информацию о тарифном плане для киевского интернет-провайдера IPNET (http://ipnet.ru).
-
-    Информация берется из личного кабинета https://stat.ipnet.ua.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-	<js>main.js</js>
-	<history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="₴"/>
-    <counter id="status" name="Состояние" type="text"/>
-    <counter id="agreement" name="Договор" type="text"/>
-    <counter id="till" name="Хватит до" type="time" format="dd/MM/yyyy"/>
-  </counters>
-  <keywords>
-    интернет
-  </keywords>
-  <type>
-    internet
-  </type>
-  <country>
-    ua
-  </country>
+	<api flags="no_browser" />
+	<id version="3">ab-internet-ipnet</id>
+	<name>IPNET (Киев)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе киевского интернет-провайдера IPNET http://ipnet.ru</p>
+	<p>Информация берется из личного кабинета https://stat.ipnet.ua</p>
+	]]></description>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" ₴"/>
+		<counter id="status" name="Состояние" type="text"/>
+		<counter id="agreement" name="Договор" type="text"/>
+		<counter id="till" name="Хватит до" type="time" format="dd/MM/yyyy"/>
+	</counters>
+	<keywords>интернет</keywords>
+	<type>internet</type>
+	<country>ua</country>
 </provider>

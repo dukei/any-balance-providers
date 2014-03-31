@@ -1,23 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <EditTextPreference 
-        title="№ договора" 
-        positiveButtonText="ОК" 
-        summary="||{@s}" 
-        dialogTitle="№ договора" 
-        negativeButtonText="Отмена" 
-        dialogMessage="Введите номер договора для входа в личный кабинет https://stat.ipnet.ua."
-        inputType="number"
-        key="login">
-    </EditTextPreference>
-    <EditTextPreference 
-        positiveButtonText="ОК"
-        key="password" 
-        dialogTitle="Пароль"
-        negativeButtonText="Отмена"
-        title="Пароль"
-        summary="||***********"
-        dialogMessage="Введите пароль, используемый для входа в личный кабинет https://stat.ipnet.ua."
-        inputType="textPassword">
-    </EditTextPreference>
+	<EditTextPreference
+		obligatory="true"
+		title="№ договора"
+		positiveButtonText="ОК"
+		summary="||{@s}"
+		dialogTitle="№ договора"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите номер договора для входа в личный кабинет https://stat.ipnet.ua."
+		inputType="number"
+		key="login">
+	</EditTextPreference>
+	<EditTextPreference
+		obligatory="true"
+		positiveButtonText="ОК"
+		key="password"
+		dialogTitle="Пароль"
+		negativeButtonText="Отмена"
+		title="Пароль"
+		summary="||***********"
+		dialogMessage="Введите пароль, используемый для входа в личный кабинет https://stat.ipnet.ua."
+		inputType="textPassword">
+	</EditTextPreference>
 </PreferenceScreen>

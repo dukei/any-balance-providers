@@ -51,7 +51,7 @@ function main() {
 	if(/phone not linked to imei/i.test(json.err)) {
 		json = requestJson({cookie:'', phone:prefs.login}, 'link_phone_prp', 'Не удалось начать процесс привязки, обратитесь к разработчикам.');
 		// Все, тут надо дождаться смс кода
-		var code = AnyBalance.retrieveCode("Пожалуйста, введите код из смс, для привязки данного устройства.");
+		var code = AnyBalance.retrieveCode('Пожалуйста, введите код из смс, для привязки данного устройства.', 'R0lGODlhBAAEAJEAAAAAAP///////wAAACH5BAEAAAIALAAAAAAEAAQAAAIElI8pBQA7');
 		json = requestJson({cookie:'',phone:prefs.login,otp:code}, 'link_phone_cmt', 'Не удалось привязать устройство, обратитесь к разработчикам.');
 		AnyBalance.trace('Успешно привязали устройство. Пробуем получить данные снова.');
 		json = requestJson({cookie:'',registration_id:g_registrationId}, 'props');

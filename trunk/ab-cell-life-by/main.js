@@ -68,6 +68,8 @@ function main(){
 	// Баланс
 	getParam(html, result, 'balance', /Основной баланс(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'balance_bonus', /Бонусный баланс(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	// Оплаченные обязательства	
+	getParam(html, result, 'balance_corent', /Оплаченные обязательства(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 	
 	// В новом кабинете нет баланса, очень круто :)
 	/*if (AnyBalance.isAvailable('balance', 'balance_bonus') && (!isset(result.balance) || !isset(result.balance_bonus))) {

@@ -13,8 +13,8 @@ var g_headers = {
 function main(){
     var prefs = AnyBalance.getPreferences();
     var baseurl = 'https://stat.prolink.ru/';
-    AnyBalance.setDefaultCharset('windows-1251'); 
-
+    AnyBalance.setDefaultCharset('windows-1251');
+	
     var html = AnyBalance.requestGet(baseurl+ 'stat/', g_headers);
 	
 	var params = createFormParams(html, function(params, str, name, value){
@@ -23,19 +23,29 @@ function main(){
 		else if(name == 'ip2')
 			return prefs.password;			
 		return value;
-	}, []);
-	html = AnyBalance.requestPost(baseurl + 'stat/', params, addHeaders({Referer: baseurl + 'stat/', Origin:baseurl})); 
+	});
 	
-    if(!/logout/i.test(html)){
-        throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-    }
+	html = AnyBalance.requestPost(baseurl + 'stat/', params, addHeaders({Referer: baseurl + 'stat/', Origin: baseurl})); 
+	
+	if (!/logout/i.test(html)) {
+		var error = getParam(html, null, null, /<center>([^>]*>){1}/i, replaceTagsAndSpaces, html_entity_decode);
+		if (error)
+			throw new AnyBalance.Error(error, null, /Такого договора в системе не существует/i.test(error));
+		
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+	}
+	
+	
     var result = {success: true};
+	
     getParam(html, result, 'acc_num', /Номер договора:(?:[\s\S]*?<td[^>]*>)([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'fio', /Ф\.И\.О(?:[\s\S]*?<td[^>]*>)([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, '__tariff', /Тарифный план:(?:[\s\S]*?<td[^>]*>)([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'balance', /Баланс на текущий момент времени:(?:[\s\S]*?<td[^>]*>)([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'status', /Состояние:(?:[\s\S]*?<td[^>]*>)([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'turbo', /Турбо-режим:(?:[\s\S]*?<td[^>]*>)([\s\S]*?)</i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'turbo_traf', /Доступно турбо-трафика:([^>]*>){4}/i, replaceTagsAndSpaces, parseTraffic);
 	
     AnyBalance.setResult(result);
 }

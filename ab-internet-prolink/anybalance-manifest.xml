@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="1">ab-internet-prolink</id>
+	<id version="2">ab-internet-prolink</id>
 	<name>ProLink (Московская Область)</name>
-	<description>
-	Получает данные для интернет-провайдера Москвы и Московской области ProLink (http://www.prolink.ru/)
-	
-	Личный кабинет находится по адресу https://stat.prolink.ru/stat/
-	</description>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе интернет-провайдера Москвы и Московской области ProLink (http://www.prolink.ru/)</p>
+	<p>Информация берется из личного кабинета https://stat.prolink.ru/stat/</p>
+	]]></description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
@@ -17,11 +16,12 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units="р"/>
+		<counter id="balance" name="Баланс" units=" р"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="acc_num" name="Номер договора" type="text"/>
 		<counter id="status" name="Состояние" type="text"/>
 		<counter id="turbo" name="Турбо-режим" type="text"/>
+		<counter id="turbo_traf" name="Доступно турбо-трафика" units=" Мб"/>
 	</counters>
 	<keywords></keywords>
 	<type>internet</type>

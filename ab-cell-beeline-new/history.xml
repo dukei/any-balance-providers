@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-	<change version="55" date="2014-03-31">
+	<change version="52" date="2014-03-31">
 	- Новый счетчик: Всего трафика.
 	- Улучшено распознавание трафика при подключенной опции Хайвей.
 	</change>

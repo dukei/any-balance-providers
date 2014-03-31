@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-internet-netorn</id>
+	<id version="2">ab-internet-netorn</id>
 	<api flags="no_browser"/>
 	<name>НЕТОРН</name>
 	<description html="true"><![CDATA[
@@ -17,6 +17,7 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="days" name="Дней до блокировки" units=" д"/>
 		<counter id="status" name="Статус" type="text"/>
 	</counters>
 	<keywords></keywords>

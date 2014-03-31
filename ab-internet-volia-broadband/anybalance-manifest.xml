@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="8">ab-internet-volia-broadband</id>
+  <id version="9">ab-internet-volia-broadband</id>
   <name>Volia Broadband (Украина)</name>
   <description>
     Мониторинг остатка средств на счету и использованного трафика для интернет провайдера Воля Бродбенд (Украина)

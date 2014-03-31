@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-game-proeconomika</id>
+	<api flags="no_browser"/>
+	<name>Proeconomika</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию об аккаунте в игре Proeconomika</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="gold" name="Золото"/>
+		<counter id="eco" name="ECO"/>
+		<counter id="day" name="День"/>
+	</counters>
+	<keywords></keywords>
+	<type>game</type>
+	<country>ru</country>
+</provider>

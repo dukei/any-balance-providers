@@ -9,7 +9,7 @@
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-    AnyBalance.setDefaultCharset('windows-1251');
+    AnyBalance.setDefaultCharset('utf-8');
 	
     if(AnyBalance.getLevel() < 5)
         throw new AnyBalance.Error('Для этого провайдера необходима AnyBalance v.2.9.600+.');

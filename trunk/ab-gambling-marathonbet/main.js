@@ -29,7 +29,7 @@ function main(){
 		AnyBalance.trace('Пытаемся ввести капчу');
 		AnyBalance.setOptions({forceCharset: 'base64'});
 		var captcha = AnyBalance.requestGet(baseurl+ 'su/jcaptcha.htm');
-		AnyBalance.setDefaultCharset('utf-8');
+		AnyBalance.setOptions({forceCharset: 'utf-8'});
 		captchaa = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
 		AnyBalance.trace('Капча получена: ' + captchaa);
 	}else{

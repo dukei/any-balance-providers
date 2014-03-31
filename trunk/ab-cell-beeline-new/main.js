@@ -464,7 +464,7 @@ function getBonuses(xhtml, result) {
 		var bonus = bonuses[j];
 		var bonus_name = ''; //getParam(bonus, null, null, /<span[^>]+class="bonuses-accums-list"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
 													// Эта регулярка вроде не работает, но оставил для совместимости
-		var services = sumParam(bonus, null, null, /<div[^>]+class="bonus"(?:[\s\S](?!$|<div[^>]+class="bonus"))*[\s\S]/ig);
+		var services = sumParam(bonus, null, null, /<div[^>]+class="(?:accumulator|bonus)"(?:[\s\S](?!$|<div[^>]+class="(?:accumulator|bonus)"))*[\s\S]/ig);
 		AnyBalance.trace("Found " + services.length + ' bonuses');
 		var reValue = /<div[^>]+class="column2[^"]*"[^>]*>([\s\S]*?)<\/div>/i;
 		for (var i = 0; i < services.length; ++i) {
@@ -474,7 +474,16 @@ function getBonuses(xhtml, result) {
 			} else if (/MMS/i.test(name)) {
 				sumParam(services[i], result, 'mms_left', reValue, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 			} else if (/Internet|Интернет/i.test(name)) {
-				sumParam(services[i], result, 'traffic_left', reValue, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
+				// Для опции Хайвей все отличается..
+				if (/Xайвей/i.test(name)) {
+					sumParam(services[i], result, 'traffic_left', /<div[^>]+class="column2[^"]*"([^>]*>){6}/i, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
+					sumParam(services[i], result, 'traffic_total', /<div[^>]+class="column2[^"]*"(?:[^>]*>){5}[^<]*из([\s\d,]*ГБ)/i, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
+					if(isset(result.traffic_left) && isset(result.traffic_total)) {
+						sumParam(result.traffic_total - result.traffic_left, result, 'traffic_used', null, null, null, aggregate_sum);
+					}
+				} else {
+					sumParam(services[i], result, 'traffic_left', reValue, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
+				}
 			} else if (/Рублей БОНУС|бонус-баланс/i.test(name)) {
 				sumParam(services[i], result, 'rub_bonus', reValue, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 			} else if (/Рублей за участие в опросе|Счастливое время/i.test(name)) {

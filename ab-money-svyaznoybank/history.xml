@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+<change version="15" date="2014-04-01">
+- Изменения в интернет-банке
+</change>
 <change version="14" date="2013-12-17">
 - Сообщение о блокировке по IP
 </change>

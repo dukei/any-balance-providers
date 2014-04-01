@@ -1,45 +1,25 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-
 <PreferenceScreen>
-
-    <EditTextPreference
- 
-        title="Логин"
- 
-        positiveButtonText="ОК"
- 
-        summary="Номер телефона (10 цифр)||{@s}\n"
- 
-        dialogTitle="Номер телефона"
- 
-        negativeButtonText="Отмена"
- 
-        dialogMessage="Введите номер вашего телефона для входа в ИССА (10 цифр), например 9021234567"
-
-         key="login"
-
-         inputType="number">
-
-    </EditTextPreference>
-
-    <EditTextPreference
- 
-        positiveButtonText="ОК"
-
-         key="password"
- 
-        dialogTitle="Пароль"
-
-         negativeButtonText="Отмена"
-
-         title="Пароль"
-
-         summary="Пароль для входа в ИССА||***********\n"
-
-         dialogMessage="Для входа в ИССА необходимо ввести пароль. При неправильном вводе пароля 6 раз подряд, вход в ИССА блокируется на 6 часов."
-
-         inputType="textPassword">
-
-    </EditTextPreference>
-
+	<EditTextPreference
+		obligatory="true"
+		title="Логин"
+		positiveButtonText="ОК"
+		summary="Номер телефона (10 цифр)||{@s}\n"
+		dialogTitle="Номер телефона"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите номер вашего телефона для входа в ИССА (10 цифр), например 9021234567"
+		key="login"
+		inputType="number">
+	</EditTextPreference>
+	<EditTextPreference
+		obligatory="true"
+		positiveButtonText="ОК"
+		key="password"
+		dialogTitle="Пароль"
+		negativeButtonText="Отмена"
+		title="Пароль"
+		summary="Пароль для входа в ИССА||***********\n"
+		dialogMessage="Для входа в ИССА необходимо ввести пароль. При неправильном вводе пароля 6 раз подряд, вход в ИССА блокируется на 6 часов."
+		inputType="textPassword">
+	</EditTextPreference>
 </PreferenceScreen>

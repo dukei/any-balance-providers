@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="3">ab-bonus-lukoil</id>
+	<id version="4">ab-bonus-lukoil</id>
 	<name>Лукойл (Бонусы)</name>
 	<description html="true"><![CDATA[
 	<p>Получает информацию по картам "Лукойл Ликард" (http://my.licard.com/), а также по картам Лояльности (http://club-lukoil.ru/cabinet/).</p>

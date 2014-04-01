@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+<change version="4" date="2014-04-01">
+	- Поддержка изменений на сайте.
+	</change>
 	<change version="3" date="2013-09-03">
 	- Добавлены потерянные поля из предыдущих версий провайдера.
 	</change>

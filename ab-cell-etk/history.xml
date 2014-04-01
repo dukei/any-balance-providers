@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<history>
+	<change major_version="1.0" version="2" date="2014-04-01">
+	- Новые счетчики: ФИО, Телефон, Лицевой счет.
+	</change>
+</history>

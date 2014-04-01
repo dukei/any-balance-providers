@@ -122,7 +122,7 @@ function fetchCard(baseurl, html){
         if(i==0)
             getParam(cards[p.CardId].Number, result, '__tariff');
         if(AnyBalance.isAvailable('cardballs' + suffix)){
-            var html = AnyBalance.requestGet(baseurl + p.BalanceUrl, g_headers);
+            var html = AnyBalance.requestPost(baseurl + p.BalanceUrl, '', g_headers);
             var json = getJson(html);
             getParam(json.balls, result, 'cardballs' + suffix, null, replaceTagsAndSpaces, parseBalance);
         }

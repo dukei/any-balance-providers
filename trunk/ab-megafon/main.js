@@ -492,7 +492,9 @@ function megafonTrayInfo(filial) {
 						AnyBalance.trace('Опция без значений: ' + discount);
 						continue;
 					}
-					if (/MMS|ММС/i.test(name)) {
+					if (/SMS|СМС|сообщен/i.test(name) && !/минут/i.test(name)) {
+						getLeftAndTotal(val, result, need_sms_left, need_sms_total, 'sms_left', 'sms_total', parseBalance);
+					} else if (/MMS|ММС/i.test(name)) {
 						getLeftAndTotal(val, result, need_mms_left, need_mms_total, 'mms_left', 'mms_total', parseBalance);
 					} else if (/SMS|СМС|сообщен/i.test(name) && !/минут/i.test(name)) {
 						getLeftAndTotal(val, result, need_sms_left, need_sms_total, 'sms_left', 'sms_total', parseBalance);

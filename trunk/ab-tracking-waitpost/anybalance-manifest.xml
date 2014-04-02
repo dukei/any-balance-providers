@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-tracking-waitpost</id>
+	<id version="2">ab-tracking-waitpost</id>
 	<api flags="no_browser"/>
 	<name>Ждем посылку</name>
 	<description html="true"><![CDATA[

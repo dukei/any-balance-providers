@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-internet-byfly</id>
+	<id version="2">ab-internet-byfly</id>
+        <api flags="no_browser"/>
 	<name>ByFly</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию из ИССА ByFly - торговой марки «Белтелеком», в рамках которой предлагается широкополосный доступ в сеть Интернет.</p>
@@ -10,18 +11,18 @@
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>api:jquery.min.js</js> <!-- Используем библиотеку, которая и так входит в AnyBalance -->
+		<js>library.js</js>
 		<js>main.js</js>
+		<history>history.xml</history>
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units="р"/>
-		<counter id="pays" name="Платежи" units="р"/>
-		<counter id="trafficIn" name="Вх.трафик" units="Мб"/>
-		<counter id="trafficOut" name="Исх.трафик" units="Мб"/>
-		<counter id="trafficCost" name="Стоимость трафика" units="р"/>
-		<counter id="corrections" name="Корректировка" units="р"/>
+		<counter id="status" name="Статус" type="text"/>
 		<counter id="agreement" name="Номер договора" type="text"/>
 		<counter id="username" name="ФИО" type="text"/>
+		<counter id="last_pay_date" name="Дата последнего платежа" type="time" format="dd/MM/yyyy"/>
+		<counter id="last_pay_sum" name="Сумма последнего платежа" units="р"/>
+		<counter id="last_pay_comment" name="Тип последнего платежа" type="text"/>
 	</counters>
 	<keywords>провайдер интернет белоруссия байфлай</keywords>
 	<type>internet</type>

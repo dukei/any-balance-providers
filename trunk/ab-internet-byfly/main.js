@@ -6,119 +6,71 @@
 Личный кабинет: https://issa.beltelecom.by
 */
 
+var g_headers = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.154 Safari/537.36',
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    'Accept-Language': 'ru-ru,ru;q=0.8,en-us;q=0.5,en;q=0.3',
+    'Connection': 'keep-alive'
+};
+
 function main(){
     var prefs = AnyBalance.getPreferences();
 
-    var baseurl = 'https://issa.beltelecom.by/cgi-bin/cgi.exe?';
+    var baseurl = 'https://issa.beltelecom.by/';
 
-    AnyBalance.trace('Entering ' + baseurl  + "function=is_login");
+    AnyBalance.trace('Entering ' + baseurl);
 
-    var required_headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20100101 Firefox/12.0',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-        'Accept-Language': 'ru-ru,ru;q=0.8,en-us;q=0.5,en;q=0.3',
-        'Accept-Encoding': 'gzip, deflate',
-        'Connection': 'keep-alive'
-    };
-    
-    var html = AnyBalance.requestPost(baseurl + "function=is_login", {
-        Lang: 2,
-        mobnum: prefs.login,
-        Password: prefs.password
-    }, required_headers);
-
-    //AnyBalance.trace(html);
-
-    var matches = html.match(/<td class=error>([\s\S]*?)<\/td>/i);
-    if(matches){
-        throw new AnyBalance.Error(matches[1].replace(/^\s*|\s*$/g, ''));
+    var html = AnyBalance.requestGet(baseurl, g_headers);
+    var code;
+    if(/<input[^>]+name="cap_field"/i.test(html)){
+        //Требуется капча, черт
+        AnyBalance.trace('Затребовали капчу...');
+        var lnk = getParam(html, null, null, /<img[^>]+src="\/([^"]*)"[^>]*id="capcher"/i, null, html_entity_decode);
+        var captcha = AnyBalance.requestGet(baseurl + lnk, g_headers);
+        code = AnyBalance.retrieveCode('Пожалуйста, введите код с картинки', captcha);
     }
-    
+
+    html = AnyBalance.requestPost(baseurl + "main.html", {
+        redirect: '/main.html',
+        oper_user: prefs.login,
+        passwd: prefs.password,
+        cap_field: code
+    }, g_headers);
+
+
+    if(!/\/logout/i.test(html)){
+        var error = getParam(html, null, null, /\$\.jGrowl\('([^']*)/, [replaceSlashes, replaceTagsAndSpaces], html_entity_decode);
+        if(error)
+            throw new AnyBalance.Error(error, null, /Введен неверный пароль или абонент не существует/i.test(error));
+        error = getParam(html, null, null, /<div[^>]+id="error"[^>]*>([\s\S]*?)<\/div>/, replaceTagsAndSpaces, html_entity_decode);
+        if(error)
+            throw new AnyBalance.Error(error, null, /пользователя не существует/i.test(error));
+        if(/Вы совершаете слишком частые попытки авторизации/i.test(html))
+            throw new AnyBalance.Error('Вы совершаете слишком частые попытки авторизации. К сожалению, Белтелеком вынужден вас заблокировать на 10 минут.');
+        AnyBalance.trace(html);
+        throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
+    }
+
     var result = {
         success: true
     };
-    
-    html = AnyBalance.requestGet(baseurl + "function=is_account", required_headers);
-    //AnyBalance.trace(html);
 
-    var $html = $(html);
-    var $tableInfo = $html.find('table.ystyle:has(img[src*="images/issa/person.gif"])');
-    AnyBalance.trace("Found info table: " + $tableInfo.length);
-    
-    if(AnyBalance.isAvailable('username')){
-        var val = $tableInfo.find('td:has(img[src*="images/issa/person.gif"])').next().find('b').text();
-        if(val)
-            result.username = $.trim(val);
-    }
-    if(AnyBalance.isAvailable('agreement'))
-        result.agreement = $.trim($tableInfo.find('td:has(img[src*="images/issa/account.gif"])').next().find('b').text());
-    
-    result.__tariff = $.trim($tableInfo.find('td:has(img[src*="images/issa/tariff.gif"])').next().find('b').text());
-    
-    var $tableBalance = $html.find('p:contains("Информация о лицевом счете")').next();
-    AnyBalance.trace("Found balance table: " + $tableBalance.length);
-    
-    if(AnyBalance.isAvailable('balance')){
-        var val = $tableBalance.find('td:contains("Актуальный баланс")').next().text();
-        if(val && (matches = val.match(/[\-\d\.]+/)))
-            result.balance = parseFloat(matches[0]);
-    }
-    
-    if(AnyBalance.isAvailable('corrections')){
-        var val = $tableBalance.find('td:contains("Сумма корректировок за текущий месяц:")').next().text();
-        AnyBalance.trace("Corrections: " + val);
-        if(val && (matches = val.match(/([\-\d\.]+)/))){
-            result.corrections = parseFloat(matches[1]);
-        }
-    }
+    getParam(html, result, 'balance', /Актуальный баланс:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'username', /<td[^>]*>Абонент<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'agreement', /Договор (?:&#8470;|№)([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, '__tariff', /<td[^>]*>Тарифный план на услуги<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'status', />Статус блокировки<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
 
-    if(AnyBalance.isAvailable('pays')){
-        var val = $tableBalance.find('td:contains("Сумма платежей за текущий месяц:")').next().text();
-        AnyBalance.trace("Pays: " + val);
-        if(val && (matches = val.match(/([\-\d\.]+)/))){
-            result.pays = parseFloat(matches[1]);
+    if(AnyBalance.isAvailable('last_pay_date', 'last_pay_sum', 'last_pay_comment')){
+        html = AnyBalance.requestGet(baseurl + 'payact.html', g_headers);
+        var row = getParam(html, null, null, /Зачисленные платежи за последние 180 дней(?:[\s\S](?!<\/table>))*?(<td[^>]*>\d\d\.\d\d\.\d{2,4} \d\d:\d\d:\d\d<[\s\S]*?)<\/tr>/i);
+        if(row){
+            getParam(row, result, 'last_pay_date', /(?:[\s\S]*?<td[^>]*>)([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+            getParam(row, result, 'last_pay_sum', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+            getParam(row, result, 'last_pay_comment', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+        }else{
+            AnyBalance.trace('Последний платеж не найден...');
         }
-    }
-   
-    if(AnyBalance.isAvailable('trafficIn', 'trafficOut', 'trafficCost')){
-        $html.empty();
-        
-        //Просто требуется получить эти страницы, несмотря на то, что информация их них не используется
-        //Иначе последняя страница инфу не возвращает
-        AnyBalance.requestGet(baseurl + "function=is_lastcalls&action=report", required_headers);
-        AnyBalance.requestPost(baseurl + "function=is_lastcalls", {
-            action: 'setperiod',
-            periods: 'CURRENT'
-        }, required_headers);
-        
-        html = AnyBalance.requestGet(baseurl + "function=is_lastcalls&action=setfilter&filter=1", required_headers);
-        $html = $(html);
-        var $tr = $html.find('div#CallsData table.ystyle tr:contains("Итого")');
-        
-        if(AnyBalance.isAvailable('trafficIn')){
-            var val = $tr.find('td.dark:nth-child(6)').text();
-            AnyBalance.trace("trafficIn: " + val);
-            if(val && (matches = val.match(/([\-\d\.]+)/))){
-                result.trafficIn = parseFloat(matches[1]);
-            }
-        }
-   
-        if(AnyBalance.isAvailable('trafficOut')){
-            var val = $tr.find('td.dark:nth-child(7)').text();
-            AnyBalance.trace("trafficOut: " + val);
-            if(val && (matches = val.match(/([\-\d\.]+)/))){
-                result.trafficOut = parseFloat(matches[1]);
-            }
-        }
-   
-        if(AnyBalance.isAvailable('trafficCost')){
-            var val = $tr.find('td.dark:nth-child(8)').text();
-            AnyBalance.trace("trafficCost: " + val);
-            if(val && (matches = val.match(/([\-\d\.]+)/))){
-                result.trafficCost = parseFloat(matches[1]);
-            }
-        }
-   
     }
 
     AnyBalance.setResult(result);

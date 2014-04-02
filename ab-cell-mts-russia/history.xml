@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="3.3" version="75" date="2014-04-02">
+	- Попытка оптимизировать работу провайдера на устройствах с малым объемом памяти.
+	</change>
 	<change major_version="3.3" version="74" date="2014-03-22">
 	- Изменения получения баланса из личного кабинета
 	</change>

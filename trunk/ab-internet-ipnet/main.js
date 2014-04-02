@@ -1,10 +1,5 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Получает баланс и информацию о тарифном плане для украинского интернет-провайдера IPNET
-
-Сайт оператора: http://ipnet.ua
-Личный кабинет: https://stat.ipnet.ua/
 */
 
 function main(){
@@ -30,6 +25,8 @@ function main(){
         var error = getParam(html, null, null, /<font[^>]*color=["']?red[^>]*>([\s\S]*?)<\/font>/, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error);
+		
+		AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось войти в личный кабинет. Проблемы на сайте или сайт изменен.');
     }
 	
@@ -41,5 +38,10 @@ function main(){
     getParam(html, result, 'agreement', /Номер договора[\S\s]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, '__tariff', /Тарифный пакет[\S\s]*?<td[^>]*center">([\S\s]*?)<\/t[dr]>/i, replaceTagsAndSpaces, html_entity_decode);
     
+	if(isAvailable('bonus')) {
+		html = AnyBalance.requestGet(url + 'loyalty/statistics.html');
+		getParam(html, result, 'bonus', /На данный момент у Вас:([^>]*>){2}/i, replaceTagsAndSpaces, parseBalance);
+	}
+	
     AnyBalance.setResult(result);
 }

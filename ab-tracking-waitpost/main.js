@@ -30,7 +30,8 @@ function main() {
 		if (error)
 			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(html));
 		
-		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось найти информацию. Сайт изменен?');
 	}
 	
 	var result = {success: true};

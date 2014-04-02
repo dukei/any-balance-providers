@@ -3,8 +3,9 @@
     <EditTextPreference 
         title="Логин" 
         positiveButtonText="ОК" 
-        summary="Логин, например 1234567||{@s}\n" 
+        summary="|Логин, например 1234567|{@s}" 
         dialogTitle="Логин" 
+        obligatory="true"
         negativeButtonText="Отмена" 
         dialogMessage="Логин для входа в ИССА Белтелеком (https://issa.beltelecom.by), например, 1234567"
         key="login">
@@ -13,9 +14,10 @@
         positiveButtonText="ОК"
         key="password" 
         dialogTitle="Пароль"
+        obligatory="true"
         negativeButtonText="Отмена"
         title="Пароль"
-        summary="Пароль для входа в ИССА||***********\n"
+        summary="|Пароль для входа в ИССА|***********"
         dialogMessage="Введите пароль, используемый для входа в ИССА Белтелеком"
         inputType="textPassword">
     </EditTextPreference>

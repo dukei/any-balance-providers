@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference
+		title="№ рекламного места"
+		key="login"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="№ рекламного места"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите № рекламного места.">
+	</EditTextPreference>
+</PreferenceScreen>

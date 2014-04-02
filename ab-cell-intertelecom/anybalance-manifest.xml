@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="27">ab-cell-intertelecom</id>
+  <id version="28">ab-cell-intertelecom</id>
   <api flags="no_browser" />
   <name>Интертелеком</name>
 	<description html="true"><![CDATA[
@@ -52,6 +52,7 @@
     <counter id="news" name="Новости" type="numeric" flags="zero_when_empty"/>
     <counter id="phonet" name="Номер телефона" type="text"/>
     <counter id="mobphonet" name="Номер телефона мобильный" type="text"/>
+	<counter id="ip_adr" name="IP" type="text"/>
   </counters>
   <keywords>
     мобильный национальный оператор cdma украина

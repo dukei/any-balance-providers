@@ -1,23 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <EditTextPreference 
-        key="phone"
-        title="Номер телефона" 
-        summary="Номер без префикса +380||{@s}\n" 
-        dialogTitle="Номер телефона" 
-        negativeButtonText="Отмена" 
-        dialogMessage="Введите номер вашего телефона"
-        positiveButtonText="ОК" 
-        inputType="number">
-    </EditTextPreference>
-    <EditTextPreference 
-        key="pass" 
-        title="Пароль"
-        summary="Пароль для авторизации||***********\n"
-        dialogTitle="Пароль"
-        negativeButtonText="Отмена"
-        dialogMessage="Введите пароль, используемый для авторизации"
-        positiveButtonText="ОК"
-        inputType="textPassword">
-    </EditTextPreference>
+	<EditTextPreference
+		obligatory="true"
+		key="phone"
+		title="Номер телефона"
+		summary="Номер без префикса +380||{@s}\n"
+		dialogTitle="Номер телефона"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите номер вашего телефона"
+		positiveButtonText="ОК"
+		inputType="number">
+	</EditTextPreference>
+	<EditTextPreference
+		obligatory="true"
+		key="pass"
+		title="Пароль"
+		summary="Пароль для авторизации||***********\n"
+		dialogTitle="Пароль"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите пароль, используемый для авторизации"
+		positiveButtonText="ОК"
+		inputType="textPassword">
+	</EditTextPreference>
 </PreferenceScreen>

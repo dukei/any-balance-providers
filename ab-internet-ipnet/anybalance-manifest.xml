@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="3">ab-internet-ipnet</id>
+	<id version="4">ab-internet-ipnet</id>
 	<name>IPNET (Киев)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе киевского интернет-провайдера IPNET http://ipnet.ru</p>
@@ -17,6 +17,7 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" ₴"/>
+		<counter id="bonus" name="Бонусы"/>
 		<counter id="status" name="Состояние" type="text"/>
 		<counter id="agreement" name="Договор" type="text"/>
 		<counter id="till" name="Хватит до" type="time" format="dd/MM/yyyy"/>

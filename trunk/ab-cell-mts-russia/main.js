@@ -575,7 +575,17 @@ function mainLK(allowRetry){
     AnyBalance.trace("Мы в личном кабинете...");
 
     var result = {success: true};
-    var info = getParam(html, null, null, /var\s+initialProfile\s*=\s*(\{[\s\S]*?\})/, null, getJson);
+	// Попытка пофиксить Unhandled exception in user script:
+	// name: TypeError
+	// message: Cannot read property "Balance" from undefined
+	// fileName: main.js_v74
+	// lineNumber: 579
+	// rhinoException: org.mozilla.javascript.EcmaError: TypeError: Cannot read property "Balance" from undefined (main.js_v74#579)
+	var info = getParam(html, null, null, /var\s+initialProfile\s*=\s*(\{[\s\S]*?\})/i);
+	
+	info = getJson(info);
+	AnyBalance.trace(JSON.stringify(info));
+	
     getParam(info.Balance+'', result, 'balance', null, null, parseBalanceRound);
     getParam(info.Tariff+'', result, '__tariff', null, replaceTagsAndSpaces, html_entity_decode);
     getParam(info.Bonus+'', result, 'bonus', null, null, parseBalance);

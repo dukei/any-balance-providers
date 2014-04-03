@@ -102,9 +102,9 @@ function main() {
     //Количество новостей
     getParam(html, result, 'news', />Новости <span [^>]*>([^<]*)<\/span>/i, replaceTagsAndSpaces, parseBalance);
     //Номер телефона
-    getParam(html, result, 'phonet', /<td[^>]*>\s*Номер телефона\s*<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, add380);
+    getParam(html, result, 'phonet', /<td[^>]*>\s*Номер телефона\s*<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, [replaceTagsAndSpaces, /(\d+)/i, '+38$1']);
     //Номер телефона мобильный
-    getParam(html, result, 'mobphonet', /<td[^>]*>\s*Мобильный номер\s*<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, add380);
+    getParam(html, result, 'mobphonet', /<td[^>]*>\s*Мобильный номер\s*<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, [replaceTagsAndSpaces, /(\d+)/i, '+38$1']);
     getParam(html, result, 'ip_adr', /<td[^>]*>\s*IP([^>]*>){3}/i, replaceTagsAndSpaces);
     AnyBalance.setResult(result);
 }
@@ -118,10 +118,6 @@ function parseStazh(str) {
     } else {
         AnyBalance.trace("Не удалось вычислить стаж из " + str);
     }
-}
-
-function add380(str) {
-    return '+380' + html_entity_decode(str);
 }
 
 function parseSeconds(str) {

@@ -112,8 +112,13 @@ function mainDep(what, baseurl){
     var prefs = AnyBalance.getPreferences();
     var html = AnyBalance.requestGet(baseurl + "/priv/deposits");
     var $html = $(html);
-    
-    var pattern = new RegExp(prefs.num ? '\\d{3,}'+prefs.num+'\\s' : '\\d{7,}\\s');
+
+
+    var pattern;
+    if(prefs.login.match(/2t\d{8}/i))
+      pattern = new RegExp(prefs.num ? prefs.num : '\\d{5}');
+    else	
+      pattern = new RegExp(prefs.num ? '\\d{3,}'+prefs.num+'\\s' : '\\d{7,}\\s');
 
     var min_i = -1;
     var min_val = null;

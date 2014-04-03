@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        key="login"
+        title="Логин" 
+        summary="Логин" 
+        dialogTitle="Логин" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите ваш e-mail, используемый для входа в интернет-банк"
+        positiveButtonText="ОК" 
+        inputType="text"/>
+    <EditTextPreference 
+        key="password" 
+        title="Пароль"
+        summary="Пароль для входа"
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        dialogMessage="Введите пароль, используемый для входа в интернет-банк"
+        positiveButtonText="ОК"
+        inputType="textPassword"/>
+    <ListPreference 
+        key="type" 
+        title="Счет/вклад"
+        summary="Счет или вклад"
+        dialogTitle="Счет/вклад"
+	entries="Счет|Вклад"
+	entryValues="1|2"
+	defaultValue="1"/>
+    <EditTextPreference 
+        key="account" 
+        title="Номер счета"
+        summary="Номер счета или вклада (последние 5 цифр)"
+        dialogTitle="Номер счета"
+        negativeButtonText="Отмена"
+        dialogMessage="Введите последние 5 цифр номера счета/вклада"
+        positiveButtonText="ОК"
+        inputType="number"/>
+</PreferenceScreen>

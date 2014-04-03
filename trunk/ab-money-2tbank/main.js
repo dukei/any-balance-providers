@@ -39,7 +39,7 @@ function fetchAcc(pageHtml){
  if(rows.length == 0)
   return {error: true, message: "Не найдена таблица со счетами. Сайт изменился?"};
  AnyBalance.trace("Rows: "+rows);
- for(i = 0; i<rows.length; i++) {
+ for(var i = 0; i<rows.length; i++) {
   var row = $(rows[i]);
   var accStr = row.find("span.accountToggleNumber > a").html();
   AnyBalance.trace("accStr: "+accStr);
@@ -65,7 +65,7 @@ function fetchDep(pageHtml){
  var rows = pageHtml.find("tbody > tr");
  if(rows.length == 0)
   return {error: true, message: "Не найдена таблица с вкладами. Сайт изменился?"};
- for(i = 0; i<rows.length;i++) {
+ for(var i = 0; i<rows.length;i++) {
   var cells = $(rows[i]).find("td");
   if(cells.length){
    var accStr = $(cells[0]).find("a.deposit-link span").html();

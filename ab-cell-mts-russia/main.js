@@ -34,15 +34,12 @@ function getViewState(html){
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-    if(prefs.phone && !/^\d+$/.test(prefs.phone)){
-	throw new AnyBalance.Error('В качестве номера необходимо ввести 10 цифр номера, например, 9161234567, или не вводить ничего, чтобы получить информацию по основному номеру.', null, true);
+    if (prefs.phone && !/^\d+$/.test(prefs.phone)) {
+        throw new AnyBalance.Error('В качестве номера необходимо ввести 10 цифр номера, например, 9161234567, или не вводить ничего, чтобы получить информацию по основному номеру.', null, true);
     }
-
-    if(!prefs.login)
-	throw new AnyBalance.Error('Вы не ввели телефон (логин)', null, true);
-    if(!prefs.password)
-	throw new AnyBalance.Error('Вы не ввели пароль', null, true);
-
+	checkEmpty(prefs.login, 'Вы не ввели телефон (логин)!');
+	checkEmpty(prefs.password, 'Вы не ввели пароль!');
+	
     if(prefs.type == 'lk'){
         mainLK();
     }else if(prefs.type == 'mobile'){
@@ -514,17 +511,25 @@ function mainLK(allowRetry){
 
         var html = AnyBalance.requestGet(baseurl, g_headers);
         
-        if(isLoggedIn(html)){
-             AnyBalance.trace("Уже залогинены, проверяем, что на правильный номер...");
-             //Автоматом залогинились, надо проверить, что на тот номер
-             var info = AnyBalance.requestPost(baseurl + '/GoodokServices/GoodokAjaxGetWidgetInfo/', '', g_headers);
-             info = JSON.parse(info);
-             if(info.MSISDN != prefs.login){  //Автоматом залогинились не на тот номер
-                 AnyBalance.trace("Залогинены на неправильный номер: " + info.MSISDN + ", выходим");
-                 html = AnyBalance.requestGet(baseurlLogin + "/amserver/UI/Logout", g_headers);
-                 if(isLoggedIn(html))
-                     throw new AnyBalance.Error('Не удаётся выйти из личного кабинета, чтобы зайти под правильным номером. Сайт изменен?');
-             }
+        if (isLoggedIn(html)) {
+            AnyBalance.trace("Уже залогинены, проверяем, что на правильный номер...");
+            //Автоматом залогинились, надо проверить, что на тот номер
+            /*var info = AnyBalance.requestPost(baseurl + '/GoodokServices/GoodokAjaxGetWidgetInfo/', '', g_headers);
+            if(/Внутренняя ошибка сервера/i.test(info)) {
+				throw new AnyBalance.Error('Внутренняя ошибка сервера, попробуйте выполнить запрос позже.');
+			}
+            //info = JSON.parse(info);
+            // Уж лучше пусть бросит исключение, нежели пойдет дальше с пустым или кривым info
+            info = getJson(info);*/
+			var loggedInMSISDN = getParam(html, null, null, /var\s*initialProfile[^"']+['"]Login(?:[^'"]*"){2}(\d{10})/i);
+			checkEmpty(loggedInMSISDN, 'Не удалось определить, на какой номер залогинились автоматически, сайт изменен?', true);
+			
+            if (loggedInMSISDN != prefs.login) { //Автоматом залогинились не на тот номер
+                AnyBalance.trace("Залогинены на неправильный номер: " + loggedInMSISDN + ", выходим");
+                html = AnyBalance.requestGet(baseurlLogin + "/amserver/UI/Logout", g_headers);
+                if (isLoggedIn(html))
+					throw new AnyBalance.Error('Не удаётся выйти из личного кабинета, чтобы зайти под правильным номером. Сайт изменен?');
+            }
         }
         
         if(!isLoggedIn(html)){

@@ -1,9 +1,5 @@
 /**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Белтелеком (ByFly) - белорусский интернет-провайдер
-Сайт оператора: http://byfly.by/
-Личный кабинет: https://issa.beltelecom.by
 */
 
 var g_headers = {
@@ -51,9 +47,7 @@ function main(){
         throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
     }
 
-    var result = {
-        success: true
-    };
+    var result = {success: true};
 
     getParam(html, result, 'balance', /Актуальный баланс:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'username', /<td[^>]*>Абонент<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
@@ -72,6 +66,17 @@ function main(){
             AnyBalance.trace('Последний платеж не найден...');
         }
     }
-
+	
+	if(AnyBalance.isAvailable('traf_used', 'traf_left', 'traf_total')) {
+		html = AnyBalance.requestGet(baseurl + 'statact.html', g_headers);
+		
+		getParam(html, result, ['traf_used', 'traf_total'], /трафик(?:[^>]*>){6}([\s\d.]+(?:М|К|Г)Б)/i, replaceTagsAndSpaces, parseTraffic);
+		getParam(html, result, ['traf_left', 'traf_total'], /трафик(?:[^>]*>){8}([\s\d.]+(?:М|К|Г)Б)/i, replaceTagsAndSpaces, parseTraffic);
+		
+		if(isset(result.traf_used) && isset(result.traf_left)) {
+			getParam(result.traf_used + result.traf_left, result, 'traf_total');
+		}	
+	}
+	
     AnyBalance.setResult(result);
 }

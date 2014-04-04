@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-<change version="2" date="2014-04-02">
-  - Полностью новый личный кабинет
-</change>
+	<change version="3" date="2014-04-04">
+	- Добавлены счетчики: Использовано трафика, Остаток трафика, Всего трафика.
+	</change>
+	<change version="2" date="2014-04-02">
+	- Полностью новый личный кабинет
+	</change>
 </history>

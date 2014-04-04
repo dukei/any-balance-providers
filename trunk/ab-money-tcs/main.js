@@ -20,11 +20,13 @@ function main(){
         throw new AnyBalance.Error('Этот провайдер требует AnyBalance API v.4+');
 
     var basedomain = "www.tcsbank.ru";
-    var baseurl = "https://" + basedomain;
+    var baseurl = {};
+    baseurl._= "https://" + basedomain;
+    baseurl.api = baseurl._ + "/api-ds/v1/";
     AnyBalance.setDefaultCharset('utf-8');
 
     var html, sessionid;
-    html = AnyBalance.requestGet(baseurl + '/api/v1/session/?username=' + encodeURIComponent(prefs.login) + '&password=' + encodeURIComponent(prefs.password), g_headers);
+    html = AnyBalance.requestGet(baseurl.api + 'session/?username=' + encodeURIComponent(prefs.login) + '&password=' + encodeURIComponent(prefs.password), g_headers);
 
 	if(/технические работы/i.test(html)) {
 		throw new AnyBalance.Error('В настоящий момент на сайте проводятся технические работы. Попробуйте запустить обновление позже.');
@@ -88,18 +90,21 @@ function main(){
     } */
 
     //Данные грузятся только после получения этой страницы, хитрецы, блин...
-    AnyBalance.requestGet(baseurl + '/bank/accounts/', g_headers);
+    AnyBalance.requestGet(baseurl._ + '/bank/accounts/', g_headers);
 
-    var accounts = AnyBalance.requestGet(baseurl + '/api/v1/accounts/?sessionid=' + sessionid, addHeaders({
+    var headers = addHeaders({
         Accept:'application/json, text/javascript, */*; q=0.01',
         'X-Requested-With':'XMLHttpRequest',
-        Referer: baseurl + '/bank/accounts/'
-    }));
+        Referer: baseurl._ + '/bank/accounts/'
+    });
+    
+    var accounts = AnyBalance.requestGet(baseurl.api + 'accounts/?sessionid=' + sessionid, headers);
     
 	if(/технические работы/i.test(accounts)) {
 		throw new AnyBalance.Error('В настоящий момент на сайте проводятся технические работы. Попробуйте запустить обновление позже.');
 	}
-	
+
+	AnyBalance.trace("Accounts: "+accounts);
     accounts = getJson(accounts);
 
     if(accounts.resultCode != 'OK')
@@ -171,6 +176,9 @@ function fetchCard(accounts, baseurl, sessionid){
         result.accnum = card.externalAccountNumber;
     if(AnyBalance.isAvailable('freeaddleft') && card.renewalAmountLeft)
         result.freeaddleft = parseBalance(card.renewalAmountLeft.value+'');
+    AnyBalance.trace("Cash limit: "+card.monthlyCashLimit);
+    if(AnyBalance.isAvailable('freecashleft') && card.monthlyCashLimit)
+        result.freecashleft = parseBalance(card.monthlyCashLimit.value+'');
     if(AnyBalance.isAvailable('till') && isset(thiscard.expiration))
         result.till = thiscard.expiration.milliseconds;
     if(AnyBalance.isAvailable('limit') && isset(card.creditLimit))
@@ -180,10 +188,10 @@ function fetchCard(accounts, baseurl, sessionid){
 
     if(AnyBalance.isAvailable('pcts')){
         //Информация по выписке
-        var statements = AnyBalance.requestGet(baseurl + '/api/v1/statements/?sessionid=' + sessionid + '&account=' + card.id, addHeaders({
+        var statements = AnyBalance.requestGet(baseurl.api + 'statements/?sessionid=' + sessionid + '&account=' + card.id, addHeaders({
             Accept:'application/json, text/javascript, */*; q=0.01',
             'X-Requested-With':'XMLHttpRequest',
-            Referer: baseurl + '/bank/accounts/'
+            Referer: baseurl._ + '/bank/accounts/'
         }));
     
         try{

@@ -1,28 +1,32 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Получает сумму штрафов и их количество с сайта госуслуг татарстана https://uslugi.tatar.ru
-
-Сайт оператора: https://uslugi.tatar.ru
-Личный кабинет: https://uslugi.tatar.ru/user/login
 */
+
+var g_headers = {
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
+	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Connection': 'keep-alive',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+};
 
 function main(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
-
+	
     if(!prefs.plate || !/^.\d\d\d..\d{2,3}$/i.test(prefs.plate))
         throw new AnyBalance.Error('Введите номер машины в формате cXXXccRR для автомобиля или XXXXccRR для мотоцикла, где с - буква, X - цифра, RR - номер региона (2 или 3 цифры).');
     if(!prefs.sr)
         throw new AnyBalance.Error('Введите последние 6 цифр номера свидетельства о регистрации.');
     
-    var baseurl = "https://uslugi.tatar.ru/";
-    var html = AnyBalance.requestGet(baseurl + 'user/login');
-
+    var baseurl = 'https://uslugi.tatarstan.ru/';
+	
+    var html = AnyBalance.requestGet(baseurl + 'user/login', g_headers);
+	
     var form = getParam(html, null, null, /<form[^>]+id="login-form"[^>]*>([\s\S]*?)<\/form>/i, null, html_entity_decode);
     if(!form)
         throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
-
+	
     var params = createFormParams(form, function(params, str, name, value){
         if(/phone_number/i.test(name))
             return prefs.login;
@@ -32,21 +36,20 @@ function main(){
             return '0';
         return value;
     });
-
-    html = AnyBalance.requestPost(baseurl + 'user/login', params);
-
-    //AnyBalance.trace(html);
-    if(!/\/user\/logout/i.test(html)){
+	
+    html = AnyBalance.requestPost(baseurl + 'user/login', params, addHeaders({Referer: baseurl + ''}));
+	
+    if(!/is_user_authorized\s*=\s*true/i.test(html)){
         var error = getParam(html, null, null, /<div[^>]*id=["']error_explanation[^>]*>([\s\S]*?)<\/div>/, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error);
         throw new AnyBalance.Error('Не удалось войти в личный кабинет. Проблемы на сайте или сайт изменен.');
     }
-
+	
     var isAuto = /^\D/.test(prefs.plate);
     var number = getParam(prefs.plate, null, null, /^.\d\d\d../);
     var region = getParam(prefs.plate, null, null, /(\d+)$/);
-
+	
     html = AnyBalance.requestPost(baseurl + 'gibdd/fines/fines', {
         findType:'car',
         type_ts:isAuto ? 'auto' : 'moto',
@@ -57,20 +60,24 @@ function main(){
         find_protocol_series:'',
         find_protocol_number:'',
         find_protocol_date:''
-    }); 
-
-    var error = getParam(html, null, null, /<div[^>]*id=["']error_explanation[^>]*>([\s\S]*?)<\/div>/, replaceTagsAndSpaces, html_entity_decode);
-    if(error)
-        throw new AnyBalance.Error(error);
-
-    var finesTable = getParam(html, null, null, /<table[^>]*class="extra-table"[^>]*>([\s\S]*?)<\/table>/i) || '';
-
-    var result = {success: true};
-
-    getParam(html, result, 'count', /Найдено\s*(\d+)/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'balance', /штраф[^<]*?на сумму ([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-    sumParam(finesTable, result, 'lastdate', /<tr[^>]*>\s*(?:(?:[\s\S](?!<\/tr))*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate, aggregate_max);
-    sumParam(finesTable, result, 'firstdate', /<tr[^>]*>\s*(?:(?:[\s\S](?!<\/tr))*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate, aggregate_min);
-
+    });
+	
+	var result = {success: true};
+	
+	if(/<h2>Штрафов не найдено<\/h2>/i.test(html)) {
+		AnyBalance.trace('Не найдено штрафов..');
+		getParam('0', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
+	} else {
+	    /*var error = getParam(html, null, null, /<div[^>]*id=["']error_explanation[^>]*>([\s\S]*?)<\/div>/, replaceTagsAndSpaces, html_entity_decode);
+		if(error)
+			throw new AnyBalance.Error(error);*/
+		var finesTable = getParam(html, null, null, /<table[^>]*class="extra-table"[^>]*>([\s\S]*?)<\/table>/i) || '';
+		
+		getParam(html, result, 'count', /Найдено\s*(\d+)/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'balance', /штраф[^<]*?на сумму ([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+		sumParam(finesTable, result, 'lastdate', /<tr[^>]*>\s*(?:(?:[\s\S](?!<\/tr))*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate, aggregate_max);
+		sumParam(finesTable, result, 'firstdate', /<tr[^>]*>\s*(?:(?:[\s\S](?!<\/tr))*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate, aggregate_min);
+	}
+	
     AnyBalance.setResult(result);
 }

@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-internet-byfly</id>
-        <api flags="no_browser"/>
+	<id version="3">ab-internet-byfly</id>
+	<api flags="no_browser"/>
 	<name>ByFly</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию из ИССА ByFly - торговой марки «Белтелеком», в рамках которой предлагается широкополосный доступ в сеть Интернет.</p>
@@ -16,13 +16,16 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units="р"/>
+		<counter id="balance" name="Баланс" units=" р"/>
 		<counter id="status" name="Статус" type="text"/>
 		<counter id="agreement" name="Номер договора" type="text"/>
 		<counter id="username" name="ФИО" type="text"/>
 		<counter id="last_pay_date" name="Дата последнего платежа" type="time" format="dd/MM/yyyy"/>
-		<counter id="last_pay_sum" name="Сумма последнего платежа" units="р"/>
+		<counter id="last_pay_sum" name="Сумма последнего платежа" units=" р"/>
 		<counter id="last_pay_comment" name="Тип последнего платежа" type="text"/>
+		<counter id="traf_used" name="Использовано трафика" units=" Mb"/>
+		<counter id="traf_left" name="Остаток трафика" units=" Mb"/>
+		<counter id="traf_total" name="Всего трафика" units=" Mb"/>
 	</counters>
 	<keywords>провайдер интернет белоруссия байфлай</keywords>
 	<type>internet</type>

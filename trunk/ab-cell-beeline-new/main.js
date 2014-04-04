@@ -467,15 +467,17 @@ function getBonuses(xhtml, result) {
 		var services = sumParam(bonus, null, null, /<div[^>]+class="(?:accumulator|bonus)"(?:[\s\S](?!$|<div[^>]+class="(?:accumulator|bonus)"))*[\s\S]/ig);
 		AnyBalance.trace("Found " + services.length + ' bonuses');
 		var reValue = /<div[^>]+class="column2[^"]*"[^>]*>([\s\S]*?)<\/div>/i;
+		var reNewValue = /<div[^>]+class="column2[^"]*"(?:[^>]*>){5}([\s\d,]+)/i;
+		
 		for (var i = 0; i < services.length; ++i) {
 			var name = '' + getParam(services[i], null, null, /<div[^>]+class="column1[^"]*"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode); //+ ' ' + bonus_name;
 			if (/SMS|штук/i.test(name)) {
-				sumParam(services[i], result, 'sms_left', reValue, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+				sumParam(services[i], result, 'sms_left', [reValue, reNewValue], replaceTagsAndSpaces, parseBalance, aggregate_sum);
 			} else if (/MMS/i.test(name)) {
-				sumParam(services[i], result, 'mms_left', reValue, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+				sumParam(services[i], result, 'mms_left', [reValue, reNewValue], replaceTagsAndSpaces, parseBalance, aggregate_sum);
 			} else if (/Internet|Интернет/i.test(name)) {
 				// Для опции Хайвей все отличается..
-				if (/Xайвей/i.test(name)) {
+				if (/Xайвей|Интернет-трафика по тарифу/i.test(name)) {
 					sumParam(services[i], result, 'traffic_left', /<div[^>]+class="column2[^"]*"([^>]*>){6}/i, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
 					sumParam(services[i], result, 'traffic_total', /<div[^>]+class="column2[^"]*"(?:[^>]*>){5}[^<]*из([\s\d,]*ГБ)/i, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
 					if(isset(result.traffic_left) && isset(result.traffic_total)) {
@@ -498,6 +500,11 @@ function getBonuses(xhtml, result) {
 				var minutes = getParam(services[i], null, null, reValue, replaceTagsAndSpaces, parseMinutes);
 				sumParam(minutes, result, 'min_local', null, null, null, aggregate_sum);
 				sumParam(minutes/60, result, 'min_local_clear', null, null, null, aggregate_sum);
+			} else if (/Минут общения по тарифу/i.test(name)) {
+				// Это новый вид отображения данных
+				// Минут осталось
+				sumParam(services[i], result, 'min_local', reNewValue, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
+				
 			} else {
 				AnyBalance.trace('Неизвестная опция: ' + bonus_name + ' ' + services[i]);
 			}

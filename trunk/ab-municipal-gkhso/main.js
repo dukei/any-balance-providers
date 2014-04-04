@@ -1,9 +1,5 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Получает информацию о платежах в ЖКХНСО 
-
-Operator site: https://жкхнсо.рф
 */
 
 var g_headers = {
@@ -18,7 +14,7 @@ function main(){
     var prefs = AnyBalance.getPreferences();
 
     var baseurl = "https://www.kvartplata.ru/",
-       baseurl2 = 'https://xn--f1aijeow.xn--p1ai/';
+	baseurl2 = 'https://xn--f1aijeow.xn--p1ai/';
 
     AnyBalance.setDefaultCharset('utf-8'); 
 	
@@ -69,7 +65,7 @@ function main(){
     html.replace(re, function(tr)
 	{
         if(AnyBalance.isSetResultCalled())
-            return; //Если уже вернули результат, то дальше крутимся вхолостую
+			return; //Если уже вернули результат, то дальше крутимся вхолостую
 
 		var accnum = (prefs.accnum || '').toUpperCase();
         var name = getParam(tr, null, null, /(?:[\s\S]*?<td[^>]*>){1}\s*([\s\S]*?)\s*<\/td>/i, replaceTagsAndSpaces, html_entity_decode);

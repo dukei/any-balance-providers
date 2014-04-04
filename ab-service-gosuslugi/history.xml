@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="5" date="2014-04-04">
+	- Мелочи.
+	</change>
 	<change version="4" date="2014-02-15">
-	- Улучшение обработки ошибок входа
+	- Улучшение обработки ошибок входа.
 	</change>
 	<change version="3" date="2014-02-14">
 	- Оптимизация процедуры входа.

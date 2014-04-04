@@ -420,7 +420,7 @@ function fetchPre(baseurl, html) {
 		// И получим баланс из него
 		getParam(xhtml, result, 'balance', /class="price[^>]*>((?:[\s\S]*?span[^>]*>){3})/i, replaceTagsAndSpaces, parseBalance);
 		// Если баланса нет, не надо получать и валюту
-		if(!isset(result.balance)) {
+		if(isset(result.balance)) {
 			getParam(xhtml, result, ['currency', 'balance'], /class="price[^>]*>((?:[\s\S]*?span[^>]*>){3})/i, replaceTagsAndSpaces, myParseCurrency);
 		}
 	}

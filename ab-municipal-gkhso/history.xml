@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-	<change version="3" date="2013-07-18">- Добавлена детализация услуг</change>
-	<change version="2" date="2013-07-13">- Поддержка изменений на сайте</change>
+	<change version="4" date="2014-04-04">
+	- Поддежрка текстовых логинов.
+	</change>
+	<change version="3" date="2013-07-18">
+	- Добавлена детализация услуг
+	</change>
+	<change version="2" date="2013-07-13">
+	- Поддержка изменений на сайте
+	</change>
 </history>

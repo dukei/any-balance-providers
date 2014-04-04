@@ -1,43 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="3">ab-municipal-gkhso</id>
-  <api flags="no_browser" />
-  <name>ЖКХНСО (Новосибирск)</name>
-  <description>
-    Получает информацию о платежах в ЖКХНСО (https://жкхнсо.рф)
-
-    Информация берется из личного кабинета 
-  </description>
-  <author>Alexandra Shalamova &lt;alexandrashalamova@gmail.com&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Начислено" units="р"/>
-    <counter id="balance-pay" name="К оплате" units="р"/>
-    <counter id="last" name="Последний платёж" units="р"/>
-    <counter id="fio" name="ФИО" type="text"/>
-    <counter id="adress" name="Адрес" type="text"/>
-    <counter id="date" name="Суммы к оплате на" type="time" format="dd.MM.yyyy"/>
-	<counter id="usluga" name="Услуга" type="text"/>
-	<counter id="postavshik" name="Поставщик" type="text"/>
-	<counter id="ostatok" name="Остаток на начало месяца"/>
-	<counter id="nachislenia" name="Начисления + перерасчёты"/>
-	<counter id="oplacheno" name="Оплачено"/>
-	<counter id="ostatok_konec" name="Остаток на конец месяца"/>
-	<counter id="k_oplate" name="К оплате по услуге"/>
-  </counters>
-  <keywords>
-    жкх
-  </keywords>
-  <type>
-    municipal
-  </type>
-  <country>
-    ru
-  </country>
+	<id version="4">ab-municipal-gkhso</id>
+	<api flags="no_browser" />
+	<name>ЖКХНСО (Новосибирск)</name>
+	<description html="true"><![CDATA[
+	<p>Получает информацию о платежах в ЖКХНСО (https://жкхнсо.рф)</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Начислено" units=" р"/>
+		<counter id="balance-pay" name="К оплате" units=" р"/>
+		<counter id="last" name="Последний платёж" units=" р"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="adress" name="Адрес" type="text"/>
+		<counter id="date" name="Суммы к оплате на" type="time" format="dd/MM/yyyy"/>
+		<counter id="usluga" name="Услуга" type="text"/>
+		<counter id="postavshik" name="Поставщик" type="text"/>
+		<counter id="ostatok" name="Остаток на начало месяца"/>
+		<counter id="nachislenia" name="Начисления + перерасчёты"/>
+		<counter id="oplacheno" name="Оплачено"/>
+		<counter id="ostatok_konec" name="Остаток на конец месяца"/>
+		<counter id="k_oplate" name="К оплате по услуге"/>
+	</counters>
+	<keywords>жкх</keywords>
+	<type>municipal</type>
+	<country>ru</country>
 </provider>

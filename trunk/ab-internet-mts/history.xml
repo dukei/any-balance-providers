@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="55" date="2014-04-04">
+	- Исправлен регион: Ижевск.
+	</change>
 	<change version="54" date="2014-03-20">
 	- Исправлен регион: Новосибирск.
 	</change>

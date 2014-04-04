@@ -97,22 +97,43 @@ function mainRussianPost() {
 	var prefs = AnyBalance.getPreferences();
 	AnyBalance.trace('Connecting to russianpost...');
 	var baseurl = 'http://www.russianpost.ru';
-	var info = AnyBalance.requestGet(baseurl + '/Tracking/?' + Math.random());
+	var info = AnyBalance.requestGet(baseurl + '/tracking20/?' + prefs.code.toUpperCase());
 	info = checkForRedirect(info, baseurl);
-	var form = getParam(info, null, null, /<form[^>]+(?:name|id)="F(?:orm)?1"[^>]*>[\s\S]*?<\/form>/i);
+	
+	/*var form = getParam(info, null, null, /<form[^>]+(?:name|id)="F(?:orm)?1"[^>]*>[\s\S]*?<\/form>/i);
 	if (!form) {
 		checkForErrors(info);
 		throw new AnyBalance.Error('Не удалось найти форму запроса. На сайте обед?');
-	}
+	}*/
 	var captcha = '', captchaId = '';
 	if (AnyBalance.getLevel() >= 7) {
-	    captchaId = getParam(form, null, null, /<input[^>]+name="CaptchaId"[^>]*value="([^"]*)/i, null, html_entity_decode);
+	    /*captchaId = getParam(info, null, null, /<input[^>]+name="CaptchaId"[^>]*value="([^"]*)/i, null, html_entity_decode);
 	    if(!captchaId)
-	        throw new AnyBalance.Error('Не удалось найти идентификатор капчи. Сайт изменен?');
-	    var captchaimg = AnyBalance.requestGet(baseurl + '/CaptchaService/CaptchaImage.ashx?ID=' + captchaId);
+	        throw new AnyBalance.Error('Не удалось найти идентификатор капчи. Сайт изменен?');*/
+	    var captchaimg = AnyBalance.requestGet(baseurl + '/tracking20/Code/Code.png.ashx');
 	    captcha = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки. Если вы хотите получать статус отправления Почты России без ввода кода, воспользуйтесь провайдером \"Моя посылка\".", captchaimg);
 	}
-
+	
+	info = AnyBalance.requestGet(baseurl + '/tracking20/OperationHistory.js.aspx?Id=' + prefs.code.toUpperCase() + '&Code='+captcha+'&Language=Russian');
+	
+	var result = {success: true};
+	
+	result.__tariff = prefs.code;
+	
+	var json = getJson(info);
+	
+	var op = json.Operations[json.Operations.length-1];
+	
+	getParam(op.Date+'', result, 'date', null, replaceTagsAndSpaces);
+	getParam(op.Name+'', result, 'operation', null, replaceTagsAndSpaces);
+	getParam(op.PostOffice+'', result, 'location', null, replaceTagsAndSpaces);
+	getParam(op.Attribute+'', result, 'attribute', null, replaceTagsAndSpaces);
+	getParam(op.Payment+'', result, 'addcost', null, replaceTagsAndSpaces, parseBalance);
+	getParam('<small>' + op.Date + '</small>: <b>' + op.Name + '</b><br/>' + op.PostOffice + '<br/>' + op.Attribute + ((op.Payment && op.Payment != '-') ? ', Н/п ' + op.Payment + 'р' : ''), result, 'fulltext');
+	
+	AnyBalance.setResult(result);
+	//
+	/*
 	var params = createFormParams(form, function(params, input, name, value) {
 		var undef;
 		if (name == 'BarCode')
@@ -186,5 +207,5 @@ function mainRussianPost() {
 		if (error) 
 			throw new AnyBalance.Error('ВНИМАНИЕ! Для получения информации по отправления Почты России пользуйтесь провайдером "Моя посылка". Напрямую получить информацию об отправлении не удаётся в связи с капчей на сайте почты россии.');
 		throw new AnyBalance.Error("Отправление не найдено.")
-	}
+	}*/
 }

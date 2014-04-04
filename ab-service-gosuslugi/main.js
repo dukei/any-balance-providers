@@ -24,7 +24,9 @@ function main() {
 	var prefs = AnyBalance.getPreferences();
 	AnyBalance.setDefaultCharset('utf-8');
 	
-	checkEmpty(prefs.login = getParam(prefs.login || '', null, null, null, [/^(\d{3})(\d{3})(\d{3})(\d{2})$/i, '$1-$2-$3 $4']), 'Введите СНИЛС (без пробелов и разделителей, 11 символов подряд), или логин. Вы ввели: "'+ (prefs.login || 'пустое поле')+'"!');
+	var formattedLogin = getParam(prefs.login || '', null, null, /^\d{11}$/, [/^(\d{3})(\d{3})(\d{3})(\d{2})$/i, '$1-$2-$3 $4']);
+	
+	checkEmpty(formattedLogin, 'Введите СНИЛС (без пробелов и разделителей, 11 символов подряд), или логин. Вы ввели: "'+ (prefs.login || 'пустое поле')+'"!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
 	var html = AnyBalance.requestGet(g_baseurl + 'pgu/personcab', g_headers);
@@ -32,7 +34,7 @@ function main() {
 	html = performRedirect(html);
 	
 	html = AnyBalance.requestPost('https://esia.gosuslugi.ru/idp/Authn/UsernamePasswordLogin', {
-		username: prefs.login,
+		username: formattedLogin,
 		password: prefs.password,
 		answer:'',
 		globalRole:'RF_PERSON',
@@ -102,8 +104,12 @@ function performRedirect(html) {
 function createFormParamsById(html, servicesubId) {
 	var form = getParam(html, null, null, new RegExp('<form[^>]*id="s' + servicesubId + '"[\\s\\S]*?</form>'));
 	if(!form) {
+		var err = getParam(html, null, null, /"popupText"([^>]*>){2}/i);
+		if(err)
+			throw new AnyBalance.Error(err);
+
 		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось найти форму для id: ' + servicesubId + ', сайт изменен?');
+		throw new AnyBalance.Error('Не удалось найти форму с данными для id: ' + servicesubId + ', такое бывает, если услуга недоступна. Если эта ошибка появляется часто - свяжитесь, пожалуйста, с разработчиками.');
 	}
 	
 	return createFormParams(form);
@@ -155,8 +161,12 @@ function processNalogi(result, html, prefs) {
 		html = AnyBalance.requestPost(serviceUrl, params, addHeaders({Referer: serviceUrl}));
 		
 		// Проверить что статус у заявления исполнено
-		if(!/>\s*Исполнено\s*</i.test(html))
-			throw new AnyBalance.Error('Не удалось обработать заявление, сайт изменен?');
+		if(!/>\s*Исполнено\s*</i.test(html)) {
+			// т.к. проблемы могут возникать отдально в каждом сервисе, лучше не бросать исключения, а просто записывать в лог
+			//throw new AnyBalance.Error('Не удалось обработать заявление, сайт изменен?');
+			AnyBalance.trace('Не удалось получить данные по налогам, возможно, сайт изменен?');
+			return
+		}
 			
 		html = getXmlFileResult(html);
 		

@@ -1,32 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-bonus-shell-ua</id>
-  <name>Shell (Украина)</name>
-  <description>
-  Получает количество баллов бонусной карты компании Shell в Украине (http://shellsmart.com.ua)
-
-  Информация берется из личного кабинета клиента: https://shellsmart.com.ua/ru/account
-  </description>
-  <author>Alexandra Shalamova &lt;alexandrashalamova@gmail.com&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Количество доступных баллов" units=" Б"/>
-    <counter id="allbalance" name="Накоплено баллов всего" units=" Б"/>
-    <counter id="fio" name="ФИО" type="text"/>
-  </counters>
-  <keywords>
-    шел
-  </keywords>
-  <type>
-    bonus
-  </type>
-  <country>
-    ru
-  </country>
+	<id version="2">ab-bonus-shell-ua</id>
+	<api flags="no_browser"/>
+	<name>Shell (Украина)</name>
+	<description html="true"><![CDATA[
+	<p>Получает количество баллов бонусной карты компании Shell в Украине (http://shellsmart.com.ua)</p>
+	<p>Информация берется из личного кабинета клиента: https://shellsmart.com.ua/ru/account</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Количество доступных баллов" units=" Б"/>
+		<counter id="allbalance" name="Накоплено баллов всего" units=" Б"/>
+		<counter id="fio" name="ФИО" type="text"/>
+	</counters>
+	<keywords>шел</keywords>
+	<type>bonus</type>
+	<country>ru</country>
 </provider>

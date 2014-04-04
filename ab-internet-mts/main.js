@@ -523,8 +523,10 @@ function getVologda(){
 }
 
 function getIzhevsk(){
-    var baseurl = 'https://lk.izhnt.ru/';
-    typicalLanBillingInetTv(baseurl + 'index.php?r=site/login');
+    var baseurl = 'https://lk.izhnt.ru/index.php?r=site/login';
+    var urlAjax = 'https://lk.izhnt.ru/index.php?r=account/vgroups&agrmid=';
+
+    newTypicalLanBillingInetTv(baseurl, urlAjax);
 }
 
 function getKomsomolsk(){
@@ -874,10 +876,15 @@ function newTypicalLanBillingInetTv(urlIndex, urlAjax) {
 		}
     }
 	
+    var usedAccs = {};//аккаунты только уникальные собираем
+
     function readAcc(json, isInet){
         if(json) {
 			getParam(json.bal, result, isInet ? 'balance' : 'balance_tv');
-			sumParam(json.acc, result, 'agreement', null, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+			if(!usedAccs['acc_' + json.acc]){ //аккаунты только уникальные собираем
+				sumParam(json.acc, result, 'agreement', null, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+				usedAccs['acc_' + json.acc] = true;
+			}
 			
 			if(!/Нет подключенных услуг/i.test(json.services)) {
 				sumParam(json.tarifdescr, result, '__tariff', null, replaceTagsAndSpaces, html_entity_decode, aggregate_join);

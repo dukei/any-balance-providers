@@ -47,6 +47,11 @@ function main(){
         throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
     }
 
+    if(!/<h1[^>]*>Состояние счета<\/h1>/i.test(html)){
+        AnyBalance.trace('Оказались не на состоянии счета, переходим туда явно');
+        html = AnyBalance.requestGet(baseurl + 'main.html', g_headers);
+    }
+
     var result = {success: true};
 
     getParam(html, result, 'balance', /Актуальный баланс:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseBalance);

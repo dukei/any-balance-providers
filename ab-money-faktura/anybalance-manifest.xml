@@ -8,7 +8,7 @@
 	<instruction html="true"><![CDATA[
 	<p>Если у вас нет доступа к интернет-банку, выполните условия на странице https://www.faktura.ru/lite/app/pub/Register</p>
 	]]></instruction>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;, Victor Vostrikov &lt;v.vostrikov@softworks.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
@@ -30,8 +30,11 @@
 		<counter id="cardname" name="Тип карты" type="text"/>
 		<counter id="accnum" name="Номер счета" type="text"/>
 		<counter id="accname" name="Имя счета" type="text"/>
+		<counter id="percent" name="Процент"/>
+		<counter id="percent_sum" name="Сумма процентов к начислению" units=" {@currency}"/>
+		<counter id="percent_date" name="Дата начисления процентов" type="time" format="dd.MM.yyyy"/>
 	</counters>
-	<keywords>интернет-банк, фактура, левобережный, 2Т банк</keywords>
+	<keywords>интернет-банк, фактура, левобережный, 2Т банк,  Банк-Т, 2ТБанк</keywords>
 	<type>money</type>
 	<country>ru</country>
 </provider>

@@ -112,10 +112,9 @@ function mainDep(what, baseurl){
     var prefs = AnyBalance.getPreferences();
     var html = AnyBalance.requestGet(baseurl + "/priv/deposits");
     var $html = $(html);
-
-
     var pattern;
-    if(prefs.login.match(/2t\d{8}/i))
+    
+    if($html.find("div.links a[href*='2tbank']").length > 0 || AnyBalance.getCookie('site')=="bank-t")
       pattern = new RegExp(prefs.num ? prefs.num : '\\d{5}');
     else	
       pattern = new RegExp(prefs.num ? '\\d{3,}'+prefs.num+'\\s' : '\\d{7,}\\s');
@@ -123,8 +122,8 @@ function mainDep(what, baseurl){
     var min_i = -1;
     var min_val = null;
     var cur_i = -1;
-    var $acc = $html.find('div.deposits tbody tr').filter(function(i){
-        var matches = pattern.exec($(this).find('a.deposit-link').text());
+    var $acc = $html.find('tbody tr').filter(function(i){
+    	var matches = pattern.exec($(this).find('a.deposit-link').text());
         if(!matches)
              return false;
         ++cur_i;
@@ -147,9 +146,12 @@ function mainDep(what, baseurl){
     getParam($acc.find('span.deposit-name').text(), result, 'accname', null, replaceTagsAndSpaces);
     getParam($acc.find('a.deposit-link span span').first().text(), result, 'cardnum', null, replaceTagsAndSpaces);
     getParam($acc.find('span.deposit-name').text(), result, '__tariff', null, replaceTagsAndSpaces);
+    getParam($acc.find('td:nth-child(2)').text(), result, ['currency','balance'], null, replaceTagsAndSpaces);
+    getParam($acc.find('td:nth-child(3)').text(), result, 'percent', null, [replaceTagsAndSpaces,/%/i,'']);
     getParam($acc.find('td:nth-child(4)').text(), result, 'balance', null, myReplaceTagsAndSpaces, parseBalance);
-    getParam($acc.find('td:nth-child(2)').text(), result, 'currency', null, replaceTagsAndSpaces);
-
+    getParam($acc.find('td:nth-child(5)').text(), result, 'percent_sum', null, myReplaceTagsAndSpaces, parseBalance);
+    getParam($acc.find('td:nth-child(6)').text(), result, 'percent_date', null, myReplaceTagsAndSpaces, parseDate);
+    
     if(AnyBalance.isAvailable('accnum')){
         var href = $acc.find('a.deposit-link').attr('href');
         html = AnyBalance.requestGet(baseurl + '/' + href.replace(/^[.\/]+/g, ''));

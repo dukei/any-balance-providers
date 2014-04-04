@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="11">ab-money-tcs</id>
+	<id version="12">ab-money-tcs</id>
 	<api flags="no_browser" min_level="4"/>
 	<name>Тинькофф Кредитные Системы</name>
 	<description html="true"><![CDATA[
@@ -39,6 +39,7 @@
 		<counter id="till" name="Дата окончания" type="time" format="dd/MM/yyyy"/>
 		<counter id="limit" name="Кредитный лимит" units=" {@currency}"/>
 		<counter id="freeaddleft" name="Бесплатные пополнения (Остаток)"/>
+		<counter id="freecashleft" name="Сумма льготного снятия (Остаток)"/>
 		<counter id="currency" name="Валюта" type="text"/>
 		<counter id="cardnum" name="Номер карты" type="text"/>
 		<counter id="name" name="Название" type="text"/>

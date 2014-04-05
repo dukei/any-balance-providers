@@ -9,9 +9,8 @@
 
 var g_headers = {
     'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-    'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
     'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.60 Safari/537.1'
+    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.154 Safari/537.36'
 }
 
 function main(){
@@ -19,11 +18,19 @@ function main(){
     if(AnyBalance.getLevel() < 4)
         throw new AnyBalance.Error('Этот провайдер требует AnyBalance API v.4+');
 
+    AnyBalance.setDefaultCharset('utf-8');
+
     var basedomain = "www.tcsbank.ru";
     var baseurl = {};
     baseurl._= "https://" + basedomain;
-    baseurl.api = baseurl._ + "/api-ds/v1/";
-    AnyBalance.setDefaultCharset('utf-8');
+
+    var html = AnyBalance.requestGet(baseurl._ + '/authentication/', g_headers);
+    var api = getParam(html, null, null, /TCS\.Auth\.Cfg\.authServiceURL\s*=\s*"[^"]*?(\/api-[^"]*?\/)session\/"/, replaceSlashes);
+    if(!api)
+        throw new AnyBalance.Error('Не удаётся найти адрес API. Сайт изменен?');
+    
+    AnyBalance.trace('API: ' + api);
+    baseurl.api = baseurl._ + api;
 
     var html, sessionid;
     html = AnyBalance.requestGet(baseurl.api + 'session/?username=' + encodeURIComponent(prefs.login) + '&password=' + encodeURIComponent(prefs.password), g_headers);

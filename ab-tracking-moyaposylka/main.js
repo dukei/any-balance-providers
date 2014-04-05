@@ -32,15 +32,17 @@ var g_headers = {
 function getMyPosylkaResult(prefs) {
 	AnyBalance.trace('Connecting to moyaposylka...');
 	checkEmpty(prefs.track_id, 'Введите код почтового отправления');
-	checkEmpty(prefs.track_dest, 'Выберите страну назначения');
+	//checkEmpty(prefs.track_dest, 'Выберите страну назначения');
 
 	var id = prefs.track_id; //Код отправления, введенный пользователем
-	var dest = prefs.track_dest; //Страна назначения
+	var dest = prefs.track_dest || "RU"; //Страна назначения
 	var baseurl = "https://moyaposylka.ru";
 	var html = AnyBalance.requestGet(baseurl, g_headers);
-        html = AnyBalance.requestPost(baseurl + '/tracker-type/', {
+        html = AnyBalance.requestPost(baseurl + '/tracker-type/', JSON.stringify({
 		number:prefs.track_id
-        }, addHeaders({
+        }), addHeaders({
+		Accept: 'application/json, text/plain, */*',
+		'Content-Type':'application/json;charset=UTF-8',
 		Origin: baseurl,
 		Referer: baseurl + '/',
 		'X-Requested-With': 'XMLHttpRequest'
@@ -49,11 +51,13 @@ function getMyPosylkaResult(prefs) {
 	if(!types.types || types.types.length == 0)
 		throw new AnyBalance.Error('Неизвестный или неверный тип отправления', null, true);
 
-	html = AnyBalance.requestPost(baseurl + '/quick-check/', {
+	html = AnyBalance.requestPost(baseurl + '/quick-check/', JSON.stringify({
 		'number': prefs.track_id,
-		'destinationCountry': prefs.track_dest || 'RU',
+		'destinationCountry': dest,
 		'type': types.types[0].type,
-	}, addHeaders({
+	}), addHeaders({
+		Accept: 'application/json, text/plain, */*',
+		'Content-Type':'application/json;charset=UTF-8',
 		Origin: baseurl,
 		Referer: baseurl + '/',
 		'X-Requested-With': 'XMLHttpRequest'

@@ -11,13 +11,13 @@
 Следует вводить: 11512780151384 (весь номер, цифры и латинские буквы без скобок и пробелов). Вид международного идентификатора: например, CJ247232575US"
         key="track_id">
     </EditTextPreference>
-    <ListPreference 
+<!--    <ListPreference 
         key="track_dest" 
         title="Страна получателя"
 		obligatory="true"
         summary="|Выберите страну получателя|{@s}"
         entries="Россия|Украина|Республика Беларусь|Соединённые Штаты Америки|Великобритания|Таиланд|Гонконг|Сингапур|Германия|Франция|Казахстан|Литва|Латвия|Норвегия|Швеция|Польша|Чехия|Молдова|Южная Корея|Канада|Португалия|Япония|Фиджи|Израиль|Азербайджан|Испания|Швейцария|Италия|Кипр"
 		entryValues="RU|UA|BY|US|GB|TH|HK|SG|DE|FR|KZ|LT|LV|NO|SE|PL|CZ|MD|KR|CA|PT|JP|FJ|IL|AZ|ES|CH|IT|CY"
-		defaultValue="RU">
-    </ListPreference>
+		defaultValue="RU"> 
+    </ListPreference> -->
 </PreferenceScreen>

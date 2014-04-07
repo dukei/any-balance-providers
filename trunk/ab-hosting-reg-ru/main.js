@@ -16,40 +16,34 @@ function main(){
 
     var baseurl = "https://www.reg.ru/";
 
-    var html = AnyBalance.requestGet(baseurl + 'user/', g_headers);
-        
-    var form = getParam(html, null, null, /<form[^>]+action="\/user\/[^"]*login"[^>]*>([\s\S]*?)<\/form>/i);    
-    if(!form)
-        throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
-
-    var params = createFormParams(form);
+    var html = AnyBalance.requestGet(baseurl + 'user/login?nocache=8834', g_headers);
 	
-    if (!params['mode'])
-		params['mode'] = 'login';
-    if (!params['ajax'])
-		params['ajax'] = '1';
-    if (!params['callback']) 
-		params['callback'] = "jQuery183010454580537043512_1369032173223";
-    if (!params['_']) 
-		params['_'] = '1369032378626';
-
-	html = AnyBalance.requestGet(baseurl + 'user/login?login=' + prefs.login
-		+ '&password=' + prefs.password
-		+ '&mode=' + params['mode']
-		+ '&ajax=' + params['ajax']
-		+ '&callback=' + params['callback']
-		+ '&_=' + params['_'],
-	g_headers);
+	html = AnyBalance.requestPost(baseurl + 'user/login?nocache=8834', {
+		login: prefs.login,
+		password: prefs.password,
+		'ajax': '1',
+		'confirmation_code': '',
+		'sms_session_id': '',
+	}, addHeaders({
+		Referer: baseurl + 'user/',
+		'x-requested-with':'XMLHttpRequest'
+	}));
 	
-    if(/"errors":/i.test(html)){
-        var error = getParam(html, null, null, /"error":\"([\s\S]*?)\"}/, replaceTagsAndSpaces, html_entity_decode);
-        if(error)
-            throw new AnyBalance.Error(error);
-        throw new AnyBalance.Error('Не удалось войти в личный кабинет. Проблемы на сайте или сайт изменен.');
-    }
-    //html = AnyBalance.requestGet(baseurl, g_headers);
-    var result = {success: true};
-
+	var json = getJson(html);
+	
+	if (json.auth_ok != '1') {
+		var error = getParam(json.error, null, null, null, replaceTagsAndSpaces, html_entity_decode);
+		if (error)
+			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+		
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+	}
+	
+	html = AnyBalance.requestGet(baseurl + json.auth_return_path, g_headers);
+	
+	var result = {success: true};
+	
     getParam(html, result, 'balance', /<!--\s*баланс\s*-->(?:[^>]*>){5}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 
 	if(isAvailable(['domain_0', 'domain_1', 'domain_2', 'domain_date_0', 'domain_date_1', 'domain_date_2', ])) {

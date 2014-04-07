@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-money-spurtbank</id>
+  <name>Спурт банк</name>
+  <description>
+    Помогает отслеживать состояние счета в банке Спурт (система HandyBank).
+  </description>
+  <author>wtiger &lt;wtiger@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>api:jquery.min.js</js>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Остаток" units=" {@currency}"/>
+    <counter id="currency" name="Валюта" type="text"/>
+    <counter id="balance_rur" name="Остаток в рублях"/>
+    <counter id="account" name="Номер счета"/>
+    <counter id="card_expire" name="Действительно до" type="text"/>
+  </counters>
+  <keywords>
+    money spurt spurtbank handybank
+  </keywords>
+  <type>
+    money
+  </type>
+</provider>

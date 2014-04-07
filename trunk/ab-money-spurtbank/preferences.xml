@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference 
+		key="login"
+		title="Handy-номер"
+		summary="||{@s}" 
+		dialogTitle="Handy-номер" 
+		negativeButtonText="Отмена" 
+		dialogMessage="Укажите Handy-номер для доступа к кабинету."
+		positiveButtonText="ОК">
+	</EditTextPreference>
+	<EditTextPreference 
+		key="pass"
+		title="Handy-пароль" 
+		summary="||***********" 
+		dialogTitle="Handy-пароль" 
+		negativeButtonText="Отмена" 
+		dialogMessage="Укажите Handy-пароль (код доступа) для авторизации."
+		inputType="textPassword"
+		positiveButtonText="ОК">
+	</EditTextPreference>
+	<EditTextPreference 
+		key="card"
+		title="Номер карты"
+		summary="||{@s}" 
+		dialogTitle="Номер карты" 
+		negativeButtonText="Отмена" 
+		dialogMessage="Укажите четыре последних цифры номера карты."
+		positiveButtonText="ОК">
+	</EditTextPreference>
+</PreferenceScreen>

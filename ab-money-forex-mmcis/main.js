@@ -40,12 +40,12 @@ function main() {
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
     var result = {success: true};
-	getParam(html, result, 'fio', /Владелец счёта:(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'balance', /Всего на счет(?:е|у):(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, ['currency', 'balance', 'dostupno', 'bonus'], /Всего на счету:(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, parseCurrency);
-	getParam(html, result, 'dostupno', /Доступно к снятию:(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'bonus', /Бонусов:(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'invest', /Инвестировано в Index TOP(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'fio', /Владелец сч(?:ё|е)та:([^>]*>){4}/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'balance', /Всего на счет(?:е|у):([^>]*>){4}/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, ['currency', 'balance', 'dostupno', 'bonus'], /Всего на счет(?:е|у):([^>]*>){4}/i, replaceTagsAndSpaces, parseCurrency);
+	getParam(html, result, 'dostupno', /Доступно к снятию:([^>]*>){3}/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'bonus', />Бонус(?:ов|ы):([^>]*>){3}/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'invest', /Инвестировано в Index TOP(?:[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 	
 	if(isAvailable(['income_last_month', 'average_income_per_month'])) {	
 		html = AnyBalance.requestGet(baseurl + 'investment/', g_headers);

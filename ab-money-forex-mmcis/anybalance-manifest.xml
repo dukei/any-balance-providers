@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="5">ab-money-forex-mmcis</id>
+	<id version="6">ab-money-forex-mmcis</id>
 	<api flags="no_browser"/>
 	<name>MMCIS (Forex)</name>
 	<description html="true"><![CDATA[

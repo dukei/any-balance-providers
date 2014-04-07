@@ -1,22 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <EditTextPreference 
-        title="Логин" 
-        positiveButtonText="ОК" 
-        summary="Логин:||{@s}\n" 
-        dialogTitle="Логин" 
-        negativeButtonText="Отмена" 
-        dialogMessage="Введите логин на страницу информации об учетной записи на https://stats.tis-dialog.ru."
-        key="login">
-    </EditTextPreference>
-    <EditTextPreference 
-        positiveButtonText="ОК"
-        key="password" 
-        dialogTitle="Пароль"
-        negativeButtonText="Отмена"
-        title="Пароль"
-        summary="Пароль||***********\n"
-        dialogMessage="Введите пароль, используемый для входа на страницу информации об учетной записи на https://stats.tis-dialog.ru."
-        inputType="textPassword">
-    </EditTextPreference>
+	<EditTextPreference
+		obligatory="true"
+		title="Логин"
+		positiveButtonText="ОК"
+		summary="Логин:||{@s}\n"
+		dialogTitle="Логин"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите логин на страницу информации об учетной записи на https://stats.tis-dialog.ru."
+		key="login">
+	</EditTextPreference>
+	<EditTextPreference
+		obligatory="true"
+		positiveButtonText="ОК"
+		key="password"
+		dialogTitle="Пароль"
+		negativeButtonText="Отмена"
+		title="Пароль"
+		summary="Пароль||***********\n"
+		dialogMessage="Введите пароль, используемый для входа на страницу информации об учетной записи на https://stats.tis-dialog.ru."
+		inputType="textPassword">
+	</EditTextPreference>
 </PreferenceScreen>

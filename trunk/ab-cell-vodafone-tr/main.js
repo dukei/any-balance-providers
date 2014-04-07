@@ -18,8 +18,8 @@ function main() {
 
     checkEmpty(prefs.login, 'Telefon numaranızı girin!');
     checkEmpty(prefs.password, 'Şifrenizi girin!');
-
-	var html = AnyBalance.requestGet(baseurl + 'customer/login', g_headers);
+	
+	var html = AnyBalance.requestGet(baseurl + 'customer/login?xcvz=-1', g_headers);
 
 	var params = createFormParams(html, function(params, str, name, value) {
 		if (name == 'username') 
@@ -46,31 +46,34 @@ function main() {
 	
 	// Потом завернуть сюда
 	if(isAvailable(['sms_local', 'sms', 'data_left', 'minutes','minutes_local'/*,'','','',*/])) {
-		var obj = getPackages(baseurl, prefs);
+		try {
+			var obj = getPackages(baseurl, prefs);
+			var packageInfo = obj.packageList.packageInfo;
+			for (i = 0; i < packageInfo.length; i++) {
+				switch (packageInfo[i].trafficType) {
+					case "SMS":
+						// Sms to vodafone numbers
+						if(/Vodafone İçi/i.test(packageInfo[i].trafficDirection)) {
+							sumParam(packageInfo[i].credits+'', result, 'sms_local', null, null, parseBalance, aggregate_sum);
+						} else {
+							sumParam(packageInfo[i].credits+'', result, 'sms', null, null, parseBalance, aggregate_sum);
+						}
+						break;
+					case "DATA":
+						sumParam(packageInfo[i].credits+' b', result, 'data_left', null, null, parseTraffic, aggregate_sum);
+						break;
+					case "VOICE":
+						// to all numbers
+						if(/Her Yöne/i.test(packageInfo[i].trafficDirection)) {
+							sumParam(packageInfo[i].credits+'', result, 'minutes', null, null, parseBalance, aggregate_sum);
+						} else {
+							sumParam(packageInfo[i].credits+'', result, 'minutes_local', null, null, parseBalance, aggregate_sum);
+						}			
+						break;
+				}
+			}		
+		} catch(e) {
 		
-		var packageInfo = obj.packageList.packageInfo;
-		for (i = 0; i < packageInfo.length; i++) {
-			switch (packageInfo[i].trafficType) {
-				case "SMS":
-					// Sms to vodafone numbers
-					if(/Vodafone İçi/i.test(packageInfo[i].trafficDirection)) {
-						sumParam(packageInfo[i].credits+'', result, 'sms_local', null, null, parseBalance, aggregate_sum);
-					} else {
-						sumParam(packageInfo[i].credits+'', result, 'sms', null, null, parseBalance, aggregate_sum);
-					}
-					break;
-				case "DATA":
-					sumParam(packageInfo[i].credits+' b', result, 'data_left', null, null, parseTraffic, aggregate_sum);
-					break;
-				case "VOICE":
-					// to all numbers
-					if(/Her Yöne/i.test(packageInfo[i].trafficDirection)) {
-						sumParam(packageInfo[i].credits+'', result, 'minutes', null, null, parseBalance, aggregate_sum);
-					} else {
-						sumParam(packageInfo[i].credits+'', result, 'minutes_local', null, null, parseBalance, aggregate_sum);
-					}			
-					break;
-			}
 		}
 	}
 	

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="1.0" version="2">ab-cell-vodafone-tr</id>
+	<id major_version="1.0" version="3">ab-cell-vodafone-tr</id>
 	<api flags="no_browser"/>
 	<name>Vodafone Türkiye</name>
 	<description html="true">

@@ -57,10 +57,10 @@ function main(){
 	var result = {success: true, balance:null} ;
 	
 	getParam(html, result, 'count', /Всего[^>]*>[^>]*"Amount"[^>]*>\s*(\d+)/i, null, parseBalance);
-	getParam(html, result, ['balance', 'all'], /на сумму[^>]*>([^<]*)/i, null, parseBalance);
+	getParam(html, result, ['balance', 'all'], [/на сумму[^>]*>([^<]*)/i, /Неоплаченные\s*штрафы[\s\S]{1,5}не\s*найдены/i], [replaceTagsAndSpaces, /Неоплаченные штрафы не найдены/i, '0'], parseBalance);
 	
 	var fines = sumParam(html, null, null, /<tr[^>]*"\s*FineDetails\s*"(?:[\s\S]*?<\/div[^>]*>){4}\s*<\/td>/ig);
-	if(fines) {
+	if(fines && fines.length > 0) {
 		result.all = '';
 		for(var i = 0; i< fines.length; i++) {
 			var curr = fines[i];
@@ -79,7 +79,7 @@ function main(){
 			}
 		}
 	} else {
-		AnyBalance.trace('Не найдено информации о штрафах. Возможно их нет?');
+		AnyBalance.trace('Не найдено информации о штрафах. Скорее всего их нет.');
 	}
 	
     AnyBalance.setResult(result);

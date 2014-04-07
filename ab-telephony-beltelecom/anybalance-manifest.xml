@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-telephony-beltelecom</id>
+	<api flags="no_browser"/>
+	<name>Белтелеком (Минск)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе Белтелеком г. Минск</p>
+	<p>Информация берется с сайта http://beltelecom.by/subscribers/phone-debt</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Общая сумма неоплаченных услуг" units=" р"/>
+	</counters>
+	<keywords></keywords>
+	<type>telephony</type>
+	<country>by</country>
+</provider>

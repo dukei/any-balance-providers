@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="9">ab-money-fxtrend</id>
+  <id version="10">ab-money-fxtrend</id>
   <name>FX-Trend</name>
   <description>
     This provider helps you to check balances on your FX-Trend's account and to monitor PAMMs and PAMM indices.

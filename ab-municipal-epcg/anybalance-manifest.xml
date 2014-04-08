@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-municipal-epcg</id>
+	<id version="2">ab-municipal-epcg</id>
 	<api flags="no_browser"/>
 	<name>Elektroprivreda Crne Gore AD Niksic</name>
 	<description html="true"><![CDATA[
@@ -15,12 +15,13 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Saldo"/>
-		<counter id="topay" name="Iznos zadnje fakture"/>
-		<counter id="topay_date" name="Datum zadnje fakture" type="time" format="dd/MM/yyyy"/>
-		<counter id="meter_num" name="Broj brojila" type="text"/>
-		<counter id="fio" name="Naziv" type="text"/>
-		<counter id="adress" name="Adresa" type="text"/>
+		<counter id="balance" name="Total"/>
+		<counter id="lastdebt" name="Last debt"/>
+		<counter id="last_bill" name="Last bill"/>
+		<counter id="last_bill_month" name="Last bill month" type="text"/>
+		<counter id="meter_num" name="Meter num" type="text"/>
+		<counter id="fio" name="Name" type="text"/>
+		<counter id="adress" name="Region" type="text"/>
 	</counters>
 	<keywords></keywords>
 	<type>municipal</type>

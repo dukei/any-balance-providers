@@ -29,7 +29,7 @@ function main(){
 		'x-requested-with':'XMLHttpRequest'
 	}));
 	
-	var json = getJson(html);
+	var json = getJsonEval(html);
 	
 	if (json.auth_ok != '1') {
 		var error = getParam(json.error, null, null, null, replaceTagsAndSpaces, html_entity_decode);

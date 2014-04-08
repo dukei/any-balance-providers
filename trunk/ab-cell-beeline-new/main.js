@@ -1,5 +1,8 @@
 ﻿﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
+
+Для отладки в дебагере: параметр __debug
+Значения: pre - предоплата, post - постоплата, b2b - кабинет для юр. лиц.
 */
 
 var g_headers = {
@@ -185,11 +188,15 @@ function main() {
 			html = AnyBalance.requestPost(baseurl + (action || 'login.html'), params, addHeaders({Referer: baseurl + 'login.html'}));
 		} catch(e) {
 			if(prefs.__debug) {
-				html = AnyBalance.requestGet(baseurl + 'c/' + prefs.__debug + '/index.html');
+				if(prefs.__debug == 'b2b')
+					html = AnyBalance.requestGet(baseurl + 'faces/index.html');
+				else
+					html = AnyBalance.requestGet(baseurl + 'c/' + prefs.__debug + '/index.html');
 			} else {
 				throw e;
 			}
 		}
+		//AnyBalance.trace(html);
 	}
 	// Иногда билайн нормальный пароль считает временным и предлагает его изменить, но если сделать еще один запрос, пускает и показывает баланс
 	if (/Ваш пароль временный\.\s*Необходимо изменить его на постоянный/i.test(html)) {
@@ -203,26 +210,32 @@ function main() {
 		throw new AnyBalance.Error('Вы зашли по временному паролю, требуется сменить пароль. Для этого войдите в ваш кабинет https://my.beeline.ru через браузер и смените там пароль. Новый пароль введите в настройки данного провайдера.', null, true);
 	if (/<form[^>]+action="\/(?:changePass|changePassB2C).html"/i.test(html))
 		throw new AnyBalance.Error('Билайн требует сменить пароль. Зайдите в кабинет https://my.beeline.ru через браузер и поменяйте пароль на постоянный.', null, true);
-	//После входа обязательно проверяем маркер успешного входа
-	//Обычно это ссылка на выход, хотя иногда приходится искать что-то ещё
-	if (!/logOutLink/i.test(html)) {
-		//Если в кабинет войти не получилось, то в первую очередь надо поискать в ответе сервера объяснение ошибки
-		var error = getParam(html, null, null, [/<div[^>]+class="error-page[\s|"][^>]*>([\s\S]*?)<\/div>/i, /<span[^>]+class="ui-messages-error-summary"[^>]*>([\s\S]*?)<\/span>/i], replaceTagsAndSpaces, html_entity_decode);
-		if(error)
-			throw new AnyBalance.Error(error, null, /Неправильные логин и\s*(?:\(или\)\s*)?пароль/i.test(error));
 		
-		if (AnyBalance.getLastStatusCode() > 400) {
-			AnyBalance.trace('Beeline returned: ' + AnyBalance.getLastStatusString());
-			throw new AnyBalance.Error('Личный кабинет Билайн временно не работает. Пожалуйста, попробуйте позднее.');
-		}
-		//Если объяснения ошибки не найдено, при том, что на сайт войти не удалось, то, вероятно, произошли изменения на сайте
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-	}
-	if (/b2b_post/i.test(html)) {
-		fetchPost(baseurl, html);
+	// Определим, может мы вошли в кабинет для физ лиц?
+	if (/"logout-button"/i.test(html)) {
+		fetchB2B(baseurl, html);
 	} else {
-		fetchPre(baseurl, html);
+		//После входа обязательно проверяем маркер успешного входа
+		//Обычно это ссылка на выход, хотя иногда приходится искать что-то ещё
+		if (!/logOutLink|"logout-button"/i.test(html)) {
+			//Если в кабинет войти не получилось, то в первую очередь надо поискать в ответе сервера объяснение ошибки
+			var error = getParam(html, null, null, [/<div[^>]+class="error-page[\s|"][^>]*>([\s\S]*?)<\/div>/i, /<span[^>]+class="ui-messages-error-summary"[^>]*>([\s\S]*?)<\/span>/i], replaceTagsAndSpaces, html_entity_decode);
+			if(error)
+				throw new AnyBalance.Error(error, null, /Неправильные логин и\s*(?:\(или\)\s*)?пароль/i.test(error));
+			
+			if (AnyBalance.getLastStatusCode() > 400) {
+				AnyBalance.trace('Beeline returned: ' + AnyBalance.getLastStatusString());
+				throw new AnyBalance.Error('Личный кабинет Билайн временно не работает. Пожалуйста, попробуйте позднее.');
+			}
+			//Если объяснения ошибки не найдено, при том, что на сайт войти не удалось, то, вероятно, произошли изменения на сайте
+			AnyBalance.trace(html);
+			throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+		}
+		if (/b2b_post/i.test(html)) {
+			fetchPost(baseurl, html);
+		} else {
+			fetchPre(baseurl, html);
+		}
 	}
 }
 
@@ -230,6 +243,39 @@ function parseBalanceNegative(str) {
 	var val = parseBalance(str);
 	if (isset(val))
 		return -val;
+}
+
+function fetchB2B(baseurl, html) {
+	var prefs = AnyBalance.getPreferences();
+	AnyBalance.trace('Мы в кабинете для юр. лиц...');
+
+	var result = {success: true};
+	
+	getParam(html, result, 'fio', /"user-name"([^>]*>){2}/i, replaceTagsAndSpaces, capitalFirstLenttersAndDecode);
+	
+	if (AnyBalance.isAvailable('balance', 'agreement', 'currency')) {
+		var accounts = sumParam(html, null, null, /faces\/info\/contractDetail\.html\?objId=\d+[^>]*>\d{5,10}/ig);
+		checkEmpty(accounts, 'Не удалось найти ни одного договора, сайт изменен?', true);
+		
+		AnyBalance.trace('Договоров: ' + accounts.length);
+		
+		// Пока мы не знаем как будет выглядеть кабинет с двумя и более договорами, пока получим по первому
+		var current = accounts[0];
+		var currentNum = getParam(current, null, null, />(\d+)/);
+		var currentId = getParam(current, null, null, /faces\/info\/contractDetail\.html\?objId=(\d+)/i);
+		var currentHref = getParam(current, null, null, /faces\/info\/contractDetail\.html\?objId=\d+/i);
+		
+		AnyBalance.trace('Получим информацию по договору: ' + currentNum);
+		
+		html = AnyBalance.requestGet(baseurl + currentHref, g_headers);
+		
+		getParam(html, result, 'agreement', /Договор №([\s\d]+)/i, replaceTagsAndSpaces);
+		//getParam(html, result, 'bills', /class="balance"[^>]*>[^<]*руб(?:[,.\s]*)?([^<]+)/i, replaceTagsAndSpaces);
+		getParam(html, result, 'balance', /class="balance"([^>]*>){2}/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, ['currency', 'balance'], /class="balance"[^>]*>[^<]*?([\d,.]+\s*(?:руб|usd|eur)?)/i, replaceTagsAndSpaces, parseCurrency);
+	}
+	
+	AnyBalance.setResult(result);
 }
 
 function fetchPost(baseurl, html) {
@@ -504,7 +550,7 @@ function getBonuses(xhtml, result) {
 				// Это новый вид отображения данных
 				// Минут осталось
 				sumParam(services[i], result, 'min_local', reNewValue, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
-				
+				sumParam(services[i], result, 'min_local_clear', reNewValue, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 			} else {
 				AnyBalance.trace('Неизвестная опция: ' + bonus_name + ' ' + services[i]);
 			}

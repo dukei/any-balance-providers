@@ -15,7 +15,7 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="mails" name="Баланс" units=" шт"/>
+		<counter id="mails" name="Новые сообщения" units=" шт"/>
 	</counters>
 	<keywords></keywords>
 	<type>social</type>

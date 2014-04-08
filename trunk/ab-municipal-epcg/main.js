@@ -10,40 +10,61 @@ var g_headers = {
 	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
 };
 
+function getFormId(html) {
+	return getParam(html, null, null, /name="form_build_id"[^>]*value="([^"]+)"/i);
+}
+
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://www.epcg.co.me/';
+	
+	var baseurl = 'https://www.racun.epcg.com/';
 	AnyBalance.setDefaultCharset('utf-8');
 
 	checkEmpty(prefs.login, 'Enter login!');
 	checkEmpty(prefs.meterno, 'Enter meter number!');
 
-	var html = AnyBalance.requestGet(baseurl + 'en02_12.html', g_headers);
+	var html = AnyBalance.requestGet(baseurl + 'provjera-racuna', g_headers);
 
-	html = AnyBalance.requestPost(baseurl + 'uvidustanje1.asp', {
-		tipdv:prefs.typeofuser || 'dom',
-		opstina:prefs.municipality || 'Budva',
-		sifra:prefs.login,
-		brbra:prefs.meterno, 
-		B3:'Potvrdi',
-	}, addHeaders({Referer: baseurl + 'en02_12.html'}));
-
-	if (!/Povratak/i.test(html)) {
+	html = AnyBalance.requestPost(baseurl + 'system/ajax', {
+		'home_pretplatni_broj':prefs.login,
+		'home_broj_brojila':prefs.meterno,
+		'form_build_id':getFormId(html),
+		'form_id':'bild_anonymouse_view_bills_view_home_bills_form',
+		'_triggering_element_name':'op',
+		'_triggering_element_value':'Provjerite vaše stanje'
+	}, addHeaders({
+		Referer: baseurl + 'provjera-racuna',
+		'X-Requested-With':'XMLHttpRequest'
+	}));
+	
+	var json = getJsonEval(html);
+	
+	if (!json[1].data) {
 		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
 			throw new AnyBalance.Error(error);
-		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+		throw new AnyBalance.Error('Can`t find information. Is the site changed?');
 	}
-	var result = {success: true};
-
-	getParam(html, result, 'fio', /Naziv:(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'adress', /Adresa:(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-
-	getParam(html, result, 'meter_num', /Broj brojila:(?:[\s\S]*?<td[^>]*>){10}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'balance', /Saldo:(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 	
-	getParam(html, result, 'topay', /Iznos zadnje\s+fakture:(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'topay_date', /Datum zadnje\s+fakture:(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
-
+	var result = {success: true};
+	
+	var data = json[1].data || json[0].data;
+	
+	AnyBalance.trace(data);
+	
+	getParam(prefs.meterno, result, 'meter_num');
+	// ФИО Dabovic Veselin
+	getParam(data, result, 'fio', /<h2>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	//Район страны Sumet
+	getParam(data, result, 'adress', /"subitle"([^>]*>){2}/i, replaceTagsAndSpaces, html_entity_decode);
+	//Всего к уплате –56,1 евро (минус также означает переплату, снимать показание надо с учетом знака перед цифрой)	
+	getParam(data, result, 'balance', /"total"([^>]*>){3}/i, replaceTagsAndSpaces, parseBalance);
+	//Предыдущий долг –61,67 евро (минус означает переплату, снимать показание надо с учетом знака перед цифрой)
+	getParam(data, result, 'lastdebt', /"last-debt"([^>]*>){5}/i, replaceTagsAndSpaces, parseBalance);
+	//Cчет за прошедший месяц (в данном случае февраль 2014) 5,57 евро
+	getParam(data, result, 'last_bill', /"last-bill"([^>]*>){7}/i, replaceTagsAndSpaces, parseBalance);
+	//Месяц счета февраль 2014
+	getParam(data, result, 'last_bill_month', /"last-bill"([^>]*>){5}/i, replaceTagsAndSpaces, html_entity_decode);
+	
 	AnyBalance.setResult(result);
 }

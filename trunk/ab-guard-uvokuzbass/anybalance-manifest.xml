@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-guard-uvokuzbass</id>
+	<id version="3">ab-guard-uvokuzbass</id>
 	<name>УВО МВД Кемерово</name>
 	<api flags="no_browser"/>
 	<description html="true"><![CDATA[
 	<p>Получает баланс и информацию о балансе по услуге охраны от Управления вневедомственной охраны</p>
 	<p>Главного управления Министерства внутренних дел Российской Федерации по Кемеровской области (http://www.uvokuzbass.ru)</p>
-	<p>Информация берется со страницы http://www.uvokuzbass.ru/dolg.html</p>
+	<p>Информация берется со страницы http://www.uvokuzbass.ru/zadolg/</p>
 	<p>Баланс пока можно получить только по лицевому счету. Если вам нужно получать баланс по фамилии и номеру договора, то обращайтесь к автору провайдера для доработки.</p>
 	]]></description>
 	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>

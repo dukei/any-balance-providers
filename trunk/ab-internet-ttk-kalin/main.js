@@ -14,6 +14,7 @@ function getTrafficGb(str){
 }
 
 function main(){
+	throw new AnyBalance.Error("Провайдер более не работает, воспользуйтесь провайдером ТТК (Единый кабинет)");
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
 

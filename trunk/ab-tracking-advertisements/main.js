@@ -77,7 +77,7 @@ function main(){
 			return;
 		}
 
-		result.found = getParam(info, null, null, /<span class="catalog_breadcrumbs-count">[,\s]*(.+?)\s*<\/span>/i, replaceTagsAndSpaces, parseBalance);
+		result.found = getParam(info, null, null, /<div class="catalog_counts">[\S\s]*?(\d+?)\s*<\/span>/i, replaceTagsAndSpaces, parseBalance);
 
 		if(result.found == null){throw new AnyBalance.Error("Ошибка при получении данных с сайта.");}
 

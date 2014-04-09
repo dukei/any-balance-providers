@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <CheckBoxPreference
-        title="Отображать ссылку на график?"
-        defaultValue="true"
-        summaryOn="Отображается"
-        summaryOff="Не отображается"
-        key="show_link" />
+	<CheckBoxPreference
+	title="Отображать ссылку на график?"
+	defaultValue="true"
+	summaryOn="Отображается"
+	summaryOff="Не отображается"
+	key="show_link" />
 </PreferenceScreen>

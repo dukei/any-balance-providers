@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="3">ab-internet-ttk-kalin</id>
+  <id version="4">ab-internet-ttk-kalin</id>
   <name>ТТК - Калининград</name>
   <description>
     Получает баланс и информацию о тарифном плане для калининградского интернет-провайдера Калининград ТрансТелеКом. Информация берется из личного кабинета http://billing.kgdttk.ru/client/index.php.
+	
+	Провайдер более не работает, воспользуйтесь провайдером ТТК (Единый кабинет) http://anybalance.ru/catalog.php?id=ab-internet-ttk&inapp=0
   </description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <files>

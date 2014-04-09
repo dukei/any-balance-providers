@@ -4,10 +4,10 @@
 	<api flags="no_browser"/>
     <name>Температура в Москве</name>
     <description html="true"><![CDATA[
-	<p>Текущая температура в Москве с <a href="https://gradus.melda.ru/">https://gradus.melda.ru/</a></p>
+	<p>Текущая температура в Москве с https://gradus.melda.ru/</p>
 	]]></description>
     <instruction html="true"><![CDATA[
-	<p>Подробная инструкция по настройке: <a href="https://melda.ru/gradus/android/">https://melda.ru/gradus/android/</a></p>
+	<p>Подробная инструкция по настройке: https://melda.ru/gradus/android/</p>
 	]]></instruction>
     <author>Erelen Laiquendi &lt;erelen@melda.ru&gt;</author>
     <files>

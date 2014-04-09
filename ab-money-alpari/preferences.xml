@@ -21,4 +21,14 @@
 		dialogMessage="Введите пароль, используемый для входа в личный кабинет."
 		inputType="textPassword">
 	</EditTextPreference>
+	<EditTextPreference
+		title="Номер счета"
+		key="account"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Номер счета"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Если вы хотите отслеживать состояние счета, введите здесь его номер полностью, например, ALPR012345USD. Поддерживаются только торговые счета.">
+	</EditTextPreference>
 </PreferenceScreen>

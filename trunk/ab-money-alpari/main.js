@@ -30,7 +30,14 @@ function main() {
 	} catch(e) {
 	}
 	
-	html = AnyBalance.requestGet('https://new-my.alpari.ru/ru/', g_headers);
+	if(prefs.account == null){
+		html = AnyBalance.requestGet('https://new-my.alpari.ru/ru/', addHeaders({Referer: baseurl + 'ru/login/'}));
+	}else{
+		var type='mt4';
+		if(prefs.account.search(/^ALPR/)==0)type='fx_option';
+
+		html = AnyBalance.requestGet('https://new-my.alpari.ru/ru/accounts/trading/'+type+'/'+prefs.account+'/', addHeaders({Referer: baseurl + 'ru/login/'}));
+	}
 	
 	if (!/>Выйти</i.test(html)) {
 		var error = sumParam(html, null, null, /"tooltip__phrase"[^>]*>([^<]+)/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
@@ -41,13 +48,26 @@ function main() {
 	}
 	
 	var result = {success: true};
-	var currencys = ['USD', 'EUR', 'RUR', 'GLD'];
-	
-	for(var i= 0; i < currencys.length; i++) {
-		var current = currencys[i];
+
+	if(prefs.account == null){
+
+		var currencys = ['USD', 'EUR', 'RUR', 'GLD'];
+		for(var i= 0; i < currencys.length; i++) {
+			var current = currencys[i];
 		
-		getParam(html, result, 'balance_' + current, new RegExp('"[\\d,.\\s]+' + current + '"', 'i'), replaceTagsAndSpaces, parseBalance);
-		getParam(current, result, 'currency_' + current);
+			getParam(html, result, 'balance_' + current, new RegExp('"[\\d,.\\s]+' + current + '"', 'i'), replaceTagsAndSpaces, parseBalance);
+			getParam(current, result, 'currency_' + current);
+		}
+	}else{
+		result.__tariff = prefs.account;
+
+		getParam(html, result, 'type', /<tr><th>Тип счета:<\/th><td>(.*?)<\/td><\/tr>/i, replaceTagsAndSpaces, html_entity_decode);
+		getParam(html, result, 'server', /<tr><th>Торговый сервер:<\/th><td>(.*?)<\/td><\/tr>/i, replaceTagsAndSpaces, html_entity_decode);
+		getParam(html, result, 'leverage', /<tr><th>Кредитное плечо:<\/th><td>(.*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+		getParam(html, result, 'balance' , /<span class="js-balance-value">(.*?)<\/span>/, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'currency', /<span class="js-balance-value">.*?<\/span>(.*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+		getParam(html, result, 'equity' , /<span class="js-equity-value">(.*?)<\/span>/, replaceTagsAndSpaces, parseBalance);
+
 	}
 	
 	AnyBalance.setResult(result);

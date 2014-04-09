@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-money-alpari</id>
+	<id version="2">ab-money-alpari</id>
 	<api flags="no_browser"/>
 	<name>Alpari</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе на сайте Alpari.ru</p>
+	<p>Предоставляет информацию о балансе на сайте Alpari.ru, либо помогает отслеживать состояние конкретного торгового счета.</p>
 	<p>Информация берется из личного кабинета https://www.alpari.ru/ru/login/</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>Stark &lt;support@starksoft.ru&gt;; wtiger &lt;wtiger@mail.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
@@ -19,9 +19,15 @@
 		<counter id="balance_USD" name="Баланс USD" units=" {@currency_USD}"/>
 		<counter id="balance_EUR" name="Баланс EUR" units=" {@currency_EUR}"/>
 		<counter id="balance_RUR" name="Баланс RUR" units=" {@currency_RUR}"/>
-		<counter id="balance_GLD" name="Баланс GLD" units=" {@currency_GLD}"/>		
+		<counter id="balance_GLD" name="Баланс GLD" units=" {@currency_GLD}"/>
+		<counter id="balance" name="Баланс"/>
+		<counter id="equity" name="Средства"/>
+		<counter id="type" name="Тип счета" type="text"/>
+		<counter id="server" name="Торговый сервер" type="text"/>
+		<counter id="leverage" name="Кредитное плечо" type="text"/>
+		<counter id="currency" name="Валюта" type="text"/>
 	</counters>
-	<keywords></keywords>
+	<keywords>forex alpari</keywords>
 	<type>money</type>
 	<country>ru</country>
 </provider>

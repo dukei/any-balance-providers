@@ -60,6 +60,9 @@ function main(){
 	var pname = pinfo.data[id].clan ? pinfo.data[id].nickname + '[' + cname + ']' : pinfo.data[id].nickname;
 	
 	// Общая статистика
+	if(AnyBalance.isAvailable('wgrate'))
+		result['wgrate'] = pinfo.data[id].global_rating;
+	
 	if(AnyBalance.isAvailable('name'))
 		result['name'] = pname;
 	

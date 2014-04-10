@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="4">ab-internet-ufanet</id>
+	<id version="5">ab-internet-ufanet</id>
 	<name>UFANET (Уфа)</name>
-	<description>
-Получает баланс и информацию о тарифном плане для интернет-провайдера УФАНЕТ (http://ufanet.ru).
-
-УФАНЕТ предоставляет услуги доступа в интернет и телевидения в следующих городах: Ишимбай, Нефтекамск, Октябрьский, Оренбург, Орск, Салават, Стерлитамак, Уфа.
-
-Информация берется из личного кабинета https://my.ufanet.ru но так же поддерживается и старый кабинет http://stat1.ufanet.ru, обратите внимание, в старом кабинете игнорируется настройка № договора, для исправления свяжитесь с автором по e-mail.
-	</description>
+	<description html="true"><![CDATA[
+	<p>Получает баланс и информацию о тарифном плане для интернет-провайдера УФАНЕТ (http://ufanet.ru).</p>
+	<p>УФАНЕТ предоставляет услуги доступа в интернет и телевидения в следующих городах: Ишимбай, Нефтекамск, Октябрьский, Оренбург, Орск, Салават, Стерлитамак, Уфа.</p>
+	<p>Информация берется из личного кабинета https://my.ufanet.ru но так же поддерживается и старый кабинет http://stat1.ufanet.ru, обратите внимание, в старом кабинете игнорируется настройка № договора.</p>
+	]]></description>	
 	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
@@ -19,10 +17,10 @@
 		<js>main.js</js>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units="р"/>
-		<counter id="pay" name="Сумма к оплате" units="р"/>
-		<counter id="abon" name="Абонентская плата" units="р"/>
-		<counter id="daysleft" name="До конца учетного периода" units="дн"/>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="pay" name="Сумма к оплате" units=" р"/>
+		<counter id="abon" name="Абонентская плата" units=" р"/>
+		<counter id="daysleft" name="До конца учетного периода" units=" дн"/>
 		<counter id="agreement" name="№ договора" type="text"/>
 	</counters>
 	<keywords>интернет</keywords>

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3" major_version="1.0" >ab-internet-ktk</id>
+	<id version="4" major_version="1.0" >ab-internet-ktk</id>
 	<name>Kurskonline</name>
 	<description html="true"><![CDATA[
 	<p>Получает текущий баланс, номер договора  у провайдера Kurskonline ("Курская телефонная компания"): http://r46.ru</p>

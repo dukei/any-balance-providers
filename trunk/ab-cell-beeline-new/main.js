@@ -127,6 +127,24 @@ function checkCorrectNumberLogin(html, prefs) {
 	AnyBalance.trace('Залогинены на правильный номер ' + phone);
 }
 
+function loginProc(baseurl, action, params, prefs) {
+	var html;
+	//Теперь, когда секретный параметр есть, можно попытаться войти
+	try {
+		html = AnyBalance.requestPost(baseurl + (action || 'login.html'), params, addHeaders({Referer: baseurl + 'login.html'}));
+	} catch(e) {
+		if(prefs.__debug) {
+			if(prefs.__debug == 'b2b')
+				html = AnyBalance.requestGet(baseurl + 'faces/index.html');
+			else
+				html = AnyBalance.requestGet(baseurl + 'c/' + prefs.__debug + '/index.html');
+		} else {
+			throw e;
+		}
+	}
+	return html;
+}
+
 function main() {
 	var prefs = AnyBalance.getPreferences();
 	
@@ -184,7 +202,18 @@ function main() {
 		var action = getParam(tform, null, null, /<form[^>]+action="\/([^"]*)/i, null, html_entity_decode);
 		
 		//Теперь, когда секретный параметр есть, можно попытаться войти
-		try {
+		for(var i = 1 ; i < 6; i++) {
+			var html = loginProc(baseurl, action, params, prefs);
+			// Если нет показывают ошибки входа, надо попробовать еще раз
+			if(/Вход в личный кабинет/i.test(html) && !/<span[^>]+class="ui-messages-error-summary"/i.test(html)) {
+				AnyBalance.trace('Войти не удалось, сайт не сообщает ни о каких ошибках, попытка №' + i);
+				continue;
+			} else {
+				AnyBalance.trace('Выполнили ' + i + ' попыток входа..');
+				break;
+			}
+		}
+		/*try {
 			html = AnyBalance.requestPost(baseurl + (action || 'login.html'), params, addHeaders({Referer: baseurl + 'login.html'}));
 		} catch(e) {
 			if(prefs.__debug) {
@@ -195,7 +224,7 @@ function main() {
 			} else {
 				throw e;
 			}
-		}
+		}*/
 		//AnyBalance.trace(html);
 	}
 	// Иногда билайн нормальный пароль считает временным и предлагает его изменить, но если сделать еще один запрос, пускает и показывает баланс
@@ -217,7 +246,7 @@ function main() {
 	} else {
 		//После входа обязательно проверяем маркер успешного входа
 		//Обычно это ссылка на выход, хотя иногда приходится искать что-то ещё
-		if (!/logOutLink|"logout-button"/i.test(html)) {
+		if (!/logOutLink/i.test(html)) {
 			//Если в кабинет войти не получилось, то в первую очередь надо поискать в ответе сервера объяснение ошибки
 			var error = getParam(html, null, null, [/<div[^>]+class="error-page[\s|"][^>]*>([\s\S]*?)<\/div>/i, /<span[^>]+class="ui-messages-error-summary"[^>]*>([\s\S]*?)<\/span>/i], replaceTagsAndSpaces, html_entity_decode);
 			if(error)

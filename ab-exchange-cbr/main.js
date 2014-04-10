@@ -10,7 +10,7 @@ function getRateText(result, info, namein, nameout, force) {
 }
 
 function getRate(result, info, namein, nameout) {
-	var matches, regexp = new RegExp('"' + namein + '"[^"]*"([^"]*)"', 'i');
+	var matches, regexp = new RegExp('"' + namein + '"[^"]*"([\\d\\.\\,]*)"', 'i');
 	if (matches = info.match(regexp)) {
 		if (AnyBalance.isAvailable(nameout)) result[nameout] = parseFloat(matches[1].replace(',', '.'));
 	} else {

@@ -24,7 +24,7 @@
         title="Город"
         summary="||{@s}"
         entries="Ишимбай|Нефтекамск|Октябрьский|Оренбург|Орск|Салават|Стерлитамак|Уфа"
-        entryValues="ishimbai|neftekamsk|okt|orenburg|orsk|slv|sterlitamak|ufa"
+        entryValues="ish|nft|okt|orb|orsk|slv|str|ufa"
 		defaultValue="ufa">
     </ListPreference>
     <EditTextPreference 

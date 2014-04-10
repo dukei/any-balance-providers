@@ -34,7 +34,7 @@ function main(){
     var row = $(rows[0]);
     result.agreement = row.find("td").text().trim();
     row = $(rows[1]);
-    result.balance = Number(row.find("td").text().replace("ð.","").trim());
+    result.balance = Number(row.find("td").text().trim().split(" ")[0]);
     row = $(rows[2]);
     cells = row.find("td");
     if(cells.length == 3){

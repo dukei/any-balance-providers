@@ -102,6 +102,9 @@ function main() {
 	//обратить внимание на "Залишок:", может измениться
 	sumParam(html, result, 'bonus_mins_1', /(?:Залишок:|Остаток минут на сеть Киевстар:)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
 
+	//Срок действия бонусных минут (1)
+	sumParam(html, result, 'bonus_mins_1_till', /(?:Залишок хвилин для дзвінків на Ки.встар:|Остаток минут для звонков на Ки.встар:)[\s\S]*?<td[^>]*>[\s\S]*?<\/td>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate, aggregate_sum);
+
 	//Бонусные минуты (2) на любые номера
 	sumParam(html, result, 'bonus_mins_2', /(?:Залишок хвилин для дзвінків абонентам Ки.встар та DJUICE:|Остаток минут для звонков абонентам Ки.встар и DJUICE:)[\s\S]*?<b>([^<]*)/ig, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
 	sumParam(html, result, 'bonus_mins_2', /(?:Залишок Хвилини на КС 500 хв:|Остаток Минуты на КС 500 мин:)[\s\S]*?<b>([^<]*)/ig, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
@@ -110,6 +113,11 @@ function main() {
 	sumParam(html, result, 'bonus_mins_2', /(?:Залишок хвилин для дзвінків по Україні:|Остаток минут для звонков по Украине:)[\s\S]*?<b>([^<]*)/ig, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
 	sumParam(html, result, 'bonus_mins_2', /(?:Залишок хвилин для дзвінків на інших операторів та номери фіксованого зв"язку|Остаток минут для звонков на других операторов)(?:[^>]*>){3}(.*)/ig, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
 	sumParam(html, result, 'bonus_mins_2', /(?:Залишок хвилин|Остаток минут):(?:[^>]*>){3}(.*)/ig, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
+	sumParam(html, result, 'bonus_mins_2', /(?:Залишок хвилин на інші мобільні мережі в межах України|Остаток минут на другие мобильные сети в пределах Украины):(?:[^>]*>){3}(.*)/ig, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
+
+	//Срок действия бонусных минут (2)
+	sumParam(html, result, 'bonus_mins_2_till', /(?:Залишок хвилин на інші мобільні мережі в межах України:|Остаток минут на другие мобильные сети в пределах Украины:)[\s\S]*?<td[^>]*>[\s\S]*?<\/td>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate, aggregate_sum);
+
 	//Тарифные минуты:
 	sumParam(html, result, 'mins_tariff', /(?:Тарифні хвилини:|Тарифные минуты:)[\s\S]*?<b>([^<]*)/ig, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
 	//Доплата за входящие:

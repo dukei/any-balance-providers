@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="11" date="2014-04-10">
+      - Adaptation to the new code.
+    </change>
     <change version="10" date="2014-04-07">
       - New PAMM-index "Million3" added.
       - Some improvements.
     </change>
     <change version="9" date="2014-03-22">
       - New PAMM-index "Prize2" added.
-      - Some improvements in forecast procedure.
+      - Some improvements in the forecast procedure.
     </change>
     <change version="8" date="2014-03-01">
       - Counter depended by PAMM indices added: Sum of open trades. It calculated by all PAMMs included in PAMM-index. Also, look for more details in provider's log.
@@ -28,7 +31,7 @@
       - Some counters changed to optional.
     </change>
     <change version="4" date="2014-02-04">
-      - Adaptation to new design.
+      - Adaptation to the new design.
     </change>
     <change version="3" date="2014-01-22">
       - Some correct for Receipts.

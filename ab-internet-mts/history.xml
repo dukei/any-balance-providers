@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="57" date="2014-04-10">
+	- Исправлен регион: Новосибирск.
+	</change>
 	<change version="56" date="2014-04-10">
 	- Добавлен г. Ярославль
 	</change>

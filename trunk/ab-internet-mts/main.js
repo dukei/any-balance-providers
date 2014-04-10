@@ -241,18 +241,20 @@ function getNsk(){
 	json = getJson(html);
 	html = JSON.stringify(json);
 	
-	AnyBalance.trace(html);
+	var accounts = sumParam(html, null, null, /("Param":\[\{"_":"API.User.Service:ReloadUserCard[\s\S]*?Name[\s\S]*?})/ig);
+	checkEmpty(accounts && accounts.length > 0, 'Не удалось найти ни одного счета', true);
 	
-    var result = {success: true};
-    //Вначале попытаемся найти активный тариф
-    getParam(html, result, '__tariff', /Name[\s\S]{1,20}Тариф\s*'([\s\S]*?)'/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'balance', /([\d.\-,]{1,10})(?:\&nbsp;|\s)руб/i, replaceTagsAndSpaces, parseBalance2);
-
-/*	getParam(html, result, 'abon', /Абонентская плата:([^<]*)/i, replaceTagsAndSpaces, parseBalance2);
-    getParam(html, result, 'internet_cur', /Израсходовано:([^<]*)/i, replaceTagsAndSpaces, parseBalance2);
-    getParam(html, result, 'agreement', /Номер договора:[^<]*<[^>]*>([^<]*)/i, replaceTagsAndSpaces);
-    getParam(html, result, 'username', /Мои аккаунты[\s\S]{1,150}<strong>([\s\S]*?)<\/strong>/i, null);
-*/
+	AnyBalance.trace('Аккаунтов: ' + accounts.length);
+	
+	var result = {success: true};
+	
+	for(var i = 0; i < accounts.length; i++) {
+		var name = getParam(accounts[i], null, null, /Name":"([^"]+)/i);
+		
+		sumParam(name, result, 'balance', /([\d.,]+)(?:&nbsp;)?\s*руб/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+		sumParam(name, result, '__tariff', /,\s([\d\-]{5,})/i, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+	}
+	
     AnyBalance.setResult(result);
 	
 	

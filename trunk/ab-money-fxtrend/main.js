@@ -154,22 +154,28 @@ function main(){
 			throw new AnyBalance.Error("Error getting data of index '"+prefs.index+"' (may be it not exist?).");
 		}
 
-		result.index_included = (getParam(info, null, null, /PAMM accounts that are included in PAMM index:<\/b><\/td>\s+<td.*?>([\s\S]+?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode)).replace(/\% /g,"%, ");
+		result.index_included = (getParam(info, null, null, /PAMM accounts that are included in PAMM index:<\/b><\/td>\s+<td.*?>([\s\S]+?)<\/table>/i, replaceTagsAndSpaces, html_entity_decode)).replace(/\% /g,"%, ");
+
+		if(matches = info.match(/PAMM accounts that are included in PAMM index:<\/b><\/td>\s+<td.*?>([\s\S]+?)<\/table>/i)){
+			included=matches[1];
+		}else{
+			throw new AnyBalance.Error("Error getting data of index '"+prefs.index+"' (may be it not exist?).");
+		}
 		AnyBalance.trace('Index included: ' + result.index_included);
 
 		getParam(info, result, 'index_started', /Time of starting:<\/b><\/td>\s+<td.*?>(.*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
 
 		if(isAvailable('sum_open_trades')){
 			AnyBalance.trace('Getting open trades...');
-			var accs = result.index_included.replace(/ \d+\%$/,'').split(/ \d+\%, /);
-			var sum = 0;
-			for(a in accs){
-				AnyBalance.trace('Getting details for PAMM: '+accs[a]+'...');
 
-				var info1 = AnyBalance.requestGet(baseurl + 'en/pamm/' + accs[a], addHeaders({Referer: baseurl}));
+			var regexp = /<a href="https?:\/\/fx\-trend\.com\/(.*?)">(.*?)<\/a>/g;
+			var sum = 0;
+			while((r = regexp.exec(included)) != null) {
+				AnyBalance.trace('Getting details for PAMM: '+r[2]+'...');
+				var info1 = AnyBalance.requestGet(baseurl + 'en/' + r[1], addHeaders({Referer: baseurl}));
 
 				if((matches = info1.match(/<h2>PAMM account details (.*?)<\/h2>/)) == null){
-					throw new AnyBalance.Error("Error getting data of PAMM '"+accs[a]+"' (may be it not exist?).");
+					throw new AnyBalance.Error("Error getting data of PAMM '"+r[2]+"' (may be it not exist?).");
 				}
 
 				AnyBalance.trace('Looking for open trades...');
@@ -180,8 +186,8 @@ function main(){
 					getParam(matches[0], null, null, /[\s\S]*<tr>\s+<td>.*?<\/td>\s+<td.*?>.*?<\/td>\s+<td.*?>(.*?)\%<\/td>\s+<\/tr>/i, replaceTagsAndSpaces, parseBalance);
 				}
 			}
-			result.sum_open_trades = sum;
 			AnyBalance.trace('Sum of open trades: '+sum);
+			result.sum_open_trades = sum;
 		}
 
 		if(matches = info.match(/<h2>weekly investor’s returns<\/h2>[\s\S]+?<\/table>/i)){

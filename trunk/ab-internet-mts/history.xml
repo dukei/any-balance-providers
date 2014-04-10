@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="56" date="2014-04-10">
+	- Добавлен г. Ярославль
+	</change>
 	<change version="55" date="2014-04-04">
 	- Исправлен регион: Ижевск.
 	</change>

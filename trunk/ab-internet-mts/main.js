@@ -13,32 +13,33 @@ var g_headers = {
 };
 
 var regions = {
-   moscow: getMoscow,
-   rostov: getRostov,
-   nsk: getNsk,
-   prm: getPrm,
-   ekt: getPrm,
-   krv: getKrv,
-   nnov: getNnov,
-   sdv: getSdv,
-   vlgd: getVologda,
-   izh: getIzhevsk,
-   pnz: getPnz,
-   kms: getKomsomolsk,
-   tula: getTula,
-   bal: getBalakovo,
-   uln: getUln,
-   nor: getNorilsk,
-   mag: getMagnit,
-   miass: getMiass,
-   kurgan: getKurgan,
-   barnaul: getBarnaul,
-   belgorod: getBelgorod,
-   saratov: getSaratov,
-   chita: getChita,
-   amur: getAmur,
-   orel: getOrel,
-   piter: getPiter,
+	moscow: getMoscow,
+	rostov: getRostov,
+	nsk: getNsk,
+	prm: getPrm,
+	ekt: getPrm,
+	krv: getKrv,
+	nnov: getNnov,
+	sdv: getSdv,
+	vlgd: getVologda,
+	izh: getIzhevsk,
+	pnz: getPnz,
+	kms: getKomsomolsk,
+	tula: getTula,
+	bal: getBalakovo,
+	uln: getUln,
+	nor: getNorilsk,
+	mag: getMagnit,
+	miass: getMiass,
+	kurgan: getKurgan,
+	barnaul: getBarnaul,
+	belgorod: getBelgorod,
+	saratov: getSaratov,
+	chita: getChita,
+	amur: getAmur,
+	orel: getOrel,
+	piter: getPiter,
+	yar: getYar,
 };
 
 function main(){
@@ -905,3 +906,37 @@ function newTypicalLanBillingInetTv(urlIndex, urlAjax) {
 	
     AnyBalance.setResult(result);
 } 
+
+
+function getYar() {
+	var prefs = AnyBalance.getPreferences();
+	var baseurl = 'https://lanbilling.tensortelecom.ru/';
+	AnyBalance.setDefaultCharset('utf-8');
+	
+	checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(prefs.password, 'Введите пароль!');
+	
+	var html = AnyBalance.requestGet(baseurl + 'client/index.php', g_headers);
+	
+	html = AnyBalance.requestPost(baseurl + 'client/index.php', {
+		login: prefs.login,
+		password: prefs.password,
+	}, addHeaders({Referer: baseurl + 'client/index.php'}));
+	
+	if (!/logout/i.test(html)) {
+		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
+		if (error)
+			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+		
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+	}
+	
+	var result = {success: true};
+	
+	getParam(html, result, 'balance', /Баланс([\s\S]*?<td[^>]*>){4}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'username', />\s*Вы:([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'agreement', />Номер договора([\s\S]*?<td[^>]*>){4}(\d+)/i, replaceTagsAndSpaces, html_entity_decode);
+	
+	AnyBalance.setResult(result);
+}

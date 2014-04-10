@@ -1,10 +1,5 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Получает текущий остаток и другие параметры карт Беларусбанка, используя систему интернет-банк
-
-Сайт оператора: http://belarusbank.by/
-Личный кабинет: https://ibank.asb.by/wps/portal/ibank/
 */
 
 function main(){
@@ -64,22 +59,30 @@ function main(){
     if(!codes)
         throw new AnyBalance.Error('Не введены коды ' + (col+1) + '1-' + (col+2) + '0');
 
-    var url = getParam(html, null, null, /<form[^>]+action="\/wps\/portal\/ibank\/([^"]*)"[^>]*name="LoginForm1"/i, null, html_entity_decode);
-    if(!url)
-        throw new AnyBalance.Error('Не удалось найти форму ввода кода. Сайт изменен?');
+	var form = getParam(html, null, null, /<form[^>]+action="\/wps\/portal\/ibank\/[^"]*"[^>]*name="LoginForm1"[\s\S]*?<\/form>/i);
+	if(!form)
+		throw new AnyBalance.Error('Не удалось найти форму ввода кода. Сайт изменен?');
+
+	var url = getParam(form, null, null, /<form[^>]+action="\/wps\/portal\/ibank\/([^"]*)"[^>]*name="LoginForm1"/i, null, html_entity_decode);
+    /*if(!url)
+        throw new AnyBalance.Error('Не удалось найти форму ввода кода. Сайт изменен?');*/
 
     codes = codes.split(/\D+/g);
     var code = codes[idx];
     if(!code)
         throw new AnyBalance.Error('Не введен код № ' + (codenum+1));
+	
+	var params = createFormParams(form, function(params, str, name, value) {
+		if (name == 'bbIbCodevalueField') 
+			return code*1;
 
-    html = AnyBalance.requestPost(baseurl + url, {
-        cancelindicator:false,
-        bbIbCodevalueField:code,
-        bbIbLoginAction:'in-action',
-        bbIbCancelAction:'',
-        code_number_expire_time:true
-    });
+		return value;
+	});	
+	
+	params.bbIbLoginAction = 'in-action';
+	
+	//
+    html = AnyBalance.requestPost(baseurl + url, params);
 
     if(!/portalLogoutLink/i.test(html)){
         var error = getParam(html, null, null, /<p[^>]+class="warning"[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);

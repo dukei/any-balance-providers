@@ -12,7 +12,7 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://www.askidka.ru/';
+	var baseurl = 'http://www.podarok.rn-card.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 
 	checkEmpty(prefs.login, 'Введите номер карты!');
@@ -28,8 +28,8 @@ function main() {
 	
 	html = AnyBalance.requestPost(baseurl + '?q=cabinet', params, addHeaders({Referer: baseurl + '?q=cabinet'}));
 
-	if (/Сообщение об ошибке/i.test(html)) {
-		var error = getParam(html, null, null, /Сообщение об ошибке(?:[^>]*>){1}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+	if (!/name="bonus"[^>]*value="\d+"/i.test(html)) {
+		var error = getParam(html, null, null, /Сообщение об ошибке(?:[^>]*>){1}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
 			throw new AnyBalance.Error(error);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');

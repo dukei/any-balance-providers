@@ -33,7 +33,7 @@ function main() {
 		
 		html = AnyBalance.requestPost(baseurlLogin + 'login/hosting/', params, addHeaders({Referer: baseurlLogin + 'login/hosting/'})); 		
 		
-		if(!/jauth\/logout/i.test(html)){
+		if(!/\/logout/i.test(html)){
 			var error = sumParam(html, null, null, /"form-errors"[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
 			if(error)
 				throw new AnyBalance.Error(error);

@@ -132,7 +132,7 @@ function doNewCabinet(prefs) {
 }
 
 function fetchCard(html, baseurl, prefs) {
-	html = AnyBalance.requestGet(baseurl + getParam(html, null, null, /href="([^"]+CARDS[^"]+)/i), g_headers);
+	html = AnyBalance.requestGet(baseurl + getParam(html, null, null, /href="([^"]+CARDS[^"]+)[^>]*>\s*Карты\s*</i), g_headers);
 	
 	var lastdigits = prefs.cardnum ? prefs.cardnum : '\\d{4}';
 	

@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-internet-o3-ua</id>
+	<id version="2">ab-internet-o3-ua</id>
 	<api flags="no_browser"/>
 	<name>O3 (Freenet, Украина)</name>
-	<description>
-Получает данные для провайдера O3, бывший Freenet в Украине http://o3.ua/
-
-Личный кабинет находится по адресу http://o3.ua/ru/cabinet.html
-	</description>
+	<description html="true"><![CDATA[
+	<p>Получает данные для провайдера O3, бывший Freenet в Украине http://o3.ua/</p>
+	<p>Личный кабинет находится по адресу http://my.o3.ua/</p>
+	]]></description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
@@ -17,12 +16,12 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units="грн"/>
+		<counter id="balance" name="Баланс" units=" грн"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="status" name="Статус" type="text"/>
 		<counter id="dogovor" name="Договор" type="text"/>
-		<counter id="traf_income" name="Входящий трафик" units="Мб"/>
-		<counter id="traf_outgoing" name="Исходящий трафик" units="Мб"/>
+		<counter id="traf_income" name="Входящий трафик" units=" Мб"/>
+		<counter id="traf_outgoing" name="Исходящий трафик" units=" Мб"/>
 	</counters>
 	<keywords></keywords>
 	<type>internet</type>

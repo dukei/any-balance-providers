@@ -525,19 +525,10 @@ function megafonTrayInfo(filial) {
 						} else {
 							AnyBalance.trace('Пропускаем безлимитные внутрисетевые минуты: ' + val);
 						}
-					} else if (/мин/i.test(val) || /минут/i.test(name)) {
-						var mins = getLeftAndTotal(val, result, false, false, 'mins_left', 'mins_total', parseMinutes);
-						if (!isset(mins.left) || mins.left < 1000000) { //Большие значения, считай, безлимит. Че его показывать...
-							if (isset(mins.total) && !isset(mins_totals_was[mins.total])) {
-								addLeftAndTotal(mins, result, AnyBalance.isAvailable('mins_left'), AnyBalance.isAvailable('mins_total'), 'mins_left', 'mins_total');
-								new_mins_totals_was[mins.total] = true;
-							}
-						} else {
-							AnyBalance.trace('Пропускаем безлимитные минуты: ' + val);
-						}
 					} else if (/Гигабайт в дорогу/i.test(name)) {
 						getLeftAndTotal(val, result, need_gb_with_you, false, 'gb_with_you', null, parseTrafficMy);
-					} else if (/[кгмkgm][бb]|тар\.\s*ед/i.test(val)) {
+					// Трафик пришлось перенести выше, т.к. иногда есть трафик вот такого вида 187.73 мин \/ 324.27 мин \/ 512 мин и попадает в минуты
+					} else if (/QS2 все включено/i.test(name) || /[кгмkgm][бb]|тар\.\s*ед/i.test(val)) {
 						var traf = getLeftAndTotal(val, result, false, false, null, null, parseTrafficMy);
 						if (isset(traf.total) && !isset(internet_totals_was[traf.total])) { //Проверяем, что на предыдущем этапе этот трафик ещё не был учтен
 							new_internet_totals_was[traf.total] = true;
@@ -548,6 +539,16 @@ function megafonTrayInfo(filial) {
 								result.internet_left = (result.internet_left || 0) + (traf.left || 0);
 							if (AnyBalance.isAvailable('internet_total')) 
 								result.internet_total = (result.internet_total || 0) + traf.total;
+						}
+					} else if (/мин/i.test(val) || /минут/i.test(name)) {
+						var mins = getLeftAndTotal(val, result, false, false, 'mins_left', 'mins_total', parseMinutes);
+						if (!isset(mins.left) || mins.left < 1000000) { //Большие значения, считай, безлимит. Че его показывать...
+							if (isset(mins.total) && !isset(mins_totals_was[mins.total])) {
+								addLeftAndTotal(mins, result, AnyBalance.isAvailable('mins_left'), AnyBalance.isAvailable('mins_total'), 'mins_left', 'mins_total');
+								new_mins_totals_was[mins.total] = true;
+							}
+						} else {
+							AnyBalance.trace('Пропускаем безлимитные минуты: ' + val);
 						}
 					} else {
 						AnyBalance.trace('Неизвестная опция ' + name + ': ' + val);

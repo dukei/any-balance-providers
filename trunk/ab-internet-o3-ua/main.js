@@ -11,20 +11,20 @@ var g_headers = {
 };
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://o3.ua/';
+	var baseurl = 'http://my.o3.ua/';
 	AnyBalance.setDefaultCharset('windows-1251');
 	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 		
-	var html = AnyBalance.requestPost(baseurl + 'ru/cabinet.html', {
+	var html = AnyBalance.requestPost(baseurl, {
 		redirect:'',
 		logon:'1',
 		login:prefs.login,
 		password:prefs.password,
 		logon:'1',
 		chk:'frm_chk',
-    }, addHeaders({Referer: baseurl + 'ru/cabinet.html'}));
+    }, addHeaders({Referer: baseurl}));
 	
 	if(!/logout/i.test(html)) {
 		var error = getParam(html, null, null, /<h2>Личный кабинет<\/h2>\s*<div[^>]*"message"[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);

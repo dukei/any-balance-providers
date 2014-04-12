@@ -209,7 +209,7 @@ function fetchCard(accounts, baseurl, sessionid){
 		for(var z = 0; z < cur.length; z++) {
 			var curr = cur[z];
 			
-			if(/Current/i.test(curr.accountType))
+			if(/Current|Credit/i.test(curr.accountType))
 				cards = cards.concat(curr);
 		}
     }

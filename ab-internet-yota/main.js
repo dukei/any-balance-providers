@@ -20,7 +20,7 @@ function main(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
 
-    var baseurl = "https://my.yota.ru/selfcare/";
+    var baseurl = "https://my.yota.ru:443/selfcare/";
 
 	checkEmpty(prefs.login, 'Пожалуйста, введите логин в личный кабинет Yota!');
 	checkEmpty(prefs.password, 'Пожалуйста, введите пароль!');
@@ -53,7 +53,6 @@ function main(){
             gotoOnFail:baseurl + 'loginError',
             org:'customer',
             'old-token':old_token,
-            IDToken3:prefs.password,
             IDToken2:prefs.password,
             IDToken1:login
         });

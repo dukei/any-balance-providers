@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-education-class-life</id>
+	<api flags="no_browser"/>
+	<name>Школьная карта (https://class-life.ru)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе на школьной карте https://www.class-life.ru/</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Общий баланс" units=" р"/>
+		<counter id="balance_hot" name="Баланс горячего питания" units=" р"/>
+		<counter id="balance_cafe" name="Баланс буфетного питания" units=" р"/>
+	</counters>
+	<keywords></keywords>
+	<type>education</type>
+	<country>ru</country>
+</provider>

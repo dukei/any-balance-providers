@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="22" date="2014-04-14">
+      - Улучшено распознавание "Трафика".
+    </change>
     <change version="21" date="2013-07-15">
       - Добавлена поддержка Balance Widget
     </change>

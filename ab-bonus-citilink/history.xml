@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-<change version="4" date="2013-11-12">
-- Добавлена поддержка раздела Эксперта. (Stark)
-</change>
-<change version="3" date="2013-04-17">
-- Исправлены единицы измерения
-</change>
-<change version="2" date="2013-04-16">
-- Исправлено получение бонусов в некоторых случаях
-</change>
+	<change version="5" date="2014-04-14">
+	- Поддержка изменений на сайте.
+	</change>
+	<change version="4" date="2013-11-12">
+	- Добавлена поддержка раздела Эксперта. (Stark)
+	</change>
+	<change version="3" date="2013-04-17">
+	- Исправлены единицы измерения
+	</change>
+	<change version="2" date="2013-04-16">
+	- Исправлено получение бонусов в некоторых случаях
+	</change>
 </history>

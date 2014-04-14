@@ -1,15 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-<change version="6" date="2013-12-02">
-- Поддержка изменений в процедуре входа.
-</change>
-<change version="5" date="2013-11-12">
-- Исправлено получение дохода за текущий месяц (Stark)
-</change>
-<change version="4" date="2013-11-07">
-- Поддержка изменений на сайте
-</change>
-<change version="2" date="2013-07-05">
-- Исправлено получение прогноза дохода
-</change>
+	<change version="7" date="2014-04-14">
+	- Поддержка изменений в процедуре входа.
+	</change>
+	<change version="6" date="2013-12-02">
+	- Поддержка изменений в процедуре входа.
+	</change>
+	<change version="5" date="2013-11-12">
+	- Исправлено получение дохода за текущий месяц (Stark)
+	</change>
+	<change version="4" date="2013-11-07">
+	- Поддержка изменений на сайте
+	</change>
+	<change version="2" date="2013-07-05">
+	- Исправлено получение прогноза дохода
+	</change>
 </history>

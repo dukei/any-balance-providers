@@ -2,6 +2,8 @@
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
+var g_baseurl = 'https://profit-partner.ru/';
+
 var g_headers = {
 	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
@@ -35,21 +37,19 @@ function main(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
 
-    var baseurl = 'http://profit-partner.ru/';
-
-	var html = AnyBalance.requestGet(baseurl + 'sign/in', g_headers);
+	var html = AnyBalance.requestGet(g_baseurl + 'sign/in', g_headers);
 
 	var a = toNumbers("34b6df80b370ea1d139e9ff53c0e569e"),
 		b = toNumbers("3579ba912ceb30beb21135fc5defb40b"),
 		c = toNumbers("da96a44a86a5a28ba38ce3d38bb89cd3");
 
-	AnyBalance.setCookie('profit-partner.ru', 'sissioncookie', toHex(slowAES.decrypt(c, 2, a, b)) + "; expires=Thu, 31-Dec-37 23:55:55 GMT; path=/");
+	//AnyBalance.setCookie('profit-partner.ru', 'sissioncookie', toHex(slowAES.decrypt(c, 2, a, b)) + "; expires=Thu, 31-Dec-37 23:55:55 GMT; path=/");
 	
-	html = AnyBalance.requestGet(baseurl + 'sign/in', g_headers);
+	html = AnyBalance.requestGet(g_baseurl + 'sign/in', g_headers);
 	/*var captchaa;
 	if(AnyBalance.getLevel() >= 7){
 		AnyBalance.trace('Пытаемся ввести капчу');
-		var captcha = AnyBalance.requestGet(baseurl+ '/ps/scc/php/cryptographp.php');
+		var captcha = AnyBalance.requestGet(g_baseurl+ '/ps/scc/php/cryptographp.php');
 		captchaa = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
 		AnyBalance.trace('Капча получена: ' + captchaa);
 	}else{
@@ -65,7 +65,7 @@ function main(){
 		return value;
 	});	
 	
-    var html = AnyBalance.requestPost(baseurl + 'sign/in', params, g_headers);
+    var html = AnyBalance.requestPost(g_baseurl + 'sign/in', params, g_headers);
 
     if(!/\/sign\/out/i.test(html)){
         var error = getParam(html, null, null, /<div[^>]+class="error"(?:[^>](?!display:none))*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
@@ -88,7 +88,7 @@ function main(){
         var now = new Date();
         var startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
         var endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-        html = AnyBalance.requestPost(baseurl + 'stats/common/', {
+        html = AnyBalance.requestPost(g_baseurl + 'stats/common/', {
             form_reload:1,
             area:'all',
             period:dateToYMD(startOfMonth) + '~' + dateToYMD(endOfMonth),

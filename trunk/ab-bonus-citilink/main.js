@@ -1,10 +1,5 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Получает бонусы для федерального электронного дискаунтера citilink 
-
-Operator site: http://www.citilink.ru
-Личный кабинет: http://www.citilink.ru/profile/
 */
 
 var g_headers = {
@@ -21,10 +16,13 @@ function main(){
 
     AnyBalance.setDefaultCharset('windows-1251'); 
 
-    var html = AnyBalance.requestPost(baseurl + 'login/', {
-		fromPage:'',
-		login:prefs.login,
-		password:prefs.password,
+	var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
+	
+	var action = getParam(html, null, null, /<form name="mainForm" method="POST" action="([^"]+)/i);
+	
+    html = AnyBalance.requestPost(action, {
+		email:prefs.login,
+		pass:prefs.password,
 		passOk:false
     }, addHeaders({Referer: baseurl})); 
 
@@ -45,7 +43,7 @@ function main(){
     getParam(html, result, 'new', /ожидают начисления([^<]*)/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'num', /(\d+)\s*товар\S* на сумму/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'sum', /\d+\s*товар\S* на сумму([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, '__tariff', /Статус &laquo;([\s\S]*?)&raquo;? в следующем квартале будет сохранен/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, '__tariff', [/Статус &laquo;([\s\S]*?)&raquo;? в следующем квартале будет сохранен/i, /Для сохранения статуса([^<]+)по итогам/i], replaceTagsAndSpaces, html_entity_decode);
 
 	if(isAvailable(['obrabotannie', 'pomosh', 'reshennie', 'zhalobi', 'rating', 'position', 'nachisleno'])) {
 		html = AnyBalance.requestGet(baseurl + 'profile/expert/', g_headers);

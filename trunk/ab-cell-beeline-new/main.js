@@ -281,6 +281,26 @@ function fetchB2B(baseurl, html) {
 	var result = {success: true};
 	
 	getParam(html, result, 'fio', /"user-name"([^>]*>){2}/i, replaceTagsAndSpaces, capitalFirstLenttersAndDecode);
+    if (AnyBalance.isAvailable('balance', 'agreement', 'currency')) {
+    	var accounts = sumParam(html, null, null, /faces\/info\/contractDetail\.html\?objId=\d+[^>]*>\d{5,10}/ig);
+
+    	checkEmpty(accounts, 'Не удалось найти ни одного договора, сайт изменен?', true);
+
+    	AnyBalance.trace('Договоров: ' + accounts.length);
+    	// Пока мы не знаем как будет выглядеть кабинет с двумя и более договорами, пока получим по первому
+    	var current = accounts[0];
+    	var currentNum = getParam(current, null, null, />(\d+)/);
+    	var currentId = getParam(current, null, null, /faces\/info\/contractDetail\.html\?objId=(\d+)/i);
+    	var currentHref = getParam(current, null, null, /faces\/info\/contractDetail\.html\?objId=\d+/i);
+
+    	AnyBalance.trace('Получим информацию по договору: ' + currentNum);
+
+    	html = AnyBalance.requestGet(baseurl + currentHref, g_headers);
+
+    	getParam(html, result, 'agreement', /Договор №([\s\d]+)/i, replaceTagsAndSpaces);
+    	getParam(html, result, 'balance', /class="balance"([^>]*>){2}/i, replaceTagsAndSpaces, parseBalance);
+    	getParam(html, result, ['currency', 'balance'], /class="balance"[^>]*>[^<]*?([\d,.]+\s*(?:руб|usd|eur)?)/i, replaceTagsAndSpaces, parseCurrency);
+    }	
 	// Получим страницу с тарифом и опциями
     html = AnyBalance.requestGet(baseurl + 'faces/info/abonents/catalog.html', g_headers);
 	
@@ -315,26 +335,6 @@ function fetchB2B(baseurl, html) {
     	}
     }
 	
-    if (AnyBalance.isAvailable('balance', 'agreement', 'currency')) {
-    	var accounts = sumParam(html, null, null, /faces\/info\/contractDetail\.html\?objId=\d+[^>]*>\d{5,10}/ig);
-
-    	checkEmpty(accounts, 'Не удалось найти ни одного договора, сайт изменен?', true);
-
-    	AnyBalance.trace('Договоров: ' + accounts.length);
-    	// Пока мы не знаем как будет выглядеть кабинет с двумя и более договорами, пока получим по первому
-    	var current = accounts[0];
-    	var currentNum = getParam(current, null, null, />(\d+)/);
-    	var currentId = getParam(current, null, null, /faces\/info\/contractDetail\.html\?objId=(\d+)/i);
-    	var currentHref = getParam(current, null, null, /faces\/info\/contractDetail\.html\?objId=\d+/i);
-
-    	AnyBalance.trace('Получим информацию по договору: ' + currentNum);
-
-    	html = AnyBalance.requestGet(baseurl + currentHref, g_headers);
-
-    	getParam(html, result, 'agreement', /Договор №([\s\d]+)/i, replaceTagsAndSpaces);
-    	getParam(html, result, 'balance', /class="balance"([^>]*>){2}/i, replaceTagsAndSpaces, parseBalance);
-    	getParam(html, result, ['currency', 'balance'], /class="balance"[^>]*>[^<]*?([\d,.]+\s*(?:руб|usd|eur)?)/i, replaceTagsAndSpaces, parseCurrency);
-    }
     AnyBalance.setResult(result);
 }
 

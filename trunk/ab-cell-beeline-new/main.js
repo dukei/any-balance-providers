@@ -281,30 +281,61 @@ function fetchB2B(baseurl, html) {
 	var result = {success: true};
 	
 	getParam(html, result, 'fio', /"user-name"([^>]*>){2}/i, replaceTagsAndSpaces, capitalFirstLenttersAndDecode);
+	// Получим страницу с тарифом и опциями
+    html = AnyBalance.requestGet(baseurl + 'faces/info/abonents/catalog.html', g_headers);
 	
-	if (AnyBalance.isAvailable('balance', 'agreement', 'currency')) {
-		var accounts = sumParam(html, null, null, /faces\/info\/contractDetail\.html\?objId=\d+[^>]*>\d{5,10}/ig);
-		checkEmpty(accounts, 'Не удалось найти ни одного договора, сайт изменен?', true);
-		
-		AnyBalance.trace('Договоров: ' + accounts.length);
-		
-		// Пока мы не знаем как будет выглядеть кабинет с двумя и более договорами, пока получим по первому
-		var current = accounts[0];
-		var currentNum = getParam(current, null, null, />(\d+)/);
-		var currentId = getParam(current, null, null, /faces\/info\/contractDetail\.html\?objId=(\d+)/i);
-		var currentHref = getParam(current, null, null, /faces\/info\/contractDetail\.html\?objId=\d+/i);
-		
-		AnyBalance.trace('Получим информацию по договору: ' + currentNum);
-		
-		html = AnyBalance.requestGet(baseurl + currentHref, g_headers);
-		
-		getParam(html, result, 'agreement', /Договор №([\s\d]+)/i, replaceTagsAndSpaces);
-		//getParam(html, result, 'bills', /class="balance"[^>]*>[^<]*руб(?:[,.\s]*)?([^<]+)/i, replaceTagsAndSpaces);
-		getParam(html, result, 'balance', /class="balance"([^>]*>){2}/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, ['currency', 'balance'], /class="balance"[^>]*>[^<]*?([\d,.]+\s*(?:руб|usd|eur)?)/i, replaceTagsAndSpaces, parseCurrency);
-	}
+    var number = prefs.phone || '\\d{4}'
 	
-	AnyBalance.setResult(result);
+    var href = getParam(html, null, null, new RegExp('(faces/info/subscriberDetail\\.html\\?objId=\\d+)(?:[^>]*>){4}\\d{6}' + number, 'i'));
+	
+    checkEmpty(href, 'Не удалось найти ' + (prefs.phone ? 'номер с последними цифрами ' + prefs.phone : 'ни одного номера!'), true);
+    
+	html = AnyBalance.requestGet(baseurl + href, g_headers);
+    
+	getParam(html, result, 'phone', /subheader\s*"([^>]*>){3}/i, replaceTagsAndSpaces);
+    getParam(html, result, '__tariff', /Тариф:([^>]*>){5}/i, replaceTagsAndSpaces);
+    // Бонусы
+    var bonuses = sumParam(html, null, null, /class="accumulator"[^>]*>([\s\S]*?)<\/div/ig);
+    for (var i = 0; i < bonuses.length; i++) {
+    	var curr = bonuses[i];
+    	var name = getParam(curr, null, null, /([^<]*)</i);
+    	var usedMin = getParam(curr, null, null, /израсходовано[^>]*>([\s\d.,]+мин)/i, replaceTagsAndSpaces, parseMinutes);
+    	var totalMin = getParam(curr, null, null, /из доступных[^>]*>([\s\d.,]+мин)/i, replaceTagsAndSpaces, parseMinutes);
+		
+    	if (/Лидер общения/i.test(name)) {
+    		if (isset(usedMin) && isset(totalMin)) {
+    			sumParam(totalMin - usedMin, result, 'min_local', null, null, null, aggregate_sum);
+    		}
+    	} else if (/Ноль на Билайн/i.test(name)) {
+    		if (isset(usedMin) && isset(totalMin)) {
+    			sumParam(totalMin - usedMin, result, 'min_bi', null, null, null, aggregate_sum);
+    		}
+    	} else {
+    		AnyBalance.trace('Неизвестная опция ' + curr);
+    	}
+    }
+	
+    if (AnyBalance.isAvailable('balance', 'agreement', 'currency')) {
+    	var accounts = sumParam(html, null, null, /faces\/info\/contractDetail\.html\?objId=\d+[^>]*>\d{5,10}/ig);
+
+    	checkEmpty(accounts, 'Не удалось найти ни одного договора, сайт изменен?', true);
+
+    	AnyBalance.trace('Договоров: ' + accounts.length);
+    	// Пока мы не знаем как будет выглядеть кабинет с двумя и более договорами, пока получим по первому
+    	var current = accounts[0];
+    	var currentNum = getParam(current, null, null, />(\d+)/);
+    	var currentId = getParam(current, null, null, /faces\/info\/contractDetail\.html\?objId=(\d+)/i);
+    	var currentHref = getParam(current, null, null, /faces\/info\/contractDetail\.html\?objId=\d+/i);
+
+    	AnyBalance.trace('Получим информацию по договору: ' + currentNum);
+
+    	html = AnyBalance.requestGet(baseurl + currentHref, g_headers);
+
+    	getParam(html, result, 'agreement', /Договор №([\s\d]+)/i, replaceTagsAndSpaces);
+    	getParam(html, result, 'balance', /class="balance"([^>]*>){2}/i, replaceTagsAndSpaces, parseBalance);
+    	getParam(html, result, ['currency', 'balance'], /class="balance"[^>]*>[^<]*?([\d,.]+\s*(?:руб|usd|eur)?)/i, replaceTagsAndSpaces, parseCurrency);
+    }
+    AnyBalance.setResult(result);
 }
 
 function fetchPost(baseurl, html) {

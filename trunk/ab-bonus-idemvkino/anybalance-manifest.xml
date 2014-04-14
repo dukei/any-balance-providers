@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-bonus-idemvkino</id>
+	<api flags="no_browser"/>
+	<name>Идем в кино (Very Velly)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе бонусов в Идем в кино (http://idemvkino.ru/)</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Накопленные бонусы" units=" р"/>
+		<counter id="discount" name="Предоставленные скидки" units=" р"/>
+		<counter id="payed" name="Потраченые средства" units=" р"/>
+	</counters>
+	<keywords></keywords>
+	<type>bonus</type>
+	<country>ru</country>
+</provider>

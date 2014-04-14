@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-transport-m-road</id>
+	<api flags="no_browser"/>
+	<name>Новое качество дорог (http://m-road.ru)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Новое качество дорог (http://m-road.ru)</p>
+	<p>Информация берется из личного кабинета https://lk.m-road.ru/Login.aspx</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс"/>
+		<counter id="travels" name="Совершено поездок"/>
+		<counter id="travels_cost" name="Общая стоимость поездок"/>
+		<counter id="agreement" name="Договор" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>transport</type>
+	<country>ru</country>
+</provider>

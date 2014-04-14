@@ -936,9 +936,9 @@ function getYar() {
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'balance', /Баланс([\s\S]*?<td[^>]*>){4}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance', />\s*Баланс(?:[\s\S]*?<td[^>]*>){4}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'username', />\s*Вы:([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'agreement', />Номер договора([\s\S]*?<td[^>]*>){4}(\d+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'agreement', />\s*Номер договора(?:[\s\S]*?<td[^>]*>){4}(\d+)/i, replaceTagsAndSpaces, html_entity_decode);
 	
 	AnyBalance.setResult(result);
 }

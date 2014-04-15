@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-finance-inwiqu</id>
+	<api flags="no_browser"/>
+	<name>INWIQU</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе INWIQU http://inwiqu.com/</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Нераспределенные средства"/>
+		<counter id="uin_count" name="UIN, шт"/>
+		<counter id="uin_cost" name="Стоимость UIN"/>
+		<counter id="uin_sum" name="UIN на сумму"/>
+	</counters>
+	<keywords></keywords>
+	<type>finance</type>
+	<country>ru</country>
+</provider>

@@ -304,7 +304,7 @@ function fetchB2B(baseurl, html) {
 	// Получим страницу с тарифом и опциями
     html = AnyBalance.requestGet(baseurl + 'faces/info/abonents/catalog.html', g_headers);
 	
-    var number = prefs.phone || '\\d{4}'
+    var number = prefs.phone || '\\d{4}';
 	
     var href = getParam(html, null, null, new RegExp('(faces/info/subscriberDetail\\.html\\?objId=\\d+)(?:[^>]*>){4}\\d{6}' + number, 'i'));
 	
@@ -321,15 +321,15 @@ function fetchB2B(baseurl, html) {
     	var name = getParam(curr, null, null, /([^<]*)</i);
     	var usedMin = getParam(curr, null, null, /израсходовано[^>]*>([\s\d.,]+мин)/i, replaceTagsAndSpaces, parseMinutes);
     	var totalMin = getParam(curr, null, null, /из доступных[^>]*>([\s\d.,]+мин)/i, replaceTagsAndSpaces, parseMinutes);
+    	var usedSms = getParam(curr, null, null, /израсходовано[^>]*>([\s\d.,]+штук)/i, replaceTagsAndSpaces, parseBalance);
+    	var totalSms = getParam(curr, null, null, /из доступных[^>]*>([\s\d.,]+штук)/i, replaceTagsAndSpaces, parseBalance);		
 		
-    	if (/Лидер общения/i.test(name)) {
-    		if (isset(usedMin) && isset(totalMin)) {
-    			sumParam(totalMin - usedMin, result, 'min_local', null, null, null, aggregate_sum);
-    		}
-    	} else if (/Ноль на Билайн/i.test(name)) {
-    		if (isset(usedMin) && isset(totalMin)) {
-    			sumParam(totalMin - usedMin, result, 'min_bi', null, null, null, aggregate_sum);
-    		}
+    	if (/Лидер общения/i.test(name) && isset(usedMin) && isset(totalMin)) {
+   			sumParam(totalMin - usedMin, result, 'min_local', null, null, null, aggregate_sum);
+		} else if (/Лидер общения/i.test(name) && isset(usedSms) && isset(totalSms)) {
+   			sumParam(totalSms - usedSms, result, 'sms_left', null, null, null, aggregate_sum);
+    	} else if (/Ноль на Билайн/i.test(name) && isset(usedMin) && isset(totalMin)) {
+   			sumParam(totalMin - usedMin, result, 'min_bi', null, null, null, aggregate_sum);
     	} else {
     		AnyBalance.trace('Неизвестная опция ' + curr);
     	}

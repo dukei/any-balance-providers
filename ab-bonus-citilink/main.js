@@ -39,13 +39,15 @@ function main(){
         throw new AnyBalance.Error('Для пользования этим провайдером прикрепите бонусную карту к личному кабинету.');
 	
     var result = {success: true};
+	
     getParam(html, result, 'balance', /<h2[^>]*>Закрома<\/h2>(?:[\s\S](?!<\/td>))*?<p[^>]*>\s*(\d+)\s*бонус/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'new', /ожидают начисления([^<]*)/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'num', /(\d+)\s*товар\S* на сумму/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'sum', /\d+\s*товар\S* на сумму([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, '__tariff', [/Статус &laquo;([\s\S]*?)&raquo;? в следующем квартале будет сохранен/i, /Для сохранения статуса([^<]+)по итогам/i], replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, '__tariff', [/Статус &laquo;([\s\S]*?)&raquo;? в следующем квартале будет сохранен/i, /Для сохранения статуса([^<]+)по итогам/i], [replaceTagsAndSpaces, /&raquo/ig, '»'], html_entity_decode);
 
 	if(isAvailable(['obrabotannie', 'pomosh', 'reshennie', 'zhalobi', 'rating', 'position', 'nachisleno'])) {
+		AnyBalance.trace('Переходим на страницу эксперта..');
 		html = AnyBalance.requestGet(baseurl + 'profile/expert/', g_headers);
 		
 		getParam(html, result, 'obrabotannie', /Количество обработанных вопросов(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);

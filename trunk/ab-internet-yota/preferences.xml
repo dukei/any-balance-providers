@@ -21,4 +21,13 @@
         dialogMessage="Введите пароль, используемый для входа в личный кабинет Yota."
         inputType="textPassword">
     </EditTextPreference>
+    <EditTextPreference 
+        title="Список устройств" 
+        positiveButtonText="ОК" 
+        summary="|Автоматически|{@s}" 
+        dialogTitle="Список устройств" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите через запятую ICCID устройств (достаточно последних цифр), информацию по которым нужно получить, или оставьте поле пустым. Например, 8823, 7751, 3224."
+        key="devices">
+    </EditTextPreference>
 </PreferenceScreen>

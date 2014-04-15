@@ -2,20 +2,6 @@
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
-function aggregateToBalances(vals, result, name){
-    for(var i=0; i<vals.length; ++i){
-        var thisname = name + (i ? i : '');
-        if(AnyBalance.isAvailable(thisname))
-            result[thisname] = vals[i];
-    }
-}
-
-function createBalancesAggregate(result, name) { 
-	return function(vals) {
-		aggregateToBalances(vals, result, name) 
-	}
-};
-
 function main(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
@@ -100,12 +86,50 @@ function main(){
 			html = AnyBalance.requestGet(baseurl + 'devices');
 		}
 
-		getParam(html, result, 'balance', /<dd[^>]+id="balance-holder"[^>]*>([^{]*?)<\/dd>/i, replaceTagsAndSpaces, parseBalance);
-		sumParam(html, null, null, /<div[^>]+class="cost"[^>]*>([^{]*?)<\/div>/ig, replaceTagsAndSpaces, parseBalance, createBalancesAggregate(result, 'abon'));
-		sumParam(html, null, null, /<div[^>]+class="speed"[^>]*>([^{]*?)<\/div>/ig, replaceTagsAndSpaces, html_entity_decode, createBalancesAggregate(result, 'speed'));
-		sumParam(html, result, '__tariff', /<h3[^>]+class="device-title"[^>]*>([\S\s]*?)<\/h3>/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
-		sumParam(html, null, null, /<div[^>]+class="time[^"]*"[^>]*>([\S\s]*?)<\/div>/ig, replaceTagsAndSpaces, parseTimeInterval, createBalancesAggregate(result, 'timeleft'));
+		var devices = sumParam(html, null, null, /<form[^>]+class="tariff-choice-form"[^>]*>([\s\S]*?)<\/form>/ig);
+		if(devices.length > 0){
+			var idx = 0, n = 0;
+			var devrefs = (prefs.devices || '*,*,*,*,*').split(/\s*,\s*/g);
+			for(var i=0; i<devrefs.length; ++i){
+				var device = null;
+				if(devrefs[i] == '*'){
+					if(idx >= devices.length){
+						AnyBalance.trace("All the devices are listed, breaking...");
+						break;
+					}else{
+						device = devices[idx++];
+					}
+				}else{
+					for(var j=0; j<devices.length; ++j){
+						var icc = getParam(devices[j], null, null, /ICCID:([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+						if(!icc){
+							AnyBalance.trace("Can not find device ICCID: " + devices[j]);
+							continue;
+						}
+						if(endsWith(icc, devrefs[i])){
+							device = devices[j];
+							break;
+						}
+					}
 
+					if(!device){
+							AnyBalance.trace("Could not find device ending with " + devrefs[i]);
+							++n;
+							continue;
+					}
+					AnyBalance.trace("Found device ICCID:" + icc + ', ends with ' + devrefs[i]);
+				}
+
+				var suffix = n==0 ? '' : '' + n;
+				++n;
+				getParam(device, result, 'abon' + suffix, /<div[^>]+class="cost"[^>]*>([^{]*?)<\/div>/ig, replaceTagsAndSpaces, parseBalance);
+				getParam(device, result, 'speed' + suffix, /<div[^>]+class="speed"[^>]*>([^{]*?)<\/div>/ig, replaceTagsAndSpaces, html_entity_decode);
+				sumParam(device, result, '__tariff', /<h3[^>]+class="device-title"[^>]*>([\S\s]*?)<\/h3>/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+				getParam(device, result, 'timeleft' + suffix, /<div[^>]+class="time[^"]*"[^>]*>([\S\s]*?)<\/div>/ig, replaceTagsAndSpaces, parseTimeInterval);
+			}
+		}
+
+		getParam(html, result, 'balance', /<dd[^>]+id="balance-holder"[^>]*>([^{]*?)<\/dd>/i, replaceTagsAndSpaces, parseBalance);
 		if(AnyBalance.isAvailable('licschet', 'agreement', 'fio', 'email', 'phone')){
 			html = AnyBalance.requestGet(baseurl + 'profile');
 			getParam(html, result, 'licschet', /(?:Номер лицевого счета|Personal Account Number)[\S\s]*?<div[^>]+class="value"[^>]*>([\S\s]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);

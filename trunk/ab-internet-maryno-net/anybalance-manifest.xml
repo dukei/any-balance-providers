@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="10">ab-internet-maryno-net</id>
+  <id major_version="1.0" version="11">ab-internet-maryno-net</id>
   <name>Марьино.NET (Москва)</name>
   <description>
 	Получает текущий баланс, бонусный баланс, номера лицевого счета и договора, статус у провайдера "Maryno.net" (http://maryno.net) из личного кабинета https://my.maryno.net.
@@ -10,6 +10,7 @@
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
     <js>main.js</js>
+    <history>history.xml</history>
   </files>
   <counters>
     <counter id="balance" name="Баланс"  suffix=" р"/>

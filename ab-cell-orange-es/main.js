@@ -17,19 +17,19 @@ function main(){
     checkEmpty(prefs.password, 'Enter password!');
 
 	var baseurl = 'https://areaprivada.orange.es/';
-	var baseurlLogin = 'https://sso.orange.es/';
+	
+	var baseurlLogin = 'https://gidf.orange.es/';
 	var html;
     AnyBalance.setDefaultCharset('utf-8'); 
 
-	html = AnyBalance.requestPost(baseurlLogin + 'amserver/gateway', {
-		'gotoOnFail':'http://m.orange.es/miorange/?eCode=1',
+	html = AnyBalance.requestPost(baseurlLogin + 'osp_auth/', {
+		'gotoOnFail':'http://m.orange.es/miorange/?eCode=1?msisdn=' + prefs.login,
 		'goto':baseurl+'neos/init-mobile.neos',
-		'encoded':'false',
-		'gx_charset':'ISO-8859-1',
-		'service':'EcareAuthService',
-		'IDToken1':prefs.login,
-		'IDToken2':prefs.password
-	}, addHeaders({Referer: 'http://m.orange.es/miorange/?', Origin: 'http://m.orange.es'}));
+		'gotoOnBlacklist':baseurl+'error.html?errorCode=LOCK',
+		'serv':'NEOSMO',
+		'wt-msisdn':prefs.login,
+		'wt-pwd':prefs.password
+	}, addHeaders({Referer: 'http://m.orange.es/miorange/', Origin: 'http://m.orange.es'}));
 
     if(!/div id="balance"/i.test(html)){
         //Если в кабинет войти не получилось, то в первую очередь надо поискать в ответе сервера объяснение ошибки

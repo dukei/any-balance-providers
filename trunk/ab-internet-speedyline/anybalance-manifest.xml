@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="2.0" version="3">ab-internet-speedyline</id>
-  <api flags="no_browser"/>
-  <name>Спиди-Лайн</name>
+	<id major_version="2.0" version="4">ab-internet-speedyline</id>
+	<api flags="no_browser"/>
+	<name>Спиди-Лайн</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о состоянии счета для пользователей интернет-провайдера "Спиди-Лайн" (http://www.speedyline.ru).</p>
 	<p>Информация берется из личного кабинета (http://web.speedyline.ru).</p>
@@ -14,33 +14,26 @@
 	<li> Включите опцию "Разрешить вход в личный кабинет с чужих ip адресов".</li>
 	</ol>
 	]]></instruction>
-  <author>iReset &lt;ireset.ag@gmail.com&gt;</author>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <history>history.xml</history>
-    <js>library.js</js>
-    <js>main.js</js>
-  </files>
-  <counters>
-    <counter id="balance" name="Текущий баланс" units="р"/>
-    <counter id="credit" name="Кредит" units="р"/>
-    <counter id="download" name="Скачано" units="Мб"/>
-    <counter id="speed" name="Скорость" type="text"/>
-    <counter id="state" name="Статус" type="text"/>
-    <counter id="stateinternet" name="Статус интернета" type="text"/>
-    <counter id="id" name="ID пользователя" type="text"/>
-
-    <counter id="client" name="Владелец" type="text"/>
-  </counters>
-  <keywords>
-    спиди-лайн, спиди лайн, спидилайн, интернет, московская область
-  </keywords>
-  <type>
-    internet
-  </type>
-  <country>
-    ru
-  </country>
+	<author>iReset &lt;ireset.ag@gmail.com&gt;</author>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<history>history.xml</history>
+		<js>library.js</js>
+		<js>main.js</js>
+	</files>
+	<counters>
+		<counter id="balance" name="Текущий баланс" units=" р"/>
+		<counter id="credit" name="Кредит" units=" р"/>
+		<counter id="download" name="Скачано" units=" Мб"/>
+		<counter id="speed" name="Скорость" type="text"/>
+		<counter id="state" name="Статус" type="text"/>
+		<counter id="stateinternet" name="Статус интернета" type="text"/>
+		<counter id="id" name="ID пользователя" type="text"/>
+		<counter id="client" name="Владелец" type="text"/>
+	</counters>
+	<keywords>спиди-лайн, спиди лайн, спидилайн, интернет, московская область</keywords>
+	<type>internet</type>
+	<country>ru</country>
 </provider>

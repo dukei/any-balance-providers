@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<history>
+    <change major_version="1.0" version="11" date="2014-04-16">
+	- Обновления на сайте
+	- Исправлен для ведения истории версий
+    </change>
+    <change major_version="1.0" version="10">
+	- Обновления на сайте
+    </change>
+    <change major_version="1.0" version="9">
+	- Округление трафика до мегабайтов.
+    </change>
+    <change major_version="1.0" version="8">
+	- добавлена информация по текущему трафикуи трафику за прошлый месяц
+    </change>
+</history>

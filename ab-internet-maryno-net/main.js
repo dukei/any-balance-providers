@@ -4,6 +4,7 @@
 Провайдер Марьино.NET 
 Сайт оператора: http://maryno.net/
 Личный кабинет: https://my.maryno.net/
+1.0.11- Обновления на сайте.
 1.0.10- Обновления на сайте.
 1.0.9 - Округление трафика до мегабайтов.
 1.0.8 - добавлена информация по текущему трафикуи трафику за прошлый месяц
@@ -32,82 +33,81 @@ function main(){
 
 	var res=/<\/script>(<table.*<\/table>)<br><table/.exec(html);
 	var tmp=res[1];
-	res=tmp.replace(/<tr><td bgcolor=#f1f3f7><b>/g,'<1>');
-	res=res.replace(/<\/b><\/td><td bgcolor=#ffffff>/g,'<2>');
-	res=res.replace(/<\/td><td bgcolor=#ffffff><\/td><\/tr>/g,'<3>');
-	res=res.replace(/.*pt.>/,'');
-	res=res.replace(/<\/td>.*<\/tr>/,'<3>');
-	var tmp=res.replace(/<.table>/,'');
+        res=tmp.replace(/<.*?>/g,'-');
+	res=res.replace(/--+/g,'=');
+	var tmp=res;
 
 	if(AnyBalance.isAvailable('number')){
-    regexp=/<1>Номер договорной записи<2>(.*?)<3><1>Договор/;
+    regexp=/=Номер договорной записи=(.*?)=/;
 		if (res=regexp.exec(tmp)){result.number=res[1];}
 	}
 	if(AnyBalance.isAvailable('dogovor')){
-    regexp=/<1>Договор<2>(.*?)<3>/;
+    regexp=/=Договор=(.*?)=/;
 		if (res=regexp.exec(tmp)){result.dogovor=res[1];}
 	}
 	if(AnyBalance.isAvailable('FIO')){
-    regexp=/<1>Фамилия И.О.<2>(.*?)<3>/;
+    regexp=/=Фамилия И.О.=(.*?)=/;
 		if (res=regexp.exec(tmp)){result.FIO=res[1];}
 	}
 	if(AnyBalance.isAvailable('adress')){
-    regexp=/<1>Адрес<2>(.*?)<3>/;
+    regexp=/=Адрес=(.*?)=/;
 		if (res=regexp.exec(tmp)){result.adress=res[1];}
 	}
 	if(AnyBalance.isAvailable('Home_Phone')){
-    regexp=/<1>Телефон домашний<2>(.*?)<3>/;
+    regexp=/=Телефон домашний=(.*?)=/;
 		if (res=regexp.exec(tmp)){result.Home_Phone=res[1]}
 	}
 	if(AnyBalance.isAvailable('Phone')){
-    regexp=/<1>Телефон мобильный<2>(.*?)<3>/;
+    regexp=/=Телефон мобильный=(.*?)=/;
 		if (res=regexp.exec(tmp)){result.Phone=res[1];}
 	}
 	if(AnyBalance.isAvailable('email')){
-    regexp=/<1>E-Mail<2>(.*?)<3>/;
+    regexp=/=E-Mail=(.*?)=/;
 		if (res=regexp.exec(tmp)){result.email=res[1];}
 	}
 	if(AnyBalance.isAvailable('start_day')){
-    regexp=/<1>Дата открытия<2>(.*?)<3>/;
+    regexp=/=Дата открытия=(.*?)=/;
 		if (res=regexp.exec(tmp)){result.start_day=res[1];}
 	}
-    regexp=/<1>Актуальный баланс, руб.<2>(.*?)<3>/;
+    regexp=/=Актуальный баланс, руб.=(.*?)=/;
 		if (res=regexp.exec(tmp)){result.balance=Math.floor(res[1]*100)/100;}
 	if(AnyBalance.isAvailable('bonus_balance')){
-    regexp=/<1>Бонусный баланс, руб.<2>(.*?)<3>/;
+    regexp=/=Бонусный баланс, руб.=(.*?)=/;
 		if (res=regexp.exec(tmp)){result.bonus_balance=res[1];}
 	}
+
 	if(AnyBalance.isAvailable('unconfirmed')){
-    regexp=/<1>Неподтвержденные платежи, руб.>(.*?)<3>/;
+    regexp=/=Неподтвержденные платежи, руб.>(.*?)=/;
 		if (res=regexp.exec(tmp)){result.unconfirmed=res[1];}
 	}
 	if(AnyBalance.isAvailable('credit')){
-    regexp=/<1>Кредитование, руб.<2>(.*?)<3>/;
+    regexp=/=Кредитование, руб.=(.*?)=/;
 		if (res=regexp.exec(tmp)){result.credit=res[1];}
 	}
 	if(AnyBalance.isAvailable('status')){
-    regexp=/<1>Статус счета<2>(.*?)<3>/;
+    regexp=/=Статус счета=(.*?)=/;
 		if (res=regexp.exec(tmp)){result.status=res[1];}
 	}
-  regexp=/<1>Тарифный план<2>(.*?)<3>/;
+
+  regexp=/=Тарифный план=(.*?)=/;
   if (res=regexp.exec(tmp)){
     result.__tariff=res[1];
     if(AnyBalance.isAvailable('tariff')){result.tariff=res[1];}
 	}        
 	if(AnyBalance.isAvailable('included')){
-    regexp=/<1>Остаток оплаченного включенного трафика, Мб<2>(.*?)<3>/;
+    regexp=/=Остаток оплаченного включенного трафика, Мб=(.*?)=/;
 		if (res=regexp.exec(tmp)){result.included=res[1];}
 	}
 	if(AnyBalance.isAvailable('unpaid')){
-    regexp=/<1>Остаток неоплаченного включенного трафика, Мб<2>(.*?)<3>/;
+    regexp=/=Остаток неоплаченного включенного трафика, Мб=(.*?)=/;
 		if (res=regexp.exec(tmp)){result.unpaid=res[1];}
 	}
 	if(AnyBalance.isAvailable('transfer')){
-    regexp=/<1>Перенесенный трафик, Мб<2>(.*?)<3>/;
+    regexp=/=Перенесенный трафик, Мб=(.*?)=/;
 		if (res=regexp.exec(tmp)){result.transfer=res[1];}
 	}
 	if(AnyBalance.isAvailable('bonus')){
-    regexp=/<1>Бонусный трафик, Мб<2>(.*?)<3>/;
+    regexp=/=Бонусный трафик, Мб=(.*?)=/;
 		if (res=regexp.exec(tmp)){result.bonus=res[1];}
 	}
 	if(AnyBalance.isAvailable('traffic_month_in')||

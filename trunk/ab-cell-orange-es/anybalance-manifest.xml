@@ -1,31 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-cell-orange-es</id>
-  <api flags="no_browser"/>
-  <name>Orange (Espania)</name>
-  <description>
-	Cell provider Orange Espania (http://m.orange.es/area_clientes)
-  </description>
-  <author>Stark &lt;support@starksoft.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Balance" units="€" />
-	<counter id="bonus" name="Bonus" units="€" />
-	<counter id="valid" name="Valid to" type="time" format="dd/MM/yyyy" />
-  </counters>
-  <keywords>
-    spain
-  </keywords>
-  <type>
-    cell
-  </type>
-  <country>
-    es
-  </country>
+	<id version="3">ab-cell-orange-es</id>
+	<api flags="no_browser"/>
+	<name>Orange (Espania)</name>
+	<description html="true"><![CDATA[
+	<p>Cell provider Orange Espania (http://m.orange.es/area_clientes)</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Balance" units=" €"/>
+		<counter id="bonus" name="Bonus" units=" €"/>
+		<counter id="valid" name="Valid to" type="time" format="dd/MM/yyyy"/>
+	</counters>
+	<keywords>spain</keywords>
+	<type>cell</type>
+	<country>es</country>
 </provider>

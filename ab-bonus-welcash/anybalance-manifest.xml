@@ -1,33 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-bonus-welcash</id>
-  <api min_level="6" />
-  <name>Велика Кишеня</name>
-  <description>
-    Получает баланс бонусов на карте для всей СЕМЬИ сети магазинов Велика Кишеня (http://card.welcash.kiev.ua).
-
-    Информация берется из личного кабинета.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-    <js>library.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Текущий баланс" units=" ₴"/>
-    <counter id="bonus" name="Бонус" units=" ₴"/>
-    <counter id="cardnum" name="Номер карты" type="text"/>
-    <counter id="level" name="Текущий уровень" type="text"/>
-  </counters>
-  <keywords>
-  </keywords>
-  <type>
-    bonus
-  </type>
-  <country>
-    ua
-  </country>
+	<id version="2">ab-bonus-welcash</id>
+	<api min_level="6" flags="no_browser"/>
+	<name>Велика Кишеня</name>
+	<description html="true"><![CDATA[
+	<p>Получает баланс бонусов на карте для всей СЕМЬИ сети магазинов Велика Кишеня (http://card.welcash.kiev.ua).</p>
+	<p>Информация берется из личного кабинета.</p>
+	]]></description>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Текущий баланс" units=" ₴"/>
+		<counter id="bonus" name="Бонус"/>
+		<!-- <counter id="cardnum" name="Номер карты" type="text"/> -->
+		<!-- <counter id="level" name="Текущий уровень" type="text"/> -->
+	</counters>
+	<keywords></keywords>
+	<type>bonus</type>
+	<country>ua</country>
 </provider>

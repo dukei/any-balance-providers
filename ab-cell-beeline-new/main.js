@@ -277,26 +277,26 @@ function parseBalanceNegative(str) {
 function fetchB2B(baseurl, html) {
 	var prefs = AnyBalance.getPreferences();
 	AnyBalance.trace('Мы в кабинете для юр. лиц...');
-
+	
 	var result = {success: true};
 	
 	getParam(html, result, 'fio', /"user-name"([^>]*>){2}/i, replaceTagsAndSpaces, capitalFirstLenttersAndDecode);
     if (AnyBalance.isAvailable('balance', 'agreement', 'currency')) {
     	var accounts = sumParam(html, null, null, /faces\/info\/contractDetail\.html\?objId=\d+[^>]*>\d{5,10}/ig);
-
+		
     	checkEmpty(accounts, 'Не удалось найти ни одного договора, сайт изменен?', true);
-
+		
     	AnyBalance.trace('Договоров: ' + accounts.length);
     	// Пока мы не знаем как будет выглядеть кабинет с двумя и более договорами, пока получим по первому
     	var current = accounts[0];
     	var currentNum = getParam(current, null, null, />(\d+)/);
     	var currentId = getParam(current, null, null, /faces\/info\/contractDetail\.html\?objId=(\d+)/i);
     	var currentHref = getParam(current, null, null, /faces\/info\/contractDetail\.html\?objId=\d+/i);
-
+		
     	AnyBalance.trace('Получим информацию по договору: ' + currentNum);
-
+		
     	html = AnyBalance.requestGet(baseurl + currentHref, g_headers);
-
+		
     	getParam(html, result, 'agreement', /Договор №([\s\d]+)/i, replaceTagsAndSpaces);
     	getParam(html, result, 'balance', /class="balance"([^>]*>){2}/i, replaceTagsAndSpaces, parseBalance);
     	getParam(html, result, ['currency', 'balance'], /class="balance"[^>]*>[^<]*?([\d,.]+\s*(?:руб|usd|eur)?)/i, replaceTagsAndSpaces, parseCurrency);
@@ -316,6 +316,8 @@ function fetchB2B(baseurl, html) {
     getParam(html, result, '__tariff', /Тариф:([^>]*>){5}/i, replaceTagsAndSpaces);
     // Бонусы
     var bonuses = sumParam(html, null, null, /class="accumulator"[^>]*>([\s\S]*?)<\/div/ig);
+	AnyBalance.trace('Найдено бонусов и пакетов: ' + bonuses.length);
+	
     for (var i = 0; i < bonuses.length; i++) {
     	var curr = bonuses[i];
     	var name = getParam(curr, null, null, /([^<]*)</i);
@@ -331,7 +333,7 @@ function fetchB2B(baseurl, html) {
     	} else if (/Ноль на Билайн/i.test(name) && isset(usedMin) && isset(totalMin)) {
    			sumParam(totalMin - usedMin, result, 'min_bi', null, null, null, aggregate_sum);
     	} else {
-    		AnyBalance.trace('Неизвестная опция ' + curr);
+    		AnyBalance.trace('Неизвестная опция, либо неизвестные единицы измерений: ' + curr);
     	}
     }
 	
@@ -559,7 +561,7 @@ function fetchPre(baseurl, html) {
 }
 
 function isAvailableBonuses() {
-	return AnyBalance.isAvailable('sms_left', 'mms_left', 'rub_bonus', 'rub_opros', 'min_local', 'min_bi', 'min_local_clear');
+	return AnyBalance.isAvailable('sms_left', 'mms_left', 'rub_bonus', 'rub_opros', 'min_local', 'min_bi');
 }
 
 function getBonuses(xhtml, result) {
@@ -583,7 +585,7 @@ function getBonuses(xhtml, result) {
 				sumParam(services[i], result, 'mms_left', [reValue, reNewValue], replaceTagsAndSpaces, parseBalance, aggregate_sum);
 			} else if (/Internet|Интернет/i.test(name)) {
 				// Для опции Хайвей все отличается..
-				if (/Xайвей|Интернет-трафика по тарифу/i.test(name)) {
+				if (/Xайвей|Интернет-трафика по тарифу|Мобильного интернета/i.test(name)) {
 					sumParam(services[i], result, 'traffic_left', /<div[^>]+class="column2[^"]*"([^>]*>){6}/i, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
 					sumParam(services[i], result, 'traffic_total', /<div[^>]+class="column2[^"]*"(?:[^>]*>){5}[^<]*из([\s\d,]*ГБ)/i, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
 					if(isset(result.traffic_left) && isset(result.traffic_total)) {
@@ -605,12 +607,18 @@ function getBonuses(xhtml, result) {
 			} else if (/минут в месяц|мин\./i.test(name)) {
 				var minutes = getParam(services[i], null, null, reValue, replaceTagsAndSpaces, parseMinutes);
 				sumParam(minutes, result, 'min_local', null, null, null, aggregate_sum);
-				sumParam(minutes/60, result, 'min_local_clear', null, null, null, aggregate_sum);
+			// Это новый вид отображения данных
 			} else if (/Минут общения по тарифу/i.test(name)) {
-				// Это новый вид отображения данных
-				// Минут осталось
-				sumParam(services[i], result, 'min_local', reNewValue, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
-				sumParam(services[i], result, 'min_local_clear', reNewValue, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+				// Очень внимательно надо матчить
+				if(/номера других операторов|все номера/i.test(name))
+					sumParam(services[i], result, 'min_local', reNewValue, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
+				else
+					sumParam(services[i], result, 'min_bi', reNewValue, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
+				/*if(/на номера.+Билайн.+$/i.test(name))
+					sumParam(services[i], result, 'min_bi', reNewValue, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
+				else 
+					// Минут осталось на всех операторов
+					sumParam(services[i], result, 'min_local', reNewValue, replaceTagsAndSpaces, parseMinutes, aggregate_sum);*/
 			} else {
 				AnyBalance.trace('Неизвестная опция: ' + bonus_name + ' ' + services[i]);
 			}
@@ -657,7 +665,7 @@ function getBonusesPost(xhtml, result) {
 			} else if (/минут в месяц|мин\./i.test(name)) {
 				var minutes = getParam(services[i], null, null, /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseMinutes);
 				sumParam(minutes, result, 'min_local', null, null, null, aggregate_sum);
-				sumParam(minutes/60, result, 'min_local_clear', null, null, null, aggregate_sum);
+				//sumParam(minutes/60, result, 'min_local_clear', null, null, null, aggregate_sum);
 			} else {
 				AnyBalance.trace('Неизвестная опция: ' + bonus_name + ' ' + services[i]);
 			}

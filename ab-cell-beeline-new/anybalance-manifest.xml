@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="59">ab-cell-beeline-new</id>
+	<id version="60">ab-cell-beeline-new</id>
 	<name>Билайн (новый кабинет)</name>
 	<api flags="no_browser" min_level="5"/>
 	<description html="true"><![CDATA[
@@ -43,16 +43,19 @@
 		<counter id="sms_left" name="Остаток SMS" units=" sms"/>
 		<counter id="mms_left" name="Остаток MMS" units=" mms"/>
 		<counter id="rub_bonus" name="Рублей БОНУС" units=" руб"/>
-		<counter id="min_bi" name="Минуты на Билайн" type="time_interval" format="{@H}:{@min}:{@sec}"/>
-		<counter id="min_local" name="Минуты на местные номера" type="time_interval" format="{@H}:{@min}:{@sec}"/>
-		<counter id="min_local_clear" name="Минуты на местные номера (как в лк)" units=" мин"/>
+		<counter id="min_bi" name="Минуты на Билайн" type="time_interval" format="{@MIN}:{@sec}"/>
+		<counter id="min_local" name="Минуты на местные номера" type="time_interval" format="{@MIN}:{@sec}"/>
 		<counter id="rub_opros" name="Рублей за участие в опросе" units=" руб"/>
 		<counter id="traffic_left" name="Остаток трафика" units=" Mb"/>
 		<counter id="traffic_used" name="Использовано трафика" units=" Mb"/>
 		<counter id="traffic_total" name="Всего трафика" units=" Mb"/>
+		<!-- Под вопросом -->
+		<!-- <counter id="min_left_1" name="Остаток минут 1" type="time_interval" format="{@MIN}:{@sec}"/> -->
+		<!-- <counter id="min_left_2" name="Остаток минут 2" type="time_interval" format="{@MIN}:{@sec}"/> -->
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="phone" name="Телефон" type="text"/>
 		<counter id="agreement" name="Договор" type="text"/>
+		<!-- <counter id="min_local_clear" name="Минуты на местные номера (как в лк)" units=" мин"/> -->
 	</counters>
 	<keywords>beeline</keywords>
 	<type>cell</type>

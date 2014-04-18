@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="9">ab-money-leomoney</id>
+	<id version="10">ab-money-leomoney</id>
 	<api flags="no_browser"/>
 	<name>Leomoney</name>
 	<description html="true"><![CDATA[
@@ -23,6 +23,7 @@
 		<counter id="spent" name="Spent in current month" units=" {@currency}"/>
 		<counter id="limit" name="Month limit" units=" {@currency}"/>
 		<counter id="wallet" name="Wallet number" type="text"/>
+		<counter id="phone" name="Phone number" type="text"/>
 	</counters>
 	<keywords>леомани</keywords>
 	<type>money</type>

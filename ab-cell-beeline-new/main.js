@@ -618,11 +618,9 @@ function getBonuses(xhtml, result) {
 		
 		for (var i = 0; i < services.length; ++i) {
 			var name = '' + getParam(services[i], null, null, /<div[^>]+class="column1[^"]*"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode); //+ ' ' + bonus_name;
-			if (/SMS|штук/i.test(name)) {
-				sumParam(services[i], result, 'sms_left', [reValue, reNewValue], replaceTagsAndSpaces, parseBalance, aggregate_sum);
-			} else if (/MMS/i.test(name)) {
-				sumParam(services[i], result, 'mms_left', [reValue, reNewValue], replaceTagsAndSpaces, parseBalance, aggregate_sum);
-			} else if (/Internet|Интернет/i.test(name)) {
+			var values = getParam(services[i], null, null, /<div class="val">([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+			
+			if (/Internet|Интернет/i.test(name)) {
 				// Для опции Хайвей все отличается..
 				if (/Xайвей|Интернет-трафика по тарифу|Мобильного интернета/i.test(name)) {
 					sumParam(services[i], result, 'traffic_left', /<div[^>]+class="column2[^"]*"([^>]*>){6}/i, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
@@ -633,6 +631,10 @@ function getBonuses(xhtml, result) {
 				} else {
 					sumParam(services[i], result, 'traffic_left', reValue, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
 				}
+			} else if (/SMS|штук/i.test(name)) {
+				sumParam(services[i], result, 'sms_left', [reValue, reNewValue], replaceTagsAndSpaces, parseBalance, aggregate_sum);
+			} else if (/MMS/i.test(name)) {
+				sumParam(services[i], result, 'mms_left', [reValue, reNewValue], replaceTagsAndSpaces, parseBalance, aggregate_sum);
 			} else if (/Рублей БОНУС|бонус-баланс/i.test(name)) {
 				sumParam(services[i], result, 'rub_bonus', reValue, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 			} else if (/Рублей за участие в опросе|Счастливое время/i.test(name)) {

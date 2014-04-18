@@ -43,9 +43,10 @@ function main() {
 
 	var result = {success: true};
 	
-	getParam(html, result, '__tariff', /<AccountId>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(result.__tariff, result, 'wallet');
 	
+	getParam(prefs.login, result, 'phone');
+	getParam(prefs.login, result, '__tariff');
+	getParam(html, result, 'wallet', /<AccountId>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'balance', /<Amount>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, ['currency', 'balance', 'spent', 'limit'], /<Currency>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'spent', /<TotalAmount>([^<]*)/i, replaceTagsAndSpaces, parseBalance);

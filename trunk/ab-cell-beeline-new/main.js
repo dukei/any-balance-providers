@@ -13,7 +13,7 @@ var g_headers = {
 	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.64 Safari/537.31'
 };
 
-function getBlock(url, html, name, exact) {
+function getBlock(url, html, name, exact, onlyReturnParams) {
 	var formhtml = html;
 	if (isArray(html)) { //Если массив, то разный хтмл для поиска блока и для формы
 		formhtml = html[1];
@@ -49,23 +49,27 @@ function getBlock(url, html, name, exact) {
 	params['javax.faces.partial.render'] = render;
 	//params[render] = render;
 	params[source] = source;
-
-	html = AnyBalance.requestPost(url, params, addHeaders({
-		Referer: url,
-		'Faces-Request': 'partial/ajax',
-		'X-Requested-With': 'XMLHttpRequest'
-	}));
-	// Костыль для бонусов
-	if(/bonusesForm/i.test(name)) {
-		name = getParam(name, null, null, /([^\s]+)/i);
+	
+	if(!onlyReturnParams) {
+		html = AnyBalance.requestPost(url, params, addHeaders({
+			Referer: url,
+			'Faces-Request': 'partial/ajax',
+			'X-Requested-With': 'XMLHttpRequest'
+		}));
+		// Костыль для бонусов
+		if(/bonusesForm/i.test(name)) {
+			name = getParam(name, null, null, /([^\s]+)/i);
+		}
+		var re = new RegExp('<update[^>]*id="' + (exact ? '' : '[^"]*') + name + '"[^>]*>\\s*<!\\[CDATA\\[([\\s\\S]*?)\\]\\]></update>', 'i');
+		data = getParam(html, null, null, re);
+		if (!data) {
+			AnyBalance.trace('Неверный ответ для блока ' + name + ': ' + html);
+			return '';
+		}
+		return data;	
+	} else {
+		return params;
 	}
-	var re = new RegExp('<update[^>]*id="' + (exact ? '' : '[^"]*') + name + '"[^>]*>\\s*<!\\[CDATA\\[([\\s\\S]*?)\\]\\]></update>', 'i');
-	data = getParam(html, null, null, re);
-	if (!data) {
-		AnyBalance.trace('Неверный ответ для блока ' + name + ': ' + html);
-		return '';
-	}
-	return data;
 }
 
 function refreshBalance(url, html, htmlBalance) {
@@ -306,6 +310,33 @@ function fetchB2B(baseurl, html) {
 	
     var number = prefs.phone || '\\d{4}';
 	
+	// Если указан телефон, надо его найти, актуально для тех у кого больше 10 номеров, они не помещаются на странице
+	if(prefs.phone) {
+		var form = getParam(html, null, null, /<form[^>]*id="mobileDataForm"[\s\S]*?<\/form>/i);
+		
+		checkEmpty(form, 'Не удалось найти форму поиска номера, сайт изменен?', true);
+		
+		var params = getBlock(' ', html, 'mobileDataForm', 'mobileDataForm', true);
+		
+		params['mobileDataForm:abonents:telephoneNum'] = prefs.phone;
+		params['javax.faces.partial.execute'] = 'mobileDataForm';
+		
+		html = AnyBalance.requestPost(baseurl + 'faces/info/abonents/catalog.html', params, addHeaders({
+			Referer: baseurl + 'faces/info/abonents/catalog.html',
+			'Faces-Request': 'partial/ajax',
+			'X-Requested-With': 'XMLHttpRequest'
+		}));
+
+		var re = new RegExp('<update[^>]*id="mobileDataForm"[^>]*>\\s*<!\\[CDATA\\[([\\s\\S]*?)\\]\\]></update>', 'i');
+		data = getParam(html, null, null, re);
+		if (!data) {
+			AnyBalance.trace('Неверный ответ для блока mobileDataForm: ' + html);
+			html = '';
+		} else {
+			html = data;
+		}
+	}
+	
     var href = getParam(html, null, null, new RegExp('(faces/info/subscriberDetail\\.html\\?objId=\\d+)(?:[^>]*>){4}\\d{6}' + number, 'i'));
 	
     checkEmpty(href, 'Не удалось найти ' + (prefs.phone ? 'номер с последними цифрами ' + prefs.phone : 'ни одного номера!'), true);
@@ -326,13 +357,21 @@ function fetchB2B(baseurl, html) {
     	var usedSms = getParam(curr, null, null, /израсходовано[^>]*>([\s\d.,]+штук)/i, replaceTagsAndSpaces, parseBalance);
     	var totalSms = getParam(curr, null, null, /из доступных[^>]*>([\s\d.,]+штук)/i, replaceTagsAndSpaces, parseBalance);		
 		
-    	if (/Лидер общения/i.test(name) && isset(usedMin) && isset(totalMin)) {
-   			sumParam(totalMin - usedMin, result, 'min_local', null, null, null, aggregate_sum);
-		} else if (/Лидер общения/i.test(name) && isset(usedSms) && isset(totalSms)) {
-   			sumParam(totalSms - usedSms, result, 'sms_left', null, null, null, aggregate_sum);
-    	} else if (/Ноль на Билайн/i.test(name) && isset(usedMin) && isset(totalMin)) {
+    	// Это пакет опций
+    	if (/Ноль на Билайн/i.test(name) && isset(usedMin) && isset(totalMin)) {
    			sumParam(totalMin - usedMin, result, 'min_bi', null, null, null, aggregate_sum);
-    	} else {
+		// Это минуты
+    	} else if (isset(usedMin) && isset(totalMin)) {
+			if(!isset(result['min_left_1']) && !isset(result['min_left_2']))
+				sumParam(totalMin - usedMin, result, 'min_left_1', null, null, null, aggregate_sum);
+			else if(isset(result['min_left_1']) && !isset(result['min_left_2']))
+				sumParam(totalMin - usedMin, result, 'min_left_2', null, null, null, aggregate_sum);
+			else
+				sumParam(totalMin - usedMin, result, 'min_local', null, null, null, aggregate_sum);
+		// Это смс
+		} else if (isset(usedSms) && isset(totalSms)) {
+   			sumParam(totalSms - usedSms, result, 'sms_left', null, null, null, aggregate_sum);
+		} else {
     		AnyBalance.trace('Неизвестная опция, либо неизвестные единицы измерений: ' + curr);
     	}
     }

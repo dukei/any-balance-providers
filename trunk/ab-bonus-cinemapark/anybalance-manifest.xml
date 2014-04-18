@@ -1,29 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-bonus-cinemapark</id>
-  <name>Синема Парк</name>
-  <description>
-     Получает значения бонусной карты Синема Парк (https://cinemapark.ru)
-  </description>
-  <author>Stark &lt;support@starksoft.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс"/>
-    <counter id="status" name="Статус карты" type="text"/>
-  </counters>
-  <keywords>
-    
-  </keywords>
-  <type>
-    bonus
-  </type>
-  <country>
-    ru
-  </country>
+	<id version="2">ab-bonus-cinemapark</id>
+	<api flags="no_browser"/>
+	<name>Синема Парк</name>
+	<description html="true"><![CDATA[
+	<p>Получает значения бонусной карты Синема Парк (https://cinemapark.ru)</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс"/>
+		<counter id="status" name="Статус карты" type="text"/>
+		<counter id="stage" name="Уровень программы" type="text"/>
+		<counter id="discount" name="Действующий процент" type="text"/>
+		<counter id="deadline" name="Действительна до" type="time" format="dd/MM/yyyy"/>
+	</counters>
+	<keywords></keywords>
+	<type>bonus</type>
+	<country>ru</country>
 </provider>

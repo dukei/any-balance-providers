@@ -121,9 +121,26 @@ function doNewCabinet(prefs) {
 	var loginVar = getParam(html, null, null, /afterLogin\(([^)]+)/i);
 	if(!loginVar)
 		throw new AnyBalance.Error('Не удалось найти ссылку на страницу с данными, сайт изменен?');
+
+	// Теперь надо пнуть базу, чтобы обновилось все
+	html = AnyBalance.requestPost(baseurl + 'wwv_flow.show', {
+		p_request:'APPLICATION_PROCESS=AFTER_AUTH',
+		p_flow_id:10,
+		p_flow_step_id:100,
+		p_instance:loginVar,
+	}, addHeaders({Referer: baseurl}));
 	
+	html = AnyBalance.requestPost(baseurl + 'wwv_flow.show', {
+		p_request:'APPLICATION_PROCESS=GET_CRM',
+		p_flow_id:10,
+		p_flow_step_id:0,
+		p_instance:loginVar,
+		x01:100
+	}, addHeaders({Referer: baseurl}));	
+		
 	var url = baseurl + 'f?p=10:MAIN:' + loginVar;
 	html = AnyBalance.requestGet(url, g_headers);
+	
 	// Все, теперь можно разбирать данные
     if(prefs.type == 'acc')
 		fetchAcc(html, baseurl, prefs, url);

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-money-akbars</id>
+	<api flags="no_browser"/>
+	<name>АК БАРС Online</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе на картах АК БАРС Банка http://akbars.ru</p>
+	<p>Информация берется из АК БАРС Online https://online.akbars.ru/frontend/frontend</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс"/>
+		<counter id="debt" name="Сумма задолженности"/>
+		<counter id="card_type" name="Тип карты" type="text"/>
+		<counter id="card_num" name="Номер карты" type="text"/>
+		<counter id="card_status" name="Статус карты" type="text"/>
+		<counter id="card_acc" name="Номер счета карты" type="text"/>
+		<counter id="card_prod" name="Продукт" type="text"/>
+		<counter id="card_exp" name="Срок действия карты" type="time" format="dd/MM/yyyy"/>
+	</counters>
+	<keywords></keywords>
+	<type>money</type>
+	<country>ru</country>
+</provider>

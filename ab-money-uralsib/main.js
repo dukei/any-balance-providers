@@ -154,7 +154,7 @@ function fetchCard(html, baseurl, prefs) {
 	var lastdigits = prefs.cardnum ? prefs.cardnum : '\\d{4}';
 	
 	// <li[^>]*class(?:[^>]*>){25,30}\d{4}[\-x]{8,}6445(?:[^>]*>){3,6}\s*</
-	var reCard = new RegExp('<li[^>]*class(?:[^>]*>){25,30}\\d{4}[\\-x]{8,}' + lastdigits + '(?:[^>]*>){3,6}\\s*</', 'i');
+	var reCard = new RegExp('<li[^>]*class(?:[^>]*>){23,30}\\d{4}[\\-x]{8,}' + lastdigits + '(?:[^>]*>){1,6}\\s*</', 'i');
 	
 	var tr = getParam(html, null, null, reCard);
 	if(!tr)

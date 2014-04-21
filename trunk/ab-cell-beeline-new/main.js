@@ -622,7 +622,8 @@ function getBonuses(xhtml, result) {
 			
 			if (/Internet|Интернет/i.test(name)) {
 				// Для опции Хайвей все отличается..
-				if (/Xайвей|Интернет-трафика по тарифу|Мобильного интернета/i.test(name)) {
+				// В билайне опечатались, первая буква иногда из русского алфавита, иногда из английского :)
+				if (/(?:x|х)айвей|Интернет-трафика по тарифу|Мобильного интернета/i.test(name)) {
 					sumParam(services[i], result, 'traffic_left', /<div[^>]+class="column2[^"]*"([^>]*>){6}/i, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
 					sumParam(services[i], result, 'traffic_total', /<div[^>]+class="column2[^"]*"(?:[^>]*>){5}[^<]*из([\s\d,]*ГБ)/i, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
 					if(isset(result.traffic_left) && isset(result.traffic_total)) {

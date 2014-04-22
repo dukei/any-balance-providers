@@ -13,10 +13,10 @@ var g_headers = {
 function main(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
-
-    var baseurl = "http://krasnoeibeloe.ru/";
 	
-	var html = AnyBalance.requestGet(baseurl + 'discount/', g_headers);
+    var baseurl = "http://www.krasnoeibeloe.ru/";
+	
+	var html = AnyBalance.requestGet(baseurl + 'discount/?old=Y', g_headers);
 	
 	var form = getParam(html, null, null, /<form action="[^"]*" method="POST"(?:[^>]*>){10,12}\s*<\/form>/i);
 	
@@ -26,7 +26,7 @@ function main(){
 		return value;
 	});
 	
-    html = AnyBalance.requestPost(baseurl + 'discount/', params);
+    html = AnyBalance.requestPost(baseurl + 'discount/?old=Y', params);
 	
 	if (!/Скидка по вашей карте(?:[^>]*>)[1-9][0-9]*%/i.test(html)) {
 		var error = getParam(html, null, null, /"white-ramka"([^>]*>){2}/i, replaceTagsAndSpaces, html_entity_decode);

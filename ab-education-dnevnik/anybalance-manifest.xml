@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-education-dnevnik</id>
+	<api flags="no_browser"/>
+	<name>Дневник.ру</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию об оценках с сайта Дневник.ру (http://dnevnik.ru/)</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="total0" name="Оценки в понедельник" type="text"/>
+		<counter id="total1" name="Оценки во вторник" type="text"/>
+		<counter id="total2" name="Оценки в среду" type="text"/>
+		<counter id="total3" name="Оценки в четверг" type="text"/>
+		<counter id="total4" name="Оценки в пятницу" type="text"/>
+		<counter id="total5" name="Оценки в субботу" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>education</type>
+	<country>ru</country>
+</provider>

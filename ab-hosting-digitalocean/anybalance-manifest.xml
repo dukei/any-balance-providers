@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id major_version="1.0" version="1">ab-hosting-digitalocean</id>
+	<api flags="no_browser"/>
+	<name>DigitalOcean</name>
+	<description>
+Получает баланс для хостинга DigitalOcean. Информация берется из личного кабинета https://cloud.digitalocean.com/billing.
+	</description>
+	<author>Andrey Belchikov &lt;belchikovs@gmail.com&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units="$"/>
+		<counter id="usage" name="Начислено за текущий месяц" units="$"/>
+	</counters>
+	<keywords>интернет, хостинг, облако, сервер</keywords>
+	<type>hosting</type>
+	<country>ru</country>
+</provider>

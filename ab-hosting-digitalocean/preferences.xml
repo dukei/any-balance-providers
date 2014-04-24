@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Email" 
+        positiveButtonText="ОК" 
+        summary="Email для входа||{@s}\n" 
+        dialogTitle="Логин" 
+        negativeButtonText="Отмена" 
+	obligatory="true"
+        dialogMessage="Введите email, используемый для входа в личный кабинет https://cloud.digitalocean.com"
+        key="email"
+	inputType="textEmailAddress">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="Пароль для входа||***********\n"
+	obligatory="true"
+        dialogMessage="Введите пароль, используемый для входа в личный кабинет https://cloud.digitalocean.com"
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

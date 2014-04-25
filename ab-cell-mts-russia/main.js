@@ -534,8 +534,10 @@ function mainLK(allowRetry){
         
         if(!isLoggedIn(html)){
             var form = getParam(html, null, null, /<form[^>]+name="Login"[^>]*>([\s\S]*?)<\/form>/i);
-            if(!form)
+            if(!form){
+		AnyBalance.trace(html);
                 throw new AnyBalance.Error("Не удаётся найти форму входа!", allowRetry);
+	    }
         
             var params = createFormParams(form, function(params, input, name, value){
                 var undef;

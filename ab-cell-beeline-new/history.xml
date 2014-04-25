@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="65" date="2014-04-25">
+	- Улучшена обработка ошибок
+	</change>
 	<change version="64" date="2014-04-25">
 	- Исправлены ошибки получения баланса и валюты на постоплатных тарифах.
 	</change>

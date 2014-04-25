@@ -288,7 +288,10 @@ function fetchB2B(baseurl, html) {
     if (AnyBalance.isAvailable('balance', 'agreement', 'currency')) {
     	var accounts = sumParam(html, null, null, /faces\/info\/contractDetail\.html\?objId=\d+[^>]*>\d{5,10}/ig);
 		
-    	checkEmpty(accounts, 'Не удалось найти ни одного договора, сайт изменен?', true);
+		if(!accounts || accounts.length < 1) {
+			AnyBalance.trace(html);
+			throw new AnyBalance.Error('Не удалось найти ни одного договора, сайт изменен, либо проблемы на сайте.');
+		}
 		
     	AnyBalance.trace('Договоров: ' + accounts.length);
     	// Пока мы не знаем как будет выглядеть кабинет с двумя и более договорами, пока получим по первому

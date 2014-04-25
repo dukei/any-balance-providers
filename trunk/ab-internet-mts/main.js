@@ -799,8 +799,8 @@ function getPiter() {
 }
 
 function getBalakovo(){
-	var urlIndex = 'http://stat.balakovo.comstar-r.ru/client2/index.php?r=site/login';
-	var urlAjax = 'http://stat.balakovo.comstar-r.ru/client2/index.php?r=account/vgroups&agrmid=';
+	var urlIndex = 'https://lksrt.pv.mts.ru/bal/index.php?r=site/login';
+	var urlAjax = 'https://lksrt.pv.mts.ru/bal/index.php?r=account/vgroups&agrmid=';
 	
 	newTypicalLanBillingInetTv(urlIndex, urlAjax);
 }

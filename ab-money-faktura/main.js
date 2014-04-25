@@ -16,7 +16,7 @@ function main(){
     var prefs = AnyBalance.getPreferences();
     var baseurl = "https://www.faktura.ru/lite/app";
     AnyBalance.setDefaultCharset("utf-8");
-
+	
     var what = prefs.what || 'card';
     if(prefs.num && !/\d{4}/.test(prefs.num))
         throw new AnyBalance.Error("Введите 4 последних цифры номера " + g_phrases.karty[what] + " или не вводите ничего, чтобы показать информацию по " + g_phrases.karte1[what]);
@@ -30,26 +30,26 @@ function main(){
             throw new AnyBalance.Error("В настоящее время в системе Интернет-банк проводятся профилактические работы. Пожалуйста, попробуйте ещё раз позже.");
         throw new AnyBalance.Error("Не удаётся найти форму входа в интернет-банк! Сайт недоступен или изменения на сайте.");
     }
-
+	
     var id=matches[1], href=matches[2];
     var params = {};
     params[id + "_hf_0"] = '';
     params.hasData = 'X';
     params.login=prefs.login;
     params.password=prefs.password;
-
+	
     html = AnyBalance.requestPost(baseurl + href, params);
-
+	
     var error = getParam(html, null, null, /<span[^>]*class="feedbackPanelERROR"[^>]*>([\s\S]*?)(<script|<\/span>)/i, replaceTagsAndSpaces);
     if(error)
         throw new AnyBalance.Error(error);
-
+	
     var needsms = getParam(html, null, null, /(sms-message-panel|Введите SMS-код)/i);
     if(needsms)
         throw new AnyBalance.Error("Для работы этого провайдера требуется отключить в настройках интернет-банка подтверждение входа по СМС. Это безопасно, для совершения операций все равно будет требоваться подтверждение по СМС.");
-
+	
     AnyBalance.trace("We seem to enter the bank...");
-
+	
     if(what == 'dep')
         mainDep(what, baseurl);
     else
@@ -63,13 +63,13 @@ function mainCardAcc(what, baseurl){
     var pattern;
     if(what == 'card')
 		// Я маньяк :)
-		// <div\s+class="account-block"(?:[^>]*>){3}[^>]*acc_\d+(?:[^>]*>){1,200}\d{4}\s*(?:\*{4}\s*){1,3}3998[\s\S]*?class="account-amounts"(?:[\s\S]*?</div[^>]*>){12}
-        pattern = new RegExp('<div\\s+class="account-block"(?:[^>]*>){3}[^>]*acc_\\d+(?:[^>]*>){1,200}\\d{4}\\s*(?:\\*{4}\\s*){1,3}' + (prefs.num || '\\d{4}')+ '[\\s\\S]*?class="account-amounts"(?:[\\s\\S]*?</div[^>]*>){12}');
+		// <div\s+class="account-block"(?:[^>]*>){3}[^>]*acc_\d+(?:[^>]*>){1,100}\s*(?:[\*\s]{8,18}){1,3}6914[\s\S]*?class="account-amounts"(?:[\s\S]*?</div[^>]*>){6,12}
+        pattern = new RegExp('<div\\s+class="account-block"(?:[^>]*>){3}[^>]*acc_\\d+(?:[^>]*>){1,100}\\s*(?:[\\*\\s]{8,18}){1,3}' + (prefs.num || '\\d{4}')+ '[\\s\\S]*?class="account-amounts"(?:[\\s\\S]*?</div[^>]*>){6,12}', 'i');
     else
 		// <div\s+class="account-block"(?:[^>]*>){3}[^>]*acc_\d+221738(?:[\s\S]*?</div[^>]*>){12}
         pattern = new RegExp('<div\\s+class="account-block"(?:[^>]*>){3}[^>]*acc_\\d+' + (prefs.num || '') + '[\\s\\S]*?class="account-amounts"(?:[\\s\\S]*?</div[^>]*>){12}', 'i');
 	
-	AnyBalance.trace('Pattern is: ' +pattern);
+	AnyBalance.trace('Pattern is: ' + pattern);
 	var account = getParam(html, null, null, pattern);
 	if(!account) {
         if(prefs.num)
@@ -82,10 +82,9 @@ function mainCardAcc(what, baseurl){
 	
 	var result = {success: true};
 	
-	getParam(account, result, 'accnum', /Счет\s*№(\d+)/i, replaceTagsAndSpaces);
+	getParam(account, result, 'accnum', /Счет\s*№\s*(\d+)/i, replaceTagsAndSpaces);
 	getParam(account, result, 'accname', /bind\(this\)\);">([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
-	
-	getParam(account, result, '__tariff', new RegExp('\\d{4}\\s*(?:\\*{4}\\s*){2}' + (prefs.num || '\\d{4}'), 'i'), replaceTagsAndSpaces);
+	getParam(account, result, '__tariff', new RegExp('[\\*\\s]{8,18}' + (prefs.num || '\\d{4}'), 'i'), replaceTagsAndSpaces);
 	getParam(result.__tariff, result, 'cardnum');
 	
 	var balancesArray = [/Средств на счете[\s\S]*?<span[^>]+class="amount"[^>]*>([\s\S]*?)<\/div/i, /Доступно по картам(?:[^>]*>){2}([\s\S]*?)<\/div/i, 

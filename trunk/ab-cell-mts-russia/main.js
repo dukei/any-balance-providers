@@ -521,14 +521,19 @@ function mainLK(allowRetry){
             //info = JSON.parse(info);
             // Уж лучше пусть бросит исключение, нежели пойдет дальше с пустым или кривым info
             info = getJson(info);*/
-			var loggedInMSISDN = getParam(html, null, null, /var\s*initialProfile[^"']+['"]Login(?:[^'"]*"){2}(\d{10})/i);
-			checkEmpty(loggedInMSISDN, 'Не удалось определить, на какой номер залогинились автоматически, сайт изменен?', true);
+	    var loggedInMSISDN = getParam(html, null, null, /var\s*initialProfile[^"']+['"]Login(?:[^'"]*"){2}(\d{10})/i);
+	    if(!loggedInMSISDN){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось определить текущий номер в кабинете, сайт изменен?');
+	    }
 			
             if (loggedInMSISDN != prefs.login) { //Автоматом залогинились не на тот номер
                 AnyBalance.trace("Залогинены на неправильный номер: " + loggedInMSISDN + ", выходим");
                 html = AnyBalance.requestGet(baseurlLogin + "/amserver/UI/Logout", g_headers);
-                if (isLoggedIn(html))
-					throw new AnyBalance.Error('Не удаётся выйти из личного кабинета, чтобы зайти под правильным номером. Сайт изменен?');
+                if (isLoggedIn(html)){
+			AnyBalance.trace(html);
+			throw new AnyBalance.Error('Не удаётся выйти из личного кабинета, чтобы зайти под правильным номером. Сайт изменен?');
+		}
             }
         }
         
@@ -600,24 +605,28 @@ function mainLK(allowRetry){
 
     if(isAvailableStatus()){
         var baseurlHelper = "https://ihelper.mts.ru/selfcare/";
-        html = AnyBalance.requestGet(baseurlHelper + "account-status.aspx", g_headers);
-        var redirect=getParam(html, null, null, /<form .*?id="redirect-form".*?action="[^"]*?([^\/\.]+)\.mts\.ru/);
-        if (redirect){
-            //Неправильный регион. Умный мтс нас редиректит
-            //Только эта скотина не всегда даёт правильную ссылку, иногда даёт такую, которая требует ещё редиректов
-            //Поэтому приходится вычленять из ссылки непосредственно нужный регион
-            if(region_aliases[redirect])
-                redirect = region_aliases[redirect];
-            if(!regionsOrdinary[redirect])
-                throw new AnyBalance.Error("МТС перенаправила на неизвестный регион: " + redirect);
-	
-            baseurlHelper = regionsOrdinary[redirect];
-            AnyBalance.trace("Redirected, now trying to enter selfcare at address: " + baseurlHelper);
-            html = AnyBalance.requestPost(baseurlHelper + "logon.aspx", {
-                wasRedirected: '1',
-                submit: 'Go'
-            }, g_headers);
-        }
+	try{
+            html = AnyBalance.requestGet(baseurlHelper + "account-status.aspx", g_headers);
+            var redirect=getParam(html, null, null, /<form .*?id="redirect-form".*?action="[^"]*?([^\/\.]+)\.mts\.ru/);
+            if (redirect){
+                //Неправильный регион. Умный мтс нас редиректит
+                //Только эта скотина не всегда даёт правильную ссылку, иногда даёт такую, которая требует ещё редиректов
+                //Поэтому приходится вычленять из ссылки непосредственно нужный регион
+                if(region_aliases[redirect])
+                    redirect = region_aliases[redirect];
+                if(!regionsOrdinary[redirect])
+                    throw new AnyBalance.Error("МТС перенаправила на неизвестный регион: " + redirect);
+		
+                baseurlHelper = regionsOrdinary[redirect];
+                AnyBalance.trace("Redirected, now trying to enter selfcare at address: " + baseurlHelper);
+                html = AnyBalance.requestPost(baseurlHelper + "logon.aspx", {
+                    wasRedirected: '1',
+                    submit: 'Go'
+                }, g_headers);
+            }
+        }catch(e){
+            AnyBalance.trace('Не удалось перейти из лк в интернет-помощник: ' + e.message);
+	}
 
         if(!isInOrdinary(html)){ //Тупой МТС не всегда может перейти из личного кабинета в интернет-помощник :(
             AnyBalance.trace('Ошибка прямого перехода в интернет-помощник. Пробуем зайти с логином-паролем.');

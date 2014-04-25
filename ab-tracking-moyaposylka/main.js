@@ -38,8 +38,8 @@ function getMyPosylkaResult(prefs) {
 	var dest = prefs.track_dest || "RU"; //Страна назначения
 	var baseurl = "https://moyaposylka.ru";
 	var html = AnyBalance.requestGet(baseurl, g_headers);
-        html = AnyBalance.requestPost(baseurl + '/tracker-type/', JSON.stringify({
-		number:prefs.track_id
+        html = AnyBalance.requestPost(baseurl + '/apps/tracker/v1', JSON.stringify({
+		method:"getTrackerTypesByNumber",params:{number:prefs.track_id}
         }), addHeaders({
 		Accept: 'application/json, text/plain, */*',
 		'Content-Type':'application/json;charset=UTF-8',
@@ -47,51 +47,44 @@ function getMyPosylkaResult(prefs) {
 		Referer: baseurl + '/',
 		'X-Requested-With': 'XMLHttpRequest'
 	}));
-	var types = getJson(html);
-	if(!types.types || types.types.length == 0)
-		throw new AnyBalance.Error('Неизвестный или неверный тип отправления', null, true);
+	var res = getJson(html);
+	if(!res.success || res.result.types.length == 0)
+		throw new AnyBalance.Error(res.error || 'Неизвестный или неверный тип отправления', null, true);
 
-	html = AnyBalance.requestPost(baseurl + '/quick-check/', JSON.stringify({
-		'number': prefs.track_id,
-		'destinationCountry': dest,
-		'type': types.types[0].type,
-	}), addHeaders({
+	html = AnyBalance.requestPost(baseurl + '/apps/tracker/v1', JSON.stringify(
+		{method:"getActiveStatuses",params:{
+			type:res.result.types[0].type,
+			number:prefs.track_id,
+			countryCode:dest}}
+	), addHeaders({
 		Accept: 'application/json, text/plain, */*',
 		'Content-Type':'application/json;charset=UTF-8',
 		Origin: baseurl,
 		Referer: baseurl + '/',
 		'X-Requested-With': 'XMLHttpRequest'
 	}));
-	var error = getParam(html, null, null, /<div[^>]*class="quick-check-error"[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	if (error) throw new AnyBalance.Error(error);
-	
+
+	res = getJson(html);
+	if(!res.success || res.result.error){
+		throw new AnyBalance.Error(res.error || res.result.error || 'Не удаётся получить информацию по отправлению', null);
+        }
+
 	var result = {success: true};
+
+        var tracker = res.result.tracker;
 	
-	var tr = getParam(html, null, null, /<tr[^>]*>(\s*<td[^>]+class="tracker-date[\s\S]*?)<\/tr>/i);
-	if (!tr) {
-		error = getParam(html, null, null, /<ul[^>]+class="form-errors"[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
-		if (error) AnyBalance.trace('Случилась ошибка, пробуем закешеный результат: ' + error);
-	}
-	if (!tr) {
-		html = AnyBalance.requestGet(baseurl + '/' + prefs.track_id, g_headers);
-		tr = getParam(html, null, null, /<tr[^>]*>(\s*<td[^>]+class="tracker-date[\s\S]*?)<\/tr>/i);
-		if (!tr) {
-			if (error) throw new AnyBalance.Error(error);
-			throw new AnyBalance.Error('Информация об отправлении не найдена!');
-		}
-	}
-	getParam(html, result, 'trackid', /<h2[^>]*>([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'days', /Дней в пути\s*<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'weight', /Вес посылки:?\s*<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(tr, result, 'date', /(?:<td[^>]*>[\s\S]*?){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
-	getParam(tr, result, 'address', /(?:<td[^>]*>[\s\S]*?){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(tr, result, 'status', /(?:<td[^>]*>[\s\S]*?){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(tracker.number, result, 'trackid');
+	getParam(tracker.trackTime + '', result, 'days', null, null, parseBalance);
+	getParam(tracker.weight + '', result, 'weight', null, null, parseBalance);
+	getParam(tracker.lastStatus.date, result, 'date', null, null, parseDate);
+	getParam(tracker.lastStatus.place, result, 'address');
+	getParam(tracker.lastStatus.operationReadable, result, 'status');
 	
 	if (AnyBalance.isAvailable('fulltext')) {
-		var date = getParam(tr, null, null, /(?:<td[^>]*>[\s\S]*?){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
-		var address = getParam(tr, null, null, /(?:<td[^>]*>[\s\S]*?){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-		var status = getParam(tr, null, null, /(?:<td[^>]*>[\s\S]*?){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-		var days = getParam(html, null, null, /Дней в пути\s*<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+		var date = getParam(tracker.lastStatus.date, null, null, null, null, parseDate);;
+		var address = tracker.lastStatus.place;
+		var status = tracker.lastStatus.operationReadable;
+		var days = tracker.trackTime;
 		result.fulltext = '<b>' + status + '</b><br/>\n' + '<small>' + getDateString(date) + '</small>: ' + address + '<br/>\n' + 'в пути ' + days + ' дн.';
 	}
 	return result;

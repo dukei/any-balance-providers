@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id major_version="3.3" version="78">ab-cell-mts-russia</id>
+	<id major_version="3.3" version="79">ab-cell-mts-russia</id>
 	<name>МТС (Россия)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе, бонусных баллах, использованных минутах на локальные, мобильные и любимые номера, расходах, статусе блокировки, кредите, номере лицевого счета, ежемесячой плате.</p>
@@ -47,6 +47,7 @@
 		<counter id="min_love" name="Использовано минут на любимые номера" units=" мин"/>
 		<counter id="min_used_mts" name="Использовано минут на МТС" units=" мин"/>
 		<counter id="min_left_mts" name="Бесплатные минуты на МТС" units=" мин"/>
+		<counter id="min_left_mts_rf" name="Бесплатные минуты на МТС РФ" units=" мин"/>
 		<counter id="tourist" name="Туристическая СИМ-карта от МТС" type="time_interval" format="{@MIN}" units=" мин"/>
 		<counter id="abonservice" name="Абонентская плата за доп.услуги" units=" р"/>
 		<counter id="debt" name="Неоплаченные счета" units=" р"/>

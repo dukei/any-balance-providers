@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="3.3" version="79" date="2014-04-25">
+	- Добавлен счетчик: Бесплатные минуты на МТС РФ.
+	</change>
 	<change major_version="3.3" version="78" date="2014-04-25">
 	- Попытка обхода проблем прямого входа в интернет помощник из лк и дополнительная диагностика ошибок
 	</change>

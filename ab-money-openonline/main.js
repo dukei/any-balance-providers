@@ -12,7 +12,7 @@ var g_headers = {
 
 var g_headers2 = {
 	'Accept': '*/*',
-	'Referer': 'https://www.openonline.ru/finances/index',
+	'Referer': 'https://online.openbank.ru/finances/index',
 	'X-Requested-With': 'XMLHttpRequest',
 };
 
@@ -22,7 +22,7 @@ function getToken(html) {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://www.openonline.ru/';
+	var baseurl = 'https://online.openbank.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 
 	checkEmpty(prefs.login, 'Введите логин!');
@@ -38,7 +38,7 @@ function main() {
 		stat: '8095'
 	}, addHeaders({Referer: baseurl + 'logon'}));
 
-	if (!/exit_link/i.test(html)) {
+	if (!/exit_link|logoff/i.test(html)) {
 		var error = sumParam(html, null, null, /"error"[^>]*>([^<]+)/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
 		if (error && /Неверный логин или пароль/i.test(error))
 			throw new AnyBalance.Error(error, null, true);

@@ -385,6 +385,8 @@ function fetchPost(baseurl, html) {
 
 	var result = {success: true, balance: null, currency: null};
 	var multi = /<span[^>]+class="selected"[^>]*>/i.test(html), xhtml='';
+	// Пытаемся исправить всякую ерунду в балансе и валюте
+	var balancesReplaces = [replaceTagsAndSpaces, /информация[^<]*недоступна|недоступна|временно недоступен/ig, ''];
 
 	getParam(html, result, 'agreement', /<h2[^>]*>\s*Договор №([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces, html_entity_decode);
 //	xhtml = getBlock(baseurl + 'c/post/index.html', html, 'list-contents', true); //Это строка вообще приводила к созданию/отмене заявки на смену тарифного плана
@@ -436,9 +438,9 @@ function fetchPost(baseurl, html) {
 		if (AnyBalance.isAvailable('balance')) {
 			xhtml = getBlock(baseurl + 'c/post/index.html', html, 'homeBalance');
 			
-			var balance = getParam(xhtml, null, null, /Расходы по номеру за текущий период с НДС[\s\S]*?<div[^>]+class="balan?ce-summ"[^>]*>([\s\S]*?)<\/div>/i, [replaceTagsAndSpaces, /Баланс временно недоступен/ig, ''], parseBalance);
+			var balance = getParam(xhtml, null, null, /Расходы по номеру за текущий период с НДС[\s\S]*?<div[^>]+class="balan?ce-summ"[^>]*>([\s\S]*?)<\/div>/i, balancesReplaces, parseBalance);
 			if(!isset(balance))
-				balance = getParam(html, null, null, /Расходы по номеру за текущий период с НДС[\s\S]*?<div[^>]+class="balan?ce-summ"[^>]*>([\s\S]*?)<\/div>/i, [replaceTagsAndSpaces, /Баланс временно недоступен/ig, ''], parseBalance);
+				balance = getParam(html, null, null, /Расходы по номеру за текущий период с НДС[\s\S]*?<div[^>]+class="balan?ce-summ"[^>]*>([\s\S]*?)<\/div>/i, balancesReplaces, parseBalance);
 			
 			getParam(balance, result, 'balance');
 		}
@@ -455,13 +457,13 @@ function fetchPost(baseurl, html) {
     if (AnyBalance.isAvailable('overpay', 'prebal', 'currency')) {
     	xhtml = getBlock(baseurl + 'c/post/index.html', html, 'callDetailsDetails');
 		
-    	getParam(xhtml, result, 'overpay', /<h4[^>]*>Переплата[\s\S]*?<span[^>]+class="price[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-    	getParam(xhtml, result, 'overpay', /<h4[^>]*>Осталось к оплате[\s\S]*?<span[^>]+class="price[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalanceNegative);
-    	getParam(xhtml, result, 'prebal', /Расходы по договору за текущий период:[\S\s]*?<div[^<]+class="balan?ce-summ"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-    	getParam(xhtml, result, ['currency', 'prebal', 'overpay'], /Расходы по договору за текущий период:[\S\s]*?<div[^<]+class="balan?ce-summ"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, myParseCurrency);
+    	getParam(xhtml, result, 'overpay', /<h4[^>]*>Переплата[\s\S]*?<span[^>]+class="price[^>]*>([\s\S]*?)<\/span>/i, balancesReplaces, parseBalance);
+    	getParam(xhtml, result, 'overpay', /<h4[^>]*>Осталось к оплате[\s\S]*?<span[^>]+class="price[^>]*>([\s\S]*?)<\/span>/i, balancesReplaces, parseBalanceNegative);
+    	getParam(xhtml, result, 'prebal', /Расходы по договору за текущий период:[\S\s]*?<div[^<]+class="balan?ce-summ"[^>]*>([\s\S]*?)<\/div>/i, balancesReplaces, parseBalance);
+    	getParam(xhtml, result, ['currency', 'prebal', 'overpay'], /Расходы по договору за текущий период:[\S\s]*?<div[^<]+class="balan?ce-summ"[^>]*>([\s\S]*?)<\/div>/i, balancesReplaces, myParseCurrency);
 		
 		AnyBalance.trace(xhtml);
-		if(/информация[^<]*недоступна/)
+		if(/информация[^<]*недоступна/i.test(xhtml))
 			AnyBalance.trace('Информация временно недоступна на сайте Билайн, попробуйте позже');
     }
 
@@ -470,10 +472,10 @@ function fetchPost(baseurl, html) {
 		xhtml = AnyBalance.requestGet(baseurl + 'm/post/index.html', g_headers);
 		getParam(xhtml, result, 'fio', /<div[^>]+class="abonent-name"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, capitalFirstLenttersAndDecode);
 		// Вроде бы все хорошо, но: {"sms_left":3463,"min_local":24900,"balance":0,"phone":"+7 909 169-24-86","agreement":"248260674","__time":1385043751223,"fio":"Максим Крылов","overpay":619.07,"min_local_clear":415,"currency":"рубвмесяцОтключитьБудьвкурсе","__tariff":"«Всё включено L 2013»"}
-		getParam(xhtml, result, 'balance', /class="price[^>]*>((?:[\s\S]*?span[^>]*>){3})/i, replaceTagsAndSpaces, parseBalance);
+		getParam(xhtml, result, 'balance', /class="price[^>]*>((?:[\s\S]*?span[^>]*>){3})/i, balancesReplaces, parseBalance);
 		// Если баланса нет, не надо получать и валюту
-		if(isset(result.balance) && result.balance != null) {
-			getParam(xhtml, result, ['currency', 'balance'], /class="price[^>]*>((?:[\s\S]*?span[^>]*>){3})/i, replaceTagsAndSpaces, myParseCurrency);
+		if(isset(result.balance)) {
+			getParam(xhtml, result, ['currency', 'balance'], /class="price[^>]*>((?:[\s\S]*?span[^>]*>){3})/i, balancesReplaces, myParseCurrency);
 		}
 	}
 	

@@ -305,8 +305,8 @@ function fetchB2B(baseurl, html) {
     	html = AnyBalance.requestGet(baseurl + currentHref, g_headers);
 		
     	getParam(html, result, 'agreement', /Договор №([\s\d]+)/i, replaceTagsAndSpaces);
-    	getParam(html, result, 'balance', /class="balance"([^>]*>){2}/i, replaceTagsAndSpaces, parseBalance);
-    	getParam(html, result, ['currency', 'balance'], /class="balance"[^>]*>[^<]*?([\d,.]+\s*(?:руб|usd|eur)?)/i, replaceTagsAndSpaces, parseCurrency);
+    	getParam(html, result, 'balance', /class="balance"[^>]*>([\s\S]*?)<\/div>/i, [replaceTagsAndSpaces, /Сумма неоплаченных счетов[^\d]+/i, '-'], parseBalance);
+    	getParam(html, result, ['currency', 'balance'], /class="balance"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseCurrency);
     }	
 	// Получим страницу с тарифом и опциями
     html = AnyBalance.requestGet(baseurl + 'faces/info/abonents/catalog.html', g_headers);
@@ -348,6 +348,25 @@ function fetchB2B(baseurl, html) {
     
 	getParam(html, result, 'phone', /subheader\s*"([^>]*>){3}/i, replaceTagsAndSpaces);
     getParam(html, result, '__tariff', /Тариф:([^>]*>){5}/i, replaceTagsAndSpaces);
+	// Трафик из детализации, пока не работает
+	
+	// if(isAvailable()) {
+		// var form = getParam(html, null, null, /<form id="reportDetailUnbilledButtonsForm"[\s\S]*?<\/form>/i);
+		// if(form) {
+			// var xhtml = getBlock(baseurl + 'faces/info/subscriberDetail.html', form, 'reportDetailUnbilledButtonsForm', 'reportDetailUnbilledButtonsForm');
+			
+			// var params = getBlock(baseurl + 'faces/info/subscriberDetail.html', xhtml, 'reportDetailUnbilledButtonsForm', 'reportDetailUnbilledButtonsForm', true);
+			
+			// params['javax.faces.partial.render'] = 'reportDetailUnbilledButtonsForm messages reportDetailUnbilledExcelButtonForm:excelDetailOnlineButton';
+			
+			// html = AnyBalance.requestPost(baseurl + 'faces/info/subscriberDetail.html', params, addHeaders({
+				// Referer: baseurl + href,
+				// 'Faces-Request': 'partial/ajax',
+				// 'X-Requested-With': 'XMLHttpRequest'
+			// }));
+		// }
+	// }
+	
     // Бонусы
     var bonuses = sumParam(html, null, null, /class="accumulator"[^>]*>([\s\S]*?)<\/div/ig);
 	AnyBalance.trace('Найдено бонусов и пакетов: ' + bonuses.length);

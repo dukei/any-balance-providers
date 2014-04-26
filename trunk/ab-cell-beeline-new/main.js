@@ -73,22 +73,28 @@ function getBlock(url, html, name, exact, onlyReturnParams) {
 }
 
 function refreshBalance(url, html, htmlBalance) {
-	var data = getParam(htmlBalance, null, null, /PrimeFaces\.\w+\s*\(\s*\{[^}]*update:\s*'[^']*headerBalance/);
+	//{PrimeFaces.cw('BlockUI','loadingBalanceBlock',{id:'j_idt760:j_idt761',block:'j_idt760:homeBalance'});});</script>
+	//var data = getParam(htmlBalance, null, null, /PrimeFaces\.\w+\s*\(\s*\{[^}]*update:\s*'[^']*headerBalance/);
+	var data = getParam(html, null, null, /PrimeFaces\.\w+\s*[^}]*(?:header|home)Balance/i);
+	
 	if (!data) {
 		AnyBalance.trace('Блок headerBalance не найден!');
 		return '';
 	}
-	var source = getParam(data, null, null, /source:\s*'([^']*)/, replaceSlashes);
-	var render = getParam(data, null, null, /update:\s*'([^']*)/, replaceSlashes);
-	var form = getParam(htmlBalance, null, null, new RegExp('(<form[^>]+>)(?:[\\s\\S](?!</?form))*id="' + source + '"'));
+	
+	var balanceForm = getParam(html, null, null, /<form[^>]*action="(?:[^>]*>){3}\s*loadingBalance[\s\S]*?<\/form>/i)
+	
+	var source = getParam(balanceForm, null, null, /source:\s*'([^']*)/, replaceSlashes);
+	var render = getParam(data, null, null, /(?:update|block):\s*'([^']*)/, replaceSlashes);
+	var form = balanceForm;//getParam(balanceForm, null, null, new RegExp('(<form[^>]+>)(?:[\\s\\S](?!</?form))*id="' + source + '"'));
 	if (!form) {
-		AnyBalance.trace('Не найдена форма для блока headerBalance!');
+		AnyBalance.trace('Не найдена форма для блока (?:header|home)Balance!');
 		return '';
 	}
 	
 	var viewState = getParam(html, null, null, /<input[^>]+name="javax.faces.ViewState"[^>]*value="([^"]*)/i, null, html_entity_decode);
 	
-	var formId = getParam(form, null, null, /id="([^"]*)/i, null, html_entity_decode);
+	//var formId = getParam(form, null, null, /id="([^"]*)/i, null, html_entity_decode);
 	var params = createFormParams(form);
 	params['javax.faces.partial.ajax'] = true;
 	params['javax.faces.source'] = source;
@@ -102,7 +108,7 @@ function refreshBalance(url, html, htmlBalance) {
 		'Faces-Request': 'partial/ajax',
 		'X-Requested-With': 'XMLHttpRequest'
 	}));
-	data = getParam(html, null, null, new RegExp('<update[^>]+id="' + formId + '"[^>]*>\\s*<!\\[CDATA\\[([\\s\\S]*?)\\]\\]></update>', 'i'));
+	data = getParam(html, null, null, new RegExp('<update[^>]+id="' + render + '"[^>]*>\\s*<!\\[CDATA\\[([\\s\\S]*?)\\]\\]></update>', 'i'));
 	if (!data) {
 		AnyBalance.trace('Неверный ответ для блока headerBalance: ' + html);
 		return '';
@@ -527,7 +533,7 @@ function fetchPre(baseurl, html) {
 	var prefs = AnyBalance.getPreferences();
 	AnyBalance.trace('Мы в предоплатном кабинете');
 	
-	var result = {success: true, balance: null/*, currency: null*/};
+	var result = {success: true, balance: null, currency: null};
 	
 	if (prefs.phone) { //Если задан номер, то надо сделать из него регулярное выражение
 		if (!/^\d{4,10}$/.test(prefs.phone))
@@ -569,19 +575,24 @@ function fetchPre(baseurl, html) {
 		}
 	}
 	getParam(html, result, 'phone', /<h1[^>]+class="phone-number"[^>]*>([\s\S]*?)<\/h1>/i, replaceTagsAndSpaces, html_entity_decode);
-	
-	var xhtml = getBlock(baseurl + 'c/pre/index.html', html, 'currentTariffLoaderDetails');
-	getParam(xhtml, result, '__tariff', [/<div[^>]+:tariffInfo[^>]*class="current"[^>]*>(?:[\s\S](?!<\/div>))*?<h2[^>]*>([\s\S]*?)<\/h2>/i, /<h2>(?:[\s\S](?!<\/h2>))*?Текущий тариф\s*([\s\S]*?)\s*<\/h2>/i], replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, '__tariff', /Текущий тариф[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+
+	var xhtml; //= getBlock(baseurl + 'c/pre/index.html', html, 'currentTariffLoaderDetails');
+	//getParam(xhtml, result, '__tariff', [/<div[^>]+:tariffInfo[^>]*class="current"[^>]*>(?:[\s\S](?!<\/div>))*?<h2[^>]*>([\s\S]*?)<\/h2>/i, /<h2>(?:[\s\S](?!<\/h2>))*?Текущий тариф\s*([\s\S]*?)\s*<\/h2>/i], replaceTagsAndSpaces, html_entity_decode);
 	
 	if (AnyBalance.isAvailable('balance'/*, 'fio'*/)) {
 		/*xhtml = getBlock(baseurl + 'c/pre/index.html', html, 'balancePreHeadDetails');
 		getParam(xhtml, result, 'balance', /у вас на балансе([\s\S]*)/i, replaceTagsAndSpaces, parseBalance);
 		getParam(xhtml, result, ['currency', 'balance'], /у вас на балансе([\s\S]*)/i, replaceTagsAndSpaces, myParseCurrency);
 		getParam(xhtml, result, 'fio', /<span[^>]+class="b2c.header.greeting.pre.b2c.ban"[^>]*>([\s\S]*?)(?:<\/span>|,)/i, replaceTagsAndSpaces, html_entity_decode);*/
+		
 		// Пробуем получить со страницы, при обновлении через мобильный интернет, он там есть
 		getParam(html, result, 'balance', /class="price[^>]*>((?:[\s\S]*?span[^>]*>){3})/i, replaceTagsAndSpaces, parseBalance);
 		// Теперь запросим блок homeBalance
-		xhtml = getBlock(baseurl + 'c/pre/index.html', html, 'homeBalance');
+		//xhtml = getBlock(baseurl + 'c/pre/index.html', html, 'loadingBalanceBlock');
+		xhtml = refreshBalance(baseurl + 'c/pre/index.html', html);
+		
+		
 		/*var tries = 0; //Почему-то не работает. Сколько раз ни пробовал, если первый раз баланс недоступен, то и остальные оказывается недоступен...
 		while(/balance-not-found/i.test(xhtml) && tries < 20){
 			AnyBalance.trace('Баланс временно недоступен, пробуем обновить: ' + (++tries));
@@ -591,12 +602,16 @@ function fetchPre(baseurl, html) {
 		// И получим баланс из него
 		getParam(xhtml, result, 'balance', /class="price[^>]*>((?:[\s\S]*?span[^>]*>){3})/i, replaceTagsAndSpaces, parseBalance);
 		// Если баланса нет, не надо получать и валюту
-		if(isset(result.balance)) {
+		if(isset(result.balance) && result.balance != null) {
 			getParam(xhtml, result, ['currency', 'balance'], /class="price[^>]*>((?:[\s\S]*?span[^>]*>){3})/i, replaceTagsAndSpaces, myParseCurrency);
 		}
 	}
 	if (isAvailableBonuses()) {
-		xhtml = getBlock(baseurl + 'c/pre/index.html', html, 'bonusesForm homeServices')
+		xhtml = getBlock(baseurl + 'c/pre/index.html', html, 'bonusesForm homeServices');
+		
+		// Затем надо пнуть систему, чтобы точно получить все бонусы
+		//xhtml = getBlock(baseurl + 'c/pre/index.html', html, 'refreshButton')
+		
 		getBonuses(xhtml, result);
 	}
 	if (AnyBalance.isAvailable('fio')) {
@@ -635,7 +650,7 @@ function getBonuses(xhtml, result) {
 		var bonus = bonuses[j];
 		var bonus_name = ''; //getParam(bonus, null, null, /<span[^>]+class="bonuses-accums-list"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
 													// Эта регулярка вроде не работает, но оставил для совместимости
-		var services = sumParam(bonus, null, null, /<div[^>]+class="(?:accumulator|bonus)"(?:[\s\S](?!$|<div[^>]+class="(?:accumulator|bonus)"))*[\s\S]/ig);
+		var services = sumParam(bonus, null, null, /<div[^>]+class="\s*(?:accumulator|bonus)\s*"(?:[\s\S](?!$|<div[^>]+class="(?:accumulator|bonus)"))*[\s\S]/ig);
 		AnyBalance.trace("Found " + services.length + ' bonuses');
 		var reValue = /<div[^>]+class="column2[^"]*"[^>]*>([\s\S]*?)<\/div>/i;
 		var reNewValue = /<div[^>]+class="column2[^"]*"(?:[^>]*>){5}([\s\d,]+)/i;

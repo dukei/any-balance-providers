@@ -624,7 +624,7 @@ function fetchPre(baseurl, html) {
 }
 
 function isAvailableBonuses() {
-	return AnyBalance.isAvailable('sms_left', 'mms_left', 'rub_bonus', 'rub_opros', 'min_local', 'min_bi');
+	return AnyBalance.isAvailable('sms_left', 'mms_left', 'rub_bonus', 'rub_opros', 'min_local', 'min_bi', 'traffic_left', 'traffic_used', 'traffic_total');
 }
 
 function getBonuses(xhtml, result) {

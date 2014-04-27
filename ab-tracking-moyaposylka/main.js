@@ -26,7 +26,7 @@ var g_headers = {
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	Connection: 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.97 Safari/537.11',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.97 Safari/537.11'
 };
 
 function getMyPosylkaResult(prefs) {
@@ -72,18 +72,23 @@ function getMyPosylkaResult(prefs) {
 	var result = {success: true};
 
         var tracker = res.result.tracker;
+	var ls = tracker.lastStatus;
+	
+	var lsdate = (ls && ls.date) || '',
+		lsplace = (ls && ls.place) || '',
+		lsstatus = (ls && ls.operationReadable) || '???';
 	
 	getParam(tracker.number, result, 'trackid');
 	getParam(tracker.trackTime + '', result, 'days', null, null, parseBalance);
 	getParam(tracker.weight + '', result, 'weight', null, null, parseBalance);
-	getParam(tracker.lastStatus.date, result, 'date', null, null, parseDate);
-	getParam(tracker.lastStatus.place, result, 'address');
-	getParam(tracker.lastStatus.operationReadable, result, 'status');
+	getParam(lsdate, result, 'date', null, null, parseDate);
+	getParam(lsplace, result, 'address');
+	getParam(lsstatus, result, 'status');
 	
 	if (AnyBalance.isAvailable('fulltext')) {
-		var date = getParam(tracker.lastStatus.date, null, null, null, null, parseDate);;
-		var address = tracker.lastStatus.place;
-		var status = tracker.lastStatus.operationReadable;
+		var date = getParam(lsdate, null, null, null, null, parseDate) || (new Date().getTime());
+		var address = lsplace;
+		var status = lsstatus;
 		var days = tracker.trackTime;
 		result.fulltext = '<b>' + status + '</b><br/>\n' + '<small>' + getDateString(date) + '</small>: ' + address + '<br/>\n' + 'в пути ' + days + ' дн.';
 	}

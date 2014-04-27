@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-tv-otautv</id>
+	<id version="2">ab-tv-otautv</id>
 	<api flags="no_browser"/>
 	<name>ОТАУ-ТВ</name>
 	<description html="true"><![CDATA[
@@ -17,11 +17,11 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс"/>
-		<counter id="annual" name="Баланс"/>
+		<counter id="annual" name="Сумма подписки"/>
 		<counter id="status" name="Статус" type="text"/>
 		<counter id="deadline" name="Дата приостановки" type="time" format="dd/MM/yyyy"/>
 	</counters>
-	<keywords></keywords>
+	<keywords>отаутв otautv</keywords>
 	<type>tv</type>
 	<country>kz</country>
 </provider>

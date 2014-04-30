@@ -14,7 +14,7 @@ function main() {
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'http://www.krasguk.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
-
+	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 
@@ -35,12 +35,16 @@ function main() {
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	
-	html = AnyBalance.requestGet(baseurl + 'cabinet?p=info', g_headers);
+	html = AnyBalance.requestGet(baseurl + 'cabinet?auth=false&info=&p=info', addHeaders({'X-Requested-With': 'XMLHttpRequest'}));
+	
+//	html = AnyBalance.requestGet(baseurl + 'cabinet#url=info', g_headers);
+	
+	var json = getJson(html);
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'balance', /Баланс лицевого счета(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'acc_num', /Номер личного счета(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(json.html, result, 'balance', /Баланс лицевого счета(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(json.html, result, 'acc_num', /Номер личного счета(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 	
 	AnyBalance.setResult(result);
 }

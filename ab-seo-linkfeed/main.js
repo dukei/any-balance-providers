@@ -19,15 +19,29 @@ function main() {
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
 	var html = AnyBalance.requestGet(baseurl, g_headers);
+
+	var match = /<img alt="([^"]+)"\s*src="\/(system\/captcha[^"]+)"/i.exec(html);
+	
+	
+	var captchaa;
+	if(AnyBalance.getLevel() >= 7){
+		AnyBalance.trace('Пытаемся ввести капчу');
+		var captcha = AnyBalance.requestGet(baseurl + match[2]);
+		captchaa = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
+		AnyBalance.trace('Капча получена: ' + captchaa);
+	}else{
+		throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
+	}
 	
 	html = AnyBalance.requestPost(baseurl + 'user/auth', {
 		'user[login]': prefs.login,
 		'user[password]': prefs.password,
-		'Remember': 'false'
+		'captcha_validation': match[1],
+		'captcha':captchaa
 	}, addHeaders({Referer: baseurl + 'user/auth'}));
 	
 	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, null, null, /span style="font-weight: bold; color :red;"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
 		

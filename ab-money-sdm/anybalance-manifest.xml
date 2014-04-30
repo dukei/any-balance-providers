@@ -1,42 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="4">ab-money-sdm</id>
-  <name>СДМ-Банк</name>
-  <description>
-    Получает текущий остаток и другие параметры карт, счетов СДМ-Банка (http://www.sdm.ru), используя интернет-банк https://retail.sdm.ru.
-
-    Для указания счета/карты, по которому необходимо получить информацию, надо в настройки ввести его ID. Чтобы узнать ID имеющихся у вас карт/счетов, выберите в настройках отображение счетчика &quot;Сводка&quot;.
-
-    Код и пароль для пользования системой можно заказать:
-    * В любом отделении или филиале СДМ-БАНКа.
-    * По телефону 8-800-200-02-23 (бесплатно - междугородная связь с территории России) и через 5 рабочих дней получить в выбранном Вами отделении или филиале Банка.
-    * В бухгалтерии вашей организации, где производили оформление зарплатной карты.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Остаток"/>
-    <counter id="currency" name="Валюта" type="text"/>
-    <counter id="type" name="Название" type="text"/>
-    <counter id="cardnum" name="Номер карты" type="text"/>
-    <counter id="accnum" name="Номер счета" type="text"/>
-    <counter id="status" name="Статус" type="text"/>
-    <counter id="till" name="Срок действия" type="time" format="dd/MM/yyyy"/>
-    <counter id="fio" name="Владелец" type="text"/>
-    <counter id="all" name="Сводка" type="text"/>
-  </counters>
-  <keywords>
-    интернет-банкинг
-  </keywords>
-  <type>
-    money
-  </type>
-  <country>
-    ru
-  </country>
+	<api flags="no_browser"/>
+	<id version="5">ab-money-sdm</id>
+	<name>СДМ-Банк</name>
+	<description html="true"><![CDATA[
+	<p>Получает текущий остаток и другие параметры карт, счетов СДМ-Банка (http://www.sdm.ru), используя интернет-банк https://retail.sdm.ru.</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для указания счета/карты, по которому необходимо получить информацию, надо в настройки ввести его ID. Чтобы узнать ID имеющихся у вас карт/счетов, выберите в настройках отображение счетчика &quot;Сводка&quot;.</p>
+	<p>Код и пароль для пользования системой можно заказать:</p>
+	<p>* В любом отделении или филиале СДМ-БАНКа.</p>
+	<p>* По телефону 8-800-200-02-23 (бесплатно - междугородная связь с территории России) и через 5 рабочих дней получить в выбранном Вами отделении или филиале Банка.</p>
+	<p>* В бухгалтерии вашей организации, где производили оформление зарплатной карты.</p>
+	]]></instruction>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Остаток"/>
+		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="type" name="Название" type="text"/>
+		<counter id="cardnum" name="Номер карты" type="text"/>
+		<counter id="accnum" name="Номер счета" type="text"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="till" name="Срок действия" type="time" format="dd/MM/yyyy"/>
+		<counter id="fio" name="Владелец" type="text"/>
+		<counter id="all" name="Сводка" type="text"/>
+	</counters>
+	<keywords>интернет-банкинг</keywords>
+	<type>money</type>
+	<country>ru</country>
 </provider>

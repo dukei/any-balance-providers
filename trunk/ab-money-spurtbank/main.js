@@ -50,7 +50,7 @@ function main(){
 		getParam(info1, result, 'account', /счет (\d+)/i, replaceTagsAndSpaces, parseBalance);
 		getParam(info1, result, 'currency', /счет \d+ \((.*?)\)/i, replaceTagsAndSpaces, html_entity_decode);
 		getParam(info1, result, 'balance', /счет \d+.*?<td align="right">(.*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-		getParam(info1, result, 'balance_rur', /счет .*?<td align="right">([\d\.]*?)<\/td><\/tr>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(info1, result, 'balance_rur', /счет .*?<\/td>.*?<\/td>.*?<\/td>.*?<\/td><td align="right">(.*?)<\/td><\/tr>/i, replaceTagsAndSpaces, parseBalance);
 		result.__tariff = getParam(info1, null, null, /карта (.*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
 		getParam(info1, result, 'card_expire', /до&nbsp;(.*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
 

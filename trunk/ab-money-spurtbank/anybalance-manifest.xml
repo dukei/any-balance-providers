@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-money-spurtbank</id>
+  <id version="2">ab-money-spurtbank</id>
   <name>Спурт банк</name>
   <description>
     Помогает отслеживать состояние счета в банке Спурт (система HandyBank).

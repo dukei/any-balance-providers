@@ -597,8 +597,9 @@ function mainLK(allowRetry){
 	// rhinoException: org.mozilla.javascript.EcmaError: TypeError: Cannot read property "Balance" from undefined (main.js_v74#579)
 	var info = getParam(html, null, null, /var\s+initialProfile\s*=\s*(\{[\s\S]*?\})/i);
 	
+	AnyBalance.trace(info);
 	info = getJson(info);
-	AnyBalance.trace(JSON.stringify(info));
+	//AnyBalance.trace(JSON.stringify(info));
 	
     getParam(info.Balance+'', result, 'balance', null, null, parseBalanceRound);
     getParam(info.Tariff+'', result, '__tariff', null, replaceTagsAndSpaces, html_entity_decode);

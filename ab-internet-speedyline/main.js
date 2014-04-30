@@ -4,12 +4,13 @@
 
 function main () {
     var prefs = AnyBalance.getPreferences ();
-    var baseurl = 'http://web.speedyline.ru/';
-
-    checkEmpty (prefs.login, 'Введите логин');
-    checkEmpty (prefs.password, 'Введите пароль');
-
+    var baseurl = 'https://web.speedyline.ru/';
+	
+    checkEmpty (prefs.login, 'Введите логин!');
+    checkEmpty (prefs.password, 'Введите пароль!');
+	
     AnyBalance.trace('Trying to enter selfcare at address: ' + baseurl);
+	
     var html = AnyBalance.requestPost(baseurl, {
     	login: prefs.login,
     	password: prefs.password,
@@ -17,7 +18,6 @@ function main () {
     });
     // Проверка на корректный вход
     if (!/logout.html/i.test(html)) {
-    	// Проверка неправильной пары логин/пароль
     	var error = getParam(html, null, null, /class='no-border red'>[\s*]*([^<]+?)\s*</i, replaceTagsAndSpaces, html_entity_decode);
     	if (error) {
     		if (error.indexOf('Доступ разрешен только с ip адресов') >= 0)

@@ -14,7 +14,7 @@ function main() {
 	checkEmpty(prefs.login, 'Please, enter the phone number in international form, for example, +971552344334');
 	checkEmpty(prefs.password, 'Please, enter the password!');
 	
-	var baseurl = "https://leomoney.";
+	var baseurl = "https://leomoney.com/api/";
 	AnyBalance.setDefaultCharset('utf-8');
 	var rePrefixes = /^\+(1|7|44|373|374|375|380|971|992|993|994|996|998)(\d+)$/;
 	if (!prefs.login || !rePrefixes.test(prefs.login))
@@ -27,7 +27,7 @@ function main() {
 	
 	baseurl = baseurl + (matches[1] == '7' ? 'ru' : 'ae') + '/';
 	
-	var html = AnyBalance.requestPost(baseurl + 'api/GetWalletBalanceByLogin', {
+	var html = AnyBalance.requestPost(baseurl + 'GetWalletBalanceByLogin', {
 		"Phone":matches[1] + matches[2], 
 		"Password":prefs.password,
 	}, g_headers);

@@ -50,6 +50,8 @@ function main(){
 	
     getParam(json.c.milesBalance + '', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
     getParam(json.c.firstName + ' ' + json.c.lastName, result, 'userName', null, replaceTagsAndSpaces);
+	getParam(json.c.qMiles+'', result, 'qmiles', null, replaceTagsAndSpaces, parseBalance);
+	getParam(json.c.qFlights+'', result, 'flights', null, replaceTagsAndSpaces, parseBalance);
 	
     var cardNum = json.c.cardNumber;
 	var cardType = json.c.cardLevel;
@@ -60,11 +62,11 @@ function main(){
 	
 	result.__tariff = cardType + ', №' + cardNum;	
 	
-    if(AnyBalance.isAvailable('qmiles', 'flights')){
+    /*if(AnyBalance.isAvailable('qmiles', 'flights')){
         html = AnyBalance.requestGet(baseurl + 'home/priority/ffpMyMiles.dot');
 		
-        getParam(html, result, 'qmiles', /<td[^>]+class="balance"[^>]*>([\s\S]*?)(?:<\/td>|\/)/i, replaceTagsAndSpaces, parseBalance);
+        //getParam(html, result, 'qmiles', /<td[^>]+class="balance"[^>]*>([\s\S]*?)(?:<\/td>|\/)/i, replaceTagsAndSpaces, parseBalance);
         getParam(html, result, 'flights', /<td[^>]+class="balance"[^>]*>[^<]*\/([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    }
+    }*/
     AnyBalance.setResult(result);
 }

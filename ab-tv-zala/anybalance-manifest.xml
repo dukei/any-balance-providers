@@ -1,33 +1,28 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-tv-zala</id>
-  <name>Zala.by</name>
-  <description>
-    Получает данные из личного кабинета http://zala.by - белорусского провайдера IPTV.
-
-    Данные берутся из личного кабинета https://issa.beltelecom.by.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>api:jquery.min.js</js> <!-- Используем библиотеку, которая и так входит в AnyBalance -->
-    <js>main.js</js>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="pays" name="Платежи" units="р"/>
-    <counter id="corrections" name="Корректировка" units="р"/>
-    <counter id="agreement" name="Лицевой счет" type="text"/>
-    <counter id="username" name="ФИО" type="text"/>
- </counters>
-  <keywords>
-    провайдер интернет белоруссия белтелеком зала
-  </keywords>
-  <type>
-    tv
-  </type>
-  <country>
-    by
-  </country>
+	<id version="2">ab-tv-zala</id>
+	<name>Zala.by</name>
+	<description html="true"><![CDATA[
+	<p>Получает данные из личного кабинета http://zala.by - белорусского провайдера IPTV.</p>
+	<p>Данные берутся из личного кабинета https://issa.beltelecom.by.</p>
+	]]></description>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>api:jquery.min.js</js> <!-- Используем библиотеку, которая и так входит в AnyBalance -->
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="pays" name="Платежи" units=" р"/>
+		<counter id="corrections" name="Корректировка" units=" р"/>
+		<counter id="agreement" name="Лицевой счет" type="text"/>
+		<counter id="username" name="ФИО" type="text"/>
+	</counters>
+	<keywords>провайдер интернет белоруссия белтелеком зала</keywords>
+	<type>tv</type>
+	<country>by</country>
 </provider>

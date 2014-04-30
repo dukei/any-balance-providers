@@ -56,11 +56,11 @@ function main(){
 	} else {
 		var region = prefs.region;
 		var pattern = prefs.pattern;
-
+		
 		var pattern1=pattern.replace(/ /g,"+");
-
+		
 		var baseurl = 'http://www.avito.ru/'+region+'?name='+pattern1;
-
+		
 		AnyBalance.trace('Starting search: ' + baseurl);
 		var info = AnyBalance.requestGet(baseurl);	
 		
@@ -70,32 +70,36 @@ function main(){
 		}*/		
 		var result = {success: true};
 		result.__tariff=prefs.pattern;
-
+		
 		if(matches = info.match(/ничего не найдено/i)){
 			result.found = 0;
 			AnyBalance.setResult(result);
 			return;
 		}
-
+		
 		result.found = getParam(info, null, null, /<div class="catalog_counts">[\S\s]*?(\d+?)\s*<\/span>/i, replaceTagsAndSpaces, parseBalance);
-
-		if(result.found == null){throw new AnyBalance.Error("Ошибка при получении данных с сайта.");}
-
-		if(AnyBalance.isAvailable('last') && (matches = info.match(/<div class="item \S*?".*?>[\s\S]*?<div class="description">[\s\S]*?<\/div>/i))){
-			info=matches[0];
-
-			result.date = getParam(info, null, null, /<div class="date">\s+(.*?)\s*<span/i, replaceTagsAndSpaces, html_entity_decode);
-			result.time = getParam(info, null, null, /<span class="time">(.*?)<\/span/i, replaceTagsAndSpaces, html_entity_decode);
-			if(result.date != null && result.time != null){result.datetime = result.date + ' ' + result.time;}
-			else if(result.date != null){result.datetime = result.date;}
-			else if(result.time != null){result.datetime = result.time;}
-
-			getParam(info, result, 'last', /<h3 class="title">([\s\S]*?)<\/h3>/i, replaceTagsAndSpaces, html_entity_decode);
-			getParam(info, result, 'price', /<div class="about">([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-			getParam(info, result, 'currency', /<div class="about">\s+<span>.*?<\/span>\s+<span>(.*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
-
-		}else {throw new AnyBalance.Error("Ошибка при разборе ответа с сайта.");}
-
+		
+    	if (!result.found) {
+    	    throw new AnyBalance.Error("Ошибка при получении данных с сайта.");
+    	}
+    	if (AnyBalance.isAvailable('last') && (matches = info.match(/<div class="item \S*?".*?>[\s\S]*?<div class="description">[\s\S]*?<\/div>/i))) {
+    	    info = matches[0];
+    	    result.date = getParam(info, null, null, /<div class="date">\s+(.*?)\s*<span/i, replaceTagsAndSpaces, html_entity_decode);
+    	    result.time = getParam(info, null, null, /<span class="time">(.*?)<\/span/i, replaceTagsAndSpaces, html_entity_decode);
+    	    if (result.date != null && result.time != null) {
+    	        result.datetime = result.date + ' ' + result.time;
+    	    } else if (result.date != null) {
+    	        result.datetime = result.date;
+    	    } else if (result.time != null) {
+    	        result.datetime = result.time;
+    	    }
+    	    getParam(info, result, 'last', /<h3 class="title">([\s\S]*?)<\/h3>/i, replaceTagsAndSpaces, html_entity_decode);
+    	    getParam(info, result, 'price', /<div class="about">([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+    	    getParam(info, result, 'currency', /<div class="about">\s+<span>.*?<\/span>\s+<span>(.*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+    	} else {
+    	    throw new AnyBalance.Error("Ошибка при разборе ответа с сайта.");
+    	}
+		
 		AnyBalance.setResult(result);
 	}
 }

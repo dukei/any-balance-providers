@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-money-vbank</id>
+	<id version="4">ab-money-vbank</id>
 	<api flags="no_browser"/>
 	<name>Банк Возрождение</name>
-	<description>
-Получает остаток и другие параметры карт банка Возрождение (http://www.vbank.ru) из системы «Vbank с тобой» https://online.bankcard.ru.
-
-Процедура получения логина и пароля описана в кратком руководстве пользователя «Vbank с тобой» в разделе 2: http://www.vbank.ru/common/ru/personal/assistant_card/7x24/vbank-with-you_short.pdf
-	</description>
+	<description html="true"><![CDATA[
+	<p>Получает остаток и другие параметры карт банка Возрождение (http://www.vbank.ru) из системы «Vbank с тобой» https://online.bankcard.ru.</p>
+	<p>Процедура получения логина и пароля описана в кратком руководстве пользователя «Vbank с тобой» в разделе 2: http://www.vbank.ru/common/ru/personal/assistant_card/7x24/vbank-with-you_short.pdf</p>
+	]]></description>
 	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
@@ -17,7 +16,7 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Остаток" units="{@currency}"/>
+		<counter id="balance" name="Остаток" units=" {@currency}"/>
 		<counter id="currency" name="Валюта" type="text"/>
 		<counter id="status" name="Статус" type="text"/>
 		<counter id="cardnum" name="Номер карты" type="text"/>

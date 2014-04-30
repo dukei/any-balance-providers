@@ -1,61 +1,9 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Получает текущий остаток и другие параметры карт Всероссийского банка развития регионов
-
-Сайт оператора: http://www.vbrr.ru
-Личный кабинет: https://enter2.unicredit.ru/
 */
 
-function getParam (html, result, param, regexp, replaces, parser) {
-	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
-		return;
-
-	var value = regexp.exec (html);
-	if (value) {
-		value = value[1];
-		if (replaces) {
-			for (var i = 0; i < replaces.length; i += 2) {
-				value = value.replace (replaces[i], replaces[i+1]);
-			}
-		}
-		if (parser)
-			value = parser (value);
-
-    if(param)
-      result[param] = value;
-    else
-      return value
-	}
-}
-
-var replaceTagsAndSpaces = [/\\n/g, ' ', /\[br\]/ig, ' ', /<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
-var replaceFloat = [/\s+/g, '', /,/g, '.'];
-
-function parseBalance(text){
-    var _text = html_entity_decode(text);
-    _text = _text.replace(/\s+/g, '');
-    var val = getParam(_text, null, null, /(-?\d[\d\.,]*)/, replaceFloat, parseFloat);
-    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
-    return val;
-}
-
-function parseCurrency(text){
-    var _text = text.replace(/\s+/g, '');
-    var val = getParam(_text, null, null, /-?\d[\d\.,]*\s*(\S*)/);
-    AnyBalance.trace('Parsing currency (' + val + ') from: ' + text);
-    return val;
-}
-
-function parseDate(str){
-    var matches = /(\d+)[^\d](\d+)[^\d](\d+)/.exec(str);
-    if(matches){
-          var date = new Date(+matches[3], matches[2]-1, +matches[1]);
-	  var time = date.getTime();
-          AnyBalance.trace('Parsing date ' + date + ' from value: ' + str);
-          return time;
-    }
-    AnyBalance.trace('Failed to parse date from value: ' + str);
+var g_headers = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.60 Safari/537.1'
 }
 
 function sleep(delay) {
@@ -70,24 +18,37 @@ function sleep(delay) {
    }
 } 
 
-var g_headers = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.60 Safari/537.1'
-}
-
 function main(){
     var prefs = AnyBalance.getPreferences();
 
-    var baseurl = "https://retail.sdm.ru";
+    var baseurl = "https://retail.sdm.ru/";
     
-    var html = AnyBalance.requestPost(baseurl + '/logon?ReturnUrl=%2f', {
+    var html = AnyBalance.requestPost(baseurl + 'logon?ReturnUrl=%2f', {
         username:prefs.login,
         password:prefs.password
     }, g_headers);
-
+	
+	// Попробуем войти без смс
+	if(/Введите код, отправленный на Ваш мобильный телефон/i.test(html)) {
+		AnyBalance.trace('Необходимо ввести код из смс.. пропускаем..');
+		var token = getParam(html, null, null, /<form action="\/user\/confirmlogon(?:[^>]*>){20,30}[^>]*__RequestVerificationToken[^>]*value="([^"]+)/i);
+		if(!token) {
+			throw new AnyBalance.Error("Не удалось найти токен отмены смс кода, cайт изменен?");
+		}
+		
+		html = AnyBalance.requestPost(baseurl + 'user/confirmlogon', {
+			'otp':'',
+			'mode':'nosms',
+			'returnUrl':'',
+			'__RequestVerificationToken':token
+		}, addHeaders({Referer:baseurl+'user/confirmlogon'}));		
+	}
+	
     if(!/\/logoff/i.test(html)){
         var error = getParam(html, null, null, /<div[^>]+class="error"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error);
+		
         throw new AnyBalance.Error("Не удалось зайти в интернет-банк. Сайт изменен?");
     }
 
@@ -203,12 +164,3 @@ function fetchAccount(html, baseurl){
 
     AnyBalance.setResult(result);
 }
-
-function html_entity_decode(str)
-{
-    //jd-tech.net
-    var tarea=document.createElement('textarea');
-    tarea.innerHTML = str;
-    return tarea.value;
-}
-

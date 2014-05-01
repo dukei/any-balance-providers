@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="13" date="2014-05-01">
+      - Поддержка изменений на сайте
+    </change>
     <change version="12" date="2014-03-14">
       - Ещё в одном месте исправлен код Москвы
     </change>

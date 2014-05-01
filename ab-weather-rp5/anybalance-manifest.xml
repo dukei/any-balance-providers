@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="12">ab-weather-rp5</id>
+	<id version="13">ab-weather-rp5</id>
 	<api flags="no_browser"/>
 	<name>Прогноз rp5.ru</name>
 	<description html="true"><![CDATA[

@@ -5,19 +5,11 @@
 XML данные с http://rp5.ru/docs/xml/ru
 */
 
-function parseDateMoment(str){
-    var mom = moment(str.replace(/i/ig, 'і'), ['D MMM, HH:mm', 'DD MMM']);
-    if(!mom.isValid()){
-        AnyBalance.trace('Failed to parse date from ' + str);
-    }else{
-        var now = moment();
-        mom.add('years', now.year());
-        if(mom.isBefore(now))
-            mom.add('years', 1);
-        var val = mom.toDate();
-        AnyBalance.trace('Parsed date ' + val + ' from ' + str);
-        return val.getTime();
-    }
+function parseDateTime(str){
+        AnyBalance.trace('Trying to parse date from ' + str);
+	var year = new Date().getFullYear();
+	str = str.replace(/(\d+\s+\S+),/g, '$1 ' + year + ', ');
+	return parseDateWord(str);
 }
 
 function main(){
@@ -50,21 +42,19 @@ function parseHtml(html){
         if(!/\/wap\/style.css/i.test(html))
             throw new AnyBalance.Error('Не удаётся получить данные по выбранному городу. Неверный код города?');
 
-        moment.lang('ru');
-
 	var result = {success: true};
         getParam(html, result, '__tariff', /<h1[^>]*>([\s\S]*?)<\/h1>/i, replaceTagsAndSpaces, html_entity_decode);
 
         var wasToday = false;
         html.replace(/<tr><td><b>(?:пн|вт|ср|чт|пт|сб|вс)(?:[\s\S]*?<\/tr>){5}/ig, function(tr){
-            var time = getParam(tr, null, null, /<tr><td><b>(?:пн|вт|ср|чт|пт|сб|вс),([^<]*)/i, replaceTagsAndSpaces, parseDateMoment);
+            var time = getParam(tr, null, null, /<tr><td><b>(?:пн|вт|ср|чт|пт|сб|вс),([^<]*)/i, replaceTagsAndSpaces, parseDateTime);
             var hour = new Date(time).getHours();
             
             if(8 < hour && hour <= 20){ //Это день
                 var suffix = wasToday ? '2' : '1';
                 wasToday = true;
 
-                getParam(tr, result, 'date'+suffix, /<tr><td><b>(?:пн|вт|ср|чт|пт|сб|вс),([^<]*)/i, replaceTagsAndSpaces, parseDateMoment);
+                getParam(tr, result, 'date'+suffix, /<tr><td><b>(?:пн|вт|ср|чт|пт|сб|вс),([^<]*)/i, replaceTagsAndSpaces, parseDateTime);
                 getParam(tr, result, 'cloud'+suffix, /облачность([^<]*)/i, replaceTagsAndSpaces, parseBalance);
                 getParam(tr, result, 'temp'+suffix, /(?:[\s\S]*?<tr[^>]*>){4}([\s\S]*?)<\/tr>/i, replaceTagsAndSpaces, parseBalance);
                 getParam(tr, result, 'humidity'+suffix, /влажность([^<]*)/i, replaceTagsAndSpaces, parseBalance);

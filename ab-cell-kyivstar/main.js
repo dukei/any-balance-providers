@@ -80,12 +80,12 @@ function main() {
 			throw new AnyBalance.Error('Не удалось зайти в систему. Сайт изменен?');
 		}
 	}
-	if (!~html.indexOf(prefs.login)) {
-		throw new AnyBalance.Error("Ошибка. Информация о номере не найдена.");
-	}
 	if (!/payment\/activity\//i.test(html)) {
 		//Не нашли ссылку на платежи. Очень вероятно, что это корпоративный аккаунт
 		throw new AnyBalance.Error("Похоже, у вас корпоративный аккаунт. Пожалуйста, воспользуйтесь провайдером Киевстар для корпоративных тарифов");
+	}
+	if (!~html.indexOf(prefs.login)) {
+		throw new AnyBalance.Error("Ошибка. Информация о номере не найдена.");
 	}
 	AnyBalance.trace('Успешный вход.');
 	var result = {success: true};

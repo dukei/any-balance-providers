@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="3">ab-cell-du</id>
+  <id version="4">ab-cell-du</id>
   <name>du</name>
   <description>
     Retrieve balance and plan information from du (http://www.du.ae) selfcare.

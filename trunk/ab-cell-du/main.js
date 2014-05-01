@@ -79,7 +79,7 @@ function main(){
         html = AnyBalance.requestGet(baseurl + 'selfcare-portal-web/selfcare/portal/userManagement/web/accountoverview/respondToAjaxRequests.do?tagID=AccountBalanceDiv%2C1%2C&locale=en&actionNames=getPrepaidAccountBalance%2C&contrract=' + contract + '&rndm=' + new Date().getTime());
     }
 
-    var balances = getParam(html, null, null, /<th[^>]*>\s*Balance type([\s\S]*?)<\/table>/i);
+    var balances = getParam(html, null, null, /<th[^>]*>(?:\s|&nbsp;)*Balance type([\s\S]*?)<\/table>/i);
     if(!balances)
         throw new AnyBalance.Error('Can not find your account balance. Is site changed?');
 

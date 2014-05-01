@@ -21,9 +21,18 @@ function main(){
 	}
 	
     var result = {success: true};
+
+    for(var i=0; i<info.sensors.length; ++i){
+	var s = info.sensors[i];
+	if(s.type == 1 && AnyBalance.isAvailable('temperature'))
+		result.temperature=s.value;
+	else if(s.type == 2 && AnyBalance.isAvailable('humidity'))
+		result.humidity=s.value;
+	else if(s.type == 3 && AnyBalance.isAvailable('pressure'))
+		result.pressure=s.value
+	else
+		AnyBalance.trace("unknown sensor type: " + JSON.stringify(s));
+    }
 	
-	if (info.sensors.length>=1) result.temperature=info.sensors[0].value;
-	if (info.sensors.length>=2) result.humidity=info.sensors[1].value;
-	if (info.sensors.length>=3) result.pressure=info.sensors[2].value;
     AnyBalance.setResult(result);
 }

@@ -71,6 +71,9 @@ function main(){
 	// Оплаченные обязательства	
 	getParam(html, result, 'balance_corent', /Оплаченные обязательства(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 	
+	html = AnyBalance.requestGet(baseurl + 'ru/upravleniye-kontraktom/smena-tarifnogo-plana/', g_headers);
+	getParam(html, result, '__tariff', /href="[^"]*">([^<]+)(?:[^>]*>){11}Активен/i, replaceTagsAndSpaces, html_entity_decode);
+	
 	// В новом кабинете нет баланса, очень круто :)
 	/*if (AnyBalance.isAvailable('balance', 'balance_bonus') && (!isset(result.balance) || !isset(result.balance_bonus))) {
 	    html = AnyBalance.requestPost(baseurlOld, {

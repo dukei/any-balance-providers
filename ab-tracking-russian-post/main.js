@@ -4,8 +4,8 @@
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	if (!prefs.code) //Код отправления, введенный пользователем
-		throw new AnyBalance.Error("Введите код отправления!");
+	
+	checkEmpty(prefs.code, 'Введите код отправления!');
 	
 	mainRussianPost();
 	
@@ -121,6 +121,10 @@ function mainRussianPost() {
 	result.__tariff = prefs.code;
 	
 	var json = getJson(info);
+	
+	
+	if(!json.Operations || json.Operations.length < 1)
+		throw new AnyBalance.Error('Информация о почтовом отправлении не найдена! Проверьте правильность ввода трек-номера: ' + prefs.code);
 	
 	var op = json.Operations[json.Operations.length-1];
 	

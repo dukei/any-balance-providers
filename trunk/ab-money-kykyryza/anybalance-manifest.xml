@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="11" major_version="1.0">ab-money-kykyryza</id>
+	<id version="12" major_version="1.0">ab-money-kykyryza</id>
 	<api flags="no_browser" />
 	<name>Платежный кабинет Кукуруза</name>
 	<description html="true"><![CDATA[

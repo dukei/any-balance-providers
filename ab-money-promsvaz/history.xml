@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="11" date="2014-05-05">
+	- Улучшена обработка ошибок.
+	</change>
 	<change version="10" date="2013-12-19">
-	- Улучшена обработка ошибок (Stark)
+	- Улучшена обработка ошибок.
 	</change>
 	<change version="8" date="2013-10-17">
 	- Исправлено получение данных по картам, счетам и депозитам (Stark)

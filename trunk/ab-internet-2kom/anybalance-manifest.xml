@@ -1,34 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-internet-2kom</id>
-  <name>2КОМ</name>
-  <description>
-    Получает баланс и информацию о тарифном плане для московского интернет-провайдера 2КОМ.
-    Информация берется из личного кабинета https://portal.2kom.ru/lk/ .
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="bonus" name="Бонус" units=""/>
-    <counter id="trafficIn" name="Вх.трафик текущем периоде" units="Gb"/>
-    <counter id="trafficOut" name="Исх.трафик текущем периоде" units="Gb"/>
-    <counter id="status" name="Состояние" type="text"/>
-    <counter id="licschet" name="Лицевой счет" type="text"/>
-    <counter id="userName" name="ФИО" type="text"/>
-  </counters>
-  <keywords>
-    интернет, 2kom, 2com
-  </keywords>
-  <type>
-    internet
-  </type>
-  <country>
-    ru
-  </country>
+	<id version="3">ab-internet-2kom</id>
+	<name>2КОМ</name>
+	<api flags="no_browser"/>
+	<description html="true"><![CDATA[
+	<p>Получает баланс и информацию о тарифном плане для московского интернет-провайдера 2КОМ.</p>
+	<p>Информация берется из личного кабинета https://portal.2kom.ru/lk/</p>
+	]]></description>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="bonus" name="Бонус"/>
+		<counter id="trafficIn" name="Вх.трафик текущем периоде" units=" Gb"/>
+		<counter id="trafficOut" name="Исх.трафик текущем периоде" units=" Gb"/>
+		<counter id="status" name="Состояние" type="text"/>
+		<counter id="licschet" name="Лицевой счет" type="text"/>
+		<counter id="userName" name="ФИО" type="text"/>
+		<counter id="period" name="Дата отключения" type="time" format="dd/MM/yyyy"/>
+	</counters>
+	<keywords>интернет, 2kom, 2com</keywords>
+	<type>internet</type>
+	<country>ru</country>
 </provider>

@@ -12,6 +12,8 @@ var g_headers = {
 	'X-Requested-With':'XMLHttpRequest'
 };
 
+var g_baseurl = "https://retail.payment.ru";
+
 function getViewState(html){
     return getParam(html, null, null, /name="__VIEWSTATE".*?value="([^"]*)"/);
 }
@@ -20,38 +22,84 @@ function getEventValidation(html){
     return getParam(html, null, null, /name="__EVENTVALIDATION".*?value="([^"]*)"/);
 }
 
-function getViewState1(html){
-    return getParam(html, null, null, /__VIEWSTATE\|([^\|]*)/);
-}
+// function getViewState1(html){
+    // return getParam(html, null, null, /__VIEWSTATE\|([^\|]*)/);
+// }
 
-function getEventValidation1(html){
-    return getParam(html, null, null, /__EVENTVALIDATION\|([^\|]*)/);
-}
+// function getEventValidation1(html){
+    // return getParam(html, null, null, /__EVENTVALIDATION\|([^\|]*)/);
+// }
 
-function checkForErrors(html) {
-    var error = getParam(html, null, null, /<div[^>]*class="errorMessage"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-	if(error)
-		throw new AnyBalance.Error(error);
-	if(!/pageRedirect/i.test(html))
+// function checkForErrors(html) {
+    // var error = getParam(html, null, null, /<div[^>]*class="errorMessage"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+	// if(error)
+		// throw new AnyBalance.Error(error);
+	// if(!/pageRedirect/i.test(html))
+		// throw new AnyBalance.Error("Не удаётся войти в интернет банк (внутренняя ошибка сайта)");
+	// if(/KeyAuth/i.test(html))
+		// throw new AnyBalance.Error("Для входа в интернет-банк требуются одноразовые пароли. Зайдите в интернет-банк с компьютера и отключите в Настройках требование одноразовых паролей при входе. Это безопасно, для операций по переводу денег пароли всё равно будут требоваться.");
+// }
+
+function requestAndCheckForErrors(method, url, params, headers, folowRedirect) {
+	
+	if(/POST/.test(method)) {
+		var html = AnyBalance.requestPost(url, params, headers);
+	} else {
+		var html = AnyBalance.requestGet(url, headers);
+	}
+	
+	if(folowRedirect && !/pageRedirect/i.test(html)) {
+		AnyBalance.trace(html);
 		throw new AnyBalance.Error("Не удаётся войти в интернет банк (внутренняя ошибка сайта)");
+	}
+	
 	if(/KeyAuth/i.test(html))
 		throw new AnyBalance.Error("Для входа в интернет-банк требуются одноразовые пароли. Зайдите в интернет-банк с компьютера и отключите в Настройках требование одноразовых паролей при входе. Это безопасно, для операций по переводу денег пароли всё равно будут требоваться.");
+	if(/UpdateContactInfo.aspx/i.test(html))
+		throw new AnyBalance.Error("Для входа в интернет-банк требуются обновить контактную информацию. Зайдите в интернет-банк с компьютера и следуйте инструкциям.");
+	
+	if(folowRedirect) {
+		var authHref = getParam(html, null, null, /pageRedirect\|\|([^\|]*)/i, replaceTagsAndSpaces, decodeURIComponent);
+		
+		AnyBalance.trace('Нашли ссылку ' + authHref);
+		//authHref = decodeURIComponent(authHref);
+		//AnyBalance.trace('Привели ссылку к нормальному виду ' + authHref);
+		// Они добавили еще один шаг авторизации, эта ссылка ставит кучу кук и возвращает 302, без нее не работает
+		html = AnyBalance.requestGet(g_baseurl + authHref, g_headers);
+	}
+	
+	var error = getParam(html, null, null, /<div[^>]*class="errorMessage"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+	if(error)
+		throw new AnyBalance.Error(error);
+	
+	return html;
 }
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-
-    var baseurl = "https://retail.payment.ru";
+	
     AnyBalance.setDefaultCharset('utf-8');
-
+	
 	checkEmpty(prefs.login, "Пожалуйста, укажите логин для входа в интернет-банк Промсвязбанка!");
 	checkEmpty(prefs.password, "Пожалуйста, укажите пароль для входа в интернет-банк Промсвязбанка!");
-
-    var html = AnyBalance.requestGet(baseurl + '/n/Default.aspx', g_headers);
+	
+    var html = AnyBalance.requestGet(g_baseurl + '/n/Default.aspx', g_headers);
     var eventvalidation = getEventValidation(html);
     var viewstate = getViewState(html);
-
-	html = AnyBalance.requestPost(baseurl + '/n/Default.aspx', {
+	
+	// html = AnyBalance.requestPost(g_baseurl + '/n/Default.aspx', {
+		// 'ctl00$ScriptManager':'ctl00$mainArea$upLogin|ctl00$mainArea$btnLogin',
+		// '__EVENTTARGET': '',
+		// '__EVENTARGUMENT': '',
+		// '__VIEWSTATE':viewstate,
+		// '__VIEWSTATEENCRYPTED': '',
+		// '__EVENTVALIDATION':eventvalidation,
+		// 'ctl00$mainArea$vtcUserName':prefs.login,
+		// 'ctl00$mainArea$vtcPassword':prefs.password,
+		// '__ASYNCPOST':true,
+		// 'ctl00$mainArea$btnLogin':'Войти'
+	// }, addHeaders({Referer:'https://retail.payment.ru/n/Default.aspx'}));
+	html = requestAndCheckForErrors("POST", g_baseurl + '/n/Default.aspx', {
 		'ctl00$ScriptManager':'ctl00$mainArea$upLogin|ctl00$mainArea$btnLogin',
 		'__EVENTTARGET': '',
 		'__EVENTARGUMENT': '',
@@ -62,47 +110,55 @@ function main(){
 		'ctl00$mainArea$vtcPassword':prefs.password,
 		'__ASYNCPOST':true,
 		'ctl00$mainArea$btnLogin':'Войти'
-	}, addHeaders({Referer:'https://retail.payment.ru/n/Default.aspx'}));
+	}, addHeaders({Referer:'https://retail.payment.ru/n/Default.aspx'}), true);
 	
-	if(!/pageRedirect/i.test(html))
-		throw new AnyBalance.Error("Не удаётся войти в интернет банк (внутренняя ошибка сайта)");
-	if(/KeyAuth/i.test(html))
-		throw new AnyBalance.Error("Для входа в интернет-банк требуются одноразовые пароли. Зайдите в интернет-банк с компьютера и отключите в Настройках требование одноразовых паролей при входе. Это безопасно, для операций по переводу денег пароли всё равно будут требоваться.");
-
-	var authHref = getParam(html, null, null, /pageRedirect\|\|([^\|]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	AnyBalance.trace('Нашли ссылку ' + authHref);
-	authHref = decodeURIComponent(authHref);
-	AnyBalance.trace('Привели ссылку к нормальному виду ' + authHref);
-	// Они добавили еще один шаг авторизации, эта ссылка ставит кучу кук и возвращает 302, без нее не работает
-	html = AnyBalance.requestGet(baseurl + authHref, g_headers);
-    var error = getParam(html, null, null, /<div[^>]*class="errorMessage"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-	if(error)
-		throw new AnyBalance.Error(error);	
-	html = AnyBalance.requestGet(baseurl + '/n/Main/Home.aspx', g_headers);
-
-	if(/KeyAuth/i.test(html))
-		throw new AnyBalance.Error("Для входа в интернет-банк требуются одноразовые пароли. Зайдите в интернет-банк с компьютера и отключите в Настройках требование одноразовых паролей при входе. Это безопасно, для операций по переводу денег пароли всё равно будут требоваться.");	
+	// if(!/pageRedirect/i.test(html))
+		// throw new AnyBalance.Error("Не удаётся войти в интернет банк (внутренняя ошибка сайта)");
+	// if(/KeyAuth/i.test(html))
+		// throw new AnyBalance.Error("Для входа в интернет-банк требуются одноразовые пароли. Зайдите в интернет-банк с компьютера и отключите в Настройках требование одноразовых паролей при входе. Это безопасно, для операций по переводу денег пароли всё равно будут требоваться.");
 	
-    if(prefs.type == 'card'){
-        fetchCard(baseurl, html);
+	// var authHref = getParam(html, null, null, /pageRedirect\|\|([^\|]*)/i, replaceTagsAndSpaces, html_entity_decode);
+	// AnyBalance.trace('Нашли ссылку ' + authHref);
+	// authHref = decodeURIComponent(authHref);
+	// AnyBalance.trace('Привели ссылку к нормальному виду ' + authHref);
+	// // Они добавили еще один шаг авторизации, эта ссылка ставит кучу кук и возвращает 302, без нее не работает
+	// html = AnyBalance.requestGet(g_baseurl + authHref, g_headers);
+
+		
+		
+	
+	// html = AnyBalance.requestGet(g_baseurl + '/n/Main/Home.aspx', g_headers);
+	
+	html = requestAndCheckForErrors("GET", g_baseurl + '/n/Main/Home.aspx', '', g_headers);
+	
+	
+	// if(/KeyAuth/i.test(html))
+		// throw new AnyBalance.Error("Для входа в интернет-банк требуются одноразовые пароли. Зайдите в интернет-банк с компьютера и отключите в Настройках требование одноразовых паролей при входе. Это безопасно, для операций по переводу денег пароли всё равно будут требоваться.");
+	
+	// if(/UpdateContactInfo.aspx/i.test(html))
+		// throw new AnyBalance.Error("Для входа в интернет-банк требуются обновить контактную информацию. Зайдите в интернет-банк с компьютера и следуйте инструкциям.");
+	
+	if(prefs.type == 'card'){
+        fetchCard(g_baseurl, html);
     }else if(prefs.type == 'dep'){
-        fetchDeposit(baseurl, html);
+        fetchDeposit(g_baseurl, html);
     }else if(prefs.type == 'acc'){
-        fetchAccount(baseurl, html);
+        fetchAccount(g_baseurl, html);
     }else{
-        fetchCard(baseurl, html);
+        fetchCard(g_baseurl, html);
     }
 }
 
-function getBonuses(baseurl, result){
+function getBonuses(g_baseurl, result){
 	if(isAvailable(['bonuses', 'bonuses_grade'])) {
-		html = AnyBalance.requestGet(baseurl + '/n/Services/BonusProgram.aspx');
+		html = AnyBalance.requestGet(g_baseurl + '/n/Services/BonusProgram.aspx');
+		
 		getParam(html, result, 'bonuses', [/class="bonusAmount"[^>]*>([^<]*)/i, /"ctl00_ctl00_mainArea_main_lblBonusAmount"[^>]*>([^<]*)/i], replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, 'bonuses_grade', [/Уровень\s*"([^"]*)/i, /"ctl00_ctl00_mainArea_main_lblStatus"[^>]*>([^<]*)/i], replaceTagsAndSpaces, html_entity_decode);
 	}
 }
 
-function fetchCard(baseurl, html){
+function fetchCard(g_baseurl, html){
     var prefs = AnyBalance.getPreferences();
 
     var eventvalidation = getEventValidation(html);
@@ -112,7 +168,7 @@ function fetchCard(baseurl, html){
     
     //Инфа о счетах схлопнута, а надо её раскрыть
     if(/<div[^>]*isDetExpandBtn[^>]*>\s*подробно/i.test(html)){
-        html = AnyBalance.requestPost(baseurl + '/n/Main/Home.aspx', {
+        html = AnyBalance.requestPost(g_baseurl + '/n/Main/Home.aspx', {
             ctl00$ScriptManager:'ctl00$ctl00$mainArea$main$upCards|ctl00$ctl00$mainArea$main$cardList',
             __EVENTTARGET:'ctl00$ctl00$mainArea$main$cardList',
             __EVENTARGUMENT:'_det_exp',
@@ -124,7 +180,7 @@ function fetchCard(baseurl, html){
             __ASYNCPOST:true
         }, addHeaders({Referer:'https://retail.payment.ru/n/Main/Home.aspx'}));
 		
-		html = AnyBalance.requestGet(baseurl + '/n/Main/Home.aspx', addHeaders({Referer:'https://retail.payment.ru/n/Main/Home.aspx'}));
+		html = AnyBalance.requestGet(g_baseurl + '/n/Main/Home.aspx', addHeaders({Referer:'https://retail.payment.ru/n/Main/Home.aspx'}));
     }
 	var cardnum = prefs.lastdigits ? prefs.lastdigits : '\\d{4}';
 	//                   (<div[^>]*class="cardAccountBlock"(?:[^>]*>){18,22}\d+\\.\\.       5787    (?:[^>]*>){3})
@@ -144,17 +200,17 @@ function fetchCard(baseurl, html){
 	
 	if(AnyBalance.isAvailable('balance_own', 'blocked')){
         var href = getParam(tr, null, null, /"infoUnitObject"[^>]*href="([^"]*)/i);
-        html = AnyBalance.requestGet(baseurl + href, g_headers);
+        html = AnyBalance.requestGet(g_baseurl + href, g_headers);
         
         getParam(html, result, 'balance_own', /"ctl00_ctl00_mainArea_main_lblAccountBalance"[^>]*>([^<]*)/, replaceTagsAndSpaces, parseBalance);
         getParam(html, result, 'blocked', /"ctl00_ctl00_mainArea_main_lblReserved"[^>]*>([^<]*)/, replaceTagsAndSpaces, parseBalance);
     }
-	getBonuses(baseurl, result);
+	getBonuses(g_baseurl, result);
 
     AnyBalance.setResult(result);
 }
 
-function fetchAccount(baseurl, html){
+function fetchAccount(g_baseurl, html){
     var prefs = AnyBalance.getPreferences();
 
     var eventvalidation = getEventValidation(html);
@@ -194,21 +250,21 @@ function fetchAccount(baseurl, html){
 	
 	if(AnyBalance.isAvailable('balance_own', 'blocked')){
         var href = getParam(tr, null, null, /"infoUnitObject"[^>]*href="([^"]*)/i);
-        html = AnyBalance.requestGet(baseurl + href, g_headers);
+        html = AnyBalance.requestGet(g_baseurl + href, g_headers);
         getParam(html, result, 'blocked', /"ctl00_ctl00_mainArea_main_lblReserved"[^>]*>([^<]*)/, replaceTagsAndSpaces, parseBalance);
     }
-	getBonuses(baseurl, result);
+	getBonuses(g_baseurl, result);
 
     AnyBalance.setResult(result);	
 }
 
-// Парсит дату из такого вида в мс 27 июля 2013
-function parseDateMoment(str){
-	AnyBalance.trace('Trying to parse date from ' + str);
-	return getParam(str, null, null, null, [replaceTagsAndSpaces, /января/i, '.01.', /февраля/i, '.02.', /марта/i, '.03.', /апреля/i, '.04.', /мая/i, '.05.', /июня/i, '.06.', /июля/i, '.07.', /августа/i, '.08.', /сентября/i, '.09.', /октября/i, '.10.', /ноября/i, '.11.', /декабря/i, '.12.', /\s/g, ''], parseDate);
-}
+// // Парсит дату из такого вида в мс 27 июля 2013
+// function parseDateMoment(str){
+	// AnyBalance.trace('Trying to parse date from ' + str);
+	// return getParam(str, null, null, null, [replaceTagsAndSpaces, /января/i, '.01.', /февраля/i, '.02.', /марта/i, '.03.', /апреля/i, '.04.', /мая/i, '.05.', /июня/i, '.06.', /июля/i, '.07.', /августа/i, '.08.', /сентября/i, '.09.', /октября/i, '.10.', /ноября/i, '.11.', /декабря/i, '.12.', /\s/g, ''], parseDate);
+// }
 
-function fetchDeposit(baseurl, html){
+function fetchDeposit(g_baseurl, html){
     var prefs = AnyBalance.getPreferences();
     var eventvalidation = getEventValidation(html);
     var viewstate = getViewState(html);
@@ -243,13 +299,13 @@ function fetchDeposit(baseurl, html){
 	
 	if(AnyBalance.isAvailable('balance_own', 'blocked')) {
         var href = getParam(tr, null, null, /"infoUnitObject"[^>]*href="([^"]*)/i);
-        html = AnyBalance.requestGet(baseurl + href, g_headers);
+        html = AnyBalance.requestGet(g_baseurl + href, g_headers);
 
 		getParam(html, result, 'income', /Ожидаемый доход(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, 'accnum', /Депозитный счет(?:[^>]*>){3}([\s\S]*?)<\/td>/i, [replaceTagsAndSpaces, /\D/g, ''], html_entity_decode);
-		getParam(html, result, 'till', /Фактическая дата закрытия(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, parseDateMoment);
+		getParam(html, result, 'till', /Фактическая дата закрытия(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, parseDateWord);
     }
-	getBonuses(baseurl, result);
+	getBonuses(g_baseurl, result);
 
     AnyBalance.setResult(result);		
 }

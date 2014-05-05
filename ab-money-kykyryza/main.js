@@ -16,6 +16,10 @@ var g_headers = {
 
 function main(){
     var prefs = AnyBalance.getPreferences();
+	
+	checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(prefs.password, 'Введите пароль!');
+	
 	//if(prefs.cabinet == 'new')
 		doNewCabinet(prefs);
 	/*else /*if(prefs.cabinet == 'old')*
@@ -52,17 +56,16 @@ function doNewCabinet(prefs){
             throw new AnyBalance.Error(error);
         throw new AnyBalance.Error("Не удалось зайти в личный кабинет. Проверьте номер карты и пароль.");
     }
-
+	
 	html = AnyBalance.requestGet(json.form.redirectUrl, g_headers);
 	
     var result = {success: true};
-    getParam(html, result, 'balance', /(?:Доступные средства|Баланс)[\s\S]*?b-user-info__balance[^>]*>([\s\S]*?)</i, null, parseBalance);
-	getParam(html, result, 'bonus', /bonus-statement[^>]*>\s*<span[^>]*b-user-info__balance[^>]*>([\s\S]*?)</i, null, parseBalance);
+    getParam(html, result, 'balance', /b-user-info__balance[^>]*>([\s\S]*?)</i, null, parseBalance);
+	getParam(html, result, 'bonus', /Начислено(?:[^>]*>){4,6}\s*<span[^>]*b-user-info__balance[^>]*>([\s\S]*?)</i, null, parseBalance);
+	getParam(html, result, 'bonus_avail', /Доступно(?:[^>]*>){4,6}\s*<span[^>]*b-user-info__balance[^>]*>([\s\S]*?)</i, null, parseBalance);	
+	// Пока не было такого
 	getParam(html, result, 'limit', />Кредитный лимит[\s\S]{1,60}b-user-info__balance[^>]*>([\s\S]*?)</i, null, parseBalance);
 	getParam(html, result, 'own', /Собственные[\s\S]*?средства[\s\S]*?b-user-info__balance[^>]*>([\s\S]*?)</i, null, parseBalance);
-	
-	html = AnyBalance.requestGet(baseurl + 'personal/bonus-statement', g_headers);
-	getParam(html, result, 'bonus_avail', /Доступные баллы[\s\S]*?span[^>]*>([\s\S]*?)</i, null, parseBalance);
 	
 	result.__tariff = prefs.login;
 

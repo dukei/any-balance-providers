@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="12" date="2014-05-05">
+	- Исправлено отображение валюты.
+	</change>
 	<change version="11" date="2014-02-11">
 	- Улучшена обработка ошибок входа.
 	</change>

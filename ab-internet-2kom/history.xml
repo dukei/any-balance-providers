@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="3" date="2014-05-05">
+	- Новые счетчик: Дата отключения.
+	</change>
     <change version="2" date="2013-04-24">
-      Добавлено отображение бонуса
-    </change>
+	- Добавлено отображение бонуса.
+	</change>
 </history>

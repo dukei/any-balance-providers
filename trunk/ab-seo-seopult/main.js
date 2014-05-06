@@ -15,7 +15,7 @@ function main(){
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-    var baseurl = "http://seopult.ru/";
+    var baseurl = "https://seopult.ru/";
     AnyBalance.setDefaultCharset('utf-8');
 
 	var html = AnyBalance.requestGet(baseurl + 'user.html', g_headers);
@@ -26,10 +26,9 @@ function main(){
 		pass_hash:'',
         op:'login'
     }, addHeaders({Referer: baseurl + 'user.html'}));
-
 	
 	// при успешном логине сайт нас редиректит
-    if(!/Refresh[\s\S]*?http:\/\/seopult.ru\/items.html/i.test(html)) {
+    if(!/Спасибо за визит на наш сайт/i.test(html)) {
 		var error = getParam(html, null, null, /<div[^>]*background-color:\s*#999999[^>]*>\s*<h4[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 		if(error && /Неверный логин или пароль/i.test(error))
 			throw new AnyBalance.Error(error, null, true);
@@ -38,7 +37,10 @@ function main(){
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	// идем по 302...
-	html = AnyBalance.requestGet('http://seopult.ru/items.html', addHeaders({Referer: baseurl + 'user.html'}));
+	var href = getParam(html, null, null, /"Refresh"[^>]*url=\/([^"]+)/i);
+	checkEmpty(href, 'Не удалось найти ссылку для входа в кабинет, сайт изменен?', true);
+	
+	html = AnyBalance.requestGet(baseurl + href, addHeaders({Referer: baseurl + 'user.html'}));
     //Раз мы здесь, то мы успешно вошли в кабинет
     var result = {success: true};
     getParam(html, result, 'balance', /Баланс:[^>]*>[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);

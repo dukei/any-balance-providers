@@ -16,8 +16,8 @@ function main() {
 	
 	AnyBalance.setOptions({forceCharset: 'utf-8'});
 	
-	var baseurl = "http://card.welcash.kiev.ua/";
-	var html = AnyBalance.requestGet(baseurl, g_headers);
+	var baseurl = "https://card.welcash.kiev.ua/";
+	var html = AnyBalance.requestGet(baseurl + 'ua/auth', g_headers);
 	
 	html = AnyBalance.requestPost(baseurl + 'ua/auth', {
 		card: prefs.login,

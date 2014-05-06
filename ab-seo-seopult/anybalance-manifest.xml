@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-seo-seopult</id>
+	<id version="4">ab-seo-seopult</id>
 	<api flags="no_browser"/>
 	<name>SeoPult</name>
 	<description html="true"><![CDATA[
@@ -16,10 +16,10 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units="р"/>
-		<counter id="monthly_income" name="Ежемесячный реферальный (партнерский) доход" units="р"/>
-		<counter id="monthly" name="Ежемесячный расход" units="р"/>
-		<counter id="daily" name="Ежедневный расход" units="р"/>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="monthly_income" name="Ежемесячный реферальный (партнерский) доход" units=" р"/>
+		<counter id="monthly" name="Ежемесячный расход" units=" р"/>
+		<counter id="daily" name="Ежедневный расход" units=" р"/>
 	</counters>
 	<keywords>сео пульт</keywords>
 	<type>seo</type>

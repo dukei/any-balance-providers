@@ -410,12 +410,12 @@ function fetchB2B(baseurl, html) {
 function fetchPost(baseurl, html) {
 	var prefs = AnyBalance.getPreferences();
 	AnyBalance.trace('Мы в постоплатном кабинете');
-
+	
 	var result = {success: true, balance: null, currency: null};
 	var multi = /<span[^>]+class="selected"[^>]*>/i.test(html), xhtml='';
 	// Пытаемся исправить всякую ерунду в балансе и валюте
 	var balancesReplaces = [replaceTagsAndSpaces, /информация[^<]*недоступна|недоступна|временно недоступен/ig, ''];
-
+	
 	getParam(html, result, 'agreement', /<h2[^>]*>\s*Договор №([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces, html_entity_decode);
 //	xhtml = getBlock(baseurl + 'c/post/index.html', html, 'list-contents', true); //Это строка вообще приводила к созданию/отмене заявки на смену тарифного плана
 //	getParam(xhtml, result, '__tariff', /<h2[^>]*>(?:[\s\S](?!<\/h2>))*?Текущий тариф([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces, html_entity_decode);
@@ -425,18 +425,18 @@ function fetchPost(baseurl, html) {
 		AnyBalance.trace('Похоже на кабинет с одним номером.');
 	} else {
 		AnyBalance.trace('Похоже на кабинет с несколькими номерами.');
-
+		
 		getParam(html, result, 'fio', /<div[^>]+class="ban-param name">([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-
+		
 		if (prefs.phone) { //Если задан номер, то надо сделать из него регулярное выражение
 			if (!/^\d{4,10}$/.test(prefs.phone)) throw new AnyBalance.Error('Введите от 4 до 10 последних цифр номера дополнительного телефона без пробелов и разделителей или не вводите ничего, чтобы получить информацию по первому номеру!', null, true);
-
+			
 			var regnumber = prefs.phone.replace(/(\d)/g, '$1[\\s\\-()]*');
 			var re = new RegExp('(?:<a[^>]*>\\s*)?<span[^>]*>\\+7[0-9\\s\\-()]*' + regnumber + '</span>', 'i');
 			var numinfo = getParam(html, null, null, re);
 			if (!numinfo) 
 				throw new AnyBalance.Error('Не найден присоединенный к договору номер телефона, оканчивающийся на ' + prefs.phone);
-
+			
 			var num = getParam(numinfo, null, null, null, replaceTagsAndSpaces, html_entity_decode);
 			if (/class="selected"/i.test(numinfo)) {
 				AnyBalance.trace('Дополнительный номер ' + num + ' уже выбран');
@@ -449,10 +449,10 @@ function fetchPost(baseurl, html) {
 					AnyBalance.trace(numinfo);
 					throw new AnyBalance.Error('Дополнительный номер ' + num + ' найден, но переключиться на него не удалось. Возможны изменения в личном кабинете...');
 				}
-
+				
 				var fparams = createFormParams(form);
 				params = joinObjects(fparams, params);
-
+				
 				html = AnyBalance.requestPost(baseurl + 'c/post/index.html', params, addHeaders({Referer: baseurl + 'c/post/index.html'}));
 				/*if (AnyBalance.getLastStatusCode() > 400) {
 					AnyBalance.trace('Beeline returned: ' + AnyBalance.getLastStatusString());
@@ -464,7 +464,8 @@ function fetchPost(baseurl, html) {
 		}
 		//Если несколько номеров в кабинете, то почему-то баланс надо брать отсюда
 		if (AnyBalance.isAvailable('balance')) {
-			xhtml = getBlock(baseurl + 'c/post/index.html', html, 'homeBalance');
+			xhtml = refreshBalance(baseurl + 'c/post/index.html', html);
+			//xhtml = getBlock(baseurl + 'c/post/index.html', html, 'homeBalance');
 			
 			var balance = getParam(xhtml, null, null, /Расходы по номеру за текущий период с НДС[\s\S]*?<div[^>]+class="balan?ce-summ"[^>]*>([\s\S]*?)<\/div>/i, balancesReplaces, parseBalance);
 			if(!isset(balance))
@@ -609,6 +610,7 @@ function fetchPre(baseurl, html) {
 	if (isAvailableBonuses()) {
 		xhtml = getBlock(baseurl + 'c/pre/index.html', html, 'bonusesForm homeServices');
 		
+		AnyBalance.trace(xhtml);
 		// Затем надо пнуть систему, чтобы точно получить все бонусы
 		//xhtml = getBlock(baseurl + 'c/pre/index.html', html, 'refreshButton')
 		

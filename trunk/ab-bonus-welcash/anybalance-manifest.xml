@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-bonus-welcash</id>
+	<id version="3">ab-bonus-welcash</id>
 	<api min_level="6" flags="no_browser"/>
 	<name>Велика Кишеня</name>
 	<description html="true"><![CDATA[

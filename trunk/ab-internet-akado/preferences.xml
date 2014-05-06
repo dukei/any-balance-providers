@@ -1,23 +1,25 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <EditTextPreference 
-        title="№ договора" 
-        positiveButtonText="ОК" 
-        summary="№ договора, например 20012345||{@s}\n" 
-        dialogTitle="Номер договора" 
-        negativeButtonText="Отмена" 
-        dialogMessage="Номер договора, использующийся для входа в личный кабинет АКАДО, например, 20012345"
-	inputType="number"
-        key="login">
-    </EditTextPreference>
-    <EditTextPreference 
-        positiveButtonText="ОК"
-        key="password" 
-        dialogTitle="Пароль"
-        negativeButtonText="Отмена"
-        title="Пароль"
-        summary="Пароль для входа в личный кабинет||***********\n"
-        dialogMessage="Введите пароль, используемый для входа в личный кабинет АКАДО"
-        inputType="textPassword">
-    </EditTextPreference>
+	<EditTextPreference
+		obligatory="true"
+		title="№ договора"
+		positiveButtonText="ОК"
+		summary="№ договора, например 20012345||{@s}\n"
+		dialogTitle="Номер договора"
+		negativeButtonText="Отмена"
+		dialogMessage="Номер договора, использующийся для входа в личный кабинет АКАДО, например, 20012345"
+		inputType="number"
+		key="login">
+	</EditTextPreference>
+	<EditTextPreference
+		obligatory="true"
+		positiveButtonText="ОК"
+		key="password"
+		dialogTitle="Пароль"
+		negativeButtonText="Отмена"
+		title="Пароль"
+		summary="Пароль для входа в личный кабинет||***********\n"
+		dialogMessage="Введите пароль, используемый для входа в личный кабинет АКАДО"
+		inputType="textPassword">
+	</EditTextPreference>
 </PreferenceScreen>

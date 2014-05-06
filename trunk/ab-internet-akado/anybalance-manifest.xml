@@ -1,8 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser" />
-	<id version="6">ab-internet-akado</id>
+	<id version="7">ab-internet-akado</id>
 	<name>Домашний Интернет и Телевидение АКАДО</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем балансе, номере договора, ФИО владельца для пользователей провайдера интернет и телевидения АКАДО (http://www.akado.ru).</p>
@@ -20,14 +19,13 @@
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>md5-min.js</js>
 		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units="р"/>
-		<counter id="payhint" name="Рекомендуемая сумма оплаты" suffix="р"/>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="payhint" name="Рекомендуемая сумма оплаты" suffix=" р"/>
 		<counter id="agreement" name="Номер договора" type="text"/>
 		<counter id="username" name="ФИО" type="text"/>
 	</counters>

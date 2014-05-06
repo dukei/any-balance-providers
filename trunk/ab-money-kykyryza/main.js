@@ -61,11 +61,11 @@ function doNewCabinet(prefs){
 	
     var result = {success: true};
     getParam(html, result, 'balance', /b-user-info__balance[^>]*>([\s\S]*?)</i, null, parseBalance);
-	getParam(html, result, 'bonus', /Начислено(?:[^>]*>){4,6}\s*<span[^>]*b-user-info__balance[^>]*>([\s\S]*?)</i, null, parseBalance);
-	getParam(html, result, 'bonus_avail', /Доступно(?:[^>]*>){4,6}\s*<span[^>]*b-user-info__balance[^>]*>([\s\S]*?)</i, null, parseBalance);	
+	getParam(html, result, 'bonus', />\s*Начислено(?:[^>]*>){4,6}\s*<span[^>]*b-user-info__balance[^>]*>([\s\S]*?)</i, null, parseBalance);
+	getParam(html, result, 'bonus_avail', />\s*Доступно(?:[^>]*>){4,6}\s*<span[^>]*b-user-info__balance[^>]*>([\s\S]*?)</i, null, parseBalance);	
 	// Пока не было такого
-	getParam(html, result, 'limit', />Кредитный лимит[\s\S]{1,60}b-user-info__balance[^>]*>([\s\S]*?)</i, null, parseBalance);
-	getParam(html, result, 'own', /Собственные[\s\S]*?средства[\s\S]*?b-user-info__balance[^>]*>([\s\S]*?)</i, null, parseBalance);
+	getParam(html, result, 'limit', />\s*Кредитный лимит(?:[^>]*>){4,6}\s*<span[^>]*b-user-info__balance[^>]*>([\s\S]*?)</i, null, parseBalance);
+	getParam(html, result, 'own', />\s*Собственные(?:[^>]*>|\s*)?средства(?:[^>]*>){4,6}\s*<span[^>]*b-user-info__balance[^>]*>([\s\S]*?)</i, null, parseBalance);
 	
 	result.__tariff = prefs.login;
 

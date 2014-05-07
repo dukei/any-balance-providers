@@ -3,66 +3,65 @@
 */
 
 var g_headers = {
-	'Accept':'text/xml',
-	'Content-Type':'text/xml',
-	'Connection':'keep-alive',
-	'User-Agent':'Dalvik/1.6.0 (Linux; U; Android 4.1.2; GT-I9300 Build/JZO54K) Android/2.1.1(121)'
+	'Accept': 'text/xml',
+	'Content-Type': 'text/xml',
+	'Connection': 'keep-alive',
+	'User-Agent': 'Dalvik/1.6.0 (Linux; U; Android 4.1.2; GT-I9300 Build/JZO54K) Android/2.1.1(121)'
 };
 
 var g_xml_login = '<?xml version="1.0" encoding="UTF-8" standalone="yes" ?><soapenv:Envelope xmlns:xsd="http://entry.rconnect/xsd" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://service.rconnect" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><soapenv:Header /><soapenv:Body><ser:login><ser:login>%LOGIN%</ser:login><ser:password>%PASSWORD%</ser:password></ser:login></soapenv:Body></soapenv:Envelope>',
-    g_xml_accounts = '<?xml version="1.0" encoding="UTF-8" standalone="yes" ?><soapenv:Envelope xmlns:xsd="http://entry.rconnect/xsd" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://service.rconnect" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><soapenv:Header /><soapenv:Body><ser:GetAccounts /></soapenv:Body></soapenv:Envelope>',
-    g_xml_cards = '<?xml version="1.0" encoding="UTF-8" standalone="yes" ?><soapenv:Envelope xmlns:xsd="http://entry.rconnect/xsd" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://service.rconnect" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><soapenv:Header /><soapenv:Body><ser:GetCards /></soapenv:Body></soapenv:Envelope>';
+	g_xml_accounts = '<?xml version="1.0" encoding="UTF-8" standalone="yes" ?><soapenv:Envelope xmlns:xsd="http://entry.rconnect/xsd" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://service.rconnect" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><soapenv:Header /><soapenv:Body><ser:GetAccounts /></soapenv:Body></soapenv:Envelope>',
+	g_xml_cards = '<?xml version="1.0" encoding="UTF-8" standalone="yes" ?><soapenv:Envelope xmlns:xsd="http://entry.rconnect/xsd" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://service.rconnect" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><soapenv:Header /><soapenv:Body><ser:GetCards /></soapenv:Body></soapenv:Envelope>';
 
-
-function translateError(error){
-    var errors = {
-        'logins.password.incorrect': 'Неправильный логин или пароль',
-        'profile.login.first_entry': 'Это ваш первый вход в Райффайзен.Connect. Пожалуйста, зайдите в https://connect.raiffeisen.ru через браузер и установите постоянный пароль',
+function translateError(error) {
+	var errors = {
+		'logins.password.incorrect': 'Неправильный логин или пароль',
+		'profile.login.first_entry': 'Это ваш первый вход в Райффайзен.Connect. Пожалуйста, зайдите в https://connect.raiffeisen.ru через браузер и установите постоянный пароль',
 		'profile.login.expired': 'Уважаемый клиент, срок действия Вашего пароля истёк, так как Вы не меняли Ваше имя пользователя и/или пароль в течение последних 180 дней. Для доступа к системе требуется изменить ваше имя пользователя и/или пароль на новые значения.',
-    };
-    if(errors[error]) 
-        return errors[error];
-	
-    AnyBalance.trace('Неизвестная ошибка: ' + error);
-    return error;
+	};
+	if (errors[error]) return errors[error];
+	AnyBalance.trace('Неизвестная ошибка: ' + error);
+	return error;
 }
-
-function main(){
-    var prefs = AnyBalance.getPreferences();
-    var baseurl = 'https://connect.raiffeisen.ru/mobile/services/';
-    AnyBalance.setDefaultCharset('utf-8'); 
+function main() {
+	var prefs = AnyBalance.getPreferences();
 
 	checkEmpty(prefs.login, 'Введите логин в интернет-банк!');
 	checkEmpty(prefs.password, 'Введите пароль в интернет-банк!');
-	
-    var html = AnyBalance.requestPost(baseurl + 'RCAuthorizationService', g_xml_login.replace(/%LOGIN%/g, prefs.login).replace(/%PASSWORD%/g, prefs.password), addHeaders({SOAPAction: 'urn:login'})); 
 
-    if(!/<ax21:name>/i.test(html)){
-        var error = getParam(html, null, null, /<faultstring>([\s\S]*?)<\/faultstring>/i, replaceTagsAndSpaces, html_entity_decode);
-        if(error) {
+	var baseurl = 'https://connect.raiffeisen.ru/mobile/services/';
+	AnyBalance.setDefaultCharset('utf-8');
+	
+	var html = AnyBalance.requestPost(baseurl + 'RCAuthorizationService', g_xml_login.replace(/%LOGIN%/g, prefs.login).replace(/%PASSWORD%/g, prefs.password), addHeaders({SOAPAction: 'urn:login'}));
+	
+	if (!/<ax21:name>/i.test(html)) {
+		var error = getParam(html, null, null, /<faultstring>([\s\S]*?)<\/faultstring>/i, replaceTagsAndSpaces, html_entity_decode);
+		if (error) {
 			var er = translateError(error);
-			if(er)
+			if (er)
 				throw new AnyBalance.Error(er, null, /Неправильный логин или пароль|срок действия Вашего пароля истёк/i.test(er));
 		}
-        AnyBalance.trace(html);
-        throw new AnyBalance.Error('Не удалось зайти в интернет банк. Обратитесь к разработчикам.');
-    }
+		
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось зайти в интернет банк. Обратитесь к разработчикам.');
+	}
 	
-    var result = {success: true};
-    getParam(html, result, 'fio', /<ax\d+:name>([\s\S]*?)<\/ax\d+:name>/i, replaceTagsAndSpaces, capitalFirstLenttersDecode);
-
-    if(prefs.type == 'card')
-        fetchCard(baseurl, html, result);
-    else if(prefs.type == 'acc')
-        fetchAccount(baseurl, html, result);
-    else if(prefs.type == 'dep')
-        fetchDeposit(baseurl, html, result);
-    else if(prefs.type == 'cred')
-        fetchCredit(baseurl, html, result);		
-    else
-        fetchAccount(baseurl, html, result);
-
-    AnyBalance.setResult(result);
+	var result = {success: true};
+	
+	getParam(html, result, 'fio', /<ax\d+:name>([\s\S]*?)<\/ax\d+:name>/i, replaceTagsAndSpaces, capitalFirstLenttersDecode);
+	
+	if (prefs.type == 'card')
+		fetchCard(baseurl, html, result);
+	else if (prefs.type == 'acc')
+		fetchAccount(baseurl, html, result);
+	else if (prefs.type == 'dep')
+		fetchDeposit(baseurl, html, result);
+	else if (prefs.type == 'cred')
+		fetchCredit(baseurl, html, result);
+	else 
+		fetchAccount(baseurl, html, result);
+	
+	AnyBalance.setResult(result);
 }
 //    
 function fetchCard(baseurl, html, result){
@@ -77,10 +76,11 @@ function fetchCard(baseurl, html, result){
     var info = getParam(html, null, null, re);
     if(!info)
         throw new AnyBalance.Error(prefs.num ? 'Не удалось найти карту с последними цифрами ' + prefs.num : 'Не найдено ни одной карты');
-
-    getParam(info, result, '__tariff', /<ax\d+:type>([\s\S]*?)<\/ax\d+:type>/i, replaceTagsAndSpaces, html_entity_decode);
+	
+	getParam(info, result, 'type', /<ax\d+:type>([\s\S]*?)<\/ax\d+:type>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(info, result, 'cardnum', /<ax\d+:number>([\s\S]*?)<\/ax\d+:number>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(info, result, 'accnum', /<ax\d+:accountNumber>([\s\S]*?)<\/ax\d+:accountNumber>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(info, result, '__tariff', /<ax\d+:number>([\s\S]*?)<\/ax\d+:number>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(info, result, 'accnum', /<ax\d+:accountNumber>([\s\S]*?)<\/ax\d+:accountNumber>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(info, result, 'balance', /balance>([\s\S]*?)<\/ax[\s\S]{1,10}:balance>/i, replaceTagsAndSpaces, parseBalance);
     getParam(info, result, ['currency', '__tariff'], /<ax\d+:currency>([\s\S]*?)<\/ax\d+:currency>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(info, result, 'minpaytill', /<ax\d+:nextCreditPaymentDate>([\s\S]*?)<\/ax\d+:nextCreditPaymentDate>/i, replaceTagsAndSpaces, parseDateISO);

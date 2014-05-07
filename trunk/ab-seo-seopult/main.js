@@ -43,7 +43,8 @@ function main(){
 	html = AnyBalance.requestGet(baseurl + href, addHeaders({Referer: baseurl + 'user.html'}));
     //Раз мы здесь, то мы успешно вошли в кабинет
     var result = {success: true};
-    getParam(html, result, 'balance', /Баланс:[^>]*>[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	
+    getParam(html, result, 'balance', /id="balance"[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'monthly', /текущий ежемесячный расход[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'daily', /текущий ежедневный расход[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'monthly_income', /ежемесячный реферальный[^>]*доход[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);

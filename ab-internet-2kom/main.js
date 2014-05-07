@@ -50,7 +50,7 @@ function main() {
 			getParam(html, result, 'trafficIn', /<tr class="current">(?:[\s\S]*?<td[^>]*>){4}([^<]*)/i, replaceTagsAndSpaces, parseTrafficGb);
 			getParam(html, result, 'trafficOut', /<tr class="current">(?:[\s\S]*?<td[^>]*>){5}([^<]*)/i, replaceTagsAndSpaces, parseTrafficGb);
 			
-			sumParam(html, result, 'period', /class="current"(?:[^>]*>){2}[\s\d.,]*-([^<]+)/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
+			sumParam(html, result, 'period', /"period_dates"(?:[^>]*>){1}[\s\d.,]*-([^<]+)/ig, replaceTagsAndSpaces, parseDate, aggregate_max);
 		} else {
 			AnyBalance.trace("Can not find statistics url!");
 		}

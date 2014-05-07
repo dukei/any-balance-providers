@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-internet-2kom</id>
+	<id version="4">ab-internet-2kom</id>
 	<name>2КОМ</name>
 	<api flags="no_browser"/>
 	<description html="true"><![CDATA[

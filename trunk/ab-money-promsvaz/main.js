@@ -107,6 +107,7 @@ function main(){
 		'__VIEWSTATEENCRYPTED': '',
 		'__EVENTVALIDATION':eventvalidation,
 		'ctl00$mainArea$vtcUserName':prefs.login,
+		'ctl00$mainArea$LoginInput$vtcLogin':prefs.login,
 		'ctl00$mainArea$vtcPassword':prefs.password,
 		'__ASYNCPOST':true,
 		'ctl00$mainArea$btnLogin':'Войти'

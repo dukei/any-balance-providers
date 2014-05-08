@@ -1,6 +1,7 @@
 /**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
+
 var g_headers = {
 	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
@@ -52,7 +53,7 @@ function main(){
 	
     var result = {success: true, balance: null};
 	
-	getParam(html, result, '__tariff', /Тарифный план([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, '__tariff', [/Тарифный план([^<]+)/i, /Наименование тарифного плана(?:[^>]*>){2}([\s\S]*?)<\/td>/i], replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'fio', /ФИО(?:[^>]+>){2}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'phone', /Номер life(?:[^>]+>){2}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
 	// СМС/ММС
@@ -66,8 +67,8 @@ function main(){
 	sumParam(html, result, 'traffic_night_left', />\s*Ночной интернет(?:[^>]+>){2}([^<]+МБ)/ig, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
 	sumParam(html, result, 'traffic_left', />\s*Интернет(?:[^>]+>){2}([^<]+МБ)/ig, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
 	// Баланс
-	getParam(html, result, 'balance', /Основной баланс(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'balance_bonus', /Бонусный баланс(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance', /Основной баланс:([^<]+)\s*<\/li>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance_bonus', /Бонусный баланс:([^<]+)\s*<\/li>/i, replaceTagsAndSpaces, parseBalance);
 	// Оплаченные обязательства	
 	getParam(html, result, 'balance_corent', /Оплаченные обязательства(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 	

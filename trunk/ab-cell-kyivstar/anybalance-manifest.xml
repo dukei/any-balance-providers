@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id major_version="2.0" version="51">ab-cell-kyivstar</id>
+	<id major_version="2.0" version="52">ab-cell-kyivstar</id>
 	<name>Киевстар</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе, бонусных минутах, SMS, MMS, остатке интернет-трафика и других бонусах для пользователей мобильного оператора "Киевстар".</p>
@@ -45,6 +45,7 @@
 		<counter id="sms_packet_left" name="Остаток SMS" />
 		<counter id="bonus_mins_1_till" name="Срок действия бонусных минут (1)" type="time" format="dd/MM/yyyy"/>
 		<counter id="bonus_mins_2_till" name="Срок действия бонусных минут (2)" type="time" format="dd/MM/yyyy"/>
+		<counter id="personal_account" name="Лицевой счет" type="text"/>
 	</counters>
 	<keywords>Сотовый телефон, мобильный, мобильник, kyivstar, киевстар, Украина</keywords>
 	<type>cell</type>

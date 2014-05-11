@@ -11,8 +11,8 @@ function main() {
 	var baseurl = 'http://sberbank.ru/';
 	var html = AnyBalance.requestGet(baseurl + (prefs.region || 'moscow') + '/ru/quotes/currencies/');
 	
-	getParam(html, result, 'date', /Курсы иностранных валют([^<]+)/i, replaceTagsAndSpaces, parseDate);
-	getParam(html, result, '__tariff', /Курсы иностранных валют([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'date', /<h3[^>]*>Курсы иностранных валют с([^<]+)/i, replaceTagsAndSpaces, parseDate);
+	getParam(html, result, '__tariff', /<h3[^>]*>Курсы иностранных валют с([^<]+)/i, [/по местному времени/g, '', replaceTagsAndSpaces], html_entity_decode);
 	getParam(html, result, 'usd_purch', /"Доллар США"([^>]*>){8}/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'usd_sell', /"Доллар США"([^>]*>){13}/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'eur_purch', /"Евро"([^>]*>){8}/i, replaceTagsAndSpaces, parseBalance);

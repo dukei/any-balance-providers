@@ -41,7 +41,9 @@ function main() {
 			error = getParam(html, null, null, /(<form[^>]+name="verifyForm")/i, replaceTagsAndSpaces, html_entity_decode);
 			if (error)
 				throw new AnyBalance.Error('This account requires 2-step authorization. Turn off 2-step authorization to use this provider.');
-			throw new AnyBalance.Error('Can`t log in, is site changed?');
+				
+			AnyBalance.trace(html);
+			throw new AnyBalance.Error('Can`t log in, is the site changed?');
 		}
 	} else {
 		var html = AnyBalance.requestGet('https://www.google.com/settings/account', g_headers);

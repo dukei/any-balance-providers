@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-telephony-mango</id>
-  <name>Манго-Офис</name>
-  <description>
-    Получает текущий остаток на счете и параметры продукта у провайдера IP-телефонии Манго-Офис ( http://www.mango-office.ru/ ). Позволяет задать номер продукта, если у вас несколько продуктов в личном кабинете.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-  </files>
-  <counters>
-    <counter id="balance" name="Остаток на счете" units="р"/>
-    <counter id="freespace" name="Свободное место" units="Мб"/>
-    <counter id="product" name="Продукт" type="text"/>
-    <counter id="incline" name="Внешняя линия" type="text"/>
-    <counter id="licschet" name="Л/с" type="text"/>
-  </counters>
-  <keywords>
-    IP-телефония mango
-  </keywords>
-  <type>
-    telephony
-  </type>
+	<id version="2">ab-telephony-mango</id>
+	<api flags="no_browser"/>
+	<name>Манго-Офис</name>
+	<description html="true"><![CDATA[
+	<p>Получает текущий остаток на счете и параметры продукта у провайдера IP-телефонии Манго-Офис ( http://www.mango-office.ru/ ). Позволяет задать номер продукта, если у вас несколько продуктов в личном кабинете.</p>
+	]]></description>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Остаток на счете" units=" р"/>
+		<counter id="freespace" name="Свободное место" units=" Мб"/>
+		<counter id="product" name="Продукт" type="text"/>
+		<counter id="incline" name="Внешняя линия" type="text"/>
+		<counter id="licschet" name="Л/с" type="text"/>
+	</counters>
+	<keywords>IP-телефония mango</keywords>
+	<type>telephony</type>
 </provider>

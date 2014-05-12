@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-finance-sberbank-am</id>
+	<api flags="no_browser"/>
+	<name>Сбербанк управление активами</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о ПИФах с сайта http://www.sberbank-am.ru/</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Стоимость на текущую дату"/>
+		<counter id="scha" name="Стоимость чистых активов"/>
+		<counter id="pif_date" name="Дата" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>finance</type>
+	<country>ru</country>
+</provider>

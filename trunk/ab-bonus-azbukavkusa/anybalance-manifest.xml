@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-bonus-azbukavkusa</id>
-	<api flags="no_browser|captcha"/>
+	<id version="2">ab-bonus-azbukavkusa</id>
+	<api flags="no_browser"/>
 	<name>Азбука Вкуса (Бонусы)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о бонусах на карте сети супермаркетов Азбука Вкуса.</p>
@@ -15,10 +15,10 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="to_reach_next_discount" name="До достижения следующей скидки" units=" р"/>
+		<!-- <counter id="to_reach_next_discount" name="До достижения следующей скидки" units=" р"/> -->
 		<counter id="discount" name="Размер скидки" units=" %"/>
-		<counter id="next_discount" name="Размер следующей скидки" units=" %"/>
-		<counter id="last_purch_date" name="Дата последней покупки" type="time" format="dd/MM/yyyy"/>
+		<!-- <counter id="next_discount" name="Размер следующей скидки" units=" %"/>
+		<counter id="last_purch_date" name="Дата последней покупки" type="time" format="dd/MM/yyyy"/> -->
 	</counters>
 	<keywords></keywords>
 	<type>bonus</type>

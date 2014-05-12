@@ -24,7 +24,7 @@
         title="Номер продукта" 
         positiveButtonText="ОК" 
         summary="|Автоматически\n|{@s}\n" 
-        dialogTitle="Лицевой счет" 
+        dialogTitle="Номер продукта" 
         negativeButtonText="Отмена" 
         dialogMessage="Введите номер продукта, для которого вы хотите получить информацию. Можете оставить это поле пустым, чтобы получить информацию по первому продукту."
         inputType="number" 

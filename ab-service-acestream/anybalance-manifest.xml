@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-service-acestream</id>
+	<api flags="no_browser"/>
+	<name>Ace Stream</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Ace Stream http://acestream.org/</p>
+	<p>Информация берется из личного кабинета https://accounts.acestream.net/</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" {@currency}"/>
+		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="days" name="No ADs" units=" {@days_cur}"/>
+	</counters>
+	<keywords></keywords>
+	<type>service</type>
+	<country>ru</country>
+</provider>

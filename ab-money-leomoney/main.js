@@ -40,17 +40,20 @@ function main() {
 		
 		throw new AnyBalance.Error(matches[1] == '7' ? 'Не удалось зайти в личный кабинет. Сайт изменен?' : 'Can`t login, is the site changed?');
 	}
-
+	
 	var result = {success: true};
 	
-	
+	var walletBalance = getParam(html, null, null, new RegExp('<WalletBalance>(?:[^>]*>){5}' + (prefs.type || 'rub') + '(?:[^>]*>){12}\\s*</WalletBalance>', 'i'))
+	if(!walletBalance)
+		throw new AnyBalance.Error(matches[1] == '7' ? 'Не удалось найти данные по счету. Сайт изменен?' : 'Can`t find wallet balance, is the site changed?');
+		
 	getParam(prefs.login, result, 'phone');
 	getParam(prefs.login, result, '__tariff');
-	getParam(html, result, 'wallet', /<AccountId>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'balance', /<Amount>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, ['currency', 'balance', 'spent', 'limit'], /<Currency>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'spent', /<TotalAmount>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'limit', /<MonthLimit>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(walletBalance, result, 'wallet', /<AccountId>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(walletBalance, result, 'balance', /<Amount>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(walletBalance, result, ['currency', 'balance', 'spent', 'limit'], /<Currency>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(walletBalance, result, 'spent', /<TotalAmount>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(walletBalance, result, 'limit', /<MonthLimit>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	
 	AnyBalance.setResult(result);
 

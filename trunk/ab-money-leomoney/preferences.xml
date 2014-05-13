@@ -22,4 +22,12 @@
 		dialogMessage="Enter password to Leomoney personal account."
 		inputType="textPassword">
 	</EditTextPreference>
+	<ListPreference
+		key="type"
+		title="Account currency"
+		summary="||{@s}"
+		entries="RUB|AED"
+		entryValues="rub|aed"
+		defaultValue="rur">
+	</ListPreference>	
 </PreferenceScreen>

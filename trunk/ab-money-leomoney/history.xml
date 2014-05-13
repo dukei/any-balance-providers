@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="12" date="2014-05-13">
+	- Добавлена поддержка кошельков с двумя привязанными счетами.
+	</change>
 	<change version="11" date="2014-04-30">
 	- Поддержка изменений в Leomoney API
 	</change>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-tracking-gtedoedet</id>
+	<api flags="no_browser"/>
+	<name>ГДЕТОЕДЕТ.РУ</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о посылке с сайта http://gdetoedet.ru</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="track" name="Отправление" type="text"/>
+		<counter id="type" name="Тип посылки" type="text"/>
+		<counter id="weight" name="Вес" type="text"/>
+		<counter id="parcel_date" name="Дата" type="text"/>
+		<counter id="parcel_adr" name="Адрес" type="text"/>
+		<counter id="parcel_status" name="Статус" type="text"/>
+		<counter id="parcel_details" name="Сводка" type="html"/>
+	</counters>
+	<keywords></keywords>
+	<type>tracking</type>
+	<country>ru</country>
+</provider>

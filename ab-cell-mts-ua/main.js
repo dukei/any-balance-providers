@@ -207,10 +207,12 @@ function main(){
 
     // Бесплатный интернет Актуально до 15.08.2012 для Супер Свободы
     sumParam (html, result, 'traffic_free_mb', /<li>К-во Кб на GPRS-Internet:[^<]*Осталось[^\d]*?(\d+,?\d* *(kb|mb|gb|кб|мб|гб|байт|bytes)).<\/li>/ig, null, parseTraffic, aggregate_sum);
-    // Подарок для тарифа Смартфон
+    // Подарок для тарифа Смартфон и Смартфон 0.50
     sumParam (html, result, 'traffic_free_mb', /<li>5 МБ для тарифа 'Смартфон'. Осталось:(\d+,?\d* *(kb|mb|gb|кб|мб|гб|байт|bytes)). Срок действия до [^<]*<\/li>/ig, null, parseTraffic, aggregate_sum);
-    //Срок действия бесплатного трафика для тарифа Смартфон
+    sumParam (html, result, 'traffic_free_mb', /<li>50 МБ для тарифа 'Смартфон'. Осталось:(\d+,?\d* *(kb|mb|gb|кб|мб|гб|байт|bytes)). Срок действия до [^<]*<\/li>/ig, null, parseTraffic, aggregate_sum);
+    //Срок действия бесплатного трафика для тарифа Смартфон и Смартфон 0.50
     sumParam (html, result, 'termin_traffic_free_mb', /<li>5 МБ для тарифа 'Смартфон'. Осталось:[^\d]*?[^<]*. Срок действия до([^<]*)<\/li>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
+    sumParam (html, result, 'termin_traffic_free_mb', /<li>50 МБ для тарифа 'Смартфон'. Осталось:[^\d]*?[^<]*. Срок действия до([^<]*)<\/li>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
 
     // Лицевой счет
     getParam (html, result, 'license', /№ (.*?):/, replaceTagsAndSpaces, html_entity_decode);

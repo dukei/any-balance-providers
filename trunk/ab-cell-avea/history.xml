@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="2.0" version="14" date="2014-05-14">
+	- Minor bugs fixed.
+	</change>
 	<change major_version="2.0" version="13" date="2014-03-18">
 	- Improved errors parsing.
 	</change>

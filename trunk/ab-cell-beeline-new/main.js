@@ -617,24 +617,21 @@ function fetchPre(baseurl, html) {
 		getBonuses(xhtml, result);
 	}
 	if (AnyBalance.isAvailable('fio')) {
-		AnyBalance.trace('Переходим в мобильную версию для получения ФИО.');
+		AnyBalance.trace('Переходим в настройки для получения ФИО.');
+		html = AnyBalance.requestGet(baseurl + 'sso/settings.html', g_headers);
 		
-		html = AnyBalance.requestGet(baseurl + 'm/pre/index.html', g_headers);
-		AnyBalance.trace(html);
+		getParam(html, result, 'fio', /(?:Имя и фамилия|ФИО)(?:[^>]*>){2}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, capitalFirstLenttersAndDecode);
+		// AnyBalance.trace('Переходим в мобильную версию для получения ФИО.');
+		// html = AnyBalance.requestGet(baseurl + 'm/pre/index.html', g_headers);
+		// AnyBalance.trace(html);
 		
-		if(/Вход в личный кабинет/i.test(html)) {
-			AnyBalance.trace('Перейти в мобильную версию не удалось, попробуем зайти с логином и паролем...');
+		// if(/Вход в личный кабинет/i.test(html)) {
+			// AnyBalance.trace('Перейти в мобильную версию не удалось, попробуем зайти с логином и паролем...');
 			
-			html = AnyBalance.requestGet(baseurl + 'ext/mAuthorization.html?ret_url=https%3A%2F%2Fmy.beeline.ru%2FmLogin.html&login=' + encodeURIComponent(prefs.login) + '&password=' + encodeURIComponent(prefs.password), g_headers);
-			html = AnyBalance.requestGet(baseurl + 'm/pre/index.html', g_headers);
-		}
-		getParam(html, result, 'fio', /<div[^>]+class="abonent-name"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, capitalFirstLenttersAndDecode);
-		// Если не получили баланс выше, попробуем достать его из мобильной версии
-		// Вызывает глюки, надо дождаться логов, из них будет ясно что тут отображается, если в кабинете нет баланса.
-		/*if(result.balance == null) {
-			getParam(html, result, 'balance', /class="price[^>]*>((?:[\s\S]*?span[^>]*>){3})/i, replaceTagsAndSpaces, parseBalance);
-			getParam(html, result, ['currency', 'balance'], /class="price[^>]*>((?:[\s\S]*?span[^>]*>){3})/i, replaceTagsAndSpaces, myParseCurrency);
-		}*/
+			// html = AnyBalance.requestGet(baseurl + 'ext/mAuthorization.html?ret_url=https%3A%2F%2Fmy.beeline.ru%2FmLogin.html&login=' + encodeURIComponent(prefs.login) + '&password=' + encodeURIComponent(prefs.password), g_headers);
+			// html = AnyBalance.requestGet(baseurl + 'm/pre/index.html', g_headers);
+		// }
+		// getParam(html, result, 'fio', /<div[^>]+class="abonent-name"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, capitalFirstLenttersAndDecode);
 	}
 	
 	AnyBalance.setResult(result);
@@ -693,7 +690,7 @@ function getBonuses(xhtml, result) {
 			// Это новый вид отображения данных
 			} else if (/Минут общения по тарифу/i.test(name)) {
 				// Очень внимательно надо матчить
-				if(/номера других операторов|все номера/i.test(name))
+				if(/номера других (?:сотовых\s+)?операторов|все номера/i.test(name))
 					sumParam(services[i], result, 'min_local', reNewValue, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
 				else
 					sumParam(services[i], result, 'min_bi', reNewValue, replaceTagsAndSpaces, parseMinutes, aggregate_sum);

@@ -492,16 +492,26 @@ function parseJson(json){
     return getJson(json);
 }
 
-function mainLK(allowRetry){
+function getLKJson(html) {
+	var json = getParam(html, null, null, /var\s+initialProfile\s*=\s*(\{[\s\S]*?\})\s*;/i);
+	if(!json) {
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось найти Json с описанием пользователя, сайт изменен?');
+	}
+	
+	return json;
+}
+
+function mainLK(allowRetry) {
     AnyBalance.trace("Entering lk...");
-    
+	
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
-
+	
     var baseurl = 'https://lk.ssl.mts.ru';
     var baseurlLogin = 'https://login.mts.ru';
-
-    try{
+	
+    try {
         var loginUrl = baseurlLogin + "/amserver/UI/Login?gx_charset=UTF-8&service=lk&goto=" + encodeURIComponent(baseurl + '/') + "&auth-status=0";
 /*        if(prefs.__dbg){
             //Чтобы сбросить автологин
@@ -510,12 +520,12 @@ function mainLK(allowRetry){
             //Чтобы сбросить автологин
             var html = AnyBalance.requestGet(loginUrl, g_headers);
         } */
-
+		
         var html = AnyBalance.requestGet(baseurl, g_headers);
         
         if (isLoggedIn(html)) {
-            AnyBalance.trace("Уже залогинены, проверяем, что на правильный номер...");
-            //Автоматом залогинились, надо проверить, что на тот номер
+			AnyBalance.trace("Уже залогинены, проверяем, что на правильный номер...");
+			//Автоматом залогинились, надо проверить, что на тот номер
             /*var info = AnyBalance.requestPost(baseurl + '/GoodokServices/GoodokAjaxGetWidgetInfo/', '', g_headers);
             if(/Внутренняя ошибка сервера/i.test(info)) {
 				throw new AnyBalance.Error('Внутренняя ошибка сервера, попробуйте выполнить запрос позже.');
@@ -523,30 +533,36 @@ function mainLK(allowRetry){
             //info = JSON.parse(info);
             // Уж лучше пусть бросит исключение, нежели пойдет дальше с пустым или кривым info
             info = getJson(info);*/
-	    var loggedInMSISDN = getParam(html, null, null, /var\s*initialProfile[^"']+['"]Login(?:[^'"]*"){2}(\d{10})/i);
-	    if(!loggedInMSISDN){
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось определить текущий номер в кабинете, сайт изменен?');
-	    }
 			
-            if (loggedInMSISDN != prefs.login) { //Автоматом залогинились не на тот номер
-                AnyBalance.trace("Залогинены на неправильный номер: " + loggedInMSISDN + ", выходим");
-                html = AnyBalance.requestGet(baseurlLogin + "/amserver/UI/Logout", g_headers);
-                if (isLoggedIn(html)){
-			AnyBalance.trace(html);
-			throw new AnyBalance.Error('Не удаётся выйти из личного кабинета, чтобы зайти под правильным номером. Сайт изменен?');
+			var json = getJson(getLKJson(html));
+			
+			var loggedInMSISDN = json.Login;//getParam(html, null, null, /var\s*initialProfile = \{"(?:[\s\S]*?":"?[^,"\}]+"?,){1,15}"Login(?:[^'"]*"){2}(\d{10})/i);
+			if(!loggedInMSISDN){
+				AnyBalance.trace(html);
+				throw new AnyBalance.Error('Не удалось определить текущий номер в кабинете, сайт изменен?');
+			}
+			
+			if (loggedInMSISDN != prefs.login) { //Автоматом залогинились не на тот номер
+				AnyBalance.trace("Залогинены на неправильный номер: " + loggedInMSISDN + ", выходим");
+				html = AnyBalance.requestGet(baseurlLogin + "/amserver/UI/Logout", g_headers);
+				
+				if (isLoggedIn(html)){
+					AnyBalance.trace(html);
+					throw new AnyBalance.Error('Не удаётся выйти из личного кабинета, чтобы зайти под правильным номером. Сайт изменен?');
+				}
+			} else {
+				AnyBalance.trace("Залогинены на правильный номер: " + loggedInMSISDN);
+			}
 		}
-            }
-        }
-        
-        if(!isLoggedIn(html)){
+		
+		if(!isLoggedIn(html)){
             var form = getParam(html, null, null, /<form[^>]+name="Login"[^>]*>([\s\S]*?)<\/form>/i);
             if(!form){
-		AnyBalance.trace(html);
-                throw new AnyBalance.Error("Не удаётся найти форму входа!", allowRetry);
-	    }
-        
-            var params = createFormParams(form, function(params, input, name, value){
+				AnyBalance.trace(html);
+				throw new AnyBalance.Error("Не удаётся найти форму входа!", allowRetry);
+			}
+			
+			var params = createFormParams(form, function(params, input, name, value){
                 var undef;
                 if(name == 'IDToken1')
                     value = prefs.login;
@@ -560,15 +576,15 @@ function mainLK(allowRetry){
                 return value;
             });
         
-//  //        AnyBalance.trace("Login params: " + JSON.stringify(params));
+			// AnyBalance.trace("Login params: " + JSON.stringify(params));
         
             AnyBalance.trace("Логинимся с заданным номером");
             html = AnyBalance.requestPost(loginUrl, params, addHeaders({Referer: loginUrl}));
-//            AnyBalance.trace("Команду логина послали, смотрим, что получилось...");
+			// AnyBalance.trace("Команду логина послали, смотрим, что получилось...");
         }
         
         if(!isLoggedIn(html)){
-//  //        AnyBalance.trace(html);
+			// AnyBalance.trace(html);
             var error = getParam(html, null, null, /<div[^>]+class="(?:msg_error|field_error)"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
             if(error)
                 throw new AnyBalance.Error(error, false);
@@ -595,7 +611,7 @@ function mainLK(allowRetry){
 	// fileName: main.js_v74
 	// lineNumber: 579
 	// rhinoException: org.mozilla.javascript.EcmaError: TypeError: Cannot read property "Balance" from undefined (main.js_v74#579)
-	var info = getParam(html, null, null, /var\s+initialProfile\s*=\s*(\{[\s\S]*?\})/i);
+	var info = getLKJson(html);
 	
 	AnyBalance.trace(info);
 	info = getJson(info);
@@ -605,11 +621,11 @@ function mainLK(allowRetry){
     getParam(info.Tariff+'', result, '__tariff', null, replaceTagsAndSpaces, html_entity_decode);
     getParam(info.Bonus+'', result, 'bonus', null, null, parseBalance);
     getParam(info.FullLogin+'', result, 'phone', null, [/7(\d{3})(\d{3})(\d{2})(\d{2})/, '+7 $1 $2$3$4'], html_entity_decode);
-
+	
     if(isAvailableStatus()){
         var baseurlHelper = "https://ihelper.mts.ru/selfcare/";
-	try{
-            html = AnyBalance.requestGet(baseurlHelper + "account-status.aspx", g_headers);
+		try {
+			html = AnyBalance.requestGet(baseurlHelper + "account-status.aspx", g_headers);
             var redirect=getParam(html, null, null, /<form .*?id="redirect-form".*?action="[^"]*?([^\/\.]+)\.mts\.ru/);
             if (redirect){
                 //Неправильный регион. Умный мтс нас редиректит
@@ -628,16 +644,16 @@ function mainLK(allowRetry){
                 }, g_headers);
             }
         }catch(e){
-            AnyBalance.trace('Не удалось перейти из лк в интернет-помощник: ' + e.message);
-	}
-
-        if(!isInOrdinary(html)){ //Тупой МТС не всегда может перейти из личного кабинета в интернет-помощник :(
+			AnyBalance.trace('Не удалось перейти из лк в интернет-помощник: ' + e.message);
+		}
+		
+		if(!isInOrdinary(html)){ //Тупой МТС не всегда может перейти из личного кабинета в интернет-помощник :(
             AnyBalance.trace('Ошибка прямого перехода в интернет-помощник. Пробуем зайти с логином-паролем.');
             try{
-            var retVals = {};
-                html = enterOrdinary(redirect, retVals);
-                baseurlHelper = retVals.baseurl;
-                redirect = retVals.region;
+				var retVals = {};
+				html = enterOrdinary(redirect, retVals);
+				baseurlHelper = retVals.baseurl;
+				redirect = retVals.region;
             }catch(e){
                 var __message = "МТС не позволила войти в интернет-помощник из личного кабинета. Мы попытались войти в него напрямую, но не удалось: " + e.message + "\nВы можете избежать этой ошибки, отключив все счетчики, кроме баланса и бонусного баланса, или настроив вход в обычный интернет-помощник.";
                 AnyBalance.trace(__message);
@@ -645,10 +661,10 @@ function mainLK(allowRetry){
                 return;
             }
         }
-
+		
         fetchOrdinary(html, baseurlHelper, result);
     }
-
+	
     AnyBalance.setResult(result);
 }
 

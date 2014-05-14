@@ -1,41 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
-  <api flags="no_browser" />
-  <id version="2">ab-hosting-netangels</id>
-  <name>NetAngels</name>
-  <description>
-    Получает баланс и информацию о тарифном плане для екатеринбургского хостинг провайдера NetAngels (http://netangels.ru)
-
-    Информация берется из личного кабинета https://panel.netangels.ru/
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="status" name="Статус" type="text"/>
-    <counter id="licschet" name="Договор" type="text"/>
-    <counter id="space" name="Место (осталось)" units=" Мб"/>
-    <counter id="sites" name="Сайты (осталось)" units=""/>
-    <counter id="mail" name="Почта (осталось)" units=" Мб"/>
-    <counter id="space_total" name="Место (всего)" units=" Мб"/>
-    <counter id="sites_total" name="Сайты (всего)" units=""/>
-    <counter id="mail_total" name="Почта (всего)" units=" Мб"/>
-    <counter id="fio" name="ФИО" type="text"/>
-  </counters>
-  <keywords>
-    нетангел
-  </keywords>
-  <type>
-    hosting
-  </type>
-  <country>
-    ru
-  </country>
+	<api flags="no_browser" />
+	<id version="3">ab-hosting-netangels</id>
+	<name>NetAngels</name>
+	<description html="true"><![CDATA[
+	<p>Получает баланс и информацию о тарифном плане для екатеринбургского хостинг провайдера NetAngels (http://netangels.ru)</p>
+	<p>Информация берется из личного кабинета https://panel.netangels.ru/</p>
+	]]></description>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="licschet" name="Договор" type="text"/>
+		<counter id="space" name="Место (осталось)" units=" Мб"/>
+		<counter id="sites" name="Сайты (осталось)" units=""/>
+		<counter id="mail" name="Почта (осталось)" units=" Мб"/>
+		<counter id="space_total" name="Место (всего)" units=" Мб"/>
+		<counter id="sites_total" name="Сайты (всего)" units=""/>
+		<counter id="mail_total" name="Почта (всего)" units=" Мб"/>
+		<counter id="fio" name="ФИО" type="text"/>
+	</counters>
+	<keywords>нетангел</keywords>
+	<type>hosting</type>
+	<country>ru</country>
 </provider>

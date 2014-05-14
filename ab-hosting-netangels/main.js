@@ -1,10 +1,5 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Получает баланс и информацию о тарифном плане для екатеринбургского хостинг-провайдера NetAngels
-
-Operator site: http://netangels.ru
-Личный кабинет: https://panel.netangels.ru/
 */
 
 var g_headers = {
@@ -30,21 +25,24 @@ function main(){
 		username:prefs.login,
 		password:prefs.password,
 		next:'/'
-    }, addHeaders({Referer: baseurl + 'auth/?next=/'})); 
-
-    if(!/\/auth\/logout/i.test(html)){
+    }, addHeaders({Referer: baseurl + 'auth/?next=/'}));
+	
+	html = AnyBalance.requestGet(baseurl + '/', g_headers);
+	
+    if(!/\/auth\/logout/i.test(html)) {
         //Если в кабинет войти не получилось, то в первую очередь надо поискать в ответе сервера объяснение ошибки
         var error = getParam(html, null, null, /<span[^>]+id="overall_error"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error);
-        //Если объяснения ошибки не найдено, при том, что на сайт войти не удалось, то, вероятно, произошли изменения на сайте
+        
+		AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
     //Раз мы здесь, то мы успешно вошли в кабинет
     var result = {success: true};
     getParam(html, result, 'fio', /<div[^>]+class="top_exit"[^>]*>([\s\S]*?)(?:\(|<a|<\/div>)/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, '__tariff', /Заказанные услуги:([\s\S]*?)(?:<ul|<\/p>)/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'licschet', /Договор:([\s\S]*?)(?:<br|<\/p>)/i, replaceTagsAndSpaces, html_entity_decode); 
+    getParam(html, result, 'licschet', /Договор:([\s\S]*?)(?:<br|<\/(?:b|p)>)/i, replaceTagsAndSpaces, html_entity_decode); 
     getParam(html, result, 'balance', /Баланс:([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'status', /<span[^>]+user_state_[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
 

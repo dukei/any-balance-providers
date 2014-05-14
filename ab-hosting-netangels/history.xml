@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="3" date="2014-05-14">
+	- Поддержка изменений в личном кабинете.
+	</change>
     <change version="2" date="2013-07-22">
-      - Поддержка изменений в личном кабинете.
-    </change> 
+	- Поддержка изменений в личном кабинете.
+	</change>
 </history>

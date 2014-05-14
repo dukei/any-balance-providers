@@ -10,32 +10,31 @@ var g_headers = {
 	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
 };
 
-function main(){
-    var prefs = AnyBalance.getPreferences();
+function main() {
+	var prefs = AnyBalance.getPreferences();
 	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	if(prefs.cabinet == 'new') {
+	if (prefs.cabinet == 'new') {
 		doNewCabinet(prefs);
 	} else {
 		doOldCabinet(prefs);
 	}
 }
 
-function parseCurrencyAndMy(cur){
-        return parseCurrencyMy(parseCurrency(cur));
+function parseCurrencyAndMy(cur) {
+	return parseCurrencyMy(parseCurrency(cur));
 }
 
-function parseCurrencyMy(cur){
-        var tbl = {
-            'Российский рубль': 'руб',
-            'Доллар США': '$',
-            'Евро': '€'
-        }
-        if(tbl[cur])
-            return tbl[cur];
-        return cur;
+function parseCurrencyMy(cur) {
+	var tbl = {
+		'Российский рубль': 'руб',
+		'Доллар США': '$',
+		'Евро': '€'
+	}
+	if (tbl[cur]) return tbl[cur];
+	return cur;
 }
 
 function getAuthKey(html) {
@@ -79,49 +78,53 @@ function doNewCabinet(prefs) {
 	var passwordMD5 = '';
 	var p_instance = getP_instance(html);
 	
-    if (typeof (CryptoJS) != 'undefined' && authkey) {
-		passwordMD5 = CryptoJS.MD5(password).toString(CryptoJS.enc.Hex).substr(0, 30);
-		passwordMD5 = ':' + CryptoJS.MD5(authkey + ':' + passwordMD5).toString(CryptoJS.enc.Hex);
-	}
-	password = CryptoJS.SHA1(password).toString(CryptoJS.enc.Hex);
-	password = CryptoJS.SHA1(authkey + ':' + password).toString(CryptoJS.enc.Hex);
-    
-    if (rsa_N && rsa_E && typeof (RSAKey) != undefined) {
-        var rsa = new RSAKey();
-        rsa.setPublic(rsa_N, rsa_E);
-        authkey = authkey + ':' + rsa.encrypt(password + passwordMD5).toLowerCase();
-        var l = password.length;
-        password = '';
-        for (var i = 0; i < l; i++)
+    if (typeof(CryptoJS) != 'undefined' && authkey) {
+    	passwordMD5 = CryptoJS.MD5(password).toString(CryptoJS.enc.Hex).substr(0, 30);
+    	passwordMD5 = ':' + CryptoJS.MD5(authkey + ':' + passwordMD5).toString(CryptoJS.enc.Hex);
+    }
+    password = CryptoJS.SHA1(password).toString(CryptoJS.enc.Hex);
+    password = CryptoJS.SHA1(authkey + ':' + password).toString(CryptoJS.enc.Hex);
+	
+    if (rsa_N && rsa_E && typeof(RSAKey) != undefined) {
+    	var rsa = new RSAKey();
+    	rsa.setPublic(rsa_N, rsa_E);
+    	authkey = authkey + ':' + rsa.encrypt(password + passwordMD5).toLowerCase();
+    	var l = password.length;
+    	password = '';
+    	for (var i = 0; i < l; i++)
 			password += '*';
     }
-	
 	html = AnyBalance.requestPost(baseurl + 'wwv_flow.show', {
-		p_request:'APPLICATION_PROCESS=AUTHENTICATE',
-		p_flow_id:getFlowID(html),
-		p_flow_step_id:getFlowStepID(html),
-		p_instance:p_instance,
-		x01:'AUTH#PASSWORD',
-		x02:prefs.login,
-		x03:password,
-		x04:authkey,
-		x05:'N',
-		x06:'4' // может понадобится переделать
-	}, addHeaders({Referer: baseurl + ''}));
+		p_request: 'APPLICATION_PROCESS=AUTHENTICATE',
+		p_flow_id: getFlowID(html),
+		p_flow_step_id: getFlowStepID(html),
+		p_instance: p_instance,
+		x01: 'AUTH#PASSWORD',
+		x02: prefs.login,
+		x03: password,
+		x04: authkey,
+		x05: 'N',
+		x06: '4' // может понадобится переделать
+	}, addHeaders({
+		Referer: baseurl
+	}));
 	
-	if (!/Авторизация успешна/i.test(html)) {
-		var error = sumParam(html, null, null, /"err"[^"]+"([^"]+)/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
-		if (error)
+    if (!/Авторизация успешна/i.test(html)) {
+    	var error = sumParam(html, null, null, /"err"[^"]+"([^"]+)/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+    	if (error) 
 			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
 		
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-	}	
+		if(/истёк срок действия пароля/i.test(html)) 
+			throw new AnyBalance.Error('Истёк срок действия пароля. Смените пароль через браузер, а затем введите его в настройки провайдера.', null, true);
+		
+    	AnyBalance.trace(html);
+    	throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+    }
 	
 	var loginVar = getParam(html, null, null, /afterLogin\(([^)]+)/i);
 	if(!loginVar)
 		throw new AnyBalance.Error('Не удалось найти ссылку на страницу с данными, сайт изменен?');
-
+	
 	// Теперь надо пнуть базу, чтобы обновилось все
 	html = AnyBalance.requestPost(baseurl + 'wwv_flow.show', {
 		p_request:'APPLICATION_PROCESS=AFTER_AUTH',
@@ -137,7 +140,7 @@ function doNewCabinet(prefs) {
 		p_instance:loginVar,
 		x01:100
 	}, addHeaders({Referer: baseurl}));	
-		
+	
 	var url = baseurl + 'f?p=10:MAIN:' + loginVar;
 	html = AnyBalance.requestGet(url, g_headers);
 	
@@ -289,6 +292,9 @@ function doOldCabinet(prefs) {
 		if (error)
 			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
 		
+		if(/истёк срок действия пароля/i.test(html)) 
+			throw new AnyBalance.Error('Истёк срок действия пароля. Смените пароль через браузер, а затем введите его в настройки провайдера.', null, true);
+
 		AnyBalance.trace(html);
         throw new AnyBalance.Error("Не удалось зайти в интернет-банк. Сайт изменен?");
     }

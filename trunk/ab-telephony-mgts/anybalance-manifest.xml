@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="8">ab-telephony-mgts</id>
+	<id version="9">ab-telephony-mgts</id>
 	<name>МГТС</name>
 	<api flags="no_browser"/>
 	<description html="true"><![CDATA[
@@ -27,6 +27,7 @@
 		<counter id="balance" name="Баланс" units=" р"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="licschet" name="Лицевой счет" type="text"/>
+		<counter id="phone" name="Номер телефона" type="text"/>
 	</counters>
 	<keywords>mgts, московская городская телефонная сеть, проводной телефон</keywords>
 	<type>telephony</type>

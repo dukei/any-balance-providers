@@ -59,6 +59,7 @@ function main() {
 		
 		getParam(html, result, 'fio', /"cabinet-aside"[^>]*>([\s\S]*?)<\/h3/i, replaceTagsAndSpaces);
 		getParam(html, result, 'balance', /Баланс:([^>]*>){3}/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'phone', /Номер:(?:[^>]*>){2}([\s\S]*?)<\/dd>/i, replaceTagsAndSpaces);
 		getParam(html, result, 'licschet', /Лицевой счет:([^>]*>){3}/i, replaceTagsAndSpaces);
 	}
 	

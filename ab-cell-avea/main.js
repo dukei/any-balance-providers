@@ -10,6 +10,16 @@ var g_headers = {
 	'Origin':'https://www.avea.com.tr',
 	'User-Agent':'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
 };
+
+function getXLogin(html) {
+	return getParam(html, null,null, /value="5xxxxxxxxx"[^>]*name="([0-9a-f]{32})"/i);
+}
+
+function getXpass(html) {
+	return getParam(html, null,null, /focusssPass[^>]*([0-9a-f]{32})"/i);
+}
+
+
 function main() {
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'https://www.avea.com.tr/';
@@ -20,25 +30,21 @@ function main() {
 	
 	var html = AnyBalance.requestGet(baseurl + 'mps/portal?cmd=onlineTransactionsHome&lang=tr&tb=redTab', g_headers);
 	
-	var Xlogin = getParam(html, null,null, /value="5xxxxxxxxx"[^>]*([0-9a-f]{32})/i);
-	var Xpass = getParam(html, null,null, /focusssPass[^>]*([0-9a-f]{32})/i);
+	var params = {
+		'SubmitImage.x':'47',
+		'SubmitImage.y':'15',
+		'SubmitImage':'Giriş',
+	};
 	
-	var params = createFormParams(html, function(params, str, name, value) {
-		if(name == Xlogin)
-			return prefs.login;
-		else if(name == Xpass)
-			return prefs.password;
-		return value;
-	});
+	params[getXLogin(html)] = prefs.login;
+	params[getXpass(html)] = prefs.password;
+	
 	html = AnyBalance.requestPost(baseurl + 'mps/portal?cmd=Login&lang=tr', params, addHeaders({Referer: baseurl + 'mps/portal?cmd=Login&lang=tr'}));
 
 	if(!/logout/i.test(html)) {
 		// Иногда оно не хочет входить и требует капчу, но так не навязчиво, что если еще раз авторизоваться, то все ок
-		Xlogin = getParam(html, null,null, /value="5xxxxxxxxx"[^>]*([0-9a-f]{32})/i);
-		Xpass = getParam(html, null,null, /focusssPass[^>]*([0-9a-f]{32})/i);
-		
-		params[Xlogin] = prefs.login;
-		params[Xpass] = prefs.password;
+		params[getXLogin(html)] = prefs.login;
+		params[getXpass(html)] = prefs.password;
 		
 		html = AnyBalance.requestPost(baseurl + 'mps/portal?cmd=Login&lang=tr', params, addHeaders({Referer: baseurl + 'mps/portal?cmd=Login&lang=tr'}));
 		

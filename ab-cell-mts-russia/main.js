@@ -495,6 +495,9 @@ function parseJson(json){
 function getLKJson(html) {
 	var json = getParam(html, null, null, /var\s+initialProfile\s*=\s*(\{[\s\S]*?\})\s*;/i);
 	if(!json) {
+		var error = getParam(html, null, null, /<div[^>]+class="red-status"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+		if(error)
+			throw new AnyBalance.Error(error);
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось найти Json с описанием пользователя, сайт изменен?');
 	}

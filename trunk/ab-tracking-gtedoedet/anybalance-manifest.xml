@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-tracking-gtedoedet</id>
+	<id version="2">ab-tracking-gtedoedet</id>
 	<api flags="no_browser"/>
 	<name>ГДЕТОЕДЕТ.РУ</name>
 	<description html="true"><![CDATA[

@@ -19,7 +19,6 @@ function main() {
 	
 	var html = AnyBalance.requestGet(baseurl + 'track/'+ prefs.login, g_headers);
 	
-	
 	if (!new RegExp('ОТПРАВЛЕНИЕ:([^>]*>){1}\\s*'+ prefs.login, 'i').test(html)) {
 		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
@@ -36,12 +35,12 @@ function main() {
 	getParam(html, result, 'type', /Тип посылки:(?:[^>]*>){2}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'weight', />вес([^>]*>){3}/i, replaceTagsAndSpaces, html_entity_decode);
 	
-	var lastStatus = getParam(html, null, null, /<td>\s*<img[^>]*>\s*<\/td>\s*<td>\d{2}\.\d{2}\.\d{4}(?:[^>]*>){11}\s*<\/tr>\s*<\/table>/i);
+	var lastStatus = getParam(html, null, null, /<td>\s*<img[^>]*>\s*<\/td>\s*<td>\d{2}\.\d{2}\.\d{4}(?:[^>]*>){10,20}\s*<\/tr>\s*<\/table>/i);
 	
 	if(lastStatus) {
 		getParam(lastStatus, result, ['parcel_date', 'parcel_details'], /(\d{2}\.\d{2}\.\d{4}(?:[^>]*>){2}\d+:\d+)/i, replaceTagsAndSpaces, html_entity_decode);
 		getParam(lastStatus, result, ['parcel_adr', 'parcel_details'], /"Адрес отделения"([^>]*>){2}/i, replaceTagsAndSpaces, html_entity_decode);
-		getParam(lastStatus, result, ['parcel_status', 'parcel_details'], /"b-status"([^>]*>){2}/i, replaceTagsAndSpaces, html_entity_decode);
+		sumParam(lastStatus, result, ['parcel_status', 'parcel_details'], /"b-status"([^>]*>){2}/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
 		getParam('<b>' + result.parcel_date + ':</b><br/>' + result.parcel_adr + ' - ' + result.parcel_status, result, 'parcel_details');
 	} else {
 		AnyBalance.trace('Не удалось найти информацию о посылке, возможно она еще не попала в базу gdetoedet.ru');

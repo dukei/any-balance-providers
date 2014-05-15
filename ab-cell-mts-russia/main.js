@@ -1,6 +1,7 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
+
 var regions = {
 	auto: "https://ip.mts.ru/SELFCAREPDA/",
 	center: "https://ip.mts.ru/SELFCAREPDA/",
@@ -28,47 +29,46 @@ var regionsOrdinary = {
 	ug: "https://ihelper.ug.mts.ru/SelfCare/"
 };
 
-function getViewState(html){
-    return getParam(html, null, null, /name="__VIEWSTATE".*?value="([^"]*)"/);
+function getViewState(html) {
+	return getParam(html, null, null, /name="__VIEWSTATE".*?value="([^"]*)"/);
 }
 
-function main(){
+function main() {
     var prefs = AnyBalance.getPreferences();
     if (prefs.phone && !/^\d+$/.test(prefs.phone)) {
-        throw new AnyBalance.Error('В качестве номера необходимо ввести 10 цифр номера, например, 9161234567, или не вводить ничего, чтобы получить информацию по основному номеру.', null, true);
+    	throw new AnyBalance.Error('В качестве номера необходимо ввести 10 цифр номера, например, 9161234567, или не вводить ничего, чтобы получить информацию по основному номеру.', null, true);
     }
+	
 	checkEmpty(prefs.login, 'Вы не ввели телефон (логин)!');
 	checkEmpty(prefs.password, 'Вы не ввели пароль!');
 	
-    if(prefs.type == 'lk'){
-        mainLK();
-    }else if(prefs.type == 'mobile'){
-        mainMobile();
-    }else if(prefs.type == 'ordinary'){
-        mainOrdinary();
-    }else{
-        try{
-           if(!AnyBalance.isAvailable('bonus')){
-                //Мобильный помощник, только если не нужны бонусные баллы
-	        mainMobile(true);
-                return;
-           }else{
-                AnyBalance.trace('Требуются бонусные баллы, мобильный помощник не подходит...');
-           }
-        }catch(e){
-           if(!e.allow_retry || e.fatal)
-               throw e;
-           AnyBalance.trace('С мобильным помощником проблема: ' + e.message + " Пробуем обычный...");
-        }
-        try{
-           mainLK(true);
-        }catch(e){
-           if(!e.allow_retry || e.fatal)
-               throw e;
-           AnyBalance.trace('С личным кабинетом проблема: ' + e.message + " Пробуем обычный помощник...");
-           mainOrdinary();
-        }
-    }
+	if (prefs.type == 'lk') {
+		mainLK();
+	} else if (prefs.type == 'mobile') {
+		mainMobile();
+	} else if (prefs.type == 'ordinary') {
+		mainOrdinary();
+	} else {
+		try {
+			if (!AnyBalance.isAvailable('bonus')) {
+				//Мобильный помощник, только если не нужны бонусные баллы
+				mainMobile(true);
+				return;
+			} else {
+				AnyBalance.trace('Требуются бонусные баллы, мобильный помощник не подходит...');
+			}
+		} catch (e) {
+			if (!e.allow_retry || e.fatal) throw e;
+			AnyBalance.trace('С мобильным помощником проблема: ' + e.message + " Пробуем обычный...");
+		}
+		try {
+			mainLK(true);
+		} catch (e) {
+			if (!e.allow_retry || e.fatal) throw e;
+			AnyBalance.trace('С личным кабинетом проблема: ' + e.message + " Пробуем обычный помощник...");
+			mainOrdinary();
+		}
+	}
 }
 
 function mainMobile(allowRetry){
@@ -125,8 +125,8 @@ function mainMobile(allowRetry){
             if(error){
                 throw new AnyBalance.Error(error, allowRetry);
             }
-        
-            AnyBalance.trace("Have not found logOff... Unknown other error. Please contact author.");
+			
+			AnyBalance.trace("Have not found logOff... Unknown other error. Please contact author.");
             AnyBalance.trace(html);
             throw new AnyBalance.Error("Не удаётся войти в мобильный интернет помощник. Возможно, проблемы на сайте." + (prefs.region == '' ? ' Попробуйте установить ваш Регион вручную в настройках провайдера.' : ' Попробуйте вручную войти в помощник по адресу ' + baseurl), allowRetry);
         }
@@ -151,8 +151,9 @@ function mainMobile(allowRetry){
             var error = getParam(html, null, null, /<ul class="operation-results-error"><li>(.*?)<\/li>/i, replaceTagsAndSpaces, html_entity_decode);
             if (error)
                 throw new AnyBalance.Error(error, allowRetry);
-            AnyBalance.trace(html);
-                throw new AnyBalance.Error('Не удалось найти баланс в мобильном помощнике!', allowRetry); 
+			
+			AnyBalance.trace(html);
+			throw new AnyBalance.Error('Не удалось найти баланс в мобильном помощнике!', allowRetry); 
         }
         // Телефон
         getParam (html, result, 'phone', /Ваш телефон:.*?>([^<]*)</i, replaceTagsAndSpaces, html_entity_decode);
@@ -197,189 +198,167 @@ function mainMobile(allowRetry){
 }
 
 var g_headers = {
-    Accept:'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-    'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
-    'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-    'Cache-Control':'max-age=0',
-    Connection:'keep-alive',
-    'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.60 Safari/537.1'
+	Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
+	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Cache-Control': 'max-age=0',
+	Connection: 'keep-alive',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.60 Safari/537.1'
 };
 
-function isInOrdinary(html){
-    return /amserver\/UI\/Logout/i.test(html); 
+function isInOrdinary(html) {
+	return /amserver\/UI\/Logout/i.test(html);
 }
+
 function enterOrdinary(region, retVals){
     AnyBalance.trace("Entering ordinary internet helper...");
     
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
-
-    if(!regionsOrdinary[region]){
-	AnyBalance.trace("Unknown region: " + region + ", setting to auto");
-        region = 'auto';
+	
+    if (!regionsOrdinary[region]) {
+    	AnyBalance.trace("Unknown region: " + region + ", setting to auto");
+    	region = 'auto';
     }
-
+	
     var baseurl = regionsOrdinary[region];
-
+	
 //    var html = AnyBalance.requestGet(baseurl, g_headers);
 //    var viewstate = getViewState(html);
 //    if(!viewstate)
 //	throw new AnyBalance.Error('Не найдена форма входа. Процедура входа изменена или проблемы на сайте.');
-
+	
     AnyBalance.trace("Trying to enter selfcare at address: " + baseurl);
     var html = AnyBalance.requestPost(baseurl + 'logon.aspx', {
-            phoneNumber: '7' + prefs.login,
-            password: prefs.password,
-            submit: 'Go'
-//        __VIEWSTATE: viewstate,
-//        ctl00$MainContent$tbPhoneNumber: prefs.login,
-//        ctl00$MainContent$tbPassword: prefs.password,
-//        ctl00$MainContent$btnEnter: 'Войти'
+    	phoneNumber: '7' + prefs.login,
+    	password: prefs.password,
+    	submit: 'Go'
+    	//        __VIEWSTATE: viewstate,
+    	//        ctl00$MainContent$tbPhoneNumber: prefs.login,
+    	//        ctl00$MainContent$tbPassword: prefs.password,
+    	//        ctl00$MainContent$btnEnter: 'Войти'
     }, g_headers);
     
     var tries = 3, redirect;
-    while(tries-- > 0 && 
-        (redirect=getParam(html, null, null, /<form .*?id="redirect-form".*?action="[^"]*?([^\/\.]+)\.mts\.ru/i))){
-        //Неправильный регион. Умный мтс нас редиректит
-        //Только эта скотина не всегда даёт правильную ссылку, иногда даёт такую, которая требует ещё редиректов
-        //Поэтому приходится вычленять из ссылки непосредственно нужный регион
-        if(region_aliases[redirect])
-            redirect = region_aliases[redirect];
-        if(!regionsOrdinary[redirect])
-            throw new AnyBalance.Error("МТС перенаправила на неизвестный регион: " + redirect);
+    while (tries-- > 0 && (redirect = getParam(html, null, null, /<form .*?id="redirect-form".*?action="[^"]*?([^\/\.]+)\.mts\.ru/i))) {
+    	//Неправильный регион. Умный мтс нас редиректит
+    	//Только эта скотина не всегда даёт правильную ссылку, иногда даёт такую, которая требует ещё редиректов
+    	//Поэтому приходится вычленять из ссылки непосредственно нужный регион
+    	if (region_aliases[redirect]) redirect = region_aliases[redirect];
+    	if (!regionsOrdinary[redirect]) throw new AnyBalance.Error("МТС перенаправила на неизвестный регион: " + redirect);
+    	baseurl = regionsOrdinary[redirect];
+    	AnyBalance.trace("Redirected, now trying to enter selfcare at address: " + baseurl);
+    	html = AnyBalance.requestPost(baseurl + "logon.aspx", {
+    		phoneNumber: '7' + prefs.login,
+    		password: prefs.password,
+    		submit: 'Go'
+    	}, g_headers);
+    }
 	
-        baseurl = regionsOrdinary[redirect];
-        AnyBalance.trace("Redirected, now trying to enter selfcare at address: " + baseurl);
-        html = AnyBalance.requestPost(baseurl + "logon.aspx", {
-            phoneNumber: '7' + prefs.login,
-            password: prefs.password,
-            submit: 'Go'
-        }, g_headers);
+    if (!isInOrdinary(html)) {
+    	//Не вошли. Надо сначала попытаться выдать вразумительную ошибку, а только потом уже сдаться
+    	var error = getParam(html, null, null, /<div class="b_error">([\s\S]*?)<\/div>/, replaceTagsAndSpaces);
+    	if (error && /Введен неверный пароль/i.test(error))
+			throw new AnyBalance.Error(error, null, true); //Если неправильный пароль, то ошибка фатальная
+    	if (error)
+			throw new AnyBalance.Error(error);
+    	var regexp = /<title>Произошла ошибка<\/title>/;
+    	if (regexp.exec(html)) {
+    		throw new AnyBalance.Error("Обычный интернет-помощник временно недоступен." + (prefs.region == 'auto' ? ' Попробуйте установить ваш Регион вручную в настройках провайдера.' : ''));
+    	}
+    	var error = getParam(html, null, null, /<h1>\s*Ошибка\s*<\/h1>\s*<p>(.*?)<\/p>/i);
+    	if (error) {
+    		throw new AnyBalance.Error(error);
+    	}
+    	AnyBalance.trace("Have not found logOff... Unknown other error. Please contact author.");
+    	AnyBalance.trace(html);
+    	throw new AnyBalance.Error("Не удаётся войти в обычный интернет помощник. Возможно, проблемы на сайте." + (prefs.region == 'auto' ? ' Попробуйте установить ваш Регион вручную в настройках провайдера.' : ' Попробуйте вручную войти в помощник по адресу ' + baseurl));
     }
-
-    if(!isInOrdinary(html)){
-        //Не вошли. Надо сначала попытаться выдать вразумительную ошибку, а только потом уже сдаться
-
-        var error = getParam(html, null, null, /<div class="b_error">([\s\S]*?)<\/div>/, replaceTagsAndSpaces);
-        if (error && /Введен неверный пароль/i.test(error))
-            throw new AnyBalance.Error(error, null, true); //Если неправильный пароль, то ошибка фатальная
-        if (error)
-            throw new AnyBalance.Error(error);
-        
-        var regexp=/<title>Произошла ошибка<\/title>/;
-        if(regexp.exec(html)){
-            throw new AnyBalance.Error("Обычный интернет-помощник временно недоступен." + (prefs.region == 'auto' ? ' Попробуйте установить ваш Регион вручную в настройках провайдера.' : ''));
-        }
-        
-        var error = getParam(html, null, null, /<h1>\s*Ошибка\s*<\/h1>\s*<p>(.*?)<\/p>/i);
-        if(error){
-            throw new AnyBalance.Error(error);
-        }
-    
-        AnyBalance.trace("Have not found logOff... Unknown other error. Please contact author.");
-        AnyBalance.trace(html);
-        throw new AnyBalance.Error("Не удаётся войти в обычный интернет помощник. Возможно, проблемы на сайте." + (prefs.region == 'auto' ? ' Попробуйте установить ваш Регион вручную в настройках провайдера.' : ' Попробуйте вручную войти в помощник по адресу ' + baseurl));
-    }
-
+	
     AnyBalance.trace("It looks like we are in selfcare (found logOff)...");
-
+	
     retVals.baseurl = baseurl;
     retVals.region = region;
     return html;
 }
 
-function mainOrdinary(){
-    var prefs = AnyBalance.getPreferences();
-    var retVals = {};
-    var html = enterOrdinary(prefs.region, retVals);
-    var baseurl = retVals.baseurl;
-    var region = retVals.region;
-    
-    fetchOrdinary(html, baseurl);
+function mainOrdinary() {
+	var prefs = AnyBalance.getPreferences();
+	var retVals = {};
+	var html = enterOrdinary(prefs.region, retVals);
+	var baseurl = retVals.baseurl;
+	var region = retVals.region;
+	fetchOrdinary(html, baseurl);
 }
 
 function fetchOrdinary(html, baseurl, resultFromLK){
     var prefs = AnyBalance.getPreferences();
     var result = resultFromLK || {success: true};
 
-    if(prefs.phone && prefs.phone != prefs.login){
-        AnyBalance.trace('Требуется другой номер. Пытаемся переключиться...');
-        html = AnyBalance.requestGet(baseurl + "my-phone-numbers.aspx", g_headers);
-
-        var token = getParam(html, null, null, /<input[^>]+name="csrfToken"[^>]*value="([^"]*)/i);
-        var domain = getParam(baseurl, null, null, /\/\/(.*?)\//);
-        AnyBalance.setCookie(domain, 'csrfToken', token);
-
-        html = AnyBalance.requestPost(baseurl + "my-phone-numbers.aspx", {
-            ctl00_sm_HiddenField:'',
-	    csrfToken: token,
-            __EVENTTARGET:'ctl00$MainContent$transitionLink',
-            __EVENTARGUMENT:'7' + prefs.phone,
-            __VIEWSTATE: getViewState(html)
-        }, addHeaders({Referer: baseurl + "my-phone-numbers.aspx"}));
-        if(!html)
-	    throw new AnyBalance.Error(prefs.phone + ": номер, возможно, неправильный или у вас нет к нему доступа"); 
-        var error = getParam(html, null, null, /(<h1>Мои номера<\/h1>)/i);
-        if(error)
-	    throw new AnyBalance.Error(prefs.phone + ": номер, возможно, неправильный или у вас нет к нему доступа"); 
+    if (prefs.phone && prefs.phone != prefs.login) {
+    	AnyBalance.trace('Требуется другой номер. Пытаемся переключиться...');
+    	html = AnyBalance.requestGet(baseurl + "my-phone-numbers.aspx", g_headers);
+    	var token = getParam(html, null, null, /<input[^>]+name="csrfToken"[^>]*value="([^"]*)/i);
+    	var domain = getParam(baseurl, null, null, /\/\/(.*?)\//);
+    	AnyBalance.setCookie(domain, 'csrfToken', token);
+    	html = AnyBalance.requestPost(baseurl + "my-phone-numbers.aspx", {
+    		ctl00_sm_HiddenField: '',
+    		csrfToken: token,
+    		__EVENTTARGET: 'ctl00$MainContent$transitionLink',
+    		__EVENTARGUMENT: '7' + prefs.phone,
+    		__VIEWSTATE: getViewState(html)
+    	}, addHeaders({Referer: baseurl + "my-phone-numbers.aspx"}));
+		
+    	if (!html)
+			throw new AnyBalance.Error(prefs.phone + ": номер, возможно, неправильный или у вас нет к нему доступа");
+    	var error = getParam(html, null, null, /(<h1>Мои номера<\/h1>)/i);
+    	if (error)
+			throw new AnyBalance.Error(prefs.phone + ": номер, возможно, неправильный или у вас нет к нему доступа");
     }
-
-    // Тарифный план
+	// Тарифный план
     getParam(html, result, '__tariff', /Тарифный план.*?>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-
-    // Баланс
-    getParam (html, result, 'balance', /<span[^>]*id="customer-info-balance[^>]*>([\s\S]*?)(?:\(|<\/span>)/i, replaceTagsAndSpaces, parseBalance);
-
-    // Телефон
-    getParam (html, result, 'phone', /Номер:.*?>([^<]*)</i, replaceTagsAndSpaces, html_entity_decode);
-
+	// Баланс
+	getParam (html, result, 'balance', /<span[^>]*id="customer-info-balance[^>]*>([\s\S]*?)(?:\(|<\/span>)/i, replaceTagsAndSpaces, parseBalance);
+	// Телефон
+	getParam (html, result, 'phone', /Номер:.*?>([^<]*)</i, replaceTagsAndSpaces, html_entity_decode);
+	
     if(AnyBalance.isAvailable('bonus') && !isset(result.bonus))
         result.bonus = null; //Не сбрасываем уже ранее полученное значение бонуса в 0. Может, мы получаем из помощника, потому что сдох ЛК
-
+	
     // Статус блокировки, хрен с ним, на следующей странице получим лучше
     //getParam (html, result, 'statuslock', /<li[^>]*class="lock-status[^>]*>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces);
-
+	
     if (isAvailableStatus()) {
-
-        AnyBalance.trace("Fetching status...");
-
-        if(!/<h1>Состояние счета<\/h1>/i.test(html)){
-            AnyBalance.trace('Не нашли заголовка "состояние счета". Заходим на account-status.aspx');
-            html = AnyBalance.requestGet(baseurl + "account-status.aspx", g_headers);
-        }
-
-        fetchAccountStatus(html, result);
+    	AnyBalance.trace("Fetching status...");
+    	if (!/<h1>Состояние счета<\/h1>/i.test(html)) {
+    		AnyBalance.trace('Не нашли заголовка "состояние счета". Заходим на account-status.aspx');
+    		html = AnyBalance.requestGet(baseurl + "account-status.aspx", g_headers);
+    	}
+    	fetchAccountStatus(html, result);
     }
-
-    if(AnyBalance.isAvailable('tourist')){
-        AnyBalance.trace("Fetching accumulated counters...");
-        html = AnyBalance.requestGet(baseurl + "accumulated-counters.aspx", g_headers);
-
-        fetchAccumulatedCounters(html, result);
-    }
-
-    if(AnyBalance.isAvailable('abonservice')){
-        AnyBalance.trace("Fetching paid services...");
-        html = AnyBalance.requestGet(baseurl + "product-2-view.aspx", g_headers);
-
-        sumParam(html, result, 'abonservice', /<tr[^>]+class="gm-row-item(?:[\s\S](?!<\/tr>))*?<td[^>]+class="price"[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-    }
-
-    if(!resultFromLK)
-        AnyBalance.setResult(result);
+	if (AnyBalance.isAvailable('tourist')) {
+		AnyBalance.trace("Fetching accumulated counters...");
+		html = AnyBalance.requestGet(baseurl + "accumulated-counters.aspx", g_headers);
+		fetchAccumulatedCounters(html, result);
+	}
+	if (AnyBalance.isAvailable('abonservice')) {
+		AnyBalance.trace("Fetching paid services...");
+		html = AnyBalance.requestGet(baseurl + "product-2-view.aspx", g_headers);
+		sumParam(html, result, 'abonservice', /<tr[^>]+class="gm-row-item(?:[\s\S](?!<\/tr>))*?<td[^>]+class="price"[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+	}
+	if (!resultFromLK)
+		AnyBalance.setResult(result);
 }
 
-function isAvailableStatus(){
-    return AnyBalance.isAvailable ('min_left','min_local','min_love','sms_left','mms_left','traffic_left','traffic_left_mb',
-        'license','statuslock','credit','usedinthismonth', 'bonus_balance', 'min_left_mts', 'min_used_mts', 'min_used', 'debt',
-        'pay_till', 'min_till', 'mms_till', 'sms_till');
+function isAvailableStatus() {
+	return AnyBalance.isAvailable('min_left', 'min_local', 'min_love', 'sms_left', 'mms_left', 'traffic_left', 'traffic_left_mb', 'license', 'statuslock',
+	'credit', 'usedinthismonth', 'bonus_balance', 'min_left_mts', 'min_used_mts', 'min_used', 'debt', 'pay_till', 'min_till', 'mms_till', 'sms_till');
 }
 
-function fetchAccumulatedCounters(html, result, mobile){
-    AnyBalance.trace("Parsing accumulated counters...");
-
-    getParam(html, result, 'tourist', mobile ? /Счетчик Туристическая СИМ-карта от МТС\.[\s\S]*?Состояние счетчика:[\s\S]*?<span[^>]+class="value"[^>]*>([\s\S]*?)<\/span>/i : 
-                                               /Счетчик Туристическая СИМ-карта от МТС\.[\s\S]*?<td[^>]+class="counter-value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+function fetchAccumulatedCounters(html, result, mobile) {
+	AnyBalance.trace("Parsing accumulated counters...");
+	getParam(html, result, 'tourist', mobile ? /Счетчик Туристическая СИМ-карта от МТС\.[\s\S]*?Состояние счетчика:[\s\S]*?<span[^>]+class="value"[^>]*>([\s\S]*?)<\/span>/i : 
+											   /Счетчик Туристическая СИМ-карта от МТС\.[\s\S]*?<td[^>]+class="counter-value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 }
 
 function fetchAccountStatus(html, result){
@@ -484,24 +463,25 @@ function fetchAccountStatus(html, result){
     getParam (html, result, 'bonus_balance', /Остаток бонуса:?\s*([\d\.,]+)\s*р/i, replaceTagsAndSpaces, parseBalance);
 }
 
-function isLoggedIn(html){
-    return getParam(html, null, null, /(<meta[^>]*name="lkMonitorCheck")/i);
+function isLoggedIn(html) {
+	return getParam(html, null, null, /(<meta[^>]*name="lkMonitorCheck")/i);
 }
 
-function parseJson(json){
-    return getJson(json);
+function parseJson(json) {
+	return getJson(json);
 }
 
-function getLKJson(html) {
+function getLKJson(html, allowRetry) {
 	var json = getParam(html, null, null, /var\s+initialProfile\s*=\s*(\{[\s\S]*?\})\s*;/i);
-	if(!json) {
+	if (!json) {
+		AnyBalance.trace(html);
+		
 		var error = getParam(html, null, null, /<div[^>]+class="red-status"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
 		if(error)
-			throw new AnyBalance.Error(error);
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось найти Json с описанием пользователя, сайт изменен?');
+			throw new AnyBalance.Error(error, allowRetry);
+		
+		throw new AnyBalance.Error('Не удалось найти Json с описанием пользователя, сайт изменен?', allowRetry);
 	}
-	
 	return json;
 }
 
@@ -537,66 +517,61 @@ function mainLK(allowRetry) {
             // Уж лучше пусть бросит исключение, нежели пойдет дальше с пустым или кривым info
             info = getJson(info);*/
 			
-			var json = getJson(getLKJson(html));
+			var json = getJson(getLKJson(html, allowRetry));
 			
-			var loggedInMSISDN = json.Login;//getParam(html, null, null, /var\s*initialProfile = \{"(?:[\s\S]*?":"?[^,"\}]+"?,){1,15}"Login(?:[^'"]*"){2}(\d{10})/i);
-			if(!loggedInMSISDN){
-				AnyBalance.trace(html);
-				throw new AnyBalance.Error('Не удалось определить текущий номер в кабинете, сайт изменен?');
-			}
+    		var loggedInMSISDN = json.Login; //getParam(html, null, null, /var\s*initialProfile = \{"(?:[\s\S]*?":"?[^,"\}]+"?,){1,15}"Login(?:[^'"]*"){2}(\d{10})/i);
+    		if (!loggedInMSISDN) {
+    			AnyBalance.trace(html);
+    			throw new AnyBalance.Error('Не удалось определить текущий номер в кабинете, сайт изменен?', allowRetry);
+    		}
 			
-			if (loggedInMSISDN != prefs.login) { //Автоматом залогинились не на тот номер
-				AnyBalance.trace("Залогинены на неправильный номер: " + loggedInMSISDN + ", выходим");
-				html = AnyBalance.requestGet(baseurlLogin + "/amserver/UI/Logout", g_headers);
-				
-				if (isLoggedIn(html)){
-					AnyBalance.trace(html);
-					throw new AnyBalance.Error('Не удаётся выйти из личного кабинета, чтобы зайти под правильным номером. Сайт изменен?');
-				}
-			} else {
-				AnyBalance.trace("Залогинены на правильный номер: " + loggedInMSISDN);
-			}
+    		if (loggedInMSISDN != prefs.login) { //Автоматом залогинились не на тот номер
+    			AnyBalance.trace("Залогинены на неправильный номер: " + loggedInMSISDN + ", выходим");
+    			html = AnyBalance.requestGet(baseurlLogin + "/amserver/UI/Logout", g_headers);
+    			if (isLoggedIn(html)) {
+    				AnyBalance.trace(html);
+    				throw new AnyBalance.Error('Не удаётся выйти из личного кабинета, чтобы зайти под правильным номером. Сайт изменен?', allowRetry);
+    			}
+    		} else {
+    			AnyBalance.trace("Залогинены на правильный номер: " + loggedInMSISDN);
+    		}
 		}
 		
 		if(!isLoggedIn(html)){
             var form = getParam(html, null, null, /<form[^>]+name="Login"[^>]*>([\s\S]*?)<\/form>/i);
-            if(!form){
-				AnyBalance.trace(html);
-				throw new AnyBalance.Error("Не удаётся найти форму входа!", allowRetry);
-			}
+            if (!form) {
+            	AnyBalance.trace(html);
+            	throw new AnyBalance.Error("Не удаётся найти форму входа!", allowRetry);
+            }
 			
-			var params = createFormParams(form, function(params, input, name, value){
-                var undef;
-                if(name == 'IDToken1')
-                    value = prefs.login;
-                else if(name == 'IDToken2')
-                    value = prefs.password;
-                else if(name == 'noscript')
-                    value = undef; //Снимаем галочку
-                else if(name == 'IDButton')
-                    value = 'Submit';
-               
-                return value;
-            });
-        
+    		var params = createFormParams(form, function(params, input, name, value) {
+    			var undef;
+    			if (name == 'IDToken1')
+					value = prefs.login;
+    			else if (name == 'IDToken2')
+					value = prefs.password;
+    			else if (name == 'noscript')
+					value = undef; //Снимаем галочку
+    			else if (name == 'IDButton')
+					value = 'Submit';
+    			return value;
+    		});
 			// AnyBalance.trace("Login params: " + JSON.stringify(params));
-        
-            AnyBalance.trace("Логинимся с заданным номером");
+			AnyBalance.trace("Логинимся с заданным номером");
             html = AnyBalance.requestPost(loginUrl, params, addHeaders({Referer: loginUrl}));
 			// AnyBalance.trace("Команду логина послали, смотрим, что получилось...");
         }
         
-        if(!isLoggedIn(html)){
-			// AnyBalance.trace(html);
-            var error = getParam(html, null, null, /<div[^>]+class="(?:msg_error|field_error)"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
-            if(error)
-                throw new AnyBalance.Error(error, false);
-        
-            if(getParam(html, null, null, /(auth-status=0)/i))
-                throw new AnyBalance.Error('Неверный логин или пароль. Повторите попытку или получите новый пароль на сайте https://lk.ssl.mts.ru/.', false, true);
-        
-            AnyBalance.trace(html);
-            throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Он изменился или проблемы на сайте.', allowRetry);
+        if (!isLoggedIn(html)) {
+        	// AnyBalance.trace(html);
+        	var error = getParam(html, null, null, /<div[^>]+class="(?:msg_error|field_error)"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+        	if (error)
+				throw new AnyBalance.Error(error, false);
+        	if (getParam(html, null, null, /(auth-status=0)/i))
+				throw new AnyBalance.Error('Неверный логин или пароль. Повторите попытку или получите новый пароль на сайте https://lk.ssl.mts.ru/.', false, true);
+			
+        	AnyBalance.trace(html);
+        	throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Он изменился или проблемы на сайте.', allowRetry);
         }
     }catch(e){
         //Если не установлено требование другой попытки, устанавливаем его в переданное в функцию значение
@@ -604,9 +579,9 @@ function mainLK(allowRetry) {
             e.allow_retry = allowRetry;
         throw e; 
     }
-
+	
     AnyBalance.trace("Мы в личном кабинете...");
-
+	
     var result = {success: true};
 	// Попытка пофиксить Unhandled exception in user script:
 	// name: TypeError
@@ -670,10 +645,9 @@ function mainLK(allowRetry) {
 	
     AnyBalance.setResult(result);
 }
-
-function parseBalanceRound(str){
-    var val = parseBalance(str);
-    if(isset(val))
-        val = Math.round(val*100)/100;
-    return val;
+function parseBalanceRound(str) {
+	var val = parseBalance(str);
+	if (isset(val))
+		val = Math.round(val * 100) / 100;
+	return val;
 }

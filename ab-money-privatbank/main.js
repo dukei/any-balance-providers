@@ -66,7 +66,13 @@ function main() {
 	
 	json = requestJson({cookie:sessionCookie, email:'',	registration_id:g_registrationId}, 'props');
 	
-	AnyBalance.trace('Всего карт: ' + json.cards.length);
+	var cardsCount = json.cards.length;
+	if(cardsCount < 1) {
+		AnyBalance.trace('Не найдено ни одной карты, свяжитесь с разработчиками, пожалуйста.');
+		AnyBalance.trace(JSON.stringify(json));
+	}
+	
+	AnyBalance.trace('Всего карт: ' + cardsCount);
 	// Баланс не всегда обновляется сам, надо его пнуть
 	requestJson({cookie:sessionCookie}, 'template_getall');
 	// Здесь можно получить детальную информацию по картам
@@ -74,7 +80,7 @@ function main() {
 	
 	// Карта должна быть только из 4х цифр!
 	if (prefs.cardnum && !/^\d{4}$/.test(prefs.cardnum)) 
-		throw new AnyBalance.Error("Надо указывать 4 последних цифры карты или не указывать ничего!");	
+		throw new AnyBalance.Error("Надо указывать 4 последних цифры карты или не указывать ничего!");
 	
 	var card, cardDetails, cardId;
 	for(var i = 0; i < json.cards.length; i++) {
@@ -95,8 +101,10 @@ function main() {
 		}
 	}
 	
-	checkEmpty(cardId, 'Не удалось найти' + (prefs.cardnum ? 'карту с последними цифрами ' + prefs.cardnum : 'ни одной карты!'), true);
-	
+	if(!cardId) {
+		AnyBalance.trace(JSON.stringify(jsonDetailed));
+		throw new AnyBalance.Error('Не удалось найти ' + (prefs.cardnum ? 'карту с последними цифрами ' + prefs.cardnum : 'ни одной карты!'));
+	}
 	
 	AnyBalance.trace('Card id: ' + cardId);
 	// Теперь найдем детальную информацию, разделил на два цикла, т.к. не всегда json.cards[i] соответвовал jsonDetailed.cards[i];
@@ -108,7 +116,7 @@ function main() {
 		} else {
 			AnyBalance.trace('ID: ' + cardDetails.cardid + ' не соответствует заданному: ' + cardId);
 		}
-	}	
+	}
 	
 	var result = {success: true};
 	

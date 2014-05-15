@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-internet-xmapa</id>
+	<id version="2">ab-internet-xmapa</id>
 	<api flags="no_browser"/>
 	<name>XMAPA.NET (Киев)</name>
 	<description html="true"><![CDATA[
@@ -9,6 +9,7 @@
 	]]></description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
+		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
 		<js>library.js</js>
 		<js>main.js</js>

@@ -46,10 +46,16 @@ function main(){
 		'form_build_id':formid,
 	}, addHeaders({Referer: baseurl}));	
 	
+	var json = getJsonEval(html);
+	
 	// в удачном случае вернет: { "redirect": "/myfines" }
-	var href = getParam(html, null, null, /"redirect"[^"]*"\/([^"]*)/i);
-	if(!href) {
+	var href = json.redirect || json.href;
+	if(!json.redirect || json.href) {
 		AnyBalance.trace(html);
+		
+		if(json.message)
+			throw new AnyBalance.Error(json.message);
+		
 		throw new AnyBalance.Error('Не удалось получить данные о штрафах, проверьте правильность ввода.');
 	}
 	html = AnyBalance.requestGet(baseurl + href, g_headers);
@@ -64,8 +70,15 @@ function main(){
 		result.all = '';
 		for(var i = 0; i< fines.length; i++) {
 			var curr = fines[i];
+			
+			var date = getParam(curr, null, null, /"Date2[^>]*>([\s\S]*?)<\/td/i, replaceTagsAndSpaces);
+			var sum = getParam(curr, null, null, /"Sum[^>]*>([^<]*)/i, replaceTagsAndSpaces);
+			// Это не всегда есть на сайте
+			var descr = getParam(curr, null, null, /"ArticleTip[^>]*title=['"]([^'"]*)/i, replaceTagsAndSpaces, html_entity_decode) || 'Нет описания';
+			var koap = getParam(curr, null, null, /"ArticleTip[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode) || 'Нет статьи';
+			
 			// Создаем сводку
-			result.all += '<b>' + getParam(curr, null, null, /"Date2[^>]*>([\s\S]*?)<\/td/i, replaceTagsAndSpaces) + ':</b> ' + getParam(curr, null, null, /"ArticleTip[^>]*title=['"]([^'"]*)/i, replaceTagsAndSpaces, html_entity_decode) + ' (' + getParam(curr, null, null, /"ArticleTip[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode) + '): <b>' + getParam(curr, null, null, /"Sum[^>]*>([^<]*)/i, replaceTagsAndSpaces) + ' р</b>' + 
+			result.all += '<b>' + date + ':</b> ' + descr + ' (' + koap + '): <b>' + sum + ' р</b>' + 
 				(i >= fines.length-1 ? '<br/><br/><b>Итого:</b> ' + fines.length + ' шт. на сумму: <b>' + result.balance + ' р</b>' : '<br/><br/>');
 			
 			// Только последний интересует

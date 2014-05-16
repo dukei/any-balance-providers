@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-service-krasnodar-ochered</id>
+	<api flags="no_browser|captcha"/>
+	<name>Очередь в МБДОУ Краснодарского края</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию об очереди в детские сады Краснодарского края с сайта http://bork.jbalance.org/CheckRegNum/</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="year_num" name="Номер в общей очереди по году рождения"/>
+		<counter id="total_num" name="Номер в общей очереди"/>
+		<counter id="status" name="Статус" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>service</type>
+	<country>ru</country>
+</provider>

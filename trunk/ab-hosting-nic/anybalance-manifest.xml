@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-hosting-nic</id>
+	<id version="4">ab-hosting-nic</id>
 	<api flags="no_browser"/>
 	<name>RU-CENTER (центр регистрации доменов)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе и другие данные для пользователей центра регистрации доменов RU-CENTER (http://www.nic.ru).</p>
-
 	<p>Может получать информацию по 4 доменам одновременно.</p>  
-
 	<p>Информация берется из личного кабинета (http://www.nic.ru/login).</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
@@ -24,7 +22,7 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units="р"/>
+		<counter id="balance" name="Баланс" units=" р"/>
 		<counter id="domain" name="Домен" type="text"/>
 		<counter id="domain_status" name="Состояние" type="text"/>
 		<counter id="domain_till" name="До" type="time" format="dd/MM/yyyy"/>

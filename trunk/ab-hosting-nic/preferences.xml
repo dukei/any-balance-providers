@@ -30,7 +30,15 @@
         entryValues="adm|tech"
 		defaultValue="adm">
     </ListPreference>
-    <EditTextPreference 
+	<ListPreference 
+        key="client_type" 
+        title="Тип договора"
+        summary="||{@s}\n"
+        entries="NIC-A|NIC-D|NIC-REG"
+        entryValues="NIC-A|NIC-D|NIC-REG"
+		defaultValue="NIC-D">
+    </ListPreference>
+	<EditTextPreference 
         positiveButtonText="ОК"
         key="domains" 
         dialogTitle="Домены"

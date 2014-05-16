@@ -25,9 +25,9 @@ function main() {
 		if (error) throw new AnyBalance.Error(error);
 		throw new AnyBalance.Error('Не удалось войти в личный кабинет. Проблемы на сайте или сайт изменен.');
 	}
-	var result = {
-		success: true
-	};
+	
+	var result = {success: true};
+	
 	getParam(html, result, 'balance', /<a[^>]*href="[^"]*step=pay.medium_balance[^>]*>([\S\s]*?)<\/a>/i, replaceTagsAndSpaces, parseBalance);
 	if (prefs.domains) {
 		var notfound = [];

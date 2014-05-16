@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-<change version="3" date="2013-10-11">
-- Оптимизация кода (Stark)
-</change>
-<change version="2" date="2012-11-13">
-- Кодировка киррилических доменов исправлена
-</change>
+	<change version="4" date="2014-05-16">
+	- Добавлена поддержка договоров NIC-A и NIC-REG.
+	</change>
+	<change version="3" date="2013-10-11">
+	- Оптимизация кода (Stark)
+	</change>
+	<change version="2" date="2012-11-13">
+	- Кодировка киррилических доменов исправлена
+	</change>
 </history>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference
+		title="Регистрационный номер"
+		key="login"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Регистрационный номер"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите регистрационный номер.">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Дата рождения"
+		key="birthdate"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Дата рождения"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите дату рождения в формате 2013-02-10.">
+	</EditTextPreference>
+    <ListPreference 
+        key="type" 
+        title="Регион"
+        summary="||{@s}"
+        entries="Северская|Кавказкая|Ахтарск|Новопокровская|Белая Глина|Староминская|Анапа|Ленинградская|Славинск|Апшеронск|Геленджик|Калининская|Тимашевск|Армавир|Выселки|Усть-Лабинский|Гулькевичи|Янтарный (Калинградская)|Унеча (Брянская обл)|Сочи|Каневская|Кореновск|Курганинск|Успенская|Отрадненская|Мостовская|Тихорецк|Павловская|Щербиновская|Туапсе|Лабинск|Новокубанск|Крыловская"
+        entryValues="Severskaya|Kavkazskaya|Ahtarsk|Npokr|BGlin|Starominskaya|Anapa|Leningradskaya|Slavinsk|Apsheronsk|Gel|Kalininskaya|Timoshevsk|Armavir|Vyselki|Ust|Gul|Yant|Un|Sochi|Kanevskay|Korenovsk|Kurgansk|Uspenskay|Otradnay|Most|Tihoreck|Pavlovskay|Sherbinovskay|Tuapse|Labinsk|Novokubansk|Krilovskay"
+		defaultValue="Armavir">
+    </ListPreference>	
+</PreferenceScreen>

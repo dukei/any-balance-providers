@@ -420,13 +420,12 @@ function fetchPost(baseurl, html) {
 //	xhtml = getBlock(baseurl + 'c/post/index.html', html, 'list-contents', true); //Это строка вообще приводила к созданию/отмене заявки на смену тарифного плана
 //	getParam(xhtml, result, '__tariff', /<h2[^>]*>(?:[\s\S](?!<\/h2>))*?Текущий тариф([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, '__tariff', /<h2[^>]*>(?:[\s\S](?!<\/h2>))*?Текущий тариф([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'fio', /<div[^>]+class="ban-param name">([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
 	
 	if (!multi) {
 		AnyBalance.trace('Похоже на кабинет с одним номером.');
 	} else {
 		AnyBalance.trace('Похоже на кабинет с несколькими номерами.');
-		
-		getParam(html, result, 'fio', /<div[^>]+class="ban-param name">([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
 		
 		if (prefs.phone) { //Если задан номер, то надо сделать из него регулярное выражение
 			if (!/^\d{4,10}$/.test(prefs.phone)) throw new AnyBalance.Error('Введите от 4 до 10 последних цифр номера дополнительного телефона без пробелов и разделителей или не вводите ничего, чтобы получить информацию по первому номеру!', null, true);
@@ -495,17 +494,24 @@ function fetchPost(baseurl, html) {
 		if(/информация[^<]*недоступна/i.test(xhtml))
 			AnyBalance.trace('Информация временно недоступна на сайте Билайн, попробуйте позже');
     }
-
-	if (!multi && AnyBalance.isAvailable('fio', 'balance', 'currency')) {
-		//Это надо в конце, потому что после перехода на m/ куки, видимо, портится.
-		xhtml = AnyBalance.requestGet(baseurl + 'm/post/index.html', g_headers);
-		getParam(xhtml, result, 'fio', /<div[^>]+class="abonent-name"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, capitalFirstLenttersAndDecode);
-		// Вроде бы все хорошо, но: {"sms_left":3463,"min_local":24900,"balance":0,"phone":"+7 909 169-24-86","agreement":"248260674","__time":1385043751223,"fio":"Максим Крылов","overpay":619.07,"min_local_clear":415,"currency":"рубвмесяцОтключитьБудьвкурсе","__tariff":"«Всё включено L 2013»"}
+	
+	// Билайн грохнул мобильную версию кабинета..
+	// if (!multi && AnyBalance.isAvailable('fio', 'balance', 'currency')) {
+		// //Это надо в конце, потому что после перехода на m/ куки, видимо, портится.
+		// xhtml = AnyBalance.requestGet(baseurl + 'm/post/index.html', g_headers);
+		// getParam(xhtml, result, 'fio', /<div[^>]+class="abonent-name"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, capitalFirstLenttersAndDecode);
+		// // Вроде бы все хорошо, но: {"sms_left":3463,"min_local":24900,"balance":0,"phone":"+7 909 169-24-86","agreement":"248260674","__time":1385043751223,"fio":"Максим Крылов","overpay":619.07,"min_local_clear":415,"currency":"рубвмесяцОтключитьБудьвкурсе","__tariff":"«Всё включено L 2013»"}
+		// getParam(xhtml, result, 'balance', /class="price[^>]*>((?:[\s\S]*?span[^>]*>){3})/i, balancesReplaces, parseBalance);
+		// // Если баланса нет, не надо получать и валюту
+		// if(isset(result.balance)) {
+			// getParam(xhtml, result, ['currency', 'balance'], /class="price[^>]*>((?:[\s\S]*?span[^>]*>){3})/i, balancesReplaces, myParseCurrency);
+		// }
+	// }
+	if (!multi && AnyBalance.isAvailable('balance', 'currency')) {
+		xhtml = refreshBalance(baseurl + 'c/post/index.html', html);
+		
 		getParam(xhtml, result, 'balance', /class="price[^>]*>((?:[\s\S]*?span[^>]*>){3})/i, balancesReplaces, parseBalance);
-		// Если баланса нет, не надо получать и валюту
-		if(isset(result.balance)) {
-			getParam(xhtml, result, ['currency', 'balance'], /class="price[^>]*>((?:[\s\S]*?span[^>]*>){3})/i, balancesReplaces, myParseCurrency);
-		}
+		getParam(xhtml, result, ['currency', 'balance'], /class="price[^>]*>((?:[\s\S]*?span[^>]*>){3})/i, balancesReplaces, myParseCurrency);
 	}
 	
 	if(prefs.__debug){

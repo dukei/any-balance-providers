@@ -589,7 +589,7 @@ function mainLK(allowRetry) {
 	// fileName: main.js_v74
 	// lineNumber: 579
 	// rhinoException: org.mozilla.javascript.EcmaError: TypeError: Cannot read property "Balance" from undefined (main.js_v74#579)
-	var info = getLKJson(html);
+	var info = getLKJson(html, allowRetry);
 	
 	AnyBalance.trace(info);
 	info = getJson(info);

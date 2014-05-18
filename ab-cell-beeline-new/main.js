@@ -82,15 +82,14 @@ function refreshBalance(url, html, htmlBalance) {
 		return '';
 	}
 	
-	var balanceForm = getParam(html, null, null, /<form[^>]*action="(?:[^>]*>){3}\s*loadingBalance[\s\S]*?<\/form>/i)
-	
-	var source = getParam(balanceForm, null, null, /source:\s*'([^']*)/, replaceSlashes);
-	var render = getParam(data, null, null, /(?:update|block):\s*'([^']*)/, replaceSlashes);
-	var form = balanceForm;//getParam(balanceForm, null, null, new RegExp('(<form[^>]+>)(?:[\\s\\S](?!</?form))*id="' + source + '"'));
+	var form = getParam(html, null, null, /<form[^>]*action="(?:[^>]*>){3}\s*loadingBalance[\s\S]*?<\/form>/i)
 	if (!form) {
 		AnyBalance.trace('Не найдена форма для блока (?:header|home)Balance!');
 		return '';
 	}
+	
+	var source = getParam(form, null, null, /source:\s*'([^']*)/, replaceSlashes);
+	var render = getParam(data, null, null, /(?:update|block):\s*'([^']*)/, replaceSlashes);
 	
 	var viewState = getParam(html, null, null, /<input[^>]+name="javax.faces.ViewState"[^>]*value="([^"]*)/i, null, html_entity_decode);
 	
@@ -510,8 +509,8 @@ function fetchPost(baseurl, html) {
 	if (!multi && AnyBalance.isAvailable('balance', 'currency')) {
 		xhtml = refreshBalance(baseurl + 'c/post/index.html', html);
 		
-		getParam(xhtml, result, 'balance', /class="price[^>]*>((?:[\s\S]*?span[^>]*>){3})/i, balancesReplaces, parseBalance);
-		getParam(xhtml, result, ['currency', 'balance'], /class="price[^>]*>((?:[\s\S]*?span[^>]*>){3})/i, balancesReplaces, myParseCurrency);
+		getParam(xhtml + html, result, 'balance', [/class="price[^>]*>((?:[\s\S]*?span[^>]*>){3})/i, /Расходы по номеру за текущий период с НДС[\s\S]*?<div[^>]+class="balan?ce-summ"[^>]*>([\s\S]*?)<\/div>/i,], balancesReplaces, parseBalance);
+		getParam(xhtml + html, result, ['currency', 'balance'], [/class="price[^>]*>((?:[\s\S]*?span[^>]*>){3})/i, /Расходы по номеру за текущий период с НДС[\s\S]*?<div[^>]+class="balan?ce-summ"[^>]*>([\s\S]*?)<\/div>/i,], balancesReplaces, myParseCurrency);
 	}
 	
 	if(prefs.__debug){

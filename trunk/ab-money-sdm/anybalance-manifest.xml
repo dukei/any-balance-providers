@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="5">ab-money-sdm</id>
+	<id version="6">ab-money-sdm</id>
 	<name>СДМ-Банк</name>
 	<description html="true"><![CDATA[
 	<p>Получает текущий остаток и другие параметры карт, счетов СДМ-Банка (http://www.sdm.ru), используя интернет-банк https://retail.sdm.ru.</p>

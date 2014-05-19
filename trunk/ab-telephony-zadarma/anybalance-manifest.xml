@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2" version="6">ab-telephony-zadarma</id>
+	<id major_version="2" version="7">ab-telephony-zadarma</id>
 	<name>Zadarma</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем балансе в Zadarma (http://zadarma.com).</p>

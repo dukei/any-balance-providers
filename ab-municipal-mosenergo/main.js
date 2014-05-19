@@ -13,16 +13,16 @@ var g_headers = {
 function main(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
-
+	
     var baseurl = 'https://lkkbyt.mosenergosbyt.ru/';
-
+	
     if(!/^\d{10}$/.test(prefs.login || ''))
         throw new AnyBalance.Error('Введите 10 цифр лицевого счета без пробелов и разделителей.');
-
+	
 	checkEmpty(prefs.password, 'Введите пароль!');			
-
+	
     var parts = /^(\d{5})(\d{3})(\d{2})$/.exec(prefs.login);
-
+	
     var html = AnyBalance.requestPost(baseurl + 'backLink.xhtml?mode=auth', {
         'book':parts[1],
         'num':parts[2],
@@ -46,7 +46,7 @@ function main(){
     }
 	
 	var result = {success: true};
-
+	
     getParam(html, result, 'balance', /Баланс:(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, '__tariff', /ЛС №([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
     // используем особенности AnyBalance зачем искать значение дважды, если __tariff всегда available?

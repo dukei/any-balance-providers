@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-bonus-korablik</id>
+	<id version="3">ab-bonus-korablik</id>
 	<api flags="no_browser"/>
 	<name>Кораблик (Бонусы)</name>
 	<description html="true"><![CDATA[

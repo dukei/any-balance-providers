@@ -21,11 +21,11 @@ function main() {
         login:prefs.login,
         pass:prefs.password,
     }, addHeaders({
-		Referer: baseurl + 'auth/login',
+		Referer: baseurl,
 		'X-Requested-With':'XMLHttpRequest',
 	}));
 	
-	if(html != '1') {
+	if(!/1/.test(html)) {
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	html = AnyBalance.requestGet(baseurl + 'bk/check_user', addHeaders({

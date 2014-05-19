@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-money-alpari</id>
+	<id version="3">ab-money-alpari</id>
 	<api flags="no_browser"/>
 	<name>Alpari</name>
 	<description html="true"><![CDATA[
@@ -26,6 +26,9 @@
 		<counter id="server" name="Торговый сервер" type="text"/>
 		<counter id="leverage" name="Кредитное плечо" type="text"/>
 		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="end_of_tp" name="Конец ТП" type="text"/>
+		<counter id="amount_of_shares" name="Количество паев"/>
+		<counter id="price_of_share" name="Цена пая" units=" {@currency}"/>
 	</counters>
 	<keywords>forex alpari</keywords>
 	<type>money</type>

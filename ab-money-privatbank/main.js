@@ -129,6 +129,10 @@ function main() {
 	getParam(cardDetails.finlimit+'', result, 'limit', null, replaceTagsAndSpaces, parseBalance);
 	getParam(cardDetails.holded+'', result, 'available', null, replaceTagsAndSpaces, parseBalance);
 	getParam(cardDetails.min_pay+'', result, 'min_pay', null, replaceTagsAndSpaces, parseBalance);
-	
+	// Если кредитная карта - надо брать баланс из детализации
+	if(cardDetails.is_credit) {
+		getParam(cardDetails.balance+'', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
+		getParam(cardDetails.ccy+'', result, ['currency', 'balance'], null, replaceTagsAndSpaces, html_entity_decode);
+	}
 	AnyBalance.setResult(result);
 }

@@ -626,6 +626,11 @@ function fetchPre(baseurl, html) {
 		html = AnyBalance.requestGet(baseurl + 'sso/settings.html', g_headers);
 		
 		getParam(html, result, 'fio', /(?:Имя и фамилия|ФИО)(?:[^>]*>){2}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, capitalFirstLenttersAndDecode);
+		// А у некоторых ФИО не введен, поэтому и беда
+		if(/\d{5,}/i.test(result.fio)) {
+			result.fio = undefined;
+			AnyBalance.trace('ФИО еще не настроено в вашей анкете. Зайдите через браузер и перейдите на вкладку Настройки, в поле Имя и фамилия введите ваше ФИО.');
+		}
 		// AnyBalance.trace('Переходим в мобильную версию для получения ФИО.');
 		// html = AnyBalance.requestGet(baseurl + 'm/pre/index.html', g_headers);
 		// AnyBalance.trace(html);

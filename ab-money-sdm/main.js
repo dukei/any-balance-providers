@@ -23,7 +23,7 @@ function main(){
 
     var baseurl = "https://retail.sdm.ru/";
     
-    var html = AnyBalance.requestPost(baseurl + 'logon?ReturnUrl=%2f', {
+    var html = AnyBalance.requestPost(baseurl + 'logon', {
         username:prefs.login,
         password:prefs.password
     }, g_headers);
@@ -53,7 +53,7 @@ function main(){
     }
 
     if(waitForRefresh(html, baseurl)) //Обновляем данные о счетах
-        html = AnyBalance.requestGet(baseurl + '/');
+        html = AnyBalance.requestGet(baseurl);
 
     if(prefs.type == 'card')
         fetchCard(html, baseurl);
@@ -68,12 +68,12 @@ function waitForRefresh(html, baseurl){
     var tried = id, i=0;
     while(id){
         AnyBalance.trace('Waiting for refresh: ' + id + ', try #' + (++i));
-        id = AnyBalance.requestPost(baseurl + '/home/wait', {id: id}, g_headers);
+        id = AnyBalance.requestPost(baseurl + 'home/wait', {id: id}, g_headers);
         if(id && i > 25){
             AnyBalance.trace('Не удалось дождаться обновления данных за 25 секунд, показываем, что есть...');
             return false;  
         }
-            
+		
         sleep(1000);
     }
     return tried;

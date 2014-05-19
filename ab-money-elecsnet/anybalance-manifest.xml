@@ -1,16 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser" />
-	<id version="2">ab-money-elecsnet</id>
+	<id version="3">ab-money-elecsnet</id>
 	<name>Элекснет</name>
-	<description>
-		Получает баланс на кошельке Элекснет (http://elecsnet.ru)
-		
-		Информация берется из личного кабинета https://1.elecsnet.ru/
-		
-		ВНИМАНИЕ! Для работы провайдера требуется пароль для ВХОДА в кабинет. Платежный пароль вводить НЕ НУЖНО!
-	</description>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе в кошельке Элекснет (http://elecsnet.ru)</p>
+	<p>Информация берется из личного кабинета https://1.elecsnet.ru/</p>
+	<p>ВНИМАНИЕ! Для работы провайдера требуется пароль для ВХОДА в кабинет. Платежный пароль вводить НЕ НУЖНО!</p>
+	]]></description>	
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
@@ -20,7 +17,7 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units="р"/>
+		<counter id="balance" name="Баланс" units=" р"/>
 		<counter id="phone" name="Телефон" type="text"/>
 	</counters>
 	<keywords></keywords>

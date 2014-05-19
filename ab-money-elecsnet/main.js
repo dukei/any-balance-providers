@@ -19,20 +19,27 @@ function main(){
     var html = AnyBalance.requestGet(baseurl + 'NotebookFront/Default.aspx', g_headers);
 
 	var params = createFormParams(html, function(params, str, name, value){
-		if(name == 'ctl00$MainLogin$UserName')
+		if(name == 'ctl00$MainLogin2$UserName')
 			return prefs.login;
-		else if(name == 'ctl00$MainLogin$Password')
+		else if(name == 'ctl00$MainLogin2$Password')
 			return prefs.password;
         return value;
     });
 	html = AnyBalance.requestPost(baseurl + 'NotebookFront/Default.aspx', params, addHeaders({Referer: baseurl+'NotebookFront/Default.aspx'})); 
 
-    if(!/ExitButton/i.test(html)){
-        throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-    }
-
+	if (!/ExitButton/i.test(html)) {
+		var error = getParam(html, null, null, /"ctl00_MainLogin2_Password"(?:[^>]*>){3}([\s\S]*?)<div/i, replaceTagsAndSpaces, html_entity_decode);
+		if (error)
+			throw new AnyBalance.Error(error, null, /Неправильно введены учетные данные/i.test(error));
+		
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+	}
+	
     var result = {success: true};
-    getParam(html, result, 'balance', /Остаток на кошельке:[\s\S]*?>([\s\S]*?)руб/i, replaceTagsAndSpaces, parseBalance);
-	getParam(prefs.login, result, 'phone', null, null, null);
+	
+    getParam(html, result, 'balance', /Остаток на кошельке:[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	getParam(prefs.login, result, 'phone');
+	
     AnyBalance.setResult(result);
 }

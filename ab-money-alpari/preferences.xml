@@ -21,6 +21,15 @@
 		dialogMessage="Введите пароль, используемый для входа в личный кабинет."
 		inputType="textPassword">
 	</EditTextPreference>
+	<ListPreference
+		title="Тип счета"
+		summary="||{@s}"
+		dialogTitle="Тип счета" 
+		key="type"
+		defaultValue="1"
+		entries="Торговый счет|Инвестиционный ПАММ-счет"
+		entryValues="1|2">
+	</ListPreference>
 	<EditTextPreference
 		title="Номер счета"
 		key="account"

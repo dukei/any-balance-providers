@@ -134,8 +134,10 @@ function main(){
 
     // Пакет интернета
     sumParam (html, result, 'traffic_paket_mb', /<li>20MB_GPRS_Internet:[^<]*осталось[^\d]*?(\d+,?\d* *(kb|mb|gb|кб|мб|гб|байт|bytes)). Срок действия до[^<]*<\/li>/ig, null, parseTraffic, aggregate_sum);
+    sumParam (html, result, 'traffic_paket_mb', /<li>3G Internet:[^<]*осталось[^\d]*?(\d+,?\d* *(kb|mb|gb|кб|мб|гб|байт|bytes)). Срок действия до[^<]*<\/li>/ig, null, parseTraffic, aggregate_sum);
     //Срок Пакета интернета
     sumParam (html, result, 'termin_traffic_paket_mb', /<li>20MB_GPRS_Internet:[^<]*осталось[^\d]*?[^<]*. Срок действия до([^<]*)<\/li>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
+    sumParam (html, result, 'termin_traffic_paket_mb', /<li>3G Internet:[^<]*осталось[^\d]*?[^<]*. Срок действия до([^<]*)<\/li>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
 
     // Интернет за копейку (новый) региональный и общенациональный
     // Проверен на пакете 1000 Мб за 10 грн. (если не будут распознаваться пакеты 1500 Мб за 15 грн и 2000 Мб за 20 грн, то добавить их распознавание в этот счетчик traffic_reg_kop_mb)

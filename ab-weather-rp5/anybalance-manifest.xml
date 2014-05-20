@@ -26,8 +26,6 @@
 	<files>
 		<preferences>preferences.xml</preferences>
 		<icon>icon.png</icon>
-		<js>moment.min.js</js>
-		<js>moment.lang.ru.min.js</js>
 		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>

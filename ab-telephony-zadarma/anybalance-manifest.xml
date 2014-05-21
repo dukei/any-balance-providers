@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2" version="7">ab-telephony-zadarma</id>
+	<id major_version="2" version="8">ab-telephony-zadarma</id>
 	<name>Zadarma</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем балансе в Zadarma (http://zadarma.com).</p>
@@ -31,6 +31,7 @@
 		<counter id="shortphone2" name="Короткий номер 3" type="text"/>
 		<counter id="shortphone3" name="Короткий номер 4" type="text"/>
 		<counter id="shortphone4" name="Короткий номер 5" type="text"/>
+		<counter id="min" name="Использовано минут" type="time_interval" format="{@MIN}:{@sec}"/>
 	</counters>
 	<keywords>zadarma sip IP-телефония</keywords>
 	<type>telephony</type>

@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-shop-autodoc</id>
+	<id version="2">ab-shop-autodoc</id>
 	<api flags="no_browser"/>
 	<name>Autodoc.ru</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе в интернет-магазине автозапчастей Autodoc.ru</p>
-	<p>Информация берется из личного кабинета http:\\...</p>
 	]]></description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
@@ -18,6 +17,7 @@
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
 		<counter id="discount" name="Скидка" type="text"/>
+		<counter id="orders_details" name="Сводка по заказу" type="text"/>
 	</counters>
 	<keywords>автодок</keywords>
 	<type>shop</type>

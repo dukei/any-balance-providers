@@ -55,8 +55,12 @@ function main() {
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'dolg', /<div class="align-left">([\d,.]+)(?:[^>]*>){8}\s*<\/table/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'balance', /<div class="align-left">([\d,.]+)(?:[^>]*>){4}\s*<\/table/i, replaceTagsAndSpaces, parseBalance);
+	var dolg = getParam(html, null, null, /<div class="align-left">([\d,.]+)(?:[^>]*>){8}\s*<\/table/i, replaceTagsAndSpaces, parseBalance) * -1;
+	var ammount = getParam(html, null, null, /<div class="align-left">([\d,.]+)(?:[^>]*>){4}\s*<\/table/i, replaceTagsAndSpaces, parseBalance);
+	
+	getParam(dolg+ammount, result, 'balance');
+	//getParam(html, result, 'dolg', /<div class="align-left">([\d,.]+)(?:[^>]*>){8}\s*<\/table/i, replaceTagsAndSpaces, parseBalance);
+	//getParam(html, result, 'balance', /<div class="align-left">([\d,.]+)(?:[^>]*>){4}\s*<\/table/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'fio', / class="blue2"[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'licschet', /Лицевой счет №([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
 	

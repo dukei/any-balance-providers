@@ -7,7 +7,7 @@ function main(){
 
 
         
-        var info = AnyBalance.requestPost('http://api.liveproxy.com.ua/users/index.php', {
+        var info = AnyBalance.requestPost('http://client.liveproxy.com.ua/index.php', {
            
                 login: prefs.login,
 				 password: prefs.password

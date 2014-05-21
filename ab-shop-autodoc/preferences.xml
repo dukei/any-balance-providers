@@ -21,4 +21,13 @@
 		dialogMessage="Введите пароль, используемый для входа в личный кабинет."
 		inputType="textPassword">
 	</EditTextPreference>
+	<EditTextPreference
+		title="Номер заказа"
+		key="order_num"
+		summary="||{@s}"
+		dialogTitle="Номер заказа"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите номер заказа.">
+	</EditTextPreference>	
 </PreferenceScreen>

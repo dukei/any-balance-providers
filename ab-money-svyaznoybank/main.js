@@ -87,8 +87,14 @@ function fetchCard(baseurl, html){
     if(prefs.num && !/^\d{4}$/.test(prefs.num))
         throw new AnyBalance.Error("Введите 4 последних цифры номера карты или не вводите ничего, чтобы показать информацию по первой карте");
 
-    var products = getParam(html, null, null, /Page.products\s*=\s*(\[.*?\]);/, null, getJson);
+    var products = getParam(html, null, null, /page.products\s*=\s*(\[.*?\]);/, null, getJson);
     var cards = getParam(html, null, null, /cards:\s*(\{.*\}),/, null, getJson);
+
+    if(!products){
+	AnyBalance.trace(html);
+        throw new AnyBalance.Error("Не удалось найти банковские продукты. Сайт изменен?");
+    }
+
     var product;
     for(var i=0; i<products.length; ++i){
         var p = products[i];
@@ -146,8 +152,13 @@ function fetchDep(baseurl, html){
     if(prefs.num && !/^\d+$/.test(prefs.num))
         throw new AnyBalance.Error("Введите ID депозита или не вводите ничего, чтобы показать информацию по первому депозиту. ID депозитов можно увидеть в счетчике Сводка.");
 
-    var products = getParam(html, null, null, /Page.products\s*=\s*(\[.*?\]);/, null, getJson);
+    var products = getParam(html, null, null, /page.products\s*=\s*(\[.*?\]);/, null, getJson);
     var cards = getParam(html, null, null, /cards:\s*(\{.*\}),/, null, getJson);
+
+    if(!products){
+	AnyBalance.trace(html);
+        throw new AnyBalance.Error("Не удалось найти банковские продукты. Сайт изменен?");
+    }
 
     var result = {success: true};
     if(AnyBalance.isAvailable('all')){

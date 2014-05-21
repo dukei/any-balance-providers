@@ -1,35 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
-  <api flags="no_browser" />
-  <id version="2">ab-internet-strelatel</id>
-  <api min_level="6"/>
-  <name>Стрела Телеком (Сибирь)</name>
-  <description>
-    Получает баланс и информацию о тарифном плане для сибирского интернет-провайдера Стрела Телеком (http://strelatelecom.ru).
-
-    Информация берется из личного кабинета https://bill.strelatelecom.ru
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="topay" name="Рекомендуемый платеж"/>
-    <counter id="agreement" name="№ договора" type="text"/>
-    <counter id="fio" name="ФИО" type="text"/>
-  </counters>
-  <keywords>
-  </keywords>
-  <type>
-    internet
-  </type>
-  <country>
-    ru
-  </country>
+	<api flags="no_browser" />
+	<id version="3">ab-internet-strelatel</id>
+	<api min_level="6"/>
+	<name>Стрела Телеком (Сибирь)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе и тарифном плане для сибирского интернет-провайдера Стрела Телеком (http://strelatelecom.ru).</p>
+	<p>Информация берется из личного кабинета https://bill.strelatelecom.ru</p>
+	]]></description>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="topay" name="Рекомендуемый платеж"/>
+		<counter id="agreement" name="№ договора" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet</type>
+	<country>ru</country>
 </provider>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-municipal-peterburgregiongaz</id>
+	<id version="2">ab-municipal-peterburgregiongaz</id>
 	<api flags="no_browser"/>
 	<name>Межрегионгаз</name>
 	<description html="true"><![CDATA[
@@ -16,8 +16,7 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" р"/>
-		<counter id="dolg" name="Задолженность" units=" р"/>
+		<counter id="balance" name="Баланс (Долг+Переплата)" units=" р"/>
 		<counter id="licschet" name="Лицевой счет" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>
 	</counters>

@@ -17,7 +17,7 @@ function main() {
 	
 	checkEmpty(prefs.login, 'Введите уникальный идентификатор заявления!');
 	
-	var html = AnyBalance.requestGet(baseurl + 'krao/underschool/queue?kinnumber=240033391116&search=%CF%EE%EA%E0%E7%E0%F2%FC', g_headers);
+	var html = AnyBalance.requestGet(baseurl + 'krao/underschool/queue?kinnumber='+prefs.login+'&search=%CF%EE%EA%E0%E7%E0%F2%FC', g_headers);
 	
 	if (/Информация не найдена/i.test(html)) {
 		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);

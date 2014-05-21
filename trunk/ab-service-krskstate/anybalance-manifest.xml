@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-service-krskstate</id>
+	<id version="2">ab-service-krskstate</id>
 	<api flags="no_browser"/>
 	<name>Очередь в детские сады Красноярского края</name>
 	<description html="true"><![CDATA[

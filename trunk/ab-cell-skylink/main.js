@@ -102,7 +102,7 @@ function getEventValidation(html){
     return getParam(html, null, null, /name="__EVENTVALIDATION".*?value="([^"]*)"/);
 }
 
-function parseBalanceRK(_text){
+function parseBalanceRK(_text) {
     var text = _text.replace(/\s+/g, '');
     var rub = getParam(text, null, null, /(-?\d[\d\.,]*)руб/i, replaceFloat, parseFloat) || 0;
     var kop = getParam(text, null, null, /(-?\d[\d\.,]*)коп/i, replaceFloat, parseFloat) || 0;
@@ -134,7 +134,8 @@ var g_regions = {
     uln: mainUln,
     kuban: mainKuban,
     spb: mainSpb,
-    ryaz: mainRyaz
+    ryaz: mainRyaz,
+	izhevsk: mainUln
 };
 
 function mainMoscow(){

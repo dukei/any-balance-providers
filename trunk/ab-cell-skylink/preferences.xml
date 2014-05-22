@@ -26,8 +26,8 @@
 		key="region"
 		title="Регион"
 		summary="Регион вашего номера|Нужен для определения личного кабинета\n|{@s}\n"
-		entries="Алтайский край|Владимир|Волгоград|Вологда|Воронеж|Екатеринбург|Калининград|Калуга|Карелия|Кемерово|Киров|Краснодарский край и республика Адыгея|Москва|Мурманск|Нижний новгород|Новгород Великий|Новосибирск|Омск|Псков|Ростов|Рязань|Санкт-Петербург|Ульяновск"
-		entryValues="altai|vladimir|volgograd|vologda|voronezh|ekt|kaliningrad|kaluga|karel|kemerovo|kirov|kuban|moscow|murmansk|nnov|vnov|nsk|omsk|pskov|rostov|ryaz|spb|uln"
+		entries="Алтайский край|Владимир|Волгоград|Вологда|Воронеж|Екатеринбург|Ижевск|Калининград|Калуга|Карелия|Кемерово|Киров|Краснодарский край и республика Адыгея|Москва|Мурманск|Нижний новгород|Новгород Великий|Новосибирск|Омск|Псков|Ростов|Рязань|Санкт-Петербург|Ульяновск"
+		entryValues="altai|vladimir|volgograd|vologda|voronezh|ekt|izhevsk|kaliningrad|kaluga|karel|kemerovo|kirov|kuban|moscow|murmansk|nnov|vnov|nsk|omsk|pskov|rostov|ryaz|spb|uln"
 		defaultValue="moscow">
 	</ListPreference>
 </PreferenceScreen>

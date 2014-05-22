@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-<change version="8" date="2013-10-09">
-- Улучшенная обработка ошибок (Stark)
-</change>
-<change version="7" date="2013-10-03">
-- Обновлен library.js
-</change>
-<change version="6" date="2013-04-25">
-- Исправлено в связи с изменениями на сайте
-</change>
-<change version="5" date="2013-01-25">
-- Исправлено получение кредитов и депозитов в случае, если они не первые в списке
-</change>
-<change version="4" date="2012-01-16">
-- Добавлена поддержка кредитов
-</change>
-<change version="3" date="2012-12-15">
-- Добавлен счетчик Задолженность для кредитных карт
-</change>
-<change version="2" date="2012-12-15">
-- Отслеживание информации по картам
-</change>
+	<change version="8" date="2013-10-09">
+	- Улучшенная обработка ошибок (Stark)
+	</change>
+	<change version="7" date="2013-10-03">
+	- Обновлен library.js
+	</change>
+	<change version="6" date="2013-04-25">
+	- Исправлено в связи с изменениями на сайте
+	</change>
+	<change version="5" date="2013-01-25">
+	- Исправлено получение кредитов и депозитов в случае, если они не первые в списке
+	</change>
+	<change version="4" date="2012-01-16">
+	- Добавлена поддержка кредитов
+	</change>
+	<change version="3" date="2012-12-15">
+	- Добавлен счетчик Задолженность для кредитных карт
+	</change>
+	<change version="2" date="2012-12-15">
+	- Отслеживание информации по картам
+	</change>
 </history>

@@ -1,36 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
-  <api flags="no_browser" />
-  <id version="2">ab-money-sber-by</id>
-  <name>БПС Сбербанк (Беларусь)</name>   
-  <description>
-	Получает текущий остаток карт банка БПС Сбербанк (https://ibank.bpsb.by/), используя интернет-банк https://ibank.bpsb.by/v1/cgi/bsi.dll?T=RT_2Auth.BF
-	
-	Если какие-то данные не отображаются, свяжитесь с автором провайдера по имейл.
-  </description>
-  <author>Stark &lt;support@starksoft.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Остаток" units=" {@currency}"/>
-    <counter id="cardnum" name="Номер карты" type="text"/>
-    <counter id="fio" name="Владелец" type="text"/>
-    <counter id="currency" name="Валюта" type="text"/>
-	<counter id="type" name="Название" type="text"/>
-  </counters>
-  <keywords>
-    интернет-банкинг
-  </keywords>
-  <type>
-    money
-  </type>
-  <country>
-    by
-  </country>
+	<api flags="no_browser" />
+	<id version="3">ab-money-sber-by</id>
+	<name>БПС Сбербанк (Беларусь)</name>
+	<description html="true"><![CDATA[
+	<p>Получает текущий остаток карт банка БПС Сбербанк (https://ibank.bpsb.by/), используя интернет-банк https://ibank.bpsb.by/v1/cgi/bsi.dll?T=RT_2Auth.BF</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Остаток" units=" {@currency}"/>
+		<counter id="cardnum" name="Номер карты" type="text"/>
+		<counter id="balance1" name="Остаток 2" units=" {@currency1}"/>
+		<counter id="cardnum1" name="Номер карты 2" type="text"/>
+		<counter id="balance2" name="Остаток 3" units=" {@currency2}"/>
+		<counter id="cardnum2" name="Номер карты 3" type="text"/>		
+		<counter id="fio" name="Владелец" type="text"/>
+		<!-- <counter id="currency" name="Валюта" type="text"/> -->
+		<counter id="type" name="Название" type="text"/>
+		<counter id="details" name="Сводка" type="html"/>
+	</counters>
+	<keywords>интернет-банкинг</keywords>
+	<type>money</type>
+	<country>by</country>
 </provider>

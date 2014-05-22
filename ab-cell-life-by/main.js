@@ -37,7 +37,13 @@ function main(){
 		form:true,
 		next:'/ru/'
 	}, addHeaders({Referer: baseurl + main}));
-    
+	
+	// Иногда после логина висит 500ая ошибка, при переходе на главную все начинает работать
+	if(/Ошибка 500/i.test(html)) {
+		AnyBalance.trace('Ошибка при логине... попробуем исправить...');
+		html = AnyBalance.requestGet(baseurl + main + 'informaciya/abonent/', g_headers);
+	}
+	
     if(!/log-out/i.test(html)){
 		if(/action\s*=\s*["']https:\/\/issa2\.life\.com\.by/i.test(html)) {
 			AnyBalance.trace('Этот номер не поддерживается в новом кабинете, нас редиректит на старый адрес...');
@@ -61,7 +67,7 @@ function main(){
 	sumParam(html, result, 'sms_left', /SMS внутри сети(?:[^>]+>){2}([^<]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	sumParam(html, result, 'mms_left', /MMS внутри сети(?:[^>]+>){2}([^<]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	// Минуты
-	sumParam(html, result, 'min_left_other', /Звонки на (?:все|другие) сети(?:[^>]+>){2}([^<]+)/ig, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
+	sumParam(html, result, 'min_left_other', /Звонки (?:на|во) (?:все|другие) сети(?:[^>]+>){2}([^<]+)/ig, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
     sumParam(html, result, 'min_left', /Звонки внутри сети(?:[^>]+>){2}([^<]+)/ig, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
 	// Трафик
 	sumParam(html, result, 'traffic_night_left', />\s*Ночной интернет(?:[^>]+>){2}([^<]+МБ)/ig, replaceTagsAndSpaces, parseTraffic, aggregate_sum);

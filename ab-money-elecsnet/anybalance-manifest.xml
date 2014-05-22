@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="3">ab-money-elecsnet</id>
+	<id version="4">ab-money-elecsnet</id>
 	<name>Элекснет</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе в кошельке Элекснет (http://elecsnet.ru)</p>

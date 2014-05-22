@@ -19,16 +19,16 @@ function main(){
     var html = AnyBalance.requestGet(baseurl + 'NotebookFront/Default.aspx', g_headers);
 
 	var params = createFormParams(html, function(params, str, name, value){
-		if(name == 'ctl00$MainLogin2$UserName')
+		if(name == 'ctl00$MainLogin2$UserName' || name == 'ctl00$MainLogin$UserName')
 			return prefs.login;
-		else if(name == 'ctl00$MainLogin2$Password')
+		else if(name == 'ctl00$MainLogin2$Password' || name == 'ctl00$MainLogin$Password')
 			return prefs.password;
         return value;
     });
 	html = AnyBalance.requestPost(baseurl + 'NotebookFront/Default.aspx', params, addHeaders({Referer: baseurl+'NotebookFront/Default.aspx'})); 
 
 	if (!/ExitButton/i.test(html)) {
-		var error = getParam(html, null, null, /"ctl00_MainLogin2_Password"(?:[^>]*>){3}([\s\S]*?)<div/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, null, null, /"ctl00_MainLogin2?_Password"(?:[^>]*>){3}([\s\S]*?)<div/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Неправильно введены учетные данные/i.test(error));
 		

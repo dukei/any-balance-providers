@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+<change version="17" date="2014-05-22">
+- Исправление сводки счетов
+</change>
 <change version="16" date="2014-05-21">
 - Изменения в интернет-банке
 </change>

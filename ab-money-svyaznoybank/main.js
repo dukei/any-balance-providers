@@ -168,7 +168,7 @@ function fetchDep(baseurl, html){
             if(/<span[^>]+class="number">/i.test(deposits[i]))
                 continue; //Это не депозит
             var pid = getParam(deposits[i], null, null, /<div[^>]+data-id="([^"]*)/i, replaceTagsAndSpaces, html_entity_decode);
-            var name = getParam(deposits[i], null, null, /<h2[^>]*>([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces, html_entity_decode);
+            var name = getParam(deposits[i], null, null, /<(?:div|span)[^>]+data-product-label[^>]*>([\s\S]*?)<\/(?:div|span)>/i, replaceTagsAndSpaces, html_entity_decode);
             all.push(pid + ': ' + name);
         }
         result.all = all.join('\n');

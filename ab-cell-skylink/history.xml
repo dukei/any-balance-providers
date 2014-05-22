@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="18" major_version="3.0" date="2014-05-22">
+	- Добавлен регион Ижевск.
+	</change>
 	<change version="17" major_version="3.0" date="2014-03-11">
 	- Добавлено получение данных через SkyBalance, без капчи, но только баланс будет отображаться, это вызвано из-за поломки windows-приложения SkyPoint.
 	</change>

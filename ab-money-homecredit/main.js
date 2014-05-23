@@ -60,15 +60,15 @@ function main() {
 
 function fetchCard(baseurl, html){
     var prefs = AnyBalance.getPreferences();
-    if(prefs.contract)
-        throw new AnyBalance.Error('В данной версии не поддерживается поиск по ID продукта, свяжитесь с разработчиками.');
+    //if(prefs.contract)
+        //throw new AnyBalance.Error('В данной версии не поддерживается поиск по ID продукта, свяжитесь с разработчиками.');
     
     var result = {success: true};
     
     getParam(html, result, '__tariff', />\s*Карта([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'accname', />\s*Карта([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'balance', /class="C"[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, ['currency', '__tariff'], /class="C"[^>]*>[^>]*class='([^']+)'/i, replaceTagsAndSpaces, parseCurrency);
+    getParam(html, result, ['currency', '__tariff'], /class="C"[^>]*>[^>]*class='([^']+)'/i, replaceTagsAndSpaces);
 	getParam(html, result, 'accnum', /Номер счета:?[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'limit', /Кредитный лимит([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'minpaytill', /Дата списания следующего платежа(?:[^>]*>){7}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseDate);
@@ -187,44 +187,23 @@ function createProductsIds(html, result){
 
 function fetchDeposit(baseurl, html){
     var prefs = AnyBalance.getPreferences();
-    if(prefs.contract && !/^\d{1,20}$/.test(prefs.contract))
-        throw new AnyBalance.Error('Пожалуйста, введите ID вклада, по которому вы хотите получить информацию, или не вводите ничего, чтобы получить информацию по первому вкладу.');
-
-    var re = new RegExp('(<a[^>]+id="[^"]*deposit_' + (prefs.contract ? prefs.contract : '\\d+') + '"[^>]*class="[^"]*selectProduct[^"]*"[\\s\\S]*?<\\/a>)', 'i');
-    var tr = getParam(html, null, null, re);
-    if(!tr)
-        throw new AnyBalance.Error('Не удаётся найти ' + (prefs.contract ? 'вклад с ID ' + prefs.contract : 'ни одного вклада'));
-    var id = getParam(tr, null, null, /<a[^>]+id="[^"]*loan_(\d+)"/i);
-
-    var selected = getParam(html, null, null, new RegExp('<div[^>]+class="productBlock\\s+([^"]*)(?:[\\s\\S](?!</a>))*?<a[^>]+id="[^"]*deposit_' + id + '"', 'i'));
-    var isProductSelected = selected && /productBlockActive/i.test(selected);
+    //if(prefs.contract && !/^\d{1,20}$/.test(prefs.contract))
+        //throw new AnyBalance.Error('Пожалуйста, введите ID вклада, по которому вы хотите получить информацию, или не вводите ничего, чтобы получить информацию по первому вкладу.');
 
     var result = {success: true};
     
-    createProductsIds(html, result);
-
-    getParam(tr, result, '__tariff', /<td[^>]+class="productInfo"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(tr, result, 'accname', /<td[^>]+class="productInfo"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(tr, result, 'balance', /<td[^>]+class="productAmount"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(tr, result, 'currency', /<td[^>]+class="productAmount"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseCurrency);
-
-    if(AnyBalance.isAvailable('pcts', 'agreement', 'status', 'accnum', 'till', 'rate')){
-        //Проверим выбран ли текущий продукт и нужный вклад внутри него
-        var isSelected = isProductSelected && getParam(tr, null, null, /<span[^>]+class="(selected)"/i);
-        if(!isSelected){
-            html = requestDetails(html, tr);
-        }
-
-        getParam(html, result, 'pcts', /Сумма начисленных процентов[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-        getParam(html, result, 'agreement', /Номер договора[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-        getParam(html, result, 'status', /Статус[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-        getParam(html, result, 'accnum', /Номер счета вклада[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-        getParam(html, result, 'till', /Дата закрытия[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
-        getParam(html, result, 'rate', /Процентная ставка[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    }
-
-    AnyBalance.setResult(result);
-    
+    getParam(html, result, '__tariff', /class="N">([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'accname', /class="N">([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'balance', /class="C"[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, ['currency', '__tariff'], /class="C"[^>]*>[^>]*class='([^']+)'/i, replaceTagsAndSpaces);
+	getParam(html, result, 'accnum', /Номер счета:?[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'rate', /Процентная ставка(?:[^>]*>){7}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'pcts', /Сумма начисленных процентов(?:[^>]*>){7}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'agreement', /Номер договора[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'status', /Статус[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'till', /Дата закрытия[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+	
+	AnyBalance.setResult(result);
 }
 
 function fetchCredit(baseurl, html){

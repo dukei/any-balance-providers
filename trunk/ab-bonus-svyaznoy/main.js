@@ -28,11 +28,13 @@ function main () {
     // Необходимо для формирования cookie
     var html = AnyBalance.requestGet(baseurl, g_headers);
     var form = getParam(html, null, null, /<form[^>]*(?:id="mainLogin"|name="Form")[^>]*>[\s\S]*?<\/form>/i);
-    if (!form)
+    if (!form) {
+		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось найти форму входа, похоже, связной её спрятал. Обратитесь к автору провайдера.');
-	
+	}
 	var AntiForgeryToken = getParam(html, null, null, /antiForgeryToken:[^']*'([^']+)/i);
-	if(!AntiForgeryToken) throw new AnyBalance.Error('Не удалось найти токен авторизации!');
+	if(!AntiForgeryToken)
+		throw new AnyBalance.Error('Не удалось найти токен авторизации!');
 	
 	html = AnyBalance.requestPost(baseurl + 'account/login', {
 		UserName:prefs.login,

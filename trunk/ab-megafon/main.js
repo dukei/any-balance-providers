@@ -356,7 +356,7 @@ function megafonTrayInfo(filial) {
 					var units = plan_si;
 					if (units == 'мин') {
 						//Надо попытаться исправить ошибку мегафона с единицами измерения трафика
-						if (/[GM]B/i.test(plan_name)) units = 'мб';
+						if (/[GM]B|[гм]б/i.test(plan_name)) units = 'мб';
 						else if (/GPRS-Internet трафик/i.test(plan_name)) units = 'мб'; //Вот ещё такое исключение. Надеюсь, на всём будет работать, хотя сообщили из поволжского филиала
 						else if (/100\s*мб/i.test(plan_name)) units = 'тар.ед.';
 						else if (/Интернет (?:S|M|L|XL)/i.test(names)) units = 'мб';

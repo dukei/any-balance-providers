@@ -39,8 +39,13 @@ function main(){
             AnyBalance.requestGet(baseurl + 'logout.aspx'); //На всякий случай попробуем выйти, но вообще-то ничего кроме смены пароля сделать почему-то нельзя...
             throw new AnyBalance.Error('Банк требует сменить пароль. Пожалуйста, зайдите в интернет-банк https://online.bankcard.ru через браузер, смените пароль, а затем введите новый пароль в настройки провайдера.');
         }
+		AnyBalance.trace(html);
         throw new AnyBalance.Error("Не удалось зайти в интернет-банк. Сайт изменился?");
     }
+	// Банк требует сменить пароль
+	if(/Истек срок действия пароля/i.test(html)) {
+		throw new AnyBalance.Error("Истек срок действия пароля! Зайдите на сайт и установите новый пароль, затем введите его в настройки этого аккаунта.");
+	}
     try{
         html = AnyBalance.requestGet(baseurl + 'client/contracts');
         var reCard = new RegExp('<a[^>]+href=[\'"](/client/?[^\'"]*)[\'"][^>]*>\\s*\\d{4}\\s*XXXX\\s*XXXX\\s*' + (prefs.num ? prefs.num : '\\d{4}'), 'i');

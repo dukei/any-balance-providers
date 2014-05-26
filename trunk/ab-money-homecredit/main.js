@@ -43,7 +43,9 @@ function main() {
             throw new AnyBalance.Error(error);
         throw new AnyBalance.Error('Не удалось войти в интернет-банк. Сайт изменен?');
     }
-
+	fetchAll(baseurl, html);
+	
+/*
     if(prefs.type == 'crd')
         fetchCredit(baseurl, html);
     else if(prefs.type == 'acc')
@@ -52,17 +54,98 @@ function main() {
         fetchCard(baseurl, html);
     else if(prefs.type == 'dep')
         fetchDeposit(baseurl, html);
-    else if(prefs.type == 'crd')
-        fetchCredit(baseurl, html);
     else
         fetchDeposit(baseurl, html); //По умолчанию депозит
+*/
 }
+
+function fetchAll(baseurl, html){
+    var prefs = AnyBalance.getPreferences();
+    
+	var cardNum = prefs.cardnum || '\\d{4}';
+	//<a id="[^"]+" href(?:[^>]*>){5,8}[^>]*class="ACCOUNT">\s*\d+6516(?:[^>]*>){20,30}\s*<\/table>
+	var re = new RegExp('<a id="[^"]+" href(?:[^>]*>){5,8}[^>]*class="ACCOUNT">\\s*\\d+' + cardNum + '(?:[^>]*>){20,30}\\s*</table>');
+	
+	var tr = getParam(html, null, null, re);
+	if(!tr) {
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось найти ' + (prefs.cardnum ? 'счет с последними цифрами ' + prefs.cardnum : 'ни одного счета!'));
+	}
+	
+	var product = getParam(tr, null, null, /class="S"[^>]*>([^<]+)/i);
+	
+	AnyBalance.trace('Продукт: ' +product);
+	
+	html = requestDetails(html, tr);
+	
+    var result = {success: true};
+
+	// общее
+    getParam(html, result, 'accnum', /Номер счета:?[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'agreement', /Номер договора:?[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'status', /Статус[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'card_num', /Номер карты:?[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'accname', /<td class="LABEL" colspan="2">([^<]+)<\//i, replaceTagsAndSpaces, html_entity_decode);
+	// Дебетовая карта
+    getParam(html, result, 'balance', /Доступный остаток[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, ['currency', '__tariff'], /Доступный остаток[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseCurrency);
+	getParam(html, result, 'debt', /Задолженность(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'own', /Остаток собственных средств на счете(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	// Депозит
+    getParam(html, result, 'balance', /Текущая сумма вклада(?:[^>]*>){6}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, ['currency', '__tariff'], /Текущая сумма вклада(?:[^>]*>){6}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseCurrency);
+	getParam(html, result, 'till', /Дата закрытия[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+    getParam(html, result, 'rate', /Процентная ставка(?:[^>]*>){7}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'pcts', /Сумма начисленных процентов(?:[^>]*>){7}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	// Кредитная карта
+    getParam(html, result, 'balance', [/Доступно(?:[^>]*>){4}([\s\S]*?)<\//i, /На вашем счёте(?:[^>]*>){4}([\s\S]*?)<\//i], replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, ['currency', '__tariff'], [/Доступно(?:[^>]*>){4}([\s\S]*?)<\//i, /На вашем счёте(?:[^>]*>){4}([\s\S]*?)<\//i], replaceTagsAndSpaces, parseCurrency);	
+	getParam(html, result, 'limit', /Кредитный лимит([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'minpaytill', /Дата списания следующего платежа(?:[^>]*>){7}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseDate);
+	getParam(html, result, 'minpay', /Дата списания следующего платежа(?:[^>]*>){9}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'overall_debt', /Задолженность на конец завершенного периода(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	
+	if(/карта/i.test(product))
+		getParam(html, result, '__tariff', /Номер карты:?[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+	else
+		getParam(html, result, '__tariff', /<td class="LABEL" colspan="2">([^<]+)<\//i, replaceTagsAndSpaces, html_entity_decode);
+	
+    AnyBalance.setResult(result);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 function fetchCard(baseurl, html){
     var prefs = AnyBalance.getPreferences();
     //if(prefs.contract)
         //throw new AnyBalance.Error('В данной версии не поддерживается поиск по ID продукта, свяжитесь с разработчиками.');
     
+	var cardNum = prefs.cardnum || '\\d{4}';
+	var re = new RegExp('<a id="[^"]+" href(?:[^>]*>){7}[^>]*class="ACCOUNT">\\s*\\d+' + cardNum + '(?:[^>]*>){28}\\s*</table>');
+	
+	var tr = getParam(html, null, null, re);
+	if(!tr) {
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось найти ' + (prefs.cardnum ? 'счет с последними цифрами ' + prefs.cardnum : 'ни одного счета!'));
+	}
+	
+	
     var result = {success: true};
     
     getParam(html, result, '__tariff', />\s*Карта([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
@@ -84,61 +167,8 @@ function fetchCard(baseurl, html){
     AnyBalance.setResult(result);
 }
 
-// Они все поменяли
-function fetchCardOld(baseurl, html){
-    var prefs = AnyBalance.getPreferences();
-    if(prefs.contract && !/^\d{4}$/.test(prefs.contract))
-        throw new AnyBalance.Error('Пожалуйста, введите 4 последних цифры номера карты, по которой вы хотите получить информацию, или не вводите ничего, чтобы получить информацию по первой карте.');
-    
-    var cardnum = prefs.contract ? prefs.contract : '\\d{4}';
-    var re = new RegExp('(<a[^>]+id="[^"]*(?:debit|credit)Card_\\d+"[^>]*class="[^"]*selectProduct[^"]*"(?:[\\s\\S](?!</a>))*\\d{4}\\s+\\d{2}\\*{2}\\s+\\*{4}\\s+' + cardnum + '[\\s\\S]*?</a>)', 'i');
-    var tr = getParam(html, null, null, re);
-    if(!tr)
-        throw new AnyBalance.Error('Не удаётся найти ' + (prefs.contract ? 'карту с последними цифрами ' + prefs.contract : 'ни одной карты'));
-	
-    var isCredit = /<a[^>]+id="[^"]*creditCard_\d+"/.test(tr); 
-    //FIXME: судя по депозиту и кредиту надо проверять наличие класса productBlockActive именно у нужной карты. А здесь странно как-то. Наверху в id есть Card, а здесь нет. Так что для карт надо бы перепроверить.
-    //Проверим, выбран ли сейчас интересующий нас продукт. Для этого ищем, какой именно блок включает наш продукт
-    var reProductBlock = new RegExp('<div[^>]+class="productBlock\\s+([^"]*)(?:[\\s\\S](?!</a>))*?<a[^>]+id="[^"]*' + (isCredit ? 'credit' : 'debit') + '(?:Card)?_\\d+"', 'i');
-    var selected = getParam(html, null, null, reProductBlock);
-    var isProductSelected = selected && /productBlockActive/i.test(selected);
-	
-    var result = {success: true};
-    
-    getParam(tr, result, '__tariff', /<td[^>]+class="productInfo"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(tr, result, 'accname', /<td[^>]+class="productInfo"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(tr, result, 'balance', /<td[^>]+class="productAmount"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(tr, result, 'currency', /<td[^>]+class="productAmount"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseCurrency);
-    var balance = getParam(tr, null, null, /<td[^>]+class="productAmount"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-	
-    if(AnyBalance.isAvailable('own', 'agreement', 'status', 'accnum', 'limit', 'blocked', 'minpaytill', 'minpay', 'debt')){
-        //Проверим выбран ли текущий продукт и нужный вклад внутри него
-        var isSelected = isProductSelected && getParam(tr, null, null, /<span[^>]+class="(selected)"/i);
-        if(!isSelected){
-            html = requestDetails(html, tr);
-        }
-		
-        getParam(html, result, 'own', /Остаток собственных средств на счете[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-        getParam(html, result, 'limit', /(?:Лимит овердрафта:|Кредитный лимит)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-        getParam(html, result, 'agreement', /Номер договора[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-        getParam(html, result, 'blocked', /Остаток собственных средств на счете[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-        getParam(html, result, 'status', /Статус карты[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-        getParam(html, result, 'accnum', /Номер счета:?[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-        getParam(html, result, 'minpaytill', /(?:Дата платежа|Рекомендуемая дата внесения средств)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
-        getParam(html, result, 'minpay', /(?:Сумма минимального платежа|Сумма следующего платежа)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-        getParam(html, result, 'overall_debt', /Общая задолженность[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-		
-        var limit = getParam(html, null, null, /(?:Лимит овердрафта:|Кредитный лимит)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-        if(isCredit && limit && AnyBalance.isAvailable('debt')){
-            result.debt = limit - balance;
-        }
-    }
-	
-    AnyBalance.setResult(result);
-}
-
 //Получаем детали по продукту, если он не выбран. tr - блок продукта
-function requestDetails(html, tr){
+function requestDetails(html, tr) {
     var source = getParam(tr, null, null, /PrimeFaces.\w+\s*\([^"]*source\s*:\s*'([^']*)/i, null, html_entity_decode);
     var formId = getParam(source, null, null, /^.*j_idt\d+/i);
     var form = getParam(html, null, null, new RegExp('(<form[^>]+id="' + formId + '"[\\s\\S]*?<\\/form>)', 'i'));

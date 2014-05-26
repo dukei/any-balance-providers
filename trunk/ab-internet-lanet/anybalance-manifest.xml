@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-internet-lanet</id>
-  	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
+	<id version="4">ab-internet-lanet</id>
 	<api flags="no_browser" />
 	<name>Ланет Нетворк (Киев)</name>
-	<description>
-	Получает баланс и информацию о тарифном плане для киевского интернет-провайдера Lanet (http://lanet.ua).
-	
-	Информация берется из личного кабинета https://my.lanet.ua.
-	</description>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе киевского интернет-провайдера Lanet (http://lanet.ua)</p>
+	<p>Информация берется из личного кабинета https://my.lanet.ua</p>
+	]]></description>	
 	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
@@ -18,9 +16,9 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units="₴"/>
-		<counter id="bonus" name="Бонусный счет" units="₴"/>
-		<counter id="pay" name="Рекомендуемая сумма оплаты" units="₴"/>
+		<counter id="balance" name="Баланс" units=" ₴"/>
+		<counter id="bonus" name="Бонусный счет" units=" ₴"/>
+		<counter id="pay" name="Рекомендуемая сумма оплаты" units=" ₴"/>
 		<counter id="agreement" name="№ договора" type="text"/>
 		<counter id="paytill" name="Конец периода" type="time" format="dd/MM/yyyy"/>
 		<counter id="userName" name="Абонент" type="text"/>

@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-    <change version="2" date="2013-08-22">
-      - Поддержка изменений в личном кабинете
-    </change>
-    <change version="2" date="2012-11-25">
-      - Исправлено получение даты
-    </change>
+    <change version="4" date="2014-05-26">
+	- Поддержка изменений в личном кабинете
+	</change>
+    <change version="3" date="2013-08-22">
+	- Поддержка изменений в личном кабинете
+	</change>
+	<change version="2" date="2012-11-25">
+	- Исправлено получение даты
+	</change>
 </history>

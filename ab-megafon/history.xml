@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="3.0" version="115" date="2014-05-26">
+	- Исправлено отображение трафика в некоторых случаях.
+	</change>
 	<change major_version="3.0" version="115" date="2014-04-11">
 	- Исправлена ошибка в получении трафика, который прикидывается минутами в яндекс виджете.
 	</change>

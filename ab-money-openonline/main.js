@@ -34,10 +34,12 @@ function main() {
 		'__RequestVerificationToken': getToken(html),
 		UserName: prefs.login,
 		Password: prefs.password,
+		UserNameFromHidden: prefs.login,
+		PasswordFromHidden: prefs.password,
 		captcha: '',
 		stat: '8095'
 	}, addHeaders({Referer: baseurl + 'logon'}));
-
+	
 	if (!/exit_link|logoff/i.test(html)) {
 		var error = sumParam(html, null, null, /"error"[^>]*>([^<]+)/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
 		if (error && /Неверный логин или пароль/i.test(error))

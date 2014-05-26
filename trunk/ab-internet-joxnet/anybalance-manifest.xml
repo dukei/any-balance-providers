@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-joxnet</id>
+	<api flags="no_browser"/>
+	<name>JOxNET</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе интернет-провайдера JOxNET http://joxnet.ru/</p>
+	<p>Информация берется из личного кабинета http://billing.joxnet.ru:8080/bgbilling/webexecuter</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="abon" name="Ежемесячная абонплата" units=" р"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

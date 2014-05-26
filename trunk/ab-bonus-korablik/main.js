@@ -26,6 +26,9 @@ function main() {
 	}));
 	
 	if(!/1/.test(html)) {
+		if(/0/.test(html))
+			throw new AnyBalance.Error('Неверный адрес или пароль!');
+		
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	html = AnyBalance.requestGet(baseurl + 'bk/check_user', addHeaders({

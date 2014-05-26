@@ -36,8 +36,8 @@ function main() {
 	getParam(html, result, 'balance', />на карті([^>]*>){5}/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'bonus', />на карті([^>]*>){3}/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, '__tariff', /"username"([^>]*>){3}/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(prefs.login, result, 'cardnum');
 	
-	// getParam(html, result, 'cardnum', /(?:Номер карты|Номер картки):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
 	// getParam(html, result, 'level', /(?:Текущий уровень|Поточний рівень):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 	AnyBalance.setResult(result);
 }

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="10">ab-money-homecredit</id>
+	<id version="11">ab-money-homecredit</id>
 	<api flags="no_browser"/>
 	<name>Хоум Кредит</name>
 	<description html="true"><![CDATA[
@@ -39,8 +39,9 @@
 		<counter id="status" name="Статус" type="text"/>
 		<counter id="till" name="Срок действия" type="time" format="dd/MM/yyyy"/>
 		<counter id="rate" name="Процентная ставка" units="%"/>
-		<counter id="all" name="Сводка" type="text"/>
+		<!-- <counter id="all" name="Сводка" type="text"/> -->
 		<counter id="accnum" name="Номер счета" type="text"/>
+		<counter id="card_num" name="Номер карты" type="text"/>
 		<counter id="accname" name="Название" type="text"/>
 		<counter id="limit" name="Кредитный лимит"/>
 		<counter id="own" name="Собственные средства" units=" {@currency}"/>

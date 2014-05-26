@@ -22,6 +22,19 @@
         dialogMessage="Введите пароль, используемый для входа в Интернет-банк"
         inputType="textPassword">
     </EditTextPreference>
+    <EditTextPreference
+        title="Номер счета" 
+        positiveButtonText="ОК" 
+        summary="|Автоматически|{@s}" 
+        dialogTitle="Номер счета" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите последние от 4х цифр счета по которому хотите получать данные, либо оставьте поле пустым, чтобы получить данные по первому счету."
+        key="cardnum"
+        inputType="number">
+    </EditTextPreference>
+
+
+<!-- 	
     <ListPreference 
         key="type" 
         title="Продукт"
@@ -29,7 +42,7 @@
         entries="Депозит|Карта|Кредит"
         entryValues="dep|card|crd"
 		defaultValue="dep">
-    </ListPreference>
+    </ListPreference>	
     <EditTextPreference
         title="ID продукта" 
         positiveButtonText="ОК" 
@@ -39,5 +52,5 @@
         dialogMessage="В зависимости от настройки Что смотреть, введите сюда ID депозита или кредита или последние 4 цифры карты. Если оставить поле пустым, то будет показана информация по первому продукту. ID депозитов и кредитов можно узнать из счетчика Сводка."
         key="contract"
         inputType="number">
-    </EditTextPreference>
+    </EditTextPreference> -->
 </PreferenceScreen>

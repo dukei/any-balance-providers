@@ -11,36 +11,70 @@ var g_headers = {
 	'Origin':'https://issa.damavik.by',
 };
 
+// Сайт требует разлогиниваться безопасно, чтобы входить в аккаунт чаще чем раз в 5 минут
+function logOutSafe(baseurl) {
+	AnyBalance.trace('Выходим из личного кабинета...');
+	return AnyBalance.requestPost(baseurl, {'action__n18':'logoff'}, addHeaders({Referer: baseurl})); 
+}
+
 function main(){
     var prefs = AnyBalance.getPreferences();
+	
+	checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(prefs.password, 'Введите пароль!');
+	
     var baseurl = 'https://issa.damavik.by/';
     AnyBalance.setDefaultCharset('utf-8'); 
 	
     var html = AnyBalance.requestGet(baseurl, g_headers);
 	
-	html = AnyBalance.requestPost(baseurl, {
-		form_action_true:'https://issa.damavik.by/about',
-        login__n18:prefs.login,
-        password__n18:prefs.password,
-        action__n18:'login'
-    }, addHeaders({Referer: baseurl})); 
-	
-    if(!/Информация о лицевом счете/i.test(html)){
-        throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-    }
-	
-    var result = {success: true};
-    getParam(html, result, 'balance', /Состояние счета[^>]*value="([^"]*)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'fio', /Добро пожаловать,\s*<[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'acc', /Номер лицевого счета[^>]*value="([^"]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	
-	var details = getParam(html, null, null, />Тарифный план<(?:[^>]*>){20}<a href="\/([^"]+)/i);
-	if(details && isAvailable(['trafic', 'trafic_total'])) {
-		html = AnyBalance.requestGet(baseurl + details, g_headers);
+	try {
+		html = AnyBalance.requestPost(baseurl, {
+			form_action_true:'https://issa.damavik.by/about',
+			login__n18:prefs.login,
+			password__n18:prefs.password,
+			action__n18:'login'
+		}, addHeaders({Referer: baseurl}));
 		
-		getParam(html, result, 'trafic_total', /Кол-во трафика в интернет на услуге([^>]*>){3}/i, replaceTagsAndSpaces, parseTraffic);
-		getParam(html, result, 'trafic', /<th>\s*<\/th>\s*<th>([\s\d.]+)<\/th>/i, [replaceTagsAndSpaces, /(.*)/i, '$1 мб'], parseTraffic);
-	}	
+		if (!/Информация о лицевом счете/i.test(html)) {
+			var error = getParam(html, null, null, /<h1>Вход в систему<\/h1>[\s\S]*?class="redmsg mesg"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+			if (error)
+				throw new AnyBalance.Error(error, null, /Введенные данные неверны/i.test(error));
+			
+			AnyBalance.trace(html);
+			throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+		}		
+		
+		var result = {success: true};
+		
+		getParam(html, result, 'balance', /Состояние счета[^>]*value="([^"]*)/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'fio', /Добро пожаловать,\s*<[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+		getParam(html, result, 'acc', /Номер лицевого счета[^>]*value="([^"]*)/i, replaceTagsAndSpaces, html_entity_decode);
+		
+		if(isAvailable(['trafic', 'trafic_total'])) {
+			var hrefs = sumParam(html, null, null, /<a href="\/([^"]+)"[^>]*>статистика/ig);
+			
+			AnyBalance.trace('Найдено ссылок на статистику: ' + hrefs.length);
+			
+			for(var i = 0; i < hrefs.length; i++) {
+				AnyBalance.trace('Получаем данные по трафику... попытка №' + (i+1));
+				
+				html = AnyBalance.requestGet(baseurl + hrefs[i], g_headers);
+				
+				getParam(html, result, 'trafic_total', /Кол-во трафика в интернет на услуге(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseTraffic);
+				getParam(html, result, 'trafic', /<th>\s*<\/th>\s*<th>([\s\d.]+)<\/th>/i, [replaceTagsAndSpaces, /(.*)/i, '$1 мб'], parseTraffic);
+				
+				if(isset(result.trafic_total) || isset(result.trafic)) {
+					AnyBalance.trace('Нашли данные по трафику с попытки №' + (i+1));
+					break;
+				}
+			}
+		}
+	} catch(e) {
+		throw e;
+	} finally {
+		logOutSafe(baseurl);
+	}
 	
     AnyBalance.setResult(result);
 }

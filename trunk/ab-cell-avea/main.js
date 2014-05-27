@@ -102,6 +102,10 @@ function main() {
 					} else if(/\d+\s*(?:dk|Dakika)/i.test(optionName)) {
 						sumParam(curr, result, 'minutes', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 						//getParam(curr, result, 'minutes', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+						
+					} else if(/Havuzdan Kontor Yukleme/i.test(optionName)) {
+						getParam(curr, result, 'bonus', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+						getParam(curr, result, 'bonus_till', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseDate);
 					} else {
 						AnyBalance.trace('Unknown option: ' + optionName + ', contact the developers, please.');
 						AnyBalance.trace(curr);

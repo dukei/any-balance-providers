@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="2.0" version="16" date="2014-05-27">
+	- New counters: Hediye, Hediye süresi
+	</change>
 	<change major_version="2.0" version="15" date="2014-05-26">
 	- Minutes parsing fixed.
 	</change>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2.0" version="15">ab-cell-avea</id>
+	<id major_version="2.0" version="16">ab-cell-avea</id>
 	<api flags="no_browser"/>
 	<name>AVEA</name>
 	<description html="true"><![CDATA[
@@ -29,6 +29,8 @@
 		<counter id="bonus_traf" name="Kalan Hediye İnternet" units=" Mb"/>
 		<counter id="sms" name="Kalan SMS" units=" sms"/>
 		<counter id="bonus_sms" name="Kalan Hediye SMS" units=" sms"/>
+		<counter id="bonus" name="Hediye" units=" TL"/>
+		<counter id="bonus_till" name="Hediye süresi" type="time" format="dd/MM/yyyy"/>
 		<counter id="bill_date" name="Fatura Tarihi" type="time" format="dd/MM/yyyy"/>
 	</counters>
 	<keywords></keywords>

@@ -31,20 +31,20 @@ function main(){
     if(!csrfsign)
         throw new AnyBalance.Error('Не найдена форма входа! Сайт изменен?');
 
-    try{
-    html = AnyBalance.requestPost(baseurl + 'auth/UI/Login', {
-        r:'',
-        IDToken1:prefs.login,
-        IDToken2:prefs.password,
-        IDButton:'login',
-        'csrf.sign':csrfsign,
-        'csrf.ts':csrfts
-    }, addHeaders({Referer: baseurl + 'auth/UI/Login'}));
-    }catch(e){
-	if(prefs.__dbg)
-		html = AnyBalance.requestGet("https://qbank.ru");
-        else
-		throw e;
+    try {
+    	html = AnyBalance.requestPost(baseurl + 'auth/UI/Login', {
+    		r: '',
+    		IDToken1: prefs.login,
+    		IDToken2: prefs.password,
+    		IDButton: 'login',
+    		'csrf.sign': csrfsign,
+    		'csrf.ts': csrfts
+    	}, addHeaders({Referer: baseurl + 'auth/UI/Login'}));
+    } catch (e) {
+    	if (prefs.__dbg)
+			html = AnyBalance.requestGet("https://qbank.ru");
+    	else
+			throw e;
     }
 
     if(!/qbank.ru\/auth\/UI\/Logout/i.test(html)){
@@ -151,13 +151,13 @@ function fetchDep(baseurl, html){
     var prefs = AnyBalance.getPreferences();
     if(prefs.num && !/^\d+$/.test(prefs.num))
         throw new AnyBalance.Error("Введите ID депозита или не вводите ничего, чтобы показать информацию по первому депозиту. ID депозитов можно увидеть в счетчике Сводка.");
-
+	
     var products = getParam(html, null, null, /page.products\s*=\s*(\[.*?\]);/, null, getJson);
     var cards = getParam(html, null, null, /cards:\s*(\{.*\}),/, null, getJson);
 
-    if(!products){
-	AnyBalance.trace(html);
-        throw new AnyBalance.Error("Не удалось найти банковские продукты. Сайт изменен?");
+    if (!products) {
+    	AnyBalance.trace(html);
+    	throw new AnyBalance.Error("Не удалось найти банковские продукты. Сайт изменен?");
     }
 
     var result = {success: true};
@@ -173,31 +173,34 @@ function fetchDep(baseurl, html){
         }
         result.all = all.join('\n');
     }
-
+	
     var product;
-    for(var i=0; i<products.length; ++i){
-        var p = products[i];
-        if(!p.CardId && /Deposit/i.test(p.DetailsUrl) && (!prefs.num || prefs.num == p.ProductId)){
-            product = p;
-            break;
-        }
+    for (var i = 0; i < products.length; ++i) {
+    	var p = products[i];
+    	if (!p.CardId && /Deposit/i.test(p.DetailsUrl) && (!prefs.num || prefs.num == p.ProductId)) {
+    		product = p;
+    		break;
+    	}
     }
-
-    if(!product)
-        throw new AnyBalance.Error(prefs.num ? "Не удалось найти депозит с ID " + prefs.num : "Не удалось найти ни одного депозита");
-
+	
+    if (!product) 
+		throw new AnyBalance.Error(prefs.num ? "Не удалось найти депозит с ID " + prefs.num : "Не удалось найти ни одного депозита");
+	
     getParam(product.CurrencyTitle, result, ['currency', 'balance', 'accamount']);
-
-    var html = AnyBalance.requestGet(baseurl + product.AjaxUrl);
+    
+	html = AnyBalance.requestPost(baseurl + product.AjaxUrl, '', addHeaders({'X-Requested-With': 'XMLHttpRequest'}));
+	
     getParam(html, result, 'accname', /<h2[^>]*>([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, '__tariff', /<h2[^>]*>([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'balance', /<span[^>]+class="sum"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-
-    if(AnyBalance.isAvailable('accnum')){
-        var html = AnyBalance.requestPost(baseurl + product.DetailsUrl, '', g_headers);
-        var json = getJson(html);
-        getParam(json.html, result, 'accnum', /Номер счета:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-        getParam(json.balance, result, 'balance', null, null, parseBalance);
+    
+	if (AnyBalance.isAvailable('accnum')) {
+    	html = AnyBalance.requestPost(baseurl + product.DetailsUrl, '', g_headers);
+    	
+		var json = getJson(html);
+    	
+		getParam(json.html, result, 'accnum', /Номер счета:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    	getParam(json.balance, result, 'balance', null, null, parseBalance);
     }
 
     AnyBalance.setResult(result);

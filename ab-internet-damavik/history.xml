@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="4" date="2014-05-27">
+	- Улучшена обработка ошибок.
+	- Улучшено получение трафика.
+	</change>
 	<change version="3" date="2014-02-20">
 	- Добавлено отображение трафика.
 	</change>

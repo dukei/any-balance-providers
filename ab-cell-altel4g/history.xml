@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-<!--    <change version="1">
-      - Начальная версия провайдера
-    </change> -->
+	<change major_version="2.0" version="2" date="2014-05-27">
+	- Поддержка изменений на сайте.
+	- Добавлены счетчики: Остаток минут, Остаток смс, Израсходовано трафика.
+	</change>
 </history>

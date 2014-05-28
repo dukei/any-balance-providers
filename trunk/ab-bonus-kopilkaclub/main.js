@@ -12,34 +12,36 @@ var g_headers = {
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-    var baseurl = 'http://www.kopilkaclub.ru/';
+	
+	checkEmpty(/^\d{10}$/.test(prefs.login), 'Введите номер телефона без +7, 10 цифр!');
+	checkEmpty(prefs.password, 'Введите пароль!');
+	
+    var baseurl = 'https://kopilkaclub.ru/';
     AnyBalance.setDefaultCharset('utf-8'); 
 
-	var html = AnyBalance.requestGet(baseurl + 'FullAutorize.aspx');
-    var params = createFormParams(html);
-
-	if(AnyBalance.getLevel() >= 7){
-		AnyBalance.trace('Пытаемся ввести капчу');
-		var captcha = AnyBalance.requestGet(baseurl+ 'CodeHandler.ashx');
-        params.ctl00$ContentPlaceHolder1$FullAutorize2$TextBox1 = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
-        AnyBalance.trace('Капча получена: ' + params.ctl00$ContentPlaceHolder1$FullAutorize2$TextBox1);
-	}
-	else
-		throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
-
-	params.ctl00$ContentPlaceHolder1$FullAutorize2$Login_n = prefs.login;
-	params.ctl00$ContentPlaceHolder1$FullAutorize2$Pass_n = prefs.password;
-
-	html = AnyBalance.requestPost(baseurl + 'FullAutorize.aspx', params);	
+	var html = AnyBalance.requestPost(baseurl + 'account/login', {
+		card_no:'+7' + prefs.login,
+		pin:prefs.password,
+		api:1
+	}, addHeaders({'X-Requested-With':'XMLHttpRequest'}));
 	
-    if(!/Входящие сообщения/i.test(html)){
-        var error = getParam(html, null, null, /"ctl00_ContentPlaceHolder1_Label2">([\s\S]*?)<\/span/i, replaceTagsAndSpaces, html_entity_decode);
-        if(error)
-            throw new AnyBalance.Error(error);
-        throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-    }
+	var json = getJson(html);
+	var message = json.message;
+	
+	if (!/Успешная авторизация/i.test(message)) {
+		var error = getParam(message, null, null, null, replaceTagsAndSpaces);
+		if (error)
+			throw new AnyBalance.Error(error, null, /Неверно введен номер телефона или пароль/i.test(error));
+		
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+	}
+	
+	html = AnyBalance.requestGet(baseurl, g_headers);
+	
     var result = {success: true};
-    getParam(html, result, 'balance', /Сумма доступных(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	
+    getParam(html, result, 'balance', /"balance"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
 
     AnyBalance.setResult(result);
 }

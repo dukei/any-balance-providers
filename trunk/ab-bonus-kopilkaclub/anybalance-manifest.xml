@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
-	<api flags="no_browser|captcha" />
-	<id version="1">ab-bonus-kopilkaclub</id>
+	<api flags="no_browser" />
+	<id version="2">ab-bonus-kopilkaclub</id>
 	<name>Карта Копилка</name>
-	<description>
-	Получает данные по баллам на сайте http://www.kopilkaclub.ru/ этот провайдер требует версию AnyBalance API >= 7, с поддержкой капчи.
-	</description>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию по баллам на сайте http://www.kopilkaclub.ru/</p>
+	]]></description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>

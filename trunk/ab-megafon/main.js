@@ -588,6 +588,12 @@ function getInternetInfo(filial, result, internet_totals_was){
 	.replace(/%PASSWORD%/g, encodeURIComponent(prefs.password)));
 
     var total = getParam(xml, null, null, /<ALL_VOLUME>([\s\S]*?)<\/ALL_VOLUME>/i, replaceTagsAndSpaces, parseTrafficMyMb);
+	// Фиксим для некоторых тарифов, они ввели еще одни данные по пакетам, и они отличаются от ALL_VOLUME
+	var totalGiven = getParam(xml, null, null, /<GIVE_VOLUME>([\s\S]*?)<\/GIVE_VOLUME>/i, replaceTagsAndSpaces, parseTrafficMyMb) || 0;
+	if(totalGiven >= total) {
+		AnyBalance.trace('Пытаемся пофиксить трафик, измененили ' + total + ' на ' + totalGiven);
+		total = totalGiven;
+	}
     if(isset(total)){
         var need_traffic = !internet_totals_was[total] && internet_totals_was.total != total;
         
@@ -598,7 +604,7 @@ function getInternetInfo(filial, result, internet_totals_was){
         if(need_traffic){
             sumParam(xml, result, 'internet_cur', /<CUR_VOLUME>([\s\S]*?)<\/CUR_VOLUME>/i, replaceTagsAndSpaces, parseTrafficMyMb, aggregate_sum);
             sumParam(xml, result, 'internet_left', /<LOST_VOLUME>([\s\S]*?)<\/LOST_VOLUME>/i, replaceTagsAndSpaces, parseTrafficMyMb, aggregate_sum);
-            sumParam(xml, result, 'internet_total', /<ALL_VOLUME>([\s\S]*?)<\/ALL_VOLUME>/i, replaceTagsAndSpaces, parseTrafficMyMb, aggregate_sum);
+            sumParam(total + 'мб', result, 'internet_total', null, replaceTagsAndSpaces, parseTrafficMyMb, aggregate_sum);
         }
     }else{
         var error = getParam(xml, null, null, /<ERROR>([\s\S]*?)<\/ERROR>/i, replaceTagsAndSpaces, html_entity_decode);

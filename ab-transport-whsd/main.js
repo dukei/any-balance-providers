@@ -46,13 +46,13 @@ function main(){
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'acc', /Договор №[\s\S]*?left">([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'status', /Статус[\s\S]*?left">([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'bsk', /Количество БСК[\s\S]*?left">([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'balance', /Баланс Вашего лицевого счета[\s\S]*?left">([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'thismonthtravel', /За текущий месяц совершено поездок[\s\S]*?left">([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'thismonthtravelpay', /Общая стоимость поездок, совершенных в[\s\S]*?left">([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'lasttraveldate', /Последняя совершенная поездка[\s\S]*?left">([\s\S]*?)<\//i, replaceTagsAndSpaces, parseDate);
+	getParam(html, result, 'acc', /Договор №(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'status', /Статус(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'bsk', /Количество (?:Транспондеров\/ )?БСК(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance', /Баланс Вашего лицевого счета(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'thismonthtravel', /За текущий месяц совершено поездок(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'thismonthtravelpay', /Общая стоимость поездок, совершенных в(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'lasttraveldate', /Последняя совершенная поездка(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseDate);
 	
     AnyBalance.setResult(result);
 }

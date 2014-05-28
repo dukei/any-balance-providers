@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-municipal-zss</id>
+	<api flags="no_browser"/>
+	<name>Запорожсвязьсервис</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию об услагуах в Запорожсвязьсервис http://zss.zp.ua</p>
+	<p>Информация берется из личного кабинета https://opl.zss.zp.ua/cgi-bin/cps.cgi</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Если у вас нет доступа в Личный кабинет, получите его на странице https://login.mts.ru/amserver/password</p>
+	]]></instruction>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Долг/переплата"/>
+		<counter id="nachisleno" name="Начислено"/>
+		<counter id="oplacheno" name="Оплачено"/>
+		<counter id="koplate" name="Сумма к оплате"/>
+		<counter id="name" name="Услуга" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>municipal</type>
+	<country>ua</country>
+</provider>

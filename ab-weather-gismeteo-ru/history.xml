@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change major_version="2.2" version="18" date="2014-05-29">
+    - Исправлена ошибка.
+    </change>
     <change major_version="2.2" version="17" date="2013-12-31">
     - Правильное получение текущего и ближайшего прогнозов
     </change>

@@ -138,8 +138,8 @@ function mainNew () {
 	
     var result = {success: true};
 	
-    getParam (html, result, 'balance', /<option[^>]+id="person-accounts-\w+"[^>]*selected[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-	getParam (html, result, ['currency', 'balance'], /<option[^>]+id="person-accounts-\w+"[^>]*selected[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseCurrencyMy);
+    getParam (html, result, 'balance', /"account_current"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	getParam (html, result, ['currency', 'balance'], /"account_current"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, function (str) {return parseCurrency(str.toLowerCase());});
 	
     if(AnyBalance.isAvailable('bills')){
         html = AnyBalance.requestGet(baseurl + 'user/order/main.action?type=1');

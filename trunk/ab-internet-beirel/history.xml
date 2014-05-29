@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-    <change major_version="1.0" version="2" date="2013-05-24">Обновлен логотип компании</change> 
-    <change major_version="1.0" version="1" date="2013-05-23">Первая версия. Умеет отображать: ФИО, Лицевой счет, баланс счета, тариф и блокировку.</change> 
+    <change major_version="1.0" version="3" date="2014-05-29">
+	- Исправлено отображение баланса.
+	</change>
+    <change major_version="1.0" version="2" date="2013-05-24">
+	- Обновлен логотип компании
+	</change>
+    <change major_version="1.0" version="1" date="2013-05-23">
+	- Первая версия. Умеет отображать: ФИО, Лицевой счет, баланс счета, тариф и блокировку.
+	</change> 
 </history>

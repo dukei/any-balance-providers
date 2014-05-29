@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2.2" version="14">ab-money-qiwi</id>
+	<id major_version="2.2" version="15">ab-money-qiwi</id>
 	<api flags="no_browser"/>
 	<name>QIWI Кошелек</name>
 	<description html="true"><![CDATA[
@@ -17,7 +17,7 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units="{@currency}"/>
+		<counter id="balance" name="Баланс" units=" {@currency}"/>
 		<counter id="qvc_card" name="Номер карты QVC" type="text"/>
 		<counter id="qvc_exp" name="Срок действия QVC" type="time" format="dd/MM/yyyy"/>
 		<counter id="qvc_last" name="Последняя транзакция по QVC" type="text"/>

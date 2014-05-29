@@ -3,7 +3,7 @@ The uncompressed full source code of this library is here: https://code.google.c
 */
 ;
 function getParam(f,k,b,g,c,a){if(!f){AnyBalance.trace("html is undefined!\n"+new Error().stack);
-return""
+return
 }if(!isAvailable(b)){AnyBalance.trace(b+" is disabled!");
 return
 }var h=isArray(g)?g:[g];

@@ -1,20 +1,71 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Получает баланс и информацию о тарифном плане для дагестанского интернет-провайдера Эрлайн.
-
-Сайт оператора: http://dream-net.ru/
-Личный кабинет: https://billing.dream-net.ru/cgi-bin/utm5/aaa5
 */
 
-function parseTrafficGb(str){
-  var val = parseBalance(str);
-  if(isset(val))
-      return Math.round(val/1024*100)/100;
+function parseTrafficGb(str) {
+	var val = parseBalance(str);
+	if (isset(val)) 
+		return Math.round(val / 1024 * 100) / 100;
 }
 
-function main(){
-    var prefs = AnyBalance.getPreferences();
+function main() {
+	var prefs = AnyBalance.getPreferences();
+	
+	checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(prefs.password, 'Введите пароль!');
+	
+	if (prefs.type == 'new') 
+		doNew(prefs);
+	else 
+		doOld(prefs);
+}
+
+function doNew(prefs) {
+    AnyBalance.setDefaultCharset('UTF-8');
+	
+    var baseurl = "http://lk.iflat.ru/";
+	
+	html = AnyBalance.requestGet(baseurl + 'login');
+
+	function getToken(html) {
+		var token = getParam(html, null, null, /"authenticity_token"[^>]*value="([^"]+)"/i);
+		checkEmpty(token, 'Не удалось найти токен авторизации, сайт изменен?', true);
+		return token;
+	}	
+	
+    html = AnyBalance.requestPost(baseurl + 'login', {
+		'utf8':'✓',
+		'authenticity_token':getToken(html),
+		'user[login]':prefs.login,
+		'user[password]':prefs.password,
+		'commit':'Войти'
+    });
+	
+	var user = getParam(html, null, null, /HupoApp\(({[\s\S]*?), \{logLevel: "info"\}\);/i);
+	var userJson = getJsonEval(user);
+	
+	if (!/new HupoApp/i.test(html)) {
+		var error = getParam(html, null, null, /"error_container"[^>]*>([^<]+)<\//i, replaceTagsAndSpaces, html_entity_decode);
+		if (error)
+			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+		
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+	}
+	
+	var data = userJson.data.personal_accounts[0];
+	checkEmpty(data, 'Не удалось найти пользователя, сайт изменен?', true);
+	
+    var result = {success: true};
+	
+    getParam(data.n_sum_bal+'', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
+	getParam(data.vc_account+'', result, 'licschet', null, replaceTagsAndSpaces, html_entity_decode);
+    getParam(userJson.data.servs[0].vc_name+'', result, '__tariff', null, replaceTagsAndSpaces);
+	
+    AnyBalance.setResult(result);	
+}
+
+function doOld(prefs) {
     AnyBalance.setDefaultCharset('UTF-8');
 
     var baseurl = "https://billing.dream-net.ru/cgi-bin/utm5/";
@@ -54,15 +105,6 @@ function main(){
        getParam(html, result, 'trafficIn', /Входящий[\s\S]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceFloat, parseTrafficGb);
        getParam(html, result, 'trafficOut', /Исходящий[\s\S]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceFloat, parseTrafficGb);
     }
-    
-    AnyBalance.setResult(result);
+	
+	AnyBalance.setResult(result);	
 }
-
-function html_entity_decode(str)
-{
-    //jd-tech.net
-    var tarea=document.createElement('textarea');
-    tarea.innerHTML = str;
-    return tarea.value;
-}
-

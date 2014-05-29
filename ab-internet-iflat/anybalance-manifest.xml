@@ -1,33 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-iflat</id>
-  <name>iFlat (Москва)</name>
-  <description>
-    Получает баланс и информацию о тарифном плане для московского интернет-провайдера iFlat (http://www.iflat.ru) и для сети DreamLine (http://www.dream-net.ru).
-
-    Информация берется из личного кабинета https://billing.dream-net.ru/cgi-bin/utm5/aaa5.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="licschet" name="Лицевой счет" type="text"/>
-    <counter id="credit" name="Кредит" units="р"/>
-    <counter id="trafficIn" name="Вх.трафик" units="Gb"/>
-    <counter id="trafficOut" name="Исх.трафик" units="Gb"/>
-  </counters>
-  <keywords>
-    интернет
-  </keywords>
-  <type>
-    internet
-  </type>
-  <country>
-    ru
-  </country>
+	<id version="2">ab-internet-iflat</id>
+	<api flags="no_browser"/>
+	<name>iFlat (Москва)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе и информацию о тарифном плане для московского интернет-провайдера iFlat (http://www.iflat.ru) и для сети DreamLine (http://www.dream-net.ru).</p>
+	<p>Информация берется из личного кабинета https://billing.dream-net.ru/cgi-bin/utm5/aaa5. и http://lk.iflat.ru/</p>
+	]]></description>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="licschet" name="Лицевой счет" type="text"/>
+		<counter id="credit" name="Кредит" units=" р"/>
+		<counter id="trafficIn" name="Вх.трафик" units=" Gb"/>
+		<counter id="trafficOut" name="Исх.трафик" units=" Gb"/>
+	</counters>
+	<keywords>интернет</keywords>
+	<type>internet</type>
+	<country>ru</country>
 </provider>

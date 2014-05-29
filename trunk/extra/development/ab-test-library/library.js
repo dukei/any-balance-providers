@@ -51,7 +51,7 @@ changelog:
 function getParam(html, result, param, regexp, replaces, parser) {
 	if(!html) {
 		AnyBalance.trace('html is undefined!\n' + new Error().stack);
-		return '';
+		return;
 	}
 	if (!isAvailable(param)) {
 		AnyBalance.trace(param + ' is disabled!');

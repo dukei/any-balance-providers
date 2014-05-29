@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="74" date="2014-05-29">
+	- Исправлено отображение валюты в некоторых случаях.
+	</change>
 	<change version="73" date="2014-05-28">
 	- Улучшено получение трафика на предоплатных тарифах.
 	</change>

@@ -311,9 +311,9 @@ function fetchB2B(baseurl, html) {
 		
     	getParam(html, result, 'agreement', /Договор №([\s\d]+)/i, replaceTagsAndSpaces);
     	getParam(html, result, 'balance', /class="balance"[^>]*>([\s\S]*?)<\/div>/i, [replaceTagsAndSpaces, /Сумма неоплаченных счетов[^\d]+/i, '-'], parseBalance);
-    	getParam(html, result, ['currency', 'balance'], /class="balance"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseCurrency);
-    }	
-	// Получим страницу с тарифом и опциями
+    	getParam(html, result, ['currency', 'balance'], /class="balance"[^>]*>([\s\S]*?)<\/div>/i, [replaceTagsAndSpaces, /все счета оплачены/, '', /[.,]/g, ''], parseCurrency);
+	}
+	//Получим страницу с тарифом и опциями
     html = AnyBalance.requestGet(baseurl + 'faces/info/abonents/catalog.html', g_headers);
 	
     var number = prefs.phone || '\\d{4}';

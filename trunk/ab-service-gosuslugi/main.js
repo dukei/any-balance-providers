@@ -68,7 +68,8 @@ function main() {
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'fio', /title="Личный кабинет"(?:[^>]*>){3}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, '__tariff', /title="Личный кабинет"(?:[^>]*>){3}([^<]+)</i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(result.__tariff, result, 'fio');
 	
 	// Глючит, почему-то всегда 5 показывает
 	if(isAvailable('mails')) {

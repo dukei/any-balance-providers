@@ -19,4 +19,12 @@
         dialogMessage="Введите пароль, используемый для входа в личный кабинет."
         inputType="textPassword">
     </EditTextPreference>
+	<ListPreference
+		key="type"
+		title="Какой кабинет использовать"
+		summary="||{@s}"
+		entries="Старый (billing.dream-net.ru)|Новый (lk.iflat.ru)"
+		entryValues="old|new"
+		defaultValue="old">
+	</ListPreference>
 </PreferenceScreen>

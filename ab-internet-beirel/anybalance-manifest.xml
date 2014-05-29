@@ -1,39 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="2">ab-internet-beirel</id>
-  <name>Бэйрэль Телеком (Пушкино)</name>
-  <description>
-    Отображает следующую информацию для провайдера Бэйрэль Телеком (http://www.beirel.ru/):
-    * Баланс лицевого счета
-    * Номер лицевого счета
-    * ФИО абонента
-    * Тарифный план
-    * Наличие блокировки интернета
-
-    Для работы плагина необходимо знать логин/пароль от личного кабинета, который указан на последней странице договора.
-  </description>
-  <author>Roman Terekhov &lt;roman@terekhov.su&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс лицевого счета" units="р"/>
-    <counter id="clientname" name="ФИО" type="text"/>
-    <counter id="accuntid" name="Лицевой счет" type="text"/>
-    <counter id="block" name="Блокировка" type="text"/>
-    <counter id="__tariff" name="Тарифный план" type="text"/>
-  </counters>
-  <keywords>
-    beirel
-  </keywords>
-  <type>
-    internet
-  </type>
-  <country>
-    ru
-  </country>
+	<api flags="no_browser"/>
+	<id major_version="1.0" version="3">ab-internet-beirel</id>
+	<name>Бэйрэль Телеком (Пушкино)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Бэйрэль Телеком http://www.beirel.ru</p>
+	<p>Информация берется из личного кабинета https://lk.beirel.ru/login/</p>
+	]]></description>
+	<author>Roman Terekhov &lt;roman@terekhov.su&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс лицевого счета" units=" р"/>
+		<counter id="clientname" name="ФИО" type="text"/>
+		<counter id="accuntid" name="Лицевой счет" type="text"/>
+		<counter id="block" name="Блокировка" type="text"/>
+		<counter id="__tariff" name="Тарифный план" type="text"/>
+	</counters>
+	<keywords>beirel</keywords>
+	<type>internet</type>
+	<country>ru</country>
 </provider>

@@ -19,7 +19,7 @@ function main () {
 	var baseurl = 'http://www.gismeteo.' + prefs.domen + '/';
 	// Если не числа, значит надо сделать доп запрос для поиска индекса города
 	if(!/^\d+$/i.test(prefs.city)) {
-		html = AnyBalance.requestGet (baseurl + 'ajax/city_search/?searchQuery=x' + prefs.city);
+		html = AnyBalance.requestGet (baseurl + 'ajax/city_search/?searchQuery=x' + encodeURIComponent(prefs.city));
 		
 		var id = getParam(html, null, null, /['"]*(\d+)/i, [/\D/g, '']);
 		AnyBalance.trace('Нашли ID города ' + prefs.city + ': ' + id);

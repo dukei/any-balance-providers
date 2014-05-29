@@ -648,7 +648,7 @@ function fetchPre(baseurl, html) {
 }
 
 function isAvailableBonuses() {
-	return AnyBalance.isAvailable('sms_left', 'mms_left', 'rub_bonus', 'rub_opros', 'min_local', 'min_bi', 'traffic_left', 'traffic_used', 'traffic_total');
+	return AnyBalance.isAvailable('sms_left', 'mms_left', 'rub_bonus', 'rub_opros', 'min_local', 'min_bi', 'traffic_left', 'traffic_used', 'traffic_total',	'min_left_1', 'min_left_2');
 }
 
 function getBonuses(xhtml, result) {
@@ -672,8 +672,12 @@ function getBonuses(xhtml, result) {
 				// Для опции Хайвей все отличается..
 				// В билайне опечатались, первая буква иногда из русского алфавита, иногда из английского :)
 				if (/(?:x|х)айвей|Интернет-трафика по тарифу|Мобильного интернета/i.test(name)) {
-					sumParam(services[i], result, 'traffic_left', /<div[^>]+class="column2[^"]*"([^>]*>){6}/i, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
-					sumParam(services[i], result, 'traffic_total', /<div[^>]+class="column2[^"]*"(?:[^>]*>){5}[^<]*из([\s\d,]*ГБ)/i, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
+					AnyBalance.trace('Пробуем разобрать новый трафик...');
+					AnyBalance.trace('services[i] = ' + services[i]);
+					AnyBalance.trace('values = ' + values);
+					
+					sumParam(values, result, ['traffic_left', 'traffic_used'], /^([^<]*?(?:G|Г|M|М)(?:B|Б))/i, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
+					sumParam(values, result, ['traffic_total', 'traffic_used'], /из([^<]*?(?:G|Г|M|М)(?:B|Б))/i, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
 					if(isset(result.traffic_left) && isset(result.traffic_total)) {
 						sumParam(result.traffic_total - result.traffic_left, result, 'traffic_used', null, null, null, aggregate_sum);
 					}

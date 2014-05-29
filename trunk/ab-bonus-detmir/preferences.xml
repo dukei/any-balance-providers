@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
     <EditTextPreference 
+		obligatory="true"
         title="Номер карты" 
         positiveButtonText="ОК" 
         summary="||{@s}" 
         dialogTitle="Номер карты" 
         negativeButtonText="Отмена" 
         dialogMessage="Введите номер карты, без пробелов: 8073104156732707."
+		inputType="number"
         key="login">
     </EditTextPreference>
 </PreferenceScreen>

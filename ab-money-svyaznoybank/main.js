@@ -1,4 +1,4 @@
-﻿﻿/**
+ ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 
 Получает текущий остаток и другие параметры карт Связного Банка через интернет банк.
@@ -87,7 +87,7 @@ function fetchCard(baseurl, html){
     if(prefs.num && !/^\d{4}$/.test(prefs.num))
         throw new AnyBalance.Error("Введите 4 последних цифры номера карты или не вводите ничего, чтобы показать информацию по первой карте");
 
-    var products = getParam(html, null, null, /page.products\s*=\s*(\[.*?\]);/, null, getJson);
+    var products = getParam(html, null, null, /products:\s*(\[\{.*?\}\]),/, null, getJson);
     var cards = getParam(html, null, null, /cards:\s*(\{.*\}),/, null, getJson);
 
     if(!products){
@@ -152,7 +152,7 @@ function fetchDep(baseurl, html){
     if(prefs.num && !/^\d+$/.test(prefs.num))
         throw new AnyBalance.Error("Введите ID депозита или не вводите ничего, чтобы показать информацию по первому депозиту. ID депозитов можно увидеть в счетчике Сводка.");
 	
-    var products = getParam(html, null, null, /page.products\s*=\s*(\[.*?\]);/, null, getJson);
+    var products = getParam(html, null, null, /products:\s*(\[\{.*?\}\]),/, null, getJson);
     var cards = getParam(html, null, null, /cards:\s*(\{.*\}),/, null, getJson);
 
     if (!products) {

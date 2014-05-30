@@ -2,7 +2,9 @@
 The uncompressed full source code of this library is here: https://code.google.com/p/any-balance-providers/source/browse/trunk/extra/development/ab-test-library/library.js
 */
 ;
-function getParam(f,k,b,g,c,a){if(!isAvailable(b)){AnyBalance.trace(b+" is disabled!");
+function getParam(f,k,b,g,c,a){if(!f){AnyBalance.trace("html is undefined!\n"+new Error().stack);
+return
+}if(!isAvailable(b)){AnyBalance.trace(b+" is disabled!");
 return
 }var h=isArray(g)?g:[g];
 for(var d=0;

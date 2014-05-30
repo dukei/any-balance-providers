@@ -95,7 +95,7 @@ function main(){
 	else {
 		AnyBalance.trace('Входим через сайт...');
 		var html = AnyBalance.requestGet(baseurl._ + '/authentication/', g_headers);
-		var api = getParam(html, null, null, /TCS\.Auth\.Cfg\.authServiceURL\s*=\s*"[^"]*?(\/api-[^"]*?\/)session\/"/, replaceSlashes);
+		var api = getParam(html, null, null, /TCS\.Auth\.Cfg\.authServiceURL\s*=\s*"[^"]*?(\/api-?[^"]*?\/)session\/"/, replaceSlashes);
 		if(!api)
 			throw new AnyBalance.Error('Не удаётся найти адрес API. Сайт изменен?');
 		

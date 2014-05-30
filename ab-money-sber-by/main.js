@@ -19,7 +19,8 @@ var g_currencyCodes = {
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-    var baseurl = 'https://ibank.bpsb.by/v1/cgi/bsi.dll?';
+	
+    var baseurl = 'https://ibank.bps-sberbank.by/v1/cgi/bsi.dll?';
     
     var html = AnyBalance.requestGet(baseurl + 'T=RT_2Auth.BF');
     var mapId = getParam(html, null, null, /<input[^>]*name="MapID"[^>]*value="([^"]*)"/i);

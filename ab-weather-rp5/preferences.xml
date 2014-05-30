@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
     <EditTextPreference
+		obligatory="true"
         key="city"
         title="Код города"
         summary="|Введите код города для отображения погоды|{@s}"

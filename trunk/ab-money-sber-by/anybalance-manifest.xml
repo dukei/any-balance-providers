@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="3">ab-money-sber-by</id>
+	<id version="4">ab-money-sber-by</id>
 	<name>БПС Сбербанк (Беларусь)</name>
 	<description html="true"><![CDATA[
-	<p>Получает текущий остаток карт банка БПС Сбербанк (https://ibank.bpsb.by/), используя интернет-банк https://ibank.bpsb.by/v1/cgi/bsi.dll?T=RT_2Auth.BF</p>
+	<p>Получает текущий остаток карт банка БПС Сбербанк (https://ibank.bpsb.by, http://www.bps-sberbank.by), используя интернет-банк https://ibank.bps-sberbank.by/v1/cgi/bsi.dll?T=RT_2Auth.BF</p>
 	]]></description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>

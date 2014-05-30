@@ -44,5 +44,11 @@ function main() {
 	getParam(html, result, 'inv_mill_invest', /Инвестировано в программу «Mill-invest»:(?:[^>]*>){3}([\s\S]*?)<\/dd/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'bonuses', /Бонусы(?:[^>]*>){3}([\s\S]*?)<\/dd/i, replaceTagsAndSpaces, parseBalance);
 	
+	if(isAvailable('average')) {
+		html = AnyBalance.requestGet(baseurl + 'asset-management/golden-7/', g_headers);
+		
+		getParam(html, result, 'average', /СРЕДНЯЯ ДОХОДНОСТЬ ЗА МЕСЯЦ СОСТАВИЛА:(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	}
+	
 	AnyBalance.setResult(result);
 }

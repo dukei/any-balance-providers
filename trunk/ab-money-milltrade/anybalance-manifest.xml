@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-money-milltrade</id>
+	<id version="2">ab-money-milltrade</id>
 	<api flags="no_browser"/>
 	<name>Mill Trade</name>
 	<description html="true"><![CDATA[
@@ -22,6 +22,7 @@
 		<counter id="inv_goldseven" name="Инвестировано в Золотая 7" units=" {@currency}"/>
 		<counter id="inv_mill_invest" name="Инвестировано в Mill-invest" units=" {@currency}"/>
 		<counter id="bonuses" name="Бонусы" units=" {@currency}"/>
+		<counter id="average" name="Средняя доходность за месяц" units=" %"/>
 		<counter id="currency" name="Валюта" type="text"/>
 	</counters>
 	<keywords></keywords>

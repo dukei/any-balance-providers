@@ -10,15 +10,23 @@ var g_headers = {
 	'User-Agent':'Mozilla/5.0 (BlackBerry; U; BlackBerry 9900; en-US) AppleWebKit/534.11+ (KHTML, like Gecko) Version/7.0.0.187 Mobile Safari/534.11+'
 };
 
+function getToken(html) {
+	return getParam(html, null, null, /name=token[^>]*value=([0-9a-z]+)\s*>/i);
+}
+
 function main(){
     var prefs = AnyBalance.getPreferences();
     var baseurl = 'https://voip.intelnetcom.ru/';
     AnyBalance.setDefaultCharset('utf-8'); 
 	
-	var html = AnyBalance.requestPost(baseurl + 'user/info.php?check=1', {
-        callerid:prefs.login,
-        password:prefs.password
-    }, g_headers); 
+	var html = AnyBalance.requestGet(baseurl + 'user/index.php', g_headers);
+	
+	html = AnyBalance.requestPost(baseurl + 'user/info.php?check=1',{
+		callerid:prefs.login,
+		password:prefs.password,
+		token:getToken(html),
+		submit:'Войти'
+	}, addHeaders({Referer: 'https://voip.intelnetcom.ru/user/index.php'})); 
 	
     if(!/exit\.php/i.test(html)){
         var error = getParam(html, null, null, /<font color=RED>Ошибка[\s\S]*?>([\s\S]*?)</i, replaceTagsAndSpaces, html_entity_decode);

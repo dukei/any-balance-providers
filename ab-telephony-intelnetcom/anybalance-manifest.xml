@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser" />
-	<id version="1">ab-telephony-intelnetcom</id>
+	<id version="2">ab-telephony-intelnetcom</id>
 	<name>IntelNetCom</name>
-	<description>
-		Получает данные для провайдера IP-телефонии IntelNetCom из личного кабинета по адресу https://voip.intelnetcom.ru/user/
-	</description>
+	<description html="true"><![CDATA[
+	<p>Получает данные для провайдера IP-телефонии IntelNetCom из личного кабинета по адресу https://voip.intelnetcom.ru/user</p>
+	]]></description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
@@ -16,7 +15,7 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units="р"/>
+		<counter id="balance" name="Баланс" units=" р"/>
 		<counter id="calls" name="Всего звонков"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="id" name="ID" type="text"/>

@@ -1,37 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-internet-issa-podryad</id>
-  <name>Подряд (Приморский край)</name>
-  <description>
-    Получает баланс для интернет-провайдера Подряд (http://podryad.tv/)
-
-    Информация берется из личного кабинета клиента (http://issa.podryad.tv/webexecuter)
-
-  </description>
-  <author>Alexandra Shalamova &lt;alexandrashalamova@gmail.com&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Входящий остаток на начало месяца" units="р"/>
-    <counter id="coming" name="Приход за месяц (всего)" units="р"/>
-    <counter id="consumption" name="Расход за месяц (всего)" units="р"/>
-    <counter id="working" name="Наработка за месяц (всего)" units="р"/>
-    <!-- <counter id="licenseFee" name="Абонентская плата" units="р"/> -->
-    <counter id="outgoing" name="Исходящий остаток на конец месяца" units="р"/>
-    <counter id="limit" name="Лимит" units="р"/>
-  </counters>
-  <keywords>
-    подряд приморский край podryad tv
-  </keywords>
-  <type>
-    internet
-  </type>
-  <country>
-    ru
-  </country>
+	<id version="3">ab-internet-issa-podryad</id>
+	<api flags="no_browser"/>
+	<name>Подряд (Приморский край)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Подряд (Приморский край) http://podryad.tv</p>
+	<p>Информация берется из личного кабинета http://issa.podryad.tv/webexecuter</p>
+	]]></description>	
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Входящий остаток на начало месяца" units=" р"/>
+		<counter id="coming" name="Приход за месяц (всего)" units=" р"/>
+		<counter id="consumption" name="Расход за месяц (всего)" units=" р"/>
+		<counter id="working" name="Наработка за месяц (всего)" units=" р"/>
+		<!-- <counter id="licenseFee" name="Абонентская плата" units="р"/> -->
+		<counter id="outgoing" name="Исходящий остаток на конец месяца" units=" р"/>
+		<counter id="limit" name="Лимит" units="р"/>
+	</counters>
+	<keywords>подряд приморский край podryad tv</keywords>
+	<type>internet</type>
+	<country>ru</country>
 </provider>

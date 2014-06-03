@@ -30,26 +30,44 @@ function main(){
 	checkEmpty(prefs.login, 'Enter login, please!');
 	checkEmpty(prefs.password, 'Enter password, please!');
 	
-    var baseurl = "https://www.e4me.ae/e4me/etisalat/";
+    var baseurl = "https://onlineservices.etisalat.ae/";
     AnyBalance.setDefaultCharset('utf-8'); 
 	
     var result = {success: true};
 	
     try{
-        var html = AnyBalance.requestPost(baseurl + 'login', {
-            UserName:prefs.login,
-            Password:prefs.password
-        }, addHeaders({Referer: baseurl + 'login'})); 
+		var html = AnyBalance.requestGet(baseurl + 'scp/', g_headers);
+		
+		var form = getParam(html, null, null, /<form id="atg_store_registerLoginForm"[\s\S]*?<\/form>/i);
+		
+		var action = getParam(html, null, null, /action="\/([^"]+)"/i);
+		
+		checkEmpty(form && action, 'Can`t find login form, is the site changed?', true);
+		
+		var params = createFormParams(form, function(params, str, name, value) {
+			if (name == 'atg_store_registerLoginEmailAddress') 
+				return prefs.login;
+			else if (name == 'atg_store_registerLoginPassword')
+				return prefs.password;
+
+			return value;
+		});		
+		
+        html = AnyBalance.requestPost(baseurl + action, params, addHeaders({Referer: baseurl + 'scp/index.jsp'})); 
         
-        if(!/<frame[^>]+src="[^"]*\/etisalat\/accounts"/i.test(html)){
+        if(!/Logout/i.test(html)){
             var errid = getParam(html, null, null, /location\.href='[^']*MSG=([^']*)/i, replaceSlashes);
             if(g_errors[errid])
                 throw new AnyBalance.Error(g_errors[errid]);
+			
+			if(/Change Security Question\/Answer/i.test(html))
+				throw new AnyBalance.Error('You need to change Security Question/Answer in your personal account to allow application to show information from this account. Please visit the selfcare from desktop and follow the instructions.');
+			
             //Если объяснения ошибки не найдено, при том, что на сайт войти не удалось, то, вероятно, произошли изменения на сайте
             throw new AnyBalance.Error('The login attempt has failed. Is the site changed?');
         }
         // Это предоплата
-        html = AnyBalance.requestGet(baseurl + 'accounts?SID=9');
+        html = AnyBalance.requestGet(baseurl + 'scp/myaccount/accountoverview.jsp');
 		// Это пост оплата
 		if(/There is no pre paid account available/i.test(html)) {
 			g_isPrepayed = false;
@@ -57,18 +75,19 @@ function main(){
 			
 			html = AnyBalance.requestGet(baseurl + 'accounts');
 		}
-        
-        var re = new RegExp('<tr(?:[\\s\\S](?!</tr>))*?getAccountDetails\\(\'\\d*' + (prefs.num ? prefs.num : '\\d+') + '\'[\\s\\S]*?</tr>', 'i');
+        // accountSummaryDetails\.jsp\?accountBackendId=\d+1127[\s\S]*?</tr>
+        var re = new RegExp('accountSummaryDetails\\.jsp\\?accountBackendId=\\d+' + (prefs.num ? prefs.num : '\\d+') + '[\\s\\S]*?</tr>', 'i');
         var tr = getParam(html, null, null, re);
         if(!tr)
             throw new AnyBalance.Error(prefs.num ? 'There is no phone number ending by ' + prefs.num : 'You do not have prepaid numbers attached to your account.');
-        
-        getParam(tr, result, 'phone', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-        getParam(tr, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-        getParam(tr, result, 'fio', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-        getParam(tr, result, 'status', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-        getParam(tr, result, 'till', /(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
-        
+		
+		getParam(tr, result, 'balance', /(?:[^>]*>){15}([\s\S]*?)<\/td/i, replaceTagsAndSpaces, parseBalance);
+        getParam(tr, result, 'phone', /(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+        getParam(tr, result, '__tariff', /(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+        getParam(tr, result, 'fio', /(?:[^>]*>){9}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+        getParam(tr, result, 'status', /(?:[^>]*>){14}([\s\S]*?)<\/td/i, replaceTagsAndSpaces, html_entity_decode);
+        //getParam(tr, result, 'till', /(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+        /*
         if(AnyBalance.isAvailable('balance')){
             var id = getParam(tr, null, null, /getAccountDetails\s*\(\s*'([^']*)/i);
 			
@@ -83,8 +102,10 @@ function main(){
 			
 			getParam(html, result, 'balance', [/>\s*Current Amount Due([^>]*>){4}/i, />balance(?:[\s\S]*?<td[^>]*>){5}([\d,.\s]+)/i], replaceTagsAndSpaces, parseBalance);
         }
+		*/
     }finally{
-        AnyBalance.requestGet(baseurl + 'logoff'); //The logoff is obligatory, because etisalat does not allow double login
+		var logout = getParam(html, null, null, /lass="logout" href="\/([^'"]+)/i);
+        AnyBalance.requestGet(baseurl + logout); //The logoff is obligatory, because etisalat does not allow double login
     }
 	
     AnyBalance.setResult(result);

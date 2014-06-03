@@ -56,45 +56,31 @@ function getSID(html) {
 }
 
 function fetchCard(html, baseurl) {
-
 	var prefs = AnyBalance.getPreferences();
 	if (prefs.lastdigits && !/^\d{4}$/.test(prefs.lastdigits)) 
 		throw new AnyBalance.Error("Надо вказати 4 останніх цифри карти або не вказувати нічого");
-
-
+	
 	var result = {success: true};
 	
-
+	getParam(html, result, 'fio', /user-name"([^>]*>){4}/i, replaceTagsAndSpaces);
+	
 	var cardnum = prefs.lastdigits || '\\d{4}';
-                           
-	var regExp = new RegExp('<!--\n*\s*\d{4}.{8}'+ cardnum+'\n*[\s\S]*\n*</div></div>\n*\s*</li>','i');
-	
+	// <div class="owwb-cs-slide-list-item-inner">(?:[^>]*>){15}[\s\d*]{10,}9528(?:[^>]*>){120}
+	var regExp = new RegExp('<div class="owwb-cs-slide-list-item-inner">(?:[^>]*>){15}[\\s\\d*]{10,}' + cardnum + '(?:[^>]*>){120}','i');
 	var root = getParam(html, null, null, regExp);
-AnyBalance.trace(html);
-	if(!root){
-		throw new AnyBalance.Error('Не вдалося знайти ' + (prefs.lastdigits ? 'карту с останніми цифрами ' + prefs.lastdigits : 'ні однієї карти!'));
-	}
+    if (!root) {
+		AnyBalance.trace(html);
+    	throw new AnyBalance.Error('Не вдалося знайти ' + (prefs.lastdigits ? 'карту с останніми цифрами ' + prefs.lastdigits : 'ні однієї карти!'));
+    }
+    getParam(root, result, 'balance', /(?:Доступно:|"amount"[^>]*>)\s*(-?[\d\s.,]+)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(root, result, 'maxlimit', /(?:Кредитний ліміт:)\s*(-?[\d\s.,]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(root, result, 'till', /Дата закінчення дії(?:[^>]*>){4}([\s\S]*?)<\//i, replaceTagsAndSpaces, (prefs.dz == 'mmyy') ? null : getDz);
+    getParam(root, result, 'debt', /Загальна заборгованість(?:[^>]*>){5}([\s\S]*?)<\/div/i, replaceTagsAndSpaces, parseBalance);
+    getParam(root, result, 'rr', /Номер рахунку(?:[^>]*>){4}([\s\S]*?)<\//i, replaceTagsAndSpaces);
+    getParam(root, result, ['currency', 'balance', 'maxlimit', 'debt'], /amount-currency[^>]*>([^<]+)/i, [replaceTagsAndSpaces, /[^a-zа-я]/ig, '']);
+    getParam(root, result, '__tariff', /(\d{4}\*{6,}\d{4})/i);
+	getParam(root, result, 'cardNumber', /(\d{4}\*{6,}\d{4})/i);
 	
-	      getParam(root, result, 'balance', /(?:Доступно:)(?:\s*)(-*\s*\d+\.\d{2})/i, replaceTagsAndSpaces, parseBalance);
-        getParam(root, result, 'maxlimit', /(?:Кредитний ліміт:)(?:\s*)(-*\s*\d+\.\d{2})/i, replaceTagsAndSpaces, parseBalance);
-
-	if (prefs.dz=='mmyy') getParam(root, result, 'till', /(?:Дата закінчення дії)(?:[\s\S]*)((січень|лютий|березень|квітень|травень|червень|липень|серпень|вересень|жовтень|листопад|грудень)(\s\d{4}))/i, replaceTagsAndSpaces);
-        else {
-        var mm=getParam(root, null, null, /(?:Дата закінчення дії)(?:[\s\S]*)(січень|лютий|березень|квітень|травень|червень|липень|серпень|вересень|жовтень|листопад|грудень)(\s\d{4})/i, replaceTagsAndSpaces);
-        var yy=getParam(root, null, null, /(?:Дата закінчення дії)(?:[\s\S]*)((січень|лютий|березень|квітень|травень|червень|липень|серпень|вересень|жовтень|листопад|грудень)(\s\d{4}))/i, replaceTagsAndSpaces); 
-        getDz(mm,yy,result, 'till')   
-             } 
-
-        getParam(root, result, 'debt', /(?:Загальна заборгованість)[\s\S]*\n*\r*\S*(-*\s*\d+\.\d{2})<\/span>&nbsp;грн./i, replaceTagsAndSpaces, parseBalance);
-        getParam(root, result, 'rr', /((2625\d+)(_*)(\d+))/i, replaceTagsAndSpaces);
-
-	getParam(root, result, 'currency', /(?:amount-currency..)(.{3})/i, replaceTagsAndSpaces);
-	getParam(root, result, '__tariff', /(\d{4}\*+\d{4})/i);
-
-  getParam(root, result, 'fio', /(?:<span class="owwb-ws-header-user-name">)(?:[\s\S]*i>)((.*)(?:&nbsp;)(.*)(?:<))/i, replaceTagsAndSpaces);    
-  
-	result.cardNumber = result.__tariff;
-
 	AnyBalance.setResult(result);
 }
 
@@ -102,18 +88,13 @@ function fetchAcc(html) {
 	throw new AnyBalance.Error('Получение данных по счетам еще не поддерживается, свяжитесь с автором провайдера!');
 }
 
-
-function getDz (mm, yy,result, param) {
-
-var mList = ['січень','лютий','березень','квітень','травень','червень','липень','серпень','вересень','жовтень','листопад','грудень'];
-var m,y;
-for(var i=0; i<mList.length; i++) {
- if (mList[i]==mm)m=i+1;
-}
-
-if (m.length=1)m='0'+m;
-y=yy.substring(yy.indexOf(' ')+1)
-value=m+'.'+y;
-result[param] = value;
-	return value;
+function getDz(date) {
+    var months = {'січень': '01','лютий': '02','березень': '03','квітень': '04','травень': '05','червень': '06','липень': '07','серпень': '08','вересень': '09','жовтень': '10','листопад': '11','грудень': '12'};
+	
+	var mm = getParam(date, null, null, null, [replaceTagsAndSpaces, /[\d\s]/g, '']);
+    var yy = getParam(date, null, null, null, [replaceTagsAndSpaces, /\D/g, '']);
+	if(!mm || !yy)
+		return date;
+	
+	return months[mm] + '.' + yy;
 }

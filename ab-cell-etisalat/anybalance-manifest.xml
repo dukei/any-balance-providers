@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-cell-etisalat</id>
+	<id version="4">ab-cell-etisalat</id>
 	<api flags="no_browser"/>
 	<name>Etisalat</name>
 	<description html="true"><![CDATA[

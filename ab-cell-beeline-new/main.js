@@ -655,6 +655,11 @@ function getBonuses(xhtml, result) {
 	var bonuses = sumParam(xhtml, null, null, /<div[^>]+class="item(?:[\s\S](?!$|<div[^>]+class="item))*[\s\S]/ig);
 	
 	AnyBalance.trace("Found " + bonuses.length + ' aggregated bonuses');
+	
+	if(bonuses.length == 0) {
+		AnyBalance.trace('Can`t find bonuses, tying to know why...');
+		AnyBalance.trace(getParam(xhtml, null, null, /loading-failed"[^>]*>([^<]+)/i));
+	}
 	for (var j = 0; j < bonuses.length; ++j) {
 		var bonus = bonuses[j];
 		var bonus_name = ''; //getParam(bonus, null, null, /<span[^>]+class="bonuses-accums-list"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
@@ -671,13 +676,22 @@ function getBonuses(xhtml, result) {
 			if (/Internet|Интернет/i.test(name)) {
 				// Для опции Хайвей все отличается..
 				// В билайне опечатались, первая буква иногда из русского алфавита, иногда из английского :)
-				if (/(?:x|х)айвей|Интернет-трафика по тарифу|Мобильного интернета/i.test(name)) {
+				if (/(?:x|х)айвей|Интернет-трафика по (?:услуге|тарифу)|Мобильного интернета/i.test(name)) {
 					AnyBalance.trace('Пробуем разобрать новый трафик...');
 					AnyBalance.trace('services[i] = ' + services[i]);
 					AnyBalance.trace('values = ' + values);
 					
-					sumParam(values, result, ['traffic_left', 'traffic_used'], /^([^<]*?(?:G|Г|M|М)(?:B|Б))/i, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
-					sumParam(values, result, ['traffic_total', 'traffic_used'], /из([^<]*?(?:G|Г|M|М)(?:B|Б))/i, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
+					var units = getParam(values, null, null, /((?:K|К|G|Г|M|М)?(?:B|Б))/i);
+					if(!units) {
+						AnyBalance.trace('!units...');
+						units = 'mb';
+					}
+					function parseTrafficMy(str) {
+						return parseTraffic(str, units);
+					}
+					
+					sumParam(values, result, ['traffic_left', 'traffic_used'], /([^<]*)из/i, replaceTagsAndSpaces, parseTrafficMy, aggregate_sum);
+					sumParam(values, result, ['traffic_total', 'traffic_used'], /из([^<]*)/i, replaceTagsAndSpaces, parseTrafficMy, aggregate_sum);
 					if(isset(result.traffic_left) && isset(result.traffic_total)) {
 						sumParam(result.traffic_total - result.traffic_left, result, 'traffic_used', null, null, null, aggregate_sum);
 					}

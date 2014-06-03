@@ -66,8 +66,8 @@ function fetchCard(html, baseurl) {
 	
 
 	var cardnum = prefs.lastdigits || '\\d{4}';
-
-	var regExp = new RegExp('<!-- @CARDS -->[\\s\\S]*?'+ cardnum+'\\s*<[\\s\\S]*?<!--/ .owwb-ws-cards-accounts -->','i');
+                           
+	var regExp = new RegExp('<!--\n*\s*\d{4}.{8}'+ cardnum+'\n*[\s\S]*\n*</div></div>\n*\s*</li>','i');
 	
 	var root = getParam(html, null, null, regExp);
 AnyBalance.trace(html);
@@ -75,8 +75,8 @@ AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не вдалося знайти ' + (prefs.lastdigits ? 'карту с останніми цифрами ' + prefs.lastdigits : 'ні однієї карти!'));
 	}
 	
-	      getParam(root, result, 'balance', /(?:Доступно:)(?:\s)(\d+\.\d{2})/i, replaceTagsAndSpaces, parseBalance);
-        getParam(root, result, 'maxlimit', /(?:Кредитний ліміт:)(?:\s)(\d+\.\d{2})/i, replaceTagsAndSpaces, parseBalance);
+	      getParam(root, result, 'balance', /(?:Доступно:)(?:\s*)(-*\s*\d+\.\d{2})/i, replaceTagsAndSpaces, parseBalance);
+        getParam(root, result, 'maxlimit', /(?:Кредитний ліміт:)(?:\s*)(-*\s*\d+\.\d{2})/i, replaceTagsAndSpaces, parseBalance);
 
 	if (prefs.dz=='mmyy') getParam(root, result, 'till', /(?:Дата закінчення дії)(?:[\s\S]*)((січень|лютий|березень|квітень|травень|червень|липень|серпень|вересень|жовтень|листопад|грудень)(\s\d{4}))/i, replaceTagsAndSpaces);
         else {
@@ -85,7 +85,7 @@ AnyBalance.trace(html);
         getDz(mm,yy,result, 'till')   
              } 
 
-        getParam(root, result, 'debt', /(?:Загальна заборгованість)(?:[\s\S]*)(\d+\.\d{2})(?:&nbsp;)/i, replaceTagsAndSpaces, parseBalance);
+        getParam(root, result, 'debt', /(?:Загальна заборгованість)[\s\S]*\n*\r*\S*(-*\s*\d+\.\d{2})<\/span>&nbsp;грн./i, replaceTagsAndSpaces, parseBalance);
         getParam(root, result, 'rr', /((2625\d+)(_*)(\d+))/i, replaceTagsAndSpaces);
 
 	getParam(root, result, 'currency', /(?:amount-currency..)(.{3})/i, replaceTagsAndSpaces);

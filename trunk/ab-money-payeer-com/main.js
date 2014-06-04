@@ -3,12 +3,14 @@
 */
 
 var g_headers = {
-	'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-	'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
-	'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Accept':'application/json, text/javascript, */*; q=0.01',
+	'Accept-Language':'ru,en;q=0.8',
 	'Connection':'keep-alive',
-	'User-Agent':'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+	'Origin': 'https://payeer.com',
+	'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.114 Safari/537.36',
+	'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
 };
+
 function main() {
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'https://payeer.com/';
@@ -16,32 +18,44 @@ function main() {
 	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
-
-	var html = AnyBalance.requestGet(baseurl + 'auth/?backurl=%2Faccount%2F/', g_headers);
 	
-	var params = createFormParams(html, function(params, str, name, value){
-		if(name == 'email')
-			return prefs.login;
-		if(name == 'password')
-			return prefs.password;	
-		return value;
-	});
-	html = AnyBalance.requestPost(baseurl + 'ajax/index.php', params, addHeaders({Referer: baseurl + 'auth/?backurl=%2Faccount%2F'}));
-	html = AnyBalance.requestGet(baseurl + 'account/', g_headers);
+	var html = AnyBalance.requestGet(baseurl, g_headers);
 	
-	if(!/logout=yes/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
-		if(error && /Неверный логин или пароль/i.test(error))
-			throw new AnyBalance.Error(error, null, true);
-		if(error)
-			throw new AnyBalance.Error(error);
+	AnyBalance.setCookie('payeer.com', 'BITRIX_SM_LOGIN', prefs.login);
+	AnyBalance.setCookie('payeer.com', 'BITRIX_SM_SOUND_LOGIN_PLAYED', 'Y');
+	AnyBalance.setCookie('payeer.com', 'BITRIX_SM_SALE_UID', '0');
+	
+	html = AnyBalance.requestPost(baseurl + 'ajax/index.php', {
+		'cmd':'auth_step1',
+		'backurl':'',
+		'CHPM':'64735244deb23331283ecaf460e6664c', // Этот хеш - полная фикция $.md5(String("str"-stT), true)
+		'email':prefs.login,
+		'password':prefs.password,
+		'Login':'Войти'
+	}, addHeaders({Referer: baseurl, 'X-Requested-With':'XMLHttpRequest'}));
+	
+	try {
+		var json = getJson(html);
+		if(json.location)
+			html = AnyBalance.requestGet(baseurl + json.location, g_headers);	
+	} catch(e) {
+	}
+	
+	if (!/logout=yes/i.test(html)) {
+		var error = getParam(html, null, null, /"form_error"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+		if (error)
+			throw new AnyBalance.Error(error, null, /Неверный логин или пароль|Пользователь не найден/i.test(error));
+		
+		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
+	
     var result = {success: true};
-	getParam(html, result, 'acc_num', /Номер счета[^>]*>[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'rub', /<b>RUB[^>]*>[^>]*>[^>]*>[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'usd', /<b>USD[^>]*>[^>]*>[^>]*>[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'eur', /<b>EUR[^>]*>[^>]*>[^>]*>[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	
+	getParam(html, result, 'acc_num', />\s*Номер счета(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'rub', />\s*RUB(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'usd', />\s*USD(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'eur', />\s*EUR(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
 	
     AnyBalance.setResult(result);
 }

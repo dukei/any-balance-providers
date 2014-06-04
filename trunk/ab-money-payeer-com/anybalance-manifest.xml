@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-money-payeer-com</id>
+	<id version="2">ab-money-payeer-com</id>
 	<api flags="no_browser"/>
 	<name>Payeer.com</name>
 	<description html="true"><![CDATA[
@@ -16,9 +16,9 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="rub" name="Рубли" units="p"/>
-		<counter id="usd" name="Доллары США" units="$"/>
-		<counter id="eur" name="Евро" units="€"/>
+		<counter id="rub" name="Рубли" units=" p"/>
+		<counter id="usd" name="Доллары США" units=" $"/>
+		<counter id="eur" name="Евро" units=" €"/>
 		<counter id="acc_num" name="Номер счета" type="text"/>
 	</counters>
 	<keywords>payment платеж</keywords>

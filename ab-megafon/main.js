@@ -765,21 +765,24 @@ function megafonLK(tryOldSG) {
 	if(tryOldSG) {
 		var href = getParam(html, null, null, /href="(https:\/\/moscowsg\.megafon\.ru\/SCC\/SC_BASE_LOGIN\?SESSION_ID\=[^"]+)"/i, replaceTagsAndSpaces, html_entity_decode);
 		// Не у всех доступен новый ЛК, если у юзера он не подключен, та нас редиректит сразу в старый кабинет
-		var sessionid = getParam(html, null, null, /SESSION_ID\="?([^&"]+)/i);
+		var sessionid = getParam(html, null, null, /SESSION_ID=([^&"]+)/i);
 
 		if(href || sessionid) {
 			if(href) {
 				AnyBalance.trace('Нашли ссылку для перехода в старый сервис-гид, получим данные оттуда...');
 				html = AnyBalance.requestGet(href, g_headers);
 				
-				sessionid = getParam(html, null, null, /SESSION_ID\="?([^&"]+)/i);
+				sessionid = getParam(href, null, null, /SESSION_ID=([^&"]+)/i);
 			}
 			
 			if(sessionid && !href) {
 				AnyBalance.trace('На данном номер не поддерживается новый ЛК, нас просто отправили в старый кабинет...');
 			}
 			
-			checkEmpty(sessionid, 'Не удалось найти код сессии!', true);
+			if(!sessionid) {
+				AnyBalance.trace(html);
+				throw new AnyBalance.Error('Не удалось найти код сессии!');
+			}
 			
 		    if(prefs.corporate)
 				megafonServiceGuideCorporate(MEGA_FILIAL_MOSCOW, sessionid);
@@ -819,29 +822,29 @@ function megafonServiceGuide(filial){
 
     var session;
     if(filial == MEGA_FILIAL_MOSCOW) {
-		try{
-			megafonLK(true);
-		} catch (e) {
-			// Если ошибка в логине и пароле, дальше идти нет смысла. Позже: А вдруг у кого-то не установлен пароль в новом кабинете, закидают же?
-			if(e.fatal)
-				throw e;
+		// try{
+			// megafonLK(true);
+		// } catch (e) {
+			// // Если ошибка в логине и пароле, дальше идти нет смысла. Позже: А вдруг у кого-то не установлен пароль в новом кабинете, закидают же?
+			// if(e.fatal)
+				// throw e;
 			
-			AnyBalance.trace('Невозможно зайти в сервис гид, придется получать данные из виджета. Причина: ' + e.message);
-			megafonTrayInfo(filial);
-		}
-		return;
-        // if(prefs.corporate){
-            // session = AnyBalance.requestGet('http://moscow.megafon.ru/ext/sg_gate.phtml?MSISDN=CP_' + prefs.login + '&PASS=' + encodeURIComponent(prefs.password) + '&CHANNEL=WWW');
-        // }else{
-            // //Влад, ну что же ты всё подглядываешь-то??? Впрочем, пользуйся, не жалко :)
-            // session = AnyBalance.requestGet(baseurl + 'SESSION/GET_SESSION?MSISDN=' + ((prefs.corporate ? 'CP_' : '') + prefs.login) + '&PASS=' + encodeURIComponent(prefs.password) + '&CHANNEL=WWW');
-			// var code = AnyBalance.getLastStatusCode();
-			// if(code > 400){
-				// AnyBalance.trace('Невозможно зайти в сервис гид, придется получать данные из виджета');
-				// megafonTrayInfo(filial);
-				// return;
-			// }
-        // }
+			// AnyBalance.trace('Невозможно зайти в сервис гид, придется получать данные из виджета. Причина: ' + e.message);
+			// megafonTrayInfo(filial);
+		// }
+		// return;
+        if(prefs.corporate){
+            session = AnyBalance.requestGet('http://moscow.megafon.ru/ext/sg_gate.phtml?MSISDN=CP_' + prefs.login + '&PASS=' + encodeURIComponent(prefs.password) + '&CHANNEL=WWW');
+        }else{
+            //Влад, ну что же ты всё подглядываешь-то??? Впрочем, пользуйся, не жалко :)
+            session = AnyBalance.requestGet(baseurl + 'SESSION/GET_SESSION?MSISDN=' + ((prefs.corporate ? 'CP_' : '') + prefs.login) + '&PASS=' + encodeURIComponent(prefs.password) + '&CHANNEL=WWW');
+			var code = AnyBalance.getLastStatusCode();
+			if(code > 400){
+				AnyBalance.trace('Невозможно зайти в сервис гид, придется получать данные из виджета');
+				megafonTrayInfo(filial);
+				return;
+			}
+        }
     }else{
 		session = AnyBalance.requestPost(baseurl + 'ps/scc/php/check.php?CHANNEL=WWW', {
             LOGIN: (prefs.corporate ? 'CP_' : '') + prefs.login, 
@@ -959,6 +962,7 @@ function sleep(delay) {
 } 
 
 function megafonServiceGuidePhysical(filial, sessionid){
+	AnyBalance.trace('Мы в megafonServiceGuidePhysical; sessionid ==' + sessionid);
     var filinfo = filial_info[filial];
     var baseurl = filinfo.site;
     var prefs = AnyBalance.getPreferences(), matches;

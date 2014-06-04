@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="7">ab-internet-akado</id>
+	<id version="8">ab-internet-akado</id>
 	<name>Домашний Интернет и Телевидение АКАДО</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем балансе, номере договора, ФИО владельца для пользователей провайдера интернет и телевидения АКАДО (http://www.akado.ru).</p>

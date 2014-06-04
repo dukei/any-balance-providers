@@ -843,7 +843,7 @@ function newTypicalLanBillingInetTv(urlIndex, urlAjax) {
     for(var i=0; i < accs.length; ++i) {
 		var account = getParam(accs[i], null, null, /<strong>\s*(\d+)/i);
 		var accountID = getParam(accs[i], null, null, /<tr[^>]*agreements[^>]*row[^>]*?(\d+)/i);
-		var balance = getParam(accs[i], null, null, /([\s\d.,]+руб)/i, null, parseBalance);
+		var balance = getParam(accs[i], null, null, /(-?[\s\d.,]+руб)/i, null, parseBalance);
 		
 		var xhtml = AnyBalance.requestGet(urlAjax + accountID);
 		

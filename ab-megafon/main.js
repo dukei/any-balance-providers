@@ -1,3 +1,15 @@
+/**
+Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
+*/
+
+var g_headers = {
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
+	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Connection': 'keep-alive',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+};
+
 var MEGA_FILIAL_MOSCOW = 1;
 var MEGA_FILIAL_SIBIR = 2;
 var MEGA_FILIAL_NW = 3;
@@ -19,151 +31,142 @@ var filial_info = {
 	centersg: MEGA_FILIAL_CENTRAL,
 	uralsg: MEGA_FILIAL_URAL
 };
-
 filial_info[MEGA_FILIAL_MOSCOW] = {
-  name: 'Столичный филиал',
-  func: megafonServiceGuide,
-  site: 	"https://moscowsg.megafon.ru/",
-  widget:	'https://moscowsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
-  tray: 	"https://moscowsg.megafon.ru/TRAY_INFO/TRAY_INFO?LOGIN=%LOGIN%&PASSWORD=%PASSWORD%",
-  internet:       "http://user.moscow.megafon.ru/",
-  internetRobot:       "https://moscowsg.megafon.ru/MEGAFON_BALANCE/MGFSTF_GET_QOS_PACK_STATUS?MSISDN=%LOGIN%&PASSWORD=%PASSWORD%"
+	name: 'Столичный филиал',
+	func: megafonServiceGuide,
+	site: "https://moscowsg.megafon.ru/",
+	widget: 'https://moscowsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
+	tray: "https://moscowsg.megafon.ru/TRAY_INFO/TRAY_INFO?LOGIN=%LOGIN%&PASSWORD=%PASSWORD%",
+	internet: "http://user.moscow.megafon.ru/",
+	internetRobot: "https://moscowsg.megafon.ru/MEGAFON_BALANCE/MGFSTF_GET_QOS_PACK_STATUS?MSISDN=%LOGIN%&PASSWORD=%PASSWORD%"
 };
 filial_info[MEGA_FILIAL_SIBIR] = {
-  name: 'Сибирский филиал',
-  site: "https://sibsg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%",
-  widget: 'https://sibsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
-  func: megafonTrayInfo
+	name: 'Сибирский филиал',
+	site: "https://sibsg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%",
+	widget: 'https://sibsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
+	func: megafonTrayInfo
 };
 filial_info[MEGA_FILIAL_NW] = {
-  name: 'Северо-западный филиал',
-  site: 'https://szfsg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%',
-  widget: 'https://szfsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
-  func: megafonTrayInfo,
+	name: 'Северо-западный филиал',
+	site: 'https://szfsg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%',
+	widget: 'https://szfsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
+	func: megafonTrayInfo,
 };
 filial_info[MEGA_FILIAL_FAREAST] = {
-  name: 'Дальневосточный филиал',
-  site: 'https://dvsg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%',
-  widget: 'https://dvsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
-  func: megafonTrayInfo
+	name: 'Дальневосточный филиал',
+	site: 'https://dvsg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%',
+	widget: 'https://dvsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
+	func: megafonTrayInfo
 };
 filial_info[MEGA_FILIAL_VOLGA] = {
-  name: 'Поволжский филиал',
-//  site: "https://volgasg.megafon.ru/",
-//  func: megafonServiceGuide,
-  func: megafonTrayInfo,
-  widget: 'https://volgasg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
-  site: 'https://volgasg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%'
+	name: 'Поволжский филиал',
+	//  site: "https://volgasg.megafon.ru/",
+	//  func: megafonServiceGuide,
+	func: megafonTrayInfo,
+	widget: 'https://volgasg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
+	site: 'https://volgasg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%'
 };
 filial_info[MEGA_FILIAL_KAVKAZ] = {
-  name: 'Кавказский филиал',
-  site: "https://kavkazsg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%",
-  widget: 'https://kavkazsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
-  func: megafonTrayInfo
+	name: 'Кавказский филиал',
+	site: "https://kavkazsg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%",
+	widget: 'https://kavkazsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
+	func: megafonTrayInfo
 };
 filial_info[MEGA_FILIAL_CENTRAL] = {
-  name: 'Центральный филиал',
-  site: 'https://centersg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%',
-  widget: 'https://centersg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
-  func: megafonTrayInfo
+	name: 'Центральный филиал',
+	site: 'https://centersg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%',
+	widget: 'https://centersg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
+	func: megafonTrayInfo
 };
 filial_info[MEGA_FILIAL_URAL] = {
-  name: 'Уральский филиал',
-  site: 'https://uralsg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%',
-  widget: 'https://uralsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
-  func: megafonTrayInfo
+	name: 'Уральский филиал',
+	site: 'https://uralsg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%',
+	widget: 'https://uralsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
+	func: megafonTrayInfo
 };
-
 var g_login_errors = {
-  error_1:"Введите логин!",
-  error_2:"Введите пароль!",
-  error_3:"Введите защитный код!",
-  error_4:"Неверный префикс.",
-  error_5:"Защитный код устарел.",
-  error_6:"Введен неверный защитный код.",
-  error_7:"Выберите контрольный вопрос.",
-  error_8:"Введите ответ на контрольный вопрос.",
-  error_9:"Вам недоступен список контрольных вопросов.",
-  error_10:"Передан неизвестный параметр.",
-  error_11:"Ваш ответ слишком короткий.",
-  error_12:"Не заполнено поле со старым паролем.",
-  error_13:"Не заполнено поле с новым паролем.",
-  error_14:"Не заполнено поле подтверждения пароля.",
-  error_15:"Пользователь не найден.",
-  error_100:"Вход в систему самообслуживания. Пожалуйста, подождите.",
-  error_200:"Ошибка запроса на сервер. Обратитесь, пожалуйста, в службу поддержки.",
-  error_0:"Ошибка. Сервис недоступен. Обратитесь, пожалуйста, в службу поддержки."
+	error_1: "Введите логин!",
+	error_2: "Введите пароль!",
+	error_3: "Введите защитный код!",
+	error_4: "Неверный префикс.",
+	error_5: "Защитный код устарел.",
+	error_6: "Введен неверный защитный код.",
+	error_7: "Выберите контрольный вопрос.",
+	error_8: "Введите ответ на контрольный вопрос.",
+	error_9: "Вам недоступен список контрольных вопросов.",
+	error_10: "Передан неизвестный параметр.",
+	error_11: "Ваш ответ слишком короткий.",
+	error_12: "Не заполнено поле со старым паролем.",
+	error_13: "Не заполнено поле с новым паролем.",
+	error_14: "Не заполнено поле подтверждения пароля.",
+	error_15: "Пользователь не найден.",
+	error_100: "Вход в систему самообслуживания. Пожалуйста, подождите.",
+	error_200: "Ошибка запроса на сервер. Обратитесь, пожалуйста, в службу поддержки.",
+	error_0: "Ошибка. Сервис недоступен. Обратитесь, пожалуйста, в службу поддержки."
 };
-
 //http://www.mtt.ru/mtt/def
 var def_table = {
-    p920: [
-        [0000000,  999999, MEGA_FILIAL_CENTRAL],
-        [1000000, 1109999, MEGA_FILIAL_NW],
-        [1110000, 1119999, MEGA_FILIAL_CENTRAL],
-        [1120000, 1999999, MEGA_FILIAL_NW],
-        [2000000, 2499999, MEGA_FILIAL_KAVKAZ],
-        [2500000, 2999999, MEGA_FILIAL_CENTRAL],
-        [3000000, 3999999, MEGA_FILIAL_NW],
-        [4000000, 5999999, MEGA_FILIAL_KAVKAZ],
-        [6000000, 6399999, MEGA_FILIAL_CENTRAL],
-        [6400000, 6999999, MEGA_FILIAL_NW],
-        [7000000, 9999999, MEGA_FILIAL_CENTRAL],
-    ],
-    p921: MEGA_FILIAL_NW,
-    p922: [
-        [5300000, 5599999, MEGA_FILIAL_VOLGA],
-        [6200000, 6299999, MEGA_FILIAL_VOLGA],
-        [8000000, 8999999, MEGA_FILIAL_VOLGA],
-        [0000000, 9999999, MEGA_FILIAL_URAL],
-    ],    
-    p923: MEGA_FILIAL_SIBIR,
-    p924: MEGA_FILIAL_FAREAST,
-    p925: MEGA_FILIAL_MOSCOW,
-    p926: MEGA_FILIAL_MOSCOW,
-    p927: MEGA_FILIAL_VOLGA,
-    p928: MEGA_FILIAL_KAVKAZ,
-    p929: [ 
-        [0000000,  209999, MEGA_FILIAL_KAVKAZ],
-        [ 210000,  749999, MEGA_FILIAL_CENTRAL],
-        [ 750000, 1999999, MEGA_FILIAL_NW],
-        [2000000, 2009999, MEGA_FILIAL_URAL],
-        [2010000, 2019999, MEGA_FILIAL_VOLGA],
-        [2020000, 2799999, MEGA_FILIAL_URAL],
-        [2800000, 2849999, MEGA_FILIAL_VOLGA],
-        [2850000, 2999999, MEGA_FILIAL_URAL],
-        [3000000, 3999999, MEGA_FILIAL_SIBIR],
-        [4000000, 4999999, MEGA_FILIAL_FAREAST],
-        [5000000, 6999999, MEGA_FILIAL_MOSCOW],
-        [7000000, 7999999, MEGA_FILIAL_VOLGA],
-        [8000000, 8999999, MEGA_FILIAL_KAVKAZ],
-        [9000000, 9999999, MEGA_FILIAL_MOSCOW],
-    ],
-    p930: [
-        [0000000,   59999, MEGA_FILIAL_NW],
-        [ 110000,  119999, MEGA_FILIAL_KAVKAZ],
-        [ 140000,  149999, MEGA_FILIAL_KAVKAZ],
-        [ 310000,  749999, MEGA_FILIAL_CENTRAL],
-        [ 760000,  769999, MEGA_FILIAL_NW],
-        [ 860000,  869999, MEGA_FILIAL_KAVKAZ],
-        [ 910000, 3999999, MEGA_FILIAL_NW],
-        [7000000, 8999999, MEGA_FILIAL_CENTRAL],
-    ],
-    p931: MEGA_FILIAL_NW,
-    p932: [
-        [2010000, 2019999, MEGA_FILIAL_VOLGA],
-        [5300000, 5599999, MEGA_FILIAL_VOLGA],
-        [8400000, 8699999, MEGA_FILIAL_VOLGA],
-        [0000000, 9999999, MEGA_FILIAL_URAL],
-    ],    
-    p933: MEGA_FILIAL_SIBIR,
-    p934: MEGA_FILIAL_FAREAST,
-    p936: MEGA_FILIAL_MOSCOW,
-    p937: MEGA_FILIAL_VOLGA,
-    p938: MEGA_FILIAL_KAVKAZ,
-    p939: MEGA_FILIAL_VOLGA
+	p920: [
+		[0000000, 999999, MEGA_FILIAL_CENTRAL],
+		[1000000, 1109999, MEGA_FILIAL_NW],
+		[1110000, 1119999, MEGA_FILIAL_CENTRAL],
+		[1120000, 1999999, MEGA_FILIAL_NW],
+		[2000000, 2499999, MEGA_FILIAL_KAVKAZ],
+		[2500000, 2999999, MEGA_FILIAL_CENTRAL],
+		[3000000, 3999999, MEGA_FILIAL_NW],
+		[4000000, 5999999, MEGA_FILIAL_KAVKAZ],
+		[6000000, 6399999, MEGA_FILIAL_CENTRAL],
+		[6400000, 6999999, MEGA_FILIAL_NW],
+		[7000000, 9999999, MEGA_FILIAL_CENTRAL], ],
+	p921: MEGA_FILIAL_NW,
+	p922: [
+		[5300000, 5599999, MEGA_FILIAL_VOLGA],
+		[6200000, 6299999, MEGA_FILIAL_VOLGA],
+		[8000000, 8999999, MEGA_FILIAL_VOLGA],
+		[0000000, 9999999, MEGA_FILIAL_URAL], ],
+	p923: MEGA_FILIAL_SIBIR,
+	p924: MEGA_FILIAL_FAREAST,
+	p925: MEGA_FILIAL_MOSCOW,
+	p926: MEGA_FILIAL_MOSCOW,
+	p927: MEGA_FILIAL_VOLGA,
+	p928: MEGA_FILIAL_KAVKAZ,
+	p929: [
+		[0000000, 209999, MEGA_FILIAL_KAVKAZ],
+		[210000, 749999, MEGA_FILIAL_CENTRAL],
+		[750000, 1999999, MEGA_FILIAL_NW],
+		[2000000, 2009999, MEGA_FILIAL_URAL],
+		[2010000, 2019999, MEGA_FILIAL_VOLGA],
+		[2020000, 2799999, MEGA_FILIAL_URAL],
+		[2800000, 2849999, MEGA_FILIAL_VOLGA],
+		[2850000, 2999999, MEGA_FILIAL_URAL],
+		[3000000, 3999999, MEGA_FILIAL_SIBIR],
+		[4000000, 4999999, MEGA_FILIAL_FAREAST],
+		[5000000, 6999999, MEGA_FILIAL_MOSCOW],
+		[7000000, 7999999, MEGA_FILIAL_VOLGA],
+		[8000000, 8999999, MEGA_FILIAL_KAVKAZ],
+		[9000000, 9999999, MEGA_FILIAL_MOSCOW], ],
+	p930: [
+		[0000000, 59999, MEGA_FILIAL_NW],
+		[110000, 119999, MEGA_FILIAL_KAVKAZ],
+		[140000, 149999, MEGA_FILIAL_KAVKAZ],
+		[310000, 749999, MEGA_FILIAL_CENTRAL],
+		[760000, 769999, MEGA_FILIAL_NW],
+		[860000, 869999, MEGA_FILIAL_KAVKAZ],
+		[910000, 3999999, MEGA_FILIAL_NW],
+		[7000000, 8999999, MEGA_FILIAL_CENTRAL], ],
+	p931: MEGA_FILIAL_NW,
+	p932: [
+		[2010000, 2019999, MEGA_FILIAL_VOLGA],
+		[5300000, 5599999, MEGA_FILIAL_VOLGA],
+		[8400000, 8699999, MEGA_FILIAL_VOLGA],
+		[0000000, 9999999, MEGA_FILIAL_URAL], ],
+	p933: MEGA_FILIAL_SIBIR,
+	p934: MEGA_FILIAL_FAREAST,
+	p936: MEGA_FILIAL_MOSCOW,
+	p937: MEGA_FILIAL_VOLGA,
+	p938: MEGA_FILIAL_KAVKAZ,
+	p939: MEGA_FILIAL_VOLGA
 }
-
 /**
  * Ищет филиал для переданного в виде строки номера
  */
@@ -539,6 +542,9 @@ function megafonTrayInfo(filial) {
 								result.internet_left = (result.internet_left || 0) + (traf.left || 0);
 							if (AnyBalance.isAvailable('internet_total')) 
 								result.internet_total = (result.internet_total || 0) + traf.total;
+						// Бывают и такие остатки: 60.55 Mb \/ \/
+						} else {
+							getParam(val, result, 'internet_cur', /([^\/\\]+)/i, replaceTagsAndSpaces, parseTraffic);
 						}
 					} else if (/мин/i.test(val) || /минут/i.test(name)) {
 						var mins = getLeftAndTotal(val, result, false, false, 'mins_left', 'mins_total', parseMinutes);
@@ -589,11 +595,11 @@ function getInternetInfo(filial, result, internet_totals_was){
 
     var total = getParam(xml, null, null, /<ALL_VOLUME>([\s\S]*?)<\/ALL_VOLUME>/i, replaceTagsAndSpaces, parseTrafficMyMb);
 	// Фиксим для некоторых тарифов, они ввели еще одни данные по пакетам, и они отличаются от ALL_VOLUME
-	var totalGiven = getParam(xml, null, null, /<GIVE_VOLUME>([\s\S]*?)<\/GIVE_VOLUME>/i, replaceTagsAndSpaces, parseTrafficMyMb) || 0;
+	/*var totalGiven = getParam(xml, null, null, /<GIVE_VOLUME>([\s\S]*?)<\/GIVE_VOLUME>/i, replaceTagsAndSpaces, parseTrafficMyMb) || 0;
 	if(totalGiven >= total) {
 		AnyBalance.trace('Пытаемся пофиксить трафик, измененили ' + total + ' на ' + totalGiven);
 		total = totalGiven;
-	}
+	}*/
     if(isset(total)){
         var need_traffic = !internet_totals_was[total] && internet_totals_was.total != total;
         
@@ -728,6 +734,79 @@ function read_sum_parameters_text(result, xml){
     getParam(xml, result, 'sub_soi', /<SOI>([\s\S]*?)<\/SOI>/i, null, parseBalance);
 }
 
+/** новый ЛК от мегафона */
+function megafonLK(tryOldSG) {
+	var prefs = AnyBalance.getPreferences();
+	AnyBalance.trace('Пробуем войти в новый ЛК...');
+	
+	var baseurl = 'https://lk.megafon.ru/';
+	
+	var html = AnyBalance.requestGet(baseurl + 'login/', g_headers);
+	var token = getParam(html, null, null, /name=CSRF value="([\s\S]*?)"/i);
+	
+	checkEmpty(token, 'Не удалось найти токен авторизации!', true);
+	
+	html = AnyBalance.requestPost(baseurl + 'dologin/', {
+		j_username:prefs.login,
+		j_password:prefs.password,
+		CSRF:token,
+	}, addHeaders({Referer: baseurl + 'login/'}));	
+	// Если это раскоментировать, то при редиректе из нового кабинета в старый нас пропустит дальше. Но нам это не нужно
+	//if (!/logout|&#1042;&#1099;&#1093;&#1086;&#1076;/i.test(html)) {
+	if (!/logout/i.test(html)) {
+		var error = getParam(html, null, null, /login-warning[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+		if (error)
+			throw new AnyBalance.Error(error, null, /Неверный логин\/пароль/i.test(error));
+		
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось зайти в новый личный кабинет. Сайт изменен или на этом номере он не поддерживается.');
+	}
+	
+	if(tryOldSG) {
+		var href = getParam(html, null, null, /href="(https:\/\/moscowsg\.megafon\.ru\/SCC\/SC_BASE_LOGIN\?SESSION_ID\=[^"]+)"/i, replaceTagsAndSpaces, html_entity_decode);
+		// Не у всех доступен новый ЛК, если у юзера он не подключен, та нас редиректит сразу в старый кабинет
+		var sessionid = getParam(html, null, null, /SESSION_ID\="?([^&"]+)/i);
+
+		if(href || sessionid) {
+			if(href) {
+				AnyBalance.trace('Нашли ссылку для перехода в старый сервис-гид, получим данные оттуда...');
+				html = AnyBalance.requestGet(href, g_headers);
+				
+				sessionid = getParam(html, null, null, /SESSION_ID\="?([^&"]+)/i);
+			}
+			
+			if(sessionid && !href) {
+				AnyBalance.trace('На данном номер не поддерживается новый ЛК, нас просто отправили в старый кабинет...');
+			}
+			
+			checkEmpty(sessionid, 'Не удалось найти код сессии!', true);
+			
+		    if(prefs.corporate)
+				megafonServiceGuideCorporate(MEGA_FILIAL_MOSCOW, sessionid);
+			else
+				megafonServiceGuidePhysical(MEGA_FILIAL_MOSCOW, sessionid);
+			return;
+		} else {
+			AnyBalance.trace('Не удалось найти ссылку на вход в старый кабинет, пробуем получить данные из новго ЛК!');
+		}
+	}
+	
+	var result = {success: true};
+	
+	getParam(html, result, 'balance', /Баланс[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'bonus_balance', /Бонусные баллы[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'phone', /Ваш номер[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+	
+	if(isAvailable(['last_pay_sum', 'last_pay_date'])) {
+		html = AnyBalance.requestGet(baseurl + 'history/', g_headers);
+		
+		getParam(html, result, 'last_pay_sum', /Сумма<(?:[^>]*>){8}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'last_pay_date', /Сумма<(?:[^>]*>){4}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseDateWord);
+	}
+	
+	AnyBalance.setResult(result);	
+}
+
 /**
  * Получаем данные из обычного сервис-гида для столичного филиала
  */
@@ -739,21 +818,32 @@ function megafonServiceGuide(filial){
     AnyBalance.trace('Connecting to service guide ' + filinfo.name);
 
     var session;
-    if(filial == MEGA_FILIAL_MOSCOW){
-        if(prefs.corporate){
-            session = AnyBalance.requestGet('http://moscow.megafon.ru/ext/sg_gate.phtml?MSISDN=CP_' + prefs.login + '&PASS=' + encodeURIComponent(prefs.password) + '&CHANNEL=WWW');
-        }else{
-            //Влад, ну что же ты всё подглядываешь-то??? Впрочем, пользуйся, не жалко :)
-            session = AnyBalance.requestGet(baseurl + 'SESSION/GET_SESSION?MSISDN=' + ((prefs.corporate ? 'CP_' : '') + prefs.login) + '&PASS=' + encodeURIComponent(prefs.password) + '&CHANNEL=WWW');
-			var code = AnyBalance.getLastStatusCode();
-			if(code > 400){
-				AnyBalance.trace('Невозможно зайти в сервис гид, придется получать данные из виджета');
-				megafonTrayInfo(filial);
-				return;
-			}
-        }
+    if(filial == MEGA_FILIAL_MOSCOW) {
+		try{
+			megafonLK(true);
+		} catch (e) {
+			// Если ошибка в логине и пароле, дальше идти нет смысла. Позже: А вдруг у кого-то не установлен пароль в новом кабинете, закидают же?
+			if(e.fatal)
+				throw e;
+			
+			AnyBalance.trace('Невозможно зайти в сервис гид, придется получать данные из виджета. Причина: ' + e.message);
+			megafonTrayInfo(filial);
+		}
+		return;
+        // if(prefs.corporate){
+            // session = AnyBalance.requestGet('http://moscow.megafon.ru/ext/sg_gate.phtml?MSISDN=CP_' + prefs.login + '&PASS=' + encodeURIComponent(prefs.password) + '&CHANNEL=WWW');
+        // }else{
+            // //Влад, ну что же ты всё подглядываешь-то??? Впрочем, пользуйся, не жалко :)
+            // session = AnyBalance.requestGet(baseurl + 'SESSION/GET_SESSION?MSISDN=' + ((prefs.corporate ? 'CP_' : '') + prefs.login) + '&PASS=' + encodeURIComponent(prefs.password) + '&CHANNEL=WWW');
+			// var code = AnyBalance.getLastStatusCode();
+			// if(code > 400){
+				// AnyBalance.trace('Невозможно зайти в сервис гид, придется получать данные из виджета');
+				// megafonTrayInfo(filial);
+				// return;
+			// }
+        // }
     }else{
-	session = AnyBalance.requestPost(baseurl + 'ps/scc/php/check.php?CHANNEL=WWW', {
+		session = AnyBalance.requestPost(baseurl + 'ps/scc/php/check.php?CHANNEL=WWW', {
             LOGIN: (prefs.corporate ? 'CP_' : '') + prefs.login, 
             PASSWORD: prefs.password
         });
@@ -877,8 +967,7 @@ function megafonServiceGuidePhysical(filial, sessionid){
 
     var phone = prefs.phone || prefs.login;
 
-    var text = AnyBalance.requestPost(baseurl + 'SCWWW/ACCOUNT_INFO',
-    {
+    var text = AnyBalance.requestPost(baseurl + 'SCWWW/ACCOUNT_INFO', {
         SUBSCRIBER_MSISDN:phone,
         CHANNEL: 'WWW', 
         SESSION_ID: sessionid,

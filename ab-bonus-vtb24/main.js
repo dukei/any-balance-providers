@@ -15,10 +15,8 @@ function main() {
 	var baseurl = 'https://bonus.vtb24.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
-	checkEmpty(/\d{10}/i.test(prefs.login), 'Введите номер телефона, 10 цифр подряд!');
+	checkEmpty(prefs.login = getParam(prefs.login, null, null, /^\d{10}$/i, [/^(\d{3})(\d{3})(\d{4})$/, '+7 ($1) $2-$3']), 'Введите номер телефона, 10 цифр подряд!' + (prefs.login ? ' Вы ввели: ' + prefs.login : ''));
 	checkEmpty(prefs.password, 'Введите пароль!');
-	
-	prefs.login = getParam(prefs.login, null, null, null, [/(\d{3})(\d{3})(\d{4})/, '+7 ($1) $2-$3']);
 	
 	var html = AnyBalance.requestGet(baseurl + 'account/login', g_headers);
 	
@@ -37,11 +35,9 @@ function main() {
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	
-	html = AnyBalance.requestGet(baseurl + 'mypoints', g_headers);
-	
 	var result = {success: true};
 	
-	getParam(html, result, 'balance', />Баланс([^>]*>){2}/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance', /balance" href="\/mypoints"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
 	
 	AnyBalance.setResult(result);
 }

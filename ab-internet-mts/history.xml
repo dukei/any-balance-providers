@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="60" date="2014-06-04">
+	- Исправлено отображение отрицательного баланса.
+	</change>
 	<change version="59" date="2014-04-25">
 	- Исправлен регион: Балаково.
 	</change>

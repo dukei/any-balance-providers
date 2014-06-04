@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser" />
-	<id version="1">ab-adv-marketgid</id>
+	<id version="2">ab-adv-marketgid</id>
 	<name>МаркетГид</name>
-	<description>
-	Получает данные из тизерной рекламной сети МаркетГид.
-	
-	Информация берется из личного кабинета https://my.marketgid.com
-	</description>
+	<description html="true"><![CDATA[
+	<p>Получает данные из тизерной рекламной сети МаркетГид.</p>
+	<p>Информация берется из личного кабинета https://dashboard.marketgid.com/</p>
+	]]></description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
@@ -18,14 +16,16 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units="{@currency}"/>
-		<counter id="wallet" name="МГ-кошелёк" units="{@currency}"/>
+		<counter id="balance" name="Нераспределенный заработок" units=" {@currency}"/>
+		<counter id="balance_total" name="Общий заработок" units=" {@currency}"/>
+		<counter id="balance30" name="Заработок за 30 дней" units=" {@currency}"/>
+<!-- 		<counter id="wallet" name="МГ-кошелёк" units=" {@currency}"/>
 		<counter id="clicks" name="Клики (Всего)"/>
 		<counter id="shows" name="Показы (Всего)"/>
 		<counter id="ctr" name="CTR (Всего)"/>
-		<counter id="cpm" name="CPM (Всего)" units="{@currency}"/>
-		<counter id="forclick" name="За клик (Всего)" units="¢"/>
-		<counter id="earnings" name="Заработок (Всего)" units="{@currency}"/>
+		<counter id="cpm" name="CPM (Всего)" units=" {@currency}"/>
+		<counter id="forclick" name="За клик (Всего)" units=" ¢"/>
+		<counter id="earnings" name="Заработок (Всего)" units=" {@currency}"/> -->
 	</counters>
 	<keywords></keywords>
 	<type>adv</type>

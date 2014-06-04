@@ -10,6 +10,8 @@ AnyBalance (http://any-balance-providers.googlecode.com)
 library.js v0.11 от 27.05.14
 
 changelog:
+04.06.14 parseBalance - улучшен разбор сложных балансов (,82)
+
 27.05.14 getParam - Если !html то не падаем, а пишем ошибку в trace
 
 26.03.14 getParam - Добавлено логирование, если счетчик выключен
@@ -50,7 +52,7 @@ changelog:
  
 function getParam(html, result, param, regexp, replaces, parser) {
 	if(!html) {
-		AnyBalance.trace('html is undefined!\n' + new Error().stack);
+		AnyBalance.trace('param1 is undefined!\n' + new Error().stack);
 		return;
 	}
 	if (!isAvailable(param)) {
@@ -132,7 +134,7 @@ function replaceAll(value, replaces) {
 
 /** Извлекает числовое значение из переданного текста */
 function parseBalance(text) {
-	var val = getParam(html_entity_decode(text).replace(/\s+/g, ''), null, null, /(-?\.?\d[\d'.,]*)/, replaceFloat, parseFloat);
+	var val = getParam(html_entity_decode(text).replace(/\s+/g, ''), null, null, /(-?[.,]?\d[\d'.,]*)/, replaceFloat, parseFloat);
 	AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
 	return val;
 }

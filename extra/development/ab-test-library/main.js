@@ -12,10 +12,16 @@ function main() {
 	AnyBalance.trace(result.balance == 1000555.48 ? 'Проверяем функцию parseBalance... все работает нормально!' : '_________________________________________________Что-то не работает, надо проверить код! ' + result.balance);
 	getParam('Текущий баланс: <b>.48</b>', result, 'balance_bad', /Текущий баланс:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseBalance);
 	AnyBalance.trace(result.balance_bad == 0.48 ? 'Проверяем функцию parseBalance с противными значениями типа (.48)... все работает нормально!' : '_________________________________________________Что-то не работает, надо проверить код! ' + result.balance_bad);
-
+	
 	getParam('Текущий баланс: <b>-.38</b>', result, 'balance_bad2', /Текущий баланс:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseBalance);
 	AnyBalance.trace(result.balance_bad2 == -0.38 ? 'Проверяем функцию parseBalance с противными значениями типа (-.38)... все работает нормально!' : '_________________________________________________Что-то не работает, надо проверить код! ' + result.balance_bad2);
 
+	getParam('Текущий баланс: <b>,48</b>', result, 'balance_bad3', /Текущий баланс:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseBalance);
+	AnyBalance.trace(result.balance_bad3 == 0.48 ? 'Проверяем функцию parseBalance с противными значениями типа (,48)... все работает нормально!' : '_________________________________________________Что-то не работает, надо проверить код! ' + result.balance_bad3);		
+	
+	getParam('Текущий баланс: <b>-,48</b>', result, 'balance_bad4', /Текущий баланс:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseBalance);
+	AnyBalance.trace(result.balance_bad4 == -0.48 ? 'Проверяем функцию parseBalance с противными значениями типа (-,48)... все работает нормально!' : '_________________________________________________Что-то не работает, надо проверить код! ' + result.balance_bad4);			
+	
 	getParam("Текущий баланс: <b>1'131,00</b>", result, 'balance', /Текущий баланс:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseBalance);
 	AnyBalance.trace(result.balance == 1131 ? 'Проверяем функцию parseBalance... все работает нормально!' : '_________________________________________________Что-то не работает, надо проверить код! ' + result.balance);
 	// Суммируем

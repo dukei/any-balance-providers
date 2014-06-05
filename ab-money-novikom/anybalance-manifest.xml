@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="1">ab-money-novikom</id>
+	<id version="2">ab-money-novikom</id>
 	<name>Новиком банк</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе на картах и счетах банка Новиком банк (http://novikom.ru/)</p>

@@ -55,7 +55,7 @@ function main(){
 
 function getRostov(){
     var prefs = AnyBalance.getPreferences();
-    var baseurl = 'http://lk.ug.mts.ru/';
+    var baseurl = 'https://lk.ug.mts.ru/';
 
     // Заходим на главную страницу
     var html = AnyBalance.requestPost(baseurl + "auth/login", {

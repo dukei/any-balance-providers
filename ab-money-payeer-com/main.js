@@ -25,10 +25,20 @@ function main() {
 	AnyBalance.setCookie('payeer.com', 'BITRIX_SM_SOUND_LOGIN_PLAYED', 'Y');
 	AnyBalance.setCookie('payeer.com', 'BITRIX_SM_SALE_UID', '0');
 	
+	//var stT = mdDONWKS();
+	dateServer = getParam(html, null, null, /var\s+dateServer\s*=\s*'([^']+)/i);
+	
+	if(!dateServer) {
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось найти токен авторизации. Сайт изменен?');
+	}
+	
+	var hash = md5(String(/*mdDONWKS()-stT*/13), true);
+	
 	html = AnyBalance.requestPost(baseurl + 'ajax/index.php', {
 		'cmd':'auth_step1',
 		'backurl':'',
-		'CHPM':'64735244deb23331283ecaf460e6664c', // Этот хеш - полная фикция $.md5(String("str"-stT), true)
+		'CHPM':hash,
 		'email':prefs.login,
 		'password':prefs.password,
 		'Login':'Войти'

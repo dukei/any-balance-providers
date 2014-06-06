@@ -44,7 +44,7 @@ var g_lks = {
 	uid: '82CA86D7466828F87336B012396E3F69',
 	auth_uid: 'BA2D39EE78C67FD4DE935035CA67FEC0',
 	strong_name: '\\b%VARNAME%\\],(\\w+)\\)',
-	auth_url: '"gwt/personalAccountAuth/',
+	auth_url: 'gwt/personalAccountAuth/',
 	auth_nocache: 'gwt/personalAccountAuth/personalAccountAuth.nocache.js',
 	auth_file: 'application.auth',
 	auth_class: 'com.sigma.personal.auth.AuthService',
@@ -130,7 +130,13 @@ function main(){
 
     var result = { success: true };
 
-    getParam(html, result, 'balance', /\/\/OK\[(.*?),/, null, parseBalance);
+    var balances = sumParam(html, null, null, /-?(\d+.\d+),\d+,\d+,'\w+'/g, null, parseBalance);
+    for(var i=0; i<balances.length; ++i){
+	var counter = 'balance' + (i==0 ? '' : i);
+        if(AnyBalance.isAvailable(counter))
+		result[counter] = balances[i];
+    }
+
     getParam(html, result, 'licschet', /"account","([^"]*)/, replaceSlashes);
     getParam(html, result, '__tariff', /"address","([^"]*)/, replaceSlashes);
 

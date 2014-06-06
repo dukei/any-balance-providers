@@ -1,11 +1,15 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Текущий баланс у провайдера кардшаринга zargacum.net
-
-Сайт оператора: http://www.zargacum.net
-Личный кабинет: https://billing.zargacum.net
 */
+
+var g_headers = {
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+	'Accept-Language': 'ru,en;q=0.8',
+	'Connection': 'keep-alive',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.114 Safari/537.36',
+	'Origin': 'https://billing.zargacum.net',
+	'Cache-Control': 'max-age=0'
+};
 
 function getPacket(html, name, result, counter){
     //Регулярное выражение для получения строки таблицы с пакетом с именем name
@@ -27,17 +31,25 @@ function main(){
     AnyBalance.setDefaultCharset('utf-8');
 
     var baseurl = "https://billing.zargacum.net/";
-
-    var html = AnyBalance.requestPost(baseurl + 'login/', {
-        enter_login:prefs.login,
-        enter_pwd:prefs.password
-    });
-
-    if(!/\/quit\//i.test(html)){
+	
+	var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
+	
+	var cookie = getParam(html, null, null, /document\.cookie='_ddn_intercept_2_=([^';]+)/i);
+	if(cookie) {
+		AnyBalance.setCookie('www.zargacum.net', '_ddn_intercept_2_', cookie);
+		AnyBalance.setCookie('www.zargacum.net', 'max-age', '604800');	
+	}
+	
+	html = AnyBalance.requestPost(baseurl + 'login', {
+		enter_login: prefs.login,
+		enter_pwd: prefs.password,
+	}, addHeaders({Referer: baseurl + 'login'}));
+	
+	if(!/\/quit\//i.test(html)){
         throw new AnyBalance.Error("Не удалось войти в личный кабинет. Неправильный логин-пароль?");
     }
 	
-    html = AnyBalance.requestGet(baseurl + 'cabinet/');
+    html = AnyBalance.requestGet('http://billing.zargacum.net/cabinet/', g_headers);
 	
     var result = {success: true};
 	

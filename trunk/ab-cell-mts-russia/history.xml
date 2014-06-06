@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="3.3" version="85" date="2014-06-06">
+	- Улучшено отображение трафика в Личном Кабинете.
+	</change>
 	<change major_version="3.3" version="84" date="2014-05-16">
 	- Исправлена ошибка.
 	</change>

@@ -643,6 +643,22 @@ function mainLK(allowRetry) {
         fetchOrdinary(html, baseurlHelper, result);
     }
 	
+	if(isAvailable('traffic_left_mb')) {
+		AnyBalance.trace('Запросим трафик...');
+		try {
+			html = AnyBalance.requestPost(baseurl + '/Tariff/GetTraffic', params, addHeaders({'X-Requested-With':'XMLHttpRequest', 'X-Requester':'undefined'}));
+			
+			AnyBalance.trace(html);
+			if(!/OptionName\s*['"]\s*:\s*null/i.test(html)) {
+				AnyBalance.trace('Нашли трафик...');
+				sumParam(html, result, 'traffic_left_mb', /Available[\D]+(\d+)/ig, null, function(str) {return parseTraffic(str, 'mb');}, aggregate_sum);		
+			} else {
+				AnyBalance.trace('Трафика нет...');
+			}
+		} catch(e) {
+		}
+	}
+	
     AnyBalance.setResult(result);
 }
 function parseBalanceRound(str) {

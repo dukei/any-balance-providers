@@ -27,10 +27,18 @@ function main() {
 	
 	baseurl = baseurl + (matches[1] == '7' ? 'ru' : 'ae') + '/';
 	
-	var html = AnyBalance.requestPost(baseurl + 'GetWalletBalanceByLogin', {
-		"Phone":matches[1] + matches[2], 
-		"Password":prefs.password,
-	}, g_headers);
+	try {
+		var html = AnyBalance.requestPost(baseurl + 'GetWalletBalanceByLogin', {
+			"Phone":matches[1] + matches[2], 
+			"Password":prefs.password,
+		}, g_headers);	
+	} catch(e) {
+	}
+	
+	var code = AnyBalance.getLastStatusCode();
+	if(code > 400) {
+		throw new AnyBalance.Error('Ошибка! Сервер не отвечает! Попробуйте обновить баланс позже.');
+	}
 	
 	var ret = getParam(html, null, null, /<Code>([^<]*)<\/Code>/i, replaceTagsAndSpaces, parseBalance);
 	if(ret != 0) {

@@ -26,22 +26,17 @@ function main() {
 	
 	var formattedLogin = getParam(prefs.login || '', null, null, /^\d{11}$/, [/^(\d{3})(\d{3})(\d{3})(\d{2})$/i, '$1-$2-$3 $4']);
 	
-	checkEmpty(formattedLogin, 'Введите СНИЛС (без пробелов и разделителей, 11 символов подряд), или логин. Вы ввели: "'+ (prefs.login || 'пустое поле')+'"!');
+	checkEmpty(formattedLogin, 'Введите СНИЛС (без пробелов и разделителей, 11 символов подряд). Вы ввели: "'+ (prefs.login || 'пустое поле')+'"!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
 	var html = AnyBalance.requestGet(g_baseurl + 'pgu/personcab', g_headers);
 	
 	html = performRedirect(html);
 	
-	html = AnyBalance.requestPost('https://esia.gosuslugi.ru/idp/Authn/UsernamePasswordLogin', {
+	html = AnyBalance.requestPost('https://esia.gosuslugi.ru/idp/authn/UsernamePasswordLogin', {
 		username: formattedLogin,
 		password: prefs.password,
-		answer:'',
-		globalRole:'RF_PERSON',
-		capture:'',
-		phraseId:'',
-		cmsDS:'',
-		isRegCheck:'false'
+		idType:'snils',
 	}, addHeaders({Referer: 'https://esia.gosuslugi.ru/idp/Authn/CommonLogin'}));
 	
     //Попытаемся получить ошибку авторизации на раннем этапе. Тогда она точнее.
@@ -58,9 +53,9 @@ function main() {
 	html = AnyBalance.requestPost('https://www.gosuslugi.ru/pgu/saml/SAMLAssertionConsumer', params, addHeaders({Referer: g_baseurl + 'pgu/personcab'}));
 	
 	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /span\s*>\s*(Ошибка авторизации(?:[^>]*>){4})/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, null, null, [/span\s*>\s*(Ошибка авторизации(?:[^>]*>){4})/i, /<div class="error[^>]*>([\s\S]*?)<\/div>/i], [replaceTagsAndSpaces, /Вернуться назад/i, ''], html_entity_decode);
 		if (error)
-			throw new AnyBalance.Error(error);
+			throw new AnyBalance.Error(error, null, /Ошибка авторизации/i.test(error));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
@@ -200,8 +195,9 @@ function processNalogi(result, html, prefs) {
 function processGibdd(result, html, prefs) {
 	checkEmpty(prefs.licensenumber, 'Введите серию и номер водительского удостоверения!');
 	
-	result.gibdd_balance = null;
 	if(isAvailable(['gibdd_balance', 'gibdd_info'])) {
+		result.gibdd_balance = null;
+		
 		// Id сервиса в системе, может меняться в будущем - вынесем отдельно.
 		var serviceID = '10000581563';
 

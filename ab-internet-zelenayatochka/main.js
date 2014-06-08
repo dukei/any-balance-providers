@@ -58,7 +58,7 @@ function getNal(prefs) {
 	AnyBalance.setResult(result);
 }
 
-function getStavr(baseurl, prefs) {
+function getStavr(prefs) {
 	var baseurl = 'https://personal.ooonet.ru/';
 	
 	var html = AnyBalance.requestGet(baseurl, g_headers);

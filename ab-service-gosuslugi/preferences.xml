@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
 	<EditTextPreference
+		inputType="number"
 		title="СНИЛС"
 		key="login"
 		summary="||{@s}"
@@ -40,6 +41,7 @@
 		dialogMessage="Введите серию и номер водительского удостоверения в формате 50км123456, буквы русские.">
 	</EditTextPreference>
 	<EditTextPreference
+		inputType="number"
 		title="ИНН"
 		key="inn"
 		summary="||{@s}"

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-<!--<change version="2" date="2013-07-05">
-- Добавлена совместимость с Balance Widget
-</change>-->
+	<change version="2" date="2014-06-08">
+	- Улучшена обработка ошибок.
+	</change>
 </history>

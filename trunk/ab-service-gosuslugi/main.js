@@ -197,7 +197,7 @@ function processGibdd(result, html, prefs) {
 	checkEmpty(prefs.licensenumber = getParam(prefs.licensenumber, null, null, /^.{10}$/), 'Введите серию и номер водительского удостоверения в формате 50км123456!', true);
 	
 	if(isAvailable(['gibdd_balance', 'gibdd_info'])) {
-		result.gibdd_balance = null;
+		result.gibdd_balance = 0;
 		// Id сервиса в системе, может меняться в будущем - вынесем отдельно.
 		var serviceID = '10000581563';
 		
@@ -253,9 +253,6 @@ function processGibdd(result, html, prefs) {
 				
 				sumParam(feeName, result, 'gibdd_balance', /([\d.,]*)\s*руб/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 			}
-		}
-		if(fees.length === 0) {
-			result.gibdd_balance = 0;
 		}
 		// Сводка по штрафам
 		getParam(gibdd_info, result, 'gibdd_info', null, g_replaceSpacesAndBrs);

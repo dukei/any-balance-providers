@@ -19,9 +19,15 @@ function main () {
 	var baseurl = 'http://www.gismeteo.' + prefs.domen + '/';
 	// Если не числа, значит надо сделать доп запрос для поиска индекса города
 	if(!/^\d+$/i.test(prefs.city)) {
-		html = AnyBalance.requestGet (baseurl + 'ajax/city_search/?searchQuery=x' + encodeURIComponent(prefs.city));
+		AnyBalance.trace('Ищем ID города ' + prefs.city);
+		html = AnyBalance.requestGet(baseurl + 'ajax/city_search/?searchQuery=x' + encodeURIComponent(prefs.city));
+		// Нужно для того, чтобы проверить вернулся ли правильный json, иначе могут быть ошибки
+		var json = getJson(html);
+		AnyBalance.trace(JSON.stringify(json));
 		
-		var id = getParam(html, null, null, /['"]*(\d+)/i, [/\D/g, '']);
+		var id = getParam(html, null, null, /^\{["']+(\d+)/i, [/\D/g, '']);
+		
+		checkEmpty(id, 'Не удалось найти ID города ' + prefs.city, true);
 		AnyBalance.trace('Нашли ID города ' + prefs.city + ': ' + id);
 		prefs.city = id;
 	}

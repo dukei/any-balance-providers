@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="10">ab-cell-tele2-kz</id>
+	<id version="11">ab-cell-tele2-kz</id>
 	<api flags="no_browser|captcha"/>
 	<name>Теле2 Казахстан</name>
 	<description html="true"><![CDATA[
@@ -21,6 +21,7 @@
 		<counter id="balance" name="Баланс" units=" 〒"/>
 		<counter id="internet_trafic" name="Интернет-пакеты" units=" Мб"/>
 		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="phone" name="Телефон" type="text"/>
 	</counters>
 	<keywords>теле2</keywords>
 	<type>cell</type>

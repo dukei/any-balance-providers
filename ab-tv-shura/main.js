@@ -13,7 +13,7 @@ var g_headers = {
 function main() {
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'https://shura.tv/';
-	AnyBalance.setDefaultCharset('utf-8');
+	AnyBalance.setDefaultCharset('Windows-1251');
 	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
@@ -42,8 +42,8 @@ function main() {
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'balance', />Balance:(?:[^>]*>){1}([\s\d.,]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'requests', />Total requests:(?:[^>]*>){1}([\s\d.,]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance', [/>Balance:(?:[^>]*>){1}([\s\d.,]+)/i, /Баланс:(?:[^>]*>){1}(-?[\s\d.,]+)/i], replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'requests', [/>Total requests:(?:[^>]*>){1}([\s\d.,]+)/i, /Всего запросов:(?:[^>]*>){1}(-?[\s\d.,]+)/i], replaceTagsAndSpaces, parseBalance);
 	
 	AnyBalance.setResult(result);
 }

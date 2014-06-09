@@ -36,10 +36,14 @@ function main() {
 	} else {
 		AnyBalance.trace('Входим по логину и паролю...');
 		
+		checkEmpty(prefs.login, 'Введите логин!');
+		checkEmpty(prefs.password, 'Введите пароль!');
+	
 		if(prefs.__dbg) {
 			var html = AnyBalance.requestGet('https://lk.mgts.ru/', g_headers);
 		} else {
 			var html = AnyBalance.requestGet(baseurl, g_headers);
+			
 			var pin = prefs.password; //.substr(0, 8); //Слишком длинные пины тупо не воспринимаются
 			var params = createFormParams(html, function(params, str, name, value) {
 				if (name == 'IDToken1') 
@@ -52,9 +56,12 @@ function main() {
 		}
 		
 		if (!/logout/i.test(html)) {
-			var errors = sumParam(html, null, null, /"auth-error-text"[^>]*>([^<]*)/ig);
-			if (errors) throw new AnyBalance.Error(errors.join(' '));
-			throw new AnyBalance.Error('Login failed, is site changed?');
+			var error = sumParam(html, null, null, /"auth-error-text"[^>]*>([^<]+)<\//ig, replaceTagsAndSpaces, html_entity_decode).join(', ');
+			if (error)
+				throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+			
+			AnyBalance.trace(html);
+			throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 		}
 		
 		getParam(html, result, 'fio', /"cabinet-aside"[^>]*>([\s\S]*?)<\/h3/i, replaceTagsAndSpaces);

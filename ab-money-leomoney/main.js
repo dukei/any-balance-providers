@@ -51,7 +51,7 @@ function main() {
 	
 	var result = {success: true};
 	
-	var walletBalance = getParam(html, null, null, new RegExp('<WalletBalance>(?:[^>]*>){5}' + (prefs.type || 'rub') + '(?:[^>]*>){12}\\s*</WalletBalance>', 'i'))
+	var walletBalance = getParam(html, null, null, new RegExp('<WalletBalance>(?:[^>]*>){5}' + (prefs.type || 'rub') + '(?:[^>]*>){12,}\\s*</WalletBalance>', 'i'))
 	if(!walletBalance)
 		throw new AnyBalance.Error(matches[1] == '7' ? 'Не удалось найти данные по счету. Сайт изменен?' : 'Can`t find wallet balance, is the site changed?');
 		

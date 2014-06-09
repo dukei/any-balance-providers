@@ -23,6 +23,10 @@ function main() {
 	
 	var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
 	
+	if(AnyBalance.getLastStatusCode() > 400) {
+		throw new AnyBalance.Error('Ошибка! Сервер не отвечает! Попробуйте обновить баланс позже.');
+	}
+	
 	var params = createFormParams(html, function(params, str, name, value) {
 		if (name == 'login') 
 			return prefs.login;

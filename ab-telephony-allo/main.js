@@ -52,7 +52,7 @@ function doNewCabinet(prefs) {
 	var value = hidden[2];
 	
 	var loginParams = {
-		code:'',
+		code:prefs.prefix || '',
 		username:prefs.login,
 		passwd:prefs.password,
 		osolCatchaTxt:captchaa,
@@ -68,19 +68,15 @@ function doNewCabinet(prefs) {
 		Referer: baseurl + 'login',
 		'Origin':'https://www.alloincognito.ru',
 	}));
-
-        if(/<form[^>]+name="oferta_authorization"/i.test(html)){
-                AnyBalance.trace("Требуется принять оферту. Принимаем...");
-                //Надо оферту принять, а то в кабинет не пускает
-		html = AnyBalance.requestPost(baseurl + 'ru/cabinet-contractoffer', {
-			oferta:1,
-			task:'setOfertaАuthorization'
-                }, addHeaders({
-			Referer: baseurl + 'ru/cabinet-contractoffer',
-			'Origin':'https://www.alloincognito.ru',
-		}));		
-        }
 	
+	if (/<form[^>]+name="oferta_authorization"/i.test(html)) {
+		AnyBalance.trace("Требуется принять оферту. Принимаем...");
+		//Надо оферту принять, а то в кабинет не пускает
+		html = AnyBalance.requestPost(baseurl + 'ru/cabinet-contractoffer', {
+			oferta: 1,
+			task: 'setOfertaАuthorization'
+		}, addHeaders({Referer: baseurl + 'ru/cabinet-contractoffer','Origin': 'https://www.alloincognito.ru',}));
+	}
 	if (!/exit=1"/i.test(html)) {
 		var error = getParam(html, null, null, />Ошибка([^>]*>){4}/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)

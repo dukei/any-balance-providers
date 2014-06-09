@@ -74,7 +74,7 @@ function getWeatherFromHTML (prefs) {
 
     // Проверка на корректный вход
     //regexp = />Погода за окном<([\s\S]*)>Прогноз</i;
-    regexp = /<h3\s+class=.type\w.\s*>([^<]*)/i;
+    regexp = /<h3\s+class="type\w.[^>]*>([^<]*)/i;
     if (regexp.exec (html))
     	AnyBalance.trace ('It looks like we are in selfcare...');
     else {

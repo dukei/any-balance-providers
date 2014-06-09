@@ -264,7 +264,7 @@ function postAPICall(url, params, referer) {
 function getUnreadMsgJson() {
 	var response = AnyBalance.requestPost('https://www.gosuslugi.ru/pgu/wsapi/gepsIntegration/getUnreadMessageCount', JSON.stringify({}), g_apiHeaders);
 	if(!response || !/"operation completed"/i.test(response)) {
-		AnyBalance.trace(html);
+		AnyBalance.trace(response);
 		AnyBalance.trace('Не удалось получить информацию о госпочте, сайт изменен?');
 	}
 	
@@ -293,7 +293,7 @@ function checkForRedirect(html) {
 	// Если нашли ссылку, идем по ней
 	} else {
 		AnyBalance.trace('checkForRedirect: Нашли ссылку ' + href);
-		return AnyBalance.requestGet(href, addHeaders({Referer: g_baseurl + 'pgu/personcab'}));
+		return checkForJsOff(AnyBalance.requestGet(href, addHeaders({Referer: g_baseurl + 'pgu/personcab'})));
 	}
 }
 

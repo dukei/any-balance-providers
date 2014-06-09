@@ -138,10 +138,10 @@ function mainMobile(allowRetry){
             html = AnyBalance.requestGet(baseurl + "MyPhoneNumbers.mvc", g_headers);
             html = AnyBalance.requestGet(baseurl + "MyPhoneNumbers.mvc/Change?phoneNumber=7"+prefs.phone, g_headers);
             if(!html)
-	        throw new AnyBalance.Error(prefs.phone + ": номер, возможно, неправильный или у вас нет к нему доступа", false); 
+				throw new AnyBalance.Error(prefs.phone + ": номер, возможно, неправильный или у вас нет к нему доступа", false); 
             var error = getParam(html, null, null, /<ul class="operation-results-error">([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
-            if(error)
-	        throw new AnyBalance.Error(prefs.phone + ": " + error, false); 
+			if(error)
+				throw new AnyBalance.Error(prefs.phone + ": " + error, false); 
         }
         // Тарифный план
         getParam(html, result, '__tariff', /Тарифный план.*?>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
@@ -193,7 +193,7 @@ function mainMobile(allowRetry){
         //Если не установлено требование другой попытки, устанавливаем его в переданное в функцию значение
         if(!isset(e.allow_retry))
             e.allow_retry = allowRetry;
-        throw e; 
+        throw e;
     }
 }
 
@@ -297,23 +297,43 @@ function fetchOrdinary(html, baseurl, resultFromLK){
 
     if (prefs.phone && prefs.phone != prefs.login) {
     	AnyBalance.trace('Требуется другой номер. Пытаемся переключиться...');
-    	html = AnyBalance.requestGet(baseurl + "my-phone-numbers.aspx", g_headers);
-    	var token = getParam(html, null, null, /<input[^>]+name="csrfToken"[^>]*value="([^"]*)/i);
-    	var domain = getParam(baseurl, null, null, /\/\/(.*?)\//);
-    	AnyBalance.setCookie(domain, 'csrfToken', token);
-    	html = AnyBalance.requestPost(baseurl + "my-phone-numbers.aspx", {
-    		ctl00_sm_HiddenField: '',
-    		csrfToken: token,
-    		__EVENTTARGET: 'ctl00$MainContent$transitionLink',
-    		__EVENTARGUMENT: '7' + prefs.phone,
-    		__VIEWSTATE: getViewState(html)
-    	}, addHeaders({Referer: baseurl + "my-phone-numbers.aspx"}));
 		
-    	if (!html)
-			throw new AnyBalance.Error(prefs.phone + ": номер, возможно, неправильный или у вас нет к нему доступа");
-    	var error = getParam(html, null, null, /(<h1>Мои номера<\/h1>)/i);
-    	if (error)
-			throw new AnyBalance.Error(prefs.phone + ": номер, возможно, неправильный или у вас нет к нему доступа");
+    	html = AnyBalance.requestGet(baseurl + 'my-phone-numbers.aspx', g_headers);
+    	
+		var token = getParam(html, null, null, /<input[^>]+name="csrfToken"[^>]*value="([^"]*)/i);
+    	var domain = getParam(baseurl, null, null, /\/\/(.*?)\//);
+		
+		// Надо грохнуть старую куку
+		AnyBalance.setCookie(domain, 'csrfToken', null);
+    	AnyBalance.setCookie(domain, 'csrfToken', token);
+		
+		// Проверим, есть ли такой номер в списке
+		var formattedNum = (prefs.phone || '').replace(/(\d{3})(\d{3})(\d{2})(\d{2})/i, '$1\\D$2\\D$3\\D$4');
+		
+		// Уже выбран этот номер
+		if(new RegExp('"account-phone-number current"[^>]*>\\s*\\+7\\s*' + formattedNum, 'i').test(html)) {
+			AnyBalance.trace('Номер ' + prefs.phone + ' уже выбран.');
+		} else {
+			if(!new RegExp('doPostBack\\(\'[^\']+\',\'7' + prefs.phone, 'i').test(html))
+				throw new AnyBalance.Error(prefs.phone + ": этот номер не принадлежит логину " + prefs.login);
+			
+			html = AnyBalance.requestPost(baseurl + 'my-phone-numbers.aspx', {
+				'ctl00_sm_HiddenField': '',
+				'csrfToken': token,
+				'__EVENTTARGET': 'ctl00$MainContent$transitionLink',
+				'__EVENTARGUMENT': '7' + prefs.phone,
+				'__VIEWSTATE': getViewState(html)
+			}, addHeaders({Referer: baseurl + 'my-phone-numbers.aspx'}));
+			
+			if(!new RegExp('произвести операции по номеру[^+]+\\+7 '+ formattedNum, 'i').test(html))
+				throw new AnyBalance.Error('Не удалось переключиться на номер ' + prefs.phone);
+			
+			/*if (!html)
+				throw new AnyBalance.Error(prefs.phone + ": номер, возможно, неправильный или у вас нет к нему доступа");*/
+			var error = getParam(html, null, null, /(<h1>Мои номера<\/h1>)/i);
+			if (error)
+				throw new AnyBalance.Error(prefs.phone + ": номер, возможно, неправильный или у вас нет к нему доступа");
+		}
     }
 	// Тарифный план
     getParam(html, result, '__tariff', /Тарифный план.*?>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
@@ -651,7 +671,10 @@ function mainLK(allowRetry) {
 			AnyBalance.trace(html);
 			if(!/OptionName\s*['"]\s*:\s*null/i.test(html)) {
 				AnyBalance.trace('Нашли трафик...');
-				sumParam(html, result, 'traffic_left_mb', /Available[\D]+(\d+)/ig, null, function(str) {return parseTraffic(str, 'mb');}, aggregate_sum);		
+				
+				sumParam(html, result, 'traffic_left_mb', /Available[\D]+(\d+)/ig, null, function(str) {
+					return parseTraffic(str, 'kb');
+				}, aggregate_sum);
 			} else {
 				AnyBalance.trace('Трафика нет...');
 			}

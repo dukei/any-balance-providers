@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-<change version="3" date="2013-11-16">
-- Minor changes.
-</change>
-<change version="2" date="2013-10-05">
-- Added Current humidity, Сurrent condition, Sunrise, Sunset, Wind speed.
-</change>
+	<change version="4" date="2014-06-09">
+	- Bug fixes.
+	</change>
+	<change version="3" date="2013-11-16">
+	- Minor changes.
+	</change>
+	<change version="2" date="2013-10-05">
+	- Added Current humidity, Сurrent condition, Sunrise, Sunset, Wind speed.
+	</change>
 </history>

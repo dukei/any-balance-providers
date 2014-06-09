@@ -17,11 +17,10 @@ function main() {
 	// Сначала ищем город
 	checkEmpty(prefs.city, 'Please, enter the city in settings!');
 	
-	var html = AnyBalance.requestGet('http://sugg.us.search.yahoo.net/gossip-gl-location/?appid=weather&output=sd1&p2=cn,t,pt,z&callback=YUI.Env.JSONP.yui_3_9_1_1_1380964963051_1216&lc=en-US&p1=26.24441909790039,50.61938858032227&command='+
-		encodeURIComponent(prefs.city), g_headers);
+	var html = AnyBalance.requestGet('http://sugg.us.search.yahoo.net/gossip-gl-location/?appid=weather&output=sd1&p2=cn,t,pt,z&callback=YUI.Env.JSONP.yui_3_9_1_1_1380964963051_1216&lc=en-US&p1=26.24441909790039,50.61938858032227&command=' + encodeURIComponent(prefs.city), g_headers);
 
 	var woeid = getParam(html, null, null, /woeid=(\d+)/i);
-	checkEmpty(woeid, 'Cant find city ID! Please, check the city in settings ('+prefs.city+')');
+	checkEmpty(woeid, 'Cant find city ID! Please, check the city in settings ('+prefs.city+')', true);
 	
 	html = AnyBalance.requestGet(baseurlRssAPI+'forecastrss?w='+woeid + (prefs.Degree_units ? '&u='+prefs.Degree_units : ''), g_headers);
 	
@@ -33,6 +32,7 @@ function main() {
 	}
 	
     var result = {success: true};
+	
 	getParam(html, result, 'current_temp', /<yweather:condition[^>]*temp="([^"]*)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'current_text', /<yweather:condition[^>]*text="([^"]*)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'current_pressure', /<yweather:atmosphere[^>]*pressure="([^"]*)/i, replaceTagsAndSpaces, parseBalance);

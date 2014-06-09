@@ -12,10 +12,10 @@
 	<ListPreference 
         key="prefix"
         title="Префикс номера телефона" 
-        summary="|Без префикса|{@s}" 
-	entries="Без префикса|495|499|812|005"
-	entryValues="|495|499|812|005"
-        dialogTitle="Префикс вашего номера АллоИнкогнито">
+        summary="|Без префикса|{@s}"
+		entries="Без префикса|495|499|812|005"
+		entryValues="|495|499|812|005"
+		dialogTitle="Префикс вашего номера АллоИнкогнито">
     </ListPreference>
     <EditTextPreference 
         title="Номер телефона" 

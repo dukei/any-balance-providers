@@ -305,6 +305,9 @@ function fetchOrdinary(html, baseurl, resultFromLK){
 		
 		// Надо грохнуть старую куку
 		AnyBalance.setCookie(domain, 'csrfToken', null);
+		// И если есть еще одну
+		AnyBalance.setCookie(domain, 'csrfToken', null);
+		
     	AnyBalance.setCookie(domain, 'csrfToken', token);
 		
 		// Проверим, есть ли такой номер в списке

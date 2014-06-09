@@ -29,7 +29,7 @@
 		dialogTitle="Номер автомобиля"
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите номер автомобиля, буквы русские.">
+		dialogMessage="Введите номер автомобиля в формате х123хх50 или 1234хх50, буквы русские.">
 	</EditTextPreference>
 	<EditTextPreference
 		title="Серия и номер ВУ"

@@ -10,17 +10,17 @@ var g_headers = {
 	'User-Agent': 'Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.76 Safari/537.36',
 };
 
-var g_baseurl = 'https://www.gosuslugi.ru/';
-
-var g_replaceSpacesAndBrs = [/^\s+|\s+$/g, '', /<br\/><br\/>$/i, ''];
-
-function getLocalizedMsg(msgs, path) {
-	var paths = path.split(/\./g);
-	for (var i = 0; i < paths.length; ++i) {
-		msgs = msgs[paths[i]];
-	}
-	return html_entity_decode(msgs);
+var g_apiHeaders = {
+	'Accept':'application/json, text/javascript, */*; q=0.01',
+	'Origin':'https://www.gosuslugi.ru',
+	'X-Requested-With':'XMLHttpRequest',
+	'User-Agent':'Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.76 Safari/537.36',
+	'Content-Type':'application/json',
+	'Referer':'https://www.gosuslugi.ru/pgu/personcab',
 }
+
+var g_baseurl = 'https://www.gosuslugi.ru/';
+var g_replaceSpacesAndBrs = [/^\s+|\s+$/g, '', /<br\/><br\/>$/i, ''];
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
@@ -33,28 +33,33 @@ function main() {
 	
 	var html = AnyBalance.requestGet(g_baseurl + 'pgu/personcab', g_headers);
 	
-	html = performRedirect(html);
-	
-	html = AnyBalance.requestPost('https://esia.gosuslugi.ru/idp/authn/UsernamePasswordLogin', {
-		username: formattedLogin,
-		password: prefs.password,
-		idType:'snils',
-	}, addHeaders({Referer: 'https://esia.gosuslugi.ru/idp/authn/CommonLogin'}));
-	
-    //Попытаемся получить ошибку авторизации на раннем этапе. Тогда она точнее.
-    var Authenticationbean = getParam(html, null, null, /Authentication.bean\s*=\s*(\{[\s\S]*?\})\s*;/i, null, getJson);
-    if (Authenticationbean && Authenticationbean.authnErrorCode) {
-    	var jsonLocalizationMsg = getParam(html, null, null, /var jsonLocalizationMsg\s*=\s*(\{[\s\S]*?\})\s*;/i, null, getJson);
-    	throw new AnyBalance.Error(getLocalizedMsg(jsonLocalizationMsg, Authenticationbean.authnErrorCode.errMsg), null, /invalidCredentials/i.test(Authenticationbean.authnErrorCode));
-    }
-	
-    html = performRedirect(AnyBalance.requestGet('https://www.gosuslugi.ru/pgu/personcab', g_headers));
-    // Поскольку Ваш браузер не поддерживает JavaScript, для продолжения Вам необходимо нажать кнопку "Продолжить".
-    var params = createFormParams(html);
-	
-	html = AnyBalance.requestPost('https://www.gosuslugi.ru/pgu/saml/SAMLAssertionConsumer', params, addHeaders({Referer: g_baseurl + 'pgu/personcab'}));
-	
-	if (!/logout/i.test(html)) {
+	// нужно для отладки
+	if(!isLoggedIn(html)) {
+		//html = performRedirect(html);
+		html = performRedirect(html);
+		
+		html = AnyBalance.requestPost('https://esia.gosuslugi.ru/idp/authn/UsernamePasswordLogin', {
+			username: formattedLogin,
+			password: prefs.password,
+			idType:'snils',
+		}, addHeaders({Referer: 'https://esia.gosuslugi.ru/idp/authn/CommonLogin'}));
+		
+		//Попытаемся получить ошибку авторизации на раннем этапе. Тогда она точнее.
+		var Authenticationbean = getParam(html, null, null, /Authentication.bean\s*=\s*(\{[\s\S]*?\})\s*;/i, null, getJson);
+		if (Authenticationbean && Authenticationbean.authnErrorCode) {
+			var jsonLocalizationMsg = getParam(html, null, null, /var jsonLocalizationMsg\s*=\s*(\{[\s\S]*?\})\s*;/i, null, getJson);
+			throw new AnyBalance.Error(getLocalizedMsg(jsonLocalizationMsg, Authenticationbean.authnErrorCode.errMsg), null, /invalidCredentials/i.test(Authenticationbean.authnErrorCode));
+		}
+		
+		html = performRedirect(AnyBalance.requestGet('https://www.gosuslugi.ru/pgu/personcab', g_headers));
+		// Поскольку Ваш браузер не поддерживает JavaScript, для продолжения Вам необходимо нажать кнопку "Продолжить".
+		//var params = createFormParams(html);
+		
+		//html = performRedirect2(AnyBalance.requestPost('https://www.gosuslugi.ru/pgu/saml/SAMLAssertionConsumer', params, addHeaders({Referer: g_baseurl + 'idp/profile/SAML2/Redirect/SSO'})));
+		html = checkForJsOff(html);
+	}
+
+	if(!isLoggedIn(html)) {
 		var error = getParam(html, null, null, [/span\s*>\s*(Ошибка авторизации(?:[^>]*>){4})/i, /<div class="error[^>]*>([\s\S]*?)<\/div>/i], [replaceTagsAndSpaces, /Вернуться назад/i, ''], html_entity_decode);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Ошибка авторизации/i.test(error));
@@ -93,45 +98,6 @@ function main() {
     AnyBalance.setResult(result);
 }
 
-function performRedirect(html) {
-	var href = getParam(html, null, null, /url=([^"]+)/i);
-	if (!href) {
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось найти ссылку на переадресацию, сайт изменен?');
-	}
-	//AnyBalance.trace('Нашли ссылку ' + href);
-	return AnyBalance.requestGet(href, addHeaders({Referer: g_baseurl + 'pgu/personcab'}));
-}
-
-function createFormParamsById(html, servicesubId) {
-	var form = getParam(html, null, null, new RegExp('<form[^>]*id="s' + servicesubId + '"[\\s\\S]*?</form>'));
-	if (!form) {
-		var err = getParam(html, null, null, /"popupText"([^>]*>){2}/i, replaceTagsAndSpaces);
-		if (err) 
-			throw new AnyBalance.Error(err);
-		
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось найти форму с данными для id: ' + servicesubId + ', такое бывает, если услуга недоступна. Если эта ошибка появляется часто - свяжитесь, пожалуйста, с разработчиками.');
-	}
-	return createFormParams(form);
-}
-
-function getXmlFileResult(html) {
-	var href = getParam(html, null, null, /\{\s*url:[^"]*"\/([^"]*)/i, [/\s/ig, '%20']);
-	
-	if(!href) {
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось найти ссылку для загрузки файла результата, сайт изменен?');
-	}
-	// https://www.gosuslugi.ru/fed/serviceResult/getFileResult?filename=%D0%A0%D0%B5%D0%B7%D1%83%D0%BB%D1%8C%D1%82%D0%B0%D1%82_1.html&orderId=89560860&serviceId=26&mimeType=docFormat%20docXML&downloadType=download&alternate=text/html&mnemonic=1&fileNo=0
-	return html = AnyBalance.requestGet(g_baseurl + href, {
-		'Accept': 'text/html, * /*',
-		'X-Requested-With': 'XMLHttpRequest',
-		'User-Agent': 'Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.76 Safari/537.36',
-		//'Referer': g_baseurl + action,
-	});
-}
-
 function processNalogi(result, html, prefs) {
 	if(isAvailable(['nalog_balance', 'nalog_info'])) {
 		// Id сервиса в системе, может меняться в будущем - вынесем отдельно.
@@ -144,8 +110,13 @@ function processNalogi(result, html, prefs) {
 		var json = postAPICall(g_baseurl + 'fed/service/' + serviceID + '_' + servicesubId + '/checkStatus.json', {}, url);
 		
 		var mainLink = g_baseurl + 'fed/services/s' + servicesubId + '/initForm?serviceTargetExtId=' + serviceID + '&userSelectedRegion=00000000000&rURL=https://www.gosuslugi.ru/pgu/personcab/orders&srcFormProviderId=9952354';
-		
-		html = AnyBalance.requestGet(mainLink, addHeaders({Referer: url}));
+		// Иногда возвращается пустая страница
+		for(var tries = 3; tries > 0; tries--) {
+			html = AnyBalance.requestGet(mainLink, addHeaders({Referer: url}));
+			
+			if(html) break;
+		}
+		//html = AnyBalance.requestGet(mainLink, addHeaders({Referer: url}));
 		
 		var stepId = 0;
 		// Нужно подтвердить пользовательское соглашение...
@@ -182,10 +153,12 @@ function processNalogi(result, html, prefs) {
 			var type = getParam(current, null, null, /<td(?:[^>]*>){5}([^<]+)/i); // Пени
 			var summ = getParam(current, null, null, /<td(?:[^>]*>){7}([^<]+)/i); // 5.62
 			//var date = getParam(current, null, null, /<td(?:[^>]*>){9}([^<]+)/i); // 23.01.2014
-			
-			sumParam(summ, result, 'nalog_balance', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-			// Формируем html
-			html_resonse += nalog + ': ' + type + ' <b>' + summ + '</b><br/><br/>';
+			// Уберем налоги у которых сумма ноль
+			if(summ != 0) {
+				sumParam(summ, result, 'nalog_balance', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+				// Формируем html
+				html_resonse += nalog + ': ' + type + ' <b>' + summ + '</b><br/><br/>';
+			}
 		}
 		getParam(html_resonse, result, 'nalog_info', null, g_replaceSpacesAndBrs);
 	}
@@ -197,7 +170,6 @@ function processGibdd(result, html, prefs) {
 	checkEmpty(prefs.licensenumber = getParam(prefs.licensenumber, null, null, /^.{10}$/), 'Введите серию и номер водительского удостоверения в формате 50км123456!', true);
 	
 	if(isAvailable(['gibdd_balance', 'gibdd_info'])) {
-		result.gibdd_balance = 0;
 		// Id сервиса в системе, может меняться в будущем - вынесем отдельно.
 		var serviceID = '10000581563';
 		
@@ -212,10 +184,15 @@ function processGibdd(result, html, prefs) {
 		}
 		
 		var mainLink = 'https://www.gosuslugi.ru/fed/services/s26/initForm?serviceTargetExtId=' + serviceID + '&userSelectedRegion=00000000000&rURL=https://www.gosuslugi.ru/pgu/personcab/orders&srcFormProviderId=9952354';
-		
-		html = AnyBalance.requestGet(mainLink, addHeaders({Referer: url}));
+		// Иногда возвращается пустая страница
+		for(var tries = 3; tries > 0; tries--) {
+			html = AnyBalance.requestGet(mainLink, addHeaders({Referer: url}));
+			
+			if(html) break;
+		}
 		//html = AnyBalance.requestGet(mainLink, addHeaders({Referer: mainLink}));
 		var action = getParam(html, null, null, /'action'[^'"]*['"]\/([^'"]*)/i);
+		checkEmpty(action, 'Не удалось найти форму для запроса штрафов, скорее всего услуга недоступна!', true);
 		
 		var params = createFormParams(html, function(params, str, name, value) {
 			if (name == 'tsRz')
@@ -239,6 +216,8 @@ function processGibdd(result, html, prefs) {
 		
 		AnyBalance.trace('Найдено штрафов: ' + fees.length);
 		
+		result.gibdd_balance = 0;
+		
 		for(var i = 0; i < fees.length; i++) {
 			var current = fees[i];
 			var plainText = getParam(current, null, null, null, replaceTagsAndSpaces);
@@ -259,13 +238,16 @@ function processGibdd(result, html, prefs) {
 	}
 }
 
-var g_apiHeaders = {
-	'Accept':'application/json, text/javascript, */*; q=0.01',
-	'Origin':'https://www.gosuslugi.ru',
-	'X-Requested-With':'XMLHttpRequest',
-	'User-Agent':'Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.76 Safari/537.36',
-	'Content-Type':'application/json',
-	'Referer':'https://www.gosuslugi.ru/pgu/personcab',
+function getLocalizedMsg(msgs, path) {
+	var paths = path.split(/\./g);
+	for (var i = 0; i < paths.length; ++i) {
+		msgs = msgs[paths[i]];
+	}
+	return html_entity_decode(msgs);
+}
+
+function isLoggedIn(html) {
+	return /logout|title="Выход"/i.test(html);
 }
 
 /** на входе урл и параметры в json */
@@ -287,4 +269,69 @@ function getUnreadMsgJson() {
 	}
 	
 	return response;
+}
+
+function checkForJsOff(html) {
+	if(/Since your browser does not support JavaScript,\s+you must press the Continue button once to proceed/i.test(html)) {
+		AnyBalance.trace('Since your browser does not support JavaScript, you must press the Continue button once to proceed...');
+		// Поскольку Ваш браузер не поддерживает JavaScript, для продолжения Вам необходимо нажать кнопку "Продолжить".
+		var params = createFormParams(html);
+		
+		html = checkForRedirect(AnyBalance.requestPost('https://www.gosuslugi.ru/pgu/saml/SAMLAssertionConsumer', params, addHeaders({Referer: g_baseurl + 'idp/profile/SAML2/Redirect/SSO'})));
+	}
+	return html;
+}
+
+function checkForRedirect(html) {
+	// Пытаемся найти ссылку на редирект
+	var href = getParam(html, null, null, /url=([^"]+)/i);
+	// Если нет ссылки, не надо никуда идти
+	if (!href) {
+		AnyBalance.trace('Данная страница не требует переадресации.');
+		//AnyBalance.trace(html);
+		return html;
+	// Если нашли ссылку, идем по ней
+	} else {
+		AnyBalance.trace('checkForRedirect: Нашли ссылку ' + href);
+		return AnyBalance.requestGet(href, addHeaders({Referer: g_baseurl + 'pgu/personcab'}));
+	}
+}
+
+function performRedirect(html) {
+	var href = getParam(html, null, null, /url=([^"]+)/i);
+	if (!href) {
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось найти ссылку на переадресацию, сайт изменен?');
+	}
+	//AnyBalance.trace('Нашли ссылку ' + href);
+	return AnyBalance.requestGet(href, addHeaders({Referer: g_baseurl + 'pgu/personcab'}));
+}
+
+function createFormParamsById(html, servicesubId) {
+	var form = getParam(html, null, null, new RegExp('<form[^>]*id="s' + servicesubId + '"[\\s\\S]*?</form>'));
+	if (!form) {
+		var err = getParam(html, null, null, /"popupText"([^>]*>){2}/i, replaceTagsAndSpaces);
+		if (err)
+			throw new AnyBalance.Error(err);
+		
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось найти форму с данными для id: ' + servicesubId + ', такое бывает, если услуга недоступна. Если эта ошибка появляется часто - свяжитесь, пожалуйста, с разработчиками.');
+	}
+	return createFormParams(form);
+}
+
+function getXmlFileResult(html) {
+	var href = getParam(html, null, null, /\{\s*url:[^"]*"\/([^"]*)/i, [/\s/ig, '%20']);
+	
+	if(!href) {
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось найти ссылку для загрузки файла результата, сайт изменен?');
+	}
+	// https://www.gosuslugi.ru/fed/serviceResult/getFileResult?filename=%D0%A0%D0%B5%D0%B7%D1%83%D0%BB%D1%8C%D1%82%D0%B0%D1%82_1.html&orderId=89560860&serviceId=26&mimeType=docFormat%20docXML&downloadType=download&alternate=text/html&mnemonic=1&fileNo=0
+	return html = AnyBalance.requestGet(g_baseurl + href, {
+		'Accept': 'text/html, * /*',
+		'X-Requested-With': 'XMLHttpRequest',
+		'User-Agent': 'Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.76 Safari/537.36',
+		//'Referer': g_baseurl + action,
+	});
 }

@@ -80,12 +80,16 @@ function main() {
 			throw new AnyBalance.Error('Не удалось зайти в систему. Сайт изменен?');
 		}
 	}
+	
+	/**
 	if (!/payment\/activity\//i.test(html)) {
 		//Не нашли ссылку на платежи. Очень вероятно, что это корпоративный аккаунт
 		throw new AnyBalance.Error("Похоже, у вас корпоративный аккаунт. Пожалуйста, воспользуйтесь провайдером Киевстар для корпоративных тарифов");
 	}
+	*/
+	
 	if (!~html.indexOf(prefs.login)) {
-		throw new AnyBalance.Error("Ошибка. Информация о номере не найдена.");
+		throw new AnyBalance.Error("Ошибка. Информация о номере не найдена. Если у вас корпоративный аккаунт, воспользуйтесь провайдером Киевстар для корпоративных тарифов.");
 	}
 	AnyBalance.trace('Успешный вход.');
 	var result = {success: true};
@@ -152,7 +156,7 @@ function main() {
 	sumParam(html, result, 'internet', /(?:Остаток Мб для пользования услугой Интернет GPRS\s*:|Залишок Мб для користування послугою Інтернет GPRS\s*:)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
 	sumParam(html, result, 'internet', /(?:Мб для Мобильного Интернета|Мб для Мобільного Інтернету)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
 	//Домашний Интернет
-	sumParam(html, result, 'home_internet', /(?:Від послуги[^<]*Домашній Інтернет|От услуги[^<]*Домашний Интернет|Бонусні кошти послуги[^<]*Домашній Інтернет|Бонусные средства услуги[^<]*Домашний Интернет)[^<]*:(?:[^>]*>){3}([\s\S]*?)грн/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+	sumParam(html, result, 'home_internet', /(?:Від послуги[^<]*Домашній Інтернет|От услуги[^<]*Домашний Интернет|Бонусні кошти послуги[^<]*Домашній Інтернет|Бонусные средства услуги[^<]*Домашний Интернет|Від Домашнього Інтернету|От Домашнего Интернета)[^<]*:(?:[^>]*>){3}([\s\S]*?)грн/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	getParam(html, result, 'home_internet_date', /(?:Від послуги[^<]*Домашній Інтернет|От услуги[^<]*Домашний Интернет|Бонусні кошти послуги[^<]*Домашній Інтернет|Бонусные средства услуги[^<]*Домашний Интернет)[^<]*:(?:[^>]*>){8}\s*<nobr>([^<]*)/i, replaceTagsAndSpaces, parseDate);
 	//Порог отключения
 	sumParam(html, result, 'limit', /(?:Поріг відключення:|Порог отключения:)[\s\S]*?<b>([^<]*)/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);

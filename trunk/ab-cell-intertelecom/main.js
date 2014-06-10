@@ -47,6 +47,8 @@ function main() {
     sumParam(html, result, 'bonus_fb', /<td[^>]*>\s*Бонус [^>]*Угадай код[^>]*\s*<\/td>\s*<td[^>]*>([\s\S]*?) \([^<]*\)\s*<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     //Бонус "Смартфон за Check-in"
     sumParam(html, result, 'bonus_fb', /<td[^>]*>\s*Бонус [^>]*Смартфон за Check-in[^>]*\s*<\/td>\s*<td[^>]*>([\s\S]*?) \([^<]*\)\s*<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    //Бонус "На лето" (на доп.услуги)"
+    sumParam(html, result, 'bonus_fb', /<td[^>]*>\s*Бонус [^>]*На лето[^>]*\s*[^>]*на доп.услуги[^>]*\s*<\/td>\s*<td[^>]*>([\s\S]*?) \([^<]*\)\s*<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     //Бонус «Вільний доступ»    [^>]*<\/td>
     getParam(html, result, 'bonus_vd', /<td[^>]*>\s*Бонус [^>]*Вільний доступ[^>]*\s*<\/td>\s*<td[^>]*>([\s\S]*?) \([^>]*\)\s*<\/td>/i, replaceTagsAndSpaces, parseBalance);
     //Дата Бонус контактный номер
@@ -55,6 +57,8 @@ function main() {
     sumParam(html, result, 'date_bonus_fb', /<td[^>]*>\s*Бонус [^>]*Угадай код[^>]*\s*<\/td>\s*<td[^>]*>\s*.* \(по ([^<]*)\)\s*<\/td>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
     //Дата Бонус "Смартфон за Check-in"
     sumParam(html, result, 'date_bonus_fb', /<td[^>]*>\s*Бонус [^>]*Смартфон за Check-in[^>]*\s*<\/td>\s*<td[^>]*>\s*.* \(по ([^<]*)\)\s*<\/td>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
+    //Дата Бонус "На лето" (на доп.услуги)"
+    sumParam(html, result, 'date_bonus_fb', /<td[^>]*>\s*Бонус [^>]*На лето[^>]*\s*[^>]*на доп.услуги[^>]*\s*<\/td>\s*<td[^>]*>\s*.* \(по ([^<]*)\)\s*<\/td>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
     //Пакетный трафик (получаем в локальную переменную, и независимо от включенности счетчика 'traffic_paket')
     var traffic_paket = sumParam(html, null, null, /<td[^>]*>\s*пакетный трафи(?:к|к \(Rev.A\)|к \(Rev.A\/Rev.B\))\s*<\/td>\s*<td[^>]*>([\s\S]*?)\s/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     //Пакетный трафик (Rev.B)
@@ -101,6 +105,8 @@ function main() {
     getParam(html, result, 'skidka', /<td[^>]*>\s*Лояльный стаж \(гг.мм\)\s*<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, skidka2loyal);
     //Количество новостей
     getParam(html, result, 'news', />Новости <span [^>]*>([^<]*)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+    //Кредит до…
+    getParam(html, result, 'kredit', /<td[^>]*>\s*Кредит до...\s*<\/td>\s*<td[^>]*>([^<]*)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     //Номер телефона
     getParam(html, result, 'phonet', /<td[^>]*>\s*Номер телефона\s*<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, [replaceTagsAndSpaces, /(\d+)/i, '+38$1']);
     //Номер телефона мобильный

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="29">ab-cell-intertelecom</id>
+  <id version="30">ab-cell-intertelecom</id>
   <api flags="no_browser" />
   <name>Интертелеком</name>
 	<description html="true"><![CDATA[
@@ -50,6 +50,7 @@
     <counter id="loyalty" name="Лояльный стаж" type="time_interval" format="{@Y}:{@mo}"/>
     <counter id="mobsubscr" name="Абонентский стаж" type="time_interval" format="{@Y}:{@mo}"/>
     <counter id="news" name="Новости" type="numeric" flags="zero_when_empty"/>
+    <counter id="kredit" name="Кредит до…" suffix=" ₴" type="numeric"/>
     <counter id="phonet" name="Номер телефона" type="text"/>
     <counter id="mobphonet" name="Номер телефона мобильный" type="text"/>
 	<counter id="ip_adr" name="IP" type="text"/>

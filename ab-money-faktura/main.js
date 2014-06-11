@@ -31,12 +31,12 @@ function main(){
         throw new AnyBalance.Error("Не удаётся найти форму входа в интернет-банк! Сайт недоступен или изменения на сайте.");
     }
 	
-    var id=matches[1], href=matches[2];
+    var id = matches[1], href = matches[2];
     var params = {};
     params[id + "_hf_0"] = '';
     params.hasData = 'X';
-    params.login=prefs.login;
-    params.password=prefs.password;
+    params.login = prefs.login;
+    params.password = prefs.password;
 	
     html = AnyBalance.requestPost(baseurl + href, params);
 	
@@ -110,52 +110,34 @@ function mainCardAcc(what, baseurl){
 function mainDep(what, baseurl){
     var prefs = AnyBalance.getPreferences();
     var html = AnyBalance.requestGet(baseurl + "/priv/deposits");
-    var $html = $(html);
-    var pattern;
-    
-    if($html.find("div.links a[href*='2tbank']").length > 0 || AnyBalance.getCookie('site')=="bank-t")
-      pattern = new RegExp(prefs.num ? prefs.num : '\\d{5}');
-    else	
-      pattern = new RegExp(prefs.num ? '\\d{3,}'+prefs.num+'\\s' : '\\d{7,}\\s');
-
-    var min_i = -1;
-    var min_val = null;
-    var cur_i = -1;
-    var $acc = $html.find('tbody tr').filter(function(i){
-    	var matches = pattern.exec($(this).find('a.deposit-link').text());
-        if(!matches)
-             return false;
-        ++cur_i;
-        if(min_i < 0 || min_val > matches[0]){
-            min_i = cur_i;
-            min_val = matches[0];
-        }
-        return true;
-    }).eq(min_i);
-    
-    if(!$acc.size()){
+	
+	var num = prefs.num || '';
+	
+	var tr = getParam(html, null, null, new RegExp('<tr>\\s*<td>(?:[^>]*>){4}\\s*Договор(?:[^>]*>){1}\\d+'+num+'(?:[^>]*>){28}\\s*</tr>', 'i'));
+	if(!tr) {
         if(prefs.num)
             throw new AnyBalance.Error('Не удалось найти ' + g_phrases.kartu[what] + ' с последними цифрами ' + prefs.num);
-        else
+		else
             throw new AnyBalance.Error('Не удалось найти ни ' + g_phrases.karty1[what] + '!');
     }
-
-    var result = {success: true};
-
-    getParam($acc.find('span.deposit-name').text(), result, 'accname', null, replaceTagsAndSpaces);
-    getParam($acc.find('a.deposit-link span span').first().text(), result, 'cardnum', null, replaceTagsAndSpaces);
-    getParam($acc.find('span.deposit-name').text(), result, '__tariff', null, replaceTagsAndSpaces);
-    getParam($acc.find('td:nth-child(2)').text(), result, ['currency','balance'], null, replaceTagsAndSpaces);
-    getParam($acc.find('td:nth-child(3)').text(), result, 'percent', null, [replaceTagsAndSpaces,/%/i,'']);
-    getParam($acc.find('td:nth-child(4)').text(), result, 'balance', null, myReplaceTagsAndSpaces, parseBalance);
-    getParam($acc.find('td:nth-child(5)').text(), result, 'percent_sum', null, myReplaceTagsAndSpaces, parseBalance);
-    getParam($acc.find('td:nth-child(6)').text(), result, 'percent_date', null, myReplaceTagsAndSpaces, parseDate);
-    
+	
+	var result = {success: true};
+	
+	getParam(tr, result, 'balance', /([^>]*>){19}/i, myReplaceTagsAndSpaces, parseBalance);
+	getParam(tr, result, ['currency','balance'], /([^>]*>){15}/, replaceTagsAndSpaces);
+	getParam(tr, result, 'percent', /([^>]*>){17}/, replaceTagsAndSpaces, parseBalance);
+	getParam(tr, result, 'accname', /([^>]*>){4}/i, replaceTagsAndSpaces);
+	getParam(tr, result, '__tariff', /([^>]*>){4}/i, replaceTagsAndSpaces);
+	getParam(tr, result, 'cardnum', /([^>]*>){8}/, replaceTagsAndSpaces);
+    getParam(tr, result, 'percent_sum', /([^>]*>){21}/, myReplaceTagsAndSpaces, parseBalance);
+    getParam(tr, result, 'percent_date', /([^>]*>){23}/, myReplaceTagsAndSpaces, parseDate);
+	
+/*    
     if(AnyBalance.isAvailable('accnum')){
         var href = $acc.find('a.deposit-link').attr('href');
         html = AnyBalance.requestGet(baseurl + '/' + href.replace(/^[.\/]+/g, ''));
         getParam(html, result, 'accnum', /Счет вклада[\s\S]*?<td[^>]*>\s*(\d+)/i);
     }
-
+*/
     AnyBalance.setResult(result);
 }

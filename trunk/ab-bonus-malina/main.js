@@ -19,27 +19,31 @@ function main () {
 
     AnyBalance.trace ('Trying to enter selfcare at address: ' + baseurl);
 	
-	try {
-		var html = AnyBalance.requestGet (baseurl + 'msk/', g_headers);  // Запрос необходим для формирования cookie с регионом MSK
+    var html = AnyBalance.requestGet(baseurl + 'msk/', g_headers); // Запрос необходим для формирования cookie с регионом MSK
+    
+	html = AnyBalance.requestPost(baseurl + 'msk/pp/login/', {
+    	csrfmiddlewaretoken: getParam(html, null, null, /csrfmiddlewaretoken[^>]*value=["']([^"']+)["']/i),
+    	contact: prefs.login,
+    	password: prefs.password,
+    	'next': ''
+    }, addHeaders({'X-Requested-With': 'XMLHttpRequest'}));
+	
+	var json = getJson(html);
+	
+    // Проверка на корректный вход
+    if (json.status != 'ok') {
+    	// Проверка неправильной пары логин/пароль
+		if(json.errors['__all__']) {
+			var error = json.errors['__all__'].join(', ');
+		} else {
+			var error = json.errors['__all__'];
+		}
 		
-		html = AnyBalance.requestPost(baseurl + 'msk/pp/login/', {
-			csrfmiddlewaretoken:getParam(html, null, null, /csrfmiddlewaretoken[^>]*value=["']([^"']+)["']/i),
-			contact: prefs.login,
-			password: prefs.password,
-			'next': ''
-		}, addHeaders({'X-Requested-With':'XMLHttpRequest'}));
+    	if (error)
+			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
 		
-		// Проверка на корректный вход
-		if(!/"status"\s*:\s*"ok"/i.test(html)){
-			// Проверка неправильной пары логин/пароль
-			var error = getParam(html, null, null, /<div[^>]+id="alert"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-			if(error)
-				throw new AnyBalance.Error(error);
-			throw new AnyBalance.Error('Не удалось зайти на персональную страницу. Сайт изменен?');
-		}	
-	} catch(e) {
-		
-	}
+		throw new AnyBalance.Error('Не удалось зайти на персональную страницу. Сайт изменен?');
+    }
 	
 	html = AnyBalance.requestGet (baseurl + 'pp/', g_headers);
 	

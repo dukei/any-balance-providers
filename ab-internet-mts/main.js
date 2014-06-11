@@ -727,8 +727,10 @@ function getBarnaul(){
 }
 
 function getBelgorod(){
-    var baseurl = 'http://stat.belgorod-net.ru/';
-    typicalLanBillingInetTv(baseurl + 'index.php?r=site/login');
+	var urlIndex = 'http://stat.belgorod-net.ru/index.php?r=site/login';
+	var urlAjax = 'http://stat.belgorod-net.ru/index.php?r=account/vgroups&agrmid=';
+	
+	newTypicalLanBillingInetTv(urlIndex, urlAjax);
 }
 
 function getSaratov(){

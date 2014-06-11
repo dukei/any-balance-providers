@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2.0" version="10">ab-money-faktura</id>
+	<api flags="no_browser"/>
+	<id major_version="2.0" version="11">ab-money-faktura</id>
 	<name>Фактура</name>
 	<description html="true"><![CDATA[
 	<p>Получает текущий остаток, бонусные баллы и другие параметры карт банков, работающих через factura.ru, используя систему Интернет-банк https://www.faktura.ru/lite/app</p>
@@ -12,7 +13,6 @@
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>api:jquery.min.js</js>
 		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
@@ -30,11 +30,11 @@
 		<counter id="cardname" name="Тип карты" type="text"/>
 		<counter id="accnum" name="Номер счета" type="text"/>
 		<counter id="accname" name="Имя счета" type="text"/>
-		<counter id="percent" name="Процент"/>
+		<counter id="percent" name="Процент" units=" %"/>
 		<counter id="percent_sum" name="Сумма процентов к начислению" units=" {@currency}"/>
 		<counter id="percent_date" name="Дата начисления процентов" type="time" format="dd/MM/yyyy"/>
 	</counters>
-	<keywords>интернет-банк, фактура, левобережный, 2Т банк,  Банк-Т, 2ТБанк, ПримСоцБанк</keywords>
+	<keywords>интернет-банк, фактура, левобережный, 2Т банк,  Банк-Т, 2ТБанк, ПримСоцБанк, европлан</keywords>
 	<type>money</type>
 	<country>ru</country>
 </provider>

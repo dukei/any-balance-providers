@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser" />
-	<id version="1">ab-municipal-parking</id>
+	<id version="2">ab-municipal-parking</id>
 	<name>Московский паркинг</name>
-	<description>
-	Получает баланс из личного кабинета Московского паркинга https://parkingcab.mos.ru/
-	</description>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе и сроках действия разрешений на парковку из личного кабинета Московского паркинга https://parkingcab.mos.ru</p>
+	]]></description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
@@ -16,7 +15,17 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units="р"/>
+		<counter id="balance" name="Баланс" units=" р"/>
+
+		<counter id="car1" name="Автомобиль" type="text"/>
+		<counter id="permission1" name="Номер разрешения" type="text"/>
+		<counter id="permission_till1" name="Срок действия разрешения" type="time" format="dd/MM/yyyy"/>
+		
+		<counter id="car2" name="Автомобиль" type="text"/>
+		<counter id="permission2" name="Номер разрешения" type="text"/>
+		<counter id="permission_till2" name="Срок действия разрешения" type="time" format="dd/MM/yyyy"/>
+
+		<counter id="all" name="Сводка" type="html"/>
 	</counters>
 	<keywords></keywords>
 	<type>municipal</type>

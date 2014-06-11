@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="2">ab-municipal-parking</id>
+	<id version="3">ab-municipal-parking</id>
 	<name>Московский паркинг</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе и сроках действия разрешений на парковку из личного кабинета Московского паркинга https://parkingcab.mos.ru</p>
@@ -21,9 +21,9 @@
 		<counter id="permission1" name="Номер разрешения" type="text"/>
 		<counter id="permission_till1" name="Срок действия разрешения" type="time" format="dd/MM/yyyy"/>
 		
-		<counter id="car2" name="Автомобиль" type="text"/>
-		<counter id="permission2" name="Номер разрешения" type="text"/>
-		<counter id="permission_till2" name="Срок действия разрешения" type="time" format="dd/MM/yyyy"/>
+		<counter id="car2" name="Автомобиль 2" type="text"/>
+		<counter id="permission2" name="Номер разрешения 2" type="text"/>
+		<counter id="permission_till2" name="Срок действия разрешения 2" type="time" format="dd/MM/yyyy"/>
 
 		<counter id="all" name="Сводка" type="html"/>
 	</counters>

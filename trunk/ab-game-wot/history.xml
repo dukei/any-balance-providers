@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="23" date="2014-06-14">
+	- Исправления в связи с обновлением API;
+	- Обновлены формулы расчета рейтингов.
+	</change>
 	<change version="22" date="2014-04-09">
 	- Добавлен внутриигровой рейтинг.
 	</change>

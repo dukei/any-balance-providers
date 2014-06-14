@@ -102,7 +102,7 @@ function main(){
 		var tmp = pvehicles.data[id]
 		var s = 0;
 		for (q in tmp){
-			s += tmp[q].statistics.all.battles * tanks_data[tmp[q].tank_id].level;
+			s += tmp[q].statistics.battles * tanks_data[tmp[q].tank_id].level;
 		}	
 		var TIER = s / battles;
 		
@@ -118,11 +118,11 @@ function main(){
 			result['er'] = er.toFixed(0);
 		
 		if(AnyBalance.isAvailable('er_xvm'))
-			// http://www.koreanrandom.com/forum/topic/2625-xvm-%D1%88%D0%BA%D0%B0%D0%BB%D0%B0-scale/page-48
-			if(er<420) {
+			// http://www.koreanrandom.com/forum/topic/2625-xvm-%D1%88%D0%BA%D0%B0%D0%BB%D0%B0-scale/page-54
+			if(er<350) {
 				result['er_xvm'] = 0
 			} else {
-				result['er_xvm'] = (Math.max(Math.min(er*(er*(er*(er*(er*(4.5254e-17*er - 3.3131e-13) + 9.4164e-10) - 1.3227e-6) + 9.5664e-4) - 0.2598) + 13.23, 100), 0)).toFixed(prefs.accuracy);
+				result['er_xvm'] = (Math.max(Math.min(er*(er*(er*(er*(er*(3.388e-17*er - 2.469e-13) + 6.9335e-10) - 9.5342e-7) + 6.656e-4) -0.1485) - 0.85, 100), 0)).toFixed(prefs.accuracy);
 			}
 
 	if(AnyBalance.isAvailable('avg_exp'))
@@ -152,11 +152,11 @@ function main(){
 			result['wn6'] = wn6.toFixed(0);
 		
 		if(AnyBalance.isAvailable('wn6_xvm'))
-			// http://www.koreanrandom.com/forum/topic/2625-xvm-%D1%88%D0%BA%D0%B0%D0%BB%D0%B0-scale/page-48
-			if(wn6>2160) {
+			// http://www.koreanrandom.com/forum/topic/2625-xvm-%D1%88%D0%BA%D0%B0%D0%BB%D0%B0-scale/page-54
+			if(wn6>2300) {
 				result['wn6_xvm'] = 100
 			} else {
-				result['wn6_xvm'] = (Math.max(Math.min(wn6*(wn6*(wn6*(-1.268e-11*wn6 + 5.147e-8) - 6.418e-5) + 7.576e-2) - 7.25, 100), 0)).toFixed(prefs.accuracy);
+				result['wn6_xvm'] = (Math.max(Math.min(wn6*(wn6*(wn6*(wn6*(wn6*(4.66e-18*wn6 - 3.2413e-14) + 7.524e-11) - 6.516e-8) + 1.307e-5) + 5.153e-2) - 3.9, 100), 0)).toFixed(prefs.accuracy);
 			}
 		
 	if (prefs.tank) {

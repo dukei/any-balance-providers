@@ -27,9 +27,9 @@ function getData(url) {
 }
 
 function getID(nick, API_ADDR, APP_ID) {
-	var v = getData(API_ADDR + '/2.0/account/list/?application_id=' + APP_ID + '&search=' + nick);
+	var v = getData(API_ADDR + '/2.0/account/list/?application_id=' + APP_ID + '&search=' + nick + '&limit=1');
 	if (v.data[0]) {
-		return v.data[0].id;
+		return v.data[0].account_id;
 	} else {
 		throw new AnyBalance.Error('ID not found! Check your settings.');
 	}

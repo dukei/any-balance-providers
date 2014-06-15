@@ -11,15 +11,15 @@ function main(){
 		throw new AnyBalance.Error ('Введите e-mail');
 	if (!prefs.password || prefs.password == '')
 		throw new AnyBalance.Error ('Введите пароль');
-	AnyBalance.requestPost('http://lingualeo.ru/meatballs', {
+	AnyBalance.requestPost('http://lingualeo.com/ru/meatballs', {
 		email: prefs.email,
 		password: prefs.password
 	});
-	var html = AnyBalance.requestGet('http://lingualeo.ru/meatballs');
+	var html = AnyBalance.requestGet('http://lingualeo.com/ru/meatballs');
 	if (html) {
 		var result = {success: true};
 		
-		var matches = html.match(/<a href="\/profile"[\s\S]+?>(.+?)<\/a>/i);
+		var matches = html.match(/<a href="\/ru\/profile"[\s\S]+?>(.+?)<\/a>/i);
 		if (matches) {
 			result.__tariff = matches[1]
 		} else {

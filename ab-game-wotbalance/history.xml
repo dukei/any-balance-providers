@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="2" date="2014-06-15">
+	- Исправлено определение дня недели;
+	</change>
 	<change version="1" date="2014-03-18">
 	- Добавлен провайдер;
 	</change>

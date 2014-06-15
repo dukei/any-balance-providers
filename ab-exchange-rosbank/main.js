@@ -10,7 +10,7 @@ function main(){
     
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');    
-	var baseurl = 'http://www.rosbank.ru/ru/';
+	var baseurl = 'http://www.rosbank.ru/ru/currency.php';
 	var htmlinfo = AnyBalance.requestGet(baseurl,
 	{
 		"Accept-Encoding": "deflate"

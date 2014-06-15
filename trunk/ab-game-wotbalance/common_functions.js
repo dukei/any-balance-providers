@@ -40,8 +40,8 @@ function getDateTimeToString(d, strFormat){
 // http://iljin-oleg.blogspot.com/2012/09/javascript.html
 var resultDateTime = strFormat;
 
-var daysLong = ["Понедельник","Вторник","Среда","Четверг","Пятница","Суббота","Воскресенье"];
-var daysShort = ["Пн.","Вт.","Ср.","Чт.","Пт.","Сб.","Вс."];
+var daysLong = ["Воскресенье","Понедельник","Вторник","Среда","Четверг","Пятница","Суббота"];
+var daysShort = ["Вс.","Пн.","Вт.","Ср.","Чт.","Пт.","Сб."];
 var yearRegExp = d.getFullYear();
 var monthRegExp = (String(d.getMonth()+1).length ==1) ? ("0"+(d.getMonth()+1)) : (d.getMonth()+1);
 var dayRegExp = (d.getDate().toString().length ==1) ? ("0"+d.getDate()) : d.getDate();
@@ -54,8 +54,8 @@ var milisecondsRegExp = (d.getMilliseconds().toString().length ==1) ? ("00"+d.ge
 resultDateTime = resultDateTime.replace(new RegExp('yyyy', 'g'), yearRegExp);
 resultDateTime = resultDateTime.replace(new RegExp('yy', 'g'), String(yearRegExp).slice(-2));
 resultDateTime = resultDateTime.replace(new RegExp('MM', 'g'), monthRegExp);
-resultDateTime = resultDateTime.replace(new RegExp('dddd', 'g'), daysLong[dayNameRegExp-1]);
-resultDateTime = resultDateTime.replace(new RegExp('ddd', 'g'), daysShort[dayNameRegExp-1]);
+resultDateTime = resultDateTime.replace(new RegExp('dddd', 'g'), daysLong[dayNameRegExp]);
+resultDateTime = resultDateTime.replace(new RegExp('ddd', 'g'), daysShort[dayNameRegExp]);
 resultDateTime = resultDateTime.replace(new RegExp('dd', 'g'), dayRegExp);
 resultDateTime = resultDateTime.replace(new RegExp('hh', 'g'), hoursRegExp);
 resultDateTime = resultDateTime.replace(new RegExp('mm', 'g'), minuteRegExp);

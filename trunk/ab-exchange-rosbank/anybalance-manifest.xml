@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1" version="5">ab-exchange-rosbank</id>
-  <name>РОСБАНК (курсы,расчет)</name>
+  <id major_version="1" version="6">ab-exchange-rosbank</id>
+  <name>Курсы валют РОСБАНК</name>
   <description>
     Текущие курсы покупки/продажи, установленные РОСБАНК на текущую дату. Содержит курс доллара и евро.
 	Для тех, у кого кредит/ипотека в DeltaCredit или BSGV или РОСБАНК:

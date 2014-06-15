@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+    <id version="1">ab-money-rosbank</id>
+    <name>РОСБАНК</name>
+    <description>Информация о счете, кредите в банке Росбанк (http://www.rosbank.ru).
+В настройках провайдера требуется указать 8 последних цифр номера Идентификационной карты и пароль к Интернет-банку https://ibank.rosbank.ru/.
+
+ВХОД ПО НОМЕРУ ID-КАРТЫ
+Введите 8 последних цифр номера Идентификационной карты
+Используйте данный способ входа при наличии специальной Идентификационной карты для доступа к дистанционным услугам. Если у вас нет данной карты, пожалуйста, обратитесь за ней в отделение Банка.
+
+ВНИМАНИЕ!
+В настоящее время поддерживается только один способ авторизации (по номеру ID-карты) и информация только по счетам.
+Если вам нужна поддержка еще чего-нибудь (кредиты, обращайтесь к автору провайдера по е-мейл.
+</description>
+    <author>Sergey Repin &lt;serg.repin@gmail.com&gt;</author>
+    <files>
+	<icon>icon.png</icon>
+        <preferences>preferences.xml</preferences>
+        <js>main.js</js>
+        <js>library.js</js>
+        <js>crb.js</js>
+        <js>cryptojs.js</js>
+        <history>history.xml</history>
+    </files>
+    <counters>
+	<counter id="balance" name="Остаток"/>
+        <counter id="currency" name="Валюта" type="text"/>
+        <counter id="accnum" name="Номер" type="text"/>
+        <counter id="accname" name="Название" type="text"/>
+        <counter id="fio" name="ФИО" type="text"/>
+    </counters>
+    <keywords>
+        Кредит, банк, rosbank
+    </keywords>
+    <type>
+        money
+    </type>
+    <country>
+        ru
+    </country>
+</provider>

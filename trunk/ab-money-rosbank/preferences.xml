@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference
+        title="Номер карты" 
+        positiveButtonText="ОК" 
+        summary="|Последние 8 цифр номера карты|5084 5000 {@s}" 
+        dialogTitle="Номер карты: 5084 5000 ..." 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите последние 8 цифр номера карты для входа в Интернет-банк"
+        key="login"
+        inputType="number"
+        obligatory="true">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="|Пароль для входа в Интернет-банк|***********"
+        dialogMessage="Введите пароль, используемый для входа в Интернет-банк. Если вы ранее не входили в интернет банк, то введите дату рождения в формате ДДММГГГГ."
+        inputType="numberPassword"
+        obligatory="true">
+    </EditTextPreference>
+    <ListPreference 
+        key="type" 
+        title="Что смотреть"
+        summary="||{@s}"
+        entries="Счет|Кредит"
+        entryValues="acc|crd"
+        enabled="false"
+        defaultValue="acc">
+    </ListPreference>
+    <EditTextPreference
+        title="Номер продукта" 
+        positiveButtonText="ОК" 
+        summary="|Автоматически|{@s}" 
+        dialogTitle="Номер продукта" 
+        negativeButtonText="Отмена" 
+        dialogMessage="В зависимости от настройки Что смотреть, введите сюда номер договора по кредиту или последние цифры номера счета. Если оставить поле пустым, то будет показана информация по первому счету/кредиту."
+        key="contract">
+    </EditTextPreference>
+</PreferenceScreen>

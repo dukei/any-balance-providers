@@ -77,9 +77,9 @@ function main() {
         var pin3 = prefs.password;
         var Signature = '';
 
-        AnyBalance.trace('pin2enc:'+pin2enc);
-        AnyBalance.trace('TransCod:'+TransCod);
-        AnyBalance.trace('pin3:'+pin3);
+        //AnyBalance.trace('pin2enc:'+pin2enc);
+        //AnyBalance.trace('TransCod:'+TransCod);
+        //AnyBalance.trace('pin3:'+pin3);
         
         //Этот код расчета Signature выдран из main.js сайта (использует cryptojs.js и crb.js)
         var v = CRB.decryptPin2(pin2enc,pin3);
@@ -99,7 +99,7 @@ function main() {
         }
         //Расчитали Signature
 
-        AnyBalance.trace('Signature:'+Signature);
+        //AnyBalance.trace('Signature:'+Signature);
         
         html = AnyBalance.requestPost(baseurl + 'Login.aspx', {
             'ctl00$MainScriptManager':'ctl00$MainContentPlaceHolder$TabsUpdatePanel|ctl00$MainContentPlaceHolder$Pwd1Button',

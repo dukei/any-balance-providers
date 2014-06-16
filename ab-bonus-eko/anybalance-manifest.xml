@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+        <id version="1">ab-bonus-eko</id>
+        <api flags="no_browser"/>
+        <name>Эко-маркет</name>
+	<description html="true"><![CDATA[
+	<p>Мониторинг накопленных бонусов сети супермаркетов "ЭКО-маркет" (Украина)</p>
+	<p>Информация берется из личного кабинета http://www.podyaka.eko.com.ua/</p>
+	]]></description>
+        <instruction>
+	  Для регистрации в Личном кабинете необходимо зайти на сайт http://www.podyaka.eko.com.ua/ и на главной страничке нажать кнопку «Реєстрація картки». На появившейся страничке необходимо заполнить все поля и нажать кнопку «Продовжити реєстрацію». В появившейся анкете необходимо заполнить все поля помеченные звездочкой и нажать кнопку «Зареєструватися».
+	</instruction>
+        <author>Ignatiy Goloviznin &lt;igoloviznin@gmail.com&gt;</author>
+        <files>
+               <icon>icon.png</icon>
+               <preferences>preferences.xml</preferences>
+               <js>library.js</js>
+               <js>main.js</js>
+               <history>history.xml</history>
+        </files>
+        <counters>
+                <counter id="bonus" name="Бонус" units=" ₴"/>
+                <counter id="ncard" name="№ карты" type="text"/>
+        </counters>
+        <keywords>
+         эко маркет бонус личный кабинет
+        </keywords>
+        <type>bonus</type>
+        <country>ua</country>
+</provider>

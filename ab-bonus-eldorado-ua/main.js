@@ -4,7 +4,7 @@
 Данные по бонусной карте Eldorado
 
 Сайт магазина: http://eldorado.com.ua/
-Личный кабинет: http://www.club.eldorado.com.ua/enter.php ?logout=yes
+Личный кабинет: http://www.club.eldorado.com.ua/personal/
 */
 
 function main(){

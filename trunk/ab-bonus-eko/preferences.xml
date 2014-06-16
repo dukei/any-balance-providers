@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference
+        title="Номер карты"
+        positiveButtonText="ОК"
+        summary="Номер вашей карты||{@s}\n"
+        dialogTitle="Номер карты"
+        negativeButtonText="Отмена"
+        dialogMessage="Введите номер вашей карты"
+        key="login"
+        inputType="text">
+    </EditTextPreference>
+    <EditTextPreference
+        title="Пароль"
+        positiveButtonText="ОК"
+	summary="Пароль для авторизации||***********\n"
+	dialogTitle="Пароль"
+	negativeButtonText="Отмена"
+	dialogMessage="Введите пароль, используемый для авторизации"
+	key="passw"
+	inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

@@ -20,4 +20,15 @@
         negativeButtonText="Отмена"
         inputType="numberPassword">
     </EditTextPreference>
+    <EditTextPreference
+	key="email"
+	title="E-mail"
+	summary="Адрес электронной почты||{@s}\n"
+	obligatory="true"
+	dialogTitle="E-mail"
+	positiveButtonText="ОК"
+	negativeButtonText="Отмена"
+	dialogMessage="Введите логин (адрес электронной почты), используемый для входа в личный кабинет."
+	inputType="textEmailAddress">
+    </EditTextPreference>
 </PreferenceScreen>

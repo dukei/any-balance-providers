@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-bonus-eldorado-ua</id>
+  <id version="2">ab-bonus-eldorado-ua</id>
   <name>Клуб Эльдорадо (Украина)</name>
   <description>
     Получает информацию по бонусной карте клуба постоянных покупателей Эльдорадо. Информация берется из личного кабинета http://www.club.eldorado.com.ua.
@@ -14,8 +14,9 @@
     <history>history.xml</history>
   </files>
   <counters>
-    <counter id="balance" name="Активная сумма" suffix=" ₴" type="numeric"/>
-    <counter id="balance_not_active" name="НЕактивная сумма" suffix=" ₴" type="numeric"/>
+    <counter id="balance" name="Активных бонусов" suffix=" ₴" type="numeric"/>
+    <counter id="balance_not_active" name="Не активных бонусов" suffix=" ₴" type="numeric"/>
+    <counter id="ncard" name="№ карты"/>
   </counters>
   <keywords>
     eldorado, эльдорадо, прибуткова, картка, карта, бонус, украина

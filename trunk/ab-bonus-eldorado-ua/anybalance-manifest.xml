@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
   <id version="2">ab-bonus-eldorado-ua</id>
+  <api flags="no_browser"/>
   <name>Клуб Эльдорадо (Украина)</name>
-  <description>
-    Получает информацию по бонусной карте клуба постоянных покупателей Эльдорадо. Информация берется из личного кабинета http://www.club.eldorado.com.ua.
-  </description>
+  <description html="true"><![CDATA[
+  <p>Получает информацию по бонусной карте клуба постоянных покупателей Эльдорадо. Информация берется из личного кабинета http://www.club.eldorado.com.ua.</p>
+  ]]></description>
+  <instruction>
+	  Для регистрации в Личном кабинете необходимо зайти на сайт http://www.club.eldorado.com.ua и на главной страничке ввести номер карты и пин-код. На появившейся страничке необходимо заполнить все поля анкеты и согласиться на активацию.
+  </instruction>
   <author>Ignatiy Goloviznin &lt;igoloviznin@gmail.com&gt;</author>
   <files>
     <icon>icon.png</icon>

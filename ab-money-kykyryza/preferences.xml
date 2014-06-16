@@ -2,9 +2,9 @@
 <PreferenceScreen>
 	<EditTextPreference
 		obligatory="true"
-		title="Номер карты"
+		title="Номер штрих-кода карты"
 		positiveButtonText="ОК"
-		summary="Номер карты||{@s}\n"
+		summary="Номер штрих-кода карты||{@s}\n"
 		dialogTitle="Номер карты"
 		negativeButtonText="Отмена"
 		dialogMessage="Номер штрих-кода карты"

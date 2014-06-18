@@ -12,28 +12,28 @@ function main(){
 
     checkEmpty(prefs.login, 'Введите номер телефона для входа в интернет-помощник!');
     checkEmpty(prefs.password, 'Введите пароль для входа в интернет-помощник!');
-
-    if(prefs.phone && !/^\d+$/.test(prefs.phone)){
-	throw new AnyBalance.Error('В качестве номера необходимо ввести 9 цифр номера, например, 501234567, или не вводить ничего, чтобы получить информацию по основному номеру.');
-    }
-
-    var baseurl = 'https://ihelper-prp.mts.com.ua/SelfCarePda/';
-
-    AnyBalance.trace("Trying to enter selfcare at address: " + baseurl);
-    var html = AnyBalance.requestPost(baseurl + "Security.mvc/LogOn", {
-    	username: prefs.login,
-        password: prefs.password
-    });
-    
-    var error=getParam(html, null, null, /<ul class="operation-results-error"><li>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, html_entity_decode);
-    if (error)
-        throw new AnyBalance.Error(error, null, /Введен неизвестный номер телефона|Введен неверный пароль/i.test(error));
-    
-    if(/<title>Произошла ошибка<\/title>/i.test(html)){
-        throw new AnyBalance.Error("Интернет-помощник временно недоступен");
-    }
-
-    if(/<TITLE>The page cannot be found<\/TITLE>/.test(html)){
+	
+	if(prefs.phone && !/^\d+$/.test(prefs.phone)) {
+		throw new AnyBalance.Error('В качестве номера необходимо ввести 9 цифр номера, например, 501234567, или не вводить ничего, чтобы получить информацию по основному номеру.');
+	}
+	
+	var baseurl = 'https://ihelper-prp.mts.com.ua/SelfCarePda/';
+	
+	AnyBalance.trace("Trying to enter selfcare at address: " + baseurl);
+	var html = AnyBalance.requestPost(baseurl + "Security.mvc/LogOn", {
+		username: prefs.login,
+		password: prefs.password
+	});
+	
+	var error=getParam(html, null, null, /<ul class="operation-results-error"><li>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, html_entity_decode);
+	if (error)
+		throw new AnyBalance.Error(error, null, /Введен неизвестный номер телефона|Введен неверный пароль/i.test(error));
+		
+	if(/<title>Произошла ошибка<\/title>/i.test(html)){
+		throw new AnyBalance.Error("Интернет-помощник временно недоступен");
+	}
+	
+	if(/<TITLE>The page cannot be found<\/TITLE>/.test(html)){
         throw new AnyBalance.Error("Интернет-помощник отсутствует по адресу " + baseurl);
     }
 
@@ -61,55 +61,53 @@ function main(){
     var min_all_60_isp;
 
     // Тарифный план
-    regexp=/(?:Тарифн[ыи]й план|tariff plan):.*?>(.*?)</;
-    if (res=regexp.exec(html)){
-        result.__tariff=res[1];
-    }
-
-    // Баланс
+	getParam (html, result, '__tariff', /(?:Тарифн[ыи]й план|tariff plan):[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+	// Баланс
     getParam (html, result, 'balance', /(?:Баланс|balance):.*?<strong>([\s\S]*?)<\/strong>/i, replaceTagsAndSpaces, parseBalance);
     // Телефон
     getParam (html, result, 'phone', /(?:Ваш телефон|phone):.*?>([^<]*)</i, replaceTagsAndSpaces, html_entity_decode);
-
+	
     AnyBalance.trace("Fetching status...");
-
+	
     html = AnyBalance.requestGet(baseurl + "Account.mvc/Status");
-
+	
     AnyBalance.trace("Parsing status...");
-
+	
     if(/<h1[^>]*>\s*Ошибка\s*<\/h1>/i.test(html)){
-        var error = getParam(html, null, null, /<h1[^>]*>\s*Ошибка\s*<\/h1>\s*<p[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
-	AnyBalance.trace('При получении статуса МТС вернул ошибку: ' + error + '\n Проверьте, можно ли перейти на состояние счета в мобильном интернет-помощнике');
-    }
-    
-    //Срок действия (баланса) номера (!!!пропал из интернет помощника)
+		var error = getParam(html, null, null, /<h1[^>]*>\s*Ошибка\s*<\/h1>\s*<p[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
+		AnyBalance.trace('При получении статуса МТС вернул ошибку: ' + error + '\n Проверьте, можно ли перейти на состояние счета в мобильном интернет-помощнике');
+	}
+	
+	function parseTime (str) {
+		var t = parseFloat(str);
+		if(!str || !t)
+			return;		
+		
+		return 60 * parseFloat(str)
+	}
+	
+	//Срок действия (баланса) номера (!!!пропал из интернет помощника)
     getParam (html, result, 'termin', /Термін життя балансу:([^<]*)/i, replaceTagsAndSpaces, parseDate);
-
-    //Денежный бонусный счет.
+	//Денежный бонусный счет.
     getParam (html, result, 'bonus_balance', /<li>Денежный бонусный счет:[^<]*осталось\s*([\d\.,]+)\s*грн. Срок действия до[^<]*<\/li>/i, replaceTagsAndSpaces, parseBalance);
     //Срок бонусного счета
     getParam (html, result, 'termin_bonus_balance', /<li>Денежный бонусный счет:[^<]*осталось\s*[^<]*\s*грн. Срок действия до ([^<]*)<\/li>/i, replaceTagsAndSpaces, parseDate);
-
-    // Пакет бесплатных минут для внутрисетевых звонков
+	// Пакет бесплатных минут для внутрисетевых звонков
     sumParam (html, result, 'min_paket', /<li>Осталось ([\d\.,]+) бесплатных секунд\.? до[^<]*<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     //Срок Пакет бесплатных минут для внутрисетевых звонков
     sumParam (html, result, 'termin_min_paket', /<li>Осталось[^<]*бесплатных секунд\.? до ([^<]*)<\/li>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
-
-    // 70 минут в день для внутрисетевых звонков
+	// 70 минут в день для внутрисетевых звонков
     sumParam (html, result, 'min_net_70', /<li>70 минут в день для внутрисетевых звонков:[^<]*осталось\s*([\d\.,]+) бесплатных секунд<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-
-    // 30 минут в день для внутрисетевых звонков
+	// 30 минут в день для внутрисетевых звонков
     sumParam (html, result, 'min_net_30', /<li>30 минут в день для внутрисетевых звонков:[^<]*осталось\s*([\d\.,]+) бесплатных секунд<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-    sumParam (html, result, 'min_net_30', /<li>Осталось\s*([\d\.,]+)\s*минут<\/li>/ig, replaceTagsAndSpaces, parseBalance, function(str){return 60*parseFloat(str)}, aggregate_sum);
-    
-    // 30/33 минуты в день для внутрисетевых звонков во всех областях
+    sumParam (html, result, 'min_net_30', /<li>Осталось\s*([\d\.,]+)\s*минут<\/li>/ig, replaceTagsAndSpaces, parseBalance, parseTime, aggregate_sum);
+	// 30/33 минуты в день для внутрисетевых звонков во всех областях
     sumParam (html, result, 'min_net_all_33', /<li>33 минуты в день для внутрисетевых звонков во всех областях:[^<]*осталось\s*([\d\.,]+) бесплатных секунд[^<]*<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     sumParam (html, result, 'min_net_all_33', /<li>30 минут в день для внутрисетевых звонков во всех областях:[^<]*осталось\s*([\d\.,]+) бесплатных секунд[^<]*<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     // Срок дейcтвия 30/33 минуты в день для внутрисетевых звонков во всех областях
     sumParam (html, result, 'termin_min_net_all_33', /<li>33 минуты в день для внутрисетевых звонков во всех областях:[^<]*осталось\s*[\d\.,]+ бесплатных секунд. До ([^<]*)<\/li>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
-    sumParam (html, result, 'termin_min_net_all_33', /<li>30 минут в день для внутрисетевых звонков во всех областях:[^<]*осталось\s*[\d\.,]+ бесплатных секунд. До ([^<]*)<\/li>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);    
-
-    // 100/200 минут в день на внутрисетевое направление (тут вообще путаница, в одном тарифе поменяли количество минут, добавили новую строку, а старую не убрали. Пришлось разделить счетчики…)
+    sumParam (html, result, 'termin_min_net_all_33', /<li>30 минут в день для внутрисетевых звонков во всех областях:[^<]*осталось\s*[\d\.,]+ бесплатных секунд. До ([^<]*)<\/li>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
+	// 100/200 минут в день на внутрисетевое направление (тут вообще путаница, в одном тарифе поменяли количество минут, добавили новую строку, а старую не убрали. Пришлось разделить счетчики…)
     // 100 минут в день на внутрисетевое направление
     sumParam (html, result, 'min_net_100', /<li>100 минут в день на внутрисетевое направление:[^<]*осталось\s*([\d\.,]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     sumParam (html, result, 'min_net_100', /<li>200 минут в день на внутрисетевое направление:[^<]*осталось\s*([\d\.,]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
@@ -117,10 +115,9 @@ function main(){
     //Срок действия 100/200 минут в день на внутрисетевое направление
     sumParam (html, result, 'termin_min_net_100', /<li>Осталось [\d\.,]+ бесплатных секундДо ([^<]*)<\/li>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
     // 200 минут в день на внутрисетевое направление
-    sumParam (html, result, 'min_net_200', /<li>залишилось\s*([\d\.,]+)\s*безкоштовних хвилин<\/li>/ig, replaceTagsAndSpaces, parseBalance, function(str){return 60*parseFloat(str)}, aggregate_sum);
-
+    sumParam (html, result, 'min_net_200', /<li>залишилось\s*([\d\.,]+)\s*безкоштовних хвилин<\/li>/ig, replaceTagsAndSpaces, parseBalance, parseTime, aggregate_sum);
     // 3000 региональных минут в сети
-    sumParam (html, result, 'min_reg_3000', /<li>3000 региональных минут в сети:[^<]*осталось\s*([^<]*)/ig, replaceTagsAndSpaces, parseBalance, function(str){return 60*parseFloat(str)}, aggregate_sum);
+    sumParam (html, result, 'min_reg_3000', /<li>3000 региональных минут в сети:[^<]*осталось\s*([^<]*)/ig, replaceTagsAndSpaces, parseBalance, parseTime, aggregate_sum);
 
     // Пакет СМС
     sumParam (html, result, 'sms_paket', /<li>100 бесплатных смс по Украине:[^<]*осталось\s*(\d+) смс. Срок действия до[^<]*<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);

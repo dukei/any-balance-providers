@@ -132,9 +132,11 @@ function main(){
     // Пакет интернета
     sumParam (html, result, 'traffic_paket_mb', /<li>20MB_GPRS_Internet:[^<]*осталось[^\d]*?(\d+,?\d* *(kb|mb|gb|кб|мб|гб|байт|bytes)). Срок действия до[^<]*<\/li>/ig, null, parseTraffic, aggregate_sum);
     sumParam (html, result, 'traffic_paket_mb', /<li>3G Internet:[^<]*осталось[^\d]*?(\d+,?\d* *(kb|mb|gb|кб|мб|гб|байт|bytes)). Срок действия до[^<]*<\/li>/ig, null, parseTraffic, aggregate_sum);
+    sumParam (html, result, 'traffic_paket_mb', /<li>Осталось: (\d+,?\d* *(kb|mb|gb|кб|мб|гб|байт|bytes)). Срок действия до[^<]*<\/li>/ig, null, parseTraffic, aggregate_sum);
     //Срок Пакета интернета
     sumParam (html, result, 'termin_traffic_paket_mb', /<li>20MB_GPRS_Internet:[^<]*осталось[^\d]*?[^<]*. Срок действия до([^<]*)<\/li>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
     sumParam (html, result, 'termin_traffic_paket_mb', /<li>3G Internet:[^<]*осталось[^\d]*?[^<]*. Срок действия до([^<]*)<\/li>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
+    sumParam (html, result, 'termin_traffic_paket_mb', /<li>Осталось:[^<]*. Срок действия до([^<]*)<\/li>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
 
     // Интернет за копейку (новый) региональный и общенациональный
     // Проверен на пакете 1000 Мб за 10 грн. (если не будут распознаваться пакеты 1500 Мб за 15 грн и 2000 Мб за 20 грн, то добавить их распознавание в этот счетчик traffic_reg_kop_mb)
@@ -161,6 +163,7 @@ function main(){
     sumParam (html, result, 'sms_net', /<li>Осталось (\d+) смс.[^<]*<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     //Срок действия СМС в сети МТС
     sumParam (html, result, 'termin_sms_net', /<li>Осталось \d+ смс. До ([^<]*)<\/li>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
+    sumParam (html, result, 'termin_sms_net', /<li>Осталось \d+ смс. Срок действия до ([^<]*)<\/li>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
     
     // СМС на сети других мобильных операторов Украины
     sumParam (html, result, 'sms_others', /<li>Осталось: (\d+) смс. Срок действия до[^<]*<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
@@ -169,6 +172,10 @@ function main(){
     
     // MMC на сети других мобильных операторов Украины
     sumParam (html, result, 'mms_others', /<li>Осталось (\d+) ммс.<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    sumParam (html, result, 'mms_others', /<li>Осталось: (\d+) ммс.[^<]*<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    
+    //Срок действия MMC на сети других мобильных операторов Украины
+    sumParam (html, result, 'termin_mms_others', /<li>Осталось: \d+ ммс. Срок действия до ([^<]*)<\/li>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
 
     // Минуты в сети МТС
     sumParam (html, result, 'min_net_maxenergy', /<li>Осталось ([\d\.,]+) бесплатных секунд.\s?<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
@@ -184,7 +191,15 @@ function main(){
 
     //2500 минут в сети МТС
     sumParam (html, result, 'min_net_2500', /<li>Осталось ([\d\.,]+) секунд внутри сети<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-    
+
+    //Минуты в тарифе Супер Безлимит
+    sumParam (html, result, 'min_unlin_all', /<li>Осталось ([\d\.,]+) сек. Срок действия до [^<]*<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    sumParam (html, result, 'min_unlin_mts', /сек. Срок действия до [^<]*<\/li><li>Осталось ([\d\.,]+) сек. Срок действия до [^<]*<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    sumParam (html, result, 'min_unlin_other', /APN opera: \d+<\/li><li>Осталось ([\d\.,]+) сек. Срок действия до [^<]*<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    sumParam (html, result, 'min_unlin_life', /Мб. Срок действия до [^<]*<\/li><li>Осталось ([\d\.,]+) сек. Срок действия до [^<]*<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    //Срок действия Минуты в тарифе Супер Безлимит
+    sumParam (html, result, 'termin_min_unlin', /<li>Осталось \d+ сек. Срок действия до ([^<]*)<\/li>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
+
     // Расход минут на Любимые Номера
     sumParam (html, result, 'min_ln', /<li>К-во бесплатных минут для звонков на ЛН:[^<]*Израсходовано\s*([\d\.,]+) сек.<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 

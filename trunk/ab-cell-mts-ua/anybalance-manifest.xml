@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="1.2" version="35">ab-cell-mts-ua</id>
+	<id major_version="1.2" version="36">ab-cell-mts-ua</id>
 	<api flags="no_browser"/>
 	<name>МТС (Украина)</name>
 	<description html="true"><![CDATA[
@@ -45,6 +45,10 @@
 		<counter id="min_net" name="Минуты с услугой «Супер без пополнения» в сети МТС" type="time_interval" format="{@MIN}" units=" мин"/>
 		<counter id="min_all_25" name="25 минут на другие сети" type="time_interval" format="{@MIN}" units=" мин"/>
 		<counter id="min_net_2500" name="2500 минут в сети МТС" type="time_interval" format="{@MIN}" units=" мин"/>
+		<counter id="min_unlin_all" name="Минуты Супер безлимит все" type="time_interval" format="{@MIN}" units=" мин"/>
+		<counter id="min_unlin_mts" name="Минуты Супер безлимит в сети МТС" type="time_interval" format="{@MIN}" units=" мин"/>
+		<counter id="min_unlin_other" name="Минуты Супер безлимит на всех кроме Life" type="time_interval" format="{@MIN}" units=" мин"/>
+		<counter id="min_unlin_life" name="Минуты Супер безлимит yf Life" type="time_interval" format="{@MIN}" units=" мин"/>
 		<counter id="min_ln" name="Расход минут на Любимые Номера" type="time_interval" format="{@MIN}" units=" мин"/>
 		<counter id="sms_100" name="Бесплатные смс для отправки на номера в пределах Украины" units=" sms"/>
 		<counter id="min_all_60" name="60 минут на все сети за 5 коп" type="time_interval" format="{@MIN}" units=" мин"/>
@@ -74,6 +78,8 @@
 		<counter id="termin_sms_100" name="Срок действия бесплатных смс для отправки на номера в пределах Украины" type="time" format="dd/MM/yyyy"/>
 		<counter id="termin_sms_net" name="Срок действия СМС в сети МТС" type="time" format="dd/MM/yyyy HH:mm:ss"/>
 		<counter id="termin_sms_others" name="Срок действия СМС на сети других мобильных операторов Украины" type="time" format="dd/MM/yyyy HH:mm:ss"/>
+		<counter id="termin_mms_others" name="Срок действия ММС на сети других мобильных операторов Украины" type="time" format="dd/MM/yyyy HH:mm:ss"/>
+		<counter id="termin_min_unlin" name="Срок действия минут Супер безлимит" type="time" format="dd/MM/yyyy"/>
 		<!--    <counter id="usedinprevmonth" name="Расход за прошлый месяц" units="грн"/> Че-то не показывается в лк -->
 		<counter id="phone" name="Номер телефона" type="text"/>
 		<counter id="usedinthismonth" name="Расход за этот месяц" units=" ₴"/>

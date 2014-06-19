@@ -7,7 +7,7 @@
         summary="|Логин в ГудЛайн|{@s}" 
         dialogTitle="Логин" 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите ваш логин в ГудЛайн"
+        dialogMessage="Введите ваш логин в ГудЛайн. Обычно это е-мейл."
         inputType="textEmailAddress"
         key="login">
     </EditTextPreference>

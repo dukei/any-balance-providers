@@ -40,6 +40,9 @@ function main(){
         var error = getParam(html, null, null, /id="ErrorLabel"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error);
+        error = getParam(html, null, null, /<h4>([\s\S]*?)<\/h4>/i, replaceTagsAndSpaces, html_entity_decode);
+        if(error)
+            throw new AnyBalance.Error(error, null, /введите верный номер карты/i.test(error));
 		
         throw new AnyBalance.Error('Не удалось получить данные по карте. Сайт изменен?');
     }

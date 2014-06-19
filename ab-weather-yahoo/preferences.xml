@@ -13,7 +13,7 @@
     <ListPreference 
         key="Degree_units" 
         title="Degrees units"
-        summary="||{@s}\n"
+        summary="||{@s}"
         entries="Fahrenheit|Celsius"
         entryValues="f|c"
 		defaultValue="f">

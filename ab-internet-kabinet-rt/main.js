@@ -161,7 +161,7 @@ function main(){
                             }
                         }
                     }
-                    if(/INTERNET|TELEPHONY|IPTV|CDMA/.test(service.serviceType || '') 
+                    if(/INTERNET|TELEPHONY|IPTV|CDMA/.test(service.serviceType || '')  //Судя по шаблону detailed_list, только у этих сервисов есть статистика
                         && AnyBalance.isAvailable('trafIn' + suffix, 'trafOut' + suffix, 'minOutIC' + suffix)){
                         //Междугородная исходящая телефония
                         var dt = new Date();

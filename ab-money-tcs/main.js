@@ -111,7 +111,7 @@ function main(){
 		
 		json = getJson(html);
 		if(json.resultCode == 'AUTHENTICATION_FAILED')
-			throw new AnyBalance.Error(json.errorMessage || 'Авторизация прошла неуспешно. Проверьте логин и пароль.');
+			throw new AnyBalance.Error(json.errorMessage || 'Авторизация прошла неуспешно. Проверьте логин и пароль.', null, /проверьте логин и пароль/i.test(json.errorMessage || ''));
 		
 		if(json.resultCode && json.resultCode != 'OK')
 			throw new AnyBalance.Error("Вход в интернет банк не удался: " + json.resultCode);

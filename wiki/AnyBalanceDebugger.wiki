@@ -2,15 +2,13 @@
 
 = Введение =
 
-Пошаговый отладчик провайдеров представляет собой [https://bintray.com/dukei/devtools/AnyBalanceDebugger/view расширение Google Chrome], которое симулирует среду выполнения провайдера в AnyBalance. Симуляция, однако, не полная, поэтому если провайдер работает в отладчике, то его необходимо проверить и непосредственно в AnyBalance.
+Пошаговый отладчик провайдеров представляет собой [https://chrome.google.com/webstore/detail/bjhpeieonkhafpmpkjolifioeodfoiag расширение Google Chrome], которое симулирует среду выполнения провайдера в AnyBalance. Симуляция, однако, не полная, поэтому если провайдер работает в отладчике, то его необходимо проверить и непосредственно в AnyBalance.
 
 = Установка =
 
-Для установки отладчика, скачайте c помощью Google Chrome [https://bintray.com/dukei/devtools/AnyBalanceDebugger/view расширение]. Если вы скачиваете его с помощью [https://www.google.com/chrome/ браузера Google Chrome], то оно автоматически установится. Если не установится (может быть запрещено устанавливать разрешения не из магазина расширений), то выполните следующий шаги.
+Для установки отладчика установите из магазина Google Chrome [https://chrome.google.com/webstore/detail/bjhpeieonkhafpmpkjolifioeodfoiag расширение]. После установки выполните следующий шаги.
 
  #. В Chrome перейдите по ссылке *chrome://settings/extensions*.
- #. Найдите скачанный ранее файл расширения и перетащите его на страницу "Расширения".
- #. В открывшемся диалоговом окне нажмите кнопку Установить.
  #. Для расширения AnyBalanceDebugger установите галочки *Разрешить использование в режиме инкогнито* и *Разрешить открывать файлы по ссылкам*.
 
 = Подготовка к отладке =
@@ -19,16 +17,16 @@
 
 *`-anybalance.html`*, например, `myprovider-anybalance.html`
 
-в противном случае отладчик к нему не присоединится. Эту страницу надо сохранить на локальный диск со ссылки *chrome-extension://nkphlblmakkphcnnbklcnblgijohjdif/provider-anybalance.html* или скопировать из листинга ниже. Комментарии показывают, в каких местах следует сделать изменения.
+в противном случае отладчик к нему не присоединится. Эту страницу можно сохранить на локальный диск со ссылки *chrome-extension://bjhpeieonkhafpmpkjolifioeodfoiag/provider-anybalance.html* или скопировать из листинга ниже. Комментарии показывают, в каких местах следует сделать изменения.
 
 {{{
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <script src="chrome-extension://nkphlblmakkphcnnbklcnblgijohjdif/json2.js"></script>
-  <script src="chrome-extension://nkphlblmakkphcnnbklcnblgijohjdif/jquery.min.js"></script>
-  <script src="chrome-extension://nkphlblmakkphcnnbklcnblgijohjdif/api-adapter.js"></script>
-  <script src="chrome-extension://nkphlblmakkphcnnbklcnblgijohjdif/api.js"></script>
+  <script src="chrome-extension://bjhpeieonkhafpmpkjolifioeodfoiag/json2.js"></script>
+  <script src="chrome-extension://bjhpeieonkhafpmpkjolifioeodfoiag/jquery.min.js"></script>
+  <script src="chrome-extension://bjhpeieonkhafpmpkjolifioeodfoiag/api-adapter.js"></script>
+  <script src="chrome-extension://bjhpeieonkhafpmpkjolifioeodfoiag/api.js"></script>
   <script>
 	var g_api_preferences = {
           //Вставьте сюда настройки, необходимые для вашего провайдера
@@ -41,7 +39,8 @@
        Указывайте локальные пути к файлам. Библиотека JQuery уже включена,
        отдельно указывать её не нужно.
        Например, -->
-  <script src="file://E:\SrcRep\AnyBalanceProviders\ab-exchange-cbr\main.js"></script>
+  <script src="library.js"></script>
+  <script src="main.js"></script>
 </head>
 <body onload="">
   <div style="display:none" id="AnyBalanceDebuggerRPCContainer"></div>

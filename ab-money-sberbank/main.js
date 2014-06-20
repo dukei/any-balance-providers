@@ -259,8 +259,9 @@ function doNewAccount(page) {
 		checkEmpty(null, getParam(html, null, null, /Ранее вы[^<]*уже создали свой собственный логин для входа[^<]*/i, replaceTagsAndSpaces, html_entity_decode));
 	}
 	
+	var baseurl = getParam(page, null, null, /^(https?:\/\/.*?)\//i);
 	if (/PhizIC/.test(html)) {
-		return doNewAccountPhysic(html);
+		return doNewAccountPhysic(html, baseurl);
 	} else {
 		return doNewAccountEsk(html);
 	}
@@ -324,15 +325,14 @@ function readEskCards() {
 	AnyBalance.setResult(result);
 }
 
-function doNewAccountPhysic(html) {
-	AnyBalance.trace('Entering physic account...');
+function doNewAccountPhysic(html, baseurl) {
+	AnyBalance.trace('Entering physic account...: ' + baseurl);
 	
 	if (/confirmTitle/.test(html))
 		throw new AnyBalance.Error("Ваш личный кабинет требует одноразовых паролей для входа. Пожалуйста, отмените в настройках кабинета требование одноразовых паролей при входе. Это безопасно: для совершения денежных операций требование одноразового пароля всё равно останется.");
 	if (/Откроется справочник регионов, в котором щелкните по названию выбранного региона/.test(html)) {
 		//Тупой сбер предлагает обязательно выбрать регион оплаты. Вот навязчивость...
 		//Ну просто выберем все регионы
-		var baseurl = 'https://online.sberbank.ru';
 		html = AnyBalance.requestPost(baseurl + '/PhizIC/region.do', {
 			id: -1,
 			operation: 'button.save'
@@ -340,9 +340,9 @@ function doNewAccountPhysic(html) {
 	}
 	var prefs = AnyBalance.getPreferences();
 	if (prefs.type == 'acc')
-		fetchNewAccountAcc(html);
+		fetchNewAccountAcc(html, baseurl);
 	else
-		fetchNewAccountCard(html);
+		fetchNewAccountCard(html, baseurl);
 }
 
 function fetchRates(html, result) {
@@ -367,12 +367,13 @@ function fetchNewThanks(baseurl, result) {
 	}
 }
 
-function fetchNewAccountCard(html) {
+function fetchNewAccountCard(html, baseurl) {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = "https://online.sberbank.ru";
 	// Теперь только здесь есть курсы валют
 	var result = {success: true};
 	fetchRates(html, result);
+
+        
 	
 	html = AnyBalance.requestGet(baseurl + '/PhizIC/private/cards/list.do');
 	var lastdigits = prefs.lastdigits ? prefs.lastdigits.replace(/(\d)/g, '$1\\s*') : '(?:\\d\\s*){3}\\d';
@@ -435,9 +436,8 @@ function parseDateForWord(str){
 	}
 }
 
-function fetchNewAccountAcc(html) {
+function fetchNewAccountAcc(html, baseurl) {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = "https://online.sberbank.ru";
 	// Теперь только здесь есть курсы валют
 	var result = {success: true};
 	fetchRates(html, result);

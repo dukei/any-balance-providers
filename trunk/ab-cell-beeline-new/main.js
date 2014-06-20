@@ -620,7 +620,6 @@ function fetchPre(baseurl, html) {
 		AnyBalance.trace(xhtml);
 		// Затем надо пнуть систему, чтобы точно получить все бонусы
 		//xhtml = getBlock(baseurl + 'c/pre/index.html', html, 'refreshButton')
-		
 		getBonuses(xhtml, result);
 	}
 	if (AnyBalance.isAvailable('fio')) {
@@ -629,7 +628,7 @@ function fetchPre(baseurl, html) {
 		
 		getParam(html, result, 'fio', /(?:Имя и фамилия|ФИО)(?:[^>]*>){2}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, capitalFirstLenttersAndDecode);
 		// А у некоторых ФИО не введен, поэтому и беда
-		if(/\d{5,}/i.test(result.fio)) {
+		if(/\d{5,}/i.test(result.fio) || /^\s*$/i.test(result.fio)) {
 			result.fio = undefined;
 			AnyBalance.trace('ФИО еще не настроено в вашей анкете. Зайдите через браузер и перейдите на вкладку Настройки, в поле Имя и фамилия введите ваше ФИО.');
 		}

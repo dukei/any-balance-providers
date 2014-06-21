@@ -403,7 +403,7 @@ function fetchAccountStatus(html, result){
     // Остаток бонуса
     html = sumParam (html, result, 'min_left', /Остаток бонуса:\s*([\d\.,]+?)\s*мин/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
 	// Разделим минуты на МТС и МТС РФ
-	html = sumParam (html, result, 'min_left_mts_rf', /Осталось:?\s*([\d\.,]+)\s*(?:бесплатных\s*)?мин\s*МТС РФ/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
+	html = sumParam (html, result, 'min_left_mts_rf', /Оста(?:лось|ток):?\s*([\d\.,]+)\s*(?:бесплатных\s*)?мин\s*МТС РФ/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
     // Остаток минут
     html = sumParam (html, result, 'min_left', /Осталось:?\s*([\d\.,]+)\s*(?:бесплатных\s*)?мин/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
     // Пакет минут Готовый офис: Остаток 149 минут

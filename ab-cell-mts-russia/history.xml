@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="3.3" version="87" date="2014-06-21">
+	- Улучшено определение минут на МТС РФ.
+	</change>
 	<change major_version="3.3" version="86" date="2014-06-09">
 	- Исправлена ошибка переключения на другой номер.
 	</change>

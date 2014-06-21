@@ -8,30 +8,38 @@ var g_headers = {
 	'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection':'keep-alive',
 	'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.64 Safari/537.31',
-	'Host':'stat.vintem.ru'
 };
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-    var baseurl = "http://stat.indikom.ru/";
+    var baseurl = 'http://stat.indikom.ru/';
+	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
+	
 	AnyBalance.setOptions({forceCharset: 'UTF-8'});
 	
-    var html = AnyBalance.requestPost(baseurl, {
+	var html = AnyBalance.requestGet(baseurl, g_headers);
+	
+	if(AnyBalance.getLastStatusCode() > 400) {
+		throw new AnyBalance.Error('Ошибка! Сервер не отвечает! Попробуйте обновить баланс позже.');
+	}
+	
+    html = AnyBalance.requestPost(baseurl, {
         login:prefs.login,
         password:prefs.password,
-        cmd:'login'
-    }, addHeaders({Referer: baseurl})); 
+	}, addHeaders({Referer: 'http://indikom.ru/index.php'})); 
 	
     if(!/logout/i.test(html)) {
         var error = getParam(html, null, null, /<p[^>]*style='color:red'[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error);
+		
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
 	
     var result = {success: true};
+	
     getParam(html, result, 'fio', /<td[^>]*>ФИО<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'account', /<td[^>]*>Основной лицевой счет<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'id', /<td[^>]*>ID<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);

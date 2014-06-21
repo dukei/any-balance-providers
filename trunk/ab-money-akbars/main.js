@@ -63,7 +63,7 @@ function main() {
 	// Детальная инфа по карте
 	html = AnyBalance.requestPost(baseurl + 'frontend/frontend', params, addHeaders({Referer: baseurl + 'frontend/frontend'}));	
 	
-	getParam(html, result, 'balance', /_BALANCE"[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance', /_BALANCE"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'debt', /Сумма задолженности([^>]*>){4}/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'card_type', /_CARD_TYPE"[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'card_num', /_CARD_NUMBER"[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);

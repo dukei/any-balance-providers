@@ -14,27 +14,43 @@ function main () {
 
 	AnyBalance.setDefaultCharset("utf-8");
 	
-    var html = AnyBalance.requestGet(g_baseurl + "?fromName=" + 
+	var href = g_baseurl + "?fromName=" + 
 	encodeURIComponent(prefs.station_from) + "&toName=" + 
-	encodeURIComponent(prefs.station_to));
+	encodeURIComponent(prefs.station_to);
+	
+	if(/\d{3,}/.test(prefs.station_from)) {
+		href += '&fromId=' + prefs.station_from;
+	}
+	
+	if(/\d{3,}/.test(prefs.station_to)) {
+		href += '&toId=' + prefs.station_to;
+	}
+	
+	
+    var html = AnyBalance.requestGet(href);
 	
 	// Иногда требуется уточнить место отправления или прибытия, при совпадении названий станций, например Царицино - Весенняя
+	// Оставлено для совместимости, с теми, у кого введен region в настройках
 	if(/Пожалуйста, уточните(?:[^>]*>){7}\s*<a class="b-link"/.test(html)) {
+		var precise_from = getParam(html, null, null, /<div class="l-precise__inner"(?:[^>]*>){2}Пожалуйста, уточните(?:[^>]*>){2}место отправления(?:[\s\S]*?<div class="b-precise-list__item[\s\S]*?<\/div){1,2}/i);
+		if(precise_from) {
+			AnyBalance.trace('Требуется уточнить станцию отправления...');
+			if(prefs.region) {
+				html = performPrecision(precise_from, prefs);
+			} else {
+				throw new AnyBalance.Error('Требуется уточнить станцию отправления! Введите ID станции в настройки вместо имени!');
+			}
+		}
 		var precise_to = getParam(html, null, null, /<div class="l-precise__inner"(?:[^>]*>){2}Пожалуйста, уточните(?:[^>]*>){2}место прибытия(?:[\s\S]*?<div class="b-precise-list__item[\s\S]*?<\/div){1,2}/i);
 		if(precise_to) {
 			AnyBalance.trace('Требуется уточнить станцию прибытия...');
 			
-			checkEmpty(prefs.region, 'Требуется уточнить станцию прибытия, введите регион в настройках!');
-			if(prefs.region)
-			
-			html = performPrecision(precise_to, prefs);
-		}
-		var precise_from = getParam(html, null, null, /<div class="l-precise__inner"(?:[^>]*>){2}Пожалуйста, уточните(?:[^>]*>){2}место отправления(?:[\s\S]*?<div class="b-precise-list__item[\s\S]*?<\/div){1,2}/i);
-		if(precise_from) {
-			AnyBalance.trace('Требуется уточнить станцию отправления...');
-			checkEmpty(prefs.region, 'Требуется уточнить станцию отправления, введите регион в настройках!');
-			
-			html = performPrecision(precise_from, prefs);
+			if(prefs.region) {
+				html = performPrecision(precise_to, prefs);
+			} else {
+				throw new AnyBalance.Error('Требуется уточнить станцию прибытия! Введите ID станции в настройки вместо имени!');
+				
+			}
 		}
 	}
 	
@@ -52,8 +68,8 @@ function main () {
     }
 	
 	getParam(html, result, '__tariff', /Расписание электричек (из[^<]+)/i, replaceTagsAndSpaces, capitalFirstLenttersDecode);
-	getParam(prefs.station_from, result, 'start', null, null, capitalFirstLenttersDecode);
-	getParam(prefs.station_to, result, 'finish', null, null, capitalFirstLenttersDecode);
+	getParam(html, result, 'start', /Откуда(?:[^>]*>){3}[^>]*value="([^"]+)/i, null, capitalFirstLenttersDecode);
+	getParam(html, result, 'finish', />Куда(?:[^>]*>){3}[^>]*value="([^"]+)/i, null, capitalFirstLenttersDecode);
 	
     AnyBalance.setResult(result);
 }

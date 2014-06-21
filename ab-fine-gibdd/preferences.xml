@@ -10,7 +10,7 @@
         dialogMessage="Номер должен быть в формате а351со190 либо 1234ав199, буквы русские."
         key="login">
     </EditTextPreference>
-    <EditTextPreference
+    <!-- <EditTextPreference
 		obligatory="true"
         title="Номер В/У"
         positiveButtonText="ОК"
@@ -19,7 +19,7 @@
         negativeButtonText="Отмена"
         dialogMessage="Введите номер в формате 50ХХ028333, буквы русские."
         key="license">
-    </EditTextPreference>	
+    </EditTextPreference>	 -->
     <EditTextPreference
 		obligatory="true"
         positiveButtonText="ОК"

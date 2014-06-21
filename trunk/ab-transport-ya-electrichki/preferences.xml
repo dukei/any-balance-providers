@@ -7,7 +7,7 @@
         summary="Станция отправления||{@s}\n" 
         dialogTitle="Станция отправления" 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите станцию отправления"
+        dialogMessage="Введите станцию отправления, либо ID Станции отправления, если по имени станцию определить не получается. ID можно узнать из адресной строки браузера после fromId="
         positiveButtonText="ОК" 
         inputType="text">
     </EditTextPreference>
@@ -18,11 +18,11 @@
         summary="Станция назначения||{@s}\n" 
         dialogTitle="Станция назначения" 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите станцию назначения"
+        dialogMessage="Введите станцию назначения, либо ID Станции назначения, если по имени станцию определить не получается. ID можно узнать из адресной строки браузера после toId="
         positiveButtonText="ОК" 
         inputType="text">
     </EditTextPreference>
-    <EditTextPreference
+<!--     <EditTextPreference
         key="region"
         title="Регион"
         summary="Регион||{@s}\n" 
@@ -31,5 +31,5 @@
         dialogMessage="Введите название региона, этот параметр не обязательный, нужен только для уточнения регионов некоторых станций названия которых совпадают (например пл. Весенняя (Москва и Московская область) и пл. Весенняя (г. Владивосток))"
         positiveButtonText="ОК" 
         inputType="text">
-    </EditTextPreference>	
+    </EditTextPreference> -->
 </PreferenceScreen>

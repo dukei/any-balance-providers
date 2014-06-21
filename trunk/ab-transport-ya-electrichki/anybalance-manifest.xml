@@ -1,11 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="1.0" version="7">ab-transport-ya-electrichki</id>
+	<id major_version="1.0" version="8">ab-transport-ya-electrichki</id>
 	<api flags="no_browser"/>
-	<name>Ближайшие электрички</name>
+	<name>Яндекс.Электрички</name>
 	<description html="true"><![CDATA[
 	<p>Отображает ближайшие электрички по указанному маршруту на основании данных, полученных с сервиса Яндекс.Расписания.</p>
 	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>В настройках необходимо ввести станцию отправления и прибытия, если данные отобразятся сразу - это хорошо.</p>
+	<p>Иногда возникают конфликты в названии станций, для этого нужно выяснить их ID и ввести в настройки вместо названия станции</p>
+	<p>Рассмотрим пример: Станция отправления: Пушкино М.О., станция прибытия Москва. Данные получить не удалось, т.к. есть станции с похожим названием.</p>
+	<p>Переходим по ссылке: http://rasp.yandex.ru/search/suburban/?fromName=Пушкино&toName=Москва</p>
+	<p>Слева есть колонка с уточнением станции отправления, нажимаем на вкз. Пушкино (г. Пушкино) и после перехода в адресной строке браузера будет нужный ID fromId=s9600701</p>
+	<p>Вводим его в настройки и все будет работать.</p>
+	]]></instruction>	
 	<author>theneedtocode &lt;theneedtocode@gmail.com&gt;</author>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
@@ -22,7 +30,7 @@
 		<counter id="start" name="Станция отправления" type="text" />
 		<counter id="finish" name="Станция назначения" type="text" />
 	</counters>
-	<keywords></keywords>
+	<keywords>Ближайшие электрички</keywords>
 	<type>transport</type>
 	<country>ru</country>
 </provider>

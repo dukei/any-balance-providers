@@ -54,14 +54,14 @@ function main(){
 		});		
 		
         html = AnyBalance.requestPost(baseurl + action, params, addHeaders({Referer: baseurl + 'scp/index.jsp'})); 
-        
+
+		if(/Change Security Question\/Answer/i.test(html))
+			throw new AnyBalance.Error('You need to change Security Question/Answer in your personal account to allow application to show information from this account. Please visit the selfcare from desktop and follow the instructions.');
+		
         if(!/Logout/i.test(html)){
             var errid = getParam(html, null, null, /location\.href='[^']*MSG=([^']*)/i, replaceSlashes);
             if(g_errors[errid])
                 throw new AnyBalance.Error(g_errors[errid]);
-			
-			if(/Change Security Question\/Answer/i.test(html))
-				throw new AnyBalance.Error('You need to change Security Question/Answer in your personal account to allow application to show information from this account. Please visit the selfcare from desktop and follow the instructions.');
 			
             //Если объяснения ошибки не найдено, при том, что на сайт войти не удалось, то, вероятно, произошли изменения на сайте
             throw new AnyBalance.Error('The login attempt has failed. Is the site changed?');

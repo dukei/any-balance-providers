@@ -63,34 +63,30 @@ function main() {
 }
 
 function fetchAccount(baseurl, html){
-    throw new AnyBalance.Error('Получение счетов пока не поддерживается. Пожалуйста, обратитесь к автору провайдера.');
+    //throw new AnyBalance.Error('Получение счетов пока не поддерживается. Пожалуйста, обратитесь к автору провайдера.');
 
     var prefs = AnyBalance.getPreferences();
     if(prefs.contract && !/^\d{4,20}$/.test(prefs.contract))
         throw new AnyBalance.Error('Пожалуйста, введите не менее 4 последних цифр номера счета, по которому вы хотите получить информацию, или не вводите ничего, чтобы получить информацию по первому счету.');
 
-    if(!/w_cr\.inf_accounts/.test(html))
-        html = AnyBalance.requestGet(baseurl + 'w_cr.inf_accounts?p_cur_sid=' + getSid(html));
-
-    //Сколько цифр осталось, чтобы дополнить до 20
-    var accnum = prefs.contract || '';
-    var accprefix = accnum.length;
-    accprefix = 20 - accprefix;
-
-    var result = {success: true};
-
-    var re = new RegExp('(<tr[^>]*onClick="fTableClick(?:[\\s\\S](?!<tr))*' + (accprefix > 0 ? '\\d{' + accprefix + '}' : '') + accnum + '\\s*<[\\s\\S]*?</tr>)', 'i');
-
-    var tr = getParam(html, null, null, re);
+    var table = getParam(html, null, null, /id="blckListAccountsCurrent"[^>]*>\s*<table[^>]*>([\s\S]*?)<\/table>/i);
+    if(!table)
+        throw new AnyBalance.Error('Не удалось найти список счетов. Сайт изменен?');
+	
+	// <tr class="[^"]*">\s*<td[^>]*>\s*\d{14,}2065(?:[^>]*>){20}\s*<\/tr>
+    var re = new RegExp('<tr class="[^"]*">\\s*<td[^>]*>\\s*\\d{14,}' + (prefs.contract || '\\d{4}') + '(?:[^>]*>){20}\\s*</tr>', 'i');
+    var tr = getParam(table, null, null, re);
     if(!tr)
-        throw new AnyBalance.Error('Не удаётся найти ' + (prefs.contract ? 'счет с ID ' + prefs.contract : 'ни одного счета'));
-    
-    getParam(tr, result, 'balance', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(tr, result, 'accnum', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(tr, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(tr, result, 'currency', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(tr, result, 'accname', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'fio', /Имя клиента:([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+        throw new AnyBalance.Error('Не удаётся найти ' + (prefs.contract ? 'счет с последними цифрами ' + prefs.contract : 'ни одного счета!'));
+
+	var result = {success: true};
+	
+    getParam(tr, result, 'balance', /(?:[^>]*>){18}([\s\S]*?)<\/td/i, replaceTagsAndSpaces, parseBalance);
+	getParam(tr, result, ['currency', 'balance'], /(?:[^>]*>){18}([\s\S]*?)<\/td/i, replaceTagsAndSpaces, parseCurrency);
+	getParam(tr, result, 'accnum', /(?:[^>]*>){2}([\s\S]*?)</i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(tr, result, '__tariff', /(?:[^>]*>){2}([\s\S]*?)</i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(tr, result, 'accname', /(?:[^>]*>){4}([\s\S]*?)</i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'fio', /"userIndicationName"(?:[^>]*>){1}([\s\S]*?)</i, replaceTagsAndSpaces, html_entity_decode);
 
     AnyBalance.setResult(result);
 }

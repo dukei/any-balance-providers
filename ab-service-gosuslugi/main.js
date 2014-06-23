@@ -83,7 +83,7 @@ function main() {
     		AnyBalance.trace('Указан номер автомобиля, значит надо получать штрафы...');
     		processGibdd(result, html, prefs);
     	} catch (e) {
-    		AnyBalance.trace('Не удалось получить данные по штрафам из-за ошибки: ' + e.message);
+			AnyBalance.trace('Не удалось получить данные по штрафам из-за ошибки: ' + e.message);
     	}
     }
     // Налоги
@@ -191,8 +191,18 @@ function processGibdd(result, html, prefs) {
 			if(html) break;
 		}
 		//html = AnyBalance.requestGet(mainLink, addHeaders({Referer: mainLink}));
+		// Здесь проверим на ошибки
 		var action = getParam(html, null, null, /'action'[^'"]*['"]\/([^'"]*)/i);
-		checkEmpty(action, 'Не удалось найти форму для запроса штрафов, скорее всего услуга недоступна!', true);
+		
+		if(!action) {
+			var error = getParam(html, null, null, /Услуга недоступна<(?:[^>]*>){3}([\s\S]*?)<\/div/i, replaceTagsAndSpaces, html_entity_decode);
+			if (error)
+				throw new AnyBalance.Error(error);
+			
+			AnyBalance.trace(html);
+			throw new AnyBalance.Error('Не удалось найти форму для запроса штрафов, скорее всего услуга недоступна!');
+		}
+		//checkEmpty(action, 'Не удалось найти форму для запроса штрафов, скорее всего услуга недоступна!', true);
 		
 		var params = createFormParams(html, function(params, str, name, value) {
 			if (name == 'tsRz')

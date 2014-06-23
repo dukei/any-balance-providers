@@ -18,20 +18,31 @@ function main(){
 
     AnyBalance.setDefaultCharset('utf-8'); 
 	
-    AnyBalance.requestGet(baseurl2, g_headers);
-    AnyBalance.requestGet(baseurl2 + 'office/auth/', g_headers);
-    AnyBalance.requestGet(baseurl + 'room/login.action?extURL=https://xn--f1aijeow.xn--p1ai&loginLink=/office/login/&exitLink=/office/logout/', g_headers);
-    AnyBalance.requestGet(baseurl + 'room/extAppLogin.action', g_headers);
+    //AnyBalance.requestGet(baseurl2, g_headers);
+    var html = AnyBalance.requestGet(baseurl2 + 'office/auth/', g_headers);
+    html = AnyBalance.requestGet(baseurl + 'room/lk/login.action?extURL=https://xn--f1aijeow.xn--p1ai&loginLink=/office/login/&exitLink=/office/logout/', g_headers);
+    //AnyBalance.requestGet(baseurl + 'room/lk/extAppLogin.action', g_headers);
 
     AnyBalance.setCookie("www.kvartplata.ru", "extAppExitUrl", '"https://xn--f1aijeow.xn--p1ai/office/logout/"');
     AnyBalance.setCookie("www.kvartplata.ru", "userLogin", prefs.login);
-
-    html = AnyBalance.requestPost(baseurl + 'room/doLogin.action', {
+	
+	//AnyBalance.requestGet(baseurl2, g_headers);
+	
+	if(AnyBalance.getLastStatusCode() > 400) {
+		throw new AnyBalance.Error('Ошибка! Сервер не отвечает! Попробуйте обновить баланс позже.');
+	}	
+	
+	var token = getParam(html, null, null, /"loginToken"[^>]*value="([^"]+)"/i);
+	
+    html = AnyBalance.requestPost(baseurl + 'room/lk/doLogin.action', {
+		'struts.token.name':'loginToken',
+		loginToken:token,
+		loginModule:'lk',
 		captchaCode:'x',
         userName:prefs.login,
         userPass:prefs.password,
         timezone: '-240'
-    }, addHeaders({Referer: baseurl + 'room/login.action?extURL=https://xn--f1aijeow.xn--p1ai&loginLink=/office/login/&exitLink=/office/logout/', Origin: baseurl})); 
+    }, addHeaders({Referer: baseurl + 'room/lk/login.action?extURL=https://xn--f1aijeow.xn--p1ai&loginLink=/office/login/&exitLink=/office/logout/', Origin: baseurl})); 
 
     var jsessionid = getParam(html, null, null, /<input[^>]+name="sessionId"[^>]+value=\"([\s\S]*?)\"/i, replaceTagsAndSpaces, html_entity_decode);
  
@@ -44,7 +55,7 @@ function main(){
 
     AnyBalance.requestGet(baseurl2 + 'office/', g_headers);
 
-    html = AnyBalance.requestGet(baseurl + 'room/main.action;jsessionid=' + jsessionid, g_headers);
+    html = AnyBalance.requestGet(baseurl + 'room/lk/main.action;jsessionid=' + jsessionid, g_headers);
 
     var result = {success: true};
     getParam(html, result, 'fio', /<div[^>]+class="name"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
@@ -55,7 +66,7 @@ function main(){
     getParam(html, result, 'date', /Суммы к оплате на ([\s\S]*?):/i, replaceTagsAndSpaces, parseDate);
 
 	// Теперь таблица услуг
-	html = AnyBalance.requestGet(baseurl + 'room/details.action', g_headers);
+	html = AnyBalance.requestGet(baseurl + 'room/lk/details.action', g_headers);
 	
 	var table = getParam(html, null, null, /(<table class="grid">[\s\S]*?<\/table>)/i);
     if(!table)

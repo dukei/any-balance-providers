@@ -6,9 +6,10 @@
         summary="||{@s}"
         entries="По идентификатору клиента|По текстовому псевдониму"
         entryValues="id|nick"
-	defaultValue="id">
+		defaultValue="id">
     </ListPreference>
     <EditTextPreference
+		obligatory="true"
         title="Логин" 
         positiveButtonText="ОК" 
         summary="||{@s}" 
@@ -19,6 +20,7 @@
         inputType="text">
     </EditTextPreference>
     <EditTextPreference 
+		obligatory="true"
         positiveButtonText="ОК"
         key="password" 
         dialogTitle="Пароль"
@@ -34,7 +36,7 @@
         summary="||{@s}"
         entries="Карта|Счет"
         entryValues="card|acc"
-	defaultValue="card">
+		defaultValue="card">
     </ListPreference>
     <EditTextPreference
         title="№ карты/счета" 

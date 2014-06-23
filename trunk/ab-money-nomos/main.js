@@ -1,10 +1,5 @@
 /**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Информация о карте, счете в банке "Номос-банк".
-
-Сайт: http://nomos.ru
-Сайт: https://telebank.nomos.ru
 */
 
 var g_headers = {
@@ -12,7 +7,8 @@ var g_headers = {
     'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
     'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
     Connection:'keep-alive',
-    'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11'
+    'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11',
+	Origin:'https://link.otkritiefc.ru'
 };
 
 function xorString(str, val){
@@ -28,10 +24,16 @@ function xorString(str, val){
 
 function main() {
     var prefs = AnyBalance.getPreferences();
-    var baseurl = 'https://telebank.nomos.ru/';
+    var baseurl = 'https://link.otkritiefc.ru/';
     AnyBalance.setDefaultCharset('utf-8');
 
-    var html = AnyBalance.requestPost(baseurl, {}, g_headers);
+	var html = AnyBalance.requestGet(baseurl, g_headers);
+	
+	if(AnyBalance.getLastStatusCode() > 400) {
+		throw new AnyBalance.Error('Ошибка! Сервер не отвечает! Попробуйте обновить баланс позже.');
+	}	
+    
+	html = AnyBalance.requestPost(baseurl, {}, addHeaders({Referer: baseurl + '?restoreParams'}));
     var sessionKey = getParam(html, null, null, /var\s+sessionKey\s*=\s*'([^']*)/);
     if(!sessionKey)
         throw new AnyBalance.Error('Не удаётся найти ключ сессии. Сайт изменен?');

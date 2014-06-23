@@ -1,14 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-    <id version="1">ab-money-nomos</id>
-    <name>НОМОС-Банк</name>
-    <description>Информация о карте, счете в НОМОС-Банке (http://nomos.ru).
-В настройках провайдера требуется указать логин и пароль к Интернет-банку https://telebank.nomos.ru.
-
-Подключиться к интернет-банку Номос-Линк?
-Для подключения обратитесь с паспортом в любое отделение Номос-банка.
-</description>
-    <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+    <id version="2">ab-money-nomos</id>
+    <api flags="no_browser"/>
+	<name>НОМОС-Банк (ФК Открытие)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе на картах и счетах в НОМОС-Банке (http://nomos.ru, https://link.otkritiefc.ru/).</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>В настройках провайдера требуется указать логин и пароль к Интернет-банку https://telebank.nomos.ru.</p>
+	<p>Как подключиться к интернет-банку Номос-Линк?</p>
+	<p>Для подключения обратитесь с паспортом в любое отделение Номос-банка.</p>
+	]]></instruction>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
     <files>
 	<icon>icon.png</icon>
         <preferences>preferences.xml</preferences>
@@ -17,26 +20,20 @@
         <history>history.xml</history>
     </files>
     <counters>
-	<counter id="balance" name="Доступно"/>
-	<counter id="net_balance" name="Общий баланс"/>
-        <counter id="limit" name="Кредитный лимит"/>
-	<counter id="reserved" name="Зарезервировано"/>
-        <counter id="currency" name="Валюта" type="text"/>
-        <counter id="till" name="Срок действия" type="time" format="MM/yyyy"/>
-        <counter id="accnum" name="Номер счета" type="text"/>
-        <counter id="cardnum" name="Номер карты" type="text"/>
-        <counter id="cardname" name="Название карты" type="text"/>
-        <counter id="accname" name="Название счета" type="text"/>
-        <counter id="owner" name="Владелец" type="text"/>
-        <counter id="status" name="Статус" type="text"/>
+		<counter id="balance" name="Доступно"/>
+		<counter id="net_balance" name="Общий баланс"/>
+		<counter id="limit" name="Кредитный лимит"/>
+		<counter id="reserved" name="Зарезервировано"/>
+		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="till" name="Срок действия" type="time" format="MM/yyyy"/>
+		<counter id="accnum" name="Номер счета" type="text"/>
+		<counter id="cardnum" name="Номер карты" type="text"/>
+		<counter id="cardname" name="Название карты" type="text"/>
+		<counter id="accname" name="Название счета" type="text"/>
+		<counter id="owner" name="Владелец" type="text"/>
+		<counter id="status" name="Статус" type="text"/>
     </counters>
-    <keywords>
-        nomos
-    </keywords>
-    <type>
-        money
-    </type>
-    <country>
-        ru
-    </country>
+    <keywords>nomos, линк, Номос</keywords>
+	<type>money</type>
+	<country>ru</country>
 </provider>

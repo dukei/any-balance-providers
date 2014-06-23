@@ -16,29 +16,36 @@ function main() {
 	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
-		
-	var html = AnyBalance.requestPost(baseurl + 'auth/login', {
+	
+	var html = AnyBalance.requestGet(baseurl + 'auth/login', g_headers);
+	
+	if(AnyBalance.getLastStatusCode() > 400) {
+		throw new AnyBalance.Error('Ошибка! Сервер не отвечает! Попробуйте обновить баланс позже.');
+	}
+	
+	html = AnyBalance.requestPost(baseurl + 'auth/login', {
+		act:'enter',
         login:prefs.login,
-        pass:prefs.password,
+        pwd:prefs.password,
     }, addHeaders({
-		Referer: baseurl,
+		Referer: baseurl+'auth/login',
 		'X-Requested-With':'XMLHttpRequest',
 	}));
 	
-	if(!/1/.test(html)) {
-		if(/0/.test(html))
-			throw new AnyBalance.Error('Неверный адрес или пароль!');
+	if(!/^\s*0\s*$/.test(html)) {
+		if(/\\u041d\\u0435\\u0432\\u0435\\u0440\\u043d\\u044b\\u0439 \\u043a\\u043e\\u0434 \\u0441 \\u043a\\u0430\\u0440\\u0442\\u0438\\u043d\\u043a\\u0438/i.test(html))
+			throw new AnyBalance.Error('Неверный логин или пароль!', false, true);
 		
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
-	html = AnyBalance.requestGet(baseurl + 'bk/check_user', addHeaders({
+	/*html = AnyBalance.requestGet(baseurl + 'detskaya/profile', addHeaders({
 		Referer: baseurl + 'auth/login',
 		'X-Requested-With':'XMLHttpRequest',
-	}));
+	}));*/
 	
     var result = {success: true};
 	
-	getParam(html, result, 'balance', null, replaceTagsAndSpaces, parseBalance);
+	//getParam(html, result, 'balance', null, replaceTagsAndSpaces, parseBalance);
 	
 	html = AnyBalance.requestGet(baseurl + 'detskaya/loyalty/mycards', addHeaders({Referer: baseurl+'detskaya/loyalty/profile'}));
 	

@@ -22,21 +22,21 @@
         dialogMessage="Введите пароль, используемый для входа в Интернет-банк"
         inputType="textPassword">
     </EditTextPreference>
-<!--    <ListPreference 
+   <ListPreference 
         key="type" 
         title="Продукт"
         summary="||{@s}"
         entries="Счет|Карта"
         entryValues="acc|card"
-	defaultValue="card">
-    </ListPreference>  -->
+		defaultValue="card">
+    </ListPreference> 
     <EditTextPreference
         title="Номер карты" 
         positiveButtonText="ОК" 
         summary="|Автоматически|{@s}" 
         dialogTitle="Номер карты" 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите сюда цифры номера карты. Если оставить поле пустым, то будет показана информация по первй карте."
+        dialogMessage="Введите сюда цифры номера карты. Если оставить поле пустым, то будет показана информация по первой карте."
         key="contract">
     </EditTextPreference>
 </PreferenceScreen>

@@ -1,10 +1,5 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Получает баланс в такси Максим
-
-Operator site: http://taxsee.ru
-Личный кабинет: http://cabinet.taximaxim.ru/
 */
 
 var g_headers = {
@@ -37,8 +32,8 @@ function main(){
     var result = {success: true};
 
     var json = getParam(html, null, null, /user_profile\s*=\s*(\{[\s\S]*?\});/, null, getJson);
-//    getParam(json.FIO, result, 'fio');
-    getParam(json.FIO, result, '__tariff');
+	getParam(json.FIO, result, 'fio');
+	getParam(json.FIO, result, '__tariff');
     getParam(json.Discont, result, 'discont', null, null, parseBalance);
 
     html = AnyBalance.requestGet(baseurl + 'Services/Taxi.svc/Accounts', g_headers);

@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-tv-mts-nn</id>
+	<name>Домашнее Телевидение МТС (Нижний Новгород)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о текущем балансе, номере лицевого счета и договора, ФИО владельца, трафике в текущем месяце, абонентской плате для пользователей провайдера "Домашний Интернет и Телевидение МТС" в Нижнем Новгороде.</p>
+	]]></description>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance_tv" name="Баланс ТВ" units=" р"/>
+		<counter id="abon" name="Абонентская плата" suffix=" р"/>
+		<counter id="agreement" name="Номер договора" type="text"/>
+		<counter id="username" name="ФИО" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>tv</type>
+	<country>ru</country>
+</provider>

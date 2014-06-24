@@ -11,29 +11,32 @@ var g_headers = {
 	Origin:'https://link.otkritiefc.ru'
 };
 
-function xorString(str, val){
-  if(!str || !val){
-    return '';
-  }
-  var res='';
-  for(var i=0; i<str.length; i++){
-    res+=String.fromCharCode(str.charCodeAt(i)^val);
-  }
-  return res;
+function xorString(str, val) {
+	if (!str || !val) {
+		return '';
+	}
+	var res = '';
+	for (var i = 0; i < str.length; i++) {
+		res += String.fromCharCode(str.charCodeAt(i) ^ val);
+	}
+	return res;
 }
 
 function main() {
     var prefs = AnyBalance.getPreferences();
     var baseurl = 'https://link.otkritiefc.ru/';
     AnyBalance.setDefaultCharset('utf-8');
-
+	
+	checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(prefs.password, 'Введите пароль!');
+	
 	var html = AnyBalance.requestGet(baseurl, g_headers);
 	
 	if(AnyBalance.getLastStatusCode() > 400) {
 		throw new AnyBalance.Error('Ошибка! Сервер не отвечает! Попробуйте обновить баланс позже.');
-	}	
-    
-	html = AnyBalance.requestPost(baseurl, {}, addHeaders({Referer: baseurl + '?restoreParams'}));
+	}
+	
+	html = html + AnyBalance.requestPost(baseurl, {}, addHeaders({Referer: baseurl + '?restoreParams'}));
     var sessionKey = getParam(html, null, null, /var\s+sessionKey\s*=\s*'([^']*)/);
     if(!sessionKey)
         throw new AnyBalance.Error('Не удаётся найти ключ сессии. Сайт изменен?');

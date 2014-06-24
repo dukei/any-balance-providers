@@ -36,7 +36,7 @@ function main() {
 		throw new AnyBalance.Error('Ошибка! Сервер не отвечает! Попробуйте обновить баланс позже.');
 	}
 	
-	html = html + AnyBalance.requestPost(baseurl, {}, addHeaders({Referer: baseurl + '?restoreParams'}));
+	//var html = AnyBalance.requestPost(baseurl, {}, addHeaders({Referer: baseurl + '?restoreParams'}));
     var sessionKey = getParam(html, null, null, /var\s+sessionKey\s*=\s*'([^']*)/);
     if(!sessionKey)
         throw new AnyBalance.Error('Не удаётся найти ключ сессии. Сайт изменен?');

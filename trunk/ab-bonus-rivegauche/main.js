@@ -46,6 +46,8 @@ function main(){
 	getParam(html, result, 'db_balance', /class="savingsAmmount">([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'db_date', [/последняя операция по карте (.*)<br>/m, /дата последней[^<]*по карте([^<]*)/i], replaceTagsAndSpaces, parseDate);
 	getParam(html, result, 'db_status', /"card-status"[^>]*>\s*статус карты([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+	
+	getParam(html, result, 'db_bonus', /бонус на(?:[^>]*>)?День Рождения(?:[^>]*>){4}\s*<div[^>]*savingsAmmount[^>]*>([^<]+)<\//i, replaceTagsAndSpaces, parseBalance);
 
 	//Обычная карта
 	/*if (prefs.cardtype == 0){	

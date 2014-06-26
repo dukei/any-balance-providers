@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference
+		title="Login"
+		key="Login"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Login"
+		positiveButtonText="ОК"
+		negativeButtonText="Cancel"
+		dialogMessage="Type your login on the MQL5.com.">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Password"
+		key="Password"
+		summary="||***********"
+		obligatory="true"
+		dialogTitle="Password"
+		positiveButtonText="ОК"
+		negativeButtonText="Cancel"
+		dialogMessage="Type password."
+		inputType="textPassword">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Signal"
+		key="signal"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Signal"
+		positiveButtonText="ОК"
+		negativeButtonText="Cancel"
+		dialogMessage="Enter the number of signal for watch.">
+	</EditTextPreference>
+</PreferenceScreen>

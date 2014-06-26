@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-money-mql</id>
+	<api flags="no_browser"/>
+	<name>Trading Signals for MetaTrader</name>
+	<description html="true"><![CDATA[
+	<p>This provider helps you to watch the signals on MQL5.com.</p>
+	]]></description>
+	<author>wtiger &lt;wtiger@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="initial_deposit" name="Initial deposit" units=" {@currency}"/>
+		<counter id="deposits" name="Deposits" units=" {@currency}"/>
+		<counter id="total_deposit" name="Total deposit" units=" {@currency}"/>
+		<counter id="withdrawals" name="Withdrawals" units=" {@currency}"/>
+		<counter id="currency" name="Currency" type="text"/>
+		<counter id="balance" name="Balance" units=" {@currency}"/>
+		<counter id="equity" name="Equity" units=" {@currency}"/>
+		<counter id="current_profit" name="Current profit" units=" {@currency}"/>
+		<counter id="profit" name="Profit" units=" {@currency}"/>
+		<counter id="subscribers" name="Subscribers"/>
+		<counter id="subscribers_funds" name="Subscribers funds" type="text"/>
+		<counter id="maximum_drawdown" name="Maximum drawdown" units="%"/>
+		<counter id="weeks" name="Weeks"/>
+		<counter id="latest_trade" name="Latest trade" type="text"/>
+		<counter id="trades_per_week" name="Trades per week"/>
+		<counter id="avg_holding_time" name="Avg holding time" type="text"/>
+	</counters>
+	<keywords>forex mql mql4 mal5 metatrader metatrader4 metatrader5 signal</keywords>
+	<type>money</type>
+</provider>

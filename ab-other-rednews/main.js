@@ -17,8 +17,9 @@ function main() {
 	
 //	checkEmpty(prefs.login, 'Введите логин!');
 //	checkEmpty(prefs.password, 'Введите пароль!');
-	current_date=new Date();
-	item_date=new Date();
+	var current_date=new Date();
+	var item_date=new Date();
+	var item_pm=false;
 	
 	var html = AnyBalance.requestGet(baseurl + 'calendar.php', g_headers);
 	
@@ -26,7 +27,7 @@ function main() {
 
 	result.__tariff=prefs.currency;
 //	result.mark="high";
-	result.description="<No red news at this week>";
+	result.description="<No red news this week>";
 	result.actual="-";
 	result.forecast="-";
 	result.date="-";
@@ -41,15 +42,26 @@ function main() {
 			date=date+" "+(new Date().getFullYear());
 			date=parseDateWord(date);
 			item_date=new Date(date);
+
 		}
-		if(item_date<current_date)continue;
-//		m=Date.parse("T"+replaceAll(r[3],replaceTagsAndSpaces));
+		mark=getParam(r[5], null, null, /class="(.*?)"/i, null, null);
+		if(mark != "high")continue;
 
 		currency=replaceAll(r[4],replaceTagsAndSpaces);
 		if(prefs.currency!="Any" && currency!=prefs.currency)continue;
 
-		mark=getParam(r[5], null, null, /class="(.*?)"/i, null, null);
-		if(mark != "high")continue;
+		var time=replaceAll(r[3],replaceTagsAndSpaces);
+
+		item_pm=false;
+		if(time.match(/pm/,''))item_pm=true;
+		if(!time.match(/am|pm/))time="";
+		time=time.replace(/am|pm/,'');
+		date=(item_date.getMonth()+1)+"/"+item_date.getDate()+"/"+item_date.getFullYear()+" "+time;
+
+		item_date = new Date(date);
+		if(item_pm)item_date = new Date(item_date.getTime() + (12*60*60*1000))
+
+		if(item_date<current_date)continue;
 
 		result.__tariff=currency;
 //		result.mark=mark;

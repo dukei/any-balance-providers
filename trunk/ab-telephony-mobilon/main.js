@@ -29,7 +29,11 @@ function main() {
 			throw new AnyBalance.Error(error);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
+	
+	html = AnyBalance.requestGet(baseurl + 'accountManagement', g_headers);
+	
     var result = {success: true};
+	
 	getParam(html, result, 'status', /Статус(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'balance', /Баланс(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'server', /Сервер(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);

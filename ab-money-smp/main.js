@@ -28,7 +28,9 @@ function main() {
         UserName:prefs.login,
         Password:prefs.password
     }, addHeaders({Referer: baseurl + action}));
-
+	
+	var table = getParam(html, null, null, />Курсы и обмен валюты([\s\S]*?)<\/table>/i);
+	
     if(!/Authorize\/Logout/i.test(html)){
         var error = getParam(html, null, null, /<div[^>]+validation-summary-errors[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
@@ -50,19 +52,29 @@ function main() {
     }catch(e){
         AnyBalance.trace('Обновление данных не удалось: ' + e.message);
     }
-
+	
+	var result = {success: true};
+	
+	if(AnyBalance.isAvailable('usd','eur','gbp') && table) {
+		getParam(table, result, 'usd', /USD(?:[^>]*>){5,10}\s*<\/tr>/i, [replaceTagsAndSpaces, /(\d)\s/, '$1/'], html_entity_decode);
+		getParam(table, result, 'eur', /EUR(?:[^>]*>){5,10}\s*<\/tr>/i, [replaceTagsAndSpaces, /(\d)\s/, '$1/'], html_entity_decode);
+		getParam(table, result, 'gbp', /GBP(?:[^>]*>){5,10}\s*<\/tr>/i, [replaceTagsAndSpaces, /(\d)\s/, '$1/'], html_entity_decode);
+	}
+	
     AnyBalance.trace('Получаем все счета...');
     html = AnyBalance.requestGet(baseurl + 'Ib/ViewAccounts', g_headers);
 
     if(prefs.type == 'card')
-        fetchCard(baseurl, html);
+        fetchCard(baseurl, html, result);
     else if(prefs.type == 'acc')
-        fetchAccount(baseurl, html);
+        fetchAccount(baseurl, html, result);
     else
-        fetchCard(baseurl, html); //По умолчанию карта
+        fetchCard(baseurl, html, result); //По умолчанию карта
+		
+	AnyBalance.setResult(result);
 }
 
-function fetchAccount(baseurl, html){
+function fetchAccount(baseurl, html, result){
     //throw new AnyBalance.Error('Получение счетов пока не поддерживается. Пожалуйста, обратитесь к автору провайдера.');
 
     var prefs = AnyBalance.getPreferences();
@@ -79,19 +91,15 @@ function fetchAccount(baseurl, html){
     if(!tr)
         throw new AnyBalance.Error('Не удаётся найти ' + (prefs.contract ? 'счет с последними цифрами ' + prefs.contract : 'ни одного счета!'));
 
-	var result = {success: true};
-	
     getParam(tr, result, 'balance', /(?:[^>]*>){18}([\s\S]*?)<\/td/i, replaceTagsAndSpaces, parseBalance);
 	getParam(tr, result, ['currency', 'balance'], /(?:[^>]*>){18}([\s\S]*?)<\/td/i, replaceTagsAndSpaces, parseCurrency);
 	getParam(tr, result, 'accnum', /(?:[^>]*>){2}([\s\S]*?)</i, replaceTagsAndSpaces, html_entity_decode);
     getParam(tr, result, '__tariff', /(?:[^>]*>){2}([\s\S]*?)</i, replaceTagsAndSpaces, html_entity_decode);
     getParam(tr, result, 'accname', /(?:[^>]*>){4}([\s\S]*?)</i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'fio', /"userIndicationName"(?:[^>]*>){1}([\s\S]*?)</i, replaceTagsAndSpaces, html_entity_decode);
-
-    AnyBalance.setResult(result);
 }
 
-function fetchCard(baseurl, html){
+function fetchCard(baseurl, html, result){
     var prefs = AnyBalance.getPreferences();
 
     if(prefs.contract && !/^\d{4}$/.test(prefs.contract))
@@ -106,8 +114,6 @@ function fetchCard(baseurl, html){
     if(!tr)
         throw new AnyBalance.Error('Не удаётся найти ' + (prefs.contract ? 'карту с последними цифрами ' + prefs.contract : 'ни одной карты'));
 
-    var result = {success: true};
-    
     getParam(tr, result, 'balance', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(tr, result, ['currency', 'balance'], /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseCurrency);
     getParam(tr, result, 'accnum', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)(?:<br|<\/td>)/i, replaceTagsAndSpaces, html_entity_decode);
@@ -137,7 +143,4 @@ function fetchCard(baseurl, html){
             getParam(html, result, 'type', /Тип карты(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
         }
     }
-
-    AnyBalance.setResult(result);
-    
 }

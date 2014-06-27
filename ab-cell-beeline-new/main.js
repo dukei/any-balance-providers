@@ -719,7 +719,7 @@ function getBonuses(xhtml, result) {
 			// Это новый вид отображения данных
 			} else if (/Минут общения по тарифу/i.test(name)) {
 				// Очень внимательно надо матчить
-				if(/номера других (?:сотовых\s+)?операторов|все номера/i.test(name))
+				if(/номера других (?:сотовых\s+)?операторов|все номера|На номера домашнего региона/i.test(name))
 					sumParam(services[i], result, 'min_local', reNewValue, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
 				else
 					sumParam(services[i], result, 'min_bi', reNewValue, replaceTagsAndSpaces, parseMinutes, aggregate_sum);

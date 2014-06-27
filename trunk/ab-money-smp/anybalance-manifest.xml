@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-money-smp</id>
+	<id version="5">ab-money-smp</id>
 	<api min_level="5" flags="no_browser"/>
 	<name>СМП Банк</name>
 	<description html="true"><![CDATA[
@@ -31,6 +31,10 @@
 		<counter id="type" name="Тип" type="text"/>
 		<counter id="fio" name="Владелец" type="text"/>
 		<counter id="currency" name="Валюта" type="text"/>
+		
+		<counter id="usd" name="Курс USD" type="text"/>
+		<counter id="eur" name="Курс EUR" type="text"/>
+		<counter id="gbp" name="Курс GBP" type="text"/>
 	</counters>
 	<keywords>Кредит, банк, смп, smp</keywords>
 	<type>money</type>

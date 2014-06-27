@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-money-fxcash</id>
+	<api flags="no_browser"/>
+	<name>FXCash</name>
+	<description html="true"><![CDATA[
+	<p>Позволяет контролировать состояние баланса на сайте ребейтов fxcash.ru</p>
+	]]></description>
+	<author>wtiger &lt;wtiger@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="accessible" name="Доступно" units=" $"/>
+		<counter id="balance" name="Баланс" units=" $"/>
+		<counter id="bonus" name="Бонус" units=" $"/>
+	</counters>
+	<keywords>forex fxcash broker rebate</keywords>
+	<type>money</type>
+</provider>

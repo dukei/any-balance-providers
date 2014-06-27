@@ -50,7 +50,7 @@ function main(){
     var number = getParam(prefs.plate, null, null, /^.\d\d\d../);
     var region = getParam(prefs.plate, null, null, /(\d+)$/);
 	
-    html = AnyBalance.requestPost(baseurl + 'gibdd/fines/fines', {
+    html = AnyBalance.requestPost(baseurl + 'gibdd/fines/getFromApi', {
         findType:'car',
         type_ts:isAuto ? 'auto' : 'moto',
         number:number,
@@ -60,7 +60,22 @@ function main(){
         find_protocol_series:'',
         find_protocol_number:'',
         find_protocol_date:''
-    });
+    }, addHeaders({'x-requested-with':'XMLHttpRequest'}));
+	
+	var json = getJson(html);
+	
+	for(var i = 0; i < 20; i++) {
+		AnyBalance.sleep(1000);
+		
+		html = AnyBalance.requestGet(baseurl + 'gibdd/fines/getBy/message_id/' + (json.message_id || json.id), g_headers);
+		
+		json = getJson(html);
+		
+		if(json.status != 'in_processing') {
+			AnyBalance.trace('Данные успешно обновлены за ' + i + ' сек.');
+			break;
+		}
+	}
 	
 	var result = {success: true};
 	
@@ -68,15 +83,26 @@ function main(){
 		AnyBalance.trace('Не найдено штрафов..');
 		getParam('0', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
 	} else {
-	    /*var error = getParam(html, null, null, /<div[^>]*id=["']error_explanation[^>]*>([\s\S]*?)<\/div>/, replaceTagsAndSpaces, html_entity_decode);
-		if(error)
-			throw new AnyBalance.Error(error);*/
-		var finesTable = getParam(html, null, null, /<table[^>]*class="extra-table"[^>]*>([\s\S]*?)<\/table>/i) || '';
+		/*var finesTable = getParam(html, null, null, /<table[^>]*class="extra-table"[^>]*>([\s\S]*?)<\/table>/i) || '';
 		
 		getParam(html, result, 'count', /Найдено\s*(\d+)/i, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, 'balance', /штраф[^<]*?на сумму ([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 		sumParam(finesTable, result, 'lastdate', /<tr[^>]*>\s*(?:(?:[\s\S](?!<\/tr))*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate, aggregate_max);
-		sumParam(finesTable, result, 'firstdate', /<tr[^>]*>\s*(?:(?:[\s\S](?!<\/tr))*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate, aggregate_min);
+		sumParam(finesTable, result, 'firstdate', /<tr[^>]*>\s*(?:(?:[\s\S](?!<\/tr))*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate, aggregate_min);*/
+		if(!json.response.fines) {
+			AnyBalance.trace('Не найдено штрафов..');
+			getParam('0', result, 'balance', null, replaceTagsAndSpaces, parseBalance);		
+		}
+		
+		getParam(json.response.fines.length+'', result, 'count', null, replaceTagsAndSpaces, parseBalance);
+		
+		for(var z = 0; z < json.response.fines.length; z++) {
+			var current = json.response.fines[z];
+			
+			sumParam(current.amount+'', result, 'balance', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+			sumParam(current.date+'', result, 'lastdate', null, replaceTagsAndSpaces, parseDate, aggregate_max);
+			sumParam(current.date+'', result, 'firstdate', null, replaceTagsAndSpaces, parseDate, aggregate_min);
+		}
 	}
 	
     AnyBalance.setResult(result);

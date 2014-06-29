@@ -34,9 +34,9 @@ var filial_info = {
 filial_info[MEGA_FILIAL_MOSCOW] = {
 	name: 'Столичный филиал',
 	func: megafonServiceGuide,
-	site: "https://moscowsg.megafon.ru/",
+//	site: "https://moscowsg.megafon.ru/",
 	widget: 'https://moscowsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
-	tray: "https://moscowsg.megafon.ru/TRAY_INFO/TRAY_INFO?LOGIN=%LOGIN%&PASSWORD=%PASSWORD%",
+//	tray: "https://moscowsg.megafon.ru/TRAY_INFO/TRAY_INFO?LOGIN=%LOGIN%&PASSWORD=%PASSWORD%",
 	internet: "http://user.moscow.megafon.ru/",
 	internetRobot: "https://moscowsg.megafon.ru/MEGAFON_BALANCE/MGFSTF_GET_QOS_PACK_STATUS?MSISDN=%LOGIN%&PASSWORD=%PASSWORD%"
 };
@@ -321,7 +321,7 @@ function megafonTrayInfo(filial) {
 	var mins_totals_was = {};
 	var result = {success: true};
 	
-	try {
+	if(filinfo.tray || filinfo.site){ try {
 		var xml = getTrayXmlText(filial, filinfo.tray || filinfo.site), val;
 		
 		getParam(xml, result, '__tariff', /<RATE_PLAN>([\s\S]*?)<\/RATE_PLAN>/i, replaceTagsAndSpaces, html_entity_decode);
@@ -426,7 +426,10 @@ function megafonTrayInfo(filial) {
 		//Не удалось получить инфу из хмл. Но не станем сразу унывать, получим что-нить из виджета
 		AnyBalance.trace('Не удалось получить данные из входа для автоматических систем: ' + e.message);
 		errorInTray = e.message || "Unknown error";
-	}
+	}}else{
+		AnyBalance.trace('Филиал не имеет входа для роботов...');
+		errorInTray = "Вход отсутствует на сервере Мегафон";
+        }
 	if (AnyBalance.isAvailable('internet_cost', 'bonus_balance', 'last_pay_sum', 'last_pay_date', 'mins_left', 'mins_net_left', 'mins_n_free', 'mins_total', 'internet_left', 'internet_total', 'internet_cur', 'sub_smit', 'sub_smio', 'sub_scl', 'sub_scr', 'sub_soi') || errorInTray || isAvailableButUnset(result, ['balance', 'phone', 'sms_left', 'sms_total', 'mins_left', 'mins_total', 'gb_with_you'])) {
 		//Некоторую инфу можно получить из яндекс виджета. Давайте попробуем.
 		var prefs = AnyBalance.getPreferences();
@@ -569,13 +572,16 @@ function megafonTrayInfo(filial) {
 				AnyBalance.trace('Не удалось получить доп. счетчики из Яндекс.виджета: ' + e.message);
 			} else {
 				var matches;
-				if (e.message && (matches = e.message.match(/login:(\d+).*wrong_cnt:(\d+)/i))) throw new AnyBalance.Error('Неправильный номер телефона или пароль. Неудачных входов подряд: ' + matches[2]);
+				if (e.message && (matches = e.message.match(/login:(\d+).*wrong_cnt:(\d+)/i)))
+					throw new AnyBalance.Error('Неправильный номер телефона или пароль. Неудачных входов подряд: ' + matches[2]);
+				if (e.message && (/The user is locked/i.test(e.message)))
+					throw new AnyBalance.Error('Пользователь заблокирован (' + prefs.login + '). Пожалуйста, попытайтесь войти в сервис-гид по адресу https://sg.megafon.ru через браузер и выполните инструкции по разблокировке пользователя и получению нового пароля.', null, true);
 				throw new AnyBalance.Error(errorInTray + '. Яндекс.Виджет: ' + e.message);
 			}
 		}
 	}
 	// Возможно фикс грубый, но бывает такое, что в виджете и в internet info трафик различается на 50 мб, из-за этого все суммируется дважды
-	if(!isset(result.internet_total) && !isset(result.internet_left) && result.internet_cur == 0)
+	if(!isset(result.internet_total) && !isset(result.internet_left) && !result.internet_cur)
 		getInternetInfo(filial, result, internet_totals_was);
 	else
 		AnyBalance.trace('Мы уже получили весь трафик, в getInternetInfo не пойдем, т.к. иначе все просуммируется и трафика станет в два раза больше')
@@ -836,15 +842,17 @@ function megafonServiceGuide(filial){
         if(prefs.corporate){
             session = AnyBalance.requestGet('http://moscow.megafon.ru/ext/sg_gate.phtml?MSISDN=CP_' + prefs.login + '&PASS=' + encodeURIComponent(prefs.password) + '&CHANNEL=WWW');
         }else{
-            //Влад, ну что же ты всё подглядываешь-то??? Впрочем, пользуйся, не жалко :)
+		AnyBalance.trace('Не будем и пытаться заходить в сервис-гид, придется получать данные из виджета');
+		megafonTrayInfo(filial);
+/*            //Влад, ну что же ты всё подглядываешь-то??? Впрочем, пользуйся, не жалко :)
             session = AnyBalance.requestGet(baseurl + 'SESSION/GET_SESSION?MSISDN=' + ((prefs.corporate ? 'CP_' : '') + prefs.login) + '&PASS=' + encodeURIComponent(prefs.password) + '&CHANNEL=WWW');
 			var code = AnyBalance.getLastStatusCode();
 			if(code > 400){
 				AnyBalance.trace('Невозможно зайти в сервис гид, придется получать данные из виджета');
 				megafonTrayInfo(filial);
 				return;
-			}
-        }
+			} */
+        } 
     }else{
 		session = AnyBalance.requestPost(baseurl + 'ps/scc/php/check.php?CHANNEL=WWW', {
             LOGIN: (prefs.corporate ? 'CP_' : '') + prefs.login, 

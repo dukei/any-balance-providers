@@ -20,8 +20,16 @@ function main(){
     
     var html = AnyBalance.requestGet(baseurl/* + 'work.html'*/);
     var sid = getParam(html, null, null, /name="sid3" value="([^"]*)"/i);
-    if(!sid)
+    if(!sid){
+		if(AnyBalance.getLastStatusCode() >= 400){
+			var error = getParam(html, null, null, /<h1[^>]*>([\s\S]*?)<\/h1>/i, replaceTagsAndSpaces, html_entity_decode);
+			if(error)
+				throw new AnyBalance.Error(error);
+			throw new AnyBalance.Error('Сайт временно недоступен. Пожалуйста, попробуйте ещё раз позднее.');
+		}
+			
 		throw new AnyBalance.Error('Не удалось найти идентификатор сессии!');
+    }
     
     var form = getParam(html, null, null, /(<form[^>]*name="mainForm"[^>]*>[\s\S]*?<\/form>)/i);
     if(!form)

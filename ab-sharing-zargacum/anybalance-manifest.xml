@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="5">ab-sharing-zargacum</id>
+	<id version="6">ab-sharing-zargacum</id>
 	<name>Zargacum</name>
 	<api flags="no_browser"/>
 	<description html="true"><![CDATA[

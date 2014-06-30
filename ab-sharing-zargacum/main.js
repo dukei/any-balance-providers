@@ -6,9 +6,7 @@ var g_headers = {
 	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
 	'Accept-Language': 'ru,en;q=0.8',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.114 Safari/537.36',
-	'Origin': 'https://billing.zargacum.net',
-	'Cache-Control': 'max-age=0'
+	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.153 Safari/537.36',
 };
 
 function getPacket(html, name, result, counter){
@@ -30,14 +28,23 @@ function main(){
 	
     AnyBalance.setDefaultCharset('utf-8');
 
-    var baseurl = "https://billing.zargacum.net/";
+    var baseurl = 'https://billing.zargacum.net/';
 	
 	var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
 	
+	var logonTries = 5;
 	var cookie = getParam(html, null, null, /document\.cookie='_ddn_intercept_2_=([^';]+)/i);
-	if(cookie) {
-		AnyBalance.setCookie('www.zargacum.net', '_ddn_intercept_2_', cookie);
-		AnyBalance.setCookie('www.zargacum.net', 'max-age', '604800');	
+	while(cookie && logonTries > 0) {
+		logonTries--;
+		AnyBalance.setCookie('www.billing.zargacum.net', '_ddn_intercept_2_', cookie);
+		//AnyBalance.setCookie('www.zargacum.net', 'max-age', '604800');
+		AnyBalance.setCookie('billing.zargacum.net', '_ddn_intercept_2_', cookie);
+		//AnyBalance.setCookie('zargacum.net', 'max-age', '604800');		
+		html = AnyBalance.requestGet(baseurl + 'login', addHeaders({
+			'Referer': 'https://billing.zargacum.net/login',
+			'Cache-Control': 'max-age=0',
+		}));
+		cookie = getParam(html, null, null, /document\.cookie='_ddn_intercept_2_=([^';]+)/i);
 	}
 	
 	html = AnyBalance.requestPost(baseurl + 'login', {

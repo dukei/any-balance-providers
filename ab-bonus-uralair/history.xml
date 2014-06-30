@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-<change version="3" date="2013-11-20">
-- Поддержка изменений на сайте. (Stark)
-</change>
-<change version="2" date="2013-06-04">
-- Разрешено вводить буквы в пароле.
-</change>
+	<change version="4" date="2014-06-30">
+	- Поддержка изменений на сайте.
+	</change>
+	<change version="3" date="2013-11-20">
+	- Поддержка изменений на сайте.
+	</change>
+	<change version="2" date="2013-06-04">
+	- Разрешено вводить буквы в пароле.
+	</change>
 </history>

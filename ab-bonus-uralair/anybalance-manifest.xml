@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="3">ab-bonus-uralair</id>
+	<id version="4">ab-bonus-uralair</id>
 	<name>Программа "Крылья", Уральские Авиалинии</name>
 	<description html="true"><![CDATA[
 	<p>Получает баланс баллов и другую информацию по бонусной программе "Крылья" Уральских Авиалиний (http://www.uralairlines.ru).</p>

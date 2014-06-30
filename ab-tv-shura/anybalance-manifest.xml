@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-tv-shura</id>
+	<id version="3">ab-tv-shura</id>
 	<api flags="no_browser"/>
 	<name>Тетя Шура (Shura.tv)</name>
 	<description html="true"><![CDATA[
@@ -17,6 +17,8 @@
 	<counters>
 		<counter id="balance" name="Баланс"/>
 		<counter id="requests" name="Запросов"/>
+		<counter id="pack_till_name" name="Имя пакета" type="text"/>
+		<counter id="pack_till" name="Дата окончания пакета" type="time" format="dd/MM/yyyy"/>		
 	</counters>
 	<keywords></keywords>
 	<type>tv</type>

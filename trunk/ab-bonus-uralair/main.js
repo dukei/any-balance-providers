@@ -18,20 +18,20 @@ function main(){
 	
     var baseurl = "https://loyalty.uralairlines.ru/";
 	
-	var html = AnyBalance.requestGet(baseurl + 'lgn.aspx', g_headers);
+	var html = AnyBalance.requestGet(baseurl + 'member/login', g_headers);
 	
 	var params = createFormParams(html, function(params, str, name, value) {
-		if (name == 'ctl00$ContentPlaceHolder1$l') 
+		if (name == 'Username') 
 			return prefs.login;
-		else if (name == 'ctl00$ContentPlaceHolder1$p')
+		else if (name == 'Password')
 			return prefs.password;
 
 		return value;
 	});
 	
-    html = AnyBalance.requestPost(baseurl + 'lgn.aspx', params, addHeaders({Referer: baseurl + 'lgn.aspx'}));
+    html = AnyBalance.requestPost(baseurl + 'member/login', params, addHeaders({Referer: baseurl + 'member/login'}));
 	
-    if(!/lgn\.aspx\?lou=yes"[^>]*>\s*Выход/.test(html)) {
+    if(!/>Выйти</.test(html)) {
 		var error = getParam(html, null, null, /id="ContentPlaceHolder\d+_error\d+"(?:[^>]*>){4}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
 			throw new AnyBalance.Error(error);
@@ -40,9 +40,9 @@ function main(){
 
     var result = {success: true};
 
-    getParam(html, result, 'balance', /Количество\s*Бр\s*на\s*счете:[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, '__tariff', /Программа:[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'cardnum', /Номер карты:[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'balance', /Ваш баланс:(?:[^>]*>){4}([\s\d]+)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, '__tariff', /Ваш уровень участия(?:[^>]*>){4}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'cardnum', /Номер карты:([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
 
     AnyBalance.setResult(result);
 }

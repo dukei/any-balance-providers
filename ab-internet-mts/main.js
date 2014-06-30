@@ -460,8 +460,8 @@ function getPrm(){
 }
 
 function getKrv(){
-	var urlIndex = 'https://lk.kirovnet.net/?r=site/login';
-	var urlAjax = 'https://lk.kirovnet.net/index.php?r=account/vgroups&agrmid=';
+	var urlIndex = 'https://lkkirov.pv.mts.ru/index.php?r=site/login';
+	var urlAjax = 'https://lkkirov.pv.mts.ru/index.php?r=account/vgroups&agrmid=';
 	
 	newTypicalLanBillingInetTv(urlIndex, urlAjax);
 }

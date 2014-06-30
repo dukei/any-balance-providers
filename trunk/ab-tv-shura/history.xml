@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="3" date="2014-06-30">
+	- Новые счетчики: Дата окончания пакета, Имя пакета.
+	</change>
 	<change version="2" date="2014-06-08">
 	- Поддержка изменений на сайте.
 	</change>

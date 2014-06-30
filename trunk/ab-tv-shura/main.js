@@ -45,5 +45,12 @@ function main() {
 	getParam(html, result, 'balance', [/>Balance:(?:[^>]*>){1}([\s\d.,]+)/i, /Баланс:(?:[^>]*>){1}(-?[\s\d.,]+)/i], replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'requests', [/>Total requests:(?:[^>]*>){1}([\s\d.,]+)/i, /Всего запросов:(?:[^>]*>){1}(-?[\s\d.,]+)/i], replaceTagsAndSpaces, parseBalance);
 	
+	if(isAvailable(['pack_till', 'pack_till_name'])) {
+		html = AnyBalance.requestGet(baseurl + 'b/b.php?page=bouquets', g_headers);
+		
+		getParam(html, result, 'pack_till', /<tr bgcolor="#ffdd99"(?:[^>]*>){4}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseDateISO);
+		getParam(html, result, 'pack_till_name', /<tr bgcolor="#ffdd99"(?:[^>]*>){5}([\s\S]*?)<\//i, replaceTagsAndSpaces);
+	}
+	
 	AnyBalance.setResult(result);
 }

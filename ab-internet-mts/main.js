@@ -751,27 +751,26 @@ function getAmur(){
 }
 
 function getOrel(){
+	var baseurl = 'http://lbc.oreltv.ru/';
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
-
-    var baseurl = 'http://lbc.oreltv.ru/';
-
-    var html = AnyBalance.requestPost(baseurl + 'index.php', {
-        'login':prefs.login,
-        'password':prefs.password
+	
+    var html = AnyBalance.requestPost(baseurl + 'index.php?r=site/login', {
+        'LoginForm[login]':prefs.login,
+        'LoginForm[password]':prefs.password,
+        'yt0':'Войти'
     });
 	
-    if(!/>Выход</i.test(html)){
+    if(!/r=site\/logout/i.test(html)){
         throw new AnyBalance.Error("Не удалось войти в личный кабинет. Неправильный логин-пароль?");
-    }
-
+    }	
+	
     var result = {success: true};
 	
-	getParam(html, result, 'username', /Вы:(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces);
-	getParam(html, result, 'agreement', /Номер договора(?:[\s\S]*?<td[^>]*>){5}([^<]*)/i, replaceTagsAndSpaces);
-	getParam(html, result, 'balance', />Баланс(?:[\s\S]*?<td[^>]*>){5}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, '__tariff', />Тариф(?:[\s\S]*?<td[^>]*>){7}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-
+	getParam(html, result, 'username', /<strong>([^<]*)<\/strong>(?:[^>]*>){2}\s*Вы вошли как/i, replaceTagsAndSpaces);
+	getParam(html, result, 'agreement', /Номер договора(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces);
+	getParam(html, result, 'balance', /Текущий баланс(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	
     AnyBalance.setResult(result);
 }
 

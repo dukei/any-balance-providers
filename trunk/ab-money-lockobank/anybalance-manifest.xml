@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-money-lockobank</id>
+	<api flags="no_browser"/>
+	<name>Локобанк</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе на картах и счетах ЛокоБанк http://lockobank.ru</p>
+	<p>Информация берется из личного кабинета https://i.lockobank.ru/Account/Login.aspx?ReturnUrl=%2f</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" {@currency}"/>
+		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="accnum" name="Номер счета" type="text"/>
+		<counter id="cardnum" name="Номер карты" type="text"/>
+		<counter id="till" name="Срок действия" type="time" format="dd/MM/yyyy"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="type" name="Тип" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>money</type>
+	<country>ru</country>
+</provider>

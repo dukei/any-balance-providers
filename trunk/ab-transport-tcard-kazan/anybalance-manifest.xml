@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-transport-tcard-kazan</id>
+	<api flags="no_browser|captcha"/>
+	<name>Транспортная Карта Казань</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе Транспортной Карты в г.Казань</p>
+	<p>Информация берется из личного кабинета http://www.transkart.ru/clients/balans</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" тар.ед."/>
+		<counter id="deadline" name="Срок действия" type="time" format="dd/MM/yyyy"/>
+	</counters>
+	<keywords></keywords>
+	<type>transport</type>
+	<country>ru</country>
+</provider>

@@ -1,21 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-    <change version="7" date="2013-11-14">
-      - Поддержка получения бонусных единиц, если они есть
+	<change version="8" date="2014-07-01">
+	- Улучшена обработка ошибок.
     </change>
-    <change version="6" date="2013-08-07">
-      - Поддержка изменений в личном кабинете
-    </change>
-    <change version="5" date="2013-06-04">
-      - Изменен адрес личного кабинета
-    </change>
-    <change version="4" date="2013-04-02">
-      - Исправлено определение неудачного входа
-    </change>
-    <change version="3" date="2013-01-15">
-      - Поддержка изменений в личном кабинете
-    </change>
-    <change version="2" date="2012-11-14">
-      - Добавлена отсылка к Kcell для абонентов Kcell
-    </change>
+	<change version="7" date="2013-11-14">
+	- Поддержка получения бонусных единиц, если они есть
+	</change>
+	<change version="6" date="2013-08-07">
+	- Поддержка изменений в личном кабинете
+	</change>
+	<change version="5" date="2013-06-04">
+	- Изменен адрес личного кабинета
+	</change>
+	<change version="4" date="2013-04-02">
+	- Исправлено определение неудачного входа
+	</change>
+	<change version="3" date="2013-01-15">
+	- Поддержка изменений в личном кабинете
+	</change>
+	<change version="2" date="2012-11-14">
+	- Добавлена отсылка к Kcell для абонентов Kcell
+	</change>
 </history>

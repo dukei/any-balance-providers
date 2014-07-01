@@ -1,19 +1,13 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Текущий баланс у оператора Актив (Казахстан).
-
-Сайт оператора: http://activ.kz
-Личный кабинет: http://ics.activ.kz
 */
 
-
 var g_headers = {
-'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
-'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-'Connection':'keep-alive',
-'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.11 (KHTML, like Gecko) Chrome/20.0.1132.57 Safari/536.11'
+	'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
+	'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Connection':'keep-alive',
+	'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.11 (KHTML, like Gecko) Chrome/20.0.1132.57 Safari/536.11'
 };
 
 function main(){
@@ -21,39 +15,43 @@ function main(){
         rus: 'ru',
         kaz: 'kk'
     };
-
+	
     var prefs = AnyBalance.getPreferences();
     checkEmpty(prefs.login, 'Введите номер телефона');
     checkEmpty(prefs.password, 'Введите пароль');
-
+	
     var baseurl = "http://www.activ.kz/";
-
+	
     AnyBalance.setDefaultCharset('utf-8');
-
+	
     AnyBalance.trace("Trying to enter ics at address: " + baseurl);
     var lang = prefs.lang || 'ru';
     lang = langMap[lang] || lang; //Переведем старые настройки в новые.
-
+	
     var html;
-    if(!prefs.__dbg){
+    if(!prefs.__dbg) {
         html = AnyBalance.requestPost(baseurl + lang + "/ics.security/authenticate", {
             'msisdn':'+7' + prefs.login,
             'password': prefs.password
         }, addHeaders({'Referer':baseurl + lang + '/ics.security/login'}));
-    
-        AnyBalance.trace(html);
+		
+		AnyBalance.trace(html);
         
         if(/<form[^>]+id="login-form"/i.test(html)){
-           var error = getParam(html, null, null, /<div[^>]*class="[^"]*alert[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-           if(error)
-                throw new AnyBalance.Error(error);
-           throw new AnyBalance.Error("Не удалось зайти в личный кабинет. Если вы уверены, что правильно ввели логин-пароль, то это может быть из-за проблем на сервере или изменения личного кабинета.");
+			var error = getParam(html, null, null, /<div[^>]*class="[^"]*alert[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+			if(error)
+				throw new AnyBalance.Error(error);
+			
+			throw new AnyBalance.Error("Не удалось зайти в личный кабинет. Если вы уверены, что правильно ввели логин-пароль, то это может быть из-за проблем на сервере или изменения личного кабинета.");
         }
-
-        if(/icons\/503\.png/i.test(html))
-           throw new AnyBalance.Error("Проблемы на сервере, сайт изменен или, возможно, вы ввели неправильный номер телефона.");
-    }else{
-        html = AnyBalance.requestGet(baseurl + lang + '/ics.account/dashboard?navipageId=1410', {'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.11 (KHTML, like Gecko) Chrome/20.0.1132.57 Safari/536.11'});
+		
+		if(/icons\/503\.png/i.test(html))
+			throw new AnyBalance.Error("Проблемы на сервере, сайт изменен или, возможно, вы ввели неправильный номер телефона.");
+		
+		if(/Смена пароля</i.test(html))
+			throw new AnyBalance.Error("Необходимо сменить пароль, зайдите на сайт через браузер и смените пароль.");
+    } else {
+		html = AnyBalance.requestGet(baseurl + lang + '/ics.account/dashboard?navipageId=1410', {'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.11 (KHTML, like Gecko) Chrome/20.0.1132.57 Safari/536.11'});
     }
     
     var result = {success: true};

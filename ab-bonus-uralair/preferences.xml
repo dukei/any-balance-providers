@@ -18,7 +18,6 @@
         dialogTitle="№ карты" 
         negativeButtonText="Отмена" 
         dialogMessage="Введите номер карты, используемый для входа в личный кабинет."
-        inputType="number"
         key="login">
     </EditTextPreference>
     <EditTextPreference

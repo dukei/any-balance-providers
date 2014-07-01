@@ -47,6 +47,16 @@ function main(){
 			throw e;
     }
 
+    baseurl = "https://qbank.ru";
+
+    if(!/qbank.ru\/auth\/UI\/Logout/i.test(html)){
+        error = getParam(html, null, null, /<h2[^>]*>([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces, html_entity_decode);
+	if(error && /Изменение логина/i.test(error)){
+		//Похоже, это у нас запрос, не хочет ли юзер использовать логин вместо номера. Пропускаем его.
+		html = AnyBalance.requestGet(baseurl, g_headers);
+        }
+    }
+
     if(!/qbank.ru\/auth\/UI\/Logout/i.test(html)){
         if(/otpCode/i.test(html))
             throw new AnyBalance.Error('Для работы этого провайдера требуется отключить в настройках интернет-банка подтверждение входа по СМС. Это безопасно, для совершения операций все равно будет требоваться подтверждение по СМС.');
@@ -69,9 +79,6 @@ function main(){
             throw new AnyBalance.Error(error);
         throw new AnyBalance.Error('Не удалось войти в интернет-банк. Сайт изменен?');
     }
-
-    baseurl = "https://qbank.ru";
-//    html = AnyBalance.requestGet(baseurl, g_headers);
 
     if(prefs.what == 'card'){
         fetchCard(baseurl, html);
@@ -135,12 +142,16 @@ function fetchCard(baseurl, html){
 
         if((AnyBalance.isAvailable('balance') && !isset(result.balance)) || (AnyBalance.isAvailable('accamount') && !isset(result.balance)) || AnyBalance.isAvailable('cardname' + suffix)){
             var html = AnyBalance.requestPost(baseurl + p.DetailsUrl, '', g_headers);
-            var json = getJson(html);
-            if(!isset(result.balance))
-                getParam(json.balance, result, 'balance', null, replaceTagsAndSpaces, parseBalance);
-            if(!isset(result.accbalance))
-                getParam(json.html, result, 'accamount', /Собственные средства:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-            getParam(json.html, result, 'cardname' + suffix, /<h3[^>]*>([\s\S]*?)<\/h3>/i, replaceTagsAndSpaces, html_entity_decode);
+            if(AnyBalance.getLastStatusCode() < 500){
+                var json = getJson(html);
+                if(!isset(result.balance))
+                    getParam(json.balance, result, 'balance', null, replaceTagsAndSpaces, parseBalance);
+                if(!isset(result.accbalance))
+                    getParam(json.html, result, 'accamount', /Собственные средства:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+                getParam(json.html, result, 'cardname' + suffix, /<h3[^>]*>([\s\S]*?)<\/h3>/i, replaceTagsAndSpaces, html_entity_decode);
+	    }else{
+		AnyBalance.trace('По этой карте не удалось получить детали, возможно, карта устарела');
+	    }
         }
     }
 

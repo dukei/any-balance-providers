@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="20" date="2014-07-01">
+	- Исправлен вход в интернет-банк
+	</change>
 	<change version="18" date="2014-05-27">
 	- Поддержка изменений в депозитах.
 	</change>

@@ -2,7 +2,10 @@
 The uncompressed full source code of this library is here: https://code.google.com/p/any-balance-providers/source/browse/trunk/extra/development/ab-test-library/library.js
 */
 ;
-function getParam(f,k,b,g,c,a){if(!isAvailable(b)){return
+function getParam(f,k,b,g,c,a){if(!f){AnyBalance.trace("param1 is undefined!\n"+new Error().stack);
+return
+}if(!isAvailable(b)){AnyBalance.trace(b+" is disabled!");
+return
 }var h=isArray(g)?g:[g];
 for(var d=0;
 d<h.length;
@@ -19,7 +22,7 @@ if(a){j=a(j)
 if((b&&c.indexOf(a)>=0)||(!b&&c=="__tariff")){return true
 }return AnyBalance.isAvailable(c)
 }var replaceTagsAndSpaces=[/&nbsp;/ig," ",/&minus;/ig,"-",/<!--[\s\S]*?-->/g,"",/<[^>]*>/g," ",/\s{2,}/g," ",/^\s+|\s+$/g,""];
-var replaceFloat=[/&minus;/ig,"-",/\s+/g,"",/,/g,".",/\.([^.]*)(?=\.)/g,"$1",/^\./,"0."];
+var replaceFloat=[/&minus;/ig,"-",/\s+/g,"",/'/g,"",/,/g,".",/\.([^.]*)(?=\.)/g,"$1",/^\./,"0."];
 var replaceSlashes=[/\\(.?)/g,function(a,b){switch(b){case"0":return"\0";
 case"":return"";
 default:return b
@@ -32,7 +35,7 @@ a&&b<a.length;
 }else{c=c.replace(a[b],a[b+1]);
 ++b
 }}return c
-}function parseBalance(b){var a=getParam(html_entity_decode(b).replace(/\s+/g,""),null,null,/(-?\.?\d[\d.,]*)/,replaceFloat,parseFloat);
+}function parseBalance(b){var a=getParam(html_entity_decode(b).replace(/\s+/g,""),null,null,/(-?[.,]?\d[\d'.,]*)/,replaceFloat,parseFloat);
 AnyBalance.trace("Parsing balance ("+a+") from: "+b);
 return a
 }function parseCurrency(b){var a=getParam(html_entity_decode(b).replace(/\s+/g,""),null,null,/-?\d[\d.,]*(\S*)/);

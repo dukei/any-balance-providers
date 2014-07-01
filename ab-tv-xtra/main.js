@@ -27,9 +27,14 @@ function main() {
 		login: prefs.login,
 		password: prefs.password,
 		'redirect_url': ''
-	}, addHeaders({Referer: g_baseurl + 'ru/login'}));
+	}, addHeaders({
+		Referer: g_baseurl + 'ru/login',
+		'X-Requested-With':'XMLHttpRequest'
+	}));
 	
-	if (!/logout/i.test(html)) {
+	html = AnyBalance.requestGet(g_baseurl + 'ru/cabinet', g_headers);
+	
+	if (!/login\/logout/i.test(html)) {
 		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
@@ -37,9 +42,9 @@ function main() {
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	
-	var acc_num = prefs.acc_num || '\\d{4}';
-	
-	var account = getParam(html, null, null, new RegExp('<p>(?:[^>]*>){3}\\d*' + acc_num + '(?:[^>]*>){30,33}\\s*</p>', 'i'));
+	var acc_num = prefs.acc_num || '';
+	// <a href="\/ru\/cabinet\/state\/\d+459">Состояние счета
+	var account = getParam(html, null, null, new RegExp('<a href="/ru/cabinet/state/\\d+' + acc_num, 'i'));
 	if(!account)
 		throw new AnyBalance.Error('Не удалось найти ' + (prefs.acc_num ? 'счет с последними цифрами ' + prefs.acc_num : 'ни одного счета!'));
 	
@@ -55,6 +60,6 @@ function main() {
 	getParam(html, result, 'balance', />Баланс(?:[^>]*>){1}([^<]+)/i, [replaceTagsAndSpaces, /([\d]+)\s*грн\s*([\d]+)\s*коп\./i, '$1.$2'], parseBalance);
 	getParam(html, result, 'recomend_pay', />Рекомендуемая сумма доплаты(?:[^>]*>){3}([^<]+)/i, [replaceTagsAndSpaces, /([\d]+)\s*грн\s*([\d]+)\s*коп\./i, '$1.$2'], parseBalance);
 	getParam(html, result, 'deadline', />Рекомендуемая сумма доплаты(?:[^>]*>){3}[^<]+до ([^<]+)/i, replaceTagsAndSpaces, parseDate);
-		
+	
 	AnyBalance.setResult(result);
 }

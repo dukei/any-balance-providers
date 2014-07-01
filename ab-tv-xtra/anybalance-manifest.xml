@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-tv-xtra</id>
+	<id version="2">ab-tv-xtra</id>
 	<api flags="no_browser"/>
 	<name>XtraTV</name>
 	<description html="true"><![CDATA[

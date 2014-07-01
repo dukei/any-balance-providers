@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="4" date="2014-07-01">
+	- Исправлено получение баланса ОК.
+	</change>
 	<change version="3" date="2014-03-24">
 	- Исправлено получение баланса ОК.
 	</change>

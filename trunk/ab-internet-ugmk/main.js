@@ -46,6 +46,7 @@ function main(){
     if(AnyBalance.isAvailable('balance')){
         html = AnyBalance.requestGet(baseurl + '?action=ShowBalance&mid=contract');
         getParam(html, result, 'balance', /Исходящий остаток[\S\s]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+        getParam(html, result, 'promise', /<th[^>]*>\s*Обещанный платеж[\S\s]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     }
 
     html = AnyBalance.requestGet(baseurl + '?action=ChangeTariff&mid=contract');
@@ -53,7 +54,7 @@ function main(){
     if(plans){
         sumParam(plans, result, '__tariff', /<td><font>([\S\s]*?)<\/font>/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
     }
-
+/*
     if(AnyBalance.isAvailable('traffic_time', 'traffic_cost', 'traffic_total')){
         html = AnyBalance.requestGet(baseurl + '?action=ShowLoginsBalance&mid=6&module=dialup');
         
@@ -61,6 +62,6 @@ function main(){
         getParam(html, result, 'traffic_cost', /Итого:(?:[\S\s]*?<td[^>]*>){3}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
         getParam(html, result, 'traffic_total', /Итого:(?:[\S\s]*?<td[^>]*>){4}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseTrafficTotalGb);
     }
-    
+*/    
     AnyBalance.setResult(result);
 }

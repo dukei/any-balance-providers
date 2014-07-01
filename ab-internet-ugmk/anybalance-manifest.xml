@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-ugmk</id>
+  <id version="2">ab-internet-ugmk</id>
+  <api flags="no_browser"/>
   <name>УГМК-Телеком</name>
   <description>
     Получает баланс и информацию о тарифном плане для интернет-провайдера УГМК-Телеком (http://ugmk-telecom.ru/), крупного оператора современных услуг связи, работающий на рынке телекоммуникаций, более чем в 20 населенных пунктах Урала, Сибири, Башкирии и Центральной России.
@@ -11,14 +12,16 @@
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
+    <history>history.xml</history>
     <js>main.js</js>
     <js>library.js</js>
   </files>
   <counters>
     <counter id="balance" name="Баланс" units="р"/>
-    <counter id="traffic_time" name="Время соединений за текущий месяц" type="time_interval" format="{@H}:{@min}:{@sec}"/>
+    <counter id="promise" name="Обещанный платеж" units="р"/>
+<!--    <counter id="traffic_time" name="Время соединений за текущий месяц" type="time_interval" format="{@H}:{@min}:{@sec}"/>
     <counter id="traffic_cost" name="Стоимость трафика за текущий месяц" units="р"/>
-    <counter id="traffic_total" name="Общий трафик за текущий месяц" units="Gb"/>
+    <counter id="traffic_total" name="Общий трафик за текущий месяц" units="Gb"/> -->
   </counters>
   <keywords>
     

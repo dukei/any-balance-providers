@@ -53,8 +53,8 @@ function main() {
 	
 	var cardNum = prefs.cardnum || '\\d{4}';
 	
-	//submit\(\);">\s*(?:[\d*]+(?:&nbsp;|\s)?){3}7781(?:[^>]*>){30,35}\s*</tbody>
-	var reCard = new RegExp('submit\\(\\);">\\s*(?:[\\d*]+(?:&nbsp;|\\s)?){3}' + cardNum + '(?:[^>]*>){30,35}\\s*</tbody>', 'i');
+	//(?:[\d*]+(?:&nbsp;|\s)?){3}9628(?:[^>]*>){50,70}\s*Подробнее
+	var reCard = new RegExp('(?:[\\d*]+(?:&nbsp;|\\s)?){3}' + cardNum + '(?:[^>]*>){50,70}\\s*Подробнее(?:[^>]*>){5,20}\\s*</li>', 'i');
 	var tr = getParam(html, null, null, reCard);
 	
 	checkEmpty(tr, 'Не удалось найти ' + (prefs.cardnum ? 'карту с последними цифрами ' + prefs.cardnum : 'ни одной карты!'), true);

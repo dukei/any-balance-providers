@@ -26,6 +26,10 @@ function translateError(error) {
 	return error;
 }
 
+function html_encode(str) {
+	return str.replace(/&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
+}
+
 function main() {
 	var prefs = AnyBalance.getPreferences();
 	
@@ -36,7 +40,7 @@ function main() {
 	
 	AnyBalance.setDefaultCharset('utf-8');
 	
-	var html = AnyBalance.requestPost(baseurl + 'RCAuthorizationService', g_xml_login.replace(/%LOGIN%/g, prefs.login).replace(/%PASSWORD%/g, prefs.password), addHeaders({SOAPAction: ''}));
+	var html = AnyBalance.requestPost(baseurl + 'RCAuthorizationService', g_xml_login.replace(/%LOGIN%/g, html_encode(prefs.login)).replace(/%PASSWORD%/g, html_encode(prefs.password)), addHeaders({SOAPAction: ''}));
 	
 	if (!/<name>/i.test(html)) {
 		var error = getParam(html, null, null, /<faultstring>([\s\S]*?)<\/faultstring>/i, replaceTagsAndSpaces, html_entity_decode);

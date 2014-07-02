@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-money-mql</id>
+	<id version="2">ab-money-mql</id>
 	<api flags="no_browser"/>
 	<name>Trading Signals for MetaTrader</name>
 	<description html="true"><![CDATA[
@@ -30,6 +30,7 @@
 		<counter id="weeks" name="Weeks"/>
 		<counter id="latest_trade" name="Latest trade" type="text"/>
 		<counter id="trades_per_week" name="Trades per week"/>
+		<counter id="trades_total" name="Trades total"/>
 		<counter id="avg_holding_time" name="Avg holding time" type="text"/>
 	</counters>
 	<keywords>forex mql mql4 mal5 metatrader metatrader4 metatrader5 signal</keywords>

@@ -31,4 +31,14 @@
 		negativeButtonText="Cancel"
 		dialogMessage="Enter the number of signal for watch.">
 	</EditTextPreference>
+	<EditTextPreference
+		title="Multiplier"
+		key="multiplier"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Multiplier"
+		positiveButtonText="ОК"
+		negativeButtonText="Cancel"
+		dialogMessage="Enter the value that all money counters will be divided.">
+	</EditTextPreference>
 </PreferenceScreen>

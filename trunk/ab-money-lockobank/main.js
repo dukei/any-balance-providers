@@ -10,6 +10,10 @@ var g_headers = {
 	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
 };
 
+function getParamByName(html, name) {
+	return getParam(html, null, null, new RegExp('name="' + name + '"[^>]*value="([^"]*)"'));
+}
+
 function main() {
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'https://i.lockobank.ru/';
@@ -18,29 +22,36 @@ function main() {
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	var html = AnyBalance.requestGet(baseurl + 'Account/Login.aspx?ReturnUrl=%2f', g_headers);
+	var html = AnyBalance.requestGet(baseurl + 'Account/Login.aspx?ReturnUrl=%2fmain.aspx', g_headers);
 	
 	if(AnyBalance.getLastStatusCode() > 400) {
 		throw new AnyBalance.Error('Ошибка! Сервер не отвечает! Попробуйте обновить баланс позже.');
 	}
 	
-	var params = createFormParams(html, function(params, str, name, value) {
-		if (name == 'ctl00$cphPageContent$txtName') 
-			return prefs.login;
-		else if (name == 'ctl00$cphPageContent$txtPassword')
-			return prefs.password;
-
-		return value;
-	});
+	var params = [
+		['__EVENTTARGET',''],
+		['__EVENTARGUMENT',''],
+		['__VIEWSTATE',getParamByName(html, '__VIEWSTATE')],
+		['__EVENTVALIDATION',getParamByName(html, '__EVENTVALIDATION')],
+		['ctl00_ctl03_popupControlAlertWS','0:0:-1:-10000:-10000:0:350px:-10000:1:0:0:0'],
+		['ctl00$cphPageContent$txtName',prefs.login],
+		['ctl00$cphPageContent$txtPassword',prefs.password],
+		['ctl00$cphPageContent$btnOK.x','101'],
+		['ctl00$cphPageContent$btnOK.y','23'],
+		['ctl00$ContactInfoCtrl$sReg','1'],
+		['ctl00_ctl04_popupControl1WS','0:0:-1:-10000:-10000:0:400px:-10000:1:0:0:0'],
+		['ctl00_ctl04_popupControl2WS','0:0:-1:-10000:-10000:0:400px:-10000:1:0:0:0'],
+		['ctl00_ctl04_popupControl3WS','0:0:-1:-10000:-10000:0:400px:-10000:1:0:0:0'],
+		['ctl00_ctl04_popupControl4WS','0:0:-1:-10000:-10000:0:400px:-10000:1:0:0:0'],
+		['DXScript','1_145,1_81,1_137,1_120,1_78,1_130,1_128,1_99,1_105,1_92'],
+	]
 	
-	params['DXScript'] = '1_145,1_81,1_137,1_120,1_78,1_130,1_128,1_99,1_105,1_92';
-	params['ctl00$cphPageContent$btnOK.x'] = '94';
-	params['ctl00$cphPageContent$btnOK.y'] = '22';
+	html = AnyBalance.requestPost(baseurl + 'Account/Login.aspx?ReturnUrl=%2fmain.aspx', params, addHeaders({Referer: baseurl + 'Account/Login.aspx?ReturnUrl=%2fmain.aspx', 'Origin':'https://i.lockobank.ru'}));
 	
-	html = AnyBalance.requestPost(baseurl + 'Account/Login.aspx?ReturnUrl=%2f', params, addHeaders({Referer: baseurl + 'Account/Login.aspx?ReturnUrl=%2f'}));
+	var html2 = AnyBalance.requestGet(baseurl + 'main.aspx', g_headers);
 	
-	if (!/CloseSession/i.test(html)) {
-		var error = getParam(html, null, null, /alert\("([\s\S]*?)"\)/i, replaceTagsAndSpaces, html_entity_decode);
+	if (!/CloseSession/i.test(html + html2)) {
+		var error = getParam(html + html2, null, null, /alert\("([\s\S]*?)"\)/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Проверьте правильность имени и повторите ввод пароля/i.test(error));
 		
@@ -56,7 +67,7 @@ function main() {
 		fetchDeposit(baseurl, html, result);
 	//else if (prefs.type == 'cred') 
 		//fetchCredit(baseurl, html, result);
-	else 
+	else
 		fetchAccount(baseurl, html, result);
 	
 	AnyBalance.setResult(result);
@@ -131,6 +142,6 @@ function fetchCard(baseurl, html, result){
 	getParam(tr, result, '__tariff', /(?:[^>]*>){10}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(tr, result, 'fio', /(?:[^>]*>){15}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(tr, result, 'till', /(?:[^>]*>){17}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseDate);
-	getParam(tr, result, 'balance', /(?:[^>]*>){23}([\s\S]*?)<\//i, [replaceTagsAndSpaces, /В процессе изготовления/i, '0.00'], parseBalance);
+	getParam(tr, result, 'balance', /(?:[^>]*>){23}([\s\S]*?)<\//i, [replaceTagsAndSpaces, /В процессе изготовления|Готова для выдачи/i, '0.00'], parseBalance);
 	getParam(tr, result, ['currency', '__tariff'], /(?:[^>]*>){21}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
 }

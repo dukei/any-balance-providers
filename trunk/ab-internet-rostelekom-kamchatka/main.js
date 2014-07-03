@@ -12,9 +12,10 @@ function main(){
         return;
     }catch(e){
         AnyBalance.trace('Ошибка входа: ' + e.message);
-        if(e.message == 'Нет услуги ИССА')
+        if(e.message == 'Нет услуги ИССА' || e.message == 'Изменился адрес личного кабинета!')
             newIssa();
-        else throw e;
+        else
+			throw e;
     }
 }
    
@@ -22,7 +23,7 @@ function newIssa(){
     AnyBalance.trace('Попытка войти в новый кабинет...');
 
     var prefs = AnyBalance.getPreferences();
-    var baseurl = 'http://85.28.194.62/pls/startip/';
+    var baseurl = 'http://stat.kamchatka.ru/pls/startip/';
     var regionurl = baseurl + '';
     AnyBalance.setDefaultCharset('utf-8');
 
@@ -47,9 +48,7 @@ function newIssa(){
     var authorization = getParam(next, null, null, /(&logname.*)/i);
     var html = AnyBalance.requestGet(regionurl + 'www.PageViewer?page_name=S*ADM_DIALUP_INFO' + authorization);
 
-    var result = {
-        success: true
-    };
+    var result = {success: true};
 
     // Тариф
     getParam(html, result, 'balance', /Текущее состояние лицевого счета[\s\S]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance); //Почему-то отсутствует в лк
@@ -144,10 +143,14 @@ function oldIssa(){
         Password: prefs.password
     });
 
+	if(/Внимание, изменился адрес личного кабинета услуги[^<]+Домашний интернет/i.test(html)) {
+		throw new AnyBalance.Error('Изменился адрес личного кабинета!');
+	}
+	
     var error = getParam(html, null, null, /<td class=error>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
     if(error)
         throw new AnyBalance.Error(error);
-    
+		
     var result = {success: true};
     
     html = AnyBalance.requestGet(baseurl + "function=is_account");

@@ -48,7 +48,7 @@ function main(){
 		if(/icons\/503\.png/i.test(html))
 			throw new AnyBalance.Error("Проблемы на сервере, сайт изменен или, возможно, вы ввели неправильный номер телефона.");
 		
-		if(/Смена пароля</i.test(html))
+		if(/<title>\s*Смена пароля\s*<\/title>/i.test(html))
 			throw new AnyBalance.Error("Необходимо сменить пароль, зайдите на сайт через браузер и смените пароль.");
     } else {
 		html = AnyBalance.requestGet(baseurl + lang + '/ics.account/dashboard?navipageId=1410', {'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.11 (KHTML, like Gecko) Chrome/20.0.1132.57 Safari/536.11'});

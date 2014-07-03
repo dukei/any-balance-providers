@@ -2,12 +2,16 @@
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
+var d = new Date()
+var n = 0-d.getTimezoneOffset()/60;
+
 var g_headers = {
 	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection': 'keep-alive',
 	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+	'Cookie': 'ffdstonoff=1; fftimezoneoffset='+n+'; fftimeformat=1; ffverifytimes=1; fflastactivity=0;',
 };
 
 function main() {
@@ -19,7 +23,6 @@ function main() {
 //	checkEmpty(prefs.password, 'Введите пароль!');
 	var current_date=new Date();
 	var item_date=new Date();
-	var item_pm=false;
 	
 	var html = AnyBalance.requestGet(baseurl + 'calendar.php', g_headers);
 	
@@ -52,14 +55,10 @@ function main() {
 
 		var time=replaceAll(r[3],replaceTagsAndSpaces);
 
-		item_pm=false;
-		if(time.match(/pm/,''))item_pm=true;
-		if(!time.match(/am|pm/))time="";
-		time=time.replace(/am|pm/,'');
+		if(!time.match(/\d+:\d+/))time="";
 		date=(item_date.getMonth()+1)+"/"+item_date.getDate()+"/"+item_date.getFullYear()+" "+time;
 
 		item_date = new Date(date);
-		if(item_pm)item_date = new Date(item_date.getTime() + (12*60*60*1000))
 
 		if(item_date<current_date)continue;
 
@@ -71,16 +70,9 @@ function main() {
 		result.date=item_date.toDateString();
 		result.time=replaceAll(r[3],replaceTagsAndSpaces);
 
-//		var details = AnyBalance.requestGet(baseurl + 'flex.php?do=ajax&contentType=Content&flex=calendar_mainCal&details='+r[1], g_headers);
-//		source=getParam(details, null, null, /Source<\/td>\s+<td.*?>(.*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-
-
 		break;
 
 	}
-
-	
-
 	
 	AnyBalance.setResult(result);
 }

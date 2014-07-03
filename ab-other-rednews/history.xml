@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="3" date="2014-07-03">
+      - Improvements of the time recognition.
+    </change>
     <change version="2" date="2014-06-26">
       - Time recognition.
     </change>

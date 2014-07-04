@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<api flags="no_browser|captcha" />
-	<id major_version="2.0" version="20">ab-fine-gibdd</id>
-	<name>Штрафы ГИБДД</name>
+	<api flags="no_browser" />
+	<id version="1">ab-fine-shtrafy-gibdd</id>
+	<name>Штрафы ГИБДД (shtrafy-gibdd.ru)</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о наличии штрафов с сайта http://www.gibdd.ru/check/fines/</p>
+	<p>Предоставляет информацию о наличии штрафов с сайта http://shtrafy-gibdd.ru/</p>
 	<p>Наиболее точная информация доступна в провайдере Госуслуги (Штрафы, Налоги).</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
-	<p>Для получения информации по штрафам необходимо ввести номер транспортного средства и номер свидетельства о регистрации.</p>
+	<p>Для получения информации по штрафам необходимо ввести номер транспортного средства, номер водительского удостоверения и номер свидетельства о регистрации.</p>
 	]]></instruction>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
@@ -24,7 +24,7 @@
 		<counter id="date" name="Дата последнего нарушения" type="time" format="dd/MM/yyyy"/>
 		<counter id="koap" name="Статья КоАП последнего штрафа" type="text"/>
 		<counter id="descr" name="Описание последнего штрафа" type="text"/>
-		<counter id="podrazdel" name="Подразделение последнего штрафа" type="text"/>
+		<!-- <counter id="podrazdel" name="Подразделение последнего штрафа" type="text"/> -->
 		<counter id="postanovlenie" name="Постановление последнего штрафа" type="text"/>
 		<counter id="summ" name="Сумма последнего штрафа" units=" р"/>
 		<counter id="all" name="Сводка" type="html"/>

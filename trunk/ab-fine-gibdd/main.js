@@ -9,15 +9,14 @@ var g_headers = {
 	'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.57 Safari/537.36'
 };
 
-
 /** с 04.12.13 перестало работать, и даже не помогла ручная установка кук 
 с 21.06.14 опять работает!
 */
 function main() {
 	var prefs = AnyBalance.getPreferences();
     var baseurl = 'http://www.gibdd.ru/';
-    AnyBalance.setDefaultCharset('utf-8'); 
-
+    AnyBalance.setDefaultCharset('utf-8');
+	
 	var html = AnyBalance.requestGet(baseurl + 'check/fines/');
 	var token = getParam(html, null, null, /token\s*=\s*'([^']*)/i);
 
@@ -36,7 +35,7 @@ function main() {
 	checkEmpty(prefs.password, 'Введите номер свидетельства о регистрации в формате 50ХХ123456!');
 	
 	var params = createFormParams(form);
-
+	
 	if(AnyBalance.getLevel() >= 7){
 		AnyBalance.trace('Пытаемся ввести капчу');
 		html = AnyBalance.requestPost(baseurl+ 'bitrix/templates/.default/components/gai/check/fines_1.6/ajax/captchaReload.php', {}, addHeaders( {
@@ -81,7 +80,11 @@ function main() {
 		var json = JSON.parse(html);
 	} catch(e) {
 		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось получить информацию, свяжитесь с разработчиком провайдера');
+		
+		if(/При загрузке страницы произошла ошибка/i.test(html))
+			throw new AnyBalance.Error('Сайт временно работает с перебоями, попробуйте обновить данные позже.');
+		
+		throw new AnyBalance.Error('Не удалось получить информацию, свяжитесь с разработчиком провайдера.');
 	}
 	var result = {success: true, balance:0} ;
 	
@@ -90,6 +93,10 @@ function main() {
 			throw new AnyBalance.Error(json.error);	
 		
 		throw new AnyBalance.Error("Не удалось получить данные по штрафам, сайт изменен?");
+	}
+	
+	if(!json.request || json.request.error != '0') {
+		throw new AnyBalance.Error("Указанное Вами свидетельство о регистрации транспортного средства не соответствует государственным регистрационным знакам или более недействительно. Вероятно, Вами допущена ошибка при заполнении полей запроса.");
 	}
 	
 	AnyBalance.trace('Штрафов: ' + json.request.count);

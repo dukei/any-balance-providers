@@ -1,21 +1,54 @@
 /**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-для отладки используем debug:'new'
 */
-
-function getViewState(html) {
-	return getParam(html, null, null, /name="__VIEWSTATE".*?value="([^"]*)"/);
-}
-
-function getEventValidation(html) {
-	return getParam(html, null, null, /name="__EVENTVALIDATION".*?value="([^"]*)"/);
-}
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
+	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
-	var baseurl = 'https://www.telebank.ru/WebNew/';
+	
+	try {
+		doOld(prefs);
+	} catch (e) {
+		AnyBalance.trace(e.message);
+		AnyBalance.trace('Войти в старый кабинет не удалось, пробуем новый...');
+		doNew(prefs);
+	}
+}
+
+function doNew(prefs) {
+	var baseurl = 'https://www.telebank.ru/';
+	var html = AnyBalance.requestGet(baseurl + 'content/telebank-client/ru/login.html', g_headers);
+	
+	html = AnyBalance.requestPost(baseurl + 'services/signin', {
+		login: prefs.login,
+		password: prefs.password,
+		'_charset_': 'utf-8',
+		'dateTime':'18:10:20 4-6-2014'
+	}, addHeaders({Referer: baseurl + 'content/telebank-client/ru/login.html', 'X-Requested-With':'XMLHttpRequest'}));
+	
+	var json = getJson(html);
+
+	if(!json.authorized) {
+		var error = json.error.msg;
+		if (error)
+			throw new AnyBalance.Error(error, null, /Логин или пароль введены неверно/i.test(error));
+		
+		throw new AnyBalance.Error('Не удалось зайти в Телеинфо. Сайт изменен?');
+	}
+	
+	html = AnyBalance.requestGet(baseurl + json.redirectTo, g_headers);
+	
+	if (prefs.type == 'abs') {
+		fetchAccountABS(baseurl);
+	} else {
+		fetchCardNew(baseurl, html, json);
+	}		
+}
+
+function doOld(prefs) {
+	var baseurl = 'https://old.telebank.ru/WebNew/';
 	var html = AnyBalance.requestGet(baseurl + 'Login.aspx');
 	
 	if(!prefs.debug) {
@@ -32,29 +65,114 @@ function main() {
 			TextBoxName: prefs.login,
 			TextBoxPassword: prefs.password
 		});
-	}	
-	/*if(/new\.telebank\.ru/i.test(AnyBalance.getLastUrl()) || prefs.debug == 'new') {
-		AnyBalance.trace('Определен новый тип банка, пробуем авторизоваться вновь.');
-		
-		//https://new.telebank.ru/content/telebank-client/ru/login.html
-	} else */{
-		AnyBalance.trace('Определен старый тип банка, перходим к получению данных.');
-		if (!/location.href\s*=\s*"[^"]*Accounts.aspx/i.test(html)) {
-			if (/id="ItemNewPassword"/i.test(html))
-				throw new AnyBalance.Error('Телеинфо требует поменять пароль. Пожалуйста, войдите в Телеинфо через браузер, поменяйте пароль, а затем введите новый пароль в настройки провайдера.');
-			if (/Проверка переменного кода/i.test(html))
-				throw new AnyBalance.Error('Телеинфо требует ввести переменный код. Для использования данного провайдера, проверку кода необходимо отключить.');
-			if (/id="LabelError"/i.test(html))
-				throw new AnyBalance.Error(getParam(html, null, null, /id="LabelMessage"(?:[^>]*>){3}([^<]*)/i));
-				
-			throw new AnyBalance.Error('Не удалось зайти в Телеинфо. Сайт изменен?');
-		}
-		if (prefs.type == 'abs') {
-			fetchAccountABS(baseurl);
-		} else { //card
-			fetchCard(baseurl);
-		}		
 	}
+	if (!/location.href\s*=\s*"[^"]*Accounts.aspx/i.test(html)) {
+		if (/id="ItemNewPassword"/i.test(html))
+			throw new AnyBalance.Error('Телеинфо требует поменять пароль. Пожалуйста, войдите в Телеинфо через браузер, поменяйте пароль, а затем введите новый пароль в настройки провайдера.');
+		if (/Проверка переменного кода/i.test(html))
+			throw new AnyBalance.Error('Телеинфо требует ввести переменный код. Для использования данного провайдера, проверку кода необходимо отключить.');
+		if (/id="LabelError"/i.test(html))
+			throw new AnyBalance.Error(getParam(html, null, null, /id="LabelMessage"(?:[^>]*>){3}([^<]*)/i));
+			
+		throw new AnyBalance.Error('Не удалось зайти в Телеинфо. Сайт изменен?');
+	}
+	if (prefs.type == 'abs') {
+		fetchAccountABS(baseurl);
+	} else { //card
+		fetchCard(baseurl);
+	}
+}
+
+function fetchCardNew(baseurl, html, json) {
+	var prefs = AnyBalance.getPreferences();
+	
+	var result = {success: true};
+	
+	html = AnyBalance.requestPost(baseurl + 'processor/process/minerva/info', {
+		'action':'EXECUTE',
+		'topics':'[{"id":"portfolios","params":[{"ignoreCache":true}]}]',
+		'ignoreCache':'true',
+		'locale':'ru',
+		'pageToken':json.pageToken,
+	}, addHeaders({Referer: baseurl + json.redirectTo, 'X-Requested-With':'XMLHttpRequest'}));
+	
+	var response = getJson(html);
+	
+	if(!response.result)
+		throw new AnyBalance.Error('Не удалось найти данные по картам и счетам. Сайт изменен?');
+	
+	var str = JSON.stringify(response.result);
+	for(var t = 0; t < 10; t++) {
+		html = AnyBalance.requestPost(baseurl + 'processor/process/minerva/info', {
+			'action':'GET_INCOME',
+			'allNotificationsRequired':'false',
+			'ignoreCache':'false',
+			'locale':'ru',
+			'actionIDs':str,
+			'getIncomeParams':'{}',
+			'pageToken':response.pageToken,
+		}, addHeaders({Referer: baseurl + json.redirectTo, 'X-Requested-With':'XMLHttpRequest'}));	
+		
+		response = getJson(html);
+		
+		if(/"id":"portfolios"/i.test(html))
+			break;
+	}
+	
+	var FoundProduct;
+	for(var i = 0; i < response.topics.length; i++) {
+		var curr = response.topics[i];
+		// Интересуют только продукты банка
+		if(/portfolios/i.test(curr.id)) {
+			for (var z = 0; z < curr.items.length; z++) {
+				var item = curr.items[z];
+				// Вот, наконец-то нашли
+				if(/Счета и карты/i.test(item.name)) {
+					// Ищем нужную
+					for(var r = 0; r < item.products.length; r++) {
+						var product = item.products[r];
+
+						for(var p = 0; p < product.groups.length; p++) {
+							var group = product.groups[p];
+							
+							for(var e=0; e <group.items.length; e++){
+								var groupItem = group.items[e];
+								
+								if(!prefs.card || new RegExp(prefs.card + '$').test(groupItem.number)) {
+									AnyBalance.trace('Продукт с номером ' + groupItem.number + ' соответствует, возьмем его...');
+									FoundProduct = groupItem;
+									break;
+								}
+							}
+							if(FoundProduct)
+								break;							
+						}
+						if(FoundProduct)
+							break;				
+					}
+					if(FoundProduct)
+						break;
+				}
+				if(FoundProduct)
+					break;
+			}
+		}
+	}
+	
+	if(!FoundProduct) {
+		throw new AnyBalance.Error(prefs.card ? 'Не найдена карта или счет с последними цифрами ' + prefs.card : 'Не найдено ни одной карты/счета!');
+	}
+	
+	var result = {success: true};
+	//getParam(html, result, 'fio', /<div[^>]+id="name"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(FoundProduct.number+'', result, '__tariff', null, replaceTagsAndSpaces, html_entity_decode);
+	getParam(FoundProduct.name+'', result, 'cardname', null, replaceTagsAndSpaces, html_entity_decode);
+	getParam(FoundProduct.number+'', result, 'cardnum', null, replaceTagsAndSpaces, html_entity_decode);
+	getParam(FoundProduct.amount.sum+'', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
+	getParam(FoundProduct.amount.currency+'', result, ['currency', 'balance', 'gracepay', 'minpay', 'limit', 'accbalance', 'own', 'blocked'], null, replaceTagsAndSpaces, html_entity_decode);	
+	
+	//AnyBalance.trace(JSON.stringify(FoundProduct));
+	AnyBalance.setResult(result);
 }
 
 function fetchAccountABS(baseurl) {
@@ -130,4 +248,12 @@ function fetchCard(baseurl) {
 		}
 	}
 	AnyBalance.setResult(result);
+}
+
+function getViewState(html) {
+	return getParam(html, null, null, /name="__VIEWSTATE".*?value="([^"]*)"/);
+}
+
+function getEventValidation(html) {
+	return getParam(html, null, null, /name="__EVENTVALIDATION".*?value="([^"]*)"/);
 }

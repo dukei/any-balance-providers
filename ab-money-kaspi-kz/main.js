@@ -28,7 +28,7 @@ function main() {
 	
 	var loginParams = { 
 		'submitId':'SignIn',
-		'timestamp':'/Date('+new Date().getTime()+'-14400000)/',
+		'requesTimestamp':'/Date('+new Date().getTime()+'-14400000)/',
 		'webFormValues': [
 			{'name':'FormId','value':'SignInForm'},
 			{'name':'SignInLogin','value':login},
@@ -36,14 +36,14 @@ function main() {
 			{'name':'Password','value':prefs.password}
 		]
 	};
-	html = AnyBalance.requestPost(baseurl + 'AuthExII/AuthenticationBackendService.svc/SignIn', JSON.stringify(loginParams), addHeaders({
-		Referer: baseurl + 'auth.aspx',
+	html = AnyBalance.requestPost(baseurl + 'api/auth/sign-in', JSON.stringify(loginParams), addHeaders({
+		Referer: baseurl + 'entrance',
 		'X-Requested-With':'XMLHttpRequest'
 	}));
 	
-	var json = getJson(html);
+	//var json = getJson(html);
 	
-	if (json.d.errors) {
+	/*if (json.d.errors) {
 		var errors = '';
 		for(var i = 0; i < json.d.errors.length; i++) {
 			var currnetMessage = getParam(json.d.errors[i].message, null, null, /<h2>([^<]+)/i, replaceTagsAndSpaces);
@@ -54,10 +54,9 @@ function main() {
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-	}	
+	}*/	
 	
-	
-	html = AnyBalance.requestGet(baseurl + 'Default.aspx?action=standing', g_headers);
+	html = AnyBalance.requestGet(baseurl + 'index.aspx?action=my-bank', g_headers);
 	
 	if(prefs.type == 'acc')
         fetchAccount(html, baseurl);
@@ -70,25 +69,33 @@ function fetchCard(html, baseurl){
     //if(prefs.cardnum && !/^\d{4}$/.test(prefs.cardnum))
         //throw new AnyBalance.Error("Введите 4 последних цифры номера карты или не вводите ничего, чтобы показать информацию по первой карте");
 	
-	var div = getParam(html, null,null, /"content_balance_inner"[^>]*>([\s\S]*?)<\/table/i);
+	/*var div = getParam(html, null,null, /"content_balance_inner"[^>]*>([\s\S]*?)<\/table/i);
 	if(!div)
-		throw new AnyBalance.Error('Не удаётся найти данные по картам!');
+		throw new AnyBalance.Error('Не удаётся найти данные по картам!');*/
 	
-	// <a\s*id="ctl\d+_rptCards_hlCard_\d+"\s+href="([^"]*)[^>]*>[^<]*Карта
-	var re = new RegExp('<a\\s*id="ctl\\d+_rptCards_hlCard_\\d+"\\s+href="([^"]*)[^>]*>[^<]*' + (prefs.cardnum ? prefs.cardnum : ''), 'i');
-    var href = getParam(html, null, null, re, replaceTagsAndSpaces, html_entity_decode);
-	if(!href)
+	// <div id="account(?:[^>]*>){4}\s*Russ(?:[^>]*>){105,210}\s*<\/div>\s*<\/div>\s*<\/div>\s*<\/div>\s*<\/div>\s*<\/div>
+	var re = new RegExp('<div id="account(?:[^>]*>){4}\\s*' + (prefs.cardnum ? prefs.cardnum : '[^<]+') + '(?:[^>]*>){105,255}(?:\\s*</div>){6}', 'i');
+    var account = getParam(html, null, null, re, replaceTagsAndSpaces, html_entity_decode);
+	if(!account)
 		throw new AnyBalance.Error('Не удаётся найти ' + (prefs.cardnum ? 'карту с последними цифрами ' + prefs.cardnum : 'ни одной карты!'));
 	
-	var html = AnyBalance.requestGet(baseurl + href, g_headers);
-
     var result = {success: true};
-    getParam(html, result, 'cardnum', /"renamed"(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces);
-	getParam(html, result, '__tariff', /"renamed"(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces);
-    getParam(html, result, 'balance', /Можно потратить(?:[^>]*>){4}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, ['currency', 'balance'], /Можно потратить(?:[^>]*>){4}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseCurrency);
-	getParam(html, result, 'validto', /Окончание срока действия(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseDate);
-    
+	
+	getParam(account, result, 'balance', /Можно потратить([\s\d.,]+т)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(account, result, ['currency', '__tariff'], /Можно потратить([\s\d.,]+т)/i, replaceTagsAndSpaces, parseCurrency);
+    getParam(account, result, 'cardnum', /([\s\S]*?)Можно потратить/i, replaceTagsAndSpaces);
+	getParam(account, result, '__tariff', /([\s\S]*?)Можно потратить/i, replaceTagsAndSpaces);
+	getParam(account, result, 'validto', /Срок действия карты([\s\d.,]+)/i, replaceTagsAndSpaces, parseDate);
+
+	getParam(account, result, 'cred_balance', /Кредитные средства([\s\d.,]+т)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(account, result, 'card_debt', /Задолженность по карте([\s\d.,]+т)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(account, result, 'main_debt', /Основной долг([\s\d.,]+т)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(account, result, 'pcts', /Проценты к оплате([\s\d.,]+т)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(account, result, 'payment_ammount', /Платеж по карте([\s\d.,]+т)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(account, result, 'payment_left', /Осталось внести([\s\d.,]+т)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(account, result, 'limit', /Кредитный лимит([\s\d.,]+т)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(account, result, 'pay_in', /Через([\s\d.,]+)дн/i, replaceTagsAndSpaces, parseBalance); 
+	
     AnyBalance.setResult(result);
 }
 

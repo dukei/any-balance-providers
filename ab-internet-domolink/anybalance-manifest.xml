@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="3" version="27">ab-internet-domolink</id>
+	<id major_version="3" version="28">ab-internet-domolink</id>
 	<name>Ростелеком (старые кабинеты)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем балансе, номере лицевого счета, ФИО владельца или названии организации, размере ежемесячной платы, дате, сумме и описании последней оплаты, трафике в текущем месяце для пользователей оператора ""Ростелеком - Домолинк"".</p>   

@@ -177,21 +177,21 @@ function domolinkkirov(region, login, password){
 
 function domolink_new(region,login,password) {
     var prefs = AnyBalance.getPreferences();
-                                            
-    var headers = {
+	
+	var headers = {
         'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
         'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
         'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Intel Mac OS X 10.6; rv:7.0.1) Gecko/20100101 Firefox/7.0.1',
         Connection: 'keep-alive'
     };
-
+	
     var baseurl = 'https://portal.center.rt.ru/ClientWebPortal/appmanager/ClientPortal/PrivateClientDesktop';
-    AnyBalance.setDefaultCharset('utf-8');    
- 
-    if(prefs.accnum && !/^\d{4}$/.test(prefs.accnum))
-        throw new AnyBalance.Error("Введите в настройки последние 4 цифры лицевого счета или не вводите ничего, чтобы получить информацию по первому счету");
-
-    var accnum = (prefs.accnum || '\\d{4}') + '\\s*$';
+    AnyBalance.setDefaultCharset('utf-8');
+	
+	if(prefs.accnum && !/^\d{4}$/.test(prefs.accnum))
+		throw new AnyBalance.Error("Введите в настройки последние 4 цифры лицевого счета или не вводите ничего, чтобы получить информацию по первому счету");
+	
+	var accnum = (prefs.accnum || '\\d{4}') + '\\s*$';
     var reAcc = new RegExp(accnum);
     var html;
     
@@ -247,7 +247,6 @@ function domolink_new(region,login,password) {
         
             throw new AnyBalance.Error("Не удалось войти в личный кабинет. Изменился личный кабинет или проблемы на сайте.");
         }
-        
     //Вот досюда надо закомментарить, чтобы можно было сразу парсить в уже залогиненом кабинете. */
     }
 
@@ -265,17 +264,16 @@ function domolink_new(region,login,password) {
     if(!$acc.size())
         throw new AnyBalance.Error('Невозможно найти информацию ' + (prefs.accnum ? 'по счету с последними цифрами ' + prefs.accnum : 'ни по одному лицевому счету') + '!');
     
-    var result = {
-        success: true
-    };
-    
-    getParam($acc.find('>td:first-child>img').attr('title'), result, '__tariff', null, replaceTagsAndSpaces);
+    var result = {success: true};
+	
+	sumParam(html, result, '__tariff', /<tr>\s*<td(?:[^>]*>){4}[^>]*_windowLabel=MyServices(?:[^>]*>){5}([^<]+)(?:[^>]*>){10}\s*<\/tr>/ig, null, null, aggregate_join);
+	//getParam($acc.find('>td:first-child>img').attr('title'), result, '__tariff', null, replaceTagsAndSpaces);
     getParam($acc.find('>td:nth-child(2)').text(), result, 'license', null, replaceTagsAndSpaces);
     getParam($acc.find('>td:nth-child(3)').text(), result, 'username', null, replaceTagsAndSpaces);
     getParam($acc.find('>td:nth-child(4)').text(), result, 'balance', null, replaceTagsAndSpaces, parseBalance);
     
-    var $subaccs = $acc.next();
-    getParam($subaccs.find('table.uslugi tr:first-child td:nth-child(3) label').first().text(), result, '__tariff', null, replaceTagsAndSpaces);
+    //var $subaccs = $acc.next();
+    //getParam($subaccs.find('table.uslugi tr:first-child td:nth-child(3) label').first().text(), result, '__tariff', null, replaceTagsAndSpaces);
     
     AnyBalance.setResult(result);
 }

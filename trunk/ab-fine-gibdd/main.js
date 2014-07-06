@@ -3,7 +3,7 @@
 */
 
 var g_headers = {
-	'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+	'Accept':'application/json, text/javascript, */*; q=0.01',
 	'Accept-Language':'ru,en;q=0.8',
 	'Connection':'keep-alive',
 	'Origin':'http://www.gibdd.ru',
@@ -20,30 +20,35 @@ function main() {
 	
 	var html = AnyBalance.requestGet(baseurl + 'check/fines/', g_headers);
 	var token = getParam(html, null, null, /var _token\s*=\s*'([^']*)/i);
+	var templateFolder = getParam(html, null, null, /var templateFolder\s*=\s*["']\/([^"']+)/i);
 	
 	var form = getParam(html, null, null, /(<form method="POST" id="tsdataform"[\s\S]*?<\/form>)/i);
-	if(!form || !token){
+	if(!form || !token || !templateFolder){
 		if (AnyBalance.getLastStatusCode() > 400) {
 			AnyBalance.trace('Server returned: ' + AnyBalance.getLastStatusString());
 			throw new AnyBalance.Error('Сервис проверки штрафов временно недоступен, скоро все снова будет работать.');
 		}
 		// Попробуем объяснить почему
 		if(/Работа сервиса проверки[^<]*временно приостановлена/i.test(html))
-			throw new AnyBalance.Error('Работа сервиса временно приостановлена! Попробуйте зайти позже.');
+			throw new AnyBalance.Error('Работа сервиса временно приостановлена! Попробуйте обновить данные позже.');
+		
 		throw new AnyBalance.Error('Не удалось найти форму для запроса!');
 	}
 	checkEmpty(prefs.login, 'Введите гос. номер. Номер должен быть в формате а351со190 либо 1234ав199, буквы русские!');
 	checkEmpty(prefs.password, 'Введите номер свидетельства о регистрации в формате 50ХХ123456!');
 	
+	AnyBalance.trace('templateFolder = ' + templateFolder);
+	AnyBalance.trace('token = ' + token);
+	
 	g_headers = addHeaders({'X-Csrf-Token':token});
-	AnyBalance.setCookie('www.gibdd.ru', 'X-Csrf-Token', token);
+	//AnyBalance.setCookie('www.gibdd.ru', 'X-Csrf-Token', token);
 	//var params = createFormParams(form);
 	
 	var captchaWord, captchaCode;
 	
 	if(AnyBalance.getLevel() >= 7){
 		AnyBalance.trace('Пытаемся ввести капчу');
-		html = AnyBalance.requestPost(baseurl+ 'bitrix/templates/.default/components/gai/check/fines_1.6/ajax/captchaReload.php', {}, addHeaders( {
+		html = AnyBalance.requestPost(baseurl + templateFolder + '/ajax/captchaReload.php', {}, addHeaders( {
 			'X-Requested-With':'XMLHttpRequest',
 			'Referer':baseurl+'check/fines/',
 		}));
@@ -70,8 +75,7 @@ function main() {
 	];
 	
 	// Ставим куки
-	
-	//AnyBalance.setCookie('www.gibdd.ru', 'siteType', 'deleted');
+	AnyBalance.setCookie('www.gibdd.ru', '_ga', 'GA1.2.1023137532.1404645641');
 	
 	/*AnyBalance.setCookie('www.gibdd.ru', 'BITRIX_SM_SVC_CHECK_FINES_NUM', encodeURIComponent(found[1].toUpperCase()));
 	AnyBalance.setCookie('www.gibdd.ru', 'BITRIX_SM_SVC_CHECK_FINES_REG', encodeURIComponent(found[2]));
@@ -79,12 +83,14 @@ function main() {
 	
 	AnyBalance.trace('Пробуем запросить информацию с данными: '+prefs.login+', ' + prefs.password);
 	// Без загрузки этого скрипта не работает
-	html = AnyBalance.requestGet(baseurl + '/bitrix/templates/.default/components/gai/check/fines_1.6/app.js', g_headers)
+	html = AnyBalance.requestGet(baseurl + templateFolder + '/app.js', g_headers)
 	
-	html = AnyBalance.requestPost(baseurl + 'bitrix/templates/.default/components/gai/check/fines_1.6/ajax/client.php', params2, addHeaders({
+	html = AnyBalance.requestPost(baseurl + templateFolder + '/ajax/client.php', params2, addHeaders({
 		'X-Requested-With':'XMLHttpRequest',
 		'Referer':baseurl + 'check/fines/',
-		'X-Csrf-Token':token
+		//'X-Csrf-Token':token,
+		'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8',
+		'Connection':'keep-alive'
 	}));
 	
 	try {

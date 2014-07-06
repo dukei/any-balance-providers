@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="2" version="11" date="2014-07-06">
+	- Исправлена ошибка.
+	</change>
 	<change major_version="2" version="10" date="2014-07-04">
 	- Поддержка нового банкинга.
 	</change>

@@ -1,10 +1,5 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Получает текущий остаток и другие параметры карт ОТП банка через интернет банк.
-
-Сайт оператора: http://otpbank.ru
-Личный кабинет: https://direkt.otpbank.ru/
 */
 
 function sleep(delay) {
@@ -59,6 +54,10 @@ function main(){
         var error = getParam(html, null, null, /<p[^>]+class="[^"]*red[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
         if(error)
             throw new AnyBalance.Error(error);
+		
+		if(/Ваш доступ в ОТПдирект заблокирован/i.test(html))
+			throw new AnyBalance.Error("Ваш доступ в ОТПдирект заблокирован, Пожалуйста, обратитесь в Контакт-Центр или в ближайшее для Вас Отделение Банка для разблокировки доступа.", null, true);
+		
         AnyBalance.trace(html);
         throw new AnyBalance.Error("Не удалось зайти в интернет-банк. Сайт изменен?");
     }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="9">ab-cell-mts-by</id>
+	<id version="10">ab-cell-mts-by</id>
 	<name>МТС (Беларусь)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе, расходах, статусе блокировки, кредите, номере лицевого счета, ежемесячной плате.</p>   
@@ -43,13 +43,7 @@
 		<counter id="monthlypay" name="Ежемесячная плата" units=" р"/>
 		<counter id="phone" name="Номер телефона" type="text"/>
 	</counters>
-	<keywords>
-	Сотовый телефон, мобильный, мобильник, mts, белоруссия
-	</keywords>
-	<type>
-	cell
-	</type>
-	<country>
-	by
-	</country>
+	<keywords>Сотовый телефон, мобильный, мобильник, mts, белоруссия</keywords>
+	<type>cell</type>
+	<country>by</country>
 </provider>

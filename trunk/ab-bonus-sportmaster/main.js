@@ -10,16 +10,17 @@ function main(){
 		
         AnyBalance.trace('Введен пароль - получаем данные из личного кабинета');
 
-        var baseurl = "http://www.sportmaster.ru/personal/bonus.php?login=yes";
-        var html = AnyBalance.requestPost(baseurl, {
-            AUTH_FORM:'Y',
-            TYPE:'AUTH',
-            backurl:'/personal/bonus.php',
-            USER_LOGIN:prefs.login,
-            USER_PASSWORD:prefs.password
-        });
-        
-        var error = getParam(html, null, null, /<font[^>]*class=['"]errortext['"][^>]*>([\s\S]*?)<\/font>/i, replaceTagsAndSpaces, html_entity_decode);
+        var baseurl = "https://www.sportmaster.ru/personal/bonus.php?login=yes";
+		
+		var html = AnyBalance.requestPost(baseurl, {
+			AUTH_FORM:'Y',
+			TYPE:'AUTH',
+			backurl:'/personal/bonus.php',
+			USER_LOGIN:prefs.login,
+			USER_PASSWORD:prefs.password
+		});
+		
+		var error = getParam(html, null, null, /<font[^>]*class=['"]errortext['"][^>]*>([\s\S]*?)<\/font>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error) {
 			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
 		}

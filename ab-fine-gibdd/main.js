@@ -3,9 +3,10 @@
 */
 
 var g_headers = {
-	'Accept':'application/json, text/javascript, */*; q=0.01',
+	'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
 	'Accept-Language':'ru,en;q=0.8',
 	'Connection':'keep-alive',
+	'Origin':'http://www.gibdd.ru',
 	'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.57 Safari/537.36'
 };
 
@@ -17,11 +18,11 @@ function main() {
     var baseurl = 'http://www.gibdd.ru/';
     AnyBalance.setDefaultCharset('utf-8');
 	
-	var html = AnyBalance.requestGet(baseurl + 'check/fines/');
-	var token = getParam(html, null, null, /token\s*=\s*'([^']*)/i);
-
+	var html = AnyBalance.requestGet(baseurl + 'check/fines/', g_headers);
+	var token = getParam(html, null, null, /var _token\s*=\s*'([^']*)/i);
+	
 	var form = getParam(html, null, null, /(<form method="POST" id="tsdataform"[\s\S]*?<\/form>)/i);
-	if(!form){
+	if(!form || !token){
 		if (AnyBalance.getLastStatusCode() > 400) {
 			AnyBalance.trace('Server returned: ' + AnyBalance.getLastStatusString());
 			throw new AnyBalance.Error('Сервис проверки штрафов временно недоступен, скоро все снова будет работать.');
@@ -34,7 +35,11 @@ function main() {
 	checkEmpty(prefs.login, 'Введите гос. номер. Номер должен быть в формате а351со190 либо 1234ав199, буквы русские!');
 	checkEmpty(prefs.password, 'Введите номер свидетельства о регистрации в формате 50ХХ123456!');
 	
-	var params = createFormParams(form);
+	g_headers = addHeaders({'X-Csrf-Token':token});
+	AnyBalance.setCookie('www.gibdd.ru', 'X-Csrf-Token', token);
+	//var params = createFormParams(form);
+	
+	var captchaWord, captchaCode;
 	
 	if(AnyBalance.getLevel() >= 7){
 		AnyBalance.trace('Пытаемся ввести капчу');
@@ -42,10 +47,10 @@ function main() {
 			'X-Requested-With':'XMLHttpRequest',
 			'Referer':baseurl+'check/fines/',
 		}));
-		params.captchaCode = getParam(html, null, null, /code"\s*:\s*"([^"]*)/i);
-		var captcha = AnyBalance.requestGet(baseurl+ 'bitrix/tools/captcha.php?captcha_sid=' + params.captchaCode);
-		params.captchaWord = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
-		AnyBalance.trace('Капча получена: ' + params.captchaWord);
+		captchaCode = getParam(html, null, null, /code"\s*:\s*"([^"]*)/i);
+		var captcha = AnyBalance.requestGet(baseurl+ 'bitrix/tools/captcha.php?captcha_sid=' + captchaCode, g_headers);
+		captchaWord = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
+		AnyBalance.trace('Капча получена: ' + captchaWord);
 	} else {
 		throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
 	}
@@ -54,25 +59,31 @@ function main() {
 	if(!found)
 		throw new AnyBalance.Error('Номер должен быть в формате а351со190 либо 1234ав199, буквы русские.');
 	
-	params.token = '';
-	params.regnum = found[1].toUpperCase();
-    params.regreg = found[2];
-	params.stsnum = prefs.password;
-	params.captcha_code = undefined;
-	params.captcha_word = undefined;
-	params.req = params.regnum+':'+params.regreg+':'+prefs.password;
-
-	AnyBalance.setCookie('www.gibdd.ru', 'X-Csrf-Token', token);
-	//AnyBalance.setCookie('gibdd.ru', 'X-Csrf-Token', token);
+	var params2 = [
+		['req','fines:' + found[1].toUpperCase()+':'+found[2]+':'+prefs.password],
+		['captchaWord',captchaWord],
+		['captchaCode',captchaCode],
+		['token',''],
+		['regnum',found[1].toUpperCase()],
+		['regreg',found[2]],
+		['stsnum',prefs.password],
+	];
 	
-	//BITRIX_SM_GUEST_ID=48332006; BITRIX_SM_LAST_VISIT=04.12.2013+11%3A49%3A12; BITRIX_SM_SVC_CHECK_FINES_V=20131203; PHPSESSID=d0e89pah83eme8e80c9117j4o5; BITRIX_SM_REGKOD=01; siteType=pda
+	// Ставим куки
+	
+	//AnyBalance.setCookie('www.gibdd.ru', 'siteType', 'deleted');
+	
+	/*AnyBalance.setCookie('www.gibdd.ru', 'BITRIX_SM_SVC_CHECK_FINES_NUM', encodeURIComponent(found[1].toUpperCase()));
+	AnyBalance.setCookie('www.gibdd.ru', 'BITRIX_SM_SVC_CHECK_FINES_REG', encodeURIComponent(found[2]));
+	AnyBalance.setCookie('www.gibdd.ru', 'BITRIX_SM_SVC_CHECK_FINES_STS', encodeURIComponent(prefs.password));*/
 	
 	AnyBalance.trace('Пробуем запросить информацию с данными: '+prefs.login+', ' + prefs.password);
+	// Без загрузки этого скрипта не работает
+	html = AnyBalance.requestGet(baseurl + '/bitrix/templates/.default/components/gai/check/fines_1.6/app.js', g_headers)
 	
-	html = AnyBalance.requestPost(baseurl + 'bitrix/templates/.default/components/gai/check/fines_1.6/ajax/client.php', params, addHeaders({
+	html = AnyBalance.requestPost(baseurl + 'bitrix/templates/.default/components/gai/check/fines_1.6/ajax/client.php', params2, addHeaders({
 		'X-Requested-With':'XMLHttpRequest',
-		'Referer':baseurl+'check/fines/',
-		'Origin':'http://www.gibdd.ru',
+		'Referer':baseurl + 'check/fines/',
 		'X-Csrf-Token':token
 	}));
 	
@@ -91,6 +102,9 @@ function main() {
 	if(json.status != 200) {
 		if(json.error)
 			throw new AnyBalance.Error(json.error);	
+		
+		if(json.status == 1) 
+			throw new AnyBalance.Error("Цифры с картинки введены не верно!");
 		
 		throw new AnyBalance.Error("Не удалось получить данные по штрафам, сайт изменен?");
 	}
@@ -130,7 +144,7 @@ function main() {
 		getParam(all, result, 'all', null, [/<br\/><br\/>$/i, '']);
 	// Нет штрафов
 	} else {
-		result.descr = 'В базе данных отсутствует информация о неуплаченных штрафах по Вашему запросу';
+		result.descr = 'Неуплаченных штрафов в федеральной информационной системе ГИБДД по указанным данным не найдено.';
 		result.count = 0;
 	}
 	result.__tariff = prefs.login.toUpperCase();

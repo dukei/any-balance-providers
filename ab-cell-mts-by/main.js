@@ -50,7 +50,8 @@ function fetchOrdinary(html){
         if(error)
 	    throw new AnyBalance.Error(prefs.phone + ": номер, возможно, неправильный или у вас нет к нему доступа"); 
     }
-
+	AnyBalance.trace('Пытаемся выяснить почему нет баланса?...');
+	AnyBalance.trace(html);
     // Тарифный план
     getParam(html, result, '__tariff', /Тарифный план.*?>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 
@@ -199,7 +200,8 @@ function mainMobile(allowRetry){
         if (res=regexp.exec(html)){
             result.__tariff=res[1];
         }
-        
+		AnyBalance.trace('Пытаемся выяснить почему нет баланса?...');
+		AnyBalance.trace(html);
         // Баланс
         getParam (html, result, 'balance', /Баланс.*?>([-\d\.,\s]+)/, replaceTagsAndSpaces, parseBalance);
         // Телефон
@@ -328,14 +330,12 @@ function fetchAccountStatus(html, result){
 function main(){
     var prefs = AnyBalance.getPreferences();
     if(prefs.phone && !/^\d+$/.test(prefs.phone)){
-	throw new AnyBalance.Error('В качестве номера необходимо ввести 9 цифр номера, например, 291234567, или не вводить ничего, чтобы получить информацию по основному номеру.');
+		throw new AnyBalance.Error('В качестве номера необходимо ввести 9 цифр номера, например, 291234567, или не вводить ничего, чтобы получить информацию по основному номеру.');
     }
-
-    if(!prefs.login)
-	throw new AnyBalance.Error('Вы не ввели телефон (логин)');
-    if(!prefs.password)
-	throw new AnyBalance.Error('Вы не ввели пароль');
-
+	
+	checkEmpty(prefs.login, 'Введите телефон (логин)!');
+	checkEmpty(prefs.password, 'Введите пароль!');
+	
     if(prefs.type == 'mobile'){
         mainMobile();
     }else if(prefs.type == 'ordinary'){
@@ -344,8 +344,8 @@ function main(){
         try{
            if(!AnyBalance.isAvailable('bonus')){
                 //Мобильный помощник, только если не нужны бонусные баллы
-	        mainMobile(true);
-                return;
+				mainMobile(true);
+				return;
            }else{
                 AnyBalance.trace('Требуются бонусные баллы, мобильный помощник не подходит...');
            }
@@ -357,4 +357,3 @@ function main(){
         mainOrdinary();
     }
 }
-

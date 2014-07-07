@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="2" version="12" date="2014-07-07">
+	- Исправлено описание провайдера.
+	</change>
 	<change major_version="2" version="11" date="2014-07-06">
 	- Исправлена ошибка.
 	</change>

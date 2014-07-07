@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-money-bcs</id>
+	<api flags="no_browser"/>
+	<name>БКС ПРЕМЬЕР</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера БКС ПРЕМЬЕР http://bcs-bank.com/</p>
+	<p>Информация берется из личного кабинета https://online.bcs.ru/bank/web/guest/home</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" {@currency}"/>
+		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="cardname" name="Название" type="text"/>
+		<counter id="accnumber" name="Номер счета" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>money</type>
+	<country>ru</country>
+</provider>

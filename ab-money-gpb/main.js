@@ -1,10 +1,5 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Получает текущий остаток и другие параметры карт и счетов Газпромбанка
-
-Сайт оператора: http://gazprombank.ru/
-Личный кабинет: https://homebank.gazprombank.ru
 */
 
 function sleep(delay) {
@@ -135,22 +130,23 @@ function fetchCard(jsonInfo, baseurl){
     if(!tr)
         throw new AnyBalance.Error('Не удаётся найти ' + (prefs.cardnum ? 'карту с последними цифрами ' + prefs.cardnum : 'ни одной карты'));
 
-    var result = {success: true};
-    getParam(tr, result, 'cardnum', /<div[^>]+class="number"[^>]*>(?:[\s\S](?!<\/div))*?<p[^>]+class="value"[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
+    var result = {success: true, balance: null};
+    
+	getParam(tr, result, 'balance', /<span[^>]+class="amount"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(tr, result, ['currency', 'balance'], /<span[^>]+class="currency"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+	getParam(tr, result, 'cardnum', /<div[^>]+class="number"[^>]*>(?:[\s\S](?!<\/div))*?<p[^>]+class="value"[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
     getParam(tr, result, 'type', /<div[^>]+class="type"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
     getParam(tr, result, '__tariff', /<div[^>]+class="type"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
     getParam(tr, result, 'status', /<p[^>]+class="status"[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
-    getParam(tr, result, 'balance', /<span[^>]+class="amount"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(tr, result, 'currency', /<span[^>]+class="currency"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
     getParam(tr, result, 'fio', /<div[^>]+class="holder"[^>]*>(?:[\s\S](?!<\/div))*?<p[^>]+class="value"[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
     getParam(tr, result, 'till', /<div[^>]+class="expire"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseDate);
-
+	
     AnyBalance.setResult(result);
 }
 
 function fetchAccount(jsonInfo, baseurl){
     var prefs = AnyBalance.getPreferences();
-    throw new AnyBalance.Error("Получение информации по счетам пока не поддерживается. Обращайтесь к автору провайдера.");
+    throw new AnyBalance.Error("Получение информации по счетам пока не поддерживается. Обращайтесь к разработчикам.");
     /*
     if(prefs.cardnum && !/^\d{4,}$/.test(prefs.cardnum))
         throw new AnyBalance.Error("Введите от четырех последних цифр номера счета или не вводите ничего, чтобы показать информацию по первому счету");
@@ -183,7 +179,7 @@ function fetchAccount(jsonInfo, baseurl){
 
 function fetchDeposit(jsonInfo, baseurl){
     var prefs = AnyBalance.getPreferences();
-    throw new AnyBalance.Error("Получение информации по депозитам пока не поддерживается. Обращайтесь к автору провайдера.");
+    throw new AnyBalance.Error("Получение информации по депозитам пока не поддерживается. Обращайтесь к разработчикам.");
     /*
     if(prefs.cardnum && !/^\d{4,}$/.test(prefs.cardnum))
         throw new AnyBalance.Error("Введите от четырех последних цифр номера счета депозита или не вводите ничего, чтобы показать информацию по первому депозиту");

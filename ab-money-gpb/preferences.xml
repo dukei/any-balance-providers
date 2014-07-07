@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <EditTextPreference 
+    <EditTextPreference
+		obligatory="true"
         title="Логин" 
         positiveButtonText="ОК" 
         summary="|Введите логин в интернет-банк|{@s}" 
@@ -10,7 +11,8 @@
         inputType="text"
         key="login">
     </EditTextPreference>
-    <EditTextPreference 
+    <EditTextPreference
+		obligatory="true"
         positiveButtonText="ОК"
         key="password" 
         dialogTitle="Пароль"
@@ -36,7 +38,6 @@
         negativeButtonText="Отмена"
         title="Номер карты"
         summary="|Автоматически|{@s}"
-        dialogMessage="Введите последние 4 цифры карты, по которой вы хотите получить данные. Если это поле оставить пустым, то будет показана информация по первой карте."
-        >
+        dialogMessage="Введите последние 4 цифры карты, по которой вы хотите получить данные. Если это поле оставить пустым, то будет показана информация по первой карте.">
     </EditTextPreference>
 </PreferenceScreen>

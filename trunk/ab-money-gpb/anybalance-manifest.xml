@@ -1,44 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-money-gpb</id>
-  <name>Газпромбанк</name>
-  <description>
-    Получает текущий остаток и другие параметры карт банка Газпромбанк (http://www.gazprombank.ru), используя интернет-банк https://homebank.gazprombank.ru.
-
-    Подключиться к системе «Домашний Банк» Вы можете в дополнительных офисах, а также через БАНКОМАТЫ Газпромбанка г. Москвы.
-
-    В настоящее время провайдер поддерживает только карты. Для добавления кредитов или других банковских продуктов обращайтесь к автору по е-мейл.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Остаток"/>
-    <counter id="currency" name="Валюта" type="text"/>
-<!--    <counter id="minpay" name="К оплате"/>
-    <counter id="minpaytill" name="Срок оплаты" type="time" format="dd/MM/yyyy"/>
-    <counter id="debt" name="Задолженность"/> -->
-    <counter id="type" name="Тип" type="text"/>
-<!--    <counter id="pct" name="Процентная ставка" units="%"/>
-    <counter id="pcts" name="Сумма начисленных процентов"/> -->
-    <counter id="till" name="Срок действия" type="time" format="dd/MM/yyyy"/>
-    <counter id="status" name="Статус" type="text"/>
-    <counter id="cardnum" name="Номер карты" type="text"/>
-<!--    <counter id="accnum" name="Номер счета" type="text"/> -->
-    <counter id="fio" name="Владелец" type="text"/>
-  </counters>
-  <keywords>
-    интернет-банкинг
-  </keywords>
-  <type>
-    money
-  </type>
-  <country>
-    ru
-  </country>
+	<id version="2">ab-money-gpb</id>
+	<api flags="no_browser"/>
+	<name>Газпромбанк</name>	
+	<description html="true"><![CDATA[
+	<p>Получает текущий остаток и другие параметры карт банка Газпромбанк (http://www.gazprombank.ru), используя интернет-банк https://homebank.gazprombank.ru.</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Подключиться к системе «Домашний Банк» Вы можете в дополнительных офисах, а также через БАНКОМАТЫ Газпромбанка г. Москвы.</p>
+	]]></instruction>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Остаток"/>
+		<counter id="currency" name="Валюта" type="text"/>
+		<!--<counter id="minpay" name="К оплате"/>
+		<counter id="minpaytill" name="Срок оплаты" type="time" format="dd/MM/yyyy"/>
+		<counter id="debt" name="Задолженность"/>-->
+		<counter id="type" name="Тип" type="text"/>
+		<!--<counter id="pct" name="Процентная ставка" units="%"/>
+		<counter id="pcts" name="Сумма начисленных процентов"/>-->
+		<counter id="till" name="Срок действия" type="time" format="dd/MM/yyyy"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="cardnum" name="Номер карты" type="text"/>
+		<!--<counter id="accnum" name="Номер счета" type="text"/>-->
+		<counter id="fio" name="Владелец" type="text"/>
+	</counters>
+	<keywords>интернет-банкинг</keywords>
+	<type>money</type>
+	<country>ru</country>
 </provider>

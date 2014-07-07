@@ -80,26 +80,26 @@ function main(){
         tic:1,
         T:'rt_0clientupdaterest.doheavyupd'
     }, g_headers);
-
-    var i=0;
-    do{
-        AnyBalance.trace('Ожидание обновления данных: ' + (i+1));
-        html = AnyBalance.requestPost(baseurl, {
-            SID:jsonInfo.SID,
-            tic:1,
-            T:'rt_0clientupdaterest.CheckForAcyncProcess'
-        }, g_headers);
-        var opres = getParam(html, null, null, /^\s*(?:<BSS_ERROR>([\s\S]*?)<\/BSS_ERROR>)?([\s\S]*>)?\d+\s*$/i, replaceTagsAndSpaces, html_entity_decode);
-        if(opres){
-            AnyBalance.trace('Обновление данных закончено. ' + opres);
-            break; //Всё готово, надо получать баланс
+	
+	var i=0;
+    do {
+		AnyBalance.trace('Ожидание обновления данных: ' + (i+1));
+		html = AnyBalance.requestPost(baseurl, {
+			SID:jsonInfo.SID,
+			tic:1,
+			T:'rt_0clientupdaterest.CheckForAcyncProcess'
+		}, g_headers);
+		var opres = getParam(html, null, null, /^\s*(?:<BSS_ERROR>([\s\S]*?)<\/BSS_ERROR>)?([\s\S]*>)?\d+\s*$/i, replaceTagsAndSpaces, html_entity_decode);
+		if(opres) {
+			AnyBalance.trace('Обновление данных закончено. ' + opres);
+			break; //Всё готово, надо получать баланс
         }
-        if(++i > 10){  //На всякий случай не делаем больше 10 попыток
-            AnyBalance.trace('Не удалось за 10 попыток обновить баланс, получаем старое значение...');
+        if(++i > 25){  //На всякий случай не делаем больше 10 попыток
+            AnyBalance.trace('Не удалось за 25 попыток обновить баланс, получаем старое значение...');
             break;
         }
-        sleep(3000);
-    }while(true);
+        sleep(1000);
+    } while(true);
 
     if(prefs.type == 'card')
         fetchCard(jsonInfo, baseurl);

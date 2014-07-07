@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="27" date="2014-07-07">
+	- Улучшена обработка запроса на смену пароля для входа.
+	</change>
 	<change version="26" date="2014-05-28">
 	- Улучшена обработка ошибок.
 	</change>

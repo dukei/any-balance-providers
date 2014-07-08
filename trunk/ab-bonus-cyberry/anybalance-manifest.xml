@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-bonus-cyberry</id>
+	<api flags="no_browser"/>
+	<name>Киберри</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о бонусах в сети магазинов Киберри http://www.cyberry.ru/</p>
+	<p>Информация берется из личного кабинета http://www.cyberry.ru/cabinet/</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс"/>
+		<counter id="bonus" name="Бонус"/>
+		<counter id="cards" name="Подарочные карты"/>
+		<counter id="reserved" name="Зарезервировано"/>
+	</counters>
+	<keywords></keywords>
+	<type>bonus</type>
+	<country>ru</country>
+</provider>

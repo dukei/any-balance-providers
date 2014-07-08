@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-garstelecom</id>
+	<api flags="no_browser"/>
+	<name>Гарс Телеком</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Гарс Телеком http://garstelecom.ru/ru/</p>
+	<p>Информация берется из личного кабинета https://cab.garstelecom.ru/index.php?r=site/login</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<!-- <counter id="balance_tv" name="Баланс ТВ" units=" р"/> -->
+		<counter id="internet_cur" name="Трафик в этом месяце" suffix=" Mb"/>
+		<counter id="abon" name="Абонентская плата" suffix=" р"/>
+		<!-- <counter id="daysleft" name="Хватит на" suffix=" дн"/> -->
+		<!-- <counter id="license" name="Лицевой счет" type="text"/> -->
+		<counter id="agreement" name="Номер договора" type="text"/>
+		<counter id="username" name="ФИО" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

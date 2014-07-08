@@ -98,7 +98,7 @@ function main(){
             AnyBalance.trace('Не удалось за 25 попыток обновить баланс, получаем старое значение...');
             break;
         }
-        sleep(1000);
+        sleep(3000);
     } while(true);
 
     if(prefs.type == 'card')

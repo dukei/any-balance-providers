@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-money-gpb</id>
+	<id version="3">ab-money-gpb</id>
 	<api flags="no_browser"/>
 	<name>Газпромбанк</name>	
 	<description html="true"><![CDATA[

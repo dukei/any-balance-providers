@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-tracking-boxberry</id>
+	<api flags="no_browser"/>
+	<name>BoxBerry</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию по трек-номеру в BoxBerry http://boxberry.ru</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="orderNum" name="№ заказа интернет-магазина" type="text"/>
+		<counter id="storeName" name="Название интернет-магазина" type="text"/>
+		<counter id="dest" name="Город назначения" type="text"/>
+		<counter id="weight" name="Вес товара, кг" type="text"/>
+		<counter id="point" name="Пункт выдачи" type="text"/>
+		<counter id="orderNumBox" name="Номер заказа Boxberry" type="text"/>
+		<counter id="all" name="Сводка" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>tracking</type>
+	<country>ru</country>
+</provider>

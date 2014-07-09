@@ -7,7 +7,7 @@ var g_headers = {
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (AnyBalance 6.1; WOW64; rv:22.0) Gecko/20100101 AnyBalance/22.0'
+	'User-Agent': 'Mozilla/5.0 (AnyBalance 7.0; WOW64; rv:22.0) Gecko/20100101 AnyBalance/22.0'
 }
 
 function main() {
@@ -55,7 +55,11 @@ function main() {
 	// Получаем информацию из кошелька гугл
 	html = AnyBalance.requestGet(baseurl + 'merchant/pages/', g_headers);
 	if (/Google Wallet - Merchant Center/i.test(html)) {
-		var href = getParam(html, null, null, /(merchant\/pages\/bcid-[\s\S]{1,200})\/earnings\/display/i);
+		var href = getParam(html, null, null, /(merchant\/pages[^"]+bcid[^"]+)\/earnings\/display"/i);
+		if(!href) {
+			AnyBalance.trace(html);
+			throw new AnyBalance.Error('Can`t find transactions href, is the site changed?');
+		}
 		// Переходим на страницу Выплаты:
 		html = AnyBalance.requestGet(baseurl + href + '/transactions/display?selectedrange=LAST_THREE_MONTHS&filterchoice=ALL_TRANSACTIONS', g_headers);
 		

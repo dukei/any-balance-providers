@@ -22,7 +22,7 @@
     <ListPreference 
         key="type" 
         title="Банковский продукт"
-        summary="||{@s}\n"
+        summary="||{@s}"
         entries="Карта|Кредит|Счет|Вклад"
         entryValues="card|crd|acc|dep"
 	defaultValue="card">

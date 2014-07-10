@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="7" date="2014-07-10">
+      - Мелкие исправления получения карт
+    </change>
     <change version="6" date="2013-03-16">
       - Исправлено получение счетов в связи с изменениями в интернет-банке
     </change>

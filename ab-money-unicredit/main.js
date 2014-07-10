@@ -111,15 +111,16 @@ function fetchCard(jsonInfo, headers, baseurl){
     var cardid = getParam(html, null, null, /<REDIRECT>[\s\S]*?CardID=(\d+)/i);
     if(!cardid){
         var cardtpl = prefs.cardnum ? '******' + prefs.cardnum : '';
-        var $html = $(html);
-        
-        var $card = $html.find('table.Tbl-cards' + (cardtpl ? ':contains("'+cardtpl+'")' : '')).first();
-        if(!$card.size())
+	var cardHtmls = sumParam(html, null, null, /<table(?:[\s\S](?!<\/table>))*?CardID=\d+[\s\S]*?<\/table>/ig);
+	for(var i=0; i<cardHtmls.length; ++i){
+		if(!cardtpl || cardHtmls[i].indexOf(cardtpl) >= 0){
+			cardid = getParam(cardHtmls[i], null, null, /CardID=(\d+)/i);
+			break;
+		}
+	}
+
+	if(!cardid)
             throw new AnyBalance.Error('Не удаётся найти ' + (cardtpl ? 'карту с последними цифрами ' + cardtpl : 'ни одной карты'));
-        
-        cardid = getParam($card.html(), null, null, /CardID=(\d+)/i);
-        if(!cardid)
-            throw new AnyBalance.Error('Не удаётся найти id карты. Интернет-банк изменился?');
     }
 
     html = AnyBalance.requestPost(baseurl, {

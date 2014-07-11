@@ -16,9 +16,9 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-        <counter id="balance" name="Balance" units="BTC"/>
-        <counter id="total_received" name="Total Received" units="BTC"/>
-        <counter id="n_transactions" name="Transactions Count"/>
+		<counter id="balance" name="Balance" units="BTC"/>
+		<counter id="total_received" name="Total Received" units="BTC"/>
+		<counter id="n_transactions" name="Transactions Count"/>
 	</counters>
 	<keywords>bitcoin,BTC,биткоин</keywords>
 	<type>money</type>

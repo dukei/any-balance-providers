@@ -18,9 +18,9 @@ function main()
 	var html = AnyBalance.requestGet(baseurl + prefs.wallet, g_headers);
 	var result = {success: true};
 
-	getParam(html, result, 'balance', /(<td id="final_balance">.*?<\/td>)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'total_received', /(<td id="total_received">.*?<\/td>)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'n_transactions', /(<td id="n_transactions">.*?<\/td>)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'balance', /(<td id="final_balance">.*?<\/td>)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'total_received', /(<td id="total_received">.*?<\/td>)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'n_transactions', /(<td id="n_transactions">.*?<\/td>)/i, replaceTagsAndSpaces, parseBalance);
 
 	AnyBalance.setResult(result);
 }

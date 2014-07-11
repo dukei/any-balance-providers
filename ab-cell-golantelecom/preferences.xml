@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Account Number" 
+        positiveButtonText="ОК" 
+        summary="|Account Number (this is NOT your phone number)|{@s}"
+        dialogTitle="Account Number" 
+        negativeButtonText="Cancel" 
+        obligatory="true"
+        dialogMessage="Enter your Golan Telecom account number. This is the number you are using to log into the GolanTelcom website. This is NOT your phone number."
+        key="login"
+        inputType="number">
+    </EditTextPreference>
+    <EditTextPreference 
+        title="Phone Number" 
+        positiveButtonText="ОК" 
+        summary="|Phone Number|{@s}"
+        dialogTitle="Phone Number" 
+        negativeButtonText="Cancel" 
+        obligatory="true"
+        dialogMessage="Enter your Golan Telecom 10 digits phone number here."
+        key="line"
+        inputType="number">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Password"
+        negativeButtonText="Cancel"
+        title="Password"
+        obligatory="true"
+        summary="|Golan Telecom account password|***********"
+        dialogMessage="Enter your Golan Telecom password."
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

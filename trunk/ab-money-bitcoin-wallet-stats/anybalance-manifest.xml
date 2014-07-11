@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-bitcoin-wallet-stats</id>
+	<api flags="no_browser"/>
+	<name>Bitcoin Wallet</name>
+	<description html="true"><![CDATA[
+	<p>Provides information about a BTC wallet.</p>
+	<p>Information is sourced from https://blockchain.info/</p>
+	]]></description>
+	<author>borislip@gmail.com</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Balance" type="text"/>
+		<counter id="total_received" name="Total Received" type="text"/>
+		<counter id="n_transactions" name="Transactions Count" type="text"/>
+	</counters>
+	<keywords>bitcoin,BTC</keywords>
+	<type>internet</type>
+	<country>xx</country>
+</provider>

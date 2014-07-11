@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference
+		title="BTC Wallet"
+		key="wallet"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="BTC Wallet"
+		positiveButtonText="ОК"
+		negativeButtonText="Cancel"
+		dialogMessage="Please enter your Bitcoin wallet address.">
+	</EditTextPreference>
+	<ListPreference
+		title="Units"
+		summary="||{@s}"
+		key="btcunits"
+		defaultValue="1"
+		entries="BTC|mBTC|µBTC"
+		entryValues="1|1000|1000000">
+	</ListPreference>
+	
+</PreferenceScreen>

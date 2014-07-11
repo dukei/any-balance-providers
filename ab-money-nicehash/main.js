@@ -39,13 +39,19 @@ function main()
 	var baseurl = 'https://www.nicehash.com/api?method=stats.provider&addr=';
 	var result = {success: true};
 	AnyBalance.setDefaultCharset('utf-8');
-	checkEmpty(prefs.wallet, 'Enter your BTC wallet!');
+	
+	// validate the wallet first
+	validateBtcWallet(prefs.wallet);
 
 	// set the unit according to the multiplier
 	getParam(g_multiplier_names[prefs.btcunits], result, "btcunits", null, null, html_entity_decode);
 	
-	// access NiceHash API and iterate through providers, update params and calculate the total
+	// access NiceHash API and iterate through providers, make sure we have some stats
 	var json = getJson(AnyBalance.requestGet(baseurl + prefs.wallet, g_headers));
+	if (json.result.stats.length==0)
+		throw new AnyBalance.Error("No data for " + prefs.wallet);
+	
+	// update params and calculate the total
 	var total = 0.0;
 	for(var i=0;i<json.result.stats.length;i++) 
 	{

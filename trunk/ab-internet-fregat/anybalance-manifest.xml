@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-internet-fregat</id>
+	<id version="2">ab-internet-fregat</id>
 	<api flags="no_browser"/>
 	<name>Фрегат (Днепропетровск)</name>
 	<description html="true"><![CDATA[
@@ -16,10 +16,10 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="balance" name="Баланс" units=" грн"/>
 		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
 	<keywords></keywords>
 	<type>internet</type>
-	<country>ru</country>
+	<country>ua</country>
 </provider>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-money-nicehash</id>
+	<api flags="no_browser"/>
+	<name>NiceHash</name>
+	<description html="true"><![CDATA[
+	<p>Provides nicehash.com unpaid balances for a given BTC wallet.</p>
+	]]></description>
+	<author>borislip@gmail.com</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="Total" name="Total" units="{@btcunits}"/>
+		<counter id="Scrypt" name="Scrypt" units="{@btcunits}"/>
+		<counter id="SHA256" name="SHA256" units="{@btcunits}"/>
+		<counter id="ScryptANf" name="Scrypt-A.-Nf." units="{@btcunits}"/>
+		<counter id="X11" name="X11" units="{@btcunits}"/>
+		<counter id="X13" name="X13" units="{@btcunits}"/>
+		<counter id="Keccak" name="Keccak" units="{@btcunits}"/>
+		<counter id="X15" name="X15" units="{@btcunits}"/>
+		<counter id="Nist5" name="Nist5" units="{@btcunits}"/>
+		<counter id="btcunits" name="Units" type="text"/>
+	</counters>
+	<keywords>bitcoin,BTC,NiceHash,pool,mining,биткоин</keywords>
+	<type>money</type>
+	<country></country>
+</provider>

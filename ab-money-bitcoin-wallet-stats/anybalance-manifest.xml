@@ -21,7 +21,7 @@
 		<counter id="total_received" name="Total Received" units="BTC"/>
 		<counter id="n_transactions" name="Transactions Count"/>
 	</counters>
-	<keywords>bitcoin,BTC,биткоин</keywords>
+	<keywords>bitcoin,BTC,Р±РёС‚РєРѕРёРЅ</keywords>
 	<type>money</type>
 	<country></country>
 </provider>

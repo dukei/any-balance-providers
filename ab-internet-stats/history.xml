@@ -1,26 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
     <change version="2" date="2013-05-16">
-      Добавлен счетчик Персональный ID
+      Добавлен счетчик Персональный ID (dmitry.kochin)
     </change>
     <change version="3" date="2013-05-16">
-      Добавлен счетчик Состояние тел. номеров клиента
+      Добавлен счетчик Состояние тел. номеров клиента (alexandrashalamova)
     </change>
     <change version="4" date="2013-05-18">
       Добавлены счетчики:
-	Рекомендуемый платеж интернет
-	Рекомендуемый платеж Wimax
-	Состояние IP адресов Wimax
-	Период Wimax
+	Рекомендуемый платеж интернет (sinitsynviktor)
+	Рекомендуемый платеж Wimax (sinitsynviktor)
+	Состояние IP адресов Wimax (sinitsynviktor)
+	Период Wimax (sinitsynviktor)
     </change>
     <change version="5" date="2013-05-18">
       Добавлены счетчики:
-	Объем использованного трафика
-	Объем использованного трафика Wimax
+	Объем использованного трафика (sinitsynviktor)
+	Объем использованного трафика Wimax (sinitsynviktor)
     </change>
     <change version="6" date="2013-05-19">
       Добавлены счетчики:
-	Текущий тариф
-	Тукущий тариф Wimax
+	Текущий тариф (sinitsynviktor)
+	Тукущий тариф Wimax (sinitsynviktor)
     </change>
 </history>
+

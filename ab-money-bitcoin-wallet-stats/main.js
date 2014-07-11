@@ -13,11 +13,17 @@ function main()
 	var baseurl = 'https://blockchain.info/address/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
-	checkEmpty(prefs.wallet, 'Enter your BTC wallet!');
+	validateBtcWallet(prefs.wallet);
 	
 	var html = AnyBalance.requestGet(baseurl + prefs.wallet, g_headers);
 	var result = {success: true};
+	
+	// parse errors reported by nicehash, convert into AnyBalance exceptions if any
+	var errdiv = /(<div\s*class="alert alert-error"\s*>[\s\S]*?<\/div>)/i.exec(html);
+	if (errdiv!=null)
+		throw new AnyBalance.Error("blockchain.info: "+replaceAll(errdiv[1],replaceTagsAndSpaces));
 
+	// parse params
 	getParam(html, result, 'balance', /(<td id="final_balance">.*?<\/td>)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'total_received', /(<td id="total_received">.*?<\/td>)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'n_transactions', /(<td id="n_transactions">.*?<\/td>)/i, replaceTagsAndSpaces, parseBalance);

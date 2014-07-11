@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-money-bitcoin-wallet-stats</id>
+	<id version="2">ab-money-bitcoin-wallet-stats</id>
 	<api flags="no_browser"/>
 	<name>Bitcoin Wallet</name>
 	<description html="true"><![CDATA[
@@ -12,6 +12,7 @@
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
 		<js>library.js</js>
+		<js>btcutil.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

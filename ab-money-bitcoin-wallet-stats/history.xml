@@ -3,4 +3,7 @@
 	<change version="1" date="2014-07-11">
 	- Initial version.
 	</change>
+	<change version="2" date="2014-07-11">
+	- BTC wallet validation has been added. Blockchain.info reported errors are now parsed.
+	</change>
 </history>

@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser" />
-	<id version="1">ab-municipal-yaltateplo-krim</id>
+	<id version="2">ab-municipal-yaltateplo-krim</id>
 	<name>Крымтеплокоммунэнерго</name>
 	<description>
 	Получает данные в системе Крымтеплокоммунэнерго (http://yaltateplo.com/)
@@ -16,13 +15,13 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units="грн"/>
+		<counter id="balance" name="Баланс" units=" р"/>
 		<counter id="acc" name="Лицевой счет" type="text"/>
-		<counter id="nachisleno" name="Начислено за прошлый месяц" units="грн"/>
-		<counter id="oplacheno" name="Оплачено за прошлый месяц" units="грн"/>
-		<counter id="dolg" name="Долг за прошлый месяц" units="грн"/>
+		<counter id="nachisleno" name="Начислено за прошлый месяц" units=" р"/>
+		<counter id="oplacheno" name="Оплачено за прошлый месяц" units=" р"/>
+		<counter id="dolg" name="Долг" units=" р"/>
 	</counters>
 	<keywords></keywords>
 	<type>municipal</type>
-	<country>ua</country>
+	<country>ru</country>
 </provider>

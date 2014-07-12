@@ -29,7 +29,7 @@ function main(){
     }
 	
     var result = {success: true};
-	var balance = getParam(html, null, null, /У вас([\s\S]*?)грн/i, null, null);
+	var balance = getParam(html, null, null, /У вас([\s\S]*?)руб/i, null, null);
 	var val = 0;
 	if(balance)
 	{

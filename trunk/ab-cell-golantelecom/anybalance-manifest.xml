@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-cell-golantelecom</id>
+	<id version="2">ab-cell-golantelecom</id>
 	<api flags="no_browser"/>
 	<name>Golan Telecom</name>
 	<description html="true"><![CDATA[
-	<p>Golan Telecom calls/SMS/data for a single, but selectable, phone number.</p>
-	<p>Please note, this provider may be disctontinued at any point. Golan</p>
-	<p>Telecom site changes may render this provider useless. Golan doesn't</p>
-	<p>provide a proper API, while at the same time their site implementation doesnt</p>
-	<p>allow for a reliable parsing.</p>
+	<p>
+	Golan Telecom calls/SMS/data for a single, but selectable, phone number.
+	Please note, this provider may be disctontinued at any point. Golan
+	Telecom site changes may render this provider useless. Golan doesn't
+	provide a proper API, while at the same time their site implementation doesnt
+	allow for a reliable parsing.
+	</p>
 	]]></description>
 	<author>borislip@gmail.com</author>
 	<files>
@@ -22,6 +24,7 @@
 		<counter id="calls" name="Calls" type="time_interval" format="{@H}:{@min}:{@sec}"/>
 		<counter id="sms" name="Messages"/>
 		<counter id="data" name="Data" type="text"/>
+		<counter id="price" name="Price" units="₪"/>
 	</counters>
 	<keywords>Сотовый телефон, мобильный, мобильник, теле2, Израиль, mobile, cellphone, golan, golantelecom, גולן</keywords>
 	<type>cell</type>

@@ -3,4 +3,9 @@
 	<change version="1" date="2014-07-11">
 	- Initial version.
 	</change>
+	<change version="2" date="2014-07-12">
+	- Fixed the first line details always being shown even when another line is specified in the setting.
+	- Current price has been added.
+	- Minor provider description bugfix.
+	</change>
 </history>

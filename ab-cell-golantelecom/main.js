@@ -1,6 +1,8 @@
 /**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
+var g_vat_percents = 18.0;
+
 var g_headers = 
 {
 	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
@@ -17,6 +19,7 @@ var g_get_details = "https://www.golantelecom.co.il/rpc/account_current_balance.
 
 function main() 
 {
+	var result = {success: true};
 	var prefs = AnyBalance.getPreferences();
 	AnyBalance.setDefaultCharset('utf-8');
 
@@ -35,14 +38,25 @@ function main()
 	var json = getJson(AnyBalance.requestPost(g_get_details, {account_id: prefs.login, billrun_name: ""}, addHeaders({Referer: g_billing_page})));
 	
 	// get the info block for the line we need
-	var lookfor = "<tbody>[\\s\\S]*?<td>" + prefs.line.substring(0,3) + "-" + prefs.line.substring(3,10) + "<\\/td>[\\S\\s]*?<div>"
+	var lookfor = "<tr>\\s*?<td>" + prefs.line.substring(0,3) + "-" + prefs.line.substring(3,10) + "<\\/td>[\\S\\s]*?<div>"
 	var stats = new RegExp(lookfor,"i").exec(json.content);
 	if (!stats)
 		throw new AnyBalance.Error("Unable to find data for " + prefs.line +", please make sure the phone nuber is correct!");
 	stats = stats[0];
+
+	// i probably always want this part in the log, leaving it here for not
+	AnyBalance.trace(stats);
 	
-	// parse params
-	var result = {success: true};
+	// parse prices, the price rows are like <td><span dir="ltr">₪8.47</span></td>, there are 2 of those
+	// i am looking here for <td...>(₪xxxxx)....</td>, twice, hopefully this makes the regex clear
+	var prices = /<td.*?>₪([\d\.]*).*?<\/td>[\s\S]*?<td.*?>₪([\d\.]*).*?<\/td>/i.exec(stats);
+	if (prices)
+	{
+		var totalprice = (parseFloat(prices[1])+parseFloat(prices[2]))*(1.0+g_vat_percents/100.0);
+		getParam(totalprice.toFixed(2).toString(), result, 'price', null, null, parseBalance); 
+	}
+	
+	// parse simple params
 	getParam(stats, result, 'calls',/<td>דקות שיחה<\/td>[\s\S]*?<td>(.*?)<\/td>/i, replaceTagsAndSpaces, parseMinutes);
 	getParam(stats, result, 'sms',/<td>SMS<\/td>[\s\S]*?<td>(.*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(stats, result, 'data',/<td>גלישה<\/td>[\s\S]*?<td>(.*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);

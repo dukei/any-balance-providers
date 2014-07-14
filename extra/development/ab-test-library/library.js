@@ -7,9 +7,11 @@ AnyBalance (http://any-balance-providers.googlecode.com)
 Содержит некоторые полезные для извлечения значений с сайтов функции.
 Для конкретного провайдера рекомендуется оставлять в этом файле только те функции, которые используются.
 
-library.js v0.11 от 27.05.14
+library.js v0.12 от 14.07.14
 
 changelog:
+14.07.14 getParam - Фикс (Если !isset(html), а не !html то не падаем, а пишем ошибку в trace)
+
 04.06.14 parseBalance - улучшен разбор сложных балансов (,82)
 
 27.05.14 getParam - Если !html то не падаем, а пишем ошибку в trace
@@ -51,7 +53,7 @@ changelog:
  */
  
 function getParam(html, result, param, regexp, replaces, parser) {
-	if(!html) {
+	if(!isset(html)) {
 		AnyBalance.trace('param1 is undefined!\n' + new Error().stack);
 		return;
 	}

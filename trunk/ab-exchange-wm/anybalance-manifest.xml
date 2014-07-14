@@ -11,7 +11,6 @@
 	<author>Oleg Medinskiy &lt;grf@ukr.net&gt;</author>
 	<files>
 		<icon>icon.png</icon>
-		<preferences>preferences.xml</preferences>
 		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>

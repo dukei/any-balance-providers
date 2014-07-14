@@ -746,8 +746,12 @@ function getChita(){
 }
 
 function getAmur(){
-    var baseurl = 'https://clb.amur.mts.ru/cblg/';
-    typicalLanBillingInetTv(baseurl + 'index.php?r=site/login');
+	var urlIndex = 'https://clb.amur.mts.ru/cblg/index.php?r=site/login';
+	var urlAjax = 'https://clb.amur.mts.ru/cblg/index.php?r=account/vgroups&agrmid=';
+	
+	newTypicalLanBillingInetTv(urlIndex, urlAjax);
+    // var baseurl = 'https://clb.amur.mts.ru/cblg/';
+    // typicalLanBillingInetTv(baseurl + 'index.php?r=site/login');
 }
 
 function getOrel(){
@@ -890,7 +894,7 @@ function newTypicalLanBillingInetTv(urlIndex, urlAjax) {
 				usedAccs['acc_' + json.acc] = true;
 			}
 			
-			if(!/Нет подключенных услуг/i.test(json.services)) {
+			if(!/Нет подключенных услуг|не\s*доступно/i.test(json.services)) {
 				sumParam(json.tarifdescr, result, '__tariff', null, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
 			}
 		}

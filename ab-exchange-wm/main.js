@@ -27,6 +27,41 @@ function getRate(result, info) {
 	result['WMBWMR'] = kurs[17];
 }
 
+var currencysArray = [
+	'WMZ-&gt;WMR',
+	'WMR-&gt;WMZ',
+	'WMZ-&gt;WME',
+	'WME-&gt;WMZ',
+	'WME-&gt;WMR',
+	'WMR-&gt;WME',
+	'WMZ-&gt;WMU',
+	'WMU-&gt;WMZ',
+	'WMR-&gt;WMU',
+	'WMU-&gt;WMR',
+	'WMU-&gt;WME',
+	'WME-&gt;WMU',
+	'WMB-&gt;WMZ',
+	'WMZ-&gt;WMB',
+	'WMB-&gt;WME',
+	'WME-&gt;WMB',
+	'WMR-&gt;WMB',
+	'WMB-&gt;WMR',
+];
+
+function getRateNew(html, result) {
+	for (var i = 0; i < currencysArray.length; i++) {
+		var currItem = currencysArray[i];
+		var value = getParam(html, null, null, new RegExp(currItem + '(?:[^>]*>){7}([\\s\\d.,]+)<', 'i'), null, parseBalance);
+		currItem = currItem.replace(/[^wmzrueb]/ig, '');
+		
+		if(isset(value)) {
+			getParam(value, result, currItem);
+		} else {
+			AnyBalance.trace('Не удалось найти курс для ' + currItem);
+		}
+	}
+}
+
 function main(){
     if (AnyBalance.getLevel() < 5)
 		throw new AnyBalance.Error("Для этого провайдера необходимо AnyBalance API v.5+");
@@ -34,6 +69,8 @@ function main(){
 	AnyBalance.trace('Connecting to http://wm.exchanger.ru/asp/default.asp...');
 	var info = AnyBalance.requestGet('http://wm.exchanger.ru/asp/default.asp');
 	var result = {success: true};
-	getRate(result, info);
+	//getRate(result, info);
+	getRateNew(info, result);
+	
 	AnyBalance.setResult(result);
 }

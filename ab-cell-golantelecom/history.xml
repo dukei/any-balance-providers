@@ -8,4 +8,7 @@
 	- Current price has been added.
 	- Minor provider description bugfix.
 	</change>
+	<change version="3" date="2014-07-15">
+	- Time format has been updated to minutes and seconds only.
+	</change>
 </history>

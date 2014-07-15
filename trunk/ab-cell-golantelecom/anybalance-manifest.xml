@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-cell-golantelecom</id>
+	<id version="3">ab-cell-golantelecom</id>
 	<api flags="no_browser"/>
 	<name>Golan Telecom</name>
 	<description html="true"><![CDATA[
@@ -21,7 +21,7 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="calls" name="Calls" type="time_interval" format="{@H}:{@min}:{@sec}"/>
+		<counter id="calls" name="Calls" type="time_interval" format="{@MIN}:{@sec}"/>
 		<counter id="sms" name="Messages"/>
 		<counter id="data" name="Data" type="text"/>
 		<counter id="price" name="Price" units="₪"/>

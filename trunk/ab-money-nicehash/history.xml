@@ -6,4 +6,7 @@
 	<change version="2" date="2014-07-11">
 	- BTC wallet validation has been added.
 	</change>
+	<change version="3" date="2014-07-15">
+	- Improved error checking.
+	</change>
 </history>

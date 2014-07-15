@@ -46,8 +46,23 @@ function main()
 	// set the unit according to the multiplier
 	getParam(g_multiplier_names[prefs.btcunits], result, "btcunits", null, null, html_entity_decode);
 	
-	// access NiceHash API and iterate through providers, make sure we have some stats
-	var json = getJson(AnyBalance.requestGet(baseurl + prefs.wallet, g_headers));
+	// access NiceHash API, supposed to return a json, yet somettimes, 
+	// for example, while under maintenance, the site returns an html instead of json
+	var response = AnyBalance.requestGet(baseurl + prefs.wallet, g_headers);
+	if (/<body/i.exec(response)!=null)
+	{
+		var errdiv = /<div class="panel-heading">(.*?)<\/div>/.exec(response);
+		if (errdiv!=null)
+			throw new AnyBalance.Error("nicehash.com: "+replaceAll(errdiv[1],replaceTagsAndSpaces),true); 
+		else 
+        {
+            var title = /<title>(.*?)<\/title>/.exec(response);
+			throw new AnyBalance.Error("nicehash.com: "+ (title!=null) ? title[1] : "unknown error",true); 
+        }
+	}
+		
+	// parse the json reply, make sure we have some stats
+	var json = getJson(response);
 	if (json.result.stats.length==0)
 		throw new AnyBalance.Error("No data for " + prefs.wallet);
 	

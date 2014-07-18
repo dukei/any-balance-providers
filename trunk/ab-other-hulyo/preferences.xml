@@ -8,53 +8,18 @@
 		entries="לא מוגבל|30|15|10|7|6|5|4|3|2"
 		entryValues="999999|30|15|10|7|6|5|4|3|2">
 	</ListPreference>
-	<CheckBoxPreference
-        title="יציאה בימי א"
-        defaultValue="true"
-        summaryOn="כן"
-        summaryOff="לא"
-        key="day0"> 
-	</CheckBoxPreference>
-	<CheckBoxPreference
-        title="יציאה בימי ב"
-        defaultValue="true"
-        summaryOn="כן"
-        summaryOff="לא"
-        key="day1"> 
-	</CheckBoxPreference>
-	<CheckBoxPreference
-        title="יציאה בימי ג"
-        defaultValue="true"
-        summaryOn="כן"
-        summaryOff="לא"
-        key="day2"> 
-	</CheckBoxPreference>
-	<CheckBoxPreference
-        title="יציאה בימי ד"
-        defaultValue="true"
-        summaryOn="כן"
-        summaryOff="לא"
-        key="day3"> 
-	</CheckBoxPreference>
-	<CheckBoxPreference
-        title="יציאה בימי ה"
-        defaultValue="true"
-        summaryOn="כן"
-        summaryOff="לא"
-        key="day4"> 
-	</CheckBoxPreference>
-	<CheckBoxPreference
-        title="יציאה בימי ו"
-        defaultValue="true"
-        summaryOn="כן"
-        summaryOff="לא"
-        key="day5"> 
-	</CheckBoxPreference>
-	<CheckBoxPreference
-        title="יציאה בשבת"
-        defaultValue="true"
-        summaryOn="כן"
-        summaryOff="לא"
-        key="day6"> 
-	</CheckBoxPreference>
+	<CheckBoxPreference title="יציאה בימי א" defaultValue="true" summaryOn="כן" summaryOff="לא" key="day0"/>
+	<CheckBoxPreference title="יציאה בימי ב" defaultValue="true" summaryOn="כן" summaryOff="לא" key="day1"/> 
+	<CheckBoxPreference title="יציאה בימי ג" defaultValue="true" summaryOn="כן" summaryOff="לא" key="day2"/>
+	<CheckBoxPreference title="יציאה בימי ד" defaultValue="true" summaryOn="כן" summaryOff="לא" key="day3"/>
+	<CheckBoxPreference title="יציאה בימי ה" defaultValue="true" summaryOn="כן" summaryOff="לא" key="day4"/>
+	<CheckBoxPreference title="יציאה בימי ו" defaultValue="true" summaryOn="כן" summaryOff="לא" key="day5"/>
+	<CheckBoxPreference title="יציאה בשבת"   defaultValue="true" summaryOn="כן" summaryOff="לא" key="day6"/> 
+	<CheckBoxPreference title="חזרה בימי א"  defaultValue="true" summaryOn="כן" summaryOff="לא" key="rday0"/>
+	<CheckBoxPreference title="חזרה בימי ב"  defaultValue="true" summaryOn="כן" summaryOff="לא" key="rday1"/> 
+	<CheckBoxPreference title="חזרה בימי ג"  defaultValue="true" summaryOn="כן" summaryOff="לא" key="rday2"/>
+	<CheckBoxPreference title="חזרה בימי ד"  defaultValue="true" summaryOn="כן" summaryOff="לא" key="rday3"/>
+	<CheckBoxPreference title="חזרה בימי ה"  defaultValue="true" summaryOn="כן" summaryOff="לא" key="rday4"/>
+	<CheckBoxPreference title="חזרה בימי ו"  defaultValue="true" summaryOn="כן" summaryOff="לא" key="rday5"/>
+	<CheckBoxPreference title="חזרה בשבת"    defaultValue="true" summaryOn="כן" summaryOff="לא" key="rday6"/> 
 </PreferenceScreen>

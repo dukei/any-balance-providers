@@ -1,6 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
 	<ListPreference
+		key="source"
+		title="Source"
+		dialogTitle="Select source of news"
+		summary="||{@s}"
+		entries="ForexFactory.com|Investing.com"
+		entryValues="1|2">
+	</ListPreference>
+	<ListPreference
 		key="currency"
 		title="Currency"
 		dialogTitle="Select currency to watch"
@@ -8,6 +16,25 @@
 		entries="Any|AUD|CAD|CHF|CNY|EUR|GBP|JPY|NZD|USD|ADP|AED|AFA|ALL|AMD|ANG|AON|ARS|ATS|AWG|AZM|BBD|BDT|BGL|BHD|BIF|BMD|BND|BOB|BRL|BSD|BTN|BWP|BYB|BZD|CLP|COP|CRC|CUP|CVE|CYP|CZK|DJF|DKK|DOP|DZD|ECS|EEK|EGP|ETB|FIM|FJD|FKP|FRF|GEL|GHC|GIP|GMD|GNF|GRD|GTQ|GWP|GYD|HKD|HNL|HRK|HTG|HUF|IDR|IEP|ILS|INR|IQD|IRR|ISK|JMD|JOD|KES|KGS|KHR|KMF|KPW|KRW|KWD|KYD|KZT|LAK|LBP|LKR|LRD|LSL|LTL|LVL|LYD|MAD|MDL|MGF|MKD|MMK|MNT|MOP|MRO|MTL|MUR|MVR|MWK|MXN|MYR|MZM|NAD|NGN|NIO|NLG|NOK|NPR|OMR|PAB|PEN|PGK|PHP|PKR|PLN|PTE|PYG|QAR|ROL|RUR|RWF|SAR|SBD|SCR|SDD|SEK|SGD|SHP|SIT|SKK|SLL|SOS|SRG|STD|SVC|SYP|SZL|THB|TJS|TMM|TND|TOP|TPE|TRL|TTD|TWD|TZS|UAH|UGX|UYU|UZS|VEB|VND|VUV|WST|XAF|XAF|XCD|XDR|XOF|XPF|YER|YUN|ZAR|ZMK|ZRN|ZWD"
 		entryValues="Any|AUD|CAD|CHF|CNY|EUR|GBP|JPY|NZD|USD|ADP|AED|AFA|ALL|AMD|ANG|AON|ARS|ATS|AWG|AZM|BBD|BDT|BGL|BHD|BIF|BMD|BND|BOB|BRL|BSD|BTN|BWP|BYB|BZD|CLP|COP|CRC|CUP|CVE|CYP|CZK|DJF|DKK|DOP|DZD|ECS|EEK|EGP|ETB|FIM|FJD|FKP|FRF|GEL|GHC|GIP|GMD|GNF|GRD|GTQ|GWP|GYD|HKD|HNL|HRK|HTG|HUF|IDR|IEP|ILS|INR|IQD|IRR|ISK|JMD|JOD|KES|KGS|KHR|KMF|KPW|KRW|KWD|KYD|KZT|LAK|LBP|LKR|LRD|LSL|LTL|LVL|LYD|MAD|MDL|MGF|MKD|MMK|MNT|MOP|MRO|MTL|MUR|MVR|MWK|MXN|MYR|MZM|NAD|NGN|NIO|NLG|NOK|NPR|OMR|PAB|PEN|PGK|PHP|PKR|PLN|PTE|PYG|QAR|ROL|RUR|RWF|SAR|SBD|SCR|SDD|SEK|SGD|SHP|SIT|SKK|SLL|SOS|SRG|STD|SVC|SYP|SZL|THB|TJS|TMM|TND|TOP|TPE|TRL|TTD|TWD|TZS|UAH|UGX|UYU|UZS|VEB|VND|VUV|WST|XAF|XAF|XCD|XDR|XOF|XPF|YER|YUN|ZAR|ZMK|ZRN|ZWD">
 	</ListPreference>
+	<ListPreference
+		key="in_language"
+		title="Language"
+		dialogTitle="Select language for fetch news"
+		summary="||{@s}"
+		entries="English|Chinese|Deutsch|Ellinika|English (UK)|Español (España)|Español (México)|Français|Israel|Italiano|Japan|Korean|Nederlands|Polski|Português (Brasil)|Português (Portugal)|Russian|Saudi Arabia|Suomi|Svenska|Türkçe"
+		entryValues="1|6|8|14|51|4|49|5|2|9|11|18|16|15|12|50|7|3|17|13|10">
+	</ListPreference>
+	<ListPreference
+		key="in_currency"
+		title="Currency"
+		dialogTitle="Select currency to watch"
+		summary="||{@s}"
+		entries="AUD (Australia)|CAD (Canada)|CHF (Switzerland)|CNY (China)|DKK (Denmark)|EUR (Euro Zone)|GBP (United Kingdom)|HKD (Hong Kong)|JPY (Japan)|KRW (South Korea)|MXN (Mexico)|NZD (New Zealand)|NOK (Norway)|RUB (Russia)|SEK (Sweden)|SGD (Singapore)|USD (United States)|ZAR (South Africa)"
+		entryValues="25|6|12|37|24|72|4|39|35|11|7|43|60|56|9|36|5|110">
+	</ListPreference>
+
+
+
 </PreferenceScreen>
 
 

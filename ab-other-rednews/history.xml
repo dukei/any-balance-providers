@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="4" date="2014-07-19">
+      - Added investing.com as an alternative source of news.
+      - Renamed to "Rednews".
+    </change>
     <change version="3" date="2014-07-03">
       - Improvements of the time recognition.
     </change>

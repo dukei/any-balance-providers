@@ -16,20 +16,27 @@ function main(){
 
     AnyBalance.setDefaultCharset('windows-1251'); 
 
-	var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
+	var html = AnyBalance.requestGet(baseurl + 'login/', g_headers);
 	
 	var action = getParam(html, null, null, /<form name="mainForm" method="POST" action="([^"]+)/i);
 	
-    html = AnyBalance.requestPost(action, {
-		email:prefs.login,
-		pass:prefs.password,
-		passOk:false
-    }, addHeaders({Referer: baseurl})); 
+	try{
+        html = AnyBalance.requestPost(action, {
+			email:prefs.login,
+			pass:prefs.password,
+			passOk:false
+        }, addHeaders({Referer: baseurl})); 
+    }catch(e){
+    	if(prefs.__dbg)
+    		html = AnyBalance.requestGet(baseurl + 'profile/', g_headers);
+    	else
+    		throw e;
+    }
 
     if(!/\/logout\//i.test(html)){
-        var error = getParam(html, null, null, /<p[^>]+class="red"[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
+        var error = getParam(html, null, null, /<p[^>]+class="(?:red|msg-error)"[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
-            throw new AnyBalance.Error(error);
+            throw new AnyBalance.Error(error, null, /Логин или пароль неверный/i.test(error));
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
 	

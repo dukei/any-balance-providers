@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="6">ab-bonus-citilink</id>
+	<id version="7">ab-bonus-citilink</id>
+	<api flags="no_browser"/>
 	<name>Ситилинк</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о количестве бонусов в бонусной программе электронного дискаунтера "Ситилинк" (http://www.citilink.ru/).</p>
-	<p>Информация берется из личного кабинета (http://www.citilink.ru/login).</p>
+	<p>Информация берется из личного кабинета (http://www.citilink.ru/login/).</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
 	<p>Настройки:</p>
@@ -33,7 +34,7 @@
 		<counter id="position" name="Ваше место"/>
 		<counter id="nachisleno" name="Начислено бонусов"/>
 	</counters>
-	<keywords>ситилинк</keywords>
+	<keywords>ситилинк,citilink,citylink</keywords>
 	<type>bonus</type>
 	<country>ru</country>
 </provider>

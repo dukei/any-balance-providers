@@ -25,7 +25,7 @@ function main() {
 	//checkEmpty(action, 'Не удалось найти форму входа, сайт изменен?', true);
 	
     html = AnyBalance.requestPost(baseurl + action, {
-        UserName:prefs.login,
+        Login:prefs.login,
         Password:prefs.password
     }, addHeaders({Referer: baseurl + action}));
 	
@@ -34,7 +34,7 @@ function main() {
     if(!/Authorize\/Logout/i.test(html)){
         var error = getParam(html, null, null, /<div[^>]+validation-summary-errors[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
-            throw new AnyBalance.Error(error);
+            throw new AnyBalance.Error(error, null, /неверное имя пользователя или пароль/i.test(error));
         throw new AnyBalance.Error('Не удалось войти в интернет-банк. Сайт изменен?');
     }
 	

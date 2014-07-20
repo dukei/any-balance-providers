@@ -28,8 +28,10 @@ function main() {
 		site = getParam(captchascript, null, null, /site\s*:\s*'([^']*)/i, replaceTagsAndSpaces);
 		
 		//https://www.google.com/recaptcha/api/image?c=03AHJ_VuuzqNlBBECwEQGKOXBge-m_CxMRdNu9fcuFbOerxQt5RURzXmCdP-cKgAYBJ4xdpNwO9WRlfoUfNFygz-UV4v03Z41GI6XWioxMy-uxJFQNUtQ9qNtQ3ytOMOjFZwPNRICHfapiiRUsN9_8CW_j54wyjGbujg
+        AnyBalance.setOptions({FORCE_CHARSET: 'base64'});
 		var captcha = AnyBalance.requestGet('https://www.google.com/recaptcha/api/image?c=' + challenge + '&k=' + site, g_headers);
 		captchaa = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
+        AnyBalance.setOptions({FORCE_CHARSET: null});
 		AnyBalance.trace('Капча получена: ' + captchaa);
 	}else{
 		throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
@@ -49,7 +51,10 @@ function main() {
 		if(/Лицензионное соглашение/i.test(html))
 			throw new AnyBalance.Error('Вам необходимо подтвердить лицензионное соглашение!');
 		if(/Проверьте ввод кода с картинки/i.test(html))
-			throw new AnyBalance.Error('Вы ввели не верные символы с картинки!');
+			throw new AnyBalance.Error('Вы ввели неверные символы с картинки!');
+		var error = getParam(html, null, null, /<div[^>]+class=["']MessageError["'][^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+		if(error)
+		    throw new AnyBalance.Error(error, null, /Проверьте логин и пароль/i.test(error));
 			
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}

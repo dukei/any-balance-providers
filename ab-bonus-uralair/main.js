@@ -40,9 +40,11 @@ function main(){
 
     var result = {success: true};
 
-    getParam(html, result, 'balance', /Ваш баланс:(?:[^>]*>){4}([\s\d]+)/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, '__tariff', /Ваш уровень участия(?:[^>]*>){4}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'balance', /<div[^>]+class="b-program_balance-name"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, '__tariff', /<div[^>]+class="b-program_level-name"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'cardnum', /Номер карты:([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'fio', /<div[^>]+class="b-user_name"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'city', /<div[^>]+class="b-user_city"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
 
     AnyBalance.setResult(result);
 }

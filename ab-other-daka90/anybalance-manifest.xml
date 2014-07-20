@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-other-daka90</id>
+	<api flags="no_browser"/>
+	<name>Daka90</name>
+	<description html="true"><![CDATA[
+	<p>.חו"ל ברגע האחרון של דקה 90 בווידגט טקסט פשוט</p>
+	]]></description>
+	<author>borislip@gmail.com</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="info" name="טיסות" type="text"/>
+	</counters>
+	<keywords>travel,Daka90,דקה 90</keywords>
+	<type>other</type>
+	<country>il</country>
+</provider>

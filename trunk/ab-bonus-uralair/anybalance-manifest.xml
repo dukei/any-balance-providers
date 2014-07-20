@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="5">ab-bonus-uralair</id>
+	<id version="6">ab-bonus-uralair</id>
 	<name>Программа "Крылья", Уральские Авиалинии</name>
 	<description html="true"><![CDATA[
 	<p>Получает баланс баллов и другую информацию по бонусной программе "Крылья" Уральских Авиалиний (http://www.uralairlines.ru).</p>
-	<p>Информация берется из личного кабинета https://client.uralairlines.ru.</p>
-	<p>Если у вас ещё нет ПИН-кода для входа в личный кабинет, получите его на этой странице: https://client.uralairlines.ru/getpassword/</p>
+	<p>Информация берется из личного кабинета https://loyalty.uralairlines.ru.</p>
+	<p>Если у вас ещё нет ПИН-кода для входа в личный кабинет, получите его на этой странице: https://loyalty.uralairlines.ru/ru/register/forget</p>
 	]]></description>
 	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
 	<files>
@@ -19,6 +19,8 @@
 	<counters>
 		<counter id="balance" name="Баланс" units=" Бр"/>
 		<counter id="cardnum" name="Номер карты" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="city" name="Город" type="text"/>
 	</counters>
 	<keywords>ural airlines</keywords>
 	<type>bonus</type>

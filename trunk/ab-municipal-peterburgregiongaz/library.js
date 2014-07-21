@@ -2,7 +2,9 @@
 The uncompressed full source code of this library is here: https://code.google.com/p/any-balance-providers/source/browse/trunk/extra/development/ab-test-library/library.js
 */
 ;
-function getParam(f,k,b,g,c,a){if(!isAvailable(b)){AnyBalance.trace(b+" is disabled!");
+function getParam(f,k,b,g,c,a){if(!isset(f)){AnyBalance.trace("param1 is undefined!\n"+new Error().stack);
+return
+}if(!isAvailable(b)){AnyBalance.trace(b+" is disabled!");
 return
 }var h=isArray(g)?g:[g];
 for(var d=0;
@@ -33,7 +35,7 @@ a&&b<a.length;
 }else{c=c.replace(a[b],a[b+1]);
 ++b
 }}return c
-}function parseBalance(b){var a=getParam(html_entity_decode(b).replace(/\s+/g,""),null,null,/(-?\.?\d[\d'.,]*)/,replaceFloat,parseFloat);
+}function parseBalance(b){var a=getParam(html_entity_decode(b).replace(/\s+/g,""),null,null,/(-?[.,]?\d[\d'.,]*)/,replaceFloat,parseFloat);
 AnyBalance.trace("Parsing balance ("+a+") from: "+b);
 return a
 }function parseCurrency(b){var a=getParam(html_entity_decode(b).replace(/\s+/g,""),null,null,/-?\d[\d.,]*(\S*)/);

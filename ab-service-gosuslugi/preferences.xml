@@ -23,13 +23,13 @@
 		inputType="textPassword">
 	</EditTextPreference>
 	<EditTextPreference
-		title="Номер автомобиля"
+		title="Номера автомобилей"
 		key="gosnumber"
 		summary="||{@s}"
-		dialogTitle="Номер автомобиля"
+		dialogTitle="Номера автомобилей"
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите номер автомобиля в формате х123хх50 или 1234хх50, буквы русские.">
+		dialogMessage="Введите номера автомобилей через символ ; (в формате х123хх50 или 1234хх50, буквы русские) максимально можно ввести 3 номера.">
 	</EditTextPreference>
 	<EditTextPreference
 		title="Серия и номер ВУ"

@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="65" date="2014-07-21">
+	- Исправлен регион: Чита.
+	</change>
 	<change version="64" date="2014-07-14">
 	- Исправлен регион: Амурская область.
 	</change>

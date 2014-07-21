@@ -741,8 +741,12 @@ function getSaratov(){
 }
 
 function getChita(){
-    var baseurl = 'https://clb.chita.mts.ru/chita/';
-    typicalLanBillingInetTv(baseurl + 'index.php?r=site/login');
+	var urlIndex = 'https://clb.chita.mts.ru/chita/index.php?r=site/login';
+	var urlAjax = 'https://clb.chita.mts.ru/chita/index.php?r=account/vgroups&agrmid=';
+	
+	newTypicalLanBillingInetTv(urlIndex, urlAjax);
+    //var baseurl = 'https://clb.chita.mts.ru/chita/';
+    //typicalLanBillingInetTv(baseurl + 'index.php?r=site/login');
 }
 
 function getAmur(){

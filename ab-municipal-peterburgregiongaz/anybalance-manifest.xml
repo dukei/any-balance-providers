@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-municipal-peterburgregiongaz</id>
+	<id version="3">ab-municipal-peterburgregiongaz</id>
 	<api flags="no_browser"/>
 	<name>Межрегионгаз</name>
 	<description html="true"><![CDATA[

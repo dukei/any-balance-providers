@@ -86,7 +86,7 @@ function fetchAccount(baseurl, html, result){
         throw new AnyBalance.Error('Не удалось найти список счетов. Сайт изменен?');
 	
 	// <tr class="[^"]*">\s*<td[^>]*>\s*\d{14,}2065(?:[^>]*>){20}\s*<\/tr>
-    var re = new RegExp('<tr class="[^"]*">\\s*<td[^>]*>\\s*\\d{14,}' + (prefs.contract || '\\d{4}') + '(?:[^>]*>){20}\\s*</tr>', 'i');
+    var re = new RegExp('<tr class="[^"]*">\\s*<td[^>]*>\\s*\\d*' + (prefs.contract || '\\d{4}') + '\\s*<br[^>]*>[\\s\\S]*?</tr>', 'i');
     var tr = getParam(table, null, null, re);
     if(!tr)
         throw new AnyBalance.Error('Не удаётся найти ' + (prefs.contract ? 'счет с последними цифрами ' + prefs.contract : 'ни одного счета!'));

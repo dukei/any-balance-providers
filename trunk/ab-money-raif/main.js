@@ -12,6 +12,7 @@ var g_headers = {
 var g_xml_login = '<?xml version=\'1.0\' encoding=\'UTF-8\' standalone=\'yes\' ?><soapenv:Envelope xmlns:xsd="http://entry.rconnect/xsd" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://service.rconnect" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><soapenv:Header /><soapenv:Body><ser:login><login>%LOGIN%</login><password>%PASSWORD%</password></ser:login></soapenv:Body></soapenv:Envelope>',
 	g_xml_accounts = '<?xml version=\'1.0\' encoding=\'UTF-8\' standalone=\'yes\' ?><soapenv:Envelope xmlns:xsd="http://entry.rconnect/xsd" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://service.rconnect" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><soapenv:Header /><soapenv:Body><ser:GetAccounts /></soapenv:Body></soapenv:Envelope>',
 	g_xml_cards = '<?xml version=\'1.0\' encoding=\'UTF-8\' standalone=\'yes\' ?><soapenv:Envelope xmlns:xsd="http://entry.rconnect/xsd" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://service.rconnect" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><soapenv:Header /><soapenv:Body><ser:GetCards /></soapenv:Body></soapenv:Envelope>';
+	g_xml_loans = '<?xml version=\'1.0\' encoding=\'UTF-8\' standalone=\'yes\' ?><soapenv:Envelope xmlns:xsd="http://entry.rconnect/xsd" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://service.rconnect" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><soapenv:Header /><soapenv:Body><ser:GetLoans /></soapenv:Body></soapenv:Envelope>';
 
 function translateError(error) {
 	var errors = {
@@ -180,7 +181,7 @@ function fetchDeposit(baseurl, html, result){
 function fetchCredit(baseurl, html, result){
     var prefs = AnyBalance.getPreferences();
 	
-    html = AnyBalance.requestPost(baseurl + 'RCLoanService', g_xml_accounts, addHeaders({SOAPAction: ''})); 
+    html = AnyBalance.requestPost(baseurl + 'RCLoanService', g_xml_loans, addHeaders({SOAPAction: ''})); 
 	
 	getParam(html, result, 'rate', /<intrestRate>([\s\S]*?)<\/intrestRate>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'cred_ammount', /<loanAmount>([\s\S]*?)<\/loanAmount>/i, replaceTagsAndSpaces, parseBalance);

@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="16" date="2014-07-21">
+	- Исправлено получение кредитов.
+	</change>
 	<change version="15" date="2014-07-02">
 	- Поддержка паролей со спецсимволами.
 	</change>

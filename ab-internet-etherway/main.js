@@ -18,19 +18,22 @@ function main() {
 	checkEmpty(prefs.password, 'Введите пароль!');
 		
 	var html = AnyBalance.requestPost(baseurl + 'site/login', {
-		'LoginForm[username]':prefs.login,
-		'LoginForm[password]':prefs.password,
-		yt0:'войти',
+		'FormSiteLogin[username]':prefs.login,
+		'FormSiteLogin[password]':prefs.password,
+		'FormSiteLogin[ajax]':1,
+		'FormSiteLogin[authWeb][id]':0,
+		'FormSiteLogin[authWeb][type]':''
     }, addHeaders({Referer: baseurl + 'site/login'}));
 	
 	if(!/logout/i.test(html)) {
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
     var result = {success: true};
-	getParam(html, result, 'dogovor', /Номер договора(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'fio', /Абонент(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'balance', /Баланс(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'discount', /Программа лояльности(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	
+	getParam(html, result, 'dogovor', /Договор(?:[^>]*>){3}([^<]*)</i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'fio', /ФИО(?:[^>]*>){3}([^<]*)</i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'balance', />Бал?ланс(?:[^>]*>){3}([^<]*)</i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'discount', /Скидка(?:[^>]*>){3}([^<]*)</i, replaceTagsAndSpaces, parseBalance);
 	
     AnyBalance.setResult(result);
 }

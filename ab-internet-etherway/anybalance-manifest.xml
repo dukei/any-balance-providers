@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-internet-etherway</id>
+	<id version="2">ab-internet-etherway</id>
 	<api flags="no_browser"/>
 	<name>Etherway (Чебоксары)</name>
 	<description html="true"><![CDATA[
@@ -16,8 +16,8 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units="р"/>
-		<counter id="discount" name="Скидка" units="%"/>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="discount" name="Скидка" units=" %"/>
 		<counter id="dogovor" name="Номер договора" type="text"/>
 		<counter id="fio" name="Абонент" type="text"/>
 	</counters>

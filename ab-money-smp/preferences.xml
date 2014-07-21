@@ -31,12 +31,12 @@
 		defaultValue="card">
     </ListPreference> 
     <EditTextPreference
-        title="Номер карты" 
+        title="Номер карты/счета" 
         positiveButtonText="ОК" 
         summary="|Автоматически|{@s}" 
         dialogTitle="Номер карты" 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите сюда цифры номера карты. Если оставить поле пустым, то будет показана информация по первой карте."
+        dialogMessage="Введите сюда последние цифры номера карты/счета. Если оставить поле пустым, то будет показана информация по первой карте/счету."
         key="contract">
     </EditTextPreference>
 </PreferenceScreen>

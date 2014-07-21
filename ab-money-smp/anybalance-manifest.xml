@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="6">ab-money-smp</id>
+	<id version="7">ab-money-smp</id>
 	<api min_level="5" flags="no_browser"/>
 	<name>СМП Банк</name>
 	<description html="true"><![CDATA[

@@ -521,13 +521,15 @@ function getSdv(){
 }
 
 function getVologda(){
-    var baseurl = 'https://lk.vologda.mts.ru/';
-    typicalLanBillingInetTv(baseurl + 'index.php?r=site/login');
+    var baseurl = 'https://lk.vologda.mts.ru/index.php?r=site/login';
+    var urlAjax = 'https://lk.vologda.mts.ru/index.php?r=account/vgroups&agrmid=';
+
+    newTypicalLanBillingInetTv(baseurl, urlAjax);
 }
 
 function getIzhevsk(){
-    var baseurl = 'https://lk.izhnt.ru/index.php?r=site/login';
-    var urlAjax = 'https://lk.izhnt.ru/index.php?r=account/vgroups&agrmid=';
+    var baseurl = 'https://lkizh.pv.mts.ru/index.php?r=site/login';
+    var urlAjax = 'https://lkizh.pv.mts.ru/index.php?r=account/vgroups&agrmid=';
 
     newTypicalLanBillingInetTv(baseurl, urlAjax);
 }

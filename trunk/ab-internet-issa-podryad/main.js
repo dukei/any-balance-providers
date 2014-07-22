@@ -32,8 +32,8 @@ function main() {
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	
-	var href = getParam(html, null, null, /<div[^>]+class="menu"[^>]*>(?:[\s\S]*?<li[^>]*>\s*<a[^>]+href=\"){3}([\s\S]*?)\"/i, replaceTagsAndSpaces, html_entity_decode);
-	html = AnyBalance.requestPost(baseurl + 'webexecuter' + href, '', g_headers);
+	var href = getParam(html, null, null, /href="(\?action=ShowBalance[^"]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	html = AnyBalance.requestGet(baseurl + 'webexecuter' + href, '', g_headers);
 	
 	var result = {success: true};
 	

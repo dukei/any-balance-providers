@@ -15,13 +15,22 @@ var g_weekdays = ["א'","ב'","ג'","ד'","ה'","ו'","ש'"];
 function main() 
 {
 	var prefs = AnyBalance.getPreferences();
-	var url = 'http://data.hulyo.co.il/catalogs/v1.1/Flights/Production/above199EuroFlights.js';
+	var baseurl = 'http://data.hulyo.co.il/catalogs/v1.1/Flights/Production/';
+	var pages = ['under199EuroFlights.js','above199EuroFlights.js'];
 	var result = {success: true};
 	AnyBalance.setDefaultCharset('utf-8');
 	
-	// access hulyo flights data, the "above199Euro" are ALL flights, including the ones above 199, not just those 
-	var json = getJson(AnyBalance.requestGet(url,g_headers));
-	if (json.ErrorMessage!=null)
+	// access hulyo flights data
+	var json = getJson(AnyBalance.requestGet(baseurl + 'under199EuroFlights.js',g_headers));
+	var extra = getJson(AnyBalance.requestGet(baseurl + 'above199EuroFlights.js',g_headers));
+	
+	// combine the 2 catalogs into first one
+	if ((!json.ErrorMessage) && (extra.ErrorMessage))
+		json.ErrorMessage = extra.ErrorMessage;
+	json.Flights = json.Flights.concat(extra.Flights);
+	
+	// error checking, but only if there are really no flights at all
+	if ((!json.Flights.length) && (json.ErrorMessage))
 		throw new AnyBalance.Error(json.ErrorMessage,true);
 	
 	// prepare the info text from the reply json

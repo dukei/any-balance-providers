@@ -17,10 +17,10 @@ function main() {
 
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
-
-	var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
 	
-	var captchaa;
+	var html = AnyBalance.requestGet(baseurl + 'main?sysname=adm_logon_post', g_headers);
+	
+	/*var captchaa;
 	if(AnyBalance.getLevel() >= 7){
 		AnyBalance.trace('Пытаемся ввести капчу');
 		var captcha = AnyBalance.requestGet(baseurl + 'captcha/main.png?p=' + new Date().getTime());
@@ -28,21 +28,22 @@ function main() {
 		AnyBalance.trace('Капча получена: ' + captchaa);
 	}else{
 		throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
-	}
-	
+	}*/
+
 	html = AnyBalance.requestPost(baseurl + 'main?sysname=adm_logon_post', {
-		login: prefs.login,
-		password: prefs.password,
-		captcha_edit: captchaa
-	}, addHeaders({Referer: baseurl + 'login'}));
+		'xmlout':'',
+		email: prefs.login,
+		pass: prefs.password,
+		captcha_edit: ''
+	}, addHeaders({Referer: baseurl + 'main?sysname=adm_logon_post'}));
 
 	if (!/logout/i.test(html)) {
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	var result = {success: true};
 	
-	getParam(html, result, 'balance', /Договор об обязательном пенсионном страховании(?:[^>]*>){18}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, '__tariff', /Договор об обязательном пенсионном страховании(?:[^>]*>){13}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'balance', /Договор об обязательном пенсионном страховании(?:[^>]*>){6}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, '__tariff', /Договор об обязательном пенсионном страховании(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(result.__tariff, result, 'dogovor');
 	
 	AnyBalance.setResult(result);

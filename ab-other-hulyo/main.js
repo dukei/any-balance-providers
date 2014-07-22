@@ -11,6 +11,18 @@ var g_headers =
 // days of week
 var g_weekdays = ["א'","ב'","ג'","ד'","ה'","ו'","ש'"];
 
+// duplicate flights check (same dates, same destination, same price)
+function isUniqueFlight(val, idx, arr) 
+{
+	for (var i=0;i<idx;i++)
+		if ((arr[i].DealDestinationName==val.DealDestinationName) && (arr[i].PriceTitle==val.PriceTitle) &&
+			(arr[i].OutboundFlights[0].DepartureATA==val.OutboundFlights[0].DepartureATA) 		         &&
+			(arr[i].InboundFlights[0].DepartureATA==val.InboundFlights[0].DepartureATA) 		         )
+			return(false);
+	return(true);
+};
+	
+	
 // Main
 function main() 
 {
@@ -28,6 +40,7 @@ function main()
 	if ((!json.ErrorMessage) && (extra.ErrorMessage))
 		json.ErrorMessage = extra.ErrorMessage;
 	json.Flights = json.Flights.concat(extra.Flights);
+	json.Flights = json.Flights.filter(isUniqueFlight); 
 	
 	// error checking, but only if there are really no flights at all
 	if ((!json.Flights.length) && (json.ErrorMessage))
@@ -52,6 +65,8 @@ function main()
 		if (!eval("prefs.rday"+back.getDay()))
 			continue;
 			
+		AnyBalance.trace(JSON.stringify(f));
+		
 		// add remaining flights
 		info += info.length ? "\n" : "";
 		info += f.PriceTitle + ", " + g_weekdays[there.getDay()] + there.toTimeString().substring(0,5) + 

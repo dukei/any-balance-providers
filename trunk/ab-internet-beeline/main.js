@@ -62,6 +62,20 @@ function proceedCab(prefs) {
 			AnyBalance.trace('Cчет: ' + current['v_nmbillgroup'] + ' не активен');
 		}
 	}
+	// Телефон
+	for(var i = 0; i < json.client.phone.nums.length; i++) {
+		current = json.client.phone.nums[i];
+		
+		var state = current['v_nmstatus'];
+		if(/Активeн/i.test(state)) {
+			AnyBalance.trace('Нашли активный счет: ' + current['v_nmbillgroup']);
+			break;
+		} else {
+			AnyBalance.trace('Cчет: ' + current['v_nmbillgroup'] + ' не активен');
+		}
+	}	
+	
+	
 	if(current.empty)
 		throw new AnyBalance.Error('Не удалось найти ни одного активного счета, сайт изменен?');
 	

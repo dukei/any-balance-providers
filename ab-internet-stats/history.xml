@@ -23,5 +23,8 @@
 	Текущий тариф (sinitsynviktor)
 	Тукущий тариф Wimax (sinitsynviktor)
     </change>
+        <change version="7" date="2014-07-23">
+  Поддержка капчи (sinitsynviktor)
+    </change>
 </history>
 

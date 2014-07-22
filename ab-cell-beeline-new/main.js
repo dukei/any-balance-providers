@@ -532,7 +532,15 @@ function fetchPost(baseurl, html) {
 		
 		getParam(xhtml, result, 'traffic_used', /Итоговый объем данных \(MB\):([^>]*>){3}/i, [replaceTagsAndSpaces, /([\s\S]*?)/, '$1 мб'], parseTraffic);
 	}
-
+	
+	// Получение суммы по всем номерам
+	if(isAvailable(['total_balance'])) {
+		AnyBalance.trace('Пробуем получить данные по сумме всех номеров...');
+		
+		html = AnyBalance.requestGet(baseurl + 'c/post/fininfo/index.html', g_headers);
+		
+		getParam(html, result, 'total_balance', /Сумма по всем номерам(?:[^>]*>){59}([\s\d.,]+)/i, null, parseBalance);
+	}
 	//Возвращаем результат
 	AnyBalance.setResult(result);
 }

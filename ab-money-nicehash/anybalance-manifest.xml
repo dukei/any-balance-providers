@@ -6,7 +6,7 @@
 	<description html="true"><![CDATA[
 	<p>Provides nicehash.com unpaid balances for a given BTC wallet.</p>
 	]]></description>
-	<author>borislip@gmail.com</author>
+	<author>Borislip &lt;borislip@gmail.com&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

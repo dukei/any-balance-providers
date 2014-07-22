@@ -16,8 +16,16 @@ function main() {
 	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
-		
-	var html = AnyBalance.requestPost(baseurl + 'site/login', {
+	
+	try {
+		var html = AnyBalance.requestGet(baseurl + 'site/login', g_headers);
+	} catch(e){}
+	
+	if(AnyBalance.getLastStatusCode() > 400 || !html) {
+		throw new AnyBalance.Error('Ошибка! Сервер не отвечает! Попробуйте обновить баланс позже.');
+	}
+	
+	html = AnyBalance.requestPost(baseurl + 'site/login', {
 		'FormSiteLogin[username]':prefs.login,
 		'FormSiteLogin[password]':prefs.password,
 		'FormSiteLogin[ajax]':1,
@@ -25,9 +33,12 @@ function main() {
 		'FormSiteLogin[authWeb][type]':''
     }, addHeaders({Referer: baseurl + 'site/login'}));
 	
-	if(!/logout/i.test(html)) {
+	if(!/"result"\s*:\s*"OK"/i.test(html)) {
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
+	
+	html = AnyBalance.requestGet(baseurl + 'account', g_headers);
+	
     var result = {success: true};
 	
 	getParam(html, result, 'dogovor', /Договор(?:[^>]*>){3}([^<]*)</i, replaceTagsAndSpaces, html_entity_decode);

@@ -1,4 +1,4 @@
-﻿/**
+/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 
 Получает баланс и другую информацию для интерент провайдера СвязьТехноСервис
@@ -20,20 +20,37 @@ function main(){
 
     var baseurl = "http://cab.stsats.ru/";
 
-    AnyBalance.setDefaultCharset('windows-1251'); 
+    AnyBalance.setDefaultCharset('windows-1251');
 
-    var html = AnyBalance.requestPost(baseurl + 'index.php', {
-        l:prefs.login,
-        p:prefs.password
-    }, addHeaders({Referer: baseurl})); 
+    var html = AnyBalance.requestPost(baseurl + 'index.php', addHeaders({Referer: baseurl})); 
+
+	var params = createFormParams(html);
+  	var captcha_href = getParam(html, null, null, /(pic.php[^"]*)/i);
+        if    (name == 'intext')  {  
+				if(AnyBalance.getLevel() < 7)
+               				throw new AnyBalance.Error ('Этот провайдер требует ввода капчи. Обновите программу для поддержки капчи.');
+                	AnyBalance.trace('Пытаемся ввести капчу');
+			var captchaimg = AnyBalance.requestGet(baseurl + captcha_href);
+               		value = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captchaimg);
+       			AnyBalance.trace('Капча получена: ' + value);
+			
+        }
+ 
+	params.l = prefs.login;
+	params.p = prefs.password;
+        
+        html = AnyBalance.requestPost(baseurl + 'index.php', params, addHeaders({Referer: baseurl}));
 
     if(!/logout\.php/i.test(html)){
         var error = getParam(html, null, null, /alert\(\'([\s\S]*?)\'/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error);
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-    }
 
+    }
+	AnyBalance.trace('Авторизация выполнена');
+        AnyBalance.trace('Начинаю парсить...');
+        
     var result = {success: true};
     getParam(html, result, 'fio', /Добро пожаловать в [^<]*?кабинет,\s*([\s\S]*?)!/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'id', /Ваш персональный ID:\s*<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);

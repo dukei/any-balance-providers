@@ -467,8 +467,9 @@ function getKrv(){
 }
 
 function getPnz(){
-	var urlIndex = 'https://client.lanbilling.ptcomm.ru/index.php?r=site/login';
-	var urlAjax = 'https://client.lanbilling.ptcomm.ru/index.php?r=account/vgroups&agrmid=';
+
+	var urlIndex = 'https://lkpenza.pv.mts.ru/index.php?r=site/login';
+	var urlAjax = 'https://lkpenza.pv.mts.ru/index.php?r=account/vgroups&agrmid=';
 	
 	newTypicalLanBillingInetTv(urlIndex, urlAjax);
 }

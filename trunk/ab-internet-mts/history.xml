@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="67" date="2014-07-23">
+	- Исправлен регион: Пенза.
+	</change>
 	<change version="66" date="2014-07-22">
 	- Исправлены регионы: Ижевск, Вологда.
 	</change>

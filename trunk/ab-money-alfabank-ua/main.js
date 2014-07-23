@@ -86,12 +86,12 @@ function processCredit(html, baseurl, _accnum, result){
         throw new AnyBalance.Error("Введите 4 последних цифры номера карты или не вводите ничего, чтобы показать информацию по первой карте");*/
 
     var result = {success: true};
-    getParam(html, result, 'balance', /Условия договора[\s\S]{1,100}"column column-D-H">\s*([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, '__tariff', /Счет погашения кредита[\s\S]{1,100}"column column-D-H">\s*([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'period', /Срок предоставления[\s\S]{1,100}"column column-D-H">\s*([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'balance', /Условия договора(?:[^>]*>){2}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, '__tariff', /Счет погашения кредита(?:[^>]*>){2}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'period', /Срок предоставления(?:[^>]*>){2}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
 	
-	getParam(html, result, 'next_payment', /Следующий платеж[\s\S]*?<div class="column column-D-H">[\s\S]*?необходимо([\s\S]*?)<\/span/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'next_payment_date', /Следующий платеж[\s\S]*?<div class="column column-D-H">[\s\S]*?">\s*([\s\S]*?)<\/span/i, replaceTagsAndSpaces, parseDate);
+	getParam(html, result, 'next_payment', /Следующий платеж(?:[^>]*>){2,50}\s*<div class="column column-D-H">[^>]*>\s*необходимо([\s\S]*?)<\/span/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'next_payment_date', /Следующий платеж(?:[^>]*>){2,50}\s*<div class="column column-D-H">([^<]+)</i, replaceTagsAndSpaces, parseDate);
 	
     AnyBalance.setResult(result);
 }

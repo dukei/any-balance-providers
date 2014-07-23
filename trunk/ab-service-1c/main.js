@@ -12,31 +12,39 @@ var g_headers = {
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-    var baseurl = 'http://users.v8.1c.ru/';
+    var baseurl = 'https://login.1c.ru/';
     AnyBalance.setDefaultCharset('utf-8'); 
 
-    var html = AnyBalance.requestGet(baseurl, g_headers);
+    var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
+	
+	var params = createFormParams(html, function(params, str, name, value) {
+		if (name == 'username') 
+			return prefs.login;
+		else if (name == 'password')
+			return prefs.password;
 
-	html = AnyBalance.requestPost(baseurl, {
-        user:prefs.login,
-        password:prefs.password,
-        enteringButton:'Войти'
-    }, addHeaders({Referer: baseurl + 'login'})); 
+		return value;
+	});	
+	
+	params['rememberMe'] = undefined;
+	
+	html = AnyBalance.requestPost(baseurl + 'login', params, addHeaders({Referer: baseurl + 'login'})); 
 
-    if(!/logout\.jsp/i.test(html)){
+    if(!/logout/i.test(html)){
         var error = getParam(html, null, null, /"errLabel"[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error);
+		
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
-    html = AnyBalance.requestGet(baseurl + 'personal.jsp', g_headers);
+    html = AnyBalance.requestGet('https://users.v8.1c.ru/management/subscription/contract/list', g_headers);
 	
 	if(/Нет подписки на ИТС/i.test(html))
 		throw new AnyBalance.Error('На данный момент нет активных подписок на ИТС');
 	
-
-    var result = {success: true};
-    getParam(html, result, 'date', /подписка\s*действует\s*до([^<]*)/i, replaceTagsAndSpaces, parseDate);
+	var result = {success: true};
+	
+    getParam(html, result, 'date', /<th>Действует по<\/th>([^>]*>){12}/i, replaceTagsAndSpaces, parseDate);
 
     AnyBalance.setResult(result);
 }

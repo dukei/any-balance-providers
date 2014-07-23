@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser" />
-	<id version="2">ab-service-1c</id>
+	<id version="3">ab-service-1c</id>
 	<name>1C8 (Подписка)</name>
 	<description>
 Получает данные из личного кабинета пользователя 1C8 http://users.v8.1c.ru/actual.jsp

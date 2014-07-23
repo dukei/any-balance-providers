@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="7" date="2014-07-23">
+	- Улучшено получение данных по кредитам.
+	</change>
 	<change version="6" date="2014-03-21">
 	- Добавлено отображение данных по кредитным картам.
 	</change>

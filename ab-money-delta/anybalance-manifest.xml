@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser|captcha" />
-	<id version="6">ab-money-delta</id>
+	<id version="7">ab-money-delta</id>
 	<name>Дельта Банк</name>
 	<description html="true"><![CDATA[
 	Получает текущий остаток и другие параметры счетов Дельта Банка (http://deltabank.com.ua), используя интернет-банк https://online.deltabank.com.ua.

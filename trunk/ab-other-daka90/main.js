@@ -27,7 +27,7 @@ function firstMatch(regex,str)
 function main() 
 {
 	var prefs = AnyBalance.getPreferences();
-	var url = 'http://www.daka90.co.il/48hours';
+	var url = 'http://www.daka90.co.il/' + (prefs.flightsonly ? 'flights' :'48hours');
 	var result = {success: true};
 	AnyBalance.setDefaultCharset('utf-8');
 	

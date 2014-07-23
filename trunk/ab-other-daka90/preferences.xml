@@ -8,6 +8,7 @@
 		entries="לא מוגבל|30|15|10|7|6|5|4|3|2"
 		entryValues="999999|30|15|10|7|6|5|4|3|2">
 	</ListPreference>
+	<CheckBoxPreference title="טיסות בלבד" defaultValue="false" summaryOn="כן" summaryOff="לא" key="flightsonly"/>
 	<CheckBoxPreference title="יציאה בימי א" defaultValue="true" summaryOn="כן" summaryOff="לא" key="day0"/>
 	<CheckBoxPreference title="יציאה בימי ב" defaultValue="true" summaryOn="כן" summaryOff="לא" key="day1"/> 
 	<CheckBoxPreference title="יציאה בימי ג" defaultValue="true" summaryOn="כן" summaryOff="לא" key="day2"/>

@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-        <change version="2" date="2014-03-20">
+	<change version="3" date="2014-07-23">
+	- Мелкие улучшения кода.
+	</change>
+	<change version="2" date="2014-03-20">
 	- Добавлены счетчики "Бонусный баланс", "Номер телефона", "SMS", "Money Transfer" и "Номер телефона".
 	- Мелкие изменения по тексту.
 	</change>

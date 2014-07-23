@@ -1,8 +1,5 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-3mob – первый UMTS оператор.
-Сайт оператора: http://3mob.ua/
 */
 
 var g_headers = {
@@ -61,8 +58,6 @@ function main() {
 	//Когда появится сменить __tariff на название тарифного плана
 	getParam(html, result, '__tariff', />\s*Номер телефону<[^>]*>\s*<[^>]*>\s*<[^>]*>([^<]*)</i, replaceTagsAndSpaces);
 	getParam(html, result, 'mobphone', />\s*Номер телефону<[^>]*>\s*<[^>]*>\s*<[^>]*>([^<]*)</i, replaceTagsAndSpaces);
-
-
 
 	AnyBalance.setResult(result);
 }

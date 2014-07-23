@@ -148,7 +148,7 @@ function main(){
     }
 
     if(AnyBalance.isAvailable('agreement', 'pct', 'monthlypay', 'debt', 'pay', 'paytill')){
-        var nametd = getParam(tr, null, null, /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i);
+        var nametd = getParam(tr, null, null, /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i);
         var id = getParam(nametd || '', null, null, /__doPostBack\s*\(\s*'([^']*)/i);
         if(id){
             html = AnyBalance.requestPost(baseurl + 'Pages/User/MainPage.aspx', {

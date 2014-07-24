@@ -1,40 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-cell-akos</id>
-  <name>АКОС GSM (Ростелеком)</name>
-  <description>
-    Получает баланс, использованные минуты, интернет трафик для сотового оператора АКОС GSM (ныне Ростелеком): http://akos.ru.
-Данные берутся из личного кабинета https://issa.akos.ru
-
-Для первого входа в Интернет Систему Сервиса Абонентов (ИССА) необходимо установить пароль.
-Пароль может быть установлен одним из следующих способов:
-
-1) позвоните со своего мобильного телефона на номер 101 и, следуя инструкциям
-автоинформатора, сначала нажмите 2, потом 1 и после установите свой индивидуальный пароль;
-
-2) на своем мобильном телефоне наберите комбинацию *100# и нажмите клавишу посыла вызова,
-затем отправьте команду 2, потом команду 1 и после установите свой индивидуальный пароль.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="min" name="Минуты" units="мин"/>
-    <counter id="traffic" name="Трафик" units="Мб"/>
-    <counter id="average_speed" name="Скорость расходования в день" units="р"/>
-  </counters>
-  <keywords>
-    Сотовый телефон, мобильный, мобильник, akos, akoc
-  </keywords>
-  <type>
-    cell
-  </type>
-  <country>
-    ru
-  </country>
+	<id version="2">ab-cell-akos</id>
+	<api flags="no_browser"/>
+	<name>АКОС GSM (Ростелеком)</name>
+	<description html="true"><![CDATA[
+    <p>Получает баланс, использованные минуты, интернет трафик для сотового оператора АКОС GSM (ныне Ростелеком): http://akos.ru.</p>
+	<p>Данные берутся из личного кабинета https://issa.akos.ru</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для первого входа в Интернет Систему Сервиса Абонентов (ИССА) необходимо установить пароль.</p>
+	<p>Пароль может быть установлен одним из следующих способов:</p>
+	<ol>
+		<li>позвоните со своего мобильного телефона на номер 101 и, следуя инструкциям автоинформатора, сначала нажмите 2, потом 1 и после установите свой индивидуальный пароль;</li>
+		<li>на своем мобильном телефоне наберите комбинацию *100# и нажмите клавишу посыла вызова, затем отправьте команду 2, потом команду 1 и после установите свой индивидуальный пароль.</li>
+	</ol>
+	]]></instruction>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="min" name="Минуты" units=" мин"/>
+		<counter id="traffic" name="Трафик" units=" Мб"/>
+		<counter id="average_speed" name="Скорость расходования в день" units=" р"/>
+		<counter id="sms_used" name="Использовано смс" units=" смс"/>
+		<counter id="min_used" name="Использовано минут" type="time_interval" format="{@MIN}:{@sec}" units=" мин"/>
+		<counter id="traffic_used" name="Использовано трафика" units=" Мб"/>
+	</counters>
+	<keywords>Сотовый телефон, мобильный, мобильник, akos, akoc</keywords>
+	<type>cell</type>
+	<country>ru</country>
 </provider>

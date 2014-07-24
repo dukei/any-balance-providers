@@ -1,54 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="6">ab-internet-stats</id>
-  <name>СвязьТехноСервис</name>
-  <description>
-    Получает баланс и другую информацию для интерент провайдера СвязьТехноСервис (http://www.stsats.ru)
-
-    Информация берется из личного кабинета клиента: http://cab.stsats.ru
-
-    Для данного провайдера рекомендуется отдельно подключать аккаунты для интернет, телефонии и Wimax.
-
-  </description>
-  <author>Alexandra Shalamova &lt;alexandrashalamova@gmail.com&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс интернет" units="р"/>
-    <counter id="promise" name="Сумма обещанных платежей интернет" units="р"/>
-    <counter id="ipStatus" name="Состояние IP адресов" type="text"/>
-    <counter id="period" name="Текущий период интернет" type="text"/>
-    <counter id="rekplat" name="Рекомендуемый платеж интернет" units="р"/>
-    <counter id="trafik" name="Объем использованного трафика" units="МБ"/>
-    <counter id="tarif" name="Текущий тариф" type="text"/>
-
-    <counter id="balancePhone" name="Баланс телефонии" units="р"/>
-    <counter id="promisePhone" name="Сумма обещанных платежей телефонии" units="р"/>
-    <counter id="statusPhone" name="Состояние тел. номеров клиента" type="text"/>
-
-    <counter id="balanceWimax" name="Баланс Wimax" units="р"/>
-    <counter id="promiseWimax" name="Сумма обещанных платежей Wimax" units="р"/>
-    <counter id="statusWimax" name="Состояние IP адресов Wimax" type="text"/>
-    <counter id="periodWimax" name="Текущий период Wimax" type="text"/>
-    <counter id="rekplatWimax" name="Рекомендуемый платеж Wimax" units="р"/>
-    <counter id="trafikWimax" name="Объем использованного трафика Wimax" units="МБ"/>
-    <counter id="tarifWimax" name="Текущий тариф Wimax" type="text"/>
-
-	<counter id="fio" name="ФИО" type="text"/>
-	<counter id="id" name="Персональный ID" type="text"/>
-  </counters>
-  <keywords>
-    Связь Техно Сервис
-  </keywords>
-  <type>
-    internet, telephony
-  </type>
-  <country>
-    ru
-  </country>
+	<id version="7">ab-internet-stats</id>
+	<api flags="no_browser|captcha"/>
+	<name>СвязьТехноСервис</name>
+	<description html="true"><![CDATA[
+	<p>Получает баланс и другую информацию для интерент провайдера СвязьТехноСервис (http://www.stsats.ru)</p>
+	<p>Информация берется из личного кабинета клиента: http://cab.stsats.ru</p>
+	<p>Для данного провайдера рекомендуется отдельно подключать аккаунты для интернет, телефонии и Wimax.</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>md5.js</js>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс интернет" units=" р"/>
+		<counter id="promise" name="Сумма обещанных платежей интернет" units=" р"/>
+		<counter id="ipStatus" name="Состояние IP адресов" type="text"/>
+		<counter id="period" name="Текущий период интернет" type="text"/>
+		<counter id="rekplat" name="Рекомендуемый платеж интернет" units=" р"/>
+		<counter id="trafik" name="Объем использованного трафика" units=" МБ"/>
+		<counter id="tarif" name="Текущий тариф" type="text"/>
+		<counter id="balancePhone" name="Баланс телефонии" units=" р"/>
+		<counter id="promisePhone" name="Сумма обещанных платежей телефонии" units=" р"/>
+		<counter id="statusPhone" name="Состояние тел. номеров клиента" type="text"/>
+		<counter id="balanceWimax" name="Баланс Wimax" units="р"/>
+		<counter id="promiseWimax" name="Сумма обещанных платежей Wimax" units=" р"/>
+		<counter id="statusWimax" name="Состояние IP адресов Wimax" type="text"/>
+		<counter id="periodWimax" name="Текущий период Wimax" type="text"/>
+		<counter id="rekplatWimax" name="Рекомендуемый платеж Wimax" units=" р"/>
+		<counter id="trafikWimax" name="Объем использованного трафика Wimax" units=" МБ"/>
+		<counter id="tarifWimax" name="Текущий тариф Wimax" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="id" name="Персональный ID" type="text"/>
+	</counters>
+	<keywords>Связь Техно Сервис</keywords>
+	<type>internet, telephony</type>
+	<country>ru</country>
 </provider>

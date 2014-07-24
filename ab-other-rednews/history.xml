@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="5" date="2014-07-24">
+      - Added dailyfx.com as an alternative source of news.
+      - Source "All" searches the nearest news from all sources.
+      - Improved time recognition on ForexFactory.
+      - Added options "Select timezone" and "Timezone" if your timezone recognized incorrectly.
+      - Counter "Description" changed to "html", so you can view its history.
+    </change>
     <change version="4" date="2014-07-19">
       - Added investing.com as an alternative source of news.
       - Renamed to "Rednews".

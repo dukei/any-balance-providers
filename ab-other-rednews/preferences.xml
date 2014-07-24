@@ -5,36 +5,89 @@
 		title="Source"
 		dialogTitle="Select source of news"
 		summary="||{@s}"
-		entries="ForexFactory.com|Investing.com"
-		entryValues="1|2">
+		entries="All|(ff)ForexFactory.com|(in)Investing.com|(dx)Dailyfx.com"
+		entryValues="|1|2|3">
 	</ListPreference>
 	<ListPreference
 		key="currency"
-		title="Currency"
-		dialogTitle="Select currency to watch"
+		title="Currency (ForexFactory)"
+		dialogTitle="Select currency to watch on the ForexFactory"
 		summary="||{@s}"
 		entries="Any|AUD|CAD|CHF|CNY|EUR|GBP|JPY|NZD|USD|ADP|AED|AFA|ALL|AMD|ANG|AON|ARS|ATS|AWG|AZM|BBD|BDT|BGL|BHD|BIF|BMD|BND|BOB|BRL|BSD|BTN|BWP|BYB|BZD|CLP|COP|CRC|CUP|CVE|CYP|CZK|DJF|DKK|DOP|DZD|ECS|EEK|EGP|ETB|FIM|FJD|FKP|FRF|GEL|GHC|GIP|GMD|GNF|GRD|GTQ|GWP|GYD|HKD|HNL|HRK|HTG|HUF|IDR|IEP|ILS|INR|IQD|IRR|ISK|JMD|JOD|KES|KGS|KHR|KMF|KPW|KRW|KWD|KYD|KZT|LAK|LBP|LKR|LRD|LSL|LTL|LVL|LYD|MAD|MDL|MGF|MKD|MMK|MNT|MOP|MRO|MTL|MUR|MVR|MWK|MXN|MYR|MZM|NAD|NGN|NIO|NLG|NOK|NPR|OMR|PAB|PEN|PGK|PHP|PKR|PLN|PTE|PYG|QAR|ROL|RUR|RWF|SAR|SBD|SCR|SDD|SEK|SGD|SHP|SIT|SKK|SLL|SOS|SRG|STD|SVC|SYP|SZL|THB|TJS|TMM|TND|TOP|TPE|TRL|TTD|TWD|TZS|UAH|UGX|UYU|UZS|VEB|VND|VUV|WST|XAF|XAF|XCD|XDR|XOF|XPF|YER|YUN|ZAR|ZMK|ZRN|ZWD"
 		entryValues="Any|AUD|CAD|CHF|CNY|EUR|GBP|JPY|NZD|USD|ADP|AED|AFA|ALL|AMD|ANG|AON|ARS|ATS|AWG|AZM|BBD|BDT|BGL|BHD|BIF|BMD|BND|BOB|BRL|BSD|BTN|BWP|BYB|BZD|CLP|COP|CRC|CUP|CVE|CYP|CZK|DJF|DKK|DOP|DZD|ECS|EEK|EGP|ETB|FIM|FJD|FKP|FRF|GEL|GHC|GIP|GMD|GNF|GRD|GTQ|GWP|GYD|HKD|HNL|HRK|HTG|HUF|IDR|IEP|ILS|INR|IQD|IRR|ISK|JMD|JOD|KES|KGS|KHR|KMF|KPW|KRW|KWD|KYD|KZT|LAK|LBP|LKR|LRD|LSL|LTL|LVL|LYD|MAD|MDL|MGF|MKD|MMK|MNT|MOP|MRO|MTL|MUR|MVR|MWK|MXN|MYR|MZM|NAD|NGN|NIO|NLG|NOK|NPR|OMR|PAB|PEN|PGK|PHP|PKR|PLN|PTE|PYG|QAR|ROL|RUR|RWF|SAR|SBD|SCR|SDD|SEK|SGD|SHP|SIT|SKK|SLL|SOS|SRG|STD|SVC|SYP|SZL|THB|TJS|TMM|TND|TOP|TPE|TRL|TTD|TWD|TZS|UAH|UGX|UYU|UZS|VEB|VND|VUV|WST|XAF|XAF|XCD|XDR|XOF|XPF|YER|YUN|ZAR|ZMK|ZRN|ZWD">
 	</ListPreference>
 	<ListPreference
+		key="select_timezone_ff"
+		title="Timezone type (ForexFactory)"
+		dialogTitle="Select type of timezone on ForexFactory.com"
+		summary="||{@s}"
+		entries="Auto|By user"
+		entryValues="1|2">
+	</ListPreference>
+	<ListPreference
+		key="timezone_ff"
+		title="Timezone (ForexFactory)"
+		dialogTitle="Select timeoffset by GMT on ForexFactory.com"
+		summary="||{@s}"
+		entries="-12 Eniwetok, Kwajalein|-11 Midway Island|-10 Hawaii|-9 Alaska|-8 Pacific Time (US, Canada)|-7 Mountain Time (US, Canada)|-6 Central Time (US, Canada), Mexico City|-5 Eastern Time (US, Canada), Bogota, Lima|-4:30 Caracas|-4 Atlantic Time (Canada), La Paz, Santiago|-3:30 Newfoundland|-3 Brazil, Buenos Aires, Georgetown|-2 Mid-Atlantic|-1 Azores, Cape Verde Islands|GMT Western Europe Time, London, Lisbon, Casablanca|+1 Brussels, Copenhagen, Madrid, Paris|+2 Kaliningrad, South Africa, Jerusalem|+3 Baghdad, Riyadh, St. Petersburg|+3:30 Tehran|+4 Abu Dhabi, Muscat, Baku, Tbilisi, Moscow|+4:30 Kabul|+5 Ekaterinburg, Islamabad, Karachi, Tashkent|+5:30 Mumbai, Kolkata, Chennai, New Delhi|+5:45 Kathmandu|+6 Almaty, Dhaka, Colombo|+6:30 Yangon, Cocos Islands|+7 Bangkok, Hanoi, Jakarta|+8 Beijing, Perth, Singapore, Hong Kong|+9 Tokyo, Seoul, Osaka, Sapporo, Yakutsk|+9:30 Adelaide, Darwin|+10 Eastern Australia, Guam, Vladivostok|+11 Magadan, Solomon Islands, New Caledonia|+12:00 Auckland, Wellington, Fiji, Kamchatka"
+		entryValues="-12|-11|-10|-9|-8|-7|-6|-5|-4.5|-4|-3.5|-3|-2|-1|0|1|2|3|3.5|4|4.5|5|5.5|5.75|6|6.5|7|8|9|9.5|10|11|12">
+	</ListPreference>
+	<ListPreference
+		key="in_currency"
+		title="Currency (Investing)"
+		dialogTitle="Select currency to watch on Investing.com"
+		summary="||{@s}"
+		entries="Any|AUD (Australia)|CAD (Canada)|CHF (Switzerland)|CNY (China)|DKK (Denmark)|EUR (Euro Zone)|GBP (United Kingdom)|HKD (Hong Kong)|JPY (Japan)|KRW (South Korea)|MXN (Mexico)|NZD (New Zealand)|NOK (Norway)|RUB (Russia)|SEK (Sweden)|SGD (Singapore)|USD (United States)|ZAR (South Africa)"
+		entryValues="Any|25|6|12|37|24|72|4|39|35|11|7|43|60|56|9|36|5|110">
+	</ListPreference>
+	<ListPreference
 		key="in_language"
-		title="Language"
-		dialogTitle="Select language for fetch news"
+		title="Language (Investing)"
+		dialogTitle="Select language for fetch news on the Investing.com"
 		summary="||{@s}"
 		entries="English|Chinese|Deutsch|Ellinika|English (UK)|Español (España)|Español (México)|Français|Israel|Italiano|Japan|Korean|Nederlands|Polski|Português (Brasil)|Português (Portugal)|Russian|Saudi Arabia|Suomi|Svenska|Türkçe"
 		entryValues="1|6|8|14|51|4|49|5|2|9|11|18|16|15|12|50|7|3|17|13|10">
 	</ListPreference>
 	<ListPreference
-		key="in_currency"
-		title="Currency"
-		dialogTitle="Select currency to watch"
+		key="select_timezone_in"
+		title="Timezone type (Investing)"
+		dialogTitle="Select type of timezone on Investing.com"
 		summary="||{@s}"
-		entries="AUD (Australia)|CAD (Canada)|CHF (Switzerland)|CNY (China)|DKK (Denmark)|EUR (Euro Zone)|GBP (United Kingdom)|HKD (Hong Kong)|JPY (Japan)|KRW (South Korea)|MXN (Mexico)|NZD (New Zealand)|NOK (Norway)|RUB (Russia)|SEK (Sweden)|SGD (Singapore)|USD (United States)|ZAR (South Africa)"
-		entryValues="25|6|12|37|24|72|4|39|35|11|7|43|60|56|9|36|5|110">
+		entries="Auto|By user"
+		entryValues="1|2">
 	</ListPreference>
-
-
-
+	<ListPreference
+		key="timezone_in"
+		title="Timezone (Investing)"
+		dialogTitle="Select timeoffset by GMT on Investing.com"
+		summary="||{@s}"
+		entries="-12 Eniwetok, Kwajalein|-11 Midway Island|-10 Hawaii|-9 Alaska|-8 Pacific Time (US, Canada)|-7 Mountain Time (US, Canada)|-6 Central Time (US, Canada), Mexico City|-5 Eastern Time (US, Canada), Bogota, Lima|-4:30 Caracas|-4 Atlantic Time (Canada), La Paz, Santiago|-3:30 Newfoundland|-3 Brazil, Buenos Aires, Georgetown|-2 Mid-Atlantic|-1 Azores, Cape Verde Islands|GMT Western Europe Time, London, Lisbon, Casablanca|+1 Brussels, Copenhagen, Madrid, Paris|+2 Kaliningrad, South Africa, Jerusalem|+3 Baghdad, Riyadh, St. Petersburg|+3:30 Tehran|+4 Abu Dhabi, Muscat, Baku, Tbilisi, Moscow|+4:30 Kabul|+5 Ekaterinburg, Islamabad, Karachi, Tashkent|+5:30 Mumbai, Kolkata, Chennai, New Delhi|+5:45 Kathmandu|+6 Almaty, Dhaka, Colombo|+6:30 Yangon, Cocos Islands|+7 Bangkok, Hanoi, Jakarta|+8 Beijing, Perth, Singapore, Hong Kong|+9 Tokyo, Seoul, Osaka, Sapporo, Yakutsk|+9:30 Adelaide, Darwin|+10 Eastern Australia, Guam, Vladivostok|+11 Magadan, Solomon Islands, New Caledonia|+12:00 Auckland, Wellington, Fiji, Kamchatka"
+		entryValues="-12|-11|-10|-9|-8|-7|-6|-5|-4.5|-4|-3.5|-3|-2|-1|0|1|2|3|3.5|4|4.5|5|5.5|5.75|6|6.5|7|8|9|9.5|10|11|12">
+	</ListPreference>
+	<ListPreference
+		key="dx_currency"
+		title="Currency (Dailyfx)"
+		dialogTitle="Select currency to watch on Dailyfx.com"
+		summary="||{@s}"
+		entries="Any|AUD|CAD|CHF|CNY|EUR|GBP|JPY|NZD|USD|ADP|AED|AFA|ALL|AMD|ANG|AON|ARS|ATS|AWG|AZM|BBD|BDT|BGL|BHD|BIF|BMD|BND|BOB|BRL|BSD|BTN|BWP|BYB|BZD|CLP|COP|CRC|CUP|CVE|CYP|CZK|DJF|DKK|DOP|DZD|ECS|EEK|EGP|ETB|FIM|FJD|FKP|FRF|GEL|GHC|GIP|GMD|GNF|GRD|GTQ|GWP|GYD|HKD|HNL|HRK|HTG|HUF|IDR|IEP|ILS|INR|IQD|IRR|ISK|JMD|JOD|KES|KGS|KHR|KMF|KPW|KRW|KWD|KYD|KZT|LAK|LBP|LKR|LRD|LSL|LTL|LVL|LYD|MAD|MDL|MGF|MKD|MMK|MNT|MOP|MRO|MTL|MUR|MVR|MWK|MXN|MYR|MZM|NAD|NGN|NIO|NLG|NOK|NPR|OMR|PAB|PEN|PGK|PHP|PKR|PLN|PTE|PYG|QAR|ROL|RUR|RWF|SAR|SBD|SCR|SDD|SEK|SGD|SHP|SIT|SKK|SLL|SOS|SRG|STD|SVC|SYP|SZL|THB|TJS|TMM|TND|TOP|TPE|TRL|TTD|TWD|TZS|UAH|UGX|UYU|UZS|VEB|VND|VUV|WST|XAF|XAF|XCD|XDR|XOF|XPF|YER|YUN|ZAR|ZMK|ZRN|ZWD"
+		entryValues="Any|AUD|CAD|CHF|CNY|EUR|GBP|JPY|NZD|USD|ADP|AED|AFA|ALL|AMD|ANG|AON|ARS|ATS|AWG|AZM|BBD|BDT|BGL|BHD|BIF|BMD|BND|BOB|BRL|BSD|BTN|BWP|BYB|BZD|CLP|COP|CRC|CUP|CVE|CYP|CZK|DJF|DKK|DOP|DZD|ECS|EEK|EGP|ETB|FIM|FJD|FKP|FRF|GEL|GHC|GIP|GMD|GNF|GRD|GTQ|GWP|GYD|HKD|HNL|HRK|HTG|HUF|IDR|IEP|ILS|INR|IQD|IRR|ISK|JMD|JOD|KES|KGS|KHR|KMF|KPW|KRW|KWD|KYD|KZT|LAK|LBP|LKR|LRD|LSL|LTL|LVL|LYD|MAD|MDL|MGF|MKD|MMK|MNT|MOP|MRO|MTL|MUR|MVR|MWK|MXN|MYR|MZM|NAD|NGN|NIO|NLG|NOK|NPR|OMR|PAB|PEN|PGK|PHP|PKR|PLN|PTE|PYG|QAR|ROL|RUR|RWF|SAR|SBD|SCR|SDD|SEK|SGD|SHP|SIT|SKK|SLL|SOS|SRG|STD|SVC|SYP|SZL|THB|TJS|TMM|TND|TOP|TPE|TRL|TTD|TWD|TZS|UAH|UGX|UYU|UZS|VEB|VND|VUV|WST|XAF|XAF|XCD|XDR|XOF|XPF|YER|YUN|ZAR|ZMK|ZRN|ZWD">
+	</ListPreference>
+	<ListPreference
+		key="select_timezone_dx"
+		title="Timezone type (Dailyfx)"
+		dialogTitle="Select type of timezone on Dailyfx.com"
+		summary="||{@s}"
+		entries="Auto|By user"
+		entryValues="1|2">
+	</ListPreference>
+	<ListPreference
+		key="timezone_dx"
+		title="Timezone (Dailyfx)"
+		dialogTitle="Select timeoffset by GMT on Dailyfx.com"
+		summary="||{@s}"
+		entries="-12 Eniwetok, Kwajalein|-11 Midway Island|-10 Hawaii|-9 Alaska|-8 Pacific Time (US, Canada)|-7 Mountain Time (US, Canada)|-6 Central Time (US, Canada), Mexico City|-5 Eastern Time (US, Canada), Bogota, Lima|-4:30 Caracas|-4 Atlantic Time (Canada), La Paz, Santiago|-3:30 Newfoundland|-3 Brazil, Buenos Aires, Georgetown|-2 Mid-Atlantic|-1 Azores, Cape Verde Islands|GMT Western Europe Time, London, Lisbon, Casablanca|+1 Brussels, Copenhagen, Madrid, Paris|+2 Kaliningrad, South Africa, Jerusalem|+3 Baghdad, Riyadh, St. Petersburg|+3:30 Tehran|+4 Abu Dhabi, Muscat, Baku, Tbilisi, Moscow|+4:30 Kabul|+5 Ekaterinburg, Islamabad, Karachi, Tashkent|+5:30 Mumbai, Kolkata, Chennai, New Delhi|+5:45 Kathmandu|+6 Almaty, Dhaka, Colombo|+6:30 Yangon, Cocos Islands|+7 Bangkok, Hanoi, Jakarta|+8 Beijing, Perth, Singapore, Hong Kong|+9 Tokyo, Seoul, Osaka, Sapporo, Yakutsk|+9:30 Adelaide, Darwin|+10 Eastern Australia, Guam, Vladivostok|+11 Magadan, Solomon Islands, New Caledonia|+12:00 Auckland, Wellington, Fiji, Kamchatka"
+		entryValues="-12|-11|-10|-9|-8|-7|-6|-5|-4.5|-4|-3.5|-3|-2|-1|0|1|2|3|3.5|4|4.5|5|5.5|5.75|6|6.5|7|8|9|9.5|10|11|12">
+	</ListPreference>
 </PreferenceScreen>
 
 

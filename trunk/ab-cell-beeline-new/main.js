@@ -19,7 +19,7 @@ function getBlock(url, html, name, exact, onlyReturnParams) {
 		formhtml = html[1];
 		html = html[0];
 	}
-
+	
 	var re = new RegExp("PrimeFaces\\.\\w+\\s*\\(\\s*\\{[^}]*update:\\s*'" + (exact ? "" : "[^']*") + name);
 	var data = getParam(html, null, null, re);
 	if (!data) {
@@ -73,7 +73,6 @@ function getBlock(url, html, name, exact, onlyReturnParams) {
 }
 
 function refreshBalance(url, html, htmlBalance) {
-	//{PrimeFaces.cw('BlockUI','loadingBalanceBlock',{id:'j_idt760:j_idt761',block:'j_idt760:homeBalance'});});</script>
 	//var data = getParam(htmlBalance, null, null, /PrimeFaces\.\w+\s*\(\s*\{[^}]*update:\s*'[^']*headerBalance/);
 	var data = getParam(html, null, null, /PrimeFaces\.\w+\s*[^}]*(?:header|home)Balance/i);
 	
@@ -113,6 +112,65 @@ function refreshBalance(url, html, htmlBalance) {
 		return '';
 	}
 	return data;
+}
+
+function getBonusesBlock(url, html, name, exact, onlyReturnParams) {
+	var formhtml = html;
+	if (isArray(html)) { //Если массив, то разный хтмл для поиска блока и для формы
+		formhtml = html[1];
+		html = html[0];
+	}
+
+	var re = new RegExp("loadingAccumulators = function\\(\\) \\{PrimeFaces\\.\\w+\\s*\\(\\s*\\{[^}]*update:\\s*'" + (exact ? "" : "[^']*") + name);
+	var data = getParam(html, null, null, re);
+	if (!data) {
+		AnyBalance.trace('Блок ' + name + ' не найден!');
+		return '';
+	}
+
+	var formId = getParam(data, null, null, /formId:\s*'([^']*)/, replaceSlashes);
+	if (!formId) {
+		AnyBalance.trace('Не найден ID формы для блока ' + name + '!');
+		return '';
+	}
+
+	var form = getParam(formhtml, null, null, new RegExp('<form[^>]+name="' + formId + '"[\\s\\S]*?</form>', 'i'));
+	if (!form) {
+		AnyBalance.trace('Не найдена форма ' + formId + ' для блока ' + name + '!');
+		return '';
+	}
+
+	var params = createFormParams(form);
+	var source = getParam(data, null, null, /source:\s*'([^']*)/, replaceSlashes);
+	var render = getParam(data, null, null, /update:\s*'([^']*)/, replaceSlashes);
+
+	params['javax.faces.partial.ajax'] = true;
+	params['javax.faces.source'] = source;
+	params['javax.faces.partial.execute'] = '@all';
+	params['javax.faces.partial.render'] = render;
+	//params[render] = render;
+	params[source] = source;
+	
+	if(!onlyReturnParams) {
+		html = AnyBalance.requestPost(url, params, addHeaders({
+			Referer: url,
+			'Faces-Request': 'partial/ajax',
+			'X-Requested-With': 'XMLHttpRequest'
+		}));
+		// Костыль для бонусов
+		if(/bonusesForm/i.test(name)) {
+			name = getParam(name, null, null, /([^\s]+)/i);
+		}
+		var re = new RegExp('<update[^>]*id="' + (exact ? '' : '[^"]*') + name + '"[^>]*>\\s*<!\\[CDATA\\[([\\s\\S]*?)\\]\\]></update>', 'i');
+		data = getParam(html, null, null, re);
+		if (!data) {
+			AnyBalance.trace('Неверный ответ для блока ' + name + ': ' + html);
+			return '';
+		}
+		return data;	
+	} else {
+		return params;
+	}
 }
 
 function myParseCurrency(text) {
@@ -623,11 +681,20 @@ function fetchPre(baseurl, html) {
 		}
 	}
 	if (isAvailableBonuses()) {
-		xhtml = getBlock(baseurl + 'c/pre/index.html', html, 'bonusesForm homeServices');
-		
+/*
+		javax.faces.partial.ajax:true
+		javax.faces.source:j_idt1262:j_idt1264
+		javax.faces.partial.execute:@all
+		javax.faces.partial.render:bonusesForm
+		j_idt1262:j_idt1264:j_idt1262:j_idt1264
+		j_idt1262:j_idt1262
+		javax.faces.ViewState:-5960270555230815881:779638056818587556
+*/
+		xhtml = getBonusesBlock(baseurl + 'c/pre/index.html', html, 'bonusesForm');
 		AnyBalance.trace(xhtml);
+		
 		// Затем надо пнуть систему, чтобы точно получить все бонусы
-		//xhtml = getBlock(baseurl + 'c/pre/index.html', html, 'refreshButton')
+		//xhtml = getBlock(baseurl + 'c/pre/index.html', html, 'refreshButton');
 		getBonuses(xhtml, result);
 	}
 	if (AnyBalance.isAvailable('fio')) {

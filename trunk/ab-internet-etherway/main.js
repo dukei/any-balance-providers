@@ -9,16 +9,17 @@ var g_headers = {
 	'Connection':'keep-alive',
 	'User-Agent':'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
 };
+
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://lk.etherway.ru/';
+	var baseurl = 'http://lk.etherway.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
 	try {
-		var html = AnyBalance.requestGet(baseurl + 'site/login', g_headers);
+		var html = AnyBalance.requestGet('http://lk.etherway.ru/site/login', g_headers);
 	} catch(e){}
 	
 	if(AnyBalance.getLastStatusCode() > 400 || !html) {
@@ -44,7 +45,7 @@ function main() {
 	getParam(html, result, 'dogovor', /Договор(?:[^>]*>){3}([^<]*)</i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'fio', /ФИО(?:[^>]*>){3}([^<]*)</i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'balance', />Бал?ланс(?:[^>]*>){3}([^<]*)</i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'discount', /Скидка(?:[^>]*>){3}([^<]*)</i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'discount', /скидка([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	
     AnyBalance.setResult(result);
 }

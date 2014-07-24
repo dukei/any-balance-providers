@@ -17,14 +17,17 @@ function main(){
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
     var baseurl = "http://cab.stsats.ru/";
-
+	
     AnyBalance.setDefaultCharset('windows-1251');
-
-    var html = AnyBalance.requestPost(baseurl + 'index.php', addHeaders({Referer: baseurl})); 
-
+	
+    var html = AnyBalance.requestGet(baseurl + 'index.php', addHeaders({Referer: baseurl})); 
+	
 	var captchaa;
 	if(AnyBalance.getLevel() >= 7){
 		var captcha_href = getParam(html, null, null, /(pic\.php[^"]*)/i);
+		if(!captcha_href)
+			throw new AnyBalance.Error('Не удалось найти ссылку на картинку!');
+		
 		AnyBalance.trace('Пытаемся ввести капчу');
 		var captcha = AnyBalance.requestGet(baseurl+ captcha_href);
 		captchaa = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);

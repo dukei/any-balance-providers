@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-other-rednews</id>
+	<id version="5">ab-other-rednews</id>
 	<name>Rednews</name>
 	<description html="true"><![CDATA[
 	<p>Watch on next rednews on forexfactory.com or investing.com.</p>
@@ -15,7 +15,7 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="description" name="Description" type="text"/>
+		<counter id="description" name="Description" type="html"/>
 		<counter id="actual" name="Actual" type="text"/>
 		<counter id="forecast" name="Forecast" type="text"/>
 		<counter id="date" name="Date" type="text"/>

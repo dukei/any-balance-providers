@@ -48,7 +48,7 @@ function main() {
 	
 	getParam(html, result, 'balance', /Баланс:([^>]+>){3}/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'cred', /Кредитные Бонусы([^>]+>){3}/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, ['currency', 'balance', 'cred'], /Валюта:([^>]+>){3}/i, [replaceTagsAndSpaces, /центов/i, ''], parseCurrency);
+	getParam(html, result, ['currency', 'balance', 'cred'], /Валюта:([^>]+>){3}/i, [replaceTagsAndSpaces, /\s*центов\s*/i, ''], html_entity_decode);
 	getParam(html, result, '__tariff', /Торговый счет([^>]+>){3}/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'account', /Торговый счет([^>]+>){3}/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'arm', /Плечо:([^>]+>){3}/i, replaceTagsAndSpaces, html_entity_decode);

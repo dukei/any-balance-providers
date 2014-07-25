@@ -7,6 +7,115 @@
 Личный кабинет: https://esk.sbrf.ru/
 */
 
+function requestApi(action, params, dontAddDefParams, url, ignoreErrors) {
+	if(url) {
+		var baseurl = url;
+	} else {
+		var baseurl = 'https://online.sberbank.ru:4477/CSAMAPI/';
+	}
+	
+	var m_headers = {
+		'Connection': 'keep-alive',
+		'User-Agent': 'Mobile Device',
+	};
+	
+	if(dontAddDefParams) {
+		var newParams = params;
+	} else {
+		var newParams = joinObjects(params, {
+			'version':'7.00',
+			'appType':'android',
+			'appVersion':'2014060500',
+			'deviceName':'sdk',
+		});
+	}
+	// регистрируем девайс
+	var html = AnyBalance.requestPost(baseurl + action, newParams, m_headers);
+	// Проверим на правильность
+	
+	if(!/<status>\s*<code>0<\/code>/i.test(html)) {
+		AnyBalance.trace(html);
+		if(!ignoreErrors)
+			throw new AnyBalance.Error("Ошибка при обработке запроса!");
+	}
+	return html;
+}
+
+function mainMobileApp(prefs ) {
+	var defaultPin = '11223';
+	
+	html = requestApi('checkPassword.do', {
+		'operation':'check',
+		'password':defaultPin
+	}, true, 'https://node1.online.sberbank.ru:4477/mobile7/', true);
+	
+	// Здесь нужно узнать нужна ли привязка
+	if(!/<status>\s*<code>0<\/code>/i.test(html)) {
+		AnyBalance.trace('Необходимо привязать устройство!');
+		// регистрируем девайс
+		var html = requestApi('registerApp.do', {
+			'operation':'register',
+			'login':prefs.login,
+			'devID':hex_md5(prefs.login)
+		});
+		
+		var mGUID = getParam(html, null, null, /<mGUID>([^<]+)<\/mGUID>/i);
+		if(!mGUID) {
+			throw new AnyBalance.Error("Не удалось найти токен регистрации, сайт изменен?");
+		}
+		// Все, тут надо дождаться смс кода
+		var code = AnyBalance.retrieveCode('Пожалуйста, введите код из смс, для привязки данного устройства.', 'R0lGODlhBAAEAJEAAAAAAP///////wAAACH5BAEAAAIALAAAAAAEAAQAAAIElI8pBQA7');
+		
+		html = requestApi('registerApp.do', {
+			'operation':'confirm',
+			'mGUID':mGUID,
+			'smsPassword':code,
+		});
+		AnyBalance.trace('Успешно привязали устройство. Создадим PIN...');
+		
+		html = requestApi('registerApp.do', {
+			'operation':'createPIN',
+			'mGUID':mGUID,
+			'password':defaultPin,
+			'isLightScheme':'true',
+			'devID':hex_md5(prefs.login)
+		});
+		
+		var token = getParam(html, null, null, /<token>([^<]+)<\/token>/i);
+		if(!token) {
+			throw new AnyBalance.Error("Не удалось найти токен авторизации, сайт изменен?");
+		}
+		
+		// Теперь пробуем войти
+		html = requestApi('postCSALogin.do', {
+			'token':token
+		}, true, 'https://node1.online.sberbank.ru:4477/mobile7/');
+	} else {
+		AnyBalance.trace('Устройство уже привязано!');
+		
+		html = requestApi('login.do', {
+			'operation':'button.login',
+			'mGUID':'',
+			'isLightScheme':'true',
+			'devID':hex_md5(prefs.login)
+		});
+		
+		
+		
+	}
+	/*
+	
+	html = requestApi('login.do', {
+		'operation':'button.login',
+		'mGUID':mGUID,
+		'isLightScheme':'true',
+		'devID':hex_md5(prefs.login)
+	});
+*/
+
+	
+}
+
 function main() {
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = "https://online.sberbank.ru/CSAFront/login.do";
@@ -16,10 +125,14 @@ function main() {
 		//Чтобы карты оттестировать
 		readEskCards();
 		return;
+	} else if(prefs.__debug) {
+		mainMobileApp(prefs);
+		return;
 	}
 	checkEmpty(prefs.login, "Пожалуйста, укажите логин для входа в Сбербанк-Онлайн!");
 	checkEmpty(prefs.password, "Пожалуйста, укажите пароль для входа в Сбербанк-Онлайн!");
-	if (prefs.lastdigits && !/^\d{4}$/.test(prefs.lastdigits)) throw new AnyBalance.Error("Надо указывать 4 последних цифры карты или не указывать ничего", null, true);
+	if (prefs.lastdigits && !/^\d{4}$/.test(prefs.lastdigits)) 
+		throw new AnyBalance.Error("Надо указывать 4 последних цифры карты или не указывать ничего", null, true);
 /*      
     var html = AnyBalance.requestGet(baseurl + 'esClient/_logon/LogonContent.aspx');
     var error = getParam(html, null, null, /techBreakMsgLabel[^>]*>([\s\S]*?)<\/span>/i);

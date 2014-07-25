@@ -54,7 +54,7 @@ changelog:
  
 function getParam(html, result, param, regexp, replaces, parser) {
 	if(!isset(html)) {
-		AnyBalance.trace('param1 is undefined!\n' + new Error().stack);
+		AnyBalance.trace('param1 is unset! ' + new Error().stack);
 		return;
 	}
 	if (!isAvailable(param)) {

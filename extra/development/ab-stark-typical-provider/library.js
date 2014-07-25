@@ -2,7 +2,7 @@
 The uncompressed full source code of this library is here: https://code.google.com/p/any-balance-providers/source/browse/trunk/extra/development/ab-test-library/library.js
 */
 ;
-function getParam(f,k,b,g,c,a){if(!isset(f)){AnyBalance.trace("param1 is undefined!\n"+new Error().stack);
+function getParam(f,k,b,g,c,a){if(!isset(f)){AnyBalance.trace("param1 is unset! "+new Error().stack);
 return
 }if(!isAvailable(b)){AnyBalance.trace(b+" is disabled!");
 return

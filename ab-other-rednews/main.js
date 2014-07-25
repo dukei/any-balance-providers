@@ -31,7 +31,7 @@ function main() {
 
 	result.__tariff=prefs.currency;
 //	result.mark="high";
-	result.description="<No red news this week>";
+	result.description="&lt;No red news this week&gt;";
 	result.actual="-";
 	result.forecast="-";
 	result.date="-";
@@ -45,7 +45,7 @@ function main() {
 
 		currency=prefs.currency || "Any";
 
-		timezone=(prefs.select_timezone_ff==2)?prefs.timezone_ff:current_date.getTimezoneOffset();
+		timezone=(prefs.select_timezone_ff==2)?prefs.timezone_ff*60:-current_date.getTimezoneOffset();
 
 		html = AnyBalance.requestGet(baseurl + 'calendar.php', g_headers);
 
@@ -70,7 +70,7 @@ function main() {
 			date=(day_date.getMonth()+1)+"/"+day_date.getDate()+"/"+day_date.getFullYear()+" "+time;
 
 			item_date = new Date(date);
-			item_date.setTime(item_date.getTime()-timezone*60*1000);
+			item_date.setTime(item_date.getTime()+timezone*60*1000);
 
 			if(item_date<current_date)continue;
 
@@ -83,6 +83,8 @@ function main() {
 			result.date=item_date.toDateString();
 			result.time=item_date.toLocaleTimeString();
 
+			AnyBalance.trace("ForexFactory.com ("+result.__tariff+") "+result.date+" "+result.time+": "+result.description+", forecast "+result.forecast);
+
 			break;
 		}
 	}
@@ -91,7 +93,7 @@ function main() {
 	if(prefs.source==2 || prefs.source==null || prefs.source==""){//Investing.com
 		AnyBalance.trace("Request to Investing.com...");
 
-		timezone=(prefs.select_timezone_in==2)?prefs.timezone_in:current_date.getTimezoneOffset();
+		timezone=(prefs.select_timezone_in==2)?prefs.timezone_in*60:-current_date.getTimezoneOffset();
 
 		currency=prefs.in_currency || "Any";
 		language=prefs.in_language || 1;
@@ -108,10 +110,10 @@ function main() {
 		var regexp1 = /<tr id="eventRowId.*?event_timestamp="(.*?)"[\s\S]*?\/tr>/g;
 		while((r = regexp1.exec(html)) != null) {
 			item_date=new Date(r[1]);
-			item_date.setTime(item_date.getTime()-timezone*60*1000);
+			item_date.setTime(item_date.getTime()+timezone*60*1000);
 
 			if(item_date<current_date)continue;
-			if(res_date!=null && res_date<item_date)break;
+			if(res_date!=null && res_date<=item_date)break;
 			res_date=item_date;
 
 			result.__tariff=getParam(r[0], null, null, /<td class="flagCur">(.*?)</i, replaceTagsAndSpaces, html_entity_decode)+" (in)";
@@ -121,6 +123,8 @@ function main() {
 			getParam(r[0], result, 'forecast', /id="eventForecast_.*?">(.*?)</i, replaceTagsAndSpaces, html_entity_decode);
 			result.date=item_date.toDateString();
 
+			AnyBalance.trace("Investing.com ("+result.__tariff+") "+result.date+" "+result.time+": "+result.description+", forecast "+result.forecast);
+
 			break;
 		}
 	}
@@ -129,13 +133,13 @@ function main() {
 	if(prefs.source==3 || prefs.source==null || prefs.source==""){//Dailyfx.com
 		AnyBalance.trace("Request to Dailyfx.com...");
 
-		timezone=(prefs.select_timezone_dx==2)?prefs.timezone_dx:current_date.getTimezoneOffset();
+		timezone=(prefs.select_timezone_dx==2)?prefs.timezone_dx*60:-current_date.getTimezoneOffset();
 
 		currency=prefs.dx_currency || "Any";
 		baseurl = 'http://www.dailyfx.com/';
 
 		current_date=new Date();
-		current_date.setTime(current_date.getTime()+timezone*60*1000);
+		current_date.setTime(current_date.getTime()-timezone*60*1000);
 		current_date.setDate(current_date.getDate()-current_date.getDay());
 
 		html = AnyBalance.requestGet(baseurl + "files/Calendar-"+("0"+String(current_date.getMonth()+1)).substr(-2,2)+"-"+("0"+String(current_date.getDate())).substr(-2,2)+"-"+current_date.getFullYear()+".csv", g_headers);
@@ -165,10 +169,10 @@ function main() {
 			date=(day_date.getMonth()+1)+"/"+day_date.getDate()+"/"+day_date.getFullYear()+" "+r[1];
 
 			item_date=new Date(date);
-			item_date.setTime(item_date.getTime()-timezone*60*1000);
+			item_date.setTime(item_date.getTime()+timezone*60*1000);
 
 			if(item_date<current_date)continue;
-			if(res_date!=null && res_date<item_date)break;
+			if(res_date!=null && res_date<=item_date)break;
 
 			result.__tariff=f_currency+" (dx)";
 			result.time=item_date.toLocaleTimeString();
@@ -176,6 +180,8 @@ function main() {
 			result.actual=r[6];
 			result.forecast=r[7];
 			result.date=item_date.toDateString();
+
+			AnyBalance.trace("Dailyfx.com ("+result.__tariff+") "+result.date+" "+result.time+": "+result.description+", forecast "+result.forecast);
 
 			break;
 		}

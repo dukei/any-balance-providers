@@ -538,7 +538,7 @@ function fetchPost(baseurl, html) {
 	if (isAvailableBonuses()) {
 		xhtml = getBlock(baseurl + 'c/post/index.html', html, 'loadingBonusesAndServicesDetails');
 		xhtml = getBlock(baseurl + 'c/post/index.html', [xhtml, html], 'bonusesloaderDetails');
-		getBonusesPost(xhtml, result);
+		getBonuses(xhtml, result);
 	}
 	
     if (AnyBalance.isAvailable('overpay', 'prebal', 'currency')) {
@@ -739,8 +739,7 @@ function getBonuses(xhtml, result) {
 	for (var j = 0; j < bonuses.length; ++j) {
 		var bonus = bonuses[j];
 		var bonus_name = ''; //getParam(bonus, null, null, /<span[^>]+class="bonuses-accums-list"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
-													// Эта регулярка вроде не работает, но оставил для совместимости
-		var services = sumParam(bonus, null, null, /<div[^>]+class="\s*(?:accumulator|bonus)\s*"(?:[\s\S](?!$|<div[^>]+class="(?:accumulator|bonus)"))*[\s\S]/ig);
+		var services = sumParam(bonus, null, null, /<div[^>]+class="\s*(?:accumulator|bonus|item)\s*"(?:[\s\S](?!$|<div[^>]+class="(?:accumulator|bonus|item)"))*[\s\S]/ig);
 		AnyBalance.trace("Found " + services.length + ' bonuses');
 		var reValue = /<div[^>]+class="column2[^"]*"[^>]*>([\s\S]*?)<\/div>/i;
 		var reNewValue = /<div[^>]+class="column2[^"]*"(?:[^>]*>){5}([\s\d,]+)/i;
@@ -748,6 +747,7 @@ function getBonuses(xhtml, result) {
 		for (var i = 0; i < services.length; ++i) {
 			var name = '' + getParam(services[i], null, null, /<div[^>]+class="column1[^"]*"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode); //+ ' ' + bonus_name;
 			var values = getParam(services[i], null, null, /<div class="val">([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+			var rest = getParam(services[i], null, null, /class="rest"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
 			
 			if (/Internet|Интернет/i.test(name)) {
 				// Для опции Хайвей все отличается..
@@ -756,6 +756,7 @@ function getBonuses(xhtml, result) {
 					AnyBalance.trace('Пробуем разобрать новый трафик...');
 					AnyBalance.trace('services[i] = ' + services[i]);
 					AnyBalance.trace('values = ' + values);
+					AnyBalance.trace('rest = ' + rest);
 					
 					var units = getParam(values, null, null, /((?:K|К|G|Г|M|М)?(?:B|Б))/i);
 					if(!units) {
@@ -765,12 +766,17 @@ function getBonuses(xhtml, result) {
 					function parseTrafficMy(str) {
 						return parseTraffic(str, units);
 					}
-					
-					sumParam(values, result, ['traffic_left', 'traffic_used'], /([^<]*)из/i, replaceTagsAndSpaces, parseTrafficMy, aggregate_sum);
-					sumParam(values, result, ['traffic_total', 'traffic_used'], /из([^<]*)/i, replaceTagsAndSpaces, parseTrafficMy, aggregate_sum);
-					if(isset(result.traffic_left) && isset(result.traffic_total)) {
-						sumParam(result.traffic_total - result.traffic_left, result, 'traffic_used', null, null, null, aggregate_sum);
+					// Новое отображение пакета трафика
+					if(rest) {
+						sumParam(rest, result, 'traffic_left', null, replaceTagsAndSpaces, parseTrafficMy, aggregate_sum);
+					} else {
+						sumParam(values, result, ['traffic_left', 'traffic_used'], /([^<]*)из/i, replaceTagsAndSpaces, parseTrafficMy, aggregate_sum);
+						sumParam(values, result, ['traffic_total', 'traffic_used'], /из([^<]*)/i, replaceTagsAndSpaces, parseTrafficMy, aggregate_sum);
+						if(isset(result.traffic_left) && isset(result.traffic_total)) {
+							sumParam(result.traffic_total - result.traffic_left, result, 'traffic_used', null, null, null, aggregate_sum);
+						}
 					}
+
 				} else {
 					sumParam(services[i], result, 'traffic_left', reValue, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
 				}
@@ -794,7 +800,7 @@ function getBonuses(xhtml, result) {
 			// Это новый вид отображения данных
 			} else if (/Минут общения по тарифу/i.test(name)) {
 				// Очень внимательно надо матчить
-				if(/номера других (?:сотовых\s+)?операторов|все номера|На номера домашнего региона/i.test(name))
+				if(/номера других (?:сотовых\s+)?операторов|все номера|На номера домашнего региона|Минут общения по тарифу Все для бизнеса Бронза/i.test(name))
 					sumParam(services[i], result, 'min_local', reNewValue, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
 				else
 					sumParam(services[i], result, 'min_bi', reNewValue, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
@@ -823,11 +829,17 @@ function getBonuses(xhtml, result) {
 }*/
 
 function getBonusesPost(xhtml, result) {
-	var bonuses = sumParam(xhtml, null, null, /<div[^>]+class="bonus-heading"[^>]*>[\s\S]*?<\/table>/ig);
+	var bonuses = sumParam(xhtml, null, null, [/<div[^>]+class="bonus-heading"[^>]*>[\s\S]*?<\/table>/ig, /<div[^>]+class="item(?:[\s\S](?!$|<div[^>]+class="item))*[\s\S]/ig]);
 	for (var j = 0; j < bonuses.length; ++j) {
 		var bonus = bonuses[j];
-		var bonus_name = getParam(bonus, null, null, /<div[^>]+class="bonus-heading"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-		var services = sumParam(bonus, null, null, /<tr[^>]*>\s*<td[^>]+class="title"(?:[\s\S](?!<\/tr>))*?<td[^>]+class="value"[\s\S]*?<\/tr>/ig);
+		var bonus_name = getParam(bonus, null, null, /<div[^>]+class="column\d+"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+		//var services = sumParam(bonus, null, null, /<tr[^>]*>\s*<td[^>]+class="title"(?:[\s\S](?!<\/tr>))*?<td[^>]+class="value"[\s\S]*?<\/tr>/ig);
+		
+		var services = sumParam(bonus, null, null, /<div[^>]+class="\s*(?:accumulator|bonus|item)\s*"(?:[\s\S](?!$|<div[^>]+class="(?:accumulator|bonus|item)"))*[\s\S]/ig);
+		AnyBalance.trace("Found " + services.length + ' bonuses');
+		
+		var reNewValue = /<div[^>]+class="column2[^"]*"(?:[^>]*>){5}([\s\d,]+)/i;		
+		
 		for (var i = 0; i < services.length; ++i) {
 			var name = '' + getParam(services[i], null, null, /<td[^>]+class="title"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode) + ' ' + bonus_name;
 			if (/SMS|штук/i.test(name)) {

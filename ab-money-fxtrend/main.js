@@ -156,6 +156,7 @@ function main(){
 
 		result.index_included = (getParam(info, null, null, /PAMM accounts that are included in PAMM index:<\/b><\/td>\s+<td.*?>([\s\S]+?)<\/table>/i, replaceTagsAndSpaces, html_entity_decode)).replace(/\% /g,"%, ");
 
+
 		if(matches = info.match(/PAMM accounts that are included in PAMM index:<\/b><\/td>\s+<td.*?>([\s\S]+?)<\/table>/i)){
 			included=matches[1];
 		}else{
@@ -165,13 +166,17 @@ function main(){
 
 		getParam(info, result, 'index_started', /Time of starting:<\/b><\/td>\s+<td.*?>(.*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
 
-		if(isAvailable('sum_open_trades')){
+
+		if(isAvailable('sum_open_trades') || isAvailable('index_forecast')){
 			AnyBalance.trace('Getting open trades...');
 
-			var regexp = /<a href="https?:\/\/fx\-trend\.com\/(.*?)">(.*?)<\/a>/g;
+			if(isAvailable('index_forecast')){result.index_forecast=0;};
+
+			var regexp = /<a href="https?:\/\/fx\-trend\.com\/(.*?)">(.*?)<\/a><\/td>\s+<td.*?>(\d+)\%/g;
 			var sum = 0;
 			while((r = regexp.exec(included)) != null) {
-				AnyBalance.trace('Getting details for PAMM: '+r[2]+'...');
+				var part=r[3];
+				AnyBalance.trace('Getting details for PAMM: '+r[2]+' ('+part+'%)...');
 				var info1 = AnyBalance.requestGet(baseurl + 'en/' + r[1], addHeaders({Referer: baseurl}));
 
 				if((matches = info1.match(/<h2>PAMM account details (.*?)<\/h2>/)) == null){
@@ -184,10 +189,27 @@ function main(){
 				if(matches = info1.match(/<h2>rate of return by weeks<\/h2>[\s\S]+?<\/table>/i)){
 					AnyBalance.trace('Looking for this week interest...');
 					getParam(matches[0], null, null, /[\s\S]*<tr>\s+<td>.*?<\/td>\s+<td.*?>.*?<\/td>\s+<td.*?>(.*?)\%<\/td>\s+<\/tr>/i, replaceTagsAndSpaces, parseBalance);
+
+					if(isAvailable('index_forecast')){
+//						AnyBalance.trace('Trying to forecast of drawdown...');
+						var interests = [];
+						var regexp1 = /<tr>\s+<td>.*?<\/td>\s+<td.*?>.*?<\/td>\s+<td.*?>(.*?)\%<\/td>\s+<\/tr>/g;
+						while((r1 = regexp1.exec(matches[0])) != null) {
+	        			   		interests[interests.length] = Number(r1[1]);
+						}
+
+						result.index_forecast += Math.round(getForecast(interests,prefs.limit)/100*part);
+					}
 				}
 			}
 			AnyBalance.trace('Sum of open trades: '+sum);
 			result.sum_open_trades = sum;
+
+			if(isAvailable('index_forecast')){
+				if(result.index_forecast<10)result.index_forecast=10;
+				else if(result.index_forecast>90)result.index_forecast=90;
+			};
+
 		}
 
 		if(matches = info.match(/<h2>weekly investor’s returns<\/h2>[\s\S]+?<\/table>/i)){
@@ -197,7 +219,7 @@ function main(){
 			result.index_week = getParam(info1, null, null, /[\s\S]*<tr>\s+<td>(.*?)<\/td>\s+<td.*?><span.*?>.*?\%<\/span><\/td>/i, replaceTagsAndSpaces, html_entity_decode);
 			result.index_return = getParam(info1, null, null, /[\s\S]*<tr>\s+<td>.*?<\/td>\s+<td.*?><span.*?>(.*?)\%<\/span><\/td>/i, replaceTagsAndSpaces, parseBalance);
 		}
-
+/*
 		if(isAvailable('index_forecast') && (matches = info.match(/<h2>weekly investor’s returns<\/h2>[\s\S]+?<\/table>/i))){
 			AnyBalance.trace('Trying to analyze for interests...');
 			var interests = [];
@@ -207,7 +229,7 @@ function main(){
 			}
 			result.index_forecast = getForecast(interests,prefs.limit);
 		}
-
+*/
 	}
 	
 	AnyBalance.setResult(result);
@@ -232,7 +254,7 @@ function getForecast(a,limit){
 	}
 
 	if(minus == 0){
-		AnyBalance.trace('Get forecast by '+a.length+' week(s), none overlimit drawdowns with limit '+lim+'.');
+		AnyBalance.trace('Forecast of drawdown by '+a.length+' week(s), none overlimit drawdowns with limit '+lim+' is about '+Math.round(50)+'%.');
 		return Math.round(50);
 	}
 
@@ -241,7 +263,7 @@ function getForecast(a,limit){
 	if(f<.1){f=.1;}else if(f>.9){f=.9;}
 
 	last++;
-	AnyBalance.trace('Get forecast by '+a.length+' week(s), '+minus+' overlimit drawdown(s) with limit '+lim+', last drawdown at '+last+'-th week.');
+	AnyBalance.trace('Forecast of drawdown by '+a.length+' week(s), '+minus+' overlimit drawdown(s) with limit '+lim+', last drawdown at '+last+'-th week is about '+Math.round(f*100)+'%.');
 
 	return Math.round(f*100);
 };

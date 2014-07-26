@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="12" date="2014-07-26">
+      - New PAMM-index "i500" added.
+      - Improved the forecast of drawdown for PAMM indices.
+    </change>
     <change version="11" date="2014-04-10">
       - Adaptation to the new code.
     </change>

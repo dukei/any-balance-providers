@@ -3,4 +3,7 @@
     <change major_version="1.0" version="2" date="2013-02-02">
       - Оптимизация провайдера (уменьшение трафика) - данные теперь извлекаются с meteoclub.kz/meteoXML.php
     </change>
+	<change major_version="1.0" version="3" date="2014-26-07">
+      - Исправлена загрузка данных
+    </change>
 </history>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-municipal-bashesk</id>
+	<api flags="no_browser"/>
+	<name>РУСГИДРО</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера РУСГИДРО http://www.bashesk.ru/ex/</p>
+	<p>Информация берется из личного кабинета http://www.bashesk.ru/ex/private/</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Общая задолженность" units=" р"/>
+		<counter id="pokazaniya" name="Показание прибора учета" units=" кВтч"/>
+		<counter id="perekrut" name="Перекрут (при наличии)" units=" кВтч"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="account" name="Точка учета" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>municipal</type>
+	<country>ru</country>
+</provider>

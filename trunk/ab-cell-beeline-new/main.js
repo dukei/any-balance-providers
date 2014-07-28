@@ -221,12 +221,19 @@ function main() {
 	var baseurl = "https://my.beeline.ru/";
 	AnyBalance.setDefaultCharset('utf-8');
 	
-	var html = AnyBalance.requestGet(baseurl + 'login.html', g_headers);
-	
-	if (AnyBalance.getLastStatusCode() > 400) {
-		AnyBalance.trace('Beeline returned: ' + AnyBalance.getLastStatusString());
-		throw new AnyBalance.Error('Личный кабинет Билайн временно не работает. Пожалуйста, попробуйте позднее.');
+	try {
+		var html = AnyBalance.requestGet(baseurl + 'login.html', g_headers);
+		
+		if (AnyBalance.getLastStatusCode() > 400) {
+			AnyBalance.trace('Beeline returned: ' + AnyBalance.getLastStatusString());
+			throw new AnyBalance.Error('Личный кабинет Билайн временно не работает. Пожалуйста, попробуйте позднее.');
+		}
+	} catch(e){
+		if(!prefs.__debug)
+			throw e;
 	}
+	
+
 	
 	if(prefs.__debug) {
 		try {
@@ -738,7 +745,7 @@ function getBonuses(xhtml, result) {
 	}
 	for (var j = 0; j < bonuses.length; ++j) {
 		var bonus = bonuses[j];
-		var bonus_name = ''; //getParam(bonus, null, null, /<span[^>]+class="bonuses-accums-list"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+		//var bonus_name = ''; //getParam(bonus, null, null, /<span[^>]+class="bonuses-accums-list"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
 		var services = sumParam(bonus, null, null, /<div[^>]+class="\s*(?:accumulator|bonus|item)\s*"(?:[\s\S](?!$|<div[^>]+class="(?:accumulator|bonus|item)"))*[\s\S]/ig);
 		AnyBalance.trace("Found " + services.length + ' bonuses');
 		var reValue = /<div[^>]+class="column2[^"]*"[^>]*>([\s\S]*?)<\/div>/i;
@@ -784,7 +791,7 @@ function getBonuses(xhtml, result) {
 				sumParam(services[i], result, 'sms_left', [reValue, reNewValue], replaceTagsAndSpaces, parseBalance, aggregate_sum);
 			} else if (/MMS/i.test(name)) {
 				sumParam(services[i], result, 'mms_left', [reValue, reNewValue], replaceTagsAndSpaces, parseBalance, aggregate_sum);
-			} else if (/Рублей БОНУС|бонус-баланс/i.test(name)) {
+			} else if (/Рублей БОНУС|бонус-баланс|Бонусы по программе/i.test(name)) {
 				sumParam(services[i], result, 'rub_bonus', reValue, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 			} else if (/Рублей за участие в опросе|Счастливое время/i.test(name)) {
 				sumParam(services[i], result, 'rub_opros', reValue, replaceTagsAndSpaces, parseBalance, aggregate_sum);
@@ -810,7 +817,7 @@ function getBonuses(xhtml, result) {
 					// Минут осталось на всех операторов
 					sumParam(services[i], result, 'min_local', reNewValue, replaceTagsAndSpaces, parseMinutes, aggregate_sum);*/
 			} else {
-				AnyBalance.trace('Неизвестная опция: ' + bonus_name + ' ' + services[i]);
+				AnyBalance.trace('Неизвестная опция: ' + name + ' ' + services[i]);
 			}
 		}
 	}

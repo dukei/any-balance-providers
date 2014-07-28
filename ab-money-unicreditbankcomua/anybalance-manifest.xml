@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1" version="2">ab-money-unicreditbankcomua</id>
+  <id major_version="1" version="3">ab-money-unicreditbankcomua</id>
   <name>UniCredit Bank (unicreditbank.com.ua)</name>
   <description>
     Отримує кількість доступних коштів по рахунках Українського UniCredit Bank (того, чий сайт unicreditbank.com.ua).

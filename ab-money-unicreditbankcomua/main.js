@@ -23,6 +23,8 @@ if (typeof String.prototype.trim != 'function') { // detect native implementatio
 }
 
 function main(){
+	throw new AnyBalance.Error("К сожалению, поддержка данного провайдера больше невозможна, т.к. введена серьезная система безопасности на сайте.");
+	
     var prefs = AnyBalance.getPreferences();
     //if(prefs.card)
     //    if(!/^\d{4}$/.test(prefs.card))

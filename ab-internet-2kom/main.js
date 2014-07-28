@@ -43,7 +43,7 @@ function main() {
 	getParam(html, result, '__tariff', /<label>Тариф\s*(.*)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'status', /<label>Состояние\s*(.*)/i, replaceTagsAndSpaces, html_entity_decode);
 	
-	if (AnyBalance.isAvailable('trafficIn', 'trafficOut', 'period')) {
+	if (AnyBalance.isAvailable('trafficIn', 'trafficOut', 'period', 'daysleft')) {
 		var href = getParam(html, null, null, /<a[^>]*href="(lk\/stat.php[^"]*)/i);
 		if (href) {
 			html = AnyBalance.requestGet(baseurl + href);
@@ -51,6 +51,15 @@ function main() {
 			getParam(html, result, 'trafficOut', /<tr class="current">(?:[\s\S]*?<td[^>]*>){5}([^<]*)/i, replaceTagsAndSpaces, parseTrafficGb);
 			
 			sumParam(html, result, 'period', /"period_dates"(?:[^>]*>){1}[\s\d.,]*-([^<]+)/ig, replaceTagsAndSpaces, parseDate, aggregate_max);
+			
+			if(isset(result.period)) {
+				var dt = new Date().getTime();
+				dt = result.period - dt;
+				var days = Math.round(dt/86400000);
+				AnyBalance.trace('Days left: ' + days);
+				
+				getParam(days*1, result, 'daysleft');
+			}
 		} else {
 			AnyBalance.trace("Can not find statistics url!");
 		}

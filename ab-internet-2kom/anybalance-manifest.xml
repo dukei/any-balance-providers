@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-internet-2kom</id>
+	<id version="5">ab-internet-2kom</id>
 	<name>2КОМ</name>
 	<api flags="no_browser"/>
 	<description html="true"><![CDATA[
@@ -24,6 +24,7 @@
 		<counter id="licschet" name="Лицевой счет" type="text"/>
 		<counter id="userName" name="ФИО" type="text"/>
 		<counter id="period" name="Дата отключения" type="time" format="dd/MM/yyyy"/>
+		<counter id="daysleft" name="Дней до отключения" units=" д"/>
 	</counters>
 	<keywords>интернет, 2kom, 2com</keywords>
 	<type>internet</type>

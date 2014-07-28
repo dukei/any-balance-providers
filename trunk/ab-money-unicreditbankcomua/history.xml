@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change major_version="1" version="3" date="2014-07-28">
+        - К сожалению, поддержка данного провайдера больше невозможна, т.к. введена серьезная система безопасности на сайте..
+    </change>
     <change major_version="1" version="2" date="2013-11-11">
         - Найменування валюти біля баланса.
     </change>

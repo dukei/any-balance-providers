@@ -1,34 +1,34 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Текущий баланс у томского интернет-провайдера Tomtel
-
-Сайт оператора: http://tomtel.ru
-Личный кабинет: https://bill.tomtel.ru
 */
 
 function main(){
     if(AnyBalance.getLevel() < 6)
         throw new AnyBalance.Error('Этот провайдер требует AnyBalance API 6+');
-
-    //Старый сервер оракл 10g имеет баг в TSL, приходится явно перейти на SSL
+	
+	//Старый сервер оракл 10g имеет баг в TSL, приходится явно перейти на SSL
     AnyBalance.setOptions({SSL_ENABLED_PROTOCOLS: ['SSLv3']});
-
-    var prefs = AnyBalance.getPreferences();
-
-    AnyBalance.setDefaultCharset('windows-1251');
-
-    var baseurl = "https://bill.tomtel.ru/fastcom/!w3_p_main.showform";
-
-    var html = AnyBalance.requestPost(baseurl + '?IDENTIFICATION=CONTRACT&ROOTMENU=ROOT', {
+	
+	var prefs = AnyBalance.getPreferences();
+	
+	AnyBalance.setDefaultCharset('windows-1251');
+	
+	var baseurl = "https://bill.tomtel.ru/fastcom/!w3_p_main.showform";
+	
+	var html = AnyBalance.requestPost(baseurl + '?IDENTIFICATION=TOMTEL_CONTRACT&ROOTMENU=ROOT', {
         CONTRACT:'IDENTIFICATION',
         ROOT:'ROOTMENU',
         FORMNAME:'QFRAME',
         USERNAME:prefs.login,
         PASSWORD:prefs.password
     });
-
-    //AnyBalance.trace(html);
+	
+	var href = getParam(html, null, null, /menu" SRC="([^"]+)/i);
+	if(href) {
+		html = AnyBalance.requestGet(baseurl + href);
+	}
+	
+	//AnyBalance.trace(html);
     var sid = getParam(html, null, null, /SID=([A-F0-9]{32})/i);
     var contr_id = getParam(html, null, null, /CONTR_ID=(\d+)/i);
     if(!sid || !contr_id){

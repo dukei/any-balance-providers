@@ -73,8 +73,8 @@ function fetchCard(html, baseurl){
 	if(!div)
 		throw new AnyBalance.Error('Не удаётся найти данные по картам!');*/
 	
-	// <div id="account(?:[^>]*>){4}\s*Russ(?:[^>]*>){105,210}\s*<\/div>\s*<\/div>\s*<\/div>\s*<\/div>\s*<\/div>\s*<\/div>
-	var re = new RegExp('<div id="account(?:[^>]*>){4}\\s*' + (prefs.cardnum ? prefs.cardnum : '[^<]+') + '(?:[^>]*>){105,255}(?:\\s*</div>){6}', 'i');
+	// <div[^>]*id="account(?:[^>]*>){4}\s*Russ(?:[^>]*>){105,210}\s*<\/div>\s*<\/div>
+	var re = new RegExp('<div[^>]*id="account(?:[^>]*>){4}\\s*' + (prefs.cardnum ? prefs.cardnum : '[^<]+') + '(?:[^>]*>){105,255}(?:\\s*</div>){6}', 'i');
     var account = getParam(html, null, null, re, replaceTagsAndSpaces, html_entity_decode);
 	if(!account)
 		throw new AnyBalance.Error('Не удаётся найти ' + (prefs.cardnum ? 'карту с последними цифрами ' + prefs.cardnum : 'ни одной карты!'));

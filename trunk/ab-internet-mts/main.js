@@ -536,8 +536,10 @@ function getIzhevsk(){
 }
 
 function getKomsomolsk(){
-    var baseurl = 'https://clb.komsomolsk.mts.ru/kom/';
-    typicalLanBillingInetTv(baseurl + 'index.php?r=site/login');
+    var baseurl = 'https://clb.komsomolsk.mts.ru/kom/index.php?r=site/login';
+    var urlAjax = 'https://clb.komsomolsk.mts.ru/kom/index.php?r=account/vgroups&agrmid=';
+
+    newTypicalLanBillingInetTv(baseurl, urlAjax);
 }
 
 function getTula(){

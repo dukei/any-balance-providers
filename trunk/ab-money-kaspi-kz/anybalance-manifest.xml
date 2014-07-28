@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-money-kaspi-kz</id>
+	<id version="4">ab-money-kaspi-kz</id>
 	<api flags="no_browser"/>
 	<name>Kaspi bank</name>
 	<description html="true"><![CDATA[
@@ -20,7 +20,6 @@
 		<counter id="currency" name="Валюта" type="text"/>
 		<counter id="card_num" name="Номер карты" type="text"/>
 		<counter id="validto" name="Срок действия карты" type="time" format="dd/MM/yyyy"/>
-		
 		<counter id="cred_balance" name="Кредитные средства" units=" {@currency}"/>
 		<counter id="card_debt" name="Задолженность по карте" units=" {@currency}"/>
 		<counter id="main_debt" name="Основной долг" units=" {@currency}"/>

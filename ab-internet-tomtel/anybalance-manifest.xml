@@ -1,34 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="3">ab-internet-tomtel</id>
-  <api min_level="6"/>
-  <name>Tomtel (Томск)</name>
-  <description>
-    Получает баланс для благовещенского интернет-провайдера Tomtel (http://tomtel.ru).
-
-    Информация берется из личного кабинета https://bill.tomtel.ru.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-    <js>library.js</js>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="topay" name="Рекомендуемый платеж" units="р"/>
-    <counter id="bonus" name="Бонусные баллы"/>
-    <counter id="licschet" name="Договор" type="text"/>
-    <counter id="fio" name="ФИО" type="text"/>
-  </counters>
-  <keywords>
-    интернет, томтел
-  </keywords>
-  <type>
-    internet
-  </type>
-  <country>
-    ru
-  </country>
+	<id version="4">ab-internet-tomtel</id>
+	<api flags="no_browser" min_level="6"/>
+	<name>Tomtel (Томск)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Tomtel (http://tomtel.ru).</p>
+	<p>Информация берется из личного кабинета https://bill.tomtel.ru</p>
+	]]></description>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="topay" name="Рекомендуемый платеж" units=" р"/>
+		<counter id="bonus" name="Бонусные баллы"/>
+		<counter id="licschet" name="Договор" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
+	</counters>
+	<keywords>интернет, томтел</keywords>
+	<type>internet</type>
+	<country>ru</country>
 </provider>

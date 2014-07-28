@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-    <change version="4" date="2014-05-07">
+    <change version="5" date="2014-07-28">
+	- Новый счетчик: Дней до отключения.
+	</change>
+	<change version="4" date="2014-05-07">
 	- Исправлен счетчик: Дата отключения.
 	</change>
     <change version="3" date="2014-05-05">

@@ -13,14 +13,14 @@ var g_headers = {
 function main(){
     var prefs = AnyBalance.getPreferences();
     var baseurl = 'http://simglobalsim.ru/';
-    AnyBalance.setDefaultCharset('utf-8'); 
-
-    var html = AnyBalance.requestGet(baseurl + 'emptyfrontpage?destination=emptyfrontpage', g_headers);
-
-    var form_build_id = getParam(html, null, null, /name="form_build_id"\s*id="([\s\S]*?)"/i, null, html_entity_decode);
+    AnyBalance.setDefaultCharset('utf-8');
+	
+	var html = AnyBalance.requestGet(baseurl + 'emptyfrontpage?destination=emptyfrontpage', g_headers);
+	
+	var form_build_id = getParam(html, null, null, /name="form_build_id"\s*id="([\s\S]*?)"/i, null, html_entity_decode);
     if(!form_build_id)
         throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
-
+	
 	html = AnyBalance.requestPost(baseurl + 'emptyfrontpage?destination=emptyfrontpage', {
         'form_build_id':form_build_id, 
         name:prefs.login,
@@ -30,19 +30,22 @@ function main(){
 		'op':'Войти',
     }, g_headers); 
 	
-    if(!/Logout/i.test(html)){
-        var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
+    if(!/Logout/i.test(html)) {
+        var error = getParam(html, null, null, /Ошибка!<\/h4>([^>]*>){1}/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
-            throw new AnyBalance.Error(error);
+            throw new AnyBalance.Error(error, null, /имя пользователя или пароль неверны/i.test(html));
+		
+		AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
 	
 	html = AnyBalance.requestGet(baseurl + 'user', g_headers);
-
-    var result = {success: true};
-    getParam(html, result, 'fio', /Название[\s\S]*?<dd>([\s\S]*?)<\/dd>/i, replaceTagsAndSpaces, html_entity_decode);
+	
+	var result = {success: true};
+	
+	getParam(html, result, 'fio', /Название[\s\S]*?<dd>([\s\S]*?)<\/dd>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'phone', /Телефон GLOBALSIM[\s\S]*?<dd>([\s\S]*?)<\/dd>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'balance', /Баланс[\s\S]{1,50}<dd>([\s\S]*?)<\/dd>/i, replaceTagsAndSpaces, parseBalance);
-
-    AnyBalance.setResult(result);
+	
+	AnyBalance.setResult(result);
 }

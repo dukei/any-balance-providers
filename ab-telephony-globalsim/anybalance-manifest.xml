@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser" />
-	<id version="1">ab-telephony-globalsim</id>
+	<id version="2">ab-telephony-globalsim</id>
 	<name>Globalsim</name>
-	<description>Получает данные для http://simglobalsim.ru/</description>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Globalsim http://simglobalsim.ru</p>
+	]]></description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
@@ -14,7 +15,7 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units="USD"/>
+		<counter id="balance" name="Баланс" units=" $"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="phone" name="Телефон GLOBALSIM" type="text"/>
 	</counters>

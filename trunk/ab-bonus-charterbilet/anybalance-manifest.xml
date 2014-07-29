@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-bonus-charterbilet</id>
+	<api flags="no_browser"/>
+	<name>Charterbilet (Чартики)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе из личного кабинета Charterbilet http://www.charterbilet.ru/priv/pay/pay_deposit_totals.php</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="charts" name="Чартики"/>
+		<counter id="balance" name="Рубли" units=" р"/>
+		<counter id="balance_usd" name="USD" units=" $"/>
+		<counter id="balance_eur" name="EURO" units=" €"/>
+	</counters>
+	<keywords></keywords>
+	<type>bonus</type>
+	<country>ru</country>
+</provider>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference
+		title="Логин"
+		key="login"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Логин"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите логин, используемый для входа в личный кабинет.">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Пароль"
+		key="password"
+		summary="||***********"
+		obligatory="true"
+		dialogTitle="Пароль"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите пароль, используемый для входа в личный кабинет."
+		inputType="textPassword|number">
+	</EditTextPreference>
+	<EditTextPreference
+		positiveButtonText="ОК"
+		key="lastdigits"
+		dialogTitle="Номер карты/счета"
+		negativeButtonText="Отмена"
+		title="Номер карты"
+		summary="Последние 4 цифры карты/счета|Автоматически\n|{@s}\n"
+		dialogMessage="Введите последние 4 цифры карты(счета), по которой вы хотите получить информацию. Если это поле оставить пустым, то будет показана информация по первой карте(счету)."
+		inputType="number">
+	</EditTextPreference>	
+</PreferenceScreen>

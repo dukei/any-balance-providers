@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-money-ukrsibbank</id>
+	<api flags="no_browser"/>
+	<name>УКРСИББАНК</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе на картах и счетах УКРСИББАНКа http://ukrsibbank.com/</p>
+	<p>Информация берется из личного кабинета https://secure.my.ukrsibbank.com/web_banking/protected/welcome.jsf</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" {@currency}"/>
+		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="account" name="Номер счета" type="text"/>
+		<counter id="acc_name" name="Название счета" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>money</type>
+	<country>ua</country>
+</provider>

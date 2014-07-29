@@ -551,6 +551,7 @@ function fetchPost(baseurl, html) {
 	if (isAvailableBonuses()) {
 		xhtml = getBlock(baseurl + 'c/post/index.html', html, 'loadingBonusesAndServicesDetails');
 		xhtml = getBlock(baseurl + 'c/post/index.html', [xhtml, html], 'bonusesloaderDetails');
+		
 		getBonuses(xhtml, result);
 	}
 	
@@ -755,7 +756,7 @@ function getBonuses(xhtml, result) {
 		var services = sumParam(bonus, null, null, /<div[^>]+class="\s*(?:accumulator|bonus|item)\s*"(?:[\s\S](?!$|<div[^>]+class="(?:accumulator|bonus|item)"))*[\s\S]/ig);
 		AnyBalance.trace("Found " + services.length + ' bonuses');
 		var reValue = /<div[^>]+class="column2[^"]*"[^>]*>([\s\S]*?)<\/div>/i;
-		var reNewValue = /<div[^>]+class="column2[^"]*"(?:[^>]*>){5}([\s\d,]+)/i;
+		var reNewValue = /<div[^>]+class="column2[^"]*"(?:[^>]*>){5}([\s\d,.]+)/i;
 		
 		for (var i = 0; i < services.length; ++i) {
 			var name = '' + getParam(services[i], null, null, /<div[^>]+class="column1[^"]*"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode); //+ ' ' + bonus_name;

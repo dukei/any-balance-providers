@@ -186,7 +186,8 @@ function checkCorrectNumberLogin(html, prefs) {
 	
 	AnyBalance.trace('Судя по всему, мы уже залогинены на номер ' + phone);
 	
-	var needeedPhone = prefs.phone || prefs.login;
+	var needeedPhone = prefs.login;
+	
 	if(!endsWith(phone, needeedPhone)) {
 		AnyBalance.trace('Залогинены на неправильный номер ' + phone + ' т.к. в настройках указано, что номер должен заканчиваться на ' + needeedPhone);
 		throw new AnyBalance.Error('В настоящее время Билайн не поддерживает обновление чужого номера через мобильный интернет. Обновите этот аккаунт через Wi-Fi.');
@@ -210,6 +211,11 @@ function loginProc(baseurl, action, params, prefs) {
 		}
 	}
 	return html;
+}
+
+function isMultinumbersCabinet(html) {
+	var accounts = sumParam(html, null, null, /selectAccount\('\d+'\);/ig);
+	return accounts.length > 1;
 }
 
 function main() {
@@ -791,9 +797,9 @@ function getBonuses(xhtml, result) {
 				sumParam(services[i], result, 'sms_left', [reValue, reNewValue], replaceTagsAndSpaces, parseBalance, aggregate_sum);
 			} else if (/MMS/i.test(name)) {
 				sumParam(services[i], result, 'mms_left', [reValue, reNewValue], replaceTagsAndSpaces, parseBalance, aggregate_sum);
-			} else if (/Рублей БОНУС|бонус-баланс|Бонусы по программе/i.test(name)) {
+			} else if (/Рублей БОНУС|бонус-баланс/i.test(name)) {
 				sumParam(services[i], result, 'rub_bonus', reValue, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-			} else if (/Рублей за участие в опросе|Счастливое время/i.test(name)) {
+			} else if (/Рублей за участие в опросе|Счастливое время|Бонусы по программе/i.test(name)) {
 				sumParam(services[i], result, 'rub_opros', reValue, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 			} else if (/Времени общения/i.test(name)) {
 				sumParam(services[i], result, 'min_local', reValue, replaceTagsAndSpaces, parseMinutes, aggregate_sum);

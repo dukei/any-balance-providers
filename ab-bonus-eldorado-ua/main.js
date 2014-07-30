@@ -53,7 +53,7 @@ function main(){
     //Срок действия бонусов
     getParam(html, result, 'bonus_burn_date', /<td><span>Бонусы<\/span><\/td>\s*<td><span>Срок действия<\/span><\/td>\s*<\/tr>\s*<tr>\s*<td>[^<]*<\/td>\s*<td>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
     
-    //Срок действия бонусов
+    //Дата перевода бонусов
     getParam(html, result, 'bonus_active', /<td><span>Бонусы<\/span><\/td>\s*<td><span>В статус активный<\/span><\/td>\s*<\/tr>\s*<tr>\s*<td>[^<]*<\/td>\s*<td>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
     
     // Номер карты

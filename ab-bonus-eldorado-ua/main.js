@@ -45,10 +45,16 @@ function main(){
     sumParam(html, result, '__tariff', /<td>Отчество:<\/td>\s*<td><strong>([\s\S]*?)<\/strong><\/td>/ig, replaceTagsAndSpaces, html_entity_decode, create_aggregate_join(' '));
 
     //Активная сумма
-    getParam(html, result, 'balance', /<p><span class="num_new">([^<]*)<\/span> <span class="ttext_">- Активных бонусов <\/span><\/p>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'balance', /<span class="num_new"\s?>([^<]*)<\/span>\s?<span class="ttext_">- Активных бонусов\s?<\/span>/i, replaceTagsAndSpaces, parseBalance);
 
     //НЕактивная сумма
-    getParam(html, result, 'balance_not_active', /<p><span class="num_new">([^<]*)<\/span> <span class="ttext_">- Не активных бонусов <\/span><\/p>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'balance_not_active', /<span class="num_new"\s?>([^<]*)<\/span>\s?<span class="ttext_">- Не активных бонусов\s?<\/span>/i, replaceTagsAndSpaces, parseBalance);
+    
+    //Срок действия бонусов
+    getParam(html, result, 'bonus_burn_date', /<td><span>Бонусы<\/span><\/td>\s*<td><span>Срок действия<\/span><\/td>\s*<\/tr>\s*<tr>\s*<td>[^<]*<\/td>\s*<td>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+    
+    //Срок действия бонусов
+    getParam(html, result, 'bonus_active', /<td><span>Бонусы<\/span><\/td>\s*<td><span>В статус активный<\/span><\/td>\s*<\/tr>\s*<tr>\s*<td>[^<]*<\/td>\s*<td>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
     
     // Номер карты
     result.ncard = prefs.login;

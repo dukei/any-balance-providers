@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1"></id>
+	<api flags="no_browser"/>
+	<name>TypicalProvider</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера ИмяПровайдера</p>
+	<p>Информация берется из личного кабинета http:\\...</p>
+
+	<b>Особенности:</b>
+	<ul>
+		<li>Счетчики "Расход за прошлый месяц" и "Ежемесячная плата" доступны только при использовании мобильного интернет помощника.</li>
+		<li>Счетчик "Бонусные баллы" доступнен только при использовании Личного Кабинета МТС.</li>
+		<li>Если получение данных настроено через интернет-помощник, рекомендуется устанавливать в настройках свой регион явно. Это экономит трафик и не зависит от поведения московского интернет-помощника.</li>
+	</ul>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Если у вас нет доступа в Личный кабинет, получите его на странице https://login.mts.ru/amserver/password</p>
+	]]></instruction>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" {@currency}"/>
+		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="phone" name="Телефон" type="text"/>
+		<counter id="deadline" name="Дата отключения" type="time" format="dd/MM/yyyy"/>
+	</counters>
+	<keywords></keywords>
+	<type></type>
+	<country>ru</country>
+</provider>

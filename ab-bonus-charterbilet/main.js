@@ -44,10 +44,10 @@ function main() {
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'charts', /чартик(?:[^>]*>){5}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'balance', /рубль(?:[^>]*>){5}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'balance_usd', /доллар(?:[^>]*>){5}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'balance_eur', /евро(?:[^>]*>){5}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'charts', /span>чартик(?:[^>]*>){5}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance', />рубль(?:[^>]*>){5}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance_usd', />доллар(?:[^>]*>){5}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance_eur', />евро(?:[^>]*>){5}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 	
 	AnyBalance.setResult(result);
 }

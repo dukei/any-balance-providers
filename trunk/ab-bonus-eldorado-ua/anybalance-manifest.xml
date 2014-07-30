@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-bonus-eldorado-ua</id>
+  <id version="3">ab-bonus-eldorado-ua</id>
   <api flags="no_browser"/>
   <name>Клуб Эльдорадо (Украина)</name>
   <description html="true"><![CDATA[
@@ -20,6 +20,9 @@
   <counters>
     <counter id="balance" name="Активных бонусов" suffix=" ₴" type="numeric"/>
     <counter id="balance_not_active" name="Не активных бонусов" suffix=" ₴" type="numeric"/>
+    <counter id="bonus_burn_date" name="Срок действия бонусов" type="time" format="dd/MM/yyyy"/>
+    <counter id="bonus_active" name="Дата перевода бонусов" type="time" format="dd/MM/yyyy"/>
+  </counters>
     <counter id="ncard" name="№ карты"/>
   </counters>
   <keywords>

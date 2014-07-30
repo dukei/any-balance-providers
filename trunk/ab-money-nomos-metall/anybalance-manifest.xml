@@ -2,12 +2,12 @@
 <provider>
 	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser" />
-    <id version="1">ab-money-nomos-metall</id>
+    <id version="2">ab-money-nomos-metall</id>
     <name>НОМОС-Банк (Курсы драг. металлов)</name>
     <description>
 		Получает текущие курсы купли-продажи металлов в НОМОС-Банке (http://nomos.ru)
 	</description>
-    <author>Stark &lt;support@starksoft.ru&gt;</author>
+    <author>support@starksoft.ru</author>
     <files>
 	<icon>icon.png</icon>
         <js>main.js</js>

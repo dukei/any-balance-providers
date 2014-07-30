@@ -32,12 +32,12 @@ function main(){
     case 'auto':
     default:
         try{
-            mainOld();
+			mainNew();
         }catch(e){
             if(e.fatal)
                 throw e;
-            AnyBalance.trace('Ошибка подключения к старому кабинету: ' + e.message + '\nПробуем новый...');
-            mainNew();
+            AnyBalance.trace('Ошибка подключения к новому кабинету: ' + e.message + '\nПробуем старый...');
+            mainOld();
         }
         break;
     }
@@ -116,6 +116,10 @@ function mainNew () {
     }
 	
     var html = AnyBalance.requestGet (baseurl + 'payment/main.action');
+	
+	if(/Внимание! Срок действия вашего пароля истек/i.test(html)) {
+		throw new AnyBalance.Error('Внимание! Срок действия вашего пароля истек. Зайдите в кошелек через браузер и следуйте инструкции.', null, true);
+	}
 	
 	AnyBalance.trace ('It looks like we are in selfcare...');
 	

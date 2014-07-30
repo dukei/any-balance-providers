@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="2.2" version="17" date="2014-07-30">
+	- По умолчанию используется новый кабинет.
+	- Улучшена обработка ошибок.
+	</change>
 	<change major_version="2.2" version="16" date="2014-05-29">
 	- Поддержка изменений на сайте.
 	</change>

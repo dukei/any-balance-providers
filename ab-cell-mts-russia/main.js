@@ -50,12 +50,12 @@ function main() {
 		mainOrdinary();
 	} else {
 		try {
-			if (!AnyBalance.isAvailable('bonus')) {
+			if (!AnyBalance.isAvailable(['bonus', 'traffic_left_mb'])) {
 				//Мобильный помощник, только если не нужны бонусные баллы
 				mainMobile(true);
 				return;
 			} else {
-				AnyBalance.trace('Требуются бонусные баллы, мобильный помощник не подходит...');
+				AnyBalance.trace('Требуются бонусные баллы или остаток трафика, мобильный помощник не подходит...');
 			}
 		} catch (e) {
 			if (!e.allow_retry || e.fatal) throw e;

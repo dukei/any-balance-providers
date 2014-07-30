@@ -1,37 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="3">ab-bonus-eldorado-ua</id>
-  <api flags="no_browser"/>
-  <name>Клуб Эльдорадо (Украина)</name>
-  <description html="true"><![CDATA[
-  <p>Получает информацию по бонусной карте клуба постоянных покупателей Эльдорадо. Информация берется из личного кабинета http://www.club.eldorado.com.ua.</p>
-  ]]></description>
-  <instruction>
-	  Для регистрации в Личном кабинете необходимо зайти на сайт http://www.club.eldorado.com.ua и на главной страничке ввести номер карты и пин-код. На появившейся страничке необходимо заполнить все поля анкеты и согласиться на активацию.
-  </instruction>
-  <author>Ignatiy Goloviznin &lt;igoloviznin@gmail.com&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Активных бонусов" suffix=" ₴" type="numeric"/>
-    <counter id="balance_not_active" name="Не активных бонусов" suffix=" ₴" type="numeric"/>
-    <counter id="bonus_burn_date" name="Срок действия бонусов" type="time" format="dd/MM/yyyy"/>
-    <counter id="bonus_active" name="Дата перевода бонусов" type="time" format="dd/MM/yyyy"/>
-  </counters>
-    <counter id="ncard" name="№ карты"/>
-  </counters>
-  <keywords>
-    eldorado, эльдорадо, прибуткова, картка, карта, бонус, украина
-  </keywords>
-  <type>
-    bonus
-  </type>
-  <country>
-    ua
-  </country>
+	<id version="4">ab-bonus-eldorado-ua</id>
+	<api flags="no_browser"/>
+	<name>Клуб Эльдорадо (Украина)</name>
+	<description html="true"><![CDATA[
+	<p>Получает информацию по бонусной карте клуба постоянных покупателей Эльдорадо. Информация берется из личного кабинета http://www.club.eldorado.com.ua.</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для регистрации в Личном кабинете необходимо зайти на сайт http://www.club.eldorado.com.ua и на главной страничке ввести номер карты и пин-код. На появившейся страничке необходимо заполнить все поля анкеты и согласиться на активацию.</p>
+	]]></instruction>
+	<author>Ignatiy Goloviznin &lt;igoloviznin@gmail.com&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Активных бонусов" suffix=" ₴"/>
+		<counter id="balance_not_active" name="Не активных бонусов" suffix=" ₴"/>
+		<counter id="ncard" name="№ карты" type="text"/>
+		<counter id="bonus_burn_date" name="Срок действия бонусов" type="time" format="dd/MM/yyyy"/>
+		<counter id="bonus_active" name="Дата перевода бонусов" type="time" format="dd/MM/yyyy"/>
+	</counters>
+	<keywords>eldorado, эльдорадо, прибуткова, картка, карта, бонус, украина</keywords>
+	<type>bonus</type>
+	<country>ua</country>
 </provider>

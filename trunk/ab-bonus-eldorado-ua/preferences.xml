@@ -1,34 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <EditTextPreference 
-        key="login"
-        title="Номер карты"
-        summary="Номер вашей карты||{@s}\n"
-	dialogMessage="Введите номер вашей карты"
-        dialogTitle="Номер карты"
-        positiveButtonText="ОК"
-        negativeButtonText="Отмена"
-        inputType="number">
-    </EditTextPreference>
-    <EditTextPreference 
-        key="pass"
-        title="PIN-код"
-        summary="||***********\n"
-        dialogTitle="PIN-код"
-	dialogMessage="Введите PIN-код, используемый для входа в личный кабинет."
-	positiveButtonText="ОК"
-        negativeButtonText="Отмена"
-        inputType="numberPassword">
-    </EditTextPreference>
-    <EditTextPreference
-	key="email"
-	title="E-mail"
-	summary="Адрес электронной почты||{@s}\n"
-	obligatory="true"
-	dialogTitle="E-mail"
-	positiveButtonText="ОК"
-	negativeButtonText="Отмена"
-	dialogMessage="Введите логин (адрес электронной почты), используемый для входа в личный кабинет."
-	inputType="textEmailAddress">
-    </EditTextPreference>
+	<EditTextPreference
+		obligatory="true"
+		key="login"
+		title="Номер карты"
+		summary="Номер вашей карты||{@s}\n"
+		dialogMessage="Введите номер вашей карты"
+		dialogTitle="Номер карты"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		inputType="number">
+	</EditTextPreference>
+	<EditTextPreference
+		obligatory="true"
+		key="pass"
+		title="PIN-код"
+		summary="||***********\n"
+		dialogTitle="PIN-код"
+		dialogMessage="Введите PIN-код, используемый для входа в личный кабинет."
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		inputType="numberPassword">
+	</EditTextPreference>
+	<EditTextPreference
+		key="email"
+		title="E-mail"
+		summary="Адрес электронной почты||{@s}\n"
+		obligatory="true"
+		dialogTitle="E-mail"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите логин (адрес электронной почты), используемый для входа в личный кабинет."
+		inputType="textEmailAddress">
+	</EditTextPreference>
 </PreferenceScreen>

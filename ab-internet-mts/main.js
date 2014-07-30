@@ -750,8 +750,6 @@ function getChita(){
 	var urlAjax = 'https://clb.chita.mts.ru/chita/index.php?r=account/vgroups&agrmid=';
 	
 	newTypicalLanBillingInetTv(urlIndex, urlAjax);
-    //var baseurl = 'https://clb.chita.mts.ru/chita/';
-    //typicalLanBillingInetTv(baseurl + 'index.php?r=site/login');
 }
 
 function getAmur(){
@@ -759,32 +757,13 @@ function getAmur(){
 	var urlAjax = 'https://clb.amur.mts.ru/cblg/index.php?r=account/vgroups&agrmid=';
 	
 	newTypicalLanBillingInetTv(urlIndex, urlAjax);
-    // var baseurl = 'https://clb.amur.mts.ru/cblg/';
-    // typicalLanBillingInetTv(baseurl + 'index.php?r=site/login');
 }
 
 function getOrel(){
-	var baseurl = 'http://lbc.oreltv.ru/';
-    var prefs = AnyBalance.getPreferences();
-    AnyBalance.setDefaultCharset('utf-8');
+	var urlIndex = 'https://lk-orel.center.mts.ru/index.php?r=site/login';
+	var urlAjax = 'https://lk-orel.center.mts.ru/index.php?r=account/vgroups&agrmid=';
 	
-    var html = AnyBalance.requestPost(baseurl + 'index.php?r=site/login', {
-        'LoginForm[login]':prefs.login,
-        'LoginForm[password]':prefs.password,
-        'yt0':'Войти'
-    });
-	
-    if(!/r=site\/logout/i.test(html)){
-        throw new AnyBalance.Error("Не удалось войти в личный кабинет. Неправильный логин-пароль?");
-    }	
-	
-    var result = {success: true};
-	
-	getParam(html, result, 'username', /<strong>([^<]*)<\/strong>(?:[^>]*>){2}\s*Вы вошли как/i, replaceTagsAndSpaces);
-	getParam(html, result, 'agreement', /Номер договора(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces);
-	getParam(html, result, 'balance', /Текущий баланс(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	
-    AnyBalance.setResult(result);
+	newTypicalLanBillingInetTv(urlIndex, urlAjax);
 }
 
 function getPiter() {

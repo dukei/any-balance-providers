@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="69" date="2014-07-30">
+	- Исправлен регион: Орёл.
+	</change>
 	<change version="68" date="2014-07-28">
 	- Исправлен регион: Комсомольск-на-Амуре.
 	</change>

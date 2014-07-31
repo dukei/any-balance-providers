@@ -846,7 +846,12 @@ function newTypicalLanBillingInetTv(urlIndex, urlAjax) {
 		AnyBalance.trace('Услуг по счету ' + account + ': ' + json.body.length);
 		
 		for(var j = 0; j < json.body.length; j++) {
-			var tarifdescr = json.body[j].tarifdescr + ''; //Цифровое ТВ
+			var tarifdescr = json.body[j].tarifdescr; //Цифровое ТВ
+			
+			if(typeof tarifdescr == Object) {
+				tarifdescr = tarifdescr.descr;
+			}
+			
 			var state = json.body[j].state.state + ''; //Состояние: активен
 			var services = json.body[j].services[0] + ''; //Нет подключенных услуг
 			
@@ -861,7 +866,7 @@ function newTypicalLanBillingInetTv(urlIndex, urlAjax) {
 			var act = /Состояние:\s+актив/i.test(state) ? 'active' : 'inactive';
 			var pri = priority[act];
 			// Это ТВ
-			if(/\BТВ\B/.test(tarifdescr)) {
+			if(/\BТВ\B|Телевидение/.test(tarifdescr)) {
 				if(!isset(accTv[pri]))
 					accTv[pri] = response;
 			// Это интернет

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-cell-akos</id>
+	<id version="3">ab-cell-akos</id>
 	<api flags="no_browser"/>
 	<name>АКОС GSM (Ростелеком)</name>
 	<description html="true"><![CDATA[

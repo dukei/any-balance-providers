@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="3" date="2014-07-31">
+	- Исправлена ошибка.
+	</change>
 	<change version="2" date="2014-07-24">
 	- Новые счетчики: Использовано смс, Использовано минут, Использовано трафика.
 	</change>

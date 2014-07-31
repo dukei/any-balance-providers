@@ -2,14 +2,15 @@
 <PreferenceScreen>
 	<EditTextPreference
 		obligatory="true"
-		title="Номер карты"
+		key="email"
+		title="E-mail"
+		summary="Адрес электронной почты||{@s}\n"
+		obligatory="true"
+		dialogTitle="E-mail"
 		positiveButtonText="ОК"
-		summary="Номер вашей карты||{@s}\n"
-		dialogTitle="Номер карты"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите номер вашей карты"
-		key="login"
-		inputType="number">
+		dialogMessage="Введите логин (адрес электронной почты), используемый для входа в личный кабинет."
+		inputType="textEmailAddress">
 	</EditTextPreference>
 	<EditTextPreference
 		obligatory="true"

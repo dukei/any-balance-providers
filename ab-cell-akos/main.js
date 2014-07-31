@@ -26,7 +26,7 @@ function main(){
 		
 		html = AnyBalance.requestGet(baseurl + "function=is_account");
 		
-		if(/<TITLE>ICS - [?]{5,}/i.test()) {
+		if(/<TITLE>ICS - [?]{5,}/i.test(html)) {
 			throw new AnyBalance.Error('На сайте возникла ошибка в кодировке, обойти эту ошибку невозможно, т.к. она возникает на сайте Акос.');
 		}
 		if(!/\?function=is_exit/i.test(html)){

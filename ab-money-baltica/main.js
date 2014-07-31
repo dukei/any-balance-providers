@@ -67,7 +67,7 @@ function fetchAcc(baseurl) {
 	*/
 }
 
-function checkForLoginErorrs(html) {
+function checkForLoginErrors(html) {
 	var errors = {
 		'UsernameNotFoundException':'Такого пользователя не существует!',
 		'This request requires HTTP authentication':'Проверьте правильность ввода пароля!'
@@ -78,7 +78,7 @@ function checkForLoginErorrs(html) {
 	if(match) {
 		var error = errors[match[1]];
 		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));	
+			throw new AnyBalance.Error(error, null, true);	
 	}
 	
 	AnyBalance.trace(html);
@@ -92,7 +92,7 @@ function getHTTPDigestPage(baseurl, path) {
 	var info = AnyBalance.getLastResponseHeader('WWW-Authenticate');
 	// Не удалось авторизоваться, пользователь не найден
 	if(!info) {
-		checkForLoginErorrs(html);
+		checkForLoginErrors(html);
 	}
 	var realm = getParam(info, null, null, /realm="([^"]*)/);
 	var nonce = getParam(info, null, null, /nonce="([^"]*)/);
@@ -114,11 +114,11 @@ function getHTTPDigestPage(baseurl, path) {
 		var json = getJson(html);
 	} catch (e) {
 		AnyBalance.trace('Не удалось получить данные по продукту, узнаем почему...');
-		checkForLoginErorrs(html);
+		checkForLoginErrors(html);
 	}
 	// Нет такого типа продуктов
 	if(!json) {
-		throw new AnyBalance.Error('Выбранный тип продукта не существует в системе!');
+		throw new AnyBalance.Error('У вас нет выбранного типа продукта.');
 	}
 	// Возвращаем объект
 	return json;

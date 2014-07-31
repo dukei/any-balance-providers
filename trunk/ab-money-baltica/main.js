@@ -43,7 +43,7 @@ function fetchCard(baseurl) {
 	getParam(json.card.balance + '', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
 	getParam(json.card.currency, result, ['currency', 'balance'], null, replaceTagsAndSpaces);
 	getParam(json.card.actual, result, 'actual', null, replaceTagsAndSpaces, parseDate);
-	getParam(json.bankingInformation.payee, result, 'fio', null, replaceTagsAndSpaces);
+	getParam(json.card.bankingInformation.payee, result, 'fio', null, replaceTagsAndSpaces);
 	
 	AnyBalance.setResult(result);	
 }

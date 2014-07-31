@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-money-baltica</id>
+	<id version="2">ab-money-baltica</id>
 	<api flags="no_browser"/>
 	<name>Банк Балтика</name>
 	<description html="true"><![CDATA[

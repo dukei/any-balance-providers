@@ -21,13 +21,10 @@ function main() {
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	try {
-		var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
-		
-		if(AnyBalance.getLastStatusCode() > 400 || !html) {
-			throw new AnyBalance.Error('Ошибка! Сервер не отвечает! Попробуйте обновить баланс позже.');
-		}
-	} catch(e){}
+	var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
+	
+	if(AnyBalance.getLastStatusCode() > 400 || !html) {
+		throw new AnyBalance.Error('Ошибка! Сервер не отвечает! Попробуйте обновить баланс позже.');
 	
 	var params = createFormParams(html, function(params, str, name, value) {
 		if (name == 'login') 

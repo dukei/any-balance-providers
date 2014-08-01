@@ -1,40 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-      <ListPreference 
-        key="prefph"
-        title="Префикс номера телефона" 
-        summary="|Выберите префикс номера телефона|{@s}" 
-	entries="063|093"
-	entryValues="063|093"
-        dialogTitle="Префикс номера телефона">
-    </ListPreference>
-    <EditTextPreference 
-        key="phone"
-        title="Номер телефона" 
-        summary="Номер без префикса +380X3||{@s}\n" 
-        dialogTitle="Номер телефона" 
-        negativeButtonText="Отмена" 
-        dialogMessage="Введите номер вашего телефона"
-        positiveButtonText="ОК" 
-        inputType="number">
-    </EditTextPreference>
-    <EditTextPreference 
-        key="pass" 
-        title="СуперПароль"
-        summary="СуперПароль для авторизации||***********\n"
-        dialogTitle="СуперПароль"
-        negativeButtonText="Отмена"
-        dialogMessage="Введите СуперПароль, используемый для авторизации. Если у вас нет пароля, позвоните со своего телефона Life :) на номер *124*779#, пароль придет вам в ответном SMS."
-        positiveButtonText="ОК"
-        inputType="numberPassword">
-    </EditTextPreference>
-    <ListPreference 
-        key="lang"
-        title="Язык отображения" 
-        summary="||{@s}" 
-	entries="Русский|Українська|English"
-	entryValues="ru|uk|en"
-        defaultValue="ru"
-        dialogTitle="Язык отображения данных">
-    </ListPreference>
+	<ListPreference
+		key="prefph"
+		title="Префикс номера телефона"
+		summary="|Выберите префикс номера телефона|{@s}"
+		entries="063|093"
+		entryValues="063|093"
+		dialogTitle="Префикс номера телефона">
+	</ListPreference>
+	<EditTextPreference
+		key="phone"
+		title="Номер телефона"
+		summary="Номер без префикса +380X3||{@s}\n"
+		dialogTitle="Номер телефона"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите номер вашего телефона"
+		positiveButtonText="ОК"
+		inputType="number">
+	</EditTextPreference>
+	<EditTextPreference
+		key="pass"
+		title="СуперПароль"
+		summary="СуперПароль для авторизации||***********\n"
+		dialogTitle="СуперПароль"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите СуперПароль, используемый для авторизации. Если у вас нет пароля, позвоните со своего телефона Life :) на номер *124*779#, пароль придет вам в ответном SMS."
+		positiveButtonText="ОК"
+		inputType="numberPassword">
+	</EditTextPreference>
+	<ListPreference
+		key="lang"
+		title="Язык отображения"
+		summary="||{@s}"
+		entries="Русский|Українська|English"
+		entryValues="ru|uk|en"
+		defaultValue="ru"
+		dialogTitle="Язык отображения данных">
+	</ListPreference>
+	<ListPreference
+		key="type"
+		title="Тип кабинета"
+		summary="||{@s}"
+		entries="Мобильное приложение|Сайт (С вводом кода)"
+		entryValues="app|site"
+		defaultValue="app"
+		dialogTitle="Выберите тип кабинета">
+	</ListPreference>	
 </PreferenceScreen>

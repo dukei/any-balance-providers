@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="22">ab-cell-life-ukr</id>
+	<id major_version="2" version="23">ab-cell-life-ukr</id>
 	<api flags="no_browser" />
 	<name>Life:) Украина</name>
 	<description html="true"><![CDATA[
@@ -23,6 +23,7 @@
 	]]></instruction>
 	<author>Ignatiy Goloviznin &lt;igoloviznin@gmail.com&gt;</author>
 	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
@@ -33,9 +34,9 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="Mbalance" name="Основной счет" suffix=" ₴" type="numeric"/>
-		<counter id="Bbalance" name="Бонусный счет" suffix=" ₴" type="numeric"/>
-		<counter id="gprs" name="Трафик" suffix=" Мб" type="numeric"/>
+		<counter id="Mbalance" name="Основной счет" suffix=" ₴"/>
+		<counter id="Bbalance" name="Бонусный счет" suffix=" ₴"/>
+		<counter id="gprs" name="Трафик" suffix=" Мб"/>
 		<counter id="sms_uk" name="SMS по Украине" type="numeric" units=" смс"/>
 		<counter id="sms_life" name="SMS в сети Life:)" type="numeric" units=" смс"/>
 		<counter id="mms_uk" name="MMS по Украине" type="numeric" units=" ммс"/>

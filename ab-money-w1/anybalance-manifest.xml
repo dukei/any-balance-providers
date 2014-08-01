@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="5">ab-money-w1</id>
+	<id major_version="2" version="6">ab-money-w1</id>
+	<api flags="no_browser"/>
 	<name>W1 Единый Кошелек</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе  для пользователей «Единого Кошелька W1» (http://www.w1.ru/).</p>
-	<p>Информация берется из личного кабинета (http://www.walletone.com/client/).</p>
+	<p>Предоставляет информацию о балансе  для пользователей «Единого Кошелька W1» http://www.w1.ru/</p>
+	<p>Информация берется из личного кабинета https://www.walletone.com/wallet/client/</p>
 	]]></description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
 		<js>library.js</js>
-		<js>basis.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="5">ab-bonus-nova-poshta</id>
+	<id version="6">ab-bonus-nova-poshta</id>
 	<api flags="no_browser"/>
 	<name>Нова пошта (Бонусы)</name>
 	<description html="true"><![CDATA[
 	<p>Мониторинг накопленных баллов "Нова пошта" (Украина)</p>
 	]]></description>
 	<author>Ignatiy Goloviznin &lt;igoloviznin@gmail.com&gt;</author>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

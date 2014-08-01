@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="6">ab-bonus-nova-poshta</id>
+	<id version="7">ab-bonus-nova-poshta</id>
 	<api flags="no_browser"/>
 	<name>Нова пошта (Бонусы)</name>
 	<description html="true"><![CDATA[
@@ -21,8 +21,8 @@
 		<counter id="discount" name="Доступная скидка" units=" ₴"/>
 		<counter id="send" name="Количество отправок"/>
 		<counter id="ncard" name="Номер карты"/>
-		<counter id="status" name="Статус участника"/>
-		<counter id="status_next" name="Следующий статус участника"/>
+		<counter id="status" name="Статус участника" type="text"/>
+		<counter id="status_next" name="Следующий статус участника" type="text"/>
 	</counters>
 	<keywords>нова пошта балы личный кабинет</keywords>
 	<type>bonus</type>

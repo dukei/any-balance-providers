@@ -239,8 +239,6 @@ function main() {
 			throw e;
 	}
 	
-
-	
 	if(prefs.__debug) {
 		try {
 			html = AnyBalance.requestGet('https://my.beeline.ru/c/'+prefs.__debug+'/index.html', g_headers);
@@ -248,8 +246,8 @@ function main() {
 		}
 	}
 	
-	AnyBalance.trace('Запрашиваем login.html');
-	AnyBalance.trace(html);
+	// AnyBalance.trace('Запрашиваем login.html');
+	// AnyBalance.trace(html);
 	
 	var tform = getParam(html, null, null, /<form[^>]+name="loginFormB2C:loginForm"[^>]*>[\s\S]*?<\/form>/i);
 	

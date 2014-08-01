@@ -19,7 +19,7 @@ function main() {
     AnyBalance.setDefaultCharset('utf-8');
 	
 	var html = AnyBalance.requestGet(baseurl + 'check/fines/', g_headers);
-	var token = getParam(html, null, null, /var _token\s*=\s*'([^']*)/i);
+	var token = getParam(html, null, null, /var _token\s*=\s*[^'"]+['"]([a-f\d]+)/i);
 	var templateFolder = getParam(html, null, null, /var templateFolder\s*=\s*["']\/([^"']+)/i);
 	
 	var form = getParam(html, null, null, /(<form method="POST" id="tsdataform"[\s\S]*?<\/form>)/i);

@@ -1,105 +1,90 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
+
 var g_headers = {
 	'Origin':'https://www.walletone.com',
-	'JS-Framework':'Basis',
-	'User-Agent':'Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.63 Safari/537.36',
-	'Accept': '*/*',
-	'Content-type': 'text/xml;charset=utf-8',
+	'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1985.125 Safari/537.36',
+	'Accept': 'application/vnd.wallet.openapi.v1+json',
+	'Content-type': 'application/vnd.wallet.openapi.v1+json',
 	'Referer':'https://www.walletone.com/client/?attempt=1',
+	'Accept-Language': 'ru-RU'
 };
 
-function encryptPass(pass) {
-	//AnyBalance.trace('Trying to encrypt pass: ' + pass);
-	pass = Basis.Crypt(pass).sha1(!0).base64().toString();
-	//AnyBalance.trace('Encrypted pass: ' + pass);
-	return pass;
+var g_currency = {
+	980: '₴',
+	398: '₸',
+	643: 'р',
+	710: 'ZAR',
+	840: '$',
+	978: '€'
 }
-
-function trace(str){
-    AnyBalance.trace(str);
-}
-
-function ur1(u) {
-    trace('getting path of the url ' + u);
-    return u.replace(/^\w+:\/\/[^\/]*/, '') || '/';
-}
-
+	
 function main() {
+	var prefs = AnyBalance.getPreferences();
+	var baseurl = 'https://www.walletone.com/';
 	AnyBalance.setDefaultCharset('utf-8');
-	var prefs = AnyBalance.getPreferences(),
-	currency = {
-		980: '₴',
-		398: '₸',
-		643: 'р',
-		710: 'ZAR',
-		840: '$',
-		978: '€'
-	},
-	currencyCode = prefs.currency || 643;
 	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
-
-        var domain = 'www.walletone.com';
-        var baseurl = 'https://' + domain;
 	
-	var html = AnyBalance.requestGet(baseurl + '/client/', g_headers);
-        var redirect_js_url = getParam(html, null, null, /src="(\/redirect.js[^>"]*)/i, null, html_entity_decode);
-        if(!redirect_js_url){
-            AnyBalance.trace(html);
-            throw new AnyBalance.Error('Не удаётся получить секретный параметр входа. Сайт изменен?');
-        }
-        var script = sumParam(html, null, null, /<script[^>]*>([\s\S]*?)<\/script>/ig, null, null, create_aggregate_join('\n', false));
-
-        var redirect_js = AnyBalance.requestGet(baseurl + redirect_js_url, addHeaders({Referer: baseurl + '/client/'}));
-        var location = {href: baseurl + '/client/'};
-        var document = {cookie: 'CABINET_LOCALE=ru'};
-        var window = {location: location, document: document};
-        var eval_script = 'var ur1;\n' + redirect_js + '\nur1=' + ur1.toString() + '\n' + script;
-        try{
-            //Ну вот зачем делать такую защиту? Ну почему бы просто не дать возможность пользователям смотреть свой баланс в AnyBalance?
-            //Теперь придется делать сложный и опасный eval... Надеюсь, разработчики w1 пойдут навстречу своим пользователям и разрешат им смотреть баланс w1 в AnyBalance.
-            var safe_eval_func = new Function('window', 'document', 'location', 'self', 'top', 'AnyBalance', 'g_AnyBalanceApiParams', '_AnyBalanceApi', eval_script);
-            safe_eval_func(window, document, location, window, window);
-        }catch(e){
-            AnyBalance.trace(eval_script);
-            AnyBalance.trace('Error executing redirect.js: ' + e.message + '\n' + e.stack);
-            throw new AnyBalance.Error('Ошибка выполнения скрипта входа. Сайт изменен?');
-        }
-        
-        AnyBalance.trace('cookie is: ' + document.cookie);
-        var cookiename = decodeURIComponent(document.cookie.replace(/=[\s\S]*/, ''));
-        var cookievalue = decodeURIComponent(document.cookie.replace(/;[\s\S]*/, '').replace(/^.*?=/, ''));
-        AnyBalance.trace('Setting cookie: ' + cookiename + '=' + cookievalue);
-        AnyBalance.setCookie(domain, cookiename, cookievalue);
-
-        AnyBalance.trace('New location is: ' + location.href + ', but we will not follow it (unnecessary)');
+	var html = AnyBalance.requestGet(baseurl + 'wallet/client/', g_headers);
 	
-	var loginXml = '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><soap:Header><ParamsHeader xmlns="Wallet.Security.WebService"><Params><Param Name="CultureId" Value="ru-RU"/></Params></ParamsHeader></soap:Header><soap:Body><GetSessionTicket xmlns="Wallet.Security.WebService"><Login>'+ prefs.login +'</Login><Password>' + encryptPass(prefs.password) +'</Password><LoginType>Auto</LoginType><ClientId>w1_web</ClientId><Params><Param Name="UserAgent" Value="Chrome 31.0.1650.63"/><Param Name="ClientResolutionX" Value="1920"/><Param Name="ClientResolutionY" Value="1080"/><Param Name="AppVersion" Value="201312260718-test"/></Params></GetSessionTicket></soap:Body></soap:Envelope>';
-	// Получаем SessionKey
-	html = AnyBalance.requestPost(baseurl + '/w1service/SecurityService.asmx', loginXml, addHeaders({
-		'SOAPAction': 'Wallet.Security.WebService/GetSessionTicket'
+	if(!html || AnyBalance.getLastStatusCode() > 400)
+		throw new AnyBalance.Error('Ошибка! Сервер не отвечает! Попробуйте обновить баланс позже.');
+	
+	var script = getParam(html, null, null, /src="(script.js[^"]+)/i);
+	html = AnyBalance.requestGet(baseurl + 'wallet/client/' + (script || ''), g_headers);
+	
+	var token = getParam(html, null, null, /APP_TOKEN:{wallet:"([^"]+)/i);
+	if(!token || !script) {
+		throw new AnyBalance.Error('Не удалось найти токен авторизации. Сайт изменен?');
+	}
+	
+	html = AnyBalance.requestPost(baseurl + 'OpenApi/sessions', JSON.stringify({Login:prefs.login, Password:prefs.password, Scope:'All'}), addHeaders({
+		Referer: 'http://www.walletone.com/ru/wallet/',
+		Authorization: 'Bearer ' + token
 	}));
-	var SessionUserId = getParam(html, null, null, /<SessionUserId>([\s\S]*?)<\/SessionUserId>/i);
-	var SessionKey = getParam(html, null, null, /<SessionKey>([\s\S]*?)<\/SessionKey>/i);
-	if (!SessionKey || !SessionUserId){ 
-		var error = getParam(html, null, null, /<faultstring>[\s\S]*:\s*([\s\S]*?)<\/faultstring>/i, replaceTagsAndSpaces, html_entity_decode);
-		if (error) throw new AnyBalance.Error(error, null, /USER_PASSWORD_NOT_MATCH/i.test(html));
+	
+	var json = getJson(html);
+	
+	if (!json.UserId) {
+		var error = json.ErrorDescription;
+		if (error)
+			throw new AnyBalance.Error(error, null, /Пароль пользователя не соответствует|не найден/i.test(error));
+		
+		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-        }
-
-	var balanceXml = '<?xml version="1.0" encoding="UTF-8"?><soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"><soap:Header><SecurityHeader xmlns="Wallet.Processing.WebService"><SessionKey>' + SessionKey + '</SessionKey></SecurityHeader><ParamsHeader><Params><Param Name="CultureId" Value="ru-RU" /></Params></ParamsHeader></soap:Header><soap:Body><GetUserBalance xmlns="Wallet.Processing.WebService" /></soap:Body></soap:Envelope>';
-	html = AnyBalance.requestPost('http://services.w1.ru/11/ProcessingService.asmx', balanceXml, addHeaders({
-		'SOAPAction': 'Wallet.Processing.WebService/GetUserBalance'
-	}));
-
+	}
+	
+	g_headers = addHeaders({Authorization: 'Bearer ' + json.Token});
+	
+	//html = AnyBalance.requestGet(baseurl + 'OpenApi/profile?userId=' + json.UserId, g_headers);
+	html = AnyBalance.requestGet(baseurl + 'OpenApi/balance', g_headers);
+	
+	json = getJson(html);
+	
+	// Ищем нужную валюту, по умолчанию рубль
+	var currencyCode = prefs.currency || 643;
+	var currentItem;
+	
+	for(var i = 0; i < json.length; i++) {
+		if(json[i].CurrencyId == currencyCode) {
+			currentItem = json[i];
+			break;
+		}
+	}
+	if(!currentItem) {
+		throw new AnyBalance.Error('Не удалось найти кошелек с выбранной валютой (' + g_currency[currencyCode] + ')!');
+	}
+	
 	var result = {success: true};
-	getParam(html, result, 'balance', new RegExp("<CurrencyId>" + currencyCode + "<\/CurrencyId>(?:<Amount>){1}([\\s\\S]*?)<\/Amount>", "i"), replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'SafeAmount', new RegExp("<CurrencyId>" + currencyCode + "<\/CurrencyId>[\\s\\S]*(?:<SafeAmount>){1}([\\s\\S]*?)<\/SafeAmount>", "i"), replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'HoldAmount', new RegExp("<CurrencyId>" + currencyCode + "<\/CurrencyId>[\\s\\S]*(?:<HoldAmount>){1}([\\s\\S]*?)<\/HoldAmount>", "i"), replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'Overdraft', new RegExp("<CurrencyId>" + currencyCode + "<\/CurrencyId>[\\s\\S]*(?:<Overdraft>){1}([\\s\\S]*?)<\/Overdraft>", "i"), replaceTagsAndSpaces, parseBalance);
-	result.currency = currency[currencyCode];
+	
+	getParam(currentItem.Amount + '', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
+	getParam(currentItem.SafeAmount + '', result, 'SafeAmount', null, replaceTagsAndSpaces, parseBalance);
+	getParam(currentItem.HoldAmount + '', result, 'HoldAmount', null, replaceTagsAndSpaces, parseBalance);
+	getParam(currentItem.Overdraft + '', result, 'Overdraft', null, replaceTagsAndSpaces, parseBalance);	
+	result.currency = g_currency[currencyCode];
+	
 	AnyBalance.setResult(result);
 }

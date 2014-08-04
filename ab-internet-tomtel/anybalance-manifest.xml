@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="5">ab-internet-tomtel</id>
+	<id version="6">ab-internet-tomtel</id>
 	<api flags="no_browser" min_level="6"/>
 	<name>Tomtel (Томск)</name>
 	<description html="true"><![CDATA[

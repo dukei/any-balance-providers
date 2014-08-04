@@ -10,9 +10,6 @@ var g_headers = {
 	'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.57 Safari/537.36'
 };
 
-/** с 04.12.13 перестало работать, и даже не помогла ручная установка кук 
-с 21.06.14 опять работает!
-*/
 function main() {
 	var prefs = AnyBalance.getPreferences();
     var baseurl = 'http://www.gibdd.ru/';
@@ -29,9 +26,10 @@ function main() {
 			throw new AnyBalance.Error('Сервис проверки штрафов временно недоступен, скоро все снова будет работать.');
 		}
 		// Попробуем объяснить почему
-		if(/Работа сервиса проверки[^<]*временно приостановлена/i.test(html))
+		if(/временно приостановлена/i.test(html))
 			throw new AnyBalance.Error('Работа сервиса временно приостановлена! Попробуйте обновить данные позже.');
 		
+		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось найти форму для запроса!');
 	}
 	checkEmpty(prefs.login, 'Введите гос. номер. Номер должен быть в формате а351со190 либо 1234ав199, буквы русские!');

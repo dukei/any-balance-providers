@@ -12,6 +12,8 @@ var g_headers = {
 };
 
 function main() {
+	throw new AnyBalance.Error('Провайдер больше не работает, т.к. с сайта nalog.ru убрали возможность проверки долгов по ИНН. Воспользуйтесь провайдером "Федеральная Налоговая Служба"');
+
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'https://service.nalog.ru/';
 	var html = AnyBalance.requestGet(baseurl + 'debt/req.do?');

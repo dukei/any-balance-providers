@@ -7,7 +7,7 @@ function main(){
         throw new AnyBalance.Error('Этот провайдер требует AnyBalance API 6+');
 	
 	//Старый сервер оракл 10g имеет баг в TSL, приходится явно перейти на SSL
-    AnyBalance.setOptions({SSL_ENABLED_PROTOCOLS: ['SSLv2Hello','SSLv3']});
+    	AnyBalance.setOptions({SSL_ENABLED_PROTOCOLS: ['SSLv3']});
 	
 	var prefs = AnyBalance.getPreferences();
 	

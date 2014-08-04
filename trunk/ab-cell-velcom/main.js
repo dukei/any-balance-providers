@@ -6,7 +6,7 @@ function main(){
     var prefs = AnyBalance.getPreferences();
 
     var baseurl = "https://internet.velcom.by/";
-    AnyBalance.setDefaultCharset('windows-1251');
+    AnyBalance.setDefaultCharset('utf-8');
 
     checkEmpty(prefs.login, 'Введите номер телефона в международном формате!');
     checkEmpty(prefs.password, 'Введите пароль к ИССА!');
@@ -63,7 +63,6 @@ function main(){
     params.user_submit='';
 
     var required_headers = {
-		'Origin': 'https://internet.velcom.by',
 		'Referer': 'https://internet.velcom.by/work.html',
 		'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.162 Safari/535.19'
     };
@@ -82,16 +81,15 @@ function main(){
     AnyBalance.trace('Cabinet type: ' + kabinetType);
 
     if(!kabinetType){
-        var error = sumParam(html, null, null, /<td[^>]+class="INFO(?:_Error|_caption)?"[^>]*>(.*?)<\/td>/ig, replaceTagsAndSpaces, html_entity_decode, create_aggregate_join(' '));
-        if(error)
-            throw new AnyBalance.Error(error, null, /Неверный пароль или номер телефона|Пароль должен состоять из 8 цифр/i.test(error));
-        error = sumParam(html, null, null, /<span[^>]+style="color:\s*red[^>]*>[\s\S]*?<\/span>/ig, replaceTagsAndSpaces, html_entity_decode, create_aggregate_join(' '));
+        var error = sumParam(html, null, null, /<td[^>]+class="INFO(?:_Error|_caption)?"[^>]*>(.*?)<\/td>/ig, replaceTagsAndSpaces, html_entity_decode, create_aggregate_join(' '))
+		|| sumParam(html, null, null, /<span[^>]+style="color:\s*red[^>]*>[\s\S]*?<\/span>/ig, replaceTagsAndSpaces, html_entity_decode, create_aggregate_join(' '))
+	        || getParam(html, null, null, /<td[^>]+class="info_caption"[^>]*>[\s\S]*?<\/td>/ig, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error, null, /Неверный пароль или номер телефона|Пароль должен состоять из 8 цифр/i.test(error));
         if(/Сервис временно недоступен/i.test(html))
             throw new AnyBalance.Error('ИССА Velcom временно недоступна. Пожалуйста, попробуйте позже.');
         
-		AnyBalance.trace(html);
+	AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
     }
 	// Иногда сервис недоступен, дальше идти нет смысла
@@ -135,18 +133,21 @@ function main(){
     //Кабинет изменился, рассрочку надо исправлять!
     //Пока не получаем её
 	if(AnyBalance.isAvailable('loan_balance', 'loan_left', 'loan_end')) {
-                AnyBalance.trace('Для исправления получения информации о рассрочке обратитесь к автору провайдера.');
-/*		var html = requestPostMultipart(baseurl + 'work.html', {
+	
+	var html = requestPostMultipart(baseurl + 'work.html', {
 			sid3: sid,
 			user_input_timestamp: new Date().getTime(),
-			user_input_0: '_root/MENU1/FIN_INFO1/LOAN',
-			user_input_1: 'LOAN',
+			user_input_0: '_root/FINANCE_INFO/INSTALLMENT',
+			user_input_1: '',
 			last_id: ''
 		}, required_headers);
 		
-		getParam(html, result, 'loan_balance', /Размер ежемесячного платежа:(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'loan_left', /Оставшаяся к выплате сумма по рассрочке:(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'loan_end', /Дата погашения рассрочки:(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseDate);*/
+		 
+//Ежемес. платеж 659000 руб. Остаток 7249000 руб. Погашение 01.07.2015.			
+		getParam(html, result, 'loan_balance', /Ежемес. платеж ([0-9]+) руб./i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'loan_left', /Остаток ([0-9]+) руб./i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'loan_end', /Погашение ([0-9.]+)./i, replaceTagsAndSpaces, parseDate);
+	
 	}
 	
 	/*

@@ -27,20 +27,20 @@ function getMessage(html) {
 }
 
 function getLoginParams(html, prefs) {
+	var form = getParam(html, null, null, /<form[^>]*action="login.ashx"[\s\S]*?<\/form>/i);
+	checkEmpty(form, 'Не удалось найти форму входа, сайт изменен?', true);
 	
-	var match = /<input type="hidden" name="([\da-zA-Z]{11})" value="([\da-zA-Z]{11})"/i.exec(html);
-	checkEmpty(match, 'Не удалось найти токен авторизации, сайт изменен?', true);
+	var params = createFormParams(form, function(params, str, name, value) {
+		if (name == 'usn') 
+			return prefs.login;
+		else if (name == 'pwd')
+			return prefs.password;
+		else if (name == 'bank')
+			return prefs.bank_type || '0755';
+		
+		return value;
+	});
 	
-	var params = {
-		'usn':prefs.login,
-		'pwd':prefs.password,
-		'bank':(prefs.bank_type || '0755'),
-		'captcha':'',
-		//aapebb5ooug:egqeyownuko
-		'submit':''
-	};
-	
-	params[match[1]] = match[2];
 	return params;
 }
 
@@ -94,7 +94,7 @@ function main() {
 	
 	html = AnyBalance.requestGet(baseurl + bankType +'services.aspx', g_headers);
 	
-	var cardsForm = getParam(html, null, null, /<form\s+id=["']fCrdList["'][\s\S]*?<\/form>/i);
+	var cardsForm = getParam(html, null, null, /<h1>Список карт<\/h1>[\s\S]*?<\/form>/i);
 	checkEmpty(cardsForm, 'Не удалось найти форму с картами, сайт изменен?', true);
 	
 	// Далее надо узнать какую карту смотреть

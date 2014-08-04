@@ -732,8 +732,8 @@ function getBarnaul(){
 }
 
 function getBelgorod(){
-	var urlIndex = 'http://stat.belgorod-net.ru/index.php?r=site/login';
-	var urlAjax = 'http://stat.belgorod-net.ru/index.php?r=account/vgroups&agrmid=';
+	var urlIndex = 'https://lk-belgorod.center.mts.ru/index.php?r=site/login';
+	var urlAjax = 'https://lk-belgorod.center.mts.ru/index.php?r=account/vgroups&agrmid=';
 	
 	newTypicalLanBillingInetTv(urlIndex, urlAjax);
 }

@@ -125,25 +125,27 @@ function doNewCabinet(prefs) {
 	if(!loginVar)
 		throw new AnyBalance.Error('Не удалось найти ссылку на страницу с данными, сайт изменен?');
 	
-	// Теперь надо пнуть базу, чтобы обновилось все
-	html = AnyBalance.requestPost(baseurl + 'wwv_flow.show', {
-		p_request:'APPLICATION_PROCESS=AFTER_AUTH',
-		p_flow_id:10,
-		p_flow_step_id:100,
-		p_instance:loginVar,
-	}, addHeaders({Referer: baseurl}));
-	
-	html = AnyBalance.requestPost(baseurl + 'wwv_flow.show', {
-		p_request:'APPLICATION_PROCESS=GET_CRM',
-		p_flow_id:10,
-		p_flow_step_id:0,
-		p_instance:loginVar,
-		x01:100
-	}, addHeaders({Referer: baseurl}));	
-	
 	var url = baseurl + 'f?p=10:MAIN:' + loginVar;
 	html = AnyBalance.requestGet(url, g_headers);
 	
+	// Теперь надо пнуть базу, чтобы обновилось все
+	var P_instance = getP_instance(html);
+	var FlowID = getFlowID(html);
+	var FlowStepID = getFlowStepID(html);
+	
+	var requests = ['AFTER_AUTH', 'APPLICATION_PROCESS=GET_MAIL_COUNT', 'APPLICATION_PROCESS=GET_CRM', 'APPLICATION_PROCESS=LoadPresale', ''];
+	
+	// Запросы посылаются в цикле :)
+	for(var i = 0; i < requests.length; i++) {
+		var currentRequest = requests[i];
+		
+		html = AnyBalance.requestPost(baseurl + 'wwv_flow.show', {
+			'p_request':currentRequest,
+			'p_instance':getP_instance(html) || P_instance,
+			p_flow_id:getFlowID(html) || FlowID,
+			p_flow_step_id:getFlowStepID(html) || FlowStepID,		
+		}, addHeaders({Referer: url, 'X-Requested-With': 'XMLHttpRequest'}));		
+	}
 	// Все, теперь можно разбирать данные
     if(prefs.type == 'acc')
 		fetchAcc(html, baseurl, prefs, url);
@@ -190,26 +192,6 @@ function fetchCard(html, baseurl, prefs) {
 }
 
 function fetchAcc(html, baseurl, prefs, url) {
-	var P_instance = getP_instance(html);
-	var FlowID = getFlowID(html);
-	var FlowStepID = getFlowStepID(html);
-	
-	var requests = ['APPLICATION_PROCESS=AFTER_AUTH', 'APPLICATION_PROCESS=GET_MAIL_COUNT', ''/*, '', 'APPLICATION_PROCESS=GET_CRM'*/];
-	// Запросы посылаются в цикле :)
-	for(var i = 0; i < requests.length; i++) {
-		var currentRequest = requests[i];
-		
-		html = AnyBalance.requestPost(baseurl + 'wwv_flow.show', {
-			'p_request':currentRequest,
-			'p_instance':getP_instance(html) || P_instance,
-			p_flow_id:getFlowID(html) || FlowID,
-			p_flow_step_id:getFlowStepID(html) || FlowStepID,		
-		}, addHeaders({
-			Referer: url,
-			'X-Requested-With': 'XMLHttpRequest'
-		}));		
-	}
-	
 	var lastdigits = prefs.cardnum ? prefs.cardnum : '\\d{4}';
 	// <div[^>]*desc(?:[^>]*>){20,22}\s*\d{14,}6688(?:[^>]*>){1}\s*</div>
 	var reCard = new RegExp('<div[^>]*desc(?:[^>]*>){20,22}\\s*\\d{14,}' + lastdigits + '(?:[^>]*>){1}\\s*</div>', 'i');

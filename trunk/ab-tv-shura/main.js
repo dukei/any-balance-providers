@@ -20,14 +20,22 @@ function main() {
 	
 	var html = AnyBalance.requestGet(baseurl + 'b/', g_headers);
 	
+	var logonTries = 5;
+	var cookie = getParam(html, null, null, /document\.cookie='_ddn_intercept_2_=([^';]+)/i);
+	while(cookie && logonTries > 0) {
+		logonTries--;
+		AnyBalance.setCookie('shura.tv', '_ddn_intercept_2_', cookie);
+		AnyBalance.setCookie('www.shura.tv', '_ddn_intercept_2_', cookie);
+		
+		html = AnyBalance.requestGet(baseurl + 'b/', addHeaders({'Referer': baseurl + 'b/',	'Cache-Control': 'max-age=0'}));
+		cookie = getParam(html, null, null, /document\.cookie='_ddn_intercept_2_=([^';]+)/i);
+	}
+	
 	html = AnyBalance.requestPost(baseurl + 'b/submit.php', {
 		login: prefs.login,
 		password: prefs.password,
 		'action': 'login'
-	}, addHeaders({
-		Referer: baseurl + 'b/',
-		'X-Requested-With':'XMLHttpRequest'
-	}));
+	}, addHeaders({Referer: baseurl + 'b/',	'X-Requested-With':'XMLHttpRequest'}));
 	
 	if (!/status:1/i.test(html)) {
 		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);

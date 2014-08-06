@@ -31,7 +31,7 @@ function main() {
 			var name = getParam(option, null, null, /(?:[^>]*>){4}([^<]*)/i);
 			AnyBalance.trace('Нашли опцию ' + name);
 			// Интернет 
-			if (/3G|GPRS|\d+\s+Мб/i.test(name)) {
+			if (/3G|GPRS|\d+\s+Мб|\d\s*Гб/i.test(name)) {
 				sumParam(option, result, 'traffic_used', /(?:[^>]*>){6}([^<]*)/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 				sumParam(option, result, 'traffic_left', /(?:[^>]*>){8}([^<]*)/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 				getParam(result.traffic_left + result.traffic_used, result, 'traffic_total');

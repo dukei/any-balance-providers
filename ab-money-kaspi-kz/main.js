@@ -20,7 +20,7 @@ function main() {
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	var login = prefs.login.replace(/(\d{3})(\d{3})(\d{2})(\d{2})/, "+7 ($1) $2-$3-$4");
+	var login = getParam(prefs.login || '', null, null, /^\d{10}$/, [/^(\d{3})(\d{3})(\d{2})(\d{2})$/, '+7 ($1) $2-$3-$4']);
 	if(!login)
 		throw new AnyBalance.Error('Не верный формат логина, необходимо вводить логин без +7 в начале и без пробелов.');
 	
@@ -66,15 +66,9 @@ function main() {
 
 function fetchCard(html, baseurl){
     var prefs = AnyBalance.getPreferences();
-    //if(prefs.cardnum && !/^\d{4}$/.test(prefs.cardnum))
-        //throw new AnyBalance.Error("Введите 4 последних цифры номера карты или не вводите ничего, чтобы показать информацию по первой карте");
 	
-	/*var div = getParam(html, null,null, /"content_balance_inner"[^>]*>([\s\S]*?)<\/table/i);
-	if(!div)
-		throw new AnyBalance.Error('Не удаётся найти данные по картам!');*/
-	
-	// <div[^>]*id="account(?:[^>]*>){4}\s*Russ(?:[^>]*>){105,210}\s*<\/div>\s*<\/div>
-	var re = new RegExp('<div[^>]*id="account(?:[^>]*>){4}\\s*' + (prefs.cardnum ? prefs.cardnum : '[^<]+') + '(?:[^>]*>){105,255}(?:\\s*</div>){6}', 'i');
+	// <div[^>]*id="account(?:[^>]*>){4}\s*(?:[^>]*>)?[\s*]*Russ(?:[^>]*>){105,210}\s*<\/div>\s*<\/div>
+	var re = new RegExp('<div[^>]*id="account(?:[^>]*>){4}\\s*(?:[^>]*>)?[\\s*]*' + (prefs.cardnum ? prefs.cardnum : '[^<]+') + '(?:[^>]*>){105,255}(?:\\s*</div>){6}', 'i');
     var account = getParam(html, null, null, re, replaceTagsAndSpaces, html_entity_decode);
 	if(!account)
 		throw new AnyBalance.Error('Не удаётся найти ' + (prefs.cardnum ? 'карту с последними цифрами ' + prefs.cardnum : 'ни одной карты!'));
@@ -98,7 +92,6 @@ function fetchCard(html, baseurl){
 	
     AnyBalance.setResult(result);
 }
-
 
 function fetchAccount(html, headers, baseurl){
     var prefs = AnyBalance.getPreferences();

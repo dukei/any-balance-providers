@@ -32,6 +32,15 @@ function main() {
 			return execKey;
 		return value;
 	});
+	
+	if(AnyBalance.getLevel() >= 7) {
+		var captcha = AnyBalance.requestGet(baseurl+ 'frontend/captcha-image.jpg');
+		params.captchaText = AnyBalance.retrieveCode("Please, enter security code", captcha);
+		AnyBalance.trace('Капча получена: ' + params.captchaText);
+	} else {
+		throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
+	}	
+	
 	html = AnyBalance.requestPost(baseurl + href, params, addHeaders({Referer: baseurl + 'frontend/auth/userlogin?execution=' + execKey}));
 	
 	if (!/logout/i.test(html)) {
@@ -42,6 +51,7 @@ function main() {
 			throw new AnyBalance.Error(error);
 		throw new AnyBalance.Error('Can`t login, is the site changed?');
 	}
+	
 	var result = {success: true};
 	
 	getParam(html, result, '__tariff', /class="title"[^>]*>([\d*]{10,})/i, replaceTagsAndSpaces, html_entity_decode);

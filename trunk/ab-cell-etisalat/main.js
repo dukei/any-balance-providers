@@ -58,6 +58,9 @@ function main(){
 		if(/Change Security Question\/Answer/i.test(html))
 			throw new AnyBalance.Error('You need to change Security Question/Answer in your personal account to allow application to show information from this account. Please visit the selfcare from desktop and follow the instructions.');
 		
+		if(/changeExpiredPassword/i.test(html))
+			throw new AnyBalance.Error('You need to change your password. Please visit the selfcare from desktop and follow the instructions.');
+		
         if(!/Logout/i.test(html)){
             var errid = getParam(html, null, null, /location\.href='[^']*MSG=([^']*)/i, replaceSlashes);
             if(g_errors[errid])
@@ -105,7 +108,8 @@ function main(){
 		*/
     }finally{
 		var logout = getParam(html, null, null, /lass="logout" href="\/([^'"]+)/i);
-        AnyBalance.requestGet(baseurl + logout); //The logoff is obligatory, because etisalat does not allow double login
+		if(logout)
+			AnyBalance.requestGet(baseurl + logout); //The logoff is obligatory, because etisalat does not allow double login
     }
 	
     AnyBalance.setResult(result);

@@ -10,6 +10,24 @@ var g_headers = {
 	'User-Agent':'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
 };
 
+var g_api_key = 'c836133ed96c14be43c74b9bb5312b67';
+
+function createGetParams(data) {
+	var params = [];
+	for (var name in data) {
+		params.push(encodeURIComponent(name) + '=' + encodeURIComponent(data[name]));
+	}
+	// Заполняем параметры, которые есть всегда
+	params.push(encodeURIComponent('api_key') + '=' + encodeURIComponent(g_api_key));
+	
+	return params.join('&');
+}
+
+var g_errors = {
+	1:'Неправильный логин либо пароль.',
+	2:'Аккаунт заблокирован на 10 минут за перебор паролей.'
+};
+
 function main() {
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'https://my.unet.by/';
@@ -18,28 +36,27 @@ function main() {
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
+	var html = AnyBalance.requestGet(baseurl + 'api/login?' + createGetParams({login:prefs.login, pass:prefs.password}), g_headers);
+	var session = getParam(html, null, null, /session="([^"]+)"/i);
 	
-	html = AnyBalance.requestPost(baseurl + 'login', {
-        login:prefs.login,
-        pass:prefs.password,
-    }, addHeaders({Referer: baseurl + 'login'}));
-	
-	if(!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
-		if(error && /Неверный логин или пароль/i.test(error))
-			throw new AnyBalance.Error(error, null, true);
-		if(error)
-			throw new AnyBalance.Error(error);
+	if (!session) {
+		var error = getParam(html, null, null, /error="([^"]+)"/i, replaceTagsAndSpaces, html_entity_decode);
+		if (error)
+			throw new AnyBalance.Error(g_errors[error], null, /Неправильный логин либо пароль/i.test(g_errors[error]));
+		
+		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
-    var result = {success: true};
-	getParam(html, result, 'accnum', /<td>\s*Номер счёта(?:[^>]*>){4}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'balance', /<td>\s*Текущий баланс(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, '__tariff', /<td>\s*Тарифный план(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 	
-	getParam(html, result, 'traf_inet', /<td>\s*Трафик Интернет(?:[^>]*>){5}([\s\S]*?)<\/td/i, replaceTagsAndSpaces, parseTraffic);
-	getParam(html, result, 'traf_unet', /<td>\s*Трафик UNET\.BY(?:[^>]*>){5}([\s\S]*?)<\/td/i, replaceTagsAndSpaces, parseTraffic);
+	html = AnyBalance.requestGet(baseurl + 'api/info?' + createGetParams({sid:session}), g_headers);
+	
+	var result = {success: true};
+	
+	getParam(html, result, 'balance', /deposit="([^"]+)"/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, '__tariff', /tariff="([^"]+)"/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'traf_inet', /count_internet="([^"]+)"/i, [replaceTagsAndSpaces, /(.+)/, '$1 mb'], parseTraffic);
+	getParam(html, result, 'traf_unet', /count_unet="([^"]+)"/i, [replaceTagsAndSpaces, /(.+)/, '$1 mb'], parseTraffic);
+	//getParam(html, result, 'accnum', /<td>\s*Номер счёта(?:[^>]*>){4}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 	
     AnyBalance.setResult(result);
 }

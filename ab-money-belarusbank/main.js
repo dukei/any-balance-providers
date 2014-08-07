@@ -2,6 +2,14 @@
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
+var g_headers = {
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
+	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Connection': 'keep-alive',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+};
+
 function main(){
     var prefs = AnyBalance.getPreferences();
 
@@ -43,7 +51,7 @@ function main(){
         bbIbCancelAction:''
     });
 
-    var codenum = getParam(html, null, null, /Введите код N\s*(\d+)/i, null, parseBalance);
+    var codenum = getParam(html, null, null, /Введите[^>]*>код [N№]\s*(\d+)/i, null, parseBalance);
     if(!codenum){
         var error = getParam(html, null, null, /<p[^>]+class="warning"[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
@@ -88,6 +96,7 @@ function main(){
         var error = getParam(html, null, null, /<p[^>]+class="warning"[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error + '( код №' + (codenum+1) + ': ' + code + ')');
+		
         throw new AnyBalance.Error('Не удалось войти в интернет-банк после ввода кода (№' + (codenum+1) + ': ' + code + ') . Сайт изменен?');
     }
 
@@ -99,21 +108,29 @@ function fetchCard(baseurl, html){
 
     if(prefs.lastdigits && !/^\d{4}$/.test(prefs.lastdigits))
         throw new AnyBalance.Error("Надо указывать 4 последних цифры карты или не указывать ничего");
-
-    var cards = getParam(html, null, null, /<table[^>]+id="[^"]*ibWelcomePageForm:ibCardList"[\s\S]*?<\/table>/i);
+	
+	var href = getParam(html, null, null, /href="\/([^"]+)"(?:[^>]*>){1,2}\s*Платежные карты/i, replaceTagsAndSpaces, html_entity_decode);
+	html = AnyBalance.requestGet('https://ibank.asb.by/' + href, addHeaders({'Referer': baseurl}));
+	
+    /*var cards = getParam(html, null, null, /<table[^>]+id="[^"]*ibWelcomePageForm:ibCardList"[\s\S]*?<\/table>/i);
     if(!cards)
         throw new AnyBalance.Error("Не найдена таблица карт. У вас нет ни одной карты?");
-
-    var re = new RegExp('<tr[^>]*>(?:[\\s\\S](?!</tr>))*?\\d{4}\\*{8}' + (prefs.lastdigits ? prefs.lastdigits : '\\d{4}') + '[\\s\\S]*?</tr>', 'i');
-    var tr = getParam(cards, null, null, re);
-
+	*/
+	// <tr[^>]*>(?:[^>]*>){18,20}\s*\d{4}\*{8}[\s\S]*?</tr>
+    var re = new RegExp('<tr[^>]*>(?:[^>]*>){18,20}\\s*\\d{4}\\*{8}' + (prefs.lastdigits ? prefs.lastdigits : '\\d{4}') + '[\\s\\S]*?</tr>', 'i');
+    var tr = getParam(html, null, null, re);
+	
     if(!tr)
         throw new AnyBalance.Error(prefs.lastdigits ? "Не найдено карты с последними цифрами " + prefs.lastdigits : "Не найдено ни одной карты");
+	
     var result = {success: true};
-    getParam(tr, result, 'cardnum', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/, replaceTagsAndSpaces, html_entity_decode);
-    getParam(tr, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/, replaceTagsAndSpaces, html_entity_decode);
-    getParam(tr, result, 'balance', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/, replaceTagsAndSpaces, parseBalance);
-    getParam(tr, result, ['currency', 'balance'], /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/, replaceTagsAndSpaces, html_entity_decode);
+	
+    getParam(tr, result, 'cardnum', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/, replaceTagsAndSpaces, html_entity_decode);
+	getParam(tr, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/, replaceTagsAndSpaces, html_entity_decode);
+	
+	
+    getParam(tr, result, 'balance', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/, replaceTagsAndSpaces, parseBalance);
+    getParam(tr, result, ['currency', 'balance'], /(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/, replaceTagsAndSpaces, html_entity_decode);
     
     AnyBalance.setResult(result);
 }

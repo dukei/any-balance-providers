@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-<change version="2" date="2013-10-31">
-- Добавлено отображение трафика
-</change>
+	<change version="3" date="2014-08-07">
+	- Перешли на API.
+	</change>
+	<change version="2" date="2013-10-31">
+	- Добавлено отображение трафика
+	</change>
 </history>

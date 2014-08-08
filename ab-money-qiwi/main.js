@@ -112,7 +112,7 @@ function mainNew () {
     	};
 		
 		var errors = res.message || (res.messages ? res.messages.join('\n') : 'Не удаётся войти в QIWI кошелек: ' + (errors[res.code.value] || res.code._NAME));
-    	throw new AnyBalance.Error(errors, null, /Неверный логин или пароль/i.test(errors));
+    	throw new AnyBalance.Error(errors, null, /Неверный логин или пароль|Неправильный номер телефона или пароль/i.test(errors));
     }
 	
     var html = AnyBalance.requestGet (baseurl + 'payment/main.action');

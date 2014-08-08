@@ -24,18 +24,8 @@ function main() {
 	
 	var html = AnyBalance.requestGet(baseurl + 'subscribers/phone-debt', g_headers);
 	
-	var params = createFormParams(html, function(params, str, name, value) {
-		if (name == 'phone_bill[phone]') 
-			return prefs.login;
-		else if (name == 'phone_bill[surname]')
-			return prefs.surname;
-		else if (name == 'phone_bill[cityin]')
-			return 16;			
-		return value;
-	});
-	
 	html = AnyBalance.requestPost(baseurl + 'subscribers/phone-debt', {
-		'phone_bill[cityin]':'16',
+		'phone_bill[cityin]':prefs.region || 16,
 		'phone_bill[region]':'',
 		'phone_bill[phone]':prefs.login,
 		'phone_bill[surname]':prefs.surname,

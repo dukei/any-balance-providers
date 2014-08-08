@@ -87,7 +87,9 @@ function main(){
 								if(AnyBalance.isAvailable('balance')){
 									//AnyBalance.trace(matches[3]);
 									var balance = matches[3].match(/<i>(.*?)\s/i);
-									result.balance = balance[1].replace(",","");
+									if (balance != null) 
+										result.balance = balance[1].replace(",","");
+									else result.balance = 0;
 									AnyBalance.trace('Balance OK...');
 								}
 								//Отримуємо дату відкриття рахунку

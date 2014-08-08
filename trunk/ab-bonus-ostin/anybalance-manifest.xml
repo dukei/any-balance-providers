@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser" />
-	<id version="1">ab-bonus-ostin</id>
+	<id version="2">ab-bonus-ostin</id>
 	<name>O`stin бонусы</name>
-	<description>
-		Получает баланс бонусных баллов на карте O`stin по адресу http://bonus.ostin.com/
-	</description>
+	<description html="true"><![CDATA[
+	<p>Получает баланс бонусных баллов на карте O`stin по адресу http://bonus.ostin.com/</p>
+	]]></description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
@@ -16,15 +15,11 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс"/>
+		<counter id="balance" name="Баланс" units=" б"/>
+		<counter id="total" name="Оборот" units=" р"/>
+		<counter id="next_level" name="До следующего уровня" units=" р"/>
 	</counters>
-	<keywords>
-		остин, 
-	</keywords>
-	<type>
-		bonus
-	</type>
-	<country>
-		ru
-	</country>
+	<keywords>остин</keywords>
+	<type>bonus</type>
+	<country>ru</country>
 </provider>

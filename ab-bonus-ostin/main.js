@@ -7,22 +7,71 @@ var g_headers = {
 	'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection':'keep-alive',
-	'User-Agent':'Mozilla/5.0 (BlackBerry; U; BlackBerry 9900; en-US) AppleWebKit/534.11+ (KHTML, like Gecko) Version/7.0.0.187 Mobile Safari/534.11+'
+	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
 };
+
+var g_errors = {
+	invalidLogin:'Неверный логин!',
+	invalidPassword:'Неверный пароль!'
+}
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-    var baseurl = 'http://bonus.ostin.com/';
-
+    var baseurl = 'http://ostin.com/ru/ru/';
+	
     AnyBalance.setDefaultCharset('utf-8'); 
-
-    html = AnyBalance.requestGet(baseurl+'about/?card_id='+prefs.login, g_headers);
-
-    if(/class="balance">Такой карты нет!<\/div>/i.test(html)){
-        throw new AnyBalance.Error('Такой карты нет!');
-    }
-    var result = {success: true};
-    getParam(html, result, 'balance', /Ваш баланс[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseBalance);
-
+	
+	checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(prefs.password, 'Введите пароль!');
+	
+	try {
+		var html = AnyBalance.requestPost(baseurl + 'secured/myaccount/login.jsp?login=', {redirect:'',requestForLogin:true}, addHeaders({Referer: baseurl, 'X-Requested-With':'XMLHttpRequest'}));
+	} catch(e){}
+	
+	if(AnyBalance.getLastStatusCode() > 400 || !html) {
+		throw new AnyBalance.Error('Ошибка! Сервер не отвечает! Попробуйте обновить баланс позже.');
+	}
+	
+	var form = getParam(html, null, null, /<form class="login_popup-form[\s\S]*?<\/form>/i);
+	if(!form) {
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось найти форму входа, сайт изменен?');
+	}
+	
+	var params = createFormParams(html, function(params, str, name, value) {
+		if (name == 'atg_store_registerLoginEmailAddress') 
+			return prefs.login;
+		else if (name == 'atg_store_registerLoginPassword')
+			return prefs.password;
+			
+		return value;
+	});
+	
+	html = AnyBalance.requestPost(baseurl + 'global/json/loginErrors.jsp', params, addHeaders({Referer: baseurl, 'X-Requested-With':'XMLHttpRequest'}));
+	
+	var json = getJson(html);
+	
+	if (json.errors.length > 0) {
+		var error = '';
+		for(var i = 0; i < json.errors.length; i++) {
+			var curr = json.errors[i];
+			error += g_errors[curr] + ' ';
+		}
+		
+		if (error)
+			throw new AnyBalance.Error(error, null, /Неверный/i.test(error));
+		
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+	}
+	
+	html = AnyBalance.requestGet(baseurl + 'secured/myaccount/myAccountMain.jsp?selpage=CLUBCARD', g_headers);
+	
+	var result = {success: true};
+	
+    getParam(html, result, 'balance', /<th>Баланс бонусного счета(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'total', /<th>Оборот(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'next_level', /<th>До следующего уровня(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	
     AnyBalance.setResult(result);
 }

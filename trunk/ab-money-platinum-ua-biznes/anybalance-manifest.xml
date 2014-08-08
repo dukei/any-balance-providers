@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="6">ab-money-platinum-ua-biznes</id>
+  <id version="7">ab-money-platinum-ua-biznes</id>
   <name>Платинум-бизнес</name>
   <description>
 	Отримує поточний залишок на бізнес рахунку банку Платинум Банк (Україна), використовуючи інтернет-банк https://biznes.platinumbank.com.ua

@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="7" date="2014-08-08">
+	  Виправлення помилки при порожньому рахунку
+	</change>	
 	<change version="6" date="2013-12-06">
 	  Додаткові перевірки сторінок
 	</change>

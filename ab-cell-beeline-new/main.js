@@ -792,7 +792,7 @@ function getBonuses(xhtml, result) {
 				} else {
 					sumParam(services[i], result, 'traffic_left', reValue, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
 				}
-			} else if (/SMS|штук/i.test(name)) {
+			} else if (/SMS|СМС|штук/i.test(name)) {
 				sumParam(services[i], result, 'sms_left', [reValue, reNewValue], replaceTagsAndSpaces, parseBalance, aggregate_sum);
 			} else if (/MMS/i.test(name)) {
 				sumParam(services[i], result, 'mms_left', [reValue, reNewValue], replaceTagsAndSpaces, parseBalance, aggregate_sum);

@@ -20,4 +20,12 @@
 		negativeButtonText="Отмена"
 		dialogMessage="Введите фамилию.">
 	</EditTextPreference>
+	<ListPreference
+		key="region"
+		title="Регион"
+		summary="||{@s}"
+		entries="Брестская область|Витебская область|г. Минск|Гомельская область|Гродненская область|Минская область|Могилёвская область"
+		entryValues="66|83|16|107|130|21|170"
+		defaultValue="16">
+	</ListPreference>	
 </PreferenceScreen>

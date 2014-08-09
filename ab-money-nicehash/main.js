@@ -36,7 +36,9 @@ var g_multiplier_names =
 function main() 
 {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://www.nicehash.com/api?method=stats.provider&addr=';
+	if (typeof prefs.server=="undefined") 
+		prefs.server = "www.nicehash.com";
+	var baseurl = 'https://' + prefs.server + '/api?method=stats.provider&addr=';
 	var result = {success: true};
 	AnyBalance.setDefaultCharset('utf-8');
 	
@@ -53,11 +55,11 @@ function main()
 	{
 		var errdiv = /<div class="panel-heading">(.*?)<\/div>/.exec(response);
 		if (errdiv!=null)
-			throw new AnyBalance.Error("nicehash.com: "+replaceAll(errdiv[1],replaceTagsAndSpaces),true); 
+			throw new AnyBalance.Error(prefs.server + ": "+replaceAll(errdiv[1],replaceTagsAndSpaces),true); 
 		else 
         {
             var title = /<title>(.*?)<\/title>/.exec(response);
-			throw new AnyBalance.Error("nicehash.com: "+ (title!=null) ? title[1] : "unknown error",true); 
+			throw new AnyBalance.Error(prefs.server + ": "+ (title!=null) ? title[1] : "unknown error",true); 
         }
 	}
 		

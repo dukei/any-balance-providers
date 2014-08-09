@@ -11,6 +11,14 @@
 		dialogMessage="Please enter your Bitcoin wallet address.">
 	</EditTextPreference>
 	<ListPreference
+		title="Server"
+		summary="||{@s}"
+		key="server"
+		defaultValue="www.nicehash.com"
+		entries="NiceHash|WestHash"
+		entryValues="www.nicehash.com|www.westhash.com">
+	</ListPreference>
+	<ListPreference
 		title="Units"
 		summary="||{@s}"
 		key="btcunits"

@@ -56,7 +56,7 @@ function main(){
     
     var result = {success: true};
     //(?:Теңгерім|Баланс|Balance):
-    getParam(html, result, 'balance', /<font[\s\S]*?>(?:Ваш баланс|Сіздің теңгеріміңіз|Your balance is)([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'balance', /<font[^>]*>(?:Ваш баланс|Сіздің теңгеріміңіз|Your balance is)([\s\d,.-]+)/i, replaceTagsAndSpaces, parseBalance);
     //(?:интернет плюс|internet plus)
     getParam(html, result, 'internet_plus', /(?:Ваш баланс|Сіздің теңгеріміңіз|Your balance is)[^<]*?\+\s*([\d\s.,]*\s*[Mм][Bб])/i, replaceTagsAndSpaces, parseTraffic);
     //(?:бонусные единицы)

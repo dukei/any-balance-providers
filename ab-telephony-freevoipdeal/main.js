@@ -17,9 +17,9 @@ function main(){
 	
     AnyBalance.setDefaultCharset('utf-8'); 
 	
-    var html = AnyBalance.requestGet(baseurl + 'en/login', g_headers);
+    var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
 	
-    var form = getParam(html, null, null, /<form[^>]*action="https:\/\/www\.freevoipdeal\.com\/en\/login"([\s\S]*?)<\/form>/i);    
+	var form = getParam(html, null, null, /<form id="login-form-clx" action="https:\/\/www\.freevoipdeal\.com\/login" method="post">([\s\S]*?)<\/form>/i);
     if(!form)
         throw new AnyBalance.Error('Can`t find login form, is the site changed?');
 	
@@ -61,12 +61,13 @@ function main(){
 		params["login[mcid]"] = mcid;
 	}
 	
-    html = AnyBalance.requestPost(baseurl + 'en/login', params, addHeaders({Referer: baseurl+'en/login'})); 
+    html = AnyBalance.requestPost(baseurl + 'login', params, addHeaders({Referer: baseurl + 'login'})); 
 	
     if(!/\/logout/i.test(html)){
         var error = getParam(html, null, null, /<div[^>]+class="notification error png_bg"[^>]*>[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error);
+		
         throw new AnyBalance.Error('Can`t login, unknown error. Contact the developers, please.');
     }
 	

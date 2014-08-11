@@ -52,10 +52,11 @@ function parseHtml(html) {
 			wasToday = true;
 			getParam(tr, result, 'date' + suffix, /<tr><td><b>(?:пн|вт|ср|чт|пт|сб|вс),([^<]*)/i, replaceTagsAndSpaces, parseDateTime);
 			getParam(tr, result, 'cloud' + suffix, /облачность([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+			getParam(tr, result, 'cloudtext' + suffix, /<b[^>]*>[^<]*(?:облачно|ясно)[^>]*<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
 			getParam(tr, result, 'temp' + suffix, /(?:[\s\S]*?<tr[^>]*>){4}([\s\S]*?)<\/tr>/i, replaceTagsAndSpaces, parseBalance);
 			getParam(tr, result, 'humidity' + suffix, /влажность([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 			getParam(tr, result, 'wind_dir' + suffix, />ветер([^,]*)/i, replaceTagsAndSpaces, html_entity_decode);
-			getParam(tr, result, 'wind_vel' + suffix, />ветер(.*?)м\/сек/i, replaceTagsAndSpaces, parseBalance);
+			getParam(tr, result, 'wind_vel' + suffix, />ветер[^,]*,(.*?)м\/с/i, replaceTagsAndSpaces, parseBalance);
 			getParam(tr, result, 'falls' + suffix, /(?:[\s\S]*?<tr[^>]*>){4}.*?,([^\(,]*)/i, replaceTagsAndSpaces, html_entity_decode);
 			getParam(tr, result, 'precipitation' + suffix, /(?:[\s\S]*?<tr[^>]*>){4}.*?,(.*?)мм/i, replaceTagsAndSpaces, parseBalance);
 			getParam(tr, result, 'pressure' + suffix, /давление\s*([\d.,]+)/i, replaceTagsAndSpaces, parseBalance);

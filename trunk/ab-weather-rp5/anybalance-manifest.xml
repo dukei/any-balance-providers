@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="15">ab-weather-rp5</id>
+	<id version="16">ab-weather-rp5</id>
 	<api flags="no_browser"/>
 	<name>Прогноз rp5.ru</name>
 	<description html="true"><![CDATA[
@@ -38,6 +38,7 @@
 		<counter id="precipitation1" name="Толщина осадков (завтра)" units="мм"/>
 		<counter id="wind_dir1" name="Откуда ветер (завтра)" type="text"/>
 		<counter id="wind_vel1" name="Скорость ветра (завтра)" units="м/с"/>
+		<counter id="cloudtext1" name="Облака (завтра)" type="text"/>
 		<counter id="date1" name="Дата (завтра)" type="time" format="dd/MM/yyyy"/>
 		<counter id="temp2" name="Температура (послезавтра)" units="°C"/>
 		<counter id="cloud2" name="Облачность (послезавтра)" units="%"/>
@@ -47,6 +48,7 @@
 		<counter id="precipitation2" name="Толщина осадков (послезавтра)" units="мм"/>
 		<counter id="wind_dir2" name="Откуда ветер (послезавтра)" type="text"/>
 		<counter id="wind_vel2" name="Скорость ветра (послезавтра)" units="м/с"/>
+		<counter id="cloudtext2" name="Облака (послезавтра)" type="text"/>
 		<counter id="date2" name="Дата (послезавтра)" type="time" format="dd/MM/yyyy"/>
 		<counter id="point_name" name="Город" type="text"/>
 	</counters>

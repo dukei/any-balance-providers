@@ -148,11 +148,12 @@ function fetchDeposit(baseurl){
 
     var html = AnyBalance.requestGet(baseurl + 'rs/LoansAndDeposits.jspx');
 	var sourceData = getParam(html, null, null, /<a[^>]+onclick="submitForm[^"]*source:'([^'"]*)'[^"]*"[^>]*>&#1044;&#1077;&#1087;&#1086;&#1079;&#1080;&#1090;&#1099;/i, replaceTagsAndSpaces);
-    var token = getParam(html, null, null, /<input[^>]+name="oracle.adf.faces.STATE_TOKEN"[^>]*value="([^"]*)/i, null, html_entity_decode);
-
+    var ViewState = getParam(html, null, null, /<input[^>]+name="javax.faces.ViewState"[^>]*value="([^"]*)/i, null, html_entity_decode);
+	
 	html = AnyBalance.requestPost(baseurl + 'rs/LoansAndDeposits.jspx', {
-		'oracle.adf.faces.FORM': 'mainform',
-		'oracle.adf.faces.STATE_TOKEN': token,
+		'org.apache.myfaces.trinidad.faces.FORM': 'mainform',
+		'_noJavaScript':false,
+		'javax.faces.ViewState': ViewState,
 		'source': sourceData
 	});
 	

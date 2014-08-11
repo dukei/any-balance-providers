@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-    <id major_version="3.0" version="17">ab-money-rs</id>
+    <id major_version="3.0" version="18">ab-money-rs</id>
     <api flags="no_browser"/>
     <name>Русский стандарт</name>
 	<description html="true"><![CDATA[

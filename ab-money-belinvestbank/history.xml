@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-<change version="2" date="2014-01-12">
-   - Заменена иконка
-</change>
+	<change version="3" date="2014-08-12">
+	- Добавлена поддержка нескольких карт.
+	</change>
+	<change version="2" date="2014-01-12">
+	- Заменена иконка
+	</change>
 </history>

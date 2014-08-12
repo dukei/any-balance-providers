@@ -47,13 +47,19 @@ function main() {
 	var table = getParam(html, null, null, /(<table[^>]*class="datatable"[\s\S]*?<\/table>)/i);
 	checkEmpty(table, "Не нашли ни одной карты.", true);
 	
+	var tr = getParam(table, null, null, new RegExp('<tr id(?:[^>]*>){11}[\\s*]+'+ (prefs.cardnum || '\\d{4}') +'(?:[^>]*>){60,90}\\s*</tr>', 'i'));
+	if(!tr) {
+		throw new AnyBalance.Error('Не удалось найти ' + (prefs.cardnum ? 'карту с последними цифрами ' + prefs.cardnum : 'ни одной карты!'));
+	}
+	
     var result = {success: true};
-	getParam(table, result, '__tariff', /(\*\*\*\*\s*\*\*\*\*\s*\*\*\*\*\s*\d{4})/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(table, result, 'balance', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	getParam(table, result, 'currency', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(table, result, 'validto', /Срок действия:([^<]*)/i, replaceTagsAndSpaces, parseDate);
-	getParam(table, result, 'status', /(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-	//<div>([\s\S]*?)<nobr>\s*<b>\*\*\*\*\s*\*\*\*\*\s*\*\*\*\*\s*\d{4}
+	
+	getParam(tr, result, '__tariff', /(\*\*\*\*\s*\*\*\*\*\s*\*\*\*\*\s*\d{4})/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(tr, result, 'balance', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	getParam(tr, result, 'currency', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(tr, result, 'validto', /Срок действия:([^<]*)/i, replaceTagsAndSpaces, parseDate);
+	getParam(tr, result, 'status', /(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+	
     AnyBalance.setResult(result);
 }
 

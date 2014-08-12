@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-    <id version="6">ab-money-citi</id>
+    <id version="7">ab-money-citi</id>
     <name>Ситибанк</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о на картах и счетах в Ситибинке (https://www.citibank.ru).</p>
@@ -19,13 +19,13 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Доступно"/>
-		<counter id="ondeposit" name="Текущий баланс"/>
+		<counter id="balance" name="Доступно" units=" {@currency}"/>
+		<counter id="ondeposit" name="Текущий баланс" units=" {@currency}"/>
 		<counter id="currency" name="Валюта" type="text"/>
-		<counter id="limit" name="Кредитный лимит"/>
-		<counter id="credit" name="Использованный кредит"/>
-		<counter id="credit_total" name="Сумма к погашению"/>
-		<counter id="credit_next_payment" name="Сумма следующего платежа"/>
+		<counter id="limit" name="Кредитный лимит" units=" {@currency}"/>
+		<counter id="credit" name="Использованный кредит" units=" {@currency}"/>
+		<counter id="credit_total" name="Сумма к погашению" units=" {@currency}"/>
+		<counter id="credit_next_payment" name="Сумма следующего платежа" units=" {@currency}"/>
 		<counter id="accnum" name="Номер" type="text"/>
 		<counter id="accname" name="Название" type="text"/>
 	</counters>

@@ -61,7 +61,7 @@ function main(){
 		'DXScript':'1_42,1_74,2_15,1_40,1_67,1_64,1_41,1_72,1_58,1_52,1_65,3_8,3_7,2_22,2_29,1_57',
 	}, addHeaders({Referer: baseurl + 'security/MainPage.aspx'})); 
 	
-	getParam(html, result, 'balance', /Итого(?:[\s\S]*?<td[^>]*>){11}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance', /<tr id="ASPxGridView1_DXDataRow0(?:[^>]*>){15,25}([^<]+)<\/td>\s*<\/tr>/i, replaceTagsAndSpaces, parseBalance);
 
     AnyBalance.setResult(result);
 }

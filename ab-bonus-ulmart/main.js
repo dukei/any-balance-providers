@@ -17,10 +17,13 @@ function main(){
 	
     var baseurl = 'http://www.ulmart.ru/';
 	
-    var html = AnyBalance.requestPost(baseurl + 'j_spring_security_check', {
-        j_username:prefs.login,
-        j_password:prefs.password,
-        target:'/'
+	var html = AnyBalance.requestGet(baseurl + 'login?target=/', g_headers);
+	
+	html = AnyBalance.requestPost(baseurl + 'j_spring_security_check', {
+		'_csrf':getParam(html, null, null, /name="_csrf" content="([^"]+)/i),
+        'j_username':prefs.login,
+        'j_password':prefs.password,
+        'target':'/'
     }, addHeaders({Referer: baseurl + 'login?target=/'}));
 	
     if(!/\/logout/.test(html)){

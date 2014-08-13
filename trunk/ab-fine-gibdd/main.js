@@ -61,23 +61,22 @@ function main() {
 	var found = /(\D{0,1}\d+\D{2})(\d{2,3})/i.exec(prefs.login);
 	if(!found)
 		throw new AnyBalance.Error('Номер должен быть в формате а351со190 либо 1234ав199, буквы русские.');
-	
+
 	var params2 = [
-		['req','fines:' + found[1].toUpperCase()+':'+found[2]+':'+prefs.password],
+		['req','fines:' + found[1].toUpperCase()+':'+found[2]+':'+prefs.password.toUpperCase()],
 		['captchaWord',captchaWord],
 		['captchaCode',captchaCode],
 		['token',''],
 		['regnum',found[1].toUpperCase()],
 		['regreg',found[2]],
-		['stsnum',prefs.password],
+		['stsnum',prefs.password.toUpperCase()],
 	];
 	
 	// Ставим куки
-	AnyBalance.setCookie('www.gibdd.ru', '_ga', 'GA1.2.1023137532.1404645641');
-	
-	/*AnyBalance.setCookie('www.gibdd.ru', 'BITRIX_SM_SVC_CHECK_FINES_NUM', encodeURIComponent(found[1].toUpperCase()));
-	AnyBalance.setCookie('www.gibdd.ru', 'BITRIX_SM_SVC_CHECK_FINES_REG', encodeURIComponent(found[2]));
-	AnyBalance.setCookie('www.gibdd.ru', 'BITRIX_SM_SVC_CHECK_FINES_STS', encodeURIComponent(prefs.password));*/
+	// AnyBalance.setCookie('www.gibdd.ru', '_ga', 'GA1.2.1023137532.1404645641');
+	// AnyBalance.setCookie('www.gibdd.ru', 'BITRIX_SM_SVC_CHECK_FINES_NUM', encodeURIComponent(found[1].toUpperCase()));
+	// AnyBalance.setCookie('www.gibdd.ru', 'BITRIX_SM_SVC_CHECK_FINES_REG', encodeURIComponent(found[2]));
+	// AnyBalance.setCookie('www.gibdd.ru', 'BITRIX_SM_SVC_CHECK_FINES_STS', encodeURIComponent(prefs.password));
 	
 	AnyBalance.trace('Пробуем запросить информацию с данными: '+prefs.login+', ' + prefs.password);
 	// Без загрузки этого скрипта не работает

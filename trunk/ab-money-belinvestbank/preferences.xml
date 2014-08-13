@@ -40,6 +40,6 @@
 		dialogTitle="Номер карты" 
 		positiveButtonText="ОК" 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите последние цифры номера карты, либо оставьте пустым, для получения данных по первой карте.">
+        dialogMessage="Введите последние 4 цифры номера карты, либо оставьте поле пустым, для получения данных по первой карте.">
     </EditTextPreference>	
 </PreferenceScreen>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-	<change version="25" date="2014-08-13">
+	<change version="27" date="2014-08-13">
 	- Поддержка изменений в процедуре входа.
 	</change>
 	<change version="25" date="2014-08-04">

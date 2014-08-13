@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser" />
-	<id version="1">ab-municipal-itpc</id>
+	<id version="2">ab-municipal-itpc</id>
 	<name>ОАО «ТРИЦ»</name>
-	<description>
-	Получает данные в системе ОАО «ТРИЦ» http://itpc.ru/
-	
-	Личный кабинет находится по адресу https://lk.itpc.ru/login.aspx
-	</description>
+	<description html="true"><![CDATA[
+	<p>Получает данные в системе ОАО «ТРИЦ» http://itpc.ru/</p>
+	<p>Информация берется из личного кабинета https://lk.itpc.ru/login.aspx</p>
+	]]></description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
@@ -18,7 +16,7 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Итого" units="р"/>
+		<counter id="balance" name="Итого" units=" р"/>
 		<counter id="account" name="Счет" type="text"/>
 		<counter id="adress" name="Адрес" type="text"/>
 		<counter id="beginperiod" name="Начало периода" type="text"/>

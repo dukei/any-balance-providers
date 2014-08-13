@@ -35,17 +35,20 @@ function main() {
 	
 	if(!/logout/i.test(html)) {
 		var error = getParam(html, null, null, /class="attention"[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-		if(error && /Пароль введен неверно/i.test(error))
-			throw new AnyBalance.Error(error, null, true);
 		if(error)
-			throw new AnyBalance.Error(error);
+			throw new AnyBalance.Error(error, null, /Пароль введен неверно/i.test(error));
+		
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
-	// сейчас ничего кроме карт там нет, да и карта только одна, поэтому пока сделаем обработку только первой карты
+	
 	html = AnyBalance.requestGet(baseurl + 'cards', addHeaders({'User-Agent':'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',}));
-
+	
 	var table = getParam(html, null, null, /(<table[^>]*class="datatable"[\s\S]*?<\/table>)/i);
 	checkEmpty(table, "Не нашли ни одной карты.", true);
+	
+	if(prefs.cardnum || /^\d{4}$/i.test(prefs.cardnum)) {
+		throw new AnyBalance.Error('Необходимо ввести 4 последние цифры номера карты, либо не вводить ничего!');
+	}
 	
 	var tr = getParam(table, null, null, new RegExp('<tr id(?:[^>]*>){11}[\\s*]+'+ (prefs.cardnum || '\\d{4}') +'(?:[^>]*>){60,90}\\s*</tr>', 'i'));
 	if(!tr) {

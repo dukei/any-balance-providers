@@ -2,23 +2,53 @@
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
+var g_headers = {
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
+	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Connection': 'keep-alive',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+};
+
 function main(){
     var prefs = AnyBalance.getPreferences();
-
+	
     var baseurl = "https://internet.velcom.by/";
     AnyBalance.setDefaultCharset('utf-8');
-
+	
     checkEmpty(prefs.login, 'Введите номер телефона в международном формате!');
     checkEmpty(prefs.password, 'Введите пароль к ИССА!');
-
+	
     var matches;
     if(!(matches = /^\+(375\d\d)(\d{7})$/.exec(prefs.login)))
 		throw new AnyBalance.Error('Неверный номер телефона. Необходимо ввести номер в международном формате без пробелов и разделителей!');
-
+	
     var phone = matches[2];
     var prefix = matches[1];
     
-    var html = AnyBalance.requestGet(baseurl/* + 'work.html'*/);
+    var html = AnyBalance.requestGet(baseurl, g_headers);
+	
+	if(/Your browser must support JavaScript!/.test(html)) {
+		var a = toNumbers(getParam(html, null, null, /a\s*=\s*toNumbers\("([^"]+)/i)),//toNumbers("f45b0aa91e4d63a0643d9c9420bf72b3"),
+		b = toNumbers(getParam(html, null, null, /b\s*=\s*toNumbers\("([^"]+)/i)),//toNumbers("5c6a5f08cf9bf0320bfbd8d781fa26ae"),
+		c = toNumbers(getParam(html, null, null, /c\s*=\s*toNumbers\("([^"]+)/i))//c = toNumbers("0fec5c01077762a4a1fa4156ade6d752");
+		
+		// Функчи из скрипта
+		function toNumbers(d){var e=[];d.replace(/(..)/g,function(d){e.push(parseInt(d,16))});return e}function toHex(){for(var d=[],d=1==arguments.length&&arguments[0].constructor==Array?arguments[0]:arguments,e="",f=0;f<d.length;f++)e+=(16>d[f]?"0":"")+d[f].toString(16);return e.toLowerCase()}
+		//eval(AnyBalance.requestGet(baseurl + 'vvv.js'));
+		
+		AnyBalance.setCookie('internet.velcom.by', 'X2', toHex(X.aG(c,2,a,b)));
+		
+		var href = getParam(html, null, null, /location\.href\s*=\s*"([^"]+)/i);
+		if(href) {
+			try {
+				html = AnyBalance.requestGet(href, addHeaders({'Referer': 'https://internet.velcom.by/'}));
+			} catch (e) {
+				html = AnyBalance.requestGet('https://internet.velcom.by/');
+			}
+		}
+	}
+	
     var sid = getParam(html, null, null, /name="sid3" value="([^"]*)"/i);
     if(!sid){
 		if(AnyBalance.getLastStatusCode() >= 400){
@@ -89,7 +119,7 @@ function main(){
         if(/Сервис временно недоступен/i.test(html))
             throw new AnyBalance.Error('ИССА Velcom временно недоступна. Пожалуйста, попробуйте позже.');
         
-	AnyBalance.trace(html);
+		AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
     }
 	// Иногда сервис недоступен, дальше идти нет смысла

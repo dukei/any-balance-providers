@@ -44,7 +44,7 @@ function main() {
         }, g_headers);
 		
         if (!/logout/i.test(html)) {
-            var error = getParam(html, null, null, /<p[^>]+class="err"[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
+            var error = getParam(html, null, null, [/<p[^>]+class="err"[^>]*>([\s\S]*?)<\/p>/i, /class="error">([\s\S]*?)<\//i], replaceTagsAndSpaces, html_entity_decode);
             if (error)
 				throw new AnyBalance.Error(error);
 			

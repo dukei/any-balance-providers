@@ -35,10 +35,10 @@ function main(){
 
 		var a = toNumbers(getParam(html, null, null, /a\s*=\s*toNumbers\("([^"]+)/i)),//toNumbers("f45b0aa91e4d63a0643d9c9420bf72b3"),
 		b = toNumbers(getParam(html, null, null, /b\s*=\s*toNumbers\("([^"]+)/i)),//toNumbers("5c6a5f08cf9bf0320bfbd8d781fa26ae"),
-		c = toNumbers(getParam(html, null, null, /c\s*=\s*toNumbers\("([^"]+)/i))//c = toNumbers("0fec5c01077762a4a1fa4156ade6d752");
-		//eval(AnyBalance.requestGet(baseurl + 'vvv.js'));
+		c = toNumbers(getParam(html, null, null, /c\s*=\s*toNumbers\("([^"]+)/i)),//c = toNumbers("0fec5c01077762a4a1fa4156ade6d752");
+		cookie = getParam(html, null, null, /document.cookie="([^"]+)="/i);
 		
-		AnyBalance.setCookie('internet.velcom.by', 'X2', toHex(X.aG(c,2,a,b)));
+		AnyBalance.setCookie('internet.velcom.by', cookie, toHex(X.aG(c,2,a,b)));
 		
 		var href = getParam(html, null, null, /location\.href\s*=\s*"([^"]+)/i);
 		if(href) {
@@ -144,7 +144,7 @@ function main(){
         last_id: ''
     }, required_headers);
          
-    getParam(html, result, 'userName', /ФИО(?: \(название абонента\))?:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'userName', /(?:Абонент:|ФИО)(?: \(название абонента\))?:?[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'userNum', /(?:Номер):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'balance', /(?:Баланс основного счета|Баланс лицевого счета|Баланс):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     sumParam(html, result, 'balanceBonus', /(?:Баланс бонусного счета(?: \d)?):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);

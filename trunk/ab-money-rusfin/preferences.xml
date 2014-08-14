@@ -21,4 +21,12 @@
 		dialogMessage="Введите пароль, используемый для входа в систему ИНФО-банк."
 		inputType="textPassword">
 	</EditTextPreference>
+	<ListPreference
+		key="port"
+		title="Какой порт использовать"
+		summary="||{@s}"
+		entries="7777|7779"
+		entryValues="7777|7779"
+		defaultValue="7779">
+	</ListPreference>	
 </PreferenceScreen>

@@ -1,10 +1,5 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Получает текущий остаток и другие параметры кредитов Русфинанс банка, используя систему Инфо-банк
-
-Сайт оператора: http://www.rusfinancebank.ru
-Личный кабинет: http://www.rusfinancebank.ru/ru/info-bank.html
 */
 
 function main(){
@@ -12,7 +7,7 @@ function main(){
 	checkEmpty(prefs.login, 'Пожалуйста, укажите логин для входа в ИНФО-Банк!');
 	checkEmpty(prefs.password, 'Пожалуйста, укажите пароль для входа в ИНФО-Банк!');
 	
-    var baseurl = "https://info-msk.rusfinance.ru:7779/";
+    var baseurl = 'https://info-msk.rusfinance.ru:' + (prefs.port || 7779)+ '/';
     AnyBalance.setDefaultCharset('utf-8');
 	
     var html = AnyBalance.requestGet(baseurl + 'jsso/SSOLogin');
@@ -29,13 +24,14 @@ function main(){
         var error = getParam(html, null, null, /<td[^>]+id="login\.error"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error);
+		
         throw new AnyBalance.Error('Не удалось войти в ИНФО-банк. Сайт изменен?');
     }
 	
     fetchCredit(baseurl, html, prefs);
 }
 
-function fetchCredit(baseurl, html, prefs){
+function fetchCredit(baseurl, html, prefs) {
     var result = {success: true};
 	
 	getParam(html, result, 'agreement', /Номер договора\s*:(?:[\s\S]*?<td[^>]*>)([\s\S]*?)<\/td>/, replaceTagsAndSpaces, html_entity_decode);
@@ -51,5 +47,3 @@ function fetchCredit(baseurl, html, prefs){
 	
     AnyBalance.setResult(result);
 }
-
-

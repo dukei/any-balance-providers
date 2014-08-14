@@ -46,7 +46,7 @@ function main() {
 	var table = getParam(html, null, null, /(<table[^>]*class="datatable"[\s\S]*?<\/table>)/i);
 	checkEmpty(table, "Не нашли ни одной карты.", true);
 	
-	if(prefs.cardnum || /^\d{4}$/i.test(prefs.cardnum)) {
+	if(prefs.cardnum && !/^\d{4}$/i.test(prefs.cardnum)) {
 		throw new AnyBalance.Error('Необходимо ввести 4 последние цифры номера карты, либо не вводить ничего!');
 	}
 	

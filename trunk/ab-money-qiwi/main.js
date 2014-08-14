@@ -142,8 +142,23 @@ function mainNew () {
 	
     var result = {success: true};
 	
-    getParam (html, result, 'balance', /"account_current"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	getParam (html, result, ['currency', 'balance'], /"account_current"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, function (str) {return parseCurrency(str.toLowerCase());});
+	var accs = sumParam(html, null, null, /"person-accounts-[^>]*>([\s\d,.-]+(?:RUB|USD|EUR))/ig);
+	
+	for(var i = 0; i < accs.length; i++) {
+		var curr = accs[i];
+		var balanceVar = (i >= 1 ? 'balance' + (i+1) : 'balance');
+		var currencys = {'rub':'р', 'usd':'$', 'eur':'€'};
+		
+		getParam(curr, result, balanceVar, null, replaceTagsAndSpaces, parseBalance);
+		getParam(curr, result, [(i >= 1 ? 'currency' + (i+1) : 'currency'), balanceVar], null, replaceTagsAndSpaces, function (str) {
+			try {
+				return currencys[parseCurrency(str.toLowerCase())];
+			} catch (e) {}
+			return parseCurrency(str.toLowerCase());
+		});
+	}
+    // getParam(html, result, 'balance', /"account_current"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	// getParam(html, result, ['currency', 'balance'], /"account_current"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, function (str) {return parseCurrency(str.toLowerCase());});
 	
     if(AnyBalance.isAvailable('bills')){
         html = AnyBalance.requestGet(baseurl + 'user/order/main.action?type=1');

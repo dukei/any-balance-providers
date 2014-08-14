@@ -33,6 +33,15 @@ function parseDateMy(str) {
 	return val && val.getTime();
 }
 
+Array.prototype.contains = function(k) {
+	for (var i = 0; i < this.length; i++) {
+		if (this[i] === k) {
+			return true;
+		}
+	}
+	return false;
+}
+
 function main(){
     var prefs = AnyBalance.getPreferences();
     var baseurl = "http://www.exist.ru/Profile/";
@@ -40,7 +49,7 @@ function main(){
 	
     var html = AnyBalance.requestGet(baseurl + 'Login.aspx?ReturnUrl=%2fProfile%2fbalance.aspx', g_headers);
 	
-    if(prefs.num && /^\d+$/.test(prefs.num))
+    if(prefs.num && !/^\d+$/.test(prefs.num))
         throw new AnyBalance.Error('Введите последние цифры номера заказа или не вводите ничего, чтобы получить информацию по последнему заказу');
 	
     var viewstate = getViewState(html);
@@ -68,11 +77,12 @@ function main(){
 	
 	var result = {success: true};
 	
-    getParam(html, result, 'balance', /Наличный счёт:[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'balancebez', /Безналичный счёт:[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'code', /&laquo;код клиента&raquo;\s*<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, '__tariff', /&laquo;код клиента&raquo;\s*<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'debt', /Долг по заказам:[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'balance', />\s*Счёт:([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'code', /'код клиента':\s*<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, '__tariff', /'код клиента':\s*<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'debt', />\s*Долг по заказам:([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	// Вроде как этих данных нет больше
+	getParam(html, result, 'balancebez', /Безналичный счёт:[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'card', /Счёт[^>]*карты:[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'carddebt', /Долг по счёту кредитной карты:[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 	

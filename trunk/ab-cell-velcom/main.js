@@ -27,8 +27,10 @@ function main(){
     var prefix = matches[1];
     
     var html = AnyBalance.requestGet(baseurl, g_headers);
-	
-	if(/JavaScript/.test(html)) {
+	//Ребят, а чего вы так сражаетесь-то со входом в кабинет? Боретесь со своими же пользователями?
+	//Не хотите, чтобы они свой баланс видели? :)
+	//Свяжитесь со мной (dco@mail.ru), объясните, что вам так не нравится-то? Может, какое совместное решение выработаем.
+	if(/toNumbers/.test(html)) {
 		// Функчи из скрипта
 		function toNumbers(d){var e=[];d.replace(/(..)/g,function(d){e.push(parseInt(d,16))});return e};
 		function toHex(){for(var d=[],d=1==arguments.length&&arguments[0].constructor==Array?arguments[0]:arguments,e="",f=0;f<d.length;f++)e+=(16>d[f]?"0":"")+d[f].toString(16);return e.toLowerCase()};

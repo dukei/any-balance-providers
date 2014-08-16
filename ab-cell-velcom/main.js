@@ -10,6 +10,8 @@ var g_headers = {
 	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
 };
 
+var velcomOddPeople = 'Velcom сознательно противодействует оперативному получению вами баланса через сторонние программы! Вот и снова они специально ввели изменения, которые сломали получение баланса. Пожалуйста, позвоните в службу поддержки Velcom (411 и 410 с мобильного телефона в сети velcom без взимания оплаты) и оставьте претензию, что вы не можете пользоваться любимой программой. Проявите активную позицию, они скрывают ваш баланс от вас же. Зачем, интересно? МТС и Life своих абонентов уважают значительно больше...';
+
 function main(){
     var prefs = AnyBalance.getPreferences();
 	
@@ -27,28 +29,30 @@ function main(){
     var prefix = matches[1];
     
     var html = AnyBalance.requestGet(baseurl, g_headers);
+    
+    //Да вы и по выходным шпарите, я смотрю. Личная инициатива?
+    //Без капчи или OTP не получится запретить. Тупо придется тратить ваши и наши усилия на гонку обфускации. Но зачем??? Страдают-то пользователи. Давайте жить дружно!
+
 	//Ребят, а чего вы так сражаетесь-то со входом в кабинет? Боретесь со своими же пользователями?
 	//Не хотите, чтобы они свой баланс видели? :)
 	//Свяжитесь со мной (dco@mail.ru), объясните, что вам так не нравится-то? Может, какое совместное решение выработаем.
-	if(/toNumbers/.test(html)) {
-		// Функчи из скрипта
-		function toNumbers(d){var e=[];d.replace(/(..)/g,function(d){e.push(parseInt(d,16))});return e};
-		function toHex(){for(var d=[],d=1==arguments.length&&arguments[0].constructor==Array?arguments[0]:arguments,e="",f=0;f<d.length;f++)e+=(16>d[f]?"0":"")+d[f].toString(16);return e.toLowerCase()};
 
-		var a = toNumbers(getParam(html, null, null, /a\s*=\s*toNumbers\("([^"]+)/i)),//toNumbers("f45b0aa91e4d63a0643d9c9420bf72b3"),
-		b = toNumbers(getParam(html, null, null, /b\s*=\s*toNumbers\("([^"]+)/i)),//toNumbers("5c6a5f08cf9bf0320bfbd8d781fa26ae"),
-		c = toNumbers(getParam(html, null, null, /c\s*=\s*toNumbers\("([^"]+)/i)),//c = toNumbers("0fec5c01077762a4a1fa4156ade6d752");
-		cookie = getParam(html, null, null, /document.cookie="([^"]+)="/i);
+	var obfuscatedScript = getParam(html, null, null, /<script[^>]*>(\s*var[\s\S]*?)<\/script>/i);
+	if(obfuscatedScript) {
+		var win = {document: {cookie: ''}, location: {href: baseurl}};
+		safeEval(win, obfuscatedScript);
+
+		var cookieName = getParam(win.document.cookie, null, null, /(.*?)=/);
+		var cookieVal = getParam(win.document.cookie, null, null, /=(.*?)(?:;|$)/);
+		if(!cookieName || !cookieVal)
+			throw new AnyBalance.Error(velcomOddPeople);
 		
-		AnyBalance.setCookie('internet.velcom.by', cookie, toHex(X.aG(c,2,a,b)));
+		AnyBalance.setCookie('internet.velcom.by', cookieName, cookieVal);
 		
-		var href = getParam(html, null, null, /location\.href\s*=\s*"([^"]+)/i);
-		if(href) {
-			try {
-				html = AnyBalance.requestGet(href, addHeaders({'Referer': 'https://internet.velcom.by/'}));
-			} catch (e) {
-				html = AnyBalance.requestGet('https://internet.velcom.by/');
-			}
+		try {
+			html = AnyBalance.requestGet(win.location.href, addHeaders({'Referer': 'https://internet.velcom.by/'}));
+		} catch (e) {
+			html = AnyBalance.requestGet('https://internet.velcom.by/');
 		}
 	}
 	
@@ -61,7 +65,7 @@ function main(){
 			throw new AnyBalance.Error('Сайт временно недоступен. Пожалуйста, попробуйте ещё раз позднее.');
 		}
 			
-		throw new AnyBalance.Error('Не удалось найти идентификатор сессии!');
+		throw new AnyBalance.Error(velcomOddPeople);
     }
     
     var form = getParam(html, null, null, /(<form[^>]*name="mainForm"[^>]*>[\s\S]*?<\/form>)/i);
@@ -201,3 +205,14 @@ function main(){
 */    
     AnyBalance.setResult(result);
 }
+
+function safeEval(window, script){
+   try{
+       var result = new Function('window', 'document', 'self', 'location', 'AnyBalance', 'g_AnyBalanceApiParams', '_AnyBalanceApi', script).call(window, window, window.document, window, window.location);
+       return result;
+   }catch(e){
+       AnyBalance.trace('Bad javascript (' + e.message + '): ' + script);
+       throw new AnyBalance.Error(velcomOddPeople);
+   }
+}
+

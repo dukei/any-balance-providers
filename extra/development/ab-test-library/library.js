@@ -7,9 +7,11 @@ AnyBalance (http://any-balance-providers.googlecode.com)
 Содержит некоторые полезные для извлечения значений с сайтов функции.
 Для конкретного провайдера рекомендуется оставлять в этом файле только те функции, которые используются.
 
-library.js v0.12 от 14.07.14
+library.js v0.13 от 18.08.14
 
 changelog:
+18.08.14 requestPostMultipart - эмулируем браузер, генерируя случайный boundary
+
 14.07.14 getParam - Фикс (Если !isset(html), а не !html то не падаем, а пишем ошибку в trace)
 
 04.06.14 parseBalance - улучшен разбор сложных балансов (,82)
@@ -723,10 +725,17 @@ function parseTrafficEx(text, thousand, order, defaultUnits) {
 	return val;
 }
 
-/** Создаёт мультипарт запрос */
+/** Создаёт мультипарт запрос полностью прикидываясь браузером */
 function requestPostMultipart(url, data, headers) {
+	var b = '',  possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+	
+	for( var i=0; i < 16; i++ ) {
+        b += possible.charAt(Math.floor(Math.random() * possible.length));
+	}
+	
 	var parts = [];
-	var boundary = '------WebKitFormBoundaryrceZMlz5Js39A2A6';
+	
+	var boundary = '------WebKitFormBoundary' + b;
 	for (var name in data) {
 		parts.push(boundary, 'Content-Disposition: form-data; name="' + name + '"', '', data[name]);
 	}

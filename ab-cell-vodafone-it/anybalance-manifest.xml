@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="2">ab-cell-vodafone-it</id>
+	<id version="3">ab-cell-vodafone-it</id>
 	<name>Vodafone Italy</name>
 	<description html="true"><![CDATA[
 	<p>Obtains balance and other plan information on Vodafone Italy personal account (http://www.vodafone.it)</p>

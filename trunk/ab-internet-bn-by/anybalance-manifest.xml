@@ -1,33 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-bn-by</id>
-  <name>Деловая сеть (Беларусь)</name>
-  <description>
-    Получает баланс и информацию о тарифном плане для белорусского интернет-провайдера Деловая сеть (http://www.bn.by). Информация берется из личного кабинета https://ui.bn.by.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="agreement" name="Лицевой счет" type="text"/>
-    <counter id="fio" name="ФИО" type="text"/>
-    <counter id="trafficIn" name="Входящий трафик в текущем месяце" units="Гб"/>
-    <counter id="trafficOut" name="Исходящий трафик в текущем месяце" units="Гб"/>
-    <counter id="till" name="Окончание контракта" type="time" format="dd/MM/yyyy"/>
-    <counter id="traffic" name="Предоплаченный трафик" units="Гб"/>
-  </counters>
-  <keywords>
-    business network
-  </keywords>
-  <type>
-    internet
-  </type>
-  <country>
-    by
-  </country>
+	<id version="2">ab-internet-bn-by</id>
+	<api flags="no_browser"/>
+	<name>Деловая сеть (Беларусь)</name>
+	<description html="true"><![CDATA[
+	<p>Получает баланс и информацию о тарифном плане для белорусского интернет-провайдера Деловая сеть (http://www.bn.by). Информация берется из личного кабинета https://ui.bn.by.</p>
+	]]></description>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="agreement" name="Лицевой счет" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="trafficIn" name="Входящий трафик в текущем месяце" units=" Гб"/>
+		<counter id="trafficOut" name="Исходящий трафик в текущем месяце" units=" Гб"/>
+		<counter id="till" name="Окончание контракта" type="time" format="dd/MM/yyyy"/>
+		<counter id="traffic" name="Предоплаченный трафик" units=" Гб"/>
+	</counters>
+	<keywords>business network</keywords>
+	<type>internet</type>
+	<country>by</country>
 </provider>

@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="34" date="2014-08-18">
+	- Добавлен выход из ИССА после выполнения скрипта.
+	</change>
 	<change version="33" date="2014-08-18">
 	- Очередное обострение, часть 2.
 	</change>

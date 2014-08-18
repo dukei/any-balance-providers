@@ -153,7 +153,7 @@ function main(){
     var result = {success: true};
 
     //Персональная информация
-    var html = requestPostMultipart(baseurl + 'work.html', {
+    html = requestPostMultipart(baseurl + 'work.html', {
         sid3: sid,
         user_input_timestamp: new Date().getTime(),
         user_input_0: personalInfo,
@@ -180,8 +180,7 @@ function main(){
     //Кабинет изменился, рассрочку надо исправлять!
     //Пока не получаем её
 	if(AnyBalance.isAvailable('loan_balance', 'loan_left', 'loan_end')) {
-	
-	var html = requestPostMultipart(baseurl + 'work.html', {
+		html = requestPostMultipart(baseurl + 'work.html', {
 			sid3: sid,
 			user_input_timestamp: new Date().getTime(),
 			user_input_0: '_root/FINANCE_INFO/INSTALLMENT',
@@ -189,14 +188,11 @@ function main(){
 			last_id: ''
 		}, g_headers);
 		
-		 
-//Ежемес. платеж 659000 руб. Остаток 7249000 руб. Погашение 01.07.2015.			
+		//Ежемес. платеж 659000 руб. Остаток 7249000 руб. Погашение 01.07.2015.			
 		getParam(html, result, 'loan_balance', /Ежемес. платеж ([0-9]+) руб./i, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, 'loan_left', /Остаток ([0-9]+) руб./i, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, 'loan_end', /Погашение ([0-9.]+)./i, replaceTagsAndSpaces, parseDate);
-	
 	}
-	
 	/*
     if(AnyBalance.isAvailable('traffic')){
         html = requestPostMultipart(baseurl + 'work.html', {
@@ -211,8 +207,20 @@ function main(){
         var packetKb = getParam(html, null, null, /Остаток интернет-трафика:[^<]*?(\d+)\s*Кб/i, replaceFloat, parseFloat) || 0;
 
         result.traffic = traffic + packetMb + packetKb/1000;
-    }
-*/    
+    }*/ 
+	// Выходим из кабинета, чтобы снизить нагрузку на сервер
+	try{
+		html = requestPostMultipart(baseurl + 'work.html', {
+			sid3: sid,
+			user_input_timestamp: new Date().getTime(),
+			user_input_0: '_exit',
+			user_input_1: '',
+			last_id: ''
+		}, g_headers);
+	} catch(e) {
+		
+	}
+	
     AnyBalance.setResult(result);
 }
 

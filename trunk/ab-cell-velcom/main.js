@@ -7,7 +7,7 @@ var g_headers = {
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1985.143 Safari/537.36',
 };
 
 var velcomOddPeople = 'Velcom сознательно противодействует оперативному получению вами баланса через сторонние программы! Вот и снова они специально ввели изменения, которые сломали получение баланса. Пожалуйста, позвоните в службу поддержки Velcom (411 и 410 с мобильного телефона в сети velcom без взимания оплаты) и оставьте претензию, что вы не можете пользоваться любимой программой. Проявите активную позицию, они скрывают ваш баланс от вас же. Зачем, интересно? МТС и Life своих абонентов уважают значительно больше...';
@@ -76,40 +76,45 @@ function main(){
     var form = getParam(html, null, null, /(<form[^>]*name="mainForm"[^>]*>[\s\S]*?<\/form>)/i);
     if(!form)
 		throw new AnyBalance.Error('Не удалось найти форму входа, похоже, velcom её спрятал. Обратитесь к автору провайдера.');
-
-    var params = createFormParams(form, function(params, str, name, value){
-	var id=getParam(str, null, null, /\bid="([^"]*)/i, null, html_entity_decode);
-	if(id){
-		if(/PRE/i.test(id)){ //Это префикс
-			value = prefix;
-		}else if(/NUMBER|MSISDN/i.test(id)){ //Это номер
-			value = phone;
-		}else if(/PWD/i.test(id)){ //Это пароль
-			value = prefs.password.substr(0, 8);  //Велкам принимает только первые 8 символов всё равно.
+	
+	var params = createFormParams(form, function(params, str, name, value) {
+		var id=getParam(str, null, null, /\bid="([^"]*)/i, null, html_entity_decode);
+		if(id){
+			if(/PRE/i.test(id)){ //Это префикс
+				value = prefix;
+			}else if(/NUMBER|MSISDN/i.test(id)){ //Это номер
+				value = phone;
+			}else if(/PWD/i.test(id)){ //Это пароль
+				value = prefs.password.substr(0, 8);  //Велкам принимает только первые 8 символов всё равно.
+			}
 		}
-	}
-	if(!name)
-		return;
-	if(name == 'user_input_0')
-		value = '_next';
-	if(name == 'user_input_timestamp')
-		value = new Date().getTime();
-	if(/^user_input_\d+8$/.test(name))
-		value = '5';
-	if(/^user_input_\d+9$/.test(name))
-		value = '2';
-	if(/^user_input_\d+10$/.test(name))
-		value = '0';
-	return value || '';
+		if(!name)
+			return;
+		if(name == 'user_input_0')
+			value = '_next';
+		if(name == 'user_input_timestamp')
+			value = new Date().getTime();
+		if(/^user_input_\d+8$/.test(name))
+			value = '5';
+		if(/^user_input_\d+9$/.test(name))
+			value = '2';
+		if(/^user_input_\d+10$/.test(name))
+			value = '0';
+		return value || '';
     });
-    params.user_submit='';
+    params.user_submit = '';
 
-    var required_headers = {
-		'Referer': 'https://internet.velcom.by/work.html',
-		'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.162 Safari/535.19'
-    };
-    
-    var html = requestPostMultipart(baseurl + 'work.html', params, required_headers);
+    /*var required_headers = {
+		'origin':'https://internet.velcom.by',
+		'referer':'https://internet.velcom.by/',
+		'user-agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1985.143 Safari/537.36'
+    };*/
+	
+	html = requestPostMultipart(baseurl + 'work.html', params, addHeaders({Referer: baseurl}));
+	
+	if(AnyBalance.getLastStatusCode() >= 400) {
+		throw new AnyBalance.Error(velcomOddPeople);
+	}
 
     var kabinetType, personalInfo;
     if(/_root\/PERSONAL_INFO/i.test(html)){
@@ -153,7 +158,7 @@ function main(){
         user_input_timestamp: new Date().getTime(),
         user_input_0: personalInfo,
         last_id: ''
-    }, required_headers);
+    }, g_headers);
          
     getParam(html, result, 'userName', /(?:Абонент:|ФИО)(?: \(название абонента\))?:?[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'userNum', /(?:Номер):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
@@ -182,7 +187,7 @@ function main(){
 			user_input_0: '_root/FINANCE_INFO/INSTALLMENT',
 			user_input_1: '',
 			last_id: ''
-		}, required_headers);
+		}, g_headers);
 		
 		 
 //Ежемес. платеж 659000 руб. Остаток 7249000 руб. Погашение 01.07.2015.			
@@ -200,7 +205,7 @@ function main(){
             user_input_0: '_root/TPLAN/PACKETS',
             last_id: '',
             user_input_1: -1
-        }, required_headers);
+        }, g_headers);
 
         var packetMb = getParam(html, null, null, /Остаток интернет-трафика:[^<]*?(\d+)\s*Мб/i, replaceFloat, parseFloat) || 0;
         var packetKb = getParam(html, null, null, /Остаток интернет-трафика:[^<]*?(\d+)\s*Кб/i, replaceFloat, parseFloat) || 0;

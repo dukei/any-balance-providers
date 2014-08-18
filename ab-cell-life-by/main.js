@@ -83,6 +83,17 @@ function main(){
 	html = AnyBalance.requestGet(baseurl + 'ru/upravleniye-kontraktom/smena-tarifnogo-plana/', g_headers);
 	getParam(html, result, '__tariff', /href="[^"]*">([^<]+)(?:[^>]*>){11}Активен/i, replaceTagsAndSpaces, html_entity_decode);
 	
+	if (isAvailable('packs', 'packs_deadline')) {
+		html = AnyBalance.requestGet(baseurl + 'ru/upravleniye-kontraktom/upravleniye-uslugami/', g_headers);
+		
+		var packs = sumParam(html, null, null, /<tr>\s*<td[^>]*>\s*<p>[^<]+<\/p>(?:[^>]*>){5}\s*Активная(?:[^>]*>){2}\s*до[^<]+/ig, null, html_entity_decode);
+		
+		AnyBalance.trace('Найдено активных пакетов: ' + packs.length);
+		
+		sumParam(packs, result, 'packs', /<tr>\s*<td[^>]*>\s*<p>([^<]+)<\/p>/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+		sumParam(packs, result, 'packs_deadline', /Активная(?:[^>]*>){2}\s*до([^<]+)/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
+	}
+	
 	// В новом кабинете нет баланса, очень круто :)
 	/*if (AnyBalance.isAvailable('balance', 'balance_bonus') && (!isset(result.balance) || !isset(result.balance_bonus))) {
 	    html = AnyBalance.requestPost(baseurlOld, {

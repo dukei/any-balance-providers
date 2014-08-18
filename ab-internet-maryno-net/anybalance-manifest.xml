@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="11">ab-internet-maryno-net</id>
+  <id major_version="1.0" version="12">ab-internet-maryno-net</id>
   <name>Марьино.NET (Москва)</name>
   <description>
 	Получает текущий баланс, бонусный баланс, номера лицевого счета и договора, статус у провайдера "Maryno.net" (http://maryno.net) из личного кабинета https://my.maryno.net.
@@ -16,10 +16,6 @@
     <counter id="balance" name="Баланс"  suffix=" р"/>
     <counter id="bonus_balance" name="Бонусный баланс"  suffix=" р"/>
     <counter id="credit" name="Кредитование"  suffix=" р"/>
-    <counter id="included" name="Остаток оплаченного включенного трафика" suffix=" Мб"/>
-    <counter id="unpaid" name="Остаток неоплаченного включенного трафика" suffix=" Мб"/>
-    <counter id="transfer" name="Перенесенный трафик" suffix=" Мб"/>
-    <counter id="bonus" name="Бонусный трафик" suffix=" Мб"/>
     <counter id="traffic_month_in" name="Входящий трафик за месяц" suffix=" Мб"/>
     <counter id="traffic_month_out" name="Исходящий трафик за месяц" suffix=" Мб"/>
     <counter id="traffic_last_month_in" name="Входящий трафик за прошлый месяц" suffix=" Мб"/>
@@ -29,12 +25,9 @@
     <counter id="number" name="Номер договорной записи" type="text"/>
     <counter id="dogovor" name="Договор" type="text"/>
     <counter id="FIO" name="Фамилия И.О." type="text"/>
-    <counter id="adress" name="Адрес" type="text"/>
-    <counter id="Home_Phone" name="Телефон домашний" type="text"/>
-    <counter id="Phone" name="Телефон мобильный" type="text"/>
+    <counter id="address" name="Адрес" type="text"/>
     <counter id="email" name="E-Mail" type="text"/>
     <counter id="start_day" name="Дата открытия" type="text"/>
-    <counter id="unconfirmed" name="Неподтвержденные платежи"  suffix=" р"/>
   </counters>
   <keywords>
         провайдер интернет марьино

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2.0" version="21">ab-cell-life-by</id>
+	<id major_version="2.0" version="22">ab-cell-life-by</id>
 	<api flags="no_browser" />
 	<name>Life:) Беларусь</name>
 	<description html="true"><![CDATA[
@@ -35,6 +35,8 @@
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="phone" name="Телефон" type="text"/>
 		<counter id="carmani_min_left" name="Минуты (Карманы)" units=" мин" type="time_interval" format="{@MIN}:{@sec}"/>
+		<counter id="packs" name="Активные пакеты" type="text"/>
+		<counter id="packs_deadline" name="Ближайшая дата отключения пакета" type="time" format="dd/MM/yyyy"/>
 	</counters>
 	<keywords>мобильный оператор лайф белоруссия проверка баланса</keywords>
 	<type>cell</type>

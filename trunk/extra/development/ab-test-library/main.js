@@ -5,6 +5,8 @@
 function main() {
     var result = {success: true};
 	
+	requestPostMultipart('http://ya.ru/', '', '');
+	
     // Тестируем декод
     getParam('<title>&#1057;&#1080;&#1089;&#1090;&#1077;&#1084;&#1072; &#1089;&#1072;&#1084;&#1086;&#1086;&#1073;&#1089;&#1083;&#1091;&#1078;&#1080;&#1074;&#1072;&#1085;&#1080;&#1103;</title>', result, 'title', /<title>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
     AnyBalance.trace(result.title == 'Система самообслуживания' ? 'Проверяем функцию декода... все работает нормально!' : 'Что-то не работает, надо проверить код! ' + result.title);

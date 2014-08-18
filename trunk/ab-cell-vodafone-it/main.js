@@ -22,7 +22,7 @@ function main(){
 		pass: prefs.password,
 	}, addHeaders({Referer: baseurl + '190mobile/endpoint/Mobile5_restyle/home_mio190.php'}));
 	
-    if(!/\/logout\.php/i.test(html)){
+    if(!/logout.php/i.test(html)){
         var error = getParam(html, null, null, [/<div[^>]+class="msgError"[^>]*>([\s\S]*?)<\/div>/i, /class="error[^>]*>([^<]+)/i], replaceTagsAndSpaces, html_entity_decode);
 		if (error)
 			throw new AnyBalance.Error(error, null, /username e password siano inseriti correttamente/i.test(error));
@@ -34,8 +34,9 @@ function main(){
 	
     getParam(html, result, 'phone', /<\/header(?:[^>]*>){9}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'fio', /<\/header(?:[^>]*>){6}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'balance', /Credito Residuo(?:[^>]*>){6}([-\s\d.,]+)/i, replaceTagsAndSpaces, parseBalance);
 	
-	var data = getParam(html, null, null, /([^"]*)"(?:[^"]*"){3}Credito Residuo"/i);
+	/*var data = getParam(html, null, null, /([^"]*)"(?:[^"]*"){3}Credito Residuo"/i);
 	
 	html = AnyBalance.requestPost(baseurl + '190mobile/endpoint/Mobile5_restyle/get_ext_widget.php', {
 		'data': data
@@ -45,7 +46,7 @@ function main(){
 	if(json.response == 'correct') {
 		getParam(json.result.tariffplan + '', result, '__tariff');
 		getParam(json.result.credit + '', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
-	}
+	}*/
 	
     AnyBalance.setResult(result);
 }

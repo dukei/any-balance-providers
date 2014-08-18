@@ -40,6 +40,7 @@ function main(){
         var error = getParam(html, null, null, /<ul[^>]+id="[^"]*errors"[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces);
         if(error)
             throw new AnyBalance.Error(error);
+		
 		AnyBalance.trace(html);
         throw new AnyBalance.Error('Can not log in. Wrong login or password or site might be changed.');
     }
@@ -47,7 +48,7 @@ function main(){
     var result = {success: true};
 	
 	getParam(html, result, '__tariff', /<option[^>]+selected[^>]*>\s*(\d+[^<]*)/i, replaceTagsAndSpaces);
-	getParam(html, result, 'balance', /<p>[^<]*(?:saldo|balance)(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance', [/<p>[^<]*(?:saldo|balance)(?:[^>]*>){2}([^<]*)/i, /<p>[^<]*(?:Prepago|Pay as you go)(?:[^>]*>)([^<]+)/i], replaceTagsAndSpaces, parseBalance);
 	
     AnyBalance.setResult(result);
 }

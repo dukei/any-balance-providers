@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-<change version="3" date="2013-12-03">
-- Adapted to the new site
-</change>
+	<change version="4" date="2014-08-18">
+	- Minor bugs fixed.
+	</change>
+	<change version="3" date="2013-12-03">
+	- Adapted to the new site.
+	</change>
 </history>

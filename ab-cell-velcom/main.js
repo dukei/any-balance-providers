@@ -171,6 +171,7 @@ function main(){
 	/Остаток минут, SMS, MMS, (?:МБ|GPRS), включенных в абонплату:[\s\S]*?<td[^>]*>(?:[\s\S](?!<\/td>))*?(-?\d[\d,\.]*)\s*мин(?:ут)?(?:\s*во все сети)?/i
 	], replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	sumParam(html, result, 'sms', /Остаток минут, SMS, MMS, (?:МБ|GPRS), включенных в абонплату:[\s\S]*?<td[^>]*>(?:[\s\S](?!<\/td>))*?(-?\d[\d,\.]*)\s*SMS/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+	sumParam(html, result, 'mms', /Остаток минут, SMS, MMS, (?:МБ|GPRS), включенных в абонплату:[\s\S]*?<td[^>]*>(?:[\s\S](?!<\/td>))*?(-?\d[\d,\.]*)\s*MMS/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	
     getParam(html, result, 'min_fn', /Остаток минут, SMS, MMS, (?:МБ|GPRS), включенных в абонплату:[\s\S]*?<td[^>]*>(?:[\s\S](?!<\/td>))*?(-?\d[\d,\.]*) мин(?:ут)? на ЛН/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'min_velcom', /Остаток минут, SMS, MMS, (?:МБ|GPRS), включенных в абонплату:[\s\S]*?<td[^>]*>(?:[\s\S](?!<\/td>))*?(-?\d[\d,\.]*) мин(?:ут)? на velcom/i, replaceTagsAndSpaces, parseBalance);
@@ -208,8 +209,9 @@ function main(){
 
         result.traffic = traffic + packetMb + packetKb/1000;
     }*/ 
-	// Выходим из кабинета, чтобы снизить нагрузку на сервер
 	try{
+	    // Выходим из кабинета, чтобы снизить нагрузку на сервер
+		AnyBalance.trace('Выходим из кабинета, чтобы снизить нагрузку на сервер');
 		html = requestPostMultipart(baseurl + 'work.html', {
 			sid3: sid,
 			user_input_timestamp: new Date().getTime(),
@@ -218,7 +220,7 @@ function main(){
 			last_id: ''
 		}, g_headers);
 	} catch(e) {
-		
+		AnyBalance.trace('Ошибка при выходе из кабинета: ' + e.message);
 	}
 	
     AnyBalance.setResult(result);

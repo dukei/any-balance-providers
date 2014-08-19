@@ -55,7 +55,9 @@ function main(){
 			throw new AnyBalance.Error(velcomOddPeople);
 		
 		AnyBalance.setCookie('internet.velcom.by', cookieName, cookieVal);
-		AnyBalance.setCookie('internet.velcom.by', '_ga', 'GA1.2.1052732827.1408440199');
+		function randomString(length) {var result = '', chars = '0123456789';for (var i = length; i > 0; --i) {	result += chars[Math.round(Math.random() * (chars.length - 1))];}return result;}
+		// Ищи новый способ, как нас заблокировать.
+		AnyBalance.setCookie('internet.velcom.by', '_ga', 'GA1.2.' + randomString(10) + '.' + randomString(10));
 		
 		try {
 			html = AnyBalance.requestGet(win.location.href, addHeaders({'Referer': 'https://internet.velcom.by/'}));
@@ -105,7 +107,7 @@ function main(){
 			value = '0';
 		return value || '';
     });
-    params.user_submit = '';
+    params.user_submit = undefined;
 
     /*var required_headers = {
 		'origin':'https://internet.velcom.by',
@@ -116,7 +118,8 @@ function main(){
 	try {
 		html = requestPostMultipart(baseurl + 'work.html', params, addHeaders({Referer: baseurl}));
 	} catch(e) {
-		if(/Read error/i.test(e.message))
+		AnyBalance.trace('Error executing multipart request: ' + e.message);
+		if(/Read error|failed to respond/i.test(e.message))
 			throw new AnyBalance.Error(velcomOddPeople);
 		else
 			throw new AnyBalance.Error(e.message);

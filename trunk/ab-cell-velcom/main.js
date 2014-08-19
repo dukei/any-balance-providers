@@ -3,10 +3,12 @@
 */
 
 var g_headers = {
-	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
-	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+	//'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
+	'Accept-Language': 'ru,en;q=0.8',
 	'Connection': 'keep-alive',
+	'Origin': 'https://internet.velcom.by',
+	'Cache-Control': 'max-age=0',
 	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1985.143 Safari/537.36',
 };
 
@@ -53,6 +55,7 @@ function main(){
 			throw new AnyBalance.Error(velcomOddPeople);
 		
 		AnyBalance.setCookie('internet.velcom.by', cookieName, cookieVal);
+		AnyBalance.setCookie('internet.velcom.by', '_ga', 'GA1.2.1052732827.1408440199');
 		
 		try {
 			html = AnyBalance.requestGet(win.location.href, addHeaders({'Referer': 'https://internet.velcom.by/'}));
@@ -110,7 +113,14 @@ function main(){
 		'user-agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1985.143 Safari/537.36'
     };*/
 	
-	html = requestPostMultipart(baseurl + 'work.html', params, addHeaders({Referer: baseurl}));
+	try {
+		html = requestPostMultipart(baseurl + 'work.html', params, addHeaders({Referer: baseurl}));
+	} catch(e) {
+		if(/Read error/i.test(e.message))
+			throw new AnyBalance.Error(velcomOddPeople);
+		else
+			throw new AnyBalance.Error(e.message);
+	}
 	
 	if(AnyBalance.getLastStatusCode() >= 400) {
 		throw new AnyBalance.Error(velcomOddPeople);

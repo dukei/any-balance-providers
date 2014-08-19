@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-service-emex</id>
+	<api flags="no_browser"/>
+	<name>Emex.ru</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Emex.ru</p>
+	<p>Информация берется из личного кабинета http://www.emex.ru/balancePotr</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="На вашем счете" units=" р"/>
+		<counter id="in_work" name="В работе" units=" р"/>
+		<counter id="avail" name="Доступно для заказа" units=" р"/>
+		<counter id="fio" name="ФИО" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>service</type>
+	<country>ru</country>
+</provider>

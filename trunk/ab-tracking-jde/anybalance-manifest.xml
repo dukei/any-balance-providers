@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-tracking-jde</id>
+	<api flags="no_browser"/>
+	<name>ЖелДорЭкспедиция</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о грузе по номеру ТТН в системе ЖелДорЭкспедиция http://jde.ru/</p>
+	<p>Информация берется из личного кабинета https://cabinet.jde.ru/</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Если у вас нет доступа в Личный кабинет, получите его на странице</p>
+	]]></instruction>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="date_" name="Дата" type="time" format="dd/MM/yyyy"/>
+		<counter id="place" name="Место" type="text"/>
+		<counter id="status" name="Статус" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>tracking</type>
+	<country>ru</country>
+</provider>

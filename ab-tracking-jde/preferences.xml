@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference
+		title="Номер ТТН"
+		key="login"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Номер ТТН"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите номер ТТН, состоящий из цифр.">
+	</EditTextPreference>
+	<EditTextPreference
+		title="ПИН-код"
+		key="password"
+		summary="||***********"
+		obligatory="true"
+		dialogTitle="ПИН-код"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите ПИН-код."
+		inputType="textPassword">
+	</EditTextPreference>
+</PreferenceScreen>

@@ -248,10 +248,11 @@ function getNsk(){
 	
 	var result = {success: true};
 	
+	sumParam(html, result, 'balance', /"([\d.,-]+)(?:&nbsp;)?\s*(?:руб|\\u0440\\u0443\\u0431)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+	
 	for(var i = 0; i < accounts.length; i++) {
 		var name = getParam(accounts[i], null, null, /Name":"([^"]+)/i);
 		
-		sumParam(name, result, 'balance', /([\d.,]+)(?:&nbsp;)?\s*руб/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 		sumParam(name, result, '__tariff', /,\s([\d\-]{5,})/i, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
 	}
 	

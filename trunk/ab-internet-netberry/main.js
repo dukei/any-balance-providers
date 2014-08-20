@@ -7,36 +7,6 @@
 Личный кабинет: https://user.nbr.by/bgbilling/webexecuter
 */
 
-function getParam (html, result, param, regexp, replaces, parser) {
-	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
-		return;
-
-	var matches = regexp.exec (html), value;
-	if (matches) {
-		value = matches[1];
-		if (replaces) {
-			for (var i = 0; i < replaces.length; i += 2) {
-				value = value.replace (replaces[i], replaces[i+1]);
-			}
-		}
-		if (parser)
-			value = parser (value);
-
-    if(param)
-      result[param] = value;
-	}
-   return value
-}
-
-var replaceTagsAndSpaces = [/&nbsp;/g, ' ', /<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, ''];
-var replaceFloat = [/\s+/g, '', /,/g, '.'];
-
-function parseBalance(text){
-    var val = getParam(text.replace(/\s+/g, ''), null, null, /(-?\d[\d\s.,]*)/, replaceFloat, parseFloat);
-    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
-    return val;
-}
-
 function parseTrafficTotalGb(str){
      var traffics = str.split(/\//g);
      var total;
@@ -53,6 +23,10 @@ function parseTrafficTotalGb(str){
 
 function main(){
     var prefs = AnyBalance.getPreferences();
+	
+	checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(prefs.password, 'Введите пароль!');
+	
     AnyBalance.setDefaultCharset('utf-8');
 
     var baseurl = "https://user.nbr.by/bgbilling/webexecuter";
@@ -68,6 +42,7 @@ function main(){
         var error = getParam(html, null, null, /<h2[^>]*>ОШИБКА:([\s\S]*?)(?:<\/ul>|<\/div>)/, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error);
+		
         throw new AnyBalance.Error('Не удалось войти в личный кабинет. Проблемы на сайте или сайт изменен.');
     }
 
@@ -75,7 +50,7 @@ function main(){
     
     if(AnyBalance.isAvailable('balance')){
         html = AnyBalance.requestGet(baseurl + '?action=ShowBalance&mid=contract');
-        getParam(html, result, 'balance', /Исходящий остаток[\S\s]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+        getParam(html, result, 'balance', /Остаток средств[^>]*><td[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
     }
 
     html = AnyBalance.requestGet(baseurl + '?action=ChangeTariff&mid=contract');
@@ -91,12 +66,3 @@ function main(){
     
     AnyBalance.setResult(result);
 }
-
-function html_entity_decode(str)
-{
-    //jd-tech.net
-    var tarea=document.createElement('textarea');
-    tarea.innerHTML = str;
-    return tarea.value;
-}
-

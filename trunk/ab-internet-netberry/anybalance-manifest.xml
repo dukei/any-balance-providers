@@ -1,33 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-netberry</id>
-  <name>NetBerry (Белоруссия)</name>
-  <description>
-    Получает баланс и информацию о тарифном плане для белорусского интернет-провайдера NetBerry (http://nbr.by).
+	<id version="2">ab-internet-netberry</id>
+	<api flags="no_browser"/>
+	<name>NetBerry (Белоруссия)</name>
+	<description html="true"><![CDATA[
+	<p>Получает баланс и информацию о тарифном плане для белорусского интернет-провайдера NetBerry (http://nbr.by).</p>
+	<p>Информация берется из личного кабинета https://user.nbr.by/bgbilling/webexecuter.</p>
 
-    Информация берется из личного кабинета https://user.nbr.by/bgbilling/webexecuter.
-
-    ВНИМАНИЕ! Пароль для доступа к серверу статистики указывается в карте регистрации, выдаваемой при заключении договора.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="traffic_time" name="Время соединений за текущий месяц" type="time_interval" format="{@H}:{@min}:{@sec}"/>
-    <counter id="traffic_cost" name="Стоимость трафика за текущий месяц" units="р"/>
-    <counter id="traffic_total" name="Общий трафик за текущий месяц" units="Gb"/>
-  </counters>
-  <keywords>
-    нетберри
-  </keywords>
-  <type>
-    internet
-  </type>
-  <country>
-    by
-  </country>
+	<p>ВНИМАНИЕ! Пароль для доступа к серверу статистики указывается в карте регистрации, выдаваемой при заключении договора.</p>
+	]]></description>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="traffic_time" name="Время соединений за текущий месяц" type="time_interval" format="{@H}:{@min}:{@sec}"/>
+		<counter id="traffic_cost" name="Стоимость трафика за текущий месяц" units=" р"/>
+		<counter id="traffic_total" name="Общий трафик за текущий месяц" units=" Gb"/>
+	</counters>
+	<keywords>нетберри</keywords>
+	<type>internet</type>
+	<country>by</country>
 </provider>

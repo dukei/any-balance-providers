@@ -21,4 +21,14 @@
 		dialogMessage="Введите пароль, используемый для входа в личный кабинет."
 		inputType="textPassword">
 	</EditTextPreference>
+	<EditTextPreference
+		title="Трек-Номер"
+		key="track"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Трек-Номер"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите трек-номер, либо оставьте это поле пустым, чтобы получить данные по первому треку.">
+	</EditTextPreference>
 </PreferenceScreen>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-exchange-vtb</id>
+	<api flags="no_browser"/>
+	<name>Курсы валют ВТБ24</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о курсах валют ВТБ24 </p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<js>library.js</js>
+		<js>main.js</js>
+	</files>
+	<counters>
+		<counter id="usd_buy" name="USD Покупка" units=" р"/>
+		<counter id="usd_sell" name="USD Продажа" units=" р"/>
+		<counter id="eur_buy" name="EUR Покупка" units=" р"/>
+		<counter id="eur_sell" name="EUR Продажа" units=" р"/>
+	</counters>
+	<keywords></keywords>
+	<type>exchange</type>
+	<country>ru</country>
+</provider>

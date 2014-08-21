@@ -7,6 +7,13 @@
 Личный кабинет: https://ihelper-prp.mts.com.ua/SelfCarePda/
 */
 
+function parseTrafficMb(str){
+    var val = parseBalance(str);
+    if(isset(val))
+        val = Math.round(val/1024*100)/100;
+    return val;
+}
+
 function main(){
     var prefs = AnyBalance.getPreferences();
 
@@ -156,11 +163,13 @@ function main(){
     //К-во Кб загруженных по АПН opera
     sumParam (html, result, 'traffic_opera_mb', /<li>К-во Кб загруженных по АПН opera:[^<]*Использовано[^\d]*?(\d+,?\d* *(kb|mb|gb|кб|мб|гб|байт|bytes))<\/li>/ig, null, parseTraffic, aggregate_sum);
 
-    // Интернет Max Energy (интересно у них единица измерения прописана)
+    // Интернет Max Energy (интересно у них единица измерения прописана) и MAX Energy Allo
     sumParam (html, result, 'traffic_maxenergy_mb', /<li>Осталось: (\d+,?\d* *(kб|bytes)).<\/li>/ig, null, parseTraffic, aggregate_sum);
+    sumParam (html, result, 'traffic_maxenergy_mb', /<li>Осталось (\d+) бесплатных Kб.[^<]*<\/li>/ig, null, parseTrafficMb, aggregate_sum);
 
     // СМС в сети МТС
     sumParam (html, result, 'sms_net', /<li>Осталось (\d+) смс.[^<]*<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    sumParam (html, result, 'sms_net', /<li>Осталось (\d+) бесплатных SMS[^<]*<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     //Срок действия СМС в сети МТС
     sumParam (html, result, 'termin_sms_net', /<li>Осталось \d+ смс. До ([^<]*)<\/li>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
     sumParam (html, result, 'termin_sms_net', /<li>Осталось \d+ смс. Срок действия до ([^<]*)<\/li>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
@@ -199,6 +208,10 @@ function main(){
     sumParam (html, result, 'min_unlin_life', /Мб. Срок действия до [^<]*<\/li><li>Осталось ([\d\.,]+) сек. Срок действия до [^<]*<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     //Срок действия Минуты в тарифе Супер Безлимит
     sumParam (html, result, 'termin_min_unlin', /<li>Осталось \d+ сек. Срок действия до ([^<]*)<\/li>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
+    
+    //Минуты в тарифе MAX Energy Allo
+    sumParam (html, result, 'min_allo_net', /Kб.<\/li><li>Осталось ([\d\.,]+) бесплатных секунд[^<]*<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    sumParam (html, result, 'min_allo_other', /Осталось ([\d\.,]+) бесплатных секунд[^<]*<\/li><\/ul>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 
     // Расход минут на Любимые Номера
     sumParam (html, result, 'min_ln', /<li>К-во бесплатных минут для звонков на ЛН:[^<]*Израсходовано\s*([\d\.,]+) сек.<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);

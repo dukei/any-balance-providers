@@ -142,17 +142,17 @@ function mainNew () {
 	
     var result = {success: true};
 	
-	var accs = sumParam(html, null, null, /"person-accounts-[^>]*>([\s\d,.-]+(?:RUB|USD|EUR))/ig);
+	var accs = sumParam(html, null, null, /"person-accounts-[^>]*>([\s\d,.-]+(?:RUB|USD|EUR|KZT))/ig);
 	
 	for(var i = 0; i < accs.length; i++) {
 		var curr = accs[i];
 		var balanceVar = (i >= 1 ? 'balance' + (i+1) : 'balance');
-		var currencys = {'rub':'р', 'usd':'$', 'eur':'€'};
+		//var currencys = {'rub':'р', 'usd':'$', 'eur':'€'};
 		
 		getParam(curr, result, balanceVar, null, replaceTagsAndSpaces, parseBalance);
 		getParam(curr, result, [(i >= 1 ? 'currency' + (i+1) : 'currency'), balanceVar], null, replaceTagsAndSpaces, function (str) {
 			try {
-				return currencys[parseCurrency(str.toLowerCase())];
+				return g_currency[parseCurrency(str.toUpperCase())];
 			} catch (e) {}
 			return parseCurrency(str.toLowerCase());
 		});

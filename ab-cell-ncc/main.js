@@ -62,7 +62,7 @@ function main(){
 	getParam(info, result, 'filial', /<dd[^>]*>Филиал:<\/dd>\s*<dd[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(info, result, 'phone', /<dd[^>]*>Номер:<\/dd>\s*<dd[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 	// Теперь аккумуляторы
-	if(isAvailable('accum_trafic', 'accum_mins', 'accum_sms')){
+	if(isAvailable(['accum_trafic', 'accum_mins', 'accum_sms'])) {
 		AnyBalance.trace('Requesting accumulators info...');
 		info = AnyBalance.requestGet(baseurl + '?path=services');
 		

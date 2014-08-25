@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser" />
-	<id major_version="1.1" version="25">ab-cell-ncc</id>
+	<id major_version="1.1" version="26">ab-cell-ncc</id>
 	<name>Ростелеком-Волга (НСС)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем балансе и тарифе для пользователей оператора ""Ростелеком-Волга"" (НСС).</p>
@@ -31,10 +30,10 @@
 		<js>main.js</js>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units="р"/>
-		<counter id="bonus" name="Бонус" units="р"/>
-		<counter id="trafic" name="Трафик" units="Mb"/>
-		<counter id="accum_trafic" name="Трафик (Аккумулятор)" units="Mb"/>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="bonus" name="Бонус" units=" р"/>
+		<counter id="trafic" name="Трафик" units=" Mb"/>
+		<counter id="accum_trafic" name="Трафик (Аккумулятор)" units=" Mb"/>
 		<counter id="accum_mins" name="Минуты (Аккумулятор)"/>
 		<counter id="accum_sms" name="СМС (Аккумулятор)"/>
 		<counter id="filial" name="Филиал" type="text"/>

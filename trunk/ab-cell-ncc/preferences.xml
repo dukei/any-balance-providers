@@ -1,15 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <!--
-	Это ни к чему вообще
-	<ListPreference
-        title="Регион"
-        summary="|Выберите регион|Выбран регион '{@s}'!"
-        key="region"
-        defaultValue="1"
-        entries="Республика Татарстан|Нижегородский филиал"
-        entryValues="1|2" />-->
-    <EditTextPreference 
+    <EditTextPreference
+		obligatory="true"
         key="userv"
         title="Логин" 
         summary="Номер телефона (10 цифр)||{@s}\n" 
@@ -18,7 +10,8 @@
         dialogMessage="Введите номер вашего телефона, например, 9041234567"
         positiveButtonText="ОК" >
     </EditTextPreference>
-    <EditTextPreference 
+    <EditTextPreference
+		obligatory="true"
         key="passv" 
         title="Пароль"
         summary="Пароль для входа в iServe||***********\n"

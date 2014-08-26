@@ -1,41 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="12">ab-internet-maryno-net</id>
-  <name>Марьино.NET (Москва)</name>
-  <description>
-	Получает текущий баланс, бонусный баланс, номера лицевого счета и договора, статус у провайдера "Maryno.net" (http://maryno.net) из личного кабинета https://my.maryno.net.
-  </description>
-  <author>KiLLer13&lt;killer_kondor@pisem.net&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс"  suffix=" р"/>
-    <counter id="bonus_balance" name="Бонусный баланс"  suffix=" р"/>
-    <counter id="credit" name="Кредитование"  suffix=" р"/>
-    <counter id="traffic_month_in" name="Входящий трафик за месяц" suffix=" Мб"/>
-    <counter id="traffic_month_out" name="Исходящий трафик за месяц" suffix=" Мб"/>
-    <counter id="traffic_last_month_in" name="Входящий трафик за прошлый месяц" suffix=" Мб"/>
-    <counter id="traffic_last_month_out" name="Исходящий трафик за прошлый месяц" suffix=" Мб"/>
-    <counter id="status" name="Статус счета" type="text"/>
-    <counter id="tariff" name="Тарифный план" type="text"/>
-    <counter id="number" name="Номер договорной записи" type="text"/>
-    <counter id="dogovor" name="Договор" type="text"/>
-    <counter id="FIO" name="Фамилия И.О." type="text"/>
-    <counter id="address" name="Адрес" type="text"/>
-    <counter id="email" name="E-Mail" type="text"/>
-    <counter id="start_day" name="Дата открытия" type="text"/>
-  </counters>
-  <keywords>
-        провайдер интернет марьино
-  </keywords>
-  <type>
-    internet, tv
-  </type>
-  <country>
-    ru
-  </country>
+	<api flags="no_browser"/>
+	<id major_version="2.0" version="13">ab-internet-maryno-net</id>
+	<name>Марьино.NET (Москва)</name>
+	<description html="true"><![CDATA[
+	<p>Получает текущий баланс, бонусный баланс, номера лицевого счета и договора, статус у провайдера "Maryno.net" (http://maryno.net) из личного кабинета https://my.maryno.net.</p>
+	]]></description>
+	<author>KiLLer13&lt;killer_kondor@pisem.net&gt;</author>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс"  suffix=" р"/>
+		<counter id="bonus_balance" name="Бонусный баланс"  suffix=" р"/>
+		<counter id="credit" name="Кредитование"  suffix=" р"/>
+		<counter id="traffic_month_in" name="Входящий трафик за месяц" suffix=" Мб"/>
+		<counter id="traffic_month_out" name="Исходящий трафик за месяц" suffix=" Мб"/>
+		<counter id="traffic_last_month_in" name="Входящий трафик за прошлый месяц" suffix=" Мб"/>
+		<counter id="traffic_last_month_out" name="Исходящий трафик за прошлый месяц" suffix=" Мб"/>
+		<counter id="status" name="Статус счета" type="text"/>
+		<counter id="tariff" name="Тарифный план" type="text"/>
+		<counter id="number" name="Номер договорной записи" type="text"/>
+		<counter id="dogovor" name="Договор" type="text"/>
+		<counter id="FIO" name="Фамилия И.О." type="text"/>
+		<counter id="address" name="Адрес" type="text"/>
+		<counter id="email" name="E-Mail" type="text"/>
+		<counter id="start_day" name="Дата открытия" type="time" format="dd/MM/yyyy"/>
+	</counters>
+	<keywords>провайдер интернет марьино</keywords>
+	<type>internet, tv</type>
+	<country>ru</country>
 </provider>

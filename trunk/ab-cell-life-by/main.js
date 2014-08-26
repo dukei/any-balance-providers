@@ -83,7 +83,7 @@ function main(){
 	html = AnyBalance.requestGet(baseurl + 'ru/upravleniye-kontraktom/smena-tarifnogo-plana/', g_headers);
 	getParam(html, result, '__tariff', /href="[^"]*">([^<]+)(?:[^>]*>){11}Активен/i, replaceTagsAndSpaces, html_entity_decode);
 	
-	if (isAvailable('packs', 'packs_deadline')) {
+	if (isAvailable(['packs', 'packs_deadline'])) {
 		html = AnyBalance.requestGet(baseurl + 'ru/upravleniye-kontraktom/upravleniye-uslugami/', g_headers);
 		
 		var packs = sumParam(html, null, null, /<tr>\s*<td[^>]*>\s*<p>[^<]+<\/p>(?:[^>]*>){5}\s*Активная(?:[^>]*>){2}\s*до[^<]+/ig, null, html_entity_decode);

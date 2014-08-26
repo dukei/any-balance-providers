@@ -1,111 +1,113 @@
 /**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Провайдер Марьино.NET 
-Сайт оператора: http://maryno.net/
-Личный кабинет: https://my.maryno.net/
-1.0.12- Полностью изменен личный кабинет
-1.0.11- Обновления на сайте.
-1.0.10- Обновления на сайте.
-1.0.9 - Округление трафика до мегабайтов.
-1.0.8 - добавлена информация по текущему трафикуи трафику за прошлый месяц
 */
 
+var g_headers = {
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
+	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Connection': 'keep-alive',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+};
+
 function main(){
-	AnyBalance.trace('Connecting...');
+	var prefs = AnyBalance.getPreferences();
+	var baseurl = 'https://lk.maryno.net/';
+	AnyBalance.setDefaultCharset('utf-8');
 	
-	var data = AnyBalance.getPreferences();
-
-	AnyBalance.setAuthentication(data.login,data.password);
+	checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	var url='https://lk.maryno.net/login';
-
-	var html = AnyBalance.requestPost('https://lk.maryno.net/login',{
-		username:data.login,
-		password:data.password
-	});
-	html=AnyBalance.requestGet('https://lk.maryno.net/api/user/contract');
-	if (res=/contract_id\":(.*?),/.exec(html)){var contract_id=res[1];}
-        html = AnyBalance.requestPost('https://lk.maryno.net/api/user/contract/'+contract_id);
-        html = AnyBalance.requestGet('https://lk.maryno.net/api/user/subscriber');
-	if (res=/subscriber_id\":(.*?),/.exec(html)){var subscriber_id=res[1];}
-        html = AnyBalance.requestPost('https://lk.maryno.net/api/user/subscriber/'+subscriber_id);
-        html = AnyBalance.requestGet('https://lk.maryno.net/api/user/product');
-	if (res=/product_id\":(.*?),/.exec(html)){var product_id=res[1];}
-        html = AnyBalance.requestPost('https://lk.maryno.net/api/user/product/'+product_id);
-	url='https://lk.maryno.net/api/user/all';
-	html=AnyBalance.requestGet(url);
-	regexp = /Unauthorized/;
-	if (!regexp.exec(html)){
-      		AnyBalance.trace ('Authorization Ok!');
-	} else {
-      		AnyBalance.trace ('Authorization Required.');
-		throw new AnyBalance.Error ('Ошибка авторизации.');
+	var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
+	
+	if(!html || AnyBalance.getLastStatusCode() > 400)
+		throw new AnyBalance.Error('Ошибка! Сервер не отвечает! Попробуйте обновить баланс позже.');
+	
+	html = AnyBalance.requestPost(baseurl + 'login', {
+		username: prefs.login,
+		password: prefs.password,
+	}, addHeaders({Referer: baseurl + 'login'}));
+	
+	if (!/type_jur":0/i.test(html)) {
+		var errors = {'no such user':'Такого пользователя не существует!', 'wrong password':'Неправильный пароль!'};
+		var error = errors[html];
+		if (error)
+			throw new AnyBalance.Error(error, null, /Такого пользователя не существует|Неправильный пароль/i.test(error));
+		
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
-
-	AnyBalance.trace ('Start parsing...');
+	
+	html = AnyBalance.requestGet('https://lk.maryno.net/api/user/contract');
+	
+	var contract_id = getParam(html, null, null, /contract_id\":(.*?),/i);
+	
+	html = AnyBalance.requestPost('https://lk.maryno.net/api/user/contract/' + contract_id);
+	
+	html = AnyBalance.requestGet('https://lk.maryno.net/api/user/subscriber');
+	
+	var subscriber_id = getParam(html, null, null, /subscriber_id\":(.*?),/i);
+	
+	html = AnyBalance.requestPost('https://lk.maryno.net/api/user/subscriber/' + subscriber_id);
+	
+	html = AnyBalance.requestGet('https://lk.maryno.net/api/user/product');
+	
+	var product_id = getParam(html, null, null, /product_id\":(.*?),/i);
+	
+	html = AnyBalance.requestPost('https://lk.maryno.net/api/user/product/' + product_id);
+	
+	html = AnyBalance.requestGet('https://lk.maryno.net/api/user/all');
+	
 	var result = {success: true};
-	var res='';
-
-
-	if (res=/number\":\"(.*?)\"/.exec(html)){result.number=res[1];}
-	if (res=/contract_num\":\"(.*?)\"/.exec(html)){result.dogovor=res[1];}
-	if (res=/fio\":\"(.*?)\"/.exec(html)){result.FIO=res[1];}
-	if (res=/address\":\"(.*?)\"/.exec(html)){result.address=res[1];}
-	if (res=/date_begin\":\"(.*?)\"/.exec(html)){result.start_day=res[1];}
-	if (res=/balance\":(.*?),/.exec(html)){result.balance=Math.floor(res[1]*100)/100;}
-	if (res=/bonusBalance\":(.*?),/.exec(html)){result.bonus_balance=res[1];}
-	if (res=/plan\":\"(.*?)\"/.exec(html)){result.__tariff=res[1];result.tariff=res[1];}
-	if (res=/turnbackBalance\":(.*?),/.exec(html)){result.credit=res[1];}
-	if (res=/isBlocked\":(.*?)}/.exec(html)){
-		if (res[1] == 0){result.status="Не блокирован";}
-		if (res[1] != 0){result.status=res[1]}
+	
+	var json = getJson(html);
+	
+	getParam(json.number, result, 'number', null, replaceTagsAndSpaces, html_entity_decode);
+	getParam(json.contract_num, result, 'dogovor', null, replaceTagsAndSpaces, html_entity_decode);
+	getParam(json.fio, result, 'FIO', null, replaceTagsAndSpaces, html_entity_decode);
+	getParam(json.address, result, 'address', null, replaceTagsAndSpaces, html_entity_decode);
+	getParam(json.date_begin, result, 'start_day', null, replaceTagsAndSpaces, parseDateISO);
+	getParam(json.balance + '', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
+	getParam(json.bonusBalance + '', result, 'bonus_balance', null, replaceTagsAndSpaces, parseBalance);
+	getParam(json.plan, result, '__tariff', null, replaceTagsAndSpaces, html_entity_decode);
+	getParam(json.turnbackBalance + '', result, 'credit', null, replaceTagsAndSpaces, parseBalance);
+	getParam(json.blockStatus.isBlocked+'', result, 'status', null, replaceTagsAndSpaces, function (str) {if (str == 0) return "Не блокирован"; else return str;});
+	
+	if(isAvailable('email')) {
+		html = AnyBalance.requestGet('https://lk.maryno.net/api/user/email');
+		
+		json = getJson(html);
+		getParam(json.value+'', result, 'email', null, replaceTagsAndSpaces, html_entity_decode);
 	}
-	url='https://lk.maryno.net/api/user/email';
-	html=AnyBalance.requestGet(url);
-	if (res=/value\":\"(.*?)\"/.exec(html)){result.email=res[1];}
-
-
-	url='https://lk.maryno.net/api/accounts';
-	html=AnyBalance.requestGet(url);
-	if (res=/ip_address\":\"(.*?)\"/.exec(html)){ip_address=res[1];
-        	var date = new Date ();
-		var year=date.getFullYear();
-		var month=date.getMonth();
-		url='https://lk.maryno.net/api/accounts/details/month/'+ip_address+'/'+year+'/'+(month+1);
-		t=AnyBalance.requestGet(url);
-		t_m=t.split("}");
-		var tr_in=0;
-		var tr_out=0;
-		for (i=0;i<=t_m.length-2;i++){
-			res =/incoming\":(.*?),\"outgoing\":(.*)/.exec(t_m[i]);
-        		tr_in=tr_in+Math.floor((res[1])/1024/1024);
-			tr_out=tr_out+Math.floor((res[2])/1024/1024);
+	
+	function getDetails(url, result, inName, outName) {
+		html = AnyBalance.requestGet(url);
+		json = getJson(html);
+		
+		for(var i = 0; i < json.length; i++) {
+			var curr = json[i];
+			
+			sumParam(curr.incoming + '', result, inName, null, [replaceTagsAndSpaces, /(.+)/, '$1 b'], parseTraffic, aggregate_sum);
+			sumParam(curr.outgoing + '', result, outName, null, [replaceTagsAndSpaces, /(.+)/, '$1 b'], parseTraffic, aggregate_sum);
 		}
-		result.traffic_month_in=tr_in;
-		result.traffic_month_out=tr_out;
-
-
-		if (month == 0 ){
-			year=year-1;
-			month=12;
-		}
-		url='https://lk.maryno.net/api/accounts/details/month/'+ip_address+'/'+year+'/'+month;
-		t_pr=AnyBalance.requestGet(url);
-		t_m_pr=t_pr.split("}");
-		var tr_lm_in=0;
-		var tr_lm_out=0;
-		for (i=0;i<=t_m_pr.length-2;i++){
-			res =/incoming\":(.*?),\"outgoing\":(.*)/.exec(t_m_pr[i]);
-        		tr_lm_in=tr_lm_in+Math.floor((res[1])/1024/1024);
-			tr_lm_out=tr_lm_out+Math.floor((res[2])/1024/1024);
-		}
-		result.traffic_last_month_in=tr_lm_in;
-		result.traffic_last_month_out=tr_lm_out;
 	}
-
-	AnyBalance.trace ('End parsing...');	
+	
+	if(isAvailable(['traffic_month_in','traffic_month_out', 'traffic_last_month_in', 'traffic_last_month_out'])) {
+		html = AnyBalance.requestGet('https://lk.maryno.net/api/accounts');
+		
+		json = getJson(html);
+		var ip_address = json[0].ip_address;
+		
+       	var date = new Date();
+		var month = (date.getMonth()+1);
+		var year = date.getFullYear();
+		
+		getDetails('https://lk.maryno.net/api/accounts/details/month/'+ip_address+'/'+year+'/'+month, result, 'traffic_month_in', 'traffic_month_out');
+		
+		if (month == 1) {year--; month = 12;}
+		
+		getDetails('https://lk.maryno.net/api/accounts/details/month/'+ip_address+'/'+year+'/'+month, result, 'traffic_last_month_in', 'traffic_last_month_out');
+	}
+	
 	AnyBalance.setResult(result);
-        
-
 }

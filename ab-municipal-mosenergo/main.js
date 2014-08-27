@@ -16,14 +16,14 @@ function main(){
 	
     var baseurl = 'https://lkkbyt.mosenergosbyt.ru/';
 	
-    if(!/^\d{10}$/.test(prefs.login || ''))
-        throw new AnyBalance.Error('Введите 10 цифр лицевого счета без пробелов и разделителей.');
-	
+	checkEmpty(/^\d{10}$/.test(prefs.login), 'Введите 10 цифр лицевого счета без пробелов и разделителей.');
 	checkEmpty(prefs.password, 'Введите пароль!');			
 	
     var parts = /^(\d{5})(\d{3})(\d{2})$/.exec(prefs.login);
 	
-    var html = AnyBalance.requestPost(baseurl + 'backLink.xhtml?mode=auth', {
+	var html = AnyBalance.requestGet(baseurl + 'common/login.xhtml', g_headers);
+	
+    html = AnyBalance.requestPost(baseurl + 'backLink.xhtml?mode=auth', {
         'book':parts[1],
         'num':parts[2],
         'kr':parts[3],

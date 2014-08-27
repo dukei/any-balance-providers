@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="8">ab-exchange-cbr</id>
+	<id version="9">ab-exchange-cbr</id>
 	<api flags="no_browser"/>
 	<name>Курсы валют ЦБ России</name>
 	<description html="true"><![CDATA[

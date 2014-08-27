@@ -129,17 +129,20 @@ function main(){
 	}
 
     var kabinetType, personalInfo;
-    if(/_root\/PERSONAL_INFO/i.test(html)){
+	if(/_root\/PERSONAL_INFO_ABONENT/i.test(html)) {
+        personalInfo = '_root/PERSONAL_INFO_ABONENT';
+        kabinetType = 3;		
+	} else if(/_root\/PERSONAL_INFO/i.test(html)){
         personalInfo = '_root/PERSONAL_INFO';
         kabinetType = 2;
     }else if(/_root\/USER_INFO/i.test(html)){
         personalInfo = '_root/USER_INFO';
         kabinetType = 1;
     }
-
-    AnyBalance.trace('Cabinet type: ' + kabinetType);
-
-    if(!kabinetType){
+	
+	AnyBalance.trace('Cabinet type: ' + kabinetType);
+	
+	if(!kabinetType){
         var error = sumParam(html, null, null, /<td[^>]+class="INFO(?:_Error|_caption)?"[^>]*>(.*?)<\/td>/ig, replaceTagsAndSpaces, html_entity_decode, create_aggregate_join(' '))
 		|| sumParam(html, null, null, /<span[^>]+style="color:\s*red[^>]*>[\s\S]*?<\/span>/ig, replaceTagsAndSpaces, html_entity_decode, create_aggregate_join(' '))
 	        || getParam(html, null, null, /<td[^>]+class="info_caption"[^>]*>[\s\S]*?<\/td>/ig, replaceTagsAndSpaces, html_entity_decode);
@@ -163,8 +166,8 @@ function main(){
 	}	
 	
     var result = {success: true};
-
-    //Персональная информация
+	
+	//Персональная информация
     html = requestPostMultipart(baseurl + 'work.html', {
         sid3: sid,
         user_input_timestamp: new Date().getTime(),
@@ -174,7 +177,7 @@ function main(){
 	
 	getParam(html, result, 'userName', /(?:Абонент:|ФИО)(?: \(название абонента\))?:?[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'userNum', /(?:Номер):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'balance', /(?:Баланс основного счета|Баланс лицевого счета|Баланс):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'balance', /(?:Баланс основного счета|Баланс лицевого счета|Баланс|Начисления абонента):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     sumParam(html, result, 'balanceBonus', /(?:Баланс бонусного счета(?: \d)?):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     getParam(html, result, 'status', /(?:Текущий статус абонента|Статус абонента):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, '__tariff', /Тарифный план:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
@@ -255,4 +258,3 @@ function safeEval(window, script){
        throw new AnyBalance.Error(velcomOddPeople);
    }
 }
-

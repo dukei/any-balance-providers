@@ -12,8 +12,7 @@ var g_headers = {
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-	
-    var baseurl = "https://www.freevoipdeal.com/";
+	var baseurl = "https://www.freevoipdeal.com/";
 	
     AnyBalance.setDefaultCharset('utf-8'); 
 	

@@ -13,10 +13,10 @@ function main() {
 	
 	getParam(html, result, 'date', /<h3[^>]*>Курсы иностранных валют с([^<]+)/i, replaceTagsAndSpaces, parseDate);
 	getParam(html, result, '__tariff', /<h3[^>]*>Курсы иностранных валют с([^<]+)/i, [/по местному времени/g, '', replaceTagsAndSpaces], html_entity_decode);
-	getParam(html, result, 'usd_purch', /"Доллар США"([^>]*>){8}/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'usd_sell', /"Доллар США"([^>]*>){13}/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'eur_purch', /"Евро"([^>]*>){8}/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'eur_sell', /"Евро"([^>]*>){13}/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'usd_purch', /"Доллар США"(?:[^>]*>){8}([\s\d.,]{3,})/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'usd_sell', /"Доллар США"(?:[^>]*>){13}([\s\d.,]{3,})/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'eur_purch', /"Евро"(?:[^>]*>){8}([\s\d.,]{3,})/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'eur_sell', /"Евро"(?:[^>]*>){13}([\s\d.,]{3,})/i, replaceTagsAndSpaces, parseBalance);
 	
 	AnyBalance.setResult(result);
 }

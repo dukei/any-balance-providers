@@ -16,7 +16,7 @@ function getViewState(html) {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://schoolinfo.educom.ru/';
+	var baseurl = 'https://schoolinfo.educom.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Введите логин!');
@@ -72,6 +72,10 @@ function main() {
 function getRatingsByName(html, name, counterName, result) {
 	var tr = getParam(html, null, null, new RegExp('(<tr>(?:[^>]*>){1}'+ name +'(?:[^>]*>){10,40}\\s*</tr>)', 'i'));
 	if(!tr) {
+		var error = getParam(html, null, null, /message"(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+		if (error)
+			throw new AnyBalance.Error(error);
+		
 		throw new AnyBalance.Error('Не удалось найти предмет '+name+' в таблице.');
 	}
 	

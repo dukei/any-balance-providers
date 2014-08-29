@@ -20,29 +20,30 @@ function main() {
 	
 	var html = AnyBalance.requestGet(baseurl + 'auth/login', g_headers);
 	
-	var params = createFormParams(html, function(params, str, name, value) {
-		if (name == 'u') 
-			return prefs.login;
-		else if (name == 'p')
-			return prefs.password;
-
-		return value;
-	});
+	AnyBalance.trace(html);
+	
+	var params = createFormParams(html);
+	
+	params.u = prefs.login;
+	params.p = prefs.password;
+	//AnyBalance.trace(JSON.stringify(params));
+	
 	if(!prefs.dbg) {
 		html = AnyBalance.requestPost(baseurl + 'auth/login', params, addHeaders({Referer: baseurl + 'auth/login'}));
 	} else {
 		html = AnyBalance.requestGet('https://ooointersvyaz6.lk.is74.ru/balance', g_headers);
 	}
 	var lastUrl = AnyBalance.getLastUrl();
-	AnyBalance.trace('Last url was: '+lastUrl);
+	AnyBalance.trace('Last url was: ' + lastUrl);
 	
 	var subDomain = getParam(lastUrl, null, null, /https:\/\/([^\.]*)\.lk/i);
-	AnyBalance.trace('Sub domain is: '+subDomain);
+	AnyBalance.trace('Sub domain is: ' + subDomain);
 	
 	if (!/logout/i.test(html)) {
 		var error = getParam(html, null, null, /class="auth-error-summary"[^>]*>([\s\S]*)<\/ul/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
 			throw new AnyBalance.Error(error);
+		
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	var result = {success: true};
@@ -53,7 +54,7 @@ function main() {
 	getParam(html, result, 'fio', /Здравствуйте,(?:[^>]*>){1}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 	
 	if(isAvailable('nls')) {
-		html = AnyBalance.requestGet('https://'+subDomain+'.lk.is74.ru/profile', g_headers);
+		html = AnyBalance.requestGet('https://' + subDomain + '.lk.is74.ru/profile', g_headers);
 		getParam(html, result, 'nls', /Лицевой счет №:(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 	}
 	

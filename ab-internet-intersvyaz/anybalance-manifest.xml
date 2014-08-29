@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2.0" version="2">ab-internet-intersvyaz</id>
+	<id major_version="2.0" version="4">ab-internet-intersvyaz</id>
 	<name>Интерсвязь (Челябинск)</name>
 	<description html="true"><![CDATA[
 	<p>Получает текущий баланс лицевого счета, бонусы и другую информацию провайдера "Интерсвязь" г. Челябинск</p>

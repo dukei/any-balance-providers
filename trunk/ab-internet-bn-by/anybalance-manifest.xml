@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-internet-bn-by</id>
+	<id version="3">ab-internet-bn-by</id>
 	<api flags="no_browser"/>
 	<name>Деловая сеть (Беларусь)</name>
 	<description html="true"><![CDATA[

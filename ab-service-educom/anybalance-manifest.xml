@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-service-educom</id>
+	<id version="3">ab-service-educom</id>
 	<api flags="no_browser"/>
 	<name>Городская Школьная Информационная Система</name>
 	<description html="true"><![CDATA[

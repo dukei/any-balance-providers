@@ -1,30 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-tv-telekarta</id>
-  <name>Телекарта</name>
-  <description>
-    Получает срок действия подписки по карте ТЕЛЕКАРТА (http://telekarta.tv)
-
-    Информация берется из системы проверки подписки http://act.telekarta.tv/chkcard/. Достаточно указать только номер карты.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="till" name="Срок действия подписки" type="time"/>
-  </counters>
-  <keywords>
-    
-  </keywords>
-  <type>
-    tv
-  </type>
-  <country>
-    ru
-  </country>
+	<id version="3">ab-tv-telekarta</id>
+	<api flags="no_browser"/>
+	<name>Телекарта</name>
+	<description html="true"><![CDATA[
+	<p>Получает срок действия подписки по карте ТЕЛЕКАРТА (http://telekarta.tv)</p>
+	<p>Информация берется из системы проверки подписки http://act.telekarta.tv/chkcard/. Достаточно указать только номер карты.</p>
+	]]></description>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="till" name="Срок действия подписки" type="time"/>
+	</counters>
+	<keywords></keywords>
+	<type>tv</type>
+	<country>ru</country>
 </provider>

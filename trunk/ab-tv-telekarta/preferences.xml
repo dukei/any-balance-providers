@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <EditTextPreference 
+    <EditTextPreference
+		obligatory="true"
         title="Номер карты" 
         positiveButtonText="OK" 
         summary="|Введите номер вашей телекарты|{@s}" 

@@ -35,16 +35,18 @@ function main(){
 		txtPassword:prefs.password,
 		btnLoginStandard:'Войти'
 	});
-	error = getParam(html, null, null, /<span[^>]*id="lblErrorMsg"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
-	if(error)
-		throw new AnyBalance.Error(error);
+	
+	if (!/\/secure\/logout\.aspx/i.test(html)) {
+		var error = getParam(html, null, null, /<span[^>]*id="lblErrorMsg"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+		if (error)
+			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
 		
-	var logout = getParam(html, null, null, /(\/secure\/logout.aspx)/i);
-	if(!logout)
+		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в интернет банк. Неправильный логин-пароль или проблемы на сайте.');
+	}
 	
 	var result = {success: true};
-		// Бонусы всегда нужны
+	// Бонусы всегда нужны
 	getParam(html, result, 'bonuses', /МКБ Бонус(?:[^>]*>){3,}Всего бонусных баллов(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 
 	if(prefs.type == 'card')
@@ -63,7 +65,7 @@ function fetchCard(html, baseurl, result) {
     var prefs = AnyBalance.getPreferences();
     if(prefs.num && !/^\d{4}$/.test(prefs.num))
         throw new AnyBalance.Error('Укажите 4 последних цифры карты или не указывайте ничего, чтобы получить информацию по первой карте.');
-
+	
 	var cardnum = prefs.num ? prefs.num : '\\d{4}';
 	//                   (<tr[^>]*btnrscards[^>]*>\s*<td>[^>]*id=\"hl\"[^>]*6956"[\s\S]*?</tr>)
 	var re = new RegExp('(<tr[^>]*btnrscards[^>]*>\\s*<td>[^>]*id=\"hl\"[^>]*' + cardnum + '\"[\\s\\S]*?</tr>)', 'i');

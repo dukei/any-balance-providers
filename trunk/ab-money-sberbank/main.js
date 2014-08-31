@@ -502,14 +502,15 @@ function fetchNewAccountCard(html, baseurl) {
 	var reBalance = new RegExp('<a[^>]+href="[^"]*info.do\\?id=' + cardId + '"[\\s\\S]*?<span[^>]+class="overallAmount\\b[^>]*>([\\s\\S]*?)</span>', 'i');
 	
 	getParam(html, result, 'balance', reBalance, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'cardNumber', reCardNumber, replaceTagsAndSpaces);
-	getParam(html, result, '__tariff', reCardNumber, replaceTagsAndSpaces);
+	var tariff = getParam(html, null, null, reCardNumber, replaceTagsAndSpaces);
+	getParam(tariff, result, 'cardNumber', /[^,]*/, replaceTagsAndSpaces);
+	getParam(tariff, result, '__tariff');
+	getParam(tariff, result, 'till', /действует до(.*)/i, replaceTagsAndSpaces, parseDateWord);
 	getParam(html, result, ['currency', 'balance', 'cash', 'electrocash', 'debt', 'maxlimit'], reBalance, replaceTagsAndSpaces, parseCurrencyMy);
 	fetchRates(html, result);
-	if (AnyBalance.isAvailable('userName', 'till', 'cash', 'electrocash', 'minpay', 'minpaydate', 'maxlimit')) {
+	if (AnyBalance.isAvailable('userName', 'cash', 'electrocash', 'minpay', 'minpaydate', 'maxlimit')) {
 		html = AnyBalance.requestGet(baseurl + '/PhizIC/private/cards/detail.do?id=' + cardId);
-		getParam(html, result, 'userName', /ФИО Держателя карты:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/, replaceTagsAndSpaces, capitalFirstLenttersDecode);
-		getParam(html, result, 'till', /Срок действия до:[\s\S]*?(\d{1,2}\/\d{4})/i, replaceTagsAndSpaces);
+		getParam(html, result, 'userName', /Держатель карты:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/, replaceTagsAndSpaces, capitalFirstLenttersDecode);
 		getParam(html, result, 'cash', /Для снятия наличных:(?:[^>]*>){5}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, 'electrocash', /для покупок:(?:[^>]*>){5}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, 'minpay', /Минимальный платеж:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/, replaceTagsAndSpaces, parseBalance);
@@ -526,11 +527,7 @@ function fetchNewAccountCard(html, baseurl) {
 		var tr = getParam(html, null, null, /<tr[^>]*class="ListLine0"[^>]*>([\S\s]*?)<\/tr>/i);
 		if (tr) {
 			getParam(tr, result, 'lastPurchDate', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseSmallDate);
-			if (AnyBalance.isAvailable('lastPurchSum')) {
-				var credit = getParam(tr, null, null, /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-				var debet = getParam(tr, null, null, /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-				result.lastPurchSum = credit ? '+' + credit : '-' + debet;
-			}
+			var sum = getParam(tr, result, 'lastPurchSum', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
 			getParam(tr, result, 'lastPurchPlace', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
 		} else {
 			AnyBalance.trace('Не удалось найти последнюю операцию.');

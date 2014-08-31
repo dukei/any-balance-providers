@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="38">ab-money-sberbank</id>
+	<id version="39">ab-money-sberbank</id>
 	<api flags="no_browser"/>
 	<name>Сбербанк ОнЛ@йн</name>
 	<description html="true"><![CDATA[
@@ -59,7 +59,7 @@
 		<counter id="currency" name="Валюта" type="text"/>
 		<counter id="cardNumber" name="Номер карты" type="text"/>
 		<counter id="userName" name="ФИО" type="text"/>
-		<counter id="till" name="Срок действия" type="text"/>
+		<counter id="till" name="Срок действия" type="time" format="dd/MM/yyyy"/>
 		<counter id="debt" name="Задолженность" units=" {@currency}"/>
 		<counter id="maxlimit" name="Кредитный лимит" units=" {@currency}"/>
 		<counter id="minpay" name="Минимальный платеж" units=" {@currency}"/>

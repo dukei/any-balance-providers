@@ -490,7 +490,7 @@ function fetchNewAccountCard(html, baseurl) {
 	
 	html = AnyBalance.requestGet(baseurl + '/PhizIC/private/cards/list.do');
 	var lastdigits = prefs.lastdigits ? prefs.lastdigits.replace(/(\d)/g, '$1\\s*') : '(?:\\d\\s*){3}\\d';
-	var baseFind = '<[^>]*class="accountNumber\\b[^"]*">[^<]*' + lastdigits + '[<,]';
+	var baseFind = '<[^>]*class="accountNumber\\b[^"]*">[^<,]*' + lastdigits;
 	var reCardId = new RegExp(baseFind + '[\\s\\S]*?<div[^>]+id="card_(\\d+)', 'i');
 	//    AnyBalance.trace('Пытаемся найти карту: ' + reCardId);
 	var cardId = getParam(html, null, null, reCardId);
@@ -498,8 +498,8 @@ function fetchNewAccountCard(html, baseurl) {
 		if (prefs.lastdigits) throw new AnyBalance.Error("Не удаётся идентификатор карты с последними цифрами " + prefs.lastdigits);
 		else throw new AnyBalance.Error("Не удаётся найти ни одной карты");
 	}
-	var reCardNumber = new RegExp('<[^>]*class="accountNumber\\b[^"]*">([^<]*' + lastdigits + ')[<,]', 'i');
-	var reCardTill = new RegExp('<[^>]*class="accountNumber\\b[^"]*">[^<]*?' + lastdigits + ', действует до([^<]*)', 'i');
+	var reCardNumber = new RegExp('<[^>]*class="accountNumber\\b[^"]*">([^<,]*' + lastdigits + ')[<,]', 'i');
+	var reCardTill = new RegExp('<[^>]*class="accountNumber\\b[^"]*">[^<,]*' + lastdigits + ', действует до([^<]*)', 'i');
 	var reBalance = new RegExp('<a[^>]+href="[^"]*info.do\\?id=' + cardId + '"[\\s\\S]*?<span[^>]+class="overallAmount\\b[^>]*>([\\s\\S]*?)</span>', 'i');
 	
 	getParam(html, result, 'balance', reBalance, replaceTagsAndSpaces, parseBalance);

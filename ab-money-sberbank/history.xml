@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="38" date="2014-08-31">
+	- Исправление получения карт при указании последних цифр
+	</change>
 	<change version="37" date="2014-08-31">
 	- Поддержка изменений в дизайне
 	</change>

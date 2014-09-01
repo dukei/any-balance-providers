@@ -24,14 +24,14 @@ function main() {
 		'fr.needCaptcha':'',
 		'fr.password':prefs.password,
 		'fr.posted':'set',
-    }, addHeaders({Referer: baseurl + ''}));
+    }, addHeaders({Referer: baseurl}));
 	
 	if (!/cmd=logoff/i.test(html)) {
 		var error = getParam(html, null, null, /role="alert"[^>]*>([\s\S]*?)<\/ul/i, replaceTagsAndSpaces, html_entity_decode);
-		if (error && /Неверный логин или пароль/i.test(error))
-			throw new AnyBalance.Error(error, null, true);
 		if (error)
-			throw new AnyBalance.Error(error);
+			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+		
+		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	
@@ -39,15 +39,10 @@ function main() {
 	
 	getParam(html, result, 'fio', /"Страница пользователя"(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, '__tariff', /"Страница пользователя"(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-
-	html = AnyBalance.requestGet(baseurl + 'dk?st.cmd=userSettings', g_headers);
 	
-	var href = getParam(html, null, null, /href="\/([^"]*UserHiddenOnline[^"]+)"(?:[^>]*>){1,2}\s*Включить .?Невидимку/i, replaceTagsAndSpaces, html_entity_decode);
-	if(!href)
-		throw new AnyBalance.Error('Не удалось найти ссылку на баланс. Сайт изменен?');
-	html = AnyBalance.requestGet(baseurl + href, g_headers);
+	html = AnyBalance.requestGet(baseurl + 'dk?st.cmd=selectPresent&st.or=o%3AM%2C&_prevCmd=userSettings&tkn=4665', g_headers);
 	
-	getParam(html, result, 'balance', /На счёте:\s*(\d*)\s*OK/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance', /На счёте:?\s*(\d*)\s*OK/i, replaceTagsAndSpaces, parseBalance);
 	
     AnyBalance.setResult(result);
 }

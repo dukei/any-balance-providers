@@ -2,7 +2,7 @@
 The uncompressed full source code of this library is here: https://code.google.com/p/any-balance-providers/source/browse/trunk/extra/development/ab-test-library/library.js
 */
 ;
-function getParam(f,k,b,g,c,a){if(!f){AnyBalance.trace("param1 is undefined!\n"+new Error().stack);
+function getParam(f,k,b,g,c,a){if(!isset(f)){AnyBalance.trace("param1 is unset! "+new Error().stack);
 return
 }if(!isAvailable(b)){AnyBalance.trace(b+" is disabled!");
 return
@@ -224,11 +224,15 @@ if(e.length>6){a=Math.round(a)
 }}var c={0:"b",1:"kb",2:"mb",3:"gb",4:"tb"};
 AnyBalance.trace("Parsing traffic ("+a+c[b]+") from: "+h);
 return a
-}function requestPostMultipart(b,c,e){var d=[];
-var f="------WebKitFormBoundaryrceZMlz5Js39A2A6";
-for(var a in c){d.push(f,'Content-Disposition: form-data; name="'+a+'"',"",c[a])
-}d.push(f+"--\r\n");
+}function requestPostMultipart(c,h,e){var k="",g="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+for(var j=0;
+j<16;
+j++){k+=g.charAt(Math.floor(Math.random()*g.length))
+}var f=[];
+var d="------WebKitFormBoundary"+k;
+for(var a in h){f.push(d,'Content-Disposition: form-data; name="'+a+'"',"",h[a])
+}f.push(d+"--\r\n");
 if(!e){e={}
-}e["Content-Type"]="multipart/form-data; boundary="+f.substr(2);
-return AnyBalance.requestPost(b,d.join("\r\n"),e)
+}e["Content-Type"]="multipart/form-data; boundary="+d.substr(2);
+return AnyBalance.requestPost(c,f.join("\r\n"),e)
 };

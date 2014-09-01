@@ -1,51 +1,33 @@
 /**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Мережа магазинів біля дому «Фора»
-Сайт «Фора»: http://fora.ua/
-Особистий кабінет: http://fora.ua/club_postiynih_pokuptsiv/osobistiy_kabinet/
 */
 
 function main(){
 	var prefs = AnyBalance.getPreferences();
-	var pass = prefs.pass;
-	var login = prefs.login;
-	if (!prefs.login || prefs.login == '')
-		throw new AnyBalance.Error ('Введите № карты');
-	if (!prefs.pass || prefs.pass == '')
-		throw new AnyBalance.Error ('Введите пароль');
+	
+	checkEmpty(prefs.login, 'Введите № карты!');
+	checkEmpty(prefs.pass, 'Введите пароль!');
+	
 	var html = AnyBalance.requestPost('http://fora.ua/club_postiynih_pokuptsiv/osobistiy_kabinet/', {
-			login: prefs.login,
-			pass: prefs.pass
-		}, 
-		{"User-Agent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.57 Safari/537.17"}
-	);
-	if (html){
-		var result = {success: true};
-		//ФИО
-		if (matches=/<div class="leftColumnText">(.*?)<br \/>(.*?)<br \/>(.*?)<\/div>/.exec(html)){
-		result.__tariff=matches[1]+' '+matches[2]+' '+matches[3];
-		}
-		//Накапливаемые балы по программе «Клуб постійних покупців»
-		if (AnyBalance.isAvailable('baly')) {
-			var matches = html.match(/<div id="balliNow">(\d+?)<\/div>/i);
-			if (matches) {
-				result.baly = parseFloat(matches[1]);
-			} else {
-				throw new AnyBalance.Error("Не удалось проверить балы");
-			}
-		}
-		//Начисленные бонусы переведённые в грн.
-		if (AnyBalance.isAvailable('bonus')) {
-			var matches = html.match(/<div class="dostupniBonus">Доступний для витрат бонус:<\/div>\s*<div class='cur-bonusItem'>([\d\.,]+) грн/i);
-			if (matches) {
-				result.bonus = parseFloat(matches[1]);
-			} else {
-				throw new AnyBalance.Error("Не удалось проверить бонусы");
-			}
-		}
-		AnyBalance.setResult(result);
-	} else {
-		throw new AnyBalance.Error('Не удалось получить данные');
+		login: prefs.login,
+		pass: prefs.pass
+	}, {"User-Agent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.57 Safari/537.17"});
+	
+	if (!/\?logout/i.test(html)) {
+		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
+		if (error)
+			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+		
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
+	
+	var result = {success: true};
+	
+	getParam(html, result, 'bonus', /Доступний для витрат бонус:(?:[^>]*>){2}([\d\s.,]+)грн/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, '__tariff', /"leftColumnText"(?:[^>]*>)([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'baly', /id="balliNow">(\d+?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'bonus_deadline', /Доступний для витрат бонус:(?:[^>]*>){2}[^<]+до([^<]+)/i, replaceTagsAndSpaces, parseDate);
+	
+	AnyBalance.setResult(result);
 }

@@ -1,28 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="4">ab-bonus-fora</id>
-  <name>Фора, мережа магазинів біля дому (Україна)</name>
-  <description>
-    Мониторинг накопленных бонусов по программе "Клуб постійних покупців" сети магазинов Фора (Украина)
-  </description>
-  <author>Ignatiy Goloviznin &lt;igoloviznin@gmail.com&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="bonus" name="Бонус" suffix=" ₴" type="numeric"/>
-    <counter id="baly" name="Балы" suffix=" бал" type="numeric"/>
-  </counters>
-  <keywords>
-    сеть магазин фора украина
-  </keywords>
-  <type>
-    bonus
-  </type>
-  <country>
-    ua
-  </country>
+	<id version="5">ab-bonus-fora</id>
+	<api flags="no_browser"/>
+	<name>Фора, мережа магазинів біля дому (Україна)</name>
+	<description html="true"><![CDATA[
+	<p>Мониторинг накопленных бонусов по программе "Клуб постійних покупців" сети магазинов Фора (Украина)</p>
+	]]></description>
+	<author>Ignatiy Goloviznin &lt;igoloviznin@gmail.com&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="bonus" name="Бонус" suffix=" ₴"/>
+		<counter id="baly" name="Балы" suffix=" б"/>
+		<counter id="bonus_deadline" name="Бонусы доступны до" type="time" format="dd/MM/yyyy"/>
+	</counters>
+	<keywords>сеть магазин фора украина</keywords>
+	<type>bonus</type>
+	<country>ua</country>
 </provider>

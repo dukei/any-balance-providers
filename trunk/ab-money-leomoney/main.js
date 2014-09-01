@@ -44,7 +44,7 @@ function main() {
 	if(ret != 0) {
 		var error = getParam(html, null, null, /<Details>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
-			throw new AnyBalance.Error(error);
+			throw new AnyBalance.Error(error, null, /Incorrect wallet data/i.test(error));
 		
 		throw new AnyBalance.Error(matches[1] == '7' ? 'Не удалось зайти в личный кабинет. Сайт изменен?' : 'Can`t login, is the site changed?');
 	}

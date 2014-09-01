@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
 	<change version="6" date="2014-09-01">
-	- Исправлено 
+	- Исправлено получение минут.
 	</change>
 	<change version="5" date="2014-08-06">
 	- Исправлено получение трафика в некоторых случаях.

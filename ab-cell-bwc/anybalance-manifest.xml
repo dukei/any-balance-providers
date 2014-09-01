@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="5">ab-cell-bwc</id>
+	<id version="6">ab-cell-bwc</id>
 	<api flags="no_browser"/>
 	<name>БайкалВестКом (Ростелеком)</name>
 	<description html="true"><![CDATA[

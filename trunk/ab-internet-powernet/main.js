@@ -38,5 +38,8 @@ function main() {
 	getParam(html, result, 'balance', /"abon_info_balance"(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, '__tariff', /"abon_info_balance"(?:[^>]*>){1}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
 	
+	if(!isset(result.balance))
+		AnyBalance.trace(html);
+	
 	AnyBalance.setResult(result);
 }

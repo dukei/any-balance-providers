@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-municippal-mosenergosbyt-eirkc</id>
+	<api flags="no_browser"/>
+	<name>Мособлеирц</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о задолженности или переплате в Мособлеирц http://www.mosenergosbyt-eirkc.ru/</p>
+	<p>Информация берется из личного кабинета https://client.mosenergosbyt-eirkc.ru/</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="fio" name="ФИО" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>municippal</type>
+	<country>ru</country>
+</provider>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-municipal-erkc-sch</id>
+	<api flags="no_browser"/>
+	<name>ЕРКЦ Щелково</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Единый расчетный кассовый центр Щелково http://erkc-sch.ru/</p>
+	<p>Информация берется из личного кабинета http://erkc-sch.ru/modules/alcom_konsalt</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Начисления" units=" р"/>
+	</counters>
+	<keywords></keywords>
+	<type>municipal</type>
+	<country>ru</country>
+</provider>

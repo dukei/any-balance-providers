@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-internet-powernet</id>
+	<id version="3">ab-internet-powernet</id>
 	<api flags="no_browser"/>
 	<name>Powernet</name>
 	<description html="true"><![CDATA[

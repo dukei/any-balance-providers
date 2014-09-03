@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="41" date="2014-09-03">
+	- Исправление срока действия счетов
+	</change>
 	<change version="40" date="2014-08-31">
 	- Исправление получения карт при указании последних цифр
 	</change>

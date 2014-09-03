@@ -22,13 +22,13 @@
 		inputType="textPassword">
 	</EditTextPreference>
 	<EditTextPreference
-		title="Номер счета"
+		title="Номер контракта"
 		key="account"
 		summary="||{@s}"
 		obligatory="true"
-		dialogTitle="Номер счета"
+		dialogTitle="Номер контракта"
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите номер счета по которому необходимо получать данные, либо оставьте поле пустым, для получения данных по первому счету.">
+		dialogMessage="Введите номер контракта по которому необходимо получать данные, либо оставьте поле пустым, для получения данных по первому контракту.">
 	</EditTextPreference>	
 </PreferenceScreen>

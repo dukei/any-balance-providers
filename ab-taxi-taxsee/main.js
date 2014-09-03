@@ -30,13 +30,14 @@ function main(){
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
     var result = {success: true};
-
-    var json = getParam(html, null, null, /user_profile\s*=\s*(\{[\s\S]*?\});/, null, getJson);
+	
+	getParam(html, result, 'discont', /"Скидка:\s*(\d+)/i, null, parseBalance);
+	
+	var json = getParam(html, null, null, /user_profile\s*=\s*(\{[\s\S]*?\});/, null, getJson);
 	getParam(json.FIO, result, 'fio');
 	getParam(json.FIO, result, '__tariff');
-    getParam(json.Discont, result, 'discont', null, null, parseBalance);
 
-    html = AnyBalance.requestGet(baseurl + 'Services/Taxi.svc/Accounts', g_headers);
+	html = AnyBalance.requestGet(baseurl + 'Services/Taxi.svc/Accounts', g_headers);
     json = getJson(html);
     for(var i=0; i<json.Accounts.length; ++i){
         var acc = json.Accounts[i];

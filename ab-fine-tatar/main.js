@@ -89,12 +89,13 @@ function main(){
 		getParam(html, result, 'balance', /штраф[^<]*?на сумму ([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 		sumParam(finesTable, result, 'lastdate', /<tr[^>]*>\s*(?:(?:[\s\S](?!<\/tr))*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate, aggregate_max);
 		sumParam(finesTable, result, 'firstdate', /<tr[^>]*>\s*(?:(?:[\s\S](?!<\/tr))*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate, aggregate_min);*/
-		if(!json.response.fines) {
+		if(!isset(json.response.fines)) {
 			AnyBalance.trace('Не найдено штрафов..');
 			getParam('0', result, 'balance', null, replaceTagsAndSpaces, parseBalance);		
 		}
-		
-		getParam(json.response.fines.length+'', result, 'count', null, replaceTagsAndSpaces, parseBalance);
+		try {
+			getParam(json.response.fines.length + '', result, 'count', null, replaceTagsAndSpaces, parseBalance);
+		} catch(e){}
 		
 		for(var z = 0; z < json.response.fines.length; z++) {
 			var current = json.response.fines[z];

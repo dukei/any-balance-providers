@@ -218,7 +218,7 @@ function processClick(){
         throw new AnyBalance.Error("Не удалось зайти в интернет-банк. Проверьте, что сайт доступен.");
     }
 
-    var afr = getParam(html, null, null, /_afrLoop=(\d+)/i);
+    var afr = getParam(html, null, null, /"_afrLoop",\s*"(\d+)"/i);
     if(!afr)
         throw new AnyBalance.Error('Не удаётся найти параметр для входа: _afrLoop. Обратитесь к автору провайдера.');
 
@@ -228,7 +228,7 @@ function processClick(){
     
     html = AnyBalance.requestGet(baseurl + url, g_headers);
 
-    var afr = getParam(html, null, null, /_afrLoop=(\d+)/i);
+    var afr = getParam(html, null, null, /"_afrLoop",\s*"(\d+)"/i);
     if(!afr)
         throw new AnyBalance.Error('Не удаётся найти очередной параметр для входа: _afrLoop. Обратитесь к автору провайдера.');
     

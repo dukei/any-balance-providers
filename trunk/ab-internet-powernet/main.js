@@ -35,8 +35,8 @@ function main() {
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'balance', /<\/div>[^>]*"abon_info_balance"(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, '__tariff', /<\/div>[^>]*"abon_info_balance"(?:[^>]*>){1}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'balance', /<span class="abon_info_balance"(?:[^>]*>){2}([-\s\d.,]{2,})/i, replaceTagsAndSpaces, parseBalance);
+	getParam(prefs.login, result, '__tariff');
 	
 	if(!isset(result.balance))
 		AnyBalance.trace(html);

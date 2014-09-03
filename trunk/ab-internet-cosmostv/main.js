@@ -54,7 +54,7 @@ function main() {
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	
-	// Если есть номер счета, надо выбрать его из списка
+	// Если есть номер контракта, надо выбрать его из списка
 	if(prefs.account) {
 		var contractsForm = getParam(html, null, null, /<form id="frm_contracts"[\s\S]*?<\/form>/i);
 		action = getAction(contractsForm);

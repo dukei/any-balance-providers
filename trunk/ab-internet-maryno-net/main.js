@@ -77,7 +77,8 @@ function main(){
 		html = AnyBalance.requestGet('https://lk.maryno.net/api/user/email');
 		
 		json = getJson(html);
-		getParam(json.value+'', result, 'email', null, replaceTagsAndSpaces, html_entity_decode);
+		if(isset(json.value))
+			getParam(json.value+'', result, 'email', null, replaceTagsAndSpaces, html_entity_decode);
 	}
 	
 	function getDetails(url, result, inName, outName) {

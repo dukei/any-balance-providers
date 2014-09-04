@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="85">ab-cell-beeline-new</id>
+	<id version="86">ab-cell-beeline-new</id>
 	<name>Билайн (новый кабинет)</name>
 	<api flags="no_browser" min_level="5"/>
 	<description html="true"><![CDATA[
-	<p>Предоставляет  информацию о балансе и тарифном плане для пользователей сотового оператора "Билайн" (http://beeline.ru).</p>   
-	<p> Информация берется из нового личного кабинета (http://my.beeline.ru).</p>
-	<b>ВНИМАНИЕ!</b> Если у вас логин и пароль от старого личного кабинета https://uslugi.beeline.ru, используйте провайдер "Билайн" (старый кабинет).
+	<p>Предоставляет  информацию о балансе и тарифном плане для пользователей сотового оператора "Билайн" (<a href="http://beeline.ru">http://beeline.ru</a>).</p>
+	<p>Информация берется из нового личного кабинета (<a href="https://my.beeline.ru">https://my.beeline.ru</a>).</p>
+	<b>ВНИМАНИЕ!</b> Если у вас логин и пароль от старого личного кабинета <a href="https://uslugi.beeline.ru">https://uslugi.beeline.ru</a>, используйте провайдер "Билайн" (старый кабинет).
 	]]></description>
 	<instruction html="true"><![CDATA[
 	<p><strong>Как получить или сменить пароль:</strong></p>
 	<ol>
 		<li>Со своего мобильного телефона наберите номер *110*9#.</li>
 		<li>Получите SMS с логином и ВРЕМЕННЫМ паролем в личный кабинет.</li>
-		<li>Войдите в кабинет https://my.beeline.ru с помощью вашего логина и ВРЕМЕННОГО пароля.</li>
+		<li>Войдите в кабинет <a href="https://my.beeline.ru">https://my.beeline.ru</a> с помощью вашего логина и ВРЕМЕННОГО пароля.</li>
 		<li>Смените пароль на ПОСТОЯННЫЙ.</li>
 		<li>Введите логин и ПОСТОЯННЫЙ пароль в настройки провайера.</li><br/>
 	</ol>
 	<p><strong>Как отключить уведомления по SMS о входе в личный кабинет:</strong></p>
 	<ol>
-		<li>Зайдите через браузер на сайт https://my.beeline.ru.</li>
+		<li>Зайдите через браузер на сайт <a href="https://my.beeline.ru">https://my.beeline.ru</a>.</li>
 		<li>Перейдите на закладку "Настройки".</li>
 		<li>Нажмите на нужный номер телефона и подождите, пока не раскроется меню.</li>
 		<li>Снимите галочку с пункта "Вход в личный кабинет".</li>
@@ -43,6 +43,8 @@
 		<counter id="sms_left" name="Остаток SMS" units=" sms"/>
 		<counter id="mms_left" name="Остаток MMS" units=" mms"/>
 		<counter id="rub_bonus" name="Рублей БОНУС" units=" руб"/>
+		<counter id="rub_bonus2" name="Денежный бонус" units=" руб"/>
+		<counter id="rub_bonus2_till" name="Денежный бонус доступен до" units=" руб"/>
 		<counter id="min_bi" name="Минуты на Билайн" type="time_interval" format="{@MIN}:{@sec}"/>
 		<counter id="min_local" name="Минуты на местные номера" type="time_interval" format="{@MIN}:{@sec}"/>
 		<counter id="rub_opros" name="Бонусы по программе Счастливое время" units=" руб"/>

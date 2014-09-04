@@ -268,7 +268,7 @@ function doOldCabinet(prefs) {
 	if(/Пароль верный, но время его действия скоро истекает/i.test(html)) {
 		AnyBalance.trace('Пароль верный, но время его действия скоро истекает, попробуем войти...');
 		var href = getParam(html, null, null, /href="([^"]*)"[^>]*>\s*Продолжить работу без смены пароля/i);
-		html = AnyBalance.requestGet(baseurl + href, g_headersOld);
+		html = AnyBalance.requestGet(baseurl + '/' + href, g_headersOld);
 	} else if(!/login\.asp\?logout/i.test(html)) {
         var error = getParam(html, null, null, /^(?:[\s\S](?!<NOSCRIPT))*?<p[^>]*class="errorb"[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)

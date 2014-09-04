@@ -736,7 +736,8 @@ function fetchPre(baseurl, html) {
 }
 
 function isAvailableBonuses() {
-	return AnyBalance.isAvailable('sms_left', 'mms_left', 'rub_bonus', 'rub_opros', 'min_local', 'min_bi', 'traffic_left', 'traffic_used', 'traffic_total',	'min_left_1', 'min_left_2');
+	return AnyBalance.isAvailable('sms_left', 'mms_left', 'rub_bonus', 'rub_opros', 'min_local', 'min_bi', 'traffic_left', 
+		'traffic_used', 'traffic_total', 'min_left_1', 'min_left_2', 'rub_bonus2_till', 'rub_bonus2', 'min_local_till');
 }
 
 function getBonuses(xhtml, result) {
@@ -798,6 +799,9 @@ function getBonuses(xhtml, result) {
 				sumParam(services[i], result, 'mms_left', [reValue, reNewValue], replaceTagsAndSpaces, parseBalance, aggregate_sum);
 			} else if (/Рублей БОНУС|бонус-баланс/i.test(name)) {
 				sumParam(services[i], result, 'rub_bonus', reValue, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+			} else if (/Денежный бонус/i.test(name)) {
+				getParam(services[i], result, 'rub_bonus2', reValue, replaceTagsAndSpaces, parseBalance);
+				getParam(services[i], result, 'rub_bonus2_till', /<div[^>]+class="column3[^"]*"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseDateWord);
 			} else if (/Рублей за участие в опросе|Счастливое время|Бонусы по программе/i.test(name)) {
 				sumParam(services[i], result, 'rub_opros', reValue, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 			} else if (/Времени общения/i.test(name)) {

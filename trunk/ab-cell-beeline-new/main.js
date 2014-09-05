@@ -241,7 +241,13 @@ function main() {
 	
 	if(prefs.__debug) {
 		try {
-			html = AnyBalance.requestGet('https://my.beeline.ru/c/'+prefs.__debug+'/index.html', g_headers);
+			if(prefs.__debug == 'b2b') {
+				html = AnyBalance.requestGet('https://my.beeline.ru/faces/index.html', g_headers);
+			} else {
+				html = AnyBalance.requestGet('https://my.beeline.ru/c/'+prefs.__debug+'/index.html', g_headers);
+			}
+			
+			
 		} catch(e){
 		}
 	}
@@ -414,7 +420,7 @@ function fetchB2B(baseurl, html) {
 		}
 	}
 	
-    var href = getParam(html, null, null, new RegExp('(faces/info/subscriberDetail\\.html\\?objId=\\d+)(?:[^>]*>){4}\\d{6}' + number, 'i'));
+    var href = getParam(html, null, null, new RegExp('(faces/info/subscriberDetail\\.html\\?objId=\\d+)(?:[^>]*>){4}\\d{4,6}' + number, 'i'));
 	
     checkEmpty(href, 'Не удалось найти ' + (prefs.phone ? 'номер с последними цифрами ' + prefs.phone : 'ни одного номера!'), true);
     

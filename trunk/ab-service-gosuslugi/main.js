@@ -114,9 +114,11 @@ function main() {
 }
 
 function processGibdd(result, html, prefs) {
-	// Обязательно проверяем входные параметры.
 	checkEmpty(prefs.gosnumber = getParam(prefs.gosnumber, null, null, /^\D?\d{3,4}\D{2}\d{2,3}$/), 'Введите номер автомобиля в формате х123хх50 или 1234хх50!', true);
-	checkEmpty(prefs.licensenumber = getParam(prefs.licensenumber, null, null, /^.{10}$/), 'Введите серию и номер водительского удостоверения в формате 50км123456!', true);
+	// Права не обязательны для заполнения
+	if(prefs.licensenumber) {
+		checkEmpty(prefs.licensenumber = getParam(prefs.licensenumber, null, null, /^.{10}$/), 'Введите серию и номер водительского удостоверения в формате 50км123456!', true);
+	}
 	
 	if(isAvailable(['gibdd_balance', 'gibdd_info'])) {
 		// Id сервиса в системе, может меняться в будущем - вынесем отдельно.

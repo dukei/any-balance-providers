@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="1.0" version="14">ab-service-gosuslugi</id>
+	<id major_version="1.0" version="15">ab-service-gosuslugi</id>
 	<api flags="no_browser"/>
 	<name>Госуслуги (Штрафы, Налоги)</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию из системы Госуслуги http://www.gosuslugi.ru/</p>
+	<p>Предоставляет информацию из системы Госуслуги <a href="http://www.gosuslugi.ru">http://www.gosuslugi.ru</a></p>
 	<b>Поддерживаемые услуги:</b>
 	<ol>
 		<li>Проверка штрафов ГИБДД.</li>
@@ -12,7 +12,7 @@
 	</ol>
 	]]></description>
 	<instruction html="true"><![CDATA[
-	<p>Если у вас нет доступа в Личный кабинет Госуслуг, пройдите регистрацию на странице https://esia.gosuslugi.ru/sia-web/rf/registration/lp/Index.spr</p>
+	<p>Если у вас нет доступа в Личный кабинет Госуслуг, пройдите регистрацию на странице <a href="https://esia.gosuslugi.ru/sia-web/rf/registration/lp/Index.spr">https://esia.gosuslugi.ru/sia-web/rf/registration/lp/Index.spr</a></p>
 	]]></instruction>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>

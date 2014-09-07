@@ -7,7 +7,7 @@
 	<p>Получает информацию о балансе пластиковой карты Системы «Телеинфо» ВТБ24 ( https://www.telebank.ru/content/telebank-client/ru/login.html и https://old.telebank.ru/WebNew/Login.aspx ).</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
-	<p>Получить доступ к Телеинфо можно, пройдя регистрацию по ссылке https://www.telebank.ru/content/telebank-client/ru/help/telebank/topic32.html</p>
+	<p>Получить доступ к Телеинфо можно, пройдя регистрацию по ссылке https://www.telebank.ru/content/telebank-client/ru/help/teleinfo/topic41.html</p>
 	]]></instruction>
 	<author>Robert Khaliullov &lt;robix@mail.ru&gt;</author>
 	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>

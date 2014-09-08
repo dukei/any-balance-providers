@@ -27,7 +27,7 @@ function isUniqueFlight(val, idx, arr)
 function main() 
 {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://data.hulyo.co.il/catalogs/v1.1/Flights/Production/';
+	var baseurl = 'http://data.hulyo.co.il/catalogs/Production/Flights/v1.2/';
 	var pages = ['under199EuroFlights.js','above199EuroFlights.js'];
 	var result = {success: true};
 	AnyBalance.setDefaultCharset('utf-8');

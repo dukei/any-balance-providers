@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-internet-cifra1</id>
+	<id version="5">ab-internet-cifra1</id>
 	<api flags="no_browser"/>
 	<name>Цифра Один</name>
 	<description html="true"><![CDATA[

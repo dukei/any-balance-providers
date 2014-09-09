@@ -20,29 +20,35 @@ function main(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
 	
-    checkEmpty(prefs.login && /^\d{10}$/.test(prefs.login), 'Логин должен состоять из 10 цифр');
+	// Теперь вход осуществляется по любому логину для ultranet
+    checkEmpty(prefs.login, 'Введите логин!');
     checkEmpty(prefs.password, 'Введите пароль!');
 	
     var params, region;
-    if(!prefs.region || prefs.region == 'auto' || !g_regionsById[prefs.region]){
-        var info = AnyBalance.requestGet('http://www.cifra1.ru/office/sites.json?login=' + encodeURIComponent(prefs.login), addHeaders({
-            Referer: 'http://www.cifra1.ru/r/homeusers/',
-            "X-Requested-With":'XMLHttpRequest'
-        }));
+    if(!prefs.region || prefs.region == 'auto' || !g_regionsById[prefs.region]) {
+		// Если в логине не номер счета, дальше идти нет смысла.
+		if(!/^\d{10}$/.test(prefs.login)) {
+			throw new AnyBalance.Error('Вы ввели в настройки логин вместо номера счета. Необходимо выбрать регион вручную в настройках провайдера.');
+		} else {
+			var info = AnyBalance.requestGet('http://www.cifra1.ru/office/sites.json?login=' + encodeURIComponent(prefs.login), addHeaders({
+				Referer: 'http://www.cifra1.ru/r/homeusers/',
+				"X-Requested-With":'XMLHttpRequest'
+			}));
 
-        var json = getJson(info);
-        if(json.type != "correct"){
-            AnyBalance.trace(JSON.stringify(json));
-            throw new AnyBalance.Error('Неверный номер договора: ' + prefs.login, null, true);
-        }
-        params = {};
-        params[json.login_var] = prefs.login;
-        params[json.pass_var] = prefs.password;
+			var json = getJson(info);
+			if(json.type != "correct"){
+				AnyBalance.trace(JSON.stringify(json));
+				throw new AnyBalance.Error('Неверный номер договора: ' + prefs.login, null, true);
+			}
+			params = {};
+			params[json.login_var] = prefs.login;
+			params[json.pass_var] = prefs.password;
 
-        var region = g_regionsByUrl[json.url];
-        if(!region)
-            throw new AnyBalance.Error('Личный кабинет для вашего номера договора: ' + json.url + '. К сожалению, он пока не поддерживается. Обратитесь к автору провайдера по е-мейл, чтобы добавить его поддержку.');
-    }else{
+			var region = g_regionsByUrl[json.url];
+			if(!region)
+				throw new AnyBalance.Error('Личный кабинет для вашего номера договора: ' + json.url + '. К сожалению, он пока не поддерживается. Обратитесь к автору провайдера по е-мейл, чтобы добавить его поддержку.');
+		}
+    } else {
         region = prefs.region;    
     }
 	
@@ -101,9 +107,8 @@ function getCifra1(region, params){
     AnyBalance.setResult(result);
 }    
 
-
-function getUltranet(region, params){
-    var baseurl = 'https://stat.ultranet.ru/';
+function getUltranet(region, params) {
+    var baseurl = 'https://dpfl.cifra1.ru/';
     var prefs = AnyBalance.getPreferences();
 
     if(!params)
@@ -128,5 +133,6 @@ function getUltranet(region, params){
     getParam(html, result, 'status', /Состояние доступа:[\S\s]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'agreement', /PIN:([\S\s]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, '__tariff', /Тариф:[\S\s]*?<td[^>]*>([\S\s]*?)(?:<\/td>|<a)/i, replaceTagsAndSpaces, html_entity_decode);
+	
     AnyBalance.setResult(result);
 }    

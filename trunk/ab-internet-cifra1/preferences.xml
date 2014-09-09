@@ -8,7 +8,6 @@
         dialogTitle="Логин или № договора" 
         negativeButtonText="Отмена" 
         dialogMessage="Введите логин или номер договора для входа в личный кабинет Цифра Один."
-        inputType="number"
         key="login">
     </EditTextPreference>
     <EditTextPreference
@@ -28,6 +27,6 @@
         summary="||{@s}"
         entries="Автоматически|Ultranet|Cifra1"
         entryValues="auto|ultranet|cifra1"
-	      defaultValue="auto">
-    </ListPreference>
+		defaultValue="auto">
+	</ListPreference>
 </PreferenceScreen>

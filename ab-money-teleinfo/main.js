@@ -224,10 +224,12 @@ function fetchCard(baseurl) {
 		throw new AnyBalance.Error('Не найдена таблица счетов и карт. Сайт изменен?');
 	}
 	
+	// Сводка
+	sumParam(accounts, result, 'all', /\d+(?:\s*[\dX]{4}){3}\s*<\/td>[\s\S]*?<\/tr>/ig, [/(\d+(?:\s*[\dX]{4}){3})\s*<\/td>([\s\S]*?)<\/tr>/i, '$1: $2', replaceTagsAndSpaces], html_entity_decode, 	function aggregate_join(values) {if (values.length == 0) return; var ret = values.join('\n');return ret.replace(/^(?:\s*,\s*)+|(?:\s*,\s*){2,}|(?:\s*,\s*)+$/g, '');});
+	
 	var card_tr = getParam(accounts, null, null, new RegExp('<tr[^>]*>(?:[\\s\\S](?!</tr))*?(?:XX\\s*){3}' + (prefs.card ? prefs.card : '\\d{4}') + '[\\s\\S]*?</tr>', 'i'));
 	if (!card_tr)
 		throw new AnyBalance.Error(prefs.card ? 'Не найдена карта с последними цифрами ' + prefs.card : 'Не найдено ни одной карты');
-	var result = {success: true};
 	
 	getParam(html, result, 'fio', /<div[^>]+id="name"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(card_tr, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
@@ -236,7 +238,7 @@ function fetchCard(baseurl) {
 	getParam(card_tr, result, 'balance', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(card_tr, result, ['currency', 'balance', 'gracepay', 'minpay', 'limit', 'accbalance', 'own', 'blocked'], /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
 	
-	if (AnyBalance.isAvailable('pct', 'accnum', 'limit', 'credit_till', 'minpaytill', 'minpay', 'gracetill', 'gracepay', 'accbalance', 'own', 'blocked')) {
+	if (AnyBalance.isAvailable('own_free', 'pct', 'accnum', 'limit', 'credit_till', 'minpaytill', 'minpay', 'gracetill', 'gracepay', 'accbalance', 'own', 'blocked')) {
 		var accid = getParam(card_tr, null, null, /accountid=([\-0-9]+)/i);
 		if (accid) {
 			html = AnyBalance.requestGet(baseurl + 'Accounts/Account.aspx?accountid=' + accid + '&systemid=ssOpenway');
@@ -249,8 +251,19 @@ function fetchCard(baseurl) {
 			getParam(html, result, 'minpay', /<span[^>]+id="[^"]*LabelCardMinimumPayment"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
 			getParam(html, result, 'gracepay', /<span[^>]+id="[^"]*LabelCardGracePeriodSum"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
 			getParam(html, result, 'accbalance', /<span[^>]+id="[^"]*LabelCardRest"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-			getParam(html, result, 'own', /<span[^>]+id="[^"]*LabelCardOwnMoney"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-			getParam(html, result, 'blocked', /<span[^>]+id="[^"]*LabelCardBlocked"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+			
+			var own = getParam(html, null, null, /<span[^>]+id="[^"]*LabelCardOwnMoney"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+			var blocked = getParam(html, null, null, /<span[^>]+id="[^"]*LabelCardBlocked"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+			
+			if(isset(own)) {
+				getParam(own, result, 'own');
+			}
+			if(isset(blocked)) {
+				getParam(blocked, result, 'blocked');
+			}
+			if(isset(blocked) && isset(own)) {
+				getParam(own-blocked, result, 'own_free');
+			}
 		} else {
 			AnyBalance.trace('Не удалось найти идентификатор счета карты и получить по ней подробную информацию');
 		}

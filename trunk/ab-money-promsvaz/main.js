@@ -184,8 +184,8 @@ function fetchCard(g_baseurl, html){
 		html = AnyBalance.requestGet(g_baseurl + '/n/Main/Home.aspx', addHeaders({Referer:'https://retail.payment.ru/n/Main/Home.aspx'}));
     }
 	var cardnum = prefs.lastdigits ? prefs.lastdigits : '\\d{4}';
-	//                   (<div[^>]*class="cardAccountBlock"(?:[^>]*>){18,22}\d+\\.\\.       5787    (?:[^>]*>){3})
-    var re = new RegExp('(<div[^>]*class=\"cardAccountBlock\"(?:[^>]*>){18,22}\\d+\\.\\.' + cardnum + '(?:[^>]*>){3})', 'i');
+	//                   (<div[^>]*class="cardAccountBlock"(?:[^>]*>){18,32}\d+\\.\\.       5787    (?:[^>]*>){3})
+    var re = new RegExp('(<div[^>]*class=\"cardAccountBlock\"(?:[^>]*>){18,32}\\d+\\.\\.' + cardnum + '(?:[^>]*>){3})', 'i');
     var tr = getParam(html, null, null, re);
     if(!tr) {
 		AnyBalance.trace(html);

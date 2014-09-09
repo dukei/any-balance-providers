@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="GUID" 
+        positiveButtonText="ОК" 
+        summary="|Internal 012mobile GUID|{@s}"
+        dialogTitle="GUID" 
+        negativeButtonText="Cancel" 
+        obligatory="false"
+        dialogMessage="The GUID can be acquired automatically while on 012 mobile network."
+        key="guid"
+        inputType="text">
+    </EditTextPreference>
+</PreferenceScreen>

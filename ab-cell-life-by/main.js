@@ -74,6 +74,9 @@ function main(){
 	sumParam(html, result, 'traffic_left', />\s*Интернет(?:[^>]+>){2}([^<]+МБ)/ig, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
 	// Баланс
 	getParam(html, result, 'balance', /Основной баланс:([^<]+)\s*<\/li>/i, replaceTagsAndSpaces, parseBalance);
+	// Баланс для постоплаты
+	if(!isset(result.balance) || result.balance === 0)
+		getParam(html, result, 'balance', /Задолженность на линии(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'balance_bonus', /Бонусный баланс:([^<]+)\s*<\/li>/i, replaceTagsAndSpaces, parseBalance);
 	// Оплаченные обязательства	
 	getParam(html, result, 'balance_corent', /Оплаченные обязательства(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, parseBalance);

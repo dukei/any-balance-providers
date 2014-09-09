@@ -255,12 +255,9 @@ function fetchCard(baseurl) {
 			var own = getParam(html, null, null, /<span[^>]+id="[^"]*LabelCardOwnMoney"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
 			var blocked = getParam(html, null, null, /<span[^>]+id="[^"]*LabelCardBlocked"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
 			
-			if(isset(own)) {
-				getParam(own, result, 'own');
-			}
-			if(isset(blocked)) {
-				getParam(blocked, result, 'blocked');
-			}
+			getParam(own, result, 'own');
+			getParam(blocked, result, 'blocked');
+			
 			if(isset(blocked) && isset(own)) {
 				getParam(own-blocked, result, 'own_free');
 			}

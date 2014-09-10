@@ -8,11 +8,12 @@
 */
 
 function requestApi(action, params, dontAddDefParams, url, ignoreErrors) {
-	if(url) {
+	/*if(url) {
 		var baseurl = url;
 	} else {
 		var baseurl = 'https://online.sberbank.ru:4477/CSAMAPI/';
-	}
+	}*/
+	var baseurl = (url || 'https://online.sberbank.ru:4477/CSAMAPI/');
 	
 	var m_headers = {
 		'Connection': 'keep-alive',
@@ -41,16 +42,56 @@ function requestApi(action, params, dontAddDefParams, url, ignoreErrors) {
 	return html;
 }
 
-function mainMobileApp(prefs ) {
+function requestApi2(url, params, addDefParams, ignoreErrors) {
+	var m_headers = {
+		'Accept-Encoding': 'gzip',
+		'Connection': 'keep-alive',
+		'User-Agent': 'Mobile Device',
+		'Origin':'',
+	};
+	
+	if(!addDefParams) {
+		var newParams = params;
+	} else {
+		var newParams = joinObjects(params, {
+			'version':'7.00',
+			'appType':'android',
+			'appVersion':'2014060500',
+			'deviceName':'AnyBalanceAPI',
+		});
+	}
+	// регистрируем девайс
+	var html = AnyBalance.requestPost(url, newParams, m_headers);
+	// Проверим на правильность
+	
+	if(!/<status>\s*<code>0<\/code>/i.test(html)) {
+		AnyBalance.trace(html);
+		if(!ignoreErrors)
+			throw new AnyBalance.Error("Ошибка при обработке запроса!");
+	}
+	return html;
+}
+
+function getToken(html) {
+	var token = getParam(html, null, null, /<token>([^<]+)<\/token>/i);
+	if(!token) {
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error("Не удалось найти токен авторизации, сайт изменен?");
+	}
+	return token;
+}
+
+function mainMobileApp(prefs) {
 	var defaultPin = '11223';
 	
-	html = requestApi('checkPassword.do', {
+	/*html = requestApi('checkPassword.do', {
 		'operation':'check',
 		'password':defaultPin
 	}, true, 'https://node1.online.sberbank.ru:4477/mobile7/', true);
-	
+	*/
 	// Здесь нужно узнать нужна ли привязка
-	if(!/<status>\s*<code>0<\/code>/i.test(html)) {
+	//if(!/<status>\s*<code>0<\/code>/i.test(html)) {
+	if(!prefs.guid) {
 		AnyBalance.trace('Необходимо привязать устройство!');
 		// регистрируем девайс
 		var html = requestApi('registerApp.do', {
@@ -63,6 +104,9 @@ function mainMobileApp(prefs ) {
 		if(!mGUID) {
 			throw new AnyBalance.Error("Не удалось найти токен регистрации, сайт изменен?");
 		}
+		
+		AnyBalance.trace('mGUID is: ' + mGUID);
+		
 		// Все, тут надо дождаться смс кода
 		var code = AnyBalance.retrieveCode('Пожалуйста, введите код из смс, для привязки данного устройства.', 'R0lGODlhBAAEAJEAAAAAAP///////wAAACH5BAEAAAIALAAAAAAEAAQAAAIElI8pBQA7');
 		
@@ -81,39 +125,108 @@ function mainMobileApp(prefs ) {
 			'devID':hex_md5(prefs.login)
 		});
 		
-		var token = getParam(html, null, null, /<token>([^<]+)<\/token>/i);
-		if(!token) {
-			throw new AnyBalance.Error("Не удалось найти токен авторизации, сайт изменен?");
-		}
-		
-		// Теперь пробуем войти
-		html = requestApi('postCSALogin.do', {
-			'token':token
-		}, true, 'https://node1.online.sberbank.ru:4477/mobile7/');
+		var token = getToken(html);
 	} else {
 		AnyBalance.trace('Устройство уже привязано!');
 		
-		html = requestApi('login.do', {
+		html = requestApi2('https://online.sberbank.ru:4477/CSAMAPI/login.do', {
 			'operation':'button.login',
-			'mGUID':'',
+			'mGUID':prefs.guid,
 			'isLightScheme':'true',
 			'devID':hex_md5(prefs.login)
-		});
-		
-		
-		
+		}, true);
 	}
-	/*
 	
-	html = requestApi('login.do', {
-		'operation':'button.login',
-		'mGUID':mGUID,
-		'isLightScheme':'true',
-		'devID':hex_md5(prefs.login)
-	});
-*/
+	var baseurlAPI = 'https://node1.online.sberbank.ru:4477/mobile7/';
+	var result = {success: true};
+	
+	html = requestApi2(baseurlAPI + 'postCSALogin.do', {'token':getToken(html)});
+	
+	getParam(html, result, 'userName', /<surName>([\s\S]*)<\/(?:patrName|firstName)>/i, replaceTagsAndSpaces, capitalFirstLenttersDecode);
+	
+	html = requestApi2(baseurlAPI + 'checkPassword.do', {'operation':'check','password':defaultPin});
+	// Спасибо
+	if (AnyBalance.isAvailable('spasibo')) {
+		html = requestApi2(baseurlAPI + 'private/profile/loyaltyURL.do');
+		
+		var url = getParam(html, null, null, /<url>([^<]{10,})/i, replaceTagsAndSpaces, html_entity_decode);
+		if(url) {
+			html = AnyBalance.requestGet(url);
+			getParam(html, result, 'spasibo', /Баланс:\s*<strong[^>]*>\s*([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+		} else {
+			AnyBalance.trace("Не удалось найти ссылку на программу спасибо, сайт изменен?");
+		}
+	}
+	// Курсы валют
+	if(isAvailable(['eurPurch', 'eurSell', 'usdPurch', 'usdSell'])) {
+		AnyBalance.trace('Fetching rates...');
+		html = requestApi2(baseurlAPI + 'private/rates/list.do');
+		
+		getParam(html, result, 'eurPurch', /RUB<\/code>\s*<amount>([^<]+)<\/amount>\s*<\/from>\s*<to>\s*<code>EUR/i, null, parseBalance);
+		getParam(html, result, 'eurSell', /EUR<\/code>\s*<\/from>\s*<to>\s*<code>RUB<\/code>([\s\S]*?)<\//i, null, parseBalance);
+		getParam(html, result, 'usdPurch', /RUB<\/code>\s*<amount>([^<]+)<\/amount>\s*<\/from>\s*<to>\s*<code>USD/i, null, parseBalance);
+		getParam(html, result, 'usdSell', /USD<\/code>\s*<\/from>\s*<to>\s*<code>RUB<\/code>([\s\S]*?)<\//i, null, parseBalance);		
+	}
+	
+	// Получим продукты
+	html = requestApi2(baseurlAPI + 'private/products/list.do', {showProductType:'cards,accounts,imaccounts'});
+	
+	if (prefs.type == 'acc')
+		throw new AnyBalance.Error('Получение счетов пока не поддерживается, свяжитесь с разработчиками!');
+	else
+		fetchApiCard(html, result, prefs);
+	
+	AnyBalance.setResult(result);
+}
 
+function fetchApiCard(html, result, prefs) {
+	if (prefs.lastdigits && !/^\d{4}$/.test(prefs.lastdigits)) 
+		throw new AnyBalance.Error("Надо указывать 4 последних цифры карты или не указывать ничего", null, true);
 	
+	var digits = '';
+	if(prefs.lastdigits) {
+		for(var i = 0; i < prefs.lastdigits.length; i++) {
+			var сhar = prefs.lastdigits[i]
+			digits += сhar + '\\s*';
+		}
+	}
+	
+	//<card>(?:[^>]*>){6,10}\s*<number>[\s\d*]+55 82[\s\S]*?<\/card>
+	var card = getParam(html, null, null, new RegExp('<card>(?:[^>]*>){6,10}\\s*<number>[\\s\\d*]+' + digits + '[\\s\\S]*?</card>'));
+	
+	if(!card) {
+		throw new AnyBalance.Error('Не удалось найти ' + (prefs.lastdigits ? 'карту с последними цифрами ' + prefs.lastdigits : 'ни одной карты!'));
+	}
+	
+	getParam(card, result, 'balance', /<amount>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(card, result, 'cardNumber', /<number>([^<]+)/i, replaceTagsAndSpaces);
+	getParam(card, result, '__tariff', /<number>([^<]+)/i, replaceTagsAndSpaces);
+	getParam(card, result, ['currency', 'balance', 'cash', 'electrocash', 'debt', 'maxlimit'], /code>\s*<name>([^<]+)/i, [replaceTagsAndSpaces, /\./, '']);
+	getParam(card, result, 'status', /<state>([^<]+)/i, [replaceTagsAndSpaces, /active/i, 'Активная']);
+	//getParam(card, result, 'till', reCardTill, replaceTagsAndSpaces, parseDateWord);
+	
+	var id = getParam(card, null, null, /<id>([^<]+)/i)
+	if (AnyBalance.isAvailable('cash', 'electrocash', 'minpay', 'minpaydate', 'maxlimit')) {
+		html = requestApi2('https://node1.online.sberbank.ru:4477/mobile7/private/cards/info.do', {'id':id});
+		
+		//getParam(html, result, ' ', /<holderName>([^<]+)/i, replaceTagsAndSpaces, capitalFirstLenttersDecode);
+		getParam(html, result, 'cash', /<availableCashLimit>([\s\S]+?)<\/amount>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'electrocash', /<purchaseLimit>([\s\S]+?)<\/amount>/i, replaceTagsAndSpaces, parseBalance);
+		
+		// Еще не знаю как это будет выглядеть
+		//getParam(html, result, 'minpay', /Минимальный платеж:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/, replaceTagsAndSpaces, parseBalance);
+		//getParam(html, result, 'maxlimit', /Кредитный лимит:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/, replaceTagsAndSpaces, parseBalance);
+		//getParam(html, result, 'minpaydate', /Дата минимального платежа:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/, replaceTagsAndSpaces, parseDateForWord);
+	}
+	
+	
+	if (isAvailable(['lastPurchSum', 'lastPurchPlace', 'lastPurchDate'])) {
+		html = requestApi2('https://node1.online.sberbank.ru:4477/mobile7/private/cards/abstract.do', {'id':id, count:10, paginationSize:10});
+		
+		getParam(html, result, 'lastPurchDate', /<operation><date>([^<]+)/i, replaceTagsAndSpaces, parseDate);
+		getParam(html, result, 'lastPurchSum', /<amount>([^<]+)/i, replaceTagsAndSpaces);
+		getParam(html, result, 'lastPurchPlace', /<description><\!\[CDATA\[([^\]]+)/i, replaceTagsAndSpaces);
+	}
 }
 
 function main() {
@@ -125,7 +238,7 @@ function main() {
 		//Чтобы карты оттестировать
 		readEskCards();
 		return;
-	} else if(prefs.__debug) {
+	} else if(prefs.__debug == 'mobile') {
 		mainMobileApp(prefs);
 		return;
 	}

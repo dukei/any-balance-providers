@@ -500,7 +500,7 @@ function doNewAccountEsk(html) {
 	var page = getParam(html, null, null, /self\.location\.href\s*=\s*'([^'"]*?AuthToken=[^'"]*)/i);
 	if (!page) {
 		AnyBalance.trace(html);
-		throw new AnyBalance.Error("Не удаётся найти ссылку на информацию по картам (esk). Пожалуйста, обратитесь к автору провайдера для исправления ситуации.");
+		throw new AnyBalance.Error("Не удаётся найти ссылку на информацию по картам (esk). Пожалуйста, обратитесь к разработчикам для исправления ситуации.");
 	}
 	var token = getParam(page, null, null, /AuthToken=([^&]*)/i);
 	//Переходим в лк esk (Типа логинимся автоматически)

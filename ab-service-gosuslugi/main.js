@@ -48,10 +48,12 @@ function main() {
 		}, addHeaders({Referer: 'https://esia.gosuslugi.ru/idp/authn/CommonLogin'}));
 		
 		//Попытаемся получить ошибку авторизации на раннем этапе. Тогда она точнее.
-		var Authenticationbean = getParam(html, null, null, /Authentication.bean\s*=\s*(\{[\s\S]*?\})\s*;/i, null, getJson);
-		if (Authenticationbean && Authenticationbean.authnErrorCode) {
+		
+		var errorCode = getParam(html, null, null, /authn\.error\.([^"']+)/i);
+		if (errorCode) {
 			var jsonLocalizationMsg = getParam(html, null, null, /var jsonLocalizationMsg\s*=\s*(\{[\s\S]*?\})\s*;/i, null, getJson);
-			throw new AnyBalance.Error(getLocalizedMsg(jsonLocalizationMsg, Authenticationbean.authnErrorCode.errMsg), null, /invalidCredentials/i.test(Authenticationbean.authnErrorCode));
+			var message = getParam(jsonLocalizationMsg.authn.error[errorCode], null, null, null, replaceTagsAndSpaces, html_entity_decode);
+			throw new AnyBalance.Error(message, null, /invalidCredentials/i.test(errorCode));
 		}
 		
 		html = performRedirect(AnyBalance.requestGet('https://www.gosuslugi.ru/pgu/personcab', g_headers));
@@ -276,7 +278,7 @@ function getLocalizedMsg(msgs, path) {
 }
 
 function isLoggedIn(html) {
-	return /logout|title="Выход"/i.test(html);
+	return /\/logout|title="Выход"/i.test(html);
 }
 
 /** на входе урл и параметры в json */

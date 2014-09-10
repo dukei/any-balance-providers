@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-bonus-foodmaster</id>
+	<api flags="no_browser|captcha"/>
+	<name>Фудмастер (Бонусы)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о бонусной программе Фудмастер <a href="http://www.food-master.ru/">http://www.food-master.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="http://www.food-master.ru/cabinet/">http://www.food-master.ru/cabinet/</a></p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Текущий остаток" units=" р"/>
+		<counter id="current" name="Текущий процент бонуса" units=" %"/>
+		<counter id="spend_this_month" name="Потратили в текущем месяце" units=" р"/>
+		<counter id="earn_this_month" name="Получили бонусов в текущем месяце" units=" р"/>
+		<counter id="recieve_this_month" name="Еще получите бонусов за этот месяц" units=" р"/>
+		<counter id="next_month_discount" name="В следующем месяце ваш бонус" units=" %"/>
+	</counters>
+	<keywords></keywords>
+	<type>bonus</type>
+	<country>ru</country>
+</provider>

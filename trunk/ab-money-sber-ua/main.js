@@ -35,9 +35,10 @@ function main() {
 		var error = getParam(html, null, null, /"message message-error"(?:[^>]*>){15}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
 			throw new AnyBalance.Error(error);
+		
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-	}	
-
+	}
+	
 	AnyBalance.trace("Успешно авторизовались.");
 	
     if(prefs.type == 'acc')
@@ -62,7 +63,8 @@ function fetchCard(html, baseurl) {
 	var prefs = AnyBalance.getPreferences();
 	var lastdigits = prefs.lastdigits ? prefs.lastdigits : '';
 	
-	var reCard = new RegExp('<table width="100%"[^>]+>\\s*<tbody>(?:[^>]*>){4}(?:[\\d\\s*]+)' + lastdigits+'[\\s\\S]*?</table>', 'i');
+	// <a[^>]*cards"[^>]*href(?:[^>]*>){2}[\s*\d]{8,}7122\s*<\/div(?:[^>]*>){10,20}\s*</a>
+	var reCard = new RegExp('<a[^>]*cards"[^>]*href(?:[^>]*>){2}[*\\s\\d]{8,}' + lastdigits+'\\s*</div(?:[^>]*>){10,20}\\s*</a>', 'i');
 	
 	var tr = getParam(html, null, null, reCard);
 	if(!tr)
@@ -70,22 +72,23 @@ function fetchCard(html, baseurl) {
 
 	var result = {success: true};
 	
+	getParam(tr, result, 'balance', /id="balance(?:[^>]*>)([\s\S]*?)<\/div/i, replaceTagsAndSpaces, parseBalance);
+	getParam(tr, result, ['currency', 'balance'], /id="balance(?:[^>]*>)([\s\S]*?)<\/div/i, replaceTagsAndSpaces, parseCurrency);
 	getParam(tr, result, 'cardNumber', /(\d{4}\s*(?:[\d*]*\s)+\d{4})/i, replaceTagsAndSpaces);
-	getParam(tr, result, 'userName', /"attribute-surname"[^>]*>([\s\S]*?)<\/span/i, replaceTagsAndSpaces, capitalFirstLenttersDecode);
-	getParam(tr, result, 'balance', /id="balance_\d+"[^>]*>([\s\S]*?)<\/td/i, replaceTagsAndSpaces, parseBalance);
-	getParam(tr, result, ['currency', 'balance'], /id="balance_\d+"[^>]*>([\s\S]*?)<\/td/i, replaceTagsAndSpaces, parseCurrency);
-	getParam(tr, result, 'status', /"Текущий карточный счет"(?:[^>]*>){7}([^<]*)/i, replaceTagsAndSpaces);
+	getParam(tr, result, 'status', /id="balance(?:[^>]*>){4}([\s\S]*?)<\/div/i, replaceTagsAndSpaces);
+	
+	//getParam(tr, result, 'userName', /"attribute-surname"[^>]*>([\s\S]*?)<\/span/i, replaceTagsAndSpaces, capitalFirstLenttersDecode);
 	
 	// Дополнительная инфа по картам.
-	if (AnyBalance.isAvailable('till', 'cardName', '', '', '', '', '', '', '', '')) {
+	if (AnyBalance.isAvailable('till', 'cardName', 'accNum')) {
 		//https://ibank.sbrf.com.ua/ifobsClientSBRF/BankingCardShow.action?accountid=1027820&cardid=52ec16d582d302adec054869fa0030ee
-		var href = getParam(tr, null, null, /<a\s+href="([^"]*)/i);
+		var href = getParam(tr, null, null, /<a[^>]*href="([^"]*)/i);
 		if(href) {
 			html = AnyBalance.requestGet(baseurl + 'ifobsClientSBRF/' + href, g_headers);
 			
-			getParam(html, result, 'till', /Срок действия карты:(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces);
-			getParam(html, result, 'cardName', /Имя держателя карты:(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces);
-			getParam(html, result, 'accNum', /Номер счета:(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces);
+			getParam(html, result, 'till', /Срок действия карты(?:[^>]*>){3}([^<]+)/i, replaceTagsAndSpaces);
+			getParam(html, result, 'cardName', /Имя держателя карты(?:[^>]*>){3}([^<]+)/i, replaceTagsAndSpaces);
+			getParam(html, result, 'accNum', /Номер счета(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces);
 		} else {
 			AnyBalance.trace('Не нашли ссылку на дополнительную информацию по картам, возможно, сайт изменился?');
 		}

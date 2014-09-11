@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-money-sber-ua</id>
+	<id version="2">ab-money-sber-ua</id>
 	<api flags="no_browser"/>
 	<name>Сбербанк ОнЛ@йн (Украина)</name>
 	<description html="true"><![CDATA[
@@ -24,27 +24,12 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Остаток" units=" {@currency}"/>
-		<!-- <counter id="spasibo" name="Спасибо"/> -->
-		<!-- <counter id="cash" name="Наличные" units=" {@currency}"/> -->
-		<!-- <counter id="electrocash" name="Для покупок" units=" {@currency}"/> -->
 		<counter id="currency" name="Валюта" type="text"/>
 		<counter id="cardNumber" name="Номер карты" type="text"/>
 		<counter id="accNum" name="Номер счета" type="text"/>
-		<counter id="userName" name="ФИО" type="text"/>
+		<counter id="till" name="Срок действия" type="text"/>
 		<counter id="cardName" name="Имя на карте" type="text"/>
 		<counter id="status" name="Статус" type="text"/>
-		
-		
-		<counter id="till" name="Срок действия" type="text"/>
-		<counter id="debt" name="Задолженность" units=" {@currency}"/>
-		<counter id="maxlimit" name="Кредитный лимит" units=" {@currency}"/>
-		<counter id="minpay" name="Минимальный платеж" units=" {@currency}"/>
-		<counter id="minpaydate" name="Дата минимального платежа" type="time" format="dd/MM/yyyy"/>
-		
-		
-		<counter id="lastPurchSum" name="Сумма последней операции" type="text"/>
-		<counter id="lastPurchPlace" name="Место последней операции" type="text"/>
-		<counter id="lastPurchDate" name="Дата последней операции" type="time" format="dd/MM"/>
 	</counters>
 	<keywords>сбербанк онлайн, sberbank online, сберегательный банк, спасибо</keywords>
 	<type>money</type>

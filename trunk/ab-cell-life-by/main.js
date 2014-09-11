@@ -71,7 +71,7 @@ function main(){
     sumParam(html, result, 'min_left', /Звонки внутри сети(?:[^>]+>){2}([^<]+)/ig, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
 	// Трафик
 	sumParam(html, result, 'traffic_night_left', />\s*Ночной интернет(?:[^>]+>){2}([^<]+МБ)/ig, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
-	sumParam(html, result, 'traffic_left', />\s*Интернет(?:[^>]+>){2}([^<]+МБ)/ig, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
+	sumParam(html, result, 'traffic_left', />(?:Безлимитный)?\s*интернет(?:[^>]+>){2}([^<]+МБ)/ig, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
 	// Баланс
 	getParam(html, result, 'balance', /Основной баланс:([^<]+)\s*<\/li>/i, replaceTagsAndSpaces, parseBalance);
 	// Баланс для постоплаты

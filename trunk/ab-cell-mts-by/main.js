@@ -282,6 +282,10 @@ function fetchAccountStatus(html, result) {
 	AnyBalance.trace("Parsing status...");
 	// 30 льготных минут: 30 мин.
 	html = sumParam(html, result, 'min_local', /[\d\.,]+\s*льготных минут:([\s\d\.,]+)мин/ig, replaceTagsAndSpaces, parseBalance, true, aggregate_sum);
+	// внути страны: 900 мин
+	html = sumParam(html, result, 'min_local', /внутр?и страны:\s*([\d\.,]+)\s*мин/ig, replaceTagsAndSpaces, parseBalance, true, aggregate_sum);
+	// Пакет минут МТС: 671,1 мин.
+	html = sumParam(html, result, 'min_mts', /МТС:\s*([\d\.,]+)\s*мин/ig, replaceTagsAndSpaces, parseBalance, true, aggregate_sum);
 	// Странные минуты, которые на самом деле секунды
 	html = sumParam(html, result, 'min_left', /[\d\.,]+\s+мин:[^<]*?[\d\.,]+\s*мин/ig, replaceTagsAndSpaces, parseOddSeconds, true, aggregate_sum);
 	// Пакет минут
@@ -304,6 +308,7 @@ function fetchAccountStatus(html, result) {
 	html = sumParam(html, result, 'min_love', /Использовано:\s*([\d\.,]+).*?мин[^\s]* на любимые/ig, replaceTagsAndSpaces, parseBalance, true, aggregate_sum);
 	// Остаток СМС
 	getParam(html, result, 'sms_left', /(?:Осталось|Остаток)[^\d]*(\d*).*?(sms|смс)/i, [], parseBalance);
+	getParam(html, result, 'sms_left', /SMS:\s*([\d\.,]+)\s*шт/i, replaceTagsAndSpaces, parseBalance);
 	// Остаток ММС
 	getParam(html, result, 'mms_left', /(?:Осталось|Остаток)[^\d]*(\d*).*?(mms|ммс)/i, [], parseBalance);
 	// Накоплено 54 мин. в текущем месяце

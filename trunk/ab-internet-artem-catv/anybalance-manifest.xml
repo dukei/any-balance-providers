@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-artem-catv</id>
+	<api flags="no_browser"/>
+	<name>ARTEM-CATV</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера ARTEM-CATV <a href="http://www.artem-catv.ru/">http://www.artem-catv.ru/</a> в г. Артем</p>
+	<p>Информация берется из личного кабинета <a href="https://bill.artem-catv.net/">https://bill.artem-catv.net/</a></p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet, tv</type>
+	<country>ru</country>
+</provider>

@@ -1,38 +1,38 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="72">ab-internet-mts</id>
+	<id version="73">ab-internet-mts</id>
 	<name>Домашний Интернет и Телевидение МТС</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем балансе, номере лицевого счета и договора, ФИО владельца, трафике в текущем месяце, абонентской плате для пользователей провайдера "Домашний Интернет и Телевидение МТС".</p>
 	<p>Поддерживаются регионы:</p>
 	<ul>
-		<li>Москва (http://kabinet.mts.ru) - Стрим (http://stream-internet.ru/)<br></li>
-		<li>Ростов (http://lk.ug.mts.ru) - КОМСТАР-Регионы Южный филиал	<br></li>
-		<li>Новосибирск (https://kabinet.nsk.mts.ru) - бывший CityHomeNet <br></li>
-		<li>Пермь (http://lka.ural.mts.ru)<br></li>
-		<li>Екатеринбург (http://lka.ural.mts.ru)<br></li>
-		<li>Киров (http://lk.kirovnet.net)<br></li>
-		<li>Нижний Новгород (http://stat.nnov.comstar-r.ru)<br></li>
-		<li>Северодвинск (http://severodvinsk.stream-info.ru/client2)<br></li>
-		<li>Вологда (http://lk.vologda.mts.ru)<br></li>
-		<li>Ижевск (http://lk.izhnt.ru)<br></li>
-		<li>Пенза (http://client.lanbilling.ptcomm.ru)<br></li>
-		<li>Комсомольск-на-Амуре (https://clb.komsomolsk.mts.ru/kom/)<br></li>
-		<li>Тула (http://kabinet.tula.mts.ru)<br></li>
-		<li>Балаково (http://stat.balakovo.comstar-r.ru)<br></li>
-		<li>Ульяновск (http://ess.netroad.ru)<br></li>
-		<li>Норильск (http://kabinet.norilsk.mts.ru)<br></li>
-		<li>Магнитогорск (http://stat.magnitogorsk.multinex.ru)<br></li>
-		<li>Миасс (http://stat.miass.multinex.ru)<br></li>
-		<li>Курган (http://infocentr.ru/lk/index.php?r=site/login)<br></li>
-		<li>Барнаул (http://kabinet.barnaul.mts.ru)<br></li>
-		<li>Белгород (http://stat.belgorod-net.ru)<br></li>
-		<li>Саратов (http://stat.saratov.comstar.ru/)<br></li>
-		<li>Чита (https://clb.chita.mts.ru/chita/)<br></li>
-		<li>Амурская область г. Благовещенск; г. Белогорск (https://clb.amur.mts.ru/cblg/)<br></li>
-		<li>Орел (http://lbc.oreltv.ru/index.php)<br></li>
-		<li>Санкт-Петербург (https://lk.spb.mts.ru/index.php)<br></li>
-		<li>Ярославль (https://lanbilling.tensortelecom.ru/client/index.php) - Стрим Ярославль<br></li>
+		<li>Москва (<a href="http://kabinet.mts.ru">http://kabinet.mts.ru</a>) - Стрим (<a href="http://stream-internet.ru/">http://stream-internet.ru/</a>)<br></li>
+		<li>Ростов (<a href="http://lk.ug.mts.ru">http://lk.ug.mts.ru</a>) - КОМСТАР-Регионы Южный филиал	<br></li>
+		<li>Новосибирск (<a href="https://kabinet.nsk.mts.ru">https://kabinet.nsk.mts.ru</a>) - бывший CityHomeNet <br></li>
+		<li>Пермь (<a href="http://lka.ural.mts.ru">http://lka.ural.mts.ru</a>)<br></li>
+		<li>Екатеринбург (<a href="http://lka.ural.mts.ru">http://lka.ural.mts.ru</a>)<br></li>
+		<li>Киров (<a href="http://lk.kirovnet.net">http://lk.kirovnet.net</a>)<br></li>
+		<li>Нижний Новгород (<a href="http://stat.nnov.comstar-r.ru">http://stat.nnov.comstar-r.ru</a>)<br></li>
+		<li>Северодвинск (<a href="http://severodvinsk.stream-info.ru/client2">http://severodvinsk.stream-info.ru/client2</a>)<br></li>
+		<li>Вологда (<a href="http://lk.vologda.mts.ru">http://lk.vologda.mts.ru</a>)<br></li>
+		<li>Ижевск (<a href="http://lk.izhnt.ru">http://lk.izhnt.ru</a>)<br></li>
+		<li>Пенза (<a href="http://client.lanbilling.ptcomm.ru">http://client.lanbilling.ptcomm.ru</a>)<br></li>
+		<li>Комсомольск-на-Амуре (<a href="https://clb.komsomolsk.mts.ru/kom/">https://clb.komsomolsk.mts.ru/kom/</a>)<br></li>
+		<li>Тула (<a href="http://kabinet.tula.mts.ru">http://kabinet.tula.mts.ru</a>)<br></li>
+		<li>Балаково (<a href="http://stat.balakovo.comstar-r.ru">http://stat.balakovo.comstar-r.ru</a>)<br></li>
+		<li>Ульяновск (<a href="http://ess.netroad.ru">http://ess.netroad.ru</a>)<br></li>
+		<li>Норильск (<a href="http://kabinet.norilsk.mts.ru">http://kabinet.norilsk.mts.ru</a>)<br></li>
+		<li>Магнитогорск (<a href="http://stat.magnitogorsk.multinex.ru">http://stat.magnitogorsk.multinex.ru</a>)<br></li>
+		<li>Миасс (<a href="http://stat.miass.multinex.ru">http://stat.miass.multinex.ru</a>)<br></li>
+		<li>Курган (<a href="http://infocentr.ru/lk/index.php?r=site/login">http://infocentr.ru/lk/index.php?r=site/login</a>)<br></li>
+		<li>Барнаул (<a href="http://kabinet.barnaul.mts.ru">http://kabinet.barnaul.mts.ru</a>)<br></li>
+		<li>Белгород (<a href="http://stat.belgorod-net.ru">http://stat.belgorod-net.ru</a>)<br></li>
+		<li>Саратов (<a href="http://stat.saratov.comstar.ru/">http://stat.saratov.comstar.ru/</a>)<br></li>
+		<li>Чита (<a href="https://clb.chita.mts.ru/chita/">https://clb.chita.mts.ru/chita/</a>)<br></li>
+		<li>Амурская область г. Благовещенск; г. Белогорск (<a href="https://clb.amur.mts.ru/cblg/">https://clb.amur.mts.ru/cblg/</a>)<br></li>
+		<li>Орел (<a href="http://lbc.oreltv.ru/index.php">http://lbc.oreltv.ru/index.php</a>)<br></li>
+		<li>Санкт-Петербург (<a href="https://lk.spb.mts.ru/index.php">https://lk.spb.mts.ru/index.php</a>)<br></li>
+		<li>Ярославль (<a href="https://lanbilling.tensortelecom.ru/client/index.php">https://lanbilling.tensortelecom.ru/client/index.php</a>) - Стрим Ярославль<br></li>
 	</ul>
 	]]></description>
 	<instruction html="true"><![CDATA[

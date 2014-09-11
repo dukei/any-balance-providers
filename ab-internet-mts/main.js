@@ -637,8 +637,10 @@ function parseTrafficPerm(text){
 }
 
 function getUln(){
-    var baseurl = "https://ess.netroad.ru/";
-    typicalLanBillingInetTv(baseurl + 'index.php?r=site/login');
+	var urlIndex = 'https://lkuln.pv.mts.ru/index.php?r=site/login';
+	var urlAjax = 'https://lkuln.pv.mts.ru/index.php?r=account/vgroups&agrmid=';
+	
+	newTypicalLanBillingInetTv(urlIndex, urlAjax);	
 }
 
 function getNorilsk(){

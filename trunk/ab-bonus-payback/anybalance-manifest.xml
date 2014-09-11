@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-bonus-payback</id>
+	<api flags="no_browser"/>
+	<name>PAYBACK</name>
+	<description html="true"><![CDATA[
+	<p>Obtains information from PayBack personal account <a href="http://www2.payback.pl/">http://www2.payback.pl/</a></p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Balance"/>
+	</counters>
+	<keywords></keywords>
+	<type>bonus</type>
+	<country>pl</country>
+</provider>

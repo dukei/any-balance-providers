@@ -13,12 +13,48 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://tv.itce.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Введите логин!');
-	checkEmpty(prefs.password, 'Введите пароль!');
-		
+	checkEmpty(prefs.password, 'Введите пароль!');	
+	
+	if(prefs.type == 'inet') {
+		mainInet(prefs);
+	} else {
+		mainTV(prefs);
+	}
+}
+
+function mainInet(prefs) {
+	var baseurl = 'http://inet.itce.ru/';
+	var html = AnyBalance.requestPost(baseurl + 'core.php', {
+		'host':'inet.itce.ru',
+		'options[page]':'billing',
+		'module':'inetBilling',
+		'account':prefs.login,
+		'password':prefs.password,
+		'undefined':'Вход',
+    }, addHeaders({Referer: baseurl + 'core.php'}));
+	
+	if(!/>выход</i.test(html)) {
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+	}
+	html = AnyBalance.requestPost(baseurl + 'core.php', {
+		'host':'inet.itce.ru',
+		'options[page]':'billing',
+		'module':'inetBilling',
+    }, addHeaders({Referer: baseurl + 'core.php'}));
+	
+    var result = {success: true};
+	getParam(html, result, 'balance', /Ваш баланс:[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'fio', /<h2>([^<.]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	
+    AnyBalance.setResult(result);
+}
+
+function mainTV(prefs) {
+	var baseurl = 'http://tv.itce.ru/';
 	var html = AnyBalance.requestPost(baseurl + 'core.php', {
 		'host':'tv.itce.ru',
 		'options[page]':'billing',
@@ -29,6 +65,7 @@ function main() {
     }, addHeaders({Referer: baseurl + 'core.php'}));
 	
 	if(!/ok/i.test(html)) {
+		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	html = AnyBalance.requestPost(baseurl + 'core.php', {

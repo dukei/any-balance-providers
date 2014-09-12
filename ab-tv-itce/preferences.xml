@@ -21,4 +21,12 @@
 		dialogMessage="Введите пароль, используемый для входа в личный кабинет."
 		inputType="textPassword">
 	</EditTextPreference>
+	<ListPreference
+		key="type"
+		title="Что смотреть"
+		summary="||{@s}"
+		entries="Цифровое ТВ|Интернет"
+		entryValues="tv|inet"
+		defaultValue="tv">
+	</ListPreference>	
 </PreferenceScreen>

@@ -1,12 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="73">ab-internet-mts</id>
+	<id version="74">ab-internet-mts</id>
 	<name>Домашний Интернет и Телевидение МТС</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем балансе, номере лицевого счета и договора, ФИО владельца, трафике в текущем месяце, абонентской плате для пользователей провайдера "Домашний Интернет и Телевидение МТС".</p>
 	<p>Поддерживаются регионы:</p>
 	<ul>
 		<li>Москва (<a href="http://kabinet.mts.ru">http://kabinet.mts.ru</a>) - Стрим (<a href="http://stream-internet.ru/">http://stream-internet.ru/</a>)<br></li>
+		<li>Архангельск (<a href="https://lk.arkhangelsk.mts.ru/client/index.php">https://lk.arkhangelsk.mts.ru/client/index.php</a>)<br></li>
 		<li>Ростов (<a href="http://lk.ug.mts.ru">http://lk.ug.mts.ru</a>) - КОМСТАР-Регионы Южный филиал	<br></li>
 		<li>Новосибирск (<a href="https://kabinet.nsk.mts.ru">https://kabinet.nsk.mts.ru</a>) - бывший CityHomeNet <br></li>
 		<li>Пермь (<a href="http://lka.ural.mts.ru">http://lka.ural.mts.ru</a>)<br></li>

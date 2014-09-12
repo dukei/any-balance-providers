@@ -486,7 +486,7 @@ function fetchPost(baseurl, html) {
 	AnyBalance.trace('Мы в постоплатном кабинете');
 	
 	var result = {success: true, balance: null, currency: null};
-	var multi = /<span[^>]+class="selected"[^>]*>/i.test(html), xhtml='';
+	var multi = /onclick\s*=\s*"\s*selectAccount\('\d{10}/i.test(html), xhtml='';
 	// Пытаемся исправить всякую ерунду в балансе и валюте
 	var balancesReplaces = [replaceTagsAndSpaces, /информация[^<]*недоступна|недоступна|временно недоступен/ig, ''];
 	
@@ -502,21 +502,61 @@ function fetchPost(baseurl, html) {
 		AnyBalance.trace('Похоже на кабинет с несколькими номерами.');
 		
 		if (prefs.phone) { //Если задан номер, то надо сделать из него регулярное выражение
-			if (!/^\d{4,10}$/.test(prefs.phone)) throw new AnyBalance.Error('Введите от 4 до 10 последних цифр номера дополнительного телефона без пробелов и разделителей или не вводите ничего, чтобы получить информацию по первому номеру!', null, true);
+			if (!/^\d{4,10}$/.test(prefs.phone))
+				throw new AnyBalance.Error('Введите от 4 до 10 последних цифр номера дополнительного телефона без пробелов и разделителей или не вводите ничего, чтобы получить информацию по первому номеру!', null, true);
 			
-			var regnumber = prefs.phone.replace(/(\d)/g, '$1[\\s\\-()]*');
-			var re = new RegExp('(?:<a[^>]*>\\s*)?<span[^>]*>\\+7[0-9\\s\\-()]*' + regnumber + '</span>', 'i');
+			//var regnumber = prefs.phone.replace(/(\d)/g, '$1[\\s\\-()]*');
+			var re = new RegExp('div[^>]*(?:>)[^>]*onclick="\\s*selectAccount\\([\'\\"]\\d*' + prefs.phone + '[\'\\"][^>]*', 'i');
 			var numinfo = getParam(html, null, null, re);
 			if (!numinfo) 
 				throw new AnyBalance.Error('Не найден присоединенный к договору номер телефона, оканчивающийся на ' + prefs.phone);
 			
-			var num = getParam(numinfo, null, null, null, replaceTagsAndSpaces, html_entity_decode);
-			if (/class="selected"/i.test(numinfo)) {
+			var num = getParam(numinfo, null, null, /selectAccount\('([^']*)/, replaceSlashes);
+			if (/sso-account-current/i.test(numinfo)) {
 				AnyBalance.trace('Дополнительный номер ' + num + ' уже выбран');
 			} else {
+			
+	/*
+		var re = new RegExp('div[^>]*(?:>)[^>]*onclick="\\s*selectAccount\\([\'\\"]\\d*' + prefs.phone + '[\'\\"][^>]*', 'i');
+		var numinfo = getParam(html, null, null, re);
+		if (!numinfo)
+			throw new AnyBalance.Error('Не найден присоединенный к договору номер телефона, оканчивающийся на ' + prefs.phone);
+
+		var num = getParam(numinfo, null, null, /selectAccount\('([^']*)/, replaceSlashes);
+		if (/sso-account-current/i.test(numinfo))
+			AnyBalance.trace('Дополнительный номер ' + num + ' уже выбран');
+		else {
+			AnyBalance.trace('Переключаемся на номер ' + num);
+			var formid = getParam(html, null, null, /changeUser\s*=[^<]*?formId:'([^']*)/, replaceSlashes);
+			var source = getParam(html, null, null, /changeUser\s*=[^<]*?source:'([^']*)/, replaceSlashes);
+			var form = getParam(html, null, null, new RegExp('<form[^>]+id="' + formid + '"[^>]*>([\\s\\S]*?)</form>', 'i'));
+			if (!form) {
+				AnyBalance.trace(numinfo);
+				throw new AnyBalance.Error('Дополнительный номер ' + num + ' найден, но переключиться на него не удалось. Возможны изменения в личном кабинете...');
+			}
+
+			var fparams = createFormParams(form);
+			params = joinObjects(fparams, {
+				'javax.faces.partial.ajax':'true',
+				'javax.faces.source':source,
+				'javax.faces.partial.execute':'@all',
+				newSsoLogin: num
+			});
+			params[source] = source;
+
+			var xhtml = AnyBalance.requestPost(baseurl + 'c/pre/index.html', params, addHeaders({Referer: baseurl + 'c/pre/index.html'}));
+			var url = getParam(xhtml, null, null, /<redirect[^>]+url="\/([^"]*)/i, null, html_entity_decode);
+			if(!url)
+				AnyBalance.trace('Не удалось переключить номер: ' + xhtml);
+			else
+				html = AnyBalance.requestGet(baseurl + url, addHeaders({Referer: baseurl + 'c/pre/index.html'}));
+		}
+*/
+
+			
 				AnyBalance.trace('Переключаемся на номер ' + num);
-				var formid = getParam(numinfo, null, null, /addSubmitParam\('([^']*)/, replaceSlashes);
-				var params = getParam(numinfo, null, null, /addSubmitParam\('[^']*',(\{.*?\})\)/, null, getJsonEval);
+				var formid = getParam(html, null, null, /changeUser\s*=[^<]*?formId:'([^']*)/, replaceSlashes);
+				var source = getParam(html, null, null, /changeUser\s*=[^<]*?source:'([^']*)/, replaceSlashes);
 				var form = getParam(html, null, null, new RegExp('<form[^>]+id="' + formid + '"[^>]*>([\\s\\S]*?)</form>', 'i'));
 				if (!form) {
 					AnyBalance.trace(numinfo);
@@ -524,7 +564,13 @@ function fetchPost(baseurl, html) {
 				}
 				
 				var fparams = createFormParams(form);
-				params = joinObjects(fparams, params);
+				params = joinObjects(fparams, {
+					'javax.faces.partial.ajax':'true',
+					'javax.faces.source':source,
+					'javax.faces.partial.execute':'@all',
+					newSsoLogin: num
+				});
+				params[source] = source;
 				
 				try {
 					html = AnyBalance.requestPost(baseurl + 'c/post/index.html', params, addHeaders({Referer: baseurl + 'c/post/index.html'}));
@@ -538,15 +584,12 @@ function fetchPost(baseurl, html) {
 			}
 		}
 		//Если несколько номеров в кабинете, то почему-то баланс надо брать отсюда
-		if (AnyBalance.isAvailable('balance')) {
+		if (AnyBalance.isAvailable('balance', 'currency')) {
 			xhtml = refreshBalance(baseurl + 'c/post/index.html', html);
 			//xhtml = getBlock(baseurl + 'c/post/index.html', html, 'homeBalance');
 			
-			var balance = getParam(xhtml, null, null, /Расходы по номеру за текущий период с НДС[\s\S]*?<div[^>]+class="balan?ce-summ"[^>]*>([\s\S]*?)<\/div>/i, balancesReplaces, parseBalance);
-			if(!isset(balance))
-				balance = getParam(html, null, null, /Расходы по номеру за текущий период с НДС[\s\S]*?<div[^>]+class="balan?ce-summ"[^>]*>([\s\S]*?)<\/div>/i, balancesReplaces, parseBalance);
-			
-			getParam(balance + '', result, 'balance', null, null, parseBalance);
+			getParam(xhtml + html, result, 'balance', /Расходы по номеру за текущий период с НДС[\s\S]*?<div[^>]+class="balan?ce-summ"[^>]*>([\s\S]*?)<\/div>/i, balancesReplaces, parseBalance);
+			getParam(xhtml + html, result, ['currency', 'prebal', 'overpay', 'balance'], /Расходы по номеру за текущий период с НДС[\s\S]*?<div[^>]+class="balan?ce-summ"[^>]*>([\s\S]*?)<\/div>/i, balancesReplaces, myParseCurrency);
 		}
 	}
 	
@@ -565,7 +608,7 @@ function fetchPost(baseurl, html) {
     	getParam(xhtml, result, 'overpay', /<h4[^>]*>Переплата[\s\S]*?<span[^>]+class="price[^>]*>([\s\S]*?)<\/span>/i, balancesReplaces, parseBalance);
     	getParam(xhtml, result, 'overpay', /<h4[^>]*>Осталось к оплате[\s\S]*?<span[^>]+class="price[^>]*>([\s\S]*?)<\/span>/i, balancesReplaces, parseBalanceNegative);
     	getParam(xhtml, result, 'prebal', /Расходы по договору за текущий период:[\S\s]*?<div[^<]+class="balan?ce-summ"[^>]*>([\s\S]*?)<\/div>/i, balancesReplaces, parseBalance);
-    	getParam(xhtml, result, ['currency', 'prebal', 'overpay'], /Расходы по договору за текущий период:[\S\s]*?<div[^<]+class="balan?ce-summ"[^>]*>([\s\S]*?)<\/div>/i, balancesReplaces, myParseCurrency);
+    	getParam(xhtml, result, ['currency', 'prebal', 'overpay', 'balance'], /Расходы по договору за текущий период:[\S\s]*?<div[^<]+class="balan?ce-summ"[^>]*>([\s\S]*?)<\/div>/i, balancesReplaces, myParseCurrency);
 		
 		AnyBalance.trace(xhtml);
 		if(/информация[^<]*недоступна/i.test(xhtml))

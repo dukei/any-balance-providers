@@ -40,6 +40,7 @@ var regions = {
 	orel: getOrel,
 	piter: getPiter,
 	yar: getYar,
+	arkh: getArkh,
 };
 
 function main(){
@@ -463,6 +464,13 @@ function getPrm(){
 function getKrv(){
 	var urlIndex = 'https://lkkirov.pv.mts.ru/index.php?r=site/login';
 	var urlAjax = 'https://lkkirov.pv.mts.ru/index.php?r=account/vgroups&agrmid=';
+	
+	newTypicalLanBillingInetTv(urlIndex, urlAjax);
+}
+
+function getArkh(){
+	var urlIndex = 'https://lk.arkhangelsk.mts.ru/client/index.php?r=site/login';
+	var urlAjax = 'https://lk.arkhangelsk.mts.ru/client/index.php?r=account/vgroups&agrmid=';
 	
 	newTypicalLanBillingInetTv(urlIndex, urlAjax);
 }

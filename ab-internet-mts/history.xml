@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="74" date="2014-09-12">
+	- Добавлен регион: Архангельск.
+	</change>
 	<change version="73" date="2014-09-11">
 	- Исправлен регион: Ульяновск.
 	</change>

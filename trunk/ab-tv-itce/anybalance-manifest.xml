@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-tv-itce</id>
+	<id version="2">ab-tv-itce</id>
 	<api flags="no_browser"/>
-	<name>Группа Компаний Электрон (Цифровое ТВ)</name>
+	<name>Группа Компаний Электрон (Цифровое ТВ, Интернет)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе ГК Электрон (Цифровое ТВ)</p>
 	<p>Информация берется из личного кабинета http://tv.itce.ru/?page=billing</p>
@@ -20,6 +20,6 @@
 		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
 	<keywords></keywords>
-	<type>tv</type>
+	<type>tv, internet</type>
 	<country>ru</country>
 </provider>

@@ -12,7 +12,8 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://beloil.by/';
+	
+	var baseurl = 'http://www.belorusneft.by/';
 	AnyBalance.setDefaultCharset('windows-1251');
 
 	checkEmpty(prefs.login, 'Введите логин!');
@@ -28,6 +29,7 @@ function main() {
 	}, addHeaders({Referer: baseurl + 'rcp/rests_light/logon.asp'}));
 
 	if (!/Движение средств по договору/i.test(html)) {
+		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	var result = {success: true};

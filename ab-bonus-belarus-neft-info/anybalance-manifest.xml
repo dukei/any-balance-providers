@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="1">ab-bonus-belarus-neft-info</id>
+	<id version="2">ab-bonus-belarus-neft-info</id>
 	<name>Беларусь Нефть (АЗС-Инфо)</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию из системы отчетов АЗС-Инфо Беларусь Нефть http://beloil.by/sitebeloil/ru/center/azs/center/card/rests</p>
+	<p>Предоставляет информацию из системы отчетов АЗС-Инфо Беларусь Нефть http://www.belorusneft.by/sitebeloil/ru/center/azs/center/card/rests</p>
 	]]></description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>

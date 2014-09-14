@@ -3,4 +3,7 @@
 	<change version="1" date="2014-09-10">
 	- Initial version.
 	</change>
+	<change version="2" date="2014-09-15">
+	- Current plan information, data plan information (only available on some, but not all accounts, use the mobile site to check).
+	</change>
 </history>

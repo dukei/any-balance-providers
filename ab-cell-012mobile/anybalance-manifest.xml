@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-cell-012mobile</id>
+	<id version="2">ab-cell-012mobile</id>
 	<api flags="no_browser"/>
 	<name>012 Mobile</name>
 	<description html="true"><![CDATA[
-	<p>Prelimintary provider for 012 Mobile.</p>
+	<p>Anybalance provider for 012 Mobile.</p>
 	]]></description>
 	<author>Borislip &lt;borislip@gmail.com&gt;</author>
 	<files>
@@ -16,6 +16,10 @@
 	</files>
 	<counters>
 		<counter id="price" name="Price" units="₪"/>
+		<counter id="dataprcnt" name="Data Usage (%)" units="%"/>
+        <counter id="datausage" name="Data Usage" units="GB"/>
+		<counter id="plan" name="Rate Plan" type="text"/>
+        <counter id="dataplans" name="Data Plans" type="text"/>
 		<counter id="fullname" name="Name" type="text"/>
 		<counter id="number" name="Number" type="text"/>
 		<counter id="nextbill" name="Next Bill" type="time" format="dd/MM/yyyy"/>

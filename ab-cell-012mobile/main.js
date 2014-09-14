@@ -77,18 +77,28 @@ function main()
 	var bill = getBillData(key);
 	AnyBalance.trace('Bill: ' + JSON.stringify(bill));
 	
-	// set the results
-	if (typeof bill.total!="undefined")
-		getParam(bill.total, result, 'price', null, null, parseBalance); 
-	if (typeof bill.FullName!="undefined")
-		getParam(bill.FullName, result, 'fullname', null, null, html_entity_decode); 
-	if (typeof bill.msisdn!="undefined")
-		getParam(bill.msisdn, result, 'number', null, null, html_entity_decode); 
-	if (typeof bill.nextBillcycle!="undefined")
-		getParam(bill.nextBillcycle, result, 'nextbill', null, null, parseDate); 
-	if (typeof bill.discountExpiration!="undefined")
-		getParam(bill.discountExpiration, result, 'discountend', /\d\d\.\d\d\.\d\d\d\d/, null, parseDate); 
-	
+    // get data plans, sum it all up together in case there is more than one
+	if (bill.dataPackages.length)
+	{
+		result['dataprcnt'] = result['datausage'] = 0.0;
+		result['dataplans'] = '';
+		for (var i=0;i<bill.dataPackages.length;i++) 
+		{
+			var dataPackage = bill.dataPackages[i];
+			result['dataprcnt'] += dataPackage.dataplanUsedPrecentage/bill.dataPackages.length;
+			result['datausage'] += parseFloat(dataPackage.consumptionDescription);
+			result['dataplans'] += (result['dataplans'].length ? '\n' : '') + dataPackage.dataplan;
+		} 
+	}
+
+	// set the rest of the results
+	getParam(bill.total, result, 'price', null, null, parseBalance); 
+	getParam(bill.FullName, result, 'fullname', null, null, html_entity_decode); 
+	getParam(bill.msisdn, result, 'number', null, null, html_entity_decode); 
+	getParam(bill.nextBillcycle, result, 'nextbill', null, null, parseDate); 
+	getParam(bill.discountExpiration, result, 'discountend', /\d\d\.\d\d\.\d\d\d\d/, null, parseDate); 
+	getParam(bill.rateplan, result, 'plan', null, null, html_entity_decode); 
+    
 	// done, set the result
 	AnyBalance.setResult(result);
 }

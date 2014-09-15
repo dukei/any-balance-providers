@@ -11,8 +11,9 @@ var g_headers = {
 
 var g_xml_login = '<?xml version=\'1.0\' encoding=\'UTF-8\' standalone=\'yes\' ?><soapenv:Envelope xmlns:xsd="http://entry.rconnect/xsd" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://service.rconnect" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><soapenv:Header /><soapenv:Body><ser:login><login>%LOGIN%</login><password>%PASSWORD%</password></ser:login></soapenv:Body></soapenv:Envelope>',
 	g_xml_accounts = '<?xml version=\'1.0\' encoding=\'UTF-8\' standalone=\'yes\' ?><soapenv:Envelope xmlns:xsd="http://entry.rconnect/xsd" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://service.rconnect" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><soapenv:Header /><soapenv:Body><ser:GetAccounts /></soapenv:Body></soapenv:Envelope>',
-	g_xml_cards = '<?xml version=\'1.0\' encoding=\'UTF-8\' standalone=\'yes\' ?><soapenv:Envelope xmlns:xsd="http://entry.rconnect/xsd" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://service.rconnect" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><soapenv:Header /><soapenv:Body><ser:GetCards /></soapenv:Body></soapenv:Envelope>';
-	g_xml_loans = '<?xml version=\'1.0\' encoding=\'UTF-8\' standalone=\'yes\' ?><soapenv:Envelope xmlns:xsd="http://entry.rconnect/xsd" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://service.rconnect" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><soapenv:Header /><soapenv:Body><ser:GetLoans /></soapenv:Body></soapenv:Envelope>';
+	g_xml_cards = '<?xml version=\'1.0\' encoding=\'UTF-8\' standalone=\'yes\' ?><soapenv:Envelope xmlns:xsd="http://entry.rconnect/xsd" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://service.rconnect" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><soapenv:Header /><soapenv:Body><ser:GetCards /></soapenv:Body></soapenv:Envelope>',
+	g_xml_loans = '<?xml version=\'1.0\' encoding=\'UTF-8\' standalone=\'yes\' ?><soapenv:Envelope xmlns:xsd="http://entry.rconnect/xsd" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://service.rconnect" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><soapenv:Header /><soapenv:Body><ser:GetLoans /></soapenv:Body></soapenv:Envelope>',
+	g_xml_deposits = '<?xml version=\'1.0\' encoding=\'UTF-8\' standalone=\'yes\' ?><soapenv:Envelope xmlns:xsd="http://entry.rconnect/xsd" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://service.rconnect" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><soapenv:Header /><soapenv:Body><ser:GetDeposits /></soapenv:Body></soapenv:Envelope>';
 
 function translateError(error) {
 	var errors = {
@@ -144,14 +145,20 @@ function fetchAccount(baseurl, html, result){
     }
 }
 
+'40817810801001355423: 337425.17 rur\
+40817840401002355423: 19614.44 usd\
+40817840101001355423: 17333.41 usd\
+40817840801000355423: 21816.81 usd\
+40817810101002355423: 430947.82 rur'
+
 function fetchDeposit(baseurl, html, result){
     var prefs = AnyBalance.getPreferences();
-
-    if(prefs.num && !/^\d+$/.test(prefs.num))
+	
+	if(prefs.num && !/^\d+$/.test(prefs.num))
         throw new AnyBalance.Error('Введите последние цифры интересующего вас счета или не вводите ничего, чтобы получить информацию по первому счету');
-    html = AnyBalance.requestPost(baseurl + 'RCDepositService', g_xml_accounts, addHeaders({SOAPAction: ''})); 
+    html = AnyBalance.requestPost(baseurl + 'RCDepositService', g_xml_deposits, addHeaders({SOAPAction: ''})); 
    
-    var re = new RegExp('<return[^>]*>((?:[\\s\\S](?!</return>))*?<accountNumber>\\d+' + (prefs.num ? prefs.num : '') + '</accountNumber>[\\s\\S]*?)</return>', 'i');
+    var re = new RegExp('<return[^>]*>((?:[\\s\\S](?!</return>))*?<accountNumber>\\d*' + (prefs.num ? prefs.num : '') + '</accountNumber>[\\s\\S]*?)</return>', 'i');
     var info = getParam(html, null, null, re);
     if(!info)
         throw new AnyBalance.Error(prefs.num ? 'Не удалось найти счета с последними цифрами ' + prefs.num : 'Не найдено ни одного счета');

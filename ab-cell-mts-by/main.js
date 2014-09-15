@@ -262,7 +262,7 @@ function isAvailableStatus(){
 function parseOddSeconds(str) {
 	AnyBalance.trace("Parsing odd seconds...");
 	// Вычисляем пакет минут
-	var packMinutes = getParam(str, null, null, /[\d\.,]+\s+мин/i, replaceTagsAndSpaces, parseBalance);
+	var packMinutes = getParam(str, null, null, /\s([\d\.,]+)\s+мин:[^<]*?[\d\.,]+\s*мин/i, replaceTagsAndSpaces, parseBalance);
 	AnyBalance.trace("packMinutes is:" + packMinutes);
 	
 	var packUsed = getParam(str, null, null, /[\d\.,]+\s+мин:[^<]*?([\d\.,]+)\s*мин/i, replaceTagsAndSpaces, parseBalance);

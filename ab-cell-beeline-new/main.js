@@ -246,8 +246,6 @@ function main() {
 			} else {
 				html = AnyBalance.requestGet('https://my.beeline.ru/c/'+prefs.__debug+'/index.html', g_headers);
 			}
-			
-			
 		} catch(e){
 		}
 	}
@@ -486,7 +484,8 @@ function fetchPost(baseurl, html) {
 	AnyBalance.trace('Мы в постоплатном кабинете');
 	
 	var result = {success: true, balance: null, currency: null};
-	var multi = /onclick\s*=\s*"\s*selectAccount\('\d{10}/i.test(html), xhtml='';
+	var multi = /onclick\s*=\s*"\s*selectAccount\('\d{10}|<span[^>]+class="selected"[^>]*>/i.test(html), xhtml='';
+	
 	// Пытаемся исправить всякую ерунду в балансе и валюте
 	var balancesReplaces = [replaceTagsAndSpaces, /информация[^<]*недоступна|недоступна|временно недоступен/ig, ''];
 	
@@ -505,72 +504,58 @@ function fetchPost(baseurl, html) {
 			if (!/^\d{4,10}$/.test(prefs.phone))
 				throw new AnyBalance.Error('Введите от 4 до 10 последних цифр номера дополнительного телефона без пробелов и разделителей или не вводите ничего, чтобы получить информацию по первому номеру!', null, true);
 			
-			//var regnumber = prefs.phone.replace(/(\d)/g, '$1[\\s\\-()]*');
-			var re = new RegExp('div[^>]*(?:>)[^>]*onclick="\\s*selectAccount\\([\'\\"]\\d*' + prefs.phone + '[\'\\"][^>]*', 'i');
+			var cabinetType = 1;
+			// Оказывается есть два типа кабинета с несколькими номерами..
+			var regnumber = prefs.phone.replace(/(\d)/g, '$1[\\s\\-()]*');
+			var re = new RegExp('(?:<a[^>]*>\\s*)?<span[^>]*>\\+7[0-9\\s\\-()]*' + regnumber + '</span>', 'i');
 			var numinfo = getParam(html, null, null, re);
-			if (!numinfo) 
-				throw new AnyBalance.Error('Не найден присоединенный к договору номер телефона, оканчивающийся на ' + prefs.phone);
+			// Пробуем второй тип кабинета
+			if(!isset(numinfo)) {
+				cabinetType = 2;
+				re = new RegExp('div[^>]*(?:>)[^>]*onclick="\\s*selectAccount\\([\'\\"]\\d*' + prefs.phone + '[\'\\"][^>]*', 'i');
+				numinfo = getParam(html, null, null, re);
+				if (!numinfo)
+					throw new AnyBalance.Error('Не найден присоединенный к договору номер телефона, оканчивающийся на ' + prefs.phone);
+			}
 			
 			var num = getParam(numinfo, null, null, /selectAccount\('([^']*)/, replaceSlashes);
-			if (/sso-account-current/i.test(numinfo)) {
+			if(!isset(num))
+				num = getParam(numinfo, null, null, null, replaceTagsAndSpaces, html_entity_decode);
+			
+			checkEmpty(num, 'Не удалось найти номер на который необходимо переключиться, сайт изменен?', true);
+			
+			if (/sso-account-current|class="selected"/i.test(numinfo)) {
 				AnyBalance.trace('Дополнительный номер ' + num + ' уже выбран');
 			} else {
-			
-	/*
-		var re = new RegExp('div[^>]*(?:>)[^>]*onclick="\\s*selectAccount\\([\'\\"]\\d*' + prefs.phone + '[\'\\"][^>]*', 'i');
-		var numinfo = getParam(html, null, null, re);
-		if (!numinfo)
-			throw new AnyBalance.Error('Не найден присоединенный к договору номер телефона, оканчивающийся на ' + prefs.phone);
-
-		var num = getParam(numinfo, null, null, /selectAccount\('([^']*)/, replaceSlashes);
-		if (/sso-account-current/i.test(numinfo))
-			AnyBalance.trace('Дополнительный номер ' + num + ' уже выбран');
-		else {
-			AnyBalance.trace('Переключаемся на номер ' + num);
-			var formid = getParam(html, null, null, /changeUser\s*=[^<]*?formId:'([^']*)/, replaceSlashes);
-			var source = getParam(html, null, null, /changeUser\s*=[^<]*?source:'([^']*)/, replaceSlashes);
-			var form = getParam(html, null, null, new RegExp('<form[^>]+id="' + formid + '"[^>]*>([\\s\\S]*?)</form>', 'i'));
-			if (!form) {
-				AnyBalance.trace(numinfo);
-				throw new AnyBalance.Error('Дополнительный номер ' + num + ' найден, но переключиться на него не удалось. Возможны изменения в личном кабинете...');
-			}
-
-			var fparams = createFormParams(form);
-			params = joinObjects(fparams, {
-				'javax.faces.partial.ajax':'true',
-				'javax.faces.source':source,
-				'javax.faces.partial.execute':'@all',
-				newSsoLogin: num
-			});
-			params[source] = source;
-
-			var xhtml = AnyBalance.requestPost(baseurl + 'c/pre/index.html', params, addHeaders({Referer: baseurl + 'c/pre/index.html'}));
-			var url = getParam(xhtml, null, null, /<redirect[^>]+url="\/([^"]*)/i, null, html_entity_decode);
-			if(!url)
-				AnyBalance.trace('Не удалось переключить номер: ' + xhtml);
-			else
-				html = AnyBalance.requestGet(baseurl + url, addHeaders({Referer: baseurl + 'c/pre/index.html'}));
-		}
-*/
-
-			
 				AnyBalance.trace('Переключаемся на номер ' + num);
-				var formid = getParam(html, null, null, /changeUser\s*=[^<]*?formId:'([^']*)/, replaceSlashes);
-				var source = getParam(html, null, null, /changeUser\s*=[^<]*?source:'([^']*)/, replaceSlashes);
+				
+				if(cabinetType == 1) {
+					var formid = getParam(numinfo, null, null, /addSubmitParam\('([^']*)/, replaceSlashes);
+					var params = getParam(numinfo, null, null, /addSubmitParam\('[^']*',(\{.*?\})\)/, null, getJsonEval);
+				} else {
+					var formid = getParam(html, null, null, /changeUser\s*=[^<]*?formId:'([^']*)/, replaceSlashes);
+					var source = getParam(html, null, null, /changeUser\s*=[^<]*?source:'([^']*)/, replaceSlashes);					
+				}
+
 				var form = getParam(html, null, null, new RegExp('<form[^>]+id="' + formid + '"[^>]*>([\\s\\S]*?)</form>', 'i'));
 				if (!form) {
 					AnyBalance.trace(numinfo);
 					throw new AnyBalance.Error('Дополнительный номер ' + num + ' найден, но переключиться на него не удалось. Возможны изменения в личном кабинете...');
 				}
 				
-				var fparams = createFormParams(form);
-				params = joinObjects(fparams, {
-					'javax.faces.partial.ajax':'true',
-					'javax.faces.source':source,
-					'javax.faces.partial.execute':'@all',
-					newSsoLogin: num
-				});
-				params[source] = source;
+				if(cabinetType == 1) {
+					var fparams = createFormParams(form);
+					params = joinObjects(fparams, params);
+				} else {
+					var fparams = createFormParams(form);
+					params = joinObjects(fparams, {
+						'javax.faces.partial.ajax':'true',
+						'javax.faces.source':source,
+						'javax.faces.partial.execute':'@all',
+						newSsoLogin: num
+					});
+					params[source] = source;
+				}
 				
 				try {
 					html = AnyBalance.requestPost(baseurl + 'c/post/index.html', params, addHeaders({Referer: baseurl + 'c/post/index.html'}));
@@ -579,8 +564,16 @@ function fetchPost(baseurl, html) {
 					AnyBalance.trace('Beeline returned: ' + AnyBalance.getLastStatusString());
 					throw new AnyBalance.Error('Переключится на доп. номер не удолось из-за технических проблем в личном кабинете Билайн. Проверьте, что вы можете переключиться на доп. номер, зайдя в личный кабинет через браузер.');
 				}*/
-				// Вроде помогает переход на главную
-				html = AnyBalance.requestGet(baseurl + 'c/post/index.html', g_headers);
+				// Бывает что к постоплатному кабинету привязан предоплатный номер, проверяем..
+				if(/c\/pre\/index\.html/i.test(html)) {
+					AnyBalance.trace('Дополнительный номер ' + num + ' предоплатный, но привязан к постоплатному кабинету...');
+					html = AnyBalance.requestGet(baseurl + 'c/pre/index.html', g_headers);
+					fetchPre(baseurl, html);
+					return;
+				} else {
+					// Вроде помогает переход на главную
+					html = AnyBalance.requestGet(baseurl + 'c/post/index.html', g_headers);
+				}
 			}
 		}
 		//Если несколько номеров в кабинете, то почему-то баланс надо брать отсюда

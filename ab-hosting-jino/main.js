@@ -70,6 +70,8 @@ function main() {
 	getService(html, result, 'storage', 'Дисковое пространство');
 	// Почтовый сервис
 	getService(html, result, 'mail', 'Место под Почту');
+	// Имя пользователя
+	getParam(html, result, '__tariff', /\.login\s*=\s*'([^']+)/i, replaceTagsAndSpaces, html_entity_decode);
 	
     AnyBalance.setResult(result);
 }
@@ -82,9 +84,12 @@ function getService(html, result, counterPrefix, regExpPrefix) {
 			getParam(ptc, result, counterPrefix+'_percent');
 			getParam(100-ptc, result, counterPrefix+'_percent_left');
 		}
+		//Дисковое пространство(?:[^>]*>){9}([\s\d,.]+(?:М|M)Б|B)
+		getParam(html, result, counterPrefix+'_total', new RegExp(regExpPrefix+'(?:[^>]*>){9}[\\s\\d,.]+(?:М|M|Г|G)(?:Б|B)\\s*из([\\s\\d,.]+(?:М|M|Г|G)(?:Б|B))','i'), replaceTagsAndSpaces, parseTraffic);
+		getParam(html, result, counterPrefix+'_used', new RegExp(regExpPrefix+'(?:[^>]*>){9}([\\s\\d,.]+(?:М|M|Г|G)(?:Б|B))','i'), replaceTagsAndSpaces, parseTraffic);
 		
-		getParam(html, result, counterPrefix+'_total', new RegExp(regExpPrefix+'[\\s\\S]*?Всего:(?:[^>]*>){2}([^<]*)','i'), replaceTagsAndSpaces, parseTraffic);
-		getParam(html, result, counterPrefix+'_used', new RegExp(regExpPrefix+'[\\s\\S]*?Занято:(?:[^>]*>){2}([^<]*)','i'), replaceTagsAndSpaces, parseTraffic);
-		getParam(html, result, counterPrefix+'_left', new RegExp(regExpPrefix+'[\\s\\S]*?Свободно:(?:[^>]*>){2}([^<]*)','i'), replaceTagsAndSpaces, parseTraffic);
+		if(isset(result[counterPrefix+'_total']) && isset(result[counterPrefix+'_used'])) {
+			getParam(result[counterPrefix+'_total'] - result[counterPrefix+'_used'], result, counterPrefix+'_left');
+		}
 	}
 }

@@ -9,6 +9,45 @@ var g_headers = {
 
 function main(){
     var prefs = AnyBalance.getPreferences();
+	
+	checkEmpty(prefs.login, 'Введите логин!');
+    checkEmpty(prefs.password, 'Введите пароль!');
+	
+	var baseurl = "https://ib.rencredit.ru/rencredit/ru/";
+    
+    var html = AnyBalance.requestGet(baseurl, g_headers);
+	
+    html = AnyBalance.requestPost(baseurl + 'home?p_p_id=ClientLogin_WAR_bscbankserverportalapp&p_p_lifecycle=2&p_p_state=normal&p_p_mode=view&p_p_resource_id=SEND_FORM&p_p_cacheability=cacheLevelPage&p_p_col_id=column-1&p_p_col_count=1', {
+        login:prefs.login,
+        password:prefs.password,
+    }, addHeaders({'X-Requested-With':'XMLHttpRequest'}));
+	
+	if(!/but_exit\.gif/i.test(html)){
+		if(/Введите полученный в SMS одноразовый код/.test(html))
+			throw new AnyBalance.Error('Банк требует ввести одноразовый СМС код. Для использования приложения необходимо отключить подтверждение входа по смс. Но новый интернет банк не предоставляет такой возможности, обращайтесь в службу поддержки Вашего банка.');
+		
+        //var htmlErr = AnyBalance.requestGet(baseurl + 'faces/renk/login.jsp', g_headers);
+        var error = getParam(html, null, null, /msg-error"(?:[^>]*>){1}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+        if(error)
+            throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+		
+		AnyBalance.trace(html);
+        throw new AnyBalance.Error('Не удалось зайти в интернет-банк. Сайт изменен?');
+    }
+	
+	if(/ChangeLoginPassword.jspx/.test(html))
+        throw new AnyBalance.Error('Интернет банк требует сменить пароль. Войдите в интернет банк https://online.rencredit.ru через браузер, установите новый пароль, а затем введите новый пароль в настройки провайдера.', null, true);
+	
+	if(prefs.type == 'acc')
+        fetchAccount(html, baseurl);
+	else if(prefs.type == 'deposit') 
+		fetchDeposit(html, baseurl);
+    else
+        fetchCard(html, baseurl); //По умолчанию карты будем получать
+}
+
+function mainOld(){
+    var prefs = AnyBalance.getPreferences();
 
     checkEmpty(prefs.login, 'Введите логин!');
     checkEmpty(prefs.password, 'Введите пароль!');

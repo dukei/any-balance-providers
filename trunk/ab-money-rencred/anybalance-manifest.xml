@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-money-rencred</id>
+	<id version="5">ab-money-rencred</id>
 	<api flags="no_browser"/>
 	<name>Ренессанс Кредит</name>
 	<description html="true"><![CDATA[

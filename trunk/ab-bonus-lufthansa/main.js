@@ -24,8 +24,8 @@ function main(){
     //Need to enter a country
     var html = AnyBalance.requestGet(baseurl + "/hpg/cor.do?l=en", g_headers);
 	//return makeCountries(html);
-
-    var country = prefs.country || 'ZZ';
+	
+	var country = prefs.country || 'DE';
     var action = getParam(html, null, null, /action="(\/hpg\/cor.do[^"]*)/i, null, html_entity_decode);
     if(!action)
         throw new AnyBalance.Error('Can not find country form!');
@@ -35,13 +35,13 @@ function main(){
         timezone: jstz.determine_timezone().name()
     }, g_headers);
 	
-    html = AnyBalance.requestPost(baseurl + "/hpg/login.do?l=en_RU&showOverlay=service_account&viewPortHeight=483", {
+    html = AnyBalance.requestPost(baseurl + "/hpg/login.do?l=en", {
         user:prefs.login,
         pass:prefs.password,
         step:'search'
     }, g_headers);
 	
-    if(!/step=logout/.test(html)){
+    if(!/step=logout|\/logout\?/.test(html)){
         var error = getParam(html, null, null, /<span[^>]*class="feedback_neg"[^>]*>([\s\S]*?)<\/span>/, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error);

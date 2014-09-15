@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="16">ab-money-raif</id>
+	<id version="17">ab-money-raif</id>
 	<name>Райффайзен</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о текущем остатке и других параметрах счетов и депозитов для клиентов банка Райффайзенбанк (http://www.raiffeisen.ru).</p>
-	<p>Информация берется из Интернет-банка (http://connect.raiffeisen.ru).</p>
+	<p>Предоставляет информацию о текущем остатке и других параметрах счетов и депозитов для клиентов банка Райффайзенбанк (<a href="http://www.raiffeisen.ru">http://www.raiffeisen.ru</a>).</p>
+	<p>Информация берется из Интернет-банка (<a href="http://connect.raiffeisen.ru">http://connect.raiffeisen.ru</a>).</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
 	<p>Как подключиться к Интернет-банку:</p>
 	<ol> 
-	<li>Обратитесь с документом, удостоверяющим личность, в любое отделение типа «А» Райффайзенбанка и подпишите Заявление на регистрацию в системе Raiffeisen CONNECT.</li>
-	<li>После подписания заявления вы получите логин и ПИН-конверт, содержащий ваш пароль для доступа в Raiffeisen CONNECT.</li>
+		<li>Обратитесь с документом, удостоверяющим личность, в любое отделение типа «А» Райффайзенбанка и подпишите Заявление на регистрацию в системе Raiffeisen CONNECT.</li>
+		<li>После подписания заявления вы получите логин и ПИН-конверт, содержащий ваш пароль для доступа в Raiffeisen CONNECT.</li>
 	</ol>
 	]]></instruction>
 	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>

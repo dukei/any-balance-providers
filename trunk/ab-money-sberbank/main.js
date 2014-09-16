@@ -244,7 +244,7 @@ function main() {
 	}
 	checkEmpty(prefs.login, "Пожалуйста, укажите логин для входа в Сбербанк-Онлайн!");
 	checkEmpty(prefs.password, "Пожалуйста, укажите пароль для входа в Сбербанк-Онлайн!");
-	if (prefs.lastdigits && !/^\d{4}$/.test(prefs.lastdigits)) 
+	if (prefs.lastdigits && !/^\d{4,5}$/.test(prefs.lastdigits)) 
 		throw new AnyBalance.Error("Надо указывать 4 последних цифры карты или не указывать ничего", null, true);
 /*      
     var html = AnyBalance.requestGet(baseurl + 'esClient/_logon/LogonContent.aspx');
@@ -598,8 +598,6 @@ function fetchNewAccountCard(html, baseurl) {
 	// Теперь только здесь есть курсы валют
 	var result = {success: true};
 	fetchRates(html, result);
-
-        
 	
 	html = AnyBalance.requestGet(baseurl + '/PhizIC/private/cards/list.do');
 	var lastdigits = prefs.lastdigits ? prefs.lastdigits.replace(/(\d)/g, '$1\\s*') : '(?:\\d\\s*){3}\\d';
@@ -626,13 +624,9 @@ function fetchNewAccountCard(html, baseurl) {
 		getParam(html, result, 'userName', /Держатель карты:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/, replaceTagsAndSpaces, capitalFirstLenttersDecode);
 		getParam(html, result, 'cash', /Для снятия наличных:(?:[^>]*>){5}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, 'electrocash', /для покупок:(?:[^>]*>){5}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'minpay', /Минимальный платеж:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'maxlimit', /Кредитный лимит:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/, replaceTagsAndSpaces, parseBalance);
-		/* приходит вот такая штука:
-		<td class="align-right field">Дата минимального платежа:</td><td><span class="bold">
-		Thu Nov 28 00:00:00 MSK 2013 &nbsp;</span>
-		*/
-		getParam(html, result, 'minpaydate', /Дата минимального платежа:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/, replaceTagsAndSpaces, parseDateForWord);
+		getParam(html, result, 'minpay', /Обязательный платеж(?:[^>]*>){5}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'minpaydate', /Обязательный платеж(?:[^>]*>){7}([\s\S]*?)<\/div>/, replaceTagsAndSpaces, parseDateWord);
+		getParam(html, result, 'maxlimit', /Кредитный лимит(?:[^>]*>){5}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 	}
 	fetchNewThanks(baseurl, result);
 	if (AnyBalance.isAvailable('lastPurchSum') || AnyBalance.isAvailable('lastPurchPlace') || AnyBalance.isAvailable('lastPurchDate')) {

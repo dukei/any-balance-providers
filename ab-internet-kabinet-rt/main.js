@@ -51,17 +51,24 @@ function main(){
     AnyBalance.setCookie('kabinet.rt.ru', 'sessionHashKey', json.sessionKey);
 
     html = AnyBalance.requestGet(baseurl, g_headers);
-    var accinfo = getParam(html, null, null, /var[\s+]services\s*=\s*(\{[\s\S]*?\})\s*;/, null, getJson);
+	
+	html = AnyBalance.requestGet(baseurl + 'serverLogic/cabinetGetStructure', g_headers);
+	
+	try {
+		var accinfo = getJson(html);
+	} catch(e) {}
+	
+    //var accinfo = getParam(html, null, null, /var[\s+]services\s*=\s*(\{[\s\S]*?\})\s*;/, null, getJson);
     if(!accinfo)
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     
     if(accinfo.isError)
         throw new AnyBalance.Error(accinfo.errorMsg);
 
-    if(!accinfo.accounts || accinfo.accounts.length == 0)
+    if(!accinfo.cabinet.accounts || accinfo.cabinet.accounts.length == 0)
         throw new AnyBalance.Error("В вашем кабинете Ростелеком ещё не подключена ни одна услуга");
 
-    AnyBalance.trace('Найдено ' + accinfo.accounts.length + ' л/с');
+    AnyBalance.trace('Найдено ' + accinfo.cabinet.accounts.length + ' л/с');
     AnyBalance.trace('Требуются ' + (prefs.num || 'любые л/с'));
 
     var nums = prefs.num ? prefs.num.split(/,/g) : ['', '', '', ''];
@@ -80,8 +87,8 @@ function main(){
         if(num){
             //Если num непустой, то ищем аккаунт с этим номером
             accsearch:
-            for(var j=0; j<accinfo.accounts.length; ++j){
-                var _acc = accinfo.accounts[j];
+            for(var j=0; j<accinfo.cabinet.accounts.length; ++j){
+                var _acc = accinfo.cabinet.accounts[j];
                 if(endsWith(_acc.number, num)){
                     acc = _acc;
                     break;
@@ -99,7 +106,7 @@ function main(){
             }
         }else{
             //Если num пустой, то просто берем следующий по счету аккаунт
-            acc = accinfo.accounts[i];
+            acc = accinfo.cabinet.accounts[i];
         }
         
         if(!acc){
@@ -257,8 +264,8 @@ function main(){
 
     //Получим баланс для остальных л\с, если юзер запросил
     if(AnyBalance.isAvailable('totalBalancePlus', 'totalBalanceMinus')){
-        for(var i=0; i<accinfo.accounts.length; ++i){
-            var acc = accinfo.accounts[i];
+        for(var i=0; i<accinfo.cabinet.accounts.length; ++i){
+            var acc = accinfo.cabinet.accounts[i];
             if(!acc.__detailedInfo){
                 AnyBalance.trace('Дополнительно получаем данные для л/с: ' + acc.number);
                 html = AnyBalance.requestPost(baseurl + 'serverLogic/getAccountInfo', {account: acc.id}, g_headers);

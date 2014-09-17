@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-lan-ua</id>
+	<api flags="no_browser"/>
+	<name>LocalNet (Украина)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера LocalNet <a href="http://lan.ua/">http://lan.ua/</a></p>
+	<p>Информация берется из личного кабинета <a href="https://stat.lan.ua/cgi-bin/">https://stat.lan.ua/cgi-bin/</a></p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>md5.js</js>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" грн"/>
+		<counter id="balance_act" name="Акционный баланс" units=" грн"/>
+		<counter id="balance_bonus" name="Бонусный баланс" units=" грн"/>
+		<counter id="abon" name="Итоговая стоимость тарифного плана" units=" грн"/>
+		<counter id="discount" name="Скидка" units=" %"/>
+		<counter id="fio" name="ФИО" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet</type>
+	<country>ua</country>
+</provider>

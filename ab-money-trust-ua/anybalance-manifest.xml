@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-money-trust-ua</id>
+	<api flags="no_browser"/>
+	<name>Траст банк (Унраина)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Траст банк <a href="http://banktrust.com.ua/">http://banktrust.com.ua/</a></p>
+	<p>Информация берется из личного кабинета <a href="https://mobi.banktrust.com.ua/mobi-trust/Login.do">https://mobi.banktrust.com.ua/mobi-trust/Login.do</a></p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" грн"/>
+		<counter id="blocked" name="Заблокировано" units=" грн"/>
+	</counters>
+	<keywords></keywords>
+	<type>money</type>
+	<country>ua</country>
+</provider>

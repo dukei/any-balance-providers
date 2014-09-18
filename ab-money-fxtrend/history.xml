@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="13" date="2014-09-18">
+      - New PAMM-indexes added: "MAggressive", "Victory2".
+      - Small improvements.
+    </change>
     <change version="12" date="2014-07-26">
       - New PAMM-index "i500" added.
       - Improved the forecast of drawdown for PAMM indices.

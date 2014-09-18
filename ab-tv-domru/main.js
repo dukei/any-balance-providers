@@ -6,6 +6,11 @@
 Личный кабинет: http://chel.domru.ru/balance_ktv
 */
 
+var g_region_change = {
+	kzn: 'kazan',
+	nch: 'chelny'
+}
+
 function main(){
 	var prefs = AnyBalance.getPreferences();
 	var domain = prefs.region;
@@ -14,6 +19,9 @@ function main(){
 	if(prefs.region==""){	// Санкт-петербург по умолчанию
 		domain='spb';
 	}
+
+	if(g_region_change[domain])
+		domain = g_region_change[domain];
 
 	AnyBalance.trace('Selected region: ' + domain);
 

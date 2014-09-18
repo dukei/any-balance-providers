@@ -5,8 +5,8 @@
         summary="|Выберите регион|Выбран регион '{@s}'!"
         key="region"
         defaultValue="spb"
-        entries="Барнаул|Брянск|Волгоград (Волжский)|Воронеж|Дзержинск|Екатеринбург|Ижевск|Иркутск|Йошкар-Ола|Казань|Киров|Красноярск|Курган|Курск|Липецк|Магнитогорск|Набережные Челны|Нижнекамск|Нижний Новгород|Новосибирск|Омск|Оренбург|Пенза|Пермь|Ростов-на-Дону|Рязань|Самара|Санкт-Петербург|Саратов (Энгельс)|Сызрань|Тверь|Томск|Тула|Тюмень|Ульяновск|Уфа|Чебоксары|Челябинск|Ярославль"
-        entryValues="barnaul|bryansk|volgograd|voronezh|dzr|ekat|izhevsk|irkutsk|yola|kzn|kirov|krsk|kurgan|kursk|lipetsk|mgn|nch|nk|nn|nsk|omsk|oren|penza|perm|rostov|ryazan|samara|spb|saratov|syzran|tver|tomsk|tula|tmn|ulsk|ufa|cheb|chel|yar" />
+        entries="Барнаул|Брянск|Волгоград|Волжский|Воронеж|Дзержинск|Екатеринбург|Ижевск|Иркутск|Йошкар-Ола|Казань|Киров|Красноярск|Курган|Курск|Липецк|Магнитогорск|Набережные Челны|Нижнекамск|Нижний Новгород|Новосибирск|Омск|Оренбург|Пенза|Пермь|Ростов-на-Дону|Рязань|Самара|Санкт-Петербург|Саратов (Энгельс)|Сызрань|Тверь|Томск|Тула|Тюмень|Ульяновск|Уфа|Чебоксары|Челябинск|Энгельс|Ярославль"
+        entryValues="barnaul|bryansk|volgograd|vlz|voronezh|dzr|ekat|izhevsk|irkutsk|yola|kzn|kirov|krsk|kurgan|kursk|lipetsk|mgn|nch|nk|nn|nsk|omsk|oren|penza|perm|rostov|ryazan|samara|spb|saratov|syzran|tver|tomsk|tula|tmn|ulsk|ufa|cheb|chel|engels|yar" />
     <EditTextPreference 
         key="uname"
         title="Фамилия и имя" 

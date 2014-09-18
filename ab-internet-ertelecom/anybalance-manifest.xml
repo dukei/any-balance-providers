@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="6">ab-internet-ertelecom</id>
+	<id version="7">ab-internet-ertelecom</id>
+	<api flags="no_browser"/>
 	<name>Дом.ру (Эр-телеком)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем балансе и номере лицевого счета для пользователей интернет-провайдера "Эр-телеком" (ДОМ.РУ), http://domru.ru.</p>

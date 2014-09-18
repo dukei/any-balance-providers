@@ -5,6 +5,12 @@
 Сайт оператора: http://citydom.ru/
 */
 
+var g_region_change = {
+	kzn: 'kazan',
+	nch: 'chelny',
+	nsk: 'novosib'
+};
+
 function main(){
 	var prefs = AnyBalance.getPreferences();
 	var domain = prefs.region;
@@ -13,6 +19,9 @@ function main(){
 	if(prefs.region ==""){	// Казань по умолчанию
 		domain='kzn';
 	}
+
+	if(g_region_change[domain])
+		domain = g_region_change[domain];
 
 	AnyBalance.trace('Selected region: ' + domain);
 

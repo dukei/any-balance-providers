@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-game-4game</id>
+	<id version="3">ab-game-4game</id>
+	<api flags="no_browser"/>
 	<name>Фогейм</name>
-	<description>
-	Получает баланс и бонусы в сервисе для поклонников онлайн развлечений Фогейм (https://ru.4game.com).
-	</description>
+	<description html="true"><![CDATA[
+	<p>Получает баланс и бонусы в сервисе для поклонников онлайн развлечений Фогейм (<a href="https://ru.4game.com">https://ru.4game.com</a>)</p>
+	]]></description>
 	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
@@ -14,8 +15,8 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units="р"/>
-		<counter id="bonus" name="Бонусы" units="б"/>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="bonus" name="Бонусы" units=" б"/>
 	</counters>
 	<keywords>4game</keywords>
 	<type>game</type>

@@ -68,7 +68,8 @@ function main(){
 				for(i in c){
 					if(account[c[i]] != undefined){result[c[i]] = account[c[i]];}
 				}
-				result.receipts = Math.round((result.equity*1 - result.balance*1)*100)/100;
+				if(result.equity!=null && result.balance!=null)
+					result.receipts = Math.round((result.equity*1 - result.balance*1)*100)/100;
 			}else{
 				throw new AnyBalance.Error("Incorrect account number.");
 			}
@@ -88,7 +89,8 @@ function main(){
 			result.deposited = getParam(info, null, null, /<td[^>]*>total<\/td>\s+<td[^>]*>(.*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 			result.withdrawn = getParam(info, null, null, /<td[^>]*>total<\/td>\s+<td[^>]*>.*?<\/td>\s+<td[^>]*>(.*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 			result.difference = getParam(info, null, null, /<td[^>]*>total<\/td>\s+<td[^>]*>.*?<\/td>\s+<td[^>]*>.*?<\/td>\s+<td[^>]*>(.*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-			result.income = Math.round((result.total*1 - result.difference*1)*100)/100;
+			if(result.total!=null && result.difference!=null)
+				result.income = Math.round((result.total*1 - result.difference*1)*100)/100;
 
 		}
 //PAMM-monitoring (without login)

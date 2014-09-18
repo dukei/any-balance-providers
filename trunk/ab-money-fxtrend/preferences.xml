@@ -52,8 +52,8 @@
 		title="PAMM index"
 		dialogTitle="Select PAMM index"
 		summary="||{@s}"
-		entries="2010|Aggressive|Balance|Balance2|Balance3|Diamond|Gold|GoldP2|i500|Million|Million2|Million3|Platinum|Platinum2|Prize|Prize2"
-		entryValues="2010|Aggressive|Balance|Balance2|Balance3|Diamond|Gold|GoldP2|i500|Million|Million2|Million3|Platinum|Platinum2|Prize|Prize2">
+		entries="2010|Aggressive|Balance|Balance2|Balance3|Diamond|Gold|GoldP2|i500|MAggressive|Million|Million2|Million3|Platinum|Platinum2|Prize|Prize2|Victory2"
+		entryValues="2010|Aggressive|Balance|Balance2|Balance3|Diamond|Gold|GoldP2|i500|MAggressive|Million|Million2|Million3|Platinum|Platinum2|Prize|Prize2|Victory2">
 	</ListPreference>
 	<EditTextPreference 
 		positiveButtonText="ОК"

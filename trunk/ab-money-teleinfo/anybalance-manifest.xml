@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="13" major_version="2">ab-money-teleinfo</id>
+	<id version="14" major_version="2">ab-money-teleinfo</id>
 	<name>ВТБ24: Телеинфо</name>
 	<api flags="no_browser"/>
 	<description html="true"><![CDATA[
@@ -36,6 +36,7 @@
 		<counter id="cardname" name="Название" type="text"/>
 		<counter id="cardnum" name="Номер" type="text"/>
 		<counter id="fio" name="Владелец" type="text"/>
+		<counter id="all" name="Сводка" type="text"/>
 	</counters>
 	<keywords>ВТБ24, Телебанк, телеинфо</keywords>
 	<type>money</type>

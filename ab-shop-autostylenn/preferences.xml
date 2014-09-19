@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference
+	obligatory="true"
+        key="userv"
+        title="Логин" 
+        dialogTitle="Логин" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите Ваш логин"
+        positiveButtonText="ОК" >
+    </EditTextPreference>
+    <EditTextPreference
+	obligatory="true"
+        key="passv" 
+        title="Пароль"
+        summary="Пароль для входа||***********\n"
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        dialogMessage="Введите пароль для входа в личный кабинет"
+        positiveButtonText="ОК"
+        inputType="textPassword">
+    </EditTextPreference>
+    <EditTextPreference 
+        key="order_num"
+        title="Номер заказа" 
+        summary="Номер заказа для отслеживания\n" 
+        dialogTitle="Номер заказа" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите номер заказа для отслеживания"
+        positiveButtonText="ОК" 
+        inputType="number">
+    </EditTextPreference>
+</PreferenceScreen>

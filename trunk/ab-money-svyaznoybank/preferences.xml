@@ -28,7 +28,7 @@
         summary="||{@s}"
         entries="Карта|Вклад"
         entryValues="card|dep"
-	defaultValue="card">
+		defaultValue="card">
     </ListPreference>
     <EditTextPreference 
         positiveButtonText="ОК"

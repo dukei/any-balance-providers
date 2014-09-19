@@ -36,7 +36,7 @@ function mainInet(prefs) {
 		'undefined':'Вход',
     }, addHeaders({Referer: baseurl + 'core.php'}));
 	
-	if(!/>выход</i.test(html)) {
+	if(!/>выход<|^ok$/i.test(html)) {
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}

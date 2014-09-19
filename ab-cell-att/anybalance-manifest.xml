@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-cell-att</id>
+  <name>AT&amp;T (USA)</name>
+  <description>
+    Obtains AT&amp;T account balance.
+
+    If you are not registered for AT&amp;T you can register here: https://www.att.com/olam/slidRegistrationAction.olamexecute
+  </description>
+  <author>Sergii Puliaiev &lt;sergii.puliaiev@gmail.com&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+	<js>api:jquery.min.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Account balance" prefix="$"/>
+    <counter id="till" name="Use by" type="time" format="MMM dd"/>
+    <counter id="expires" name="Expires" type="time" format="MMM dd"/>
+    <counter id="planName" name="Plan name" type="text"/>
+    <counter id="minPerMonth" name="Minutes per month" units=" min"/>
+    <counter id="minAvailable" name="Minutes available" units=" min"/>
+    <counter id="smsPerMonth" name="Messages per month" units=" sms"/>
+    <counter id="smsAvailable" name="Messages available" units=" sms"/>
+    <counter id="trafficPerMonth" name="Traffic per month" type="text"/>
+    <counter id="trafficAvaliable" name="Traffic available" type="text"/>
+    <counter id="status" name="Plan status" type="text"/>
+  </counters>
+  <keywords>
+  </keywords>
+  <type>
+    cell
+  </type>
+  <country>
+    us
+  </country>
+</provider>

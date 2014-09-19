@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Mobile Number" 
+        positiveButtonText="OK" 
+        summary="|Enter 10 digits of your number|{@s}" 
+        dialogTitle="Mobile Number" 
+        negativeButtonText="Cancel" 
+        dialogMessage="Enter your 10 digits of your mobile number"
+        inputType="number"
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="OK"
+        key="password" 
+        dialogTitle="Password"
+        negativeButtonText="Cancel"
+        title="Password"
+        summary="||****\n"
+        dialogMessage="Please enter a 4 digit password for your AT&amp;T account."
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

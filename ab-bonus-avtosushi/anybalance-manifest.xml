@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-bonus-avtosushi</id>
+	<api flags="no_browser"/>
+	<name>avtosushi.ru</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о бонусах по карте лояльности avtosushi.ru</p>
+	<p>Информация берется из личного кабинета http://bonus.avtosushi.ru</p>
+	]]></description>
+	<author>dp &lt;d.p@km.ru&gt;</author>
+	<files>
+		<icon>avtosushi.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+	</files>
+	<counters>
+		<counter id="card_bonus" name="Бонусы" units=" руб"/>
+	</counters>
+	<keywords>avtosushi, avtopizza</keywords>
+	<type>bonus</type>
+	<country>ru</country>
+</provider>

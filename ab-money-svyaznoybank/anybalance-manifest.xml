@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="20">ab-money-svyaznoybank</id>
+	<id version="21">ab-money-svyaznoybank</id>
 	<api flags="no_browser"/>
 	<name>Связнойбанк (QBank)</name>
 	<description html="true"><![CDATA[
@@ -12,13 +12,13 @@
 	<p>Персональный клиентский номер – это цифровой код, который получают все клиенты банка при получении банковской карты Связной Банк.</p> 
 	<p>Если вы забыли свой ПКН:</p>
 	<ol>
-	<li>Обратитесь в контакт-центр банка по телефону 8 (800) 100-00-05 для его восстановления.</li>
-	<li>После получения ПКН зарегистрируйте его на странице http://login.qbank.ru/auth/UI/Login, нажав на кнопку «Зарегистрироваться и получить новый пароль».</li>
+		<li>Обратитесь в контакт-центр банка по телефону 8 (800) 100-00-05 для его восстановления.</li>
+		<li>После получения ПКН зарегистрируйте его на странице http://login.qbank.ru/auth/UI/Login, нажав на кнопку «Зарегистрироваться и получить новый пароль».</li>
 	</ol>
 	<br>
 	<b>ВНИМАНИЕ!</b> Для работы провайдера необходимо отключить запрос одноразового пароля при входе в Интернет-банк: 
 	<ul>
-	<li>Зайдите в Интернет-банк через браузер, в меню "Настройки" снимите галочку у опции "SMS-пароли на вход".</li>
+		<li>Зайдите в Интернет-банк через браузер, в меню "Настройки" снимите галочку у опции "SMS-пароли на вход".</li>
 	</ul>   
 	<p><small>Отключение подтверждения даёт возможность только зайти в систему, в целях безопасности НЕВОЗМОЖНО отключить SMS-подтверждение при совершении платежных операций.</small></p>
 	]]></instruction>
@@ -31,23 +31,35 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Остаток" units="{@currency}"/>
+		<counter id="balance" name="Остаток" units=" {@currency}"/>
 		<counter id="cardballs" name="Плюсы"/>
-		<counter id="accamount" name="Средств на счете" units="{@currency}"/>
+		<counter id="accamount" name="Средств на счете" units=" {@currency}"/>
 		<counter id="currency" name="Валюта" type="text"/>
 		<counter id="cardnum" name="Номер карты" type="text"/>
 		<counter id="cardname" name="Тип карты" type="text"/>
 		<counter id="accnum" name="Номер счета" type="text"/>
 		<counter id="accname" name="Имя счета" type="text"/>
+		<counter id="minpay" name="Необходимо оплатить" units=" {@currency}"/>
+		<counter id="minpay_till" name="Необходимо оплатить до" type="time" format="dd/MM/yyyy"/>
+		
 		<counter id="cardnum1" name="Номер карты 2" type="text"/>
 		<counter id="cardname1" name="Тип карты 2" type="text"/>
 		<counter id="cardballs1" name="Баллы 2"/>
+		<counter id="minpay1" name="Необходимо оплатить 2" units=" {@currency}"/>
+		<counter id="minpay_till1" name="Необходимо оплатить до 2" type="time" format="dd/MM/yyyy"/>
+		
 		<counter id="cardnum2" name="Номер карты 3" type="text"/>
 		<counter id="cardname2" name="Тип карты 3" type="text"/>
 		<counter id="cardballs2" name="Баллы 3"/>
+		<counter id="minpay2" name="Необходимо оплатить 3 " units=" {@currency}"/>
+		<counter id="minpay_till2" name="Необходимо оплатить до 3" type="time" format="dd/MM/yyyy"/>		
+		
 		<counter id="cardnum3" name="Номер карты 4" type="text"/>
 		<counter id="cardname3" name="Тип карты 4" type="text"/>
 		<counter id="cardballs3" name="Баллы 4"/>
+		<counter id="minpay3" name="Необходимо оплатить 4" units=" {@currency}"/>
+		<counter id="minpay_till3" name="Необходимо оплатить до 4" type="time" format="dd/MM/yyyy"/>
+		
 		<counter id="all" name="Сводка" type="text"/>
 	</counters>
 	<keywords>интернет-банк, связной, кубанк</keywords>

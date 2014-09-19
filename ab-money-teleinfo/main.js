@@ -39,6 +39,13 @@ function doNew(prefs) {
 	var json = getJson(html);
 
 	if(!json.authorized) {
+		// Проверим на otp
+		if(json.authConfirmation)
+			throw new AnyBalance.Error('Телеинфо требует ввести одноразовый смс-код. Для использования данного провайдера, проверку кода необходимо отключить.');
+		
+		if(json.accountLocked)
+			throw new AnyBalance.Error('Ваш аккаунт заблокирован банком, свяжитесь со службой технической поддержки для разблокирования аккаунта.', null, true);
+		
 		var error = json.error.msg;
 		if (error)
 			throw new AnyBalance.Error(error, null, /Логин или пароль введены неверно/i.test(error));

@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="2" version="15" date="2014-09-19">
+	- Улучшена обработка ошибок.
+	</change>
 	<change major_version="2" version="14" date="2014-09-18">
 	- Исправлена ошибка в отображении сводки.
 	</change>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<api flags="no_browser" />
+	<id major_version="1.0" version="3">ab-shop-autostylenn</id>
+	<name>Автостиль-НН</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о заказах, текущем балансе и задолженности для пользователей интернет-магазина Автостиль-НН.</p>
+	<p>Информация берется из личного кабинета (http://autostylenn.ru/).</p>
+	]]></description>
+	<author>Sergey Shalyminov &lt;voyager@voyager.su&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<history>history.xml</history>
+		<js>library.js</js>
+		<js>main.js</js>
+	</files>
+	<counters>
+		<counter id="balance" name="На счету" units=" р"/>
+		<counter id="active" name="Активные заказы" units=" р"/>
+		<counter id="debt" name="Долг по заказам" units=" р"/>
+		<counter id="owner" name="Заказчик" type="text"/>
+		<counter id="order_data" name="Данные заказа" type="text"/>
+		<counter id="order_datearrive" name="Дата прихода заказа" type="text"/>
+		<counter id="order_status" name="Статус заказа" type="text"/>
+		<counter id="order_summary" name="Сводка заказа" type="text"/>
+	</counters>
+	<keywords>магазин автостиль автостильнн автостиль-нн</keywords>
+	<type>shop</type>
+	<country>ru</country>
+</provider>

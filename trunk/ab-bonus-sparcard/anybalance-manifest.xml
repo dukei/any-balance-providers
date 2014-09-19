@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="5">ab-bonus-sparcard</id>
+	<api flags="no_browser"/>
+	<name>Sparcard.ru</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о бонусах по карте магазинов SPAR, EUROSPAR и SPARexpress</p>
+	<p>Информация берется из личного кабинета http://sparcard.ru</p>
+	]]></description>
+	<author>dp &lt;d.p@km.ru&gt;</author>
+	<files>
+		<icon>spar.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+	</files>
+	<counters>
+		<counter id="card_bonus" name="Бонусы" units=" руб"/>
+	</counters>
+	<keywords>spar, sparclub, sparcard</keywords>
+	<type>bonus</type>
+	<country>ru</country>
+</provider>

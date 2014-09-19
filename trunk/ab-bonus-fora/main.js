@@ -26,7 +26,7 @@ function main(){
 	
 	getParam(html, result, 'bonus', /Доступний для витрат бонус:(?:[^>]*>){2}([\d\s.,]+)грн/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, '__tariff', /"leftColumnText"(?:[^>]*>)([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'baly', /id="balliNow">(\d+?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'baly', /var\s+baliparse\s*=\s*"(\d+)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'bonus_deadline', /Доступний для витрат бонус:(?:[^>]*>){2}[^<]+до([^<]+)/i, replaceTagsAndSpaces, parseDate);
 	
 	AnyBalance.setResult(result);

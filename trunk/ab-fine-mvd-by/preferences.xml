@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference
+		title="Фамилия"
+		key="surname"
+		summary="|Ваша фамилия, например, Иванов|{@s}"
+		obligatory="true"
+		dialogTitle="Фамилия"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите вашу фамилию, регистр букв не имеет значения. Например, Иванов">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Имя"
+		key="username"
+		summary="|Ваше имя, например, Дмитрий|{@s}"
+		obligatory="true"
+		dialogTitle="Имя"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите ваше имя, регистр букв не имеет значения. Например, Дмитрий">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Отчество"
+		key="fathername"
+		summary="|Ваше отчество, например, Иванович|{@s}"
+		obligatory="true"
+		dialogTitle="Отчество"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите ваше отчество, регистр букв не имеет значения. Например, Иванович">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Серия СТС"
+		key="srseria"
+		summary="|Серия СТС, например, МАА|{@s}"
+		obligatory="true"
+		dialogTitle="Серия СТС"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите серию свидетельства о регистрации ТС, например МАА, регистр букв не имеет значения.">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Номер СТС"
+		key="srnumber"
+		summary="|Номер СТС, например, 123456|{@s}"
+		obligatory="true"
+		inputType="number"
+		dialogTitle="Номер СТС"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите номер свидетельства о регистрации ТС, например 123456.">
+	</EditTextPreference>
+</PreferenceScreen>

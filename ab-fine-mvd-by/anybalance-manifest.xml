@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<api flags="no_browser"/>
+	<id version="1">ab-fine-mvd-by</id>
+	<name>Штрафы (Беларусь)</name>
+	<description html="true"><![CDATA[
+	<p>Проверка наличия фактов превышения установленной скорости движения и соответствующих штрафов на сайте МВД Беларуси http://mvd.gov.by/. Информация берется со страницы http://mvd.gov.by/ru/main.aspx?guid=15791.
+	</p>
+	]]></description>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="status" name="Штрафы" type="text"/>
+	</counters>
+	<keywords>штраф беларусь гаи камера видеофиксация нарушений пдд</keywords>
+	<type>fine</type>
+	<country>by</country>
+</provider>

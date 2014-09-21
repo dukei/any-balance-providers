@@ -74,7 +74,7 @@ function main(){
 	
     getParam(html, result, 'balance', /Your credit[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, ['currency', 'balance'], /Your credit[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, [replaceTagsAndSpaces, /&euro;/i, '€'], parseMyCurrency);
-    getParam(html, result, 'freedays', /Freedays:(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'freedays', /Freedays:(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 
     AnyBalance.setResult(result);
 }

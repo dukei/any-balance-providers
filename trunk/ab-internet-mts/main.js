@@ -757,10 +757,10 @@ function getSaratov(){
 }
 
 function getChita(){
-	var urlIndex = 'https://clb.chita.mts.ru/chita/index.php?r=site/login';
-	var urlAjax = 'https://clb.chita.mts.ru/chita/index.php?r=account/vgroups&agrmid=';
+	var urlIndex = 'https://clb.primorye.mts.ru/chita/index.php?r=site/login';
+	var urlAjax = 'https://clb.primorye.mts.ru/chita/index.php?r=account/vgroups&agrmid=';
 	
-	newTypicalLanBillingInetTv(urlIndex, urlAjax);
+	typicalLanBillingInetTv(urlIndex, urlAjax);
 }
 
 function getAmur(){

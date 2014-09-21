@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="75" date="2014-09-21">
+	- Изменился регион: Чита.
+	</change>
 	<change version="74" date="2014-09-12">
 	- Добавлен регион: Архангельск.
 	</change>

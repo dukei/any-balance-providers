@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="74">ab-internet-mts</id>
+	<id version="75">ab-internet-mts</id>
 	<name>Домашний Интернет и Телевидение МТС</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем балансе, номере лицевого счета и договора, ФИО владельца, трафике в текущем месяце, абонентской плате для пользователей провайдера "Домашний Интернет и Телевидение МТС".</p>
@@ -29,7 +29,7 @@
 		<li>Барнаул (<a href="http://kabinet.barnaul.mts.ru">http://kabinet.barnaul.mts.ru</a>)<br></li>
 		<li>Белгород (<a href="http://stat.belgorod-net.ru">http://stat.belgorod-net.ru</a>)<br></li>
 		<li>Саратов (<a href="http://stat.saratov.comstar.ru/">http://stat.saratov.comstar.ru/</a>)<br></li>
-		<li>Чита (<a href="https://clb.chita.mts.ru/chita/">https://clb.chita.mts.ru/chita/</a>)<br></li>
+		<li>Чита (<a href="https://clb.primorye.mts.ru/chita/">https://clb.primorye.mts.ru/chita/</a>)<br></li>
 		<li>Амурская область г. Благовещенск; г. Белогорск (<a href="https://clb.amur.mts.ru/cblg/">https://clb.amur.mts.ru/cblg/</a>)<br></li>
 		<li>Орел (<a href="http://lbc.oreltv.ru/index.php">http://lbc.oreltv.ru/index.php</a>)<br></li>
 		<li>Санкт-Петербург (<a href="https://lk.spb.mts.ru/index.php">https://lk.spb.mts.ru/index.php</a>)<br></li>

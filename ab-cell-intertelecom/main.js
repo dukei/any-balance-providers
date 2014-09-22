@@ -108,6 +108,7 @@ function main() {
     //Кредит до…
     getParam(html, result, 'kredit', /<td[^>]*>\s*Кредит до...\s*<\/td>\s*<td[^>]*>([^<]*)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     //Номер телефона
+    getParam(html, result, 'phonet', /<td[^>]*>\s*Абонентский код\s*<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, [replaceTagsAndSpaces, /(\d+)/i, '+38$1']);
     getParam(html, result, 'phonet', /<td[^>]*>\s*Номер телефона\s*<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, [replaceTagsAndSpaces, /(\d+)/i, '+38$1']);
     //Номер телефона мобильный
     getParam(html, result, 'mobphonet', /<td[^>]*>\s*Мобильный номер\s*<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, [replaceTagsAndSpaces, /(\d+)/i, '+38$1']);

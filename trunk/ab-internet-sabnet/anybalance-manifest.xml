@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-sabnet</id>
+	<api flags="no_browser"/>
+	<name>Сабнет (Махачкала)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Сабнет г. Махачкала <a href="http://www.subnet05.ru/">http://www.subnet05.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="http://81.163.32.46:8080/bgbilling/webexecuter">http://81.163.32.46:8080/bgbilling/webexecuter</a></p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+        <counter id="abon" name="Абонплата" units=" р"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

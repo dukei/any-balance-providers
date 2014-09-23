@@ -31,7 +31,7 @@ function main(){
     var html = AnyBalance.requestPost(baseurl + 'dorf1.php', {
 	name:prefs.login,
 	password:prefs.password,
-	lowRes:1,
+	// lowRes:1,
 	s1:'Войти',
 	w:'1920:1080',
 	login:Math.floor(new Date().getTime()/1000)

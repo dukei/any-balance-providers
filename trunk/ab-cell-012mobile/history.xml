@@ -6,4 +6,7 @@
 	<change version="2" date="2014-09-15">
 	- Current plan information, data plan information (only available on some, but not all accounts, use the mobile site to check).
 	</change>
+	<change version="3" date="2014-09-23">
+	- Roaming plan credit.
+	</change>
 </history>

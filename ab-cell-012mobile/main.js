@@ -56,6 +56,21 @@ function getBillData(key)
 }
 
 
+// get abroad plans info
+function getContractInfo(key)
+{
+	var billUrl = 'https://192.118.8.173:8443/IntlSrv/InternationalAPI.svc/General/GetContractInfo';
+	var billRequest = '{"brand":"012Mobile","key" : "' + key + '"}';
+	var json = getJson(AnyBalance.requestPost(billUrl,billRequest,addHeaders(g_headers)));
+	if (typeof json.ContractId=="undefined")
+	{
+		AnyBalance.trace(JSON.stringify(json));
+		throw new AnyBalance.Error("Unexpected server response");
+	}
+	return(json); 
+}
+
+
 function main() 
 {
 	var result = {success: true};
@@ -73,9 +88,11 @@ function main()
 	var key = getKey(guid);
 	AnyBalance.trace('Key: ' + key);
 	
-	// get bill data
+	// get bill data and contract info (contract info contains the roaming plans)
 	var bill = getBillData(key);
 	AnyBalance.trace('Bill: ' + JSON.stringify(bill));
+	var contract = getContractInfo(key);
+	AnyBalance.trace('ContractInfo: ' + JSON.stringify(contract));
 	
     // get data plans, sum it all up together in case there is more than one
 	if (bill.dataPackages.length)
@@ -91,6 +108,15 @@ function main()
 		} 
 	}
 
+    // get roaming plans
+	for (var i=0,n=0;i<contract.ActivatedPackages.length;i++) 
+	{
+		var plan = contract.ActivatedPackages[i];
+        if ((plan.Balance==null) || (plan.Balance.RemainAmount==null))
+            continue;
+        getParam(plan.Balance.RemainAmount.toString(), result, 'roamingcredit'+(++n), null, null, parseBalance); 
+	} 
+	
 	// set the rest of the results
 	getParam(bill.total, result, 'price', null, null, parseBalance); 
 	getParam(bill.FullName, result, 'fullname', null, null, html_entity_decode); 
@@ -98,7 +124,7 @@ function main()
 	getParam(bill.nextBillcycle, result, 'nextbill', null, null, parseDate); 
 	getParam(bill.discountExpiration, result, 'discountend', /\d\d\.\d\d\.\d\d\d\d/, null, parseDate); 
 	getParam(bill.rateplan, result, 'plan', null, null, html_entity_decode); 
-    
-	// done, set the result
+	
+    // done, set the result
 	AnyBalance.setResult(result);
 }

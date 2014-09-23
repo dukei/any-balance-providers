@@ -10,7 +10,7 @@ function main() {
 	
 	var baseurl = "https://reg.2domains.ru/";
 	
-	var html = AnyBalance.requestPost(baseurl + 'login2.php', {
+	var html = AnyBalance.requestPost(baseurl + 'login.php', {
 		ret: '/',
 		email: prefs.login,
 		passwd: prefs.password,

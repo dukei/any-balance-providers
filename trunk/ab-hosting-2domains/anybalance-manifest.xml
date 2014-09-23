@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="4">ab-hosting-2domains</id>
+	<id version="5">ab-hosting-2domains</id>
 	<name>2domains (регистрация доменов)</name>
 	<description html="true"><![CDATA[
 	<p>Получает баланс и информацию о доменах из центра регистрации доменов 2domains (http://2domains.ru).</p>

@@ -14,315 +14,100 @@ var g_headers = {
     'User-Agent':'Mozilla/5.0 (Linux; U; Android 4.0.2; en-us; Galaxy Nexus Build/ICL53F) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30'
 }
 
-function getParam (html, result, param, regexp, replaces, parser) {
-	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
-		return;
-
-	var value = regexp.exec (html);
-	if (value) {
-		value = value[1];
-		if (replaces) {
-			for (var i = 0; i < replaces.length; i += 2) {
-				value = value.replace (replaces[i], replaces[i+1]);
-			}
-		}
-		if (parser)
-			value = parser (value);
-
-    if(param)
-      result[param] = value;
-    else
-      return value
-	}
-}
-
-var replaceTagsAndSpaces = [/<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
-var replaceFloat = [/\s+/g, '', /,/g, '.'];
-
-function parseBalance(text){
-    var val = getParam(html_entity_decode(text).replace(/\s+/g, ''), null, null, /(-?\d[\d\s.,]*)/, replaceFloat, parseFloat);
-    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
-    return val;
-}
-
-/**
- * Заменяет HTML сущности в строке на соответствующие им символы
- */
- function html_entity_decode (string) {
-  // http://kevin.vanzonneveld.net
-  // +   original by: john (http://www.jd-tech.net)
-  // +      input by: ger
-  // +   improved by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-  // +    revised by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-  // +   bugfixed by: Onno Marsman
-  // +   improved by: marc andreu
-  // +    revised by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-  // +      input by: Ratheous
-  // +   bugfixed by: Brett Zamir (http://brett-zamir.me)
-  // +      input by: Nick Kolosov (http://sammy.ru)
-  // +   bugfixed by: Fox
-  // -    depends on: get_html_translation_table
-  // *     example 1: html_entity_decode('Kevin &amp; van Zonneveld');
-  // *     returns 1: 'Kevin & van Zonneveld'
-  // *     example 2: html_entity_decode('&amp;lt;');
-  // *     returns 2: '&lt;'
-  var hash_map = {},
-    symbol = '',
-    tmp_str = '',
-    entity = '';
-  tmp_str = string.toString();
-  var quote_style = '';
-  if (false === (hash_map = get_html_translation_table('HTML_ENTITIES', quote_style))) {
-    return false;
-  }
-
-  // fix &amp; problem
-  // http://phpjs.org/functions/get_html_translation_table:416#comment_97660
-  delete(hash_map['&']);
-  hash_map['&'] = '&amp;';
-
-  for (symbol in hash_map) {
-    entity = hash_map[symbol];
-    tmp_str = tmp_str.split(entity).join(symbol);
-  }
-  tmp_str = tmp_str.split('&#039;').join("'");
-
-  return tmp_str;
-}
-function get_html_translation_table (table, quote_style) {
-  // http://kevin.vanzonneveld.net
-  // +   original by: Philip Peterson
-  // +    revised by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-  // +   bugfixed by: noname
-  // +   bugfixed by: Alex
-  // +   bugfixed by: Marco
-  // +   bugfixed by: madipta
-  // +   improved by: KELAN
-  // +   improved by: Brett Zamir (http://brett-zamir.me)
-  // +   bugfixed by: Brett Zamir (http://brett-zamir.me)
-  // +      input by: Frank Forte
-  // +   bugfixed by: T.Wild
-  // +      input by: Ratheous
-  // %          note: It has been decided that we're not going to add global
-  // %          note: dependencies to php.js, meaning the constants are not
-  // %          note: real constants, but strings instead. Integers are also supported if someone
-  // %          note: chooses to create the constants themselves.
-  // *     example 1: get_html_translation_table('HTML_SPECIALCHARS');
-  // *     returns 1: {'"': '&quot;', '&': '&amp;', '<': '&lt;', '>': '&gt;'}
-  var entities = {},
-    hash_map = {},
-    decimal;
-  var constMappingTable = {},
-    constMappingQuoteStyle = {};
-  var useTable = {},
-    useQuoteStyle = {};
-
-  // Translate arguments
-  constMappingTable[0] = 'HTML_SPECIALCHARS';
-  constMappingTable[1] = 'HTML_ENTITIES';
-  constMappingQuoteStyle[0] = 'ENT_NOQUOTES';
-  constMappingQuoteStyle[2] = 'ENT_COMPAT';
-  constMappingQuoteStyle[3] = 'ENT_QUOTES';
-
-  useTable = !isNaN(table) ? constMappingTable[table] : table ? table.toUpperCase() : 'HTML_SPECIALCHARS';
-  useQuoteStyle = !isNaN(quote_style) ? constMappingQuoteStyle[quote_style] : quote_style ? quote_style.toUpperCase() : 'ENT_COMPAT';
-
-  if (useTable !== 'HTML_SPECIALCHARS' && useTable !== 'HTML_ENTITIES') {
-    throw new Error("Table: " + useTable + ' not supported');
-    // return false;
-  }
-
-  entities['38'] = '&amp;';
-  if (useTable === 'HTML_ENTITIES') {
-    entities['160'] = '&nbsp;';
-    entities['161'] = '&iexcl;';
-    entities['162'] = '&cent;';
-    entities['163'] = '&pound;';
-    entities['164'] = '&curren;';
-    entities['165'] = '&yen;';
-    entities['166'] = '&brvbar;';
-    entities['167'] = '&sect;';
-    entities['168'] = '&uml;';
-    entities['169'] = '&copy;';
-    entities['170'] = '&ordf;';
-    entities['171'] = '&laquo;';
-    entities['172'] = '&not;';
-    entities['173'] = '&shy;';
-    entities['174'] = '&reg;';
-    entities['175'] = '&macr;';
-    entities['176'] = '&deg;';
-    entities['177'] = '&plusmn;';
-    entities['178'] = '&sup2;';
-    entities['179'] = '&sup3;';
-    entities['180'] = '&acute;';
-    entities['181'] = '&micro;';
-    entities['182'] = '&para;';
-    entities['183'] = '&middot;';
-    entities['184'] = '&cedil;';
-    entities['185'] = '&sup1;';
-    entities['186'] = '&ordm;';
-    entities['187'] = '&raquo;';
-    entities['188'] = '&frac14;';
-    entities['189'] = '&frac12;';
-    entities['190'] = '&frac34;';
-    entities['191'] = '&iquest;';
-    entities['192'] = '&Agrave;';
-    entities['193'] = '&Aacute;';
-    entities['194'] = '&Acirc;';
-    entities['195'] = '&Atilde;';
-    entities['196'] = '&Auml;';
-    entities['197'] = '&Aring;';
-    entities['198'] = '&AElig;';
-    entities['199'] = '&Ccedil;';
-    entities['200'] = '&Egrave;';
-    entities['201'] = '&Eacute;';
-    entities['202'] = '&Ecirc;';
-    entities['203'] = '&Euml;';
-    entities['204'] = '&Igrave;';
-    entities['205'] = '&Iacute;';
-    entities['206'] = '&Icirc;';
-    entities['207'] = '&Iuml;';
-    entities['208'] = '&ETH;';
-    entities['209'] = '&Ntilde;';
-    entities['210'] = '&Ograve;';
-    entities['211'] = '&Oacute;';
-    entities['212'] = '&Ocirc;';
-    entities['213'] = '&Otilde;';
-    entities['214'] = '&Ouml;';
-    entities['215'] = '&times;';
-    entities['216'] = '&Oslash;';
-    entities['217'] = '&Ugrave;';
-    entities['218'] = '&Uacute;';
-    entities['219'] = '&Ucirc;';
-    entities['220'] = '&Uuml;';
-    entities['221'] = '&Yacute;';
-    entities['222'] = '&THORN;';
-    entities['223'] = '&szlig;';
-    entities['224'] = '&agrave;';
-    entities['225'] = '&aacute;';
-    entities['226'] = '&acirc;';
-    entities['227'] = '&atilde;';
-    entities['228'] = '&auml;';
-    entities['229'] = '&aring;';
-    entities['230'] = '&aelig;';
-    entities['231'] = '&ccedil;';
-    entities['232'] = '&egrave;';
-    entities['233'] = '&eacute;';
-    entities['234'] = '&ecirc;';
-    entities['235'] = '&euml;';
-    entities['236'] = '&igrave;';
-    entities['237'] = '&iacute;';
-    entities['238'] = '&icirc;';
-    entities['239'] = '&iuml;';
-    entities['240'] = '&eth;';
-    entities['241'] = '&ntilde;';
-    entities['242'] = '&ograve;';
-    entities['243'] = '&oacute;';
-    entities['244'] = '&ocirc;';
-    entities['245'] = '&otilde;';
-    entities['246'] = '&ouml;';
-    entities['247'] = '&divide;';
-    entities['248'] = '&oslash;';
-    entities['249'] = '&ugrave;';
-    entities['250'] = '&uacute;';
-    entities['251'] = '&ucirc;';
-    entities['252'] = '&uuml;';
-    entities['253'] = '&yacute;';
-    entities['254'] = '&thorn;';
-    entities['255'] = '&yuml;';
-  }
-
-  if (useQuoteStyle !== 'ENT_NOQUOTES') {
-    entities['34'] = '&quot;';
-  }
-  if (useQuoteStyle === 'ENT_QUOTES') {
-    entities['39'] = '&#39;';
-  }
-  entities['60'] = '&lt;';
-  entities['62'] = '&gt;';
-
-
-  // ascii decimals to real symbols
-  for (decimal in entities) {
-    if (entities.hasOwnProperty(decimal)) {
-      hash_map[String.fromCharCode(decimal)] = entities[decimal];
-    }
-  }
-
-  return hash_map;
-}
-/*function html_entity_decode(str)
-{
-	//return str;
-    //jd-tech.net
-    var tarea = document.createElement('textarea');
-    tarea.innerHTML = str;
-    return tarea.value;
-}*/
-
-function createFormParams(html, process){
-    var params = {};
-    html.replace(/<input[^>]+name="([^"]*)"[^>]*>/ig, function(str, name){
-        var value = getParam(str, null, null, /value="([^"]*)"/i, null, html_entity_decode);
-        name = html_entity_decode(name);
-        if(process){
-            value = process(params, str, name, value);
-        }
-        params[name] = value;
-    });
-    return params;
-}
-
 function main() {
-
-	var result = {
-        success: true
-    };
-
+	var result = {success: true};
     var prefs = AnyBalance.getPreferences();
     
     AnyBalance.setDefaultCharset('utf-8');
-
+	
 	var baseurl = "https://accounts.google.com/ServiceLogin?service=adwords&hl=ru_RU&ltmpl=jfk&continue=https://adwords.google.com/um/gaiaauth?apt%3DNone%26ltmpl%3Djfk&passive=86400&sacu=1&sarp=1";
 	var baseurlLogin = "https://accounts.google.com/";
     
-    var html = AnyBalance.requestGet(baseurl, g_headers);
-    var params = createFormParams(html, function(params, input, name, value){
-        var undef;
-        if(name == 'Email')
-            value = prefs.login;
-        else if(name == 'Passwd')
-            value = prefs.password;
-        else if(name == 'PersistentCookie')
-            value = undef; //Снимаем галочку
-       
-        return value;
-    });
-    
-    //AnyBalance.trace(JSON.stringify(params));
+	try {
+		var html = AnyBalance.requestGet(baseurl, g_headers);
+		var params = createFormParams(html, function(params, input, name, value){
+			var undef;
+			if(name == 'Email')
+				value = prefs.login;
+			else if(name == 'Passwd')
+				value = prefs.password;
+			else if(name == 'PersistentCookie')
+				value = undef; //Снимаем галочку
+		   
+			return value;
+		});
+		
+		//AnyBalance.trace(JSON.stringify(params));
 
-    var html = AnyBalance.requestPost(baseurlLogin + 'ServiceLoginAuth', params, g_headers);
+		var html = AnyBalance.requestPost(baseurlLogin + 'ServiceLoginAuth', params, g_headers);
 
-    //AnyBalance.trace(html);
+		//AnyBalance.trace(html);
 
-    if(!/authenticatedUserName/i.test(html)){
-        var error = getParam(html, null, null, /<span[^>]+class="errormsg[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
-        if(error)
-            throw new AnyBalance.Error(error);
-        error = getParam(html, null, null, /(<form[^>]+name="verifyForm")/i);
-        if(error)
-            throw new AnyBalance.Error("This account requires 2-step authorization. Turn off 2-step authorization to use this provider.");
-        throw new AnyBalance.Error('Can not log in google account.');
-    }
-
-	html = AnyBalance.requestGet('https://adwords.google.com/select/ShowBillingSummary?hl=ru', g_headers);
+		if(!/authenticatedUserName/i.test(html)){
+			var error = getParam(html, null, null, /<span[^>]+class="errormsg[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+			if(error)
+				throw new AnyBalance.Error(error);
+			error = getParam(html, null, null, /(<form[^>]+name="verifyForm")/i);
+			if(error)
+				throw new AnyBalance.Error("This account requires 2-step authorization. Turn off 2-step authorization to use this provider.");
+			throw new AnyBalance.Error('Can not log in google account.');
+		}
+		
+		html = AnyBalance.requestGet('https://adwords.google.com/select/ShowBillingSummary?hl=ru', g_headers);
+	} catch(e) {
+		if(prefs.dbg)
+			html = AnyBalance.requestGet('https://adwords.google.com/select/ShowBillingSummary?hl=ru', g_headers);
+		else
+			throw e;
+	}
+	
+	var lg = null;
+	var ng = function(a) {
+		for (var b = [], c = 0, d = 0; d < a.length; d++) {
+			for (var e = a.charCodeAt(d); 255 < e;) b[c++] = e & 255, e >>= 8;
+			b[c++] = e
+		}
+		//if (!da(b)) throw Error("M");
+		if (!lg)
+			for (lg = {}, mg = {}, a = 0; 65 > a; a++) lg[a] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=".charAt(a), mg[a] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_.".charAt(a);
+		a = mg;
+		c = [];
+		for (d = 0; d < b.length; d += 3) {
+			var f = b[d],
+				k = (e = d + 1 < b.length) ? b[d + 1] : 0,
+				l = d + 2 < b.length,
+				q = l ? b[d + 2] : 0,
+				O = f >> 2,
+				f = (f & 3) << 4 | k >> 4,
+				k = (k & 15) << 2 | q >> 6,
+				q = q & 63;
+			l || (q = 64, e || (k = 64));
+			c.push(a[O], a[f], a[k], a[q])
+		}
+		return c.join("")
+	};
+	var v = Date.now || function() {
+		return +new Date
+	};
+	
+	var ya = function() {
+		return Math.floor(2147483648 * Math.random()).toString(36) + Math.abs(Math.floor(2147483648 * Math.random()) ^ (0, v)()).toString(36)
+	};
+	
+	var pcid = getParam(html, null, null, /"pcid"[^>]*value="([^"]+)/i);
+	var hostOrigin = getParam(html, null, null, /"hostOrigin"[^>]*value="([^"]+)/i);
+	
+	hostOrigin = ng(hostOrigin);
+	
+	html = AnyBalance.requestGet('https://bpui0.google.com/payments/u/0/transactions?pcid=' + pcid + '&hostOrigin=' + hostOrigin + '&hl=ru&ipi=' + ya(), g_headers);
+	
     if(/<form[^>]+name="tcaccept"/i.test(html)){
         //Надо че-то принять, че-то у них изменилось.
         throw new AnyBalance.Error('Положения программы Google изменились. Пожалуйста, зайдите в ваш аккаунт Adwords через браузер и на вкладке "Сводка платежных данных" примите новые положения.');
     }
-
-    getParam(html, result, 'balance', /<div[^>]+id="adw-billing-billingstatement-currentBalance"[^>]*>\s+\(?([^\)<]*)\)?<\/div>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'currency', /<div[^>]+id="adw-billing-billingstatement-currentBalance"[^>]*>\s+\((\w+)\s+/i, replaceTagsAndSpaces);
+	
+	getParam(html, result, 'balance', /Остаток(?:[^>]*>){2}\s*\(([^)]+)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'currency', /Остаток(?:[^>]*>){2}\s*\(([^)]+)/i, replaceTagsAndSpaces, parseCurrency);
 
     AnyBalance.setResult(result);
 }

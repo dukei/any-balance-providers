@@ -19,7 +19,7 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	AnyBalance.setDefaultCharset('utf-8');
+	AnyBalance.setDefaultCharset('windows-1251');
 	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
@@ -73,12 +73,15 @@ function checkForLoginErrors(html) {
 		'This request requires HTTP authentication':'Проверьте правильность ввода пароля!'
 	}
 	
+	if(/<h1>Сервер на обслуживании.<\/h1>/.test(html))
+		throw new AnyBalance.Error('Приносим свои извинения, сервер находится на обслуживании. Повторите попытку через несколько минут.');
+	
 	var match = /(UsernameNotFoundException|This request requires HTTP authentication)/i.exec(html);
 	
 	if(match) {
 		var error = errors[match[1]];
 		if (error)
-			throw new AnyBalance.Error(error, null, true);	
+			throw new AnyBalance.Error(error, null, true);
 	}
 	
 	AnyBalance.trace(html);

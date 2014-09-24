@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-global-alania</id>
+	<api flags="no_browser"/>
+	<name>Интернет Глобал Алания</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Интернет Глобал Алания <a href="">http://globalalania.ru/</a>http://globalalania.ru/</p>
+	<p>Информация берется из личного кабинета <a href="https://bill.globalalania.ru:8443/bgbilling/webexecuter"></a>https://bill.globalalania.ru:8443/bgbilling/webexecuter</p>
+
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="account" name="Договор №" type="text"/>
+		<counter id="fee" name="Абонентская плата" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

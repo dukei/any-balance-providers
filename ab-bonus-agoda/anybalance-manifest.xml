@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-bonus-agoda</id>
+	<id version="3">ab-bonus-agoda</id>
 	<api flags="no_browser"/>
 	<name>Agoda bonuses</name>
 	<description html="true"><![CDATA[

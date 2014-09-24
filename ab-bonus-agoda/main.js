@@ -12,11 +12,11 @@ var g_headers = {
 };
 
 function getViewState(html) {
-	return getParam(html, null, null, /"__VIEWSTATE"[^>]*value="([^"]*)/i);
+	return getParam(html, null, null, /"__VIEWSTATE"[^>]*value="([^"]+)/i);
 }
 
 function getEventValidation(html) {
-	return getParam(html, null, null, /"__EVENTVALIDATION"[^>]*value="([^"]*)/i);
+	return getParam(html, null, null, /"__EVENTVALIDATION"[^>]*value="([^"]+)/i);
 }
 
 function main() {
@@ -36,7 +36,8 @@ function main() {
 		'__EVENTARGUMENT':'',
 		'__VIEWSTATE':getViewState(html),
 		'__EVENTVALIDATION':getEventValidation(html),
-		'ctl00$ctl00$Googlesearch$txtSearch':'',
+		'ctl00$ctl00$ddlCurrency$hidCurrencyChange':'USD',
+		'ctl00$ctl00$ddlCurrency$hidCurrencySelected':'',
 		'ctl00$ctl00$MainContent$ContentMain$RewardLogin1$txtEmail':prefs.login,
 		'ctl00$ctl00$MainContent$ContentMain$RewardLogin1$txtPassword':prefs.password,
 		'__ASYNCPOST':'true',
@@ -46,14 +47,14 @@ function main() {
 		'X-MicrosoftAjax':'Delta=true',
 		'X-Requested-With':'XMLHttpRequest'
 	}));
-
-	if (!/pageRedirect||%2frewards%2fmanagebooking.html/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
-		if (error && /Неверный логин или пароль/i.test(error))
-			throw new AnyBalance.Error(error, null, true);
+	
+	if (!/pageRedirect\|\|%2frewards%2fmanagebooking\.html/i.test(html)) {
+		var error = getParam(html, null, null, /class="notification_error"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
-			throw new AnyBalance.Error(error);
-		throw new AnyBalance.Error('Can`t login! Is the site is changed?');
+			throw new AnyBalance.Error(error, null, /Email or Password is incorrect/i.test(error));
+		
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	
 	html = AnyBalance.requestPost(baseurl + 'rewards/managebooking.html', {

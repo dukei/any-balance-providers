@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-money-mdr</id>
+	<api flags="no_browser"/>
+	<name>Мастер денежных расчетов</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Мастер денежных расчетов <a href="https://secure.mdr26.ru/">https://secure.mdr26.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="https://secure.mdr26.ru/">https://secure.mdr26.ru/</a></p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="begin_period" name="Долг на начало расчетного периода" units=" р"/>
+		<counter id="accrued" name="Начислено в расчетном периоде" units=" р"/>
+		<counter id="odn" name="ОДН в расчетном периоде" units=" р"/>
+		<counter id="changes" name="Изменения в расчетном периоде" units=" р"/>
+		<counter id="paid" name="Оплачено всего в расчетном периоде" units=" р"/>
+		<counter id="balance" name="Долг на конец расчетного периода" units=" р"/>
+	</counters>
+	<keywords></keywords>
+	<type>money</type>
+	<country>ru</country>
+</provider>

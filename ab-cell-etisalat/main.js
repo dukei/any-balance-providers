@@ -84,6 +84,10 @@ function main(){
             if(g_errors[errid])
                 throw new AnyBalance.Error(g_errors[errid]);
 			
+			var error = getParam(html, null, null, /class="errorMessage"([^>]*>){2}/i, replaceTagsAndSpaces, html_entity_decode);
+			if (error)
+				throw new AnyBalance.Error(error, null, /Either user ID or password is incorrect/i.test(error));			
+			
             //Если объяснения ошибки не найдено, при том, что на сайт войти не удалось, то, вероятно, произошли изменения на сайте
             throw new AnyBalance.Error('The login attempt has failed. Is the site changed?');
         }

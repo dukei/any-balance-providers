@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-transport-salik</id>
+	<id version="2">ab-transport-salik</id>
 	<api flags="no_browser"/>
 	<name>Salik</name>
 	<description html="true"><![CDATA[
@@ -15,8 +15,8 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" {@currency}"/>
-		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="balance" name="Balance" units=" {@currency}"/>
+		<counter id="currency" name="Currency" type="text"/>
 		<counter id="acc_num" name="Account number" type="text"/>
 		<counter id="acc_type" name="Account type" type="text"/>
 		<counter id="acc_status" name="Account status" type="text"/>

@@ -844,7 +844,7 @@ function getBonuses(xhtml, result) {
 			} else if (/Денежный бонус/i.test(name)) {
 				getParam(services[i], result, 'rub_bonus2', reValue, replaceTagsAndSpaces, parseBalance);
 				getParam(services[i], result, 'rub_bonus2_till', /<div[^>]+class="column3[^"]*"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseDateWord);
-			} else if (/Рублей за участие в опросе|Счастливое время|Бонусы по программе/i.test(name)) {
+			} else if (/Рублей за участие в опросе|Счастливое время|Бонусы по программе|Счастливого времени/i.test(name)) {
 				sumParam(services[i], result, 'rub_opros', reValue, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 			} else if (/Времени общения/i.test(name)) {
 				sumParam(services[i], result, 'min_local', reValue, replaceTagsAndSpaces, parseMinutes, aggregate_sum);

@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="44" date="2014-09-28">
+	- Исправлен вход с русским логином
+	</change>
 	<change version="43" date="2014-09-16">
 	- Исправлено отображение данных по кредитным картам.
 	</change>

@@ -277,11 +277,16 @@ function main() {
 	var html = AnyBalance.requestPost(baseurl);
 	var error = getParam(html, null, null, /<h1[^>]*>О временной недоступности услуги[\s\S]*?<p[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
 	if (error) throw new AnyBalance.Error(error);
+
+	//Сбер разрешает русские логины и кодирует их почему-то в 1251, хотя в контент-тайп передаёт utf-8.
+	AnyBalance.setDefaultCharset('windows-1251');
 	html = AnyBalance.requestPost(baseurl, {
 		'field(login)': prefs.login,
 		'field(password)': prefs.password,
 		operation: 'button.begin'
 	});
+	AnyBalance.setDefaultCharset('utf-8');
+
 	error = getParam(html, null, null, /в связи с ошибкой в работе системы[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
 	if (error)
 		throw new AnyBalance.Error(error);

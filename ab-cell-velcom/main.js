@@ -197,7 +197,13 @@ function main(){
 			sumParam(html, result, 'min', /([\s\d]+)мин/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 			sumParam(html, result, 'mms', /([\s\d]+)(?:MMS|ММС)/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 			getParam(html, result, 'traffic', /([\s\d]+)(?:М|M)(?:B|Б)/i, replaceTagsAndSpaces, parseBalance);
-		} else {
+		} else if(/<td[^>]+id="DISCOUNT"/i.test(html)){
+			//<tr class="uneven">
+            //                     <td class="info_caption"><span>Скидки:</span></td>
+            //                     <td class="info" id="DISCOUNT" colspan="2"><span>У вас осталось 949776 Кб 1 Кб </span></td>
+            //                  </tr>
+			getParam(html, result, 'traffic', /<td[^>]+id="DISCOUNT"[^>]*>([\s\S]*?)<\/td>/i, [replaceTagsAndSpaces, /^\D+/, ''], parseTraffic);
+		}else{
 			AnyBalance.trace(html);
 			AnyBalance.trace('Не удалось найти остатки трафика, минут и ммс, сайт изменен?');
 		}

@@ -1,53 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-<change major_version="2" version="20" date="2013-12-09">
-- Изменения в процедуре входа
-</change>
-<change major_version="2" version="19" date="2013-11-17">
-- Добавлено отображение имени пользователя в списке аккаунтов 
-</change>
-<change major_version="2" version="18" date="2013-11-09">
-- Мелкие улучшения (Stark)
-</change>
-<change major_version="2" version="17" date="2013-10-04">
-- Исправлено отображение срока деактивации средств
-</change>
-<change major_version="2" version="16" date="2013-09-20">
-- Исправлено отображение валюты (Stark)
-</change>
-<change major_version="2" version="15" date="2013-07-19">
-- Поддержка изменений в личном кабинете
-</change>
-<change major_version="2" version="15" date="2013-07-19">
-- Поддержка изменений в личном кабинете
-</change>
-<change major_version="2" version="14" date="2013-07-10">
-- Исправлено получение минут по подписке
-</change>
-<change major_version="2" version="13" date="2013-07-08">
-- Добавлена совместимость с Balance Widget
-- Поддержка изменений в личном кабинете
-</change>
-<change major_version="2" version="12" date="2013-07-03">
-- Исправлено получение баланса, подписок. Обновлена иконка
-</change>
-<change major_version="2" version="11" date="2013-06-01">
-- Исправлено получение баланса в некоторых случаях
-</change>
-<change major_version="2" version="10" date="2013-05-25">
-- Иcправлено получение информации о количестве дней до деактивации средств
-</change>
-<change major_version="2" version="9" date="2013-05-13">
-- Поддержка информации о количестве дней до деактивации средств
-- Корректное получение нулевого баланса аккаунта Skype, который ранее никода не пополнялся
-</change>
-<change major_version="2" version="8" date="2012-10-26">
-- Поддержка новой процедуры входа
-</change>
-<change major_version="2" version="6" date="2012-10-09">
-- Поддержка информации об использованных минутах, числе подписок, остатке минут от подписок
-</change>
-<change major_version="1" version="6" date="2012-09-18">
-- Поддержка нового дизайна сайта
-</change>
+<!-- 	<change major_version="2" version="21" date="2014-09-29">
+	- Переведено на английский.
+	</change> -->
+	<change major_version="2" version="20" date="2013-12-09">
+	- Изменения в процедуре входа
+	</change>
+	<change major_version="2" version="19" date="2013-11-17">
+	- Добавлено отображение имени пользователя в списке аккаунтов 
+	</change>
+	<change major_version="2" version="18" date="2013-11-09">
+	- Мелкие улучшения (Stark)
+	</change>
+	<change major_version="2" version="17" date="2013-10-04">
+	- Исправлено отображение срока деактивации средств
+	</change>
+	<change major_version="2" version="16" date="2013-09-20">
+	- Исправлено отображение валюты (Stark)
+	</change>
+	<change major_version="2" version="15" date="2013-07-19">
+	- Поддержка изменений в личном кабинете
+	</change>
+	<change major_version="2" version="15" date="2013-07-19">
+	- Поддержка изменений в личном кабинете
+	</change>
+	<change major_version="2" version="14" date="2013-07-10">
+	- Исправлено получение минут по подписке
+	</change>
+	<change major_version="2" version="13" date="2013-07-08">
+	- Добавлена совместимость с Balance Widget
+	- Поддержка изменений в личном кабинете
+	</change>
+	<change major_version="2" version="12" date="2013-07-03">
+	- Исправлено получение баланса, подписок. Обновлена иконка
+	</change>
+	<change major_version="2" version="11" date="2013-06-01">
+	- Исправлено получение баланса в некоторых случаях
+	</change>
+	<change major_version="2" version="10" date="2013-05-25">
+	- Иcправлено получение информации о количестве дней до деактивации средств
+	</change>
+	<change major_version="2" version="9" date="2013-05-13">
+	- Поддержка информации о количестве дней до деактивации средств
+	- Корректное получение нулевого баланса аккаунта Skype, который ранее никода не пополнялся
+	</change>
+	<change major_version="2" version="8" date="2012-10-26">
+	- Поддержка новой процедуры входа
+	</change>
+	<change major_version="2" version="6" date="2012-10-09">
+	- Поддержка информации об использованных минутах, числе подписок, остатке минут от подписок
+	</change>
+	<change major_version="1" version="6" date="2012-09-18">
+	- Поддержка нового дизайна сайта
+	</change>
 </history>

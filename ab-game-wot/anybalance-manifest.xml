@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="23">ab-game-wot</id>
+	<id version="24">ab-game-wot</id>
 	<name>World of Tanks</name>
 	<description html="true"><![CDATA[
 	<p>Показывает ник и клан-тэг, общее количество боев и побед, средний опыт, рейтинги эффективности в игре World of Tanks, а также информацию о количестве боев и побед на выбранном танке.</p>
@@ -34,4 +34,5 @@
 	</counters>
 	<keywords>игра, game, wot</keywords>
 	<type>game</type>
+	<country>ru, ua, by</country>
 </provider>

@@ -35,7 +35,7 @@ function main(){
             'password': prefs.password
         }, addHeaders({'Referer':baseurl + lang + '/ics.security/login'}));
 		
-		AnyBalance.trace(html);
+		//AnyBalance.trace(html);
         
         if(/<form[^>]+id="login-form"/i.test(html)){
 			var error = getParam(html, null, null, /<div[^>]*class="[^"]*alert[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
@@ -51,22 +51,22 @@ function main(){
 		if(/<title>\s*Смена пароля\s*<\/title>/i.test(html))
 			throw new AnyBalance.Error("Необходимо сменить пароль, зайдите на сайт через браузер и смените пароль.");
     } else {
-		html = AnyBalance.requestGet(baseurl + lang + '/ics.account/dashboard?navipageId=1410', {'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.11 (KHTML, like Gecko) Chrome/20.0.1132.57 Safari/536.11'});
+		html = AnyBalance.requestGet(baseurl + lang + '/ics.account/dashboard', {'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.11 (KHTML, like Gecko) Chrome/20.0.1132.57 Safari/536.11'});
     }
     
     var result = {success: true};
     //(?:Теңгерім|Баланс|Balance):
-    getParam(html, result, 'balance', /<font[^>]*>(?:Ваш баланс|Сіздің теңгеріміңіз|Your balance is)([\s\d,.-]+)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'balance', /<h5[^>]*>(?:Ваш баланс|Сіздің теңгеріміңіз|Your balance is)([\s\d,.-]+)/i, replaceTagsAndSpaces, parseBalance);
     //(?:интернет плюс|internet plus)
     getParam(html, result, 'internet_plus', /(?:Ваш баланс|Сіздің теңгеріміңіз|Your balance is)[^<]*?\+\s*([\d\s.,]*\s*[Mм][Bб])/i, replaceTagsAndSpaces, parseTraffic);
     //(?:бонусные единицы)
     getParam(html, result, 'bonus', /(\d+)\s*(?:бонусных единиц|бонустық бірлік|bonus units)/i, replaceTagsAndSpaces, parseBalance);
     //(?:Шот қалпы|Статус номера|Account status):
-    getParam(html, result, 'status', /(?:Статус|Қалпы|Status):[\s\S]*?<font[^>]*>([\s\S]*?)<\/font>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'status', /<h5>(?:Статус|Қалпы|Status)(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
     //(?:Шот қалпы|Статус номера|Account status):
     getParam(html, result, 'min_roaming', /([\d\.]+)\s*(?:Бонусных минут в роуминге|Роумингтегі бонус минут|Bonus minutes in roaming)/i, replaceTagsAndSpaces, parseBalance);
     //Тариф:
-    getParam(html, result, '__tariff', /(?:Тарифный план|Тариф|Tariff):[\s\S]*?<font[^>]*>([\s\S]*?)<\/font>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, '__tariff', /(?:Тарифный план|Тариф|Tariff):(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
 
     AnyBalance.setResult(result);
 }

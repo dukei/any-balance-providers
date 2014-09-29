@@ -1,4 +1,4 @@
-/*
+/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 

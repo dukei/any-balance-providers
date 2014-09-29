@@ -16,11 +16,12 @@
     <history>history.xml</history>
   </files>
   <counters>
-    <counter id="fulltext" name="Местоположение" type="html"/>
     <counter id="location" name="Текущее местоположение" type="text"/>
-    <counter id="expected" name="Дата прибытия" type="time" format="dd/MM/yyyy"/>
     <counter id="route" name="Маршрут" type="text"/>
     <counter id="trackid" name="№ накладной" type="text"/>
+    <counter id="back" name="Обратная доставка" type="text"/>
+    <counter id="weight" name="Вес отправления" type="text"/>
+    <counter id="payment" name="Сумма к оплате" type="text"/>
   </counters>
   <keywords>
     Почтовое отправление, почта Украины

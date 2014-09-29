@@ -19,17 +19,17 @@ function main(){
 	var prefs = AnyBalance.getPreferences();
         AnyBalance.setDefaultCharset('utf-8');
 
+        
 	AnyBalance.trace('Connecting to novaposhta...');
 	var id = prefs.track_id; //Код отправления, введенный пользователем
 
-	var baseurl = "http://novaposhta.ua/frontend/tracking/ru";
+	var baseurl = "http://novaposhta.ua/tracking";
 	var html = AnyBalance.requestPost(baseurl, {
-		'en':prefs.track_id
+		'cargo_number': prefs.track_id
 	}, addHeaders({Origin:baseurl}));
 
-	if(!/<div[^>]+class="result"[^>]*>(?:[^<]|<br[^>]*>)*<table/i.test(html)){
-            //если нет таблицы с результатом, значит, вероятно, ошибка
-            var error = getParam(html, null, null, /<div[^>]+class="result"[^>]*>(?:[^<]|<br[^>]*>)*<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+	if(/не найден|не знайдено/i.test(html)){
+            var error = getParam(html, null, null, /class="response"[^<]([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
             if(error)
                 throw new AnyBalance.Error(error);
             throw new AnyBalance.Error('Не найден статус отправления. Неверный код отправления или произошли изменения на сайте.');
@@ -37,19 +37,21 @@ function main(){
      
 	var result = {success: true};
 
-        getParam(html, result, 'trackid', /(?:Результати пошуку за товарно-транспортною накладною №|Результаты поиска по товарно-транспортной накладной №)([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-        getParam(html, result, 'route', /(?:Маршрут вантажу|Маршрут груза)(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-        getParam(html, result, 'expected', /(?:Дата прибуття|Дата прибытия)(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
-        getParam(html, result, 'location', /(?:Текущее местоположение|Поточне місцезнаходження)(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+        getParam(html, result, 'trackid', /(?:Результат пошуку[^№]+|Результат поиска[^№]+)(?:[№])([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+        getParam(html, result, 'route', /Маршрут:(?:[^>]*>){1}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+        getParam(html, result, 'location', /(?:Текущее местоположение:|Поточне місцезнаходження:)([\s\S]*?)<\/a>/i, replaceTagsAndSpaces, html_entity_decode);
+        getParam(html, result, 'back', /Обратная доставка:(?:[^>]*>){1}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+        getParam(html, result, 'weight', /Вес отправления:(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+        getParam(html, result, 'payment', /Сумма к оплате:(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);     
 
-        if(AnyBalance.isAvailable('fulltext')){
-            var res = [];
-            var dt = getParam(html, null, null, /(?:Дата прибуття|Дата прибытия)(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-            if(dt)
-                res.push('Ожидается: <b>', dt, '</b><br/>');
-            res.push(getParam(html, null, null, /(?:Текущее местоположение|Поточне місцезнаходження)(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode));
-            result.fulltext = res.join('');
-        }
+        // if(AnyBalance.isAvailable('fulltext')){
+            // var res = [];
+            // var dt = getParam(html, null, null, /(?:Дата прибуття|Дата прибытия)(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+            // if(dt)
+                // res.push('Ожидается: <b>', dt, '</b><br/>');
+            // res.push(getParam(html, null, null, /(?:Текущее местоположение:|Поточне місцезнаходження:)([\s\S]*?)<\/a>/i, replaceTagsAndSpaces, html_entity_decode));
+            // result.fulltext = res.join('');
+        // }
 
 	AnyBalance.setResult(result);
 }

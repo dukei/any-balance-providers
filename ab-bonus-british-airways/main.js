@@ -1,18 +1,13 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Получает баланс и другую информацию для British Airways 
-
-Operator site: https://www.britishairways.com/travel/viewaccount/execclub/_gf/ru_ru
-
 */
 
 var g_headers = {
-'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
-'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-'Connection':'keep-alive',
-'User-Agent':'Mozilla/5.0 (BlackBerry; U; BlackBerry 9900; en-US) AppleWebKit/534.11+ (KHTML, like Gecko) Version/7.0.0.187 Mobile Safari/534.11+'
+	'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
+	'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Connection':'keep-alive',
+	'User-Agent':'Mozilla/5.0 (BlackBerry; U; BlackBerry 9900; en-US) AppleWebKit/534.11+ (KHTML, like Gecko) Version/7.0.0.187 Mobile Safari/534.11+'
 };
 
 function main(){
@@ -25,7 +20,7 @@ function main(){
     var html = AnyBalance.requestGet(baseurl + 'travel/loginr/public/ru_ru');
 
     var eId = getParam(html, null, null, /<input[^>]+name="eId"[^>]+value=\"([\s\S]*?)\"[^>]*>/i, replaceTagsAndSpaces, html_entity_decode);
-alert(eId);
+	//alert(eId);
     html = AnyBalance.requestPost(baseurl + 'travel/loginr/public/ru_ru?eId=' + eId, {
         Directional_Login:'/travel/echome/execclub/_gf/ru_ru',
         membershipNumber:prefs.login,
@@ -36,7 +31,7 @@ alert(eId);
         var error = getParam(html, null, null, /<span[^>]+class="errorTitle"[^>]*>Error<\/span>[\s\S\]*<div[^>]+class="podBody"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error);
-        throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+        throw new AnyBalance.Error('Can`t login into personal account. Maybe the site has changed??');
     }
 
     var result = {success: true};

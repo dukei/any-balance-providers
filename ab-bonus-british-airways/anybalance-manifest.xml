@@ -1,37 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-bonus-british-airways</id>
-  <name>British Airways</name>
-  <description>
-    Получает баланс и другую информацию для British Airways (https://www.britishairways.com/travel/home/execclub/_gf/ru_ru)
-
-    Информация берется из личного кабинета клиента: https://www.britishairways.com/travel/viewaccount/execclub/_gf/ru_ru
-
-  </description>
-  <author>Alexandra Shalamova &lt;alexandrashalamova@gmail.com&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Мои Баллы Avios" units=" Б"/>
-    <counter id="balanceFamaly" name="Баллы Avios на Семейном Счете" units=" Б"/>
-    <counter id="balanceStatus" name="Мои Статусные Баллы" units=" Б"/>
-    <counter id="cartType" name="Тип карты" type="text"/>
-    <counter id="yearEnd" name="Год начисления Статусных Баллов заканчивается" type="text"/>
-    <counter id="cartEnd" name="Дата истечения срока действия карты" type="text"/>
-    <counter id="fio" name="ФИО" type="text"/>
-  </counters>
-  <keywords>
-    бритиш аэролайнс
-  </keywords>
-  <type>
-    bonus
-  </type>
-  <country>
-    ru
-  </country>
+	<id version="2">ab-bonus-british-airways</id>
+	<api flags="no_browser"/>
+	<name>British Airways</name>
+  	<description html="true"><![CDATA[
+	<p>Obtains information from British Airways personal account <a href="https://www.britishairways.com/travel/home/execclub/_gf/ru_ru">https://www.britishairways.com/travel/home/execclub/_gf/ru_ru</a></p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="My points Avios" units=" Б"/>
+		<counter id="balanceFamaly" name="Points Avios on family bill" units=" Б"/>
+		<counter id="balanceStatus" name="My status points" units=" Б"/>
+		<counter id="cartType" name="Card type" type="text"/>
+		<counter id="yearEnd" name="Year accrual status points ends" type="text"/>
+		<counter id="cartEnd" name="Card expiration date" type="text"/>
+		<counter id="fio" name="Name" type="text"/>
+	</counters>
+	<keywords>бритиш аэролайнс</keywords>
+	<type>bonus</type>
+	<!-- <country>ru</country> -->
 </provider>

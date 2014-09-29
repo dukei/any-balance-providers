@@ -1,34 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-transport-nrg-tk</id>
-  <name>ТК Энергия</name>
-  <description>
-    Получает информацию о перевозках в транспортной компании ТК Энергия (http://nrg-tk.ru/poisk-nakladnoj.html)
-  </description>
-  <author>Alexandra Shalamova &lt;alexandrashalamova@gmail.com&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="results" name="Информация о доставке" type="html"/>
-    <counter id="now" name="Текущее местоположение" type="text"/>
-    <counter id="tocity" name="Куда" type="text"/>
-    <counter id="from" name="Откуда" type="text"/>
-    <counter id="sits" name="Кол-во мест" type="text"/>
-    <counter id="weight" name="Вес" units="кг"/>
-    <counter id="volume" name="Объём" units="м3"/>
-  </counters>
-  <keywords>
-    nrg-tk
-  </keywords>
-  <type>
-    transport
-  </type>
-  <country>
-    ru
-  </country>
+	<id version="2">ab-transport-nrg-tk</id>
+	<name>ТК Энергия</name>
+	<description html="true"><![CDATA[
+	<p>Получает информацию о перевозках в транспортной компании ТК Энергия (http://nrg-tk.ru/poisk-nakladnoj.html)</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<!-- <counter id="results" name="Информация о доставке" type="html"/> -->
+		<counter id="now" name="Текущее местоположение" type="text"/>
+		<counter id="tocity" name="Куда" type="text"/>
+		<counter id="from" name="Откуда" type="text"/>
+		<counter id="sits" name="Кол-во мест" type="text"/>
+		<counter id="weight" name="Вес" units=" кг"/>
+		<counter id="volume" name="Объём" units=" м3"/>
+	</counters>
+	<keywords>nrg-tk</keywords>
+	<type>transport</type>
+	<country>ru</country>
 </provider>

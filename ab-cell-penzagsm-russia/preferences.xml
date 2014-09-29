@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
     <EditTextPreference 
+		obligatory="true"
         title="Номер телефона" 
         positiveButtonText="ОК" 
         summary="Номер телефона (10 или 6 цифр)\n" 
@@ -11,6 +12,7 @@
 		inputType="phone">
     </EditTextPreference>
     <EditTextPreference 
+		obligatory="true"
         positiveButtonText="ОК"
         key="password" 
         dialogTitle="Пароль"

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-    <id version="6">ab-adv-google-adwords</id>
+    <id version="7">ab-adv-google-adwords</id>
 	<api flags="no_browser" />
     <name>Google Adwords</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе в системе Google Adwords <a href="https://adwords.google.com">https://adwords.google.com</a></p>
+	<p>Obtains information from Google Adwords personal account at <a href="https://adwords.google.com">https://adwords.google.com</a></p>
 	]]></description>
     <author>BArtWell &lt;web@bartwell.ru&gt;</author>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
@@ -16,8 +16,8 @@
 		<history>history.xml</history>
 	</files>
     <counters>
-        <counter id="balance" name="Баланс" units=" {@currency}"/>
-        <counter id="currency" name="Валюта" type="text"/>
+        <counter id="balance" name="Balance" units=" {@currency}"/>
+        <counter id="currency" name="Currency" type="text"/>
     </counters>
     <keywords>Google Adwords</keywords>
 	<type>adv</type>

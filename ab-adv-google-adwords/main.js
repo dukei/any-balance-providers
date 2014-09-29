@@ -50,7 +50,7 @@ function main() {
 			error = getParam(html, null, null, /(<form[^>]+name="verifyForm")/i);
 			if(error)
 				throw new AnyBalance.Error("This account requires 2-step authorization. Turn off 2-step authorization to use this provider.");
-			throw new AnyBalance.Error('Can not log in google account.');
+			throw new AnyBalance.Error('Can not log into google account.');
 		}
 		
 		html = AnyBalance.requestGet('https://adwords.google.com/select/ShowBillingSummary?hl=ru', g_headers);
@@ -97,7 +97,7 @@ function main() {
 	var pcid = getParam(html, null, null, /"pcid"[^>]*value="([^"]+)/i);
 	var hostOrigin = getParam(html, null, null, /"hostOrigin"[^>]*value="([^"]+)/i);
 	
-	hostOrigin = ng(hostOrigin);
+	hostOrigin = ng(hostOrigin || '');
 	
 	html = AnyBalance.requestGet('https://bpui0.google.com/payments/u/0/transactions?pcid=' + pcid + '&hostOrigin=' + hostOrigin + '&hl=ru&ipi=' + ya(), g_headers);
 	

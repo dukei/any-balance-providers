@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-money-wm</id>
+	<id version="3">ab-money-wm</id>
 	<name>WebMoney</name>
 	<description html="true"><![CDATA[
 	<p>Получает информацию о балансе кошельков WMR, WMZ, WME, WMU и WMB.</p> 
@@ -9,25 +9,26 @@
 	<instruction html="true"><![CDATA[
 	<p>Настройки:</p>
 	<ul>
-	<li>Для входа вам потребуется WM-идентификатор и пароль, которые вы можете найти на сайте https://enter.webmoney.ru/addLP.aspx.</li> 
-	<li>Если у вас mini кошелек, зайдите в свой кошелек и перейдите в раздел «Настройки». В разделе «Управление аккаунтом» выберите Light и подключите второй способ управления. После подключения должно отобразиться: «Используется в разделе: Управление аккаунтом».</li>
+		<li>Для входа вам потребуется WM-идентификатор и пароль, которые вы можете найти на сайте https://enter.webmoney.ru/addLP.aspx.</li> 
+		<li>Если у вас mini кошелек, зайдите в свой кошелек и перейдите в раздел «Настройки». В разделе «Управление аккаунтом» выберите Light и подключите второй способ управления. После подключения должно отобразиться: «Используется в разделе: Управление аккаунтом».</li>
 	</ul>
 	]]></instruction>
 	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<history>history.xml</history>
+		<js>library.js</js>
 		<js>main.js</js>
+		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="wmr" name="WMR" units="р"/>
-		<counter id="wmz" name="WMZ" units="$"/>
-		<counter id="wme" name="WME" units="€"/>
-		<counter id="wmu" name="WMU" units="₴"/>
-		<counter id="wmb" name="WMB" units="р"/>
+		<counter id="wmr" name="WMR" units=" р"/>
+		<counter id="wmz" name="WMZ" units=" $"/>
+		<counter id="wme" name="WME" units=" €"/>
+		<counter id="wmu" name="WMU" units=" ₴"/>
+		<counter id="wmb" name="WMB" units=" р"/>
 	</counters>
 	<keywords>вебмани</keywords>
 	<type>money</type>
-	<type>ru, ua, by</type>
+	<country>ru, ua, by</country>
 </provider>

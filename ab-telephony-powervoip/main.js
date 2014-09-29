@@ -31,7 +31,6 @@ function main(){
 		return value;
 	});
 	// т.к. генерируется 20 форм чтобы запутать нас, мы возьмем нужные данные из скрипта
-	// т.к. генерируется 20 форм чтобы запутать нас, мы возьмем нужные данные из скрипта
     var matches = /<input type="hidden"[^>]+name="([^"]+)" value="([^"]+)"\s*\/>\s*<\/div>\s*<\/div>/i.exec(html);
     if(!matches)
         throw new AnyBalance.Error("Can`t find session id!");
@@ -61,7 +60,7 @@ function main(){
 		params["login[mcid]"] = mcid;
 	}
 	
-    html = AnyBalance.requestPost(baseurl + 'en/login', params, addHeaders({Referer: baseurl+'en/login'})); 
+    html = AnyBalance.requestPost(baseurl + 'login', params, addHeaders({Referer: baseurl + 'login'})); 
 	
     if(!/\/logout/i.test(html)){
         var error = getParam(html, null, null, /<div[^>]+class="notification error png_bg"[^>]*>[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);

@@ -28,14 +28,14 @@ function main(){
         var result = {success: true};
         //getParam(html, result, 'cardnum', /Номер бонусной карты:[\s\S]*?>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 		getParam(html, result, '__tariff', /Уровень вашей бонусной программы:[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-        getParam(html, result, 'balance', /id='mybBonus'[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+        getParam(html, result, 'balance', /У вас общих бонусов[^>]*>\s*(\d+)/i, replaceTagsAndSpaces, parseBalance);
 		
 		if(isAvailable('all')) {
-			var table = getParam(html, null, null, /<table[^>]*>(?:[\s\S](?!<\/table>))*ListBonusTableName[\s\S]*?<\/table>/i);
+			var table = getParam(html, null, null, /<table[^>]*clubTableA[^>]*>(?:[\s\S](?!<\/table>))[\s\S]*?<\/table>/i);
 			if(table) {
 				var string = '';
-				var array = sumParam(table, null, null, /<tr>\s*<td valign=top[^>]*>\s*<div[^>]*ListBonusTableName[\s\S]*?<\/tr>/ig, replaceTagsAndSpaces);
-				for(var i = 0; i < array.length; i++) {
+				var array = sumParam(table, null, null, /<tr>\s*<td[^>]*>\s*[\s\S]*?<\/tr>/ig, replaceTagsAndSpaces);
+				for(var i = 1; i < array.length; i++) {
 					var current = getParam(array[i], null, null, null, [/(\d{4})$/i, '$1\n', /(\d{2})-(\d{2})-(\d{4})/, '$1/$2/$3']);
 					string += current;
 				}

@@ -1,35 +1,30 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-exchange-btc-e</id>
-  <name>BTC-E</name>
-  <description>
-    Obtains BitCoin exchange rates at BTC-E (https://btc-e.com)
-  </description>
-  <author>Alexandra Shalamova &lt;alexandrashalamova@gmail.com&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="avg" name="Average price" units=" {@currency_2}"/>
-    <counter id="last" name="Last Price" units=" {@currency_2}"/>
-    <counter id="low" name="Low" units=" {@currency_2}"/>
-    <counter id="high" name="High" units=" {@currency_2}"/>
-    <counter id="buy" name="Buy" units=" {@currency_2}"/>
-    <counter id="sell" name="Sell" units=" {@currency_2}"/>
-    <counter id="vol_cur" name="Volume 1" units=" {@currency_1}"/>
-    <counter id="vol" name="Volume 2" units=" {@currency_2}"/>
-    <counter id="servertime" name="Server time" type="time"/>
-  </counters>
-  <keywords>
-    бтс е биткоин
-  </keywords>
-  <type>
-    exchange
-  </type>
-  <country>
-  </country>
+	<id version="3">ab-exchange-btc-e</id>
+	<name>BTC-E</name>
+	<description html="true"><![CDATA[
+	<p>Obtains BitCoin exchange rates at BTC-E (https://btc-e.com)</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="avg" name="Average price" units=" {@currency_2}"/>
+		<counter id="last" name="Last Price" units=" {@currency_2}"/>
+		<counter id="low" name="Low" units=" {@currency_2}"/>
+		<counter id="high" name="High" units=" {@currency_2}"/>
+		<counter id="buy" name="Buy" units=" {@currency_2}"/>
+		<counter id="sell" name="Sell" units=" {@currency_2}"/>
+		<counter id="vol_cur" name="Volume 1" units=" {@currency_1}"/>
+		<counter id="vol" name="Volume 2" units=" {@currency_2}"/>
+		<counter id="servertime" name="Server time" type="time"/>
+	</counters>
+	<keywords>бтс е биткоин</keywords>
+	<type>exchange</type>
+	<country></country>
 </provider>

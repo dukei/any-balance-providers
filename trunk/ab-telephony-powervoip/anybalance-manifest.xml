@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-telephony-powervoip</id>
+	<id version="5">ab-telephony-powervoip</id>
 	<api flags="no_browser|captcha"/>
 	<name>PowerVoip</name>
 	<description html="true"><![CDATA[

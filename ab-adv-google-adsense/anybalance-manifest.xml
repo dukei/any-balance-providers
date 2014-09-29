@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-    <id version="2">ab-adv-google-adsense</id>
+    <id version="3">ab-adv-google-adsense</id>
 	<api flags="no_browser" />
     <name>Google AdSense</name>
-    <description>Информация из аккаунта Google AdSense</description>
+	<description html="true"><![CDATA[
+	<p>Obtains information from Google AdSense personal account at <a href="https://www.google.com/adsense">https://www.google.com/adsense</a></p>
+	]]></description>
     <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
     <files>
 	<icon>icon.png</icon>
@@ -12,16 +14,12 @@
     	<history>history.xml</history>
     </files>
     <counters>
-        <counter id="balance" name="Баланс"/>
-        <counter id="currency" name="Валюта" type="text"/>
-        <counter id="today" name="Сегодня"/>
-        <counter id="yesterday" name="Вчера"/>
-        <counter id="prevmonth" name="Прошлый месяц"/>
+        <counter id="balance" name="Balance"/>
+        <counter id="currency" name="Currency" type="text"/>
+        <counter id="today" name="Today"/>
+        <counter id="yesterday" name="Yesterday"/>
+        <counter id="prevmonth" name="Previous month"/>
     </counters>
-    <keywords>
-        Google AdSense
-    </keywords>
-    <type>
-        adv
-    </type>
+    <keywords>Google AdSense</keywords>
+	<type>adv</type>
 </provider>

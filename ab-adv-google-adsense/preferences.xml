@@ -5,19 +5,19 @@
         positiveButtonText="ОК" 
         summary="||{@s}" 
         dialogTitle="E-mail" 
-        negativeButtonText="Отмена" 
-        dialogMessage="Введите ваш адрес e-mail"
+        negativeButtonText="Cancel" 
+        dialogMessage="Enter your e-mail"
         key="login"
         inputType="text">
     </EditTextPreference>
     <EditTextPreference 
         positiveButtonText="ОК"
         key="password" 
-        dialogTitle="Пароль"
-        negativeButtonText="Отмена"
-        title="Пароль"
-        summary="|Введите пароль в AdSense|***********\n"
-        dialogMessage="Введите пароль, используемый для входа в Google AdSense"
+        dialogTitle="Password"
+        negativeButtonText="Cancel"
+        title="Password"
+        summary="|Password|***********\n"
+        dialogMessage="Enter your password"
         inputType="textPassword">
     </EditTextPreference>
 </PreferenceScreen>

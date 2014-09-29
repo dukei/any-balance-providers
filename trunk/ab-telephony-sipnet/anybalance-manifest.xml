@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="6">ab-telephony-sipnet</id>
+	<id version="7">ab-telephony-sipnet</id>
 	<api flags="no_browser"/>
 	<name>SIPNET</name>
 	<description html="true"><![CDATA[
@@ -20,9 +20,7 @@
 		<counter id="sipid" name="SIP ID" type="text"/>
 		<counter id="login" name="Логин" type="text"/>
 	</counters>
-  <country>
-    ru by ua kz tj uz md lt lv
-  </country>
-	<keywords>sipnet sip IP-телефония</keywords>
+	<country>ru, by, ua, kz, tj, uz, md, lt, lv</country>
+	<keywords>sipnet, sip, IP-телефония</keywords>
 	<type>telephony</type>
 </provider>

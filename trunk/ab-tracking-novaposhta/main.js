@@ -40,9 +40,9 @@ function main(){
         getParam(html, result, 'trackid', /(?:Результат пошуку[^№]+|Результат поиска[^№]+)(?:[№])([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
         getParam(html, result, 'route', /Маршрут:(?:[^>]*>){1}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
         getParam(html, result, 'location', /(?:Текущее местоположение:|Поточне місцезнаходження:)([\s\S]*?)<\/a>/i, replaceTagsAndSpaces, html_entity_decode);
-        getParam(html, result, 'back', /Обратная доставка:(?:[^>]*>){1}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
-        getParam(html, result, 'weight', /Вес отправления:(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
-        getParam(html, result, 'payment', /Сумма к оплате:(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);     
+        getParam(html, result, 'back', /Обратная доставка:|Зворотна доставка:(?:[^>]*>){1}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+        getParam(html, result, 'weight', /Вес отправления:|Вага відправлення:(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+        getParam(html, result, 'payment', /Сумма к оплате:|Сума до сплати:(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);     
 
         // if(AnyBalance.isAvailable('fulltext')){
             // var res = [];

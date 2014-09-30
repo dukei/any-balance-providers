@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-money-freekassa</id>
+	<api flags="no_browser"/>
+	<name>FREE-KASSA</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера FREE-KASSA <a href="http://www.free-kassa.ru/">http://www.free-kassa.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="http://www.free-kassa.ru/merchant/cabinet/login.php">http://www.free-kassa.ru/merchant/cabinet/login.php</a></p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" $"/>
+		<counter id="account_id" name="ID" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>money</type>
+	<country>ru</country>
+</provider>

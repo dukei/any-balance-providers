@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="3">ab-tracking-novaposhta</id>
+  <id version="4">ab-tracking-novaposhta</id>
   <api flags="no_browser"/>
   <name>Нова пошта</name>
   <description>

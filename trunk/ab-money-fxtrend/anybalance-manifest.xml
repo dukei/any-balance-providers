@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="13">ab-money-fxtrend</id>
+  <id version="14">ab-money-fxtrend</id>
   <name>FX-Trend</name>
   <description>
-    This provider helps you to check balances on your FX-Trend's account and to monitor PAMMs and PAMM indices.
+    This provider helps you to check balances on your FX-Trend's account and to monitor PAMMs and PAMM indexes.
   </description>
   <author>wtiger &lt;wtiger@mail.ru&gt;</author>
   <files>
@@ -56,7 +56,7 @@
     <counter id="index_forecast" name="3)Forecast of drawdown" units="%"/>
   </counters>
   <keywords>
-    money fx-trend forex pamm index indices pamm-index pamm-indices
+    money fx-trend forex pamm index indices indexes pamm-index pamm-indices pamm-indexes
   </keywords>
   <type>
     money

@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="14" date="2014-09-30">
+      - New PAMM-index added: "Best4".
+    </change>
     <change version="13" date="2014-09-18">
       - New PAMM-indexes added: "MAggressive", "Victory2".
       - Small improvements.

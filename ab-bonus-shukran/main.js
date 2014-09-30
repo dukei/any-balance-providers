@@ -49,8 +49,8 @@ function main(){
 
     var result = {success: true};
 	
-    getParam(html, result, 'balance', /Available\s*:(?:[^>]*>)(\d+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'balance_pending', /Pending\s*:(?:[^>]*>)(\d+)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'balance', /Available\s*:\s*(\d+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance_pending', /Pending\s*:\s*(\d+)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, '__tariff', /your card number is\s*(\d{16})/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'fio', /Hi([^<]+)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
 	

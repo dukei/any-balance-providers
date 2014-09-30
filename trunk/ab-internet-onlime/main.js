@@ -2,6 +2,14 @@
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
+var g_headers = {
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
+	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Connection': 'keep-alive',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+};
+
 function main(){
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'https://my.onlime.ru/';
@@ -18,33 +26,38 @@ function main(){
     var info = AnyBalance.requestPost(baseurl + "session/login", {
     	"login_credentials[login]": prefs.login,
         "login_credentials[password]": prefs.password
-    });
+    }, g_headers);
     
-	if(!/\/session\/logout/i.test(info)) {
-		var error = getParam(info, null, null, /<p[^>]+id="errHolder"[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
+	var wtf = getParam(info, null, null, /var wtf\s*=\s*'([^']+)/i);
+	checkEmpty(wtf, 'Не удалось найти форму входа, сайт изменен?', true);
+	
+	if(/<input[^>]*value="Войти"/i.test(info)) {
+		var error = getParam(info, null, null, /"message error"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+			throw new AnyBalance.Error(error, null, /Пароль неверный|не найден/i.test(error));
 		
 		AnyBalance.trace(info);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
     
+	info = AnyBalance.requestPost(baseurl + 'json/cabinet/', {}, addHeaders({Referer: baseurl, 'X-Requested-With': 'XMLHttpRequest', 'X-Request': 'JSON', 'X-Wtf': wtf}));
+	
     var result = {success: true};
-
-    var form = getParam(info, null, null, /<form[^>]+class="forma"[^>]*action="[^"]*choosecontract[^>]*>([\s\S]*?)<\/form>/i)
-    if(form){
-        //Несколько контрактов на аккаунте. Надо выбрать нужный лицевой счет
-        AnyBalance.trace('Требуется выбрать контракт...');
-        var re = new RegExp('<tr[^>]*>(?:[\\s\\S](?!</tr>))*?<strong[^>]*>\\s*\\d*' + (prefs.num || '\\d+') + '\\s*</strong>[\\s\\S]*?</tr>', 'i');
-        var row = getParam(form, null, null, re);
-        if(!row)
-            throw new AnyBalance.Error(prefs.num ? 'Не удалось найти лицевой счет или договор с последними цифрами ' + prefs.num : 'Не удалось найти ни одного номера счета!');
-        var idx = getParam(row, null, null, /<input[^>]+value="([^"]*)"[^>]*name="contract"/i, null, html_entity_decode);
-        AnyBalance.trace('Выбираем контракт ' + idx + '...');
-        info = AnyBalance.requestPost(baseurl + 'index/choosecontract/', {contract: idx});
-    }
-
-    info = AnyBalance.requestGet(baseurl + "json/cabinet/");
+	
+	// var form = getParam(info, null, null, /<form[^>]+class="forma"[^>]*action="[^"]*choosecontract[^>]*>([\s\S]*?)<\/form>/i)
+    // if(form){
+        // //Несколько контрактов на аккаунте. Надо выбрать нужный лицевой счет
+        // AnyBalance.trace('Требуется выбрать контракт...');
+        // var re = new RegExp('<tr[^>]*>(?:[\\s\\S](?!</tr>))*?<strong[^>]*>\\s*\\d*' + (prefs.num || '\\d+') + '\\s*</strong>[\\s\\S]*?</tr>', 'i');
+        // var row = getParam(form, null, null, re);
+        // if(!row)
+            // throw new AnyBalance.Error(prefs.num ? 'Не удалось найти лицевой счет или договор с последними цифрами ' + prefs.num : 'Не удалось найти ни одного номера счета!');
+        // var idx = getParam(row, null, null, /<input[^>]+value="([^"]*)"[^>]*name="contract"/i, null, html_entity_decode);
+        // AnyBalance.trace('Выбираем контракт ' + idx + '...');
+        // info = AnyBalance.requestPost(baseurl + 'index/choosecontract/', {contract: idx});
+    // }
+	
+    //info = AnyBalance.requestGet(baseurl + "json/cabinet/");
     AnyBalance.trace('got info: ' + info);
     var oInfo = getJson(info.replace(/:(\-)?\./g, ':$10.')); //А то "balance":-.31 не распарсивается
 	

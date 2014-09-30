@@ -1,15 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="12">ab-internet-onlime</id>
+	<id version="13">ab-internet-onlime</id>
 	<name>Onlime (Москва)</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о текущем балансе, бонусных баллах, номерах лицевого счета и договора, статусе и трафике в текущем месяце для пользователей провайдера ""Onlime"" (http://onlime.ru).</p>
-	<p>Информация берется из личного кабинета (http://my.onlime.ru).</p>
+	<p>Предоставляет информацию о текущем балансе, бонусных баллах, номерах лицевого счета и договора, статусе и трафике в текущем месяце для пользователей провайдера "Onlime" (<a href="http://onlime.ru">http://onlime.ru</a>).</p>
+	<p>Информация берется из личного кабинета (<a href="http://my.onlime.ru">http://my.onlime.ru</a>).</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
 	<p>Для работы провайдера необходимо иметь доступ к личному кабинету.</p>
-	<p>Получить доступ к личному кабинету можно на странице https://my.onlime.ru/account/forgot_password.</p>
+	<p>Получить доступ к личному кабинету можно на странице <a href="https://my.onlime.ru/account/forgot_password">https://my.onlime.ru/account/forgot_password</a>.</p>
 	]]></instruction>
 	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
 	<files>

@@ -25,6 +25,23 @@ var g_errors = {
 
 var g_isPrepayed = true;
 
+function createJSRedirectParams(html) {
+	var table = getParam(html, null, null, /var table\s*=\s*"([^"]+)/i);
+	var c = getParam(html, null, null, /var c\s*=\s*(\d+)/i);
+	var slt = getParam(html, null, null, /var slt\s*=\s*"([^"]+)/i);
+	var hash = getParam(html, null, null, /elements\[1\].value="([^"]+)/i);
+	var s1 = getParam(html, null, null, /var s1\s*=\s*'([^']+)/i);
+	var s2 = getParam(html, null, null, /var s2\s*=\s*'([^']+)/i);
+			
+	var params2 = createFormParams(html, function(params, str, name, value) {
+		if (/.+_cr/.test(name))
+			return test(table, c, slt, hash, s1, s2);
+		return decodeURIComponent(value);
+	});
+	
+	return params2;
+}
+
 function main(){
     var prefs = AnyBalance.getPreferences();
 	checkEmpty(prefs.login, 'Enter login, please!');
@@ -93,6 +110,15 @@ function main(){
         }
         // Это предоплата
         html = AnyBalance.requestGet(baseurl + 'scp/myaccount/accountoverview.jsp');
+		// Теперь добавили защиту от роботов
+		
+		var form = getParam(html, null, null, /<form method="POST"[\s\S]*?<\/form>/i);
+		if(form) {
+			AnyBalance.trace('Javascript redirect requested...');
+			var params = createJSRedirectParams(html);
+			html = AnyBalance.requestPost(baseurl + 'scp/myaccount/accountoverview.jsp', params, addHeaders({Referer: baseurl + 'login'}));		
+		}
+		
 		// Это пост оплата
 		if(/There is no pre paid account available/i.test(html)) {
 			g_isPrepayed = false;

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-	<change version="9" date="2014-10-01">
+	<change version="10" date="2014-10-01">
 	- Improved redirection handler.
 	</change>
 	<change version="8" date="2014-09-26">

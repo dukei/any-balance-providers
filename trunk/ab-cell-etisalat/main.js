@@ -32,12 +32,12 @@ function createJSRedirectParams(html) {
 	var hash = getParam(html, null, null, /elements\[1\].value="([^"]+)/i);
 	var s1 = getParam(html, null, null, /var s1\s*=\s*'([^']+)/i);
 	var s2 = getParam(html, null, null, /var s2\s*=\s*'([^']+)/i);
-			
+	
 	var params2 = createFormParams(html, function(params, str, name, value) {
 		if (/.+_cr/.test(name))
 			return test(table, c, slt, hash, s1, s2);
 		return decodeURIComponent(value);
-	});
+	}, true);
 	
 	return params2;
 }
@@ -113,10 +113,13 @@ function main(){
 		// Теперь добавили защиту от роботов
 		
 		var form = getParam(html, null, null, /<form method="POST"[\s\S]*?<\/form>/i);
+		AnyBalance.trace('form is ' + form);
 		if(form) {
 			AnyBalance.trace('Javascript redirect requested...');
 			var params = createJSRedirectParams(html);
-			html = AnyBalance.requestPost(baseurl + 'scp/myaccount/accountoverview.jsp', params, addHeaders({Referer: baseurl + 'login'}));		
+			params['TSd21a69_rf'] = 'https://onlineservices.etisalat.ae/scp/index.jsp?locale=en_AE&source=login&qp_st=&qp_an=&_requestid=2264972'
+			
+			html = AnyBalance.requestPost(baseurl + 'scp/myaccount/accountoverview.jsp', params, addHeaders({Referer: baseurl + 'scp/myaccount/accountoverview.jsp'}));		
 		}
 		
 		// Это пост оплата

@@ -18,7 +18,7 @@ function main() {
 	checkEmpty(prefs.login, 'Введіть логін!');
 	checkEmpty(prefs.password, 'Введіть пароль!');
 	
-	var html = AnyBalance.requestGet(baseurl + 'frontend/frontend', g_headers);
+	var html = AnyBalance.requestGet(baseurl + 'wb', g_headers);
 	
 	var execKey = getParam(html, null, null, /execution=([\s\S]{4})/i);
 	var href = getParam(html, null, null, /id="FORM_FAST_LOGIN"[^>]*action="\/([^"]*)/i);

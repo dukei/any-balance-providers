@@ -90,9 +90,7 @@ function main(){
     var baseurl = {};
     baseurl._= "https://" + basedomain;
 	
-	if(prefs['interface'] == 'mobileapp')
-		mainMobileApp(baseurl, prefs);
-	else {
+	if(prefs['interface'] == 'site') {
 		AnyBalance.trace('Входим через сайт...');
 		var html = AnyBalance.requestGet(baseurl._ + '/authentication/', g_headers);
 		var api = getParam(html, null, null, /TCS\.Auth\.Cfg\.authServiceURL\s*=\s*"[^"]*?(\/api-?[^"]*?\/)session\/"/, replaceSlashes);
@@ -200,6 +198,9 @@ function main(){
 			fetchCard(accounts, baseurl, sessionid);
 		}
 	}
+	// По умолчанию мобильное API
+	else
+		mainMobileApp(baseurl, prefs);
 }
 
 function fetchCard(accounts, baseurl, sessionid){

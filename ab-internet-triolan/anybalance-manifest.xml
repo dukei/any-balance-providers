@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="4">ab-internet-triolan</id>
+	<id version="5">ab-internet-triolan</id>
 	<name>Triolan (Украина)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем балансе для пользователей интернет-провайдера Triolan (Украина).</p>   

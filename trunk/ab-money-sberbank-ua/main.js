@@ -2,12 +2,12 @@
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 var g_headers = {
-	'Accept': 'text/html, application/xml;q=0.9, application/xhtml+xml, image/png, image/webp, image/jpeg, image/gif, image/x-xbitmap, */*;q=0.1',
-	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
-	'Accept-Language': 'ru,en;q=0.9,ru-RU;q=0.8',
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+/*	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',*/
+	'Accept-Language': 'ru,en-US;q=0.8,en;q=0.6,uk;q=0.4',
 	'Connection': 'keep-alive',
-	'Origin': 'https://online.oschadnybank.com/',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+	'Origin': 'https://online.oschadnybank.com',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.66 Safari/537.36 OPR/25.0.1614.31 (Edition beta)',
 };
 
 function main() {
@@ -18,10 +18,14 @@ function main() {
 	checkEmpty(prefs.login, 'Введіть логін!');
 	checkEmpty(prefs.password, 'Введіть пароль!');
 	
-	var html = AnyBalance.requestGet(baseurl + 'wb', g_headers);
+	var html = AnyBalance.requestGet(baseurl + 'wb/', g_headers);
+AnyBalance.trace(html);
 	
 	var execKey = getParam(html, null, null, /execution=([\s\S]{4})/i);
+AnyBalance.trace(html);
+  
 	var href = getParam(html, null, null, /id="FORM_FAST_LOGIN"[^>]*action="\/([^"]*)/i);
+AnyBalance.trace(href);
 	
 	var params = createFormParams(html, function(params, str, name, value) {
 		if (name == 'Login') 

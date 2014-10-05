@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
     <EditTextPreference 
-        title="Номер карты" 
+        title="Ваш E-mail" 
         positiveButtonText="ОК" 
-        summary="Номер карты Декатлон||{@s}\n" 
+        summary="|E-mail для входа в личный кабинет Декатлон|{@s}" 
         dialogTitle="Номер карты" 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите номер карты Декатлон"
+        dialogMessage="Введите ваш e-mail, который вы используете для входа в личный кабинет Декатлон"
         key="login"
-        inputType="number">
+        inputType="textEmailAddress">
     </EditTextPreference>
     <EditTextPreference 
         positiveButtonText="ОК"

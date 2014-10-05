@@ -1,21 +1,30 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="4">ab-bonus-decathlon</id>
+  <id version="5">ab-bonus-decathlon</id>
+  <api flags="no_browser"/>
   <name>Бонусная карта Декатлон</name>
   <description>
-    Получает количество баллов на карте накопительной программы Декатлон.
+    Получает количество баллов на карте накопительной программы Декатлон с сайта http://www.mydecathlon.com/
   </description>
+  <instruction>
+    Если у вас ещё нет кабинета, но есть карта, вы можете создать его по ссылке: http://www.mydecathlon.com/mydecathlon.html?ppays=RU&amp;langue=RU#nomPage=creationCompte1
+
+    Если у вас ещё нет карты, вы можете создать её вместе с кабинетом по ссылке: http://www.mydecathlon.com/mydecathlon.html?ppays=RU&amp;langue=RU#nomPage=creationCompte1SansCarte
+  </instruction>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
+    <js>x.js</js>
     <js>library.js</js>
     <js>main.js</js>
     <history>history.xml</history>
   </files>
   <counters>
-    <counter id="balance" name="Баланс"/>
-    <counter id="left2kupon" name="Осталось для получения купона"/>
+    <counter id="balance" name="Баланс" units=" Б"/>
+    <counter id="left2kupon" name="Осталось для получения купона" units=" Б"/>
+    <counter id="lastchange" name="Последнее изменение баланса" type="time"/>
+    <counter id="fio" name="ФИО" type="text"/>
   </counters>
   <keywords>
     бонус, баллы, bonus, бонусная накопительная программа, Decathlon, карта клиента

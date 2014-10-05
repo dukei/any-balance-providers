@@ -63,6 +63,7 @@ function main(){
 				
 				getParam(html, result, 'trafic_total', /Кол-во трафика в интернет(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseTraffic);
 				getParam(html, result, 'trafic', /<th>\s*<\/th>(?:[^>]*>){9}([\d.,]+)/i, [replaceTagsAndSpaces, /(.*)/i, '$1 мб'], parseTraffic);
+				getParam(html, result, 'trafic', /(?:<th>[^>]*<\/th>){3}\s*<\/tr>\s*<\/table>/i, [replaceTagsAndSpaces, /([\d.,]+)/i, '$1 мб'], parseTraffic);
 				
 				if(isset(result.trafic_total) || isset(result.trafic)) {
 					AnyBalance.trace('Нашли данные по трафику с попытки №' + (i+1));

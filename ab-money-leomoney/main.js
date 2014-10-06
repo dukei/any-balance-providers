@@ -11,29 +11,43 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	checkEmpty(prefs.login, 'Please, enter the phone number in international form, for example, +971552344334');
-	checkEmpty(prefs.password, 'Please, enter the password!');
-	
 	var baseurl = "https://leomoney.com/api/";
 	AnyBalance.setDefaultCharset('utf-8');
-	var rePrefixes = /^\+(1|7|44|373|374|375|380|971|992|993|994|996|998)(\d+)$/;
-	if (!prefs.login || !rePrefixes.test(prefs.login))
-		throw new AnyBalance.Error('Number ' + prefs.login + ' is wrong or has incorect prefix.');
 	
-	var matches = prefs.login.match(rePrefixes);
+	var enterById = (!isset(prefs.login) && !isset(prefs.password)) && (isset(prefs.deviceUID) && isset(prefs.deviceIMEI));
 	
-	if (matches[1] != '7' && matches[1] != '971') 
-		throw new AnyBalance.Error('Провайдер пока поддерживает только российские и эмиратские номера. Для поддержки других стран обращайтесь к разработчикам.');
-	
-	baseurl = baseurl + (matches[1] == '7' ? 'ru' : 'ae') + '/';
+	if(!enterById) {
+		checkEmpty(prefs.login, 'Please, enter the phone number in international form, for example, +971552344334');
+		checkEmpty(prefs.password, 'Please, enter the password!');
+		
+		var rePrefixes = /^\+(1|7|44|373|374|375|380|971|992|993|994|996|998)(\d+)$/;
+		if (!prefs.login || !rePrefixes.test(prefs.login))
+			throw new AnyBalance.Error('Number ' + prefs.login + ' is wrong or has incorect prefix.');
+		
+		var matches = prefs.login.match(rePrefixes);
+		
+		if (matches[1] != '7' && matches[1] != '971') 
+			throw new AnyBalance.Error('Провайдер пока поддерживает только российские и эмиратские номера. Для поддержки других стран обращайтесь к разработчикам.');
+		
+		baseurl = baseurl + (matches[1] == '7' ? 'ru' : 'ae') + '/';
+	}
 	
 	try {
-		var html = AnyBalance.requestPost(baseurl + 'GetWalletBalanceByLogin', {
-			"Phone":matches[1] + matches[2], 
-			"Password":prefs.password,
-		}, g_headers);	
-	} catch(e) {
-	}
+		if(!enterById) {
+			AnyBalance.trace('Entering by login and password...');
+			var html = AnyBalance.requestPost(baseurl + 'GetWalletBalanceByLogin', {
+				"Phone":matches[1] + matches[2], 
+				"Password":prefs.password,
+			}, g_headers);
+		} else {
+			AnyBalance.trace('Entering by uid and imei...');
+			baseurl = 'http://87.249.30.67/api/';
+			var html = AnyBalance.requestPost(baseurl + 'ru/GetWalletBalance', {
+				'DeviceUID':prefs.deviceUID, 
+				'DeviceIMEI':prefs.deviceIMEI,
+			}, g_headers);
+		}
+	} catch(e) {}
 	
 	var code = AnyBalance.getLastStatusCode();
 	if(code > 400) {
@@ -54,9 +68,11 @@ function main() {
 	var walletBalance = getParam(html, null, null, new RegExp('<WalletBalance>(?:[^>]*>){5}' + (prefs.type || 'rub') + '(?:[^>]*>){12,}\\s*</WalletBalance>', 'i'))
 	if(!walletBalance)
 		throw new AnyBalance.Error(matches[1] == '7' ? 'Не удалось найти данные по счету. Сайт изменен?' : 'Can`t find wallet balance, is the site changed?');
-		
-	getParam(prefs.login, result, 'phone');
-	getParam(prefs.login, result, '__tariff');
+	
+	if(!enterById) {
+		getParam(prefs.login, result, 'phone');
+		getParam(prefs.login, result, '__tariff');
+	}
 	getParam(walletBalance, result, 'wallet', /<AccountId>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(walletBalance, result, 'balance', /<Amount>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(walletBalance, result, ['currency', 'balance', 'spent', 'limit'], /<Currency>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);

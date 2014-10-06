@@ -33,20 +33,17 @@ function main() {
 	}));
 	
 	if(!/^\s*0\s*$/.test(html)) {
-		// Ну так вот возвращает ошибку сайт...
-		if(/\\u041d\\u0435\\u0432\\u0435\\u0440\\u043d\\u044b\\u0439 \\u043a\\u043e\\u0434 \\u0441 \\u043a\\u0430\\u0440\\u0442\\u0438\\u043d\\u043a\\u0438/i.test(html))
-			throw new AnyBalance.Error('Неверный логин или пароль!', false, true);
+		var error = getJson(html);
+		if (error)
+			throw new AnyBalance.Error(error, null, /Неверные логин или пароль/i.test(error));
 		
+		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
-	/*html = AnyBalance.requestGet(baseurl + 'detskaya/profile', addHeaders({
-		Referer: baseurl + 'auth/login',
-		'X-Requested-With':'XMLHttpRequest',
-	}));*/
 	
     var result = {success: true};
 	
-	html = AnyBalance.requestGet(baseurl + 'detskaya/loyalty/mycards', addHeaders({Referer: baseurl+'detskaya/loyalty/profile'}));
+	html = AnyBalance.requestGet(baseurl + 'detskaya/mycards', addHeaders({Referer: baseurl + 'detskaya/profile'}));
 	
 	var cards = sumParam(html, null, null, /<td(?:[^>]*>){2}\d{10,}(?:[^>]*>){3}\s*номер бонусной карты(?:[^>]*>){19,22}\s*<\/td>/ig);
 	if(!cards || cards.length < 1) {
@@ -55,7 +52,7 @@ function main() {
 	
 	for(var i = 0; i < cards.length; i++) {
 		getParam(cards[i], result, (i > 0) ? 'cardnum' + i : 'cardnum', /(\d{5,})(?:<[^<]*){3}номер бонусной карты/i, replaceTagsAndSpaces);
-		getParam(cards[i], result, (i > 0) ? 'cardbalance' + i : 'cardbalance', />([^<]*)(?:<[^<]*){3}баланс карты/i, replaceTagsAndSpaces, parseBalance);
+		getParam(cards[i], result, (i > 0) ? 'cardbalance' + i : 'cardbalance', /([\s\d.,]+)(?:[^>]*>){3}\s*баланс карты/i, replaceTagsAndSpaces, parseBalance);
 	}
 	//getParam(html, result, 'balance', null, replaceTagsAndSpaces, parseBalance);
 	

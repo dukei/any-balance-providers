@@ -21,19 +21,21 @@ function main(){
 	
 	html = AnyBalance.requestPost(baseurl + 'j_spring_security_check', {
 		'_csrf':getParam(html, null, null, /name="_csrf" content="([^"]+)/i),
-        'j_username':prefs.login,
+        'email':prefs.login,
         'j_password':prefs.password,
-        'target':'/'
+        'target':'/',
+		'enterby':'email'
     }, addHeaders({Referer: baseurl + 'login?target=/'}));
 	
     if(!/\/logout/.test(html)){
         var error = getParam(html, null, null, /<div[^>]+id="loginErrorDiv"[^>]*>([\s\S]*?)(?:Проверьте состояние|<\/div>)/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error);
+		
         throw new AnyBalance.Error('Не удалось войти в личный кабинет. Проблемы на сайте или сайт изменен.');
     }
 
-    var result = {success: true, subaccountall:''};
+    var result = {success: true};
 	
     getParam(html, result, 'fio', />Личный кабинет<(?:[\s\S]*?<div[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'price', /цена(?:&nbsp;|\s)+(\d+)/i, replaceTagsAndSpaces, parseBalance);
@@ -47,10 +49,13 @@ function main(){
 		
 		var list = getParam(html, null, null, /(<ul>[\s\S]*?<\/ul>)/i, replaceTagsAndSpaces, html_entity_decode);
 		if(list){
+			var subaccountall = '';
 			var li = sumParam(html, null, null, /<li[^>]*class="cl"[^>]*>[\s\S]*?<\/li>/ig);
 			for(i=0; i< li.length; i++){
-				result.subaccountall += getParam(li[i], null, null, null, replaceTagsAndSpaces, html_entity_decode) +'\n';
+				subaccountall += getParam(li[i], null, null, null, replaceTagsAndSpaces, html_entity_decode) +'\n';
 			}
+			if(subaccountall)
+				getParam(subaccountall, result, 'subaccountall');
 		}
 	}	
     AnyBalance.setResult(result);

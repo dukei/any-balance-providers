@@ -13,13 +13,13 @@ var g_headers = {
 function main() {
     var prefs = AnyBalance.getPreferences();
     var baseurl = 'https://ib.homecredit.ru/ibs/';
-
-    var html = AnyBalance.requestGet(baseurl, g_headers);
+	
+    var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
     var form = getParam(html, null, null, /(<form[^>]+class="aui-form[\s\S]*?<\/form>)/i);
     if(!form) {
 		if(/Услуга временно недоступна\.\s*Приносим извинения за доставленные неудобства\./i.test(html))
 			throw new AnyBalance.Error('Уважаемый Клиент! Услуга временно недоступна. Приносим извинения за доставленные неудобства. Информацию о продуктах и услугах Вы сможете найти на нашем сайте: www.homecredit.ru');
-			
+		
         throw new AnyBalance.Error('Не удаётся найти форму входа. Сайт изменен?');
 	}
     var action = getParam(form, null, null, /<form[^>]+action="([^"]*)/i, null, html_entity_decode);
@@ -41,8 +41,15 @@ function main() {
         var error = getParam(html, null, null, /<div[^>]*portlet-msg-error[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error);
+		
+		
         throw new AnyBalance.Error('Не удалось войти в интернет-банк. Сайт изменен?');
     }
+	
+	// Главная страница теперь страница с виджетами, надо перейти на страницу с продуктами
+	if(/#show-widgets-panel/i.test(html))
+		html = AnyBalance.requestGet(baseurl + 'group/hcfb/products', g_headers);
+	
 	fetchAll(baseurl, html);
 	
 /*

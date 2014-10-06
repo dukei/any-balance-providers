@@ -47,7 +47,7 @@ function main(){
 	
 	var result = {success: true};
 	// Бонусы всегда нужны
-	getParam(html, result, 'bonuses', /МКБ Бонус(?:[^>]*>){3,}Всего бонусных баллов(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'bonuses', /МКБ Бонус(?:[^>]*>){3}([\d\s.,\-]+)/i, replaceTagsAndSpaces, parseBalance);
 
 	if(prefs.type == 'card')
 		fetchCard(html, baseurl, result);

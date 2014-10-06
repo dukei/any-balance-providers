@@ -27,6 +27,7 @@ var g_max_plates_num = 3;
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
+	
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	var formattedLogin = getParam(prefs.login || '', null, null, /^\d{11}$/, [/^(\d{3})(\d{3})(\d{3})(\d{2})$/i, '$1-$2-$3 $4']);
@@ -38,7 +39,6 @@ function main() {
 	
 	// нужно для отладки
 	if(!isLoggedIn(html)) {
-		//html = performRedirect(html);
 		html = performRedirect(html);
 		
 		html = AnyBalance.requestPost('https://esia.gosuslugi.ru/idp/authn/UsernamePasswordLogin', {
@@ -48,12 +48,17 @@ function main() {
 		}, addHeaders({Referer: 'https://esia.gosuslugi.ru/idp/authn/CommonLogin'}));
 		
 		//Попытаемся получить ошибку авторизации на раннем этапе. Тогда она точнее.
-		
 		var errorCode = getParam(html, null, null, /authn\.error\.([^"']+)/i);
 		if (errorCode) {
 			var jsonLocalizationMsg = getParam(html, null, null, /var jsonLocalizationMsg\s*=\s*(\{[\s\S]*?\})\s*;/i, null, getJson);
 			var message = getParam(jsonLocalizationMsg.authn.error[errorCode], null, null, null, replaceTagsAndSpaces, html_entity_decode);
+			
 			throw new AnyBalance.Error(message, null, /invalidCredentials/i.test(errorCode));
+		}
+
+		// Возмонжо мы попадем в кабинет где есть ИП и физ лицо, надо проверить
+		if(/<h1[^>]*>\s*Выбор роли\s*<\/h1>/i.test(html)) {
+			html = AnyBalance.requestGet('https://esia.gosuslugi.ru/idp/globalRoleSelection?orgID=P', g_headers);
 		}
 		
 		html = performRedirect(AnyBalance.requestGet('https://www.gosuslugi.ru/pgu/personcab', g_headers));

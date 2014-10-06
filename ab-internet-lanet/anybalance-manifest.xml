@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-internet-lanet</id>
+	<id version="5">ab-internet-lanet</id>
 	<api flags="no_browser" />
 	<name>Ланет Нетворк (Киев)</name>
 	<description html="true"><![CDATA[

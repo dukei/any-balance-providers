@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="40">ab-cell-velcom</id>
+	<id version="41">ab-cell-velcom</id>
 	<api flags="no_browser"/>
 	<name>Velcom (Беларусь)</name>
 	<description html="true"><![CDATA[
@@ -33,6 +33,7 @@
 		<counter id="min_velcom" name="Минуты на velcom" units=" vc"/>
 		<counter id="min_fn" name="Минуты на любимые номера" units=" лн"/>
 		<counter id="traffic" name="Трафик" units=" Mb"/>
+		<counter id="traffic_night" name="Трафик (ночь)" units=" Mb"/>
 		<counter id="balanceBonus" name="Бонусный баланс" units=" р"/>
 		<counter id="userName" name="ФИО" type="text"/>
 		<counter id="userNum" name="Номер абонента" type="text"/>

@@ -35,12 +35,19 @@ function main() {
 	if(!html || AnyBalance.getLastStatusCode() > 400)
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
     
-    var obf_script = getParam(html, null, null, /(\$\$_=~[\s\S]*?)\(function\s*\(\s*\)\s*\{\s*var\s+ga/);
-    
-    var window = {localStorage: {setItem: function(name, value) {
-        alert(str);
-    }}, document: {}, location: {}};
+        if(!this.Storage)
+            this.Storage = function(){};
+
+        var token;
+        Storage.prototype.setItem = function(key, value) { 
+	    AnyBalance.trace('Получили token (' + key + '): ' + value);
+            token = value;
+        }
+
+        var obf_script = getParam(html, null, null, /(\$\$_=~[\s\S]*?)\(function\s*\(\s*\)\s*\{\s*var\s+ga/);
     safeEval(window, obf_script);
+
+    alert(token);
     
     
     // Запрос на поиск пункта отправления
@@ -83,7 +90,7 @@ function main() {
 
 function safeEval(window, script) {
    try{
-       var result = new Function('window', 'document', 'self', 'location', 'localStorage', 'AnyBalance', 'g_AnyBalanceApiParams', '_AnyBalanceApi', script).call(window, window, window.document, window, window.location, window.localStorage);
+       var result = new Function('window', 'document', 'self', 'location', 'AnyBalance', 'g_AnyBalanceApiParams', '_AnyBalanceApi', script).call(window, window, window.document, window, window.location);
        return result;
    }catch(e){
        throw new AnyBalance.Error('Bad javascript (' + e.message + '): ' + script);

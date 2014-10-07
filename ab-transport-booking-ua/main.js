@@ -37,15 +37,18 @@ function main() {
     
         if(!this.Storage)
             this.Storage = function(){};
+        if(!this.localStorage)
+            this.localStorage = new Storage();
 
-        var token;
+        var token, svAB = AnyBalance;
         Storage.prototype.setItem = function(key, value) { 
-	    AnyBalance.trace('Получили token (' + key + '): ' + value);
+	    	svAB.trace('Получили token (' + key + '): ' + value);
             token = value;
         }
 
         var obf_script = getParam(html, null, null, /(\$\$_=~[\s\S]*?)\(function\s*\(\s*\)\s*\{\s*var\s+ga/);
-    safeEval(window, obf_script);
+    
+    safeEval(obf_script);
 
     alert(token);
     
@@ -88,11 +91,16 @@ function main() {
 	AnyBalance.setResult(result);
 }
 
-function safeEval(window, script) {
+function safeEval(script, argsNamesString, argsArray) {
+   var svAB = AnyBalance, svParams = this.g_AnyBalanceApiParams, svApi = this._AnyBalanceApi;
+   AnyBalance = this.g_AnyBalanceApiParams = this._AnyBalanceApi = undefined;
+
    try{
-       var result = new Function('window', 'document', 'self', 'location', 'AnyBalance', 'g_AnyBalanceApiParams', '_AnyBalanceApi', script).call(window, window, window.document, window, window.location);
+       var result = new Function(argsNamesString || 'ja0w4yhwphgawht984h', 'AnyBalance', 'g_AnyBalanceApiParams', '_AnyBalanceApi', script).apply(null, argsArray);
        return result;
    }catch(e){
-       throw new AnyBalance.Error('Bad javascript (' + e.message + '): ' + script);
+       throw new svAB.Error('Bad javascript (' + e.message + '): ' + script);
+   }finally{
+   		AnyBalance = svAB, g_AnyBalanceApiParams = svParams, _AnyBalanceApi=svApi;
    }
 }

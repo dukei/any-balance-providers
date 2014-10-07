@@ -116,10 +116,15 @@ for(b in c){f.push([b,c[b]])
 return a
 }catch(c){AnyBalance.trace("Bad json ("+c.message+"): "+b);
 throw new AnyBalance.Error("Сервер вернул ошибочные данные: "+c.message)
-}}function getJsonEval(b){try{var a=new Function("window","AnyBalance","g_AnyBalanceApiParams","_AnyBalanceApi","document","self","return "+b).apply(null);
-return a
+}}function getJsonEval(b){try{var a=safeEval("return "+b,"window,document,self")
 }catch(c){AnyBalance.trace("Bad json ("+c.message+"): "+b);
 throw new AnyBalance.Error("Сервер вернул ошибочные данные: "+c.message)
+}}function safeEval(c,g,i){var d=AnyBalance,b=this.g_AnyBalanceApiParams,f=this._AnyBalanceApi;
+AnyBalance=this.g_AnyBalanceApiParams=this._AnyBalanceApi=undefined;
+try{var a=Function(g||"ja0w4yhwphgawht984h","AnyBalance","g_AnyBalanceApiParams","_AnyBalanceApi",c).apply(null,i);
+return a
+}catch(h){throw new d.Error("Bad javascript ("+h.message+"): "+c)
+}finally{AnyBalance=d,g_AnyBalanceApiParams=b,_AnyBalanceApi=f
 }}function endsWith(b,a){return b.indexOf(a,b.length-a.length)!==-1
 }(function(b,d){var c=b.parse,a=[1,4,5,6,7,10,11];
 b.parse=function(f){var j,l,h=0;

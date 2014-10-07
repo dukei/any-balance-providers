@@ -196,7 +196,8 @@ function main(){
 		if(str) {
 			sumParam(html, result, 'min', /([\s\d]+)мин/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 			sumParam(html, result, 'mms', /([\s\d]+)(?:MMS|ММС)/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-			getParam(html, result, 'traffic', /([\s\d]+)(?:М|M)(?:B|Б)/i, replaceTagsAndSpaces, parseBalance);
+			getParam(html, result, 'traffic', /([\s\d]+[М|M][B|Б])/i, replaceTagsAndSpaces, parseTraffic);
+			getParam(html, result, 'traffic_night', /([\s\d]+[М|M][B|Б]\s+ночь)/i, replaceTagsAndSpaces, parseTraffic);
 		} else if(/<td[^>]+id="DISCOUNT"/i.test(html)){
 			//<tr class="uneven">
             //                     <td class="info_caption"><span>Скидки:</span></td>

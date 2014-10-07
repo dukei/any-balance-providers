@@ -7,9 +7,11 @@ AnyBalance (http://any-balance-providers.googlecode.com)
 Содержит некоторые полезные для извлечения значений с сайтов функции.
 Для конкретного провайдера рекомендуется оставлять в этом файле только те функции, которые используются.
 
-library.js v0.13 от 18.08.14
+library.js v0.14 от 07.10.14
 
 changelog:
+07.10.14 safeEval - полностью безопасное исполнение стороннего Javascript (в плане недоступности для него AnyBalance API)
+
 18.08.14 requestPostMultipart - эмулируем браузер, генерируя случайный boundary
 
 14.07.14 getParam - Фикс (Если !isset(html), а не !html то не падаем, а пишем ошибку в trace)
@@ -451,11 +453,34 @@ function getJson(html) {
 function getJsonEval(html){
    try{
        //Запрещаем использование следующих переменных из функции:
-       var json = new Function('window', 'AnyBalance', 'g_AnyBalanceApiParams', '_AnyBalanceApi', 'document', 'self', 'return ' + html).apply(null);
-       return json;
+       var json = safeEval('return ' + html, 'window,document,self');
    }catch(e){
        AnyBalance.trace('Bad json (' + e.message + '): ' + html);
        throw new AnyBalance.Error('Сервер вернул ошибочные данные: ' + e.message);
+   }
+}
+
+/** Выполняет скрипт безопасно, не давая ему доступ к AnyBalance API 
+    Пример использования:
+
+    var ret = safeEval("function(input1, input2) { input1.a = 1; input2.b = 3; return 'xxx' }()", "input1,input2", [{a: 5}, {b: 8}]);
+    
+    а если входные параметры скрипту не нужны, то можно просто
+
+    var ret = safeEval(" return 'xxx' }");
+*/
+
+function safeEval(script, argsNamesString, argsArray) {
+   var svAB = AnyBalance, svParams = this.g_AnyBalanceApiParams, svApi = this._AnyBalanceApi;
+   AnyBalance = this.g_AnyBalanceApiParams = this._AnyBalanceApi = undefined;
+
+   try{
+       var result = Function(argsNamesString || 'ja0w4yhwphgawht984h', 'AnyBalance', 'g_AnyBalanceApiParams', '_AnyBalanceApi', script).apply(null, argsArray);
+       return result;
+   }catch(e){
+       throw new svAB.Error('Bad javascript (' + e.message + '): ' + script);
+   }finally{
+   		AnyBalance = svAB, g_AnyBalanceApiParams = svParams, _AnyBalanceApi=svApi;
    }
 }
 

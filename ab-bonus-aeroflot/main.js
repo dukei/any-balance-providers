@@ -42,12 +42,16 @@ function main(){
 
     var result = {success: true};
 
-    html = AnyBalance.requestGet(baseurl + 'ajax/mile_balance', {'X-Requested-With':'XMLHttpRequest'});
+    getParam(html, result, 'balance', /<td[^>]+id="member_miles_value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'qmiles', /<td[^>]+id="current_year_miles_value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'segments', /<td[^>]+id="current_year_segments_value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, '__tariff', /<div[^>]+class="name"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+/*
+    if(AnyBalance.isAvailable('level')){
+    	html = AnyBalance.requestGet(baseurl + 'ajax/mile_balance', {'X-Requested-With':'XMLHttpRequest'});
 
-    getParam(html, result, 'balance', /^(\d+)/i, replaceFloat, parseFloat);
-    getParam(html, result, 'qmiles', /,(\d+)/i, replaceFloat, parseFloat);
-    getParam(html, result, 'level', /.*?,.*?,(.*)/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, '__tariff', /.*?,.*?,(.*)/i, replaceTagsAndSpaces, html_entity_decode);
-
+    	getParam(html, result, 'level', /.*?,.*?,(.*)/i, replaceTagsAndSpaces, html_entity_decode);
+    }
+*/
     AnyBalance.setResult(result);
 }

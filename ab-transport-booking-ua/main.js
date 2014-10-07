@@ -35,11 +35,12 @@ function main() {
 	if(!html || AnyBalance.getLastStatusCode() > 400)
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
     
+    var obf_script = getParam(html, null, null, /(\$\$_=~[\s\S]*?)\(function\s*\(\s*\)\s*\{\s*var\s+ga/);
     
-    var window = {localStorage: {setItem: function(str) {
+    var window = {localStorage: {setItem: function(name, value) {
         alert(str);
-    }}};
-    safeEval(window, g_obf_script);
+    }}, document: {}, location: {}};
+    safeEval(window, obf_script);
     
     
     // Запрос на поиск пункта отправления
@@ -82,7 +83,7 @@ function main() {
 
 function safeEval(window, script) {
    try{
-       var result = new Function('window', 'document', 'self', 'location', 'AnyBalance', 'g_AnyBalanceApiParams', '_AnyBalanceApi', script).call(window, window, window.document, window, window.location);
+       var result = new Function('window', 'document', 'self', 'location', 'localStorage', 'AnyBalance', 'g_AnyBalanceApiParams', '_AnyBalanceApi', script).call(window, window, window.document, window, window.location, window.localStorage);
        return result;
    }catch(e){
        throw new AnyBalance.Error('Bad javascript (' + e.message + '): ' + script);

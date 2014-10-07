@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-telephony-bezlimit</id>
+	<api flags="no_browser"/>
+	<name>Безлимит.РУ</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Безлимит.РУ <a href="http://bezlimit.ru/">http://bezlimit.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="http://my.bezlimit.ru/index.php?r=user/login">http://my.bezlimit.ru/index.php?r=user/login</a></p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="account" name="Номер" type="text"/>
+        <counter id="__tariff" name="Тариф" type="text"/>
+		<counter id="status" name="Статус блок." type="text"/>
+		<counter id="phone_bezlimit" name="Номер SIM-карты в Безлимите" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>telephony</type>
+	<country>ru</country>
+</provider>

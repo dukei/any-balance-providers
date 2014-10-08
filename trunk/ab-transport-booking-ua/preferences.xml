@@ -1,24 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
 	<EditTextPreference
-		title="Логин"
-		key="login"
+		title="Пункт отправления"
+		key="station_from"
 		summary="||{@s}"
 		obligatory="true"
-		dialogTitle="Логин"
+		dialogTitle="Пункт отправления"
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите логин, используемый для входа в личный кабинет.">
+		dialogMessage="Введите пункт отправления.">
 	</EditTextPreference>
 	<EditTextPreference
-		title="Пароль"
-		key="password"
-		summary="||***********"
+		title="Пункт назначения"
+		key="station_to"
+		summary="||{@s}"
 		obligatory="true"
-		dialogTitle="Пароль"
+		dialogTitle="Пункт назначения"
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите пароль, используемый для входа в личный кабинет."
-		inputType="textPassword">
+		dialogMessage="Введите пункт назначения">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Дата"
+		key="date_trip"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Дата"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите дату в формате 01.12.2014.">
 	</EditTextPreference>
 </PreferenceScreen>

@@ -678,7 +678,13 @@ function getNorilsk(){
     getParam(html, result, 'status', /Статус:[\S\s]*?<strong[^>]*>([\S\s]*?)<\/strong>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'licschet', /Лицевой счёт:[\S\s]*?<strong[^>]*>([\S\s]*?)<\/strong>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, '__tariff', /Тарифный план:[\S\s]*?<strong[^>]*>([\S\s]*?)<\/strong>/i, replaceTagsAndSpaces, html_entity_decode);
-
+	
+	if(isAvailable('internet_cur')) {
+		html = AnyBalance.requestGet(baseurl + 'equipment/traffic');
+		
+		getParam(html, result, 'internet_cur', /Количество неизрасходованного трафика, включенного в абонентскую плату:(?:[^>]*>){3}([^<]+)/i, replaceTagsAndSpaces, parseTraffic);
+	}
+	
     AnyBalance.setResult(result);
 }
 
@@ -760,7 +766,7 @@ function getChita(){
 	var urlIndex = 'https://clb.primorye.mts.ru/chita/index.php?r=site/login';
 	var urlAjax = 'https://clb.primorye.mts.ru/chita/index.php?r=account/vgroups&agrmid=';
 	
-	typicalLanBillingInetTv(urlIndex, urlAjax);
+	newTypicalLanBillingInetTv(urlIndex, urlAjax);
 }
 
 function getAmur(){

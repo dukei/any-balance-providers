@@ -23,8 +23,7 @@ function main(){
 	var html;
     var result = {success: true};
 	
-	if(prefs.type == 'card')
-	{
+	if(prefs.type == 'card') {
 		html = AnyBalance.requestPost('https://secure.apollophone.ru/cardoffice/' , {
 			ap_login:prefs.login,
 			ap_password:'',
@@ -32,28 +31,27 @@ function main(){
 			'tx_apollologin_pi1[submit_button]':'Войти'
 		} , addHeaders({Referer: baseurl}));
 		
-		if(!/header__login__exit/i.test(html))
-		{
+		if(!/header__login__exit/i.test(html)) {
 			throw new AnyBalance.Error('Не удалось войти в личный кабинет с номером карты '+prefs.login+' проверьте правильность ввода');
 		}
 		
 		getParam(html, result, 'balance', /Ваш баланс:([\s\S]*?)руб/i, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, '__tariff', /Тип карты:\s*<strong>([\s\S]*?)<\/strong>/i, replaceTagsAndSpaces);
-	}
-	else
-	{
-		html = AnyBalance.requestPost(baseurl, {
-			user:prefs.login,
-			password:prefs.password
-		}, g_headers);
+	} else {
+		html = AnyBalance.requestPost('https://secure.apollophone.ru/office/' , {
+			ap_login:prefs.login,
+			ap_password:prefs.password,
+			office_action:'login_do',
+			'tx_apollologin_pi1[submit_button]':'Войти'
+		} , addHeaders({Referer: baseurl}));
 		
 		var error = getParam(html, null, null, /<td[^>]*class="zv3"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
 		if(error)
 			throw new AnyBalance.Error(error);
 
-		getParam(html, result, 'balance', /БАЛАНС[\s\S]*?class="form3"[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'currency', /БАЛАНС[\s\S]*?class="form3"[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseCurrency);
-		getParam(html, result, 'number', /АБОНЕНТ[\s\S]*?class="form3"[^>]*>([^<]*)/i, replaceTagsAndSpaces);
+		getParam(html, result, 'balance', /Ваш баланс:([^>]+>){2}/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'currency', /Ваш баланс:([^>]+>){2}/i, replaceTagsAndSpaces, parseCurrency);
+		getParam(html, result, 'number', /Абонент:([^>]+>){2}/i, replaceTagsAndSpaces);
 		getParam(html, result, 'userName', /<input[^>]*name='cont1'[^>]*value="([^"]*)/i, replaceTagsAndSpaces);
 		getParam(html, result, '__tariff', /<input[^>]*name='cont1'[^>]*value="([^"]*)/i, replaceTagsAndSpaces);
 	}

@@ -31,27 +31,23 @@ function main() {
 	checkEmpty(prefs.station_to, 'Введите пункт назначения!');
 	
 	var html = AnyBalance.requestGet(baseurl + 'ru/', g_headers);
+	if (!html || AnyBalance.getLastStatusCode() > 400) throw new AnyBalance.Error(
+		'Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.'
+	);
+	if (!this.Storage)
+		this.Storage = function() {};
+	if (!this.localStorage) 
+		this.localStorage = new Storage();
 	
-	if(!html || AnyBalance.getLastStatusCode() > 400)
-		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
-    
-        if(!this.Storage)
-            this.Storage = function(){};
-        if(!this.localStorage)
-            this.localStorage = new Storage();
-
-        var token, svAB = AnyBalance;
-        Storage.prototype.setItem = function(key, value) { 
-	    	svAB.trace('Получили token (' + key + '): ' + value);
-            token = value;
-        }
-
-        var obf_script = getParam(html, null, null, /(\$\$_=~[\s\S]*?)\(function\s*\(\s*\)\s*\{\s*var\s+ga/);
-    
-    safeEval(obf_script);
-
-    alert(token);
-    
+	var token, svAB = AnyBalance;
+	
+	Storage.prototype.setItem = function(key, value) {
+		svAB.trace('Получили token (' + key + '): ' + value);
+		token = value;
+	}
+	var obf_script = getParam(html, null, null, /(\$\$_=~[\s\S]*?)\(function\s*\(\s*\)\s*\{\s*var\s+ga/);
+	
+	safeEval(obf_script);
     
     // Запрос на поиск пункта отправления
     var station_fromIdAndNameArray = findStationByName(baseurl, prefs.station_from);
@@ -70,13 +66,19 @@ function main() {
         'search':''
     }, addHeaders({
         'Referer': baseurl + 'ru/',
-        'GV-Unique-Host': 1,
-        'GV-Ajax': 1,
+        'GV-Unique-Host': '1',
+        'GV-Ajax': '1',
         'GV-Screen': '1440x900',
         'GV-Referer': 'http://booking.uz.gov.ua/ru/',
-        'GV-Token':''
+        'GV-Token':token
     })); 
     
+	json = getJson(html);
+	
+	if(json.error) {
+		throw new AnyBalance.Error(json.value);
+	}
+	
     
 	var result = {success: true};
 	

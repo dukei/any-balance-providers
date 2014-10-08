@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-internet-norcom</id>
+	<id version="2">ab-internet-norcom</id>
 	<api flags="no_browser"/>
 	<name>НорКом (Норильск)</name>
 	<description html="true"><![CDATA[
@@ -17,6 +17,7 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="traf" name="Трафик" units=" мб"/>
 		<counter id="accnum" name="Лицевой счёт" type="text"/>
 	</counters>
 	<keywords></keywords>

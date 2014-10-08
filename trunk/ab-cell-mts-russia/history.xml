@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="3.3" version="90" date="2014-10-08">
+	- Улучшено получение минут.
+	</change>
 	<change major_version="3.3" version="89" date="2014-07-30">
 	- Улучшено получение трафика.
 	</change>

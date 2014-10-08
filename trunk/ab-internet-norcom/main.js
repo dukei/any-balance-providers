@@ -27,9 +27,12 @@ function main() {
 	if(!/Выйти из профиля/i.test(html)) {
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
+	
     var result = {success: true};
+	
 	getParam(html, result, 'accnum', /Лицевой счёт:[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'balance', /Ваш Баланс:[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'traf', /Трафик за месяц:(?:[^>]*>){1}([^<]+)/i, replaceTagsAndSpaces, parseTraffic);
 	
     AnyBalance.setResult(result);
 }

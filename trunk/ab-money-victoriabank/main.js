@@ -36,12 +36,16 @@ function main() {
 	if(AnyBalance.getLevel() >= 7) {
 		var captcha = AnyBalance.requestGet(baseurl+ 'frontend/captcha-image.jpg');
 		params.captchaText = AnyBalance.retrieveCode("Please, enter security code", captcha);
-		AnyBalance.trace('Капча получена: ' + params.captchaText);
+		AnyBalance.trace('Got code: ' + params.captchaText);
 	} else {
-		throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
+		throw new AnyBalance.Error('provider requires AnyBalance API v7, please, update AnyBalance!');
 	}	
 	
 	html = AnyBalance.requestPost(baseurl + href, params, addHeaders({Referer: baseurl + 'frontend/auth/userlogin?execution=' + execKey}));
+	
+	if(/change password now/i.test(html)) {
+		throw new AnyBalance.Error('You password has expired, enter your account from desktop and change password!', null, true);
+	}
 	
 	if (!/logout/i.test(html)) {
 		var error = getParam(html, null, null, /error-title"[^>]*>([\s\S]*?)<\/div/i, replaceTagsAndSpaces, html_entity_decode);

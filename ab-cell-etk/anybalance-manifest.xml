@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="1.0" version="2">ab-cell-etk</id>
+	<id major_version="1.0" version="3">ab-cell-etk</id>
 	<api flags="no_browser"/>
 	<name>Енисейтелеком (Ростелеком - ЕТК)</name>
 	<description html="true"><![CDATA[
@@ -32,6 +32,7 @@
 	<counters>
 		<counter id="ActualBalance" name="Актуальный баланс" units=" р"/>
 		<counter id="DayRashod" name="Скорость расходования средств в день" units=" р"/>
+		<counter id="trafic" name="Трафик" units=" мб"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="phone" name="Телефон" type="text"/>
 		<counter id="licschet" name="Лицевой счет" type="text"/>

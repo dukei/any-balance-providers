@@ -29,11 +29,14 @@ function main() {
 	
 	checkEmpty(prefs.station_from, 'Введите пункт отправления!');
 	checkEmpty(prefs.station_to, 'Введите пункт назначения!');
+	checkEmpty(prefs.date_trip, 'Введите дату!');
 	
 	var html = AnyBalance.requestGet(baseurl + 'ru/', g_headers);
+	
 	if (!html || AnyBalance.getLastStatusCode() > 400) throw new AnyBalance.Error(
 		'Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.'
 	);
+	
 	if (!this.Storage)
 		this.Storage = function() {};
 	if (!this.localStorage) 
@@ -79,7 +82,7 @@ function main() {
 	}
     
 	var result = {success: true};
-    
+	
     result.train = json.value[0].num;
     result.depart_station = json.value[0].from.station;
     result.depart_time = json.value[0].from.src_date;

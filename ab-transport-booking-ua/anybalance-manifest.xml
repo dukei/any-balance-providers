@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-transport-booking-ua</id>
+	<id version="2">ab-transport-booking-ua</id>
 	<api flags="no_browser"/>
-	<name>Укрзализныця</name>
+	<name>Укрзализныця (Расписание поездов, Украина)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет возможность мониторинга расписания поездов согласно сайту <a href="http://booking.uz.gov.ua/ru/">http://booking.uz.gov.ua/ru/</a></p>
 	]]></description>

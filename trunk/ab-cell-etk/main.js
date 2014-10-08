@@ -35,5 +35,12 @@ function main(){
 	getParam(html, result, 'phone', /"Номер телефона"([^>]*>){5}/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'licschet', /"Лицевой счет"([^>]*>){5}/i, replaceTagsAndSpaces, html_entity_decode);
 	
+	if(isAvailable('trafic')) {
+		var traf = getParam(html, null, null, /объем переданных данных типа GPRS составляет([^<]+)/i, replaceTagsAndSpaces);
+		if(traf) {
+			sumParam(traf, result, 'trafic', /\d+\s\D{1,2}/ig, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
+		}
+	}
+	
 	AnyBalance.setResult(result);
 }

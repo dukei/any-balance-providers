@@ -17,13 +17,13 @@ function main() {
 
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
-
-	var html = AnyBalance.requestGet(baseurl, g_headers);
-
-	var cookie = getParam(html, null, null, /document\.cookie='_ddn_intercept_2_=([^';]+)/i);
 	
-	checkEmpty(cookie, 'Не удалось обойти защиту от роботов, сайт изменен?', true);
-	AnyBalance.setCookie('www.i-ghost.net', '_ddn_intercept_2_', cookie);	
+	var html = AnyBalance.requestGet(baseurl + 'auth/login', g_headers);
+
+	// var cookie = getParam(html, null, null, /document\.cookie='_ddn_intercept_2_=([^';]+)/i);
+	
+	// checkEmpty(cookie, 'Не удалось обойти защиту от роботов, сайт изменен?', true);
+	// AnyBalance.setCookie('www.i-ghost.net', '_ddn_intercept_2_', cookie);	
 	
 	html = requestPostMultipart(baseurl + 'auth/login', {
 		'username': prefs.login,

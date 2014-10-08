@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="77" date="2014-10-08">
+	- Исправлен регион: Чита.
+	- Добавлено отображение трафика для Норильска.
+	</change>
 	<change version="76" date="2014-09-25">
 	- Исправлен регион: Пенза.
 	</change>

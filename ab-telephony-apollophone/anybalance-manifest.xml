@@ -1,41 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
-  <api flags="no_browser" />
-  <id version="3">ab-telephony-apollophone</id>
-  <name>Apollo Phone</name>
-  <description>
-    Получает текущий баланс, валюту баланса в провайдере IP-телефонии Apollo Phone (http://www.apollophone.ru). 
+	<api flags="no_browser" />
+	<id version="4">ab-telephony-apollophone</id>
+	<name>Apollo Phone</name>
+	<description>
+	Получает текущий баланс, валюту баланса в провайдере IP-телефонии Apollo Phone (http://www.apollophone.ru). 
 
     Компания "Apollo Phone" оказывает следующие услуги:
       междугородная/международная телефонная связь с помощью телефонных карт Apollo Phone;
       прямой доступ к междугородной/международной телефонной связи.
 
-    Провайдер получает данные из личного кабинета https://secure.apollophone.com/
+    Провайдер получает данные из личного кабинета https://secure.apollophone.ru/office
 
     Доступ к личному кабинету выдаётся только для постоянных клиентов компании, заключивших договор на прямое подключение. Информацию о том, как заключить договор, Вы можете посмотреть здесь: http://www.apollophone.ru/moskva/pr_pod_m.php.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-	<js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс"/>
-    <counter id="currency" name="Валюта" type="text"/>
-    <counter id="number" name="Номер счета" type="text"/>
-    <counter id="userName" name="Владелец" type="text"/>
-  </counters>
-  <keywords>
-    apollophone аполлофон
-  </keywords>
-  <type>
-    telephony
-  </type>
-  <country>
-    ru
-  </country>
+	</description>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс"/>
+		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="number" name="Номер счета" type="text"/>
+		<counter id="userName" name="Владелец" type="text"/>
+	</counters>
+	<keywords>apollophone аполлофон</keywords>
+	<type>telephony</type>
+	<country>ru</country>
 </provider>

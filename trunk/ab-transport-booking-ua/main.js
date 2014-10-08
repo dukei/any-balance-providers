@@ -73,22 +73,26 @@ function main() {
         'GV-Token':token
     })); 
     
-	json = getJson(html);
-	
+	json = getJson(html);	
 	if(json.error) {
 		throw new AnyBalance.Error(json.value);
 	}
-	
     
 	var result = {success: true};
-	
-	getParam(html, result, 'balance', /баланс:(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, ['currency', 'balance'], /Текущий баланс:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseCurrency);
-	getParam(html, result, 'fio', /Имя абонента:(?:[\s\S]*?<b[^>]*>){1}([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, '__tariff', /Тарифный план:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'phone', /Номер:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'deadline', /Действителен до:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseDate);
-	getParam(html, result, 'status', /Статус:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
+    
+    result.train = json.value[0].num;
+    result.depart_station = json.value[0].from.station;
+    result.depart_time = json.value[0].from.src_date;
+    result.arrival_station = json.value[0].till.station;
+    result.arrival_time = json.value[0].till.src_date;
+    
+    var types = [];
+    
+    for(var i = 0; i < json.value[0].types.length; i++)	{
+        var avail_seats = " " + json.value[0].types[i].title + ": " + json.value[0].types[i].places;
+        types.push(avail_seats);
+	}
+    result.types = types.toString();
 	
 	AnyBalance.setResult(result);
 }

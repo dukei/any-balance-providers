@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-    <id version="7">ab-money-google-checkout</id>
+    <id version="8">ab-money-google-checkout</id>
     <name>Google Wallet (Checkout)</name>
 	<api flags="no_browser"/>
 	<description html="true"><![CDATA[

@@ -116,7 +116,8 @@ for(b in c){f.push([b,c[b]])
 return a
 }catch(c){AnyBalance.trace("Bad json ("+c.message+"): "+b);
 throw new AnyBalance.Error("Сервер вернул ошибочные данные: "+c.message)
-}}function getJsonEval(b){try{var a=safeEval("return "+b,"window,document,self")
+}}function getJsonEval(b){try{var a=safeEval("return "+b,"window,document,self");
+return a
 }catch(c){AnyBalance.trace("Bad json ("+c.message+"): "+b);
 throw new AnyBalance.Error("Сервер вернул ошибочные данные: "+c.message)
 }}function safeEval(c,g,i){var d=AnyBalance,b=this.g_AnyBalanceApiParams,f=this._AnyBalanceApi;

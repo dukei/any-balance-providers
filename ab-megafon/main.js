@@ -34,7 +34,7 @@ var filial_info = {
 filial_info[MEGA_FILIAL_MOSCOW] = {
 	name: 'Столичный филиал',
 	func: megafonServiceGuide,
-//	site: "https://moscowsg.megafon.ru/",
+	site: "https://moscowsg.megafon.ru/",
 	widget: 'https://moscowsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
 //	tray: "https://moscowsg.megafon.ru/TRAY_INFO/TRAY_INFO?LOGIN=%LOGIN%&PASSWORD=%PASSWORD%",
 	internet: "http://user.moscow.megafon.ru/",
@@ -748,7 +748,7 @@ function megafonLK(tryOldSG) {
 	var baseurl = 'https://lk.megafon.ru/';
 	
 	var html = AnyBalance.requestGet(baseurl + 'login/', g_headers);
-	var token = getParam(html, null, null, /name=CSRF value="([\s\S]*?)"/i);
+	var token = getParam(html, null, null, /name=CSRF value="([^"]+)/i);
 	
 	checkEmpty(token, 'Не удалось найти токен авторизации!', true);
 	
@@ -769,16 +769,21 @@ function megafonLK(tryOldSG) {
 	}
 	
 	if(tryOldSG) {
-		var href = getParam(html, null, null, /href="(https:\/\/moscowsg\.megafon\.ru\/SCC\/SC_BASE_LOGIN\?SESSION_ID\=[^"]+)"/i, replaceTagsAndSpaces, html_entity_decode);
+		var href = getParam(html, null, null, /href="\/redirect\/sg\/index"/i, replaceTagsAndSpaces, html_entity_decode);
 		// Не у всех доступен новый ЛК, если у юзера он не подключен, та нас редиректит сразу в старый кабинет
 		var sessionid = getParam(html, null, null, /SESSION_ID=([^&"]+)/i);
 
 		if(href || sessionid) {
 			if(href) {
 				AnyBalance.trace('Нашли ссылку для перехода в старый сервис-гид, получим данные оттуда...');
-				html = AnyBalance.requestGet(href, g_headers);
-				
-				sessionid = getParam(href, null, null, /SESSION_ID=([^&"]+)/i);
+				try {
+					html = AnyBalance.requestGet(baseurl + 'redirect/sg/index', g_headers);
+					
+					var url = AnyBalance.getLastUrl();
+					AnyBalance.trace('Redirected to ' + url + '\nResult\n\n' + html);
+					sessionid = getParam(href + url, null, null, /SESSION_ID=([^&"]+)/i);
+				} catch(e){
+				}
 			}
 			
 			if(sessionid && !href) {
@@ -786,8 +791,12 @@ function megafonLK(tryOldSG) {
 			}
 			
 			if(!sessionid) {
-				AnyBalance.trace(html);
-				throw new AnyBalance.Error('Не удалось найти код сессии!');
+				if(prefs.debug) {
+					sessionid = AnyBalance.retrieveCode("Пожалуйста, введите sessionid");
+				} else {
+					AnyBalance.trace(html);
+					throw new AnyBalance.Error('Не удалось найти код сессии!');
+				}
 			}
 			
 		    if(prefs.corporate)
@@ -795,6 +804,7 @@ function megafonLK(tryOldSG) {
 			else
 				megafonServiceGuidePhysical(MEGA_FILIAL_MOSCOW, sessionid);
 			return;
+			
 		} else {
 			AnyBalance.trace('Не удалось найти ссылку на вход в старый кабинет, пробуем получить данные из новго ЛК!');
 		}
@@ -828,17 +838,17 @@ function megafonServiceGuide(filial){
 
     var session;
     if(filial == MEGA_FILIAL_MOSCOW) {
-		// try{
-			// megafonLK(true);
-		// } catch (e) {
-			// // Если ошибка в логине и пароле, дальше идти нет смысла. Позже: А вдруг у кого-то не установлен пароль в новом кабинете, закидают же?
-			// if(e.fatal)
-				// throw e;
+		try{
+			megafonLK(true);
+		} catch (e) {
+			// Если ошибка в логине и пароле, дальше идти нет смысла. Позже: А вдруг у кого-то не установлен пароль в новом кабинете, закидают же?
+			if(e.fatal)
+				throw e;
 			
-			// AnyBalance.trace('Невозможно зайти в сервис гид, придется получать данные из виджета. Причина: ' + e.message);
-			// megafonTrayInfo(filial);
-		// }
-		// return;
+			AnyBalance.trace('Невозможно зайти в сервис гид, придется получать данные из виджета. Причина: ' + e.message);
+			megafonTrayInfo(filial);
+		}
+		return;
         if(prefs.corporate){
             session = AnyBalance.requestGet('http://moscow.megafon.ru/ext/sg_gate.phtml?MSISDN=CP_' + prefs.login + '&PASS=' + encodeURIComponent(prefs.password) + '&CHANNEL=WWW');
         }else{

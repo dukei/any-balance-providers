@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference
+        key="phone"
+        title="Номер телефона" 
+        summary="Номер Вашего мобильного телефона||{@s}\n" 
+        dialogTitle="Номер телефона" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите номер Вашего мобильного телефона, зарегистрированный в Единой Мобильной Платформе г. Москвы"
+        positiveButtonText="ОК">
+    </EditTextPreference>
+    <EditTextPreference
+        key="password"
+        title="Пароль"
+        summary="Пароль для входа в личный кабинет||**********\n"
+        inputType="textPassword"
+        dialogTitle="Пароль"
+        dialogMessage="Введите пароль, используемый для входа в личный кабинет"
+        positiveButtonText="ОК"
+        negativeButtonText="Отмена">
+    </EditTextPreference>
+</PreferenceScreen>

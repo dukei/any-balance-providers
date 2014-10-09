@@ -3,11 +3,11 @@
 	<EditTextPreference
 		title="Логин"
 		positiveButtonText="ОК"
-		summary="|Введите логин в Альфа.Click|{@s}"
+		summary="|Введите логин в Альфа-Клик|{@s}"
 		obligatory="true"
 		dialogTitle="Логин"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите логин для входа в систему Альфа.Click."
+		dialogMessage="Введите логин для входа в систему Альфа-Клик."
 		key="login">
 	</EditTextPreference>
 	<EditTextPreference
@@ -17,8 +17,8 @@
 		negativeButtonText="Отмена"
 		obligatory="true"
 		title="Пароль"
-		summary="|Введите пароль в Альфа.Click|***********"
-		dialogMessage="Введите пароль, используемый для входа в систему Альфа.Click."
+		summary="|Введите пароль в Альфа-Клик|***********"
+		dialogMessage="Введите пароль, используемый для входа в систему Альфа-Клик."
 		inputType="textPassword">
 	</EditTextPreference>
 	<ListPreference

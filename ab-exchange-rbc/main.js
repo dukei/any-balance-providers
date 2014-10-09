@@ -11,18 +11,17 @@ var g_headers = {
 };
 
 function getCurrs(html, regexpkey, curr, result) {
-	getParam(html, result, 'balance' + curr + 'spros', new RegExp(regexpkey + '(?:[^>]*>){7}([^<]+)', 'i'), replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'balance' + curr + 'predl', new RegExp(regexpkey + '(?:[^>]*>){9}([^<]+)', 'i'), replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance' + curr + 'spros', new RegExp(regexpkey + '(?:[^>]*>){1}[^>]*indicators__ticker__val1[^>]*>([^<]+)', 'i'), replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance' + curr + 'predl', new RegExp(regexpkey + '(?:[^>]*>){3}[^>]*indicators__ticker__val2[^>]*>([^<]+)', 'i'), replaceTagsAndSpaces, parseBalance);
 }
 
 function main() {
-	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'http://www.rbc.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	var html = AnyBalance.requestGet(baseurl, g_headers);
 	
-	var table = getParam(html, null, null, /<td class="rightBlock">[\s\S]*?правая колонка - конец(?:[^>]*>){1,}\s*<\/td>/i);
+	var table = getParam(html, null, null, /class="indicators__inner">[\s\S]*?<\/div/i);
 	
 	if(!table)
 		throw new AnyBalance.Error('Не удалось найти таблицу с данными. Сайт изменен?');

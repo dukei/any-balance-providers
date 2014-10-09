@@ -33,8 +33,26 @@ function main(){
 		'passwd':prefs.password,
 		'cap_field':captchaa
     }, required_headers);
-
-    //AnyBalance.trace(html);
+	
+	// Указан номер - надо переключиться
+	if(prefs.number) {
+		var login = getParam(html, null, null, /Логин[^<]+?(\d{6,})/i);
+		AnyBalance.trace('Залогинены на номер: ' + login);
+		
+		if(!endsWith(login, prefs.number)) {
+			var post = getParam(html, null, null, new RegExp('SendPost\\(\'(\\?pril_sel=\\d+' + prefs.number + '[^)\']+)', 'i'));
+			
+			html = AnyBalance.requestPost(baseurl + "main.html", {
+				'pril_sel':getParam(post, null, null, /pril_sel=([^&]+)/i),
+				'live':getParam(post, null, null, /live=([^&]+)/i),
+				'chpril':getParam(post, null, null, /chpril=([^&]+)/i),
+			}, required_headers);
+			
+			AnyBalance.trace('Переключились на номер с последними цифрами: ' + prefs.number);
+		} else {
+			AnyBalance.trace('Уже залогинены на правильный номер: ' + login);
+		}
+	}
 	
 	if (!/\/logout/i.test(html)) {
 		var error = sumParam(html, null, null, /id="error"[^>]*>([\s\S]*?)<\/div>/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
@@ -49,50 +67,8 @@ function main(){
 	
 	getParam(html, result, 'username', />\s*ФИО\s*\/\s*Компания[^:]*:([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'agreement', />\s*Договор([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-
-	sumParam(html, result, 'balance', /\(<img[^>]*coins\.png">(?:&nbsp;|\s*)?Баланс([\d\s]+)р/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-	sumParam(html, result, '__tariff', /\d{8,}(?:\s|&nbsp;)?\(([^)]+)/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+	getParam(html, result, 'balance', /coins\.png">(?:&nbsp;|\s*)?[^<]+баланс([\s\S]*?)р/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, '__tariff', /\d{8,}(?:\s|&nbsp;)?\(([^)]+)/i, replaceTagsAndSpaces, html_entity_decode);
 	
-	
-	
-    /*var $html = $(html);
-    var $tableInfo = $html.find('table.ystyle:has(img[src*="images/issa/person.gif"])');
-    AnyBalance.trace("Found info table: " + $tableInfo.length);
-    
-    /*if(AnyBalance.isAvailable('username')){
-        var val = $tableInfo.find('td:has(img[src*="images/issa/person.gif"])').next().find('b').text();
-        if(val)
-            result.username = $.trim(val);
-    }*/
-    /*if(AnyBalance.isAvailable('agreement'))
-        result.agreement = $.trim($tableInfo.find('td:has(img[src*="images/issa/account.gif"])').next().find('b').text());
-    */
-    //result.__tariff = $.trim($tableInfo.find('td:has(img[src*="images/issa/tariff.gif"])').next().find('b').text());
-    
-    /*var $tableBalance = $html.find('p:contains("Информация о лицевом счете")').next();
-    AnyBalance.trace("Found balance table: " + $tableBalance.length);
-    
-    if(AnyBalance.isAvailable('balance')){
-        var val = $tableBalance.find('td:contains("Актуальный баланс")').next().text();
-        if(val && (matches = val.match(/[\-\d\.]+/)))
-            result.balance = parseFloat(matches[0]);
-    }
-    
-    if(AnyBalance.isAvailable('corrections')){
-        var val = $tableBalance.find('td:contains("Сумма корректировок за текущий месяц:")').next().text();
-        AnyBalance.trace("Corrections: " + val);
-        if(val && (matches = val.match(/([\-\d\.]+)/))){
-            result.corrections = parseFloat(matches[1]);
-        }
-    }
-
-    if(AnyBalance.isAvailable('pays')){
-        var val = $tableBalance.find('td:contains("Сумма платежей за текущий месяц:")').next().text();
-        AnyBalance.trace("Pays: " + val);
-        if(val && (matches = val.match(/([\-\d\.]+)/))){
-            result.pays = parseFloat(matches[1]);
-        }
-    }*/
-   
     AnyBalance.setResult(result);
 }

@@ -19,4 +19,13 @@
         dialogMessage="Введите пароль, используемый для входа в личный кабинет Zala.by"
         inputType="textPassword">
     </EditTextPreference>
+    <EditTextPreference 
+        title="Последние цифры договора" 
+        positiveButtonText="ОК" 
+        summary="||{@s}" 
+        dialogTitle="Последние цифры договора" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите последние цифры договора, по которому необходимо получать данные."
+        key="number">
+    </EditTextPreference>	
 </PreferenceScreen>

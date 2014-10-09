@@ -454,6 +454,7 @@ function getJsonEval(html){
    try{
        //Запрещаем использование следующих переменных из функции:
        var json = safeEval('return ' + html, 'window,document,self');
+	   return json;
    }catch(e){
        AnyBalance.trace('Bad json (' + e.message + '): ' + html);
        throw new AnyBalance.Error('Сервер вернул ошибочные данные: ' + e.message);

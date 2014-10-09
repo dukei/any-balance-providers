@@ -2,9 +2,9 @@
 <provider>
 	<api flags="no_browser" />
 	<id version="4">ab-money-alfabank-ua</id>
-	<name>Альфа-банк (Украина)</name>
+	<name>Альфа-Банк (Украина)</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе на картах, кредитах и депозитах Альфа-банка Украина (https://my.alfabank.com.ua/)</p>
+	<p>Предоставляет информацию о балансе на картах, кредитах и депозитах Альфа-Банка Украина (https://my.alfabank.com.ua/)</p>
 	]]></description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>

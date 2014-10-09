@@ -2,10 +2,10 @@
 <provider>
 	<id version="21">ab-money-svyaznoybank</id>
 	<api flags="no_browser"/>
-	<name>Связнойбанк (QBank)</name>
+	<name>Связной Банк (QBank)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем остатке, бонусных баллах и других параметрах карт, счетов и вкладов "Связного Банка".</p>
-	<p>Информация берется из системы Интернет-банк (http://qbank.ru).</p>
+	<p>Информация берется из системы Интернет-Банк (http://qbank.ru).</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
 	<p>Для входа требуется Персональный Клиентский Номер и пароль.</p> 

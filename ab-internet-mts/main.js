@@ -41,6 +41,7 @@ var regions = {
 	piter: getPiter,
 	yar: getYar,
 	arkh: getArkh,
+	vladimir:getVladimir
 };
 
 function main(){
@@ -746,6 +747,13 @@ function getBarnaul(){
     getParam(html, result, 'username', /Мои аккаунты[\s\S]{1,150}<strong>([\s\S]*?)<\/strong>/i, null);
 */
     AnyBalance.setResult(result);
+}
+
+function getVladimir(){
+	var urlIndex = 'https://lk-vladimir.center.mts.ru/index.php?r=site/login';
+	var urlAjax = 'https://lk-vladimir.center.mts.ru/index.php?r=account/vgroups&agrmid=';
+	
+	newTypicalLanBillingInetTv(urlIndex, urlAjax);
 }
 
 function getBelgorod(){

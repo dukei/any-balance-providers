@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="77">ab-internet-mts</id>
+	<id version="78">ab-internet-mts</id>
 	<name>Домашний Интернет и Телевидение МТС</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем балансе, номере лицевого счета и договора, ФИО владельца, трафике в текущем месяце, абонентской плате для пользователей провайдера "Домашний Интернет и Телевидение МТС".</p>
@@ -15,6 +15,7 @@
 		<li>Киров (<a href="http://lk.kirovnet.net">http://lk.kirovnet.net</a>)<br></li>
 		<li>Нижний Новгород (<a href="http://stat.nnov.comstar-r.ru">http://stat.nnov.comstar-r.ru</a>)<br></li>
 		<li>Северодвинск (<a href="http://severodvinsk.stream-info.ru/client2">http://severodvinsk.stream-info.ru/client2</a>)<br></li>
+		<li>Владимир (<a href="https://lk-vladimir.center.mts.ru/">https://lk-vladimir.center.mts.ru/</a>)<br></li>
 		<li>Вологда (<a href="http://lk.vologda.mts.ru">http://lk.vologda.mts.ru</a>)<br></li>
 		<li>Ижевск (<a href="http://lk.izhnt.ru">http://lk.izhnt.ru</a>)<br></li>
 		<li>Пенза (<a href="http://client.lanbilling.ptcomm.ru">http://client.lanbilling.ptcomm.ru</a>)<br></li>

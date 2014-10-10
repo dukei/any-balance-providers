@@ -13,11 +13,13 @@ d<h.length;
 var e=g?f.match(g):[,f],j;
 if(e){j=replaceAll(isset(e[1])?e[1]:e[0],c);
 if(a){j=a(j)
-}if(b&&isset(j)){k[isArray(b)?b[0]:b]=j
+}if(b&&isset(j)){k[__getParName(b)]=j
 }break
 }}return j
 }function checkEmpty(c,b,a){if(!c){throw new AnyBalance.Error(b,null,!a)
-}}function isAvailable(c){if(!c){return true
+}}function __getParName(b){var a=isArray(b)?b[0]:b;
+return a&&a.replace(/([^.]*)$/,"$1")
+}function isAvailable(c){if(!c){return true
 }var b=isArray(c),a="__tariff";
 if((b&&c.indexOf(a)>=0)||(!b&&c=="__tariff")){return true
 }return AnyBalance.isAvailable(c)
@@ -116,7 +118,8 @@ for(b in c){f.push([b,c[b]])
 return a
 }catch(c){AnyBalance.trace("Bad json ("+c.message+"): "+b);
 throw new AnyBalance.Error("Сервер вернул ошибочные данные: "+c.message)
-}}function getJsonEval(b){try{var a=safeEval("return "+b,"window,document,self")
+}}function getJsonEval(b){try{var a=safeEval("return "+b,"window,document,self");
+return a
 }catch(c){AnyBalance.trace("Bad json ("+c.message+"): "+b);
 throw new AnyBalance.Error("Сервер вернул ошибочные данные: "+c.message)
 }}function safeEval(c,g,i){var d=AnyBalance,b=this.g_AnyBalanceApiParams,f=this._AnyBalanceApi;
@@ -157,7 +160,7 @@ c=f;
 f=a||false
 }function p(){if(f){return n?k.replace(n,""):""
 }}if(!isAvailable(d)){return p()
-}d=isArray(d)?d[0]:d;
+}d=__getParName(d);
 var o=[],j;
 if(d&&isset(q[d])){o.push(q[d])
 }function l(i){i=replaceAll(i,e);

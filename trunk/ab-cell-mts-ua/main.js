@@ -32,10 +32,15 @@ function main(){
 		password: prefs.password
 	});
 	
-	var error=getParam(html, null, null, /<ul class="operation-results-error"><li>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, html_entity_decode);
-	if (error)
-		throw new AnyBalance.Error(error, null, /Введен неизвестный номер телефона|Введен неверный пароль/i.test(error));
+	if (!/Security\.mvc\/LogOff/i.test(html)) {
+		var error = getParam(html, null, null, [/<ul class="operation-results-error"><li>([\s\S]*?)<\/li>/i, /<h1>\s*Ошибка\s*<\/h1>\s*<p>([\s\S]*?)<\/p>/i], replaceTagsAndSpaces, html_entity_decode);
+		if (error)
+			throw new AnyBalance.Error(error, null, /Введен неизвестный номер телефона|Введен неверный пароль/i.test(error));
 		
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+	}
+
 	if(/<title>Произошла ошибка<\/title>/i.test(html)){
 		throw new AnyBalance.Error("Интернет-помощник временно недоступен");
 	}
@@ -43,14 +48,7 @@ function main(){
 	if(/<TITLE>The page cannot be found<\/TITLE>/.test(html)){
         throw new AnyBalance.Error("Интернет-помощник отсутствует по адресу " + baseurl);
     }
-
-    error = getParam(html, null, null, /<h1>\s*Ошибка\s*<\/h1>\s*<p>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
-    if(error)
-        throw new AnyBalance.Error(error);
-
-    if(!/Security\.mvc\/LogOff/.test(html))
-    	throw new AnyBalance.Error("Не удалось войти в мобильный интернет-помощник. Проблемы на сайте?");
-   
+	
     AnyBalance.trace("It looks like we are in selfcare (found logOff)...");
 
     if(prefs.phone && prefs.phone != prefs.login){

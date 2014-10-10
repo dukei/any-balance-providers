@@ -13,13 +13,11 @@ d<h.length;
 var e=g?f.match(g):[,f],j;
 if(e){j=replaceAll(isset(e[1])?e[1]:e[0],c);
 if(a){j=a(j)
-}if(b&&isset(j)){k[__getParName(b)]=j
+}if(b&&isset(j)){k[isArray(b)?b[0]:b]=j
 }break
 }}return j
 }function checkEmpty(c,b,a){if(!c){throw new AnyBalance.Error(b,null,!a)
-}}function __getParName(b){var a=isArray(b)?b[0]:b;
-return a&&a.replace(/([^.]*)$/,"$1")
-}function isAvailable(c){if(!c){return true
+}}function isAvailable(c){if(!c){return true
 }var b=isArray(c),a="__tariff";
 if((b&&c.indexOf(a)>=0)||(!b&&c=="__tariff")){return true
 }return AnyBalance.isAvailable(c)
@@ -160,7 +158,7 @@ c=f;
 f=a||false
 }function p(){if(f){return n?k.replace(n,""):""
 }}if(!isAvailable(d)){return p()
-}d=__getParName(d);
+}d=isArray(d)?d[0]:d;
 var o=[],j;
 if(d&&isset(q[d])){o.push(q[d])
 }function l(i){i=replaceAll(i,e);

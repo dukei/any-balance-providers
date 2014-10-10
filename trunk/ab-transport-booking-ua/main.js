@@ -36,20 +36,24 @@ function main() {
 	if (!html || AnyBalance.getLastStatusCode() > 400) throw new AnyBalance.Error(
 		'Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.'
 	);
-	
-	if (!this.Storage)
-		this.Storage = function() {};
-	if (!this.localStorage) 
-		this.localStorage = new Storage();
-	
-	var token, svAB = AnyBalance;
-	
-	Storage.prototype.setItem = function(key, value) {
+
+        var svAB = AnyBalance;
+        this.fake_localStorage = {
+	    setItem: function(key, value) {
 		svAB.trace('Получили token (' + key + '): ' + value);
 		token = value;
-	}
+	    }
+        }
+
 	var obf_script = getParam(html, null, null, /(\$\$_=~[\s\S]*?)\(function\s*\(\s*\)\s*\{\s*var\s+ga/);
-	
+        
+        (0).constructor.constructor = function(str){ //Обфусцированный скрипт использует это для выполнения кода
+		if(str && typeof(str)=='string' && /localStorage/.test(str)){
+			str = str.replace(/localStorage/g, 'fake_localStorage');
+		}
+		return Function.apply(null, arguments);
+	}
+
 	safeEval(obf_script);
     
     // Запрос на поиск пункта отправления

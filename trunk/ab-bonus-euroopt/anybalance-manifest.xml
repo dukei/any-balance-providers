@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="3">ab-bonus-euroopt</id>
+  <id version="4">ab-bonus-euroopt</id>
   <api flags="no_browser|captcha" min_level="3"/>
   <name>Евроопт (Беларусь)</name>
 	<description html="true"><![CDATA[
@@ -16,8 +16,9 @@
     <history>history.xml</history>
   </files>
   <counters>
-    <counter id="sum" name="Покупок в текущем месяце"/>
-    <counter id="status" name="Статус карты"/>
+    <counter id="sum" name="Покупок в текущем месяце" units=" р"/>
+    <counter id="status" name="Накопленный процент" units="%"/>
+    <counter id="skidka" name="Сэкономлено в текущем месяце" units=" р"/>
   </counters>
   <keywords>
     евроопт

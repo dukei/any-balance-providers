@@ -19,22 +19,23 @@ function main () {
         throw new AnyBalance.Error('Введите № карты');
 
     var html = AnyBalance.requestGet(baseurl + 'otchet-po-diskontnoj-karte-2');
-    var form = getParam(html, null, null, /<form[^>]+id="maec4cmoduleform_1"[^>]*>([\s\S]*?)<\/form>/i);
+    var form = getParam(html, null, null, /<div[^>]+class="enter_number_form"[^>]*>([\s\S]*?)<\/form>/i);
     if(!form)
         throw new AnyBalance.Error('Не удалось найти форму ввода номера карты. Сайт изменен?');
 
     var params = createFormParams(form, function(params, input, name, value){
         var dt = new Date();
-        if(name == 'maec4cnumber')
+        if(name == 'cardnum')
             value = prefs.login;
-        else if(name == 'maec4cfrom')
+        else if(name == 'from_date')
             value = '1.' + (dt.getMonth()+1) + '.' + dt.getFullYear();
-        else if(name == 'maec4cto')
+        else if(name == 'to_date')
             value = dt.getDate() + '.' + (dt.getMonth()+1) + '.' + dt.getFullYear();
-        else if(name == 'captcha'){
+        else if(name == 'captcha[input]'){
             if(AnyBalance.getLevel() < 7)
                 throw new AnyBalance.Error ('Этот провайдер требует ввода капчи. Обновите программу для поддержки капчи.');
-            var captchaimg = AnyBalance.requestGet(baseurl + 'captcha.php');
+            var captchaid = getParam(form, null, null, /<input[^>]+value="([^"]*)"[^>]*id="captcha-id"/i, null, html_entity_decode);
+            var captchaimg = AnyBalance.requestGet(baseurl + 'images/captcha/' + captchaid + '.png');
             value = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки.", captchaimg);
         }
        
@@ -43,14 +44,22 @@ function main () {
 
     var html = AnyBalance.requestPost(baseurl + 'otchet-po-diskontnoj-karte-2', params);
     
-    var error = getParam(html, null, null, /<div[^>]+class="error-message[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
-    if(error)
-        throw new AnyBalance.Error(error);
+    if(!/<tr[^>]*class="itog"/i.test(html)){
+        var error = getParam(html, null, null, /<ul[^>]+class="errors"[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
+        if(error)
+            throw new AnyBalance.Error(error, null, /Карточка с таким номером не найдена/i.test(error));
+    
+        error = getParam(html, null, null, /К сожалению, Вы не заполнили сведения о себе/);
+        if(error)
+            throw new AnyBalance.Error("Евроопт требует заполнить форму регистрации. Вам необходимо зайти на сайт http://www.euroopt.by/otchet-po-diskontnoj-karte-2 через браузер и заполнить форму");
+        throw new AnyBalance.Error('Не удалось получить данные по карте. Сайт изменен?');
+    }
 
     var result = {success: true};
 
-    getParam(html, result, 'status', /Текущий статус карточки:[^<]*<strong[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-    sumParam(html, result, 'sum', /<th[^>]*>\d+\.\d+\.\d+<\/th>\s*<td[^>]*>(\d+)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    getParam(html, result, 'status', /Текущий накопленный процент[^<]*<big[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'sum', /<tr[^>]*class="itog"(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'skidka', /<tr[^>]*class="itog"(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 
     AnyBalance.setResult (result);
 }

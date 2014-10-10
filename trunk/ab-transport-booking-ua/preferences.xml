@@ -8,7 +8,7 @@
 		dialogTitle="Пункт отправления"
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите пункт отправления.">
+		dialogMessage="Введите пункт отправления на русском языке.">
 	</EditTextPreference>
 	<EditTextPreference
 		title="Пункт назначения"
@@ -18,7 +18,7 @@
 		dialogTitle="Пункт назначения"
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите пункт назначения">
+		dialogMessage="Введите пункт назначения на русском языке.">
 	</EditTextPreference>
 	<EditTextPreference
 		title="Дата"
@@ -28,6 +28,6 @@
 		dialogTitle="Дата"
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите дату в формате 01.12.2014.">
+		dialogMessage="Введите дату в формате 01.12.2014">
 	</EditTextPreference>
 </PreferenceScreen>

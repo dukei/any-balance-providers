@@ -33,9 +33,8 @@ function main() {
 	
 	var html = AnyBalance.requestGet(baseurl + 'ru/', g_headers);
 	
-	if (!html || AnyBalance.getLastStatusCode() > 400) throw new AnyBalance.Error(
-		'Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.'
-	);
+	if (!html || AnyBalance.getLastStatusCode() > 400) 
+		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 
         var svAB = AnyBalance;
         this.fake_localStorage = {

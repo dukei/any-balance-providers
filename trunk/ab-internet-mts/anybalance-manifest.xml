@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="78">ab-internet-mts</id>
+	<id version="79">ab-internet-mts</id>
 	<name>Домашний Интернет и Телевидение МТС</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем балансе, номере лицевого счета и договора, ФИО владельца, трафике в текущем месяце, абонентской плате для пользователей провайдера "Домашний Интернет и Телевидение МТС".</p>
@@ -20,7 +20,7 @@
 		<li>Ижевск (<a href="http://lk.izhnt.ru">http://lk.izhnt.ru</a>)<br></li>
 		<li>Пенза (<a href="http://client.lanbilling.ptcomm.ru">http://client.lanbilling.ptcomm.ru</a>)<br></li>
 		<li>Комсомольск-на-Амуре (<a href="https://clb.komsomolsk.mts.ru/kom/">https://clb.komsomolsk.mts.ru/kom/</a>)<br></li>
-		<li>Тула (<a href="http://kabinet.tula.mts.ru">http://kabinet.tula.mts.ru</a>)<br></li>
+		<li>Тула (<a href="https://lk-tula.center.mts.ru/">https://lk-tula.center.mts.ru/</a>)<br></li>
 		<li>Балаково (<a href="http://stat.balakovo.comstar-r.ru">http://stat.balakovo.comstar-r.ru</a>)<br></li>
 		<li>Ульяновск (<a href="http://ess.netroad.ru">http://ess.netroad.ru</a>)<br></li>
 		<li>Норильск (<a href="http://kabinet.norilsk.mts.ru">http://kabinet.norilsk.mts.ru</a>)<br></li>

@@ -553,8 +553,11 @@ function getKomsomolsk(){
 }
 
 function getTula(){
-    var baseurl = "https://kabinet.tula.mts.ru/";
-    typicalLanBillingInetTv(baseurl + 'client2/index.php?r=site/login');
+    var baseurl = 'https://lk-tula.center.mts.ru/index.php?r=site/login';
+    var urlAjax = 'https://lk-tula.center.mts.ru/index.php?r=account/vgroups&agrmid=';
+
+    newTypicalLanBillingInetTv(baseurl, urlAjax);
+	
 }
 
 function typicalLanBillingInetTv(url) {

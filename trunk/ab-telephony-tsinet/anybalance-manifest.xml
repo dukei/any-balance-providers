@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-telephony-tsinet</id>
+	<api flags="no_browser"/>
+	<name>Компания ТСИ</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера ТСИ <a href="http://www.tsinet.ru/">http://www.tsinet.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="http://www.tsinet.ru/">http://www.tsinet.ru/</a></p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="account" name="Номер лицевого счета" type="text"/>
+		<counter id="credit" name="Кредит" units=" р"/>
+		<counter id="limit" name="Порог доступа" units=" р"/>
+	</counters>
+	<keywords></keywords>
+	<type>telephony</type>
+	<country>ru</country>
+</provider>

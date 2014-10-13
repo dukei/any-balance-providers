@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-money-cetelem</id>
+	<api flags="no_browser"/>
+	<name>Cetelem</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Cetelem <a href="https://www.cetelem.ru/">https://www.cetelem.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="https://online.cetelem.ru/login.jsp">https://online.cetelem.ru/login.jsp</a></p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Собственные средства" units=" р"/>
+		<counter id="account" name="Договор №" type="text"/>
+		<counter id="next_payment_date" name="Дата следующего платежа" type="time" format="dd/MM/yyyy"/>
+		<counter id="next_payment_sum" name="Сумма следующего платежа" units=" р"/>
+		<counter id="debt_sum" name="Сумма просроченной задолженности" units=" р"/>
+	</counters>
+	<keywords></keywords>
+	<type>money</type>
+	<country>ru</country>
+</provider>

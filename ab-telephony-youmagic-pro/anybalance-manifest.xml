@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-telephony-youmagic-pro</id>
+	<api flags="no_browser"/>
+	<name>YouMagic.Pro</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера YouMagic.Pro <a href="http://youmagic.pro/ru/">http://youmagic.pro/ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="http://account.youmagic.pro/user/login">http://account.youmagic.pro/user/login</a></p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="credit_limit" name="Кредитный лимит" units=" р"/>
+		<counter id="debit" name="Дебиторская задолжность" units=" р"/>
+		<counter id="account" name="Лицевой счет" type="text"/>
+		<counter id="min_sum" name="Минимальная сумма к оплате" units=" р"/>
+	</counters>
+	<keywords></keywords>
+	<type>telephony</type>
+	<country>ru</country>
+</provider>

@@ -107,13 +107,15 @@ function main() {
         if(AnyBalance.isAvailable('accname'))
             result.accname = acc.accountName || acc.accountNumber;
 		
-        if(acc.elementEntryMap && acc.elementEntryMap.right) {
-            for(var j=0; j < acc.elementEntryMap.right.length + (acc.elementEntryMap.bottom.length || 0); ++j) {
-                var bal = acc.elementEntryMap.right[j];
-				// Если есть bottom, надо подменить текущий элемент
-				if(acc.elementEntryMap.bottom && j >= acc.elementEntryMap.right.length) {
-					var bal = acc.elementEntryMap.bottom[j-acc.elementEntryMap.right.length];
-				}
+        if(acc.elementEntryMap && (acc.elementEntryMap.right || acc.elementEntryMap.bottom)) {
+			if(acc.elementEntryMap.bottom) {
+				var accsArray = acc.elementEntryMap.right.concat(acc.elementEntryMap.bottom);
+			} else {
+				var accsArray = acc.elementEntryMap.right;
+			}
+			
+            for(var j=0; j < accsArray.length; ++j) {
+                var bal = accsArray[j];
 				if(!bal.value || bal.value == 'BalUnAvail') {
 					// В случае когда bal.rawBalance == 'BalUnAvail' кредитный лимит можно посчитать если есть баланс и использованный кредит
 					if(isset(result.balance) && isset(result.credit) && !isset(result.limit)) {

@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-    <id version="8">ab-money-citi</id>
+    <id version="9">ab-money-citi</id>
     <name>Ситибанк</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о на картах и счетах в Ситибинке (https://www.citibank.ru).</p>

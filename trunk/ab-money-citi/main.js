@@ -107,9 +107,13 @@ function main() {
         if(AnyBalance.isAvailable('accname'))
             result.accname = acc.accountName || acc.accountNumber;
 		
-        if(acc.elementEntryMap && acc.elementEntryMap.right){
-            for(var j=0; j<acc.elementEntryMap.right.length; ++j){
+        if(acc.elementEntryMap && acc.elementEntryMap.right) {
+            for(var j=0; j < acc.elementEntryMap.right.length + (acc.elementEntryMap.bottom.length || 0); ++j) {
                 var bal = acc.elementEntryMap.right[j];
+				// Если есть bottom, надо подменить текущий элемент
+				if(acc.elementEntryMap.bottom && j >= acc.elementEntryMap.right.length) {
+					var bal = acc.elementEntryMap.bottom[j-acc.elementEntryMap.right.length];
+				}
 				if(!bal.value || bal.value == 'BalUnAvail') {
 					// В случае когда bal.rawBalance == 'BalUnAvail' кредитный лимит можно посчитать если есть баланс и использованный кредит
 					if(isset(result.balance) && isset(result.credit) && !isset(result.limit)) {
@@ -117,28 +121,37 @@ function main() {
 					}
                     continue;
 				}
-                var val = parseBalance(bal.value);
+				
+				if(/дата/i.test(bal.phrase)) {
+					var val = parseDate(bal.value);
+				} else {
+					var val = parseBalance(bal.value);
+				}
+				
                 if(!isset(val)) {
                     AnyBalance.trace('Could not parse value for ' + bal.value);
                     continue;
                 }
-
-                if(AnyBalance.isAvailable('balance') && /Доступно сейчас|Available now/i.test(bal.phrase))
-                    result.balance = val;
+                if(AnyBalance.isAvailable('balance') && /Доступно сейчас|Available now|Остаток долга по кредиту/i.test(bal.phrase)) {
+                    if(/Остаток долга по кредиту/i.test(bal.phrase))
+						result.balance = val*-1;
+					else
+						result.balance = val;
+				}
                 if(AnyBalance.isAvailable('ondeposit') && /Текущий баланс|On deposit/i.test(bal.phrase))
                     result.ondeposit = val;
                 if(AnyBalance.isAvailable('limit') && /Кредитный лимит|Credit limit/i.test(bal.phrase))
                     result.limit = val;
                 if(AnyBalance.isAvailable('credit') && /Использованный кредит|Credit used/i.test(bal.phrase))
                     result.credit = val;
-
                 if(AnyBalance.isAvailable('credit_total') && /Сумма к погашению|Payoff amount/i.test(bal.phrase))
                     result.credit_total = val;
-                if(AnyBalance.isAvailable('credit_next_payment') && /Сумма следующего платежа|Next installment amount/i.test(bal.phrase))
-                    result.credit_next_payment = val;					
+                if(AnyBalance.isAvailable('credit_next_payment') && /Сумма (?:следующего|очередного) платежа|Next installment amount/i.test(bal.phrase))
+                    result.credit_next_payment = val;
+                if(AnyBalance.isAvailable('credit_next_payment_till') && /Дата (?:следующего|очередного) платежа/i.test(bal.phrase))
+                    result.credit_next_payment_till = val;					
 				
-				// Валюта нужна почти всегда!
-                if(/*AnyBalance.isAvailable('currency') && */!isset(result.currency))
+                if(!isset(result.currency))
                     result.currency = parseCurrency(bal.value);
             }
         }else{

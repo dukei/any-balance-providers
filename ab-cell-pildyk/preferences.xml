@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <EditTextPreference 
+    <EditTextPreference
+		obligatory="true"
         title="Логин" 
         positiveButtonText="ОК" 
         summary="|Логин|{@s}" 
@@ -9,7 +10,8 @@
         dialogMessage="Введите логин для входа в личный кабинет, без +370 или 8"
         key="login">
     </EditTextPreference>
-    <EditTextPreference 
+    <EditTextPreference
+		obligatory="true"
         positiveButtonText="ОК"
         key="password" 
         dialogTitle="Пароль"

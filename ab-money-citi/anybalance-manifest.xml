@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-    <id version="7">ab-money-citi</id>
+    <id version="8">ab-money-citi</id>
     <name>Ситибанк</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о на картах и счетах в Ситибинке (https://www.citibank.ru).</p>
@@ -26,6 +26,7 @@
 		<counter id="credit" name="Использованный кредит" units=" {@currency}"/>
 		<counter id="credit_total" name="Сумма к погашению" units=" {@currency}"/>
 		<counter id="credit_next_payment" name="Сумма следующего платежа" units=" {@currency}"/>
+		<counter id="credit_next_payment_till" name="Дата следующего платежа" type="time" format="dd/MM/yyyy"/>
 		<counter id="accnum" name="Номер" type="text"/>
 		<counter id="accname" name="Название" type="text"/>
 	</counters>

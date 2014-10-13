@@ -709,6 +709,11 @@ function fetchPre(baseurl, html) {
 	//getParam(xhtml, result, '__tariff', [/<div[^>]+:tariffInfo[^>]*class="current"[^>]*>(?:[\s\S](?!<\/div>))*?<h2[^>]*>([\s\S]*?)<\/h2>/i, /<h2>(?:[\s\S](?!<\/h2>))*?Текущий тариф\s*([\s\S]*?)\s*<\/h2>/i], replaceTagsAndSpaces, html_entity_decode);
 	
 	if (AnyBalance.isAvailable('balance')) {
+		// Если нет баланса, валюту не нужно получать
+		function l_getCurrency() {
+			if(isset(result.balance) && result.balance != null) 
+				getParam(html + xhtml, result, ['currency', 'balance'], balanceRegExp, replaceTagsAndSpaces, myParseCurrency);			
+		}
 		// Пробуем получить со страницы, при обновлении через мобильный интернет, он там есть
 		var balanceRegExp = /class="price[^>]*>((?:[\s\S]*?span[^>]*>){3})/i;
 		getParam(html, result, 'balance', balanceRegExp, replaceTagsAndSpaces, parseBalance);
@@ -727,11 +732,6 @@ function fetchPre(baseurl, html) {
 			// И получим баланс из него
 			getParam(xhtml, result, 'balance', balanceRegExp, replaceTagsAndSpaces, parseBalance);
 			l_getCurrency();
-		}
-		// Если нет баланса, валюту не нужно получать
-		function l_getCurrency() {
-			if(isset(result.balance) && result.balance != null) 
-				getParam(html + xhtml, result, ['currency', 'balance'], balanceRegExp, replaceTagsAndSpaces, myParseCurrency);			
 		}
 	}
 	if (isAvailableBonuses()) {

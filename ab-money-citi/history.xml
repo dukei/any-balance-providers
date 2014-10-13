@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-	<change version="8" date="2014-10-13">
+	<change version="9" date="2014-10-13">
 	- Улучшено получение данных по кредитам.
 	- Новый счетчик: Дата следующего платежа.
 	</change>

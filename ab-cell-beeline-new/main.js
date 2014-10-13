@@ -708,45 +708,35 @@ function fetchPre(baseurl, html) {
 	var xhtml; //= getBlock(baseurl + 'c/pre/index.html', html, 'currentTariffLoaderDetails');
 	//getParam(xhtml, result, '__tariff', [/<div[^>]+:tariffInfo[^>]*class="current"[^>]*>(?:[\s\S](?!<\/div>))*?<h2[^>]*>([\s\S]*?)<\/h2>/i, /<h2>(?:[\s\S](?!<\/h2>))*?Текущий тариф\s*([\s\S]*?)\s*<\/h2>/i], replaceTagsAndSpaces, html_entity_decode);
 	
-	if (AnyBalance.isAvailable('balance'/*, 'fio'*/)) {
-		/*xhtml = getBlock(baseurl + 'c/pre/index.html', html, 'balancePreHeadDetails');
-		getParam(xhtml, result, 'balance', /у вас на балансе([\s\S]*)/i, replaceTagsAndSpaces, parseBalance);
-		getParam(xhtml, result, ['currency', 'balance'], /у вас на балансе([\s\S]*)/i, replaceTagsAndSpaces, myParseCurrency);
-		getParam(xhtml, result, 'fio', /<span[^>]+class="b2c.header.greeting.pre.b2c.ban"[^>]*>([\s\S]*?)(?:<\/span>|,)/i, replaceTagsAndSpaces, html_entity_decode);*/
-		
+	if (AnyBalance.isAvailable('balance')) {
 		// Пробуем получить со страницы, при обновлении через мобильный интернет, он там есть
-		getParam(html, result, 'balance', /class="price[^>]*>((?:[\s\S]*?span[^>]*>){3})/i, replaceTagsAndSpaces, parseBalance);
-		// Теперь запросим блок homeBalance
-		//xhtml = getBlock(baseurl + 'c/pre/index.html', html, 'loadingBalanceBlock');
-		xhtml = refreshBalance(baseurl + 'c/pre/index.html', html);
+		var balanceRegExp = /class="price[^>]*>((?:[\s\S]*?span[^>]*>){3})/i;
+		getParam(html, result, 'balance', balanceRegExp, replaceTagsAndSpaces, parseBalance);
+		l_getCurrency();
 		
-		
-		/*var tries = 0; //Почему-то не работает. Сколько раз ни пробовал, если первый раз баланс недоступен, то и остальные оказывается недоступен...
-		while(/balance-not-found/i.test(xhtml) && tries < 20){
-			AnyBalance.trace('Баланс временно недоступен, пробуем обновить: ' + (++tries));
-			AnyBalance.sleep(2000);
-			xhtml = refreshBalance(baseurl + 'c/pre/index.html', html, xhtml) || xhtml;
-		} */
-		// И получим баланс из него
-		getParam(xhtml, result, 'balance', /class="price[^>]*>((?:[\s\S]*?span[^>]*>){3})/i, replaceTagsAndSpaces, parseBalance);
-		// Если баланса нет, не надо получать и валюту
-		if(isset(result.balance) && result.balance != null) {
-			getParam(xhtml, result, ['currency', 'balance'], /class="price[^>]*>((?:[\s\S]*?span[^>]*>){3})/i, replaceTagsAndSpaces, myParseCurrency);
+		if(!isset(result.balance) || result.balance == null) {
+			// Теперь запросим блок homeBalance
+			//xhtml = getBlock(baseurl + 'c/pre/index.html', html, 'loadingBalanceBlock');
+			xhtml = refreshBalance(baseurl + 'c/pre/index.html', html);
+			/*var tries = 0; //Почему-то не работает. Сколько раз ни пробовал, если первый раз баланс недоступен, то и остальные оказывается недоступен...
+			while(/balance-not-found/i.test(xhtml) && tries < 20){
+				AnyBalance.trace('Баланс временно недоступен, пробуем обновить: ' + (++tries));
+				AnyBalance.sleep(2000);
+				xhtml = refreshBalance(baseurl + 'c/pre/index.html', html, xhtml) || xhtml;
+			} */
+			// И получим баланс из него
+			getParam(xhtml, result, 'balance', balanceRegExp, replaceTagsAndSpaces, parseBalance);
+			l_getCurrency();
+		}
+		// Если нет баланса, валюту не нужно получать
+		function l_getCurrency() {
+			if(isset(result.balance) && result.balance != null) 
+				getParam(html + xhtml, result, ['currency', 'balance'], balanceRegExp, replaceTagsAndSpaces, myParseCurrency);			
 		}
 	}
 	if (isAvailableBonuses()) {
-/*
-		javax.faces.partial.ajax:true
-		javax.faces.source:j_idt1262:j_idt1264
-		javax.faces.partial.execute:@all
-		javax.faces.partial.render:bonusesForm
-		j_idt1262:j_idt1264:j_idt1262:j_idt1264
-		j_idt1262:j_idt1262
-		javax.faces.ViewState:-5960270555230815881:779638056818587556
-*/
 		xhtml = getBonusesBlock(baseurl + 'c/pre/index.html', html, 'bonusesForm');
 		AnyBalance.trace(xhtml);
-		
 		// Затем надо пнуть систему, чтобы точно получить все бонусы
 		//xhtml = getBlock(baseurl + 'c/pre/index.html', html, 'refreshButton');
 		getBonuses(xhtml, result);
@@ -859,7 +849,7 @@ function getBonuses(xhtml, result) {
 			// Это новый вид отображения данных
 			} else if (/Минут общения по тарифу/i.test(name)) {
 				// Очень внимательно надо матчить
-				if(/номера других (?:сотовых\s+)?операторов|все номера|На номера домашнего региона|Минут общения по тарифу Все для бизнеса Бронза/i.test(name))
+				if(/других (?:сотовых\s+)?операторов|все номера|На номера домашнего региона|Минут общения по тарифу Все для бизнеса Бронза/i.test(name))
 					sumParam(services[i], result, 'min_local', reNewValue, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
 				else
 					sumParam(services[i], result, 'min_bi', reNewValue, replaceTagsAndSpaces, parseMinutes, aggregate_sum);

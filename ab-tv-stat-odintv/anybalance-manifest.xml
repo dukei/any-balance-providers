@@ -1,36 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-tv-stat-odintv</id>
-  <name>ТВ ТРК Одинцово</name>
-  <description>
-    Получает баланс для провайдера по цифровому ТВ ТРК Одинцово (http://trc.odintv.ru/)
-
-    Информация берется из личного кабинета клиента (https://stat.odintv.ru/webexecuter)
-
-  </description>
-  <author>Alexandra Shalamova &lt;alexandrashalamova@gmail.com&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Входящий остаток на начало месяца" units="р"/>
-    <counter id="coming" name="Приход за месяц (всего)" units="р"/>
-    <counter id="consumption" name="Расход за месяц (всего)" units="р"/>
-    <counter id="working" name="Наработка за месяц (всего)" units="р"/>
-    <counter id="outgoing" name="Исходящий остаток на конец месяца" units="р"/>
-    <counter id="limit" name="Лимит" units="р"/>
-  </counters>
-  <keywords>
-    телевидение
-  </keywords>
-  <type>
-    tv
-  </type>
-  <country>
-    ru
-  </country>
+	<api flags="no_browser"/>
+	<id version="2">ab-tv-stat-odintv</id>
+	<name>ТВ ТРК Одинцово</name>
+  	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера ТВ ТРК Одинцово <a href="http://trc.odintv.ru">http://trc.odintv.ru</a></p>
+	<p>Информация берется из личного кабинета <a href="https://stat.odintv.ru/webexecuter">https://stat.odintv.ru/webexecuter</a></p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Входящий остаток на начало месяца" units="р"/>
+		<counter id="coming" name="Приход за месяц (всего)" units="р"/>
+		<counter id="consumption" name="Расход за месяц (всего)" units="р"/>
+		<counter id="working" name="Наработка за месяц (всего)" units="р"/>
+		<counter id="outgoing" name="Исходящий остаток на конец месяца" units="р"/>
+		<counter id="limit" name="Лимит" units="р"/>
+	</counters>
+	<keywords>телевидение</keywords>
+	<type>tv</type>
+	<country>ru</country>
 </provider>

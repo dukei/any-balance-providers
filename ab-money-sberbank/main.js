@@ -1,10 +1,5 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Получает текущий остаток и другие параметры карт Сбербанка, используя систему Сбербанк-онлайн.
-
-Сайт оператора: http://sbrf.ru/
-Личный кабинет: https://esk.sbrf.ru/
 */
 
 function requestApi(action, params, dontAddDefParams, url, ignoreErrors) {
@@ -276,8 +271,9 @@ function main() {
 */
 	var html = AnyBalance.requestPost(baseurl);
 	var error = getParam(html, null, null, /<h1[^>]*>О временной недоступности услуги[\s\S]*?<p[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
-	if (error) throw new AnyBalance.Error(error);
-
+	if (error)
+		throw new AnyBalance.Error(error);
+	
 	//Сбер разрешает русские логины и кодирует их почему-то в 1251, хотя в контент-тайп передаёт utf-8.
 	AnyBalance.setDefaultCharset('windows-1251');
 	html = AnyBalance.requestPost(baseurl, {
@@ -286,12 +282,13 @@ function main() {
 		operation: 'button.begin'
 	});
 	AnyBalance.setDefaultCharset('utf-8');
-
+	
 	error = getParam(html, null, null, /в связи с ошибкой в работе системы[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
 	if (error)
 		throw new AnyBalance.Error(error);
 	if (/\$\$errorFlag/i.test(html)) {
 		var error = getParam(html, null, null, /([\s\S]*)/, replaceTagsAndSpaces, html_entity_decode);
+		
 		throw new AnyBalance.Error(error);
 	}
 	var page = getParam(html, null, null, /value\s*=\s*["'](https:[^'"]*?AuthToken=[^'"]*)/i);
@@ -572,6 +569,8 @@ function doNewAccountPhysic(html, baseurl) {
 	var prefs = AnyBalance.getPreferences();
 	if (prefs.type == 'acc')
 		fetchNewAccountAcc(html, baseurl);
+	else if (prefs.type == 'metal_acc')
+		fetchNewAccountMetallAcc(html, baseurl);
 	else
 		fetchNewAccountCard(html, baseurl);
 }
@@ -656,6 +655,37 @@ function parseDateForWord(str){
 	else {
 		return parseDateWord(date[2] + ' ' + date[1] + ' ' + date[3]);
 	}
+}
+
+function fetchNewAccountMetallAcc(html, baseurl) {
+	var prefs = AnyBalance.getPreferences();
+	// Теперь только здесь есть курсы валют
+	var result = {success: true};
+	fetchRates(html, result);
+	
+	html = AnyBalance.requestGet(baseurl + '/PhizIC/private/ima/list.do');
+	var lastdigits = prefs.lastdigits ? prefs.lastdigits.replace(/(\d)/g, '$1\\s*') : '(?:\\d\\s*){3}\\d';
+	var baseFind = 'class="productNumber\\b[^"]*">[^<]*' + lastdigits + '\\s*<';
+	var reCardId = new RegExp(baseFind + '[\\s\\S]*?account_(\\d+)', 'i');
+	
+	AnyBalance.trace('Пытаемся найти счет: ' + reCardId);
+	
+	var cardId = getParam(html, null, null, reCardId);
+	if (!cardId) {
+		if (prefs.lastdigits) throw new AnyBalance.Error("Не удаётся идентификатор счета с последними цифрами " + prefs.lastdigits);
+		else throw new AnyBalance.Error("Не удаётся найти ни одного счета");
+	}
+	
+	html = AnyBalance.requestGet(baseurl + '/PhizIC/private/ima/info.do?id=' + cardId);
+	
+	getParam(html, result, '__tariff', /ProductTitle([^>]*>){2}/i, replaceTagsAndSpaces);
+	getParam(html, result, 'weight', /detailAmount([^>]*>){2}/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, ['weight_units', 'weight'], /detailAmount([^>]*>){2}/i, replaceTagsAndSpaces, parseCurrency);
+	getParam(html, result, 'balance', /По курсу покупки Банка([^>]*>){2}/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, ['currency', 'balance'], /По курсу покупки Банка([^>]*>){2}/i, replaceTagsAndSpaces, parseCurrencyMy);
+	getParam(html, result, 'cardNumber', /productNumber"([^>]*>){2}/i, [replaceTagsAndSpaces, /\D/g, '']);
+	
+	AnyBalance.setResult(result);
 }
 
 function fetchNewAccountAcc(html, baseurl) {

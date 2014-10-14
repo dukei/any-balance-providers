@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="44">ab-money-sberbank</id>
+	<id version="45">ab-money-sberbank</id>
 	<api flags="no_browser"/>
 	<name>Сбербанк ОнЛ@йн</name>
 	<description html="true"><![CDATA[
@@ -57,7 +57,7 @@
 		<counter id="cash" name="Наличные" units=" {@currency}"/>
 		<counter id="electrocash" name="Для покупок" units=" {@currency}"/>
 		<counter id="currency" name="Валюта" type="text"/>
-		<counter id="cardNumber" name="Номер карты" type="text"/>
+		<counter id="cardNumber" name="Номер карты/счета" type="text"/>
 		<counter id="userName" name="ФИО" type="text"/>
 		<counter id="till" name="Срок действия" type="time" format="dd/MM/yyyy"/>
 		<counter id="debt" name="Задолженность" units=" {@currency}"/>
@@ -69,6 +69,7 @@
 		<counter id="lastPurchSum" name="Сумма последней операции" type="text"/>
 		<counter id="lastPurchPlace" name="Место последней операции" type="text"/>
 		<counter id="lastPurchDate" name="Дата последней операции" type="time" format="dd/MM"/>
+		<counter id="weight" name="Вес" units=" {@weight_units}"/>
 		<counter id="usdPurch" name="USD покупка"/>
 		<counter id="usdSell" name="USD продажа"/>
 		<counter id="eurPurch" name="EUR покупка"/>

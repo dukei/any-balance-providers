@@ -38,7 +38,18 @@ function main() {
 	var result = {success: true};
 	
 	getParam(html, result, 'balance', /Сумма к оплате([^>]*>){3}/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'licschet', /лицевой счет([^>]*>){1}/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'licschet', /лицевой счет\s*:\s*([\d]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	
+	var dt = new Date();
+	var months = ['январь', 'февраль', 'март', 'апрель', 'май', 'июнь', 'июль', 'август', 'сентябрь', 'октябрь', 'ноябрь', 'декабрь'];
+	
+	// Вроде есть только за предыдущий месяц данные
+	var month = dt.getMonth() > 0 ? months[dt.getMonth()-1] : months[dt.getMonth()];
+	var trWater = getParam(html, null, null, new RegExp('<tr>\\s*<td[^>]*>\\s*"' + month + '"(?:[^>]*>){21}\\s*</tr>', 'i'));
+	if(trWater) {
+		getParam(trWater, result, 'cold_water', /(?:[^>]*>){10}\s*(\d+)/i, replaceTagsAndSpaces, parseBalance);
+		getParam(trWater, result, 'hot_water', /(?:[^>]*>){17}\s*(\d+)/i, replaceTagsAndSpaces, parseBalance);
+	}
 	
 	AnyBalance.setResult(result);
 }

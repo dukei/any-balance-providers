@@ -58,8 +58,8 @@ function main() {
 	
 	html = AnyBalance.requestGet(baseurl + 'index.aspx?action=my-bank', g_headers);
 	
-	if(prefs.type == 'acc')
-        fetchAccount(html, baseurl);
+	if(prefs.type == 'dep')
+        fetchDepozit(html, baseurl);
     else
         fetchCard(html, baseurl); //По умолчанию карты будем получать
 }
@@ -93,22 +93,27 @@ function fetchCard(html, baseurl){
     AnyBalance.setResult(result);
 }
 
-function fetchAccount(html, headers, baseurl){
+function fetchDepozit(html, baseurl){
     var prefs = AnyBalance.getPreferences();
     if(prefs.cardnum && !/^\d{4}$/.test(prefs.cardnum))
         throw new AnyBalance.Error("Введите 4 последних цифры номера счета или не вводите ничего, чтобы показать информацию по первому счету");
-
-    var re = new RegExp('(<tr[^>]*>\\s*<td[^>]*class="ui-narrowest"(?:[^>]*>){5}\s*\\d{16}' + (prefs.cardnum ? prefs.cardnum : '\\d{4}') + '[\\s\\S]*?</tr>)', 'i');
-    var tr = getParam(html, null, null, re);
-
+	
+	//html = AnyBalance.requestGet(baseurl + 'index.aspx?action=my-bank#item_deposits', g_headers);
+	
+    var re = new RegExp('<div[^>]*deposit(?:[^>]*>){3,5}\\s*(?:[^>]*>)?[\\s*]*' + (prefs.cardnum ? prefs.cardnum : '[^<]+') + '(?:[^>]*>){10,255}(?:\\s*</div>){6}', 'i');
+    
+	var tr = getParam(html, null, null, re);
     if(!tr)
         throw new AnyBalance.Error('Не удаётся найти ' + (prefs.cardnum ? 'счет с первыми цифрами ' + prefs.cardnum : 'ни одного счета!'));
 
     var result = {success: true};
+	
+    getParam(tr, result, 'balance', /Накоплено(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	
     getParam(tr, result, 'cardnum', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-    getParam(tr, result, 'balance', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(tr, result, 'accnum', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
     getParam(tr, result, ['currency', 'balance'], /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
     getParam(tr, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+	
     AnyBalance.setResult(result);
 }

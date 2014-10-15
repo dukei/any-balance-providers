@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-samtelecom</id>
+	<api flags="no_browser"/>
+	<name>Самтелеком</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Самтелеком <a href="http://samtelecom.ru/">http://samtelecom.ru/</a></p>
+	<p>Информация берется со страницы <a href="http://samtelecom.ru/klientam/proverit_balans/">http://samtelecom.ru/klientam/proverit_balans/</a></p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="account" name="Лицевой счет" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet, telephony</type>
+	<country>ru</country>
+</provider>

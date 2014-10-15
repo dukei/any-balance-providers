@@ -76,26 +76,36 @@ function main(){
 	getParam(html, result, 'phone', /"profile-phonenum"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
 	
 	try{
-		token = getParam(html, null, null, /constant\("csrf_token",\s+['"]([^"']*)/i);
-		json = {same_origin_token: token};
-		// Сайт возвращает JSON c доп. балансами, они -то нам и нужны
-		html = AnyBalance.requestPost(baseurl + 'balanceres', JSON.stringify(json), addHeaders({Referer: baseurl + 'profile'}));
-		json = getJson(html);
-		var v;
-        if(isset(json.returns[0])){ //Ежемесячные
-		    v = Math.round(json.returns[0].volume);
-			sumParam('' + v, result, 'internet_trafic', null, null, parseBalance, aggregate_sum);
-		    //getParam('' + v, result, 'internet_trafic', null, null, parseBalance);
-        }
-		if(isset(json.returns[1])){ //Еженедельные
-			v = Math.round(json.returns[1].volume);
-			sumParam('' + v, result, 'internet_trafic', null, null, parseBalance, aggregate_sum);
-			//getParam('' + v, result, 'internet_trafic', null, null, parseBalance);
-        }
-		if(isset(json.returns[2])){ //Ежедневные
-			v = Math.round(json.returns[2].volume);
-		    //getParam('' + v, result, 'internet_trafic', null, null, parseBalance);
-			sumParam('' + v, result, 'internet_trafic', null, null, parseBalance, aggregate_sum);
+		if(isAvailable('internet_trafic')) {
+			token = getParam(html, null, null, /constant\("csrf_token",\s+['"]([^"']*)/i);
+			var requestJson = {same_origin_token: token};
+			// Сайт возвращает JSON c доп. балансами, они -то нам и нужны
+			html = AnyBalance.requestPost(baseurl + 'balanceres', JSON.stringify(requestJson), addHeaders({Referer: baseurl + 'profile'}));
+			json = getJson(html);
+			var v;
+			if(isset(json.returns[0])){ //Ежемесячные
+				v = Math.round(json.returns[0].volume);
+				sumParam('' + v, result, 'internet_trafic', null, null, parseBalance, aggregate_sum);
+				//getParam('' + v, result, 'internet_trafic', null, null, parseBalance);
+			}
+			if(isset(json.returns[1])){ //Еженедельные
+				v = Math.round(json.returns[1].volume);
+				sumParam('' + v, result, 'internet_trafic', null, null, parseBalance, aggregate_sum);
+				//getParam('' + v, result, 'internet_trafic', null, null, parseBalance);
+			}
+			if(isset(json.returns[2])){ //Ежедневные
+				v = Math.round(json.returns[2].volume);
+				//getParam('' + v, result, 'internet_trafic', null, null, parseBalance);
+				sumParam('' + v, result, 'internet_trafic', null, null, parseBalance, aggregate_sum);
+			}
+
+			html = AnyBalance.requestPost(baseurl + 'balancedis', JSON.stringify(requestJson), addHeaders({Referer: baseurl + 'profile'}));
+			json = getJson(html);
+
+			if(isset(json.returns[0])){ //Ежегодные
+				v = Math.round(json.returns[0].balance);
+				sumParam('' + v, result, 'internet_trafic', null, null, parseBalance, aggregate_sum);
+			}
 		}
 	} catch(e){
 		AnyBalance.trace('Ошибка при получении Интернет-пакетов: ' + e);

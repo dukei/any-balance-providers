@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-municipal-erczd</id>
+	<id version="3">ab-municipal-erczd</id>
 	<api flags="no_browser"/>
 	<name>Единый Расчётный Центр г. Железнодорожный</name>
 	<description html="true"><![CDATA[
@@ -18,8 +18,10 @@
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
 		<counter id="licschet" name="Лицевой счет" type="text"/>
-		<counter id="cold_water" name="Холодная вода" units=" куб.м"/>
-		<counter id="hot_water" name="Горячая вода" units=" куб.м"/>
+		<counter id="cold_water" name="Холодная вода" prefix="Х: " units=" куб.м"/>
+		<counter id="cold_water_counter" name="Холодная вода - счетчик" prefix="Х: " units=" куб.м"/>
+		<counter id="hot_water" name="Горячая вода" prefix="Г: " units=" куб.м"/>
+		<counter id="hot_water_counter" name="Горячая вода - счетчик" prefix="Г: " units=" куб.м"/>
 	</counters>
 	<keywords></keywords>
 	<type>municipal</type>

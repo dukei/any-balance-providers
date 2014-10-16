@@ -48,7 +48,9 @@ function main() {
 	var trWater = getParam(html, null, null, new RegExp('<tr>\\s*<td[^>]*>\\s*"' + month + '"(?:[^>]*>){21}\\s*</tr>', 'i'));
 	if(trWater) {
 		getParam(trWater, result, 'cold_water', /(?:[^>]*>){10}\s*(\d+)/i, replaceTagsAndSpaces, parseBalance);
+		getParam(trWater, result, 'cold_water_counter', /(?:[^>]*>){7}\s*(\d+)/i, replaceTagsAndSpaces, parseBalance);
 		getParam(trWater, result, 'hot_water', /(?:[^>]*>){17}\s*(\d+)/i, replaceTagsAndSpaces, parseBalance);
+		getParam(trWater, result, 'hot_water_counter', /(?:[^>]*>){15}\s*(\d+)/i, replaceTagsAndSpaces, parseBalance);
 	}
 	
 	AnyBalance.setResult(result);

@@ -28,7 +28,7 @@ function main(){
 			quick_expire: 'on'
 		}, addHeaders({Referer: baseurl + 'profile'}));	
 		
-		if (!/logout/i.test(html)) {
+		if (!/logout|profile\/exit/i.test(html)) {
 			var error = getParam(html, null, null, /class="error-description"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
 			if (error && /Неправильная пара электронная почта/i.test(error)) throw new AnyBalance.Error(error, null, true);
 			if (error) throw new AnyBalance.Error(error);

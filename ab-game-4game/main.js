@@ -20,7 +20,7 @@ function main(){
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	var html = AnyBalance.requestGet(baseurl + '?popupWidget=AuthPopupWidget&block=login', g_headers);
+	var html = AnyBalance.requestGet(baseurl + '?popupWidget=AuthPopupWidget', g_headers);
 	
 	if(!html || AnyBalance.getLastStatusCode() > 400)
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
@@ -34,12 +34,14 @@ function main(){
 		return value;
 	});
 	
-	html = AnyBalance.requestPost(baseurl + '?popupWidget=AuthPopupWidget&block=login', {
+	html = AnyBalance.requestPost(baseurl + '?popupWidget=AuthPopupWidget', {
 		'AuthForm[loginOrEmail]': prefs.login,
 		'AuthForm[password]': prefs.password,
 		'AuthForm[bruteforceDetected]': ''
-	}, addHeaders({Referer: baseurl + '?popupWidget=AuthPopupWidget&block=login'}));
-
+	}, addHeaders({Referer: baseurl + '?popupWidget=AuthPopupWidget'}));
+	
+	html = AnyBalance.requestGet(baseurl, g_headers);
+	
     var result = {success: true};
 
     result.__tariff = prefs.login;

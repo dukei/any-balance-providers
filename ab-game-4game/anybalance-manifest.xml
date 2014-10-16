@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-game-4game</id>
+	<id version="4">ab-game-4game</id>
 	<api flags="no_browser"/>
 	<name>Фогейм</name>
 	<description html="true"><![CDATA[

@@ -1,10 +1,5 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Получает баланс, количество сообщений и счетов в QIWI Кошельке.
-
-Сайт компании: http://qiwi.ru
-Личный кабинет: http://w.qiwi.ru
 */
 
 function jsonp (obj) {
@@ -123,61 +118,30 @@ function mainNew () {
 	
 	AnyBalance.trace ('It looks like we are in selfcare...');
 	
-    // Проверка на корректный вход
-    /*if (/id="person-accounts-/i.exec(html)){
-    	AnyBalance.trace ('It looks like we are in selfcare...');
-        if(!getParam(html, null, null, /(profileBalance)/i)){
-            //Похоже, проблема с паролем, устарел, наверное.
-            var error = getParam(html, null, null, /<p[^>]+class="attention"[^>]*>\s*([\s\S]*?)\s*<\/p>/i);
-            if(error)
-                throw getFatalError(error.replace(/href="\//ig, 'href="https://w.qiwi.com/'));
-            throw getFatalError('Срок действия пароля истек. Смените пароль, зайдя в свой QIWI-кошелек (https://w.qiwi.com) через браузер.');
-        }
-    }else if(/passwordchangesuccess.action|password.action/i.test(html)){
-        throw getFatalError('Срок действия пароля истек. Смените пароль, зайдя в свой QIWI-кошелек (https://w.qiwi.com) через браузер.');
-    }else {
-        AnyBalance.trace ('Have not found logout... Unknown error. Please contact author.');
-        throw new AnyBalance.Error ('Неизвестная ошибка. Пожалуйста, свяжитесь с автором провайдера.');
-    }*/
-	
     var result = {success: true};
 	
-	var accs = sumParam(html, null, null, /"person-accounts-[^>]*>([\s\d,.-]+(?:RUB|USD|EUR|KZT))/ig);
+	info = AnyBalance.requestPost(baseurl + 'person/state.action', '', addHeaders({Accept: 'application/json, text/javascript', 'X-Requested-With':'XMLHttpRequest'}));
 	
-	for(var i = 0; i < accs.length; i++) {
-		var curr = accs[i];
+	res = getJson(info);
+	
+	var i = 0;
+	for(var balance in res.data.balances) {
 		var balanceVar = (i >= 1 ? 'balance' + (i+1) : 'balance');
-		//var currencys = {'rub':'р', 'usd':'$', 'eur':'€'};
 		
-		getParam(curr, result, balanceVar, null, replaceTagsAndSpaces, parseBalance);
-		getParam(curr, result, [(i >= 1 ? 'currency' + (i+1) : 'currency'), balanceVar], null, replaceTagsAndSpaces, function (str) {
-			try {
-				return g_currency[parseCurrency(str.toUpperCase())];
-			} catch (e) {}
-			return parseCurrency(str.toLowerCase());
-		});
+		getParam(res.data.balances[balance] + '', result, balanceVar, null, replaceTagsAndSpaces, parseBalance);
+		getParam(g_currency[balance] + '', result, [(i >= 1 ? 'currency' + (i+1) : 'currency'), balanceVar]);
+		i++
 	}
-    // getParam(html, result, 'balance', /"account_current"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	// getParam(html, result, ['currency', 'balance'], /"account_current"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, function (str) {return parseCurrency(str.toLowerCase());});
 	
-    if(AnyBalance.isAvailable('bills')){
-        html = AnyBalance.requestGet(baseurl + 'user/order/main.action?type=1');
-		
-        var count = html.match(/<div[^>]*ordersLine\s+NOT_PAID[^>]*>/ig);
-        result.bills = count ? count.length : 0;
-    }
+	getParam(res.data.messages, result, 'messages');
+	getParam(res.data.unpaidOrderCount, result, 'bills');
 	
-    if(AnyBalance.isAvailable('messages')){
-        html = AnyBalance.requestGet(baseurl + 'user/message/content/loadlist.action');
-        var count = html.match(/<li[^>]+data-container-name="item"[^>]*class="unread"/ig);
-        result.messages = count ? count.length : 0;
-    }
 	// QVC
 	if(AnyBalance.isAvailable('qvc_card')) {
         html = AnyBalance.requestGet(baseurl + 'qvc/main.action');
 		
-		var card = getParam (html, result, 'qvc_card', /Номер карты:[\s\S]{1,70}value">\s*([\s\S]*?)\s*<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
-		getParam (html, result, 'qvc_exp', /Срок действия:[\s\S]{1,70}value">\s*([\s\S]*?)\s*<\/p>/i, replaceTagsAndSpaces, parseDate);
+		var card = getParam (html, result, 'qvc_card', /Номер карты:([^>]*>){3}/i, replaceTagsAndSpaces, html_entity_decode);
+		getParam (html, result, 'qvc_exp', /Срок действия:([^>]*>){3}/i, replaceTagsAndSpaces, parseDate);
 		// Получим отчеты, чтобы получить последнюю транзакцию по карте
 		var today = new Date();
 		var yr = today.getFullYear();
@@ -187,19 +151,19 @@ function mainNew () {
 		// На валидность проверяется только дата окончания отчета
 		html = AnyBalance.requestGet(baseurl + 'qvc/reports.action?number='+card+'&daterange=true&start=24.06.2013&finish='+day+'.'+month+'.'+yr);
 		
-		var element = getParam (html, null, null, /(<div class="reportsLine">[\s\S]*?<div class="clearBoth">)/i, null, html_entity_decode);
+		var element = getParam (html, null, null, /<div[^>]*class="reportsLine(?:[^>]*>){30,40}[^>]*clearBoth/i, null, html_entity_decode);
 		if(element) {
 			var seller = getParam (html, null, null, /<div class="comment">([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-			var ammount = getParam (html, null, null, /<div class="cash">(-?\d[\d\s]*[.,]?\d*[.,]?\d*)/i, null, null);
+			var ammount = getParam (html, null, null, /<div class="cash">([-\s\d,.]+)/i, replaceTagsAndSpaces);
 			
-			var date = getParam (html, null, null, /<span class="date">([\s\S]*?)<\//i, null, null);
-			var time = getParam (html, null, null, /<span class="time">([\s\S]*?)<\//i, null, null);
+			var date = getParam (html, null, null, /<span class="date">([\s\S]*?)<\//i, replaceTagsAndSpaces);
+			var time = getParam (html, null, null, /<span class="time">([\s\S]*?)<\//i, replaceTagsAndSpaces);
 			
 			var all = date + ' ' + time +': \n' + seller + ' (' + ammount + ')';
 			getParam (all, result, 'qvc_last', null, null, null);
-		}
-		else
+		} else {
 			AnyBalance.trace('Не нашли ни одной транзакции!');
+		}
     }
     AnyBalance.setResult (result);
 }

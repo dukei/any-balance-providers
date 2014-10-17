@@ -32,7 +32,7 @@ function main(){
 	var json = getJsonEval(html);
 	
 	if (json.auth_ok != '1') {
-		var error = getParam(json.error, null, null, null, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(json.error, null, null, /<p class="red">([^>]*>){2}/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
 		

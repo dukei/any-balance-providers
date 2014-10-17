@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-exchange-forexpf</id>
+	<api flags="no_browser"/>
+	<name>Курсы Валют Форекс</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о курсах валют в реальном времени, с сайта <a href="http://www.forexpf.ru/chart/usdrub/">http://www.forexpf.ru/chart/usdrub/</a></p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="USDRUB_bid" name="USD покупка" units=" р"/>
+		<counter id="USDRUB_ask" name="USD продажа" units=" р"/>
+		<counter id="EURRUB_bid" name="EUR покупка" units=" р"/>
+		<counter id="EURRUB_ask" name="EUR продажа" units=" р"/>
+		</counters>
+	<keywords></keywords>
+	<type>exchange</type>
+	<country>ru</country>
+</provider>

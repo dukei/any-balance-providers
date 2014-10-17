@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-municipal-reutov</id>
+	<api flags="no_browser"/>
+	<name>Сервисный центр городского хозяйства города Реутова</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера "Сервисный центр городского хозяйства города Реутова" <a href="https://reutov-scgh.ru/Main">https://reutov-scgh.ru/Main</a></p>
+	<p>Информация берется из личного кабинета <a href="https://reutov-scgh.ru/LogOn">https://reutov-scgh.ru/LogOn</a></p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Сумма" units=" р"/>
+		<counter id="account" name="Лицевой счет" type="text"/>
+		<counter id="period" name="Месяц" type="text"/>
+		<counter id="water_details" name="Данные счетчиков воды за последний месяц" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>municipal</type>
+	<country>ru</country>
+</provider>

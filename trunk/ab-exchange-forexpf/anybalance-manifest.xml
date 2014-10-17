@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-exchange-forexpf</id>
+	<id version="2">ab-exchange-forexpf</id>
 	<api flags="no_browser"/>
 	<name>Курсы Валют Форекс</name>
 	<description html="true"><![CDATA[

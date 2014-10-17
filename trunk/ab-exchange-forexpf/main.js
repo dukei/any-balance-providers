@@ -16,12 +16,8 @@ function getCurrent(html, result, value) {
 }
 
 function main() {
-	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'http://www.forexpf.ru/chart/usdrub/';
 	AnyBalance.setDefaultCharset('utf-8');
-	
-	checkEmpty(prefs.login, 'Введите логин!');
-	checkEmpty(prefs.password, 'Введите пароль!');
 	
 	var html = AnyBalance.requestGet(baseurl, g_headers);
 	

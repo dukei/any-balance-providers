@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-exchange-forexpf</id>
+	<id version="3">ab-exchange-forexpf</id>
 	<api flags="no_browser"/>
 	<name>Курсы Валют Форекс</name>
 	<description html="true"><![CDATA[
@@ -14,10 +14,10 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="USDRUB_bid" name="USD покупка" units=" р"/>
-		<counter id="USDRUB_ask" name="USD продажа" units=" р"/>
-		<counter id="EURRUB_bid" name="EUR покупка" units=" р"/>
-		<counter id="EURRUB_ask" name="EUR продажа" units=" р"/>
+		<counter id="USDRUB_bid" name="USD покупка" prefix="$↑ "/>
+		<counter id="USDRUB_ask" name="USD продажа" prefix="$↓ "/>
+		<counter id="EURRUB_bid" name="EUR покупка" prefix="€↑ "/>
+		<counter id="EURRUB_ask" name="EUR продажа" prefix="€↓ "/>
 		</counters>
 	<keywords></keywords>
 	<type>exchange</type>

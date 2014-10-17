@@ -26,20 +26,23 @@ function main() {
 	if(!html || AnyBalance.getLastStatusCode() > 400)
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
         
-	html = AnyBalance.requestPost(baseurl + 'stat/index.php', {
+	html = AnyBalance.requestPost(baseurl + 'stat/ath.php', {
 		'email': prefs.login,
 		'password': prefs.password
-	}, addHeaders({Referer: baseurl + 'stat/index.php'}));
+	}, addHeaders({Referer: baseurl + 'stat/ath.php'}));
+
+    var html = AnyBalance.requestGet(baseurl + 'stat/index.php', g_headers); 
 	
-	if (!/action="exit/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
+	if (!/Выход/i.test(html)) {
+        var html = AnyBalance.requestGet(baseurl + 'stat/ath.php', g_headers); 
+		var error = getParam(html, null, null, /copy(?:[^>]*>){2}([\s\S]*?)<form/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
-	
+
 	var result = {success: true};
 	
 	getParam(html, result, 'balance', /Баланс:(?:[^>]*>){5}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);

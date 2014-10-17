@@ -151,16 +151,16 @@ function mainNew () {
 		// На валидность проверяется только дата окончания отчета
 		html = AnyBalance.requestGet(baseurl + 'qvc/reports.action?number='+card+'&daterange=true&start=24.06.2013&finish='+day+'.'+month+'.'+yr);
 		
-		var element = getParam (html, null, null, /<div[^>]*class="reportsLine(?:[^>]*>){30,40}[^>]*clearBoth/i, null, html_entity_decode);
+		var element = getParam (html, null, null, /<div[^>]*class="reportsLine(?:[^>]*>){9}\s*\d{1,2}.\d{1,2}.\d{2,4}(?:[^>]*>){25,30}[^>]*clearBoth/i, null, html_entity_decode);
 		if(element) {
-			var seller = getParam (html, null, null, /<div class="comment">([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-			var ammount = getParam (html, null, null, /<div class="cash">([-\s\d,.]+)/i, replaceTagsAndSpaces);
+			var seller = getParam (element, null, null, /<div class="comment">([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+			var ammount = getParam (element, null, null, /<div class="cash">([-\s\d,.]+)/i, replaceTagsAndSpaces);
 			
-			var date = getParam (html, null, null, /<span class="date">([\s\S]*?)<\//i, replaceTagsAndSpaces);
-			var time = getParam (html, null, null, /<span class="time">([\s\S]*?)<\//i, replaceTagsAndSpaces);
+			var date = getParam (element, null, null, /<span class="date">([\s\S]*?)<\//i, replaceTagsAndSpaces);
+			var time = getParam (element, null, null, /<span class="time">([\s\S]*?)<\//i, replaceTagsAndSpaces);
 			
 			var all = date + ' ' + time +': \n' + seller + ' (' + ammount + ')';
-			getParam (all, result, 'qvc_last', null, null, null);
+			getParam (all, result, 'qvc_last');
 		} else {
 			AnyBalance.trace('Не нашли ни одной транзакции!');
 		}

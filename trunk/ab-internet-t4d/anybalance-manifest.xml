@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-t4d</id>
+	<api flags="no_browser"/>
+	<name>Точка доступа</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Точка доступа <a href="http://t4d.ru/">http://t4d.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="http://www.t4d.ru/stat/index.php">http://www.t4d.ru/stat/index.php</a></p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="account" name="№ договора" type="text"/>
+		<counter id="__tariff" name="Тарифный план" type="text"/>
+		<counter id="next_payment_sum" name="Предварительная сумма платежа" units=" р"/>
+		<counter id="next_payment_date" name="Предварительная дата следующего платежа" type="time" format="dd/MM/yyyy"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

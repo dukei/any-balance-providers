@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-telephony-bite-lv</id>
+	<api flags="no_browser"/>
+	<name>Bite</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Bite <a href="http://www.bite.lv/">http://www.bite.lv/</a></p>
+	<p>Информация берется из личного кабинета <a href="https://www.manabite.lv/login?language=ru">https://www.manabite.lv/login?language=ru</a></p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Доступный остаток кредита" units=" EUR"/>
+		<counter id="account" name="Номер предоплаты" type="text"/>
+		<counter id="expires_date" name="Дата истечения срока" type="time" format="dd/MM/yyyy"/>
+		<counter id="service_sum" name="Общая сумма к оплате за услуги за текущий месяц" units=" EUR"/>
+		<counter id="devices_sum" name="Общая сумма к оплате за устройствa за текущий месяц" units=" EUR"/>
+	</counters>
+	<keywords></keywords>
+	<type>telephony</type>
+	<country>lv</country>
+</provider>

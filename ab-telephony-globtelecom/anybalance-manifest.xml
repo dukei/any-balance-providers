@@ -2,14 +2,14 @@
 <provider>
 	<id version="1">ab-telephony-globtelecom</id>
 	<api flags="no_browser"/>
-	<name>ГлобалТелеком</name>
+	<name>Глобал Телеком</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе провайдера ГлобалТелеком <a href="http://www.globtelecom.ru/">globtelecom.ru</a></p>
-	<p>Информация берется из личного кабинета <a href="https://login.globtelecom.ru/login.php">login.globtelecom.ru/login.php</a></p>
+	<p>Предоставляет информацию о балансе провайдера Глобал Телеком <a href="http://www.globtelecom.ru/">http://www.globtelecom.ru</a></p>
+	<p>Информация берется из личного кабинета <a href="https://login.globtelecom.ru/login.php">https://login.globtelecom.ru/login.php</a></p>
 	]]></description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
-		<icon>icon.jpg</icon>
+		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
 		<js>library.js</js>
 		<js>main.js</js>
@@ -19,7 +19,6 @@
 		<counter id="balance" name="Баланс" units=" р"/>
 		<counter id="status" name="Статус" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>
-		<counter id="__tariff" name="Тариф" type="text"/>
 	</counters>
 	<keywords></keywords>
 	<type>telephony</type>

@@ -11,42 +11,24 @@ var g_headers = {
 	'X-Requested-With':'XMLHttpRequest'
 };
 
-function generateManifestCounters(rate) {
-	AnyBalance.trace('<counter id="purchase_' + rate +'" name="' + rate.toUpperCase() + ' Покупка" units=" UAH"/>');
-	AnyBalance.trace('<counter id="sell_' + rate +'" name="' + rate.toUpperCase() + ' Продажа" units=" UAH"/>');
-}
-
-function getRate(html, result, rate) {
-	//generateManifestCounters(rate);
-	
-	var purchase = getParam(html, null, null, new RegExp('<tr class=\\"regular\\">(?:[^>]*>){3}[^>]*href=\\"http://kurs.com.ua/' + rate + '([^>]*>){9}', 'i'), replaceTagsAndSpaces, parseBalance);
-	var sell = getParam(html, null, null, new RegExp('<tr class=\\"regular\\">(?:[^>]*>){3}[^>]*href=\\"http://kurs.com.ua/' + rate + '(?:[^>]*>){15,20}[^>]*"value"[^>]*>([\\s\\S]*?)</div', 'i'), replaceTagsAndSpaces, parseBalance);
-	
-	checkEmpty(purchase && sell, 'Не удалось найти курсы для валюты ' + rate, true);
-	
-	getParam(purchase, result, 'purchase_' + rate);
-	getParam(sell, result, 'sell_' + rate);
-}
-
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://kurs.com.ua/';
+	var baseurl = 'http://minfin.com.ua/currency/mb/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
-	var html = AnyBalance.requestGet(baseurl + 'ajax/mezhbank_table/all/?_=' + new Date().getTime(), g_headers);
-	
-	var json = getJson(html);
-	
-	if (!json.table) {
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось найти таблицу с курсами. Сайт изменен?');
-	}
+	var html = AnyBalance.requestGet(baseurl, g_headers);
 	
 	var result = {success: true};
 	
-	getRate(json.table, result, 'usd');
-	getRate(json.table, result, 'eur');
-	getRate(json.table, result, 'rub');
+	getParam(html, result, 'purchase_usd', /USD(?:[\s\S]*?<tr[^>]*>){1}([^>]*>){4}/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'sell_usd', /USD(?:[\s\S]*?<tr[^>]*>){2}([^>]*>){4}/i, replaceTagsAndSpaces, parseBalance);
+	
+	
+	getParam(html, result, 'purchase_eur', /EUR(?:[\s\S]*?<tr[^>]*>){1}([^>]*>){8}/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'sell_eur', /EUR(?:[\s\S]*?<tr[^>]*>){2}([^>]*>){8}/i, replaceTagsAndSpaces, parseBalance);
+	
+	getParam(html, result, 'purchase_rub', /RUB(?:[\s\S]*?<tr[^>]*>){1}([^>]*>){12}/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'sell_rub', /RUB(?:[\s\S]*?<tr[^>]*>){2}([^>]*>){12}/i, replaceTagsAndSpaces, parseBalance);
 	
 	AnyBalance.setResult(result);
 }

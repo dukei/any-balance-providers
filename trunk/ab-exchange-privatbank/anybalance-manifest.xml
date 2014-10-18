@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-exchange-privatbank</id>
+	<id version="2">ab-exchange-privatbank</id>
 	<api flags="no_browser"/>
 	<name>Курсы валют Приватбанка</name>
 	<description html="true"><![CDATA[

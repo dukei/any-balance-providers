@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-exchange-nalu</id>
+	<id version="3">ab-exchange-nalu</id>
 	<api flags="no_browser"/>
 	<api min_level="5"/>
 	<name>Наличный курс валют Украины</name>

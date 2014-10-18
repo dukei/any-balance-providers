@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="2">ab-exchange-halykbank</id>
+	<id version="3">ab-exchange-halykbank</id>
 	<name>Курсы валют (Народный банк Казахстана)</name>
 	<description>
 Текущие курсы валют, установленные Народным банком Казахстана http://halykbank.kz/

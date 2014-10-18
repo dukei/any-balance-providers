@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0"  version="3">ab-exchange-kz</id>
+  <id major_version="1.0"  version="4">ab-exchange-kz</id>
   <name>Курсы валют Нацбанка РК</name>
   <description>
    Текущие курсы валют, установленные Национальным Банком Республики Казахстан. Содержит курс доллара, евро, российского рубля.

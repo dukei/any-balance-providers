@@ -25,6 +25,6 @@
 		<counter id="date" name="Дата курса" type="text"/>
 	</counters>
 	<keywords>Курс валют, центральный банк, центробанк рф, доллар, евро, фунт, белорусский рубль, тенге, юань, гривна, франк, йена, форекс, forex</keywords>
-	<type>finance, exchange</type>
+	<type>exchange</type>
 	<country>ru</country>
 </provider>

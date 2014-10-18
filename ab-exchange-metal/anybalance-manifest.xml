@@ -21,6 +21,6 @@
 		<counter id="date" name="Дата" type="text"/>
 	</counters>
 	<keywords>Драгоценные металлы, золото, серебро, платина, палладий, центральный банк, центробанк рф</keywords>
-	<type>finance, exchange</type>
+	<type>exchange</type>
 	<country>ru</country>
 </provider>

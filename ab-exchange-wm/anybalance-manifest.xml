@@ -36,6 +36,6 @@
 		<counter id="WMBWMR" name="WMB&gt;WMR" prefix="B→R:"/>
 	</counters>
 	<keywords>Webmoney, курс валют Webmoney, курс Webmoney, валюта, финансы, обмен валют, WMZ, WMR, WME, WMU, WMB</keywords>
-	<type>finance, exchange</type>
-	<country>ua</country>
+	<type>exchange</type>
+	<country>ru,ua,by,kz,uz</country>
 </provider>

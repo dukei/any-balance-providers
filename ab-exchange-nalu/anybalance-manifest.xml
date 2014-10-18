@@ -24,6 +24,6 @@
 		<counter id="RUBp" name="RUB покупка" prefix="р↓ "/>
 	</counters>
 	<keywords>Украина, курс валют, валюта, финансы, обмен валют, наличный курс валют, доллар, евро, гривна</keywords>
-	<type>finance, exchange</type>
+	<type>exchange</type>
 	<country>ua</country>
 </provider>

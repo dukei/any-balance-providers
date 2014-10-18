@@ -46,6 +46,6 @@
 		<counter id="date" name="Дата курса" type="text"/>
 	</counters>
 	<keywords>Курс валют, национальный банк, нацбанк украины, доллар, евро, фунт, белорусский рубль, тенге, юань, гривна, франк, йена</keywords>
-	<type>finance, exchange</type>
+	<type>exchange</type>
 	<country>ua</country>
 </provider>

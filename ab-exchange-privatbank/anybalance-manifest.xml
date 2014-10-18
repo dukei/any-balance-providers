@@ -22,6 +22,6 @@
 		<counter id="RUR_sell" name="RUR продажа" prefix="р↑ "/>
 	</counters>
 	<keywords>Курс валют, приватбанк, украина, доллар, евро, гривна, рубль</keywords>
-	<type>finance, exchange</type>
+	<type>exchange</type>
 	<country>ua</country>
 </provider>

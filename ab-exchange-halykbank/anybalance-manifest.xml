@@ -22,6 +22,6 @@
 		<counter id="XAG" name="Курс серебра" />
 	</counters>
 	<keywords>Курс валют, доллар, евро, фунт, юань, франк</keywords>
-	<type>finance, exchange</type>
+	<type>exchange</type>
 	<country>kz</country>
 </provider>

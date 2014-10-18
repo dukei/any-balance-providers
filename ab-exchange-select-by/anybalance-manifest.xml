@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-exchange-select-by</id>
+	<id version="3">ab-exchange-select-by</id>
 	<name>Курсы валют Банков Беларуси</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущих курсах валют в банках Республики Беларусь и курс ""Национального Банка"".</p> 

@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="3">ab-exchange-metal-sbrf</id>
+  <id version="4">ab-exchange-metal-sbrf</id>
+  <api flags="no_browser"/>
   <name>Курсы драгоценных металлов Сбербанка</name>
   <description>
     Текущие курсы покупки и продажи драгоценных металлов, установленные Сбербанком РФ. Содержит цены золота, серебра, платины и палладия. Получает данные со страницы http://www.sbrf.ru/ru/quotes/metals/timeline

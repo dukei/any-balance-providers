@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-internet-t4d</id>
+	<id version="2">ab-internet-t4d</id>
 	<api flags="no_browser"/>
-	<name>Точка доступа</name>
+	<name>Точка Доступа</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе провайдера Точка доступа <a href="http://t4d.ru/">http://t4d.ru/</a></p>
+	<p>Предоставляет информацию о балансе провайдера Точка Доступа <a href="http://t4d.ru/">http://t4d.ru/</a></p>
 	<p>Информация берется из личного кабинета <a href="http://www.t4d.ru/stat/index.php">http://www.t4d.ru/stat/index.php</a></p>
 	]]></description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>

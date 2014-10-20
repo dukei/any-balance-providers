@@ -200,7 +200,7 @@ function processGibdd(result, html, prefs) {
 				
 				if(g_gibdd_info.indexOf(feeName) === -1) {
 					g_gibdd_info += feeName + ' - <b>Не оплачен</b><br/><br/>';
-					sumParam(feeName, result, 'gibdd_balance', /([\d.,]*)\s*руб/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);					
+					sumParam(feeName, result, 'gibdd_balance', /,([\s\d.,]+)руб/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);					
 				} else {
 					AnyBalance.trace('Штраф ' + feeName + ' привязан к номеру ВУ и уже был учтен в подсчете общей суммы штрафов...');
 				}

@@ -1,32 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-hosting-firstvds</id>
-  <name>FirstVDS (Хостинг)</name>
-  <description>
-    Получает баланс, прогноз отключения у хостинг-провайдера FirstVDS (http://firstvds.ru).
-
-    Информация берется из личного кабинета https://my.firsvds.ru
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <history>history.xml</history>
-    <js>main.js</js>
-    <js>library.js</js>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="currency" name="Валюта" type="text"/>
-    <counter id="forecast" name="Прогноз отключения" type="text"/>
-  </counters>
-  <keywords>
-    интернет hosting
-  </keywords>
-  <type>
-    hosting
-  </type>
-  <country>
-    ru
-  </country>
+	<id version="3">ab-hosting-firstvds</id>
+	<api flags="no_browser"/>
+	<name>FirstVDS (Хостинг)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе хостинг-провайдера FirstVDS <a href="http://firstvds.ru">http://firstvds.ru</a></p>
+	<p>Информация берется из личного кабинета <a href="https://my.firsvds.ru">https://my.firsvds.ru</a></p>
+	]]></description>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="forecast" name="Прогноз отключения" type="time" format="dd/MM/yyyy"/>
+	</counters>
+	<keywords>интернет hosting</keywords>
+	<type>hosting</type>
+	<country>ru</country>
 </provider>

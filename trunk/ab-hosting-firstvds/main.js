@@ -1,10 +1,5 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Получает остаток дней и информацию о тарифном плане для хостинг провайдера BestHoster
-
-Сайт оператора: http://besthoster.ru/
-Личный кабинет: https://order.best-hoster.ru
 */
 
 var g_headers = {
@@ -29,40 +24,31 @@ function main(){
     if(!prefs.__dbg){
         AnyBalance.setCookie('my.firstvds.ru', 'billmgr4', 'sirius:ru:0');
         
-        html = AnyBalance.requestPost(baseurl, {
+        html = AnyBalance.requestPost(baseurl + '?func=logon', {
             username:prefs.login,
             password:prefs.password,
-            theme:'sirius',
             lang:'ru',
             func:'auth',
-            project:'',
-            welcomfunc:'',
-            welcomparam:''
         }, g_headers);
         
-        var sessval = getParam(html, null, null, /=sirius:ru:(\d+)/i);
-        if(!sessval){
-            var error = getParam(html, null, null, /<td[^>]*login-error-content[^>]*>([\s\S]*?)<\/td>/, replaceTagsAndSpaces);
-            if(error)
-                throw new AnyBalance.Error(error);
-            throw new AnyBalance.Error('Не удалось войти в личный кабинет. Проблемы на сайте или сайт изменен.');
-        }
-        
-        AnyBalance.setCookie('my.firstvds.ru', 'billmgr4', 'sirius:ru:' + sessval);
+	   	if (!/document\.location\s*=\s*"\/manager\/billmgr/i.test(html)) {
+			var error = getParam(html, null, null, /error">([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+			if (error)
+				throw new AnyBalance.Error(error, null, /Неверное имя пользователя или пароль/i.test(error));
+			
+			AnyBalance.trace(html);
+			throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+		}
+		
+		html = AnyBalance.requestGet(baseurl + '?sfrom=loginform&sfrom=loginform ', g_headers);
     }
-
-    html = AnyBalance.requestGet(baseurl + '?func=accountinfo', g_headers);
-
-    var result = {success: true};
-
-    getParam(html, result, '__tariff', /<tbody[^>]+mainBody[^>]*>(?:[\S\s]*?<td[^>]*>){2}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'balance', /<tbody[^>]+mainBody[^>]*>(?:[\S\s]*?<td[^>]*>){3}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, function(str){
-        var v = parseBalance(str);
-        if(v) v = Math.round(v*100)/100;
-        return v;
-    });
-    getParam(html, result, 'currency', /<tbody[^>]+mainBody[^>]*>(?:[\S\s]*?<td[^>]*>){4}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'forecast', /<tbody[^>]+mainBody[^>]*>(?:[\S\s]*?<td[^>]*>){5}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+	
+	var result = {success: true};
+	
+	html = AnyBalance.requestGet(baseurl + '?func=dashboard.info&p_cnt=undefined&p_num=1&dashboard=info&sfrom=ajax&operafake=1413790832259', g_headers);
+	
+    getParam(html, result, 'balance', /"Баланс"(?:[^"]+"){5,20}value"\s*:\s*"([\s\d.,-]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'forecast', /"Средств хватит до"(?:[^"]+"){5,20}value"\s*:\s*"([\s\d\/-]+)/i, replaceTagsAndSpaces, parseDateISO);
 
     AnyBalance.setResult(result);
 }

@@ -49,7 +49,7 @@ function main () {
         if(error)
             throw new AnyBalance.Error(error, null, /Карточка с таким номером не найдена/i.test(error));
     
-        error = getParam(html, null, null, /К сожалению, Вы не заполнили сведения о себе/);
+        error = getParam(html, null, null, /Вы не заполнили сведения о себе|Для идентификации пользователя/);
         if(error)
             throw new AnyBalance.Error("Евроопт требует заполнить форму регистрации. Вам необходимо зайти на сайт http://www.euroopt.by/otchet-po-diskontnoj-karte-2 через браузер и заполнить форму");
         throw new AnyBalance.Error('Не удалось получить данные по карте. Сайт изменен?');

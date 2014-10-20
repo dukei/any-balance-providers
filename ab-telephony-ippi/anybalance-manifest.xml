@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
+  <api flags="no_browser"/>
+  <id version="2">ab-telephony-ippi</id>
+  <name>IPPI</name>
+  <description>
+  Предоставляет информацию о балансе провайдера IP телефонии IPPI (http://www.ippi.com/)
+  
+  Информация берется из личного кабинета http://www.ippi.com/
+  </description>
+  <author>Mikhail Fedotov &lt;anyremote@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="credit" name="Баланс" units="€"/>
+    <counter id="id" name="ID" type="text"/>   
+    <counter id="state"  name="Статус" type="text"/>
+    <counter id="sipid"  name="SIP ID" type="text"/>
+  </counters>
+  <keywords>
+    ippi
+  </keywords>
+  <type>
+    telephony
+  </type>
+  <country>
+    fr
+  </country>
+</provider>

@@ -24,13 +24,14 @@ function main(){
     var html = AnyBalance.requestPost(baseurl, {
         abonentid:prefs.login,
         fam:prefs.password,
+		SendCounter:'Передача фактических показаний прибора учета',
         qm:threeMonthsAgo.getMonth(),
         qy:threeMonthsAgo.getFullYear(),
-        ShowState:'Просмотреть состояние счета, оплаты, начисления ...'
+        //ShowState:'Просмотреть состояние счета, оплаты, начисления ...'
     }, g_headers);
 
     //Ссылка на печать квитанции
-    if(!/<input[^<]+name="print"/i.test(html)){
+    if(!/Лицевой cчет N/i.test(html)){
         var error = getParam(html, null, null, /<div[^>]+class="error"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error);

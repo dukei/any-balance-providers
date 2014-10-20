@@ -6,6 +6,8 @@ function main () {
     var prefs = AnyBalance.getPreferences ();
     var baseurl = 'https://web.speedyline.ru/';
 	
+	AnyBalance.setOptions({SSL_ENABLED_PROTOCOLS: ['SSLv3']});
+	
     checkEmpty (prefs.login, 'Введите логин!');
     checkEmpty (prefs.password, 'Введите пароль!');
 	

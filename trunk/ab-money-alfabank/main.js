@@ -18,77 +18,78 @@ function main(){
 }
 
 var g_phrases = {
-   karty: {card: 'карты', credit: 'кредитного счета'},
-   karte1: {card: 'первой карте', credit: 'первому счету'}
+	karty: {
+		card: 'карты',
+		credit: 'кредитного счета'
+	},
+	karte1: {
+		card: 'первой карте',
+		credit: 'первому счету'
+	}
 }
-
 var g_headers = [
-  ['Accept', '*/*'],
-  ['Accept-Charset', 'windows-1251,utf-8;q=0.7,*;q=0.3'],
-  ['Accept-Language', 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4'],
-  ['Connection', 'keep-alive'],
-  ['User-Agent', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.89 Safari/537.1']
+	['Accept', '*/*'],
+	['Accept-Charset', 'windows-1251,utf-8;q=0.7,*;q=0.3'],
+	['Accept-Language', 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4'],
+	['Connection', 'keep-alive'],
+	['User-Agent', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.89 Safari/537.1']
 ];
 
 var g_currencyDependancy = ['currency', 'balance', 'topay', 'debt', 'minpay', 'penalty', 'late', 'overdraft', 'limit'];
 
-function createParams(params, event){
-   var ret = {};
-   for(var i=0; i<params.length; ++i){
-       if(!params[i])
-           continue;
-       ret[params[i][0].replace(/%EVENT%/g, event)] = params[i][1].replace(/%EVENT%/g, event); 
-   }
-   return ret;
+function createParams(params, event) {
+	var ret = {};
+	for (var i = 0; i < params.length; ++i) {
+		if (!params[i]) continue;
+		ret[params[i][0].replace(/%EVENT%/g, event)] = params[i][1].replace(/%EVENT%/g, event);
+	}
+	return ret;
 }
 
 var g_wasMainPage = false;
-function getMainPageOrModule(html, type, baseurl){
-   var commands = {
-       card: 'MCD__cardlist',
-       acc: 'MAC__accountlist',
-       dep: 'MDP__depositlist',
-       crd: 'MCR__credits' 
-   };
 
-   var action = getParam(html, null, null, /<form[^>]*name="f1"[^>]*action="\/(ALFAIBSR[^"]*)/i, null, html_entity_decode);
-   if(!action)
-       throw new AnyBalance.Error('Не удаётся найти форму ввода команды. Сайт изменен?');
-   var viewstate = getParam(html, null, null, /<input[^>]*name="javax.faces.ViewState"[^>]*value="([^"]*)/i, null, html_entity_decode);
-   if(!viewstate)
-       throw new AnyBalance.Error('Не удаётся найти ViewState. Сайт изменен?');
-
-   if(!g_wasMainPage){
-      var paramsMainPage = createParams([
-         ['pt1:r1:0:dt1:rangeStart', '0'],
-         ['pt1:r4:0:table1:rangeStart', '0'],
-         ['pt1:r2:0:t1:rangeStart', '0'],
-         ['org.apache.myfaces.trinidad.faces.FORM', 'f1'],
-         ['javax.faces.ViewState', viewstate],
-         ['oracle.adf.view.rich.RENDER', 'pt1:left:ATP1_r1'],
-         ['event', 'pt1:left:ATP1_r1:0:' + commands[type]],
-         ['event.pt1:left:ATP1_r1:0:' + commands[type], '<m xmlns="http://oracle.com/richClient/comm"><k v="type"><s>action</s></k></m>'],
-         ['oracle.adf.view.rich.PROCESS', 'pt1:left:ATP1_r1']
-      ]);
-      g_wasMainPage = true;
-      html = AnyBalance.requestPost(baseurl + action, paramsMainPage, addHeaders({"Adf-Rich-Message": "true"}));
-   }else{
-      var rangeStart = getParam(html, null, null, /<input[^>]*name="([^"]*rangeStart)/i, null, html_entity_decode);
-      
-      var paramsModule = createParams([
-         rangeStart ? [rangeStart, '0'] : null,
-         ['org.apache.myfaces.trinidad.faces.FORM', 'f1'],
-         ['javax.faces.ViewState', viewstate],
-         ['oracle.adf.view.rich.RENDER', 'pt1:left:ATP1_r1'],
-         ['event', 'pt1:left:ATP1_r1:0:' + commands[type]],
-         ['event.pt1:left:ATP1_r1:0:' + commands[type], '<m xmlns="http://oracle.com/richClient/comm"><k v="type"><s>action</s></k></m>'],
-         ['oracle.adf.view.rich.PROCESS', 'pt1:left:ATP1_r1']
-      ]);
-
-      html = AnyBalance.requestPost(baseurl + action, paramsModule, addHeaders({"Adf-Rich-Message": "true"}));
-   }
-
-   return getParam(html, null, null, /<fragment><!\[CDATA\[([\s\S]*?)\]\]>/); //Вычленяем html;
+function getMainPageOrModule(html, type, baseurl) {
+	var commands = {
+		card: 'MCD__cardlist',
+		acc: 'MAC__accountlist',
+		dep: 'MDP__depositlist',
+		crd: 'MCR__credits'
+	};
+	var action = getParam(html, null, null, /<form[^>]*name="f1"[^>]*action="\/(ALFAIBSR[^"]*)/i, null, html_entity_decode);
+	if (!action) throw new AnyBalance.Error('Не удаётся найти форму ввода команды. Сайт изменен?');
+	var viewstate = getParam(html, null, null, /<input[^>]*name="javax.faces.ViewState"[^>]*value="([^"]*)/i, null, html_entity_decode);
+	if (!viewstate) throw new AnyBalance.Error('Не удаётся найти ViewState. Сайт изменен?');
+	if (!g_wasMainPage) {
+		var paramsMainPage = createParams([
+			['pt1:r1:0:dt1:rangeStart', '0'],
+			['pt1:r4:0:table1:rangeStart', '0'],
+			['pt1:r2:0:t1:rangeStart', '0'],
+			['org.apache.myfaces.trinidad.faces.FORM', 'f1'],
+			['javax.faces.ViewState', viewstate],
+			['oracle.adf.view.rich.RENDER', 'pt1:left:ATP1_r1'],
+			['event', 'pt1:left:ATP1_r1:0:' + commands[type]],
+			['event.pt1:left:ATP1_r1:0:' + commands[type], '<m xmlns="http://oracle.com/richClient/comm"><k v="type"><s>action</s></k></m>'],
+			['oracle.adf.view.rich.PROCESS', 'pt1:left:ATP1_r1']
+		]);
+		g_wasMainPage = true;
+		html = AnyBalance.requestPost(baseurl + action, paramsMainPage, addHeaders({
+			"Adf-Rich-Message": "true"
+		}));
+	} else {
+		var rangeStart = getParam(html, null, null, /<input[^>]*name="([^"]*rangeStart)/i, null, html_entity_decode);
+		var paramsModule = createParams([
+			rangeStart ? [rangeStart, '0'] : null, ['org.apache.myfaces.trinidad.faces.FORM', 'f1'],
+			['javax.faces.ViewState', viewstate],
+			['oracle.adf.view.rich.RENDER', 'pt1:left:ATP1_r1'],
+			['event', 'pt1:left:ATP1_r1:0:' + commands[type]],
+			['event.pt1:left:ATP1_r1:0:' + commands[type], '<m xmlns="http://oracle.com/richClient/comm"><k v="type"><s>action</s></k></m>'],
+			['oracle.adf.view.rich.PROCESS', 'pt1:left:ATP1_r1']
+		]);
+		html = AnyBalance.requestPost(baseurl + action, paramsModule, addHeaders({
+			"Adf-Rich-Message": "true"
+		}));
+	}
+	return getParam(html, null, null, /<fragment><!\[CDATA\[([\s\S]*?)\]\]>/); //Вычленяем html;
 }
 
 function getMainPageOrModule2(html, type, baseurl) {
@@ -99,35 +100,8 @@ function getMainPageOrModule2(html, type, baseurl) {
 		crd: 'pt1:menu:ATP2_r1:0:i1:3:cl2'
 	};
 	
-	/*
-	pt1:header:it1:
-	pt1:r4:0:t3:rangeStart:0
-	pt1:r2:0:t4:rangeStart:0
-	pt1:r3:0:t3:rangeStart:0
-	pt1:r1:0:w1:id1:26.11.2013
-	pt1:r1:0:w1:id2:13.12.2013
-	pt1:r1:0:w1:sos1:
-	pt1:r1:0:w1:t1:rangeStart:0
-	pt1:r7:0:t1:rangeStart:0
-	org.apache.myfaces.trinidad.faces.FORM:f1
-	javax.faces.ViewState:!-57wunlap7
-	oracle.adf.view.rich.RENDER:pt1:menu:ATP2_r1
-	oracle.adf.view.rich.DELTAS:{pt1:menu:ATP2_r1:0:i1:3:p1={_shown=}}
-	event:pt1:menu:ATP2_r1:0:i1:3:cl2
-	event.pt1:menu:ATP2_r1:0:i1:3:cl2:<m xmlns="http://oracle.com/richClient/comm"><k v="type"><s>action</s></k></m>
-	oracle.adf.view.rich.PROCESS:pt1:menu:ATP2_r1
-	*/	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	var event = commands[type] ? commands[type] : type;
+	
 	return getNextPage(html, event, baseurl, [
 		['oracle.adf.view.rich.RENDER', 'pt1:menu:ATP2_r1'],
 		['oracle.adf.view.rich.DELTAS', '{pt1:menu:ATP2_r1:0:i1:3:p1={_shown=}}'],
@@ -136,53 +110,50 @@ function getMainPageOrModule2(html, type, baseurl) {
 		['oracle.adf.view.rich.PROCESS', 'pt1:menu:ATP2_r1']
 	]);
 }
-
 function getNextPage(html, event, baseurl, extra_params) {
 	var form = getParam(html, null, null, /<form[^>]*name="f1"[^>]*>([\s\S]*?)<\/form>/i);
 	var action = getParam(html, null, null, /<form[^>]*name="f1"[^>]*action="\/(ALFAIBSR[^"]*)/i, null, html_entity_decode);
-	if (!action)
+	if (!action) 
 		throw new AnyBalance.Error('Не удаётся найти форму ввода команды. Сайт изменен?');
 	
 	var params = createFormParams(form, function(params, str, name, value) {
-		if (/::input$/.test(name)) 
+		if (/::input$/.test(name))
 			return; //Ненужные поля
 		return value;
 	}, true);
-	
 	var paramsModule = createParams(joinArrays(params, extra_params), event);
 	html = AnyBalance.requestPost(baseurl + action, paramsModule, addHeaders({"Adf-Rich-Message": "true"}));
-	
 	return getParam(html, null, null, /<fragment>\s*<!\[CDATA\[([\s\S]*?)\]\]>/); //Вычленяем html;
 }
-
-function getDetails(html, event, baseurl, renderAndProcess){
-   var action = getParam(html, null, null, /<form[^>]*name="f1"[^>]*action="\/(ALFAIBSR[^"]*)/i, null, html_entity_decode);
-   if(!action)
-       throw new AnyBalance.Error('Не удаётся найти форму ввода команды для получения деталей. Сайт изменен?');
-   var viewstate = getParam(html, null, null, /<input[^>]*name="javax.faces.ViewState"[^>]*value="([^"]*)/i, null, html_entity_decode);
-   if(!viewstate)
-       throw new AnyBalance.Error('Не удаётся найти ViewState для получения деталей. Сайт изменен?');
-
-      var rangeStart = getParam(html, null, null, /<input[^>]*name="([^"]*rangeStart)/i, null, html_entity_decode);
-      if(!rangeStart)
-          throw new AnyBalance.Error('Не удаётся найти rangeStart. Сайт изменен?');
-      
-   var paramsModule = createParams([
-      [rangeStart, '0'],
-      ['org.apache.myfaces.trinidad.faces.FORM', 'f1'],
-      ['javax.faces.ViewState', viewstate],
-      ['event', event],
-      ['event.' + event, '<m xmlns="http://oracle.com/richClient/comm"><k v="type"><s>action</s></k></m>'],
-      ['oracle.adf.view.rich.PPR_FORCED', 'true']
-   ]);
-
-   html = AnyBalance.requestPost(baseurl + action, paramsModule, addHeaders({"Adf-Rich-Message": "true"}));
-   html = getParam(html, null, null, /<fragment><!\[CDATA\[([\s\S]*?)\]\]>/); //Вычленяем html;
-   //Проверим на Функционал временно недоступен
-   var error = getParam(html, null, null, /(&#1060;&#1091;&#1085;&#1082;&#1094;&#1080;&#1086;&#1085;&#1072;&#1083; &#1074;&#1088;&#1077;&#1084;&#1077;&#1085;&#1085;&#1086; &#1085;&#1077;&#1076;&#1086;&#1089;&#1090;&#1091;&#1087;&#1077;&#1085;[^<]*)/, null, html_entity_decode);
-   if(error)
-       throw new AnyBalance.Error('Альфа.Клик сообщает: ' + error);
-   return html;
+function getDetails(html, event, baseurl, renderAndProcess) {
+	var action = getParam(html, null, null, /<form[^>]*name="f1"[^>]*action="\/(ALFAIBSR[^"]*)/i, null, html_entity_decode);
+	if (!action) 
+		throw new AnyBalance.Error('Не удаётся найти форму ввода команды для получения деталей. Сайт изменен?');
+	var viewstate = getParam(html, null, null, /<input[^>]*name="javax.faces.ViewState"[^>]*value="([^"]*)/i, null, html_entity_decode);
+	if (!viewstate)
+		throw new AnyBalance.Error('Не удаётся найти ViewState для получения деталей. Сайт изменен?');
+	var rangeStart = getParam(html, null, null, /<input[^>]*name="([^"]*rangeStart)/i, null, html_entity_decode);
+	if (!rangeStart)
+		throw new AnyBalance.Error('Не удаётся найти rangeStart. Сайт изменен?');
+	
+	var paramsModule = createParams([
+		[rangeStart, '0'],
+		['org.apache.myfaces.trinidad.faces.FORM', 'f1'],
+		['javax.faces.ViewState', viewstate],
+		['event', event],
+		['event.' + event, '<m xmlns="http://oracle.com/richClient/comm"><k v="type"><s>action</s></k></m>'],
+		['oracle.adf.view.rich.PPR_FORCED', 'true']
+	]);
+	
+	html = AnyBalance.requestPost(baseurl + action, paramsModule, addHeaders({"Adf-Rich-Message": "true"}));
+	
+	html = getParam(html, null, null, /<fragment><!\[CDATA\[([\s\S]*?)\]\]>/); //Вычленяем html;
+	//Проверим на Функционал временно недоступен
+	var error = getParam(html, null, null, /(&#1060;&#1091;&#1085;&#1082;&#1094;&#1080;&#1086;&#1085;&#1072;&#1083; &#1074;&#1088;&#1077;&#1084;&#1077;&#1085;&#1085;&#1086; &#1085;&#1077;&#1076;&#1086;&#1089;&#1090;&#1091;&#1087;&#1077;&#1085;[^<]*)/,	null, html_entity_decode);
+	if (error)
+		throw new AnyBalance.Error(error);
+	
+	return html;
 }
 
 function processClick(){
@@ -215,12 +186,13 @@ function processClick(){
         error = getParam(html, null, null, /(Неверный логин или пароль)/i);
         if(error)
             throw new AnyBalance.Error(error, null, true);
-        throw new AnyBalance.Error("Не удалось зайти в интернет-банк. Проверьте, что сайт доступен.");
+		
+        throw new AnyBalance.Error("Не удалось зайти в интернет-банк. Сайт изменен?");
     }
 
     var afr = getParam(html, null, null, /"_afrLoop",\s*"(\d+)"/i);
     if(!afr)
-        throw new AnyBalance.Error('Не удаётся найти параметр для входа: _afrLoop. Обратитесь к автору провайдера.');
+        throw new AnyBalance.Error('Не удаётся найти параметр для входа: _afrLoop. Сайт изменен?');
 
     html = AnyBalance.requestGet(baseurl + 'ALFAIBSR/?_afrLoop='+afr+'&_afrWindowMode=0&_afrWindowId=null', g_headers);
 
@@ -230,20 +202,20 @@ function processClick(){
 
     var afr = getParam(html, null, null, /"_afrLoop",\s*"(\d+)"/i);
     if(!afr)
-        throw new AnyBalance.Error('Не удаётся найти очередной параметр для входа: _afrLoop. Обратитесь к автору провайдера.');
+        throw new AnyBalance.Error('Не удаётся найти очередной параметр для входа: _afrLoop. Сайт изменен?');
     
     html = AnyBalance.requestGet(baseurl + url + '&_afrLoop='+afr+'&_afrWindowMode=0&_afrWindowId=null', g_headers);
 
     if(/:otpPassword/i.test(html)){
-        throw new AnyBalance.Error("Для работы провайдера необходимо отключить запрос одноразового пароля при входе в Альфа.Клик. Это безопасно - для совершения переводов средств пароль всё равно будет требоваться. Зайдите в Альфа.Клик через браузер и в меню \"Мой профиль\" снимите галочку \"Использовать одноразовый пароль при входе\".");
+        throw new AnyBalance.Error("Для работы провайдера необходимо отключить запрос одноразового пароля при входе в Альфа-Клик. Это безопасно - для совершения переводов средств пароль всё равно будет требоваться. Зайдите в Альфа-Клик через браузер и в меню \"Мой профиль\" снимите галочку \"Использовать одноразовый пароль при входе\".");
     }
 
     if(/faces\/main\/changePassword|faces\/routeChangePwd\/changePassword/i.test(html)){
-        throw new AnyBalance.Error("Альфабанк считает, что вам необходимо сменить старый пароль. Зайдите в Альфа.Клик через браузер, поменяйте пароль, затем введите новый пароль в настройки провайдера.", null, true);
+        throw new AnyBalance.Error("Вам необходимо сменить старый пароль. Зайдите в Альфа-Клик через браузер, поменяйте пароль, затем введите новый пароль в настройки провайдера.", null, true);
     }
 
     if(/\(C2skin\)/.test(html)){  //Альфаклик 2.0
-        AnyBalance.trace("Определен Альфа.Клик 2.0");
+        AnyBalance.trace("Определен Альфа-Клик 2.0");
         if(prefs.type == 'card')
             processCard2(html, baseurl);
         else if(prefs.type == 'acc')
@@ -255,7 +227,7 @@ function processClick(){
         else 
             processCard2(html, baseurl);
     }else{
-        AnyBalance.trace("Определен Альфа.Клик 1.0");
+        AnyBalance.trace("Определен Альфа-Клик 1.0");
         if(prefs.type == 'card')
             processCard(html, baseurl);
         else if(prefs.type == 'acc')
@@ -307,13 +279,14 @@ function processCard(html, baseurl){
 
     //Тип карты
     var type = getParam(html, null, null, /&#1058;&#1080;&#1087;\s*&#1082;&#1072;&#1088;&#1090;&#1099;:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    if(type && /кредитн/i.test(type) && AnyBalance.isAvailable('topay','paytill','minpay','penalty','late','overdraft','limit','debt','gracetill')){
-        var accnum = getParam(html, null, null, /&#1053;&#1086;&#1084;&#1077;&#1088;\s*&#1089;&#1095;&#1077;&#1090;&#1072;:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);;
-        if(!accnum)
-            throw new AnyBalance.Error('Не удалось найти номер счета карты!');
-
-	html = getMainPageOrModule(html, 'crd', baseurl);
-        getCreditInfo(html, result, accnum, baseurl);
+	
+    if (type && /кредитн/i.test(type) && AnyBalance.isAvailable('topay', 'paytill', 'minpay', 'penalty', 'late', 'overdraft', 'limit', 'debt', 'gracetill')) {
+    	var accnum = getParam(html, null, null, /&#1053;&#1086;&#1084;&#1077;&#1088;\s*&#1089;&#1095;&#1077;&#1090;&#1072;:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    	if (!accnum)
+			throw new AnyBalance.Error('Не удалось найти номер счета карты!');
+		
+    	html = getMainPageOrModule(html, 'crd', baseurl);
+    	getCreditInfo(html, result, accnum, baseurl);
     }
 
     AnyBalance.setResult(result);
@@ -334,9 +307,9 @@ function processCard2(html, baseurl){
 
     var event = getParam(tr, null, null, /<a[^>]+id="([^"]*)/i, null, html_entity_decode);
     var html = getNextPage(html, event, baseurl, [
-	['event', '%EVENT%'],
-	['event.%EVENT%', '<m xmlns="http://oracle.com/richClient/comm"><k v="type"><s>action</s></k></m>'],
-	['oracle.adf.view.rich.PPR_FORCED', 'true']
+    	['event', '%EVENT%'],
+    	['event.%EVENT%', '<m xmlns="http://oracle.com/richClient/comm"><k v="type"><s>action</s></k></m>'],
+    	['oracle.adf.view.rich.PPR_FORCED', 'true']
     ]);
     
     var result = {success: true};
@@ -352,7 +325,6 @@ function processCard2(html, baseurl){
     getParam(html, result, 'cardtype', /&#1058;&#1080;&#1087;<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     //Название счета
     getParam(html, result, 'acctype', /&#1053;&#1072;&#1079;&#1074;&#1072;&#1085;&#1080;&#1077; &#1089;&#1095;&#1077;&#1090;&#1072;<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-
     //Рады вас видеть
     getParam(html, result, 'userName', /&#1056;&#1072;&#1076;&#1099; &#1042;&#1072;&#1089; &#1074;&#1080;&#1076;&#1077;&#1090;&#1100;,([^<(]*)/i, replaceTagsAndSpaces, html_entity_decode);
     //Статус
@@ -362,15 +334,15 @@ function processCard2(html, baseurl){
 
     //Тип карты
     var type = getParam(html, null, null, /&#1058;&#1080;&#1087;<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    if(type && /кредитн/i.test(type) && AnyBalance.isAvailable('topay','paytill','minpay','penalty','late','overdraft','limit','debt','gracetill')){
-        AnyBalance.trace('Карта кредитная, надо получить кредитную информацию...');
-        //Номер счета
-        var accnum = getParam(html, null, null, /&#1053;&#1086;&#1084;&#1077;&#1088; &#1089;&#1095;&#1077;&#1090;&#1072;<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-        try{
-            processCredit2(html, baseurl, accnum, result);
-        }catch(e){
-            AnyBalance.trace('Не удалось получить кредитную информацию: ' + e.message);
-        }
+    if (type && /кредитн/i.test(type) && AnyBalance.isAvailable('topay', 'paytill', 'minpay', 'penalty', 'late', 'overdraft', 'limit', 'debt', 'gracetill')) {
+    	AnyBalance.trace('Карта кредитная, надо получить кредитную информацию...');
+    	//Номер счета
+    	var accnum = getParam(html, null, null, /&#1053;&#1086;&#1084;&#1077;&#1088; &#1089;&#1095;&#1077;&#1090;&#1072;<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    	try {
+    		processCredit2(html, baseurl, accnum, result);
+    	} catch (e) {
+    		AnyBalance.trace('Не удалось получить кредитную информацию: ' + e.message);
+    	}
     }
 
     AnyBalance.setResult(result);
@@ -434,19 +406,18 @@ function processDep2(html, baseurl){
     //Рады вас видеть
     getParam(html, result, 'userName', /&#1056;&#1072;&#1076;&#1099; &#1042;&#1072;&#1089; &#1074;&#1080;&#1076;&#1077;&#1090;&#1100;,([^<(]*)/i, replaceTagsAndSpaces, html_entity_decode);
 
-    if(AnyBalance.isAvailable('till')){
-        var event = getParam(tr, null, null, /<a[^>]+id="([^"]*)"[^>]*p_AFTextOnly/i);
-        if(!event){
-            AnyBalance.trace('Не удаётся найти ссылку на расширенную информацию о депозите');
-        }else{
-            html = getNextPage(html, event, baseurl, [
-		['event', '%EVENT%'],
-		['event.%EVENT%', '<m xmlns="http://oracle.com/richClient/comm"><k v="type"><s>action</s></k></m>'],
-		['oracle.adf.view.rich.PPR_FORCED', 'true']
-	    ]);
-
-            getParam(html, result, 'till', /&#1054;&#1082;&#1086;&#1085;&#1095;&#1072;&#1085;&#1080;&#1077;<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-        }
+    if (AnyBalance.isAvailable('till')) {
+    	var event = getParam(tr, null, null, /<a[^>]+id="([^"]*)"[^>]*p_AFTextOnly/i);
+    	if (!event) {
+    		AnyBalance.trace('Не удаётся найти ссылку на расширенную информацию о депозите');
+    	} else {
+    		html = getNextPage(html, event, baseurl, [
+    			['event', '%EVENT%'],
+    			['event.%EVENT%', '<m xmlns="http://oracle.com/richClient/comm"><k v="type"><s>action</s></k></m>'],
+    			['oracle.adf.view.rich.PPR_FORCED', 'true']
+    		]);
+    		getParam(html, result, 'till', /&#1054;&#1082;&#1086;&#1085;&#1095;&#1072;&#1085;&#1080;&#1077;<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    	}
     }
 
     AnyBalance.setResult(result);
@@ -458,25 +429,6 @@ function processCredit2(html, baseurl, _accnum, result){
         throw new AnyBalance.Error("Введите не меньше 4 последних цифр номера счета кредита или не вводите ничего, чтобы показать информацию по первому кредиту");
 
     html = getMainPageOrModule2(html, 'crd', baseurl);
-	/*
-	pt1:header:it1:
-	pt1:r4:0:t3:rangeStart:0
-	pt1:r2:0:t4:rangeStart:0
-	pt1:r3:0:t3:rangeStart:0
-	pt1:r1:0:w1:id1:26.11.2013
-	pt1:r1:0:w1:id2:13.12.2013
-	pt1:r1:0:w1:sos1:
-	pt1:r1:0:w1:t1:rangeStart:0
-	pt1:r7:0:t1:rangeStart:0
-	org.apache.myfaces.trinidad.faces.FORM:f1
-	javax.faces.ViewState:!-57wunlap7
-	oracle.adf.view.rich.RENDER:pt1:menu:ATP2_r1
-	oracle.adf.view.rich.DELTAS:{pt1:menu:ATP2_r1:0:i1:3:p1={_shown=}}
-	event:pt1:menu:ATP2_r1:0:i1:3:cl2
-	event.pt1:menu:ATP2_r1:0:i1:3:cl2:<m xmlns="http://oracle.com/richClient/comm"><k v="type"><s>action</s></k></m>
-	oracle.adf.view.rich.PROCESS:pt1:menu:ATP2_r1
-	*/	
-    
     //Сколько цифр осталось, чтобы дополнить до 20
     var accnum = _accnum || prefs.cardnum || '';
     var accprefix = accnum.length;
@@ -486,7 +438,7 @@ function processCredit2(html, baseurl, _accnum, result){
     var re = new RegExp('<table[^>]+table-layout:\\s*fixed[^>]*>\\s*<tr[^>]*>(?:[\\s\\S]*?<td[^>]*>){2}\\d*' + accnum + '<', 'i');
     var tr = getParam(html, null, null, re);
     if(!tr)
-        throw new AnyBalance.Error('Не удаётся найти ' + (accnum ? 'кредит с последними цифрами ' + accnum : 'ни одного кредита'));
+        throw new AnyBalance.Error('Не удаётся найти ' + (accnum ? 'кредит, чей номер оканчивается на ' + accnum : 'ни одного кредита!'));
 
     var event = getParam(tr, null, null, /<a[^>]+id="([^"]*)"[^>]*p_AFTextOnly/i);
     if(!event)
@@ -504,9 +456,9 @@ function processCredit2(html, baseurl, _accnum, result){
     }
 
     html = getNextPage(html, event, baseurl, [
-	['event', '%EVENT%'],
-	['event.%EVENT%', '<m xmlns="http://oracle.com/richClient/comm"><k v="type"><s>action</s></k></m>'],
-	['oracle.adf.view.rich.PPR_FORCED', 'true']
+    	['event', '%EVENT%'],
+    	['event.%EVENT%', '<m xmlns="http://oracle.com/richClient/comm"><k v="type"><s>action</s></k></m>'],
+    	['oracle.adf.view.rich.PPR_FORCED', 'true']
     ]);
 
     //Остаток задолженности
@@ -538,7 +490,6 @@ function processCredit2(html, baseurl, _accnum, result){
 }
 
 function getCreditInfo(html, result, accnum, baseurl, creditonly){
-    
     //Сколько цифр осталось, чтобы дополнить до 20
     accnum = accnum || '';
     var accprefix = accnum.length;
@@ -547,7 +498,7 @@ function getCreditInfo(html, result, accnum, baseurl, creditonly){
     var re = new RegExp('(<tr[^>]*>(?:[\\s\\S](?!<\\/tr>))*>[^<]*' + (accprefix > 0 ? '\\d{' + accprefix + '}' : '') + accnum + '<[\\s\\S]*?<\\/tr>)', 'i');
     var tr = getParam(html, null, null, re);
     if(!tr)
-        throw new AnyBalance.Error('Не удаётся найти ' + (accnum ? 'кредитный счет с последними цифрами ' + accnum : 'ни одного кредитного счета'));
+        throw new AnyBalance.Error('Не удаётся найти ' + (accnum ? 'кредитный счет с последними цифрами ' + accnum : 'ни одного кредитного счета!'));
 
     if(creditonly){
         getParam(tr, result, 'accnum', /(\d{20})/i, replaceTagsAndSpaces, html_entity_decode);
@@ -582,7 +533,7 @@ function getCreditInfo(html, result, accnum, baseurl, creditonly){
     //Установленный лимит|Начальная сумма кредита
     getParam(html, result, 'limit', /(?:&#1059;&#1089;&#1090;&#1072;&#1085;&#1086;&#1074;&#1083;&#1077;&#1085;&#1085;&#1099;&#1081; (?:&#1082;&#1088;&#1077;&#1076;&#1080;&#1090;&#1085;&#1099;&#1081; )?&#1083;&#1080;&#1084;&#1080;&#1090;|&#1053;&#1072;&#1095;&#1072;&#1083;&#1100;&#1085;&#1072;&#1103; &#1089;&#1091;&#1084;&#1084;&#1072; &#1082;&#1088;&#1077;&#1076;&#1080;&#1090;&#1072;)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 
-    if(creditonly){
+    if(creditonly) {
         //Доступный лимит
         getParam(html, result, 'balance', /&#1044;&#1086;&#1089;&#1090;&#1091;&#1087;&#1085;&#1099;&#1081;\s*&#1083;&#1080;&#1084;&#1080;&#1090;:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
         getParam(html, result, g_currencyDependancy, /&#1044;&#1086;&#1089;&#1090;&#1091;&#1087;&#1085;&#1099;&#1081;\s*&#1083;&#1080;&#1084;&#1080;&#1090;:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseCurrency);

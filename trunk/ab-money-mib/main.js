@@ -1,10 +1,5 @@
 /**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Информация о карте, счете в банке "Номос-банк".
-
-Сайт: http://www.minbank.ru
-Сайт: https://telebank.minbank.ru
 */
 
 var g_headers = {
@@ -15,24 +10,23 @@ var g_headers = {
     'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11'
 };
 
-function xorString(str, val){
-  if(!str || !val){
-    return '';
-  }
-  var res='';
-  for(var i=0; i<str.length; i++){
-    res+=String.fromCharCode(str.charCodeAt(i)^val);
-  }
-  return res;
+function xorString(str, val) {
+	if (!str || !val) {
+		return '';
+	}
+	var res = '';
+	for (var i = 0; i < str.length; i++) {
+		res += String.fromCharCode(str.charCodeAt(i) ^ val);
+	}
+	return res;
 }
 
-function encodePan(prefix, val){
-    if(prefix && prefix.length>val.length){
-        val=prefix.substring(0,prefix.length-val.length)+val;
-    }
-    return val;
+function encodePan(prefix, val) {
+	if (prefix && prefix.length > val.length) {
+		val = prefix.substring(0, prefix.length - val.length) + val;
+	}
+	return val;
 }
-
 
 function main() {
     var prefs = AnyBalance.getPreferences();
@@ -81,6 +75,7 @@ function main() {
     }
     
     var json = getJson(html);
+	
     if(!json.GetPANRp || !json.GetPANRp.Response){
         if(json.Fault)
             throw new AnyBalance.Error(json.Fault.Explanation);
@@ -91,6 +86,47 @@ function main() {
     html = AnyBalance.requestPost(baseurl + 'exec.jsp?c=LogonRq', sessionParams, g_headers);
     var json = getJson(html);
 
+	// Может нужен код из смс?
+	var code;
+	if(json.Fault && json.Fault.Code.Value == 18) {
+		var transactionId = json.Fault.Detail.TranId;
+		
+		html = AnyBalance.requestPost(baseurl + 'getModule.jsp?name=DynamicAuth', {
+            a:'CountExtended',
+            cookiesDisabled:0,
+            sessionKey:sessionKey
+        }, g_headers);
+		
+		
+		var Address = getParam(html, null, null, /value="([^"]+)[^<]+id="address"/i, replaceTagsAndSpaces);
+		var Masked = getParam(html, null, null, /id="masked"[^>]*value="([^"]+)/i, replaceTagsAndSpaces);
+		
+		html = AnyBalance.requestPost(baseurl + 'getModule.jsp?name=DynamicAuth', {
+			'a':'Password',
+			'PrevTranId':transactionId,
+			'GenerateDynPasswordRq___Address':Address,
+			'GenerateDynPasswordRq___Channel':'MINB_SMS',
+			'Masked':Masked,
+            'cookiesDisabled':0,
+            'sessionKey':sessionKey
+        }, g_headers);
+		
+		if(AnyBalance.getLevel() >= 7) {
+			AnyBalance.trace('Пытаемся ввести код из смс...');
+			code = AnyBalance.retrieveCode("Пожалуйста, введите код из смс", 'R0lGODlhBAAEAJEAAAAAAP///////wAAACH5BAEAAAIALAAAAAAEAAQAAAIElI8pBQA7');
+			AnyBalance.trace('Код получен: ' + code);
+		} else {
+			throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
+		}
+		
+		html = AnyBalance.requestPost(baseurl + 'exec.jsp?c=LogonRq', joinObjects({
+			DynamicPassword: code,
+			PrevTranId:transactionId
+		}, sessionParams), g_headers);
+		
+		json = getJson(html);
+	}
+	
     if(!json.LogonRp || !json.LogonRp.Response || !json.LogonRp.Response.ApprovalCode){
         if(json.Fault)
             throw new AnyBalance.Error(json.Fault.Explanation);

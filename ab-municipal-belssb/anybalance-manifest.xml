@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-municipal-belssb</id>
+	<id version="2">ab-municipal-belssb</id>
 	<api flags="no_browser"/>
 	<name>Балашихинская Электросеть</name>
 	<description html="true"><![CDATA[
@@ -19,6 +19,9 @@
 		<counter id="balance" name="Баланс" units=" р"/>
 		<counter id="acc_num" name="Номер счета" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="prev" name="Предыдущие показания"/>
+		<counter id="current" name="Текущие показания"/>
+		<counter id="diff" name="Расход"/>
 	</counters>
 	<keywords></keywords>
 	<type>municipal</type>

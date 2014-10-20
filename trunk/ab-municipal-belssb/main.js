@@ -44,5 +44,11 @@ function main() {
 	getParam(html, result, 'acc_num', /Номер счета:([^>]*>){3}/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'fio', /<th colspan="3">([^>]*>){1}/i, replaceTagsAndSpaces, html_entity_decode);
 	
+	html = AnyBalance.requestGet(baseurl + 'lk/billing/full.php', g_headers);
+	
+	getParam(html, result, 'prev', /<tr class="weight"(?:[^>]*>){2}\s*\d{1,2}.\d{1,2}.\d{2,4}(?:[^>]*>){2}(\d+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'current', /<tr class="weight"(?:[^>]*>){2}\s*\d{1,2}.\d{1,2}.\d{2,4}(?:[^>]*>){4}(\d+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'diff', /<tr class="weight"(?:[^>]*>){2}\s*\d{1,2}.\d{1,2}.\d{2,4}(?:[^>]*>){6}(\d+)/i, replaceTagsAndSpaces, parseBalance);
+	
 	AnyBalance.setResult(result);
 }

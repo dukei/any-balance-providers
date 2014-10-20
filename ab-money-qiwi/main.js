@@ -47,8 +47,9 @@ function getFatalError(str){
 var g_currency = {
     RUB: 'р',
     USD: '$',
+	EUR: '€',
     KZT: '〒',
-    UAH: '₴'
+    UAH: '₴',
 };
 
 function parseCurrencyMy(text){
@@ -125,9 +126,11 @@ function mainNew () {
 	res = getJson(info);
 	
 	var i = 0;
-	for(var balance in res.data.balances) {
-		var balanceVar = (i >= 1 ? 'balance' + (i+1) : 'balance');
+	for(var balance in g_currency) {
+		if(!isset(res.data.balances[balance]))
+			continue;
 		
+		var balanceVar = (i >= 1 ? 'balance' + (i+1) : 'balance');
 		getParam(res.data.balances[balance] + '', result, balanceVar, null, replaceTagsAndSpaces, parseBalance);
 		getParam(g_currency[balance] + '', result, [(i >= 1 ? 'currency' + (i+1) : 'currency'), balanceVar]);
 		i++

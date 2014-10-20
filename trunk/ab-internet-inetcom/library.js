@@ -98,7 +98,7 @@ function replaceAll(value, replaces){
  */
 function parseBalance(text){
     var val = getParam(html_entity_decode(text).replace(/\s+/g, ''), null, null, /(-?\d[\d.,]*)/, replaceFloat, parseFloat);
-    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
+    //AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
     return val;
 }
 
@@ -107,7 +107,7 @@ function parseBalance(text){
  */
 function parseCurrency(text){
     var val = getParam(html_entity_decode(text).replace(/\s+/g, ''), null, null, /-?\d[\d.,]*(\S*)/);
-    AnyBalance.trace('Parsing currency (' + val + ') from: ' + text);
+    //AnyBalance.trace('Parsing currency (' + val + ') from: ' + text);
     return val;
 }
 

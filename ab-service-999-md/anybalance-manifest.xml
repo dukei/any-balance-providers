@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser" />
-	<id version="1">ab-service-999-md</id>
 	<name>Доска объявлений в Молдове (999.MD)</name>
-	<description>
-	Получает данные для доски объявлений в Молдове (http://999.md/)
-	</description>
+	<id version="2">ab-service-999-md</id>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе Доски объявлений в Молдове (999.MD) <a href="http://999.md">http://999.md</a></p>
+	]]></description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
@@ -16,7 +15,7 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units="лей"/>
+		<counter id="balance" name="Баланс" units=" лей"/>
 	</counters>
 	<keywords></keywords>
 	<type>service</type>

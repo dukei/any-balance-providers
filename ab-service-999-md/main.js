@@ -12,13 +12,26 @@ var g_headers = {
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-    var baseurl = 'http://999.md/';
+    var baseurl = 'https://simpalsid.com/user/login?project_id=5107de83-f208-4ca4-87ed-9b69d58d16e1';
     AnyBalance.setDefaultCharset('utf-8'); 
 	
-    var html = AnyBalance.requestGet('http://simpalsid.com/login?login='+encodeURIComponent(prefs.login)+'&password='+encodeURIComponent(prefs.password)+'&remember=1&_='+ new Date().getTime(), g_headers);
+	var html = AnyBalance.requestGet(baseurl, g_headers);
+	
+	if(!html || AnyBalance.getLastStatusCode() > 400)
+		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+	
+	var params = createFormParams(html, function(params, str, name, value) {
+		if (name == 'login') 
+			return prefs.login;
+		else if (name == 'password')
+			return prefs.password;
 
-	html = AnyBalance.requestGet('http://simpalsid.com/config?callback=_jqjsp&_'+ new Date().getTime(), g_headers);
-	var token = getParam(html, null, null, /token":\s*"([^"]*)/i);
+		return value;
+	});	
+	
+	html = AnyBalance.requestPost(baseurl, params, addHeaders({Referer: baseurl}));
+	
+	var token = getParam(html, null, null, /TOKEN\s*=\s*"([^"]+)/i);
 	if(!token)
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	

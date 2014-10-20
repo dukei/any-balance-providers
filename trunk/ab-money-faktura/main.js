@@ -62,9 +62,8 @@ function mainCardAcc(what, baseurl){
 	
     var pattern;
     if(what == 'card')
-		// Я маньяк :)
-		// <div\s+class="account-block"(?:[^>]*>){3}[^>]*acc_\d+(?:[^>]*>){1,100}\s*(?:[\*\s]{8,18}){1,3}6914[\s\S]*?class="account-amounts"(?:[\s\S]*?</div[^>]*>){6,12}
-        pattern = new RegExp('<div\\s+class="account-block"(?:[^>]*>){3}[^>]*acc_\\d+(?:[^>]*>){1,100}\\s*(?:[\\*\\s]{8,18}){1,3}' + (prefs.num || '\\d{4}')+ '[\\s\\S]*?class="account-amounts"(?:[\\s\\S]*?</div[^>]*>){6,12}', 'i');
+		// <div\s+class="account-block"(?:[^>]*>){3}[^>]*acc_\d+(?:[^>]*>){40,100}\s*(?:[\*\s\d]{8,26})4170[\s\S]*?class="account-amounts"(?:[\s\S]*?</div[^>]*>){6,12}
+        pattern = new RegExp('<div\\s+class="account-block"(?:[^>]*>){3}[^>]*acc_\\d+(?:[^>]*>){40,100}\\s*(?:[\\*\\s\\d]{8,26})' + (prefs.num || '\\d{4}')+ '[\\s\\S]*?class="account-amounts"(?:[\\s\\S]*?</div[^>]*>){6,12}', 'i');
     else
 		// <div\s+class="account-block"(?:[^>]*>){3}[^>]*acc_\d+221738(?:[\s\S]*?</div[^>]*>){12}
         pattern = new RegExp('<div\\s+class="account-block"(?:[^>]*>){3}[^>]*acc_\\d+' + (prefs.num || '') + '[\\s\\S]*?class="account-amounts"(?:[\\s\\S]*?</div[^>]*>){12}', 'i');
@@ -112,8 +111,8 @@ function mainDep(what, baseurl){
     var html = AnyBalance.requestGet(baseurl + "/priv/deposits");
 	
 	var num = prefs.num || '';
-	
-	var tr = getParam(html, null, null, new RegExp('<tr>\\s*<td>(?:[^>]*>){4}\\s*Договор(?:[^>]*>){1}\\d+'+num+'(?:[^>]*>){28}\\s*</tr>', 'i'));
+	// <tr>\s*<td>(?:[^>]*>){4}\s*Договор(?:[^>]*>){1}[^<]+(?:[^>]*>){15,30}\s*</tr>
+	var tr = getParam(html, null, null, new RegExp('<tr>\\s*<td>(?:[^>]*>){4}\\s*Договор(?:[^>]*>){1}[^<]+' + num + '(?:[^>]*>){15,30}\\s*</tr>', 'i'));
 	if(!tr) {
         if(prefs.num)
             throw new AnyBalance.Error('Не удалось найти ' + g_phrases.kartu[what] + ' с последними цифрами ' + prefs.num);

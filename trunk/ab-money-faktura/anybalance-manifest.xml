@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id major_version="2.0" version="11">ab-money-faktura</id>
+	<id major_version="2.0" version="12">ab-money-faktura</id>
 	<name>Фактура</name>
 	<description html="true"><![CDATA[
 	<p>Получает текущий остаток, бонусные баллы и другие параметры карт банков, работающих через factura.ru, используя систему Интернет-банк https://www.faktura.ru/lite/app</p>

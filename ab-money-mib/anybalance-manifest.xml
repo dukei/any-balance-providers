@@ -1,42 +1,39 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-    <id version="1">ab-money-mib</id>
+	<api flags="no_browser|captcha"/>
+    <id version="2">ab-money-mib</id>
     <name>Московский Индустриальный Банк</name>
-    <description>Информация о карте, счете в Московском Индустриальном Банке (http://minbank.ru).
-В настройках провайдера требуется указать логин и пароль к Интернет-банку https://telebank.minbank.ru.
-
-Подключиться к интернет-банку Московского индустриального банка?
-Для подключения обратитесь с паспортом в любое отделение Московского индустриального банка.
-</description>
+	<description html="true"><![CDATA[
+	<p>Информация о карте, счете в Московском Индустриальном Банке (http://minbank.ru).</p>
+	<p>В настройках провайдера требуется указать логин и пароль к Интернет-банку https://telebank.minbank.ru.</p>
+	]]></description>	
+	<instruction html="true"><![CDATA[
+	<p>Подключиться к интернет-банку Московского индустриального банка?</p>
+	<p>Для подключения обратитесь с паспортом в любое отделение Московского индустриального банка.</p>
+	]]></instruction>
     <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-    <files>
-	<icon>icon.png</icon>
-        <preferences>preferences.xml</preferences>
-        <js>main.js</js>
-        <js>library.js</js>
-        <history>history.xml</history>
-    </files>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
     <counters>
-	<counter id="balance" name="Доступно"/>
-	<counter id="net_balance" name="Общий баланс"/>
-        <counter id="limit" name="Кредитный лимит"/>
-	<counter id="reserved" name="Зарезервировано"/>
-        <counter id="currency" name="Валюта" type="text"/>
-        <counter id="till" name="Срок действия" type="time" format="MM/yyyy"/>
-        <counter id="accnum" name="Номер счета" type="text"/>
-        <counter id="cardnum" name="Номер карты" type="text"/>
-        <counter id="cardname" name="Название карты" type="text"/>
-        <counter id="accname" name="Название счета" type="text"/>
-        <counter id="owner" name="Владелец" type="text"/>
-        <counter id="status" name="Статус" type="text"/>
-    </counters>
-    <keywords>
-        МИБ минбанк
-    </keywords>
-    <type>
-        money
-    </type>
-    <country>
-        ru
-    </country>
+		<counter id="balance" name="Доступно"/>
+		<counter id="net_balance" name="Общий баланс"/>
+		<counter id="limit" name="Кредитный лимит"/>
+		<counter id="reserved" name="Зарезервировано"/>
+		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="till" name="Срок действия" type="time" format="MM/yyyy"/>
+		<counter id="accnum" name="Номер счета" type="text"/>
+		<counter id="cardnum" name="Номер карты" type="text"/>
+		<counter id="cardname" name="Название карты" type="text"/>
+		<counter id="accname" name="Название счета" type="text"/>
+		<counter id="owner" name="Владелец" type="text"/>
+		<counter id="status" name="Статус" type="text"/>
+	</counters>
+	<keywords>МИБ минбанк</keywords>
+	<type>money</type>
+	<country>ru</country>
 </provider>

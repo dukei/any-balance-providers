@@ -2,12 +2,11 @@
 <provider>
   <!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
   <api flags="no_browser"/>
-  <id version="2">ab-telephony-ippi</id>
+  <id version="1">ab-telephony-ippi</id>
   <name>IPPI</name>
   <description>
-  Предоставляет информацию о балансе провайдера IP телефонии IPPI (http://www.ippi.com/)
-  
-  Информация берется из личного кабинета http://www.ippi.com/
+  <p>Предоставляет информацию о балансе провайдера IP-телефонии IPPI <a href="http://www.ippi.com/">http://www.ippi.com/</a></p>
+  <p>Информация берется из личного кабинета <a href="http://www.ippi.com/">http://www.ippi.com/</a></p>
   </description>
   <author>Mikhail Fedotov &lt;anyremote@mail.ru&gt;</author>
   <files>

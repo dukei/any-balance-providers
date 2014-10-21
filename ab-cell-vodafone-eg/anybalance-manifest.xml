@@ -1,32 +1,30 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-cell-vodafone-eg</id>
-  <name>Vodafone Egypt</name>
-  <description>
-    Obtains balance and other plan information on Vodafone Egypt personal account (http://www.vodafone.com.eg)
-
-    If you don't have Vodafone personal account, please register here: https://www.vodafone.com.eg/vodafoneportalWeb/en/MyVodafone_Register
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Balance" units=" L.E."/>
-    <counter id="fio" name="Name" type="text"/>
-    <counter id="phone" name="Phone" type="text"/>
-    <counter id="accnum" name="Account number" type="text"/>
-  </counters>
-  <keywords>
-  </keywords>
-  <type>
-    cell
-  </type>
-  <country>
-    eg
-  </country>
+	<api flags="no_browser"/>
+	<id version="2">ab-cell-vodafone-eg</id>
+	<name>Vodafone Egypt</name>
+	<description html="true"><![CDATA[
+	<p>Obtains balance and other plan information on Vodafone Egypt personal account <a href="http://www.vodafone.com.eg">http://www.vodafone.com.eg</a></p>
+	<p>If you don't have Vodafone personal account, please register here: <a href="https://www.vodafone.com.eg/vodafoneportalWeb/en/MyVodafone_Register">https://www.vodafone.com.eg/vodafoneportalWeb/en/MyVodafone_Register</a></p>
+	]]></description>	
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Balance" units=" L.E."/>
+		<counter id="fio" name="Name" type="text"/>
+		<counter id="phone" name="Phone" type="text"/>
+		<counter id="accnum" name="Account number" type="text"/>
+		<counter id="traf_used" name="Data used" units=" Mb"/>
+		<counter id="traf_left" name="Date left" units=" Mb"/>
+		<counter id="traf_total" name="Data total" units=" Mb"/>
+	</counters>
+	<keywords></keywords>
+	<type>cell</type>
+	<country>eg</country>
 </provider>

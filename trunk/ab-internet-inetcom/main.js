@@ -1,30 +1,20 @@
 /**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Текущий баланс у интернет провайдера Инетком (Москва).
-
-https://stat.inetcom.ru/cabinet
-
 */
 
 function main(){
-
     AnyBalance.setDefaultCharset('utf-8');
-
     var prefs = AnyBalance.getPreferences();
-   
-    if(!prefs.login)
-	    throw new AnyBalance.Error('Вы не ввели логин');
-    if(!prefs.password)
-	    throw new AnyBalance.Error('Вы не ввели пароль');
-
+	
+	checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(prefs.password, 'Введите пароль!');
+	
     var baseurl = "https://stat.inetcom.ru/cabinet/";
     
     var html = '';
-
     for (i=0; i<3; i++) {  // try several times with different session ID
-        
-        sessID = Math.random().toString().substr(2);
+
+		sessID = Math.random().toString().substr(2);
         if (sessID.substr(0,1) == '0') {
 	    sessID = '1'+sessID;
         }

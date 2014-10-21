@@ -1,33 +1,29 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-internet-inetcom</id>
-  <name>Инетком (Москва)</name>
-  <description>
-    Получает баланс и информацию о тарифном плане для интернет-провайдера Инетком (Москва). Информация берется из личного кабинета https://stat.inetcom.ru/cabinet.
-  </description>
-  <author>Mikhail Fedotov &lt;anyremote@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-    <js>library.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance"  name="Баланс" units="р"/>
-    <counter id="traffic"  name="Трафик в текущем периоде" units="Гб"/>
-    <counter id="userName" name="ФИО" type="text"/>
-    <counter id="period"   name="Расчетный период" type="text"/>
-    <!--counter id="id"       name="Номер договора" type="text"/-->
-    <!--counter id="abplata"  name="Абонентская плата за расчетный период" units="р"/-->
-  </counters>
-  <keywords>
-    inetcom
-  </keywords>
-  <type>
-    internet
-  </type>
-  <country>
-    ru
-  </country>
+	<api flags="no_browser"/>
+	<id version="3">ab-internet-inetcom</id>
+	<name>Инетком (Москва)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе интернет-провайдера Инетком (Москва) <a href="http://inetcom.ru">http://inetcom.ru</a></p>
+	<p>Информация берется из личного кабинета <a href="https://stat.inetcom.ru/cabinet">https://stat.inetcom.ru/cabinet</a></p>
+	]]></description>	
+	<author>Mikhail Fedotov &lt;anyremote@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<js>library.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance"  name="Баланс" units=" р"/>
+		<counter id="traffic"  name="Трафик в текущем периоде" units=" Гб"/>
+		<counter id="userName" name="ФИО" type="text"/>
+		<counter id="period"   name="Расчетный период" type="text"/>
+		<!--counter id="id"       name="Номер договора" type="text"/-->
+		<!--counter id="abplata"  name="Абонентская плата за расчетный период" units="р"/-->
+	</counters>
+	<keywords>inetcom</keywords>
+	<type>internet</type>
+	<country>ru</country>
 </provider>

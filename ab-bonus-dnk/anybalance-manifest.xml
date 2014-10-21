@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-bonus-dnk</id>
+	<api flags="no_browser"/>
+	<name>ДНК</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о бонусной программе провайдера ДНК(Дом натуральной косметики) <a href="http://www.dnk.by/">http://www.dnk.by/</a></p>
+	<p>Информация берется из личного кабинета <a href="http://www.dnk.by/personal/bonus_discount/">http://www.dnk.by/personal/bonus_discount/</a></p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="account" name="Код дисконтной карты" type="text"/>
+		<counter id="personal_discount" name="Скидка на персональную продукцию" type="text"/>
+		<counter id="prof_discount" name="Скидка на профессиональную продукцию" type="text"/>
+		<counter id="name" name="ФИО" type="text"/>
+		<counter id="bonus" name="Бонусные баллы" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>bonus</type>
+	<country>by</country>
+</provider>

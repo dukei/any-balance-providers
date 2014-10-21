@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-service-kasperskiy</id>
+	<api flags="no_browser"/>
+	<name>My Kaspersky</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о кодах активации продуктов Лаборатории Касперского <a href="http://www.kaspersky.com/">http://www.kaspersky.com/</a></p>
+	<p>Информация берется из личного кабинета <a href="https://my.kaspersky.com/ru/">https://my.kaspersky.com/ru/</a></p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="__tariff" name="Лицензия" type="text"/>
+		<counter id="devices" name="Количество устройств" type="text"/>
+		<counter id="expires_date" name="Дата окончания лицензии" type="time" format="dd/MM/yyyy"/>
+	</counters>
+	<keywords></keywords>
+	<type>service</type>
+	<country>ru</country>
+</provider>

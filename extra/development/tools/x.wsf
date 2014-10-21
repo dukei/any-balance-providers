@@ -12,5 +12,6 @@
         End Function
     ]]>
     </script>
+    <script language="VBScript" src="mb.vbs" encoding="UTF-8"></script>
     <script language="JScript" src="x.js" encoding="UTF-8"></script>
 </job>

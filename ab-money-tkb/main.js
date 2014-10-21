@@ -13,10 +13,6 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	prefs = {
-		login: '0003896797',
-		password: 'Xevf-1964',
-	};
 	
 	var baseurl = 'https://i.tcb.ru/';
 	AnyBalance.setDefaultCharset('utf-8');

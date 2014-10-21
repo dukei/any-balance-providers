@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 
 <job id="IncludeExample">
 
@@ -12,5 +12,5 @@
         End Function
     ]]>
     </script>
-    <script language="JScript" src="x.js"></script>
+    <script language="JScript" src="x.js" encoding="UTF-8"></script>
 </job>

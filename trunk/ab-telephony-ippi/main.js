@@ -22,7 +22,7 @@ function main(){
     AnyBalance.trace('get  ' + baseurl+'index.php?page=my-home&lang=44');
     var html = AnyBalance.requestPost(baseurl+'index.php?page=my-home&lang=44', {
                 page:     'my-login',
-                class:    'sign',
+                'class':    'sign',
                 form_name:'contact_form',
                 lang:     44,
                 username: prefs.login,

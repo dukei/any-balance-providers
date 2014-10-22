@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-bonus-dnk</id>
+	<id version="2">ab-bonus-dnk</id>
 	<api flags="no_browser"/>
 	<name>ДНК</name>
 	<description html="true"><![CDATA[
@@ -22,6 +22,8 @@
 		<counter id="prof_discount" name="Скидка на профессиональную продукцию" type="text"/>
 		<counter id="name" name="ФИО" type="text"/>
 		<counter id="bonus" name="Бонусные баллы" type="text"/>
+		<counter id="next_discount_percent" name="Следующая скидка" type="text"/>
+		<counter id="next_discount_sum" name="До следующей скидки осталось" units=" р"/>
 	</counters>
 	<keywords></keywords>
 	<type>bonus</type>

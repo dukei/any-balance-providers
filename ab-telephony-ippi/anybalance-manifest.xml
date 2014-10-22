@@ -2,7 +2,7 @@
 <provider>
   <!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
   <api flags="no_browser"/>
-  <id version="2">ab-telephony-ippi</id>
+  <id version="3">ab-telephony-ippi</id>
   <name>IPPI</name>
   <description>
   <p>Предоставляет информацию о балансе провайдера IP-телефонии IPPI <a href="http://www.ippi.com/">http://www.ippi.com/</a></p>

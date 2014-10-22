@@ -24,8 +24,8 @@ function main(){
 
     AnyBalance.setDefaultCharset('utf-8'); 
 
-   	AnyBalance.trace('GET: ' + baseurl);
-    html = AnyBalance.requestGet(baseurl);
+   	AnyBalance.trace('GET: ' + baseurl + 'primary/');
+    html = AnyBalance.requestGet(baseurl + 'primary/');
    	AnyBalance.trace('GET: ' + baseurl + ' ... OK');
    	
    	loggain = html.match(/<a[\s\S]*?href="\/([\s\S]*?)"[\s\S]*?<span class="menu-text">Logga in<\/span>/i)[1];

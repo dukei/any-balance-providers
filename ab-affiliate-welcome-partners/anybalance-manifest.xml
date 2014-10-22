@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-affiliate-welcome-partners</id>
+	<id version="2">ab-affiliate-welcome-partners</id>
 	<api flags="no_browser"/>
 	<name>Welcome Partners</name>
 	<description html="true"><![CDATA[
@@ -16,13 +16,14 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
+		<counter id="balance" name="Доход" units=" $"/>
 		<counter id="site_name" name="Сайт" type="text"/>
 		<counter id="site_views" name="Сайт: просмотры" type="text"/>
 		<counter id="site_clicks" name="Сайт: переходы" type="text"/>
 		<counter id="deposite_amount" name="Количество депозитов" type="text"/>
 		<counter id="deposite_sum" name="Сумма депозитов" type="text"/>
 		<counter id="players_balance" name="Остаток на счетах игроков" type="text"/>
-		<counter id="balance" name="Доход за месяц" units=" $"/>
+        <counter id="period" name="Период" type="text"/>
 	</counters>
 	<keywords></keywords>
 	<type>affiliate</type>

@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="30" date="2014-10-22">
+	- New script (multiline added)
+	- Still in progress...
+	</change>
 	<change version="24" date="2014-10-21">
 	- New history helper script, still in progress
 	</change>

@@ -23,7 +23,8 @@ var prompt = "Enter a line to history:";
 // Create the WshShell object (needed for using Popup).
 var WshShell = WScript.CreateObject("WScript.Shell");
 // Open the input dialog box using a function in the .wsf file.
-var result = WSHInputBox(prompt, title, "- ");
+//var result = WSHInputBox(prompt, title, "- ");
+var result = returnValue;
 // Test whether the Cancel button was clicked.
 if (result != null) {
 	var objStream = new ActiveXObject("ADODB.Stream");
@@ -40,7 +41,7 @@ if (result != null) {
 	objStream.Close();
 	
 	var dt = new Date();
-	originalHistory = originalHistory.replace(/<history>/, '<history>\n\t<change version="' + g_prov_version + '" date="' + dt.getYear() + '-' + addZeros(dt.getMonth()+1) + '-' + addZeros(dt.getDate()) + '">\n\t' + result + '\n\t</change>');
+	originalHistory = originalHistory.replace(/<history>/, '<history>\n\t<change version="' + g_prov_version + '" date="' + dt.getYear() + '-' + addZeros(dt.getMonth()+1) + '-' + addZeros(dt.getDate()) + '">\n\t' + result.replace(/\n/g, '\n\t') + '\n\t</change>');
 	originalHistory = originalHistory.replace(/^\s*|\s*$/g, '');
 	
 	objStream.Open();

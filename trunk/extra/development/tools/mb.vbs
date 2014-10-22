@@ -1,9 +1,9 @@
 Option Explicit
 
 Dim returnValue
-returnValue = createInput("У вас есть 10 секунд на ввод нужного значения или сообщение закроется само собой. B)","Заголовок сообщения",10000)
+returnValue = createInput("Enter history in 120 seconds","Adding history",120 * 1000)
 
-MsgBox returnValue,vbInformation,"Введённое значение"
+'MsgBox returnValue,vbInformation,"Введённое значение"
 
 'Функция создания окна похожего на inputBox с таймаутом в миллисекундах
 Function createInput(prompt,title,timeout)

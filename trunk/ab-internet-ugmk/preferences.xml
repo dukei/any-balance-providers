@@ -20,4 +20,14 @@
         dialogMessage="Введите пароль, используемый для входа в личный кабинет УГМК-Телеком."
         inputType="textPassword">
     </EditTextPreference>
+    <EditTextPreference 
+        title="Счет" 
+        positiveButtonText="ОК" 
+        summary="||{@s}" 
+        dialogTitle="Счет" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите последние цифры номера счета по которому необходимо получать данные."
+        inputType="number"
+        key="digits">
+    </EditTextPreference>	
 </PreferenceScreen>

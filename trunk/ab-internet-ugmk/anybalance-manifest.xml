@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-internet-ugmk</id>
+	<id version="4">ab-internet-ugmk</id>
 	<api flags="no_browser"/>
 	<name>УГМК-Телеком</name>
 	<description html="true"><![CDATA[
@@ -18,6 +18,8 @@
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
 		<counter id="promise" name="Обещанный платеж" units=" р"/>
+		<counter id="account" name="Счет №" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
 		
 <!-- 		<counter id="traffic_time" name="Время соединений за текущий месяц" type="time_interval" format="{@H}:{@min}:{@sec}"/>
 		<counter id="traffic_cost" name="Стоимость трафика за текущий месяц" units="р"/>

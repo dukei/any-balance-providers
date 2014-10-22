@@ -1,7 +1,7 @@
 Option Explicit
 
 Dim returnValue
-returnValue = createInput("Enter history in 120 seconds","Adding history",120 * 1000)
+returnValue = createInput("Enter history in 5 minutes","Adding history",5 * 60 * 1000)
 
 'MsgBox returnValue,vbInformation,"¬ведЄнное значение"
 

@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="31" date="2014-10-22">
+	- Timeout increased to 5 minutes
+	</change>
 	<change version="30" date="2014-10-22">
 	- New script (multiline added)
 	- Still in progress...

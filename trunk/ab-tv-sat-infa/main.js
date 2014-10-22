@@ -41,11 +41,16 @@ function main() {
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	
+	html = AnyBalance.requestGet(baseurl + 'index.php?mode=idx', g_headers);
+	
 	var result = {success: true};
 	
-	getParam(html, result, 'balance', /(?:Баланс:)([\s\S]*?)\$/i, replaceTagsAndSpaces, html_entity_decode, parseBalance);
-	getParam(html, result, 'account', /Ваш логин:([^>]*>){3}/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'server_address', /Адрес сервера([^>]*>){4}/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'balance', /баланс:(?:[^>]*>)([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode, parseBalance);
+	getParam(html, result, 'account', /Здравствуйте,([^>]*>){1}/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'server_address', /сервер:([^>]*>){1}/i, replaceTagsAndSpaces, html_entity_decode);
+	
+	getParam(html, result, 'subscription', /активные подписки:(?:[^>]*>){5}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'subscription_deadline', /активные подписки:(?:[^>]*>){8}([^<]+)/i, replaceTagsAndSpaces, parseDate);
 	
 	AnyBalance.setResult(result);
 }

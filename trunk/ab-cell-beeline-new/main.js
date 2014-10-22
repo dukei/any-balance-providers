@@ -476,6 +476,11 @@ function fetchB2B(baseurl, html) {
     	}
     }
 	
+	// Новое отображение данных
+	if(bonuses.length == 0 ) {
+		getBonuses(html, result);
+	}
+	
     AnyBalance.setResult(result);
 }
 
@@ -797,7 +802,7 @@ function getBonuses(xhtml, result) {
 			if (/Internet|Интернет/i.test(name)) {
 				// Для опции Хайвей все отличается..
 				// В билайне опечатались, первая буква иногда из русского алфавита, иногда из английского :)
-				if (/(?:x|х)айвей|Интернет-трафика по (?:услуге|тарифу)|Мобильного интернета/i.test(name)) {
+				if (/(?:x|х)айвей|Интернет-трафика по (?:услуге|тарифу)|Мобильного интернета|Мобильный интернет по тарифу/i.test(name)) {
 					AnyBalance.trace('Пробуем разобрать новый трафик...');
 					AnyBalance.trace('services[i] = ' + services[i]);
 					AnyBalance.trace('values = ' + values);
@@ -847,7 +852,7 @@ function getBonuses(xhtml, result) {
 				var minutes = getParam(services[i], null, null, reValue, replaceTagsAndSpaces, parseMinutes);
 				sumParam(minutes, result, 'min_local', null, null, null, aggregate_sum);
 			// Это новый вид отображения данных
-			} else if (/Минут общения по тарифу/i.test(name)) {
+			} else if (/Минут общения по тарифу|вызовы на/i.test(name)) {
 				// Очень внимательно надо матчить
 				if(/других (?:сотовых\s+)?операторов|все номера|На номера домашнего региона|Минут общения по тарифу Все для бизнеса Бронза/i.test(name))
 					sumParam(services[i], result, 'min_local', reNewValue, replaceTagsAndSpaces, parseMinutes, aggregate_sum);

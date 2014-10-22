@@ -1,5 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="93" date="2014-10-22">
+	- Исправлено получение пакетов минут, трафика и смс на корпоративных тарифах.
+	</change>
 	<change version="92" date="2014-10-13">
 	- Улучшено получение минут и валюты на предоплатных тарифах.
 	</change>

@@ -704,9 +704,33 @@ function fetchNewAccountAcc(html, baseurl) {
 	AnyBalance.trace('Пытаемся найти счет: ' + reCardId);
 	
 	var cardId = getParam(html, null, null, reCardId);
+	// бывает что номера счета нет на странице со счетами, придется идти внутрь
 	if (!cardId) {
-		if (prefs.lastdigits) throw new AnyBalance.Error("Не удаётся идентификатор счета с последними цифрами " + prefs.lastdigits);
-		else throw new AnyBalance.Error("Не удаётся найти ни одного счета");
+		AnyBalance.trace('Не нашли счет стандартным способом, пробудем альтернативным...');
+		var accountsWithoutIDs = sumParam(html, null, null, /<div class="productTitle">(?:[^>]*>){200,300}\s*<div class="productNumberBlock">\s*<\/div>/ig);
+		AnyBalance.trace('Нашли счета без номеров: ' + accountsWithoutIDs.length);
+		// Проваливаемся
+		for(var i = 0; i < accountsWithoutIDs.length; i++) {
+			cardId = getParam(accountsWithoutIDs[i], null, null, /id=(\d+)/);
+			AnyBalance.trace('Пробуем найти номер счета у id: ' + cardId);
+			html = AnyBalance.requestGet(baseurl + '/PhizIC/private/accounts/info.do?id=' + cardId);
+			
+			var accountNum = getParam(html, null, null, /Номер счета[^:]*:(?:[^>]*>){3}([\s\d]{20,40})/i, [/\D/g, '']);
+			AnyBalance.trace('Номер счета: ' + accountNum);
+			
+			if(endsWith(accountNum, prefs.lastdigits)) {
+				AnyBalance.trace('Номер счета: ' + accountNum + ' совпадает с нужным нам ' + prefs.lastdigits);
+				break;
+			}
+		}
+		// Теперь получим баланс
+		getParam(html, result, 'balance', /Сумма вклада:(?:[^>]*>){3}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, ['currency', 'balance', 'cash', 'electrocash', 'debt', 'maxlimit'], /Сумма вклада:(?:[^>]*>){3}([^<]+)/i, replaceTagsAndSpaces, parseCurrency);
+		getParam(accountNum, result, '__tariff');
+	}
+	// Теперь проверяем ID
+	if (!cardId) {
+		throw new AnyBalance.Error('Не удаётся найти ' + (prefs.lastdigits ? 'идентификатор счета с последними цифрами ' + prefs.lastdigits: 'ни одного счета!'));
 	}
 	var reCardNumber = new RegExp('class="productNumber\\b[^"]*">([^<]*' + lastdigits + ')<', 'i');
 	var reBalance = new RegExp('<a[^>]+href="[^"]*operations.do\\?id=' + cardId + '"[\\s\\S]*?<span[^>]+class="overallAmount\\b[^>]*>([\\s\\S]*?)</span>', 'i');

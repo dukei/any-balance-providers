@@ -1,5 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="46" date="2014-10-22">
+	- Поддержка счетов, номера которых не отображаются на главной странице.
+	</change>
 	<change version="45" date="2014-10-14">
 	- Поддержка металлических счетов.
 	- Новый счетчик: Вес.

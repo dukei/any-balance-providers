@@ -34,7 +34,7 @@ function main(){
 	
 	var token = getParam(html, null, null, /"loginToken"[^>]*value="([^"]+)"/i);
 	
-    html = AnyBalance.requestPost(baseurl + 'room/lk/doLogin.action', {
+    html = AnyBalance.requestPost(baseurl + 'room/lk/doLogin!enter.action', {
 		'struts.token.name':'loginToken',
 		loginToken:token,
 		loginModule:'lk',

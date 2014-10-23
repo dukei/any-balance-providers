@@ -1,7 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="5" date="2014-10-23">
+	- Улучшена обработка ошибок.
+	</change>
 	<change version="4" date="2013-08-28">
-	Убраны единицы у счетчик Бонусы
+	Убраны единицы у счетчика Бонусы
 	</change>
 	<change version="3" date="2013-08-27">
 	Исправлено отображение бонусного баланса в некоторых случаях

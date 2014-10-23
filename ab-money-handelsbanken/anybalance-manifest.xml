@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1" version="2">ab-money-handelsbanken</id>
+  <id major_version="1" version="3">ab-money-handelsbanken</id>
   <api flags="no_browser" />
   <name>Handelsbanken</name>
   <description>

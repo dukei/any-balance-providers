@@ -12,14 +12,14 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://lk.etherway.ru/';
+	var baseurl = 'https://lk.etherway.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
 	try {
-		var html = AnyBalance.requestGet('http://lk.etherway.ru/site/login', g_headers);
+		var html = AnyBalance.requestGet(baseurl + 'site/login', g_headers);
 	} catch(e){}
 	
 	if(AnyBalance.getLastStatusCode() > 400 || !html) {

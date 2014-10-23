@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="4" date="2014-10-23">
+      - Исправлен порядок счетчиков, обновлена иконка
+    </change>
     <change version="3" date="2014-10-22">
       - Исправлено определение баланса
     </change>

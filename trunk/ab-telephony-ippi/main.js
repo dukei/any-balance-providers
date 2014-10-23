@@ -45,10 +45,10 @@ function main(){
 
     var result = {success: true};
     
-    var v = getParam(html, result, 'id', /ID\s*:\s*<\/span>\s*(\S*)\s*<br/, replaceTagsAndSpaces, html_entity_decode);
-    //AnyBalance.trace('ID  ' + v);
-    v = getParam(html, result, 'credit', /Credit[^>]*>[^>]*>[^>]*>\s*(\S+)\s*.*<\/font>/i, replaceTagsAndSpaces, parseBalance);
+    var v = getParam(html, result, 'credit', /Credit[^>]*>[^>]*>[^>]*>\s*(\S+)\s*.*<\/font>/i, replaceTagsAndSpaces, parseBalance);
     //AnyBalance.trace('BL  ' + v);
+    v = getParam(html, result, 'id', /ID\s*:\s*<\/span>\s*(\S*)\s*<br/, replaceTagsAndSpaces, html_entity_decode);
+    //AnyBalance.trace('ID  ' + v);
     v = getParam(html, result, 'state',  /State<\/th>\s*<td>\s*(\S+)\s*<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     //AnyBalance.trace('ST  ' + v);
     v = getParam(html, result, 'sipid',  /SIP number<\/th>\s*<td>(\d+)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);

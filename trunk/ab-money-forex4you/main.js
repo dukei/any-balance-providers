@@ -41,13 +41,23 @@ function main() {
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	
+	if(prefs.digits) {
+		var account = getParam(html, null, null, new RegExp('<option value="([^"]+)"[^>]*>\\s*\\d+' + prefs.digits, 'i'), replaceTagsAndSpaces);
+		checkEmpty(account, 'Не удалось переключится на счет с последними цифрами ' + prefs.digits, true);
+		
+		html = AnyBalance.requestPost(baseurl + 'trader-account/set-active-account', {
+			'back':'https://account.forex4you.org/ru/trader-account/',
+			'current_account_id':account
+		}, addHeaders({Referer: baseurl + 'trader-account'}));
+	}
+	
 	var result = {success: true};
 	
 	getParam(html, result, 'balance', /Баланс:([^>]+>){3}/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'cred', /Кредитные Бонусы([^>]+>){3}/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, ['currency', 'balance', 'cred'], /Валюта:([^>]+>){3}/i, [replaceTagsAndSpaces, /\s*центов\s*/i, ''], html_entity_decode);
-	getParam(html, result, '__tariff', />Торговый счет([^>]+>){3}/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'account', />Торговый счет([^>]+>){3}/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, '__tariff', />[^<]+счет(?:[^>]+>){2}\s*(\d+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'account', />[^<]+счет(?:[^>]+>){2}\s*(\d+)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'arm', /Плечо:([^>]+>){3}/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'fio', /Имя:([^>]+>){3}/i, replaceTagsAndSpaces, html_entity_decode);
 	

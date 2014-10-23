@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-fortex</id>
+	<api flags="no_browser"/>
+	<name>Фортэкс Телеком</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Фортэкс Телеком <a href="http://fortex.ru/">http://fortex.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="https://stat.fortex.ru/">https://stat.fortex.ru/</a></p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="__tariff" name="Тарифный план" type="text"/>
+		<counter id="account_id" name="Номер счета" type="text"/>
+		<counter id="abon" name="Абонентская плата за последний месяц" units=" р"/>
+		<counter id="data_income" name="Входящий трафик за последний месяц" units=" Mb"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet, telephony, tv</type>
+	<country>ru</country>
+</provider>

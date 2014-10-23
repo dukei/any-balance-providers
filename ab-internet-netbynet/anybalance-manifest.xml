@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2.0" version="15">ab-internet-netbynet</id>
+	<id major_version="2.0" version="16">ab-internet-netbynet</id>
 	<api flags="no_browser"/>
 	<name>NetByNet</name>
 	<description html="true"><![CDATA[
@@ -31,7 +31,7 @@
 		<counter id="balance" name="Баланс" units=" р"/>
 		<counter id="bonus_balance" name="Бонусный баланс" units=" б"/>
 		<counter id="trafficLeft" name="Остаток трафика" units=" Гб"/>
-		<counter id="day_left" name="Осталось дней" type="text" suffix=" дн."/>
+		<counter id="day_left" name="Осталось дней" suffix=" дн."/>
 		<counter id="subscriber" name="Абонент" type="text"/>
 		<counter id="contract" name="Номер договора" type="text" prefix="№ "/>
 		<counter id="status" name="Статус" type="text"/>

@@ -1,8 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser" />
-	<id version="4">ab-cell-mts-arm</id>
+	<id version="5">ab-cell-mts-arm</id>
 	<name>МТС (Армения)</name>
 	<description>
 	Получает информацию о балансе и тарифном плане сотового оператора МТС в Армении по адресу https://cabinet.mts.am/.

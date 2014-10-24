@@ -224,7 +224,8 @@ function main() {
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	var baseurl = "https://my.beeline.ru/";
+	var baseurl = 'https://my.beeline.' + (prefs.country || 'ru') + '/';
+	
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	try {
@@ -242,9 +243,9 @@ function main() {
 	if(prefs.__debug) {
 		try {
 			if(prefs.__debug == 'b2b') {
-				html = AnyBalance.requestGet('https://my.beeline.ru/faces/index.html', g_headers);
+				html = AnyBalance.requestGet(baseurl + 'faces/index.html', g_headers);
 			} else {
-				html = AnyBalance.requestGet('https://my.beeline.ru/c/'+prefs.__debug+'/index.html', g_headers);
+				html = AnyBalance.requestGet(baseurl + 'c/' + prefs.__debug + '/index.html', g_headers);
 			}
 		} catch(e){
 		}
@@ -295,19 +296,6 @@ function main() {
 				break;
 			}
 		}
-		/*try {
-			html = AnyBalance.requestPost(baseurl + (action || 'login.html'), params, addHeaders({Referer: baseurl + 'login.html'}));
-		} catch(e) {
-			if(prefs.__debug) {
-				if(prefs.__debug == 'b2b')
-					html = AnyBalance.requestGet(baseurl + 'faces/index.html');
-				else
-					html = AnyBalance.requestGet(baseurl + 'c/' + prefs.__debug + '/index.html');
-			} else {
-				throw e;
-			}
-		}*/
-		//AnyBalance.trace(html);
 	}
 	// Иногда билайн нормальный пароль считает временным и предлагает его изменить, но если сделать еще один запрос, пускает и показывает баланс
 	if (/Ваш пароль временный\.\s*Необходимо изменить его на постоянный/i.test(html)) {
@@ -748,9 +736,10 @@ function fetchPre(baseurl, html) {
 	}
 	if (AnyBalance.isAvailable('fio')) {
 		AnyBalance.trace('Переходим в настройки для получения ФИО.');
-		html = AnyBalance.requestGet(baseurl + 'sso/settings.html', g_headers);
+		var href = getParam(html, null, null, /[^"]*settings.html/i);
+		html = AnyBalance.requestGet(href, g_headers);
 		
-		getParam(html, result, 'fio', /(?:Имя и фамилия|ФИО)(?:[^>]*>){2}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, capitalFirstLenttersAndDecode);
+		getParam(html, result, 'fio', /personal_info(?:[^>]*>){5}[^>]*class="value"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, capitalFirstLenttersAndDecode);
 		// А у некоторых ФИО не введен, поэтому и беда
 		if(/\d{5,}/i.test(result.fio) || /^\s*$/i.test(result.fio)) {
 			result.fio = undefined;

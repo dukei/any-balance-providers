@@ -31,4 +31,12 @@
 		inputType="number"
 		key="phone">
 	</EditTextPreference>
+    <ListPreference 
+        key="country" 
+        title="Страна"
+        summary="Ваша страна|Нужна для определения личного кабинета|{@s}"
+        entries="Россия|Казахстан"
+        entryValues="ru|kz"
+		defaultValue="ru">
+    </ListPreference>
 </PreferenceScreen>

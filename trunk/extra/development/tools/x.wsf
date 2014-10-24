@@ -1,17 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <job id="IncludeExample">
-
-    <script language="VBScript">
-    <![CDATA[
-        Function WSHInputBox(Message, Title, Value)
-            ' Provides an InputBox function for JScript
-            ' Can be called from JScript as:
-            ' var result = WSHInputBox("Enter a name", "Input", test);
-            WSHInputBox = InputBox(Message, Title, Value)
-        End Function
-    ]]>
-    </script>
-    <script language="VBScript" src="mb.vbs" encoding="UTF-8"></script>
-    <script language="JScript" src="x.js" encoding="UTF-8"></script>
+	<script language="VBScript" src="mb.vbs" encoding="UTF-8"></script>
+	<script language="JScript" src="x.js" encoding="UTF-8"></script>
 </job>

@@ -26,7 +26,7 @@ var WshShell = WScript.CreateObject("WScript.Shell");
 //var result = WSHInputBox(prompt, title, "- ");
 var result = returnValue;
 // Test whether the Cancel button was clicked.
-if (result != null) {
+if (result) {
 	var objStream = new ActiveXObject("ADODB.Stream");
 	objStream.CharSet = "utf-8";
 	
@@ -48,7 +48,7 @@ if (result != null) {
 	objStream.WriteText(originalHistory);
 	objStream.SaveToFile (g_history_file, 2);
 	objStream.Close();
-	
+
 	var intDoIt = WshShell.Popup('Provider: ' + g_prov_text_id + ' v.' + g_prov_major_version + '.' + g_prov_version + ' edited.\nAdded new history line: ' + result + '\n\nDo you want to commit via SVN?', 0, "Result", vbYesNo + vbInformation);
 	
 	if(intDoIt == vbYes) {

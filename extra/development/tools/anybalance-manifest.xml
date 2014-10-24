@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id major_version = "2.0" version="31">ab-test-helper</id>
+	<id major_version = "2.0" version="2">ab-test-helper</id>
 	<name>History Helper test provider</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе провайдера ИмяПровайдера</p>

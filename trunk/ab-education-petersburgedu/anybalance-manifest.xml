@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-education-petersburgedu</id>
+	<api flags="no_browser"/>
+	<name>TypicalProvider</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера ИмяПровайдера <a href=""></a></p>
+	<p>Информация берется из личного кабинета <a href=""></a></p>
+
+	<b>Особенности:</b>
+	<ul>
+		<li></li>
+		<li></li>
+		<li></li>
+	</ul>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Если у вас нет доступа в Личный кабинет, получите его на странице <a href=""></a></p>
+	]]></instruction>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="english" name="Английский язык" type="text"/>
+		<counter id="english_rounded" name="Английский язык - средняя оценка"/>
+		<counter id="literature" name="Литературное чтение" type="text"/>
+		<counter id="literature_rounded" name="Литературное чтение - средняя оценка"/>
+		<counter id="izo" name="Изобразительное искусство" type="text"/>
+		<counter id="izo_rounded" name="Изобразительное искусство - средняя оценка"/>
+		<counter id="matem" name="Математика" type="text"/>
+		<counter id="matem_rounded" name="Математика - средняя оценка"/>
+		<counter id="muz" name="Музыка" type="text"/>
+		<counter id="muz_rounded" name="Музыка - средняя оценка"/>
+		<counter id="world" name="Окружающий мир" type="text"/>
+		<counter id="world_rounded" name="Окружающий мир - средняя оценка"/>
+		<counter id="russian" name="Русский язык" type="text"/>
+		<counter id="russian_rounded" name="Русский язык - средняя оценка"/>
+		<counter id="tech" name="Технология" type="text"/>
+		<counter id="tech_rounded" name="Технология - средняя оценка"/>
+		<counter id="phiz" name="Физическая культура" type="text"/>
+		<counter id="phiz_rounded" name="Физическая культура - средняя оценка"/>
+	</counters>
+	<keywords></keywords>
+	<type></type>
+	<country>ru</country>
+</provider>

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-education-petersburgedu</id>
+	<id version="2">ab-education-petersburgedu</id>
 	<api flags="no_browser"/>
-	<name>TypicalProvider</name>
+	<name>Петербургское образование</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию из электронного дневника на сайте Петербургское образование <a href="http://petersburgedu.ru/">http://petersburgedu.ru/</a></p>
 	<p>Информация берется из личного кабинета <a href="http://petersburgedu.ru/dnevnik/">http://petersburgedu.ru/dnevnik/</a></p>

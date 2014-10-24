@@ -39,17 +39,23 @@ function main(){
 		var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
 		
 		var token = getParam(html, null, null, /constant\("csrf_token",\s+['"]([^"']*)/i);
+		checkEmpty(token, 'Не удалось найти токен авторизации, сайт изменен?', true);
 		
 		var html = AnyBalance.requestPost(baseurl + 'captcha', JSON.stringify({same_origin_token: token}), addHeaders({Referer: baseurl + 'login'})); 
 		
 		var captchaa;
-		if(AnyBalance.getLevel() >= 7) {
-			AnyBalance.trace('Пытаемся ввести капчу');
-			var captcha = AnyBalance.requestGet(getParam(html, null, null, /"captcha"[^>]*url":"([^"]*)/i));
-			captchaa = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
-			AnyBalance.trace('Капча получена: ' + captchaa);
+		var captcha_href = getParam(html, null, null, /"captcha"[^>]*url":"([^"]*)/i);
+		if(captcha_href) {
+			if(AnyBalance.getLevel() >= 7) {
+				AnyBalance.trace('Пытаемся ввести капчу');
+				var captcha = AnyBalance.requestGet(getParam(html, null, null, /"captcha"[^>]*url":"([^"]*)/i));
+				captchaa = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
+				AnyBalance.trace('Капча получена: ' + captchaa);
+			} else {
+				throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
+			}
 		} else {
-			throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
+			AnyBalance.trace('Похоже что капча не требуется...');
 		}
 		
 		var json = {msisdn: prefs.login, password: prefs.password, same_origin_token: token, answer: captchaa};

@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="12">ab-cell-tele2-kz</id>
+	<id version="13">ab-cell-tele2-kz</id>
 	<api flags="no_browser|captcha"/>
 	<name>Теле2 Казахстан</name>
 	<description html="true"><![CDATA[

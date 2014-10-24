@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-exchange-privatbank</id>
+	<id version="3">ab-exchange-privatbank</id>
 	<api flags="no_browser"/>
 	<name>Курсы валют Приватбанка</name>
 	<description html="true"><![CDATA[
@@ -12,14 +12,21 @@
 		<icon>icon.png</icon>
 		<js>library.js</js>
 		<js>main.js</js>
+		<history>history.xml</history>
 	</files>
 	<counters>
- 		<counter id="USD_buy" name="USD покупка" prefix="$↓ "/>
-		<counter id="USD_sell" name="USD продажа" prefix="$↑ "/>
-		<counter id="EUR_buy" name="EUR покупка" prefix="€↓ "/>
-		<counter id="EUR_sell" name="EUR продажа" prefix="€↑ "/>
-		<counter id="RUR_buy" name="RUR покупка" prefix="р↓ "/>
-		<counter id="RUR_sell" name="RUR продажа" prefix="р↑ "/>
+ 		<counter id="USD_buy" name="USD покупка(в отделениях и Приват24)" prefix="$↓ "/>
+		<counter id="USD_sell" name="USD продажа(в отделениях и Приват24)" prefix="$↑ "/>
+		<counter id="EUR_buy" name="EUR покупка(в отделениях и Приват24)" prefix="€↓ "/>
+		<counter id="EUR_sell" name="EUR продажа(в отделениях и Приват24)" prefix="€↑ "/>
+		<counter id="RUR_buy" name="RUR покупка(в отделениях и Приват24)" prefix="р↓ "/>
+		<counter id="RUR_sell" name="RUR продажа(в отделениях и Приват24)" prefix="р↑ "/>
+ 		<counter id="USD_buy_card" name="USD покупка(конвертация по картам)" prefix="$↓ "/>
+		<counter id="USD_sell_card" name="USD продажа(конвертация по картам)" prefix="$↑ "/>
+		<counter id="EUR_buy_card" name="EUR покупка(конвертация по картам)" prefix="€↓ "/>
+		<counter id="EUR_sell_card" name="EUR продажа(конвертация по картам)" prefix="€↑ "/>
+		<counter id="RUR_buy_card" name="RUR покупка(конвертация по картам)" prefix="р↓ "/>
+		<counter id="RUR_sell_card" name="RUR продажа(конвертация по картам)" prefix="р↑ "/>
 	</counters>
 	<keywords>Курс валют, приватбанк, украина, доллар, евро, гривна, рубль</keywords>
 	<type>exchange</type>

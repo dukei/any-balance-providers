@@ -1,5 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="4" date="2014-10-24">
+	- Поддержка извенений на сайте.
+	</change>
 	<change version="3" date="2014-08-07">
 	- Поддержка нового дизайна сайта.
 	</change>

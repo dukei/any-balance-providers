@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference
+		title="Логин"
+		key="login"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Логин"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите логин, используемый для входа в личный кабинет.">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Пароль"
+		key="password"
+		summary="||***********"
+		obligatory="true"
+		dialogTitle="Пароль"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите пароль, используемый для входа в личный кабинет."
+		inputType="textPassword">
+	</EditTextPreference>
+	<ListPreference
+		key="period"
+		title="Период"
+		summary="||{@s}"
+		entries="1 полугодие|1 четверть|2 полугодие|2 четверть|3 четверть|4 четверть|Год"
+		entryValues="current|0|1|2|3|4|year"
+		defaultValue="current">
+	</ListPreference>	
+</PreferenceScreen>

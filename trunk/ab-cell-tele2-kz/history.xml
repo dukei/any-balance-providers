@@ -1,5 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="13" date="2014-10-24">
+	- Улучшена обработка ошибок.
+	- Добавлена обработка кабинетов без качпи.
+	</change>
 	<change version="12" date="2014-10-15">
 	- Улучшенно получение трафика.
 	</change>

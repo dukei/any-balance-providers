@@ -1,11 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-cell-beeline-kz</id>
+	<id version="2">ab-cell-beeline-kz</id>
 	<api flags="no_browser"/>
 	<name>Билайн (Казахстан)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе сотового оператора Билайн в Казахстане http://beeline.kz/</p>
 	<p>Информация берется из личного кабинета https://beeline.kz/ru/users/sign_in</p>
+	<p>ВНИМАНИЕ! Билайн запустил новую версию кабинета по адресу my.beeline.kz если вы используете именно это сайт, вам необходимо установить провайдера Билайн (новый кабинет)</p>
 	]]></description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>

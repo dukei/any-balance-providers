@@ -4,19 +4,9 @@
 	<api flags="no_browser"/>
 	<name>TypicalProvider</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе провайдера ИмяПровайдера <a href=""></a></p>
-	<p>Информация берется из личного кабинета <a href=""></a></p>
-
-	<b>Особенности:</b>
-	<ul>
-		<li></li>
-		<li></li>
-		<li></li>
-	</ul>
+	<p>Предоставляет информацию из электронного дневника на сайте Петербургское образование <a href="http://petersburgedu.ru/">http://petersburgedu.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="http://petersburgedu.ru/dnevnik/">http://petersburgedu.ru/dnevnik/</a></p>
 	]]></description>
-	<instruction html="true"><![CDATA[
-	<p>Если у вас нет доступа в Личный кабинет, получите его на странице <a href=""></a></p>
-	]]></instruction>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
@@ -46,6 +36,6 @@
 		<counter id="phiz_rounded" name="Физическая культура - средняя оценка"/>
 	</counters>
 	<keywords></keywords>
-	<type></type>
+	<type>education</type>
 	<country>ru</country>
 </provider>

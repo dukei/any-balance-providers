@@ -8,6 +8,7 @@ var g_prov_major_version = '';
 var g_prov_text_id = '';
 var g_prov_name = '';
 var g_history_file = '';
+var g_prefs_file = '';
 
 var vbOKOnly = 0; // Constants for Popup
 var vbYesNo = 4;
@@ -32,14 +33,23 @@ if (result) {
 	
 	var manifest = openManifest(objStream);
 	getManifestData(manifest);
+	
+	// Проверим не заменены ли преференсы в файле
+	var mainJs = readFileToString('main.js');
+	if(!/var[^=]+=\s*AnyBalance\.getPreferences\(\);/i.test(mainJs) && g_prefs_file) {
+		throw new Error('We don`t found AnyBalance.getPreferences()! Check you main.js file for stupid errors!');
+	}
+	
+	// var intDoIt = WshShell.Popup('Do you want to use new library.js?', 0, "Result", vbYesNo + vbInformation);
+	// if(intDoIt == vbYes) {
+		
+	// }
+	
 	// Запишем манифест
 	writeManifest(objStream, manifest, WshShell);
 	
-	objStream.Open();
-	objStream.LoadFromFile(g_history_file);
-	var originalHistory = objStream.ReadText();
-	objStream.Close();
-	
+	// История 
+	var originalHistory = readFileToString(g_history_file);
 	var dt = new Date();
 	originalHistory = originalHistory.replace(/<history>/, '<history>\n\t<change version="' + g_prov_version + '" date="' + dt.getYear() + '-' + addZeros(dt.getMonth()+1) + '-' + addZeros(dt.getDate()) + '">\n\t' + result.replace(/\n/g, '\n\t') + '\n\t</change>');
 	originalHistory = originalHistory.replace(/^\s*|\s*$/g, '');
@@ -48,7 +58,7 @@ if (result) {
 	objStream.WriteText(originalHistory);
 	objStream.SaveToFile (g_history_file, 2);
 	objStream.Close();
-
+	
 	var intDoIt = WshShell.Popup('Provider: ' + g_prov_text_id + ' v.' + g_prov_major_version + '.' + g_prov_version + ' edited.\nAdded new history line: ' + result + '\n\nDo you want to commit via SVN?', 0, "Result", vbYesNo + vbInformation);
 	
 	if(intDoIt == vbYes) {
@@ -61,6 +71,14 @@ if (result) {
 
 function commit(WshShell, mesg) {
 	WshShell.Run('tortoiseproc /command:commit /logmsg:"' + g_prov_name + ' (' + g_prov_text_id + '):\n' + mesg + '" /path:"'+WshShell.CurrentDirectory+'"');
+}
+
+function readFileToString(file) {
+	objStream.Open();
+	objStream.LoadFromFile(file);
+	var text = objStream.ReadText();
+	objStream.Close();
+	return text; 
 }
 
 function getManifestData(manifest) {
@@ -77,6 +95,8 @@ function getManifestData(manifest) {
 	g_history_file = searchRegExpSafe(/<history>([^<]+)<\/history>/i, manifest);
 	if(!g_history_file)
 		throw new Error('No history file specified in the manifest!');
+		
+	g_prefs_file = searchRegExpSafe(/<preferences>([^<]+)<\/preferences>/i, manifest);	
 }
 
 function openManifest(objStream) {

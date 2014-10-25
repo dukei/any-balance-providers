@@ -1,8 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="7" date="2014-10-25">
+	Added check for getPreferences
+	</change>
 	<change version="2" date="2014-10-24">
 	- Minor bugs fixed
 	</change>
-
-
 </history>

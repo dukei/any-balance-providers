@@ -11,8 +11,7 @@ var g_headers = {
 };
 
 function main(){
-    //var prefs = AnyBalance.getPreferences();
-	var prefs = {"counter6":"","counter4":"","freq":"0","counter5":"","counter2":"","counter3":"","counter0":"balance","counter1":"","password":"xDMP95ItMV","on_touch_account":"","on_touch_account_icon":"","enable_net_0":"2","enable_net_1":"2","codes2":"0793 6510 4587 8780 1199 3527 6318 1876 4536 4190","codes3":"9301 5592 5489 9191 3868 5003 2492 4452 0212 9983","codes0":"6442 6599 2848 2340 4545 8697 4538 1816 5962 5134","codes1":"1643 9176 0356 0137 0044 6640 9208 3059 3768 0968","notifications":[{"type":0,"counter":"balance"}],"name":"Visa Electron","login":"KDV-71","lastdigits":"1850"};
+    var prefs = AnyBalance.getPreferences();
     if(AnyBalance.getLevel() < 6)
         throw new AnyBalance.Error('Этот провайдер требует AnyBalance API v.6+');
 

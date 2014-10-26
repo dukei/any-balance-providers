@@ -226,6 +226,9 @@ function main() {
 	
 	var baseurl = 'https://my.beeline.' + (prefs.country || 'ru') + '/';
 	
+	if(prefs.country == 'kz')
+		AnyBalance.setCookie('my.beeline.kz', 'ui.language.current', 'ru_RU');
+	
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	try {
@@ -306,9 +309,9 @@ function main() {
 	}
 	// Ну и тут еще раз проверяем, получилось-таки войти или нет
 	if (/<form[^>]+name="(?:chPassForm)"|Ваш пароль временный\.\s*Необходимо изменить его на постоянный/i.test(html))
-		throw new AnyBalance.Error('Вы зашли по временному паролю, требуется сменить пароль. Для этого войдите в ваш кабинет https://my.beeline.ru через браузер и смените там пароль. Новый пароль введите в настройки данного провайдера.', null, true);
+		throw new AnyBalance.Error('Вы зашли по временному паролю, требуется сменить пароль. Для этого войдите в ваш кабинет ' + baseurl + ' через браузер и смените там пароль. Новый пароль введите в настройки данного провайдера.', null, true);
 	if (/<form[^>]+action="\/(?:changePass|changePassB2C).html"/i.test(html))
-		throw new AnyBalance.Error('Билайн требует сменить пароль. Зайдите в кабинет https://my.beeline.ru через браузер и поменяйте пароль на постоянный.', null, true);
+		throw new AnyBalance.Error('Билайн требует сменить пароль. Зайдите в кабинет ' + baseurl + ' через браузер и поменяйте пароль на постоянный.', null, true);
 		
 	// Определим, может мы вошли в кабинет для физ лиц?
 	if (/"logout-button"/i.test(html)) {
@@ -583,7 +586,7 @@ function fetchPost(baseurl, html) {
 	
 	if (isAvailableBonuses()) {
 		xhtml = getBlock(baseurl + 'c/post/index.html', html, 'loadingBonusesAndServicesDetails');
-		xhtml = getBlock(baseurl + 'c/post/index.html', [xhtml, html], 'bonusesloaderDetails');
+		xhtml += getBlock(baseurl + 'c/post/index.html', [xhtml, html], 'bonusesloaderDetails');
 		
 		getBonuses(xhtml, result);
 	}
@@ -698,8 +701,11 @@ function fetchPre(baseurl, html) {
 	getParam(html, result, 'phone', /<h1[^>]+class="phone-number"[^>]*>([\s\S]*?)<\/h1>/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, '__tariff', /Текущий тариф[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
 
-	var xhtml; //= getBlock(baseurl + 'c/pre/index.html', html, 'currentTariffLoaderDetails');
-	//getParam(xhtml, result, '__tariff', [/<div[^>]+:tariffInfo[^>]*class="current"[^>]*>(?:[\s\S](?!<\/div>))*?<h2[^>]*>([\s\S]*?)<\/h2>/i, /<h2>(?:[\s\S](?!<\/h2>))*?Текущий тариф\s*([\s\S]*?)\s*<\/h2>/i], replaceTagsAndSpaces, html_entity_decode);
+	var xhtml;
+	if(prefs.country == 'kz' && !result.__tariff) {
+		xhtml = getBlock(baseurl + 'c/pre/index.html', html, 'currentTariffLoaderDetails');
+		getParam(xhtml, result, '__tariff', [/<div[^>]+:tariffInfo[^>]*class="current"[^>]*>(?:[\s\S](?!<\/div>))*?<h2[^>]*>([\s\S]*?)<\/h2>/i, /<h2>(?:[\s\S](?!<\/h2>))*?Текущий тариф[^>]*>([\s\S]*?)\s*<\/h2>/i], replaceTagsAndSpaces, html_entity_decode);
+	}
 	
 	if (AnyBalance.isAvailable('balance')) {
 		// Если нет баланса, валюту не нужно получать
@@ -778,7 +784,8 @@ function getBonuses(xhtml, result) {
 	for (var j = 0; j < bonuses.length; ++j) {
 		var bonus = bonuses[j];
 		//var bonus_name = ''; //getParam(bonus, null, null, /<span[^>]+class="bonuses-accums-list"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
-		var services = sumParam(bonus, null, null, /<div[^>]+class="\s*(?:accumulator|bonus|item)\s*"(?:[\s\S](?!$|<div[^>]+class="(?:accumulator|bonus|item)"))*[\s\S]/ig);
+		// var services = sumParam(bonus, null, null, /<div[^>]+class="\s*(?:accumulator|bonus|item)\s*"(?:[\s\S](?!$|<div[^>]+class="(?:accumulator|bonus|item)"))*[\s\S]/ig);
+		var services = sumParam(bonus, null, null, /<div[^>]+class="\s*(?:item accumulator|accumulator|bonus|item)\s*"(?:[\s\S](?!$|<div[^>]+class="(?:accumulator|bonus|item)"))*[\s\S]/ig);
 		AnyBalance.trace("Found " + services.length + ' bonuses');
 		var reValue = /<div[^>]+class="column2[^"]*"[^>]*>([\s\S]*?)<\/div>/i;
 		var reNewValue = /<div[^>]+class="column2[^"]*"(?:[^>]*>){5}([\s\d,.]+)/i;
@@ -791,7 +798,7 @@ function getBonuses(xhtml, result) {
 			if (/Internet|Интернет/i.test(name)) {
 				// Для опции Хайвей все отличается..
 				// В билайне опечатались, первая буква иногда из русского алфавита, иногда из английского :)
-				if (/(?:x|х)айвей|Интернет-трафика по (?:услуге|тарифу)|Мобильного интернета|Мобильный интернет по тарифу/i.test(name)) {
+				if (/(?:x|х)айвей|Интернет-трафик(?:а)?(?:\sна полной скорости)? по (?:услуге|тарифу)|Мобильного интернета|Мобильный интернет/i.test(name)) {
 					AnyBalance.trace('Пробуем разобрать новый трафик...');
 					AnyBalance.trace('services[i] = ' + services[i]);
 					AnyBalance.trace('values = ' + values);
@@ -841,7 +848,7 @@ function getBonuses(xhtml, result) {
 				var minutes = getParam(services[i], null, null, reValue, replaceTagsAndSpaces, parseMinutes);
 				sumParam(minutes, result, 'min_local', null, null, null, aggregate_sum);
 			// Это новый вид отображения данных
-			} else if (/Минут общения по тарифу|вызовы на/i.test(name)) {
+			} else if (/Минут общения по тарифу|вызовы/i.test(name)) {
 				// Очень внимательно надо матчить
 				if(/других (?:сотовых\s+)?операторов|все номера|На номера домашнего региона|Минут общения по тарифу Все для бизнеса Бронза/i.test(name))
 					sumParam(services[i], result, 'min_local', reNewValue, replaceTagsAndSpaces, parseMinutes, aggregate_sum);

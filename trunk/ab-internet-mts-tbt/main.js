@@ -20,7 +20,7 @@ function getEventValidation(html) {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://newcab.tbt.ru/';
+	var baseurl = 'https://lkkazan.pv.mts.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Введите логин или номер счета!');

@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="95" date="2014-10-26">
+	- Улучшено получение бонусов и тарифа.
+	</change>
 	<change version="94" date="2014-10-24">
 	- Добавлена поддержка Казахстана.
 	</change>

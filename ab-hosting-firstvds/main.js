@@ -40,12 +40,12 @@ function main(){
 			throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 		}
 		
-		html = AnyBalance.requestGet(baseurl + '?sfrom=loginform&sfrom=loginform ', g_headers);
+		html = AnyBalance.requestGet(baseurl + '?sfrom=loginform&sfrom=loginform', g_headers);
     }
 	
 	var result = {success: true};
 	
-	html = AnyBalance.requestGet(baseurl + '?func=dashboard.info&p_cnt=undefined&p_num=1&dashboard=info&sfrom=ajax&operafake=1413790832259', g_headers);
+	html = AnyBalance.requestGet(baseurl + '?func=dashboard.info&p_cnt=undefined&p_num=1&dashboard=info&sfrom=ajax&operafake=' + new Date().getTime(), g_headers);
 	
     getParam(html, result, 'balance', /"Баланс"(?:[^"]+"){5,20}value"\s*:\s*"([\s\d.,-]+)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'forecast', /"Средств хватит до"(?:[^"]+"){5,20}value"\s*:\s*"([\s\d\/-]+)/i, replaceTagsAndSpaces, parseDateISO);

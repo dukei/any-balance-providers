@@ -24,35 +24,45 @@ function main() {
 	AnyBalance.setCookie('payeer.com', 'BITRIX_SM_SALE_UID', '0');
 	
 	var html = AnyBalance.requestGet(baseurl, g_headers);
-	AnyBalance.requestGet(baseurl + '/images/cms/pb8.ico', g_headers); //Эта штука что-то в сессию пишет, что логин правильный.
+	// AnyBalance.requestGet(baseurl + '/images/cms/pb8.ico', g_headers); //Эта штука что-то в сессию пишет, что логин правильный.
 	
-	dateServer = getParam(html, null, null, /var\s+dateServer\s*=\s*'([^']+)/i);
+	// dateServer = getParam(html, null, null, /var\s+dateServer\s*=\s*'([^']+)/i);
 	
-	if(!dateServer) {
-		if(/403 Forbidden/i.test(html))
-			throw new AnyBalance.Error('Payeer.com на время заблокировал вас. Пожалуйста, подождите часок и попробуйте снова.');
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось найти системную метку загрузки страницы. Сайт изменен?');
-	}
+	// if(!dateServer) {
+		// if(/403 Forbidden/i.test(html))
+			// throw new AnyBalance.Error('Payeer.com на время заблокировал вас. Пожалуйста, подождите часок и попробуйте снова.');
+		
+		// AnyBalance.trace(html);
+		// throw new AnyBalance.Error('Не удалось найти системную метку загрузки страницы. Сайт изменен?');
+	// }
 	
-	var stT = jQueryEmulator.mdDONWKS();
-	AnyBalance.sleep((2 + Math.random()*5)*1000); //Типа, вводим логин-пароль некоторое время.
+	// var stT = jQueryEmulator.mdDONWKS();
+	// AnyBalance.sleep((2 + Math.random()*5)*1000); //Типа, вводим логин-пароль некоторое время.
 
-	var hash = jQueryEmulator.modmd5(String(jQueryEmulator.mdDONWKS()-stT), true, prefs.login);
+	// var hash = jQueryEmulator.modmd5(String(jQueryEmulator.mdDONWKS()-stT), true, prefs.login);
 	
-	html = AnyBalance.requestPost(baseurl + '/ajax/index.php', {
-		'cmd':'auth_step1',
-		'backurl':'',
+	var hash = getParam(html, null, null, /name="CHPM"[^>]*value="([^"]+)/i, replaceTagsAndSpaces);
+
+	html = AnyBalance.requestPost(baseurl + '/bitrix/components/payeer/system.auth.form/templates/index_list/ajax.php', {
+		'cmd':'Authorization',
+		'backurl':'/ru/account/',
 		'CHPM':hash,
 		'email':prefs.login,
 		'password':prefs.password,
-		'Login':'Войти'
-	}, addHeaders({Referer: baseurl, 'X-Requested-With':'XMLHttpRequest'}));
+	}, addHeaders({Referer: baseurl, 'X-Requested-With':'XMLHttpRequest'}));	
+	
+	// html = AnyBalance.requestPost(baseurl + '/ajax/index.php', {
+		// 'cmd':'Authorization',
+		// 'backurl':'/ru/account/',
+		// 'CHPM':hash,
+		// 'email':prefs.login,
+		// 'password':prefs.password,
+	// }, addHeaders({Referer: baseurl, 'X-Requested-With':'XMLHttpRequest'}));
 	
 	var json = getJson(html);
-	if(json.location){
-		html = AnyBalance.requestGet(baseurl + json.location, g_headers);
-	    AnyBalance.requestGet(baseurl + '/images/cms/pb8.ico', g_headers); //Эта штука, возможно, что-то в сессию пишет, что логин правильный.
+	if(json.main.location){
+		html = AnyBalance.requestGet(json.main.location, g_headers);
+	    //AnyBalance.requestGet(baseurl + '/images/cms/pb8.ico', g_headers); //Эта штука, возможно, что-то в сессию пишет, что логин правильный.
 	}
 
 	if (!/logout=yes/i.test(html)) {
@@ -90,7 +100,6 @@ function main() {
         }
     }
 	
-
 	if (!/logout=yes/i.test(html)) {  //А после капчи уже окончательно проверяем вход.
 		var error = getParam(html, null, null, /"form_error"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
@@ -102,10 +111,10 @@ function main() {
 	
     var result = {success: true};
 	
-	getParam(html, result, 'acc_num', />\s*Номер счета(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'rub', />\s*RUB(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'usd', />\s*USD(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'eur', />\s*EUR(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'acc_num', />\s*No. аккаунта(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'rub', />\s*RUB(?:[^>]*>){6}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'usd', />\s*USD(?:[^>]*>){6}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'eur', />\s*EUR(?:[^>]*>){6}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
 	
     AnyBalance.setResult(result);
 }

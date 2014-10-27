@@ -1,18 +1,13 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Получает баланс и информацию о тарифном плане для сотового оператора xxxxxx 
-
-Operator site: http://xxxxxx.ru
-Личный кабинет: https://kabinet.xxxxxx.ru/login
 */
 
 var g_headers = {
-'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
-'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-'Connection':'keep-alive',
-'User-Agent':'Mozilla/5.0 (BlackBerry; U; BlackBerry 9900; en-US) AppleWebKit/534.11+ (KHTML, like Gecko) Version/7.0.0.187 Mobile Safari/534.11+'
+	'Accept':'*/*',
+	'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
+	'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Connection':'keep-alive',
+	'User-Agent':'Mozilla/5.0 (BlackBerry; U; BlackBerry 9900; en-US) AppleWebKit/534.11+ (KHTML, like Gecko) Version/7.0.0.187 Mobile Safari/534.11+'
 };
 
 function main(){
@@ -25,19 +20,27 @@ function main(){
 
     AnyBalance.setDefaultCharset('utf-8'); 
 
-    var number = prefs.login.replace(/([\d]{3})([\d]{3})([\d]{2})([\d]{3})([\d]{1})([\d]{2})/i, "$1-$2-$3-$4-$5-$6"); 
-
+	checkEmpty(prefs.login, 'Введите логин без пробелов и разделителей!');
+	var number = prefs.login.replace(/([\d]{3})([\d]{3})([\d]{2})([\d]{3})([\d]{1})([\d]{2})/i, "$1-$2-$3-$4-$5-$6"); 
+	
+	var html = AnyBalance.requestGet(baseurl + 'component/private', g_headers);
+	
+	if(!html || AnyBalance.getLastStatusCode() > 400)
+		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+	
     var html = AnyBalance.requestPost(baseurl + 'component/private/?task=login', {
         accountNumber: number
-    }, addHeaders({Referer: baseurl + 'index.php?option=com_private'})); 
+    }, addHeaders({Referer: baseurl + 'index.php?option=com_private', 'X-Requested-With':'XMLHttpRequest'})); 
 
-    if(!/<p[^>]*>СПРАВКА<br\/>/i.test(html)){
+    if(!/СПРАВКА/i.test(html)){
         var error = getParam(html, null, null, /<dd[^>]+class="message message"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error);
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
-
+	
+	html = AnyBalance.requestGet(baseurl + 'component/private/?task=help', g_headers);
+	
     var result = {success: true};
 
     for (var i = 0; i < categories.length; i++) {

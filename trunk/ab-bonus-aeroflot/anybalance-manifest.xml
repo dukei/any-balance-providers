@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-bonus-aeroflot</id>
+	<id version="5">ab-bonus-aeroflot</id>
 	<api flags="no_browser"/>
 	<name>Аэрофлот Бонус</name>
 	<description html="true"><![CDATA[
@@ -19,7 +19,7 @@
 		<counter id="balance" name="Мили" units=" m"/>
 		<counter id="qmiles" name="Квалификационные мили" units=" qm"/>
 		<counter id="segments" name="Полетные сегменты"/>
-<!--		<counter id="level" name="Уровень" type="text"/> -->
+		<counter id="level" name="Уровень" type="text"/>
 	</counters>
 	<keywords>
 	aeroflot, miles

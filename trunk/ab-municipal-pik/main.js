@@ -26,7 +26,7 @@ function main() {
 		'action': 'CheckLoginPwd'
 	}, addHeaders({Referer: baseurl}));
 	
-	if (!/document.location[^']+'[^']+info.html/i.test(html)) {
+	if (!/exit\.png/i.test(html)) {
 		var error = sumParam(html, null, null, /color:\s*red"([^>]*>){2}/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Номер лицевого счета введен некорректно|Неверный пароль/i.test(error));
@@ -39,8 +39,8 @@ function main() {
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'balance', /Сумма к оплате([^>]*>){3}/i, [replaceTagsAndSpaces, /\s*руб[^\d]*/i, '.'], parseBalance);
-	getParam(html, result, 'account', />Лицевой счет([^>]*>){3}/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'balance', /Сумма к оплате([^>]*>){3}/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'account', />\s*(?:Номер лицевого счета|Лицевой счет)([^>]*>){3}/i, replaceTagsAndSpaces, html_entity_decode);
 	
 	AnyBalance.setResult(result);
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-      <ListPreference 
+<!--       <ListPreference 
         key="cabinet"
         title="Кабинет" 
         summary="||{@s}"
@@ -8,7 +8,7 @@
 		entryValues="new|old"
 		defaultValue="old"
         dialogTitle="Выберите личный кабинет.">
-    </ListPreference>
+    </ListPreference>-->
 	<ListPreference 
         key="prefix"
         title="Префикс номера телефона" 
@@ -16,7 +16,7 @@
 		entries="Без префикса|495|499|812|005"
 		entryValues="|495|499|812|005"
 		dialogTitle="Префикс вашего номера АллоИнкогнито">
-    </ListPreference>
+    </ListPreference> 
     <EditTextPreference 
         title="Номер телефона" 
         positiveButtonText="ОК" 

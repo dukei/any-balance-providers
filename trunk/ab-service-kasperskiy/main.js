@@ -7,9 +7,6 @@ var g_headers = {
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection': 'keep-alive',
-	// Mobile
-	//'User-Agent':'Mozilla/5.0 (BlackBerry; U; BlackBerry 9900; en-US) AppleWebKit/534.11+ (KHTML, like Gecko) Version/7.0.0.187 Mobile Safari/534.11+',
-	// Desktop
 	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
 };
 
@@ -34,12 +31,14 @@ function main() {
 		'password': prefs.password
 	}, addHeaders({Referer: baseurl + '?logonSessionData=MyAccount&returnUrl=ru'}));
 	
-    var params = createFormParams(html);
+	var params = createFormParams(html);
+	params.wresult = getParam(html, null, null, /"wresult"[^>]*value="([^"]+)/i, null, html_entity_decode);
+	
     html = AnyBalance.requestPost('https://my.kaspersky.com/', params, addHeaders({Referer: baseurl + '?logonSessionData=MyAccount&returnUrl=ru'}));
     
     html = AnyBalance.requestGet(baseurl, g_headers);
     
-    var accId = getParam(AnyBalance.getCookie('MyAccount2'), null, null, /\d+/i);
+	var accId = AnyBalance.getCookie('MyAccount2');
     checkEmpty(accId , 'Не удалось найти ID аккаунта, сайт изменен?',true);
     
     html = AnyBalance.requestGet(baseurl + 'ru/activations?ajax_block=' + accId + '&_=' + new Date().getTime(), addHeaders({'X-Requested-With':'XMLHttpRequest'}));

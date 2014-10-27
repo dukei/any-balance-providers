@@ -41,7 +41,7 @@ function main(){
     getParam(html, result, '__tariff', /<dt>(?:Номер карты лояльности|Номер картки лояльності)<\/dt>\s*<dd>([\s\S]*?)<\/dd>/i, replaceTagsAndSpaces, html_entity_decode);
 
     html = AnyBalance.requestGet(baseurl + 'profile/bonus-balance/'); 
-    getParam(html, result, 'balance', /(?:На вашем счете|На вашому рахунку) ([\s\S]*?) (?:бонусов|бонусів)./i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'balance', /(?:На вашем счете|На вашому рахунку) ([\s\S]*?) бонус./i, replaceTagsAndSpaces, parseBalance);
 
     AnyBalance.setResult(result);
 }

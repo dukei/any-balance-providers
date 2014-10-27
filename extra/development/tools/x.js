@@ -13,6 +13,7 @@ var g_prefs_file = '';
 var vbOKOnly = 0; // Constants for Popup
 var vbYesNo = 4;
 
+var stayOnTop = 4096;
 var vbInformation = 64;
 var vbCancel = 2;
 var vbYes = 6;
@@ -36,11 +37,25 @@ if (result) {
 	
 	// Проверим не заменены ли преференсы в файле
 	var mainJs = readFileToString('main.js');
-	if(!/var[^=]+=\s*AnyBalance\.getPreferences\(\);/i.test(mainJs) && g_prefs_file) {
-		throw new Error('We don`t found AnyBalance.getPreferences()! Check you main.js file for stupid errors!');
+	if(g_prefs_file) {
+		var msg = ' Check you main.js file for stupid errors!';
+		
+		var prefsName = /var\s+([^\s]+)\s*=\s*AnyBalance\.getPreferences\(\)/i.exec(mainJs)[1];
+		if(!prefsName) {
+			throw new Error('We don`t found AnyBalance.getPreferences()!' + msg);
+		}
+		
+		// Нельзя хардкодить преференсы!
+		var reg = new RegExp('(?:var\\s+)?' + prefsName + '\\s*=\\s*([^;]+)', 'ig');
+		var r_result;
+		while((r_result = reg.exec(mainJs)) !== null) {
+			if(r_result[1] != 'AnyBalance.getPreferences()') {
+				throw new Error('You have overrided your preferences!' + msg);
+			}
+		}
 	}
 	
-	// var intDoIt = WshShell.Popup('Do you want to use new library.js?', 0, "Result", vbYesNo + vbInformation);
+	// var intDoIt = WshShell.Popup('Do you want to use new library.js?', 0, "Result", vbYesNo + vbInformation + stayOnTop);
 	// if(intDoIt == vbYes) {
 		
 	// }
@@ -59,14 +74,14 @@ if (result) {
 	objStream.SaveToFile (g_history_file, 2);
 	objStream.Close();
 	
-	var intDoIt = WshShell.Popup('Provider: ' + g_prov_text_id + ' v.' + g_prov_major_version + '.' + g_prov_version + ' edited.\nAdded new history line: ' + result + '\n\nDo you want to commit via SVN?', 0, "Result", vbYesNo + vbInformation);
+	var intDoIt = WshShell.Popup('Provider: ' + g_prov_text_id + ' v.' + g_prov_major_version + '.' + g_prov_version + ' edited.\nAdded new history line: ' + result + '\n\nDo you want to commit via SVN?', 0, "Result", vbYesNo + vbInformation + stayOnTop);
 	
 	if(intDoIt == vbYes) {
 		// Want to commit
 		commit(WshShell, result);
 	}
 } else { // Cancel button was clicked.
-	var intDoIt = WshShell.Popup("Sorry, no input", 0, "Result", vbOKOnly + vbInformation);
+	var intDoIt = WshShell.Popup("Sorry, no input", 0, "Result", vbOKOnly + vbInformation + stayOnTop);
 }
 
 function commit(WshShell, mesg) {
@@ -109,7 +124,7 @@ function openManifest(objStream) {
 
 function writeManifest(objStream, manifest, WshShell) {
 	if(!/jquery/i.test(manifest) && !/no_browser/.test(manifest)) {
-		var intDoIt = WshShell.Popup('You do not use jquery in your provider!\nTo improve compability you must add "no_browser" flag \nDo you want to do this?', 0, "Result", vbYesNo + vbInformation);
+		var intDoIt = WshShell.Popup('You do not use jquery in your provider!\nTo improve compability you must add "no_browser" flag \nDo you want to do this?', 0, "Result", vbYesNo + vbInformation + stayOnTop);
 		if(intDoIt == vbYes) {
 			var apiFlags = searchRegExpSafe(/<api[^>]*flags\s*=\s*"([^"]+)/i, manifest);
 			// already has some flags

@@ -14,7 +14,12 @@ var g_headers = {
 };
 
 function main() {
-	var prefs = AnyBalance.getPreferences();
+    var categories = ['01','02', '03', '06', '07', '05', '17', '08', '12'],
+        iter,
+        preg,
+        prefs = AnyBalance.getPreferences(),
+        baseurl = "http://xn--b1apfm1b.xn--p1ai/";
+	
 	var baseurl = 'https://kabinet.xxxxxx.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 	

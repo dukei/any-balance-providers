@@ -15,59 +15,26 @@ function main(){
 	checkEmpty(prefs.login, 'Введите номер телефона!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	if(prefs.cabinet == 'new')
+	//if(prefs.cabinet == 'new')
 		doNewCabinet(prefs)
-	else
-		doOldCabinet(prefs);
+	//else
+		//doOldCabinet(prefs);
 }
 
 function doNewCabinet(prefs) {
 	AnyBalance.trace('Входим в новый кабинет...');
 	
-        AnyBalance.setDefaultCharset('utf-8');
-	var baseurl = 'https://www.alloincognito.ru/';
+	AnyBalance.setDefaultCharset('utf-8');
+	var baseurl = 'https://lk.alloincognito.ru/';
 	
 	var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
-	
-	var instanceNo = 0;	var captchaa;
-	
-	if(AnyBalance.getLevel() >= 7){
-		AnyBalance.trace('Пытаемся ввести капчу');
-		
-		var href = getParam(html, null, null, /src\s*=\s*['"](https:\/\/www.alloincognito.ru\/index.php\?showCaptcha=[^'"]+)['"]/);
-		checkEmpty(href, 'Не удалсоь найти картинку капчи, сайт изменен?', true);
-		
-		var captcha = AnyBalance.requestGet(href);
-		captchaa = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
-		AnyBalance.trace('Капча получена: ' + captchaa);
-	}else{
-		throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
-	}
-	
-	var hidden = /<input type="hidden" name="([0-9a-z]{32})" value="([^"]*)"\s*\/>/i.exec(html);
-	if(!hidden)
-		throw new AnyBalance.Error('Не удалось найти форму входа, сайт изменен?');
-	
-	var param = hidden[1];
-	var value = hidden[2];
-	
-	var loginParams = {
-		code:prefs.prefix || '',
-		username:prefs.login,
-		passwd:prefs.password,
-		osolCatchaTxt:captchaa,
-		osolCatchaTxtInst:instanceNo,
-		option:'com_user',
-		view:'login',
-		task:'login',
-	};
-	
-	loginParams[param] = value;
-	
-	html = AnyBalance.requestPost(baseurl + 'ru/login', loginParams, addHeaders({
-		Referer: baseurl + 'login',
-		'Origin':'https://www.alloincognito.ru',
-	}));
+
+	html = AnyBalance.requestPost(baseurl + 'login', {
+		username: (prefs.prefix || '') + prefs.login,
+		password: prefs.password,
+		option: 'com_cabinet',
+		task: 'login.login'
+	}, addHeaders({Referer: baseurl + 'login', 'Origin': baseurl}));
 	
 	if (/<form[^>]+name="oferta_authorization"/i.test(html)) {
 		AnyBalance.trace("Требуется принять оферту. Принимаем...");
@@ -77,7 +44,7 @@ function doNewCabinet(prefs) {
 			task: 'setOfertaАuthorization'
 		}, addHeaders({Referer: baseurl + 'ru/cabinet-contractoffer','Origin': 'https://www.alloincognito.ru',}));
 	}
-	if (!/exit=1"/i.test(html)) {
+	if (!/login\.logout/i.test(html)) {
 		var error = getParam(html, null, null, />Ошибка([^>]*>){4}/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Имя пользователя и пароль не совпадают|учетная запись отсутствует/i.test(error));
@@ -88,10 +55,10 @@ function doNewCabinet(prefs) {
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'fio', /id="info_block"([^>]*>){3}/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'phone', /id="info_block"([^>]*>){6}/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'balance', /Баланс\s*:([^>]*>){2}/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, '__tariff', /Тариф\s*:([^>]*>){2}/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'fio', /"person-info"(?:[^>]*>){2}([\s\S]*?<\/span[\s\S]*?)<\/span/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'phone', /"komplekt-number"(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'balance', />\s*Баланс(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, '__tariff', /"komplekt-number"(?:[^>]*>){3}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
 	
 	AnyBalance.setResult(result);	
 }

@@ -121,7 +121,7 @@ function getBonusesBlock(url, html, name, exact, onlyReturnParams) {
 		html = html[0];
 	}
 
-	var re = new RegExp("loadingAccumulators = function\\(\\) \\{PrimeFaces\\.\\w+\\s*\\(\\s*\\{[^}]*update:\\s*'" + (exact ? "" : "[^']*") + name);
+	var re = new RegExp("(?:loadingServices|loadingAccumulators)\\s*=\\s*function\\(\\) \\{PrimeFaces\\.\\w+\\s*\\(\\s*\\{[^}]*update:\\s*'" + (exact ? "" : "[^']*") + name);
 	var data = getParam(html, null, null, re);
 	if (!data) {
 		AnyBalance.trace('Блок ' + name + ' не найден!');
@@ -830,7 +830,7 @@ function getBonuses(xhtml, result) {
 				sumParam(services[i], result, 'sms_left', [reValue, reNewValue], replaceTagsAndSpaces, parseBalance, aggregate_sum);
 			} else if (/MMS/i.test(name)) {
 				sumParam(services[i], result, 'mms_left', [reValue, reNewValue], replaceTagsAndSpaces, parseBalance, aggregate_sum);
-			} else if (/Рублей БОНУС|бонус-баланс/i.test(name)) {
+			} else if (/Рублей БОНУС|бонус-баланс|Дополнительный баланс/i.test(name)) {
 				sumParam(services[i], result, 'rub_bonus', reValue, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 			} else if (/Денежный бонус/i.test(name)) {
 				getParam(services[i], result, 'rub_bonus2', reValue, replaceTagsAndSpaces, parseBalance);

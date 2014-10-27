@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-cell-orange-md</id>
+	<id version="3">ab-cell-orange-md</id>
 	<api flags="no_browser|captcha" min_level="7"/>
 	<name>Orange (Moldova)</name>
 	<description html="true"><![CDATA[

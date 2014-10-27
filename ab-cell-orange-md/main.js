@@ -56,7 +56,7 @@ function main(){
 	
 	var result = {success: true};
 	
-    getParam(html, result, 'balance', /<h2>([\s\d]+)(?:lei|лей)<\/h2>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'balance', /<h2>([-\s\d.,]+)(?:lei|лей)<\/h2>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, '__tariff', /<h3>\s*абонемент(?:[^>]*>){10}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
 	
 	/*if(isAvailable('abondate')) {

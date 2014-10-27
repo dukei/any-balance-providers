@@ -1,40 +1,34 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-municipal-mpkvc</id>
-  <name>КВЦ (Рязань)</name>
-  <description>
-    Получается информацию о начислениях для Кустового Вычислительного Центра города Рязани (http://мпквц.рф/)
-
-    Информация берется из личного кабинета (http://мпквц.рф/component/private/)
-  </description>
-  <author>Alexandra Shalamova &lt;alexandrashalamova@gmail.com&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Итого" units="р"/>
-
-    <counter id="balance01" name="Сод. и рем. жил. помещ." units="р"/>
-    <counter id="balance02" name="Газоснабжение" units="р"/>
-    <counter id="balance03" name="Электроснабжение" units="р"/>
-    <counter id="balance06" name="Отопление" units="р"/>
-    <counter id="balance07" name="ГВС" units="р"/>
-    <counter id="balance05" name="ХВС" units="р"/>
-    <counter id="balance17" name="Водоотведение" units="р"/>
-    <counter id="balance08" name="Домофон" units="р"/>
-    <counter id="balance12" name="Кабельное ТВ" units="р"/>
-  </counters>
-  <keywords>
-    мпквц Кустового Вычислительного Центра Рязань
-  </keywords>
-  <type>
-    municipal
-  </type>
-  <country>
-    ru
-  </country>
+	<api flags="no_browser"/>
+	<id version="2">ab-municipal-mpkvc</id>
+	<name>КВЦ (Рязань)</name>
+	<description html="true"><![CDATA[
+	<p>Получается информацию о начислениях для Кустового Вычислительного Центра города Рязани (http://мпквц.рф/)</p>
+	<p>Информация берется из личного кабинета (http://мпквц.рф/component/private/)</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Итого" units=" р"/>
+		
+		<counter id="balance01" name="Сод. и рем. жил. помещ." units=" р"/>
+		<counter id="balance02" name="Газоснабжение" units=" р"/>
+		<counter id="balance03" name="Электроснабжение" units=" р"/>
+		<counter id="balance06" name="Отопление" units=" р"/>
+		<counter id="balance07" name="ГВС" units=" р"/>
+		<counter id="balance05" name="ХВС" units=" р"/>
+		<counter id="balance17" name="Водоотведение" units=" р"/>
+		<counter id="balance08" name="Домофон" units=" р"/>
+		<counter id="balance12" name="Кабельное ТВ" units=" р"/>
+	</counters>
+	<keywords>мпквц Кустового Вычислительного Центра Рязань</keywords>
+	<type>municipal</type>
+	<country>ru</country>
 </provider>

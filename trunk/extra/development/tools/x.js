@@ -40,13 +40,13 @@ if (result) {
 	if(g_prefs_file) {
 		var msg = ' Check you main.js file for stupid errors!';
 		
-		var prefsName = /var\s+([^\s]+)\s*=\s*AnyBalance\.getPreferences\(\)/i.exec(mainJs)[1];
+		var prefsName = /(?:var\s+)?([^\s]+)\s*=\s*AnyBalance\.getPreferences\(\)/i.exec(mainJs)[1];
 		if(!prefsName) {
 			throw new Error('We don`t found AnyBalance.getPreferences()!' + msg);
 		}
 		
 		// Нельзя хардкодить преференсы!
-		var reg = new RegExp('(?:var\\s+)?' + prefsName + '\\s*=\\s*([^;]+)', 'ig');
+		var reg = new RegExp('(?:var\\s+)?' + prefsName + '\\s*=\\s*([^,;]+)', 'ig');
 		var r_result;
 		while((r_result = reg.exec(mainJs)) !== null) {
 			if(r_result[1] != 'AnyBalance.getPreferences()') {

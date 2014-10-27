@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="9" date="2014-10-27">
+	- minor bugs fixed
+	</change>
 	<change version="8" date="2014-10-27">
 	- Improved errors handler.
 	</change>

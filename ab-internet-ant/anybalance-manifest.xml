@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-ant</id>
+	<api flags="no_browser"/>
+	<name>Альфа Нет Телеком</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Альфа Нет Телеком <a href="http://a-n-t.ru/">http://a-n-t.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="http://cabinet.a-n-t.ru/">http://cabinet.a-n-t.ru/</a></p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="account" name="Учетная запись" type="text"/>
+		<counter id="status" name="Статус учетной записи" type="text"/>
+		<counter id="__tariff" name="Тариф" type="text"/>
+		<counter id="payment_acc" name="Код плательщика" type="text"/>
+		<counter id="traffic" name="Скачано за текущий месяц" type="text"/>
+		<counter id="dns" name="Ваш DynDNS" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

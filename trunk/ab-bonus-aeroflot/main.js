@@ -17,6 +17,7 @@ var g_headers = {
 
 function main(){
     var prefs = AnyBalance.getPreferences();
+	
     checkEmpty(prefs.login, 'Введите логин');
     checkEmpty(prefs.login, 'Введите пароль');
 
@@ -24,25 +25,29 @@ function main(){
     AnyBalance.setDefaultCharset('utf-8');
     
     var html = requestPostMultipart(baseurl + 'login', {
-	login: prefs.login,
-	password: prefs.password,
-	submit0: 'Подождите...',
-	return_url: ''
-    }, addHeaders({Origin: "https://www.aeroflot.ru", Referer: baseurl + 'login'}));
-
-    if(!/\/personal\/logout/i.test(html)){
-        var error = getParam(html, null, null, /<div[^>]+class="[^"]*error[^>]*>([\s\S]*?)(?:<p|<\/div>)/i, replaceTagsAndSpaces, html_entity_decode);
-        if(error)
-            throw new AnyBalance.Error(error);
-        error = getParam(html, null, null, /<!-- :: errors :: -->\s*<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-        if(error)
-            throw new AnyBalance.Error(error, null, /указали неправильные реквизиты/.test(error));
-	throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
-    }
+    	login: prefs.login,
+    	password: prefs.password,
+    	submit0: 'Подождите...',
+    	return_url: ''
+    }, addHeaders({
+    	Origin: "https://www.aeroflot.ru",
+    	Referer: baseurl + 'login'
+    }));
+	if (!/\/personal\/logout/i.test(html)) {
+		var error = getParam(html, null, null, /<div[^>]+class="[^"]*error[^>]*>([\s\S]*?)(?:<p|<\/div>)/i, replaceTagsAndSpaces, html_entity_decode);
+		if (error)
+			throw new AnyBalance.Error(error);
+		
+		error = getParam(html, null, null, /<!-- :: errors :: -->\s*<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+		if (error)
+			throw new AnyBalance.Error(error, null, /указали неправильные реквизиты/.test(error));
+		
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
+	}
 
     var result = {success: true};
 	
-    //getParam(html, result, 'balance', /"miles"\s*:\s*(\d+)/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'qmiles', /<td[^>]+id="current_year_miles_value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'segments', /<td[^>]+id="current_year_segments_value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, '__tariff', /<div[^>]+class="name"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
@@ -51,16 +56,7 @@ function main(){
 	if(userInfo) {
 		getParam(userInfo.miles + '', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
 		getParam(userInfo.tier_level + '', result, 'level');
-		
-		
 	}
 	
-/*
-    if(AnyBalance.isAvailable('level')){
-    	html = AnyBalance.requestGet(baseurl + 'ajax/mile_balance', {'X-Requested-With':'XMLHttpRequest'});
-
-    	getParam(html, result, 'level', /.*?,.*?,(.*)/i, replaceTagsAndSpaces, html_entity_decode);
-    }
-*/
     AnyBalance.setResult(result);
 }

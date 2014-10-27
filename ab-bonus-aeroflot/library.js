@@ -13,13 +13,11 @@ d<h.length;
 var e=g?f.match(g):[,f],j;
 if(e){j=replaceAll(isset(e[1])?e[1]:e[0],c);
 if(a){j=a(j)
-}if(b&&isset(j)){k[__getParName(b)]=j
+}if(b&&isset(j)){k[isArray(b)?b[0]:b]=j
 }break
 }}return j
 }function checkEmpty(c,b,a){if(!c){throw new AnyBalance.Error(b,null,!a)
-}}function __getParName(b){var a=isArray(b)?b[0]:b;
-return a&&a.replace(/([^.]*)$/,"$1")
-}function isAvailable(c){if(!c){return true
+}}function isAvailable(c){if(!c){return true
 }var b=isArray(c),a="__tariff";
 if((b&&c.indexOf(a)>=0)||(!b&&c=="__tariff")){return true
 }return AnyBalance.isAvailable(c)
@@ -118,10 +116,16 @@ for(b in c){f.push([b,c[b]])
 return a
 }catch(c){AnyBalance.trace("Bad json ("+c.message+"): "+b);
 throw new AnyBalance.Error("Сервер вернул ошибочные данные: "+c.message)
-}}function getJsonEval(b){try{var a=new Function("window","AnyBalance","g_AnyBalanceApiParams","_AnyBalanceApi","document","self","return "+b).apply(null);
+}}function getJsonEval(b){try{var a=safeEval("return "+b,"window,document,self");
 return a
 }catch(c){AnyBalance.trace("Bad json ("+c.message+"): "+b);
 throw new AnyBalance.Error("Сервер вернул ошибочные данные: "+c.message)
+}}function safeEval(c,g,i){var d=AnyBalance,b=this.g_AnyBalanceApiParams,f=this._AnyBalanceApi;
+AnyBalance=this.g_AnyBalanceApiParams=this._AnyBalanceApi=undefined;
+try{var a=Function(g||"ja0w4yhwphgawht984h","AnyBalance","g_AnyBalanceApiParams","_AnyBalanceApi",c).apply(null,i);
+return a
+}catch(h){throw new d.Error("Bad javascript ("+h.message+"): "+c)
+}finally{AnyBalance=d,g_AnyBalanceApiParams=b,_AnyBalanceApi=f
 }}function endsWith(b,a){return b.indexOf(a,b.length-a.length)!==-1
 }(function(b,d){var c=b.parse,a=[1,4,5,6,7,10,11];
 b.parse=function(f){var j,l,h=0;
@@ -154,7 +158,7 @@ c=f;
 f=a||false
 }function p(){if(f){return n?k.replace(n,""):""
 }}if(!isAvailable(d)){return p()
-}d=__getParName(d);
+}d=isArray(d)?d[0]:d;
 var o=[],j;
 if(d&&isset(q[d])){o.push(q[d])
 }function l(i){i=replaceAll(i,e);

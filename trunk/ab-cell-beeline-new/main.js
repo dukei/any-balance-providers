@@ -121,7 +121,12 @@ function getBonusesBlock(url, html, name, exact, onlyReturnParams) {
 		html = html[0];
 	}
 
-	var re = new RegExp("(?:loadingServices|loadingAccumulators)\\s*=\\s*function\\(\\) \\{PrimeFaces\\.\\w+\\s*\\(\\s*\\{[^}]*update:\\s*'" + (exact ? "" : "[^']*") + name);
+	var prefs = AnyBalance.getPreferences();
+	if (prefs.country == 'kz')
+		var re = new RegExp("loadingServices = function\\(\\) \\{PrimeFaces\\.\\w+\\s*\\(\\s*\\{[^}]*update:\\s*'" + (exact ? "" : "[^']*") + name);
+	else
+		var re = new RegExp("loadingAccumulators\\s*=\\s*function\\(\\) \\{PrimeFaces\\.\\w+\\s*\\(\\s*\\{[^}]*update:\\s*'" + (exact ? "" : "[^']*") + name);
+	
 	var data = getParam(html, null, null, re);
 	if (!data) {
 		AnyBalance.trace('Блок ' + name + ' не найден!');

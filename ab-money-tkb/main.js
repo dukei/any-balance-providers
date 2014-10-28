@@ -63,7 +63,9 @@ function main() {
 		throw new AnyBalance.Error('Не удалось найти ' + (prefs.card ? 'карту с последними цифрами ' + prefs.card : 'ни одной карты!'));
 	}
 	
-	getParam(card, result, 'balance', /(?:[^>]*>){22}([-\s\d.,]+)/i, replaceTagsAndSpaces, parseBalance);
+	AnyBalance.trace(card);
+	
+	getParam(card, result, 'balance', /(?:[^>]*>){21}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
 	getParam(card, result, '__tariff', /(?:[^>]*>){3}([\s\d*]+)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(card, result, 'card_num', /(?:[^>]*>){3}([\s\d*]+)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(card, result, 'card_name', /(?:[^>]*>){3}[\s\d*]+([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);

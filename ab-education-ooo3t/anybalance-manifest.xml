@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="2">ab-education-ooo3t</id>
+	<api flags="no_browser"/>
+	<name>3Т (Электронный дневник)</name>
+	<description html="true"><![CDATA[
+	<p>Получает данные для провайдера ООО 3Т <a href="http://ooo3t.ru/">http://ooo3t.ru/</a></p>
+	<p>Электронный дневник находится по адресу <a href="http://ooo3t.ru/webjournal/ed.php">http://ooo3t.ru/webjournal/ed.php</a></p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<js>md6.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="all" name="Сводка" type="text"/>
+        <counter id="algebra" name="Алгебра" type="text"/>
+		<counter id="algebra_rounded" name="Алгебра - средняя оценка"/>
+		<counter id="biology" name="Биология" type="text"/>
+		<counter id="biology_rounded" name="Биология - средняя оценка"/>
+		<counter id="geography" name="География" type="text"/>
+		<counter id="geography_rounded" name="География - средняя оценка"/>
+		<counter id="geometry" name="Геометрия" type="text"/>
+		<counter id="geometry_rounded" name="Геометрия - средняя оценка"/>
+		<counter id="izo" name="Изобразительное искусство" type="text"/>
+		<counter id="izo_rounded" name="Изобразительное искусство - средняя оценка"/>
+		<counter id="foreign" name="Иностранный язык" type="text"/>
+		<counter id="foreign_rounded" name="Иностранный язык - средняя оценка"/>
+		<counter id="informatics" name="Информатика" type="text"/>
+		<counter id="informatics_rounded" name="Информатика - средняя оценка"/>
+		<counter id="history" name="История" type="text"/>
+		<counter id="history_rounded" name="История - средняя оценка"/>
+		<counter id="class" name="Классный час" type="text"/>
+		<counter id="class_rounded" name="Классный час - средняя оценка"/>
+		<counter id="literature" name="Литература" type="text"/>
+		<counter id="literature_rounded" name="Литература - средняя оценка"/>
+		<counter id="music" name="Музыка" type="text"/>
+		<counter id="music_rounded" name="Музыка - средняя оценка"/>
+		<counter id="social_science" name="Обществознание" type="text"/>
+		<counter id="social_science_rounded" name="Обществознание - средняя оценка"/>
+		<counter id="russian" name="Русский язык" type="text"/>
+		<counter id="russian_rounded" name="Русский язык - средняя оценка"/>
+		<counter id="tech" name="Технология" type="text"/>
+		<counter id="tech_rounded" name="Технология - средняя оценка"/>
+		<counter id="physics" name="Физика" type="text"/>
+		<counter id="physics_rounded" name="Физика - средняя оценка"/>
+		<counter id="sport" name="Физическая культура" type="text"/>
+		<counter id="sport_rounded" name="Физическая культура - средняя оценка"/>
+	</counters>
+	<keywords></keywords>
+	<type>education</type>
+	<country>ru</country>
+</provider>

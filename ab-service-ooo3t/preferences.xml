@@ -19,4 +19,12 @@
         dialogMessage="Введите пароль, используемый для входа в личный кабинет."
         inputType="textPassword">
     </EditTextPreference>
+	<ListPreference
+		key="period"
+		title="Период"
+		summary="||{@s}"
+		entries="1-я четверть|2-я четверть|3-я четверть|4-я четверть|Учебный год"
+		entryValues="first|second|third|fourth|year"
+		defaultValue="first">
+	</ListPreference>
 </PreferenceScreen>

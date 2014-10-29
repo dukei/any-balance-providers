@@ -57,53 +57,47 @@ function main() {
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
     
-    var period = prefs.period;
+    var out = '';
+	
+	if(isAvailable('all')) {
+		var table = getParam(html, null, null, /(<table[^>]*class="bt1"[^>]*>[\s\S]*?<\/table>)/i);
+		var trs = sumParam(table, null, null, /(<tr[\s\S]*?<\/tr>)/ig);
+		
+		for (i = 0; i < trs.length; i++) {
+			var curr = trs[i];
+			var day = getParam(curr, null, null, /<td[^>]*align="center"[^>]*rowspan[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+			var lesson = getParam(curr, null, null, /(?:<td[^>]*>){1}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+			//var tema = getParam(curr, null, null, /(?:<td[^>]*>[\s\S]*?){2}([\s\S]*?)<\/td/i, replaceTagsAndSpaces, html_entity_decode);
+			//var dz = getParam(curr, null, null, /(?:<td[^>]*>[\s\S]*?){3}([\s\S]*?)<\/td/i, replaceTagsAndSpaces, html_entity_decode);
+			var ocenka = getParam(curr, null, null, /(?:<td[^>]*>[\s\S]*?){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+			if (day && day != '' || lesson && lesson != '') 
+				out += (day ? '\n' + day : '') + lesson + (ocenka ? ': ' + ocenka : (day ? '' : ': нет оценок')) + '\n';
+			//out += (day ? day+'\n' : '') + lesson + tema + dz+'\n';
+		}
+	}
+	out = out.replace(/^\s+|\s+$/g, '');
+    var result = {success: true, all: (out || undefined)};
+	
+	
+    var period = (prefs.period || '1');
     
     html = AnyBalance.requestPost(baseurl + 'webjournal/ed.php', {
 		'Week': '0',
         'Task': 'YearMarks'
     }, addHeaders({Referer: baseurl + 'webjournal/ed.php'}));
     
-	var table = getParam(html, null, null, /(Оценки учащегося[\s\S]*?<\/table>)/i);
-      
-	
-	var trs = sumParam(table, null, null, /(<tr[\s\S]*?<\/tr>)/ig);
+	var table = getParam(html, null, null, /(Оценки учащегося[\s\S]*?<\/table>)/i, null, html_entity_decode);
+	checkEmpty(table, 'Не удалось найти таблицу с оценками, сайт изменен?', true);
     
-    var result = {success: true};
-    
-    var subjects = [];
-    var subjects = Object.keys(g_manifestIds);
-    
-    console.log(subjects.length);
-    
-    for(var i = 0; i < subjects.length; i++) {
-        var current = subjects[i].toUpperCase();
-        var markTr = getParam(trs[i], null, null, new RegExp('<tr[^]*' + current + '[\\s\\S]*?<\/tr>', 'i'));
-        
-        AnyBalance.trace('Текущий предмет: ' + current);
-       
-       
-            // getParam(markTr, result, 'gg', /<td[\s\S]*?>([\s\S]*?){2}<\/td>/ig, replaceTagsAndSpaces, html_entity_decode); 
-        
-	}
-    
-    
-    
-	// var out = '';
-	// for(i = 0; i < trs.length; i++) {
-		// var curr = trs[i];
-		// var day = getParam(curr, null, null, /<td[^>]*align="center"[^>]*rowspan[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+	for(var subj in g_manifestIds) {
+		var r = new RegExp('<tr(?:[^>]*>){2}[^<]*' + subj + '\\s*</td>((?:[\\s\\S]*?</td[^>]*>){3}){' + period + '}', 'i');
+		AnyBalance.trace('R: ' + r);
+		var marks = getParam(table, null, null, r);
+		// AnyBalance.trace('Оценки: ' + marks);
 		
-		// var lesson = getParam(curr, null, null, /(?:<td[^>]*>){1}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-		// //var tema = getParam(curr, null, null, /(?:<td[^>]*>[\s\S]*?){2}([\s\S]*?)<\/td/i, replaceTagsAndSpaces, html_entity_decode);
-		// //var dz = getParam(curr, null, null, /(?:<td[^>]*>[\s\S]*?){3}([\s\S]*?)<\/td/i, replaceTagsAndSpaces, html_entity_decode);
-		// var ocenka = getParam(curr, null, null, /(?:<td[^>]*>[\s\S]*?){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-		// if(day && day != '' || lesson && lesson != '')
-			// out += (day ? '\n'+day : '') + lesson + (ocenka ? ': '+ocenka : (day ? '' : ': нет оценок') )+ '\n';
-			
-		// //out += (day ? day+'\n' : '') + lesson + tema + dz+'\n';
-	// }
+		sumParam(marks, result, g_manifestIds[subj], /<span[^>]*>\s*(\d+)/ig, replaceTagsAndSpaces, null, aggregate_join);
+		getParam(marks, result, g_manifestIds[subj] + '_round', /<td align="center">\s*([\d,.]+)/ig, replaceTagsAndSpaces, parseBalance);
+	}
 	
-    // var result = {success: true, all:out.replace(/^\s+|\s+$/g, '')};
     AnyBalance.setResult(result);
 }

@@ -23,8 +23,8 @@
 		key="period"
 		title="Период"
 		summary="||{@s}"
-		entries="1-я четверть|2-я четверть|3-я четверть|4-я четверть|Учебный год"
-		entryValues="first|second|third|fourth|year"
-		defaultValue="first">
+		entries="1-я четверть|2-я четверть|3-я четверть|4-я четверть"
+		entryValues="1|2|3|4"
+		defaultValue="1">
 	</ListPreference>
 </PreferenceScreen>

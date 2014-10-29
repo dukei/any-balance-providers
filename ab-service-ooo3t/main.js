@@ -96,7 +96,7 @@ function main() {
 		// AnyBalance.trace('Оценки: ' + marks);
 		
 		sumParam(marks, result, g_manifestIds[subj], /<span[^>]*>\s*(\d+)/ig, replaceTagsAndSpaces, null, aggregate_join);
-		getParam(marks, result, g_manifestIds[subj] + '_round', /<td align="center">\s*([\d,.]+)/ig, replaceTagsAndSpaces, parseBalance);
+		getParam(marks, result, g_manifestIds[subj] + '_rounded', /<td align="center">\s*([\d,.]+)/ig, replaceTagsAndSpaces, parseBalance);
 	}
 	
     AnyBalance.setResult(result);

@@ -12,7 +12,7 @@ var g_headers = {
 
 function main(){
 
-    var categories = ['01','02', '03', '06', '07', '05', '17', '08', '12'],
+    var categories = ['01', '34', '02', '03', '06', '07', '05', '17', '85', '87', '08', '12'],
         iter,
         preg,
         prefs = AnyBalance.getPreferences(),

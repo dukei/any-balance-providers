@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="2">ab-municipal-mpkvc</id>
+	<id version="3">ab-municipal-mpkvc</id>
 	<name>КВЦ (Рязань)</name>
 	<description html="true"><![CDATA[
 	<p>Получается информацию о начислениях для Кустового Вычислительного Центра города Рязани (http://мпквц.рф/)</p>
@@ -17,14 +17,18 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Итого" units=" р"/>
+		<counter id="__tariff" name="Лицевой счет" type="text"/>
 		
 		<counter id="balance01" name="Сод. и рем. жил. помещ." units=" р"/>
+		<counter id="balance34" name="ВзнКапРем" units=" р"/>
 		<counter id="balance02" name="Газоснабжение" units=" р"/>
 		<counter id="balance03" name="Электроснабжение" units=" р"/>
 		<counter id="balance06" name="Отопление" units=" р"/>
 		<counter id="balance07" name="ГВС" units=" р"/>
 		<counter id="balance05" name="ХВС" units=" р"/>
 		<counter id="balance17" name="Водоотведение" units=" р"/>
+		<counter id="balance85" name="ОДН ХВС" units=" р"/>
+		<counter id="balance87" name="ОДН ГВС" units=" р"/>
 		<counter id="balance08" name="Домофон" units=" р"/>
 		<counter id="balance12" name="Кабельное ТВ" units=" р"/>
 	</counters>

@@ -12,22 +12,29 @@ var g_headers = {
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-    var baseurl = 'http://bill.zet/';
+    var baseurl = 'http://bill.interzet.ru/';
     AnyBalance.setDefaultCharset('cp1251'); 
-    var html = AnyBalance.requestGet(baseurl+'welcome/login', g_headers);
+    var html = AnyBalance.requestGet(baseurl + 'welcome/login', g_headers);
 
-	html = AnyBalance.requestPost(baseurl+'welcome/login', {
+	html = AnyBalance.requestPost(baseurl + 'welcome/login', {
         login:prefs.login,
         passwd:prefs.password,
         errors:''
     }, addHeaders({Referer: baseurl + 'login'})); 
 
-    if(!/logout/i.test(html)){
-        throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-    }
-	html = AnyBalance.requestGet(baseurl+'w3_first/account', g_headers);
+	if (!/logout/i.test(html)) {
+		var error = getParam(html, null, null, /color="red">([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+		if (error)
+			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+		
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+	}
+	
+	html = AnyBalance.requestGet(baseurl + 'w3_first/account', g_headers);
 
     var result = {success: true};
+	
     getParam(html, result, 'balance', /Баланс:([\s\S]*?)руб/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'bonus', /Бонусные очки:[\s\S]*?">\s*([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'acsess', /Доступ в интернет:[^>]*>\s*[^>]*>[^>]*"internet_state">\s*([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);

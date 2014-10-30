@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-mtu-inform</id>
+	<api flags="no_browser"/>
+	<name>МТУ-Информ</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет финансовую информацию по услугам фиксированной связи МТС <a href="http://www.corp.mts.ru/fix_connection/">http://www.corp.mts.ru/fix_connection/</a></p>
+	<p>Информация берется из личного кабинета <a href="http://www.mtu-inform.ru/ru/login.jsp?page=client-statistic.jsp">http://www.mtu-inform.ru/ru/login.jsp?page=client-statistic.jsp</a></p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Состояние лицевого счета на начало месяца" units=" р"/>
+		<counter id="account" name="Номер лицевого счета" type="text"/>
+		<counter id="name" name="Наименование (ФИО)" type="text"/>
+		<counter id="status" name="Статус" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet, tv</type>
+	<country>ru</country>
+</provider>

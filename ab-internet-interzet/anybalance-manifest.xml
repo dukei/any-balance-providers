@@ -1,15 +1,15 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<api flags="no_browser|private" />
-	<id version="1">ab-internet-interzet</id>
+	<api flags="no_browser" />
+	<id version="2">ab-internet-interzet</id>
 	<name>InterZet (Санкт-Петербург)</name>
-	<description>
-	Получает данные для крупного интернет-провайдера Санкт-Петербурга InterZet (http://interzet.ru/)
-	
-	Личный кабинет находится по адресу: http://bill.zet/
-	
-	Данный провайдер работает только из локальной сети InterZet.
-	</description>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера InterZet <a href="http://interzet.ru">http://interzet.ru</a></p>
+	<p>Информация берется из личного кабинета <a href="http://bill.interzet.ru">http://bill.interzet.ru</a></p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Необходимо поставить галочку "Разрешить доступ из внешней сети в Личный Кабинет" в разделе "Настройки Личного кабинета"</p>
+	]]></instruction>	
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
@@ -19,7 +19,7 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units="р"/>
+		<counter id="balance" name="Баланс" units=" р"/>
 		<counter id="bonus" name="Бонусные очки"/>
 		<counter id="acsess" name="Доступ в интернет" type="text"/>
 		<counter id="status" name="Состояние счета" type="text"/>

@@ -67,16 +67,15 @@ function main() {
 function fetchCard(html, baseurl){
     var prefs = AnyBalance.getPreferences();
 	
-	// <div[^>]*id="account(?:[^>]*>){4}\s*(?:[^>]*>)?[\s*]*Russ(?:[^>]*>){105,210}\s*<\/div>\s*<\/div>
-	var re = new RegExp('<div[^>]*id="account(?:[^>]*>){4}\\s*(?:[^>]*>)?[\\s*]*' + (prefs.cardnum ? prefs.cardnum : '[^<]+') + '(?:[^>]*>){105,255}(?:\\s*</div>){6}', 'i');
+	// <div[^>]*id="account(?:[^>]*>){4}\s*(?:[^>]*>)?[\s*]*Russ(?:[^>]*>){50,255}\s*<\/div>\s*<\/div>
+	var re = new RegExp('<div[^>]*id="account(?:[^>]*>){4}\\s*(?:[^>]*>)?[\\s*]*' + (prefs.cardnum ? prefs.cardnum : '[^<]+') + '(?:[^>]*>){50,255}(?:\\s*</div>){3,6}', 'i');
     var account = getParam(html, null, null, re, replaceTagsAndSpaces, html_entity_decode);
 	if(!account)
 		throw new AnyBalance.Error('Не удаётся найти ' + (prefs.cardnum ? 'карту с последними цифрами ' + prefs.cardnum : 'ни одной карты!'));
 	
-    var result = {success: true};
+    var result = {success: true, currency: '₸'};
 	
-	getParam(account, result, 'balance', /Можно потратить([\s\d.,]+т)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(account, result, ['currency', '__tariff'], /Можно потратить([\s\d.,]+т)/i, replaceTagsAndSpaces, parseCurrency);
+	getParam(account, result, 'balance', /Можно потратить[^<]+?([\s*\d.,-]+)т\s/i, replaceTagsAndSpaces, parseBalance);
     getParam(account, result, 'cardnum', /([\s\S]*?)Можно потратить/i, replaceTagsAndSpaces);
 	getParam(account, result, '__tariff', /([\s\S]*?)Можно потратить/i, replaceTagsAndSpaces);
 	getParam(account, result, 'validto', /Срок действия карты([\s\d.,]+)/i, replaceTagsAndSpaces, parseDate);

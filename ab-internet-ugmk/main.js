@@ -33,15 +33,15 @@ function main(){
     });
 	
     if (!/logout=yes/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, null, null, /errortext">([^<]+)<\//i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+			throw new AnyBalance.Error(error, null, /Неверный логин или пароль|неправильный пароль/i.test(error));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
-	
-	var account = getParam(html, null, null, new RegExp('Счёт\\s+№\\s*\\d+' + (prefs.digits || '') + '(?:[^>]*>){40,50}(?:\\s*</div>){3}', 'i'));
+    
+	var account = getParam(html, null, null, new RegExp('\(span[\\s]class="bill-number[\\s\\S]*Счёт[\\s]№[\\s]' + (prefs.digits || '') + '[\\s\\S]*?</td>)', 'i'));
 	checkEmpty(account, 'Не удалось найти ' + (prefs.digits ? 'счет с последними цифрами ' + prefs.digits : 'ни одного счета!'));
 	
     var result = {success: true};

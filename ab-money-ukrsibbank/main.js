@@ -40,7 +40,7 @@ function main() {
 		j_password += digitsArray[(prefs.password[i]*1)-1] + '_';
 	}
 
-	html = AnyBalance.requestPost(baseurl + 'j_security_check ', {
+	html = AnyBalance.requestPost(baseurl + 'j_security_check', {
 		j_username: prefs.login,
 		j_password: j_password,
 		fake_password: fake_password

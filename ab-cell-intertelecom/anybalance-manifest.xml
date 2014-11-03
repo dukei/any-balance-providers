@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="31">ab-cell-intertelecom</id>
+  <id version="32">ab-cell-intertelecom</id>
   <api flags="no_browser" />
   <name>Интертелеком</name>
 	<description html="true"><![CDATA[
@@ -26,6 +26,7 @@
     <counter id="saldo" name="Сальдо" suffix=" ₴" type="numeric"/>
     <counter id="predoplata" name="Предоплаченые услуги на месяц" suffix=" ₴" type="numeric"/>
     <counter id="bonus" name="Неактивированные бонусы (с 094)" suffix=" ₴" type="numeric"/>
+    <counter id="min_it" name="Минуты Интертелеком и Местные" type="time_interval" format="{@H}:{@min}:{@sec}"/>
     <counter id="min_local" name="Местные минуты" type="time_interval" format="{@H}:{@min}:{@sec}"/>
     <counter id="min_uk_mob" name="Минуты по Украине на мобильные" type="time_interval" format="{@H}:{@min}:{@sec}"/>
 	<counter id="min_rus" name="Минуты по России" type="time_interval" format="{@H}:{@min}:{@sec}"/>

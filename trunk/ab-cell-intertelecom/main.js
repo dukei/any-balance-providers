@@ -32,7 +32,7 @@ function main() {
     //Неактивированные бонусы с 094
     getParam(html, result, 'bonus', /<td[^>]*>\s*Неактивированные бонусы \(с 094\)\s*<\/td>\s*<td[^>]*>([^<]*)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     //Предоплачение ИТ(местные+Украина+моб.094)+Местные
-    getParam(html, result, 'min_min_it', /<td[^>]*>[^<]*ИТ\(местные\+Украина\+моб.094\)\+Местные[^<]*<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseSeconds);
+    getParam(html, result, 'min_it', /<td[^>]*>[^<]*ИТ\(местные\+Украина\+моб.094\)\+Местные[^<]*<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseSeconds);
     //Предоплачение местные минуты
     getParam(html, result, 'min_local', /<td[^>]*>\s*Минуты\s*<\/td>[\s\S]*?<td[^>]*>[^<]*местные[^<]*<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseSeconds);
     //Украина (моб.) [100 мин]

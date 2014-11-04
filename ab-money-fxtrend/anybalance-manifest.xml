@@ -12,6 +12,7 @@
     <js>api:jquery.min.js</js>
     <js>library.js</js>
     <js>main.js</js>
+    <js>incapsule.js</js>
     <js target="preferences">preferences.js</js>
     <history>history.xml</history>
   </files>

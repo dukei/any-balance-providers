@@ -1,12 +1,29 @@
-﻿/**
+﻿/*! AnyBalance Library (http://any-balance-providers.googlecode.com)
+The uncompressed full source code of this library is here: https://code.google.com/p/any-balance-providers/source/browse/trunk/extra/development/ab-test-library/library.js
+*/
+/**
 AnyBalance (http://any-balance-providers.googlecode.com)
 
 Содержит некоторые полезные для извлечения значений с сайтов функции.
 Для конкретного провайдера рекомендуется оставлять в этом файле только те функции, которые используются.
 
-library.js v0.08 от 17.12.13
+library.js v0.14 от 07.10.14
 
 changelog:
+07.10.14 safeEval - полностью безопасное исполнение стороннего Javascript (в плане недоступности для него AnyBalance API)
+
+18.08.14 requestPostMultipart - эмулируем браузер, генерируя случайный boundary
+
+14.07.14 getParam - Фикс (Если !isset(html), а не !html то не падаем, а пишем ошибку в trace)
+
+04.06.14 parseBalance - улучшен разбор сложных балансов (,82)
+
+27.05.14 getParam - Если !html то не падаем, а пишем ошибку в trace
+
+26.03.14 getParam - Добавлено логирование, если счетчик выключен
+
+16.01.14 parseMinutes - Улучшена обработка секунд с запятой 2 340,00 сек
+
 17.12.13 parseMinutes - улучшена обработка минут с точками (28мин.40сек)
 
 05.12.13 parseMinutes - парсинг минут вида 49,25 (т.е. 49 минут и 15 секунд) (Д. Кочин)
@@ -38,11 +55,16 @@ changelog:
  * массивы могут быть вложенными
  * см. например replaceTagsAndSpaces
  */
-
+ 
 function getParam(html, result, param, regexp, replaces, parser) {
-	if (!isAvailable(param))
-        return;
-
+	if(!isset(html)) {
+		AnyBalance.trace('param1 is unset! ' + new Error().stack);
+		return;
+	}
+	if (!isAvailable(param)) {
+		AnyBalance.trace(param + ' is disabled!');
+		return;
+	}
 	var regexps = isArray(regexp) ? regexp : [regexp];
 	for (var i = 0; i < regexps.length; ++i) { //Если массив регэкспов, то возвращаем первый заматченный
 		regexp = regexps[i];
@@ -51,10 +73,9 @@ function getParam(html, result, param, regexp, replaces, parser) {
 			//Если нет скобок, то значение - всё заматченное
 			value = replaceAll(isset(matches[1]) ? matches[1] : matches[0], replaces);
 			if (parser)
-                value = parser(value);
-
-			if (param && isset(value)) 
-                result[isArray(param) ? param[0] : param] = value;
+				value = parser(value);
+			if (param && isset(value))
+				result[isArray(param) ? param[0] : param] = value;
 			break;
 		}
 	}
@@ -81,7 +102,7 @@ function isAvailable(param) {
 //Замена пробелов и тэгов
 var replaceTagsAndSpaces = [/&nbsp;/ig, ' ', /&minus;/ig, '-', /<!--[\s\S]*?-->/g, '', /<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, ''];
 //Замена для чисел
-var replaceFloat = [/&minus;/ig, '-', /\s+/g, '', /,/g, '.', /\.([^.]*)(?=\.)/g, '$1', /^\./, '0.'];
+var replaceFloat = [/&minus;/ig, '-', /\s+/g, '', /'/g, '', /,/g, '.', /\.([^.]*)(?=\.)/g, '$1', /^\./, '0.'];
 //Замена для Javascript строк
 var replaceSlashes = [/\\(.?)/g, function(str, n) {
 	switch (n) {
@@ -119,7 +140,7 @@ function replaceAll(value, replaces) {
 
 /** Извлекает числовое значение из переданного текста */
 function parseBalance(text) {
-	var val = getParam(html_entity_decode(text).replace(/\s+/g, ''), null, null, /(-?\.?\d[\d.,]*)/, replaceFloat, parseFloat);
+	var val = getParam(html_entity_decode(text).replace(/\s+/g, ''), null, null, /(-?[.,]?\d[\d'.,]*)/, replaceFloat, parseFloat);
 	AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
 	return val;
 }
@@ -151,9 +172,9 @@ function parseMinutes(_text) {
 		sec = parseFloat(regExp[2]);
 	// Это любой другой формат, со словами либо просто число
 	} else {
-		hour = getParam(text, null, null, /(-?[\d\.,]*)\s*(?:час|ч|hour|h)/i, replaceFloat, parseFloat) || 0;
-		min = getParam(text, null, null, [/([\d.,]*)\s*(?:мин|м|хв|min|m)/i, /^[\d.,]+$/i], replaceFloat, parseFloat) || 0;
-		sec = getParam(text, null, null, /([\d]+)\s*(?:сек|c|с|sec|s)/i, [/&minus;/ig, '-', /\s+/g, '', /,/g, '.'], parseFloat) || 0;
+		hour = getParam(text, null, null, /(-?\d[\d.,]*)\s*(?:час|ч|hour|h)/i, replaceFloat, parseFloat) || 0;
+		min = getParam(text, null, null, [/(-?\d[\d.,]*)\s*(?:мин|м|хв|min|m)/i, /^-?[\d.,]+$/i], replaceFloat, parseFloat) || 0;
+		sec = getParam(text, null, null, /(-?\d[\d.,]*)\s*(?:сек|c|с|sec|s)/i, replaceFloat, parseFloat) || 0;
 	}
 	var val = (hour*3600) + (min * 60) + sec;
 	AnyBalance.trace('Parsed seconds (' + val + ') from: ' + _text);
@@ -432,11 +453,35 @@ function getJson(html) {
 function getJsonEval(html){
    try{
        //Запрещаем использование следующих переменных из функции:
-       var json = new Function('window', 'AnyBalance', 'g_AnyBalanceApiParams', '_AnyBalanceApi', 'document', 'self', 'return ' + html).apply(null);
-       return json;
+       var json = safeEval('return ' + html, 'window,document,self');
+	   return json;
    }catch(e){
        AnyBalance.trace('Bad json (' + e.message + '): ' + html);
        throw new AnyBalance.Error('Сервер вернул ошибочные данные: ' + e.message);
+   }
+}
+
+/** Выполняет скрипт безопасно, не давая ему доступ к AnyBalance API 
+    Пример использования:
+
+    var ret = safeEval("function(input1, input2) { input1.a = 1; input2.b = 3; return 'xxx' }()", "input1,input2", [{a: 5}, {b: 8}]);
+    
+    а если входные параметры скрипту не нужны, то можно просто
+
+    var ret = safeEval(" return 'xxx' }");
+*/
+
+function safeEval(script, argsNamesString, argsArray) {
+   var svAB = AnyBalance, svParams = this.g_AnyBalanceApiParams, svApi = this._AnyBalanceApi;
+   AnyBalance = this.g_AnyBalanceApiParams = this._AnyBalanceApi = undefined;
+
+   try{
+       var result = Function(argsNamesString || 'ja0w4yhwphgawht984h', 'AnyBalance', 'g_AnyBalanceApiParams', '_AnyBalanceApi', script).apply(null, argsArray);
+       return result;
+   }catch(e){
+       throw new svAB.Error('Bad javascript (' + e.message + '): ' + script);
+   }finally{
+   		AnyBalance = svAB, g_AnyBalanceApiParams = svParams, _AnyBalanceApi=svApi;
    }
 }
 
@@ -706,10 +751,17 @@ function parseTrafficEx(text, thousand, order, defaultUnits) {
 	return val;
 }
 
-/** Создаёт мультипарт запрос */
+/** Создаёт мультипарт запрос полностью прикидываясь браузером */
 function requestPostMultipart(url, data, headers) {
+	var b = '',  possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+	
+	for( var i=0; i < 16; i++ ) {
+        b += possible.charAt(Math.floor(Math.random() * possible.length));
+	}
+	
 	var parts = [];
-	var boundary = '------WebKitFormBoundaryrceZMlz5Js39A2A6';
+	
+	var boundary = '------WebKitFormBoundary' + b;
 	for (var name in data) {
 		parts.push(boundary, 'Content-Disposition: form-data; name="' + name + '"', '', data[name]);
 	}

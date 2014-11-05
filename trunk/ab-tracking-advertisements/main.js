@@ -59,7 +59,7 @@ function main(){
 		
 		var pattern1 = pattern.replace(/ /g,"+");
 		
-		var baseurl = 'http://www.avito.ru/'+region+'?name='+pattern1;
+		var baseurl = 'https://www.avito.ru/'+region+'?name='+pattern1;
 		
 		AnyBalance.trace('Starting search: ' + baseurl);
 		var info = AnyBalance.requestGet(baseurl);	

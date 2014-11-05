@@ -6,7 +6,7 @@
         summary="Город||{@s}\n" 
         dialogTitle="Город" 
         negativeButtonText="Отмена" 
-        dialogMessage="Укажите город для отслеживания объявления формате city. Узнать его можно в адресной строке браузера, например, http://www.avito.ru/город."
+        dialogMessage="Укажите город для отслеживания объявления в формате city. Узнать его можно в адресной строке браузера, например, http://www.avito.ru/город."
         positiveButtonText="ОК">
     </EditTextPreference>
     <EditTextPreference 

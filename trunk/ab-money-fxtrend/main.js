@@ -25,35 +25,22 @@ function main(){
 	var result;
 
 	var incapsule = Incapsule(baseurl + 'sign_in/');
-	var html = AnyBalance.requestGet(baseurl + 'sign_in/', g_headers);
-	if(incapsule.isIncapsulated(html))
-	    html = incapsule.executeScript(html);
-
-    if(!/<input[^>]+name="login"/i.test(html))
-        throw new AnyBalance.Error('Не удается найти форму входа. Сайт изменен?');
-
-    html = AnyBalance.requestPost(baseurl + 'sign_in/', {login: prefs.login, pass: prefs.pass}, addHeaders({Referer: baseurl + 'sign_in/'}));
-    if(!/\/logout\//i.test(html))
-        throw new AnyBalance.Error('Не удалось войти в личный кабинет'); //Надо более подробно ошибку разобрать и вывести причину невхода
-    
-    AnyBalance.trace('Вошли!');
-    return true;
+	var info = AnyBalance.requestGet(baseurl + 'sign_in/', g_headers);
+	if(incapsule.isIncapsulated(info))
+	    info = incapsule.executeScript(info);
 
 //Account monitoring (with login)
 	if(prefs.type==1 || !isset(prefs.type)){
 
 		AnyBalance.trace('Authorizing...');
 
-		var info = AnyBalance.requestPost(baseurl + 'login/my/profile/info', {
-			"login": prefs.login,
-			"pass": prefs.pass
-		}, addHeaders({Referer: baseurl + 'profile'}));	
+		if(!/<input[^>]+name="login"/i.test(info))
+			throw new AnyBalance.Error('Can\'t find the login form. Is the site modified?');
 
-		var error = $('#errHolder', info).text();
-		if(error){
-			throw new AnyBalance.Error(error);
-		}
-
+		info = AnyBalance.requestPost(baseurl + 'sign_in/', {login: prefs.login, pass: prefs.pass}, addHeaders({Referer: baseurl + 'sign_in/'}));
+		if(!/\/logout\//i.test(info))
+			throw new AnyBalance.Error(getParam(info, null, null, /<div class=\"errorsbox\">[\s\S]+?<\/div>/i, replaceTagsAndSpaces, html_entity_decode)); //Надо более подробно ошибку разобрать и вывести причину невхода
+    
 		result = {success: true};
 		var total = 0.0;
 		var account;

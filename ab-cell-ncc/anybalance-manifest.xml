@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id major_version="1.1" version="26">ab-cell-ncc</id>
+	<id version="27">ab-cell-ncc</id>
 	<name>Ростелеком-Волга (НСС)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем балансе и тарифе для пользователей оператора ""Ростелеком-Волга"" (НСС).</p>
@@ -10,6 +10,8 @@
 	Татарстан (wtiger@mail.ru)  
 	<br>
 	Нижегородский филиал (voyager@voyager.su)            
+	<br>
+	Возможно, другие (требуется проверка)
 	]]></description>
 	<instruction html="true"><![CDATA[
 	<p>Настройки:</p>
@@ -36,15 +38,12 @@
 		<counter id="accum_trafic" name="Трафик (Аккумулятор)" units=" Mb"/>
 		<counter id="accum_mins" name="Минуты (Аккумулятор)"/>
 		<counter id="accum_sms" name="СМС (Аккумулятор)"/>
+		<counter id="accum_rub" name="Рубли (Аккумулятор)"/>
 		<counter id="filial" name="Филиал" type="text"/>
 		<counter id="phone" name="Номер" type="text"/>
 		<counter id="acc_num" name="Номер лицевого счета" type="text"/>
-		<!-- следующие счётчики по умолчанию выключены, т.к. не несут полезной информации - цена на интернет-трафик одна на все виды. Но для желающих...
-		<counter id="traf1" name="Трафик internet" units="Mb"/>
-		<counter id="traf2" name="Трафик WiFi" units="Mb"/>
-		<counter id="traf3" name="Трафик wap" units="Mb"/> -->
 	</counters>
-	<keywords>оператор нсс ncc ростелеком ростелеком-волга</keywords>
+	<keywords>оператор татинком нсс ncc ростелеком ростелеком-волга</keywords>
 	<type>cell</type>
 	<country>ru</country>
 </provider>

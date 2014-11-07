@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id major_version="1" version="2">ab-internet-wifidag</id>
+	<api flags="no_browser"/>
+	<name>WifiDag (Дагестан)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера WifiDag р. Дагестан <a href="http://www.wifidag.ru/">www.wifidag.ru</a></p>
+	<p>Информация берется из личного кабинета <a href="https://stat.wifidag.ru:8443/bgbilling/webexecuter">Wifidag личный кабинет</a></p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+`		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="abon" name="Абонплата" units=" р"/>
+		<counter id="limit" name="Лимит" units=" р"/>
+		<counter id="news" name="Новости" type="text"/>
+		<counter id="tariff" name="Тариф" type="text"/>
+		<counter id="contract" name="Договор" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

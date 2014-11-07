@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-money-ukrsibbank</id>
+	<id version="3">ab-money-ukrsibbank</id>
 	<api flags="no_browser"/>
 	<name>УКРСИББАНК</name>
 	<description html="true"><![CDATA[
@@ -16,10 +16,16 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" {@currency}"/>
+		<counter id="balance" name="Баланс"/>
 		<counter id="currency" name="Валюта" type="text"/>
 		<counter id="account" name="Номер счета" type="text"/>
 		<counter id="acc_name" name="Название счета" type="text"/>
+		<counter id="own" name="Собственные средства"/>
+		<counter id="avail" name="Доступная сумма"/>
+		<counter id="debt" name="Общая задолженность"/>
+		<counter id="fill" name="Пополнение за месяц"/>
+		<counter id="expense" name="Списание за месяц"/>
+		<counter id="overdraft" name="Доступный овердрафт"/>
 	</counters>
 	<keywords></keywords>
 	<type>money</type>

@@ -27,7 +27,7 @@ function main(){
         password:prefs.password
     }, addHeaders({Referer: baseurl + 'travel/echome/execclub/_gf/ru_ru'})); 
 
-    if(!/id="logout"/i.test(html)){
+    if(!/execPnlLogout/i.test(html)){
         var error = getParam(html, null, null, /<span[^>]+class="errorTitle"[^>]*>Error<\/span>[\s\S\]*<div[^>]+class="podBody"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error);
@@ -36,14 +36,13 @@ function main(){
 
     var result = {success: true};
     getParam(html, result, 'fio', /id="welcomeLabel"[^>]*>[\s\S]*?,\s*([\s\S]*?)<\/h1>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'balance', /<h2[^>]+class="lineSpace aviosPoints"[^>]*>([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'balanceFamaly', /Баллы Avios на Семейном Счете:(?:[\s\S]*?<h3[^>]*>){1}([\s\S]*?)<\/h3>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'balanceStatus', /<h2[^>]+class="headingDisp"[^>]*>([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'balance', /"aviosPoints"[^>]*>([\s\S]*?)<\/h2>/i, [/,/, '', replaceTagsAndSpaces], parseBalance);
+    getParam(html, result, 'balanceFamaly', /Баллы Avios на Семейном Счете:(?:[\s\S]*?<h3[^>]*>){1}([\s\S]*?)<\/h3>/i, [/,/, '', replaceTagsAndSpaces], parseBalance);
+    getParam(html, result, 'balanceStatus', /Tier Points:(?:&nbsp;|\s)*([,\d]+)/i, [/,/, '', replaceTagsAndSpaces], parseBalance);
+	
     getParam(html, result, 'cartType', /<h4[^>]+class="tierH4Style headingDisp"[^>]*>([\s\S]*?)<\/h4>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'yearEnd', /<table[^>]+summary="Мои Статусные Баллы"[^>]*>(?:[\s\S]*?<td[^>]*>){4}\s*<strong>([\s\S]*?)<\/strong>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'cartEnd', /<table[^>]+summary="Мои Статусные Баллы"[^>]*>(?:[\s\S]*?<td[^>]*>){6}\s*<strong>([\s\S]*?)<\/strong>/i, replaceTagsAndSpaces, html_entity_decode);
-
-
-    //Возвращаем результат
+	
     AnyBalance.setResult(result);
 }

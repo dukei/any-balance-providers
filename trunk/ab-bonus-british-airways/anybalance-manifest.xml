@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-bonus-british-airways</id>
+	<id version="3">ab-bonus-british-airways</id>
 	<api flags="no_browser"/>
 	<name>British Airways</name>
   	<description html="true"><![CDATA[
@@ -15,9 +15,9 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="My points Avios" units=" Б"/>
-		<counter id="balanceFamaly" name="Points Avios on family bill" units=" Б"/>
-		<counter id="balanceStatus" name="My status points" units=" Б"/>
+		<counter id="balance" name="My points Avios" units=" B"/>
+		<counter id="balanceFamaly" name="Points Avios on family bill" units=" B"/>
+		<counter id="balanceStatus" name="My status points" units=" B"/>
 		<counter id="cartType" name="Card type" type="text"/>
 		<counter id="yearEnd" name="Year accrual status points ends" type="text"/>
 		<counter id="cartEnd" name="Card expiration date" type="text"/>

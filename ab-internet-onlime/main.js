@@ -48,7 +48,7 @@ function main(){
 	
     var result = {success: true};
 	
-	info = AnyBalance.requestGet(baseurl + "json/cabinet/");
+	//info = AnyBalance.requestGet(baseurl + "json/cabinet/");
 	
 	var form = getParam(info, null, null, /<form[^>]*action="[^"]*account\/choose[^>]*>([\s\S]*?)<\/form>/i)
     if(form) {
@@ -65,7 +65,6 @@ function main(){
 		
 		info = AnyBalance.requestPost(baseurl + 'json/cabinet/', {}, addHeaders({Referer: baseurl, 'X-Requested-With': 'XMLHttpRequest', 'X-Request': 'JSON', 'X-Wtf': getWtf(info)}));
     }
-	
     
     AnyBalance.trace('got info: ' + info);
     var oInfo = getJson(info.replace(/:(\-)?\./g, ':$10.')); //А то "balance":-.31 не распарсивается
@@ -94,7 +93,9 @@ function main(){
 	
     if(AnyBalance.isAvailable('internet_total', 'internet_up', 'internet_down')) {
         try {
-            info = AnyBalance.requestGet(baseurl + "statistics/inet_statistics");
+			var dt = new Date();
+			
+            info = AnyBalance.requestGet(baseurl + 'html/inetstat/?month=' + (dt.getMonth()+1) + '&year=' + dt.getFullYear());
 			
 			if(AnyBalance.isAvailable('internet_total', 'internet_down')){
                 var val = getParam(info, null, null, /Входящий трафик(?:[\s\S]*?<th[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, parseBalance);

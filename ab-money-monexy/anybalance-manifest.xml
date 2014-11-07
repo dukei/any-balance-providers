@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-money-monexy</id>
+	<api flags="no_browser"/>
+	<name>MoneXy</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера MoneXy <a href="https://www.monexy.ua/">https://www.monexy.ua/</a></p>
+	<p>Информация берется из личного кабинета</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" UAH"/>
+		<counter id="vauchers" name="Мои ваучеры" units=" UAH"/>
+		<counter id="limit" name="Остаток лимита" units=" UAH"/>
+		<counter id="phone" name="Номер телефона" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>money</type>
+	<country>ua</country>
+</provider>

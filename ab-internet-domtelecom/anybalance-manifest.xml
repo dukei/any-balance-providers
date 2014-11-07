@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-domtelecom</id>
+	<api flags="no_browser"/>
+	<name>Домашний телеком</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Домашний телеком <a href="http://www.domtele.com/">http://www.domtele.com/</a></p>
+	<p>Информация берется из личного кабинета <a href="http://my.domtele.com/">http://my.domtele.com/</a></p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" UAH"/>
+		<counter id="__tariff" name="Тарифный пакет" type="text"/>
+		<counter id="fio" name="Абонент" type="text"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="account" name="Номер договора" type="text"/>
+		<counter id="lic_account" name="Лицевой счет" type="text"/>
+		<counter id="connection" name="Подключение" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet, telephony, tv</type>
+	<country>ua</country>
+</provider>

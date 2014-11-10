@@ -57,12 +57,14 @@ function main(){
 
     var redirect = getParam(html, null, null, /pageRedirect\|\|\/trCustomer\/([^|]*)/i);
 
-    //AnyBalance.trace(html);
-    if (!redirect) { //ctl00.logOff/i.test(html)
-        var error = getParam(html, null, null, /<span[^>]*ctl00_ContentPlaceHolder1_ErrDescr[^>]*>([\s\S]*?)<\/span>/, replaceTagsAndSpaces, html_entity_decode);
-        if (error) throw new AnyBalance.Error(error);
-        throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
-    }
+	if (!redirect) {
+		var error = getParam(html, null, null, /<span[^>]*ctl00_ContentPlaceHolder1_ErrDescr[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+		if (error)
+			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+		
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+	}
 	
     html = AnyBalance.requestGet(baseurl + redirect, g_headers);
     
@@ -71,18 +73,21 @@ function main(){
     getParam(html, result, 'balance', /<td[^>]*id="[^"]*pBalanceCurr"[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'agreement', /<td[^>]+id="[^"]*pContractNumber"[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'device', /<td[^>]+id="[^"]*pReceicerNumber"[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, '__tariff', />\s*(?:пакет)\s*(<[\S\s]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, '__tariff', /pStartTariff"[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     
 	var services = [];
-    var n = 1;
-    html.replace(/<tr[^>]*>(?:[\s\S](?!<\/tr))*Активная услуга[\s\S]*?<\/tr>/ig, function(tr) {
+	var activeSevices = sumParam(html, null, null, /<tr>\s*<td>(?:[^>]*>){2}\s*Активная(?:[^>]*>){4}\s*[\d\s.]{8,}(?:[^>]*>){16}\s*<\/tr>/ig);
+	for (var i = 1; i < activeSevices.length+1; i++) {
+		var tr = activeSevices[i-1];
+		
         var name = getParam(tr, null, null, /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-        var days = getParam(tr, null, null, /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-        services[services.length] = name + ' (' + days + ' дн)';
-        getParam(tr, result, 'service' + n, /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-        getParam(tr, result, 'daysleft' + n, /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-        ++n;
-    });
+        var days = getParam(tr, null, null, /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+		
+		services.push(name + ' (' + days + ' дн)');
+		
+        getParam(name, result, 'service' + i);
+        getParam(days, result, 'daysleft' + i);
+	}
 	
     result.__tariff = services.join(', ');
 	

@@ -37,7 +37,7 @@ function main(){
         throw new AnyBalance.Error('Не удалось войти в личный кабинет. Проблемы на сайте или сайт изменен.');
     }
 	
-	html = AnyBalance.requestGet(json.result[1], g_headers);
+	html = AnyBalance.requestGet(baseurl + 'client_info.php', g_headers);
 	
 	var token = getParam(html, null, null, /"\?api"\s*,\s*"([^"]+)/i);
 	checkEmpty(token, 'Не удалось найти токен авторизации, сайт изменен?', true);

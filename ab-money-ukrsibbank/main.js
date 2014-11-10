@@ -80,7 +80,7 @@ function fetchCard(html, baseurl) {
 	getParam(tr, result, 'acc_name', /(?:[^>]*>){2}[^>]*title="([^"]+)/i, replaceTagsAndSpaces, html_entity_decode);
 	
 	// Дополнительная инфа по картам.
-	if (AnyBalance.isAvailable('own', 'avail', 'debt', 'fill', 'expense', 'overdraft')) {
+	if (AnyBalance.isAvailable('own', 'avail', 'debt', 'fill', 'expense', 'overdraft', 'blocked')) {
 		var wForm = getParam(tr, null, null, /(welcomeForm:j_id_jsp_[^']+)/i);
 		var accountId = getParam(tr, null, null, /accountId'\s*,\s*'(\d+)/i);
 		
@@ -92,9 +92,13 @@ function fetchCard(html, baseurl) {
 				'welcomeForm:_idcl': wForm,
 			}, addHeaders({Referer: baseurl + 'protected/welcome.jsf'}));
 			
-			getParam(html, result, 'own', /&#1042;&#1083;&#1072;&#1089;&#1085;&#1110; &#1082;&#1086;&#1096;&#1090;&#1080;:([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-			getParam(html, result, 'avail', /&#1044;&#1086;&#1089;&#1090;&#1091;&#1087;&#1085;&#1072; &#1089;&#1091;&#1084;&#1072;:([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+			getParam(html, result, ['own', 'blocked'], /&#1042;&#1083;&#1072;&#1089;&#1085;&#1110; &#1082;&#1086;&#1096;&#1090;&#1080;:([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+			getParam(html, result, ['avail', 'blocked'], /&#1044;&#1086;&#1089;&#1090;&#1091;&#1087;&#1085;&#1072; &#1089;&#1091;&#1084;&#1072;:([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 			getParam(html, result, 'debt', /&#1047;&#1072;&#1075;&#1072;&#1083;&#1100;&#1085;&#1072; &#1079;&#1072;&#1073;&#1086;&#1088;&#1075;&#1086;&#1074;&#1072;&#1085;&#1110;&#1089;&#1090;&#1100; &#1079;&#1072; &#1088;&#1072;&#1093;&#1091;&#1085;&#1082;&#1086;&#1084; &#1089;&#1082;&#1083;&#1072;&#1076;&#1072;&#1108;([\d\s.,]+)/i, replaceTagsAndSpaces, parseBalance);
+			
+			if(isAvailable(['blocked'])) {
+				getParam(result.own - result.avail, result, 'blocked');
+			}
 			
 			if(isAvailable(['fill', 'expense', 'overdraft'])) {
 				var periodParams = {
@@ -115,8 +119,8 @@ function fetchCard(html, baseurl) {
 				
 				html = AnyBalance.requestPost(baseurl + 'protected/reports/sap_card_account_info.jsf', periodParams, addHeaders({Referer: baseurl + 'protected/welcome.jsf'}));
 				
-				getParam(html, result, 'fill', /&#1056;&#1072;&#1079;&#1086;&#1084; &#1089;&#1087;&#1080;&#1089;&#1072;&#1085;&#1085;&#1103; &#1082;&#1086;&#1096;&#1090;&#1110;&#1074;([^>]*>){3}/i, replaceTagsAndSpaces, parseBalance);
-				getParam(html, result, 'expense', /&#1056;&#1072;&#1079;&#1086;&#1084; &#1087;&#1086;&#1087;&#1086;&#1074;&#1085;&#1077;&#1085;&#1100;([^>]*>){3}/i, replaceTagsAndSpaces, parseBalance);
+				getParam(html, result, 'fill', /&#1056;&#1072;&#1079;&#1086;&#1084; &#1087;&#1086;&#1087;&#1086;&#1074;&#1085;&#1077;&#1085;&#1100;([^>]*>){3}/i, replaceTagsAndSpaces, parseBalance);
+				getParam(html, result, 'expense', /&#1056;&#1072;&#1079;&#1086;&#1084; &#1089;&#1087;&#1080;&#1089;&#1072;&#1085;&#1085;&#1103; &#1082;&#1086;&#1096;&#1090;&#1110;&#1074;([^>]*>){3}/i, replaceTagsAndSpaces, parseBalance);
 				getParam(html, result, 'overdraft', /&#1044;&#1086;&#1089;&#1090;&#1091;&#1087;&#1085;&#1080;&#1081; &#1086;&#1074;&#1077;&#1088;&#1076;&#1088;&#1072;&#1092;&#1090;:([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 			}
 		} else {

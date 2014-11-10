@@ -20,25 +20,25 @@ function main() {
 	
 	var html = AnyBalance.requestGet(baseurl + 'Auth/LoginPassword?returnUrl=http%3A%2F%2Ffootball.mts.ru%2F', g_headers);
 	
-	var key = getParam(html, null, null, /File\/Captcha\?key=([^"]+)/i);
-	if(!key)
-		throw new AnyBalance.Error('Не удалось найти форму входа, сайт изменен?');
+	// var key = getParam(html, null, null, /File\/Captcha\?key=([^"]+)/i);
+	// if(!key)
+		// throw new AnyBalance.Error('Не удалось найти форму входа, сайт изменен?');
 	
-	var captchaa;
-	if(AnyBalance.getLevel() >= 7) {
-		AnyBalance.trace('Пытаемся ввести капчу');
-		var captcha = AnyBalance.requestGet(baseurl + 'File/Captcha?key=' + key);
-		captchaa = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
-		AnyBalance.trace('Капча получена: ' + captchaa);
-	} else {
-		throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
-	}
+	// var captchaa;
+	// if(AnyBalance.getLevel() >= 7) {
+		// AnyBalance.trace('Пытаемся ввести капчу');
+		// var captcha = AnyBalance.requestGet(baseurl + 'File/Captcha?key=' + key);
+		// captchaa = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
+		// AnyBalance.trace('Капча получена: ' + captchaa);
+	// } else {
+		// throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
+	// }
 	
 	html = AnyBalance.requestPost(baseurl + 'Auth/LoginPassword?returnUrl=http%3A%2F%2Ffootball.mts.ru%2F', {
 		Login:prefs.login,
 		Password:prefs.password,
-		'Key':key,
-		Value:captchaa,
+		// 'Key':key,
+		// Value:captchaa,
 	}, addHeaders({Referer: baseurl + 'Auth/LoginPassword?returnUrl=http%3A%2F%2Ffootball.mts.ru%2F'}));
 	
 	if (!/logout/i.test(html)) {

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-money-ukrsibbank</id>
+	<id version="4">ab-money-ukrsibbank</id>
 	<api flags="no_browser"/>
 	<name>УКРСИББАНК</name>
 	<description html="true"><![CDATA[
@@ -26,6 +26,7 @@
 		<counter id="fill" name="Пополнение за месяц"/>
 		<counter id="expense" name="Списание за месяц"/>
 		<counter id="overdraft" name="Доступный овердрафт"/>
+		<counter id="blocked" name="Заблокированная сумма"/>
 	</counters>
 	<keywords></keywords>
 	<type>money</type>

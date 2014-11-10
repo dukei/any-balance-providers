@@ -1,6 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-tv-tricolor</id>
+	<api flags="no_browser"/>
+	<id version="5">ab-tv-tricolor</id>
 	<name>Триколор ТВ</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе и другие данные для пользователей провайдера спутникового телевидения "Триколор ТВ" (http://tricolor.tv).</p>   

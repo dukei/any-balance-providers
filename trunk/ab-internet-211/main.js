@@ -1,10 +1,5 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Текущий баланс у новосибирского интернет провайдера Сибирские Сети
-
-Сайт оператора: http://211.ru
-Личный кабинет: http://passport.211.ru/
 */
 
 var g_headers = {
@@ -13,22 +8,19 @@ var g_headers = {
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-
     AnyBalance.setDefaultCharset('UTF-8');
 
-    var baseurl = "http://passport.211.ru";
+    var baseurl = 'https://cabinet.211.ru/';
 
-    var html = AnyBalance.requestGet(baseurl + '/user/index', g_headers);
-    if(!prefs.__debug){
-        html = AnyBalance.requestPost('http://header.211.ru/', {
-            retpath: baseurl,
-            login:prefs.login,
-            password:prefs.password
-        }, addHeaders({Referer: baseurl + '/user/index'}));
-    }
-
-    var href = getParam(html, null, null, /(\/logout)/i);
-    if(!href){
+    var html = AnyBalance.requestGet(baseurl + 'auth/index', g_headers);
+	
+	html = AnyBalance.requestPost(baseurl + 'auth/index', {
+		retpath: baseurl,
+		login:prefs.login,
+		password:prefs.password
+	}, addHeaders({Referer: baseurl + '/user/index'}));
+	
+    if(!/(\/logout)/i.test(html)){
         var error = sumParam(html, null, null, /<span[^>]*class="input-message"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
         if(error)
             throw new AnyBalance.Error(error);
@@ -37,7 +29,7 @@ function main(){
 
     var result = {success: true};
 
-    getParam(html, result, 'balance', /<a[^>]*class="header-balance-button[^"]*"[^>]*>([\S\s]*?)<\/a>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'balance', /Итого на[\s\d.]{8,}(?:[^>]*>){4}([-\s\d.,]+)/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, '__tariff', /Ваш тариф:([^<]*)/i, replaceTagsAndSpaces);
     getParam(html, result, 'bonus', /<a[^>]*class="header-bonus-button[^"]*"[^>]*>([\S\s]*?)<\/a>/i, replaceTagsAndSpaces, parseBalance);
 

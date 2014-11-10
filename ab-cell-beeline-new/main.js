@@ -125,7 +125,7 @@ function getBonusesBlock(url, html, name, exact, onlyReturnParams) {
 	if (prefs.country == 'kz')
 		var re = new RegExp("loadingServices = function\\(\\) \\{PrimeFaces\\.\\w+\\s*\\(\\s*\\{[^}]*update:\\s*'" + (exact ? "" : "[^']*") + name);
 	else
-		var re = new RegExp("loadingAccumulators\\s*=\\s*function\\(\\) \\{PrimeFaces\\.\\w+\\s*\\(\\s*\\{[^}]*update:\\s*'" + (exact ? "" : "[^']*") + name);
+		var re = new RegExp("(?:loadingbonusesloaderDetails|loadingAccumulators)\\s*=\\s*function\\(\\) \\{PrimeFaces\\.\\w+\\s*\\(\\s*\\{[^}]*update:\\s*'" + (exact ? "" : "[^']*") + name);
 	
 	var data = getParam(html, null, null, re);
 	if (!data) {
@@ -308,16 +308,14 @@ function main() {
 	// Иногда билайн нормальный пароль считает временным и предлагает его изменить, но если сделать еще один запрос, пускает и показывает баланс
 	if (/Ваш пароль временный\.\s*Необходимо изменить его на постоянный/i.test(html)) {
 		AnyBalance.trace('Билайн считает наш пароль временным, но это может быть и не так, попробуем еще раз войти...');
-		html = AnyBalance.requestPost(baseurl + (action || 'login.html'), params, addHeaders({
-			Referer: baseurl + 'login.html'
-		}));
+		html = AnyBalance.requestPost(baseurl + (action || 'login.html'), params, addHeaders({Referer: baseurl + 'login.html'}));
 	}
 	// Ну и тут еще раз проверяем, получилось-таки войти или нет
 	if (/<form[^>]+name="(?:chPassForm)"|Ваш пароль временный\.\s*Необходимо изменить его на постоянный/i.test(html))
 		throw new AnyBalance.Error('Вы зашли по временному паролю, требуется сменить пароль. Для этого войдите в ваш кабинет ' + baseurl + ' через браузер и смените там пароль. Новый пароль введите в настройки данного провайдера.', null, true);
 	if (/<form[^>]+action="\/(?:changePass|changePassB2C).html"/i.test(html))
 		throw new AnyBalance.Error('Билайн требует сменить пароль. Зайдите в кабинет ' + baseurl + ' через браузер и поменяйте пароль на постоянный.', null, true);
-		
+	
 	// Определим, может мы вошли в кабинет для физ лиц?
 	if (/"logout-button"/i.test(html)) {
 		fetchB2B(baseurl, html);
@@ -334,6 +332,10 @@ function main() {
 				AnyBalance.trace('Beeline returned: ' + AnyBalance.getLastStatusString());
 				throw new AnyBalance.Error('Личный кабинет Билайн временно не работает. Пожалуйста, попробуйте позднее.');
 			}
+			
+			var message = getParam(html, null, null, /<h1>\s*(Личный кабинет временно недоступен\s*<\/h1>[\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+			if(message)
+				throw new AnyBalance.Error(message);
 			//Если объяснения ошибки не найдено, при том, что на сайт войти не удалось, то, вероятно, произошли изменения на сайте
 			AnyBalance.trace(html);
 			throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
@@ -590,10 +592,12 @@ function fetchPost(baseurl, html) {
 	getParam(html, result, ['phone', 'traffic_used'], /<h1[^>]+class="phone-number"[^>]*>([\s\S]*?)<\/h1>/i, replaceTagsAndSpaces, html_entity_decode);
 	
 	if (isAvailableBonuses()) {
-		xhtml = getBlock(baseurl + 'c/post/index.html', html, 'loadingBonusesAndServicesDetails');
-		xhtml += getBlock(baseurl + 'c/post/index.html', [xhtml, html], 'bonusesloaderDetails');
+		xhtml = getBonusesBlock(baseurl + 'c/post/index.html', html, 'loadingBonusesAndServicesDetails');
+		xhtml += getBonusesBlock(baseurl + 'c/post/index.html', [xhtml, html], 'bonusesloaderDetails');
+		// Корпоративная постоплата
+		xhtml += getBonusesBlock(baseurl + 'c/post/index.html', html, 'subscriberDetailsForm');
 		
-		getBonuses(xhtml, result);
+		getBonuses(html + xhtml, result);
 	}
 	
     if (AnyBalance.isAvailable('overpay', 'prebal', 'currency')) {
@@ -853,7 +857,7 @@ function getBonuses(xhtml, result) {
 				var minutes = getParam(services[i], null, null, reValue, replaceTagsAndSpaces, parseMinutes);
 				sumParam(minutes, result, 'min_local', null, null, null, aggregate_sum);
 			// Это новый вид отображения данных
-			} else if (/Минут общения по тарифу|вызовы/i.test(name)) {
+			} else if (/Минут общения по (?:тарифу|услуге)|вызовы/i.test(name)) {
 				// Очень внимательно надо матчить
 				if(/других (?:сотовых\s+)?операторов|все номера|На номера домашнего региона|Минут общения по тарифу Все для бизнеса Бронза/i.test(name))
 					sumParam(services[i], result, 'min_local', reNewValue, replaceTagsAndSpaces, parseMinutes, aggregate_sum);

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-affiliate-7cont</id>
+	<api flags="no_browser"/>
+	<name>Седьмой Континент</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Седьмой Континент <a href="http://www.7cont.ru/">http://www.7cont.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="http://corporate.7cont.ru/loyal_cabinet/auth/">http://corporate.7cont.ru/loyal_cabinet/auth/</a></p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс"/>
+		<counter id="active_balance" name="Доступно баллов"/>
+		<counter id="discount" name="Ваша скидка" units=" р"/>
+		<counter id="debet" name="Начислено баллов"/>
+		<counter id="credit" name="Потрачено баллов"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="number" name="Номер карты" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>affiliate</type>
+	<country>ru</country>
+</provider>

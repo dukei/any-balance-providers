@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2.0" version="11">ab-bonus-gazprom</id>
+	<id major_version="2.0" version="12">ab-bonus-gazprom</id>
 	<api flags="captcha|no_browser"/>
 	<name>Газпромнефть Бонус</name>
 	<description html="true"><![CDATA[
@@ -17,11 +17,11 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс"/>
-		<counter id="balance_money" name="Баланс по курсу в рублях" suffix=" р"/>
+		<!-- <counter id="balance_money" name="Баланс по курсу в рублях" suffix=" р"/> -->
 		<counter id="month" name="Сумма покупок за месяц" suffix=" р"/>
 		<counter id="month_need" name="Сумма для подтверждения статуса" suffix=" р"/>
 		<counter id="month_need_up" name="Сумма для повышения статуса" suffix=" р"/>
-		<counter id="kurs" name="Курс бонусной программы" type="text"/>
+		<!-- <counter id="kurs" name="Курс бонусной программы" type="text"/> -->
 		<counter id="customer" name="Владелец" type="text"/>
 		<counter id="status" name="Текущий статус" type="text"/>
 	</counters>

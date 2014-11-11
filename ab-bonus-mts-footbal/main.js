@@ -35,8 +35,9 @@ function main() {
 	// }
 	
 	html = AnyBalance.requestPost(baseurl + 'Auth/LoginPassword?returnUrl=http%3A%2F%2Ffootball.mts.ru%2F', {
-		Login:prefs.login,
+		Phone:prefs.login,
 		Password:prefs.password,
+		Promo:''
 		// 'Key':key,
 		// Value:captchaa,
 	}, addHeaders({Referer: baseurl + 'Auth/LoginPassword?returnUrl=http%3A%2F%2Ffootball.mts.ru%2F'}));

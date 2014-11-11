@@ -12,21 +12,16 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://3mob.ua/';
+	var baseurl = 'https://cabinet.3mob.ua';
 	AnyBalance.setDefaultCharset('utf-8');
 
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 
-	var html = AnyBalance.requestGet('http://3mob.ua/', g_headers);
-
-	html = AnyBalance.requestPost(baseurl + 'application/ajax/auth', {
-		email: prefs.login,
-		password: prefs.password,
-	}, addHeaders({
-		Referer: baseurl + 'login',
-		'X-Requested-With':'XMLHttpRequest'
-	}));
+	var html = AnyBalance.requestPost(baseurl + '/ua/login', {
+		phone: prefs.login, 
+		password: prefs.password
+	}, addHeaders({Referer: baseurl + '/ua/', 'X-Requested-With': 'XMLHttpRequest'}));
 
 	var json = getJson(html);
 

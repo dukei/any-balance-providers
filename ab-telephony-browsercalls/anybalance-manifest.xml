@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-telephony-browsercalls</id>
+	<api flags="no_browser|captcha"/>
+	<name>BrowserCalls</name>
+	<description html="true"><![CDATA[
+	<p>Obtains information from https://www.browsercalls.com such as your credit, freedays.</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Your credit" units=" {@currency}"/>
+		<counter id="freedays" name="Freedays" units=" d"/>
+	</counters>
+	<!-- этот провайдер - один из множества клонов nonoh.net -->
+	<keywords>clone, nonoh</keywords>
+	<type>telephony</type>
+	<country></country>
+</provider>

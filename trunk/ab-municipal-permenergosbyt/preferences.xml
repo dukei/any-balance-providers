@@ -20,4 +20,14 @@
         summary="||{@s}"
         dialogMessage="Введите вашу фамилию.">
     </EditTextPreference>
+    <EditTextPreference 
+		obligatory="true"
+        positiveButtonText="ОК"
+        key="phone" 
+        dialogTitle="Телефон"
+        negativeButtonText="Отмена"
+        title="Телефон"
+        summary="||{@s}"
+        dialogMessage="Введите ваш телефон.">
+    </EditTextPreference>
 </PreferenceScreen>

@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-municipal-permenergosbyt</id>
+	<id version="4">ab-municipal-permenergosbyt</id>
 	<api flags="no_browser"/>
 	<name>Пермэнергосбыт (Пермь)</name>
 	<description html="true"><![CDATA[
 	<p>Получает баланс и информацию о счетчике Пермэнергосбыта (https://permenergosbyt.ru)</p>
 	<p>Информация берется из личного кабинета Пермэнергосбыта: https://test.permenergosbyt.ru/Auth/IndividualEnergy</p>
+	<p>Для повышения уровня безопасности Ваших учетных данных введен номер мобильного или стационарного телефона</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>Stark &lt;support@starksoft.ru&gt;, mod v4 by Aleksey Shi &lt;aleks.shishkin@gmail.com&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

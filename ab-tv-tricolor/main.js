@@ -76,7 +76,7 @@ function main(){
     getParam(html, result, '__tariff', /pStartTariff"[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     
 	var services = [];
-	var activeSevices = sumParam(html, null, null, /<tr>\s*<td>(?:[^>]*>){2}\s*Активная(?:[^>]*>){4}\s*[\d\s.]{8,}(?:[^>]*>){16}\s*<\/tr>/ig);
+	var activeSevices = sumParam(html, null, null, /<tr[^>]*>\s*<td>(?:[^>]*>){2}\s*Активная(?:[^>]*>){4}\s*[\d\s.]{8,}(?:[^>]*>){16}\s*<\/tr>/ig);
 	for (var i = 1; i < activeSevices.length+1; i++) {
 		var tr = activeSevices[i-1];
 		

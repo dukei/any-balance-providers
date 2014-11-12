@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="5">ab-internet-liveproxy</id>
+	<id version="6">ab-internet-liveproxy</id>
 	<name>Liveproxy (Армянск)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе провайдера Liveproxy  в г.Армянск http://liveproxy.com.ua/</p>

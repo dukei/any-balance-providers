@@ -24,12 +24,11 @@ function main() {
 	}, addHeaders({Referer: baseurl + '/ua/', 'X-Requested-With': 'XMLHttpRequest'}));
 
 	if (/error/i.test(html)) {
-	error = getJson(html);  
-        if (error)
-		throw new AnyBalance.Error(error, null, / /i.test(error));
-
-        AnyBalance.trace(html);
-        throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+		var error = getJson(html);  
+	        throw new AnyBalance.Error(error.data, null, /Невірно введено пароль/i.test('' + error.data));
+        
+                AnyBalance.trace(html);
+                throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
         }
 
 	var result = {success: true};

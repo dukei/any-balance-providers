@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-cell-3mob</id>
+	<id version="4">ab-cell-3mob</id>
 	<api flags="no_browser"/>
 	<name>3Mob</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе сотового оператора 3Mob http://3mob.ua/</p>
-	<p>Информация берется из личного кабинета https://3mob.ua/application/customer/balances</p>
+	<p>Информация берется из личного кабинета https://my.3mob.ua/</p>
 	]]></description>
         <instruction>
-	  Для регистрации в Личном кабинете необходимо зайти на сайт http://3mob.ua/ и на главной страничке нажать кнопку «Личный кабинет». В всплывющем окне перейти по ссылке "Зарегистрироваться". Заполнить данные и зарегистрироваться.
+	  Для регистрации в Личном кабинете необходимо зайти на сайт http://my.3mob.ua/ и на главной страничке нажать кнопку «Реєстрація». В появившемся окне заполнить все данные и нажать кнопку "Зареєструватись". После чего нужно будет ввести код активации, который прийдет в СМС на регистрируємый номер.
 	</instruction>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<author>Ignatiy Goloviznin &lt;igoloviznin@gmail.com&gt;</author>

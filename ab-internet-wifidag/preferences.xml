@@ -25,7 +25,6 @@
 		title="Тип входа"
 		summary="{@s}"
 		key="midAuth"
-		defaultValue="1"
 		entries="Логин интернета|номер договора"
 		entryValues="1|0"
 		defaultValue="1"/>

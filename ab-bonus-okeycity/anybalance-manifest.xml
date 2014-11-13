@@ -1,14 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser" />
-	<id version="1">ab-bonus-okeycity</id>
+	<id version="2">ab-bonus-okeycity</id>
 	<name>ОКейСити</name>
-	<description>
-		Получает данные по бонусным картам ОКейСити
-		
-		Личный кабинет находится по адресу: https://okeycity.ru/user
-	</description>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию по бонусным картам ОКейСити</p>
+	<p>Информация берется из личного кабинета <a href="https://okeycity.ru/user">https://okeycity.ru/user</a></p>
+	]]></description>	
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
@@ -18,7 +16,7 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units="р"/>
+		<counter id="balance" name="Баланс" units=" р"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="status" name="Статус" type="text"/>
 		<counter id="phone" name="Телефон" type="text"/>

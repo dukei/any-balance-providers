@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-cell-tele2-lt</id>
+	<api flags="no_browser"/>
+	<name>Tele2 (Latvia)</name>
+	<description html="true"><![CDATA[
+	<p>Obtains information from Tele2 personal account <a href="https://mano.tele2.lt">https://mano.tele2.lt</a></p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Balance" units=" €"/>
+		<counter id="balance_lt" name="Balance (LT)" units=" LT"/>
+	</counters>
+	<keywords></keywords>
+	<type>cell</type>
+	<country>lt</country>
+</provider>

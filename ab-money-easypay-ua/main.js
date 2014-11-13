@@ -36,6 +36,8 @@ function main(){
 	
     var result = {success: true};
 	
+    getParam(html, result, 'points', /class="points"([^>]*>){2}/i, replaceTagsAndSpaces, parseBalance);
+	
 	var tr = getParam(html, null, null, new RegExp("<tr>\\s*<td[^>]*>\\s*" + (prefs.number || '\\d+')+ "\\s*</td>\\s*<td[^>]*>[\\s\\S]*?<\/td>", "i"));
 
 	checkEmpty(tr, 'Не удалось найти ' + (prefs.number ? 'кошелек с последними цифрами ' + prefs.number : 'ни одного кошелька!'), true);

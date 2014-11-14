@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-service-invitro</id>
+	<id version="2">ab-service-invitro</id>
 	<api flags="no_browser"/>
 	<name>Инвитро</name>
 	<description html="true"><![CDATA[

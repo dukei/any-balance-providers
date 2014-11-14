@@ -1,30 +1,38 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-internet-rosintel</id>
-  <name>Росинтел (Тульская область)</name>
-  <description>
-    Получает баланс и информацию о тарифном плане для интернет провайдера тульской области Росинтел (http://www.rosintel.ru). Информация берется из личного кабинета https://billing.rosintel.com/client.
-
-    Сеть Росинтел охватывает такие города Тульского региона как, Тула, Новомосковск, Донской, Богородицк, Щекино, Болохово, Узловая, Сокольники, Северо-Задонск
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="status" name="Состояние" type="text"/>
-    <counter id="userName" name="ФИО" type="text"/>
-  </counters>
-  <keywords>
-    интернет, тульская область, новомосковск, rosintel
-  </keywords>
-  <type>
-    internet
-  </type>
-  <country>
-    ru
-  </country>
+	<api flags="no_browser"/>
+	<id version="3">ab-internet-rosintel</id>
+	<name>Росинтел (Тульская область)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе интернет провайдера тульской области Росинтел <a href="http://rosintel.ru">http://rosintel.ru</a></p>
+	<p>Информация берется из личного кабинета <a href="https://billing.rosintel.com/client">https://billing.rosintel.com/client</a></p>
+	<b>Сеть Росинтел работает в городах:</b>
+	<ul>
+		<li>Тула</li>
+		<li>Новомосковск</li>
+		<li>Донской</li>
+		<li>Богородицк</li>
+		<li>Щекино</li>
+		<li>Болохово</li>
+		<li>Узловая</li>
+		<li>Сокольники</li>
+		<li>Северо-Задонск</li>
+	</ul>
+	]]></description>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="status" name="Состояние" type="text"/>
+		<counter id="userName" name="ФИО" type="text"/>
+	</counters>
+	<keywords>интернет, тульская область, новомосковск, rosintel</keywords>
+	<type>internet</type>
+	<country>ru</country>
 </provider>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="27">ab-cell-ncc</id>
+	<id version="28">ab-cell-ncc</id>
 	<name>Ростелеком-Волга (НСС)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем балансе и тарифе для пользователей оператора ""Ростелеком-Волга"" (НСС).</p>

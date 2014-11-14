@@ -596,6 +596,8 @@ function fetchPost(baseurl, html) {
 		xhtml += getBonusesBlock(baseurl + 'c/post/index.html', [xhtml, html], 'bonusesloaderDetails');
 		// Корпоративная постоплата
 		xhtml += getBonusesBlock(baseurl + 'c/post/index.html', html, 'subscriberDetailsForm');
+		// Еще какая-то херь(
+		xhtml += getBonusesBlock(baseurl + 'c/post/index.html', html, 'bonuses');
 		
 		getBonuses(html + xhtml, result);
 	}

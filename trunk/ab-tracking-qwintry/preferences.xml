@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference
+		title="Tracking number"
+		key="number"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Tracking number"
+		positiveButtonText="Ok"
+		negativeButtonText="Cancel"
+		dialogMessage="Enter tracking number.">
+	</EditTextPreference>
+</PreferenceScreen>

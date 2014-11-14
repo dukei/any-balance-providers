@@ -18,12 +18,15 @@ function main(){
 	});
 	// Проверяем успешный ли вход
 	if(!/path=exit/i.test(info)){
-        var error = getParam(info, null, null, /<div[^>]*class="info_block_right"[^>]*>[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-        if(error)
-            throw new AnyBalance.Error(error);
-        throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-    }
-	
+		var error = getParam(info, null, null, /<div class="tech">([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+	        if(error)
+        		throw new AnyBalance.Error(error);
+		error = getParam(info, null, null, /<div[^>]*class="info_block_right"[^>]*>[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+	        if(error)
+        		throw new AnyBalance.Error(error);
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+	}
+
 	var result = {success: true};
 
 	getParam(info, result, 'balance', /<dd[^>]*>Баланс:<\/dd>\s*<dd[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
@@ -31,7 +34,7 @@ function main(){
 	getParam(info, result, 'filial', /<dd[^>]*>Филиал:<\/dd>\s*<dd[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(info, result, 'phone', /<dd[^>]*>Номер:<\/dd>\s*<dd[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 	// Теперь аккумуляторы
-	if(isAvailable(['accum_trafic', 'accum_mins', 'accum_sms'])) {
+	if(isAvailable(['accum_trafic', 'accum_mins', 'accum_sms', 'accum_rub'])) {
 		AnyBalance.trace('Requesting accumulators info...');
 		info = AnyBalance.requestGet(baseurl + '?path=services');
 		

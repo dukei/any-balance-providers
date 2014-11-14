@@ -33,9 +33,8 @@ function main() {
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	// Если есть номер заказа ищем его, если нет ищем что попадется первым
-	var inz = prefs.inz ? prefs.inz : '';
-	var reInz = new RegExp('<div[^>]*class="order_list_row row collapse resultRow_\\d+"[^>]*>(?:[^>]*>){10}[^>]*' + inz + '(?:[^>]*>){8}', 'i');
-	var zakaz = getParam(html, null, null, reInz);
+	// <div[^>]*class="[^"]+resultRow_\d+[^>]*>(?:[^>]*>){10}[^>]*7461(?:[^>]*>){8}
+	var zakaz = getParam(html, null, null, new RegExp('<div[^>]*class="[^"]+resultRow_\\d+[^>]*>(?:[^>]*>){10}[^>]*' + (prefs.inz || '') + '(?:[^>]*>){8}', 'i'));
 	if(!zakaz)
 		throw new AnyBalance.Error('Не удалось найти' + (prefs.inz ? ' ИНЗ №' + prefs.inz : 'ни одного ИНЗ.'));
 	
@@ -45,15 +44,16 @@ function main() {
 	getParam(zakaz, result, 'inz_status', /(?:[\s\S]*?<div[^>]*>){5}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
 
 	if(isAvailable(['age', 'gender', 'addr', 'total'])) {
-		var row = getParam(zakaz, null, null, /<div[^>]*class="order_list_row row collapse\s*(resultRow_\d+)"/i);
+		var row = getParam(zakaz, null, null, /(resultRow_\d+)"/i);
 		var reDetatails = new RegExp(row + '\\"\\)\\.click\\(function\\(\\)\\s*\\{\\s*document\\.location\\s*=\\s*\\"/([^\\"]*)', 'i');
 		var details = getParam(html, null, null, reDetatails);
 		html = AnyBalance.requestGet(baseurl + details, g_headers);
+		//https://lk.invitro.ru/lk2/lkp/results/details?reqId=81138e2105499fec5177b694b221c992&inzId=118507461&filter=
 		
 		getParam(html, result, 'age', /Возраст:(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, 'gender', /Пол:(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 		getParam(html, result, 'addr', /Мед\.офис:(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-		sumParam(html, result, 'total', /(<tr class="det_row">(?:[^>]*>){14})/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+		sumParam(html, result, 'total', /<tr class="table__row">\s*<td class="table__cell">([\s\S]*?)<\/tr>/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
 	}
 	
     AnyBalance.setResult(result);

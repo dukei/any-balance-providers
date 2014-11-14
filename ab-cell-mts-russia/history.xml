@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
-	<change version="91" date="2014-11-14">
+	<change major_version="3.3" version="91" date="2014-11-14">
 	- Исправлено получение трафика в некоторых случаях
 	</change>
 	<change major_version="3.3" version="90" date="2014-10-08">

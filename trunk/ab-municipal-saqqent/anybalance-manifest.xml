@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-municipal-saqqent</id>
+	<api flags="no_browser"/>
+	<name>ЦифровойГород.РФ</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера ЦифровойГород.РФ <a href="https://www.saqqent.com/">https://www.saqqent.com/</a></p>
+	<p>Информация берется из личного кабинета.</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="name" name="Название" type="text"/>
+		<counter id="account" name="Лицевой счет" type="text"/>
+		<counter id="sum_to_be_paid" name="Начислено в текущем месяце" units=" р"/>
+	</counters>
+	<keywords></keywords>
+	<type>municipal</type>
+	<country>ru</country>
+</provider>

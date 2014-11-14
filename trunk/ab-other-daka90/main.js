@@ -42,12 +42,14 @@ function main()
 	{
 		infoBlock = infoBlock[1];
 		
-		// get the dates
+		// get the dates, skip entries without proper dates (some deals have unknown dates)
 		var dateRegex = /(\d\d\/\d\d\/\d\d\d\d)[\s\S]*?(\d\d\:\d\d)/g;
-		var there = dateRegex.exec(infoBlock); dateRegex.exec(infoBlock); // the skipped one is the landing date
+		var there = dateRegex.exec(infoBlock); 
+		if ((!there) || (!dateRegex.exec(infoBlock))) // the skipped one is the landing date
+			continue;
 		var back = dateRegex.exec(infoBlock); 
-		if (!dateRegex.exec(infoBlock))
-			throw new AnyBalance.Error("מידע לא צפוי מאתר דקה 90");
+		if ((!back) || (!dateRegex.exec(infoBlock)))
+			continue;
 		
 		// convet the dates, calculate the travel days 
 		there = new Date(parseDate(there[1] + " " + there[2]));
@@ -64,8 +66,8 @@ function main()
 		if (!eval("prefs.rday"+back.getDay()))
 			continue;
 
-		// parse the rest of the data (city, 
-		var destination = replaceAll(firstMatch(/class="DepartmentTitleCampaignGroupBy">([\s\S]*?)<\/div>\s*<\/div>/i,infoBlock),replaceTagsAndSpaces);
+		// parse the rest of the data (city and price)
+		var destination = replaceAll(firstMatch(/class="Department.*Campaign.*">([\s\S]*?)<\/div>\s*<\/div>/i,infoBlock),replaceTagsAndSpaces);
 		var price = replaceAll(firstMatch(/<div class="FloatLeft">([\s\S]*?)<\/div>\s*<\/div>\s*<\/div>/i,infoBlock),replaceTagsAndSpaces).replace(/\s*/g,'');
 		
 		// add remaining flights

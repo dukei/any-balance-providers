@@ -50,13 +50,12 @@ function main(){
 	
 	//info = AnyBalance.requestGet(baseurl + "json/cabinet/");
 	
-	var form = getParam(info, null, null, /<form[^>]*action="[^"]*account\/choose[^>]*>([\s\S]*?)<\/form>/i)
-    if(form) {
+	var contracts = getParam(info, null, null, /<contracts>([\s\S]*?)<\/contracts>/i)
+    if(contracts) {
         //Несколько контрактов на аккаунте. Надо выбрать нужный лицевой счет
         AnyBalance.trace('Требуется выбрать контракт...');
-		var re = new RegExp((prefs.num ? prefs.num + '(?:[^>]*>){4,17}\\s*' : '') + '<input[^>]*value="(\\d+)', 'i');
-        //var re = new RegExp('<tr[^>]*>(?:[\\s\\S](?!</tr>))*?<strong[^>]*>\\s*\\d*' + (prefs.num || '\\d+') + '\\s*</strong>[\\s\\S]*?</tr>', 'i');
-        var idx = getParam(form, null, null, re);
+		
+		var idx = getParam(contracts, null, null, new RegExp('row_id="(\\d+)">\\s*<ObjidPrvc>\\s*' + (prefs.num || ''), 'i'));
         if(!idx)
             throw new AnyBalance.Error(prefs.num ? 'Не удалось найти лицевой счет или договор с последними цифрами ' + prefs.num : 'Не удалось найти ни одного номера счета!');
         

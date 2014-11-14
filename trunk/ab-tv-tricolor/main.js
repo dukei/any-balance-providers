@@ -76,20 +76,22 @@ function main(){
     getParam(html, result, '__tariff', /pStartTariff"[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     
 	var services = [];
-	var activeSevices = sumParam(html, null, null, /<tr[^>]*>\s*<td>(?:[^>]*>){2}\s*Активная(?:[^>]*>){4}\s*[\d\s.]{8,}(?:[^>]*>){16}\s*<\/tr>/ig);
-	for (var i = 1; i < activeSevices.length+1; i++) {
-		var tr = activeSevices[i-1];
+	var activeSevices = sumParam(html, null, null, /<tr[^>]*>\s*<td>(?:[^>]*>){2}\s*Активная(?:[^>]*>){4}\s*[\d\s.]{8,}(?:[^>]*>){10,20}\s*<\/tr>/ig);
+	for (var i = 0; i < activeSevices.length; i++) {
+		var tr = activeSevices[i];
 		
         var name = getParam(tr, null, null, /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-        var days = getParam(tr, null, null, /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+        var days = getParam(tr, null, null, /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance) || 0;
 		
 		services.push(name + ' (' + days + ' дн)');
 		
-        getParam(name, result, 'service' + i);
-        getParam(days, result, 'daysleft' + i);
+        getParam(name, result, 'service' + (i+1));
+        getParam(days, result, 'daysleft' + (i+1));
 	}
 	
-    result.__tariff = services.join(', ');
+	var tar = services.join(', ');
+	if(tar)
+		result.__tariff = services.join(', ');
 	
     AnyBalance.setResult(result);
 }

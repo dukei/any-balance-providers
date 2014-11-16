@@ -46,11 +46,18 @@ function main(){
     getParam(html, result, '__tariff', /<div[^>]+class="row content"[^>]*>\s*<p[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'licschet', /Лицевой счёт:\s*<strong[^>]*>([\s\S]*?)<\/strong>/i, replaceTagsAndSpaces, html_entity_decode);
 
-    var kvpl = getParam(html, null, null, /Квартплата([\s\S]*?)<\/div><br/i);
+    var kaprem = getParam(html, null, null, /Капитальный ремонт([\s\S]*?На дату:[^<]*)<\/div>/i);
+    if(kaprem){
+        getParam(kaprem, result, 'balance_kaprem', /(?:Переплата|Долг|Задолженность):\s*<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+        getParam(kaprem, result, 'peni_kaprem', /Пени:([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+        getParam(kaprem, result, 'date_kaprem', /На дату:([^<]*)/i, replaceTagsAndSpaces, parseDate);
+    }
+    
+    var kvpl = getParam(html, null, null, /Квартплата([\s\S]*?На дату:[^<]*)<\/div>/i);
     if(kvpl){
-        getParam(html, result, 'balance', /(?:Переплата|Долг|Задолженность):\s*<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-        getParam(html, result, 'peni', /Пени:([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-        getParam(html, result, 'date', /На дату:([^<]*)/i, replaceTagsAndSpaces, parseDate);
+        getParam(kvpl, result, 'balance', /(?:Переплата|Долг|Задолженность):\s*<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+        getParam(kvpl, result, 'peni', /Пени:([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+        getParam(kvpl, result, 'date', /На дату:([^<]*)/i, replaceTagsAndSpaces, parseDate);
     }
 
     //Возвращаем результат

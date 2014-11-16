@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-municipal-sgku</id>
+  <id version="2">ab-municipal-sgku</id>
   <api min_level="7" flags="no_browser"/>
   <name>ЖКХ Сургут</name>
   <description>
@@ -18,8 +18,11 @@
   <counters>
     <counter id="balance" name="Баланс" units="р"/>
     <counter id="peni" name="Пени" units="р"/>
+    <counter id="balance_kaprem" name="Баланс(кап.рем)" units="р"/>
+    <counter id="peni_kaprem" name="Пени(кап.рем)" units="р"/>
     <counter id="licschet" name="Лицевой счет" type="text"/>
     <counter id="date" name="Дата" format="dd/MM/yyyy" type="time"/>
+    <counter id="date_kaprem" name="Дата(кап.рем)" format="dd/MM/yyyy" type="time"/>
     <counter id="address" name="Адрес" type="text"/>
   </counters>
   <keywords>

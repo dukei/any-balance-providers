@@ -21,7 +21,10 @@ function main(){
 	}, addHeaders({Referer: baseurl + '/user/index'}));
 	
     if(!/(\/logout)/i.test(html)){
-        var error = sumParam(html, null, null, /<span[^>]*class="input-message"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+        var error = sumParam(html, null, null, /<font[^>]*class="error"[^>]*>([\s\S]*?)<\/font>/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+        if(error)
+            throw new AnyBalance.Error(error, null, /Введенная информация неверна/i.test(error));
+        error = sumParam(html, null, null, /<span[^>]*class="input-message"[^>]*>([\s\S]*?)<\/span>/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
         if(error)
             throw new AnyBalance.Error(error);
         throw new AnyBalance.Error("Не удалось войти в паспорт! Изменения на сайте?");

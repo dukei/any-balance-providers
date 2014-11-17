@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-money-sberbank-kz</id>
+	<id version="7">ab-money-sberbank-kz</id>
 	<api flags="no_browser"/>
 	<name>Сбербанк ОнЛ@йн (Казахстан)</name>
 	<description html="true"><![CDATA[
@@ -10,6 +10,7 @@
 	<p>Если у вас нет доступа к Сбербанк-онлайн: перейдите на страницу https://www.sob.kz/frontend/static-2.7.22/rainbow/docs/UserGuide.pdf это руководство пользователя в формате pdf.</p>
 	]]></instruction>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>Op Po &lt;locomocotoko@gmail.com&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

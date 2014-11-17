@@ -68,7 +68,10 @@ if (result) {
 	// История 
 	var originalHistory = readFileToString(g_history_file);
 	var dt = new Date();
-	originalHistory = originalHistory.replace(/<history>/, '<history>\n\t<change version="' + g_prov_version + '" date="' + dt.getYear() + '-' + addZeros(dt.getMonth()+1) + '-' + addZeros(dt.getDate()) + '">\n\t' + result.replace(/\n/g, '\n\t') + '\n\t</change>');
+	
+	var major_version_str = (g_prov_major_version ? 'major_version="' + g_prov_major_version + '" ' : '');
+	
+	originalHistory = originalHistory.replace(/<history>/, '<history>\n\t<change ' + major_version_str + 'version="' + g_prov_version + '" date="' + dt.getYear() + '-' + addZeros(dt.getMonth()+1) + '-' + addZeros(dt.getDate()) + '">\n\t' + result.replace(/\n/g, '\n\t') + '\n\t</change>');
 	originalHistory = originalHistory.replace(/^\s*|\s*$/g, '');
 	
 	objStream.Open();

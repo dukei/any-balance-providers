@@ -7,26 +7,15 @@ returnValue = createInput("Enter history in 5 minutes","Adding history",(5 * 60)
 Function createInput(prompt,title,timeout)
     Dim content, wnd, status
     'Задаём HTML код окна
-    content =  "<html>" &_
-                    "<head>" &_
-                        "<style>" &_
-                            "*{font-family:Tahoma;font-size:13px;}" &_
-                            "button,textarea,span{position:absolute;}" &_
-                            "button{width:80px;}" &_
-                            "#lblPrompt{left:10px;top:10px;overflow:hidden;width:250px;height:80px;}" &_
-                            "#btnOk{left:265px;top:10px;}" &_
-                            "#btnCancel{left:265px;top:40px;}" &_
-                            "#inpText{top:98px;width:330px;}" &_
-                        "</style>" &_
-                    "</head>" &_
-                    "<body bgcolor=#F0F0F0>" &_
-                        "<span id='lblPrompt'></span>" &_
-                        "<button id='btnOk' onclick='window.returnValue=inpText.value;window.status=1'>OK</button>" &_
-                        "<button id='btnCancel' onclick='window.status=1;'>Отмена</button>" &_
-                        "<textarea id='inpText'></textarea>" &_
-                    "</body>" &_
-                "</html>"
+	'Загрузим из файла
+	Dim objStream
 
+	Set objStream = CreateObject("ADODB.Stream")
+	objStream.CharSet = "utf-8"
+	objStream.Open
+	objStream.LoadFromFile("wnd.html")
+	content = objStream.ReadText()
+	
     'Создаём нужное нам окошко (без скролов, без меню и т.п)
     Set wnd = createWindow(content,"border=dialog " &_
                                 "minimizeButton=no " &_
@@ -45,23 +34,34 @@ Function createInput(prompt,title,timeout)
     With wnd
         'По умолчанию выставляем статус 0 (потом будем проверять его в цикле)
         .status = 0
-        'Ставим фокус на кнопку OK
-        .btnOk.focus
+        'Ставим фокус на inpText
+        .inpText.focus
         'Задаём заголовок окна
         .document.title = title
         'Заполняем поле запроса в окне
-        .lblPrompt.innerText = prompt
+        REM .lblPrompt.innerText = prompt
         'Двигаем окошко на нужные нам координаты (при желании можно отцентрировать по wnd.screenWidth / wnd.screenHeight)
-        .moveTo 100, 100
+        .moveTo 200, 200
         'Задаём ширину и высоту окошка
-        .resizeTo 370, 170
+        .resizeTo 370, 250
     End With
     
+	Dim prevSelect
+	
+	prevSelect = 0
     
     Do
         'Проверяем статус окна
         On Error Resume Next
         status = wnd.status
+		'проверяем выбор селекта
+		If prevSelect = wnd.standartMessages.selectedIndex Then
+
+		Else
+			wnd.inpText.value = wnd.standartMessages.Options(wnd.standartMessages.selectedIndex).Text
+			prevSelect = wnd.standartMessages.selectedIndex
+			End if
+		
         'Если окошко закрыли кнопкой [X], то произойдёт ошибка обращения к нему
         If Err.number <> 0 Then 
             On Error Goto 0
@@ -74,7 +74,7 @@ Function createInput(prompt,title,timeout)
                 Exit Do
             End if
         End if
-        WScript.Sleep 100
+        WScript.Sleep 200
     Loop
     'По концу функции закрываем окно
     wnd.close

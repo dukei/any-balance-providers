@@ -9,6 +9,7 @@ var g_prov_text_id = '';
 var g_prov_name = '';
 var g_history_file = '';
 var g_prefs_file = '';
+var g_defaultHistoryLine = '- Поддержка изменений на сайте.';
 
 var vbOKOnly = 0; // Constants for Popup
 var vbYesNo = 4;
@@ -40,7 +41,8 @@ if (result) {
 	if(g_prefs_file) {
 		var msg = ' Check you main.js file for stupid errors!';
 		
-		var prefsName = /(?:var\s+)?([^\s]+)\s*=\s*AnyBalance\.getPreferences\(\)/i.exec(mainJs)[1];
+		var prefsName = searchRegExpSafe(/(?:var\s+)?([^\s]+)\s*=\s*AnyBalance\.getPreferences\s*\(\)/i, mainJs);
+		//var prefsName = /(?:var\s+)?([^\s]+)\s*=\s*AnyBalance\.getPreferences\s*\(\)/i.exec(mainJs)[1];
 		if(!prefsName) {
 			throw new Error('We don`t found AnyBalance.getPreferences()!' + msg);
 		}
@@ -49,7 +51,7 @@ if (result) {
 		var reg = new RegExp('(?:var\\s+)?' + prefsName + '\\s*=\\s*([^,;]+)', 'ig');
 		var r_result;
 		while((r_result = reg.exec(mainJs)) !== null) {
-			if(r_result[1] != 'AnyBalance.getPreferences()') {
+			if(!/AnyBalance\.getPreferences\s*\(\)/i.test(r_result[1])) {
 				throw new Error('You have overrided your preferences!' + msg);
 			}
 		}
@@ -81,7 +83,7 @@ if (result) {
 		commit(WshShell, result);
 	}
 } else { // Cancel button was clicked.
-	var intDoIt = WshShell.Popup("Sorry, no input", 0, "Result", vbOKOnly + vbInformation + stayOnTop);
+	//var intDoIt = WshShell.Popup("Sorry, no input", 0, "Result", vbOKOnly + vbInformation + stayOnTop);
 }
 
 function commit(WshShell, mesg) {

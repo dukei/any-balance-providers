@@ -73,7 +73,8 @@ function main(){
 	sumParam(html, result, 'traffic_night_left', />\s*Ночной интернет(?:[^>]+>){2}([^<]+МБ)/ig, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
 	sumParam(html, result, 'traffic_left', />(?:Безлимитный)?\s*интернет(?:[^>]+>){2}([^<]+МБ)/ig, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
 	// Баланс
-	getParam(html, result, 'balance', /Основной баланс:([^<]+)\s*<\/li>/i, replaceTagsAndSpaces, parseBalance);
+	
+	getParam(html, result, 'balance', /Основной (?:счет|баланс:)([^<]+)\s*<\/li>/i, replaceTagsAndSpaces, parseBalance);
 	// Баланс для постоплаты
 	if(!isset(result.balance) || result.balance === 0)
 		getParam(html, result, 'balance', /Задолженность на линии(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, parseBalance);

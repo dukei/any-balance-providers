@@ -107,35 +107,49 @@ function fetchAcc(html, baseurl) {
 
 	var result = {success: true};
 	// Иногда мы не переходим на нужную страницу, из-за каких-то глюков.
-	html = AnyBalance.requestPost(baseurl + 'frontend/frontend', {
-		'RQ_TYPE':'WORK',
-		'SCREEN_ID':'MAIN',
-		'MENU_ID':'MENU',
-		'ITEM_ID':'MENU_CLICK',
-		SID:getSID(html),
-		'Step_ID':'0',
-		'CP_MENU_ITEM_ID':'SFMAIN_MENU.WB_PRODUCTS_ALL',
-	}, addHeaders({Referer: baseurl + 'frontend/frontend'}));
+	
+	var items = ['SFMAIN_MENU.WB_PRODUCTS_ALL', 'WB_PRODUCTS_ALL.ACCOUNTS', 'ACCOUNTS.ACC_LIST'];
+	for(var stepId = 0; stepId < 3; stepId++) {
+		html = AnyBalance.requestPost(baseurl + 'frontend/frontend', {
+			'RQ_TYPE':'WORK',
+			'SCREEN_ID':'MAIN',
+			'MENU_ID':'MENU',
+			'ITEM_ID':'MENU_CLICK',
+			SID:getSID(html),
+			'Step_ID':stepId + '',
+			'CP_MENU_ITEM_ID':items[stepId],
+		}, addHeaders({Referer: baseurl + 'frontend/frontend'}));
+	}
+	
+	// html = AnyBalance.requestPost(baseurl + 'frontend/frontend', {
+		// 'RQ_TYPE':'WORK',
+		// 'SCREEN_ID':'MAIN',
+		// 'MENU_ID':'MENU',
+		// 'ITEM_ID':'MENU_CLICK',
+		// SID:getSID(html),
+		// 'Step_ID':'0',
+		// 'CP_MENU_ITEM_ID':'SFMAIN_MENU.WB_PRODUCTS_ALL',
+	// }, addHeaders({Referer: baseurl + 'frontend/frontend'}));
 
-	html = AnyBalance.requestPost(baseurl + 'frontend/frontend', {
-		'RQ_TYPE':'WORK',
-		'SCREEN_ID':'MAIN',
-		'MENU_ID':'MENU',
-		'ITEM_ID':'MENU_CLICK',
-		SID:getSID(html),
-		'Step_ID':'1',
-		'CP_MENU_ITEM_ID':'WB_PRODUCTS_ALL.ACCOUNTS',
-	}, addHeaders({Referer: baseurl + 'frontend/frontend'}));
+	// html = AnyBalance.requestPost(baseurl + 'frontend/frontend', {
+		// 'RQ_TYPE':'WORK',
+		// 'SCREEN_ID':'MAIN',
+		// 'MENU_ID':'MENU',
+		// 'ITEM_ID':'MENU_CLICK',
+		// SID:getSID(html),
+		// 'Step_ID':'1',
+		// 'CP_MENU_ITEM_ID':'WB_PRODUCTS_ALL.ACCOUNTS',
+	// }, addHeaders({Referer: baseurl + 'frontend/frontend'}));
 
-	html = AnyBalance.requestPost(baseurl + 'frontend/frontend', {
-		'RQ_TYPE':'WORK',
-		'SCREEN_ID':'MAIN',
-		'MENU_ID':'MENU',
-		'ITEM_ID':'MENU_CLICK',
-		SID:getSID(html),
-		'Step_ID':'2',
-		'CP_MENU_ITEM_ID':'ACCOUNTS.ACC_LIST',
-	}, addHeaders({Referer: baseurl + 'frontend/frontend'}));
+	// html = AnyBalance.requestPost(baseurl + 'frontend/frontend', {
+		// 'RQ_TYPE':'WORK',
+		// 'SCREEN_ID':'MAIN',
+		// 'MENU_ID':'MENU',
+		// 'ITEM_ID':'MENU_CLICK',
+		// SID:getSID(html),
+		// 'Step_ID':'2',
+		// 'CP_MENU_ITEM_ID':'ACCOUNTS.ACC_LIST',
+	// }, addHeaders({Referer: baseurl + 'frontend/frontend'}));
 
 	getParam(html, result, 'userName', /ibec_header_right">\s*<b>([\s\S]*?)<\//i, replaceTagsAndSpaces);
 	var accnum = prefs.lastdigits || '\\S{3}';
@@ -143,6 +157,7 @@ function fetchAcc(html, baseurl) {
 	/*#####
 	## Fetch all trs by groups and loop throught them to find needed account
 	######*/
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 	var regexHtml = new RegExp('(<tr class=\"\\s*owwb-cs-slide-list[\\s\\S]*?</tr>)','gi');
 	var regexTr = new RegExp('KZ\\S{15}'+ accnum,'i');
 
@@ -157,7 +172,12 @@ function fetchAcc(html, baseurl) {
         	break;
         }
     }
-
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/**
+	Все что выше можно было написать одной строкой.
+	var matchTr = getParam(html, null, null, new RegExp('...' + ( prefs.lastdigits || '') + '...', 'i'), replaceTagsAndSpaces);
+	*/
+	
 	if(!root){
 		throw new AnyBalance.Error('Не удалось найти ' + (prefs.lastdigits ? 'карту с последними цифрами ' + prefs.lastdigits : 'ни одной карты!'));
 	}

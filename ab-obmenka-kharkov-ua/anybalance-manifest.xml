@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-obmenka-kharkov-ua</id>
+	<name>Obmenka.kharkov.ua</name>
+	<description>
+	Обмен валют на Розы Люксембург в Харькове. Актуальный курс ЧЕРНОГО рынка валюты.
+	</description>
+	<author>Alexander Kotelevets &lt;kotelevets@mail.ua&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<js>main.js</js>
+		<js>library.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+	
+	    <counter id="USDpok" name="Доллар покупка" />
+        <counter id="USDpro" name="Доллар продажа" />
+        <counter id="EURpok" name="Евро покупка" />
+        <counter id="EURpro" name="Евро продажа" />
+        <counter id="RUBpok" name="Рубль покупка" />
+        <counter id="RUBpro" name="Рубль продажа" />
+
+	</counters>
+	<keywords>Курс валют, доллар, евро, рубль, гривна</keywords>
+	<type>exchange</type>
+	<country>ua</country>
+</provider>

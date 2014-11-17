@@ -1,32 +1,27 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.1" version="2">ab-bonus-formulakino</id>
-  <name>Формула Кино</name>
-  <description>
-    Получает информацию о бонусах на бонусной карте сети кинотеатров Формула Кино.
-  </description>
-  <author>iReset &lt;ireset.ag@gmail.com&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>api:jquery.min.js</js>
-    <js>main.js</js>
-    <js>common_functions.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="bonus" name="Текущий бонус" units="%"/>
-    <counter id="endDate" name="Дата окончания регистрации" type="text"/>
-    <counter id="customer" name="Владелец" type="text"/>
-  </counters>
-  <keywords>
-    формула кино, бонус, кинотеатр
-  </keywords>
-  <type>
-    bonus
-  </type>
-  <country>
-    ru
-  </country>
+	<api flags="no_browser"/>
+	<id major_version="1.1" version="3">ab-bonus-formulakino</id>
+	<name>Формула Кино</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о бонусах на бонусной карте сети кинотеатров Формула Кино <a href=""></a></p>
+	]]></description>
+	<author>iReset &lt;ireset.ag@gmail.com&gt;</author>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="bonus" name="Текущий бонус" units=" %"/>
+		<counter id="endDate" name="Дата окончания регистрации" type="text"/>
+		<counter id="customer" name="Владелец" type="text"/>
+	</counters>
+	<keywords>формула кино, бонус, кинотеатр</keywords>
+	<type>bonus</type>
+	<country>ru</country>
 </provider>

@@ -13,7 +13,7 @@ Function createInput(prompt,title,timeout)
 	Set objStream = CreateObject("ADODB.Stream")
 	objStream.CharSet = "utf-8"
 	objStream.Open
-	objStream.LoadFromFile("wnd.html")
+	objStream.LoadFromFile("..\\extra\\development\\tools\\wnd.html")
 	content = objStream.ReadText()
 	
     'Создаём нужное нам окошко (без скролов, без меню и т.п)

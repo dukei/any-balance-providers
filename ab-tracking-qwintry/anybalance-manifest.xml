@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-tracking-qwintry</id>
+	<id version="2">ab-tracking-qwintry</id>
 	<api flags="no_browser"/>
 	<name>Qwintry</name>
 	<description html="true"><![CDATA[
@@ -20,7 +20,7 @@
 		<counter id="status" name="Status" type="text"/>
 		<counter id="message" name="Message" type="text"/>
 	</counters>
-	<keywords></keywords>
+	<keywords>Бандеролька</keywords>
 	<type>tracking</type>
 	<country></country>
 </provider>

@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="6">ab-money-sbsibank</id>
+	<id version="7">ab-money-sbsibank</id>
 	<api flags="no_browser|captcha"/>
 	<name>Система Банковского Самообслуживания (Беларусь)</name>
 	<description html="true"><![CDATA[

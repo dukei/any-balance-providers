@@ -138,8 +138,13 @@ function main() {
 	getParam(cardCurrent, result, '__tariff');
 	getParam(cardCurrent, result, 'cardnum');
 	
-	getParam(html, result, 'balance', /Доступный остаток средств на карте([\s\S]*?<\/tr>){2}/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, ['currency', 'balance'], /Доступный остаток средств на карте([\s\S]*?<\/tr>){2}/i, replaceTagsAndSpaces, parseCurrency);
+	var clearBalances = getParam(html, null, null, null, replaceTagsAndSpaces, html_entity_decode);
+	AnyBalance.trace(clearBalances);
+	
+	var balanceRegExp = /Доступный остаток средств на карте([\s\d.,-]+BYR)/i;
+	
+	getParam(clearBalances, result, 'balance', balanceRegExp, replaceTagsAndSpaces, parseBalance);
+	getParam(clearBalances, result, ['currency', 'balance'], balanceRegExp, replaceTagsAndSpaces, parseCurrency);
 	
 	AnyBalance.setResult(result);
 }

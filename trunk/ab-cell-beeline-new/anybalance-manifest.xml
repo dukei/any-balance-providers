@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="99">ab-cell-beeline-new</id>
+	<id version="100">ab-cell-beeline-new</id>
 	<name>Билайн (новый кабинет)</name>
 	<api flags="no_browser" min_level="5"/>
 	<description html="true"><![CDATA[
@@ -43,7 +43,7 @@
 		<counter id="balance" name="Баланс" units=" {@currency}"/>
 		<counter id="prebal" name="Предварительная сумма по договору" units=" {@currency}"/>
 		<counter id="overpay" name="Переплата" units=" {@currency}"/>
-		<counter id="currency" name="Валюта" type="text"/>
+		<!-- <counter id="currency" name="Валюта" type="text"/> -->
 		<counter id="sms_left" name="Остаток SMS" units=" sms"/>
 		<counter id="mms_left" name="Остаток MMS" units=" mms"/>
 		<counter id="rub_bonus" name="Рублей БОНУС" units=" руб"/>

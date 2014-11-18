@@ -224,6 +224,8 @@ function isMultinumbersCabinet(html) {
 }
 
 function main() {
+	AnyBalance.setDefaultCharset('utf-8');
+	
 	var prefs = AnyBalance.getPreferences();
 	
 	checkEmpty(prefs.login, 'Введите логин!');
@@ -233,8 +235,15 @@ function main() {
 	
 	if(prefs.country == 'kz')
 		AnyBalance.setCookie('my.beeline.kz', 'ui.language.current', 'ru_RU');
+	else {
+		// Если задан номер телефона то идем через морду, приложение не поддерживает несколько номеров на аккаунте
+		// Пока закоментируем, не все отлажено
+		// if(!prefs.phone) {
+			// proceedWithMobileAppAPI(baseurl, prefs);
+			// return;
+		// }
+	}
 	
-	AnyBalance.setDefaultCharset('utf-8');
 	
 	try {
 		var html = AnyBalance.requestGet(baseurl + 'login.html', g_headers);
@@ -592,12 +601,21 @@ function fetchPost(baseurl, html) {
 	getParam(html, result, ['phone', 'traffic_used'], /<h1[^>]+class="phone-number"[^>]*>([\s\S]*?)<\/h1>/i, replaceTagsAndSpaces, html_entity_decode);
 	
 	if (isAvailableBonuses()) {
-		xhtml = getBonusesBlock(baseurl + 'c/post/index.html', html, 'loadingBonusesAndServicesDetails');
-		xhtml += getBonusesBlock(baseurl + 'c/post/index.html', [xhtml, html], 'bonusesloaderDetails');
-		// Корпоративная постоплата
-		xhtml += getBonusesBlock(baseurl + 'c/post/index.html', html, 'subscriberDetailsForm');
-		// Еще какая-то херь(
-		xhtml += getBonusesBlock(baseurl + 'c/post/index.html', html, 'bonuses');
+		AnyBalance.trace('Запросим бонусы...');
+		// Вот геморойщики!!
+		xhtml = getBlock(baseurl + 'c/post/index.html', html, 'loadingBonusesAndServicesDetails');
+		// Теперь только бонусы станут видны
+		xhtml = getBlock(baseurl + 'c/post/index.html', [xhtml || html, html], 'bonusesloaderDetails');
+		// Надо проверить, получили ли мы бонусы
+		var bonuses = getFoundBonuses(xhtml);
+		if(bonuses.length === 0) {
+			// И если не получили - пробуем другие варианты
+		}
+		
+		// // Корпоративная постоплата
+		// xhtml += getBonusesBlock(baseurl + 'c/post/index.html', html, 'subscriberDetailsForm');
+		// // Еще какая-то херь(
+		// xhtml += getBonusesBlock(baseurl + 'c/post/index.html', html, 'bonuses');
 		
 		getBonuses(html + xhtml, result);
 	}
@@ -783,8 +801,13 @@ function isAvailableBonuses() {
 		'traffic_used', 'traffic_total', 'min_left_1', 'min_left_2', 'rub_bonus2_till', 'rub_bonus2', 'min_local_till');
 }
 
-function getBonuses(xhtml, result) {
+function getFoundBonuses(xhtml) {
 	var bonuses = sumParam(xhtml, null, null, /<div[^>]+class="item(?:[\s\S](?!$|<div[^>]+class="item))*[\s\S]/ig);
+	return bonuses;
+}
+
+function getBonuses(xhtml, result) {
+	var bonuses = getFoundBonuses(xhtml);
 	
 	AnyBalance.trace("Found " + bonuses.length + ' aggregated bonuses');
 	
@@ -809,7 +832,7 @@ function getBonuses(xhtml, result) {
 			if (/Internet|Интернет/i.test(name)) {
 				// Для опции Хайвей все отличается..
 				// В билайне опечатались, первая буква иногда из русского алфавита, иногда из английского :)
-				if (/(?:x|х)айвей|Интернет-трафик(?:а)?(?:\sна полной скорости)? по (?:услуге|тарифу)|Мобильного интернета|Мобильный интернет/i.test(name)) {
+				if (/(?:x|х)айвей|Интернет-трафик(?:а)?(?:\sна полной скорости)? по (?:услуге|тарифу)|Мобильного интернета|Мобильный интернет|Интернет трафик/i.test(name)) {
 					AnyBalance.trace('Пробуем разобрать новый трафик...');
 					AnyBalance.trace('services[i] = ' + services[i]);
 					AnyBalance.trace('values = ' + values);
@@ -940,3 +963,132 @@ function capitalFirstLenttersAndDecode(str) {
 	}
 	return wordCapital.replace(/^\s+|\s+$/g, '');
 }
+
+/** API Мобильного приложения */
+function proceedWithMobileAppAPI(baseurl, prefs) {
+	baseurl +=  'api/1.0/'
+	var encodedLogin = encodeURIComponent(prefs.login);
+	var encodedPassword = encodeURIComponent(prefs.password);
+	
+	var json = callAPIProc(baseurl + 'auth?login=' + encodedLogin + '&password=' + encodedPassword);
+	
+	AnyBalance.setCookie('my.beeline.ru', 'token', json.token);
+	
+	json = callAPIProc(baseurl + 'info/payType?ctn=' + encodedLogin);
+	
+	var payType = json.payType;
+	
+	json = callAPIProc(baseurl + 'info/pricePlan?ctn=' + encodedLogin);
+	
+	var result = {success: true};
+	
+	getParam(json.pricePlanInfo.entityName, result, '__tariff', null, replaceTagsAndSpaces, html_entity_decode);
+	
+	// Предоплата
+	if(payType == 'PREPAID') {
+		json = callAPIProc(baseurl + 'info/prepaidBalance?ctn=' + encodedLogin);
+		
+		getParam(json.balance + '', result, 'balance', null, replaceTagsAndSpaces, apiParseBalanceRound);
+		getParam(g_api_currencys[json.currency], result, ['currency', 'balance'], null, replaceTagsAndSpaces);
+	} else if(payType == 'POSTPAID') {
+		
+		json = callAPIProc(baseurl + 'info/postpaidBalance?ctn=' + encodedLogin);
+		
+		getParam(json.balance + '', result, 'balance', null, replaceTagsAndSpaces, apiParseBalanceRound);
+		getParam(g_api_currencys[json.currency], result, ['currency', 'balance'], null, replaceTagsAndSpaces);	
+		
+	} else {
+		throw new AnyBalance.Error('Неизвестный тип кабинета: ' + payType);
+	}
+	
+	if(isAvailable('fio')) {
+		json = callAPIProc(baseurl + 'sso/contactData?login=' + encodedLogin);
+		
+		if((isset(json.lastName) && /\W+/i.test(json.lastName)) && isset(json.firstName)) {
+			
+			getParam(json.lastName + ' ' + json.firstName, result, 'fio', null, replaceTagsAndSpaces);
+		} else
+			AnyBalance.trace('Фио не указано в настройках...');
+	}
+	
+	if(isAvailable('phone')) {
+		getParam(prefs.login, result, 'phone', /^\d{10}$/, [/(\d{3})(\d{3})(\d{2})(\d{2})/, '+7 $1 $2 $3 $4']);
+	}
+	
+	// Бонусы
+	if(isAvailableBonuses()) {
+		try {
+			json = callAPIProc(baseurl + 'info/accumulators?ctn=' + encodedLogin);
+	
+			for(var z = 0; z < json.accumulators.length; z++) {
+				var curr = json.accumulators[z];
+				
+				// Минуты
+				if(curr.unit == 'SECONDS') {
+					if(/на номера других операторов Вашего региона/i.test(curr.accName)) {
+						sumParam(curr.rest + ' ' + curr.unit, result, 'min_local', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
+					} else {
+						sumParam(curr.rest + ' ' + curr.unit, result, 'min_bi', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
+					}
+				} else if(curr.unit == 'SMS') {
+					sumParam(curr.rest + ' ' + curr.unit, result, 'sms_left', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+				} else if(curr.unit == 'KBYTE') {
+					
+					sumParam(curr.rest + ' ' + curr.unit, result, ['traffic_left', 'traffic_used'], null, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
+					sumParam(curr.size + ' ' + curr.unit, result, ['traffic_total', 'traffic_used'], null, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
+					
+					if(isset(result.traffic_total) && isset(result.traffic_left)) {
+						sumParam(result.traffic_total - result.traffic_left, result, 'traffic_used', null, null, null, aggregate_sum);
+					}
+				}
+			}
+			
+			if(payType == 'PREPAID') {
+				json = callAPIProc(baseurl + 'info/prepaidAddBalance?ctn=' + encodedLogin);
+				
+				for(var i = 0; i < json.balanceNLP.length; i++) {
+					var curr = json.balanceNLP[i];
+					
+					if(/bonusopros/i.test(curr.name)) {
+						getParam(curr.value + '', result, 'rub_opros', null, replaceTagsAndSpaces, apiParseBalanceRound);
+					}
+				}
+				for(var i = 0; i < json.balanceMMS.length; i++) {
+					var curr = json.balanceMMS[i];
+					
+					if(/mms/i.test(curr.name)) {
+						getParam(curr.value + '', result, 'mms_left', null, replaceTagsAndSpaces, parseBalance);
+					}
+				}
+			}
+		} catch(e) {
+			AnyBalance.trace('Ошибка получения бонусов: ' + e.message);
+		}
+	}
+	
+	AnyBalance.setResult(result);
+}
+
+function callAPIProc(url) {
+	var html = AnyBalance.requestGet(url, g_headers);
+	var json = getJson(html);
+	if(json.meta.status != 'OK')
+		throw new AnyBalance.Error('Ошибка вызова API! ' + (json.meta.message || '')) ;
+	
+	return json;
+}
+
+var g_api_currencys = {
+	RUR : 'р',
+	undefined: ''
+}
+
+/** если не найдено число вернет null */
+function apiParseBalanceRound(val) {
+	var balance = parseBalance(val + '');
+	if(!isset(balance))
+		return null;
+	
+	return balance.toFixed(2);
+}
+

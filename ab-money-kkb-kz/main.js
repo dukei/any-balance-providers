@@ -32,13 +32,12 @@ function main() {
         isKeyBoard: 'false'
 	}, addHeaders({Referer: baseurl}));
 	
-    // html = AnyBalance.requestGet(baseurl + 'main.htm', g_headers);
     html = AnyBalance.requestGet(baseurl + 'finance/accounts/allaccounts.htm', g_headers);
     
 	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, null, null, /class="error"[^>]*>[\s\S]*?([\s\S]*?)<\/td/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+			throw new AnyBalance.Error(error, null, /Введите корректный Идентификатор|Вы ввели неверный пароль/i.test(error));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
@@ -53,16 +52,41 @@ function main() {
 		}
 	}
 	
-	var tr = getParam(html, null, null, new RegExp('title="[^"]*Идентификационный[^>]*>[^<]+' + numPart + '(?:[^>]*>){14,20}\\s*</tr>', 'i'));
-	checkEmpty(tr, 'Не удалось найти ' + (prefs.num ? 'продукт с последними цифрами ' + prefs.num : 'ни одного банковского продукта!'), true);
+	if (prefs.type == 'card') 
+		fetchCard(baseurl, html, result, numPart);
+	else if (prefs.type == 'acc') 
+		fetchAccount(baseurl, html, result, numPart);
+    else 
+        fetchCard(baseurl, html, result, numPart);        
+    
+    function fetchCard(baseurl, html, result, numPart){
+    
+        var table = getParam(html, null, null, /Платежные карты[\s\S]*?(<table[\s\S]*?Текущие счета)/ig);
+        
+        getParam(table, result, 'account', new RegExp('(KZ[0-9\\sA-Z]*?' + numPart + ')</', 'i'), replaceTagsAndSpaces, html_entity_decode);
+        checkEmpty(result.account, 'Не удалось найти ' + (prefs.num ? 'продукт с последними цифрами ' + prefs.num : 'ни одного банковского продукта!'), true);
+        AnyBalance.trace(table); 
 
-	getParam(tr, result, 'balance', / /i, replaceTagsAndSpaces, parseBalance);
-	getParam(tr, result, ['currency', 'balance'], /Текущий баланс:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseCurrency);
-	getParam(tr, result, 'fio', /Имя абонента:(?:[\s\S]*?<b[^>]*>){1}([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(tr, result, '__tariff', /Тарифный план:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(tr, result, 'phone', /Номер:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(tr, result, 'deadline', /Действителен до:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseDate);
-	getParam(tr, result, 'status', /Статус:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
-	
+        getParam(table, result, 'balance', new RegExp('title="[^"]*Идентификационный[^>]*>[^<]+' + numPart + '[\\s\\S]*?class="tgtr"[\\s\\S]*?>([\\s\\S]*?)</td', 'i'), replaceTagsAndSpaces, parseBalance);
+        getParam(table, result, ['currency', 'balance'], new RegExp('title="[^"]*Идентификационный[^>]*>[^<]+' + numPart + '[\\s\\S]*?class="tgtr"[\\s\\S]*?>([\\s\\S]*?)</td', 'i'), replaceTagsAndSpaces, parseCurrency);
+        getParam(table, result, 'available', new RegExp('title="[^"]*Идентификационный[^>]*>[^<]+' + numPart + '[\\s\\S]*?class="tgtr"(?:[\\s\\S]*?>){3}([\\s\\S]*?)</td', 'i'), replaceTagsAndSpaces, parseBalance);
+        getParam(table, result, 'blocked', new RegExp('title="[^"]*Идентификационный[^>]*>[^<]+' + numPart + '[\\s\\S]*?class="tgtr"(?:[\\s\\S]*?>){5}([\\s\\S]*?)</td', 'i'), replaceTagsAndSpaces, parseBalance);
+        getParam(table, result, 'repayment', new RegExp('title="[^"]*Идентификационный[^>]*>[^<]+' + numPart + '[\\s\\S]*?class="tgtr"(?:[\\s\\S]*?>){11}([\\s\\S]*?)</td', 'i'), replaceTagsAndSpaces, parseBalance);
+    }
+    
+    function fetchAccount(baseurl, html, result, numPart){
+        
+        var table = getParam(html, null, null, /Текущие счета[\s\S]*?(<table[\s\S]*?<\/iframe)/ig);
+        
+        getParam(table, result, 'account', new RegExp('(KZ[0-9\\sA-Z]*?' + numPart + ')</', 'i'), replaceTagsAndSpaces, html_entity_decode);
+        checkEmpty(result.account, 'Не удалось найти ' + (prefs.num ? 'продукт с последними цифрами ' + prefs.num : 'ни одного банковского продукта!'), true);
+        AnyBalance.trace(table);
+
+        getParam(table, result, 'balance', new RegExp('title="[^"]*Идентификационный[^>]*>[^<]+' + numPart + '[\\s\\S]*?class="tgtr"[\\s\\S]*?>([\\s\\S]*?)</td', 'i'), replaceTagsAndSpaces, parseBalance);
+        getParam(table, result, ['currency', 'balance'], new RegExp('title="[^"]*Идентификационный[^>]*>[^<]+' + numPart + '[\\s\\S]*?class="tgtr"[\\s\\S]*?>([\\s\\S]*?)</td', 'i'), replaceTagsAndSpaces, parseCurrency);
+        getParam(table, result, 'available', new RegExp('title="[^"]*Идентификационный[^>]*>[^<]+' + numPart + '[\\s\\S]*?class="tgtr"(?:[\\s\\S]*?>){3}([\\s\\S]*?)</td', 'i'), replaceTagsAndSpaces, parseBalance);
+        getParam(table, result, 'blocked', new RegExp('title="[^"]*Идентификационный[^>]*>[^<]+' + numPart + '[\\s\\S]*?class="tgtr"(?:[\\s\\S]*?>){5}([\\s\\S]*?)</td', 'i'), replaceTagsAndSpaces, parseBalance);
+    }
+    
 	AnyBalance.setResult(result);
 }

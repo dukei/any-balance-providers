@@ -11,6 +11,9 @@ var g_headers = {
 };
 
 function main() {
+	throw new AnyBalance.Error('На сайте ввели защиту от автоматических систем, провайдер больше не работает.');
+	
+	
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'https://gw.api.alibaba.com/';
 	AnyBalance.setDefaultCharset('utf-8');

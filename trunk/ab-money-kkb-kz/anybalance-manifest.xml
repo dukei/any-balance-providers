@@ -1,22 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1"></id>
+	<id version="1">ab-money-kkb-kz</id>
 	<api flags="no_browser"/>
-	<name>TypicalProvider</name>
+	<name>Казкоммерцбанк</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе провайдера ИмяПровайдера <a href=""></a></p>
-	<p>Информация берется из личного кабинета <a href=""></a></p>
-
-	<b>Особенности:</b>
-	<ul>
-		<li></li>
-		<li></li>
-		<li></li>
-	</ul>
+	<p>Предоставляет информацию о текущем остатке и других параметрах счетов и карт для клиентов банка Казкоммерцбанк <a href="http://www.kkb.kz/">http://www.kkb.kz/</a></p>
+	<p>Информация берется из Интернет-банка <a href="https://www.homebank.kz/">https://www.homebank.kz/</a></p>
 	]]></description>
-	<instruction html="true"><![CDATA[
-	<p>Если у вас нет доступа в Личный кабинет, получите его на странице <a href=""></a></p>
-	]]></instruction>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
@@ -26,13 +16,13 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" {@currency}"/>
-		<counter id="fio" name="ФИО" type="text"/>
-		<counter id="status" name="Статус" type="text"/>
-		<counter id="phone" name="Телефон" type="text"/>
-		<counter id="deadline" name="Дата отключения" type="time" format="dd/MM/yyyy"/>
+		<counter id="balance" name="Остаток" units=" {@currency}"/>
+		<counter id="available" name="Доступно" units=" {@currency}"/>
+		<counter id="blocked" name="Блок." units=" {@currency}"/>
+		<counter id="repayment" name="К погашению" units=" {@currency}"/>
+		<counter id="account" name="Номер счета/карты" type="text"/>
 	</counters>
-	<keywords></keywords>
-	<type></type>
-	<country>ru</country>
+	<keywords>КАЗКОМ</keywords>
+	<type>money</type>
+	<country>kz</country>
 </provider>

@@ -17,9 +17,9 @@ function main() {
 	AnyBalance.setOptions({forceCharset: 'utf-8'});
 	
 	var baseurl = "https://card.welcash.kiev.ua/";
-	var html = AnyBalance.requestGet(baseurl + 'ua/auth', g_headers);
+	var html = AnyBalance.requestGet(baseurl + 'auth', g_headers);
 	
-	html = AnyBalance.requestPost(baseurl + 'ua/auth', {
+	html = AnyBalance.requestPost(baseurl + 'auth', {
 		card: prefs.login,
 		password: prefs.password
 	}, addHeaders({Referer: baseurl + 'ps/scc/login.php?SECONDARY_LOGIN=1'}));

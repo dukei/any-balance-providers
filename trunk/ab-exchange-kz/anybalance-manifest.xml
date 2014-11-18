@@ -1,28 +1,26 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0"  version="4">ab-exchange-kz</id>
-  <name>Курсы валют Нацбанка РК</name>
-  <description>
-   Текущие курсы валют, установленные Национальным Банком Республики Казахстан. Содержит курс доллара, евро, российского рубля.
-  </description>
-  <author>v_stikh &lt;stikhilyas@gmail.com&gt;</author>
-  <files>
-   <js>api:jquery.min.js</js>
-    <icon>icon.png</icon>
-    <js>main.js</js>
-  </files>
-  <counters>
-    <counter id="USD" name="Курс доллара" prefix="$ "/>
-    <counter id="EUR" name="Курс евро" prefix="€ "/>
-    <counter id="RUB" name="Курс рубля" prefix="R "/>
-  </counters>
-  <keywords>
-   Курс валют, национальный банк, Казахстан, доллар, тенге, рубль.
-  </keywords>
-  <type>
-    exchange
-  </type>
-  <country>
-    kz
-  </country>
+	<api flags="no_browser"/>
+	<id major_version="2.0"  version="5">ab-exchange-kz</id>
+	<name>Курсы валют Нацбанка РК</name>
+	<description html="true"><![CDATA[
+	<p>Текущие курсы валют, установленные Национальным Банком Республики Казахстан. Содержит курс доллара, евро, российского рубля.</p>
+	]]></description>
+	<author>v_stikh &lt;stikhilyas@gmail.com&gt;</author>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="USD" name="Курс доллара" prefix="$ "/>
+		<counter id="EUR" name="Курс евро" prefix="€ "/>
+		<counter id="RUB" name="Курс рубля" prefix="R "/>
+	</counters>
+	<keywords>Курс валют, национальный банк, Казахстан, доллар, тенге, рубль.</keywords>
+	<type>exchange</type>
+	<country>kz</country>
 </provider>

@@ -1,10 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-shop-aliexpress</id>
+	<id version="2">ab-shop-aliexpress</id>
 	<api flags="no_browser"/>
 	<name>AliExpress</name>
 	<description html="true"><![CDATA[
 	<p>Obtains information from AliExpress personal account at http://us.ae.aliexpress.com/</p>
+	
+	<p>На сайте ввели защиту от автоматических систем, провайдер больше не работает.</p>
 	]]></description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>

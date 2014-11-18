@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-service-ekburg-school</id>
+	<api flags="no_browser"/>
+	<name>Школьное питание</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера "Школьное питание"</p>
+	<p>Информация берется из личного кабинета <a href="http://www.ekburg.ru/school/">http://www.ekburg.ru/school/</a></p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="__tariff" name="Лицевой счёт" type="text"/>
+		<counter id="debt" name="Допустимая задолженность" units=" р"/>
+		<counter id="limit" name="Буфет, лимит на день" units=" р"/>
+		<counter id="pupil" name="Ученик" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>service</type>
+	<country>ru</country>
+</provider>

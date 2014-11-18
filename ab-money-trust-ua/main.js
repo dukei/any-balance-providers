@@ -38,7 +38,7 @@ function main() {
 		'action:Login': 'Войти'
 	}, addHeaders({Referer: baseurl + 'Login.do'}));
 	
-	if (!/logout/i.test(html)) {
+	if (!/exit\.png/i.test(html)) {
 		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));

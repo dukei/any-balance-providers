@@ -78,7 +78,7 @@ function main(){
 	// Баланс для постоплаты
 	if(!isset(result.balance) || result.balance === 0)
 		getParam(html, result, 'balance', /Задолженность на линии(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'balance_bonus', /Бонусный баланс:([^<]+)\s*<\/li>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance_bonus', /Бонусный (?:счет|баланс:)([^<]+)\s*<\/li>/i, replaceTagsAndSpaces, parseBalance);
 	// Оплаченные обязательства	
 	getParam(html, result, 'balance_corent', /Оплаченные обязательства(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 	// Карманы

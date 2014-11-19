@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="3" date="2014-11-19">
+	- Улучшена обработка ошибок.
+	</change>
 	<change version="2" date="2014-10-30">
 	- Добавлена поддержка входа не из сети InterZet.
 	</change>

@@ -23,7 +23,7 @@ function main(){
     }, addHeaders({Referer: baseurl + 'login'})); 
 
 	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /color="red">([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, null, null, /font color=["']red["']>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
 		

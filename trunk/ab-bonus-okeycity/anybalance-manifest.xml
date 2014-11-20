@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="3">ab-bonus-okeycity</id>
+	<id version="4">ab-bonus-okeycity</id>
 	<name>ОКейСити</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию по бонусным картам ОКейСити</p>

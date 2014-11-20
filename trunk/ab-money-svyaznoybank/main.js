@@ -139,7 +139,7 @@ function fetchCard(baseurl, html){
     	if (AnyBalance.isAvailable('cardballs' + suffix)) {
     		var html = AnyBalance.requestPost(baseurl + p.BalanceUrl, '', g_headers);
     		var json = getJson(html);
-    		getParam(json.balls, result, 'cardballs' + suffix, null, replaceTagsAndSpaces, parseBalance);
+    		getParam('' + json.balls, result, 'cardballs' + suffix, null, replaceTagsAndSpaces, parseBalance);
     	}
 
         if ((AnyBalance.isAvailable('balance') && !isset(result.balance)) || (AnyBalance.isAvailable('accamount') && !isset(result.balance)) || AnyBalance.isAvailable('cardname' + suffix)) {
@@ -148,7 +148,7 @@ function fetchCard(baseurl, html){
         		var json = getJson(html);
         		// Баланс
 				if (!isset(result.balance)) 
-					getParam(json.balance, result, 'balance', null, replaceTagsAndSpaces, parseBalance);
+					getParam('' + json.balance, result, 'balance', null, replaceTagsAndSpaces, parseBalance);
 				
 				// Собственные средства
         		if (!isset(result.accbalance)) 
@@ -223,7 +223,7 @@ function fetchDep(baseurl, html){
 		var json = getJson(html);
     	
 		getParam(json.html, result, 'accnum', /Номер счета:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    	getParam(json.balance, result, 'balance', null, null, parseBalance);
+    	getParam('' + json.balance, result, 'balance', null, null, parseBalance);
     }
 
     AnyBalance.setResult(result);

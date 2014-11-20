@@ -41,7 +41,11 @@ function main(){
         login:prefs.login,
         passwd:prefs.password
     }, g_headers);
-
+	
+	if(/Личный кабинет временно недоступен/i.test(html)) {
+		throw new AnyBalance.Error('Личный кабинет временно недоступен. Ведутся технические работы, попробуйте обновить баланс позже.');
+	}
+	
     var json = getJson(html);
     if(json.isError)
         throw new AnyBalance.Error(json.errorMsg, null, /Вы ввели несуществующую пару логин-пароль/.test(json.errorMsg));
@@ -123,8 +127,9 @@ function main(){
            (i < 4 && AnyBalance.isAvailable('balance' + suffix, 'bonus' + suffix, 'sms' + suffix, 'mms' + suffix, 'min' + suffix, 'gprs' + suffix, 'status' + suffix, 'licschet' + suffix, 'name' + suffix, 'phone' + suffix))){
 
             AnyBalance.trace('Получаем данные для л/с: ' + acc.number);
-            html = AnyBalance.requestPost(baseurl + 'serverLogic/getAccountInfoOpmz', {account: acc.id}, g_headers);
+            html = AnyBalance.requestPost(baseurl + 'serverLogic/accountGetExtData', {account: acc.id}, g_headers);
             json = getJson(html);
+			json = json.account;
 			
             acc.__detailedInfo = json;
 
@@ -137,7 +142,11 @@ function main(){
                 var statuses = [], names = [], bonuses = [], phones = [], sms = [], mms = [], gprs = []; 
                 for(var j=0; json.services && j<json.services.length; ++j){
                     var service = json.services[j];
-                    tariffs.push((service.typeString || service.serviceType) + (service.tariff ? ': ' + service.tariff.tarName : ''));
+                    //tariffs.push(/*(service.type || service.serviceType) + */(service.tariff ? ': ' + service.tariff.title : ''));
+					
+					if(service.tariff.title)
+						tariffs.push(service.tariff.title);
+					
                     statuses.push(g_ServiceStatus[service.status]);
                     if(service.alias)
                         names.push(service.alias);
@@ -168,7 +177,7 @@ function main(){
                             }
                         }
                     }
-                    if(/INTERNET|TELEPHONY|IPTV|CDMA/.test(service.serviceType || '')  //Судя по шаблону detailed_list, только у этих сервисов есть статистика
+                    if(/INTERNET|TELEPHONY|IPTV|CDMA/.test(service.type || '')  //Судя по шаблону detailed_list, только у этих сервисов есть статистика
                         && AnyBalance.isAvailable('trafIn' + suffix, 'trafOut' + suffix, 'minOutIC' + suffix)){
                         //Междугородная исходящая телефония
                         var dt = new Date();
@@ -268,13 +277,13 @@ function main(){
             var acc = accinfo.cabinet.accounts[i];
             if(!acc.__detailedInfo){
                 AnyBalance.trace('Дополнительно получаем данные для л/с: ' + acc.number);
-                html = AnyBalance.requestPost(baseurl + 'serverLogic/getAccountInfo', {account: acc.id}, g_headers);
+                html = AnyBalance.requestPost(baseurl + 'serverLogic/accountGetExtData', {account: acc.id}, g_headers);
                 json = getJson(html);
 
-                if(json.balance > 0)
-                    totalBalancePlus += json.balance/100;
+                if(json.account.balance > 0)
+                    totalBalancePlus += json.account.balance/100;
                 else
-                    totalBalanceMinus += json.balance/100;
+                    totalBalanceMinus += json.account.balance/100;
             }
 
             if(AnyBalance.isAvailable('totalBalancePlus'))

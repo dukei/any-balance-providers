@@ -21,8 +21,9 @@ function main() {
 	var html = AnyBalance.requestGet(baseurl, g_headers);
 	
 	html = AnyBalance.requestPost(baseurl, {
-		login: prefs.login,
-		password: prefs.password,
+		'bootstrap[password]': prefs.login,
+		'bootstrap[password]': prefs.password,
+		'bootstrap[send]': '<i class="icon-ok"></i>Войти'
 	}, addHeaders({Referer: baseurl}));
 	
 	if (!/logout/i.test(html)) {
@@ -36,9 +37,9 @@ function main() {
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'balance', /Баланс([^>]*>){3}/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'fio', /ФИО([^>]*>){3}/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'id', />ID([^>]*>){3}/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'balance', /Баланс(?:[^>]*>){2}([\s\S]*?)<\/td/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'fio', /<h2>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'id', /Основной лицевой счёт:(?:[^>]*>){2}([\s\S]*?)<\/td/i, replaceTagsAndSpaces, html_entity_decode);
 	
 	AnyBalance.setResult(result);
 }

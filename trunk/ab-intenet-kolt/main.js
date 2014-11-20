@@ -38,7 +38,7 @@ function main() {
 	var result = {success: true};
 	
 	getParam(html, result, 'balance', /Баланс(?:[^>]*>){2}([\s\S]*?)<\/td/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'fio', /<h2>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'fio', /<h2>([^<]+)<a class="btn"/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'id', /Основной лицевой счёт:(?:[^>]*>){2}([\s\S]*?)<\/td/i, replaceTagsAndSpaces, html_entity_decode);
 	
 	AnyBalance.setResult(result);

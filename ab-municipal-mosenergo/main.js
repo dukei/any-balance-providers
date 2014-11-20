@@ -40,8 +40,9 @@ function main(){
     	if (html.length < 5000 && AnyBalance.getLevel() < 5) {
     		throw new AnyBalance.Error("Ваша версия AnyBalance не может получить информацию для этого провайдера. Пожалуйста, установите последнюю версию AnyBalance.");
     	}
-    	var error = getParam(html, null, null, [/<span[^>]+id="login:fTemplateLogin:otLoginError"[^>]*>([\s\S]*?)<\/span>/i, /class="loginError"[^>]*>([\s\S]*?)<\/div>/i], replaceTagsAndSpaces, html_entity_decode);
-    	if (error) throw new AnyBalance.Error(error);
+    	var error = getParam(html, null, null, [/<span[^>]+id="login:fTemplateLogin:otLoginError"[^>]*>([\s\S]*?)<\/span>/i, /class="loginError"[^>]*>([\s\S]*?)<\/div>/i, /class="red[^>]*>([\s\S]*?)<\/td>/i], replaceTagsAndSpaces, html_entity_decode);
+    	if (error) throw new AnyBalance.Error(error, null, /Неверно введен пароль/i.test(error));
+    	
     	// Если ошибку не распознали, запишем ее в лог.
     	AnyBalance.trace(html);
     	throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');

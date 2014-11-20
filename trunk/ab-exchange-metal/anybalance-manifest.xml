@@ -1,17 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="4">ab-exchange-metal</id>
+	<id version="5">ab-exchange-metal</id>
 	<name>Курсы драгоценных металлов ЦБ России</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о текущих курсах драгоценных металлов, установленных Центральным Банком РФ.</p> 
-	<p>Показывает цены на золото, серебро, платину и палладий.</p>
+	<p>Предоставляет информацию о текущих курсах драгоценных металлов, установленных Центральным Банком РФ. Информация берется на самую свежую дату со страницы http://www.cbr.ru/hd_base/?PrtId=metall_base_new</p> 
+	<p>Показывает цены в рублях за грамм на золото, серебро, платину и палладий.</p>
 	]]></description>
 	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<js>library.js</js>
 		<js>main.js</js>
+		<history>history.xml</history>
 	</files>
 	<counters>
 		<counter id="Au" name="Золото" prefix="Au "/>

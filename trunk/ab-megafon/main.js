@@ -38,7 +38,8 @@ filial_info[MEGA_FILIAL_MOSCOW] = {
 	widget: 'https://moscowsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
 //	tray: "https://moscowsg.megafon.ru/TRAY_INFO/TRAY_INFO?LOGIN=%LOGIN%&PASSWORD=%PASSWORD%",
 	internet: "http://user.moscow.megafon.ru/",
-	internetRobot: "https://moscowsg.megafon.ru/MEGAFON_BALANCE/MGFSTF_GET_QOS_PACK_STATUS?MSISDN=%LOGIN%&PASSWORD=%PASSWORD%"
+	internetRobot: "https://moscowsg.megafon.ru/MEGAFON_BALANCE/MGFSTF_GET_QOS_PACK_STATUS?MSISDN=%LOGIN%&PASSWORD=%PASSWORD%",
+	balanceRobot: "https://moscowsg.megafon.ru/MEGAFON_BALANCE/MGFSTF_GET_BALANCE?MSISDN=%LOGIN%&PASSWORD=%PASSWORD%"
 };
 filial_info[MEGA_FILIAL_SIBIR] = {
 	name: 'Сибирский филиал',
@@ -854,7 +855,29 @@ function megafonServiceGuide(filial){
             session = AnyBalance.requestGet('http://moscow.megafon.ru/ext/sg_gate.phtml?MSISDN=CP_' + prefs.login + '&PASS=' + encodeURIComponent(prefs.password) + '&CHANNEL=WWW');
         }else{
 		AnyBalance.trace('Не будем и пытаться заходить в сервис-гид, придется получать данные из виджета');
-		megafonTrayInfo(filial);
+		try{
+			megafonTrayInfo(filial);
+		}catch(e){
+		    if(/неверный ответ сервера/i.test(e.message) && filinfo.balanceRobot){
+		        //Яндекс виджет, скотина, не даёт получить баланс :(
+		        //Тогда баланс получим хотя бы из московского балансера
+		        AnyBalance.trace('Не удалось получить данные из яндекс виджета: ' + e.message);
+		        AnyBalance.trace('Пробуем получить баланс из ещё одного источника...');
+		        var html = AnyBalance.requestGet(filinfo.balanceRobot.replace(/%LOGIN%/i, encodeURIComponent(prefs.login)).replace(/%PASSWORD%/i, encodeURIComponent(prefs.password)));
+		        if(!/<BALANCE>([^<]*)<\/BALANCE>/i.test(html)){
+		            var error = getParam(html, null, null, /<ERROR_MESSAGE>([\s\S]*?)<\/ERROR_MESSAGE>/i, replaceTagsAndSpaces, html_entity_decode);
+		            if(error)
+		                throw new AnyBalance.Error(error, null, /Wrong password/i.test(error));
+		            AnyBalance.trace(html);
+		            throw e;
+		        }
+
+		        var result = {success: true};
+		        getParam(html, result, 'balance', /<BALANCE>([^<]*)<\/BALANCE>/i, replaceTagsAndSpaces, parseBalance);
+		        AnyBalance.setResult(result);
+		        return;
+		    }
+		} 
 /*            //Влад, ну что же ты всё подглядываешь-то??? Впрочем, пользуйся, не жалко :)
             session = AnyBalance.requestGet(baseurl + 'SESSION/GET_SESSION?MSISDN=' + ((prefs.corporate ? 'CP_' : '') + prefs.login) + '&PASS=' + encodeURIComponent(prefs.password) + '&CHANNEL=WWW');
 			var code = AnyBalance.getLastStatusCode();

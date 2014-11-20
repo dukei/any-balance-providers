@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-bonus-foxtrot</id>
+  <id version="2">ab-bonus-foxtrot</id>
   <api flags="no_browser"/>
   <name>Фокстрот</name>
-  <description>
-    Мониторинг накопленной скидки в "Программе комфорта" сети магазинов Фокстрот (Украина)
-  </description>
+  <description> html="true"><![CDATA[
+    <p>Мониторинг накопленной скидки в "Программе комфорта" сети магазинов Фокстрот (Украина).</p>
+    <p>Сайт «Фокстрот»: http://www.foxtrot.com.ua/uk</p>
+    <p>«Программа комфорта»: http://www.my-comfort.com.ua/</p>
+  ]]></description>
+  <instruction>
+    Для получения доступа в личный кабинет, необходимо заполнить анкетные данные при получении карты. Далее вход будет производится по номеру карты и номеру телефона.
+  </instruction>
   <author>Ignatiy Goloviznin &lt;igoloviznin@gmail.com&gt;</author>
   <files>
     <icon>icon.png</icon>

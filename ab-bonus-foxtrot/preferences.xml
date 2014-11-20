@@ -10,14 +10,23 @@
         key="login"
         inputType="number">
     </EditTextPreference>
+    <ListPreference
+        key="prefct"
+        title="Код страны" 
+        summary="|Выберите код страны|{@s}" 
+	entries="380|79"
+	entryValues="380|79"
+        defaultValue="380"
+        dialogTitle="Введите код страны 380 или 79 номера вашего телефона зарегистрированного по карте">
+    </ListPreference>
     <EditTextPreference 
         positiveButtonText="ОК"
-        key="prefph" 
+        key="prefph"
         dialogTitle="Код номера телефона"
         negativeButtonText="Отмена"
         title="Код номер телефона"
         summary="Код номера вашей телефона||{@s}\n"
-        dialogMessage="Введите код «0XX» (3 цифры после +38) номера вашего телефона зарегистрированного по карте"
+        dialogMessage="Введите код «XX» (2 цифры после +380 или +79) номера вашего телефона зарегистрированного по карте"
         inputType="number">
     </EditTextPreference>
     <EditTextPreference 

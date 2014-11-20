@@ -6,38 +6,43 @@ var g_headers = {
 /*	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',*/
 	'Accept-Language': 'ru,en-US;q=0.8,en;q=0.6,uk;q=0.4',
 	'Connection': 'keep-alive',
-	'Origin': 'https://online.oschadnybank.com',
+	'Origin': 'https://online.oschadbank.ua',
 	'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.66 Safari/537.36 OPR/25.0.1614.31 (Edition beta)',
 };
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://online.oschadnybank.com/';
+	var baseurl = 'https://online.oschadbank.ua/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Введіть логін!');
 	checkEmpty(prefs.password, 'Введіть пароль!');
 	
 	var html = AnyBalance.requestGet(baseurl + 'wb/', g_headers);
-AnyBalance.trace(html);
 	
 	var execKey = getParam(html, null, null, /execution=([\s\S]{4})/i);
-AnyBalance.trace(html);
+
   
 	var href = getParam(html, null, null, /id="FORM_FAST_LOGIN"[^>]*action="\/([^"]*)/i);
-AnyBalance.trace(href);
 	
-	var params = createFormParams(html, function(params, str, name, value) {
+	var params = createFormParams(html, function(params, str, name, value) {  
+  		if (name == 'AUTH_METHOD') 
+			return 'FAST_PWA';  
 		if (name == 'Login') 
 			return prefs.login;
 		else if (name == 'password')
 			return prefs.password;
 		else if (name == '_flowExecutionKey')
-			return execKey;
+			return execKey; 
+		else if (name == '_eventId')
+			return 'submitUserId'; 
+    
 		return value;
 	});
-	html = AnyBalance.requestPost(baseurl + href, params, addHeaders({Referer: baseurl + 'frontend/auth/userlogin?execution=' + execKey}));
+	html = AnyBalance.requestPost(baseurl + href, params, addHeaders({Referer: baseurl + 'wb/auth/userlogin?execution=' + execKey}));
 
+AnyBalance.trace(baseurl + 'wb/auth/userlogin?execution=' + execKey);
+                                                                                        
 	if (!/logout/i.test(html)) {
 		var error = getParam(html, null, null, /Смена Пароля(?:[\s\S]*?<[^>]*>){2}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error) 

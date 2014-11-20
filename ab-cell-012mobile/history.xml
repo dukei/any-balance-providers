@@ -9,4 +9,7 @@
 	<change version="3" date="2014-09-23">
 	- Roaming plan credit.
 	</change>
+	<change version="4" date="2014-11-20">
+	- Fix for the recent 012 mobile site change.
+	</change>
 </history>

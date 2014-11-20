@@ -12,7 +12,7 @@ var g_headers =
 // ask for the GUID, this will only work on mobile connection, on the 012 network
 function getGuid()
 {
-	var guidUrl = 'http://192.118.8.173/GeneralSrv/General.svc/Authentication/GetGuid';
+	var guidUrl = 'http://mystg.orange.co.il/GeneralSrv/General.svc/Authentication/GetGuid';
 	var guidRequest = '{"brand":"012Mobile","platform":"WEB"}';
 	var json = getJson(AnyBalance.requestPost(guidUrl,guidRequest,addHeaders(g_headers)));
 	if (typeof json.GetGuidResult=="undefined")
@@ -29,7 +29,7 @@ function getGuid()
 // get the key, required to get the bill data, needs the GUID above
 function getKey(guid)
 {
-	var keyUrl = 'https://192.118.8.173:8443/GeneralSrv/General.svc/AuthenticationSSL/GetKey';
+	var keyUrl = 'https://mystg.orange.co.il/GeneralSrv/General.svc/AuthenticationSSL/GetKey';
 	var keyRequest = '{"guid":"' + guid + '","brand":"012Mobile","platform":"WEB"}';
 	var json = getJson(AnyBalance.requestPost(keyUrl,keyRequest,addHeaders(g_headers)));
 	if ((typeof json.GetKeyResult=="undefined") || (json.GetKeyResult==null))

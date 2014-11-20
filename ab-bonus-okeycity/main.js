@@ -11,6 +11,9 @@ var g_headers = {
 };
 
 function main(){
+	if(AnyBalance.getLevel() < 9) {
+		throw new AnyBalance.Error('Провайдер требует AnyBalance API v9, пожалуйста, дождитесь выхода новой версии приложения!');
+	}
     var prefs = AnyBalance.getPreferences();
     var baseurl = 'https://m.okeycity.ru/';
     AnyBalance.setDefaultCharset('utf-8'); 
@@ -32,9 +35,9 @@ function main(){
     }, addHeaders({Referer: baseurl + 'site/login'})); 
 	
 	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, null, null, /"errorMessage">([\s\S]*?)<\/div/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+			throw new AnyBalance.Error(error, null, /Некорректен логин или пароль/i.test(error));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');

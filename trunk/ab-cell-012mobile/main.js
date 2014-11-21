@@ -26,6 +26,34 @@ function getGuid()
 }
 
 
+// restore the GUID from saved data if available, otherwise try to get from the network 
+function getSavedOrNetworkGuid()
+{
+	// make sure the data save/resore API is supported
+	var canSave = AnyBalance.getLevel()>=9;
+	if (!canSave)
+	{
+		AnyBalance.trace('Unable to save network GUID, AnyBalance version is too old. The provider will still work while on 012mobile netwrok or with manual GUID.');
+		return(getGuid());
+	}
+		
+	// try restoring the GUID from saved data
+	var guid = AnyBalance.getData('guid',null);
+	if (guid!=null)
+	{
+		AnyBalance.trace('Using saved GUID...');
+		return(guid);
+	}
+		
+	// ask the network and save it
+	guid = getGuid();
+	AnyBalance.trace('Saving network GUID (' + guid + ') for future use...');
+	AnyBalance.setData('guid',guid);
+	AnyBalance.saveData();
+	return(guid);
+}
+
+
 // get the key, required to get the bill data, needs the GUID above
 function getKey(guid)
 {
@@ -81,7 +109,7 @@ function main()
 	// or by requesting an SMS authentication (not implemented here)
 	// The GUID is permenent, one can reuse it on any connection later on, though.
 	var manualGuid = (typeof prefs.guid!="undefined") && (prefs.guid.length>0);
-    var guid = manualGuid ? prefs.guid : getGuid();
+	var guid = manualGuid ? prefs.guid : getSavedOrNetworkGuid();
     AnyBalance.trace((manualGuid ? 'Manual ' : '') + 'GUID: ' + guid);
         
 	// get the key, it is required for the rest of the requests

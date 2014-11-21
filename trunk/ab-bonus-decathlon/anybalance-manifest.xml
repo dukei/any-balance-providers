@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="5">ab-bonus-decathlon</id>
+  <id version="6">ab-bonus-decathlon</id>
   <api flags="no_browser"/>
   <name>Бонусная карта Декатлон</name>
   <description>

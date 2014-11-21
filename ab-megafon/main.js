@@ -34,7 +34,8 @@ var filial_info = {
 filial_info[MEGA_FILIAL_MOSCOW] = {
 	name: 'Столичный филиал',
 	func: megafonServiceGuide,
-//  site: "https://moscowsg.megafon.ru/",
+    site: "https://moscowsg.megafon.ru/",
+    lk: "https://lk.megafon.ru/",
 	widget: 'https://moscowsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
 //	tray: "https://moscowsg.megafon.ru/TRAY_INFO/TRAY_INFO?LOGIN=%LOGIN%&PASSWORD=%PASSWORD%",
 	internet: "http://user.moscow.megafon.ru/",
@@ -43,19 +44,19 @@ filial_info[MEGA_FILIAL_MOSCOW] = {
 };
 filial_info[MEGA_FILIAL_SIBIR] = {
 	name: 'Сибирский филиал',
-	site: "https://sibsg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%",
+	tray: "https://sibsg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%",
 	widget: 'https://sibsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
 	func: megafonTrayInfo
 };
 filial_info[MEGA_FILIAL_NW] = {
 	name: 'Северо-западный филиал',
-	site: 'https://szfsg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%',
+	tray: 'https://szfsg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%',
 	widget: 'https://szfsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
 	func: megafonTrayInfo,
 };
 filial_info[MEGA_FILIAL_FAREAST] = {
 	name: 'Дальневосточный филиал',
-	site: 'https://dvsg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%',
+	tray: 'https://dvsg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%',
 	widget: 'https://dvsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
 	func: megafonTrayInfo
 };
@@ -65,23 +66,23 @@ filial_info[MEGA_FILIAL_VOLGA] = {
 	//  func: megafonServiceGuide,
 	func: megafonTrayInfo,
 	widget: 'https://volgasg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
-	site: 'https://volgasg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%'
+	tray: 'https://volgasg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%'
 };
 filial_info[MEGA_FILIAL_KAVKAZ] = {
 	name: 'Кавказский филиал',
-	site: "https://kavkazsg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%",
+	tray: "https://kavkazsg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%",
 	widget: 'https://kavkazsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
 	func: megafonTrayInfo
 };
 filial_info[MEGA_FILIAL_CENTRAL] = {
 	name: 'Центральный филиал',
-	site: 'https://centersg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%',
+	tray: 'https://centersg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%',
 	widget: 'https://centersg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
 	func: megafonTrayInfo
 };
 filial_info[MEGA_FILIAL_URAL] = {
 	name: 'Уральский филиал',
-	site: 'https://uralsg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%',
+	tray: 'https://uralsg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%',
 	widget: 'https://uralsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
 	func: megafonTrayInfo
 };
@@ -264,9 +265,14 @@ function getTrayXmlText(filial, address){
         
     if(/SCC-ROBOT-PASSWORD-INCORRECT/.test(info)){
       AnyBalance.trace("Server returned: " + info);
-      throw new AnyBalance.Error('Вы ввели неправильный пароль.');
+      throw new AnyBalance.Error('Вы ввели неправильный пароль.', null, true);
     }
 
+    if(/SCC-ROBOT-LOGIN-INCORRECT/.test(info)){
+      AnyBalance.trace("Server returned: " + info);
+      throw new AnyBalance.Error('Вы ввели неправильный логин.', null, true);
+    }
+    
     if(/ROBOTS-DENY|SCC-ROBOT-LOGIN-DENY/.test(info)){
       AnyBalance.trace("Server returned: " + info);
       throw new AnyBalance.Error('Доступ автоматическим системам заблокирован.\n\
@@ -322,8 +328,8 @@ function megafonTrayInfo(filial) {
 	var mins_totals_was = {};
 	var result = {success: true};
 	
-	if(filinfo.tray || filinfo.site){ try {
-		var xml = getTrayXmlText(filial, filinfo.tray || filinfo.site), val;
+	if(filinfo.tray){ try {
+		var xml = getTrayXmlText(filial, filinfo.tray), val;
 		
 		getParam(xml, result, '__tariff', /<RATE_PLAN>([\s\S]*?)<\/RATE_PLAN>/i, replaceTagsAndSpaces, html_entity_decode);
 		getParam(xml, result, 'balance', /<BALANCE>([\s\S]*?)<\/BALANCE>/i, replaceTagsAndSpaces, parseBalance);
@@ -424,6 +430,8 @@ function megafonTrayInfo(filial) {
 		AnyBalance.trace('Ищем агрегированные параметры...');
 		read_sum_parameters_text(result, xml);
 	} catch (e) {
+	    if(e.fatal)
+	        throw e;
 		//Не удалось получить инфу из хмл. Но не станем сразу унывать, получим что-нить из виджета
 		AnyBalance.trace('Не удалось получить данные из входа для автоматических систем: ' + e.message);
 		errorInTray = e.message || "Unknown error";
@@ -742,11 +750,11 @@ function read_sum_parameters_text(result, xml){
 }
 
 /** новый ЛК от мегафона */
-function megafonLK(tryOldSG) {
+function megafonLK(filinfo, tryOldSG) {
 	var prefs = AnyBalance.getPreferences();
 	AnyBalance.trace('Пробуем войти в новый ЛК...');
 	
-	var baseurl = 'https://lk.megafon.ru/';
+	var baseurl = filinfo.lk;
 	
 	var html = AnyBalance.requestGet(baseurl + 'login/', g_headers);
 	var token = getParam(html, null, null, /name=CSRF value="([^"]+)/i);
@@ -781,14 +789,15 @@ function megafonLK(tryOldSG) {
 					html = AnyBalance.requestGet(baseurl + 'redirect/sg/index', g_headers);
 					
 					var url = AnyBalance.getLastUrl();
-					AnyBalance.trace('Redirected to ' + url + '\nResult\n\n' + html);
+					AnyBalance.trace('Redirected to ' + url /*+ '\nResult\n\n' + html*/);
 					sessionid = getParam(href + url, null, null, /SESSION_ID=([^&"]+)/i);
 				} catch(e){
+				    AnyBalance.trace('Error: ' + e.message);
 				}
 			}
 			
 			if(sessionid && !href) {
-				AnyBalance.trace('На данном номер не поддерживается новый ЛК, нас просто отправили в старый кабинет...');
+				AnyBalance.trace('На данном номере не поддерживается новый ЛК, нас просто отправили в старый кабинет...');
 			}
 			
 			if(!sessionid) {
@@ -827,6 +836,24 @@ function megafonLK(tryOldSG) {
 	AnyBalance.setResult(result);	
 }
 
+function megafonBalanceInfo(filinfo){
+    var prefs = AnyBalance.getPreferences();
+
+    AnyBalance.trace('Connecting to MEGAFON_BALANCE ' + filinfo.name);
+    var html = AnyBalance.requestGet(filinfo.balanceRobot.replace(/%LOGIN%/i, encodeURIComponent(prefs.login)).replace(/%PASSWORD%/i, encodeURIComponent(prefs.password)));
+    if(!/<BALANCE>([^<]*)<\/BALANCE>/i.test(html)){
+        var error = getParam(html, null, null, /<ERROR_MESSAGE>([\s\S]*?)<\/ERROR_MESSAGE>/i, replaceTagsAndSpaces, html_entity_decode);
+        if(error)
+            throw new AnyBalance.Error(error, null, /Wrong password/i.test(error));
+        AnyBalance.trace(html);
+        throw e;
+    }
+
+    var result = {success: true};
+    getParam(html, result, 'balance', /<BALANCE>([^<]*)<\/BALANCE>/i, replaceTagsAndSpaces, parseBalance);
+    AnyBalance.setResult(result);
+}
+
 /**
  * Получаем данные из обычного сервис-гида для столичного филиала
  */
@@ -840,52 +867,50 @@ function megafonServiceGuide(filial){
     var session;
     if(filial == MEGA_FILIAL_MOSCOW) {
 		// Мегафон шлет смс на вход если пытаемся войти через большой кабинет
-		// try{
-			// megafonLK(true);
-		// } catch (e) {
-			// // Если ошибка в логине и пароле, дальше идти нет смысла. Позже: А вдруг у кого-то не установлен пароль в новом кабинете, закидают же?
-			// if(e.fatal)
-				// throw e;
-			
-			// AnyBalance.trace('Невозможно зайти в сервис гид, придется получать данные из виджета. Причина: ' + e.message);
-			// megafonTrayInfo(filial);
-		// }
-		// return;
+		if(filinfo.lk){
+	   	    try{
+			    megafonLK(filinfo, true);
+		    } catch (e) {
+				// Если ошибка в логине и пароле, дальше идти нет смысла. Позже: А вдруг у кого-то не установлен пароль в новом кабинете, закидают же?
+				if(e.fatal)
+				    throw e;
+				
+			    AnyBalance.trace('Невозможно зайти в сервис гид, придется получать данные из виджета. Причина: ' + e.message);
+				try{
+					megafonTrayInfo(filial);
+		   			return;
+				}catch(e){
+				    if(/неверный ответ сервера/i.test(e.message) && filinfo.balanceRobot){
+				        //Яндекс виджет, скотина, не даёт получить баланс :(
+				        //Тогда баланс получим хотя бы из московского балансера
+				        AnyBalance.trace('Не удалось получить данные из яндекс виджета: ' + e.message);
+				        AnyBalance.trace('Пробуем получить баланс из ещё одного источника...');
+				        megafonBalanceInfo(filinfo);
+				        return;
+				    }
+				} 
+	        }
+	        return;
+		}
+
         if(prefs.corporate){
             session = AnyBalance.requestGet('http://moscow.megafon.ru/ext/sg_gate.phtml?MSISDN=CP_' + prefs.login + '&PASS=' + encodeURIComponent(prefs.password) + '&CHANNEL=WWW');
         }else{
-		AnyBalance.trace('Не будем и пытаться заходить в сервис-гид, придется получать данные из виджета');
-		try{
-			megafonTrayInfo(filial);
-		}catch(e){
-		    if(/неверный ответ сервера/i.test(e.message) && filinfo.balanceRobot){
-		        //Яндекс виджет, скотина, не даёт получить баланс :(
-		        //Тогда баланс получим хотя бы из московского балансера
-		        AnyBalance.trace('Не удалось получить данные из яндекс виджета: ' + e.message);
-		        AnyBalance.trace('Пробуем получить баланс из ещё одного источника...');
-		        var html = AnyBalance.requestGet(filinfo.balanceRobot.replace(/%LOGIN%/i, encodeURIComponent(prefs.login)).replace(/%PASSWORD%/i, encodeURIComponent(prefs.password)));
-		        if(!/<BALANCE>([^<]*)<\/BALANCE>/i.test(html)){
-		            var error = getParam(html, null, null, /<ERROR_MESSAGE>([\s\S]*?)<\/ERROR_MESSAGE>/i, replaceTagsAndSpaces, html_entity_decode);
-		            if(error)
-		                throw new AnyBalance.Error(error, null, /Wrong password/i.test(error));
-		            AnyBalance.trace(html);
-		            throw e;
-		        }
-
-		        var result = {success: true};
-		        getParam(html, result, 'balance', /<BALANCE>([^<]*)<\/BALANCE>/i, replaceTagsAndSpaces, parseBalance);
-		        AnyBalance.setResult(result);
-		        return;
-		    }
-		} 
-/*            //Влад, ну что же ты всё подглядываешь-то??? Впрочем, пользуйся, не жалко :)
-            session = AnyBalance.requestGet(baseurl + 'SESSION/GET_SESSION?MSISDN=' + ((prefs.corporate ? 'CP_' : '') + prefs.login) + '&PASS=' + encodeURIComponent(prefs.password) + '&CHANNEL=WWW');
-			var code = AnyBalance.getLastStatusCode();
-			if(code > 400){
-				AnyBalance.trace('Невозможно зайти в сервис гид, придется получать данные из виджета');
+			AnyBalance.trace('Не будем и пытаться заходить в сервис-гид, придется получать данные из виджета');
+			try{
 				megafonTrayInfo(filial);
-				return;
-			} */
+			}catch(e){
+				if(/неверный ответ сервера/i.test(e.message) && filinfo.balanceRobot){
+					//Яндекс виджет, скотина, не даёт получить баланс :(
+					//Тогда баланс получим хотя бы из московского балансера
+					AnyBalance.trace('Не удалось получить данные из яндекс виджета: ' + e.message);
+					AnyBalance.trace('Пробуем получить баланс из ещё одного источника...');
+					megafonBalanceInfo(filinfo);
+					return;
+				}
+			}
+
+			return;
         } 
     }else{
 		session = AnyBalance.requestPost(baseurl + 'ps/scc/php/check.php?CHANNEL=WWW', {
@@ -1070,7 +1095,9 @@ function megafonServiceGuidePhysical(filial, sessionid){
             //Ищем в таблице скидок строки вида: 39:00 мин   39:00, что означает Всего, Остаток
             var p = /<div class="td_def">\s*(\d+)(?::(\d+))?[^<]*(?:&#1052;|&#1084;)&#1080;&#1085;[^<]*<[^&#;\d]*<div class="td_def">(\d+)(?::(\d+))?/i.exec(matches[1]);
             if(p){ //Это минуты, надо бы их рассортировать
-                 if(/мин на МТС Билайн Скай Линк/i.test(name))
+                 if(/[36]0 мин\. бесплатно/i.test(name))
+                     sumOption(colnum, matches[1], result, null, 'mins_n_free', '.', parseMinutes);
+                 else if(/мин на МТС Билайн Скай Линк/i.test(name))
                      sumOption(colnum, matches[1], result, 'mins_compet_total', 'mins_compet_left', '.', parseMinutes);
                  else if(/мин на номера СНГ/i.test(name))
                      sumOption(colnum, matches[1], result, 'mins_sng_total', 'mins_sng_left', '.', parseMinutes);
@@ -1097,16 +1124,14 @@ function megafonServiceGuidePhysical(filial, sessionid){
         //Пакет SMS за бонусы (SMS &#1079;&#1072; &#1073;&#1086;&#1085;&#1091;&#1089;&#1099;)
         //Пакет SMS-сообщений (Поволжье) (&#1055;&#1072;&#1082;&#1077;&#1090; SMS-&#1089;&#1086;&#1086;&#1073;&#1097;&#1077;&#1085;&#1080;&#1081;)
         //SMS на номера России (SMS &#1085;&#1072; &#1085;&#1086;&#1084;&#1077;&#1088;&#1072; &#1056;&#1086;&#1089;&#1089;&#1080;&#1080;)
-        //(SMS)
-        sumOption(colnum, text, result, 'sms_total', 'sms_left', 'SMS');
-        sumOption(colnum, text, result, 'sms_total', 'sms_left', 'СМС');
+        //(SMS|СМС|сообщен)
+        sumOption(colnum, text, result, 'sms_total', 'sms_left', '(?:SMS|&#1057;&#1052;&#1057;|&#1089;&#1086;&#1086;&#1073;&#1097;&#1077;&#1085;)');
         
         //Исходящие SM (ОХард, Москва)
         sumOption(colnum, text, result, 'sms_total', 'sms_left', '&#1048;&#1089;&#1093;&#1086;&#1076;&#1103;&#1097;&#1080;&#1077; SM\\s*<');
             
         //MMS
-        sumOption(colnum, text, result, 'mms_total', 'mms_left', 'MMS');
-        sumOption(colnum, text, result, 'mms_total', 'mms_left', 'ММС');
+        sumOption(colnum, text, result, 'mms_total', 'mms_left', '(?:MMS|&#1052;&#1052;&#1057;)');
         
         //Нужный подарок (Поволжье)
         sumOption(colnum, text, result, 'handygift_total', 'handygift_left', '&#1053;&#1091;&#1078;&#1085;&#1099;&#1081; &#1087;&#1086;&#1076;&#1072;&#1088;&#1086;&#1082;');
@@ -1232,6 +1257,42 @@ function megafonServiceGuidePhysical(filial, sessionid){
 			else
 				AnyBalance.trace("Не удаётся найти таблицу услуг, свяжиетсь с автором провайдера");
         }
+
+        //Отключаем посылку смс при входе.
+		text = AnyBalance.requestPost(baseurl + 'SCWWW/SMS_NG_FORM', {
+			'P_GRID_LEFT':'0',
+			'P_GRID_WIDTH':'740',
+			'find':'',
+			'CHANNEL':'WWW',
+			'SESSION_ID':sessionid,
+			'P_USER_LANG_ID':'1',
+			'CUR_SUBS_MSISDN':phone,
+			'SUBSCRIBER_MSISDN':phone
+		});
+
+		if(/<input[^>]+id="idSMSCheck_\d+"[^>]*checked/i.test(text)){
+		    AnyBalance.trace('Уведомление по смс о входе разрешено. Запрещаем его, чтобы не парило мозг.');
+		    var snev = getParam(text, null, null, /<input[^>]+name="P_SNEV_ID_LIST"[^>]*value="([^"]*)/i, null, html_entity_decode);
+		    text = AnyBalance.requestPost(baseurl + 'SCWWW/SMS_NG_ACTION', {
+				'RECIPIENT':'',
+				'P_SNEV_ID_LIST':snev,
+				'P_SMS_NOTIFY_FLAG_LIST':'',
+				'P_EMAIL_NOTIFY_FLAG_LIST':'',
+			    'P_GRID_LEFT':'0',
+			    'P_GRID_WIDTH':'740',
+				'CHANNEL':'WWW',
+				'SESSION_ID':sessionid,
+				'P_USER_LANG_ID':'1',
+				'CUR_SUBS_MSISDN':phone,
+				'SUBSCRIBER_MSISDN':phone
+		    });
+		    var action_result = getParam(text, null, null, /<div[^>]+class="action_result"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+		    AnyBalance.trace("Result: " + action_result);
+		}else if(/<input[^>]+id="idSMSCheck_/i.test(text)){
+		    AnyBalance.trace('Уведомление по смс о входе отключено. И отлично.');
+		}else{
+		    AnyBalance.trace('Не удалось получить страницу отмены смс оповещения: ' + text);
+		}
     }
     
     if(filial == MEGA_FILIAL_VOLGA){

@@ -10,7 +10,7 @@
 	<instruction html="true"><![CDATA[
 	<p>При оформленні картки, на ваш контактний номер висилається логін та пароль. Пароль є тимчасовим і має обмежений термін дії. При першому вході тимчасовий пароль неоходімо змінити. Якщо з якихось причин ви не отримали СМС з логіном та паролем, то зателефонуйте в контакт-центр за номером 0(800)30-40-40.</p>
 	]]></instruction>
-	<author></author>
+	<author>Ignatiy Goloviznin &lt;igoloviznin@gmail.com&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

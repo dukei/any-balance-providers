@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1"></id>
+	<api flags="no_browser"/>
+	<name>Банк Михайлівський</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансах на счетах Банка Михайлівський <a href=""></a></p>
+	<p>Информация берется из личного кабинета <a href=""></a></p>
+
+	<b>Особенности:</b>
+	<ul>
+		<li></li>
+		<li></li>
+		<li></li>
+	</ul>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Если у вас нет доступа в интернет банк, получите его на странице <a href=""></a></p>
+	]]></instruction>
+	<author></author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" {@currency}"/>
+	</counters>
+	<keywords></keywords>
+	<type>money</type>
+	<country>ua</country>
+</provider>

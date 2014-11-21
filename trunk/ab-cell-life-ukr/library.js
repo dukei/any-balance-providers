@@ -116,10 +116,16 @@ for(b in c){f.push([b,c[b]])
 return a
 }catch(c){AnyBalance.trace("Bad json ("+c.message+"): "+b);
 throw new AnyBalance.Error("Сервер вернул ошибочные данные: "+c.message)
-}}function getJsonEval(b){try{var a=new Function("window","AnyBalance","g_AnyBalanceApiParams","_AnyBalanceApi","document","self","return "+b).apply(null);
+}}function getJsonEval(b){try{var a=safeEval("return "+b,"window,document,self");
 return a
 }catch(c){AnyBalance.trace("Bad json ("+c.message+"): "+b);
 throw new AnyBalance.Error("Сервер вернул ошибочные данные: "+c.message)
+}}function safeEval(c,g,i){var d=AnyBalance,b=this.g_AnyBalanceApiParams,f=this._AnyBalanceApi;
+AnyBalance=this.g_AnyBalanceApiParams=this._AnyBalanceApi=undefined;
+try{var a=Function(g||"ja0w4yhwphgawht984h","AnyBalance","g_AnyBalanceApiParams","_AnyBalanceApi",c).apply(null,i);
+return a
+}catch(h){throw new d.Error("Bad javascript ("+h.message+"): "+c)
+}finally{AnyBalance=d,g_AnyBalanceApiParams=b,_AnyBalanceApi=f
 }}function endsWith(b,a){return b.indexOf(a,b.length-a.length)!==-1
 }(function(b,d){var c=b.parse,a=[1,4,5,6,7,10,11];
 b.parse=function(f){var j,l,h=0;
@@ -224,11 +230,15 @@ if(e.length>6){a=Math.round(a)
 }}var c={0:"b",1:"kb",2:"mb",3:"gb",4:"tb"};
 AnyBalance.trace("Parsing traffic ("+a+c[b]+") from: "+h);
 return a
-}function requestPostMultipart(b,c,e){var d=[];
-var f="------WebKitFormBoundaryrceZMlz5Js39A2A6";
-for(var a in c){d.push(f,'Content-Disposition: form-data; name="'+a+'"',"",c[a])
-}d.push(f+"--\r\n");
+}function requestPostMultipart(c,h,e){var k="",g="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+for(var j=0;
+j<16;
+j++){k+=g.charAt(Math.floor(Math.random()*g.length))
+}var f=[];
+var d="------WebKitFormBoundary"+k;
+for(var a in h){f.push(d,'Content-Disposition: form-data; name="'+a+'"',"",h[a])
+}f.push(d+"--\r\n");
 if(!e){e={}
-}e["Content-Type"]="multipart/form-data; boundary="+f.substr(2);
-return AnyBalance.requestPost(b,d.join("\r\n"),e)
+}e["Content-Type"]="multipart/form-data; boundary="+d.substr(2);
+return AnyBalance.requestPost(c,f.join("\r\n"),e)
 };

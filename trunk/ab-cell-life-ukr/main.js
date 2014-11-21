@@ -7,7 +7,7 @@ var g_headers = {
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.65 Safari/537.36',
 };
 
 function main() {
@@ -25,12 +25,36 @@ function main() {
 	}
 }
 
+function parseSec(str) {
+    var matches = /(\d+):0*(\d+):0*(\d+)/.exec(str);
+    var time;
+    if (matches) {
+        time = (+matches[1]) * 3600 + (+matches[2]) * 60 + (+matches[3]);
+        AnyBalance.trace('Parsing minutes ' + time + ' from value: ' + str);
+        return time;
+    }
+    AnyBalance.trace('Could not parse minutes from value: ' + str);
+}
+
+function parseBalanceSecLeft(str) {
+    var matches = /(\d+):0*(\d+):0*(\d+)/.exec(str);
+    var time;
+    if (matches) {
+        time = (+matches[1]) * 3600 + (+matches[2]) * 60 + (+matches[3]);
+        AnyBalance.trace('Parsing minutes ' + time + ' from value: ' + str);
+	time = 180000 - time;
+        return time;
+    }
+    AnyBalance.trace('Could not parse minutes from value: ' + str);
+}
+
 function mainSite(prefs, baseurl) {
 	var html = AnyBalance.requestGet(baseurl + 'ru/?locale=ru', g_headers);
-	
+	var lang = prefs.lang || 'ru';
+
 	if(AnyBalance.getLastStatusCode() > 400 || !html)
 		throw new AnyBalance.Error('Ошибка! Сервер не отвечает! Попробуйте обновить баланс позже.');
-	
+
 	var params = createFormParams(html, function(params, str, name, value) {
 		if (name == 'msisdn') 
 			return prefs.phone;
@@ -42,7 +66,7 @@ function mainSite(prefs, baseurl) {
 			
 		return value;
 	});
-	
+
 	// Если показывают картинку - надо запросить капчу
 	var href = getParam(html, null, null, /<img src="\/(captcha\/image[^"]+)/i);
 	if(href) {
@@ -55,29 +79,58 @@ function mainSite(prefs, baseurl) {
 			throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
 		}
 	}
-	
+
 	html = AnyBalance.requestPost(baseurl + 'ru/?locale=ru', params, addHeaders({Referer: baseurl + 'ru/?locale=ru'}));
-	
+
 	if (!/logout/i.test(html)) {
 		var error = getParam(html, null, null, /class="errorlist">([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
-		
+
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
-	
+
 	var result = {success: true};
-	
-    // Основной счет
+
+	html = AnyBalance.requestPost(baseurl + 'ru/osnovnaya-informaciya/osnobnaya-informaciya/', params, addHeaders({Referer: baseurl + 'ru/osnovnaya-informaciya/osnobnaya-informaciya/'}));
+        // Основной счет
 	getParam(html, result, 'Mbalance', /<td>Основной счет:(?:[\s\S]*?<td[^>]*>){5}\s*([\s\d.,\-]+)/i, replaceTagsAndSpaces, parseBalance);
-    // Бонусный счет
+        // Бонусный счет
 	getParam(html, result, 'Bbalance', />Бонусный счет(?:[\s\S]*?<td[^>]*>){1}\s*([\s\d.,\-]+)/i, replaceTagsAndSpaces, parseBalance);
+	//Минуты по сети Life:)
+    	sumParam(html, result, 'mins_life', /минуты \[сеть <span class="life">life:\)<\/span>](?:[\s\S]*?<td[^>]*>){1}\s*([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseSec, aggregate_sum);
+    	//Минуты по сети Life:) тариф Life 25
+    	sumParam(html, result, 'mins_life', /25 - 3000 мин.(?:[\s\S]*?<td[^>]*>){1}\s*([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalanceSecLeft, aggregate_sum);
+	//Подарочный трафик (Бесплатный Интернет [Интернет, WAP]: CMS и Бесплатный Интернет)
+    	sumParam(html, result, 'gprs', /Интернет(?:[\s\S]*?<td[^>]*>){1}\s*([\s\d.,\-]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+	//MMS по Life
+    	sumParam(html, result, 'mms_life', /MMS \[сеть <span class="life">life:\)<\/span>](?:[\s\S]*?<td[^>]*>){1}\s*([\s\d.,\-]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    	//SMS по Life
+    	sumParam(html, result, 'sms_life', /SMS \[сеть <span class="life">life:\)<\/span>](?:[\s\S]*?<td[^>]*>){1}\s*([\s\d.,\-]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+	//MMS по Украине
+    	sumParam(html, result, 'mms_uk', /MMS \[в пределах Украины\](?:[\s\S]*?<td[^>]*>){1}\s*([\s\d.,\-]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    	//SMS по Украине
+    	sumParam(html, result, 'sms_uk', /SMS \[в пределах Украины\](?:[\s\S]*?<td[^>]*>){1}\s*([\s\d.,\-]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+	//Срок действия
+	getParam(html, result, 'till', />Срок действия номера(?:[\s\S]*?<td[^>]*>){1}\s*([\s\d.,\-]+)/i, replaceTagsAndSpaces, parseDateISO);
 	// Телефон
 	getParam(html, result, 'phone', /class="user-number"[^>]*>(380\d+)/i, [replaceTagsAndSpaces, /^380/, '+380'], html_entity_decode);
-    // Тариф	
-	getParam(html, result, '__tariff', /<td>Тариф:(?:[\s\S]*?<td[^>]*>){5}\s*([\s\S]*?)<\/td/i, replaceTagsAndSpaces, html_entity_decode);
-	
+        // Тариф
+	if(lang == 'ru') {
+	  html = AnyBalance.requestPost(baseurl + 'ru/osnovnaya-informaciya/osnobnaya-informaciya/', params, addHeaders({Referer: baseurl + 'ru/osnovnaya-informaciya/osnobnaya-informaciya/'}));
+	  getParam(html, result, '__tariff', /<td>Тариф:(?:[\s\S]*?<td[^>]*>){5}\s*([\s\S]*?)<\/td/i, replaceTagsAndSpaces, html_entity_decode);
+	}
+	if(lang == 'uk') {
+	  html = AnyBalance.requestPost(baseurl + 'uk/osnovna-informacia/osnovna-informacia/', params, addHeaders({Referer: baseurl + 'uk/osnovna-informacia/osnovna-informacia/'}));
+	  getParam(html, result, '__tariff', /<td>Тариф:(?:[\s\S]*?<td[^>]*>){5}\s*([\s\S]*?)<\/td/i, replaceTagsAndSpaces, html_entity_decode);
+	}
+	if(lang == 'en') {
+	  html = AnyBalance.requestPost(baseurl + 'en/general-info/general-info/', params, addHeaders({Referer: baseurl + 'en/general-info/general-info/'}));
+	  getParam(html, result, '__tariff', /<td>Tariff:(?:[\s\S]*?<td[^>]*>){5}\s*([\s\S]*?)<\/td/i, replaceTagsAndSpaces, html_entity_decode);
+	}
+
+
 	AnyBalance.setResult(result);
 }
 
@@ -213,9 +266,9 @@ function mainMobileApp(prefs, baseurl){
     var token = getParam(xml, null, null, /<token>([\s\S]*?)<\/token>/i, replaceTagsAndSpaces);
     if (!token)
 		throw new AnyBalance.Error('He удалось авторизоваться в Life API!');
-	
+
     var result = {success: true};
-	
+
 	xml = lifeGet('getSummaryData', {msisdn: msisdn, languageId: lang, osType: 'ANDROID', token: token});
 	//Основной счет
 	sumParam(xml, result, 'Mbalance', /<balance[^>]+code="Line_Main"[^>]*amount="([^"]*)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
@@ -227,7 +280,7 @@ function mainMobileApp(prefs, baseurl){
 	getParam(xml, result, 'till', /<attribute[^>]+name="LINE_SUSPEND_DATE"[^>]*>\s*(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?\s*<\/attribute>/i, replaceTagsAndSpaces, parseDateISO);
 	//Тариф
 	getParam(xml, result, '__tariff', /<tariff[^>]*>[\s\S]*?<name[^>]*>\s*(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?\s*<\/name>/i, replaceTagsAndSpaces, html_entity_decode);
-	
+
     if (AnyBalance.isAvailable('gprs', 'mms_uk', 'mms_life', 'sms_uk', 'sms_life', 'mins_family', 'mins_life', 'mins_fixed', 'mins_uk', 'mins_mob')) {
     	xml = lifeGet('getBalances', {msisdn: msisdn, languageId: lang, osType: 'ANDROID', token: token});
     	//Подарочный трафик

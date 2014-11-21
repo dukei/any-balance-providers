@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2" version="23">ab-cell-life-ukr</id>
+	<id major_version="2" version="24">ab-cell-life-ukr</id>
 	<api flags="no_browser" />
 	<name>Life:) Украина</name>
 	<description html="true"><![CDATA[
@@ -15,7 +15,7 @@
 	<li>Позвонить по номеру *124*779#. Пароль придет в ответном SMS.</li>
 	</ul>
 	<br>
-	<small>Провайдер получает данные через API для мобильного приложения Life:) ( https://play.google.com/store/apps/details?id=com.life.my ). Если провайдер не показывает данные, которые есть в мобильном приложении, обратитесь, пожалуйста, к автору провайдера.</small>
+	<small>Провайдер получает данные через API для мобильного приложения Life:) ( https://play.google.com/store/apps/details?id=com.life.my ) и через сайт https://my.life.ua/. Если провайдер не показывает данные, которые есть в мобильном приложении или на сайте My.Life, обратитесь, пожалуйста, к автору провайдера.</small>
 	<br> 
 	<br>  
 	<b>ВНИМАНИЕ!</b> Все вышеуказанные действия нужно выполнять с мобильного 

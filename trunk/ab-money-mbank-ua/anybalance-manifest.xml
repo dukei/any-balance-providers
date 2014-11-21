@@ -4,18 +4,11 @@
 	<api flags="no_browser"/>
 	<name>Банк Михайлівський</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансах на счетах Банка Михайлівський <a href=""></a></p>
-	<p>Информация берется из личного кабинета <a href=""></a></p>
-
-	<b>Особенности:</b>
-	<ul>
-		<li></li>
-		<li></li>
-		<li></li>
-	</ul>
+	<p>Надає інформацію по балансах на рахунках <a href="http://www.mbank.kiev.ua">Банка Михайлівський</a>.</p>
+	<p>Інформація береться з <a href="https://mpay.mbank.kiev.ua/">інтернет-банкінга</a>.</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
-	<p>Если у вас нет доступа в интернет банк, получите его на странице <a href=""></a></p>
+	<p>При оформленні картки, на ваш контактний номер висилається логін та пароль. Пароль є тимчасовим і має обмежений термін дії. При першому вході тимчасовий пароль неоходімо змінити. Якщо з якихось причин ви не отримали СМС з логіном та паролем, то зателефонуйте в контакт-центр за номером 0(800)30-40-40.</p>
 	]]></instruction>
 	<author></author>
 	<files>
@@ -26,9 +19,12 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" {@currency}"/>
+		<counter id="balance" name="Баланс" units=" ₴"/>
+		<counter id="balance_my" name="Баланс власний" units=" ₴"/>
+		<counter id="balance_vklad" name="Мої вклади" units=" ₴"/>
+		<counter id="balance_kred" name="Мої кредити" units=" ₴"/>
 	</counters>
-	<keywords></keywords>
+	<keywords>банк михійлівський картки рахунки</keywords>
 	<type>money</type>
 	<country>ua</country>
 </provider>

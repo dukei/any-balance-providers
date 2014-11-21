@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
 	<EditTextPreference
-		title="Логин"
+		title="Логін"
 		key="login"
 		summary="||{@s}"
 		obligatory="true"
-		dialogTitle="Логин"
-		positiveButtonText="ОК"
-		negativeButtonText="Отмена"
-		dialogMessage="Введите логин, используемый для входа в личный кабинет.">
+		dialogTitle="Логін"
+		positiveButtonText="Гаразд"
+		negativeButtonText="Скасувати"
+		dialogMessage="Введіть логін, який використовується для входа в інтернет-банкінг.">
 	</EditTextPreference>
 	<EditTextPreference
 		title="Пароль"
@@ -16,9 +16,9 @@
 		summary="||***********"
 		obligatory="true"
 		dialogTitle="Пароль"
-		positiveButtonText="ОК"
-		negativeButtonText="Отмена"
-		dialogMessage="Введите пароль, используемый для входа в личный кабинет."
+		positiveButtonText="Гаразд"
+		negativeButtonText="Скасувати"
+		dialogMessage="Введіть пароль, який використовується для входа в інтернет-банкінг."
 		inputType="textPassword">
 	</EditTextPreference>
 </PreferenceScreen>

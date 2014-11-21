@@ -70,6 +70,7 @@ function main(){
     			ppays: 'RU',
     			codeAppli: 'NetCardV2',
     			langue: 'RU',
+    			resterConnecter:false,
     			mdp: mdp,
     			email: prefs.login,
     			__preventCache__: new Date().getTime(),

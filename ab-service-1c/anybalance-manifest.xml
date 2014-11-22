@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="3">ab-service-1c</id>
-	<name>1C8 (Подписка)</name>
+	<id version="4">ab-service-1c</id>
+	<name>1C8 (Подписка ИТС)</name>
 	<description>
-Получает данные из личного кабинета пользователя 1C8 http://users.v8.1c.ru/actual.jsp
+Получает данные из личного кабинета пользователя 1C8 http://users.v8.1c.ru/
 	</description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>Viktor Sinitsyn &lt;mousesport007@ya.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
@@ -15,7 +15,11 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="date" name="Срок подписки" type="time" format="dd/MM/yyyy"/>
+		<counter id="date-end-ITS" name="Окончание подписки ИТС" type="time" format="dd-MM-yyyy"/>
+		<counter id="date-start-ITS" name="Начало подписки ИТС" type="time" format="dd-MM-yyyy"/>
+		<counter id="viddogovoraITS" name="Вид подписки" type="text"/>
+		<counter id="partnerITS" name="Партнер ИТС" type="text"/>
+		<counter id="clientITS" name="Клиент ИТС" type="text"/>
 	</counters>
 	<keywords></keywords>
 	<type>service</type>

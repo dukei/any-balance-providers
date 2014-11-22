@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="12">ab-cell-mts-russia-corp</id>
+	<api flags="no_browser"/>
+  <id version="13">ab-cell-mts-russia-corp</id>
   <name>МТС Корпоративный (Россия)</name>
   <description>
     Получает информацию по номеру и лицевому счету из интернет-помощника для корпоративных абонентов ( https://ihelper.mts.ru/Ncih ). 
@@ -14,6 +15,7 @@
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
+    <js>library.js</js>
     <js>main.js</js>
     <history>history.xml</history>
   </files>

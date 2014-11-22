@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-service-1c-bitix</id>
+	<name>1С-Битрикс</name>
+	<api flags="no_browser"/>
+	<description html="true"><![CDATA[
+	<p>Получает данные о версии ,сроке подписки и др. для сайтов работающих на 1С-Битрикс</p>
+	<p>Информация берется из админки вашего сайта (http://site.ru/bitrix)</p>
+	]]></description>
+	<author>Viktor Sinitsyn &lt;mousesport007@ya.ru&gt;</author>  
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="podpiskaStart" name="Дата активация ключа" type="time" format="dd.MM.yyyy"/>
+		<counter id="podpiskaEnd" name="Дата окончания ключа" type="time" format="dd.MM.yyyy"/>
+	</counters>
+	<keywords>1С битрикс 1C bitrix 1С-битрикс 1C-bitrix</keywords>
+	<type>service</type>
+	<country>ru</country>
+</provider>

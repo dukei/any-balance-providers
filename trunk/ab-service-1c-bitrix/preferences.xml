@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+<EditTextPreference
+		title="Домен"
+		key="site"
+		summary="|Домен который работает 1С-Битрикс|{@s}"
+		obligatory="true"
+		dialogTitle="Домен"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите адрес домена без указания www и http:// , например site.ru ">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Логин"
+		key="login"
+		summary="|Логин для входа в админку|{@s}"
+		obligatory="true"
+		dialogTitle="Логин"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите логин, используемый для входа в вашу админку.">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Пароль"
+		key="password"
+		summary="|Пароль для входа в админку|***********"
+		obligatory="true"
+		dialogTitle="Пароль"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите пароль, используемый для входа в вашу админку."
+		inputType="textPassword">
+	</EditTextPreference>
+</PreferenceScreen>

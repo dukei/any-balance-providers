@@ -11,9 +11,14 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
+
 	checkEmpty(prefs.login, 'Введите номер вашего телефона для входа в Мой Киевстар (в формате +380ХХХХХХХХХ), например +380971234567');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
+	AnyBalance.setOptions({
+		SSL_ENABLED_PROTOCOLS: ['TLSv1'], // https://my.kyivstar.ua очень смущается от присутствия TLSv1.1 и TLSv1.2
+	}); 
+
 	var baseurl = "https://my.kyivstar.ua/";
 	AnyBalance.trace('Соединение с ' + baseurl);
 	var html = AnyBalance.requestGet(baseurl + 'tbmb/login/show.do', g_headers);

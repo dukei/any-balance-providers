@@ -7,47 +7,6 @@
 Личный кабинет: https://ihelper.mts.ru/Ncih/
 */
 
-function getParam (html, result, param, regexp, replaces, parser) {
-	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
-		return;
-
-	var value = regexp.exec (html);
-	if (value) {
-		value = value[1];
-		if (replaces) {
-			for (var i = 0; i < replaces.length; i += 2) {
-				value = value.replace (replaces[i], replaces[i+1]);
-			}
-		}
-		if (parser)
-			value = parser (value);
-
-    if(param)
-      result[param] = value;
-    else
-      return value
-	}
-}
-
-var replaceTagsAndSpaces = [/<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
-var replaceFloat = [/\s+/g, '', /,/g, '.'];
-
-function parseBalance(text){
-    var val = getParam(text.replace(/\s+/g, ''), null, null, /(-?\d[\d\s.,]*)/, replaceFloat, parseFloat);
-    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
-    return val;
-}
-
-function parseDate(str){
-    var matches = /(\d+)[^\d](\d+)[^\d](\d+)/.exec(str);
-    var time;
-    if(matches){
-	  time = (new Date(+matches[3], matches[2]-1, +matches[1])).getTime();
-    }
-    AnyBalance.trace('Parsing date ' + new Date(time) + ' from value: ' + str);
-    return time;
-}
-
 function getHierarchyId(html){
     var availableHierarchy = getParam(html, null, null, /availableHierarchy:\s*(\[[^\]]*\])/);
     if(!availableHierarchy){
@@ -102,7 +61,7 @@ function main(){
             __LOCAL_DATETIME__: new Date().getTime()
         });
 
-        var info = JSON.parse(json);
+        var info = getJson(json);
         if(info.errorMessage)
             throw new AnyBalance.Error('Ошибка получения информации по текущему сотруднику: ' + info.errorMessage);
 
@@ -129,7 +88,7 @@ function main(){
         });
         
         AnyBalance.trace('Got hierarchy nodes for ' + findnum + ': ' + json);
-        var info = JSON.parse(json);
+        var info = getJson(json);
         if(!info.totalCount){
             throw new AnyBalance.Error("Ошибка поиска информации по номеру или счету " + info);
         }
@@ -170,38 +129,26 @@ function main(){
             throw new AnyBalance.Error("Не найдено ни одного счета или телефона с номером " + findnum);
         
         if(accNode && AnyBalance.isAvailable('balance', 'billing', 'acc_expences', 'last_pay_date', 'last_pay', 'debt', 'promise', 'promiseDate')){
-            var accInfo = AnyBalance.requestPost(baseurl + 'ObjectInfo.mvc/PersonalAccount', {objectId:accNode.data.objectId});
-            accInfo = JSON.parse(accInfo);
-            if(accInfo.success){
-                var html = accInfo.infoHtml;
-                result.__tariff = accNode.text;
-                if(/Получение запрошенной информации в данный момент недоступно/i.test(html))
-                    AnyBalance.trace("Проблемы получения информации по л/с " + accNode.text + ": МТС сообщает, что получение запрошенной информации в данный момент недоступно");
-                getParam(html, result, 'balance', /Баланс[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-                getParam(html, result, 'billing', /Метод расчетов[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-                getParam(html, result, 'acc_expences', /Израсходовано за период[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-                getParam(html, result, 'last_pay_date', /Дата последней оплаты счета[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
-                getParam(html, result, 'last_pay', /Сумма последней оплаты счета[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-                getParam(html, result, 'debt', /Сумма по неоплаченным счетам[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-                getParam(html, result, 'promise', /Сумма обещанного платежа[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-                getParam(html, result, 'promiseDate', /Срок действия обещанного платежа[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
-            }else{
-                AnyBalance.trace("Не удалось получить информацию по счету " + accNode.text + ": " + accInfo.errorMessage);
-            }
+            var html = AnyBalance.requestPost(baseurl + 'ObjectInfo.mvc/PersonalAccount', {objectId:accNode.data.objectId});
+            result.__tariff = accNode.text;
+            if(/Получение запрошенной информации в данный момент недоступно/i.test(html))
+                AnyBalance.trace("Проблемы получения информации по л/с " + accNode.text + ": МТС сообщает, что получение запрошенной информации в данный момент недоступно");
+            getParam(html, result, 'balance', /Баланс[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+            getParam(html, result, 'billing', /Метод расчетов[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+            getParam(html, result, 'acc_expences', /Израсходовано за период[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+            getParam(html, result, 'last_pay_date', /Дата последней оплаты счета[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+            getParam(html, result, 'last_pay', /Сумма последней оплаты счета[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+            getParam(html, result, 'debt', /Сумма по неоплаченным счетам[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+            getParam(html, result, 'promise', /Сумма обещанного платежа[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+            getParam(html, result, 'promiseDate', /Срок действия обещанного платежа[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
         }
         
         if(phoneNode){
-            var phoneInfo = AnyBalance.requestPost(baseurl + 'ObjectInfo.mvc/Phone', {objectId:phoneNode.data.objectId});
-            phoneInfo = JSON.parse(phoneInfo);
-            if(phoneInfo.success){
-                var html = phoneInfo.infoHtml;
-                if(/Получение запрошенной информации в данный момент недоступно/i.test(html))
-                    AnyBalance.trace("Проблемы получения информации по номеру " + phoneNode.text + ": МТС сообщает, что получение запрошенной информации в данный момент недоступно");
-                getParam(html, result, '__tariff', /Тарифный план[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-                getParam(html, result, 'expences', /Израсходовано по номеру[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-            }else{
-                AnyBalance.trace("Не удалось получить информацию по номеру " + phoneNode.text + ": " + phoneInfo.errorMessage);
-            }
+            var html = AnyBalance.requestPost(baseurl + 'ObjectInfo.mvc/Phone', {objectId:phoneNode.data.objectId});
+            if(/Получение запрошенной информации в данный момент недоступно/i.test(html))
+                AnyBalance.trace("Проблемы получения информации по номеру " + phoneNode.text + ": МТС сообщает, что получение запрошенной информации в данный момент недоступно");
+            getParam(html, result, '__tariff', /Тарифный план[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+            getParam(html, result, 'expences', /Израсходовано по номеру[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
         }
     }
    

@@ -334,20 +334,28 @@ function capitalFirstLenttersDecode(str) {
 	}
 	return wordCapital.replace(/^\s+|\s+$/g, '');;
 }
+
 function parseSmallDate(str) {
+    var dt = parseSmallDateInternal(str);
+    AnyBalance.trace('Parsed small date ' + new Date(dt) + ' from ' + str);
+    return dt;
+}
+
+function parseSmallDateInternal(str) {
 	//Дата
-	if (str.indexOf('сегодня') != -1) {
-		var date = new Date();
+    var matches = str.match(/(\d+):(\d+)/);
+	var now = new Date();
+	if (/сегодня/i.test(str)) {
+		var date = new Date(now.getFullYear(), now.getMonth(), now.getDate(), +matches[1], +matches[2], 0);
 		return date.getTime();
-	} else if (str.indexOf('вчера') != -1) {
-		var date = new Date();
-		return date.getTime() - 86400000;
+	} else if (/вчера/i.test(str)) {
+		var date = new Date(now.getFullYear(), now.getMonth(), now.getDate()-1, +matches[1], +matches[2], 0);
+		return date.getTime();
 	} else {
 		var matches = /(\d+)[^\d]+(\d+)/i.exec(str);
 		if (!matches) {
 			AnyBalance.trace('Не удалось распарсить дату: ' + str);
 		} else {
-			var now = new Date();
 			var year = now.getFullYear();
 			if (now.getMonth() + 1 < +matches[2])--year; //Если текущий месяц меньше месяца последней операции, скорее всего, то было за прошлый год
 			var date = new Date(year, +matches[2] - 1, +matches[1]);
@@ -614,7 +622,7 @@ function fetchNewAccountCard(html, baseurl) {
 		else throw new AnyBalance.Error("Не удаётся найти ни одной карты");
 	}
 	var reCardNumber = new RegExp('<[^>]*class="accountNumber\\b[^"]*">([^<,]*' + lastdigits + ')[<,]', 'i');
-	var reCardTill = new RegExp('<[^>]*class="accountNumber\\b[^"]*">[^<,]*' + lastdigits + ', действует до([^<]*)', 'i');
+	var reCardTill = new RegExp('<[^>]*class="accountNumber\\b[^"]*">[^<,]*' + lastdigits + ', действует (?:до|по)([^<]*)', 'i');
 	var reBalance = new RegExp('<a[^>]+href="[^"]*info.do\\?id=' + cardId + '"[\\s\\S]*?<span[^>]+class="overallAmount\\b[^>]*>([\\s\\S]*?)</span>', 'i');
 	
 	getParam(html, result, 'balance', reBalance, replaceTagsAndSpaces, parseBalance);

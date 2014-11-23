@@ -229,13 +229,17 @@ function main(){
 					AnyBalance.trace('Пробуем найти бонусную программу Интернет-Бонус...');
 					try {
 						var sbversion = getSouthBonusVersion(baseurl);
-						html = '';
-						html = AnyBalance.requestPost(baseurl + 'plugins/south-bonus/' + sbversion + '/request', {action: 'getBonusBalance', accountId:acc.__detailedInfo.id}, g_headers);
-						var jsonBonus = JSON.parse(html);
-						if(!jsonBonus.isError){
-							getParam(jsonBonus.balance+'', result, 'bonusInt' + suffix, null, replaceTagsAndSpaces, parseBalance);						
+						if(sbversion != '???'){
+							html = '';
+							html = AnyBalance.requestPost(baseurl + 'plugins/south-bonus/' + sbversion + '/request', {action: 'getBonusBalance', accountId:acc.__detailedInfo.id}, g_headers);
+							var jsonBonus = JSON.parse(html);
+							if(!jsonBonus.isError){
+								getParam(jsonBonus.balance+'', result, 'bonusInt' + suffix, null, replaceTagsAndSpaces, parseBalance);						
+							}else{
+							    AnyBalance.trace('Не удалось получить Интернет-Бонус: ' + jsonBonus.errorMsg);
+							}
 						}else{
-						    AnyBalance.trace('Не удалось получить Интернет-Бонус: ' + jsonBonus.errorMsg);
+						    AnyBalance.trace('Не удалось получить Интернет-Бонус: программа отсутствует');
 						}
 					} catch (e) {
 						AnyBalance.trace(e.message + ': can`t parse json from: ' + html);
@@ -279,11 +283,14 @@ function main(){
                 AnyBalance.trace('Дополнительно получаем данные для л/с: ' + acc.number);
                 html = AnyBalance.requestPost(baseurl + 'serverLogic/accountGetExtData', {account: acc.id}, g_headers);
                 json = getJson(html);
-
-                if(json.account.balance > 0)
-                    totalBalancePlus += json.account.balance/100;
-                else
-                    totalBalanceMinus += json.account.balance/100;
+                if(!json.account){
+                    AnyBalance.trace('Странные данные аккаунта без аккаунта (пропускаем): ' + html);
+                }else{
+                    if(json.account.balance > 0)
+                        totalBalancePlus += json.account.balance/100;
+                    else
+                        totalBalanceMinus += json.account.balance/100;
+                }
             }
 
             if(AnyBalance.isAvailable('totalBalancePlus'))

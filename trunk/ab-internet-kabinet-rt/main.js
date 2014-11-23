@@ -58,16 +58,7 @@ function main(){
 	
 	html = AnyBalance.requestGet(baseurl + 'serverLogic/cabinetGetStructure', g_headers);
 	
-	try {
-		var accinfo = getJson(html);
-	} catch(e) {}
-	
-    //var accinfo = getParam(html, null, null, /var[\s+]services\s*=\s*(\{[\s\S]*?\})\s*;/, null, getJson);
-    if(!accinfo)
-        throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-    
-    if(accinfo.isError)
-        throw new AnyBalance.Error(accinfo.errorMsg);
+    var accinfo = getRTJson(html);
 
     if(!accinfo.cabinet.accounts || accinfo.cabinet.accounts.length == 0)
         throw new AnyBalance.Error("В вашем кабинете Ростелеком ещё не подключена ни одна услуга");
@@ -127,131 +118,128 @@ function main(){
            (i < 4 && AnyBalance.isAvailable('balance' + suffix, 'bonus' + suffix, 'sms' + suffix, 'mms' + suffix, 'min' + suffix, 'gprs' + suffix, 'status' + suffix, 'licschet' + suffix, 'name' + suffix, 'phone' + suffix))){
 
             AnyBalance.trace('Получаем данные для л/с: ' + acc.number);
-            html = AnyBalance.requestPost(baseurl + 'serverLogic/accountGetExtData', {account: acc.id}, g_headers);
-            json = getJson(html);
-			json = json.account;
-			
-            acc.__detailedInfo = json;
+			try{
+				html = AnyBalance.requestPost(baseurl + 'serverLogic/accountGetExtData', {account: acc.id}, g_headers);
+				json = getRTJson(html).account;
+				
+				acc.__detailedInfo = json;
 
-            var balance = getAccBalance(json);
-            
-            if(i < 4){
-                if(AnyBalance.isAvailable('balance' + suffix))
-                    result['balance' + suffix] = balance;
-                
-                var statuses = [], names = [], bonuses = [], phones = [], sms = [], mms = [], gprs = []; 
-                for(var j=0; json.services && j<json.services.length; ++j){
-                    var service = json.services[j];
-                    //tariffs.push(/*(service.type || service.serviceType) + */(service.tariff ? ': ' + service.tariff.title : ''));
+				var balance = getAccBalance(json);
+				
+				if(i < 4){
+					if(AnyBalance.isAvailable('balance' + suffix))
+						result['balance' + suffix] = balance;
 					
-					if(service.tariff.title)
-						tariffs.push(service.tariff.title);
-					
-                    statuses.push(g_ServiceStatus[service.status]);
-                    if(service.alias)
-                        names.push(service.alias);
-                    phones.push(service.number);
-    
-                    if(AnyBalance.isAvailable('bonus' + suffix)){
-					    AnyBalance.trace('Пробуем найти бонусную программу Премия...');
-                        var jsonBonus = getJson(AnyBalance.requestPost(baseurl + 'serverLogic/getBonusProgramStatus', {serviceId: service.id}, g_headers));
-						if(!jsonBonus.isError){
-							sumParam(jsonBonus.balance+'', result, 'bonus' + suffix, null, replaceTagsAndSpaces, parseBalance, aggregate_sum);						
-						}else{
-						    AnyBalance.trace('Не удалось бонусную программу Премия: ' + jsonBonus.errorMsg);
-						}
-                    }
-                    if(AnyBalance.isAvailable('sms' + suffix, 'mms' + suffix, 'min' + suffix, 'gprs' + suffix)){
-                        var jsonPackets = getJson(AnyBalance.requestPost(baseurl + 'serverLogic/viewCurrentBonus', {serviceId: service.id}, g_headers));
-                        if(jsonPackets.bonusCurrent){
-                            for(var j1=0; j1<jsonPackets.bonusCurrent.length; ++j1){
-                                var _packet = jsonPackets.bonusCurrent[j1];
-                                if(/SMS/i.test(_packet.title))
-                                	sumParam(_packet.currentCount, result, 'sms'+suffix, null, null, parseBalance, aggregate_sum);
-                                else if(/MMS/i.test(_packet.title))
-                                	sumParam(_packet.currentCount, result, 'mms'+suffix, null, null, parseBalance, aggregate_sum);
-                                else if(/мин/i.test(_packet.title))
-                                	sumParam(_packet.currentCount, result, 'min'+suffix, null, null, parseBalance, aggregate_sum);
-                                else if(/[мmkкгg][бb]|байт|bytes/i.test(_packet.title))
-                                	sumParam(_packet.currentCount, result, 'gprs'+suffix, null, null, parseBalance, aggregate_sum);
-                            }
-                        }
-                    }
-                    if(/INTERNET|TELEPHONY|IPTV|CDMA/.test(service.type || '')  //Судя по шаблону detailed_list, только у этих сервисов есть статистика
-                        && AnyBalance.isAvailable('trafIn' + suffix, 'trafOut' + suffix, 'minOutIC' + suffix)){
-                        //Междугородная исходящая телефония
-                        var dt = new Date();
-                        var jsonStatistics = getJson(AnyBalance.requestPost(baseurl + 'serverLogic/statistic', {action:'get_statistic',serviceId:service.id,month: dt.getMonth(), year: dt.getFullYear()}, g_headers));
-                        AnyBalance.trace('Смотрим статистику');
-                        for(var j1=0; jsonStatistics.statistic && j1<jsonStatistics.statistic.length; ++j1){
-                           var su = jsonStatistics.statistic[j1];
-                           AnyBalance.trace(su.name + ': ' + su.value + ' ' + su.unit);
-                           if(su.statUnit == 'TYPE_TIME'){
-                               if(/Междугородная исходящая/i.test(su.name))
-                                   sumParam(su.value, result, 'minOutIC'+suffix, null, null, parseMinutes, aggregate_sum);
-                               else
-                                   AnyBalance.trace('^^^ а эти минуты пропустили...');
-                           }else if(su.statUnit == 'TYPE_TRAFFIC'){
-                               if(/входящий/i.test(su.name))
-                                   sumParam(su.value + su.unit, result, 'trafIn'+suffix, null, null, parseTrafficGb, aggregate_sum);
-                               else if(/Исходящий/i.test(su.name))
-                                   sumParam(su.value + su.unit, result, 'trafOut'+suffix, null, null, parseTrafficGb, aggregate_sum);
-                               else
-                                   AnyBalance.trace('^^^ а этот трафик пропустили...');
-                           }else{
-                               AnyBalance.trace('^^^ а эту статистику пропустили...');
-                           }
-                        }
-                        if(jsonStatistics.isError)
-                            AnyBalance.trace(jsonStatistics.errorMessage);
-                    }
-                }
-    
-                if(AnyBalance.isAvailable('status' + suffix) && statuses.length > 0)
-                    result['status' + suffix] = statuses.join(', ');
-                
-                if(AnyBalance.isAvailable('licschet' + suffix))
-                    result['licschet' + suffix] = acc.number;
-    
-                if(AnyBalance.isAvailable('name' + suffix) && names.length > 0)
-                    result['name' + suffix] = names.join(', ');
-    
-                if(AnyBalance.isAvailable('phone' + suffix) && phones.length > 0)
-                    result['phone' + suffix] = phones.join(', ');
-    
-                if(AnyBalance.isAvailable('bonus' + suffix)) {
-					if(bonuses.length > 0) {
-						result['bonus' + suffix] = aggregate_sum(bonuses);
-					}
-				}
-
-                if(AnyBalance.isAvailable('bonusInt' + suffix)){
-					AnyBalance.trace('Пробуем найти бонусную программу Интернет-Бонус...');
-					try {
-						var sbversion = getSouthBonusVersion(baseurl);
-						if(sbversion != '???'){
-							html = '';
-							html = AnyBalance.requestPost(baseurl + 'plugins/south-bonus/' + sbversion + '/request', {action: 'getBonusBalance', accountId:acc.__detailedInfo.id}, g_headers);
-							var jsonBonus = JSON.parse(html);
+					var statuses = [], names = [], bonuses = [], phones = [], sms = [], mms = [], gprs = []; 
+					for(var j=0; json.services && j<json.services.length; ++j){
+						var service = json.services[j];
+						//tariffs.push(/*(service.type || service.serviceType) + */(service.tariff ? ': ' + service.tariff.title : ''));
+						
+						if(service.tariff.title)
+							tariffs.push(service.tariff.title);
+						
+						statuses.push(g_ServiceStatus[service.status]);
+						if(service.alias)
+							names.push(service.alias);
+						phones.push(service.number);
+		
+						if(AnyBalance.isAvailable('bonus' + suffix)){
+							AnyBalance.trace('Пробуем найти бонусную программу Премия...');
+							var jsonBonus = getJson(AnyBalance.requestPost(baseurl + 'serverLogic/getBonusProgramStatus', {serviceId: service.id}, g_headers));
 							if(!jsonBonus.isError){
+								sumParam(jsonBonus.balance+'', result, 'bonus' + suffix, null, replaceTagsAndSpaces, parseBalance, aggregate_sum);						
+							}else{
+								AnyBalance.trace('Не удалось бонусную программу Премия: ' + jsonBonus.errorMsg);
+							}
+						}
+						if(AnyBalance.isAvailable('sms' + suffix, 'mms' + suffix, 'min' + suffix, 'gprs' + suffix)){
+							var jsonPackets = getJson(AnyBalance.requestPost(baseurl + 'serverLogic/viewCurrentBonus', {serviceId: service.id}, g_headers));
+							if(jsonPackets.bonusCurrent){
+								for(var j1=0; j1<jsonPackets.bonusCurrent.length; ++j1){
+									var _packet = jsonPackets.bonusCurrent[j1];
+									if(/SMS/i.test(_packet.title))
+										sumParam(_packet.currentCount, result, 'sms'+suffix, null, null, parseBalance, aggregate_sum);
+									else if(/MMS/i.test(_packet.title))
+										sumParam(_packet.currentCount, result, 'mms'+suffix, null, null, parseBalance, aggregate_sum);
+									else if(/мин/i.test(_packet.title))
+										sumParam(_packet.currentCount, result, 'min'+suffix, null, null, parseBalance, aggregate_sum);
+									else if(/[мmkкгg][бb]|байт|bytes/i.test(_packet.title))
+										sumParam(_packet.currentCount, result, 'gprs'+suffix, null, null, parseBalance, aggregate_sum);
+								}
+							}
+						}
+						if(/INTERNET|TELEPHONY|IPTV|CDMA/.test(service.type || '')  //Судя по шаблону detailed_list, только у этих сервисов есть статистика
+							&& AnyBalance.isAvailable('trafIn' + suffix, 'trafOut' + suffix, 'minOutIC' + suffix)){
+							//Междугородная исходящая телефония
+							var dt = new Date();
+							var jsonStatistics = getJson(AnyBalance.requestPost(baseurl + 'serverLogic/statistic', {action:'get_statistic',serviceId:service.id,month: dt.getMonth(), year: dt.getFullYear()}, g_headers));
+							AnyBalance.trace('Смотрим статистику');
+							for(var j1=0; jsonStatistics.statistic && j1<jsonStatistics.statistic.length; ++j1){
+							   var su = jsonStatistics.statistic[j1];
+							   AnyBalance.trace(su.name + ': ' + su.value + ' ' + su.unit);
+							   if(su.statUnit == 'TYPE_TIME'){
+								   if(/Междугородная исходящая/i.test(su.name))
+									   sumParam(su.value, result, 'minOutIC'+suffix, null, null, parseMinutes, aggregate_sum);
+								   else
+									   AnyBalance.trace('^^^ а эти минуты пропустили...');
+							   }else if(su.statUnit == 'TYPE_TRAFFIC'){
+								   if(/входящий/i.test(su.name))
+									   sumParam(su.value + su.unit, result, 'trafIn'+suffix, null, null, parseTrafficGb, aggregate_sum);
+								   else if(/Исходящий/i.test(su.name))
+									   sumParam(su.value + su.unit, result, 'trafOut'+suffix, null, null, parseTrafficGb, aggregate_sum);
+								   else
+									   AnyBalance.trace('^^^ а этот трафик пропустили...');
+							   }else{
+								   AnyBalance.trace('^^^ а эту статистику пропустили...');
+							   }
+							}
+							if(jsonStatistics.isError)
+								AnyBalance.trace(jsonStatistics.errorMessage);
+						}
+					}
+		
+					if(AnyBalance.isAvailable('status' + suffix) && statuses.length > 0)
+						result['status' + suffix] = statuses.join(', ');
+					
+					if(AnyBalance.isAvailable('licschet' + suffix))
+						result['licschet' + suffix] = acc.number;
+		
+					if(AnyBalance.isAvailable('name' + suffix) && names.length > 0)
+						result['name' + suffix] = names.join(', ');
+		
+					if(AnyBalance.isAvailable('phone' + suffix) && phones.length > 0)
+						result['phone' + suffix] = phones.join(', ');
+		
+					if(AnyBalance.isAvailable('bonus' + suffix)) {
+						if(bonuses.length > 0) {
+							result['bonus' + suffix] = aggregate_sum(bonuses);
+						}
+					}
+
+					if(AnyBalance.isAvailable('bonusInt' + suffix)){
+						AnyBalance.trace('Пробуем найти бонусную программу Интернет-Бонус...');
+						try {
+							var sbversion = getSouthBonusVersion(baseurl);
+							if(sbversion != '???'){
+								html = '';
+								html = AnyBalance.requestPost(baseurl + 'plugins/south-bonus/' + sbversion + '/request', {action: 'getBonusBalance', accountId:acc.__detailedInfo.id}, g_headers);
+								var jsonBonus = getRTJson(html);
 								getParam(jsonBonus.balance+'', result, 'bonusInt' + suffix, null, replaceTagsAndSpaces, parseBalance);						
 							}else{
-							    AnyBalance.trace('Не удалось получить Интернет-Бонус: ' + jsonBonus.errorMsg);
+								AnyBalance.trace('Не удалось получить Интернет-Бонус: программа отсутствует');
 							}
-						}else{
-						    AnyBalance.trace('Не удалось получить Интернет-Бонус: программа отсутствует');
+						} catch (e) {
+							AnyBalance.trace('Не удалось получить Интернет-Бонус: ' + html);
 						}
-					} catch (e) {
-						AnyBalance.trace(e.message + ': can`t parse json from: ' + html);
 					}
 				}
-
-
-            }
-            if(balance > 0)
-                totalBalancePlus += balance;
-            else
-                totalBalanceMinus += balance;
+				if(balance > 0)
+					totalBalancePlus += balance;
+				else
+					totalBalanceMinus += balance;
+			}catch(e){
+				AnyBalance.trace('Ошибка получения данных для л/с ' + acc.number + ': ' + e.message);
+			}
         }
     }
 
@@ -263,15 +251,13 @@ function main(){
 		try {
 			html = '';
 			html = AnyBalance.requestPost(baseurl + 'serverLogic/bonusFPLGetProgram', '', g_headers);
-			var jsonBonus = JSON.parse(html);
-			if(!jsonBonus.isError){
-				if(jsonBonus.masterFPL)
-					getParam(jsonBonus.masterFPL.points+'', result, 'bonusFPL', null, replaceTagsAndSpaces, parseBalance);						
-			}else{
-			    AnyBalance.trace('Не удалось получить программу "Бонус": ' + jsonBonus.errorMsg);
-			}
+			var jsonBonus = getRTJson(html);
+			if(jsonBonus.masterFPL)
+				getParam(jsonBonus.masterFPL.points+'', result, 'bonusFPL', null, replaceTagsAndSpaces, parseBalance);						
+			else
+				AnyBalance.trace('Нет masterFPL: ' + html);
 		} catch (e) {
-			AnyBalance.trace(e.message + ': can`t parse json from: ' + html);
+			AnyBalance.trace('Не удалось получить программу "Бонус": ' + e.message);
 		}
 	}
 
@@ -281,16 +267,16 @@ function main(){
             var acc = accinfo.cabinet.accounts[i];
             if(!acc.__detailedInfo){
                 AnyBalance.trace('Дополнительно получаем данные для л/с: ' + acc.number);
-                html = AnyBalance.requestPost(baseurl + 'serverLogic/accountGetExtData', {account: acc.id}, g_headers);
-                json = getJson(html);
-                if(!json.account){
-                    AnyBalance.trace('Странные данные аккаунта без аккаунта (пропускаем): ' + html);
-                }else{
-                    if(json.account.balance > 0)
-                        totalBalancePlus += json.account.balance/100;
-                    else
-                        totalBalanceMinus += json.account.balance/100;
-                }
+				try{
+					html = AnyBalance.requestPost(baseurl + 'serverLogic/accountGetExtData', {account: acc.id}, g_headers);
+					json = getRTJson(html);
+					if(json.account.balance > 0)
+						totalBalancePlus += json.account.balance/100;
+					else
+						totalBalanceMinus += json.account.balance/100;
+				}catch(e){
+				    AnyBalance.trace('Не удалось получить данные л/с ' + acc.number + ': ' + e.message);
+				}
             }
 
             if(AnyBalance.isAvailable('totalBalancePlus'))
@@ -323,7 +309,7 @@ function getSouthBonusVersion(baseurl){
 function getAccBalance(json){
     //Баланс может быть разбит на суббалансы
     var balance;
-    if((!isset(json.balance) || json.balance==null) && json.subAccounts){
+    if((!isset(json.balance) || json.balance===null) && json.subAccounts){
         for(var i=0; i<json.subAccounts.length; ++i){
             var acc = json.subAccounts[i];
             if(isset(acc.balance) && acc.balance!=null){
@@ -335,4 +321,11 @@ function getAccBalance(json){
         balance = json.balance/100;
     }
     return balance;
+}
+
+function getRTJson(text){
+    var json = getJson(text);
+    if(json.isError)
+        throw new AnyBalance.Error(json.errorMsg);
+    return json;
 }

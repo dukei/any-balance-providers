@@ -217,6 +217,7 @@ function getFilialByPrefixAndNumber(prefix, number){
 
 function main(){
     var prefs = AnyBalance.getPreferences();
+
     var filial = getFilial(prefs.login);
     if(!filial)
         throw new AnyBalance.Error('Неизвестен филиал Мегафона для номера ' + prefs.login);
@@ -1078,66 +1079,88 @@ function megafonServiceGuidePhysical(filial, sessionid){
     
     //Бонусный баланс
     getPropValFloat(text, '&#1041;&#1086;&#1085;&#1091;&#1089;&#1085;&#1099;&#1081; &#1073;&#1072;&#1083;&#1072;&#1085;&#1089;:', result, 'bonus_balance');
+	
+	var foundInternetPacketOptions = {};
     
     //Между Текущие скидки и пакеты услуг: и Текущие услуги:
     //matches = text.match(/<div сlass="heading">&#1058;&#1077;&#1082;&#1091;&#1097;&#1080;&#1077; &#1089;&#1082;&#1080;&#1076;&#1082;&#1080; &#1080; &#1087;&#1072;&#1082;&#1077;&#1090;&#1099; &#1091;&#1089;&#1083;&#1091;&#1075;:<\/div>([\s\S]*?)<div class="heading">&#1058;&#1077;&#1082;&#1091;&#1097;&#1080;&#1077; &#1091;&#1089;&#1083;&#1091;&#1075;&#1080;:<\/div>/); 
     var text = getParam(text, null, null, /<table(?:[\s\S](?!<\/table>))*?(?:colname="SUBS_VOLUME"|head_grid_template_name="DISCOUNTS")(?:[\s\S]*?<\/table>){2}/i);
+	var optionGroupHtml = '', optionGroupText = '';
     if(text){//Таблица скидок
         var colnum = /colname="OWNER"/.test(text) ? 2 : 1; //Новая колонка в некоторых кабинетах - владелец скидки
-    
-        //Должны точно ловиться:
-        //Бонус 1 - полчаса бесплатно (Москва)
-        //10 мин на МТС, Билайн, Скай Линк
-        
-        var reOption = /(<tr[^>]*>(?:(?:[\s\S](?!<\/tr>))*?<td[^>]*>\s*<div[^>]+class="td_def"[^>]*>){3}[\s\S]*?<\/tr>)/ig;
-        while(matches = reOption.exec(text)){
-            var name = getParam(matches[1], null, null, /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-            //Ищем в таблице скидок строки вида: 39:00 мин   39:00, что означает Всего, Остаток
-            var p = /<div class="td_def">\s*(\d+)(?::(\d+))?[^<]*(?:&#1052;|&#1084;)&#1080;&#1085;[^<]*<[^&#;\d]*<div class="td_def">(\d+)(?::(\d+))?/i.exec(matches[1]);
-            if(p){ //Это минуты, надо бы их рассортировать
-                 if(/[36]0 мин\. бесплатно/i.test(name))
-                     sumOption(colnum, matches[1], result, null, 'mins_n_free', '.', parseMinutes);
-                 else if(/мин на МТС Билайн Скай Линк/i.test(name))
-                     sumOption(colnum, matches[1], result, 'mins_compet_total', 'mins_compet_left', '.', parseMinutes);
-                 else if(/мин на номера СНГ/i.test(name))
-                     sumOption(colnum, matches[1], result, 'mins_sng_total', 'mins_sng_left', '.', parseMinutes);
-                 else if(/мин по России/i.test(name))
-                     sumOption(colnum, matches[1], result, 'mins_country_total', 'mins_country_left', '.', parseMinutes);
-                 else if(/внутри сети/i.test(name))
-                     sumOption(colnum, matches[1], result, 'mins_net_total', 'mins_net_left', '.', parseMinutes);
-                 else
-                     sumOption(colnum, matches[1], result, 'mins_total', 'mins_left', '.', parseMinutes);
-            }else if(/GPRS|Интернет|Internet|\d+\s+[гмкgmk][бb]/i.test(name)){
-                 sumOption(colnum, matches[1], result, 'internet_total', 'internet_left', '.', parseTrafficMy);
-                 if(AnyBalance.isAvailable('internet_cur')){
-                     var total = getParam(matches[1], null, null, /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTrafficMy);
-                     var left = getParam(matches[1], null, null, /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTrafficMy);
-                     if(isset(total) && isset(left))
-                         result.internet_cur = (result.internet_cur || 0) + total - left;
-                 }
-            }
+        var rows = sumParam(text, null, null, /<tr[^>]*>[\s\S]*?<\/tr>/ig, null, html_entity_decode);
+		var reOption = /<tr[^>]*>(?:(?:[\s\S](?!<\/tr>))*?<td[^>]*>\s*<div[^>]+class="td_def"[^>]*>){3}[\s\S]*?<\/tr>/i;
+        for(var i=0; i<rows.length; ++i){
+		    var row = rows[i];
+			if(/grid-header-cell/i.test(row)){
+			    continue; //Заголовок пропускаем
+			}else if(!reOption.test(row)){
+				optionGroupHtml = row;
+				optionGroupText = getParam(row, null, null, null, replaceTagsAndSpaces);
+			    AnyBalance.trace('Найдена группа опций: ' + optionGroupText);
+			}else{
+				//Должны точно ловиться:
+				//Бонус 1 - полчаса бесплатно (Москва)
+				//10 мин на МТС, Билайн, Скай Линк
+				
+				var name = getParam(row, null, null, /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+			    AnyBalance.trace('Найдена опция: ' + name);
+				
+				//Ищем в таблице скидок строки вида: 39:00 мин   39:00, что означает Всего, Остаток
+				if(/<div class="td_def">\s*(\d+)(?::(\d+))?[^<]*(?:М|м)ин[^<]*<[^а-я\d]*<div class="td_def">(\d+)(?::(\d+))?/i.test(row)){ 
+				    //Это минуты, надо бы их рассортировать
+					if(/[36]0 мин\. бесплатно/i.test(name))
+						sumOption(colnum, row, result, null, 'mins_n_free', '.', parseMinutes);
+					else if(/мин на МТС Билайн Скай Линк/i.test(name))
+						sumOption(colnum, row, result, 'mins_compet_total', 'mins_compet_left', '.', parseMinutes);
+					else if(/мин на номера СНГ/i.test(name))
+						sumOption(colnum, row, result, 'mins_sng_total', 'mins_sng_left', '.', parseMinutes);
+					else if(/мин по России/i.test(name))
+						sumOption(colnum, row, result, 'mins_country_total', 'mins_country_left', '.', parseMinutes);
+					else if(/внутри сети/i.test(name))
+						sumOption(colnum, row, result, 'mins_net_total', 'mins_net_left', '.', parseMinutes);
+					else{
+				        AnyBalance.trace('Минуты ' + name + ', относим к просто минутам');
+						sumOption(colnum, row, result, 'mins_total', 'mins_left', '.', parseMinutes);
+					}
+				}else if(/GPRS|Интернет|Internet|\d+\s+[гмкgmk][бb]/i.test(name)){
+				    var internetPacket = getParam(optionGroupText, null, null, /Интернет \w+/i);
+					if(internetPacket)
+					    foundInternetPacketOptions[internetPacket] = true;
+						
+					sumOption(colnum, row, result, 'internet_total', 'internet_left', '.', parseTrafficMy);
+					if(AnyBalance.isAvailable('internet_cur')){
+						var total = getParam(row, null, null, /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTrafficMy);
+						var left = getParam(row, null, null, /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTrafficMy);
+						if(isset(total) && isset(left))
+							result.internet_cur = (result.internet_cur || 0) + total - left;
+					}
+				}else if(/(?:SMS|СМС|сообщен)/i.test(name)){
+					// Карманный интернет теперь покрывается циклом выше
+					
+					//200 SMS MegaVIP 0
+					//Пакет SMS за бонусы
+					//Пакет SMS-сообщений (Поволжье)
+					//SMS на номера России
+					//(SMS|СМС|сообщен)
+					sumOption(colnum, row, result, 'sms_total', 'sms_left', '.');
+				}else if(/Исходящие SM\s*</i.test(name)){
+					//Исходящие SM (ОХард, Москва)
+					sumOption(colnum, row, result, 'sms_total', 'sms_left', '.');
+				}else if(/(?:MMS|ММС)/i.test(name)){
+					//MMS
+					sumOption(colnum, row, result, 'mms_total', 'mms_left', '.');
+				}else if(/Нужный подарок/i.test(name)){
+					//Нужный подарок (Поволжье)
+					sumOption(colnum, row, result, 'handygift_total', 'handygift_left', '.');
+				}else if(/Гигабайт в дорогу/i.test(name)){
+					//Гигабайт в дорогу
+					sumOption(colnum, row, result, null, 'gb_with_you', '.');
+				}else{
+				    AnyBalance.trace('??? НЕИЗВЕСТНАЯ ОПЦИЯ (группа ' + optionGroupText + ') ' + name + ': ' + row);
+				}
+			}
         }
-          
-        // Карманный интернет теперь покрывается циклом выше
-        
-        //200 SMS MegaVIP 0
-        //Пакет SMS за бонусы (SMS &#1079;&#1072; &#1073;&#1086;&#1085;&#1091;&#1089;&#1099;)
-        //Пакет SMS-сообщений (Поволжье) (&#1055;&#1072;&#1082;&#1077;&#1090; SMS-&#1089;&#1086;&#1086;&#1073;&#1097;&#1077;&#1085;&#1080;&#1081;)
-        //SMS на номера России (SMS &#1085;&#1072; &#1085;&#1086;&#1084;&#1077;&#1088;&#1072; &#1056;&#1086;&#1089;&#1089;&#1080;&#1080;)
-        //(SMS|СМС|сообщен)
-        sumOption(colnum, text, result, 'sms_total', 'sms_left', '(?:SMS|&#1057;&#1052;&#1057;|&#1089;&#1086;&#1086;&#1073;&#1097;&#1077;&#1085;)');
-        
-        //Исходящие SM (ОХард, Москва)
-        sumOption(colnum, text, result, 'sms_total', 'sms_left', '&#1048;&#1089;&#1093;&#1086;&#1076;&#1103;&#1097;&#1080;&#1077; SM\\s*<');
-            
-        //MMS
-        sumOption(colnum, text, result, 'mms_total', 'mms_left', '(?:MMS|&#1052;&#1052;&#1057;)');
-        
-        //Нужный подарок (Поволжье)
-        sumOption(colnum, text, result, 'handygift_total', 'handygift_left', '&#1053;&#1091;&#1078;&#1085;&#1099;&#1081; &#1087;&#1086;&#1076;&#1072;&#1088;&#1086;&#1082;');
-        
-        //Гигабайт в дорогу
-        sumOption(colnum, text, result, null, 'gb_with_you', '&#1043;&#1080;&#1075;&#1072;&#1073;&#1072;&#1081;&#1090; &#1074; &#1076;&#1086;&#1088;&#1086;&#1075;&#1091;');
     }
 
     //Пакет Интернет 24 теперь покрывается циклом выше
@@ -1240,17 +1263,21 @@ function megafonServiceGuidePhysical(filial, sessionid){
 						AnyBalance.trace('Нашли ' + ++checkedLen + ' отмеченных элементов в таблице');
 						var optName = getParam(tr, null, null, /<TMP_PACK_NAME>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
 						AnyBalance.trace('Опция ' + optName);
-						if(optName == 'Интернет XS')
-						{
-							AnyBalance.trace('Опция ' + optName+ ' нам известна, разбираем...');
-							sumParam(tr, result, 'internet_total', /Включённый объём:(?:[\s\S]*?<div[^>]*>){3}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
-							sumParam(tr, result, 'internet_left', /Включённый объём:(?:[\s\S]*?<div[^>]*>){4}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
+						if(!foundInternetPacketOptions[optName]){
+							if(/^Интернет \w+$/i.test(optName))
+							{
+								AnyBalance.trace('Опция ' + optName+ ' нам известна, разбираем...');
+								sumParam(tr, result, 'internet_total', /Включённый объём:(?:[\s\S]*?<div[^>]*>){3}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
+								sumParam(tr, result, 'internet_left', /Включённый объём:(?:[\s\S]*?<div[^>]*>){4}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
 
-							if(isAvailable('internet_cur'))
-								result.internet_cur = (result.internet_cur||0) + (result.internet_total - (result.internet_left||0));
+								if(isAvailable('internet_cur'))
+									result.internet_cur = (result.internet_cur||0) + (result.internet_total - (result.internet_left||0));
+							}
+							else
+								AnyBalance.trace('Опция ' + optName+ ' неизвестна, свяжитесь с автором провайдера для добавления данной опции.');
+						}else{
+							AnyBalance.trace('Опцию ' + optName+ ' уже обработали ранее, пропускаем');
 						}
-						else
-							AnyBalance.trace('Опция ' + optName+ ' не известна, свяжитесь с автором провайдера для добавления данной опции.');
 					}
 				}
 			}

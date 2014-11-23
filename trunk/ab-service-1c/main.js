@@ -49,10 +49,17 @@ function main(){
 	
     getParam(html, result, 'date-end-ITS', /<th>Действует по<\/th>([^>]*>){14}/i, replaceTagsAndSpaces, parseDate);
 	getParam(html, result, 'date-start-ITS', /<th>Действует с<\/th>([^>]*>){14}/i, replaceTagsAndSpaces, parseDate);
-	//getParam(html, result, 'dateITS-OTR', /<th>Действует по<\/th>([^>]*>){63}/i, replaceTagsAndSpaces, parseDate);
 	getParam(html, result, 'viddogovoraITS', /<th>Вид договора<\/th>([^>]*>){14}/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'partnerITS', /<th>Партнер 1С<\/th>([^>]*>){14}/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'clientITS', /<th>Зарегистрирован на<\/th>([^>]*>){14}/i, replaceTagsAndSpaces, html_entity_decode);
+	
+	getParam(html, result, 'date-start-ITS-OTR', /<h4>Активированные сервисы 1С:ИТС Отраслевой<\/h4>([^>]*>){29}/i, replaceTagsAndSpaces, parseDate);
+	getParam(html, result, 'date-end-ITS-OTR', /<h4>Активированные сервисы 1С:ИТС Отраслевой<\/h4>([^>]*>){27}/i, replaceTagsAndSpaces, parseDate);
+	getParam(html, result, 'date-active-ITS-OTR', /<th>Дата активации<\/th>([^>]*>){18}/i, replaceTagsAndSpaces, parseDate);
+	getParam(html, result, 'vidITS-OTR', /<th>Вид сервиса<\/th>([^>]*>){17}/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'partnerITS-OTR', /<h4>Активированные сервисы 1С:ИТС Отраслевой<\/h4>([^>]*>){31}/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'productITS-OTR', /<th>Сопровождаемый продукт<\/th>([^>]*>){18}/i, replaceTagsAndSpaces, html_entity_decode);
+	
 	//AnyBalance.trace('Делаю выход'); 
 	//html = AnyBalance.requestPost(baseurl + 'logout');
 	

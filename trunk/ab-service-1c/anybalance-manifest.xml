@@ -15,11 +15,18 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="date-end-ITS" name="Окончание подписки ИТС" type="time" format="dd-MM-yyyy"/>
 		<counter id="date-start-ITS" name="Начало подписки ИТС" type="time" format="dd-MM-yyyy"/>
+		<counter id="date-end-ITS" name="Окончание подписки ИТС" type="time" format="dd-MM-yyyy"/>
 		<counter id="viddogovoraITS" name="Вид подписки" type="text"/>
 		<counter id="partnerITS" name="Партнер ИТС" type="text"/>
 		<counter id="clientITS" name="Клиент ИТС" type="text"/>
+		
+		<counter id="date-start-ITS-OTR" name="Начало подписки ИТС:Отраслевой" type="time" format="dd-MM-yyyy"/>
+		<counter id="date-end-ITS-OTR" name="Окончание подписки ИТС:Отраслевой" type="time" format="dd-MM-yyyy"/>
+		<counter id="date-active-ITS-OTR" name="Активация ИТС:Отраслевой" type="time" format="dd-MM-yyyy"/>
+		<counter id="vidITS-OTR" name="Вид подписки ИТС:Отраслевой" type="text"/>
+		<counter id="partnerITS-OTR" name="Партнер ИТС:Отраслевой" type="text"/>
+		<counter id="productITS-OTR" name="Сопровождаемый продукт ИТС:Отраслевой" type="text"/>
 	</counters>
 	<keywords></keywords>
 	<type>service</type>

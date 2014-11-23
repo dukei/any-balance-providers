@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="3.0" version="126" date="2014-11-23">
+	- Небольшое улучшение распознавание опций в некоторых случаях
+	- Исправлено удвоение интернета XS
+	</change>
 	<change major_version="3.0" version="125" date="2014-11-21">
 	- Получение всех данных для Столичного филиала из СервисГида
 	</change>

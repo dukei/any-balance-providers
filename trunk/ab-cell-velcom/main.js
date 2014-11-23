@@ -177,7 +177,8 @@ function main(){
 	
 	getParam(html, result, 'userName', /(?:Абонент:|ФИО)(?: \(название абонента\))?:?[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'userNum', /(?:Номер):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'balance', /(?:Баланс основного счета|Баланс лицевого счета|Баланс|Начисления абонента):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    //Хитрецы несколько строчек начисления абонента делают, одна при этом пустая
+    sumParam(html, result, 'balance', /(?:Баланс основного счета|Баланс лицевого счета|Баланс|Начисления абонента):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     sumParam(html, result, 'balanceBonus', /(?:Баланс бонусного счета(?: \d)?):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     getParam(html, result, 'status', /(?:Текущий статус абонента|Статус абонента):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, '__tariff', /Тарифный план:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
@@ -191,10 +192,11 @@ function main(){
 	getParam(html, result, 'call_barring', /Запрет исходящих с:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDateWord);
 	
 	// Изменилось отображение трафика и минут
-	if(!isset(result.min) || !isset(result.traffic) || !isset(result.mms)) {
+	if(!isset(result.min_velcom) || !isset(result.min) || !isset(result.traffic) || !isset(result.mms)) {
 		var str = getParam(html, null, null, /Остаток трафика:(?:[^>]*>){3}([\s\S]*?)<\//i);
 		if(str) {
-			sumParam(html, result, 'min', /([\s\d]+)мин/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+			sumParam(html, result, 'min_velcom', /([\s\d]+)мин(?:ут)? на velcom/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+			sumParam(html, result, 'min', /([\s\d]+)мин(?!(?:ут)? на velcom)/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 			sumParam(html, result, 'mms', /([\s\d]+)(?:MMS|ММС)/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 			getParam(html, result, 'traffic', /([\s\d]+[М|M][B|Б])/i, replaceTagsAndSpaces, parseTraffic);
 			getParam(html, result, 'traffic_night', /([\s\d]+[М|M][B|Б]\s+ночь)/i, replaceTagsAndSpaces, parseTraffic);

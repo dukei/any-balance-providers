@@ -34,6 +34,7 @@ function main(){
         var error = getParam(html, null, null, /<div[^>]*class="errmsg"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
         if(error)
           throw new AnyBalance.Error(error);
+        AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
     }
     

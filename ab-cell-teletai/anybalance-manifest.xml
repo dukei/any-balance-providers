@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-cell-teletai</id>
+	<api flags="no_browser|captcha"/>
+	<name>Teletai</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Teletai <a href="http://www.teletie.ru/">http://www.teletie.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="http://lk.teletie.ru/login">http://lk.teletie.ru/login</a></p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="balance2" name="Расходы по номеру за текущий период" units=" р"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="phone" name="Телефон" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>cell</type>
+	<country>ru</country>
+</provider>

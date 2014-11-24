@@ -77,6 +77,10 @@ function getToken(html) {
 }
 
 function mainMobileApp(prefs) {
+	if(AnyBalance.getLevel() < 9) {
+		throw new AnyBalance.Error('Для использования API мобильного приложения необходим AnyBalance API v9, пожалуйста, обновите приложение!');
+	}
+	
 	var defaultPin = '11223';
 	
 	/*html = requestApi('checkPassword.do', {
@@ -85,8 +89,8 @@ function mainMobileApp(prefs) {
 	}, true, 'https://node1.online.sberbank.ru:4477/mobile7/', true);
 	*/
 	// Здесь нужно узнать нужна ли привязка
-	//if(!/<status>\s*<code>0<\/code>/i.test(html)) {
-	if(!prefs.guid) {
+	var guid = AnyBalance.getData('guid', '');
+	if(!guid) {
 		AnyBalance.trace('Необходимо привязать устройство!');
 		// регистрируем девайс
 		var html = requestApi('registerApp.do', {
@@ -100,8 +104,9 @@ function mainMobileApp(prefs) {
 			throw new AnyBalance.Error("Не удалось найти токен регистрации, сайт изменен?");
 		}
 		
+		AnyBalance.setData('guid', mGUID);
 		AnyBalance.trace('mGUID is: ' + mGUID);
-		
+		AnyBalance.saveData();
 		// Все, тут надо дождаться смс кода
 		var code = AnyBalance.retrieveCode('Пожалуйста, введите код из смс, для привязки данного устройства.', 'R0lGODlhBAAEAJEAAAAAAP///////wAAACH5BAEAAAIALAAAAAAEAAQAAAIElI8pBQA7');
 		
@@ -126,7 +131,7 @@ function mainMobileApp(prefs) {
 		
 		html = requestApi2('https://online.sberbank.ru:4477/CSAMAPI/login.do', {
 			'operation':'button.login',
-			'mGUID':prefs.guid,
+			'mGUID':guid,
 			'isLightScheme':'true',
 			'devID':hex_md5(prefs.login)
 		}, true);
@@ -240,7 +245,7 @@ function main() {
 	checkEmpty(prefs.login, "Пожалуйста, укажите логин для входа в Сбербанк-Онлайн!");
 	checkEmpty(prefs.password, "Пожалуйста, укажите пароль для входа в Сбербанк-Онлайн!");
 	if (prefs.lastdigits && !/^\d{4,5}$/.test(prefs.lastdigits)) 
-		throw new AnyBalance.Error("Надо указывать 4 последних цифры карты или не указывать ничего", null, true);
+		throw new AnyBalance.Error("Надо указывать 4 последних цифры карты или не указывать ничего", null, true);	
 /*      
     var html = AnyBalance.requestGet(baseurl + 'esClient/_logon/LogonContent.aspx');
     var error = getParam(html, null, null, /techBreakMsgLabel[^>]*>([\s\S]*?)<\/span>/i);

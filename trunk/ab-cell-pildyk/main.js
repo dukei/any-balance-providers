@@ -55,6 +55,8 @@ function main(){
 	getParam(html, result, 'name', /<p\s*id="userinfo"\s*[^>]*>[\s\S]*?Prisijungęs:\s*<strong>([^>]*?)\s*<\/strong>[\s\S]*?<\/p>/i, replaceTagsAndSpaces, null);
     getParam(html, result, 'balanceExpire', /<th>Sąskaitos\s*likutis:[\s\S]*?<small\sclass="expiration_date">\s*galioja\s*iki\s*([^>]*?)\s*<\/small>\s*<\/th>/i, replaceTagsAndSpaces, parseDateISO);
 	
+	getParam(html, result, 'traf_left', /AccountInfo_DataServiceRow(?:[^>]*>){8}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseTraffic);
+	
 	result.telnum = '+370' + prefs.login;
 	
     AnyBalance.setResult(result);

@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="6">ab-cell-pildyk</id>
+	<id version="7">ab-cell-pildyk</id>
 	<name>Pildyk</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе провайдера Pildyk <a href="www.pildyk.lt">www.pildyk.lt</a></p>
@@ -21,6 +21,7 @@
 		<counter id="balanceExpire" name="Дата сгорания баланса" type="time" format="dd/MM/yyyy"/>
 		<counter id="name" name="Владелец" type="text"/>
 		<counter id="telnum" name="Номер телефона" type="text"/>
+		<counter id="traf_left" name="Остаток трафика" units=" Мб"/>
 	</counters>
 	<keywords>pildyk</keywords>
 	<type>cell</type>

@@ -1,42 +1,45 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Получает информацию по бонусной карте Транаэро
-
-Сайт оператора: http://transaero.ru/
-Личный кабинет: http://transaero.ru/ru/privilege/argo-login
 */
 
 function main(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
+	
+    var baseurl = "http://m.transaero.ru/";
 
-    var baseurl = "http://transaero.ru";
-
-    var html = AnyBalance.requestGet(baseurl + '/ru/privilege/argo-login');
-    var action = getParam(html, null, null, /<form[^>]+action="(\/wps\/portal\/!ut[^"]*)/i, null, html_entity_decode);
+    var html = AnyBalance.requestGet(baseurl);
+	
+    var action = getParam(html, null, null, /<a href="\/([^"]+)(?:[^>]*>){3}\s*Привилегия/i, null, html_entity_decode);
     if(!action)
         throw new AnyBalance.Error('Не удаётся найти форму входа. Сайт изменен или проблемы на сайте.');
+	
+	html = AnyBalance.requestGet(baseurl + action);
 
+    var action = getParam(html, null, null, /<form[^>]*action="\/([^"]+)/i, null, html_entity_decode);
+    if(!action)
+        throw new AnyBalance.Error('Не удаётся найти форму входа. Сайт изменен или проблемы на сайте.');
+	
     html = AnyBalance.requestPost(baseurl + action, {
-        FORM_LASTNAME:prefs.surname,
-        FORM_CARDNO:prefs.login,
-        FORM_PINCODE:prefs.password,
-        ArgoPortletFormSubmit:'Войти'
+        lastName:prefs.surname,
+        cardno:prefs.login,
+        pin:prefs.password,
     });
 
-    if(!/Возврат на страницу авторизации/i.test(html)){
-        var error = getParam(html, null, null, /<h1[^>]*>Просмотр состояния счёта<\/h1>\s*<p[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
-        if(error)
-            throw new AnyBalance.Error(error);
-        throw new AnyBalance.Error('Не удалось войти в личный кабинет. Проблемы на сайте или сайт изменен.');
-    }
-
+	if (!/"Выход"/i.test(html)) {
+		var error = sumParam(html, null, null, /<span style=[^>]*color:#990000[^>]*>([\s\S]*?)<\//ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+		if (error)
+			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+		
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+	}
+	
     var result = {success: true};
 
-    getParam(html, result, 'balance', /Вы набрали\s*<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, '__tariff', /Уважаемый([^<!]*)/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'cardnum', /ваш персональный счет([^<\.]*)/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'balance', />\s*Всего баллов(?:[^>]*>){3}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, '__tariff', />\s*Номер карты(?:[^>]*>){3}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'cardnum', />\s*Номер карты(?:[^>]*>){3}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
 
     AnyBalance.setResult(result);
 }

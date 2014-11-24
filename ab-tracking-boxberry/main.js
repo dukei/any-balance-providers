@@ -34,7 +34,7 @@ function main() {
 		return value;
 	});
 	
-	html = AnyBalance.requestPost(baseurl + 'track.php', {
+	html = AnyBalance.requestPost(baseurl + 'departure_track/', {
 		id: prefs.login,
 	}, addHeaders({Referer: baseurl, 'X-Requested-With':'XMLHttpRequest'}));
 	
@@ -49,27 +49,31 @@ function main() {
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'orderNum', /№ заказа интернет-магазина(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, '__tariff', /№ заказа интернет-магазина(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'storeName', /Название интернет-магазина(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'dest', /Город назначения(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'weight', /Вес товара, кг(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'point', /Пункт выдачи(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'orderNumBox', /Номер заказа Boxberry(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'orderNum', /<b>\s*№ заказа интернет-магазина(?:[^>]*>){3}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, '__tariff', /<b>\s*№ заказа интернет-магазина(?:[^>]*>){3}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'storeName', /<b>\s*Название интернет-магазина(?:[^>]*>){3}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'dest', /<b>\s*Город назначения(?:[^>]*>){3}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'weight', /<b>\s*Вес товара(?:[^>]*>){3}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'point', /<b>\s*Пункт выдачи(?:[^>]*>){3}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, ['orderNumBox', 'all'], /<b>\s*Номер заказа Boxberry(?:[^>]*>){3}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
 	
 	if(isAvailable('all')) {
-		var trs = sumParam(html, null, null, /\d{2}\.\d{2}.\d{2} \d{2}:\d{2}(?:[^>]*>){2}[^<]+/ig);
-		if(trs) {
+		html = AnyBalance.requestPost(baseurl + 'track2.php', {
+			'type': 'trackone',
+			'type_track': 'z',
+			'id': result.orderNumBox
+		}, addHeaders({Referer: baseurl, 'X-Requested-With':'XMLHttpRequest'}));		
+		
+		var items = sumParam(html, null, null, /\d{2}\.\d{2}.\d{2} \(?\d{2}:\d{2}\)?(?:[^>]*>){3}[\s\S]*?<\//ig);
+		if(items) {
 			var text = '';
-			for(var i = 0; i < trs.length; i++) {
-				var match = /(\d{2}\.\d{2}.\d{2} \d{2}:\d{2})(?:[^>]*>){2}([^<]+)/ig.exec(trs[i]);
+			for(var i = 0; i < items.length; i++) {
+				var match = /(\d{2}\.\d{2}.\d{2} \(?\d{2}:\d{2}\)?)(?:[^>]*>){3}([\s\S]*?)<\//i.exec(items[i]);
 				
-				text += match[1] + ' ' + match[2] + '\n';
+				text += match[1] + ': ' + match[2] + '\n';
 			}
-			
 			result.all = text;
 		}
 	}
-	
 	AnyBalance.setResult(result);
 }

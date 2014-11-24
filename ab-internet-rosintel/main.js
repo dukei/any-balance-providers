@@ -27,7 +27,7 @@ function main(){
 	
     var result = {success: true};
 
-	getParam(html, result, 'balance', />\s*Баланс(?:[^>]*>){14}([\-\d.,]{2,})/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance', />\s*Баланс(?:[^>]*>){14}([\-\s\d.,]{2,})/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'userName', /Вы:<\/td>\s*<td>(.*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, '__tariff', new RegExp(prefs.login + '\\s*</a([^>]*>){4}', 'i'), replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'status', new RegExp(prefs.login + '\\s*</a([^>]*>){12}', 'i'), replaceTagsAndSpaces, html_entity_decode);

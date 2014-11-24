@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="4">ab-internet-rosintel</id>
+	<id version="5">ab-internet-rosintel</id>
 	<name>Росинтел (Тульская область)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе интернет провайдера тульской области Росинтел <a href="http://rosintel.ru">http://rosintel.ru</a></p>

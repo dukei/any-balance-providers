@@ -40,8 +40,8 @@ function main(){
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
-    
-	var account = getParam(html, null, null, new RegExp('\(span[\\s]class="bill-number[\\s\\S]*Счёт[\\s]№[\\s]' + (prefs.digits || '') + '[\\s\\S]*?</td>)', 'i'));
+	
+	var account = getParam(html, null, null, new RegExp('Счёт\\s+№\\s*\\d+' + (prefs.digits || '') + '(?:[^>]*>){35,60}(?:\\s*</div>){3}', 'i'));
 	checkEmpty(account, 'Не удалось найти ' + (prefs.digits ? 'счет с последними цифрами ' + prefs.digits : 'ни одного счета!'));
 	
     var result = {success: true};

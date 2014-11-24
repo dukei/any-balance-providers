@@ -34,7 +34,7 @@
     <ListPreference 
         key="country" 
         title="Страна"
-        summary="Ваша страна|Нужна для определения личного кабинета|{@s}"
+        summary="|Нужна для определения личного кабинета|{@s}"
         entries="Россия|Казахстан"
         entryValues="ru|kz"
 		defaultValue="ru">

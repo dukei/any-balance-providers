@@ -22,12 +22,12 @@ function main () {
 	if(!html || AnyBalance.getLastStatusCode() > 400)
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	
-	html = AnyBalance.requestPost(baseurl + 'territory-movie', {
+	html = AnyBalance.requestPost(baseurl + 'territory-movie/', {
 		'sessid':getParam(html, null, null, /<form[^>]*action="\/territory-movie[^>]*>[^>]*value="([^"]+)/i),
 		'card':prefs.login,
 		'pin':prefs.password,
 		'login':'ВОЙТИ'
-	}, addHeaders({Referer: baseurl + 'territory-movie'}));
+	}, addHeaders({Referer: baseurl + 'territory-movie/'}));
 	
 	if (!/logout=yes/i.test(html)) {
 		var error = getParam(html, null, null, / class="errortext"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);

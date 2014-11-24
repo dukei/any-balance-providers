@@ -7,9 +7,11 @@ AnyBalance (http://any-balance-providers.googlecode.com)
 Содержит некоторые полезные для извлечения значений с сайтов функции.
 Для конкретного провайдера рекомендуется оставлять в этом файле только те функции, которые используются.
 
-library.js v0.14 от 07.10.14
+library.js v0.15 от 24.11.14
 
 changelog:
+24.11.14 capitalFirstLetters - новая функция, делает из строки ИВАноВ - Иванов;
+
 07.10.14 safeEval - полностью безопасное исполнение стороннего Javascript (в плане недоступности для него AnyBalance API)
 
 18.08.14 requestPostMultipart - эмулируем браузер, генерируя случайный boundary
@@ -770,4 +772,14 @@ function requestPostMultipart(url, data, headers) {
 		headers = {};
 	headers['Content-Type'] = 'multipart/form-data; boundary=' + boundary.substr(2);
 	return AnyBalance.requestPost(url, parts.join('\r\n'), headers);
+}
+
+/** Приводим все к единому виду вместо ИВаНов пишем Иванов */
+function capitalFirstLetters(str) {
+	var wordSplit = html_entity_decode(str + '').toLowerCase().split(' ');
+	var wordCapital = '';
+	for (i = 0; i < wordSplit.length; i++) {
+		wordCapital += wordSplit[i].substring(0, 1).toUpperCase() + wordSplit[i].substring(1) + ' ';
+	}
+	return wordCapital.replace(/^\s+|\s+$/g, '');
 }

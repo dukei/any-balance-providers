@@ -5,6 +5,8 @@
 function main() {
     var result = {success: true};
 	
+	AnyBalance.trace(capitalFirstLetters('ИвАНоВ и. иваНОВИЧ'));
+	
 	requestPostMultipart('http://ya.ru/', '', '');
 	
     // Тестируем декод

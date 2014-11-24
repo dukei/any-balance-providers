@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-service-1c-bitix</id>
+	<id version="1">ab-service-1c-bitrix</id>
 	<name>1С-Битрикс</name>
 	<api flags="no_browser"/>
 	<description html="true"><![CDATA[

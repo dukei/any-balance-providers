@@ -13,6 +13,7 @@ var g_headers = {
 function main() {
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'https://mpay.mbank.kiev.ua/';
+	var currency;
 	AnyBalance.setDefaultCharset('utf-8');
 
 	checkEmpty(prefs.login, 'Введіть логін!');
@@ -36,13 +37,26 @@ function main() {
 
 	getParam(html, result, '__tariff', /home.png" \/>\s*<\/span>\s*<span class=[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
 
-	html = AnyBalance.requestGet(baseurl + 'uk/widgets/products/balance/data/UAH?_=' + new Date().getTime(), g_headers);
+	html = AnyBalance.requestGet(baseurl + 'uk/widgets/products/balance/data/'+ prefs.curn +'?_=' + new Date().getTime(), g_headers);
 	var json = getJson(html);
 
 	getParam(json.AccountsAvailableAmount/100, result, 'balance');
 	getParam(json.AccountsAvailableAmountOwn/100, result, 'balance_my');
 	getParam(json.DepositsBalanceAmount/100, result, 'balance_vklad');
 	getParam(json.LoansBalanceAmount/100, result, 'balance_kred');
+
+	if(prefs.curn == 'UAH') {
+	  result.currency = '₴';
+	}
+	if(prefs.curn == 'USD') {
+	  result.currency = '$';
+	}
+	if(prefs.curn == 'EUR') {
+	  result.currency = '€';
+	}
+	if(prefs.curn == 'RUB') {
+	  result.currency = '₽';
+	}
 
 	html = AnyBalance.requestGet(baseurl + '/uk/security/logout', g_headers);
 

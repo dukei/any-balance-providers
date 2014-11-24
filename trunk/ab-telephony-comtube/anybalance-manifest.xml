@@ -1,31 +1,26 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="4">ab-telephony-comtube</id>
-  <name>ComTube</name>
+	<api flags="no_browser"/>
+	<id version="5">ab-telephony-comtube</id>
+	<name>ComTube</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем балансе, балансе инвестиционного счета, валюте счета и номере внутри системы для пользователей провайдера IP-телефонии ComTube (http://www.comtube.com).</p>   
 	]]></description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units=" {@currency}"/>
-    <counter id="invest" name="Баланс инвестиционного счета" units=" {@currency}"/>
-    <counter id="number" name="Номер ComTube" type="text"/>
-    <counter id="currency" name="Валюта" type="text"/>
-  </counters>
-  <keywords>
-    IP-телефония
-  </keywords>
-  <type>
-    telephony
-  </type>
-  <country>
-    ru
-  </country>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" {@currency}"/>
+		<counter id="invest" name="Баланс инвестиционного счета" units=" {@currency}"/>
+		<counter id="number" name="Номер ComTube" type="text"/>
+		<counter id="currency" name="Валюта" type="text"/>
+	</counters>
+	<keywords>IP-телефония</keywords>
+	<type>telephony</type>
+	<country>ru</country>
 </provider>

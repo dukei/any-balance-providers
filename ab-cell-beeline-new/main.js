@@ -13,6 +13,13 @@ var g_headers = {
 	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.64 Safari/537.31'
 };
 
+var g_currencys = {
+	руб: 'р',
+	RUR: 'р',
+	тенге:'₸',
+	undefined: ''
+}
+
 function getBlock(url, html, name, exact, onlyReturnParams) {
 	var formhtml = html;
 	if (isArray(html)) { //Если массив, то разный хтмл для поиска блока и для формы
@@ -180,6 +187,7 @@ function getBonusesBlock(url, html, name, exact, onlyReturnParams) {
 
 function myParseCurrency(text) {
 	var val = html_entity_decode(text).replace(/\s+/g, '').replace(/[\-\d\.,]+/g, '');
+	val = g_currencys[val];
 	AnyBalance.trace('Parsing currency (' + val + ') from: ' + text);
 	return val;
 }
@@ -238,12 +246,11 @@ function main() {
 	else {
 		// Если задан номер телефона то идем через морду, приложение не поддерживает несколько номеров на аккаунте
 		// Пока закоментируем, не все отлажено
-		// if(!prefs.phone) {
-			// proceedWithMobileAppAPI(baseurl, prefs);
-			// return;
-		// }
+		if(!prefs.phone) {
+			proceedWithMobileAppAPI(baseurl, prefs);
+			return;
+		}
 	}
-	
 	
 	try {
 		var html = AnyBalance.requestGet(baseurl + 'login.html', g_headers);
@@ -369,7 +376,7 @@ function fetchB2B(baseurl, html) {
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'fio', /"user-name"([^>]*>){2}/i, replaceTagsAndSpaces, capitalFirstLenttersAndDecode);
+	getParam(html, result, 'fio', /"user-name"([^>]*>){2}/i, replaceTagsAndSpaces, capitalFirstLetters);
     if (AnyBalance.isAvailable('balance', 'agreement', 'currency')) {
     	var accounts = sumParam(html, null, null, /faces\/info\/contractDetail\.html\?objId=\d+[^>]*>\d{5,10}/ig);
 		
@@ -637,7 +644,7 @@ function fetchPost(baseurl, html) {
 	// if (!multi && AnyBalance.isAvailable('fio', 'balance', 'currency')) {
 		// //Это надо в конце, потому что после перехода на m/ куки, видимо, портится.
 		// xhtml = AnyBalance.requestGet(baseurl + 'm/post/index.html', g_headers);
-		// getParam(xhtml, result, 'fio', /<div[^>]+class="abonent-name"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, capitalFirstLenttersAndDecode);
+		// getParam(xhtml, result, 'fio', /<div[^>]+class="abonent-name"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, capitalFirstLetters);
 		// // Вроде бы все хорошо, но: {"sms_left":3463,"min_local":24900,"balance":0,"phone":"+7 909 169-24-86","agreement":"248260674","__time":1385043751223,"fio":"Максим Крылов","overpay":619.07,"min_local_clear":415,"currency":"рубвмесяцОтключитьБудьвкурсе","__tariff":"«Всё включено L 2013»"}
 		// getParam(xhtml, result, 'balance', /class="price[^>]*>((?:[\s\S]*?span[^>]*>){3})/i, balancesReplaces, parseBalance);
 		// // Если баланса нет, не надо получать и валюту
@@ -739,7 +746,7 @@ function fetchPre(baseurl, html) {
 	if (AnyBalance.isAvailable('balance')) {
 		// Если нет баланса, валюту не нужно получать
 		function l_getCurrency() {
-			if(isset(result.balance) && result.balance != null) 
+			if(isset(result.balance) && result.balance != null)
 				getParam(html + xhtml, result, ['currency', 'balance'], balanceRegExp, replaceTagsAndSpaces, myParseCurrency);			
 		}
 		// Пробуем получить со страницы, при обновлении через мобильный интернет, он там есть
@@ -774,7 +781,7 @@ function fetchPre(baseurl, html) {
 		var href = getParam(html, null, null, /[^"]*settings.html/i);
 		html = AnyBalance.requestGet(href, g_headers);
 		
-		getParam(html, result, 'fio', /personal_info(?:[^>]*>){5}[^>]*class="value"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, capitalFirstLenttersAndDecode);
+		getParam(html, result, 'fio', /personal_info(?:[^>]*>){5}[^>]*class="value"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, capitalFirstLetters);
 		// А у некоторых ФИО не введен, поэтому и беда
 		if(/\d{5,}/i.test(result.fio) || /^\s*$/i.test(result.fio)) {
 			result.fio = undefined;
@@ -790,7 +797,7 @@ function fetchPre(baseurl, html) {
 			// html = AnyBalance.requestGet(baseurl + 'ext/mAuthorization.html?ret_url=https%3A%2F%2Fmy.beeline.ru%2FmLogin.html&login=' + encodeURIComponent(prefs.login) + '&password=' + encodeURIComponent(prefs.password), g_headers);
 			// html = AnyBalance.requestGet(baseurl + 'm/pre/index.html', g_headers);
 		// }
-		// getParam(html, result, 'fio', /<div[^>]+class="abonent-name"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, capitalFirstLenttersAndDecode);
+		// getParam(html, result, 'fio', /<div[^>]+class="abonent-name"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, capitalFirstLetters);
 	}
 	
 	AnyBalance.setResult(result);
@@ -953,20 +960,10 @@ function getBonusesPost(xhtml, result) {
 	}
 }
 
-/** Приводим все к единому виду вместо ИВаНов пишем Иванов */
-function capitalFirstLenttersAndDecode(str) {
-	str = html_entity_decode(str+'');
-	var wordSplit = str.toLowerCase().split(' ');
-	var wordCapital = '';
-	for (i = 0; i < wordSplit.length; i++) {
-		wordCapital += wordSplit[i].substring(0, 1).toUpperCase() + wordSplit[i].substring(1) + ' ';
-	}
-	return wordCapital.replace(/^\s+|\s+$/g, '');
-}
-
 /** API Мобильного приложения */
 function proceedWithMobileAppAPI(baseurl, prefs) {
-	baseurl +=  'api/1.0/'
+	AnyBalance.trace('Входим через API мобильного приложения...');
+	baseurl +=  'api/1.0/';
 	var encodedLogin = encodeURIComponent(prefs.login);
 	var encodedPassword = encodeURIComponent(prefs.password);
 	
@@ -977,6 +974,8 @@ function proceedWithMobileAppAPI(baseurl, prefs) {
 	json = callAPIProc(baseurl + 'info/payType?ctn=' + encodedLogin);
 	
 	var payType = json.payType;
+	checkEmpty(payType, 'Не удалось узнать тип кабинета, сайт изменен?', true);
+	AnyBalance.trace('Тип кабинета: ' + payType);
 	
 	json = callAPIProc(baseurl + 'info/pricePlan?ctn=' + encodedLogin);
 	
@@ -989,14 +988,13 @@ function proceedWithMobileAppAPI(baseurl, prefs) {
 		json = callAPIProc(baseurl + 'info/prepaidBalance?ctn=' + encodedLogin);
 		
 		getParam(json.balance + '', result, 'balance', null, replaceTagsAndSpaces, apiParseBalanceRound);
-		getParam(g_api_currencys[json.currency], result, ['currency', 'balance'], null, replaceTagsAndSpaces);
+		getParam(g_currencys[json.currency], result, ['currency', 'balance'], null, replaceTagsAndSpaces);
 	} else if(payType == 'POSTPAID') {
 		
 		json = callAPIProc(baseurl + 'info/postpaidBalance?ctn=' + encodedLogin);
 		
 		getParam(json.balance + '', result, 'balance', null, replaceTagsAndSpaces, apiParseBalanceRound);
-		getParam(g_api_currencys[json.currency], result, ['currency', 'balance'], null, replaceTagsAndSpaces);	
-		
+		getParam(g_currencys[json.currency], result, ['currency', 'balance'], null, replaceTagsAndSpaces);	
 	} else {
 		throw new AnyBalance.Error('Неизвестный тип кабинета: ' + payType);
 	}
@@ -1004,17 +1002,13 @@ function proceedWithMobileAppAPI(baseurl, prefs) {
 	if(isAvailable('fio')) {
 		json = callAPIProc(baseurl + 'sso/contactData?login=' + encodedLogin);
 		
-		if((isset(json.lastName) && /\W+/i.test(json.lastName)) && isset(json.firstName)) {
-			
+		if((isset(json.lastName) && /\w+/i.test(json.lastName)) && isset(json.firstName)) {
 			getParam(json.lastName + ' ' + json.firstName, result, 'fio', null, replaceTagsAndSpaces);
 		} else
 			AnyBalance.trace('Фио не указано в настройках...');
 	}
-	
-	if(isAvailable('phone')) {
-		getParam(prefs.login, result, 'phone', /^\d{10}$/, [/(\d{3})(\d{3})(\d{2})(\d{2})/, '+7 $1 $2 $3 $4']);
-	}
-	
+	// Номер телефона
+	getParam(prefs.login, result, 'phone', /^\d{10}$/, [/(\d{3})(\d{3})(\d{2})(\d{2})/, '+7 $1 $2 $3 $4']);
 	// Бонусы
 	if(isAvailableBonuses()) {
 		try {
@@ -1069,18 +1063,18 @@ function proceedWithMobileAppAPI(baseurl, prefs) {
 	AnyBalance.setResult(result);
 }
 
+var errors = {
+	AUTH_ERROR:' Ошибка авторизации! Проверьте логин-пароль!',
+
+}
+
 function callAPIProc(url) {
 	var html = AnyBalance.requestGet(url, g_headers);
 	var json = getJson(html);
 	if(json.meta.status != 'OK')
-		throw new AnyBalance.Error('Ошибка вызова API! ' + (json.meta.message || '')) ;
+		throw new AnyBalance.Error('Ошибка вызова API! ' + (errors[json.meta.message] || json.meta.message || '')) ;
 	
 	return json;
-}
-
-var g_api_currencys = {
-	RUR : 'р',
-	undefined: ''
 }
 
 /** если не найдено число вернет null */
@@ -1091,4 +1085,3 @@ function apiParseBalanceRound(val) {
 	
 	return balance.toFixed(2);
 }
-

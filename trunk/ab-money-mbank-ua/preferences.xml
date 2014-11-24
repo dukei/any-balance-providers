@@ -21,4 +21,13 @@
 		dialogMessage="Введіть пароль, який використовується для входа в інтернет-банкінг."
 		inputType="textPassword">
 	</EditTextPreference>
+	<ListPreference
+		title="Валюта"
+		key="curn"
+		summary="|Виберіть валюту|{@s}"
+		entries="Гривня|Долар|Євро|Рубль"
+		entryValues="UAH|USD|EUR|RUB"
+		defaultValue="UAH"
+		dialogTitle="Валюта">
+	</ListPreference>
 </PreferenceScreen>

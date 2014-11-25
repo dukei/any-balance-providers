@@ -31,6 +31,14 @@
 		inputType="number"
 		key="phone">
 	</EditTextPreference>
+	<ListPreference
+		key="source"
+		title="Источник данных"
+		summary="||{@s}"
+		entries="Сайт|API мобильного приложения"
+		entryValues="site|app"
+		defaultValue="site">
+	</ListPreference>	
     <ListPreference 
         key="country" 
         title="Страна"

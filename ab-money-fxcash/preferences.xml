@@ -1,24 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
+	<ListPreference
+		title="Fxcash.ru"
+		summary="||{@s}"
+		dialogTitle="Do you want to use fxcash.ru?" 
+		key="fxc"
+		defaultValue="0"
+		entries="Yes|No"
+		entryValues="1|0">
+	</ListPreference>
 	<EditTextPreference
-		title="Логин"
+		title="Login"
 		key="login"
 		summary="||{@s}"
 		obligatory="true"
-		dialogTitle="Логин"
+		dialogTitle="Login to fxcash.ru"
 		positiveButtonText="ОК"
-		negativeButtonText="Отмена"
-		dialogMessage="Введите логин в кабинет на сайте fxcash.ru.">
+		negativeButtonText="Cancel"
+		dialogMessage="Enter login.">
 	</EditTextPreference>
 	<EditTextPreference
-		title="Пароль"
+		title="Password"
 		key="password"
 		summary="||***********"
 		obligatory="true"
-		dialogTitle="Пароль"
+		dialogTitle="Password to fxcash.ru"
 		positiveButtonText="ОК"
-		negativeButtonText="Отмена"
-		dialogMessage="Введите пароль."
+		negativeButtonText="Cancel"
+		dialogMessage="Enter password."
+		inputType="textPassword">
+	</EditTextPreference>
+	<ListPreference
+		title="Forexcashbackrebate.com"
+		summary="||{@s}"
+		dialogTitle="Do you want to use forexcashbackrebate.com?"
+		key="fcbr"
+		defaultValue="0"
+		entries="Yes|No"
+		entryValues="1|0">
+	</ListPreference>
+	<EditTextPreference
+		title="Login"
+		key="login_fcbr"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Login to forexcashbackrebate.com"
+		positiveButtonText="ОК"
+		negativeButtonText="Cancel"
+		dialogMessage="Enter login.">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Password"
+		key="password_fcbr"
+		summary="||***********"
+		obligatory="true"
+		dialogTitle="Password to forexcashbackrebate.com."
+		positiveButtonText="ОК"
+		negativeButtonText="Cancel"
+		dialogMessage="Enter password."
 		inputType="textPassword">
 	</EditTextPreference>
 </PreferenceScreen>

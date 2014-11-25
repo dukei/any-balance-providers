@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-money-fxcash</id>
+	<id version="2">ab-money-fxcash</id>
 	<api flags="no_browser"/>
-	<name>FXCash</name>
+	<name>FX Rebates</name>
 	<description html="true"><![CDATA[
-	<p>Позволяет контролировать состояние баланса на сайте ребейтов fxcash.ru</p>
+	<p>Allow to monitor accounts on <a href="http://fxcash.ru/?id=wtiger">fxcash.ru</a> and <a href="http://www.forexcashbackrebate.com?area=576">forexcashbackrebate.com</a>.</p>
 	]]></description>
 	<author>wtiger &lt;wtiger@mail.ru&gt;</author>
 	<files>
@@ -13,12 +13,16 @@
 		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
+		<js target="preferences">preferences.js</js>
 	</files>
 	<counters>
-		<counter id="accessible" name="Доступно" units=" $"/>
-		<counter id="balance" name="Баланс" units=" $"/>
-		<counter id="bonus" name="Бонус" units=" $"/>
+		<counter id="total_balance" name="Balance total" units=" $"/>
+		<counter id="accessible" name="Accessible (fc)" units=" $"/>
+		<counter id="balance" name="Balance (fc)" units=" $"/>
+		<counter id="bonus" name="Bonus (fc)" units=" $"/>
+		<counter id="balance_fcbr" name="Balance (fcbr)" units=" $"/>
+		<counter id="withdrawn_fcbr" name="Paid out (fcbr)" units=" $"/>
 	</counters>
-	<keywords>forex fxcash broker rebate</keywords>
+	<keywords>forex fxcash broker rebate cashback fxcash.ru forexcashbackrebate.com</keywords>
 	<type>money</type>
 </provider>

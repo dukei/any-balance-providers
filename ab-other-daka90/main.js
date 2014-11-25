@@ -14,14 +14,18 @@ var g_weekdays = ["א'","ב'","ג'","ד'","ה'","ו'","ש'"];
 
 
 // get first bracket group from a regex match
-function firstMatch(regex,str)
+function nMatch(regex,str,n)
 {
 	var result = regex.exec(str);
+	for (var i=1;i<n;i++)
+		result = regex.exec(str);
 	if (!result)
-		throw new AnyBalance.Error("מידע לא צפוי מאתר דקה 90");
+	{
+		AnyBalance.trace(str);
+		throw new AnyBalance.Error("מידע לא צפוי מאתר דקה 90\n" + x);
+	}
 	return(result[1]);
 }
-
 
 // Main
 function main() 
@@ -67,8 +71,8 @@ function main()
 			continue;
 
 		// parse the rest of the data (city and price)
-		var destination = replaceAll(firstMatch(/class="Department.*Campaign.*">([\s\S]*?)<\/div>\s*<\/div>/i,infoBlock),replaceTagsAndSpaces);
-		var price = replaceAll(firstMatch(/<div class="FloatLeft">([\s\S]*?)<\/div>\s*<\/div>\s*<\/div>/i,infoBlock),replaceTagsAndSpaces).replace(/\s*/g,'');
+		var destination = replaceAll(nMatch(/class="CityColumn">([\s\S]*?)<\/div>\s*<\/div>/g,infoBlock,2),replaceTagsAndSpaces);
+		var price = replaceAll(nMatch(/<div class="FloatLeft">([\s\S]*?)<\/div>\s*<\/div>\s*<\/div>/i,infoBlock,1),replaceTagsAndSpaces).replace(/\s*/g,'');
 		
 		// add remaining flights
 		info += info.length ? "\n" : "";

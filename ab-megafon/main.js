@@ -84,7 +84,8 @@ filial_info[MEGA_FILIAL_URAL] = {
 	name: 'Уральский филиал',
 	tray: 'https://uralsg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%',
 	widget: 'https://uralsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
-	func: megafonTrayInfo
+	func: megafonTrayInfo,
+	old_server: true
 };
 var g_login_errors = {
 	error_1: "Введите логин!",
@@ -241,18 +242,14 @@ var g_headers = {
     'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.60 Safari/537.1'
 };
 
-function getTrayXmlText(filial, address){
+function getTrayXmlText(filial){
     var prefs = AnyBalance.getPreferences();
     var filinfo = filial_info[filial];
     
     AnyBalance.trace('Connecting to trayinfo for ' + filinfo.name);
     
     AnyBalance.setDefaultCharset('utf-8');
-    var info;
-    if(prefs.__dbg_html)
-        info = prefs.__dbg_html;
-    else
-        info = AnyBalance.requestGet(address.replace(/%LOGIN%/g, prefs.login).replace(/%PASSWORD%/g, encodeURIComponent(prefs.password)), g_headers);
+    var info = loadFilial(filial, 'tray');
         
     if(/<title>Not Found<\/title>/.test(info)){
       //AnyBalance.trace("Server returned: " + info);
@@ -323,6 +320,22 @@ function isAvailableButUnset(result, params){
     }
     return false;
 }
+
+function loadFilial(filial, addr){
+	var prefs = AnyBalance.getPreferences();
+	var filinfo = filial_info[filial];
+	var widget_url = filinfo[addr].replace(/%LOGIN%/g, prefs.login).replace(/%PASSWORD%/g, encodeURIComponent(prefs.password)), html;
+	try{
+		html = AnyBalance.getPreferences()['__dbg_'+addr] || AnyBalance.requestGet(widget_url, g_headers);
+	}catch(e){
+		if(e.message && /Connection closed by peer|Handshake failed/i.test(e.message) && filinfo.old_server){
+			//Поскольку на лоллипопе проблемы и напрямую он не может получить данные, придется получать через гейт
+			html = AnyBalance.requestGet('https://anybalance.ru/ext/gate.php?dest=' + encodeURIComponent(widget_url));
+		}
+	}
+	return html;
+}
+
 function megafonTrayInfo(filial) {
 	var filinfo = filial_info[filial], errorInTray;
 	var internet_totals_was = {};
@@ -330,7 +343,7 @@ function megafonTrayInfo(filial) {
 	var result = {success: true};
 	
 	if(filinfo.tray){ try {
-		var xml = getTrayXmlText(filial, filinfo.tray), val;
+		var xml = getTrayXmlText(filial), val;
 		
 		getParam(xml, result, '__tariff', /<RATE_PLAN>([\s\S]*?)<\/RATE_PLAN>/i, replaceTagsAndSpaces, html_entity_decode);
 		getParam(xml, result, 'balance', /<BALANCE>([\s\S]*?)<\/BALANCE>/i, replaceTagsAndSpaces, parseBalance);
@@ -352,6 +365,13 @@ function megafonTrayInfo(filial) {
 				var plan_si = getParam(d, null, null, /<PLAN_SI>([\s\S]*?)<\/PLAN_SI>/i) || '';
 				var name_service = getParam(d, null, null, /<NAME_SERVICE>([\s\S]*?)<\/NAME_SERVICE>/i) || '';
 				var names = name + ',' + plan_name + ',' + pack_name;
+				var vol_ava = getParam(d, null, null, /<VOLUME_AVAILABLE>([\s\S]*?)<\/VOLUME_AVAILABLE>/i, replaceTagsAndSpaces, parseBalance);
+				var vol_tot = getParam(d, null, null, /<VOLUME_TOTAL>([\s\S]*?)<\/VOLUME_TOTAL>/i, replaceTagsAndSpaces, parseBalance);
+				if(vol_ava >= 100000000000 || vol_tot >= 100000000000){ //что-то безлимитное, надо пропустить
+					AnyBalance.trace('Безлимитное значение ' + names + ': ' + vol_ava + '/' + vol_tot + '. Пропускаем...');
+					continue;
+				}
+
 				if (/sms|смс/i.test(names)) {
 					AnyBalance.trace('Найдены SMS: ' + names);
 					sumParam(d, result, 'sms_left', /<VOLUME_AVAILABLE>([\s\S]*?)<\/VOLUME_AVAILABLE>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
@@ -445,15 +465,7 @@ function megafonTrayInfo(filial) {
 		var prefs = AnyBalance.getPreferences();
 		AnyBalance.setDefaultCharset('utf-8');
 		AnyBalance.trace('Попытаемся получить данные из яндекс виджета');
-		var widget_url = filinfo.widget.replace(/%LOGIN%/g, prefs.login).replace(/%PASSWORD%/g, encodeURIComponent(prefs.password)), html;
-		try{
-			html = AnyBalance.getPreferences().__dbg_widget || AnyBalance.requestGet(widget_url, g_headers);
-		}catch(e){
-			if(e.message && /Connection closed by peer|Handshake failed/i.test(e.message) && filial == MEGA_FILIAL_URAL){
-				//Поскольку на лоллипопе проблемы и напрямую он не может получить данные, придется получать через гейт
-				html = AnyBalance.requestGet('https://anybalance.ru/ext/gate.php?dest=' + encodeURIComponent(widget_url));
-			}
-		}
+		var html = loadFilial(filial, 'widget');
 		try {
 			var json = getParam(html, null, null, /^[^({]*\((\{[\s\S]*?\})\);?\s*$/);
 			if (!json) {
@@ -855,7 +867,7 @@ function megafonBalanceInfo(filinfo){
         if(error)
             throw new AnyBalance.Error(error, null, /Wrong password/i.test(error));
         AnyBalance.trace(html);
-        throw e;
+        throw new AnyBalance.Error('Сервис временно недоступен');
     }
 
     var result = {success: true};
@@ -889,6 +901,8 @@ function megafonServiceGuide(filial){
 					megafonTrayInfo(filial);
 		   			return;
 				}catch(e){
+				    if(e.fatal)
+				        throw e;
 				    if(/неверный ответ сервера/i.test(e.message) && filinfo.balanceRobot){
 				        //Яндекс виджет, скотина, не даёт получить баланс :(
 				        //Тогда баланс получим хотя бы из московского балансера
@@ -896,10 +910,12 @@ function megafonServiceGuide(filial){
 				        AnyBalance.trace('Пробуем получить баланс из ещё одного источника...');
 				        megafonBalanceInfo(filinfo);
 				        return;
+				    }else{
+					throw e;
 				    }
 				} 
-	        }
-	        return;
+	            }
+	            return;
 		}
 
         if(prefs.corporate){
@@ -1372,14 +1388,24 @@ function sumOption(num, text, result, totalName, leftName, optionName, parseFunc
     if(!parseFunc) parseFunc = parseBalance;
 
     if(totalName){
-        var aggregate = /^mins_/.test(totalName) ? aggregate_sum_minutes : aggregate_sum;
+	var mins = /^mins_/.test(totalName);
+        var aggregate = mins ? aggregate_sum_minutes : aggregate_sum;
         var re1 = new RegExp('<tr[^>]*>\\s*<td[^>]*>\\s*<div[^>]+class="td_def"[^>]*>(?:<div[^>]*>|[^<]|<nobr[^>]*>)*' + optionName + '(?:(?:[\\s\\S](?!<tr))*?<td[^>]*>){' + num + '}([\\s\\S]*?)</td>', 'ig');
-        sumParam(text, result, totalName, re1, replaceTagsAndSpaces, parseFunc, aggregate);
+        var val = getParam(text, null, null, re1, replaceTagsAndSpaces, parseFunc);
+	if(!mins || val < 1000000) //Большие значения, считай, безлимит. Че его показывать...
+            sumParam(val || 0, result, totalName, null, null, null, aggregate);
+        else
+            AnyBalance.trace('Пропускаем безлимитные минуты: ' + val);
     }
     if(leftName){
-        var aggregate = /^mins_/.test(leftName) ? aggregate_sum_minutes : aggregate_sum;
+	var mins = /^mins_/.test(totalName);
+        var aggregate = mins ? aggregate_sum_minutes : aggregate_sum;
         var re2 = new RegExp('<tr[^>]*>\\s*<td[^>]*>\\s*<div[^>]+class="td_def"[^>]*>(?:<div[^>]*>|[^<]|<nobr[^>]*>)*' + optionName + '(?:(?:[\\s\\S](?!<tr))*?<td[^>]*>){' + (num+1) + '}([\\s\\S]*?)</td>', 'ig');
-        sumParam(text, result, leftName, re2, replaceTagsAndSpaces, parseFunc, aggregate);
+        var val = getParam(text, null, null, re2, replaceTagsAndSpaces, parseFunc);
+	if(!mins || val < 1000000) //Большие значения, считай, безлимит. Че его показывать...
+            sumParam(text, result, leftName, null, null, null, aggregate);
+        else
+            AnyBalance.trace('Пропускаем безлимитные минуты: ' + val);
     }
 }
 

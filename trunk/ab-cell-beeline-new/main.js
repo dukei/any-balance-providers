@@ -245,10 +245,14 @@ function main() {
 		AnyBalance.setCookie('my.beeline.kz', 'ui.language.current', 'ru_RU');
 	else {
 		// Если задан номер телефона то идем через морду, приложение не поддерживает несколько номеров на аккаунте
-		// Пока закоментируем, не все отлажено
-		if(!prefs.phone) {
-			proceedWithMobileAppAPI(baseurl, prefs);
-			return;
+		
+		if(prefs.source == 'app') {
+			if(!prefs.phone && /^\d{10}$/.test(prefs.login)) {
+				proceedWithMobileAppAPI(baseurl, prefs);
+				return;
+			} else {
+				AnyBalance.trace('Невозможно обновить данные через API мобильного приложения, пробуем войти через сайт...');
+			}
 		}
 	}
 	
@@ -1002,7 +1006,7 @@ function proceedWithMobileAppAPI(baseurl, prefs) {
 	if(isAvailable('fio')) {
 		json = callAPIProc(baseurl + 'sso/contactData?login=' + encodedLogin);
 		
-		if((isset(json.lastName) && /\w+/i.test(json.lastName)) && isset(json.firstName)) {
+		if((isset(json.lastName) && /[A-Za-zА-Яа-я]{2,}/i.test(json.lastName)) && isset(json.firstName)) {
 			getParam(json.lastName + ' ' + json.firstName, result, 'fio', null, replaceTagsAndSpaces);
 		} else
 			AnyBalance.trace('Фио не указано в настройках...');
@@ -1019,7 +1023,7 @@ function proceedWithMobileAppAPI(baseurl, prefs) {
 				
 				// Минуты
 				if(curr.unit == 'SECONDS') {
-					if(/на номера других операторов Вашего региона/i.test(curr.accName)) {
+					if(/номера других|на все номера/i.test(curr.accName)) {
 						sumParam(curr.rest + ' ' + curr.unit, result, 'min_local', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
 					} else {
 						sumParam(curr.rest + ' ' + curr.unit, result, 'min_bi', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
@@ -1040,18 +1044,22 @@ function proceedWithMobileAppAPI(baseurl, prefs) {
 			if(payType == 'PREPAID') {
 				json = callAPIProc(baseurl + 'info/prepaidAddBalance?ctn=' + encodedLogin);
 				
-				for(var i = 0; i < json.balanceNLP.length; i++) {
-					var curr = json.balanceNLP[i];
-					
-					if(/bonusopros/i.test(curr.name)) {
-						getParam(curr.value + '', result, 'rub_opros', null, replaceTagsAndSpaces, apiParseBalanceRound);
+				if(json.balanceNLP) {
+					for(var i = 0; i < json.balanceNLP.length; i++) {
+						var curr = json.balanceNLP[i];
+						
+						if(/bonusopros/i.test(curr.name)) {
+							getParam(curr.value + '', result, 'rub_opros', null, replaceTagsAndSpaces, apiParseBalanceRound);
+						}
 					}
 				}
-				for(var i = 0; i < json.balanceMMS.length; i++) {
-					var curr = json.balanceMMS[i];
-					
-					if(/mms/i.test(curr.name)) {
-						getParam(curr.value + '', result, 'mms_left', null, replaceTagsAndSpaces, parseBalance);
+				if(json.balanceMMS) {
+					for(var i = 0; i < json.balanceMMS.length; i++) {
+						var curr = json.balanceMMS[i];
+						
+						if(/mms/i.test(curr.name)) {
+							getParam(curr.value + '', result, 'mms_left', null, replaceTagsAndSpaces, parseBalance);
+						}
 					}
 				}
 			}

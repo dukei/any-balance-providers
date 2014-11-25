@@ -1007,7 +1007,7 @@ function proceedWithMobileAppAPI(baseurl, prefs) {
 		json = callAPIProc(baseurl + 'sso/contactData?login=' + encodedLogin);
 		
 		if((isset(json.lastName) && /[A-Za-zА-Яа-я]{2,}/i.test(json.lastName)) && isset(json.firstName)) {
-			getParam(json.lastName + ' ' + json.firstName, result, 'fio', null, replaceTagsAndSpaces);
+			getParam((json.lastName ? json.lastName + ' ' : '') + (json.firstName || ''), result, 'fio', null, replaceTagsAndSpaces);
 		} else
 			AnyBalance.trace('Фио не указано в настройках...');
 	}
@@ -1044,21 +1044,20 @@ function proceedWithMobileAppAPI(baseurl, prefs) {
 			if(payType == 'PREPAID') {
 				json = callAPIProc(baseurl + 'info/prepaidAddBalance?ctn=' + encodedLogin);
 				
-				if(json.balanceNLP) {
-					for(var i = 0; i < json.balanceNLP.length; i++) {
-						var curr = json.balanceNLP[i];
-						
-						if(/bonusopros/i.test(curr.name)) {
-							getParam(curr.value + '', result, 'rub_opros', null, replaceTagsAndSpaces, apiParseBalanceRound);
-						}
-					}
-				}
-				if(json.balanceMMS) {
-					for(var i = 0; i < json.balanceMMS.length; i++) {
-						var curr = json.balanceMMS[i];
-						
-						if(/mms/i.test(curr.name)) {
-							getParam(curr.value + '', result, 'mms_left', null, replaceTagsAndSpaces, parseBalance);
+				for(var prop in json){
+					if(isArray(json[prop])){
+						for(var i = 0; i < json[prop].length; i++) {
+							var curr = json[prop][i];
+							
+							if(/bonusopros/i.test(curr.name)) {
+								getParam(curr.value + '', result, 'rub_opros', null, replaceTagsAndSpaces, apiParseBalanceRound);
+							}else if(/mms/i.test(curr.name)) {
+								sumParam(curr.value + '', result, 'mms_left', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+							}else if(/sms/i.test(curr.name)) {
+								sumParam(curr.value + '', result, 'sms_left', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+							}else{
+								AnyBalance.trace('Unknown option: ' + prop + ' ' + JSON.stringify(curr));
+							}
 						}
 					}
 				}

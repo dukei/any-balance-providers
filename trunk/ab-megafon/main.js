@@ -445,7 +445,15 @@ function megafonTrayInfo(filial) {
 		var prefs = AnyBalance.getPreferences();
 		AnyBalance.setDefaultCharset('utf-8');
 		AnyBalance.trace('Попытаемся получить данные из яндекс виджета');
-		var html = AnyBalance.getPreferences().__dbg_widget || AnyBalance.requestGet(filinfo.widget.replace(/%LOGIN%/g, prefs.login).replace(/%PASSWORD%/g, encodeURIComponent(prefs.password)), g_headers);
+		var widget_url = filinfo.widget.replace(/%LOGIN%/g, prefs.login).replace(/%PASSWORD%/g, encodeURIComponent(prefs.password)), html;
+		try{
+			html = AnyBalance.getPreferences().__dbg_widget || AnyBalance.requestGet(widget_url, g_headers);
+		}catch(e){
+			if(e.message && /Connection closed by peer|Handshake failed/i.test(e.message) && filial == MEGA_FILIAL_URAL){
+				//Поскольку на лоллипопе проблемы и напрямую он не может получить данные, придется получать через гейт
+				html = AnyBalance.requestGet('https://anybalance.ru/ext/gate.php?dest=' + encodeURIComponent(widget_url));
+			}
+		}
 		try {
 			var json = getParam(html, null, null, /^[^({]*\((\{[\s\S]*?\})\);?\s*$/);
 			if (!json) {

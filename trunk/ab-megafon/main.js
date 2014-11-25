@@ -1392,7 +1392,7 @@ function sumOption(num, text, result, totalName, leftName, optionName, parseFunc
         var aggregate = mins ? aggregate_sum_minutes : aggregate_sum;
         var re1 = new RegExp('<tr[^>]*>\\s*<td[^>]*>\\s*<div[^>]+class="td_def"[^>]*>(?:<div[^>]*>|[^<]|<nobr[^>]*>)*' + optionName + '(?:(?:[\\s\\S](?!<tr))*?<td[^>]*>){' + num + '}([\\s\\S]*?)</td>', 'ig');
         var val = getParam(text, null, null, re1, replaceTagsAndSpaces, parseFunc);
-	if(!mins || val < 1000000) //Большие значения, считай, безлимит. Че его показывать...
+	    if(!mins || val < 1000000) //Большие значения, считай, безлимит. Че его показывать...
             sumParam(val || 0, result, totalName, null, null, null, aggregate);
         else
             AnyBalance.trace('Пропускаем безлимитные минуты: ' + val);
@@ -1402,8 +1402,8 @@ function sumOption(num, text, result, totalName, leftName, optionName, parseFunc
         var aggregate = mins ? aggregate_sum_minutes : aggregate_sum;
         var re2 = new RegExp('<tr[^>]*>\\s*<td[^>]*>\\s*<div[^>]+class="td_def"[^>]*>(?:<div[^>]*>|[^<]|<nobr[^>]*>)*' + optionName + '(?:(?:[\\s\\S](?!<tr))*?<td[^>]*>){' + (num+1) + '}([\\s\\S]*?)</td>', 'ig');
         var val = getParam(text, null, null, re2, replaceTagsAndSpaces, parseFunc);
-	if(!mins || val < 1000000) //Большие значения, считай, безлимит. Че его показывать...
-            sumParam(text, result, leftName, null, null, null, aggregate);
+	    if(!mins || val < 1000000) //Большие значения, считай, безлимит. Че его показывать...
+            sumParam(val, result, leftName, null, null, null, aggregate);
         else
             AnyBalance.trace('Пропускаем безлимитные минуты: ' + val);
     }

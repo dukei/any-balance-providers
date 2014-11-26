@@ -99,8 +99,9 @@ function mainMobileApp(prefs) {
 			'devID':hex_md5(prefs.login)
 		});
 		
-		var mGUID = getParam(html, null, null, /<mGUID>([^<]+)<\/mGUID>/i);
+		var mGUID = getParam(html, null, null, /<mGUID>([\s\S]*?)<\/mGUID>/i);
 		if(!mGUID) {
+			AnyBalance.trace(html);
 			throw new AnyBalance.Error("Не удалось найти токен регистрации, сайт изменен?");
 		}
 		
@@ -128,6 +129,7 @@ function mainMobileApp(prefs) {
 		var token = getToken(html);
 	} else {
 		AnyBalance.trace('Устройство уже привязано!');
+		AnyBalance.trace('guid is: ' + guid);
 		
 		html = requestApi2('https://online.sberbank.ru:4477/CSAMAPI/login.do', {
 			'operation':'button.login',
@@ -238,14 +240,17 @@ function main() {
 		//Чтобы карты оттестировать
 		readEskCards();
 		return;
-	} else if(prefs.__debug == 'mobile') {
-		mainMobileApp(prefs);
-		return;
-	}
+	} 
 	checkEmpty(prefs.login, "Пожалуйста, укажите логин для входа в Сбербанк-Онлайн!");
 	checkEmpty(prefs.password, "Пожалуйста, укажите пароль для входа в Сбербанк-Онлайн!");
 	if (prefs.lastdigits && !/^\d{4,5}$/.test(prefs.lastdigits)) 
-		throw new AnyBalance.Error("Надо указывать 4 последних цифры карты или не указывать ничего", null, true);	
+		throw new AnyBalance.Error("Надо указывать 4 последних цифры карты или не указывать ничего", null, true);
+	
+	if(prefs.source == 'app') {
+		mainMobileApp(prefs);
+		return;
+	}
+	
 /*      
     var html = AnyBalance.requestGet(baseurl + 'esClient/_logon/LogonContent.aspx');
     var error = getParam(html, null, null, /techBreakMsgLabel[^>]*>([\s\S]*?)<\/span>/i);

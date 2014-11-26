@@ -43,13 +43,12 @@ function main(){
 		
 		var html = AnyBalance.requestPost(baseurl + 'captcha', JSON.stringify({same_origin_token: token}), addHeaders({Referer: baseurl + 'login'})); 
 		
-		var captchaa;
-		var captcha_href = getParam(html, null, null, /"captcha"[^>]*url":"([^"]*)/i);
-		if(captcha_href) {
+		var json = getJson(html);
+		
+		if(json.capcha64) {
 			if(AnyBalance.getLevel() >= 7) {
 				AnyBalance.trace('Пытаемся ввести капчу');
-				var captcha = AnyBalance.requestGet(getParam(html, null, null, /"captcha"[^>]*url":"([^"]*)/i));
-				captchaa = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
+				captchaa = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", getParam(json.capcha64 || '', null, null, /,([\s\S]+)/i));
 				AnyBalance.trace('Капча получена: ' + captchaa);
 			} else {
 				throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');

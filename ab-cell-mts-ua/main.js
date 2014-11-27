@@ -19,11 +19,11 @@ function main(){
 
     checkEmpty(prefs.login, 'Введите номер телефона для входа в интернет-помощник!');
     checkEmpty(prefs.password, 'Введите пароль для входа в интернет-помощник!');
-	
+
 	if(prefs.phone && !/^\d+$/.test(prefs.phone)) {
 		throw new AnyBalance.Error('В качестве номера необходимо ввести 9 цифр номера, например, 501234567, или не вводить ничего, чтобы получить информацию по основному номеру.');
 	}
-	
+
 	var baseurl = 'https://ihelper-prp.mts.com.ua/SelfCarePda/';
 	
 	AnyBalance.trace("Trying to enter selfcare at address: " + baseurl);
@@ -31,12 +31,12 @@ function main(){
 		username: prefs.login,
 		password: prefs.password
 	});
-	
+
 	if (!/Security\.mvc\/LogOff/i.test(html)) {
 		var error = getParam(html, null, null, [/<ul class="operation-results-error"><li>([\s\S]*?)<\/li>/i, /<h1>\s*Ошибка\s*<\/h1>\s*<p>([\s\S]*?)<\/p>/i], replaceTagsAndSpaces, html_entity_decode);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Введен неизвестный номер телефона|Введен неверный пароль/i.test(error));
-		
+
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
@@ -44,11 +44,19 @@ function main(){
 	if(/<title>Произошла ошибка<\/title>/i.test(html)){
 		throw new AnyBalance.Error("Интернет-помощник временно недоступен");
 	}
-	
+
+	if(/Інтернет-Помічник тимчасово недоступний/i.test(html)){
+		throw new AnyBalance.Error("Интернет-помощник временно недоступен");
+	}
+
+	if(/Натиснувши на кнопку/i.test(html)){
+		throw new AnyBalance.Error("Интернет-помощник временно недоступен");
+	}
+
 	if(/<TITLE>The page cannot be found<\/TITLE>/.test(html)){
         throw new AnyBalance.Error("Интернет-помощник отсутствует по адресу " + baseurl);
-    }
-	
+        }
+
     AnyBalance.trace("It looks like we are in selfcare (found logOff)...");
 
     if(prefs.phone && prefs.phone != prefs.login){
@@ -60,6 +68,10 @@ function main(){
 	if(error)
 		throw new AnyBalance.Error(prefs.phone + ": " + error); 
     }
+
+    if(/Інтернет-Помічник тимчасово недоступний/i.test(html)){
+		throw new AnyBalance.Error("Интернет-помощник временно недоступен");
+	}
 
     var result = {success: true};
     

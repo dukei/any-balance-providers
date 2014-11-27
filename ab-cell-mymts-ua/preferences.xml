@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Логин" 
+        positiveButtonText="ОК" 
+        summary="Номер телефона (9 цифр)||{@s}\n" 
+        dialogTitle="Номер телефона" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите номер вашего телефона для входа в Мой МТС (9 цифр), например 661234567"
+	obligatory="true"
+        key="login"
+        inputType="number">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="Пароль для входа в Мой МТС||***********\n"
+	obligatory="true"
+        dialogMessage="Введите пароль, используемый для входа в Мой МТС"
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

@@ -36,18 +36,17 @@ function doNewCabinet(prefs) {
 		task: 'login.login'
 	}, addHeaders({Referer: baseurl + 'login', 'Origin': baseurl}));
 	
-	if (/<form[^>]+name="oferta_authorization"/i.test(html)) {
+	if (/<form[^>]+"js-form-accept"/i.test(html)) {
 		AnyBalance.trace("Требуется принять оферту. Принимаем...");
 		//Надо оферту принять, а то в кабинет не пускает
-		html = AnyBalance.requestPost(baseurl + 'ru/cabinet-contractoffer', {
-			oferta: 1,
-			task: 'setOfertaАuthorization'
-		}, addHeaders({Referer: baseurl + 'ru/cabinet-contractoffer','Origin': 'https://www.alloincognito.ru',}));
+		html = AnyBalance.requestPost(baseurl + 'contract-offer', {
+			task: 'offer.acceptOffer'
+		}, addHeaders({Referer: baseurl + 'contract-offer','Origin': baseurl}));
 	}
 	if (!/login\.logout/i.test(html)) {
-		var error = getParam(html, null, null, />Ошибка([^>]*>){4}/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, null, null, />\s*Ошибка([\s\S]*?)<\/div/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
-			throw new AnyBalance.Error(error, null, /Имя пользователя и пароль не совпадают|учетная запись отсутствует/i.test(error));
+			throw new AnyBalance.Error(error, null, /Имя пользователя и пароль не совпадают|учетная запись отсутствует|Неверные данные/i.test(error));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');

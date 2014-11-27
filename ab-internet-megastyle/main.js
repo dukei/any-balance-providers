@@ -13,29 +13,37 @@ var g_headers = {
 function main(){
     var prefs = AnyBalance.getPreferences();
 	
-    var baseurl = 'https://stats.uch.net/';
+    var baseurl = 'https://bills.megastyle.com:9443/';
     AnyBalance.setDefaultCharset('utf-8'); 
 
-    var html = AnyBalance.requestPost(baseurl + 'EndUserStats/index2.php', {
-		Login:prefs.login,
-        Password:prefs.password,
-        submit:'Смотреть статистику'
-    }, addHeaders({Referer: baseurl + 'EndUserStats/index.html'})); 
+    var html = AnyBalance.requestPost(baseurl + 'index.cgi', {
+		'DOMAIN_ID':'',
+		'REFERRER':baseurl,
+		'language':'russian',
+		'user':prefs.login,
+        'passwd':prefs.password,
+		'logined': 'Войти'
+    }, addHeaders({Referer: baseurl})); 
 
-    if(!/Общая информация о пользователе/i.test(html)){
-        var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
-        if(error)
-            throw new AnyBalance.Error(error);
-        throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-    }
-
+	if(!/>\s*Выход\s*</i.test(html)) {
+		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
+		if (error)
+			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+		
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+	}
+	
 	var result = {success: true};
-    getParam(html, result, 'balance', /Денег на л\/сч, грн[\s\S]*?class=info>([\s\S]*?)<\/FONT>/i, replaceTagsAndSpaces, parseBalance);
+	
+    getParam(html, result, 'balance', /Депозит:(?:[^>]*>){3}([\s\S]*?)</i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'fio', /ФИО:(?:[^>]*>){3}([\s\S]*?)</i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'account', /Договор:(?:[^>]*>){3}([\s\S]*?)</i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'status', /Состояние:(?:[^>]*>){1}([\s\S]*?)</i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'deadline', /Услуга завершится через [^(]*\(([\s\S]*?)\)\s*</i, replaceTagsAndSpaces, parseDateISO);
+	
+	
 	getParam(html, result, 'bonus', /акционных:([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'fio', /Контактное лицо[\s\S]*?class=info>([\s\S]*?)<\/FONT>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'account', /Номер лицевого счета[\s\S]*?class=info><B>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'status', /Текущий статус[\s\S]*?<B>([\s\S]*?)<\/B>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'deadline', /дата отключения[\s\S]*?class=info>([\s\S]*?)<\/FONT>/i, replaceTagsAndSpaces, parseDateISO);
 
     //Возвращаем результат
     AnyBalance.setResult(result);

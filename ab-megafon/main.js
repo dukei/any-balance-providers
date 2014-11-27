@@ -888,9 +888,10 @@ function megafonServiceGuide(filial){
     var session;
     if(filial == MEGA_FILIAL_MOSCOW) {
 		// Мегафон шлет смс на вход если пытаемся войти через большой кабинет
-		if(filinfo.lk){
-	   	    try{
-			    megafonLK(filinfo, true);
+		if(filinfo.lk || filinfo.api){
+	   	    try {
+			    //megafonLK(filinfo, true);
+				megafonLkAPI();
 		    } catch (e) {
 				// Если ошибка в логине и пароле, дальше идти нет смысла. Позже: А вдруг у кого-то не установлен пароль в новом кабинете, закидают же?
 				if(e.fatal)
@@ -1557,4 +1558,68 @@ function parseTrafficExMega(text, thousand, order, defaultUnits){
     AnyBalance.trace('Parsing traffic (' + val + dbg_units[order] + ') from: ' + text);
     return val;
 }
+
+/** API Megafon LK*/
+
+var g_api_headers = {
+	'User-Agent': 'MLK Android Phone 1.0.5',
+	
+};
+
+var g_baseurl = 'https://api.megafon.ru/mlk/';
+
+function callAPI(method, url, params) {
+	if(method == 'post')
+		var html = AnyBalance.requestPost(g_baseurl + url, params, g_api_headers);
+	else
+		var html = AnyBalance.requestGet(g_baseurl + url, g_api_headers);
+	
+	var json = getJson(html);
+	
+	if(json.code) {
+		throw new AnyBalance.Error('Ошибка вызова API! ' + json.message);
+	}
+	return json;
+}
+
+function megafonLkAPI() {
+	var prefs = AnyBalance.getPreferences();
+	
+	AnyBalance.trace('Пробуем войти через API мобильного приложения...');
+	
+	AnyBalance.requestGet('http://api.megafon.ru/mlk/auth/check', g_api_headers);
+	
+	var json = callAPI('post', 'login', {
+		login: prefs.login,
+		password: prefs.password,
+	});
+	
+	json = callAPI('get', 'api/main/info');
+	
+	var result = {success: true};
+	
+	getParam(json.balance + '', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
+	getParam(json.bonusBalance + '', result, 'bonus_balance', null, replaceTagsAndSpaces, parseBalance);
+	
+	if(json.ratePlan)
+		getParam(json.ratePlan.name, result, '__tariff');
+	
+	json = callAPI('get', 'api/options/remainders');
+	
+	
+	/*
+	api/payments/history?offset=0&size=10
+		api/payments/info
+
+	<counter id="last_pay_sum" name="Последний платеж" units=" р"/>
+	<counter id="last_pay_date" name="Дата посл. платежа" type="time" format="dd/MM/yyyy"/>
+	*/
+
+	
+	
+	
+	
+	AnyBalance.setResult(result);
+}
+
 

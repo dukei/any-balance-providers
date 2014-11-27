@@ -16,6 +16,10 @@ function main() {
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = "https://my.kyivstar.ua/";
 	
+	AnyBalance.setOptions({
+		SSL_ENABLED_PROTOCOLS: ['TLSv1'], // https://my.kyivstar.ua очень смущается от присутствия TLSv1.1 и TLSv1.2
+	}); 
+
 	AnyBalance.trace('Connecting to ' + baseurl);
 	
 	var html = AnyBalance.requestGet(baseurl + 'tbmb/login/show.do', headers);

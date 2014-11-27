@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2.0" version="6">ab-internet-kievstar</id>
+	<id major_version="2.0" version="7">ab-internet-kievstar</id>
 	<!-- <api flags="no_browser|captcha"/> -->
 	<api flags="no_browser"/>
 	<name>Киевстар (домашний интернет)</name>

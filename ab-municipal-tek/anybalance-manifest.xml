@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-municipal-tek</id>
+	<api flags="no_browser"/>
+	<name>ТЭК</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера ТЭК (Тюменская энергосбытовая компания) <a href="http://energosales.ru/">http://energosales.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="http://lkk.energosales.ru/lkk_fl/">http://lkk.energosales.ru/lkk_fl/</a></p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="fio" name="Потребитель" type="text"/>
+		<counter id="account" name="Лицевой счет" type="text"/>
+		<counter id="device_number" name="Номер прибора учета" type="text"/>
+		<counter id="last_counters" name="Последние принятые показания" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>municipal</type>
+	<country>ru</country>
+</provider>

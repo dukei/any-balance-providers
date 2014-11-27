@@ -1606,7 +1606,34 @@ function megafonLkAPI() {
 	
 	json = callAPI('get', 'api/options/remainders');
 	
+	for(var i = 0; i < json.models.length; i++) {
+		var model = json.models[i];
+		
+		if(model.remainders) {
+			for(var z = 0; z < model.remainders.length; z++) {
+				var current = model.remainders[z];
+				var name = current.name;
+				
+				if(/Исх\. связь/i.test(name)) {
+					sumParam(current.available, result, 'mins_left', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
+				} else if(/Исходящие SM/i.test(name)) {
+					sumParam(current.available, result, 'sms_left', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+				} else {
+					AnyBalance.trace('Неизвестная опция: ' + name + ': '  + current);
+				}
+				
+
+			}
+		}
+	}
 	
+	json = callAPI('get', 'api/payments/history?offset=0&size=10');
+	
+	if(json.payments && json.payments[0]) {
+		
+		getParam(json.payments[0].amount + '', result, 'last_pay_sum', null, replaceTagsAndSpaces, parseBalance);
+		getParam(json.payments[0].date + '', result, 'last_pay_date', null, replaceTagsAndSpaces, parseDate);
+	}
 	/*
 	api/payments/history?offset=0&size=10
 		api/payments/info
@@ -1621,5 +1648,3 @@ function megafonLkAPI() {
 	
 	AnyBalance.setResult(result);
 }
-
-

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-tv-ents</id>
+	<api flags="no_browser"/>
+	<name>ЭНТС</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера ЭНТС(Энергодарские телесистемы) <a href="http://www.ents.net.ua/">http://www.ents.net.ua/</a></p>
+	<p>Информация берется из личного кабинета <a href="http://www.ents.net.ua/my/">http://www.ents.net.ua/my/</a></p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" UAH"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="account" name="Лицевой счет №" type="text"/>
+		<counter id="channels" name="Пакеты каналов" type="text"/>
+		<counter id="address" name="Адрес" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>tv</type>
+	<country>ua</country>
+</provider>

@@ -44,7 +44,7 @@ function main() {
 	html = AnyBalance.requestPost(baseurl + 'Logon', {
 		Captcha:captchaa,
 		PhoneNumber: prefs.login,
-		Password: prefs.password,
+		Password: prefs.password
 	}, addHeaders({Referer: baseurl + 'Logon'}));
 
 	if (!/logOff/i.test(html)) {
@@ -106,6 +106,16 @@ function main() {
 	//Второстепенные параметры
 	getParam(html, result, 'spent', /Витрачено за номером \+\d\d\d \d\d \d\d\d-\d\d-\d\d за період з \d\d.\d\d до \d\d.\d\d.\d\d\d\d \(з урахуванням ПДВ і збору до ПФ\)<\/span>\s*<div[^>]*><span>([\s\S]*?)\s*<small>грн/i, replaceTagsAndSpaces, parseBalance);
 	getParam (html, result, 'phone', /Номер<\/span>\s+<span[^>]*>([^<]*)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+
+	//Подключенные пакеты
+	//3G копейка
+	html = AnyBalance.requestPost(baseurl + 'ActiveServices', addHeaders({Referer: baseurl + 'ActiveServices'}));
+
+	if(/Извините, на данный момент, из-за технических причин сервис временно не доступен. Попробуйте повторить позже./i.test(html)){
+		throw new AnyBalance.Error("Извините, на данный момент, из-за технических причин сервис временно не доступен. Попробуйте повторить позже.");
+	}
+
+	getParam (html, result, '3G_kopiyka_termin', /3G Копійка","DateFrom":"([^"]*)",/i, replaceTagsAndSpaces, parseDate);
 
 	AnyBalance.setResult(result);
 }

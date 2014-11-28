@@ -38,14 +38,21 @@ function main(){
 	AnyBalance.trace('Авторизация выполнена, начинаю парсить'); 
     var result = {success: true};
     html = AnyBalance.requestGet(baseurl + "/bitrix/admin/update_system.php?lang=ru", g_headers);
-    if (/bitrix\/admin\/update_system\.php/i.test(html)) {
+	if (/bitrix\/admin\/update_system\.php/i.test(html)) {
 	getParam(html, result, 'podpiskaStart', /<td>с ([\s\S]*?)по/i, replaceTagsAndSpaces, parseDate); 
 	getParam(html, result, 'podpiskaEnd', /по ([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
-
-	AnyBalance.trace('Сматываюсь');
-	html = AnyBalance.requestGet(baseurl + "/bitrix/admin/?logout=yes", g_headers);
 	} else {
 	throw new AnyBalance.Error('Не удалось найти данную страницу. Сайт изменен?');
 	}
+	
+	html = AnyBalance.requestGet(baseurl + "/bitrix/admin/bitrixcloud_monitoring_admin.php?lang=ru", g_headers);
+    if (/bitrix\/admin\/bitrixcloud_monitoring_admin\.php/i.test(html)) {
+	getParam(html, result, 'srokDomena', /<td[^>]*>Реги[^>](?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)дн/i, replaceTagsAndSpaces, parseBalance); 
+	getParam(html, result, 'dneyPodpiski', /<td[^>]*>Лице[^>](?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)дн/i, replaceTagsAndSpaces, parseBalance);
+
+	AnyBalance.trace('Сматываюсь');
+	html = AnyBalance.requestGet(baseurl + "/bitrix/admin/?logout=yes", g_headers);
+	}
+	
     AnyBalance.setResult(result);
 }

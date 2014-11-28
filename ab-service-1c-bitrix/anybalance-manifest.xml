@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-service-1c-bitrix</id>
+	<id version="2">ab-service-1c-bitrix</id>
 	<name>1С-Битрикс</name>
 	<api flags="no_browser"/>
 	<description html="true"><![CDATA[
@@ -18,6 +18,8 @@
 	<counters>
 		<counter id="podpiskaStart" name="Дата активация ключа" type="time" format="dd.MM.yyyy"/>
 		<counter id="podpiskaEnd" name="Дата окончания ключа" type="time" format="dd.MM.yyyy"/>
+		<counter id="srokDomena" name="Дней до окончания домена" units=" дня"/>
+		<counter id="dneyPodpiski" name="Дней до окончания ключа" units=" дня"/>
 	</counters>
 	<keywords>1С битрикс 1C bitrix 1С-битрикс 1C-bitrix</keywords>
 	<type>service</type>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-affiliate-prostore</id>
+	<api flags="no_browser"/>
+	<name>ProStore</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера ProStore <a href="http://www.prostore.by/">http://www.prostore.by/</a></p>
+	<p>Информация берется из личного кабинета <a href="https://prostorevprok.eps.lt/Authorization/Login">https://prostorevprok.eps.lt/Authorization/Login</a></p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс Денег Prostore"/>
+		<counter id="status" name="Статус карточки" type="text"/>
+		<counter id="group" name="Группа" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>affiliate</type>
+	<country>by</country>
+</provider>

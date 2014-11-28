@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="3.0" version="132" date="2014-11-28">
+	- Улучшена поддержка API мобильного приложения.
+	</change>
 	<change major_version="3.0" version="131" date="2014-11-28">
 	- Добавлена поддержка API мобильного приложения.
 	</change>
@@ -11,7 +14,6 @@
 	</change>
 	<change major_version="3.0" version="128" date="2014-11-25">
 	- Исправление безлимитных минут на СЗ филиале
-	
 	</change>
 	<change major_version="3.0" version="127" date="2014-11-25">
 	- Исправление доступа к уральскому филиалу на лоллипопе

@@ -20,8 +20,10 @@ function main () {
 
     var html = AnyBalance.requestGet(baseurl + 'otchet-po-diskontnoj-karte-2');
     var form = getParam(html, null, null, /<div[^>]+class="enter_number_form"[^>]*>([\s\S]*?)<\/form>/i);
-    if(!form)
+    if(!form){
+	AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось найти форму ввода номера карты. Сайт изменен?');
+    }
 
     var params = createFormParams(form, function(params, input, name, value){
         var dt = new Date();
@@ -52,6 +54,7 @@ function main () {
         error = getParam(html, null, null, /Вы не заполнили сведения о себе|Для идентификации пользователя/);
         if(error)
             throw new AnyBalance.Error("Евроопт требует заполнить форму регистрации. Вам необходимо зайти на сайт http://www.euroopt.by/otchet-po-diskontnoj-karte-2 через браузер и заполнить форму");
+        AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось получить данные по карте. Сайт изменен?');
     }
 

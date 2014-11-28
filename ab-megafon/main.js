@@ -1662,5 +1662,25 @@ function megafonLkAPI() {
 		getParam(json.outcome + '', result, 'sub_scl', null, replaceTagsAndSpaces, parseBalance);
 	}
 	
+	try {
+		// Проверим включены ли смс-оповещения о входе
+		json = callAPI('get', 'api/profile/info');
+		if(json.notifications) {
+			AnyBalance.trace('Включено смс оповещение о входе, отключаем...');
+			
+			json = callAPI('post', 'api/profile/notifications?status=false');
+			AnyBalance.trace('Отключили, проверяем...');
+			json = callAPI('get', 'api/profile/info');
+			
+			if(!json.notifications)
+				AnyBalance.trace('Успешно отключили смс оповещение о входе в кабинет!');
+			else
+				AnyBalance.trace('Не удалось отключить смс оповещение о входе в кабинет. Свяжитесь с разработчиком.');
+		} else {
+			AnyBalance.trace('Cмс оповещение о входе в кабинет уже отключено!');
+		}
+	} catch(e) {
+	}
+	
 	AnyBalance.setResult(result);
 }

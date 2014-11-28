@@ -937,34 +937,8 @@ function newTypicalLanBillingInetTv(urlIndex, urlAjax) {
 
 
 function getYar() {
-	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://lanbilling.tensortelecom.ru/';
-	AnyBalance.setDefaultCharset('utf-8');
+	var urlIndex = 'https://lk-yaroslavl.center.mts.ru/index.php?r=site/login';
+	var urlAjax = 'https://lk-yaroslavl.center.mts.ru/index.php?r=account/vgroups&agrmid=';
 	
-	checkEmpty(prefs.login, 'Введите логин!');
-	checkEmpty(prefs.password, 'Введите пароль!');
-	
-	var html = AnyBalance.requestGet(baseurl + 'client/index.php', g_headers);
-	
-	html = AnyBalance.requestPost(baseurl + 'client/index.php', {
-		login: prefs.login,
-		password: prefs.password,
-	}, addHeaders({Referer: baseurl + 'client/index.php'}));
-	
-	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
-		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
-		
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-	}
-	
-	var result = {success: true};
-	
-	getParam(html, result, 'balance', />\s*Баланс(?:[\s\S]*?<td[^>]*>){4}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'username', />\s*Вы:([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'agreement', />\s*Номер договора(?:[\s\S]*?<td[^>]*>){4}(\d+)/i, replaceTagsAndSpaces, html_entity_decode);
-	
-	AnyBalance.setResult(result);
+	newTypicalLanBillingInetTv(urlIndex, urlAjax);
 }

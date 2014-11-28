@@ -39,22 +39,44 @@ function getMyPosylkaResult(prefs) {
 	AnyBalance.setCookie('moyaposylka.ru', 'countryCode', dest);
 	
 	var json = apiCall({
+		"method":"getTrackerTypesByNumber",
+		"params":{
+			"number":prefs.track_id,
+		}
+	});
+	
+	checkEmpty(json.result[0].code, 'Не удалось выяснить тип отправления, сайт изменен?', true);
+	
+	json = apiCall({
 		"method":"createRequest",
 		"params":{
-			"type":"ru",
+			"type":json.result[0].code,
 			"number":prefs.track_id,
 			"countryCode":dest
 		}
 	});
-	// Нужно дать данным обновится, иначе получим 404
-	sleep(3000);
+	var token = json.result;
 	
-	json = apiCall({
-		"method":"getRequestInfo",
-		"params":{
-			"token":json.result
+	for(var i = 0; i < 5; i++) {
+		try {
+			// Нужно дать данным обновится, иначе получим 404
+			sleep(3000);
+			
+			json = apiCall({
+				"method":"getRequestInfo",
+				"params":{
+					"token":token
+				}
+			});
+			// Успешно прошли - прерываемся
+			break;
+		} catch(e) {
+			if(/QUICK_CHECK_REQUEST_NOT_COMPLETE/i.test(e))
+				sleep(2000);
+			else
+				break;
 		}
-	});
+	}
 	
 	var result = {success: true};
 	

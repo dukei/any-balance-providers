@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="3.0" version="133" date="2014-11-28">
+	- Показывается правильный баланс без учета кредита
+	- Восстановлена прежняя иконка, потому что плоская некрасивая
+	</change>
 	<change major_version="3.0" version="132" date="2014-11-28">
 	- Улучшена поддержка API мобильного приложения.
 	</change>

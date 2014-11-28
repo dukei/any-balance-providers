@@ -218,6 +218,8 @@ function getFilialByPrefixAndNumber(prefix, number){
 
 function main(){
     var prefs = AnyBalance.getPreferences();
+    
+//    AnyBalance.setOptions({PER_DOMAIN: {'lk.megafon.ru': {SSL_ENABLED_PROTOCOLS: ['TLSv1'], SSL_ENABLED_CIPHER_SUITES: ['SSL_RSA_WITH_RC4_128_MD5']}}});
 
     var filial = getFilial(prefs.login);
     if(!filial)
@@ -1598,7 +1600,7 @@ function megafonLkAPI() {
 	
 	var result = {success: true};
 	
-	getParam(json.balance + '', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
+	getParam(json.originalBalance + '', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
 	getParam(json.bonusBalance + '', result, 'bonus_balance', null, replaceTagsAndSpaces, parseBalance);
 	
 	if(json.ratePlan)

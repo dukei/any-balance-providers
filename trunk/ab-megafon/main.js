@@ -1380,9 +1380,13 @@ function parseMinutes(str){
         matches = /([\d.]+)/i.exec(_str);
     if(matches)
         val = (matches[1] ? +matches[1] : 0)*60 + (matches[2] ? +matches[2] : 0);
-    if(isset(val))
-        AnyBalance.trace('Parsed ' + val + ' seconds from ' + str + ' (' + _str + ')');
-    else
+    if(isset(val)){
+	if(val > 1000000){
+            AnyBalance.trace('Parsed ' + val + ' seconds from ' + str + ' (' + _str + '). Это безлимитные минуты, пропускаем.');
+	    val = undefined;
+	}else
+            AnyBalance.trace('Parsed ' + val + ' seconds from ' + str + ' (' + _str + ')');
+    }else
         AnyBalance.trace('Failed to parse seconds from ' + str + ' (' + _str + ')');
     return val;
 }
@@ -1625,11 +1629,17 @@ function megafonLkAPI() {
 							getParam(current.available, result, 'mins_n_free', null, replaceTagsAndSpaces, parseMinutes);
 						} else {
 							sumParam(current.available, result, 'mins_left', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
+							sumParam(current.total, result, 'mins_total', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
 						}
 					// СМС
 					} else if(/шт|sms|смс/i.test(units)) {
 						AnyBalance.trace('Parsing sms...' + JSON.stringify(current));
 						sumParam(current.available, result, 'sms_left', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+						sumParam(current.total, result, 'sms_total', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+					} else if(/mms|ммс/i.test(units)) {
+						AnyBalance.trace('Parsing mms...' + JSON.stringify(current));
+						sumParam(current.available, result, 'mms_left', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+						sumParam(current.total, result, 'mms_total', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 					// Трафик
 					} else if(/Мб|Mb/i.test(units)) {
 						AnyBalance.trace('Parsing data...' + JSON.stringify(current));
@@ -1637,7 +1647,14 @@ function megafonLkAPI() {
 						if(/Гигабайт в дорогу/i.test(name)) {
 							getParam(current.available + current.unit, result, 'gb_with_you', null, replaceTagsAndSpaces, parseTraffic);
 						} else {
-							sumParam(current.available + current.unit, result, 'internet_left', null, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
+							var internet_left = getParam(current.available + current.unit, null, null, null, replaceTagsAndSpaces, parseTraffic);
+							var internet_total = getParam(current.total + current.unit, null, null, null, replaceTagsAndSpaces, parseTraffic);
+							if(isset(internet_left))
+								sumParam(internet_left, result, 'internet_left', null, null, null, aggregate_sum);
+							if(isset(internet_total))
+								sumParam(internet_total, result, 'internet_total', null, null, null, aggregate_sum);
+							if(isset(internet_left) && isset(internet_total))
+								sumParam(internet_total - internet_left, result, 'internet_cur', null, null, null, aggregate_sum);
 						}
 					// Ошибка 
 					} else {

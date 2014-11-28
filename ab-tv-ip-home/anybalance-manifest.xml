@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-tv-ip-home</id>
+	<api flags="no_browser"/>
+	<name>IP-Home</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера IP-Home <a href="http://ip-home.net/">http://ip-home.net/</a></p>
+	<p>Информация берется из личного кабинета <a href="http://stat.ip-home.net:8002/login">http://stat.ip-home.net:8002/login</a></p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="__tariff" name="Тарифы" type="text"/>
+		<counter id="account" name="Лицевой счет" type="text"/>
+		<counter id="limit" name="Постоянный кредитный лимит" units=" р"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

@@ -1604,47 +1604,63 @@ function megafonLkAPI() {
 	if(json.ratePlan)
 		getParam(json.ratePlan.name, result, '__tariff');
 	
-	json = callAPI('get', 'api/options/remainders');
-	
-	for(var i = 0; i < json.models.length; i++) {
-		var model = json.models[i];
+	if (AnyBalance.isAvailable('mins_n_free', 'mins_left', 'sms_left', 'gb_with_you', 'internet_left')) {
+		json = callAPI('get', 'api/options/remainders');
 		
-		if(model.remainders) {
-			for(var z = 0; z < model.remainders.length; z++) {
-				var current = model.remainders[z];
-				var name = current.name;
-				
-				if(/Исх\. связь/i.test(name)) {
-					sumParam(current.available, result, 'mins_left', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
-				} else if(/Исходящие SM/i.test(name)) {
-					sumParam(current.available, result, 'sms_left', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-				} else {
-					AnyBalance.trace('Неизвестная опция: ' + name + ': '  + current);
+		for(var i = 0; i < json.models.length; i++) {
+			var model = json.models[i];
+			
+			if(model.remainders) {
+				for(var z = 0; z < model.remainders.length; z++) {
+					var current = model.remainders[z];
+					var name = current.name;
+					var units = current.unit;
+					
+					// Минуты
+					if(/мин/i.test(units)) {
+						AnyBalance.trace('Parsing minutes...' + JSON.stringify(current));
+						if(/бесплат/i.test(name)) {
+							getParam(current.available, result, 'mins_n_free', null, replaceTagsAndSpaces, parseMinutes);
+						} else {
+							sumParam(current.available, result, 'mins_left', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
+						}
+					// СМС
+					} else if(/шт|sms|смс/i.test(units)) {
+						AnyBalance.trace('Parsing sms...' + JSON.stringify(current));
+						sumParam(current.available, result, 'sms_left', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+					// Трафик
+					} else if(/Мб|Mb/i.test(units)) {
+						AnyBalance.trace('Parsing data...' + JSON.stringify(current));
+						
+						if(/Гигабайт в дорогу/i.test(name)) {
+							getParam(current.available + current.unit, result, 'gb_with_you', null, replaceTagsAndSpaces, parseTraffic);
+						} else {
+							sumParam(current.available + current.unit, result, 'internet_left', null, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
+						}
+					// Ошибка 
+					} else {
+						AnyBalance.trace('Неизвестные единицы измерений: ' + units + ' опция: ' + name + ': '  + JSON.stringify(current));
+					}
 				}
-				
-
 			}
 		}
 	}
 	
-	json = callAPI('get', 'api/payments/history?offset=0&size=10');
-	
-	if(json.payments && json.payments[0]) {
+	if (AnyBalance.isAvailable('last_pay_sum', 'last_pay_date')) {
+		json = callAPI('get', 'api/payments/history?offset=0&size=10');
 		
-		getParam(json.payments[0].amount + '', result, 'last_pay_sum', null, replaceTagsAndSpaces, parseBalance);
-		getParam(json.payments[0].date + '', result, 'last_pay_date', null, replaceTagsAndSpaces, parseDate);
+		if(json.payments && json.payments[0]) {
+			
+			getParam(json.payments[0].amount + '', result, 'last_pay_sum', null, replaceTagsAndSpaces, parseBalance);
+			getParam(json.payments[0].date + '', result, 'last_pay_date', null, replaceTagsAndSpaces, parseDate);
+		}
 	}
-	/*
-	api/payments/history?offset=0&size=10
-		api/payments/info
-
-	<counter id="last_pay_sum" name="Последний платеж" units=" р"/>
-	<counter id="last_pay_date" name="Дата посл. платежа" type="time" format="dd/MM/yyyy"/>
-	*/
-
 	
-	
-	
+	if (AnyBalance.isAvailable('sub_scl')) {
+		json = callAPI('get', 'api/payments/info');
+		
+		getParam(json.outcome + '', result, 'sub_scl', null, replaceTagsAndSpaces, parseBalance);
+	}
 	
 	AnyBalance.setResult(result);
 }

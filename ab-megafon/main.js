@@ -369,10 +369,6 @@ function megafonTrayInfo(filial) {
 				var names = name + ',' + plan_name + ',' + pack_name;
 				var vol_ava = getParam(d, null, null, /<VOLUME_AVAILABLE>([\s\S]*?)<\/VOLUME_AVAILABLE>/i, replaceTagsAndSpaces, parseBalance);
 				var vol_tot = getParam(d, null, null, /<VOLUME_TOTAL>([\s\S]*?)<\/VOLUME_TOTAL>/i, replaceTagsAndSpaces, parseBalance);
-				if(vol_ava >= 100000000000 || vol_tot >= 100000000000){ //что-то безлимитное, надо пропустить
-					AnyBalance.trace('Безлимитное значение ' + names + ': ' + vol_ava + '/' + vol_tot + '. Пропускаем...');
-					continue;
-				}
 
 				if (/sms|смс/i.test(names)) {
 					AnyBalance.trace('Найдены SMS: ' + names);
@@ -382,31 +378,63 @@ function megafonTrayInfo(filial) {
 					AnyBalance.trace('Найдены MMS: ' + names);
 					sumParam(d, result, 'mms_left', /<VOLUME_AVAILABLE>([\s\S]*?)<\/VOLUME_AVAILABLE>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 					sumParam(d, result, 'mms_total', /<VOLUME_TOTAL>([\s\S]*?)<\/VOLUME_TOTAL>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-				} else if (/GPRS| Байт|интернет|мб|Пакетная передача данных/i.test(names) || /Пакетная передача данных/i.test(name_service) || /Байт|Тар.ед./i.test(plan_si)) {
+				} else if (/GPRS| Байт|интернет|мб|Пакетная передача данных|QoS:\s*\d+\s*Гб/i.test(names) || /Пакетная передача данных/i.test(name_service) || /Байт|Тар.ед./i.test(plan_si)) {
 					AnyBalance.trace('Найден интернет: ' + names + ', ' + plan_si);
-					var valAvailable = getParam(d, null, null, /<VOLUME_AVAILABLE>([\s\S]*?)<\/VOLUME_AVAILABLE>/i, replaceTagsAndSpaces, parseBalance);
-					var valTotal = getParam(d, null, null, /<VOLUME_TOTAL>([\s\S]*?)<\/VOLUME_TOTAL>/i, replaceTagsAndSpaces, parseBalance);
+					var valAvailable = vol_ava;
+					var valTotal = vol_tot;
 					var units = plan_si;
+					if (units == 'шт'){
+					    units = 'мб';
+					}
+					if (units == 'сек'){
+					    units = 'байт';
+					}
 					if (units == 'мин') {
 						//Надо попытаться исправить ошибку мегафона с единицами измерения трафика
 						if (/[GM]B|[гм]б/i.test(plan_name)) units = 'мб';
 						else if (/GPRS-Internet трафик/i.test(plan_name)) units = 'мб'; //Вот ещё такое исключение. Надеюсь, на всём будет работать, хотя сообщили из поволжского филиала
 						else if (/100\s*мб/i.test(plan_name)) units = 'тар.ед.';
 						else if (/Интернет (?:S|M|L|XL)/i.test(names)) units = 'мб';
-						else if (/Все включено/i.test(plan_name)) units = 'мб'; //Из дальневосточного филиала сообщили
+						else if (/Все включено|Интернет трафик на месяц/i.test(plan_name)) units = 'мб'; //Из дальневосточного филиала сообщили
 						else units = 'тар.ед.'; //измеряется в 100кб интервалах
 					}
+
+					var _valTotal = parseTrafficMy(valTotal + units);
+
 					if (isset(valTotal)) { //Отметим, что этот пакет мы уже посчитали
-						var _valTotal = parseTrafficMy(valTotal + units);
 						internet_totals_was[_valTotal] = true;
-						internet_totals_was.total = (internet_totals_was.total || 0) + _valTotal;
+
+					    internet_totals_was.total = (internet_totals_was.total || 0) + _valTotal;
 					}
+
+					if(_valTotal > 10000000){
+					    var realTotal = getParam(names, null, null, /\d+\s*[гмкgmk][бb]/i, null, parseTrafficToBytes);
+					    if(isset(realTotal)){
+							AnyBalance.trace('Нашли тотал из названия опции: ' + realTotal + ' байт');
+							valAvailable = realTotal - (valTotal - valAvailable);
+							valTotal = realTotal;
+					    }
+					}
+
 					if (AnyBalance.isAvailable('internet_left') && isset(valAvailable)) {
-						result.internet_left = (result.internet_left || 0) + parseTrafficMy(valAvailable + units);
+					    var _val = parseTrafficMy(valAvailable + units);
+						if(_val < 100000000){
+						    result.internet_left = (result.internet_left || 0) + _val;
+						}else{
+							AnyBalance.trace('Безлимитное значение остатка трафика ' + names + ': ' + valAvailable + units + '. Пропускаем...');
+						}
+						
 					}
+
 					if (AnyBalance.isAvailable('internet_total') && isset(_valTotal)) {
-						result.internet_total = (result.internet_total || 0) + _valTotal;
+					    var _val = parseTrafficMy(valTotal + units);
+						if(_val < 100000000){
+						    result.internet_total = (result.internet_total || 0) + _val;
+						}else{
+							AnyBalance.trace('Безлимитное значение всего трафика ' + names + ': ' + valTotal + units + '. Пропускаем...');
+						}
 					}
+
 					if (AnyBalance.isAvailable('internet_cur') && isset(valAvailable) && isset(valTotal)) {
 						result.internet_cur = (result.internet_cur || 0) + parseTrafficMy((valTotal - valAvailable) + units);
 					}
@@ -1502,6 +1530,10 @@ function parseTrafficMy(str){
   return parseTrafficExMega(str, 1024, 2, 'b');
 }
 
+function parseTrafficToBytes(str){
+  return parseTrafficExMega(str, 1024, 0, 'b');
+}
+
 function parseTrafficMyMb(str){
   return parseTrafficExMega(str, 1024, 2, 'mb');
 }
@@ -1574,7 +1606,7 @@ var g_api_headers = {
 
 var g_baseurl = 'https://api.megafon.ru/mlk/';
 
-function callAPI(method, url, params) {
+function callAPI(method, url, params, allowerror) {
 	if(method == 'post')
 		var html = AnyBalance.requestPost(g_baseurl + url, params, g_api_headers);
 	else
@@ -1582,7 +1614,7 @@ function callAPI(method, url, params) {
 	
 	var json = getJson(html);
 	
-	if(json.code) {
+	if(json.code && !allowerror) {
 		throw new AnyBalance.Error('Ошибка вызова API! ' + json.message);
 	}
 	return json;
@@ -1598,7 +1630,22 @@ function megafonLkAPI() {
 	var json = callAPI('post', 'login', {
 		login: prefs.login,
 		password: prefs.password,
-	});
+	}, true);
+
+	if(json.code){
+	    if(json.code == 'a211'){ //Капча
+	        var capchaImg = AnyBalance.requestGet(g_baseurl + 'auth/captcha', g_api_headers);
+	        var captcha = AnyBalance.retrieveCode('Мегафон иногда требует подтвердить, что вы не робот. Сейчас как раз такой случай. Если вы введете цифры с картинки, то мы сможем получить какую-то информацию помимо баланса. В противном случае получим только баланс.', capchaImg);
+			json = callAPI('post', 'login', {
+				login: prefs.login,
+				password: prefs.password,
+				captcha: captcha
+			});
+	    }
+
+	    if(json.code)
+	    	throw new AnyBalance.Error('Ошибка вызова API! ' + json.message, null, /Неправильный логин\/пароль/i.test(json.message));
+	}
 	
 	json = callAPI('get', 'api/main/info');
 	
@@ -1610,7 +1657,7 @@ function megafonLkAPI() {
 	if(json.ratePlan)
 		getParam(json.ratePlan.name, result, '__tariff');
 	
-	if (AnyBalance.isAvailable('mins_n_free', 'mins_left', 'sms_left', 'gb_with_you', 'internet_left')) {
+	if (AnyBalance.isAvailable('mins_n_free', 'mins_left', 'mins_total', 'sms_left', 'sms_total', 'mms_left', 'mms_total', 'gb_with_you', 'internet_left', 'internet_total', 'internet_cur')) {
 		json = callAPI('get', 'api/options/remainders');
 		
 		for(var i = 0; i < json.models.length; i++) {

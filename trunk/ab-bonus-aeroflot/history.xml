@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="6" date="2014-11-29">
+	- Восстановлен показ баланса миль
+	</change>
 	<change version="5" date="2014-10-27">
 	- Поддержка изменений в личном кабинете
 	</change>

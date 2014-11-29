@@ -30,11 +30,23 @@ function main() {
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'balance', /<div[^>]*class="b-account__sum__hint-descr-sum"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance', /<div[^>]*id="current-user-balance-container"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalanceRK);
 	getParam(html, result, 'number', /"b-account__number__text"[^>]*>(.*?)</i, replaceTagsAndSpaces);
 	getParam(html, result, '__tariff', /"b-account__number__text"[^>]*>(.*?)</i, replaceTagsAndSpaces);
 	
 	AnyBalance.setResult(result);
+}
+
+function parseBalanceRK(_text){
+    var text = _text.replace(/\s+/g, '');
+    var rub = getParam(text, null, null, /(-?\d+)(?:\s|&nbsp;)*руб/i, replaceTagsAndSpaces, parseBalance);
+    var kop = getParam(text, null, null, /(-?\d+)(?:\s|&nbsp;)*коп/i, replaceFloat, parseBalance);
+    var val;
+    if(isset(rub) || isset(kop)){
+    	val = (rub || 0) + (kop || 0)/100;
+    }
+    AnyBalance.trace('Parsing balance (' + val + ') from: ' + _text);
+    return val;
 }
 
 function loginYandex(login, password, html, retpath, from) {

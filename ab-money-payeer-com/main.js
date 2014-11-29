@@ -63,7 +63,10 @@ function main() {
 	AnyBalance.setCookie('payeer.com', 'BITRIX_SM_SOUND_LOGIN_PLAYED', 'Y');
 	AnyBalance.setCookie('payeer.com', 'BITRIX_SM_SALE_UID', '0');
 	
+	var incapsule = Incapsule(baseurl + 'ru/');
 	var html = AnyBalance.requestGet(baseurl + 'ru/', g_headers);
+	if(incapsule.isIncapsulated(html))
+	    html = incapsule.executeScript(html);
 
 	html = login(baseurl, html);
 	if (!/logout=yes/i.test(html)) {  //Возможно, нужна всё-таки капча

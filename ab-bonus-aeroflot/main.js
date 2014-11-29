@@ -48,15 +48,10 @@ function main(){
 
     var result = {success: true};
 	
+    getParam(html, result, 'balance', /<td[^>]+id="member_miles_value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'qmiles', /<td[^>]+id="current_year_miles_value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'segments', /<td[^>]+id="current_year_segments_value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, '__tariff', /<div[^>]+class="name"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-	
-	var userInfo = getParam(html, null, null, /var\s+user_info\s*=\s*JSON\.stringify\(([\s\S]*?)\);/i, replaceTagsAndSpaces, getJson);
-	if(userInfo) {
-		getParam(userInfo.miles + '', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
-		getParam(userInfo.tier_level + '', result, 'level');
-	}
 	
     AnyBalance.setResult(result);
 }

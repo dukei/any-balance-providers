@@ -1527,7 +1527,7 @@ function parseTrafficExMega(text, thousand, order, defaultUnits){
         AnyBalance.trace("Could not parse traffic value from " + text);
         return;
     }
-    var units = getParam(_text, null, null, /([kmgкмгт][бb]?|[бb](?![\wа-я])|байт|bytes)/i);
+    var units = getParam(_text, null, null, /([kmgкмгт][бb]?|[бb](?![\wа-я])|байт|byte)/i);
     if(!units && !defaultUnits){
         AnyBalance.trace("Could not parse traffic units from " + text);
         return;
@@ -1631,17 +1631,19 @@ function megafonLkAPI() {
 							sumParam(current.available, result, 'mins_left', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
 							sumParam(current.total, result, 'mins_total', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
 						}
-					// СМС
-					} else if(/шт|sms|смс/i.test(units)) {
-						AnyBalance.trace('Parsing sms...' + JSON.stringify(current));
-						sumParam(current.available, result, 'sms_left', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-						sumParam(current.total, result, 'sms_total', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-					} else if(/mms|ммс/i.test(units)) {
-						AnyBalance.trace('Parsing mms...' + JSON.stringify(current));
-						sumParam(current.available, result, 'mms_left', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-						sumParam(current.total, result, 'mms_total', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+					// Сообщения
+					} else if(/шт|sms|смс|mms|ммс/i.test(units)) {
+					    if(/mms|ММС/i.test(name)){
+							AnyBalance.trace('Parsing mms...' + JSON.stringify(current));
+							sumParam(current.available, result, 'mms_left', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+							sumParam(current.total, result, 'mms_total', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+						}else{
+							AnyBalance.trace('Parsing sms...' + JSON.stringify(current));
+							sumParam(current.available, result, 'sms_left', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+							sumParam(current.total, result, 'sms_total', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+						}
 					// Трафик
-					} else if(/Мб|Mb/i.test(units)) {
+					} else if(/([kmgкмгт][бb]?|[бb](?![\wа-я])|байт|byte)/i.test(units)) {
 						AnyBalance.trace('Parsing data...' + JSON.stringify(current));
 						
 						if(/Гигабайт в дорогу/i.test(name)) {

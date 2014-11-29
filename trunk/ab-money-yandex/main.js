@@ -39,8 +39,8 @@ function main() {
 
 function parseBalanceRK(_text){
     var text = _text.replace(/\s+/g, '');
-    var rub = getParam(text, null, null, /(-?\d+)(?:\s|&nbsp;)*руб/i, replaceTagsAndSpaces, parseBalance);
-    var kop = getParam(text, null, null, /(-?\d+)(?:\s|&nbsp;)*коп/i, replaceFloat, parseBalance);
+    var rub = getParam(text, null, null, /([\s\S]*)руб/i, replaceTagsAndSpaces, parseBalance);
+    var kop = getParam(text, null, null, /((?:[\s\S](?!руб))*)коп/i, [/руб\.?/i, '', replaceTagsAndSpaces], parseBalance);
     var val;
     if(isset(rub) || isset(kop)){
     	val = (rub || 0) + (kop || 0)/100;

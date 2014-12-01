@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-gambling-baltplay</id>
+	<api flags="no_browser"/>
+	<name>BALTBET</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера BALTBET <a href="http://www.baltplay.com/">http://www.baltplay.com/</a></p>
+	<p>Информация берется из личного кабинета</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="bonus" name="Бонусные баллы"/>
+		<counter id="account" name="Номер счета" type="text"/>
+		<counter id="name" name="Имя пользователя" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>gambling</type>
+	<country>by ua ru kz tj</country>
+</provider>

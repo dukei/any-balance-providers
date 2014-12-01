@@ -830,7 +830,8 @@ function getBonuses(xhtml, result) {
 		var bonus = bonuses[j];
 		//var bonus_name = ''; //getParam(bonus, null, null, /<span[^>]+class="bonuses-accums-list"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
 		// var services = sumParam(bonus, null, null, /<div[^>]+class="\s*(?:accumulator|bonus|item)\s*"(?:[\s\S](?!$|<div[^>]+class="(?:accumulator|bonus|item)"))*[\s\S]/ig);
-		var services = sumParam(bonus, null, null, /<div[^>]+class="\s*(?:item accumulator|accumulator|bonus|item)\s*"(?:[\s\S](?!$|<div[^>]+class="(?:accumulator|bonus|item)"))*[\s\S]/ig);
+		var services = sumParam(bonus, null, null, /<div[^>]+class="\s*(?:item\s*(?:accumulator|accumulator|bonus|item)?)\s*"(?:[\s\S](?!$|<div[^>]+class="(?:accumulator|accumulator|bonus|item)"))*[\s\S]/ig);
+		
 		AnyBalance.trace("Found " + services.length + ' bonuses');
 		var reValue = /<div[^>]+class="column2[^"]*"[^>]*>([\s\S]*?)<\/div>/i;
 		var reNewValue = /<div[^>]+class="column2[^"]*"(?:[^>]*>){5}([\s\d,.]+)/i;
@@ -889,7 +890,7 @@ function getBonuses(xhtml, result) {
 			} else if (/Секунд БОНУС-2|Баланс бесплатных секунд-промо/i.test(name)) {
 				sumParam(services[i], result, 'min_local', reValue, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
 				sumParam(services[i], result, 'min_local_till', /Доступно до([^<]{10,20})/i, replaceTagsAndSpaces, parseDateWord, aggregate_min);
-			} else if (/минут в месяц|мин\./i.test(name)) {
+			} else if (/минут в месяц|мин\.|Голосовой трафик/i.test(name)) {
 				var minutes = getParam(services[i], null, null, reValue, replaceTagsAndSpaces, parseMinutes);
 				sumParam(minutes, result, 'min_local', null, null, null, aggregate_sum);
 			// Это новый вид отображения данных

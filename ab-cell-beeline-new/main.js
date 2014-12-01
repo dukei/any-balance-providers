@@ -241,11 +241,9 @@ function main() {
 	
 	var baseurl = 'https://my.beeline.' + (prefs.country || 'ru') + '/';
 	
-	if(prefs.country == 'kz')
+	if(prefs.country == 'kz') {
 		AnyBalance.setCookie('my.beeline.kz', 'ui.language.current', 'ru_RU');
-	else {
-		// Если задан номер телефона то идем через морду, приложение не поддерживает несколько номеров на аккаунте
-		
+	} else {
 		if(prefs.source == 'app') {
 			if(!prefs.phone && /^\d{10}$/.test(prefs.login)) {
 				proceedWithMobileAppAPI(baseurl, prefs);
@@ -754,7 +752,7 @@ function fetchPre(baseurl, html) {
 				getParam(html + xhtml, result, ['currency', 'balance'], balanceRegExp, replaceTagsAndSpaces, myParseCurrency);			
 		}
 		// Пробуем получить со страницы, при обновлении через мобильный интернет, он там есть
-		var balanceRegExp = /class="price[^>]*>((?:[\s\S]*?span[^>]*>){3})/i;
+		var balanceRegExp = /<h3>[^>]*class="price[^>]*>((?:[\s\S]*?span[^>]*>){3})/i;
 		getParam(html, result, 'balance', balanceRegExp, replaceTagsAndSpaces, parseBalance);
 		l_getCurrency();
 		
@@ -830,7 +828,7 @@ function getBonuses(xhtml, result) {
 		var bonus = bonuses[j];
 		//var bonus_name = ''; //getParam(bonus, null, null, /<span[^>]+class="bonuses-accums-list"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
 		// var services = sumParam(bonus, null, null, /<div[^>]+class="\s*(?:accumulator|bonus|item)\s*"(?:[\s\S](?!$|<div[^>]+class="(?:accumulator|bonus|item)"))*[\s\S]/ig);
-		var services = sumParam(bonus, null, null, /<div[^>]+class="\s*(?:item\s*(?:accumulator|accumulator|bonus|item)?)\s*"(?:[\s\S](?!$|<div[^>]+class="(?:accumulator|accumulator|bonus|item)"))*[\s\S]/ig);
+		var services = sumParam(bonus, null, null, /<div[^>]+class="\s*(?:(?:item\s*)?(?:accumulator|accumulator|bonus|item)?)\s*"(?:[\s\S](?!$|<div[^>]+class="(?:accumulator|accumulator|bonus|item)"))*[\s\S]/ig);
 		
 		AnyBalance.trace("Found " + services.length + ' bonuses');
 		var reValue = /<div[^>]+class="column2[^"]*"[^>]*>([\s\S]*?)<\/div>/i;
@@ -896,7 +894,7 @@ function getBonuses(xhtml, result) {
 			// Это новый вид отображения данных
 			} else if (/Минут общения по (?:тарифу|услуге)|вызовы/i.test(name)) {
 				// Очень внимательно надо матчить
-				if(/других (?:сотовых\s+)?операторов|все номера|На номера домашнего региона|Минут общения по тарифу Все для бизнеса Бронза/i.test(name))
+				if(/других (?:сотовых\s+)?операторов|все номера|На номера домашнего региона|Минут общения по тарифу Все для бизнеса Бронза|кроме номеров "Билайн"/i.test(name))
 					sumParam(services[i], result, 'min_local', reNewValue, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
 				else
 					sumParam(services[i], result, 'min_bi', reNewValue, replaceTagsAndSpaces, parseMinutes, aggregate_sum);

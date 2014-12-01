@@ -52,6 +52,13 @@ function main(){
     getParam(html, result, 'qmiles', /<td[^>]+id="current_year_miles_value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'segments', /<td[^>]+id="current_year_segments_value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, '__tariff', /<div[^>]+class="name"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+
+    if(AnyBalance.isAvailable('balance') && !isset(result.balance)){
+        AnyBalance.trace('Баланс не на странице. Попробуем получить аяксом.');
+	html = AnyBalance.requestGet(baseurl + 'ajax/mile_balance', addHeaders({Referer: baseurl, 'X-Requested-With': 'XMLHttpRequest'}));
+        getParam(html, result, 'balance', /\d+/i, replaceTagsAndSpaces, parseBalance);
+    }
 	
     AnyBalance.setResult(result);
 }
+

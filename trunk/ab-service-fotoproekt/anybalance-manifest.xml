@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-service-fotoproekt</id>
+	<api flags="no_browser"/>
+	<name>Фотопроект</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Фотопроект <a href="http://www.fotoproekt.ru/">http://www.fotoproekt.ru/</a></p>
+	<p>Информация берется из личного кабинета
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="limit" name="Лимит" units=" р"/>
+		<counter id="turnover" name="Оборот" units=" р"/>
+		<counter id="service_discount" name="Скидка на услуги" units=" %"/>
+		<counter id="goods_discount" name="Скидка на товары" units=" %"/>
+	</counters>
+	<keywords></keywords>
+	<type>service</type>
+	<country>ru</country>
+</provider>

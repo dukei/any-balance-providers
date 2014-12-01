@@ -94,7 +94,7 @@ function main() {
 	
 	html = AnyBalance.requestGet(baseurl + bankType +'services.aspx', g_headers);
 	
-	var cardsForm = getParam(html, null, null, /<h1>Список карт<\/h1>[\s\S]*?<\/form>/i);
+	var cardsForm = getParam(html, null, null, /<h1>(?:Карточки|Список карт)<\/h1>[\s\S]*?<\/form>/i);
 	checkEmpty(cardsForm, 'Не удалось найти форму с картами, сайт изменен?', true);
 	
 	// Далее надо узнать какую карту смотреть

@@ -11,8 +11,8 @@ var g_headers = {
 };
 
 var g_errors = {
-	invalidLogin:'Неверный логин!',
-	invalidPassword:'Неверный пароль!'
+	invalidLogin: 'Неверный логин!',
+	invalidPassword: 'Неверный пароль!'
 }
 
 function main(){
@@ -24,9 +24,7 @@ function main(){
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	try {
-		var html = AnyBalance.requestPost(baseurl + 'secured/myaccount/login.jsp?login=', {redirect:'',requestForLogin:true}, addHeaders({Referer: baseurl, 'X-Requested-With':'XMLHttpRequest'}));
-	} catch(e){}
+	var html = AnyBalance.requestPost(baseurl + 'secured/myaccount/login.jsp?login=', {redirect:'',requestForLogin:true}, addHeaders({Referer: baseurl, 'X-Requested-With':'XMLHttpRequest'}));	
 	
 	if(AnyBalance.getLastStatusCode() > 400 || !html) {
 		throw new AnyBalance.Error('Ошибка! Сервер не отвечает! Попробуйте обновить баланс позже.');
@@ -69,9 +67,9 @@ function main(){
 	
 	var result = {success: true};
 	
-    getParam(html, result, 'balance', /<th>Баланс бонусного счета(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'total', /<th>Оборот(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'next_level', /<th>До следующего уровня(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'balance', />\s*Баланс бонусного счета[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'total', />\s*Оборот[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'next_level', />\s*До следующего уровня[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
 	
     AnyBalance.setResult(result);
 }

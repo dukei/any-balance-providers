@@ -1696,6 +1696,10 @@ function megafonLkAPI() {
 						if(/Гигабайт в дорогу/i.test(name)) {
 							getParam(current.available + current.unit, result, 'gb_with_you', null, replaceTagsAndSpaces, parseTraffic);
 						} else {
+							if(current.available == 99999999) {
+								AnyBalance.trace('Пропускаем огромный трафик...');
+								continue;
+							}
 							var internet_left = getParam(current.available + current.unit, null, null, null, replaceTagsAndSpaces, parseTraffic);
 							var internet_total = getParam(current.total + current.unit, null, null, null, replaceTagsAndSpaces, parseTraffic);
 							if(isset(internet_left))

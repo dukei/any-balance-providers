@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-tracking-pecom</id>
+	<api flags="no_browser"/>
+	<name>ПЭК</name>
+	<description html="true"><![CDATA[
+	<p>Получает данные по коду груза на сайте <a href="https://kabinet.pecom.ru/status">https://kabinet.pecom.ru/status</a></p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="debt" name="Долг по оплате" units=" р"/>
+		<counter id="status" name="Статус груза" type="text"/>
+		<counter id="depart_date" name="Дата сдачи груза" type="time" format="dd/MM/yyyy"/>
+		<counter id="arrival_date" name="Время прибытия" type="time" format="dd/MM/yyyy"/>
+		<counter id="approx_arrival_date" name="Ориентировочное время прибытия" type="time" format="dd/MM/yyyy"/>
+		<counter id="name" name="Наименование груза" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>tracking</type>
+	<country>ru</country>
+</provider>

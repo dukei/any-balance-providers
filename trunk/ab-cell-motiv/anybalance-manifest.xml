@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="4">ab-cell-motiv</id>
+	<id version="5">ab-cell-motiv</id>
 	<name>Мотив Телеком</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе и тарифном плане для пользователей сотового оператора "Мотив".</p>   
@@ -30,8 +30,9 @@
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
 		<counter id="min" name="Минуты" units=" мин"/>
-		<counter id="sms" name="SMS" units=" sms"/>
-		<counter id="mms" name="MMS" units=" mms"/>
+		<counter id="sms" name="SMS" units=" смс"/>
+		<counter id="mms" name="MMS" units=" ммс"/>
+		<counter id="traf" name="Трафик" units=" мб"/>
 		<counter id="phone" name="Номер телефона" type="text"/>
 		<counter id="userName" name="Владелец" type="text"/>
 		<counter id="tarification" name="Тарификация" type="text"/>

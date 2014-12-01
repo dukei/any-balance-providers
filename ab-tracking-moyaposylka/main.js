@@ -22,9 +22,10 @@ function apiCall(params) {
 	
 	var json = getJson(html);
 	
-	if(!json.success)
-		throw new AnyBalance.Error(json.error.code || JSON.stringify(json.error));
-	
+	if(!json.success) {
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error(json.error.code || JSON.stringify(json.error) || 'Неизвестная ошибка!');
+	}
 	return json;
 }
 
@@ -34,6 +35,9 @@ function getMyPosylkaResult(prefs) {
 	
 	var dest = prefs.track_dest || "RU"; //Страна назначения
 	var html = AnyBalance.requestGet(g_baseurl, g_headers);
+	
+	if(!html || AnyBalance.getLastStatusCode() > 400)
+		throw new AnyBalance.Error('Сайт временно не работает! Попробуйте обновить данные позже.');
 	
 	AnyBalance.setCookie('moyaposylka.ru', 'trackerNumber', prefs.track_id);
 	AnyBalance.setCookie('moyaposylka.ru', 'countryCode', dest);
@@ -45,7 +49,10 @@ function getMyPosylkaResult(prefs) {
 		}
 	});
 	
-	checkEmpty(json.result[0].code, 'Не удалось выяснить тип отправления, сайт изменен?', true);
+	if(!isArray(json.result) || !json.result[0].code) {
+		AnyBalance.trace(JSON.stringify(json));
+		throw new AnyBalance.Error('Не удалось выяснить тип отправления, сайт изменен?');
+	}
 	
 	json = apiCall({
 		"method":"createRequest",
@@ -55,13 +62,19 @@ function getMyPosylkaResult(prefs) {
 			"countryCode":dest
 		}
 	});
+	
 	var token = json.result;
+	
+	if(!token) {
+		AnyBalance.trace(JSON.stringify(json));
+		throw new AnyBalance.Error('Не удалось получить токен, сайт изменен?');
+	}	
 	
 	for(var i = 0; i < 5; i++) {
 		try {
+			AnyBalance.trace('Обновление данных №' + (i+1));
 			// Нужно дать данным обновится, иначе получим 404
 			sleep(3000);
-			
 			json = apiCall({
 				"method":"getRequestInfo",
 				"params":{
@@ -71,10 +84,13 @@ function getMyPosylkaResult(prefs) {
 			// Успешно прошли - прерываемся
 			break;
 		} catch(e) {
-			if(/QUICK_CHECK_REQUEST_NOT_COMPLETE/i.test(e))
+			if(/QUICK_CHECK_REQUEST_NOT_COMPLETE/i.test(e)) {
+				AnyBalance.trace('Обновление данных не завершено, попробоуем еще раз...');
 				sleep(2000);
-			else
-				break;
+			} else {
+				AnyBalance.trace('Обновление данных завершено с ошибкой!');
+				throw e;
+			}
 		}
 	}
 	

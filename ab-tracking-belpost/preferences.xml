@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference
+		title="Номер отправления"
+		key="cargo"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Номер отправления"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите номер отправления.">
+	</EditTextPreference>
+	<ListPreference
+		key="internal"
+		title="Вид отправления"
+		summary="||{@s}"
+		entries="Слежение за отправлениями по РБ|Слежение за международными отправлениями и EMS"
+		entryValues="1|2"
+		defaultValue="1">
+	</ListPreference>
+</PreferenceScreen>

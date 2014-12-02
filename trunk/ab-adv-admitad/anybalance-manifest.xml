@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-adv-admitad</id>
+	<id version="2">ab-adv-admitad</id>
 	<api flags="no_browser"/>
 	<name>Admitad</name>
 	<description html="true"><![CDATA[
@@ -19,6 +19,7 @@
 		<counter id="in_process" name="В обработке"/>
 		<counter id="out_usd" name="Готовы к снятию USD"/>
 		<counter id="out_rub" name="Готовы к снятию RUB"/>
+		<counter id="out_eur" name="Готовы к снятию EUR"/>
 	</counters>
 	<keywords></keywords>
 	<type>adv</type>

@@ -31,7 +31,7 @@ function main() {
 	
 	html = AnyBalance.requestPost(baseurl + 'ru/sign_in/', params, addHeaders({Referer: baseurl + 'ru/sign_in/'}));
 	
-	if (!/log_out/i.test(html)) {
+	if (!/sign_out/i.test(html)) {
 		var error = getParam(html, null, null, /"errorlist"[^>]*>([\s\S]*?)<\/ul/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
 			throw new AnyBalance.Error(error, null, /еправильный логин и\/или пароль/i.test(error));
@@ -40,11 +40,22 @@ function main() {
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	
+	html = AnyBalance.requestGet(baseurl + 'ru/webmaster/ajax/user_balance/', g_headers);
+	
+	var json = getJson(html);
+	
 	var result = {success: true};
 	
-	getParam(html, result, 'in_process', />В обработке(?:[^>]*>){13}\s*<table>([\s\S]*?)<\/table/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'out_usd', />Готовы к снятию(?:[^>]*>){4}\s*USD([^>]*>){3}/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'out_rub', />Готовы к снятию(?:[^>]*>){10}\s*RUB([^>]*>){3}/i, replaceTagsAndSpaces, parseBalance);
+	for(var i=0; i<json.mixed_balances.length; i++) {
+		var current = json.mixed_balances[i];
+		
+		getParam(current.balance+'', result, 'out_' + current.currency.toLowerCase(), null, replaceTagsAndSpaces, parseBalance);
+	}
+	
+	// getParam(html, result, 'in_process', />В обработке(?:[^>]*>){13}\s*<table>([\s\S]*?)<\/table/i, replaceTagsAndSpaces, parseBalance);
+	// getParam(html, result, 'out_usd', />Готовы к снятию(?:[^>]*>){4}\s*USD([^>]*>){3}/i, replaceTagsAndSpaces, parseBalance);
+	// getParam(html, result, 'out_rub', />Готовы к снятию(?:[^>]*>){10}\s*RUB([^>]*>){3}/i, replaceTagsAndSpaces, parseBalance);
+	// getParam(html, result, 'out_rub', />Готовы к снятию(?:[^>]*>){10}\s*RUB([^>]*>){3}/i, replaceTagsAndSpaces, parseBalance);
 	
 	AnyBalance.setResult(result);
 }

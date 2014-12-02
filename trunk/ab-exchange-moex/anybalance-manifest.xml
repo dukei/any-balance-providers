@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-exchange-moex</id>
+	<api flags="no_browser"/>
+	<name>Курсы валют Московской Биржи</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о курсах валют Московской Биржи <a href="http://moex.com/">http://moex.com/</a></p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="mmvb" name="Индекс ММВБ"/>
+		<counter id="USDEUR_BKT" name="USDEUR_BKT"/>
+		<counter id="USDRUB_TOM" name="USDRUB_TOM"/>
+		<counter id="EURRUB_TOM" name="EURRUB_TOM"/>
+		<counter id="EURUSD_TOM" name="EURUSD_TOM"/>
+		<counter id="USD" name="USD ЦБ"/>
+		<counter id="EUR" name="EUR ЦБ"/>
+	</counters>
+	<keywords></keywords>
+	<type>exchange</type>
+	<country>ru</country>
+</provider>

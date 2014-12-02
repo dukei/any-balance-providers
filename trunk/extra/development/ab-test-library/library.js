@@ -7,9 +7,11 @@ AnyBalance (http://any-balance-providers.googlecode.com)
 Содержит некоторые полезные для извлечения значений с сайтов функции.
 Для конкретного провайдера рекомендуется оставлять в этом файле только те функции, которые используются.
 
-library.js v0.15 от 24.11.14
+library.js v0.16 от 02.12.14
 
 changelog:
+24.11.14 parseDateWord - улучшено получение дат из строки '10 декабря';
+
 24.11.14 capitalFirstLetters - новая функция, делает из строки ИВАноВ - Иванов;
 
 07.10.14 safeEval - полностью безопасное исполнение стороннего Javascript (в плане недоступности для него AnyBalance API)
@@ -385,7 +387,7 @@ function parseDate(str) {
 /** Парсит дату из такого вида: 27 июля 2013 без использования сторонних библиотек, результат в мс */
 function parseDateWord(str){
 	AnyBalance.trace('Trying to parse date from ' + str);
-	return getParam(str, null, null, null, [replaceTagsAndSpaces, 
+	var dateString = getParam(str, null, null, null, [replaceTagsAndSpaces, 
 		/\D*(?:январ(?:я|ь)|янв|january|jan)\D*/i, '.01.', 
 		/\D*(?:феврал(?:я|ь)|фев|febrary|feb)\D*/i, '.02.', 
 		/\D*(?:марта|март|мар|march|mar)\D*/i, '.03.', 
@@ -397,7 +399,12 @@ function parseDateWord(str){
 		/\D*(?:сентябр(?:я|ь)|сен|september|sep)\D*/i, '.09.', 
 		/\D*(?:октябр(?:я|ь)|окт|october|oct)\D*/i, '.10.', 
 		/\D*(?:ноябр(?:я|ь)|ноя|november|nov)\D*/i, '.11.', 
-		/\D*(?:декабр(?:я|ь)|dec|december|dec)\D*/i, '.12.', /\s/g, ''], parseDate);
+		/\D*(?:декабр(?:я|ь)|dec|december|dec)\D*/i, '.12.', /\s/g, '']);
+	// Если года нет - его надо подставить
+	if(endsWith(dateString,'.')) {
+		dateString += new Date().getFullYear();
+	}
+	return parseDate(dateString);
 }
 
 /** Объединяет два объекта. Свойства с общими именами берутся из newObject */

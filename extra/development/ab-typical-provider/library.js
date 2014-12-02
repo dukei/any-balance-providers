@@ -87,8 +87,10 @@ var d=a.getTime();
 AnyBalance.trace("Parsing date "+a+" from value: "+e);
 return d
 }AnyBalance.trace("Failed to parse date from value: "+e)
-}function parseDateWord(a){AnyBalance.trace("Trying to parse date from "+a);
-return getParam(a,null,null,null,[replaceTagsAndSpaces,/\D*(?:январ(?:я|ь)|янв|january|jan)\D*/i,".01.",/\D*(?:феврал(?:я|ь)|фев|febrary|feb)\D*/i,".02.",/\D*(?:марта|март|мар|march|mar)\D*/i,".03.",/\D*(?:апрел(?:я|ь)|апр|april|apr)\D*/i,".04.",/\D*(?:ма(?:я|й)|may)\D*/i,".05.",/\D*(?:июн(?:я|ь)|июн|june|jun)\D*/i,".06.",/\D*(?:июл(?:я|ь)|июл|july|jul)\D*/i,".07.",/\D*(?:августа|август|авг|august|aug)\D*/i,".08.",/\D*(?:сентябр(?:я|ь)|сен|september|sep)\D*/i,".09.",/\D*(?:октябр(?:я|ь)|окт|october|oct)\D*/i,".10.",/\D*(?:ноябр(?:я|ь)|ноя|november|nov)\D*/i,".11.",/\D*(?:декабр(?:я|ь)|dec|december|dec)\D*/i,".12.",/\s/g,""],parseDate)
+}function parseDateWord(b){AnyBalance.trace("Trying to parse date from "+b);
+var a=getParam(b,null,null,null,[replaceTagsAndSpaces,/\D*(?:январ(?:я|ь)|янв|january|jan)\D*/i,".01.",/\D*(?:феврал(?:я|ь)|фев|febrary|feb)\D*/i,".02.",/\D*(?:марта|март|мар|march|mar)\D*/i,".03.",/\D*(?:апрел(?:я|ь)|апр|april|apr)\D*/i,".04.",/\D*(?:ма(?:я|й)|may)\D*/i,".05.",/\D*(?:июн(?:я|ь)|июн|june|jun)\D*/i,".06.",/\D*(?:июл(?:я|ь)|июл|july|jul)\D*/i,".07.",/\D*(?:августа|август|авг|august|aug)\D*/i,".08.",/\D*(?:сентябр(?:я|ь)|сен|september|sep)\D*/i,".09.",/\D*(?:октябр(?:я|ь)|окт|october|oct)\D*/i,".10.",/\D*(?:ноябр(?:я|ь)|ноя|november|nov)\D*/i,".11.",/\D*(?:декабр(?:я|ь)|dec|december|dec)\D*/i,".12.",/\s/g,""]);
+if(endsWith(a,".")){a+=new Date().getFullYear()
+}return parseDate(a)
 }function joinObjects(c,a){var d={};
 for(var b in a){d[b]=a[b]
 }if(c){for(b in c){d[b]=c[b]

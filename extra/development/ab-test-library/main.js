@@ -49,6 +49,11 @@ function main() {
 	for (i = 0; i < months.length; i++) {
 		var date = parseDateWord('11 ' + months[i] + ' 2013');
 	}
+	AnyBalance.trace('Проверяем функцию parseDateWord... Парсим дату без года');
+	for (i = 0; i < months.length; i++) {
+		var date = parseDateWord('14 ' + months[i]);
+	}
+	
 	var prefs = AnyBalance.getPreferences();
 	
 	AnyBalance.trace('Проверяем функцию createFormParams...');
@@ -128,6 +133,8 @@ function main() {
 			AnyBalance.trace('!!!____________________________________________________________Item ' + (temp++) + ' parsing failed: should be ' + res + ', parsed ' + parsed + '!!!');
 		}
 	}
+	
+	
 		
 	//checkEmpty(prefs.s, 'checkEmpty работает нормально!');
 

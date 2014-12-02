@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-sharing-1cent</id>
+	<api flags="no_browser"/>
+	<name>1cent.in</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию для шаринга <a href="https://1cent.in/">https://1cent.in/</a></p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" USD"/>
+		<counter id="dw_key" name="Cтоимость одного dw (ключа)" units=" USD"/>
+		<counter id="dw_users" name="Сумма dw юзеров" units=" USD"/>
+		<counter id="sum" name="На сумму" units=" USD"/>
+		<counter id="status" name="Статус" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>sharing</type>
+	<country></country>
+</provider>

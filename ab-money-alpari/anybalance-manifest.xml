@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-money-alpari</id>
+	<id version="4">ab-money-alpari</id>
 	<api flags="no_browser"/>
 	<name>Alpari</name>
 	<description html="true"><![CDATA[

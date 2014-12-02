@@ -77,7 +77,7 @@ function getParam(html, result, param, regexp, replaces, parser) {
 			if (parser)
 				value = parser(value);
 			if (param && isset(value))
-				result[isArray(param) ? param[0] : param] = value;
+				result[__getParName(param)] = value;
 			break;
 		}
 	}
@@ -88,6 +88,11 @@ function getParam(html, result, param, regexp, replaces, parser) {
 function checkEmpty(param, error, notfatal) {
 	if (!param) 
         throw new AnyBalance.Error(error, null, !notfatal);
+}
+
+function __getParName(param){ //Возвращает для параметра имя после последней точки
+	var name = isArray(param) ? param[0] : param;
+	return name && name.substr(name.lastIndexOf('.')+1); //Оставляем только хвост до точки
 }
 
 /** Проверяет счетчик param на доступность, принимает либо один счетчик, либо массив
@@ -102,11 +107,11 @@ function isAvailable(param) {
 	return AnyBalance.isAvailable(param);
 }
 //Замена пробелов и тэгов
-var replaceTagsAndSpaces = [/&nbsp;/ig, ' ', /&minus;/ig, '-', /<!--[\s\S]*?-->/g, '', /<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, ''];
+var replaceTagsAndSpaces = [/&nbsp;/ig, ' ', /&minus;/ig, '-', /<!--[\s\S]*?-->/g, '', /<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, ''],
 //Замена для чисел
-var replaceFloat = [/&minus;/ig, '-', /\s+/g, '', /'/g, '', /,/g, '.', /\.([^.]*)(?=\.)/g, '$1', /^\./, '0.'];
+    replaceFloat = [/&minus;/ig, '-', /\s+/g, '', /'/g, '', /,/g, '.', /\.([^.]*)(?=\.)/g, '$1', /^\./, '0.'],
 //Замена для Javascript строк
-var replaceSlashes = [/\\(.?)/g, function(str, n) {
+    replaceSlashes = [/\\(.?)/g, function(str, n) {
 	switch (n) {
 	case '0':
 		return '\0';
@@ -115,7 +120,9 @@ var replaceSlashes = [/\\(.?)/g, function(str, n) {
 	default:
 		return n;
 	}
-}];
+}],
+//Замена всех html энтитей
+    replaceHtmlEntities = [/&(#(x)?)?(\w+);/ig, make_html_entity_replacement];
 
 /** Проверяет, определено ли значение переменной */
 function isset(v) {
@@ -185,25 +192,10 @@ function parseMinutes(_text) {
 
 /** Заменяет HTML сущности в строке на соответствующие им символы */
 function html_entity_decode(string) {
-	var entities = get_html_translation_table();
-	var replaced = string.replace(/&(#(x)?)?(\w+);/ig, function(str, sharp, x, m) {
-		if (!sharp) {
-			var ml = m.toLowerCase(m);
-			if (entities.hasOwnProperty(ml))
-				return String.fromCharCode(entities[ml]);
-		} else if (!x) {
-			if (/^\d+$/.test(m))
-				return String.fromCharCode(parseInt(m));
-		} else {
-			if (/^[0-9a-f]+$/i.test(m))
-				return String.fromCharCode(parseInt(m, 16));
-		}
-		return str;
-	});
-	return replaced;
+	return replaceAll(string, replaceHtmlEntities);
 }
 
-function get_html_translation_table() {
+function make_html_entity_replacement(str, sharp, x, m){
 	var entities = {
 		amp		: 38,
 		nbsp	: 160,
@@ -307,8 +299,20 @@ function get_html_translation_table() {
 		gt		: 62
 	};
 
-	return entities;
+	if (!sharp) {
+		var ml = m.toLowerCase(m);
+		if (entities.hasOwnProperty(ml))
+			return String.fromCharCode(entities[ml]);
+	} else if (!x) {
+		if (/^\d+$/.test(m))
+			return String.fromCharCode(parseInt(m));
+	} else {
+		if (/^[0-9a-f]+$/i.test(m))
+			return String.fromCharCode(parseInt(m, 16));
+	}
+	return str;
 }
+
 /**
  * Получает объект с параметрами форм (ищет в html все <input и <select и возвращает объект с их именами-значениями.
  * 
@@ -597,7 +601,7 @@ function sumParam(html, result, param, regexp, replaces, parser, do_replace, agg
 		return replaceIfNeeded();
 
 	//После того, как проверили нужность счетчиков, кладем результат в первый из переданных счетчиков. Оставляем только первый
-	param = isArray(param) ? param[0] : param;
+	param = __getParName(param);
 
 	var values = [], matches;
 	if (param && isset(result[param])) 

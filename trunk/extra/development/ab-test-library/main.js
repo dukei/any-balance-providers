@@ -118,13 +118,14 @@ function main() {
 	];
 	var temp = 0;
 	for (var i = 0; i < times.length; i++) {
+		AnyBalance.trace('Parsing item ' + (temp+1) + ': ' + times[i]);
 		var parsed = parseMinutes(times[i]);
 		var res = times[++i];
 		
 		if(res == parsed) {
 			AnyBalance.trace('Item ' + (temp++) + ' parsed ok');
 		} else {
-			AnyBalance.trace('____________________________________________________________Item ' + (temp++) + ' parsing failed: should be ' + res + ', parsed ' + parsed + '!!!');
+			AnyBalance.trace('!!!____________________________________________________________Item ' + (temp++) + ' parsing failed: should be ' + res + ', parsed ' + parsed + '!!!');
 		}
 	}
 		
@@ -138,7 +139,7 @@ function main() {
 	getParam(html, result, ['currency', 'balance'], /Текущий баланс:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseCurrency);
 	getParam(html, result, 'status', /Статус:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);*/
 
-	getParam(null, result, 'status', /Статус:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(undefined, result, 'status', /Статус:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
 	
 	AnyBalance.setResult(result);
 }

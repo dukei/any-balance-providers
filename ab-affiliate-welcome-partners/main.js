@@ -19,6 +19,7 @@ function main() {
 	checkEmpty(prefs.password, 'Введите пароль!');
     
 	var html = AnyBalance.requestGet(baseurl + 'webmaster/webmasters/login', g_headers);
+	
 	if (!html || AnyBalance.getLastStatusCode() > 400) 
         throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
     
@@ -58,14 +59,16 @@ function main() {
     
 	var result = {success: true};
     
-    result.site_name = json.data[0][0];
-    result.site_views = json.data[0][3];
-    result.site_clicks = json.data[0][4];
-    result.deposite_amount = json.data[0][7];
-    result.deposite_sum = json.data[0][8];
-    result.players_balance = json.data[0][9];
-    result.balance = json.data[0][12];
-    result.period = dateFrom + ' - ' + dateTo;
+	var row = json.rows[0].data;
+	
+	getParam(row[0] + '', result, 'site_name', null, replaceTagsAndSpaces);
+	getParam(row[12] + '', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
+	getParam(row[3] + '', result, 'site_views', null, replaceTagsAndSpaces, parseBalance);
+	getParam(row[4] + '', result, 'site_clicks', null, replaceTagsAndSpaces, parseBalance);
+	getParam(row[7] + '', result, 'deposite_amount', null, replaceTagsAndSpaces, parseBalance);
+	getParam(row[8] + '', result, 'deposite_sum', null, replaceTagsAndSpaces, parseBalance);
+	getParam(row[9] + '', result, 'players_balance', null, replaceTagsAndSpaces, parseBalance);
+    getParam(dateFrom + ' - ' + dateTo, result, 'period', null, replaceTagsAndSpaces);
 	
 	AnyBalance.setResult(result);
 }

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-schelkovo-telekom</id>
+	<api flags="no_browser"/>
+	<name>Щелково-Телеком</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Щелково-Телеком</p>
+	<p>Информация берется из личного кабинета <a href="http://kabunet.schelkovo-telekom.ru/login.php">http://kabunet.schelkovo-telekom.ru/login.php</a></p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="account" name="№ договора" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="speed" name="Ограничение скорости" type="text"/>
+		<counter id="abon_payment" name="Текущая абонентская плата по тарифу" units=" р"/>
+		<counter id="traffic" name="Расход трафика в текущем месяце" units=" Mb"/>
+		<counter id="status" name="Статус подключения" type="text"/>
+		<counter id="deadline" name="Предполагаемая дата отключения" type="time" format="dd/MM/yyyy"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

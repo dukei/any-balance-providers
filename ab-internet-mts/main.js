@@ -694,8 +694,10 @@ function getNorilsk(){
 
 
 function getMagnit(){
-    var baseurl = "https://stat.magnitogorsk.multinex.ru/client/";
-    typicalLanBillingInetTv(baseurl + 'index.php?r=site/login');
+	var urlIndex = 'https://lkmagn.ural.mts.ru/index.php?r=site/login';
+	var urlAjax = 'https://lkmagn.ural.mts.ru/index.php?r=account/vgroups&agrmid=';
+	
+	newTypicalLanBillingInetTv(urlIndex, urlAjax);	
 }
 
 

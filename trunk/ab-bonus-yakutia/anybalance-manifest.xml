@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-bonus-yakutia</id>
+	<api flags="no_browser"/>
+	<name>Yakutia Free Flight</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе баллов по программе "Yakutia Free Flight" <a href="http://www.yakutia.aero/freeflight/">http://www.yakutia.aero/freeflight/</a></p>
+	<p>Информация берется из личного кабинета <a href="https://ffr3.loyaltyplus.aero/loyalty/home.seam">https://ffr3.loyaltyplus.aero/loyalty/home.seam</a></p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Доступные баллы"/>
+		<counter id="basic" name="Основные баллы"/>
+		<counter id="premium" name="Премиальные баллы"/>
+		<counter id="used" name="Использованные баллы"/>
+		<counter id="expired" name="Истекшие баллы"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="card_number" name="Номер карты" type="text"/>
+		<counter id="deadline" name="Срок действия карточки" type="time" format="dd/MM/yyyy"/>
+	</counters>
+	<keywords></keywords>
+	<type>bonus</type>
+	<country>ru</country>
+</provider>

@@ -49,9 +49,14 @@ function getMyPosylkaResult(prefs) {
 		}
 	});
 	
-	if(!isArray(json.result) || !json.result[0].code) {
+	// вот такие варианты возвращаются в разных случаях...
+	//json = {"success":true,"error":null,"result":[],"debug":"0.0004"};
+	//json = {"success":true,"error":null,"result":'',"debug":"0.0004"};
+	//json = {"success":true,"error":null,"result":null,"debug":"0.0004"};
+	
+	if(!isArray(json.result) || !json.result || !json.result[0] || !json.result[0].code) {
 		AnyBalance.trace(JSON.stringify(json));
-		throw new AnyBalance.Error('Не удалось выяснить тип отправления, сайт изменен?');
+		throw new AnyBalance.Error('Неизвестный тип почтового отправления, проверьте правильность введенных данных.');
 	}
 	
 	json = apiCall({
@@ -70,7 +75,8 @@ function getMyPosylkaResult(prefs) {
 		throw new AnyBalance.Error('Не удалось получить токен, сайт изменен?');
 	}	
 	
-	for(var i = 0; i < 5; i++) {
+	var retryCount = 5;
+	for(var i = 0; i < retryCount; i++) {
 		try {
 			AnyBalance.trace('Обновление данных №' + (i+1));
 			// Нужно дать данным обновится, иначе получим 404
@@ -84,14 +90,19 @@ function getMyPosylkaResult(prefs) {
 			// Успешно прошли - прерываемся
 			break;
 		} catch(e) {
-			if(/QUICK_CHECK_REQUEST_NOT_COMPLETE/i.test(e)) {
+			if(/QUICK_CHECK_REQUEST_NOT_COMPLETE/i.test(e.message)) {
 				AnyBalance.trace('Обновление данных не завершено, попробоуем еще раз...');
-				sleep(2000);
+				continue;
 			} else {
 				AnyBalance.trace('Обновление данных завершено с ошибкой!');
 				throw e;
 			}
 		}
+	}
+	
+	if(!json.result) {
+		AnyBalance.trace(JSON.stringify(json));
+		throw new AnyBalance.Error('Не удалось за ' + retryCount + ' запросов получить данные по отправлению, попробуйте обновить данные позже.');
 	}
 	
 	var result = {success: true};

@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="3">ab-internet-quartztelecom</id>
+	<id version="4">ab-internet-quartztelecom</id>
 	<name>Кварц Телеком</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе интернет провайдера г. Подольск и Подольского района Кварц Телеком http://quartztelecom.ru</p>
@@ -20,9 +20,12 @@
 		<counter id="status" name="Статус интернета" type="text"/>
 		<counter id="balance_tv" name="Баланс ТВ" units=" р"/>
 		<counter id="status_tv" name="Статус ТВ" type="text"/>
+		<counter id="_tariff" name="Тариф интернета" type="text"/>
+		<counter id="__tariff_tv" name="Пакеты ТВ" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="account" name="№ лицевого счета" type="text"/>
 	</counters>
 	<keywords></keywords>
-	<type>internet</type>
+	<type>internet, tv</type>
 	<country>ru</country>
 </provider>

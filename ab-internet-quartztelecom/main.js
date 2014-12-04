@@ -40,11 +40,15 @@ function main(){
 	
     var result = {success: true};
 	
+    var tv_tariffs = getParam(html, null, null, /Пакеты<\/div>([\s\S]*?)<div class="acc_manage">/i);
+    
 	getParam(html, result, 'fio', /<div[^>]*class="customer_name"><p>([^<]*)/i, null, html_entity_decode);
 	sumParam(html, result, '__tariff', /Тариф(?:[\s\S]*?<div[^>]*>){2}((?:[^>]*>){8})/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+	getParam(html, result, 'account', /№ ЛИЦЕВОГО СЧЕТА(?:[^>]*>){3}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+	sumParam(tv_tariffs, result, '__tariff_tv', /rate_name">([\s\S]*?)<div\s*class="clear"/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
 	
 	getOptionByName(html, 'Интернет', result, '');
-	getOptionByName(html, 'КТВ', result, '_tv');
+	getOptionByName(html, 'Цифровое тв', result, '_tv');
 
     AnyBalance.setResult(result);
 }

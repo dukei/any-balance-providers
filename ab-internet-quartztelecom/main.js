@@ -11,10 +11,10 @@ var g_headers = {
 };
 
 function getOptionByName(html, name, result, counterSuffix) {
-	var div = getParam(html, null, null, new RegExp('"options"(?:[^>]*>){5}'+name+'(?:[\\s\\S]*?</div[^>]*>){17,19}', 'i'));
-	if(div) {
-		getParam(div, result, 'status'+counterSuffix, /turn(?:off|on)[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
-		getParam(div, result, 'balance'+counterSuffix, /<div[^>]*>Баланс(?:[\s\S]*?<div[^>]*>){1}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	var div = getParam(html, null, null, new RegExp('"options"(?:[^>]*>){5}' + name + '(?:[\\s\\S]*?</div[^>]*>){17,19}', 'i'));
+	if (div) {
+		getParam(div, result, 'status' + counterSuffix, /turn(?:off|on)[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+		getParam(div, result, 'balance' + counterSuffix, /<div[^>]*>Баланс(?:[\s\S]*?<div[^>]*>){1}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 	}
 }
 
@@ -39,16 +39,18 @@ function main(){
 	html = AnyBalance.requestGet(baseurl + 'services', g_headers);
 	
     var result = {success: true};
-	
-    var tv_tariffs = getParam(html, null, null, /Пакеты<\/div>([\s\S]*?)<div class="acc_manage">/i);
     
 	getParam(html, result, 'fio', /<div[^>]*class="customer_name"><p>([^<]*)/i, null, html_entity_decode);
-	sumParam(html, result, '__tariff', /Тариф(?:[\s\S]*?<div[^>]*>){2}((?:[^>]*>){8})/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
 	getParam(html, result, 'account', /№ ЛИЦЕВОГО СЧЕТА(?:[^>]*>){3}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-	sumParam(tv_tariffs, result, '__tariff_tv', /rate_name">([\s\S]*?)<div\s*class="clear"/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+	sumParam(html, result, '__tariff', /Тариф(?:[\s\S]*?<div[^>]*>){2}((?:[^>]*>){8})/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
 	
 	getOptionByName(html, 'Интернет', result, '');
-	getOptionByName(html, 'Цифровое тв', result, '_tv');
-
+	getOptionByName(html, '(?:КТВ|Цифровое тв)', result, '_tv');
+	
+	if(isAvailable('all')) {
+		var packs = getParam(html, null, null, /Пакеты\s*<\/div>([\s\S]*?)(?:<\/div>\s*){2}/i);
+		sumParam(packs, result, 'all', /rate_name">((?:[^>]*>){8}\s*<\/div>)/ig, [replaceTagsAndSpaces, /(^[^\d]+)(\d+\s*Р\s*\/[^"]+)/i, '<b>$1</b>: $2'], html_entity_decode, function(values) {return values.join('<br/>');});
+	}
+	
     AnyBalance.setResult(result);
 }

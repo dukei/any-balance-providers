@@ -27,7 +27,7 @@ function main(){
 		next:'/'
     }, addHeaders({Referer: baseurl + 'auth/?next=/'}));
 	
-	html = AnyBalance.requestGet(baseurl + '/', g_headers);
+	html = AnyBalance.requestGet(baseurl, g_headers);
 	
     if(!/\/auth\/logout/i.test(html)) {
         //Если в кабинет войти не получилось, то в первую очередь надо поискать в ответе сервера объяснение ошибки
@@ -41,7 +41,7 @@ function main(){
     //Раз мы здесь, то мы успешно вошли в кабинет
     var result = {success: true};
     getParam(html, result, 'fio', /<div[^>]+class="top_exit"[^>]*>([\s\S]*?)(?:\(|<a|<\/div>)/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, '__tariff', /Заказанные услуги:([\s\S]*?)(?:<ul|<\/p>)/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, '__tariff', /Заказанные услуги:([\s\S]*?)(?:<\/ul|<\/p>)/i, [replaceTagsAndSpaces, /:\s*заказан/ig, ', '], html_entity_decode);
     getParam(html, result, 'licschet', /Договор:([\s\S]*?)(?:<br|<\/(?:b|p)>)/i, replaceTagsAndSpaces, html_entity_decode); 
     getParam(html, result, 'balance', /Баланс:([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'status', /<span[^>]+user_state_[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);

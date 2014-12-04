@@ -1,36 +1,66 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-education-mcko</id>
+	<id version="3">ab-education-mcko</id>
 	<api flags="no_browser"/>
 	<name>МРКО</name>
 	<description html="true"><![CDATA[
-	<p>Получает информацию об оценках из Московского регистра качества образования (http://new.mcko.ru/)</p>
+	<p>Получает информацию об оценках из Московского регистра качества образования (https://mrko.mos.ru/)</p>
 	<p>Информация берется из сводной ведомости</p>
 	]]></description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
+		<js>md5.js</js>
 		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balanceEng" name="английский язык" type="text" />
-		<counter id="balanceBio" name="биология" type="text" />
-		<counter id="balanceGeo" name="география" type="text"/>
-		<counter id="balanceIzo" name="изобразительное искусство" type="text" />
-		<counter id="balanceIst" name="история" type="text" />
-		<counter id="balanceLit" name="литература" type="text" />
-		<counter id="balanceMat" name="математика" type="text" />
-		<counter id="balanceObsch" name="обществознание включая экономику и право" type="text" />
-		<counter id="balanceRus" name="русский язык" type="text" />
-		<counter id="balanceMus" name="музыка" type="text" />
-		<counter id="balanceAlg" name="алгебра" type="text" />
-		<counter id="balanceMhk" name="искусство и МХК" type="text" />
-		<counter id="balanceFiz" name="физика" type="text" />
-		<counter id="balanceGeom" name="геометрия" type="text" />
-		<counter id="balanceTech" name="технология" type="text" />
+        <counter id="balanceEng" name="английский язык" type="text"/> 
+        <counter id="balanceEng_average" name="английский язык - средняя"/> 
+        <counter id="balanceBio" name="биология" type="text"/> 
+        <counter id="balanceBio_average" name="биология - средняя"/> 
+        <counter id="balanceGeo" name="география" type="text"/> 
+        <counter id="balanceGeo_average" name="география - средняя"/> 
+        <counter id="balanceIzo" name="изобразительное искусство" type="text"/> 
+        <counter id="balanceIzo_average" name="изобразительное искусство - средняя"/> 
+        <counter id="balanceIst" name="история" type="text"/> 
+        <counter id="balanceIst_average" name="история - средняя"/> 
+        <counter id="balanceLit" name="литература" type="text"/>
+        <counter id="balanceLit_average" name="литература - средняя"/> 
+        <counter id="balanceMat" name="математика" type="text"/> 
+        <counter id="balanceMat_average" name="математика - средняя"/> 
+        <counter id="balanceObsch" name="обществознание (включая экономику и право)" type="text"/> 
+        <counter id="balanceObsch_average" name="обществознание (включая экономику и право) - средняя"/> 
+        <counter id="balanceRus" name="русский язык" type="text"/> 
+        <counter id="balanceRus_average" name="русский язык - средняя"/>
+        <counter id="balanceMus" name="музыка" type="text"/> 
+        <counter id="balanceMus_average" name="музыка - средняя"/> 
+        <counter id="balanceAlg" name="алгебра" type="text"/> 
+        <counter id="balanceAlg_average" name="алгебра - средняя"/> 
+        <counter id="balanceMhk" name="искусство и МХК" type="text"/> 
+        <counter id="balanceMhk_average" name="искусство и МХК - средняя"/> 
+        <counter id="balanceFiz" name="физика" type="text"/> 
+        <counter id="balanceFiz_average" name="физика - средняя"/> 
+        <counter id="balanceGeom" name="геометрия" type="text"/> 
+        <counter id="balanceGeom_average" name="геометрия - средняя"/> 
+        <counter id="balanceTech" name="технология" type="text"/> 
+        <counter id="balanceTech_average" name="технология - средняя"/> 
+        <counter id="balanceLitReading" name="Литературное чтение" type="text"/> 
+        <counter id="balanceLitReading_average" name="Литературное чтение - средняя"/> 
+        <counter id="balanceORKCE" name="ОРКСЭ" type="text"/> 
+        <counter id="balanceORKCE_average" name="ОРКСЭ - средняя"/> 
+        <counter id="balanceOkr" name="Окружающий мир" type="text"/>
+        <counter id="balanceOkr_average" name="Окружающий мир - средняя"/>
+        <counter id="balanceTat" name="Татарский язык" type="text"/> 
+        <counter id="balanceTat_average" name="Татарский язык - средняя"/> 
+        <counter id="balanceInfor" name="Информатика и ИКТ" type="text"/> 
+        <counter id="balanceInfor_average" name="Информатика и ИКТ - средняя"/> 
+        <counter id="balancePhizik" name="Физическая культура" type="text"/> 
+        <counter id="balancePhizik_average" name="Физическая культура - средняя"/> 
+        <counter id="balanceRitmix" name="Ритмика" type="text"/> 
+        <counter id="balanceRitmix_average" name="Ритмика - средняя"/>
 	</counters>
 	<keywords>Московский регистр качества образования mcko.ru</keywords>
 	<type>education</type>

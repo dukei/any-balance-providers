@@ -1,14 +1,11 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-service-anybalance-helpdesk</id>
+	<id version="2">ab-service-anybalance-helpdesk</id>
 	<api flags="no_browser"/>
 	<name>AnyBalance Helpdesk</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о количестве заявок в сисетме <a href="http://support.anybalance.ru/scp/login.php">AnyBalance Helpdesk</a></p>
+	<p>Предоставляет информацию о количестве заявок в системе <a href="http://support.anybalance.ru/scp/login.php">AnyBalance Helpdesk</a></p>
 	]]></description>
-	<instruction html="true"><![CDATA[
-	<p>Если у вас нет доступа в Личный кабинет, получите его на странице <a href=""></a></p>
-	]]></instruction>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>

@@ -20,8 +20,7 @@
 		<counter id="status" name="Статус интернета" type="text"/>
 		<counter id="balance_tv" name="Баланс ТВ" units=" р"/>
 		<counter id="status_tv" name="Статус ТВ" type="text"/>
-		<counter id="_tariff" name="Тариф интернета" type="text"/>
-		<counter id="__tariff_tv" name="Пакеты ТВ" type="text"/>
+		<counter id="all" name="Сводка ТВ" type="html"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="account" name="№ лицевого счета" type="text"/>
 	</counters>

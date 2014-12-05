@@ -2,7 +2,7 @@
 <PreferenceScreen>
 	<CheckBoxPreference
 	title="Отображать ссылку на график?"
-	defaultValue="true"
+	defaultValue="false"
 	summaryOn="Отображается"
 	summaryOff="Не отображается"
 	key="show_link" />

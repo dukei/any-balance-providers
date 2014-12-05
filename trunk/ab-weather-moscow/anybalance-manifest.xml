@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-    <id major_version="3.0" version="10">ab-weather-moscow</id>
+    <id major_version="3.0" version="11">ab-weather-moscow</id>
 	<api flags="no_browser"/>
     <name>Температура в Москве</name>
     <description html="true"><![CDATA[
@@ -18,9 +18,9 @@
         <history>history.xml</history>
     </files>
     <counters>
+        <counter id="temperature_int" name="Температура (число)" units="°" />
         <counter id="temperature_color" name="Температура с цветом" type="html" />
         <counter id="temperature" name="Температура" type="text" units="°" />
-        <counter id="temperature_int" name="Температура (число)" units="°" />
         <counter id="ts" name="Время генерации данных" type="text" units="" />
     </counters>
     <keywords>погода, температура, москва, россия</keywords>

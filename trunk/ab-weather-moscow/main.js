@@ -28,7 +28,7 @@ function main() {
     getParam(data.temperature, result, 'temperature');
     getParam(data.temperature, result, 'temperature_int', null, null, parseBalance);
     var ts = new Date(data.ts.data * 1000);
-    getParam(ts.getDate() + '.' + (ts.getMonth()+1 < 10 ? '0' : '') + (ts.getMonth()+1) + '.' + ts.getFullYear() + ' ' + ts.getHours() + ':' + (ts.getMinutes() < 10 ? '0' : '') + ts.getMinutes(), result, ['ts', '__tariff']);
+    getParam((ts.getDate() < 10 ? '0' : '') + (ts.getDate()) + '.' + (ts.getMonth()+1 < 10 ? '0' : '') + (ts.getMonth()+1) + '.' + ts.getFullYear() + ' ' + ts.getHours() + ':' + (ts.getMinutes() < 10 ? '0' : '') + ts.getMinutes(), result, ['ts', '__tariff']);
 	
     if (prefs.show_link) {
         result['__tariff'] = "График: https://gradus.melda.ru/";

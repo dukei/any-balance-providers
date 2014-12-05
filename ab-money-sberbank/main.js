@@ -353,7 +353,7 @@ function parseSmallDate(str) {
 
 function parseSmallDateInternal(str) {
 	//Дата
-    var matches = str.match(/(\d+):(\d+)/);
+    var matches = str.match(/(\d+):(\d+)/) || [,0,0];
 	var now = new Date();
 	if (/сегодня/i.test(str)) {
 		var date = new Date(now.getFullYear(), now.getMonth(), now.getDate(), +matches[1], +matches[2], 0);

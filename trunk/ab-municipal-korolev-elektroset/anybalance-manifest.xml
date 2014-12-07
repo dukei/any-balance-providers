@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
+  <api flags="no_browser"/>
+  <id version="4">ab-telephony-korolev-elektroset</id>
+  <name>Королевская Электросеть СК</name>
+  <description>
+  <p>Предоставляет информацию о балансе Королевская Электросеть СК <a href="http://kensbyt.ru/">http://kensbyt.ru/</a></p>
+  <p>Информация берется из личного кабинета <a href="https://lkk.kensbyt.ru/auth">https://lkk.kensbyt.ru/personal</a></p>
+  </description>
+  <author>Mikhail Fedotov &lt;anyremote@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="credit" name="Баланс" units="р"/>
+    <counter id="id" name="Потребитель" type="text"/>   
+    <counter id="period" name="Период" type="text"/>
+  </counters>
+  <keywords>
+    kensbyt
+  </keywords>
+  <type>
+    municipal
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

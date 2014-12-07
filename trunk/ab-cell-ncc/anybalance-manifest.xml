@@ -1,28 +1,21 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="28">ab-cell-ncc</id>
+	<id version="29">ab-cell-ncc</id>
 	<name>Ростелеком-Волга (НСС)</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о текущем балансе и тарифе для пользователей оператора ""Ростелеком-Волга"" (НСС).</p>
-	<p>Информация берется из личного кабинета (http://iserve.ncc-volga.ru).</p>
-	<p>Поддерживаются регионы:<p>     
-	Татарстан (wtiger@mail.ru)  
-	<br>
-	Нижегородский филиал (voyager@voyager.su)            
-	<br>
-	Возможно, другие (требуется проверка)
+	<p>Предоставляет информацию о текущем балансе и тарифе для пользователей оператора "Ростелеком-Волга" (НСС).</p>
+	<p>Информация берется из личного кабинета (https://login.rt.ru).</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
-	<p>Настройки:</p>
+	<p>Чтобы получить пароль</p>
 	<ol>
-	<li>Отправьте SMS с вашим паролем в личный кабинет НСС в формате "PSW пароль" на бесплатный номер 177.</li>
-	<small>Пароль должен содержать не менее 6 символов (латинские буквы, цифры).</small>
-	<br>
-	<li>Введите пароль в настройки оператора.</li>
+	<li>Нажмите кнопку "Получить пароль" на странице https://login.rt.ru</li>
+	<li>Введите номер своего телефона</li>
+	<li>Получите пароль в СМС</li>
+	<li>Введите пароль в настройки провайдера.</li>
 	</ol>
 	]]></instruction>
-	<author>wtiger &lt;wtiger@mail.ru&gt;</author>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
@@ -33,15 +26,18 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
-		<counter id="bonus" name="Бонус" units=" р"/>
-		<counter id="trafic" name="Трафик" units=" Mb"/>
-		<counter id="accum_trafic" name="Трафик (Аккумулятор)" units=" Mb"/>
-		<counter id="accum_mins" name="Минуты (Аккумулятор)"/>
-		<counter id="accum_sms" name="СМС (Аккумулятор)"/>
-		<counter id="accum_rub" name="Рубли (Аккумулятор)"/>
+<!--		<counter id="bonus" name="Бонус" units=" р"/> -->
+		<counter id="accum_trafic" name="Трафик" units=" Mb"/>
+		<counter id="accum_mins" name="Минуты"/>
+		<counter id="accum_sms" name="СМС"/>
+<!--		<counter id="accum_rub" name="Рубли (Аккумулятор)"/> -->
 		<counter id="filial" name="Филиал" type="text"/>
 		<counter id="phone" name="Номер" type="text"/>
-		<counter id="acc_num" name="Номер лицевого счета" type="text"/>
+		<counter id="userName" name="Владелец" type="text"/>
+		<counter id="history" name="Последние 10 пополнений" type="text"/>
+		<counter id="history_income" name="Сумма последних 10 пополнений" units=" р"/>
+		<counter id="history_out" name="Сумма последних 10 списаний" units=" р"/>
+
 	</counters>
 	<keywords>оператор татинком нсс ncc ростелеком ростелеком-волга</keywords>
 	<type>cell</type>

@@ -30,7 +30,8 @@ function main() {
 		'allow': ''
 	}, addHeaders({Referer: 'https://auth.motmom.com/oauth2/authorize'}));
 	
-	if (!/logout/i.test(html)) {
+	var cabinet = getParam(html, null, null, /location\.replace\(['"]([^'"]+)/i);
+	if (!cabinet) {
 		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
@@ -38,6 +39,8 @@ function main() {
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
+	
+	html = AnyBalance.requestGet(cabinet, g_headers);
 	
 	var cabinet = getParam(html, null, null, /"\/(cabinet[^"]+)/i);
 	checkEmpty(cabinet, 'Не удалось найти ссылку на личный кабинет, сайт изменен?', true);

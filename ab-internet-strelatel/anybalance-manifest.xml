@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="3">ab-internet-strelatel</id>
+	<id version="4">ab-internet-strelatel</id>
 	<api min_level="6"/>
 	<name>Стрела Телеком (Сибирь)</name>
 	<description html="true"><![CDATA[

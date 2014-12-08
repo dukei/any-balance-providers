@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-tracking-139express</id>
+	<api flags="no_browser"/>
+	<name>139express</name>
+	<description html="true"><![CDATA[
+	<p>Отслеживает почтовое отправление с помощью сервиса 139express <a href="http://vip.139express.com/search.aspx">http://vip.139express.com/search.aspx</a></p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="date" name="Дата" type="time" format="dd/MM/yyyy"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="message" name="Замечание" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>tracking</type>
+	<country></country>
+</provider>

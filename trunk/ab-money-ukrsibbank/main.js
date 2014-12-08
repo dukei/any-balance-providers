@@ -18,9 +18,7 @@ function main() {
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	try {
-		var html = AnyBalance.requestGet(baseurl + 'protected/welcome.jsf', g_headers);
-	} catch(e){}
+	var html = AnyBalance.requestGet(baseurl + 'protected/welcome.jsf', g_headers);
 	
 	if(AnyBalance.getLastStatusCode() > 400 || !html) {
 		throw new AnyBalance.Error('Ошибка! Сервер не отвечает! Попробуйте обновить баланс позже.');
@@ -37,9 +35,10 @@ function main() {
 	
 	for(var i = 0; i < prefs.password.length; i++) {
 		fake_password +=  '*';
-		j_password += digitsArray[(prefs.password[i]*1)-1] + '_';
+		var curr = prefs.password[i]*1;
+		j_password += digitsArray[curr == 0 ? 9 : curr-1] + '_';
 	}
-
+	
 	html = AnyBalance.requestPost(baseurl + 'j_security_check', {
 		j_username: prefs.login,
 		j_password: j_password,

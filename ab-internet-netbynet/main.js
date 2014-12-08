@@ -245,9 +245,9 @@ function mainLobnya(region){
 	var result = {success: true};
 	
     getParam (html, result, 'balance', /баланс:([\s\d.,-]+)руб/i, replaceTagsAndSpaces, parseBalance);
-    getParam (html, result, 'subscriber', /Приветствуем Вас,([^<]*)/i, replaceTagsAndSpaces);
-    getParam (html, result, 'contract', />\s*Лицевой счет:([^<,]*)/i, replaceTagsAndSpaces);
-    getParam (html, result, 'day_left', /дней до ухода в финансовую блокировку:(?:[^>]*>){2}\s*(\d+)/i, replaceTagsAndSpaces, parseBalance);
+    getParam (html, result, 'subscriber', /Приветствуем Вас,([^<]+)/i, replaceTagsAndSpaces);
+    getParam (html, result, 'contract', />\s*(?:ЛС|Лицевой счет):([^<,]+)/i, replaceTagsAndSpaces);
+    getParam (html, result, 'day_left', /дней до ухода в финансовую блокировку:(?:[^>]*>){1,2}\s*(\d+)/i, replaceTagsAndSpaces, parseBalance);
 	//sumParam(html, result, '__tariff', /Тарифный план:([\s\S]*?)(?:<\/span>|<a)/i, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
     //getParam (html, result, 'bonus_balance', /Баланс:([^<]*)балл/i, replaceTagsAndSpaces, parseBalance);
     //sumParam (html, result, '__tariff', /(<strong[^>]*>\s*Бонусный счет[\s\S]*?)Баланс/i, replaceTagsAndSpaces, html_entity_decode, aggregate_join);

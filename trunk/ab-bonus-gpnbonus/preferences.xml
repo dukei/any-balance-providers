@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference
+		title="Номер карты"
+		key="login"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Номер карты"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите номер карты.">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Фамилия"
+		key="name"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Фамилия"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите фамилию.">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Дата рождения"
+		key="date_of_birth"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Дата рождения"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите дату рождения в формате 31.12.2014">
+	</EditTextPreference>
+</PreferenceScreen>

@@ -1,35 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-money-vbrr</id>
-  <name>ВБРР</name>
-  <description>
-    Получает текущий остаток и другие параметры карт, счетов Всероссийского Банка Развития Регионов (http://www.vbrr.ru), используя интернет-банк https://pb1.vbrr.ru.
-
-    Как подключиться к Интернет-Банку?
-      1. обратитесь в отделение ВББР и заключите договор об обслуживании с использованием системы «ДБО BS-Client. Частный клиент»;
-      2. прямо при подключении получите от сотрудника Банка Ваш логин, пароль и скретч-карту с набором сеансовых ключей для подтверждения операций.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Остаток"/>
-    <counter id="currency" name="Валюта" type="text"/>
-    <counter id="type" name="Тип" type="text"/>
-    <counter id="cardnum" name="Номер" type="text"/>
-    <counter id="fio" name="Владелец" type="text"/>
-  </counters>
-  <keywords>
-    интернет-банкинг
-  </keywords>
-  <type>
-    money
-  </type>
-  <country>
-    ru
-  </country>
+	<id version="1">ab-money-vbrr</id>
+	<name>ВБРР</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе на картах Всероссийского Банка Развития Регионов <a href="http://vbrr.ru">http://vbrr.ru</a></p>
+	
+	Получает текущий остаток и другие параметры карт, счетов Всероссийского Банка Развития Регионов (http://www.vbrr.ru), используя интернет-банк https://pb1.vbrr.ru.
+	<p>Информация берется из личного кабинета <a href="https://pb1.vbrr.ru">https://pb1.vbrr.ru</a></p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Как подключиться к Интернет-Банку?
+	<ol>
+		<li>обратитесь в отделение ВББР и заключите договор об обслуживании с использованием системы «ДБО BS-Client. Частный клиент»;</li>
+		<li>прямо при подключении получите от сотрудника Банка Ваш логин, пароль и скретч-карту с набором сеансовых ключей для подтверждения операций.</li>
+	</ol></p>
+	]]></instruction>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Остаток" units=" {@currency}"/>
+		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="type" name="Тип" type="text"/>
+		<counter id="cardnum" name="Номер" type="text"/>
+		<counter id="fio" name="Владелец" type="text"/>
+	</counters>
+	<keywords>интернет-банкинг</keywords>
+	<type>money</type>
+	<country>ru</country>
 </provider>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-bonus-gpnbonus</id>
+	<api flags="no_browser"/>
+	<name>Газпромнефть-Беларусь</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о бонусной программе Газпромнефть-Беларусь <a href="http://gpnbonus.by/">http://gpnbonus.by/</a></p>
+	<p>Информация берется из личного кабинета <a href="http://gpnbonus.by/users">http://gpnbonus.by/users</a></p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" б"/>
+		<counter id="sum_needed" name="Сумма для повышения статуса" units=" р"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="status" name="Статус карты" type="text"/>
+		<counter id="prev_month" name="Сумма покупок за предыдущий месяц" units=" р"/>
+		<counter id="cur_month" name="Сумма покупок за текущий месяц" units=" р"/>
+	</counters>
+	<keywords></keywords>
+	<type>bonus</type>
+	<country>by</country>
+</provider>

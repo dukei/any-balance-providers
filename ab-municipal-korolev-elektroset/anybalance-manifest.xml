@@ -2,7 +2,7 @@
 <provider>
   <!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
   <api flags="no_browser"/>
-  <id version="4">ab-telephony-korolev-elektroset</id>
+  <id version="2">ab-municipal-korolev-elektroset</id>
   <name>Королевская Электросеть СК</name>
   <description>
   <p>Предоставляет информацию о балансе Королевская Электросеть СК <a href="http://kensbyt.ru/">http://kensbyt.ru/</a></p>

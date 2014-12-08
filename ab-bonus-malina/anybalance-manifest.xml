@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2.0" version="9">ab-bonus-malina</id>
-	<api flags="no_browser"/>
+	<id major_version="2.0" version="10">ab-bonus-malina</id>
+	<api flags="no_browser|captcha"/>
 	<name>Бонусы Малина</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о баллах на карте накопительной программы "Малина".</p><p>Информация берется с персональной страницы (http://malina.ru/login.php).</p>

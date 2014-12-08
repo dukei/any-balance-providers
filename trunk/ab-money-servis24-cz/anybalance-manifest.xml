@@ -1,22 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1"></id>
+	<id version="1">ab-money-servis24-cz</id>
 	<api flags="no_browser"/>
-	<name>TypicalProvider</name>
+	<name>SERVIS 24</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе провайдера ИмяПровайдера <a href=""></a></p>
-	<p>Информация берется из личного кабинета <a href=""></a></p>
-
-	<b>Особенности:</b>
-	<ul>
-		<li></li>
-		<li></li>
-		<li></li>
-	</ul>
+	<p>Provides balance information from SERVIS 24 Internetbanking <a href="https://www.servis24.cz/">https://www.servis24.cz/</a></p>
 	]]></description>
-	<instruction html="true"><![CDATA[
-	<p>Если у вас нет доступа в Личный кабинет, получите его на странице <a href=""></a></p>
-	]]></instruction>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
@@ -26,13 +15,13 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" {@currency}"/>
-		<counter id="fio" name="ФИО" type="text"/>
-		<counter id="status" name="Статус" type="text"/>
-		<counter id="phone" name="Телефон" type="text"/>
-		<counter id="deadline" name="Дата отключения" type="time" format="dd/MM/yyyy"/>
+		<counter id="balance" name="Available balance" units=" CZK"/>
+		<counter id="acc_balance" name="Account balance" units=" CZK"/>
+		<counter id="mon_balance" name="Money aside balance" units=" CZK"/>
+		<counter id="user_name" name="User name" type="text"/>
+		<counter id="acc_number" name="Account number" type="text"/>
 	</counters>
 	<keywords></keywords>
-	<type></type>
-	<country>ru</country>
+	<type>money</type>
+	<country>cz</country>
 </provider>

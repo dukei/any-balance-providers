@@ -21,11 +21,27 @@ function main () {
 	
     var html = AnyBalance.requestGet(baseurl + 'msk/', g_headers); // Запрос необходим для формирования cookie с регионом MSK
     
+	var captchaa;
+	if(AnyBalance.getLevel() >= 7) {
+		AnyBalance.trace('Пытаемся ввести капчу');
+		
+		var json = getJson(AnyBalance.requestGet(baseurl + 'captcha/refresh/?_=' + new Date().getTime(), addHeaders({'X-Requested-With': 'XMLHttpRequest'})));
+		AnyBalance.setOptions({forceCharset:'base64'});
+		var captcha = AnyBalance.requestGet(baseurl + 'captcha/image/' + json.key);
+		captchaa = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
+		AnyBalance.setOptions({forceCharset:'utf-8'});
+		AnyBalance.trace('Капча получена: ' + captchaa);
+	}else{
+		throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
+	}
+	
 	html = AnyBalance.requestPost(baseurl + 'msk/pp/login/', {
-    	csrfmiddlewaretoken: getParam(html, null, null, /csrfmiddlewaretoken[^>]*value=["']([^"']+)["']/i),
-    	contact: prefs.login,
-    	password: prefs.password,
-    	'next': ''
+    	'csrfmiddlewaretoken': getParam(html, null, null, /csrfmiddlewaretoken[^>]*value=["']([^"']+)["']/i),
+    	'contact': prefs.login,
+    	'password': prefs.password,
+    	'next': '',
+		'captcha_0':json.key,
+		'captcha_1':captchaa
     }, addHeaders({'X-Requested-With': 'XMLHttpRequest'}));
 	
 	var json = getJson(html);
@@ -38,6 +54,9 @@ function main () {
 		} else {
 			var error = json.errors['__all__'];
 		}
+		
+		if(isArray(json.errors))
+			var error = json.errors.join(', ');
 		
     	if (error)
 			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));

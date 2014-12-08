@@ -50,7 +50,7 @@ function proceedCab(prefs) {
 	var result = {success: true};
 	
 	// Интернет
-	var current = {empty:true};
+	var current;
 	for(var i = 0; i < json.client.net.nums.length; i++) {
 		current = json.client.net.nums[i];
 		
@@ -63,25 +63,29 @@ function proceedCab(prefs) {
 		}
 	}
 	// Телефон
+	var current_phone;
 	for(var i = 0; i < json.client.phone.nums.length; i++) {
-		current = json.client.phone.nums[i];
+		var current_phone = json.client.phone.nums[i];
 		
-		var state = current['v_nmstatus'];
+		var state = current_phone['v_nmstatus'];
 		if(/Активeн/i.test(state)) {
-			AnyBalance.trace('Нашли активный счет: ' + current['v_nmbillgroup']);
+			AnyBalance.trace('Нашли активный счет: ' + current_phone['v_nmbillgroup']);
 			break;
 		} else {
-			AnyBalance.trace('Cчет: ' + current['v_nmbillgroup'] + ' не активен');
+			AnyBalance.trace('Cчет: ' + current_phone['v_nmbillgroup'] + ' не активен');
 		}
-	}	
+	}
 	
-	
-	if(current.empty)
+	if(!current && !current_phone)
 		throw new AnyBalance.Error('Не удалось найти ни одного активного счета, сайт изменен?');
 	
 	getParam(current['v_saldo'], result, 'balance', null, replaceTagsAndSpaces, parseBalance);
+	getParam(current_phone['v_saldo'], result, 'balance_phone', null, replaceTagsAndSpaces, parseBalance);
+	
 	getParam(current['v_nmbplan'], result, '__tariff', null, replaceTagsAndSpaces, html_entity_decode);
-	getParam(current['v_nmbillgroup'], result, 'bill', null, replaceTagsAndSpaces, html_entity_decode);
+	
+	sumParam(current['v_nmbillgroup'], result, 'bill', null, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+	sumParam('ТФ:' + current_phone['v_nmbillgroup'], result, 'bill', null, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
 	
 	AnyBalance.setResult(result);
 }

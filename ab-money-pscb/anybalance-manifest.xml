@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-money-pscb</id>
+	<api flags="no_browser"/>
+	<name>Петербургский Социальный Коммерческий Банк</name>	
+	<description html="true"><![CDATA[
+	<p>Получает текущий остаток и другие параметры карт банка Петербургский Социальный Коммерческий Банк (http://pscb.ru), используя интернет-банк https://web2.pscb.ru.</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Остаток"/>
+		<counter id="currency" name="Валюта" type="text"/>
+		<!--<counter id="minpay" name="К оплате"/>
+		<counter id="minpaytill" name="Срок оплаты" type="time" format="dd/MM/yyyy"/>
+		<counter id="debt" name="Задолженность"/>-->
+		<counter id="type" name="Тип" type="text"/>
+		<!--<counter id="pct" name="Процентная ставка" units="%"/>
+		<counter id="pcts" name="Сумма начисленных процентов"/>-->
+		<!-- <counter id="till" name="Срок действия" type="time" format="dd/MM/yyyy"/> -->
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="cardnum" name="Номер карты" type="text"/>
+		<!--<counter id="accnum" name="Номер счета" type="text"/>-->
+		<counter id="fio" name="Владелец" type="text"/>
+	</counters>
+	<keywords>интернет-банкинг</keywords>
+	<type>money</type>
+	<country>ru</country>
+</provider>

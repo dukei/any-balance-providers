@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-netts</id>
+	<api flags="no_browser"/>
+	<name>Netts</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Netts <a href="http://www.netts.ru/">http://www.netts.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="http://stat.netts.ru/">http://stat.netts.ru/</a></p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="account" name="Номер договора" type="text"/>
+		<counter id="payment" name="Сумма ежемесячного платежа" units=" р"/>
+		<counter id="fio" name="Владелец договора" type="text"/>
+		<counter id="deadline" name="Дата окончания расчетного периода" type="time" format="dd/MM/yyyy"/>
+		<counter id="next_payment" name="Дата снятия следующей абонентской платы" type="time" format="dd/MM/yyyy"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

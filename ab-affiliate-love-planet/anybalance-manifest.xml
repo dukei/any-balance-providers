@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-affiliate-love-planet</id>
+	<api flags="no_browser"/>
+	<name>LovePlanet</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера LovePlanet <a href="http://lp-partners.ru/">http://lp-partners.ru/</a></p>
+	<p>Информация берется из личного кабинета</p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="all" name="Всего анкет"/>
+		<counter id="men" name="Мужских анкет"/>
+		<counter id="women" name="Женских анкет"/>
+		<counter id="user_id" name="ID" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>affiliate</type>
+	<country>ru</country>
+</provider>

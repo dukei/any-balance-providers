@@ -1,6 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-money-vbrr</id>
+	<api flags="no_browser"/>
+	<id version="2">ab-money-vbrr</id>
 	<name>ВБРР</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе на картах Всероссийского Банка Развития Регионов <a href="http://vbrr.ru">http://vbrr.ru</a></p>

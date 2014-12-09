@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-municipal-nesk</id>
+	<api flags="no_browser"/>
+	<name>НЭСК</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера НЭСК <a href="http://nesk.ru/">http://nesk.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="http://sis.nesk.ru/">http://sis.nesk.ru/</a></p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Задолженность" units=" р"/>
+		<counter id="account" name="Номер лицевого счёта" type="text"/>
+		<counter id="counter_number" name="Номер счетчика" type="text"/>
+		<counter id="counter_install" name="Дата установки счетчика" type="time" format="dd/MM/yyyy"/>
+		<counter id="last_counter_date" name="Дата последних показаний принятых к расчёту" type="time" format="dd/MM/yyyy"/>
+		<counter id="last_counter_day" name="Последние показания принятые к расчёту(день)"/>
+		<counter id="last_counter_night" name="Последние показания принятые к расчёту(ночь)"/>
+		<counter id="unaccounted_payment" name="Неразнесённые платежи" units=" р"/>
+	</counters>
+	<keywords></keywords>
+	<type>municipal</type>
+	<country>ru</country>
+</provider>

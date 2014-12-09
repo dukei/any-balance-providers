@@ -715,7 +715,7 @@ function fetchNewAccountAcc(html, baseurl) {
 	html = AnyBalance.requestGet(baseurl + '/PhizIC/private/accounts/list.do');
 	var lastdigits = prefs.lastdigits ? prefs.lastdigits.replace(/(\d)/g, '$1\\s*') : '(?:\\d\\s*){3}\\d';
 	// class="productNumber\b[^"]*">[^<]*
-	var baseFind = 'class="productNumber\\b[^"]*">[^<]*' + lastdigits + '<';
+	var baseFind = 'class="productNumber\\b[^"]*">[^<]*' + lastdigits + '[^<]*<';
 	// [\s\S]*?onclick\s*=\s*"[^"]*(?:operations|info)[^']*'(\d+)
 	var reCardId = new RegExp(baseFind + '[\\s\\S]*?<div[^>]+id="account_(\\d+)', 'i');
 	

@@ -7,7 +7,7 @@
 	<p>Provides information about a BTC wallet.</p>
 	<p>Information is sourced from https://blockchain.info/</p>
 	]]></description>
-	<author>borislip@gmail.com</author>
+	<author>Borislip &lt;borislip@gmail.com&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

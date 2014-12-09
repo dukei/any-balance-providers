@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="52" date="2014-12-09">
+	- Исправлена ошибка.
+	</change>
 	<change version="51" date="2014-12-09">
 	- Исправлено получение данных по счетам.
 	</change>

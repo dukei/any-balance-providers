@@ -39,10 +39,10 @@ function main() {
     
 	var result = {success: true};
 	
-	getParam(tr, result, 'date', /<td(?:[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(tr, result, 'status', /<td(?:[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(tr, result, 'message', /<td(?:[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, '__tariff', /139номер\sнакладной(?:[^>]*>){9}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(tr, result, 'date', /<td(?:[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+	getParam(tr, result, 'status', /<td(?:[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+	getParam(tr, result, 'message', /<td(?:[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+	getParam(html, result, '__tariff', /139номер\sнакладной(?:[^>]*>){9}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
 	
 	AnyBalance.setResult(result);
 }

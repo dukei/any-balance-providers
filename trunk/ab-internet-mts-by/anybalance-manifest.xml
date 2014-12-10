@@ -21,7 +21,7 @@
 		<counter id="network" name="Сеть" type="text"/>
 		<counter id="ip" name="IP-адрес" type="text"/>
 		<counter id="traffic" name="Остаток трафика" units=" Gb"/>
-		<counter id="next_topup" name="Следующее пополнение трафика" type="text"/>
+		<counter id="next_topup" name="Следующее пополнение трафика" type="time" format="dd/MM/yyyy"/>
 	</counters>
 	<keywords></keywords>
 	<type>internet, tv</type>

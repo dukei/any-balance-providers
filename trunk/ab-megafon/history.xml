@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="3.0" version="138" date="2014-12-10">
+	- Возможность отмены запроса капчи ночью
+	</change>
 	<change major_version="3.0" version="137" date="2014-12-01">
 	- Улучшено получение трафика в некоторых случаях.
 	</change>

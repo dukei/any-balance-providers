@@ -51,7 +51,7 @@ function main() {
 	getParam(html, result, 'network', /Сеть:(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'ip', /IP-адрес:(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'traffic', /Остаток трафика:(?:[\s\S]*?)data-text="([\s\S]*?)"/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'next_topup', /Следующее пополнение трафика:(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'next_topup', /Следующее пополнение трафика:(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseDateWord);
 	
 	AnyBalance.setResult(result);
 }

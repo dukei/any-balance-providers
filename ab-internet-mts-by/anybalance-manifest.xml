@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-mts-by</id>
+	<api flags="no_browser"/>
+	<name>Домашний Интернет и Телевидение МТС (Беларусь)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера "Домашний Интернет и Телевидение МТС (Беларусь)" <a href="http://mts.by/">http://mts.by/</a></p>
+	<p>Информация берется из личного кабинета <a href="https://internet.mts.by/login">https://internet.mts.by/login</a></p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="number" name="Номер" type="text"/>
+		<counter id="network" name="Сеть" type="text"/>
+		<counter id="ip" name="IP-адрес" type="text"/>
+		<counter id="traffic" name="Остаток трафика" units=" Gb"/>
+		<counter id="next_topup" name="Следующее пополнение трафика" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet, tv</type>
+	<country>by</country>
+</provider>

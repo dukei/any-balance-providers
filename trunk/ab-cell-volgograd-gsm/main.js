@@ -3,6 +3,8 @@
 */
 
 function main(){
+    throw new AnyBalance.Error('В связи с поглощением Ростелекомом данный провайдер объединен с провайдером Ростелеком-Волга (НСС, Волгоград GSM). Воспользуйтесь им.', null, true);
+
     var prefs = AnyBalance.getPreferences();
     
     var baseurl = "https://issa.volgogsm.ru/cgi-bin/cgi.exe?";

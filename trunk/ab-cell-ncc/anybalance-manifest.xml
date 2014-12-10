@@ -2,9 +2,9 @@
 <provider>
 	<api flags="no_browser" />
 	<id version="29">ab-cell-ncc</id>
-	<name>Ростелеком-Волга (НСС)</name>
+	<name>Ростелеком-Волга (НСС, Волгоград GSM)</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о текущем балансе и тарифе для пользователей оператора "Ростелеком-Волга" (НСС).</p>
+	<p>Предоставляет информацию о текущем балансе и тарифе для пользователей оператора "Ростелеком-Волга" (НСС, Волгоград GSM).</p>
 	<p>Информация берется из личного кабинета (https://login.rt.ru).</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
@@ -39,7 +39,7 @@
 		<counter id="history_out" name="Сумма последних 10 списаний" units=" р"/>
 
 	</counters>
-	<keywords>оператор татинком нсс ncc ростелеком ростелеком-волга</keywords>
+	<keywords>оператор татинком нсс ncc ростелеком ростелеком-волга volgograd gsm volgogsm</keywords>
 	<type>cell</type>
 	<country>ru</country>
 </provider>

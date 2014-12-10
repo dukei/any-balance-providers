@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-tracking-139express</id>
+	<id version="2">ab-tracking-139express</id>
 	<api flags="no_browser"/>
 	<name>139express</name>
 	<description html="true"><![CDATA[
@@ -15,7 +15,7 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="date" name="Дата" type="time" format="dd/MM/yyyy"/>
+		<counter id="date" name="Дата" type="text"/>
 		<counter id="status" name="Статус" type="text"/>
 		<counter id="message" name="Замечание" type="text"/>
 	</counters>

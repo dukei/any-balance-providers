@@ -1633,9 +1633,19 @@ function megafonLkAPI() {
 	}, true);
 
 	if(json.code){
+	    if(json.code == 'a211' && prefs.allowcaptcha){ //Капча отключена
+		var matches = /(\d+)-(\d+)/.exec(prefs.allowcaptcha);
+		if(!matches)
+			throw new AnyBalance.Error('Неверный параметр отключения капчи: ' + prefs.allowcaptcha);
+		var from = parseInt(matches[1]), to = parseInt(matches[2]);
+		var hours = new Date().getHours();
+		if(hours < from || hours >= to)
+	    		throw new AnyBalance.Error('API мобильного приложения потребовало ввод капчи, а она отключена в настройках (' + prefs.allowcaptcha + ') провайдера! Пропускаем API...');
+	    }
+ 
 	    if(json.code == 'a211'){ //Капча
 	        var capchaImg = AnyBalance.requestGet(g_baseurl + 'auth/captcha', g_api_headers);
-	        var captcha = AnyBalance.retrieveCode('Мегафон иногда требует подтвердить, что вы не робот. Сейчас как раз такой случай. Если вы введете цифры с картинки, то мы сможем получить какую-то информацию помимо баланса. В противном случае получим только баланс.', capchaImg);
+	        var captcha = AnyBalance.retrieveCode('Мегафон иногда требует подтвердить, что вы не робот. Сейчас как раз такой случай. Если вы введете цифры с картинки, то мы сможем получить какую-то информацию помимо баланса. В противном случае получим только баланс.\n\nВы можете отключить показ капчи совсем или только ночью в настройках провайдера.', capchaImg);
 			json = callAPI('post', 'login', {
 				login: prefs.login,
 				password: prefs.password,

@@ -1,34 +1,27 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-money-rbc</id>
-  <name>RBK Money</name>
-  <description>
-    Получает баланс системы RBK Money (http://rbkmoney.ru)
-
-    Информация берется из личного кабинета RBK Money: https://rbkmoney.ru/login.aspx
-
-  </description>
-  <author>Alexandra Shalamova &lt;alexandrashalamova@gmail.com&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/> 
-    <counter id="pursenumber" name="Номер кошелька" type="text"/>
-    <counter id="fio" name="ФИО" type="text"/>
-    <counter id="purse" name="Кошелек" type="text"/>
-  </counters>
-  <keywords>
-    РБК маней мани
-  </keywords>
-  <type>
-    money
-  </type>
-  <country>
-    ru
-  </country>
+	<api flags="no_browser"/>
+	<id version="2">ab-money-rbc</id>
+	<name>RBK Money</name>
+	<description html="true"><![CDATA[
+	<p>Получает баланс системы RBK Money <a href="http://rbkmoney.ru">http://rbkmoney.ru</a></p>
+	<p>Информация берется из личного кабинета RBK Money: <a href="https://rbkmoney.ru/login">https://rbkmoney.ru/login</a></p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/> 
+		<counter id="pursenumber" name="Номер кошелька" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="purse" name="Кошелек" type="text"/>
+	</counters>
+	<keywords>РБК маней мани</keywords>
+	<type>money</type>
+	<country>ru</country>
 </provider>

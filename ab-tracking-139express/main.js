@@ -38,7 +38,6 @@ function main() {
     AnyBalance.trace(tr);
     
 	var result = {success: true};
-	
 	getParam(tr, result, 'date', /<td(?:[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
 	getParam(tr, result, 'status', /<td(?:[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
 	getParam(tr, result, 'message', /<td(?:[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);

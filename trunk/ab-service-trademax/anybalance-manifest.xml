@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-service-trademax</id>
+	<api flags="no_browser"/>
+	<name>TRADEMAX</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о заказах через систему TRADEMAX <a href="http://trademax.com.pl/">http://trademax.com.pl/</a></p>
+	<p>Информация берется из личного кабинета <a href="http://trademax.com.pl/login.html">http://trademax.com.pl/login.html</a></p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="sum" name="Общая сумма"/>
+		<counter id="order" name="Номер заказа" type="text"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="date" name="Дата" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>service</type>
+	<country>by</country>
+</provider>

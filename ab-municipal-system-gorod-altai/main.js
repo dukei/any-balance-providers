@@ -61,12 +61,12 @@ function altai(prefix){
     AnyBalance.requestGet(baseurl, g_headers);
 
     var html = AnyBalance.requestPost(baseurl + "auth", {
-        typeAuth:'card',
+        'type-auth':'card',
         'answer-captcha':'',
         pan:pan,
         pin: prefs.password
     }, g_headers);
-
+	
     if(!/<state>ok<\/state>/i.test(html)){
       var error = getParam(html, null, null, /<error>([\s\S]*?)<\/error>/i, replaceTagsAndSpaces, html_entity_decode);
       if(error)

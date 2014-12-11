@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="8">ab-municipal-system-gorod-altai</id>
+  <id version="9">ab-municipal-system-gorod-altai</id>
   <api flags="no_browser" />
   <name>Система Город (Алтайский край)</name>
   <description html="true"><![CDATA[

@@ -1,10 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-tv-mts-nn</id>
+	<id version="2">ab-tv-mts-nn</id>
 	<api flags="no_browser"/>
 	<name>Домашнее Телевидение МТС (Нижний Новгород)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем балансе, номере лицевого счета и договора, ФИО владельца, трафике в текущем месяце, абонентской плате для пользователей провайдера "Домашний Интернет и Телевидение МТС" в Нижнем Новгороде.</p>
+	<p>ВНИМАНИЕ! Этот провайдер больше не поддерживается, используйте провайдера <a href="http://anybalance.ru/catalog.php?id=ab-internet-mts">Домашний Интернет и Телевидение МТС</a>.</p>
 	]]></description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>

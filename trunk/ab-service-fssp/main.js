@@ -48,7 +48,7 @@ function main() {
 			AnyBalance.setOptions({forceCharset:'base64'});
 			var captcha = AnyBalance.requestGet(baseurl + captchaa);
 			captchaa = AnyBalance.retrieveCode('Пожалуйста, введите код с картинки', captcha);
-			AnyBalance.setOptions({forceCharset:'utf-8'});
+			AnyBalance.setOptions({forceCharset:'cp-1251'});
 			AnyBalance.trace('Капча получена: ' + captchaa);
 		} else {
 			throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');

@@ -20,6 +20,7 @@ var regions = {
 	ekt: getPrm,
 	krv: getKrv,
 	nnov: getNnov,
+	nnov_tv: getNnovTv,
 	sdv: getSdv,
 	vlgd: getVologda,
 	izh: getIzhevsk,
@@ -480,6 +481,13 @@ function getPnz(){
 
 	var urlIndex = 'https://lkpenza.pv.mts.ru/index.php?r=site/login';
 	var urlAjax = 'https://lkpenza.pv.mts.ru/index.php?r=account/vgroups&agrmid=';
+	
+	newTypicalLanBillingInetTv(urlIndex, urlAjax);
+}
+
+function getNnovTv() {
+	var urlIndex = 'https://lktvnn.pv.mts.ru/index.php?r=site/login';
+	var urlAjax = 'https://lktvnn.pv.mts.ru/index.php?r=account/vgroups&agrmid=';
 	
 	newTypicalLanBillingInetTv(urlIndex, urlAjax);
 }

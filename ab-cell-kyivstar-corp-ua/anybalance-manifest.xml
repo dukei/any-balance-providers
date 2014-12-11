@@ -1,34 +1,41 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="13">ab-cell-kyivstar-corp-ua</id>
-	<name>Киевстар Корпоративный (Украина)</name>
-	<description html="true"><![CDATA[
-	<p>Получает баланс, остаток минут, интернет трафка, SMS для корпоративных тарифов. Информация берется из системы Мой Киевстар <a href="https://my.kyivstar.ua">https://my.kyivstar.ua</a></p>
-	<p>Если вы не зарегистрированы в системе Мой Киевстар, то для пользования провайдером вам сначала нужно там зарегистрироваться. Самостоятельно зарегистрироваться в системе могут все абоненты "Киевстар" и DJUICE. Для этого пройдите на страницу <a href="https://my.kyivstar.ua/tbmb/enroll_ABContr/user/show.do">https://my.kyivstar.ua/tbmb/enroll_ABContr/user/show.do</a> и выполните приведенные там инструкции.</p>
+  <id version="13">ab-cell-kyivstar-corp-ua</id>
+  <name>Киевстар Корпоративный (Украина)</name>
+  <description>
+    Получает баланс, остаток минут, интернет трафка, SMS для корпоративных тарифов. Информация берется из системы Мой Киевстар https://my.kyivstar.ua
 
-	<p>ВНИМАНИЕ! Этот провайдер получает значения только для корпоративных тарифных планов. Если у вас не корпоративный тариф, воспользуйтесь провайдером Киевстар.</p>
-	]]></description>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-	<files>
-		<icon>icon.png</icon>
-		<preferences>preferences.xml</preferences>
-		<js>api:jquery.min.js</js>
-		<js>library.js</js>
-		<js>main.js</js>
-		<history>history.xml</history>
-	</files>
-	<counters>
-		<counter id="balance" name="Баланс" units="₴"/>
-		<counter id="costs" name="Затраты за предыдущий месяц" units="₴"/>
-		<counter id="min_left" name="Бесплатные минуты" units="мин"/>
-		<counter id="min_group" name="Групповые минуты" units="мин"/>
-		<counter id="traffic_left" name="Остаток трафика" units="Мб"/>
-		<counter id="sms_left" name="Остаток SMS"/>
-		<counter id="mms_left" name="Остаток MMS"/>
-		<counter id="bonus_available" name="Доступные бонусы Киевстар бизнес-клуб"/>
-		<counter id="statuslock" name="Статус телефона" type="text"/>
-	</counters>
-	<keywords>Сотовый телефон, мобильный, мобильник, kyivstar, украина</keywords>
-	<type>cell</type>
-	<country>ua</country>
+    Если вы не зарегистрированы в системе Мой Киевстар, то для пользования провайдером вам сначала нужно там зарегистрироваться. Самостоятельно зарегистрироваться в системе могут все абоненты "Киевстар" и DJUICE. Для этого пройдите на страницу https://my.kyivstar.ua/tbmb/enroll_ABContr/user/show.do и выполните приведенные там инструкции.
+
+    ВНИМАНИЕ! Этот провайдер получает значения только для корпоративных тарифных планов. Если у вас не корпоративный тариф, воспользуйтесь провайдером Киевстар.
+</description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>api:jquery.min.js</js>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="₴"/>
+    <counter id="costs" name="Затраты за предыдущий месяц" units="₴"/>
+    <counter id="min_left" name="Бесплатные минуты" units="мин"/>
+    <counter id="min_group" name="Групповые минуты" units="мин"/>
+    <counter id="traffic_left" name="Остаток трафика" units="Мб"/>
+    <counter id="sms_left" name="Остаток SMS"/>
+    <counter id="mms_left" name="Остаток MMS"/>
+    <counter id="bonus_available" name="Доступные бонусы Киевстар бизнес-клуб"/>
+    <counter id="statuslock" name="Статус телефона" type="text"/>
+  </counters>
+  <keywords>
+    Сотовый телефон, мобильный, мобильник, kyivstar, украина
+  </keywords>
+  <type>
+    cell
+  </type>
+  <country>
+    ua
+  </country>
 </provider>

@@ -1,5 +1,9 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
+
+Текущий баланс у сотового оператора Киевстар корпоративный (Украина).
+
+Сайт оператора: http://my.kyivstar.ua/
 */
 
 function parseBalanceRK(_text){
@@ -31,10 +35,10 @@ function main(){
     
     var baseurl = "https://my.kyivstar.ua/";
     var headers = {
-		'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
-		'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-		'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Intel Mac OS X 10.6; rv:7.0.1) Gecko/20100101 Firefox/7.0.1',
-		Connection: 'keep-alive'
+      'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
+      'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+      'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Intel Mac OS X 10.6; rv:7.0.1) Gecko/20100101 Firefox/7.0.1',
+      Connection: 'keep-alive'
     };
 	
     AnyBalance.trace("Trying to enter selfcare at address: " + baseurl);
@@ -44,44 +48,53 @@ function main(){
         password: prefs.password
     }, headers);
     
-	if(!/\/tbmb\/logout\/perform/i.test(html)){
-		var error = getParam(html, null, null, /<td class="redError">([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
-		
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-	}
+    if(!/\/tbmb\/logout\/perform/i.test(html)){
+	var error = getParam(html, null, null, /<td class="redError">([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+	if (error)
+		throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
 	
-    if(/\/tbmb\/payment\/activity\//i.test(html)){
-        //Нашли ссылку на платежи. Очень вероятно, что это физический аккаунт
-        throw new AnyBalance.Error("Похоже, у вас не корпоративный личный кабинет. Пожалуйста, воспользуйтесь провайдером Киевстар для некорпоративных тарифов.");
+	AnyBalance.trace(html);
+	throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
 
+    if(/\/tbmb\/payment\/activity\//i.test(html)){
+        //Нашли ссылку на платежи. Очень вероятно, что это физический аккаунт
+        throw new AnyBalance.Error("Похоже, у вас не корпоративный личный кабинет. Пожалуйста, воспользуйтесь провайдером Киевстар для некорпоративных тарифов");
+    }
+
+//    AnyBalance.trace(html);
+    
     var hierarchy = AnyBalance.requestGet(baseurl + "tbmb/flash/hierarchy?action=hier");
+//    AnyBalance.trace(hierarchy);
+
     //<hh><h id='4199266' type='BILLING' name='Billing Hierarchy'><n i='4199267' t='1' v='Billing Hierarchy'><n i='8974631' t='1' virt='0' v='2802451'><n i='17496882' t='3' virt='0' v='4654037' c='' m='+380673401254'/></n></n></h></hh>
-    // var $hierarchy = $(hierarchy);
-    var hierid = getParam(hierarchy, null, null, /<h[^>]*id=["']([^"']+)/i);
-    // var nodeid_info = $hierarchy.find('n[m="'+prefs.login+'"]').attr('i');
-	var nodeid_info = getParam(hierarchy, null, null, new RegExp('<n[^>]*i=["\']([^\'"]+)[^>]*m=["\']\\' + prefs.login));
-	// var nodeid_balance = $hierarchy.find('n[m="'+prefs.login+'"]').parent().attr('i');
-    var nodeid_balance = getParam(hierarchy, null, null, new RegExp('<n[^>]*i=["\']([^\'"]+)[^>]*>\s*<n[^>]*m=["\']\\' + prefs.login));
-	// var nodeid_services = $hierarchy.find('n[m="'+prefs.login+'"]').attr('v');
-    var nodeid_services = getParam(hierarchy, null, null, new RegExp('<n[^>]*v=["\']([^\'"]+)[^>]*m=["\']\\' + prefs.login));
+    var $hierarchy = $(hierarchy);
+    var hierid = $hierarchy.find("h").attr('id');
+    var nodeid_info = $hierarchy.find('n[m="'+prefs.login+'"]').attr('i');
+    var nodeid_balance = $hierarchy.find('n[m="'+prefs.login+'"]').parent().attr('i');
+    var nodeid_services = $hierarchy.find('n[m="'+prefs.login+'"]').attr('v');
     
     var result = {success: true};
     
-    if(AnyBalance.isAvailable('costs', 'balance')) {
-		var balance_html = AnyBalance.requestGet(baseurl + "tbmb/flash/hierarchy?action=charges&nodeId=" + nodeid_balance + "&hierId=" + hierid);
-		
-		//<cc i='8974631'><c i='17496882' c='87.65'/></cc>
-		getParam(balance_html, result, 'costs', /c=["']([\s\d.,\-]{2,})/i, replaceTagsAndSpaces, parseBalance);
-		getParam(balance_html, result, 'balance', /b=["']([\s\d.,\-]{2,})/i, replaceTagsAndSpaces, parseBalance);
+    if(AnyBalance.isAvailable('costs', 'balance')){
+        var balance_html = AnyBalance.requestGet(baseurl + "tbmb/flash/hierarchy?action=charges&nodeId=" + nodeid_balance + "&hierId=" + hierid);
+//        AnyBalance.trace(balance_html);
+        //<cc i='8974631'><c i='17496882' c='87.65'/></cc>
+	if(AnyBalance.isAvailable('costs')){
+            var costs = parseFloat($(balance_html).find('c').attr('c'));
+            if(costs)
+                result.costs = costs;
+	}
+	if(AnyBalance.isAvailable('balance')){
+            var balance = parseFloat($(balance_html).find('c[b]').attr('b'));
+	    if(balance)
+                result.balance = balance;
+	}
     }
-	
+
     //https://my.kyivstar.ua/tbmb/flash/hierarchy?action=mtninfo&hierId=4199266&nodeId=17496882&time=261
     var info_html = AnyBalance.requestGet(baseurl + "tbmb/flash/hierarchy?action=mtninfo&nodeId=" + nodeid_info + "&hierId=" + hierid);
-	
+//    AnyBalance.trace(info_html);
     var $info = $(info_html);
     
     result.__tariff = $info.find('rp').text();

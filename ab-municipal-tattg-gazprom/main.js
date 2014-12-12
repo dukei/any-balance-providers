@@ -26,88 +26,28 @@ function main() {
     
     html = AnyBalance.requestGet(baseurl + 'MyAccount/' + getDataPath(prefs.ap, prefs.login),  addHeaders({Referer: baseurl + 'MyAccount/viewdata.html?ap=' + prefs.ap + '&account=' + prefs.login}));
     
-	// var params = createFormParams(html, function(params, str, name, value) {
-		// if (name == 'login') 
-			// return prefs.login;
-		// else if (name == 'password')
-			// return prefs.password;
-
-		// return value;
-	// });
+	var abonentdata = getParam(html, null, null, new RegExp('<abonentdata><account>' + prefs.login + '</account>[\\s\\S]*?</abonentdata>', 'i'))
 	
-	// html = AnyBalance.requestPost(baseurl + 'login', {
-		// login: prefs.login,
-		// password: prefs.password,
-		// 'Remember': 'false'
-	// }, addHeaders({Referer: baseurl + 'login'}));
-	
-	// if (!/logout/i.test(html)) {
-		// var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
-		// if (error)
-			// throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
-		
-		// AnyBalance.trace(html);
-		// throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-	// }
-
-
-
-// Удаление "лишних" данных
-  // datapath = getDataPath(getUrlVars()['ap'], getUrlVars()['account']);
-  datapath = getDataPath(prefs.ap, prefs.login);
-  // var xml = loadXMLDoc(baseurl + 'MyAccount/' + datapath);
-  var xml = html;
-  var path = "abonent/abonentdata[account != " + prefs.login + "]";
-  // try {
-    // if (window.ActiveXObject || xhttp.responseType=="msxml-document") {
-      // xml.setProperty("SelectionLanguage","XPath");
-      // nodes = xml.selectNodes(path);
-      // for (i = nodes.length; i > 0 ; i--) {
-        // parentnode = nodes[i-1].parentNode;
-        // parentnode.removeChild(nodes[i-1]);
-      // }
-    // }
-    // // code for Chrome, Firefox, Opera, etc.
-    // else
-      // if (document.implementation && document.implementation.createDocument) {
-        var nodes = xml.evaluate(path, xml, null, XPathResult.ANY_TYPE, null);
-        nodeArray = new Array(9);
-        var i = 0;
-        var result=nodes.iterateNext();
-        while (result) {
-          nodeArray[i++] = result;
-          result = nodes.iterateNext();
-        }
-        for (i=nodeArray.length;i>0;i--) {
-          if (nodeArray[i-1] != null) {
-            parentnode = nodeArray[i-1].parentNode;
-            parentnode.removeChild(nodeArray[i-1]);
-           }
-        }
-      // }
-  // }
-  // catch(e) {}
-
-
-
+	if (!abonentdata) {
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+	}
 	
 	var result = {success: true};
     
-	
-	getParam(html, result, 'period', /<abonent><moment>([\s\S]*?)<\/moment/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, '__tariff', /<account>([\s\S]*?)<\/account>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(abonentdata, result, 'period', /<abonent><moment>([\s\S]*?)<\/moment/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(abonentdata, result, '__tariff', /<account>([\s\S]*?)<\/account>/i, replaceTagsAndSpaces, html_entity_decode);
     
     
-	getParam(html, result, 'balance', /баланс:(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, ['currency', 'balance'], /Текущий баланс:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseCurrency);
-	getParam(html, result, 'fio', /Имя абонента:(?:[\s\S]*?<b[^>]*>){1}([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'deadline', /Действителен до:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseDate);
-	getParam(html, result, 'status', /Статус:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(abonentdata, result, 'balance', /баланс:(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	getParam(abonentdata, result, ['currency', 'balance'], /Текущий баланс:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseCurrency);
+	getParam(abonentdata, result, 'fio', /Имя абонента:(?:[\s\S]*?<b[^>]*>){1}([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(abonentdata, result, 'deadline', /Действителен до:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseDate);
+	getParam(abonentdata, result, 'status', /Статус:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
 	
 	AnyBalance.setResult(result);
 }
 
-// Формирование пути к файлу с данными абонента "account" из а/пункта "ap"
 function getDataPath(ap, account) {
     account = (account - account % 10) +'';
     var cnt = 8 - account.length;
@@ -116,45 +56,3 @@ function getDataPath(ap, account) {
     }
     return 'datastore/'+ap+'/'+account+'.xml';
 }
-
-
-// function getUrlVars() {
-  // var vars = [], hash;
-  // var hashes = location.href.slice(location.href.indexOf('?') + 1).split('&');
-  // for(var i = 0; i < hashes.length; i++) {
-    // hash = hashes[i].split('=');
-    // vars.push(hash[0]);
-    // vars[hash[0]] = hash[1];
-  // }
-  // return vars;
-// }
-
-// function loadXMLDoc(filename) {
-  // try {
-    // xhttp = createRequestObject();
-  // }
-  // catch(e) { 
-  // // alert(e.message); 
-  // return null; }
-
-  // xhttp.open("GET", filename, false);
-  // xhttp.send("");
-  // return xhttp.responseXML;
-// }
-
-// function createRequestObject() {
-  // if (typeof XMLHttpRequest == 'undefined') {
-    // XMLHttpRequest = function() {
-      // try { return new ActiveXObject("Msxml2.XMLHTTP.6.0"); } // По умолчанию это свойство в данном случае отключено: var source = new ActiveXObject("Msxml2.DOMDocument.6.0"); source.setProperty("AllowDocumentFunction", true);
-        // catch(e) {}
-      // try { return new ActiveXObject("Msxml2.XMLHTTP.3.0"); }
-        // catch(e) {}
-      // try { return new ActiveXObject("Msxml2.XMLHTTP"); }
-        // catch(e) {}
-      // try { return new ActiveXObject("Microsoft.XMLHTTP"); }
-        // catch(e) {}
-      // throw new Error("Работа с вашим браузером не поддерживается."); // This browser does not support XMLHttpRequest
-    // };
-  // }
-  // return new XMLHttpRequest();
-// }

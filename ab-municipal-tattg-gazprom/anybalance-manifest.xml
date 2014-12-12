@@ -4,7 +4,7 @@
 	<api flags="no_browser"/>
 	<name>Газпром Трансгаз Казань</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе провайдера Газпром Трансгаз Казань <a href="http://tattg.gazprom.ru/">http://tattg.gazprom.ru/</a></p>
+	<p>Предоставляет информацию о данных по лицевому счету от провайдера Газпром Трансгаз Казань <a href="http://tattg.gazprom.ru/">http://tattg.gazprom.ru/</a></p>
 	<p>Информация берется из личного кабинета <a href="http://tattg.gazprom.ru/MyAccount/">http://tattg.gazprom.ru/MyAccount/</a></p>
 	]]></description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
@@ -16,11 +16,18 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" {@currency}"/>
-		<counter id="fio" name="ФИО" type="text"/>
-		<counter id="status" name="Статус" type="text"/>
-		<counter id="phone" name="Телефон" type="text"/>
-		<counter id="deadline" name="Дата отключения" type="time" format="dd/MM/yyyy"/>
+		<counter id="period" name="Отчётный период" type="text"/>
+		<counter id="gasp" name="Последние показания газовых счетчиков" type="text"/>
+		<counter id="barcode_gas" name="Штрих-код для оплаты газоснабжения" type="text"/>
+		<counter id="barcode_tech" name="Штрих-код для оплаты техобслуживания" type="text"/>
+		<counter id="begsaldo_gas" name="Начальное сальдо(газ)" units=" р"/>
+		<counter id="charged_gas" name="Начислено(газ)" units=" р"/>
+		<counter id="paid_gas" name="Оплачено(газ)" units=" р"/>
+		<counter id="endsaldo_gas" name="Текущее сальдо(газ)" units=" р"/>
+		<counter id="begsaldo_tech" name="Начальное сальдо(техобслуживание)" units=" р"/>
+		<counter id="charged_tech" name="Начислено(техобслуживание)" units=" р"/>
+		<counter id="paid_tech" name="Оплачено(техобслуживание)" units=" р"/>
+		<counter id="endsaldo_tech" name="Текущее сальдо(техобслуживание)" units=" р"/>
 	</counters>
 	<keywords></keywords>
 	<type>municipal</type>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-municipal-tatenergosbyt</id>
+	<api flags="no_browser"/>
+	<name>Татэнергосбыт</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Татэнергосбыт <a href="http://www.tatenergosbyt.ru/">http://www.tatenergosbyt.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="https://lkfl.tatenergosbyt.ru/">https://lkfl.tatenergosbyt.ru/</a></p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Сумма к оплате" units=" р"/>
+		<counter id="period" name="Период" type="text"/>
+		<counter id="counter" name="№ счетчика" type="text"/>
+		<counter id="counter_cur" name="Текущие показания счетчика" type="text"/>
+		<counter id="zone" name="Зона" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>municipal</type>
+	<country>ru</country>
+</provider>

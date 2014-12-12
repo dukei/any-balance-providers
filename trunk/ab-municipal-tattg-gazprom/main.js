@@ -7,7 +7,6 @@ var g_headers = {
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection': 'keep-alive',
 	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
-
 };
 
 function main() {
@@ -15,7 +14,7 @@ function main() {
 	var baseurl = 'http://tattg.gazprom.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
-	checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(prefs.login, 'Введите лицевой счет!');
 	
 	var html = AnyBalance.requestGet(baseurl + 'MyAccount', g_headers);
     
@@ -27,7 +26,7 @@ function main() {
     html = AnyBalance.requestGet(baseurl + 'MyAccount/' + getDataPath(prefs.ap, prefs.login),  addHeaders({Referer: baseurl + 'MyAccount/viewdata.html?ap=' + prefs.ap + '&account=' + prefs.login}));
     
 	var abonentdata = getParam(html, null, null, new RegExp('<abonentdata><account>' + prefs.login + '</account>[\\s\\S]*?</abonentdata>', 'i'))
-	
+
 	if (!abonentdata) {
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
@@ -35,15 +34,21 @@ function main() {
 	
 	var result = {success: true};
     
-	getParam(abonentdata, result, 'period', /<abonent><moment>([\s\S]*?)<\/moment/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'period', /<abonent>\s*<moment>([\s\S]*?)<\/moment>/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(abonentdata, result, '__tariff', /<account>([\s\S]*?)<\/account>/i, replaceTagsAndSpaces, html_entity_decode);
-    
-    
-	getParam(abonentdata, result, 'balance', /баланс:(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	getParam(abonentdata, result, ['currency', 'balance'], /Текущий баланс:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseCurrency);
-	getParam(abonentdata, result, 'fio', /Имя абонента:(?:[\s\S]*?<b[^>]*>){1}([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(abonentdata, result, 'deadline', /Действителен до:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseDate);
-	getParam(abonentdata, result, 'status', /Статус:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
+    var gasp = getParam(abonentdata, null, null, /<gasp>([\s\S]*?)<\/gasp>/i, replaceTagsAndSpaces, html_entity_decode);
+    var dat_gasp = getParam(abonentdata, null, null, /<dat_gasp>([\s\S]*?)<\/dat_gasp>/i, replaceTagsAndSpaces, html_entity_decode);
+    if(gasp && dat_gasp) result.gasp = gasp + ' на дату ' + dat_gasp;
+	getParam(abonentdata, result, 'barcode_gas', /(?:газоснабжение[\s\S]*?<barcode>)([\s\S]*?)<\/barcode>/i, replaceTagsAndSpaces, html_entity_decode);    
+	getParam(abonentdata, result, 'barcode_tech', /(?:техобслуживание[\s\S]*?<barcode>)([\s\S]*?)<\/barcode>/i, replaceTagsAndSpaces, html_entity_decode);    
+	getParam(abonentdata, result, 'begsaldo_gas', /(?:газоснабжение[\s\S]*?<begsaldo>)([\s\S]*?)<\/begsaldo>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(abonentdata, result, 'charged_gas', /(?:газоснабжение[\s\S]*?<charged>)([\s\S]*?)<\/charged>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(abonentdata, result, 'paid_gas', /(?:газоснабжение[\s\S]*?<paid>)([\s\S]*?)<\/paid>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(abonentdata, result, 'endsaldo_gas', /(?:газоснабжение[\s\S]*?<endsaldo>)([\s\S]*?)<\/endsaldo>/i, replaceTagsAndSpaces, parseBalance);    
+	getParam(abonentdata, result, 'begsaldo_tech', /(?:техобслуживание[\s\S]*?<begsaldo>)([\s\S]*?)<\/begsaldo>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(abonentdata, result, 'charged_tech', /(?:техобслуживание[\s\S]*?<charged>)([\s\S]*?)<\/charged>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(abonentdata, result, 'paid_tech', /(?:техобслуживание[\s\S]*?<paid>)([\s\S]*?)<\/paid>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(abonentdata, result, 'endsaldo_tech', /(?:техобслуживание[\s\S]*?<endsaldo>)([\s\S]*?)<\/endsaldo>/i, replaceTagsAndSpaces, parseBalance);
 	
 	AnyBalance.setResult(result);
 }

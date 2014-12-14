@@ -35,8 +35,8 @@ function main(){
 	var result = {success: true};
 	
 	getParam(html, result, 'balance', />([^<]*)бонус/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'username', /class="authorized[^>]*>\s*Ура[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'cardnum', /class="authorized[^>]*>\s*Ура(?:[^>]*>){4}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);	
+	getParam(html, result, 'username', /class="top_detals-info[^>]*>([^<,]*)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'cardnum', /class="number_card[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);	
 	
 	AnyBalance.setResult(result);
 }

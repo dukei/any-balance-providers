@@ -107,28 +107,33 @@ function getMyPosylkaResult(prefs) {
 	
 	var result = {success: true};
 	
-	var tracker = json.result;
-	var ls = tracker.statuses[0];
-	
-	var lsdate = (ls && ls.date) || '',
-		lsplace = (ls && ls.place) || '',
-		lsstatus = (ls && ls.operation.name) || '???';
-	
-	getParam(tracker.number, result, 'trackid');
-	getParam(tracker.trackTime + '', result, 'days', null, null, parseBalance);
-	getParam(tracker.weight + '', result, 'weight', null, null, parseBalance);
-	getParam(lsdate, result, 'date', null, null, parseDateISO);
-	getParam(lsplace, result, 'address');
-	getParam(lsstatus, result, 'status');
-	
-	if (AnyBalance.isAvailable('fulltext')) {
-		var date = getParam(lsdate, null, null, null, null, parseDateISO) || (new Date().getTime());
-		var address = lsplace;
-		var status = lsstatus;
-		var days = tracker.trackTime;
-		result.fulltext = '<b>' + status + '</b><br/>\n' + '<small>' + getDateString(date) + '</small>: ' + address + '<br/>\n' + 'в пути ' + days + ' дн.';
+	try{
+		var tracker = json.result;
+		var ls = tracker.statuses[0];
+		
+		var lsdate = (ls && ls.date) || '',
+			lsplace = (ls && ls.place) || '',
+			lsstatus = (ls && ls.operation.name) || '???';
+		
+		getParam(tracker.number, result, 'trackid');
+		getParam(tracker.trackTime + '', result, 'days', null, null, parseBalance);
+		getParam(tracker.weight + '', result, 'weight', null, null, parseBalance);
+		getParam(lsdate, result, 'date', null, null, parseDateISO);
+		getParam(lsplace, result, 'address');
+		getParam(lsstatus, result, 'status');
+		
+		if (AnyBalance.isAvailable('fulltext')) {
+			var date = getParam(lsdate, null, null, null, null, parseDateISO) || (new Date().getTime());
+			var address = lsplace;
+			var status = lsstatus;
+			var days = tracker.trackTime;
+			result.fulltext = '<b>' + status + '</b><br/>\n' + '<small>' + getDateString(date) + '</small>: ' + address + '<br/>\n' + 'в пути ' + days + ' дн.';
+		}
+		return result;
+	}catch(e){
+		AnyBalance.trace(JSON.stringify(json));
+		throw e;
 	}
-	return result;
 }
 
 function main() {

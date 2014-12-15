@@ -59,7 +59,7 @@ function main(){
 		
 		var pattern1 = pattern.replace(/ /g,"+");
 		
-		var baseurl = 'https://www.avito.ru/'+region+'?name='+pattern1;
+		var baseurl = 'https://m.avito.ru/'+region+'?q='+pattern1;
 		
 		AnyBalance.trace('Starting search: ' + baseurl);
 		var info = AnyBalance.requestGet(baseurl);	
@@ -71,36 +71,36 @@ function main(){
 		var result = {success: true};
 		result.__tariff = prefs.pattern;
 		
-		if(matches = info.match(/ничего не найдено/i)){
+		if(matches = info.match(/не найдено/i)){
 			result.found = 0;
 			AnyBalance.setResult(result);
 			return;
 		}
 		
-		getParam(info, result, 'found', /<div class="catalog_counts">[\S\s]*?(\d+?)\s*<\/span>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(info, result, 'found', /<div class="nav-helper-content nav-helper-text">([\s\S]+?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 		
     	if (!result.found) {
     	    throw new AnyBalance.Error("Ошибка при получении данных с сайта.");
     	}
-    	if ((matches = info.match(/<div class="item(?:[^>]*>){10,20}\s*<div class="description">[\s\S]*?<\/div>/i))) {
-    	    info = matches[0];
-			getParam(info, result, 'date', /<div class="date">\s+(.*?)\s*<span/i, replaceTagsAndSpaces, html_entity_decode);
-			getParam(info, result, 'time', /<span class="time">(.*?)<\/span/i, replaceTagsAndSpaces, html_entity_decode);
+    	if ((matches = info.match(/<h3 class="item-header">([\s\S]+?)<article/i))) {
+		info = matches[1];
+		getParam(info, result, 'date', /<div class="info-date info-text">([\s\S]+?),\&nbsp;.*?<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+		getParam(info, result, 'time', /<div class="info-date info-text">[\s\S]+?,\&nbsp;([\s\S]+?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
 			
-			var datetime;
-    	    if (isset(result.date) && isset(result.time)) {
-				datetime = result.date + ' ' + result.time;
-    	    } else if (isset(result.date)) {
-    	        datetime = result.date;
-    	    } else if (isset(result.time)) {
-    	        datetime = result.time;
-    	    }
-			if(datetime)
-				getParam(datetime, result, 'datetime');
+		var datetime;
+		if (isset(result.date) && isset(result.time)) {
+			datetime = result.date + ' ' + result.time;
+		} else if (isset(result.date)) {
+			datetime = result.date;
+		} else if (isset(result.time)) {
+			datetime = result.time;
+		}
+		if(datetime)
+			getParam(datetime, result, 'datetime');
 			
-    	    getParam(info, result, 'last', /<h3 class="title">([\s\S]*?)<\/h3>/i, replaceTagsAndSpaces, html_entity_decode);
-    	    getParam(info, result, 'price', /<div class="about">([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-    	    getParam(info, result, 'currency', /<div class="about">\s+<span>.*?<\/span>\s+<span>(.*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+		getParam(info, result, 'last', /<h3 class="item-header">([\s\S]*?)<\/h3>/i, replaceTagsAndSpaces, html_entity_decode);
+		getParam(info, result, 'price', /<div class="item-price ">([\s\S]+?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(info, result, 'currency', /<div class="item-price ">.*?\&nbsp;([^\d].*?)\s+<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
     	} else {
     	    throw new AnyBalance.Error("Ошибка при разборе ответа с сайта.");
     	}

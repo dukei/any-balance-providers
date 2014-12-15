@@ -8,7 +8,6 @@
         negativeButtonText="Cancel" 
         dialogMessage="Enter your login to du selfcare"
         obligatory="true"
-        inputType="phone"
         key="login">
     </EditTextPreference>
     <EditTextPreference 

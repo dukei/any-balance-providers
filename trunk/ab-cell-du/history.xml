@@ -1,12 +1,15 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="5" date="2014-12-15">
+	- Ability to enter non-numeric login.
+	</change>
     <change version="4" date="2014-05-01">
-        Fixed getting balances
+	- Fixed getting balances.
     </change>
     <change version="3" date="2014-01-09">
-        Support for multinumber accounts
+	- Support for multinumber accounts.
     </change>
     <change version="2" date="2013-04-01">
-        Added more balance types
+	- Added more balance types.
     </change>
 </history>

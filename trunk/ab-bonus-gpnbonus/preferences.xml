@@ -12,7 +12,7 @@
 	</EditTextPreference>
 	<EditTextPreference
 		title="Фамилия"
-		key="name"
+		key="surname"
 		summary="||{@s}"
 		obligatory="true"
 		dialogTitle="Фамилия"

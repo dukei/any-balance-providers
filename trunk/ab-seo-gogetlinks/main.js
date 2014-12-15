@@ -27,11 +27,12 @@ function main(){
         password:prefs.password,
         remember:''
     }, addHeaders({Referer: baseurl}));
-
-    if(!/window\.location\.href=\"\.\/my_campaigns\.php\"/i.test(html)){
+	
+    if(!/window\.location\.href=\"\/my_campaigns\.php\"/i.test(html)){
         var error = getParam(html, null, null, /([\s\S]*)/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error);
+		
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
 

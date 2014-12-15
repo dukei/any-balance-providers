@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-municipal-uslugi-tatarstan</id>
+	<api flags="no_browser"/>
+	<name>Госуслуги Татарстан</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию из системы Госуслуги республики Татарстан <a href="https://uslugi.tatarstan.ru/">https://uslugi.tatarstan.ru/</a></p>
+	<b>Поддерживаемые услуги:</b>
+	<ol>
+		<li>Проверка задолженности по налогам.</li>
+	</ol>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="nalog_info" name="Сводка по налогам" type="html"/>
+	</counters>
+	<keywords></keywords>
+	<type>municipal</type>
+	<country>ru</country>
+</provider>

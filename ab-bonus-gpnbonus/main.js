@@ -16,7 +16,7 @@ function main() {
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Введите номер карты!');
-	checkEmpty(prefs.name, 'Введите фамилию!');
+	checkEmpty(prefs.surname, 'Введите фамилию!');
 	checkEmpty(/^(\d{2}).(\d{2}).(\d{4})$/i.test(prefs.date_of_birth), 'Введите дату рождения в формате 31.12.2014!');
     var date = /^(\d{2}).(\d{2}).(\d{4})$/i.exec(prefs.date_of_birth);
     
@@ -25,13 +25,12 @@ function main() {
 	if(!html || AnyBalance.getLastStatusCode() > 400)
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
     
-    html = AnyBalance.requestPost(baseurl + '_run.php?xoadCall=true', 'a:4:{s:6:"source";s:57:"O:9:"front_api":1:{s:6:"result";a:1:{s:7:"captcha";b:1;}}";s:9:"className";s:9:"front_api";s:6:"method";s:6:"xroute";s:9:"arguments";s:242:"a:2:{i:0;a:1:{s:6:"fusers";a:1:{s:11:"getInfoUser";a:5:{s:14:"CardSWNumberID";s:16:"' + prefs.login + '";s:9:"SurNameID";s:14:"' + prefs.name + '";s:12:"DayOfBirthID";s:2:"' + date[1] + '";s:14:"MonthOfBirthID";s:2:"' + date[2] + '";s:13:"YearOfBirthID";s:4:"' + date[3] + '";}}}i:1;N;}";}', addHeaders({Referer: baseurl + '_run.php?xoadCall=true'}));
+    html = AnyBalance.requestPost(baseurl + '_run.php?xoadCall=true', 'a:4:{s:6:"source";s:57:"O:9:"front_api":1:{s:6:"result";a:1:{s:7:"captcha";b:1;}}";s:9:"className";s:9:"front_api";s:6:"method";s:6:"xroute";s:9:"arguments";s:242:"a:2:{i:0;a:1:{s:6:"fusers";a:1:{s:11:"getInfoUser";a:5:{s:14:"CardSWNumberID";s:16:"' + prefs.login + '";s:9:"SurNameID";s:14:"' + prefs.surname + '";s:12:"DayOfBirthID";s:2:"' + date[1] + '";s:14:"MonthOfBirthID";s:2:"' + date[2] + '";s:13:"YearOfBirthID";s:4:"' + date[3] + '";}}}i:1;N;}";}', addHeaders({Referer: baseurl + '_run.php?xoadCall=true'}));
 	
 	if (!/"vxod":"true"/i.test(html)) {
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
-    
     
     html = AnyBalance.requestGet(baseurl + 'users/~showinfousers', g_headers);
 	

@@ -1,32 +1,26 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-seo-gogetlinks</id>
-  <name>GoGetLinks</name>
-  <description>
-    Получается информацию о балансе для сервиса GoGetLinks (http://gogetlinks.net/)
-
-    Информация берется из личного кабинета (http://gogetlinks.net/my_campaigns.php)
-  </description>
-  <author>Alexandra Shalamova &lt;alexandrashalamova@gmail.com&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="balanceAvailable" name="Баланс доступно" units="р"/>
-    <counter id="balanceBlocked" name="Баланс блокировано" units="р"/>
-  </counters>
-  <keywords>
-    гоу гет линкс gogetlinks
-  </keywords>
-  <type>
-    seo
-  </type>
-  <country>
-    ru
-  </country>
+	<api flags="no_browser"/>
+	<id version="2">ab-seo-gogetlinks</id>
+	<name>GoGetLinks</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе сервиса GoGetLinks <a href="http://gogetlinks.net">http://gogetlinks.net</a></p>
+	<p>Информация берется из личного кабинета <a href="http://gogetlinks.net/my_campaigns.php">http://gogetlinks.net/my_campaigns.php</a></p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="balanceAvailable" name="Баланс доступно" units=" р"/>
+		<counter id="balanceBlocked" name="Баланс блокировано" units=" р"/>
+	</counters>
+	<keywords>гоу гет линкс gogetlinks</keywords>
+	<type>seo</type>
+	<country>ru</country>
 </provider>

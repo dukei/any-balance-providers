@@ -1,41 +1,34 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="4">ab-cell-du</id>
-  <name>du</name>
-  <description>
-    Retrieve balance and plan information from du (http://www.du.ae) selfcare.
-
-    The selfcare address is: https://selfcare.du.ae
-
-    If you still have not got du selfcare account please register here: https://selfcare.du.ae
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="More International Balance" units=" AED"/>
-    <counter id="till" name="Renewal date" type="time" format="MM/dd/yyyy"/>
-    <counter id="balance_md" name="More Data Balance" units=" Mb"/>
-    <counter id="till_md" name="More International Renewal date" type="time" format="MM/dd/yyyy"/>
-    <counter id="balance_mc" name="More Credit Balance" units=" AED"/>
-    <counter id="till_mc" name="More Credit Renewal date" type="time" format="MM/dd/yyyy"/>
-    <counter id="balance_mt" name="More Time Balance" units=" AED"/>
-    <counter id="till_mt" name="More Time Renewal date" type="time" format="MM/dd/yyyy"/>
-    <counter id="fio" name="Name" type="text"/>
-    <counter id="phone" name="Phone" type="text"/>
-  </counters>
-  <keywords>
-    
-  </keywords>
-  <type>
-    cell
-  </type>
-  <country>
-    ae
-  </country>
+	<api flags="no_browser"/>
+	<id version="5">ab-cell-du</id>
+	<name>Du (UAE)</name>
+	<description html="true"><![CDATA[
+	<p>Retrieve balance and plan information from du <a href="http://www.du.ae">http://www.du.ae</a> selfcare.</p>
+	<p>Selfcare is located at <a href="https://selfcare.du.ae">https://selfcare.du.ae</a></p>
+	<p>If you still have not got du selfcare account please register here <a href="https://selfcare.du.ae">https://selfcare.du.ae</a></p>
+	]]></description>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="More International Balance" units=" AED"/>
+		<counter id="till" name="Renewal date" type="time" format="MM/dd/yyyy"/>
+		<counter id="balance_md" name="More Data Balance" units=" Mb"/>
+		<counter id="till_md" name="More International Renewal date" type="time" format="MM/dd/yyyy"/>
+		<counter id="balance_mc" name="More Credit Balance" units=" AED"/>
+		<counter id="till_mc" name="More Credit Renewal date" type="time" format="MM/dd/yyyy"/>
+		<counter id="balance_mt" name="More Time Balance" units=" AED"/>
+		<counter id="till_mt" name="More Time Renewal date" type="time" format="MM/dd/yyyy"/>
+		<counter id="fio" name="Name" type="text"/>
+		<counter id="phone" name="Phone" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>cell</type>
+	<country>ae</country>
 </provider>

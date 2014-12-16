@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-municipal-tattg-gazprom</id>
+	<id version="3">ab-municipal-tattg-gazprom</id>
 	<api flags="no_browser"/>
 	<name>Газпром Трансгаз Казань</name>
 	<description html="true"><![CDATA[

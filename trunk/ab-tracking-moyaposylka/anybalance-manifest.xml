@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="12">ab-tracking-moyaposylka</id>
+	<id version="13">ab-tracking-moyaposylka</id>
 	<api flags="no_browser"/>
 	<name>Моя посылка</name>
 	<description html="true"><![CDATA[

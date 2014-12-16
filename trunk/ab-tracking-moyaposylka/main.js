@@ -69,17 +69,18 @@ function getMyPosylkaResult(prefs) {
 	});
 	
 	var token = json.result;
+	AnyBalance.trace("Получили токен: " + token);
 	
 	if(!token) {
 		AnyBalance.trace(JSON.stringify(json));
 		throw new AnyBalance.Error('Не удалось получить токен, сайт изменен?');
 	}	
 	
-	var retryCount = 5;
+	var retryCount = 7;
 	for(var i = 0; i < retryCount; i++) {
 		try {
 			AnyBalance.trace('Обновление данных №' + (i+1));
-			// Нужно дать данным обновится, иначе получим 404
+			// Нужно дать данным обновиться, иначе получим 404
 			sleep(3000);
 			json = apiCall({
 				"method":"getRequestInfo",
@@ -87,6 +88,13 @@ function getMyPosylkaResult(prefs) {
 					"token":token
 				}
 			});
+
+			if(typeof(json.result) == 'string'){
+				//Смена токена, похоже
+				AnyBalance.trace("Сменили токен: " + token);
+				token = json.result;
+				continue;
+			}
 			// Успешно прошли - прерываемся
 			break;
 		} catch(e) {

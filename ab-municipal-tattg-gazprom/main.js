@@ -32,23 +32,31 @@ function main() {
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	
+	AnyBalance.trace(abonentdata);
+	
 	var result = {success: true};
     
 	getParam(html, result, 'period', /<abonent>\s*<moment>([\s\S]*?)<\/moment>/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(abonentdata, result, '__tariff', /<account>([\s\S]*?)<\/account>/i, replaceTagsAndSpaces, html_entity_decode);
+	
     var gasp = getParam(abonentdata, null, null, /<gasp>([\s\S]*?)<\/gasp>/i, replaceTagsAndSpaces, html_entity_decode);
     var dat_gasp = getParam(abonentdata, null, null, /<dat_gasp>([\s\S]*?)<\/dat_gasp>/i, replaceTagsAndSpaces, html_entity_decode);
-    if(gasp && dat_gasp) result.gasp = gasp + ' на дату ' + dat_gasp;
-	getParam(abonentdata, result, 'barcode_gas', /(?:газоснабжение[\s\S]*?<barcode>)([\s\S]*?)<\/barcode>/i, replaceTagsAndSpaces, html_entity_decode);    
-	getParam(abonentdata, result, 'barcode_tech', /(?:техобслуживание[\s\S]*?<barcode>)([\s\S]*?)<\/barcode>/i, replaceTagsAndSpaces, html_entity_decode);    
-	getParam(abonentdata, result, 'begsaldo_gas', /(?:газоснабжение[\s\S]*?<begsaldo>)([\s\S]*?)<\/begsaldo>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(abonentdata, result, 'charged_gas', /(?:газоснабжение[\s\S]*?<charged>)([\s\S]*?)<\/charged>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(abonentdata, result, 'paid_gas', /(?:газоснабжение[\s\S]*?<paid>)([\s\S]*?)<\/paid>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(abonentdata, result, 'endsaldo_gas', /(?:газоснабжение[\s\S]*?<endsaldo>)([\s\S]*?)<\/endsaldo>/i, replaceTagsAndSpaces, parseBalance);    
-	getParam(abonentdata, result, 'begsaldo_tech', /(?:техобслуживание[\s\S]*?<begsaldo>)([\s\S]*?)<\/begsaldo>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(abonentdata, result, 'charged_tech', /(?:техобслуживание[\s\S]*?<charged>)([\s\S]*?)<\/charged>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(abonentdata, result, 'paid_tech', /(?:техобслуживание[\s\S]*?<paid>)([\s\S]*?)<\/paid>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(abonentdata, result, 'endsaldo_tech', /(?:техобслуживание[\s\S]*?<endsaldo>)([\s\S]*?)<\/endsaldo>/i, replaceTagsAndSpaces, parseBalance);
+    
+	if(gasp && dat_gasp) 
+		result.gasp = gasp + ' на дату ' + dat_gasp;
+	
+	// ГАЗ
+    getParam(abonentdata, result, 'barcode_gas', /газоснабжение(?:[^>]*>){6,14}<barcode>(\d{10,})/i, replaceTagsAndSpaces, html_entity_decode);    
+	getParam(abonentdata, result, 'begsaldo_gas', /газоснабжение(?:[^>]*>){1,14}<begsaldo>([\s\S]*?)<\/begsaldo>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(abonentdata, result, 'charged_gas', /газоснабжение(?:[^>]*>){1,14}<charged>([\s\S]*?)<\/charged>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(abonentdata, result, 'paid_gas', /газоснабжение(?:[^>]*>){1,14}<paid>([\s\S]*?)<\/paid>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(abonentdata, result, 'endsaldo_gas', /газоснабжение(?:[^>]*>){1,14}<endsaldo>([\s\S]*?)<\/endsaldo>/i, replaceTagsAndSpaces, parseBalance);    
+	// Техобслуживание
+	getParam(abonentdata, result, 'barcode_tech', /техобслуживание(?:[^>]*>){6,14}<barcode>(\d{10,})/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(abonentdata, result, 'begsaldo_tech', /техобслуживание(?:[^>]*>){1,14}<begsaldo>([\s\S]*?)<\/begsaldo>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(abonentdata, result, 'charged_tech', /техобслуживание(?:[^>]*>){1,14}<charged>([\s\S]*?)<\/charged>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(abonentdata, result, 'paid_tech', /техобслуживание(?:[^>]*>){1,14}<paid>([\s\S]*?)<\/paid>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(abonentdata, result, 'endsaldo_tech', /техобслуживание(?:[^>]*>){1,14}<endsaldo>([\s\S]*?)<\/endsaldo>/i, replaceTagsAndSpaces, parseBalance);
 	
 	AnyBalance.setResult(result);
 }

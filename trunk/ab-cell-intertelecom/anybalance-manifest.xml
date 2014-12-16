@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="33">ab-cell-intertelecom</id>
+  <id version="34">ab-cell-intertelecom</id>
   <api flags="no_browser" />
   <name>Интертелеком</name>
 	<description html="true"><![CDATA[
@@ -40,6 +40,7 @@
     <counter id="traffic_session" name="Трафик за текущую сессию" units=" mb"/>
     <counter id="bonus_fb" name="Бонус по акциям" suffix=" ₴" type="numeric" flags="zero_when_empty"/>
     <counter id="bonus_vd" name="Бонус «Вільний доступ»" suffix=" ₴" type="numeric" flags="zero_when_empty"/>
+    <counter id="sms_ukr" name="СМС по Украине" suffix=" sms" type="numeric" flags="zero_when_empty"/>    
     <counter id="traffic_action" name="Трафик по акции" units=" mb" flags="zero_when_empty"/>
     <counter id="bonus_action_current" name="Акционный счет на текущий месяц" suffix=" ₴" type="numeric" flags="zero_when_empty"/>
     <counter id="bonus_action_next" name="Акционный счет на следующие месяцы" suffix=" ₴" type="numeric" flags="zero_when_empty"/>
@@ -47,6 +48,7 @@
     <counter id="date_bonus_fb" name="Срок действия бонусов по акциям" type="time" format="dd/MM/yyyy"/>
     <counter id="date_traffic_action" name="Срок действия трафика по акции" type="time" format="dd/MM/yyyy"/>
     <counter id="date_bezlimit" name="Срок действия безлимита на скорости до 128 Кбит/с" type="time" format="dd/MM/yyyy"/>
+    <counter id="date_sms_ukr" name="Срок действия СМС по Украине" type="time" format="dd/MM/yyyy"/>
     <counter id="skidka" name="Размер скидки по программе лояльности «Наилучшее общение»" suffix="%" type="numeric"/>
     <counter id="loyalty" name="Лояльный стаж" type="time_interval" format="{@Y}:{@mo}"/>
     <counter id="mobsubscr" name="Абонентский стаж" type="time_interval" format="{@Y}:{@mo}"/>

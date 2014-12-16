@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-education-novayashkola</id>
+	<api flags="no_browser"/>
+	<name>Новая школа</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера "Новая школа" <a href="https://www.novayashkola.ru/ecafe.html">https://www.novayashkola.ru/ecafe.html</a></p>
+	<p>Информация берется из личного кабинета <a href="https://www.novayashkola.ru/ecafe/cabinet.html">https://www.novayashkola.ru/ecafe/cabinet.html</a></p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="number" name="Номер лицевого счета" type="text"/>
+		<counter id="status" name="Состояние договора" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>education, service</type>
+	<country>ru</country>
+</provider>

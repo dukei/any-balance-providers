@@ -53,6 +53,10 @@ function main() {
     sumParam(html, result, 'bonus_fb', /<td[^>]*>\s*Бонус [^>]*На лето[^>]*\s*[^>]*на доп.услуги[^>]*\s*<\/td>\s*<td[^>]*>([\s\S]*?) \([^<]*\)\s*<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     //Бонус «Вільний доступ»    [^>]*<\/td>
     getParam(html, result, 'bonus_vd', /<td[^>]*>\s*Бонус [^>]*Вільний доступ[^>]*\s*<\/td>\s*<td[^>]*>([\s\S]*?) \([^>]*\)\s*<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    //СМС по Украине
+    sumParam(html, result, 'sms_ukr', />\s*сеть ИТ\+CDMA\+GSM операторов\s*<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    //Срок действия СМС по Украине
+    sumParam(html, result, 'date_sms_ukr', />\s*сеть ИТ\+CDMA\+GSM операторов\s*<[\s\S]*?<td[^>]*>[\s\S]*? по ([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
     //Дата Бонус контактный номер
     sumParam(html, result, 'date_bonus_fb', /<td[^>]*>\s*Бонус за контактный номер\s*<\/td>\s*<td[^>]*>\s*.* \(по ([^<]*)\)\s*</ig, replaceTagsAndSpaces, parseDate, aggregate_min);
     //Дата Бонус "Угадай код"

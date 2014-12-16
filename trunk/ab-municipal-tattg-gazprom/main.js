@@ -12,7 +12,7 @@ var g_headers = {
 function main() {
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'http://tattg.gazprom.ru/';
-	AnyBalance.setDefaultCharset('utf-8');
+	AnyBalance.setDefaultCharset('windows-1251');
 	
 	checkEmpty(prefs.login, 'Введите лицевой счет!');
 	

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-tracking-yanwen</id>
+	<api flags="no_browser"/>
+	<name>Yanwen</name>
+	<description html="true"><![CDATA[
+	<p>Получает данные по номеру почтового отправления на сайте <a href="http://track.yw56.com.cn/en-US/">http://track.yw56.com.cn/en-US/</a></p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="fulltext" name="Сводка" type="html"/>
+		<counter id="days" name="Кол-во дней" type="text"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="destination" name="Страна назначения" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>tracking, post</type>
+	<country></country>
+</provider>

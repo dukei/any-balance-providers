@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-money-alfabank-by</id>
+	<api flags="no_browser"/>
+	<name>Альфа-Банк (Белоруссия)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе на картах, кредитах и депозитах Альфа-Банка Белоруссия <a href="http://www.alfabank.by/">http://www.alfabank.by/</a></p>
+	<p>Информация берется из личного кабинета <a href="https://click.alfa-bank.by/webBank/private/details.action">https://click.alfa-bank.by/webBank/private/details.action</a></p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+        <counter id="card_number" name="Номер карты" type="text"/>
+        <counter id="card_type" name="Название карты" type="text"/>
+        <counter id="card_curr" name="Валюта карты" type="text"/>
+        <counter id="acc_number" name="Номер счёта" type="text"/>
+        <counter id="expires" name="Срок окончания действия карты" type="text"/>
+        <counter id="status" name="Статус карты" type="text"/>
+        <counter id="acc_type" name="Тип счёта" type="text"/>
+		<counter id="balance" name="Доступный остаток" units=" {@currency}"/>
+		<counter id="limit" name="Кредитный лимит" units=" {@currency}"/>
+		<counter id="min_balance" name="Неснижаемый остаток" units=" {@currency}"/>
+		<counter id="rate" name="Текущая процентная ставка " units=" %"/>
+	</counters>
+	<keywords></keywords>
+	<type>money</type>
+	<country>by</country>
+</provider>

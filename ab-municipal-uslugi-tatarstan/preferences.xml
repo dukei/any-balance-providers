@@ -26,10 +26,30 @@
 		title="ИНН"
 		key="inn"
 		summary="||{@s}"
-		obligatory="true"
 		dialogTitle="ИНН"
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
 		dialogMessage="Введите ИНН.">
 	</EditTextPreference>
+	
+	<EditTextPreference 
+        title="Номера машин" 
+        positiveButtonText="ОК" 
+        summary="|Формат ввода: cXXXccRR или XXXXccRR|{@s}" 
+        dialogTitle="Номер машины" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите номера машин через запятую (до 3х) в формате cXXXccRR для автомобиля или XXXXccRR для мотоцикла, где с - буква, X - цифра, RR - номер региона (2 или 3 цифры)\nЛибо оставьте это поле пустым, чтобы получить данные из информеров."
+        inputType="text"
+        key="plate">
+    </EditTextPreference>
+    <EditTextPreference 
+        title="Свидетельства о регистрации" 
+        positiveButtonText="ОК" 
+        summary="|Введите последние 6 цифр|{@s}" 
+        dialogTitle="Свидетельства о регистрации" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите последние 6 цифр номеров свидетельства о регистрации ТС через запятую (до 3х)\nЛибо оставьте это поле пустым, чтобы получить данные из информеров."
+        inputType="number"
+        key="sr">
+    </EditTextPreference>
 </PreferenceScreen>

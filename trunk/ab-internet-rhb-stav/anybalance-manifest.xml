@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-rhb-stav</id>
+	<api flags="no_browser"/>
+	<name>CCS</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера CCS <a href="http://stav.ru/">http://stav.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="http://rhb.stav.ru/login">http://rhb.stav.ru/login</a></p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="abon_payment" name="Ежемесячная абонентская плата" units=" р"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="phone_status" name="Статус телефона" type="text"/>
+		<counter id="phone" name="Номер телефона" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet, tv, telephony</type>
+	<country>ru</country>
+</provider>

@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="106" date="2014-12-17">
+	- Исправлено получение ФИО.
+	</change>
 	<change version="105" date="2014-12-12">
 	- Улучшено получение трафика в кабинете для юр. лиц.
 	</change>

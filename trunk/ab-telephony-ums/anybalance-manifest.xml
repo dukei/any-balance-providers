@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-telephony-ums</id>
+	<api flags="no_browser"/>
+	<name>UMS</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера UMS <a href="http://ums.uz/ru/">http://ums.uz/</a></p>
+	<p>Информация берется из личного кабинета <a href="https://ip.ums.uz/selfcare/">https://ip.ums.uz/selfcare/</a></p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" {@currency}"/>
+		<counter id="traffic" name="Остаток трафика" units=" Mb"/>
+		<counter id="minutes" name="Остаток минут" units=" мин"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="phone" name="Номер" type="text"/>
+		<counter id="acc" name="Лицевой счет" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>telephony</type>
+	<country>uz</country>
+</provider>

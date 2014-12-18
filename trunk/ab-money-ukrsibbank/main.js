@@ -62,7 +62,7 @@ function fetchCard(html, baseurl) {
 	var lastdigits = prefs.lastdigits ? prefs.lastdigits : '';
 	
 	// <tr class="darkRow"(?:[^>]*>){15}\s*\d+0885(?:[^>]*>){14}\s*<\/tr>
-	var reCard = new RegExp('<tr class="darkRow"(?:[^>]*>){15}\\s*\\d+' + lastdigits + '(?:[^>]*>){14}\\s*</tr>', 'i');
+	var reCard = new RegExp('<tr class="darkRow"(?:[^>]*>){15}\\s*\\d+' + lastdigits + '(?:[^>]*>){10,20}\\s*</tr>', 'i');
 	
 	var tr = getParam(html, null, null, reCard);
 	if(!tr)

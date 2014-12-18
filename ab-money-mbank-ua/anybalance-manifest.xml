@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-money-mbank-ua</id>
+	<id version="3">ab-money-mbank-ua</id>
 	<api flags="no_browser"/>
 	<name>Банк Михайлівський</name>
 	<description html="true"><![CDATA[
@@ -23,6 +23,7 @@
 		<counter id="balance_my" name="Баланс власний" units=" {@currency}"/>
 		<counter id="balance_vklad" name="Мої вклади" units=" {@currency}"/>
 		<counter id="balance_kred" name="Мої кредити" units=" {@currency}"/>
+		<counter id="messages" name="Повідомлення"/>
 	</counters>
 	<keywords>банк михійлівський картки рахунки</keywords>
 	<type>money</type>

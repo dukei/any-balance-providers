@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-exchange-yandex</id>
+	<api flags="no_browser"/>
+	<name>Яндекс Котировки</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о котировках с сайта <a href="http://news.yandex.ru/quotes/">http://news.yandex.ru/quotes/</a></p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="date" name="Дата" type="text"/>
+		<counter id="usd_rate" name="Курс USD" units=" RUR"/>
+		<counter id="usd_change" name="Изменение USD"/>
+		<counter id="brent_rate" name="Курс ICE.Brent" units=" USD/баррель"/>
+		<counter id="brent_change" name="Изменение ICE.Brent" units=" %"/>
+	</counters>
+	<keywords></keywords>
+	<type>exchange</type>
+	<country>ru</country>
+</provider>

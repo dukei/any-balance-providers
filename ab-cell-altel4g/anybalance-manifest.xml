@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2.0" version="2">ab-cell-altel4g</id>
+	<id major_version="2.0" version="3">ab-cell-altel4g</id>
 	<api flags="no_browser"/>
 	<name>ALTEL 4G (Казахстан)</name>
 	<description html="true"><![CDATA[
@@ -26,6 +26,11 @@
 		<counter id="till" name="Срок действия" type="time" format="dd/MM/yyyy"/>
 		
 		<counter id="min_left" name="Остаток минут" type="time_interval" format="{@MIN}:{@sec}"/>
+		
+		<counter id="min_left_gsm" name="Остаток минут на GSM" type="time_interval" format="{@MIN}:{@sec}"/>
+		<counter id="min_left_city" name="Остаток минут на город" type="time_interval" format="{@MIN}:{@sec}"/>
+		
+		
 		<counter id="sms_left" name="Остаток смс" units=" шт"/>
 		
 		<counter id="traffic_left" name="Остаток трафика" units=" Мб"/>

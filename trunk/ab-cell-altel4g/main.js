@@ -45,6 +45,11 @@ function main(){
     getParam(html, result, 'traffic_left', /([\d.,\s]+\s*(?:[^>]*>){2}\s*Мб)/i, replaceTagsAndSpaces, parseTraffic);
 	// Минуты внутри сети
 	getParam(html, result, 'min_left', /(\d+:\d+)\s*(?:[^>]*>){2}\s*Мин(?:[^>]*>){3}\s*Внутри сети/i, replaceTagsAndSpaces, parseMinutes);
+	// Минуты на GSM
+	getParam(html, result, 'min_left_gsm', /(\d+:\d+)\s*(?:[^>]*>){2}\s*Мин(?:[^>]*>){3}\s*на GSM/i, replaceTagsAndSpaces, parseMinutes);
+	// Минуты на город
+	getParam(html, result, 'min_left_city', /(\d+:\d+)\s*(?:[^>]*>){2}\s*Мин(?:[^>]*>){3}\s*на город/i, replaceTagsAndSpaces, parseMinutes);	
+	
 	// Смс внутри сети
 	getParam(html, result, 'sms_left', /(\d+)\s*(?:[^>]*>){2}\s*СМС(?:[^>]*>){3}\s*Внутри сети/i, replaceTagsAndSpaces, parseBalance);
     

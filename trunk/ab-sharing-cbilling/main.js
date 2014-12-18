@@ -68,7 +68,7 @@ function main() {
 	getParam(html, result, 'balance', /Ваш баланс:([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, ['currency', 'balance'], /Ваш баланс:([^<]*)/i, replaceTagsAndSpaces, parseCurrency);
 	getParam(html, result, '__tariff', /<fieldset[^>]*>[^>]*>Ваши пакеты(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'date', /<fieldset[^>]*>[^>]*>Ваши пакеты(?:[\s\S]*?<td[^>]*>){8}([\s\S]*?)</i, replaceTagsAndSpaces, parseDateISO);
+	getParam(html, result, 'date', /<fieldset[^>]*>[^>]*>Ваши пакеты(?:[\s\S]*?<td[^>]*>){8}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseDateISO);
 	getParam(html, result, 'server', /Ваш сервер:([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'days', /Осталось дней([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
 	

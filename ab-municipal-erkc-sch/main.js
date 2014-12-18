@@ -7,11 +7,23 @@ var g_headers = {
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection': 'keep-alive',
-	// Mobile
-	//'User-Agent':'Mozilla/5.0 (BlackBerry; U; BlackBerry 9900; en-US) AppleWebKit/534.11+ (KHTML, like Gecko) Version/7.0.0.187 Mobile Safari/534.11+',
-	// Desktop
 	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
 };
+
+var g_months = [
+	'Январь',
+	'Февраль',
+	'Март',
+	'Апрель',
+	'Май',
+	'Июнь',
+	'Июль',
+	'Август',
+	'Сентябрь',
+	'Октябрь',
+	'Ноябрь',
+	'Декабрь'
+];
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
@@ -45,10 +57,49 @@ function main() {
 	
 	var result = {success: true};
 	
-	var balance = getParam(html, null, null, /Начисления\s*<\/strong>(?:[^>]*>){5}[^>]*value=([-\d\s,."]+)/i, replaceTagsAndSpaces, parseBalance);
-	var comission = getParam(html, null, null, /Начисления\s*<\/strong>(?:[^>]*>){26}\*?Комиссия[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(getValue(html, 'Начислени(?:е|я)'), result, 'balance');
+	// ИТОГО со страхованием жилья
+	getParam(getValue(html, 'Страхование жилья'), result, 'balance_ins');
+	// ИТОГО со страх.гражданской ответственности
+	getParam(getValue(html, 'Гражданская отвественность'), result, 'balance_go');
+	// ИТОГО со страхо.жилья и страх.гражданской ответственности
+	getParam(getValue(html, 'Полное страхование'), result, 'balance_total');
 	
-	getParam(balance-comission, result, 'balance');
+	// Отчетный период
+	var dt = new Date();
+	var month = dt.getMonth();
+	var year = dt.getFullYear();
+	
+	if (month != 0)
+		var period = g_months[month-1] + ' ' + year;
+	else
+		var period = g_months[11] + ' ' + (--year);
+	
+	getParam(period, result, 'period_total');
+	getParam(period, result, '__tariff');
+	
+	if(isAvailable(['pay_date', 'pay_sum', 'pay_place'])) {
+		html = AnyBalance.requestGet(baseurl + 'modules/alcom_konsalt/payment', g_headers);
+		
+		var tr = getParam(html, null, null, /<tr>\s*<td[^>]*>\d{1,2}\.\d{1,2}\.\d{4}(?:[^>]*>){5}\s*<\/tr>/i);
+		if(tr) {
+			getParam(tr, result, 'pay_date', /\d{1,2}\.\d{1,2}\.\d{4}/i, replaceTagsAndSpaces);
+			getParam(tr, result, 'pay_sum', /<tr>\s*(?:[^>]*>){3}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+			getParam(tr, result, 'pay_place', /<tr>\s*(?:[^>]*>){4}([\s\S]*?)<\//i, replaceTagsAndSpaces);
+		} else {
+			AnyBalance.trace('Не удалось найти платежи.');
+		}
+	}
 	
 	AnyBalance.setResult(result);
+}
+
+function getValue(html, name) {
+	var balance = getParam(html, null, null, new RegExp(name + '[^<]*</strong>(?:[^>]*>){5}[^>]*value=([-\\d\\s,."]+)', 'i'), replaceTagsAndSpaces, parseBalance);
+	var comission = getParam(html, null, null, new RegExp(name + '[^<]*</strong>(?:[^>]*>){20,30}\\*?Комиссия[^>]*>([^<]+)', 'i'), replaceTagsAndSpaces, parseBalance);
+	
+	if(isset(balance) && isset(comission))
+		return (balance-comission).toFixed(2);
+	else
+		return 0;
 }

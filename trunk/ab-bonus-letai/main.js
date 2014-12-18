@@ -12,16 +12,16 @@ var g_headers = {
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-    var baseurl = "http://bonus.letai.ru/";
+    var baseurl = "https://bonus.letai.ru:8443/";
     AnyBalance.setDefaultCharset('utf-8'); 
-
-    var html = AnyBalance.requestGet(baseurl + 'portal/site/letaibonus/template.LOGIN/', g_headers);
+	
+    var html = AnyBalance.requestGet(baseurl + 'template.LOGIN/', g_headers);
 
     var VGN_NONCE = getParam(html, null, null, /VGN_NONCE"\s*value="([\s\S]*?)"/i, null, html_entity_decode);
     if(!VGN_NONCE)
-        throw new AnyBalance.Error('Не удалось токен авторизации. Сайт изменен?');
+        throw new AnyBalance.Error('Не удалось найти токен авторизации. Сайт изменен?');
 
-    html = AnyBalance.requestPost(baseurl + 'portal/site/letaibonus/template.LOGIN/action.process/', {
+    html = AnyBalance.requestPost(baseurl + 'template.LOGIN/action.process/', {
         'entrance':'login', 
         'VGN_NONCE':VGN_NONCE, 
         login:prefs.login,

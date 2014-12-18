@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-exchange-valuta-today</id>
+	<api flags="no_browser"/>
+	<name>Valuta.Today</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о курсе обмена доллара США в Украине с сайта <a href="http://valuta.today/ukraine/USD/mastercard.html">http://valuta.today/ukraine/USD/mastercard.html</a></p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="buy" name="Покупка $"/>
+		<counter id="buy_rate_change" name="Изменение курса покупки $"/>
+		<counter id="sell" name="Продажа $"/>
+		<counter id="sell_rate_change" name="Изменение курса продажи $"/>
+		<counter id="date" name="Дата" type="time" format="dd/MM/yyyy"/>
+	</counters>
+	<keywords></keywords>
+	<type>exchange</type>
+	<country>ua</country>
+</provider>

@@ -1,8 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser" />
-	<id version="1">ab-bonus-letai</id>
+	<id version="2">ab-bonus-letai</id>
 	<name>Летай (Бонусы)</name>
 	<description>
 		Получает бонусные баллы интернет провайдера Летай (http://letai.ru/) (Таттелеком http://tattelecom.ru/)

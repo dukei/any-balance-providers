@@ -7,7 +7,7 @@ var g_headers = {
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.65 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36',
 };
 
 function main() {
@@ -36,8 +36,9 @@ function main() {
 	var result = {success: true};
 
 	getParam(html, result, '__tariff', /home.png" \/>\s*<\/span>\s*<span class=[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'messages', /messagesCount = ko.observable\({"count":([\s\S]*?)} .count\);/i, replaceTagsAndSpaces, html_entity_decode);
 
-	html = AnyBalance.requestGet(baseurl + 'uk/widgets/products/balance/data/'+ prefs.curn +'?_=' + new Date().getTime(), g_headers);
+	html = AnyBalance.requestGet(baseurl + 'uk/widgets/products/balance/data/'+ prefs.curn +'?_=' + new Date().getTime());
 	var json = getJson(html);
 
 	getParam(json.AccountsAvailableAmount/100, result, 'balance');

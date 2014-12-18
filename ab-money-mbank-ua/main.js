@@ -38,7 +38,7 @@ function main() {
 	getParam(html, result, '__tariff', /home.png" \/>\s*<\/span>\s*<span class=[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'messages', /messagesCount = ko.observable\({"count":([\s\S]*?)} .count\);/i, replaceTagsAndSpaces, html_entity_decode);
 
-	html = AnyBalance.requestGet(baseurl + 'uk/widgets/products/balance/data/'+ prefs.curn +'?_=' + new Date().getTime());
+	html = AnyBalance.requestGet(baseurl + 'uk/widgets/products/balance/data/'+ prefs.curn +'?_=' + new Date().getTime(), g_headers);
 	var json = getJson(html);
 
 	getParam(json.AccountsAvailableAmount/100, result, 'balance');

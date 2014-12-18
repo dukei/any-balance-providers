@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-municipal-erkc-sch</id>
+	<id version="2">ab-municipal-erkc-sch</id>
 	<api flags="no_browser"/>
 	<name>ЕРКЦ Щелково</name>
 	<description html="true"><![CDATA[
@@ -16,7 +16,14 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Начисления" units=" р"/>
+		<counter id="balance" name="ИТОГО по услугам" units=" р"/>
+		<counter id="balance_ins" name="ИТОГО со страхованием жилья" units=" р"/>
+		<counter id="balance_go" name="ИТОГО со страхованием ГО" units=" р"/>
+		<counter id="balance_total" name="ИТОГО со страхованием жилья и страхованием ГО" units=" р"/>
+
+		<counter id="pay_date" name="Дата оплаты" type="text"/>
+		<counter id="pay_sum" name="Сумма оплаты" units=" р"/>
+		<counter id="pay_place" name="Место оплаты" type="text"/>
 	</counters>
 	<keywords></keywords>
 	<type>municipal</type>

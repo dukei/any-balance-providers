@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="2">ab-internet-nline</id>
+	<id version="3">ab-internet-nline</id>
 	<name>ЭНЛАЙН (Москва)</name>
 	<description>
     Получает баланс и информацию о тарифном плане для московского интернет-провайдера ЭНЛАЙН (http://nline.ru).

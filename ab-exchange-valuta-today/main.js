@@ -11,21 +11,27 @@ var g_headers = {
 };
 
 function main() {
+	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'http://valuta.today/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
-	var html = AnyBalance.requestGet(baseurl + 'ukraine/USD/mastercard.html', g_headers);
+	var html = AnyBalance.requestGet(baseurl, g_headers);
 	
 	if(!html || AnyBalance.getLastStatusCode() > 400)
-		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+		throw new AnyBalance.Error('Ошибка при подключении к сайту! Попробуйте обновить данные позже.');
+	
+    var quote = prefs.quote || 'USD';
+	
+    html = AnyBalance.requestGet(baseurl + 'ukraine/' + quote + '/mastercard.html', g_headers);
 	
 	var result = {success: true};
-	
-	getParam(html, result, 'date', /Курс доллара США в Украине(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseDate);
+
+	getParam(html, result, 'rate_date', /на\s*(\d{2}\.\d{2}\.\d{2,4})/i, replaceTagsAndSpaces, parseDate);
 	getParam(html, result, 'buy', /Покупка(?:[^>]*>){3}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'buy_rate_change', /Покупка(?:[^>]*>){5}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'sell', /Продажа(?:[^>]*>){3}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'sell_rate_change', /Продажа(?:[^>]*>){5}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	
+	getParam(html, result, '__tariff', /<title>\s*Курсы валют\s*-([^]+)<\/title>/i, replaceTagsAndSpaces, html_entity_decode);
+    
 	AnyBalance.setResult(result);
 }

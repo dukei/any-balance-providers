@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <ListPreference 
+        key="quote" 
+        title="Валюта"
+        summary="||{@s}"
+        entries="Курс обмена доллара США|Курс обмена доллара евро"
+        entryValues="USD|EUR"
+	    defaultValue="USD">
+    </ListPreference>
+</PreferenceScreen>

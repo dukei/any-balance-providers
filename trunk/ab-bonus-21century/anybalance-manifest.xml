@@ -1,14 +1,15 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
+	<id version="2">ab-bonus-21century</id>
 	<api flags="no_browser" />
-	<id version="1">ab-bonus-21century</id>
 	<name>21 Век Бонус (Беларусь)</name>
-	<description>
-		Получает данные по бонусным картам 21 Век Бонус Беларусь http://bonus.21vek.by/
-		
-		Обратите внимание, дату рождения необходимо вводить без паролей, пробелов и точек, только цифры, подряд.
-	</description>
+	<description html="true"><![CDATA[
+	<p>Получает данные по бонусным картам 21 Век Бонус Беларусь <a href="http://bonus.21vek.by/">http://bonus.21vek.by/</a></p>
+	]]></description>    
+	<instruction html="true"><![CDATA[
+	<p>Обратите внимание, дату рождения необходимо вводить без пробелов и точек, только цифры подряд.</p>
+	]]></instruction>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
@@ -18,10 +19,7 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units="р"/>
-		<counter id="fio" name="ФИО" type="text"/>
-		<counter id="status" name="Статус" type="text"/>
-		<counter id="phone" name="Телефон" type="text"/>
+		<counter id="balance" name="Баланс" units=" {@curr}"/>
 	</counters>
 	<keywords></keywords>
 	<type>bonus</type>

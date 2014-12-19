@@ -14,6 +14,14 @@ function main(){
     var prefs = AnyBalance.getPreferences();
     var baseurl = "http://bonus.21vek.by/";
     AnyBalance.setDefaultCharset('utf-8'); 
+	
+	checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(prefs.password, 'Введите пароль!');
+	
+	var html = AnyBalance.requestGet(baseurl, g_headers);
+	
+	if(!html || AnyBalance.getLastStatusCode() > 400)
+		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 
 	var pass = '';
 	var parts = /(\d{2})(\d{2})(\d{4})/i.exec(prefs.password)
@@ -23,20 +31,28 @@ function main(){
 	}
 	else
 		throw new AnyBalance.Error('Дату рождения не удалось преобразовать в нужный формат, введите дату рождения без пробелов и точек, например 15101988');
-	var html = AnyBalance.requestPost(baseurl + 'balance/', {
-        'data[number]':prefs.login,
-        'data[birthday]':pass,
-    }, g_headers); 
+        
+	html = AnyBalance.requestPost(baseurl + 'balance/', {
+        'data[number]': prefs.login,
+        'data[birthday]': pass
+    }, addHeaders({'X-Requested-With': 'XMLHttpRequest'})); 
 
 	var json = getJson(html);
-	if(json.balance == false)
-	{	
+    
+	if(!json.balance){	    
 		var error = getParam(json.msg, null, null, null, replaceTagsAndSpaces, html_entity_decode);
-		throw new AnyBalance.Error('Не удалось получить баланс, причина: '+error );
+		if (error)
+			throw new AnyBalance.Error(error, null, /не найдена|проверьте правильность введенных данных/i.test(error));
+		
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 
     var result = {success: true};
+    
     getParam(json.balance, result, 'balance', null, replaceTagsAndSpaces, parseBalance);
+    getParam(json.unit, result, 'curr', null, replaceTagsAndSpaces, html_entity_decode);
+    getParam(json.number, result, '__tariff', null, replaceTagsAndSpaces, html_entity_decode);
 
     AnyBalance.setResult(result);
 }

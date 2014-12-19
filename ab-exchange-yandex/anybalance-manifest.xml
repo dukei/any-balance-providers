@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-exchange-yandex</id>
+	<id version="2">ab-exchange-yandex</id>
 	<api flags="no_browser"/>
 	<name>Яндекс Котировки</name>
 	<description html="true"><![CDATA[
@@ -15,11 +15,9 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="date" name="Дата" type="text"/>
-		<counter id="usd_rate" name="Курс USD" units=" RUR"/>
-		<counter id="usd_change" name="Изменение USD"/>
-		<counter id="brent_rate" name="Курс ICE.Brent" units=" USD/баррель"/>
-		<counter id="brent_change" name="Изменение ICE.Brent" units=" %"/>
+		<counter id="rate_val" name="Курс" units=" {@units}"/>
+		<counter id="rate_diff" name="Изменение" type="text"/>
+		<counter id="rate_date" name="Дата" type="text"/>
 	</counters>
 	<keywords></keywords>
 	<type>exchange</type>

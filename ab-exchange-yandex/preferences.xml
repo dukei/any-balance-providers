@@ -3,9 +3,9 @@
     <ListPreference 
         key="quote" 
         title="Котировка"
-        summary="Динамика курса USD ЦБ РФ, руб.|Динамика цен на Нефть Brent(ICE.Brent), USD/баррель\n|{@s}\n"
-        entries="Динамика курса USD ЦБ РФ, руб.|Динамика цен на Нефть Brent(ICE.Brent), USD/баррель"
-        entryValues="usd|brent"
-	    defaultValue="usd">
+        summary="||{@s}"
+        entries="Динамика курса USD ЦБ РФ, руб|Динамика цен на Нефть Brent(ICE.Brent), USD/баррель"
+        entryValues="1|1006"
+	    defaultValue="1">
     </ListPreference>
 </PreferenceScreen>

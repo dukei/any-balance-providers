@@ -18,37 +18,19 @@ function main() {
 	var html = AnyBalance.requestGet(baseurl + 'quotes/', g_headers);
 	
 	if(!html || AnyBalance.getLastStatusCode() > 400)
-		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+		throw new AnyBalance.Error('Ошибка при подключении к сайту! Попробуйте обновить данные позже.');
 	
-    var quote = prefs.quote || 'usd';
-    
-    if (quote == 'usd') {
-        getInfo(baseurl, '1.html', quote);
-    } else if (quote == 'brent'){
-        getInfo(baseurl, '1006.html', quote);
-    }
-}
-
-function getInfo(baseurl, href, quote) {
-
-    html = AnyBalance.requestGet(baseurl + 'quotes/' + href, g_headers);
+    var quote = prefs.quote || '1';
+	
+    html = AnyBalance.requestGet(baseurl + 'quotes/' + quote + '.html', g_headers);
+	
 	var result = {success: true};
 	
-	getParam(html, result, 'date', /Дата(?:[^>]*>){8}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, quote + '_rate', /Курс<(?:[^>]*>){10}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, quote + '_change', /Изменение(?:[^>]*>){11}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'rate_date', /Дата(?:[^>]*>){8}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'rate_val', /Курс<(?:[^>]*>){10}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'rate_diff', /Изменение(?:[^>]*>){11}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+	getParam(html, result, '__tariff', /title_color_grey[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(result.__tariff, result, 'units', /,([\S\s]*?)$/i, [replaceTagsAndSpaces, /\.$/, ''], html_entity_decode);
 	
 	AnyBalance.setResult(result);
 }
-
-
-
-
-
-
-
-
-
-
-
-

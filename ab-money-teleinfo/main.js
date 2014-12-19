@@ -53,13 +53,12 @@ function doNew(prefs) {
 		throw new AnyBalance.Error('Не удалось зайти в Телеинфо. Сайт изменен?');
 	}
 	
-	html = AnyBalance.requestGet(baseurl + json.redirectTo, g_headers);
+	html = AnyBalance.requestGet(baseurl + (json.redirectTo || '').replace(/\/$/, ''), g_headers);
 	
-	if (prefs.type == 'abs') {
+	/*if (prefs.type == 'abs') {
 		fetchAccountABS(baseurl);
-	} else {
+	} else */
 		fetchCardNew(baseurl, html, json);
-	}		
 }
 
 function doOld(prefs) {
@@ -142,7 +141,7 @@ function fetchCardNew(baseurl, html, json) {
 			for (var z = 0; z < curr.items.length; z++) {
 				var item = curr.items[z];
 				// Вот, наконец-то нашли
-				if(/Счета и карты/i.test(item.name)) {
+				if(/Счета и карты|Вклады и сбережения/i.test(item.name)) {
 					// Ищем нужную
 					for(var r = 0; r < item.products.length; r++) {
 						var product = item.products[r];
@@ -192,6 +191,7 @@ function fetchCardNew(baseurl, html, json) {
 
 function fetchAccountABS(baseurl) {
 	var prefs = AnyBalance.getPreferences();
+	
 	var html = AnyBalance.requestGet(baseurl + 'Accounts/Accounts.aspx?_ra=4');
 	if (prefs.card && !/^\d{4,20}$/.test(prefs.card)) 
 		throw new AnyBalance.Error('Пожалуйста, введите не менее 4 последних цифр номера счета, по которому вы хотите получить информацию, или не вводите ничего, чтобы получить информацию по первому счету.');

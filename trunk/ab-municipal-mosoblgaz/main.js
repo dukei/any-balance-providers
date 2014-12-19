@@ -23,9 +23,11 @@ function main(){
 	
 	if(AnyBalance.getLevel() >= 7){
 		AnyBalance.trace('Пытаемся ввести капчу');
+		AnyBalance.setOptions({forceCharset:'base64'});
 		var captcha = AnyBalance.requestGet(baseurl+ captcha_href);
-		params.ctl00$ChildContent$Captcha = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
-        AnyBalance.trace('Капча получена: ' + params.ctl00$ChildContent$Captcha);
+		params['ctl00$ChildContent$Captcha'] = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
+        AnyBalance.trace('Капча получена: ' + params['ctl00$ChildContent$Captcha']);
+		AnyBalance.setOptions({forceCharset:'utf-8'});
 	}
 	else
 		throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');

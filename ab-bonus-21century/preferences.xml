@@ -1,22 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <EditTextPreference 
-        title="Личный номер" 
-        positiveButtonText="ОК" 
-        summary="||{@s}" 
-        dialogTitle="Личный номер" 
-        negativeButtonText="Отмена" 
-        dialogMessage="Введите личный номер."
-        key="login">
-    </EditTextPreference>
-    <EditTextPreference 
-        positiveButtonText="ОК"
-        key="password" 
-        dialogTitle="Дата рождения"
-        negativeButtonText="Отмена"
-        title="Дата рождения"
-        summary="||***********"
-        dialogMessage="Введите дату рождения, без пробелов и точек, например: 15101988."
-        inputType="textPassword">
-    </EditTextPreference>
+	<EditTextPreference
+		title="Личный номер"
+		key="login"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Личный номер"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите личный номер, используемый для входа в личный кабинет.">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Дата рождения"
+		key="password"
+		summary="||***********"
+		obligatory="true"
+		dialogTitle="Дата рождения"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите дату рождения, без пробелов и точек, например: 15101988."
+		inputType="textPassword">
+	</EditTextPreference>
 </PreferenceScreen>

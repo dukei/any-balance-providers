@@ -1,5 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="8" date="2014-12-19">
+	- Поддержка изменений на сайте.
+	- Новый счетчик: Дата пополнения.
+	</change>
     <change version="7" date="2014-09-18">
       - Оптимизация
     </change>

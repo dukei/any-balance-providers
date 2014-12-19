@@ -1,12 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="7">ab-internet-ertelecom</id>
+	<id version="8">ab-internet-ertelecom</id>
 	<api flags="no_browser"/>
 	<name>Дом.ру (Эр-телеком)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем балансе и номере лицевого счета для пользователей интернет-провайдера "Эр-телеком" (ДОМ.РУ), http://domru.ru.</p>
 	<p>Информация берется из личного кабинета (http://lk.domru.ru).</p>
-
 	<p>Провайдер предоставляет интернет для городов: Барнаул, Брянск, Волгоград, Волжский, Воронеж, Дзержинск, Екатеринбург, Ижевск, Иркутск, Йошкар-Ола, Казань, Киров, Красноярск, Курган, Курск, Липецк, Магнитогорск, Набережные Челны, Нижнекамск, Нижний Новгород, Новосибирск, Омск, Оренбург, Пенза, Пермь, Ростов-на-Дону, Рязань, Самара, Санкт-Петербург, Саратов, Сызрань, Тверь, Томск, Тула, Тюмень, Ульяновск, Уфа, Чебоксары, Челябинск, Энгельс, Ярославль</p>
 	]]></description>
 	<author>wtiger &lt;wtiger@mail.ru&gt;</author>
@@ -27,6 +26,7 @@
 		<counter id="traffic_outer" name="Внешний трафик" prefix="Вн:" suffix="Гб"/> -->
 		<counter id="tariff_number" name="Номер договора" type="text"/>
 		<counter id="status" name="Статус" type="text"/>
+		<counter id="pay_till" name="Дата пополнения" type="text"/>
 	</counters>
 	<keywords>дом.ру ertelecom citidom эретелеком ситидом</keywords>
 	<type>internet</type>

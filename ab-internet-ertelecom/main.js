@@ -13,60 +13,56 @@ var g_region_change = {
 
 function main(){
 	var prefs = AnyBalance.getPreferences();
-	var domain = prefs.region;
-
-// установка региона
-	if(prefs.region ==""){	// Казань по умолчанию
-		domain='kzn';
-	}
-
+	var domain = prefs.region || 'kzn'; // Казань по умолчанию
+	
 	if(g_region_change[domain])
 		domain = g_region_change[domain];
-
+	
 	AnyBalance.trace('Selected region: ' + domain);
-
 	var baseurl = 'https://lk.domru.ru/';
-
+	
 	AnyBalance.setDefaultCharset('utf-8');
-
+	
 	var info = AnyBalance.requestGet(baseurl + "login");
-        var token = getParam(info, null, null, /<input[^>]+value="([^"]*)"[^>]*name="YII_CSRF_TOKEN"/i);
-        if(!token)
-            throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
-
-        AnyBalance.setCookie('domru.ru', 'citydomain'); //Удаляем старую куку
-
-        AnyBalance.setCookie('.domru.ru', 'service', '0');
-        AnyBalance.setCookie('.domru.ru', 'citydomain', domain, {path: '/'});
-
-    // Заходим на главную страницу
+	var token = getParam(info, null, null, /<input[^>]+value="([^"]*)"[^>]*name="YII_CSRF_TOKEN"/i);
+	if (!token)
+		throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
+	
+	AnyBalance.setCookie('domru.ru', 'citydomain'); //Удаляем старую куку
+	AnyBalance.setCookie('.domru.ru', 'service', '0');
+	AnyBalance.setCookie('.domru.ru', 'citydomain', domain, {path: '/'});
+	
+	// Заходим на главную страницу
 	var info = AnyBalance.requestPost(baseurl + "login", {
-                YII_CSRF_TOKEN: token,
+		YII_CSRF_TOKEN: token,
 		"Login[username]": prefs.log,
 		"Login[password]": prefs.pwd,
-                city: domain,
-                yt0: 'Войти'
+		city: domain,
+		yt0: 'Войти'
 	});
 
-        
-    
-        if(!/\/logout/.test(info)){
-           var error = sumParam(info, null, null, /<div[^>]+class="b-login__errormessage"[^>]*>([\s\S]*?)<\/div>/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
-           if(error)
-               throw new AnyBalance.Error(error);
-           throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-        }
-    
-        var result = {success: true};
-
-        getParam(info, result, 'balance', /<span[^>]+balance-value[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-        getParam(info, result, 'tariff_number', /№ договора:([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
-//        getParam(info, result, 'name', /<span[^>]+class="client-name"[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-        sumParam(info, result, '__tariff', /a[^>]+class="b-services__tarif[^>]*>([\s\S]*?)<\/a>/ig, [/Подключить|Участвовать/ig, '', replaceTagsAndSpaces], html_entity_decode, aggregate_join);
-        getParam(info, result, 'bits', /<a[^>]+href="\/privilege"[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces, parseBalance);
-        getParam(info, result, 'status', /<a[^>]+href="[^"]*status.domru.ru"[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces, html_entity_decode);
-
-
+ 	if(!/\/logout/.test(info)) {
+		var error = sumParam(info, null, null, /<div[^>]+class="b-login__errormessage"[^>]*>([\s\S]*?)<\/div>/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+		if (error)
+			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+		
+		AnyBalance.trace(info);
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+	}
+	
+	var result = {success: true};
+	
+	getParam(info, result, 'balance', /<span[^>]+balance-value[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(info, result, 'tariff_number', /№ договора:([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
+	//getParam(info, result, 'name', /<span[^>]+class="client-name"[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+	sumParam(info, result, '__tariff', /<a[^>]*services__tarif[^>]*href[^>]*domru\.ru[^>]*>([\s\S]*?)<\//ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+	getParam(info, result, 'bits', /<a[^>]+href="\/privilege"[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(info, result, 'status', /<a[^>]+href="[^"]*status.domru.ru"[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces, html_entity_decode);
+	
+	getParam(info, result, 'pay_till', /(Не(?:&nbsp;|\s+)забудьте до[\s\S]*?)<\/p/i, replaceTagsAndSpaces, html_entity_decode);
+	
+	
+	
 /*	//Нет в новом кабинете
         if(AnyBalance.isAvailable('last_session_end','traffic_inner','traffic_outer','contract_type')){
 	    AnyBalance.trace('Getting links to statistics by ' + baseurl + 'right.php?url=&entry=procedure%3Astatistic_user_pppoe.entry');
@@ -93,9 +89,3 @@ function main(){
 */
 	AnyBalance.setResult(result);
 };
-
-
-
-
-
-

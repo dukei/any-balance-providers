@@ -40,6 +40,8 @@ function encryptPass(pass, map){
 function processUnicredit(){
     var prefs = AnyBalance.getPreferences();
 
+    AnyBalance.setOptions({PER_DOMAIN: {'enter.unicredit.ru': {SSL_ENABLED_CIPHER_SUITES_ADD: ['SSL_RSA_WITH_3DES_EDE_CBC_SHA']}}});
+
     var baseurl = prefs.login != 'demo' ? "https://enter.unicredit.ru/v2/cgi/bsi.dll?" : "http://demo.enter.unicredit.ru/v2/cgi/bsi.dll?";
     
     var html = AnyBalance.requestGet(baseurl + 'T=RT_2Auth.BF');

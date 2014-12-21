@@ -1,5 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="8" date="2014-12-21">
+	- Исправление соединения с интернет-банком на Lollipop
+	</change>
     <change version="7" date="2014-07-10">
       - Мелкие исправления получения карт
     </change>

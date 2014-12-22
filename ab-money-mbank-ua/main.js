@@ -37,8 +37,11 @@ function main() {
 
 	getParam(html, result, '__tariff', /home.png" \/>\s*<\/span>\s*<span class=[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'messages', /messagesCount = ko.observable\({"count":([\s\S]*?)} .count\);/i, replaceTagsAndSpaces, html_entity_decode);
+	var tabid = getParam(html, null, null, /window.__tab_id\s*=\s*['"]([^'"]*)/);
+	if(!tabid)
+		throw new AnyBalance.Error('Не удаётся найти секретный параметр для запроса баланса. Сайт изменен?');
 
-	html = AnyBalance.requestGet(baseurl + 'uk/widgets/products/balance/data/'+ prefs.curn +'?_=' + new Date().getTime(), g_headers);
+	html = AnyBalance.requestGet(baseurl + 'uk/widgets/products/balance/data/'+ prefs.curn +'?_=' + new Date().getTime(), addHeaders({'X-Tab-Id': tabid, 'X-Requested-With':'XMLHttpRequest'}));
 	var json = getJson(html);
 
 	getParam(json.AccountsAvailableAmount/100, result, 'balance');

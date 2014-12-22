@@ -34,15 +34,29 @@ function main(){
 	result.__tariff = prefs.login;
     getParam(html, result, 'fio', / <div>ФИО:\s*([\s\S]*?)\s*<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
 	
-	html = AnyBalance.requestGet(baseurl + 'lk/totals.html?t=1377871971796', g_headers); 
+	var json;
+	for(var i = 0; i < 5; i++) {
+		AnyBalance.trace('Попробуем получить данные... Попытка №' + (i+1));
+		
+		html = AnyBalance.requestGet(baseurl + 'lk/totals.html?t=' + new Date().getTime(), g_headers);
+		json = getJson(html);
+		
+		if(!json.totals) {
+			sleep(2000);
+		} else {
+			AnyBalance.trace('Данные успешно получены!');
+			break;
+		}
+	}
 	
-	var json = getJson(html);
 	if(json && json.totals){
 		getParam(json.totals.arrears, result, 'arrears', null, replaceTagsAndSpaces, parseBalanceRK);
 		getParam(json.totals.overpay, result, 'overpay', null, replaceTagsAndSpaces, parseBalanceRK);
 		getParam(json.totals.income, result, 'income', null, replaceTagsAndSpaces, parseBalanceRK);
 		getParam(json.totals.paid, result, 'paid', null, replaceTagsAndSpaces, parseBalanceRK);
 		getParam(json.totals.unpaid, result, 'unpaid', null, replaceTagsAndSpaces, parseBalanceRK);
+	} else {
+		throw new AnyBalance.Error('Не удалось получить данные, возможно сервис временно недоступен.');
 	}
     AnyBalance.setResult(result);
 }
@@ -54,4 +68,16 @@ function parseBalanceRK(_text){
     var val = rub+kop/100;
     AnyBalance.trace('Parsing balance (' + val + ') from: ' + _text);
     return val;
+}
+
+function sleep(delay) {
+	if(AnyBalance.getLevel() < 6) {
+		var startTime = new Date();
+		var endTime = null;
+		do {
+			endTime = new Date();
+		} while (endTime.getTime() - startTime.getTime() < delay);
+	} else {
+		AnyBalance.sleep(delay);
+	}
 }

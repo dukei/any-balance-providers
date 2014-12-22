@@ -2,7 +2,7 @@
 <provider>
 	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser" />
-	<id version="3">ab-municipal-nalog-ru</id>
+	<id version="4">ab-municipal-nalog-ru</id>
 	<name>Федеральная Налоговая Служба</name>
 	<description>
 	Пролучает данные на сайте Федеральной Налоговой Службы http://nalog.ru/.

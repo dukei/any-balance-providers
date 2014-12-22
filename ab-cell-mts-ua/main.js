@@ -61,6 +61,10 @@ function main(){
 		throw new AnyBalance.Error("Интернет-помощник временно недоступен");
 	}
 
+	if(/Використовуючи систему/i.test(html)){
+		throw new AnyBalance.Error("Интернет-помощник временно недоступен");
+	}
+
 	if(/<TITLE>The page cannot be found<\/TITLE>/.test(html)){
         throw new AnyBalance.Error("Интернет-помощник отсутствует по адресу " + baseurl);
         }

@@ -1,8 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser" />
-	<id version="2">ab-municipal-nalog-ru</id>
+	<id version="3">ab-municipal-nalog-ru</id>
 	<name>Федеральная Налоговая Служба</name>
 	<description>
 	Пролучает данные на сайте Федеральной Налоговой Службы http://nalog.ru/.
@@ -20,11 +20,11 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="arrears" name="Задолженность" units="р"/>
-		<counter id="overpay" name="Переплата" units="р"/>
-		<counter id="income" name="Зачислено" units="р"/>
-		<counter id="paid" name="Уплачено" units="р"/>
-		<counter id="unpaid" name="Начислено" units="р"/>
+		<counter id="arrears" name="Задолженность" units=" р"/>
+		<counter id="overpay" name="Переплата" units=" р"/>
+		<counter id="income" name="Зачислено" units=" р"/>
+		<counter id="paid" name="Уплачено" units=" р"/>
+		<counter id="unpaid" name="Начислено" units=" р"/>
 		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
 	<keywords></keywords>

@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2.0" version="16">ab-money-uralsib</id>
+	<id major_version="2.0" version="17">ab-money-uralsib</id>
 	<name>Банк УРАЛСИБ</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем остатке и других параметрах счетов банка УРАЛСИБ (http://www.bankuralsib.ru).</p>

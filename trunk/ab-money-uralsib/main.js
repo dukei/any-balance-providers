@@ -175,7 +175,7 @@ function fetchCard(html, baseurl, prefs) {
 	getParam(tr, result, 'till', /\d{4}[-x]{8,}\d{4}[^<]*?(\d{1,2}\/\d{1,2})/i, [replaceTagsAndSpaces, /(.*)/i, '01/$1'], parseDate);
 	
 	// Дополнительная инфа по картам.
-	if (isAvailable(['status', 'accnum', 'acctype', 'blocked'])) {
+	if (isAvailable(['status', 'accnum', 'acctype', 'blocked', 'limit', 'grace_till', 'grace_pay'])) {
 		var href = getParam(tr, null, null, /<a\s*href="([^"]*)/i);
 		if(href) {
 			html = AnyBalance.requestGet(baseurl + href, g_headers);
@@ -184,6 +184,9 @@ function fetchCard(html, baseurl, prefs) {
 			getParam(html, result, 'accnum', /Карточный счет(?:[^>]*>){3}([^<]+)/i, replaceTagsAndSpaces);
 			getParam(html, result, 'acctype', /Тип карты(?:[^>]*>){3}([^<]+)/i, replaceTagsAndSpaces);
 			getParam(html, result, 'blocked', /Заблокировано(?:[^>]*>){10}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+			getParam(html, result, 'limit', />Кредитный лимит<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+			getParam(html, result, 'grace_till', /погасить в период:[^-]+([\s\S]*?)<\//i, replaceTagsAndSpaces, parseDate);
+			getParam(html, result, 'grace_pay', /для выполнения условий льготного периода кредитования[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 		} else {
 			AnyBalance.trace('Не нашли ссылку на дополнительную информацию по картам, возможно, сайт изменился?');
 		}

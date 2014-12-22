@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-morton</id>
+	<api flags="no_browser"/>
+	<name>Мортон Телеком</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Мортон Телеком <a href="http://www.mtel.ru/">http://www.mtel.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="https://lk.mtel.ru/login">https://lk.mtel.ru/login</a></p>
+	]]></description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="acc" name="Лицевой счет" type="text"/>
+		<counter id="beg_period" name="Начало расчетного периода" type="time" format="dd/MM/yyyy"/>
+		<counter id="end_period" name="Окончание расчетного периода" type="time" format="dd/MM/yyyy"/>
+		<counter id="pay_sum" name="Ежемесячная плата" units=" р"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet, telephony, tv</type>
+	<country>ru</country>
+</provider>

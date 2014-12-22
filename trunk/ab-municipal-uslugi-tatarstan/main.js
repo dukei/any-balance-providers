@@ -57,28 +57,38 @@ function main() {
     
 	// Определяем что нам нужно получать
 	processGibdd(html, baseurl, prefs, result);
+	// Запросим налолги
+	processNalog(html, baseurl, prefs, result, lastname, firstname, inn);
+	// Запросим ЖКХ
+	processGKH(html, baseurl, prefs, result);
 	
-	
-	
-    // Данные жкх пока не пашет
-    if(isAvailable('cei_pay')) {
-        var informers = sumParam(html, null, null, /<li[^>]*class="cei_pay"(?:[^>]*>){20}\s*<\/li>/ig);
+	AnyBalance.setResult(result);
+}
+
+function processGKH(html, baseurl, prefs, result) {
+	if(isAvailable(['house_info', 'house_balance'])) {
+		var html = AnyBalance.requestGet(baseurl, g_headers);
+		
+		var informers = sumParam(html, null, null, /<li[^>]*class="house"(?:[^>]*>){10,11}\s*<\/li>/ig);
 		AnyBalance.trace('Found informers: ' + informers.length);
 		
-		for(var i=0; i< informers.length; i++)
+		var house_info = '';
+		for(var i=0; i< informers.length; i++) {
 			var curr = informers[i];
-			var name = getParam(curr, null, null, /<b title="([^"]+)/i);
+			var name = getParam(curr, null, null, /<b>([\s\S]*?)<\/b>/i);
+			var sum = getParam(curr, null, null, [/Начислено(?:[^>]*>){2}\s*([-\d.,]+)/i, /Начислено:?\s*([-\d.,]+)/i]);
 			
-			
-			
-		
-		
-		
+			house_info += '<b>' + name + '</b>: ' + sum + '<br/><br/>';
+			sumParam(sum, result, 'house_balance', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+		}
+		getParam(house_info, result, 'house_info', null, [/<br\/><br\/>$/i, '']);
     }
-    
+}
+
+function processNalog(html, baseurl, prefs, result, lastname, firstname, inn) {
 	if(isAvailable('nalog_info')) {
 		// получаем данные о налоговой задолженности
-		html = AnyBalance.requestGet(baseurl + 'taxes/index', g_headers);
+		var html = AnyBalance.requestGet(baseurl + 'taxes/index', g_headers);
 		params = createFormParams(html, function(params, str, name, value) {
 			if (name == 'inn')
 				return prefs.inn || inn;
@@ -100,22 +110,19 @@ function main() {
 		for(var i = 0; i < array.length; i++) {
 			var current = array[i];
 			
-			var type = getParam(current, null, null, /<td(?:[^>]*>){4}([^<]+)/i) || 'Неизвестный тип налога'; // Транспортный налог
-			var agency = getParam(current, null, null, /<td(?:[^>]*>){7}([^<]+)/i); // УПРАВЛЕНИЕ ФЕДЕРАЛЬНОГО КАЗНАЧЕЙСТВА ПО МОСКОВСКОЙ ОБЛАСТИ (Межрайонная ИФНС России № 3 по Московской области)
-			var sum = getParam(current, null, null, /налог:(?:[^>]*>){2}([^<]+)/i); // Сумма налога
-			var fine = getParam(current, null, null, /пеня:(?:[^>]*>){2}([^<]+)/i); // Пени
-			var date = getParam(current, null, null, /(По состоянию на:[^>]*>[^<]+)/i, replaceTagsAndSpaces, html_entity_decode); // На дату
+			var type = getParam(current, null, null, /<td(?:[^>]*>){4}([^<]+)/i, replaceTagsAndSpaces) || 'Неизвестный тип налога'; // Транспортный налог
+			var agency = getParam(current, null, null, /<td(?:[^>]*>){7}([^<]+)/i, replaceTagsAndSpaces) || 'Неизвестно'; // УПРАВЛЕНИЕ ФЕДЕРАЛЬНОГО КАЗНАЧЕЙСТВА ПО МОСКОВСКОЙ ОБЛАСТИ (Межрайонная ИФНС России № 3 по Московской области)
+			var sum = getParam(current, null, null, /налог:(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces) || 0; // Сумма налога
+			var fine = getParam(current, null, null, /пеня:(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces) || 0; // Пени
+			//var date = getParam(current, null, null, /(По состоянию на:[^>]*>[^<]+)/i, replaceTagsAndSpaces) || 'Неизвестная дата'; // На дату
 			// Формируем html
-			html_response += type + ': ' + agency + ' <b>Налог: ' + sum + '.</b> ' + '<b>Пеня: ' + fine + '.</b>' + date + '<br/><br/>';
+			html_response += agency + ':<br/>' + type + ': ' + ' <b>Налог: ' + sum + ' Пеня: ' + fine + '</b>' + '<br/><br/>';
 			
 			sumParam(sum, result, 'nalog_balance', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 			sumParam(fine, result, 'nalog_balance', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 		}
-		getParam(html_response, result, 'nalog_info', null);
-		
-    }
-	
-	AnyBalance.setResult(result);
+		getParam(html_response, result, 'nalog_info', null, [/<br\/><br\/>$/i, '']);
+    }	
 }
 
 function processGibdd(html, baseurl, prefs, result) {
@@ -177,7 +184,6 @@ function getGibddAPI(baseurl, count, result, plate, sr) {
 		AnyBalance.sleep(1000);
 		
 		html = AnyBalance.requestGet(baseurl + 'gibdd/fines/getBy/message_id/' + (json.message_id || json.id), g_headers);
-		
 		json = getJson(html);
 		
 		if(json.status != 'in_processing') {
@@ -186,7 +192,7 @@ function getGibddAPI(baseurl, count, result, plate, sr) {
 		}
 	}
 	
-	if(!isset(json.response.fines) || json.response.fines.length == 0) {
+	if(!json.response || !isset(json.response.fines) || json.response.fines.length == 0) {
 		AnyBalance.trace('Не найдено штрафов..');
 		sumParam('0', result, 'gibdd_balance', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	} else {

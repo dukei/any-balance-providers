@@ -29,9 +29,8 @@
 		dialogTitle="ИНН"
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите ИНН.">
+		dialogMessage="Введите ИНН, либо оставьте поле пустым, для получения данных по ИНН указанному в личном кабинете.">
 	</EditTextPreference>
-	
 	<EditTextPreference 
         title="Номера машин" 
         positiveButtonText="ОК" 

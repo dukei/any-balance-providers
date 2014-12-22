@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-municipal-uslugi-tatarstan</id>
+	<id version="4">ab-municipal-uslugi-tatarstan</id>
 	<api flags="no_browser"/>
 	<name>Госуслуги Татарстан</name>
 	<description html="true"><![CDATA[
@@ -20,12 +20,13 @@
 	</files>
 	<counters>
 		<counter id="nalog_balance" name="Сумма налогов" units=" р"/>
-		<counter id="gibdd_balance" name="Сумма штрафов" units=" р"/>
-		<counter id="house_balance" name="Сумма начислений ЖКХ" units=" р"/>
-
 		<counter id="nalog_info" name="Сводка по налогам" type="html"/>
+		<counter id="house_balance" name="Сумма начислений ЖКХ" units=" р"/>
 		<counter id="house_info" name="Сводка по ЖКХ" type="html"/>
+		<counter id="gibdd_balance" name="Сумма штрафов ГИБДД" units=" р"/>
 		
+		<counter id="cei_info" name="Сводка по детским садам" type="html"/>
+		<counter id="cei_balance" name="Сумма за услуги детского сада" units=" р"/>
 		
 		<counter id="fio" name="ФИО" type="text"/>
 	</counters>

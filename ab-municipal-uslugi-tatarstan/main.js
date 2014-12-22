@@ -61,8 +61,33 @@ function main() {
 	processNalog(html, baseurl, prefs, result, lastname, firstname, inn);
 	// Запросим ЖКХ
 	processGKH(html, baseurl, prefs, result);
+	// Запросим детсад
+	processCei(html, baseurl, prefs, result);
 	
 	AnyBalance.setResult(result);
+}
+
+function processCei(html, baseurl, prefs, result) {
+	if(isAvailable(['cei_balance', 'cei_info'])) {
+		var html = AnyBalance.requestGet(baseurl, g_headers);
+		
+		var informers = sumParam(html, null, null, /<li[^>]*class="cei_pay"(?:[^>]*>){18,22}\s*<\/li>/ig);
+		AnyBalance.trace('Found informers: ' + informers.length);
+		
+		if(!informers.length)
+			return;
+		
+		var info = '';
+		for(var i=0; i< informers.length; i++) {
+			var curr = informers[i];
+			var name = getParam(curr, null, null, /<b[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces);
+			var sum = sumParam(curr, null, null, />([^<]*услуги:\s*[-\d.,]+)/ig, replaceTagsAndSpaces, null, aggregate_join);
+			
+			info += '<b>' + name + '</b>: ' + sum + '<br/><br/>';
+			sumParam(curr, result, 'cei_balance',  />([^<]*услуги:\s*[-\d.,]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+		}
+		getParam(info, result, 'cei_info', null, [/<br\/><br\/>$/i, '']);
+    }
 }
 
 function processGKH(html, baseurl, prefs, result) {
@@ -71,6 +96,9 @@ function processGKH(html, baseurl, prefs, result) {
 		
 		var informers = sumParam(html, null, null, /<li[^>]*class="house"(?:[^>]*>){10,11}\s*<\/li>/ig);
 		AnyBalance.trace('Found informers: ' + informers.length);
+		
+		if(!informers.length)
+			return;
 		
 		var house_info = '';
 		for(var i=0; i< informers.length; i++) {

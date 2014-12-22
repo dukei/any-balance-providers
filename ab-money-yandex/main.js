@@ -14,25 +14,41 @@ function main() {
 	var prefs = AnyBalance.getPreferences();
 	checkEmpty(prefs.login, 'Введите логин в Яндекс.Деньги!');
 	checkEmpty(prefs.password, 'Введите пароль, используемый для входа в систему Яндекс.Деньги. Не платежный пароль, а именно пароль для входа!');
+
+	var baseurl = 'https://money.yandex.ru/';
 	
 	var html = AnyBalance.requestGet("https://passport.yandex.ru", g_headers);
 	if (!prefs.__dbg) {
 		try {
-			html = loginYandex(prefs.login, prefs.password, html, 'https://money.yandex.ru/index.xml', 'money');
+			html = loginYandex(prefs.login, prefs.password, html, baseurl + 'index.xml', 'money');
 		} catch(e) {
 			// Нужно для отладчика
 			AnyBalance.trace('Error in loginYandex ' + e.message);
-			html = AnyBalance.requestGet("https://money.yandex.ru", g_headers);
+			html = AnyBalance.requestGet(baseurl, g_headers);
 		}
 	}
 	if (!/current\-user\-balance\-link/i.test(html))
 		throw new AnyBalance.Error("Не удалось зайти. Проверьте логин и пароль.");
 	
 	var result = {success: true};
-	
-	getParam(html, result, 'balance', /<div[^>]*id="current-user-balance-container"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalanceRK);
+
 	getParam(html, result, 'number', /"b-account__number__text"[^>]*>(.*?)</i, replaceTagsAndSpaces);
 	getParam(html, result, '__tariff', /"b-account__number__text"[^>]*>(.*?)</i, replaceTagsAndSpaces);
+
+	if(/data-is-sum-visible\s*=\s*"false"/i.test(html)){
+	    AnyBalance.trace('Сумма спрятана. Будем пытаться найти...');
+		var sk = getParam(html, null, null, /data-account-secret-key\s*=\s*"([^"]*)/i, replaceTagsAndSpaces);
+		if(!sk){
+			AnyBalance.trace(html);
+			throw new AnyBalanceError('Не удаётся найти ключ для получения баланса! Сайт изменен?');
+		}
+		var text = AnyBalance.requestGet(baseurl + "/internal/index-ajax.xml?action=updateSumVisibility&sk=" + sk + "&showSum=1", addHeaders({Referer: baseurl, 'X-Requested-With':'XMLHttpRequest'}));
+		var json = getJson(text);
+	    getParam('' + json.sum, result, 'balance', null, null, parseBalanceRK);
+	}else{
+	    getParam(html, result, 'balance', /<div[^>]*id="current-user-balance-container"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalanceRK);
+	}
+
 	
 	AnyBalance.setResult(result);
 }

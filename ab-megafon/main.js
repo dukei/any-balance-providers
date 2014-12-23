@@ -378,7 +378,8 @@ function megafonTrayInfo(filial) {
 					AnyBalance.trace('Найдены MMS: ' + names);
 					sumParam(d, result, 'mms_left', /<VOLUME_AVAILABLE>([\s\S]*?)<\/VOLUME_AVAILABLE>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 					sumParam(d, result, 'mms_total', /<VOLUME_TOTAL>([\s\S]*?)<\/VOLUME_TOTAL>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-				} else if (/GPRS| Байт|интернет|мб|Пакетная передача данных|QoS:\s*\d+\s*Гб/i.test(names) || /Пакетная передача данных/i.test(name_service) || /Байт|Тар.ед./i.test(plan_si)) {
+				} else if (/GPRS| Байт|интернет|мб|Пакетная передача данных|QoS:\s*\d+\s*Гб|Продли скорость\s*\d+\s*Гб/i.test(names)
+					 || /Пакетная передача данных/i.test(name_service) || /Байт|Тар.ед./i.test(plan_si)) {
 					AnyBalance.trace('Найден интернет: ' + names + ', ' + plan_si);
 					var valAvailable = vol_ava;
 					var valTotal = vol_tot;
@@ -1625,7 +1626,11 @@ function megafonLkAPI() {
 	
 	AnyBalance.trace('Пробуем войти через API мобильного приложения...');
 	
-	AnyBalance.requestGet('http://api.megafon.ru/mlk/auth/check', g_api_headers);
+	var html = AnyBalance.requestGet('http://api.megafon.ru/mlk/auth/check', g_api_headers);
+	if(AnyBalance.getLastStatusCode() >= 400){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Сервер мобильного API временно недоступен. Пропускаем API...');
+	}
 	
 	var json = callAPI('post', 'login', {
 		login: prefs.login,

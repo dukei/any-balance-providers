@@ -152,11 +152,16 @@ function fetchCardNew(baseurl, html, json) {
 							for(var e=0; e <group.items.length; e++){
 								var groupItem = group.items[e];
 								
+								if(prefs.type == 'card' && !/Card/i.test(groupItem.classType)) {
+									AnyBalance.trace('Продукт с номером ' + groupItem.number + ' не соответствует, т.к. не является картой...');
+									continue;
+								}
+								
 								if(!prefs.card || new RegExp(prefs.card + '$').test(groupItem.number)) {
 									AnyBalance.trace('Продукт с номером ' + groupItem.number + ' соответствует, возьмем его...');
 									FoundProduct = groupItem;
 									break;
-								}
+								}								
 							}
 							if(FoundProduct)
 								break;							
@@ -178,6 +183,7 @@ function fetchCardNew(baseurl, html, json) {
 	}
 	
 	var result = {success: true};
+	
 	//getParam(html, result, 'fio', /<div[^>]+id="name"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(FoundProduct.number+'', result, '__tariff', null, replaceTagsAndSpaces, html_entity_decode);
 	getParam(FoundProduct.name+'', result, 'cardname', null, replaceTagsAndSpaces, html_entity_decode);
@@ -185,7 +191,34 @@ function fetchCardNew(baseurl, html, json) {
 	getParam(FoundProduct.amount.sum+'', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
 	getParam(FoundProduct.amount.currency+'', result, ['currency', 'balance', 'gracepay', 'minpay', 'limit', 'accbalance', 'own', 'blocked'], null, replaceTagsAndSpaces, html_entity_decode);	
 	
-	//AnyBalance.trace(JSON.stringify(FoundProduct));
+	/*if(isAvailable(['', '', '', '', '', ''])) {
+		<counter id="minpay" name="Минимальный платеж" units=" {@currency}"/>
+		<counter id="minpaytill" name="Срок мин.платежа" type="time" format="dd/MM/yyyy"/>
+		<counter id="gracepay" name="Грейс платеж" units=" {@currency}"/>
+		<counter id="gracetill" name="Конец льготного периода" type="time" format="dd/MM/yyyy"/>
+		<counter id="limit" name="Кредитный лимит" units=" {@currency}"/>
+		<counter id="credit_till" name="Срок кредита" type="time" format="dd/MM/yyyy"/>
+		<counter id="accbalance" name="Остаток на счете" units=" {@currency}"/>
+		<counter id="own" name="Собственные средства" units=" {@currency}"/>
+		<counter id="own_free" name="Свободные собственные средства" units=" {@currency}"/>
+		<counter id="blocked" name="Заблокировано" units=" {@currency}"/>
+		<counter id="accnum" name="Номер счета" type="text"/>
+		<counter id="pct" name="Процентная ставка" units="%"/>
+
+		html = AnyBalance.requestPost(baseurl + 'processor/process/minerva/info', {
+			'action':'GET_INCOME',
+			'allNotificationsRequired':'false',
+			'ignoreCache':'false',
+			'locale':'ru',
+			'actionIDs':'{"1664472572":"details"}',
+			'getIncomeParams':'{}',
+			'pageToken':response.pageToken,
+		}, addHeaders({Referer: baseurl + json.redirectTo, 'X-Requested-With':'XMLHttpRequest'}));			
+		
+		
+		
+	}*/
+	
 	AnyBalance.setResult(result);
 }
 

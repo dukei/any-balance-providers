@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="11" date="2014-12-23">
+	- Поддержка изменений на сайте.
+	</change>
 	<change version="10" date="2014-12-08">
 	- Добавлено отображение баланса по телефонии.
 	</change>

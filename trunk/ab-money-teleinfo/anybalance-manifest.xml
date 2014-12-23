@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="17" major_version="2">ab-money-teleinfo</id>
+	<id version="18" major_version="2">ab-money-teleinfo</id>
 	<name>ВТБ24: Телеинфо</name>
 	<api flags="no_browser"/>
 	<description html="true"><![CDATA[

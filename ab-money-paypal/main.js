@@ -26,6 +26,9 @@ function main(){
 	checkEmpty(prefs.login, 'Enter e-mail!');
 	checkEmpty(prefs.password, 'Enter password!');
     
+	logInAPI(prefs);
+	return;
+	
 	var baseurl = 'https://mobile.paypal.com/cgi-bin/wapapp';
 	var html = AnyBalance.requestGet(baseurl, g_headers);
 	
@@ -37,7 +40,7 @@ function main(){
 	if(/&(?:amp;)?view_balance\.x="/i.test(html)) {
 		AnyBalance.trace('Идем в просмотр баланса...');
 		html = followLink(html, 'view_balance.x=');
-        }
+	}
 	
 	var form = getParam(html, null, null, /<form[^>]+name="Login"[\s\S]*?<\/form>/i);
 	if(!form)
@@ -74,6 +77,56 @@ function main(){
     getParam(html, result, 'balance', /<\/h4>([^<]*)<hr/i, replaceTagsAndSpaces, parseBalance);
 	
     AnyBalance.setResult(result);
+}
+
+var g_apiHeaders = {
+	'Authorization': 'Basic ZDNhYWNmNDUwZGQ2YWE5OTJjZmJhNzcwNjc1NjA3MzM6N2NlYmJhMWJmMTRjYjg1OA==',
+	'Accept': 'application/json',
+	'Accept-Language': 'en_US',
+	'Origin': 'https://api.paypal.com/'
+}
+
+function logInAPI(prefs) {
+	var baseurl = 'https://api.paypal.com/v1';
+	
+	var json = requestAPI('post', baseurl + '/oauth2/token', {'grant_type': 'client_credentials'}, g_apiHeaders);
+	
+	json = requestAPI('post', baseurl + '/oauth2/login', {
+		'grant_type': 'password',
+		'email': prefs.login,
+		'password': prefs.password,
+		'redirect_uri': 'https://www.paypalmobiletest.com',
+	}, addHeaders({'Authorization': json.token_type + ' ' + json.access_token}, g_apiHeaders));
+	
+	json = requestAPI('get', baseurl + '/wallet/@me/financial-instruments', null, addHeaders({'Authorization': json.token_type + ' ' + json.access_token}, g_apiHeaders));
+	
+	var result = {success: true};
+	
+	for(var i=0; i<json.account_balance.balances.length; i++) {
+		var curr = json.account_balance.balances[i];
+		if(curr.currency == 'USD') {
+			getParam(curr.available.total.amount + '', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
+		} else if(curr.currency == 'EUR') {
+			getParam(curr.available.total.amount + '', result, 'balance_eur', null, replaceTagsAndSpaces, parseBalance);
+		}
+	}
+	
+    AnyBalance.setResult(result);
+}
+
+function requestAPI(method, url, params, headers) {
+	if(method == 'post')
+		var html = AnyBalance.requestPost(url, params, headers);
+	else
+		var html = AnyBalance.requestGet(url, headers);
+	
+	json = getJson(html);
+	if(!json.access_token && !/\/wallet/.test(url)) {
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Error calling API method! ' + json.error);
+	}
+	
+	return json;
 }
 
 function logIntoFullVersion(prefs) {

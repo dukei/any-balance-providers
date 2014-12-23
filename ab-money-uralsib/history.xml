@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="2.0" version="18" date="2014-12-23">
+	- Поддержка автоматического перехода в новый интернет-банк из старого.
+	</change>
 	<change major_version="2.0" version="17" date="2014-12-22">
 	- Исправлено получение счетчиков: Льготный платеж, Оплатить до, Кредитный лимит.
 	</change>

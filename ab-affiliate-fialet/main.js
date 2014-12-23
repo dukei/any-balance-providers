@@ -13,7 +13,7 @@ var g_headers = {
 function main() {
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'http://fialet.com/';
-	AnyBalance.setDefaultCharset('utf-8');
+	AnyBalance.setDefaultCharset('windows-1251');
 	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');

@@ -48,7 +48,7 @@ function main() {
 			AnyBalance.setOptions({forceCharset:'base64'});
 			var captcha = AnyBalance.requestGet(baseurl + captchaa);
 			captchaa = AnyBalance.retrieveCode('Пожалуйста, введите код с картинки', captcha);
-			AnyBalance.setOptions({forceCharset:'cp-1251'});
+			AnyBalance.setOptions({forceCharset:'utf-8'});
 			AnyBalance.trace('Капча получена: ' + captchaa);
 		} else {
 			throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
@@ -69,6 +69,7 @@ function main() {
 			result.all += rows[i] + '\n\n';
 		}
 		result.all = result.all.replace(/^\s+|\s+$/g, '');
+		sumParam(table, result, 'sum', /[\d\s-.,]{3,}\s*руб/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	} else {
 		var err = getParam(html, null, null, /class="empty"[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 		if(!err)

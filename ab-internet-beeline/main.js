@@ -79,13 +79,16 @@ function proceedCab(prefs) {
 	if(!current && !current_phone)
 		throw new AnyBalance.Error('Не удалось найти ни одного активного счета, сайт изменен?');
 	
-	getParam(current['v_saldo'], result, 'balance', null, replaceTagsAndSpaces, parseBalance);
-	getParam(current_phone['v_saldo'], result, 'balance_phone', null, replaceTagsAndSpaces, parseBalance);
+	if(current) {
+		getParam(current['v_saldo'], result, 'balance', null, replaceTagsAndSpaces, parseBalance);
+		getParam(current['v_nmbplan'], result, '__tariff', null, replaceTagsAndSpaces, html_entity_decode);
+		sumParam(current['v_nmbillgroup'], result, 'bill', null, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+	}
 	
-	getParam(current['v_nmbplan'], result, '__tariff', null, replaceTagsAndSpaces, html_entity_decode);
-	
-	sumParam(current['v_nmbillgroup'], result, 'bill', null, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
-	sumParam('ТФ:' + current_phone['v_nmbillgroup'], result, 'bill', null, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+	if(current_phone) {
+		getParam(current_phone['v_saldo'], result, 'balance_phone', null, replaceTagsAndSpaces, parseBalance);
+		sumParam('ТФ:' + current_phone['v_nmbillgroup'], result, 'bill', null, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+	}
 	
 	AnyBalance.setResult(result);
 }

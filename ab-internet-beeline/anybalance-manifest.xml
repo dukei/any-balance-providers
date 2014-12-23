@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="10">ab-internet-beeline</id>
+	<id version="11">ab-internet-beeline</id>
 	<name>Beeline интернет</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе, бонусах и тарифном плане для пользователей Beeline интернет.</p>       

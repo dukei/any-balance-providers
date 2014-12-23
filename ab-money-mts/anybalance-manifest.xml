@@ -1,8 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="5">ab-money-mts</id>
-  <api flags="no_browser"/>
-  <name>МТС Банк</name>
+	<id version="6">ab-money-mts</id>
+	<api flags="no_browser"/>
+	<name>МТС Банк</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем остатке и других параметрах карт и счетов для клиентов МТС Банка (http://www.mtsbank.ru).</p>
 	<p>Информация берется из Интернет-банка (http://personalbank.ru).</p>
@@ -10,43 +10,37 @@
 	<instruction html="true"><![CDATA[
 	<p>Где подключиться к Интернет-банку:</p>
 	<ul>
-	<li>В любом из офисов МТС Банка;</li>
-	<li>С помощью банкомата МТС Банка.</li>
+		<li>В любом из офисов МТС Банка;</li>
+		<li>С помощью банкомата МТС Банка.</li>
 	</ul>
 	<p>При подключении в офисе МТС Банка вам предоставляется:</p>
 	<ol>
-	<li>Логин и пароль для входа в систему «Интернет-банкинг».</li> 
-	<li>Комплект сеансовых ключей, необходимых для совершения платежных операций в рамках Системы (для работы провайдера необязательно).</li>
+		<li>Логин и пароль для входа в систему «Интернет-банкинг».</li> 
+		<li>Комплект сеансовых ключей, необходимых для совершения платежных операций в рамках Системы (для работы провайдера необязательно).</li>
 	</ol>
 	<p>При подключении через банкомат МТС Банка вам предоставляется:</p>
 	<ol>
-	<li>Логин и пароль для входа в систему «Интернет-банкинг», которые распечатываются на чеке.</li>
-	<li>Новые логин и пароль в случае утраты (услуга платная, в соответствии с Тарифами Банка).</li>
-	<p><b>ВНИМАНИЕ!</b> Для совершения платежных операций вам потребуется получить комплект сеансовых ключей в офисе Банка (для работы провайдера необязательно).</p>
+		<li>Логин и пароль для входа в систему «Интернет-банкинг», которые распечатываются на чеке.</li>
+		<li>Новые логин и пароль в случае утраты (услуга платная, в соответствии с Тарифами Банка).</li>
+		<p><b>ВНИМАНИЕ!</b> Для совершения платежных операций вам потребуется получить комплект сеансовых ключей в офисе Банка (для работы провайдера необязательно).</p>
 	</ol>   
 	]]></instruction>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Остаток"/>
-    <counter id="currency" name="Валюта" type="text"/>
-    <counter id="type" name="Тип" type="text"/>
-    <counter id="cardnum" name="Номер" type="text"/>
-    <counter id="fio" name="Владелец" type="text"/>
-  </counters>
-  <keywords>
-    интернет-банкинг
-  </keywords>
-  <type>
-    money
-  </type>
-  <country>
-    ru
-  </country>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Остаток" units=" {@currency}"/>
+		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="type" name="Тип" type="text"/>
+		<counter id="cardnum" name="Номер" type="text"/>
+		<counter id="fio" name="Владелец" type="text"/>
+	</counters>
+	<keywords>интернет-банкинг</keywords>
+	<type>money</type>
+	<country>ru</country>
 </provider>

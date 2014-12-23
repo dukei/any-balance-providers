@@ -25,7 +25,31 @@ function main() {
 	if(!html || AnyBalance.getLastStatusCode() > 400)
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
     
-    html = AnyBalance.requestPost(baseurl + '_run.php?xoadCall=true', 'a:4:{s:6:"source";s:57:"O:9:"front_api":1:{s:6:"result";a:1:{s:7:"captcha";b:1;}}";s:9:"className";s:9:"front_api";s:6:"method";s:6:"xroute";s:9:"arguments";s:242:"a:2:{i:0;a:1:{s:6:"fusers";a:1:{s:11:"getInfoUser";a:5:{s:14:"CardSWNumberID";s:16:"' + prefs.login + '";s:9:"SurNameID";s:14:"' + prefs.surname + '";s:12:"DayOfBirthID";s:2:"' + date[1] + '";s:14:"MonthOfBirthID";s:2:"' + date[2] + '";s:13:"YearOfBirthID";s:4:"' + date[3] + '";}}}i:1;N;}";}', addHeaders({Referer: baseurl + '_run.php?xoadCall=true'}));
+	var parmsSource = 'O:9:"front_api":1:{s:6:"result";a:1:{s:7:"captcha";b:1;}}';
+	
+	var arr = [
+		{fusers: {getInfoUser: {
+			'CardSWNumberID': prefs.login,
+            'SurNameID': prefs.surname,
+            'DayOfBirthID': date[1],
+            'MonthOfBirthID': date[2],
+            'YearOfBirthID': date[3]
+            }
+		}},
+		undefined
+	];
+	
+	var auth = serialize(arr);
+	var requestParams = {
+		arguments: auth,
+		className: "front_api",
+		method: "xroute",
+		source: parmsSource,
+	}
+	
+	auth = serialize(requestParams);
+	
+    html = AnyBalance.requestPost(baseurl + '_run.php?xoadCall=true', auth, addHeaders({Referer: baseurl + '_run.php?xoadCall=true'}));
 	
 	if (!/"vxod":"true"/i.test(html)) {
 		AnyBalance.trace(html);
@@ -50,3 +74,85 @@ function main() {
 	
 	AnyBalance.setResult(result);
 }
+
+function serialize(data) {
+    if (data == null) {
+        return 'N;';
+    }
+    var type = typeof (data);
+    var code = '';
+    var iterator = 0;
+    var length = null;
+    var asciiCode = null;
+    var key = null;
+    
+    if (type == 'function')
+        return '';
+    if (type == 'boolean') {
+        code += 'b:' + (data ? 1 : 0) + ';';
+    } else if (type == 'number') {
+        if (Math.round(data) == data) {
+            code += 'i:' + data + ';';
+        } else {
+            code += 'd:' + data + ';';
+        }
+    } else if (type == 'string') {
+        //data=win2utf(data);
+        length = data.length;
+        for (iterator = 0; iterator < data.length; iterator++) {
+            asciiCode = data.charCodeAt(iterator);
+            if ((asciiCode >= 0x00000080) && (asciiCode <= 0x000007FF)) {
+                length += 1;
+            } else if ((asciiCode >= 0x00000800) && (asciiCode <= 0x0000FFFF)) {
+                length += 2;
+            } else if ((asciiCode >= 0x00010000) && (asciiCode <= 0x001FFFFF)) {
+                length += 3;
+            } else if ((asciiCode >= 0x00200000) && (asciiCode <= 0x03FFFFFF)) {
+                length += 4;
+            } else if ((asciiCode >= 0x04000000) && (asciiCode <= 0x7FFFFFFF)) {
+                length += 5;
+            }
+        }
+        code += 's:' + length + ':"' + data + '";';
+    } else if (type == 'object') {
+        if (typeof (data.__class) == 'undefined') {
+            length = 0;
+            if (
+            (typeof (data.length) == 'number') && 
+            (data.length > 0) && 
+            (typeof (data[0]) != 'undefined')) {
+                for (iterator = 0; iterator < data.length; iterator++) {
+                    code += serialize(iterator);
+                    code += serialize(data[iterator]);
+                }
+                length = data.length;
+            } else {
+                for (key in data) {
+                    if (typeof (data[key]) != 'function') {
+                        if (/^[0-9]+$/.test(key)) {
+                            code += serialize(parseInt(key));
+                        } else {
+                            code += serialize(key);
+                        }
+                        code += serialize(data[key]);
+                        length++;
+                    }
+                }
+            }
+            code = 'a:' + length + ':{' + code + '}';
+        } else {
+            code += 'O:' + data.__class.length + ':"' + data.__class + '":' + data.__size + ':{';
+            if (data.__meta != null) {
+                for (key in data.__meta) {
+                    code += serialize(key);
+                    code += serialize(data[key]);
+                }
+            }
+            code += '}';
+        }
+    } else {
+        code = 'N;'
+    }
+    
+    return code;
+};

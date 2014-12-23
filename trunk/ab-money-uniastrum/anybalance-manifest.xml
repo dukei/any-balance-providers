@@ -1,6 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="4">ab-money-uniastrum</id>
+	<api flags="no_browser"/>
+  <id version="5">ab-money-uniastrum</id>
   <name>Юниаструм банк</name>   
   <description>
     Получает текущий остаток и другие параметры карт/счетов/депозитов/кредитов банка Юниаструм (http://uniastrum.ru/), используя интернет-банк https://1bank.uniastrum.ru

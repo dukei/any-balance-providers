@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="9">ab-cell-kcell-kz</id>
+	<id version="10">ab-cell-kcell-kz</id>
 	<api flags="no_browser"/>
 	<name>Kcell (Казахстан)</name>
 	<description html="true"><![CDATA[
@@ -19,7 +19,7 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" 〒"/>
-		<counter id="internet" name="GPRS" units=" Mb"/>
+		<counter id="internet" name="Трафик" units=" Mb"/>
 		<counter id="min_left" name="Минуты" units=" мин"/>
 		<counter id="sms_left" name="SMS" units=" sms"/>
 		<counter id="inet_unlim" name="Безлимитный интернет (Мб до снижения скорости)" units=" Мб"/>

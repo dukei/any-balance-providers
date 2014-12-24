@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2.0" version="12">ab-money-paypal</id>
+	<id major_version="2.0" version="13">ab-money-paypal</id>
 	<api flags="no_browser"/>
 	<name>PayPal</name>
 	<description html="true"><![CDATA[
@@ -17,6 +17,7 @@
 	<counters>
 		<counter id="balance" name="Balance" units=" USD"/>
 		<counter id="balance_eur" name="Balance EUR" units=" EUR"/>
+		<counter id="balance_sek" name="Balance SEK" units=" SEK"/>
 	</counters>
 	<keywords>пейпал</keywords>
 	<type>money</type>

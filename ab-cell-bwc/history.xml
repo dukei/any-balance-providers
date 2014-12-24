@@ -1,5 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="7" date="2014-12-24">
+	- Провайдер больше не работает и не поддерживается, используйте провайдера Ростелеком-Регионы.
+	</change>
 	<change version="6" date="2014-09-01">
 	- Исправлено получение минут.
 	</change>

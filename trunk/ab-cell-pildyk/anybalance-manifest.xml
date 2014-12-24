@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="7">ab-cell-pildyk</id>
+	<id version="8">ab-cell-pildyk</id>
 	<name>Pildyk</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе провайдера Pildyk <a href="www.pildyk.lt">www.pildyk.lt</a></p>

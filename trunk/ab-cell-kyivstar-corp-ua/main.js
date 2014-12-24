@@ -32,6 +32,11 @@ function aggregate_sum_mins(mins){
 
 function main(){
     var prefs = AnyBalance.getPreferences();
+
+	AnyBalance.setOptions({
+		SSL_ENABLED_PROTOCOLS: ['TLSv1'], // https://my.kyivstar.ua очень смущается от присутствия TLSv1.1 и TLSv1.2
+	}); 
+
     
     var baseurl = "https://my.kyivstar.ua/";
     var headers = {
@@ -49,7 +54,7 @@ function main(){
     }, headers);
     
     if(!/\/tbmb\/logout\/perform/i.test(html)){
-	var error = getParam(html, null, null, /<td class="redError">([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+	var error = getParam(html, null, null, /<td[^>]+class="redError"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
 	if (error)
 		throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
 	

@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="14" date="2014-12-24">
+	- Исправлен на Lollipop
+	- Исправлена обработка ошибки входа
+	</change>
 	<change version="13" date="2014-12-11">
 	- Восстановлено получение баланса
 	</change>

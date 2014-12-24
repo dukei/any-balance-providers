@@ -1,6 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="3" date="2014-12-24">
+	- Поддержка изменений на сайте для Якутска.
+	</change>
     <change version="2" date="2013-09-06">
-      Исправлено получение баланса
+	- Исправлено получение баланса.
     </change>
 </history>

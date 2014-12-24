@@ -19,4 +19,12 @@
         dialogMessage="Введите пароль, используемый для входа в личный кабинет https://stat.baikal-ttk.ru."
         inputType="textPassword">
     </EditTextPreference>
+	<ListPreference
+		key="region"
+		title="Регион"
+		summary="||{@s}"
+		entries="Все регионы|Якутск"
+		entryValues="all|yak"
+		defaultValue="all">
+	</ListPreference>	
 </PreferenceScreen>

@@ -44,6 +44,23 @@ function main() {
 	getParam(html, result, 'internet', /(?:Остатки по доп. услугам|Қосымша қызметтер бойынша қалдық|Available for VAS):[^<]*?GPRS\s*-?([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'sms_left', /(?:Остатки по доп. услугам|Қосымша қызметтер бойынша қалдық|Available for VAS):[^<]*?(?:Бонусные смс|Бонустық SMS|Bonus SMS)\s*-?([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'min_left', [/(?:Остатки по доп. услугам|Қосымша қызметтер бойынша қалдық|Available for VAS):[^<]*?(\d+)\s*(?:бонусных мин|бонустық минут|bonus on-net min)/i, /(?:Остатки по доп. услугам|Қосымша қызметтер бойынша қалдық|Available for VAS):[^<]*?(?:Бонустық минуттар|Бонусные минуты|Bonus Minutes)\s*-?([^<]*)\s*(?:мин|min)/i], replaceTagsAndSpaces, parseBalance);
+	
+	if(isAvailable(['internet']) && !isset(result.internet)) {
+		try {
+			html = AnyBalance.requestGet('https://www.kcell.kz/ru/ics.account/getconnectedservices/1200', g_headers);
+			var json = getJson(html);
+			for(var i = 0; i < json.enabledPacks.length; i++) {
+				var current = json.enabledPacks[i];
+				
+				if(/internet/i.test(current.serviceUrl)) {
+					getParam(current.packInfoDto.bytes + 'bytes', result, 'internet', null, replaceTagsAndSpaces, parseTraffic);
+				}
+			}
+		} catch(e) {
+			AnyBalance.trace('Не удалось получить данные по подключенным услугам.');
+		}
+	}
+	
 	// PUK получаем в переменную, но не отображаем из соображений безопасности
 	// var puk = getParam(html, result, null, /PUK[\s\S]*?(\d+)/i, replaceTagsAndSpaces, html_entity_decode);
 	// if (puk) {

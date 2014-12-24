@@ -39,7 +39,7 @@ function main() {
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'balance', /Сумма к оплате([^>]*>){3}/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance', /Сумма к оплате\s*<([^>]*>){3}/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'account', />\s*(?:Номер лицевого счета|Лицевой счет)([^>]*>){3}/i, replaceTagsAndSpaces, html_entity_decode);
 	
 	AnyBalance.setResult(result);

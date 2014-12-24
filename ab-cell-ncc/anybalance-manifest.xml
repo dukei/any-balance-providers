@@ -1,21 +1,30 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="29">ab-cell-ncc</id>
-	<name>Ростелеком-Волга (НСС, Волгоград GSM)</name>
+	<id version="30">ab-cell-ncc</id>
+	<name>Ростелеком-Регионы</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о текущем балансе и тарифе для пользователей оператора "Ростелеком-Волга" (НСС, Волгоград GSM).</p>
-	<p>Информация берется из личного кабинета (https://login.rt.ru).</p>
+	<p>Предоставляет информацию о текущем балансе и тарифе для пользователей различных операторов, которые перечислены ниже.</p>
+	<p>Информация берется из личного кабинета <a href="https://login.rt.ru">https://login.rt.ru</a></p>
+	<p>Поддерживаются регионы/операторы:</p>
+	<ul>
+		<li>Ростелеком-Волга (НСС)</li>
+		<li>Волгоград GSM</li>
+		<li>БайкалВестКом</li>
+		<li>АКОС GSM</li>
+	</ul>
 	]]></description>
 	<instruction html="true"><![CDATA[
 	<p>Чтобы получить пароль</p>
 	<ol>
-	<li>Нажмите кнопку "Получить пароль" на странице https://login.rt.ru</li>
-	<li>Введите номер своего телефона</li>
-	<li>Получите пароль в СМС</li>
-	<li>Введите пароль в настройки провайдера.</li>
+		<li>Нажмите кнопку "Получить пароль" на странице https://login.rt.ru</li>
+		<li>Введите номер своего телефона</li>
+		<li>Получите пароль в СМС</li>
+		<li>Введите пароль в настройки провайдера.</li>
 	</ol>
 	]]></instruction>
+	<author>wtiger &lt;wtiger@mail.ru&gt;</author>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>

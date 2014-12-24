@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="3" date="2014-12-24">
+	- Исправлено получение данных по оплатам.
+	</change>
 	<change version="2" date="2014-12-18">
 	- Добавлены новые счетчики.
 	</change>

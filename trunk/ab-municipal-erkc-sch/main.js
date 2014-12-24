@@ -65,8 +65,8 @@ function main() {
 	// ИТОГО со страхо.жилья и страх.гражданской ответственности
 	getParam(getValue(html, 'Полное страхование'), result, 'balance_total');
 	
-	// Отчетный период
-	var dt = new Date();
+	// Отчетный период - не правильно работает
+	/*var dt = new Date();
 	var month = dt.getMonth();
 	var year = dt.getFullYear();
 	
@@ -76,12 +76,12 @@ function main() {
 		var period = g_months[11] + ' ' + (--year);
 	
 	getParam(period, result, 'period_total');
-	getParam(period, result, '__tariff');
+	getParam(period, result, '__tariff');*/
 	
 	if(isAvailable(['pay_date', 'pay_sum', 'pay_place'])) {
 		html = AnyBalance.requestGet(baseurl + 'modules/alcom_konsalt/payment', g_headers);
 		
-		var tr = getParam(html, null, null, /<tr>\s*<td[^>]*>\d{1,2}\.\d{1,2}\.\d{4}(?:[^>]*>){5}\s*<\/tr>/i);
+		var tr = getParam(html, null, null, /<tr>\s*<td[^>]*>\d{1,2}\.\d{1,2}\.\d{4}(?:[^>]*>){5}\s*<\/tr>\s*<\/table/i);
 		if(tr) {
 			getParam(tr, result, 'pay_date', /\d{1,2}\.\d{1,2}\.\d{4}/i, replaceTagsAndSpaces);
 			getParam(tr, result, 'pay_sum', /<tr>\s*(?:[^>]*>){3}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);

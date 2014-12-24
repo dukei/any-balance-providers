@@ -3,6 +3,9 @@
 */
 
 function main() {
+	var error = 'Провайдер больше не работает. Используйте провайдер Ростелеком-Регионы. Перед использованием нового личного кабинета, возможно, нужно будет пройти регистрацию. Приносим свои извинения за предоставленные неудобства.'
+	throw new AnyBalance.Error(error, null, true);
+
 	var prefs = AnyBalance.getPreferences();
 	
 	checkEmpty(prefs.login, 'Введите логин!');

@@ -50,11 +50,11 @@ function main() {
 	var json = getJson(html);
 	
 	html = json[0].data.html;
-	//AnyBalance.trace(html);
+	AnyBalance.trace(html);
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'balance', /<td>([^<]+)(?:[^>]*>){2}\s*балла/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance', /<td>([^<]+)(?:[^>]*>){2}\s*(?:балла|баланс)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'discount', /<td>([^<]+)(?:[^>]*>){2}\s*бонус/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'penalty', /<td>([^<]+)(?:[^>]*>){2}\s*штрафы/i, replaceTagsAndSpaces, parseBalance);
 	

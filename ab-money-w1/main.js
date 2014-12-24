@@ -36,7 +36,7 @@ function main() {
 	var script = getParam(html, null, null, /src="(script.js[^"]+)/i);
 	html = AnyBalance.requestGet(baseurl + 'wallet/client/' + (script || ''), g_headers);
 	
-	var token = getParam(html, null, null, /APP_TOKEN:{wallet:"([^"]+)/i);
+	var token = getParam(html, null, null, /APP_TOKEN:"([\dA-F-]+)"/i);
 	if(!token || !script) {
 		throw new AnyBalance.Error('Не удалось найти токен авторизации. Сайт изменен?');
 	}

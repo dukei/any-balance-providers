@@ -1,5 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="4" date="2014-12-24">
+	- Провайдер больше не работает и не поддерживается, используйте провайдера Ростелеком-Регионы.
+	</change>
 	<change version="3" date="2014-07-31">
 	- Исправлена ошибка.
 	</change>

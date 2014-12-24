@@ -1,9 +1,11 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-cell-akos</id>
+	<id version="4">ab-cell-akos</id>
 	<api flags="no_browser"/>
 	<name>АКОС GSM (Ростелеком)</name>
 	<description html="true"><![CDATA[
+	<p>Провайдер больше не работает и не поддерживается, используйте провайдера <a href="http://anybalance.ru/catalog.php?id=ab-cell-ncc&inapp=0">Ростелеком-Регионы</a></p>
+	
     <p>Получает баланс, использованные минуты, интернет трафик для сотового оператора АКОС GSM (ныне Ростелеком): http://akos.ru.</p>
 	<p>Данные берутся из личного кабинета https://issa.akos.ru</p>
 	]]></description>

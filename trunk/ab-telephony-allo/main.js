@@ -59,6 +59,23 @@ function doNewCabinet(prefs) {
 	getParam(html, result, 'balance', />\s*Баланс(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, '__tariff', /"komplekt-number"(?:[^>]*>){3}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
 	
+	try {
+		var packs = sumParam(html, null, null, /<div[^>]+class="limitname"(?:[^>]*>){16}\s*<\/div>/i);
+		AnyBalance.trace('Найдено пакетов: ' + packs.length);
+		for(var i = 0; i < packs.length; i++) {
+			var current = packs[i];
+			var name = getParam(current, null, null, /<span>([\s\S]*?)<\//i, replaceTagsAndSpaces);
+			
+			if(/Интернет/i.test(name)) {
+				getParam(html, result, 'internet', /Осталось([\d\s.,]+МБ)/i, replaceTagsAndSpaces, parseTraffic);
+			} else {
+				AnyBalance.trace('Неизвестная опция: ' + current);
+			}
+		}
+	} catch (e) {
+		AnyBalance.trace('Не удалось получить данные по пакетам из-за ошибки: ' + e.message);
+	}
+	
 	AnyBalance.setResult(result);	
 }
 

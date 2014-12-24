@@ -108,6 +108,8 @@ function logInAPI(prefs) {
 			getParam(curr.available.total.amount + '', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
 		} else if(curr.currency == 'EUR') {
 			getParam(curr.available.total.amount + '', result, 'balance_eur', null, replaceTagsAndSpaces, parseBalance);
+		} else if(curr.currency == 'SEK') {
+			getParam(curr.available.total.amount + '', result, 'balance_sek', null, replaceTagsAndSpaces, parseBalance);
 		}
 	}
 	

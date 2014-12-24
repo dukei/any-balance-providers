@@ -1,33 +1,41 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-internet-ttk-baikal</id>
-  <api flags="no_browser"/>
-  <name>ТТК-Байкал</name>
-  <description>
-    Получает баланс и информацию о тарифном плане для интернет провайдера ТТК-Байкал (http://baikal-ttk.ru). Информация берется из личного кабинета https://stat.baikal-ttk.ru.
-
-    Провайдер предоставляет доступ в интернет в следующих городах: Иркутск, Ангарск, Вихоревка, Тайшет, Зима, Братск, Нижнеудинск, Улан-Удэ, Усолье-Сибирское, Шелехов, Нерюнгри, Якутск
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="licschet" name="Лицевой счет" type="text"/>
-    <counter id="userName" name="ФИО" type="text"/>
-  </counters>
-  <keywords>
-    интернет, байкал, транстелеком
-  </keywords>
-  <type>
-    internet
-  </type>
-  <country>
-    ru
-  </country>
+	<api flags="no_browser"/>
+	<id version="3">ab-internet-ttk-baikal</id>
+	<name>ТТК-Байкал</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе интернет провайдера ТТК-Байкал <a href="http://baikal-ttk.ru">http://baikal-ttk.ru</a></p>
+	<p>Информация берется из личного кабинета <a href="https://stat.baikal-ttk.ru">https://stat.baikal-ttk.ru</a> и <a href="https://188.244.184.44">https://188.244.184.44</a> для Якутска.</p>
+	<b>Провайдер предоставляет доступ в интернет в следующих городах:</b>
+	<ul>
+		<li>Иркутск</li>
+		<li>Ангарск</li>
+		<li>Вихоревка</li>
+		<li>Тайшет</li>
+		<li>Зима</li>
+		<li>Братск</li>
+		<li>Нижнеудинск</li>
+		<li>Улан-Удэ</li>
+		<li>Усолье-Сибирское</li>
+		<li>Шелехов</li>
+		<li>Нерюнгри</li>
+		<li>Якутск</li>
+	</ul>
+	]]></description>	
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="licschet" name="Лицевой счет" type="text"/>
+		<counter id="userName" name="ФИО" type="text"/>
+	</counters>
+	<keywords>интернет, байкал, транстелеком</keywords>
+	<type>internet</type>
+	<country>ru</country>
 </provider>

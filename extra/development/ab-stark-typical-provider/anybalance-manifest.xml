@@ -17,7 +17,7 @@
 	<instruction html="true"><![CDATA[
 	<p>Если у вас нет доступа в Личный кабинет, получите его на странице <a href=""></a></p>
 	]]></instruction>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

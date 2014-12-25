@@ -1,13 +1,13 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-bonus-ebates</id>
+	<id version="2">ab-bonus-ebates</id>
 	<api flags="no_browser"/>
 	<name>Ebates</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию об аккаунте Ebates</p>
-	<p>Информация берется из личного кабинета https://www.ebates.com/auth/logon.do</p>
+	<p>Obtains information from Ebates personal account</p>
+	<p>Selfcare located at https://www.ebates.com/auth/logon.do</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

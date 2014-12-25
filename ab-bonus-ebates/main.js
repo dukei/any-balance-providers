@@ -15,30 +15,25 @@ function main() {
 	var baseurl = 'https://www.ebates.com/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
-	checkEmpty(prefs.login, 'Введите логин!');
-	checkEmpty(prefs.password, 'Введите пароль!');
+	checkEmpty(prefs.login, 'Enter login!');
+	checkEmpty(prefs.password, 'Enter password!');
 	
 	var html = AnyBalance.requestGet(baseurl + 'auth/logon.do', g_headers);
 	
-	try {
-		html = AnyBalance.requestPost(baseurl + 'auth/logon.do', {
-			username: prefs.login,
-			password: prefs.password,
-			'urlIdentifier': '/auth/getLogonForm.do?pageName=/common_templates/login.vm',
-			'terms':'checked',
-		}, addHeaders({Referer: baseurl + 'auth/logon.do'}));
-	}catch(e) {
-	}
+	html = AnyBalance.requestPost(baseurl + 'auth/logon.do', {
+		username: prefs.login,
+		password: prefs.password,
+		'urlIdentifier': '/auth/getLogonForm.do?pageName=/common_templates/login.vm',
+		'terms':'checked',
+	}, addHeaders({Referer: baseurl + 'auth/logon.do'}));	
 	
-	html = AnyBalance.requestGet('http://www.ebates.com/index.do', g_headers);
-	
-	if (!/>Log Out</i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
+	if (!/>(?:Log|Sign) Out</i.test(html)) {
+		var error = getParam(html, null, null, /class="error"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+			throw new AnyBalance.Error(error, null, /is incorrect/i.test(error));
 		
 		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+		throw new AnyBalance.Error('Login attempt has failed. Maybe site has been changed?');
 	}
 	
 	html = AnyBalance.requestPost('http://www.ebates.com/account-info.htm', {}, addHeaders({
@@ -46,12 +41,14 @@ function main() {
 		'X-Requested-With':'XMLHttpRequest'
 	}));
 	
+	var json = getJson(html);
+	
 	var result = {success: true};
 	
-	getParam(html, result, 'fio', /EbatesMember\s*"\s*:\s*"([^"]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'CashPaid', /CashPaid\s*"\s*:\s*"([^"]*)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'CashPending', /CashPending\s*"\s*:\s*"([^"]*)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'TotalCashBack', /TotalCashBack\s*"\s*:\s*"([^"]*)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(json.EbatesMember + '', result, 'fio', null, replaceTagsAndSpaces, html_entity_decode);
+	getParam(json.CashPaid + '', result, 'CashPaid', null, replaceTagsAndSpaces, parseBalance);
+	getParam(json.CashPending + '', result, 'CashPending', null, replaceTagsAndSpaces, parseBalance);
+	getParam(json.TotalCashBack + '', result, 'TotalCashBack', null, replaceTagsAndSpaces, parseBalance);
 	
 	AnyBalance.setResult(result);
 }

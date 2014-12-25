@@ -23,6 +23,20 @@ function main() {
 		login: prefs.login,
 		password: prefs.password
 	}, addHeaders({Referer: baseurl + 'uk/security/logon'}));
+	
+	var otpm = getParam(html, null, null, /Тимчасовий пароль/i);
+	if(otpm) {
+		if(AnyBalance.getLevel() >= 7){
+			AnyBalance.trace('Намагаємось ввести код підтвердження');
+			code = AnyBalance.retrieveCode("Будь ласка, введіть тимчасовий пароль який надійшов в СМС", 'R0lGODlhBAAEAJEAAAAAAP///////wAAACH5BAEAAAIALAAAAAAEAAQAAAIElI8pBQA7');
+			AnyBalance.trace('Код отриманний: ' + code);
+			html = AnyBalance.requestPost(baseurl + 'uk/security/logonotp', {
+		            otp: code
+	                }, addHeaders({Referer: baseurl + 'uk/security/logonotp'}));
+		}else{
+			throw new AnyBalance.Error('Провайдер вимагає AnyBalance API v7, будь ласка, оновіть AnyBalance!');
+		}
+	}
 
 	if (!/btn-logout/i.test(html)) {
 		var error = getParam(html, null, null, /<div[^>]+class="[^"]*alert[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);

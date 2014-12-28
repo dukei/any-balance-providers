@@ -18,64 +18,57 @@ var g_headers = {
 function main(){
     var prefs = AnyBalance.getPreferences();
 
-    /*if(prefs.password){
-        AnyBalance.trace('Введен пароль - получаем данные из личного кабинета');
+    checkEmpty(prefs.login, 'Введите номер карты');
+    checkEmpty(prefs.type, 'Выберите тип карты');
 
-        var baseurl = "http://www.sportmaster.ru/personal/bonus.php?login=yes";
-        var html = AnyBalance.requestPost(baseurl, {
-            AUTH_FORM:'Y',
-            TYPE:'AUTH',
-            backurl:'/personal/bonus.php',
-            USER_LOGIN:prefs.login,
-            USER_PASSWORD:prefs.password
-        });
-        
-        var error = getParam(html, null, null, /<font[^>]*class=['"]errortext['"][^>]*>([\s\S]*?)<\/font>/i, replaceTagsAndSpaces, html_entity_decode);
-        if(error)
-            throw new AnyBalance.Error(error);
-        
-        var result = {success: true};
-        
-        getParam(html, result, 'cardnum', /Номер бонусной карты:[\s\S]*?>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-        getParam(html, result, '__tariff', /Номер бонусной карты:[\s\S]*?>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-        getParam(html, result, 'balance', /Доступно средств:[\s\S]*?>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-    }else*/{
-        AnyBalance.trace('Пароль не введен - получаем данные по номеру карты');
+    AnyBalance.trace('Пароль не введен - получаем данные по номеру карты');
 
-        var baseurl = "http://www.sportmaster.ua/";
-        var types = {
-            '600': 'Синяя карта',
-            '601': 'Серебряная карта',
-            '602': 'Золотая карта',
-        };
-        var json;
+    var baseurl = "http://www.sportmaster.ua/";
+    var types = {
+        '600': 'Синяя карта',
+        '601': 'Серебряная карта',
+        '602': 'Золотая карта',
+    };
+    var json;
 
-        for(var type in types){
-            /*if(types[prefs.type] && type != prefs.type)
-                continue; //Если у нас задан тип, то получаем сразу его*/
-            var html = AnyBalance.requestPost(baseurl + '?module=club&action=CheckBonus', {
-                card_type:type,
-                card_number:prefs.login,
-                ajax:'1'
-            }, g_headers);
-			
-			json = getJson(html);
+    var img = AnyBalance.requestGet(baseurl + "/kcaptcha/?" + Math.random());
+    var code = AnyBalance.retrieveCode('Пожалуйста, введите код с картинки', img);
+    
+    for(var type in types){
+        if(types[prefs.type] && type != prefs.type)
+            continue; //Если у нас задан тип, то получаем сразу его
 
-			if(json.message != false)
-                break;
-        }
-
-        if(json.message == false){
-            throw new AnyBalance.Error("Не удалось получить баланс. Неверный номер карты или сайт изменен?");
-        }
+        var html = AnyBalance.requestPost(baseurl + '?module=clubpro&action=checkByCard', {
+            card_number:prefs.login,
+            card_type:type,
+            captcha_text:code
+        }, g_headers);
 		
-        var result = {success: true};
-        
-        result.__tariff = types[type];
-        if(AnyBalance.isAvailable('cardnum'))
-            result.cardnum = prefs.login;
-			
-        getParam(json.message+'', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
+		json = getJson(html);
+
+		if(!json.error)
+            break;
+    }
+
+    if(json.message){
+        throw new AnyBalance.Error(json.message);
+    }
+	
+    var result = {success: true};
+    
+    result.__tariff = types[type];
+    if(AnyBalance.isAvailable('cardnum'))
+        result.cardnum = prefs.login;
+		
+    getParam(json.data.client_level.CurLevelSumma, result, 'balance', null, null, parseBalance);
+    for(var i=0; i<json.data.bonus_amount_list.BonusAmount.length; ++i){
+        var ba = json.data.bonus_amount_list.BonusAmount[i];
+    	if(ba.BonusType == 3){
+    		sumParam(ba.Amount, result, 'bonus3', null, null, null, aggregate_sum);
+    		sumParam(ba.DatEnd, result, 'bonus3till', null, null, parseDateISO, aggregate_min);
+    	}else{
+    		AnyBalance.trace('Unknown bonus type: ' + JSON.stringify(ba));
+    	}
     }
 
     AnyBalance.setResult(result);

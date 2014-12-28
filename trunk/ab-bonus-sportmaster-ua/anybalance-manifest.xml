@@ -1,8 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-bonus-sportmaster-ua</id>
+	<id version="2">ab-bonus-sportmaster-ua</id>
 	<name>Спортмастер (Украина)</name>
-	<api flags="no_browser"/>
+	<api flags="no_browser|captcha"/>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию по бонусной карте "Спортмастер-Украина".</p>
 	<p>Поддерживается получение данных только по номеру карты</p>
@@ -16,8 +16,10 @@
 		<js>main.js</js>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс"/>
+		<counter id="balance" name="Баланс" units=" Б"/>
 		<counter id="cardnum" name="Номер карты" type="text"/>
+		<counter id="bonus3" name="Сервисные баллы УФ" units=" СБ"/>
+		<counter id="bonus3till" name="Сервисные баллы УФ: срок действия" type="time" format="dd/MM/yyyy"/>
 	</counters>
 	<keywords>sportmaster, карта, бонус</keywords>
 	<type>bonus</type>

@@ -8,6 +8,15 @@
 		obligatory="true"
 		negativeButtonText="Отмена"
 		dialogMessage="Введите № карты."
+		inputType="number"
 		key="login">
 	</EditTextPreference>
+    <ListPreference
+		key="type"
+		title="Тип карты"
+		summary="||{@s}"
+		entries="Синяя карта|Серебряная карта|Золотая карта"
+		entryValues="600|601|602"
+		defaultValue="">
+	</ListPreference>
 </PreferenceScreen>

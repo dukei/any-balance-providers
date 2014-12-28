@@ -46,7 +46,8 @@ function main(){
 	
 	if (!/qbank.ru\/auth\/UI\/Logout/i.test(html)) {
     	error = getParam(html, null, null, /<h2[^>]*>([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces, html_entity_decode);
-    	if (error && /Изменение логина/i.test(error)) {
+    	if (error && /Изменение логина|Адрес электронной почты/i.test(error)) {
+    		AnyBalance.trace('Связной банк хочет внимания: ' + error + '. Но это необязательно, пропускаем...');
     		//Похоже, это у нас запрос, не хочет ли юзер использовать логин вместо номера. Пропускаем его.
     		html = AnyBalance.requestGet(baseurl, g_headers);
     	}
@@ -152,7 +153,7 @@ function fetchCard(baseurl, html){
 				
 				// Собственные средства
         		if (!isset(result.accbalance)) 
-					getParam(json.html, result, 'accamount', /Собственные средства:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+					getParam(json.html, result, 'accamount', /Собственные средства[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 				
 				// Имя карт
         		getParam(json.html, result, 'cardname' + suffix, /<h3[^>]*>([\s\S]*?)<\/h3>/i, replaceTagsAndSpaces, html_entity_decode);

@@ -190,34 +190,71 @@ function fetchCardNew(baseurl, html, json) {
 	getParam(FoundProduct.number+'', result, 'cardnum', null, replaceTagsAndSpaces, html_entity_decode);
 	getParam(FoundProduct.amount.sum+'', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
 	getParam(FoundProduct.amount.currency+'', result, ['currency', 'balance', 'gracepay', 'minpay', 'limit', 'accbalance', 'own', 'blocked'], null, replaceTagsAndSpaces, html_entity_decode);	
-	
-	/*if(isAvailable(['', '', '', '', '', ''])) {
-		<counter id="minpay" name="Минимальный платеж" units=" {@currency}"/>
-		<counter id="minpaytill" name="Срок мин.платежа" type="time" format="dd/MM/yyyy"/>
+
+	if(isAvailable(['minpaytill', 'minpay', 'blocked', 'own', 'limit', 'credit_till', 'pct'])) {
+
+		html = AnyBalance.requestPost(baseurl + 'processor/process/minerva/info', {
+			'action':'EXECUTE',
+			'topics':JSON.stringify([{"id":"details","params":[{"objects":[{"id":FoundProduct.id,"className":FoundProduct.classType}]}]}]),
+			'ignoreCache':'false',
+			'locale':'ru',
+			'pageToken':response.pageToken,
+		}, addHeaders({Referer: baseurl + json.redirectTo, 'X-Requested-With':'XMLHttpRequest'}));			
+	    
+		response = getJson(html);
+/*	    //Неосвоенные счетчики
 		<counter id="gracepay" name="Грейс платеж" units=" {@currency}"/>
 		<counter id="gracetill" name="Конец льготного периода" type="time" format="dd/MM/yyyy"/>
-		<counter id="limit" name="Кредитный лимит" units=" {@currency}"/>
-		<counter id="credit_till" name="Срок кредита" type="time" format="dd/MM/yyyy"/>
 		<counter id="accbalance" name="Остаток на счете" units=" {@currency}"/>
-		<counter id="own" name="Собственные средства" units=" {@currency}"/>
 		<counter id="own_free" name="Свободные собственные средства" units=" {@currency}"/>
-		<counter id="blocked" name="Заблокировано" units=" {@currency}"/>
 		<counter id="accnum" name="Номер счета" type="text"/>
-		<counter id="pct" name="Процентная ставка" units="%"/>
-
+*/
 		html = AnyBalance.requestPost(baseurl + 'processor/process/minerva/info', {
 			'action':'GET_INCOME',
 			'allNotificationsRequired':'false',
 			'ignoreCache':'false',
 			'locale':'ru',
-			'actionIDs':'{"1664472572":"details"}',
+			'actionIDs':JSON.stringify(response.result),
 			'getIncomeParams':'{}',
 			'pageToken':response.pageToken,
 		}, addHeaders({Referer: baseurl + json.redirectTo, 'X-Requested-With':'XMLHttpRequest'}));			
 		
+		response = getJson(html);
 		
+		var details = null;
+		for(var i=0; i<response.topics.length; ++i){
+			if(response.topics[i].id == 'details'){
+			    details = response.topics[i];
+			    break;
+			}
+		}
+		if(!details)
+			throw new AnyBalance.Error('Не удаётся найти детальную информацию для продукта ' + FoundProduct.name);
+
+		var prod = null;
+		for(var i=0; i<details.items.length; ++i){
+			if(details.items[i].id == FoundProduct.id){
+				prod = details.items[i];
+				break;
+			}
+		}
 		
-	}*/
+		if(!prod)
+			throw new AnyBalance.Error('Не удаётся найти детали для продукта ' + FoundProduct.name);
+
+		if(prod.classType == 'CreditCard'){
+			getParam('' + prod.properties['cards.details.credit.nextPayment'], result, 'minpaytill', null, null, parseDate);
+			getParam('' + prod.properties['cards.details.credit.minAmountForRepayment'], result, 'minpay', null, null, parseBalance);
+			getParam('' + prod.properties['cards.details.creditcard.allowed-sum-details']['cards.details.blocked'], result, 'blocked', null, null, parseBalance);
+			getParam('' + prod.properties['cards.details.creditcard.allowed-sum-details']['cards.details.amountSum'], result, 'own', null, null, parseBalance);
+			getParam('' + prod.properties['cards.details.creditcard.allowed-sum-details']['cards.details.credit.limit'], result, 'limit', null, null, parseBalance);
+			getParam('' + prod.properties['cards.details.credit.limitEndDate'], result, 'credit_till', null, null, parseDate);
+			getParam('' + prod.properties['cards.details.credit.interestRate'], result, 'pct', null, null, parseBalance);
+		}else{
+			AnyBalance.trace('Не умеем получать детали для ' + prod.classType + ': ' + JSON.stringify(response));
+		}
+
+	}
 	
 	AnyBalance.setResult(result);
 }

@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="6" date="2014-12-28">
+	- Улучшена обработка ошибок, особенно в случае необходимости сменить пароль
+	</change>
 	<change version="5" date="2014-10-25">
 	Исправлен вход в интернет-банк
 	</change>

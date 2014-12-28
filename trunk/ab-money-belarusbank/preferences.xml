@@ -21,14 +21,14 @@
         dialogMessage="Введите пароль, используемый для входа в систему Интернет-банкинг."
         inputType="textPassword">
     </EditTextPreference>
-	<ListPreference
+<!--	<ListPreference
 		key="type"
 		title="Банковский продукт"
 		summary="||{@s}"
 		entries="Депозит|Карта"
 		entryValues="dep|card"
 		defaultValue="card">
-	</ListPreference>
+	</ListPreference> -->
     <EditTextPreference 
         positiveButtonText="ОК"
         key="lastdigits" 

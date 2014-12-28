@@ -37,7 +37,7 @@ function main(){
 		}, addHeaders({Referer: baseurl}));
 		
 		if (!/Информация о лицевом счете/i.test(html)) {
-			var error = getParam(html, null, null, /<h1>Вход в систему<\/h1>[\s\S]*?class="redmsg mesg"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+			var error = getParam(html, null, null, /<h1[^>]*>Вход в систему<\/h1>[\s\S]*?class="redmsg mesg"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
 			if (error)
 				throw new AnyBalance.Error(error, null, /Введенные данные неверны/i.test(error));
 			

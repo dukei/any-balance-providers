@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-municipal-kvartplata-info</id>
+	<api flags="no_browser"/>
+	<name>Квартплата Info</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о начислениях за квартплату с сайта "Квартплата Info" <a href="http://www.kvartplata.info">http://www.kvartplata.info</a></p>
+	<p>Информация берется из личного кабинета <a href="http://gcjs.kvartplata.info/lich_kab/">http://gcjs.kvartplata.info/lich_kab/</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Начислено" units=" р"/>
+		<counter id="fine" name="Пеня" units=" р"/>
+		<counter id="payment" name="К оплате" units=" р"/>
+		<counter id="prev_payment" name="Оплачено ранее" units=" р"/>
+		<counter id="cold_last_counter" name="Последнее показание ХВС"/>
+		<counter id="hot_last_counter" name="Последнее показание ГВС"/>
+	</counters>
+	<keywords></keywords>
+	<type>municipal</type>
+	<country>ru</country>
+</provider>

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
     <id version="7">ab-affiliate-startapp</id>
-    <name>OnPay</name>
-    <description>StartApp</description>
+    <name>StartApp</name>
+    <description>Статистика заработков для StartApp.com</description>
     <author>BArtWell &lt;web@bartwell.ru&gt;</author>
     <files>
 		<icon>icon.png</icon>

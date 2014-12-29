@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="3">ab-money-easypay-ua</id>
+	<id version="4">ab-money-easypay-ua</id>
 	<name>EasyPay (Украина)</name>
 	<description html="true"><![CDATA[
 	<p>Получает баланс кошелька системы электронных платежей EasyPay <a href="https://easypay.ua">https://easypay.ua</a></p>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+    <id version="7">ab-affiliate-adlabs</id>
+    <name>AdLabs-Mobile</name>
+    <description>Статистика заработков для AdLabs-Mobile</description>
+    <author>BArtWell &lt;web@bartwell.ru&gt;</author>
+    <files>
+		<icon>icon.png</icon>
+        <preferences>preferences.xml</preferences>
+        <js>main.js</js>
+        <history>history.xml</history>
+    </files>
+    <counters>
+		<counter id="today" name="Заработок за сегодня"/>
+		<counter id="yesterday" name="Заработок за вчера"/>
+		<counter id="month" name="Заработок за месяц"/>
+        <counter id="balance" name="Баланс"/>
+    </counters>
+    <keywords>
+        AdLabs-Mobile, заработок
+    </keywords>
+    <type>
+        affiliate
+    </type>
+</provider>

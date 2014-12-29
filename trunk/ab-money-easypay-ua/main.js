@@ -25,10 +25,10 @@ function main(){
         password:prefs.password
     }, addHeaders({Referer: baseurl + 'auth/signin'})); 
 
-	if(!/class="exit"/i.test(html)) {
+	if(!/class="exit/i.test(html)) {
 		var error = getParam(html, null, null, /<div[^>]+class="error1"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+			throw new AnyBalance.Error(error, null, /Неверный логин или пароль|Пользователь не найден или email не активирован/i.test(error));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');

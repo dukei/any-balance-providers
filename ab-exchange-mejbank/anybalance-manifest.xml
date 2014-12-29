@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-exchange-mejbank</id>
+	<id version="3">ab-exchange-mejbank</id>
 	<api flags="no_browser"/>
 	<name>Курсы валют Межбанка Украины</name>
 	<description html="true"><![CDATA[
@@ -20,6 +20,10 @@
 		<counter id="sell_eur" name="EUR Продажа" units=" UAH"/>
 		<counter id="purchase_rub" name="RUB Покупка" units=" UAH"/>
 		<counter id="sell_rub" name="RUB Продажа" units=" UAH"/>
+		<counter id="course_date" name="Дата курса" type="time" format="dd/MM/yyyy"/>
+		<counter id="course_USD" name="Курс USD" units=" UAH"/>
+		<counter id="course_EUR" name="Курс EUR" units=" UAH"/>
+		<counter id="course_RUB" name="Курс RUB" units=" UAH"/>
 	</counters>
 	<keywords></keywords>
 	<type>exchange</type>

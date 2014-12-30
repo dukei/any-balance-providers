@@ -28,6 +28,6 @@
 		summary="||{@s}"
 		entries="RUB|AED"
 		entryValues="rub|aed"
-		defaultValue="rur">
+		defaultValue="rub">
 	</ListPreference>	
 </PreferenceScreen>

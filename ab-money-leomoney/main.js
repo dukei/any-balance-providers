@@ -53,91 +53,45 @@ function main() {
 	if(code > 400) {
 		throw new AnyBalance.Error('Ошибка! Сервер не отвечает! Попробуйте обновить баланс позже.');
 	}
+
+        var json = getJson(html);
 	
-	var ret = getParam(html, null, null, /<Code>([^<]*)<\/Code>/i, replaceTagsAndSpaces, parseBalance);
-	if(ret != 0) {
-		var error = getParam(html, null, null, /<Details>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-		if (error)
-			throw new AnyBalance.Error(error, null, /Incorrect wallet data/i.test(error));
+	if(json.Code) {
+		if (json.Details)
+			throw new AnyBalance.Error(json.Details, null, /Incorrect wallet data/i.test(json.Details));
 		
 		throw new AnyBalance.Error(matches[1] == '7' ? 'Не удалось зайти в личный кабинет. Сайт изменен?' : 'Can`t login, is the site changed?');
 	}
 	
 	var result = {success: true};
+
+	if(!prefs.type || prefs.type == 'rur')
+		prefs.type = 'rub';
 	
-	var walletBalance = getParam(html, null, null, new RegExp('<WalletBalance>(?:[^>]*>){5}' + (prefs.type || 'rub') + '(?:[^>]*>){12,}\\s*</WalletBalance>', 'i'))
-	if(!walletBalance)
+	var walletBalance = json.WalletBalances;
+	for(var i=0; walletBalance && i<walletBalance.length; ++i){
+		var acc = walletBalance[i];
+		if(acc.Currency.toUpperCase() == prefs.type.toUpperCase()){
+			walletBalance = acc;
+			break;
+		}
+	}
+	if(!walletBalance){
+		AnyBalance.trace(html);
 		throw new AnyBalance.Error(matches[1] == '7' ? 'Не удалось найти данные по счету. Сайт изменен?' : 'Can`t find wallet balance, is the site changed?');
+	}
+
+        
 	
 	if(!enterById) {
 		getParam(prefs.login, result, 'phone');
 		getParam(prefs.login, result, '__tariff');
 	}
-	getParam(walletBalance, result, 'wallet', /<AccountId>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(walletBalance, result, 'balance', /<Amount>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(walletBalance, result, ['currency', 'balance', 'spent', 'limit'], /<Currency>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(walletBalance, result, 'spent', /<TotalAmount>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(walletBalance, result, 'limit', /<MonthLimit>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	getParam('' + walletBalance.AccountId, result, 'wallet');
+	getParam('' + walletBalance.Amount, result, 'balance');
+	getParam('' + walletBalance.Currency, result, ['currency', 'balance', 'spent', 'limit']);
+	getParam('' + walletBalance.TotalAmount, result, 'spent');
+	getParam('' + walletBalance.MonthLimit, result, 'limit');
 	
 	AnyBalance.setResult(result);
-
-	/*if (matches[1] == '7') {
-		var html = AnyBalance.requestPost(baseurl + 'security/signin', {
-			flags0: matches[1],
-			LoginClear: matches[2],
-			Password: prefs.password,
-			x: 24,
-			y: 22,
-			ReturnUrl: '',
-			Login: prefs.login.replace('+', '')
-		}, addHeaders({
-			Origin: baseurl,
-			Referer: baseurl
-		}));
-		
-		if (!/\/security\/signout/i.test(html)) {
-			var error = getParam(html, null, null, /\$\('#window1'\)\.html\('([\s\S]*?)'\)/i, replaceSlashes);
-			if (error) 
-				throw new AnyBalance.Error(error, null, /Неверный пароль или логин/i.test(error));
-			//Если объяснения ошибки не найдено, при том, что на сайт войти не удалось, то, вероятно, произошли изменения на сайте
-			throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-		}
-		//Раз мы здесь, то мы успешно вошли в кабинет
-		var result = {success: true};
-		
-		getParam(html, result, '__tariff', /<span[^>]+class="auth_ewallet_num"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
-		getParam(html, result, 'balance', /<div[^>]+class="auth_money_count"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, ['currency', 'balance', 'spent', 'limit'], /<div[^>]+class="auth_money_count"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseCurrency);
-		getParam(html, result, 'spent', /(?:Из них израсходовано|Spent):([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'limit', /(?:Месячный лимит|Monthly limit):([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'wallet', /<span[^>]+class="auth_ewallet_num"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
-		
-		AnyBalance.setResult(result);
-	} else {
-		var baseurl = "http://leomoney.ae/";
-		var html = AnyBalance.requestPost(baseurl + 'security/signin2', {
-			login: prefs.login,
-			password: prefs.password
-		}, addHeaders({Origin: baseurl, Referer: baseurl}));
-		
-		var json = getJson(html);
-		
-		if (json.Code != 0) {
-			var error = json.Details;
-			if (error) throw new AnyBalance.Error(error);
-			//Если объяснения ошибки не найдено, при том, что на сайт войти не удалось, то, вероятно, произошли изменения на сайте
-			throw new AnyBalance.Error('Could not enter personal accont. Is the site changed?');
-		}
-		
-		html = AnyBalance.requestGet(baseurl, addHeaders({ Origin: baseurl, Referer: baseurl }));
-		//Раз мы здесь, то мы успешно вошли в кабинет
-		var result = {success: true};
-		
-		getParam(html, result, '__tariff', /<span[^<]+class="auth_ewallet_num"[^<]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
-		getParam(html, result, 'balance', /<div[^<]+class="auth_money_count"[^<]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, ['currency', 'balance'], /<div[^<]+class="auth_money_count"[^<]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseCurrency);
-		getParam(html, result, 'wallet', /<span[^<]+class="auth_ewallet_num"[^<]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
-		
-		AnyBalance.setResult(result);
-	}*/
 }

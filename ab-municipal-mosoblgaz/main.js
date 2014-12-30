@@ -16,24 +16,30 @@ function main(){
     AnyBalance.setDefaultCharset('utf-8'); 
 
     var html = AnyBalance.requestGet(baseurl + 'LoginPersonalSUPG.aspx?ReturnUrl=%2fPersonalCabinetSUPG.aspx', g_headers);
-	
-    var params = createFormParams(html);
 	var captcha_href = getParam(html, null, null, /(CaptchaImage.axd[^"]*)/i);
 	
-	
-	if(AnyBalance.getLevel() >= 7){
-		AnyBalance.trace('Пытаемся ввести капчу');
-		AnyBalance.setOptions({forceCharset:'base64'});
-		var captcha = AnyBalance.requestGet(baseurl+ captcha_href);
-		params['ctl00$ChildContent$Captcha'] = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
-        AnyBalance.trace('Капча получена: ' + params['ctl00$ChildContent$Captcha']);
-		AnyBalance.setOptions({forceCharset:'utf-8'});
-	}
-	else
-		throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
-	
-	params.ctl00$ChildContent$UserAccount = prefs.login;
-	params.ctl00$ChildContent$Password = prefs.password;
+	var params = createFormParams(html, function(params, str, name, value) {
+		AnyBalance.trace('Processing form field ' + name + ': ' + value);
+		if (/\$UserAccount/i.test(name)) 
+			return prefs.login;
+		else if (/\$Password/i.test(name))
+			return prefs.password;
+		else if (/\$Captcha/i.test(name)){
+			if(AnyBalance.getLevel() >= 7){
+				AnyBalance.trace('Пытаемся ввести капчу');
+				AnyBalance.setOptions({forceCharset:'base64'});
+				var captcha = AnyBalance.requestGet(baseurl+ captcha_href);
+				var captchaVal = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
+			        AnyBalance.trace('Капча получена: ' + captchaVal);
+				AnyBalance.setOptions({forceCharset:'utf-8'});
+				return captchaVal;
+			}
+			else
+				throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
+		}
+
+		return value;
+	}, true); //Важен порядок параметров
 	
 	html = AnyBalance.requestPost(baseurl + 'LoginPersonalSUPG.aspx?ReturnUrl=%2fPersonalCabinetSUPG.aspx', params, addHeaders({Referer: baseurl + 'LoginPersonalSUPG.aspx?ReturnUrl=%2fPersonalCabinetSUPG.aspx'})); 
 	

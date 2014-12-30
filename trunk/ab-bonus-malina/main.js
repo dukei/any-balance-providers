@@ -65,6 +65,8 @@ function main () {
     }
 	
 	html = AnyBalance.requestGet (baseurl + 'pp/', g_headers);
+	if(/change_password/i.test(AnyBalance.getLastUrl()))
+		AnyBalance.trace('Малина заставляет вас сменить пароль. Пока вы не смените пароль, провайдер будет возвращать только баланс');
 	
     AnyBalance.trace ('It looks like we are in selfcare...');
 	

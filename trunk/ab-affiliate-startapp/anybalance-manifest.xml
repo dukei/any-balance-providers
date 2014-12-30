@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-    <id version="7">ab-affiliate-startapp</id>
+    <id version="2">ab-affiliate-startapp</id>
     <name>StartApp</name>
     <description>Статистика заработков для StartApp.com</description>
     <author>BArtWell &lt;web@bartwell.ru&gt;</author>

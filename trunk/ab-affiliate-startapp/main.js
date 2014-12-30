@@ -60,14 +60,14 @@ function main() {
 		if(html.indexOf('>Log out</a>')==-1) throw new AnyBalance.Error('Ошибка авторизации. Проверьте логин и пароль');
 	}
 	
-	r=new RegExp('<span class="earning-text">\\s+(\\S+)\\s+</span>');
+	r=new RegExp('<span class="earning-text">\\s+\\$([0-9.]+)\\s+</span>');
     matches=r.exec(html);
 	if(matches==null) throw new AnyBalance.Error('Невозможно получить заработок за месяц');
 	result.month=matches[1];
 	
 	
 	html=AnyBalance.requestGet('https://developers.startapp.com/Payment/EarningHistory.aspx');
-	r=new RegExp('<div class="pe-earning">\\s+(\\S+)\\s+');
+	r=new RegExp('<div class="pe-earning">\\s+\\$([0-9.]+)\\s+');
     matches=r.exec(html);
 	if(matches==null) throw new AnyBalance.Error('Невозможно получить баланс');
 	result.balance=matches[1];

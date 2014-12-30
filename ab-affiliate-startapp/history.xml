@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-<change version="1" date="2014-12-29">
-- Релиз
-</change>
+<change version="1" date="2014-12-29">Релиз</change>
+<change version="2" date="2014-12-30">Исправления отображения счетчиков</change>
 </history>

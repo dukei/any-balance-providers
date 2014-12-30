@@ -35,27 +35,22 @@ function main() {
 	var r=new RegExp('Сумма к выплате: <strong>([0-9,.]+)</strong>');
 	var matches=r.exec(html);
 	if(matches==null) throw new AnyBalance.Error('Невозможно получить баланс');
-	result.balance=matches[1];
+	result.balance=matches[1].replace(',','.');
 	
 	r=new RegExp('<tbody>\\s+<tr class="spec">\\s+(?:<td[\\S\\s]+?){5}<td>([0-9,.]+)');
 	var matches=r.exec(html);
 	if(matches==null) throw new AnyBalance.Error('Невозможно получить доход за сегодня');
-	result.today=matches[1];
+	result.today=matches[1].replace(',','.');
 	
 	r=new RegExp('<tbody>\\s+<tr class="spec">\\s+(?:<td[\\S\\s]+?){11}<td>([0-9,.]+)');
 	var matches=r.exec(html);
 	if(matches==null) throw new AnyBalance.Error('Невозможно получить доход за вчера');
-	result.yesterday=matches[1];
+	result.yesterday=matches[1].replace(',','.');
 	
 	r=new RegExp('<td class="ta-lt">Всего</td>\\s+(?:<td[\\S\\s]+?){4}<td>([0-9,.]+)');
 	var matches=r.exec(html);
 	if(matches==null) throw new AnyBalance.Error('Невозможно получить доход за месяц');
-	result.month=matches[1];
-	
-	
-
-	
-	
+	result.month=matches[1].replace(',','.');
 	
 	
     AnyBalance.setResult(result);

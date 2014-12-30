@@ -903,6 +903,7 @@ function megafonBalanceInfo(filinfo){
 
     var result = {success: true};
     getParam(html, result, 'balance', /<BALANCE>([^<]*)<\/BALANCE>/i, replaceTagsAndSpaces, parseBalance);
+    setCountersToNull(result);
     AnyBalance.setResult(result);
 }
 
@@ -927,8 +928,8 @@ function megafonServiceGuide(filial){
 				// Если ошибка в логине и пароле, дальше идти нет смысла. Позже: А вдруг у кого-то не установлен пароль в новом кабинете, закидают же?
 				if(e.fatal)
 				    throw e;
-				
-			    AnyBalance.trace('Невозможно зайти в сервис гид, придется получать данные из виджета. Причина: ' + e.message);
+
+			    AnyBalance.trace('Невозможно зайти в мобильный клиент, придется получать данные из виджета. Причина: ' + e.message);
 				try{
 					megafonTrayInfo(filial);
 		   			return;
@@ -1606,6 +1607,17 @@ var g_api_headers = {
 };
 
 var g_baseurl = 'https://api.megafon.ru/mlk/';
+
+function setCountersToNull(result){
+	var arr = AnyBalance.getAvailableCounters();
+	for(var i=0; i<arr.length; ++i){
+		if(arr[i] !== '--auto--' && !isset(result[arr[i]])){
+			result[arr[i]] = null;
+		}
+	}
+	if(!isset(result.__tariff))
+		result.__tariff = null;
+}
 
 function callAPI(method, url, params, allowerror) {
 	if(method == 'post')

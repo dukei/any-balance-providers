@@ -1,6 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2" version="8">ab-telephony-zadarma</id>
+	<api flags="no_browser"/>
+	<id major_version="2" version="9">ab-telephony-zadarma</id>
 	<name>Zadarma</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем балансе в Zadarma (http://zadarma.com).</p>
@@ -16,7 +17,7 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" prefix="$" type="numeric"/>
+		<counter id="balance" name="Баланс" units=" {@currency}"/>
 		<counter id="phone0" name="Прямой номер" type="text"/>
 		<counter id="phone0status" name="Прямой номер - статус" type="text"/>
 		<counter id="phone0till" name="Срок действия прямого номера" type="time" format="dd/MM/yyyy"/>

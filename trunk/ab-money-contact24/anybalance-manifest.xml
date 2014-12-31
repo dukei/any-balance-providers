@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-money-contact24</id>
+	<api flags="no_browser"/>
+	<name>C24</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансах платежного сервиса C24 <a href="https://www.contact24.com/">https://www.contact24.com/</a></p>
+	<p>Информация берется из личного кабинета <a href="https://www.contact24.com/login.action">https://www.contact24.com/login.action</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс электронного счета" units=" {@currency}"/>
+		<counter id="balance_card" name="Баланс карты" units=" {@currency_card}"/>
+	</counters>
+	<keywords></keywords>
+	<type>money</type>
+	<country>ru</country>
+</provider>

@@ -872,7 +872,7 @@ function newTypicalLanBillingInetTv(urlIndex, urlAjax) {
 	AnyBalance.trace('Найдено счетов: ' + accs.length);
 	
     for(var i=0; i < accs.length; ++i) {
-		var account = getParam(accs[i], null, null, /<strong>\s*(\d+)/i);
+		var account = getParam(accs[i], null, null, [/<strong>\s*(\d+)/i, /<td[^>]+class="first_col"[^>]*>([\s\S]*?)<\/td>/i]);
 		var accountID = getParam(accs[i], null, null, /<tr[^>]*agreements[^>]*row[^>]*?(\d+)/i);
 		var balance = getParam(accs[i], null, null, /(-?[\s\d.,]+руб)/i, null, parseBalance);
 		

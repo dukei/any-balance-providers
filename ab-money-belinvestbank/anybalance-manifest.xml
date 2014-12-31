@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="5">ab-money-belinvestbank</id>
+	<id version="6">ab-money-belinvestbank</id>
 	<api flags="no_browser"/>
 	<name>Белинвестбанк (Беларусь)</name>
 	<description html="true"><![CDATA[

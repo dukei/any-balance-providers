@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<api flags="no_browser" />
+	<api flags="no_browser|private" />
 	<id version="3">ab-internet-omks</id>
 	<name>Омские кабельные сети</name>
 	<description html="true"><![CDATA[

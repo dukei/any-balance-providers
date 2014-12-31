@@ -23,7 +23,8 @@ function main() {
 	}
 	var result = {success: true};
 	
-	getParam(html, result, 'balance', /<span class="balance">.*\$(-?\d+[\.,]\d+).*<\/span>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance', /<span class="balance">[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, ['currency', 'balance'], /<span class="balance">[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, parseCurrency);
 	getParam(html, result, '__tariff', [/<p><strong>(.*)<\/strong>( \((?:стоимость|вартість|cost) \d+\.\d+.*\))<\/p>/i, /<h2>Текущий тарифный план<\/h2>\s*<p>\s*<strong>(.*)<\/strong>/i], replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'min', /использовано:[^<]+\[(\d+ мин)/i, replaceTagsAndSpaces, parseMinutes);
 	

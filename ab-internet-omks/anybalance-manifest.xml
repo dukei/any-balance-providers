@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="2">ab-internet-omks</id>
+	<id version="3">ab-internet-omks</id>
 	<name>Омские кабельные сети</name>
 	<description html="true"><![CDATA[
 	<p>Получает данные из личного кабинета интернет-провайдера в г. Омск Омские кабельные сети по адресу http://billing.omkc.ru/.</p>

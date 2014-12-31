@@ -16,6 +16,8 @@ function main(){
     AnyBalance.setDefaultCharset('utf-8'); 
 
     var html = AnyBalance.requestGet(baseurl + 'index.php', g_headers);
+	if(AnyBalance.getLastStatusCode() >= 400)
+		throw new AnyBalance.Error('Личный кабинет доступен только из домашней сети. Пожалуйста, обновите аккаунт через вайфай от домашнего роутера');
 
 	html = AnyBalance.requestPost(baseurl + 'index.php', {
         UserName:prefs.login,

@@ -191,7 +191,7 @@ function fetchCardNew(baseurl, html, json) {
 	getParam(FoundProduct.amount.sum+'', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
 	getParam(FoundProduct.amount.currency+'', result, ['currency', 'balance', 'gracepay', 'minpay', 'limit', 'accbalance', 'own', 'blocked'], null, replaceTagsAndSpaces, html_entity_decode);	
 
-	if(isAvailable(['minpaytill', 'minpay', 'blocked', 'own', 'limit', 'credit_till', 'pct'])) {
+	if(isAvailable(['minpaytill', 'minpay', 'blocked', 'own', 'limit', 'credit_till', 'pct', 'gracepay', 'gracetill'])) {
 
 		html = AnyBalance.requestPost(baseurl + 'processor/process/minerva/info', {
 			'action':'EXECUTE',
@@ -203,8 +203,6 @@ function fetchCardNew(baseurl, html, json) {
 	    
 		response = getJson(html);
 /*	    //Неосвоенные счетчики
-		<counter id="gracepay" name="Грейс платеж" units=" {@currency}"/>
-		<counter id="gracetill" name="Конец льготного периода" type="time" format="dd/MM/yyyy"/>
 		<counter id="accbalance" name="Остаток на счете" units=" {@currency}"/>
 		<counter id="own_free" name="Свободные собственные средства" units=" {@currency}"/>
 		<counter id="accnum" name="Номер счета" type="text"/>
@@ -250,6 +248,8 @@ function fetchCardNew(baseurl, html, json) {
 			getParam('' + prod.properties['cards.details.creditcard.allowed-sum-details']['cards.details.credit.limit'], result, 'limit', null, null, parseBalance);
 			getParam('' + prod.properties['cards.details.credit.limitEndDate'], result, 'credit_till', null, null, parseDate);
 			getParam('' + prod.properties['cards.details.credit.interestRate'], result, 'pct', null, null, parseBalance);
+			getParam('' + prod.properties['cards.details.credit.graceEndDate'], result, 'gracetill', null, null, parseDate);
+			getParam('' + prod.properties['cards.details.credit.graceAmountForRepayment'], result, 'gracepay', null, null, parseBalance);
 		}else{
 			AnyBalance.trace('Не умеем получать детали для ' + prod.classType + ': ' + JSON.stringify(response));
 		}

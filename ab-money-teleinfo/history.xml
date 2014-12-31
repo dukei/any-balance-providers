@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="2" version="20" date="2014-12-31">
+	- Добавлен получение грейс платежа и грейс периода для кредитных карт
+	</change>
 	<change major_version="2" version="19" date="2014-12-28">
 	Поддержка расширенной информации по кредитной карте
 	</change>

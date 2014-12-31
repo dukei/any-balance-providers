@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2.0" version="3">ab-cell-altel4g</id>
+	<id major_version="2.0" version="4">ab-cell-altel4g</id>
 	<api flags="no_browser"/>
 	<name>ALTEL 4G (Казахстан)</name>
 	<description html="true"><![CDATA[
@@ -21,9 +21,6 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" 〒"/>
-		<counter id="fio" name="ФИО" type="text"/>
-		<counter id="phone" name="Телефон" type="text"/>
-		<counter id="till" name="Срок действия" type="time" format="dd/MM/yyyy"/>
 		
 		<counter id="min_left" name="Остаток минут" type="time_interval" format="{@MIN}:{@sec}"/>
 		
@@ -34,7 +31,15 @@
 		<counter id="sms_left" name="Остаток смс" units=" шт"/>
 		
 		<counter id="traffic_left" name="Остаток трафика" units=" Мб"/>
-		<counter id="traffic_used" name="Израсходовано трафика" units=" Мб"/>
+
+		<counter id="min_left_till" name="Срок минут" type="time" format="dd/MM/yyyy"/>
+		<counter id="min_left_gsm_till" name="Срок GSM минут" type="time" format="dd/MM/yyyy"/>
+		<counter id="min_left_city_till" name="Срок городских минут" type="time" format="dd/MM/yyyy"/>
+		<counter id="sms_left_till" name="Срок СМС" type="time" format="dd/MM/yyyy"/>
+		<counter id="traffic_left_till" name="Срок трафика" units=" Мб"/>
+
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="phone" name="Телефон" type="text"/>
 	</counters>
 	<keywords>мобильный лте</keywords>
 	<type>cell</type>

@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="2.0" version="4" date="2014-12-31">
+	- Добавлены сроки действия минут, смс и трафика
+	</change>
 	<change major_version="2.0" version="3" date="2014-12-18">
 	- Новые счетчики: Остаток минут на GSM, Остаток минут на город.
 	</change>

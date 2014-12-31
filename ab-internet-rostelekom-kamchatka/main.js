@@ -146,6 +146,9 @@ function oldIssa(){
 	if(/Внимание, изменился адрес личного кабинета услуги[^<]+Домашний интернет/i.test(html)) {
 		throw new AnyBalance.Error('Изменился адрес личного кабинета!');
 	}
+
+	if(/В настоящее время система на профилактике/i.test(html))
+		throw new AnyBalance.Error('В настоящее время система на профилактике!');
 	
     var error = getParam(html, null, null, /<td class=error>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
     if(error)

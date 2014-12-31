@@ -50,7 +50,7 @@ function main() {
 		throw new AnyBalance.Error('Необходимо ввести 4 последние цифры номера карты, либо не вводить ничего!');
 	}
 	
-	var tr = getParam(table, null, null, new RegExp('<tr id(?:[^>]*>){11}[\\s*]+'+ (prefs.cardnum || '\\d{4}') +'(?:[^>]*>){60,90}\\s*</tr>', 'i'));
+	var tr = getParam(table, null, null, new RegExp('<tr\\s+id(?:[\\s\\S](?!</tr>))*?(?:\\*\\*\\*\\*\\s+){3}'+ (prefs.cardnum || '\\d{4}') +'[\\s\\S]*?</tr>', 'i'));
 	if(!tr) {
 		throw new AnyBalance.Error('Не удалось найти ' + (prefs.cardnum ? 'карту с последними цифрами ' + prefs.cardnum : 'ни одной карты!'));
 	}

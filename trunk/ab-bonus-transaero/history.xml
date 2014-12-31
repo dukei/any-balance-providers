@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="3" date="2014-12-31">
+	- Преодоление защиты сайта от автоматического входа
+	</change>
 	<change version="2" date="2014-11-24">
 	- Поддержка изменений на сайте.
 	</change>

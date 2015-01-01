@@ -12,7 +12,7 @@ function main(){
         return;
     }catch(e){
         AnyBalance.trace('Ошибка входа: ' + e.message);
-        if(e.message == 'Нет услуги ИССА' || e.message == 'Изменился адрес личного кабинета!')
+        if(/Нет услуги ИССА|Изменился адрес личного кабинета|на профилактике/i.test(e.message + ''))
             newIssa();
         else
 			throw e;

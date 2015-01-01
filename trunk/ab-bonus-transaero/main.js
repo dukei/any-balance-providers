@@ -17,20 +17,24 @@ function main(){
 	
     var baseurl = "http://m.transaero.ru/";
 
-    var incapsule = Incapsule(baseurl + 'http://m.transaero.ru/');
+    var incapsule = Incapsule(baseurl);
     var html = AnyBalance.requestGet(baseurl, g_headers);
     if(incapsule.isIncapsulated(html))
         html = incapsule.executeScript(html);
 	
     var action = getParam(html, null, null, /<a href="\/([^"]+)(?:[^>]*>){3}\s*Привилегия/i, null, html_entity_decode);
-    if(!action)
-        throw new AnyBalance.Error('Не удаётся найти форму входа. Сайт изменен или проблемы на сайте.');
+    if(!action){
+    	AnyBalance.trace(html);
+        throw new AnyBalance.Error('Не удаётся найти ссылку на вход. Сайт изменен или проблемы на сайте.');
+    }
 	
 	html = AnyBalance.requestGet(baseurl + action, g_headers);
 
     var action = getParam(html, null, null, /<form[^>]*action="\/([^"]+)/i, null, html_entity_decode);
-    if(!action)
+    if(!action){
+    	AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удаётся найти форму входа. Сайт изменен или проблемы на сайте.');
+    }
 	
     html = AnyBalance.requestPost(baseurl + action, {
         lastName:prefs.surname,

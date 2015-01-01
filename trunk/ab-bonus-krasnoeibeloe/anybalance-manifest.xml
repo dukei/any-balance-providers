@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-bonus-krasnoeibeloe</id>
+	<id version="5">ab-bonus-krasnoeibeloe</id>
 	<api flags="no_browser"/>
 	<name>Красное&amp;Белое (Урал)</name>
 	<description html="true"><![CDATA[
@@ -12,6 +12,7 @@
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
 		<js>library.js</js>
+		<js>cloudflare.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

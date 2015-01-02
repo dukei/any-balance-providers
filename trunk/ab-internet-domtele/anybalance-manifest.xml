@@ -1,34 +1,27 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="4">ab-internet-domtele</id>
-  <name>Домашний телеком (Украина)</name>
-  <description>
-    Получает баланс и информацию о тарифном плане для интернет провайдера Домашний телеком (http://www.domtele.com/)
-
-    Информация берется из личного кабинета Домашний телеком: http://my.domtele.com/
-
-  </description>
-  <author>Alexandra Shalamova &lt;alexandrashalamova@gmail.com&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="грн"/>
-    <counter id="number" name="Номер договора" type="text"/>
-    <counter id="account" name="Лицевой счет" type="text"/>
-    <counter id="fio" name="ФИО" type="text"/>
-  </counters>
-  <keywords>
-    Домашний телеком
-  </keywords>
-  <type>
-    internet
-  </type>
-  <country>
-    ru
-  </country>
+	<api flags="no_browser"/>
+	<id version="5">ab-internet-domtele</id>
+	<name>Домашний телеком (Украина)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе интернет провайдера Домашний телеком <a href="http://www.domtele.com">http://www.domtele.com</a></p>
+	<p>Информация берется из личного кабинета <a href="https://my.domtele.com/">https://my.domtele.com/</a></p>
+	]]></description>	
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" грн"/>
+		<counter id="number" name="Номер договора" type="text"/>
+		<counter id="account" name="Лицевой счет" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
+	</counters>
+	<keywords>Домашний телеком</keywords>
+	<type>internet</type>
+	<country>ru</country>
 </provider>

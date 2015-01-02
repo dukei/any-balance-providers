@@ -1,538 +1,249 @@
-﻿/**
-AnyBalance (http://any-balance-providers.googlecode.com)
-
-Содержит некоторые полезные для извлечения значений с сайтов функции.
-Для конкретного провайдера рекомендуется оставлять в этом файле только те функции, которые используются.
+/*! AnyBalance Library (http://any-balance-providers.googlecode.com)
+The uncompressed full source code of this library is here: https://code.google.com/p/any-balance-providers/source/browse/trunk/extra/development/ab-test-library/library.js
 */
-
-/**
- * Получает значение, подходящее под регулярное выражение regexp, производит 
- * в нем замены replaces, результат передаёт в функцию parser, 
- * а затем записывает результат в счетчик с именем param в result
- * Результат в result помещается только если счетчик выбран пользователем 
- * в настройках аккаунта
- * 
- * если result и param равны null, то значение просто возвращается.
- * eсли parser == null, то возвращается результат сразу после замен
- * если replaces == null, то замены не делаются
- * 
- * replaces - массив, нечетные индексы - регулярные выражения, четные - строки, 
- * на которые надо заменить куски, подходящие под предыдущее регулярное выражение
- * массивы могут быть вложенными
- * см. например replaceTagsAndSpaces
- */
-
-function getParam (html, result, param, regexp, replaces, parser) {
-	if (!isAvailable(param))
-		return;
-
-	var matches = regexp ? html.match(regexp) : [, html], value;
-	if (matches) {
-                //Если нет скобок, то значение - всё заматченное
-		value = replaceAll(isset(matches[1]) ? matches[1] : matches[0], replaces);
-		if (parser)
-			value = parser (value);
-
-		if(param && isset(value))
-			result[isArray(param) ? param[0] : param] = value;
-	}
-	return value;
+;
+function getParam(f,k,b,g,c,a){if(!isset(f)){AnyBalance.trace("param1 is unset! "+new Error().stack);
+return
+}if(!isAvailable(b)){AnyBalance.trace(b+" is disabled!");
+return
+}var h=isArray(g)?g:[g];
+for(var d=0;
+d<h.length;
+++d){g=h[d];
+var e=g?f.match(g):[,f],j;
+if(e){j=replaceAll(isset(e[1])?e[1]:e[0],c);
+if(a){j=a(j)
+}if(b&&isset(j)){k[__getParName(b)]=j
+}break
+}}return j
+}function checkEmpty(c,b,a){if(!c){throw new AnyBalance.Error(b,null,!a)
+}}function __getParName(b){var a=isArray(b)?b[0]:b;
+return a&&a.substr(a.lastIndexOf(".")+1)
+}function isAvailable(c){if(!c){return true
+}var b=isArray(c),a="__tariff";
+if((b&&c.indexOf(a)>=0)||(!b&&c=="__tariff")){return true
+}return AnyBalance.isAvailable(c)
+}var replaceTagsAndSpaces=[/&nbsp;/ig," ",/&minus;/ig,"-",/<!--[\s\S]*?-->/g,"",/<[^>]*>/g," ",/\s{2,}/g," ",/^\s+|\s+$/g,""],replaceFloat=[/&minus;/ig,"-",/\s+/g,"",/'/g,"",/,/g,".",/\.([^.]*)(?=\.)/g,"$1",/^\./,"0."],replaceSlashes=[/\\(.?)/g,function(a,b){switch(b){case"0":return"\0";
+case"":return"";
+default:return b
+}}],replaceHtmlEntities=[/&(#(x)?)?(\w+);/ig,make_html_entity_replacement];
+function isset(a){return typeof(a)!="undefined"
+}function isArray(a){return Object.prototype.toString.call(a)==="[object Array]"
+}function replaceAll(c,a){for(var b=0;
+a&&b<a.length;
+++b){if(isArray(a[b])){c=replaceAll(c,a[b])
+}else{c=c.replace(a[b],a[b+1]);
+++b
+}}return c
+}function parseBalance(b){var a=getParam(html_entity_decode(b).replace(/\s+/g,""),null,null,/(-?[.,]?\d[\d'.,]*)/,replaceFloat,parseFloat);
+AnyBalance.trace("Parsing balance ("+a+") from: "+b);
+return a
+}function parseCurrency(b){var a=getParam(html_entity_decode(b).replace(/\s+/g,""),null,null,/-?\d[\d.,]*(\S*)/);
+AnyBalance.trace("Parsing currency ("+a+") from: "+b);
+return a
+}function parseMinutes(e){var g=html_entity_decode(e).replace(/[\s�]+/g,"");
+var a=0,c=0,d=0;
+if(/^\d+:\d+:\d+$/i.test(g)){var b=/^(\d+):(\d+):(\d+)$/i.exec(g);
+a=parseFloat(b[1]);
+c=parseFloat(b[2]);
+d=parseFloat(b[3])
+}else{if(/^\d+:\d+/i.test(g)){var b=/^(\d+):(\d+)/i.exec(g);
+a=0;
+c=parseFloat(b[1]);
+d=parseFloat(b[2])
+}else{a=getParam(g,null,null,/(-?\d[\d.,]*)\s*(?:час|ч|hour|h)/i,replaceFloat,parseFloat)||0;
+c=getParam(g,null,null,[/(-?\d[\d.,]*)\s*(?:мин|м|хв|min|m)/i,/^-?[\d.,]+$/i],replaceFloat,parseFloat)||0;
+d=getParam(g,null,null,/(-?\d[\d.,]*)\s*(?:сек|c|с|sec|s)/i,replaceFloat,parseFloat)||0
+}}var f=(a*3600)+(c*60)+d;
+AnyBalance.trace("Parsed seconds ("+f+") from: "+e);
+return f
+}function html_entity_decode(a){return replaceAll(a,replaceHtmlEntities)
+}function make_html_entity_replacement(e,c,b,a){var d={amp:38,nbsp:160,iexcl:161,cent:162,pound:163,curren:164,yen:165,brvbar:166,sect:167,uml:168,copy:169,ordf:170,laquo:171,not:172,shy:173,reg:174,macr:175,deg:176,plusmn:177,sup2:178,sup3:179,acute:180,micro:181,para:182,middot:183,cedil:184,sup1:185,ordm:186,raquo:187,frac14:188,frac12:189,frac34:190,iquest:191,agrave:192,aacute:193,acirc:194,atilde:195,auml:196,aring:197,aelig:198,ccedil:199,egrave:200,eacute:201,ecirc:202,euml:203,igrave:204,iacute:205,icirc:206,iuml:207,eth:208,ntilde:209,ograve:210,oacute:211,ocirc:212,otilde:213,ouml:214,times:215,oslash:216,ugrave:217,uacute:218,ucirc:219,uuml:220,yacute:221,thorn:222,szlig:223,agrave:224,aacute:225,acirc:226,atilde:227,auml:228,aring:229,aelig:230,ccedil:231,egrave:232,eacute:233,ecirc:234,euml:235,igrave:236,iacute:237,icirc:238,iuml:239,eth:240,ntilde:241,ograve:242,oacute:243,ocirc:244,otilde:245,ouml:246,divide:247,oslash:248,ugrave:249,uacute:250,ucirc:251,uuml:252,yacute:253,thorn:254,yuml:255,quot:34,lt:60,gt:62};
+if(!c){var f=a.toLowerCase(a);
+if(d.hasOwnProperty(f)){return String.fromCharCode(d[f])
+}}else{if(!b){if(/^\d+$/.test(a)){return String.fromCharCode(parseInt(a))
+}}else{if(/^[0-9a-f]+$/i.test(a)){return String.fromCharCode(parseInt(a,16))
+}}}return e
+}function createFormParams(a,b,d){var c=d?[]:{};
+a.replace(/<input[^>]+name=['"]([^'"]*)['"][^>]*>|<select[^>]+name=['"]([^'"]*)['"][^>]*>[\s\S]*?<\/select>/ig,function(j,f,g){var e="";
+if(f){if(/type=['"]button['"]/i.test(j)){e=undefined
+}else{e=getParam(j,null,null,/value=['"]([^'"]*)['"]/i,null,html_entity_decode)||""
+}name=f
+}else{if(g){e=getParam(j,null,null,/^<[^>]*value=['"]([^'"]*)['"]/i,null,html_entity_decode);
+if(typeof(e)=="undefined"){var h=getParam(j,null,null,/(<option[^>]+selected[^>]*>)/i);
+if(!h){h=getParam(j,null,null,/(<option[^>]*>)/i)
+}if(h){e=getParam(h,null,null,/value=['"]([^'"]*)["']/i,null,html_entity_decode)
+}}name=g
+}}name=html_entity_decode(name);
+if(b){e=b(c,j,name,e)
+}if(typeof(e)!="undefined"){if(d){c.push([name,e])
+}else{c[name]=e
+}}});
+return c
+}function parseDate(e){var c=/(?:(\d+)[^\d])?(\d+)[^\d](\d{2,4})(?:[^\d](\d+):(\d+)(?::(\d+))?)?/.exec(e);
+if(c){var b=+c[3];
+var a=new Date(b<1000?2000+b:b,c[2]-1,+(c[1]||1),c[4]||0,c[5]||0,c[6]||0);
+var d=a.getTime();
+AnyBalance.trace("Parsing date "+a+" from value: "+e);
+return d
+}AnyBalance.trace("Failed to parse date from value: "+e)
+}function parseDateWord(b){AnyBalance.trace("Trying to parse date from "+b);
+var a=getParam(b,null,null,null,[replaceTagsAndSpaces,/\D*(?:январ(?:я|ь)|янв|january|jan)\D*/i,".01.",/\D*(?:феврал(?:я|ь)|фев|febrary|feb)\D*/i,".02.",/\D*(?:марта|март|мар|march|mar)\D*/i,".03.",/\D*(?:апрел(?:я|ь)|апр|april|apr)\D*/i,".04.",/\D*(?:ма(?:я|й)|may)\D*/i,".05.",/\D*(?:июн(?:я|ь)|июн|june|jun)\D*/i,".06.",/\D*(?:июл(?:я|ь)|июл|july|jul)\D*/i,".07.",/\D*(?:августа|август|авг|august|aug)\D*/i,".08.",/\D*(?:сентябр(?:я|ь)|сен|september|sep)\D*/i,".09.",/\D*(?:октябр(?:я|ь)|окт|october|oct)\D*/i,".10.",/\D*(?:ноябр(?:я|ь)|ноя|november|nov)\D*/i,".11.",/\D*(?:декабр(?:я|ь)|dec|december|dec)\D*/i,".12.",/\s/g,""]);
+if(endsWith(a,".")){a+=new Date().getFullYear()
+}return parseDate(a)
+}function joinObjects(c,a){var d={};
+for(var b in a){d[b]=a[b]
+}if(c){for(b in c){d[b]=c[b]
+}}return d
+}function joinArrays(c,b){var a=c.slice();
+a.push.apply(a,b);
+return a
+}function addHeaders(c,e){e=e||g_headers;
+var d=isArray(e);
+var a=isArray(c);
+if(!d&&!a){return joinObjects(c,e)
+}if(d&&a){return joinArrays(e,c)
+}if(!d&&a){var f=joinObjects(null,e);
+for(var b=0;
+b<c.length;
+++b){f[c[b][0]]=c[b][1]
+}return f
+}if(d&&!a){var f=e.slice();
+for(b in c){f.push([b,c[b]])
+}return f
+}}function getJson(b){try{var a=JSON.parse(b);
+return a
+}catch(c){AnyBalance.trace("Bad json ("+c.message+"): "+b);
+throw new AnyBalance.Error("Сервер вернул ошибочные данные: "+c.message)
+}}function getJsonEval(b){try{var a=safeEval("return "+b,"window,document,self");
+return a
+}catch(c){AnyBalance.trace("Bad json ("+c.message+"): "+b);
+throw new AnyBalance.Error("Сервер вернул ошибочные данные: "+c.message)
+}}function safeEval(c,g,j){var d=AnyBalance,b=this.g_AnyBalanceApiParams,f=this._AnyBalanceApi;
+AnyBalance=this.g_AnyBalanceApiParams=this._AnyBalanceApi=undefined;
+try{var a=Function(g||"ja0w4yhwphgawht984h","AnyBalance","g_AnyBalanceApiParams","_AnyBalanceApi",c).apply(null,j);
+return a
+}catch(h){throw new d.Error("Bad javascript ("+h.message+"): "+c)
+}finally{AnyBalance=d,g_AnyBalanceApiParams=b,_AnyBalanceApi=f
+}}function endsWith(b,a){return b.indexOf(a,b.length-a.length)!==-1
+}(function(b,d){var c=b.parse,a=[1,4,5,6,7,10,11];
+b.parse=function(f){var j,l,h=0;
+if((l=/^(\d{4}|[+\-]\d{6})(?:-(\d{2})(?:-(\d{2}))?)?(?:T(\d{2}):(\d{2})(?::(\d{2})(?:\.(\d{3}))?)?(?:(Z)|([+\-])(\d{2})(?::(\d{2}))?)?)?$/.exec(f))){for(var g=0,e;
+(e=a[g]);
+++g){l[e]=+l[e]||0
+}l[2]=(+l[2]||1)-1;
+l[3]=+l[3]||1;
+if(l[8]!=="Z"&&l[9]!==d){h=l[10]*60+l[11];
+if(l[9]==="+"){h=0-h
+}}j=b.UTC(l[1],l[2],l[3],l[4],l[5]+h,l[6],l[7])
+}else{j=c?c(f):NaN
+}return j
 }
-
-function isAvailable(param){
-    if(!param)
-        return true;
-    var bArray = isArray(param), tariffName = '__tariff';
-    if((bArray && param.indexOf(tariffName) >= 0) || (!bArray && param == '__tariff'))
-        return true; //Тариф всегда нужен
-    return AnyBalance.isAvailable (param);
-}
-
-//Замена пробелов и тэгов
-var replaceTagsAndSpaces = [/&nbsp;/ig, ' ', /&minus;/ig, '-', /<!--[\s\S]*?-->/g, '', /<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, ''];
-//Замена для чисел
-var replaceFloat = [/&minus;/ig, '-', /\s+/g, '', /,/g, '.'];
-//Замена для Javascript строк
-var replaceSlashes = [/\\(.?)/g, function(str, n){
-        switch (n) {
-            case '0':
-              return '\0';
-            case '':
-              return '';
-            default:
-              return n;
-        }
-    }];
-
-/**
- *  Проверяет, определено ли значение переменной
- */
-function isset(v){
-    return typeof(v) != 'undefined';
-}
-
-/**
- *  Проверяет, является ли объект массивом
- */
-function isArray(arr){
-	return Object.prototype.toString.call( arr ) === '[object Array]';
-}
-
-/**
- * Делает все замены в строке value. При этом, если элемент replaces массив, то делает замены по нему рекурсивно.
- */
-function replaceAll(value, replaces){
-	for (var i = 0; replaces && i < replaces.length; ++i) {
-                if(isArray(replaces[i])){
-			value = replaceAll(value, replaces[i]);
-                }else{
-			value = value.replace (replaces[i], replaces[i+1]);
-			++i; //Пропускаем ещё один элемент, использованный в качестве замены
-                }
-	}
-        return value;
-}
-
-/**
- * Извлекает числовое значение из переданного текста
- */
-function parseBalance(text){
-    var val = getParam(html_entity_decode(text).replace(/\s+/g, ''), null, null, /(-?\d[\d.,]*)/, replaceFloat, parseFloat);
-    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
-    return val;
-}
-
-/**
- * Извлекает валюту из переданного текста (типичная реализация)
- */
-function parseCurrency(text){
-    var val = getParam(html_entity_decode(text).replace(/\s+/g, ''), null, null, /-?\d[\d.,]*(\S*)/);
-    AnyBalance.trace('Parsing currency (' + val + ') from: ' + text);
-    return val;
-}
-
-/**
- * Заменяет HTML сущности в строке на соответствующие им символы
- */
-function html_entity_decode(str)
-{
-    //jd-tech.net
-    var tarea=document.createElement('textarea');
-    tarea.innerHTML = str;
-    return tarea.value;
-}
-
-/**
- * Получает объект с параметрами форм (ищет в html все <input и <select и возвращает объект с их именами-значениями.
- * 
- * process - функция function(params, str, name, value). Возвращаемое значение будет положено в объект params под именем name. Если возвратит undefined, то ничего не будет сделано.
- * params - объект, который вернется из createFormParams
- * str - весь <input или <select
- * name - атрибут name <input или <select
- * value - атрибут value <input или <select
- * 
- * Типичное использование:
- *
-        var params = createFormParams(html, function(params, str, name, value){
-            if(name == 'login')
-                return prefs.login;
-            return value;
-        });
- */
-function createFormParams(html, process, array){
-    var params = array ? [] : {};
-    html.replace(/<input[^>]+name="([^"]*)"[^>]*>|<select[^>]+name="([^"]*)"[^>]*>[\s\S]*?<\/select>/ig, function(str, nameInp, nameSel){
-        var value = '';
-        if(nameInp){
-            if(/type="button"/i.test(str))
-                value=undefined;
-            else
-                value = getParam(str, null, null, /value="([^"]*)"/i, null, html_entity_decode) || '';
-            name = nameInp;
-        }else if(nameSel){
-            value = getParam(str, null, null, /^<[^>]*value="([^"]*)"/i, null, html_entity_decode);
-            if(typeof(value) == 'undefined'){
-                var optSel = getParam(str, null, null, /(<option[^>]+selected[^>]*>)/i);
-                if(!optSel)
-                    optSel = getParam(str, null, null, /(<option[^>]*>)/i);
-                value = getParam(optSel, null, null, /value="([^"]*)"/i, null, html_entity_decode);
-            }
-            name = nameSel;
-        }
-
-        name = html_entity_decode(name);
-        if(process){
-            value = process(params, str, name, value);
-        }
-        if(typeof(value) != 'undefined')
-            if(array) params.push([name, value])
-            else params[name] = value;
-    });
-
-    //AnyBalance.trace('Form params are: ' + JSON.stringify(params));
-    return params;
-}
-
-/**
- *  Получает дату из строки
- */
-function parseDate(str){
-    var matches = /(?:(\d+)[^\d])?(\d+)[^\d](\d{2,4})(?:[^\d](\d+):(\d+)(?::(\d+))?)?/.exec(str);
-    if(matches){
-          var year = +matches[3];
-          var date = new Date(year < 1000 ? 2000 + year : year, matches[2]-1, +(matches[1] || 1), matches[4] || 0, matches[5] || 0, matches[6] || 0);
-	  var time = date.getTime();
-          AnyBalance.trace('Parsing date ' + date + ' from value: ' + str);
-          return time;
-    }
-    AnyBalance.trace('Failed to parse date from value: ' + str);
-}
-
-/**
- *  Объединяет два объекта. Свойства с общими именами берутся из newObject
- */
-function joinObjects(newObject, oldObject){
-   var obj = {};
-   for(var i in oldObject){
-       obj[i] = oldObject[i];
-   }
-   if(newObject){
-      for(i in newObject){
-          obj[i] = newObject[i];
-      }
-   }
-   return obj;
-}
-
-function joinArrays(arr1, arr2){
-   var narr = arr1.slice();
-   narr.push.apply(narr, arr2);
-   return narr;
-}
-
-/**
- *  Добавляет хедеры к переданным или к g_headers
- */
-function addHeaders(newHeaders, oldHeaders){
-   oldHeaders = oldHeaders || g_headers;
-   var bOldArray = isArray(oldHeaders);
-   var bNewArray = isArray(newHeaders);
-   if(!bOldArray && !bNewArray)
-       return joinObjects(newHeaders, oldHeaders);
-   if(bOldArray && bNewArray) //Если это массивы, то просто делаем им join
-       return joinArrays(oldHeaders, newHeaders);
-   if(!bOldArray && bNewArray){ //Если старый объект, а новый массив
-       var headers = joinObjects(null, oldHeaders);
-       for(var i=0; i<newHeaders.length; ++i)
-           headers[newHeaders[i][0]] = newHeaders[i][1];
-       return headers;
-   }
-   if(bOldArray && !bNewArray){ //Если старый массив, а новый объект, то это специальный объект {index: [name, value], ...}!
-       var headers = oldHeaders.slice();
-       for(i in newHeaders)
-           headers[i] = newHeaders[i];
-       return headers;
-   }
-}
-
-/**
- *  Получает JSON из переданного текста, кидает ошибку, если не парсится
- */
-function getJson(html){
-   try{
-       var json = JSON.parse(html);
-       return json;
-   }catch(e){
-       AnyBalance.trace('Bad json (' + e.message + '): ' + html);
-       throw new AnyBalance.Error('Сервер вернул ошибочные данные: ' + e.message);
-   }
-}
-
-/**
- *  Получает JSON из переданного текста, выполняя его (требуется для невалидного JSON)
- */
-function getJsonEval(html){
-   try{
-       //Запрещаем использование следующих переменных из функции:
-       var json = new Function('window', 'AnyBalance', 'g_AnyBalanceApiParams', '_AnyBalanceApi', 'document', 'return ' + html).apply(null);
-       return json;
-   }catch(e){
-       AnyBalance.trace('Bad json (' + e.message + '): ' + html);
-       throw new AnyBalance.Error('Сервер вернул ошибочные данные: ' + e.message);
-   }
-}
-
-
-/**
- *  Проверяет, не оканчивается ли строка на заданную
- */
-function endsWith(str, suffix) {
-    return str.indexOf(suffix, str.length - suffix.length) !== -1;
-}
-
-/**
- * Date.parse with progressive enhancement for ISO 8601 <https://github.com/csnover/js-iso8601>
- * В© 2011 Colin Snover <http://zetafleet.com>
- * Released under MIT license.
- */
-(function (Date, undefined) {
-    var origParse = Date.parse, numericKeys = [ 1, 4, 5, 6, 7, 10, 11 ];
-    Date.parse = function (date) {
-        var timestamp, struct, minutesOffset = 0;
-
-        // ES5 В§15.9.4.2 states that the string should attempt to be parsed as a Date Time String Format string
-        // before falling back to any implementation-specific date parsing, so thatвЂ™s what we do, even if native
-        // implementations could be faster
-        //              1 YYYY                2 MM       3 DD           4 HH    5 mm       6 ss        7 msec        8 Z 9 В±    10 tzHH    11 tzmm
-        if ((struct = /^(\d{4}|[+\-]\d{6})(?:-(\d{2})(?:-(\d{2}))?)?(?:(?:T|\s+)(\d{2}):(\d{2})(?::(\d{2})(?:\.(\d{3}))?)?(?:(Z)|([+\-])(\d{2})(?::(\d{2}))?)?)?$/.exec(date))) {
-            // avoid NaN timestamps caused by вЂњundefinedвЂќ values being passed to Date.UTC
-            for (var i = 0, k; (k = numericKeys[i]); ++i) {
-                struct[k] = +struct[k] || 0;
-            }
-
-            // allow undefined days and months
-            struct[2] = (+struct[2] || 1) - 1;
-            struct[3] = +struct[3] || 1;
-
-            if (struct[8] !== 'Z' && struct[9] !== undefined) {
-                minutesOffset = struct[10] * 60 + struct[11];
-
-                if (struct[9] === '+') {
-                    minutesOffset = 0 - minutesOffset;
-                }
-            }
-
-            timestamp = new Date(struct[1], struct[2], struct[3], struct[4], struct[5] + minutesOffset, struct[6], struct[7]).getTime();
-        }
-        else {
-            timestamp = origParse ? origParse(date) : NaN;
-        }
-
-        return timestamp;
-    };
 }(Date));
-
-function parseDateISO(str){
-    var dt = Date.parse(str);
-    if(!dt){
-        AnyBalance.trace('Could not parse date from ' + str);
-        return;
-    }else{
-        AnyBalance.trace('Parsed ' + new Date(dt) + ' from ' + str);
-        return dt;
-    }
+function parseDateISO(b){var a=Date.parse(b);
+if(!a){AnyBalance.trace("Could not parse date from "+b);
+return
+}else{AnyBalance.trace("Parsed "+new Date(a)+" from "+b);
+return a
+}}function parseDateJS(b){var c=b.replace(/(\d+)\s*г(?:\.|ода?)?,?/i,"$1 ");
+var a=Date.parse(c);
+if(!a){AnyBalance.trace("Can not parse date from "+b);
+return
+}a=new Date(a);
+AnyBalance.trace("Parsed date "+a.toString()+" from "+b);
+return a.getTime()
+}function sumParam(k,q,d,n,e,b,f,c){if(typeof(f)=="function"){var a=c;
+c=f;
+f=a||false
+}function p(){if(f){return n?k.replace(n,""):""
+}}if(!isAvailable(d)){return p()
+}d=__getParName(d);
+var o=[],j;
+if(d&&isset(q[d])){o.push(q[d])
+}function l(r){r=replaceAll(r,e);
+if(b){r=b(r)
+}if(isset(r)){o.push(r)
+}}var m=isArray(n)?n:[n];
+for(var g=0;
+g<m.length;
+++g){n=m[g];
+if(!n){l(k)
+}else{n.lastIndex=0;
+while(j=n.exec(k)){l(isset(j[1])?j[1]:j[0]);
+if(!n.global){break
+}}}if(f){k=n?k.replace(n,""):""
+}}var h;
+if(c){h=c(o)
+}else{if(!d){h=o
+}}if(d){if(isset(h)){q[d]=h
+}return k
+}else{return h
+}}function aggregate_sum(a){if(a.length==0){return
+}var c=0;
+for(var b=0;
+b<a.length;
+++b){c+=a[b]
+}return c
+}function aggregate_join(b,a,d){if(b.length==0){return
+}if(!isset(a)){a=", "
+}var c=b.join(a);
+if(!d){c=c.replace(/^(?:\s*,\s*)+|(?:\s*,\s*){2,}|(?:\s*,\s*)+$/g,"")
+}return c
+}function create_aggregate_join(a,b){return function(c){return aggregate_join(c,a,b)
 }
-
-function parseDateJS(str){
-  //Рассчитывает на библиотеку date-ru-RU.js
-  var _str = str.replace(/(\d+)\s*г(?:\.|ода?)?,?/i, '$1 '); //Убираем г. после года, чтобы не мешалось
-  var dt = Date.parse(_str);
-  if(!dt){
-      AnyBalance.trace('Can not parse date from ' + str);
-      return;
-  }
-
-  dt = new Date(dt);
-  
-  AnyBalance.trace('Parsed date ' + dt.toString() + ' from ' + str);
-  return dt.getTime(); 
-}
-
-/**
- * Получает значение, подходящее под регулярное выражение regexp, производит 
- * в нем замены replaces, результат передаёт в функцию parser, 
- * а затем записывает результат в счетчик с именем param в result
- * Результат в result помещается только если счетчик выбран пользователем 
- * в настройках аккаунта
- *
- * Очень похоже на getParam, но может получать несколько значений (при наличии 
- * в регулярном выражении флага g). В этом случае применяет к ним функцию aggregate, 
- * а если она не передана, то возвращает массив всех совпадений.
- * 
- * если result и param равны null, то значение просто возвращается.
- * eсли parser == null, то возвращается результат сразу после замен
- * если regexp == null, то значением является переданный html
- * если replaces == null, то замены не делаются
- * do_replace - если true, то найденные значения вырезаются из переданного текста 
- * и новый текст возвращается (только при param != null)
- * 
- * replaces - массив, нечетные индексы - регулярные выражения, четные - строки, 
- * на которые надо заменить куски, подходящие под предыдущее регулярное выражение. Эти массивы могут быть вложенными.
- * см. например replaceTagsAndSpaces
- */
-function sumParam (html, result, param, regexp, replaces, parser, do_replace, aggregate) {
-    if(typeof(do_replace) == 'function'){
-        var aggregate_old = aggregate;
-        aggregate = do_replace;
-        do_replace = aggregate_old || false;
-    }
-
-    if (!isAvailable(param)){
-	if(do_replace){ //Даже если счетчик не требуется, всё равно надо вырезать его матчи, чтобы не мешалось другим счетчикам
-		return regexp ? html.replace(regexp, '') : html;
-        }else
-		return;
-    }
-    //После того, как проверили нужность счетчиков, кладем результат в первый из переданных счетчиков. Оставляем только первый
-    param = isArray(param) ? param[0] : param;
-
-    var values = [], matches;
-    if(param && isset(result[param]))
-        values.push(result[param]);
-
-    function replaceAndPush(value){
-        value = replaceAll(value, replaces);
-	if (parser)
-		value = parser (value);
-        if(isset(value))
-        	values.push(value);
-    }
-
-    if(!regexp){
-        replaceAndPush(html);
-    }else{
-        regexp.lastIndex = 0; //Удостоверяемся, что начинаем поиск сначала.
-        while(matches = regexp.exec(html)){
-                replaceAndPush(isset(matches[1]) ? matches[1] : matches[0]);
-        	if(!regexp.global)
-            		break; //Если поиск не глобальный, то выходим из цикла
-	}
-    }
-
-    var total_value;
-    if(aggregate)
-        total_value = aggregate(values);
-    else if(!param) //Если не требуется записывать в резалт, и функция агрегации отсутствует, то вернем массив
-        total_value = values;
-
-    if(param){
-      if(isset(total_value)){
-          result[param] = total_value;
-      }
-      if(do_replace)
-          return regexp ? html.replace(regexp, '') : html;
-    }else{
-      return total_value;
-    }
-}
-
-function aggregate_sum(values){
-    if(values.length == 0)
-        return;
-    var total_value = 0;
-    for(var i=0; i<values.length; ++i){
-        total_value += values[i];
-    }
-    return total_value;
-}
-
-function aggregate_join(values, delimiter){
-    if(values.length == 0)
-        return;
-    if(!isset(delimiter))
-        delimiter = ', ';
-    return values.join(delimiter);
-}
-
-function create_aggregate_join(delimiter){
-    return function(values){ return aggregate_join(values, delimiter); }
-}
-
-function aggregate_min(values){
-    if(values.length == 0)
-        return;
-    var total_value;
-    for(var i=0; i<values.length; ++i){
-        if(!isset(total_value) || total_value > values[i])
-            total_value = values[i];
-    }
-    return total_value;
-}
-
-function aggregate_max(values){
-    if(values.length == 0)
-        return;
-    var total_value;
-    for(var i=0; i<values.length; ++i){
-        if(!isset(total_value) || total_value < values[i])
-            total_value = values[i];
-    }
-    return total_value;
-}
-
-/**
- * Вычисляет трафик в мегабайтах из переданной строки.
- */
-function parseTraffic(text, defaultUnits){
-    return parseTrafficEx(text, 1024, 2, defaultUnits);
-}
-
-/**
- * Вычисляет трафик в гигабайтах из переданной строки.
- */
-function parseTrafficGb(text, defaultUnits){
-    return parseTrafficEx(text, 1024, 3, defaultUnits);
-}
-
-/**
- * Вычисляет трафик в нужных единицах из переданной строки.
- */
-function parseTrafficEx(text, thousand, order, defaultUnits){
-    var _text = html_entity_decode(text.replace(/\s+/g, ''));
-    var val = getParam(_text, null, null, /(-?\d[\d\.,]*)/, replaceFloat, parseFloat);
-    if(!isset(val)){
-        AnyBalance.trace("Could not parse traffic value from " + text);
-        return;
-    }
-    var units = getParam(_text, null, null, /([kmgкмг][бb]?|[бb](?![\wа-я])|байт|bytes)/i);
-    if(!units && !defaultUnits){
-        AnyBalance.trace("Could not parse traffic units from " + text);
-        return;
-    }
-    if(!units) units = defaultUnits;
-    switch(units.substr(0,1).toLowerCase()){
-      case 'b':
-      case 'б':
-        val = Math.round(val/Math.pow(thousand, order)*100)/100;
-        break;
-      case 'k':
-      case 'к':
-        val = Math.round(val/Math.pow(thousand, order-1)*100)/100;
-        break;
-      case 'm':
-      case 'м':
-        val = Math.round(val/Math.pow(thousand, order-2)*100)/100;
-        break;
-      case 'g':
-      case 'г':
-        val = Math.round(val/Math.pow(thousand, order-3)*100)/100;
-        break;
-    }
-    var textval = ''+val;
-    if(textval.length > 6)
-      val = Math.round(val);
-    else if(textval.length > 5)
-      val = Math.round(val*10)/10;
-    var dbg_units = {0: 'b', 1: 'kb', 2: 'mb', 3: 'gb'};
-    AnyBalance.trace('Parsing traffic (' + val + dbg_units[order] + ') from: ' + text);
-    return val;
-}
-
-/**
- * Создаёт мультипарт запрос
- */
-function requestPostMultipart(url, data, headers){
-	var parts = [];
-	var boundary = '------WebKitFormBoundaryWEU6wGTXXYvMpiJo';
-	for(var name in data){
-		parts.push(boundary, 
-		'Content-Disposition: form-data; name="' + name + '"',
-		'',
-		data[name]);
-	}
-	parts.push(boundary, '--');
-        if(!headers) headers = {};
-	headers['Content-Type'] = 'multipart/form-data; boundary=' + boundary.substr(2);
-	return AnyBalance.requestPost(url, parts.join('\r\n'), headers);
-}
-
+}function aggregate_min(a){if(a.length==0){return
+}var c;
+for(var b=0;
+b<a.length;
+++b){if(!isset(c)||c>a[b]){c=a[b]
+}}return c
+}function aggregate_max(a){if(a.length==0){return
+}var c;
+for(var b=0;
+b<a.length;
+++b){if(!isset(c)||c<a[b]){c=a[b]
+}}return c
+}function parseTraffic(b,a){return parseTrafficEx(b,1024,2,a)
+}function parseTrafficGb(b,a){return parseTrafficEx(b,1024,3,a)
+}function parseTrafficEx(h,j,b,d){var g=html_entity_decode(h.replace(/\s+/g,""));
+var a=getParam(g,null,null,/(-?\.?\d[\d\.,]*)/,replaceFloat,parseFloat);
+if(!isset(a)||a===""){AnyBalance.trace("Could not parse traffic value from "+h);
+return
+}var f=getParam(g,null,null,/([kmgtкмгт][бb]?|[бb](?![\wа-я])|байт|bytes)/i);
+if(!f&&!d){AnyBalance.trace("Could not parse traffic units from "+h);
+return
+}if(!f){f=d
+}switch(f.substr(0,1).toLowerCase()){case"b":case"б":a=Math.round(a/Math.pow(j,b)*100)/100;
+break;
+case"k":case"к":a=Math.round(a/Math.pow(j,b-1)*100)/100;
+break;
+case"m":case"м":a=Math.round(a/Math.pow(j,b-2)*100)/100;
+break;
+case"g":case"г":a=Math.round(a/Math.pow(j,b-3)*100)/100;
+break;
+case"t":case"т":a=Math.round(a/Math.pow(j,b-4)*100)/100;
+break
+}var e=""+a;
+if(e.length>6){a=Math.round(a)
+}else{if(e.length>5){a=Math.round(a*10)/10
+}}var c={0:"b",1:"kb",2:"mb",3:"gb",4:"tb"};
+AnyBalance.trace("Parsing traffic ("+a+c[b]+") from: "+h);
+return a
+}function requestPostMultipart(c,h,e){var k="",g="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+for(var j=0;
+j<16;
+j++){k+=g.charAt(Math.floor(Math.random()*g.length))
+}var f=[];
+var d="------WebKitFormBoundary"+k;
+for(var a in h){f.push(d,'Content-Disposition: form-data; name="'+a+'"',"",h[a])
+}f.push(d+"--\r\n");
+if(!e){e={}
+}e["Content-Type"]="multipart/form-data; boundary="+d.substr(2);
+return AnyBalance.requestPost(c,f.join("\r\n"),e)
+}function capitalFirstLetters(c){var a=html_entity_decode(c+"").toLowerCase().split(" ");
+var b="";
+for(i=0;
+i<a.length;
+i++){b+=a[i].substring(0,1).toUpperCase()+a[i].substring(1)+" "
+}return b.replace(/^\s+|\s+$/g,"")
+};

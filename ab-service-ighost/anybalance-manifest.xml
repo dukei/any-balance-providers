@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-service-ighost</id>
+	<id version="4">ab-service-ighost</id>
 	<api flags="no_browser|captcha"/>
 	<name>I-ghost.net</name>
 	<description html="true"><![CDATA[

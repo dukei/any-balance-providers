@@ -80,12 +80,12 @@ function getStavr(prefs) {
 	}
 	var result = {success: true};
 	
-	getParam(html, result, 'fio', /Мой счет[^>]*>\s*<table(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'acc_num', /Мой счет[^>]*>\s*<table(?:[^>]*>){9}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'balance', />([^<]*)(?:[^>]*>){12}Пополнить счет/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'bonuses', /\d+\s*бону/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'cred_balance', /Кредит счета(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'status', /Статус(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'fio', /<tr[^>]*>((?:[\s\S](?!<\/tr>))*).<\/tr>\s*<tr[^>]*>\s*<td[^>]*>\s*№ счета/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'acc_num', /№ счета([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'balance', /<tr[^>]*>((?:[\s\S](?!<\/tr>))*?).<\/tr>\s*<tr[^>]*>(?:[\s\S](?!<\/tr>))*?refresh\/account/i, replaceTagsAndSpaces, parseBalance);
+//	getParam(html, result, 'bonuses', /\d+\s*бону/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'cred_balance', /Рекомендуемая сумма к оплате:([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'status', /Статус([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
 
 	AnyBalance.setResult(result);
 }

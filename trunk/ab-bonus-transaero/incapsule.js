@@ -154,10 +154,19 @@
         	loadImages();
         }
 
+        if(_AnyBalance.getLevel() >= 9){
+        	AnyBalance.saveCookies(/incap/i);
+        	AnyBalance.saveData();
+        }
+
         return html;
     }
 
     _window.parent = _window;
+
+    if(_AnyBalance.getLevel() >= 9){
+    	AnyBalance.restoreCookies(/incap/i);
+    }
 
     return {
         document: _document,

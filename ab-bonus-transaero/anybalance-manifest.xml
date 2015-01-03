@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="4">ab-bonus-transaero</id>
+	<id version="5">ab-bonus-transaero</id>
 	<name>Трансаэро Привилегия</name>
 	<description html="true"><![CDATA[
 	<p>Получает баланс баллов и другую информацию по бонусной программе «Трансаэро Привилегия» <a href="http://transaero.ru/ru/special-programs/privilege/privilege-terms">http://transaero.ru/ru/special-programs/privilege/privilege-terms</a></p>
@@ -20,6 +20,7 @@
 	<counters>
 		<counter id="balance" name="Баланс"/>
 		<counter id="cardnum" name="Номер карты" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
 	<keywords>авиакомпания</keywords>
 	<type>bonus</type>

@@ -1,12 +1,17 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser" />
-	<id version="1">ab-cell-yargsm</id>
+	<id version="2">ab-cell-yargsm</id>
 	<name>Смартс (Ярославская область)</name>
 	<description>
 	Получает информацию о балансе и тарифном плане оператора Смартс в Ярославской области https://www.yargsm.ru/issa/
 	</description>
+	<instruction>
+		Для получения пароля воспользуйтесь формой по ссылке: https://www.yargsm.ru/issa/register.php
+
+		Для восстановления пароля, если вы его забыли, воспользуйтесь формой https://www.yargsm.ru/issa/login.php?action=passrecover
+	</instruction>
+	
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
@@ -16,9 +21,13 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units="р"/>
-		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="time" name="Время" type="time_interval"  format="{@MIN}:{@sec}"/>
+		<counter id="sms" name="SMS" units=" sms"/>
 		<counter id="status" name="Статус" type="text"/>
+		<counter id="spent" name="Потрачено в тек. месяце" units=" р"/>
+		<counter id="thres" name="Порог" units=" р"/>
+		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="acc" name="Номер счета" type="text"/>
 		<counter id="phone" name="Телефон" type="text"/>
 	</counters>

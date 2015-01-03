@@ -22,6 +22,15 @@ function main(){
     }, g_headers); 
 
     if(!/Logout/i.test(html)){
+    	var url = AnyBalance.getLastUrl();
+     	if(AnyBalance.getLastStatusCode() == 404 && /message.php/i.test(url)){
+     	    AnyBalance.trace('Неправильная переадресация. Поправим-ка ошибку и переадресуем правильно.');
+     		html = AnyBalance.requestGet(url.replace(/\.ru\/message\.php/i, '.ru/issa/message.php'), g_headers);
+            var error = getParam(html, null, null, /<h1[^>]*>[\s\S]*?<\/h1>\s*(?:<p[^>]*>[\s\S]*?<\/p>)/i, replaceTagsAndSpaces, html_entity_decode);
+            if(error)
+               throw new AnyBalance.Error(error, null, /неправильный логин или пароль/i.test(error));
+     	}
+
         var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error);
@@ -31,12 +40,17 @@ function main(){
 	html = AnyBalance.requestGet(baseurl + 'issa/balance.php', g_headers);
 
     var result = {success: true};
-    getParam(html, result, 'fio', /Клиент:.*?<td>(.*?)<\//i, null, html_entity_decode);
-	getParam(html, result, 'acc', /Номер счета:.*?<td>(.*?)<\//i, null, html_entity_decode);
-	getParam(html, result, 'balance', /Баланс.*?<td>(.*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, '__tariff', /Тарифный план:.*?<td>(.*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'phone', /Телефонный номер:.*?<td>(.*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'status', /Статус:.*?<td>(.*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'fio', /Клиент:[\s\S]*?<td[^>]*>([\s\S]*?)<\//i, null, html_entity_decode);
+	getParam(html, result, 'acc', /Номер счета:[\s\S]*?<td[^>]*>([\s\S]*?)<\//i, null, html_entity_decode);
+	getParam(html, result, 'balance', /Баланс[\s\S]*?<td[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, '__tariff', /Тарифный план:[\s\S]*?<td[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'phone', /Телефонный номер:[\s\S]*?<td[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'status', /Статус:[\s\S]*?<td[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+
+    getParam(html, result, 'time', /Время:[\s\S]*?<td[^>]*>[^<]*?\((\d+)\s*[cс]/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'sms', /Количество SMS:[\s\S]*?<td[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'spent', /Потрачено в текушем месяце:[\s\S]*?<td[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'thres', /Порог:[\s\S]*?<td[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
 
     AnyBalance.setResult(result);
 }

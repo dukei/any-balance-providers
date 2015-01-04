@@ -17,7 +17,7 @@ function main(){
 	
     var baseurl = "http://transaero.ru/";
 
-    var incapsule = Incapsule(baseurl);
+    var incapsule = Incapsule(baseurl + 'ru/privilege/argo-login');
     var html = AnyBalance.requestGet(baseurl + 'ru/privilege/argo-login', g_headers);
     if(incapsule.isIncapsulated(html))
         html = incapsule.executeScript(html);
@@ -34,12 +34,12 @@ function main(){
         throw new AnyBalance.Error('Не удаётся найти ссылку на вход. Сайт изменен или проблемы на сайте.');
     }
 	
-	html = AnyBalance.requestPost(baseurl + action, {
-		FORM_LASTNAME: prefs.surname,
-		FORM_CARDNO: prefs.login,
-		FORM_PINCODE: prefs.password,
-		ArgoPortletFormSubmit: 'Войти',
-	}, addHeaders({Referer: baseurl + 'ru/privilege/argo-login'}));
+	html = AnyBalance.requestPost(baseurl + action, [
+		['FORM_LASTNAME', prefs.surname],
+		['FORM_CARDNO', prefs.login],
+		['FORM_PINCODE', prefs.password],
+		['ArgoPortletFormSubmit', 'Войти']
+	], addHeaders({Referer: baseurl + 'ru/privilege/argo-login'}));
 
 	if (!/Уважаемый[^<]*!/i.test(html)) {
 		var error = getParam(html, null, null, /<h1[^>]*>\s*Просмотр состояния счёта\s*<\/h1>\s*<p[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
@@ -53,8 +53,8 @@ function main(){
     var result = {success: true};
 
     getParam(html, result, 'balance', />\s*Вы набрали\s*<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, '__tariff', /на ваш персональный счет\s*([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'cardnum', /на ваш персональный счет\s*([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, '__tariff', /на ваш персональный счет\s*([^<]*)/i, [replaceTagsAndSpaces, /\.+$/, ''], html_entity_decode);
+    getParam(html, result, 'cardnum', /на ваш персональный счет\s*([^<]*)/i, [replaceTagsAndSpaces, /\.+$/, ''], html_entity_decode);
     getParam(html, result, 'fio', /Уважаемый([^<]*)!/i, replaceTagsAndSpaces, html_entity_decode);
 
     AnyBalance.setResult(result);

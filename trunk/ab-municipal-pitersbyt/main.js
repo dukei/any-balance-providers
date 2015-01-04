@@ -58,7 +58,7 @@ var g_lks = {
     pes: {
 	url: 'https://ikus.pes.spb.ru/IKUSUser/',
 	uid: 'D71455428F33C019BC5C4C1707CA205C',
-	auth_uid: 'A393A5DFCBCC9378504457D04ABD5B9E',
+	auth_uid: 'AE742241A0A8AD76E4877D96DE250A42',
 	strong_name: '\\b%VARNAME%,\\w+\\],(\\w+)\\)',
 	auth_url: 'userAuth/',
 	auth_nocache: 'userAuth/userAuth.nocache.js',

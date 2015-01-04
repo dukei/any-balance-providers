@@ -1,6 +1,6 @@
 ﻿function Incapsule(_url){
     var _AnyBalance = AnyBalance;
-    var headers = addHeaders(g_headers, {Referrer: _url});
+    var headers = addHeaders(g_headers, {Referer: _url});
     var imagesToLoad = [];
 
     function _XMLHttpRequest(){

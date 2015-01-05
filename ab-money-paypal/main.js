@@ -110,6 +110,10 @@ function logInAPI(prefs) {
 			getParam(curr.available.total.amount + '', result, 'balance_eur', null, replaceTagsAndSpaces, parseBalance);
 		} else if(curr.currency == 'SEK') {
 			getParam(curr.available.total.amount + '', result, 'balance_sek', null, replaceTagsAndSpaces, parseBalance);
+		} else if(curr.currency == 'RUB') {
+			getParam(curr.available.total.amount + '', result, 'balance_rub', null, replaceTagsAndSpaces, parseBalance);
+		}else{
+		    AnyBalance.trace('Unknown currency ' + curr.currency + ': ' + JSON.stringify(curr));
 		}
 	}
 	

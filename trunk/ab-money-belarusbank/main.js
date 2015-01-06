@@ -38,6 +38,7 @@ function main(){
         var error = getParam(html, null, null, /<font[^>]+color="#FF0000"[^>]*>([\s\S]*?)<\/font>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error);
+        AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
     }
 
@@ -50,9 +51,10 @@ function main(){
 
     var codenum = getParam(html, null, null, /Введите[^>]*>код [N№]\s*(\d+)/i, null, parseBalance);
     if(!codenum){
-        var error = getParam(html, null, null, /<p[^>]+class="warning"[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
+        var error = getParam(html, null, null, /<p[^>]+class="(?:warning|error)"[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error);
+        AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось войти в интернет-банк. Сайт изменен?');
     }
 
@@ -65,8 +67,10 @@ function main(){
         throw new AnyBalance.Error('Не введены коды ' + (col+1) + '1-' + (col+2) + '0');
 
 	var form = getParam(html, null, null, /<form[^>]+action="\/wps\/portal\/ibank\/[^"]*"[^>]*name="LoginForm1"[\s\S]*?<\/form>/i);
-	if(!form)
+	if(!form){
+        AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось найти форму ввода кода. Сайт изменен?');
+	}
 
 	var url = getParam(form, null, null, /<form[^>]+action="\/([^"]*)"[^>]*name="LoginForm1"/i, null, html_entity_decode);
     /*if(!url)
@@ -97,6 +101,7 @@ function main(){
         if(/bbIbNewPasswordConfirmField/i.test(html))
             throw new AnyBalance.Error('Интернет банк требует сменить пароль. Пожалуйста, зайдите в интернет банк через браузер, смените пароль, затем новый пароль введите в настройки провайдера.', null, true);
 		
+        AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось войти в интернет-банк после ввода кода (№' + (codenum+1) + ': ' + code + ') . Сайт изменен?');
     }
 	

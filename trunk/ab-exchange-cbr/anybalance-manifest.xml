@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="9">ab-exchange-cbr</id>
+	<id version="10">ab-exchange-cbr</id>
 	<api flags="no_browser"/>
 	<name>Курсы валют ЦБ России</name>
 	<description html="true"><![CDATA[
@@ -10,6 +10,7 @@
 	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
+		<history>history.xml</history>
 		<js>main.js</js>
 	</files>
 	<counters>

@@ -33,8 +33,13 @@ function main() {
 	AnyBalance.trace('Connecting to forex...');
 	
 	var info = AnyBalance.requestGet('http://informers.forexpf.ru/php/cbrf.php?id=012345678');
+
 	// Нужно для улучшения обработки ошибок в след версии
 	AnyBalance.trace(info);
+
+	if(AnyBalance.getLastStatusCode() >= 500)
+	    throw new AnyBalance.Error('Сервер временно недоступен. Пожалуйста, попробуйте позже.');
+
 	var result = {success: true};
 	
 	getRate(result, info, 'usrutm', 'USD');

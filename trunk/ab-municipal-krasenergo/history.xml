@@ -1,4 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?><history>
+	<change version="6" date="2015-01-08">
+	- Улучшена обработка ошибок.
+	</change>
 	<change version="5" date="2014-11-11">
 	- Поддержка изменений на сайте.
 	</change>	<change version="4" date="2014-10-20">	- Поддержка изменений на сайте.	</change>	<change version="3" date="2013-09-30">	- Исправлены настройки аккаунта	</change>	<change version="2" date="2013-07-10">	- Сумма задолженности сделана отрицательной	</change></history>

@@ -15,6 +15,8 @@ function main() {
 	checkEmpty(prefs.login, 'Введите логин в Яндекс.Деньги!');
 	checkEmpty(prefs.password, 'Введите пароль, используемый для входа в систему Яндекс.Деньги. Не платежный пароль, а именно пароль для входа!');
 
+	AnyBalance.setDefaultCharset('UTF-8');
+
 	var baseurl = 'https://money.yandex.ru/';
 	
 	var html = AnyBalance.requestGet("https://passport.yandex.ru", g_headers);

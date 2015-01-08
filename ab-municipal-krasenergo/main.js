@@ -32,10 +32,11 @@ function main(){
 
     //Ссылка на печать квитанции
     if(!/Лицевой cчет N/i.test(html)){
-        var error = getParam(html, null, null, /<div[^>]+class="error"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+        var error = getParam(html, null, null, [/<div[^>]+class="error"[^>]*>([\s\S]*?)<\/div>/i, /<\/form>(?:\s+|<br[^>]*>)*<strong[^>]*>([\s\S]*?)<\/strong>/i], replaceTagsAndSpaces, html_entity_decode);
         if(error)
-            throw new AnyBalance.Error(error);
-        throw new AnyBalance.Error('Не удалось войти в личный кабинет. Неправильный номер счета или пароль?');
+            throw new AnyBalance.Error(error, null, /Введены некорректные данные/i.test(html));
+        AnyBalance.trace(html);
+        throw new AnyBalance.Error('Не удалось войти в личный кабинет. Неправильный номер счета или фамилия?');
     }
 
     var result = {success: true};

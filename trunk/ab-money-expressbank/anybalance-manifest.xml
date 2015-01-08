@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<api flags="no_browser"/>
+  <id version="2">ab-money-expressbank</id>
+  <name>Восточный Экспресс Банк</name>   
+  <description>
+    Получает текущий остаток и другие параметры карт/счетов Восточного Экспресс Банка (http://www.express-bank.ru/), используя интернет-банк https://online.express-bank.ru
+  </description>
+  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Остаток" units=" {@currency}"/>
+    <counter id="limit" name="Лимит кредита" units=" {@currency}"/>
+    <counter id="type" name="Тип" type="text"/>
+    <counter id="till" name="Срок действия" type="time" format="dd/MM/yyyy"/>
+    <counter id="status" name="Статус" type="text"/>
+    <counter id="num" name="Номер" type="text"/>
+    <counter id="holder" name="Владелец карты" type="text"/>
+    <counter id="fio" name="Владелец" type="text"/>
+    <counter id="currency" name="Валюта" type="text"/>
+  </counters>
+  <keywords>
+    интернет-банкинг
+  </keywords>
+  <type>
+    money, bank
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-exchange-select-by</id>
+	<id version="4">ab-exchange-select-by</id>
 	<name>Курсы валют Банков Беларуси</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущих курсах валют в банках Республики Беларусь и курс ""Национального Банка"".</p> 
@@ -11,8 +11,10 @@
 	<files>
 		<icon>icon.png</icon>
 		<js>api:jquery.min.js</js>
+		<js>library.js</js>
 		<js>main.js</js>
 		<preferences>preferences.xml</preferences>
+		<history>history.xml</history>
 	</files>
 	<counters>
 		<counter id="usdpok" name="USD покупка" prefix="$↓"/>

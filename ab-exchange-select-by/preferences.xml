@@ -11,9 +11,9 @@
     <ListPreference 
         key="city" 
         title="Город"
-        summary="Город||{@s}\n"
+        summary="||{@s}"
         entries="Брест|Витебск|Гомель|Гродно|Минск|Могилёв"
         entryValues="brest|vitebsk|gomel|grodno||mogilev"
-		defaultValue="Минск">
+		defaultValue="">
     </ListPreference>
 </PreferenceScreen>

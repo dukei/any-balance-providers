@@ -108,3 +108,7 @@ Function createWindow(content,features)
     we.Terminate
     Err.Raise vbObjectError,"createWindow","Can't connect with created window !"
 End Function
+
+Function VBInputBox(promptText, def)
+      VBInputBox = InputBox(promptText, "History helper", def)
+End Function

@@ -11,25 +11,26 @@ var g_headers = {
 };
 
 function main(){
-    var prefs = AnyBalance.getPreferences();
-    var baseurl = 'http://services.ukrposhta.com/';
-    AnyBalance.setDefaultCharset('utf-8'); 
+	var prefs = AnyBalance.getPreferences();
+	var baseurl = 'http://services.ukrposhta.ua/';
+	AnyBalance.setDefaultCharset('utf-8'); 
 
-    var html = AnyBalance.requestGet(baseurl+'barcodesingle/default.aspx?culture=uk', g_headers);
+	var html = AnyBalance.requestGet(baseurl+'bardcodesingle/', g_headers);
 
 	var params = createFormParams(html, function(params, str, name, value){
 		if(name == 'ctl00$centerContent$txtBarcode')
 			return prefs.login;
 		return value;
 	});
-	html = AnyBalance.requestPost(baseurl+'barcodesingle/default.aspx?culture=uk', params, addHeaders({Referer: baseurl + 'vidslidkuvati-forma-poshuku'})); 
-	
-	if(!/Відправлення за номером/i.test(html)){
-        throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+
+	html = AnyBalance.requestPost(baseurl+'bardcodesingle/Default.aspx', params, addHeaders({Referer: baseurl + 'bardcodesingle/Default.aspx'})); 
+
+	if(!/Результат пошуку/i.test(html)){
+        throw new AnyBalance.Error('Не вдалося отримати інформацію. Сайт було змінено?');
     }
-	
+
     var result = {success: true};
     getParam(html, result, 'all', /<div id="ctl00_centerContent_divInfo">\s*([\s\S]*?)\s*<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-	
+
     AnyBalance.setResult(result);
 }

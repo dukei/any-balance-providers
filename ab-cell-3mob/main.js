@@ -43,13 +43,15 @@ function main() {
 
 	html = AnyBalance.requestGet(baseurl + '/ua/finance/balance', g_headers);
 
-	getParam(html, result, 'minutes_local', /Голосовий баланс в мережі Тримоб<[^>]*><[^>]*>([^<]*) сек</i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'minutes_roam', /Голосовий баланс в мережі Тримоб та нац.роумінгу<[^>]*><[^>]*>([^>]*) сек</i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'internet_local', /Інтернет в мережі Тримоб<[^>]*><[^>]*>([^>]*) Кбайт</i, [replaceTagsAndSpaces, /(.*)/i, '$1 kb'], parseTraffic);
-	getParam(html, result, 'internet_roam', /Інтернет в мережі Тримоб та нац.роумінгу<[^>]*><[^>]*>([^>]*) Кбайт</i, [replaceTagsAndSpaces, /(.*)/i, '$1 kb'], parseTraffic);
-	getParam(html, result, 'internet_roaming', /Інтернет в  нац.роумінгу<[^>]*><[^>]*>([^>]*) Кбайт</i, [replaceTagsAndSpaces, /(.*)/i, '$1 kb'], parseTraffic);
-	getParam(html, result, 'balance_sms', /СМС<[^>]*><[^>]*>([^>]*) штук</i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'money_transfer', /U\'transfer<[^>]*><[^>]*>([^>]*) грн</i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'minutes_local', /<tr ><td>Голосовий баланс в мережі Тримоб<[^>]*><[^>]*>([^<]*) сек</i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'minutes_roam', /<tr ><td>Голосовий баланс в мережі Тримоб та нац.роумінгу<[^>]*><[^>]*>([^>]*) сек</i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'internet_local', /<tr ><td>Інтернет в мережі Тримоб<[^>]*><[^>]*>([^>]*) Кбайт</i, [replaceTagsAndSpaces, /(.*)/i, '$1 kb'], parseTraffic);
+	getParam(html, result, 'internet_roam', /<tr ><td>Інтернет в мережі Тримоб та нац.роумінгу<[^>]*><[^>]*>([^>]*) Кбайт</i, [replaceTagsAndSpaces, /(.*)/i, '$1 kb'], parseTraffic);
+	getParam(html, result, 'internet_roaming', /<tr ><td>Інтернет в  нац.роумінгу<[^>]*><[^>]*>([^>]*) Кбайт</i, [replaceTagsAndSpaces, /(.*)/i, '$1 kb'], parseTraffic);
+	getParam(html, result, 'internet_action', /<tr ><td>Акційний баланс<[^>]*><[^>]*>([^>]*) Кбайт</i, [replaceTagsAndSpaces, /(.*)/i, '$1 kb'], parseTraffic);
+	getParam(html, result, 'balance_sms', /<tr ><td>SMS<[^>]*><[^>]*>([^>]*) штук</i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'money_transfer', /<tr ><td>Грошовий переказ \"U\'transfer\"<[^>]*><[^>]*>([^>]*) грн</i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'internet_action_termin', /<tr ><td>Акційний баланс<[^>]*><[^>]*>[^>]* Кбайт<[^>]*><[^>]*>([^<]+)</i, replaceTagsAndSpaces, parseDate);
 
 	html = AnyBalance.requestGet(baseurl + '/logout', g_headers);
 

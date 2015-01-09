@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="7" date="2015-01-09">
+	- Now provider use main version of site instead mobile version.
+	- Fixed "DX Points".
+	- Fixed order date.
 	<change version="6" date="2014-10-08">
 	- Errors fixed.
 	</change>

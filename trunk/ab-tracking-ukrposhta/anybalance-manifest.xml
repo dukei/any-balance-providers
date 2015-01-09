@@ -2,10 +2,10 @@
 <provider>
 	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser" />
-	<id version="1">ab-tracking-ukrposhta</id>
+	<id version="2">ab-tracking-ukrposhta</id>
 	<name>Укрпошта</name>
 	<description>
-	Получает данные по номеру почтового отправления на сайте http://ukrposhta.ua/vidslidkuvati-forma-poshuku
+	Отримує дані за номером поштового відправлення на сайті http://ukrposhta.ua/vidslidkuvati-forma-poshuku
 	</description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
@@ -16,7 +16,7 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="all" name="Сводка" type="text"/>
+		<counter id="all" name="Звіт" type="text"/>
 	</counters>
 	<keywords></keywords>
 	<type>tracking</type>

@@ -4,6 +4,7 @@
 	- Now provider use main version of site instead mobile version.
 	- Fixed "DX Points".
 	- Fixed order date.
+	</change>
 	<change version="6" date="2014-10-08">
 	- Errors fixed.
 	</change>

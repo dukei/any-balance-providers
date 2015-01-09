@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="6">ab-service-dxcom</id>
+	<id version="7">ab-service-dxcom</id>
 	<api flags="no_browser"/>
 	<name>Dx.com</name>
 	<description html="true"><![CDATA[
@@ -18,7 +18,7 @@
 		<counter id="points" name="DX Points"/>
 		<counter id="order_num" name="Order number" type="text"/>
 		<counter id="order_date" name="Order date" type="time" format="dd/MM/yyyy"/>
-		<counter id="order_sum" name="Order sum"/>
+		<counter id="order_sum" name="Order sum"  type="text"/>
 		<counter id="order_status" name="Order status" type="text"/>
 	</counters>
 	<keywords></keywords>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-cell-3mob</id>
+	<id version="5">ab-cell-3mob</id>
 	<api flags="no_browser"/>
 	<name>3Mob</name>
 	<description html="true"><![CDATA[
@@ -27,8 +27,10 @@
 		<counter id="internet_local" name="Интернет внутри сети" units=" Мб"/>
 		<counter id="internet_roam" name="Интернет внутри сети и нац. роуминг" units=" Мб"/>
 		<counter id="internet_roaming" name="Интернет в нац. роумингу" units=" Мб"/>
+		<counter id="internet_action" name="Интернет акционний" units=" Мб"/>
 		<counter id="balance_sms" name="SMS" suffix=" смс" type="numeric"/>
-		<counter id="money_transfer" name="Money Transfer" suffix=" ₴" type="numeric"/>
+		<counter id="money_transfer" name="Денежний перевод" suffix=" ₴" type="numeric"/>
+		<counter id="internet_action_termin" name="Срок действия акционного интернета" type="time" format="dd/MM/yyyy HH:mm:ss"/>
 		<counter id="deadline" name="Дата деактивации" type="time" format="dd/MM/yyyy"/>
 		<counter id="mobphone" name="Номер телефона" type="text"/>
 		</counters>

@@ -4,6 +4,7 @@
 	<id major_version="1.3" version="33">ab-cell-djuice</id>
 	<name>Djuice</name>
 	<description html="true"><![CDATA[
+	<p>DJUICE закрыт. Все пользователи переведены на Киевстар. Установите провайдер Киевстар.</p>
 	<p>Предоставляет информацию о балансе, бонусных минутах, SMS, MMS, остатке интернет-трафика и других бонусах для пользователей мобильного оператора Djuice.</p>
 	<p>Информация берется из системы Мой DJUICE (http://my.djuice.com.ua/).</p>
 	]]></description>

@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="2.0" version="56" date="2015-01-12">
+	- Добавлено получение минут и смс для тарифного плана "Киевстар Комфорт 35".
+	</change>
 	<change major_version="2.0" version="55" date="2014-11-22">
 	- Исправления для работы под Лоллипопом
 	</change>

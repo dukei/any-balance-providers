@@ -106,7 +106,7 @@ function main(){
 		getDetails('https://lk.maryno.net/api/accounts/details/month/'+ip_address+'/'+year+'/'+month, result, 'traffic_month_in', 'traffic_month_out');
 		
 		month = month - 1;
-		if (month == 1) {year--; month = 12;}
+		if (month == 0) {year--; month = 12;}
 		
 		getDetails('https://lk.maryno.net/api/accounts/details/month/'+ip_address+'/'+year+'/'+month, result, 'traffic_last_month_in', 'traffic_last_month_out');
 	}

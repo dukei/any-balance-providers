@@ -464,32 +464,19 @@ function getPrm(){
 }
 
 function getKrv(){
-	var urlIndex = 'https://lkkirov.pv.mts.ru/index.php?r=site/login';
-	var urlAjax = 'https://lkkirov.pv.mts.ru/index.php?r=account/vgroups&agrmid=';
-	
-	newTypicalLanBillingInetTv(urlIndex, urlAjax);
+	newTypicalLanBillingInetTv('https://lkkirov.pv.mts.ru/index.php');
 }
 
 function getArkh(){
-	var urlIndex = 'https://lk.arkhangelsk.mts.ru/client/index.php?r=site/login';
-	var urlAjax = 'https://lk.arkhangelsk.mts.ru/client/index.php?r=account/vgroups&agrmid=';
-	
-	newTypicalLanBillingInetTv(urlIndex, urlAjax);
+	newTypicalLanBillingInetTv('https://lk.arkhangelsk.mts.ru/client/index.php');
 }
 
 function getPnz(){
-
-	var urlIndex = 'https://lkpenza.pv.mts.ru/index.php?r=site/login';
-	var urlAjax = 'https://lkpenza.pv.mts.ru/index.php?r=account/vgroups&agrmid=';
-	
-	newTypicalLanBillingInetTv(urlIndex, urlAjax);
+	newTypicalLanBillingInetTv('https://lkpenza.pv.mts.ru/index.php');
 }
 
 function getNnovTv() {
-	var urlIndex = 'https://lktvnn.pv.mts.ru/index.php?r=site/login';
-	var urlAjax = 'https://lktvnn.pv.mts.ru/index.php?r=account/vgroups&agrmid=';
-	
-	newTypicalLanBillingInetTv(urlIndex, urlAjax);
+	newTypicalLanBillingInetTv('https://lktvnn.pv.mts.ru/index.php');
 }
 
 function getNnov(){
@@ -540,32 +527,19 @@ function getSdv(){
 }
 
 function getVologda(){
-    var baseurl = 'https://lk.vologda.mts.ru/index.php?r=site/login';
-    var urlAjax = 'https://lk.vologda.mts.ru/index.php?r=account/vgroups&agrmid=';
-
-    newTypicalLanBillingInetTv(baseurl, urlAjax);
+    newTypicalLanBillingInetTv('https://lk.vologda.mts.ru/index.php');
 }
 
 function getIzhevsk(){
-    var baseurl = 'https://lkizh.pv.mts.ru/index.php?r=site/login';
-    var urlAjax = 'https://lkizh.pv.mts.ru/index.php?r=account/vgroups&agrmid=';
-
-    newTypicalLanBillingInetTv(baseurl, urlAjax);
+    newTypicalLanBillingInetTv('https://lkizh.pv.mts.ru/index.php');
 }
 
 function getKomsomolsk(){
-    var baseurl = 'https://clb.komsomolsk.mts.ru/kom/index.php?r=site/login';
-    var urlAjax = 'https://clb.komsomolsk.mts.ru/kom/index.php?r=account/vgroups&agrmid=';
-
-    newTypicalLanBillingInetTv(baseurl, urlAjax);
+    newTypicalLanBillingInetTv('https://clb.komsomolsk.mts.ru/kom/index.php');
 }
 
 function getTula(){
-    var baseurl = 'https://lk-tula.center.mts.ru/index.php?r=site/login';
-    var urlAjax = 'https://lk-tula.center.mts.ru/index.php?r=account/vgroups&agrmid=';
-
-    newTypicalLanBillingInetTv(baseurl, urlAjax);
-	
+    newTypicalLanBillingInetTv('https://lk-tula.center.mts.ru/index.php');
 }
 
 function typicalLanBillingInetTv(url) {
@@ -657,10 +631,7 @@ function parseTrafficPerm(text){
 }
 
 function getUln(){
-	var urlIndex = 'https://lkuln.pv.mts.ru/index.php?r=site/login';
-	var urlAjax = 'https://lkuln.pv.mts.ru/index.php?r=account/vgroups&agrmid=';
-	
-	newTypicalLanBillingInetTv(urlIndex, urlAjax);	
+	newTypicalLanBillingInetTv('https://lkuln.pv.mts.ru/index.php');	
 }
 
 function getNorilsk(){
@@ -702,10 +673,7 @@ function getNorilsk(){
 
 
 function getMagnit(){
-	var urlIndex = 'https://lkmagn.ural.mts.ru/index.php?r=site/login';
-	var urlAjax = 'https://lkmagn.ural.mts.ru/index.php?r=account/vgroups&agrmid=';
-	
-	newTypicalLanBillingInetTv(urlIndex, urlAjax);	
+	newTypicalLanBillingInetTv('https://lkmagn.ural.mts.ru/index.php');	
 }
 
 
@@ -763,45 +731,27 @@ function getBarnaul(){
 }
 
 function getVladimir(){
-	var urlIndex = 'https://lk-vladimir.center.mts.ru/index.php?r=site/login';
-	var urlAjax = 'https://lk-vladimir.center.mts.ru/index.php?r=account/vgroups&agrmid=';
-	
-	newTypicalLanBillingInetTv(urlIndex, urlAjax);
+	newTypicalLanBillingInetTv('https://lk-vladimir.center.mts.ru/index.php');
 }
 
 function getBelgorod(){
-	var urlIndex = 'https://lk-belgorod.center.mts.ru/index.php?r=site/login';
-	var urlAjax = 'https://lk-belgorod.center.mts.ru/index.php?r=account/vgroups&agrmid=';
-	
-	newTypicalLanBillingInetTv(urlIndex, urlAjax);
+	newTypicalLanBillingInetTv('https://lk-belgorod.center.mts.ru/index.php');
 }
 
 function getSaratov(){
-	var urlIndex = 'https://lksrt.pv.mts.ru/internet/index.php?r=site/login';
-	var urlAjax = 'https://lksrt.pv.mts.ru/internet/index.php?r=account/vgroups&agrmid=';
-	
-	newTypicalLanBillingInetTv(urlIndex, urlAjax);
+	newTypicalLanBillingInetTv('https://lksrt.pv.mts.ru/internet/index.php');
 }
 
 function getChita(){
-	var urlIndex = 'https://clb.primorye.mts.ru/chita/index.php?r=site/login';
-	var urlAjax = 'https://clb.primorye.mts.ru/chita/index.php?r=account/vgroups&agrmid=';
-	
-	newTypicalLanBillingInetTv(urlIndex, urlAjax);
+	newTypicalLanBillingInetTv('https://clb.primorye.mts.ru/chita/index.php');
 }
 
 function getAmur(){
-	var urlIndex = 'https://clb.amur.mts.ru/cblg/index.php?r=site/login';
-	var urlAjax = 'https://clb.amur.mts.ru/cblg/index.php?r=account/vgroups&agrmid=';
-	
-	newTypicalLanBillingInetTv(urlIndex, urlAjax);
+	newTypicalLanBillingInetTv('https://clb.amur.mts.ru/cblg/index.php');
 }
 
 function getOrel(){
-	var urlIndex = 'https://lk-orel.center.mts.ru/index.php?r=site/login';
-	var urlAjax = 'https://lk-orel.center.mts.ru/index.php?r=account/vgroups&agrmid=';
-	
-	newTypicalLanBillingInetTv(urlIndex, urlAjax);
+	newTypicalLanBillingInetTv('https://lk-orel.center.mts.ru/index.php');
 }
 
 function getPiter() {
@@ -830,18 +780,22 @@ function getPiter() {
 }
 
 function getBalakovo(){
-	var urlIndex = 'https://lksrt.pv.mts.ru/bal/index.php?r=site/login';
-	var urlAjax = 'https://lksrt.pv.mts.ru/bal/index.php?r=account/vgroups&agrmid=';
-	
-	newTypicalLanBillingInetTv(urlIndex, urlAjax);
+	newTypicalLanBillingInetTv('https://lksrt.pv.mts.ru/bal/index.php');
 }
 
-function newTypicalLanBillingInetTv(urlIndex, urlAjax) {
+function getYar() {
+	newTypicalLanBillingInetTv('https://lk-yaroslavl.center.mts.ru/index.php');
+}
+
+function newTypicalLanBillingInetTv(baseurl) {
+	var urlAjax = baseurl + '?r=account/vgroups&agrmid=';
+	var urlIndex = baseurl + '?r=site/login';
+	
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
 	
 	if(prefs.__dbg) {
-		var html = AnyBalance.requestGet('https://lk.kirovnet.net/?r=account/index');
+		var html = AnyBalance.requestGet(baseurl + '?r=account/index');
 	} else {
 		var html = AnyBalance.requestGet(urlIndex);
 		
@@ -876,8 +830,12 @@ function newTypicalLanBillingInetTv(urlIndex, urlAjax) {
 		var accountID = getParam(accs[i], null, null, /<tr[^>]*agreements[^>]*row[^>]*?(\d+)/i);
 		var balance = getParam(accs[i], null, null, /(-?[\s\d.,]+руб)/i, null, parseBalance);
 		
-		var xhtml = AnyBalance.requestGet(urlAjax + accountID);
+		if(!isset(account) || !isset(accountID)) {
+			AnyBalance.trace('Не удалось найти данные, проблемы на сайте?');
+			continue;
+		}
 		
+		var xhtml = AnyBalance.requestGet(urlAjax + accountID);
 		var json = getJson(xhtml);
 		
 		// Может быть несколько услуг по одному счету
@@ -943,12 +901,4 @@ function newTypicalLanBillingInetTv(urlIndex, urlAjax) {
     getParam(html, result, 'username', /<div[^>]+class="content-aside"[^>]*>[\s\S]*?<p[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
 	
     AnyBalance.setResult(result);
-} 
-
-
-function getYar() {
-	var urlIndex = 'https://lk-yaroslavl.center.mts.ru/index.php?r=site/login';
-	var urlAjax = 'https://lk-yaroslavl.center.mts.ru/index.php?r=account/vgroups&agrmid=';
-	
-	newTypicalLanBillingInetTv(urlIndex, urlAjax);
 }

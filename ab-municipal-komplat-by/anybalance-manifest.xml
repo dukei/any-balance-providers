@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-municipal-komplat-by</id>
+	<api flags="no_browser"/>
+	<name>АС "Жилплат"</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера АС "Жилплат" <a href="http://komplat.by/">http://komplat.by/</a></p>
+	<p>Информация берется из личного кабинета </p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Итого к оплате" units=" р"/>
+		<counter id="to_pay" name="Начислено по тарифам" units=" р"/>
+		<counter id="benefit" name="Льготная скидка" units=" р"/>
+		<counter id="recalc" name="Перерасчеты" units=" р"/>
+		<counter id="subsidy" name="Субсидия" units=" р"/>
+		<counter id="summary" name="Итого начислено" units=" р"/>
+		<counter id="debt" name="Пени за месяц" units=" р"/>
+		<counter id="account" name="Лицевой счет" type="text"/>
+		<counter id="period" name="Период" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>municipal</type>
+	<country>ru</country>
+</provider>

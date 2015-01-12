@@ -755,28 +755,7 @@ function getOrel(){
 }
 
 function getPiter() {
-	var url = 'https://lk.spb.mts.ru/index.php?r=site/login';
-	
-    var prefs = AnyBalance.getPreferences();
-    AnyBalance.setDefaultCharset('utf-8');
-
-    var html = AnyBalance.requestPost(url, {
-        'LoginForm[login]':prefs.login,
-        'LoginForm[password]':prefs.password,
-        'yt0':'Войти'
-    });
-	
-    if(!/r=site\/logout/i.test(html)){
-        throw new AnyBalance.Error("Не удалось войти в личный кабинет. Неправильный логин-пароль?");
-    }
-	
-    var result = {success: true};
-	
-	getParam(html, result, 'username', />([^<]+)(?:<[^<]*){3}Вы вошли как/i, replaceTagsAndSpaces);
-	getParam(html, result, 'agreement', /Вы вошли как(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces);
-	getParam(html, result, 'balance', /Текущий баланс(?:[^>]*>){15}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	
-    AnyBalance.setResult(result);
+	newTypicalLanBillingInetTv('https://lk.spb.mts.ru/index.php');
 }
 
 function getBalakovo(){

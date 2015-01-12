@@ -231,6 +231,10 @@ function isMultinumbersCabinet(html) {
 	return accounts.length > 1;
 }
 
+function canUseMobileApp(prefs){
+	return (!prefs.phone || prefs.phone == prefs.login) && /^\d{10}$/.test(prefs.login);
+}
+
 function main() {
 	AnyBalance.setDefaultCharset('utf-8');
 	
@@ -245,7 +249,7 @@ function main() {
 		AnyBalance.setCookie('my.beeline.kz', 'ui.language.current', 'ru_RU');
 	} else {
 		if(prefs.source == 'app') {
-			if(!prefs.phone && /^\d{10}$/.test(prefs.login)) {
+			if(canUseMobileApp(prefs)) {
 				proceedWithMobileAppAPI(baseurl, prefs);
 				return;
 			} else {
@@ -254,6 +258,21 @@ function main() {
 		}
 	}
 	
+	try {
+		proceedWithSite(baseurl, prefs);
+	} catch(e){
+		if(e.fatal)
+			throw e;
+		//Обломался сайт. Если можно мобильное приложение, давайте его попробуем
+		if(canUseMobileApp(prefs)) {
+			AnyBalance.trace('Не получается зайти в личный кабинет: ' + e.message + '. Попробуем мобильное приложение');
+			proceedWithMobileAppAPI(baseurl, prefs, true);
+			return;
+		}
+	}
+}
+
+function proceedWithSite(baseurl, prefs) {
 	try {
 		var html = AnyBalance.requestGet(baseurl + 'login.html', g_headers);
 		
@@ -497,6 +516,7 @@ function fetchB2B(baseurl, html) {
 		getBonuses(html, result);
 	}
 	
+    setCountersToNull(result);
     AnyBalance.setResult(result);
 }
 
@@ -688,6 +708,7 @@ function fetchPost(baseurl, html) {
 		getParam(html, result, 'total_balance', /Сумма по всем номерам(?:[^>]*>){59}([\s\d.,]+)/i, null, parseBalance);
 	}
 	//Возвращаем результат
+    	setCountersToNull(result);
 	AnyBalance.setResult(result);
 }
 
@@ -805,6 +826,7 @@ function fetchPre(baseurl, html) {
 		// getParam(html, result, 'fio', /<div[^>]+class="abonent-name"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, capitalFirstLetters);
 	}
 	
+    	setCountersToNull(result);
 	AnyBalance.setResult(result);
 }
 
@@ -884,8 +906,8 @@ function getBonuses(xhtml, result) {
 				getParam(services[i], result, 'rub_bonus2_till', /<div[^>]+class="column3[^"]*"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseDateWord);
 			} else if (/Рублей за участие в опросе|Счастливое время|Бонусы по программе|Счастливого времени/i.test(name)) {
 				sumParam(services[i], result, 'rub_opros', reValue, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-			} else if (/Времени общения/i.test(name)) {
-				sumParam(services[i], result, 'min_local', reValue, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
+			} else if (/Времени общения|Включенные минуты/i.test(name)) {
+				sumParam(services[i], result, 'min_local', [reValue, reNewValue], replaceTagsAndSpaces, parseMinutes, aggregate_sum);
 			} else if (/Секунд БОНУС\s*\+|Баланс бонус-секунд/i.test(name)) {
 				sumParam(services[i], result, 'min_bi', reValue, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
 			} else if (/Секунд БОНУС-2|Баланс бесплатных секунд-промо/i.test(name)) {
@@ -967,7 +989,7 @@ function getBonusesPost(xhtml, result) {
 }
 
 /** API Мобильного приложения */
-function proceedWithMobileAppAPI(baseurl, prefs) {
+function proceedWithMobileAppAPI(baseurl, prefs, failover) {
 	AnyBalance.trace('Входим через API мобильного приложения...');
 	baseurl +=  'api/1.0/';
 	var encodedLogin = encodeURIComponent(prefs.login);
@@ -1068,9 +1090,24 @@ function proceedWithMobileAppAPI(baseurl, prefs) {
 			AnyBalance.trace('Ошибка получения бонусов: ' + e.message);
 		}
 	}
+
+	if(failover)
+		setCountersToNull(result);
 	
 	AnyBalance.setResult(result);
 }
+
+function setCountersToNull(result){
+	var arr = AnyBalance.getAvailableCounters();
+	for(var i=0; i<arr.length; ++i){
+		if(arr[i] !== '--auto--' && !isset(result[arr[i]])){
+			result[arr[i]] = null;
+		}
+	}
+	if(!isset(result.__tariff))
+		result.__tariff = null;
+}
+
 
 var errors = {
 	AUTH_ERROR:' Ошибка авторизации! Проверьте логин-пароль!',

@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-municipal-komplat-by</id>
+	<id version="2">ab-municipal-komplat-by</id>
 	<api flags="no_browser"/>
 	<name>АС "Жилплат"</name>
 	<description html="true"><![CDATA[
@@ -28,5 +28,5 @@
 	</counters>
 	<keywords></keywords>
 	<type>municipal</type>
-	<country>ru</country>
+	<country>by</country>
 </provider>

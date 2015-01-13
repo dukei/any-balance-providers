@@ -164,7 +164,7 @@ function main() {
 	sumParam(html, result, 'internet', /(?:Остаток GPRS Internet\s*:|Залишок GPRS Internet\s*:)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
 	sumParam(html, result, 'internet', /(?:Остаток Мб для пользования услугой Интернет GPRS\s*:|Залишок Мб для користування послугою Інтернет GPRS\s*:)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
 	sumParam(html, result, 'internet', /(?:Мб для Мобильного Интернета|Мб для Мобільного Інтернету)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
-	sumParam(html, result, 'internet', /(?:Залишок байт на день:|Остаток байт на день:)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
+	sumParam(html, result, 'internet', /(?:Залишок байт на день:|Остаток байт на день:)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, function(str) {return parseTraffic(str, 'b')}, aggregate_sum);
 	//Домашний Интернет
 	sumParam(html, result, 'home_internet', /(?:Від послуги[^<]*Домашній Інтернет|От услуги[^<]*Домашний Интернет|Бонусні кошти послуги[^<]*Домашній Інтернет|Бонусные средства услуги[^<]*Домашний Интернет|Від Домашнього Інтернету|От Домашнего Интернета)[^<]*:(?:[^>]*>){3}([\s\S]*?)грн/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	getParam(html, result, 'home_internet_date', /(?:Від послуги[^<]*Домашній Інтернет|От услуги[^<]*Домашний Интернет|Бонусні кошти послуги[^<]*Домашній Інтернет|Бонусные средства услуги[^<]*Домашний Интернет)[^<]*:(?:[^>]*>){8}\s*<nobr>([^<]*)/i, replaceTagsAndSpaces, parseDate);

@@ -1657,7 +1657,7 @@ function megafonLkAPI() {
 		var from = parseInt(matches[1]), to = parseInt(matches[2]);
 		var hours = new Date().getHours();
 		if(hours < from || hours >= to)
-	    		throw new AnyBalance.Error('API мобильного приложения потребовало ввод капчи, а она отключена в настройках (' + prefs.allowcaptcha + ') провайдера! Пропускаем API...');
+			throw new AnyBalance.Error('API мобильного приложения потребовало ввод капчи, а она отключена в настройках (' + prefs.allowcaptcha + ') провайдера! Пропускаем API...');
 	    }
  
 	    if(json.code == 'a211'){ //Капча
@@ -1682,7 +1682,7 @@ function megafonLkAPI() {
 	getParam(json.bonusBalance + '', result, 'bonus_balance', null, replaceTagsAndSpaces, parseBalance);
 	
 	if(json.ratePlan)
-		getParam(json.ratePlan.name, result, '__tariff');
+		getParam(json.ratePlan.name, result, '__tariff', null, replaceTagsAndSpaces, html_entity_decode);
 	
 	if (AnyBalance.isAvailable('mins_n_free', 'mins_left', 'mins_total', 'sms_left', 'sms_total', 'mms_left', 'mms_total', 'gb_with_you', 'internet_left', 'internet_total', 'internet_cur')) {
 		json = callAPI('get', 'api/options/remainders');
@@ -1695,6 +1695,12 @@ function megafonLkAPI() {
 					var current = model.remainders[z];
 					var name = current.name;
 					var units = current.unit;
+					
+					// Игнорируем отрицательные значения пакетов
+					if(current.available < 0) {
+						AnyBalance.trace('Игнорируем отрицательные остатки...' + JSON.stringify(current));
+						continue;
+					}
 					
 					// Минуты
 					if(/мин/i.test(units)) {
@@ -1723,7 +1729,7 @@ function megafonLkAPI() {
 						if(/Гигабайт в дорогу/i.test(name)) {
 							getParam(current.available + current.unit, result, 'gb_with_you', null, replaceTagsAndSpaces, parseTraffic);
 						} else {
-							if(current.available == 99999999) {
+							if(current.available >= 99999999) {
 								AnyBalance.trace('Пропускаем огромный трафик...');
 								continue;
 							}

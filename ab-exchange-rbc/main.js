@@ -30,7 +30,18 @@ function main() {
 	
 	getCurrs(table, 'Нал. USD', 'usd', result);
 	getCurrs(table, 'Нал. EUR', 'eur', result);
-	getCurrs(table, 'EUR/USD', 'eur_usd', result);
+
+	if(AnyBalance.isAvailable('balanceeur_usdspros', 'balanceeur_usdpredl')){
+		html = AnyBalance.requestGet('http://stock.quote.rbc.ru/demo/forex.9/intraday/EUR_USD.rus.js?format=json&jsoncallback=jsonp&rnd=' + Math.random() + '&a=?&_=' + new Date().getTime(), g_headers);
+		var json = safeEval('var _json; function jsonp(x){ _json=x; } ' + html + '\nreturn _json');
+		if(!json || !json[0] || !json[0].header){
+			//Возвращаем результат
+			AnyBalance.trace('Неправильный jsonp: ' + html);
+		}else{
+			getParam(json[0].header.bid, result, 'balanceeur_usdspros');
+			getParam(json[0].header.ask, result, 'balanceeur_usdpredl');
+		}
+	}
 	
 	AnyBalance.setResult(result);
 }

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-tv-netbynet</id>
+	<api flags="no_browser"/>
+	<name>NetByNet(TV)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера NetByNet(TV) <a href="http://www.wifire.ru/">http://www.wifire.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="https://selfcare.netbynet.ru/ott/">https://selfcare.netbynet.ru/ott/</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="payment" name="Ежемесячная абонентская плата" units=" р"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="acc" name="Лицевой счет" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>tv</type>
+	<country>ru</country>
+</provider>

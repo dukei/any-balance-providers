@@ -50,7 +50,7 @@ function main(){
 	
 	var result = {success: true};
 	
-    getParam(html, result, 'balance', /Баланс:(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'balance', /Баланс:(?:[^>]*>){2,4}([\s\d.,-]{3,})руб/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, '__tariff', /ЛС №([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
     // используем особенности AnyBalance зачем искать значение дважды, если __tariff всегда available?
     getParam(result.__tariff, result, 'agreement');

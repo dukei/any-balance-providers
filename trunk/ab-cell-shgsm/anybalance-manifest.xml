@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-cell-shgsm</id>
+	<api flags="no_browser"/>
+	<name>Смартс (Чувашия)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Смартс (Чувашия) <a href="http://shgsm.ru/">http://shgsm.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="http://web.shgsm.ru/account/login?ReturnUrl=%2f">http://web.shgsm.ru/account/login?ReturnUrl=%2f</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="status" name="Состояние" type="text"/>
+		<counter id="phone" name="Номер абонента" type="text"/>
+		<counter id="contract_id" name="Номер контракта" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>cell</type>
+	<country>ru</country>
+</provider>

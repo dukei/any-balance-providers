@@ -41,7 +41,7 @@ function gwtGetJSON(str){
 var g_lks = {
     pesc: {
 	url: 'http://ikus.pesc.ru:8080/IKUSUser/',
-	uid: 'D71455428F33C019BC5C4C1707CA205C',
+	uid: 'E85D8BB4C101FFBB462908DEC5BC61A6',
 	auth_uid: 'AE742241A0A8AD76E4877D96DE250A42',
 	strong_name: '\\b%VARNAME%,\\w+\\],(\\w+)\\)',
 	auth_url: 'userAuth/',
@@ -54,6 +54,9 @@ var g_lks = {
 	user_file: 'com.sigma.personal.client.physical.ClientService.gwt',
 	user_class: 'com.sigma.personal.client.physical.ClientService',
 	user_data: "7|0|4|%url%%user_url%|%auth_uid%|%user_class%|getAbonsList|1|2|3|4|0|",
+	re_balance: /-?(\d+\.\d+),\d+,'\w+'/g,
+	re_account: /electric.model.AbonentModel[^"]*","([^"]*)/,
+	re_address: /electric.model.AbonentModel[^"]*","[^"]*","([^"]*)/,
     },
     pes: {
 	url: 'https://ikus.pes.spb.ru/IKUSUser/',
@@ -70,6 +73,9 @@ var g_lks = {
 	user_file: 'com.sigma.personal.client.physical.ClientService.gwt',
 	user_class: 'com.sigma.personal.client.physical.ClientService',
 	user_data: "7|0|4|%url%%user_url%|%auth_uid%|%user_class%|getAbonsList|1|2|3|4|0|",
+	re_balance: /-?(\d+\.\d+),\d+,\d+,'\w+'/g,
+	re_account: /"account","([^"]*)/,
+	re_address: /"address","([^"]*)/,
     }
 }
 
@@ -130,15 +136,15 @@ function main(){
 
     var result = { success: true };
 
-    var balances = sumParam(html, null, null, /-?(\d+.\d+),\d+,\d+,'\w+'/g, null, parseBalance);
+    var balances = sumParam(html, null, null, cfg.re_balance, null, parseBalance);
     for(var i=0; i<balances.length; ++i){
 	var counter = 'balance' + (i==0 ? '' : i);
         if(AnyBalance.isAvailable(counter))
 		result[counter] = balances[i];
     }
 
-    getParam(html, result, 'licschet', /"account","([^"]*)/, replaceSlashes);
-    getParam(html, result, '__tariff', /"address","([^"]*)/, replaceSlashes);
+    getParam(html, result, 'licschet', cfg.re_account, replaceSlashes);
+    getParam(html, result, '__tariff', cfg.re_address, replaceSlashes);
 
     AnyBalance.setResult(result); 
 }

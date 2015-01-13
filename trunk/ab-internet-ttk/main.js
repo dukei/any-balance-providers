@@ -31,6 +31,10 @@ function main() {
 		'j_password':prefs.password,
 		'loginSource':'form'
 	}, addHeaders({Referer: baseurl + 'po/LoginForm.jsp'}));
+
+	var error = getParam(html, null, null, /<em[^>]+id="error"(?:[^>](?!display:none))*>([\s\S]*?)<\/em>/i, replaceTagsAndSpaces, html_entity_decode);
+	if(error)
+		throw new AnyBalance.Error(error, null, /Неверные данные/i.test(error));
 	
 	html = AnyBalance.requestGet(baseurl + 'po/pages/client/main.jsf', g_headers);
 	

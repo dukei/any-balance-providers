@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-internet-ellcom</id>
+	<id version="2">ab-internet-ellcom</id>
 	<api flags="no_browser"/>
-	<name>Евротелеком</name>
+	<name>Ellco (Электросвязь)</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе провайдера Евротелеком http://www.ellco.ru/</p>
-	<p>Информация берется из личного кабинета http://bill.ellcom.ru/bgbilling/webexecuter</p>
+	<p>Предоставляет информацию о балансе провайдера Ellco (Электросвязь) http://www.ellco.ru/</p>
+	<p>Информация берется из личного кабинета https://bill.ellcom.ru/bgbilling/webexecuter</p>
 	]]></description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
@@ -16,7 +16,7 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс"/>
+		<counter id="balance" name="Баланс" units=" р"/>
 	</counters>
 	<keywords></keywords>
 	<type>internet</type>

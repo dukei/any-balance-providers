@@ -59,7 +59,7 @@ function main(){
             if(!isset(metals[id]))
                 continue;
             var name = metals[id];
-            if(!AnyBalance.isAvailable(name + '_buy', name + '_sell'))
+            if(!AnyBalance.isAvailable(name + '_buy', name + '_sell', name + '_weight'))
                 continue;
             if(!json[id].quotes)
                 throw new AnyBalance.Error('Не удается найти котировки для ' + json.meta.TITLE);
@@ -73,11 +73,13 @@ function main(){
             if(!dt_max)
                 continue;
 
-            var quote = json[id].quotes[dt_max];
+            var quote = json[id].quotes[dt_max], weight;
             if(AnyBalance.isAvailable(name + '_buy'))
                 result[name + '_buy'] = parseFloat(quote.buy);
             if(AnyBalance.isAvailable(name + '_sell'))
                 result[name + '_sell'] = parseFloat(quote.sell);
+            if(AnyBalance.isAvailable(name + '_weight') && (weight = getWeight(name)))
+                result[name + '_weight'] = parseFloat(quote.buy)*weight;
             if(AnyBalance.isAvailable('date'))
                 result.date = Date.parse(dt_max);
         }
@@ -85,6 +87,16 @@ function main(){
         //buildRegions(result);
 	
 	AnyBalance.setResult(result);
+}
+
+function getWeight(metal){
+	var prefs = AnyBalance.getPreferences();
+	if(!prefs.weight)
+		return undefined;
+	if(/^[\d\s\.,]+$/.test(prefs.weight))
+		return parseBalance(prefs.weight);
+	var weight = getParam(prefs.weight, null, null, new RegExp(metal + '\s*:([^;a-z]*)', 'i'), null, parseBalance);
+	return weight;
 }
 
 function buildRegions(result){

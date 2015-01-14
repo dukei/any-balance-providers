@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-fasty</id>
+	<api flags="no_browser"/>
+	<name>Fasty</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Fasty <a href="http://fasty.net/">http://fasty.net/</a></p>
+	<p>Информация берется из личного кабинета <a href="https://stats.fasty.net/index.php">https://stats.fasty.net/index.php</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" UAH"/>
+		<counter id="disconnect" name="Отключение при балансе" units=" UAH"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="uin" name="UIN-номер" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet</type>
+	<country>ua</country>
+</provider>

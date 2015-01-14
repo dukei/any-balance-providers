@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-affiliate-welcome-partners</id>
+	<id version="4">ab-affiliate-welcome-partners</id>
 	<api flags="no_browser"/>
 	<name>Welcome Partners</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе провайдера Welcome Partners <a href="https://welcomepartners.com/">https://welcomepartners.com/</a></p>
-	<p>Информация берется из личного кабинета <a href="https://welcomepartners.com/webmaster/webmasters/login">https://welcomepartners.com/webmaster/webmasters/login</a></p>
+	<p>Информация берется из личного кабинета <a href="http://m.welcomepartners.com/webmaster/webmasters/login">http://m.welcomepartners.com/webmaster/webmasters/login</a></p>
 	]]></description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
@@ -16,14 +16,10 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Доход" units=" $"/>
-		<counter id="site_name" name="Сайт" type="text"/>
-		<counter id="site_views" name="Сайт: просмотры" type="text"/>
-		<counter id="site_clicks" name="Сайт: переходы" type="text"/>
-		<counter id="deposite_amount" name="Количество депозитов" type="text"/>
-		<counter id="deposite_sum" name="Сумма депозитов" type="text"/>
-		<counter id="players_balance" name="Остаток на счетах игроков" type="text"/>
-        <counter id="period" name="Период" type="text"/>
+		<counter id="balance" name="Income" units=" $"/>
+		<counter id="traffic" name="Traffic" type="text"/>
+		<counter id="regs" name="Regs"/>
+		<counter id="deps" name="Deps"/>
 	</counters>
 	<keywords></keywords>
 	<type>affiliate</type>

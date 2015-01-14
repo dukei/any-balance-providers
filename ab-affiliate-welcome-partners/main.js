@@ -12,32 +12,35 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://welcomepartners.com/';
+	var baseurl = 'http://m.welcomepartners.com/';
 	AnyBalance.setDefaultCharset('utf-8');
     
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
     
-	var html = AnyBalance.requestGet(baseurl + 'webmaster/webmasters/login', g_headers);
+	var html = AnyBalance.requestGet(baseurl + 'webmaster/login', g_headers);
 	
 	if (!html || AnyBalance.getLastStatusCode() > 400) 
         throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
     
-	html = AnyBalance.requestPost(baseurl + 'webmaster/webmasters/login', {
+	html = AnyBalance.requestPost(baseurl + 'webmaster/login', {
 		'_method': 'POST',
 		'data[Webmaster][email]': prefs.login,
-		'data[Webmaster][pass]': prefs.password
-	}, addHeaders({Referer: baseurl + 'webmaster/webmasters/login'}));
+		'data[Webmaster][pass]': prefs.password,
+        'data[Webmaster][pass_show]': prefs.password,
+        'data[Webmaster][pass_show_flag]': ''
+	}, addHeaders({Referer: baseurl}));
     
 	if (!/logout/i.test(html)) {
 		var error = getParam(html, null, null, /flashMessage(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
-            throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+            throw new AnyBalance.Error(error, null, /Неверный логин или пароль|Wrong password or email address/i.test(error));
         
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
     
+    // период с начала недели
     var dt = new Date();
     var ms = dt.getTime() - ((86400*1000) * (dt.getDay()-1));
     dt = new Date(ms);
@@ -45,30 +48,15 @@ function main() {
     
     var dateFrom = dt.getFullYear() + "-" + (dt.getMonth()+1) + "-" + dt.getDate();
     var dateTo = date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate();
-	
-    var html = AnyBalance.requestPost(baseurl + 'webmaster/WebmasterReport/ajaxGetReport/site', {
-        'filters[dateFrom]': dateFrom,
-        'filters[dateTo]': dateTo
-    }, g_headers);
     
-	json = getJson(html);	
-	
-    if(json.error.message != null) {
-		throw new AnyBalance.Error(json.error.message);
-	}
+    html = AnyBalance.requestGet(baseurl + 'webmaster/affiliate?dateFrom=' + dateFrom + '&dateTo=' + dateTo, g_headers);
     
-	var result = {success: true};
-    
-	var row = json.rows[0].data;
-	
-	getParam(row[0] + '', result, 'site_name', null, replaceTagsAndSpaces);
-	getParam(row[12] + '', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
-	getParam(row[3] + '', result, 'site_views', null, replaceTagsAndSpaces, parseBalance);
-	getParam(row[4] + '', result, 'site_clicks', null, replaceTagsAndSpaces, parseBalance);
-	getParam(row[7] + '', result, 'deposite_amount', null, replaceTagsAndSpaces, parseBalance);
-	getParam(row[8] + '', result, 'deposite_sum', null, replaceTagsAndSpaces, parseBalance);
-	getParam(row[9] + '', result, 'players_balance', null, replaceTagsAndSpaces, parseBalance);
-    getParam(dateFrom + ' - ' + dateTo, result, 'period', null, replaceTagsAndSpaces);
+    var result = {success: true};
+  
+	getParam(html, result, 'traffic', /TOTAL(?:[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'regs', /TOTAL(?:[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'deps', /TOTAL(?:[^>]*>){8}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance', /TOTAL(?:[^>]*>){10}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 	
 	AnyBalance.setResult(result);
 }

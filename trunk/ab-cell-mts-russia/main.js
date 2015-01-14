@@ -431,6 +431,9 @@ function fetchAccountStatus(html, result){
     html = sumParam (html, result, 'min_left', /Осталось минут[^<]*?:\s*([\d\.,]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
     //Осталось по опции "Супер Область": 60 мин
     html = sumParam (html, result, 'min_left', /Осталось по опции[^<]*?:\s*([\d\.,]+)\s+мин/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
+	// Бизнес пакеты
+	html = sumParam (html, result, 'min_left', /местные минуты[^<]*?:\s*([\d\.,]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
+	html = sumParam (html, result, 'min_left_mezh', /междугородные минуты[^<]*?:\s*([\d\.,]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
     // Использовано: 0 минут местных и мобильных вызовов.
     // Использовано 1 мин на городские номера Москвы, МТС домашнего региона и МТС России
     sumParam (html, result, 'min_local', /Использовано:?\s*([\d\.,]+)\s*мин[^\s]* (местных|на городские)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);

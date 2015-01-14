@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="3.3" version="92" date="2015-01-14">
+	- Новый счетчик "Междугородные минуты" используется для "остатоков бизнес пакетов".
+	</change>
 	<change major_version="3.3" version="91" date="2014-11-14">
 	- Исправлено получение трафика в некоторых случаях
 	</change>

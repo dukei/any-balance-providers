@@ -15,36 +15,28 @@ var baseurl = 'https://iclick.imoneybank.ru/';
 
 function main(){
     var prefs = AnyBalance.getPreferences();
+
+	checkEmpty(prefs.login, 'Введите логин! Логин должен быть в формате 9001234567!');
+	checkEmpty(prefs.password, 'Введите пароль!');
+	
     AnyBalance.setDefaultCharset('utf-8'); 
 
     var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
 
-	var found = /(\d{3})(\d{3})(\d{2})(\d{2})/i.exec(prefs.login);
-	if(found)
-		var phoneNumber = '+7 (' + found[1] + ') ' + found[2] + '-' + found[3] + '-' + found[4];
-	else
-		throw new AnyBalance.Error('Введите логин! Логин должен быть в формате 9001234567!');
-	
-	var token = getParam(html, null, null, /"_token"[^>]*value="([^"]*)/i);
-	html = AnyBalance.requestPost(baseurl + 'login', {
-        '_cellphone':phoneNumber,
-		'submit':'',
-		'_token':token
-    }, addHeaders({Referer: baseurl + 'login'}));
-
 	html = AnyBalance.requestPost(baseurl + 'login_check', {
-		'_cellphone':phoneNumber,
+		'_cellphone':prefs.login,
 		'_password':prefs.password,
 		'submit':'',
-		'_token':token
     }, addHeaders({Referer: AnyBalance.getLastUrl()}));
-
-    if(!/logout/i.test(html)){
-        var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
-        if(error)
-            throw new AnyBalance.Error(error);
-        throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-    }
+	
+	if (!/logout/i.test(html)) {
+		var error = getParam(html, null, null, /window.msg\(["']([^"']+)["'],\s*["']error/i, replaceTagsAndSpaces, html_entity_decode);
+		if (error)
+			throw new AnyBalance.Error(error, null, /Номер не зарегистрирован в системе|Неверная пара логин\/пароль/i.test(error));
+		
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+	}
 	
 	if(prefs.type == 'card')
 		fetchCard(html, baseurl);

@@ -1,10 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="4">ab-exchange-metal-sbrf</id>
+  <id version="5">ab-exchange-metal-sbrf</id>
   <api flags="no_browser"/>
   <name>Курсы драгоценных металлов Сбербанка</name>
   <description>
-    Текущие курсы покупки и продажи драгоценных металлов, установленные Сбербанком РФ. Содержит цены золота, серебра, платины и палладия. Получает данные со страницы http://www.sbrf.ru/ru/quotes/metals/timeline
+    Текущие курсы покупки и продажи драгоценных металлов ОМС, установленные Сбербанком РФ. Содержит цены золота, серебра, платины и палладия. Получает данные со страницы http://www.sberbank.ru/ru/quotes/metal
+
+    Позволяет также ввести вес имеющегося у вас металла и выводит ваш капитал в случае продажи всего металла Сбербанку по текущей цене покупки.
   </description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <files>
@@ -17,12 +19,16 @@
   <counters>
     <counter id="Au_buy" name="Золото покупка" prefix="Au↓ "/>
     <counter id="Au_sell" name="Золото продажа" prefix="Au↑ "/>
+    <counter id="Au_weight" name="Золото за вес" prefix="Au+ "/>
     <counter id="Ag_buy" name="Серебро покупка" prefix="Ag↓ "/>
     <counter id="Ag_sell" name="Серебро продажа" prefix="Ag↑ "/>
+    <counter id="Ag_weight" name="Серебро за вес" prefix="Ag+ "/>
     <counter id="Pt_buy" name="Платина покупка" prefix="Pt↓ "/>
     <counter id="Pt_sell" name="Платина продажа" prefix="Pt↑ "/>
+    <counter id="Pt_weight" name="Платина за вес" prefix="Pt+ "/>
     <counter id="Pd_buy" name="Палладий покупка" prefix="Pd↓ "/>
     <counter id="Pd_sell" name="Палладий продажа" prefix="Pd↑ "/>
+    <counter id="Pd_weight" name="Палладий за вес" prefix="Pd+ "/>
     <counter id="date" name="Дата" type="time" format="dd/MM/yyyy"/>
   </counters>
   <keywords>

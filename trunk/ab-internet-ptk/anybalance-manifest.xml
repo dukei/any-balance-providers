@@ -1,15 +1,13 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser|captcha" />
-	<id version="1">ab-internet-ptk</id>
+	<id version="2">ab-internet-ptk</id>
 	<name>П-Т-К</name>
-	<description>
-		Получает данные интернет- провайдера &lt;П-Т-К&gt; в г. Подольске http://p-t-k.net/
-		
-		Этот провайдер требует версию AnyBalance API >= 7, с поддержкой капчи.
-	</description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе интернет-провайдера П-Т-К <a href="http://p-t-k.net/">http://p-t-k.net/</a></p>
+	<p>Информация берется из личного кабинета <a href="https://stat.p-t-k.net/lk/start.php">https://stat.p-t-k.net/lk/start.php</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

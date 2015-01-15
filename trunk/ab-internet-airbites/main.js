@@ -1,46 +1,6 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Получает баланс и информацию о тарифном плане для украинского интернет-провайдера Airbites
-
-Сайт оператора: https://airbites.net.ua
-Личный кабинет: https://airbites.net.ua/enteruser
 */
-
-function getParam (html, result, param, regexp, replaces, parser) {
-	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
-		return;
-
-	var matches = regexp.exec (html), value;
-	if (matches) {
-		value = matches[1];
-		if (replaces) {
-			for (var i = 0; i < replaces.length; i += 2) {
-				value = value.replace (replaces[i], replaces[i+1]);
-			}
-		}
-		if (parser)
-			value = parser (value);
-
-    if(param)
-      result[param] = value;
-	}
-   return value
-}
-
-var replaceTagsAndSpaces = [/&nbsp;/g, ' ', /<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, ''];
-var replaceFloat = [/\s+/g, '', /,/g, '.'];
-
-function parseBalance(text){
-    var val = getParam(text.replace(/\s+/g, ''), null, null, /(-?\d[\d\s.,]*)/, replaceFloat, parseFloat);
-    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
-    return val;
-}
-
-function parseTrafficGb(str){
-  var val = getParam(str.replace(/\s+/g, ''), null, null, /(-?\d[\d\s.,]*)/, replaceFloat, parseFloat);
-  return parseFloat((val/1024).toFixed(2));
-}
 
 var g_cities = {
     lviv: 1,
@@ -61,25 +21,37 @@ var g_headers = {
 
 function main(){
     var prefs = AnyBalance.getPreferences();
+	
+	checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(prefs.password, 'Введите пароль!');
+	
     AnyBalance.setDefaultCharset('utf-8');
 
     var baseurl = "https://airbites.net.ua/";
-
-    var city = prefs.city;
-    if(!g_cities[city]) city = 'lviv';
+    var city = prefs.city || 'lviv';
 
     AnyBalance.trace('Entering city: ' + city);
 
-    var html = AnyBalance.requestPost(baseurl + 'enteruser', {
+	var html = AnyBalance.requestGet(baseurl + 'forma-pop-apu', g_headers);
+	
+	if(!html || AnyBalance.getLastStatusCode() > 400)
+		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+	
+	html = AnyBalance.requestPost(baseurl + 'enteruser', {
         txt_login:prefs.login,
         txt_pass:prefs.password,
-        txt_city:g_cities[city]
-    }, g_headers);
-
-    //AnyBalance.trace(html);
-    if(!/<div[^>]*class="exit"[^>]*>/.test(html)){
-        throw new AnyBalance.Error('Не удалось войти в личный кабинет. Неправильный логин или пароль?');
-    }
+        txt_city:g_cities[city],
+		btn_enter:'Вход'
+	}, addHeaders({Referer: baseurl + 'forma-pop-apu'}));
+	
+	if(!/<div[^>]*class="exit"[^>]*>/.test(html)) {
+		var error = getParam(html, null, null, /<div[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+		if (error)
+			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+		
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+	}
 
     var result = {success: true};
 
@@ -98,12 +70,3 @@ function main(){
     
     AnyBalance.setResult(result);
 }
-
-function html_entity_decode(str)
-{
-    //jd-tech.net
-    var tarea=document.createElement('textarea');
-    tarea.innerHTML = str;
-    return tarea.value;
-}
-

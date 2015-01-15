@@ -1,32 +1,29 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-airbites</id>
-  <name>Airbites.net (Украина)</name>
-  <description>
-    Получает баланс и информацию о статусе услуг для украинского интернет-провайдера Airbites.net (https://airbites.net.ua). Airbites.net предоставляет доступ в интернет в следующих городах: Львов, Харьков, Ивано-Франковск, Хмельницкий, Ровно, Луцк.
+	<api flags="no_browser"/>
+	<id version="3">ab-internet-airbites</id>
+	<name>Airbites.net (Украина)</name>
+	<description>
+	Получает баланс и информацию о статусе услуг для украинского интернет-провайдера Airbites.net (https://airbites.net.ua). Airbites.net предоставляет доступ в интернет в следующих городах: Львов, Харьков, Ивано-Франковск, Хмельницкий, Ровно, Луцк.
 
-    Информация берется из личного кабинета.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="₴"/>
-    <counter id="abon" name="Абонентская плата за Интернет" units="₴"/>
-    <counter id="statusInet" name="Состояние Интернета" type="text"/>
-    <counter id="statusTv" name="Состояние ТВ" type="text"/>
-    <counter id="statusVoip" name="Состояние VOIP" type="text"/>
-  </counters>
-  <keywords>
-    интернет
-  </keywords>
-  <type>
-    internet
-  </type>
-  <country>
-    ua
-  </country>
+	Информация берется из личного кабинета.
+	</description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" ₴"/>
+		<counter id="abon" name="Абонентская плата за Интернет" units=" ₴"/>
+		<counter id="statusInet" name="Состояние Интернета" type="text"/>
+		<counter id="statusTv" name="Состояние ТВ" type="text"/>
+		<counter id="statusVoip" name="Состояние VOIP" type="text"/>
+	</counters>
+	<keywords>интернет</keywords>
+	<type>internet</type>
+	<country>ua</country>
 </provider>

@@ -6,7 +6,7 @@ var g_headers = {
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.99 Safari/537.36',
 };
 
 function parseTrafficMb(str){
@@ -66,28 +66,30 @@ function main() {
 	getParam (html, result, 'bonus_balance_termin', />Денежный бонусный счет: осталось [\s\S]* грн. Срок действия до([^<]*)<\/span>/i, replaceTagsAndSpaces, parseDate);
 
 	//Секция бонусов
-	getParam(html, result, 'bonusy', /ВАШ БОНУСНИЙ РАХУНОК<\/div>\s+<div[^>]*>\s+<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'bonusy_burn', /буде списано\s*(\d+)\s*бонусів/i, replaceTagsAndSpaces, parseBalance);
-	getParam (html, result, 'bonusy_burn_termin', />([^<]*) буде списано/i, replaceTagsAndSpaces, parseDate);
+	getParam(html, result, 'bonusy', /ВАШ БОНУСН(?:И|Ы)Й (?:РАХУНОК|СЧЕТ)<\/div>\s+<div[^>]*>\s+<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'bonusy_burn', /буд(?:е|ет) списано\s*(\d+)\s*бонус(?:і|о)в/i, replaceTagsAndSpaces, parseBalance);
+	getParam (html, result, 'bonusy_burn_termin', />([^<]*) буд(?:е|ет) списано/i, replaceTagsAndSpaces, parseDate);
 
         //Минуты
 	//Минуты в сети МТС которые действуют в регионе
-	getParam (html, result, 'hvylyny_net1', /минут в день для внутрисетевых звонков: осталось\s*(\d+)\s*бесплатных секунд/i, replaceTagsAndSpaces, parseBalance);
-	getParam (html, result, 'hvylyny_net1', />залишилось\s*([\d\.,]+)\s*безкоштовних хвилин<\/span>/i, parseBalance, parseTime);
+	sumParam (html, result, 'hvylyny_net1', /минут в день для внутрисетевых звонков: осталось\s*(\d+)\s*бесплатных секунд/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+	sumParam (html, result, 'hvylyny_net1', />Безкоштовні хвилини на добу в рамках "Супер без поповнення", залишилось\s*([\d\.,]+)\s*безкоштовних хвилин<\/span>/ig, parseBalance, parseTime, aggregate_sum);
 
 	//Минуты в сети МТС которые действуют вне региона
-	getParam (html, result, 'hvylyny_net2', />Осталось\s*([\d\.,]+)\s*минут<\/span>/i, parseBalance, parseTime);
+	getParam (html, result, 'hvylyny_net2', /минут в день вне региона, осталось\s*([\d\.,]+)\s*минут<\/span>/i, parseBalance, parseTime);
 
 	//Пакетные минуты в сети МТС общенациональные
-	getParam (html, result, 'hvylyny_net3', />Осталось\s*(\d+)\s*бесплатных секунд/i, replaceTagsAndSpaces, parseBalance);
-	getParam (html, result, 'hvylyny_net3_termin', />Осталось \d+ бесплатных секунд до\s*([^<]*)\s*<\/span>/i, replaceTagsAndSpaces, parseDate);
+	sumParam (html, result, 'hvylyny_net3', /минут внутри сети, осталось\s*(\d+)\s*бесплатных секунд/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+	sumParam (html, result, 'hvylyny_net3_termin', /минут внутри сети, осталось \d+ бесплатных секунд до\s*([^<]*)\s*<\/span>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
 
 	//СМС и ММС
-	getParam (html, result, 'sms_used', />Израсходовано:(\d+)\s*смс.<\/span>/ig, replaceTagsAndSpaces, parseBalance);
-	getParam (html, result, 'mms_used', />Израсходовано:(\d+)\s*mms.<\/span>/ig, replaceTagsAndSpaces, parseBalance);
+	sumParam (html, result, 'sms_used', />50 SMS по Украине для "Смартфона", израсходовано:(\d+)\s*смс.<\/span>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+	sumParam (html, result, 'mms_used', />50 MMS по Украине для "Смартфона", израсходовано:(\d+)\s*mms.<\/span>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 
 	//Трафик
-	//Ежедневный пакет?
+	//Пакет (интернет за копейку 1000 за 10, еще должны быть 1500 за 15 и 2000 за 20)
+	sumParam (html, result, 'traffic1', /1000 МБ за 10 грн., осталось:\s*(\d+,?\d* *(Кб|kb|mb|gb|кб|мб|гб|байт|bytes)).<\/span>/ig, null, parseTrafficMb, aggregate_sum);
+	//Ежедневный пакет? тут старое описание не работает, нужен номер с таким пакетом, что бы исправить
 	getParam (html, result, 'traffic2', /Кб.<\/span>\s*<\/div>\s*<div[^>]*>\s*<span[^>]*>Осталось:\s*(\d+,?\d* *(Кб|kb|mb|gb|кб|мб|гб|байт|bytes)).<\/span>/i, null, parseTrafficMb);
 	//Смарт.NET
 	getParam (html, result, 'traffic4', /секунд<\/span>\s*<\/div>\s*<div[^>]*>\s*<span[^>]*>Осталось:\s*(\d+,?\d* *(Кб|kb|mb|gb|кб|мб|гб|байт|bytes)).<\/span>/i, null, parseTrafficMb);

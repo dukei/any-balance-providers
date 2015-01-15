@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-municipal-irkutskenergo</id>
+	<api flags="no_browser"/>
+	<name>Иркутскэнергосбыт</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Иркутскэнергосбыт <a href="http://www.sbyt.irkutskenergo.ru/">http://www.sbyt.irkutskenergo.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="http://www.sbyt.irkutskenergo.ru/qa/PersonalCabin.html">http://www.sbyt.irkutskenergo.ru/qa/PersonalCabin.html</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Электроэнергия" units=" р"/>
+		<counter id="odn" name="Электроэнергия ОДН" units=" р"/>
+	</counters>
+	<keywords></keywords>
+	<type>municipal</type>
+	<country>ru</country>
+</provider>

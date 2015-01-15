@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-sharing-ottclub</id>
+	<api flags="no_browser"/>
+	<name>OTTCLUB</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера OTTCLUB <a href="http://ottclub.no-ip.org/">http://ottclub.no-ip.org/</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" USD"/>
+		<counter id="status" name="Статус услуги" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>sharing</type>
+	<country>ru</country>
+</provider>

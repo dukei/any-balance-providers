@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="1.0" version="2">ab-cell-mymts-ua</id>
+	<id major_version="1.0" version="3">ab-cell-mymts-ua</id>
 	<api flags="no_browser"/>
 	<name>Мой МТС (Украина)</name>
 	<description html="true"><![CDATA[
@@ -31,7 +31,7 @@
 		<counter id="hvylyny_net3" name="Минуты в сети МТС" type="time_interval" format="{@MIN}" units=" мин"/>
 		<counter id="sms_used" name="Израсходовано SMS" units=" sms"/>
 		<counter id="mms_used" name="Израсходовано MMS" units=" mms"/>
-		<!-- traffic1 для пакетов на месяц -->
+		<counter id="traffic1" name="Интернет пакет" units=" mb"/>
 		<counter id="traffic2" name="Интернет ежедневный пакет" units=" mb"/>
 		<!--traffic3 для интернета из тарифных планов, типа Осталось: -->
 		<counter id="traffic4" name="Интернет Смарт.NET" units=" mb"/>
@@ -40,9 +40,9 @@
 		<counter id="bonus_balance_termin" name="Срок действия бонусного баланса" type="time" format="dd/MM/yyyy HH:mm:ss"/>
 		<counter id="hvylyny_net3_termin" name="Срок действия минут в сети МТС" type="time" format="dd/MM/yyyy HH:mm:ss"/>
 		<counter id="3G_kopiyka_termin" name="Дата підключення 3G Копейка" type="time" format="dd/MM/yyyy"/>
-		<counter id="PZS_MB_opera" name="ПЗС за первое событие для APN opera" units=" ₴"/>
-		<counter id="PZS_first" name="ПЗС за первое событие" units=" ₴"/>
-		<counter id="PZS_first_out" name="ПЗС за пределами региона" units=" ₴"/>
+		<counter id="PZS_MB_opera" name="ПЗС за первое событие для APN opera"/>
+		<counter id="PZS_first" name="ПЗС за первое событие"/>
+		<counter id="PZS_first_out" name="ПЗС за пределами региона"/>
 		<counter id="spent" name="Потрачено за текущий месяц" units=" ₴"/>
 		<counter id="phone" name="Номер телефона" type="text"/>
 	</counters>

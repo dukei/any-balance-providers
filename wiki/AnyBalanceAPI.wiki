@@ -376,15 +376,24 @@ AnyBalance.getLastResponseHeader(/*string*/ name) //since level 5
 
 ==retrieveCode==
 {{{
-AnyBalance.retrieveCode(/*string*/ comment, /*string*/ image) //since level 7
+AnyBalance.retrieveCode(/*string*/ comment, /*string*/ image, /*object*/options) //since level 7
+//options parameter is supported since level 9
 }}}
 
 Запрашивает ввод кода с картинки. В настоящее время эта функция открывает в программе окошко с картинкой и полем ввода, в которое надо за минуту успеть ввести код.
 
+В качестве опций `options` можно указать следующее:
+{{{
+{
+   time: 120000, //Время ожидания ввода кода в мс
+   inputType: 'text', //Способ ввода капчи (аналогично inputType в EditTextPreference)
+}
+}}}
+
 Пример использования:
 {{{
 var captchaimg = AnyBalance.requestGet(baseurl + 'captcha.php');
-var value = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки.", captchaimg);
+var value = AnyBalance.retrieveCode("Пожалуйста, введите цифры с картинки.", captchaimg, {inputType: 'number'});
 }}}
 
 Ещё примеры реального использования можно посмотреть, например, в провайдерах [http://code.google.com/p/any-balance-providers/source/browse/trunk/ab-bonus-gazprom/main.js Газпромбонус], [http://code.google.com/p/any-balance-providers/source/browse/trunk/ab-bonus-euroopt/main.js Евроопт] и [http://code.google.com/p/any-balance-providers/source/browse/trunk/ab-tracking-russian-post/main.js Почта России]

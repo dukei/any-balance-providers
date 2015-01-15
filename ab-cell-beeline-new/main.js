@@ -268,6 +268,8 @@ function main() {
 			AnyBalance.trace('Не получается зайти в личный кабинет: ' + e.message + '. Попробуем мобильное приложение');
 			proceedWithMobileAppAPI(baseurl, prefs, true);
 			return;
+		}else{
+			throw e;
 		}
 	}
 }

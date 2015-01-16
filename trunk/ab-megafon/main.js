@@ -903,6 +903,8 @@ function megafonBalanceInfo(filinfo){
 
     var result = {success: true};
     getParam(html, result, 'balance', /<BALANCE>([^<]*)<\/BALANCE>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'phone', /<MSISDN>([^<]*)<\/MSISDN>/i, replaceTagsAndSpaces, parseBalance);
+
     setCountersToNull(result);
     AnyBalance.setResult(result);
 }
@@ -1673,11 +1675,13 @@ function megafonLkAPI() {
 	    if(json.code)
 	    	throw new AnyBalance.Error('Ошибка вызова API! ' + json.message, null, /Неправильный логин\/пароль/i.test(json.message));
 	}
-	
-	json = callAPI('get', 'api/main/info');
+
 	
 	var result = {success: true};
 	
+	json = callAPI('get', 'api/main/info');
+	
+	getParam(json.msisdn, result, 'phone');
 	getParam(json.originalBalance + '', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
 	getParam(json.bonusBalance + '', result, 'bonus_balance', null, replaceTagsAndSpaces, parseBalance);
 	

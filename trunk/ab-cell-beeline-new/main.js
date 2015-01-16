@@ -264,11 +264,11 @@ function main() {
 		if(e.fatal)
 			throw e;
 		//Обломался сайт. Если можно мобильное приложение, давайте его попробуем
-		/*if(canUseMobileApp(prefs)) {
+		if(canUseMobileApp(prefs)) {
 			AnyBalance.trace('Не получается зайти в личный кабинет: ' + e.message + '. Попробуем мобильное приложение');
 			proceedWithMobileAppAPI(baseurl, prefs, true);
 			return;
-		}else*/{
+		}else{
 			throw e;
 		}
 	}
@@ -379,7 +379,7 @@ function proceedWithSite(baseurl, prefs) {
 			AnyBalance.trace(html);
 			throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 		}
-		if (/b2b_post/i.test(html)) {
+		if (/'b2c',\s*'postpaid'/i.test(html)) {
 			fetchPost(baseurl, html);
 		} else {
 			fetchPre(baseurl, html);
@@ -601,31 +601,31 @@ function fetchPost(baseurl, html) {
 				}
 				
 				try {
-					html = AnyBalance.requestPost(baseurl + 'c/post/index.html', params, addHeaders({Referer: baseurl + 'c/post/index.html'}));
+					html = AnyBalance.requestPost(baseurl + 'c/post/index.xhtml', params, addHeaders({Referer: baseurl + 'c/post/index.xhtml'}));
 				} catch(e) {}
 				/*if (AnyBalance.getLastStatusCode() > 400) {
 					AnyBalance.trace('Beeline returned: ' + AnyBalance.getLastStatusString());
 					throw new AnyBalance.Error('Переключится на доп. номер не удолось из-за технических проблем в личном кабинете Билайн. Проверьте, что вы можете переключиться на доп. номер, зайдя в личный кабинет через браузер.');
 				}*/
 				// Бывает что к постоплатному кабинету привязан предоплатный номер, проверяем..
-				if(/c\/pre\/index\.html/i.test(html)) {
+				if(/c\/pre\/index\.xhtml/i.test(html)) {
 					AnyBalance.trace('Дополнительный номер ' + num + ' предоплатный, но привязан к постоплатному кабинету...');
-					html = AnyBalance.requestGet(baseurl + 'c/pre/index.html', g_headers);
+					html = AnyBalance.requestGet(baseurl + 'c/pre/index.xhtml', g_headers);
 					fetchPre(baseurl, html);
 					return;
 				} else {
 					// Вроде помогает переход на главную
-					html = AnyBalance.requestGet(baseurl + 'c/post/index.html', g_headers);
+					html = AnyBalance.requestGet(baseurl + 'c/post/index.xhtml', g_headers);
 				}
 			}
 		}
 		//Если несколько номеров в кабинете, то почему-то баланс надо брать отсюда
 		if (AnyBalance.isAvailable('balance', 'currency')) {
-			xhtml = refreshBalance(baseurl + 'c/post/index.html', html);
+			xhtml = refreshBalance(baseurl + 'c/post/index.xhtml', html);
 			//xhtml = getBlock(baseurl + 'c/post/index.html', html, 'homeBalance');
 			
-			getParam(xhtml + html, result, 'balance', /Расходы по номеру за текущий период с НДС[\s\S]*?<div[^>]+class="balan?ce-summ"[^>]*>([\s\S]*?)<\/div>/i, balancesReplaces, parseBalance);
-			getParam(xhtml + html, result, ['currency', 'prebal', 'overpay', 'balance'], /Расходы по номеру за текущий период с НДС[\s\S]*?<div[^>]+class="balan?ce-summ"[^>]*>([\s\S]*?)<\/div>/i, balancesReplaces, myParseCurrency);
+			getParam(xhtml + html, result, 'balance', /Расходы по номеру за текущий период с НДС[\s\S]*?<div[^>]+class="[^>]*balan?ce-summ"[^>]*>([\s\S]*?)<\/div>/i, balancesReplaces, parseBalance);
+			getParam(xhtml + html, result, ['currency', 'prebal', 'overpay', 'balance'], /Расходы по номеру за текущий период с НДС[\s\S]*?<div[^>]+class="[^>]*balan?ce-summ"[^>]*>([\s\S]*?)<\/div>/i, balancesReplaces, myParseCurrency);
 		}
 	}
 	
@@ -634,9 +634,9 @@ function fetchPost(baseurl, html) {
 	if (isAvailableBonuses()) {
 		AnyBalance.trace('Запросим бонусы...');
 		// Вот геморойщики!!
-		xhtml = getBlock(baseurl + 'c/post/index.html', html, 'loadingBonusesAndServicesDetails');
+		xhtml = getBlock(baseurl + 'c/post/index.xhtml', html, 'loadingBonusesAndServicesDetails');
 		// Теперь только бонусы станут видны
-		xhtml = getBlock(baseurl + 'c/post/index.html', [xhtml || html, html], 'bonusesloaderDetails');
+		xhtml = getBlock(baseurl + 'c/post/index.xhtml', [xhtml || html, html], 'bonusesloaderDetails');
 		// Надо проверить, получили ли мы бонусы
 		var bonuses = getFoundBonuses(xhtml);
 		if(bonuses.length === 0) {
@@ -652,7 +652,7 @@ function fetchPost(baseurl, html) {
 	}
 	
     if (AnyBalance.isAvailable('overpay', 'prebal', 'currency')) {
-    	xhtml = getBlock(baseurl + 'c/post/index.html', html, 'callDetailsDetails');
+    	xhtml = getBlock(baseurl + 'c/post/index.xhtml', html, 'callDetailsDetails');
 		
     	getParam(xhtml, result, 'overpay', /<h4[^>]*>Переплата[\s\S]*?<span[^>]+class="price[^>]*>([\s\S]*?)<\/span>/i, balancesReplaces, parseBalance);
     	getParam(xhtml, result, 'overpay', /<h4[^>]*>Осталось к оплате[\s\S]*?<span[^>]+class="price[^>]*>([\s\S]*?)<\/span>/i, balancesReplaces, parseBalanceNegative);
@@ -677,15 +677,15 @@ function fetchPost(baseurl, html) {
 		// }
 	// }
 	if (!multi && AnyBalance.isAvailable('balance', 'currency')) {
-		xhtml = refreshBalance(baseurl + 'c/post/index.html', html);
+		xhtml = refreshBalance(baseurl + 'c/post/index.xhtml', html);
 		
-		getParam(xhtml + html, result, 'balance', [/class="price[^>]*>((?:[\s\S]*?span[^>]*>){3})/i, /Расходы по номеру за текущий период с НДС[\s\S]*?<div[^>]+class="balan?ce-summ"[^>]*>([\s\S]*?)<\/div>/i,], balancesReplaces, parseBalance);
-		getParam(xhtml + html, result, ['currency', 'balance'], [/class="price[^>]*>((?:[\s\S]*?span[^>]*>){3})/i, /Расходы по номеру за текущий период с НДС[\s\S]*?<div[^>]+class="balan?ce-summ"[^>]*>([\s\S]*?)<\/div>/i,], balancesReplaces, myParseCurrency);
+		getParam(xhtml + html, result, 'balance', [/class="price[^>]*>((?:[\s\S]*?span[^>]*>){3})/i, /Расходы по номеру за текущий период с НДС[\s\S]*?<div[^>]+class="[^>]*balan?ce-summ"[^>]*>([\s\S]*?)<\/div>/i,], balancesReplaces, parseBalance);
+		getParam(xhtml + html, result, ['currency', 'balance'], [/class="price[^>]*>((?:[\s\S]*?span[^>]*>){3})/i, /Расходы по номеру за текущий период с НДС[\s\S]*?<div[^>]+class="[^>]*balan?ce-summ"[^>]*>([\s\S]*?)<\/div>/i,], balancesReplaces, myParseCurrency);
 	}
 	
 	if(prefs.__debug){
 		//Проверяем, не создалась ли лишняя заявка в процессе просмотра личного кабинета
-        html = AnyBalance.requestGet(baseurl + 'c/operations/operationsHistory.html');
+        html = AnyBalance.requestGet(baseurl + 'c/operations/operationsHistory.xhtml');
         var last_time = getParam(html, null, null, /<span[^>]+class="date"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
         AnyBalance.trace('Последняя заявка: ' + last_time);
     }
@@ -695,8 +695,8 @@ function fetchPost(baseurl, html) {
 		var num = getParam(result.phone, null, null, null, [/\+\s*7([\s\d\-]{10,})/i, '$1', /\D/g, '']);
 		
 		AnyBalance.trace('Пробуем получить данные по трафику из детализации по номеру: ' + num);
-		html = AnyBalance.requestGet(baseurl + 'c/post/fininfo/report/detailUnbilledCalls.html?ctn=' + num, g_headers);
-		xhtml = getBlock(baseurl + 'c/post/fininfo/report/detailUnbilledCalls.html', html, 'retrieveSubCurPeriodDataDetails');
+		html = AnyBalance.requestGet(baseurl + 'c/post/fininfo/report/detailUnbilledCalls.xhtml?ctn=' + num, g_headers);
+		xhtml = getBlock(baseurl + 'c/post/fininfo/report/detailUnbilledCalls.xhtml', html, 'retrieveSubCurPeriodDataDetails');
 		
 		getParam(xhtml, result, 'traffic_used', /Итоговый объем данных \(MB\):([^>]*>){3}/i, [replaceTagsAndSpaces, /([\s\S]*?)/, '$1 мб'], parseTraffic);
 	}
@@ -705,9 +705,9 @@ function fetchPost(baseurl, html) {
 	if(isAvailable(['total_balance'])) {
 		AnyBalance.trace('Пробуем получить данные по сумме всех номеров...');
 		
-		html = AnyBalance.requestGet(baseurl + 'c/post/fininfo/index.html', g_headers);
+		html = AnyBalance.requestGet(baseurl + 'c/post/fininfo/index.xhtml', g_headers);
 		
-		getParam(html, result, 'total_balance', /Сумма по всем номерам(?:[^>]*>){59}([\s\d.,]+)/i, null, parseBalance);
+		getParam(html, result, 'total_balance', /Сумма по всем номерам(?:[\s\S]*?<th[^>]*>){11}([\s\S]*?)<\/span/i, null, parseBalance);
 	}
 	//Возвращаем результат
 	setCountersToNull(result);
@@ -857,7 +857,7 @@ function getBonuses(xhtml, result) {
 		var bonus = bonuses[j];
 		//var bonus_name = ''; //getParam(bonus, null, null, /<span[^>]+class="bonuses-accums-list"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
 		// var services = sumParam(bonus, null, null, /<div[^>]+class="\s*(?:accumulator|bonus|item)\s*"(?:[\s\S](?!$|<div[^>]+class="(?:accumulator|bonus|item)"))*[\s\S]/ig);
-		var services = sumParam(bonus, null, null, /<div[^>]+class="\s*(?:(?:item\s*)?(?:accumulator|accumulator|bonus|item)?)\s*"(?:[\s\S](?!$|<div[^>]+class="(?:accumulator|accumulator|bonus|item)"))*[\s\S]/ig);
+		var services = sumParam(bonus, null, null, /<div[^>]+class="\s*(?:(?:item\s*)?(?:accumulator|accumulator|bonus|item)?)[^"]*"(?:[\s\S](?!$|<div[^>]+class="(?:accumulator|accumulator|bonus|item)"))*[\s\S]/ig);
 		
 		AnyBalance.trace("Found " + services.length + ' bonuses');
 		var reValue = /<div[^>]+class="[^>]*column2[^"]*"[^>]*>([\s\S]*?)<\/div>/i;
@@ -866,7 +866,7 @@ function getBonuses(xhtml, result) {
 		for (var i = 0; i < services.length; ++i) {
 			var name = '' + getParam(services[i], null, null, /<div[^>]+class="[^"]*column1[^"]*"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode); //+ ' ' + bonus_name;
 			var values = getParam(services[i], null, null, /<div class="val">([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-			var rest = getParam(services[i], null, null, /class="rest"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+			var rest = getParam(services[i], null, null, /class="[^>]*rest"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
 			
 			if (/Internet|Интернет/i.test(name)) {
 				// Для опции Хайвей все отличается..

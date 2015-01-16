@@ -29,12 +29,12 @@ function main() {
 		'act': 'Login'
 	}, addHeaders({Referer: baseurl + 'index.php'}));
 	
+    html = AnyBalance.requestGet(baseurl + 'index.php', g_headers);
+    
 	if (!/Logout/i.test(html)) {
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
-    
-    html = AnyBalance.requestGet(baseurl + 'index.php', g_headers);
 	
 	var result = {success: true};
 	

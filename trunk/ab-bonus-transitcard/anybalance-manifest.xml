@@ -1,8 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser" />
-	<id version="1">ab-bonus-transitcard</id>
+	<id version="2">ab-bonus-transitcard</id>
 	<name>Петрол Плюс Регион</name>
 	<description>
 		Получает баланс топливной карты Петрол Плюс Регион на сайте https://client.transitcard.ru/login

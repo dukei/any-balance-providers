@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="109" date="2015-01-16">
+	- Поддержка изменений на сайте.
+	</change>
 	<change version="108" date="2015-01-15">
 	- Восстановление работы после серьезных изменений в личном кабинете.
 	</change>

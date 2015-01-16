@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-municipal-domofon-e</id>
+	<api flags="no_browser"/>
+	<name>Петруня (домофон)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Петруня (домофонная компания) <a href="http://domofon-e.ru/">http://domofon-e.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="http://domofon-e.ru/lk/enter/">http://domofon-e.ru/lk/enter/</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="fio" name="Владелец договора" type="text"/>
+		<counter id="status" name="Состояние трубки" type="text"/>
+		<counter id="abon_payment" name="Абонентская плата" type="text"/>
+		<counter id="account" name="Номер лицевого счета" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>municipal</type>
+	<country>ru</country>
+</provider>

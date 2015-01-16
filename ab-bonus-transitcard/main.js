@@ -12,31 +12,31 @@ var g_headers = {
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-    var baseurl = 'https://client.transitcard.ru/';
+    var baseurl = 'https://online.petrolplus.ru/';
     AnyBalance.setDefaultCharset('utf-8'); 
+	
+    var html = AnyBalance.requestGet(baseurl, g_headers);
 
-	// Надо найти x
-    var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
-
-    var x = getParam(html, null, null, /<form\s*id="[\s\S]*?"\s*method="post"\s*action="([\s\S]*?)">/i, null, html_entity_decode);
-    if(!x)
-        throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
-
-	html = AnyBalance.requestPost(baseurl + x, {
+	html = AnyBalance.requestPost(baseurl + 'personal-office/v1/login', {
         username:prefs.login,
         password:prefs.password,
-        signIn:'x'
-    }, addHeaders({Referer: baseurl + 'login'})); 
-
-    if(!/exit_b/i.test(html)){
+    }, addHeaders({Referer: baseurl})); 
+	
+    if(!/idAccount":\d+/i.test(html)){
         var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error);
+		
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
 	
+	html = AnyBalance.requestGet(baseurl + 'personal-office/v1/balance?firmId=NULL&_=' + new Date().getTime(), addHeaders({Referer: baseurl, 'X-Requested-With': 'XMLHttpRequest'})); 
+	
+	var json = getJson(html);
+
     var result = {success: true};
-	getParam(html, result, 'balance', /Ваш баланс:[\s\S]*?<span>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+	
+	getParam(json.balance + '', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
 
     AnyBalance.setResult(result);
 }

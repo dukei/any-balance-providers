@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference
+		title="Наименование товара"
+		key="good"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Наименование товара"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите наименование товара в соответствии с названием на Яндекс Маркете.">
+	</EditTextPreference>
+</PreferenceScreen>

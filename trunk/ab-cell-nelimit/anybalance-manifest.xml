@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-cell-nelimit</id>
+	<api flags="no_browser"/>
+	<name>Gartel</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Gartel <a href="http://www.gartel.ru/">http://www.gartel.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="http://nelimit.ru/login.php">http://nelimit.ru/login.php</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="abon_payment" name="Абонентская плата" units=" р"/>
+		<counter id="internet" name="Интернет" type="text"/>
+		<counter id="messages" name="Пакет SMS/MMS" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>cell</type>
+	<country>ru</country>
+</provider>

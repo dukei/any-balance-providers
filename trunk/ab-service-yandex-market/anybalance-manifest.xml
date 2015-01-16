@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-service-yandex-market</id>
+	<api flags="no_browser"/>
+	<name>Яндекс Маркет</name>
+	<description html="true"><![CDATA[
+	<p>Отслеживает среднюю цену товара на Яндекс Маркете <a href="http://market.yandex.ru/">http://market.yandex.ru/</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Средняя цена" units=" {@currency}"/>
+		<counter id="min_price" name="Минимальная цена" units=" {@currency}"/>
+		<counter id="max_price" name="Максимальная цена" units=" {@currency}"/>
+		<counter id="rating_value" name="Рейтинг"/>
+	</counters>
+	<keywords></keywords>
+	<type>service</type>
+	<country>ru</country>
+</provider>

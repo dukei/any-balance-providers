@@ -1,18 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="2">ab-cell-yargsm</id>
+	<id version="3">ab-cell-yargsm</id>
 	<name>Смартс (Ярославская область)</name>
-	<description>
-	Получает информацию о балансе и тарифном плане оператора Смартс в Ярославской области https://www.yargsm.ru/issa/
-	</description>
-	<instruction>
-		Для получения пароля воспользуйтесь формой по ссылке: https://www.yargsm.ru/issa/register.php
-
-		Для восстановления пароля, если вы его забыли, воспользуйтесь формой https://www.yargsm.ru/issa/login.php?action=passrecover
-	</instruction>
-	
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе и тарифном плане оператора Смартс в Ярославской области <a href="https://www.yargsm.ru/issa/">https://www.yargsm.ru/issa/</a></p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для получения пароля воспользуйтесь формой по ссылке: <a href="https://www.yargsm.ru/issa/register.php">https://www.yargsm.ru/issa/register.php</a></p>
+	<p>Для восстановления пароля, если вы его забыли, воспользуйтесь формой <a href="https://www.yargsm.ru/issa/login.php?action=passrecover">https://www.yargsm.ru/issa/login.php?action=passrecover</a></p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

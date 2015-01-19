@@ -15,7 +15,15 @@ function main(){
     var baseurl = 'https://www.yargsm.ru/';
     AnyBalance.setDefaultCharset('utf-8'); 
 	
-	var html = AnyBalance.requestPost(baseurl + 'issa/login.php', {
+	checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(prefs.password, 'Введите пароль!');
+	
+	var html = AnyBalance.requestGet(baseurl + 'issa', g_headers);
+	
+	if(!html || AnyBalance.getLastStatusCode() > 400)
+		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+	
+	html = AnyBalance.requestPost(baseurl + 'issa/login.php', {
         phone:prefs.login,
         password:prefs.password,
         action:'l'

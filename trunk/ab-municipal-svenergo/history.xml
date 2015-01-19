@@ -1,1 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><history><!--	<change version="2" date="2012-11-19">	Разрешено вводить буквы в пароле	</change> --></history>
+﻿<?xml version="1.0" encoding="utf-8"?><history>
+	<change version="2" date="2015-01-19">
+	- Поддержка изменений на сайте.
+	</change><!--	<change version="2" date="2012-11-19">	Разрешено вводить буквы в пароле	</change> --></history>

@@ -1,6 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-municipal-svenergo</id>
+	<api flags="no_browser"/>
+  <id version="2">ab-municipal-svenergo</id>
   <name>Свердловэнергосбыт</name>
   <description>
     Получает баланс и информацию о тарифах в Свердловэнергосбыт. Получает данные из личного кабинета http://lk.sesb.ru.

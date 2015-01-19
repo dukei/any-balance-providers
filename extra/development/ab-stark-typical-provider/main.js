@@ -23,8 +23,10 @@ function main() {
 	
 	var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
 	
-	if(!html || AnyBalance.getLastStatusCode() > 400)
+	if(!html || AnyBalance.getLastStatusCode() > 400){
+		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+	}
 	
 	var params = createFormParams(html, function(params, str, name, value) {
 		if (name == 'login') 

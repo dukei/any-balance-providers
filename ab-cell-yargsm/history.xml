@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="3" date="2015-01-19">
+	- Улучшена обработка ошибок.
+	</change>
 	<change version="2" date="2015-01-03">
 	- Улучшена обработка ошибок
 	- Уточнено описание
 	- Добавлены счетчики
 	</change>
-<!--    <change version="2" date="2012-12-26">
-      Исправлено название тарифа и формат даты (спасибо Valeriy Vyshnyak)
-    </change> -->
 </history>

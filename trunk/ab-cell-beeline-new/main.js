@@ -1082,6 +1082,10 @@ function proceedWithMobileAppAPI(baseurl, prefs, failover) {
 							
 							if(/bonusopros/i.test(curr.name)) {
 								getParam(curr.value + '', result, 'rub_opros', null, replaceTagsAndSpaces, apiParseBalanceRound);
+							}else if(/seconds/i.test(curr.name)) {
+								getParam(curr.value + '', result, 'min_local', null, replaceTagsAndSpaces, apiParseBalanceRound);
+							}else if(/internet/i.test(curr.name)) {
+								getParam(curr.value + 'б', result, 'traffic_left', null, replaceTagsAndSpaces, parseTraffic);
 							}else if(/mms/i.test(curr.name)) {
 								sumParam(curr.value + '', result, 'mms_left', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 							}else if(/sms/i.test(curr.name)) {
@@ -1136,7 +1140,7 @@ function apiParseBalanceRound(val) {
 	if(!isset(balance))
 		return null;
 	
-	return balance.toFixed(2);
+	return Math.round(balance*100)/100;
 }
 
 /************************************************************

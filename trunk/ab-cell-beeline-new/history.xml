@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="111" date="2015-01-19">
+	- Добавлено распознавание трафика и секунд промо в некоторых случаях
+	</change>
 	<change version="110" date="2015-01-17">
 	- Исправлен Билайн Казахстан
 	</change>

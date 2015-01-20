@@ -1,11 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-transport-nrg-tk</id>
+	<api flags="no_browser"/>
+	<id version="3">ab-transport-nrg-tk</id>
 	<name>ТК Энергия</name>
 	<description html="true"><![CDATA[
 	<p>Получает информацию о перевозках в транспортной компании ТК Энергия (http://nrg-tk.ru/poisk-nakladnoj.html)</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

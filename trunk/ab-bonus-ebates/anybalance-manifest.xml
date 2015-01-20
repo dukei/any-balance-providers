@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-bonus-ebates</id>
+	<id version="3">ab-bonus-ebates</id>
 	<api flags="no_browser"/>
 	<name>Ebates</name>
 	<description html="true"><![CDATA[

@@ -21,4 +21,12 @@
 		dialogMessage="Enter password to personal account."
 		inputType="textPassword">
 	</EditTextPreference>
+	<ListPreference
+		key="cabinet"
+		title="Cabinet"
+		summary="||{@s}"
+		entries="Ebates.ru|Ebates.com"
+		entryValues="ru|com"
+		defaultValue="com">
+	</ListPreference>	
 </PreferenceScreen>

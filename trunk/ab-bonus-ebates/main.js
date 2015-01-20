@@ -12,12 +12,18 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://www.ebates.com/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Enter login!');
 	checkEmpty(prefs.password, 'Enter password!');
 	
+	if(prefs.cabinet == 'ru')
+		doRu('https://www.ebates.ru/', prefs);
+	else
+		doCom('https://www.ebates.com/', prefs);
+}
+
+function doCom(baseurl, prefs) {
 	var html = AnyBalance.requestGet(baseurl + 'auth/logon.do', g_headers);
 	
 	html = AnyBalance.requestPost(baseurl + 'auth/logon.do', {
@@ -49,6 +55,38 @@ function main() {
 	getParam(json.CashPaid + '', result, 'CashPaid', null, replaceTagsAndSpaces, parseBalance);
 	getParam(json.CashPending + '', result, 'CashPending', null, replaceTagsAndSpaces, parseBalance);
 	getParam(json.TotalCashBack + '', result, 'TotalCashBack', null, replaceTagsAndSpaces, parseBalance);
+	
+	AnyBalance.setResult(result);
+}
+
+function doRu(baseurl, prefs) {
+	var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
+	
+	html = AnyBalance.requestPost(baseurl + 'login/verify', {
+		'fe_member_uname': prefs.login,
+		'fe_member_pw': prefs.password,
+		'fe_member_remember_me':false,
+		'accessDeninedTargetUrl':'',
+		'signin':'Log In',
+	}, addHeaders({Referer: baseurl + 'login'}));	
+	
+	if (!/logout/i.test(html)) {
+		var error = getParam(html, null, null, /class="error"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+		if (error)
+			throw new AnyBalance.Error(error, null, /is incorrect/i.test(error));
+		
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Login attempt has failed. Maybe site has been changed?');
+	}
+	
+	html = AnyBalance.requestGet(baseurl + 'member/dashboard', g_headers);
+	
+	var result = {success: true};
+	
+	getParam(html, result, 'fio', /Пользователь Ebates:(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'CashPaid', /Выплаченная сумма:(?:[^>]*>){3}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'CashPending', /Невыплаченная сумма:(?:[^>]*>){3}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'TotalCashBack', /Общая сумма кэшбек:(?:[^>]*>){3}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 	
 	AnyBalance.setResult(result);
 }

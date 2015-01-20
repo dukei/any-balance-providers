@@ -1062,6 +1062,8 @@ function proceedWithMobileAppAPI(baseurl, prefs, failover) {
 					}
 				} else if(curr.unit == 'SMS') {
 					sumParam(curr.rest + ' ' + curr.unit, result, 'sms_left', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+				} else if(curr.unit == 'MMS') {
+					sumParam(curr.rest + ' ' + curr.unit, result, 'mms_left', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 				} else if(curr.unit == 'KBYTE') {
 					
 					sumParam(curr.rest + ' ' + curr.unit, result, ['traffic_left', 'traffic_used'], null, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
@@ -1070,6 +1072,8 @@ function proceedWithMobileAppAPI(baseurl, prefs, failover) {
 					if(isset(result.traffic_total) && isset(result.traffic_left)) {
 						sumParam(result.traffic_total - result.traffic_left, result, 'traffic_used', null, null, null, aggregate_sum);
 					}
+				} else {
+					AnyBalance.trace('Unknown units: ' + JSON.stringify(curr));
 				}
 			}
 			

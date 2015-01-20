@@ -1054,7 +1054,8 @@ function proceedWithMobileAppAPI(baseurl, prefs, failover) {
 				
 				// Минуты
 				if(curr.unit == 'SECONDS') {
-					if(/номера других|на все номера/i.test(curr.accName)) {
+					//Приоритет билайна не случаен, их минуты определить сложнее
+					if(/номера других|на других|на все номера/i.test(curr.accName)) {
 						sumParam(curr.rest + ' ' + curr.unit, result, 'min_local', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
 					} else {
 						sumParam(curr.rest + ' ' + curr.unit, result, 'min_bi', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);

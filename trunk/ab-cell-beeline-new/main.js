@@ -212,7 +212,7 @@ function loginProc(baseurl, action, params, prefs) {
 	var html;
 	//Теперь, когда секретный параметр есть, можно попытаться войти
 	try {
-		html = AnyBalance.requestPost(baseurl + (action || 'login.html'), params, addHeaders({Referer: baseurl + 'login.html'}));
+		html = AnyBalance.requestPost(baseurl + (action || 'login.xhtml'), params, addHeaders({Referer: baseurl + 'login.xhtml'}));
 	} catch(e) {
 		if(prefs.__debug) {
 			if(prefs.__debug == 'b2b')
@@ -285,6 +285,18 @@ function proceedWithSite(baseurl, prefs) {
 			AnyBalance.trace('Beeline returned: ' + AnyBalance.getLastStatusString());
 			throw new AnyBalance.Error('Личный кабинет Билайн временно не работает. Пожалуйста, попробуйте позднее.');
 		}
+		
+		if(/xbr.x?html/i.test(AnyBalance.getLastUrl())) {
+			AnyBalance.trace('Переадресовались на xbr.xhtml');
+			AnyBalance.setCookie('my.beeline.ru', 'token', 'invalid');
+			
+			// Эдакий хак, чтобы перейти на страницу авторизации
+			html = AnyBalance.requestPost(baseurl + 'login.xhtml', {
+				'selectLk':'1',
+				'login':prefs.login,
+				'password':prefs.password
+			}, addHeaders({Referer: 'http://my.beeline.ru/xbr.xhtml'}));
+		}
 	} catch(e){
 		if(!prefs.__debug)
 			throw e;
@@ -331,7 +343,7 @@ function proceedWithSite(baseurl, prefs) {
 		params['loginFormB2C:loginForm:password'] = prefs.password;
 		params['loginFormB2C:loginForm:passwordVisible'] = prefs.password;
 		params['loginFormB2C:loginForm:loginButton'] = '';
-		
+
 		var action = getParam(tform, null, null, /<form[^>]+action="\/([^"]*)/i, null, html_entity_decode);
 		
 		//Теперь, когда секретный параметр есть, можно попытаться войти

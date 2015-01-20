@@ -1,10 +1,5 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Лень карта ИОН
-
-Сайт: http://i-on.ru/
-Личный кабинет: http://i-on.ru/crm/logon
 */
 var g_headers = {
     Accept:'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
@@ -15,7 +10,7 @@ var g_headers = {
     Connection:'keep-alive',
     'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.95 Safari/537.36',
 	'X-Requested-With':'XMLHttpRequest',
-	Referer:'https://pay.i-on.ru/personal/pub/Entrance'
+	Referer:'https://pay.khclub.ru/personal/pub/Entrance'
 };
 
 function main(){
@@ -27,7 +22,7 @@ function main(){
 }
 
 function doNewCabinet(prefs){
-	var baseurl = 'https://pay.i-on.ru/';
+	var baseurl = 'https://pay.khclub.ru/';
 	var html = AnyBalance.requestGet(baseurl + 'personal/pub/Entrance', g_headers);
 	// Это форма где нужно ввести только номер карты, затем ставится кука и можно уже вводить логин и пароль
 	var loginForm = getParam(html, null, null, /<form[^>]*>(?!<form[^>]*>)[\s\S]*?b-form-login[\s\S]*?<\/form>/i);
@@ -67,8 +62,7 @@ function doNewCabinet(prefs){
     AnyBalance.setResult(result);
 }
 
-function doOldCabinet(prefs)
-{
+function doOldCabinet(prefs) {
 	var baseurl = 'http://i-on.ru/';
     var html = AnyBalance.requestPost(baseurl + 'crm/logon', {
         number:prefs.login,

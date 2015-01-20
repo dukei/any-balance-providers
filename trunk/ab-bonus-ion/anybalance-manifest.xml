@@ -1,34 +1,28 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser" />
-  <id version="5">ab-bonus-ion</id>
-  <name>Лень карта ИОН</name>
-  <description>
-    Получает количество баллов на карте сервисной программе ИОН ЛЕНЬ в старом кабинете (http://i-on.ru/crm/presents) и новом (https://pay.i-on.ru/personal/pub/Entrance).
-
-    Если у вас есть ЛЕНЬ карта, но нет пароля, его можно получить на этой странице: https://pay.i-on.ru/personal/pub/OtpPage?mode=passwordForFirstLogin
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-	<js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс"/>
-    <counter id="total" name="Всего заработано"/>
-	<counter id="bonuses" name="Баланс (Баллов)"/>
-  </counters>
-  <keywords>
-    бонус, баллы, bonus, бонусная накопительная программа, ion
-  </keywords>
-  <type>
-    bonus
-  </type>
-  <country>
-    ru
-  </country>
+	<id version="6">ab-bonus-ion</id>
+	<name>Лень карта ИОН</name>
+	<description html="true"><![CDATA[
+	<p>Получает количество баллов на карте сервисной программе ИОН ЛЕНЬ в старом кабинете <a href="http://i-on.ru/crm/presents">http://i-on.ru/crm/presents</a> и новом (<a href="https://pay.khclub.ru/personal/pub/Entrance">https://pay.khclub.ru/personal/pub/Entrance</a></p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Если у вас есть ЛЕНЬ карта, но нет пароля, его можно получить на этой странице: <a href="https://pay.khclub.ru/personal/pub/OtpPage?mode=passwordForFirstLogin">https://pay.khclub.ru/personal/pub/OtpPage?mode=passwordForFirstLogin</a></p>
+	]]></instruction>	
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс"/>
+		<counter id="total" name="Всего заработано"/>
+		<counter id="bonuses" name="Баланс (Баллов)"/>
+	</counters>
+	<keywords>бонус, баллы, bonus, бонусная накопительная программа, ion</keywords>
+	<type>bonus</type>
+	<country>ru</country>
 </provider>

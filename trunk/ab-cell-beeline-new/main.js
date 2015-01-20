@@ -983,7 +983,7 @@ function getBonusesPost(xhtml, result) {
 			} else if (/Секунд БОНУС\s*\+|Баланс бонус-секунд/i.test(name)) {
 				sumParam(services[i], result, 'min_bi', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
 			} else if (/Секунд БОНУС-2|Баланс бесплатных секунд-промо/i.test(name)) {
-				sumParam(services[i], result, 'min_local', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
+				sumParam(services[i], result, 'min_left_1', /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
 			} else if (/минут в месяц|мин\./i.test(name)) {
 				var minutes = getParam(services[i], null, null, /<td[^>]+class="value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseMinutes);
 				sumParam(minutes, result, 'min_local', null, null, null, aggregate_sum);
@@ -995,6 +995,15 @@ function getBonusesPost(xhtml, result) {
 	}
 }
 
+/*
+Бонусы различные
+- Баланс SMS-промо: расходуются на SMS внутри России (Билайн и другие операторы);
+- Баланс MMS-промо: расходуются на MMS внутри России (Билайн и другие операторы), на международных операторов и в роуминге не расходуются;
+- Баланс Voice-промо: бесплатные секунды расходуются при звонках на все местные номера своего города подключения при условии нахождения Вас в пределах своей области подключения или безроуминговой зоне, если подключен "домашний регион" (в роуминге минуты не расходуются);
+- Internet-баланс, Кб: баланс расходуется на весь GPRS-трафик при пользовании точками доступа internet.beeline.ru, home.beeline.ru, default.beeline.ru, в роуминге не расходуется.
+Бонусы тратятся автоматически при использовании услуг сотовой связи.
+
+*/
 /** API Мобильного приложения */
 function proceedWithMobileAppAPI(baseurl, prefs, failover) {
 	AnyBalance.trace('Входим через API мобильного приложения...');
@@ -1086,11 +1095,13 @@ function proceedWithMobileAppAPI(baseurl, prefs, failover) {
 							var curr = json[prop][i];
 							
 							if(/bonusopros/i.test(curr.name)) {
-								getParam(curr.value + '', result, 'rub_opros', null, replaceTagsAndSpaces, apiParseBalanceRound);
+								sumParam(curr.value + '', result, 'rub_opros', null, replaceTagsAndSpaces, apiParseBalanceRound, aggregate_sum);
+							}else if(/bonusseconds/i.test(curr.name)) { //Бонус секунд-промо
+								sumParam(curr.value + '', result, 'min_left_1', null, replaceTagsAndSpaces, apiParseBalanceRound, aggregate_sum);
 							}else if(/seconds/i.test(curr.name)) {
-								getParam(curr.value + '', result, 'min_local', null, replaceTagsAndSpaces, apiParseBalanceRound);
+								sumParam(curr.value + '', result, 'min_local', null, replaceTagsAndSpaces, apiParseBalanceRound, aggregate_sum);
 							}else if(/internet/i.test(curr.name)) {
-								getParam(curr.value + 'б', result, 'traffic_left', null, replaceTagsAndSpaces, parseTraffic);
+								sumParam(curr.value + 'б', result, 'traffic_left', null, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
 							}else if(/mms/i.test(curr.name)) {
 								sumParam(curr.value + '', result, 'mms_left', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 							}else if(/sms/i.test(curr.name)) {

@@ -53,14 +53,15 @@
 		<counter id="min_local" name="Минуты на местные номера" type="time_interval" format="{@MIN}:{@sec}"/>
 		<counter id="rub_opros" name="Бонусы по программе Счастливое время" units=" руб"/>
 		<counter id="traffic_left" name="Остаток трафика" units=" Mb"/>
-		<counter id="traffic_used" name="Использовано трафика" units=" Mb"/>
-		<counter id="traffic_total" name="Всего трафика" units=" Mb"/>
+		<counter id="traffic_bonus" name="Бонусный трафик" units=" Mb"/>
 		<counter id="min_left_1" name="Остаток минут 1" type="time_interval" format="{@MIN}:{@sec}"/>
 		<counter id="min_left_2" name="Остаток минут 2" type="time_interval" format="{@MIN}:{@sec}"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="phone" name="Телефон" type="text"/>
 		<counter id="agreement" name="Договор" type="text"/>
 		<counter id="total_balance" name="Сумма по всем номерам" units=" {@currency}"/>
+		<counter id="traffic_used" name="Использовано трафика" units=" Mb"/>
+		<counter id="traffic_total" name="Всего трафика" units=" Mb"/>
 		<counter id="min_local_till" name="Срок действия пакета минут" type="time" format="dd/MM/yyyy"/>
 	</counters>
 	<keywords>beeline</keywords>

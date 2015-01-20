@@ -3,58 +3,55 @@
 */
 
 var g_headers = {
-	'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-	'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
-	'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-	'Connection':'keep-alive',
-	'User-Agent':'Mozilla/5.0 (BlackBerry; U; BlackBerry 9900; en-US) AppleWebKit/534.11+ (KHTML, like Gecko) Version/7.0.0.187 Mobile Safari/534.11+'
+	'Accept':'*/*',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.99 Safari/537.36',
+	'Accept-Language': 'ru,en;q=0.8'
 };
 
 function main() {
     var prefs = AnyBalance.getPreferences();
-	checkEmpty(prefs.number, 'Введите номер накладной!');
-	
-    var baseurl = "http://nrg-tk.ru/";
-
     AnyBalance.setDefaultCharset('utf-8'); 
 	
-    var html = AnyBalance.requestPost(baseurl + 'tracking.html', {
-		cityTo:prefs.city,
-		invoice:prefs.number,
-		perform:1
-	}, addHeaders({Referer: baseurl + 'tracking.html'}));
+	checkEmpty(prefs.number, 'Введите номер накладной!');
 	
-	if(/Накладная не найдена!/i.test(html)){
-        var error = getParam(html, null, null, null, replaceTagsAndSpaces, html_entity_decode);
-        if(error)
-            throw new AnyBalance.Error(error);
+    var baseurl = 'http://api.nrg-tk.ru/api/rest';
+	
+    var html = AnyBalance.requestGet(baseurl + '/?callback=jQuery11100618867561686784_1421683618927&method=nrg.get_sending_state&numdoc=' + encodeURIComponent(prefs.number) + '&idcity=' + encodeURIComponent(prefs.city) + '&_=' + new Date().getTime(), addHeaders({Referer: baseurl + 'tracking.html'}));
+	
+	// buildRegions(html);
+	
+	var json = getParam(html, null, null, /jQuery[\d_]+\((\{[\s\S]*?\})\)/i, null, getJson);
+	
+	if(!json || !json.rsp || json.rsp.stat != 'ok'){
+		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
+		if (error)
+			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
 		
-        throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-    }
-
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось найти информацию. Сайт изменен?');
+	}
+	
+	json = json.rsp.info;
+	
     var result = {success: true};
 
-    getParam(html, result, 'now', /\Текущее состояние\s*:(?:[^>]*>){2}(.*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'tocity', /Куда\s*:(?:[^>]*>){2}(.*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'from', /Откуда\s*:(?:[^>]*>){2}(.*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'sits', /Количество мест\s*:(?:[^>]*>){2}(.*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'weight', /Вес\s*:(?:[^>]*>){2}(.*?)<\//i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'volume', /Объем\s*:(?:[^>]*>){2}(.*?)<\//i, replaceTagsAndSpaces, parseBalance);
-
-    // getParam(html, result, 'results', null, [/:([\s\S]*?)(?:\n|$)/ig, ": <strong>$1</strong><br/>", /\n/g, "<br/>"], null);
-
-// buildRegions(html);
-
+    getParam(json.cur_state, result, 'now', null, replaceTagsAndSpaces, html_entity_decode);
+    getParam(json.cityto, result, 'tocity', null, replaceTagsAndSpaces, html_entity_decode);
+    getParam(json.cityfrom, result, 'from', null, replaceTagsAndSpaces, html_entity_decode);
+    getParam(json.num_places, result, 'sits', null, replaceTagsAndSpaces, html_entity_decode);
+    getParam(json.weight, result, 'weight', null, replaceTagsAndSpaces, parseBalance);
+    getParam(json.volume, result, 'volume', null, replaceTagsAndSpaces, parseBalance);
+	
     AnyBalance.setResult(result);
 }
 
 function buildRegions(result){
     var html = AnyBalance.requestGet('http://nrg-tk.ru/poisk-nakladnoj.html'),
-        select = getParam(html, null, null, /(<select[^>]+id="city"[^>]*>([\s\S]*?)<\/select>)/i, null, null),
-        regions = sumParam(select, null, null, /(<option[^>]*>([\s\S]*?)<\/option>?)/ig);
-
+	select = getParam(html, null, null, /(<select[^>]+id="city[^>]*>([\s\S]*?)<\/select>)/i, null, null),
+	regions = sumParam(select, null, null, /(<option[^>]*>([\s\S]*?)<\/option>?)/ig);
+	
     // console.log(regions);
-
+	
     var names = [], values = [], value = '';
     for(var i=0; i<regions.length; ++i){
         value = getParam(regions[i], null, null, /value=['"]([^'"]*)/i, replaceTagsAndSpaces);

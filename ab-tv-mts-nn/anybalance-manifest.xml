@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-tv-mts-nn</id>
+	<id version="3">ab-tv-mts-nn</id>
 	<api flags="no_browser"/>
 	<name>Домашнее Телевидение МТС (Нижний Новгород)</name>
 	<description html="true"><![CDATA[

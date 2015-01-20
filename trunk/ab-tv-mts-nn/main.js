@@ -49,7 +49,7 @@ function newTypicalLanBillingInetTv(urlIndex, urlAjax) {
     var accTv = [], accInet = [];
 	
 	var table = getParam(html, null, null, /Номер договора[\s\S]*?<\/table>/i);
-    var accs = sumParam(html, null, null, /<tr[^>]*agreements[^>]*row(?:[^>]*>){15}\s*<\/tr>/ig);
+    var accs = sumParam(html, null, null, /<tr[^>]*agreements[^>]*row(?:[^>]*>){10,20}\s*<\/tr>/ig);
 	AnyBalance.trace('Найдено счетов: ' + accs.length);
 	
     for(var i=0; i < accs.length; ++i) {

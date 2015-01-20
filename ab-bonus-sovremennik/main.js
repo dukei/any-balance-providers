@@ -54,9 +54,9 @@ function main() {
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'balance', /<td>([^<]+)(?:[^>]*>){2}\s*(?:балла|баланс)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'discount', /<td>([^<]+)(?:[^>]*>){2}\s*бонус/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'penalty', /<td>([^<]+)(?:[^>]*>){2}\s*штрафы/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance', [/<td>([^<]+)(?:[^>]*>){2}\s*(?:балла|баланс)/i, /Баллы кино[^>]*>([\d\s.,-]+)/i], replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'discount', [/<td>([^<]+)(?:[^>]*>){2}\s*бонус/i, /Бонус в кино[^>]*>([\d\s.,-]+)/i], replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'penalty', />([^<]+)(?:[^>]*>){3}\s*штраф/i, replaceTagsAndSpaces, parseBalance);
 	
 	AnyBalance.setResult(result);
 }

@@ -52,7 +52,7 @@ function main() {
 		}));
 		captchaCode = getParam(html, null, null, /code"\s*:\s*"([^"]*)/i);
 		var captcha = AnyBalance.requestGet(baseurl+ 'bitrix/tools/captcha.php?captcha_sid=' + captchaCode, g_headers);
-		captchaWord = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
+		captchaWord = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha, {inputType: 'number'});
 		AnyBalance.trace('Капча получена: ' + captchaWord);
 	} else {
 		throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');

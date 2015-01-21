@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-money-mbank-ua</id>
+	<id version="5">ab-money-mbank-ua</id>
 	<api flags="no_browser"/>
 	<name>Банк Михайлівський</name>
 	<description html="true"><![CDATA[

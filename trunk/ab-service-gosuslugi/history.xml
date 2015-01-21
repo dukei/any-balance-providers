@@ -1,5 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="1.0" version="19" date="2015-01-21">
+	- Улучшена обработка ошибок. По прежнему не работает проверка данных по налогам, т.к. эта информация пропала с сайта гос услуг.
+	</change>
 	<change version="18" date="2014-10-20">
 	- Поддержка изменений на сайте.
 	</change>

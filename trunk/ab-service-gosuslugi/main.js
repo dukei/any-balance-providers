@@ -221,6 +221,11 @@ function processNalogi(result, html, prefs) {
 		html = AnyBalance.requestGet(url, g_headers);
 		
 		var json = postAPICall(g_baseurl + 'fed/service/' + serviceID + '_' + servicesubId + '/checkStatus.json', {}, url);
+		json = getJson(json);
+		
+		if(json.errorCode != 0) {
+			throw new AnyBalance.Error('Система ответила сообщением: ' + json.errorMessage);
+		}
 		
 		var mainLink = g_baseurl + 'fed/services/s' + servicesubId + '/initForm?serviceTargetExtId=' + serviceID + '&userSelectedRegion=00000000000&rURL=https://www.gosuslugi.ru/pgu/personcab/orders&srcFormProviderId=9952354';
 		// Иногда возвращается пустая страница

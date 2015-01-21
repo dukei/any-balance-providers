@@ -11,7 +11,8 @@ var g_headers = {
 	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1985.143 Safari/537.36',
 };
 
-var velcomOddPeople = 'Velcom сознательно противодействует оперативному получению вами баланса через сторонние программы! Вот и снова они специально ввели изменения, которые сломали получение баланса. Пожалуйста, позвоните в службу поддержки Velcom (411 и 410 с мобильного телефона в сети velcom без взимания оплаты) и оставьте претензию, что вы не можете пользоваться любимой программой. Проявите активную позицию, они скрывают ваш баланс от вас же. Зачем, интересно? МТС и Life своих абонентов уважают значительно больше...';
+//var velcomOddPeople = 'Velcom сознательно противодействует оперативному получению вами баланса через сторонние программы! Вот и снова они специально ввели изменения, которые сломали получение баланса. Пожалуйста, позвоните в службу поддержки Velcom (411 и 410 с мобильного телефона в сети velcom без взимания оплаты) и оставьте претензию, что вы не можете пользоваться любимой программой. Проявите активную позицию, они скрывают ваш баланс от вас же. Зачем, интересно? МТС и Life своих абонентов уважают значительно больше...';
+var velcomOddPeople = 'Не удалось войти в личный кабинет. Сайт изменен?';
 
 function main(){
     var prefs = AnyBalance.getPreferences();
@@ -42,7 +43,7 @@ function main(){
 	//Ребят, а чего вы так сражаетесь-то со входом в кабинет? Боретесь со своими же пользователями?
 	//Не хотите, чтобы они свой баланс видели? :)
 	//Свяжитесь со мной (dco@mail.ru), объясните, что вам так не нравится-то? Может, какое совместное решение выработаем.
-	
+	/*
 	var obfuscatedScript = sumParam(html, null, null, /<script(?:[^>](?!src\s*=))*>([\s\S]*?)<\/script>/ig, null, null, create_aggregate_join('\n'));
 	if(obfuscatedScript) {
 		var win = {document: {cookie: ''}, location: {href: baseurl}};
@@ -64,7 +65,12 @@ function main(){
 			html = AnyBalance.requestGet('https://internet.velcom.by/');
 		}
 	}
-	
+	*/
+
+		function randomString(length) {var result = '', chars = '0123456789';for (var i = length; i > 0; --i) {	result += chars[Math.round(Math.random() * (chars.length - 1))];}return result;}
+		// Ищи новый способ, как нас заблокировать.
+		AnyBalance.setCookie('internet.velcom.by', '_ga', 'GA1.2.' + randomString(10) + '.' + randomString(10));
+
     var sid = getParam(html, null, null, /name="sid3" value="([^"]*)"/i);
     if(!sid){
 		if(AnyBalance.getLastStatusCode() >= 400){

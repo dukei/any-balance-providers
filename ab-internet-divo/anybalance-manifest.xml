@@ -1,32 +1,26 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-divo</id>
-  <name>ДИВО (Сергиев-Посад)</name>
-  <description>
-    Получает баланс и информацию о тарифном плане для подмосковного интернет провайдера ДИВО Телекоммуникации (http://divo.ru)
-
-    Информация берется из личного кабинета.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="trafficIn" name="Вх.трафик в текущем месяце" units=" Гб"/>
-    <counter id="trafficOut" name="Исх.трафик в текущем месяце" units=" Гб"/>
-  </counters>
-  <keywords>
-    
-  </keywords>
-  <type>
-    internet
-  </type>
-  <country>
-    ru
-  </country>
+	<api flags="no_browser"/>
+	<id version="2">ab-internet-divo</id>
+	<name>ДИВО (Сергиев-Посад)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе для подмосковного интернет провайдера ДИВО Телекоммуникации <a href="http://divo.ru">http://divo.ru</a></p>
+	<p>Информация берется из личного кабинета <a href="http://divo.ru/service/internet/234.html">http://divo.ru/service/internet/234.html</a></p>
+	]]></description>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="trafficIn" name="Вх.трафик в текущем месяце" units=" Гб"/>
+		<counter id="trafficOut" name="Исх.трафик в текущем месяце" units=" Гб"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet</type>
+	<country>ru</country>
 </provider>

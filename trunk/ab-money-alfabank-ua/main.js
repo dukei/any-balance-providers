@@ -32,7 +32,7 @@ function main(){
 	if(otpa) {
 		if(AnyBalance.getLevel() >= 7){
 			AnyBalance.trace('Пытаемся ввести код смс-подтверждения');
-			code = AnyBalance.retrieveCode("Пожалуйста, введите код смс-подтверждения", 'R0lGODlhBAAEAJEAAAAAAP///////wAAACH5BAEAAAIALAAAAAAEAAQAAAIElI8pBQA7');
+			code = AnyBalance.retrieveCode("Пожалуйста, введите код смс-подтверждения", 'R0lGODlhBAAEAJEAAAAAAP///////wAAACH5BAEAAAIALAAAAAAEAAQAAAIElI8pBQA7', {time: 240000, inputType: 'number'});
 			AnyBalance.trace('Код получен: ' + code);
 			html = AnyBalance.requestPost(baseurl + 'loginConfirm', {
 			action:'next',

@@ -12,7 +12,7 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://market.yandex.ru/';
+	var baseurl = 'http://market.yandex.ru';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.good, 'Введите наименование товара!');
@@ -24,17 +24,21 @@ function main() {
     
     var res = prefs.good.replace(/(^\s+|\s+$)/g, '');
     res = res.replace(/ /g,"+");
-    AnyBalance.trace(res);    
+    AnyBalance.trace(res);
      
-    html = AnyBalance.requestGet(baseurl + 'search.xml?cvredirect=2&text=' + res, g_headers);    
+    html = AnyBalance.requestGet(baseurl + '/search.xml?cvredirect=2&text=' + res, g_headers);    
 	
 	if (/Сортировать/i.test(html)) {
-        var model_href = getParam(html, null, null, /b-offers__title(?:[^>]*>)[\s\S]*?href="([^"]+)/i);
+		AnyBalance.trace('Необходимо перейти на страницу товара вручную...');
+        var model_href = getParam(html, null, null, /b-offers__title(?:[^>]*>)[\s\S]*?href="([^"]+)/i, replaceTagsAndSpaces, html_entity_decode);
+		checkEmpty(model_href, 'Не удалось найти информацию по товару ' + prefs.good + '! Сайт изменен?' , true);
         html = AnyBalance.requestGet(baseurl + model_href, g_headers);
-	} else if (/По вашему запросу ничего не найдено/i.test(html)){
+	}
+	
+	if (!/Средняя цена/i.test(html)){
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('По вашему запросу ничего не найдено.');        
-    }	
+    }
 	
 	var result = {success: true};
 	

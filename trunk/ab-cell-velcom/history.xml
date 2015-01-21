@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="43" date="2015-01-21">
+	- Поддержка изменений на сайте.
+	</change>
 	<change version="42" date="2014-11-23">
 	- Исправлено отображение информации для некоторых корпоративных тарифов
 	</change>

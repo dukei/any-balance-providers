@@ -7,7 +7,7 @@ var g_headers = {
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.99 Safari/537.36',
 };
 
 function main() {
@@ -28,7 +28,7 @@ function main() {
 	if(otpm) {
 		if(AnyBalance.getLevel() >= 7){
 			AnyBalance.trace('Намагаємось ввести код підтвердження');
-			code = AnyBalance.retrieveCode("Будь ласка, введіть тимчасовий пароль який надійшов в СМС", 'R0lGODlhBAAEAJEAAAAAAP///////wAAACH5BAEAAAIALAAAAAAEAAQAAAIElI8pBQA7');
+			code = AnyBalance.retrieveCode("Будь ласка, введіть тимчасовий пароль який надійшов в СМС", 'R0lGODlhBAAEAJEAAAAAAP///////wAAACH5BAEAAAIALAAAAAAEAAQAAAIElI8pBQA7', {time: 240000, inputType: 'number'});
 			AnyBalance.trace('Код отриманний: ' + code);
 			html = AnyBalance.requestPost(baseurl + 'uk/security/logonotp', {
 		            otp: code

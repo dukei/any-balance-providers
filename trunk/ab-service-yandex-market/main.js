@@ -25,13 +25,16 @@ function main() {
     var res = prefs.good.replace(/(^\s+|\s+$)/g, '');
     res = res.replace(/ /g,"+");
     AnyBalance.trace(res);    
-    
+     
     html = AnyBalance.requestGet(baseurl + 'search.xml?cvredirect=2&text=' + res, g_headers);    
 	
 	if (/Сортировать/i.test(html)) {
+        var model_href = getParam(html, null, null, /b-offers__title(?:[^>]*>)[\s\S]*?href="([^"]+)/i);
+        html = AnyBalance.requestGet(baseurl + model_href, g_headers);
+	} else if (/По вашему запросу ничего не найдено/i.test(html)){
 		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Введите верный запрос.');
-	}
+		throw new AnyBalance.Error('По вашему запросу ничего не найдено.');        
+    }	
 	
 	var result = {success: true};
 	

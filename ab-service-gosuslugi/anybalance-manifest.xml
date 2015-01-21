@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="1.0" version="18">ab-service-gosuslugi</id>
+	<id major_version="1.0" version="19">ab-service-gosuslugi</id>
 	<api flags="no_browser"/>
 	<name>Госуслуги (Штрафы, Налоги)</name>
 	<description html="true"><![CDATA[

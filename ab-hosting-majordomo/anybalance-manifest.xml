@@ -1,40 +1,35 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-hosting-majordomo</id>
-  <name>Majordomo (хостинг)</name>
-  <description>
+	<api flags="no_browser"/>
+	<id version="2">ab-hosting-majordomo</id>
+	<name>Majordomo (хостинг)</name>
+	<description>
     Получает баланс и информацию о доменах у хостинг провайдера Majordomo (http://majordomo.ru).
 
     Информация берется из личного кабинета https://control.majordomo.ru. Может получать информацию по 4 доменам одновременно.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-    <js>library.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="domains" name="Всего доменов"/>
-    <counter id="domain" name="Домен" type="text"/>
-    <counter id="domain_till" name="До" type="time" format="dd/MM/yyyy"/>
-    <counter id="domain1" name="Домен 2" type="text"/>
-    <counter id="domain_till1" name="До 2" type="time" format="dd/MM/yyyy"/>
-    <counter id="domain2" name="Домен 3" type="text"/>
-    <counter id="domain_till2" name="До 3" type="time" format="dd/MM/yyyy"/>
-    <counter id="domain3" name="Домен 4" type="text"/>
-    <counter id="domain_till3" name="До 4" type="time" format="dd/MM/yyyy"/>
-    <counter id="balance_ue" name="Баланс уе" units="уе"/>
-  </counters>
-  <keywords>
-    интернет регистратор hosting
-  </keywords>
-  <type>
-    hosting
-  </type>
-  <country>
-    ru
-  </country>
+	</description>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<js>library.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="domains" name="Всего доменов"/>
+		<counter id="domain" name="Домен" type="text"/>
+		<counter id="domain_till" name="До" type="time" format="dd/MM/yyyy"/>
+		<counter id="domain1" name="Домен 2" type="text"/>
+		<counter id="domain_till1" name="До 2" type="time" format="dd/MM/yyyy"/>
+		<counter id="domain2" name="Домен 3" type="text"/>
+		<counter id="domain_till2" name="До 3" type="time" format="dd/MM/yyyy"/>
+		<counter id="domain3" name="Домен 4" type="text"/>
+		<counter id="domain_till3" name="До 4" type="time" format="dd/MM/yyyy"/>
+		<counter id="balance_ue" name="Баланс уе" units="уе"/>
+	</counters>
+	<keywords>интернет регистратор hosting</keywords>
+	<type>hosting</type>
+	<country>ru</country>
 </provider>

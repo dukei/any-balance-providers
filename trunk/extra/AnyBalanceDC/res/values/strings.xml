@@ -9,7 +9,6 @@
     <string name="service_name5">AnyBalance 5</string>
     
     <string name="widget_description">Shows balances from a chosen AnyBalance account</string>
-    <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
 
     <string name="prefs_account">Account</string>

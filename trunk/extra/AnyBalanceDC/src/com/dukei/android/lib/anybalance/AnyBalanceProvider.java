@@ -166,19 +166,24 @@ public class AnyBalanceProvider {
 	public static List<AccountEx> getAccountsEx(Context ctx){
 		Cursor cursor = ctx.getContentResolver().query(MetaData.AccountEx.CONTENT_URI, null, null, null, null);
 		try{
-			ArrayList<AccountEx> al = new ArrayList<AccountEx>(cursor.getCount());
-			for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()){
-				AccountEx acc = new AccountEx(cursor);
-				al.add(acc);
+			ArrayList<AccountEx> al = new ArrayList<AccountEx>(cursor == null ? 0 : cursor.getCount());
+			if(cursor != null){
+				for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()){
+					AccountEx acc = new AccountEx(cursor);
+					al.add(acc);
+				}
 			}
 			return al;
 		}finally{
-			cursor.close();
+			if(cursor != null)
+				cursor.close();
 		}
 	}
 
 	public static AccountEx getAccountEx(Context ctx, long id){
 		Cursor cursor = ctx.getContentResolver().query(ContentUris.withAppendedId(MetaData.AccountEx.CONTENT_URI, id), null, null, null, null);
+		if(cursor == null)
+			return null;
 		try{
 			cursor.moveToFirst();
 			if(cursor.isAfterLast())

@@ -2,7 +2,10 @@
 
 = Введение =
 
-AnyBalance позволяет другим приложениям на Android получить доступ к балансам и статистике по ним, используя [http://developer.android.com/guide/topics/providers/content-providers.html механизм поставщиков контента (Content Provider)]. Кроме того, есть возможность совершать некоторые действия, например, обновить заданный аккаунт.
+AnyBalance позволяет другим приложениям на Android получить доступ к балансам и статистике по ним, используя [http://developer.android.com/guide/topics/providers/content-providers.html механизм поставщиков контента (Content Provider)]. Кроме того, есть возможность совершать некоторые действия, например, обновить заданный аккаунт. 
+
+= Пример =
+Есть [https://code.google.com/p/any-balance-providers/source/browse/trunk/extra/AnyBalanceDC исходный код] примера использования - [https://play.google.com/store/apps/details?id=com.dukei.android.extension.anybalance.dashclock расширение] для [https://play.google.com/store/apps/details?id=net.nurik.roman.dashclock DashClock Widget]. Пример умеет получать балансы и иконки из AnyBalance, многие классы из примера могут пригодиться вам для работы с AnyBalance в вашем приложении. Прошу не стесняться и исследовать [https://code.google.com/p/any-balance-providers/source/browse/trunk/extra/AnyBalanceDC исходный код].
 
 = Балансы =
 

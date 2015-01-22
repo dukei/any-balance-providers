@@ -23,14 +23,19 @@ function main() {
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 
     var plainParams = {
+        Home:true,
         No:prefs.login,
-        FirstName:prefs.password,
-        FullName: "",
+        FIO:prefs.password,
+        Rooms_Count:"",
         PostAddress:"",
         IsApproved:false,
         Residents:"",
         FullArea:"",
-        Balanses:[]
+        FullArea_All:"",
+        Balanses:[],
+        IsMonthButton:false,
+        IsYearButton:false,
+        CreditList:[]
     }
     
     var par = 'EnergoSales@LoginPL(\''+ JSON.stringify(plainParams) +'\'#string)';
@@ -52,8 +57,27 @@ function main() {
 	
 	var result = {success: true};
 	
-	getParam(json.Credentials.Balanses, result, 'balance', /Электроэнергия\s\(\d+\)","Balans":"([^]*?)"/i, null, parseBalance);
-	getParam(json.Credentials.Balanses, result, 'odn', /(?:Электроэнергия\sОДН\s*?\(\d+\)","Balans":")([^]*?)"/i, null, parseBalance);
+	getParam(json.Credentials.balanses[0].Balans, result, 'balance', null, null, parseBalance);
+    
+    var today = new Date();
+    to_date = today.getDate() + '.' + today.getMonth()+1 + '.' + today.getFullYear();
+    from_date = today.getMonth()+1 + '.' + today.getFullYear();
+    AnyBalance.trace(from_date);
+    AnyBalance.trace(to_date);
+    
+    var date_par = "EnergoSales@GetPLCreditsMonthSummary('00000000-0000-0000-0000-000000000000'#guid,'01." + from_date + "'#string,'" + to_date + "'#string'true'#bool)";
+    
+	html = AnyBalance.requestPost(baseurl + 'asp/srvproxy.aspx', {
+        Parameters: date_par
+    }, addHeaders({Referer: baseurl + 'qa/PersonalCabin.html', 'X-Requested-With': 'XMLHttpRequest'}));  
+    
+    var json = getJson(html);
+    
+    getParam(json.Credits[0].Balance, result, 'to_pay', null, null, parseBalance);
+    getParam(json.Credits[0].Month, result, 'month', null, null, null);
+    getParam(json.Credits[0].Year, result, 'year', null, null, null);
+    getParam(json.Credits[0].Pay, result, 'credited', null, null, parseBalance);
+    getParam(json.Credits[0].Purchase, result, 'paid', null, null, parseBalance);
 	
 	AnyBalance.setResult(result);
 }

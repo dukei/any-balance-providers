@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-municipal-irkutskenergo</id>
+	<id version="2">ab-municipal-irkutskenergo</id>
 	<api flags="no_browser"/>
 	<name>Иркутскэнергосбыт</name>
 	<description html="true"><![CDATA[
@@ -17,7 +17,11 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Электроэнергия" units=" р"/>
-		<counter id="odn" name="Электроэнергия ОДН" units=" р"/>
+		<counter id="to_pay" name="Итого к оплате" units=" р"/>
+		<counter id="credited" name="Начислено" units=" р"/>
+		<counter id="paid" name="Оплачено" units=" р"/>
+		<counter id="month" name="Месяц" type="text"/>
+		<counter id="year" name="Год" type="text"/>
 	</counters>
 	<keywords></keywords>
 	<type>municipal</type>

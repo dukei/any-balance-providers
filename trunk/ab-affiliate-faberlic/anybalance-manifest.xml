@@ -1,14 +1,13 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-affiliate-faberlic</id>
+  <id version="2">ab-affiliate-faberlic</id>
+  <api flags="no_browser"/>
   <name>Faberlic</name>
-  <description>
-    Получает информацию для консультанта Faberlic (https://faberlic.com)
-
-    Информация берется из личного кабинета системы Faberlic: https://faberlic.com/index.php
-
-  </description>
-  <author>Alexandra Shalamova &lt;alexandrashalamova@gmail.com&gt;</author>
+	<description html="true"><![CDATA[
+	<p>Получает информацию для консультанта Faberlic <a href="https://faberlic.com/">https://faberlic.com/</a></p>
+	<p>Информация берется из личного кабинета <a href="https://faberlic.com/index.php?option=com_user&view=login&lang=ru">https://faberlic.com/index.php?option=com_user&view=login&lang=ru</a></p>
+	]]></description>
+  <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
@@ -17,24 +16,15 @@
     <history>history.xml</history>
   </files>
   <counters>
-    <counter id="balance" name="Мой счёт" prefix="RUR "/>
-    <counter id="myOS" name="Моя ОС" prefix="ОС RUR "/>
-    <counter id="payable" name="К оплате" prefix="RUR "/>
-
-    <counter id="delivery" name="Ближайшая доставка" type="text"/>
-    <counter id="consultant" name="Консультант" type="text"/>
-    <counter id="LO" name="ЛО" type="text"/>
-    <counter id="OLG" name="ОЛГ" type="text"/>
-    <counter id="GO" name="ГО" type="text"/>
+    <counter id="balance" name="Состояние счета" units=" р"/>
     <counter id="fio" name="ФИО" type="text"/>
+    <counter id="orders_sum" name="Итоговая сумма заказов" units=" р"/>
+    <counter id="points_sum" name="Итоговая сумма баллов"/>
+    <counter id="lo" name="ЛО(текущий период)"/>
+    <counter id="olg" name="ОЛГ(текущий период)"/>
+    <counter id="go" name="ГО(текущий период)"/>
   </counters>
-  <keywords>
-    Фаберлик
-  </keywords>
-  <type>
-    affiliate
-  </type>
-  <country>
-    ru
-  </country>
+  <keywords>Фаберлик</keywords>
+  <type>affiliate</type>
+  <country>ru</country>
 </provider>

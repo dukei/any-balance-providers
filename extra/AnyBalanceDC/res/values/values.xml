@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="widget_icons_values">
+        <item>name</item>
+        <item>app</item>
+        <item>acc</item>
+     </string-array>
+    
+    <string-array name="widget_icons">
+        <item>@string/pref_icon_name</item>
+        <item>@string/pref_icon_app</item>
+        <item>@string/pref_icon_acc</item>
+     </string-array>
+</resources>

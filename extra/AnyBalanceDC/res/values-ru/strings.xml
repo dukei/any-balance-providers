@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AnyBalance DashClock</string>
+    <string name="service_name">AnyBalance</string>
+    <string name="service_name2">AnyBalance 2</string>
+    <string name="service_name3">AnyBalance 3</string>
+    <string name="service_name4">AnyBalance 4</string>
+    <string name="service_name5">AnyBalance 5</string>
+    
+    <string name="widget_description">Показывает балансы из настроенного в AnyBalance аккаунта</string>
+    <string name="action_settings">Настройки</string>
+
+    <string name="prefs_account">Аккаунт</string>
+    <string name="prefs_counter_primary">Основной счетчик</string>
+    <string name="prefs_counter_add1">Доп. счетчик 1</string>
+    <string name="prefs_counter_add2">Доп. счетчик 2</string>
+    <string name="prefs_counter_add3">Доп. счетчик 3</string>
+    <string name="prefs_counter_add4">Доп. счетчик 4</string>
+    <string name="prefs_counter_add5">Доп. счетчик 5</string>
+    <string name="prefs_counter_add6">Доп. счетчик 6</string>
+    <string name="prefs_counter_summary">|Спрятать этот счетчик|{@s}</string>
+    <string name="prefs_account_summary">|Выберите аккаунт|{@s}</string>
+    <string name="hide_this_counter">Спрятать этот счетчик</string>
+    <string name="please_wait_while_your_accounts_are_loaded">Пожалуйста, подождите, пока информация будет загружена из AnyBalance&#8230;</string>
+    <string name="please_wait">Ждите&#8230;</string>
+    <string name="prefs_counter_units_summary_off">Значения счетчиков показываются без единиц измерения</string>
+    <string name="prefs_counter_units_summary_on">Значения счетчиков показываются с единицами измерения</string>
+    <string name="prefs_counter_units">Показать единицы измерения</string>
+    <string name="pref_icon_name">Название аккаунта</string>
+    <string name="pref_icon_app">Иконка приложения</string>
+    <string name="pref_icon_acc">Иконка провайдера</string>
+    <string name="prefs_simple_summary">||{@s}</string>
+    <string name="prefs_widget_icon">Иконка виджета</string>
+            
+    <string name="prefs_widget_counters">Счетчики</string>
+    <string name="prefs_widget_appearance">Внешний вид</string>
+</resources>

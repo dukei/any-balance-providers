@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">AnyBalance DashClock</string>
+    <string name="service_name">AnyBalance</string>
+    <string name="service_name2">AnyBalance 2</string>
+    <string name="service_name3">AnyBalance 3</string>
+    <string name="service_name4">AnyBalance 4</string>
+    <string name="service_name5">AnyBalance 5</string>
+    
+    <string name="widget_description">Shows balances from a chosen AnyBalance account</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="prefs_account">Account</string>
+    <string name="prefs_counter_primary">Primary counter</string>
+    <string name="prefs_counter_add1">Additional counter 1</string>
+    <string name="prefs_counter_add2">Additional counter 2</string>
+    <string name="prefs_counter_add3">Additional counter 3</string>
+    <string name="prefs_counter_add4">Additional counter 4</string>
+    <string name="prefs_counter_add5">Additional counter 5</string>
+    <string name="prefs_counter_add6">Additional counter 6</string>
+    <string name="prefs_counter_summary">|Hide this counter|{@s}</string>
+    <string name="prefs_account_summary">|Choose account to show|{@s}</string>
+    <string name="hide_this_counter">Hide this counter</string>
+    <string name="please_wait_while_your_accounts_are_loaded">Please wait while your accounts are loaded from AnyBalance&#8230;</string>
+    <string name="please_wait">Please, wait&#8230;</string>
+    <string name="prefs_counter_units_summary_off">Counter values are shown without units</string>
+    <string name="prefs_counter_units_summary_on">Counter values are shown with units</string>
+    <string name="prefs_counter_units">Show units</string>
+    <string name="pref_icon_name">Account name</string>
+    <string name="pref_icon_app">Application icon</string>
+    <string name="pref_icon_acc">Provider icon</string>
+    <string name="prefs_simple_summary">||{@s}</string>
+    <string name="prefs_widget_icon">Widget icon</string>
+            
+    <string name="prefs_widget_counters">Counters</string>
+    <string name="prefs_widget_appearance">Appearance</string>
+</resources>

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <ListPreference
+        android:key="account"
+        android:title="@string/prefs_account"
+        android:summary="@string/prefs_account_summary" >
+    </ListPreference>
+    
+    <PreferenceCategory
+        android:key="widget_preferences"
+        android:title="@string/prefs_widget_counters" >
+
+        <ListPreference
+            android:key="counter0"
+            android:summary="@string/prefs_counter_summary"
+            android:title="@string/prefs_counter_primary" >
+        </ListPreference>
+
+        <ListPreference
+            android:key="counter1"
+            android:summary="@string/prefs_counter_summary"
+            android:title="@string/prefs_counter_add1" >
+        </ListPreference>
+
+        <ListPreference
+            android:key="counter2"
+            android:summary="@string/prefs_counter_summary"
+            android:title="@string/prefs_counter_add2" >
+        </ListPreference>
+
+        <ListPreference
+            android:key="counter3"
+            android:summary="@string/prefs_counter_summary"
+            android:title="@string/prefs_counter_add3" >
+        </ListPreference>
+
+        <ListPreference
+            android:key="counter4"
+            android:summary="@string/prefs_counter_summary"
+            android:title="@string/prefs_counter_add4" >
+        </ListPreference>
+
+        <ListPreference
+            android:key="counter5"
+            android:summary="@string/prefs_counter_summary"
+            android:title="@string/prefs_counter_add5" >
+        </ListPreference>
+
+        <ListPreference
+            android:key="counter6"
+            android:summary="@string/prefs_counter_summary"
+            android:title="@string/prefs_counter_add6" >
+        </ListPreference>
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:key="widget_preferences"
+        android:title="@string/prefs_widget_appearance" >
+        <CheckBoxPreference
+            android:key="counter_units"
+            android:summaryOff="@string/prefs_counter_units_summary_off"
+            android:summaryOn="@string/prefs_counter_units_summary_on"
+            android:title="@string/prefs_counter_units"
+            android:defaultValue="true">
+        </CheckBoxPreference>
+        
+        <ListPreference
+            android:defaultValue="name"
+            android:entries="@array/widget_icons"
+            android:entryValues="@array/widget_icons_values"
+            android:key="icon"
+            android:summary="@string/prefs_simple_summary"
+            android:title="@string/prefs_widget_icon" >
+        </ListPreference>
+    </PreferenceCategory>
+</PreferenceScreen>

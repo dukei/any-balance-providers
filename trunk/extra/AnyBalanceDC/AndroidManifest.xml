@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.dukei.android.extension.anybalance.dashclock"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="17"
+        android:targetSdkVersion="21" />
+    
+    <uses-permission android:name="com.dukei.android.provider.anybalance.READ_PERMISSION"/>
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/logo2"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+
+        <activity
+            android:name=".SettingsActivity1"
+            android:label="@string/service_name"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".SettingsActivity2"
+            android:label="@string/service_name2"
+            android:exported="true" >
+        </activity>
+        
+        <activity
+            android:name=".SettingsActivity3"
+            android:label="@string/service_name3"
+            android:exported="true" >
+        </activity>
+        
+        <activity
+            android:name=".SettingsActivity4"
+            android:label="@string/service_name4"
+            android:exported="true" >
+        </activity>
+        
+        <activity
+            android:name=".SettingsActivity5"
+            android:label="@string/service_name5"
+            android:exported="true" >
+        </activity>
+        
+        <service android:name=".Extension1"
+            android:icon="@drawable/logo2"
+            android:label="@string/service_name"
+            android:permission="com.google.android.apps.dashclock.permission.READ_EXTENSION_DATA">
+            <intent-filter>
+                <action android:name="com.google.android.apps.dashclock.Extension" />
+            </intent-filter>
+            <meta-data android:name="protocolVersion" android:value="2" />
+            <meta-data android:name="worldReadable" android:value="true" />
+            <meta-data android:name="description" android:value="@string/widget_description" />
+            <meta-data android:name="settingsActivity" android:value=".SettingsActivity1" />
+        </service>
+
+        <service android:name=".Extension2"
+            android:icon="@drawable/logo2"
+            android:label="@string/service_name2"
+            android:permission="com.google.android.apps.dashclock.permission.READ_EXTENSION_DATA">
+            <intent-filter>
+                <action android:name="com.google.android.apps.dashclock.Extension" />
+            </intent-filter>
+            <meta-data android:name="protocolVersion" android:value="2" />
+            <meta-data android:name="worldReadable" android:value="true" />
+            <meta-data android:name="description" android:value="@string/widget_description" />
+            <meta-data android:name="settingsActivity" android:value=".SettingsActivity2" />
+        </service>
+        
+        <service android:name=".Extension3"
+            android:icon="@drawable/logo2"
+            android:label="@string/service_name3"
+            android:permission="com.google.android.apps.dashclock.permission.READ_EXTENSION_DATA">
+            <intent-filter>
+                <action android:name="com.google.android.apps.dashclock.Extension" />
+            </intent-filter>
+            <meta-data android:name="protocolVersion" android:value="2" />
+            <meta-data android:name="worldReadable" android:value="true" />
+            <meta-data android:name="description" android:value="@string/widget_description" />
+            <meta-data android:name="settingsActivity" android:value=".SettingsActivity3" />
+        </service>
+        
+        <service android:name=".Extension4"
+            android:icon="@drawable/logo2"
+            android:label="@string/service_name4"
+            android:permission="com.google.android.apps.dashclock.permission.READ_EXTENSION_DATA">
+            <intent-filter>
+                <action android:name="com.google.android.apps.dashclock.Extension" />
+            </intent-filter>
+            <meta-data android:name="protocolVersion" android:value="2" />
+            <meta-data android:name="worldReadable" android:value="true" />
+            <meta-data android:name="description" android:value="@string/widget_description" />
+            <meta-data android:name="settingsActivity" android:value=".SettingsActivity4" />
+        </service>
+        
+        <service android:name=".Extension5"
+            android:icon="@drawable/logo2"
+            android:label="@string/service_name5"
+            android:permission="com.google.android.apps.dashclock.permission.READ_EXTENSION_DATA">
+            <intent-filter>
+                <action android:name="com.google.android.apps.dashclock.Extension" />
+            </intent-filter>
+            <meta-data android:name="protocolVersion" android:value="2" />
+            <meta-data android:name="worldReadable" android:value="true" />
+            <meta-data android:name="description" android:value="@string/widget_description" />
+            <meta-data android:name="settingsActivity" android:value=".SettingsActivity5" />
+        </service>
+        
+        <provider
+            android:name="com.dukei.android.lib.anybalance.IconProvider"
+            android:authorities="com.dukei.android.provider.texticon"
+            android:exported="true" >
+        </provider>
+    </application>
+
+</manifest>

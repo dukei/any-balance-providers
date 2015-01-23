@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="3">ab-transport-nrg-tk</id>
+	<id version="4">ab-transport-nrg-tk</id>
 	<name>ТК Энергия</name>
 	<description html="true"><![CDATA[
 	<p>Получает информацию о перевозках в транспортной компании ТК Энергия (http://nrg-tk.ru/poisk-nakladnoj.html)</p>

@@ -35,12 +35,12 @@ function main() {
 	
     var result = {success: true};
 
-    getParam(json.cur_state, result, 'now', null, replaceTagsAndSpaces, html_entity_decode);
-    getParam(json.cityto, result, 'tocity', null, replaceTagsAndSpaces, html_entity_decode);
-    getParam(json.cityfrom, result, 'from', null, replaceTagsAndSpaces, html_entity_decode);
-    getParam(json.num_places, result, 'sits', null, replaceTagsAndSpaces, html_entity_decode);
-    getParam(json.weight, result, 'weight', null, replaceTagsAndSpaces, parseBalance);
-    getParam(json.volume, result, 'volume', null, replaceTagsAndSpaces, parseBalance);
+    getParam(json.cur_state + '', result, 'now', null, replaceTagsAndSpaces, html_entity_decode);
+    getParam(json.cityto + '', result, 'tocity', null, replaceTagsAndSpaces, html_entity_decode);
+    getParam(json.cityfrom + '', result, 'from', null, replaceTagsAndSpaces, html_entity_decode);
+    getParam(json.num_places + '', result, 'sits', null, replaceTagsAndSpaces, html_entity_decode);
+    getParam(json.weight + '', result, 'weight', null, replaceTagsAndSpaces, parseBalance);
+    getParam(json.volume + '', result, 'volume', null, replaceTagsAndSpaces, parseBalance);
 	
     AnyBalance.setResult(result);
 }

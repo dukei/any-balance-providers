@@ -18,7 +18,7 @@ function main() {
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 
-	var html = AnyBalance.requestPost(baseurl + 'index2.php?option=com_module&module=flregionselection&no_html=1&task=getmodule&act=setRegion&reg_id=1000034210371', null, addHeaders({Referer: baseurl + 'index.php?option=com_user&view=login&lang=ru', 'X-Requested-With':'XMLHttpRequest'}));
+	var html = AnyBalance.requestPost(baseurl + 'index2.php?option=com_module&module=flregionselection&no_html=1&task=getmodule&act=setRegion&reg_id=1000034210371', {}, addHeaders({Referer: baseurl + 'index.php?option=com_user&view=login&lang=ru', 'X-Requested-With':'XMLHttpRequest'}));
 		
 	html = AnyBalance.requestGet(baseurl + 'index.php?option=com_user&view=login&lang=ru', g_headers);
 	

@@ -1,10 +1,7 @@
 Option Explicit
 
-Dim returnValue
-returnValue = createInput("Enter history in 5 minutes","Adding history",(5 * 60) * 1000)
-
 'Функция создания окна похожего на inputBox с таймаутом в миллисекундах
-Function createInput(prompt,title,timeout)
+Function createInput(file,title,timeout)
     Dim content, wnd, status
     'Задаём HTML код окна
 	'Загрузим из файла
@@ -13,7 +10,7 @@ Function createInput(prompt,title,timeout)
 	Set objStream = CreateObject("ADODB.Stream")
 	objStream.CharSet = "utf-8"
 	objStream.Open
-	objStream.LoadFromFile("..\\extra\\development\\tools\\wnd.html")
+	objStream.LoadFromFile("..\\extra\\development\\tools\\" & file)
 	content = objStream.ReadText()
 	
     'Создаём нужное нам окошко (без скролов, без меню и т.п)
@@ -38,8 +35,6 @@ Function createInput(prompt,title,timeout)
         .inpText.focus
         'Задаём заголовок окна
         .document.title = title
-        'Заполняем поле запроса в окне
-        REM .lblPrompt.innerText = prompt
         'Двигаем окошко на нужные нам координаты (при желании можно отцентрировать по wnd.screenWidth / wnd.screenHeight)
         .moveTo 200, 200
         'Задаём ширину и высоту окошка

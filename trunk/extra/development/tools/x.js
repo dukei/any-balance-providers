@@ -26,11 +26,14 @@ var prompt = "Enter a line to history:";
 var cancel = "User asked to terminate";
 
 try{
+
+	var result = createInput("wnd.html","Adding history",(5 * 60) * 1000);
+	if(!result)
+		throw new Error(cancel);
+
 	// Create the WshShell object (needed for using Popup).
 	var WshShell = WScript.CreateObject("WScript.Shell");
 	// Open the input dialog box using a function in the .wsf file.
-	//var result = WSHInputBox(prompt, title, "- ");
-	var result = returnValue;
 	// Test whether the Cancel button was clicked.
 	if (result) {
 		var objStream = new ActiveXObject("ADODB.Stream");
@@ -158,6 +161,14 @@ function writeManifest(objStream, manifest, WshShell) {
 				manifest = manifest.replace(/<provider>/, '<provider>\n\t<api flags="no_browser"/>');
 			}
 		}
+	}
+
+	if(/<type[^>]*>[^<]*money/i.test(manifest) && !/<type[^>]*>[^<]*(bank|wallet)/i.test(manifest)){
+		var result = createInput("type.html","Исправление типа",(5 * 60) * 1000);
+		if(!result)
+			throw new Error(cancel);
+
+		manifest = manifest.replace(/<\/type>/, ', ' + result + '</type>');
 	}
 	
 	if(!g_history_file)

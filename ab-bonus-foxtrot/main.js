@@ -43,11 +43,12 @@ function main(){
     var skidkatemp = sumParam (html, null, null, /Баллы: <\/span><span class=[^<]*>(\d+)</ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     result.skidka = skidka2balance(skidkatemp);
     
-    html = AnyBalance.requestGet(baseurl + 'Members/Summary', {
-    });
+//    html = AnyBalance.requestGet(baseurl + 'Members/Summary', {
+//    });
 
     // Остаток баланса до увеличения %
-    sumParam (html, result, 'balance_left', /Для перехода на новый уровень Вам не хватает (\d+) баллов\!<\/p>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+//    sumParam (html, result, 'balance_left', /Для перехода на новый уровень Вам не хватает (\d+) баллов\!<\/p>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    result.balance_left = skidka2balanceleft(skidkatemp);
 
     html = AnyBalance.requestGet(baseurl + 'Members/PersonalData', {
     });
@@ -81,9 +82,9 @@ function skidka2balance(str){
         return;
 
     var skidka;
-    
+
     if(str<=4200)
-        skidka = 1.5;
+        skidka = 1;
     else if((str>4200)&&(str<=8500))
         skidka = 3;
     else if((str>8500)&&(str<=14450))
@@ -91,7 +92,27 @@ function skidka2balance(str){
     else if((str>14450)&&(str<=30000))
         skidka = 7;
     else //if(str>30000)
-        skidka = 8;
-  
+        skidka = 7;
+
     return skidka;
+}
+
+function skidka2balanceleft(str){
+    if(!isset(str))
+        return;
+
+    var balance_left;
+
+    if(str<=4200)
+        balance_left = 4201 - str;
+    else if((str>4200)&&(str<=8500))
+        balance_left = 8501 - str;
+    else if((str>8500)&&(str<=14450))
+        balance_left = 14451 - str;
+    else if((str>14450)&&(str<=30000))
+        balance_left = 0;
+    else //if(str>30000)
+        balance_left = 0;
+
+    return balance_left;
 }

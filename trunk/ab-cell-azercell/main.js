@@ -1,10 +1,5 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Текущий баланс у оператора Azercell (Азербайджан).
-
-Сайт оператора: http://www.azercell.com
-Личный кабинет: http://www.azercell.com/WebModule1/mainservlet
 */
 
 var g_headers = {'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.11 (KHTML, like Gecko) Chrome/20.0.1132.57 Safari/536.11'};

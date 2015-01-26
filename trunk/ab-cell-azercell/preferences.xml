@@ -4,8 +4,8 @@
         key="preix"
         title="Префикс номера телефона" 
         summary="|Выберите префикс номера телефона|{@s}" 
-	entries="50|51"
-	entryValues="50|51"
+		entries="50|51"
+		entryValues="50|51"
         defaultValue="50"
         dialogTitle="Префикс номера телефона">
     </ListPreference>

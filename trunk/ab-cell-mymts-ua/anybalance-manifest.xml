@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="1.0" version="3">ab-cell-mymts-ua</id>
+	<id major_version="1.0" version="4">ab-cell-mymts-ua</id>
 	<api flags="no_browser"/>
 	<name>Мой МТС (Украина)</name>
 	<description html="true"><![CDATA[
@@ -29,11 +29,13 @@
 		<counter id="hvylyny_net1" name="Минуты в сети МТС региональные" type="time_interval" format="{@MIN}" units=" мин"/>
 		<counter id="hvylyny_net2" name="Минуты в сети МТС вне региона" type="time_interval" format="{@MIN}" units=" мин"/>
 		<counter id="hvylyny_net3" name="Минуты в сети МТС" type="time_interval" format="{@MIN}" units=" мин"/>
+		<counter id="hvylyny_all1" name="Минуты по Украине" type="time_interval" format="{@MIN}" units=" мин"/>
 		<counter id="sms_used" name="Израсходовано SMS" units=" sms"/>
 		<counter id="mms_used" name="Израсходовано MMS" units=" mms"/>
+		<counter id="sms_net" name="SMS в сети МТС" units=" sms"/>
 		<counter id="traffic1" name="Интернет пакет" units=" mb"/>
 		<counter id="traffic2" name="Интернет ежедневный пакет" units=" mb"/>
-		<!--traffic3 для интернета из тарифных планов, типа Осталось: -->
+		<counter id="traffic3" name="Интернет трафик" units=" mb"/>
 		<counter id="traffic4" name="Интернет Смарт.NET" units=" mb"/>
 		<counter id="bonusy_burn" name="Бонусы на списание" units=" б."/>
 		<counter id="bonusy_burn_termin" name="Дата списания бонусов" type="time" format="dd/MM/yyyy"/>

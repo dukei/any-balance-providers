@@ -9,10 +9,10 @@
 
 var g_headers = {
 	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
-	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Accept-Language': 'ru,en-US;q=0.8,en;q=0.6',
+	'Cache-Control': 'max-age=0',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36'
+	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.99 Safari/537.36'
 };
 
 function main(){
@@ -25,20 +25,16 @@ function main(){
     AnyBalance.setDefaultCharset('utf-8');
     
     var html = requestPostMultipart(baseurl + 'login', {
+    	return_url: '',
     	login: prefs.login,
     	password: prefs.password,
     	submit0: 'Подождите...',
-    	return_url: ''
     }, addHeaders({
     	Origin: "https://www.aeroflot.ru",
     	Referer: baseurl + 'login'
     }));
 	if (!/\/personal\/logout/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+class="[^"]*error[^>]*>([\s\S]*?)(?:<p|<\/div>)/i, replaceTagsAndSpaces, html_entity_decode);
-		if (error)
-			throw new AnyBalance.Error(error);
-		
-		error = getParam(html, null, null, /<!-- :: errors :: -->\s*<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, null, null, /<div[^>]+class="[^"]*error[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
 			throw new AnyBalance.Error(error, null, /указали неправильные реквизиты/.test(error));
 		
@@ -49,9 +45,42 @@ function main(){
     var result = {success: true};
 	
     getParam(html, result, 'balance', /<td[^>]+id="member_miles_value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'qmiles', /<td[^>]+id="current_year_miles_value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'segments', /<td[^>]+id="current_year_segments_value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, '__tariff', /<div[^>]+class="name"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+
+    if(/signconsentform/i.test(html)){
+	AnyBalance.trace('Аэрофлот просит подписать согласие какое-то. Подписываем, ибо иначе придется отказываться от всех милей всё равно.');
+	var form = getParam(html, null, null, /<form[^>]+name="signconsentform"[^>]*>([\s\S]*?)<\/form>/i);
+	var params = createFormParams(form);
+	html = requestPostMultipart(baseurl + 'sign_consent', params, addHeaders({
+        	Origin: "https://www.aeroflot.ru",
+        	Referer: baseurl + 'sign_consent'
+        }));
+    }
+
+    if(AnyBalance.isAvailable('qmiles', 'segments')){
+	var html = AnyBalance.requestPost(baseurl + 'services/widgets_bulk', {
+		widgets:'["miles_exp_date","miles_summary"]',
+	}, addHeaders({
+    		Origin: "https://www.aeroflot.ru",
+    		Referer: AnyBalance.getLastUrl(),
+		'X-Requested-With':'XMLHttpRequest'
+	}));
+	var json = getJson(html);
+	if(json.data){
+		for(var i=0; i<json.data.length; ++i){
+			var o = json.data[i];
+			if(!isset(o.current_year_miles_amount))
+				continue;
+			
+    			getParam(o.current_year_miles_amount, result, 'qmiles');
+    			getParam(o.current_year_segments_amount, result, 'segments');
+			break;
+		}
+	}else{
+		AnyBalance.trace('Информация о квалификационных милях не вернулась: ' + html);
+	}
+		
+    }
 
     if(AnyBalance.isAvailable('balance') && !isset(result.balance)){
         AnyBalance.trace('Баланс не на странице. Попробуем получить аяксом.');

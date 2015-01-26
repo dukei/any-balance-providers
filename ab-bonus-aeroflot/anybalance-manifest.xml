@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="7">ab-bonus-aeroflot</id>
+	<id version="8">ab-bonus-aeroflot</id>
 	<api flags="no_browser"/>
 	<name>Аэрофлот Бонус</name>
 	<description html="true"><![CDATA[

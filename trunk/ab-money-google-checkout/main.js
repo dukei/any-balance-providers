@@ -3,11 +3,11 @@
 */
 
 var g_headers = {
-	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
-	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (AnyBalance 7.0; WOW64; rv:22.0) Gecko/20100101 AnyBalance/22.0'
+	'Cache-Control': 'max-age=0',
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+	'Origin': 'https://accounts.google.com',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.91 Safari/537.36',
+	'Accept-Language': 'ru,en;q=0.8'
 }
 
 function main() {
@@ -35,6 +35,31 @@ function main() {
 		}, g_headers);
 	} catch(e) {
 		var html = AnyBalance.requestGet('https://www.google.com/settings/account', g_headers);
+	}
+	
+	// Двухэтапная авторизация...
+	if(/secondfactor/i.test(html)) {
+		throw new AnyBalance.Error('Two-factor authorization is enabled. Just now we can`t deal with this. Login attempt has failed.');
+		
+		if(AnyBalance.getLevel() >= 7) {
+			AnyBalance.trace('Trying to get code...');
+			var code = AnyBalance.retrieveCode("Plaese, enter code from Authentificator");
+			AnyBalance.trace('Got code: ' + code);
+		} else {
+			throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
+		}
+		
+		var secTok = getParam(html, null, null, /['"]secTok['"][^>]*value=['"]([^'']+)/i);
+		
+		html = AnyBalance.requestPost(baseurlLogin + 'SecondFactor', {
+			'timeStmp': Math.round(new Date().getTime()/1000),
+			'secTok': secTok,
+			'smsToken':'',
+			'smsUserPin': code,
+			'smsVerifyPin': 'Подтвердить',
+			'PersistentOptionSelection':'1',
+			'PersistentCookie': 'on'
+		}, addHeaders({Referer: baseurlLogin + 'SecondFactor'}));
 	}
 	
 	if (!/logout/i.test(html)) {

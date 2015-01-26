@@ -6,7 +6,7 @@ var g_headers = {
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.99 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.91 Safari/537.36',
 };
 
 function parseTrafficMb(str){
@@ -35,7 +35,7 @@ function main() {
 	if (AnyBalance.getLevel() >= 7) {
 		AnyBalance.trace('Пытаемся ввести капчу');
 		var captcha = AnyBalance.requestGet(baseurl + 'Captcha/ShowForLogon');
-		captchaa = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
+		captchaa = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha, {time: 120000});
 		AnyBalance.trace('Капча получена: ' + captchaa);
 	} else {
 		throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
@@ -80,17 +80,24 @@ function main() {
 
 	//Пакетные минуты в сети МТС общенациональные
 	sumParam (html, result, 'hvylyny_net3', /минут внутри сети, осталось\s*(\d+)\s*бесплатных секунд/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+	sumParam (html, result, 'hvylyny_net3', /3000 минут на МТС для MAX Energy Allo, осталось\s*(\d+)\s*бесплатных секунд/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	sumParam (html, result, 'hvylyny_net3_termin', /минут внутри сети, осталось \d+ бесплатных секунд до\s*([^<]*)\s*<\/span>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
+
+	//Минуты по Украине
+	sumParam (html, result, 'hvylyny_all1', /100 минут по Украине для MAX Energy Allo, осталось\s*(\d+)\s*бесплатных секунд/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 
 	//СМС и ММС
 	sumParam (html, result, 'sms_used', />50 SMS по Украине для "Смартфона", израсходовано:(\d+)\s*смс.<\/span>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	sumParam (html, result, 'mms_used', />50 MMS по Украине для "Смартфона", израсходовано:(\d+)\s*mms.<\/span>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+	sumParam (html, result, 'sms_net', />1500 SMS на МТС для MAX Energy Allo, осталось (\d+) бесплатных SMS</ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 
 	//Трафик
 	//Пакет (интернет за копейку 1000 за 10, еще должны быть 1500 за 15 и 2000 за 20)
 	sumParam (html, result, 'traffic1', /1000 МБ за 10 грн., осталось:\s*(\d+,?\d* *(Кб|kb|mb|gb|кб|мб|гб|байт|bytes)).<\/span>/ig, null, parseTrafficMb, aggregate_sum);
 	//Ежедневный пакет? тут старое описание не работает, нужен номер с таким пакетом, что бы исправить
 	getParam (html, result, 'traffic2', /Кб.<\/span>\s*<\/div>\s*<div[^>]*>\s*<span[^>]*>Осталось:\s*(\d+,?\d* *(Кб|kb|mb|gb|кб|мб|гб|байт|bytes)).<\/span>/i, null, parseTrafficMb);
+	//Пакет на месяц в тарифе
+	sumParam (html, result, 'traffic3', /1500 Mb GPRS Internet для MAX Energy Allo, осталось\s*(\d+)\s*бесплатных Kб.<\/span>/ig, null, parseTrafficMb, aggregate_sum);
 	//Смарт.NET
 	getParam (html, result, 'traffic4', /секунд<\/span>\s*<\/div>\s*<div[^>]*>\s*<span[^>]*>Осталось:\s*(\d+,?\d* *(Кб|kb|mb|gb|кб|мб|гб|байт|bytes)).<\/span>/i, null, parseTrafficMb);
 

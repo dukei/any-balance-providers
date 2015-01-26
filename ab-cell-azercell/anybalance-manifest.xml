@@ -1,40 +1,36 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-cell-azercell</id>
-  <name>Azercell (Азербайджан)</name>
-  <description>
-    Получает информацию о балансе и тарифном плане для сотового оператора Azercell (http://azercell.com).
-    Информация берется из личного кабинета http://www.azercell.com/WebModule1/mainservlet
-
-    Как получить доступ? 
-    Зайдите в раздел Регистрация: http://subscriber.azercell.com/subscriber/subscriberSignInWithMsisdn.do и пройдите регистрацию. После успешного прохождения регистрации на номер Вашего телефона поступит пароль.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-    <js>library.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="limit" name="Оставшийся лимит" units=" AZN"/>
-    <counter id="debt" name="Сумма долга" units=" AZN"/>
-    <counter id="paytill" name="Срок оплаты" type="time" format="dd/MM/yyyy"/>
-    <counter id="advance" name="Сумма аванса" units=" AZN"/>
-    <counter id="calls" name="Сумма текущих разговоров" units=" AZN"/>
-    <counter id="bonus" name="Бонусы"/>
-    <counter id="paysum" name="Последняя оплата" units=" AZN"/>
-    <counter id="paydate" name="Дата последней оплаты" type="time" format="dd/MM/yyyy H:mm"/>
-    <counter id="phone" name="Номер телефона" type="text"/>
-  </counters>
-  <keywords>
-    Сотовый телефон, мобильный, мобильник, азерсел
-  </keywords>
-  <type>
-    cell
-  </type>
-  <country>
-    az
-  </country>
+	<api flags="no_browser"/>
+	<id version="2">ab-cell-azercell</id>
+	<name>Azercell (Азербайджан)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе и тарифном плане для сотового оператора Azercell <a href="http://azercell.com">http://azercell.com</a></p>
+	<p>Информация берется из личного кабинета <a href="http://www.azercell.com/WebModule1/mainservlet">http://www.azercell.com/WebModule1/mainservlet</a></p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Как получить доступ? </p>
+	<p>Зайдите в раздел Регистрация: <a href="http://subscriber.azercell.com/subscriber/subscriberSignInWithMsisdn.do">http://subscriber.azercell.com/subscriber/subscriberSignInWithMsisdn.do</a> и пройдите регистрацию. После успешного прохождения регистрации на номер Вашего телефона поступит пароль.</p>
+	]]></instruction>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="limit" name="Оставшийся лимит" units=" AZN"/>
+		<counter id="debt" name="Сумма долга" units=" AZN"/>
+		<counter id="paytill" name="Срок оплаты" type="time" format="dd/MM/yyyy"/>
+		<counter id="advance" name="Сумма аванса" units=" AZN"/>
+		<counter id="calls" name="Сумма текущих разговоров" units=" AZN"/>
+		<counter id="bonus" name="Бонусы"/>
+		<counter id="paysum" name="Последняя оплата" units=" AZN"/>
+		<counter id="paydate" name="Дата последней оплаты" type="time" format="dd/MM/yyyy H:mm"/>
+		<counter id="phone" name="Номер телефона" type="text"/>
+	</counters>
+	<keywords>Сотовый телефон, мобильный, мобильник, азерсел</keywords>
+	<type>cell</type>
+	<country>az</country>
 </provider>

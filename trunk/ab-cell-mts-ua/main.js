@@ -114,8 +114,8 @@ function main(){
 	function parseTime (str) {
 		var t = parseFloat(str);
 		if(!str || !t)
-			return;		
-		
+			return;
+
 		return 60 * parseFloat(str)
 	}
 
@@ -197,11 +197,13 @@ function main(){
     // Интернет Max Energy (интересно у них единица измерения прописана) и MAX Energy Allo
     sumParam (html, result, 'traffic_maxenergy_mb', /<li>Осталось: (\d+,?\d* *(kб|bytes)).<\/li>/ig, null, parseTraffic, aggregate_sum);
     sumParam (html, result, 'traffic_maxenergy_mb', /<li>Осталось (\d+) бесплатных Kб.[^<]*<\/li>/ig, null, parseTrafficMb, aggregate_sum);
+    sumParam (html, result, 'traffic_maxenergy_mb', /<li>1500 Mb GPRS Internet для MAX Energy Allo, осталось (\d+) бесплатных Kб.[^<]*<\/li>/ig, null, parseTrafficMb, aggregate_sum);
 
     // СМС в сети МТС
     sumParam (html, result, 'sms_net', /<li>Осталось (\d+) смс.[^<]*<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     sumParam (html, result, 'sms_net', /<li>Осталось (\d+) бесплатных SMS[^<]*<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     sumParam (html, result, 'sms_net', /<li>30 sms в день внутри сети, осталось (\d+) смс.<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    sumParam (html, result, 'sms_net', /<li>1500 SMS на МТС для MAX Energy Allo, осталось (\d+) бесплатных SMS<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     //Срок действия СМС в сети МТС
     sumParam (html, result, 'termin_sms_net', /<li>Осталось \d+ смс. До ([^<]*)<\/li>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
     sumParam (html, result, 'termin_sms_net', /<li>Осталось \d+ смс. Срок действия до ([^<]*)<\/li>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
@@ -245,8 +247,10 @@ function main(){
     //Минуты в тарифе MAX Energy Allo
     sumParam (html, result, 'min_allo_net', /Kб.<\/li><li>Осталось ([\d\.,]+) бесплатных секунд[^<]*<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     sumParam (html, result, 'min_allo_net', /секунд<\/li><li>Осталось ([\d\.,]+) бесплатных секунд[^<]*<\/li><li>Осталось/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    sumParam (html, result, 'min_allo_net', /<li>3000 минут на МТС для MAX Energy Allo, осталось ([\d\.,]+) бесплатных секунд[^<]*<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     sumParam (html, result, 'min_allo_other', /Осталось ([\d\.,]+) бесплатных секунд[^<]*<\/li><\/ul>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     sumParam (html, result, 'min_allo_other', /SMS<\/li><li>Осталось ([\d\.,]+) бесплатных секунд[^<]*<\/li><li>Осталось/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    sumParam (html, result, 'min_allo_other', /<li>100 минут по Украине для MAX Energy Allo, осталось ([\d\.,]+) бесплатных секунд[^<]*<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 
     // Расход минут на Любимые Номера
     sumParam (html, result, 'min_ln', /<li>К-во бесплатных минут для звонков на ЛН:[^<]*Израсходовано\s*([\d\.,]+) сек.<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
@@ -302,7 +306,7 @@ function main(){
     sumParam (html, result, 'PZS_MB_3D', /<li>ПЗС за Мб по услуге Супер 3D[^<]*([\d\.,]+)<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 
     // ПЗС за первое событие для APN opera
-    sumParam (html, result, 'PZS_MB_opera', /<li>ПЗС за первое событие для APN opera[^<]*([\d\.,]+)<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    sumParam (html, result, 'PZS_MB_opera', /ПЗС за первое событие для APN opera[^<]*([\d\.,]+)<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 
     // ПЗС за первое событие
     sumParam (html, result, 'PZS_first', /<li>Снятие ПЗС за первое событие[^<]*([\d\.,]+)<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="3">ab-affiliate-faberlic</id>
+  <id version="4">ab-affiliate-faberlic</id>
   <api flags="no_browser"/>
   <name>Faberlic</name>
 	<description html="true"><![CDATA[
@@ -23,6 +23,8 @@
     <counter id="lo" name="ЛО(текущий период)"/>
     <counter id="olg" name="ОЛГ(текущий период)"/>
     <counter id="go" name="ГО(текущий период)"/>
+    <counter id="personal" name="Неоплаченные личные баллы"/>
+    <counter id="group" name="Неоплаченные групповые баллы"/>
   </counters>
   <keywords>Фаберлик</keywords>
   <type>affiliate</type>

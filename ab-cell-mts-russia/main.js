@@ -401,7 +401,7 @@ function fetchAccountStatus(html, result){
     //Срочный контракт (15%, 25% как 15%): Осталось 0 минут
     html = sumParam (html, result, 'min_left', /Срочный контракт.*?: Осталось\s*([\d\.,]+)\s*мин/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
     // Пакет минут
-    html = sumParam (html, result, 'min_left', /Остаток пакета минут:\s*([\d\.,]+)\s*[\.,<]/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
+    html = sumParam (html, result, 'min_left', /Остаток (?:ежесуточного )?пакета минут:\s*([\d\.,]+)\s*[м\.,<]/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
     // Остаток бонуса
     html = sumParam (html, result, 'min_left', /Остаток бонуса:\s*([\d\.,]+?)\s*мин/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
 	

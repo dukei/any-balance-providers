@@ -67,5 +67,10 @@ function main() {
 	getParam(html, result, 'olg', /<td[^>]*>\s*Текущий период\s*<\/td>(?:[\s\S]*?<td[^>]*>){9}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'go', /<td[^>]*>\s*Текущий период\s*<\/td>(?:[\s\S]*?<td[^>]*>){12}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 	
+    html = AnyBalance.requestPost(baseurl + 'index2.php?option=com_module&task=getmodule&module=mod_flmybusiness&no_html=1', {}, addHeaders({Referer: baseurl + 'index.php?option=com_user&view=cabinet&Itemid=2069&lang=ru', 'X-Requested-With':'XMLHttpRequest'}));
+    
+	getParam(html, result, 'personal', /В личных(?:[^>]*>){5}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'group', /В группе(?:[^>]*>){5}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);    
+    
 	AnyBalance.setResult(result);
 }

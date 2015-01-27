@@ -10,20 +10,30 @@ var g_headers = {
 	'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.66 Safari/537.36'
 };
 
-function main(){
-    var prefs = AnyBalance.getPreferences();
-    var baseurl = 'https://stat.prolink.ru/';
-    AnyBalance.setDefaultCharset('windows-1251');
-	
-    var html = AnyBalance.requestGet(baseurl+ 'stat/', g_headers);
-	
-	var params = createFormParams(html, function(params, str, name, value){
+function getLoginParams(html, prefs) {
+	return createFormParams(html, function(params, str, name, value){
 		if(name == 'ip1')
 			return prefs.login;
 		else if(name == 'ip2')
 			return prefs.password;			
 		return value;
 	});
+}
+
+function main(){
+    var prefs = AnyBalance.getPreferences();
+    var baseurl = 'https://stat.prolink.ru/';
+    AnyBalance.setDefaultCharset('windows-1251');
+	
+    var html = AnyBalance.requestGet(baseurl + 'stat/index.php', g_headers);
+	
+	var params = getLoginParams(html, prefs);
+	
+	if(!params || !params.ip1) {
+		AnyBalance.trace('Какая-то тупая промо страница - пропускаем...');
+		html = AnyBalance.requestGet(baseurl + 'stat/index.php', g_headers);	
+		params = getLoginParams(html, prefs);
+	}
 	
 	html = AnyBalance.requestPost(baseurl + 'stat/', params, addHeaders({Referer: baseurl + 'stat/', Origin: baseurl})); 
 	

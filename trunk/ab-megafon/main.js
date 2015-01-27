@@ -1640,11 +1640,11 @@ function megafonLkAPI() {
 	
 	AnyBalance.trace('Пробуем войти через API мобильного приложения...');
 	
-	// var html = AnyBalance.requestGet('http://api.megafon.ru/mlk/auth/check', g_api_headers);
-	// if(AnyBalance.getLastStatusCode() >= 400){
-		// AnyBalance.trace(html);
-		// throw new AnyBalance.Error('Сервер мобильного API временно недоступен. Пропускаем API...');
-	// }
+	var html = AnyBalance.requestGet('http://api.megafon.ru/mlk/auth/check', g_api_headers);
+	if(AnyBalance.getLastStatusCode() >= 400){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Сервер мобильного API временно недоступен. Пропускаем API...');
+	}
 	
 	var json = callAPI('post', 'login', {
 		login: prefs.login,

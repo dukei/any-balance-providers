@@ -888,7 +888,7 @@ function megafonLK(filinfo, tryOldSG) {
 	AnyBalance.setResult(result);	
 }
 
-function megafonBalanceInfo(filinfo){
+function megafonBalanceInfo(filinfo) {
     var prefs = AnyBalance.getPreferences();
 
     AnyBalance.trace('Connecting to MEGAFON_BALANCE ' + filinfo.name);
@@ -903,7 +903,7 @@ function megafonBalanceInfo(filinfo){
 
     var result = {success: true};
     getParam(html, result, 'balance', /<BALANCE>([^<]*)<\/BALANCE>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'phone', /<MSISDN>([^<]*)<\/MSISDN>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'phone', /<MSISDN>([^<]*)<\/MSISDN>/i, replaceTagsAndSpaces, html_entity_decode);
 
     setCountersToNull(result);
     AnyBalance.setResult(result);
@@ -1640,11 +1640,11 @@ function megafonLkAPI() {
 	
 	AnyBalance.trace('Пробуем войти через API мобильного приложения...');
 	
-	var html = AnyBalance.requestGet('http://api.megafon.ru/mlk/auth/check', g_api_headers);
-	if(AnyBalance.getLastStatusCode() >= 400){
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Сервер мобильного API временно недоступен. Пропускаем API...');
-	}
+	// var html = AnyBalance.requestGet('http://api.megafon.ru/mlk/auth/check', g_api_headers);
+	// if(AnyBalance.getLastStatusCode() >= 400){
+		// AnyBalance.trace(html);
+		// throw new AnyBalance.Error('Сервер мобильного API временно недоступен. Пропускаем API...');
+	// }
 	
 	var json = callAPI('post', 'login', {
 		login: prefs.login,
@@ -1691,8 +1691,19 @@ function megafonLkAPI() {
 	if (AnyBalance.isAvailable('mins_n_free', 'mins_left', 'mins_total', 'sms_left', 'sms_total', 'mms_left', 'mms_total', 'gb_with_you', 'internet_left', 'internet_total', 'internet_cur')) {
 		json = callAPI('get', 'api/options/remainders');
 		
-		for(var i = 0; i < json.models.length; i++) {
+		var namesProcessed = [];
+		//for(var i = 0; i < json.models.length; i++) {
+		// Идем с конца, чтобы игнорировать "замерзшие" остатки
+		for(var i = json.models.length-1; i >= 0; i--) {
 			var model = json.models[i];
+			
+			// Этот пакет опций мы уже обработали
+			if(namesProcessed.indexOf(model.name) >= 0 && /OPTION/i.test(model.optionsRemaindersType)) {
+				AnyBalance.trace('Мы уже обработали пакеты опций из группы ' + model.name);
+				AnyBalance.trace(JSON.stringify(model));
+				continue;
+			}
+			namesProcessed.push(model.name);
 			
 			if(model.remainders) {
 				for(var z = 0; z < model.remainders.length; z++) {

@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="3.0" version="143" date="2015-01-27">
+	- Исправлено суммирование пакетов опций в некоторых случаях.
+	</change>
 	<change major_version="3.0" version="142" date="2015-01-16">
 	- Исправлено получение номера телефона для столичного региона
 	</change>

@@ -19,6 +19,20 @@ function main() {
 		SSL_ENABLED_PROTOCOLS: ['TLSv1'], // https://my.kyivstar.ua очень смущается от присутствия TLSv1.1 и TLSv1.2
 	}); 
 
+	try{
+		processSite();
+	}catch(e){
+		if(e.fatal)
+			throw e;
+		AnyBalance.trace('Не удалось получить данные из лк: ' + e.message);
+		AnyBalance.trace('Попробуем получить данные из мобильного приложения');
+		processMobileApi();
+	}
+}
+
+function processSite(){
+	var prefs = AnyBalance.getPreferences();
+
 	var baseurl = "https://my.kyivstar.ua/";
 	AnyBalance.trace('Соединение с ' + baseurl);
 	var html = AnyBalance.requestGet(baseurl + 'tbmb/login/show.do', g_headers);
@@ -80,6 +94,8 @@ function main() {
 			var error = getParam(html, null, null, /<td class="redError"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
 			if (error)
 				throw new AnyBalance.Error(error, null, /Перевірте правильність введення логіну|введіть правильний пароль/i.test(error));
+			if (/<form[^>]+action="[^"]*perform.do"/i.test(html))
+				throw new AnyBalance.Error('Киевстар показал форму входа без ошибки. Возможно, вы пытаетесь войти в кабинет через мобильный интернет. На стороне Киевстара сейчас с этим проблема. Попробуйте обновить провайдер через вайфай.');
 			
 			AnyBalance.trace(html);
 			throw new AnyBalance.Error('Не удалось зайти в систему. Сайт изменен?');
@@ -93,9 +109,10 @@ function main() {
 	}
 	*/
 	
-	if (!~html.indexOf(prefs.login)) {
+	if (/HierarchyOverview/i.test(html)) {
 		throw new AnyBalance.Error("Ошибка. Информация о номере не найдена. Если у вас корпоративный аккаунт, воспользуйтесь провайдером Киевстар для корпоративных тарифов.");
 	}
+
 	AnyBalance.trace('Успешный вход.');
 	var result = {success: true};
 	//Тарифный план
@@ -138,10 +155,10 @@ function main() {
 	sumParam(html, result, 'sms', />(?:Бонусні SMS:|Бонусные SMS:)[\s\S]*?<b>(.*?)</, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	sumParam(html, result, 'sms', />SMS:[\s\S]*?<b>(.*?)</ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	sumParam(html, result, 'sms', /(?:Остаток текстових сообщений для отправки абонентам Киевстар и Beeline|Залишок текстових повідомлень для відправки абонентам Київстар та Beeline):[\s\S]*?<b>(.*?)</ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-	sumParam(html, result, 'sms', />(?:СМС за умовами ТП:|СМС по условиям ТП:)[\s\S]*?<b>(.*?)</, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+	sumParam(html, result, 'sms', />(?:СМС за умовами (?:ТП|пакета):|СМС по условиям (?:ТП|пакета):)[\s\S]*?<b>(.*?)</, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	sumParam(html, result, 'sms', />(?:Залишок смс|Остаток смс):[\s\S]*?<b>(.*?)</i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	sumParam(html, result, 'sms', />(?:Домашній регіон. Залишок СМС по Україні|Домашний регион. Остаток СМС по Украине):[\s\S]*?<b>(.*?)</i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-	sumParam(html, result, 'sms', />(?:Залишок SMS по Україні|Остаток SMS по Украине):[\s\S]*?<b>(.*?)</i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+	sumParam(html, result, 'sms', />(?:SMS по Україні|SMS[^<]*по Украине:)[\s\S]*?<b>(.*?)</i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	sumParam(html, result, 'sms', />(?:Остаток сообщений|Остаток сообщений):[\s\S]*?<b>(.*?)</i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	sumParam(html, result, 'sms', />(?:Залишок SMS на день|Остаток SMS на день):[\s\S]*?<b>(.*?)</i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	//Бонусные средства 
@@ -178,7 +195,8 @@ function main() {
 	getParam(html, result, 'personal_account', /(?:Особовий рахунок|Лицевой счет):[\s\S]*?<td[^>]*>([\s\S]*?)(?:\(|<\/td>)/i, replaceTagsAndSpaces, html_entity_decode);
 	//Срок действия услуги Комфортный переход
 	if (AnyBalance.isAvailable('comfort_till')) {
-		html = AnyBalance.requestGet(baseurl + "tbmb/tsm/overview.do", g_headers);
+		if(!/overview/i.test(AnyBalance.getLastUrl()))
+			html = AnyBalance.requestGet(baseurl + "tbmb/tsm/overview.do", g_headers);
 		if (/show.do\?featureId=99&amp;in=1/i.test(html)) {
 			html = AnyBalance.requestGet(baseurl + "tbmb/tsm/complexFeature/show.do?featureId=99&in=1", g_headers);
 			sumParam(html, result, 'comfort_till', /(?:Послуга буде автоматично відключена&nbsp;|Услуга будет автоматически отключена&nbsp;)([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
@@ -186,7 +204,8 @@ function main() {
 	}
 	//Пакет SMS
 	if (AnyBalance.isAvailable('sms_packet', 'sms_packet_till', 'sms_packet_left')) {
-		html = AnyBalance.requestGet(baseurl + "tbmb/tsm/overview.do", g_headers);
+		if(!/overview/i.test(AnyBalance.getLastUrl()))
+			html = AnyBalance.requestGet(baseurl + "tbmb/tsm/overview.do", g_headers);
 		if (/show.do\?featureId=349&amp;in=1/i.test(html)) {
 			html = AnyBalance.requestGet(baseurl + "tbmb/tsm/complexFeature/show.do?featureId=349&in=1", g_headers);
 			getParam(html, result, 'sms_packet', /<nobr>(?:Пакет: |Пакет: )<strong> ([\s\S]*?) <\/strong>/i, replaceTagsAndSpaces);
@@ -195,4 +214,148 @@ function main() {
 		}
 	}
 	AnyBalance.setResult(result);
+}
+
+var g_session_counter = 0;
+var g_session_token;
+var g_replace_date = [/01.01.0001/, 'истек'];
+
+function createMobileParams(params){
+	var o = {"version":"1.3.0.0","lang":"ru","sourceId":"Android 4.2"};
+	var ret = {};
+	if(params){
+		for(var i in params){
+			ret[i] = params[i];
+		}
+	}
+	for(var i in o){
+		ret[i] = o[i];
+	}
+	return ret;
+}
+
+function getMobileApiResult(json){
+	if(json.errorCode)
+		throw new AnyBalance.Error(json.errorMsg, null, /wrong\s+password/i.test(json.errorMsg));
+	return json.value;
+}
+
+function callMobileApi(cmd, params){
+	var html, baseurl = 'https://my.kyivstar.ua/MobileConverter2/v2/';
+	var headers = {
+		Connection: 'keep-alive',
+		SESSION_COUNTER: '' + (g_session_counter++),
+		SESSION_TOKEN: g_session_token,
+		'Content-Type': 'application/json;charset=UTF-8',
+		'X-Requested-With': 'com.kyivstar.mykyivstar',
+		'User-Agent': 'Mozilla/5.0 (Linux; U; Android 4.2; ru-ru; Android SDK built for x86 Build/JOP40C) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30',
+		'Accept-Language': 'ru-RU, en-US',
+		'Accept-Charset': 'utf-8, iso-8859-1, utf-16, *;q=0.7'
+	}
+
+	if(!isArray(params)){ //Простой запрос
+		html = AnyBalance.requestPost(baseurl + cmd + '/?' + new Date().getTime(), JSON.stringify({param: createMobileParams(params)}), headers);
+		var json = getJson(html);
+		var value = getMobileApiResult(json);
+		if(cmd == 'login'){
+			if(value.session_token)
+				g_session_token = value.session_token;
+		}
+		return value;
+	}else{  //Бэтч
+		var batchParams = [];
+		for(var i=0; i<params.length; ++i){
+			var param = params[i];
+			for(var name in param){
+				var newParam = {};
+				newParam[name] = {param: createMobileParams([param[name]])};
+				batchParams.push(newParam);
+			}
+	  	}
+		html = AnyBalance.requestPost(baseurl + 'batch/?' + new Date().getTime(), JSON.stringify(batchParams), headers);
+		var json = getJson(html);
+		return json;
+	}
+}
+
+function processMobileApi() {
+	var prefs = AnyBalance.getPreferences();
+	var result = {success: true};
+
+	var json = callMobileApi('login', {uid: prefs.login, password: prefs.password});
+	getParam(json.rate_plan, result, '__tariff');
+	getParam(json.uid, result, 'phone');
+
+	json = callMobileApi('batch', [{getBalance: {}}, {getBonuses: {}}, {showProfile: {}}]);
+
+	for(var i=0; i<json.length; ++i){
+		for(var func in json[i]){
+			var ret = getMobileApiResult(json[i][func]);
+			switch(func){
+				case 'getBalance':
+					getParam(ret.balance, result, 'balance', null, null, parseBalance);
+					getParam(ret.exp_date, result, 'till', null, g_replace_date, parseDate);
+					break;
+				case 'getBonuses':
+					processBonuses(ret, result);
+					break;
+				case 'showProfile':
+					if(ret.account)
+						getParam(ret.account, result, 'personal_account');
+					if(ret.ratePlan)
+						getParam(ret.ratePlan.uk_ua || ret.ratePlan.ru_ru || ret.ratePlan.en_us, result, '__tariff');
+					break;
+			}
+		}
+	}
+
+	setCountersToNull(result);
+	AnyBalance.setResult(result);
+}
+
+function processBonuses(bonuses, result){
+	for(var name in bonuses){
+		if(isArray(bonuses[name])){
+			for(var i=0; i<bonuses[name].length; ++i){
+				processBonus(bonuses[name][i], name, result);
+			}
+		}else{
+			processBonus(bonuses[name], name, result);
+		}
+	}
+}
+
+function processBonus(bonus, name, result){
+	if(isArray(bonus)){
+		if(/От Домашнего Интернета/i.test(bonus[0])){
+			getParam(bonus[1], result, 'home_internet', null, null, parseBalance);
+			getParam(bonus[2], result, 'home_internet_till', null, g_replace_date, parseDate);
+		}else if(/Экстра деньги|Бонусные средства|Остаток бонусов/i.test(bonus[0])){
+			sumParam(bonus[1], result, 'bonus_money', null, null, parseBalance, aggregate_sum);
+			sumParam(bonus[2], result, 'bonus_money_till', null, g_replace_date, parseDate, aggregate_min);
+		}else if(/Остаток бонусов/i.test(bonus[0])){
+			getParam(bonus[1], result, 'bonus_left', null, null, parseBalance);
+		}else if(/SMS|смс|Остаток сообщений/i.test(bonus[0])){
+			sumParam(bonus[1], result, 'sms', null, null, parseBalance, aggregate_sum);
+		}else if(/MMS|ммс/i.test(bonus[0])){
+			sumParam(bonus[1], result, 'mms', null, null, parseBalance, aggregate_sum);
+		}else if(/sms/i.test(name)){
+			AnyBalance.trace('Неизвестные sms ' + name + ', относим к sms: ' + JSON.stringify(bonus));
+			sumParam(bonus[1], result, 'sms', null, null, parseBalance, aggregate_sum);
+		}else if(/TIME/i.test(name) && /на Киевстар|В сети Киевстар/i.test(bonus[0])){
+			sumParam(bonus[1], result, 'bonus_mins_1', null, null, parseMinutes, aggregate_sum);
+			sumParam(bonus[2], result, 'bonus_mins_1_till', null, g_replace_date, parseDate, aggregate_min);
+		}else if(/TIME/i.test(name)){
+			if(!/В пределах Укр|по Украине|на другие сети/i.test(bonus[0]))
+				AnyBalance.trace('Неизвестные минуты ' + name + ', относим к минутам на все сети: ' + JSON.stringify(bonus));
+			sumParam(bonus[1], result, 'bonus_mins_2', null, null, parseMinutes, aggregate_sum);
+			sumParam(bonus[2], result, 'bonus_mins_2_till', null, g_replace_date, parseDate, aggregate_min);
+		}else if(/INET/i.test(name)){
+			sumParam(bonus[1] + bonus[3], result, 'internet', null, null, parseTraffic, aggregate_sum);
+		}else{
+			AnyBalance.trace('Неизвестный бонус ' + name + ': ' + JSON.stringify(bonus));
+		}
+	}else{
+		AnyBalance.trace('Пропускаем суммарный бонус ' + name + ': ' + bonus);
+	}
 }

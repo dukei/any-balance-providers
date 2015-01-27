@@ -1,9 +1,5 @@
 /**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Интернет Ростелеком Камчатский филиал
-Сайт оператора: http://disly.dsv.ru/kam
-Личный кабинет: http://issa.kamchatka.ru/
 */
 
 function main(){
@@ -12,7 +8,7 @@ function main(){
         return;
     }catch(e){
         AnyBalance.trace('Ошибка входа: ' + e.message);
-        if(/Нет услуги ИССА|Изменился адрес личного кабинета|на профилактике/i.test(e.message + ''))
+        if(/Не удалось зайти в личный кабинет|Нет услуги ИССА|Изменился адрес личного кабинета|на профилактике/i.test(e.message + ''))
             newIssa();
         else
 			throw e;

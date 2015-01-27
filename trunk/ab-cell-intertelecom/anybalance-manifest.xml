@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="34">ab-cell-intertelecom</id>
+  <id version="35">ab-cell-intertelecom</id>
   <api flags="no_browser" />
   <name>Интертелеком</name>
 	<description html="true"><![CDATA[

@@ -34,7 +34,7 @@ function main() {
 	
 		html = AnyBalance.requestPost(baseurl, params, addHeaders({Referer: baseurl}));
 	}
-	
+
 	if (!/\/signout/i.test(html)) {
 		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
@@ -50,14 +50,6 @@ function main() {
 	
 	getParam(html, result, 'status', /Статус([^>]*>){4}/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'balance', /Баланс за карткою([^>]*>){4}/i, replaceTagsAndSpaces, parseBalance);
-	
-	
-	getParam(html, result, ['currency', 'balance'], /Текущий баланс:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseCurrency);
-	getParam(html, result, 'fio', /Имя абонента:(?:[\s\S]*?<b[^>]*>){1}([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, '__tariff', /Тарифный план:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'phone', /Номер:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'deadline', /Действителен до:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseDate);
-	
 	
 	AnyBalance.setResult(result);
 }

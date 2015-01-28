@@ -378,7 +378,7 @@ function megafonTrayInfo(filial) {
 					AnyBalance.trace('Найдены MMS: ' + names);
 					sumParam(d, result, 'mms_left', /<VOLUME_AVAILABLE>([\s\S]*?)<\/VOLUME_AVAILABLE>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 					sumParam(d, result, 'mms_total', /<VOLUME_TOTAL>([\s\S]*?)<\/VOLUME_TOTAL>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-				} else if (/GPRS| Байт|интернет|мб|Пакетная передача данных|QoS:\s*\d+\s*Гб|Продли скорость\s*\d+\s*Гб/i.test(names)
+				} else if (/GPRS| Байт|интернет|мб|Пакетная передача данных|QoS\d*:\s*\d+\s*Гб|Продли скорость\s*\d+\s*Гб/i.test(names)
 					 || /Пакетная передача данных/i.test(name_service) || /Байт|Тар.ед./i.test(plan_si)) {
 					AnyBalance.trace('Найден интернет: ' + names + ', ' + plan_si);
 					var valAvailable = vol_ava;
@@ -1703,9 +1703,9 @@ function megafonLkAPI() {
 				AnyBalance.trace(JSON.stringify(model));
 				continue;
 			}
-			namesProcessed.push(model.name);
 			
 			if(model.remainders) {
+				namesProcessed.push(model.name);
 				for(var z = 0; z < model.remainders.length; z++) {
 					var current = model.remainders[z];
 					var name = current.name;

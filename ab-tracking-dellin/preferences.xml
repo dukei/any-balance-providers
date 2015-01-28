@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference
+		obligatory="true"
+		title="Номер почтового отправления"
+		positiveButtonText="ОК"
+		summary="Весь номер||{@s}\n"
+		dialogTitle="Номер почтового отправления"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите почтовый идентификатор."
+		key="cargo">
+	</EditTextPreference>
+</PreferenceScreen>

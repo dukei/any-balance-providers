@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-tracking-dellin</id>
+	<api flags="no_browser"/>
+	<name>Деловые Линии</name>
+	<description html="true"><![CDATA[
+	<p>Отслеживает почтовое отправление с помощью сервиса Деловые Линии <a href="http://www.dellin.ru/tracker/">http://www.dellin.ru/tracker/</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+        <counter id="fulltext" name="Сводка" type="html"/>
+	</counters>
+	<keywords></keywords>
+	<type>tracking</type>
+	<country>ru</country>
+</provider>

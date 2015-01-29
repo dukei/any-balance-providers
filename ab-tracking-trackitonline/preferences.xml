@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference
+		title="Номер отправления"
+		key="cargo"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Номер отправления"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите номер отправления.">
+	</EditTextPreference>
+</PreferenceScreen>

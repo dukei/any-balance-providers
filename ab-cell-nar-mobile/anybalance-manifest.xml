@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-cell-nar-mobile</id>
+	<api flags="no_browser"/>
+	<name>TypicalProvider</name>
+	<description html="true"><![CDATA[
+	<p>Provides balance information about Nar Mobile <a href="https://www.narmobile.az/">https://www.narmobile.az/</a></p>
+	<p>Information is taken from personal account <a href="https://www.narmobile.az/ics/cgi-bin/cgi.exe?function=is_newlog">https://www.narmobile.az/ics/cgi-bin/cgi.exe?function=is_newlog</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Actual balance" units=" AZN"/>
+		<counter id="fio" name="Name" type="text"/>
+		<counter id="phone" name="Phone number" type="text"/>
+		<counter id="acc_num" name="Account" type="text"/>
+		<counter id="billing_group" name="Billing group" type="text"/>
+		<counter id="pay_method" name="Payment method" type="text"/>
+		<counter id="address" name="Actual address" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>cell</type>
+	<country>az</country>
+</provider>

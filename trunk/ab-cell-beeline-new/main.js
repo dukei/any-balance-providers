@@ -514,7 +514,7 @@ function fetchB2B(baseurl, html) {
 			javax.faces.ViewState:-2522423474342426299:3960040617829553771		
 			*/
 			
-			var xhtml = getBlock(baseurl + 'b/info/subscriberDetail.xhtml', form, 'reportDetailUnbilledButtonsForm');
+			// var xhtml = getBlock(baseurl + 'b/info/subscriberDetail.xhtml', form, 'reportDetailUnbilledButtonsForm');
 			
 			// var params = getBlock(baseurl + 'b/info/subscriberDetail.xhtml', xhtml, 'reportDetailUnbilledButtonsForm', 'reportDetailUnbilledButtonsForm', true);
 			

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference
+		title="Phone number"
+		key="login"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Phone number"
+		positiveButtonText="Ok"
+		negativeButtonText="Cancel"
+		dialogMessage="Enter phone number(Nine digits: 70xxxxxxx).">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Password"
+		key="password"
+		summary="||***********"
+		obligatory="true"
+		dialogTitle="Password"
+		positiveButtonText="Ok"
+		negativeButtonText="Cancel"
+		dialogMessage="Enter password."
+		inputType="textPassword">
+	</EditTextPreference>
+</PreferenceScreen>

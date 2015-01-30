@@ -415,7 +415,7 @@ function fetchB2B(baseurl, html) {
 	var result = {success: true};
 	
 	getParam(html, result, 'fio', /"user-name"([^>]*>){2}/i, replaceTagsAndSpaces, capitalFirstLetters);
-    if (AnyBalance.isAvailable('balance', 'agreement', 'currency')) {
+    if (AnyBalance.isAvailable('balance', 'agreement', 'currency', 'overpay')) {
     	var accounts = sumParam(html, null, null, /b\/info\/contractDetail\.xhtml\?objId=\d+[^>]*>\d{5,10}/ig);
 		
 		if(!accounts || accounts.length < 1) {
@@ -435,7 +435,9 @@ function fetchB2B(baseurl, html) {
     	html = AnyBalance.requestGet(baseurl + currentHref, g_headers);
 		
     	getParam(html, result, 'agreement', /Договор №([\s\d]+)/i, replaceTagsAndSpaces);
+		// Неизвестно что и как выводить, пока сделаем так, может нужно будет переделать
     	getParam(html, result, 'balance', /class="balance"[^>]*>([\s\S]*?)<\/div>/i, [replaceTagsAndSpaces, /Сумма неоплаченных счетов[^\d]+/i, '-'], parseBalance);
+		getParam(html, result, 'overpay', /class="[^>]*balance"[^>]*>([\s\S]*?)<\/div>/i, [replaceTagsAndSpaces, /Сумма неоплаченных счетов[^\d]+/i, '-'], parseBalance);
     	getParam(html, result, ['currency', 'balance'], /class="balance"[^>]*>([\s\S]*?)<\/div>/i, [replaceTagsAndSpaces, /все счета оплачены/, '', /[.,]/g, ''], parseCurrency);
 	}
 	//Получим страницу с тарифом и опциями
@@ -478,8 +480,9 @@ function fetchB2B(baseurl, html) {
     
 	getParam(html, result, 'phone', /subheader\s*"([^>]*>){3}/i, replaceTagsAndSpaces);
     getParam(html, result, '__tariff', /Тариф:([^>]*>){5}/i, replaceTagsAndSpaces);
+
+
 	// Трафик из детализации, пока не работает
-	
 	// if(isAvailable()) {
 		// var form = getParam(html, null, null, /<form id="reportDetailUnbilledButtonsForm"[\s\S]*?<\/form>/i);
 		// if(form) {
@@ -496,6 +499,39 @@ function fetchB2B(baseurl, html) {
 			// }));
 		// }
 	// }
+	
+	// Это расходы из детализации
+	if(isAvailable('balance')) {
+		var form = getParam(html, null, null, /<form id="reportDetailUnbilledButtonsForm"[\s\S]*?<\/form>/i);
+		if(form) {
+			/*
+			javax.faces.partial.ajax:true
+			javax.faces.source:reportDetailUnbilledButtonsForm:j_idt2444
+			javax.faces.partial.execute:@all
+			javax.faces.partial.render:messages reportDetailUnbilledForm reportDetailUnbilledExcelButtonForm:excelDetailOnlineButton unbilledConfirDlg
+			reportDetailUnbilledButtonsForm:j_idt2444:reportDetailUnbilledButtonsForm:j_idt2444
+			reportDetailUnbilledButtonsForm:reportDetailUnbilledButtonsForm
+			javax.faces.ViewState:-2522423474342426299:3960040617829553771		
+			*/
+			
+			var xhtml = getBlock(baseurl + 'b/info/subscriberDetail.xhtml', form, 'reportDetailUnbilledButtonsForm');
+			
+			// var params = getBlock(baseurl + 'b/info/subscriberDetail.xhtml', xhtml, 'reportDetailUnbilledButtonsForm', 'reportDetailUnbilledButtonsForm', true);
+			
+			// params['javax.faces.partial.render'] = 'reportDetailUnbilledButtonsForm messages reportDetailUnbilledExcelButtonForm:excelDetailOnlineButton';
+			
+			// html = AnyBalance.requestPost(baseurl + 'b/info/subscriberDetail.xhtml', params, addHeaders({
+				// Referer: baseurl + href,
+				// 'Faces-Request': 'partial/ajax',
+				// 'X-Requested-With': 'XMLHttpRequest'
+			// }));
+			
+			//Итого с НДС[^>]*>([\s\S]*?)<\/div>
+		}
+	}
+	
+	
+	
 	
     // Бонусы
     var bonuses = sumParam(html, null, null, /class="accumulator"[^>]*>([\s\S]*?)<\/div/ig);
@@ -591,8 +627,8 @@ function fetchPost(baseurl, html) {
 					var formid = getParam(numinfo, null, null, /addSubmitParam\('([^']*)/, replaceSlashes);
 					var params = getParam(numinfo, null, null, /addSubmitParam\('[^']*',(\{.*?\})\)/, null, getJsonEval);
 				} else {
-					var formid = getParam(html, null, null, /changeUser\s*=[^<]*?formId:'([^']*)/, replaceSlashes);
-					var source = getParam(html, null, null, /changeUser\s*=[^<]*?source:'([^']*)/, replaceSlashes);					
+					var formid = getParam(html, null, null, /changeUser\s*=[^<]*?(?:f|formId):["']([^"']+)/i, replaceSlashes);
+					var source = getParam(html, null, null, /changeUser\s*=[^<]*?(?:s|source):["']([^"']+)/i, replaceSlashes);					
 				}
 
 				var form = getParam(html, null, null, new RegExp('<form[^>]+id="' + formid + '"[^>]*>([\\s\\S]*?)</form>', 'i'));
@@ -938,7 +974,7 @@ function getBonuses(xhtml, result) {
 			// Это новый вид отображения данных
 			} else if (/Минут общения по (?:тарифу|услуге)|вызовы/i.test(name)) {
 				// Очень внимательно надо матчить
-				if(/других (?:сотовых\s+)?операторов|все номера|На номера домашнего региона|Минут общения по тарифу Все для бизнеса Бронза|кроме номеров "Билайн"/i.test(name))
+				if(/^Минут общения по тарифу$|других (?:сотовых\s+)?операторов|все номера|На номера домашнего региона|Минут общения по тарифу Все для бизнеса Бронза|кроме номеров "Билайн"/i.test(name))
 					sumParam(services[i], result, 'min_local', reNewValue, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
 				else
 					sumParam(services[i], result, 'min_bi', reNewValue, replaceTagsAndSpaces, parseMinutes, aggregate_sum);

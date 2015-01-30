@@ -8,6 +8,8 @@ var g_headers = {
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection': 'keep-alive',
 	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+	'Origin': 'http://corporate.7cont.ru',
+	'Content-Type': 'application/json;charset=UTF-8'
 };
 
 function main() {
@@ -22,12 +24,11 @@ function main() {
 	
 	if(!html || AnyBalance.getLastStatusCode() > 400)
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
-    
-    
-	html = AnyBalance.requestPost(baseurl + 'loyal_cabinet/api/login_user/', JSON.stringify({
+	
+    html = AnyBalance.requestPost(baseurl + 'loyal_cabinet/api/login_user/', JSON.stringify({
 		card_number: prefs.login,
 		password: prefs.password
-	}), addHeaders({Referer: baseurl + 'loyal_cabinet/auth/?next=/loyal_cabinet/'}));
+	}), addHeaders({Referer: baseurl + 'loyal_cabinet/auth/'}));
 	
     var json = getJson(html);
     

@@ -1,8 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-cell-nar-mobile</id>
+	<id version="2">ab-cell-nar-mobile</id>
 	<api flags="no_browser"/>
-	<name>TypicalProvider</name>
+	<name>Nar Mobile</name>
 	<description html="true"><![CDATA[
 	<p>Provides balance information about Nar Mobile <a href="https://www.narmobile.az/">https://www.narmobile.az/</a></p>
 	<p>Information is taken from personal account <a href="https://www.narmobile.az/ics/cgi-bin/cgi.exe?function=is_newlog">https://www.narmobile.az/ics/cgi-bin/cgi.exe?function=is_newlog</a></p>

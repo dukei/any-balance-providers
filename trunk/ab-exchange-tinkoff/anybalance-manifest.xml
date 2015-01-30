@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-exchange-tinkoff</id>
+	<api flags="no_browser"/>
+	<name>Курсы обмена валют Тинькофф Банка</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о курсах валют для дебетовых карт Тинькофф Банка <a href="https://www.tinkoff.ru/about/documents/exchange/">https://www.tinkoff.ru/about/documents/exchange/</a></p>
+    <p>Курсы валют для операций по Картсчету, в том числе через Центр обслуживания клиентов, Интернет-банк и Мобильное приложение, кроме операций с использованием карты (ее реквизитов)</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="usd_to_rub_buy" name="USD/RUB Покупка"/>
+		<counter id="usd_to_rub_sell" name="USD/RUB Продажа"/>
+		<counter id="usd_to_eur_buy" name="USD/EUR Покупка"/>
+		<counter id="usd_to_eur_sell" name="USD/EUR Продажа"/>
+		<counter id="eur_to_rub_buy" name="EUR/RUB Покупка"/>
+		<counter id="eur_to_rub_sell" name="EUR/RUB Продажа"/>
+		<counter id="eur_to_usd_buy" name="EUR/USD Покупка"/>
+		<counter id="eur_to_usd_sell" name="EUR/USD Продажа"/>
+	</counters>
+	<keywords></keywords>
+	<type>exchange</type>
+	<country>ru</country>
+</provider>

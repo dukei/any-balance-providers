@@ -69,9 +69,10 @@ function main(){
     }, headers);
 
     var error = getParam(html, null, null, /<BSS_ERROR>\d*\|?([\s\S]*?)(?:EXT\(|<\/BSS_ERROR>)/i, replaceTagsAndSpaces, html_entity_decode);
-    if(error && /Вы ошиблись при вводе логина или пароля|Логин или пароль введены неверно/i.test(error))
-	error = replaceAll(decodeURIComponent(error), replaceTagsAndSpaces);
+    if(error && /Вы ошиблись при вводе логина или пароля|Логин или пароль введены неверно/i.test(error)){
+		error = replaceAll(decodeURIComponent(error), replaceTagsAndSpaces);
         throw new AnyBalance.Error(error, null, true);
+    }
     if(error)
         throw new AnyBalance.Error(error);
 

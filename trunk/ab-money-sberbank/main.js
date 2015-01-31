@@ -3,43 +3,12 @@
 */
 
 function requestApi(action, params, dontAddDefParams, url, ignoreErrors) {
-	/*if(url) {
-		var baseurl = url;
-	} else {
-		var baseurl = 'https://online.sberbank.ru:4477/CSAMAPI/';
-	}*/
 	var baseurl = (url || 'https://online.sberbank.ru:4477/CSAMAPI/');
-	
-	var m_headers = {
-		'Connection': 'keep-alive',
-		'User-Agent': 'Mobile Device',
-	};
-	
-	if(dontAddDefParams) {
-		var newParams = params;
-	} else {
-		var newParams = joinObjects(params, {
-			'version':'7.00',
-			'appType':'android',
-			'appVersion':'2014060500',
-			'deviceName':'sdk',
-		});
-	}
-	// регистрируем девайс
-	var html = AnyBalance.requestPost(baseurl + action, newParams, m_headers);
-	// Проверим на правильность
-	
-	if(!/<status>\s*<code>0<\/code>/i.test(html)) {
-		AnyBalance.trace(html);
-		if(!ignoreErrors)
-			throw new AnyBalance.Error("Ошибка при обработке запроса!");
-	}
-	return html;
+	return requestApi2(baseurl + action, params, !dontAddDefParams, ignoreErrors);
 }
 
 function requestApi2(url, params, addDefParams, ignoreErrors) {
 	var m_headers = {
-		'Accept-Encoding': 'gzip',
 		'Connection': 'keep-alive',
 		'User-Agent': 'Mobile Device',
 		'Origin':'',
@@ -61,8 +30,10 @@ function requestApi2(url, params, addDefParams, ignoreErrors) {
 	
 	if(!/<status>\s*<code>0<\/code>/i.test(html)) {
 		AnyBalance.trace(html);
-		if(!ignoreErrors)
-			throw new AnyBalance.Error("Ошибка при обработке запроса!");
+		if(!ignoreErrors){
+			var error = sumParam(html, null, null, /<error>\s*<text>\s*<!(?:\[CDATA\[)?([\s\S]*?)(?:\]\]>)\s*<\/text>\s*<\/error>/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+			throw new AnyBalance.Error(error || "Ошибка при обработке запроса!", null, /неправильный идентификатор/i.test(error));
+		}
 	}
 	return html;
 }
@@ -78,7 +49,7 @@ function getToken(html) {
 
 function mainMobileApp(prefs) {
 	if(AnyBalance.getLevel() < 9) {
-		throw new AnyBalance.Error('Для использования API мобильного приложения необходим AnyBalance API v9, пожалуйста, обновите приложение!');
+		throw new AnyBalance.Error('Для использования API мобильного приложения необходим AnyBalance API v9!');
 	}
 	
 	var defaultPin = '11223';
@@ -107,7 +78,8 @@ function mainMobileApp(prefs) {
 		
 		AnyBalance.setData('guid', mGUID);
 		AnyBalance.trace('mGUID is: ' + mGUID);
-		AnyBalance.saveData();
+		//AnyBalance.saveData(); Нельзя здесь сохранять! Только после успешного ввода кода!
+
 		// Все, тут надо дождаться смс кода
 		var code = AnyBalance.retrieveCode('Пожалуйста, введите код из смс, для привязки данного устройства.', 'R0lGODlhBAAEAJEAAAAAAP///////wAAACH5BAEAAAIALAAAAAAEAAQAAAIElI8pBQA7');
 		
@@ -125,7 +97,8 @@ function mainMobileApp(prefs) {
 			'isLightScheme':'true',
 			'devID':hex_md5(prefs.login)
 		});
-		
+
+		AnyBalance.saveData();
 		var token = getToken(html);
 	} else {
 		AnyBalance.trace('Устройство уже привязано!');
@@ -279,11 +252,8 @@ function main() {
       'ctl00$ctl00$BaseContentPlaceHolder$ctl01$ctl04$userManual2Region$ddlRegions':''
     });
 */
-	var html = AnyBalance.requestPost(baseurl);
-	var error = getParam(html, null, null, /<h1[^>]*>О временной недоступности услуги[\s\S]*?<p[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
-	if (error)
-		throw new AnyBalance.Error(error);
-	
+	var html;
+
 	//Сбер разрешает русские логины и кодирует их почему-то в 1251, хотя в контент-тайп передаёт utf-8.
 	AnyBalance.setDefaultCharset('windows-1251');
 	html = AnyBalance.requestPost(baseurl, {
@@ -293,13 +263,18 @@ function main() {
 	});
 	AnyBalance.setDefaultCharset('utf-8');
 	
+	var error = getParam(html, null, null, /<h1[^>]*>О временной недоступности услуги[\s\S]*?<p[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
+	if (error)
+		throw new AnyBalance.Error(error);
+	
 	error = getParam(html, null, null, /в связи с ошибкой в работе системы[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
 	if (error)
 		throw new AnyBalance.Error(error);
+
 	if (/\$\$errorFlag/i.test(html)) {
 		var error = getParam(html, null, null, /([\s\S]*)/, replaceTagsAndSpaces, html_entity_decode);
 		
-		throw new AnyBalance.Error(error);
+		throw new AnyBalance.Error(error, null, /Ошибка идентификации/i.test(error));
 	}
 	var page = getParam(html, null, null, /value\s*=\s*["'](https:[^'"]*?AuthToken=[^'"]*)/i);
 	if (!page) {

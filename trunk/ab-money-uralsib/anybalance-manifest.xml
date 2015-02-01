@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2.0" version="18">ab-money-uralsib</id>
+	<api flags="no_browser"/>
+	<id major_version="2.0" version="19">ab-money-uralsib</id>
 	<name>Банк УРАЛСИБ</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем остатке и других параметрах счетов банка УРАЛСИБ (http://www.bankuralsib.ru).</p>
@@ -52,6 +53,6 @@
 		<counter id="userName" name="Имя" type="text"/>
 	</counters>
 	<keywords>интернет-банкинг</keywords>
-	<type>money</type>
+	<type>money, bank</type>
 	<country>ru</country>
 </provider>

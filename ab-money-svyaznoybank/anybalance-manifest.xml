@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="23">ab-money-svyaznoybank</id>
+	<id version="24">ab-money-svyaznoybank</id>
 	<api flags="no_browser"/>
 	<name>Связной Банк (QBank)</name>
 	<description html="true"><![CDATA[
@@ -35,6 +35,7 @@
 		<counter id="cardballs" name="Плюсы"/>
 		<counter id="accamount" name="Средств на счете" units=" {@currency}"/>
 		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="pct" name="Ставка" units="%"/>
 		<counter id="cardnum" name="Номер карты" type="text"/>
 		<counter id="cardname" name="Тип карты" type="text"/>
 		<counter id="accnum" name="Номер счета" type="text"/>
@@ -63,6 +64,6 @@
 		<counter id="all" name="Сводка" type="text"/>
 	</counters>
 	<keywords>интернет-банк, связной, кубанк</keywords>
-	<type>money</type>
+	<type>money, bank</type>
 	<country>ru</country>
 </provider>

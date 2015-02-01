@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="24" date="2015-02-01">
+	- Добавлено отображение процентов по вкладу
+	</change>
 	<change version="23" date="2014-12-28">
 	- Поддержка изменений на сайте.
 	</change>

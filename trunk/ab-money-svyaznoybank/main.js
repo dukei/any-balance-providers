@@ -218,12 +218,13 @@ function fetchDep(baseurl, html){
     getParam(html, result, '__tariff', /<h2[^>]*>([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'balance', /<span[^>]+class="sum"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
     
-	if (AnyBalance.isAvailable('accnum')) {
+	if (AnyBalance.isAvailable('accnum', 'pct')) {
     	html = AnyBalance.requestPost(baseurl + product.DetailsUrl, '', g_headers);
     	
 		var json = getJson(html);
     	
-		getParam(json.html, result, 'accnum', /Номер счета:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+		getParam(json.html, result, 'accnum', /Номер счета[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+		getParam(json.html, result, 'pct', /Ставка[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     	getParam('' + json.balance, result, 'balance', null, null, parseBalance);
     }
 

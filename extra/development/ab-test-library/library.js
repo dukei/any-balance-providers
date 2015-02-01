@@ -794,3 +794,17 @@ function capitalFirstLetters(str) {
 	}
 	return wordCapital.replace(/^\s+|\s+$/g, '');
 }
+
+/** Все включенные счетчики, значение которых не найдено, становится равным null, 
+что позволяет сохранить в программе прошлые значения для показа, но индицировать, что баланс неактивен */
+function setCountersToNull(result){
+	var arr = AnyBalance.getAvailableCounters();
+	for(var i=0; i<arr.length; ++i){
+		if(arr[i] !== '--auto--' && !isset(result[arr[i]])){
+			result[arr[i]] = null;
+		}
+	}
+	if(!isset(result.__tariff))
+		result.__tariff = null;
+}
+

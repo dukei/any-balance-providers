@@ -112,7 +112,7 @@ function doNewCabinet(prefs) {
     if (!/Авторизация успешна/i.test(html)) {
     	var error = sumParam(html, null, null, /"err"[^"]+"([^"]+)/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
     	if (error) 
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+			throw new AnyBalance.Error(error, null, /Неверный логин или пароль|неверно указано имя входа/i.test(error));
 		
 		if(/истёк срок действия пароля/i.test(html)) 
 			throw new AnyBalance.Error('Истёк срок действия пароля. Смените пароль через браузер, а затем введите его в настройки провайдера.', null, true);
@@ -127,30 +127,41 @@ function doNewCabinet(prefs) {
 	
 	var url = baseurl + 'f?p=10:MAIN:' + loginVar;
 	html = AnyBalance.requestGet(url, g_headers);
-	
-	// Теперь надо пнуть базу, чтобы обновилось все
-	var P_instance = getP_instance(html);
-	var FlowID = getFlowID(html);
-	var FlowStepID = getFlowStepID(html);
-	
-	var requests = ['AFTER_AUTH', 'APPLICATION_PROCESS=GET_MAIL_COUNT', 'APPLICATION_PROCESS=GET_CRM', 'APPLICATION_PROCESS=LoadPresale', ''];
-	
-	// Запросы посылаются в цикле :)
-	for(var i = 0; i < requests.length; i++) {
-		var currentRequest = requests[i];
+
+	var logout_url = getParam(html, null, null, /<div[^>]+class="profile-logout"[^>]*>\s*<a[^>]+href="([^"]*)/i, null, html_entity_decode);
+	if(!logout_url)
+		AnyBalance.trace('Не удалось найти ссылку на выход, наверное, сайт изменен. Не сможем выйти из кабинета...');
+
+	try{
+		// Теперь надо пнуть базу, чтобы обновилось все
+		var P_instance = getP_instance(html);
+		var FlowID = getFlowID(html);
+		var FlowStepID = getFlowStepID(html);
 		
-		html = AnyBalance.requestPost(baseurl + 'wwv_flow.show', {
-			'p_request':currentRequest,
-			'p_instance':getP_instance(html) || P_instance,
-			p_flow_id:getFlowID(html) || FlowID,
-			p_flow_step_id:getFlowStepID(html) || FlowStepID,		
-		}, addHeaders({Referer: url, 'X-Requested-With': 'XMLHttpRequest'}));		
+		var requests = ['AFTER_AUTH', 'APPLICATION_PROCESS=GET_MAIL_COUNT', 'APPLICATION_PROCESS=GET_CRM', 'APPLICATION_PROCESS=LoadPresale', ''];
+		
+		// Запросы посылаются в цикле :)
+		for(var i = 0; i < requests.length; i++) {
+			var currentRequest = requests[i];
+			
+			html = AnyBalance.requestPost(baseurl + 'wwv_flow.show', {
+				'p_request':currentRequest,
+				'p_instance':getP_instance(html) || P_instance,
+				p_flow_id:getFlowID(html) || FlowID,
+				p_flow_step_id:getFlowStepID(html) || FlowStepID,		
+			}, addHeaders({Referer: url, 'X-Requested-With': 'XMLHttpRequest'}));		
+		}
+		// Все, теперь можно разбирать данные
+        if(prefs.type == 'acc')
+			fetchAcc(html, baseurl, prefs, url);
+		else
+			fetchCard(html, baseurl, prefs);
+	}finally{
+		if(logout_url){
+			AnyBalance.trace('Выходим из кабинета...');
+			AnyBalance.requestGet(baseurl + logout_url, g_headers);
+		}
 	}
-	// Все, теперь можно разбирать данные
-    if(prefs.type == 'acc')
-		fetchAcc(html, baseurl, prefs, url);
-	else
-		fetchCard(html, baseurl, prefs);
 }
 
 function fetchCard(html, baseurl, prefs) {
@@ -281,7 +292,7 @@ function doOldCabinet(prefs) {
 	} else if(!/login\.asp\?logout/i.test(html)) {
         var error = getParam(html, null, null, /^(?:[\s\S](?!<NOSCRIPT))*?<p[^>]*class="errorb"[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+			throw new AnyBalance.Error(error, null, /Неверный логин или пароль|неверно указано имя входа|Пароль введен неверно/i.test(error));
 		
 		if(/истёк срок действия пароля/i.test(html)) 
 			throw new AnyBalance.Error('Истёк срок действия пароля. Смените пароль через браузер, а затем введите его в настройки провайдера.', null, true);

@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="3.3" version="94" date="2015-02-01">
+	- Улучшена обработка ошибок.
+	</change>
 	<change major_version="3.3" version="93" date="2015-01-27">
 	- Распознавание пакета ежесуточных минут
 	</change>

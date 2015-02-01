@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="14">ab-municipal-pitersbyt</id>
+  <id version="15">ab-municipal-pitersbyt</id>
   <api flags="no_browser"/>
   <name>Петербургская сбытовая компания</name>
   <description>
@@ -27,6 +27,11 @@
     <counter id="balance2" name="Задолженность 2" units="р"/>
     <counter id="balance3" name="Задолженность 3" units="р"/>
     <counter id="balance4" name="Задолженность 4" units="р"/>
+    <counter id="peni" name="Пени" units="р"/>
+    <counter id="peni1" name="Пени 1" units="р"/>
+    <counter id="peni2" name="Пени 2" units="р"/>
+    <counter id="peni3" name="Пени 3" units="р"/>
+    <counter id="peni4" name="Пени 4" units="р"/>
     <counter id="licschet" name="Лицевой счет" type="text"/>
   </counters>
   <keywords>

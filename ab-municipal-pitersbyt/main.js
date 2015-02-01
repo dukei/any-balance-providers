@@ -54,9 +54,9 @@ var g_lks = {
 	user_file: 'com.sigma.personal.client.physical.ClientService.gwt',
 	user_class: 'com.sigma.personal.client.physical.ClientService',
 	user_data: "7|0|4|%url%%user_url%|%auth_uid%|%user_class%|getAbonsList|1|2|3|4|0|",
-	re_balance: /-?(\d+\.\d+),\d+,'\w+'/g,
 	re_account: /electric.model.AbonentModel[^"]*","([^"]*)/,
 	re_address: /electric.model.AbonentModel[^"]*","[^"]*","([^"]*)/,
+	counters: ['peni', 'balance'],
     },
     pes: {
 	url: 'https://ikus.pes.spb.ru/IKUSUser/',
@@ -73,9 +73,9 @@ var g_lks = {
 	user_file: 'com.sigma.personal.client.physical.ClientService.gwt',
 	user_class: 'com.sigma.personal.client.physical.ClientService',
 	user_data: "7|0|4|%url%%user_url%|%auth_uid%|%user_class%|getAbonsList|1|2|3|4|0|",
-	re_balance: /-?(\d+\.\d+),\d+,\d+,'\w+'/g,
 	re_account: /"account","([^"]*)/,
 	re_address: /"address","([^"]*)/,
+	counters: ['balance', 'peni'],
     }
 }
 
@@ -136,11 +136,18 @@ function main(){
 
     var result = { success: true };
 
-    var balances = sumParam(html, null, null, cfg.re_balance, null, parseBalance);
-    for(var i=0; i<balances.length; ++i){
-	var counter = 'balance' + (i==0 ? '' : i);
-        if(AnyBalance.isAvailable(counter))
-		result[counter] = balances[i];
+    var num = getParam(html, null, null, /\d+\.\d+,(\d+),/);
+    if(!isset(num))
+    	throw new AnyBalance.Error('Не удаётся найти баланс. Сайт изменен?');
+
+    var balanceRe = new RegExp('(-?\\d+\\.\\d+),' + num + '\\b', 'g');
+    var balances = sumParam(html, null, null, balanceRe, null, parseBalance);
+    for(var i=0; i<balances.length; i += cfg.counters.length){
+    	for(var j=0; j<cfg.counters.length; ++j){
+			var counter = cfg.counters[j] + (i==0 ? '' : Math.floor(i/cfg.counters.length));
+            if(AnyBalance.isAvailable(counter))
+				result[counter] = balances[i+j];
+		}
     }
 
     getParam(html, result, 'licschet', cfg.re_account, replaceSlashes);

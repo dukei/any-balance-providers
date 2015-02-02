@@ -1,29 +1,26 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-convex</id>
-  <name>Convex (Екатеринбург)</name>
-  <description>
-    Получает баланс и информацию о тарифном плане для екатеринбургского интернет провайдера Convex. Информация берется из личного кабинета http://convex.ru.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="traffic" name="Общий трафик" units="Гб"/>
-    <counter id="trafficExternal" name="Внешнегородской трафик" units="Гб"/>
-    <counter id="userName" name="ФИО" type="text"/>
-  </counters>
-  <keywords>
-    интернет, екатеринбург, конвекс
-  </keywords>
-  <type>
-    internet
-  </type>
-  <country>
-    ru
-  </country>
+	<api flags="no_browser"/>
+	<id version="2">ab-internet-convex</id>
+	<name>Convex (Екатеринбург)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе Екатеринбургского интернет-провайдера Convex <a href="http://convex.ru">http://convex.ru</a></p>
+	]]></description>	
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="traffic" name="Общий трафик" units=" Гб"/>
+		<counter id="trafficExternal" name="Внешнегородской трафик" units=" Гб"/>
+		<counter id="userName" name="ФИО" type="text"/>
+	</counters>
+	<keywords>интернет, екатеринбург, конвекс</keywords>
+	<type>internet</type>
+	<country>ru</country>
 </provider>

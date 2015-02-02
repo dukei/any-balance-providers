@@ -76,7 +76,7 @@ function getMyPosylkaResult(prefs) {
 		throw new AnyBalance.Error('Не удалось получить токен, сайт изменен?');
 	}	
 	
-	var retryCount = 7;
+	var retryCount = 10;
 	for(var i = 0; i < retryCount; i++) {
 		try {
 			AnyBalance.trace('Обновление данных №' + (i+1));
@@ -140,7 +140,7 @@ function getMyPosylkaResult(prefs) {
 		return result;
 	}catch(e){
 		AnyBalance.trace(JSON.stringify(json));
-		throw e;
+		throw new AnyBalance.Error('Не удалось получить данные. Возможно на сайте возникли перебои в работе, попробуйте обновить данные позже.');
 	}
 }
 

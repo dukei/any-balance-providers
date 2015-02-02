@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
       <ListPreference 
-        key="preix"
+        key="prefix"
         title="Префикс номера телефона" 
         summary="|Выберите префикс номера телефона|{@s}" 
-		entries="50|51"
-		entryValues="50|51"
+		entries="50|51|55|70|77"
+		entryValues="50|51|55|70|77"
         defaultValue="50"
         dialogTitle="Префикс номера телефона">
     </ListPreference>

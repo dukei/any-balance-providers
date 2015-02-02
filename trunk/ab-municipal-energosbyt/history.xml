@@ -1,1 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><history>	<!--<change version="14" date="2013-08-08">        Исправлено ошибка в случае отсутствия платежей	</change>--></history>
+﻿<?xml version="1.0" encoding="utf-8"?><history>
+	<change version="2" date="2015-02-02">
+	- Поддержка изменений на сайте.
+	</change></history>

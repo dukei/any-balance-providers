@@ -1,10 +1,5 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Получает баланс для московского поставщика электроэнергии мосэнергосбыт
-
-Сайт оператора: http://mosenergosbyt.ru
-Личный кабинет: https://lkkbyt.mosenergosbyt.ru
 */
 
 var g_headers = {
@@ -22,16 +17,11 @@ function main(){
     var baseurl = 'https://lk.ensbyt.ru/';
 	var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
 
-	try
-	{
-		html = AnyBalance.requestPost(baseurl + 'security_check', {
-			'j_username':prefs.login,
-			'j_password':prefs.password,
-		}, g_headers);
-	}
-	catch(e)
-	{
-	}
+	html = AnyBalance.requestPost(baseurl + 'security_check', {
+		'j_username':prefs.login,
+		'j_password':prefs.password,
+	}, g_headers);
+	
     if(!/logout/i.test(html)){
         throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
     }

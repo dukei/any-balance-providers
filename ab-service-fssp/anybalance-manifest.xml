@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="7">ab-service-fssp</id>
+	<id version="8">ab-service-fssp</id>
 	<api flags="no_browser|captcha" min_level="7"/>
 	<name>Банк данных исполнительных производств</name>
 	<description html="true"><![CDATA[

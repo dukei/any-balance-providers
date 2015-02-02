@@ -7,7 +7,7 @@ function main(){
     AnyBalance.setDefaultCharset('utf-8');
 	
     if(AnyBalance.getLevel() < 5)
-        throw new AnyBalance.Error('Для этого провайдера необходима AnyBalance v.2.9.600+.');
+        throw new AnyBalance.Error('Для этого провайдера необходимо AnyBalance API v5.');
 	
     var baseurl = "https://stat.ipnet.ua/";
 	
@@ -32,15 +32,18 @@ function main(){
 	
     var result = {success: true};
 	
-    getParam(html, result, 'balance', /Текущий остаток[\S\s]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'till', /Прогнозируемая дата ухода в минус[\S\s]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
-    getParam(html, result, 'status', /Текущее состояние[\S\s]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'agreement', /Номер договора[\S\s]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, '__tariff', /Тарифный пакет[\S\s]*?<td[^>]*center">([\S\s]*?)<\/t[dr]>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, '__tariff', /Тариф:(?:[^>]*>){2}([\s\S]*?)<\//i, [/&ldquo;|&rdquo;/ig, '"', replaceTagsAndSpaces], html_entity_decode);
+    getParam(html, result, 'agreement', /Номер договору:(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+	
+	html = AnyBalance.requestGet(baseurl + 'ua/finance/');
+	
+    getParam(html, result, 'balance', /Поточний баланс:(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'till', /Послуги сплачені до:(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseDate);
+    // getParam(html, result, 'status', /Текущее состояние[\S\s]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     
 	if(isAvailable('bonus')) {
-		html = AnyBalance.requestGet(url + 'loyalty/statistics.html');
-		getParam(html, result, 'bonus', /На данный момент у Вас:([^>]*>){2}/i, replaceTagsAndSpaces, parseBalance);
+		html = AnyBalance.requestGet(baseurl + 'ua/loyalty/');
+		getParam(html, result, 'bonus', /Кількість доступних бaлів:(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
 	}
 	
     AnyBalance.setResult(result);

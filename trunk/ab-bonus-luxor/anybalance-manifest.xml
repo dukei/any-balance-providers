@@ -1,32 +1,35 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-bonus-luxor</id>
-  <name>Люксор</name>
-  <description>
-    Получает баланс и другую информацию по накопительной карте сети кинотеатров Люксор (http://www.luxorfilm.ru).
+	<api flags="no_browser"/>
+	<id version="2">ab-bonus-luxor</id>
+	<name>Люксор</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию по накопительной карте сети кинотеатров Люксор <a href="http://www.luxorfilm.ru">http://www.luxorfilm.ru</a></p>
+	<p>Информация берется из личного кабинета <a href="http://www.luxorfilm.ru/login.aspx">http://www.luxorfilm.ru/login.aspx</a></p>
 
-    Информация берется из личного кабинета http://www.luxorfilm.ru/login.aspx. 
-
-    Если у вас нет доступа к личному кабинету, зарегистрируйтесь здесь: http://www.luxorfilm.ru/Users/Registration.aspx и прикрепите к этому личному кабинету карту зрителя.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-    <js>library.js</js>
-  </files>
-  <counters>
-    <counter id="balance" name="Бонусы"/>
-    <counter id="cardnum" name="Номер карты" type="text"/>
-  </counters>
-  <keywords>
-    luxor, аттракционы
-  </keywords>
-  <type>
-    bonus
-  </type>
-  <country>
-    ru
-  </country>
+	<b>Особенности:</b>
+	<ul>
+		<li></li>
+		<li></li>
+		<li></li>
+	</ul>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Если у вас нет доступа к личному кабинету, зарегистрируйтесь здесь: <a href="http://www.luxorfilm.ru/Users/Registration.aspx">http://www.luxorfilm.ru/Users/Registration.aspx</a> и прикрепите к этому личному кабинету карту зрителя.</p>
+	]]></instruction>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<js>library.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Бонусы"/>
+		<counter id="cardnum" name="Номер карты" type="text"/>
+	</counters>
+	<keywords>luxor, аттракционы</keywords>
+	<type>bonus</type>
+	<country>ru</country>
 </provider>

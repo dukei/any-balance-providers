@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="3">ab-cell-yargsm</id>
+	<id version="4">ab-cell-yargsm</id>
 	<name>Смартс (Ярославская область)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе и тарифном плане оператора Смартс в Ярославской области <a href="https://www.yargsm.ru/issa/">https://www.yargsm.ru/issa/</a></p>

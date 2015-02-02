@@ -7,7 +7,7 @@
         dialogTitle="Номер телефона" 
         negativeButtonText="Отмена" 
         dialogMessage="Введите номер телефона в формате 79021234567, который используется для входа в личный кабинет"
-        inputType="number">
+        inputType="number"
         key="login">
     </EditTextPreference>
     <EditTextPreference 

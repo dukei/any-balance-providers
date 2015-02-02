@@ -7,12 +7,13 @@ var g_headers = {
 	'Accept-Language': 'ru,en;q=0.8',
 	'Connection':'keep-alive',
 	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36',
-	'Referer': 'http://fssprus.ru/iss/ip/'
+	'Referer': 'http://fssprus.ru/iss/ip/',
+	'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
 };
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://fssprus.ru/';
+	var baseurl = 'http://fssprus.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.last_name, 'Введите Фамилию!');
@@ -21,7 +22,8 @@ function main() {
 	checkEmpty(prefs.birthdate, 'Введите дату рождения в формате ДД.ММ.ГГГГ!');
 	
 	var params = [
-		['s', 'ip'],
+		['/ajax_search?url', 'iss/ajax_search'], 
+		['system', 'ip'], 
 		['is[extended]','1'],
 		['is[variant]','1'],
 		['is[region_id][0]',(prefs.region_id || '77')],
@@ -32,13 +34,15 @@ function main() {
 		['nocache','1'],
 		['is[sort_field]',''],
 		['is[sort_direction]',''],
+		['nocache', '1']
 	];
 	
 	var strParams = '';
 	for(var i = 0; i < params.length; i++) {
 		strParams += '&' + encodeURIComponent(params[i][0]) + '=' + encodeURIComponent(params[i][1]);
 	}
-	var url = baseurl + 'is/ajax-iss.php?' + strParams;
+	
+	var url = baseurl + 'iss/ajax_search?' + strParams;
 	var html = AnyBalance.requestGet(url, addHeaders({'X-Requested-With': 'XMLHttpRequest'}));
 	
 	var captchaa = getParam(html, null, null, /<img\s*src=".([^"]*)/i);
@@ -59,8 +63,7 @@ function main() {
 		}, addHeaders({Referer: url, 'X-Requested-With': 'XMLHttpRequest'}));
 	}
 	
-	//AnyBalance.trace(html);
-	var table = getParam(html, null, null, /<table[^>]*class="list"[\s\S]*?<\/table>/i);
+	var table = getParam(html, null, null, /<table[^>]*class="list[\s\S]*?<\/table>/i);
 	var result = {success: true, all:''};
 	if(table) {
 		getParam(html, result, 'balance', /Найдено([^\/]*)/i, replaceTagsAndSpaces, parseBalance);
@@ -69,7 +72,7 @@ function main() {
 			result.all += rows[i] + '\n\n';
 		}
 		result.all = result.all.replace(/^\s+|\s+$/g, '');
-		sumParam(table, result, 'sum', /[\d\s-.,]{3,}\s*руб/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+		sumParam(table, result, 'sum', /[\d\s-.,]{3,}\s*руб/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	} else {
 		var err = getParam(html, null, null, /class="empty"[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
 		if(!err)

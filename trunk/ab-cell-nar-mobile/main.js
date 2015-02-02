@@ -31,9 +31,9 @@ function main() {
 	var captchaa;
 	if(AnyBalance.getLevel() >= 7){
 		AnyBalance.trace('Пытаемся ввести капчу');
-		AnyBalance.setOptions({forceCharset: 'base64'});
+//		AnyBalance.setOptions({forceCharset: 'base64'});
 		var captcha = AnyBalance.requestGet(baseurl + 'ics/cgi-bin/' + cap_href);
-		AnyBalance.setOptions({forceCharset: 'utf-8'});
+//		AnyBalance.setOptions({forceCharset: 'utf-8'});
 		captchaa = AnyBalance.retrieveCode("Please, enter the captcha code", captcha);
 		AnyBalance.trace('Капча получена: ' + captchaa);
 	}else{

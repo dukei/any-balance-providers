@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-cell-nar-mobile</id>
+	<id version="3">ab-cell-nar-mobile</id>
 	<api flags="no_browser"/>
 	<name>Nar Mobile</name>
 	<description html="true"><![CDATA[

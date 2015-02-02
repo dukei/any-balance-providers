@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id major_version="2.0" version="19">ab-money-uralsib</id>
+	<id major_version="2.0" version="20">ab-money-uralsib</id>
 	<name>Банк УРАЛСИБ</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем остатке и других параметрах счетов банка УРАЛСИБ (http://www.bankuralsib.ru).</p>
@@ -23,6 +23,7 @@
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
+		<js>env.js</js>
 		<js>jsbn.js</js>
 		<js>prng4.js</js>
 		<js>rng.js</js>

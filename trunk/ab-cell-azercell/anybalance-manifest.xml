@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="2">ab-cell-azercell</id>
+	<id version="3">ab-cell-azercell</id>
 	<name>Azercell (Азербайджан)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе и тарифном плане для сотового оператора Azercell <a href="http://azercell.com">http://azercell.com</a></p>

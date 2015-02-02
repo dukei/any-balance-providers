@@ -9,6 +9,9 @@ function main(){
     var lang = prefs.lang || 'ru';
     var baseurl = "http://www.azercell.com/WebModule1/mainservlet";
 
+    checkEmpty(prefs.login, 'Введите номер телефона (Логин)!');
+    checkEmpty(prefs.password, 'Введите пароль!');
+
     AnyBalance.setDefaultCharset('utf-8');
 
     var html = AnyBalance.requestPost(baseurl + '?lang=' + lang, {
@@ -24,7 +27,7 @@ function main(){
     if(!/cmnd=logout|<title>(?:Login ok|Giriş|Логин)<\/title>/i.test(html)){
         var error = getParam(html, null, null, /<font[^>]+color="#FF0000"[^>]*>([\s\S]*?)<\/font>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error){
-            throw new AnyBalance.Error(error);
+            throw new AnyBalance.Error(error, null, /Некорректный логин или пароль|login or password is invalid|adınız və ya şifrəniz düzgün deyildir/i.test(error));
         }
         throw new AnyBalance.Error("Не удалось зайти в личный кабинет. Сайт изменен?");
     }

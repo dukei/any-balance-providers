@@ -1,38 +1,32 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser" />
-  <id version="1">ab-municipal-energosbyt</id>
-  <name>Энергосбыт (ЭК "Восток")</name>
-  <description>
+	<id version="2">ab-municipal-energosbyt</id>
+	<name>Энергосбыт (ЭК "Восток")</name>
+	<description>
     Получает информацию в системе Энергосбыт (ОАО "Энергосбытовая компания "Восток") сайт: http://www.ensbyt.ru/
 	
-	Получает данные из личного кабинета https://lk.ensbyt.ru/</description>
-  <author>Stark &lt;support@starksoft.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-    <js>library.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-	<counter id="balance" name="Сумма к оплате" units="р"/>
-	<counter id="dolg" name="Долг/переплата" units="р"/>
-	<counter id="opl" name="Оплачено" units="р"/>
-	<counter id="potreblenie" name="Кол-во/объем потребления"/>
-	<counter id="nachisleno" name="Начислено" units="р"/>
-	<counter id="pererascheti" name="Перерасчеты" units="р"/>
-	<counter id="agreement" name="Лицевой счет" type="text"/>
-	<counter id="fio" name="ФИО" type="text"/>
-  </counters>
-  <keywords>
-    энерго, курган, электричество
-  </keywords>
-  <type>
-    municipal
-  </type>
-  <country>
-    ru
-  </country>
+	Получает данные из личного кабинета https://lk.ensbyt.ru/
+	</description>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<js>library.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Сумма к оплате" units=" р"/>
+		<counter id="dolg" name="Долг/переплата" units=" р"/>
+		<counter id="opl" name="Оплачено" units=" р"/>
+		<counter id="potreblenie" name="Кол-во/объем потребления"/>
+		<counter id="nachisleno" name="Начислено" units=" р"/>
+		<counter id="pererascheti" name="Перерасчеты" units=" р"/>
+		<counter id="agreement" name="Лицевой счет" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
+	</counters>
+	<keywords>энерго, курган, электричество</keywords>
+	<type>municipal</type>
+	<country>ru</country>
 </provider>

@@ -3,6 +3,8 @@
 */
 
 function main(){
+	throw new AnyBalance.Error('Личный кабинет переехал на login.rt.ru, воспользуйтесь провайдером Ростелеком-Регионы');
+
 	var prefs = AnyBalance.getPreferences();
 	
 	checkEmpty(prefs.login, 'Введите логин!');

@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-money-myskb</id>
+	<id version="2">ab-money-myskb</id>
 	<api flags="no_browser"/>
 	<name>СКБ-БАНК</name>
 	<description html="true"><![CDATA[
@@ -22,6 +22,6 @@
 		<counter id="type" name="Название" type="text"/>
 	</counters>
 	<keywords></keywords>
-	<type>money</type>
+	<type>money, bank</type>
 	<country>ru</country>
 </provider>

@@ -44,7 +44,7 @@ var g_headers = {
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-    var baseurl = 'https://retail.myskb.ru/v1/cgi/bsi.dll?';
+    var baseurl = 'https://retail.myskb.ru/v2/cgi/bsi.dll?';
     
     var html = AnyBalance.requestGet(baseurl + 'T=RT_2Auth.BF');
     var mapId = getParam(html, null, null, /<input[^>]*name="MapID"[^>]*value="([^"]*)"/i);

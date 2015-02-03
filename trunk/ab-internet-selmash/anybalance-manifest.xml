@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-internet-selmash</id>
+	<id version="2">ab-internet-selmash</id>
 	<api flags="no_browser"/>
 	<name>Selmash</name>
 	<description html="true"><![CDATA[
@@ -22,7 +22,7 @@
 		<counter id="blocked" name="Состояние блокировки" type="text"/>
 		<counter id="acc_num" name="Основной лицевой счёт" type="text"/>
 	</counters>
-	<keywords></keywordos>
+	<keywords></keywords>
 	<type>internet</type>
 	<country>ru</country>
 </provider>

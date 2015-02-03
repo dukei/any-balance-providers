@@ -41,7 +41,7 @@ function main() {
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'status', /<div class="status-delivery-triangle"><\/div>([\s\S]*?)<\/div/i, null, html_entity_decode);
+	getParam(html, result, 'fulltext', /<div class="status-delivery-triangle"><\/div>([\s\S]*?)<\/div/i, null, html_entity_decode);
 	
 	AnyBalance.setResult(result);
 }

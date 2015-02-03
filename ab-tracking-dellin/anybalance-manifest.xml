@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-tracking-dellin</id>
+	<id version="2">ab-tracking-dellin</id>
 	<api flags="no_browser"/>
 	<name>Деловые Линии</name>
 	<description html="true"><![CDATA[

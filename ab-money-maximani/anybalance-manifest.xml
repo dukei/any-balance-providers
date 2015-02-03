@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-money-maximani</id>
+	<api flags="no_browser"/>
+	<name>Maximani</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Maximani <a href="http://maximani.ru/">http://maximani.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="http://maximani.ru/login/">http://maximani.ru/login/</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Активно" units=" р"/>
+		<counter id="charity" name="Всего пожертвовано" units=" р"/>
+		<counter id="ready" name="Готовы к выводу" units=" р"/>
+		<counter id="waiting" name="Ожидающий" units=" р"/>
+		<counter id="rejected" name="Отклонёный" units=" р"/>
+		<counter id="spent" name="Всего потрачено" units=" р"/>
+		<counter id="requested" name="Запрошено на выплату" units=" р"/>
+		<counter id="paid" name="Всего выплачено" units=" р"/>
+		<counter id="bonus" name="Начисленные бонусы" units=" р"/>
+		<counter id="fio" name="ФИО" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>money, service</type>
+	<country>ru</country>
+</provider>

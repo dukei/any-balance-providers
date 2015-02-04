@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="115" date="2015-02-04">
+	- Поддержка изменений на сайте (казахстан) https://code.google.com/p/any-balance-providers/issues/detail?id=228
+	</change>
 	<change version="114" date="2015-01-30">
 	- Улучшено получение минут на постоплатных тарифах.
 	</change>

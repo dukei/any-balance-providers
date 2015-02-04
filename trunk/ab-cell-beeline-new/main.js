@@ -1,4 +1,4 @@
-﻿﻿/**
+/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 
 Для отладки в дебагере: параметр __debug
@@ -1873,9 +1873,9 @@ function getBonusesBlockKz(url, html, name, exact, onlyReturnParams) {
 	}
 
 	var prefs = AnyBalance.getPreferences();
-	if (prefs.country == 'kz')
-		var re = new RegExp("loadingServices = function\\(\\) \\{PrimeFaces\\.\\w+\\s*\\(\\s*\\{[^}]*update:\\s*'" + (exact ? "" : "[^']*") + name);
-	else
+	//if (prefs.country == 'kz')
+	//	var re = new RegExp("loadingServices = function\\(\\) \\{PrimeFaces\\.\\w+\\s*\\(\\s*\\{[^}]*update:\\s*'" + (exact ? "" : "[^']*") + name);
+	//else
 		var re = new RegExp("(?:loadingbonusesloaderDetails|loadingAccumulators)\\s*=\\s*function\\(\\) \\{PrimeFaces\\.\\w+\\s*\\(\\s*\\{[^}]*update:\\s*'" + (exact ? "" : "[^']*") + name);
 	
 	var data = getParam(html, null, null, re);

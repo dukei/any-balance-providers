@@ -42,14 +42,15 @@ var regions = {
 	piter: getPiter,
 	yar: getYar,
 	arkh: getArkh,
-	vladimir:getVladimir
+	vladimir: getVladimir,
+	volzhsk: getVolzhsk
 };
 
 function main(){
 	var prefs = AnyBalance.getPreferences();
 	var region = prefs.region;
 	if(!region || !regions[region])
-		region = 'moscow';
+		region = 'volzhsk';
 	
 	var func = regions[region];
 	AnyBalance.trace('Регион: ' + region);
@@ -467,6 +468,10 @@ function getKrv(){
 	newTypicalLanBillingInetTv('https://lkkirov.pv.mts.ru/index.php');
 }
 
+function getVolzhsk(){
+	newTypicalLanBillingInetTv('https://internet.mari-el.mts.ru/index.php');
+}
+	
 function getArkh(){
 	newTypicalLanBillingInetTv('https://lk.arkhangelsk.mts.ru/client/index.php');
 }

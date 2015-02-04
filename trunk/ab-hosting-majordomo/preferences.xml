@@ -19,6 +19,14 @@
         dialogMessage="Введите пароль для входа в личный кабинет .masterhost."
         inputType="textPassword">
     </EditTextPreference>
+	<ListPreference
+		key="type"
+		title="Тип кабинета"
+		summary="||{@s}"
+		entries="Старый|Новый"
+		entryValues="old|new"
+		defaultValue="old">
+	</ListPreference>		
     <EditTextPreference 
         positiveButtonText="ОК"
         key="domains" 

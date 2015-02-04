@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-municipal-spas-dom</id>
+	<api flags="no_browser"/>
+	<name>СПАС-Дом</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера СПАС-Дом <a href="http://www.spas-dom.ru/">http://www.spas-dom.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="https://cabinet.spas-dom.ru/">https://cabinet.spas-dom.ru/</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Задолженность" units=" р"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="fulltext" name="Сводка" type="html"/>
+		<counter id="acc_num" name="Номер лицевого счета" type="text"/>
+		<counter id="period" name="Период" type="text"/>
+		<counter id="hot_water" name="Показания прибора ГВС" units=" м3"/>
+		<counter id="cold_water" name="Показания прибора ХВС" units=" м3"/>
+	</counters>
+	<keywords></keywords>
+	<type>municipal</type>
+	<country>ru</country>
+</provider>

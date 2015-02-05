@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="12">ab-money-yandex</id>
+	<id version="13">ab-money-yandex</id>
 	<api flags="no_browser" />
 	<name>Яндекс.Деньги</name>
 	<description html="true"><![CDATA[
@@ -25,6 +25,6 @@
 		<counter id="number" name="Номер счета" type="text"/>
 	</counters>
 	<keywords>яндекс-деньги, yandex money</keywords>
-	<type>money</type>
+	<type>money, wallet</type>
 	<country>ru</country>
 </provider>

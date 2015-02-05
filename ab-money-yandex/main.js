@@ -29,14 +29,14 @@ function main() {
 			html = AnyBalance.requestGet(baseurl, g_headers);
 		}
 	}
-	if (!/current\-user\-balance\-link/i.test(html))
+	if (!/user__logout/i.test(html))
 		throw new AnyBalance.Error("Не удалось зайти. Проверьте логин и пароль.");
 	
 	var result = {success: true};
-
-	getParam(html, result, 'number', /"b-account__number__text"[^>]*>(.*?)</i, replaceTagsAndSpaces);
-	getParam(html, result, '__tariff', /"b-account__number__text"[^>]*>(.*?)</i, replaceTagsAndSpaces);
-
+	
+	getParam(html, result, '__tariff', /Номер кошелька(?:[^>]*>){2}(\d{10,20})/i, replaceTagsAndSpaces);
+	getParam(result['__tariff'], result, 'number');
+	
 	if(/data-is-sum-visible\s*=\s*"false"/i.test(html)){
 	    AnyBalance.trace('Сумма спрятана. Будем пытаться найти...');
 		var sk = getParam(html, null, null, /data-account-secret-key\s*=\s*"([^"]*)/i, replaceTagsAndSpaces);
@@ -48,7 +48,7 @@ function main() {
 		var json = getJson(text);
 	    getParam('' + json.sum, result, 'balance', null, null, parseBalanceRK);
 	}else{
-	    getParam(html, result, 'balance', /<div[^>]*id="current-user-balance-container"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalanceRK);
+	    getParam(html, result, 'balance', /balance[^>]*button(?:[^>]*>){3}[^>]*amount[^>]*>([\s\S]*?)<d/i, replaceTagsAndSpaces, parseBalance);
 	}
 
 	

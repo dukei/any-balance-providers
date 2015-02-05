@@ -38,7 +38,7 @@ function main() {
 
 	getParam(html, result, 'points', /DX Points:([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'order_num', /<td class="number">[\s\S]*?<a.*?>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'order_date', /<td class="number">[\s\S]*?<td>[\s\S]*?(\d\d\/\d\d\/\d\d\d\d)/i, [replaceTagsAndSpaces, /(\d\d)\/(\d\d)/, "$2/$1"], parseDate);
+	getParam(html, result, 'order_date', /<td class="number">[\s\S]*?<td>[\s\S]*?(\d+\/\d+\/\d\d\d\d)<br/i, [replaceTagsAndSpaces, /(\d+)\/(\d+)/, "$2/$1"], parseDate);
 	getParam(html, result, 'order_sum', /<td class="total">[\s\S]*?([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'order_status', /<td class="status">[\s\S]*?([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
 

@@ -1,5 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="9" date="2015-02-05">
+	- Added support of two-factor authorization.
+	</change>
 	<change version="8" date="2014-10-09">
 	- Support site changes.
 	</change>

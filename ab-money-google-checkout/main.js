@@ -14,15 +14,15 @@ var g_headers = {
 /** вынес в отдельную функцию, чтобы было легко скопировать ее в другие провайдеры */
 function googleLogin(prefs) {
 	var baseurlLogin = 'https://accounts.google.com/';
-
+	
+	// Прежде чем входить, вынем куки
+	AnyBalance.restoreCookies();
+	
 	var html = AnyBalance.requestGet(baseurlLogin + 'ServiceLoginAuth', g_headers);
 
 	var GALX = getParam(html, null, null, /GALX[^>]*value=['"]([^"']+)/i);
 	if(!GALX)
 		throw new AnyBalance.Error('Can`t find find login form, please, contact the developers.');
-	
-	// Прежде чем входить, вынем куки
-	AnyBalance.restoreCookies();
 	
 	html = AnyBalance.requestPost(baseurlLogin + 'ServiceLoginAuth', {
 		'osid': '1',
@@ -67,11 +67,11 @@ function googleLogin(prefs) {
 			['PersistentCookie', 'on'],
 		], addHeaders({Referer: baseurlLogin + 'SecondFactor?checkedDomains=youtube&pstMsg=0'}));
 		
-		if(isLoginSuccesful(html)) {
-			// Если вошли, то это повод сохранить все куки чтобы больше не донимать юзера окошками
-			AnyBalance.saveCookies();
-			AnyBalance.saveData();
-		}
+		// if(isLoginSuccesful(html)) {
+			// // Если вошли, то это повод сохранить все куки чтобы больше не донимать юзера окошками
+			// AnyBalance.saveCookies();
+			// AnyBalance.saveData();
+		// }
 	}
 	// Еще раз проверим правильность входа
 	isLoginSuccesful(html);
@@ -91,6 +91,8 @@ function googleLogin(prefs) {
 		return true;
 	}
 	
+	AnyBalance.saveCookies();
+	AnyBalance.saveData();
 	return html;
 }
 
@@ -201,5 +203,6 @@ function main() {
 	} else {
 		AnyBalance.trace('Can`t login to Google Wallet, do have it on this account?');
 	}
+	
 	AnyBalance.setResult(result);
 }

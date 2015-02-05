@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="2">ab-cell-vodafone-eg</id>
+	<id version="3">ab-cell-vodafone-eg</id>
 	<name>Vodafone Egypt</name>
 	<description html="true"><![CDATA[
 	<p>Obtains balance and other plan information on Vodafone Egypt personal account <a href="http://www.vodafone.com.eg">http://www.vodafone.com.eg</a></p>

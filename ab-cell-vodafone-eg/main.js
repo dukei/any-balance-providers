@@ -38,17 +38,23 @@ function main(){
 		
 		html = AnyBalance.requestGet(scriptRedirect, g_headers);
 		
-		var res = scriptRedirect.split("?");
-		var iframeId = getParam(html, null, null, /"iframeId"[^>]*src="([^"]+)/i);
-		var url = iframeId + '?' + res[1]; 
+		html = AnyBalance.requestGet(baseurl1 + '/My010App/SessionDispatcher.jsp?pageCode=myVodafone_Revamp&lang=en&_nfpb=true&_pageLabel=myVodafonePreMain_Page&lang=en&userType=MyVodafonePre', g_headers);
 		
-		try {
-			html = AnyBalance.requestGet(url, g_headers);
-		} catch(e) {
-			html = AnyBalance.requestGet(url.replace(/http:/, 'https:'), g_headers);
-		}
 		
-		if(!/<h1>[^<]+Account/i.test(html)){
+		
+		//html = AnyBalance.requestGet('http://www.vodafone.com.eg/My010App/ucm/LoginLogoutModulePortal.jsp?lang=en', g_headers);
+		
+		// var res = scriptRedirect.split("?");
+		// var iframeId = getParam(html, null, null, /"iframeId"[^>]*src="([^"]+)/i);
+		// var url = iframeId + '?' + res[1]; 
+		
+		// try {
+			// html = AnyBalance.requestGet(url, g_headers);
+		// } catch(e) {
+			// html = AnyBalance.requestGet(url.replace(/http:/, 'https:'), g_headers);
+		// }
+		
+		if(!/Logout|Welcome/i.test(html)){
             throw new AnyBalance.Error('Could not enter personal account. Have you entered correct login and password?');
         }
     }
@@ -57,9 +63,11 @@ function main(){
 
     var result = {success: true};
 
-    getParam(html, result, 'balance', />\s*Current Balance(?:[^>]*>){3}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'phone', /Data Line Number:(?:[^>]*>){2}\s*([\d+-]+)/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, '__tariff', /Data Plan:(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'balance', [/>\s*Current (?:Credit|Balance)(?:[^>]*>){2}([\s\S]*?)<\//i, /My Balance(?:[^>]*>){2}([\s\S]*?)<\//i], replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'phone', [/Data Line Number:(?:[^>]*>){2}\s*([\d+-]+)/i, /Mobile Number:(?:[^>]*>){2}([\s\S]*?)<\//i], replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, '__tariff', [/Data Plan:(?:[^>]*>){2}([\s\S]*?)<\//i, /Rate Plan:(?:[^>]*>){2}([\s\S]*?)<\//i], replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'fio', /<h\d[^>]*>[^<]+Welcome([\s\S]*?)<\/h\d[^>]*>/i, replaceTagsAndSpaces, function(str){ return html_entity_decode(str) || undefined } );
+    getParam(html, result, 'accnum', /Account Number(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
 	
 	var usedTraf = getParam(html, result, 'traf_used', />\s*Consumed(?:[^>]*>){3}([\s\d.,GMKB]+)/i, replaceTagsAndSpaces, parseTraffic);
 	var leftTraf = getParam(html, result, 'traf_left', />\s*Remaining(?:[^>]*>){3}([\s\d.,GMKB]+)/i, replaceTagsAndSpaces, parseTraffic);
@@ -69,8 +77,7 @@ function main(){
 	}
 	
 	
-    // getParam(html, result, 'fio', /<span[^>]+class="heading1"[^>]*>Name(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, function(str){ return html_entity_decode(str) || undefined } );
-    // getParam(html, result, 'accnum', /Account Number(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+	
 
     AnyBalance.setResult(result);
 }

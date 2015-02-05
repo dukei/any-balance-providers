@@ -1,9 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="3" date="2015-02-05">
+	- Minor site changes support.
+	</change>
 	<change version="2" date="2014-10-21">
 	- New counters: Data used, Date left, Data total.
 	- Adapted to the new login procedure.
 	</change>
-
-
 </history>

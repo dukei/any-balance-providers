@@ -107,9 +107,9 @@ function main() {
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'fio', /Account Options(?:[\s\S]*?<span[^>]*>){5}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'login_email', /Account Options(?:[\s\S]*?<span[^>]*>){8}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, '__tariff', /Account Options(?:[\s\S]*?<span[^>]*>){8}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'fio', /gbar\.logger\.il(?:[^>]*>){1}([^<]+)<\/span/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'login_email', /gbar\.logger\.il(?:[^>]*>){3}([^<]+)<\/span/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, '__tariff', /gbar\.logger\.il(?:[^>]*>){3}([^<]+)<\/span/i, replaceTagsAndSpaces, html_entity_decode);
 	
 	// Получаем информацию из кошелька гугл
 	html = AnyBalance.requestGet(baseurl + 'merchant/pages/', g_headers);

@@ -22,12 +22,12 @@
         positiveButtonText="ОК"
         negativeButtonText="Отмена">
     </EditTextPreference>
-    <ListPreference 
+<!--     <ListPreference 
         key="type" 
         title="Личный кабинет"
         summary="||{@s}\n"
         entries="Автоматически|Старый (w.qiwi.ru)|Новый (w.qiwi.com)"
         entryValues="auto|old|new"
 		defaultValue="auto">
-    </ListPreference>
+    </ListPreference> -->
 </PreferenceScreen>

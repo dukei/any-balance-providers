@@ -1,14 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2.3" version="23">ab-money-qiwi</id>
+	<id major_version="2.3" version="24">ab-money-qiwi</id>
 	<api flags="no_browser"/>
 	<name>QIWI Кошелек</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе, номере QVC-карты, сроке действия QVC-карты, транзакции по QVC (только новый кабинет), количестве сообщений и счетов в QIWI Кошельке.</p> 
-	<p>Информация берется из старого личного кабинета (http://w.qiwi.ru) и нового (http://w.qiwi.com).</p>
+	<p>Предоставляет информацию о балансе, номере QVC-карты, сроке действия QVC-карты, транзакции по QVC, количестве сообщений и счетов в QIWI Кошельке.</p> 
+	<p>Информация берется из личного кабинета <a href="https://visa.qiwi.com/">https://visa.qiwi.com/</a></p>
 	]]></description>
 	<author>iReset &lt;ireset.ag@gmail.com&gt;</author>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
@@ -27,6 +27,6 @@
 		<counter id="bills" name="Счета" units=" шт"/>
 	</counters>
 	<keywords>QVC, QVV, кошелек, деньги, киви, оплата, платежи, карта, банковская карта, visa, виза</keywords>
-	<type>money</type>
+	<type>money, wallet</type>
 	<country>ru, ua, kz</country>
 </provider>

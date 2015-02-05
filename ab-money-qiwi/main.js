@@ -17,25 +17,28 @@ var g_headers = {
 
 function main(){
     var prefs = AnyBalance.getPreferences ();
-    switch(prefs.type){
-    case 'new':
-        mainNew();
-        break;
-    case 'old':
-        mainOld();
-        break;
-    case 'auto':
-    default:
-        try{
-			mainNew();
-        }catch(e){
-            if(e.fatal)
-                throw e;
-            AnyBalance.trace('Ошибка подключения к новому кабинету: ' + e.message + '\nПробуем старый...');
-            mainOld();
-        }
-        break;
-    }
+	
+	mainNew();
+	// Вроде старого кабинета больше нет.
+    // switch(prefs.type){
+    // case 'new':
+        // mainNew();
+        // break;
+    // case 'old':
+        // mainOld();
+        // break;
+    // case 'auto':
+    // default:
+        // try{
+			// mainNew();
+        // }catch(e){
+            // if(e.fatal)
+                // throw e;
+            // AnyBalance.trace('Ошибка подключения к новому кабинету: ' + e.message + '\nПробуем старый...');
+            // mainOld();
+        // }
+        // break;
+    // }
 }
 
 function getFatalError(str){

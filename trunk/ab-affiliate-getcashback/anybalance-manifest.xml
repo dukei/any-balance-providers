@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-affiliate-getcashback</id>
+	<api flags="no_browser"/>
+	<name>Getcashback</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Getcashback <a href="http://getcashback.ru/">http://getcashback.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="http://getcashback.ru/auth/">http://getcashback.ru/auth/</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Доступные для вывода" units=" р"/>
+		<counter id="waiting" name="Ожидающие подтверждения" units=" р"/>
+		<counter id="unconfirmed" name="Неподтвержденные" units=" р"/>
+		<counter id="total" name="Итого выведено" units=" р"/>
+	</counters>
+	<keywords></keywords>
+	<type>affiliate</type>
+	<country>ru</country>
+</provider>

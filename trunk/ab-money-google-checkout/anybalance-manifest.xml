@@ -4,9 +4,7 @@
     <name>Google Wallet (Checkout)</name>
 	<api flags="no_browser"/>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о текущем балансе на Google Кошельке.</p>
-	<p><b>Особенности:</b></p>
-	<p>Этот провайдер не работает, если включена 2-этапная авторизация.</p>
+	<p>Obtains information from Google Wallet personal account. <a href="https://checkout.google.com/sell/orders">https://checkout.google.com/sell/orders</a></p>
 	]]></description>
     <author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>

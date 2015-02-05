@@ -32,9 +32,35 @@ function main() {
     var json = getJson(html);
 	
 	if (json.Response == 'FAIL') {
-		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+	}
+	
+	if(prefs.num) {
+		var acountJson;
+		html = AnyBalance.requestGet(baseurl + 'cabinet.php?action=getAccountData', addHeaders({Referer: baseurl + 'hello', 'X-Requested-With': 'XMLHttpRequest'}));
+		json = getJson(html);
+		
+		for(var account in json.bclient) {
+			AnyBalance.trace('Got account: ' + account);
+			
+			if(new RegExp(prefs.num.replace(/.$/i, '.?$'), 'i').test(account)) {
+				AnyBalance.trace('Account: ' + account + ' is what we need!');
+				acountJson = json.bclient[account];
+				break;
+			} else {
+				AnyBalance.trace('No match, skipping...');
+			}
+		}
+		if(!isset(acountJson)) {
+			throw new AnyBalance.Error('Не удалось найти счет с последними цифрами ' + prefs.num);
+		}
+		
+		html = AnyBalance.requestPost(baseurl + 'cabinet.php', {
+			'action': 'setLicsSelected',
+			'lics': account,
+			'adres': acountJson.cabLicsInfoAdres,
+		}, addHeaders({Referer: baseurl + 'user.php?action=cabinet', 'X-Requested-With': 'XMLHttpRequest'}));
 	}
 	
 	html = AnyBalance.requestPost(baseurl + 'cabinet.php', {

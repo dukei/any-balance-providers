@@ -12,6 +12,7 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
+	
     var baseurl = 'http://www.gibdd.ru/';
     AnyBalance.setDefaultCharset('utf-8');
 	
@@ -81,24 +82,27 @@ function main() {
 	AnyBalance.trace('Пробуем запросить информацию с данными: '+prefs.login+', ' + prefs.password);
 	// Без загрузки этого скрипта не работает
 	html = AnyBalance.requestGet(baseurl + templateFolder + '/app.js', g_headers)
-	
+	AnyBalance.trace('Получили скрипт...');
 	html = AnyBalance.requestPost(baseurl + templateFolder + '/ajax/client.php', params2, addHeaders({
-		'X-Requested-With':'XMLHttpRequest',
-		'Referer':baseurl + 'check/fines/',
+		'X-Requested-With': 'XMLHttpRequest',
+		'Referer': baseurl + 'check/fines/',
 		//'X-Csrf-Token':token,
-		'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8',
-		'Connection':'keep-alive'
+		'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+		'Connection': 'keep-alive'
 	}));
 	
+	AnyBalance.trace('Получили данные...' + html);
+	
 	try {
-		var json = JSON.parse(html);
+		//var json = JSON.parse(html);
+		var json = getJsonEval(html);
 	} catch(e) {
 		AnyBalance.trace(html);
 		
 		if(/При загрузке страницы произошла ошибка/i.test(html))
 			throw new AnyBalance.Error('Сайт временно работает с перебоями, попробуйте обновить данные позже.');
 		
-		throw new AnyBalance.Error('Не удалось получить информацию, свяжитесь с разработчиком провайдера.');
+		throw new AnyBalance.Error('Не удалось получить информацию, свяжитесь, пожалуйста, с разработчиками.');
 	}
 	var result = {success: true, balance:0} ;
 	

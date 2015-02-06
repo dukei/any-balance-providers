@@ -1,27 +1,24 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="1">ab-municipal-activecitizen</id>
-  <name>Активный гражданин</name>
-  <description>
-	Получает текущее количество балов из личного кабинета http://ag.mos.ru/
-  </description>
-  <author>KiLLer13&lt;killer_kondor@pisem.net&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="points" name="Количество баллов"  suffix=""/>
-  </counters>
-  <keywords>
-        провайдер активный гражданин
-  </keywords>
-  <type>
-    municipal
-  </type>
-  <country>
-    ru
-  </country>
+	<api flags="no_browser"/>
+	<id major_version="1.0" version="2">ab-municipal-activecitizen</id>
+	<name>Активный гражданин</name>
+	<description html="true"><![CDATA[
+	<p>Получает текущее количество баллов из личного кабинета <a href="http://ag.mos.ru/">http://ag.mos.ru/</a></p>
+	]]></description>
+	<author>KiLLer13&lt;killer_kondor@pisem.net&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="points" name="Количество баллов" units=" б"/>
+	</counters>
+	<keywords></keywords>
+	<type>municipal</type>
+	<country>ru</country>
 </provider>

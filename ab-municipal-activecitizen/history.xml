@@ -1,6 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
-    <change major_version="1.0" version="1" date="2014-10-09">
-	- Начло
-    </change>
+	<change major_version="1.0" version="2" date="2015-02-06">
+	- Улучшена обработка ошибок.
+	</change>
+
 </history>

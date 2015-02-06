@@ -1,15 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
     <EditTextPreference
+		obligatory="true"
         key="phone"
         title="Номер телефона" 
         summary="Номер Вашего мобильного телефона||{@s}\n" 
         dialogTitle="Номер телефона" 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите номер Вашего мобильного телефона, зарегистрированный в Единой Мобильной Платформе г. Москвы"
+        dialogMessage="Введите номер мобильного телефона (10 цифр без пробелов и разделителей), зарегистрированный в Единой Мобильной Платформе г. Москвы"
         positiveButtonText="ОК">
     </EditTextPreference>
     <EditTextPreference
+		obligatory="true"
         key="password"
         title="Пароль"
         summary="Пароль для входа в личный кабинет||**********\n"

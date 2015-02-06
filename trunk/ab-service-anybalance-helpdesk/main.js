@@ -10,6 +10,8 @@ var g_headers = {
 	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
 };
 
+var replaces = [replaceTagsAndSpaces, /,/g, ''];
+
 function main() {
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'http://support.anybalance.ru/';
@@ -45,11 +47,11 @@ function main() {
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'open', /Открытые\s\((\d+)\)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'answered', /Получившие ответ\s\((\d+)\)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'my', /Мои заявки\s\((\d+)\)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'overdue', /Просрочено\s\((\d+)\)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'closed', /Закрытые\s\((\d+)\)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'open', /Открытые\s\(([\d,]+)\)/i, replaces, parseBalance);
+	getParam(html, result, 'answered', /Получившие ответ\s\(([\d,]+)\)/i, replaces, parseBalance);
+	getParam(html, result, 'my', /Мои заявки\s\(([\d,]+)\)/i, replaces, parseBalance);
+	getParam(html, result, 'overdue', /Просрочено\s\(([\d,]+)\)/i, replaces, parseBalance);
+	getParam(html, result, 'closed', /Закрытые\s\(([\d,]+)\)/i, replaces, parseBalance);
 	
 	AnyBalance.setResult(result);
 }

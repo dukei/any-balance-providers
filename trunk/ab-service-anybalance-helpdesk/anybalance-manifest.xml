@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-service-anybalance-helpdesk</id>
+	<id version="4">ab-service-anybalance-helpdesk</id>
 	<api flags="no_browser"/>
 	<name>AnyBalance Helpdesk</name>
 	<description html="true"><![CDATA[

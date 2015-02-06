@@ -15,7 +15,7 @@ function main() {
 	var baseurl = 'https://lk.ttk.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
-	checkEmpty(prefs.login && /\d{9}/.test(prefs.login), 'Логин должен состоять только из девяти цифр!');
+	checkEmpty(prefs.login && /^\d{9}$/.test(prefs.login), 'Логин должен состоять только из девяти цифр!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
 	var html = AnyBalance.requestGet(baseurl + 'po/LoginForm.jsp', g_headers);
@@ -31,12 +31,8 @@ function main() {
 		'j_password':prefs.password,
 		'loginSource':'form'
 	}, addHeaders({Referer: baseurl + 'po/LoginForm.jsp'}));
-
-	var error = getParam(html, null, null, /<em[^>]+id="error"(?:[^>](?!display:none))*>([\s\S]*?)<\/em>/i, replaceTagsAndSpaces, html_entity_decode);
-	if(error)
-		throw new AnyBalance.Error(error, null, /Неверные данные/i.test(error));
 	
-	html = AnyBalance.requestGet(baseurl + 'po/pages/client/main.jsf', g_headers);
+	html = AnyBalance.requestGet(baseurl + 'po/index.jsf', g_headers);
 	
 	if (!/logout/i.test(html)) {
 		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
@@ -49,10 +45,23 @@ function main() {
 	// Вошли, там может быть и несколько счетов, но пока нет доступа к такому кабинету, сделаем пока с одним
 	var result = {success: true};
 	
-	getParam(html, result, 'account', /Лицевой счёт([^>]*>){9}/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, '__tariff', /Лицевой счёт([^>]*>){9}/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'balance', />На счету([^>]*>){3}/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'fio', /"user-panel_button([^>]*>){2}/i, replaceTagsAndSpaces, html_entity_decode);
+	html = AnyBalance.requestGet(baseurl + 'po/rest/client/accounts/', g_headers);
 	
+	var json = getJson(html);
+	
+	// возвращается массив со счетами, можно потом сделать поддержку нескольких счетов
+	var currAcc = json[0];
+	
+	getParam(currAcc.accountNumber + '', result, '__tariff', null, replaceTagsAndSpaces, html_entity_decode);
+	getParam(currAcc.accountNumber + '', result, 'account', null, replaceTagsAndSpaces, html_entity_decode);
+	getParam(currAcc.accountBalance + '', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
+	
+	if(isAvailable('fio')) {
+		html = AnyBalance.requestGet(baseurl + 'po/rest/client/info/', g_headers);
+		
+		json = getJson(html);
+
+		getParam(json.firstName + ' ' + json.lastName, result, 'fio', /"user-panel_button([^>]*>){2}/i, replaceTagsAndSpaces, html_entity_decode);
+	}
 	AnyBalance.setResult(result);
 }

@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="2.0" version="26" date="2015-02-06">
+	- Исправлена ошибка которая вызывала зависание обновления.
+	</change>
 	<change major_version="2.0" version="25" date="2015-01-21">
 	- Поддержка изменений на сайте.
 	</change>

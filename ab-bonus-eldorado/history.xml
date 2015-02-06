@@ -1,5 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="9" date="2015-02-06">
+	- Исправлено описание.
+	</change>
 	<change version="7" date="2014-03-11">
 	- Поддержка изменений в процедуре входа.
 	</change>

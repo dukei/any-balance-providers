@@ -1,5 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="1.3" version="34" date="2015-02-06">
+	- DJUICE закрыт. Все пользователи переведены на Киевстар. Установите провайдер Киевстар.
+	</change>
 
 <change major_version="1.3" version="33" date="2014-03-27">
 - Сообщение о закрытии Djuice.

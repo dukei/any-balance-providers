@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id major_version="1.3" version="33">ab-cell-djuice</id>
+	<id major_version="1.3" version="34">ab-cell-djuice</id>
 	<name>Djuice</name>
 	<description html="true"><![CDATA[
 	<p>DJUICE закрыт. Все пользователи переведены на Киевстар. Установите провайдер Киевстар.</p>

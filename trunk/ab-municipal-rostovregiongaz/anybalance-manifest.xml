@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-municipal-rostovregiongaz</id>
+	<api flags="no_browser"/>
+	<name>Газпром межрегионгаз Ростов-на-Дону</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о данных по лицевому счету от провайдера Газпром межрегионгаз Ростов-на-Дону <a href="http://www.rostovregiongaz.ru/">http://www.rostovregiongaz.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="http://www.rostovregiongaz.ru/auth/index.php">http://www.rostovregiongaz.ru/auth/index.php</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Задолженность" units=" р"/>
+		<counter id="advance" name="Аванс" units=" р"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="acc_num" name="Номер лицевого счета" type="text"/>
+		<counter id="address" name="Адрес установки оборудования" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>municipal</type>
+	<country>ru</country>
+</provider>

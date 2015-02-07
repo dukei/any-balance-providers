@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="2">ab-internet-lofisnet</id>
+  <name>ООО ЛОИС-нэт (Долгопрудный)</name>
+  <description>
+     Получает статистику из личного кабинета провайдера ЛОИС-нэт г. Долгопрудный (http://lofisnet.ru)
+  </description>
+  <author>Khimik &lt;admin@lofisnet.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units=" р"/>
+	<counter id="monthly_fee" name="Ежемесячная плата" units=" р"/>
+	<counter id="fio" name="ФИО" type="text"/>
+	<counter id="account" name="Лицевой счет" type="text"/>
+  </counters>
+  <keywords>
+
+  </keywords>
+  <type>
+    internet
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

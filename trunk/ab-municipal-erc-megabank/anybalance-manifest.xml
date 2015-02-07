@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="9">ab-municipal-erc-megabank</id>
+  <id major_version="1.0" version="10">ab-municipal-erc-megabank</id>
   <name>ЕРЦ Мегабанк</name>
   <description>
     Единый расчетный центр "Мегабанка" – банковский продукт по оплате жилищно-коммунальных услуг, который разработан и внедрен в Харькове, Кировограде, Полтаве, Чернигове, Черкассах, Новой Каховке Херсонской области, Львове, Донецке, Борисполе. Идет работа по внедрению технологии ЕРЦ в Симферополе и Феодосии (АР Крым). Через систему ЕРЦ "Мегабанка" оплачивают коммунальные услуги более 12% всех плательщиков Украины.
@@ -14,6 +14,7 @@
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
     <js>main.js</js>
+    <js>library.js</js>
     <history>history.xml</history>
   </files>
   <counters>

@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change major_version="1.0" version="10" date="2015-02-07">
+      Исправлено необнуление счетчика в новом месяце.
+    </change>
     <change major_version="1.0" version="9" date="2013-02-16">
       Исправлена ошибка входа с кириллическим логином.
       Добавлен новый счетчик (Воля).

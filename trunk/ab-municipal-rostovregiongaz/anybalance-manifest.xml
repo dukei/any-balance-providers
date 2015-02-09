@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-municipal-rostovregiongaz</id>
+	<id version="2">ab-municipal-rostovregiongaz</id>
 	<api flags="no_browser"/>
 	<name>Газпром межрегионгаз Ростов-на-Дону</name>
 	<description html="true"><![CDATA[

@@ -15,7 +15,7 @@ function main() {
 	var baseurl = 'http://www.rostovregiongaz.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
-	checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(prefs.acc_num, 'Введите номер счета!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
 	var html = AnyBalance.requestGet(baseurl + 'lk/', g_headers);
@@ -29,11 +29,9 @@ function main() {
         'backurl': '/lk/index.php',
         'AUTH_FORM': 'Y',
         'TYPE': 'AUTH',
-        'USER_LOGIN': prefs.login,
+        'USER_LOGIN': prefs.acc_num,
         'USER_PASSWORD': prefs.password
 	}, addHeaders({Referer: baseurl + 'lk/', 'X-Requested-With': 'XMLHttpRequest'}));
-	
-    // var json = getJson(html);
         
 	if (html != 'Y') {
 		var error = getParam(html, null, null, null, replaceTagsAndSpaces, html_entity_decode);

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1"></id>
+	<id version="1">ab-telephony-callbackhunter</id>
 	<api flags="no_browser"/>
 	<name>CallbackHunter</name>
 	<description html="true"><![CDATA[

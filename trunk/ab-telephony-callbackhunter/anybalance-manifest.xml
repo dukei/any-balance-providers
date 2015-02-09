@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1"></id>
+	<api flags="no_browser"/>
+	<name>CallbackHunter</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера CallbackHunter (http://callbackhunter.com/)</p>
+	<p>Информация берется из личного кабинета (http://callbackhunter.com/cabinet_new/)</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Если у вас нет доступа в Личный кабинет, получите его на странице (http://callbackhunter.com/)</p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="user_id" name="ID пользователя" type="text"/>
+		<counter id="minutes_left" name="Количество оставшихся минут" units=" мин"/>
+		<counter id="last_calls" name="Последние 5 звонков" type="html"/>
+	</counters>
+	<keywords></keywords>
+	<type>telephony</type>
+	<country>ru</country>
+</provider>

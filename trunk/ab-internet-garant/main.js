@@ -52,6 +52,8 @@ function main() {
 	getParam(html, result, 'fio', /Ф\.И\.О\.(?:[^>]*>){4}[^>]*value="([^"]*)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'status', /Статус(?:[^>]*>){4}[^>]*value="([^"]*)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, '__tariff', /Тарифный план(?:[^>]*>){4}[^>]*value="([^"]*)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'promised', /Обещанный платеж(?:[^>]*>){4}[^>]*value="([^"]*)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'traffic', /Бонусный трафик(?:[^>]*>){4}[^>]*value="([^"]*)/i, replaceTagsAndSpaces, parseBalance);
 
 	AnyBalance.setResult(result);
 }

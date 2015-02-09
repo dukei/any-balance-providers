@@ -60,8 +60,9 @@ function main() {
 	getParam(json.Credentials.balanses[0].Balans, result, 'balance', null, null, parseBalance);
     
     var today = new Date();
-    to_date = today.getDate() + '.' + today.getMonth()+1 + '.' + today.getFullYear();
-    from_date = today.getMonth()+1 + '.' + today.getFullYear();
+    to_month = today.getMonth() + 1;
+    to_date = today.getDate() + '.' + to_month + '.' + today.getFullYear();
+    from_date = to_month + '.' + today.getFullYear();
     AnyBalance.trace(from_date);
     AnyBalance.trace(to_date);
     

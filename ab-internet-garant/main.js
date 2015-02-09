@@ -38,8 +38,8 @@ function main() {
 	}, addHeaders({Referer: baseurl + ''}));
 
 	if (!/exit\.php/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
-		if (error && /Неверный логин или пароль/i.test(error))
+		var error = getParam(html, null, null, /<font color="red"[^>]*>([\s\S]*?)<\/div/i, replaceTagsAndSpaces, html_entity_decode);
+		if (error && /неверное имя или пароль/i.test(error))
 			throw new AnyBalance.Error(error, null, true);
 		if (error)
 			throw new AnyBalance.Error(error);
@@ -47,11 +47,11 @@ function main() {
 	}
 	var result = {success: true};
 	
-	getParam(html, result, 'acc_num', /Лицевой счет(?:[^>]*>){3}[^>]*value="([^"]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'fio', /Ф\.И\.О\.(?:[^>]*>){3}[^>]*value="([^"]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'status', /Статус(?:[^>]*>){3}[^>]*value="([^"]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, '__tariff', /Тарифный план(?:[^>]*>){3}[^>]*value="([^"]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'balance', /Остаток на счету(?:[^>]*>){3}[^>]*value="([^"]*)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance', /Остаток на счету(?:[^>]*>){6}[^>]*value="([^"]*)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'acc_num', /Лицевой счет(?:[^>]*>){6}[^>]*value="([^"]*)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'fio', /Ф\.И\.О\.(?:[^>]*>){4}[^>]*value="([^"]*)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'status', /Статус(?:[^>]*>){4}[^>]*value="([^"]*)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, '__tariff', /Тарифный план(?:[^>]*>){4}[^>]*value="([^"]*)/i, replaceTagsAndSpaces, html_entity_decode);
 
 	AnyBalance.setResult(result);
 }

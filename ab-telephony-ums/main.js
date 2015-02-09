@@ -15,7 +15,7 @@ function main() {
 	var baseurl = 'https://ip.ums.uz/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
-	checkEmpty(prefs.login, 'Введите номер!');
+	checkEmpty(prefs.login, 'Введите номер телефона, без кода!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
 	var html = AnyBalance.requestGet(baseurl + 'selfcare/', g_headers);
@@ -53,10 +53,13 @@ function main() {
 	getParam(html, result, 'acc', /Лицевой счет:(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'status', /lock-status(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
     
-    html = AnyBalance.requestGet(baseurl + 'selfcare/account-status.aspx', g_headers);
-    
-	getParam(html, result, 'traffic', /У Вас осталось([\s\S]*?)mb/g, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'minutes', /Осталось([\s\S]*?)минут/g, replaceTagsAndSpaces, parseBalance);  
+	if(isAvailable(['traffic', 'minutes', 'sms'])) {
+		html = AnyBalance.requestGet(baseurl + 'selfcare/account-status.aspx', g_headers);
+		
+		getParam(html, result, 'traffic', /У Вас осталось([\s\S]*?)mb/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'minutes', /Осталось([^<]+)минут/i, replaceTagsAndSpaces, parseBalance);  
+		getParam(html, result, 'sms', /Осталось([^<]+)(?:смс|sms)/i, replaceTagsAndSpaces, parseBalance);  
+	}
 	
 	AnyBalance.setResult(result);
 }

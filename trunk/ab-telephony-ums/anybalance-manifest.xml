@@ -1,13 +1,13 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-telephony-ums</id>
+	<id version="2">ab-telephony-ums</id>
 	<api flags="no_browser"/>
-	<name>UMS</name>
+	<name>UMS (Узбекистан)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе провайдера UMS <a href="http://ums.uz/ru/">http://ums.uz/</a></p>
 	<p>Информация берется из личного кабинета <a href="https://ip.ums.uz/selfcare/">https://ip.ums.uz/selfcare/</a></p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
@@ -19,12 +19,13 @@
 		<counter id="balance" name="Баланс" units=" {@currency}"/>
 		<counter id="traffic" name="Остаток трафика" units=" Mb"/>
 		<counter id="minutes" name="Остаток минут" units=" мин"/>
+		<counter id="sms" name="Остаток смс" units=" смс"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="status" name="Статус" type="text"/>
 		<counter id="phone" name="Номер" type="text"/>
 		<counter id="acc" name="Лицевой счет" type="text"/>
 	</counters>
 	<keywords></keywords>
-	<type>telephony</type>
+	<type>telephony, cell</type>
 	<country>uz</country>
 </provider>

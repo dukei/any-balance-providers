@@ -57,6 +57,7 @@ function main() {
 		html = AnyBalance.requestGet(baseurl + 'selfcare/account-status.aspx', g_headers);
 		
 		getParam(html, result, 'traffic', /У Вас осталось([\s\S]*?)mb/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'traffic2', /У Вас осталось([^<]+)mb[^<]+Действует до/i, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, 'minutes', /Осталось([^<]+)минут/i, replaceTagsAndSpaces, parseBalance);  
 		getParam(html, result, 'sms', /Осталось([^<]+)(?:смс|sms)/i, replaceTagsAndSpaces, parseBalance);  
 	}

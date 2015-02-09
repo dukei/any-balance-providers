@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-money-fidomarket</id>
+	<id version="2">ab-money-fidomarket</id>
 	<api flags="no_browser"/>
 	<name>Fidomarket</name>
 	<description html="true"><![CDATA[
@@ -20,6 +20,6 @@
 		<counter id="acc_num" name="Номер счета" type="text"/>
 	</counters>
 	<keywords></keywords>
-	<type>money</type>
+	<type>money, bank</type>
 	<country>ua</country>
 </provider>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-service-obrkarta</id>
+	<api flags="no_browser"/>
+	<name>Образовательная карта</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера "Образовательная карта" <a href="http://obrkarta.ru/">http://obrkarta.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="http://obrkarta.ru/auth/">http://obrkarta.ru/auth/</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="overdraft_limit" name="Лимит овердрафта" units=" р"/>
+		<counter id="expense_limit" name="Лимит расходов в день" units=" р"/>
+		<counter id="without_card" name="Текущее количество покупок без предъявления карты"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="status" name="Состояние договора" type="text"/>
+		<counter id="acc" name="Номер лицевого счета" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>service</type>
+	<country>ru</country>
+</provider>

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-telephony-ums</id>
+	<id version="3">ab-telephony-ums</id>
 	<api flags="no_browser"/>
 	<name>UMS (Узбекистан)</name>
 	<description html="true"><![CDATA[
@@ -18,6 +18,7 @@
 	<counters>
 		<counter id="balance" name="Баланс" units=" {@currency}"/>
 		<counter id="traffic" name="Остаток трафика" units=" Mb"/>
+		<counter id="traffic2" name="Остаток трафика 2" units=" Mb"/>
 		<counter id="minutes" name="Остаток минут" units=" мин"/>
 		<counter id="sms" name="Остаток смс" units=" смс"/>
 		<counter id="fio" name="ФИО" type="text"/>

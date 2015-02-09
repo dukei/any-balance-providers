@@ -30,7 +30,7 @@ function main() {
 	}
 	
 	// Первая авторизация. Если  сохранить куки, то не должно просить ввод смс кода
-	if(!/href="\/c\/portal\/logout"/i) {
+	if(!/href="\/c\/portal\/logout"/i.test(html)) {
 		AnyBalance.trace('Нужен код и авторизация...');
 		
 		html = AnyBalance.requestPost(baseurl + 'home-page?p_p_id=loginportlet_WAR_fidoportlet&p_p_lifecycle=2&p_p_state=normal&p_p_mode=view&p_p_resource_id=processRegistrationUrl&p_p_cacheability=cacheLevelPage', {

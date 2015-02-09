@@ -63,23 +63,28 @@ function main() {
 		}, addHeaders({Referer: url, 'X-Requested-With': 'XMLHttpRequest'}));
 	}
 	
-	var table = getParam(html, null, null, /<table[^>]*class="list[\s\S]*?<\/table>/i);
-	var result = {success: true, all:''};
-	if(table) {
-		getParam(html, result, 'balance', /Найдено([^\/]*)/i, replaceTagsAndSpaces, parseBalance);
-		var rows = sumParam(table, null, null, /<tr[^>]*>\s*<td[^>]*>([\s\S]*?)<\/tr>/ig, replaceTagsAndSpaces, html_entity_decode);
-		for(i = 0; i < rows.length; i++) {
-			result.all += rows[i] + '\n\n';
-		}
-		result.all = result.all.replace(/^\s+|\s+$/g, '');
+	var result = {success: true};
+	
+	getParam(html, result, 'balance', /(Найдено[\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, null, null, /<table[^>]*class="list[\s\S]*?<\/table>/i, null, function(table) {
+		// Сводка в html
 		sumParam(table, result, 'sum', /[\d\s-.,]{3,}\s*руб/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-	} else {
-		var err = getParam(html, null, null, /class="empty"[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
-		if(!err)
-			err = "Не найдено информации...";
+		
+		var rows = sumParam(table, null, null, /(<tr[^>]*>[\s\S]*?<\/tr>)/ig);
+		var all = [];
+		for(i = 0; i < rows.length; i++) {
+			var curRow = rows[i];
 
-		result.all = err;
-	}
+			// var name = getParam(curRow, null, null, /<td>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+			var order = getParam(curRow, null, null, /(?:[\s\S]*?<td>){2}([^<]+)/i, replaceTagsAndSpaces);
+			// var order = getParam(curRow, null, null, /(?:[\s\S]*?<td>){3}([^<]+)/i, replaceTagsAndSpaces);
+			var ammount = getParam(curRow, null, null, /(?:[\s\S]*?<td>){4}([^<]+)/i, replaceTagsAndSpaces);
+			
+			if(order && ammount)
+				all.push('<b>' + order + ':</b> ' + ammount);
+		}
+		getParam(all.join('<br/><br/>'), result, 'all');
+	});
 	
     AnyBalance.setResult(result);
 }

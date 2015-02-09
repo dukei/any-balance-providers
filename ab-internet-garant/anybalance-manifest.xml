@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-internet-garant</id>
+	<id version="3">ab-internet-garant</id>
 	<api flags="no_browser|captcha"/>
 	<name>Гарант (Беларусь)</name>
 	<description html="true"><![CDATA[
@@ -20,6 +20,8 @@
 		<counter id="acc_num" name="Лицевой счет" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="status" name="Статус" type="text"/>
+		<counter id="promised" name="Обещанный платеж"/>
+		<counter id="traffic" name="Бонусный трафик"/>
 	</counters>
 	<keywords></keywords>
 	<type>internet, telephony</type>

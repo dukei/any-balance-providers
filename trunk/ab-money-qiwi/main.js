@@ -3,7 +3,7 @@
 */
 
 function jsonp (obj) {
-  return obj;
+	return obj;
 }
 
 var g_headers = {

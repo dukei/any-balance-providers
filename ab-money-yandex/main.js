@@ -14,21 +14,24 @@ function main() {
 	var prefs = AnyBalance.getPreferences();
 	checkEmpty(prefs.login, 'Введите логин в Яндекс.Деньги!');
 	checkEmpty(prefs.password, 'Введите пароль, используемый для входа в систему Яндекс.Деньги. Не платежный пароль, а именно пароль для входа!');
-
+	
 	AnyBalance.setDefaultCharset('UTF-8');
-
+	
 	var baseurl = 'https://money.yandex.ru/';
 	
 	var html = AnyBalance.requestGet("https://passport.yandex.ru", g_headers);
-	if (!prefs.__dbg) {
-		try {
-			html = loginYandex(prefs.login, prefs.password, html, baseurl + 'index.xml', 'money');
-		} catch(e) {
-			// Нужно для отладчика
-			AnyBalance.trace('Error in loginYandex ' + e.message);
-			html = AnyBalance.requestGet(baseurl, g_headers);
-		}
-	}
+	
+	html = loginYandex(prefs.login, prefs.password, html, baseurl + 'index.xml', 'money');
+	// Теперь не нужен этот блок, т.к. он не выбрасывает нужную ошибку 
+	// if (!prefs.__dbg) {
+		// try {
+				// html = loginYandex(prefs.login, prefs.password, html, baseurl + 'index.xml', 'money');
+		// } catch(e) {
+			// // Нужно для отладчика
+			// AnyBalance.trace('Error in loginYandex ' + e.message);
+			// html = AnyBalance.requestGet(baseurl, g_headers);
+		// }
+	// }
 	if (!/user__logout/i.test(html))
 		throw new AnyBalance.Error("Не удалось зайти. Проверьте логин и пароль.");
 	
@@ -37,20 +40,21 @@ function main() {
 	getParam(html, result, '__tariff', /Номер кошелька(?:[^>]*>){2}(\d{10,20})/i, replaceTagsAndSpaces);
 	getParam(result['__tariff'], result, 'number');
 	
-	if(/data-is-sum-visible\s*=\s*"false"/i.test(html)){
+	if(/sum__amount[^>]*>\s*\*{3}/i.test(html)) {
 	    AnyBalance.trace('Сумма спрятана. Будем пытаться найти...');
-		var sk = getParam(html, null, null, /data-account-secret-key\s*=\s*"([^"]*)/i, replaceTagsAndSpaces);
+		var text = AnyBalance.requestGet(baseurl + "tunes.xml", g_headers);
+		var sk = getParam(text, null, null, /name="sk"[^>]*value="([^"]+)/i, replaceTagsAndSpaces);
 		if(!sk){
 			AnyBalance.trace(html);
-			throw new AnyBalanceError('Не удаётся найти ключ для получения баланса! Сайт изменен?');
+			throw new AnyBalance.Error('Не удаётся найти ключ для получения баланса! Сайт изменен?');
 		}
-		var text = AnyBalance.requestGet(baseurl + "/internal/index-ajax.xml?action=updateSumVisibility&sk=" + sk + "&showSum=1", addHeaders({Referer: baseurl, 'X-Requested-With':'XMLHttpRequest'}));
+		
+		text = AnyBalance.requestGet(baseurl + "internal/index-ajax.xml?action=updateSumVisibility&sk=" + sk + "&showSum=1", addHeaders({Referer: baseurl, 'X-Requested-With':'XMLHttpRequest'}));
 		var json = getJson(text);
-	    getParam('' + json.sum, result, 'balance', null, null, parseBalanceRK);
-	}else{
+	    getParam('' + json.sum, result, 'balance', null, null, parseBalance);
+	} else {
 	    getParam(html, result, 'balance', /balance[^>]*button(?:[^>]*>){3}[^>]*amount[^>]*>([\s\S]*?)<d/i, replaceTagsAndSpaces, parseBalance);
 	}
-
 	
 	AnyBalance.setResult(result);
 }

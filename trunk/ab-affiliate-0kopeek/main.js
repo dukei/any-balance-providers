@@ -49,5 +49,20 @@ function main() {
 	getParam(html, result, 'fio', /Здравствуйте,(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'user_id', /Ваш ID:(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
 	
+    var table = getParam(html, null, null, /table class="referral-program-table"([\s\S]*?)<\/table>/i);
+    var trs = sumParam(table, null, null, /<tr>\s*?<td>[\s\S]*?<\/tr>/ig);
+    
+	if (AnyBalance.isAvailable('fulltext')) {
+        var res = [];
+        for (var i = 0; i < trs.length; i++) {       
+            var refer = getParam(trs[i], null, null, /<td>[\s\S]*?<\/td>{1}/i, replaceTagsAndSpaces, html_entity_decode);
+            var people = getParam(trs[i], null, null, /<td>([^>]*>){3}/i, replaceTagsAndSpaces, html_entity_decode);
+            var reward = getParam(trs[i], null, null, /<td>([^>]*>){5}/i, replaceTagsAndSpaces, html_entity_decode);
+            var money = getParam(trs[i], null, null, /<td>([^>]*>){7}/i, replaceTagsAndSpaces, html_entity_decode);
+            res.push('<b>' + refer + ':</b> ' + 'Привлечено ' + people + ' Вознаграждение ' + reward + '. Заработано ' + money);
+        }
+        result.fulltext = res.join('<br/>');
+	}
+    
 	AnyBalance.setResult(result);
 }

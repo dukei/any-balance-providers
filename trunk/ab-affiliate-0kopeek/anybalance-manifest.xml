@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-affiliate-0kopeek</id>
+	<id version="2">ab-affiliate-0kopeek</id>
 	<api flags="no_browser"/>
 	<name>0kopeek.ru</name>
 	<description html="true"><![CDATA[
@@ -17,11 +17,12 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
-		<counter id="paid" name="Баланс" units=" р"/>
+		<counter id="paid" name="Выплачено" units=" р"/>
 		<counter id="earned" name="Заработано" units=" р"/>
 		<counter id="not_paid" name="Ещё не выплачено" units=" р"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="user_id" name="Ваш ID" type="text"/>
+		<counter id="fulltext" name="Реферальная программа" type="html"/>
 	</counters>
 	<keywords></keywords>
 	<type>affiliate</type>

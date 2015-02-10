@@ -21,4 +21,14 @@
 		dialogMessage="Введите пароль, используемый для входа в личный кабинет."
 		inputType="textPassword">
 	</EditTextPreference>
+	<EditTextPreference
+		positiveButtonText="ОК"
+		key="accnum"
+		dialogTitle="Номер договора"
+		negativeButtonText="Отмена"
+		title="Номер договора"
+		summary="Номер договора|Автоматически\n|{@s}\n"
+		dialogMessage="Введите номер договора, по которому вы хотите получить информацию. Если это поле оставить пустым, то будет показана информация по первому договору."
+		inputType="number">
+	</EditTextPreference>
 </PreferenceScreen>

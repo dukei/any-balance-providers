@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-telephony-acbt</id>
+	<id version="2">ab-telephony-acbt</id>
 	<api flags="no_browser"/>
 	<name>ACBT</name>
 	<description html="true"><![CDATA[
@@ -18,12 +18,13 @@
 	<counters>
 		<counter id="balance" name="Текущий баланс" units=" р"/>
 		<counter id="fio" name="Абонент" type="text"/>
+		<counter id="type" name="Тип объекта договора" type="text"/>
 		<counter id="recommended" name="Рекомендуемая сумма платежа" units=" р"/>
 		<counter id="account" name="Договор № " type="text"/>
-		<counter id="phone" name="Внутренний идентификатор" type="text"/>
+		<counter id="inner_id" name="Внутренний идентификатор" type="text"/>
 		<counter id="state" name="Состояние" type="text"/>
 	</counters>
 	<keywords></keywords>
-	<type>telephony</type>
+	<type>telephony, tv, internet</type>
 	<country>ru</country>
 </provider>

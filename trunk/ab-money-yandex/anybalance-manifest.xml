@@ -1,18 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="13">ab-money-yandex</id>
+	<id version="14">ab-money-yandex</id>
 	<api flags="no_browser" />
 	<name>Яндекс.Деньги</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о текущем остатке и номере счета в "Яндекс.деньги".</p>
+	<p>Предоставляет информацию о текущем остатке и номере счета в "Яндекс.Деньги".</p>
+	<p>Информация берется из личного кабинета <a href="https://money.yandex.ru/">https://money.yandex.ru/</a></p>
 	]]></description>
 	<instruction html="true"><![CDATA[
 	<p>Настройки подключения:</p>
 	<ul>
-	<li>Для работы провайдера требуется ввести пароль только для входа. ОБРАТИТЕ ВНИМАНИЕ на то, что платежный пароль вводить не надо.</li>
+		<li>Для работы провайдера требуется ввести пароль только для входа. ОБРАТИТЕ ВНИМАНИЕ на то, что платежный пароль вводить не надо.</li>
 	</ul>
 	]]></instruction>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
@@ -21,7 +22,7 @@
 		<js>main.js</js>
 	</files>
 	<counters>
-		<counter id="balance" name="Остаток" units="р"/>
+		<counter id="balance" name="Остаток" units=" р"/>
 		<counter id="number" name="Номер счета" type="text"/>
 	</counters>
 	<keywords>яндекс-деньги, yandex money</keywords>

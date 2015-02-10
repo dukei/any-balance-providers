@@ -139,6 +139,7 @@ function mainNew () {
 		i++
 	}
 	
+	getParam(res.data.person, result, '__tariff');
 	getParam(res.data.messages, result, 'messages');
 	getParam(res.data.unpaidOrderCount, result, 'bills');
 	

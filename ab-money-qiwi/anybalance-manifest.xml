@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2.3" version="24">ab-money-qiwi</id>
+	<id major_version="2.3" version="25">ab-money-qiwi</id>
 	<api flags="no_browser"/>
 	<name>QIWI Кошелек</name>
 	<description html="true"><![CDATA[

@@ -79,13 +79,15 @@ function main(){
 				throw new AnyBalance.Error(error);
 			throw new AnyBalance.Error('Сайт временно недоступен. Пожалуйста, попробуйте ещё раз позднее.');
 		}
-			
+		AnyBalance.trace(html);
 		throw new AnyBalance.Error(velcomOddPeople);
     }
     
     var form = getParam(html, null, null, /(<form[^>]*name="mainForm"[^>]*>[\s\S]*?<\/form>)/i);
-    if(!form)
+    if(!form){
+		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось найти форму входа, похоже, velcom её спрятал. Обратитесь к автору провайдера.');
+    }
 	
 	var params = createFormParams(form, function(params, str, name, value) {
 		var id=getParam(str, null, null, /\bid="([^"]*)/i, null, html_entity_decode);
@@ -124,14 +126,17 @@ function main(){
 		html = requestPostMultipart(baseurl + 'work.html', params, addHeaders({Referer: baseurl}));
 	} catch(e) {
 		AnyBalance.trace('Error executing multipart request: ' + e.message);
-		if(/Read error|failed to respond/i.test(e.message))
-			throw new AnyBalance.Error(velcomOddPeople);
-		else
+		if(/Read error|failed to respond/i.test(e.message)){
+			AnyBalance.trace(html);
+			throw new AnyBalance.Error(velcomOddPeople + '!');
+		}else{
 			throw new AnyBalance.Error(e.message);
+		}
 	}
 	
 	if(AnyBalance.getLastStatusCode() >= 400) {
-		throw new AnyBalance.Error(velcomOddPeople);
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error(velcomOddPeople + '!!');
 	}
 
     var kabinetType, personalInfo;

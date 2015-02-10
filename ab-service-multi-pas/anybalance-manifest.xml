@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-service-multi-pas</id>
+	<api flags="no_browser"/>
+	<name>Мультипас</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Мультипас <a href="http://multi-pas.ru/">http://multi-pas.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="http://multi-pas.ru/personal/">http://multi-pas.ru/personal/</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="school" name="Школа" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>service</type>
+	<country>ru</country>
+</provider>

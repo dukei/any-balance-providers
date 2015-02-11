@@ -47,7 +47,7 @@ function main(){
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'balance', /"current_points"[^>]*>\s*(\d+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'points', /"current_points"[^>]*>\s*(\d+)/i, replaceTagsAndSpaces, parseBalance);
 	
 	AnyBalance.setResult(result);
 }

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference
+		title="Логин ЛК"
+		key="login"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Логин ЛК"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите логин (номер договора), используемый для входа в личный кабинет на сайте http://bill.prometeyhome.ru&#xD;&#xA;Например, 71234.">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Пароль ЛК"
+		key="password"
+		summary="||***********"
+		obligatory="true"
+		dialogTitle="Пароль ЛК"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите пароль, используемый для входа в личный кабинет."
+		inputType="textPassword">
+	</EditTextPreference>
+</PreferenceScreen>

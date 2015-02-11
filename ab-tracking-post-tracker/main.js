@@ -50,9 +50,9 @@ function main() {
 			var status = getParam(tracks[i], null, null, /class="status"([^>]*>){2}/i, replaceTagsAndSpaces);
 			var date = getParam(tracks[i], null, null, /class="date"([^>]*>){2}/i, replaceTagsAndSpaces);
 			
-			totalText += '<b>' + code + ':</b></br>' + date + ' - ' + status + '</br></br>';
+			totalText += '<b>' + code + ':</b><br>' + date + ' - ' + status + '<br><br>';
 		}
-		getParam(totalText, result, 'all', null, [/<\/br><\/br>$/i, '']);
+		getParam(totalText, result, 'all', null, [/<br><br>$/i, '']);
 	}
 	
 	AnyBalance.setResult(result);

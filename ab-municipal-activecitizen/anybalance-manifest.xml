@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id major_version="1.0" version="2">ab-municipal-activecitizen</id>
+	<id major_version="1.0" version="3">ab-municipal-activecitizen</id>
 	<name>Активный гражданин</name>
 	<description html="true"><![CDATA[
 	<p>Получает текущее количество баллов из личного кабинета <a href="http://ag.mos.ru/">http://ag.mos.ru/</a></p>

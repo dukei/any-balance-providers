@@ -1,10 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="ab-bonus-coffeelife"></id>
+	<id version="2">ab-bonus-coffeelife</id>
 	<api flags="no_browser"/>
 	<name>CoffeeLife</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе и бонусах украинской сети кофеен CoffeeLife (https://coffeelife.com.ua/)</p>
+	<p>Предоставляет информацию о балансе и бонусах Украинской сети кофеен CoffeeLife (https://coffeelife.com.ua/)</p>
 	<p>Информация берется из личного кабинета (https://coffeelife.com.ua/usercabinet)</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
@@ -24,5 +24,5 @@
 	</counters>
 	<keywords></keywords>
 	<type>bonus</type>
-	<country>ru</country>
+	<country>ua</country>
 </provider>

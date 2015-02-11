@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-lk-smolensk</id>
+	<api flags="no_browser"/>
+	<name>Домашний Интернет и Телевидение МТС (Смоленск)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера "Домашний Интернет и Телевидение МТС (Смоленск)" <a href="http://www.smolensk.mts.ru/mobil_inet_and_tv/">http://www.smolensk.mts.ru/mobil_inet_and_tv/</a></p>
+	<p>Информация берется из личного кабинета <a href="http://www.smolensk.mts.ru/dom/">http://www.smolensk.mts.ru/dom/</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="status" name="Состояние" type="text"/>
+		<counter id="acc_num" name="Номер договора" type="text"/>
+		<counter id="abon_payment" name="Абонентская плата" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet, tv</type>
+	<country>ru</country>
+</provider>

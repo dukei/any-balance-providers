@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-municipal-zkh-kraskovo</id>
+	<id version="2">ab-municipal-zkh-kraskovo</id>
 	<api flags="no_browser"/>
 	<name>ЖКХ Красково</name>
 	<description html="true"><![CDATA[
@@ -16,7 +16,8 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="balance" name="Долг" units=" р"/>
+		<counter id="sum" name="Начисления" units=" р"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="acc_num" name="Лицевой счет" type="text"/>
 	</counters>

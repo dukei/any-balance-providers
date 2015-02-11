@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="ab-bonus-coffeelife"></id>
+	<api flags="no_browser"/>
+	<name>CoffeeLife</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе и бонусах украинской сети кофеен CoffeeLife (https://coffeelife.com.ua/)</p>
+	<p>Информация берется из личного кабинета (https://coffeelife.com.ua/usercabinet)</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Если у вас нет доступа в Личный кабинет, получите его на странице (https://coffeelife.com.ua/)</p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" грн"/>
+		<counter id="bonus" name="Бонусы" units=" грн"/>
+	</counters>
+	<keywords></keywords>
+	<type>bonus</type>
+	<country>ru</country>
+</provider>

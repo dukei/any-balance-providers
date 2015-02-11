@@ -52,7 +52,7 @@ function main() {
 			for(var i = 0; i < json.enabledPacks.length; i++) {
 				var current = json.enabledPacks[i];
 				
-				if(/internet/i.test(current.serviceUrl)) {
+				if(/internet/i.test(current.serviceUrl) || /интернет/i.test(current.localizedName)) {
 					getParam(current.packInfoDto.bytes + 'bytes', result, 'internet', null, replaceTagsAndSpaces, parseTraffic);
 				}
 			}

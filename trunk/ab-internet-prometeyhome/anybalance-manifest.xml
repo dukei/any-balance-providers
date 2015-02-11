@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<api flags="no_browser"/>
+	<id version="1">ab-internet-prometeyhome</id>
+	<name>Prometey home</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Prometey home <a href="http://prometeyhome.ru/">http://prometeyhome.ru</a> в г. Санкт-Петербург и области.</p>
+	<p>Информация берется из личного кабинета абонента <a href="http://bill.prometeyhome.ru">http://bill.prometeyhome.ru</a></p>
+	]]></description>
+	<author>Ilya Molchanov &lt;kakoo@yandex.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="access" name="Интернет-доступ" type="text"/>
+		<counter id="fee" name="Абонентская плата" units=" р/мес"/>
+		<counter id="ip" name="IP-адрес" type="text"/>
+	</counters>
+	<keywords>prometey,прометей,хоум,home,ptspb</keywords>
+	<type>internet,tv</type>
+	<country>ru</country>
+</provider>

@@ -1663,6 +1663,9 @@ function megafonLkAPI() {
 	    }
  
 	    if(json.code == 'a211'){ //Капча
+		if(!((prefs.$$startReason$$ || 0)&0xFF)){
+			throw new AnyBalance.Error('Сейчас автоматическое обновление. Показываем капчу в мегафоне только при ручном обновлении!');
+		}
 	        var capchaImg = AnyBalance.requestGet(g_baseurl + 'auth/captcha', g_api_headers);
 	        var captcha = AnyBalance.retrieveCode('Мегафон иногда требует подтвердить, что вы не робот. Сейчас как раз такой случай. Если вы введете цифры с картинки, то мы сможем получить какую-то информацию помимо баланса. В противном случае получим только баланс.\n\nВы можете отключить показ капчи совсем или только ночью в настройках провайдера.', capchaImg);
 			json = callAPI('post', 'login', {

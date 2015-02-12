@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-telephony-acbt</id>
+	<id version="3">ab-telephony-acbt</id>
 	<api flags="no_browser"/>
 	<name>ACBT</name>
 	<description html="true"><![CDATA[

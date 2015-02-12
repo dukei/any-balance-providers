@@ -46,24 +46,30 @@ function main() {
     
     html = AnyBalance.requestGet(baseurl + 'billing/!w3_p_main.showform' + menu, g_headers);
     
-    if(prefs.accnum && !/^\d{5}$/.test(prefs.accnum))
-        throw new AnyBalance.Error("Введите номер договора или не вводите ничего, чтобы показать информацию по первому договору");
+	if(prefs.accnum) {
+		if(!/^\d{5}$/.test(prefs.accnum))
+			throw new AnyBalance.Error("Введите номер договора или не вводите ничего, чтобы показать информацию по первому договору");	
+		
+		var href = getParam(html, null, null, new RegExp("javascript:Click\\('R!C\\d*?!','\\?FORMNAME=\\S*?&CONTR_ID=\\d*?&SID=\\S*?&NLS=WR','data'\\)\">Договор\\s" + (prefs.accnum || "\\d+") + "</a>", 'i'), replaceTagsAndSpaces);
+		
+		if(!href) {
+			AnyBalance.trace(href);
+			throw new AnyBalance.Error("Не удалось найти " + (prefs.accnum ? ' номер договора ' + prefs.accnum : 'ни одного договора!'));        
+		}
+		var formname = getParam(href, null, null, /FORMNAME=([\s\S]*?)&/i);
+		var contr_id = getParam(href, null, null, /CONTR_ID=([\s\S]*?)&/i);
+		var sid = getParam(href, null, null, /SID=([\s\S]*?)&/i);
+			
+		checkEmpty(formname && contr_id && sid, 'Не удалось найти ссылку на договор, сайт изменен?', true);
+			
+		html = AnyBalance.requestPost(baseurl + 'billing/!w3_p_main.showform?FORMNAME=' + formname + '&CONTR_ID=' + contr_id + '&SID=' + sid + '&NLS=WR', {}, addHeaders({Referer: baseurl + 'billing/!w3_p_main.showform?CONFIG=CONTRACT'}));  			
+	} else {
+		var contract = getParam(html, null, null, /\?FORMNAME=QCURRACC&CONTR_ID=\d+[^"']+/i, replaceTagsAndSpaces, html_entity_decode);
+		checkEmpty(contract, 'Не удалось найти ссылку на информацию по контракту, сайт изменен?', true);
+		
+		html = AnyBalance.requestGet(baseurl + 'billing/!w3_p_main.showform'+contract, g_headers);    
+	}
 	
-    var href = getParam(html, null, null, new RegExp("javascript:Click\\('R!C\\d*?!','\\?FORMNAME=\\S*?&CONTR_ID=\\d*?&SID=\\S*?&NLS=WR','data'\\)\">Договор\\s" + (prefs.accnum || "\\d+") + "</a>", 'i'), replaceTagsAndSpaces);
-    
-    if(!href) {
-		AnyBalance.trace(href);
-		throw new AnyBalance.Error("Не удалось найти " + (prefs.accnum ? ' номер договора ' + prefs.accnum : 'ни одного договора!'));        
-    }
-	
-    var formname = getParam(href, null, null, /FORMNAME=([\s\S]*?)&/i);
-    var contr_id = getParam(href, null, null, /CONTR_ID=([\s\S]*?)&/i);
-    var sid = getParam(href, null, null, /SID=([\s\S]*?)&/i);
-    
-	checkEmpty(formname && contr_id && sid, 'Не удалось найти ссылку на договор, сайт изменен?', true);
-	
- 	html = AnyBalance.requestPost(baseurl + 'billing/!w3_p_main.showform?FORMNAME=' + formname + '&CONTR_ID=' + contr_id + '&SID=' + sid + '&NLS=WR', {}, addHeaders({Referer: baseurl + 'billing/!w3_p_main.showform?CONFIG=CONTRACT'}));  
-    
 	var result = {success: true};
     
 	getParam(html, result, 'balance', /Текущий баланс \(на(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, parseBalance);

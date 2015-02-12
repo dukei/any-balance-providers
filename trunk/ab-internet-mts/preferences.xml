@@ -25,8 +25,8 @@
         key="region" 
         title="Регион"
         summary="|Нужен для определения личного кабинета|{@s}"
-        entries="Архангельск|Амурская область|Барнаул|Балаково|Белгород|Владимир|Вологда|Волжск|Екатеринбург|Ижевск|Киров|Комсомольск-на-Амуре|Курган|Магнитогорск|Миасс|Москва|Нижний Новгород|Нижний Новгород (ТВ)|Новосибирск|Норильск|Орел|Пенза|Пермь|Ростов|Санкт-Петербург|Саратов|Северодвинск|Тула|Ульяновск|Чита|Ярославль"
-        entryValues="arkh|amur|barnaul|bal|belgorod|vladimir|vlgd|volzhsk|ekt|izh|krv|kms|kurgan|mag|miass|moscow|nnov|nnov_tv|nsk|nor|orel|pnz|prm|rostov|piter|saratov|sdv|tula|uln|chita|yar"
+        entries="Архангельск|Амурская область|Барнаул|Балаково|Белгород|Владимир|Вологда|Волжск|Екатеринбург|Ижевск|Киров|Комсомольск-на-Амуре|Курган|Магнитогорск|Миасс|Москва|Нижний Новгород|Нижний Новгород (ТВ)|Новосибирск|Норильск|Орел|Пенза|Пермь|Ростов|Санкт-Петербург|Саратов|Северодвинск|Смоленск|Тула|Ульяновск|Чита|Ярославль"
+        entryValues="arkh|amur|barnaul|bal|belgorod|vladimir|vlgd|volzhsk|ekt|izh|krv|kms|kurgan|mag|miass|moscow|nnov|nnov_tv|nsk|nor|orel|pnz|prm|rostov|piter|saratov|sdv|smolensk|tula|uln|chita|yar"
 		defaultValue="volzhsk">
     </ListPreference>
 </PreferenceScreen>

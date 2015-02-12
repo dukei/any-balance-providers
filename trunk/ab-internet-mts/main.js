@@ -36,6 +36,7 @@ var regions = {
 	barnaul: getBarnaul,
 	belgorod: getBelgorod,
 	saratov: getSaratov,
+    smolensk: getSmolensk,
 	chita: getChita,
 	amur: getAmur,
 	orel: getOrel,
@@ -545,6 +546,10 @@ function getKomsomolsk(){
 
 function getTula(){
     newTypicalLanBillingInetTv('https://lk-tula.center.mts.ru/index.php');
+}
+
+function getSmolensk(){
+    newTypicalLanBillingInetTv('https://lk-smolensk.center.mts.ru/index.php');
 }
 
 function typicalLanBillingInetTv(url) {

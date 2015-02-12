@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="85">ab-internet-mts</id>
+	<id version="86">ab-internet-mts</id>
 	<name>Домашний Интернет и Телевидение МТС</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем балансе, номере лицевого счета и договора, ФИО владельца, трафике в текущем месяце, абонентской плате для пользователей провайдера "Домашний Интернет и Телевидение МТС".</p>
@@ -36,6 +36,7 @@
 		<li>Санкт-Петербург (<a href="https://lk.spb.mts.ru/index.php">https://lk.spb.mts.ru/index.php</a>)<br></li>
 		<li>Ярославль (<a href="https://lanbilling.tensortelecom.ru/client/index.php">https://lanbilling.tensortelecom.ru/client/index.php</a>) - Стрим Ярославль<br></li>
 		<li>Волжск (<a href="https://internet.mari-el.mts.ru/index.php?r=site/login">https://internet.mari-el.mts.ru/index.php?r=site/login</a>)<br></li>
+		<li>Смоленск (<a href="https://lk-smolensk.center.mts.ru/index.php">https://lk-smolensk.center.mts.ru/index.php</a>)<br></li>
 	</ul>
 	]]></description>
 	<instruction html="true"><![CDATA[

@@ -12,28 +12,27 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://user.everbuying.com/';
+	var baseurl = 'http://www.everbuying.net/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Please, enter login!');
 	checkEmpty(prefs.password, 'Please, enter password!');
 	
 	var html = AnyBalance.requestGet(baseurl + 'm-users-a-sign.htm?ref=%2Fm-users.htm', g_headers);
-	
-	html = AnyBalance.requestPost(baseurl + 'm-users-a-act_sign.htm', {
+
+	var validation = AnyBalance.requestPost(baseurl + 'm-users-a-act_sign.htm', {
 		email: prefs.login,
 		password: prefs.password,
-	}, addHeaders({Referer: baseurl + 'm-users-a-sign.htm?ref=%2Fm-users.htm'}));
+	}, addHeaders({Referer: baseurl + 'm-users-a-sign.htm?ref=%2Fm-users.htm', 'X-Requested-With':'XMLHttpRequest'}));
 	
-	if (!/Successfully sign/i.test(html)) {
-		var error = getParam(html, null, null, /^[\w+\s,]+$/i, replaceTagsAndSpaces, html_entity_decode);
-		if (error)
-			throw new AnyBalance.Error(error, null, /sign in failed/i.test(html));
-		
+	if (!/Successfully/i.test(validation))
+		throw new AnyBalance.Error(validation, null, /email\/password is incorrect/i.test(validation));
+
+	html = AnyBalance.requestGet(baseurl + 'm-users.htm',
+		addHeaders({Referer: baseurl + 'm-users-a-sign.htm?ref=%2Fm-users.htm'}));
+	
+	if (!/My Account/i.test(html))
 		throw new AnyBalance.Error('Can`t login, is the site changed?');
-	}
-	
-	html = AnyBalance.requestGet(baseurl + 'm-users.htm', g_headers);
 	
 	var result = {success: true};
 	

@@ -499,7 +499,9 @@ function parseJson(json) {
 }
 
 function getLKJson(html, allowRetry) {
-	var json = getParam(html, null, null, /var\s+initialProfile\s*=\s*(\{[\s\S]*?\})\s*;/i);
+	var html = AnyBalance.requestGet('https://oauth.mts.ru/webapi-1.4/customers/@me', addHeaders({'Authorization': 'Bearer sso_1.0_websso_cookie'}));
+	
+	var json = getParam(html, null, null, /^\{[\s\S]*?\}$/i);
 	if (!json) {
 		AnyBalance.trace(html);
 		
@@ -546,7 +548,7 @@ function mainLK(allowRetry) {
 			
 			var json = getJson(getLKJson(html, allowRetry));
 			
-    		var loggedInMSISDN = json.Login; //getParam(html, null, null, /var\s*initialProfile = \{"(?:[\s\S]*?":"?[^,"\}]+"?,){1,15}"Login(?:[^'"]*"){2}(\d{10})/i);
+    		var loggedInMSISDN = json.id; //getParam(html, null, null, /var\s*initialProfile = \{"(?:[\s\S]*?":"?[^,"\}]+"?,){1,15}"Login(?:[^'"]*"){2}(\d{10})/i);
     		if (!loggedInMSISDN) {
     			AnyBalance.trace(html);
     			throw new AnyBalance.Error('Не удалось определить текущий номер в кабинете, сайт изменен?', allowRetry);
@@ -586,6 +588,11 @@ function mainLK(allowRetry) {
 			// AnyBalance.trace("Login params: " + JSON.stringify(params));
 			AnyBalance.trace("Логинимся с заданным номером");
             html = AnyBalance.requestPost(loginUrl, params, addHeaders({Referer: loginUrl}));
+			
+			// Бага при авторизации ошибка 502, но если запросить гет еще раз - все ок
+			if(AnyBalance.getLastStatusCode() >= 500) {
+				html = AnyBalance.requestGet(loginUrl, addHeaders({Referer: loginUrl}));
+			}
 			// AnyBalance.trace("Команду логина послали, смотрим, что получилось...");
         }
         
@@ -621,22 +628,37 @@ function mainLK(allowRetry) {
 	AnyBalance.trace(info);
 	info = getJson(info);
 	//AnyBalance.trace(JSON.stringify(info));
+	for(var i = 0; i < info.genericRelations.length; i++) {
+		var rel = info.genericRelations[i];
+		if(!isset(result.balance) && isset(rel.target.balance))
+			getParam(rel.target.balance + '', result, 'balance', null, null, parseBalanceRound);
+		
+		// if(!isset(result.__tariff))
+			// getParam(info.Tariff+'', result, '__tariff', null, replaceTagsAndSpaces, html_entity_decode);
+		
+		if(!isset(result.bonus) && isset(rel.target.bonusBalance))
+			getParam(rel.target.bonusBalance + '', result, 'bonus', null, null, parseBalance);
+		
+		if(!isset(result.phone) && isset(rel.target.address))
+			getParam(rel.target.address + '', result, 'phone', null, [/^(\d{3})(\d{3})(\d{2})(\d{2})$/, '+7 $1 $2 $3 $4'], html_entity_decode);
+	}
 	
-    getParam(info.Balance+'', result, 'balance', null, null, parseBalanceRound);
-    getParam(info.Tariff+'', result, '__tariff', null, replaceTagsAndSpaces, html_entity_decode);
-    getParam(info.Bonus+'', result, 'bonus', null, null, parseBalance);
-    getParam(info.FullLogin+'', result, 'phone', null, [/7(\d{3})(\d{3})(\d{2})(\d{2})/, '+7 $1 $2$3$4'], html_entity_decode);
+    // getParam(info.Balance+'', result, 'balance', null, null, parseBalanceRound);
+    // getParam(info.Tariff+'', result, '__tariff', null, replaceTagsAndSpaces, html_entity_decode);
+    // getParam(info.Bonus+'', result, 'bonus', null, null, parseBalance);
+    // getParam(info.FullLogin+'', result, 'phone', null, [/7(\d{3})(\d{3})(\d{2})(\d{2})/, '+7 $1 $2$3$4'], html_entity_decode);
 	
 	if(isAvailable('traffic_left_mb')) {
 		AnyBalance.trace('Запросим трафик...');
 		try {
-			html = AnyBalance.requestPost(baseurl + '/Tariff/GetTraffic', params, addHeaders({'X-Requested-With':'XMLHttpRequest', 'X-Requester':'undefined'}));
-			
+			html = AnyBalance.requestGet(baseurl + '/miwidgetdiagram/getwidgetdata?area=&ui-culture=en-us', addHeaders({'X-Requested-With':'XMLHttpRequest', 'X-Requester':'undefined'}));
 			AnyBalance.trace(html);
-			if(!/OptionName\s*['"]\s*:\s*null/i.test(html)) {
+			var json = getJson(html);
+			
+			if(json.OptionName != 'null' && isset(json.OptionName)) {
 				AnyBalance.trace('Нашли трафик...');
 				
-				sumParam(html, result, 'traffic_left_mb', /Available["']?:\s*(-?\d+)/ig, null, function(str) {
+				sumParam(json.TrafficLeft + '', result, 'traffic_left_mb', null, null, function(str) {
 					return parseTraffic(str, 'kb');
 				}, aggregate_sum);
 			} else {

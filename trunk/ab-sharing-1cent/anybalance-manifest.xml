@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-sharing-1cent</id>
+	<id version="2">ab-sharing-1cent</id>
 	<api flags="no_browser"/>
 	<name>1cent.in</name>
 	<description html="true"><![CDATA[
@@ -15,8 +15,8 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" USD"/>
-		<counter id="dw_key" name="Cтоимость одного dw (ключа)" units=" USD"/>
-		<counter id="dw_users" name="Сумма dw юзеров" units=" USD"/>
+		<counter id="dw_key" name="Cтоимость одного dw (ключа)" type="text"/>
+		<counter id="dw_users" name="Сумма dw юзеров" units=" шт"/>
 		<counter id="sum" name="На сумму" units=" USD"/>
 		<counter id="status" name="Статус" type="text"/>
 	</counters>

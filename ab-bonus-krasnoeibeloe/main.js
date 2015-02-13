@@ -12,6 +12,8 @@ var g_headers = {
 
 function main(){
     var prefs = AnyBalance.getPreferences();
+    checkEmpty(prefs.login, 'Введите номер карты!');
+    
     AnyBalance.setDefaultCharset('utf-8');
 
     var baseurl = "http://www.krasnoeibeloe.ru/";
@@ -21,20 +23,22 @@ function main(){
     if(incapsule.isCloudflared(html))
         html = incapsule.executeScript(html);
 	
-	var form = getParam(html, null, null, /<form action="[^"]*" method="POST"(?:[^>]*>){10,12}\s*<\/form>/i);
+	var form = getParam(html, null, null, /<form action="[^"]*" method="POST"(?:[^>]*>)[\s\S]*?<\/form>/i);
+    var bxajaxid = getParam(form, null, null, /name="bxajaxid"[\s\S]*?id="([^"]+)/i);
+    var sessid = getParam(form, null, null, /name="sessid"[\s\S]*?value="([^"]+)/i);
 	
-	var params = createFormParams(form, function(params, str, name, value) {
-		if (name == 'card_number') 
-			return prefs.login;
-		return value;
-	});
-	
-    html = AnyBalance.requestPost(baseurl + 'discount/?old=Y', params, addHeaders({Referer: baseurl + 'discount/?old=Y'}));
+    html = AnyBalance.requestPost(baseurl + 'discount/?old=Y', {
+        'bxajaxid': bxajaxid,
+        'AJAX_CALL': 'Y',
+        'sessid': sessid,
+        'card_number': prefs.login,
+        'card_submit': 'Узнать'
+    }, addHeaders({Referer: baseurl + 'discount/?old=Y'}));
 	
 	if (!/Скидка по вашей карте(?:[^>]*>)[1-9][0-9]*%/i.test(html)) {
 		var error = getParam(html, null, null, /"white-ramka"([^>]*>){2}/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+			throw new AnyBalance.Error(error, null, /Данных по карте не найдено/i.test(error));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');

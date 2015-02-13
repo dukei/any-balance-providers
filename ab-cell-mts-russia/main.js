@@ -665,7 +665,7 @@ function mainLK(allowRetry) {
 				AnyBalance.trace('Трафика нет...');
 			}
 		} catch(e) {
-			AnyBalance.trace('Не удалось получить трафик: ' e.message);
+			AnyBalance.trace('Не удалось получить трафик: ' + e.message);
 		}
 	}
 	

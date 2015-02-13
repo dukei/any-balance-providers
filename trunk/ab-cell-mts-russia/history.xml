@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="3.3" version="97" date="2015-02-13">
+	- Исправлено отображение тарифа и трафика в некоторых случаях.
+	</change>
 	<change major_version="3.3" version="96" date="2015-02-13">
 	- Исправлена ошибка.
 	</change>

@@ -2,15 +2,11 @@
 <provider>
 	<id version="1">ab-money-mybank</id>
 	<api flags="no_browser"/>
-	<name>Мой Банк</name>
+	<name>МТБанк (Беларусь)</name>
 	<description html="true"><![CDATA[
-	<p>Получает текущий остаток и другие параметры карт «Мой банк» (https://new.mybank.by/)</p>
-	<p>Информация берется из личного кабинета (https://new.mybank.by/ib/site/login)</p>
+	<p>Получает текущий остаток и другие параметры карт МТБанка <a href="http://www.mtbank.by/">http://www.mtbank.by/</a></p>
+	<p>Информация берется из личного кабинета <a href="https://new.mybank.by/ib/site/login">https://new.mybank.by/ib/site/login</a></p>
 	]]></description>
-	<instruction html="true"><![CDATA[
-	<p>Если у вас нет доступа в Личный кабинет, получите его на странице (https://new.mybank.by/ib/site/login).</p>
-	<p>Для этого в поле «Логин» Вам необходимо ввести логин, выданный банком. При первом входе, после ввода логина и выхода из поля «Логин», поле «Пароль» заменится на кнопку «Отправить СМС», нажмите на эту кнопку. Через несколько секунд на Ваш мобильный телефон придет смс-сообщение с временным паролем, который вам необходимо будет ввести в поле «Пароль» и нажать кнопку «Подключиться». После этого система предложит Вам сменить временный пароль на постоянный. Для этого, в поле «Действующий пароль» введите временный пароль, полученный в смс-сообщении, в поля «Новый пароль» и «Повторите пароль» введите пароль, который вы хотите использовать в последующем для подключения к «Мой банк», и нажмите кнопку «Изменить». При возникновении трудностей ознакомьтесь, пожалуйста, с более подробной инструкцией на странице (http://o.mybank.by/instructions.pdf).</p>
-	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
@@ -20,9 +16,15 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
+		<counter id="balance" name="Баланс" units=" {@currency}"/>
+		<counter id="limit" name="Лимит" units=" {@currency}"/>
+		<counter id="debt" name="Задолженность" units=" {@currency}"/>
+		<counter id="nachisl" name="Начисл. проценты" units=" {@currency}"/>
+		<counter id="grace_pay" name="Минимальный платеж" units=" {@currency}"/>
+		<counter id="grace_pay_till" name="Дата минимального платежа" type="time" format="dd/MM/yyyy"/>
 		<counter id="cardname" name="Наименование карты" type="text"/>
 		<counter id="cardnum" name="Номер карты" type="text"/>
-		<counter id="balance" name="Баланс"  units=" BYR"/>
+		<counter id="order_num" name="Номер договора" type="text"/>
 	</counters>
 	<keywords></keywords>
 	<type>money</type>

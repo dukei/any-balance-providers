@@ -633,8 +633,8 @@ function mainLK(allowRetry) {
 		if(!isset(result.balance) && isset(rel.target.balance))
 			getParam(rel.target.balance + '', result, 'balance', null, null, parseBalanceRound);
 		
-		// if(!isset(result.__tariff))
-			// getParam(info.Tariff+'', result, '__tariff', null, replaceTagsAndSpaces, html_entity_decode);
+		if(!isset(result.__tariff) && isset(rel.target.productResources) && isset(rel.target.productResources[0]))
+			getParam(rel.target.productResources[0].product.name['ru-RU'], result, '__tariff', null, replaceTagsAndSpaces, html_entity_decode);
 		
 		if(!isset(result.bonus) && isset(rel.target.bonusBalance))
 			getParam(rel.target.bonusBalance + '', result, 'bonus', null, null, parseBalance);
@@ -643,15 +643,15 @@ function mainLK(allowRetry) {
 			getParam(rel.target.address + '', result, 'phone', null, [/^(\d{3})(\d{3})(\d{2})(\d{2})$/, '+7 $1 $2 $3 $4'], html_entity_decode);
 	}
 	
-    // getParam(info.Balance+'', result, 'balance', null, null, parseBalanceRound);
-    // getParam(info.Tariff+'', result, '__tariff', null, replaceTagsAndSpaces, html_entity_decode);
-    // getParam(info.Bonus+'', result, 'bonus', null, null, parseBalance);
-    // getParam(info.FullLogin+'', result, 'phone', null, [/7(\d{3})(\d{3})(\d{2})(\d{2})/, '+7 $1 $2$3$4'], html_entity_decode);
-	
 	if(isAvailable('traffic_left_mb')) {
 		AnyBalance.trace('Запросим трафик...');
 		try {
-			html = AnyBalance.requestGet(baseurl + '/miwidgetdiagram/getwidgetdata?area=&ui-culture=en-us', addHeaders({'X-Requested-With':'XMLHttpRequest', 'X-Requester':'undefined'}));
+			var widgetJson = getParam(html, null, null, /myInternet.diagram\s*=\s*(\{[\s\S]*?\});/i, null, getJsonEval);
+			var href = widgetJson.widgetDataUrl;
+			if(!href)
+				throw new AnyBalance.Error('Не удалось найти ссылку на трафик.');
+			
+			html = AnyBalance.requestGet(baseurl + href, addHeaders({'X-Requested-With':'XMLHttpRequest', 'X-Requester':'undefined'}));
 			AnyBalance.trace(html);
 			var json = getJson(html);
 			

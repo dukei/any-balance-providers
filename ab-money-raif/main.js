@@ -14,6 +14,7 @@ var g_xml_login = '<?xml version=\'1.0\' encoding=\'UTF-8\' standalone=\'yes\' ?
 	g_xml_cards = '<?xml version=\'1.0\' encoding=\'UTF-8\' standalone=\'yes\' ?><soapenv:Envelope xmlns:xsd="http://entry.rconnect/xsd" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://service.rconnect" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><soapenv:Header /><soapenv:Body><ser:GetCards /></soapenv:Body></soapenv:Envelope>',
 	g_xml_loans = '<?xml version=\'1.0\' encoding=\'UTF-8\' standalone=\'yes\' ?><soapenv:Envelope xmlns:xsd="http://entry.rconnect/xsd" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://service.rconnect" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><soapenv:Header /><soapenv:Body><ser:GetLoans /></soapenv:Body></soapenv:Envelope>',
 	g_xml_deposits = '<?xml version=\'1.0\' encoding=\'UTF-8\' standalone=\'yes\' ?><soapenv:Envelope xmlns:xsd="http://entry.rconnect/xsd" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://service.rconnect" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><soapenv:Header /><soapenv:Body><ser:GetDeposits /></soapenv:Body></soapenv:Envelope>';
+	g_xml_UITAccounts  = '<?xml version=\'1.0\' encoding=\'UTF-8\' standalone=\'yes\' ?><soapenv:Envelope xmlns:xsd="http://entry.rconnect/xsd" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://service.rconnect" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><soapenv:Header /><soapenv:Body><ser:GetUITAccounts /></soapenv:Body></soapenv:Envelope>';
 
 function translateError(error) {
 	var errors = {
@@ -66,11 +67,55 @@ function main() {
 		fetchDeposit(baseurl, html, result);
 	else if (prefs.type == 'cred') 
 		fetchCredit(baseurl, html, result);
+	else if (prefs.type == 'uit') 
+		fetchUITAccounts(baseurl, html, result);		
 	else 
 		fetchAccount(baseurl, html, result);
 	
 	AnyBalance.setResult(result);
 }
+
+function fetchUITAccounts(baseurl, html, result){
+    var prefs = AnyBalance.getPreferences();
+
+    // if(prefs.num && !/^\d{4}$/.test(prefs.num))
+        // throw new AnyBalance.Error('Введите последние 4 цифры интересующей вас карты или не вводите ничего, чтобы получить информацию по первой карте');
+
+    html = AnyBalance.requestPost(baseurl + 'RCUITService', g_xml_UITAccounts, addHeaders({SOAPAction: ''})); 
+   
+    var re = new RegExp('<return[^>]*>((?:[\\s\\S](?!</return>))*?<number>[^<]*' + (prefs.num ? prefs.num : '\\d{4}') + '</number>[\\s\\S]*?)</return>', 'i');
+    var info = getParam(html, null, null, re);
+    if(!info)
+        throw new AnyBalance.Error(prefs.num ? 'Не удалось найти карту с последними цифрами ' + prefs.num : 'Не найдено ни одной карты');
+	
+	// подробности
+	//<?xml version='1.0' encoding='UTF-8' standalone='yes' ?><soapenv:Envelope xmlns:xsd="http://entry.rconnect/xsd" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://service.rconnect" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><soapenv:Header /><soapenv:Body><ser:GetUITRequests><account><accountNumber>RC1FLP11902         </accountNumber><uitName>[Райффайзен – США, Raiffeisen - USA]</uitName><uitLink>http://www.rcmru.ru/fonds/unitinvestmenttrust/openfonds/funds/graphics/</uitLink><lastModifiedDate>2015-01-15T00:00:00</lastModifiedDate><unitPrice>32043.71</unitPrice><unitPriceSummary>276368.35</unitPriceSummary><unitQuantity>8.62473</unitQuantity></account></ser:GetUITRequests></soapenv:Body></soapenv:Envelope>
+	
+	getParam(info, result, 'type', /<type>([\s\S]*?)<\/type>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(info, result, 'cardnum', /<number>([\s\S]*?)<\/number>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(info, result, '__tariff', /<number>([\s\S]*?)<\/number>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(info, result, 'accnum', /<accountNumber>([\s\S]*?)<\/accountNumber>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(info, result, 'balance', /<balance>([\s\S]*?)<\/balance>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(info, result, ['currency', '__tariff'], /<currency>([\s\S]*?)<\/currency>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(info, result, 'minpaytill', /<nextCreditPaymentDate>([\s\S]*?)<\/nextCreditPaymentDate>/i, replaceTagsAndSpaces, parseDateISO);
+	getParam(info, result, 'minpay', /<minimalCreditPayment>([\s\S]*?)<\/minimalCreditPayment>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(info, result, 'limit', /<creditLimit>([\s\S]*?)<\/creditLimit>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(info, result, 'till', /<expirationDate>([\s\S]*?)<\/expirationDate>/i, replaceTagsAndSpaces, parseDateISO);
+	
+	if (AnyBalance.isAvailable('all')) {
+		var all = sumParam(html, null, null, /<return[^>]*>([\s\S]*?)<\/return>/ig);
+		var out = [];
+		for (var i = 0; i < all.length; ++i) {
+			var info = all[i];
+			var accnum = getParam(info, null, null, /<number>([\s\S]*?)<\/number>/i, replaceTagsAndSpaces, html_entity_decode);
+			var balance = getParam(info, null, null, /<balance>([\s\S]*?)<\/balance>/i, replaceTagsAndSpaces, parseBalance);
+			var currency = getParam(info, null, null, /<currency>([\s\S]*?)<\/currency>/i, replaceTagsAndSpaces, html_entity_decode);
+			out.push(accnum + ': ' + balance + ' ' + currency);
+		}
+		result.all = out.join('\n');
+	}
+}
+
 
 function fetchCard(baseurl, html, result){
     var prefs = AnyBalance.getPreferences();

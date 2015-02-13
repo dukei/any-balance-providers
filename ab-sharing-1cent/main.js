@@ -12,18 +12,18 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://1cent.in/';
+	var baseurl = 'https://1cent.tv/';
 	AnyBalance.setOptions({forceCharset:'utf-8'});
 	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	var html = AnyBalance.requestGet(baseurl + 'login.php', g_headers);
+	var html = AnyBalance.requestGet(baseurl, g_headers);
 	
 	if(!html || AnyBalance.getLastStatusCode() > 400)
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
         
-	html = AnyBalance.requestPost(baseurl + 'login.php', {
+	html = AnyBalance.requestPost(baseurl, {
 		'userName': prefs.login,
 		'userPass': prefs.password,
 		'loginIn': 'ok'
@@ -43,10 +43,10 @@ function main() {
 	var result = {success: true};
 	
 	getParam(html, result, 'balance', /Баланс:([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);    
-	getParam(html, result, 'dw_key', /(?:Cтоимость одного dw \(ключа\):[\s]*?\[)([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'dw_users', /(?:Сумма dw юзеров[\s:]*?\[)([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'sum', /(?:На сумму[\s:]*?\[)([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'status', /(?:font color="#006600">)([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'dw_key', /Cтоимость одного dw \(ключа\):[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'dw_users', /Сумма dw юзеров[\s:]*?\[([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'sum', /На сумму[\s:]*?\[([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'status', /font\s*?color="#006600">([\s\S]*?)</i, replaceTagsAndSpaces, html_entity_decode);
 	
 	AnyBalance.setResult(result);
 }

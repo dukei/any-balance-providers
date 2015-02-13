@@ -15,14 +15,14 @@ function main(){
 	
 	checkEmpty(prefs.login, 'Введите номер карты!');
 	
-    var baseurl = 'https://dmbonus.cft.ru/';
+    var baseurl = 'https://dmbonus.korona.net/';
 	
     AnyBalance.setDefaultCharset('utf-8'); 
 	
 	var html = AnyBalance.requestGet(baseurl + 'dm');
+        
 	var captcha;
-	
-    if (AnyBalance.getLevel() >= 7) {
+	if (AnyBalance.getLevel() >= 7) {
     	AnyBalance.trace('Пытаемся ввести капчу');
     	var captcha = AnyBalance.requestGet(baseurl + 'dm/captcha');
     	captcha = AnyBalance.retrieveCode('Пожалуйста, введите код с картинки', captcha);
@@ -31,7 +31,7 @@ function main(){
     	throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
     }
 	
-	html = AnyBalance.requestPost(baseurl+'dm/detmir/info', {
+	html = AnyBalance.requestPost(baseurl + 'dm/detmir/info', {
 		'card':prefs.login,
 		'captcha':captcha
 	}, addHeaders({'X-Requested-With': 'XMLHttpRequest'}));

@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser|captcha"/>
-	<id version="2">ab-bonus-detmir</id>
+	<id version="3">ab-bonus-detmir</id>
 	<name>Детский мир (Бонусы)</name>
 	<description html="true"><![CDATA[
 	<p>Получает данные по бонусной карте сети магазинов Детский мир http://www.detmir.ru/pages/bonus-balance/</p>

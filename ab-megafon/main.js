@@ -924,33 +924,40 @@ function megafonServiceGuide(filial){
 		// Мегафон шлет смс на вход если пытаемся войти через большой кабинет
 		if(filinfo.lk || filinfo.api){
 	   	    try {
-			    //megafonLK(filinfo, true);
 				megafonLkAPI();
 		    } catch (e) {
 				// Если ошибка в логине и пароле, дальше идти нет смысла. Позже: А вдруг у кого-то не установлен пароль в новом кабинете, закидают же?
 				if(e.fatal)
 				    throw e;
 
-			    AnyBalance.trace('Невозможно зайти в мобильный клиент, придется получать данные из виджета. Причина: ' + e.message);
 				try{
-					megafonTrayInfo(filial);
-		   			return;
+			    	AnyBalance.trace('Невозможно зайти в мобильный клиент, Попробуем получить данные из ЛК. Причина: ' + e.message);
+					megafonLK(filinfo, true);
 				}catch(e){
 				    if(e.fatal)
 				        throw e;
-				    if(/неверный ответ сервера/i.test(e.message) && filinfo.balanceRobot){
-				        //Яндекс виджет, скотина, не даёт получить баланс :(
-				        //Тогда баланс получим хотя бы из московского балансера
-				        AnyBalance.trace('Не удалось получить данные из яндекс виджета: ' + e.message);
-				        AnyBalance.trace('Пробуем получить баланс из ещё одного источника...');
-				        megafonBalanceInfo(filinfo);
-				        return;
-				    }else{
-					throw e;
-				    }
-				} 
+
+			        AnyBalance.trace('Невозможно зайти в личный кабинет, придется получать данные из виджета. Причина: ' + e.message);
+					try{
+						megafonTrayInfo(filial);
+		   				return;
+					}catch(e){
+					    if(e.fatal)
+					        throw e;
+					    if(/неверный ответ сервера/i.test(e.message) && filinfo.balanceRobot){
+					        //Яндекс виджет, скотина, не даёт получить баланс :(
+					        //Тогда баланс получим хотя бы из московского балансера
+					        AnyBalance.trace('Не удалось получить данные из яндекс виджета: ' + e.message);
+					        AnyBalance.trace('Пробуем получить баланс из ещё одного источника...');
+					        megafonBalanceInfo(filinfo);
+					        return;
+					    }else{
+						    throw e;
+					    }
+					} 
 	            }
-	            return;
+	        }
+	        return;
 		}
 
         if(prefs.corporate){

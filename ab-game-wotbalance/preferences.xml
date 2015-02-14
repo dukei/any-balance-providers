@@ -27,6 +27,17 @@
         entryValues="RU|EU|NA|ASIA}KR" />
     <EditTextPreference 
         obligatory="true"
+        key="appid"
+        title="Application ID" 
+        summary="Your application ID||{@s}\n" 
+        dialogTitle="Application ID" 
+        negativeButtonText="Cancel" 
+        dialogMessage="Enter your application ID"
+        positiveButtonText="ОК" 
+        inputType="text">
+    </EditTextPreference>
+    <EditTextPreference 
+        obligatory="true"
         key="token"
         title="Access token" 
         summary="Your access token||{@s}\n" 

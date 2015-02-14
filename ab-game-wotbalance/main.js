@@ -32,7 +32,12 @@ function main(){
 	var id = (prefs.method == 'id') ? prefs.nick : getID (prefs.nick, API_ADDR);
 
 	// Получаем информацию игрока
-	var info = getData(API_ADDR + '/wot/account/info/?application_id=demo&account_id=' + id + '&fields=private,nickname&access_token=' + prefs.token);
+	var info = getData(API_ADDR + '/wot/account/info/?application_id=' + prefs.appid + '&account_id=' + id + '&fields=private,nickname&access_token=' + prefs.token);
+	
+	if(!(info.data[id]['private']))
+		throw new AnyBalance.Error('Token is expired!');
+	if(info.status == 'error')
+		throw new AnyBalance.Error(info.error.mesage);
 	
 	var result = {success: true};
 	
@@ -52,7 +57,7 @@ function main(){
 			var t = new Date(info.data[id]['private'].premium_expires_at * 1000);
 			result['premium'] = getDateTimeToString(t, "dddd, dd.MM.yyyy (hh:mm)");; 
 		} else {
-			result['premium'] = "Премиум-аккаунт отсутствует";
+			result['premium'] = "Premium not found";
 		}
 		
 	AnyBalance.setResult(result);

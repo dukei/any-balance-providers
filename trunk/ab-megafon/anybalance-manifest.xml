@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="3.0" version="145">ab-megafon</id>
+	<id major_version="3.0" version="146">ab-megafon</id>
 	<api flags="no_browser"/>
 	<name>Мегафон</name>
 	<description html="true"><![CDATA[

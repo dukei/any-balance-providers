@@ -43,7 +43,7 @@ function main(){
 			}
 		}
 		if (AnyBalance.isAvailable('xp')) {
-			var matches = html.match(/<div class="l-prog-progress" data-xp-progressbar\s+style="width: (\d+?)%">/i);
+			var matches = html.match(/<div class="user-progress__value" data-xp-progressbar style="width: (\d+?)%">/i);
 			if (matches) {
 				result.xp = matches[1]
 			} else {

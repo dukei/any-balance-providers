@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="1.2" version="46" date="2015-02-16">
+	- Удален счетчик "50 минут на другие сети", его значение отображается в счетчике "Минуты по Украине линейки тарифов MAX Energy".
+	</change>
 	<change major_version="1.2" version="45" date="2015-02-16">
 	- Новый счетчик: 50 минут на другие сети
 	- Примен патч из https://code.google.com/p/any-balance-providers/issues/detail?id=232

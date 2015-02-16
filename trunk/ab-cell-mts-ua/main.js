@@ -236,10 +236,8 @@ function main(){
 
     // 25 минут на другие сети
     sumParam (html, result, 'min_all_25', /<li>Осталось ([\d\.,]+) секунд на другие сети<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-	
-	// 50 минут на другие сети
-	sumParam (html, result, 'min_all_50', /<li>\d+\sхвилин\sна\sвсi\sмережi,\sосталось\s(\d+)\sсекунд\sна\sвсе\sсети<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-	
+
+
     //2500 минут в сети МТС
     sumParam (html, result, 'min_net_2500', /<li>Осталось ([\d\.,]+) секунд внутри сети<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 
@@ -258,6 +256,8 @@ function main(){
     sumParam (html, result, 'min_allo_other', /Осталось ([\d\.,]+) бесплатных секунд[^<]*<\/li><\/ul>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     sumParam (html, result, 'min_allo_other', /SMS<\/li><li>Осталось ([\d\.,]+) бесплатных секунд[^<]*<\/li><li>Осталось/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     sumParam (html, result, 'min_allo_other', /<li>100 минут по Украине для MAX Energy Allo, осталось ([\d\.,]+) бесплатных секунд[^<]*<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    // 50 минут на другие сети в тарифе MAX Energy
+    sumParam (html, result, 'min_allo_other', /<li>\d+\sхвилин\sна\sвсi\sмережi,\sосталось\s(\d+)\sсекунд\sна\sвсе\sсети<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 
     // Расход минут на Любимые Номера
     sumParam (html, result, 'min_ln', /<li>К-во бесплатных минут для звонков на ЛН:[^<]*Израсходовано\s*([\d\.,]+) сек.<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);

@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-telephony-rt-volga-nnov</id>
-  <name>Ростелеком-Волга (Нижний Новгород)</name>
-  <description>
-    Получает текущий баланс и информацию о тарифном плане проводной связи из личного кабинета Нижегородского филиала Ростелеком-Волга (http://navigator.nnov.volga.rt.ru/navigator/).
-
-    Если у вас ещё нет доступа к личному кабинету, позвоните с домашнего телефона 8-800-707-69-79 (бесплатно)
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="expences" name="Начислено" units="р"/>
-    <counter id="peni" name="Пени" units="р"/>
-    <counter id="overpay" name="Переплата" units="р"/>
-    <counter id="period" name="Период" type="text"/>
-    <counter id="userName" name="Абонент" type="text"/>
-    <counter id="licschet" name="Лицевой счет" type="text"/>
-  </counters>
+	<id version="2">ab-telephony-rt-volga-nnov</id>
+	<name>Ростелеком-Волга (Нижний Новгород)</name>
+	<description html="true"><![CDATA[
+	<p>ВНИМАНИЕ! Сайт более недоступен, установите провайдер <a href="http://anybalance.ru/catalog.php?id=ab-internet-kabinet-rt&inapp=0">Ростелеком (Единый кабинет)</a></p>
+	
+	<p>Получает текущий баланс и информацию о тарифном плане проводной связи из личного кабинета Нижегородского филиала Ростелеком-Волга (http://navigator.nnov.volga.rt.ru/navigator/).</p>
+	]]></description>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units="р"/>
+		<counter id="expences" name="Начислено" units="р"/>
+		<counter id="peni" name="Пени" units="р"/>
+		<counter id="overpay" name="Переплата" units="р"/>
+		<counter id="period" name="Период" type="text"/>
+		<counter id="userName" name="Абонент" type="text"/>
+		<counter id="licschet" name="Лицевой счет" type="text"/>
+	</counters>
   <keywords>
   </keywords>
   <type>

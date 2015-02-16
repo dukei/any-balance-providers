@@ -48,6 +48,8 @@ function parseCurrency(text){
 }
 
 function main(){
+	throw new AnyBalance.Error('Сайт более недоступен, установите провайдер Ростелеком (Единый кабинет)');
+	
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('windows-1251');    
 

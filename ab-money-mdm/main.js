@@ -94,6 +94,7 @@ function fetchAccount(baseurl){
 
     var re = new RegExp('(<tr[^>]*>(?:[\\s\\S](?!<\\/tr>))*' + (accprefix > 0 ? '\\d{' + accprefix + '}' : '') + accnum + '\\s*<[\\s\\S]*?<\\/tr>)', 'i');
     var tr = getParam(html, null, null, re);
+
     if(!tr)
         throw new AnyBalance.Error('Не удаётся найти ' + (prefs.contract ? 'счет с последними цифрами ' + prefs.contract : 'ни одного счета'));
     
@@ -126,8 +127,7 @@ function fetchDeposit(baseurl){
 
     //Сколько цифр осталось, чтобы дополнить до 20
     var accnum = prefs.contract || '';
-    var accprefix = accnum.length;
-    accprefix = 20 - accprefix;
+    var accprefix = 20 - accnum.length;
 
     var re = new RegExp('(<tr[^>]*>(?:[\\s\\S](?!<\\/tr>))*' + (accprefix > 0 ? '\\d{' + accprefix + '}' : '') + accnum + '\\s*<[\\s\\S]*?<\\/tr>)', 'i');
     var tr = getParam(html, null, null, re);
@@ -136,17 +136,17 @@ function fetchDeposit(baseurl){
     
     var result = {success: true};
     getParam(tr, result, 'balance', /(?:[\s\S]*?<td[^>]*>){7}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(tr, result, 'currency', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseCurrency);
+    getParam(tr, result, 'currency', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(tr, result, 'accnum', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(tr, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(tr, result, 'till', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
     getParam(tr, result, 'pct', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 
-    var href = getParam(tr, null, null, /<a[^>]+href="([^"]*deposit-statement.asp[^"]*)"[^>]*>/i, null, html_entity_decode);
+    var href = getParam(tr, null, null, /<a[^>]+href=["']([^"']*deposit-statement.asp[^"']*)["'][^>]*>/i, null, html_entity_decode);
    
     if(AnyBalance.isAvailable('nextpct')){
         html = AnyBalance.requestGet(baseurl + href, addHeaders({Referer: baseurl + 'deposits.asp'}));
-        getParam(tr, result, 'nextpct', /Дата следующей уплаты процентов:([^<]*?)/i, replaceTagsAndSpaces, parseDate);
+        getParam(html, result, 'nextpct', /Дата следующей уплаты процентов:([^<]*)/i, replaceTagsAndSpaces, parseDate);
     }
 
     AnyBalance.setResult(result);

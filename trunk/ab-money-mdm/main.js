@@ -1,9 +1,5 @@
 /**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Информация о карте, счете, депозите в банке "МДМ-Банк".
-
-Сайт: https://client.mdmbank.ru
 */
 
 var g_headers = {
@@ -16,34 +12,47 @@ var g_headers = {
 
 function main() {
     var prefs = AnyBalance.getPreferences();
-        var baseurl = 'https://client.mdmbank.ru/retailweb/';
+	
+	checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(prefs.password, 'Введите пароль!');
+	
+	var baseurl = 'https://client.mdmbank.ru/retailweb/';
 
-        //var html = AnyBalance.requestGet(baseurl + 'login.asp', g_headers);
-
-	var html = AnyBalance.requestPost(baseurl + 'login.asp', {
+    var html = AnyBalance.requestGet(baseurl + 'login.asp', g_headers);
+	
+	if(!html || AnyBalance.getLastStatusCode() > 400){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+	}
+	
+	html = AnyBalance.requestPost(baseurl + 'login.asp', {
 		unc: prefs.login,
 		pin: prefs.password
 	}, addHeaders({Referer: baseurl + 'login.asp'}));
 	
-	if(!/logout\.asp/i.test(html)){
-            var error = getParam(html, null, null, /<label[^>]*>((?:[\s\S](?!<\/label>))*RetailWeb.Web.ClientLogin[\s\S]*?)<\/label>/i, replaceTagsAndSpaces, html_entity_decode);
-            if(error)
-	        throw new AnyBalance.Error(error);
-	    throw new AnyBalance.Error('Не удалось войти в интернет-банк. Сайт изменен?');
-        }
-
-        if(prefs.type == 'crd')
-            fetchCredit(baseurl);
-        else if(prefs.type == 'acc')
-            fetchAccount(baseurl);
-        else if(prefs.type == 'card')
-            fetchCard(baseurl);
-        else if(prefs.type == 'dep')
-            fetchDeposit(baseurl);
-        else
-            fetchCard(baseurl); //По умолчанию кредит
+	if(!/logout\.asp/i.test(html)) {
+		if(/<h4>\s*Подтверждение входа в Интернет-банк/i.test(html))
+			throw new AnyBalance.Error('Для работы провайдера необходимо отключить смс-подтверждение входа в интернет-банк.');
+		
+		var error = getParam(html, null, null, /<label[^>]*>((?:[\s\S](?!<\/label>))*RetailWeb.Web.ClientLogin[\s\S]*?)<\/label>/i, replaceTagsAndSpaces, html_entity_decode);
+		if (error)
+			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+		
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось войти в интернет-банк. Сайт изменен?');
+	}
+	
+	if (prefs.type == 'crd')
+		fetchCredit(baseurl);
+	else if (prefs.type == 'acc')
+		fetchAccount(baseurl);
+	else if (prefs.type == 'card')
+		fetchCard(baseurl);
+	else if (prefs.type == 'dep')
+		fetchDeposit(baseurl);
+	else
+		fetchCard(baseurl); //По умолчанию карта
 }
-
 function fetchCard(baseurl){
     var prefs = AnyBalance.getPreferences();
     if(prefs.contract && !/^\d{4}$/.test(prefs.contract))
@@ -73,11 +82,9 @@ function fetchCard(baseurl){
         getParam(html, result, 'comissiondebt', /Комиссионная задолженность[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/, replaceTagsAndSpaces, parseBalance);
         getParam(html, result, 'minpay', /Минимальная сумма взноса[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/, replaceTagsAndSpaces, parseBalance);
         getParam(html, result, 'accnum', /Р\/с([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-
     }
 
     AnyBalance.setResult(result);
-    
 }
 
 function fetchAccount(baseurl){
@@ -115,7 +122,6 @@ function fetchAccount(baseurl){
 
     */
     AnyBalance.setResult(result);
-    
 }
 
 function fetchDeposit(baseurl){

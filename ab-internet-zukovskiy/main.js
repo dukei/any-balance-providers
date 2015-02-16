@@ -1,7 +1,6 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
-
 var g_headers = {
 	'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
 	'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
@@ -12,18 +11,19 @@ var g_headers = {
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-    var baseurl = 'http://zhukovsky.net/';
-    AnyBalance.setDefaultCharset('windows-1251'); 
+    var baseurl = 'https://lk.zhukovsky.net/login';
+    AnyBalance.setDefaultCharset('windows-1251');
+
+    checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	var html = AnyBalance.requestGet(baseurl + '?lk', g_headers);
+	var html = AnyBalance.requestGet(baseurl, g_headers);
 	
 	html = AnyBalance.requestPost(baseurl, {
-        login:prefs.login,
-        password:prefs.password,
-		login_ok:'войти'
-	}, addHeaders({Referer: baseurl + '?lk'})); 
-	
-	//html = AnyBalance.requestGet(baseurl + 'lk', g_headers);
+        login: prefs.login,
+        password: prefs.password,
+		login_ok: 'Войти'
+	}, addHeaders({Referer: baseurl})); 
 	
 	if (!/Выход/i.test(html)) {
 		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);

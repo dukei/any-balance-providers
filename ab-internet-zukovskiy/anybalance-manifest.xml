@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="3">ab-internet-zukovskiy</id>
+	<id version="4">ab-internet-zukovskiy</id>
 	<name>Жуковский.NET</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе интернет-провайдера Жуковский.NET г. Жуковский (http://zhukovsky.net/)</p>

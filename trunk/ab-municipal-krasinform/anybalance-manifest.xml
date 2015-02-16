@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser" />
-	<id version="1">ab-municipal-krasinform</id>
+	<id version="2">ab-municipal-krasinform</id>
 	<name>КрасИнформ</name>
 	<description>
-	Получает информацию по сойиальной карте на сайте http://krasinform.ru/
+	Получает информацию по социальной карте на сайте http://krasinform.ru/
 	</description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>

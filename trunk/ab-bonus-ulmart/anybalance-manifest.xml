@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="11">ab-bonus-ulmart</id>
+	<id version="12">ab-bonus-ulmart</id>
 	<api flags="no_browser" />
 	<name>Ulmart</name>
 	<description html="true"><![CDATA[

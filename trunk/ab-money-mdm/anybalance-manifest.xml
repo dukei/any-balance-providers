@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-    <id version="2">ab-money-mdm</id>
+    <id version="3">ab-money-mdm</id>
+    <api flags="no_browser"/>
     <name>МДМ-Банк</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о карте, счете и депозите для клиентов МДМ-Банка (http://www.mdm.ru).</p>
@@ -34,7 +35,7 @@
         <counter id="nextpct" name="Следующая выплата процентов" type="time" format="dd/MM/yyyy"/>
         <counter id="overlimit" name="Перерасход сверх лимита"/>
         <counter id="comissiondebt" name="Комиссионная задолженность"/>
-	<counter id="pct" name="Процентная ставка" units="%"/>
+        <counter id="pct" name="Процентная ставка" units="%"/>
         <counter id="limit" name="Кредитный лимит"/>
         <counter id="accnum" name="Номер счета" type="text"/>
         <counter id="cardnum" name="Номер карты" type="text"/>
@@ -45,7 +46,7 @@
     </keywords>
     <type>
         money
-    </type>
+    , bank</type>
     <country>
         ru
     </country>

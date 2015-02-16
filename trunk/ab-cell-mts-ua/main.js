@@ -198,12 +198,15 @@ function main(){
     sumParam (html, result, 'traffic_maxenergy_mb', /<li>Осталось: (\d+,?\d* *(kб|bytes)).<\/li>/ig, null, parseTraffic, aggregate_sum);
     sumParam (html, result, 'traffic_maxenergy_mb', /<li>Осталось (\d+) бесплатных Kб.[^<]*<\/li>/ig, null, parseTrafficMb, aggregate_sum);
     sumParam (html, result, 'traffic_maxenergy_mb', /<li>1500 Mb GPRS Internet для MAX Energy Allo, осталось (\d+) бесплатных Kб.[^<]*<\/li>/ig, null, parseTrafficMb, aggregate_sum);
+	sumParam (html, result, 'traffic_maxenergy_mb', /<li>\d+\s\w*\sGPRS\sInternet\sдля\sMAX\sEnergy,\sосталось:\s(\d+,?\d*\s*(kб|bytes)).<\/li>/ig, null, parseTraffic, aggregate_sum);
 
     // СМС в сети МТС
     sumParam (html, result, 'sms_net', /<li>Осталось (\d+) смс.[^<]*<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     sumParam (html, result, 'sms_net', /<li>Осталось (\d+) бесплатных SMS[^<]*<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     sumParam (html, result, 'sms_net', /<li>30 sms в день внутри сети, осталось (\d+) смс.<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     sumParam (html, result, 'sms_net', /<li>1500 SMS на МТС для MAX Energy Allo, осталось (\d+) бесплатных SMS<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+	sumParam (html, result, 'sms_net', /<li>\d+\sSMS\sи\sMMS\sна\sМТС\sдля\sMAX\sEnergy,\sосталось\s(\d+)\sсмс\.<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+	
     //Срок действия СМС в сети МТС
     sumParam (html, result, 'termin_sms_net', /<li>Осталось \d+ смс. До ([^<]*)<\/li>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
     sumParam (html, result, 'termin_sms_net', /<li>Осталось \d+ смс. Срок действия до ([^<]*)<\/li>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
@@ -222,6 +225,7 @@ function main(){
 
     // Минуты в сети МТС
     sumParam (html, result, 'min_net_maxenergy', /<li>Осталось ([\d\.,]+) бесплатных секунд.\s?<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+	sumParam (html, result, 'min_net_maxenergy', /<li>\d+\sминут\sна\sМТС\sдля\sМАХ\sEnergy,\sОсталось\s([\d\.,]+)\sбесплатных\sсекунд.\s?<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 
     // 100 минут абонентам по Украине
     sumParam (html, result, 'min_all_100', /<li>Осталось ([\d\.,]+) секунд на все сети<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
@@ -232,7 +236,10 @@ function main(){
 
     // 25 минут на другие сети
     sumParam (html, result, 'min_all_25', /<li>Осталось ([\d\.,]+) секунд на другие сети<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-
+	
+	// 50 минут на другие сети
+	sumParam (html, result, 'min_all_50', /<li>\d+\sхвилин\sна\sвсi\sмережi,\sосталось\s(\d+)\sсекунд\sна\sвсе\sсети<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+	
     //2500 минут в сети МТС
     sumParam (html, result, 'min_net_2500', /<li>Осталось ([\d\.,]+) секунд внутри сети<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 

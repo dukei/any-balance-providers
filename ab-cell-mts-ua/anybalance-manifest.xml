@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="1.2" version="45">ab-cell-mts-ua</id>
+	<id major_version="1.2" version="46">ab-cell-mts-ua</id>
 	<api flags="no_browser"/>
 	<name>МТС (Украина)</name>
 	<description html="true"><![CDATA[
@@ -44,14 +44,13 @@
 		<counter id="min_all_100" name="100 минут абонентам по Украине" type="time_interval" format="{@MIN}" units=" мин"/>
 		<counter id="min_net" name="Минуты с услугой «Супер без пополнения» в сети МТС" type="time_interval" format="{@MIN}" units=" мин"/>
 		<counter id="min_all_25" name="25 минут на другие сети" type="time_interval" format="{@MIN}" units=" мин"/>
-		<counter id="min_all_50" name="50 минут на другие сети" type="time_interval" format="{@MIN}" units=" мин"/>
 		<counter id="min_net_2500" name="2500 минут в сети МТС" type="time_interval" format="{@MIN}" units=" мин"/>
 		<counter id="min_unlin_all" name="Минуты Супер безлимит все" type="time_interval" format="{@MIN}" units=" мин"/>
 		<counter id="min_unlin_mts" name="Минуты Супер безлимит в сети МТС" type="time_interval" format="{@MIN}" units=" мин"/>
 		<counter id="min_unlin_other" name="Минуты Супер безлимит на всех кроме Life" type="time_interval" format="{@MIN}" units=" мин"/>
 		<counter id="min_unlin_life" name="Минуты Супер безлимит yf Life" type="time_interval" format="{@MIN}" units=" мин"/>
 		<counter id="min_allo_net" name="Минуты MAX Energy Allo в сети МТС" type="time_interval" format="{@MIN}" units=" мин"/>
-		<counter id="min_allo_other" name="Минуты MAX Energy Allo по Украине" type="time_interval" format="{@MIN}" units=" мин"/>
+		<counter id="min_allo_other" name="Минуты по Украине линейки тарифов MAX Energy" type="time_interval" format="{@MIN}" units=" мин"/>
 		<counter id="min_ln" name="Расход минут на Любимые Номера" type="time_interval" format="{@MIN}" units=" мин"/>
 		<counter id="sms_100" name="Бесплатные смс для отправки на номера в пределах Украины" units=" sms"/>
 		<counter id="min_all_60" name="60 минут на все сети за 5 коп" type="time_interval" format="{@MIN}" units=" мин"/>

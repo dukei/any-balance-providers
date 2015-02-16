@@ -12,11 +12,11 @@ var g_headers = {
 };
 
 function getXLogin(html) {
-	return getParam(html, null,null, /value="5xxxxxxxxx"[^>]*name="([0-9a-f]{32})"/i);
+	return getParam(html, null,null, /placeholder=['"]5xxxxxxxxx['"][^>]*name=['"]([0-9a-f]{32})['"]/i);
 }
 
 function getXpass(html) {
-	return getParam(html, null,null, /focusssPass[^>]*([0-9a-f]{32})"/i);
+	return getParam(html, null,null, /for=['"]redpassword['"](?:[\s\S](?!name))+\s+name=['"]([0-9a-f]{32})['"]/i);
 }
 
 
@@ -118,14 +118,14 @@ function main() {
 		AnyBalance.trace('It looks like we are in post paid selfcare...');
 		html = AnyBalance.requestGet(baseurl + 'mps/portal?cmd=guncelKullanim&lang=tr&pagemenu=faturaislemleri.guncelfatura', g_headers);
 		
-		getParam(html, result, '__tariff', /Tarife:(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-		getParam(html, result, 'fatura', /<\s*b\s*>\s*G&uuml;ncel Fatura(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'bill_date', /<\s*b\s*>\s*Fatura Kesim Tarihi(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, parseDate);
+		getParam(html, result, '__tariff', /Tarife:(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+		getParam(html, result, 'fatura', /G&uuml;ncel Fatura:(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'bill_date', /Fatura Kesim Tarihi:(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseDate);
 		// не работает больше
 		//getParam(html, result, 'bonus_minutes', /Kalan S\&uuml;re:(?:[^>]*>){3}[^<]*?kadar gecerli([^<]*?)DKniz/i, replaceTagsAndSpaces, parseBalance);
 		//getParam(html, result, 'minutes', /Kalan S\&uuml;re:(?:[^>]*>){3}[^<]*kadar gecerli([^<]*?)DKniz/i, replaceTagsAndSpaces, parseBalance);
 		
-		var time = getParam(html, null, null, /Kalan S\&uuml;re:(?:[^>]*>){3}([^<]*)/i);
+		var time = getParam(html, null, null, /Kalan S\&uuml;re:(?:[^>]*>){2}([^<]*)/i);
 		if(time) {
 			// Это минуты на все звонки, есть еще внутри сетевые вызовы, но пока таких тарифов нет
 			sumParam(time, result, 'minutes', /Heryone([^<]*?)DK(?:niz)?/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);

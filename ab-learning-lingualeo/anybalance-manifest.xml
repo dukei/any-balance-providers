@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="9">ab-learning-lingualeo</id>
+  <id version="10">ab-learning-lingualeo</id>
   <name>LinguaLeo</name>
   <description>
     Получает количество фрикаделек, текущий опыт и уровень на сервисе изучения английского языка LinguaLeo
   </description>
-	<author>Vitaliy Poluphanov &lt;vitaliy@root.ua&gt;</author>
+	<author>Vitaliy Poluphanov &lt;hetleven@yandex.ua&gt;</author>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>

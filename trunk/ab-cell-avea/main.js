@@ -19,6 +19,12 @@ function getXpass(html) {
 	return getParam(html, null,null, /for=['"]redpassword['"](?:[\s\S](?!name))+\s+name=['"]([0-9a-f]{32})['"]/i);
 }
 
+function checkErrors(html) {
+	var error = getParam(html, null,null, /<script type=['"]text\/javascript['"]>ShowModalAlert\(['"]((?:[\s\S](?!['"]\)))*\S)['"]\)/i, replaceTagsAndSpaces, html_entity_decode);
+	if(error)
+		throw new AnyBalance.Error(error, null, /Kullanıcı adınız ya da şifreniz hatalıdır/i.test(error));
+}
+
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
@@ -31,9 +37,7 @@ function main() {
 	var html = AnyBalance.requestGet(baseurl + 'mps/portal?cmd=onlineTransactionsHome&lang=tr&tb=redTab', g_headers);
 	
 	var params = {
-		'SubmitImage.x':'47',
-		'SubmitImage.y':'15',
-		'SubmitImage':'Giriş',
+		'SubmitImage':'Giriş'
 	};
 	
 	params[getXLogin(html)] = prefs.login;
@@ -42,6 +46,8 @@ function main() {
 	html = AnyBalance.requestPost(baseurl + 'mps/portal?cmd=Login&lang=tr', params, addHeaders({Referer: baseurl + 'mps/portal?cmd=Login&lang=tr'}));
 
 	if(!/logout/i.test(html)) {
+		checkErrors(html);
+
 		// Иногда оно не хочет входить и требует капчу, но так не навязчиво, что если еще раз авторизоваться, то все ок
 		params[getXLogin(html)] = prefs.login;
 		params[getXpass(html)] = prefs.password;
@@ -49,9 +55,8 @@ function main() {
 		html = AnyBalance.requestPost(baseurl + 'mps/portal?cmd=Login&lang=tr', params, addHeaders({Referer: baseurl + 'mps/portal?cmd=Login&lang=tr'}));
 		
 		if(!/logout/i.test(html)) {
-			var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
-			if(error)
-				throw new AnyBalance.Error(error);
+			checkErrors(html);
+
 			throw new AnyBalance.Error('Login failed, is site changed?');
 		}
 	}

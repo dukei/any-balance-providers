@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-    <id version="3">ab-money-mdm</id>
+    <id version="4">ab-money-mdm</id>
     <api flags="no_browser"/>
     <name>МДМ-Банк</name>
 	<description html="true"><![CDATA[
@@ -9,16 +9,16 @@
 	<instruction html="true"><![CDATA[
 	<p>Настройки:</p>
 	<ul>
-	<li>Укажите логин и пароль к Интернет-банку (http://client.mdmbank.ru) в настройках провайдера.</li>
+		<li>Укажите логин и пароль к Интернет-банку (http://client.mdmbank.ru) в настройках провайдера.</li>
 	</ul>
-
 	<p>Как подключить Интернет-банк «МДМ online»:</p>
 	<ol>
-	<li>Обратитесь к персональному менеджеру в удобном для вас офисе.</li> 
-	<li>Оформите банковский счет и подпишите заявление на подключение услуги.</li>
-	<li>Получите в офисе банка конверт с логином и паролем для доступа в Интернет-банк «МДМ online».</li> 
+		<li>Обратитесь к персональному менеджеру в удобном для вас офисе.</li> 
+		<li>Оформите банковский счет и подпишите заявление на подключение услуги.</li>
+		<li>Получите в офисе банка конверт с логином и паролем для доступа в Интернет-банк «МДМ online».</li> 
+	</ol>
 	]]></instruction>
-    <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+    <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
     <files>
 	<icon>icon.png</icon>
         <preferences>preferences.xml</preferences>
@@ -27,27 +27,21 @@
         <history>history.xml</history>
     </files>
     <counters>
-	<counter id="balance" name="Баланс"/>
+	<counter id="balance" name="Баланс" units=" {@currency}"/>
         <counter id="currency" name="Валюта" type="text"/>
-        <counter id="minpay" name="Минимальный платеж"/>
-        <counter id="blocked" name="Заблокировано"/>
+        <counter id="minpay" name="Минимальный платеж" units=" {@currency}"/>
+        <counter id="blocked" name="Заблокировано" units=" {@currency}"/>
         <counter id="till" name="Срок действия" type="time" format="dd/MM/yyyy"/>
         <counter id="nextpct" name="Следующая выплата процентов" type="time" format="dd/MM/yyyy"/>
-        <counter id="overlimit" name="Перерасход сверх лимита"/>
-        <counter id="comissiondebt" name="Комиссионная задолженность"/>
+        <counter id="overlimit" name="Перерасход сверх лимита" units=" {@currency}"/>
+        <counter id="comissiondebt" name="Комиссионная задолженность" units=" {@currency}"/>
         <counter id="pct" name="Процентная ставка" units="%"/>
-        <counter id="limit" name="Кредитный лимит"/>
+        <counter id="limit" name="Кредитный лимит" units=" {@currency}"/>
         <counter id="accnum" name="Номер счета" type="text"/>
         <counter id="cardnum" name="Номер карты" type="text"/>
         <counter id="accname" name="Название" type="text"/>
     </counters>
-    <keywords>
-        Кредит, банк, mdm
-    </keywords>
-    <type>
-        money
-    , bank</type>
-    <country>
-        ru
-    </country>
+    <keywords>Кредит, банк, mdm</keywords>
+    <type>money, bank</type>
+    <country>ru</country>
 </provider>

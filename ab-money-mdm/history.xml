@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="4" date="2015-02-16">
+	- Исправлена ошибка.
+	- Добавлено отображение валюты рядом с балансом.
+	</change>
 	<change version="3" date="2015-02-16">
 	- Поддержка изменений на сайте.
 	</change>

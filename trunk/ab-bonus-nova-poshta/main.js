@@ -23,7 +23,7 @@ function main(){
 	if(!html || AnyBalance.getLastStatusCode() > 400)
 		throw new AnyBalance.Error('Ошибка! Сервер не отвечает! Попробуйте обновить баланс позже.');
 	
-	var html = AnyBalance.requestPost(baseurl + '?r=auth/index', {
+	html = AnyBalance.requestPost(baseurl + '?r=auth/index', {
 		"LoginForm[username]": prefs.email,
 		"LoginForm[password]": prefs.passw,
 		'LoginForm[remember]':0,
@@ -39,13 +39,15 @@ function main(){
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	
-	var result = {success: true};
-	
 	html = AnyBalance.requestGet(baseurl + '?r=loyaltyUser/index');
+	
+	var result = {success: true};
+
 	getParam(html, result, '__tariff', /<th>Клієнт:<\/th>\s*<td>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'ncard', /<th>Персональний рахунок:<\/th>\s*<td>(\d+)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'discount', /<th>Доступна знижка:<\/th>\s*<td>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance);
-	if(isAvailable('balance')){
+
+	if(isAvailable('balance_all')){
 		var now = new Date();
 		var html = AnyBalance.requestPost(baseurl + 'loyaltyUser/turnoverContent', {
 			Year: now.getFullYear(),
@@ -53,8 +55,14 @@ function main(){
 			Day: 0
 		}, addHeaders({'Referer' : baseurl + '?r=loyaltyUser/index', 'X-Requested-With': 'XMLHttpRequest'}));
 
-		getParam(html, result, 'balance', /Всього:<\/th>(?:\s*<th>[\s\S]*?<\/th>){5}\s*<th>(\d*)/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'balance_all', /Всього:<\/th>(?:\s*<th>[\s\S]*?<\/th>){5}\s*<th>(\d*)/i, replaceTagsAndSpaces, parseBalance);
 	}
+
+	// Эти счетчики не работают
+	sumParam(html, result, 'balance', /<th>Залишок балів:<\/th>\s*<td>(\d+)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+	sumParam(html, result, 'send', /<th>Кількість ТТН:<\/th>\s*<td>(\d+)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+	getParam(html, result, 'status', /<th>Статус Учасника:<\/th>\s*<td>([^<]*)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'status_next', /<th>Наступний статус:<\/th>\s*<td>([^<]*)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
 
 	AnyBalance.setResult(result);
 }

@@ -25,16 +25,21 @@ function main() {
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
     if(prefs.type == 'acc')
-		fetchAcc(baseurl);
+		fetchAcc(baseurl, prefs);
+	else if(prefs.type == 'dep')
+		fetchDep(baseurl, prefs);
 	// По умолчанию карта
     else
-		fetchCard(baseurl);
+		fetchCard(baseurl, prefs);
 }
 
-function fetchCard(baseurl) {
+function fetchCard(baseurl, prefs) {
 	var json = getHTTPDigestPage(baseurl, pathCards);
 	
 	var result = {success: true};
+	
+	if(prefs.digits)
+		throw new AnyBalance.Error('На данный момент отображение данных по нескольким картам не поддерживается, свяжитесь, пожалуйста, с разработчиками.');
 	
 	getParam(json.card.formattedNumber, result, '__tariff', null, replaceTagsAndSpaces);
 	getParam(json.card.formattedNumber, result, 'card_num', null, replaceTagsAndSpaces);
@@ -48,23 +53,78 @@ function fetchCard(baseurl) {
 	AnyBalance.setResult(result);	
 }
 
-function fetchAcc(baseurl) {
-	throw new AnyBalance.Error('Получение данных по счетам пока не поддерживается! Свяжитесь с разработчиками для исправления ситуации.');
-	/*
+function fetchDep(baseurl, prefs) {
+	var json = getHTTPDigestPage(baseurl, pathDeposits);
+	
+	var result = {success: true};
+	
+	var deposit;
+	// Если массив - значит несколько счетов в кабинете
+	if(isArray(json.deposit)) {
+		if(prefs.digits) {
+			for(var i = 0; i < json.deposit.length; i++) {
+				var current = json.deposit[i];
+				
+				if(endsWith(current.number, prefs.digits)) {
+					AnyBalance.trace('Found deposit that ends with ' + prefs.digits);
+					deposit = current;
+				}
+			}
+			if(!deposit)
+				throw new AnyBalance.Error('Не удалось найти счет который заканчивается на ' + prefs.digits + '. Возможно проблемы на сайте или сайт изменен!');
+		} else {
+			deposit = json.deposit[0];
+		}
+	} else {
+		deposit = json.deposit;
+	}
+
+	getParam(deposit.info, result, 'acc_type', null, replaceTagsAndSpaces);
+	getParam(deposit.number, result, 'acc_num', null, replaceTagsAndSpaces);
+	getParam(deposit.number, result, '__tariff', null, replaceTagsAndSpaces);
+	getParam(deposit.balance + '', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
+	getParam(deposit.currency, result, ['currency', 'balance'], null, replaceTagsAndSpaces);
+	getParam(deposit.actual, result, 'actual', null, replaceTagsAndSpaces, parseDate);
+	getParam(deposit.bankingInformation.payee, result, 'fio', null, replaceTagsAndSpaces);
+	
+	AnyBalance.setResult(result);	
+}
+
+function fetchAcc(baseurl, prefs) {
 	var json = getHTTPDigestPage(baseurl, pathAccounts);
 	
 	var result = {success: true};
 	
-	getParam(json.card.formattedNumber, result, '__tariff', null, replaceTagsAndSpaces);
-	getParam(json.card.formattedNumber, result, 'card_num', null, replaceTagsAndSpaces);
-	getParam(json.card.info, result, 'card_type', null, replaceTagsAndSpaces);
-	getParam(json.card.number, result, 'acc_num', null, replaceTagsAndSpaces);
-	getParam(json.card.balance + '', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
-	getParam(json.card.currency, result, ['currency', 'balance'], null, replaceTagsAndSpaces);
-	getParam(json.card.actual, result, 'actual', null, replaceTagsAndSpaces, parseDate);
+	var account;
+	// Если массив - значит несколько счетов в кабинете
+	if(isArray(json.account)) {
+		if(prefs.digits) {
+			for(var i = 0; i < json.account.length; i++) {
+				var current = json.account[i];
+				
+				if(endsWith(current.number, prefs.digits)) {
+					AnyBalance.trace('Found account that ends with ' + prefs.digits);
+					account = current;
+				}
+			}
+			if(!account)
+				throw new AnyBalance.Error('Не удалось найти счет который заканчивается на ' + prefs.digits + '. Возможно проблемы на сайте или сайт изменен!');
+		} else {
+			account = json.account[0];
+		}
+	} else {
+		account = json.account;
+	}
+
+	getParam(account.info, result, 'acc_type', null, replaceTagsAndSpaces);
+	getParam(account.number, result, 'acc_num', null, replaceTagsAndSpaces);
+	getParam(account.number, result, '__tariff', null, replaceTagsAndSpaces);
+	getParam(account.balance + '', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
+	getParam(account.currency, result, ['currency', 'balance'], null, replaceTagsAndSpaces);
+	getParam(account.actual, result, 'actual', null, replaceTagsAndSpaces, parseDate);
+	getParam(account.bankingInformation.payee, result, 'fio', null, replaceTagsAndSpaces);
 	
 	AnyBalance.setResult(result);	
-	*/
 }
 
 function checkForLoginErrors(html) {

@@ -203,11 +203,11 @@ var g_headers = {
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Cache-Control': 'max-age=0',
 	Connection: 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.60 Safari/537.1'
+	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.111 Safari/537.36'
 };
 
 function isInOrdinary(html) {
-	return /amserver\/UI\/Logout/i.test(html);
+	return /<div[^>]+class="main-menu"/i.test(html);
 }
 
 function enterOrdinary(region, retVals){
@@ -622,6 +622,7 @@ function mainLK(allowRetry) {
     }
 	
     AnyBalance.trace("Мы в личном кабинете...");
+    var lkPage = AnyBalance.getLastUrl();
 	
     var result = {success: true};
 	
@@ -678,7 +679,7 @@ function mainLK(allowRetry) {
     if(isAvailableStatus()){
         var baseurlHelper = "https://ihelper.mts.ru/selfcare/";
 		try {
-			html = AnyBalance.requestGet(baseurlHelper + "account-status.aspx", g_headers);
+			html = AnyBalance.requestGet(baseurlHelper + "account-status.aspx", addHeaders({Referer: lkPage}));
             var redirect=getParam(html, null, null, /<form .*?id="redirect-form".*?action="[^"]*?([^\/\.]+)\.mts\.ru/);
             if (redirect){
                 //Неправильный регион. Умный мтс нас редиректит
@@ -702,6 +703,7 @@ function mainLK(allowRetry) {
 		
 		if(!isInOrdinary(html)){ //Тупой МТС не всегда может перейти из личного кабинета в интернет-помощник :(
             AnyBalance.trace('Ошибка прямого перехода в интернет-помощник. Пробуем зайти с логином-паролем.');
+			AnyBalance.trace(html);
             try{
 				var retVals = {};
 				html = enterOrdinary(redirect, retVals);

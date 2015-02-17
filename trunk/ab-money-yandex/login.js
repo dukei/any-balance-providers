@@ -36,6 +36,8 @@ function loginYandex(login, password, html, retpath, from) {
 		var error = getParam(html, null, null, [/b\-login\-error[^>]*>([\s\S]*?)<\/strong>/i, /error-msg[^>]*>([^<]+)/i], replaceTagsAndSpaces, html_entity_decode);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Учётной записи с таким логином не существует|Неправильная пара логин-пароль/i.test(error));
+		if(/Нам пришлось заблокировать ваш IP/i.test(html))
+			throw new AnyBalance.Error('Яндекс временно заблокировал ваш IP. Возможно, с этого IP было много входов. Пожалуйста, подождите часок и попробуйте ещё раз.');
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет Яндекса. Сайт изменен?');

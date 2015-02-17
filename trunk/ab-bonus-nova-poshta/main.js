@@ -12,7 +12,7 @@ var g_headers = {
 
 function main(){
 	var baseurl = 'https://my.novaposhta.ua/';
-    var prefs = AnyBalance.getPreferences();
+	var prefs = AnyBalance.getPreferences();
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.email, 'Введите логин!');
@@ -23,39 +23,38 @@ function main(){
 	if(!html || AnyBalance.getLastStatusCode() > 400)
 		throw new AnyBalance.Error('Ошибка! Сервер не отвечает! Попробуйте обновить баланс позже.');
 	
-    var html = AnyBalance.requestPost(baseurl + '?r=auth/index', {
-    	"LoginForm[username]": prefs.email,
-        "LoginForm[password]": prefs.passw,
+	var html = AnyBalance.requestPost(baseurl + '?r=auth/index', {
+		"LoginForm[username]": prefs.email,
+		"LoginForm[password]": prefs.passw,
 		'LoginForm[remember]':0,
 		'yt0':'Увійти'
-    }, addHeaders({'Referer' : baseurl + '?r=auth'}));
+	}, addHeaders({'Referer' : baseurl + '?r=auth'}));
 	
-    if (!/Налаштування/i.test(html)) {
-    	var error = getParam(html, null, null, /<div class="errorSummary">\s*<ul>\s*<li>([\s\S]*)<\/li>/i, replaceTagsAndSpaces, html_entity_decode);
-    	if (error)
+	if (!/Налаштування/i.test(html)) {
+		var error = getParam(html, null, null, /<div class="errorSummary">\s*<ul>\s*<li>([\s\S]*)<\/li>/i, replaceTagsAndSpaces, html_entity_decode);
+		if (error)
 			throw new AnyBalance.Error(error);
 		
 		AnyBalance.trace(html);
-    	throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-    }
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+	}
 	
 	var result = {success: true};
 	
-	html = AnyBalance.requestPost(baseurl + '?r=loyaltyUser/index');
-	// ФИО
-	getParam(html, result, '__tariff', /<th>Власник:<\/th>\s*<td>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-	// Номер карты
-	getParam(html, result, 'ncard', /<th>Номер картки лояльності:<\/th>\s*<td>(\d+)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-	html = AnyBalance.requestPost(baseurl + '?r=loyaltyUser/turnover');
-	// Балы
-	sumParam(html, result, 'balance', /<th>Залишок балів:<\/th>\s*<td>(\d+)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-	sumParam(html, result, 'balance_all', /<th>Всього балів:<\/th>\s*<td>(\d+)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-	// Скидка
-	sumParam(html, result, 'discount', /<th>Доступна знижка, грн.:<\/th>\s*<td>(\d+.\d+)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-	// Кол-во отправок
-	sumParam(html, result, 'send', /<th>Кількість ТТН:<\/th>\s*<td>(\d+)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-	// Статус
-	getParam(html, result, 'status', /<th>Статус Учасника:<\/th>\s*<td>([^<]*)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'status_next', /<th>Наступний статус:<\/th>\s*<td>([^<]*)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+	html = AnyBalance.requestGet(baseurl + '?r=loyaltyUser/index');
+	getParam(html, result, '__tariff', /<th>Клієнт:<\/th>\s*<td>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'ncard', /<th>Персональний рахунок:<\/th>\s*<td>(\d+)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'discount', /<th>Доступна знижка:<\/th>\s*<td>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance);
+	if(isAvailable('balance')){
+		var now = new Date();
+		var html = AnyBalance.requestPost(baseurl + 'loyaltyUser/turnoverContent', {
+			Year: now.getFullYear(),
+			Month: now.getMonth() + 1,
+			Day: 0
+		}, addHeaders({'Referer' : baseurl + '?r=loyaltyUser/index', 'X-Requested-With': 'XMLHttpRequest'}));
+
+		getParam(html, result, 'balance', /Всього:<\/th>(?:\s*<th>[\s\S]*?<\/th>){5}\s*<th>(\d*)/i, replaceTagsAndSpaces, parseBalance);
+	}
+
 	AnyBalance.setResult(result);
 }

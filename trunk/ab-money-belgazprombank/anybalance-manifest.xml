@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-money-belgazprombank</id>
+	<api flags="no_browser"/>
+	<name>Белгазпромбанк (Беларусь)</name>
+	<description html="true"><![CDATA[
+	<p>Получает текущий остаток и другие параметры карт Белгазпромбанка <a href="http://www.belgazprombank.by/">http://www.belgazprombank.by/</a></p>
+	<p>Информация берется из личного кабинета <a href="https://www.e-bgpb.by/">https://www.e-bgpb.by/</a></p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Если у вас нет доступа в Личный кабинет, получите его на странице <a href="https://www.e-bgpb.by/">https://www.e-bgpb.by/</a></p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" {@currency}"/>
+		<counter id="end_date" name="Окончание действия" type="time" format="dd/MM/yyyy"/>
+		<counter id="cardname" name="Наименование карты" type="text"/>
+		<counter id="cardnum" name="Номер карты" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>money</type>
+	<country>by</country>
+</provider>

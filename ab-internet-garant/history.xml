@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="4" date="2015-02-17">
+	- Поддержка изменений на сайте.
+	</change>
 	<change version="3" date="2015-02-09">
 	Добавлены счетчики Обещанный платеж и Бонусный трафик
 	</change>

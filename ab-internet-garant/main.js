@@ -17,13 +17,13 @@ function main() {
 
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
-
-	var html = AnyBalance.requestGet(baseurl + '', g_headers);
+	
+	var html = AnyBalance.requestGet(baseurl, g_headers);
 
 	var captchaa;
-	if(AnyBalance.getLevel() >= 7){
+	if(AnyBalance.getLevel() >= 7) {
 		AnyBalance.trace('Пытаемся ввести капчу');
-		var captcha = AnyBalance.requestGet(baseurl+ 'captcha/captcha.php?id=1387869990233');
+		var captcha = AnyBalance.requestGet(baseurl+ 'captcha/captcha.php?id=' + new Date().getTime());
 		captchaa = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
 		AnyBalance.trace('Капча получена: ' + captchaa);
 	} else {
@@ -33,18 +33,23 @@ function main() {
 	html = AnyBalance.requestPost(baseurl + 'balance/viewinfo.php', {
 		userlogin: prefs.login,
 		userpassword: prefs.password,
-		captcha:captchaa,
+		captcha: captchaa,
+		https: 'checked',
 		Submit: 'Войти'
-	}, addHeaders({Referer: baseurl + ''}));
+	}, addHeaders({Referer: baseurl}));
 
 	if (!/exit\.php/i.test(html)) {
 		var error = getParam(html, null, null, /<font color="red"[^>]*>([\s\S]*?)<\/div/i, replaceTagsAndSpaces, html_entity_decode);
-		if (error && /неверное имя или пароль/i.test(error))
-			throw new AnyBalance.Error(error, null, true);
 		if (error)
-			throw new AnyBalance.Error(error);
+			throw new AnyBalance.Error(error, null, /неверное имя или пароль/i.test(error));
+		
+		if(/errok/i.test(AnyBalance.getLastUrl()))
+			throw new AnyBalance.Error('Неверный код.');
+		
+		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
+	
 	var result = {success: true};
 	
 	getParam(html, result, 'balance', /Остаток на счету(?:[^>]*>){6}[^>]*value="([^"]*)/i, replaceTagsAndSpaces, parseBalance);

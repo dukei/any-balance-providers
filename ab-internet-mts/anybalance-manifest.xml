@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="86">ab-internet-mts</id>
+	<id version="87">ab-internet-mts</id>
 	<name>Домашний Интернет и Телевидение МТС</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем балансе, номере лицевого счета и договора, ФИО владельца, трафике в текущем месяце, абонентской плате для пользователей провайдера "Домашний Интернет и Телевидение МТС".</p>
@@ -10,8 +10,6 @@
 		<li>Архангельск (<a href="https://lk.arkhangelsk.mts.ru/client/index.php">https://lk.arkhangelsk.mts.ru/client/index.php</a>)<br></li>
 		<li>Ростов (<a href="http://lk.ug.mts.ru">http://lk.ug.mts.ru</a>) - КОМСТАР-Регионы Южный филиал	<br></li>
 		<li>Новосибирск (<a href="https://kabinet.nsk.mts.ru">https://kabinet.nsk.mts.ru</a>) - бывший CityHomeNet <br></li>
-		<li>Пермь (<a href="http://lka.ural.mts.ru">http://lka.ural.mts.ru</a>)<br></li>
-		<li>Екатеринбург (<a href="http://lka.ural.mts.ru">http://lka.ural.mts.ru</a>)<br></li>
 		<li>Киров (<a href="http://lk.kirovnet.net">http://lk.kirovnet.net</a>)<br></li>
 		<li>Нижний Новгород (<a href="http://stat.nnov.comstar-r.ru">http://stat.nnov.comstar-r.ru</a>, <a href="https://lktvnn.pv.mts.ru/index.php?r=site/login">https://lktvnn.pv.mts.ru/index.php?r=site/login</a>)<br></li>
 		<li>Северодвинск (<a href="http://severodvinsk.stream-info.ru/client2">http://severodvinsk.stream-info.ru/client2</a>)<br></li>

@@ -354,6 +354,8 @@ function getNsk(){
 }
 
 function getPrmOld(){
+	throw new AnyBalance.Error("Используйте провайдера МТС Комстар-регионы (Сибирь, Урал) чтобы обновлять данные для Екатеринбурга и Перми");
+	
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('koi8-r');
 

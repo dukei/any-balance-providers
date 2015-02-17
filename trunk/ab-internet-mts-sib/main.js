@@ -21,8 +21,32 @@ function main(){
     AnyBalance.setDefaultCharset('utf-8');
 	
     var baseurl = "https://lka.ural.mts.ru/";
-
-    var city2num = {yamal:7, perm: 44, bug: 26, buz: 26, kem: 29, nef: 2, nizv: 16, novk: 30, novt: 26, noy: 7, nyg: 4, orn: 26, prm: 26, prg: 26, pyh: 2, rad: 8, sor: 26, sur: 5, tob: 28, tum: 26} 
+	
+    var city2num = {
+		ekat: 42,
+		kem: 29,
+		nef: 2,
+		nizv: 16,
+		ntagil: 43,
+		novk: 30,
+		nyg: 4,
+		orn: 26,
+		perm: 44,
+		pyh: 2,
+		rad: 8,
+		sur: 5,
+		tob: 28,
+		tum: 6,
+		yamal: 7,
+		// Оставлено для совместимости, можно потом удалить
+		bug: 26,
+		buz: 26,
+		novt: 26,
+		noy: 7,
+		prm: 26,
+		prg: 26,
+		sor: 26,
+	};
 
     if(prefs.type != 0 && prefs.type != 500 && prefs.type != 550 && !prefs.city)
         throw new AnyBalance.Error('Для выбранного типа подключения необходимо явно указать ваш город.');
@@ -48,6 +72,7 @@ function main(){
         var error = getParam(html, null, null, /<div[^>]*background-color:\s*Maroon[^>]*>([\s\S]*?)<\/div>/, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error);
+		
         AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось войти в личный кабинет. Проблемы на сайте или сайт изменен.');
     }

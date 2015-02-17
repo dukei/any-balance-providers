@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-internet-garant</id>
+	<id version="4">ab-internet-garant</id>
 	<api flags="no_browser|captcha"/>
 	<name>Гарант (Беларусь)</name>
 	<description html="true"><![CDATA[

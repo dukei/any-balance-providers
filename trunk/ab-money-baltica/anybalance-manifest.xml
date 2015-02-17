@@ -1,16 +1,17 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-money-baltica</id>
+	<id version="5">ab-money-baltica</id>
 	<api flags="no_browser"/>
 	<name>Банк Балтика</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе на картах и счетах банка Балтика http://baltica.ru</p>
-	<p>Информация берется из личного кабинета https://retail.baltica.ru</p>
+	<p>Предоставляет информацию о балансе на картах и счетах банка Балтика <a href="http://baltica.ru">http://baltica.ru</a></p>
+	<p>Информация берется из личного кабинета <a href="https://retail.baltica.ru">https://retail.baltica.ru</a></p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
+		<history>history.xml</history>
 		<js>library.js</js>
 		<js>main.js</js>
 		<js>md5.js</js>
@@ -21,10 +22,11 @@
 		<counter id="card_num" name="Номер карты" type="text"/>
 		<counter id="card_type" name="Тип карты" type="text"/>
 		<counter id="acc_num" name="Номер счета" type="text"/>
+		<counter id="acc_type" name="Тип счета" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="actual" name="Баланс актуален на" type="time" format="dd/MM/yyyy H:m"/>
 	</counters>
 	<keywords></keywords>
-	<type>money</type>
+	<type>money, bank</type>
 	<country>ru</country>
 </provider>

@@ -25,8 +25,18 @@
 		key="type"
 		title="Что смотреть"
 		summary="||{@s}"
-		entries="Карта|Счет"
-		entryValues="card|acc"
+		entries="Карта|Счет|Депозит"
+		entryValues="card|acc|dep"
 		defaultValue="card">
-	</ListPreference>	
+	</ListPreference>
+	<EditTextPreference
+		title="Номер счета/карты"
+		key="digits"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Номер счета/карты"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите последние цифры номер счета или карты по которой нужно получать данные, либо оставьте это поле пустым, чтобы получить данные по первому счету или карте.">
+	</EditTextPreference>	
 </PreferenceScreen>

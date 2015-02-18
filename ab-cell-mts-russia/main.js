@@ -41,34 +41,40 @@ function main() {
 
     checkEmpty(prefs.login, 'Вы не ввели телефон (логин)!');
     checkEmpty(prefs.password, 'Вы не ввели пароль!');
-
-    if (prefs.type == 'lk') {
-        mainLK();
-    } else if (prefs.type == 'mobile') {
-        mainMobile();
-    } else if (prefs.type == 'ordinary') {
-        mainOrdinary();
-    } else {
-        try {
-            if (!AnyBalance.isAvailable(['bonus', 'traffic_left_mb'])) {
-                //Мобильный помощник, только если не нужны бонусные баллы
-                mainMobile(true);
-                return;
-            } else {
-                AnyBalance.trace('Требуются бонусные баллы или остаток трафика, мобильный помощник не подходит...');
-            }
-        } catch (e) {
-            if (!e.allow_retry || e.fatal) throw e;
-            AnyBalance.trace('С мобильным помощником проблема: ' + e.message + " Пробуем обычный...");
-        }
-        try {
-            mainLK(true);
-        } catch (e) {
-            if (!e.allow_retry || e.fatal) throw e;
-            AnyBalance.trace('С личным кабинетом проблема: ' + e.message + " Пробуем обычный помощник...");
-            mainOrdinary();
-        }
-    }
+	
+	if (prefs.type == 'mobile') {
+		mainMobile();
+	} else {
+		mainLK();
+	}
+	
+    // if (prefs.type == 'lk') {
+        // mainLK();
+    // } else if (prefs.type == 'mobile') {
+        // mainMobile();
+    // } else if (prefs.type == 'ordinary') {
+        // mainOrdinary();
+    // } else {
+        // try {
+            // if (!AnyBalance.isAvailable(['bonus', 'traffic_left_mb'])) {
+                // //Мобильный помощник, только если не нужны бонусные баллы
+                // mainMobile(true);
+                // return;
+            // } else {
+                // AnyBalance.trace('Требуются бонусные баллы или остаток трафика, мобильный помощник не подходит...');
+            // }
+        // } catch (e) {
+            // if (!e.allow_retry || e.fatal) throw e;
+            // AnyBalance.trace('С мобильным помощником проблема: ' + e.message + " Пробуем обычный...");
+        // }
+        // try {
+            // mainLK(true);
+        // } catch (e) {
+            // if (!e.allow_retry || e.fatal) throw e;
+            // AnyBalance.trace('С личным кабинетом проблема: ' + e.message + " Пробуем обычный помощник...");
+            // mainOrdinary();
+        // }
+    // }
 }
 
 function mainMobile(allowRetry) {
@@ -339,11 +345,13 @@ function fetchOrdinary(html, baseurl, resultFromLK) {
         }
     }
     // Тарифный план
-    getParam(html, result, '__tariff', /Тарифный план.*?>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+	if(!isset(result.__tariff))
+		getParam(html, result, '__tariff', /Тарифный план.*?>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
     // Баланс
     getParam(html, result, 'balance', /<span[^>]*id="customer-info-balance[^>]*>([\s\S]*?)(?:\(|<\/span>)/i, replaceTagsAndSpaces, parseBalance);
     // Телефон
-    getParam(html, result, 'phone', /Номер:.*?>([^<]*)</i, replaceTagsAndSpaces, html_entity_decode);
+	if(!isset(result.phone))
+		getParam(html, result, 'phone', /Номер:.*?>([^<]*)</i, replaceTagsAndSpaces, html_entity_decode);
 
     if (AnyBalance.isAvailable('bonus') && !isset(result.bonus))
         result.bonus = null; //Не сбрасываем уже ранее полученное значение бонуса в 0. Может, мы получаем из помощника, потому что сдох ЛК
@@ -658,7 +666,7 @@ function mainLK(allowRetry) {
     if (isAvailable('traffic_left_mb')) {
         AnyBalance.trace('Запросим трафик...');
         try {
-            var widgetJson = getParam(html, null, null, /myInternet.diagram\s*=\s*(\{[\s\S]*?\});/i, null, getJsonEval);
+            var widgetJson = getParam(html, null, null, /myInternet.\w+\s*=\s*(\{[\s\S]*?\});/i, null, getJsonEval);
             var href = widgetJson.widgetDataUrl;
             if (!href)
                 throw new AnyBalance.Error('Не удалось найти ссылку на трафик.');
@@ -673,9 +681,7 @@ function mainLK(allowRetry) {
             if (json.OptionName != 'null' && isset(json.OptionName)) {
                 AnyBalance.trace('Нашли трафик...');
 
-                sumParam(json.TrafficLeft + '', result, 'traffic_left_mb', null, null, function (str) {
-                    return parseTraffic(str, 'kb');
-                }, aggregate_sum);
+                sumParam(json.TrafficLeft + '', result, 'traffic_left_mb', null, null, function (str) { return parseTraffic(str, 'kb'); }, aggregate_sum);
             } else {
                 AnyBalance.trace('Трафика нет...');
             }
@@ -685,23 +691,27 @@ function mainLK(allowRetry) {
     }
 
     if (isAvailableStatus()) {
+		AnyBalance.setDefaultCharset('windows-1251');
+		
         var baseurlHelper = "https://ihelper.mts.ru/selfcare/";
         var redirect = null;
         try {
             html = AnyBalance.requestGet(baseurlHelper + "account-status.aspx", addHeaders({Referer: lkPage}));
-	    var newUrl = AnyBalance.getLastUrl();
-	    if(newUrl.indexOf(baseurlHelper) != 0){
+			var newUrl = AnyBalance.getLastUrl();
+			
+			if (newUrl.indexOf(baseurlHelper) != 0) {
                 redirect = getParam(newUrl, null, null, /ihelper\.([\w\-]+\.)?mts.ru/i, [/\./g, '']);
-		if(!redirect)
-                    throw new AnyBalance.Error("МТС перенаправила на неизвестный регион! " + redirect);
-                if (region_aliases[redirect])
-                    redirect = region_aliases[redirect];
-                if (!regionsOrdinary[redirect])
-                    throw new AnyBalance.Error("МТС перенаправила на неизвестный регион!! " + redirect);
-                baseurlHelper = regionsOrdinary[redirect];
-		AnyBalance.trace('Переходим напрямую в помощник ' + baseurlHelper);
-            	html = AnyBalance.requestGet(baseurlHelper + "account-status.aspx", addHeaders({Referer: lkPage}));
-	    }
+				
+				if(!redirect)
+					throw new AnyBalance.Error("МТС перенаправила на неизвестный регион! " + redirect);
+				if (region_aliases[redirect])
+					redirect = region_aliases[redirect];
+				if (!regionsOrdinary[redirect])
+					throw new AnyBalance.Error("МТС перенаправила на неизвестный регион!! " + redirect);
+				baseurlHelper = regionsOrdinary[redirect];
+				AnyBalance.trace('Переходим напрямую в помощник ' + baseurlHelper);
+				html = AnyBalance.requestGet(baseurlHelper + "account-status.aspx", addHeaders({Referer: lkPage}));
+			}
 
             redirect = getParam(html, null, null, /<form .*?id="redirect-form".*?action="[^"]*?([^\/\.]+)\.mts\.ru/);
             if (redirect) {

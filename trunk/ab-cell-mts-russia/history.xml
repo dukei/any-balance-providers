@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="3.3" version="100" date="2015-02-18">
+	- Поддержка очередных изменений.
+	- Улучшена обработка ошибок входа.
+	</change>
 	<change major_version="3.3" version="99" date="2015-02-17">
 	- Поддержка изменений на сайте.
 	</change>

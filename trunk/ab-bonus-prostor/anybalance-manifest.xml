@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-bonus-prostor</id>
+	<api flags="no_browser"/>
+	<name>proStor (Украина)</name>
+	<description html="true"><![CDATA[
+	<p>Получает количество активних бонусних гривень и другие параметры бонусных карт proStor <a href="http://club.prostor.ua/">http://club.prostor.ua/</a></p>
+	<p>Информация берется из личного кабинета <a href="http://club.prostor.ua/account/">http://club.prostor.ua/account/</a></p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Если у вас нет доступа в Личный кабинет, получите его на странице <a href="http://club.prostor.ua/account/">http://club.prostor.ua/account/</a></p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="wait" name="Ожидает активации" units=" грн."/>
+		<counter id="balance" name="Активних бонусних гривень" units=" грн."/>
+		<counter id="expire" name="Сгорит в текущем месяце" units=" грн."/>
+		<counter id="cardnum" name="Номер карты" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>balance</type>
+	<country>ua</country>
+</provider>

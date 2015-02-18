@@ -1,6 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="3" version="28">ab-internet-domolink</id>
+	<api flags="no_browser"/>
+	<id major_version="3" version="29">ab-internet-domolink</id>
 	<name>Ростелеком (старые кабинеты)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем балансе, номере лицевого счета, ФИО владельца или названии организации, размере ежемесячной платы, дате, сумме и описании последней оплаты, трафике в текущем месяце для пользователей оператора ""Ростелеком - Домолинк"".</p>   
@@ -11,8 +12,8 @@
 	<instruction html="true"><![CDATA[
 	<p>Как получить доступ к новому личному кабинету:</p>
 	<ol>
-	<li>Узнайте свой номер лицевого счета из квитанции.</li>
-	<li>Узнайте свой ПИН код, позвонив по номеру 8-800-450-0-153 (звонок бесплатный) с вашего домашнего телефона.</li>
+		<li>Узнайте свой номер лицевого счета из квитанции.</li>
+		<li>Узнайте свой ПИН код, позвонив по номеру 8-800-450-0-153 (звонок бесплатный) с вашего домашнего телефона.</li>
 	</ol> 
 	<br>
 	<b>ВНИМАНИЕ!</b> 
@@ -24,7 +25,6 @@
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>api:jquery.min.js</js>
 		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>

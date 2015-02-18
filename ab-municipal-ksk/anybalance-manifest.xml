@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-municipal-ksk</id>
+	<id version="2">ab-municipal-ksk</id>
 	<api flags="no_browser"/>
 	<name>Калужская сбытовая компания</name>
 	<description html="true"><![CDATA[

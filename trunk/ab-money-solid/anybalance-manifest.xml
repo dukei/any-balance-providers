@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-money-solid</id>
+	<api flags="no_browser"/>
+	<name>Банк Солидарность</name>
+	<description html="true"><![CDATA[
+	<p>Получает текущий остаток и другие параметры карт банка Солидарность <a href="http://www.solid.ru/">http://www.solid.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="https://www.e-life.ru/">https://www.e-life.ru/</a></p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Если у вас нет доступа в Личный кабинет, получите его на странице <a href="https://www.e-life.ru/">https://www.e-life.ru/</a></p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" {@currency}"/>
+		<counter id="end_date" name="Окончание действия" type="time" format="dd/MM/yyyy"/>
+		<counter id="cardname" name="Наименование карты" type="text"/>
+		<counter id="cardnum" name="Номер карты" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>money</type>
+	<country>ru</country>
+</provider>

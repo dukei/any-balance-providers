@@ -72,30 +72,15 @@ function getKey(guid)
 // get bill data JSON
 function getBillData(key)
 {
-	var billUrl = 'https://m.012mobile.co.il/wsselfservice/Mobile012API.svc/GetBillData';
-	var billRequest = '{"key" : "' + key + '"}';
-	var json = getJson(AnyBalance.requestPost(billUrl,billRequest,addHeaders(g_headers)));
-	if (typeof json.GetBillDataResult=="undefined")
+	var billUrl = 'http://my.orange.co.il/Mobile012Srv/Mobile012.svc/myAccount/GetContractBillingData';
+	var billRequest = '{"brand":"012Mobile","platform":"WEB","key" : "' + key + '"}';
+    var json = getJson(AnyBalance.requestPost(billUrl,billRequest,addHeaders(g_headers)));
+	if (typeof json.GetContractBillingDataResult=="undefined")
 	{
 		AnyBalance.trace(JSON.stringify(json));
 		throw new AnyBalance.Error("Unexpected server response");
 	}
-	return(getJson(json.GetBillDataResult)); 
-}
-
-
-// get abroad plans info
-function getContractInfo(key)
-{
-	var billUrl = 'https://192.118.8.173:8443/IntlSrv/InternationalAPI.svc/General/GetContractInfo';
-	var billRequest = '{"brand":"012Mobile","key" : "' + key + '"}';
-	var json = getJson(AnyBalance.requestPost(billUrl,billRequest,addHeaders(g_headers)));
-	if (typeof json.ContractId=="undefined")
-	{
-		AnyBalance.trace(JSON.stringify(json));
-		throw new AnyBalance.Error("Unexpected server response");
-	}
-	return(json); 
+	return(json.GetContractBillingDataResult); 
 }
 
 
@@ -119,39 +104,32 @@ function main()
 	// get bill data and contract info (contract info contains the roaming plans)
 	var bill = getBillData(key);
 	AnyBalance.trace('Bill: ' + JSON.stringify(bill));
-	var contract = getContractInfo(key);
-	AnyBalance.trace('ContractInfo: ' + JSON.stringify(contract));
 	
-    // get data plans, sum it all up together in case there is more than one
-	if (bill.dataPackages.length)
-	{
-		result['dataprcnt'] = result['datausage'] = 0.0;
-		result['dataplans'] = '';
-		for (var i=0;i<bill.dataPackages.length;i++) 
-		{
-			var dataPackage = bill.dataPackages[i];
-			result['dataprcnt'] += dataPackage.dataplanUsedPrecentage/bill.dataPackages.length;
-			result['datausage'] += parseFloat(dataPackage.consumptionDescription);
-			result['dataplans'] += (result['dataplans'].length ? '\n' : '') + dataPackage.dataplan;
-		} 
-	}
+    // seems data plans no longer available (yet?) using the current API
+    // i am keeping the counters (but having them reset), hoping for 012 to have this again
+    result['dataprcnt'] = result['datausage'] = 0.0;
+    result['dataplans'] = '';
+
 
     // get roaming plans
-	for (var i=0,n=0;i<contract.ActivatedPackages.length;i++) 
+	for (var i=0,n=0;i<bill.International.Entity.length;i++) 
 	{
-		var plan = contract.ActivatedPackages[i];
-        if ((plan.Balance==null) || (plan.Balance.RemainAmount==null))
-            continue;
-        getParam(plan.Balance.RemainAmount.toString(), result, 'roamingcredit'+(++n), null, null, parseBalance); 
+		var plan = bill.International.Entity[i];
+        var key = 'roamingcredit'+(++n);
+        if (plan.REMAIN_AMOUNT!=null)
+            getParam(plan.REMAIN_AMOUNT.toString(), result, key, null, null, parseBalance); 
+        else
+            result[key] = 0;
+        result[key] *= 100;
 	} 
 	
 	// set the rest of the results
-	getParam(bill.total, result, 'price', null, null, parseBalance); 
+	getParam(bill.ContractTotalFinalBalance, result, 'price', null, null, parseBalance); 
 	getParam(bill.FullName, result, 'fullname', null, null, html_entity_decode); 
 	getParam(bill.msisdn, result, 'number', null, null, html_entity_decode); 
-	getParam(bill.nextBillcycle, result, 'nextbill', null, null, parseDate); 
-	getParam(bill.discountExpiration, result, 'discountend', /\d\d\.\d\d\.\d\d\d\d/, null, parseDate); 
-	getParam(bill.rateplan, result, 'plan', null, null, html_entity_decode); 
+	getParam(bill.NextMonthCharge, result, 'nextbill', null, null, parseDate); 
+	getParam(bill.DiscountExpiration, result, 'discountend', /\d\d\.\d\d\.\d\d\d\d/, null, parseDate); 
+	getParam(bill.PlanName, result, 'plan', null, null, html_entity_decode); 
 	
     // done, set the result
 	AnyBalance.setResult(result);

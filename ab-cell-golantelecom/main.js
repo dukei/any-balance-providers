@@ -1,7 +1,6 @@
 /**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
-var g_vat_percents = 18.0;
 
 var g_headers = 
 {
@@ -15,7 +14,7 @@ var g_headers =
 var g_login_page = "https://www.golantelecom.co.il/web/";
 var g_billing_page = "https://www.golantelecom.co.il/web/account_billing.php";
 var g_login_script = "https://www.golantelecom.co.il/rpc/web.account.rpc.php?action=login&p_action=";
-var g_get_details = "https://www.golantelecom.co.il/rpc/account_current_balance.rpc.php?action=view_current_balance_summary"
+var g_get_details = "https://www.golantelecom.co.il/rpc/account_current_balance.rpc.php"
 
 function main() 
 {
@@ -35,30 +34,19 @@ function main()
 		throw new AnyBalance.Error(replaceAll(err[1],replaceTagsAndSpaces));
 	
 	// get billing details for all lines (the result is a json wrapped html, ewww)
-	var json = getJson(AnyBalance.requestPost(g_get_details, {account_id: prefs.login, billrun_name: ""}, addHeaders({Referer: g_billing_page})));
+	var json = getJson(AnyBalance.requestPost(g_get_details, {account_id: prefs.login, action: "viewSubscriberCurrentBalance", NDC_SN: prefs.line.substring(1,10)}, addHeaders({Referer: g_billing_page})));
+    var stats = json.content;
+    AnyBalance.trace(stats);
+    if (stats.length<100)
+        throw new AnyBalance.Error("Unable to get data for " + prefs.line +", please make sure the phone number is correct!");
 	
-	// get the info block for the line we need
-	var lookfor = "<tr>\\s*?<td>" + prefs.line.substring(0,3) + "-" + prefs.line.substring(3,10) + "<\\/td>[\\S\\s]*?<div>"
-	var stats = new RegExp(lookfor,"i").exec(json.content);
-	if (!stats)
-		throw new AnyBalance.Error("Unable to find data for " + prefs.line +", please make sure the phone nuber is correct!");
-	stats = stats[0];
-
-	// i probably always want this part in the log, leaving it here for not
-	AnyBalance.trace(stats);
-	
-	// parse prices, the price rows are like <td><span dir="ltr">₪8.47</span></td>, there are 2 of those
-	// i am looking here for <td...>(₪xxxxx)....</td>, twice, hopefully this makes the regex clear
-	var prices = /<td.*?>₪([\d\.]*).*?<\/td>[\s\S]*?<td.*?>₪([\d\.]*).*?<\/td>/i.exec(stats);
-	if (prices)
-	{
-		var totalprice = (parseFloat(prices[1])+parseFloat(prices[2]))*(1.0+g_vat_percents/100.0);
-		getParam(totalprice.toFixed(2).toString(), result, 'price', null, null, parseBalance); 
-	}
-	
-	// parse simple params
-	getParam(stats, result, 'calls',/<td>דקות שיחה<\/td>[\s\S]*?<td>(.*?)<\/td>/i, replaceTagsAndSpaces, parseMinutes);
-	getParam(stats, result, 'sms',/<td>SMS<\/td>[\s\S]*?<td>(.*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(stats, result, 'data',/<td>גלישה<\/td>[\s\S]*?<td>(.*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+	// parse price, we no longer need to sum everything up and add vat manually, all we need is to find it
+	var price = /<td.*?>סה\"כ לתשלום<\/td>[\s\S]*?<span>₪<\/span>[\s\S]*?<span>([\d\.]*)<\/span>/i.exec(stats);
+    getParam(price ? price[1] : "0.0", result, 'price', null, null, parseBalance);
+	    
+	// parse rest of the params
+	getParam(stats, result, 'calls',/<td.*?>דקות שיחה<\/td>[\s\S]*?<td.*?>(.*?)<\/td>/i, replaceTagsAndSpaces, parseMinutes);
+	getParam(stats, result, 'sms',/<td.*?>SMS<\/td>[\s\S]*?<td.*?>(.*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(stats, result, 'data',/<td.*?>גלישה<\/td>[\s\S]*?<td.*?>(.*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
 	AnyBalance.setResult(result);
 }

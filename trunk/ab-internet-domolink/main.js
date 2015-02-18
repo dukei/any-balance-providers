@@ -253,28 +253,26 @@ function domolink_new(region,login,password) {
     AnyBalance.trace("Requesting accounts info...");
     html = AnyBalance.requestGet(baseurl + "?_nfpb=true&_pageLabel=PrivateClient_portal_Services_page");
     
-    //AnyBalance.trace(html);
-    var $html = $(html);
-    
-    var $acc = $html.find('.gridTableContainer table tr').filter(function(i){
-        var num = $(this).find('a[href*="_number="]').first().text();
-        return reAcc.test(num);
-    }).first();
-    
-    if(!$acc.size())
+	var tr = getParam(html, null, null, new RegExp('<tr(?:[^>]*>){6,8}[\\d-]+' + (prefs.accnum || '') + '(?:[^>]*>){22,28}\\s*</tr>', 'i'))
+    if(!tr)
         throw new AnyBalance.Error('Невозможно найти информацию ' + (prefs.accnum ? 'по счету с последними цифрами ' + prefs.accnum : 'ни по одному лицевому счету') + '!');
-    
+	
     var result = {success: true};
 	
 	sumParam(html, result, '__tariff', /<tr>\s*<td(?:[^>]*>){4}[^>]*_windowLabel=MyServices(?:[^>]*>){5}([^<]+)(?:[^>]*>){10}\s*<\/tr>/ig, null, null, aggregate_join);
-	//getParam($acc.find('>td:first-child>img').attr('title'), result, '__tariff', null, replaceTagsAndSpaces);
-    getParam($acc.find('>td:nth-child(2)').text(), result, 'license', null, replaceTagsAndSpaces);
-    getParam($acc.find('>td:nth-child(3)').text(), result, 'username', null, replaceTagsAndSpaces);
-    getParam($acc.find('>td:nth-child(4)').text(), result, 'balance', null, replaceTagsAndSpaces, parseBalance);
+	
+    getParam(tr, result, 'license', /<td(?:[^>]*>){6}([^<]+)/i, replaceTagsAndSpaces);
+    getParam(tr, result, 'username', /<td(?:[^>]*>){7}([^<]+)/i, replaceTagsAndSpaces, capitalFirstLetters);
+    getParam(tr, result, 'balance', /<body>([\s\S]*?)<\/body>/i, replaceTagsAndSpaces, parseBalance);
     
-    //var $subaccs = $acc.next();
-    //getParam($subaccs.find('table.uslugi tr:first-child td:nth-child(3) label').first().text(), result, '__tariff', null, replaceTagsAndSpaces);
-    
+	// getParam(html, result, 'balance', /баланс:(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	// getParam(html, result, ['currency', 'balance'], /Текущий баланс:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseCurrency);
+	// getParam(html, result, 'fio', /Имя абонента:(?:[\s\S]*?<b[^>]*>){1}([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
+	// getParam(html, result, '__tariff', /Тарифный план:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
+	// getParam(html, result, 'phone', /Номер:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
+	// getParam(html, result, 'deadline', /Действителен до:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseDate);
+	// getParam(html, result, 'status', /Статус:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
+	
     AnyBalance.setResult(result);
 }
     

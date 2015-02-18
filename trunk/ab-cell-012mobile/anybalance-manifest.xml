@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="5">ab-cell-012mobile</id>
+	<id version="6">ab-cell-012mobile</id>
 	<api flags="no_browser"/>
 	<name>012 Mobile</name>
 	<description html="true"><![CDATA[
@@ -24,9 +24,9 @@
 		<counter id="number" name="Number" type="text"/>
 		<counter id="nextbill" name="Next Bill" type="time" format="dd/MM/yyyy"/>
 		<counter id="discountend" name="Discount End" type="time" format="dd/MM/yyyy"/>
-        <counter id="roamingcredit1" name="Roaming Credit 1"/>
-        <counter id="roamingcredit2" name="Roaming Credit 2"/>
-        <counter id="roamingcredit3" name="Roaming Credit 3"/>
+        <counter id="roamingcredit1" name="Roaming Credit 1" units="%"/>
+        <counter id="roamingcredit2" name="Roaming Credit 2" units="%"/>
+        <counter id="roamingcredit3" name="Roaming Credit 3" units="%"/>
 	</counters>
 	<keywords>Сотовый телефон, мобильный, мобильник, теле2, Израиль, mobile, cellphone, 012, 012mobile</keywords>
 	<type>cell</type>

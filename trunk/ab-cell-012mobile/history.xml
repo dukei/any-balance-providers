@@ -15,4 +15,7 @@
 	<change version="5" date="2014-11-21">
 	- Automatically save the GUID while on 012 mobile network. This allows the provider to keep working on any connections, once it has been used on 012 mobile connection first. Requires AnyBalance v.3.9.742 or higher.
 	</change>
+	<change version="6" date="2015-02-18">
+	- 012 mobile has changed their mobile site API, had to do the same. Data usage and plan names no longer available. Keeping the counters there, though, hoping 012 will add those back to the API soon enough.
+	</change>
 </history>

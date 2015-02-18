@@ -1,7 +1,6 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
-
 var g_headers = {
 	'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
 	'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
@@ -12,6 +11,7 @@ var g_headers = {
 	// Desktop
 	'User-Agent':'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
 };
+
 function main() {
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'http://svet.kaluga.ru/';
@@ -21,7 +21,11 @@ function main() {
 	checkEmpty(prefs.password, 'Введите пароль!');
 		
 	var html = AnyBalance.requestGet(baseurl + 'ieps/Login.aspx?ReturnUrl=%2fieps%2f', g_headers);
-	
+
+	var error = getParam(html, null, null, /(Вход в систему временно невозможен.[^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+	if(error)
+		throw new AnyBalance.Error(error);
+
 	var params = createFormParams(html, function(params, str, name, value){
 		if(name == 'ctl00$cphBody$txtAccount')
 			return prefs.login;
@@ -33,11 +37,9 @@ function main() {
 	html = AnyBalance.requestPost(baseurl + 'ieps/Login.aspx?ReturnUrl=%2fieps%2f', params, addHeaders({Referer: baseurl + 'ieps/Login.aspx?ReturnUrl=%2fieps%2f'}));
 	
 	if(!/cmdLogoff/i.test(html)) {
-		var error = getParam(html, null, null, /class="error-text"[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-		if(error && /Неверный номер лицевого счета или пароль/i.test(error))
-			throw new AnyBalance.Error(error, null, true);
+		error = getParam(html, null, null, /class="error-text"[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 		if(error)
-			throw new AnyBalance.Error(error);
+			throw new AnyBalance.Error(error, null, /Неверный номер лицевого счета или пароль/i.test(error));
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
     var result = {success: true};

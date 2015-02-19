@@ -42,11 +42,12 @@ function main() {
     checkEmpty(prefs.login, 'Вы не ввели телефон (логин)!');
     checkEmpty(prefs.password, 'Вы не ввели пароль!');
 	
-	if (prefs.type == 'mobile') {
-		mainMobile();
-	} else {
+	//Всё, теперь во все помощники вход через единый логин всё равно
+//	if (prefs.type == 'mobile') {
+//		mainMobile();
+//	} else { 
 		mainLK();
-	}
+//	}
 	
     // if (prefs.type == 'lk') {
         // mainLK();
@@ -545,30 +546,18 @@ function mainLK(allowRetry) {
 
     try {
         var loginUrl = baseurlLogin + "/amserver/UI/Login?gx_charset=UTF-8&service=lk&goto=" + encodeURIComponent(baseurl + '/') + "&auth-status=0";
-        /*        if(prefs.__dbg){
-         //Чтобы сбросить автологин
-         var html = AnyBalance.requestGet(baseurl, g_headers);
-         }else{
-         //Чтобы сбросить автологин
-         var html = AnyBalance.requestGet(loginUrl, g_headers);
-         } */
 
         var html = AnyBalance.requestGet(baseurl, g_headers);
+        if(AnyBalance.getLastStatusCode() >= 500)
+        	throw new AnyBalance.Error("Ошибка на сервере МТС, сервер не смог обработать запрос. Можно попытаться позже...", allowRetry);
 
         if (isLoggedIn(html)) {
             AnyBalance.trace("Уже залогинены, проверяем, что на правильный номер...");
             //Автоматом залогинились, надо проверить, что на тот номер
-            /*var info = AnyBalance.requestPost(baseurl + '/GoodokServices/GoodokAjaxGetWidgetInfo/', '', g_headers);
-             if(/Внутренняя ошибка сервера/i.test(info)) {
-             throw new AnyBalance.Error('Внутренняя ошибка сервера, попробуйте выполнить запрос позже.');
-             }
-             //info = JSON.parse(info);
-             // Уж лучше пусть бросит исключение, нежели пойдет дальше с пустым или кривым info
-             info = getJson(info);*/
 
             var json = getJson(getLKJson(html, allowRetry));
 
-            var loggedInMSISDN = json.id; //getParam(html, null, null, /var\s*initialProfile = \{"(?:[\s\S]*?":"?[^,"\}]+"?,){1,15}"Login(?:[^'"]*"){2}(\d{10})/i);
+            var loggedInMSISDN = json.id;
             if (!loggedInMSISDN) {
                 AnyBalance.trace(html);
                 throw new AnyBalance.Error('Не удалось определить текущий номер в кабинете, сайт изменен?', allowRetry);
@@ -608,6 +597,8 @@ function mainLK(allowRetry) {
             // AnyBalance.trace("Login params: " + JSON.stringify(params));
             AnyBalance.trace("Логинимся с заданным номером");
             html = AnyBalance.requestPost(loginUrl, params, addHeaders({Referer: loginUrl}));
+            if(AnyBalance.getLastStatusCode() >= 500)
+        	    throw new AnyBalance.Error("Ошибка на сервере МТС при попытке зайти, сервер не смог обработать запрос. Можно попытаться позже...", allowRetry);
 
             // Бага при авторизации ошибка 502, но если запросить гет еще раз - все ок
             if (AnyBalance.getLastStatusCode() >= 500) {
@@ -736,8 +727,10 @@ function mainLK(allowRetry) {
         }
 
         if (!isInOrdinary(html)) { //Тупой МТС не всегда может перейти из личного кабинета в интернет-помощник :(
-            AnyBalance.trace('Ошибка прямого перехода в интернет-помощник. Пробуем зайти с логином-паролем.');
-            AnyBalance.trace(html);
+            var error = getParam(html, null, null, /<div[^>]+class="b_error"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+            AnyBalance.trace('Ошибка прямого перехода в интернет-помощник: ' + error + '. Пробуем зайти с логином-паролем.');
+            if(!error)
+            	AnyBalance.trace(html);
             try {
                 var retVals = {};
                 html = enterOrdinary(redirect, retVals);

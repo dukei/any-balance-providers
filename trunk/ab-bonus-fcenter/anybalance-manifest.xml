@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-bonus-fcenter</id>
+	<api flags="no_browser"/>
+	<name>ФЦентр</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе и других параметрах бонусных карт интернет-магазина fcenter.ru <a href="http://fcenter.ru/">http://fcenter.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="http://fcenter.ru/profile/show">http://fcenter.ru/profile/show</a></p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Если у вас нет доступа в Личный кабинет, получите его на странице <a href="http://fcenter.ru/profile/register">http://fcenter.ru/profile/register</a></p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="status" name="Состояние" type="text"/>
+		<counter id="type" name="Тип скидки" type="text"/>
+		<counter id="cardnum" name="Номер карты" type="text"/>
+		<counter id="history" name="История накопления" type="html"/>
+	</counters>
+	<keywords></keywords>
+	<type>bonus</type>
+	<country>ru</country>
+</provider>

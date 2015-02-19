@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-internet-fregat</id>
+	<id version="3">ab-internet-fregat</id>
 	<api flags="no_browser"/>
 	<name>Фрегат (Днепропетровск)</name>
 	<description html="true"><![CDATA[

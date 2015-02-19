@@ -42,7 +42,7 @@ function main() {
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'balance', /Остаток на счете(?:[^>]*>){5}([\s\S]*?)</i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance', /Остаток на счете((?:[\s\S](?!<\/b>))+[\s\S])/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'fio', /ФИО(?:[^>]*>){3}([\s\S]*?)</i, replaceTagsAndSpaces, html_entity_decode);
 	
 	AnyBalance.setResult(result);

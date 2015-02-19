@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-money-strelka</id>
+	<id version="2">ab-money-strelka</id>
 	<api flags="no_browser"/>
 	<name>Стрелка</name>
 	<description html="true"><![CDATA[
@@ -19,13 +19,13 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" руб."/>
-		<counter id="alias" name="Алиас карты" type="text"/>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="alias" name="Название карты" type="text"/>
 		<counter id="history" name="Последние 5 операций по карте" type="html"/>
-		<counter id="total_outcome" name="Всего потрачено" units=" руб."/>
-		<counter id="total_income" name="Всего пополнено" units=" руб."/>
+		<counter id="total_outcome" name="Всего потрачено" units=" р"/>
+		<counter id="total_income" name="Всего пополнено" units=" р"/>
 	</counters>
 	<keywords></keywords>
-	<type>money</type>
+	<type>transport</type>
 	<country>ru</country>
 </provider>

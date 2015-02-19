@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-money-psafinance</id>
+	<api flags="no_browser"/>
+	<name>Bank PSA Finance RUS</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о кредитах банка PSA Finance RUS <a href="http://bankpsafinance.ru/">http://bankpsafinance.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="https://info-msk.rusfinance.ru:7777/jsso/">https://info-msk.rusfinance.ru:7777/jsso/</a></p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Если у вас нет доступа в Личный кабинет, получите его на странице <a href="https://info-msk.rusfinance.ru:7777/ICA/createAccount.jsp">https://info-msk.rusfinance.ru:7777/ICA/createAccount.jsp</a></p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="monthly_payment" name="Ежемесячный платеж" units=" {@currency_bal}"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="recommend_payment_date" name="Рекомендованная дата следующей оплаты по кредиту" type="time" format="dd/MM/yyyy"/>
+		<counter id="type" name="Тип кредита" type="text"/>
+		<counter id="date" name="Дата оформления кредита" type="time" format="dd/MM/yyyy"/>
+		<counter id="summ_total" name="Сумма кредита" units=" {@currency_summ}"/>
+		<counter id="summ_debt" name="Остаток ссудной задолженности" units=" {@currency_summ}"/>
+		<counter id="past_due" name="Просроченная задолженность" type="text"/>
+		<counter id="time" name="Срок кредита" units=" мес."/>
+		<counter id="closed" name="Договор закрыт" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>money</type>
+	<country>ru</country>
+</provider>

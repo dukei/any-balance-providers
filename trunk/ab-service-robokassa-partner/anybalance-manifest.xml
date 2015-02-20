@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-service-robokassa-partner</id>
+	<api flags="no_browser"/>
+	<name>Robokassa (магазин)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о магазинах клиента Robokassa <a href="https://robokassa.ru/ru/Index.aspx">https://robokassa.ru/ru/Index.aspx</a></p>
+	<p>Информация берется из личного кабинета <a href="https://auth.robokassa.ru/partner/Login.aspx?ReturnURL=https%3a%2f%2fpartner.robokassa.ru%2f%3fculture%3dru">https://auth.robokassa.ru/partner/Login.aspx?ReturnURL=https%3a%2f%2fpartner.robokassa.ru%2f%3fculture%3dru</a></p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Если у вас нет доступа в Личный кабинет, получите его на странице <a href="https://partner.robokassa.ru/Reg/Register?culture=ru">https://partner.robokassa.ru/Reg/Register?culture=ru</a></p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="name" name="Наименование клиента" type="text"/>
+		<counter id="shops" name="Магазины" type="html"/>
+	</counters>
+	<keywords></keywords>
+	<type>service</type>
+	<country>ru</country>
+</provider>

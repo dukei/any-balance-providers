@@ -12,7 +12,7 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://stat.bit-com.ru/';
+	var baseurl = 'https://stat.bit-com.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Введите логин!');
@@ -23,14 +23,14 @@ function main() {
 	if(!html || AnyBalance.getLastStatusCode() > 400)
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	
-	var form_build_id = getParam(html, null, null, /name="form_build_id"[^>]*value="([^"]+)/i);
-    checkEmpty(form_build_id, 'Не удалось найти форму входа, сайт изменен?', true);
+	var params = createFormParams(html, function(params, str, name, value) { return value; });
+    checkEmpty(params.form_build_id, 'Не удалось найти форму входа, сайт изменен?', true);
     
 	html = AnyBalance.requestPost(baseurl + '?q=user', {
-        form_build_id:form_build_id,
 		name: prefs.login,
 		pass: prefs.password,
-		'form_id': 'user_login'
+        form_build_id: params.form_build_id,
+		form_id: 'user_login'
 	}, addHeaders({Referer: baseurl + '?q=user'}));
 	
 	if (!/logout/i.test(html)) {

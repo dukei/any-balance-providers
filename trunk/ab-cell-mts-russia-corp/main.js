@@ -7,6 +7,16 @@
 Личный кабинет: https://ihelper.mts.ru/Ncih/
 */
 
+var g_headers = {
+    Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
+    'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+    'Cache-Control': 'max-age=0',
+    Connection: 'keep-alive',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.111 Safari/537.36'
+};
+
+
 function getHierarchyId(html){
     var availableHierarchy = getParam(html, null, null, /availableHierarchy:\s*(\[[^\]]*\])/);
     if(!availableHierarchy){
@@ -35,22 +45,61 @@ function getHierarchyId(html){
     return baseid;
 }
 
+function isLoggedIn(html) {
+    return getParam(html, null, null, /UI\/Logout/i);
+}
+
 function main(){
     var baseurl = "https://ihelper.mts.ru/Ncih/";
     var prefs = AnyBalance.getPreferences();
 
     AnyBalance.trace("Trying to enter selfcare at address: " + baseurl);
-    var html = AnyBalance.requestPost(baseurl + "Security.mvc/LogOn", {
-        Name:prefs.login,
-        Password:prefs.password
-    });
+    var html = AnyBalance.requestGet(baseurl, g_headers);
+    if(!isLoggedIn(html)){
+        var loginUrl = AnyBalance.getLastUrl();
+        
+        var form = getParam(html, null, null, /<form[^>]+name="Login"[^>]*>([\s\S]*?)<\/form>/i);
+        if (!form) {
+            AnyBalance.trace(html);
+            throw new AnyBalance.Error("Не удаётся найти форму входа! Сайт изменен?");
+        }
+        
+        var params = createFormParams(form, function (params, input, name, value) {
+            var undef;
+            if (name == 'IDToken1')
+                value = prefs.login;
+            else if (name == 'IDToken2')
+                value = prefs.password;
+            else if (name == 'noscript')
+                value = undef; //Снимаем галочку
+            else if (name == 'IDButton')
+                value = 'Submit';
+            return value;
+        });
+        
+        AnyBalance.trace("Логинимся с заданным номером");
+        html = AnyBalance.requestPost(loginUrl, params, addHeaders({Referer: loginUrl}));
+        
+        // Бага при авторизации ошибка 502, но если запросить гет еще раз - все ок
+        if (AnyBalance.getLastStatusCode() >= 500) {
+            AnyBalance.trace("МТС вернул 500 при попытке логина. Пробуем ещё разок...");
+            html = AnyBalance.requestGet(baseurl, addHeaders({Referer: loginUrl}));
+        }
+        
+        if(AnyBalance.getLastStatusCode() >= 500)
+        	    throw new AnyBalance.Error("Ошибка на сервере МТС при попытке зайти, сервер не смог обработать запрос! Можно попытаться позже...", allowRetry);
+    }
     
     //Проверим, залогинились ли
-    if(!/Security.mvc\/LogOff/i.test(html)){
-        var error = getParam(html, null, null, /<div[^>]*class="(?:b_error|b_warning)"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
-        if(error)
-            throw new AnyBalance.Error(error);
-        throw new AnyBalance.Error("Не удалось зайти в личный кабинет. Сайт изменен?");
+    if(!isLoggedIn(html)){
+            var error = sumParam(html, null, null, /var\s+(?:loginErr|passwordErr)\s*=\s*'([^']*)/g, replaceSlashes, null, aggregate_join);
+            if (error)
+                throw new AnyBalance.Error(error, null, /Неверный пароль|телефон в неверном формате/.test(error));
+            if (getParam(html, null, null, /(auth-status=0)/i))
+                throw new AnyBalance.Error('Неверный логин или пароль.', null, true);
+
+            AnyBalance.trace(html);
+            throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
 
     var result = {success: true}

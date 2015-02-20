@@ -548,6 +548,11 @@ function mainLK(allowRetry) {
         var loginUrl = baseurlLogin + "/amserver/UI/Login?gx_charset=UTF-8&service=lk&goto=" + encodeURIComponent(baseurl + '/') + "&auth-status=0";
 
         var html = AnyBalance.requestGet(baseurl, g_headers);
+        if(AnyBalance.getLastStatusCode() >= 500){
+            AnyBalance.trace("МТС вернул 500. Пробуем ещё разок...");
+	    html = AnyBalance.requestGet(baseurl, g_headers);
+	}
+
         if(AnyBalance.getLastStatusCode() >= 500)
         	throw new AnyBalance.Error("Ошибка на сервере МТС, сервер не смог обработать запрос. Можно попытаться позже...", allowRetry);
 
@@ -597,14 +602,16 @@ function mainLK(allowRetry) {
             // AnyBalance.trace("Login params: " + JSON.stringify(params));
             AnyBalance.trace("Логинимся с заданным номером");
             html = AnyBalance.requestPost(loginUrl, params, addHeaders({Referer: loginUrl}));
-            if(AnyBalance.getLastStatusCode() >= 500)
-        	    throw new AnyBalance.Error("Ошибка на сервере МТС при попытке зайти, сервер не смог обработать запрос. Можно попытаться позже...", allowRetry);
 
             // Бага при авторизации ошибка 502, но если запросить гет еще раз - все ок
             if (AnyBalance.getLastStatusCode() >= 500) {
+                AnyBalance.trace("МТС вернул 500 при попытке логина. Пробуем ещё разок...");
                 html = AnyBalance.requestGet(loginUrl, addHeaders({Referer: loginUrl}));
             }
             // AnyBalance.trace("Команду логина послали, смотрим, что получилось...");
+            
+	    if(AnyBalance.getLastStatusCode() >= 500)
+        	    throw new AnyBalance.Error("Ошибка на сервере МТС при попытке зайти, сервер не смог обработать запрос! Можно попытаться позже...", allowRetry);
         }
 
         if (!isLoggedIn(html)) {

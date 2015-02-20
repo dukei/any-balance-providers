@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="11">ab-bonus-s7</id>
+	<id version="12">ab-bonus-s7</id>
 	<name>S7 Приоритет</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе миль и другую информацию по бонусной карте авиакомпании S7 (http://www.s7.ru).</p>

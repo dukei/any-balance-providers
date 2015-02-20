@@ -20,17 +20,13 @@ function main(){
     var baseurl = 'https://www.s7.ru/';
 	var baseurlLogin = 'https://cca.s7.ru/';
 	
-    var html = AnyBalance.requestPost(baseurl + 'dotCMS/priority/newLogin', {
-        renew:true,
-        auto:true,
-        service:baseurl + 'home/priority/ffpAccount.dot',
-        errorPage:baseurl + 'home/priority/ffpLoginError.dot',
-        hiddenText:'',
-        username:prefs.login,
-        password:prefs.password
-    }, g_headers);
+    var html = AnyBalance.requestPost(baseurl + 'dotCMS/priority/newDesignAjaxLogin', {
+        dispatch: 'login',
+        username: prefs.login,
+        password: prefs.password
+    }, addHeaders({ Referer: baseurl }));
 	
-	htmlJson = AnyBalance.requestGet(baseurl + 'servlets/authorization?action=get_user_info', addHeaders({
+	htmlJson = AnyBalance.requestGet(baseurl + 'dotCMS/priority/NewDesignAjaxProfileService?dispatch=getUserInfo', addHeaders({
 		'X-Requested-With':'XMLHttpRequest'
 	}));
 	

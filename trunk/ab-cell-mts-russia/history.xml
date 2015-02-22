@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="3.3" version="103" date="2015-02-22">
+	- Исправлен счетчик Сумма по неоплаченным счетам
+	</change>
 	<change major_version="3.3" version="102" date="2015-02-20">
 	- Улучшена обработка ошибок.
 	- Перезапрос страницы, если сервер мтс выдаёт ошибку

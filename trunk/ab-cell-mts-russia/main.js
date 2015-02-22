@@ -476,7 +476,7 @@ function fetchAccountStatus(html, result) {
     // Накоплено 54 мин. в текущем месяце
     sumParam(html, result, 'min_used', /Накоплено\s*(\d+)\s*мин[^\s]*/g, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     // Сумма по неоплаченным счетам: 786.02 руб. (оплатить до 24.03.2012)
-    getParam(html, result, 'debt', /Сумма по неоплаченным счетам.*?([-\d\.,]+)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'debt', /Сумма [^<]*по неоплаченным счетам(?:[\s\S](?!<\/td|<\/p))*?([-\d\.,]+)\s+руб/i, replaceTagsAndSpaces, parseBalance);
     // Сумма по неоплаченным счетам: 786.02 руб. (оплатить до 24.03.2012)
     getParam(html, result, 'pay_till', /оплатить до\s*([\d\.,\/]+)/i, replaceTagsAndSpaces, parseDate);
     // Остаток трафика

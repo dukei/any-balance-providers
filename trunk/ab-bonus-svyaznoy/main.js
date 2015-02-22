@@ -12,9 +12,6 @@ var g_headers = {
 };
 
 function main () {
-    if (AnyBalance.getLevel () < 3) {
-        throw new AnyBalance.Error ('Для этого провайдера необходима версия программы не ниже 1.2.436. Пожалуйста, обновите программу.');
-    }
 	var prefs = AnyBalance.getPreferences ();
     var baseurl = 'https://www.sclub.ru/';
 	
@@ -29,8 +26,10 @@ function main () {
     var html = AnyBalance.requestGet(baseurl, g_headers);
     var form = getParam(html, null, null, /<form[^>]*(?:id="mainLogin"|name="Form")[^>]*>[\s\S]*?<\/form>/i);
     if (!form) {
+    	if(AnyBalance.getLastStatusCode() >= 400)
+			throw new AnyBalance.Error('Личный кабинет Связной-клуб временно недоступен. Пожалуйста, попробуйте ещё раз позднее...');
 		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось найти форму входа, похоже, связной её спрятал. Обратитесь к автору провайдера.');
+		throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
 	}
 	var AntiForgeryToken = getParam(html, null, null, /antiForgeryToken:[^']*'([^']+)/i);
 	if(!AntiForgeryToken)

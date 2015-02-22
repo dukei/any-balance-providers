@@ -8,18 +8,24 @@
 */
 
 var g_headers = {
-    Accept:'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    Accept:'*/*',
     'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
-    'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-    'Cache-Control':'max-age=0',
-    Connection:'keep-alive',
-    'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.60 Safari/537.1'
+    'Accept-Language':'ru,en-US;q=0.8,en;q=0.6',
+    Connection: 'keep-alive',
+    Origin: 'https://vk.com',
+    'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.115 Safari/537.36'
 };
 
 function main(){
     var prefs = AnyBalance.getPreferences();
 
-    var baseurl = "http://vk.com";
+    var baseurl = "https://vk.com";
+
+    var uid = AnyBalance.getData('remixttpid');
+    if(uid){
+        AnyBalance.trace('Найдена привязка к браузеру, восстанавливаем её.');
+        AnyBalance.setCookie('.vk.com', 'remixttpid', uid);
+    }
 
     var html = AnyBalance.requestGet(baseurl + '/settings?act=balance', g_headers);
 
@@ -46,9 +52,48 @@ function main(){
     if(!/\?act=logout/.test(html)){
         var error = getParam(html, null, null, /<div[^>]+id="message"[^>]*>([\s\S]*?)(?:<\/div>|<\/ul>)/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
-            throw new AnyBalance.Error(error);
+            throw new AnyBalance.Error(error, null, /проверьте правильность написания логина и пароля/i.test(error));
         throw new AnyBalance.Error('Не удалось зайти. Сайт изменен?');
     }
+
+    if(/<input[^>]+id="authcheck_code"/i.test(html)){
+        AnyBalance.trace('Требуется двухфакторная авторизация...');
+        var _prompt = getParam(html, null, null, /<div[^>]+class="login_authcheck_info"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+        var hash = getParam(html, null, null, /a_authcheck_code[^\}]*hash:\s*'([^']*)/, replaceSlashes);
+        var code = AnyBalance.retrieveCode(_prompt, null, {inputType: 'number'});
+        var referer = AnyBalance.getLastUrl();
+
+        html = AnyBalance.requestPost(baseurl + '/al_login.php', {
+        	act: 'a_authcheck_code',
+        	al: '1',
+        	code: code,
+        	remember: 1,
+        	hash: hash
+        }, addHeaders({'X-Requested-With': 'XMLHttpRequest', Referer: referer}));
+
+        var res = getVKResult(html);
+        if(res.code != 4){
+        	if(res.code != 8)
+        		AnyBalance.trace(html);
+        	throw new AnyBalance.Error(res.data ? replaceAll(res.data, replaceTagsAndSpaces) : 'Неизвестная ошибка. Сайт изменен?');
+        }
+
+        var uid = AnyBalance.getCookie('remixttpid');
+        AnyBalance.setData('remixttpid', uid);
+        AnyBalance.saveData();
+
+        var url = res.data;
+        if(!/^https?:/i.test(url))
+        	url = baseurl + url;
+            
+        html = AnyBalance.requestGet(url, g_headers);
+    }
+
+    if(!/<b[^>]+id="balance_str"/i.test(html)){
+    	AnyBalance.trace(html);
+    	throw new AnyBalance.Error('Не удалось получить страницу голосов. Сайт изменен?');
+    }
+
     var result = {success: true};
     getParam(html, result, 'balance', /<b[^>]+id="balance_str"[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseBalance);
 	
@@ -65,4 +110,7 @@ function main(){
     AnyBalance.setResult(result);
 }
 
-
+function getVKResult(html){
+	var a = html.split(/<!>/g);
+	return {code: a[4], data: a[5]};
+}

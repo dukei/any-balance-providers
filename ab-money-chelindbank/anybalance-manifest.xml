@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="3">ab-money-chelindbank</id>
+	<id version="4">ab-money-chelindbank</id>
 	<name>Челиндбанк</name>
 	<description html="true"><![CDATA[
 	<p>Получает текущий остаток и другие параметры карт, счетов Челиндбанка (http://www.chelindbank.ru), используя интернет-банк https://www.chelindbank.ru/ib2.</p>
@@ -24,6 +24,6 @@
 		<counter id="accnum" name="Номер счета" type="text"/>
 	</counters>
 	<keywords>интернет-банкинг</keywords>
-	<type>money</type>
+	<type>money, bank</type>
 	<country>ru</country>
 </provider>

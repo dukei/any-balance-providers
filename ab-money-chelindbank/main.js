@@ -40,7 +40,7 @@ function fetchCard(html, headers, baseurl){
     if(prefs.cardnum && !/^\d{4}$/.test(prefs.cardnum))
         throw new AnyBalance.Error("Введите 4 последних цифры номера карты или не вводите ничего, чтобы показать информацию по первой карте");
 
-	var re = new RegExp('(<tr[^>]*>\\s*<td[^>]*class="ui-narrowest(?:[^>]*>){10,14}[^>]*\\d{4}XXXXXXXX' + (prefs.cardnum ? prefs.cardnum : '\\d{4}') + '[\\s\\S]*?</tr>)', 'i');
+	var re = new RegExp('(<tr[^>]*>\\s*<td[^>]*class="ui-narrowest(?:[^>]*>){20}[^>]*\\d{4}XXXXXXXX' + (prefs.cardnum ? prefs.cardnum : '\\d{4}') + '[\\s\\S]*?</tr>)', 'i');
     var tr = getParam(html, null, null, re);
 
     if(!tr)

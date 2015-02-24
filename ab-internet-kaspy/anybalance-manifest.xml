@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-kaspy</id>
+	<api flags="no_browser"/>
+	<name>КаспийТелеком</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера КаспийТелеком <a href="http://kaspiytelekom.ru/">http://kaspiytelekom.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="http://176.97.164.9:8080/bgbilling/webexecuter">http://176.97.164.9:8080/bgbilling/webexecuter</a></p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Если у вас нет доступа в Личный кабинет, получите его на странице <a href="http://176.97.164.9:8080/bgbilling/webexecuter">http://176.97.164.9:8080/bgbilling/webexecuter</a></p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balanceInitial" name="Входящий остаток на начало месяца" units=" р"/>
+		<counter id="income" name="Приход за месяц (всего)" units=" р"/>
+		<counter id="outcome" name="Расход за месяц (всего)" units=" р"/>
+		<counter id="accumulation" name="Наработка за месяц (всего)" units=" р"/>
+		<counter id="licenseFee" name="Абонплата" units=" р"/>
+		<counter id="balanceFinal" name="Исходящий остаток на конец месяца" units=" р"/>
+		<counter id="limit" name="Лимит" units=" р"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

@@ -17,8 +17,8 @@ function main() {
 	
 	checkEmpty(prefs.login, 'Введите номер карты!');
 	checkEmpty(prefs.surname, 'Введите фамилию!');
-	checkEmpty(/^(\d{2}).(\d{2}).(\d{4})$/i.test(prefs.date_of_birth), 'Введите дату рождения в формате 31.12.2014!');
-    var date = /^(\d{2}).(\d{2}).(\d{4})$/i.exec(prefs.date_of_birth);
+	checkEmpty(/^(\d{2})\.(\d{2}|[А-яЁё]+)\.(\d{4})$/i.test(prefs.date_of_birth), 'Введите дату рождения в формате 31.12.2014! или 31.декабря.2014');
+    var date = /^(\d{2})\.(\d{2}|[А-яЁё]+)\.(\d{4})$/i.exec(prefs.date_of_birth);
     
 	var html = AnyBalance.requestGet(baseurl + 'users', g_headers);
 	

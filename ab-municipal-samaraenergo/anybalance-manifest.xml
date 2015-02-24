@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-municipal-samaraenergo</id>
+	<api flags="no_browser"/>
+	<name>СамараЭнерго</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о тарифе, дате и сумме последнего платежа, данных об абоненте СамараЭнерго <a href="http://www.samaraenergo.ru/">http://www.samaraenergo.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="https://lk.samaraenergo.ru/bdisu/public/frameset_top_html.jsp">https://lk.samaraenergo.ru/bdisu/public/frameset_top_html.jsp</a></p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Если у вас нет доступа в Личный кабинет, получите его на странице <a href="https://lk.samaraenergo.ru/bdisu/public/frameset_top_html.jsp">https://lk.samaraenergo.ru/bdisu/public/frameset_top_html.jsp</a></p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="account" name="Номер лицевого счета" type="text"/>
+		<counter id="tariffType" name="Тип тарифа" type="text"/>
+		<counter id="tariff" name="Тариф" type="text"/>
+		<counter id="lastPayment" name="Последний платеж" type="text"/>
+		<counter id="notPaid" name="К оплате" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>municipal</type>
+	<country>ru</country>
+</provider>

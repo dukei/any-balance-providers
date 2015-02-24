@@ -658,6 +658,9 @@ function fetchPost(baseurl, html) {
 					AnyBalance.trace('Beeline returned: ' + AnyBalance.getLastStatusString());
 					throw new AnyBalance.Error('Переключится на доп. номер не удолось из-за технических проблем в личном кабинете Билайн. Проверьте, что вы можете переключиться на доп. номер, зайдя в личный кабинет через браузер.');
 				}*/
+				// Надо перейти, чтобы узнать какой тип кабинета
+				html = AnyBalance.requestGet(baseurl + 'c', g_headers);
+				// И только потом:
 				// Бывает что к постоплатному кабинету привязан предоплатный номер, проверяем..
 				if(/c\/pre\/index\.xhtml/i.test(html)) {
 					AnyBalance.trace('Дополнительный номер ' + num + ' предоплатный, но привязан к постоплатному кабинету...');

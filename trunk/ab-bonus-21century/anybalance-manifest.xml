@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
-	<id version="2">ab-bonus-21century</id>
+	<id version="3">ab-bonus-21century</id>
 	<api flags="no_browser" />
 	<name>21 Век Бонус (Беларусь)</name>
 	<description html="true"><![CDATA[

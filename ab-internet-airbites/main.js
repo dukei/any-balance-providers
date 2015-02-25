@@ -32,22 +32,28 @@ function main(){
 
     AnyBalance.trace('Entering city: ' + city);
 
-	var html = AnyBalance.requestGet(baseurl + 'forma-pop-apu', g_headers);
+	var html = AnyBalance.requestGet(baseurl, g_headers);
 	
 	if(!html || AnyBalance.getLastStatusCode() > 400)
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+
+    var params = createFormParams(html, function(params, str, name, value) {
+        if (name == 'auth_city_id') 
+            return g_cities[city];
+        else if (name == 'auth_login')
+            return prefs.login;
+        else if (name == 'auth_password')
+            return prefs.password;
+
+        return value;
+    });
 	
-	html = AnyBalance.requestPost(baseurl + 'enteruser', {
-        txt_login:prefs.login,
-        txt_pass:prefs.password,
-        txt_city:g_cities[city],
-		btn_enter:'Вход'
-	}, addHeaders({Referer: baseurl + 'forma-pop-apu'}));
+	html = AnyBalance.requestPost(baseurl, params, addHeaders({Referer: baseurl}));
 	
-	if(!/<div[^>]*class="exit"[^>]*>/.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+	if(!/logout/.test(html)) {
+		var error = getParam(html, null, null, /class="error"[^>]*>([\s\S]+?)<\//i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+			throw new AnyBalance.Error(error, null, /Невірний логін\/пароль/i.test(error));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
@@ -55,18 +61,18 @@ function main(){
 
     var result = {success: true};
 
-    getParam(html, result, 'balance', /(?:Остаток на счете|Залишок на рахунку|Remains on account):[\S\s]*?<a[^>]*>([\S\s]*?)<\/a>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'statusInet', /(?:Статус Интернета|Стан Інтернету|Internet status):[\S\s]*?<a[^>]*>([\S\s]*?)<\/a>/i, replaceTagsAndSpaces, html_entity_decode);
-    var inetStatus = getParam(html, null, null, /(?:Статус Интернета|Стан Інтернету|Internet status):[\S\s]*?<a[^>]*class="([^"]*)/i);
-    getParam(html, result, 'statusTv', /(?:Статус ТВ|Стан ТВ|TV status):[\S\s]*?<a[^>]*>([\S\s]*?)<\/a>/i, replaceTagsAndSpaces, html_entity_decode);
-    var tvStatus = getParam(html, null, null, /(?:Статус ТВ|Стан ТВ|TV status):[\S\s]*?<a[^>]*class="([^"]*)/i);
-    getParam(html, result, 'statusVoip', /(?:Статус VOIP|Стан VOIP|VOIP status):[\S\s]*?<a[^>]*>([\S\s]*?)<\/a>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'balance', /Баланс([\s\S]+?)<\/strong>/i, replaceTagsAndSpaces, parseBalance);
+    // getParam(html, result, 'statusInet', /(?:Статус Интернета|Стан Інтернету|Internet status):[\S\s]*?<a[^>]*>([\S\s]*?)<\/a>/i, replaceTagsAndSpaces, html_entity_decode);
+    // var inetStatus = getParam(html, null, null, /(?:Статус Интернета|Стан Інтернету|Internet status):[\S\s]*?<a[^>]*class="([^"]*)/i);
+    // getParam(html, result, 'statusTv', /(?:Статус ТВ|Стан ТВ|TV status):[\S\s]*?<a[^>]*>([\S\s]*?)<\/a>/i, replaceTagsAndSpaces, html_entity_decode);
+    // var tvStatus = getParam(html, null, null, /(?:Статус ТВ|Стан ТВ|TV status):[\S\s]*?<a[^>]*class="([^"]*)/i);
+    // getParam(html, result, 'statusVoip', /(?:Статус VOIP|Стан VOIP|VOIP status):[\S\s]*?<a[^>]*>([\S\s]*?)<\/a>/i, replaceTagsAndSpaces, html_entity_decode);
 
-    if(inetStatus != 'nonactive'){
-        html = AnyBalance.requestGet(baseurl + city + '/pryvatnyj/my/internet/myinternet', g_headers);
-        getParam(html, result, '__tariff', /(?:Название пакета|Назва пакету|Name of tariff)[\S\s]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-        getParam(html, result, 'abon', /(?:Сумма абонентской платы|Сума абонентської плати|Amount of fee)[\S\s]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    }
-    
+    // if(inetStatus != 'nonactive'){
+    //     html = AnyBalance.requestGet(baseurl + city + '/pryvatnyj/my/internet/myinternet', g_headers);
+    //     getParam(html, result, '__tariff', /(?:Название пакета|Назва пакету|Name of tariff)[\S\s]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+        getParam(html, result, 'abon', /Щомісячний платіж([\s\S]+?)<\/strong>/i, replaceTagsAndSpaces, parseBalance);
+    // }
+
     AnyBalance.setResult(result);
 }

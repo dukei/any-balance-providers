@@ -1,63 +1,37 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Получает баланс и информацию о тарифном плане для московского интернет-провайдера Rinet
-
-Сайт оператора: http://rinet.net
-Личный кабинет: http://rinet.net/personal/
 */
-
-function getParam (html, result, param, regexp, replaces, parser) {
-	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
-		return;
-
-	var matches = regexp.exec (html), value;
-	if (matches) {
-		value = matches[1];
-		if (replaces) {
-			for (var i = 0; i < replaces.length; i += 2) {
-				value = value.replace (replaces[i], replaces[i+1]);
-			}
-		}
-		if (parser)
-			value = parser (value);
-
-    if(param)
-      result[param] = value;
-	}
-   return value
-}
-
-var replaceTagsAndSpaces = [/&nbsp;/g, ' ', /<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, ''];
-var replaceFloat = [/\s+/g, '', /,/g, '.'];
-
-function parseBalance(text){
-    var val = getParam(text.replace(/\s+/g, ''), null, null, /(-?\d[\d\s.,]*)/, replaceFloat, parseFloat);
-    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
-    return val;
-}
-
-function parseTrafficGb(str){
-  var val = getParam(str.replace(/\s+/g, ''), null, null, /(-?\d[\d\s.,]*)/, replaceFloat, parseFloat);
-  return parseFloat((val/1024).toFixed(2));
-}
+var g_headers = {
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+    'Connection': 'keep-alive',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.111 Safari/537.36'
+};
 
 function main(){
-    var prefs = AnyBalance.getPreferences();
+    var prefs = AnyBalance.getPreferences(),
+        baseurl = "https://ctl.rinet.ru/cgi-bin/uctl.cgi";
     AnyBalance.setDefaultCharset('utf-8');
 
-    var baseurl = "https://ctl.rinet.ru/cgi-bin/uctl.cgi";
+    checkEmpty(prefs.login, 'Введите логин!');
+    checkEmpty(prefs.password, 'Введите пароль!');
+
+    var html = AnyBalance.requestGet(baseurl, g_headers);
+    
+    if(!html || AnyBalance.getLastStatusCode() > 400){
+        AnyBalance.trace(html);
+        throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+    }
 
     var html = AnyBalance.requestPost(baseurl, {
-        mode:1,
-        cmd:0,
-        user:prefs.login,
-        passwd:prefs.password,
-        x:28,
-        y:14
-    });
+        user: prefs.login,
+        passwd: prefs.password,
+        mode: 1,
+        cmd: 0,
+        x: 28,
+        y: 14
+    }, addHeaders({Referer: baseurl}));
 
-    //AnyBalance.trace(html);
     if(!/\/cgi-bin\/uctl.cgi\?mode=255/.test(html)){
         var error = getParam(html, null, null, /<div[^>]+class="warning"[^>]*>([\s\S]*?)<\/div>/, replaceTagsAndSpaces, html_entity_decode);
         if(error)
@@ -67,22 +41,13 @@ function main(){
 
     var result = {success: true};
 
-    getParam(html, result, '__tariff', /Тарифный план:[\S\s]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces);
-    getParam(html, result, 'balance', /Баланс:[\S\s]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'abon', /Абонентская плата:[\S\s]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'status', /Состояние счета:[\S\s]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    //getParam(html, result, '__tariff', /Тарифный план:[\S\s]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces);
+    getParam(html, result, 'balance', /Баланс[\s\S]+?<\/strong>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'abon', /Абонентская плата[\s\S]+?<\/strong>/i, replaceTagsAndSpaces, parseBalance);
+    //getParam(html, result, 'status', /Состояние счета:[\S\s]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
 
-    getParam(html, result, 'trafficIn', /Трафик за[\s\S]*?Итого(?:[\S\s]*?<td[^>]*>){2}([\S\s]*?)<\/td>/i, replaceFloat, parseTrafficGb);
-    getParam(html, result, 'trafficOut', /Трафик за[\s\S]*?Итого(?:[\S\s]*?<td[^>]*>){1}([\S\s]*?)<\/td>/i, replaceFloat, parseTrafficGb);
+    getParam(html, result, 'trafficIn', /Трафик[\s\S]*?Итого(?:[\S\s]*?<div[^>]*>){5}([\S\s]*?)<\/div>/i, replaceFloat, function(traffic){ return parseTrafficGb(traffic, 'Мб') });
+    getParam(html, result, 'trafficOut', /Трафик[\s\S]*?Итого(?:[\S\s]*?<div[^>]*>){11}([\S\s]*?)<\/div>/i, replaceFloat, function(traffic){ return parseTrafficGb(traffic, 'Мб') });
     
     AnyBalance.setResult(result);
 }
-
-function html_entity_decode(str)
-{
-    //jd-tech.net
-    var tarea=document.createElement('textarea');
-    tarea.innerHTML = str;
-    return tarea.value;
-}
-

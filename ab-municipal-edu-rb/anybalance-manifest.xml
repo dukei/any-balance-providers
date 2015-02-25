@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-municipal-edu-rb</id>
+	<api flags="no_browser"/>
+	<name>Электронная очередь в ДОУ (Башкортостан)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о номере в очереди, желаемом ДОУ и других параметрах электронной очереди в ДОУ Республики Башкортостан<a href="https://edu-rb.ru/">https://edu-rb.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="https://edu-rb.ru/?page=status">https://edu-rb.ru/?page=status</a></p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Обращаем ваше внимание, что проверить статус заявления можно не менее чем через 10 дней после его подачи.</p>
+	<p>Если все же не удается проверить статус заявления, обратитесь к методисту вашего района.</p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="birthday" name="Дата рождения" type="time" format="dd/MM/yyyy"/>
+		<counter id="date" name="Дата подачи заявления" type="time" format="dd/MM/yyyy"/>
+		<counter id="DOU" name="Желаемый ДОУ (район)" type="text"/>
+		<counter id="areaQueueNum" name="Номер очереди по Вашему муниципальному району" type="text"/>
+		<counter id="preferQueueNum" name="Номер очереди в желаемом ДОУ" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>municipal</type>
+	<country>ru</country>
+</provider>

@@ -1,32 +1,28 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-rinet</id>
-  <name>Rinet (Москва)</name>
-  <description>
-    Получает баланс и информацию о тарифном плане для московского интернет-провайдера Rinet (http://rinet.net). RiNet – зарегистрированная торговая марка ООО «КРОНИКС ПЛЮС» - одного из старейших интернет-провайдеров г. Москвы. В настоящее время RiNet обслуживает сети районов Даниловский, Донской, Замоскворечье, Якиманка, ограниченные участки в районах Красносельский и Пресненский.
-
-    Информация берется из личного кабинета https://rinet.net/personal/.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="status" name="Состояние" type="text"/>
-    <counter id="abon" name="Абонентская плата" units="р"/>
-    <counter id="trafficIn" name="Вх.трафик" units="Gb"/>
-    <counter id="trafficOut" name="Исх.трафик" units="Gb"/>
-  </counters>
-  <keywords>
-    ринет
-  </keywords>
-  <type>
-    internet
-  </type>
-  <country>
-    ru
-  </country>
+	<api flags="no_browser"/>
+	<id version="2">ab-internet-rinet</id>
+	<name>Rinet (Москва)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера московского интернет-провайдера Rinet <a href="http://rinet.net">http://rinet.net</a></p>
+	<p>Информация берется из личного кабинета <a href="https://rinet.net/personal">https://rinet.net/personal</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="status" name="Состояние" type="text"/>
+		<counter id="abon" name="Абонентская плата" units=" р"/>
+		<counter id="trafficIn" name="Вх.трафик" units=" Gb"/>
+		<counter id="trafficOut" name="Исх.трафик" units=" Gb"/>
+	</counters>
+	<keywords>ринет</keywords>
+	<type>internet</type>
+	<country>ru</country>
 </provider>

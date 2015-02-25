@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference
+		title="Серия"
+		key="series"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Серия"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите серию документа. В серии свидетельства о рождении РФ должны присутствовать римские цифры и буквы русского алфавита: например, III-АР.">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Номер"
+		key="number"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Номер"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите номер документа.">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Дата выдачи"
+		key="date"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Дата выдачи"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите дату выдачи в формате ДД.ММ.ГГГГ: например 25.02.2014">
+	</EditTextPreference>
+</PreferenceScreen>

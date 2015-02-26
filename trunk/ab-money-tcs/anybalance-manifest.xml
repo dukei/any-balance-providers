@@ -1,10 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="17">ab-money-tcs</id>
+	<id version="18">ab-money-tcs</id>
 	<api flags="no_browser" min_level="4"/>
 	<name>Тинькофф Кредитные Системы</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о текущем остатке и других параметрах карт и депозитов банка "Тинькофф Кредитные Системы".</p>
+	<p>Предоставляет информацию о текущем остатке и других параметрах карт, депозитов и накопительных счетов банка "Тинькофф Кредитные Системы".</p>
 	<p>Информация берется из системы интернет-банк при помощи API Мобильного приложения.</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
@@ -16,10 +16,11 @@
 	<br>
 	<b>Особенности:</b>
 	<ul>
-		<li> На данный момент провайдер поддерживает получение информации по картам и депозитам (вкладам). Если вам нужны дополнительные опции, обратитесь, пожалуйста, к разработчикам.</li> 
+		<li> На данный момент провайдер поддерживает получение информации по картам, депозитам (вкладам) и накопительным счетам. Если вам нужны дополнительные опции, обратитесь, пожалуйста, к разработчикам.</li> 
 		<li>Если у вас больше одного депозита, укажите последние цифры номера счета депозита, который нужно отобразить. Номер счета можно найти в интернет-банке в реквизитах депозита.</li>
+		<li>Для накопительного счета последние цифры номера вводить не нужно - берется первый найденный счет.</li>
 	]]></instruction>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
@@ -43,8 +44,9 @@
 		<counter id="cardnum" name="Номер карты" type="text"/>
 		<counter id="name" name="Название" type="text"/>
 		<counter id="accnum" name="Номер счета" type="text"/>
+		<counter id="nextStatementDate" name="Дата следующего зачисления процентов" type="time" format="dd/MM/yyyy"/>
 	</counters>
 	<keywords>ткс онлайн, tcs online, tinkoff</keywords>
-	<type>money</type>
+	<type>money, bank</type>
 	<country>ru</country>
 </provider>

@@ -140,8 +140,14 @@
         var paramValues = [_window,_document,_navigator,_webkitURL,_window.location,_window,_XMLHttpRequest];
 
         if(/<META[^>]+NAME="robots"[^>]*CONTENT="noindex,nofollow"[^>]*>/i.test(html)){ //Усиленная скриптовая проверка
-			var obfuscatedScript = sumParam(html, null, null, /<script(?:[^>](?!src\s*=))*>([\s\S]*?)<\/script>/ig, null, null, create_aggregate_join('\n'));
-        	safeEval(obfuscatedScript, paramNames, paramValues);
+		var obfuscatedScripts = sumParam(html, null, null, /<script(?:[^>](?!src\s*=))*>([\s\S]*?)<\/script>/ig, null, null);
+		for(var i=0; i<obfuscatedScripts.length; ++i){
+			try{
+        			safeEval(obfuscatedScripts[i], paramNames, paramValues);
+			}catch(e){
+				AnyBalance.trace(e.message);
+			}
+		}
         	loadImages();
         	html = _AnyBalance.requestGet(_url, headers);
         }

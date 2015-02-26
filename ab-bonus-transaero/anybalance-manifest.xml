@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="6">ab-bonus-transaero</id>
+	<id version="7">ab-bonus-transaero</id>
 	<name>Трансаэро Привилегия</name>
 	<description html="true"><![CDATA[
 	<p>Получает баланс баллов и другую информацию по бонусной программе «Трансаэро Привилегия» <a href="http://transaero.ru/ru/special-programs/privilege/privilege-terms">http://transaero.ru/ru/special-programs/privilege/privilege-terms</a></p>

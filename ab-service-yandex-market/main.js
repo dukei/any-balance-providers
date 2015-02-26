@@ -12,7 +12,7 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://market.yandex.ru';
+	var baseurl = 'http://m.market.yandex.ru';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.good, 'Введите наименование товара!');
@@ -22,17 +22,17 @@ function main() {
 	if(!html || AnyBalance.getLastStatusCode() > 400)
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');    
     
-    var res = prefs.good.replace(/(^\s+|\s+$)/g, '');
-    res = res.replace(/ /g,"+");
-    AnyBalance.trace(res);
+    // var res = prefs.good.replace(/(^\s+|\s+$)/g, '');
+    // res = res.replace(/ /g,"+");
+    // AnyBalance.trace(res);
      
-    html = AnyBalance.requestGet(baseurl + '/search.xml?cvredirect=2&text=' + res, g_headers);    
+    html = AnyBalance.requestGet(baseurl + '/search.xml?cvredirect=1&text=' + encodeURIComponent(prefs.good), g_headers);    
 	
 	if (/Сортировать/i.test(html)) {
 		AnyBalance.trace('Необходимо перейти на страницу товара вручную...');
-        var model_href = getParam(html, null, null, /b-offers__title(?:[^>]*>)[\s\S]*?href="([^"]+)/i, replaceTagsAndSpaces, html_entity_decode);
+        var model_href = getParam(html, null, null, /minicards[^>]*>[^>]*href="([^"]+)"/i, replaceTagsAndSpaces, html_entity_decode);
 		checkEmpty(model_href, 'Не удалось найти информацию по товару ' + prefs.good + '! Сайт изменен?' , true);
-        html = AnyBalance.requestGet(baseurl + model_href, g_headers);
+        html = AnyBalance.requestGet(model_href, g_headers);
 	}
 	
 	if (!/Средняя цена/i.test(html)){
@@ -42,12 +42,12 @@ function main() {
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'balance', /Средняя цена(?:[^>]*>){5}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, ['currency', 'balance', 'min_price', 'max_price'], /Средняя цена(?:[^>]*>){5}([\s\S]*?)<meta/i, replaceTagsAndSpaces, parseCurrency);
-	getParam(html, result, 'min_price', /b-prices__range(?:[^>]*>)([\d\s]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'max_price', /b-prices__range(?:[^>]*>[\d\s]+)…([\s\d]+)</i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'rating_value', /meta\scontent="([\d\.\,\s]*?)"\sitemprop="ratingValue"/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, '__tariff', /product-title(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'balance', /Средняя цена(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, ['currency', 'balance', 'min_price', 'max_price'], /Средняя цена(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseCurrency);
+	getParam(html, result, '__tariff', /<h\d class="b-title(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'min_price', /b-prices__range(?:[^>]*>){2}([\d\s]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'max_price', /b-prices__range(?:[^>]*>){4}([\d\s]+)/i, replaceTagsAndSpaces, parseBalance);
+	// getParam(html, result, 'rating_value', /meta\scontent="([\d\.\,\s]*?)"\sitemprop="ratingValue"/i, replaceTagsAndSpaces, parseBalance);
 	
 	AnyBalance.setResult(result);
 }

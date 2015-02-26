@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-service-google-play</id>
+	<id version="4">ab-service-google-play</id>
 	<api flags="no_browser"/>
 	<name>Google Play app tracker</name>
 	<description html="true"><![CDATA[
@@ -10,6 +10,7 @@
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
+		<js>login.js</js>
 		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>

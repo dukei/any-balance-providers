@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-intertelecom-krim</id>
+	<api flags="no_browser"/>
+	<name>Интертелеком (Крым)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Интертелеком <a href="http://www.intertelecom.ru.com/">http://www.intertelecom.ru.com/</a></p>
+	<p>Информация берется из личного кабинета <a href="https://assa.intertelecom.ru.com/ru/login/">https://assa.intertelecom.ru.com/ru/login/</a></p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Если у вас нет доступа в Личный кабинет, получите его на странице <a href="https://assa.intertelecom.ru.com/ru/reg/">https://assa.intertelecom.ru.com/ru/reg/</a></p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="accnum" name="Лицевой счет" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="status" name="Состояние" type="text"/>
+		<counter id="lastActivity" name="Дата последней абонентской активности" type="time" format="dd/MM/yyyy"/>
+		<counter id="saldo" name="Сальдо" units=" р"/>
+		<counter id="prepay" name="Предоплаченые услуги на месяц" units=" р"/>
+		<counter id="bonuses" name="Неактивированные бонусы" units=" р"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

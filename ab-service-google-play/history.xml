@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="5" date="2015-02-26">
+	- Translation added.
+	</change>
 	<change version="4" date="2015-02-26">
 	- Minor bugs fixed.
 	</change>

@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-service-google-play</id>
+	<id version="5">ab-service-google-play</id>
 	<api flags="no_browser"/>
 	<name>Google Play app tracker</name>
 	<description html="true"><![CDATA[
-	<p>Obtains information abount application from Google Play Developer Console<a href="https://play.google.com/apps/publish/">https://play.google.com/apps/publish/</a></p>
+	<p>Obtains information about application from Google Play Developer Console <a href="https://play.google.com/apps/publish/">https://play.google.com/apps/publish/</a></p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>

@@ -22,4 +22,14 @@
         dialogMessage="Please enter your password for Google Account."
         inputType="textPassword">
     </EditTextPreference>
+    <EditTextPreference
+		obligatory="true"
+        title="Application name" 
+        positiveButtonText="OK" 
+        summary="||{@s}" 
+        dialogTitle="Application name" 
+        negativeButtonText="Cancel" 
+        dialogMessage="Please enter application name to track."
+        key="app_name">
+    </EditTextPreference>	
 </PreferenceScreen>

@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="3" date="2015-02-26">
+	- Preferences fixed again.
+	</change>
 	<change version="2" date="2015-02-26">
 	- preferences fixed.
 	</change>

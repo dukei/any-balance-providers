@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id major_version="1.0" version="2">ab-bonus-planeta-kino-imax</id>
+	<id major_version="1.0" version="3">ab-bonus-planeta-kino-imax</id>
 	<name>Планета Кино IMAX</name>
 	<description html="true"><![CDATA[
 <p>Предоставляет информацию о бонусном счете сети кинотеатров «Планета кино» http://planeta-kino.com.ua/</p>

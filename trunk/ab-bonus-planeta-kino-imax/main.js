@@ -18,17 +18,15 @@ var g_headers = {
 function main(){
     var prefs = AnyBalance.getPreferences();
     var baseurl = "https://cabinet.planeta-kino.com.ua/";
-    AnyBalance.setDefaultCharset('windows-1251'); 
+//    AnyBalance.setDefaultCharset('windows-1251'); 
+    AnyBalance.setDefaultCharset('utf-8'); 
 
-    html = AnyBalance.requestPost(baseurl + '?return=#in', {
-        'return':'',
-        '__signing_l':prefs.login,
-        '__signing_p':prefs.password,
-        '__signing_action':'signin',
-        '__signing_in':'Âîéòè'
+    html = AnyBalance.requestPost(baseurl + 'Account/Login?ReturnUrl=%2f', {
+        'login':prefs.login,
+        'password':prefs.password
     }); 
 
-    if(!/\/signout\//i.test(html)){
+    if(!/signout/i.test(html)){
         var error = getParam(html, null, null, /<ul class="error-messages"><li>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error);
@@ -37,11 +35,11 @@ function main(){
 
     var result = {success: true};
 
-    html = AnyBalance.requestGet(baseurl + 'profile/id/'); 
-    getParam(html, result, '__tariff', /<dt>(?:Номер карты лояльности|Номер картки лояльності)<\/dt>\s*<dd>([\s\S]*?)<\/dd>/i, replaceTagsAndSpaces, html_entity_decode);
+    html = AnyBalance.requestGet(baseurl + 'Profile/Id'); 
+    getParam(html, result, '__tariff', /<dt>(?:Регистрационный номер|Реєстраційний номер)<\/dt>\s*<dd>([\s\S]*?)<\/dd>/i, replaceTagsAndSpaces, html_entity_decode);
 
-    html = AnyBalance.requestGet(baseurl + 'profile/bonus-balance/'); 
-    getParam(html, result, 'balance', /(?:На вашем счете|На вашому рахунку) ([\s\S]*?) бонус./i, replaceTagsAndSpaces, parseBalance);
+    html = AnyBalance.requestGet(baseurl + 'Profile/BonusBalance');
+    getParam(html, result, 'balance', /<\/h1>[\s\S]*?<p>([\s\S]*?) (?:бонусов на вашем счете.|бонусів на вашому рахунку.)/i, replaceTagsAndSpaces, parseBalance);
 
     AnyBalance.setResult(result);
 }

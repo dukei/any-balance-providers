@@ -8,7 +8,7 @@ var g_headers = {
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection': 'keep-alive',
 	'X-GWT-Module-Base': 'https://play.google.com/apps/publish/gwt/',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (AnyBalance 7.0; WOW64; rv:22.0) Gecko/20100101 AnyBalance/22.0',
 };
 
 function main() {
@@ -16,8 +16,9 @@ function main() {
 	var baseurl = 'https://play.google.com/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
-	checkEmpty(prefs.login, 'Введите логин!');
-	checkEmpty(prefs.password, 'Введите пароль!');
+	checkEmpty(prefs.login, 'Enter login!');
+	checkEmpty(prefs.password, 'Enter password!');
+	checkEmpty(prefs.app_name, 'Enter application name!');
 	
 	var html = googleLogin(prefs);
 	
@@ -36,7 +37,7 @@ function main() {
 	
 	var token = getParam(html, null, null, /"XsrfToken"[^{]+{[^:]+:\\"([\s\S]*?)\\"/i);
 	
-	checkEmpty(dev_acc && token, 'Не удалось найти аккаунт разработчика Google-Play', true);
+	checkEmpty(dev_acc && token, 'Can`t find developer account in Google-Play', true);
 	
 	var p = {
 		"method":"fetch",
@@ -57,7 +58,7 @@ function main() {
 	
 	if(!json.result) {
 		AnyBalance.trace(html);
-		throw new AnyBalance.Error('No result!');
+		throw new AnyBalance.Error('Can`t find result in response json!');
 	}
 	
 	token = json.xsrf;
@@ -70,7 +71,7 @@ function main() {
 			var appName = currentApp[1][2][1][0][2];
 			if(new RegExp(prefs.app_name, 'i').test(appName)) {
 				app = currentApp;
-				AnyBalance.trace(JSON.stringify(app));
+				//AnyBalance.trace(JSON.stringify(app));
 				break;
 			}
 		}

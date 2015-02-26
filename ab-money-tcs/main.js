@@ -74,6 +74,8 @@ function mainMobileApp(baseurl, prefs) {
 	
     if(prefs.type == 'dep') {
         fetchDep(json, baseurl, sessionId);
+    } else if(prefs.type == 'saving') {
+    	fetchSaving(json, baseurl, sessionId);
     } else {
         fetchCard(json, baseurl, sessionId);
     }
@@ -190,11 +192,11 @@ function main(){
 			throw new AnyBalance.Error('Не удалось получить список карт: ' + accounts.resultCode);
 		}
 
-		if(prefs.type == 'card'){
-			fetchCard(accounts, baseurl, sessionid);
-		}else if(prefs.type == 'dep'){
+		if(prefs.type == 'dep'){
 			fetchDep(accounts, baseurl, sessionid);
-		}else{
+		} else if(prefs.type == 'saving') {
+	    	fetchSaving(accounts, baseurl, sessionId);
+		} else {
 			fetchCard(accounts, baseurl, sessionid);
 		}
 	}
@@ -220,8 +222,9 @@ function fetchCard(accounts, baseurl, sessionid){
     accounts = cards;
 
     var prefs = AnyBalance.getPreferences();
-    if(prefs.num && !/^\d{4}$/.test(prefs.num))
-        throw new AnyBalance.Error("Укажите 4 последних цифры карты или не указывайте ничего, чтобы получить информацию по первой карте.");
+
+    if(prefs.num && !/^\d{4,}$/.test(prefs.num))
+        throw new AnyBalance.Error("Укажите не менее 4 последних цифр номера карты, или не указывайте ничего, чтобы получить информацию по первой карте.");
 
     var card = null;
     var cardNumber = 0;
@@ -314,19 +317,19 @@ function fetchDep(accounts, baseurl, sessionid){
     accounts = deps;
 
     var prefs = AnyBalance.getPreferences();
+
     if(prefs.num && !/^\d{4,}$/.test(prefs.num))
         throw new AnyBalance.Error("Укажите не менее 4 последних цифр номера депозита, или не указывайте ничего, чтобы получить информацию по первому депозиту.");
-
+    
     var dep = null;
 
     if(!prefs.num){
         dep = accounts[0];
     }else{
-        finddep: 
         for(var i=0; i<accounts.length; ++i){
-            if(endsWith(accounts[i].externalAccountNumber, prefs.num)){
+            if(accounts[i].externalAccountNumber && endsWith(accounts[i].externalAccountNumber, prefs.num)){
                 dep = accounts[i];
-                break finddep;
+                break;
             }
         }
     }
@@ -353,6 +356,31 @@ function fetchDep(accounts, baseurl, sessionid){
     if(AnyBalance.isAvailable('pcts') && isset(dep.interest))
         result.pcts = dep.interest.value;
     result.__tariff = dep.name;
+    
+    AnyBalance.setResult(result);
+}
+
+function fetchSaving(accounts, baseurl, sessionid){
+	var prefs = AnyBalance.getPreferences();
+	var savingList = accounts.payload.reduce(function(res, acc){
+		return res.concat(acc.accounts.filter(function(acc){
+			return /Saving/i.test(acc.accountType);
+		}));
+	}, []);
+	var saving, filtered, result;
+
+	if(!savingList.length)
+		throw new AnyBalance.Error("У вас нет ни одного накопительного счета!");
+
+	// Берем 1й так как нету externalAccountNumber
+	saving = savingList[0];
+
+	result = {success: true};
+	getParam(saving.moneyAmount.value, result, 'balance');
+	getParam(saving.moneyAmount.currency.name, result, ['currency', 'balance']);
+	getParam(saving.nextStatementDate.milliseconds, result, 'nextStatementDate');
+	getParam(saving.name, result, 'name');
+	getParam(saving.name, result, '__tariff');
     
     AnyBalance.setResult(result);
 }

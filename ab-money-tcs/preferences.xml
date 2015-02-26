@@ -33,8 +33,8 @@
 		key="type"
 		title="Что смотреть"
 		summary="||{@s}"
-		entries="Карта|Депозит"
-		entryValues="card|dep"
+		entries="Карта|Депозит|Накопительный счет"
+		entryValues="card|dep|saving"
 		defaultValue="card">
 	</ListPreference>
 	<EditTextPreference

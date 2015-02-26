@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-service-google-play</id>
+	<api flags="no_browser"/>
+	<name>Google Play app tracker</name>
+	<description html="true"><![CDATA[
+	<p>Obtains information abount application from Google Play Developer Console<a href="https://play.google.com/apps/publish/">https://play.google.com/apps/publish/</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="rating" name="Rating"/>
+		<counter id="rating_total" name="Total ratings"/>
+		<counter id="active_users" name="Active users"/>
+		<counter id="total_users" name="Total installs"/>
+		<counter id="errors_total" name="Errors and ANRs"/>
+	</counters>
+	<keywords></keywords>
+	<type>service</type>
+	<country></country>
+</provider>

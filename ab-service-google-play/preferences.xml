@@ -1,24 +1,25 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-	<EditTextPreference
-		title="Логин"
-		key="login"
-		summary="||{@s}"
+    <EditTextPreference
 		obligatory="true"
-		dialogTitle="Логин"
-		positiveButtonText="ОК"
-		negativeButtonText="Отмена"
-		dialogMessage="Введите логин, используемый для входа в личный кабинет.">
-	</EditTextPreference>
-	<EditTextPreference
-		title="Пароль"
-		key="password"
-		summary="||***********"
+        title="E-mail" 
+        positiveButtonText="OK" 
+        summary="||{@s}" 
+        dialogTitle="E-mail" 
+        negativeButtonText="Cancel" 
+        dialogMessage="Please enter your e-mail."
+        key="login"
+        inputType="textEmailAddress">
+    </EditTextPreference>
+    <EditTextPreference
 		obligatory="true"
-		dialogTitle="Пароль"
-		positiveButtonText="ОК"
-		negativeButtonText="Отмена"
-		dialogMessage="Введите пароль, используемый для входа в личный кабинет."
-		inputType="textPassword">
-	</EditTextPreference>
+        positiveButtonText="OK"
+        key="password" 
+        dialogTitle="Password"
+        negativeButtonText="Cancel"
+        title="Password"
+        summary="||***********"
+        dialogMessage="Please enter your password for Google Account."
+        inputType="textPassword">
+    </EditTextPreference>
 </PreferenceScreen>

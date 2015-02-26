@@ -1,12 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-exchange-mejbank</id>
+	<id version="4">ab-exchange-mejbank</id>
 	<api flags="no_browser"/>
 	<name>Курсы валют Межбанка Украины</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о курсах валют Межбанка со страницы http://minfin.com.ua/currency/mb/</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<js>library.js</js>

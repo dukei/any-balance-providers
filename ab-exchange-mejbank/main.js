@@ -7,78 +7,79 @@ var g_headers = {
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
-	'X-Requested-With':'XMLHttpRequest'
+	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36'
 };
 
+function getIfAvailable(counters, url){
+    var html;
+    if(isAvailable(counters)){
+        html = AnyBalance.requestGet(url, g_headers);
+        if(!html || AnyBalance.getLastStatusCode() > 400)
+            throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+        return html;
+    }
+    return html;
+}
+
+function getCRFromTable(result, sellCounter, purchaseCounter, url){
+    var table, html;
+    if(html = getIfAvailable([sellCounter, purchaseCounter], url)){
+        table = getParam(html, null, null, /(Покупают по[\s\S]*?)<\/table>/i);
+        getParam(table, result, sellCounter, /class="price"[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+
+        table = getParam(html, null, null, /(Продают по[\s\S]*?)<\/table>/i);
+        getParam(table, result, purchaseCounter, /class="price"[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+    }
+}
+
+function getCRFromHeader(result, sellCounter, purchaseCounter, url){
+    var html;
+    if(html = getIfAvailable([sellCounter, purchaseCounter], url)){
+        getParam(html, result, sellCounter, /Средняя покупка:<\/small>\s*<span>([\S\s]+?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+        getParam(html, result, purchaseCounter, /Средняя продажа:<\/small>\s*<span>([\S\s]+?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+    }
+}
+
 function main() {
-	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://minfin.com.ua/';
+	var prefs = AnyBalance.getPreferences(),
+        baseurl = 'http://minfin.com.ua/',
+        course = prefs.course || '1',
+        result = {success: true},
+        entity,
+        table,
+        html;
+
 	AnyBalance.setDefaultCharset('utf-8');
 	
-	var html = AnyBalance.requestGet(baseurl + 'currency/mb/', g_headers);
-	
-	if(!html || AnyBalance.getLastStatusCode() > 400)
-		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');    
-    
-    var course = prefs.course || '1';
-    
-	var result = {success: true};    
-    
     if (course == '1') {
-        var table = getParam(html, null, null, /(Курсы от банков[\s\S]*?)<\/table>/i);        
-    
-        getParam(table, result, '_tariff', /Курсы от банков/i, null, null);
-        getParam(table, result, 'purchase_usd', /USD(?:[\s\S]*?<tr[^>]*>){1}([^>]*>){4}/i, replaceTagsAndSpaces, parseBalance);
-        getParam(table, result, 'sell_usd', /USD(?:[\s\S]*?<tr[^>]*>){2}([^>]*>){4}/i, replaceTagsAndSpaces, parseBalance);
-        
-        getParam(table, result, 'purchase_eur', /EUR(?:[\s\S]*?<tr[^>]*>){1}([^>]*>){6}/i, replaceTagsAndSpaces, parseBalance);
-        getParam(table, result, 'sell_eur', /EUR(?:[\s\S]*?<tr[^>]*>){2}([^>]*>){6}/i, replaceTagsAndSpaces, parseBalance);
-         
-        getParam(table, result, 'purchase_rub', /RUB(?:[\s\S]*?<tr[^>]*>){1}([^>]*>){8}/i, replaceTagsAndSpaces, parseBalance);
-        getParam(table, result, 'sell_rub', /RUB(?:[\s\S]*?<tr[^>]*>){2}([^>]*>){8}/i, replaceTagsAndSpaces, parseBalance);
-        
+        // Курсы от банков
+        getCRFromTable(result, 'sell_usd', 'purchase_usd', baseurl + 'currency/banks/usd/');
+        getCRFromTable(result, 'sell_eur', 'purchase_eur', baseurl + 'currency/banks/eur/');
+        getCRFromTable(result, 'sell_rub', 'purchase_rub', baseurl + 'currency/banks/rub/');
     } else if (course == '2') {
-    
-        var table = getParam(html, null, null, /(Рыночные курсы[\s\S]*?)<\/table>/i);
-        
-        getParam(table, result, '_tariff', /Рыночные курсы/i, null, null);    
-        getParam(table, result, 'purchase_usd', /USD(?:[\s\S]*?<tr[^>]*>){1}([^>]*>){2}/i, replaceTagsAndSpaces, parseBalance);
-        getParam(table, result, 'sell_usd', /USD(?:[\s\S]*?<tr[^>]*>){2}([^>]*>){2}/i, replaceTagsAndSpaces, parseBalance);
-        
-        getParam(table, result, 'purchase_eur', /EUR(?:[\s\S]*?<tr[^>]*>){1}([^>]*>){4}/i, replaceTagsAndSpaces, parseBalance);
-        getParam(table, result, 'sell_eur', /EUR(?:[\s\S]*?<tr[^>]*>){2}([^>]*>){4}/i, replaceTagsAndSpaces, parseBalance);
-        
-        getParam(table, result, 'purchase_rub', /RUB(?:[\s\S]*?<tr[^>]*>){1}([^>]*>){6}/i, replaceTagsAndSpaces, parseBalance);
-        getParam(table, result, 'sell_rub', /RUB(?:[\s\S]*?<tr[^>]*>){2}([^>]*>){6}/i, replaceTagsAndSpaces, parseBalance);
-        
+        // Карточные курсы
+        getCRFromTable(result, 'sell_usd', 'purchase_usd', baseurl + 'currency/cards/usd/');
+        getCRFromTable(result, 'sell_eur', 'purchase_eur', baseurl + 'currency/cards/eur/');
+        getCRFromTable(result, 'sell_rub', 'purchase_rub', baseurl + 'currency/cards/rub/');
     } else if (course == '3')  {
-    
-        getParam(html, result, '_tariff', /(Индикативные курсы НБУ на[\s\S]*?):<\//i, replaceTagsAndSpaces, html_entity_decode);   
-        getParam(html, result, 'course_date', /Индикативные курсы НБУ на([\s\S]*?):<\//i, replaceTagsAndSpaces, parseDate);
-        getParam(html, result, 'course_USD', /Индикативные курсы НБУ на(?:[^>]*>){2}доллар&nbsp;([^;]+)/i, replaceTagsAndSpaces, parseBalance);
-        getParam(html, result, 'course_EUR', /Индикативные курсы НБУ на(?:[^>]*>){2}[\s\S]*?евро&nbsp;([^;]+)/i, replaceTagsAndSpaces, parseBalance);
-        getParam(html, result, 'course_RUB', /Индикативные курсы НБУ на(?:[^>]*>){2}[\s\S]*?рубль&nbsp;([\s\S]*?)\.\s*?</i, replaceTagsAndSpaces, parseBalance);  
-        
+        // Индикативные курсы НБУ
+        if(html = getIfAvailable(['course_USD', 'course_EUR', 'course_RUB'], baseurl + 'currency/nbu/')){
+            table = getParam(html, null, null, /(Курсы валют НБУ[\s\S]*?)<\/table>/i);
+
+            entity = /доллары США<\/a><\/td>\s*<td>(\d+)<\/td>\s*?<td[^>]*>([\s\d.]*?)<\/td>/i.exec(table);
+            getParam(entity[2]/entity[1], result, 'course_USD');
+
+            entity = /ЕВРО<\/a><\/td>\s*<td>(\d+)<\/td>\s*?<td[^>]*>([\s\d.]*?)<\/td>/i.exec(table);
+            getParam(entity[2]/entity[1], result, 'course_EUR'); 
+
+            entity = /российские рубли<\/a><\/td>\s*<td>(\d+)<\/td>\s*?<td[^>]*>([\s\d.]*?)<\/td>/i.exec(table);
+            getParam(entity[2]/entity[1], result, 'course_RUB');
+        } 
     } else {
-    
-        html = AnyBalance.requestGet(baseurl + 'currency/auction/', g_headers);
-        
-        if(!html || AnyBalance.getLastStatusCode() > 400)
-            throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');  
-            
-        var table = getParam(html, null, null, /(<h1>Валютный аукцион[\s\S]*?)<\/table>/i);
-    
-        getParam(table, result, '_tariff', /Валютный аукцион/i, null, null);
-        getParam(table, result, 'purchase_usd', /USD(?:[\s\S]*?<tr[^>]*>){1}([^>]*>){4}/i, replaceTagsAndSpaces, parseBalance);
-        getParam(table, result, 'sell_usd', /USD(?:[\s\S]*?<tr[^>]*>){2}([^>]*>){4}/i, replaceTagsAndSpaces, parseBalance);
-        
-        getParam(table, result, 'purchase_eur', /EUR(?:[\s\S]*?<tr[^>]*>){1}([^>]*>){6}/i, replaceTagsAndSpaces, parseBalance);
-        getParam(table, result, 'sell_eur', /EUR(?:[\s\S]*?<tr[^>]*>){2}([^>]*>){6}/i, replaceTagsAndSpaces, parseBalance);
-         
-        getParam(table, result, 'purchase_rub', /RUB(?:[\s\S]*?<tr[^>]*>){1}([^>]*>){8}/i, replaceTagsAndSpaces, parseBalance);
-        getParam(table, result, 'sell_rub', /RUB(?:[\s\S]*?<tr[^>]*>){2}([^>]*>){8}/i, replaceTagsAndSpaces, parseBalance);
-        
+        // Валютный аукцион
+        getCRFromHeader(result, 'sell_usd', 'purchase_usd', baseurl + 'currency/auction/usd/buy/all/');
+        getCRFromHeader(result, 'sell_eur', 'purchase_eur', baseurl + 'currency/auction/eur/buy/all/');
+        getCRFromHeader(result, 'sell_rub', 'purchase_rub', baseurl + 'currency/auction/rub/buy/all/');
     }
     
 	AnyBalance.setResult(result);

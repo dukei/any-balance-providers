@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-municipal-akadem-ekat</id>
+	<api flags="no_browser"/>
+	<name>УК Академический (Екатеринбург)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе, показаниях счетчиков и других параметрах провайдера УК Академический <a href="http://www.uk-akadem.ru/">http://www.uk-akadem.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="http://www.uk-akadem.ru/users/">http://www.uk-akadem.ru/users/</a></p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Если у вас нет доступа в Личный кабинет, получите его на странице <a href="http://www.uk-akadem.ru/users/?action=user/register">http://www.uk-akadem.ru/users/?action=user/register</a></p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="address" name="Объект недвижимости" type="text"/>
+		<counter id="counters" name="Показания приборов счетчика" type="html"/>
+		<counter id="account" name="Лицевой счет" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>municipal</type>
+	<country>ru</country>
+</provider>

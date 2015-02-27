@@ -69,52 +69,42 @@ function main() {
 		AnyBalance.trace('It looks like we are in pre paid selfcare...');
 		html = AnyBalance.requestGet(baseurl + 'mps/portal?cmd=dashboard&lang=tr&pagemenu=paket.mevcutPaket', g_headers);
 		
-		getParam(html, result, '__tariff', /Tarifeniz:(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-		getParam(html, result, 'balance', /Kalan Bakiyeniz:(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, '__tariff', /Tarifeniz:(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+		getParam(html, result, 'balance', /Kalan Bakiyeniz:(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	
-		var bonusesTable = getParam(html, null, null, /(<table[^>]*class="oim_table"[\s\S]*?<\/table>)/i);
-		if(bonusesTable) {
-			var bonusRows = sumParam(bonusesTable, null, null, /<tr>[\s\S]*?<\/tr>/ig);
-			for(i=0; i< bonusRows.length; i++) {
-				var curr = bonusRows[i];
-				var optionName = getParam(curr, null, null, /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\//i);
+		var rowsTitles = sumParam(html, null, null, /<div class="package-list-title">[\s\S]*?<\/div>/ig);
+		for(var i = 0, toi = rowsTitles.length; i < toi; i++){
+			var rowTitle = rowsTitles[i],
+				rowValue = getParam(html, null, null, new RegExp(rowTitle + '[\\s\\S]+?<div class="progress-text text-center">\\s*([^<]+)', 'i'), replaceTagsAndSpaces);
+			if(/bonus/i.test(rowTitle)){
 				// Это бонусные пакеты
-				if(/bonus/i.test(optionName)) {
-					//AnyBalance.trace('Found bonuses: ' + curr);
-					// Трафик
-					if(/\d+\s*(?:K|M|G)B/i.test(optionName)) {
-						sumParam(curr, result, 'bonus_traf', /(?:[\s\S]*?<td[^>]*>){5}[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
-					// SMS 
-					} else if(/\d+\s*SMS/i.test(optionName)) {
-						sumParam(curr, result, 'bonus_sms', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-					// Минуты
-					} else if(/\d+\s*(?:dk|Dakika)/i.test(optionName)) {
-						sumParam(curr, result, 'bonus_minutes', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-						//getParam(curr, result, 'minutes', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-					} else {
-						AnyBalance.trace('Unknown bonus-option: ' + optionName + ', contact the developers, please.');
-						AnyBalance.trace(curr);
-					}
-				// это обычные пакеты
+				// Трафик
+				if(/\d+\s*(?:K|M|G)B/i.test(rowValue)) {
+					sumParam(rowValue, result, 'bonus_traf', /[\s\S]+/i, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
+				// SMS 
+				} else if(/\d+\s*SMS/i.test(rowValue)) {
+					sumParam(rowValue, result, 'bonus_sms', /[\s\S]+/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+				// Минуты
+				} else if(/\d+\s*(?:dk|Dakika)/i.test(rowValue)) {
+					sumParam(rowValue, result, 'bonus_minutes', /[\s\S]+/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 				} else {
-					// Трафик
-					if(/\d+\s*(?:K|M|G)B/i.test(optionName)) {
-						sumParam(curr, result, 'traf', /(?:[\s\S]*?<td[^>]*>){5}[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
-					// SMS 
-					} else if(/\d+\s*SMS/i.test(optionName)) {
-						sumParam(curr, result, 'sms', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-					// Минуты
-					} else if(/\d+\s*(?:dk|Dakika)/i.test(optionName)) {
-						sumParam(curr, result, 'minutes', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-						//getParam(curr, result, 'minutes', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-						
-					} else if(/Havuzdan Kontor Yukleme/i.test(optionName)) {
-						getParam(curr, result, 'bonus', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-						getParam(curr, result, 'bonus_till', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseDate);
-					} else {
-						AnyBalance.trace('Unknown option: ' + optionName + ', contact the developers, please.');
-						AnyBalance.trace(curr);
-					}
+					AnyBalance.trace('Unknown bonus-option, contact the developers, please.');
+					AnyBalance.trace(rowValue);
+				}
+			} else {
+				// Это обычные пакеты
+				// Трафик
+				if(/\d+\s*(?:K|M|G)B/i.test(rowValue)) {
+					sumParam(rowValue, result, 'traf', /[\s\S]+/i, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
+				// SMS 
+				} else if(/\d+\s*SMS/i.test(rowValue)) {
+					sumParam(rowValue, result, 'sms', /[\s\S]+/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+				// Минуты
+				} else if(/\d+\s*(?:dk|Dakika)/i.test(rowValue)) {
+					sumParam(rowValue, result, 'minutes', /[\s\S]+/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+				} else {
+					AnyBalance.trace('Unknown bonus-option, contact the developers, please.');
+					AnyBalance.trace(rowValue);
 				}
 			}
 		}

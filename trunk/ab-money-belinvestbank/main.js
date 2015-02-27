@@ -20,6 +20,11 @@ function main() {
 		
 	var html = AnyBalance.requestGet(baseurl + 'signin', g_headers);
 
+	if(!html || AnyBalance.getLastStatusCode() > 400){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+	}
+
 	html = AnyBalance.requestPost(baseurl + 'signin', {
         login:prefs.login,
         keyword:prefs.keyword,

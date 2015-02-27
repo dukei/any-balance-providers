@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2.0" version="18">ab-cell-avea</id>
+	<id major_version="2.0" version="19">ab-cell-avea</id>
 	<api flags="no_browser"/>
 	<name>AVEA</name>
 	<description html="true"><![CDATA[
@@ -10,7 +10,7 @@
 	<instruction html="true"><![CDATA[
 	<p>Online İşlemler şifrenizi almak için telefonunuzda *952# yazıp arama tuşuna basın.</p>
 	]]></instruction>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

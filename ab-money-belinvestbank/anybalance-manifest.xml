@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="6">ab-money-belinvestbank</id>
+	<id version="7">ab-money-belinvestbank</id>
 	<api flags="no_browser"/>
 	<name>Белинвестбанк (Беларусь)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе банковских карт Белинвестбанка</p>
 	<p>Информация берется из PDA версии интернет-банкинга (https://ibank.belinvestbank.by/signin)</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
@@ -22,6 +22,6 @@
 		<counter id="status" name="Статус" type="text"/>
 	</counters>
 	<keywords></keywords>
-	<type>money</type>
+	<type>money, bank</type>
 	<country>by</country>
 </provider>

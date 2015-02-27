@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-service-robokassa-partner</id>
+	<id version="2">ab-service-robokassa-partner</id>
 	<api flags="no_browser"/>
 	<name>Robokassa (магазин)</name>
 	<description html="true"><![CDATA[
@@ -21,6 +21,16 @@
 	<counters>
 		<counter id="name" name="Наименование клиента" type="text"/>
 		<counter id="shops" name="Магазины" type="html"/>
+
+		<counter id="shopName0" name="Название магазина №1" type="text"/>
+		<counter id="shopName1" name="Название магазина №2" type="text"/>
+		<counter id="shopName2" name="Название магазина №3" type="text"/>
+		<counter id="shopBalance0" name="Баланс магазина №1" type="text"/>
+		<counter id="shopBalance1" name="Баланс магазина №2" type="text"/>
+		<counter id="shopBalance2" name="Баланс магазина №3" type="text"/>
+		<counter id="shopStatus0" name="Статус магазина №1" type="text"/>
+		<counter id="shopStatus1" name="Статус магазина №2" type="text"/>
+		<counter id="shopStatus2" name="Статус магазина №3" type="text"/>
 	</counters>
 	<keywords></keywords>
 	<type>service</type>

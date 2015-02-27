@@ -53,26 +53,42 @@ function main() {
 
 	var result = {success: true};
 
-	sumParam(html, result, 'shops', /shopRow[\s\S]+?shop-upper[^>]+>((?:[\s\S](?!<div class="shop-lower))+[\s\S](?:[\s\S](?!<\/div))+[\s\S])/ig, null, null, aggregateShops);
+	var shops = sumParam(html, null, null, /shopRow[\s\S]+?shop-upper[^>]+>((?:[\s\S](?!<div class="shop-lower))+[\s\S](?:[\s\S](?!<\/div))+[\s\S])/ig);
+	var shopsData = getShopsData(shops);
+
+	for(var i = 0, toi = shopsData.length > 3 ? 3 : shopsData.length; i < toi; i++){
+		var shopData = shopsData[i];
+		getParam(shopData.name, result, 'shopName' + i);
+		getParam(shopData.status, result, 'shopStatus' + i);
+		getParam(shopData.balance, result, 'shopBalance' + i);
+	}
+
+	getParam(shopsData, result, 'shops', null, null, aggregateShops);
 	getParam(html, result, 'name', /page-title[\s\S]+?(<h1>[\w\s]+<\/h1>)/i, replaceTagsAndSpaces, html_entity_decode);
 
 	AnyBalance.setResult(result);
 }
 
-function aggregateShops(shops){
+function getShopsData(shops){
 	if(!shops || shops.length === 0)
 		throw new AnyBalance.Error('Не найдено ни одного магазина');
-
 	var res = [], name, status, balance;
 	for(var i = 0, toi = shops.length; i < toi; i++){
 		name = getParam(shops[i], null, null, /class="name[^>]>\s*[^>]+>([^<]+)/i, replaceTagsAndSpaces);
 		status = getParam(shops[i], null, null, /shop-lower(?:[\s\S](?!<b>))+[\s\S](<[^<]+<\/b>)/i, replaceTagsAndSpaces);
 		balance = getParam(shops[i], null, null, /<a class="balance[^>]+>(?:[\s\S](?!<\/div>))+[\s\S]/i, replaceTagsAndSpaces);
-		res.push(
-			(name || 'Имя магазина не найдено') + 
-			' (' + (status || 'Статус не найден') + ') ' + 
-			(balance ? '<b>' + parseBalance(balance) + ' ' + parseCurrency(balance) + '</b>' : '')
-		);
+		res.push({
+			name: name || 'Имя магазина не найдено',
+			status: status || 'Статус не найден',
+			balance: balance ? parseBalance(balance) + ' ' + parseCurrency(balance) : ''
+		});
 	}
-	return res.join('<br />');
+	return res;
+}
+
+function aggregateShops(shops){
+	var res = [];
+	for(var i = 0, toi = shops.length; i < toi; i++)
+		res.push(shops[i].name + ' (' + shops[i].status + ') ' + '<b>' + shops[i].balance + '</b>');
+	return res.join('< br />');
 }

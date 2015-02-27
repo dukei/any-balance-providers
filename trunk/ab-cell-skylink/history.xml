@@ -1,5 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="3.0" version="19" date="2015-02-27">
+	- Улучшена обработка ошибок.
+	</change>
 	<change version="18" major_version="3.0" date="2014-05-22">
 	- Добавлен регион Ижевск.
 	</change>

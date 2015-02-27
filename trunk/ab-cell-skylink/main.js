@@ -11,6 +11,10 @@ var g_headers = {
 function main(){
     var prefs = AnyBalance.getPreferences();
 
+    checkEmpty(prefs.password, 'Введите пароль!');
+    checkEmpty(prefs.login, 'Введите логин!');
+    checkEmpty(/^\d{10}$/.test(prefs.login), 'Не верный формат логина, необходимо вводить логин без +7 в начале и без пробелов.');
+
     var region = prefs.region || 'moscow';
     var regionFunc = g_regions[region] || g_regions.moscow;
 
@@ -298,7 +302,7 @@ function mainSpb(){
     var headers = {
     	"User-Agent":'Mozilla/5.0 (Windows NT 5.1; rv:2.0) Gecko/20100101 Firefox/4.0'
     };
-    
+
     var html = AnyBalance.requestPost(baseurl + 'j_security_check', {
 	j_username:prefs.login,
 	j_password:prefs.password,

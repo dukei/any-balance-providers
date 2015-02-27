@@ -55,7 +55,7 @@ function doNewCabinet(prefs){
 	html = AnyBalance.requestGet(json.form.redirectUrl, g_headers);
 	
     var result = {success: true};
-    getParam(html, result, 'balance', /Баланс[\s\S]*?b-user-info__balance[^>]*>([\s\S]*?)</i, null, parseBalance);
+    getParam(html, result, 'balance', /personal\/history[^>]*>\s*<span[^>]*b-user-info__balance[^>]*>([\s\S]*?)</i, null, parseBalance);
 	getParam(html, result, 'bonuses', /bonus-statement[^>]*>\s*<span[^>]*b-user-info__balance[^>]*>([\s\S]*?)</i, null, parseBalance);
 	result.__tariff = prefs.login;
 

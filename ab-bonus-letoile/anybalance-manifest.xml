@@ -1,12 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="1.0" version="4">ab-bonus-letoile</id>
+	<id major_version="1.0" version="5">ab-bonus-letoile</id>
 	<api flags="no_browser"/>
 	<name>Л'Этуаль</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о бонусных баллах на клубных картах сети магазинов Л'Этуаль.</p>
 	]]></description>
-	<author>iReset &lt;ireset.ag@gmail.com&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

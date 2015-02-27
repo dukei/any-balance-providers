@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="18" major_version="3.0">ab-cell-skylink</id>
+	<id version="19" major_version="3.0">ab-cell-skylink</id>
 	<name>Skylink</name>
 	<api flags="no_browser"/>
 	<description html="true"><![CDATA[
@@ -21,7 +21,7 @@
 	<li>Для добавления других регионов или доработки существующих, обратитесь, пожалуйста, к автору по e-mail.</li>
 	</ul>
 	]]></instruction>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

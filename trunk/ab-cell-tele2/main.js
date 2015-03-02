@@ -2,6 +2,14 @@
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
+var g_headers = {
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
+	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Connection': 'keep-alive',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+};
+
 function main() {
 	var prefs = AnyBalance.getPreferences();
 	
@@ -9,44 +17,43 @@ function main() {
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
 	var baseurl = "https://my.tele2.ru/";
+	var baseurlLogin = 'https://login.tele2.ru/ssotele2/';
 	
 	AnyBalance.setDefaultCharset('utf-8');
-	var html = AnyBalance.requestGet(baseurl);
+	var html = AnyBalance.requestGet(baseurl, g_headers);
 	
-	var matches = html.match(/<input[^>]*name="(csrf[^"]*)"[^>]*value="([^"]*)"/i);
-	if (!matches) {
-		var error = getParam(html, null, null, /<div[^>]+id="error-wrapper"[^>]*>([\s\S]*?)(?:<a |<\/div>)/i, replaceTagsAndSpaces, html_entity_decode);
-		if (error) throw new AnyBalance.Error(error);
-		throw new AnyBalance.Error("Не удаётся найти код безопасности для входа. Проблемы на сайте или сайт изменен.");
+	if(!html || AnyBalance.getLastStatusCode() > 400){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
-	AnyBalance.trace("Trying to enter selfcare at address: " + baseurl);
-	var params = {
-		j_username: prefs.login,
-		j_password: prefs.password,
-		_redirectToUrl: '',
-		is_ajax: true
-	};
-	params[matches[1]] = matches[2]; //Код безопасности
-	html = AnyBalance.requestPost(baseurl + "public/security/check", params, {"X-Requested-With": "XMLHttpRequest"});
 	
-	var error = getParam(html, null, null, /<div id="error-wrapper">[\s\S]*?<p>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
-	if (error) throw new AnyBalance.Error(error, null, /Ошибка в номере телефона|Пароль неправильный/i.test(error));
-	var json = JSON.parse(html.replace(/[\x0D\x0A]+/g, ' '));
-	if (!json.success) throw new AnyBalance.Error(json.error, null, /Ошибка в номере телефона|Пароль неправильный/i.test(json.error));
-	var result = {success: true}; //Баланс нельзя не получить, не выдав ошибку!
-	if (AnyBalance.isAvailable('balance')) {
-		result.balance = null; //Баланс должен быть всегда, даже если его не удаётся получить. 
-		//Если его не удалось получить, то передаём null, чтобы значение взялось из предыдущего запроса
+	html = AnyBalance.requestPost(baseurlLogin + 'wap/auth/submitLoginAndPassword', {
+		pNumber: prefs.login,
+		password: prefs.password,
+	}, g_headers);
+	
+	if (!/profile\/logout/i.test(html)) {
+		var error = sumParam(html, null, null, /class="error"[^>]*>([\s\S]*?)</gi, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+		if (error)
+			throw new AnyBalance.Error(error, null, /не найден|Неверный пароль/i.test(error));
+		
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
-	html = AnyBalance.requestGet(baseurl + "home");
+	
+	html = AnyBalance.requestGet(baseurl + 'home', g_headers);
+	
+	var result = {success: true};
 	
 	getParam(html, result, "userName", /"wide-header"[\s\S]*?([^<>]*)<\/h1>/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, '__tariff', /Тариф<\/h2>[\s\S]*?>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 	
 	var matches = html.match(/(csrf[^:]*):\s*'([^']*)'/i);
-	if (!matches) throw new AnyBalance.Error("Не удаётся найти код безопасности для запроса балансов. Свяжитесь с автором провайдера для исправления.");
-	var tokName = matches[1],
-		tokVal = matches[2];
+	if (!matches)
+		throw new AnyBalance.Error("Не удаётся найти код безопасности для запроса балансов. Свяжитесь с автором провайдера для исправления.");
+		
+	var tokName = matches[1], tokVal = matches[2];
+	
 	if (AnyBalance.isAvailable('balance')) {
 		AnyBalance.trace("Searching for balance");
 		var params = {};

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-shop-onliner</id>
+	<api flags="no_browser"/>
+	<name>Onliner (Беларусь)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера onliner <a href="http://www.onliner.by/">http://www.onliner.by/</a></p>
+	<p>Информация берется из личного кабинета <a href="https://profile.onliner.by/">https://profile.onliner.by/</a></p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Если у вас нет доступа в Личный кабинет, получите его на странице <a href="https://profile.onliner.by/login#registration">https://profile.onliner.by/login#registration</a></p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" type="text"/>
+		<counter id="nickname" name="Псевдоним" type="text"/>
+		<counter id="account" name="Учетная запись" type="text"/>
+		<counter id="city" name="Из города" type="text"/>
+		<counter id="registerDate" name="Дата регистрации" type="time" format="dd/MM/yyyy"/>
+		<counter id="newMessages" name="Новых сообщений" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>shop</type>
+	<country>by</country>
+</provider>

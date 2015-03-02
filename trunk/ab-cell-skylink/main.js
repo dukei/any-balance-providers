@@ -13,7 +13,7 @@ function main(){
 
     checkEmpty(prefs.password, 'Введите пароль!');
     checkEmpty(prefs.login, 'Введите логин!');
-    checkEmpty(/^\d{10}$/.test(prefs.login), 'Не верный формат логина, необходимо вводить логин без +7 в начале и без пробелов.');
+    checkEmpty(!/^\s+|\s+$/i.test(prefs.login), 'Не верный формат логина, необходимо вводить логин без пробелов.');
 
     var region = prefs.region || 'moscow';
     var regionFunc = g_regions[region] || g_regions.moscow;

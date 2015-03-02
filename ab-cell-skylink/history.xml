@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="3.0" version="20" date="2015-03-02">
+	- Добавлен вход по "Internet Account"
+	</change>
 	<change major_version="3.0" version="19" date="2015-02-27">
 	- Улучшена обработка ошибок.
 	</change>

@@ -2,12 +2,12 @@
 <PreferenceScreen>
 	<EditTextPreference
 		obligatory="true"
-		title="Номер телефона"
+		title="Логин"
 		positiveButtonText="ОК"
-		summary="10 цифр номера телефона||{@s}\n"
+		summary="'Internet Account' или 10 цифр номера телефона||{@s}\n"
 		dialogTitle="Логин"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите 10 цифр вашего номера телефона без пробелов и разделителей, например, 9011234567"
+		dialogMessage="Введите ваш 'Internet Account' или 10 цифр вашего номера телефона без пробелов и разделителей, например, 9011234567"
 		inputType="textEmailAddress"
 		key="login">
 	</EditTextPreference>

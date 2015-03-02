@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-bonus-novus</id>
+	<id version="3">ab-bonus-novus</id>
 	<api flags="no_browser"/>
 	<name>NOVUS (Супермаркеты, Украина)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе на карте сети супермаркетов NOVUS http://novus.com.ua/</p>
 	<p>Информация берется из личного кабинета https://my.novus.com.ua/info/</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

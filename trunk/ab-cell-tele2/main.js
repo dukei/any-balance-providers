@@ -21,6 +21,7 @@ function main() {
 	
 	AnyBalance.setDefaultCharset('utf-8');
 	var html = AnyBalance.requestGet(baseurl, g_headers);
+	var reNewCabinet = /Мы обновили процедуру входа в личный кабинет/i.test(html);
 	
 	if(!html || AnyBalance.getLastStatusCode() > 400){
 		AnyBalance.trace(html);
@@ -34,8 +35,13 @@ function main() {
 	
 	if (!/profile\/logout/i.test(html)) {
 		var error = sumParam(html, null, null, /class="error"[^>]*>([\s\S]*?)</gi, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+		
+		var fatal = /не найден|Неверный пароль/i.test(error);
+		if(fatal && reNewCabinet)
+			throw new AnyBalance.Error('Tele2 обновили процедуру входа в личный кабинет с 26 февраля 2015.\nЧтобы войти в него всем пользователям необходимо заново пройти регистрацию.\nНовая учетная запись позволит входить в личный кабинет "Мой Tele2" и на портал market.tele2.ru с единым паролем. Зайдите в личный кабинет с копьютера и зарегистрируйетсь заново.', null, fatal);
+
 		if (error)
-			throw new AnyBalance.Error(error, null, /не найден|Неверный пароль/i.test(error));
+			throw new AnyBalance.Error(error, null, fatal);
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');

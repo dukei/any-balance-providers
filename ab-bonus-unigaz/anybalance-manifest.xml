@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-bonus-unigaz</id>
+	<api flags="no_browser"/>
+	<name>Юнигаз (Лукойл)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе Бонусных карт ООО «Юнигаз» <a href="http://www.junigaz.ru/">http://www.junigaz.ru</a></p>
+	<p>Информация берется из личного кабинета <a href="http://www.junigaz.ru/component/azs/?view=kab">http://www.junigaz.ru/component/azs/?view=kab</a></p>
+	]]></description>
+	<instruction html="true"></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+	</counters>
+	<keywords></keywords>
+	<type>bonus</type>
+	<country>ru</country>
+</provider>

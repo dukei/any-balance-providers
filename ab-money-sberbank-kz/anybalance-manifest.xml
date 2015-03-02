@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="8">ab-money-sberbank-kz</id>
+	<id version="9">ab-money-sberbank-kz</id>
 	<api flags="no_browser"/>
 	<name>Сбербанк ОнЛ@йн (Казахстан)</name>
 	<description html="true"><![CDATA[
@@ -9,8 +9,7 @@
 	<instruction html="true"><![CDATA[
 	<p>Если у вас нет доступа к Сбербанк-онлайн: перейдите на страницу https://www.sob.kz/frontend/static-2.7.22/rainbow/docs/UserGuide.pdf это руководство пользователя в формате pdf.</p>
 	]]></instruction>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
-	<author>Op Po &lt;locomocotoko@gmail.com&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
@@ -23,8 +22,9 @@
 		<counter id="currency" name="Валюта" type="text"/>
 		<counter id="cardNumber" name="Номер карты" type="text"/>
 		<counter id="userName" name="ФИО" type="text"/>
+		<counter id="date" name="Действует до" type="time" format="dd/MM/yyyy"/>
 	</counters>
 	<keywords>сбербанк онлайн, sberbank online, сберегательный банк</keywords>
-	<type>money</type>
+	<type>money, bank</type>
 	<country>kz</country>
 </provider>

@@ -13,89 +13,82 @@ var g_headers = {
 function main() {
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'https://online.sberbank.kz/';
+	var error, html, redirect;
 	AnyBalance.setDefaultCharset('utf-8');
 
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 
-	var html = AnyBalance.requestGet(baseurl + 'frontend/frontend', g_headers);
+	html = AnyBalance.requestGet(baseurl + 'CSAFront/index.do', g_headers);
 
-	var execKey = getParam(html, null, null, /execution=([\s\S]{4})/i);
-	var href = getParam(html, null, null, /id="FORM_FAST_LOGIN"[^>]*action="\/([^"]*)/i);
+	html = AnyBalance.requestPost(baseurl + 'CSAFront/login.do', {
+		'field(login)': prefs.login,
+		'field(password)': prefs.password,
+		deviceprint: 'version=3.4.0.0_2&pm_fpua=mozilla/5.0 (windows nt 6.1; wow64) applewebkit/537.36 (khtml, like gecko) chrome/40.0.2214.115 safari/537.36|5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.115 Safari/537.36|Win32&pm_fpsc=24|1440|900|900&pm_fpsw=&pm_fptz=3&pm_fpln=lang=ru|syslang=|userlang=&pm_fpjv=1&pm_fpco=1&pm_fpasw=widevinecdmadapter|pepflashplayer|internal-remoting-viewer|internal-nacl-plugin|pdf|npauthz|npspwrap|npgoogleupdate3|npnv3dv|npnv3dvstreaming|npvlc|npwlpg|npitunes|npfgoperaplugin&pm_fpan=Netscape&pm_fpacn=Mozilla&pm_fpol=true&pm_fposp=&pm_fpup=&pm_fpsaw=1440&pm_fpspd=24&pm_fpsbd=&pm_fpsdx=&pm_fpsdy=&pm_fpslx=&pm_fpsly=&pm_fpsfse=&pm_fpsui=&pm_os=Windows&pm_brmjv=40&pm_br=Chrome&pm_inpt=&pm_expt=',
+		htmlinjection: '{"functions":{"names":["$","authform","blackberrylocationcollector","divfloat","domdatacollection","fingerprint","floattostring","html5locationcollector","hashtable","ie","ie_fingerprint","iframerequest","indicator","interactionelement","loginvalidator","mozilla_fingerprint","opera_fingerprint","passwordvalidator","payinput","requiredvalidator","select","selectcore","staticmessagemanager","str2date","str2time","strcheck","timer","uielementlist","uievent","validator","windows","absposition","activexdetect","addadditionalmessage","addclearmasks","addelementtoform","adderror","addeventlistener","addeventlistenerex","addfield","addfieldwithcheck","addhidden","addinactiveesmessage","addmessage","addoption","addorderparameter"],"excluded":{"size":0,"count":0},"truncated":true},"inputs":["field(login)","field(password)","hiddenajaxurlerrorform","hiddenajaxurlstageform","iehack","password"],"iframes":[],"scripts":[191,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,500,730,810,229,0,1661,240,2,218],"collection_status":0}',
+		manvsmachinedetection: '1,1,INPUT:text,10@1,3,0;1,1,0;1,5,0;1,5,0;1,4,0;1,3,0;1,4,0@0,1425305183296,0',
+		operation: 'button.begin'
+	}, addHeaders({
+		Referer: baseurl + 'CSAFront/index.do',
+		'X-Requested-With': 'XMLHttpRequest'
+	}));
 
-	var params = createFormParams(html, function(params, str, name, value) {
-		if (name == 'Login')
-			return prefs.login;
-		else if (name == 'password')
-			return prefs.password;
-		else if (name == '_flowExecutionKey')
-			return execKey;
-		return value;
-	});
-	html = AnyBalance.requestPost(baseurl + href, params, addHeaders({Referer: baseurl + 'frontend/auth/userlogin?execution=' + execKey}));
+	redirect = getParam(html, null, null, /name="\$\$redirect"\s+value="([^"]+)/i);
 
-	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /Смена Пароля(?:[\s\S]*?<[^>]*>){2}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-		if (error)
-			throw new AnyBalance.Error(error);
-		error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
-		if (error)
-			throw new AnyBalance.Error(error);
+	if(!redirect){
+		if(/\$\$errorFlag/i.test(html)){
+			error = getParam(html, null, null, /[\s\S]*/i, replaceTagsAndSpaces, html_entity_decode);
+			throw new AnyBalance.Error(error, null, null, /неправильный идентификатор\/логин|неправильный пароль/i.test(error));
+		}
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
-	if (prefs.type == 'acc')
-		fetchAcc(html, baseurl);
-	else
-		fetchCard(html, baseurl);
-}
 
-function getSID(html) {
-	var sid = getParam(html, null, null, /'SID'[^>]*value='([^']*)/i, replaceTagsAndSpaces, html_entity_decode);
-	return sid;
+	html = AnyBalance.requestGet(redirect, g_headers);
+
+	if (!/logoff/i.test(html)) 
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+
+	// Счет возможно работает некорректно, т.к. не было возможности протестировать
+	 if (prefs.type == 'acc')
+		fetchAcc(html, baseurl);
+	 else
+		fetchCard(html, baseurl);
 }
 
 function fetchCard(html, baseurl) {
 	var prefs = AnyBalance.getPreferences();
-	if (prefs.lastdigits && !/^\d{3}$/.test(prefs.lastdigits))
+
+	if (prefs.lastdigits && !/^\S{3}$/.test(prefs.lastdigits))
 		throw new AnyBalance.Error("Надо указывать 3 последних символа карты или не указывать ничего");
 
-	var result = {success: true};
-	// Иногда мы не переходим на нужную страницу, из-за каких-то глюков.
-	html = AnyBalance.requestPost(baseurl + 'frontend/frontend', {
-		'RQ_TYPE':'WORK',
-		'SCREEN_ID':'MAIN',
-		'MENU_ID':'MENU',
-		'ITEM_ID':'MENU_CLICK',
-		SID:getSID(html),
-		'Step_ID':'0',
-		'CP_MENU_ITEM_ID':'SFMAIN_MENU.WB_PRODUCTS_ALL',
-	}, addHeaders({Referer: baseurl + 'frontend/frontend'}));
+	var html = AnyBalance.requestGet(baseurl + 'PhizIC/private/cards/list.do', g_headers);
 
-	html = AnyBalance.requestPost(baseurl + 'frontend/frontend', {
-		'RQ_TYPE':'WORK',
-		'SCREEN_ID':'MAIN',
-		'MENU_ID':'MENU',
-		'ITEM_ID':'MENU_CLICK',
-		SID:getSID(html),
-		'Step_ID':'1',
-		'CP_MENU_ITEM_ID':'CARDS.CARD_LIST',
-	}, addHeaders({Referer: baseurl + 'frontend/frontend'}));
+	var accounts = sumParam(html, null, null, /all-about-product[\s\S]+?productBottom[^>]*>/g);
+	if(!accounts || (isArray(accounts) && accounts.length === 0))
+		throw new AnyBalance.Error('Не найдено ни одной карты');
 
-	getParam(html, result, 'userName', /ibec_header_right">\s*<b>([\s\S]*?)<\//i, replaceTagsAndSpaces);
-
-	// Пока мы не знаем как выглядит счет с несколькими картами, поэтому сделал как было, вроде должно сработать если что.
-	var cardnum = prefs.lastdigits || '\\d{3}';
-	var regExp = new RegExp('<root>(?:[\\s\\S]*?<name[^>]*>){12}\\d{3}\\*+' + cardnum + '[\\s\\S]*?</root>','i');
-
-	var root = getParam(html, null, null, regExp);
-	if(!root){
-		throw new AnyBalance.Error('Не удалось найти ' + (prefs.lastdigits ? 'карту с последними символами ' + prefs.lastdigits : 'ни одной карты!'));
+	//Ищем заданную пользователем карту или берем первую
+	var account;
+	if(prefs.lastdigits){
+		var filtered = accounts.filter(function(account){return new RegExp('accountNumber[^>]*>[^,]*?' + prefs.lastdigits + ',').test(account); });
+		if(filtered.length > 1)
+			throw new AnyBalance.Error('Найдено больше одной карты с последними цифрами ' + prefs.lastdigits);
+		else if(filtered.length === 0)
+			throw new AnyBalance.Error('Не найдено ни одной карты с последними цифрами ' + prefs.lastdigits);
+		else
+			account = filtered[0];
+	} else {
+		account = accounts[0];
 	}
+	AnyBalance.trace('Найдена карта');
 
-	getParam(root, result, 'balance', /\d{3}\*+\d{3}[\s\S]*?class='ibec_balance'(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(root, result, ['currency', 'balance'], /\d{3}\*+\d{3}[\s\S]*?class='ibec_balance'(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, parseCurrency);
-	getParam(root, result, '__tariff', /(\d{3}\*+\d{3})/i);
-	result.cardNumber = result.__tariff;
+	var result = {success: true};
+
+	getParam(html, result, 'userName', /previousEnterInfo[^>]>[\s\S]*?<\/span>/i, replaceTagsAndSpaces);
+	getParam(account, result, '__tariff', /mainProductTitle[^>]*>([^<]+)/i);
+	getParam(account, result, 'date', /действует по([^<]+)/i, replaceTagsAndSpaces, parseDate);
+	getParam(account, result, 'balance', /overallAmount[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(account, result, 'currency', /overallAmount[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseCurrency);
 
 	AnyBalance.setResult(result);
 }
@@ -105,87 +98,34 @@ function fetchAcc(html, baseurl) {
 	if (prefs.lastdigits && !/^\S{3}$/.test(prefs.lastdigits))
 		throw new AnyBalance.Error("Надо указывать 3 последних символа счёта или не указывать ничего");
 
+	var html = AnyBalance.requestGet(baseurl + 'PhizIC/private/accounts.do', g_headers);
+
+	var accounts = sumParam(html, null, null, /all-about-product[\s\S]+?productBottom[^>]*>/g);
+	if(!accounts || (isArray(accounts) && accounts.length === 0))
+		throw new AnyBalance.Error('Не найдено ни одного счета');
+
+	//Ищем заданный пользователем счет или берем первый
+	var account;
+	if(prefs.lastdigits){
+		var filtered = accounts.filter(function(account){return new RegExp('accountNumber[^>]*>[^,]*?' + prefs.lastdigits + ',').test(account); });
+		if(filtered.length > 1)
+			throw new AnyBalance.Error('Найдено больше одной счета с последними цифрами ' + prefs.lastdigits);
+		else if(filtered.length === 0)
+			throw new AnyBalance.Error('Не найдено ни одного счета с последними цифрами ' + prefs.lastdigits);
+		else
+			account = filtered[0];
+	} else {
+		account = accounts[0];
+	}
+	AnyBalance.trace('Найден счет');
+
 	var result = {success: true};
-	// Иногда мы не переходим на нужную страницу, из-за каких-то глюков.
-	
-	var items = ['SFMAIN_MENU.WB_PRODUCTS_ALL', 'WB_PRODUCTS_ALL.ACCOUNTS', 'ACCOUNTS.ACC_LIST'];
-	for(var stepId = 0; stepId < 3; stepId++) {
-		html = AnyBalance.requestPost(baseurl + 'frontend/frontend', {
-			'RQ_TYPE':'WORK',
-			'SCREEN_ID':'MAIN',
-			'MENU_ID':'MENU',
-			'ITEM_ID':'MENU_CLICK',
-			SID:getSID(html),
-			'Step_ID':stepId + '',
-			'CP_MENU_ITEM_ID':items[stepId],
-		}, addHeaders({Referer: baseurl + 'frontend/frontend'}));
-	}
-	
-	// html = AnyBalance.requestPost(baseurl + 'frontend/frontend', {
-		// 'RQ_TYPE':'WORK',
-		// 'SCREEN_ID':'MAIN',
-		// 'MENU_ID':'MENU',
-		// 'ITEM_ID':'MENU_CLICK',
-		// SID:getSID(html),
-		// 'Step_ID':'0',
-		// 'CP_MENU_ITEM_ID':'SFMAIN_MENU.WB_PRODUCTS_ALL',
-	// }, addHeaders({Referer: baseurl + 'frontend/frontend'}));
 
-	// html = AnyBalance.requestPost(baseurl + 'frontend/frontend', {
-		// 'RQ_TYPE':'WORK',
-		// 'SCREEN_ID':'MAIN',
-		// 'MENU_ID':'MENU',
-		// 'ITEM_ID':'MENU_CLICK',
-		// SID:getSID(html),
-		// 'Step_ID':'1',
-		// 'CP_MENU_ITEM_ID':'WB_PRODUCTS_ALL.ACCOUNTS',
-	// }, addHeaders({Referer: baseurl + 'frontend/frontend'}));
-
-	// html = AnyBalance.requestPost(baseurl + 'frontend/frontend', {
-		// 'RQ_TYPE':'WORK',
-		// 'SCREEN_ID':'MAIN',
-		// 'MENU_ID':'MENU',
-		// 'ITEM_ID':'MENU_CLICK',
-		// SID:getSID(html),
-		// 'Step_ID':'2',
-		// 'CP_MENU_ITEM_ID':'ACCOUNTS.ACC_LIST',
-	// }, addHeaders({Referer: baseurl + 'frontend/frontend'}));
-
-	getParam(html, result, 'userName', /ibec_header_right">\s*<b>([\s\S]*?)<\//i, replaceTagsAndSpaces);
-	var accnum = prefs.lastdigits || '\\S{3}';
-
-	/*#####
-	## Fetch all trs by groups and loop throught them to find needed account
-	######*/
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////
-	var regexHtml = new RegExp('(<tr class=\"\\s*owwb-cs-slide-list[\\s\\S]*?</tr>)','gi');
-	var regexTr = new RegExp('KZ\\S{15}'+ accnum,'i');
-
-	var matchHtml;
-	var matchTr;
-	var index = 1;
-
-	while (matchHtml = regexHtml.exec(html)) {
-        matchTr = regexTr.exec(matchHtml[index]);
-        if (matchTr!=null) {
-        	var root = matchHtml[index];
-        	break;
-        }
-    }
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/**
-	Все что выше можно было написать одной строкой.
-	var matchTr = getParam(html, null, null, new RegExp('...' + ( prefs.lastdigits || '') + '...', 'i'), replaceTagsAndSpaces);
-	*/
-	
-	if(!root){
-		throw new AnyBalance.Error('Не удалось найти ' + (prefs.lastdigits ? 'карту с последними цифрами ' + prefs.lastdigits : 'ни одной карты!'));
-	}
-
-	getParam(root, result, '__tariff', /KZ\S{18}/i);
-	getParam(root, result, 'balance', /class="owwb-cs-slide-list-amount-value"(?:[^>]*>){1}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(root, result, 'currency', /class="owwb-cs-slide-list-amount-currency"(?:[^>]*>){1}([^<]*)/i, replaceTagsAndSpaces);
-	result.cardNumber = result.__tariff;
+	getParam(html, result, 'userName', /previousEnterInfo[^>]>[\s\S]*?<\/span>/i, replaceTagsAndSpaces);
+	getParam(account, result, '__tariff', /mainProductTitle[^>]*>([^<]+)/i);
+	getParam(account, result, 'date', /действует по([^<]+)/i, replaceTagsAndSpaces, parseDate);
+	getParam(account, result, 'balance', /overallAmount[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(account, result, 'currency', /overallAmount[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseCurrency);
 
 	AnyBalance.setResult(result);
 }

@@ -1,34 +1,28 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-bonus-mafia-ua</id>
-  <name>MAFIA (Украина)</name>
-  <description>
-    Получается баланс бонусной карты для ресторана MAFIA (http://mafia.ua/)
-
-    Информация берется из личного кабинета (http://mafia.ua/cabinet/)
-  </description>
-  <author>Alexandra Shalamova &lt;alexandrashalamova@gmail.com&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Накопления" units="грн."/>
-    <counter id="bonus" name="Бонусы" units=" Б"/>
-    <counter id="discount" name="Скидка" type="text"/>
-    <counter id="fio" name="Имя" type="text"/>
-    <counter id="phone" name="Мобильный" type="text"/>
-  </counters>
-  <keywords>
-    ресторан мафия
-  </keywords>
-  <type>
-    bonus
-  </type>
-  <country>
-    ru
-  </country>
+	<api flags="no_browser"/>
+	<id version="2">ab-bonus-mafia-ua</id>
+	<name>MAFIA (Украина)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе бонусной карты для ресторана MAFIA <a href="http://mafia.ua">http://mafia.ua</a></p>
+	<p>Информация берется из личного кабинета <a href="http://mafia.ua/cabinet">http://mafia.ua/cabinet</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Накопления" units=" грн"/>
+		<counter id="bonus" name="Бонусы" units=" грн"/>
+		<counter id="discount" name="Скидка" type="text"/>
+		<counter id="fio" name="Имя" type="text"/>
+		<counter id="phone" name="Мобильный" type="text"/>
+	</counters>
+	<keywords>ресторан мафия</keywords>
+	<type>bonus</type>
+	<country>ua</country>
 </provider>

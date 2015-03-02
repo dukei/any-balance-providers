@@ -22,9 +22,10 @@ function main () {
     html = AnyBalance.requestGet(
     	baseurl + 'ajax/check_account.php?card_type=' + prefs.color + '&card_number=' + prefs.number,
     	addHeaders({
-    		Referer:http: baseurl,
+    		Referer: baseurl,
     		'X-Requested-With': 'XMLHttpRequest'
-    });
+        })
+    );
 
 	if (!/Баланс\s*карты:/i.test(html)) {
 		var error = getParam(html, null, null, /class="g-error"[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);

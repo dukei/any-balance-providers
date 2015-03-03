@@ -1,11 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="1.0" version="6">ab-bonus-letoile</id>
+	<id major_version="1.0" version="7">ab-bonus-letoile</id>
 	<api flags="no_browser"/>
 	<name>Л'Этуаль</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о бонусных баллах на клубных картах сети магазинов Л'Этуаль.</p>
 	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Возможно необходимо заполнить анкету на сайте для получения данных по карте, для этого пройдите на сайт <a href="http://www.letoile.ru/">http://www.letoile.ru/</a>, введите номер и тип своей карты. Если появилась форма, заполните все необходимые поля и нажмите отправить.</p>
+	]]>
+	</instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>

@@ -1,4 +1,4 @@
-﻿/**
+ /**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
@@ -38,8 +38,9 @@ function main(){
     getParam(html, result, 'fio', /"account-title"[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'phone', /(?:Ваш номер|Сіздің нөміріңіз):([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, '__tariff', /"plan-title"[^>]*>([^<]+)[^>]*>[^>]*plan-subtitle/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'balance', /"split-title"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'till', /бонусный счет[^>]*>\s*до([^<]+)/i, replaceTagsAndSpaces, parseDate);
+	getParam(html, result, 'balance', /"account-balance split">[\s\S]*?"split-title"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'bonus', /"bonus-balance split">[\s\S]*?"split-title"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'till', /бонусный счет[^>]*>\s*до([^<]+)/i, replaceTagsAndSpaces, parseDate);
 
 	var counters = sumParam(html, null, null, /<div[^>]+class="[^"]*\bcounter\b[^>]*>([\s\S]*?)<\/div>/ig);
 	AnyBalance.trace('Found counters: ' + counters.length);

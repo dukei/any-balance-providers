@@ -26,11 +26,15 @@ var regionsOrdinary = {
     nw: "https://ihelper.nw.mts.ru/selfcare/",
     sib: "https://ihelper.sib.mts.ru/selfcare/",
     ural: "https://ihelper.nnov.mts.ru/selfcare/", //Почему-то урал в конце концов переадресуется сюда
-    ug: "https://ihelper.ug.mts.ru/SelfCare/"
+    ug: "https://ihelper.ug.mts.ru/selfcare/"
 };
 
 function getViewState(html) {
     return getParam(html, null, null, /name="__VIEWSTATE".*?value="([^"]*)"/);
+}
+
+function getParamByName(html, name) {
+    return getParam(html, null, null, new RegExp('name=["\']'+name+'["\'][^>]*value=["\']([^"\']+)"', 'i'));
 }
 
 function main() {
@@ -205,12 +209,10 @@ function mainMobile(allowRetry) {
 }
 
 var g_headers = {
-    Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-    'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
-    'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-    'Cache-Control': 'max-age=0',
-    Connection: 'keep-alive',
-    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.111 Safari/537.36'
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+    'Accept-Language': 'ru,en;q=0.8',
+	'Cache-Control': 'max-age=0',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.115 Safari/537.36'
 };
 
 function isInOrdinary(html) {
@@ -326,23 +328,24 @@ function fetchOrdinary(html, baseurl, resultFromLK) {
         } else {
             if (!new RegExp('doPostBack\\(\'[^\']+\',\'7' + prefs.phone, 'i').test(html))
                 throw new AnyBalance.Error(prefs.phone + ": этот номер не принадлежит логину " + prefs.login);
-
-            html = AnyBalance.requestPost(baseurl + 'my-phone-numbers.aspx', {
-                'ctl00_sm_HiddenField': '',
-                'csrfToken': token,
-                '__EVENTTARGET': 'ctl00$MainContent$transitionLink',
-                '__EVENTARGUMENT': '7' + prefs.phone,
-                '__VIEWSTATE': getViewState(html)
-            }, addHeaders({Referer: baseurl + 'my-phone-numbers.aspx'}));
-
-            if (!new RegExp('произвести операции по номеру[^+]+\\+7 ' + formattedNum, 'i').test(html))
+			
+            html = AnyBalance.requestPost(baseurl + 'my-phone-numbers.aspx', [
+				['ctl00_sm_HiddenField', ''],
+				['csrfToken', token],
+				['__EVENTTARGET', 'ctl00$MainContent$transitionLink'],
+				['__EVENTARGUMENT', '7' + prefs.phone],
+				['__VIEWSTATE', getParamByName(html, '__VIEWSTATE')],
+				['__VIEWSTATEGENERATOR', getParamByName(html, '__VIEWSTATEGENERATOR')],
+            ], addHeaders({Referer: baseurl + 'my-phone-numbers.aspx', Origin: 'https://ihelper.mts.ru'}));
+			
+            if (!new RegExp('<li>\\s*Номер:\\s*<strong>\\+7\\s*' + formattedNum, 'i').test(html))
                 throw new AnyBalance.Error('Не удалось переключиться на номер ' + prefs.phone);
 
             /*if (!html)
              throw new AnyBalance.Error(prefs.phone + ": номер, возможно, неправильный или у вас нет к нему доступа");*/
-            var error = getParam(html, null, null, /(<h1>Мои номера<\/h1>)/i);
-            if (error)
-                throw new AnyBalance.Error(prefs.phone + ": номер, возможно, неправильный или у вас нет к нему доступа");
+            // var error = getParam(html, null, null, /(<h1>Мои номера<\/h1>)/i);
+            // if (error)
+                // throw new AnyBalance.Error(prefs.phone + ": номер, возможно, неправильный или у вас нет к нему доступа");
         }
     }
     // Тарифный план
@@ -663,26 +666,34 @@ function mainLK(allowRetry) {
 
     if (isAvailable('traffic_left_mb')) {
         AnyBalance.trace('Запросим трафик...');
-        try {
-            var widgetJson = getParam(html, null, null, /myInternet.\w+\s*=\s*(\{[\s\S]*?\});/i, null, getJsonEval);
-            var href = widgetJson.widgetDataUrl;
-            if (!href)
-                throw new AnyBalance.Error('Не удалось найти ссылку на трафик.');
+		try {
+			for(var i = 0; i < 3; i++) {
+				AnyBalance.trace('Пробуем получить трафик, попытка: ' + (i+1));
+				
+				html = AnyBalance.requestGet(baseurl, addHeaders({Referer: baseurl}));
+				
+				var widgetJson = getParam(html, null, null, /myInternet.\w+\s*=\s*(\{[\s\S]*?\});/i, null, getJsonEval);
+				var href = widgetJson.widgetDataUrl;
+				if (!href)
+					throw new AnyBalance.Error('Не удалось найти ссылку на трафик.');
+				
+				info = AnyBalance.requestGet(baseurl + href + '&_=' + new Date().getTime(), addHeaders({'X-Requested-With': 'XMLHttpRequest', 'Accept': '*/*', 'Referer': 'https://lk.ssl.mts.ru/'}));
+				AnyBalance.trace(info);
+				
+				if(!info) {
+					AnyBalance.trace('Сервер вернул ерунду, пробуем еще раз...');
+					continue;
+				}
+				var json = getJson(info);
+				if (json.OptionName != 'null' && isset(json.OptionName)) {
+					AnyBalance.trace('Нашли трафик...');
 
-            html = AnyBalance.requestGet(baseurl + href, addHeaders({
-                'X-Requested-With': 'XMLHttpRequest',
-                'X-Requester': 'undefined'
-            }));
-            AnyBalance.trace(html);
-            var json = getJson(html);
-
-            if (json.OptionName != 'null' && isset(json.OptionName)) {
-                AnyBalance.trace('Нашли трафик...');
-
-                sumParam(json.TrafficLeft + '', result, 'traffic_left_mb', null, null, function (str) { return parseTraffic(str, 'kb'); }, aggregate_sum);
-            } else {
-                AnyBalance.trace('Трафика нет...');
-            }
+					sumParam(json.TrafficLeft + '', result, 'traffic_left_mb', null, null, function (str) { return parseTraffic(str, 'kb'); }, aggregate_sum);
+					break;
+				} else {
+					AnyBalance.trace('Трафика нет...');
+				}
+			}
         } catch (e) {
             AnyBalance.trace('Не удалось получить трафик: ' + e.message);
         }
@@ -692,6 +703,11 @@ function mainLK(allowRetry) {
 		AnyBalance.setDefaultCharset('windows-1251');
 		
         var baseurlHelper = "https://ihelper.mts.ru/selfcare/";
+		
+		var IHLink = AnyBalance.getCookie('IHLink');
+		if(IHLink) {
+			baseurlHelper = getParam(IHLink, null, null, /[\s\S]*?selfcare\//i, replaceTagsAndSpaces, html_entity_decode) || "https://ihelper.mts.ru/selfcare/";
+		}
         var redirect = null;
         try {
             html = AnyBalance.requestGet(baseurlHelper + "account-status.aspx", addHeaders({Referer: lkPage}));

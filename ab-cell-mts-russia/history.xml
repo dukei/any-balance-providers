@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="3.3" version="104" date="2015-03-03">
+	- Исправлен вход в интернет-помощник.
+	- Исправлено переключение на другой номер в кабинете.
+	</change>
 	<change major_version="3.3" version="103" date="2015-02-22">
 	- Исправлен счетчик Сумма по неоплаченным счетам
 	</change>

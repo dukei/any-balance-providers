@@ -21,13 +21,14 @@ function main(){
     var baseurl = "http://krsk-sbit.ru/quasar.php";
     var now = new Date();
     var threeMonthsAgo = new Date(now.getFullYear(), now.getMonth()-3, 1);
+    // Передача фактических показаний прибора учета не работает на сайте
     var html = AnyBalance.requestPost(baseurl, {
         abonentid:prefs.login,
         fam:prefs.password,
-		SendCounter:'Передача фактических показаний прибора учета',
+		//SendCounter:'Передача фактических показаний прибора учета',
         qm:threeMonthsAgo.getMonth(),
         qy:threeMonthsAgo.getFullYear(),
-        //ShowState:'Просмотреть состояние счета, оплаты, начисления ...'
+        ShowState:'Просмотреть состояние счета, оплаты, начисления ...'
     }, g_headers);
 
     //Ссылка на печать квитанции

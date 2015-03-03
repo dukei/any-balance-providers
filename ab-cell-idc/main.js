@@ -31,26 +31,60 @@ function main(){
 	// Это не ошибка, смена кодировок между запросами реализована на сайте, уже не знаю зачем.
 	AnyBalance.setOptions({forceCharset: 'UTF-8'});
 	
-	
 	html = AnyBalance.requestPost(baseurl, {
         user:prefs.login,
         pass:prefs.password,
         secretkey:captchaa
     }, addHeaders({Referer: baseurl})); 
 	
-	if (!/Мы рады приветствовать Вас в Личном кабинете/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
-		if (error && /Неверный логин или пароль/i.test(error))
+	if (!/Личный кабинет/i.test(html)) {
+		var error = getParam(html, null, null, /<div[^>]+class="alert-box error"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+		if (error && /Неверный логин или пароль./i.test(error))
 			throw new AnyBalance.Error(error, null, true);
-		if (error)
-			throw new AnyBalance.Error(error);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
+
+	var href = getParam(html, null, null, new RegExp('wuxify-me[^>]*?href="([^"]*)[^>]*>\\s*' + (prefs.account || '') + '[\\s\\S]*?<\\/a>', 'i'));
+	if(!href)
+		throw new AnyBalance.Error('Не найден ' + (prefs.account ? 'лицевой счет "' + prefs.account + '"' : 'ни один счет'));
 	
-    var result = {success: true};
+	html = AnyBalance.requestGet(baseurl + href, g_headers);
+	html = AnyBalance.requestGet(baseurl + 'issa_acc/', g_headers);
+
+    var result = {success: true},
+    	table, rows, row;
+
+    table = getParam(html, null, null, /Состояние счета:[\s\S]*?<tbody[^>]*>([\s\S]*?)<\/tbody>/i);
+	getParam(table, result, 'balance_usd', /<tr[^>]*>(?:\s*<td[^>]*>[\s\S]*?<\/td>){3}\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(table, result, 'balance', /<\/tr>\s*<tr[^>]*>(?:\s*<td[^>]*>[\s\S]*?<\/td>){3}\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+
+	table = getParam(html, null, null, /Ресурсы Номера:[\s\S]*?<tbody[^>]*>([\s\S]*?)<\/tbody>/i);
+	rows = sumParam(table, null, null, /<tr[^>]*>([\s\S]*?)<\/tr>/ig);
+
+	for(var i = 0, toi = rows.length; i < toi; i++){
+		row = rows[i];
+		if(/SMS/i.test(row)) {
+			// SMS 
+			sumParam(row, result, 'sms', /(?:\s*<td[^>]*>[\s\S]*?<\/td>){4}\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+		} else if(/Время/i.test(row)) {
+			// Минуты
+			sumParam(row, result, 'minutes', /(?:\s*<td[^>]*>[\s\S]*?<\/td>){4}\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
+		} else if(/Трафик/i.test(row)) {
+			// Трафик
+			sumParam(row, result, 'traf', /(?:\s*<td[^>]*>[\s\S]*?<\/td>){4}\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+		} else {
+			AnyBalance.trace('Unknown option, contact the developers, please.');
+			AnyBalance.trace(row);
+		}
+	}
+
+	if(isAvailable('traf_used')){
+		html = AnyBalance.requestGet(baseurl + 'issa_charge/', g_headers);
+
+		table = getParam(html, null, null, /Суммарная статистика за месяц[\s\S]*?<tbody[^>]*>([\s\S]*?)<\/tbody>/i);
+		getParam(table, result, 'traf_used', /<tr[^>]*>(?:\s*<td[^>]*>[\s\S]*?<\/td>){2}\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTraffic);
+	}
 	
-	getParam(html, result, 'balance', /<b>[^\|]*Руб/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'balance_usd', /<b>[^\|]*Руб/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'account_id', /\?acc=(\d+)/i, replaceTagsAndSpaces);
 	
     AnyBalance.setResult(result);

@@ -1,5 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="2" date="2015-03-03">
+	- Добавлены счетчики смс, минут, трафика, израсходованного трафика.
+	</change>
 <!--
 <change version="2" date="2013-09-21">
 - 

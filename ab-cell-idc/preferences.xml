@@ -21,4 +21,13 @@
 		dialogMessage="Введите пароль, используемый для входа в личный кабинет."
 		inputType="textPassword">
 	</EditTextPreference>
+	<EditTextPreference
+		title="Лицевой счет"
+		key="account"
+		summary="||{@s}"
+		dialogTitle="Лицевой счет"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите наименование лицевого счета, так как оно у вас указано. Если оставить это поле пустым, то будет использован первый найденный лицевой счет">
+	</EditTextPreference>
 </PreferenceScreen>

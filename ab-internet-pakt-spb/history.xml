@@ -1,5 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="2" date="2015-03-03">
+	- Поддержка изменений на сайте.
+	- Патч из https://code.google.com/p/any-balance-providers/issues/detail?id=237
+	</change>
 <!--
 	<change version="2" date="2014-02-01">
 	- 

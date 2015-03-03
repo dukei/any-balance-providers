@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-municipal-edu-rb</id>
+	<id version="2">ab-municipal-edu-rb</id>
 	<api flags="no_browser"/>
 	<name>Электронная очередь в ДОУ (Башкортостан)</name>
 	<description html="true"><![CDATA[
@@ -20,12 +20,12 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
+		<counter id="areaQueueNum" name="Номер очереди по муниципальному району"/>
+		<counter id="preferQueueNum" name="Номер очереди в ДОУ"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="birthday" name="Дата рождения" type="time" format="dd/MM/yyyy"/>
 		<counter id="date" name="Дата подачи заявления" type="time" format="dd/MM/yyyy"/>
 		<counter id="DOU" name="Желаемый ДОУ (район)" type="text"/>
-		<counter id="areaQueueNum" name="Номер очереди по Вашему муниципальному району" type="text"/>
-		<counter id="preferQueueNum" name="Номер очереди в желаемом ДОУ" type="text"/>
 	</counters>
 	<keywords></keywords>
 	<type>municipal</type>

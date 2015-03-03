@@ -55,7 +55,7 @@ function main() {
 
 	var result = {success: true};
 
-	getParam(html, result, 'fio', /<h3>[\s\S]+?<\/h3>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'fio', /<h3>[\s\S]+?<\/h3>/i, replaceTagsAndSpaces, capitalFirstLetters);
 	getParam(html, result, 'birthday', /Дата рождения[^>]+>([^<]+)/i, replaceTagsAndSpaces, parseDate);
 	getParam(html, result, 'date', /Дата подачи заявления[^>]+>([^<]+)/i, replaceTagsAndSpaces, parseDate);
 	getParam(html, result, 'DOU', /Желаемый ДОУ[^>]+>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);

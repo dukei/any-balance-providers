@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="6">ab-municipal-krasenergo</id>
+	<id version="7">ab-municipal-krasenergo</id>
 	<api flags="no_browser"/>
 	<name>Красноярскэнергосбыт</name>
 	<description>
@@ -8,7 +8,7 @@
 
 Для доступа к данным лицевого счета требуется номер лицевого счета и фамилия (без имени и отчества).
 	</description>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

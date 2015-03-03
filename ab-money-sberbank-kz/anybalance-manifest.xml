@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="9">ab-money-sberbank-kz</id>
+	<id version="10">ab-money-sberbank-kz</id>
 	<api flags="no_browser"/>
 	<name>Сбербанк ОнЛ@йн (Казахстан)</name>
 	<description html="true"><![CDATA[

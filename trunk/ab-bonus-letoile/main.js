@@ -31,7 +31,7 @@ function main () {
 		var error = getParam(html, null, null, /class="g-error"[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
 			throw new AnyBalance.Error(error);
-		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+		throw new AnyBalance.Error('Не удалось получить баланс карты. Возможно необходимо заполнить анкету на сайте для получения данных по карте, для этого пройдите на сайт http://www.letoile.ru/, введите номер и тип своей карты. Если появилась форма, заполните все необходимые поля и нажмите отправить.');
 	}
     var result = {success: true};
 	getParam(html, result, 'balance', /Баланс\s*карты:[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);

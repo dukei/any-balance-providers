@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="18" date="2015-03-05">
+	- Инструкция по отключению двухфакторной авторизации.
+	
+	</change>
 	<change version="17" date="2015-03-05">
 	- Улучшена обработка ошибок.
 	</change>

@@ -34,6 +34,10 @@ function main() {
 	}, g_headers);
 	
 	if (!/profile\/logout/i.test(html)) {
+
+		if(/<input[^>]+id\s*=\s*"smsCode"/i.test(html))
+			throw new AnyBalance.Error('У вас настроена двухфакторная авторизация с вводом SMS кода при входе в личный кабинет Теле2. Для работы провайдера требуется запрос СМС кода для входа в ЛК отключить. Инструкцию по отключению см. в описании провайдера.', null, true);
+
 		var error = sumParam(html, null, null, /class="error"[^>]*>([\s\S]*?)</gi, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
 		
 		var fatal = /не найден|Неверный пароль/i.test(error);

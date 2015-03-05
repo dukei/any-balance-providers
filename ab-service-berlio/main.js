@@ -12,13 +12,14 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://www.berlio.by/';
+	var baseurl = 'http://www.berlio.by/',
+		lkurl = 'http://lkb.by/';
 	AnyBalance.setDefaultCharset('windows-1251');
 	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	var html = AnyBalance.requestGet(baseurl + 'personal/profile/', g_headers);
+	var html = AnyBalance.requestGet(baseurl, g_headers);
 	
 	var params = createFormParams(html, function(params, str, name, value) {
 		if (name == 'USER_LOGIN') 
@@ -29,7 +30,7 @@ function main() {
 		return value;
 	});
 	
-	html = AnyBalance.requestPost(baseurl + 'personal/profile/', params, addHeaders({Referer: baseurl + 'personal/profile/'}));
+	html = AnyBalance.requestPost(lkurl + '?login=yes', params, addHeaders({Referer: baseurl + 'personal/profile/'}));
 
 	if (!/logout=yes/i.test(html)) {
 		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);

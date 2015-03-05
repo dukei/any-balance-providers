@@ -1,12 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-service-berlio</id>
+	<id version="3">ab-service-berlio</id>
 	<api flags="no_browser"/>
 	<name>Берлио</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе в личном кабинете ООО Бероио http://www.berlio.by/enter.php</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

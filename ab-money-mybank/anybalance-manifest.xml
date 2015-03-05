@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-money-mybank</id>
+	<id version="2">ab-money-mybank</id>
 	<api flags="no_browser"/>
 	<name>МТБанк (Беларусь)</name>
 	<description html="true"><![CDATA[
@@ -25,8 +25,9 @@
 		<counter id="cardname" name="Наименование карты" type="text"/>
 		<counter id="cardnum" name="Номер карты" type="text"/>
 		<counter id="order_num" name="Номер договора" type="text"/>
+		<counter id="halava_bonus" name="Бонус карты Халява Плюс" units=" бал"/>
 	</counters>
 	<keywords></keywords>
-	<type>money</type>
+	<type>money, bank</type>
 	<country>by</country>
 </provider>

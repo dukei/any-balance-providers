@@ -37,15 +37,13 @@ function main() {
 	
 	html = AnyBalance.requestGet(baseurl, g_headers);
 	var result = {success: true};
-	
-	getParam(html, result, 'messages', [/(?:Сообщения|Messages)\s*\((\d+)\)/i, /messages\/\?refid=\d+[^>]*>[^>]*>[^>]*>[^>]*>(\d+)/i], replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, '__tariff', [/data-sigil="logout"[^>]*>[^>]*>\s*\(([\s\S]*?)\)<\//i, /"id"[^"]*"name":"([^"]*)/i], replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'name', [/data-sigil="logout"[^>]*>[^>]*>\s*\(([\s\S]*?)\)<\//i, /"id"[^"]*"name":"([^"]*)/i], replaceTagsAndSpaces, html_entity_decode);
 
-	if(isAvailable(['friends'])) {
-		html = AnyBalance.requestGet(baseurl + 'findfriends/browser', g_headers);
-		getParam(html, result, 'friends', [/m-friend-center-req-badge"[^>]*>(\d+)/i, /Запрос на добавление в друзья\s*\((\d+)\)/i], replaceTagsAndSpaces, parseBalance);
-	}
+	var userid = getParam(html, null, null, /"USER_ID":"([^"]+)/i, replaceTagsAndSpaces, parseBalance);
+
+	getParam(html, result, 'messages', /Входящие(?:[^>]*>){2}(\d+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'friends', /добавление в друзья(?:[^>]*>){2}(\d+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, '__tariff', new RegExp(userid + ',"name":"([^"]+)', 'i'), replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'name', new RegExp(userid + ',"name":"([^"]+)', 'i'), replaceTagsAndSpaces, html_entity_decode);
 	
     AnyBalance.setResult(result);
 }

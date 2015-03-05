@@ -65,7 +65,7 @@ function main() {
 	getParam(info, result, '__tariff', /card-link-one[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(info, result, 'order_num', /"product-under-title"[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
 	
-	if(isAvailable(['debt', 'nachisl', 'grace_pay', 'grace_pay_till'])) {
+	if(isAvailable(['debt', 'nachisl', 'grace_pay', 'grace_pay_till', 'halava_bonus'])) {
 		var token = getParam(html, null, null, /"session_token"[^>]*value="([^"]+)/i);
 		var url = getParam(info, null, null, /\.setUrl\('\\\/([^"']+)/i);
 		var contractCode = getParam(info, null, null, /contractCode'\s*:\s*'(\d+)/i);
@@ -81,6 +81,7 @@ function main() {
 			'action': 'showFromDashboard'
 		}, addHeaders({Referer: baseurl, Origin: 'https://new.mybank.by'}));
 		
+		getParam(html, result, 'halava_bonus', /loyalty-points[^>]*>\s*<span[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, 'debt', /Задолженность по основному долгу:(?:[\s\S]*?<td[^>]*>)([\s\S]*?)<\/div/i, [/'/g, '', replaceTagsAndSpaces], parseBalance);
 		getParam(html, result, 'nachisl', /Начисл. проценты:(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/div/i, [/'/g, '', replaceTagsAndSpaces], parseBalance);
 		getParam(html, result, 'grace_pay', /Сумма и дата ближайшего минимального платежа:(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/div/i, [/'/g, '', replaceTagsAndSpaces], parseBalance);

@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-social-facebook</id>
+	<id version="2">ab-social-facebook</id>
 	<api flags="no_browser"/>
 	<name>Facebook</name>
 	<description html="true"><![CDATA[

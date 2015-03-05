@@ -96,8 +96,8 @@ function getMainPageOrModule2(html, type, baseurl) {
 	var commands = {
 		card: 'pt1:menu:ATP2_r1:0:i1:1:cl2',
 		acc: 'pt1:menu:ATP2_r1:0:i1:0:cl2',
-		dep: 'pt1:menu:ATP2_r1:0:i1:4:cl2',
-		crd: 'pt1:menu:ATP2_r1:0:i1:3:cl2'
+		dep: 'pt1:menu:ATP2_r1:0:i1:3:cl2',
+		crd: 'pt1:menu:ATP2_r1:0:i1:2:cl2'
 	};
 	
 	var event = commands[type] ? commands[type] : type;

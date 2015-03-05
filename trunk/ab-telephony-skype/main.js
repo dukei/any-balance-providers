@@ -29,7 +29,7 @@
  	} else {
  		info = AnyBalance.requestGet('https://secure.skype.com/portal/overview');
  	}
- 	if (!/skype\.com\/(?:account\/)?logout/i.test(info)) {
+ 	if (!/skype\.com\/(?:portal\/)?logout/i.test(info)) {
  		var error = getParam(info, null, null, [/class="messageBody[^>]*>([\s\S]*?)<\/div>/i, /message_error"(?:[^>]*>){3}([^<]*)/i], [/<.*?>/g, '', /^\s*|\s*$/g, '']);
  		if (error)
 			throw new AnyBalance.Error(error);

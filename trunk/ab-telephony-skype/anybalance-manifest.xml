@@ -1,12 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2" version="21">ab-telephony-skype</id>
+	<id major_version="2" version="22">ab-telephony-skype</id>
 	<api flags="no_browser" />
 	<name>Skype</name>
 	<description html="true"><![CDATA[
 	<p>Obtains information from Skype personal account at http://skype.com</p>
 	]]></description>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

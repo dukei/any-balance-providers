@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="17">ab-cell-tele2</id>
+	<id version="18">ab-cell-tele2</id>
 	<api flags="no_browser"/>
 	<name>Tele2</name>
 	<description html="true"><![CDATA[
@@ -12,6 +12,14 @@
 	<ul>
 		<li>Если у вас ещё нет пароля в личный кабинет, получите его на сайте http://my.tele2.ru.</li>
 	</ul>
+
+	<p>Для работы провайдера необходимо отключить двухфакторную авторизацию (запрос СМС кода при каждом входе в личный кабинет):</p>
+	<ol>
+		<li>Войдите в ЛК Tele2 через браузер: https://my.tele2.ru</li>
+		<li>Нажмите кнопку "Настроить профиль"</li>
+		<li>В разделе "Смена пароля и параметры безопасности" нажмите кнопку "Настроить..."</li>
+		<li>Снимите галочку "Включить двухфакторную авторизацию" и нажмите кнопку "Сохранить"</li>
+	</ol>
 	]]></instruction>
 	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
 	<files>

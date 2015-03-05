@@ -37,6 +37,10 @@ function main() {
 		var error = getParam(html, null, null, /<label[^>]*>((?:[\s\S](?!<\/label>))*RetailWeb.Web.ClientLogin[\s\S]*?)<\/label>/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+
+        error = getParam(html, null, null, /<div id="error-dialog"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+        if (error)
+            throw new AnyBalance.Error(error, null, /Неверное имя пользователя или пароль/i.test(error));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось войти в интернет-банк. Сайт изменен?');

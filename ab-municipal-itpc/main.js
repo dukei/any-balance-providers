@@ -39,6 +39,11 @@ function main(){
         var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error);
+
+        error = getParam(html, null, null, /В доступе отказано. Проверьте правильность логина и пароля./i);
+        if(error)
+            throw new AnyBalance.Error('В доступе отказано. Проверьте правильность логина и пароля. Возможно нажат CAPS LOCK или выбран не правильный язык ввода.', null, true);
+
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
 	

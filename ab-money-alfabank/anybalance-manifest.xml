@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="31">ab-money-alfabank</id>
+	<id version="32">ab-money-alfabank</id>
 	<api flags="no_browser"/>
 	<name>Альфа-Банк</name>
 	<description html="true"><![CDATA[
@@ -56,6 +56,6 @@
 		<counter id="currency" name="Валюта" type="text"/>
 	</counters>
 	<keywords>альфа, альфабанк, альфаклик, alfa.click, кредит</keywords>
-	<type>money</type>
+	<type>money, bank</type>
 	<country>ru</country>
 </provider>

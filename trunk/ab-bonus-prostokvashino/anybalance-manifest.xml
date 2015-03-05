@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-bonus-prostokvashino</id>
+	<api flags="no_browser"/>
+	<name>Простоквашино (Беларусь)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о бонусных баллах «Простоквашино» <a href="http://prostokvashino.by/">http://prostokvashino.by/</a></p>
+	<p>Информация берется из личного кабинета <a href="http://prostokvashino.by/users/login">http://prostokvashino.by/users/login</a></p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Если у вас нет доступа в Личный кабинет, получите его на странице <a href="http://prostokvashino.by/users/register">http://prostokvashino.by/users/register</a></p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" бал"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="email" name="E-mail" type="text"/>
+		<counter id="gender" name="Пол" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>bonus</type>
+	<country>by</country>
+</provider>

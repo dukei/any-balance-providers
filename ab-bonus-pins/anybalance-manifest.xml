@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-bonus-pins</id>
+	<api flags="no_browser"/>
+	<name>Pins</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Pins <a href="http://www.pinsforme.com/ru/">http://www.pinsforme.com/ru/</a></p>
+	<p>Информация берется из личного кабинета</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Если у вас нет доступа в Личный кабинет, получите его на странице <a href="https://www.pinsforme.com/ru/register">https://www.pinsforme.com/ru/register</a></p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="PINS"/>
+		<counter id="name" name="Name" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>bonus</type>
+	<country>ru</country>
+</provider>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference
+		title="Имя"
+		key="name"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Имя"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите ваше имя.">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Фамилия"
+		key="surname"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Фамилия"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите вашу фамилию.">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Отчество"
+		key="patronymic"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Отчество"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите ваше отчество.">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Дата рождения"
+		key="birthDate"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Дата рождения"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите вашу дату рождения в формате ДД.ММ.ГГГГ (например 12.01.1982).">
+	</EditTextPreference>
+</PreferenceScreen>

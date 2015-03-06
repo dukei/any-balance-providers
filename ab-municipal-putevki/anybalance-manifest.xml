@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-municipal-putevki</id>
+	<api flags="no_browser"/>
+	<name>Очередь на получение путевки (ДСЗНГМ)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о состоянии очередности на получение путевки на санаторно-курортное лечение. Информация предоставляется на сайте департамента социальной защиты населения города Москвы <a href="http://www.dszn.ru/">http://www.dszn.ru/</a></p>
+	<p>Информация берется со страницы <a href="http://support.anybalance.ru/scp/l.php?url=http%3A%2F%2Fwww.dszn.ru%2Factivities%2Finformatsiya_o_putevkakh%2Fin-the-sanatorium-and-spa-institutions%2Finforming-about-the-state-of-order-to-receive-vouchers-for-sanatorium-and-spa-treatment.php&auth=46b68beec8f1c2facf8abcd63405eb4b">http://support.anybalance.ru/scp/l.php?url=http%3A%2F%2Fwww.dszn.ru%2Factivities%2Finformatsiya_o_putevkakh%2Fin-the-sanatorium-and-spa-institutions%2Finforming-about-the-state-of-order-to-receive-vouchers-for-sanatorium-and-spa-treatment.php&auth=46b68beec8f1c2facf8abcd63405eb4b</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="queue" name="Состояние очередности"/>
+	</counters>
+	<keywords></keywords>
+	<type>municipal</type>
+	<country>ru</country>
+</provider>

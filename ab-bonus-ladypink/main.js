@@ -12,39 +12,30 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://ladypink.ru/';
+	var baseurl = 'http://www.podrygka.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Введите номер карты!');
+	checkEmpty((''+prefs.login).length === 13 && (''+prefs.login).substring(0, 4) === "2977", 'Введен некорректный номер карты. Пожалуйста, проверьте правильность ввода!');
 	
-	var html = AnyBalance.requestGet(baseurl + 'check-savings', g_headers);
+	var html = AnyBalance.requestGet(baseurl + 'check-savings/', g_headers);
 	
-	html = AnyBalance.requestPost(baseurl + 'check-savings/?submit', {
-		card: prefs.login,
-		card2: prefs.login,
-		'ds.x':72,
-		'ds.y':9,
-		'ds':'a'
-	}, addHeaders({Referer: baseurl + 'check-savings'}));
+	html = AnyBalance.requestPost(baseurl + 'ajax/savings.php', {
+		card: prefs.login
+	}, addHeaders({Referer: baseurl + 'check-savings', 'X-Requested-With': 'XMLHttpRequest'}));
 	
-	if (!/Ваша карта №/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
-		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
-		
+	if (/ERROR/.test(html)) {
 		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось получить данные по карте'+prefs.login+'. Сайт изменен?');
+		throw new AnyBalance.Error('По указанному номеру карты данных о покупках за текущий и предыдущий месяц нет. Пожалуйста, проверьте правильность введенного номера карты!');
 	}
-	
-	var text = getParam(html, null, null, /<div class="whith_detail_account">\s*<[^>]*class="first"[^>]*>((?:[\s\S]*?<\/p>){3})/i, replaceTagsAndSpaces);
-	checkEmpty(text, 'Не удалось найти данные по карте, сайт изменен?', true);
-	AnyBalance.trace(text);
 	
 	var result = {success: true};
 	
-	getParam(text, result, 'balance', /покупки на сумму([^<]+)коп/i, [replaceTagsAndSpaces, /руб/i, ''], parseBalance);
-	getParam(text, result, 'discount', /составляет([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(text, result, 'text');
+	throw new AnyBalance.Error('Данные по карте получены, пожалуйта, обратитесь к разработчикам для доработки провайдера!');
+
+	// getParam(text, result, 'balance', /покупки на сумму([^<]+)коп/i, [replaceTagsAndSpaces, /руб/i, ''], parseBalance);
+	// getParam(text, result, 'discount', /составляет([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	// getParam(text, result, 'text');
 	
 	AnyBalance.setResult(result);
 }

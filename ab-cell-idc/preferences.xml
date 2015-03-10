@@ -30,4 +30,12 @@
 		negativeButtonText="Отмена"
 		dialogMessage="Введите наименование или номер лицевого счета. Если оставить это поле пустым, то будет использован первый найденный лицевой счет">
 	</EditTextPreference>
+	<ListPreference 
+        key="currency" 
+        title="Тип валюты мини-пакета Simple"
+        summary="В какой валюте отображается на сайте остаток по мини-пакету Simple: рубли или доллары. Параметр нужен только для отображения валюты в результатах.|Выберите|Выбраны {@s}! "
+        entries="Рубли|Доллары"
+        entryValues="rub|usd"
+	defaultValue="rub">
+    </ListPreference>
 </PreferenceScreen>

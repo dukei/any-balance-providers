@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-cell-idc</id>
+	<id version="4">ab-cell-idc</id>
 	<api flags="no_browser|captcha"/>
 	<name>СЗАО Интерднестрком</name>
 	<description html="true"><![CDATA[
@@ -19,9 +19,10 @@
 		<counter id="balance" name="Баланс" units=" р"/>
 		<counter id="balance_usd" name="Баланс USD" units=" USD"/>
 		<counter id="account_id" name="Лицевой счет" type="text"/>
-		<counter id="sms" name="Смс"/>
+		<counter id="sms" name="Смс" units=" шт"/>
 		<counter id="minutes" name="Минут" type="time_interval" format="{@MIN}:{@sec}" units=" мин"/>
 		<counter id="traf" name="Трафик" units=" Мб"/>
+		<counter id="simple" name="Мини-пакет Simple" units=" {@currency}"/>
 		<counter id="traf_used" name="Израсходовано трафика" units=" Мб"/>
 	</counters>
 	<keywords></keywords>

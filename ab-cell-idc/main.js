@@ -75,6 +75,9 @@ function main(){
 		} else if(/Трафик/i.test(row)) {
 			// Трафик
 			sumParam(row, result, 'traf', /(?:\s*<td[^>]*>[\s\S]*?<\/td>){4}\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+		} else if(/Simple/i.test(row)) {
+			// Мини-пакет Simple
+			sumParam(row, result, 'simple', /(?:\s*<td[^>]*>[\s\S]*?<\/td>){4}\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 		} else {
 			AnyBalance.trace('Unknown option, contact the developers, please.');
 			AnyBalance.trace(row);
@@ -87,7 +90,8 @@ function main(){
 		table = getParam(html, null, null, /Суммарная статистика за месяц[\s\S]*?<tbody[^>]*>([\s\S]*?)<\/tbody>/i);
 		getParam(table, result, 'traf_used', /<tr[^>]*>(?:\s*<td[^>]*>[\s\S]*?<\/td>){2}\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTraffic);
 	}
-	
+
+	getParam(prefs.currency || 'rub', result, ['currency', 'simple']);
 	getParam(html, result, 'account_id', /\?acc=(\d+)/i, replaceTagsAndSpaces);
 	
     AnyBalance.setResult(result);

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-    <id version="5">ab-money-mdm</id>
+    <id version="6">ab-money-mdm</id>
     <api flags="no_browser"/>
     <name>МДМ-Банк</name>
 	<description html="true"><![CDATA[
@@ -40,6 +40,7 @@
         <counter id="accnum" name="Номер счета" type="text"/>
         <counter id="cardnum" name="Номер карты" type="text"/>
         <counter id="accname" name="Название" type="text"/>
+        <counter id="bonus" name="МДМ Бонус"  units=" бон"/>
     </counters>
     <keywords>Кредит, банк, mdm</keywords>
     <type>money, bank</type>

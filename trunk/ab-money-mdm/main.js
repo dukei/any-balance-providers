@@ -46,16 +46,29 @@ function main() {
 		throw new AnyBalance.Error('Не удалось войти в интернет-банк. Сайт изменен?');
 	}
 	
+    var result;
 	if (prefs.type == 'crd')
-		fetchCredit(baseurl);
+		result = fetchCredit(baseurl);
 	else if (prefs.type == 'acc')
-		fetchAccount(baseurl);
-	else if (prefs.type == 'card')
-		fetchCard(baseurl);
+		result = fetchAccount(baseurl);
 	else if (prefs.type == 'dep')
-		fetchDeposit(baseurl);
+		result = fetchDeposit(baseurl);
 	else
-		fetchCard(baseurl); //По умолчанию карта
+		result = fetchCard(baseurl); //По умолчанию карта
+
+    if(isAvailable('bonus')){
+        html =  AnyBalance.requestGet(baseurl + 'bonus.asp', addHeaders({ Referer: baseurl + 'bonus.asp' }));
+        if(html && AnyBalance.getLastStatusCode() < 400){
+            var bonusHref =  getParam(html, null, null, /bonus_frame[^>]+src="([^"]+)/i);
+            AnyBalance.trace('Ссылка на бонусную программу: ' + bonusHref)
+            if(bonusHref){
+                html =  AnyBalance.requestGet(bonusHref, g_headers);
+                getParam(html, result, 'bonus', /cartLink[^>]*>(\d+)/i, replaceTagsAndSpaces, parseBalance);
+            }
+        }
+    }
+
+    AnyBalance.setResult(result);
 }
 function fetchCard(baseurl){
     var prefs = AnyBalance.getPreferences();
@@ -88,7 +101,7 @@ function fetchCard(baseurl){
         getParam(html, result, 'accnum', /Р\/с([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
     }
 
-    AnyBalance.setResult(result);
+    return result;
 }
 
 function fetchAccount(baseurl){
@@ -125,7 +138,7 @@ function fetchAccount(baseurl){
     }
 
     */
-    AnyBalance.setResult(result);
+    return result;
 }
 
 function fetchDeposit(baseurl){
@@ -159,8 +172,7 @@ function fetchDeposit(baseurl){
         getParam(html, result, 'nextpct', /Дата следующей уплаты процентов:([^<]*)/i, replaceTagsAndSpaces, parseDate);
     }
 
-    AnyBalance.setResult(result);
-    
+    return result;
 }
 
 function fetchCredit(baseurl){

@@ -101,7 +101,7 @@ function fetchBankYur(html, baseurl) {
     }
 
     //Без этого почему-то не даёт получить инфу по картам.
-    html = AnyBalance.requestGet(baseurl + '/faces/facelet-pages/iday_balance.jspx', g_headers);
+    //html = AnyBalance.requestGet(baseurl + '/faces/facelet-pages/iday_balance.jspx', g_headers);
 
     html = AnyBalance.requestPost(baseurl + '/faces/facelet-pages/iday_balance.jspx', {
         docslist___jeniaPopupFrame: '',
@@ -117,7 +117,7 @@ function fetchBankYur(html, baseurl) {
         'docslist:main:clTbl:_sm': '',
         'docslist:main:accTbl:_sm': '',
         'event': '',
-        'source': 'docslist:main:_id514'
+        'source': 'docslist:main:_id526'
     }, addHeaders({Referer: baseurl + '/faces/facelet-pages/iday_balance.jspx'}));
 
     var table = getParam(html, null, null, /<table[^>]+class="x2f"[^>]*>([\s\S]*?)<\/table>/i);

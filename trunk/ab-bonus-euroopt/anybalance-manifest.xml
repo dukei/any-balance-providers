@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="7">ab-bonus-euroopt</id>
+  <id version="8">ab-bonus-euroopt</id>
   <api flags="no_browser|captcha" min_level="3"/>
   <name>Евроопт (Беларусь)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о скидке и сумме покупок в текущем месяце в белорусской компании "Евроопт" (http://www.euroopt.by).</p>
 	<p>Требует ввода защитного кода.</p> <p>Информация берется со страницы http://www.euroopt.by/otchet-po-diskontnoj-karte-2.</p>   
 	]]></description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>

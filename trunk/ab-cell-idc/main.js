@@ -44,7 +44,10 @@ function main(){
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 
+	// Ищем по наименованию или по номеру лиц счета
 	var href = getParam(html, null, null, new RegExp('wuxify-me[^>]*?href="([^"]*)[^>]*>\\s*' + (prefs.account || '') + '[\\s\\S]*?<\\/a>', 'i'));
+	if(!href)
+		href = getParam(html, null, null, new RegExp('wuxify-me[^>]+?href="\\?acc=' + (prefs.account || '[^"]*') + '">', 'i'));
 	if(!href)
 		throw new AnyBalance.Error('Не найден ' + (prefs.account ? 'лицевой счет "' + prefs.account + '"' : 'ни один счет'));
 	

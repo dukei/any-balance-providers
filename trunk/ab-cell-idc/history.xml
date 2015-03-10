@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="4" date="2015-03-10">
+	- Добавлен счетчик остатка по мини-пакету Simple.
+	- Мелкие улучшения.
+	</change>
 	<change version="3" date="2015-03-10">
 	- Добавлена возможность поиска по номеру лиц счета.
 	</change>

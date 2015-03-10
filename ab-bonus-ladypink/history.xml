@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="4" date="2015-03-10">
+	- Исправлено описание.
+	</change>
 	<change version="3" date="2015-03-10">
 	- В случае отсутствия данных по карте выводятся нулевые счетчики, а не ошибка.
 	</change>

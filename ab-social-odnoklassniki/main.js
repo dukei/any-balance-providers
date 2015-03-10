@@ -12,7 +12,7 @@ var g_headers = {
 };
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://m.odnoklassniki.ru/';
+	var baseurl = 'http://m.ok.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Введите логин!');
@@ -42,7 +42,7 @@ function main() {
 	
 	html = AnyBalance.requestGet(baseurl + 'dk?st.cmd=selectPresent&st.or=o%3AM%2C&_prevCmd=userSettings&tkn=4665', g_headers);
 	
-	getParam(html, result, 'balance', /На счёте:?\s*(\d*)\s*OK/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance', /На счёте:?\s*(\d*)/i, replaceTagsAndSpaces, parseBalance);
 	
     AnyBalance.setResult(result);
 }

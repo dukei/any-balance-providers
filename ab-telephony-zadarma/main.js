@@ -38,7 +38,7 @@ function main() {
 	if (!/\/auth\/logout\//i.test(html)) {
 		var error = getParam(html, null, null, /<p[^>]+class="error"[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
-			throw new AnyBalance.Error(error);
+			throw new AnyBalance.Error(error, null, /не были найдены в базе/i.test(html));
 		AnyBalance.trace(html)
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}

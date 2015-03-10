@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="20">ab-money-avangard</id>
+	<id version="21">ab-money-avangard</id>
 	<api flags="no_browser"/>
 	<name>Банк Авангард</name>
 	<description html="true"><![CDATA[
@@ -17,7 +17,7 @@
 	<p><b>Особенности:</b></p>
 	<p>Когда происходит вход в Интернет-банк, банк присылает SMS на ваш телефон. Так как для получения счетчиков этот провайдер входит в Интернет-банк, вы будете получать SMS каждый раз, когда провайдер делает запрос счетчиков.</p>   
 	]]></instruction>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
@@ -45,6 +45,6 @@
 		<counter id="currency" name="Валюта" type="text"/>
 	</counters>
 	<keywords></keywords>
-	<type>money</type>
+	<type>money, bank</type>
 	<country>ru</country>
 </provider>

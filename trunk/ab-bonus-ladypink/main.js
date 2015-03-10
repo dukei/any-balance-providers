@@ -19,19 +19,25 @@ function main() {
 	checkEmpty((''+prefs.login).length === 13 && (''+prefs.login).substring(0, 4) === "2977", 'Введен некорректный номер карты. Пожалуйста, проверьте правильность ввода!');
 	
 	var html = AnyBalance.requestGet(baseurl + 'check-savings/', g_headers);
+
+	if(!html || AnyBalance.getLastStatusCode() > 400){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+	}
 	
 	html = AnyBalance.requestPost(baseurl + 'ajax/savings.php', {
 		card: prefs.login
 	}, addHeaders({Referer: baseurl + 'check-savings', 'X-Requested-With': 'XMLHttpRequest'}));
 	
-	if (/ERROR/.test(html)) {
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('По указанному номеру карты данных о покупках за текущий и предыдущий месяц нет. Пожалуйста, проверьте правильность введенного номера карты!');
-	}
-	
 	var result = {success: true};
-	
-	throw new AnyBalance.Error('Данные по карте получены, пожалуйта, обратитесь к разработчикам для доработки провайдера!');
+
+	// По указанному номеру карты данных о покупках за текущий и предыдущий месяц нет.
+	if(/ERROR/.test(html)){
+		getParam('0', result, 'balance', null, null, parseBalance);
+		getParam('0', result, 'discount', null, null, parseBalance);
+	} else {
+		throw new AnyBalance.Error('Данные по карте получены, пожалуйста, обратитесь к разработчикам для доработки провайдера!');	
+	}
 
 	// getParam(text, result, 'balance', /покупки на сумму([^<]+)коп/i, [replaceTagsAndSpaces, /руб/i, ''], parseBalance);
 	// getParam(text, result, 'discount', /составляет([^<]+)/i, replaceTagsAndSpaces, parseBalance);

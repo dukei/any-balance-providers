@@ -19,11 +19,11 @@ function main(){
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
 	var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
-	
+
 	if(!html || AnyBalance.getLastStatusCode() > 400)
 		throw new AnyBalance.Error('Ошибка! Сервер не отвечает! Попробуйте обновить баланс позже.');
 	
-	html = AnyBalance.requestPost(baseurl + 'login', {
+	html = AnyBalance.requestPost(baseurl + 'auth', {
 		username: prefs.login,
 		password: prefs.password,
 	}, addHeaders({Referer: baseurl + 'login'}));

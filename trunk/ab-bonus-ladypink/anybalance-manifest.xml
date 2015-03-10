@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-bonus-ladypink</id>
+	<id version="4">ab-bonus-ladypink</id>
 	<api flags="no_browser"/>
 	<name>Подружка (Москва)</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о текущей скидке по карте Подружка г. Москва http://ladypink.ru/check-savings</p>
+	<p>Предоставляет информацию о текущей скидке по карте Подружка г. Москва <a href="http://www.podrygka.ru/">http://www.podrygka.ru/</a></p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>

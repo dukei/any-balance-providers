@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-municipal-uslugi-tatarstan</id>
+	<id version="5">ab-municipal-uslugi-tatarstan</id>
 	<api flags="no_browser"/>
 	<name>Госуслуги Татарстан</name>
 	<description html="true"><![CDATA[
@@ -10,7 +10,7 @@
 		<li>Проверка задолженности по налогам.</li>
 	</ol>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

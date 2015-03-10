@@ -14,8 +14,6 @@ function main(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
 	
-    AnyBalance.setOptions({SSL_ENABLED_PROTOCOLS: ['SSLv3']});
-
     var baseurl = 'https://lkkbyt.mosenergosbyt.ru/';
 	
 	checkEmpty(/^\d{10}$/.test(prefs.login), 'Введите 10 цифр лицевого счета без пробелов и разделителей.');

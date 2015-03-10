@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="21">ab-municipal-mosenergo</id>
+	<id version="22">ab-municipal-mosenergo</id>
 	<name>Мосэнергосбыт</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе и последнем платеже в "МосЭнергоСбыт".</p> 

@@ -140,8 +140,8 @@ function processNalog(html, baseurl, prefs, result, lastname, firstname, inn) {
 			
 			var type = getParam(current, null, null, /<td(?:[^>]*>){4}([^<]+)/i, replaceTagsAndSpaces) || 'Неизвестный тип налога'; // Транспортный налог
 			var agency = getParam(current, null, null, /<td(?:[^>]*>){7}([^<]+)/i, replaceTagsAndSpaces) || 'Неизвестно'; // УПРАВЛЕНИЕ ФЕДЕРАЛЬНОГО КАЗНАЧЕЙСТВА ПО МОСКОВСКОЙ ОБЛАСТИ (Межрайонная ИФНС России № 3 по Московской области)
-			var sum = getParam(current, null, null, /налог:(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces) || 0; // Сумма налога
-			var fine = getParam(current, null, null, /пеня:(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces) || 0; // Пени
+			var sum = getParam(current, null, null, /налог:(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces) || '0'; // Сумма налога
+			var fine = getParam(current, null, null, /пеня:(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces) || '0'; // Пени
 			//var date = getParam(current, null, null, /(По состоянию на:[^>]*>[^<]+)/i, replaceTagsAndSpaces) || 'Неизвестная дата'; // На дату
 			// Формируем html
 			html_response += agency + ':<br/>' + type + ': ' + ' <b>Налог: ' + sum + ' Пеня: ' + fine + '</b>' + '<br/><br/>';
@@ -157,7 +157,7 @@ function processGibdd(html, baseurl, prefs, result) {
 	if(isAvailable(['gibdd_balance', 'gibdd_all'])) {
 		var plates = [];
 		
-		if(isset(prefs.plate) && isset(prefs.sr)) {
+		if(isset(prefs.plate) && isset(prefs.sr) && prefs.plate !== "" && prefs.sr !== "") {
 			AnyBalance.trace('Указаны данные по автомобилям в настройках, получаем данные по заданным автомобилям...');
 			
 			var prefs_plates = prefs.plate.split(',');

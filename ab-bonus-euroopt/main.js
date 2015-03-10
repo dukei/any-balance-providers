@@ -64,8 +64,8 @@ function main () {
     var result = {success: true};
 
     getParam(html, result, 'status', /Текущий накопленный процент[^<]*<big[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'sum', /<tr[^>]*class="itog"(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'skidka', /<tr[^>]*class="itog"(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'sum', /Общая сумма покупок(?:[^>]*>){2}([^>]+)/i, replaceTagsAndSpaces, parseBalance);
+    //getParam(html, result, 'skidka', /<tr[^>]*class="itog"(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 
     AnyBalance.setResult (result);
 }

@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id major_version="2.0" version="16">ab-internet-maryno-net</id>
+	<id major_version="2.0" version="17">ab-internet-maryno-net</id>
 	<name>Марьино.NET (Москва)</name>
 	<description html="true"><![CDATA[
 	<p>Получает текущий баланс, бонусный баланс, номера лицевого счета и договора, статус у провайдера "Maryno.net" (http://maryno.net) из личного кабинета https://my.maryno.net.</p>

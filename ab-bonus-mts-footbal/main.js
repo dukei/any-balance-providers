@@ -20,26 +20,10 @@ function main() {
 	
 	var html = AnyBalance.requestGet(baseurl + 'Auth/LoginPassword?returnUrl=http%3A%2F%2Ffootball.mts.ru%2F', g_headers);
 	
-	// var key = getParam(html, null, null, /File\/Captcha\?key=([^"]+)/i);
-	// if(!key)
-		// throw new AnyBalance.Error('Не удалось найти форму входа, сайт изменен?');
-	
-	// var captchaa;
-	// if(AnyBalance.getLevel() >= 7) {
-		// AnyBalance.trace('Пытаемся ввести капчу');
-		// var captcha = AnyBalance.requestGet(baseurl + 'File/Captcha?key=' + key);
-		// captchaa = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
-		// AnyBalance.trace('Капча получена: ' + captchaa);
-	// } else {
-		// throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
-	// }
-	
 	html = AnyBalance.requestPost(baseurl + 'Auth/LoginPassword?returnUrl=http%3A%2F%2Ffootball.mts.ru%2F', {
 		Phone:prefs.login,
 		Password:prefs.password,
 		Promo:''
-		// 'Key':key,
-		// Value:captchaa,
 	}, addHeaders({Referer: baseurl + 'Auth/LoginPassword?returnUrl=http%3A%2F%2Ffootball.mts.ru%2F'}));
 	
 	if (!/logout/i.test(html)) {
@@ -55,12 +39,14 @@ function main() {
 	
 	var result = {success: true};
 	
+	getParam(html, result, 'balls', /<b[^>]*>(\d+)<\/b>\s*<\/span>\s*<\/p>\s*<p[^>]*>\s*Текущий баланс/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'miles', /<b[^>]*>(\d+)<\/b>\s*<\/span>\s*<\/p>\s*<p[^>]*>\s*Мили/i, replaceTagsAndSpaces, parseBalance);
+	
 	getParam(html, result, 'current', /Текущие прогнозы([^>]*>){2}/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'checkin', /Чекины([^>]*>){2}/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'wins', /Выигравшие прогнозы([^>]*>){2}/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'banners', /Баннеров([^>]*>){2}/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'total', /Всего прогнозов([^>]*>){2}/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'balls', />Баллы([^>]*>){2}/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'purchased', /Куплено призов([^>]*>){2}/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'balls_fan', /Баллов в ФАН Диван([^>]*>){2}/i, replaceTagsAndSpaces, parseBalance);
 	

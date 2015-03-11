@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-bonus-mts-footbal</id>
+	<id version="4">ab-bonus-mts-footbal</id>
 	<api flags="no_browser"/>
 	<name>Футбольный фан-клуб от МТС</name>
 	<description html="true"><![CDATA[
@@ -9,7 +9,7 @@
 	<instruction html="true"><![CDATA[
 	<p>Если у вас нет доступа в Личный кабинет, получите его на странице https://login.mts.ru/amserver/password</p>
 	]]></instruction>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
@@ -24,6 +24,7 @@
 		<counter id="banners" name="Баннеров"/>
 		<counter id="total" name="Всего прогнозов"/>
 		<counter id="balls" name="Баллы"/>
+		<counter id="miles" name="Мили 'На Берлин!'"/>
 		<counter id="purchased" name="Куплено призов"/>
 		<counter id="balls_fan" name="Баллов в ФАН Диван"/>
 	</counters>

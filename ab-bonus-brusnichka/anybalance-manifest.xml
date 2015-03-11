@@ -1,13 +1,13 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-bonus-brusnichka</id>
+	<id version="2">ab-bonus-brusnichka</id>
 	<api flags="no_browser"/>
 	<name>FreshCard</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о бонусной программе фрешмаркета Брусничка <a href="http://brusnichka.com.ua/">http://brusnichka.com.ua/</a></p>
 	<p>Информация берется из личного кабинета <a href="http://brusnichka.com.ua/pokupatelyam/freshcard/">http://brusnichka.com.ua/pokupatelyam/freshcard/</a></p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

@@ -41,10 +41,8 @@ function main() {
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	
-	html = AnyBalance.requestGet(baseurl + 'personal/profile/balanse/', g_headers);
-	
 	var result = {success: true};
-	getParam(html, result, 'balance', /Сумма на([^>]*>){3}\s*<\/dl>\s*<\/div/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance', /Текущий остаток(?:[^>]*>){3}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 	
 	AnyBalance.setResult(result);
 }

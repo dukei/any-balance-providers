@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-money-renesans-ua</id>
+	<api flags="no_browser"/>
+	<name>Ренесанс Кредит (Украина)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе и других параметрах продуктов банка Ренесанс Кредит <a href="http://rccf.ua/">http://rccf.ua/</a></p>
+	<p>Информация берется из личного кабинета <a href="https://online.rccf.ua/uk/security/logon">https://online.rccf.ua/uk/security/logon</a></p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Если у вас нет доступа в Личный кабинет, получите его на странице <a href=""></a></p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="agreementNumber" name="Номер договора" />
+		<counter id="name" name="Название" type="text"/>
+		<counter id="agreementAmount" name="Сумма кредита" units=" {@currency}"/>
+		<counter id="amount" name="Всего к оплате" units=" {@currency}"/>
+		<counter id="paymentAmount" name="Ежемесячный платеж" units=" {@currency}"/>
+		<counter id="dueAmount" name="Задолженность" units=" {@currency}"/>
+		<counter id="payDate" name="Дата платежа" type="time" format="dd/MM/yyyy"/>
+	</counters>
+	<keywords></keywords>
+	<type>money</type>
+	<country>ua</country>
+</provider>

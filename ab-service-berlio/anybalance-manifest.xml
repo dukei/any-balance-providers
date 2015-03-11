@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-service-berlio</id>
+	<id version="4">ab-service-berlio</id>
 	<api flags="no_browser"/>
 	<name>Берлио</name>
 	<description html="true"><![CDATA[

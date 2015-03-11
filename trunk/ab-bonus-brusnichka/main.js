@@ -7,15 +7,12 @@ var g_headers = {
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection': 'keep-alive',
-	// Mobile
-	//'User-Agent':'Mozilla/5.0 (BlackBerry; U; BlackBerry 9900; en-US) AppleWebKit/534.11+ (KHTML, like Gecko) Version/7.0.0.187 Mobile Safari/534.11+',
-	// Desktop
 	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
 };
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://brusnichka.com.ua/';
+	var baseurl = 'https://brusnichka.com.ua/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Введите логин!');
@@ -26,11 +23,15 @@ function main() {
 	if(!html || AnyBalance.getLastStatusCode() > 400)
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	
-	html = AnyBalance.requestPost(baseurl + 'pokupatelyam/freshcard/', {
+	AnyBalance.setCookie('brusnichka.com.ua', 'openstat_test', 1);
+
+	AnyBalance.requestPost(baseurl + 'pokupatelyam/freshcard/', {
 		login: prefs.login,
-        passwd: prefs.password,
+        password: prefs.password,
         action: 'Authenticate'
 	}, addHeaders({Referer: baseurl + 'pokupatelyam/freshcard/'}));
+
+	html = AnyBalance.requestGet(baseurl + 'pokupatelyam/freshcard/', g_headers);
 	
 	if (!/exit/i.test(html)) {
 		var error = getParam(html, null, null, /Ошибка[^>]*>([\s\S]*?)<br>/i, replaceTagsAndSpaces, html_entity_decode);
@@ -41,8 +42,6 @@ function main() {
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	
-    html = AnyBalance.requestGet(baseurl + 'pokupatelyam/freshcard/bonus_account.php', g_headers);
-    
 	var result = {success: true};
 	
 	getParam(html, result, 'card', /Карта[\s]*?<b>№([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);

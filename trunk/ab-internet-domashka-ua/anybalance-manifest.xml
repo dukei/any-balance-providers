@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-domashka-ua</id>
+	<api flags="no_browser"/>
+	<name>Домашняя Сеть (Украина)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Домашняя Сеть <a href="http://domashka.net/">http://domashka.net/</a></p>
+	<p>Информация берется из личного кабинета <a href="http://domashka.net/ru/abonents/abonent-service/">http://domashka.net/ru/abonents/abonent-service/</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" грн"/>
+		<counter id="deadline" name="Дата платежа" type="time" format="dd/MM/yyyy"/>
+		<counter id="abon" name="Абонентская плата" units=" грн"/>
+		<counter id="bonus" name="Бонус" units=" %"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet</type>
+	<country>ua</country>
+</provider>

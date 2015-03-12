@@ -34,7 +34,7 @@ function main(){
     checkEmpty(prefs.login, 'Введите логин!');
     checkEmpty(prefs.password, 'Введите пароль!');
 
-    var baseurl = "https://kabinet.rt.ru/";
+    var baseurl = "https://lk.rt.ru/";
 
     var html = AnyBalance.requestPost(baseurl + 'serverLogic/login', {
         action: 'login',
@@ -52,7 +52,7 @@ function main(){
     if(!json.sessionKey)
         throw new AnyBalance.Error("Не удалось получить идентификатор сессии!");
 
-    AnyBalance.setCookie('kabinet.rt.ru', 'sessionHashKey', json.sessionKey);
+    AnyBalance.setCookie('lk.rt.ru', 'sessionHashKey', json.sessionKey);
 
     html = AnyBalance.requestGet(baseurl, g_headers);
 	

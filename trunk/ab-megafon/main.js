@@ -7,7 +7,7 @@ var g_headers = {
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36'
 };
 
 var MEGA_FILIAL_MOSCOW = 1;
@@ -33,6 +33,7 @@ var filial_info = {
 };
 filial_info[MEGA_FILIAL_MOSCOW] = {
 	name: 'Столичный филиал',
+	id: 'mos',
 	func: megafonServiceGuide,
     site: "https://moscowsg.megafon.ru/",
     lk: "https://lk.megafon.ru/",
@@ -44,24 +45,28 @@ filial_info[MEGA_FILIAL_MOSCOW] = {
 };
 filial_info[MEGA_FILIAL_SIBIR] = {
 	name: 'Сибирский филиал',
+	id: 'sib',
 	tray: "https://sibsg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%",
 	widget: 'https://sibsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
 	func: megafonTrayInfo
 };
 filial_info[MEGA_FILIAL_NW] = {
 	name: 'Северо-западный филиал',
+	id: 'nw',
 	tray: 'https://szfsg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%',
 	widget: 'https://szfsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
 	func: megafonTrayInfo,
 };
 filial_info[MEGA_FILIAL_FAREAST] = {
 	name: 'Дальневосточный филиал',
+	id: 'dv',
 	tray: 'https://dvsg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%',
 	widget: 'https://dvsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
 	func: megafonTrayInfo
 };
 filial_info[MEGA_FILIAL_VOLGA] = {
 	name: 'Поволжский филиал',
+	id: 'vlg',
 	//  site: "https://volgasg.megafon.ru/",
 	//  func: megafonServiceGuide,
 	func: megafonTrayInfo,
@@ -70,18 +75,21 @@ filial_info[MEGA_FILIAL_VOLGA] = {
 };
 filial_info[MEGA_FILIAL_KAVKAZ] = {
 	name: 'Кавказский филиал',
+	id: 'kv',
 	tray: "https://kavkazsg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%",
 	widget: 'https://kavkazsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
 	func: megafonTrayInfo
 };
 filial_info[MEGA_FILIAL_CENTRAL] = {
 	name: 'Центральный филиал',
+	id: 'ctr',
 	tray: 'https://centersg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%',
 	widget: 'https://centersg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
 	func: megafonTrayInfo
 };
 filial_info[MEGA_FILIAL_URAL] = {
 	name: 'Уральский филиал',
+	id: 'url',
 	tray: 'https://uralsg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%',
 	widget: 'https://uralsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
 	func: megafonTrayInfo,
@@ -178,22 +186,27 @@ function getFilial(number) {
 		throw new AnyBalance.Error('Телефон должен быть строкой из 10 цифр!', null, true);
 	if (!/^\d{10}$/.test(number)) 
 		throw new AnyBalance.Error('Телефон должен быть строкой из 10 цифр без пробелов и разделителей!', null, true);
-		
-	var html = AnyBalance.requestPost("https://sg.megafon.ru/ps/scc/php/route.php", {
-		CHANNEL: 'WWW',
-		ULOGIN: number
-	});
-	//    Мегафон сделал сервис для определения филиала, так что попытаемся обойтись им    
-	var region = getParam(html, null, null, /<URL>https?:\/\/(\w+)\./i);
-	if (region && filial_info[region]) {
-		return filial_info[region];
-	} else {
-		//Филиал не определился, попробуем по префиксу понять
-		var prefix = parseInt(number.substr(0, 3));
-		var num = parseInt(number.substr(3).replace(/^0+(\d+)$/, '$1')); //Не должно начинаться с 0, иначе воспринимается как восьмеричное число
-		return getFilialByPrefixAndNumber(prefix, num);
+	
+	try{	
+		var html = AnyBalance.requestPost("https://sg.megafon.ru/ps/scc/php/route.php", {
+			CHANNEL: 'WWW',
+			ULOGIN: number
+		});
+		//    Мегафон сделал сервис для определения филиала, так что попытаемся обойтись им    
+		var region = getParam(html, null, null, /<URL>https?:\/\/(\w+)\./i);
+		if (region && filial_info[region]) {
+			return filial_info[region];
+		}
+	}catch(e){
+		AnyBalance.trace('Не удалось получить филиал: ' + e.message);
 	}
+	
+	//Филиал не определился, попробуем по префиксу понять
+	var prefix = parseInt(number.substr(0, 3));
+	var num = parseInt(number.substr(3).replace(/^0+(\d+)$/, '$1')); //Не должно начинаться с 0, иначе воспринимается как восьмеричное число
+	return getFilialByPrefixAndNumber(prefix, num);
 }
+
 /**
  * Ищет филиал для переданного префикса и номера в таблице def_table
  */
@@ -342,7 +355,7 @@ function megafonTrayInfo(filial) {
 	var filinfo = filial_info[filial], errorInTray;
 	var internet_totals_was = {};
 	var mins_totals_was = {};
-	var result = {success: true};
+	var result = {success: true, filial: filinfo.id};
 	
 	if(filinfo.tray){ try {
 		var xml = getTrayXmlText(filial), val;
@@ -646,7 +659,7 @@ function megafonTrayInfo(filial) {
 		getInternetInfo(filial, result, internet_totals_was);
 	else
 		AnyBalance.trace('Мы уже получили весь трафик, в getInternetInfo не пойдем, т.к. иначе все просуммируется и трафика станет в два раза больше')
-	
+
 	AnyBalance.setResult(result);
 }
 
@@ -872,7 +885,7 @@ function megafonLK(filinfo, tryOldSG) {
 		}
 	}
 	
-	var result = {success: true};
+	var result = {success: true, filial: filinfo.id};
 	
 	getParam(html, result, 'balance', /Баланс[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'bonus_balance', /Бонусные баллы[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
@@ -901,7 +914,7 @@ function megafonBalanceInfo(filinfo) {
         throw new AnyBalance.Error('Сервис временно недоступен');
     }
 
-    var result = {success: true};
+    var result = {success: true, filial: filinfo.id};
     getParam(html, result, 'balance', /<BALANCE>([^<]*)<\/BALANCE>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'phone', /<MSISDN>([^<]*)<\/MSISDN>/i, replaceTagsAndSpaces, html_entity_decode);
 
@@ -924,7 +937,7 @@ function megafonServiceGuide(filial){
 		// Мегафон шлет смс на вход если пытаемся войти через большой кабинет
 		if(filinfo.lk || filinfo.api){
 	   	    try {
-				megafonLkAPI();
+				megafonLkAPI(filinfo);
 		    } catch (e) {
 				// Если ошибка в логине и пароле, дальше идти нет смысла. Позже: А вдруг у кого-то не установлен пароль в новом кабинете, закидают же?
 				if(e.fatal)
@@ -1042,7 +1055,7 @@ function megafonServiceGuideCorporate(filial, sessionid){
     var prefs = AnyBalance.getPreferences();
 
     var result = {
-        success: true
+        success: true, filial: filinfo.id
     };
 
     var html = AnyBalance.requestPost(baseurl + 'CPWWW/SC_CP_ASSC_CHARGES_FORM', {
@@ -1101,7 +1114,7 @@ function megafonServiceGuidePhysical(filial, sessionid){
     var baseurl = filinfo.site;
     var prefs = AnyBalance.getPreferences(), matches;
     
-    var result = {success: true};
+    var result = {success: true, filial: filinfo.id};
 
     var phone = prefs.phone || prefs.login;
 
@@ -1642,7 +1655,7 @@ function callAPI(method, url, params, allowerror) {
 	return json;
 }
 
-function megafonLkAPI() {
+function megafonLkAPI(filinfo) {
 	var prefs = AnyBalance.getPreferences();
 	
 	AnyBalance.trace('Пробуем войти через API мобильного приложения...');
@@ -1687,7 +1700,7 @@ function megafonLkAPI() {
 	}
 
 	
-	var result = {success: true};
+	var result = {success: true, filial: filinfo.id};
 	
 	json = callAPI('get', 'api/main/info');
 	

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-belinfonet</id>
+	<api flags="no_browser"/>
+	<name>Белинфонет (Беларусь)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Белинфонет (Беларусь) <a href="https://adsl.by/">https://adsl.by/</a></p>
+	<p>Информация берется из личного кабинета <a href="https://www.adsl.by/001.htm">https://www.adsl.by/001.htm</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>base64.js</js>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="accnum" name="Номер аккаунта"/>
+		<counter id="traffLeft" name="Осталось трафика на сумму" units=" р"/>
+		<counter id="timeLeft" name="Осталось времени" units=" дн"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="price" name="Стоимость пакета и доп. услуг" units=" р"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet</type>
+	<country>by</country>
+</provider>

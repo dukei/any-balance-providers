@@ -24,6 +24,7 @@
 		<counter id="debt" name="Сумма долга к уплате" units=" {@currency}"/>
 		<counter id="own" name="Остаток собственных средств" units=" {@currency}"/>
 		<counter id="limit" name="Кредитный лимит" units=" {@currency}"/>
+		<!-- Лучше разделить на номер счета и карты, для оплаты нужен номер счета -->
 		<counter id="cardnum" name="Номер" type="text"/>
 		<counter id="cardname" name="Имя на карте" type="text"/>
 		<counter id="till" name="Срок действия" type="text"/>

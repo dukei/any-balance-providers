@@ -28,27 +28,29 @@ function main() {
 
 	if (!/"code":100/i.test(html)) {
 		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
-		if (error && /Неверный логин или пароль/i.test(error))
-			throw new AnyBalance.Error(error, null, true);
 		if (error)
-			throw new AnyBalance.Error(error);
+			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	html = AnyBalance.requestGet(baseurl + 'ru/73/', g_headers);
 	
 	var result = {success: true};
-	
-	getParam(html, result, 'balance', /На вашем лицевом счету(?:[^>]*>){2}([\s\S]*?)<\/td/i, replaceTagsAndSpaces, parseBalanceRK);
-	getParam(html, result, 'bonuses', /У вас на счету(?:[^>]*>){2}([\s\S]*?)<\/td/i, replaceTagsAndSpaces, parseBalance);
+
+	getParam(AnyBalance.getCookie('my_money') || 0, result, 'balance', null, replaceTagsAndSpaces, parseBalance);
+
+	if(isAvailable('bonuses')){
+		html = AnyBalance.requestGet(baseurl + 'ru/306/', g_headers);
+		getParam(html, result, 'bonuses', /var my_balance=([^;]+)/i, replaceTagsAndSpaces, parseBalance);
+	}
 	
 	AnyBalance.setResult(result);
 }
 
-function parseBalanceRK(_text){
-    var text = _text.replace(/\s+/g, '');
-    var rub = getParam(text, null, null, /(-?\d[\d\.,]*)(?:руб)/i, replaceFloat, parseFloat) || 0;
-    var kop = getParam(text, null, null, /руб[\s\S]*?(-?\d[\d\.,]*)/i, replaceFloat, parseFloat) || 0;
-    var val = rub+kop/100;
-    AnyBalance.trace('Parsing balance (' + val + ') from: ' + _text);
-    return val;
-}
+// function parseBalanceRK(_text){
+//     var text = _text.replace(/\s+/g, '');
+//     var rub = getParam(text, null, null, /(-?\d[\d\.,]*)(?:руб)/i, replaceFloat, parseFloat) || 0;
+//     var kop = getParam(text, null, null, /руб[\s\S]*?(-?\d[\d\.,]*)/i, replaceFloat, parseFloat) || 0;
+//     var val = rub+kop/100;
+//     AnyBalance.trace('Parsing balance (' + val + ') from: ' + _text);
+//     return val;
+// }

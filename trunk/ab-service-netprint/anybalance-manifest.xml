@@ -1,13 +1,13 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-service-netprint</id>
+	<id version="2">ab-service-netprint</id>
 	<api flags="no_browser"/>
 	<name>NetPrint</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе провайдера NetPrint http://www.netprint.ru/moscow</p>
 	<p>Информация берется из личного кабинета http://www.netprint.ru/moscow/73/</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

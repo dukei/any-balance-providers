@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="3.0" version="148" date="2015-03-12">
+	- Улучшена обработка ошибок
+	- Обработана невозможность определить филиал сервисом мегафона
+	</change>
 	<change major_version="3.0" version="147" date="2015-02-22">
 	- Улучшено распознавание трафика в спб
 	</change>

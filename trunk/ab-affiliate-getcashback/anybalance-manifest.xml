@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-affiliate-getcashback</id>
+	<id version="2">ab-affiliate-getcashback</id>
 	<api flags="no_browser"/>
 	<name>Getcashback</name>
 	<description html="true"><![CDATA[

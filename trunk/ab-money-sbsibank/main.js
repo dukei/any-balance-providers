@@ -141,7 +141,7 @@ function main() {
 	var clearBalances = getParam(html, null, null, null, replaceTagsAndSpaces, html_entity_decode);
 	AnyBalance.trace(clearBalances);
 	
-	var balanceRegExp = /Доступный остаток средств на карте([\s\d.,-]+BYR)/i;
+	var balanceRegExp = /Доступный остаток средств на карте([\s\d.,-]+\S+)/i;
 	
 	getParam(clearBalances, result, 'balance', balanceRegExp, replaceTagsAndSpaces, parseBalance);
 	getParam(clearBalances, result, ['currency', 'balance'], balanceRegExp, replaceTagsAndSpaces, parseCurrency);

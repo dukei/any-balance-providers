@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-money-otp</id>
+	<id version="5">ab-money-otp</id>
 	<name>ОТП Банк</name>
 	<description html="true"><![CDATA[
 	<p>Получает текущий остаток и другие параметры карт ОТП Банка ( http://otpbank.ru ), используя систему ОТПдирект ( https://direkt.otpbank.ru ).</p>
@@ -31,6 +31,6 @@
 		<counter id="currency" name="Валюта" type="text"/>
 	</counters>
 	<keywords>otp bank</keywords>
-	<type>money</type>
+	<type>money, bank</type>
 	<country>ru</country>
 </provider>

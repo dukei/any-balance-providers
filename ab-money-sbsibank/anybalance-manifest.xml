@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="9">ab-money-sbsibank</id>
+	<id version="10">ab-money-sbsibank</id>
 	<api flags="no_browser|captcha"/>
 	<name>Система Банковского Самообслуживания (Беларусь)</name>
 	<description html="true"><![CDATA[
@@ -12,7 +12,7 @@
 		<li>ЗАО Идея Банк (https://www.sbsibank.by/ideabank)</li>
 	</ul>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
@@ -27,6 +27,6 @@
 		<counter id="cardnum" name="Карта" type="text"/>
 	</counters>
 	<keywords></keywords>
-	<type>money</type>
+	<type>money, bank</type>
 	<country>by</country>
 </provider>

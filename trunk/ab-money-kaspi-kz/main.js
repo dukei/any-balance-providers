@@ -24,7 +24,7 @@ function main() {
 	if(!login)
 		throw new AnyBalance.Error('Не верный формат логина, необходимо вводить логин без +7 в начале и без пробелов.');
 	
-	var html = AnyBalance.requestGet(baseurl + 'auth.aspx', g_headers);
+	var html = AnyBalance.requestGet(baseurl + 'entrance', g_headers);
 	
 	var loginParams = { 
 		'submitId':'SignIn',
@@ -56,7 +56,7 @@ function main() {
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}*/	
 	
-	html = AnyBalance.requestGet(baseurl + 'index.aspx?action=my-bank', g_headers);
+	html = AnyBalance.requestGet(baseurl + 'index.aspx?action=bank', g_headers);
 	
 	if(prefs.type == 'dep')
         fetchDepozit(html, baseurl);
@@ -66,9 +66,11 @@ function main() {
 
 function fetchCard(html, baseurl){
     var prefs = AnyBalance.getPreferences();
+    if(prefs.cardnum && !/^\d{4}$/.test(prefs.cardnum))
+        throw new AnyBalance.Error("Введите 4 последних цифры номера карты или не вводите ничего, чтобы показать информацию по первой карте");
 	
 	// <div[^>]*id="account(?:[^>]*>){4}\s*(?:[^>]*>)?[\s*]*Russ(?:[^>]*>){50,255}\s*<\/div>\s*<\/div>
-	var re = new RegExp('<div[^>]*id="account(?:[^>]*>){4}\\s*(?:[^>]*>)?[\\s*]*' + (prefs.cardnum ? prefs.cardnum : '[^<]+') + '(?:[^>]*>){50,255}(?:\\s*</div>){3,6}', 'i');
+	var re = new RegExp('<div[^>]*id="account(?:[^>]*>){4}\\s*(?:[^>]*>)?[\\s*]*' + (prefs.cardnum ? prefs.cardnum : '[^<]+') + '(?:[^>]*>){50,255}(?:\\s*<\\/div>){3,6}', 'i');
     var account = getParam(html, null, null, re, replaceTagsAndSpaces, html_entity_decode);
 	if(!account)
 		throw new AnyBalance.Error('Не удаётся найти ' + (prefs.cardnum ? 'карту с последними цифрами ' + prefs.cardnum : 'ни одной карты!'));

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="7">ab-money-kaspi-kz</id>
+	<id version="8">ab-money-kaspi-kz</id>
 	<api flags="no_browser"/>
 	<name>Kaspi bank</name>
 	<description html="true"><![CDATA[
@@ -30,6 +30,6 @@
 		<counter id="pay_in" name="Платеж через" units=" дн"/>
 	</counters>
 	<keywords></keywords>
-	<type>money</type>
+	<type>money, bank</type>
 	<country>kz</country>
 </provider>

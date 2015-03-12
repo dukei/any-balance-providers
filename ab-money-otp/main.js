@@ -51,9 +51,9 @@ function main(){
     }, g_headers);
 
     if(!/\/homebank\/do\/beallitasok\/kijelentkezes/i.test(html)){
-        var error = getParam(html, null, null, /<p[^>]+class="[^"]*red[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
+        var error = getParam(html, null, null, [/<p[^>]+class="[^"]*red[^>]*>([\s\S]*?)<\/p>/i, /\$\('#alert_title'\)\.html\('([^']*)/], replaceTagsAndSpaces);
         if(error)
-            throw new AnyBalance.Error(error);
+            throw new AnyBalance.Error(error, null, /неверно ввели логин или пароль/i.test(error));
 		
 		if(/Ваш доступ в ОТПдирект заблокирован/i.test(html))
 			throw new AnyBalance.Error("Ваш доступ в ОТПдирект заблокирован, Пожалуйста, обратитесь в Контакт-Центр или в ближайшее для Вас Отделение Банка для разблокировки доступа.", null, true);

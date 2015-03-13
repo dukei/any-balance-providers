@@ -35,13 +35,24 @@ function main() {
 	if(/ERROR/.test(html)){
 		getParam('0', result, 'balance', null, null, parseBalance);
 		getParam('0', result, 'discount', null, null, parseBalance);
+		getParam('0', result, 'currentBalance', null, null, parseBalance);
+		getParam('0', result, 'futureDiscount', null, null, parseBalance);
 	} else {
-		throw new AnyBalance.Error('Данные по карте получены, пожалуйста, обратитесь к разработчикам для доработки провайдера!');	
-	}
+		var last = getParam(html, null, null, /LastMonth[^>]*>((?:[\s\S](?!(?:\s*<\/div>){2}))+[\S])/i),
+			current = getParam(html, null, null, /CurrentMonth[^>]*>((?:[\s\S](?!(?:\s*<\/div>){2}))+[\S])/i);
 
-	// getParam(text, result, 'balance', /покупки на сумму([^<]+)коп/i, [replaceTagsAndSpaces, /руб/i, ''], parseBalance);
-	// getParam(text, result, 'discount', /составляет([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	// getParam(text, result, 'text');
+		getDiscount(last, result, 'balance', 'discount');
+		getDiscount(current, result, 'currentBalance', 'futureDiscount');
+	}
 	
 	AnyBalance.setResult(result);
+}
+
+function getDiscount(html, result, balancePar, discountPar){
+	if(/не совершали покупок/i.test(html))
+		getParam('0', result, balancePar, null, null, parseBalance);
+	else
+		getParam(html, result, balancePar, /purchase[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+
+	getParam(html, result, discountPar, /(\d+)_percent\.png/i, replaceTagsAndSpaces, parseBalance);
 }

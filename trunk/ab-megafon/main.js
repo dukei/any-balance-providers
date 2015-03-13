@@ -223,7 +223,8 @@ function getFilialByPrefixAndNumber(prefix, number){
     var prefkey = 'p'+prefix;
     var filinfo = def_table[prefkey];
     if(!filinfo)
-        throw new AnyBalance.Error('Префикс ' + prefix + ' не принадлежит Мегафону! Попробуйте выбрать регион в настройках.');
+        // throw new AnyBalance.Error('Префикс ' + prefix + ' не принадлежит Мегафону! Попробуйте выбрать регион в настройках.');
+        throw new AnyBalance.Error('Не удалось определить регион автоматически! Вам необходимо выбрать филилал вручную в настройках аккаунта.');
     
     if(typeof(filinfo) == 'number')
         return filinfo;

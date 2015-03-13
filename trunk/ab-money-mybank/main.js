@@ -47,6 +47,10 @@ function main() {
 	
 	var info = getParam(html, null, null, new RegExp('<div[^>]+class="product-body"[^>]*>(?:[^>]*>){50,60}[\\d_]+' + (prefs.num || ''), 'i'));
 	if(!info) {
+		// Иногда бывает что у карты нету номера (например Сберегательная карта)
+		info = getParam(html, null, null, new RegExp('<div[^>]+class="product-body"[^>]*>(?:[^>]*>){50,60}', 'i'));
+	}
+	if(!info) {
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось найти ' + (prefs.num ? 'карту с последними цифрами ' + prefs.num : 'ни одной карты!'));
 	}

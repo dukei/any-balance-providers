@@ -181,30 +181,39 @@ var def_table = {
 /**
  * Ищет филиал для переданного в виде строки номера
  */
-function getFilial(number) {
+function getFilial(prefs) {
+	var number = prefs.login;
+	
 	if (typeof(number) != 'string')
 		throw new AnyBalance.Error('Телефон должен быть строкой из 10 цифр!', null, true);
 	if (!/^\d{10}$/.test(number)) 
 		throw new AnyBalance.Error('Телефон должен быть строкой из 10 цифр без пробелов и разделителей!', null, true);
 	
 	try{	
-		var html = AnyBalance.requestPost("https://sg.megafon.ru/ps/scc/php/route.php", {
-			CHANNEL: 'WWW',
-			ULOGIN: number
-		});
-		//    Мегафон сделал сервис для определения филиала, так что попытаемся обойтись им    
-		var region = getParam(html, null, null, /<URL>https?:\/\/(\w+)\./i);
-		if (region && filial_info[region]) {
-			return filial_info[region];
-		}
+		// Мегафон сделал сервис для определения филиала, так что попытаемся обойтись им    
+		// Но этот сервис сдох... 13.03.15
+		// var html = AnyBalance.requestPost("https://sg.megafon.ru/ps/scc/php/route.php", {
+			// CHANNEL: 'WWW',
+			// ULOGIN: number
+		// });
+		// var region = getParam(html, null, null, /<URL>https?:\/\/(\w+)\./i);
+		// if (region && filial_info[region]) {
+			// return filial_info[region];
+		// }
 	}catch(e){
 		AnyBalance.trace('Не удалось получить филиал: ' + e.message);
 	}
 	
 	//Филиал не определился, попробуем по префиксу понять
-	var prefix = parseInt(number.substr(0, 3));
-	var num = parseInt(number.substr(3).replace(/^0+(\d+)$/, '$1')); //Не должно начинаться с 0, иначе воспринимается как восьмеричное число
-	return getFilialByPrefixAndNumber(prefix, num);
+	if(!prefs.region) {
+		AnyBalance.trace('Пытаемся определить регион по номеру телефона...');
+		var prefix = parseInt(number.substr(0, 3));
+		var num = parseInt(number.substr(3).replace(/^0+(\d+)$/, '$1')); //Не должно начинаться с 0, иначе воспринимается как восьмеричное число
+		return getFilialByPrefixAndNumber(prefix, num);
+	} else {
+		AnyBalance.trace('Указан регион в настройках: ' + prefs.region);
+		return filial_info[prefs.region];
+	}
 }
 
 /**
@@ -214,7 +223,7 @@ function getFilialByPrefixAndNumber(prefix, number){
     var prefkey = 'p'+prefix;
     var filinfo = def_table[prefkey];
     if(!filinfo)
-        throw new AnyBalance.Error('Префикс ' + prefix + ' не принадлежит Мегафону!');
+        throw new AnyBalance.Error('Префикс ' + prefix + ' не принадлежит Мегафону! Попробуйте выбрать регион в настройках.');
     
     if(typeof(filinfo) == 'number')
         return filinfo;
@@ -234,7 +243,7 @@ function main(){
     
 //    AnyBalance.setOptions({PER_DOMAIN: {'lk.megafon.ru': {SSL_ENABLED_PROTOCOLS: ['TLSv1'], SSL_ENABLED_CIPHER_SUITES: ['SSL_RSA_WITH_RC4_128_MD5']}}});
 
-    var filial = getFilial(prefs.login);
+    var filial = getFilial(prefs);
     if(!filial)
         throw new AnyBalance.Error('Неизвестен филиал Мегафона для номера ' + prefs.login);
     

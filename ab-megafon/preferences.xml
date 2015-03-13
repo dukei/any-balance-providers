@@ -23,12 +23,20 @@
         inputType="textPassword">
     </EditTextPreference>
     <ListPreference 
+        key="region" 
+        title="Регион"
+        summary="Укажите регион, если не удалось определить его автоматически||{@s}\n"
+        entries="Автоматически|Столичный филиал|Сибирский филиал|Северо-западный филиал|Дальневосточный филиал|Поволжский филиал|Кавказский филиал|Центральный филиал|Уральский филиал"
+        entryValues="|moscowsg|sibsg|szfsg|dvsg|volgasg|kavkazsg|centersg|uralsg"
+		defaultValue="">
+    </ListPreference>	
+    <ListPreference 
         key="allowcaptcha" 
         title="Показывать капчу, если требуется"
         summary="Если капча требуется, но отключена, будет показан только баланс||{@s}\n"
         entries="Всегда|Днем с 8 до 22|Днем с 8 до 23|Днем с 8 до 24|Днем с 9 до 22|Днем с 9 до 23|Днем с 9 до 24|Днем с 10 до 23|Днем с 10 до 24|Никогда"
         entryValues="|8-22|8-23|8-24|9-22|9-23|9-24|10-23|10-24|0-0"
-	defaultValue="">
+		defaultValue="">
     </ListPreference>
 <!--    <EditTextPreference 
         title="Доп. номер телефона" 

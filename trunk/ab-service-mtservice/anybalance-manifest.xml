@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-service-mtservice</id>
+	<api flags="no_browser"/>
+	<name>МТ-сервис</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о статусе заказа сервиса по ремонту телефонов "МТ-сервис" <a href="http://www.mtservice.ru/">http://www.mtservice.ru/</a></p>
+	<p>Информация берется со страницы <a href="http://www.mtservice.ru/status/?ID=%%">http://www.mtservice.ru/status/?ID=%%</a>, где %% - номер заказа</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="status" name="Статус" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>service</type>
+	<country>ru</country>
+</provider>

@@ -38,17 +38,32 @@ function fetchCard(baseurl, prefs) {
 	
 	var result = {success: true};
 	
-	if(prefs.digits)
-		throw new AnyBalance.Error('На данный момент отображение данных по нескольким картам не поддерживается, свяжитесь, пожалуйста, с разработчиками.');
-	
-	getParam(json.card.formattedNumber, result, '__tariff', null, replaceTagsAndSpaces);
-	getParam(json.card.formattedNumber, result, 'card_num', null, replaceTagsAndSpaces);
-	getParam(json.card.info, result, 'card_type', null, replaceTagsAndSpaces);
-	getParam(json.card.number, result, 'acc_num', null, replaceTagsAndSpaces);
-	getParam(json.card.balance + '', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
-	getParam(json.card.currency, result, ['currency', 'balance'], null, replaceTagsAndSpaces);
-	getParam(json.card.actual, result, 'actual', null, replaceTagsAndSpaces, parseDate);
-	getParam(json.card.bankingInformation.payee, result, 'fio', null, replaceTagsAndSpaces);
+	var card = null;
+	if(isArray(json.card)){
+		if(!prefs.digits){
+			card = json.card[0];
+		}else{
+			for(var i=0; i<json.card.length; ++i){
+				if(endsWith(json.card[i].formattedNumber, prefs.digits)){
+					card = json.card[i];
+					break;
+				}
+			}
+			if(!card)
+				throw new AnyBalance.Error('Не удаётся найти карту с последними цифрами ' + prefs.digits);
+		}
+	}else{
+		card = json.card;
+	}
+
+	getParam(card.formattedNumber, result, '__tariff', null, replaceTagsAndSpaces);
+	getParam(card.formattedNumber, result, 'card_num', null, replaceTagsAndSpaces);
+	getParam(card.info, result, 'card_type', null, replaceTagsAndSpaces);
+	getParam(card.number, result, 'acc_num', null, replaceTagsAndSpaces);
+	getParam(card.balance + '', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
+	getParam(card.currency, result, ['currency', 'balance'], null, replaceTagsAndSpaces);
+	getParam(card.actual, result, 'actual', null, replaceTagsAndSpaces, parseDate);
+	getParam(card.bankingInformation.payee, result, 'fio', null, replaceTagsAndSpaces);
 	
 	AnyBalance.setResult(result);	
 }

@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="6" date="2015-03-13">
+	- Поддержка выбора одной из нескольких карт
+	</change>
 	<change version="5" date="2015-02-17">
 	- Добавлена поддержка счетов и депозитов.
 	</change>

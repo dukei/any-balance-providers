@@ -83,9 +83,14 @@ filial_info[MEGA_FILIAL_KAVKAZ] = {
 filial_info[MEGA_FILIAL_CENTRAL] = {
 	name: 'Центральный филиал',
 	id: 'ctr',
-	tray: 'https://centersg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%',
-	widget: 'https://centersg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
-	func: megafonTrayInfo
+	func: megafonServiceGuide,
+	site: "https://moscowsg.megafon.ru/",
+	lk: "https://lk.megafon.ru/",
+	widget: 'https://moscowsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
+//	tray: "https://moscowsg.megafon.ru/TRAY_INFO/TRAY_INFO?LOGIN=%LOGIN%&PASSWORD=%PASSWORD%",
+	internet: "http://user.moscow.megafon.ru/",
+	internetRobot: "https://moscowsg.megafon.ru/MEGAFON_BALANCE/MGFSTF_GET_QOS_PACK_STATUS?MSISDN=%LOGIN%&PASSWORD=%PASSWORD%",
+	balanceRobot: "https://moscowsg.megafon.ru/MEGAFON_BALANCE/MGFSTF_GET_BALANCE?MSISDN=%LOGIN%&PASSWORD=%PASSWORD%"
 };
 filial_info[MEGA_FILIAL_URAL] = {
 	name: 'Уральский филиал',
@@ -224,7 +229,7 @@ function getFilialByPrefixAndNumber(prefix, number){
     var filinfo = def_table[prefkey];
     if(!filinfo)
         // throw new AnyBalance.Error('Префикс ' + prefix + ' не принадлежит Мегафону! Попробуйте выбрать регион в настройках.');
-        throw new AnyBalance.Error('Не удалось определить регион автоматически! Вам необходимо выбрать филилал вручную в настройках аккаунта.');
+        throw new AnyBalance.Error('Не удалось определить филиал автоматически! Вам необходимо выбрать филиал вручную в настройках аккаунта.', null, true);
     
     if(typeof(filinfo) == 'number')
         return filinfo;
@@ -943,7 +948,7 @@ function megafonServiceGuide(filial){
     AnyBalance.trace('Connecting to service guide ' + filinfo.name);
 
     var session;
-    if(filial == MEGA_FILIAL_MOSCOW) {
+    if(filinfo.site) {
 		// Мегафон шлет смс на вход если пытаемся войти через большой кабинет
 		if(filinfo.lk || filinfo.api){
 	   	    try {
@@ -1285,7 +1290,7 @@ function megafonServiceGuidePhysical(filial, sessionid){
     }
 
 
-    if(filial == MEGA_FILIAL_MOSCOW){
+    if(filinfo.site){
         // Продли скорость (Москва)
         if(AnyBalance.isAvailable(['internet_total','internet_cur', 'internet_left'])){
             text = AnyBalance.requestGet(baseurl + 'SCCEXTSYS/EXT_SYSTEM_PROXY_FORM?CHANNEL=WWW&SESSION_ID=' + sessionid + '&URI=3.');

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-bcm</id>
+	<api flags="no_browser"/>
+	<name>БКМ (Украина)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера БКМ (Украина) <a href="http://bcm.net.ua/">http://bcm.net.ua/</a></p>
+	<p>Информация берется из личного кабинета <a href="https://stat.bcm.net.ua/">https://stat.bcm.net.ua/</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" гр"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="abon" name="Абонентская плата" units=" гр"/>
+		<counter id="paidTill" name="Оплачено до" type="time" format="dd/MM/yyyy"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet</type>
+	<country>ua</country>
+</provider>

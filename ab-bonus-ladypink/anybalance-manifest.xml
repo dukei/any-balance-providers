@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-bonus-ladypink</id>
+	<id version="5">ab-bonus-ladypink</id>
 	<api flags="no_browser"/>
 	<name>Подружка (Москва)</name>
 	<description html="true"><![CDATA[
@@ -15,9 +15,10 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Покупки в прошлом месяце"/>
-		<counter id="discount" name="Скидка на текущий месяц"/>
-		<counter id="text" name="Сводка" type="text"/>
+		<counter id="balance" name="Покупки в прошлом месяце" units=" р"/>
+		<counter id="discount" name="Скидка на текущий месяц" units=" %"/>
+		<counter id="currentBalance" name="Покупки в текущем месяце" units=" р"/>
+		<counter id="futureDiscount" name="Скидка на следующий месяц" units=" %"/>
 	</counters>
 	<keywords></keywords>
 	<type>bonus</type>

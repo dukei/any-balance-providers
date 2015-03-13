@@ -11,6 +11,7 @@ var g_regions = {
     lipetsk: mainBelgorod,
 	tver: mainUniversal,
 	lobnya: mainLobnya,
+    murmansk: mainUniversal
 };
 
 function main(){
@@ -167,7 +168,7 @@ function mainUniversal(region){
     getParam (html, result, 'balance', /Лицевой счет:(?:[^>]*>){4}баланс(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
     getParam (html, result, 'subscriber', /Приветствуем Вас,([^<]*)/i, replaceTagsAndSpaces);
     getParam (html, result, 'contract', /<b>\s*Лицевой счет:(?:[^>]*>){2}([^<,]*)/i, replaceTagsAndSpaces);
-    getParam (html, result, 'day_left', /дней до ухода в финансовую блокировку:(?:[^>]*>){2}\s*(\d+)/i, replaceTagsAndSpaces, parseBalance);
+    getParam (html, result, 'day_left', /дней до ухода в финансовую блокировку:|до списания абонентской платы осталось(?:[^>]*>){2}\s*(\d+)/i, replaceTagsAndSpaces, parseBalance);
 	sumParam(html, result, '__tariff', /Тарифный план:([\s\S]*?)(?:<\/span>|<a)/i, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
     getParam (html, result, 'bonus_balance', /Баланс:([^<]*)балл/i, replaceTagsAndSpaces, parseBalance);
     sumParam (html, result, '__tariff', /(<strong[^>]*>\s*Бонусный счет[\s\S]*?)Баланс/i, replaceTagsAndSpaces, html_entity_decode, aggregate_join);

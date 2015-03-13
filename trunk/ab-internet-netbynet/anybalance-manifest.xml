@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2.0" version="17">ab-internet-netbynet</id>
+	<id major_version="2.0" version="18">ab-internet-netbynet</id>
 	<api flags="no_browser"/>
 	<name>NetByNet</name>
 	<description html="true"><![CDATA[
@@ -15,6 +15,7 @@
 		<li>Старый Оскол</li>
 		<li>Тверь</li>
 		<li>Лобня</li>
+		<li>Мурманск</li>
 	</ul>
 	<p><small>В разных регионах личные кабинеты отличаются, в связи с чем могут быть доступны не все счетчики.</small></p>
 	]]></description>

@@ -26,8 +26,8 @@
         key="region" 
         title="Регион"
         summary="|Нужен для определения личного кабинета|{@s}"
-        entries="Москва и МО|Воронеж|Белгород|Липецк|Орел|Старый Оскол|Тверь|Лобня"
-        entryValues="moscow|voronezh|belgorod|lipetsk|orel|oskol|tver|lobnya"
+        entries="Москва и МО|Воронеж|Белгород|Липецк|Орел|Старый Оскол|Тверь|Лобня|Мурманск"
+        entryValues="moscow|voronezh|belgorod|lipetsk|orel|oskol|tver|lobnya|murmansk"
 		defaultValue="moscow">
     </ListPreference>
 </PreferenceScreen>

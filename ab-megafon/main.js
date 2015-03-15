@@ -196,15 +196,15 @@ function getFilial(prefs) {
 	
 	try{	
 		// Мегафон сделал сервис для определения филиала, так что попытаемся обойтись им    
-		// Но этот сервис сдох... 13.03.15
-		// var html = AnyBalance.requestPost("https://sg.megafon.ru/ps/scc/php/route.php", {
-			// CHANNEL: 'WWW',
-			// ULOGIN: number
-		// });
-		// var region = getParam(html, null, null, /<URL>https?:\/\/(\w+)\./i);
-		// if (region && filial_info[region]) {
-			// return filial_info[region];
-		// }
+		// Но этот сервис сдох... 13.03.15, но снова поднялся 14.03.15
+		var html = AnyBalance.requestPost("https://sg.megafon.ru/ps/scc/php/route.php", {
+			 CHANNEL: 'WWW',
+			 ULOGIN: number
+		});
+		var region = getParam(html, null, null, /<URL>https?:\/\/(\w+)\./i);
+		if (region && filial_info[region]) {
+			 return filial_info[region];
+		}
 	}catch(e){
 		AnyBalance.trace('Не удалось получить филиал: ' + e.message);
 	}

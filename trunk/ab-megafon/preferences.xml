@@ -22,6 +22,7 @@
         obligatory="true"
         inputType="textPassword">
     </EditTextPreference>
+    <!--
     <ListPreference 
         key="region" 
         title="Регион"
@@ -29,7 +30,7 @@
         entries="Автоматически|Столичный филиал|Сибирский филиал|Северо-западный филиал|Дальневосточный филиал|Поволжский филиал|Кавказский филиал|Центральный филиал|Уральский филиал"
         entryValues="|moscowsg|sibsg|szfsg|dvsg|volgasg|kavkazsg|centersg|uralsg"
 		defaultValue="">
-    </ListPreference>	
+    </ListPreference>	 -->
     <ListPreference 
         key="allowcaptcha" 
         title="Показывать капчу, если требуется"

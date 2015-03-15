@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="3.0" version="151" date="2015-03-15">
+	- Восстановлено автоопределение филиала
+	</change>
 	<change major_version="3.0" version="150" date="2015-03-13">
 	- Исправление для центрального филиала
 	</change>

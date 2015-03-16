@@ -13,7 +13,7 @@ var g_headers = {
 function main() {
     var prefs = AnyBalance.getPreferences();
     var baseurl = 'https://my.licard.com/';
-    var baseurlFizik = 'http://club-lukoil.ru/';
+    var baseurlFizik = 'https://club-lukoil.ru/';
 	
     AnyBalance.setDefaultCharset('utf-8');
     

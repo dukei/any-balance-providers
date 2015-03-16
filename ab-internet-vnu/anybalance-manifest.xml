@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-vnu</id>
+	<api flags="no_browser"/>
+	<name>Угреша нетворк</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе интернет провайдера Угреша нетворк <a href="vnu.ru">vnu.ru</a></p>
+	<p>Информация берется из личного кабинета <a href="https://cash.vnu.ru/">https://cash.vnu.ru/</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="credit" name="Кредит" units=" р"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="status" name="Блокировка" type="text"/>
+		<counter id="accnum" name="Номер лицевого счета" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-bonus-premia</id>
+	<api flags="no_browser"/>
+	<name>Премия</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе бонусной программы Премия <a href="http://karta-premia.ru/">http://karta-premia.ru/</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="income" name="Получено на карту" units=" р"/>
+		<counter id="outcome" name="Израсходовано" units=" р"/>
+	</counters>
+	<keywords></keywords>
+	<type>bonus</type>
+	<country>ru</country>
+</provider>

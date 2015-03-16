@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-sns</id>
+	<api flags="no_browser"/>
+	<name>Satellite Service</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Satellite Service <a href="http://sns.net.ua/">http://sns.net.ua/</a></p>
+	<p>Информация берется из личного кабинета <a href="http://sns.net.ua/cgi-bin/new_stat/ustat.cgi?mode=user_profile">http://sns.net.ua/cgi-bin/new_stat/ustat.cgi?mode=user_profile</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>base64.js</js>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" грн"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="accnum" name="Лицевой счет"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet</type>
+	<country>ua</country>
+</provider>

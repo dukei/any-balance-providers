@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="7">ab-bonus-lukoil</id>
+	<id version="8">ab-bonus-lukoil</id>
 	<name>Лукойл (Бонусы)</name>
 	<description html="true"><![CDATA[
 	<p>Получает информацию по картам "Лукойл Ликард" (http://my.licard.com/), а также по картам Лояльности (http://club-lukoil.ru/cabinet/).</p>
@@ -13,9 +13,7 @@
 	</ul>
 	<p><small>По умолчанию используется "Ликард".</small></p>
 	]]></instruction>
-	<author>Dmitry Reshetnikov (korleone) &lt;rdb@inbox.ru&gt;</author>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

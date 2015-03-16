@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-municipal-putevki</id>
+	<id version="3">ab-municipal-putevki</id>
 	<api flags="no_browser"/>
 	<name>Очередь на получение путевки (ДСЗНГМ)</name>
 	<description html="true"><![CDATA[
@@ -16,7 +16,14 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="queue" name="Состояние очередности" type="html"/>
+		<counter id="direction0" name="Направление 1" type="text"/>
+		<counter id="number0" name="Номер в очереди 1"/>
+		<counter id="direction1" name="Направление 2" type="text"/>
+		<counter id="number1" name="Номер в очереди 2"/>
+		<counter id="direction2" name="Направление 3" type="text"/>
+		<counter id="number2" name="Номер в очереди 3"/>
+		<counter id="direction3" name="Направление 4" type="text"/>
+		<counter id="number3" name="Номер в очереди 4"/>
 	</counters>
 	<keywords></keywords>
 	<type>municipal</type>

@@ -54,16 +54,13 @@ function main() {
 	if(!rows.length)
 		throw new AnyBalance.Error('Не удалось найти результаты.');
 
-	var queue = [], cells;
-	for (var i = 0, toi = rows.length; i < toi; i++) {
-		console.log(rows[i]);
+	var result = {success: true}, cells;
+	for (var i = 0, toi = rows.length; i < toi && i < 4; i++) {
 		cells = sumParam(rows[i], null, null, /<td[^>]*>[^<]*/ig, replaceTagsAndSpaces, html_entity_decode);
-		queue.push(cells[1] + ' (' + cells[0] + ') <b>' + cells[2] + '</b>');
+		getParam(cells[1] + ' (' + cells[0] + ')', result, 'direction' + i);
+		getParam(cells[2], result, 'number' + i, null, null, parseBalance);
 	}
 	
-	var result = {success: true};
-	
-	getParam(queue.join('<br />'), result, 'queue');
 	getParam(prefs.name + ' ' + prefs.patronymic, result, '__tariff');
 	
 	AnyBalance.setResult(result);

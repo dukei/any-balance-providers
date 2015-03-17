@@ -35,42 +35,34 @@ function main(){
 
     getParam(html, result, 'fio', /<a[^>]+href="[^"]*userinfo.php"[^>]*>([^<]*)<\/a>/i, replaceTagsAndSpaces, html_entity_decode);
 
-    if(AnyBalance.isAvailable('balance', 'pen', 'indication', 'lastpaydate')){
-        var tr = getParam(html, null, null, /<tr[^>]*>(?:[\s\S](?!<\/tr>))*?<td[^>]+class="pl-name"[^>]*>\s*Электроэнергия[\s\S]*?<\/tr>/i) || '';
-        
-        if(!tr) {
-            AnyBalance.trace('Услуга Электроэнергия не найдена');
-		} else {
-			getParam(tr, result, 'balance', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-			getParam(tr, result, 'pen', /(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, [/<span[^>]+class="pl-negative"[^>]*>/ig, '-', replaceTagsAndSpaces], parseBalance);
-			getParam(tr, result, 'indication', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-			sumParam(tr, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-			getParam(tr, result, 'lastpaydate', /(?:[\s\S]*?<td[^>]*>){7}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);		
-		}
-    }
-    if(AnyBalance.isAvailable('balance_otop', 'pen_otop', 'lastpaydate_otop')){
-        var tr = getParam(html, null, null, /<tr[^>]*>(?:[\s\S](?!<\/tr>))*?<td[^>]+class="pl-name"[^>]*>\s*Отопление[\s\S]*?<\/tr>/i);
-        
-        if(!tr) {
-            AnyBalance.trace('Услуга Отопление не найдена');
-        } else {
-			getParam(tr, result, 'balance_otop', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-			getParam(tr, result, 'pen_otop', /(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, [/<span[^>]+class="pl-negative"[^>]*>/ig, '-', replaceTagsAndSpaces], parseBalance);
-			getParam(tr, result, 'lastpaydate_otop', /(?:[\s\S]*?<td[^>]*>){7}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
-		}
-    }
+    var tr = getParam(html, null, null, /<tr[^>]*>(?:[\s\S](?!<\/tr>))*?<b[^>]*>\s*Электроэнергия[\s\S]*?<\/tr>/i);
+    if(!tr) {
+        AnyBalance.trace('Услуга Электроэнергия не найдена');
+	} else {
+		getParam(tr, result, 'balance', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(tr, result, 'pen', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, [/<span[^>]+class="pl-negative"[^>]*>/ig, '-', replaceTagsAndSpaces], parseBalance);
+		getParam(tr, result, 'indication', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(tr, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){5}[\s\S]*?<span[^>]*class=['"]org['"][^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+		//getParam(tr, result, 'lastpaydate', /(?:[\s\S]*?<td[^>]*>){7}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);		
+	}
 
-    if(AnyBalance.isAvailable('balance_gor', 'pen_gor', 'lastpaydate_gor')){
-        var tr = getParam(html, null, null, /<tr[^>]*>(?:[\s\S](?!<\/tr>))*?<td[^>]+class="pl-name"[^>]*>\s*Горячая вода[\s\S]*?<\/tr>/i);
-        
-        if(!tr) {
-            AnyBalance.trace('Услуга Горячая вода не найдена');
-		} else {
-			getParam(tr, result, 'balance_gor', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-			getParam(tr, result, 'pen_gor', /(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, [/<span[^>]+class="pl-negative"[^>]*>/ig, '-', replaceTagsAndSpaces], parseBalance);
-			getParam(tr, result, 'lastpaydate_gor', /(?:[\s\S]*?<td[^>]*>){7}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);		
-		}
-    }
+    tr = getParam(html, null, null, /<tr[^>]*>(?:[\s\S](?!<\/tr>))*?<b[^>]*>\s*Отопление[\s\S]*?<\/tr>/i);
+    if(!tr) {
+        AnyBalance.trace('Услуга Отопление не найдена');
+    } else {
+		getParam(tr, result, 'balance_otop', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(tr, result, 'pen_otop', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, [/<span[^>]+class="pl-negative"[^>]*>/ig, '-', replaceTagsAndSpaces], parseBalance);
+		//getParam(tr, result, 'lastpaydate_otop', /(?:[\s\S]*?<td[^>]*>){7}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+	}
+
+    tr = getParam(html, null, null, /<tr[^>]*>(?:[\s\S](?!<\/tr>))*?<b[^>]*>\s*Горячая вода[\s\S]*?<\/tr>/i);
+    if(!tr) {
+        AnyBalance.trace('Услуга Горячая вода не найдена');
+	} else {
+		getParam(tr, result, 'balance_gor', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(tr, result, 'pen_gor', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, [/<span[^>]+class="pl-negative"[^>]*>/ig, '-', replaceTagsAndSpaces], parseBalance);
+		//getParam(tr, result, 'lastpaydate_gor', /(?:[\s\S]*?<td[^>]*>){7}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);		
+	}
 
     AnyBalance.setResult(result);
 }

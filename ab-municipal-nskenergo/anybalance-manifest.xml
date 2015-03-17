@@ -1,13 +1,13 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-municipal-nskenergo</id>
+	<id version="4">ab-municipal-nskenergo</id>
 	<name>Новосибирскэнергосбыт</name>
 	<api flags="no_browser"/>
 	<description html="true"><![CDATA[
 	<p>Получает баланс и информацию о последнем платеже в НовосибирскЭнергоСбыт. Получает данные из личного кабинета https://narod.nskes.ru.</p>
 	<p>Если у вас еще нет доступа к этому личному кабинету, зарегистрируйтесь здесь: https://narod.nskes.ru/registration.php. </p>
 	]]></description>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

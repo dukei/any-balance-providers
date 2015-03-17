@@ -1,1 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><history>	<change version="3" date="2013-12-17">	- Исправлена ошибка.	</change>	<change version="2" date="2013-02-19">	- Добавлено получение информации по отоплению и горячей воде.	</change></history>
+﻿<?xml version="1.0" encoding="utf-8"?><history>
+	<change version="4" date="2015-03-17">
+	- Поддержка изменений на сайте.
+	</change>	<change version="3" date="2013-12-17">	- Исправлена ошибка.	</change>	<change version="2" date="2013-02-19">	- Добавлено получение информации по отоплению и горячей воде.	</change></history>

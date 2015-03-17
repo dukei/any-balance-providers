@@ -21,7 +21,6 @@ function main() {
 	
 	AnyBalance.setDefaultCharset('utf-8');
 	var html = AnyBalance.requestGet(baseurl, g_headers);
-	var reNewCabinet = true;
 	
 	if(!html || AnyBalance.getLastStatusCode() > 400){
 		AnyBalance.trace(html);
@@ -38,14 +37,15 @@ function main() {
 		if(/<input[^>]+id\s*=\s*"smsCode"/i.test(html))
 			throw new AnyBalance.Error('У вас настроена двухфакторная авторизация с вводом SMS кода при входе в личный кабинет Теле2. Для работы провайдера требуется запрос СМС кода для входа в ЛК отключить. Инструкцию по отключению см. в описании провайдера.', null, true);
 
-		var error = sumParam(html, null, null, /class="error"[^>]*>([\s\S]*?)</gi, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+		var error = sumParam(html, null, null, /class="error"[^>]*>([\s\S]*?)</gi, replaceTagsAndSpaces, html_entity_decode, aggregate_join) || '';
 		
-		var fatal = /не найден|Неверный пароль/i.test(error);
-		if(fatal && reNewCabinet)
-			throw new AnyBalance.Error(error + '.\nTele2 обновили процедуру входа в личный кабинет с 26 февраля 2015.\nЧтобы войти в него, всем пользователям необходимо заново пройти регистрацию.\nНовая учетная запись позволит входить в личный кабинет "Мой Tele2" и на портал market.tele2.ru с единым паролем. Зайдите в личный кабинет https://my.tele2.ru с копьютера и зарегистрируйетсь заново.', null, fatal);
+		if(/не найден/i.test(error)){
+			//Сайт теле2 иногда глючит и не пускает. Сделаем в этом случае несколько попыток.
+			throw new AnyBalance.Error(error + '.\nTele2 обновили процедуру входа в личный кабинет с 26 февраля 2015.\nЧтобы войти в него, всем пользователям необходимо заново пройти регистрацию.\nНовая учетная запись позволит входить в личный кабинет "Мой Tele2" и на портал market.tele2.ru с единым паролем. Зайдите в личный кабинет https://my.tele2.ru с копьютера и зарегистрируйетсь заново.', true);
+		}
 
 		if (error)
-			throw new AnyBalance.Error(error, null, fatal);
+			throw new AnyBalance.Error(error, null, /Неверный пароль/i.test(error));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');

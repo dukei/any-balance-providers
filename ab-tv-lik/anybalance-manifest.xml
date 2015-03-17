@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-tv-lik</id>
+	<api flags="no_browser"/>
+	<name>ЛИК</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера ЛИК <a href="http://www.liktv.ru/">http://www.liktv.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="http://www.liktv.ru/component/users/?view=login">http://www.liktv.ru/component/users/?view=login</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс"/>
+		<counter id="account" name="Лицевой счет"/>
+	</counters>
+	<keywords></keywords>
+	<type>tv</type>
+	<country>ru</country>
+</provider>

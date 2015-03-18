@@ -14,8 +14,17 @@ function main(){
     var prefs = AnyBalance.getPreferences();
     var baseurl = 'http://bill.interzet.ru/';
     AnyBalance.setDefaultCharset('cp1251'); 
-    var html = AnyBalance.requestGet(baseurl + 'welcome/login', g_headers);
 
+    checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(prefs.password, 'Введите пароль!');
+	
+	var html = AnyBalance.requestGet(baseurl + 'welcome/login', g_headers);
+
+	if(!html || AnyBalance.getLastStatusCode() > 400){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+	}
+    
 	html = AnyBalance.requestPost(baseurl + 'welcome/login', {
         login:prefs.login,
         passwd:prefs.password,
@@ -26,7 +35,11 @@ function main(){
 		var error = getParam(html, null, null, /font color=["']red["']>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
-		
+
+		error = getParam(html, null, null, /На данный момент производится модернизация Личного кабинета/i);
+		if (error)
+			throw new AnyBalance.Error(error);		
+
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}

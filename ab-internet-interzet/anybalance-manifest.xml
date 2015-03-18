@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="3">ab-internet-interzet</id>
+	<id version="4">ab-internet-interzet</id>
 	<name>InterZet (Санкт-Петербург)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе провайдера InterZet <a href="http://interzet.ru">http://interzet.ru</a></p>
@@ -10,7 +10,7 @@
 	<instruction html="true"><![CDATA[
 	<p>Необходимо поставить галочку "Разрешить доступ из внешней сети в Личный Кабинет" в разделе "Настройки Личного кабинета"</p>
 	]]></instruction>	
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

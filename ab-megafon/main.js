@@ -194,23 +194,25 @@ function getFilial(prefs) {
 	if (!/^\d{10}$/.test(number)) 
 		throw new AnyBalance.Error('Телефон должен быть строкой из 10 цифр без пробелов и разделителей!', null, true);
 	
-	try{	
-		// Мегафон сделал сервис для определения филиала, так что попытаемся обойтись им    
-		// Но этот сервис сдох... 13.03.15, но снова поднялся 14.03.15
-		var html = AnyBalance.requestPost("https://sg.megafon.ru/ps/scc/php/route.php", {
-			 CHANNEL: 'WWW',
-			 ULOGIN: number
-		});
-		var region = getParam(html, null, null, /<URL>https?:\/\/(\w+)\./i);
-		if (region && filial_info[region]) {
-			 return filial_info[region];
-		}
-	}catch(e){
-		AnyBalance.trace('Не удалось получить филиал: ' + e.message);
-	}
-	
-	//Филиал не определился, попробуем по префиксу понять
 	if(!prefs.region) {
+		try{	
+			// Мегафон сделал сервис для определения филиала, так что попытаемся обойтись им    
+			// Но этот сервис сдох... 13.03.15, но снова поднялся 14.03.15
+			var html = AnyBalance.requestPost("https://sg.megafon.ru/ps/scc/php/route.php", {
+				 CHANNEL: 'WWW',
+				 ULOGIN: number
+			});
+			var region = getParam(html, null, null, /<URL>https?:\/\/(\w+)\./i);
+			if (region && filial_info[region]) {
+				 return filial_info[region];
+			}else{
+				AnyBalance.trace('Не удалось получить филиал из: ' + html);
+			}
+		}catch(e){
+			AnyBalance.trace('Не удалось получить филиал: ' + e.message + '. Чтобы избежать этой ошибки можно задать свой филиал вручную в настройках провайдера.');
+		}
+        
+		//Филиал не определился, попробуем по префиксу понять
 		AnyBalance.trace('Пытаемся определить регион по номеру телефона...');
 		var prefix = parseInt(number.substr(0, 3));
 		var num = parseInt(number.substr(3).replace(/^0+(\d+)$/, '$1')); //Не должно начинаться с 0, иначе воспринимается как восьмеричное число
@@ -241,7 +243,7 @@ function getFilialByPrefixAndNumber(prefix, number){
             return info[2];
     }
 
-    throw new AnyBalance.Error('Номер '+ number + ' с префиксом ' + prefix + ' не принадлежит Мегафону!');
+    throw new AnyBalance.Error('Номер '+ number + ' с префиксом ' + prefix + ' не принадлежит Мегафону! Если вы перешли с другого оператора, вам необходимо выбрать филиал вручную в настройках аккаунта');
 }
 
 function main(){
@@ -251,7 +253,7 @@ function main(){
 
     var filial = getFilial(prefs);
     if(!filial)
-        throw new AnyBalance.Error('Неизвестен филиал Мегафона для номера ' + prefs.login);
+        throw new AnyBalance.Error('Неизвестен филиал Мегафона для номера ' + prefs.login + '. Пожалуйста, выберите филиал вручную в настройках аккаунта.');
     
     var filinfo = filial_info[filial];
     if(!filinfo)

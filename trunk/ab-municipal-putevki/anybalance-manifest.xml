@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-municipal-putevki</id>
+	<id version="4">ab-municipal-putevki</id>
 	<api flags="no_browser"/>
 	<name>Очередь на получение путевки (ДСЗНГМ)</name>
 	<description html="true"><![CDATA[

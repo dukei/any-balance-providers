@@ -15,7 +15,7 @@ function main() {
 	var baseurl = 'http://www.dszn.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
-	checkEmpty(prefs.name, 'Введите ваше имя!');
+	checkEmpty(prefs.name_name, 'Введите ваше имя!');
 	checkEmpty(prefs.patronymic, 'Введите ваше отчество!');
 	checkEmpty(prefs.surname, 'Введите вашу фамилию!');
 	checkEmpty(/\d{1,2}\.\d{1,2}\.\d{4}/.test(prefs.birthDate), 'Введите вашу дату рождения в формате ДД.ММ.ГГГГ (например 12.01.1982)!');
@@ -29,7 +29,7 @@ function main() {
 	
 	html = AnyBalance.requestPost(baseurl + 'activities/informatsiya_o_putevkakh/in-the-sanatorium-and-spa-institutions/informing-about-the-state-of-order-to-receive-vouchers-for-sanatorium-and-spa-treatment.php', {
 		lastName: prefs.surname,
-		firstName: prefs.name,
+		firstName: prefs.name_name,
 		secondName: prefs.patronymic,
 		birthDate: prefs.birthDate,
 		snilsNumber: '',
@@ -61,7 +61,7 @@ function main() {
 		getParam(cells[2], result, 'number' + i, null, null, parseBalance);
 	}
 	
-	getParam(prefs.name + ' ' + prefs.patronymic, result, '__tariff');
+	getParam(prefs.name_name + ' ' + prefs.patronymic, result, '__tariff');
 	
 	AnyBalance.setResult(result);
 }

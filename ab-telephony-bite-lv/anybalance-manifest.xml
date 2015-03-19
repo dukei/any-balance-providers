@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-telephony-bite-lv</id>
+	<id version="2">ab-telephony-bite-lv</id>
 	<api flags="no_browser"/>
 	<name>Bite</name>
 	<description html="true"><![CDATA[
@@ -23,6 +23,6 @@
 		<counter id="devices_sum" name="Общая сумма к оплате за устройствa за текущий месяц" units=" EUR"/>
 	</counters>
 	<keywords></keywords>
-	<type>telephony</type>
+	<type>cell</type>
 	<country>lv</country>
 </provider>

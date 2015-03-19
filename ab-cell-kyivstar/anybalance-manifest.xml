@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id major_version="2.0" version="58">ab-cell-kyivstar</id>
+	<id major_version="2.0" version="59">ab-cell-kyivstar</id>
 	<name>Киевстар</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе, бонусных минутах, SMS, MMS, остатке интернет-трафика и других бонусах для пользователей мобильного оператора "Киевстар".</p>
@@ -14,7 +14,7 @@
 	<li>Для регистрации в системе Мой Київстар пройдите по ссылке http://my.kyivstar.ua/tbmb/enroll_ABContr/user/show.do.</li>
 	</ul>   
 	]]></instruction>
-	<author>Sergey Bashmanov &lt;sergey.bashmanov@gmail.com&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

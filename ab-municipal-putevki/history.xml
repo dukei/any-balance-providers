@@ -1,14 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="4" date="2015-03-19">
+	- Улучшена обработка ошибок.
+	</change>
 	<change version="3" date="2015-03-16">
 	- Разделение счетчиков.
 	</change>
 	<change version="2" date="2015-03-11">
 	- Мелкие улучшения.
 	</change>
-<!--
-	<change version="2" date="2014-09-03">
-	- 
-	</change>
--->
 </history>

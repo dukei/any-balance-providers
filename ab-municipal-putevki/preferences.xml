@@ -2,7 +2,7 @@
 <PreferenceScreen>
 	<EditTextPreference
 		title="Имя"
-		key="name"
+		key="name_name"
 		summary="||{@s}"
 		obligatory="true"
 		dialogTitle="Имя"

@@ -538,6 +538,11 @@ function getLKJson(html, allowRetry, allowExceptions) {
     return json;
 }
 
+function isAnotherNumber(){
+    var prefs = AnyBalance.getPreferences();
+    return prefs.phone && prefs.phone != prefs.login;
+}
+
 function mainLK(allowRetry) {
     AnyBalance.trace("Entering lk...");
 
@@ -640,32 +645,33 @@ function mainLK(allowRetry) {
 
     var result = {success: true};
 
-    try {
-        var info = getLKJson(html, allowRetry);
-
-        AnyBalance.trace(info);
-        info = getJson(info);
-        //AnyBalance.trace(JSON.stringify(info));
-        for (var i = 0; i < info.genericRelations.length; i++) {
-            var rel = info.genericRelations[i];
-            if (!isset(result.balance) && isset(rel.target.balance))
-                getParam(rel.target.balance + '', result, 'balance', null, null, parseBalanceRound);
-
-            if (!isset(result.__tariff) && isset(rel.target.productResources) && isset(rel.target.productResources[0]))
-                getParam(rel.target.productResources[0].product.name['ru-RU'], result, '__tariff', null, replaceTagsAndSpaces, html_entity_decode);
-
-            if (!isset(result.bonus) && isset(rel.target.bonusBalance))
-                getParam(rel.target.bonusBalance + '', result, 'bonus', null, null, parseBalance);
-
-            if (!isset(result.phone) && isset(rel.target.address))
-                getParam(rel.target.address + '', result, 'phone', null, [/^(\d{3})(\d{3})(\d{2})(\d{2})$/, '+7 $1 $2 $3 $4'], html_entity_decode);
+    if(!isAnotherNumber()){
+        try {
+            var info = getLKJson(html, allowRetry);
+        
+            AnyBalance.trace(info);
+            info = getJson(info);
+            //AnyBalance.trace(JSON.stringify(info));
+            for (var i = 0; i < info.genericRelations.length; i++) {
+                var rel = info.genericRelations[i];
+                if (!isset(result.balance) && isset(rel.target.balance))
+                    getParam(rel.target.balance + '', result, 'balance', null, null, parseBalanceRound);
+        
+                if (!isset(result.__tariff) && isset(rel.target.productResources) && isset(rel.target.productResources[0]))
+                    getParam(rel.target.productResources[0].product.name['ru-RU'], result, '__tariff', null, replaceTagsAndSpaces, html_entity_decode);
+        
+                if (!isset(result.bonus) && isset(rel.target.bonusBalance))
+                    getParam(rel.target.bonusBalance + '', result, 'bonus', null, null, parseBalance);
+        
+                if (!isset(result.phone) && isset(rel.target.address))
+                    getParam(rel.target.address + '', result, 'phone', null, [/^(\d{3})(\d{3})(\d{2})(\d{2})$/, '+7 $1 $2 $3 $4'], html_entity_decode);
+            }
+        } catch (e) {
+            AnyBalance.trace('Не удалось получить данные о пользователе, скорее всего, виджет временно недоступен...');
         }
-    } catch (e) {
-        AnyBalance.trace('Не удалось получить данные о пользователе, скорее всего, виджет временно недоступен...');
-    }
-
-    if (isAvailable('traffic_left_mb')) {
-        AnyBalance.trace('Запросим трафик...');
+        
+        if (isAvailable('traffic_left_mb')) {
+            AnyBalance.trace('Запросим трафик...');
 		try {
 			for(var i = 0; i < 3; i++) {
 				AnyBalance.trace('Пробуем получить трафик, попытка: ' + (i+1));
@@ -687,19 +693,22 @@ function mainLK(allowRetry) {
 				var json = getJson(info);
 				if (json.OptionName != 'null' && isset(json.OptionName)) {
 					AnyBalance.trace('Нашли трафик...');
-
+        
 					sumParam(json.TrafficLeft + '', result, 'traffic_left_mb', null, null, function (str) { return parseTraffic(str, 'kb'); }, aggregate_sum);
 					break;
 				} else {
 					AnyBalance.trace('Трафика нет...');
 				}
 			}
-        } catch (e) {
-            AnyBalance.trace('Не удалось получить трафик: ' + e.message);
+            } catch (e) {
+                AnyBalance.trace('Не удалось получить трафик: ' + e.message);
+            }
         }
+    }else{
+	AnyBalance.trace('Пропускаем получение данных из ЛК, если требуется информация по другому номеру');
     }
 
-    if (isAvailableStatus()) {
+    if (isAnotherNumber() || isAvailableStatus()) {
 		AnyBalance.setDefaultCharset('windows-1251');
 		
         var baseurlHelper = "https://ihelper.mts.ru/selfcare/";

@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="3.3" version="106" date="2015-03-20">
+	- Улучшено нахождение прикрепленных к логину номеров
+	</change>
 	<change major_version="3.3" version="105" date="2015-03-19">
 	- Улучшено получение информации по другому номеру, прикрепленному к заданному
 	</change>

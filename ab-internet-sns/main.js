@@ -46,7 +46,7 @@ function main() {
 	getParam(html, result, 'balance', /Текущее состояние счета([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'fio', /Владелец[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'status', /Состояние([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'accnum', /Лицевой счет([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'accnum', /Лицевой счет([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 	
 	AnyBalance.setResult(result);
 }

@@ -27,6 +27,12 @@ function main() {
 		loginSubmit: 'войти'
 	}, addHeaders({Referer: baseurl + 'c/zlogin'}));
 
+	var src = getParam(html, null, null, /statp\?any=\d+&submitLocator=\+All\+/i);
+	if(!src)
+		throw new AnyBalance.Error('Не удалось найти страницу со статистикой. Сайт изменен?');
+
+	html = AnyBalance.requestGet(AnyBalance.getLastUrl().replace(/\?[^]*/, '') + src, g_headers);
+
 	if (!/logout/i.test(html)) {
 		var error = getParam(html, null, null, /class="error"[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error && /неправильный логин или пароль/i.test(error))
@@ -37,7 +43,8 @@ function main() {
 	}
 	var result = {success: true};
 	
-	getParam(html, result, 'balance', /Баланс([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance', /Баланс[^>]*>\s*(<td[^>]*>[^]+?<\/td>)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, '__tariff', /Номер договора[^>]*>\s*(<td[^>]*>[^]+?<\/td>)/i, replaceTagsAndSpaces, parseBalance);
 	
 	AnyBalance.setResult(result);
 }

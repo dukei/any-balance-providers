@@ -300,6 +300,21 @@ function mainOrdinary() {
     fetchOrdinary(html, baseurl);
 }
 
+function uniq_fast(a) {
+    var seen = {};
+    var out = [];
+    var len = a.length;
+    var j = 0;
+    for(var i = 0; i < len; i++) {
+         var item = a[i];
+         if(seen[item] !== 1) {
+               seen[item] = 1;
+               out[j++] = item;
+         }
+    }
+    return out;
+}
+
 function fetchOrdinary(html, baseurl, resultFromLK) {
     var prefs = AnyBalance.getPreferences();
     var result = resultFromLK || {success: true};
@@ -308,45 +323,66 @@ function fetchOrdinary(html, baseurl, resultFromLK) {
         AnyBalance.trace('Требуется другой номер. Пытаемся переключиться...');
 
         html = AnyBalance.requestGet(baseurl + 'my-phone-numbers.aspx', g_headers);
+	var pages = uniq_fast(sumParam(html, null, null, /__doPostBack\('ctl00\$MainContent\$pagerLink','(\d+)'/g));
+	AnyBalance.trace(pages.length + ' ещё страниц моих номеров найдено');
 
-        var token = getParam(html, null, null, /<input[^>]+name="csrfToken"[^>]*value="([^"]*)/i);
-        var domain = getParam(baseurl, null, null, /\/\/(.*?)\//);
-
-        // Надо грохнуть старую куку
-        AnyBalance.setCookie(domain, 'csrfToken', null);
-        // И если есть еще одну
-        AnyBalance.setCookie(domain, 'csrfToken', null);
-
-        AnyBalance.setCookie(domain, 'csrfToken', token);
-
-        // Проверим, есть ли такой номер в списке
-        var formattedNum = (prefs.phone || '').replace(/(\d{3})(\d{3})(\d{2})(\d{2})/i, '$1\\D$2\\D$3\\D$4');
-
-        // Уже выбран этот номер
-        if (new RegExp('"account-phone-number current"[^>]*>\\s*\\+7\\s*' + formattedNum, 'i').test(html)) {
-            AnyBalance.trace('Номер ' + prefs.phone + ' уже выбран.');
-        } else {
-            if (!new RegExp('doPostBack\\(\'[^\']+\',\'7' + prefs.phone, 'i').test(html))
-                throw new AnyBalance.Error(prefs.phone + ": этот номер не принадлежит логину " + prefs.login);
-			
-            html = AnyBalance.requestPost(baseurl + 'my-phone-numbers.aspx', [
-				['ctl00_sm_HiddenField', ''],
-				['csrfToken', token],
-				['__EVENTTARGET', 'ctl00$MainContent$transitionLink'],
-				['__EVENTARGUMENT', '7' + prefs.phone],
-				['__VIEWSTATE', getParamByName(html, '__VIEWSTATE')],
-				['__VIEWSTATEGENERATOR', getParamByName(html, '__VIEWSTATEGENERATOR')],
-            ], addHeaders({Referer: baseurl + 'my-phone-numbers.aspx', Origin: 'https://ihelper.mts.ru'}));
-			
-            if (!new RegExp('<li>\\s*Номер:\\s*<strong>\\+7\\s*' + formattedNum, 'i').test(html))
-                throw new AnyBalance.Error('Не удалось переключиться на номер ' + prefs.phone);
-
-            /*if (!html)
-             throw new AnyBalance.Error(prefs.phone + ": номер, возможно, неправильный или у вас нет к нему доступа");*/
-            // var error = getParam(html, null, null, /(<h1>Мои номера<\/h1>)/i);
-            // if (error)
-                // throw new AnyBalance.Error(prefs.phone + ": номер, возможно, неправильный или у вас нет к нему доступа");
-        }
+	do{
+            var token = getParam(html, null, null, /<input[^>]+name="csrfToken"[^>]*value="([^"]*)/i);
+            var domain = getParam(baseurl, null, null, /\/\/(.*?)\//);
+            
+            // Надо грохнуть старую куку
+            AnyBalance.setCookie(domain, 'csrfToken', null);
+            // И если есть еще одну
+            AnyBalance.setCookie(domain, 'csrfToken', null);
+            
+            AnyBalance.setCookie(domain, 'csrfToken', token);
+            
+            // Проверим, есть ли такой номер в списке
+            var formattedNum = (prefs.phone || '').replace(/(\d{3})(\d{3})(\d{2})(\d{2})/i, '$1\\D$2\\D$3\\D$4');
+            
+            // Уже выбран этот номер
+            if (new RegExp('"account-phone-number current"[^>]*>\\s*\\+7\\s*' + formattedNum, 'i').test(html)) {
+                AnyBalance.trace('Номер ' + prefs.phone + ' уже выбран.');
+		break;
+            } else {
+                if (!new RegExp('doPostBack\\(\'[^\']+\',\'7' + prefs.phone, 'i').test(html)){
+		    if(pages.length > 0){
+			var page = pages.shift();
+                        AnyBalance.trace(prefs.phone + ": этот номер не принадлежит логину " + prefs.login + ". Попробуем другую страницу - " + page);
+                        html = AnyBalance.requestPost(baseurl + 'my-phone-numbers.aspx', [
+						['ctl00_sm_HiddenField', ''],
+						['csrfToken', token],
+						['__EVENTTARGET', 'ctl00$MainContent$pagerLink'],
+						['__EVENTARGUMENT', page],
+						['__VIEWSTATE', getParamByName(html, '__VIEWSTATE')],
+						['__VIEWSTATEGENERATOR', getParamByName(html, '__VIEWSTATEGENERATOR')],
+                        ], addHeaders({Referer: baseurl + 'my-phone-numbers.aspx', Origin: 'https://ihelper.mts.ru'}));
+			continue; //Ещё разок пробуем
+		    }else{
+                        throw new AnyBalance.Error(prefs.phone + ": этот номер не принадлежит логину " + prefs.login);
+		    }
+		}
+				
+                html = AnyBalance.requestPost(baseurl + 'my-phone-numbers.aspx', [
+					['ctl00_sm_HiddenField', ''],
+					['csrfToken', token],
+					['__EVENTTARGET', 'ctl00$MainContent$transitionLink'],
+					['__EVENTARGUMENT', '7' + prefs.phone],
+					['__VIEWSTATE', getParamByName(html, '__VIEWSTATE')],
+					['__VIEWSTATEGENERATOR', getParamByName(html, '__VIEWSTATEGENERATOR')],
+                ], addHeaders({Referer: baseurl + 'my-phone-numbers.aspx', Origin: 'https://ihelper.mts.ru'}));
+				
+                if (!new RegExp('<li>\\s*Номер:\\s*<strong>\\+7\\s*' + formattedNum, 'i').test(html))
+                    throw new AnyBalance.Error('Не удалось переключиться на номер ' + prefs.phone + '. Вероятно, он не принадлежит логину ' + prefs.login);
+                
+		break;
+                /*if (!html)
+                 throw new AnyBalance.Error(prefs.phone + ": номер, возможно, неправильный или у вас нет к нему доступа");*/
+                // var error = getParam(html, null, null, /(<h1>Мои номера<\/h1>)/i);
+                // if (error)
+                    // throw new AnyBalance.Error(prefs.phone + ": номер, возможно, неправильный или у вас нет к нему доступа");
+            }
+	}while(true);
     }
     // Тарифный план
 	if(!isset(result.__tariff))

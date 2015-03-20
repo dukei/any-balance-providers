@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-internet-fryazino</id>
+	<id version="2">ab-internet-fryazino</id>
 	<api flags="no_browser"/>
 	<name>Fryazino.net</name>
 	<description html="true"><![CDATA[
@@ -11,6 +11,7 @@
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
+		<js>md5.js</js>
 		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>

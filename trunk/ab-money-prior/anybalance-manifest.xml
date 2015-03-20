@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-money-prior</id>
+	<api flags="no_browser|captcha"/>
+	<name>Приорбанк</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе и других параметрах продуктов Приорбанка <a href="https://www.prior.by/">https://www.prior.by/</a></p>
+	<p>Информация берется из личного кабинета <a href="https://www.prior.by/r/">https://www.prior.by/r/</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" {@currency}"/>
+		<counter id="expire" name="Срок действия/Дата закрытия" type="time" format="dd/MM/yyyy"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="accnum" name="Номер контракта" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>money</type>
+	<country>ru</country>
+</provider>

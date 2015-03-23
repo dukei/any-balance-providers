@@ -1,19 +1,22 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="9">ab-internet-volia-broadband</id>
+	<api flags="no_browser"/>
+  <id version="10">ab-internet-volia-broadband</id>
   <name>Volia Broadband (Украина)</name>
   <description>
-    Мониторинг остатка средств на счету и использованного трафика для интернет провайдера Воля Бродбенд (Украина)
+    Мониторинг остатка средств на счету интернет провайдера Воля Бродбенд (Украина)
   </description>
-  <author>Vitaliy Poluphanov &lt;vitaliy@root.ua&gt;</author>
+  <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
+    <js>library.js</js>
     <js>main.js</js>
     <history>history.xml</history>
   </files>
   <counters>
     <counter id="balance" name="Баланс" suffix=" ₴" type="numeric"/>
+    <counter id="amountToPay" name="Рекомендовано оплатить" suffix=" ₴" type="numeric"/>
     <counter id="traffic" name="Трафик" suffix=" GB" type="numeric"/>
     <counter id="traffic_in_lim" name="Трафик в лимите" suffix=" GB" type="numeric"/>
     <counter id="traffic_over_lim" name="Трафик за лимитом" suffix=" GB" type="numeric"/>

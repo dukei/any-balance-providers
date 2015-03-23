@@ -45,7 +45,6 @@ function main() {
         baseurl = 'http://minfin.com.ua/',
         course = prefs.course || '1',
         result = {success: true},
-        entity,
         table,
         html;
 
@@ -53,28 +52,30 @@ function main() {
 	
     if (course == '1') {
         // Курсы от банков
-        getCRFromTable(result, 'sell_usd', 'purchase_usd', baseurl + 'currency/banks/usd/');
-        getCRFromTable(result, 'sell_eur', 'purchase_eur', baseurl + 'currency/banks/eur/');
-        getCRFromTable(result, 'sell_rub', 'purchase_rub', baseurl + 'currency/banks/rub/');
+        html = AnyBalance.requestGet(baseurl + 'currency/banks/', g_headers);
+
+        getParam(html, result, 'sell_usd', /<a href="\/currency\/banks\/usd\/">ДОЛЛАР<\/a>[^]*?<td[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+        getParam(html, result, 'purchase_usd', /<a href="\/currency\/banks\/usd\/">ДОЛЛАР<\/a>[^]*?<td[^>]*>[^]*?([\d.\s]+)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+        getParam(html, result, 'sell_eur', /<a href="\/currency\/banks\/eur\/">ЕВРО<\/a>[^]*?<td[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+        getParam(html, result, 'purchase_eur', /<a href="\/currency\/banks\/eur\/">ЕВРО<\/a>[^]*?<td[^>]*>[^]*?([\d.\s]+)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+        getParam(html, result, 'sell_rub', /<a href="\/currency\/banks\/rub\/">РУБЛЬ<\/a>[^]*?<td[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+        getParam(html, result, 'purchase_rub', /<a href="\/currency\/banks\/rub\/">РУБЛЬ<\/a>[^]*?<td[^>]*>[^]*?([\d.\s]+)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     } else if (course == '2') {
         // Карточные курсы
-        getCRFromTable(result, 'sell_usd', 'purchase_usd', baseurl + 'currency/cards/usd/');
-        getCRFromTable(result, 'sell_eur', 'purchase_eur', baseurl + 'currency/cards/eur/');
-        getCRFromTable(result, 'sell_rub', 'purchase_rub', baseurl + 'currency/cards/rub/');
-    } else if (course == '3')  {
+        getCRFromTable(result, 'sell_usd', 'purchase_usd', baseurl + 'currency/cards/usd/buy/all/');
+        getCRFromTable(result, 'sell_eur', 'purchase_eur', baseurl + 'currency/cards/eur/buy/all/');
+        getCRFromTable(result, 'sell_rub', 'purchase_rub', baseurl + 'currency/cards/rub/buy/all/'); 
+    } else if (course == '3') {
         // Индикативные курсы НБУ
         if(html = getIfAvailable(['course_USD', 'course_EUR', 'course_RUB'], baseurl + 'currency/nbu/')){
-            table = getParam(html, null, null, /(Курсы валют НБУ[\s\S]*?)<\/table>/i);
+            table = getParam(html, null, null, /(Официальный курс валют[\s\S]*?)<\/table>/i);
+            if(!table)
+                throw new AnyBalance.Error('Не удалось найти таблицу с курсами! Сайт изменился?');
 
-            entity = /доллары США<\/a><\/td>\s*<td>(\d+)<\/td>\s*?<td[^>]*>([\s\d.]*?)<\/td>/i.exec(table);
-            getParam(entity[2]/entity[1], result, 'course_USD');
-
-            entity = /ЕВРО<\/a><\/td>\s*<td>(\d+)<\/td>\s*?<td[^>]*>([\s\d.]*?)<\/td>/i.exec(table);
-            getParam(entity[2]/entity[1], result, 'course_EUR'); 
-
-            entity = /российские рубли<\/a><\/td>\s*<td>(\d+)<\/td>\s*?<td[^>]*>([\s\d.]*?)<\/td>/i.exec(table);
-            getParam(entity[2]/entity[1], result, 'course_RUB');
-        } 
+            getParam(html, result, 'course_USD', /<a href="\/currency\/nbu\/usd\/">ДОЛЛАР<\/a>[^]*?<td[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+            getParam(html, result, 'course_EUR', /<a href="\/currency\/nbu\/eur\/">ЕВРО<\/a>[^]*?<td[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+            getParam(html, result, 'course_RUB', /<a href="\/currency\/nbu\/rub\/">РУБЛЬ<\/a>[^]*?<td[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+        }
     } else {
         // Валютный аукцион
         getCRFromHeader(result, 'sell_usd', 'purchase_usd', baseurl + 'currency/auction/usd/buy/all/');

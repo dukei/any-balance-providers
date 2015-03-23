@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-exchange-mejbank</id>
+	<id version="5">ab-exchange-mejbank</id>
 	<api flags="no_browser"/>
 	<name>Курсы валют Межбанка Украины</name>
 	<description html="true"><![CDATA[

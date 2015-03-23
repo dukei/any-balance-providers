@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id major_version="3" version="29">ab-internet-domolink</id>
+	<id major_version="3" version="30">ab-internet-domolink</id>
 	<name>Ростелеком (старые кабинеты)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем балансе, номере лицевого счета, ФИО владельца или названии организации, размере ежемесячной платы, дате, сумме и описании последней оплаты, трафике в текущем месяце для пользователей оператора ""Ростелеком - Домолинк"".</p>   
@@ -21,7 +21,7 @@
 	<p>""Ростелеком-Юг"" поддерживает только показ баланса, номера лицевого счета и ФИО.<p>    
 	<p><small>""Ростелеком-Юг"" (http://my.south.rt.ru) -  Астраханская область, Волгоградская область, Краснодарский край, Адыгея, Дагестан, Кабардино-Балкария, Калмыкия, Карачаево-Черкессия, Северная Осетия, Ростовская область, Ставропольский край.</small></p>
 	]]></instruction>
-	<author>Serg Repin &lt;serg.repin@gmail.com&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

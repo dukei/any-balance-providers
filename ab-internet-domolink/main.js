@@ -253,9 +253,20 @@ function domolink_new(region,login,password) {
     AnyBalance.trace("Requesting accounts info...");
     html = AnyBalance.requestGet(baseurl + "?_nfpb=true&_pageLabel=PrivateClient_portal_Services_page");
     
-	var tr = getParam(html, null, null, new RegExp('<tr(?:[^>]*>){6,8}[\\d-]+' + (prefs.accnum || '') + '(?:[^>]*>){22,28}\\s*</tr>', 'i'))
+    var table = getParam(html, null, null, /"txtMainHeader mainHeaderBox">Мои лицевые счета[^]*?<\/table>/i);
+    if(!table)
+        throw new AnyBalance.Error('Не удалось найти таблицу со счетами!');
+
+    var accounts = sumParam(table, null, null, /<tr[^>]*>\s*(?:<td[^>]*>[^]*?<\/td>\s*){5}<\/tr>/i);
+    if(!accounts.length)
+        throw new AnyBalance.Error('Не найден ни один лицевой счет!');
+
+    var tr = accounts.filter(function(acc){ return prefs.accnum ? new RegExp('MyServices_1_number=\\d+' + prefs.accnum, 'i').test(acc) : true })[0];
     if(!tr)
-        throw new AnyBalance.Error('Невозможно найти информацию ' + (prefs.accnum ? 'по счету с последними цифрами ' + prefs.accnum : 'ни по одному лицевому счету') + '!');
+        throw new AnyBalance.Error('Невозможно найти информацию по счету с последними цифрами ' + prefs.accnum + '!');
+ // var tr = getParam(html, null, null, new RegExp('<tr(?:[^>]*>){6,8}[\\d-]+' + (prefs.accnum || '') + '(?:[^>]*>){22,28}\\s*</tr>', 'i'))
+ //    if(!tr)
+ //        throw new AnyBalance.Error('Невозможно найти информацию ' + (prefs.accnum ? 'по счету с последними цифрами ' + prefs.accnum : 'ни по одному лицевому счету') + '!');
 	
     var result = {success: true};
 	

@@ -84,6 +84,15 @@ function getBillData(key)
 }
 
 
+// get data plan JSON
+function getDataPlan(key)
+{
+	var url = 'http://my.orange.co.il/ProductsSrv/SurfingPackages.svc/ContractData/GetContractCustomerDetails';
+	var request = '{"brand":"012Mobile","key" : "' + key + '"}';
+	return(getJson(AnyBalance.requestPost(url,request,addHeaders(g_headers)))); 
+}
+
+
 function main() 
 {
 	var result = {success: true};
@@ -105,11 +114,12 @@ function main()
 	var bill = getBillData(key);
 	AnyBalance.trace('Bill: ' + JSON.stringify(bill));
 	
-    // seems data plans no longer available (yet?) using the current API
-    // i am keeping the counters (but having them reset), hoping for 012 to have this again
-    result['dataprcnt'] = result['datausage'] = 0.0;
-    result['dataplans'] = '';
-
+    // get data plan details
+    var dataPlan = getDataPlan(key);
+    AnyBalance.trace('Data Plan: ' + JSON.stringify(dataPlan));
+    result['dataprcnt'] = dataPlan.balance.UsedPercent;
+    result['datausage'] = dataPlan.balance.CreditAmmountMB*dataPlan.balance.UsedPercent/100.0/1024.0;
+    result['dataplans'] = dataPlan.surfing.VasProductName;
 
     // get roaming plans
 	for (var i=0,n=0;i<bill.International.Entity.length;i++) 

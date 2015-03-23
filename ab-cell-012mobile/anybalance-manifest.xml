@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="6">ab-cell-012mobile</id>
+	<id version="7">ab-cell-012mobile</id>
 	<api flags="no_browser"/>
 	<name>012 Mobile</name>
 	<description html="true"><![CDATA[

@@ -25,18 +25,18 @@
         key="type" 
         title="Банковский продукт"
         summary="||{@s}\n"
-        entries="Карта|Счет"
-        entryValues="card|acc"
+        entries="Карта|Договор|Электронный депозит"
+        entryValues="card|contract|eldep"
 	    defaultValue="card">
     </ListPreference>
     <EditTextPreference 
         positiveButtonText="ОК"
-        key="lastdigits" 
+        key="num" 
         inputType="number"
         dialogTitle="Номер карты"
         negativeButtonText="Отмена"
-        title="Номер карты"
+        title="Псевдоним карты/договора/депозита"
         summary="|Автоматически|{@s}"
-        dialogMessage="Введите последние 4 цифры карты/счета, по которому вы хотите получить данные. Если это поле оставить пустым, то будет показана информация по первой карте/счету.">
+        dialogMessage="Введите псевдоним карты/договора/депозита, информацию по которому Вы хотите получить. Оставьте это поле пустым, если хотите получить информацию по первой карте/договору/депозиту">
     </EditTextPreference>	
 </PreferenceScreen>

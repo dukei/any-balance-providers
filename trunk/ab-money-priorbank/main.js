@@ -36,37 +36,52 @@ function main() {
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	
-	if (prefs.type == 'acc') 
-		fetchAcc(prefs);
-	else 
-		fetchCard(prefs);
-}
-
-function fetchCard(prefs) {
-	if (prefs.lastdigits && !/^\d{4}$/.test(prefs.lastdigits)) 
-		throw new AnyBalance.Error("Надо указывать 4 последних цифры карты или не указывать ничего");
-
-	html = AnyBalance.requestPost(g_baseurl + 'GateWay&Target=Android', {Template: 'CardList'}, addHeaders({Base64Fields: 'XML'}));
-	
-	var lastdigits = prefs.lastdigits ? prefs.lastdigits : '\\d{4}';
-	
-	// <Card\s+(?:[^>]*>){2,6}\s*<CardNum>\d+</CardNum(?:[^>]*>){30,50}</Card\s*>
-	var re = new RegExp('<Card\\s+(?:[^>]*>){2,6}\\s*<CardNum>' + lastdigits + '</CardNum(?:[^>]*>){30,50}</Card\\s*>', 'i');
-	var card = getParam(html, null, null, re);
-	if(!card)
-        throw new AnyBalance.Error('Не удаётся найти ' + (prefs.lastdigits ? 'карту с последними цифрами ' + prefs.lastdigits : 'ни одной карты'));
-
 	var result = {success: true};
-	
-	getParam(card, result, 'cardNumber', /Description[^>]*>([^<]+)/i);
-	getParam(card, result, '__tariff', /Description[^>]*>([^<]+)/i);
-	getParam(card, result, 'validto', /CARD_EXPIRE[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseDate);
-	getParam(card, result, 'balance', /AMOUNT_AVAILABLE[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(card, result, ['currency', 'balance'], /Currency[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+
+	if(prefs.type == 'card')
+		fetchCard(prefs, result);
+	else if(prefs.type == 'contract')
+		fetchContract(prefs, result);
+	else
+		fetchEldep(prefs, result);
 	
 	AnyBalance.setResult(result);
 }
 
-function fetchAcc(baseurl, result) {
-	throw new AnyBalance.Error('Получение данных по счетам еще не поддерживается, свяжитесь с автором провайдера!');
+function fetchCard(prefs, result) {
+	html = AnyBalance.requestPost(g_baseurl + 'GateWay&Target=Android', {Template: 'CardList'}, addHeaders({Base64Fields: 'XML'}));
+	
+	var re = new RegExp('<Card\\s+[^>]*>\\s*<Synonym>' + (prefs.num || '[^]+?') + '<\/Synonym>[^]*?<\/Card>', 'i');
+	var card = getParam(html, null, null, re);
+	if(!card)
+        throw new AnyBalance.Error('Не удаётся найти ' + (prefs.num ? 'карту с псевдонимом ' + prefs.num : 'ни одной карты'));
+
+	getParam(card, result, 'cardNumber', /CardNum[^>]*>([^<]+)/i);
+	getParam(card, result, '__tariff', /CardNum[^>]*>([^<]+)/i);
+	getParam(card, result, 'validto', /CARD_EXPIRE[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseDate);
+	getParam(card, result, 'balance', /AMOUNT_AVAILABLE[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(card, result, ['currency', 'balance'], /Currency[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	
+	return result;
+}
+
+function fetchContract(prefs, result) {
+	html = AnyBalance.requestPost(g_baseurl + 'GateWay&Target=Android', {Template: 'ContractList'}, addHeaders({Base64Fields: 'XML'}));
+	
+	var re = new RegExp('<Contract\\s+[^>]*>\\s*<Synonym>' + (prefs.num ? '<!\\[CDATA\\[' + prefs.num + '\\]\\]>' : '[^]+?') + '<\/Synonym>[^]*?<\/Contract>', 'i');
+	var contract = getParam(html, null, null, re);
+	if(!contract)
+        throw new AnyBalance.Error('Не удаётся найти ' + (prefs.num ? 'услугу с псевдонимом ' + prefs.num : 'ни одной услуги'));
+
+	getParam(contract, result, 'cardNumber', /ContracNum[^>]*>([^<]+)/i);
+	getParam(contract, result, '__tariff', /ContracNum[^>]*>([^<]+)/i);
+	getParam(contract, result, 'validto', /FinishDate[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseDate);
+	getParam(contract, result, 'balance', /ContractRest[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(contract, result, ['currency', 'balance'], /CurrCode[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	
+	return result;
+}
+
+function fetchEldep(prefs, result) {
+	throw new AnyBalance.Error('Получение данных по электронным депозитам еще не поддерживается, свяжитесь с автором провайдера!');
 }

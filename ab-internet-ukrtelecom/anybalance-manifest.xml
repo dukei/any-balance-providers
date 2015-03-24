@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-ukrtelecom</id>
+	<api flags="no_browser"/>
+	<name>Укртелеком</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Укртелеком <a href="http://www.ukrtelecom.ua/">http://www.ukrtelecom.ua/</a></p>
+	<p>Информация берется из личного кабинета <a href="http://www.ukrtelecom.ua/oplata/form">http://www.ukrtelecom.ua/oplata/form</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="pay" name="Сума до сплати" units=" грн"/>
+		<counter id="op" name="О/Р"/>
+		<counter id="phase" name="Період"/>
+		<counter id="ks" name="КС"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet</type>
+	<country>ua</country>
+</provider>

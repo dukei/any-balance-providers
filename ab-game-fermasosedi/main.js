@@ -17,16 +17,21 @@ function main() {
 	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
-	
-	var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
-	
+
+	var html = AnyBalance.requestGet(baseurl + 'login/', g_headers);
+
+	var cookie = getParam(html, null, null, /'_ddn_intercept_2_=([^;]+)/i);
+	AnyBalance.setCookie('fermasosedi.ru', '_ddn_intercept_2_', cookie);
+
+	html = AnyBalance.requestGet(baseurl + 'login', g_headers);
+
 	var captchaa;
 	if(AnyBalance.getLevel() >= 7){
 		AnyBalance.trace('Пытаемся ввести капчу');
-		var captcha = AnyBalance.requestGet(baseurl+ 'login/code.php');
+		var captcha = AnyBalance.requestGet(baseurl + 'login/code.php', addHeaders({Referer: baseurl}));
 		captchaa = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
 		AnyBalance.trace('Капча получена: ' + captchaa);
-	}else{
+	} else {
 		throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
 	}
 	

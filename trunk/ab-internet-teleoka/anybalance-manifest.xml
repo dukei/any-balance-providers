@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="2">ab-internet-teleoka</id>
+	<name>TeleOka</name>
+	<api flags="no_browser"/>
+	<description html="true"><![CDATA[
+	<p>Получает баланс провайдера ТелеОка (http://teleoka.su)</p>
+	<p>Информация берется из личного кабинета клиента (http://abonent.teleoka.su/)</p>
+	]]></description>
+	<author>Elesin &lt;dmitriy@elesin.ru&gt;</author>  
+	<files>
+		<icon>logo.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="days_left" name="Дней до отключения"/>
+		<counter id="balance" name="Остаток на счете" units=" р"/>
+		<counter id="tarif" name="Тарифный план" type="text"/>
+		<counter id="staticIP" name="Статический IP" type="text"/>
+		<counter id="block_date" name="Дата окончания услуги" type="time" format="dd-MM-yyyy"/>
+		<counter id="uid" name="ID пользователя" type="text"/>
+		<counter id="abonent" name="Абонент" type="text"/>
+		<counter id="address" name="Адрес" type="text"/>
+		<counter id="u_name" name="Имя пользователя" type="text"/>
+		<counter id="basic_bal" name="Основной счёт" units=" р"/>
+		<counter id="bonus_bal" name="Бонусный счёт" units=" р"/>
+		<counter id="totaltime" name="Всего в сети" type="text"/>
+		<counter id="downloaded" name="Всего скачано" type="text"/>
+		<counter id="uploaded" name="Всего отдано" type="text"/>
+	</counters>
+	<keywords>телеока павлово</keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

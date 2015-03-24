@@ -26,26 +26,32 @@ function main(){
 
     // Заходим на главную страницу
 	var html = AnyBalance.requestGet(baseurl + 'login.xhtml', g_headers);
-	
-	var captchaa;
-	if(AnyBalance.getLevel() >= 7) {
-		AnyBalance.trace('Пытаемся ввести капчу');
-		AnyBalance.setOptions({forceCharset:'base64'});
-		var href = getParam(html, null, null, /captcha[^>]*src="\/([^"]+)/i) || '';
-		var captcha = AnyBalance.requestGet('https://account.fonbet.com/' + href);
-		captchaa = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
-		AnyBalance.trace('Капча получена: ' + captchaa);
-		AnyBalance.setOptions({forceCharset:'utf-8'});
-	}else{
-		throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
+
+	if(!html || AnyBalance.getLastStatusCode() > 400){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
+	
+	// Убрали капчу?
+	// var captchaa;
+	// if(AnyBalance.getLevel() >= 7) {
+	// 	AnyBalance.trace('Пытаемся ввести капчу');
+	// 	AnyBalance.setOptions({forceCharset:'base64'});
+	// 	var href = getParam(html, null, null, /captcha[^>]*src="\/([^"]+)/i) || '';
+	// 	var captcha = AnyBalance.requestGet('https://account.fonbet.com/' + href);
+	// 	captchaa = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
+	// 	AnyBalance.trace('Капча получена: ' + captchaa);
+	// 	AnyBalance.setOptions({forceCharset:'utf-8'});
+	// }else{
+	// 	throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
+	// }
 	
 	html = AnyBalance.requestPost(baseurl + 'login.xhtml', {
 		'login:loginForm':'login:loginForm',
 		'login:loginForm:loginField':prefs.login,
 		'login:loginForm:passwordField':prefs.password,
 		'login:loginForm:submitButton':'Войти',
-		'login:loginForm:captcha:capInput': captchaa,
+		//'login:loginForm:captcha:capInput': captchaa,
 		'javax.faces.ViewState':getParam(html, null, null, /<input[^>]+name="javax.faces.ViewState"[^>]*value="([^"]*)/i, null, html_entity_decode)
 	}, g_headers);
 	

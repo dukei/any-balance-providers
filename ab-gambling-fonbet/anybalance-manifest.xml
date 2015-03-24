@@ -1,14 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="2">ab-gambling-fonbet</id>
+	<id version="3">ab-gambling-fonbet</id>
 	<name>FonBet (Букмекерская контора)</name>
 	<description>
     Получает текущий баланс в букмекерской конторе FonBet: http://fonbet.com.
 
     Информацию получает из личного кабинета https://account.fonbet.com.
 	</description>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

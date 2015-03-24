@@ -63,8 +63,8 @@ function main () {
 function getWeatherFromHTML (prefs) {
     var baseurl = 'http://www.gismeteo.' + prefs.domen + '/city/daily/';
 
-    AnyBalance.trace ('Trying open address: ' + baseurl + prefs.city);
-    var html = AnyBalance.requestGet (baseurl + prefs.city);
+    AnyBalance.trace ('Trying open address: ' + baseurl + prefs.city + '/');
+    var html = AnyBalance.requestGet (baseurl + prefs.city + '/');
 
     // Проверка неправильной пары логин/пароль
     var regexp=/<h2>Ошибка[\s\S]*?<p>([^<]*)/i;
@@ -73,9 +73,10 @@ function getWeatherFromHTML (prefs) {
         throw new AnyBalance.Error (res[1]);
 
     // Проверка на корректный вход
-    //regexp = />Погода за окном<([\s\S]*)>Прогноз</i;
-    regexp = /<h3\s+class="type\w.[^>]*>([^<]*)/i;
-    if (regexp.exec (html))
+    var error = getParam(html, null, null, /Страница не найдена/i);
+    if(error)
+        throw new AnyBalance.Error ('Неизвестная ошибка. Пожалуйста, свяжитесь с автором провайдера.');
+    if(getParam(html, null, null, /Почасовой прогноз погоды/i))
     	AnyBalance.trace ('It looks like we are in selfcare...');
     else {
         AnyBalance.trace ('Have not found weather info... Unknown error. Please contact author.');

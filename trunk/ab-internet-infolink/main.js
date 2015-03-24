@@ -14,16 +14,22 @@ var g_headers = {
 function main(){
     var prefs = AnyBalance.getPreferences();
     var baseurl = 'https://user.infolink.ru/';
-    AnyBalance.setDefaultCharset('utf-8'); 
+    AnyBalance.setDefaultCharset('utf-8');
+
+    checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(prefs.password, 'Введите пароль!');
+
+	var html =AnyBalance.requestGet(baseurl + 'login', g_headers);
+
+	var params = createFormParams(html, function(params, str, name, value) {
+		if (name == 'login') 
+			return prefs.login;
+		else if (name == 'password')
+			return prefs.password;
+		return value;
+	});
 	
-	var loginParams = {
-        login:prefs.login,
-        password:prefs.password,
-        submit:''
-    };
-	var html = AnyBalance.requestPost(baseurl, loginParams, addHeaders({Referer: baseurl+ 'index.php'})); 
-	// Нужно почему-то дважды
-	html = AnyBalance.requestPost(baseurl, loginParams, addHeaders({Referer: baseurl+ 'index.php'})); 
+	html = AnyBalance.requestPost(baseurl + 'login', params, addHeaders({Referer: baseurl+ 'login'})); 
 	
     if(!/\/Logout/i.test(html)){
         var error = getParam(html, null, null, /<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
@@ -34,9 +40,9 @@ function main(){
     var result = {success: true};
 	
 	getParam(html, result, '__tariff', /(Интернет[^>]*>[^>]*href="\/services\/list[^>]*>[^>]*>[^>]*>)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'acc_num', /Номер лицевого счёта:([\s\S]*?)<\/button/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'balance', /Баланс([^>]*>){5}/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'bonuses', /Бонусы([^>]*>){5}/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'acc_num', /Номер лицевого счёта:([\s\S]*?)<\/button/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'balance', /Баланс:[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'bonuses', /Бонус[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
 	// Посчитаем дату отключения, чтобы можно было назначить нотиф на нее
 	if(isAvailable('deadline')){
 		var days = getParam(html, null, null, /До отключения:\s*(\d+)\s*дн/i, null, parseBalance);

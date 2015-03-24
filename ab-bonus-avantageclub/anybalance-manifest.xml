@@ -1,14 +1,15 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-bonus-avantageclub</id>
-  <name>Улыбка Радуги</name>
+	<api flags="no_browser"/>
+  <id version="2">ab-bonus-avantageclub</id>
+  <name>Улыбка Радуги (Avantage club)</name>
   <description>
     Получает баланс и другую информацию по бонусной карте с сайта магазина Улыбка Радуги (http://r-ulybka.ru)
 
     Информация берется из личного кабинета: http://avantageclub.ru
 
   </description>
-  <author>Alexandra Shalamova &lt;alexandrashalamova@gmail.com&gt;</author>
+  <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>

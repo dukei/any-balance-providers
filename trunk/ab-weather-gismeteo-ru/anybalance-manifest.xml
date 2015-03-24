@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2.2" version="20">ab-weather-gismeteo-ru</id>
+	<id major_version="2.2" version="21">ab-weather-gismeteo-ru</id>
 	<name>Gismeteo</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о прогнозе погоды, текущей погоде, температуре водоемов, времени восхода/захода Солнца, фаз Луны для выбранного города.</p>

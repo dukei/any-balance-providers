@@ -652,6 +652,22 @@ function mainLK(allowRetry) {
                 AnyBalance.trace("МТС вернул 500 при попытке логина. Пробуем ещё разок...");
                 html = AnyBalance.requestGet(loginUrl, addHeaders({Referer: loginUrl}));
             }
+			
+			if(/дождитесь окончания процесса авторизации/i.test(html)) {
+				var json = {};
+				while(json.Data != 'Success') {
+					json = AnyBalance.requestGet('https://lk.ssl.mts.ru/WaitAuth/CheckAuth', addHeaders({Referer: 'https://lk.ssl.mts.ru/waitauth?goto=http://lk.ssl.mts.ru/'}));
+					json = getJson(json);
+					
+					if(json.Data == 'Success')
+						break;
+					
+					sleep(3000);					
+				}
+				
+				html = AnyBalance.requestGet(loginUrl, addHeaders({Referer: loginUrl}));
+			}
+			
             // AnyBalance.trace("Команду логина послали, смотрим, что получилось...");
             
 	    if(AnyBalance.getLastStatusCode() >= 500)
@@ -818,6 +834,21 @@ function mainLK(allowRetry) {
 
     AnyBalance.setResult(result);
 }
+
+function sleep(delay) {
+   AnyBalance.trace('Sleeping ' + delay + ' ms');
+   if(AnyBalance.getLevel() < 6){
+      var startTime = new Date();
+      var endTime = null;
+      do {
+          endTime = new Date();
+      } while (endTime.getTime() - startTime.getTime() < delay);
+   }else{
+      AnyBalance.trace('Calling hw sleep');
+      AnyBalance.sleep(delay);
+   }
+} 
+
 function parseBalanceRound(str) {
     var val = parseBalance(str);
     if (isset(val))

@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<id version="8">ab-money-belinvestbank</id>
-	<api flags="no_browser"/>
+	<api flags="no_browser|sms"/>
 	<name>Белинвестбанк (Беларусь)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе банковских карт Белинвестбанка</p>

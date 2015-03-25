@@ -1,13 +1,13 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-cell-telenor</id>
+	<id version="2">ab-cell-telenor</id>
 	<api flags="no_browser"/>
 	<name>Telenor</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе провайдера Telenor http://www.telenor.me/</p>
 	<p>Информация берется из личного кабинета https://csc.telenor.me/CURWeb/Login.aspx?appId=67a1cbac-40c2-46e3-a8b6-9973f5c166f8&rurl=https%3a%2f%2fcsc.telenor.me</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
@@ -16,8 +16,7 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" {@currency}"/>
-		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="balance" name="Баланс" units=" €"/>
 		<counter id="deadline" name="Дата отключения" type="time" format="dd/MM/yyyy"/>
 	</counters>
 	<keywords></keywords>

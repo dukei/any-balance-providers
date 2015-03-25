@@ -11,17 +11,6 @@
         dialogMessage="Введите логин, используемый для входа в личный кабинет.">
     </EditTextPreference>
     <EditTextPreference 
-        title="Ключевое слово"
-		key="keyword" 
-		summary="||***********"
-        obligatory="true"
-		dialogTitle="Ключевое слово"
-		positiveButtonText="ОК"
-        negativeButtonText="Отмена"
-        dialogMessage="Введите ключевое слово, используемый для входа в личный кабинет."
-        inputType="textPassword">
-    </EditTextPreference>	
-    <EditTextPreference 
         title="Пароль"
 		key="password" 
 		summary="||***********"

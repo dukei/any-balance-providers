@@ -20,13 +20,4 @@
         positiveButtonText="ОК"
         inputType="textPassword">
     </EditTextPreference>
-    <ListPreference 
-        key="tariff_type"
-        title="Тип тарифа" 
-        summary="||{@s}" 
-	entries="ТВ+Интернет|Интернет|Цифровое ТВ|Аналоговое ТВ"
-	entryValues="3|2|1|0"
-        defaultValue="3"
-        dialogTitle="Тип подключения">
-    </ListPreference>
 </PreferenceScreen>

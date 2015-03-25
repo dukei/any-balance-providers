@@ -3,36 +3,45 @@
 */
 
 var g_headers = {
-	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.101 Safari/537.36',
 };
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://sovremennik.info/';
+	var baseurl = 'https://sovremennik.info/',
+		cabineturl = 'https://auth.motmom.com/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	var html = AnyBalance.requestGet(baseurl + 'oauth2/mo/init', addHeaders({Referer: baseurl}));
+	var html = AnyBalance.requestGet(baseurl + 'oauth2/mo/init', g_headers);
 	
 	if(!html || AnyBalance.getLastStatusCode() > 400)
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	
-	html = AnyBalance.requestPost('https://auth.motmom.com/oauth2/authorize', {
+	html = AnyBalance.requestPost(cabineturl + 'oauth2/authorize', {
 		'request_id': getParam(html, null, null, /"request_id"[^>]*value="([^"]+)/i),
 		'login': prefs.login,
 		'password': prefs.password,
 		'allow': ''
-	}, addHeaders({Referer: 'https://auth.motmom.com/oauth2/authorize'}));
+	}, addHeaders({Referer: AnyBalance.getLastUrl()}));
+
+	var error = getParam(html, null, null, /<span[^>]+class="error-message"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+	if(error)
+		throw new AnyBalance.Error(error, null, /Ошибочная комбинация логина и пароля/i.test(error));
+
+	var redirectURL = getParam(html, null, null, /<meta http-equiv="Refresh"[^>]*?URL=([^"]+)/i);
+	if(!redirectURL)
+		throw new AnyBalance.Error('Не удалось найти URL для редиректа. Сайт изменен?');
+
+	html = AnyBalance.requestGet(redirectURL.replace(/&amp;/g, '&'), addHeaders({Referer: cabineturl + 'message'}));
 	
-	var cabinet = getParam(html, null, null, /location\.replace\(['"]([^'"]+)/i);
-	if (!cabinet) {
-		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
+	if (!/logout/i.test(html)) {
+		error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
 		
@@ -40,17 +49,17 @@ function main() {
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	
-	html = AnyBalance.requestGet(cabinet, g_headers);
-	
-	var cabinet = getParam(html, null, null, /"\/(cabinet[^"]+)/i);
-	checkEmpty(cabinet, 'Не удалось найти ссылку на личный кабинет, сайт изменен?', true);
-	
+	var cabinet = getParam(html, null, null, /href="\/(cabinet\/\d+)"/i);
+	checkEmpty(cabinet, 'Не удалось найти ссылку на личный кабинет, сайт изменен?');
+
 	html = AnyBalance.requestPost(baseurl + cabinet, '', addHeaders({Referer: baseurl, 'X-Requested-With': 'XMLHttpRequest'}));
 	
-	var json = getJson(html);
-	
-	html = json[0].data.html;
-	AnyBalance.trace(html);
+	try {
+		html = getJson(html)[0].data.html;
+		AnyBalance.trace(html);
+	} catch(e) {
+		throw new AnyBalance.Error('Не удалось получить данные пользователя. Сайт изменен?');
+	}
 	
 	var result = {success: true};
 	

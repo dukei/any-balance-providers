@@ -1,13 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-  <id version="2">ab-internet-szkti</id>
-  <name>СЗКТИ (Мегафон)</name>
-  <description>
-    <p>Как сказано на сайте <a href="http://stat.szkti.ru/">http://stat.szkti.ru/</a>, услуги местной телефонной связи, телематические услуги связи и услуги связи по передачи данных (доступ к сети Интернет) теперь предоставляются ООО "Нет Бай Нет Холдинг".</p>
-
-    <p>В связи с этим вы можете установить провайдер NetByNet: <a href="http://anybalance.ru/catalog.php?id=ab-internet-netbynet&key=&download">http://anybalance.ru/catalog.php?id=ab-internet-netbynet&key=&download</a>, где уже реализована поддержка Мурманска.</p>
-  </description>
+	<id version="3">ab-internet-szkti</id>
+	<name>СЗКТИ (Мегафон)</name>
+  	<description html="true"><![CDATA[
+	<p><p>Как сказано на сайте <a href="http://stat.szkti.ru/">http://stat.szkti.ru/</a>, услуги местной телефонной связи, телематические услуги связи и услуги связи по передачи данных (доступ к сети Интернет) теперь предоставляются ООО "Нет Бай Нет Холдинг".</p></p>
+	<p>В связи с этим вы можете установить провайдер NetByNet: <a href="http://anybalance.ru/catalog.php?id=ab-internet-netbynet&inapp=0">http://anybalance.ru/catalog.php?id=ab-internet-netbynet&inapp=0</a>, где уже реализована поддержка Мурманска.</p>
+	]]></description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <files>
     <icon>icon.png</icon>

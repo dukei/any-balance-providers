@@ -23,26 +23,35 @@ function main() {
 	if(!html || AnyBalance.getLastStatusCode() > 400)
 		throw new AnyBalance.Error('Ошибка! Сервер не отвечает! Попробуйте обновить баланс позже.');
 	
-	html = AnyBalance.requestPost(baseurl, {
-		login: prefs.login,
-		password: prefs.password,
-		'action': 'login'
-	}, addHeaders({Referer: baseurl + 'login'}));
+	html = AnyBalance.requestPost(baseurl + 'DoAuth.php', {
+        'PageName': 'index2',
+		'UserName': prefs.login,
+		'UserPassword': prefs.password,
+		'Action': 'Enter'
+	}, addHeaders({Referer: baseurl + 'index2.php', 'X-Requested-With': 'XMLHttpRequest'}));
 	
-	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
-		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
-		
+    html = AnyBalance.requestGet(baseurl + 'Main.php', g_headers);
+    
+	if (!/Action=Exit/i.test(html)) {
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'balance', /<th>Баланс(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'status', /<th>Статус(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'dogovor', /<th>(?:&#8470;|№) договора(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'balance', /Состояние счета(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, parseBalanceRK);
+	sumParam(html, result, 'services', /href=['"]\/Services\.php(?:[^>]*>){1}([^<]+)/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+	getParam(html, result, 'acc_num', /Номер договора(?:[^>]*>){2}([\s\S]*?)<\/td/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'fio', /ФИО(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
 	
 	AnyBalance.setResult(result);
+}
+
+function parseBalanceRK(_text){
+    var text = _text.replace(/\s+/g, '');
+    var rub = getParam(text, null, null, /(-?\d[\d\.,]*)руб/i, replaceFloat, parseFloat) || 0;
+    var kop = getParam(text, null, null, /(-?\d[\d\.,]*)коп/i, replaceFloat, parseFloat) || 0;
+    var val = rub+kop/100;
+    AnyBalance.trace('Parsing balance (' + val + ') from: ' + _text);
+    return val;
 }

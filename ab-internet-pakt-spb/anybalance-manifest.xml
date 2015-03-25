@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-internet-pakt-spb</id>
+	<id version="3">ab-internet-pakt-spb</id>
 	<api flags="no_browser"/>
 	<name>П.А.К.Т. (Санкт-Петербург)</name>
 	<description html="true"><![CDATA[
@@ -17,8 +17,9 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
-		<counter id="dogovor" name="№ договора" type="text"/>
-		<counter id="status" name="Статус" type="text"/>
+		<counter id="acc_num" name="№ договора" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="services" name="Услуги" type="text"/>
 	</counters>
 	<keywords></keywords>
 	<type>tv, internet</type>

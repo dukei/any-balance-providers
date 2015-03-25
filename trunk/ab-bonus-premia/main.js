@@ -12,7 +12,8 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://karta-premia.ru/';
+	var baseurl = 'http://karta-premia.ru/',
+		cabineturl = 'https://karta-premia.ru/'
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Введите логин!');
@@ -25,7 +26,7 @@ function main() {
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
 	
-	html = AnyBalance.requestPost(baseurl + 'site/login', {
+	html = AnyBalance.requestPost(cabineturl + 'site/login', {
 		'LoginForm[login]': prefs.login,
 		'LoginForm[password]': prefs.password,
 		'yt0': 'Вход'

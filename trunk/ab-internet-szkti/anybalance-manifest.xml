@@ -1,13 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-szkti</id>
+	<api flags="no_browser"/>
+  <id version="2">ab-internet-szkti</id>
   <name>СЗКТИ (Мегафон)</name>
   <description>
-    Получает баланс и информацию о тарифном плане для мурманского оператора фиксированной связи СЗКТИ (ОАО «Северо-Западная компания по телекоммуникациям и информатике»), которое было присоединено к ОАО «МегаФон». Сайт оператора: http://szkti.ru.
+    <p>Как сказано на сайте <a href="http://stat.szkti.ru/">http://stat.szkti.ru/</a>, услуги местной телефонной связи, телематические услуги связи и услуги связи по передачи данных (доступ к сети Интернет) теперь предоставляются ООО "Нет Бай Нет Холдинг".</p>
 
-    Как получить платежный идентификатор: http://szkti.ru/oplata/uznat_pay_id
-
-    Информация берется из личного кабинета http://stat.szkti.ru.
+    <p>В связи с этим вы можете установить провайдер NetByNet: <a href="http://anybalance.ru/catalog.php?id=ab-internet-netbynet&key=&download">http://anybalance.ru/catalog.php?id=ab-internet-netbynet&key=&download</a>, где уже реализована поддержка Мурманска.</p>
   </description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <files>
@@ -15,6 +14,7 @@
     <preferences>preferences.xml</preferences>
     <js>main.js</js>
     <js>library.js</js>
+  	<history>history.xml</history>
   </files>
   <counters>
     <counter id="balance" name="Баланс" units="р"/>

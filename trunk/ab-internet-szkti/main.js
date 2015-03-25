@@ -1,13 +1,12 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 
-Текущий баланс у мурманского провайдера фиксированной связи СЗКТИ (Мегафон)
-
-Сайт оператора: http://szkti.ru/
-Личный кабинет: http://stat.szkti.ru
+ПРОВАЙДЕР НЕ АКТУАЛЕН!
 */
 
 function main(){
+    throw new AnyBalance.Error("Провайдер неактуален. Для замены вы можете установить провайдер NetByNet, где уже реализована поддержка Мурманска.");
+
     var prefs = AnyBalance.getPreferences();
 
     AnyBalance.setDefaultCharset('utf-8');

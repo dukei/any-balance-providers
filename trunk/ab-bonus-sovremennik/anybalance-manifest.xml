@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-bonus-sovremennik</id>
+	<id version="5">ab-bonus-sovremennik</id>
 	<api flags="no_browser"/>
 	<name>Современник</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе на бонусной карте сети кинотеатров Современник <a href=""></a></p>
 	<p>Вход усуществляется чере МО.карту</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

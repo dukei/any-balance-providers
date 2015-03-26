@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="4" date="2015-03-26">
+	- Мелкие улучшения.
+	</change>
 	<change version="3" date="2015-03-23">
 	- Поддержка изменений на сайте.
 	- Добавлена поддержка договоров.

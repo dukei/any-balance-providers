@@ -32,8 +32,7 @@
     <EditTextPreference 
         positiveButtonText="ОК"
         key="num" 
-        inputType="number"
-        dialogTitle="Номер карты"
+        dialogTitle="Псевдоним карты"
         negativeButtonText="Отмена"
         title="Псевдоним карты/договора/депозита"
         summary="|Автоматически|{@s}"

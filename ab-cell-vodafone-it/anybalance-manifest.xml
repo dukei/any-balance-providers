@@ -1,13 +1,13 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="3">ab-cell-vodafone-it</id>
+	<id version="4">ab-cell-vodafone-it</id>
 	<name>Vodafone Italy</name>
 	<description html="true"><![CDATA[
 	<p>Obtains balance and other plan information on Vodafone Italy personal account (http://www.vodafone.it)</p>
 	<p>If you don't have Vodafone personal account, please register here: https://registrazione.vodafone.it/190/regu/checkLinkAccount.do</p>
 	]]></description>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

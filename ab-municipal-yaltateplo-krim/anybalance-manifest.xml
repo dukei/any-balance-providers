@@ -1,12 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="2">ab-municipal-yaltateplo-krim</id>
+	<id version="3">ab-municipal-yaltateplo-krim</id>
 	<name>Крымтеплокоммунэнерго</name>
 	<description>
 	Получает данные в системе Крымтеплокоммунэнерго (http://yaltateplo.com/)
 	</description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

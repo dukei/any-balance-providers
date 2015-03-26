@@ -9,4 +9,12 @@
         dialogMessage="Введите лицевой счет в формате 02/04545"
         key="login">
     </EditTextPreference>
+    <ListPreference
+		key="type"
+		title="Обслуживающая организация"
+		summary="||{@s}"
+		entries="АП|ГУП РК"
+		entryValues="ap|gup"
+		defaultValue="gup">
+	</ListPreference>
 </PreferenceScreen>

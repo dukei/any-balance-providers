@@ -19,7 +19,12 @@ function main(){
     checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 
-	var html =AnyBalance.requestGet(baseurl + 'login', g_headers);
+	var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
+
+	// HttpOnly cookie
+	var cookie = AnyBalance.getLastResponseHeader('Set-Cookie'),
+		session = getParam(cookie, null, null, /_lk_session=([^;]+)/i);
+	AnyBalance.setCookie('user.infolink.ru', '_lk_session', session);
 
 	var params = createFormParams(html, function(params, str, name, value) {
 		if (name == 'login') 
@@ -40,20 +45,20 @@ function main(){
     var result = {success: true};
 	
 	getParam(html, result, '__tariff', /(Интернет[^>]*>[^>]*href="\/services\/list[^>]*>[^>]*>[^>]*>)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'acc_num', /Номер лицевого счёта:([\s\S]*?)<\/button/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'acc_num', /ID абонента[^]+?(\d+)\s+<span class=['"]caret['"]>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'balance', /Баланс:[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'bonuses', /Бонус[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
 	// Посчитаем дату отключения, чтобы можно было назначить нотиф на нее
-	if(isAvailable('deadline')){
-		var days = getParam(html, null, null, /До отключения:\s*(\d+)\s*дн/i, null, parseBalance);
-		var date = new Date().getTime();
-		//      day in ms
-		date += 86400000 * days;
-		result.deadline = date;
-	}
-	if(isAvailable('incoming_traf')){
-		html = AnyBalance.requestGet(baseurl+'detailing/internet', addHeaders({Referer: baseurl+ 'index.php'}));
-		getParam(html, result, 'incoming_traf', /Всего:([^<]*)/i, replaceTagsAndSpaces, parseTraffic);
-	}
+	// if(isAvailable('deadline')){
+	// 	var days = getParam(html, null, null, /До отключения:\s*(\d+)\s*дн/i, null, parseBalance);
+	// 	var date = new Date().getTime();
+	// 	//      day in ms
+	// 	date += 86400000 * days;
+	// 	getParam(date, result, 'deadline', null, null, parseBalance);
+	// }
+	// if(isAvailable('incoming_traf')){
+	// 	html = AnyBalance.requestGet(baseurl+'detailing/internet', addHeaders({Referer: baseurl+ 'index.php'}));
+	// 	getParam(html, result, 'incoming_traf', /Всего:([^<]*)/i, replaceTagsAndSpaces, parseTraffic);
+	// }
     AnyBalance.setResult(result);
 }

@@ -2,7 +2,7 @@
 <provider>
 	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser" />
-	<id version="2">ab-internet-infolink</id>
+	<id version="3">ab-internet-infolink</id>
 	<name>Инфолинк</name>
 	<description>
 	Получает данные для интернет-провайдера Инфолинк http://infolink.ru/ в городах Московской области: Щёлково, Щёлково-3, Монино, Свердловский, Электросталь, Орехово-Зуево, Королёв, Лосино-Петровский

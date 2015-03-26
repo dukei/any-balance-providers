@@ -613,12 +613,16 @@ function mainLK(allowRetry) {
         var html = AnyBalance.requestGet(baseurl, g_headers);
         if(AnyBalance.getLastStatusCode() >= 500){
             AnyBalance.trace("МТС вернул 500. Пробуем ещё разок...");
-	    html = AnyBalance.requestGet(baseurl, g_headers);
-	}
+			html = AnyBalance.requestGet(baseurl, g_headers);
+		}
 
         if(AnyBalance.getLastStatusCode() >= 500)
         	throw new AnyBalance.Error("Ошибка на сервере МТС, сервер не смог обработать запрос. Можно попытаться позже...", allowRetry);
 
+		html = checkLoginState(html, loginUrl);
+		
+		AnyBalance.trace('isLoggedIn(html) = ' + isLoggedIn(html));
+		
         if (isLoggedIn(html)) {
             AnyBalance.trace("Уже залогинены, проверяем, что на правильный номер...");
             //Автоматом залогинились, надо проверить, что на тот номер
@@ -633,7 +637,8 @@ function mainLK(allowRetry) {
 
             if (loggedInMSISDN != prefs.login) { //Автоматом залогинились не на тот номер
                 AnyBalance.trace("Залогинены на неправильный номер: " + loggedInMSISDN + ", выходим");
-                html = AnyBalance.requestGet(baseurlLogin + "/amserver/UI/Logout", g_headers);
+                html = AnyBalance.requestGet(baseurlLogin + '/amserver/UI/Logout', g_headers);
+				
                 if (isLoggedIn(html)) {
                     AnyBalance.trace(html);
                     throw new AnyBalance.Error('Не удаётся выйти из личного кабинета, чтобы зайти под правильным номером. Сайт изменен?', allowRetry);
@@ -642,8 +647,6 @@ function mainLK(allowRetry) {
                 AnyBalance.trace("Залогинены на правильный номер: " + loggedInMSISDN);
             }
         }
-		
-		html = checkLoginState(html, loginUrl);
 		
         if (!isLoggedIn(html)) {
             var form = getParam(html, null, null, /<form[^>]+name="Login"[^>]*>([\s\S]*?)<\/form>/i);

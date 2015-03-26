@@ -2,10 +2,10 @@
 <PreferenceScreen>
     <EditTextPreference
 		obligatory="true"
-		title="Phone number"
+		title="Login"
 		positiveButtonText="OK"
 		summary="|Enter your login to Vodafone Italy|{@s}"
-		dialogTitle="Phone number"
+		dialogTitle="Login"
 		negativeButtonText="Cancel"
 		dialogMessage="Enter your login to Vodafone personal account"
 		inputType="text"
@@ -21,5 +21,15 @@
 		summary="||***********"
 		dialogMessage="Please enter a password you use to Vodafone personal account."
 		inputType="textPassword">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Phone number"
+		positiveButtonText="OK"
+		summary="||{@s}"
+		dialogTitle="Phone number"
+		negativeButtonText="Cancel"
+		dialogMessage="Enter your phone number or leave this field empty to get info about first found number"
+		inputType="number"
+		key="phone">
 	</EditTextPreference>
 </PreferenceScreen>

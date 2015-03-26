@@ -29,6 +29,9 @@ function main(){
 		
         throw new AnyBalance.Error('Could not enter personal account. Is the site changed?');
     }
+
+    if(prefs.phone)
+    	html = AnyBalance.requestGet(baseurl + '190mobile/endpoint/Mobile5_restyle/swap_sim.php?msisdn_swap=' + prefs.phone, g_headers);
 	
     var result = {success: true};
 	

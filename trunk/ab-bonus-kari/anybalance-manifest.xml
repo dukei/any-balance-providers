@@ -1,13 +1,13 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-bonus-kari</id>
+	<id version="2">ab-bonus-kari</id>
 	<api flags="no_browser"/>
 	<name>KARI CLUB</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе KARI CLUB</p>
 	<p>Информация берется из личного кабинета https://oplata.kari.com/</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

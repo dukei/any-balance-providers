@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id major_version="3.3" version="107">ab-cell-mts-russia</id>
+	<id major_version="3.3" version="108">ab-cell-mts-russia</id>
 	<name>МТС (Россия)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе, бонусных баллах, использованных минутах на локальные, мобильные и любимые номера, расходах, статусе блокировки, кредите, номере лицевого счета, ежемесячной плате.</p>

@@ -579,6 +579,25 @@ function isAnotherNumber(){
     return prefs.phone && prefs.phone != prefs.login;
 }
 
+function checkLoginState(html, loginUrl) {
+	if(/дождитесь окончания процесса авторизации/i.test(html)) {
+		var json = {};
+		while(json.Data != 'Success') {
+			json = AnyBalance.requestGet('https://lk.ssl.mts.ru/WaitAuth/CheckAuth', addHeaders({Referer: 'https://lk.ssl.mts.ru/waitauth?goto=http://lk.ssl.mts.ru/'}));
+			json = getJson(json);
+			
+			if(json.Data == 'Success')
+				break;
+			
+			sleep(3000);
+		}
+	
+		return AnyBalance.requestGet(loginUrl, addHeaders({Referer: loginUrl}));
+	} else {
+		return html;
+	}
+}
+
 function mainLK(allowRetry) {
     AnyBalance.trace("Entering lk...");
 
@@ -623,7 +642,9 @@ function mainLK(allowRetry) {
                 AnyBalance.trace("Залогинены на правильный номер: " + loggedInMSISDN);
             }
         }
-
+		
+		html = checkLoginState(html, loginUrl);
+		
         if (!isLoggedIn(html)) {
             var form = getParam(html, null, null, /<form[^>]+name="Login"[^>]*>([\s\S]*?)<\/form>/i);
             if (!form) {
@@ -653,24 +674,10 @@ function mainLK(allowRetry) {
                 html = AnyBalance.requestGet(loginUrl, addHeaders({Referer: loginUrl}));
             }
 			
-			if(/дождитесь окончания процесса авторизации/i.test(html)) {
-				var json = {};
-				while(json.Data != 'Success') {
-					json = AnyBalance.requestGet('https://lk.ssl.mts.ru/WaitAuth/CheckAuth', addHeaders({Referer: 'https://lk.ssl.mts.ru/waitauth?goto=http://lk.ssl.mts.ru/'}));
-					json = getJson(json);
-					
-					if(json.Data == 'Success')
-						break;
-					
-					sleep(3000);					
-				}
-				
-				html = AnyBalance.requestGet(loginUrl, addHeaders({Referer: loginUrl}));
-			}
-			
+			html = checkLoginState(html, loginUrl);
             // AnyBalance.trace("Команду логина послали, смотрим, что получилось...");
             
-	    if(AnyBalance.getLastStatusCode() >= 500)
+			if(AnyBalance.getLastStatusCode() >= 500)
         	    throw new AnyBalance.Error("Ошибка на сервере МТС при попытке зайти, сервер не смог обработать запрос! Можно попытаться позже...", allowRetry);
         }
 

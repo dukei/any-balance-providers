@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="5" date="2015-03-27">
+	- Добавлены счетчики ФИО и тариф
+	</change>
 	<change version="4" date="2015-03-27">
 	- Мелкие улучшения.
 	</change>

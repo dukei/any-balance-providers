@@ -2,7 +2,7 @@
 <provider>
 	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser" />
-	<id version="4">ab-internet-infolink</id>
+	<id version="5">ab-internet-infolink</id>
 	<name>Инфолинк</name>
 	<description>
 	Получает данные для интернет-провайдера Инфолинк http://infolink.ru/ в городах Московской области: Щёлково, Щёлково-3, Монино, Свердловский, Электросталь, Орехово-Зуево, Королёв, Лосино-Петровский
@@ -18,11 +18,10 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units="р"/>
+		<counter id="balance" name="Баланс" units=" р"/>
 		<counter id="bonuses" name="Бонусы" type="text"/>
-		<counter id="deadline" name="Дата отключения" type="time" format="dd/MM/yyyy"/>
 		<counter id="acc_num" name="Номер лицевого счёта" type="text"/>
-		<counter id="incoming_traf" name="Входящий трафик" units="Mb"/>
+		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
 	<keywords></keywords>
 	<type>internet</type>

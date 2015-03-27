@@ -44,7 +44,7 @@ function main() {
 		var json = getJson(text);
 	    getParam('' + json.sum, result, 'balance', null, null, parseBalance);
 	} else {
-	    getParam(html, result, 'balance', /b-sum__amount[^>]*>\s*([-\d,.]+)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+	    getParam(html, result, 'balance', /b-sum__amount[^>]*>\s*([-\s\d,.]+)<\/span>/i, replaceTagsAndSpaces, parseBalance);
 	}
 	
 	AnyBalance.setResult(result);

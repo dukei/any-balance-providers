@@ -452,7 +452,11 @@ function fetchAccountStatus(html, result) {
     html = sumParam(html, result, 'min_left', /Остаток (?:ежесуточного )?пакета минут:\s*([\d\.,]+)\s*[м\.,<]/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
     // Остаток бонуса
     html = sumParam(html, result, 'min_left', /Остаток бонуса:\s*([\d\.,]+?)\s*мин/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
+    // Пакет минут (МТС+ОСС+ОФС) в дом. регионе": 1710мин</li>
+    html = sumParam(html, result, 'min_left', /Пакет минут[^<]*?([\d\.,]+?)\s*мин/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
 
+	
+	
     // Остаток минут
     html = sumParam(html, result, 'min_left', /Осталось:?\s*([\d\.,]+)\s*(?:бесплатных\s*)?мин/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
     // Пакет минут Готовый офис: Остаток 149 минут
@@ -484,6 +488,9 @@ function fetchAccountStatus(html, result) {
     // Бизнес пакеты
     html = sumParam(html, result, 'min_left', /местные минуты[^<]*?:\s*([\d\.,]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
     html = sumParam(html, result, 'min_left_mezh', /междугородные минуты[^<]*?:\s*([\d\.,]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
+	// <li>Остаток пакета "Пакет МГ минут в дом. регионе":13мин МГ</li>
+	html = sumParam(html, result, 'min_left_mezh', /Пакет МГ[^<]*?([\d\.,]+?)\s*мин/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
+	
     // Использовано: 0 минут местных и мобильных вызовов.
     // Использовано 1 мин на городские номера Москвы, МТС домашнего региона и МТС России
     sumParam(html, result, 'min_local', /Использовано:?\s*([\d\.,]+)\s*мин[^\s]* (местных|на городские)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);

@@ -12,6 +12,7 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
+	
 	checkEmpty(prefs.login, 'Введите логин в Яндекс.Деньги!');
 	checkEmpty(prefs.password, 'Введите пароль, используемый для входа в систему Яндекс.Деньги. Не платежный пароль, а именно пароль для входа!');
 	
@@ -22,16 +23,7 @@ function main() {
 	var html = AnyBalance.requestGet("https://passport.yandex.ru", g_headers);
 	
 	html = loginYandex(prefs.login, prefs.password, html, baseurl + 'index.xml', 'money');
-	// Теперь не нужен этот блок, т.к. он не выбрасывает нужную ошибку 
-	// if (!prefs.__dbg) {
-		// try {
-				// html = loginYandex(prefs.login, prefs.password, html, baseurl + 'index.xml', 'money');
-		// } catch(e) {
-			// // Нужно для отладчика
-			// AnyBalance.trace('Error in loginYandex ' + e.message);
-			// html = AnyBalance.requestGet(baseurl, g_headers);
-		// }
-	// }
+	
 	if (!/user__logout/i.test(html))
 		throw new AnyBalance.Error("Не удалось зайти. Проверьте логин и пароль.");
 	
@@ -39,7 +31,7 @@ function main() {
 	
 	getParam(html, result, '__tariff', /Номер кошелька(?:[^>]*>){2}(\d{10,20})/i, replaceTagsAndSpaces);
 	getParam(result['__tariff'], result, 'number');
-	getParam(html, result, 'balance', /b-sum__amount[^>]*>\s*[\d,\.]+<\/span>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance', /b-sum__amount[^>]*>\s*([-\d,.]+)<\/span>/i, replaceTagsAndSpaces, parseBalance);
 
 	// if(/sum__amount[^>]*>\s*\*{3}/i.test(html)) {
 	//     AnyBalance.trace('Сумма спрятана. Будем пытаться найти...');

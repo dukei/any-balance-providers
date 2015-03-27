@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-citytelecom</id>
+	<api flags="no_browser"/>
+	<name>CityTelecom</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе интернет провайдера CityTelecom <a href="http://www.citytelecom.ru/">http://www.citytelecom.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="https://freeport.citytelecom.ru/">https://freeport.citytelecom.ru/</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="code" name="Код оплаты" type="text"/>
+		<counter id="accnum" name="Номер договора" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

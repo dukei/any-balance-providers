@@ -59,8 +59,10 @@ function main() {
 	getParam(html, result, '__tariff', /Тариф<\/h2>[\s\S]*?>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 	
 	var matches = html.match(/(csrf[^:]*):\s*'([^']*)'/i);
-	if (!matches)
+	if (!matches){
+		AnyBalance.trace(html);
 		throw new AnyBalance.Error("Не удаётся найти код безопасности для запроса балансов. Свяжитесь с автором провайдера для исправления.");
+	}
 		
 	var tokName = matches[1], tokVal = matches[2];
 	

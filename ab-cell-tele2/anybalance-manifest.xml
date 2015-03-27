@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="20">ab-cell-tele2</id>
+	<id version="21">ab-cell-tele2</id>
 	<api flags="no_browser"/>
 	<name>Tele2</name>
 	<description html="true"><![CDATA[

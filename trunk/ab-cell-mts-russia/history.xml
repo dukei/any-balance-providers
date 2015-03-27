@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="3.3" version="110" date="2015-03-27">
+	- Улучшено распознование минут в некоторых случаях.
+	</change>
 	<change major_version="3.3" version="109" date="2015-03-26">
 	- Поддержка изменений на сайте.
 	</change>

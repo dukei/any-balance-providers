@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference
+		title="Серийный номер"
+		key="login"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Серийный номер"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите cерийный номер, используемый для входа в личный кабинет.">
+	</EditTextPreference>
+	<EditTextPreference
+		title="ПИН-код карты"
+		key="password"
+		summary="||***********"
+		obligatory="true"
+		dialogTitle="ПИН-код карты"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите ПИН-код карты, используемый для входа в личный кабинет."
+		inputType="textPassword">
+	</EditTextPreference>
+</PreferenceScreen>

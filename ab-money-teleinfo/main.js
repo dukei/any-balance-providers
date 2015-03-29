@@ -10,7 +10,129 @@ var g_headers = {
 	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
 };
 
+function Message(payload, theme, properties){
+	this.type = 'com.mobiletransport.messaging.DefaultMessageImpl';
+	this.correlationId = '' + Math.floor(-2147483647 + Math.random() * 2147483647*2);
+	this.id = '' + Math.floor(-2147483647 + Math.random() * 2147483647*2);
+	this.payload = payload;
+	this.sendTimestamp = new Date().getTime();
+	this.theme = theme;
+	this.timeToLive = 30000;
+	this.properties = properties || new Properties();
+}
+
+function Properties(obj){
+	this.type = 'java.util.Hashtable';
+	for(var prop in obj){
+		this[prop] = obj[prop];
+	}
+}
+
+function isDate(d){
+	return Object.prototype.toString.call(d) == '[object Date]';
+}
+
+function getType(obj, name, parent){
+	if(typeof(obj) == 'object' && isDate(obj))
+		return 'date';
+	if(typeof(obj) == 'object' && !isArray(obj))
+		return 'map';
+	if(typeof(obj) == 'object' && isArray(obj))
+		return 'list';
+	if(typeof(obj) == 'string')
+		return 'string';
+	if(typeof(obj) == 'number')
+		return (parent && parent.__types && parent.__types[name]) || (obj % 1 === 0 ? 'long' : 'double');
+	if(typeof(obj) == 'boolean')
+		return 'boolean';
+	throw new AnyBalance.Error('Unknown type for ' + obj + ' (' + name + ' of ' + parent + ')');
+}
+
+function fmt2pos(n){
+	return n < 10 ? '0' + n : '' + n;
+}
+
+function fmt3pos(n){
+	return n < 10 ? '00' + n : (n < 100 ? '0' + n : '' + n);
+}
+
+function serialize(obj){
+	if(typeof(obj) == 'object' && isDate(obj)){
+		return '' + obj.getUTCFullYear() + fmt2pos(obj.getUTCMonth()+1) + fmt2pos(obj.getUTCDate()) + 'T' + fmt2pos(obj.getUTCHours()) + fmt2pos(obj.getUTCMinutes()) + fmt2pos(obj.getUTCSeconds()) + '.' + fmt3pos(obj.getUTCMilliseconds()) + 'Z';
+	}else if(typeof(obj) == 'object' && !isArray(obj)){
+		var ret = ['<type>', obj.type, '</type>'];
+		for(var prop in obj){
+			if(/^(?:type|__types)$/.test(prop))
+				continue;
+			ret.push('<string>', prop, '</string>');
+			var tp = getType(obj[prop], prop, obj);
+			ret.push('<', tp, '>', serialize(obj[prop]), '</', tp, '>');
+		}
+		return ret.join('');
+	}else if(typeof(obj) == 'object' && isArray(obj)){
+		var ret = ['<type>', obj.type, '</type>', '<length>', obj.length, '</length>'];
+		for(var i=0; i < obj.length; ++i){
+			var tp = getType(obj[prop], prop, obj);
+			ret.push('<', tp, '>', serialize(obj[prop]), '</', tp, '>');
+		}
+		return ret.join('');
+	}else if(typeof(obj) == 'string'){
+		return obj;
+	}else if(typeof(obj) == 'boolean'){
+		return obj ? 'true' : 'false';
+	}else if(typeof(obj) == 'number'){
+		return '' + obj;
+	}
+}
+
+function request(m){
+	var sm = '<map>' + serialize(m) + '</map>';
+
+	var ver = "2.0.24";
+	var wordsStr = CryptoJS.enc.Utf8.parse(sm);
+	var wordsVer = CryptoJS.enc.Utf8.parse(ver);
+	var words = new CryptoJS.lib.WordArray.init([wordsStr.sigBytes + wordsVer.sigBytes + 1, wordsVer.sigBytes << 24], 5);
+	var sizesSize = words.sigBytes;
+	words.concat(wordsVer).concat(wordsStr);
+
+	var ret = AnyBalance.requestPost("https://mb.telebank.ru/mobilebanking/burlap/", CryptoJS.enc.Base64.stringify(words), {
+		'mb-protocol-version': ver,
+		'mb-app-version': '0.1.46',
+		Connection: 'Keep-Alive'
+	});
+
+	words = CryptoJS.enc.Base64.parse(ret);
+
+	if(AnyBalance.getLastStatusCode() >= 400)
+		throw new AnyBalance.Error('Error requesting ' + sm + ': ' + CryptoJS.enc.Utf8.stringify(words));
+
+	var xml = CryptoJS.enc.Utf8.stringify(words, sizesSize + wordsVer.sigBytes);
+	return xml;
+}
+
 function main() {
+	var prefs = AnyBalance.getPreferences();
+
+	AnyBalance.setOptions({FORCE_CHARSET: 'base64'});
+	
+	checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(prefs.password, 'Введите пароль!');
+
+	var xml = request(new Message({
+		type: 'ru.vtb24.mobilebanking.protocol.atm.AtmListRequest',
+		latitude: 55.8047245,
+		longitude: 37.5813982,
+		radius: 5,
+		lastUpdateDate: new Date(0),
+		__types: {radius: 'int'}
+	}, 'AtmListRequest theme'));
+
+	AnyBalance.trace(xml);
+}
+
+
+
+function mainOld() {
 	var prefs = AnyBalance.getPreferences();
 	
 	checkEmpty(prefs.login, 'Введите логин!');

@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="10">ab-bonus-sportmaster</id>
+	<id version="11">ab-bonus-sportmaster</id>
 	<name>Спортмастер</name>
 	<description html="true"><![CDATA[
    <p>Предоставляет информацию по бонусной карте "Спортмастер".</p> 
@@ -10,7 +10,7 @@
 	<instruction html="true"><![CDATA[
 	<p>C ноября 2013 на сайте невозможно проверить баланс по номеру карты без подтверждения по смс, поэтому поддерживается только вход по логину и паролю.</p>
 	]]></instruction>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
@@ -21,6 +21,7 @@
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
 		<counter id="cardnum" name="Номер карты" type="text"/>
+		<counter id="nextlevel" name="Покупок до след уровня" units=" р"/>
 		<counter id="all" name="Сводка по бонусам" type="text"/>
 	</counters>
 	<keywords>sportmaster, карта, бонус</keywords>

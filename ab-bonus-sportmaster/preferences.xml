@@ -20,12 +20,4 @@
 		dialogMessage="Введите пароль, используемый для входа в личный кабинет. Если вы ввели номер карты, то пароль вводить необязательно."
 		inputType="textPassword">
 	</EditTextPreference>
-    <ListPreference
-		key="type"
-		title="Тип карты"
-		summary="|Автоматически|{@s}"
-		entries="Автоматически|Синяя карта|Серебряная карта|Золотая карта"
-		entryValues="|300|301|302"
-		defaultValue="">
-	</ListPreference>
 </PreferenceScreen>

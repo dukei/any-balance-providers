@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-cell-megafon-korp</id>
+	<api flags="no_browser"/>
+	<name>Мегафон корпоративный</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе и других параметрах Мегафона корпоративного <a href="http://megafon.ru/corporate/">http://megafon.ru/corporate/</a></p>
+	<p>Информация берется из личного кабинета <a href="https://center.b2blk.megafon.ru/sc_cp_apps/login">https://center.b2blk.megafon.ru/sc_cp_apps/login</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="abonCount" name="Количество абонентов" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>cell</type>
+	<country>ru</country>
+</provider>

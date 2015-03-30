@@ -1,5 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="1.0" version="15" date="2015-03-30">
+	- Мелкие улучшения.
+	</change>
     <change version="14" major_version="1.0" date="2014-06-16">
 	- Исправлено описание настроек.
 	</change>

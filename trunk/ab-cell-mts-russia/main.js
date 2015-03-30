@@ -211,8 +211,9 @@ function mainMobile(allowRetry) {
 var g_headers = {
     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
     'Accept-Language': 'ru,en;q=0.8',
-	'Cache-Control': 'max-age=0',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.115 Safari/537.36'
+    'Cache-Control': 'max-age=0',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.115 Safari/537.36',
+    'If-Modified-Since': null, //Иначе МТС глючит с кешированием...
 };
 
 function isInOrdinary(html) {
@@ -510,6 +511,8 @@ function fetchAccountStatus(html, result) {
     html = sumParam(html, result, 'sms_left', /(?:Осталось|Остаток)[^\d]*(\d+)\s*(?:sms|смс)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
     //Остаток пакета Безлимит М2М SMS: 61
     html = sumParam(html, result, 'sms_left', /Остаток пакета[^<]*?(?:смс|sms):\s*([\d\.,]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
+    // Осталось sms (Smart):278.
+    html = sumParam(html, result, 'sms_left', /Осталось sms[^<]*?:\s*([\d\.,]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
     //Остаток пакета SMS в Европе: 22. Пакет действует до 21.01.2014
     html = sumParam(html, result, 'sms_europe', /Остаток\s+пакета\s+SMS\s+в\s+Европе:([\s\d]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
     //Остаток пакета SMS в поездках по миру: 100. Пакет действует до 10.02.2014
@@ -520,7 +523,7 @@ function fetchAccountStatus(html, result) {
     sumParam(html, result, 'mms_left', /(?:Осталось|Остаток)(?: пакета)? (?:mms|ммс):\s*(\d+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     sumParam(html, result, 'mms_left', /(?:Осталось|Остаток)[^\d]*(\d+)\s*(?:mms|ммс)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     // Накоплено 54 мин. в текущем месяце
-    sumParam(html, result, 'min_used', /Накоплено\s*(\d+)\s*мин[^\s]*/g, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    sumParam(html, result, 'min_used', /Накоплено\s*([\d\.,]+)\s*мин[^\s]*/g, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     // Сумма по неоплаченным счетам: 786.02 руб. (оплатить до 24.03.2012)
     getParam(html, result, 'debt', /Сумма [^<]*по неоплаченным счетам(?:[\s\S](?!<\/td|<\/p))*?([-\d\.,]+)\s+руб/i, replaceTagsAndSpaces, parseBalance);
     // Сумма по неоплаченным счетам: 786.02 руб. (оплатить до 24.03.2012)
@@ -569,7 +572,7 @@ function getLKJson(html, allowRetry, allowExceptions) {
             throw new AnyBalance.Error('Не удалось найти Json с описанием пользователя, сайт изменен?', allowRetry);
         }
     } catch (e) {
-        var json = {};
+        var json = "{}";
         if (allowExceptions) {
             throw e;
         } else {
@@ -639,7 +642,7 @@ function mainLK(allowRetry) {
             var loggedInMSISDN = json.id;
             if (!loggedInMSISDN) {
                 AnyBalance.trace(html);
-                throw new AnyBalance.Error('Не удалось определить текущий номер в кабинете, сайт изменен?', allowRetry);
+                throw new AnyBalance.Error('Не удалось определить текущий номер в кабинете, сайт изменен?', true);
             }
 
             if (loggedInMSISDN != prefs.login) { //Автоматом залогинились не на тот номер
@@ -716,7 +719,7 @@ function mainLK(allowRetry) {
 
     if(!isAnotherNumber()){
         try {
-            var info = getLKJson(html, allowRetry);
+            var info = getLKJson(html, true, true);
         
             AnyBalance.trace(info);
             info = getJson(info);
@@ -736,10 +739,10 @@ function mainLK(allowRetry) {
                     getParam(rel.target.address + '', result, 'phone', null, [/^(\d{3})(\d{3})(\d{2})(\d{2})$/, '+7 $1 $2 $3 $4'], html_entity_decode);
             }
         } catch (e) {
-            AnyBalance.trace('Не удалось получить данные о пользователе, скорее всего, виджет временно недоступен...');
+            AnyBalance.trace('Не удалось получить данные о пользователе, скорее всего, виджет временно недоступен... ' + e.message);
         }
         
-        if (isAvailable('traffic_left_mb')) {
+        if (isAvailable('traffic_left_mb', 'traffic_used_mb')) {
             AnyBalance.trace('Запросим трафик...');
 		try {
 			for(var i = 0; i < 3; i++) {
@@ -764,6 +767,7 @@ function mainLK(allowRetry) {
 					AnyBalance.trace('Нашли трафик...');
         
 					sumParam(json.TrafficLeft + '', result, 'traffic_left_mb', null, null, function (str) { return parseTraffic(str, 'kb'); }, aggregate_sum);
+					sumParam(json.TrafficConsumed + '', result, 'traffic_used_mb', null, null, function (str) { return parseTraffic(str, 'kb'); }, aggregate_sum);
 					break;
 				} else {
 					AnyBalance.trace('Трафика нет...');

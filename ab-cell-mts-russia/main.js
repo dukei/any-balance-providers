@@ -590,7 +590,7 @@ function isAnotherNumber(){
 }
 
 function checkLoginState(html, loginUrl) {
-	if(/дождитесь окончания процесса авторизации/i.test(html)) {
+	if(/checkAuthStatus\(\)|дождитесь окончания процесса авторизации/i.test(html)) {
 		var json = {};
 		while(json.Data != 'Success') {
 			json = AnyBalance.requestGet('https://lk.ssl.mts.ru/WaitAuth/CheckAuth', addHeaders({Referer: 'https://lk.ssl.mts.ru/waitauth?goto=http://lk.ssl.mts.ru/'}));
@@ -599,7 +599,7 @@ function checkLoginState(html, loginUrl) {
 			if(json.Data == 'Success')
 				break;
 			
-			sleep(3000);
+			sleep(1000);
 		}
 	
 		return AnyBalance.requestGet(loginUrl, addHeaders({Referer: loginUrl}));

@@ -110,6 +110,51 @@ function request(m){
 	return xml;
 }
 
+function deserialize(xml){
+	var parser = new EasySAXParser();
+
+	var stack = [];
+	var propName = false;
+	var container = null;
+	var obj = null;
+
+	parser.on('error', function(msg) {
+		AnyBalance.trace(msg);
+	});
+
+	parser.on('startNode', function(elem, attr, uq, tagend, getStrNode) {
+		switch(elem){
+			case 'map':
+				obj = {};
+				stack.push(obj);
+				container = elem;
+				break;
+		    case 'list':
+				obj = [];
+		    	stack.push(obj);
+				container = elem;
+		    	break;
+		}
+	});
+
+	parser.on('endNode', function(elem, uq, tagstart, str) {
+		switch(elem){
+			case 'map':
+		    case 'list':
+				stack.pop();
+				if(stack.length > 0)
+					obj = stack[stack.length-1];
+				break;
+		}
+	});
+
+	parser.on('textNode', function(s, uq) {
+		uq(s);
+		AnyBalance.trace('   '+s)
+	});
+
+}
+
 function main() {
 	var prefs = AnyBalance.getPreferences();
 

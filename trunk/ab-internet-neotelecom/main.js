@@ -13,6 +13,10 @@ var g_headers = {
 function main(){
     var prefs = AnyBalance.getPreferences();
     var baseurl = "https://www.neotelecom.ru/";
+    AnyBalance.setDefaultCharset('utf-8');
+
+    checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(prefs.password, 'Введите пароль!');
 
 	var html = AnyBalance.requestPost(baseurl + 'bill/login.php', {
         login:prefs.login,
@@ -26,11 +30,11 @@ function main(){
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
 	
-	var tables = sumParam(html, null, null, /(<table(?:[\s\S](?!<\/table>))*?Договор №[\s\S]*?<\/table>)/ig, null, null, null, null);
+	var tables = sumParam(html, null, null, /(<table(?:[\s\S](?!<\/table>))*?Договор №[\s\S]*?<\/table>)/ig);
 	
-	if(!tables)
+	if(!tables.length)
 		throw new AnyBalance.Error('Не найдено ни одной услуги в личном кабинете!');
-	
+
 	var result = {success: true};
 	
 	for(var i = 0; i < tables.length; i++)

@@ -45,11 +45,11 @@ function doNewCabinet(prefs){
 	});
 	// в итоге должны запрашивать нечто https://pay.i-on.ru/personal/;jsessionid=51927EFF6F83933EE13B1AD5B3B9330B?wicket:interface=:0:loginForm::IBehaviorListener:0:1
     html = AnyBalance.requestPost(baseurl + 'personal' + loginFormSubmit, params, g_headers);
+    AnyBalance.sleep(1000);
 	// Какой ?#*$%#**%%! делал этот кабинет?! Два Post запроса подряд с одинаковой data, чтобы убедится что мы не роботы? :)
 	html = AnyBalance.requestPost(baseurl + 'personal' + loginFormSubmit, params, g_headers);
 	
 	var json = getJson(html);
-	
     if(!json.validated){
         var error = getParam(html, null, null, /<div[^>]+class="validation-summary-errors"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
         if(error)

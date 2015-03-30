@@ -1,12 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="14" major_version="1.0">ab-money-kykyryza</id>
+	<id version="15" major_version="1.0">ab-money-kykyryza</id>
 	<api flags="no_browser" />
 	<name>Платежный кабинет Кукуруза</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе из Платежного кабинета "Кукуруза" http://oplata.kykyryza.ru/personal</p>
 	]]></description>
-	<author>Robert Khaliullov &lt;robix@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
@@ -22,6 +22,6 @@
 		<counter id="own" name="Собственные средства" units=" р"/>
 	</counters>
 	<keywords>Кукуруза, Платёжный кабинет</keywords>
-	<type>money</type>
+	<type>money, wallet</type>
 	<country>ru</country>
 </provider>

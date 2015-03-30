@@ -28,12 +28,11 @@ function main() {
         login:prefs.login,
         pwd:prefs.password,
     }, addHeaders({
-		Referer: baseurl+'auth/login',
-		'X-Requested-With':'XMLHttpRequest',
+		Referer: baseurl+'auth/login'
 	}));
-	
-	if(!/^\s*0\s*$/.test(html)) {
-		var error = getJson(html);
+
+	if (!/logout/i.test(html)) {
+		var error = getParam(html, null, null, /<div[^>]+class="error"([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Неверные логин или пароль/i.test(error));
 		

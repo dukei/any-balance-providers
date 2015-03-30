@@ -43,11 +43,13 @@ function main() {
 	
 	var json = getJson(res);
 
+	var errorPart, error = [];
 	if(json.errors || !json.user){
-		var error = Object.keys(json.errors).map(function(key){
-			var err = json.errors[key];
-			return isArray(err) ? err.join('. ') : err;
-		}).join('. ');
+		for(var i in json.errors){
+			errorPart = json.errors[i];
+			error.push(isArray(errorPart) ? errorPart.join('. ') : errorPart);
+		}
+		error = error.join('. ');
 		if(error)
 			throw new AnyBalance.Error(error, null, /Неверный ник или e-mail|Неверный пароль/i.test(error));
 		

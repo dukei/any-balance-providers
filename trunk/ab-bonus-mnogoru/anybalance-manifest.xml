@@ -1,12 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="8">ab-bonus-mnogoru</id>
+	<id version="9">ab-bonus-mnogoru</id>
 	<api flags="no_browser"/>
 	<name>Бонусы Mnogo.ru</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о количестве баллов на карте накопительной программы mnogo.ru.</p>
 	]]></description>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

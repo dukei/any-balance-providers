@@ -1,4 +1,4 @@
-﻿/**
+ /**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
@@ -12,10 +12,10 @@ var g_headers = {
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-    var baseurl = 'https://www.ncc.volga.ru/';
+    var baseurl = 'https://kabinet.ncc-uc.ru/';
     AnyBalance.setDefaultCharset('utf-8'); 
 
-    var html = AnyBalance.requestGet('http://www.ncc-uc.ru/', g_headers);
+    var html = AnyBalance.requestGet(baseurl, g_headers);
 
 	html = AnyBalance.requestPost(baseurl + 'pay/', {
 		PAN:prefs.login,

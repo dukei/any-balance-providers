@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1"></id>
+	<id version="1">ab-internet-aldi</id>
 	<api flags="no_browser"/>
 	<name>ALDI TALK (Германия)</name>
 	<description html="true"><![CDATA[

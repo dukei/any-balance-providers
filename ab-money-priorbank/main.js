@@ -42,8 +42,6 @@ function main() {
 		fetchCard(prefs, result);
 	else if(prefs.type == 'contract')
 		fetchContract(prefs, result);
-	else
-		fetchEldep(prefs, result);
 	
 	AnyBalance.setResult(result);
 }
@@ -80,8 +78,4 @@ function fetchContract(prefs, result) {
 	getParam(contract, result, ['currency', 'balance'], /CurrCode[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
 	
 	return result;
-}
-
-function fetchEldep(prefs, result) {
-	throw new AnyBalance.Error('Получение данных по электронным депозитам еще не поддерживается, свяжитесь с автором провайдера!');
 }

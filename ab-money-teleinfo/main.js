@@ -142,6 +142,25 @@ function deserialize(xml) {
         container = elem;
     });
 
+    function putValue(val, put, setName) {
+        if (container == 'list') {
+            //Просто айтем в массиве
+            put(val);
+        } else if (container == 'map') {
+            if (propName) {
+                //Имя свойства уже установлено, значит, это значение
+                obj[propName] = val;
+                propName = null;
+            } else {
+                if(!setName)
+                    throw new AnyBalance.Error('deserialize error: unexpected property without name: <' + elem + '>' + val);
+                setName(val);
+            }
+        } else {
+            throw new AnyBalance.Error('deserialize error: unexpected value outside the container: <' + elem + '>' + val);
+        }
+    }
+
     parser.on('endNode', function (elem, uq, tagstart, str) {
         var val = text;
         switch (elem) {
@@ -154,55 +173,15 @@ function deserialize(xml) {
                 //А можно и не обрабатывать, всё равно наполняем постепенно
                 break;
             case 'string':
-                if(container == 'list'){
-                    //Просто айтем в массиве
-                    obj.push(val);
-                }else if(container == 'map'){
-                    if(propName){
-                        //Имя свойства уже установлено, значит, это значение
-                        obj[propName] = val;
-                        propName = null;
-                    }else{
-                        //Сейчас имя
-                        propName = val;
-                    }
-                }else{
-                    throw new AnyBalance.Error('deserialize error: unexpected string outside the container: <' + elem + '>' + val);
-                }
+                putValue(val, function(val){obj.push(val)}, function(val){propName = val});
                 break;
             case 'boolean':
-                if(container == 'list'){
-                    //Просто айтем в массиве
-                    obj.push(Boolean.valueOf(val));
-                }else if(container == 'map'){
-                    if(propName){
-                        //Имя свойства уже установлено, значит, это значение
-                        obj[propName] = val;
-                        propName = null;
-                    }else{
-                        throw new AnyBalance.Error('deserialize error: unexpected property without name: <' + elem + '>' + val);
-                    }
-                }else{
-                    throw new AnyBalance.Error('deserialize error: unexpected value outside the container: <' + elem + '>' + val);
-                }
+                putValue(val, function(val){obj.push(Boolean.valueOf(val))});
                 break;
             case 'double':
             case 'long':
             case 'int':
-                if(container == 'list'){
-                    //Просто айтем в массиве
-                    obj.push(Number.valueOf(val));
-                }else if(container == 'map'){
-                    if(propName){
-                        //Имя свойства уже установлено, значит, это значение
-                        obj[propName] = val;
-                        propName = null;
-                    }else{
-                        throw new AnyBalance.Error('deserialize error: unexpected property without name: <' + elem + '>' + val);
-                    }
-                }else{
-                    throw new AnyBalance.Error('deserialize error: unexpected value outside the container: <' + elem + '>' + val);
-                }
+                putValue(val, function(val){obj.push(Number.valueOf(val))});
                 break;
             case 'date':
                 var matches = val.match(/(\d{4})(\d\d)(\d\d)T(\d\d)(\d\d)(\d\d)\.(\d\d\d)Z/);
@@ -211,20 +190,7 @@ function deserialize(xml) {
                 var d = new Date(0);
                 d.setUTCFullYear(Number.valueOf(matches[1]), Number.valueOf(matches[2]) - 1, Number.valueOf(matches[3]));
                 d.setUTCHours(Number.valueOf(matches[4]), Number.valueOf(matches[5]), Number.valueOf(matches[6]), Number.valueOf(matches[7]));
-                if(container == 'list'){
-                    //Просто айтем в массиве
-                    obj.push(d);
-                }else if(container == 'map'){
-                    if(propName){
-                        //Имя свойства уже установлено, значит, это значение
-                        obj[propName] = d;
-                        propName = null;
-                    }else{
-                        throw new AnyBalance.Error('deserialize error: unexpected property without name: <' + elem + '>' + val);
-                    }
-                }else{
-                    throw new AnyBalance.Error('deserialize error: unexpected value outside the container: <' + elem + '>' + val);
-                }
+                putValue(d, function(val){obj.push(val)});
                 break;
             case 'map':
             case 'list':

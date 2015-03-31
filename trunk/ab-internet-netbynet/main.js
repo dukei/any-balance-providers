@@ -165,7 +165,7 @@ function mainUniversal(region){
     
 	var result = {success: true};
 	
-    getParam (html, result, 'balance', /Лицевой счет:(?:[^>]*>){4}баланс|Баланс:(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+    getParam (html, result, 'balance', /Баланс:(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
     getParam (html, result, 'subscriber', /Приветствуем Вас,([^<]*)/i, replaceTagsAndSpaces);
     getParam (html, result, 'contract', /<b>\s*Лицевой счет:|ЛС:(?:[^>]*>){2}([^<,]*)/i, replaceTagsAndSpaces);
     getParam (html, result, 'day_left', /дней до ухода в финансовую блокировку:|до списания абонентской платы осталось(?:[^>]*>){2}\s*(\d+)/i, replaceTagsAndSpaces, parseBalance);

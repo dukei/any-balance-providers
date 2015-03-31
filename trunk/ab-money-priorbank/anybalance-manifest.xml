@@ -1,12 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-money-priorbank</id>
+	<id version="5">ab-money-priorbank</id>
 	<api flags="no_browser"/>
 	<name>Приорбанк</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию об остатках на картах и счетах Приорбанка http://www.prior.by</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

@@ -591,6 +591,9 @@ function fetchPost(baseurl, html) {
 	
 	if (!multi) {
 		AnyBalance.trace('Похоже на кабинет с одним номером.');
+		
+		if (prefs.phone)
+			throw new AnyBalance.Error('Указан дополнительный номер телефона, но в кабинете нет прикрепленных номеров!');
 	} else {
 		AnyBalance.trace('Похоже на кабинет с несколькими номерами.');
 		
@@ -705,13 +708,15 @@ function fetchPost(baseurl, html) {
 		getBonuses(html + xhtml, result);
 	}
 	
-    if (AnyBalance.isAvailable('overpay', 'prebal', 'currency')) {
+    if (AnyBalance.isAvailable('overpay', 'prebal', 'currency', 'bills')) {
     	xhtml = getBlock(baseurl + 'c/post/index.xhtml', html, 'callDetailsDetails');
 		
     	getParam(xhtml, result, 'overpay', /<h4[^>]*>Переплата[\s\S]*?<span[^>]+class="price[^>]*>([\s\S]*?)<\/span>/i, balancesReplaces, parseBalance);
     	getParam(xhtml, result, 'overpay', /<h4[^>]*>Осталось к оплате[\s\S]*?<span[^>]+class="price[^>]*>([\s\S]*?)<\/span>/i, balancesReplaces, parseBalanceNegative);
     	getParam(xhtml, result, 'prebal', /Расходы по договору за текущий период:[\S\s]*?<div[^<]+class="balan?ce-summ"[^>]*>([\s\S]*?)<\/div>/i, balancesReplaces, parseBalance);
     	getParam(xhtml, result, ['currency', 'prebal', 'overpay', 'balance'], /Расходы по договору за текущий период:[\S\s]*?<div[^<]+class="balan?ce-summ"[^>]*>([\s\S]*?)<\/div>/i, balancesReplaces, myParseCurrency);
+		// Выставленные счета
+		getParam(xhtml, result, 'bills', /<div[^>]*"summ-descr"[^>]*>([\s\S]*?)<\//i, [/У вас нет неоплаченных счетов/i, '0', balancesReplaces], parseBalance);
 		
 		AnyBalance.trace(xhtml);
 		if(/информация[^<]*недоступна/i.test(xhtml))
@@ -986,6 +991,9 @@ function getBonuses(xhtml, result) {
 				else 
 					// Минут осталось на всех операторов
 					sumParam(services[i], result, 'min_local', reNewValue, replaceTagsAndSpaces, parseMinutes, aggregate_sum);*/
+			// TODO пока не работает, но может понадобится
+			} else if (/Баланс для оплаты дополнительных услуг/i.test(name)) {
+				
 			} else {
 				AnyBalance.trace('Неизвестная опция: ' + name + ' ' + services[i]);
 			}
@@ -1098,7 +1106,7 @@ function proceedWithMobileAppAPI(baseurl, prefs, failover) {
 	if(isAvailable('fio')) {
 		json = callAPIProc(baseurl + 'sso/contactData?login=' + encodedLogin);
 		
-		if((isset(json.lastName) && /[A-Za-zА-Яа-я]{2,}/i.test(json.lastName)) && isset(json.firstName)) {
+		if((isset(json.lastName) && /[A-Za-zА-Яа-я]{2,}/i.test(json.lastName)) && isset(json.firstName) && json.lastName != null) {
 			getParam((json.lastName ? json.lastName + ' ' : '') + (json.firstName || ''), result, 'fio', null, replaceTagsAndSpaces);
 		} else
 			AnyBalance.trace('Фио не указано в настройках...');

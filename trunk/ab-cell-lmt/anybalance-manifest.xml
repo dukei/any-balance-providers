@@ -1,8 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-cell-lmt</id>
+	<id version="2">ab-cell-lmt</id>
 	<api flags="no_browser"/>
-	<name>LMT</name>
+	<name>LMT (Латвия)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе провайдера мобильной связи LMT <a href="https://www.lmt.lv/ru/">https://www.lmt.lv/ru/</a></p>
 	<p>Информация берется из личного кабинета <a href="https://mans.lmt.lv/ru/index.php">https://mans.lmt.lv/ru/index.php</a></p>
@@ -20,5 +20,5 @@
 	</counters>
 	<keywords></keywords>
 	<type>cell</type>
-	<country>ru</country>
+	<country>lv</country>
 </provider>

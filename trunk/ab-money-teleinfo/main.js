@@ -199,11 +199,11 @@ function deserialize(xml) {
                 putValue(val, function(val){return null});
                 break;
             case 'double':
-                putValue(val, function(val){return Number.parseFloat(val)});
+                putValue(val, function(val){return parseFloat(val)});
                 break;
             case 'long':
             case 'int':
-                putValue(val, function(val){return Number.parseInt(val)});
+                putValue(val, function(val){return parseInt(val)});
                 break;
             case 'date':
                 putValue(val, function(val){
@@ -211,8 +211,8 @@ function deserialize(xml) {
                     if(!matches)
                         throw new AnyBalance.Error('deserialize error: unexpected date format: <' + elem + '>' + val);
                     var d = new Date(0);
-                    d.setUTCFullYear(Number.parseInt(matches[1]), Number.parseInt(matches[2]) - 1, Number.parseInt(matches[3]));
-                    d.setUTCHours(Number.parseInt(matches[4]), Number.parseInt(matches[5]), Number.parseInt(matches[6]), Number.parseInt(matches[7]));
+                    d.setUTCFullYear(parseInt(matches[1]), parseInt(matches[2]) - 1, parseInt(matches[3]));
+                    d.setUTCHours(parseInt(matches[4]), parseInt(matches[5]), parseInt(matches[6]), parseInt(matches[7]));
                     return d;
                 });
                 break;
@@ -233,7 +233,7 @@ function deserialize(xml) {
                 break;
             case 'ref':
             	putValue(val, function(val){
-            		var id = Number.parseInt(val);
+            		var id = parseInt(val);
             		if(!refMap[id])
             			throw new AnyBalance.Error('Inexistent reference: ' + id + ' of ' + refMap.length);
             		return refMap[id];

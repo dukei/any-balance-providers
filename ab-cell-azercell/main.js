@@ -22,8 +22,6 @@ function main(){
         Submit:'Принять'
     }, g_headers);
 
-//    AnyBalance.trace(html);
-    
     if(!/cmnd=logout|<title>(?:Login ok|Giriş|Логин)<\/title>/i.test(html)){
         var error = getParam(html, null, null, /<font[^>]+color="#FF0000"[^>]*>([\s\S]*?)<\/font>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error){
@@ -59,7 +57,7 @@ function main(){
     }
 
     if(AnyBalance.isAvailable('paysum', 'paydate')){
-        html = AnyBalance.requestGet(baseurl + '?cmnd=postpayments', g_headers);
+        html = AnyBalance.requestGet(baseurl + '?cmnd=prepayments', g_headers);
         getParam(html, result, 'paydate', /<td[^>]*>\s*(?:Сумма|Amount|Məbləğ)(?:(?:[\s\S](?!<\/table))*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDateISO);
         getParam(html, result, 'paysum', /<td[^>]*>\s*(?:Сумма|Amount|Məbləğ)(?:(?:[\s\S](?!<\/table))*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     }

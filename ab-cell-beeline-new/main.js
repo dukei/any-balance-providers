@@ -1095,10 +1095,18 @@ function proceedWithMobileAppAPI(baseurl, prefs, failover) {
 		getParam(g_currencys[json.currency], result, ['currency', 'balance'], null, replaceTagsAndSpaces);
 	} else if(payType == 'POSTPAID') {
 		
-		json = callAPIProc(baseurl + 'info/postpaidBalance?ctn=' + encodedLogin);
-		
-		getParam(json.balance + '', result, 'balance', null, replaceTagsAndSpaces, apiParseBalanceRound);
-		getParam(g_currencys[json.currency], result, ['currency', 'balance'], null, replaceTagsAndSpaces);	
+		if(isAvailable(['balance', 'currency'])) {
+			json = callAPIProc(baseurl + 'info/postpaidBalance?ctn=' + encodedLogin);
+			
+			getParam(json.balance + '', result, 'balance', null, replaceTagsAndSpaces, apiParseBalanceRound);
+			getParam(g_currencys[json.currency], result, ['currency', 'balance'], null, replaceTagsAndSpaces);
+		}
+			
+		if(isAvailable('overpay')) {
+			json = callAPIProc(baseurl + 'info/postpaidDebt?ctn=' + encodedLogin);
+			
+			getParam(json.balance + '', result, 'overpay', null, [replaceTagsAndSpaces, /^\s*-/i, ''], apiParseBalanceRound);
+		}
 	} else {
 		throw new AnyBalance.Error('Неизвестный тип кабинета: ' + payType);
 	}
@@ -1177,11 +1185,54 @@ function proceedWithMobileAppAPI(baseurl, prefs, failover) {
 			AnyBalance.trace('Ошибка получения бонусов: ' + e.message);
 		}
 	}
-
+	
+	// У пост-оплаты свои бонусы
+	getBonusesPostAPI(baseurl, payType, encodedLogin, result);
+	
+	 
+	 
+	
 	if(failover)
 		setCountersToNull(result);
 	
 	AnyBalance.setResult(result);
+}
+
+function getBonusesPostAPI(baseurl, payType, encodedLogin, result) {
+	if(isAvailableBonuses() && payType == 'POSTPAID') {
+		try {
+			var json = callAPIProc(baseurl + 'info/rests?ctn=' + encodedLogin);
+	
+			for(var z = 0; z < json.rests.length; z++) {
+				var curr = json.rests[z];
+				
+				// Минуты
+				if(curr.unitType == 'VOICE') {
+					//Приоритет билайна не случаен, их минуты определить сложнее
+					if(/номера других|на других|на все номера|других операторов/i.test(curr.restName)) {
+						sumParam(curr.currValue + ' ', result, 'min_local', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
+					} else {
+						sumParam(curr.currValue + ' ', result, 'min_bi', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
+					}
+				} else if(curr.unitType == 'SMS_MMS') {
+					sumParam(curr.currValue + ' ' + curr.unit, result, 'sms_left', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+				} else if(curr.unitType == 'MMS') {
+					sumParam(curr.currValue + ' ' + curr.unit, result, 'mms_left', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+				} else if(curr.unitType == 'INTERNET') {
+					sumParam(curr.currValue + ' mb', result, ['traffic_left', 'traffic_used'], null, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
+					sumParam(curr.initialSize + ' mb', result, ['traffic_total', 'traffic_used'], null, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
+					
+					if(isset(result.traffic_total) && isset(result.traffic_left)) {
+						sumParam(result.traffic_total - result.traffic_left, result, 'traffic_used', null, null, null, aggregate_sum);
+					}
+				} else {
+					AnyBalance.trace('Unknown units: ' + JSON.stringify(curr));
+				}
+			}
+		} catch(e) {
+			AnyBalance.trace('Ошибка получения постоплатных бонусов: ' + e.message);
+		}
+	}
 }
 
 function setCountersToNull(result){

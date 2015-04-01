@@ -10,7 +10,7 @@ var g_headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
 };
 
-function main() {
+function mainWeb() {
     var prefs = AnyBalance.getPreferences();
 
     checkEmpty(prefs.login, 'Введите логин!');
@@ -93,7 +93,7 @@ function doOld(prefs) {
     if (prefs.type == 'abs') {
         fetchAccountABS(baseurl);
     } else { //card
-        fetchCard(baseurl);
+        fetchCardWeb(baseurl);
     }
 }
 
@@ -293,7 +293,7 @@ function fetchAccountABS(baseurl) {
     AnyBalance.setResult(result);
 }
 
-function fetchCard(baseurl) {
+function fetchCardWeb(baseurl) {
     var prefs = AnyBalance.getPreferences();
     var html = AnyBalance.requestGet(baseurl + 'Accounts/Accounts.aspx');
     var result = {success: true};

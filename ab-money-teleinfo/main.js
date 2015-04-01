@@ -256,6 +256,12 @@ function deserialize(xml) {
 
 
 function main() {
+	if(!AnyBalance.getCapabilities){
+		AnyBalance.trace('Бинарные запросы не поддерживаются. Пока будем обновлять из веба...');
+		mainWeb();
+		return;
+	}
+
     var prefs = AnyBalance.getPreferences();
 
     AnyBalance.setOptions({FORCE_CHARSET: 'base64'});

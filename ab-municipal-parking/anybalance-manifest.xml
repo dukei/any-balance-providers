@@ -1,12 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="3">ab-municipal-parking</id>
+	<id version="4">ab-municipal-parking</id>
 	<name>Московский паркинг</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе и сроках действия разрешений на парковку из личного кабинета Московского паркинга https://parkingcab.mos.ru</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

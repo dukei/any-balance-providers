@@ -7,6 +7,7 @@ var g_headers = {
 	'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection':'keep-alive',
+	'Origin': 'https://login.mos.ru',
 	'User-Agent':'Mozilla/5.0 (BlackBerry; U; BlackBerry 9900; en-US) AppleWebKit/534.11+ (KHTML, like Gecko) Version/7.0.0.187 Mobile Safari/534.11+'
 };
 
@@ -16,27 +17,19 @@ function main(){
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-    var baseurl = 'https://parkingcab.mos.ru/';
+    var loginurl = 'https://login.mos.ru/',
+    	siteurl = 'https://parkingcab.mos.ru/';
     AnyBalance.setDefaultCharset('utf-8'); 
 	
-	var html = AnyBalance.requestGet(baseurl, g_headers);
-	
-	try {
-		html = AnyBalance.requestPost(baseurl + 'local/MPGU.php', {
-			module:'',
-			login:'Войти в личный кабинет',
-			_reqNo:0		
-		}, g_headers);
-		
-		//AnyBalance.trace(html);
-		
-		html = AnyBalance.requestPost('https://login.mos.ru/eaidit/eaiditweb/outerlogin.do', {
-			username:prefs.login,
-			password:prefs.password,
-		}, addHeaders({Referer: 'https://login.mos.ru/eaidit/eaiditweb/openouterlogin.do'})); 
-	} catch (e) {}
-	
-	//AnyBalance.trace(html);
+	var html = AnyBalance.requestGet(loginurl + 'eaidit/eaiditweb/openouterlogin.do', g_headers);
+
+	html = AnyBalance.requestPost(loginurl + 'eaidit/eaiditweb/outerlogin.do', {
+		username: prefs.login,
+		password: prefs.password		
+	}, addHeaders({ Referer: loginurl + 'eaidit/eaiditweb/openouterlogin.do' }));
+
+	html = AnyBalance.requestGet(loginurl + 'eaidit/eaiditweb/redirect.do?redirectto=https%3A%2F%2Fpgu.mos.ru%2Fru%2Fid%2F%3Fto%3Dhttps%253A%252F%252Fparkingcab.mos.ru%252Flocal%252FMPGU.php%252F%253Flogin%253D1%2526redirect%253D', g_headers)
+
     if(!/logout/i.test(html)){
         /*var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
@@ -46,9 +39,9 @@ function main(){
     
 	var result = {success: true};
 	
-    getParam(html, result, 'balance', /Текущий баланс[^>]*>[^>]*>[^>]*>[^>]*>[^>]*balance">([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'balance', /<strong[^>]*class="balance"[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 	
-	html = AnyBalance.requestGet(baseurl + '?page=accountData', g_headers);
+	html = AnyBalance.requestGet(siteurl + '?page=accountData', g_headers);
 
 	var trs = sumParam(html, null, null, /<tr>\s*<td[^>]+toggle-details(?:[^>]+>){18}\s+<\/tr>/ig);
 		

@@ -25,7 +25,7 @@
 		key="type"
 		title="Что смотреть"
 		summary="||{@s}"
-		entries="Карта|Счет в АБС"
+		entries="Карта или счет|Счет в АБС"
 		entryValues="card|abs"
 		defaultValue="card">
 	</ListPreference>

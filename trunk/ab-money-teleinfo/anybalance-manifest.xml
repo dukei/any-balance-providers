@@ -4,7 +4,7 @@
 	<name>ВТБ24: Телебанк</name>
 	<api flags="no_browser"/>
 	<description html="true"><![CDATA[
-	<p>Получает информацию о балансе карт и счетов из Системы «Телебанк» ВТБ24 ( https://www.telebank.ru/ ). Данные получаются по протоколу мобильного приложения ВТБ24 https://play.google.com/store/apps/details?id=ru.vtb24.mobilebanking.android, сравнивайте получаемые данные с приложением. </p>
+	<p>Получает информацию о балансе карт и счетов из Системы «Телебанк» ВТБ24 ( https://www.telebank.ru ). Данные получаются по протоколу мобильного приложения ВТБ24 https://play.google.com/store/apps/details?id=ru.vtb24.mobilebanking.android, сравнивайте получаемые данные с приложением. </p>
 	]]></description>
 	<instruction html="true"><![CDATA[
 	<p>Для подключения к системе «Телебанк» Вам необходимо один раз посетить любой офис банка с  документом, удостоверяющим личность.</p>

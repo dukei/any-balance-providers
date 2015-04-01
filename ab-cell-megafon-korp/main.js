@@ -24,17 +24,17 @@ function main() {
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
 	
-	var res = AnyBalance.requestPost(baseurl + 'sc_cp_apps/loginProcess', {
-		j_username: 'CP_' + prefs.login,
+	var html = AnyBalance.requestPost(baseurl + 'sc_cp_apps/loginProcess', {
+		j_username: prefs.login,
 		j_password: prefs.password,
 	}, addHeaders({
 		Referer: baseurl + 'sc_cp_apps/login'
 	}));
 
 	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, null, null, /"error.message"\s*:\s*"([^"]+)/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+			throw new AnyBalance.Error(error, null, /Вы ввели неправильный логин или пароль/i.test(error));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');

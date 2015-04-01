@@ -8,7 +8,7 @@
 		dialogTitle="Логин"
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите логин, используемый для входа в личный кабинет. CP_ указывать не надо!">
+		dialogMessage="Введите логин, используемый для входа в личный кабинет. Необходимо указать логин с префиксом, например SZF-12345678">
 	</EditTextPreference>
 	<EditTextPreference
 		title="Пароль"
@@ -26,8 +26,8 @@
 		title="Область"
 		dialogTitle="Выберите область"
 		summary="||{@s}"
-		entries="Курганская|Свердловская|Тюменская|Челябинская"
-		entryValues="ural|ural|ural|ural"
-		defaultValue="kurganskaya">
+		entries="Санкт-Петербург и область|Архангельская|Вологодская|Калининградская|Курганская|Мурманская|Новгородская|Псковская|Республика Карелия|Республика Коми|Свердловская|Тюменская|Челябинская"
+		entryValues="szf|szf|szf|szf|ural|szf|szf|szf|szf|ural|ural|ural|ural"
+		defaultValue="ural">
 	</ListPreference>
 </PreferenceScreen>

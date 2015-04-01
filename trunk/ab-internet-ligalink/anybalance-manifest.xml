@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-ligalink</id>
+	<api flags="no_browser"/>
+	<name>ЛигаЛинк</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе интернет провайдера ЛигаЛинк <a href="http://www.ligalink.ru/">http://www.ligalink.ru/</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="bonus" name="Бонусы"/>
+		<counter id="tariffCost" name="Стоимость услуг" units=" р"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

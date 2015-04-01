@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="5">ab-money-priorbank</id>
+	<id version="6">ab-money-priorbank</id>
 	<api flags="no_browser"/>
 	<name>Приорбанк</name>
 	<description html="true"><![CDATA[
@@ -19,6 +19,7 @@
 	<counters>
 		<counter id="balance" name="Баланс" units=" {@currency}"/>
 		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="name" name="Наименование" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="cardNumber" name="Номер карты/контракта" type="text"/>
 		<counter id="validto" name="Срок действия/Дата закрытия" type="time" format="dd/MM/yyyy"/>

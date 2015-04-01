@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<id version="21" major_version="3">ab-money-teleinfo</id>
-	<name>ВТБ24: Телеинфо</name>
+	<name>ВТБ24: Телебанк</name>
 	<api flags="no_browser"/>
 	<description html="true"><![CDATA[
-	<p>Получает информацию о балансе пластиковой карты Системы «Телеинфо» ВТБ24 ( https://www.telebank.ru/content/telebank-client/ru/login.html и https://old.telebank.ru/WebNew/Login.aspx ).</p>
+	<p>Получает информацию о балансе карт и счетов из Системы «Телебанк» ВТБ24 ( https://www.telebank.ru/ ). Данные получаются по протоколу мобильного приложения ВТБ24 https://play.google.com/store/apps/details?id=ru.vtb24.mobilebanking.android, сравнивайте получаемые данные с приложением. </p>
 	]]></description>
 	<instruction html="true"><![CDATA[
-	<p>Получить доступ к Телеинфо можно, пройдя регистрацию по ссылке https://www.telebank.ru/content/telebank-client/ru/help/teleinfo/topic41.html</p>
+	<p>Для подключения к системе «Телебанк» Вам необходимо один раз посетить любой офис банка с  документом, удостоверяющим личность.</p>
 	]]></instruction>
 	<author>Robert Khaliullov &lt;robix@mail.ru&gt;</author>
 	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
@@ -43,7 +43,7 @@
 		<counter id="fio" name="Владелец" type="text"/>
 		<counter id="all" name="Сводка" type="text"/>
 	</counters>
-	<keywords>ВТБ24, Телебанк, телеинфо</keywords>
+	<keywords>ВТБ24, Телебанк, телеинфо, teleinfo, втб</keywords>
 	<type>money, bank</type>
 	<country>ru</country>
 </provider>

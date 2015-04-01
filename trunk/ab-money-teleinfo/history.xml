@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="3" version="24" date="2015-04-01">
+	- Запуск получения данных отложен до выхода новой версии программы (нужно поддержать это в API)
+	</change>
 	<change major_version="3" version="23" date="2015-04-01">
 	- Получение данных через мобильное приложение
 	</change>

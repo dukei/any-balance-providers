@@ -43,7 +43,7 @@ function main() {
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	
-	var href = getParam(html, null, null, /<a href="([^"]+)[^>]*>\s*Дневник/i);
+	var href = getParam(html, null, null, /<a href="(http:\/\/schools[^"]+)[^>]*>\s*Мой дневник/i);
 	
 	checkEmpty(href, 'Не удалось найти ссылку на оценки, сайт изменен?', true);
 	
@@ -83,7 +83,7 @@ function main() {
 			getParam('<b>' + day + '</b><br/><br/>' + totalLessons, result, 'total' + i);
 	}
 	
-	getParam(html, result, 'fio', /"Мой профиль"([^>]*>){2}/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'fio', /header-profile__name[^>]+>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
 	
 	AnyBalance.setResult(result);
 }

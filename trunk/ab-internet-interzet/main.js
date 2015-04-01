@@ -11,6 +11,8 @@ var g_headers = {
 };
 
 function main(){
+	AnyBalance.Error('InterZet и Дом.ru объединились, поэтому для получения информации о балансе InterZet используйте провайдер Дом.ру (Эр-телеком)');
+	
     var prefs = AnyBalance.getPreferences();
     var baseurl = 'http://bill.interzet.ru/';
     AnyBalance.setDefaultCharset('cp1251'); 

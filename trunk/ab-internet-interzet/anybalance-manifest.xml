@@ -1,15 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="4">ab-internet-interzet</id>
+	<id version="5">ab-internet-interzet</id>
 	<name>InterZet (Санкт-Петербург)</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе провайдера InterZet <a href="http://interzet.ru">http://interzet.ru</a></p>
-	<p>Информация берется из личного кабинета <a href="http://bill.interzet.ru">http://bill.interzet.ru</a></p>
+	InterZet и Дом.ru объединились, поэтому для получения информации о балансе InterZet используйте провайдер Дом.ру (Эр-телеком): <a href="http://anybalance.ru/catalog.php?id=ab-internet-ertelecom&inapp=0">http://anybalance.ru/catalog.php?ab-internet-ertelecom&inapp=0</a>.
 	]]></description>
-	<instruction html="true"><![CDATA[
-	<p>Необходимо поставить галочку "Разрешить доступ из внешней сети в Личный Кабинет" в разделе "Настройки Личного кабинета"</p>
-	]]></instruction>	
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>

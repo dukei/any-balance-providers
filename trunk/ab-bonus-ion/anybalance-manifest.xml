@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="7">ab-bonus-ion</id>
+	<id version="8">ab-bonus-ion</id>
 	<name>Лень карта ИОН</name>
 	<description html="true"><![CDATA[
 	<p>Получает количество баллов на карте сервисной программе ИОН ЛЕНЬ в старом кабинете <a href="http://i-on.ru/crm/presents">http://i-on.ru/crm/presents</a> и новом (<a href="https://pay.khclub.ru/personal/pub/Entrance">https://pay.khclub.ru/personal/pub/Entrance</a></p>

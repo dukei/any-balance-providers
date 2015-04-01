@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="3">ab-cell-azercell</id>
+	<id version="4">ab-cell-azercell</id>
 	<name>Azercell (Азербайджан)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе и тарифном плане для сотового оператора Azercell <a href="http://azercell.com">http://azercell.com</a></p>
@@ -11,7 +11,7 @@
 	<p>Как получить доступ? </p>
 	<p>Зайдите в раздел Регистрация: <a href="http://subscriber.azercell.com/subscriber/subscriberSignInWithMsisdn.do">http://subscriber.azercell.com/subscriber/subscriberSignInWithMsisdn.do</a> и пройдите регистрацию. После успешного прохождения регистрации на номер Вашего телефона поступит пароль.</p>
 	]]></instruction>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

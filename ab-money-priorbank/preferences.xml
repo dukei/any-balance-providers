@@ -27,7 +27,7 @@
         summary="||{@s}\n"
         entries="Карта|Договор(Электронный депозит)"
         entryValues="card|contract"
-	    defaultValue="card">
+	    defaultValue="contract">
     </ListPreference>
     <EditTextPreference 
         positiveButtonText="ОК"

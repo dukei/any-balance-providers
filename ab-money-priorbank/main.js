@@ -40,7 +40,7 @@ function main() {
 
 	if(prefs.type == 'card')
 		fetchCard(prefs, result);
-	else if(prefs.type == 'contract')
+	else
 		fetchContract(prefs, result);
 	
 	AnyBalance.setResult(result);
@@ -54,11 +54,12 @@ function fetchCard(prefs, result) {
 	if(!card)
         throw new AnyBalance.Error('Не удаётся найти ' + (prefs.num ? 'карту с псевдонимом ' + prefs.num : 'ни одной карты'));
 
+	getParam(card, result, 'balance', /AMOUNT_AVAILABLE[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(card, result, ['currency', 'balance'], /Currency[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(card, result, 'name', /CustomSynonym[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(card, result, 'cardNumber', /CardNum[^>]*>([^<]+)/i);
 	getParam(card, result, '__tariff', /CardNum[^>]*>([^<]+)/i);
 	getParam(card, result, 'validto', /CARD_EXPIRE[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseDate);
-	getParam(card, result, 'balance', /AMOUNT_AVAILABLE[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(card, result, ['currency', 'balance'], /Currency[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
 	
 	return result;
 }
@@ -71,11 +72,12 @@ function fetchContract(prefs, result) {
 	if(!contract)
         throw new AnyBalance.Error('Не удаётся найти ' + (prefs.num ? 'услугу с псевдонимом ' + prefs.num : 'ни одной услуги'));
 
+	getParam(contract, result, 'balance', /ContractRest[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(contract, result, ['currency', 'balance'], /CurrCode[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(contract, result, 'name', /CustomSynonym[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(contract, result, 'cardNumber', /ContracNum[^>]*>([^<]+)/i);
 	getParam(contract, result, '__tariff', /ContracNum[^>]*>([^<]+)/i);
 	getParam(contract, result, 'validto', /FinishDate[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseDate);
-	getParam(contract, result, 'balance', /ContractRest[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(contract, result, ['currency', 'balance'], /CurrCode[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
 	
 	return result;
 }

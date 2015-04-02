@@ -256,13 +256,20 @@ function deserialize(xml) {
 
 
 function main() {
+    var prefs = AnyBalance.getPreferences();
+    if(prefs.source == 'site'){
+		AnyBalance.trace('В настройках выбрано обновление из интернет-банка');
+		mainWeb();
+		return;
+    }
+
+	AnyBalance.trace('В настройках выбрано обновление из мобильного приложения');
+
 	if(!AnyBalance.getCapabilities){
 		AnyBalance.trace('Бинарные запросы не поддерживаются. Пока будем обновлять из веба...');
 		mainWeb();
 		return;
 	}
-
-    var prefs = AnyBalance.getPreferences();
 
     AnyBalance.setOptions({FORCE_CHARSET: 'base64'});
 
@@ -380,8 +387,12 @@ function fetchCard(commonProperties){
     for(var i=0; i<obj.payload.products.length; ++i){
     	var p = obj.payload.products[i];
     	if(!prefs.card || endsWith(p.number, prefs.card)){
-    	    product = p;
-    	    break;
+    		if(!product)
+    	    	product = p;
+    	    if(/Card/i.test(p.__type)){ //Всё же по умолчанию отдаём предпочтение картам
+    	        product = p; 
+    	        break;
+    	    }
     	}
     }
 
@@ -389,43 +400,56 @@ function fetchCard(commonProperties){
     	throw new AnyBalance.Error('Не удалось найти карту или счет с последними цифрами ' + prefs.card);
 
     var result = {success: true};
-    getParam(p.shortNumber, result, '__tariff');
-    getParam(p.displayName, result, 'cardname');
-    getParam(p.number + '', result, 'cardnum');
-    getParam(p.balance.allowedSum, result, 'balance');
-    getParam(p.balance.amountSum, result, 'own');
-    getParam(p.baseCurrency.currencyCode, result, ['currency', 'balance', 'gracepay', 'minpay', 'limit', 'accbalance', 'own', 'blocked']);
-    getParam(p.balance.authorizedSum, result, 'blocked');
-    getParam(p.embossed, result, 'fio');
-    getParam(p.expireDate.getTime(), result, 'till');
+   	AnyBalance.trace('Product is ' + p.__type);
 
-    if(AnyBalance.isAvailable('limit', 'pct', 'minpay', 'gracepay', 'credit_till', 'minpaytill', 'gracetill')){
-        var obj = request(new Message({
-            __type: 'ru.vtb24.mobilebanking.protocol.ObjectRequest',
-            identity: {
-            	__type: 'ru.vtb24.mobilebanking.protocol.ObjectIdentityMto',
-            	id: p.id,
-            	type: p.__type
+    if(/Card/.test(p.__type)){
+        getParam(p.shortNumber, result, '__tariff');
+        getParam(p.displayName, result, 'cardname');
+        getParam(p.number + '', result, 'cardnum');
+        getParam(p.balance.allowedSum, result, 'balance');
+        getParam(p.balance.amountSum, result, 'own');
+        getParam(p.baseCurrency.currencyCode, result, ['currency', 'balance', 'gracepay', 'minpay', 'limit', 'accbalance', 'own', 'blocked']);
+        getParam(p.balance.authorizedSum, result, 'blocked');
+        getParam(p.embossed, result, 'fio');
+        getParam(p.expireDate.getTime(), result, 'till');
+        
+        //Для кредитной карты получаем больше параметров
+        if(/Credit/.test(p.__type) && AnyBalance.isAvailable('limit', 'pct', 'minpay', 'gracepay', 'credit_till', 'minpaytill', 'gracetill')){
+            var obj = request(new Message({
+                __type: 'ru.vtb24.mobilebanking.protocol.ObjectRequest',
+                identity: {
+                	__type: 'ru.vtb24.mobilebanking.protocol.ObjectIdentityMto',
+                	id: p.id,
+                	type: p.__type
+                }
+            }, null, commonProperties));
+        	
+        	var ca = obj.payload.cardAccount, li = ca && ca.loanInfo;
+        	if(ca && ca.creditLimit != null)
+            	getParam(ca.creditLimit, result, 'limit');
+            if(li){
+            	if(li.interestRate != null)
+                	getParam(li.interestRate, result, 'pct');
+                if(li.minAmountForRepayment != null)
+                	getParam(li.minAmountForRepayment, result, 'minpay');
+                if(li.graceAmountForRepayment != null)
+                	getParam(li.graceAmountForRepayment, result, 'gracepay');
+                if(li.limitEndDate)
+                    getParam(li.limitEndDate.getTime(), result, 'credit_till');
+                if(li.repaymentDate)
+                    getParam(li.repaymentDate && li.repaymentDate.getTime(), result, 'minpaytill');
+                if(li.graceEndDate)
+                    getParam(li.graceEndDate && li.graceEndDate.getTime(), result, 'gracetill');
             }
-        }, null, commonProperties));
-    	
-    	var ca = obj.payload.cardAccount, li = ca && ca.loanInfo;
-    	if(ca && ca.creditLimit != null)
-        	getParam(ca.creditLimit, result, 'limit');
-        if(li){
-        	if(li.interestRate != null)
-            	getParam(li.interestRate, result, 'pct');
-            if(li.minAmountForRepayment != null)
-            	getParam(li.minAmountForRepayment, result, 'minpay');
-            if(li.graceAmountForRepayment != null)
-            	getParam(li.graceAmountForRepayment, result, 'gracepay');
-            if(li.limitEndDate)
-                getParam(li.limitEndDate.getTime(), result, 'credit_till');
-            if(li.repaymentDate)
-                getParam(li.repaymentDate && li.repaymentDate.getTime(), result, 'minpaytill');
-            if(li.graceEndDate)
-                getParam(li.graceEndDate && li.graceEndDate.getTime(), result, 'gracetill');
         }
+    }else if(/Account/.test(p.__type)){ //Текущий счет
+        getParam(p.number + '', result, 'accnum');
+        getParam(p.name + ' ' + p.amount.currency.currencyCode, result, '__tariff');
+        getParam(p.name, result, 'cardname');
+        getParam(p.amount.sum, result, 'balance');
+        getParam(p.amount.currency.currencyCode, result, ['currency', 'balance']);
+    }else{
+    	throw new AnyBalance.Error('Неизвестный банковский продукт: ' + p.number + ' (' + getParam(p.__type, null, null, /\.([^\.]+)$/) + '). Обратитесь к разработчикам для исправления.');
     }
 
     AnyBalance.setResult(result);

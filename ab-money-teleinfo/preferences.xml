@@ -22,6 +22,14 @@
 		inputType="textPassword">
 	</EditTextPreference>
 	<ListPreference
+		key="source"
+		title="Источник данных"
+		summary="||{@s}"
+		entries="Мобильное приложение|Интернет-банк"
+		entryValues="mobile|site"
+		defaultValue="mobile">
+	</ListPreference>
+	<ListPreference
 		key="type"
 		title="Что смотреть"
 		summary="||{@s}"

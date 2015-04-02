@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="3" version="26" date="2015-04-02">
+	- Поддержка текущих счетов
+	- Возможность получать данные по-прежнему из сайта (указывается в настройках)
+	</change>
 	<change major_version="3" version="25" date="2015-04-01">
 	- Исправлена ошибка JS в AnyBalance
 	</change>

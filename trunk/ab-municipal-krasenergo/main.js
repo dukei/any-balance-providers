@@ -1,10 +1,5 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Получает баланс и информацию о последнем платеже в КрасноярскЭнергоСбыт.
-
-Сайт оператора: http://krsk-sbit.ru
-Личный кабинет: http://krsk-sbit.ru/quasar.php
 */
 
 var g_headers = {
@@ -16,15 +11,21 @@ var g_headers = {
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-    AnyBalance.setDefaultCharset('windows-1251');
-
     var baseurl = "http://krsk-sbit.ru/quasar.php";
     var now = new Date();
     var threeMonthsAgo = new Date(now.getFullYear(), now.getMonth()-3, 1);
+    AnyBalance.setDefaultCharset('windows-1251');
+
+    // Входим либо по лиц. счету + фамилии, либо по имени + паролю
+    if(!(prefs.abonentid && prefs.fam) && !(prefs.login && prefs.password))
+        throw new AnyBalance.Error('Необходимо ввести либо номер финансово-лицевого счета и фамилию, либо имя пользователя и пароль.');
+
     // Передача фактических показаний прибора учета не работает на сайте
     var html = AnyBalance.requestPost(baseurl, {
-        abonentid:prefs.login,
-        fam:prefs.password,
+        abonentid: prefs.abonentid,
+        fam: prefs.fam,
+        login: prefs.login,
+        password: prefs.password,
 		//SendCounter:'Передача фактических показаний прибора учета',
         qm:threeMonthsAgo.getMonth(),
         qy:threeMonthsAgo.getFullYear(),

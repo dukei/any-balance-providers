@@ -8,7 +8,7 @@
         negativeButtonText="Отмена" 
         dialogMessage="Введите номер лицевого счета."
         inputType="text"
-        key="login">
+        key="abonentid">
     </EditTextPreference>
     <EditTextPreference 
         title="Фамилия" 
@@ -18,6 +18,26 @@
         negativeButtonText="Отмена" 
         dialogMessage="Введите Фамилию абонента."
         inputType="text"
+        key="fam">
+    </EditTextPreference>
+    <EditTextPreference 
+        title="Имя пользователя" 
+        positiveButtonText="ОК" 
+        summary="||{@s}" 
+        dialogTitle="Имя пользователя" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите имя пользователя."
+        inputType="text"
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        title="Пароль" 
+        positiveButtonText="ОК" 
+        summary="||{@s}" 
+        dialogTitle="Пароль" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите пароль."
+        inputType="textPassword"
         key="password">
     </EditTextPreference>	
 </PreferenceScreen>

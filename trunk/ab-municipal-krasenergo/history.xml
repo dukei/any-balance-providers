@@ -1,4 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?><history>
+	<change version="8" date="2015-04-02">
+	- Добавлен вход по имени пользователя и паролю
+	</change>
 	<change version="7" date="2015-03-03">
 	- Поддержка изменений на сайте.
 	</change>

@@ -19,12 +19,4 @@
         dialogMessage="Введите пароль, используемый для входа в личный кабинет."
         inputType="textPassword">
     </EditTextPreference>
-    <ListPreference
-		key="period"
-		title="Период отображения"
-        summary="||{@s}"
-        entries="Текущий месяц|Предыдущий месяц"
-        entryValues="curr|prev"
-		defaultValue="curr">
-	</ListPreference>	
 </PreferenceScreen>

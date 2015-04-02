@@ -3,7 +3,6 @@
 */
 
 var g_headers = {
-
 	'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
 	'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
@@ -16,6 +15,9 @@ function main(){
     var prefs = AnyBalance.getPreferences();
     var baseurl = 'http://www.kuzesc.ru:7777/pls/apex/';
     AnyBalance.setDefaultCharset('utf-8'); 
+
+	checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(prefs.password, 'Введите пароль!');
 	
     var html = AnyBalance.requestGet(baseurl + 'f?p=100:1', g_headers);
 
@@ -32,54 +34,21 @@ function main(){
 			return 'LOGIN';
 		return value;
 	}, true);
+
     html = AnyBalance.requestPost(baseurl + 'wwv_flow.accept', params, addHeaders({Referer: baseurl + 'f?p=100:1'}));
 
     if(!/exit\.gif/i.test(html)){
         var error = getParam(html, null, null, /<table class="tbl-body"[\s\S]*?<H2>([\s\S]*?)<\/H2>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
-            throw new AnyBalance.Error(error);
+            throw new AnyBalance.Error(error, null, /Вы ввели несуществующий номер лицевого счёта|Неверный пароль/i.test(error));
+
+		AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
-	var table = getParam(html, null, null, /<table[^>]*class="report-standard-alternatingrowcolors"[\s\S]*?<\/table>/i);
-    if(!table)
-        throw new AnyBalance.Error('Не удалось найти таблицу с данными, возможно у Вас нет данных, либо Ваш тариф не поддерживается, в таком случае свяжитесь с автором провайдера.');
 
     var result = {success: true};
-	// Баланс
-	getParam(html, result, 'balance', /Ваша (?:переплата|задолженность)[\s\S]*?по показан[\s\S]*?составляет([\s\S]*?)руб/i, replaceTagsAndSpaces, parseBalance);
-	// Текущие показания 
-	getParam(html, result, 'current', /Ваша (?:переплата|задолженность)[\s\S]*?по показан([\s\S]*?)составляет/i, replaceTagsAndSpaces, parseBalance);
-	// Список формируется так, что последняя запись находится внизу, надо почитать все ряды в таблице и узнать какой из них последний
-	var periods = sumParam(html, null, null, /(<tr\s*class="highlight-row">[\s\S]*?<\/tr>)/ig, null, html_entity_decode, null);
 
-	var tableTitles = sumParam(html, null, null, /<th[^>]*COL[^>]*>([\s\S]*?)<\/th>/ig);	
-	if(prefs.period == 'prev')
-		html = periods[periods.length-2];	
-	else
-		html = periods[periods.length-1];
-
-	var tableElements = sumParam(html, null, null, /<td[^>]*>([\s\S]*?)<\/td>/ig);
+	getParam(html, result, 'balance', /[переплата|задолженность][\s]*?составляет[\s\S]*?руб/i, [replaceTagsAndSpaces, /Задолженность по услуге:/, '-'], parseBalance);
 	
-	for(i = 0; i < tableTitles.length; i++){
-		var curr = tableTitles[i];
-		if(curr.indexOf('Период расчёта') > -1)
-			getParam(tableElements[i], result, 'period', null, replaceTagsAndSpaces, html_entity_decode);
-		else if(curr.indexOf('Сальдо на начало периода') > -1)
-			getParam(tableElements[i], result, 'saldo', null, replaceTagsAndSpaces, parseBalance);
-		else if(curr.indexOf('Показания на начало периода') > -1)
-			getParam(tableElements[i], result, 'pokazaniya', null, replaceTagsAndSpaces, parseBalance);
-		else if(curr.indexOf('Показания на конец периода') > -1)
-			getParam(tableElements[i], result, 'pokazaniya_end', null, replaceTagsAndSpaces, parseBalance);
-		else if(curr.indexOf('Расход, кВтч') > -1)
-			getParam(tableElements[i], result, 'rashod', null, replaceTagsAndSpaces, parseBalance);
-		else if(curr.indexOf('Тариф') > -1)
-			getParam(tableElements[i], result, 'tarif', null, replaceTagsAndSpaces, parseBalance);
-		else if(curr.indexOf('Начислено за период, руб') > -1)
-			getParam(tableElements[i], result, 'nachisleno', null, replaceTagsAndSpaces, parseBalance);
-		else if(curr.indexOf('Оплачено за период') > -1)
-			getParam(tableElements[i], result, 'oplacheno', null, replaceTagsAndSpaces, parseBalance);
-		else if(curr.indexOf('Сальдо на конец периода') > -1)
-			getParam(tableElements[i], result, 'saldo_end', null, replaceTagsAndSpaces, parseBalance);
-	}
     AnyBalance.setResult(result);
 }

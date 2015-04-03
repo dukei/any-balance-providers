@@ -1,5 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="1.0" version="2" date="2015-04-03">
+	- Поддержка изменений на сайте.
+	</change>
 	<change major_version="1" version="0.1">
 	- Пилотный запуск
 	</change>

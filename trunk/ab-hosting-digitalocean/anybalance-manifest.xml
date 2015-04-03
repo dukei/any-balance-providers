@@ -1,12 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="1.0" version="1">ab-hosting-digitalocean</id>
+	<id major_version="1.0" version="2">ab-hosting-digitalocean</id>
 	<api flags="no_browser"/>
 	<name>DigitalOcean</name>
 	<description>
-Получает баланс для хостинга DigitalOcean. Информация берется из личного кабинета https://cloud.digitalocean.com/billing.
+		Получает баланс для хостинга DigitalOcean. Информация берется из личного кабинета https://cloud.digitalocean.com/billing.
 	</description>
-	<author>Andrey Belchikov &lt;belchikovs@gmail.com&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

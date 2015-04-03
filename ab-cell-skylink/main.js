@@ -20,7 +20,86 @@ function main(){
 
     AnyBalance.trace("Entering region: " + region);
 
-    regionFunc();
+    try {
+        AnyBalance.trace('Пробуем войти по-старому');
+        regionFunc();
+    } catch(e) {
+        AnyBalance.trace('Старый логин не сработал, пробуем на my.skylink');
+        mainMySkylink(prefs);
+    }
+}
+
+function mainMySkylink(prefs){
+    var baseurl = 'https://my.skylink.ru/';
+    var headers = {
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
+        'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+        'Connection': 'keep-alive',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+    };
+
+    var html = AnyBalance.requestGet(baseurl, headers);
+
+    if(!html || AnyBalance.getLastStatusCode() > 400){
+        AnyBalance.trace(html);
+        throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+    }
+
+    var loginForm = getParam(html, null, null, /<form[^>]*id="modal-login-form"[^>]*>[\s\S]*?<\/form>/i);
+    if(!loginForm)
+        throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
+
+    var params = createFormParams(loginForm, function(params, str, name, value) {
+        if (name == 'j_username') 
+            return prefs.login;
+        else if (name == 'j_password')
+            return prefs.password;
+        return value;
+    });
+
+    var res = AnyBalance.requestPost(baseurl + 'public/security/check', params, addHeaders({
+        Referer: baseurl,
+        'X-Requested-With': 'XMLHttpRequest',
+        Accept: 'application/json, text/javascript, */*; q=0.01'
+    }, headers));
+
+    var json = getJson(res);
+
+    if(!json || !json.success){
+        AnyBalance.trace(JSON.stringify(json));
+        throw new AnyBalance.Error(json.error, null, /Пароль неправильный|/i.test(json.error));
+    }
+
+    html = AnyBalance.requestGet(baseurl + json.targetUrl.replace(/^\//, ''), headers);
+
+    var result = {success: true};
+
+    getParam(html, result, 'userName', /top-profile-subscriber-name[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, '__tariff', /Тариф\s*<\/h2>\s*<div[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+
+    if(isAvailable('balance')){
+        var tokenName = getParam(html, null, null, /var data\s*=\s*{\s*([^:]+)/i, replaceTagsAndSpaces, html_entity_decode);
+        var tokenValue = getParam(html, null, null, /var data\s*=\s*{\s*[^:]+:\s['"]([^'"]+)/i, replaceTagsAndSpaces, html_entity_decode);
+        if(!tokenName || !tokenValue)
+            throw new AnyBalance.Error('Не удалось найти токен для получения баланса. Сайт изменен?');
+
+        params = {
+            isBalanceRefresh: true
+        };
+        params[tokenName] = tokenValue;
+
+        res = AnyBalance.requestPost(baseurl + 'balance/json', params, addHeaders({
+            'X-Requested-With': 'XMLHttpRequest',
+            Accept: 'application/json, text/javascript, */*; q=0.01'
+        }, headers));
+
+        json = getJson(res);
+
+        getParam(json.balance, result, 'balance', null, replaceTagsAndSpaces, parseBalance);
+    }
+
+    AnyBalance.setResult(result);
 }
 
 function reqSkypoint(url, action, soapAction) {

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-cell-mts-tm</id>
+	<api flags="no_browser"/>
+	<name>МТС (Туркменистан)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера МТС (Туркменистан) <a href="http://www.mts.tm/">http://www.mts.tm/</a></p>
+	<p>Информация берется из личного кабинета <a href="https://ihelper.mts.tm/">https://ihelper.mts.tm/</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" ман"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="acc_num" name="Номер лицевого счета" type="text"/>
+		<counter id="minutes_avail" name="Доступно по скидке - Количество минут за период" units=" мин"/>
+		<counter id="minutes_used" name="Использовано по скидке - Количество минут за период" units=" мин"/>
+		<counter id="packages_avail" name="Доступно по скидке - Пакетов за период (получено и передано)"/>
+		<counter id="packages_used" name="Использовано по скидке - Пакетов за период (получено и передано)"/>
+	</counters>
+	<keywords></keywords>
+	<type>cell</type>
+	<country>tm</country>
+</provider>

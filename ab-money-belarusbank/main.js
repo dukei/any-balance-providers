@@ -7,7 +7,7 @@ var g_headers = {
 	'Accept-Language': 'ru,en;q=0.8',
 	'Connection': 'keep-alive',
 	'Cache-Control': 'max-age=0',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.65 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.65 Safari/537.36'
 };
 
 function main(){
@@ -42,7 +42,7 @@ function main(){
         throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
     }
 
-    html = AnyBalance.requestPost(baseurl + url, {
+    var htmlCodePage = html = AnyBalance.requestPost(baseurl + url, {
         bbIbUseridField:prefs.login,
         bbIbPasswordField:prefs.password,
         bbIbLoginAction:'in-action',
@@ -83,7 +83,7 @@ function main(){
 	
 	var params = createFormParams(form, function(params, str, name, value) {
 		if (name == 'bbIbCodevalueField') 
-			return code*1;
+			return code;
 
 		return value;
 	});	
@@ -101,6 +101,9 @@ function main(){
         if(/bbIbNewPasswordConfirmField/i.test(html))
             throw new AnyBalance.Error('Интернет банк требует сменить пароль. Пожалуйста, зайдите в интернет банк через браузер, смените пароль, затем новый пароль введите в настройки провайдера.', null, true);
 		
+        AnyBalance.trace('******* Страница запроса кода *******');
+        AnyBalance.trace(htmlCodePage);
+        AnyBalance.trace('******* Страница ответа на ввод кода *******');
         AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось войти в интернет-банк после ввода кода (№' + (codenum+1) + ': ' + code + ') . Сайт изменен?');
     }

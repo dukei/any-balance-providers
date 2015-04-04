@@ -443,8 +443,10 @@ function fetchAccountStatus(html, result) {
     sumParam(html, result, 'mms_till', /(?:ммс|mms)[^<]*[.:,]*\s*(?:Пакет\s*)?действует до ([^<]*)/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
     // Разделим минуты на МТС и МТС РФ
     html = sumParam(html, result, 'min_left_mts_rf', /Оста(?:лось|ток):?\s*([\d\.,]+)\s*(?:бесплатных\s*)?мин[^>]+МТС РФ/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
+    html = sumParam(html, result, 'min_left_mts_rf', /Оста(?:лось|ток)[^<]+мин[^>]+МТС РФ:\s*([\d\.,]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
     //Территория МТС (3000 минут): Осталось 0 минут
     html = sumParam(html, result, 'min_left_mts', /Территория МТС.*?: Осталось\s*([\d\.,]+)\s*мин/ig, replaceFloat, parseBalance, aggregate_sum, true);
+    html = sumParam(html, result, 'min_left_mts', /Оста(?:ток|лось)\s*([\d\.,]+)\s*мин\S*\s*(?:на\s*)?МТС/ig, replaceFloat, parseBalance, aggregate_sum, true);
     html = sumParam(html, result, 'min_left_mts', /Оста(?:ток|лось)\s*([\d\.,]+)\s*мин\S*\s*(?:на\s*)?МТС/ig, replaceFloat, parseBalance, aggregate_sum, true);
     //html = sumParam (html, result, 'min_left_mts', /Остаток:?\s*([\d\.,]+)\s*мин\S* на МТС/ig, replaceFloat, parseBalance, aggregate_sum, true);
     //Срочный контракт (15%, 25% как 15%): Осталось 0 минут

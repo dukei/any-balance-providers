@@ -31,7 +31,10 @@ function main() {
 	getParam(html, result, '__tariff', /Номер кошелька(?:[^>]*>){2}(\d{10,20})/i, replaceTagsAndSpaces);
 	getParam(result['__tariff'], result, 'number');
 	
-	if(/sum__amount[^>]*>\s*\*{3}/i.test(html)) {
+	var textsum = getParam(html, result, 'balance', /b-sum__amount[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+	AnyBalance.trace('Предположительно баланс где-то здесь: ' + textsum);
+
+	if(/\*{3}/.test(textsum)) {
 	    AnyBalance.trace('Сумма спрятана. Будем пытаться найти...');
 		var text = AnyBalance.requestGet(baseurl + "tunes.xml", g_headers);
 		var sk = getParam(text, null, null, /name="sk"[^>]*value="([^"]+)/i, replaceTagsAndSpaces);
@@ -44,7 +47,7 @@ function main() {
 		var json = getJson(text);
 	    getParam('' + json.sum, result, 'balance', null, null, parseBalance);
 	} else {
-	    getParam(html, result, 'balance', /b-sum__amount[^>]*>\s*([-\s\d,.]+)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+	    getParam(html, result, 'balance', /b-sum__amount[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
 	}
 	
 	AnyBalance.setResult(result);

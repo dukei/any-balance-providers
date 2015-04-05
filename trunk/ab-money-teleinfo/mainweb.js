@@ -187,7 +187,7 @@ function fetchCardNew(baseurl, html, json) {
     //getParam(html, result, 'fio', /<div[^>]+id="name"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(FoundProduct.number + '', result, '__tariff', null, replaceTagsAndSpaces, html_entity_decode);
     getParam(FoundProduct.name + '', result, 'cardname', null, replaceTagsAndSpaces, html_entity_decode);
-    getParam(FoundProduct.number + '', result, 'cardnum', null, replaceTagsAndSpaces, html_entity_decode);
+    getParam(FoundProduct.number, result, /\d{20}/.test(FoundProduct.number) ? 'accnum' : 'cardnum', null, replaceTagsAndSpaces, html_entity_decode);
     getParam(FoundProduct.amount.sum + '', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
     getParam(FoundProduct.amount.currency + '', result, ['currency', 'balance', 'gracepay', 'minpay', 'limit', 'accbalance', 'own', 'blocked'], null, replaceTagsAndSpaces, html_entity_decode);
 

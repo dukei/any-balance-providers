@@ -120,6 +120,10 @@ function request(m) {
     var xml = CryptoJS.enc.Utf8.stringify(words, sizesSize + wordsVer.sigBytes);
     var obj = deserialize(xml);
     AnyBalance.trace('Returned ' + getParam(obj.payload.__type, null, null, /\.(\w+)$/));
+
+    if(/ErrorResponse/.test(obj.payload.__type))
+    	throw new AnyBalance.Error(obj.payload.message, null, obj.payload.type == 'invalid-credentials');
+
     return obj;
 }
 
@@ -316,32 +320,35 @@ function main() {
         password: prefs.password
     }, 'LoginRequest theme', commonProperties));
 
-    if(/ErrorResponse/.test(obj.payload.__type))
-    	throw new AnyBalance.Error(obj.payload.message, null, obj.payload.type == 'invalid-credentials');
-
     if(!obj.payload.authorizationLevel || obj.payload.authorizationLevel.id != 'IDENTIFIED')
         throw new AnyBalance.Error('Неизвестная ошибка. Сайт изменен?');
+
+    if(obj.payload.authorization.type.id != 'NONE'){
+    	//Надо вводить код...
+    	AnyBalance.trace('Придется, черт возьми, вводить код: ' + obj.payload.authorization.type.id);
+    }
 
     var userid = obj.payload.userInfo.unc;
 
     obj = request(new Message({
         __type: 'ru.vtb24.mobilebanking.protocol.security.SelectAuthorizationTypeRequest',
-        authorizationType: {
-        	__type: '>ru.vtb24.mobilebanking.protocol.security.AuthorizationTypeMto',
-        	id: 'NONE',
-        	value: 'None'
-        }
+        authorizationType: obj.payload.authorization.type
     }, 'SelectAuthorizationTypeRequest theme', commonProperties));
 
     obj = request(new Message({
         __type: 'ru.vtb24.mobilebanking.protocol.security.GetChallengeRequest'
     }, 'GetChallengeRequest theme', commonProperties));
 
+    var code = '';
+    if(obj.payload.authorization.type.id != 'NONE'){
+    	var code = AnyBalance.retrieveCode(obj.payload.authorization.message, null, {inputType: 'number', time: 300000});
+    }
+
     commonProperties.USER_ID = userid;
 
     obj = request(new Message({
         __type: 'ru.vtb24.mobilebanking.protocol.security.ConfirmLoginRequest',
-        inChallengeResponse: ''
+        inChallengeResponse: code
     }, 'ConfirmLoginRequest theme', commonProperties));
 
     if(!prefs.type || prefs.type == 'card'){

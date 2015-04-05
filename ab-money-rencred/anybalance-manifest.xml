@@ -1,13 +1,13 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="5">ab-money-rencred</id>
-	<api flags="no_browser"/>
+	<id version="6">ab-money-rencred</id>
+	<api flags="no_browser|sms"/>
 	<name>Ренессанс Кредит</name>
 	<description html="true"><![CDATA[
-	<p>Получает текущий остаток и другие параметры карт, счетов банка Ренессанс Кредит (http://rencredit.ru), используя интернет-банк https://online.rencredit.ru.</p>
+	<p>Получает текущий остаток и другие параметры карт, счетов банка Ренессанс Кредит (http://rencredit.ru), используя интернет-банк https://ib.rencredit.ru.</p>
 	]]></description>	
 	<instruction html="true"><![CDATA[
-	<p>Для подключения к системе «Интернет-банк» Вам необходимо необходимо оформить договор в любом офисе Банка в Москве или Московской области.</p>
+	<p>Подключиться к системе «Интернет-банк» можно, нажав ссылку <a href="https://ib.rencredit.ru/rencredit/ru/registration?p_p_id=ClientEnrollment_WAR_bscbankserverportalapp&p_p_lifecycle=0&p_p_state=normal&p_p_mode=view&p_p_col_id=column-1&p_p_col_count=1">регистрация</a> на главной странице интернет банка https://ib.rencredit.ru.</p>
 	]]></instruction>
 	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
 	<files>
@@ -32,6 +32,6 @@
 		<counter id="available" name="Доступно" units=" {@currency}"/>
 	</counters>
 	<keywords>интернет-банкинг</keywords>
-	<type>money</type>
+	<type>money, bank</type>
 	<country>ru</country>
 </provider>

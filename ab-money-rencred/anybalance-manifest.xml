@@ -4,7 +4,7 @@
 	<api flags="no_browser|sms"/>
 	<name>Ренессанс Кредит</name>
 	<description html="true"><![CDATA[
-	<p>Получает текущий остаток и другие параметры карт, счетов банка Ренессанс Кредит (http://rencredit.ru), используя интернет-банк https://ib.rencredit.ru.</p>
+	<p>Получает текущий остаток и другие параметры карт, счетов банка Ренессанс Кредит (http://rencredit.ru), используя интернет-банк https://ib.rencredit.ru. При каждом получении баланса будет требовать ввода СМС для входа в интернет-банк, как и родной интернет-банк Ренессанс Кредита. Жалуйтесь на это в службу поддержки банка, пожалуйста.</p>
 	]]></description>	
 	<instruction html="true"><![CDATA[
 	<p>Подключиться к системе «Интернет-банк» можно, нажав ссылку <a href="https://ib.rencredit.ru/rencredit/ru/registration?p_p_id=ClientEnrollment_WAR_bscbankserverportalapp&p_p_lifecycle=0&p_p_state=normal&p_p_mode=view&p_p_col_id=column-1&p_p_col_count=1">регистрация</a> на главной странице интернет банка https://ib.rencredit.ru.</p>

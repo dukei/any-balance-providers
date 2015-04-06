@@ -28,11 +28,10 @@ var g_phrases = {
 	}
 }
 var g_headers = [
-	['Accept', '*/*'],
-	['Accept-Charset', 'windows-1251,utf-8;q=0.7,*;q=0.3'],
-	['Accept-Language', 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4'],
+	['Accept', 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'],
+	['Accept-Language', 'ru,en-US;q=0.8,en;q=0.6'],
 	['Connection', 'keep-alive'],
-	['User-Agent', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.89 Safari/537.1']
+	['User-Agent', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36']
 ];
 
 var g_currencyDependancy = ['currency', 'balance', 'topay', 'debt', 'minpay', 'penalty', 'late', 'overdraft', 'limit'];
@@ -165,8 +164,11 @@ function processClick(){
     var baseurl = "https://click.alfabank.ru/";
 	
     var html = AnyBalance.requestGet(baseurl + 'ALFAIBSR/', g_headers);
+
+//    AnyBalance.setCookie('click.alfabank.ru', 'acl', prefs.login);
+//    AnyBalance.setCookie('click.alfabank.ru', 'cacl', "1");
 	
-    html = AnyBalance.requestPost(baseurl + 'adfform/security', {
+    html = AnyBalance.requestPost(baseurl + 'AlfaSign/security', {
         username: prefs.login,
         password: prefs.password.substr(0, 16),
     }, g_headers);
@@ -193,11 +195,14 @@ function processClick(){
     var afr = getParam(html, null, null, /"_afrLoop",\s*"(\d+)"/i);
     if(!afr)
         throw new AnyBalance.Error('Не удаётся найти параметр для входа: _afrLoop. Сайт изменен?');
+    var sess = getParam(html, null, null, /var\s+sess\s*=\s*"([^"]*)/i, replaceSlashes);
+    if(!sess)
+        throw new AnyBalance.Error('Не удаётся найти параметр для входа: sess. Сайт изменен?');
 
-    html = AnyBalance.requestGet(baseurl + 'ALFAIBSR/?_afrLoop='+afr+'&_afrWindowMode=0&_afrWindowId=null', g_headers);
+    html = AnyBalance.requestGet(baseurl + 'ALFAIBSR/' + sess + '?_afrLoop='+afr+'&_afrWindowMode=0&_afrWindowId=null', g_headers);
 
-    var url = getParam(html, null, null, /<meta[^>]*\/(ALFAIBSR\/[^"']*)/i, null, html_entity_decode);
-    
+    var url = getParam(html, null, null, /location\.href\s*=\s*'\/(ALFA[^']*)/, replaceSlashes);
+
     html = AnyBalance.requestGet(baseurl + url, g_headers);
 
     var afr = getParam(html, null, null, /"_afrLoop",\s*"(\d+)"/i);

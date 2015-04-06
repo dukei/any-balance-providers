@@ -12,7 +12,7 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://cash.vnu.ru/';
+	var baseurl = 'http://cash.vnu.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Введите логин!');
@@ -24,34 +24,45 @@ function main() {
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
+
+	var captchaKey, captchaSrc, captcha;
+	if(AnyBalance.getLevel() >= 7){
+		AnyBalance.trace('Пытаемся ввести капчу');
+		captchaSrc = getParam(html, null, null, /kcaptcha\/\?PHPSESSID=[^"]+/i);
+		captcha = AnyBalance.requestGet(baseurl + captchaSrc, addHeaders({ Referer: baseurl }));
+		if(!captchaSrc || !captcha)
+			throw new AnyBalance.Error('Не удалось получить капчу! Попробуйте обновить данные позже.');
+		captchaKey = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
+		AnyBalance.trace('Капча получена: ' + captchaKey);
+	} else {
+		throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
+	}
 	
-	html = AnyBalance.requestPost(baseurl + 'index.php?p=payment&pp=conn_friend', {
-		username: prefs.login,
+	html = AnyBalance.requestPost(baseurl + 'index', {
+		login: prefs.login,
 		passwd: prefs.password,
-		do_login: 'do_login'
+		keystring: captchaKey
 	}, addHeaders({Referer: baseurl}));
 	
-	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
+	if (/Авторизация не удалась./i.test(html)) {
+		var error = getParam(html, null, null, /<div[^>]+class="cir yellow-tab"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
-
-		error = getParam(html, null, null, /Логин и пароль не соответствуют друг другу./i, replaceTagsAndSpaces, html_entity_decode);
-		if (error)
-			throw new AnyBalance.Error(error, null, true);
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
+
+	html = AnyBalance.requestGet(baseurl + 'index', g_headers);
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'balance', /Баланс<\/td>\s*<td[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'status', /Блокировка<\/td>\s*<td[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'credit', /Кредит<\/td>\s*<td[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'fio', /ФИО<\/td>\s*<td[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'accnum', /Номер лицевого счета<\/td>\s*<td[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, '__tariff', /Тариф<\/td>\s*<td[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'balance', /Баланс<\/th>\s*<td[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'status', /Блокировка<\/th>\s*<td[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'credit', /Кредит<\/th>\s*<td[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'fio', /ФИО<\/th>\s*<td[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'accnum', /id клиента<\/th>\s*<td[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, '__tariff', /тарифный план<\/th>\s*<td[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
 	
 	AnyBalance.setResult(result);
 }

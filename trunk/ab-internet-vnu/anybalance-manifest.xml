@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-internet-vnu</id>
+	<id version="2">ab-internet-vnu</id>
 	<api flags="no_browser"/>
 	<name>Угреша нетворк</name>
 	<description html="true"><![CDATA[
@@ -20,7 +20,7 @@
 		<counter id="credit" name="Кредит" units=" р"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="status" name="Блокировка" type="text"/>
-		<counter id="accnum" name="Номер лицевого счета" type="text"/>
+		<counter id="accnum" name="id клиента" type="text"/>
 	</counters>
 	<keywords></keywords>
 	<type>internet</type>

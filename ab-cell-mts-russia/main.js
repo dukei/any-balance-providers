@@ -457,8 +457,6 @@ function fetchAccountStatus(html, result) {
     html = sumParam(html, result, 'min_left', /Остаток бонуса:\s*([\d\.,]+?)\s*мин/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
     // Пакет минут (МТС+ОСС+ОФС) в дом. регионе": 1710мин</li>
     html = sumParam(html, result, 'min_left', /Пакет минут[^<]*?([\d\.,]+?)\s*мин/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
-
-	
 	
     // Остаток минут
     html = sumParam(html, result, 'min_left', /Осталось:?\s*([\d\.,]+)\s*(?:бесплатных\s*)?мин/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
@@ -592,9 +590,25 @@ function isAnotherNumber(){
 }
 
 function checkLoginState(html, loginUrl) {
+    var img = getParam(html, null, null, /<img[^>]+id="kaptchaImage"[^>]*src="data:image\/\w+;base64,([^"]*)/, null, html_entity_decode);
+	if(img) {
+	    AnyBalance.trace('МТС решило показать капчу :( Жаль');
+	    var code = AnyBalance.retrieveCode('МТС требует ввести капчу для входа в личный кабинет, чтобы подтвердить, что вы не робот. Введите символы, которые вы видите на картинке.', img);
+	    var form = getParam(html, null, null, /<form[^>]+name="Login"[^>]*>([\s\S]*?)<\/form>/i);
+	    var params = createFormParams(form, function (params, input, name, value) {
+            if (name == 'IDToken2')
+                value = code;
+            return value;
+        });
+        html = AnyBalance.requestPost(loginUrl, params, addHeaders({Referer: loginUrl}));
+        var error = getParam(html, null, null, /var\s+passwordErr\s*=\s*'([^']*)/, replaceSlashes);
+        if(error)
+        	throw new AnyBalance.Error(error);
+    }
+
 	if(/checkAuthStatus\(\)|дождитесь окончания процесса авторизации/i.test(html)) {
-		var json = {};
-		while(json.Data != 'Success') {
+		var json = {}, tries = 20;
+		while(json.Data != 'Success' && tries-- > 0) {
 			json = AnyBalance.requestGet('https://lk.ssl.mts.ru/WaitAuth/CheckAuth', addHeaders({Referer: 'https://lk.ssl.mts.ru/waitauth?goto=http://lk.ssl.mts.ru/'}));
 			json = getJson(json);
 			
@@ -691,7 +705,7 @@ function mainLK(allowRetry) {
 			
 			html = checkLoginState(html, loginUrl);
             // AnyBalance.trace("Команду логина послали, смотрим, что получилось...");
-            
+
 			if(AnyBalance.getLastStatusCode() >= 500)
         	    throw new AnyBalance.Error("Ошибка на сервере МТС при попытке зайти, сервер не смог обработать запрос! Можно попытаться позже...", allowRetry);
         }

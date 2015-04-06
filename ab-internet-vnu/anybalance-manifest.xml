@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<id version="2">ab-internet-vnu</id>
-	<api flags="no_browser"/>
+	<api flags="no_browser|captcha"/>
 	<name>Угреша нетворк</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе интернет провайдера Угреша нетворк <a href="vnu.ru">vnu.ru</a></p>

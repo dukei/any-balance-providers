@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-municipal-podolsk</id>
+	<api flags="no_browser"/>
+	<name>Информационно-расчётный центр ЖКХ г. Подольск</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о состоянии счетчиков в Информационно-расчётном центре ЖКХ г. Подольска <a href="http://irc-zhkh-podolsk.ru/">http://irc-zhkh-podolsk.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="http://irc-zhkh-podolsk.ru/">http://irc-zhkh-podolsk.ru/</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="address" name="Адрес" type="text"/>
+
+		<counter id="tariff0" name="Тариф 1" type="text"/>
+		<counter id="date0" name="Дата посл. показания 1" type="time" format="dd/MM/yyyy"/>
+		<counter id="value0" name="Показания 1"/>
+
+		<counter id="tariff1" name="Тариф 2" type="text"/>
+		<counter id="date1" name="Дата посл. показания 2" type="time" format="dd/MM/yyyy"/>
+		<counter id="value1" name="Показания 2"/>
+	</counters>
+	<keywords></keywords>
+	<type>municipal</type>
+	<country>ru</country>
+</provider>

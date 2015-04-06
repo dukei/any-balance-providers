@@ -44,7 +44,8 @@ var regions = {
 	yar: getYar,
 	arkh: getArkh,
 	vladimir: getVladimir,
-	volzhsk: getVolzhsk
+	volzhsk: getVolzhsk,
+    novokuz: getNovokuz
 };
 
 function main(){
@@ -706,12 +707,56 @@ function getBarnaul(){
     var baseurl = 'https://kabinet.barnaul.mts.ru/';
 
     var html = AnyBalance.requestPost(baseurl + 'res/modules/AjaxRequest.php?Method=Login', {
-		BasicAuth:true,
+        BasicAuth:true,
+        'Client':'mts',
+        'Data[Login]':prefs.login,
+        'Data[Passwd]':prefs.password,
+        'Service':'API.User.Service'
+    });
+    
+    var json = getJson(html);
+    
+    if(json.Error == true){
+        throw new AnyBalance.Error("Не удалось войти в личный кабинет. Неправильный логин-пароль?");
+    }
+    var token = json.Result.Result.Token[0];
+    html = AnyBalance.requestPost(baseurl + 'res/modules/AjaxRequest.php?Method=GetContainerByPath', {
+        'AccessToken':token,
+        'Client':'mts',
+        'Service':'API.Interface.Service'
+    });
+    json = getJson(html);
+    html = JSON.stringify(json);
+    
+    AnyBalance.trace(html);
+    
+    var result = {success: true};
+    //Вначале попытаемся найти активный тариф
+    getParam(html, result, '__tariff', /Name[\s\S]{1,20}Тариф\s*'([\s\S]*?)'/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'balance', /([\d.\-,]{1,10})(?:\&nbsp;|\s)руб/i, replaceTagsAndSpaces, parseBalance2);
+
+/*  getParam(html, result, 'abon', /Абонентская плата:([^<]*)/i, replaceTagsAndSpaces, parseBalance2);
+    getParam(html, result, 'internet_cur', /Израсходовано:([^<]*)/i, replaceTagsAndSpaces, parseBalance2);
+    getParam(html, result, 'agreement', /Номер договора:[^<]*<[^>]*>([^<]*)/i, replaceTagsAndSpaces);
+    getParam(html, result, 'username', /Мои аккаунты[\s\S]{1,150}<strong>([\s\S]*?)<\/strong>/i, null);
+*/
+    AnyBalance.setResult(result);
+}
+
+function getNovokuz(){
+    var prefs = AnyBalance.getPreferences();
+    AnyBalance.setDefaultCharset('utf-8');
+
+    var baseurl = 'https://kabinet.kemerovo.mts.ru/';
+
+    var html = AnyBalance.requestPost(baseurl + 'res/modules/AjaxRequest.php?Method=Login', {
+        'Data[LoginType]': 'PPPoE',
+		'BasicAuth':true,
 		'Client':'mts',
 		'Data[Login]':prefs.login,
         'Data[Passwd]':prefs.password,
         'Service':'API.User.Service'
-	});
+	}, addHeaders({Referer: baseurl + 'auth', 'X-Requested-With': 'XMLHttpRequest'}));
     
 	var json = getJson(html);
 	
@@ -730,15 +775,11 @@ function getBarnaul(){
 	AnyBalance.trace(html);
 	
     var result = {success: true};
-    //Вначале попытаемся найти активный тариф
-    getParam(html, result, '__tariff', /Name[\s\S]{1,20}Тариф\s*'([\s\S]*?)'/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'balance', /([\d.\-,]{1,10})(?:\&nbsp;|\s)руб/i, replaceTagsAndSpaces, parseBalance2);
+    
+    getParam(html, result, '__tariff', /TarifGroupId[\s\S]*?Name["']:["']([^"']+)"/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'balance', /([\d.\-,]{1,10})(?:\&nbsp;|\s)руб/i, replaceTagsAndSpaces, parseBalance2);
+    getParam(html, result, 'agreement', /GeneralContract[\s\S]*?Value["']:["']([^"']+)"/i, replaceTagsAndSpaces, html_entity_decode);
 
-/*	getParam(html, result, 'abon', /Абонентская плата:([^<]*)/i, replaceTagsAndSpaces, parseBalance2);
-    getParam(html, result, 'internet_cur', /Израсходовано:([^<]*)/i, replaceTagsAndSpaces, parseBalance2);
-    getParam(html, result, 'agreement', /Номер договора:[^<]*<[^>]*>([^<]*)/i, replaceTagsAndSpaces);
-    getParam(html, result, 'username', /Мои аккаунты[\s\S]{1,150}<strong>([\s\S]*?)<\/strong>/i, null);
-*/
     AnyBalance.setResult(result);
 }
 

@@ -178,7 +178,7 @@ function fetchDep(baseurl, html){
 	
     var products = getParam(html, null, null, /products:\s*(\[\{.*?\}\]),/, null, getJson);
     var cards = getParam(html, null, null, /cards:\s*(\{.*\}),/, null, getJson);
-
+    var deposits = sumParam(html, null, null, /<div[^>]+data-id=[\s\S]*?<div[^>]+class="inner-card depositcard[\s\S]*?<\/div>/ig);
     if (!products) {
     	AnyBalance.trace(html);
     	throw new AnyBalance.Error("Не удалось найти банковские продукты. Сайт изменен?");
@@ -187,47 +187,46 @@ function fetchDep(baseurl, html){
     var result = {success: true};
     if(AnyBalance.isAvailable('all')){
         var all = [];
-        var deposits = sumParam(html, null, null, /<div[^>]+data-id=[\s\S]*?<div[^>]+class="inner-card[\s\S]*?<\/div>/ig);
         for(var i=0; i<deposits.length; ++i){
-            if(/<span[^>]+class="number">/i.test(deposits[i]))
-                continue; //Это не депозит
             var pid = getParam(deposits[i], null, null, /<div[^>]+data-id="([^"]*)/i, replaceTagsAndSpaces, html_entity_decode);
             var name = getParam(deposits[i], null, null, /<(?:div|span)[^>]+data-product-label[^>]*>([\s\S]*?)<\/(?:div|span)>/i, replaceTagsAndSpaces, html_entity_decode);
             all.push(pid + ': ' + name);
         }
         result.all = all.join('\n');
     }
-	
-    var product;
-    for (var i = 0; i < products.length; ++i) {
-    	var p = products[i];
-    	if (!p.CardId && /Deposit/i.test(p.DetailsUrl) && (!prefs.num || prefs.num == p.ProductId)) {
-    		product = p;
-    		break;
-    	}
+
+    var product, item;
+    for(var i = 0, toi = deposits.length; i < toi; i++){
+        pid = getParam(deposits[i], null, null, /<div[^>]+data-id="([^"]*)/i, replaceTagsAndSpaces, html_entity_decode);
+        var uid = getParam(deposits[i], null, null, new RegExp('data-id="' + pid + '" data-menu-id="([^"]+)"', 'i'));
+        try {
+            item = getJson(AnyBalance.requestPost(baseurl + '/products/depositdetails?accountNumber=' + uid,
+                {},
+                addHeaders({
+                    Referer: baseurl,
+                    'X-Requested-With': 'XMLHttpRequest'
+                }))
+            );
+            if(!prefs.num || new RegExp('\\d{5}\\s\\d{3}\\s\\d\\s\\d{7}' + prefs.num, 'i').test(item.html)){
+                product = item;
+                break;
+            }
+        } catch(e) {
+            AnyBalance.trace(e);
+        }
     }
 	
-    if (!product) 
+    if(!product) 
 		throw new AnyBalance.Error(prefs.num ? "Не удалось найти депозит с ID " + prefs.num : "Не удалось найти ни одного депозита");
 	
-    getParam(product.CurrencyTitle, result, ['currency', 'balance', 'accamount']);
+    console.log(product.html);
+    getParam(product.balance + '', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
+    getParam(product.currency, result, ['currency', 'balance', 'accamount']);
+    getParam(product.html, result, 'accname', /dashed product-name">([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(product.html, result, '__tariff', /dashed product-name">([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(product.html, result, 'accnum', /Номер счета по вкладу<\/td>\s*<td[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(product.html, result, 'pct', /Ставка<\/td>\s*<td[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
     
-	html = AnyBalance.requestPost(baseurl + product.AjaxUrl, '', addHeaders({'X-Requested-With': 'XMLHttpRequest'}));
-	
-    getParam(html, result, 'accname', /<h2[^>]*>([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, '__tariff', /<h2[^>]*>([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'balance', /<span[^>]+class="sum"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-    
-	if (AnyBalance.isAvailable('accnum', 'pct')) {
-    	html = AnyBalance.requestPost(baseurl + product.DetailsUrl, '', g_headers);
-    	
-		var json = getJson(html);
-    	
-		getParam(json.html, result, 'accnum', /Номер счета[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-		getParam(json.html, result, 'pct', /Ставка[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    	getParam('' + json.balance, result, 'balance', null, null, parseBalance);
-    }
-
     AnyBalance.setResult(result);
 }
 

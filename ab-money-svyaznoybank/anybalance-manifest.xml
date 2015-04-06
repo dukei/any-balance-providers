@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="24">ab-money-svyaznoybank</id>
+	<id version="25">ab-money-svyaznoybank</id>
 	<api flags="no_browser"/>
 	<name>Связной Банк (QBank)</name>
 	<description html="true"><![CDATA[
@@ -22,7 +22,7 @@
 	</ul>   
 	<p><small>Отключение подтверждения даёт возможность только зайти в систему, в целях безопасности НЕВОЗМОЖНО отключить SMS-подтверждение при совершении платежных операций.</small></p>
 	]]></instruction>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

@@ -131,7 +131,7 @@ function mainVoronezh(){
     
 	var result = {success: true};
 	
-    getParam (html, result, 'balance', /Лицевой счет:(?:[^>]*>){4}баланс(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+    getParam (html, result, 'balance', /Баланс:\s*<\/span>\s*<b>[^<]+/i, replaceTagsAndSpaces, parseBalance);
     getParam (html, result, 'subscriber', /Приветствуем Вас,([^<]*)/i, replaceTagsAndSpaces);
     getParam (html, result, 'contract', /<b>\s*Лицевой счет:(?:[^>]*>){2}([^<,]*)/i, replaceTagsAndSpaces);
     getParam (html, result, 'day_left', /дней до ухода в финансовую блокировку:(?:[^>]*>){2}\s*(\d+)/i, replaceTagsAndSpaces, parseBalance);

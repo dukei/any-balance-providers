@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2.0" version="5">ab-cell-altel4g</id>
+	<id major_version="2.0" version="6">ab-cell-altel4g</id>
 	<api flags="no_browser"/>
 	<name>ALTEL 4G (Казахстан)</name>
 	<description html="true"><![CDATA[
@@ -10,8 +10,7 @@
 	<instruction html="true"><![CDATA[
 	<p>Если вы ещё ни разу не входили в личный кабинет, то в качестве пароля используйте PIN1.</p>
 	]]></instruction>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

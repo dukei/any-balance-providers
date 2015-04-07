@@ -44,38 +44,40 @@ function main() {
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
-	
-	var info = getParam(html, null, null, new RegExp('<div[^>]+class="product-body"[^>]*>(?:[^>]*>){50,60}[\\d_]+' + (prefs.num || ''), 'i'));
-	if(!info) {
-		// Иногда бывает что у карты нету номера (например Сберегательная карта)
-		info = getParam(html, null, null, new RegExp('<div[^>]+class="product-body"[^>]*>(?:[^>]*>){50,60}', 'i'));
+
+	var products = sumParam(html, null, null, /<div[^>]*bank-product[^>]*>[^]*?<!-- \/ bank-product -->/ig);
+	var product;
+	if(prefs.num){
+		for(var i = 0, toi = products.length; i < toi; i++){
+			if(new RegExp('product-under-title[^>]*>[^>]*' + prefs.num + '\\b', 'i').test(products[i])){
+				product = products[i];
+				break;
+			}
+		}
+	} else {
+		product = products[0];
 	}
-	if(!info) {
-		AnyBalance.trace(html);
+
+	if(!product)
 		throw new AnyBalance.Error('Не удалось найти ' + (prefs.num ? 'карту с последними цифрами ' + prefs.num : 'ни одной карты!'));
-	}
 	
 	var result = {success: true};
 	
-	getParam(info, result, 'balance', /balance"[^>]*>([\s\S]*?)<\/span/i, [/'/g, '', replaceTagsAndSpaces], parseBalance);
-	getParam(info, result, 'limit', /лимит([^<)]*)/i, [/'/g, '', replaceTagsAndSpaces], parseBalance);
-	
-	// if(isset(result.balance) && isset(result.limit)) {
-		// getParam(result.balance - result.limit, result, 'cred');
-	// }
-	getParam(info, result, ['currency', 'balance', 'limit', 'debt', 'nachisl', 'grace_pay'], /balance"[^>]*>([\s\S]*?)<\/span/i, [/'/g, '', replaceTagsAndSpaces], parseCurrency);
-	getParam(info, result, 'cardname', /showFromTemplate[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(info, result, 'cardnum', /card-link-one[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(info, result, '__tariff', /card-link-one[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(info, result, 'order_num', /"product-under-title"[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(product, result, 'balance', /balance"[^>]*>([\s\S]*?)<\/span/i, [/'/g, '', replaceTagsAndSpaces], parseBalance);
+	getParam(product, result, 'limit', /лимит([^<)]*)/i, [/'/g, '', replaceTagsAndSpaces], parseBalance);
+	getParam(product, result, ['currency', 'balance', 'limit', 'debt', 'nachisl', 'grace_pay'], /balance"[^>]*>([\s\S]*?)<\/span/i, [/'/g, '', replaceTagsAndSpaces], parseCurrency);
+	getParam(product, result, 'cardname', /showFromTemplate[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(product, result, 'cardnum', /card-link-one[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(product, result, '__tariff', /card-link-one[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(product, result, 'order_num', /"product-under-title"[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
 	
 	if(isAvailable(['debt', 'nachisl', 'grace_pay', 'grace_pay_till', 'halava_bonus'])) {
 		var token = getParam(html, null, null, /"session_token"[^>]*value="([^"]+)/i);
-		var url = getParam(info, null, null, /\.setUrl\('\\\/([^"']+)/i);
-		var contractCode = getParam(info, null, null, /contractCode'\s*:\s*'(\d+)/i);
+		var url = getParam(product, null, null, /\.setUrl\('\\\/([^"']+)/i);
+		var contractCode = getParam(product, null, null, /contractCode'\s*:\s*'(\d+)/i);
 		
 		if(!token && !url && !contractCode) {
-			AnyBalance.trace(info);
+			AnyBalance.trace(product);
 			throw new AnyBalance.Error('Не удалось поучить дополнительную информацию по карте! Сайт изменен?');
 		}
 		

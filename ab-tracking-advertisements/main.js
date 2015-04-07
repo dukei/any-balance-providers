@@ -82,25 +82,25 @@ function main(){
     	if (!result.found) {
     	    throw new AnyBalance.Error("Ошибка при получении данных с сайта.");
     	}
-    	if ((matches = info.match(/<h3 class="item-header">([\s\S]+?)<article/i))) {
-		info = matches[1];
-		getParam(info, result, 'date', /<div class="info-date info-text">([\s\S]+?),\&nbsp;.*?<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-		getParam(info, result, 'time', /<div class="info-date info-text">[\s\S]+?,\&nbsp;([\s\S]+?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-			
-		var datetime;
-		if (isset(result.date) && isset(result.time)) {
-			datetime = result.date + ' ' + result.time;
-		} else if (isset(result.date)) {
-			datetime = result.date;
-		} else if (isset(result.time)) {
-			datetime = result.time;
-		}
-		if(datetime)
-			getParam(datetime, result, 'datetime');
-			
-		getParam(info, result, 'last', /<h3 class="item-header">([\s\S]*?)<\/h3>/i, replaceTagsAndSpaces, html_entity_decode);
-		getParam(info, result, 'price', /<div class="item-price ">([\s\S]+?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-		getParam(info, result, 'currency', /<div class="item-price ">.*?\&nbsp;([^\d].*?)\s+<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+    	if ((matches = info.match(/<article[^>]*class="b-item "[^>]*>[^]*?<\/article>/ig))) {
+			info = matches[0];
+			getParam(info, result, 'date', /<div class="info-date info-text">([^]*?),?&nbsp;/i, replaceTagsAndSpaces, html_entity_decode);
+			getParam(info, result, 'time', /<div class="info-date info-text">[^]*?,?&nbsp;([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+				
+			var datetime;
+			if (isset(result.date) && isset(result.time)) {
+				datetime = result.date + ' ' + result.time;
+			} else if (isset(result.date)) {
+				datetime = result.date;
+			} else if (isset(result.time)) {
+				datetime = result.time;
+			}
+			if(datetime)
+				getParam(datetime, result, 'datetime');
+
+			getParam(info, result, 'last', /<h3 class="item-header">([\s\S]*?)<\/h3>/i, replaceTagsAndSpaces, html_entity_decode);
+			getParam(info, result, 'price', /<div class="item-price ">([\s\S]+?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+			getParam(info, result, 'currency', /<div class="item-price ">.*?\&nbsp;([^\d].*?)\s+<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
     	} else {
     	    throw new AnyBalance.Error("Ошибка при разборе ответа с сайта.");
     	}

@@ -876,7 +876,7 @@ function fetchPre(baseurl, html) {
 				// result.fio = undefined;
 				// AnyBalance.trace('ФИО еще не настроено в вашей анкете. Зайдите через браузер и перейдите на вкладку Настройки, в поле Имя и фамилия введите ваше ФИО.');
 			// }
-		}
+		// }
 		// AnyBalance.trace('Переходим в мобильную версию для получения ФИО.');
 		// html = AnyBalance.requestGet(baseurl + 'm/pre/index.html', g_headers);
 		// AnyBalance.trace(html);

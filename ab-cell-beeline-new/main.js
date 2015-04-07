@@ -861,20 +861,21 @@ function fetchPre(baseurl, html) {
 		getBonuses(xhtml, result);
 	}
 	if (AnyBalance.isAvailable('fio')) {
-		AnyBalance.trace('Переходим в настройки для получения ФИО.');
-		var href = getParam(html, null, null, /[^"]*settings.html/i);
-		if(href) {
-			if(!/http/i.test(href))
-				href = baseurl.replace(/\/$/, '') + href;
+		// Фио пропало, негде его брать больше
+		// AnyBalance.trace('Переходим в настройки для получения ФИО.');
+		// var href = getParam(html, null, null, /href="([^"]+settings[^"]+\.xhtml)/i);
+		// if(href) {
+			// if(!/http/i.test(href))
+				// href = baseurl.replace(/\/$/, '') + href;
 			
-			html = AnyBalance.requestGet(href, g_headers);
+			// html = AnyBalance.requestGet(href, g_headers);
 			
-			getParam(html, result, 'fio', /personal_info(?:[^>]*>){5}[^>]*class="value"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, capitalFirstLetters);
-			// А у некоторых ФИО не введен, поэтому и беда
-			if(/\d{5,}/i.test(result.fio) || /^\s*$/i.test(result.fio)) {
-				result.fio = undefined;
-				AnyBalance.trace('ФИО еще не настроено в вашей анкете. Зайдите через браузер и перейдите на вкладку Настройки, в поле Имя и фамилия введите ваше ФИО.');
-			}
+			// getParam(html, result, 'fio', /personal_info(?:[^>]*>){5}[^>]*class="value"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, capitalFirstLetters);
+			// // А у некоторых ФИО не введен, поэтому и беда
+			// if(/\d{5,}/i.test(result.fio) || /^\s*$/i.test(result.fio)) {
+				// result.fio = undefined;
+				// AnyBalance.trace('ФИО еще не настроено в вашей анкете. Зайдите через браузер и перейдите на вкладку Настройки, в поле Имя и фамилия введите ваше ФИО.');
+			// }
 		}
 		// AnyBalance.trace('Переходим в мобильную версию для получения ФИО.');
 		// html = AnyBalance.requestGet(baseurl + 'm/pre/index.html', g_headers);

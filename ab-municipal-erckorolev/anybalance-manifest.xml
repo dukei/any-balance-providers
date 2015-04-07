@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-municipal-erckorolev</id>
+	<api flags="no_browser|captcha"/>
+	<name>Королевский расчетно-кассовый центр (АНО КРКЦ)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию из Королевского Расчетно Кассового Центра <a href="https://erc-korolev.ru">https://erc-korolev.ru</a></p>
+	<p>Информация берется из личного кабинета <a href="https://erc-korolev.ru/?id=cabinet">https://erc-korolev.ru/?id=cabinet</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="account" name="Номер счета"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="debt" name="Итого к оплате" units=" р"/>
+	</counters>
+	<keywords></keywords>
+	<type>municipal</type>
+	<country>ru</country>
+</provider>

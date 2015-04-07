@@ -1,10 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-education-dnevnik</id>
+	<id version="4">ab-education-dnevnik</id>
 	<api flags="no_browser"/>
 	<name>Дневник.ру</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию об оценках с сайта Дневник.ру (http://dnevnik.ru/)</p>
+	<p>Внимание! Если у вас в систему внесено несколько детей (в главном меню есть пункт "Дети"), то необходимо указать идентификатор ребенка. Для этого перейдите по адресу http://children.dnevnik.ru/ и под интересеющим вас ребенком нажмите пункт меню "Дневник". Идентификатор можно посмотреть в адресе открывшейся страницы, например http://children.dnevnik.ru/marks.aspx?child=2222222_22222, где 2222222_22222 - искомая часть.</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>

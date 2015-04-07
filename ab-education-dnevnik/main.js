@@ -18,7 +18,7 @@ function main() {
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	var html = AnyBalance.requestGet('http://dnevnik.ru/user/', g_headers);
+	var html = AnyBalance.requestGet('https://dnevnik.ru/user/', g_headers);
 	
 	var params = createFormParams(html, function(params, str, name, value) {
 		if (name == 'Login')
@@ -43,11 +43,15 @@ function main() {
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	
-	var href = getParam(html, null, null, /<a href="(http:\/\/schools[^"]+)[^>]*>\s*Мой дневник/i);
-	
-	checkEmpty(href, 'Не удалось найти ссылку на оценки, сайт изменен?', true);
-	
-	html = AnyBalance.requestGet(href, g_headers);
+	if(prefs.id) {
+		AnyBalance.trace('Ищем дневник ребенка с идентификатором ' + prefs.id);
+		html = AnyBalance.requestGet('http://children.dnevnik.ru/marks.aspx?child=' + prefs.id, g_headers);
+	} else {
+		AnyBalance.trace('Идентификатор ребенка не указан, ищем без него');
+		var href = getParam(html, null, null, /<a href="(http:\/\/schools[^"]+)[^>]*>\s*Мой дневник/i);
+		checkEmpty(href, 'Не удалось найти ссылку на оценки, сайт изменен?', true);
+		html = AnyBalance.requestGet(href, g_headers);
+	}
 	
 	var result = {success: true};
 	

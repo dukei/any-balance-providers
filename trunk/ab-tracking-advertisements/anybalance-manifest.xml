@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="19">ab-tracking-advertisements</id>
+	<id version="20">ab-tracking-advertisements</id>
 	<name>Наблюдение за Avito.ru</name>
 	<description html="true"><![CDATA[
 	<p>Отслеживает появление новых объявлений по заданной подстроке на Avito.ru, а так же позволяет следить за собственными объявлениями при вводе логина и пароля.</p>

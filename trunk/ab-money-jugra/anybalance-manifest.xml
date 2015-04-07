@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-money-jugra</id>
+	<api flags="no_browser"/>
+	<name>Югра</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе банка Югра <a href="https://jugra.handybank.ru/">https://jugra.handybank.ru/</a></p>
+	<p>Информация берется из личного кабинета</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" {@currency}"/>
+	</counters>
+	<keywords></keywords>
+	<type>money</type>
+	<country>ru</country>
+</provider>

@@ -11,6 +11,7 @@ var g_headers = {
 };
 
 var g_regions = {
+	'lipetsk': getLipetsk,
 	'stavr': getStavr,
 	'nal': getNal,
 };
@@ -29,6 +30,32 @@ function main() {
 	
 	AnyBalance.trace('Регион: ' + prefs.region);
 	g_regions[prefs.region](prefs);
+}
+
+function getLipetsk(prefs) {
+	var baseurl = 'https://lk.lipetsk.zelenaya.net/';
+	
+	var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
+
+	html = AnyBalance.requestPost(baseurl + 'login_func.php', {
+		user: prefs.login,
+		pass: prefs.password,
+		login_uri: '',
+		AuthSubmit: 'ВОЙТИ'
+	}, addHeaders({Referer: baseurl + 'login'}));
+
+	if (!/logout/i.test(html)) {
+		var error = getParam(html, null, null, /<div class="alert alert-danger">([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+			throw new AnyBalance.Error(error, null, /Ошибка с паролем или пользователем/i.test(error));
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+	}
+	var result = {success: true};
+	
+	getParam(html, result, 'fio', /Клиент:\s*<\/td>\s*<td[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'balance', /Баланс счета:\s*<\/td>\s*<td[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'cred_balance', /необходимо оплатить:\s*<strong>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	
+	AnyBalance.setResult(result);
 }
 
 function getNal(prefs) {

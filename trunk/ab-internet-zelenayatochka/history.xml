@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="5" date="2015-04-07">
+	- Добавлена поддержка Липецка
+	</change>
 	<change version="4" date="2015-01-02">
 	- Поддержка изменений на сайте.
 	</change>

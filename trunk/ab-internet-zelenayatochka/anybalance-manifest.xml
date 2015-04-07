@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-internet-zelenayatochka</id>
+	<id version="5">ab-internet-zelenayatochka</id>
 	<api flags="no_browser"/>
 	<name>Зеленая точка</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе интернет-провайдера Зеленая точка http://zelenaya.net в города Ставрополь и Нальчик.</p>
 	<p>Информация берется из личного кабинета https://personal.ooonet.ru и http://abonent.naltel.ru</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

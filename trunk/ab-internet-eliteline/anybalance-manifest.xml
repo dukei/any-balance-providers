@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-internet-eliteline</id>
+	<id version="2">ab-internet-eliteline</id>
 	<api flags="no_browser"/>
 	<name>Elite Line</name>
 	<description html="true"><![CDATA[
@@ -16,13 +16,13 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" {@currency}"/>
-		<counter id="fio" name="ФИО" type="text"/>
-		<counter id="status" name="Статус" type="text"/>
-		<counter id="phone" name="Телефон" type="text"/>
-		<counter id="deadline" name="Дата отключения" type="time" format="dd/MM/yyyy"/>
+		<counter id="remain" name="Входящий остаток на начало месяца" units=" грн"/>
+		<counter id="income" name="Приход за месяц" units=" грн"/>
+		<counter id="outcome" name="Расход за месяц" units=" грн"/>
+		<counter id="nar" name="Наработка за месяц" units=" грн"/>
+		<counter id="abom" name="Абонплата" units=" грн"/>
 	</counters>
 	<keywords></keywords>
 	<type>internet</type>
-	<country>ru</country>
+	<country>ua</country>
 </provider>

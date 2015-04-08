@@ -28,7 +28,7 @@ function main() {
 	
 	// Логинимся
 	makeRequest('Post', baseurl + 'api/users/login/', {
-		phone: '7' + prefs.login,
+		username: '7' + prefs.login,
 		password: prefs.password
 	}, baseurl);
 
@@ -39,9 +39,12 @@ function main() {
 		throw new AnyBalance.Error('Не найдено ни одной карты');
 
 	//Ищем заданную пользователем карту или берем первую
-	var card;
+	var card, filtered = [];
 	if(prefs.num){
-		var filtered = data.filter(function(card){ return new RegExp(prefs.num + '$').test(card.cardnum); });
+		for(var i = 0, toi = data.length; i < toi; i++){
+			if(new RegExp(prefs.num + '$').test(data[i].cardnum))
+				filtered.push(data[i]);
+		}
 		if(filtered.length > 1)
 			throw new AnyBalance.Error('Найдено больше одной карты с последними цифрами ' + prefs.num);
 		else if(filtered.length === 0)

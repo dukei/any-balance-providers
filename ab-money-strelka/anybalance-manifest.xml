@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-money-strelka</id>
+	<id version="3">ab-money-strelka</id>
 	<api flags="no_browser"/>
 	<name>Стрелка</name>
 	<description html="true"><![CDATA[

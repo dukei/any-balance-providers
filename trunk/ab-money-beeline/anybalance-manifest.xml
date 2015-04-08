@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-money-beeline</id>
+	<id version="2">ab-money-beeline</id>
 	<api flags="no_browser"/>
 	<name>Платежный кабинет Билайн</name>
 	<description html="true"><![CDATA[
@@ -21,6 +21,6 @@
 		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
 	<keywords></keywords>
-	<type>money</type>
+	<type>money, wallet</type>
 	<country>ru</country>
 </provider>

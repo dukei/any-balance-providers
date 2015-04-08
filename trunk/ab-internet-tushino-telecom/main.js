@@ -12,32 +12,45 @@ var g_headers = {
 
 function main(){
     var prefs = AnyBalance.getPreferences();
+    AnyBalance.setDefaultCharset('utf-8');
+    
+    checkEmpty(prefs.login, 'Введите логин!');
+    checkEmpty(prefs.password, 'Введите пароль!');
 	
-    var baseurl = "https://stat.tushino.com/";
-    AnyBalance.setDefaultCharset('utf-8'); 
+    var baseurl = "https://cabinet.tushino.com/";
 
-	var html = AnyBalance.requestPost(baseurl + 'index.cgi', {
-        login:prefs.login,
-        password:prefs.password,
-		'.submit':'Войти',
-		'page':'',
-		'subpage':'',
-		'rs_uri':'',
-    }, addHeaders({Referer: baseurl + 'index.cgi'})); 
+    var html = AnyBalance.requestGet(baseurl + 'login');
 
-    if(!/page=off/i.test(html)){
-        var error = getParam(html, null, null, /<div class="notice">([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+    var params = createFormParams(html, function(params, str, name, value) {
+        if (name == 'user[login]') 
+            return prefs.login;
+        else if (name == 'user[password]')
+            return prefs.password;
+
+        return value;
+    });
+
+	html = AnyBalance.requestPost(baseurl + 'login', params, addHeaders({Referer: baseurl + 'login'})); 
+
+    if(!/new HupoApp/i.test(html)){
+        var error = getParam(html, null, null, /<div class="error_container">([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
-            throw new AnyBalance.Error(error);
+            throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
 
+    var json = getParam(html, null, null, /new HupoApp\(([^]+?)\.data,/i, null, getJson);
+    if(!json)
+        throw new AnyBalance.Error('Не найдены данные. Сайт изменен?');
+
     var result = {success: true};
-    getParam(html, result, 'id', /ID:[\s\S]{1,50}<td class="s_r">([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'fio', /Полное имя:[\s\S]{1,50}<td class="s_r">([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, '__tariff', /Текущий тариф:[\s\S]{1,50}<td class="s_r">([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'balance', /Денег на счету RUR:[\s\S]{1,50}<td class="s_r">([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'status', /Состояние:[\s\S]{1,50}<td class="s_r">([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+
+    //getParam(html, result, 'id', /ID:[\s\S]{1,50}<td class="s_r">([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(json.data.person.vc_name, result, 'fio', null);
+    //getParam(html, result, '__tariff', /Текущий тариф:[\s\S]{1,50}<td class="s_r">([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(json.data.personal_accounts[0].n_sum_bal, result, 'balance', null);
+    getParam(json.data.servs[0].n_good_sum, result, 'abon', null);
+    //getParam(html, result, 'status', /Состояние:[\s\S]{1,50}<td class="s_r">([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
 
     AnyBalance.setResult(result);
 }

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-money-mybank</id>
+	<id version="5">ab-money-mybank</id>
 	<api flags="no_browser"/>
 	<name>МТБанк (Беларусь)</name>
 	<description html="true"><![CDATA[

@@ -20,7 +20,7 @@ function getEventValidation1(html){
 
 function main(){
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://online.mkb.ru';
+	var baseurl = 'https://oldonline.mkb.ru';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	var html = AnyBalance.requestGet(baseurl + '/secure/login.aspx?newsession=1');

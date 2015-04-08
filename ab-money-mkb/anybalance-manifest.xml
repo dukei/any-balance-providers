@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="12">ab-money-mkb</id>
+	<id version="13">ab-money-mkb</id>
 	<api flags="no_browser"/>
 	<name>Московский Кредитный Банк</name>
 	<description html="true"><![CDATA[
@@ -9,7 +9,7 @@
 	<instruction html="true"><![CDATA[
 	<p>Если у вас нет доступа к МКБ-онлайн: для подключения к комплексу услуг МКБ Онлайн Вам необходимо заполнить заявление в любом отделении Банка.</p>
 	]]></instruction>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
@@ -37,6 +37,6 @@
 		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
 	<keywords>мкб онлайн, mkb online, moscow credit bank</keywords>
-	<type>money</type>
+	<type>money, bank</type>
 	<country>ru</country>
 </provider>

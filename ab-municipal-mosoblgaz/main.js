@@ -47,6 +47,9 @@ function main(){
         var error = getParam(html, null, null, /ctl00_ChildContent_CustomCaptchaValidator[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error);
+        error = getParam(html, null, null, /ctl00_ChildContent_AccountCustomValidator[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+        if(error)
+            throw new AnyBalance.Error(error, null, /Данный лицевой счёт не зарегистрирован или пароль неверный/i.test(error));
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
 	

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2.0" version="10">ab-bonus-svyaznoy</id>
+	<id major_version="2.0" version="11">ab-bonus-svyaznoy</id>
 	<api flags="no_browser"/>
 	<name>Связной Клуб</name>
 	<description html="true"><![CDATA[
@@ -9,9 +9,7 @@
 	<instruction><![CDATA[
 	<p>Получить пароль для имеющейся карты Связной клуб или выпустить виртуальную карту Связной клуб можно на сайте http://www.sclub.ru.</p>
 	]]></instruction>
-	<author>iReset &lt;ireset.ag@gmail.com&gt;</author>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

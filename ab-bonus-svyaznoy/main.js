@@ -13,7 +13,7 @@ var g_headers = {
 
 function main () {
 	var prefs = AnyBalance.getPreferences ();
-    var baseurl = 'https://www.sclub.ru/';
+    var baseurl = 'https://sclub.ru/';
 	
     checkEmpty (prefs.login, 'Введите № карты!');
     checkEmpty (prefs.password, 'Введите пароль!');
@@ -22,91 +22,61 @@ function main () {
     if (prefs.__dbg) {
     	AnyBalance.requestGet('https://www.sclub.ru/LogOut.aspx', g_headers);
     }
-    // Необходимо для формирования cookie
+
     var html = AnyBalance.requestGet(baseurl, g_headers);
-    var form = getParam(html, null, null, /<form[^>]*(?:id="mainLogin"|name="Form")[^>]*>[\s\S]*?<\/form>/i);
-    if (!form) {
-    	if(AnyBalance.getLastStatusCode() >= 400)
-			throw new AnyBalance.Error('Личный кабинет Связной-клуб временно недоступен. Пожалуйста, попробуйте ещё раз позднее...');
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
-	}
-	var AntiForgeryToken = getParam(html, null, null, /antiForgeryToken:[^']*'([^']+)/i);
-	if(!AntiForgeryToken)
-		throw new AnyBalance.Error('Не удалось найти токен авторизации!');
-	
-	html = AnyBalance.requestPost(baseurl + 'account/login', {
-		UserName:prefs.login,
-		Password:prefs.password,
-		StayAuthorized:false,
-		CollectEmailRequestId:'',
+    
+	var res = AnyBalance.requestPost(baseurl + 'oauth/token', {
+		grant_type: 'password',
+		username: prefs.login,
+		password: prefs.password,
+		client_id: '1',
+		captcha: 'null'
 	}, addHeaders({
-		Referer: baseurl,
-		'AntiForgeryToken': AntiForgeryToken
+		Referer: baseurl
 	}));
-	
-	var jsonRespone = getJson(html);
-	if (!/Success"[^"]+true/i.test(html)) {
-		var errors = ['CollectEmailRequestId', 'LoginError', 'Password', 'StayAuthorized', 'UserName'];
-		var errorsString = '';
-		// Json содержит кучу возможных ошибок
-		if(jsonRespone.Errors) {
-			for(var i = 0; i < errors.length; i++) {
-				var currentType = errors[i];
-				var currentErrosArray = jsonRespone.Errors[currentType];
-				if(currentErrosArray && currentErrosArray.length > 0) {
-					AnyBalance.trace('Найдено ошибок: ' + currentErrosArray.length);
-					for(var j = 0; j < currentErrosArray.length; j++) {
-						var currentError = currentErrosArray[j];
-						errorsString += currentError + ', ';
-					}
-				} else {
-					AnyBalance.trace('Не найдено ошибок:  ' + currentType);
-				}
-			}
-			errorsString = errorsString.replace(/, $/, '');
-		}
-		if(errorsString && errorsString != '') {
-			throw new AnyBalance.Error(errorsString, null, /Неверные данные для авторизации/i.test(html));
-		}
-        AnyBalance.trace (html);
-        throw new AnyBalance.Error ('Неизвестная ошибка. Пожалуйста, свяжитесь с разработчиками.');		
+
+	var json = getJson(res);
+
+	if(!json || json.error || !json.access_token){
+		if(json.error_description)
+			throw new AnyBalance.Error (json.error_description, null, /Неверные данные для авторизации/.test(json.error_description));
+		AnyBalance.trace(JSON.stringify(json));
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
-	
-	// Редирект при необходимости? Не знаю, теперь вроде не нужно, оставим пока.
-	/*var redirect = getParam(html, null, null, /window\.location\.replace\("([^"]*)"\)/i);
-    if (redirect)
-        html = AnyBalance.requestGet(redirect, g_headers);
-	*/
-	
+
+	var token = json.access_token;
+
+	res = AnyBalance.requestGet(baseurl + 'api/profile', addHeaders({
+		Referer: baseurl,
+		Authorization: 'Bearer ' + token
+	}));
+
+	json = getJson(res);
+
     var result = {success: true};
+    var card = json.cards[0];
 	
-	getParam (jsonRespone.User.FullName + '', result, 'customer', null, replaceTagsAndSpaces);
-	getParam (jsonRespone.User.Pluses + '', result, 'balanceinpoints', null, replaceTagsAndSpaces, parseBalance);
-	getParam (jsonRespone.User.Discount + '', result, 'balanceinrubles', null, replaceTagsAndSpaces, parseBalance);
-	getParam (jsonRespone.User.UnreadMessagesCount + '', result, 'messages', null, replaceTagsAndSpaces, parseBalance);
-	getParam (jsonRespone.User.ActiveCard.Ean + '', result, 'cardnumber');
+	getParam (json.firstName + '', result, 'customer', null, replaceTagsAndSpaces);
+	getParam (json.pluses + '', result, 'balanceinpoints', null, replaceTagsAndSpaces, parseBalance);
+	getParam (json.balance + '', result, 'balanceinrubles', null, replaceTagsAndSpaces, parseBalance);
+	getParam (json.unreadMessagesCount + '', result, 'messages', null, replaceTagsAndSpaces, parseBalance);
+	getParam (card ? card.ean : undefined, result, 'cardnumber');
+	getParam (card && +card.cardStatus == 1 ? 'активная' : undefined, result, 'cardstate');
 	
-	var state = parseBalance(jsonRespone.User.ActiveCard.CardStatus + '');
-	if(isset(state)) {
-		getParam (state == 1 ? 'Активна' : undefined, result, 'cardstate');
-	}
-	
-    if (isAvailable(['pointsinlastoper'])) {
-		html = AnyBalance.requestPost(baseurl + 'user/GetOperations/', {
-			'ShowNewFirst':'true',
-			'Page':'0',
-			'Type':'',
-		}, addHeaders({Referer: baseurl}));
+    if (isAvailable(['pointsinlastoper', 'lastoperationplace', 'lastoperationdate'])) {
+		res = AnyBalance.requestGet(baseurl + 'api/cards/current/operations?orderByDateAsc=false&skip=0&take=10&type=', addHeaders({
+			Referer: baseurl,
+			Authorization: 'Bearer ' + token
+		}));
 		
-		var operationsJson = getJson(html);
+		json = getJson(res);
 		
-		if(operationsJson.Operations && operationsJson.Operations.length > 0) {
-			var lastOperation = operationsJson.Operations[0];
+		if(json.operations && json.operations.length) {
+			var lastOperation = json.operations[0];
 			
-			getParam (lastOperation.Amount + '', result, 'pointsinlastoper', null, replaceTagsAndSpaces, parseBalance);
-			getParam (lastOperation.PartnerName + '', result, 'lastoperationplace', null, replaceTagsAndSpaces);
-			getParam (lastOperation.OperationDate + '', result, 'lastoperationdate', null, replaceTagsAndSpaces, parseDate);
+			getParam (lastOperation.amount + '', result, 'pointsinlastoper', null, replaceTagsAndSpaces, parseBalance);
+			getParam (lastOperation.partnerName + '', result, 'lastoperationplace', null, replaceTagsAndSpaces);
+			getParam (lastOperation.operationDate + '', result, 'lastoperationdate', null, replaceTagsAndSpaces, parseDate);
 		}
     }
 	

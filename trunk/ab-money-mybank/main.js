@@ -49,7 +49,7 @@ function main() {
 	var product;
 	if(prefs.num){
 		for(var i = 0, toi = products.length; i < toi; i++){
-			if(new RegExp('product-under-title[^>]*>[^>]*' + prefs.num + '\\b', 'i').test(products[i])){
+			if(new RegExp('card-link-one[^>]*>[^>]*' + prefs.num + '\\b', 'i').test(products[i])){
 				product = products[i];
 				break;
 			}

@@ -1,5 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="13" date="2015-04-08">
+	- Поддержка изменений на сайте.
+	</change>
 	<change version="11" date="2014-10-06">
 	- Новая иконка от нашего пользователя Евгения (festival-moscow@ya.ru).
 	</change>

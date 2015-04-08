@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser" />
-	<id version="1">ab-internet-tushino-telecom</id>
+	<id version="3">ab-internet-tushino-telecom</id>
 	<name>Тушино Телеком (Москва)</name>
 	<description>Получает данные из личного кабинета интернет-провайдера Тушино Телеком г. Москва по адресу https://stat.tushino.com/index.cgi</description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
@@ -14,7 +14,8 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units="р"/>
+		<counter id="balance" name="Ежемесячная плата" units="р"/>
+		<counter id="abon" name="Баланс" units="р"/>
 		<counter id="status" name="Состояние" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="acc_numm" name="№ Договора" type="text"/>

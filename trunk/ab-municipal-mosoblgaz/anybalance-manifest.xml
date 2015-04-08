@@ -2,7 +2,7 @@
 <provider>
 	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser|captcha" />
-	<id version="5">ab-municipal-mosoblgaz</id>
+	<id version="6">ab-municipal-mosoblgaz</id>
 	<name>Мособлгаз</name>
 	<description>
 	Получает данные частных абонентов Мособлгаз из личного кабинета http://lksaupg.mosoblgaz.ru/LoginPersonalSUPG.aspx.

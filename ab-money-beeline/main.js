@@ -3,11 +3,11 @@
 */
 
 var g_headers = {
-	'Accept': 'Accept: application/json, text/javascript, */*; q=0.01',
+	'Accept': 'application/json, text/javascript, */*; q=0.01',
 	'Accept-Language': 'ru,en;q=0.8',
 	'Connection': 'keep-alive',
 	'Origin': 'https://paycard.beeline.ru',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/34.0.1847.116 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36',
 };
 
 function main() {
@@ -18,14 +18,17 @@ function main() {
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	var html = AnyBalance.requestGet(baseurl + 'personal/pub/Entrance', g_headers);
-	
+	var html = AnyBalance.requestGet(baseurl + 'personal/pub/Entrance', addHeaders({Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'}));
+	AnyBalance.sleep(1000); //Без таймаутов не пашет
+
 	var form = getParam(html, null, null, /<form[^>]*login[\s\S]*?<\/form>/i);
 	checkEmpty(form, 'Не удалось найти форму входа, сайт изменен?', true);
 	
 	var params = createFormParams(form, function(params, str, name, value) {
 		if (name == 'ean')
 			return prefs.login;
+		if (name == 'rememberEan')
+			return undefined;
 		
 		return value;
 	});
@@ -35,13 +38,17 @@ function main() {
 	
 	html = AnyBalance.requestPost(baseurl + 'personal/' + action, params, addHeaders({
 		Referer: baseurl + 'personal/pub/Entrance',
+		'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
 		'X-Requested-With':'XMLHttpRequest'
 	}));
+	AnyBalance.sleep(1000); //Без таймаутов не пашет
 	
 	params.password = prefs.password;
 	
 	html = AnyBalance.requestPost(baseurl + 'personal/' + action, params, addHeaders({
 		Referer: baseurl + 'personal/pub/Entrance',
+		'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+
 		'X-Requested-With':'XMLHttpRequest'
 	}));
 	
@@ -68,6 +75,12 @@ function main() {
 	}
 	
 	html = AnyBalance.requestGet(baseurl + 'personal/main', g_headers);
+
+	if(!/b-exit_link/i.test(html)){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет.. Сайт изменен?');
+	}
+		
 	
 	var result = {success: true};
 	

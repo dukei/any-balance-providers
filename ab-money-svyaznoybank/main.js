@@ -173,8 +173,8 @@ function fetchCard(baseurl, html){
 
 function fetchDep(baseurl, html){
     var prefs = AnyBalance.getPreferences();
-    if(prefs.num && !/^\d+$/.test(prefs.num))
-        throw new AnyBalance.Error("Введите ID депозита или не вводите ничего, чтобы показать информацию по первому депозиту. ID депозитов можно увидеть в счетчике Сводка.");
+    if(prefs.num && !/^\d{4}$/.test(prefs.num))
+        throw new AnyBalance.Error("Введите 4 последние цифры номера счета депозита или не вводите ничего, чтобы показать информацию по первому депозиту.");
 	
     var products = getParam(html, null, null, /products:\s*(\[\{.*?\}\]),/, null, getJson);
     var cards = getParam(html, null, null, /cards:\s*(\{.*\}),/, null, getJson);
@@ -217,9 +217,8 @@ function fetchDep(baseurl, html){
     }
 	
     if(!product) 
-		throw new AnyBalance.Error(prefs.num ? "Не удалось найти депозит с ID " + prefs.num : "Не удалось найти ни одного депозита");
+		throw new AnyBalance.Error(prefs.num ? "Не удалось найти депозит с последними цифрами номера счета " + prefs.num : "Не удалось найти ни одного депозита");
 	
-    console.log(product.html);
     getParam(product.balance + '', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
     getParam(product.currency, result, ['currency', 'balance', 'accamount']);
     getParam(product.html, result, 'accname', /dashed product-name">([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);

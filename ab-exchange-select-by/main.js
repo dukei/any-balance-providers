@@ -10,8 +10,8 @@
 function main(){
 	AnyBalance.trace('Connecting to select.by...');
 	var prefs = AnyBalance.getPreferences();
-    var city = prefs.city || '';
-	var info = AnyBalance.requestGet('http://select.by/kurs/' + city + '/');
+    var city = prefs.city ? prefs.city + '/' : '';
+	var info = AnyBalance.requestGet('http://select.by/kurs/' + city);
 	var bank = prefs.bank, table;
 	if(bank == '!@other'){
 	    checkEmpty(prefs.other, 'Введите часть названия другого банка');

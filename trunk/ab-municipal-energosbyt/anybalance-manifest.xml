@@ -1,14 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="2">ab-municipal-energosbyt</id>
+	<id version="3">ab-municipal-energosbyt</id>
 	<name>Энергосбыт (ЭК "Восток")</name>
 	<description>
     Получает информацию в системе Энергосбыт (ОАО "Энергосбытовая компания "Восток") сайт: http://www.ensbyt.ru/
 	
 	Получает данные из личного кабинета https://lk.ensbyt.ru/
 	</description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
@@ -20,6 +20,7 @@
 		<counter id="balance" name="Сумма к оплате" units=" р"/>
 		<counter id="dolg" name="Долг/переплата" units=" р"/>
 		<counter id="opl" name="Оплачено" units=" р"/>
+		<counter id="date" name="Месяц квитанции" type="text"/>
 		<counter id="potreblenie" name="Кол-во/объем потребления"/>
 		<counter id="nachisleno" name="Начислено" units=" р"/>
 		<counter id="pererascheti" name="Перерасчеты" units=" р"/>

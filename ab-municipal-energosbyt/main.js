@@ -27,6 +27,7 @@ function main(){
     }
 	
     var result = {success: true};
+    getParam(html, result, 'date', /<select[^>]*id="period"[^>]*>[^]*?selected="selected"[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'fio', /<title>\s*([\s\S]*?)\s{2,}/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'agreement', /<div class="payer-name">([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, '__tariff', /<div class="payer-name">([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);	

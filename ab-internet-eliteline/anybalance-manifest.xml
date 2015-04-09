@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-internet-eliteline</id>
+	<id version="3">ab-internet-eliteline</id>
 	<api flags="no_browser"/>
 	<name>Elite Line</name>
 	<description html="true"><![CDATA[
@@ -16,6 +16,7 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
+		<counter id="outremain" name="Исходящий остаток на конец месяца" units=" грн"/>
 		<counter id="remain" name="Входящий остаток на начало месяца" units=" грн"/>
 		<counter id="income" name="Приход за месяц" units=" грн"/>
 		<counter id="outcome" name="Расход за месяц" units=" грн"/>

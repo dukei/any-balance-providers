@@ -48,6 +48,7 @@ function main() {
 	
 	var result = {success: true};
 	
+	getParam(html, result, 'outremain', /Исходящий остаток на конец месяца<\/td>\s*<td>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'remain', /Входящий остаток на начало месяца<\/td>\s*<td>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'income', /Приход за месяц \(всего\)<\/td>\s*<td>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'outcome', /Расход за месяц \(всего\)<\/td>\s*<td>([^<]+)/i, replaceTagsAndSpaces, parseBalance);

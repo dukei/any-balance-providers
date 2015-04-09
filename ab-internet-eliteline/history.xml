@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="3" date="2015-04-09">
+	- Добавлен счетчик "Исходящий остаток на конец месяца"
+	</change>
 	<change version="2" date="2015-04-08">
 	- Мелкие улучшения.
 	</change>

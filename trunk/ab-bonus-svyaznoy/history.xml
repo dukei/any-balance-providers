@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="2.0" version="13" date="2015-04-09">
+	- Улучшена обработка ошибок.
+	</change>
 	<change major_version="2.0" version="12" date="2015-04-08">
 	- Восстановлена версия в каталоге.
 	</change>

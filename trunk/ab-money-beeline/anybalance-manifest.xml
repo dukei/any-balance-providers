@@ -18,6 +18,9 @@
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
 		<counter id="extra" name="Экстра-бонусы" units=" р"/>
+		<counter id="last_op_sum" name="Сумма последней операции" units=" р"/>
+		<counter id="last_op_date" name="Дата последней операции" type="time" format="dd/MM/yyyy"/>
+		<counter id="last_op_descr" name="Описание последней операции" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
 	<keywords></keywords>

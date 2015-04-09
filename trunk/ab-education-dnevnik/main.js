@@ -48,7 +48,7 @@ function main() {
 		html = AnyBalance.requestGet('http://children.dnevnik.ru/marks.aspx?child=' + prefs.id, g_headers);
 	} else {
 		AnyBalance.trace('Идентификатор ребенка не указан, ищем без него');
-		var href = getParam(html, null, null, /<a href="(http:\/\/schools[^"]+)[^>]*>\s*Мой дневник/i);
+		var href = getParam(html, null, null, /<a href="(https:\/\/schools[^"]+)[^>]*>\s*Мой дневник/i);
 		checkEmpty(href, 'Не удалось найти ссылку на оценки, сайт изменен?', true);
 		html = AnyBalance.requestGet(href, g_headers);
 	}
@@ -56,9 +56,11 @@ function main() {
 	var result = {success: true};
 	
 	//<a\s*class="strong\s*" title="[^"]+" href="http://(?:schools|children).dnevnik.ru/lesson.aspx(?:[^>]*>){15,20}</tr>
-	var regLesson = '<a\\s*class="strong\\s*" title="[^"]+" href="http://(?:schools|children).dnevnik.ru/lesson.aspx(?:[^>]*>){15,30}</tr>';
+	var regLesson = '<a\\s*class="strong\\s*" title="[^"]+" href="https://(?:schools|children).dnevnik.ru/lesson.aspx(?:[^>]*>){15,30}</tr>';
 	// Бывает от 1 до 6 уроков
-	var regDay = new RegExp('<div class="panel blue2 clear">(?:[\\s\\S]*?' + regLesson + '){1,6}', 'ig');
+	//var regDay = new RegExp('<div class="panel blue2 clear">(?:[\\s\\S]*?' + regLesson + '){1,6}', 'ig');
+
+	var regDay = new RegExp('<div class="panel blue2 clear">[^]+?<table class="grid vam marks">[^]*?<\/table>', 'ig');
 	var days = sumParam(html, null, null, regDay);
 	
 	for(var i = 0; i < days.length; i++) {

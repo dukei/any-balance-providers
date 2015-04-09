@@ -15,14 +15,10 @@ function main () {
 	var prefs = AnyBalance.getPreferences ();
     var baseurl = 'https://sclub.ru/';
 	
-    checkEmpty (prefs.login, 'Введите № карты!');
-    checkEmpty (prefs.password, 'Введите пароль!');
+    checkEmpty(prefs.login, 'Введите № карты!');
+    checkEmailOrCardNum(prefs.login, 'Некорректный email или номер карты');
+    checkEmpty(prefs.password, 'Введите пароль!');
 	
-    // Разлогин для отладки
-    if (prefs.__dbg) {
-    	AnyBalance.requestGet('https://www.sclub.ru/LogOut.aspx', g_headers);
-    }
-
     var html = AnyBalance.requestGet(baseurl, g_headers);
     
 	var res = AnyBalance.requestPost(baseurl + 'oauth/token', {
@@ -56,12 +52,12 @@ function main () {
     var result = {success: true};
     var card = json.cards[0];
 	
-	getParam (json.firstName + '', result, 'customer', null, replaceTagsAndSpaces);
-	getParam (json.pluses + '', result, 'balanceinpoints', null, replaceTagsAndSpaces, parseBalance);
-	getParam (json.balance + '', result, 'balanceinrubles', null, replaceTagsAndSpaces, parseBalance);
-	getParam (json.unreadMessagesCount + '', result, 'messages', null, replaceTagsAndSpaces, parseBalance);
-	getParam (card ? card.ean : undefined, result, 'cardnumber');
-	getParam (card && +card.cardStatus == 1 ? 'активная' : undefined, result, 'cardstate');
+	getParam(json.firstName + '', result, 'customer', null, replaceTagsAndSpaces);
+	getParam(json.pluses + '', result, 'balanceinpoints', null, replaceTagsAndSpaces, parseBalance);
+	getParam(json.balance + '', result, 'balanceinrubles', null, replaceTagsAndSpaces, parseBalance);
+	getParam(json.unreadMessagesCount + '', result, 'messages', null, replaceTagsAndSpaces, parseBalance);
+	getParam(card ? card.ean : undefined, result, 'cardnumber');
+	getParam(card && +card.cardStatus == 1 ? 'активная' : undefined, result, 'cardstate');
 	
     if (isAvailable(['pointsinlastoper', 'lastoperationplace', 'lastoperationdate'])) {
 		res = AnyBalance.requestGet(baseurl + 'api/cards/current/operations?orderByDateAsc=false&skip=0&take=10&type=', addHeaders({
@@ -74,11 +70,31 @@ function main () {
 		if(json.operations && json.operations.length) {
 			var lastOperation = json.operations[0];
 			
-			getParam (lastOperation.amount + '', result, 'pointsinlastoper', null, replaceTagsAndSpaces, parseBalance);
-			getParam (lastOperation.partnerName + '', result, 'lastoperationplace', null, replaceTagsAndSpaces);
-			getParam (lastOperation.operationDate + '', result, 'lastoperationdate', null, replaceTagsAndSpaces, parseDate);
+			getParam(lastOperation.amount + '', result, 'pointsinlastoper', null, replaceTagsAndSpaces, parseBalance);
+			getParam(lastOperation.partnerName + '', result, 'lastoperationplace', null, replaceTagsAndSpaces);
+			getParam(lastOperation.operationDate + '', result, 'lastoperationdate', null, replaceTagsAndSpaces, parseDate);
 		}
     }
 	
-    AnyBalance.setResult (result);
+    AnyBalance.setResult(result);
+}
+
+function checkEmailOrCardNum(n, msg){
+	if(/^[a-zA-Z0-9]+[a-zA-Z0-9_.-]*[a-zA-Z0-9_-]*@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+[a-zA-Z]+$/.test(n))
+		return true;
+    if(n && 13 == n.length){
+        var a = /298[0-9]{10}/.test(n);
+        if(a){
+            for (var o, l = n.toString(), c = 0, u = 0, d = 0, f = 1; d < l.length - 1; d += 2, f += 2){
+                var p = Number(l.substr(d, 1));
+                if(c += p, 13 > f){
+                    var h = Number(l.substr(f, 1));
+                    u += h;
+                }
+            }
+            if(u = 3 * u, o = c + u, o = (o + Number(l.substr(12, 1))) % 10, 0 === o)
+            	return true;
+        }
+    }
+    throw new AnyBalance.Error(msg);
 }

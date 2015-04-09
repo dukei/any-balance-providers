@@ -1,14 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="5">ab-exchange-select-by</id>
+	<id version="6">ab-exchange-select-by</id>
 	<name>Курсы валют Банков Беларуси</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущих курсах валют в банках Республики Беларусь и курс "Национального Банка".</p> 
 	<p>Есть функция отображения лучших курсов.</p> 
 	<p>Информация берется с сайта select.by.</p>
 	]]></description>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<js>library.js</js>

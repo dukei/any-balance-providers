@@ -1,9 +1,14 @@
 /**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Провайдер ЭрТелеком 
-Сайт оператора: http://citydom.ru/
 */
+
+var g_headers = {
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
+	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Connection': 'keep-alive',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+};
 
 var g_region_change = {
 	kzn: 'kazan',
@@ -52,40 +57,28 @@ function main(){
 	
 	var result = {success: true};
 	
-	getParam(info, result, 'balance', /<span[^>]+balance-value[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(info, result, 'tariff_number', /№ договора:([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
-	//getParam(info, result, 'name', /<span[^>]+class="client-name"[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	sumParam(info, result, '__tariff', /<a[^>]*services__tarif[^>]*href[^>]*domru\.ru[^>]*>([\s\S]*?)<\//ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
-	getParam(info, result, 'bits', /<a[^>]+href="\/privilege"[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(info, result, 'status', /<a[^>]+href="[^"]*status.domru.ru"[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces, html_entity_decode);
-	
-	getParam(info, result, 'pay_till', /(Не(?:&nbsp;|\s+)забудьте до[\s\S]*?)<\/p/i, replaceTagsAndSpaces, html_entity_decode);
-	
-	
-	
-/*	//Нет в новом кабинете
-        if(AnyBalance.isAvailable('last_session_end','traffic_inner','traffic_outer','contract_type')){
-	    AnyBalance.trace('Getting links to statistics by ' + baseurl + 'right.php?url=&entry=procedure%3Astatistic_user_pppoe.entry');
-            info = AnyBalance.requestGet(baseurl + 'right.php?url=&entry=procedure%3Astatistic_user_pppoe.entry');
+	if(isAvailable(['balance', 'pay_till'])){
+		var res = AnyBalance.requestPost(baseurl + 'user', [
+			['needProperties[]', 'balance'],
+			['needProperties[]', 'dataPay'],
+			['needProperties[]', 'paymentAmount'],
+			['YII_CSRF_TOKEN', token]
+		], addHeaders({ 'X-Requested-With': 'XMLHttpRequest' }));
 
-            var href = getParam(info, null, null, /<frame[^>]+target="right"[^>]*src="([^"]*)/i, null, html_entity_decode);
-            if(!href){
-                AnyBalance.trace('Не удаётся найти промежуточную ссылку на трафик.');
-            }else{
-                var session = getParam(href, null, null, /(client.*)/i);
-                if(!session){
-                    AnyBalance.trace('Не удаётся найти информацию о сессии.');
-                }else{
-		    AnyBalance.trace('Getting statistics');
-		    info = AnyBalance.requestGet(baseurl + 'cgi-bin/ppo/es_webface/statistic_user_pppoe.statistic_user?' + session + '&day1$c=01&day2$c=-1');
-                
-                    getParam(info, result, 'traffic_inner', /Наработка за период по типу трафика "ДОМашний трафик"[^<]*?:([^<]*)/i, replaceTagsAndSpaces, parseTrafficGb);
-                    getParam(info, result, 'traffic_outer', /Наработка за период по типу трафика "Интернет трафик"[^<]*?:([^<]*)/i, replaceTagsAndSpaces, parseTrafficGb);
-                    getParam(info, result, 'last_session_end', /<td[^>]*>([^<]*)<\/td>\s*<td[^>]*>Интернет трафик<\/td>\s*<td[^>]*>.*?<\/td>\s*<\/tr>\s*<tr[^>]+bgcolor="red"[^>]*>/i, replaceTagsAndSpaces, html_entity_decode);
-                    getParam(info, result, 'contract_type', /Ваш договор:[\s\S]*?\(([\s\S]*?)\)\s*<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
-                }
-            }
+		var user = {};
+		try{
+			user = getJson(res);
+		} catch(e) { }
+
+		getParam(user.bill.balance, result, 'balance', null, replaceTagsAndSpaces, parseBalance);
+		getParam(user.bill.datePay, result, 'pay_till', null, replaceTagsAndSpaces, html_entity_decode);
 	}
-*/
+
+	getParam(info, result, 'tariff_number', /№ договора:\s*<\/div>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(info, result, 'name', /b-head-block-account-info-name[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(info, result, '__tariff', /Ваш пакет[^<]*<a[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(info, result, 'bits', /status__block-item_bonus[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(info, result, 'status', /<a[^>]+href="[^"]*status.domru.ru"[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces, html_entity_decode);
+
 	AnyBalance.setResult(result);
 };

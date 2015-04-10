@@ -54,7 +54,7 @@ function main () {
 	
 	getParam(json.firstName + '', result, 'customer', null, replaceTagsAndSpaces);
 	getParam(json.pluses + '', result, 'balanceinpoints', null, replaceTagsAndSpaces, parseBalance);
-	getParam(json.balance + '', result, 'balanceinrubles', null, replaceTagsAndSpaces, parseBalance);
+	getParam(json.balance + '', result, 'balanceinrubles', null, replaceTagsAndSpaces, function(str){ var bal = parseBalance(str); return bal && bal/100;}); //Почему-то в копейках приходит
 	getParam(json.unreadMessagesCount + '', result, 'messages', null, replaceTagsAndSpaces, parseBalance);
 	getParam(card ? card.ean : undefined, result, 'cardnumber');
 	getParam(card && +card.cardStatus == 1 ? 'активная' : undefined, result, 'cardstate');

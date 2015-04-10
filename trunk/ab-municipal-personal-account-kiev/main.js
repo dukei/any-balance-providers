@@ -57,19 +57,19 @@ function main(){
 			break;
 	}
 
-    var result = {success: true};
-	//ЖЕО
-	getParam(html, result, 'geo', /Показати деталі даного рахунку(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-	// о/рахунок
-	getParam(html, result, 'acc_num', /Показати деталі даного рахунку(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-	//начислено
-	getParam(html, result, 'nachisleno', /Показати деталі даного рахунку(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-	//долг / перепл
-	getParam(html, result, 'balance', /Показати деталі даного рахунку(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-	//дата последней оплаты
-	getParam(html, result, 'lastdate', /Показати деталі даного рахунку(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDateISO);
-	//сума последней оплаты
-	getParam(html, result, 'lastsumm', /Показати деталі даного рахунку(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	var bills = sumParam(html, null, null, /<tr>\s*([^]*?)\s*<\/tr>/ig);
+	if(!bills.length)
+		throw new AnyBalance.Error('Не найден ни один счет.');
+
+	var result = {success: true};
+
+	for(var i = 0, toi = bills.length, bill, billhref, summ; i < toi; i++){
+		billhref = getParam(bills[i], null, null, /href="\/([^"]+)/i);
+		bill = AnyBalance.requestGet(baseurl + billhref, g_headers);
+
+		getParam(bills[i], result, 'type' + i, /Показати деталі даного рахунку[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+		sumParam(bill, result, 'value' + i, /_AccruedSumm[^]*?value="([^"]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+	}
 	
     AnyBalance.setResult(result);
 }

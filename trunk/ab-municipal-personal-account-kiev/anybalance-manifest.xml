@@ -1,12 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="3">ab-municipal-personal-account-kiev</id>
+	<id version="4">ab-municipal-personal-account-kiev</id>
 	<name>КП ГІОЦ (Киев)</name>
 	<description html="true"><![CDATA[
 	<p>Получает данные из личного кабинета Коммунальное предприятие Государственный информационно-вычислительный центр (Киев) https://www.personal-account.kiev.ua/entrance/?rr=/dashboard/</p>
 	]]></description>	
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
@@ -15,12 +15,16 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Долг/переплата"/>
-		<counter id="nachisleno" name="Начислено"/>
-		<counter id="lastdate" name="Дата последней оплаты" type="time" format="dd/MM/yyyy"/>
-		<counter id="lastsumm" name="Cума последней оплаты"/>
-		<counter id="geo" name="ЖЕО" type="text"/>
-		<counter id="acc_num" name="Номер счета" type="text"/>
+		<counter id="type0" name="Тип счета 1" type="text"/>
+		<counter id="value0" name="К оплате 1" units=" грн"/>
+		<counter id="type1" name="Тип счета 2" type="text"/>
+		<counter id="value1" name="К оплате 2" units=" грн"/>
+		<counter id="type2" name="Тип счета 3" type="text"/>
+		<counter id="value2" name="К оплате 3" units=" грн"/>
+		<counter id="type3" name="Тип счета 4" type="text"/>
+		<counter id="value3" name="К оплате 4" units=" грн"/>
+		<counter id="type4" name="Тип счета 5" type="text"/>
+		<counter id="value4" name="К оплате 5" units=" грн"/>
 	</counters>
 	<keywords></keywords>
 	<type>municipal</type>

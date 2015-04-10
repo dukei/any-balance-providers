@@ -365,21 +365,31 @@ function processAccount2(html, baseurl){
     var accprefix = accnum.length;
     accprefix = 20 - accprefix;
 
-    var re = new RegExp('<table[^>]+style="table-layout:\\s*fixed"[^>]*>(?:[\\s\\S](?!</?table))*?>' + (accprefix > 0 ? '\\d{' + accprefix + '}' : '') + accnum + '<[\\s\\S]*?</table>', 'i');
-    var tr = getParam(html, null, null, re);
-    if(!tr)
-        throw new AnyBalance.Error('Не удаётся найти ' + (accnum ? 'счет с последними цифрами ' + accnum : 'ни одного счета'));
+    //Любой символ или таблица (максимум 2 уровня вложенности)
+    var anyRe = '(?:(?:<table[^>]*>(?:(?:<table[^>]*>[^]*?<\\/table>)|[^])*?<\\/table>)|[^])';
 
+    //Таблица со счетом. В таблице есть вложенные таблицы на 2 уровня.
+    //Поэтому, чтобы дойти до конца таблицы со счетом, используем предыдущую регулярку
+    var accounttRe = new RegExp(
+        '<table[^>]+style="table-layout:\\s*fixed"[^>]*>' +
+            '((?:' + anyRe + '(?!</?table))*?>' + (accprefix > 0 ? '\\d{' + accprefix + '}' : '') + accnum +
+            anyRe + '*?)' +
+        '</table>',
+    'i');
+
+    var account = getParam(html, null, null, accounttRe);
+    if(!account)
+        throw new AnyBalance.Error('Не удаётся найти ' + (accnum ? 'счет с последними цифрами ' + accnum : 'ни одного счета'));
     var result = {success: true};
 
     //Рады вас видеть
     getParam(html, result, 'userName', /&#1056;&#1072;&#1076;&#1099; &#1042;&#1072;&#1089; &#1074;&#1080;&#1076;&#1077;&#1090;&#1100;,([^<(]*)/i, replaceTagsAndSpaces, html_entity_decode);
-
-    getParam(tr, result, g_currencyDependancy, /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(tr, result, 'balance', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(tr, result, 'acctype', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(tr, result, 'accnum', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(tr, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    //Вложенные таблицы начинаются с 3-й ячейки
+    getParam(account, result, g_currencyDependancy, new RegExp('(?:' + anyRe +'*?<td[^>]*>){5}(' + anyRe + '*?)<\\/td>', 'i'), replaceTagsAndSpaces, html_entity_decode);
+    getParam(account, result, 'balance', new RegExp('(?:' + anyRe +'*?<td[^>]*>){4}(' + anyRe + '*?)<\\/td>', 'i'), replaceTagsAndSpaces, parseBalance);
+    getParam(account, result, 'acctype', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(account, result, 'accnum', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(account, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
 
     AnyBalance.setResult(result);
 }

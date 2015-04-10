@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="8">ab-internet-ertelecom</id>
+	<id version="9">ab-internet-ertelecom</id>
 	<api flags="no_browser"/>
 	<name>Дом.ру (Эр-телеком)</name>
 	<description html="true"><![CDATA[
@@ -8,7 +8,7 @@
 	<p>Информация берется из личного кабинета (http://lk.domru.ru).</p>
 	<p>Провайдер предоставляет интернет для городов: Барнаул, Брянск, Волгоград, Волжский, Воронеж, Дзержинск, Екатеринбург, Ижевск, Иркутск, Йошкар-Ола, Казань, Киров, Красноярск, Курган, Курск, Липецк, Магнитогорск, Набережные Челны, Нижнекамск, Нижний Новгород, Новосибирск, Омск, Оренбург, Пенза, Пермь, Ростов-на-Дону, Рязань, Самара, Санкт-Петербург, Саратов, Сызрань, Тверь, Томск, Тула, Тюмень, Ульяновск, Уфа, Чебоксары, Челябинск, Энгельс, Ярославль</p>
 	]]></description>
-	<author>wtiger &lt;wtiger@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
@@ -17,10 +17,10 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units="р"/>
-		<counter id="bits" name="Биты" units="Ѣ"/>
-<!--    <counter id="name" name="ФИО" type="text"/>
-		<counter id="contract_type" name="Тип контракта" type="text"/>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="bits" name="Биты" units=" Ѣ"/>
+    	<counter id="name" name="ФИО" type="text"/>
+<!--		<counter id="contract_type" name="Тип контракта" type="text"/>
 		<counter id="last_session_end" name="Конец последней сессии" type="text"/>
 		<counter id="traffic_inner" name="Внутренний (Домашний) трафик" prefix="Дом:" suffix="Гб"/>
 		<counter id="traffic_outer" name="Внешний трафик" prefix="Вн:" suffix="Гб"/> -->

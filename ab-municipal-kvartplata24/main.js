@@ -1,4 +1,4 @@
-﻿/**
+ /**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
@@ -14,7 +14,7 @@ var monthsArray = ['january', 'february', 'march', 'april', 'may', 'june', 'july
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://lk.kvp24.ru/';
+	var baseurl = 'https://lk.kvp24.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 
 	checkEmpty(prefs.login, 'Введите логин!');

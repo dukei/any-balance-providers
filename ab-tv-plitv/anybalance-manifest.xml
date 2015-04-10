@@ -1,12 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-tv-plitv</id>
+	<id version="4">ab-tv-plitv</id>
 	<api flags="no_browser|captcha"/>
 	<name>PliTV.TV</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе провайдера PliTV.TV</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<preferences>preferences.xml</preferences>
 		<js>library.js</js>

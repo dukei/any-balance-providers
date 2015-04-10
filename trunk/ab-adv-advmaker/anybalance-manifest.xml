@@ -1,13 +1,13 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="15">ab-adv-advmaker</id>
+	<id version="16">ab-adv-advmaker</id>
 	<name>AdvMaker</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе в рекламной сети AdvMaker https://advmaker.net/</p>
 	<p>Информация берется из личного кабинета https://advmaker.net/webmaster</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
@@ -17,10 +17,11 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Общий баланс" units=" р"/>
-		<counter id="total_balance" name="Общий заработок" units=" р"/>
-		<counter id="click_under " name="Click Under" units=" р"/>
-		<counter id="slide_banner" name="Sliding Banner" units=" р"/>
-		<counter id="banners" name="Banners" units=" р"/>
+		<counter id="total" name="Всего за мес" units=" р"/>
+		<counter id="web " name="Веб за мес" units=" р"/>
+		<counter id="video" name="Видео за мес" units=" р"/>
+		<counter id="mebile" name="Мобильный за мес" units=" р"/>
+		<counter id="ref" name="Реферальная за мес" units=" р"/>
 	</counters>
 	<keywords>реклама</keywords>
 	<type>adv</type>

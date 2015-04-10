@@ -178,7 +178,7 @@ function fetchDep(baseurl, html){
 	
     var products = getParam(html, null, null, /products:\s*(\[\{.*?\}\]),/, null, getJson);
     var cards = getParam(html, null, null, /cards:\s*(\{.*\}),/, null, getJson);
-    var deposits = sumParam(html, null, null, /<div[^>]+data-id=[\s\S]*?<div[^>]+class="inner-card depositcard[\s\S]*?<\/div>/ig);
+    var deposits = sumParam(html, null, null, /<div[^>]+data-id=(?:[\s\S](?!inner-card))*?<div[^>]+class="inner-card depositcard[\s\S]*?<\/div>/ig);
     if (!products) {
     	AnyBalance.trace(html);
     	throw new AnyBalance.Error("Не удалось найти банковские продукты. Сайт изменен?");

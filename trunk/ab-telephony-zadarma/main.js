@@ -17,28 +17,41 @@ function main() {
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 
-	var captchaKey;
+	var html = AnyBalance.requestGet(baseurl + 'auth/', g_headers);
+
+	var captcha, captchaSrc, captchaKey;
 	if(AnyBalance.getLevel() >= 7){
 		AnyBalance.trace('Пытаемся ввести капчу');
-		var captcha = AnyBalance.requestGet(baseurl + 'captcha/', g_headers);
-		captchaKey = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
-		AnyBalance.trace('Капча получена: ' + captchaKey);
+		captchaSrc = getParam(html, null, null, /src="\/(captcha\/index.php[^"]+)/i);
+		if(captchaSrc){
+			captcha = AnyBalance.requestGet(baseurl + captchaSrc, g_headers);
+			captchaKey = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
+			AnyBalance.trace('Капча получена: ' + captchaKey);
+		} else {
+			AnyBalance.trace('Капча не нужна.');
+		}
 	} else {
 		throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
 	}
-	
-	var html = AnyBalance.requestPost(baseurl + "auth/", {
-		'p':'',
-		'login_submit_btn':'войти',
-		captcha: captchaKey,
+
+	html = AnyBalance.requestPost(baseurl + "auth/login/", {
+		redirect:'',
+		captcha: captchaKey || '',
 		email: prefs.login,
 		password: prefs.password
-	}, addHeaders({ Referer: baseurl + 'auth/' }));
-	
+	}, addHeaders({ Referer: baseurl }));
+
+	try{
+		var json = getJson(html);
+		error = !json.success ? json.error : null;
+	} catch(e){ }
+
+	if(error)
+		throw new AnyBalance.Error(error);
+
+	html = AnyBalance.requestGet(baseurl + 'auth/', g_headers);
+
 	if (!/\/auth\/logout\//i.test(html)) {
-		var error = getParam(html, null, null, /<p[^>]+class="error"[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
-		if (error)
-			throw new AnyBalance.Error(error, null, /не были найдены в базе/i.test(html));
 		AnyBalance.trace(html)
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
@@ -59,13 +72,14 @@ function main() {
 		}
 	}
 	
-	if (isAvailable(['shortphone0', 'shortphone1', 'shortphone2', 'shortphone3', 'shortphone4'])) {
+	if(isAvailable(['shortphone0', 'shortphone1', 'shortphone2', 'shortphone3', 'shortphone4'])){
 		html = AnyBalance.requestGet(baseurl + 'mysip/', g_headers);
 		
 		var numbers = sumParam(html, null, null, /<li>\s*<a href="#\d+"[^>]*>([^<]*)/ig);
-		for (var i = 0; i < Math.min(numbers.length, 5); ++i) {
+		for(var i = 0; i < Math.min(numbers.length, 5); ++i){
 			getParam(numbers[i], result, 'shortphone' + i, null, replaceTagsAndSpaces, html_entity_decode);
 		}
 	}
+	
 	AnyBalance.setResult(result);
 }

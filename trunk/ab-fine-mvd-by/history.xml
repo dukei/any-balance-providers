@@ -1,5 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="2" date="2015-04-11">
+	Добавлена "Дата последнего штрафа", "Номер постановления" и "Сводка" (список всех штрафов с номерами постановлений)
+	</change>
 <!--
 <change version="2" date="2013-09-21">
 - 

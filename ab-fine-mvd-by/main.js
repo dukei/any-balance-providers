@@ -50,7 +50,28 @@ function main(){
     if(/не найдена/i.test(html))
         result.status = 'Чисто';
     else{
-        AnyBalance.trace(html);
+    	try{
+    		var table = getJson(html);
+    		var fines = sumParam(table, null, null, /<tr[^>]*>((?:[\s\S](?!<\/tr>))*?<td[^>]*>\s*\d+\s*<\/td>)\s*<\/tr>/ig);
+    		var latest = {};
+    		var all = [];
+
+    		for(var i=0; i<fines.length; ++i){
+    			var dt = getParam(fines[i], null, null, /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+    			var num = getParam(fines[i], null, null, /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    			if(!latest.dt || dt > latest.dt){
+    				latest.dt = dt;
+    				latest.num = num;
+    			}
+    			all.push(getParam(fines[i], null, null, /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode) + ' - ' + num);
+    		}
+
+   			getParam(all.join('\n'), result, 'all');
+   			getParam(latest.dt, result, 'last_date');
+   			getParam(latest.num, result, 'last_num');
+       	}catch(e){
+       	    AnyBalance.trace(e.message + '\n' + e.stack);
+       	}
         result.status = 'Штраф';
     }
 

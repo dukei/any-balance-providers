@@ -12,7 +12,7 @@ var g_headers = {
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-    var baseurl = 'http://hydra.lofisnet.ru:8001/';
+    var baseurl = 'https://hydra.lofisnet.ru:8101/';
     AnyBalance.setDefaultCharset('utf-8'); 
 	// у этого провайдера реализована защита.
 	var html = AnyBalance.requestGet(baseurl + 'login');

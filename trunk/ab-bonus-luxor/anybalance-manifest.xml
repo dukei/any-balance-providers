@@ -1,23 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="2">ab-bonus-luxor</id>
+	<id version="3">ab-bonus-luxor</id>
 	<name>Люксор</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию по накопительной карте сети кинотеатров Люксор <a href="http://www.luxorfilm.ru">http://www.luxorfilm.ru</a></p>
 	<p>Информация берется из личного кабинета <a href="http://www.luxorfilm.ru/login.aspx">http://www.luxorfilm.ru/login.aspx</a></p>
-
-	<b>Особенности:</b>
-	<ul>
-		<li></li>
-		<li></li>
-		<li></li>
-	</ul>
 	]]></description>
 	<instruction html="true"><![CDATA[
 	<p>Если у вас нет доступа к личному кабинету, зарегистрируйтесь здесь: <a href="http://www.luxorfilm.ru/Users/Registration.aspx">http://www.luxorfilm.ru/Users/Registration.aspx</a> и прикрепите к этому личному кабинету карту зрителя.</p>
 	]]></instruction>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
@@ -27,6 +20,7 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Бонусы"/>
+		<counter id="visits" name="Посещения"/>
 		<counter id="cardnum" name="Номер карты" type="text"/>
 	</counters>
 	<keywords>luxor, аттракционы</keywords>

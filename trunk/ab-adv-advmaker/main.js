@@ -39,11 +39,25 @@ function main(){
 	var result = {success: true};
 	
 	getParam(html, result, 'balance', [/Ваш баланс(?:[^>]*>){2}([^<]+)/i, /Заработано на[\s\S]{15}([\s\S]*?)<\/strong>/i], replaceTagsAndSpaces, parseBalance);
-	getParam(table, result, 'web', /Всего:([^>]*>){3}/i, replaceTagsAndSpaces, parseBalance);
-	getParam(table, result, 'video', /Всего:([^>]*>){5}/i, replaceTagsAndSpaces, parseBalance);
-	getParam(table, result, 'mobile', /Всего:([^>]*>){7}/i, replaceTagsAndSpaces, parseBalance);
-	getParam(table, result, 'ref', /Всего:([^>]*>){9}/i, replaceTagsAndSpaces, parseBalance);
 	getParam(table, result, 'total', /Всего:([^>]*>){11}/i, replaceTagsAndSpaces, parseBalance);
+
+	fetchResults(result, baseurl + 'webmaster/stat/desktop/', ['web_CU', 'web_SB', 'web_BN', 'web_summary']);
+	fetchResults(result, baseurl + 'webmaster/stat/video/', ['video_ads', 'video_lcs', 'video_viewer', 'video_600_300', 'video_summary']);
+	fetchResults(result, baseurl + 'webmaster/stat/mobile/', ['mobile_redirect', 'mobile_300_250', 'mobile_notice', 'mobile_summary']);
 	
     AnyBalance.setResult(result);
+}
+
+function fetchResults(result, url, params){
+	if(isAvailable(params)){
+		var html = AnyBalance.requestGet(url);
+
+		var table = getParam(html, null, null, /(<table[\s\S]*?>[\s\S]*?<\/table>)/i);
+		if(!table)
+			throw new AnyBalance.Error('Не удалось найти таблицу с данными. Сайт изменен?');
+
+		for(var i = 0, toi = params.length; i < toi; i++){
+			getParam(table, result, params[i], new RegExp('Всего:([^>]*>){' + (i * 2 + 3) + '}', 'i'), replaceTagsAndSpaces, parseBalance);
+		}
+	}
 }

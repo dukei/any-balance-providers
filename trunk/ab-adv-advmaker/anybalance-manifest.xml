@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="16">ab-adv-advmaker</id>
+	<id version="17">ab-adv-advmaker</id>
 	<name>AdvMaker</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе в рекламной сети AdvMaker https://advmaker.net/</p>
@@ -18,10 +18,22 @@
 	<counters>
 		<counter id="balance" name="Общий баланс" units=" р"/>
 		<counter id="total" name="Всего за мес" units=" р"/>
-		<counter id="web " name="Веб за мес" units=" р"/>
-		<counter id="video" name="Видео за мес" units=" р"/>
-		<counter id="mebile" name="Мобильный за мес" units=" р"/>
-		<counter id="ref" name="Реферальная за мес" units=" р"/>
+
+		<counter id="web_CU" name="Веб CU" units=" р"/>
+		<counter id="web_SB" name="Веб SB" units=" р"/>
+		<counter id="web_BN" name="Веб BN" units=" р"/>
+		<counter id="web_summary" name="Веб всего" units=" р"/>
+
+		<counter id="video_ads" name="VideoAds" units=" р"/>
+		<counter id="video_lcs" name="Video LCS" units=" р"/>
+		<counter id="video_viewer" name="VideoViewer" units=" р"/>
+		<counter id="video_600_300" name="Video 600x300" units=" р"/>
+		<counter id="video_summary" name="Video всего" units=" р"/>
+
+		<counter id="mobile_redirect" name="Mobile Redirect" units=" р"/>
+		<counter id="mobile_300_250" name="Mobile 300x250" units=" р"/>
+		<counter id="mobile_notice" name="Мобильное уведомление" units=" р"/>
+		<counter id="mobile_summary" name="Mobile всего" units=" р"/>
 	</counters>
 	<keywords>реклама</keywords>
 	<type>adv</type>

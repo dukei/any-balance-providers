@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-municipal-khvschool</id>
+	<api flags="no_browser"/>
+	<name>Цифровая школа</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера ИмяПровайдера <a href="http://school.portalkhv.ru/index.php">http://school.portalkhv.ru/index.php</a></p>
+	<p>Информация берется из личного кабинета <a href="https://my.khvschool.ru/">https://my.khvschool.ru/</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="accnum" name="Лицевой счет" type="text"/>
+		<counter id="food_offerta" name="Оферта на питание" units=" р"/>
+		<counter id="food_offerta_date" name="Дата оферты на питание" type="time" format="dd/MM/yyyy"/>
+		<counter id="food_balance" name="Лимит на питание" units=" р"/>
+	</counters>
+	<keywords></keywords>
+	<type>municipal</type>
+	<country>ru</country>
+</provider>

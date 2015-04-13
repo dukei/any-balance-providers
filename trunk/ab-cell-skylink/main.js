@@ -30,6 +30,7 @@ function main(){
 }
 
 function mainMySkylink(prefs){
+    AnyBalance.setDefaultCharset('utf-8');
     var baseurl = 'https://my.skylink.ru/';
     var headers = {
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',

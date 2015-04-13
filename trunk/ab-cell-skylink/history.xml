@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="3.0" version="22" date="2015-04-13">
+	- Мелкие улучшения.
+	</change>
 	<change major_version="3.0" version="21" date="2015-04-03">
 	- Добавлен вход через my.skylink
 	</change>

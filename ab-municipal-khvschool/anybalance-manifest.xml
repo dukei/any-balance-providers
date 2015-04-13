@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-municipal-khvschool</id>
+	<id version="2">ab-municipal-khvschool</id>
 	<api flags="no_browser"/>
 	<name>Цифровая школа</name>
 	<description html="true"><![CDATA[
@@ -17,6 +17,7 @@
 	</files>
 	<counters>
 		<counter id="accnum" name="Лицевой счет" type="text"/>
+		<counter id="sms" name="Кол-во sms"/>
 		<counter id="food_offerta" name="Оферта на питание" units=" р"/>
 		<counter id="food_offerta_date" name="Дата оферты на питание" type="time" format="dd/MM/yyyy"/>
 		<counter id="food_balance" name="Лимит на питание" units=" р"/>

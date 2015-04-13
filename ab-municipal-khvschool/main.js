@@ -42,7 +42,7 @@ function main() {
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'accnum', /Добрый день! Л\/С:([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'accnum', /Добрый день!\s*Л\/С:([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
 
 	if(isAvailable(['food_offerta', 'food_offerta_date', 'food_balance'])){
 		html = AnyBalance.requestGet(baseurl + 'index.php?pays', g_headers);
@@ -50,6 +50,12 @@ function main() {
 		getParam(html, result, 'food_offerta', /Оферта на питание(?:[^>]*>\s*){5}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, 'food_offerta_date', /#last_accm_dt'\)\.html\('на <b>([^<]+)/i, replaceTagsAndSpaces, parseDate);
 		getParam(html, result, 'food_balance', /Лимит на питание(?:[^>]*>\s*){2}([^<]+)/i, replaceTagsAndSpaces, parseBalance);		
+	}
+
+	if(isAvailable('sms')){
+		html = AnyBalance.requestGet(baseurl + 'pgs/req_sms.php?r=' + parseInt(Math.random() * 99999), addHeaders({'X-Requested-With': 'XMLHttpRequest'}));
+
+		getParam(html, result, 'sms', /id='smbt'[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);	
 	}
 	
 	AnyBalance.setResult(result);

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-link-region</id>
+	<api flags="no_browser"/>
+	<name>Линк</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Линк <a href="http://link-region.ru/">http://link-region.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="https://bill.link-region.ru:8443/bgbilling/webexecuter">https://bill.link-region.ru:8443/bgbilling/webexecuter</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="account" name="Договор №" type="text"/>
+		<counter id="fee" name="Абонентская плата" units=" р"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

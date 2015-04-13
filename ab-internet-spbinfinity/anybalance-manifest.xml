@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-spbinfinity</id>
+	<api flags="no_browser"/>
+	<name>spbinfinity</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе интернет провайдера spbinfinity <a href="http://spbinfinity.ru/">http://spbinfinity.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="http://lk.spbinfinity.ru/">http://lk.spbinfinity.ru/</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="accnum" name="Номер договора" type="text"/>
+		<counter id="abon" name="Абонентская плата" units=" р"/>
+		<counter id="blocking" name="Блокировка через" type="text"/>
+		<counter id="prom" name="Обещанный платёж" units=" р"/>
+		<counter id="status" name="Статус интернет" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

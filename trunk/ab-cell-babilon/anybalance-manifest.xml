@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-cell-babilon</id>
+	<api flags="no_browser"/>
+	<name>Вавилон-Мобайл</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе и других параметрах оператора мобильной связи Таджикистана Вавилон-Мобайл <a href="http://www.babilon-m.tj/">http://www.babilon-m.tj/</a></p>
+	<p>Информация берется со страницы <a href="http://welcome.babilon-m.tj/">http://welcome.babilon-m.tj/</a></p>
+
+	<b>Для получения значений счетчиков, необходимо запускать провайдер на мобильном устройстве с симкой Вавилон-Мобайла</b>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="num" name="Номер" type="text"/>
+		<counter id="balance" name="Баланс" units=" сом"/>
+		<counter id="cell" name="Оплаченные минуты" units=" мин"/>
+		<counter id="traff" name="Оплаченный трафик" units=" Мб"/>
+		<counter id="sms" name="Оплаченные СМС" units=" шт"/>
+		<counter id="mobi_cell" name="MobiGPRS" units=" мин"/>
+		<counter id="mobi_traff" name="MobiМИНУТЫ" units=" Мб"/>
+		<counter id="mobi_sms" name="MobiSMS" units=" шт"/>
+	</counters>
+	<keywords></keywords>
+	<type>cell</type>
+	<country>tj</country>
+</provider>

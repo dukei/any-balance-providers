@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-internet-lofisnet</id>
+  <id version="3">ab-internet-lofisnet</id>
   <name>ООО ЛОИС-нэт (Долгопрудный)</name>
   <description>
      Получает статистику из личного кабинета провайдера ЛОИС-нэт г. Долгопрудный (http://lofisnet.ru)

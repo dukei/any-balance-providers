@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="17" date="2015-04-13">
+	- Добавлены счетчики
+	</change>
 	<change version="16" date="2015-04-10">
 	- Обновлены счетчики
 	</change>

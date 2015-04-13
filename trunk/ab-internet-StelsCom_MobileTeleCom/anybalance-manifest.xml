@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="01">ab-internet-StelsCom&MobileTeleCom</id>
+	<api flags="no_browser"/>
+	<name>MobileTeleCom (Россия, Сатка)</name>
+	<description html="true"><![CDATA[
+	<p>Получает данные для провайдера MobileTeleCom, http://stat.satka.ru</p>
+	<p>Личный кабинет находится по адресу http://utm.xn--80aa3a0ag.xn--80asehdb</p>
+	]]></description>
+	<author>Etamin419 &lt;etamin419@gmail.com&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

@@ -47,11 +47,48 @@ function main() {
 	}));
 	
 	var json = getJson(html);
+
+	var captchaKey, captchaId, captcha;
+	if(json.Error == 'captcha_required'){
+		if(AnyBalance.getLevel() >= 7){
+			AnyBalance.trace('Пытаемся ввести капчу');
+
+			html = AnyBalance.requestPost(baseurl + 'OpenApi/captcha', JSON.stringify({Width: 500, Height: 150}), addHeaders({Authorization:'Bearer ' + token, Referer: 'http://www.walletone.com/ru/wallet/'}));
+
+			try{captcha = getJson(html);}catch(e){};
+
+			if(!captcha || !captcha.CaptchaUrl)
+				throw new AnyBalance.Error('Не удалось получить капчу! Попробуйте обновить данные позже.');
+
+			captchaKey = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", AnyBalance.requestGet(captcha.CaptchaUrl, g_headers));
+			captchaId = captcha.CaptchaId;
+
+			AnyBalance.trace('Капча получена: ' + captchaKey);
+		} else {
+			throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
+		}
+	}
+
+	html = AnyBalance.requestPost(baseurl + 'OpenApi/sessions', JSON.stringify({
+		Login: prefs.login,
+		Password: prefs.password,
+		Scope: 'All'}
+	), addHeaders({
+		'X-Wallet-CaptchaCode': captchaKey,
+		'X-Wallet-CaptchaId': captchaId,
+		Referer: 'http://www.walletone.com/ru/wallet/',
+		Authorization: 'Bearer ' + token
+	}));
+
+	json = getJson(html)
 	
 	if (!json.UserId) {
 		var error = json.ErrorDescription;
-		if (error)
+		if(error){
+			if(/InvalidCaptchaException/i.test(error))
+				throw new AnyBalance.Error('Капча введена не верно. Попробуйте еще раз.');
 			throw new AnyBalance.Error(error, null, /Пароль пользователя не соответствует|не найден/i.test(error));
+		}
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');

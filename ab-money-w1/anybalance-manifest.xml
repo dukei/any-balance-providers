@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2" version="7">ab-money-w1</id>
-	<api flags="no_browser"/>
+	<id major_version="2" version="8">ab-money-w1</id>
+	<api flags="no_browser|captcha"/>
 	<name>W1 Единый Кошелек</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе  для пользователей «Единого Кошелька W1» http://www.w1.ru/</p>
 	<p>Информация берется из личного кабинета https://www.walletone.com/wallet/client/</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
@@ -22,6 +22,6 @@
 		<counter id="Overdraft" name="Превышение кредита" units=" {@currency}"/>
 	</counters>
 	<keywords>W1 Единый Кошелек</keywords>
-	<type>money</type>
+	<type>money, wallet</type>
 	<country>ru</country>
 </provider>

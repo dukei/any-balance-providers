@@ -41,6 +41,7 @@ function main(){
     var result = {success: true};
 	
     getParam(html, result, 'balance', /Количество баллов(\s*<(?:[^>]*>){2,5})\s*<\/div>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'visits', /Количество посещений(\s*<(?:[^>]*>){2,5})\s*<\/div>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'cardnum', /Карта №(\s*<(?:[^>]*>){2,5})\s*<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, '__tariff', /Карта №(\s*<(?:[^>]*>){2,5})\s*<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
 	

@@ -28,7 +28,7 @@ function main() {
 			if( str_begin != -1 ){
 				str_end = xml.indexOf( '</div>' , str_begin );
 				if( str_end != -1 ){
-					var result = {success: true, balance: xml.substring(str_begin+80 , str_end  )};
+					var result = {success: true, balance: parseFloat(xml.substring(str_begin+80 , str_end  ))};
 	
 					AnyBalance.setResult(result);
 					return;
@@ -42,9 +42,14 @@ function main() {
 	if( str_begin != -1 ){
 		str_end = xml.indexOf( '&nbsp;',str_begin );
 		if( str_end != -1 ){
-			var result = {success: true, balance: xml.substring(str_begin+44 , str_end  )};
+			var result = {success: true, balance: parseFloat(xml.substring(str_begin+44 , str_end))};
 			
 			AnyBalance.setResult(result);
 		}
+	}
+
+	if(!AnyBalance.isSetResultCalled()){
+		AnyBalance.trace(xml);
+		throw AnyBalance.Error('Неизвестная ошибка. Сайт изменен?');
 	}
 }

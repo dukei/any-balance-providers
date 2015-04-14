@@ -1,24 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-internet-StelsCom_MobileTeleCom</id>
+	<id version="2">ab-internet-StelsCom_MobileTeleCom</id>
 	<api flags="no_browser"/>
 	<name>MobileTeleCom (Россия, Сатка)</name>
 	<description html="true"><![CDATA[
-	<p>Получает данные для провайдера MobileTeleCom, http://stat.satka.ru</p>
+	<p>Получает данные для интернет провайдера MobileTeleCom, http://stat.satka.ru</p>
 	<p>Личный кабинет находится по адресу http://utm.xn--80aa3a0ag.xn--80asehdb</p>
 	]]></description>
 	<author>Etamin419 &lt;etamin419@gmail.com&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-    <js>library.js</js>
+		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="ID" name="ID" type="text"/>
+		<counter id="login" name="Логин" type="text"/>
+		<counter id="main_expense" name="Основной лицевой счет" type="text"/>
+		<counter id="credit" name="Кредит" type="text"/>
+		<counter id="nds" name="НДС" units=" %"/>
+		<counter id="date" name="Дата создания" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/> 
+		<counter id="status" name="Состояние интернета" type="text"/>
+		<counter id="TP" name="Текущий ТП" type="text"/>
 	</counters>
-	<keywords></keywords>
+	<keywords>Интернет</keywords>
 	<type>internet</type>
 	<country>ru</country>
 </provider>

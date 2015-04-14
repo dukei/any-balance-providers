@@ -25,10 +25,19 @@
 		positiveButtonText="ОК"
 		key="num"
 		inputType="number"
-		dialogTitle="Номер карты"
+		dialogTitle="Номер карты/договора"
 		negativeButtonText="Отмена"
 		title="Номер карты"
 		summary="|Автоматически|{@s}"
-		dialogMessage="Введите последние цифры номера карты, по которой вы хотите получить данные. Если это поле оставить пустым, то будет показана информация по первой карте.">
-	</EditTextPreference>	
+		dialogMessage="Введите последние цифры номера карты или номера договора в зависимости от типа поиска. Если это поле оставить пустым, то будет показана информация по первой карте.">
+	</EditTextPreference>
+	<ListPreference
+		key="search_type"
+		title="Тип поиска"
+		dialogTitle="Выберите по какому признаку искать банковский продукт"
+		summary="||{@s}"
+		entries="Номер карты|Номер договора"
+		entryValues="card_num|acc_num"
+		defaultValue="card_num">
+	</ListPreference>
 </PreferenceScreen>

@@ -13,6 +13,7 @@ var g_headers = {
 function main() {
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'https://new.mybank.by/';
+	var searchType = prefs.search_type || 'card_num';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Введите логин!');
@@ -46,10 +47,11 @@ function main() {
 	}
 
 	var products = sumParam(html, null, null, /<div[^>]*bank-product[^>]*>[^]*?<!-- \/ bank-product -->/ig);
-	var product;
+	var product, searchMark = searchType == 'card_num' ? 'card-link-on' : 'product-under-title';
 	if(prefs.num){
+		AnyBalance.trace('Ищем счет по ' + searchType == 'card_num' ? 'номеру карты' : 'договору')
 		for(var i = 0, toi = products.length; i < toi; i++){
-			if(new RegExp('card-link-one[^>]*>[^>]*' + prefs.num + '\\b', 'i').test(products[i])){
+			if(new RegExp(searchMark + '[^>]*>[^>]*' + prefs.num + '\\b', 'i').test(products[i])){
 				product = products[i];
 				break;
 			}
@@ -59,7 +61,9 @@ function main() {
 	}
 
 	if(!product)
-		throw new AnyBalance.Error('Не удалось найти ' + (prefs.num ? 'карту с последними цифрами ' + prefs.num : 'ни одной карты!'));
+		throw new AnyBalance.Error('Не удалось найти ' + (prefs.num ?
+			'счет ' + (searchType == 'card_num' ? 'по номеру карты' : 'по договору') + ' с последними цифрами ' + prefs.num :
+			'ни одной карты!'));
 	
 	var result = {success: true};
 	

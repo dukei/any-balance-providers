@@ -21,6 +21,15 @@
 		dialogMessage="Введите пароль, используемый для входа в систему ИНФО-банк."
 		inputType="textPassword">
 	</EditTextPreference>
+	<EditTextPreference
+		positiveButtonText="ОК"
+		key="num"
+		dialogTitle="Номер договора"
+		negativeButtonText="Отмена"
+		title="Номер договора"
+		summary="||{@s}"
+		dialogMessage="Если у вас несколько кредитных договоров, то введите полностью номер договора, по которому необходимо получать информацию">
+	</EditTextPreference>
 	<ListPreference
 		key="port"
 		title="Какой порт использовать"

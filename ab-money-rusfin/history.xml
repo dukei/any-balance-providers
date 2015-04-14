@@ -1,5 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="4" date="2015-04-14">
+	- Поддержка нескольких кредитных договоров.
+	</change>
 	<change version="3" date="2014-08-14">
 	- Поддержка другого порта для входа в банк.
 	</change>

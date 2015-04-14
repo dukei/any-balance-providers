@@ -27,6 +27,9 @@ function main(){
 		
         throw new AnyBalance.Error('Не удалось войти в ИНФО-банк. Сайт изменен?');
     }
+
+    if(prefs.num)
+        html = AnyBalance.requestGet(baseurl + 'ICA/creditDetails.jsp?contract_number=' + prefs.num + '&system_code=EQ');
 	
     fetchCredit(baseurl, html, prefs);
 }

@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="12">ab-bonus-s7</id>
+	<id version="13">ab-bonus-s7</id>
 	<name>S7 Приоритет</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе миль и другую информацию по бонусной карте авиакомпании S7 (http://www.s7.ru).</p>
@@ -17,7 +17,7 @@
 	<instruction html="true"><![CDATA[
 	<p>Как получить накопительную карту и пароль к личному кабинету, инструкция: https://www.s7.ru/home/priority/ffpEnrollment.dot</p>
 	]]></instruction>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

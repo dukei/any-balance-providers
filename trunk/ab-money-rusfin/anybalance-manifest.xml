@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-money-rusfin</id>
+	<id version="4">ab-money-rusfin</id>
 	<api flags="no_browser"/>
 	<name>Русфинанс банк</name>
 	<description html="true"><![CDATA[
@@ -9,7 +9,7 @@
 	<instruction html="true"><![CDATA[
 	<p>Если у вас нет доступа к ИНФО-Банку, перейдите по ссылке "Создать пользователя ИНФО-Банка" на странице https://info-msk.rusfinance.ru:7779/jsso/SSOLogin или https://info-msk.rusfinance.ru:7777/jsso/SSOLogin</p>
 	]]></instruction>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
@@ -29,6 +29,6 @@
 		<counter id="currency" name="Валюта" type="text"/>
 	</counters>
 	<keywords></keywords>
-	<type>money</type>
+	<type>money, bank</type>
 	<country>ru</country>
 </provider>

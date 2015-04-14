@@ -20,23 +20,27 @@ function main(){
     var baseurl = 'https://www.s7.ru/';
 	var baseurlLogin = 'https://cca.s7.ru/';
 	
-    var html = AnyBalance.requestPost(baseurl + 'dotCMS/priority/newDesignAjaxLogin', {
+    var html = AnyBalance.requestPost(baseurl + 'dotCMS/priority/ajaxLogin', {
         dispatch: 'login',
         username: prefs.login,
         password: prefs.password
     }, addHeaders({ Referer: baseurl }));
 	
-	htmlJson = AnyBalance.requestGet(baseurl + 'dotCMS/priority/NewDesignAjaxProfileService?dispatch=getUserInfo', addHeaders({
+	htmlJson = AnyBalance.requestGet(baseurl + 'dotCMS/priority/ajaxProfileService?dispatch=getUserInfo', addHeaders({
 		'X-Requested-With':'XMLHttpRequest'
 	}));
 	
 	var json = getJson(htmlJson);	
 	
     if(json.stc != 200){
-		var error = getParam(html, null, null, /"error-msg"([^>]*>){3}/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, null, null, /"error_block"[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Неверный логин\/пароль/i.test(error));
-		
+
+		try{ error = getJson(html).errors.join('. ') }catch(e){ }
+		if(error)
+			throw new AnyBalance.Error(error, null, /Неверное имя пользователя или пароль/i.test(error));	
+
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось войти в личный кабинет. Проблемы на сайте или сайт изменен.');
 	}

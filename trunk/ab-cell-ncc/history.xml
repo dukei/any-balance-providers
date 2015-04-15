@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="31" date="2015-04-15">
+	- Мелкие улучшения.
+	- Добавлен счетчик ММС.
+	</change>
 	<change version="30" date="2014-12-24">
 	- Исправлено описание в связи с переходом многих кабинетов на login.rt.ru
 	</change>

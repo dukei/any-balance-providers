@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="30">ab-cell-ncc</id>
+	<id version="31">ab-cell-ncc</id>
 	<name>Ростелеком-Регионы</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем балансе и тарифе для пользователей различных операторов, которые перечислены ниже.</p>
@@ -23,9 +23,7 @@
 		<li>Введите пароль в настройки провайдера.</li>
 	</ol>
 	]]></instruction>
-	<author>wtiger &lt;wtiger@mail.ru&gt;</author>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
@@ -39,6 +37,7 @@
 		<counter id="accum_trafic" name="Трафик" units=" Mb"/>
 		<counter id="accum_mins" name="Минуты"/>
 		<counter id="accum_sms" name="СМС"/>
+		<counter id="accum_mms" name="ММС"/>
 <!--		<counter id="accum_rub" name="Рубли (Аккумулятор)"/> -->
 		<counter id="filial" name="Филиал" type="text"/>
 		<counter id="phone" name="Номер" type="text"/>

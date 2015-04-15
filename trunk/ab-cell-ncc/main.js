@@ -58,6 +58,7 @@ function main(){
 		json = JSON.parse(html);
 		result.balance = parseBalance(json.balance);
 	}
+
 	if (AnyBalance.isAvailable('accum_sms', 'accum_mins', 'accum_trafic')) {
 		AnyBalance.trace("Searching for used resources in this month");
 		var params = {};
@@ -65,38 +66,7 @@ function main(){
 		params.isBalanceRefresh = false;
 		html = AnyBalance.requestPost(baseurl + "payments/summary/json", params);
 		json = JSON.parse(html);
-		for (var i = 0; i < json.length; ++i) {
-			var name = json[i].name;
-			var matches;
-			if (AnyBalance.isAvailable('accum_mins')) {
-				if (matches = /(\d+).*минут/i.exec(name)) {
-					result.accum_mins = parseInt(matches[1]);
-				}
-			}
-			if (AnyBalance.isAvailable('accum_sms')) {
-				if (matches = /(\d+).*SMS/i.exec(name)) {
-					result.accum_sms = parseInt(matches[1]);
-				}
-			}
-			if (AnyBalance.isAvailable('accum_trafic')) {
-				matches = /GPRS.*?([\d\.\,]+)\s*(Гб|Мб|Кб)/i.exec(name);
-				if (!matches) matches = /([\d\.\,]+)\s*(Гб|Мб|Кб).*GPRS/i.exec(name);
-				if (matches) {
-					var val = parseFloat(matches[1].replace(/^[\s,\.]*|[\s,\.]*$/g, '').replace(',', '.'));
-					switch (matches[2]) {
-					case 'Гб':
-						val *= 1000;
-						break;
-					case 'Мб':
-						break;
-					case 'Кб':
-						val /= 1000;
-						break;
-					}
-					result.accum_trafic = val;
-				}
-			}
-		}
+		getUsedResources(result, json);
 	}
 	if (AnyBalance.isAvailable('history')) {
 		AnyBalance.trace("Searching for history");
@@ -114,6 +84,22 @@ function main(){
 		}
 	}	
 	AnyBalance.setResult(result);
+}
+
+function getUsedResources(result, json){
+	var subTotals, name;
+	for(var i = 0; i < json.length; ++i){
+		subTotals = json[i].subTotals;
+		name = json[i].name;
+		if(subTotals && isArray(subTotals))
+			getUsedResources(result, subTotals);
+
+		sumParam(name, result, 'accum_mins', /(\d+).*минут/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+		sumParam(name, result, 'accum_sms', /(\d+).*SMS/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+		sumParam(name, result, 'accum_mms', /(\d+).*MMS/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+		sumParam(name, result, 'accum_trafic', /GPRS.*?([\d\.\,]+)\s*(Гб|Мб|Кб)/i, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
+		sumParam(name, result, 'accum_trafic', /([\d\.\,]+\s*(?:Гб|Мб|Кб)).*GPRS/i, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
+	}
 }
 
 function mainOld(){

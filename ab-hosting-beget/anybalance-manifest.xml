@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-hosting-beget</id>
+	<api flags="no_browser"/>
+	<name>beget</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе и других параметрах хостинга beget <a href="https://beget.ru/">https://beget.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="https://cp.beget.ru/">https://cp.beget.ru/</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="payment" name="Стоимость услу" units=" р"/>
+		<counter id="daysleft" name="Дней до блокировки"/>
+		<counter id="disk" name="Дисковое пространство" units=" %"/>
+	</counters>
+	<keywords></keywords>
+	<type>hosting</type>
+	<country>ru</country>
+</provider>

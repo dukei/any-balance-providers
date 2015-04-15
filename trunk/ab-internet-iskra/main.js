@@ -17,11 +17,10 @@ function main(){
         action:'validate',
         login:prefs.login,
         password:prefs.password,
-        domain_id:'1',
         submit:'Войти'
     });
 
-    if(!/action=logout/.test(html)){
+    if(!/exit.jsp/.test(html)){
         var error = getParam(html, null, null, /<span[^>]*style=["']color:\s*#101010[^>]*>([\s\S]*?)<\/span>/, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error);
@@ -30,24 +29,11 @@ function main(){
 
     var result = {success: true};
 
-    getParam(html, result, 'balance', /Ваш баланс:[\S\s]*?<span[^>]*>([\S\s]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'licschet', /Счет N([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-    /*var sessid = getParam(html, null, null, /<input[^>]*name="session_id"[^>]*value="([^"]*)/i);
+    var integer = getParam(html, null, null, /<td[^>]*class="balance"[^>]*>[^]*?<td[^>]*class="integer"[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+    var frac = getParam(html, null, null, /<td[^>]*class="balance"[^>]*>[^]*?<td[^>]*class="frac"[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(+integer + ((frac || 0)/100) , result, 'balance');
 
-    html = AnyBalance.requestGet(baseurl + "deal_account?session_id=" + sessid + "&action=stat_user_show");
+    getParam(html, result, 'licschet', /<h1[^>]*>Договор([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
 
-    getParam(html, result, '__tariff', /<td[^>]*class=['"]utm-cell[^>]*>([\S\s]*?)<\/t[dr]>/i, replaceTagsAndSpaces, html_entity_decode);
-    var table = getParam(html, null, null, /Отчет о предоставленных пользователю услугах[\s\S]*?<table[^>]*>([\s\S]*?)<\/table>/i);
-    if(table){
-        var matches = table.match(/<tr>\s*<td>([^<]*)<\/td>/ig);
-        var strs=[];
-        for(var i=0; matches && i<matches.length; ++i){
-            strs[strs.length] = getParam(matches[i], null, null, /<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-        }
-        if(strs.length){
-            result.__tariff = strs.join(', ');
-        }
-    }
-	*/
     AnyBalance.setResult(result);
 }

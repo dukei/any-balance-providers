@@ -1,8 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-internet-StelsCom_MobileTeleCom</id>
+	<id version="3">ab-internet-stels</id>
 	<api flags="no_browser"/>
-	<name>MobileTeleCom (Россия, Сатка)</name>
+	<name>MobileTeleCom (Сатка)</name>
 	<description html="true"><![CDATA[
 	<p>Получает данные для интернет провайдера MobileTeleCom, http://stat.satka.ru</p>
 	<p>Личный кабинет находится по адресу http://utm.xn--80aa3a0ag.xn--80asehdb</p>

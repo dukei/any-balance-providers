@@ -59,13 +59,14 @@ function main() {
 			var error = getParam(html, null, null, /class="attention"[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 			if(error)
 				throw new AnyBalance.Error(error, null, /Пароль введен неверно/i.test(error));
+
 			AnyBalance.trace(html);
 			throw new AnyBalance.Error('Не удалось зайти в интернет-банк. Сайт изменен?');
 		}
 		
 		html = AnyBalance.requestGet(baseurl + 'cards', addHeaders({'User-Agent':'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36'}));
 		
-		var cards = sumParam(html, null, null, /<table[^>]+class="table-name-card"[^>]*>[\s\S]*?<\/table>/ig);
+		var cards = sumParam(html, null, null, /<div class="table-name-card">[^]+?<\/div>\s*<div[^>]*>[^]+?<\/div>/ig);
 
 		if(!cards.length){
 			AnyBalance.trace(html);
@@ -75,7 +76,10 @@ function main() {
 		var card = prefs.cardnum ?
 				cards.filter(function(card){ return new RegExp('\\*\\*\\*\\*\\s*' + prefs.cardnum, 'i').test(card); })[0] : cards[0];
 
-		checkEmpty(card, AnyBalance.Error('Не удалось найти' + prefs.cardnum ? ' карту с последними цифрами' + prefs.cardnum : ' ни одной карты!'));
+		if(!card){
+			AnyBalance.trace(html);
+			throw new AnyBalance.Error('Не удалось найти' + ( prefs.cardnum ? ' карту с последними цифрами ' + prefs.cardnum : ' ни одной карты!' ));
+		}
 		
 		getParam(card, result, '__tariff', /(\*\*\*\*\s*\*\*\*\*\s*\*\*\*\*\s*\d{4})/i, replaceTagsAndSpaces, html_entity_decode);
 		getParam(card, result, 'balance', /card-sum[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);

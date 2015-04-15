@@ -36,7 +36,7 @@ function main() {
 	        password: cod(prefs.password, encryptArray)
 	    }, addHeaders({Referer: baseurl + 'signin'}));
 
-		if(!/на ваш сеансовый номер телефона/i.test(html)){
+		if(!/На Ваш номер телефона/i.test(html)){
 			var error = getParam(html, null, null, /<div[^>]+id="error"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
 			if(error)
 				throw new AnyBalance.Error(error, null, /Пароль введен неверно|Имя пользователя или пароль введены неверно/i.test(error));

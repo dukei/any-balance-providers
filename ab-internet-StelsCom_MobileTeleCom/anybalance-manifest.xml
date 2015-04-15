@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-internet-stels</id>
+	<id version="4">ab-internet-StelsCom_MobileTeleCom</id>
 	<api flags="no_browser"/>
 	<name>MobileTeleCom (Сатка)</name>
 	<description html="true"><![CDATA[

@@ -40,16 +40,14 @@ function main() {
 			var error = getParam(html, null, null, /<div[^>]+id="error"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
 			if(error)
 				throw new AnyBalance.Error(error, null, /Пароль введен неверно|Имя пользователя или пароль введены неверно/i.test(error));
+			AnyBalance.trace(html);
+			throw new AnyBalance.Error('Не удалось войти в интернет-банк. Сайт изменен?');
 		}
 
 		var smsKey;
-		if(AnyBalance.getLevel() >= 7){
-			AnyBalance.trace('Пытаемся ввести смс код.');
-			smsKey = AnyBalance.retrieveCode("Пожалуйста, введите код из смс");
-			AnyBalance.trace('Код из смс получен: ' + smsKey);
-		} else {
-			throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
-		}
+		AnyBalance.trace('Пытаемся ввести смс код.');
+		smsKey = AnyBalance.retrieveCode("Пожалуйста, введите код из смс");
+		AnyBalance.trace('Код из смс получен: ' + smsKey);
 
 		html = AnyBalance.requestPost(baseurl + 'signin2', {
 	        action: 1,
@@ -61,16 +59,18 @@ function main() {
 			var error = getParam(html, null, null, /class="attention"[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 			if(error)
 				throw new AnyBalance.Error(error, null, /Пароль введен неверно/i.test(error));
-			
-			throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+			AnyBalance.trace(html);
+			throw new AnyBalance.Error('Не удалось зайти в интернет-банк. Сайт изменен?');
 		}
 		
 		html = AnyBalance.requestGet(baseurl + 'cards', addHeaders({'User-Agent':'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36'}));
 		
-		var cards = sumParam(html, null, null, /<table class="table-name-card">[^]+?<\/table>/ig);
+		var cards = sumParam(html, null, null, /<table[^>]+class="table-name-card"[^>]*>[\s\S]*?<\/table>/ig);
 
-		if(!cards.length)
+		if(!cards.length){
+			AnyBalance.trace(html);
 			throw new AnyBalance.Error('Не удалось найти ни одной карты!');
+		}
 
 		var card = prefs.cardnum ?
 				cards.filter(function(card){ return new RegExp('\\*\\*\\*\\*\\s*' + prefs.cardnum, 'i').test(card); })[0] : cards[0];

@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="5">ab-internet-ipnet</id>
+	<id version="6">ab-internet-ipnet</id>
 	<name>IPNET (Киев)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе киевского интернет-провайдера IPNET http://ipnet.ru</p>
 	<p>Информация берется из личного кабинета https://stat.ipnet.ua</p>
 	]]></description>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

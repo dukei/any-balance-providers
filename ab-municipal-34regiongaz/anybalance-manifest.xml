@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-municipal-34regiongaz</id>
+	<api flags="no_browser"/>
+	<name>Газпром межрегионгаз Волгоград</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о данных по лицевому счету от Газпром межрегионгаз Волгоград <a href="http://34regiongaz.ru/">http://34regiongaz.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="http://34regiongaz.ru/cabinet/enter/">http://34regiongaz.ru/cabinet/enter/</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="account" name="Лицевой счет" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>municipal</type>
+	<country>ru</country>
+</provider>

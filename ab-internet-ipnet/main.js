@@ -9,12 +9,11 @@ function main(){
     if(AnyBalance.getLevel() < 5)
         throw new AnyBalance.Error('Для этого провайдера необходимо AnyBalance API v5.');
 	
-    var baseurl = "https://stat.ipnet.ua/";
+    var baseurl = "https://my.ipnet.ua/";
 	
     var html = AnyBalance.requestGet(baseurl);
-    var url = AnyBalance.getLastUrl();
 	
-    var html = AnyBalance.requestPost(url, {
+    var html = AnyBalance.requestPost(baseurl + 'ua/login/', {
         login:prefs.login,
         password:prefs.password,
         'auth.x': 63,
@@ -25,6 +24,10 @@ function main(){
         var error = getParam(html, null, null, /<font[^>]*color=["']?red[^>]*>([\s\S]*?)<\/font>/, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error);
+
+        error = getParam(html, null, null, /<p[^>]*class=["']login-valid[^>]*>([\s\S]*?)<\/p>/, replaceTagsAndSpaces, html_entity_decode);
+        if(error)
+            throw new AnyBalance.Error(error, null, /Невірний логін чи пароль/i.test(error));
 		
 		AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось войти в личный кабинет. Проблемы на сайте или сайт изменен.');

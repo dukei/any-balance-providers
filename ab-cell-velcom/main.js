@@ -206,11 +206,11 @@ function main(){
 	if(!isset(result.min_velcom) || !isset(result.min) || !isset(result.traffic) || !isset(result.mms)) {
 		var str = getParam(html, null, null, /Остаток трафика:(?:[^>]*>){3}([\s\S]*?)<\//i);
 		if(str) {
-			sumParam(html, result, 'min_velcom', /([\s\d]+)мин(?:ут)? на velcom/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-			sumParam(html, result, 'min', /([\s\d]+)мин(?!(?:ут)? на velcom)/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+			sumParam(html, result, 'min_velcom', /([\s\d.]+)мин(?:ут)? на velcom/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+			sumParam(html, result, 'min', /([\s\d.]+)мин(?!(?:ут)? на velcom)/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 			sumParam(html, result, 'mms', /([\s\d]+)(?:MMS|ММС)/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-			getParam(html, result, 'traffic', /([\s\d]+[М|M][B|Б])/i, replaceTagsAndSpaces, parseTraffic);
-			getParam(html, result, 'traffic_night', /([\s\d]+[М|M][B|Б]\s+ночь)/i, replaceTagsAndSpaces, parseTraffic);
+			getParam(html, result, 'traffic', /([\s\d.]+[М|M][B|Б])/i, replaceTagsAndSpaces, parseTraffic);
+			getParam(html, result, 'traffic_night', /([\s\d.]+[М|M][B|Б]\s+ночь)/i, replaceTagsAndSpaces, parseTraffic);
 		} else if(/<td[^>]+id="DISCOUNT"/i.test(html)){
 			//<tr class="uneven">
             //                     <td class="info_caption"><span>Скидки:</span></td>

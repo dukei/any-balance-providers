@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="45">ab-cell-velcom</id>
+	<id version="46">ab-cell-velcom</id>
 	<api flags="no_browser"/>
 	<name>Velcom (Беларусь)</name>
 	<description html="true"><![CDATA[
@@ -16,7 +16,7 @@
 	<li>Введите постоянный пароль в этот провайдер, чтобы получить баланс.</li>
 	</ol>
 	]]></instruction>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="4">ab-internet-iskra</id>
+	<id version="5">ab-internet-iskra</id>
 	<name>Seven Sky (Москва)</name>
 	<description html="true"><![CDATA[
 	<p>Получает баланс и информацию о тарифном плане для московского интернет-провайдера Seven Sky (http://www.seven-sky.net/) бывший ИСКРАТЕЛЕКОМ http://iskratelecom.ru</p>

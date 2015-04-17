@@ -1,11 +1,14 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Получает баланс и информацию о тарифном плане для томского интернет-провайдера ИскраТелеком
-
-Сайт оператора: http://iskratelecom.ru
-Личный кабинет: https://my.istel.ru
 */
+
+var g_headers = {
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
+    'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+    'Connection': 'keep-alive',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+};
 
 function main(){
     var prefs = AnyBalance.getPreferences();
@@ -13,14 +16,23 @@ function main(){
 	
     var baseurl = 'https://stat.seven-sky.net/cgi-bin/clients/';
 
-    var html = AnyBalance.requestPost(baseurl + 'login', {
-        action:'validate',
-        login:prefs.login,
-        password:prefs.password,
-        submit:'Войти'
-    });
+    var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
+    
+    if(!html || AnyBalance.getLastStatusCode() > 400){
+        AnyBalance.trace(html);
+        throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+    }
 
-    if(!/exit.jsp/.test(html)){
+    AnyBalance.sleep(1000);
+
+    html = AnyBalance.requestPost(baseurl + 'login', {
+        action: 'validate',
+        login: prefs.login,
+        password: prefs.password,
+        submit: 'Вход'
+    }, addHeaders({ Referer: baseurl + 'login' }));
+
+    if(!/exit.jsp|action=logout/.test(html)){
         var error = getParam(html, null, null, /<span[^>]*style=["']color:\s*#101010[^>]*>([\s\S]*?)<\/span>/, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error);
@@ -29,11 +41,17 @@ function main(){
 
     var result = {success: true};
 
-    var integer = getParam(html, null, null, /<td[^>]*class="balance"[^>]*>[^]*?<td[^>]*class="integer"[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-    var frac = getParam(html, null, null, /<td[^>]*class="balance"[^>]*>[^]*?<td[^>]*class="frac"[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-    getParam(+integer + ((frac || 0)/100) , result, 'balance');
+    var url = AnyBalance.getLastUrl();
+    if(/statistics\.gorcomnet/.test(url)){
+        var integer = getParam(html, null, null, /<td[^>]*class="balance"[^>]*>[^]*?<td[^>]*class="integer"[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+        var frac = getParam(html, null, null, /<td[^>]*class="balance"[^>]*>[^]*?<td[^>]*class="frac"[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+        getParam(+integer + ((frac || 0)/100), result, 'balance');
 
-    getParam(html, result, 'licschet', /<h1[^>]*>Договор([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+        getParam(html, result, 'licschet', /<h1[^>]*>Договор([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+    } else if(/stat\.seven-sky\.net/.test(url)){
+        getParam(html, result, 'balance', /Ваш баланс(?:[^>]*>){5}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+        getParam(html, result, 'licschet', /счет N([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+    }
 
     AnyBalance.setResult(result);
 }

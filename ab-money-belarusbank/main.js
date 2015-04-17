@@ -90,7 +90,6 @@ function main(){
 	
 	params.bbIbLoginAction = 'in-action';
 	
-	//
     html = AnyBalance.requestPost(baseurl + url, params);
 
     if(!/portalLogoutLink/i.test(html)){
@@ -112,72 +111,7 @@ function main(){
 	checkEmpty(href, 'Не удалось найти ссылку на счета, сайт изменен?', true);
 	html = AnyBalance.requestGet(baseurl + href, addHeaders({'Referer': baseurl}));
 	
-	if(prefs.type == 'dep') {
-		fetchDep(baseurl, html);
-	} else {
-		fetchCard(baseurl, html);
-	}
-}
-
-function fetchDep(baseurl, html){
-    var prefs = AnyBalance.getPreferences();
-
-    if(prefs.lastdigits && !/^\d{4}$/.test(prefs.lastdigits))
-        throw new AnyBalance.Error("Надо указывать 4 последних цифры депозита или не указывать ничего");
-	
-	var href = getParam(html, null, null, /href="\/([^"]+)"(?:[^>]*>){1,2}\s*Депозиты/i, replaceTagsAndSpaces, html_entity_decode);
-	checkEmpty(href, 'Не удалось найти ссылку на депозиты, сайт изменен?', true);
-	html = AnyBalance.requestGet(baseurl + href, addHeaders({'Referer': baseurl}));
-	
-    /*var cards = getParam(html, null, null, /<table[^>]+id="[^"]*ibWelcomePageForm:ibCardList"[\s\S]*?<\/table>/i);
-    if(!cards)
-        throw new AnyBalance.Error("Не найдена таблица карт. У вас нет ни одной карты?");
-	*/
-	// <tr[^>]*>(?:[^>]*>){16,20}\s*\d*1278[\\s\\S]*?</tr>
-    var re = new RegExp('<tr[^>]*>(?:[^>]*>){14,20}\\s*' + (prefs.lastdigits ? prefs.lastdigits : '\\d{4}') + '[\\s\\S]*?</tr>', 'i');
-    var tr = getParam(html, null, null, re);
-	
-    if(!tr)
-        throw new AnyBalance.Error(prefs.lastdigits ? "Не найдено депозита с последними цифрами " + prefs.lastdigits : "Не найдено ни одного депозита!");
-	
-    var result = {success: true};
-	
-    getParam(tr, result, 'cardnum', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/, replaceTagsAndSpaces, html_entity_decode);
-	getParam(tr, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/, replaceTagsAndSpaces, html_entity_decode);
-	
-    getParam(tr, result, ['currency', 'balance'], /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-	
-	if(isAvailable('balance')) {
-		var action = getParam(html, null, null, /<form[^>]*action="\/(wps\/myportal[^"]+QCPpagesQCPuserDepositCSDList\.jsp[^"]*\/=\/)/i, replaceTagsAndSpaces, html_entity_decode);
-		checkEmpty(action, 'Не удалось найти ссылку на баланс, сайт изменен?', true);
-		
-		var a = getParam(tr, null, null, /<a[^>]*>Получить<\/a>/i);
-		var viewns = getParam(a, null, null, /id="([^:"]+:DepositCSDListForm)/i);
-		var viewns2 = getParam(a, null, null, /id="([^"]+)/i);
-		var viewns3 = getParam(tr, null, null, /input type="radio"[^>]*name="([^"]+)/i);
-		var depositUniqueId = getParam(a, null, null, /depositUniqueId[^=]+='([^']+)/i);
-		
-		var balanceParams = [
-			[viewns + ':ibSDTSelField', depositUniqueId],
-			[viewns3, ''],
-			[viewns + ':closedDepoActive', 'false'],
-			['com.sun.faces.VIEW', getParam(html, null, null, /name="com.sun.faces.VIEW"[^>]*value="([^"]+)/i)],
-			[viewns, viewns],
-			['pageId', ''],
-			['depositUniqueId', depositUniqueId],
-			[viewns + ':_idcl', viewns2],
-		];
-		
-		html = AnyBalance.requestPost(baseurl + 'wps/PA_rdDepositsCSDlist/SelectDepositCsdServlet', {
-			depositUniqueId: depositUniqueId
-		}, addHeaders({'Referer': baseurl + href, 'Origin': 'https://ibank.asb.by'}));
-		
-		html = AnyBalance.requestPost(baseurl + action, balanceParams, addHeaders({'Referer': baseurl + href, 'Origin': 'https://ibank.asb.by'}));
-		//html = AnyBalance.requestPost(baseurl + action, balanceParams, addHeaders({'Referer': baseurl + href, 'Origin': 'https://ibank.asb.by'}));
-	}
-    getParam(tr, result, 'balance', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    
-    AnyBalance.setResult(result);
+	fetchCard(baseurl, html);
 }
 
 function fetchCard(baseurl, html){
@@ -186,29 +120,22 @@ function fetchCard(baseurl, html){
     if(prefs.lastdigits && !/^\d{4}$/.test(prefs.lastdigits))
         throw new AnyBalance.Error("Надо указывать 4 последних цифры карты или не указывать ничего");
 	
-	var href = getParam(html, null, null, /href="\/([^"]+)"(?:[^>]*>){1,2}\s*Плат[ёе]жные карты/i, replaceTagsAndSpaces, html_entity_decode);
-	checkEmpty(href, 'Не удалось найти ссылку на карты, сайт изменен?', true);
+	var href = getParam(html, null, null, /href="\/([^"]+)"(?:[^>]*>){1,2}\s*Счета с карточкой/i, replaceTagsAndSpaces, html_entity_decode);
+	checkEmpty(href, 'Не удалось найти ссылку на счета, сайт изменен?', true);
 	html = AnyBalance.requestGet(baseurl + href, addHeaders({'Referer': baseurl}));
 	
-    /*var cards = getParam(html, null, null, /<table[^>]+id="[^"]*ibWelcomePageForm:ibCardList"[\s\S]*?<\/table>/i);
-    if(!cards)
-        throw new AnyBalance.Error("Не найдена таблица карт. У вас нет ни одной карты?");
-	*/
-	// <tr[^>]*>(?:[^>]*>){18,20}\s*\d{4}\*{8}[\s\S]*?</tr>
-    var re = new RegExp('<tr[^>]*>(?:[^>]*>){18,20}\\s*\\d{4}\\*{8}' + (prefs.lastdigits ? prefs.lastdigits : '\\d{4}') + '[\\s\\S]*?</tr>', 'i');
+    var re = new RegExp('<tr[^>]*>\\s*<td[^>]*class="tdAccountText">\\s*<div[^>]*>\\s*Счёт №\\d+' + (prefs.lastdigits || '') + '<\\/div>[^]*?<\\/tr>', 'i');
     var tr = getParam(html, null, null, re);
 	
     if(!tr)
-        throw new AnyBalance.Error(prefs.lastdigits ? "Не найдено карты с последними цифрами " + prefs.lastdigits : "Не найдено ни одной карты");
+        throw new AnyBalance.Error(prefs.lastdigits ? "Не найден счет с последними цифрами " + prefs.lastdigits : "Не найдено ни одного счета");
 	
     var result = {success: true};
 	
-    getParam(tr, result, 'cardnum', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/, replaceTagsAndSpaces, html_entity_decode);
-	getParam(tr, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/, replaceTagsAndSpaces, html_entity_decode);
-	
-	
-    getParam(tr, result, 'balance', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/, replaceTagsAndSpaces, parseBalance);
-    getParam(tr, result, ['currency', 'balance'], /(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/, replaceTagsAndSpaces, html_entity_decode);
+    getParam(tr, result, 'cardnum', /<td[^>]*class="tdAccountText">([^]*?)<\/td>/, replaceTagsAndSpaces, parseBalance);
+	getParam(tr, result, '__tariff', /<td[^>]*class="tdAccountText">([^]*?)<\/td>/, replaceTagsAndSpaces, html_entity_decode);
+    getParam(tr, result, 'balance', /<td[^>]*class="tdBalance">([^]*?)<\/td>/, replaceTagsAndSpaces, parseBalance);
+    getParam(tr, result, ['currency', 'balance'], /<td[^>]*class="tdBalance">([^]*?)<\/td>/, replaceTagsAndSpaces, parseCurrency);
     
     AnyBalance.setResult(result);
 }

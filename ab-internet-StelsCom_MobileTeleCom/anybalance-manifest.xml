@@ -1,6 +1,6 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-internet-StelsCom_MobileTeleCom</id>
+	<id version="3">ab-internet-StelsCom_MobileTeleCom</id>
 	<api flags="no_browser"/>
 	<name>MobileTeleCom (Сатка)</name>
 	<description html="true"><![CDATA[
@@ -26,6 +26,11 @@
 		<counter id="fio" name="ФИО" type="text"/> 
 		<counter id="status" name="Состояние интернета" type="text"/>
 		<counter id="TP" name="Текущий ТП" type="text"/>
+		<counter id="incoming" name="Входящий трафик" units=" мб"/>
+		<counter id="outgoing" name="Исходящий трафик" units=" мб"/>
+		<counter id="local" name="Локальный трафик" units=" мб"/>
+		<counter id="File_archive" name="Файловый архив" units=" мб"/>
+		<counter id="total" name="Итого" units=" мб"/>
 	</counters>
 	<keywords>Интернет</keywords>
 	<type>internet</type>

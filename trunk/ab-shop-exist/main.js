@@ -91,14 +91,16 @@ function main(){
     	var num = prefs.num || '\\d+';
     	var re = new RegExp("<tr[^>]*>(?:[\\s\\S](?!</tr>))*?getOrder\\('[^']*\\d*" + num + "'[\\s\\S]*?</tr>", "i");
     	var tr = getParam(html, null, null, re);
+		
+		AnyBalance.trace('Found tr: ' + tr);
     	if (!tr) {
 			AnyBalance.trace(prefs.num ? 'Не найдено активного заказа с последними цифрами ' + prefs.num : 'Не найдено ни одного активного заказа!');
     	} else {
-    		getParam(tr, result, 'ordernum', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    		getParam(tr, result, 'ordersum', /(?:[\s\S]*?<td[^>]*>){8}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    		getParam(tr, result, 'orderstatus', /(?:[\s\S]*?<td[^>]*>){11}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    		getParam(tr, result, 'orderexpect', /(?:[\s\S]*?<td[^>]*>){12}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDateMy);
-    		getParam(tr, result, 'orderdesc', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+			getParam(tr, result, 'ordernum', /(?:[^>]*>){5}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+    		getParam(tr, result, 'ordersum', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    		getParam(tr, result, 'orderstatus', /(?:[\s\S]*?<td[^>]*>){8}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    		getParam(tr, result, 'orderexpect', /(?:[\s\S]*?<td[^>]*>){9}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDateMy);
+    		getParam(tr, result, 'orderdesc', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     	}
     }
 	

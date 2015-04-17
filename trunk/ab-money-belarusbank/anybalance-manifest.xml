@@ -1,16 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="8">ab-money-belarusbank</id>
+	<id version="9">ab-money-belarusbank</id>
 	<api min_level="6" flags="no_browser"/>
 	<name>Беларусбанк</name>
 	<description html="true"><![CDATA[
-	<p>Получает текущий остаток карт Беларусбанка, используя интернет-банк.</p>
+	<p>Получает текущий остаток счетов Беларусбанка, используя интернет-банк.</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
 	<p>Для использования провайдера необходимо в его настройки перенести 40 кодов подтверждения с карты кодов, выдаваемой банком.</p>
 	<p>Если у вас нет доступа к интернет-банку, инструкции по его получению можно увидеть здесь: http://belarusbank.by/ru/press/questions/16825/27580</p>
 	]]></instruction>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
@@ -20,8 +20,7 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Остаток" units=" {@currency}"/>
-		<counter id="cardnum" name="Номер карты" type="text"/>
-		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="cardnum" name="Номер счета" type="text"/>
 	</counters>
 	<keywords></keywords>
 	<type>money, bank</type>

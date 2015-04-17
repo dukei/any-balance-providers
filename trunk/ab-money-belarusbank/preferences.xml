@@ -32,11 +32,11 @@
     <EditTextPreference 
         positiveButtonText="ОК"
         key="lastdigits" 
-        dialogTitle="Номер карты"
+        dialogTitle="Номер счета"
         negativeButtonText="Отмена"
         title="Номер"
         summary="|Автоматически|{@s}"
-        dialogMessage="Введите последние 4 цифры карты, по которой вы хотите получить информацию. Если это поле оставить пустым, то будет показана информация по первой карте."
+        dialogMessage="Введите последние 4 цифры счета, по которому вы хотите получить информацию. Если это поле оставить пустым, то будет показана информация по первому счету."
         inputType="number">
     </EditTextPreference>
     <EditTextPreference 

@@ -4,7 +4,7 @@
 Получает баланс и информацию о тарифе для интернет провайдера Мобил ТелеКом Плюс
 
 Site: http://stat.satka.ru/
-Личный кабинет: http://utm.сатка.онлайн/index.php
+Личный кабинет: http://utm.xn--80aa3a0ag.xn--80asehdb/
 */
 
 var g_headers = {
@@ -56,5 +56,29 @@ function main(){
 	
 	html = AnyBalance.requestGet(baseurl + '/?module=40_tariffs', g_headers);
 	getParam(html, result, 'TP', /Изменить<\/td>\s*<\/tr>\s*<tr>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+	html = AnyBalance.requestGet(baseurl + '/?module=30_traffic_report', g_headers);
+	
+	var now = new Date();
+	var m = 0;
+        var y = 0;
+        if(now.getMonth() + 1 - m <= 0){
+            m = 12 + now.getMonth() + 1 - m;
+        } else {
+            m = now.getMonth() + 1 - m;
+        }
+        if(now.getYear() < 1900){
+            var year = 1900 + now.getYear();
+        } else {
+            var year = now.getYear();
+        }
+	var info = AnyBalance.requestPost('http://utm.xn--80aa3a0ag.xn--80asehdb/?module=30_traffic_report', {
+       date1:Date.UTC(year - y, m-1, 1) / 1000 + now.getTimezoneOffset()*60,
+       date2:Date.UTC(year - y, m, 1) / 1000 + now.getTimezoneOffset()*60,});
+       getParam(info, result, 'incoming', /Входящий<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+       getParam(info, result, 'outgoing', /Исходящий<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+       getParam(info, result, 'local', /Локальный<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+       getParam(info, result, 'File_archive', /Файловый архив<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+       getParam(info, result, 'total', /Итого<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+       
 	AnyBalance.setResult(result);
 }

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-municipal-kievgaz</id>
+	<api flags="no_browser"/>
+	<name>Киевгаз</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о поставщике услуг "Киевгаз" (г. Киев), <a href="http://www.kyivgaz.ua/">http://www.kyivgaz.ua/</a></p>
+	<p>Информация берется из личного кабинета <a href="http://my.kyivgaz.ua/index.php">http://my.kyivgaz.ua/index.php</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="income" name="Поступившие оплаты" units=" грн"/>
+		<counter id="debt" name="Долг" units=" грн"/>
+	</counters>
+	<keywords></keywords>
+	<type>municipal</type>
+	<country>ua</country>
+</provider>

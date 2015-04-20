@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-municipal-samaraenergo</id>
+	<id version="2">ab-municipal-samaraenergo</id>
 	<api flags="no_browser"/>
 	<name>СамараЭнерго</name>
 	<description html="true"><![CDATA[
@@ -24,7 +24,7 @@
 		<counter id="tariffType" name="Тип тарифа" type="text"/>
 		<counter id="tariff" name="Тариф" type="text"/>
 		<counter id="lastPayment" name="Последний платеж" type="text"/>
-		<counter id="notPaid" name="К оплате" type="text"/>
+		<counter id="notPaid" name="К оплате"/>
 	</counters>
 	<keywords></keywords>
 	<type>municipal</type>

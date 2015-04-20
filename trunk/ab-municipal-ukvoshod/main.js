@@ -12,12 +12,15 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://ukvoshod.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	checkEmpty(prefs.company, 'Выберите ваше управляющую компанию!');
+
+	prefs.company = prefs.company || '2721210209';
+
+	var baseurl = 'http://' + ['uk1', 'uk2'][['2723144544', '2721210209'].indexOf(prefs.company)] + '.ukvoshod.ru/';
 	
 	var html = AnyBalance.requestGet(baseurl + 'index.php', g_headers);
 	
@@ -29,7 +32,8 @@ function main() {
 	html = AnyBalance.requestPost(baseurl + 'index.php', {
 		inn: prefs.company,
 		login: prefs.login,
-		pass: prefs.password
+		pass: prefs.password,
+		zap: 0
 	}, addHeaders({Referer: baseurl + 'index.php'}));
 	
 	if (!/logout/i.test(html)) {

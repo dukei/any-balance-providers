@@ -61,6 +61,7 @@ function main() {
 		getParam(shopData.name, result, 'shopName' + i);
 		getParam(shopData.status, result, 'shopStatus' + i);
 		getParam(shopData.balance, result, 'shopBalance' + i);
+		getParam(shopData.currency, result, 'shopCurrency' + i);
 	}
 
 	getParam(shopsData, result, 'shops', null, null, aggregateShops);
@@ -80,7 +81,8 @@ function getShopsData(shops){
 		res.push({
 			name: name || 'Имя магазина не найдено',
 			status: status || 'Статус не найден',
-			balance: balance ? parseBalance(balance) + ' ' + parseCurrency(balance) : ''
+			balance: balance ? parseBalance(balance) : 0,
+			currency: balance ? parseCurrency(balance) : ''
 		});
 	}
 	return res;
@@ -89,6 +91,6 @@ function getShopsData(shops){
 function aggregateShops(shops){
 	var res = [];
 	for(var i = 0, toi = shops.length; i < toi; i++)
-		res.push(shops[i].name + ' (' + shops[i].status + ') ' + '<b>' + shops[i].balance + '</b>');
+		res.push(shops[i].name + ' (' + shops[i].status + ') ' + '<b>' + shops[i].balance + ' ' + shops[i].currency + '</b>');
 	return res.join('< br />');
 }

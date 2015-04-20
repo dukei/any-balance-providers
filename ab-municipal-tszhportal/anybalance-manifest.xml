@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-municipal-tszhportal</id>
+	<api flags="no_browser"/>
+	<name>ТСЖ Портал (Хабаровск)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о коммунальных платежах в ТСЖ Портале города Хабаровск <a href="http://xn--80alqkehdhf.xn--p1ai/">http://xn--80alqkehdhf.xn--p1ai/</a></p>
+	<p>Информация берется из личного кабинета одного из выбранных ТСЖ, например <a href="http://ussuri.xn--80alqkehdhf.xn--p1ai/">http://ussuri.xn--80alqkehdhf.xn--p1ai/</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="debt" name="Долг" units=" р"/>
+		<counter id="accruals" name="Начисления" units=" р"/>
+		<counter id="recalculation" name="Перерасчет" units=" р"/>
+		<counter id="payment" name="Оплата" units=" р"/>
+		<counter id="summary" name="Итого" units=" р"/>
+		<counter id="peni" name="Пени" units=" р"/>
+	</counters>
+	<keywords></keywords>
+	<type>municipal</type>
+	<country>ru</country>
+</provider>

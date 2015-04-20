@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference
+		title="Логин"
+		key="login"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Логин"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите логин, используемый для входа в личный кабинет.">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Пароль"
+		key="password"
+		summary="||***********"
+		obligatory="true"
+		dialogTitle="Пароль"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите пароль, используемый для входа в личный кабинет."
+		inputType="textPassword">
+	</EditTextPreference>
+	<ListPreference
+		key="tszh"
+		title="ТСЖ"
+		dialogTitle="Выберите ТСЖ"
+		summary="||{@s}"
+		obligatory="true"
+		entries="Вместе (пер. Фабричный 21, 23)|Вместе (пер. Дзержинского 20)|Вместе Плюс (кл. О. Кошевого 9-Б)|Фабричный, 25 (пер. Фабричный 25)|Родник (ул. Волочаевская 7)|Уссури (ул. Краснореченская д.157А)|Сысоева-4 (ул. Сысоева 4)"
+		entryValues="vmeste|dz20|vmesteplus|fab25|rodnik|ussuri|sysoeva4"
+		defaultValue="vmeste">
+	</ListPreference>
+</PreferenceScreen>

@@ -9,6 +9,7 @@ var g_headers = {
 	'Connection':'keep-alive',
 	'User-Agent':'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
 };
+
 function main() {
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'https://online.binbank.ru/';
@@ -19,16 +20,23 @@ function main() {
 	
 	var html = AnyBalance.requestGet(baseurl + 'lite/app/pub/Login', g_headers);
 	
-	var action = getParam(html, null, null, /<form[^>]*"post"[^>]*action="\.\.\/([^"]*)/i);
-	if(!action)
-		throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
+	var matches = /wicketSubmitFormById\('(id\d+?)',\s*'\.\.(\/[^']+)/i.exec(html);
+    if(!matches){
+        var prof = getParam(html, null, null, /<title>(Профилактические работы)<\/title>/i);
+        if(prof)
+            throw new AnyBalance.Error("В настоящее время в системе Интернет-банк проводятся профилактические работы. Пожалуйста, попробуйте ещё раз позже.");
+        throw new AnyBalance.Error("Не удаётся найти форму входа в интернет-банк! Сайт недоступен или изменения на сайте.");
+    }
 	
-	html = AnyBalance.requestPost(baseurl + 'lite/app/' + action, {
-		':submit':'x',
-		'hasData':'X',
-		'login':prefs.login,
-		'password':prefs.password,
-    }, addHeaders({Referer: baseurl + 'lite/app/pub/Login'}));
+    var id = matches[1], href = matches[2];
+
+    var params = {};
+    params[id + "_hf_0"] = '';
+    params.hasData = 'X';
+    params.login = prefs.login;
+    params.password = prefs.password;
+	
+	html = AnyBalance.requestPost(baseurl + 'lite/app/' + href, params, addHeaders({Referer: baseurl + 'lite/app/pub/Login'}));
 	
 	if(!/lite\/app\/pub\/Exit/i.test(html)) {
 		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference
+		title="Номер заявления"
+		key="login"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Номер заявления"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите номер заявления (16 цифр без пробелов)">
+	</EditTextPreference>
+</PreferenceScreen>

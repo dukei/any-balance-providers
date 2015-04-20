@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="8">ab-shop-exist</id>
+	<id version="9">ab-shop-exist</id>
 	<name>Exist.ru</name>
 	<api flags="no_browser"/>
 	<description html="true"><![CDATA[

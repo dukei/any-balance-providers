@@ -44,6 +44,10 @@ Array.prototype.contains = function(k) {
 
 function main(){
     var prefs = AnyBalance.getPreferences();
+	
+	checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(prefs.password, 'Введите пароль!');
+	
     var baseurl = "http://www.exist.ru/Profile/";
     AnyBalance.setDefaultCharset('utf-8'); 
 	
@@ -67,13 +71,14 @@ function main(){
         ctl00$ctl00$b$b$custLogin$bnLogin:'Ждите...'
     }, addHeaders({Referer: baseurl + 'Login.aspx?ReturnUrl=%2fProfile%2fbalance.aspx'})); 
 	
-    if(!/\/exit.axd/i.test(html)){
-        var error = getParam(html, null, null, /<span[^>]+id="lblError"[^>]*>([\s\S]*?)(?:<\/span>|<a[^>]+href=['"]\/howgetpass.aspx)/i, replaceTagsAndSpaces, html_entity_decode);
-        if(error)
-            throw new AnyBalance.Error(error);
+	if(!/\/exit.axd/i.test(html)){
+		var error = getParam(html, null, null, /<span[^>]+id="lblError"[^>]*>([\s\S]*?)(?:<\/span>|<a[^>]+href=['"]\/howgetpass.aspx)/i, replaceTagsAndSpaces, html_entity_decode);
+		if (error)
+			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
 		
+		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-    }
+	}
 	
 	var result = {success: true};
 	
@@ -86,22 +91,53 @@ function main(){
     getParam(html, result, 'card', /Счёт[^>]*карты:[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'carddebt', /Долг по счёту кредитной карты:[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 	
-    if (AnyBalance.isAvailable('ordernum', 'ordersum', 'orderdesc', 'orderstatus', 'orderexpect')) {
+	var singleOrder;
+	// Новый формат, по всем позициям в заказе
+	if (AnyBalance.isAvailable('ordernum', 'ordersum', 'orderdesc', 'orderstatus', 'orderexpect')) {
     	html = AnyBalance.requestGet(baseurl + 'Orders/default.aspx', g_headers);
-    	var num = prefs.num || '\\d+';
-    	var re = new RegExp("<tr[^>]*>(?:[\\s\\S](?!</tr>))*?getOrder\\('[^']*\\d*" + num + "'[\\s\\S]*?</tr>", "i");
-    	var tr = getParam(html, null, null, re);
-		
-		AnyBalance.trace('Found tr: ' + tr);
-    	if (!tr) {
+    	var trs = sumParam(html, null, null, new RegExp("<tr[^>]*>(?:[\\s\\S](?!</tr>))*?getOrder\\('[^']*\\d*" + (prefs.num || '\\d+') + "'[\\s\\S]*?</tr>", "ig"));
+		AnyBalance.trace('Found ' + trs.length + ' items');
+		if (!trs || !trs.length) {
 			AnyBalance.trace(prefs.num ? 'Не найдено активного заказа с последними цифрами ' + prefs.num : 'Не найдено ни одного активного заказа!');
-    	} else {
-			getParam(tr, result, 'ordernum', /(?:[^>]*>){5}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-    		getParam(tr, result, 'ordersum', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    		getParam(tr, result, 'orderstatus', /(?:[\s\S]*?<td[^>]*>){8}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    		getParam(tr, result, 'orderexpect', /(?:[\s\S]*?<td[^>]*>){9}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDateMy);
-    		getParam(tr, result, 'orderdesc', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    	}
+		} else {
+			for(var i = 0; i < trs.length; i++) {
+				var tr = trs[i];
+				// AnyBalance.trace('Found tr: ' + tr);
+				var order = getParam(tr, null, null, /(?:[^>]*>){5}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+				if(!order) {
+					AnyBalance.trace('Не удалось узнать номер заказа, останавливаемся, дальше не идем..');
+					break;
+				}
+				
+				// Если номер заказа еще не установлен - установим его
+				if(!singleOrder) {
+					singleOrder = order;
+					getParam(order, result, 'ordernum');
+					
+					getParam(tr, result, 'orderstatus', /(?:[\s\S]*?<td[^>]*>){8}([\s\S]*?)<\/td>/i, [replaceTagsAndSpaces, /\s*отказаться\s*/i, ''], html_entity_decode);
+					
+				}
+				if(order == singleOrder) {
+					AnyBalance.trace('Найденый номер заказа соответствует текущему..');
+
+					sumParam(tr, result, 'ordersum', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+					sumParam(tr, result, 'orderexpect', /(?:[\s\S]*?<td[^>]*>){9}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDateMy, aggregate_min);
+
+					sumParam(tr, result, 'orderdesc', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode, function (values, delimiter, allow_empty) {
+						if (values.length == 0) 
+							return;
+						if (!isset(delimiter)) 
+							delimiter = '\n';
+						var ret = values.join(delimiter);
+						if (!allow_empty) 
+							ret = ret.replace(/^(?:\s*,\s*)+|(?:\s*,\s*){2,}|(?:\s*,\s*)+$/g, '');
+						return ret;
+					});
+				} else {
+					AnyBalance.trace('Найденый номер заказа не соответствует текущему..');
+				}
+			}
+		}
     }
 	
     AnyBalance.setResult(result);

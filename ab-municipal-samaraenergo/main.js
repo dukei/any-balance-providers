@@ -66,7 +66,7 @@ function main() {
 
 	if(isAvailable('notPaid')){
 		html = AnyBalance.requestGet(baseurl + 'bdisu/startEBPP.sap?nextpage=getBills', addHeaders({Referer: baseurl + 'bdisu/navigation.sap'}));
-		getParam(html, result, 'notPaid', /К оплате\s*<\/label>[\s\S]*?<\/td>([\s\S]*?<\/td>)/i, replaceTagsAndSpaces, html_entity_decode);
+		getParam(html, result, 'notPaid', /<input[^>]*name="inputSumToPay"[^>]*value="([^"]*)/i, replaceTagsAndSpaces, parseBalance);
 	}
 
 	AnyBalance.setResult(result);

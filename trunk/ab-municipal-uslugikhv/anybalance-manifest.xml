@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-municipal-uslugikhv</id>
+	<api flags="no_browser"/>
+	<name>Очередь ДОУ (Хабаровский край)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о номере в очереди в ДОУ в Хабаровском крае</p>
+	<p>Информация берется со страницы <a href="https://uslugi.khv.gov.ru/dou/request/">https://uslugi.khv.gov.ru/dou/request/</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="commonQueue" name="Номер в общегородской очереди"/>
+		<counter id="benefitsQueue" name="Номер в льготной очереди"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="account" name="Номер заявления" type="text"/>
+		<counter id="fio" name="ФИО ребенка" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>municipal</type>
+	<country>ru</country>
+</provider>

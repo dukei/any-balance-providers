@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="11">ab-cell-activ-kz</id>
+	<id version="12">ab-cell-activ-kz</id>
 	<api flags="no_browser"/>
 	<name>Activ (Казахстан)</name>
 	<description html="true"><![CDATA[
@@ -16,7 +16,7 @@
 	</ol> 
 	<p><b>ВНИМАНИЕ!</b> Если вы абонент Kcell, используйте провайдер Kcell (Казахстан).</p>
 	]]></instruction>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

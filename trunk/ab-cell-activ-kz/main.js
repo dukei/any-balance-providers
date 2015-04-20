@@ -17,10 +17,10 @@ function main(){
     };
 	
     var prefs = AnyBalance.getPreferences();
-    checkEmpty(prefs.login, 'Введите номер телефона');
+    checkEmpty(/^\d{10}$/.test(prefs.login), 'Введите номер телефона');
     checkEmpty(prefs.password, 'Введите пароль');
 	
-    var baseurl = "http://www.activ.kz/";
+    var baseurl = "https://www.activ.kz/";
 	
     AnyBalance.setDefaultCharset('utf-8');
 	
@@ -31,13 +31,13 @@ function main(){
     var html;
     if(!prefs.__dbg) {
         html = AnyBalance.requestPost(baseurl + lang + "/ics.security/authenticate", {
-            'msisdn':'+7' + prefs.login,
+            'msisdn': '+7 (' + prefs.login.substr(0, 3) + ') ' + prefs.login.substr(3, 3) + '-' + prefs.login.substr(6, 4),
             'password': prefs.password
-        }, addHeaders({'Referer':baseurl + lang + '/ics.security/login'}));
+        }, addHeaders({'Referer': baseurl + lang + '/ics.security/login'}));
 		
 		//AnyBalance.trace(html);
         
-        if(/<form[^>]+id="login-form"/i.test(html)){
+        if(!/logout/i.test(html)){
 			var error = getParam(html, null, null, /<div[^>]*class="[^"]*alert[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
 			if(error)
 				throw new AnyBalance.Error(error);

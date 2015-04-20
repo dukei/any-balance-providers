@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-st65</id>
+	<api flags="no_browser"/>
+	<name>Солнце телеком</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе интернет провайдера "Солнце телеком" <a href="http://st65.ru/">http://st65.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="https://stat.st65.ru/login">https://stat.st65.ru/login</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="acc_num" name="Лицевой счет" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

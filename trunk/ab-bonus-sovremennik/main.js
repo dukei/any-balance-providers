@@ -35,10 +35,8 @@ function main() {
 		throw new AnyBalance.Error(error, null, /Ошибочная комбинация логина и пароля/i.test(error));
 
 	var redirectURL = getParam(html, null, null, /<meta http-equiv="Refresh"[^>]*?URL=([^"]+)/i);
-	if(!redirectURL)
-		throw new AnyBalance.Error('Не удалось найти URL для редиректа. Сайт изменен?');
-
-	html = AnyBalance.requestGet(redirectURL.replace(/&amp;/g, '&'), addHeaders({Referer: cabineturl + 'message'}));
+	if(redirectURL)
+		html = AnyBalance.requestGet(redirectURL.replace(/&amp;/g, '&'), addHeaders({Referer: cabineturl + 'message'}));
 	
 	if (!/logout/i.test(html)) {
 		error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);

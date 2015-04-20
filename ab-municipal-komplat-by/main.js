@@ -23,16 +23,28 @@ function main() {
 	if(!html || AnyBalance.getLastStatusCode() > 400)
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	
+	AnyBalance.setDefaultCharset('utf8');
+
 	html = AnyBalance.requestPost(baseurl + 'index.php?controller=user&action=login', {
 		login: prefs.login,
-		passwd: prefs.password,
-		'ajax': 1
-	}, addHeaders({Referer: baseurl + 'hello', 'X-Requested-With': 'XMLHttpRequest'}));
+		passwd: prefs.password
+	}, addHeaders({
+		Referer: baseurl + 'hello',
+		'X-Requested-With': 'XMLHttpRequest',
+		'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+	}));
+
+	AnyBalance.setDefaultCharset('windows-1251');
     
     var json = getJson(html);
 	
 	if (json.Response == 'FAIL') {
 		AnyBalance.trace(html);
+
+		var error = getErrorMessage(json.errorMessage);
+		if(error)
+			throw new AnyBalance.Error(error, null, /Неправильный логин или пароль|Нет пароля|Вы не в системе/.test(error));
+		
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	
@@ -81,4 +93,24 @@ function main() {
 	getParam(html, result, 'debt', /Пени за месяц[^>]*>([\s\S]*?)<\/td[^>]*>([\s\S]*?)<\/td/i, replaceTagsAndSpaces, parseBalance);
 	
 	AnyBalance.setResult(result);
+}
+
+function getErrorMessage(code) {
+    switch(code) {
+        case 'accdenied':
+            return 'Вы не в системе или у Вас нет прав на просмотр страницы';
+        case 'nolp':
+            return 'Логин и пароль не могут быть пустыми';
+        case 'nfnd':
+            return 'Неправильный логин или пароль';
+        case 'wpass':
+            return 'Неправильный логин или пароль';
+        case 'nopass':
+            return 'Нет пароля, позвоните в службу поддержки';
+        case 'lock':
+            return 'Доступ закрыт. Вы пять раз неправильно вводите данные, ' +
+                'попробуйте через 20 минут.';
+        default:
+            return false;
+    }
 }

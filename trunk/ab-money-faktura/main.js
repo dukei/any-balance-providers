@@ -23,7 +23,8 @@ function main(){
 	
     var html = AnyBalance.requestGet(baseurl + "/pub/Login");
     
-    var matches = /class="login rounded[^>]*id="([^"]*)"[^>]*action="\.\.([^"]*)"/i.exec(html);
+    //var matches = /class="login rounded[^>]*id="([^"]*)"[^>]*action="\.\.([^"]*)"/i.exec(html);
+    var matches = /wicketSubmitFormById\('(id\d+?)',\s*'\.\.(\/[^']+)/i.exec(html);
     if(!matches){
         var prof = getParam(html, null, null, /<title>(Профилактические работы)<\/title>/i);
         if(prof)

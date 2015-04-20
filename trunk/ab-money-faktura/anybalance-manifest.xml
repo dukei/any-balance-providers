@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id major_version="2.0" version="12">ab-money-faktura</id>
+	<id major_version="2.0" version="13">ab-money-faktura</id>
 	<name>Фактура</name>
 	<description html="true"><![CDATA[
 	<p>Получает текущий остаток, бонусные баллы и другие параметры карт банков, работающих через factura.ru, используя систему Интернет-банк https://www.faktura.ru/lite/app</p>
@@ -9,7 +9,7 @@
 	<instruction html="true"><![CDATA[
 	<p>Если у вас нет доступа к интернет-банку, выполните условия на странице https://www.faktura.ru/lite/app/pub/Register</p>
 	]]></instruction>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;, Victor Vostrikov &lt;v.vostrikov@softworks.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
@@ -35,6 +35,6 @@
 		<counter id="percent_date" name="Дата начисления процентов" type="time" format="dd/MM/yyyy"/>
 	</counters>
 	<keywords>интернет-банк, фактура, левобережный, 2Т банк,  Банк-Т, 2ТБанк, ПримСоцБанк, европлан</keywords>
-	<type>money</type>
+	<type>money, bank</type>
 	<country>ru</country>
 </provider>

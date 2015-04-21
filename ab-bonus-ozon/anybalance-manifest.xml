@@ -1,12 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="7">ab-bonus-ozon</id>
+	<id version="8">ab-bonus-ozon</id>
 	<name>OZON.ru</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о баланcе и количестве баллов в интернет магазине OZON.ru (http://www.ozon.ru).</p>
 	]]></description>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

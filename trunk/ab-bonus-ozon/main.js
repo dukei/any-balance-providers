@@ -47,7 +47,7 @@ function main() {
 	}
 	if (AnyBalance.isAvailable('bonus')) {
 		html = AnyBalance.requestGet(baseurl + 'context/mypoints/', g_headers);
-		getParam(html, result, 'bonus', /Сумма:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'bonus', /"eOzonStatus_NumberPoints"[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 	}
 	html = AnyBalance.requestGet(baseurl + 'context/myclient/');
 	getParam(html, result, '__tariff', /<div[^>]+class="big1"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);

@@ -1,5 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="8" date="2015-04-21">
+	- Поддержка изменений на сайте.
+	</change>
 <change version="7" date="2013-10-10">
 - Поддержка изменений в личном кабинете (Stark)
 </change>

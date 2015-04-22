@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="9">ab-shop-exist</id>
+	<id version="10">ab-shop-exist</id>
 	<name>Exist.ru</name>
 	<api flags="no_browser"/>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе и другие данные для клиентов магазина автозапчастей http://exist.ru.</p> 
-	<p>Информация берется из личного кабинета.</p>   
+	<p>Предоставляет информацию о балансе и другие данные для клиентов магазина автозапчастей <a href="http://exist.ru">http://exist.ru</a>.</p> 
+	<p>Информация берется из личного кабинета <a href="http://www.exist.ru/profile/Balance.aspx">http://www.exist.ru/profile/Balance.aspx</a></p>
 	]]></description>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
@@ -22,7 +22,7 @@
 		<counter id="carddebt" name="Долг по карте" units=" р"/>
 		<counter id="orderstatus" name="Статус заказа" type="text"/>
 		<counter id="orderexpect" name="Ожидается" type="time" format="dd/MM/yyyy"/>
-		<counter id="orderdesc" name="Описание заказа" type="text"/>
+		<counter id="orderdesc" name="Описание заказа" type="html"/>
 		<counter id="ordernum" name="Номер заказа" type="text"/>
 		<counter id="ordersum" name="Сумма заказа" type="numeric" units=" р"/>
 		<counter id="code" name="Код клиента" type="text"/>

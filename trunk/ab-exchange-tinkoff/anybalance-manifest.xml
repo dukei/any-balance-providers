@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-exchange-tinkoff</id>
+	<id version="2">ab-exchange-tinkoff</id>
 	<api flags="no_browser"/>
 	<name>Курсы обмена валют Тинькофф Банка</name>
 	<description html="true"><![CDATA[
@@ -15,14 +15,26 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="usd_to_rub_buy" name="USD/RUB Покупка"/>
-		<counter id="usd_to_rub_sell" name="USD/RUB Продажа"/>
-		<counter id="usd_to_eur_buy" name="USD/EUR Покупка"/>
-		<counter id="usd_to_eur_sell" name="USD/EUR Продажа"/>
-		<counter id="eur_to_rub_buy" name="EUR/RUB Покупка"/>
-		<counter id="eur_to_rub_sell" name="EUR/RUB Продажа"/>
-		<counter id="eur_to_usd_buy" name="EUR/USD Покупка"/>
-		<counter id="eur_to_usd_sell" name="EUR/USD Продажа"/>
+		<counter id="usd_to_rub_buy" name="USD/RUB Покупка (счет)"/>
+		<counter id="usd_to_rub_sell" name="USD/RUB Продажа (счет)"/>
+		<counter id="eur_to_rub_buy" name="EUR/RUB Покупка (счет)"/>
+		<counter id="eur_to_rub_sell" name="EUR/RUB Продажа (счет)"/>
+
+		<counter id="op_usd_to_rub_buy" name="USD/RUB Покупка (карта)"/>
+		<counter id="op_usd_to_rub_sell" name="USD/RUB Продажа (карта)"/>
+		<counter id="op_eur_to_rub_buy" name="EUR/RUB Покупка (карта)"/>
+		<counter id="op_eur_to_rub_sell" name="EUR/RUB Продажа (карта)"/>
+
+		<counter id="usd_to_eur_buy" name="USD/EUR Покупка (счет)"/>
+		<counter id="usd_to_eur_sell" name="USD/EUR Продажа (счет)"/>
+		<counter id="eur_to_usd_buy" name="EUR/USD Покупка (счет)"/>
+		<counter id="eur_to_usd_sell" name="EUR/USD Продажа (счет)"/>
+
+		<counter id="op_usd_to_eur_buy" name="USD/EUR Покупка (карта)"/>
+		<counter id="op_usd_to_eur_sell" name="USD/EUR Продажа (карта)"/>
+		<counter id="op_eur_to_usd_buy" name="EUR/USD Покупка (карта)"/>
+		<counter id="op_eur_to_usd_sell" name="EUR/USD Продажа (карта)"/>
+
 	</counters>
 	<keywords></keywords>
 	<type>exchange</type>

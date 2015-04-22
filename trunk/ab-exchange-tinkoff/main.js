@@ -29,15 +29,39 @@ function main() {
     }
 	
 	var result = {success: true};
-	
-	getParam(json.payload.rates[8].buy, result, 'usd_to_rub_buy', null, null);
-	getParam(json.payload.rates[8].sell, result, 'usd_to_rub_sell', null, null);
-	getParam(json.payload.rates[9].buy, result, 'usd_to_eur_buy', null, null);
-	getParam(json.payload.rates[9].sell, result, 'usd_to_eur_sell', null, null);
-	getParam(json.payload.rates[10].buy, result, 'eur_to_rub_buy', null, null);
-	getParam(json.payload.rates[10].sell, result, 'eur_to_rub_sell', null, null);
-	getParam(json.payload.rates[11].buy, result, 'eur_to_usd_buy', null, null);
-	getParam(json.payload.rates[11].sell, result, 'eur_to_usd_sell', null, null);
+
+	for(var i=0; i<json.payload.rates.length; ++i){
+		var obj = json.payload.rates[i];
+		if(/DebitCardsTransfers/i.test(obj.category)){
+			if(obj.fromCurrency.name == 'USD' && obj.toCurrency.name == 'RUB'){
+				getParam(obj.buy, result, 'usd_to_rub_buy');
+				getParam(obj.sell, result, 'usd_to_rub_sell');
+			}else if(obj.fromCurrency.name == 'EUR' && obj.toCurrency.name == 'RUB'){
+				getParam(obj.buy, result, 'eur_to_rub_buy');
+				getParam(obj.sell, result, 'eur_to_rub_sell');
+			}else if(obj.fromCurrency.name == 'EUR' && obj.toCurrency.name == 'USD'){
+				getParam(obj.buy, result, 'eur_to_usd_buy');
+				getParam(obj.sell, result, 'eur_to_usd_sell');
+			}else if(obj.fromCurrency.name == 'USD' && obj.toCurrency.name == 'EUR'){
+				getParam(obj.buy, result, 'usd_to_eur_buy');
+				getParam(obj.sell, result, 'usd_to_eur_sell');
+			}
+		}else if(/DebitCardsOperations/i.test(obj.category)){
+			if(obj.fromCurrency.name == 'USD' && obj.toCurrency.name == 'RUB'){
+				getParam(obj.buy, result, 'op_usd_to_rub_buy');
+				getParam(obj.sell, result, 'op_usd_to_rub_sell');
+			}else if(obj.fromCurrency.name == 'EUR' && obj.toCurrency.name == 'RUB'){
+				getParam(obj.buy, result, 'op_eur_to_rub_buy');
+				getParam(obj.sell, result, 'op_eur_to_rub_sell');
+			}else if(obj.fromCurrency.name == 'EUR' && obj.toCurrency.name == 'USD'){
+				getParam(obj.buy, result, 'op_eur_to_usd_buy');
+				getParam(obj.sell, result, 'op_eur_to_usd_sell');
+			}else if(obj.fromCurrency.name == 'USD' && obj.toCurrency.name == 'EUR'){
+				getParam(obj.buy, result, 'op_usd_to_eur_buy');
+				getParam(obj.sell, result, 'op_usd_to_eur_sell');
+			}
+		}
+	}
 	
 	AnyBalance.setResult(result);
 }

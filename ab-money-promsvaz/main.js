@@ -22,6 +22,10 @@ function getEventValidation(html){
     return getParam(html, null, null, /name="__EVENTVALIDATION".*?value="([^"]*)"/);
 }
 
+function getViewStateGenerator(html){
+    return getParam(html, null, null, /name="__VIEWSTATEGENERATOR".*?value="([^"]*)/);
+}
+
 // function getViewState1(html){
     // return getParam(html, null, null, /__VIEWSTATE\|([^\|]*)/);
 // }
@@ -86,7 +90,10 @@ function main(){
     var html = AnyBalance.requestGet(g_baseurl + '/n/Default.aspx', g_headers);
     var eventvalidation = getEventValidation(html);
     var viewstate = getViewState(html);
-	
+    var viewStateGenerator = getViewStateGenerator(html);
+
+    AnyBalance.setCookie('retail.payment.ru', '__dp_rsa', 'version%3D3%2E4%2E1%2E0%5F1%26pm%5Ffpua%3Dmozilla%2F5%2E0%20%28windows%20nt%206%2E1%3B%20wow64%29%20applewebkit%2F537%2E36%20%28khtml%2C%20like%20gecko%29%20chrome%2F42%2E0%2E2311%2E90%20safari%2F537%2E36%7C5%2E0%20%28Windows%20NT%206%2E1%3B%20WOW64%29%20AppleWebKit%2F537%2E36%20%28KHTML%2C%20like%20Gecko%29%20Chrome%2F42%2E0%2E2311%2E90%20Safari%2F537%2E36%7CWin32%26pm%5Ffpsc%3D24%7C1440%7C900%7C900%26pm%5Ffpsw%3D%26pm%5Ffptz%3D3%26pm%5Ffpln%3Dlang%3Dru%7Csyslang%3D%7Cuserlang%3D%26pm%5Ffpjv%3D1%26pm%5Ffpco%3D1%26pm%5Ffpasw%3Dwidevinecdmadapter%7Cmhjfbmdgcfjbbpaeojofohoefgiehjai%7Cpepflashplayer%7Cinternal%2Dremoting%2Dviewer%7Cinternal%2Dnacl%2Dplugin%7Cinternal%2Dpdf%2Dviewer%26pm%5Ffpan%3DNetscape%26pm%5Ffpacn%3DMozilla%26pm%5Ffpol%3Dtrue%26pm%5Ffposp%3D%26pm%5Ffpup%3D%26pm%5Ffpsaw%3D1440%26pm%5Ffpspd%3D24%26pm%5Ffpsbd%3D%26pm%5Ffpsdx%3D%26pm%5Ffpsdy%3D%26pm%5Ffpslx%3D%26pm%5Ffpsly%3D%26pm%5Ffpsfse%3D%26pm%5Ffpsui%3D%26pm%5Fos%3DWindows%26pm%5Fbrmjv%3D42%26pm%5Fbr%3DChrome%26pm%5Finpt%3D%26pm%5Fexpt%3D')
+
 	// html = AnyBalance.requestPost(g_baseurl + '/n/Default.aspx', {
 		// 'ctl00$ScriptManager':'ctl00$mainArea$upLogin|ctl00$mainArea$btnLogin',
 		// '__EVENTTARGET': '',
@@ -106,12 +113,15 @@ function main(){
 		'__VIEWSTATE':viewstate,
 		'__VIEWSTATEENCRYPTED': '',
 		'__EVENTVALIDATION':eventvalidation,
-		'ctl00$mainArea$vtcUserName':prefs.login,
+		//'ctl00$mainArea$vtcUserName':prefs.login,
+		'__VIEWSTATEGENERATOR': viewStateGenerator,
 		'ctl00$mainArea$LoginInput$vtcLogin':prefs.login,
 		'ctl00$mainArea$vtcPassword':prefs.password,
 		'__ASYNCPOST':true,
 		'ctl00$mainArea$btnLogin':'Войти'
-	}, addHeaders({Referer:'https://retail.payment.ru/n/Default.aspx'}), true);
+	}, addHeaders({
+		Referer: g_baseurl + '/n/Default.aspx'
+	}), true);
 	
 	// if(!/pageRedirect/i.test(html))
 		// throw new AnyBalance.Error("Не удаётся войти в интернет банк (внутренняя ошибка сайта)");

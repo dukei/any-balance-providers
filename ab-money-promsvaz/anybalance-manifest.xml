@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="13">ab-money-promsvaz</id>
+	<id version="14">ab-money-promsvaz</id>
 	<name>Промсвязьбанк</name>
 	<api flags="no_browser"/>
 	<description html="true"><![CDATA[
@@ -38,6 +38,6 @@
 		<counter id="currency" name="Валюта" type="text"/>
 	</counters>
 	<keywords>промсвязьбанк, промсвязь, psb retail</keywords>
-	<type>money</type>
+	<type>money, bank</type>
 	<country>ru</country>
 </provider>

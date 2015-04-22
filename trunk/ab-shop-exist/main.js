@@ -97,6 +97,8 @@ function main(){
     	html = AnyBalance.requestGet(baseurl + 'Orders/default.aspx', g_headers);
     	var trs = sumParam(html, null, null, new RegExp("<tr[^>]*>(?:[\\s\\S](?!</tr>))*?getOrder\\('[^']*\\d*" + (prefs.num || '\\d+') + "'[\\s\\S]*?</tr>", "ig"));
 		AnyBalance.trace('Found ' + trs.length + ' items');
+		var htmlDesc = [];
+		
 		if (!trs || !trs.length) {
 			AnyBalance.trace(prefs.num ? 'Не найдено активного заказа с последними цифрами ' + prefs.num : 'Не найдено ни одного активного заказа!');
 		} else {
@@ -113,30 +115,29 @@ function main(){
 				if(!singleOrder) {
 					singleOrder = order;
 					getParam(order, result, 'ordernum');
-					
 					getParam(tr, result, 'orderstatus', /(?:[\s\S]*?<td[^>]*>){8}([\s\S]*?)<\/td>/i, [replaceTagsAndSpaces, /\s*отказаться\s*/i, ''], html_entity_decode);
-					
 				}
 				if(order == singleOrder) {
 					AnyBalance.trace('Найденый номер заказа соответствует текущему..');
 
 					sumParam(tr, result, 'ordersum', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-					sumParam(tr, result, 'orderexpect', /(?:[\s\S]*?<td[^>]*>){9}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDateMy, aggregate_min);
+					sumParam(tr, result, 'orderexpect', /(?:[\s\S]*?<td[^>]*>){9}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDateMy, aggregate_max);
 
-					sumParam(tr, result, 'orderdesc', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode, function (values, delimiter, allow_empty) {
-						if (values.length == 0) 
-							return;
-						if (!isset(delimiter)) 
-							delimiter = '\n';
-						var ret = values.join(delimiter);
-						if (!allow_empty) 
-							ret = ret.replace(/^(?:\s*,\s*)+|(?:\s*,\s*){2,}|(?:\s*,\s*)+$/g, '');
-						return ret;
-					});
+					// Создаем новую сводку, вот такую 
+					// <small>Van Wezel <b>5894915</b> (Центральный склад)<br>Фонарь указателя поворота зеркала левый</small>
+					var vendorName = getParam(tr, null, null, /"vendorName"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces) || '';
+					var artname = getParam(tr, null, null, /"artname"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces) || '';
+					var descript = getParam(tr, null, null, /"descript"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces) || '';
+					var place = getParam(tr, null, null, /(?:[\s\S]*?<td[^>]*>){8}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces) || '';
+					
+					htmlDesc.push('<small>' + vendorName + ' <b>' + artname + '</b> ' + (place ? ' (' + place + ')' : '') + '<br>' + descript + '</small>');
 				} else {
-					AnyBalance.trace('Найденый номер заказа не соответствует текущему..');
+					AnyBalance.trace('Найденый номер заказа не совпадает с предыдущим, это уже другой заказ, для его отображения необходимо явно указать его номер в настройках');
+					break;
 				}
 			}
+			// Запишем сводку
+			getParam(htmlDesc.join('<br><br>'), result, 'orderdesc');
 		}
     }
 	

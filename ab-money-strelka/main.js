@@ -11,7 +11,7 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences(),
-		baseurl = 'http://strelkacard.ru/',
+		baseurl = 'https://strelkacard.ru/',
 		lkurl = 'https://lk.strelkacard.ru/';
 	
 	AnyBalance.setDefaultCharset('utf-8');
@@ -109,6 +109,6 @@ function makeRequest(type, url, data, referer){
 }
 
 function getFormattedDate(sdate){
-	var date = new Date(sdate);
-	return [('0' + date.getUTCHours()).slice(-2), ('0' + date.getUTCMinutes()).slice(-2)].join(':') + ' ' + [date.getUTCDate(), date.getUTCMonth() + 1, date.getUTCFullYear()].join('-');
+	var data = /(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})/i.exec(sdate);
+	return [data[4], data[5]].join(':') + ' ' + [data[3], data[2], data[1]].join('-');
 }

@@ -97,7 +97,36 @@ function fetchCard(baseurl, result, prefs){
 }
 
 function fetchCredit(baseurl, result, prefs) {
-	throw new AnyBalance.Error('Получение информации о кредитах пока не реализовано. Сообщите разработчикам.');
+	var html = AnyBalance.requestGet(baseurl + 'secure/loans.aspx', g_headers);
+
+	var loans = getParam(html, null, null, /var loanDetailsData =\s*([^]*?)\s*var/i, null, getJson);
+
+	if(!loans || !isArray(loans) || !loans.length){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось найти ни одного счета.');
+	}
+
+	var loan;
+	for(var i = 0, toi = loans.length; i < toi; i++){
+		// Нужен аккаунт, где есть счет с цифрами
+		if((prefs.num && new RegExp('.*' + prefs.num + '.*').test(loans[i].cn)) || !prefs.num){
+			loan = loans[i];
+			break;
+		}
+	}
+
+	if(!loan){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Обратитесь к разработчикам, поиск счета по последним цифрам не поддерживается.');
+	}
+
+	getParam(loan.dt, result, 'balance', /Текущая сумма долга по кредиту[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(loan.dt, result, ['currency' , 'balance'], /Текущая сумма долга по кредиту[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseCurrency);
+    getParam(loan.cn, result, 'cardnum');
+    getParam(loan.dt, result, 'name', /Тип кредита[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(loan.dt, result, 'pctcredit', /Текущая процентная ставка по кредиту[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(loan.dt, result, 'gracepay', /Сумма ближайшего платежа[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(loan.dt, result, 'gracepaytill', /Дата ближайшего платежа[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseDateWord);
 }
 
 function fetchAccount(baseurl, result, prefs) {

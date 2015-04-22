@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="15" date="2015-04-22">
+	- Добавлена поддержка кредитов.
+	</change>
 	<change version="14" date="2015-04-15">
 	- Поддержка изменений на сайте (переход от старого кабинета на новый).
 	</change>

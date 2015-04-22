@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-hosting-develhoster</id>
+	<api flags="no_browser"/>
+	<name>Develhoster</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе Хостинг-провайдера Develhoster <a href="http://develhoster.ru/">http://develhoster.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="https://bill.develhoster.ru/billmgr?func=logon">https://bill.develhoster.ru/billmgr?func=logon</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="code" name="Код"/>
+		<counter id="name" name="Наименование" type="text"/>
+		<counter id="remain" name="Средств хватит на" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>hosting</type>
+	<country>ru</country>
+</provider>

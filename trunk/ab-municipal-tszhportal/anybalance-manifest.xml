@@ -4,8 +4,8 @@
 	<api flags="no_browser"/>
 	<name>ТСЖ Портал (Хабаровск)</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о коммунальных платежах в ТСЖ Портале города Хабаровск <a href="http://xn--80alqkehdhf.xn--p1ai/">http://xn--80alqkehdhf.xn--p1ai/</a></p>
-	<p>Информация берется из личного кабинета одного из выбранных ТСЖ, например <a href="http://ussuri.xn--80alqkehdhf.xn--p1ai/">http://ussuri.xn--80alqkehdhf.xn--p1ai/</a></p>
+	<p>Предоставляет информацию о коммунальных платежах в ТСЖ Портале города Хабаровск <a href="http://xn--80alqkehdhf.xn--p1ai/">http://тсжпортал.рф/</a></p>
+	<p>Информация берется из личного кабинета одного из выбранных ТСЖ, например <a href="http://ussuri.xn--80alqkehdhf.xn--p1ai/">http://ussuri.тсжпортал.рф/</a></p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>

@@ -128,7 +128,7 @@ function main(){
 					var vendorName = getParam(tr, null, null, /"vendorName"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces) || '';
 					var artname = getParam(tr, null, null, /"artname"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces) || '';
 					var descript = getParam(tr, null, null, /"descript"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces) || '';
-					var place = getParam(tr, null, null, /(?:[\s\S]*?<td[^>]*>){8}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces) || '';
+					var place = getParam(tr, null, null, /(?:[\s\S]*?<td[^>]*>){8}([\s\S]*?)<\/td>/i, [replaceTagsAndSpaces, /\s*отказаться\s*/i, '']) || '';
 					
 					htmlDesc.push('<small>' + vendorName + ' <b>' + artname + '</b> ' + (place ? ' (' + place + ')' : '') + '<br>' + descript + '</small>');
 				} else {

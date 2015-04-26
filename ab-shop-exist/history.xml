@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="11" date="2015-04-26">
+	- Доработано отображение сводки по заказам.
+	</change>
 	<change version="10" date="2015-04-23">
 	- Доработано отображение сводки по заказам.
 	</change>

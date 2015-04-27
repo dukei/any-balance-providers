@@ -93,11 +93,12 @@ function main(){
 	
 	var singleOrder;
 	// Новый формат, по всем позициям в заказе
-	if (AnyBalance.isAvailable('ordernum', 'ordersum', 'orderdesc', 'orderstatus', 'orderexpect')) {
+	if (AnyBalance.isAvailable('ordernum', 'ordersum', 'orderdesc', 'orderstatus', 'orderexpect', 'parts_count')) {
     	html = AnyBalance.requestGet(baseurl + 'Orders/default.aspx', g_headers);
     	var trs = sumParam(html, null, null, new RegExp("<tr[^>]*>(?:[\\s\\S](?!</tr>))*?getOrder\\('[^']*\\d*" + (prefs.num || '\\d+') + "'[\\s\\S]*?</tr>", "ig"));
 		AnyBalance.trace('Found ' + trs.length + ' items');
 		var htmlDesc = [];
+		var parts_count = 0;
 		
 		if (!trs || !trs.length) {
 			AnyBalance.trace(prefs.num ? 'Не найдено активного заказа с последними цифрами ' + prefs.num : 'Не найдено ни одного активного заказа!');
@@ -120,7 +121,7 @@ function main(){
 				if(order == singleOrder) {
 					AnyBalance.trace('Найденый номер заказа соответствует текущему..');
 
-					sumParam(tr, result, 'ordersum', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+					sumParam(tr, result, 'ordersum', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum_round);
 					sumParam(tr, result, 'orderexpect', /(?:[\s\S]*?<td[^>]*>){9}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDateMy, aggregate_max);
 
 					// Создаем новую сводку, вот такую 
@@ -129,8 +130,12 @@ function main(){
 					var artname = getParam(tr, null, null, /"artname"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces) || '';
 					var descript = getParam(tr, null, null, /"descript"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces) || '';
 					var place = getParam(tr, null, null, /(?:[\s\S]*?<td[^>]*>){8}([\s\S]*?)<\/td>/i, [replaceTagsAndSpaces, /\s*отказаться\s*/i, '']) || '';
+					var count = getParam(tr, null, null, /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 					
-					htmlDesc.push('<small>' + vendorName + ' <b>' + artname + '</b> ' + (place ? ' (' + place + ')' : '') + '<br>' + descript + '</small>');
+					if(isset(count))
+						parts_count += count;
+					
+					htmlDesc.push('<small>' + vendorName + ' <b>' + artname + '</b> ' + (isset(count) ? ' - '  + count + ' шт': '') + (place ? ' (' + place + ')' : '') + '<br>' + descript + '</small>');
 				} else {
 					AnyBalance.trace('Найденый номер заказа не совпадает с предыдущим, это уже другой заказ, для его отображения необходимо явно указать его номер в настройках');
 					break;
@@ -138,8 +143,20 @@ function main(){
 			}
 			// Запишем сводку
 			getParam(htmlDesc.join('<br><br>'), result, 'orderdesc');
+			getParam(parts_count, result, 'parts_count');
 		}
     }
 	
     AnyBalance.setResult(result);
 }
+
+function aggregate_sum_round(values) {
+	if (values.length == 0)
+		return;
+	var total_value = 0;
+	for (var i = 0; i < values.length; ++i) {
+		total_value += values[i].toFixed(2)*1;
+	}
+	return total_value;
+}
+

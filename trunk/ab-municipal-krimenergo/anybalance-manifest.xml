@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="5">ab-municipal-krimenergo</id>
+	<id version="6">ab-municipal-krimenergo</id>
 	<name>Интернет-магазин коммунальных услуг (Мегасофт)</name>
 	<description html="true"><![CDATA[
 	<p>Получает данные в системе Мегасофт (http://www.krymenergo.com/)</p>
@@ -17,7 +17,7 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="balance" name="Баланс" units=" грн"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="lastcounter" name="Последние показания счетчика" type="text"/>
 		<counter id="lastpay" name="Последняя оплата" type="text"/>
@@ -26,5 +26,5 @@
 	</counters>
 	<keywords></keywords>
 	<type>municipal</type>
-	<country>ru</country>
+	<country>ua</country>
 </provider>

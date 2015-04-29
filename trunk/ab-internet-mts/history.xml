@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="89" date="2015-04-29">
+	- Улучшено распознование активных счетов.
+	</change>
 	<change version="88" date="2015-04-06">
 	- Добавлен регион: Новокузнецк
 	</change>

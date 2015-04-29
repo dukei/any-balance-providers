@@ -880,7 +880,7 @@ function newTypicalLanBillingInetTv(baseurl) {
 				tarifdescr = tarifdescr.descr;
 			}
 			
-			var state = json.body[j].state.state + ''; //Состояние: активен
+			var state = json.body[j].state.state + ''; //Состояние: активен, Недостаточно средств, Выключен, Действует
 			var services = json.body[j].services[0] + ''; //Нет подключенных услуг
 			
 			var response = {
@@ -891,7 +891,7 @@ function newTypicalLanBillingInetTv(baseurl) {
 				'state':state,
 				'services':services
 			};
-			var act = /Состояние:\s+актив/i.test(state) ? 'active' : 'inactive';
+			var act = /Состояние:\s+актив|Действует/i.test(state) ? 'active' : 'inactive';
 			var pri = priority[act];
 			// Это ТВ
 			if(/\BТВ\B|Телевидение/.test(tarifdescr)) {

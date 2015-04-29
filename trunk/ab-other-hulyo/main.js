@@ -27,14 +27,15 @@ function isUniqueFlight(val, idx, arr)
 function main() 
 {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://data.hulyo.co.il/catalogs/Production/Flights/v1.2/';
+	var flights1 = 'http://catalogs.hulyo.co.il/catalogs/Production/Flights/v1.2/under199Flights_B.js';
+	var flights2 = 'http://catalogs.hulyo.co.il/catalogs/Production/Flights/v1.2/above199Flights_B.js';
 	var pages = ['under199EuroFlights.js','above199EuroFlights.js'];
 	var result = {success: true};
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	// access hulyo flights data
-	var json = getJson(AnyBalance.requestGet(baseurl + 'under199EuroFlights.js',g_headers));
-	var extra = getJson(AnyBalance.requestGet(baseurl + 'above199EuroFlights.js',g_headers));
+	var json = getJson(AnyBalance.requestGet(flights1,g_headers));
+	var extra = getJson(AnyBalance.requestGet(flights2,g_headers));
 	
 	// combine the 2 catalogs into first one
 	if ((!json.ErrorMessage) && (extra.ErrorMessage))

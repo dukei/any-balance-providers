@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="5">ab-other-hulyo</id>
+	<id version="6">ab-other-hulyo</id>
 	<api flags="no_browser"/>
 	<name>Hulyo</name>
 	<description html="true"><![CDATA[

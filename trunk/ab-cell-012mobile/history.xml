@@ -21,4 +21,7 @@
 	<change version="7" date="2015-03-23">
 	- Data usage and plan names are back.
 	</change>
+	<change version="8" date="2015-04-29">
+	- Do not fail when no data plans are reported by 012 mobile.
+	</change>
 </history>

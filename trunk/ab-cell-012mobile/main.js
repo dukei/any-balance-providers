@@ -117,9 +117,12 @@ function main()
     // get data plan details
     var dataPlan = getDataPlan(key);
     AnyBalance.trace('Data Plan: ' + JSON.stringify(dataPlan));
-    result['dataprcnt'] = dataPlan.balance.UsedPercent;
-    result['datausage'] = dataPlan.balance.CreditAmmountMB*dataPlan.balance.UsedPercent/100.0/1024.0;
-    result['dataplans'] = dataPlan.surfing.VasProductName;
+    if (dataPlan.balance!=null)
+    {
+        result['dataprcnt'] = dataPlan.balance.UsedPercent;
+        result['datausage'] = dataPlan.balance.CreditAmmountMB*dataPlan.balance.UsedPercent/100.0/1024.0;
+        result['dataplans'] = dataPlan.surfing.VasProductName;
+    } else AnyBalance.trace('Warning, no data plan reported, not updating data balance...');
 
     // get roaming plans
 	for (var i=0,n=0;i<bill.International.Entity.length;i++) 

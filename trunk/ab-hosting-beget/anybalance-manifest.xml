@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-hosting-beget</id>
+	<id version="2">ab-hosting-beget</id>
 	<api flags="no_browser"/>
 	<name>beget</name>
 	<description html="true"><![CDATA[
@@ -18,8 +18,9 @@
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
 		<counter id="payment" name="Стоимость услу" units=" р"/>
-		<counter id="daysleft" name="Дней до блокировки"/>
+		<counter id="daysleft" name="Дней до блокировки" units=" д"/>
 		<counter id="disk" name="Дисковое пространство" units=" %"/>
+		<counter id="disk_mb" name="Дисковое пространство, мб" units=" Мб"/>
 	</counters>
 	<keywords></keywords>
 	<type>hosting</type>

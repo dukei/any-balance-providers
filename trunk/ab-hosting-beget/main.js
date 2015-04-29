@@ -47,6 +47,7 @@ function main() {
 	getParam(html, result, 'payment', /Суммарная стоимость услуг<\/div>\s*<\/td>\s*<td[^>]*>([^]+?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'daysleft', /Дата блокировки<\/div>\s*<\/td>\s*<td[^>]*>[^]+?(\d+ (?:дней|дня|день))\)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'disk', /Дисковое пространство<\/div>\s*<\/td>\s*<td[^>]*>[^]+?(\d+%)\)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'disk_mb', /Дисковое пространство(?:[^>]*>){3}([\s\S]*?Мб)/i, replaceTagsAndSpaces, parseTraffic);
 	
 	AnyBalance.setResult(result);
 }

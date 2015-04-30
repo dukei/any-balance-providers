@@ -981,9 +981,9 @@ function getBonuses(xhtml, result) {
 				var minutes = getParam(services[i], null, null, reValue, replaceTagsAndSpaces, parseMinutes);
 				sumParam(minutes, result, 'min_local', null, null, null, aggregate_sum);
 			// Это новый вид отображения данных
-			} else if (/Минут общения по (?:тарифу|услуге)|вызовы/i.test(name)) {
+			} else if (/Минут общения по (?:тарифу|услуге)|вызовы|на местные номера/i.test(name)) {
 				// Очень внимательно надо матчить
-				if(/^Минут общения по тарифу$|других (?:сотовых\s+)?операторов|все номера|На номера домашнего региона|Минут общения по тарифу Все для бизнеса Бронза|кроме номеров "Билайн"/i.test(name))
+				if(/^Минут общения по тарифу$|других (?:сотовых\s+)?операторов|все номера|На номера домашнего региона|Минут общения по тарифу Все для бизнеса Бронза|кроме номеров "Билайн"|на местные номера других операторов/i.test(name))
 					sumParam(services[i], result, 'min_local', reNewValue, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
 				else
 					sumParam(services[i], result, 'min_bi', reNewValue, replaceTagsAndSpaces, parseMinutes, aggregate_sum);

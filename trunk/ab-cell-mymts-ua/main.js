@@ -6,7 +6,7 @@ var g_headers = {
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.111 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.90 Safari/537.36',
 };
 
 function parseTrafficMb(str){
@@ -23,7 +23,7 @@ function parseTime (str) {
 
     return 60 * parseFloat(str)
     }
-
+    
 function main() {
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'https://ihelper-prp.mts.com.ua/SelfCareUA/';
@@ -61,7 +61,7 @@ function main() {
 	var result = {success: true};
 	//Тариф и денежные балансы
 	getParam (html, result, '__tariff', /Тариф<\/span>\s+<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'balance', /Баланс<\/span>\s+<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance', /Баланс1<\/span>\s+<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'bonus_balance', /Денежный бонусный счет: осталось\s*([\s\S]*?)\s*грн/i, replaceTagsAndSpaces, parseBalance);
 	getParam (html, result, 'bonus_balance_termin', />Денежный бонусный счет: осталось [\s\S]* грн. Срок действия до([^<]*)<\/span>/i, replaceTagsAndSpaces, parseDate);
 
@@ -86,12 +86,14 @@ function main() {
 
 	//Минуты по Украине
 	sumParam (html, result, 'hvylyny_all1', /(?:50 хвилин на всi мережi|100 минут по Украине для MAX Energy Allo), осталось\s*(\d+)\s*(?:секунд на все сети|бесплатных секунд)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+	sumParam (html, result, 'hvylyny_all1', /100 минут на других мобильных операторов по Украине, осталось: (\d+),*\d* мин/ig, replaceTagsAndSpaces, parseTime, aggregate_sum);
 
 	//СМС и ММС
 	sumParam (html, result, 'sms_used', />50 SMS по Украине для "Смартфона", израсходовано:(\d+)\s*смс.<\/span>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	sumParam (html, result, 'mms_used', />50 MMS по Украине для "Смартфона", израсходовано:(\d+)\s*mms.<\/span>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	sumParam (html, result, 'sms_net', />1500 (?:SMS|SMS и MMS) на МТС для (?:MAX Energy Allo|MAX Energy), осталось (\d+) (?:бесплатных SMS|смс)</ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	sumParam (html, result, 'mms_net', />1500 SMS и MMS на МТС для MAX Energy, осталось (\d+) ммс</ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+	sumParam (html, result, 'sms_mms_all', /1000 SMS\/MMS по Украине, осталось: (\d+) SMS\/MMS/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 
 	//Трафик
 	//Пакет (интернет за копейку 1000 за 10, еще должны быть 1500 за 15 и 2000 за 20)

@@ -61,7 +61,7 @@ function main() {
 	var result = {success: true};
 	//Тариф и денежные балансы
 	getParam (html, result, '__tariff', /Тариф<\/span>\s+<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'balance', /Баланс1<\/span>\s+<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance', /Баланс<\/span>\s+<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'bonus_balance', /Денежный бонусный счет: осталось\s*([\s\S]*?)\s*грн/i, replaceTagsAndSpaces, parseBalance);
 	getParam (html, result, 'bonus_balance_termin', />Денежный бонусный счет: осталось [\s\S]* грн. Срок действия до([^<]*)<\/span>/i, replaceTagsAndSpaces, parseDate);
 

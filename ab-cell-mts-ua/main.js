@@ -215,6 +215,8 @@ function main(){
     sumParam (html, result, 'sms_others', /<li>Осталось: (\d+) смс. Срок действия до[^<]*<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     //Срок СМС на сети других мобильных операторов Украины
     sumParam (html, result, 'termin_sms_others', /<li>Осталось: \d+ смс. Срок действия до([^<]*)<\/li>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
+    //CMC+MMS на других
+    sumParam (html, result, 'sms_mms_others', /<li>1000 SMS\/MMS по Украине, осталось: (\d+) SMS\/MMS/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 
     // MMC на сети других мобильных операторов Украины
     sumParam (html, result, 'mms_others', /<li>Осталось (\d+) ммс.<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
@@ -229,6 +231,7 @@ function main(){
 
     // 100 минут абонентам по Украине
     sumParam (html, result, 'min_all_100', /<li>Осталось ([\d\.,]+) секунд на все сети<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    sumParam (html, result, 'min_all_100', /<li>100 минут на других мобильных операторов по Украине, осталось: (\d+),*\d* мин/ig, replaceTagsAndSpaces, parseTime, aggregate_sum);
 
     // Минуты с услугой «Супер без пополнения» в сети МТС
     sumParam (html, result, 'min_net', /<li>Осталось ([\d\.,]+) бесплатных секунд<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);

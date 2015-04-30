@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="1.2" version="46">ab-cell-mts-ua</id>
+	<id major_version="1.2" version="47">ab-cell-mts-ua</id>
 	<api flags="no_browser"/>
 	<name>МТС (Украина)</name>
 	<description html="true"><![CDATA[
@@ -38,6 +38,7 @@
 		<counter id="traffic_maxenergy_mb" name="Интернет Max Energy" units=" mb"/>
 		<counter id="sms_net" name="СМС в сети МТС" units=" sms"/>
 		<counter id="sms_others" name="СМС на сети других мобильных операторов Украины" units=" sms"/>
+		<counter id="sms_mms_others" name="СМС/MMC на сети других мобильных операторов Украины" units=" sms/mms"/>
 		<counter id="mms_others" name="ММС на сети других мобильных операторов Украины" units=" mms"/>
 		<counter id="min_net_maxenergy" name="Минуты в сети МТС" type="time_interval" format="{@MIN}" units=" мин"/>
 		<counter id="min_reg_3000" name="3000 региональных минут в сети" type="time_interval" format="{@MIN}" units=" мин"/>

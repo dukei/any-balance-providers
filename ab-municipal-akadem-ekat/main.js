@@ -1,4 +1,4 @@
-﻿/**
+ /**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
@@ -36,7 +36,8 @@ function main() {
 	
 	html = AnyBalance.requestPost(baseurl + 'users/?action=user/login', {
 		'Ut5User[login]': prefs.login,
-		'Ut5User[pass]': prefs.password
+		'Ut5User[pass]': prefs.password,
+     'Ut5User[remember]':''/*fix CAHA 29.04.15*/  
 	}, addHeaders({Referer: baseurl + 'users/'}));
 	
 	if (!/logout/i.test(html)) {

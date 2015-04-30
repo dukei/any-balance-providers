@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="1.0" version="5">ab-cell-mymts-ua</id>
+	<id major_version="1.0" version="6">ab-cell-mymts-ua</id>
 	<api flags="no_browser"/>
 	<name>Мой МТС (Украина)</name>
 	<description html="true"><![CDATA[
@@ -34,6 +34,7 @@
 		<counter id="mms_used" name="Израсходовано MMS" units=" mms"/>
 		<counter id="sms_net" name="SMS в сети МТС" units=" sms"/>
 		<counter id="mms_net" name="MMS в сети МТС" units=" mms"/>
+		<counter id="sms_mms_all" name="SMS/MMS по Украине" units=" sms/mms"/>
 		<counter id="traffic1" name="Интернет пакет" units=" mb"/>
 		<counter id="traffic2" name="Интернет ежедневный пакет" units=" mb"/>
 		<counter id="traffic3" name="Интернет трафик" units=" mb"/>

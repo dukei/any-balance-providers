@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change major_version="1.0" version="6" date="2015-04-30">
+      - Улучшено распознавание счетчика "Минуты по Украине".
+      - Добавлен счетчик: "SMS/MMS по Украине".
+    </change>
     <change major_version="1.0" version="5" date="2015-02-16">
       - Исправления для тарифа MAX ENERGY.
       - Добавлен счетчик: "MMS в сети МТС".

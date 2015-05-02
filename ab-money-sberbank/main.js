@@ -27,12 +27,16 @@ function requestApi2(url, params, addDefParams, ignoreErrors) {
 	// регистрируем девайс
 	var html = AnyBalance.requestPost(url, newParams, m_headers);
 	// Проверим на правильность
+
+	var code = getParam(html, null, null, /<status>\s*<code>(-?\d+)<\/code>/i, null, parseBalance);
 	
 	if(!/<status>\s*<code>0<\/code>/i.test(html)) {
 		AnyBalance.trace(html);
 		if(!ignoreErrors){
 			var error = sumParam(html, null, null, /<error>\s*<text>\s*<!(?:\[CDATA\[)?([\s\S]*?)(?:\]\]>)\s*<\/text>\s*<\/error>/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
-			throw new AnyBalance.Error(error || "Ошибка при обработке запроса!", null, /неправильный идентификатор/i.test(error));
+			var ex = new AnyBalance.Error(error || "Ошибка при обработке запроса!", null, /неправильный идентификатор/i.test(error));
+			ex.code = code;
+			throw ex;
 		}
 	}
 	return html;
@@ -59,9 +63,31 @@ function mainMobileApp(prefs) {
 		'password':defaultPin
 	}, true, 'https://node1.online.sberbank.ru:4477/mobile7/', true);
 	*/
-	// Здесь нужно узнать нужна ли привязка
+	// Здесь нужно узнать, нужна ли привязка
 	var guid = AnyBalance.getData('guid', '');
-	if(!guid) {
+	if(guid) {
+		AnyBalance.trace('Устройство уже привязано!');
+		AnyBalance.trace('guid is: ' + guid);
+		
+		try{
+			html = requestApi2('https://online.sberbank.ru:4477/CSAMAPI/login.do', {
+				'operation':'button.login',
+				'mGUID':guid,
+				'isLightScheme':'true',
+				'devID':hex_md5(prefs.login)
+			}, true);
+		}catch(e){
+			if(e.code == 7){
+			     //Приложение не зарегистрировано. Надо перегенерить гуид
+			     AnyBalance.trace(e.message + ": Надо перегенерить guid");
+			     guid = null;
+			}else{
+				throw e;
+			}
+		}
+	}
+
+	if(!guid){
 		AnyBalance.trace('Необходимо привязать устройство!');
 		// регистрируем девайс
 		var html = requestApi('registerApp.do', {
@@ -100,16 +126,6 @@ function mainMobileApp(prefs) {
 
 		AnyBalance.saveData();
 		var token = getToken(html);
-	} else {
-		AnyBalance.trace('Устройство уже привязано!');
-		AnyBalance.trace('guid is: ' + guid);
-		
-		html = requestApi2('https://online.sberbank.ru:4477/CSAMAPI/login.do', {
-			'operation':'button.login',
-			'mGUID':guid,
-			'isLightScheme':'true',
-			'devID':hex_md5(prefs.login)
-		}, true);
 	}
 	
 	var baseurlAPI = 'https://node1.online.sberbank.ru:4477/mobile7/';

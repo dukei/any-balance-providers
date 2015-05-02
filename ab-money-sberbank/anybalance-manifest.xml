@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="53">ab-money-sberbank</id>
+	<id version="54">ab-money-sberbank</id>
 	<api flags="no_browser"/>
 	<name>Сбербанк ОнЛ@йн</name>
 	<description html="true"><![CDATA[
@@ -77,6 +77,6 @@
 		<counter id="eurSell" name="EUR продажа"/>
 	</counters>
 	<keywords>сбербанк онлайн, sberbank online, сберегательный банк, спасибо</keywords>
-	<type>money</type>
+	<type>money, bank</type>
 	<country>ru</country>
 </provider>

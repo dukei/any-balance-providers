@@ -1,4 +1,4 @@
-﻿/**
+ /**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
@@ -18,7 +18,7 @@ function main() {
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	var html = AnyBalance.requestGet(baseurl + 'index.php', g_headers);
+	var html = AnyBalance.requestGet(baseurl + 'login.php', g_headers);
 	
 	if(!html || AnyBalance.getLastStatusCode() > 400){
 		AnyBalance.trace(html);

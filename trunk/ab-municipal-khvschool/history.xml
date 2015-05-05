@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="3" date="2015-05-05">
+	- Применен патч из https://code.google.com/p/any-balance-providers/issues/detail?id=253
+	</change>
 	<change version="2" date="2015-04-13">
 	- Мелкие улучшения.
 	- Добавлен счетчик количества смс

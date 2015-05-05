@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="2">ab-internet-maglan</id>
+	<api flags="no_browser"/>
+	<name>ООО "МагЛАН"</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера ООО "МагЛАН" <a href="http://www.maglan.ru/">http://www.maglan.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="http://stat.maglan.ru">http://stat.maglan.ru</a></p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Если у вас нет доступа в Личный кабинет, получите его на странице <a href="http://stat.maglan.ru">http://stat.maglan.ru</a></p>
+	]]></instruction>
+	<author>Boris Baskakov &lt;bbb@maglan.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balanceFinal" name="Исходящий остаток на конец месяца" units=" р"/>
+		<counter id="balanceInitial" name="Входящий остаток на начало месяца" units=" р"/>
+		<counter id="income" name="Приход за месяц (всего)" units=" р"/>
+		<counter id="outcome" name="Расход за месяц (всего)" units=" р"/>
+		<counter id="accumulation" name="Наработка за месяц (всего)" units=" р"/>
+		<counter id="licenseFee" name="Абонплата" units=" р"/>
+		<counter id="accrual" name="Начисление" units=" р"/>
+		<counter id="limit" name="Лимит" units=" р"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

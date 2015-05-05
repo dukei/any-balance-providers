@@ -22,7 +22,7 @@
 		inputType="textPassword">
 	</EditTextPreference>
 	<ListPreference
-		key="tszh"
+		key="company"
 		title="ТСЖ"
 		dialogTitle="Выберите ТСЖ"
 		summary="||{@s}"

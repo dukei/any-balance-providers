@@ -3,11 +3,11 @@
 */
 
 var g_headers = {
-	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36',
 };
 
 function aggregateCounters(rows){
@@ -21,7 +21,7 @@ function aggregateCounters(rows){
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://www.uk-akadem.ru/';
+	var baseurl = 'http://uk-akadem.ru/';
 	AnyBalance.setDefaultCharset('windows-1251');
 	
 	checkEmpty(prefs.login, 'Введите логин!');
@@ -37,7 +37,6 @@ function main() {
 	html = AnyBalance.requestPost(baseurl + 'users/?action=user/login', {
 		'Ut5User[login]': prefs.login,
 		'Ut5User[pass]': prefs.password,
-     'Ut5User[remember]':''/*fix CAHA 29.04.15*/  
 	}, addHeaders({Referer: baseurl + 'users/'}));
 	
 	if (!/logout/i.test(html)) {

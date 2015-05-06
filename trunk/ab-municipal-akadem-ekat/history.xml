@@ -1,11 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="3" date="2015-05-06">
+	- Исправлена авторизация.
+	</change>
 	<change version="2" date="2015-04-30">
 	- Поддержка изменений на сайте.
 	</change>
-<!--
-	<change version="2" date="2014-09-03">
-	- 
-	</change>
--->
 </history>

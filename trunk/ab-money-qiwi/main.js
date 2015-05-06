@@ -129,19 +129,27 @@ function mainNew () {
 	res = getJson(info);
 	
 	var i = 0;
-	for(var balance in g_currency) {
-		if(!isset(res.data.balances[balance]))
+	for (var balance in g_currency) {
+		if (!isset(res.data.balances[balance]))
 			continue;
-		
-		var balanceVar = (i >= 1 ? 'balance' + (i+1) : 'balance');
+
+		var balanceVar = (i >= 1 ? 'balance' + (i + 1) : 'balance');
 		getParam(res.data.balances[balance] + '', result, balanceVar, null, replaceTagsAndSpaces, parseBalance);
-		getParam(g_currency[balance] + '', result, [(i >= 1 ? 'currency' + (i+1) : 'currency'), balanceVar]);
+		getParam(g_currency[balance] + '', result, [(i >= 1 ? 'currency' + (i + 1) : 'currency'), balanceVar]);
 		i++
 	}
 	
 	getParam(res.data.person, result, '__tariff');
 	getParam(res.data.messages, result, 'messages');
 	getParam(res.data.unpaidOrderCount, result, 'bills');
+	
+	// Баланс мегафона
+	if(AnyBalance.isAvailable('megafon_balance', 'megafon_can_pay')) {
+		html = AnyBalance.requestPost (baseurl + 'user/megafon/content/balanceheader.action', {}, addHeaders({Accept: 'text/html, */*; q=0.01', 'X-Requested-With':'XMLHttpRequest'}));
+		
+		getParam(html, result, 'megafon_balance', /phone-amount[^>]*>([\s\S]*?)<\/div/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'megafon_can_pay', /current_amount[^>]*>([\s\S]*?)<\/div/i, replaceTagsAndSpaces, parseBalance);
+	}
 	
 	// QVC
 	if(AnyBalance.isAvailable('qvc_card')) {

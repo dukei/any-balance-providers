@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2.3" version="25">ab-money-qiwi</id>
+	<id major_version="2.3" version="26">ab-money-qiwi</id>
 	<api flags="no_browser"/>
 	<name>QIWI Кошелек</name>
 	<description html="true"><![CDATA[
@@ -20,6 +20,8 @@
 		<counter id="balance" name="Баланс" units=" {@currency}"/>
 		<counter id="balance2" name="Баланс 2" units=" {@currency2}"/>
 		<counter id="balance3" name="Баланс 3" units=" {@currency3}"/>
+		<counter id="megafon_balance" name="Баланс Мегафон" units=" р"/>
+		<counter id="megafon_can_pay" name="Доступно для платежей Мегафон" units=" р"/>
 		<counter id="qvc_card" name="Номер карты QVC" type="text"/>
 		<counter id="qvc_exp" name="Срок действия QVC" type="time" format="dd/MM/yyyy"/>
 		<counter id="qvc_last" name="Последняя транзакция по QVC" type="text"/>

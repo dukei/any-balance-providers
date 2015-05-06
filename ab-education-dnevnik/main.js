@@ -48,7 +48,7 @@ function main() {
 		html = AnyBalance.requestGet('http://children.dnevnik.ru/marks.aspx?child=' + prefs.id, g_headers);
 	} else {
 		AnyBalance.trace('Идентификатор ребенка не указан, ищем без него');
-		var href = getParam(html, null, null, /<a href="(https:\/\/schools[^"]+)[^>]*>\s*Мой дневник/i);
+		var href = getParam(html, null, null, /<a href="(https?:\/\/schools[^"]+)[^>]*>\s*Мой дневник/i);
 		checkEmpty(href, 'Не удалось найти ссылку на оценки, сайт изменен?', true);
 		html = AnyBalance.requestGet(href, g_headers);
 	}

@@ -56,7 +56,7 @@ function main() {
 	var result = {success: true};
 	
 	//<a\s*class="strong\s*" title="[^"]+" href="http://(?:schools|children).dnevnik.ru/lesson.aspx(?:[^>]*>){15,20}</tr>
-	var regLesson = '<a\\s*class="strong\\s*" title="[^"]+" href="https://(?:schools|children).dnevnik.ru/lesson.aspx(?:[^>]*>){15,30}</tr>';
+	var regLesson = '<a\\s*class="strong\\s*" title="[^"]+" href="https?://(?:schools|children).dnevnik.ru/lesson.aspx(?:[^>]*>){15,30}</tr>';
 	// Бывает от 1 до 6 уроков
 	//var regDay = new RegExp('<div class="panel blue2 clear">(?:[\\s\\S]*?' + regLesson + '){1,6}', 'ig');
 

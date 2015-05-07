@@ -371,11 +371,13 @@ function processAccount2(html, baseurl){
     //Таблица со счетом. В таблице есть вложенные таблицы на 2 уровня.
     //Поэтому, чтобы дойти до конца таблицы со счетом, используем предыдущую регулярку
     var accounttRe = new RegExp(
-        '<table[^>]+style="table-layout:\\s*fixed"[^>]*>' +
+        '<table[^>]+style="table-layout:\\s*fixed[^"]*"[^>]*>' +
             '((?:' + anyRe + '(?!</?table))*?>' + (accprefix > 0 ? '\\d{' + accprefix + '}' : '') + accnum +
             anyRe + '*?)' +
         '</table>',
     'i');
+	
+	// AnyBalance.trace(accounttRe);
 
     var account = getParam(html, null, null, accounttRe);
     if(!account)

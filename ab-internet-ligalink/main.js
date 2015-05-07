@@ -18,16 +18,14 @@ function main() {
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
+	var html = AnyBalance.requestGet(baseurl + 'index.php?id=46&bill', g_headers);
 	
 	if(!html || AnyBalance.getLastStatusCode() > 400){
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
 
-	var loginURL = getParam(html, null, null, /form-login[^>]*action="([^"]+)/i);
-	
-	html = AnyBalance.requestPost(baseurl + loginURL, {
+	html = AnyBalance.requestPost(baseurl + 'index.php?id=46&bill', {
 		login: prefs.login,
 		password: prefs.password,
 		cmd: 'login'

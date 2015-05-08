@@ -55,9 +55,9 @@ function main() {
 	}
 
 	if(isAvailable('sms')){
-		html = AnyBalance.requestGet(baseurl + 'pgs/req_sms.php?r=' + parseInt(Math.random() * 99999), addHeaders({'X-Requested-With': 'XMLHttpRequest'}));
-
-		getParam(html, result, 'sms', /id='smbt'[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);	
+		html = AnyBalance.requestGet(baseurl + '?sms', addHeaders({'X-Requested-With': 'XMLHttpRequest'}));
+		
+		getParam(html, result, 'sms', /md-sms"([\s\S]*?)<\/b/i, replaceTagsAndSpaces, parseBalance);	
 	}
 	
 	AnyBalance.setResult(result);

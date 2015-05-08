@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-municipal-khvschool</id>
+	<id version="5">ab-municipal-khvschool</id>
 	<api flags="no_browser"/>
 	<name>Цифровая школа</name>
 	<description html="true"><![CDATA[

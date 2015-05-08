@@ -25,11 +25,13 @@ function main() {
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
 	
-	html = AnyBalance.requestPost(baseurl + 'index.php', {
+	html = AnyBalance.requestPost(baseurl + 'login.php', {
 		auth_ok: 1,
 		uidn: prefs.login,
 		upswd: prefs.password
-	}, addHeaders({Referer: baseurl + 'index.php'}));
+	}, addHeaders({Referer: baseurl + 'login.php'}));
+	
+	html = AnyBalance.requestGet(baseurl, g_headers);
 	
 	if (!/\?exit/i.test(html)) {
 		var error = getParam(html, null, null, /<div[^>]+id="blinkingDiv"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
@@ -42,14 +44,14 @@ function main() {
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'accnum', /Добрый день!\s*Л\/С:([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'accnum', /((?:[^>]*>\s*){1})Лицевой счет/i, replaceTagsAndSpaces, html_entity_decode);
 
 	if(isAvailable(['food_offerta', 'food_offerta_date', 'food_balance'])){
 		html = AnyBalance.requestGet(baseurl + 'index.php?pays', g_headers);
 
-		getParam(html, result, 'food_offerta', /Оферта на питание(?:[^>]*>\s*){5}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'food_offerta', /((?:[^>]*>\s*){6}Оферта на питание)/i, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, 'food_offerta_date', /#last_accm_dt'\)\.html\('на <b>([^<]+)/i, replaceTagsAndSpaces, parseDate);
-		getParam(html, result, 'food_balance', /Лимит на питание(?:[^>]*>\s*){2}([^<]+)/i, replaceTagsAndSpaces, parseBalance);		
+		getParam(html, result, 'food_balance', /((?:[^>]*>\s*){1})Лимит на питание/i, replaceTagsAndSpaces, parseBalance);		
 	}
 
 	if(isAvailable('sms')){

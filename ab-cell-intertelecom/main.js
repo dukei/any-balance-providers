@@ -1,171 +1,106 @@
-/**
+﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
+
+Билайн
+Сайт оператора: http://www.beeline.ua/
+Личный кабинет: https://poslugy.beeline.ua/
 */
 
-function main() {
-    var prefs = AnyBalance.getPreferences();
-	
-    checkEmpty(prefs.phone, 'Введите номер телефона!');
-    checkEmpty(prefs.pass, 'Введите пароль!');
-	
-    var html = AnyBalance.requestPost('https://assa.intertelecom.ua/ru/login/', {
-        phone: prefs.phone,
-        pass: prefs.pass
-    });
-	
-    if (!/\?logout/i.test(html)) {
-        var error = getParam(html, null, null, /class="error"([^>]*>){2}/i, replaceTagsAndSpaces, html_entity_decode);
-        if (error)
-			throw new AnyBalance.Error(error, null, /неверный пароль/i.test(error));
-		
-        AnyBalance.trace(html);
-        throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-    }
-	
-    var result = {success: true};
-    //Название тарифа
-    getParam(html, result, '__tariff', /<td[^>]*>\s*Тарифный план\s*<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-    //Основной счет (Сальдо)
-    getParam(html, result, 'saldo', /<td[^>]*>\s*Сальдо\s*<\/td>\s*<td[^>]*>([^<]*)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    //Предоплаченые услуги на месяц
-    getParam(html, result, 'predoplata', /<td[^>]*>\s*Предоплаченые услуги на месяц\s*<\/td>\s*<td[^>]*>([^<]*)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    //Неактивированные бонусы с 094
-    getParam(html, result, 'bonus', /<td[^>]*>\s*Неактивированные бонусы \(с 094\)\s*<\/td>\s*<td[^>]*>([^<]*)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    //Предоплачение ИТ(местные+Украина+моб.094)+Местные
-    getParam(html, result, 'min_it', /<td[^>]*>[^<]*ИТ\(местные\+Украина\+моб.094\)\+Местные[^<]*<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseSeconds);
-    //Предоплачение местные минуты
-    getParam(html, result, 'min_local', /<td[^>]*>\s*Минуты\s*<\/td>[\s\S]*?<td[^>]*>[^<]*местные[^<]*<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseSeconds);
-    //Украина (моб.) [100 и 200 мин]
-    sumParam(html, result, 'min_uk_mob', /<td[^>]*>[^<]*Украина\s*\(моб.?\)\s*\[.00\s*мин?\][^<]*<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseSeconds, aggregate_sum);
-    //Россия [100 мин]
-    getParam(html, result, 'min_rus', /<td[^>]*>\s*Минуты\s*<\/td>[\s\S]*?<td[^>]*>[^<]*Россия[^<]*<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseSeconds);
-    //Бонус по программе лояльности «Наилучшее общение»
-    getParam(html, result, 'bonus_pl', /<td[^>]*>\s*Наилучшее общение\s*<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    //Бонус facebook
-    sumParam(html, result, 'bonus_fb', /<td[^>]*>\s*Бонус facebook\s*<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-    //Бонус контактный номер
-    sumParam(html, result, 'bonus_fb', /<td[^>]*>\s*Бонус за контактный номер\s*<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-    //Бонус "Угадай код"
-    sumParam(html, result, 'bonus_fb', /<td[^>]*>\s*Бонус [^>]*Угадай код[^>]*\s*<\/td>\s*<td[^>]*>([\s\S]*?) \([^<]*\)\s*<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-    //Бонус "Смартфон за Check-in"
-    sumParam(html, result, 'bonus_fb', /<td[^>]*>\s*Бонус [^>]*Смартфон за Check-in[^>]*\s*<\/td>\s*<td[^>]*>([\s\S]*?) \([^<]*\)\s*<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-    //Бонус "На лето" (на доп.услуги)"
-    sumParam(html, result, 'bonus_fb', /<td[^>]*>\s*Бонус [^>]*На лето[^>]*\s*[^>]*на доп.услуги[^>]*\s*<\/td>\s*<td[^>]*>([\s\S]*?) \([^<]*\)\s*<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-    //Бонус «Вільний доступ»    [^>]*<\/td>
-    getParam(html, result, 'bonus_vd', /<td[^>]*>\s*Бонус [^>]*Вільний доступ[^>]*\s*<\/td>\s*<td[^>]*>([\s\S]*?) \([^>]*\)\s*<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    //Бонус при пополнении счета через Portmone
-    sumParam(html, result, 'bonus_pr', /<td[^>]*>\s*Бонус при поповненні рахунку через Portmone[^>]*\s*<\/td>\s*<td[^>]*>([\s\S]*?) \([^<]*\)\s*<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-    //СМС по Украине
-    sumParam(html, result, 'sms_ukr', />\s*сеть ИТ\+CDMA\+GSM операторов\s*<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-    //Срок действия СМС по Украине
-    sumParam(html, result, 'date_sms_ukr', />\s*сеть ИТ\+CDMA\+GSM операторов\s*<[\s\S]*?<td[^>]*>[\s\S]*? по ([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
-    //Дата Бонус контактный номер
-    sumParam(html, result, 'date_bonus_fb', /<td[^>]*>\s*Бонус за контактный номер\s*<\/td>\s*<td[^>]*>\s*.* \(по ([^<]*)\)\s*</ig, replaceTagsAndSpaces, parseDate, aggregate_min);
-    //Дата Бонус "Угадай код"
-    sumParam(html, result, 'date_bonus_fb', /<td[^>]*>\s*Бонус [^>]*Угадай код[^>]*\s*<\/td>\s*<td[^>]*>\s*.* \(по ([^<]*)\)\s*<\/td>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
-    //Дата Бонус "Смартфон за Check-in"
-    sumParam(html, result, 'date_bonus_fb', /<td[^>]*>\s*Бонус [^>]*Смартфон за Check-in[^>]*\s*<\/td>\s*<td[^>]*>\s*.* \(по ([^<]*)\)\s*<\/td>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
-    //Дата Бонус "На лето" (на доп.услуги)"
-    sumParam(html, result, 'date_bonus_fb', /<td[^>]*>\s*Бонус [^>]*На лето[^>]*\s*[^>]*на доп.услуги[^>]*\s*<\/td>\s*<td[^>]*>\s*.* \(по ([^<]*)\)\s*<\/td>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
-    //Дата "Бонус при пополнении счета через Portmone"
-    sumParam(html, result, 'date_bonus_pr', /<td[^>]*>\s*Бонус при поповненні рахунку через Portmone[^>]*\s*<\/td>\s*<td[^>]*>\s*.* \(по ([^<]*)\)\s*<\/td>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
-    //Пакетный трафик (получаем в локальную переменную, и независимо от включенности счетчика 'traffic_paket')
-    var traffic_paket = sumParam(html, null, null, /<td[^>]*>\s*пакетный трафи(?:к|к \(Rev.A\)|к \(Rev.A\/Rev.B\))\s*<\/td>\s*<td[^>]*>([\s\S]*?)\s/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-    //Пакетный трафик (Rev.B)
-    var traffic_paket_revb = getParam(html, null, null, /пакетный трафик \(Rev.B\)\s*<[\s\S]*?<td[^>]*>([\s\S]*?) по/i, replaceTagsAndSpaces, parseBalance);
-    //Трафик использованный за текущую интернет сессию  (получаем в локальную переменную, и независимо от включенности счетчика 'traffic_paket_session')
-    var traffic_paket_session = getParam(html, null, null, /<td[^>]*>\s*Трафик МБ\s*<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    //Узнаем разницу между имеющимся Пакетным трафиком и израсходованным за текущую сессию
-    if (isset(traffic_paket)) {
-        if (AnyBalance.isAvailable('traffic_paket')) 
-			result.traffic_paket = traffic_paket - (traffic_paket_session || 0); //Если вдруг traffic_paket_session не найден, то считаем его равным 0
-    }
-    if (isset(traffic_paket_revb)) {
-        if (AnyBalance.isAvailable('traffic_paket_revb'))
-			result.traffic_paket_revb = traffic_paket_revb - (traffic_paket_session || 0); //Если вдруг traffic_paket_session не найден, то считаем его равным 0
-    }
-    //Трафик ночной
-    getParam(html, result, 'traffic_night', />\s*Ночной трафик\s*<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    //Трафик смартфон 
-    getParam(html, result, 'traffic_smart', />\s*Смартфон\s*<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    //Трафик по акции
-    sumParam(html, result, 'traffic_action', />\s*по акци(?:и|и \(Rev.A\)|и \(Rev.A\/Rev.B\))\s*<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-    sumParam(html, result, 'traffic_action', />\s*Валентинка от Интертелеком. 1000 MB\s*<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-    sumParam(html, result, 'traffic_action', />\s*Подарок от Интертелеком. 1000 MB\s*<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-    //Срок трафика по акции
-    sumParam(html, result, 'date_traffic_action', />\s*по акци(?:и|и \(Rev.A\)|и \(Rev.A\/Rev.B\))\s*<[\s\S]*?<td[^>]*>[\s\S]*? по ([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
-    //Срок действия безлимита на скорости до 128 Кбит/с
-    sumParam(html, result, 'date_bezlimit', />\s*Трафик на скорости до 128\s*<[\s\S]*?<td[^>]*>Неограничено по ([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
-    //Акционный счет
-    getParam(html, result, 'bonus_action_current', /<td[^>]*>\s*Акционный счет на текущий месяц[^>]*<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'bonus_action_next', /<td[^>]*>\s*Акционный счет на следующие мес.[^>]*<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    //Трафик использованный за текущую интернет сессию  (получаем в счетчик на всякий случай)
-    getParam(html, result, 'traffic_session', /<td[^>]*>\s*Трафик МБ\s*<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    //Использованный трафик
-    sumParam(html, result, 'traffic_it', />\s*IT\s*<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-    //Использованный трафик
-    sumParam(html, result, 'traffic_3g_turbo', />\s*3G_TURBO\s*<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-    //Дата последней абонентской активности
-    sumParam(html, result, 'date_activity', /<td[^>]*>\s*Дата последней абонентской активности \(мм.гггг\)\s*<\/td>\s*<td[^>]*>([^<]*)<\/td>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
-    //Лояльный стаж
-    getParam(html, result, 'loyalty', /<td[^>]*>\s*Лояльный стаж \(гг.мм\)\s*<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseStazh);
-    //Абонентский стаж
-    getParam(html, result, 'mobsubscr', /<td[^>]*>\s*Абонентский стаж \(гг.мм\)\s*<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseStazh);
-    //Размер скидки по программе лояльности «Наилучшее общение»
-    getParam(html, result, 'skidka', /<td[^>]*>\s*Лояльный стаж \(гг.мм\)\s*<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, skidka2loyal);
-    //Количество новостей
-    getParam(html, result, 'news', />Новости <span [^>]*>([^<]*)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-    //Кредит до…
-    getParam(html, result, 'kredit', /<td[^>]*>\s*Кредит до...\s*<\/td>\s*<td[^>]*>([^<]*)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    //Номер телефона
-    getParam(html, result, 'phonet', /<td[^>]*>\s*Абонентский код\s*<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, [replaceTagsAndSpaces, /(\d+)/i, '+38$1']);
-    getParam(html, result, 'phonet', /<td[^>]*>\s*Номер телефона\s*<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, [replaceTagsAndSpaces, /(\d+)/i, '+38$1']);
-    //Номер телефона мобильный
-    getParam(html, result, 'mobphonet', /<td[^>]*>\s*Мобильный номер\s*<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, [replaceTagsAndSpaces, /(\d+)/i, '+38$1']);
-    getParam(html, result, 'ip_adr', /<td[^>]*>\s*IP([^>]*>){3}/i, replaceTagsAndSpaces);
-    AnyBalance.setResult(result);
+function parseTrafficMb(str){
+    var val = parseBalance(str);
+    if(isset(val))
+        val = Math.round(val/1024/1024*100)/100;
+    return val;
 }
 
-function parseStazh(str) {
-    var matches = str.match(/(\d+)\.(\d+)/);
-    if (matches) {
-        var val = (365 * matches[1] + 30 * matches[2]) * 86400;
-        AnyBalance.trace("Parsed " + val + ' seconds from ' + str);
-        return val;
-    } else {
-        AnyBalance.trace("Не удалось вычислить стаж из " + str);
-    }
+function main(){
+  var prefs = AnyBalance.getPreferences();
+  var baseurl = "https://poslugy.beeline.ua/";
+  var headers = {
+    'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
+    'Accept-Language':'uk-UA,uk;q=0.8,en-US;q=0.6,en;q=0.4',
+    'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.4 (KHTML, like Gecko) Chrome/22.0.1229.94 Safari/537.4',
+    Connection: 'keep-alive'
+  };
+
+  AnyBalance.trace('Connecting to ' + baseurl);
+
+  var html = AnyBalance.requestGet(baseurl + 'tbmb/login_beeline/show.do', headers);
+  var token = /name="org.apache.struts.taglib.html.TOKEN" value="([\s\S]*?)">/.exec(html);
+
+  AnyBalance.trace('Token = ' + token[1]);
+
+  var html = AnyBalance.requestPost(baseurl + "tbmb/login_beeline/perform.do", {
+    isSubmitted: "true",
+    "org.apache.struts.taglib.html.TOKEN": token[1],
+    user: prefs.login,
+    password: prefs.password
+  }, headers);
+  
+  var matches = html.match(/<td class="redError">\s*([\s\S]*?)\s*<\/td>/i);
+  if(matches){
+      throw new AnyBalance.Error(matches[1]);
+  }
+  
+  AnyBalance.trace('Successfully connected');
+  
+  var result = {success: true};
+  var str_tmp;
+  
+  var aggregate_concat = create_aggregate_join('');
+
+  // Тариф
+  getParam(html, result, '__tariff', /<nobr>Тарифн(?:и|ы)й план:<\/nobr>[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+  // Срок действия номера
+  getParam(html, result, 'termin', /<nobr>Номер д(?:іє|ействует) до:<\/nobr>[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+  
+  // Баланс
+  getParam(html, result, 'balance', /(?:Остаток на счету|Залишок на рахунку):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+
+  // Бонусный баланс
+  sumParam(html, result, 'bonusbalance', /Бонусн(?:ые средства|і кошти):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+  // Остаток бонусов
+  sumParam(html, result, 'bonusbalance', /(?:Остаток бонусо|Залишок бонусі)в:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+  // Доплата за входящие звонки
+  sumParam(html, result, 'bonusbalance', /Доплата за вх(?:одящие зво|ідні дзві)нки:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+
+  // Срок действия Бонусный баланс
+  sumParam(html, result, 'termin_bonusbalance', /Бонусн(?:ые средства|і кошти):[\s\S]*?<td[^>]*>[\s\S]*?<\/td>[\s\S]*?<td[\s\S]*?>[\s\S]*?>([\s\S]*?)</ig, replaceTagsAndSpaces, parseDate, aggregate_min);
+  // Срок действия Остаток бонусов
+  sumParam(html, result, 'termin_bonusbalance', /(?:Остаток бонусо|Залишок бонусі)в:[\s\S]*?<td[^>]*>[\s\S]*?<\/td>[\s\S]*?<td[\s\S]*?>[\s\S]*?>([\s\S]*?)</ig, replaceTagsAndSpaces, parseDate, aggregate_min);
+  // Срок действия бонусов доплаты за входящие звонки
+  sumParam(html, result, 'termin_bonusbalance', /Доплата за вх(?:одящие зво|ідні дзві)нки:[\s\S]*?<td[^>]*>[\s\S]*?<\/td>[\s\S]*?<td[\s\S]*?>[\s\S]*?>([\s\S]*?)</ig, replaceTagsAndSpaces, parseDate, aggregate_min);
+  
+  // Бесплатные минуты на Киевстар, Билайн и Голден Телеком
+  sumParam(html, result, 'minutebalance6', /(?:Остаток минут|Залишок хвилин) для (?:звонко|дзвінкі)в на Ки(?:е|ї)встар:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+  
+  // Льготные минуты на мобильные и стационарные номера по Украине
+  sumParam(html, result, 'minutebalance7', /(?:Остаток минут|Залишок хвилин) для (?:звонко|дзвінкі)в на (?:других|інших) оператор(?:о|і)в:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+
+  // Бонусные минуты на Beeline и Голден Телеком
+  getParam(html, result, 'minutebalance', /Бонусн(?:ые минуты|і хвилини) на Beeline (?:и|та) Голден Телеком:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+  
+  // Бесплатные минуты на Киевстар и Beeline
+  getParam(html, result, 'minutebalance1', /Бе(?:сплатные минуты|зкоштовні хвилини) на Ки(?:е|ї)встар (?:и|та) Beeline:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+  
+  // Минуты на стационарные телефоны Украины
+  getParam(html, result, 'minutebalance2', /(?:инуты|вилини) на стац(?:и|і)онарн(?:ые|і) телефон(?:ы|и) Укра(?:ины|їни):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+  
+  // Минуты по условиям ТП (на Киевстар, Билайн, Голден ТЕЛЕКОМ)
+  sumParam(html, result, 'minutebalance3', /.>(?:Минуты по условиям|Хвилини за умовами) ТП:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+  
+  // Пакетные минуты по условиям ТП (по Украине)
+  sumParam(html, result, 'minutebalance4', /.>Пакетн(?:ые минуты по условиям|і хвилини за умовами) ТП:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+  
+  // Остаток минут на Киевстар и Голден Телеком
+  sumParam(html, result, 'minutebalance5', /.>(?:Остаток минут для звонков на Киевстар и|Залишок хвилин для дзвінків на Київстар та) Голден Телеком:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+
+  // Бонус Домашний Интернет
+  getParam(html, result, 'bonusdominet', /(?:От услуги "Домашний И|Від послуги "Домашній І)нтернет":[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+  
+  //Остаток бонусного объема данных
+  sumParam(html, result, 'bonusinet', /.>(?:Остаток бонусного объема данны|Залишок бонусного об\'єму дани)х:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseTrafficMb, aggregate_sum);
+
+  AnyBalance.setResult(result);
 }
 
-function parseSeconds(str) {
-    var matches = /(\d+):0*(\d+):0*(\d+)/.exec(str);
-    var time;
-    if (matches) {
-        time = (+matches[1]) * 3600 + (+matches[2]) * 60 + (+matches[3]);
-        AnyBalance.trace('Parsing seconds ' + time + ' from value: ' + str);
-        return time;
-    }
-    AnyBalance.trace('Could not parse seconds from value: ' + str);
-}
-
-function skidka2loyal(str) {
-    var val = parseStazh(str);
-    if (!isset(val)) return;
-    var skidka;
-    if (val < 7776000) 
-		skidka = 0;
-    else if ((val >= 7776000) && (val < 15552000)) 
-		skidka = 2;
-    else if ((val >= 15552000) && (val < 63072000))
-		skidka = 5;
-    else if ((val >= 63072000) && (val < 94608000))
-		skidka = 7;
-    else if ((val >= 94608000) && (val < 157680000))
-		skidka = 10;
-    else if ((val >= 157680000) && (val < 315360000))
-		skidka = 15;
-    else //if((val>=315360000)&&(val<946080000))
-		skidka = 20;
-	
-    return skidka;
-}

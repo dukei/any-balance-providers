@@ -124,7 +124,7 @@ function fetchCard(baseurl, html){
 	checkEmpty(href, 'Не удалось найти ссылку на счета, сайт изменен?', true);
 	html = AnyBalance.requestGet(baseurl + href, addHeaders({'Referer': baseurl}));
 	
-    var re = new RegExp('<tr[^>]*>\\s*<td[^>]*class="tdAccountText">(?:[^](?!<\\/tr>))+?<td[^>]*class="tdId">\\s*<div[^>]*>\\s*\\d+' + (prefs.lastdigits || '') + '[^]+?<\\/tr>', 'i');
+    var re = new RegExp('<tr[^>]*>\\s*<td[^>]*class="tdAccountText">\\s*<div[^>]*>\\s*Счёт №\\d+' + (prefs.lastdigits || '') + '<\\/div>[^]*?<\\/tr>', 'i');
     var tr = getParam(html, null, null, re);
 	
     if(!tr)
@@ -132,7 +132,7 @@ function fetchCard(baseurl, html){
 	
     var result = {success: true};
 	
-    getParam(tr, result, 'cardnum', /<td[^>]*class="tdAccountText">([^]*?)<\/td>/, replaceTagsAndSpaces, html_entity_decode);
+    getParam(tr, result, 'cardnum', /<td[^>]*class="tdAccountText">([^]*?)<\/td>/, replaceTagsAndSpaces, parseBalance);
 	getParam(tr, result, '__tariff', /<td[^>]*class="tdAccountText">([^]*?)<\/td>/, replaceTagsAndSpaces, html_entity_decode);
     getParam(tr, result, 'balance', /<td[^>]*class="tdBalance">([^]*?)<\/td>/, replaceTagsAndSpaces, parseBalance);
     getParam(tr, result, ['currency', 'balance'], /<td[^>]*class="tdBalance">([^]*?)<\/td>/, replaceTagsAndSpaces, parseCurrency);

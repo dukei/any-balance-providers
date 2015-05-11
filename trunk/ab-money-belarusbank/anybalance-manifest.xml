@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="10">ab-money-belarusbank</id>
+	<id version="9">ab-money-belarusbank</id>
 	<api min_level="6" flags="no_browser"/>
 	<name>Беларусбанк</name>
 	<description html="true"><![CDATA[

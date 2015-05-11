@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference
+		obligatory="true"
+        title="Номер В/У"
+        positiveButtonText="ОК"
+        summary="||{@s}"
+        dialogTitle="Введите номер водительского удостоверения."
+        negativeButtonText="Отмена"
+        dialogMessage="Введите номер в формате 50ХХ028333, если есть буквы, то буквы русские."
+        key="prava">
+    </EditTextPreference>
+    <EditTextPreference
+		obligatory="true"
+        positiveButtonText="ОК"
+        key="regcert" 
+        dialogTitle="Св-во о регистрации."
+        negativeButtonText="Отмена"
+        title="Св-во о регистрации."
+        summary="||{@s}" 
+        dialogMessage="Введите номер свидетельства о регистрации в формате 50ХХ123456.">
+    </EditTextPreference>
+</PreferenceScreen>

@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<api flags="no_browser" />
+	<id version="1">ab-fine-yandex</id>
+	<name>Штрафы ГИБДД (Яндекс)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о наличии штрафов с сайта https://money.yandex.ru/gibdd-debts/</p>
+	<p>Наиболее точная информация доступна в провайдере Госуслуги (Штрафы, Налоги).</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для получения информации по штрафам необходимо ввести номер водительского удостверения и номер свидетельства о регистрации.</p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Общая сумма штрафов" units=" р"/>
+		<counter id="count" name="Количество штрафов" units=" шт"/>
+		<counter id="date" name="Дата последнего нарушения" type="time" format="dd/MM/yyyy"/>
+		<counter id="descr" name="Описание последнего штрафа" type="text"/>
+		<counter id="postanovlenie" name="Постановление последнего штрафа" type="text"/>
+		<counter id="summ" name="Сумма последнего штрафа" units=" р"/>
+		<counter id="all" name="Сводка" type="html"/>
+	</counters>
+	<keywords>штрафы, гаи, гибдд, мвд, увд, штраф</keywords>
+	<type>fine</type>
+	<country>ru</country>
+</provider>

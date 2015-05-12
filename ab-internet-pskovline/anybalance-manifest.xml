@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="6" major_version="1">ab-internet-pskovline</id>
+  <id version="7" major_version="1">ab-internet-pskovline</id>
   <name>PskovLine (Псков)</name>
   <description>
     ПсковЛайн (http://www.pskovline.ru). Псковский интернет-провайдер.
@@ -16,6 +16,8 @@
     <counter id="ballance" name="Баланс" suffix=" р." type="numeric"/>
     <counter id="number" name="Лицевой счет" prefix="№ " type="text"/>
     <counter id="login" name="Логин" type="text"/>
+    <counter id="date" name="Окончание периода" type="text"/>
+    <counter id="days" name="Дней до отключения" type="numeric"/>
   </counters>
   <type>
     internet

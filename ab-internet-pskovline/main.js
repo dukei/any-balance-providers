@@ -4,14 +4,15 @@
 Текущий баланс у оператора интернет и телевидения PskovLine.
 
 Сайт оператора: http://www.pskovline.ru
-Личный кабинет: http://stat.pskovline.ru/
+Личный кабинет: https://stat.pskovline.ru/
 */
 
 function main() {
   AnyBalance.setDefaultCharset("utf-8");
   var prefs = AnyBalance.getPreferences();
-  var url="http://stat.pskovline.ru/";
+  var url="https://stat.pskovline.ru/";
   var info = AnyBalance.requestPost(url, {login: prefs.login, password: prefs.password});
+  var date=new Date();
 
   var result = {success: true}, matches;
 
@@ -25,16 +26,32 @@ function main() {
 			 matches[i]=x.match('td>(.*?)<\/td','i')[1];
 		i++;
 		}
-                        var login, ballance, number;
+                        var login, ballance, number, date;
 
 			result['success']=true;
 			result['ballance']=parseFloat(matches[3].match(/>([\d\-\.]+)</)[1]);
+
+// Сумма списания за период
+var tarif=parseInt(matches[13].match(/\d+/));
 
 			if (AnyBalance.isAvailable('login'))
 				result['login'] =matches[5];
 
 			if (AnyBalance.isAvailable('number'))
-				result['number']=matches[1];
+				result['number']=matches[1].match(/\d+/)[0];
+
+			if (AnyBalance.isAvailable('date'))
+				result['date']=info.match('<em .+>[(](.+?)[)]</em','igm')[1].match(/(\d*\.\d*\.\d*)/igm)[1];
+
+// Срок до отключения
+var dats=result['date'].split('.');
+var tmp=dats[0]; dats[0]=parseInt(dats[1]); dats[1]=tmp;
+if (tarif<result['ballance']) dats[0]+=1;
+dats=((Date.parse(dats.join('.'))-date)/(1000*60*60*24)<1?0:Math.ceil((Date.parse(dats.join('.'))-date)/(1000*60*60*24)));
+
+
+			if (AnyBalance.isAvailable('days'))
+				result['days']=dats;
 
                         AnyBalance.setResult(result);
                 }

@@ -11,7 +11,7 @@ var g_headers = {
 };
 
 function auth3(html, prefs) {
-	var remote_addr = '87.249.30.82';
+	var remote_addr = '212.46.225.78'; 
 	var key = getParam(html, null, null, /var\s+key\s*=\s*['"]([^"']+)/i);
 	
 	var login = prefs.login;

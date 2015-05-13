@@ -7,7 +7,7 @@
 	<p>Предоставляет информацию о балансе провайдера Объединенные Нахабинские Сети http://billing-lan.net</p>
 	<p>Информация берется из личного кабинета http://billing-lan.net</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

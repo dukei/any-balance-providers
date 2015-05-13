@@ -31,8 +31,17 @@ function main() {
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	var formattedLogin = getParam(prefs.login || '', null, null, /^\d{11}$/, [/^(\d{3})(\d{3})(\d{3})(\d{2})$/i, '$1-$2-$3 $4']);
+	var loginType = 'snils';
+	if(!isset(formattedLogin) || !formattedLogin) {
+		formattedLogin = getParam(prefs.login || '', null, null, /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/);
+		loginType = 'email';
+	}
 	
-	checkEmpty(formattedLogin, 'Введите СНИЛС (без пробелов и разделителей, 11 символов подряд). Вы ввели: "'+ (prefs.login || 'пустое поле')+'"!');
+	if(loginType == 'snils')
+		checkEmpty(formattedLogin, 'Введите СНИЛС (без пробелов и разделителей, 11 символов подряд). Вы ввели: "'+ (prefs.login || 'пустое поле')+'"!');
+	else
+		checkEmpty(formattedLogin, 'Введите правильный Email. Вы ввели: "'+ (prefs.login || 'пустое поле') + '"!');
+	
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
 	var html = AnyBalance.requestGet(g_baseurl + 'pgu/personcab', g_headers);
@@ -44,7 +53,7 @@ function main() {
 		html = AnyBalance.requestPost('https://esia.gosuslugi.ru/idp/authn/UsernamePasswordLogin', {
 			username: formattedLogin,
 			password: prefs.password,
-			idType:'snils',
+			idType:loginType,
 		}, addHeaders({Referer: 'https://esia.gosuslugi.ru/idp/authn/CommonLogin'}));
 		
 		//Попытаемся получить ошибку авторизации на раннем этапе. Тогда она точнее.

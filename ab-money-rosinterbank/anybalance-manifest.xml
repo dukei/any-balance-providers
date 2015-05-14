@@ -1,13 +1,13 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-money-rosinterbank</id>
+	<id version="2">ab-money-rosinterbank</id>
 	<api flags="no_browser"/>
 	<name>Росинтербанк</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе на картах и счетах Росинтербанка http://www.rosinterbank.ru/</p>
 	<p>Информация берется из Интернет-банка https://b2c.rosinterbank.ru/lite/app/</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
@@ -30,6 +30,6 @@
 		<counter id="accname" name="Имя счета" type="text"/>
 	</counters>
 	<keywords></keywords>
-	<type>money</type>
+	<type>money, bank</type>
 	<country>ru</country>
 </provider>

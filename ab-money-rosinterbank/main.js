@@ -23,7 +23,7 @@ function main(){
 	
     var html = AnyBalance.requestGet(baseurl + "/pub/Login");
     
-    var matches = /class="login rounded[^>]*id="([^"]*)"[^>]*action="\.\.([^"]*)"/i.exec(html);
+    var matches = /wicketSubmitFormById\(['"](id\d+)['"]\s*,\s*['"][^\/]+([^'"]+)/i.exec(html);
     if(!matches){
         var prof = getParam(html, null, null, /<title>(Профилактические работы)<\/title>/i);
         if(prof)
@@ -82,10 +82,10 @@ function mainCardAcc(what, baseurl){
 	
 	var result = {success: true};
 	
-	getParam(account, result, 'accnum', /Номер:(?:[^>]*>){3}\s*(\d{16,20})/i, replaceTagsAndSpaces);
-	getParam(account, result, 'accname', /bind\(this\)\);">([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+	getParam(account, result, 'accnum', /Номер:(?:[^>]*>){3}\s*(\d{16,20})/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(account, result, 'accname', /bind\(this\)\);">([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
 	
-	getParam(account, result, '__tariff', new RegExp('\\d{4}\\s*(?:\\*{4}\\s*){2}' + (prefs.num || '\\d{4}'), 'i'), replaceTagsAndSpaces);
+	getParam(account, result, '__tariff', new RegExp('\\d{4}\\s*(?:\\*{4}\\s*){2}' + (prefs.num || '\\d{4}'), 'i'), replaceTagsAndSpaces, html_entity_decode);
 	getParam(result.__tariff, result, 'cardnum');
 	
 	var balancesArray = [/Средств на счете[\s\S]*?<span[^>]+class="amount"[^>]*>([\s\S]*?)<\/div/i, /Доступно по картам(?:[^>]*>){2}([\s\S]*?)<\/div/i, 
@@ -128,11 +128,11 @@ function mainDep(what, baseurl){
 	
 	var result = {success: true};
 	
-	getParam(deposit, result, '__tariff', /<div class="black"([^>]*>){2}/i, replaceTagsAndSpaces);
-	getParam(deposit, result, 'accname', /<div class="black"([^>]*>){2}/i, replaceTagsAndSpaces);
-    getParam(deposit, result, 'cardnum', /class="deposit-link"([^>]*>){4}/i, replaceTagsAndSpaces);
+	getParam(deposit, result, '__tariff', /<div class="black"([^>]*>){2}/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(deposit, result, 'accname', /<div class="black"([^>]*>){2}/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(deposit, result, 'cardnum', /class="deposit-link"([^>]*>){4}/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(deposit, result, 'balance', /<div class="black"([^>]*>){17}/i, replaceTagsAndSpaces, parseBalance);
-	getParam(deposit, result, 'currency', /<div class="black"([^>]*>){13}/i, replaceTagsAndSpaces);
+	getParam(deposit, result, 'currency', /<div class="black"([^>]*>){13}/i, replaceTagsAndSpaces, html_entity_decode);
 	
     if(AnyBalance.isAvailable('accnum')){
         var href = getParam(html, null, null, /class="deposit-link" href="[.\/]*([^"]+)/i);

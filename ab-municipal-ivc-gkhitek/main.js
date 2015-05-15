@@ -40,17 +40,16 @@ function main() {
 
 	if (!/exit\.php/i.test(html)) {
 		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
-		if (error && /Неверный логин или пароль/i.test(error))
-			throw new AnyBalance.Error(error, null, true);
 		if (error)
-			throw new AnyBalance.Error(error);
+			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+		
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	var result = {success: true};
 	
-	getParam(html, result, 'balance', /Баланс счета(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'fio', /Абонент:([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'acc_num', /Номер счета:([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'balance', /Баланс счета(?:[^>]*>){3}([\s\S]*?)<\/div/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'fio', /Абонент:(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'acc_num', /Номер счета:(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
 	
 	AnyBalance.setResult(result);
 }

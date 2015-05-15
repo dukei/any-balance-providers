@@ -1,13 +1,13 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-municipal-ivc-gkhitek</id>
-	<api flags="no_browser|capthca"/>
-	<name>ОАО "ИВЦ ЖКХ и ТЭК"</name>
+	<id version="2">ab-municipal-ivc-gkhitek</id>
+	<api flags="no_browser"/>
+	<name>ОАО ИВЦ ЖКХ и ТЭК</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе провайдера в личном кабинете ОАО "ИВЦ ЖКХ и ТЭК"</p>
 	<p>Информация берется из личного кабинета https://lk.ivc34.ru/stack-ls-info.php</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

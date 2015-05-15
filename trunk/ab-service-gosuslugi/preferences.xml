@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
 	<EditTextPreference
-		inputType="number"
 		title="СНИЛС/Email"
 		key="login"
 		summary="||{@s}"

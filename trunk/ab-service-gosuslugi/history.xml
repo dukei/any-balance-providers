@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
-	<change major_version="1.0" version="22" date="2015-05-17">
+	<change major_version="1.0" version="23" date="2015-05-17">
 	- Поддержка очередных изменений в процедуре входа.
 	</change>
 	<change major_version="1.0" version="21" date="2015-05-15">

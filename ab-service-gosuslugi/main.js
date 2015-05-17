@@ -50,18 +50,27 @@ function main() {
 	if(!isLoggedIn(html)) {
 		html = performRedirect(html);
 		
-		var command = getParam(html, null, null, /new LoginViewModel\((?:[^,]+,){1,2}'([^"']+)'/i);
-		if(!command) {
-			AnyBalance.trace(html);
-			throw new AnyBalance.Error('Не удалось найти идентификатор команды для входа.');
-		}
-		
-		html = AnyBalance.requestPost('https://esia.gosuslugi.ru/idp/login/pwd/do', {
-			login: formattedLogin,
+		// Госуслуги издеваются. Сначала выкатили новую форму входа, потом спрятали
+		// Пока используем старую
+		html = AnyBalance.requestPost('https://esia.gosuslugi.ru/idp/authn/UsernamePasswordLogin', {
+			username: formattedLogin,
 			password: prefs.password,
 			idType:loginType,
-			'command': command
-		}, addHeaders({Referer: 'https://esia.gosuslugi.ru/idp/rlogin?cc=bp'}));
+		}, addHeaders({Referer: 'https://esia.gosuslugi.ru/idp/authn/CommonLogin'}));
+		
+		// А новую оставим на всякий
+		// var command = getParam(html, null, null, /new LoginViewModel\((?:[^,]+,){1,2}'([^"']+)'/i);
+		// if(!command) {
+			// AnyBalance.trace(html);
+			// throw new AnyBalance.Error('Не удалось найти идентификатор команды для входа.');
+		// }
+		
+		// html = AnyBalance.requestPost('https://esia.gosuslugi.ru/idp/login/pwd/do', {
+			// login: formattedLogin,
+			// password: prefs.password,
+			// idType:loginType,
+			// 'command': command
+		// }, addHeaders({Referer: 'https://esia.gosuslugi.ru/idp/rlogin?cc=bp'}));
 		
 		//Попытаемся получить ошибку авторизации на раннем этапе. Тогда она точнее.
 		var errorCode = getParam(html, null, null, /authn\.error\.([^"']+)/i);

@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-cell-orange-pl</id>
+	<id version="2">ab-cell-orange-pl</id>
 	<api flags="no_browser"/>
 	<name>Orange (Poland)</name>
 	<description html="true"><![CDATA[

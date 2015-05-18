@@ -46,10 +46,13 @@ function main() {
 	getParam(html, result, '__tariff', /Plan taryfowy([^>]*>){6}/i, replaceTagsAndSpaces, html_entity_decode);
 	
 	if(isAvailable('balance')) {
-		html = AnyBalance.requestGet('https://www.orange.pl/portal/ecare?', g_headers);
+		html = AnyBalance.requestGet('https://www.orange.pl/gear/moj_orange/infoservices/ajax?group=packages-tab' + prefs.login + '&toGet=packages-tab&toUpdate=tab' + prefs.login + '&tabId=0&pageId=320500042&tabsReq=true&jsp=dynamic_v2&modal=&onlyHeader=true&_windowid=&jsp=dynamic_v2&refreshCounter=0&_=' + new Date().getTime(), addHeaders({
+			Accept: '*/*',
+			'X-Requested-With': 'XMLHttpRequest'
+		}));
 		
-		getParam(html, result, 'balance', /stan konta<([^>]*>){3}/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, ['currency', 'balance'], /stan konta<([^>]*>){3}/i, replaceTagsAndSpaces, parseCurrency);
+		getParam(html, result, 'balance', /na koncie głównym(?:[\s\S]*?<span[^>]*>)([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, ['currency', 'balance'], /na koncie głównym(?:[\s\S]*?<span[^>]*>)([\s\S]*?)<\//i, replaceTagsAndSpaces, parseCurrency);
 	}
 	
 	AnyBalance.setResult(result);

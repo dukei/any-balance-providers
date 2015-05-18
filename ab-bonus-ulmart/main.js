@@ -40,20 +40,20 @@ function main(){
 
     var result = {success: true};
 	
-    getParam(html, result, 'fio', />Личный кабинет<(?:[\s\S]*?<div[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'fio', />\s*Личный кабинет(?:[^>]*>){7}\s*<div[^>]*class="dropdown[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'price', /цена(?:&nbsp;|\s)+(\d+)/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, '__tariff', /<div[^>]+class="b-dropdown-popup__info"[^>]*>[\s\S]*?<\/div>([\s\S]*?)<ul/i, replaceTagsAndSpaces, html_entity_decode);
 	
 	if(isAvailable(['subaccountall', 'subaccounts', 'balance'])){
 		html = AnyBalance.requestGet(baseurl + 'cabinet/bonus', addHeaders({Referer:'http://www.ulmart.ru/cabinet?v=bonus'}));
 		
-		getParam(html, result, 'balance', /XXL-Бонус(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'balance', /XXL-бонус:([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, 'subaccounts', /вашей сети[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 		
-		var list = getParam(html, null, null, /(<ul>[\s\S]*?<\/ul>)/i, replaceTagsAndSpaces, html_entity_decode);
+		var list = getParam(html, null, null, /(<ul>[\s\S]*?<\/ul>)\s*<\/div/i);
 		if(list){
 			var subaccountall = '';
-			var li = sumParam(html, null, null, /<li[^>]*class="cl"[^>]*>[\s\S]*?<\/li>/ig);
+			var li = sumParam(list, null, null, /<li[^>]*>[\s\S]*?<\/li>/ig);
 			for(i=0; i< li.length; i++){
 				subaccountall += getParam(li[i], null, null, null, replaceTagsAndSpaces, html_entity_decode) +'\n';
 			}

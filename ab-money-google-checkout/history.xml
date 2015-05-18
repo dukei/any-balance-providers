@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="11" date="2015-05-18">
+	- New counter: Next payment.
+	</change>
 	<change version="10" date="2015-02-10">
 	- Unified login procedure.
 	</change>

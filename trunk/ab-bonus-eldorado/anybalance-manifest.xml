@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="9">ab-bonus-eldorado</id>
+	<id version="10">ab-bonus-eldorado</id>
 	<api flags="no_browser"/>
 	<name>Клуб Эльдорадо</name>
 	<description html="true"><![CDATA[

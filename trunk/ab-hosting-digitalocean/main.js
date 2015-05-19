@@ -44,7 +44,7 @@ function main(){
 
 	var status = AnyBalance.getLastStatusCode();
 
-	if( status != 200 && status != 302 ){
+	if(status != 200 && status != 302 ){
 		throw new AnyBalance.Error('Ошибка авторизации ');
 	}
 
@@ -58,8 +58,9 @@ function main(){
 
 	var result = {success: true};
 
-	getParam(html, result, 'balance', /<div class='amount credit'>\s*\$([\d+\.]+)/i, null, parseBalance);
-	getParam(html, result, 'usage', /<div class='amount zero'>\s*\$([\d+\.]+)/i, null, parseBalance);
+	getParam(html, result, 'balance', /Your Credit([\s\S]*?)<\//i, null, parseBalance);
+	getParam(html, result, 'usage', /Usage([\s\S]*?)<\//i, null, parseBalance);
+	
 	AnyBalance.setResult(result);
 }
 

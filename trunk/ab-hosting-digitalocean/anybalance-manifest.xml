@@ -1,11 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="1.0" version="2">ab-hosting-digitalocean</id>
+	<id major_version="1.0" version="3">ab-hosting-digitalocean</id>
 	<api flags="no_browser"/>
 	<name>DigitalOcean</name>
-	<description>
-		Получает баланс для хостинга DigitalOcean. Информация берется из личного кабинета https://cloud.digitalocean.com/billing.
-	</description>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе хостинг-провайдера DigitalOcean</p>
+	<p>Информация берется из личного кабинета <a href="https://cloud.digitalocean.com/billing">https://cloud.digitalocean.com/billing</a></p>
+	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
@@ -15,8 +16,8 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units="$"/>
-		<counter id="usage" name="Начислено за текущий месяц" units="$"/>
+		<counter id="balance" name="Баланс" units=" $"/>
+		<counter id="usage" name="Начислено за текущий месяц" units=" $"/>
 	</counters>
 	<keywords>интернет, хостинг, облако, сервер</keywords>
 	<type>hosting</type>

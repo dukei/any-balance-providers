@@ -11,7 +11,7 @@
 */
 
 var g_headers = {
-    'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    'Accept':'application/json, text/javascript, */*; q=0.01',
     'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
     'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
     'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.11 (KHTML, like Gecko) Chrome/20.0.1132.57 Safari/536.11',
@@ -19,22 +19,35 @@ var g_headers = {
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-
-    checkEmpty(prefs.login, 'Введите номер карты!');
+	
+	var formattedLogin = getParam(prefs.login, null, null, /^\d+$/, [/^(\d{4})(\d{4})(\d{4})(\d{4})$/, '$1 $2 $3 $4']);
+    checkEmpty(formattedLogin, 'Введите номер карты без пробелов и разделителей, только цифры!');
     checkEmpty(prefs.password, 'Введите PIN-код для входа в личный кабинет!');
     
     var baseurl = "http://www.eldorado.ru/";
 	
 	var html = AnyBalance.requestGet(baseurl + 'personal/club/offers/index.php', g_headers);
 	
-    var html = AnyBalance.requestPost(baseurl + '_ajax/userCardAuth.php', {
+	// var captchaa;
+	// if(AnyBalance.getLevel() >= 7){
+		// AnyBalance.trace('Пытаемся ввести капчу');
+		var captcha = AnyBalance.requestGet(baseurl+ 'bitrix/tools/captcha.php?captcha_sid=123');
+		// captchaa = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
+		// AnyBalance.trace('Капча получена: ' + captchaa);
+	// }else{
+		// throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
+	// }
+	
+    html = AnyBalance.requestPost(baseurl + '_ajax/userCardAuth.php', {
 		'AUTH_FORM':'Y',
 		'action':'AUTH',
 		'auth_popup':'1',
-		'backurl':'/personal/club/offers/index.php?login=yes',
-		'USER_LOGIN':prefs.login,
+		'backurl':'/personal/orders/index.php?login=yes',
+		'USER_LOGIN':formattedLogin,
 		'USER_PASSWORD':prefs.password,
-    }, addHeaders({Referer: baseurl + 'personal/club/offers/index.php', 'X-Requested-With': 'XMLHttpRequest'}));
+		captcha_sid:'123',
+		captcha_word:'5xx57',
+    }, addHeaders({Referer: baseurl + 'personal/orders/index.php', 'X-Requested-With': 'XMLHttpRequest'}));
 
     var json = getJson(html);
     if(!json.data){

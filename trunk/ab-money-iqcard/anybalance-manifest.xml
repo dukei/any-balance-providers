@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-money-iqcard</id>
+	<id version="3">ab-money-iqcard</id>
 	<api flags="no_browser"/>
 	<name>IQCard</name>
 	<description html="true"><![CDATA[
@@ -23,6 +23,6 @@
 		<counter id="till" name="Срок действия" type="time" format="dd/MM/yyyy"/>
 	</counters>
 	<keywords></keywords>
-	<type>money</type>
+	<type>money, bank</type>
 	<country>ru</country>
 </provider>

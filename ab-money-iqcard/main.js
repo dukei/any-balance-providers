@@ -19,13 +19,13 @@ function main() {
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	var html = AnyBalance.requestGet(baseurl + 'iqc/pages/public/login.xhtml', g_headers);
+	var html = AnyBalance.requestGet(baseurl + 'iqc/pages/public/login.html', g_headers);
 	
 	try {
-		html = AnyBalance.requestPost(baseurl + 'iqc/j_spring_security_check', {
-			j_username: prefs.login,
-			j_password: prefs.password,
-		}, addHeaders({Referer: baseurl + 'iqc/pages/public/login.xhtml'}));
+		html = AnyBalance.requestPost(baseurl + 'iqc/login', {
+			username: prefs.login,
+			password: prefs.password,
+		}, addHeaders({Referer: baseurl + 'iqc/pages/public/login.html'}));
 	} catch(e) {}
 	
 	html = AnyBalance.requestGet(baseurl + 'iqc/pages/cabinet/cards.html', g_headers);

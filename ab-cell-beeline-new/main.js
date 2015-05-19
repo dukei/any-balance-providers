@@ -394,7 +394,7 @@ function proceedWithSite(baseurl, prefs) {
 			AnyBalance.trace(html);
 			throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 		}
-		if (/'b2c',\s*'postpaid'/i.test(html)) {
+		if (/postpaid/i.test(html)) {
 			fetchPost(baseurl, html);
 		} else {
 			fetchPre(baseurl, html);
@@ -983,7 +983,7 @@ function getBonuses(xhtml, result) {
 			// Это новый вид отображения данных
 			} else if (/Минут общения по (?:тарифу|услуге)|вызовы|на местные номера/i.test(name)) {
 				// Очень внимательно надо матчить
-				if(/^Минут общения по тарифу$|других (?:сотовых\s+)?операторов|все номера|На номера домашнего региона|Минут общения по тарифу Все для бизнеса Бронза|кроме номеров "Билайн"|на местные номера других операторов/i.test(name))
+				if(/любые номера Вашего региона|^Минут общения по тарифу$|других (?:сотовых\s+)?операторов|все номера|На номера домашнего региона|Минут общения по тарифу Все для бизнеса Бронза|кроме номеров "Билайн"|на местные номера других операторов/i.test(name))
 					sumParam(services[i], result, 'min_local', reNewValue, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
 				else
 					sumParam(services[i], result, 'min_bi', reNewValue, replaceTagsAndSpaces, parseMinutes, aggregate_sum);

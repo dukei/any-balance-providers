@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="1">ab-service-infoshkola</id>
+	<id version="2">ab-service-infoshkola</id>
 	<name>Инфошкола</name>
 	<description>
 	Получает данные для провайдера Инфошкола (http://www.infoshkola.net/)

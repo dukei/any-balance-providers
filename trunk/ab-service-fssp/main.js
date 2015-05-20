@@ -18,15 +18,24 @@ function main() {
 	
 	checkEmpty(prefs.last_name, 'Введите Фамилию!');
 	checkEmpty(prefs.first_name, 'Введите имя!');
-	//checkEmpty(prefs.otchestvo, 'Введите отчество!');
-	checkEmpty(prefs.birthdate, 'Введите дату рождения в формате ДД.ММ.ГГГГ!');
+	
+	if(isset(prefs.birthdate))
+		checkEmpty(prefs.birthdate, 'Введите дату рождения в формате ДД.ММ.ГГГГ!');
+	
+	// Прежде чем входить, вынем куки
+	// Почему-то иногда падает, завернем
+	try {
+		AnyBalance.restoreCookies();
+	} catch(e) {}
+	
+	var html = AnyBalance.requestGet(baseurl + 'iss/ip/', g_headers);
 	
 	var params = [
-		['/ajax_search?url', 'iss/ajax_search'], 
+		// ['/ajax_search?url', 'iss/ajax_search'], 
 		['system', 'ip'], 
 		['is[extended]','1'],
 		['is[variant]','1'],
-		['is[region_id][0]',(prefs.region_id || '77')],
+		['is[region_id][0]',(prefs.region_id || '-1')],
 		['is[last_name]', prefs.last_name],
 		['is[first_name]',prefs.first_name],
 		['is[patronymic]',(prefs.otchestvo || '')],
@@ -34,7 +43,6 @@ function main() {
 		['nocache','1'],
 		['is[sort_field]',''],
 		['is[sort_direction]',''],
-		['nocache', '1']
 	];
 	
 	var strParams = '';
@@ -43,7 +51,7 @@ function main() {
 	}
 	
 	var url = baseurl + 'iss/ajax_search?' + strParams;
-	var html = AnyBalance.requestGet(url, addHeaders({'X-Requested-With': 'XMLHttpRequest'}));
+	html = AnyBalance.requestGet(url, addHeaders({'X-Requested-With': 'XMLHttpRequest'}));
 	
 	var captchaa = getParam(html, null, null, /<img\s*src=".([^"]*)/i);
 	if(captchaa) {
@@ -65,26 +73,34 @@ function main() {
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'balance', /(Найдено[\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, null, null, /<table[^>]*class="list[\s\S]*?<\/table>/i, null, function(table) {
-		// Сводка в html
-		sumParam(table, result, 'sum', /[\d\s-.,]{3,}\s*руб/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-		
-		var rows = sumParam(table, null, null, /(<tr[^>]*>[\s\S]*?<\/tr>)/ig);
-		var all = [];
-		for(i = 0; i < rows.length; i++) {
-			var curRow = rows[i];
-
-			// var name = getParam(curRow, null, null, /<td>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-			var order = getParam(curRow, null, null, /(?:[\s\S]*?<td>){2}([^<]+)/i, replaceTagsAndSpaces);
-			// var order = getParam(curRow, null, null, /(?:[\s\S]*?<td>){3}([^<]+)/i, replaceTagsAndSpaces);
-			var ammount = getParam(curRow, null, null, /(?:[\s\S]*?<td>){4}([^<]+)/i, replaceTagsAndSpaces);
+	getParam(html, result, 'balance', /search-found-tota[^>]*>\s*Найдено([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	if(/По вашему запросу ничего не найдено/i.test(html)) {
+		getParam(0, result, 'balance');
+		getParam(0, result, 'sum');
+		getParam('По вашему запросу ничего не найдено', result, 'all');
+	} else {
+		getParam(html, null, null, /<table[^>]*class="list[\s\S]*?<\/table>/i, null, function(table) {
+			// Сводка в html
+			sumParam(table, result, 'sum', /[\d\s-.,]{3,}\s*руб/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 			
-			if(order && ammount)
-				all.push('<b>' + order + ':</b> ' + ammount);
-		}
-		getParam(all.join('<br/><br/>'), result, 'all');
-	});
+			var rows = sumParam(table, null, null, /(<tr[^>]*>[\s\S]*?<\/tr>)/ig);
+			var all = [];
+			for(i = 0; i < rows.length; i++) {
+				var curRow = rows[i];
+
+				// var name = getParam(curRow, null, null, /<td>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+				var order = getParam(curRow, null, null, /(?:[\s\S]*?<td>){2}([^<]+)/i, replaceTagsAndSpaces);
+				// var order = getParam(curRow, null, null, /(?:[\s\S]*?<td>){3}([^<]+)/i, replaceTagsAndSpaces);
+				var ammount = getParam(curRow, null, null, /(?:[\s\S]*?<td>){4}([^<]+)/i, replaceTagsAndSpaces);
+				
+				if(order && ammount)
+					all.push('<b>' + order + ':</b> ' + ammount);
+			}
+			getParam(all.join('<br/><br/>'), result, 'all');
+		});		
+	}
 	
+	AnyBalance.saveCookies();
+	AnyBalance.saveData();
     AnyBalance.setResult(result);
 }

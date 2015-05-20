@@ -41,7 +41,7 @@
 		<counter id="daysleft5" name="Остаток дней 5" units=" дн"/>		
 		
 		<counter id="service6" name="Услуга 6" type="text"/>
-		<counter id="daysleft3" name="Остаток дней 6" units=" дн"/>
+		<counter id="daysleft6" name="Остаток дней 6" units=" дн"/>
 	</counters>
 	<keywords>спутник tricolor</keywords>
 	<type>tv</type>

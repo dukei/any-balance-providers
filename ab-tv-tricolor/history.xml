@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="8" date="2015-05-20">
+	- Поддержка до 6 услуг на счете.
+	</change>
 	<change version="7" date="2014-11-14">
 	- Исправлено получение остатка дней.
 	</change>

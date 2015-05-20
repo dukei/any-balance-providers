@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="7">ab-tv-tricolor</id>
+	<id version="8">ab-tv-tricolor</id>
 	<name>Триколор ТВ</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе и другие данные для пользователей провайдера спутникового телевидения "Триколор ТВ" (http://tricolor.tv).</p>   
@@ -27,10 +27,21 @@
 		<counter id="device" name="№ оборудования" type="text"/>
 		<counter id="service1" name="Услуга" type="text"/>
 		<counter id="daysleft1" name="Остаток дней" units=" дн"/>
+		
 		<counter id="service2" name="Услуга 2" type="text"/>
 		<counter id="daysleft2" name="Остаток дней 2" units=" дн"/>
+		
 		<counter id="service3" name="Услуга 3" type="text"/>
 		<counter id="daysleft3" name="Остаток дней 3" units=" дн"/>
+		
+		<counter id="service4" name="Услуга 4" type="text"/>
+		<counter id="daysleft4" name="Остаток дней 4" units=" дн"/>
+
+		<counter id="service5" name="Услуга 5" type="text"/>
+		<counter id="daysleft5" name="Остаток дней 5" units=" дн"/>		
+		
+		<counter id="service6" name="Услуга 6" type="text"/>
+		<counter id="daysleft3" name="Остаток дней 6" units=" дн"/>
 	</counters>
 	<keywords>спутник tricolor</keywords>
 	<type>tv</type>

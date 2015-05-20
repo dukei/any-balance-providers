@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="10" date="2015-05-20">
+	- Улучшена работа провайдера.
+	- Поддержка изменений на сайте.
+	</change>
 	<change version="9" date="2015-02-09">
 	- Мелкие улучшения.
 	</change>

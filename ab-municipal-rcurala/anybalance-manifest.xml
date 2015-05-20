@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-municipal-rcurala</id>
+	<id version="2">ab-municipal-rcurala</id>
 	<api flags="no_browser"/>
 	<name>Расчётный Центр Урала</name>
 	<description html="true"><![CDATA[

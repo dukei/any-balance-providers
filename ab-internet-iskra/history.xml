@@ -1,15 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="6" date="2015-05-20">
+	- Исправлено отображение номера счета.
+	- Новый счетчик: Дней до блокировки.
+	</change>
 	<change version="5" date="2015-04-17">
 	- Поддержка изменений на сайте.
 	</change>
 	<change version="4" date="2015-04-15">
 	- Поддержка изменений на сайте.
 	</change>
-<change version="3" date="2013-12-16">
-- Поддержка изменений на сайте.
-</change>
-<change version="2" date="2013-09-10">
-- Переименован провайдер в Seven Sky и переведен на новый адрес.
-</change>
+	<change version="3" date="2013-12-16">
+	- Поддержка изменений на сайте.
+	</change>
+	<change version="2" date="2013-09-10">
+	- Переименован провайдер в Seven Sky и переведен на новый адрес.
+	</change>
 </history>

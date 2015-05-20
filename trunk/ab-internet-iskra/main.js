@@ -43,11 +43,9 @@ function main(){
 
     var url = AnyBalance.getLastUrl();
     if(/statistics\.gorcomnet/.test(url)){
-        var integer = getParam(html, null, null, /<td[^>]*class="balance"[^>]*>[^]*?<td[^>]*class="integer"[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-        var frac = getParam(html, null, null, /<td[^>]*class="balance"[^>]*>[^]*?<td[^>]*class="frac"[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-        getParam(+integer + ((frac || 0)/100), result, 'balance');
-
-        getParam(html, result, 'licschet', /<h1[^>]*>Договор([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+		getParam(html, result, 'balance', /баланс:([\s\S]*?<\/tr[^>]*>){2}/i, [replaceTagsAndSpaces, /(\d+)\s(\d+)/, '$1,$2'], parseBalance);
+		getParam(html, result, 'days', /Осталось дней до блокировки([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'licschet', /Лицевой счет([\s\d]+)/i, replaceTagsAndSpaces, html_entity_decode);
     } else if(/stat\.seven-sky\.net/.test(url)){
         getParam(html, result, 'balance', /Ваш баланс(?:[^>]*>){5}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
         getParam(html, result, 'licschet', /счет N([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);

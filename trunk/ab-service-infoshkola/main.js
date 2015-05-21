@@ -35,6 +35,7 @@ function main(){
 	
 	AnyBalance.setOptions({forceCharset: 'utf-8'});
 	
+	html = AnyBalance.requestGet(baseurl + 'sdpupil_pg/include/auth.php', g_headers);
 	html = AnyBalance.requestGet(baseurl + 'sdpupil_pg/index.php?page=personal', g_headers);
 	
     var result = {success: true};

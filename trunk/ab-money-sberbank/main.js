@@ -89,11 +89,15 @@ function mainMobileApp(prefs) {
 
 	if(!guid){
 		AnyBalance.trace('Необходимо привязать устройство!');
+		
+		// Сбер стал блокировать одинаковые девайсы, перепривязывая их по новой.
+		// Придется сделать так
+		var devID = hex_md5(prefs.login + ' ' + Math.random());
 		// регистрируем девайс
 		var html = requestApi('registerApp.do', {
 			'operation':'register',
 			'login':prefs.login,
-			'devID':hex_md5(prefs.login)
+			'devID':devID
 		});
 		
 		var mGUID = getParam(html, null, null, /<mGUID>([\s\S]*?)<\/mGUID>/i);
@@ -107,7 +111,10 @@ function mainMobileApp(prefs) {
 		//AnyBalance.saveData(); Нельзя здесь сохранять! Только после успешного ввода кода!
 
 		// Все, тут надо дождаться смс кода
-		var code = AnyBalance.retrieveCode('Пожалуйста, введите код из смс, для привязки данного устройства.', 'R0lGODlhBAAEAJEAAAAAAP///////wAAACH5BAEAAAIALAAAAAAEAAQAAAIElI8pBQA7');
+		var code = AnyBalance.retrieveCode('Пожалуйста, введите код из смс, для привязки данного устройства.', null, {
+			time: 120000,
+			inputType: 'number',
+		});
 		
 		html = requestApi('registerApp.do', {
 			'operation':'confirm',
@@ -121,7 +128,7 @@ function mainMobileApp(prefs) {
 			'mGUID':mGUID,
 			'password':defaultPin,
 			'isLightScheme':'true',
-			'devID':hex_md5(prefs.login)
+			'devID':devID
 		});
 
 		AnyBalance.saveData();
@@ -210,13 +217,16 @@ function fetchApiCard(html, result, prefs) {
 		//getParam(html, result, 'minpaydate', /Дата минимального платежа:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/, replaceTagsAndSpaces, parseDateForWord);
 	}
 	
-	
 	if (isAvailable(['lastPurchSum', 'lastPurchPlace', 'lastPurchDate'])) {
-		html = requestApi2('https://node1.online.sberbank.ru:4477/mobile7/private/cards/abstract.do', {'id':id, count:10, paginationSize:10});
-		
-		getParam(html, result, 'lastPurchDate', /<operation><date>([^<]+)/i, replaceTagsAndSpaces, parseDate);
-		getParam(html, result, 'lastPurchSum', /<amount>([^<]+)/i, replaceTagsAndSpaces);
-		getParam(html, result, 'lastPurchPlace', /<description><\!\[CDATA\[([^\]]+)/i, replaceTagsAndSpaces);
+		try {
+			html = requestApi2('https://node1.online.sberbank.ru:4477/mobile7/private/cards/abstract.do', {'id':id, count:10, paginationSize:10});
+			
+			getParam(html, result, 'lastPurchDate', /<operation><date>([^<]+)/i, replaceTagsAndSpaces, parseDate);
+			getParam(html, result, 'lastPurchSum', /<amount>([^<]+)/i, replaceTagsAndSpaces);
+			getParam(html, result, 'lastPurchPlace', /<description><\!\[CDATA\[([^\]]+)/i, replaceTagsAndSpaces);
+		} catch(e) {
+			AnyBalance.trace('Не удалось получить выписку: ' + e.message);
+		}
 	}
 }
 

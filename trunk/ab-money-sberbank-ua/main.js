@@ -47,14 +47,15 @@ AnyBalance.trace(baseurl + 'wb/auth/userlogin?execution=' + execKey);
 		var error = getParam(html, null, null, /Смена Пароля(?:[\s\S]*?<[^>]*>){2}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error) 
 			throw new AnyBalance.Error(error);
-		error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
-
+		error = getElement(html, /<div[^>]+form-error[^>]*>/i);
+		if(error)
+			error = replaceAll(error, [replaceTagsAndSpaces, replaceHtmlEntities]);
 		if (error) 
 			throw new AnyBalance.Error(error);
 		throw new AnyBalance.Error('Не вдалося зайти в особистий кабінет. Сайт змінено?');
 	}
 	if (prefs.type == 'acc') 
-		fetchAcc(html);
+		fetchAcc(html, baseurl);
 	else 
 		fetchCard(html, baseurl);
 }
@@ -70,40 +71,68 @@ function fetchCard(html, baseurl) {
 		throw new AnyBalance.Error("Надо вказати 4 останніх цифри карти або не вказувати нічого");
 	
 	var result = {success: true};
-	
 	getParam(html, result, 'fio', /user-name"([^>]*>){4}/i, replaceTagsAndSpaces);
+
+	html = AnyBalance.requestGet(baseurl + 'wb/api/v1/contracts?system=W4C', addHeaders({'X-Requested-With':'XMLHttpRequest'}));
+	var json = getJson(html);
 	
-	var cardnum = prefs.lastdigits || '\\d{4}';
-	// <div class="owwb-cs-slide-list-item-inner">(?:[^>]*>){15}[\s\d*]{10,}9528(?:[^>]*>){120}
-	var regExp = new RegExp('<div class="owwb-cs-slide-list-item-inner">(?:[^>]*>){15}[\\s\\d*]{10,}' + cardnum + '(?:[^>]*>){120}','i');
-	var root = getParam(html, null, null, regExp);
-    if (!root) {
+	for(var i=0; i<json.length; ++i){
+		var prod = json[i];
+		if(!prod.card)
+			continue;
+		if(!prefs.lastdigits || endsWith(prod.number, prefs.lastdigits))
+			break;
+	}
+
+	if(i > json.length){
 		AnyBalance.trace(html);
     	throw new AnyBalance.Error('Не вдалося знайти ' + (prefs.lastdigits ? 'карту с останніми цифрами ' + prefs.lastdigits : 'ні однієї карти!'));
-    }
-    getParam(root, result, 'balance', /(?:Доступно:|"amount"[^>]*>)\s*(-?[\d\s.,]+)/i, replaceTagsAndSpaces, parseBalance);
-    getParam(root, result, 'maxlimit', /(?:Кредитний ліміт:)\s*(-?[\d\s.,]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(root, result, 'till', /Дата закінчення дії(?:[^>]*>){4}([\s\S]*?)<\//i, replaceTagsAndSpaces, (prefs.dz == 'mmyy') ? null : getDz);
-    getParam(root, result, 'debt', /Загальна заборгованість(?:[^>]*>){5}([\s\S]*?)<\/div/i, replaceTagsAndSpaces, parseBalance);
-    getParam(root, result, 'rr', /Номер рахунку(?:[^>]*>){4}([\s\S]*?)<\//i, replaceTagsAndSpaces);
-    getParam(root, result, ['currency', 'balance', 'maxlimit', 'debt'], /amount-currency[^>]*>([^<]+)/i, [replaceTagsAndSpaces, /[^a-zа-я]/ig, '']);
-    getParam(root, result, '__tariff', /(\d{4}\*{6,}\d{4})/i);
-	getParam(root, result, 'cardNumber', /(\d{4}\*{6,}\d{4})/i);
+	}
+
+    getParam(prod.balances.available.value, result, 'balance', null, null, parseBalance);
+    getParam(prod.balances.full_crlimit.value, result, 'maxlimit', null, null, parseBalance);
+	getParam(prod.card.expiryDate, result, 'till', null, null, parseDate);
+    getParam(prod.balances.total_due.value, result, 'debt', null, null, replaceTagsAndSpaces, parseBalance);
+    getParam(prod.card.accountNumber, result, 'rr');
+    getParam(prod.balances.available.currency, result, ['currency', 'balance', 'maxlimit', 'debt']);
+    getParam(prod.product.name, result, '__tariff');
+	getParam(prod.number, result, 'cardNumber');
 	
 	AnyBalance.setResult(result);
 }
 
-function fetchAcc(html) {
-	throw new AnyBalance.Error('Получение данных по счетам еще не поддерживается, свяжитесь с автором провайдера!');
-}
+function fetchAcc(html, baseurl) {
+	var prefs = AnyBalance.getPreferences();
+	if (prefs.lastdigits && !/^\d{4}$/.test(prefs.lastdigits)) 
+		throw new AnyBalance.Error("Надо вказати 4 останніх цифри рахунка або не вказувати нічого");
+	
+	var result = {success: true};
+	getParam(html, result, 'fio', /user-name"([^>]*>){4}/i, replaceTagsAndSpaces);
 
-function getDz(date) {
-    var months = {'січень': '01','лютий': '02','березень': '03','квітень': '04','травень': '05','червень': '06','липень': '07','серпень': '08','вересень': '09','жовтень': '10','листопад': '11','грудень': '12'};
+	html = AnyBalance.requestGet(baseurl + 'wb/api/v1/contracts?system=W4C', addHeaders({'X-Requested-With':'XMLHttpRequest'}));
+	var json = getJson(html);
 	
-	var mm = getParam(date, null, null, null, [replaceTagsAndSpaces, /[\d\s]/g, '']);
-    var yy = getParam(date, null, null, null, [replaceTagsAndSpaces, /\D/g, '']);
-	if(!mm || !yy)
-		return date;
+	for(var i=0; i<json.length; ++i){
+		var prod = json[i];
+		if(!prod.cardAccount)
+			continue;
+		if(!prefs.lastdigits || endsWith(prod.number, prefs.lastdigits))
+			break;
+	}
+
+	if(i > json.length){
+		AnyBalance.trace(html);
+    	throw new AnyBalance.Error('Не вдалося знайти ' + (prefs.lastdigits ? 'рахунок с останніми цифрами ' + prefs.lastdigits : 'ні однієї карти!'));
+	}
+
+    getParam(prod.balances.available.value, result, 'balance', null, null, parseBalance);
+    getParam(prod.balances.full_crlimit.value, result, 'maxlimit', null, null, parseBalance);
+//	getParam(prod.card.expiryDate, result, 'till', null, null, parseDate);
+    getParam(prod.balances.total_due.value, result, 'debt', null, null, parseBalance);
+    getParam(prod.cardAccount.accountNumber, result, 'rr');
+    getParam(prod.balances.available.currency, result, ['currency', 'balance', 'maxlimit', 'debt']);
+    getParam(prod.product.name, result, '__tariff');
+//	getParam(prod.number, result, 'cardNumber');
 	
-	return months[mm] + '.' + yy;
+	AnyBalance.setResult(result);
 }

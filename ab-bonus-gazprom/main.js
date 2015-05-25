@@ -64,17 +64,24 @@ function main() {
 	
 	var result = {success: true};
 	var balance = getParam(html, null, null, /Бонусов доступно[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-	result.balance = balance;
+	getParam(balance, result, 'balance');
+
 	//getParam(html, result, 'balance', /Бонусов доступно[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'status', /Текущий статус карты[\s\S]*?<img[^>]+src="[^"]*images\/([^\/"]*)\.png"[^>]*>/i, replaceTagsAndSpaces, img2status);
 	getParam(html, result, '__tariff', /Текущий статус карты[\s\S]*?<img[^>]+src="[^"]*images\/([^\/"]*)\.png"[^>]*>/i, replaceTagsAndSpaces, img2status);
 	getParam(html, result, 'month_need', /Для подтверждения статуса необходимо совершить покупки на сумму[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'month', /Сумма покупок за текущий месяц. От нее зависит статус участника программы на следующий месяц.[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	
+	var month1 = getParam(html, null, null, /Сумма покупок за текущий месяц(?:[^>]*>){4}\s*1 зона([\s\S]*?)</i, replaceTagsAndSpaces, parseBalance) || 0;
+	var month2 = getParam(html, null, null, /Сумма покупок за текущий месяц(?:[^>]*>){5}\s*2 зона([\s\S]*?)</i, replaceTagsAndSpaces, parseBalance) || 0;
+	getParam(month1, result, 'month1');
+	getParam(month2, result, 'month2');
+	getParam(month1 + month2, result, 'month');
+	
 	getParam(html, result, 'customer', /<div[^>]+class="[^"]*PersonalName"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'month_need_up', /Для повышения статуса необходимо совершить покупки на сумму[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 	//Баланс по курсу в рублях
 	if(AnyBalance.isAvailable('balance_money', 'kurs')) {
-		html=AnyBalance.requestGet("http://www.gpnbonus.ru/on_the_way/");
+		html=AnyBalance.requestGet("https://www.gpnbonus.ru/on_the_way/");
 		var regexp = /Наш курс: <b>(\d*) бонусов = (\d*) рубль<\/b>/;
 		if (res = regexp.exec(html)) {
 			result.balance_money = Math.floor(((result.balance*res[2])/res[1])*100)/100;

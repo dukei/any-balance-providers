@@ -53,7 +53,7 @@ function newTypicalLanBillingInetTv(urlIndex, urlAjax) {
 	AnyBalance.trace('Найдено счетов: ' + accs.length);
 	
     for(var i=0; i < accs.length; ++i) {
-		var account = getParam(accs[i], null, null, /<strong>\s*(\d+)/i);
+		var account = getParam(accs[i], null, null, /class="first_col"[^>]*>\s*([\s\d-]+)/i);
 		var accountID = getParam(accs[i], null, null, /<tr[^>]*agreements[^>]*row[^>]*?(\d+)/i);
 		var balance = getParam(accs[i], null, null, /(-?[\s\d.,]+руб)/i, null, parseBalance);
 		
@@ -95,7 +95,7 @@ function newTypicalLanBillingInetTv(urlIndex, urlAjax) {
 
     function readAcc(json, isInet){
         if(json) {
-			getParam(json.bal, result, /*isInet ? 'balance' : 'balance_tv'*/ 'rent');
+			getParam(json.bal, result, 'balance_tv');
 			if(!usedAccs['acc_' + json.acc]){ //аккаунты только уникальные собираем
 				sumParam(json.acc, result, 'agreement', null, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
 				usedAccs['acc_' + json.acc] = true;

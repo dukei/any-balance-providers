@@ -75,24 +75,30 @@ function fetchCard(html, baseurl) {
 
 	html = AnyBalance.requestGet(baseurl + 'wb/api/v1/contracts?system=W4C', addHeaders({'X-Requested-With':'XMLHttpRequest'}));
 	var json = getJson(html);
+	var prod;
 	
-	for(var i=0; i<json.length; ++i){
-		var prod = json[i];
-		if(!prod.card)
-			continue;
-		if(!prefs.lastdigits || endsWith(prod.number, prefs.lastdigits))
-			break;
-	}
-
-	if(i > json.length){
+	if(isset(prefs.lastdigits)) {
+		for(var i=0; i<json.length; ++i) {
+			prod = json[i];
+			if(endsWith(prod.number, prefs.lastdigits)) {
+				prod = json[i];
+				break;
+			} else {
+				prod = null;
+			}
+		}
+	} else
+		prod = json[0];
+	
+	if(!prod){
 		AnyBalance.trace(html);
     	throw new AnyBalance.Error('Не вдалося знайти ' + (prefs.lastdigits ? 'карту с останніми цифрами ' + prefs.lastdigits : 'ні однієї карти!'));
 	}
 
     getParam(prod.balances.available.value, result, 'balance', null, null, parseBalance);
     getParam(prod.balances.full_crlimit.value, result, 'maxlimit', null, null, parseBalance);
-	getParam(prod.card.expiryDate, result, 'till', null, null, parseDate);
-    getParam(prod.balances.total_due.value, result, 'debt', null, null, replaceTagsAndSpaces, parseBalance);
+	getParam(prod.card.expiryDate + '', result, 'till', null, null, parseDate);
+    getParam(prod.balances.total_due.value, result, 'debt', null, null, parseBalance);
     getParam(prod.card.accountNumber, result, 'rr');
     getParam(prod.balances.available.currency, result, ['currency', 'balance', 'maxlimit', 'debt']);
     getParam(prod.product.name, result, '__tariff');
@@ -136,3 +142,30 @@ function fetchAcc(html, baseurl) {
 	
 	AnyBalance.setResult(result);
 }
+
+// Moved from library.js
+function getElement(g,j){var c=getParam(j.toString(),null,null,/<(\w+)/);
+var b=j.exec(g);
+if(!b){return null
+}var h=b.index;
+var d=new RegExp("(?:<"+c+"|</"+c+")[^>]*>","ig");
+d.lastIndex=h+b[0].length;
+var e=0;
+while(true){b=d.exec(g);
+if(!b){break
+}var a=b[0];
+if(a.charAt(1)=="/"){if(e==0){break
+}--e
+}else{++e
+}d.lastIndex=b.index+a.length
+}var f=g.length;
+if(b){f=b.index+b[0].length
+}j.lastIndex=f;
+return g.substring(h,f)
+}function getElements(c,d){var b=[];
+do{var a=getElement(c,d);
+if(a){b.push(a)
+}if(!d.global){break
+}}while(a!==null);
+return b
+};

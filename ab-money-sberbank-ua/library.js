@@ -251,28 +251,4 @@ for(var c=0;
 c<a.length;
 ++c){if(a[c]!=="--auto--"&&!isset(b[a[c]])){b[a[c]]=null
 }}if(!isset(b.__tariff)){b.__tariff=null
-}}function getElement(g,j){var c=getParam(j.toString(),null,null,/<(\w+)/);
-var b=j.exec(g);
-if(!b){return null
-}var h=b.index;
-var d=new RegExp("(?:<"+c+"|</"+c+")[^>]*>","ig");
-d.lastIndex=h+b[0].length;
-var e=0;
-while(true){b=d.exec(g);
-if(!b){break
-}var a=b[0];
-if(a.charAt(1)=="/"){if(e==0){break
-}--e
-}else{++e
-}d.lastIndex=b.index+a.length
-}var f=g.length;
-if(b){f=b.index+b[0].length
-}j.lastIndex=f;
-return g.substring(h,f)
-}function getElements(c,d){var b=[];
-do{var a=getElement(c,d);
-if(a){b.push(a)
-}if(!d.global){break
-}}while(a!==null);
-return b
-};
+}};

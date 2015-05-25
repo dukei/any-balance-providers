@@ -1,15 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2.8" version="16">ab-money-sberbank-ua</id>
+	<id major_version="2.8" version="17">ab-money-sberbank-ua</id>
 	<api flags="no_browser"/>
 	<name>Ощадбанк ОнЛ@йн (Україна)</name>
 	<description html="true"><![CDATA[
-	<p>Отримує поточний залишок та інші параметри карт Ощадбанку в України, використовуючи систему Ощадбанк-онлайн https://online.oschadnybank.com/wb.</p>
+	<p>Отримує поточний залишок та інші параметри карт Ощадбанку в України, використовуючи систему Ощадбанк-онлайн <a href="https://online.oschadnybank.com/wb">https://online.oschadnybank.com/wb</a></p>
 	]]></description>
 	<instruction html="true"><![CDATA[
-	<p>Якщо у вас немає доступу до Ощадбанк-онлайн: перейдіть на сторінку https://online.oschadnybank.com/wb/auth/userlogin?execution=e1s1 .</p>
+	<p>Якщо у вас немає доступу до Ощадбанк-онлайн: перейдіть на сторінку <a href="https://online.oschadnybank.com/wb/auth/userlogin?execution=e1s1">https://online.oschadnybank.com/wb/auth/userlogin?execution=e1s1</a></p>
 	]]></instruction>
 	<author>antarey &lt;antarey@gmail.com&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

@@ -34,6 +34,7 @@ function main() {
 	html = AnyBalance.requestGet(baseurl + auth3(html, prefs), g_headers);
 	
 	if (!/"Выход"/i.test(html)) {
+		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	

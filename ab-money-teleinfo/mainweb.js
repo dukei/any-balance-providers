@@ -28,7 +28,7 @@ function mainWeb() {
 function doNew(prefs) {
     var baseurl = 'https://www.telebank.ru/';
     var html = AnyBalance.requestGet(baseurl + 'content/telebank-client/ru/login.html', g_headers);
-
+	
     html = AnyBalance.requestPost(baseurl + 'services/signin', {
         login: prefs.login,
         password: prefs.password,

@@ -403,8 +403,10 @@ function fetchCard(commonProperties){
     	}
     }
 
-    if(!(p = product))
+    if(!(p = product)) {
+		AnyBalance.trace(JSON.stringify(obj));
     	throw new AnyBalance.Error('Не удалось найти карту или счет с последними цифрами ' + prefs.card);
+	}
 
     var result = {success: true};
    	AnyBalance.trace('Product is ' + p.__type);
@@ -486,8 +488,10 @@ function fetchDep(commonProperties){
     	}
     }
 
-    if(!(p = product))
+    if(!(p = product)) {
+		AnyBalance.trace(JSON.stringify(obj));
     	throw new AnyBalance.Error('Не удалось найти депозит с последними цифрами ' + prefs.card);
+	}
 
     var result = {success: true};
     getParam(p.displayName, result, '__tariff');

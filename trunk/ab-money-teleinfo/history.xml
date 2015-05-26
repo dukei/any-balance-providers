@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="3" version="28" date="2015-05-26">
+	- Улучшена обработка ошибок.
+	</change>
 	<change major_version="3" version="27" date="2015-04-05">
 	- Теперь может запрашивать код в режиме мобильного приложения
 	</change>

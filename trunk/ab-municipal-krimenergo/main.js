@@ -12,10 +12,16 @@ var g_headers = {
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-    var baseurl = "https://secure.mega-billing.com/";
+    var baseurl = "https://secure.mega-billing.com/byt/ru/";
+    var baseurl2 = "https://www.mega-billing.ru/ru/";
+	
+	if(prefs.type == 'krim') {
+		baseurl = baseurl2;
+	}
+	
     AnyBalance.setDefaultCharset('utf-8'); 
 	
-    var html = AnyBalance.requestGet(baseurl + 'byt/ru', g_headers);
+    var html = AnyBalance.requestGet(baseurl, g_headers);
 	
 	var params = createFormParams(html, function(params, str, name, value){
 		if(name == 'username')
@@ -25,14 +31,20 @@ function main(){
 		return value;
 	});
 	
-	html = AnyBalance.requestPost(baseurl + 'byt/ru/login', params, g_headers); 
+	html = AnyBalance.requestPost(baseurl + 'login', params, g_headers); 
 	
     if(!/\/Logout/i.test(html)){
         var error = getParam(html, null, null, [/<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, /class="page-error"[^>]*>([^<]*)/i], replaceTagsAndSpaces, html_entity_decode);
-        if(error)
-            throw new AnyBalance.Error(error);
+		if (error)
+			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+		
+		AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
+	
+	if(/Выберите лицевой счет для работы/i.test(html)) {
+		throw new AnyBalance.Error('Не найдено счетов. Попробуйте выбрать в настройках Крымэнерго!');
+	}
 	
     var result = {success: true};
 	

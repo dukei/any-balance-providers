@@ -8,7 +8,7 @@
 		dialogTitle="Логин"
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите логин, используемый для входа в личный кабинет.">
+		dialogMessage="Необходимо вводить последние 8 цифр номера телефона, исключая код страны.">
 	</EditTextPreference>
 	<EditTextPreference
 		title="Пароль"

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-adar-nt</id>
+	<api flags="no_browser"/>
+	<name>Эдар Норд Телеком</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера ИмяПровайдера <a href="http://adar-nt.ru/">http://adar-nt.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="http://adar-nt.ru/cabinet/">http://adar-nt.ru/cabinet/</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="dogovor" name="Номер договора" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

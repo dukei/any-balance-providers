@@ -15,7 +15,7 @@ function main() {
 	var baseurl = 'https://hyzmat.tmcell.tm/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
-	checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(prefs.login && /^\d{8}$/.test(prefs.login), 'Введите логин! Необходимо вводить последние 8 цифр номера телефона, исключая код страны.');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
 	var html = AnyBalance.requestGet(baseurl + 'ru-ru/', g_headers);
@@ -35,9 +35,9 @@ function main() {
 	html = AnyBalance.requestPost(baseurl + 'User', params, addHeaders({Referer: baseurl + 'ru-ru/'}));
 	
 	if (!/Выход из системы/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, null, null, /alert-error(?:[^>]*>){3}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+			throw new AnyBalance.Error(error, null, /неправильный номер телефона или неправильный пароль/i.test(error));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');

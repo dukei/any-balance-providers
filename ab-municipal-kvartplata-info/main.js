@@ -37,6 +37,31 @@ function main() {
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	
+	if(prefs.digits) {
+		var accs = sumParam(html, null, null, /<option value="(\d+)/ig);
+		if(!accs || accs.length < 1) {
+			AnyBalance.trace(html);
+			AnyBalance.trace('Не удалось найти счета в кабинете. Похоже на кабинет с одним счетом');
+		}
+		
+		for(var i = 0; i < accs.length; i++) {
+			
+			if(endsWith(accs[i], prefs.digits)) {
+				var account = accs[i];
+				break;
+			}
+		}
+		if(!account)
+			throw new AnyBalance.Error('Не удалось найти счет с последними цифрами ' + prefs.digits);
+		
+		var dt = new Date();
+		html = AnyBalance.requestPost(baseurl + 'lich_kab/Home/AccountInfo', {
+			AccauntNum: account,
+			Month: dt.getMonth() + 1,
+			Year: dt.getFullYear()
+		}, addHeaders({Referer: baseurl + 'lich_kab/Home/Login'}));
+	}
+	
 	var result = {success: true};
 	
 	getParam(html, result, 'balance', /<b>Начислено:(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalanceRK);

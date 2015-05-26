@@ -48,14 +48,14 @@ function main(){
 	
 	var result = {success: true};
 	
-    getParam(html, result, 'balance', /Баланс:(?:[^>]*>){2,4}([\s\d.,-]{3,})руб/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'balance', /(Баланс:(?:[^>]*>){2,4}(?:[\s\d.,-]{3,})руб)/i, [/class="red"[^>]*>/, '>-', replaceTagsAndSpaces], parseBalance);
     getParam(html, result, '__tariff', /ЛС №([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
     // используем особенности AnyBalance зачем искать значение дважды, если __tariff всегда available?
     getParam(result.__tariff, result, 'agreement');
 	
     html = AnyBalance.requestGet(baseurl + 'abonent/persInfo.xhtml', g_headers);
     //Величина тарифа:
-    sumParam(html, result, '__tariff', /Величина тарифа:[\s\S]*?<tr>([\s\S]*?)<\/tr>/i, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+    sumParam(html, result, '__tariff', /Величина тарифа:[\s\S]*?<tr>([\s\S]*?)<\/table>/i, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
     // Однотарифный, Двухтарифный, Трехтарифный
     var type = getParam(html, null, null, /Тариф[\s\S]*?<tbody[^>]*>(?:[\s\S]*?<td[^>]*>){2}([\S\s]*?)<\/td>/i);
 	
@@ -78,7 +78,8 @@ function main(){
     		getParam(table, result, 'lastcounter', /<tbody[^>]*>(?:[\s\S]*?<td[^>]*>){4}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     		getParam(table, result, 'lastcounterdate', /<tbody[^>]*>(?:[\s\S]*?<td[^>]*>){1}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
 
-    		if (type.toLowerCase().indexOf("двухтарифный") != -1) getParam(table, result, 'lastcounter1', /<tbody[^>]*>(?:[\s\S]*?<td[^>]*>){6}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    		if (type.toLowerCase().indexOf("двухтарифный") != -1 || /Зона суток/i.test(table)) 
+				getParam(table, result, 'lastcounter1', /<tbody[^>]*>(?:[\s\S]*?<td[^>]*>){6}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 
     		if (type.toLowerCase().indexOf("трехтарифный") != -1) {
     			getParam(table, result, 'lastcounter1', /<tbody[^>]*>(?:[\s\S]*?<td[^>]*>){6}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);

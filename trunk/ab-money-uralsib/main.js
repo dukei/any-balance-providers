@@ -128,7 +128,7 @@ function doNewCabinet(prefs) {
 	var url = baseurl + 'f?p=10:MAIN:' + loginVar;
 	html = AnyBalance.requestGet(url, g_headers);
 
-	var logout_url = getParam(html, null, null, /<div[^>]+class="profile-logout"[^>]*>\s*<a[^>]+href="([^"]*)/i, null, html_entity_decode);
+	var logout_url = getParam(html, null, null, /<a\s+href="([^"]+)">\s*Выход\s*<\/a>/i, null, html_entity_decode);
 	if(!logout_url)
 		AnyBalance.trace('Не удалось найти ссылку на выход, наверное, сайт изменен. Не сможем выйти из кабинета...');
 

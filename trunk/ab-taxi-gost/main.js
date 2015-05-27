@@ -42,7 +42,7 @@ function main() {
 	
 	html = AnyBalance.requestGet(baseurl + 'corp/main.php', g_headers);
 	
-	html = AnyBalance.requestPost(baseurl + 'corp/corp/request.php?action=options', null, addHeaders({
+	html = AnyBalance.requestPost(baseurl + 'corp/corp/request.php?action=options', '', addHeaders({
 		Referer: baseurl + 'corp/main.php', 
 		'X-Requested-With':'XMLHttpRequest',
 		'Content-Type': null

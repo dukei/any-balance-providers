@@ -1,13 +1,13 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="2">ab-bonus-oldi</id>
+	<id version="3">ab-bonus-oldi</id>
 	<name>Олди (Бонусы)</name>
 	<description html="true"><![CDATA[
-	<p>Получает данные по бонусным картам сети магазинов Олди (http://www.oldi.ru/)</p>
-	<p>Информация берется из личного кабинета http://www.oldi.ru/personal/</p>
+	<p>Получает данные по бонусным картам сети магазинов Олди <a href="http://www.oldi.ru/">http://www.oldi.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="http://www.oldi.ru/personal/">http://www.oldi.ru/personal/</a></p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
@@ -19,6 +19,7 @@
 		<counter id="bonus" name="Накоплено бонусов"/>
 		<counter id="suumazakazov" name="Сумма заказов"/>
 		<counter id="zakazy" name="Количество заказов"/>
+		<counter id="price" name="Доступная ценовая колонка" type="text"/>
 	</counters>
 	<keywords>oldi</keywords>
 	<type>bonus</type>

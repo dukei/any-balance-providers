@@ -123,7 +123,7 @@ function readFileToString(file) {
 function getManifestData(manifest) {
 	g_prov_major_version = searchRegExpSafe(/<id[^>]*major_version\s*=\s*"([^"]+)"/i, manifest);
 	g_prov_version = searchRegExpSafe(/<id[^>]*\sversion\s*=\s*"([^"]+)"/i, manifest)*1;
-	if(!g_prov_version++)
+	if(!++g_prov_version)
 		throw new Error('No version specified in the manifest!');
 	g_prov_text_id = searchRegExpSafe(/<id[^>]*>([^<]+)/i, manifest);
 	if(!g_prov_text_id)

@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Номер телефона" 
+        positiveButtonText="ОК" 
+        summary="|Номер телефона (10 цифр)|{@s}" 
+        dialogTitle="Номер телефона" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите номер вашего телефона (10 цифр), например 9261234567"
+        obligatory="true"
+        key="login"
+        inputType="number">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Желаемый пароль"
+        negativeButtonText="Отмена"
+        title="Желаемый пароль"
+        summary="|Желаемый пароль, который вы хотите установить для входа в Сервис-Гид|***********"
+        dialogMessage="Введите пароль, который вы желаете использовать для входа в Сервис-Гид. Если хотите, чтобы пароль был сгенерирован автоматически, не вводите ничего."
+        obligatory="true"
+        inputType="numberPassword">
+    </EditTextPreference>
+    <ListPreference 
+        key="region" 
+        title="Регион"
+        summary="Укажите регион, если не удалось определить его автоматически||{@s}\n"
+        entries="Автоматически|Столичный филиал|Сибирский филиал|Северо-западный филиал|Дальневосточный филиал|Поволжский филиал|Кавказский филиал|Центральный филиал|Уральский филиал"
+        entryValues="|moscowsg|sibsg|szfsg|dvsg|volgasg|kavkazsg|centersg|uralsg"
+	defaultValue="">
+    </ListPreference>
+</PreferenceScreen>

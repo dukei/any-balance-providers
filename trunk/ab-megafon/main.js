@@ -35,8 +35,8 @@ filial_info[MEGA_FILIAL_MOSCOW] = {
 	name: 'Столичный филиал',
 	id: 'mos',
 	func: megafonServiceGuide,
-    site: "https://moscowsg.megafon.ru/",
-    lk: "https://lk.megafon.ru/",
+        sg: "https://moscowsg.megafon.ru/",
+        lk: "https://lk.megafon.ru/",
 	widget: 'https://moscowsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
 //	tray: "https://moscowsg.megafon.ru/TRAY_INFO/TRAY_INFO?LOGIN=%LOGIN%&PASSWORD=%PASSWORD%",
 	internet: "http://user.moscow.megafon.ru/",
@@ -46,6 +46,7 @@ filial_info[MEGA_FILIAL_MOSCOW] = {
 filial_info[MEGA_FILIAL_SIBIR] = {
 	name: 'Сибирский филиал',
 	id: 'sib',
+        sg: "https://sibsg.megafon.ru/",
 	tray: "https://sibsg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%",
 	widget: 'https://sibsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
 	func: megafonTrayInfo
@@ -53,6 +54,7 @@ filial_info[MEGA_FILIAL_SIBIR] = {
 filial_info[MEGA_FILIAL_NW] = {
 	name: 'Северо-западный филиал',
 	id: 'nw',
+        sg: "https://szfsg.megafon.ru/",
 	tray: 'https://szfsg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%',
 	widget: 'https://szfsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
 	func: megafonTrayInfo,
@@ -60,6 +62,7 @@ filial_info[MEGA_FILIAL_NW] = {
 filial_info[MEGA_FILIAL_FAREAST] = {
 	name: 'Дальневосточный филиал',
 	id: 'dv',
+        sg: "https://dvsg.megafon.ru/",
 	tray: 'https://dvsg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%',
 	widget: 'https://dvsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
 	func: megafonTrayInfo
@@ -69,6 +72,7 @@ filial_info[MEGA_FILIAL_VOLGA] = {
 	id: 'vlg',
 	//  site: "https://volgasg.megafon.ru/",
 	//  func: megafonServiceGuide,
+        sg: "https://volgasg.megafon.ru/",
 	func: megafonTrayInfo,
 	widget: 'https://volgasg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
 	tray: 'https://volgasg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%'
@@ -76,6 +80,7 @@ filial_info[MEGA_FILIAL_VOLGA] = {
 filial_info[MEGA_FILIAL_KAVKAZ] = {
 	name: 'Кавказский филиал',
 	id: 'kv',
+        sg: "https://kavkazsg.megafon.ru/",
 	tray: "https://kavkazsg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%",
 	widget: 'https://kavkazsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
 	func: megafonTrayInfo
@@ -84,7 +89,7 @@ filial_info[MEGA_FILIAL_CENTRAL] = {
 	name: 'Центральный филиал',
 	id: 'ctr',
 	func: megafonServiceGuide,
-	site: "https://moscowsg.megafon.ru/",
+	sg: "https://moscowsg.megafon.ru/",
 	lk: "https://lk.megafon.ru/",
 	widget: 'https://moscowsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
 //	tray: "https://moscowsg.megafon.ru/TRAY_INFO/TRAY_INFO?LOGIN=%LOGIN%&PASSWORD=%PASSWORD%",
@@ -95,6 +100,7 @@ filial_info[MEGA_FILIAL_CENTRAL] = {
 filial_info[MEGA_FILIAL_URAL] = {
 	name: 'Уральский филиал',
 	id: 'url',
+	sg: 'https://uralsg.megafon.ru/',
 	tray: 'https://uralsg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%',
 	widget: 'https://uralsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
 	func: megafonTrayInfo,
@@ -248,19 +254,23 @@ function getFilialByPrefixAndNumber(prefix, number){
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-    
+    checkEmpty(prefs.login, 'Введите номер телефона (логин)');
+
 //    AnyBalance.setOptions({PER_DOMAIN: {'lk.megafon.ru': {SSL_ENABLED_PROTOCOLS: ['TLSv1'], SSL_ENABLED_CIPHER_SUITES: ['SSL_RSA_WITH_RC4_128_MD5']}}});
 
     var filial = getFilial(prefs);
     if(!filial)
         throw new AnyBalance.Error('Неизвестен филиал Мегафона для номера ' + prefs.login + '. Пожалуйста, выберите филиал вручную в настройках аккаунта.');
-    
+
     var filinfo = filial_info[filial];
     if(!filinfo)
         throw new AnyBalance.Error('Unknown filial ' + filial);
     
     if(!filinfo.func)
         throw new AnyBalance.Error(filinfo.name + ' Мегафона ещё не поддерживается. Пожалуйста, помогите его поддержать. Информация на сайте программы http://any-balance-providers.googlecode.com .');
+
+    if(prefs.__initialization)
+	return initialize(filial);
     
     (filinfo.func)(filial);
 }
@@ -848,9 +858,8 @@ function megafonLK(filinfo, tryOldSG) {
 		j_password:prefs.password,
 		CSRF:token,
 	}, addHeaders({Referer: baseurl + 'login/'}));	
-	// Если это раскоментировать, то при редиректе из нового кабинета в старый нас пропустит дальше. Но нам это не нужно
-	//if (!/logout|&#1042;&#1099;&#1093;&#1086;&#1076;/i.test(html)) {
-	if (!/logout/i.test(html)) {
+
+	if (!/logout|CLOSE_SESSION/i.test(html)) {
 		var error = getParam(html, null, null, /login-warning[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Неверный логин\/пароль/i.test(error));
@@ -944,13 +953,13 @@ function megafonBalanceInfo(filinfo) {
  */
 function megafonServiceGuide(filial){
     var filinfo = filial_info[filial];
-    var baseurl = filinfo.site;
+    var baseurl = filinfo.sg;
     
     var prefs = AnyBalance.getPreferences();
     AnyBalance.trace('Connecting to service guide ' + filinfo.name);
 
     var session;
-    if(filinfo.site) {
+    if(filinfo.sg) {
 		// Мегафон шлет смс на вход если пытаемся войти через большой кабинет
 		if(filinfo.lk || filinfo.api){
 	   	    try {
@@ -1017,34 +1026,7 @@ function megafonServiceGuide(filial){
     }
 	
     AnyBalance.trace('Got result from service guide: ' + session);
-
-    var matches;
-    if(matches = session.match(/<ERROR_ID>(.*?)<\/ERROR_ID>/i)){
-        var errid = matches[1];
-        AnyBalance.trace('Got error from sg: ' + errid);
-
-        if(errid == '60020011')
-            throw new AnyBalance.Error('Пользователь заблокирован. Для разблокировки наберите команду *105*00# и нажмите клавишу вызова, новый пароль будет отправлен Вам в SMS.');
-
-        //Случилась ошибка, может быть мы можем даже увидеть её описание
-        if(matches = session.match(/<ERROR_MESSAGE>(.*?)<\/ERROR_MESSAGE>/i)){
-            AnyBalance.trace('Got error message from sg: ' + matches[1]);
-            throw new AnyBalance.Error(matches[1]);
-        }
-
-        errid = "error_" + Math.abs(parseInt(errid));
-        if(g_login_errors[errid])
-            throw new AnyBalance.Error(g_login_errors[errid]);
-
-        AnyBalance.trace('Got unknown error from sg');
-        throw new AnyBalance.Error(g_login_errors.error_0);
-    }
-
-    if(!(matches = session.match(/<SESSION_ID>(.*?)<\/SESSION_ID>/i))){
-        throw new AnyBalance.Error('Не удалось получить сессию'); //Странный ответ, может, можно переконнектиться потом
-    }
-
-    var sessionid = matches[1];
+    var sessionid = getSessionIdFromSGLogin(session);
 /*
     //Зачем-то мегафон вставил ещё один шаг авторизации...
     var html = AnyBalance.requestPost(baseurl + 'SCC/SC_BASE_LOGIN',
@@ -1068,7 +1050,7 @@ function megafonServiceGuide(filial){
 
 function megafonServiceGuideCorporate(filial, sessionid){
     var filinfo = filial_info[filial];
-    var baseurl = filinfo.site;
+    var baseurl = filinfo.sg;
     var prefs = AnyBalance.getPreferences();
 
     var result = {
@@ -1128,7 +1110,7 @@ function sleep(delay) {
 function megafonServiceGuidePhysical(filial, sessionid){
 	AnyBalance.trace('Мы в megafonServiceGuidePhysical; sessionid ==' + sessionid);
     var filinfo = filial_info[filial];
-    var baseurl = filinfo.site;
+    var baseurl = filinfo.sg;
     var prefs = AnyBalance.getPreferences(), matches;
     
     var result = {success: true, filial: filinfo.id};
@@ -1292,7 +1274,7 @@ function megafonServiceGuidePhysical(filial, sessionid){
     }
 
 
-    if(filinfo.site){
+    if(filinfo.sg){
         // Продли скорость (Москва)
         if(AnyBalance.isAvailable(['internet_total','internet_cur', 'internet_left'])){
             text = AnyBalance.requestGet(baseurl + 'SCCEXTSYS/EXT_SYSTEM_PROXY_FORM?CHANNEL=WWW&SESSION_ID=' + sessionid + '&URI=3.');
@@ -1382,40 +1364,7 @@ function megafonServiceGuidePhysical(filial, sessionid){
         }
 
         //Отключаем посылку смс при входе.
-		text = AnyBalance.requestPost(baseurl + 'SCWWW/SMS_NG_FORM', {
-			'P_GRID_LEFT':'0',
-			'P_GRID_WIDTH':'740',
-			'find':'',
-			'CHANNEL':'WWW',
-			'SESSION_ID':sessionid,
-			'P_USER_LANG_ID':'1',
-			'CUR_SUBS_MSISDN':phone,
-			'SUBSCRIBER_MSISDN':phone
-		});
-
-		if(/<input[^>]+id="idSMSCheck_\d+"[^>]*checked/i.test(text)){
-		    AnyBalance.trace('Уведомление по смс о входе разрешено. Запрещаем его, чтобы не парило мозг.');
-		    var snev = getParam(text, null, null, /<input[^>]+name="P_SNEV_ID_LIST"[^>]*value="([^"]*)/i, null, html_entity_decode);
-		    text = AnyBalance.requestPost(baseurl + 'SCWWW/SMS_NG_ACTION', {
-				'RECIPIENT':'',
-				'P_SNEV_ID_LIST':snev,
-				'P_SMS_NOTIFY_FLAG_LIST':'',
-				'P_EMAIL_NOTIFY_FLAG_LIST':'',
-			    'P_GRID_LEFT':'0',
-			    'P_GRID_WIDTH':'740',
-				'CHANNEL':'WWW',
-				'SESSION_ID':sessionid,
-				'P_USER_LANG_ID':'1',
-				'CUR_SUBS_MSISDN':phone,
-				'SUBSCRIBER_MSISDN':phone
-		    });
-		    var action_result = getParam(text, null, null, /<div[^>]+class="action_result"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-		    AnyBalance.trace("Result: " + action_result);
-		}else if(/<input[^>]+id="idSMSCheck_/i.test(text)){
-		    AnyBalance.trace('Уведомление по смс о входе отключено. И отлично.');
-		}else{
-		    AnyBalance.trace('Не удалось получить страницу отмены смс оповещения: ' + text);
-		}
+	turnOffNotificationSMSSG(filial, sessionid, phone);
     }
     
     if(filial == MEGA_FILIAL_VOLGA){
@@ -1843,4 +1792,318 @@ function megafonLkAPI(filinfo) {
 	}
 	
 	AnyBalance.setResult(result);
+}
+
+function initialize(filial){
+    var prefs = AnyBalance.getPreferences();
+    checkEmpty(!prefs.password || /^\w{6,26}$/.test(prefs.password), 'Желаемый пароль должен содержать от 6 до 26 символов');
+    
+    var pass = AnyBalance.retrieveCode('Наберите на телефоне с номером ' + prefs.login + ' команду *105*00# или отправьте СМС с текстом 00 на номер 000105. В ответ придет СМС с паролем. Введите его в поле ввода ниже. <!--#instruction:{"sms":{"number":"000105","text": "00"},"ussd":{"number":"*105*00#"}}#-->', null, {time: 300000});
+
+    var sginfo;
+    try{
+        sginfo = enterLK(filial, {login: prefs.login, password: pass, useOldSG: true});
+    }catch(e){
+        if(e.fatal)
+            throw e;
+        AnyBalance.trace('Не удалось войти через ЛК, пробуем зайти в СГ напрямую: ' + e.message);
+        sginfo = enterSG(filial, {login: prefs.login, password: pass});
+    }
+    if(prefs.password /* && pass != prefs.password */){
+    	changePasswordSG(filial, sginfo.sessionid, pass, prefs.password);
+    }
+    turnOffNotificationSMSSG(filial, sginfo.sessionid, prefs.login);
+    allowRobotsSG(filial, sginfo.sessionid, prefs.login);
+    
+    var result = {success: true, __initialization: true};
+
+    result.login = prefs.login;
+    result.password = prefs.password;
+    for(var f in filial_info){
+	if(filial_info[f] == filial)
+	    result.region = f;
+    }
+
+    AnyBalance.setResult(result);
+}
+
+function enterLK(filial, options){
+	var prefs = AnyBalance.getPreferences();
+	AnyBalance.trace('Пробуем войти в новый ЛК...');
+	
+	var baseurl = "https://lk.megafon.ru/";
+	
+	var html = AnyBalance.requestGet(baseurl + 'login/', g_headers);
+	var token = getParam(html, null, null, /name=CSRF value="([^"]+)/i);
+	
+	checkEmpty(token, 'Не удалось найти токен авторизации ЛК!', true);
+	
+	html = AnyBalance.requestPost(baseurl + 'dologin/', {
+		j_username:options.login,
+		j_password:options.password,
+		CSRF:token,
+	}, addHeaders({Referer: baseurl + 'login/'}));	
+
+	if (!/logout|CLOSE_SESSION/i.test(html)) {
+		var error = getParam(html, null, null, /login-warning[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+		if (error)
+			throw new AnyBalance.Error(error, null, /(?:Неверный|Неправильный) логин\/пароль/i.test(error));
+		
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось зайти в новый личный кабинет. Сайт изменен или на этом номере он не поддерживается.');
+	}
+
+	if(options.useOldSG){
+		var href = getParam(html, null, null, /href="\/redirect\/sg\/index"/i, replaceTagsAndSpaces, html_entity_decode);
+		// Не у всех доступен новый ЛК, если у юзера он не подключен, та нас редиректит сразу в старый кабинет
+		var sessionid = getParam(html, null, null, /SESSION_ID=([^&"]+)/i);
+
+		if(href || sessionid) {
+			if(href) {
+				AnyBalance.trace('Нашли ссылку для перехода в старый сервис-гид, получим данные оттуда...');
+				try {
+					html = AnyBalance.requestGet(baseurl + 'redirect/sg/index', g_headers);
+					
+					var url = AnyBalance.getLastUrl();
+					AnyBalance.trace('Redirected to ' + url /*+ '\nResult\n\n' + html*/);
+					sessionid = getParam(href + url, null, null, /SESSION_ID=([^&"]+)/i);
+				} catch(e){
+				    AnyBalance.trace('Error: ' + e.message);
+				}
+			}
+			
+			if(sessionid && !href) {
+				AnyBalance.trace('На данном номере не поддерживается новый ЛК, нас просто отправили в старый кабинет...');
+			}
+			
+			if(!sessionid) {
+				if(prefs.debug) {
+					sessionid = AnyBalance.retrieveCode("Пожалуйста, введите sessionid");
+				} else {
+					AnyBalance.trace(html);
+					throw new AnyBalance.Error('Не удалось найти код сессии!');
+				}
+			}
+		} else {
+			AnyBalance.trace('Не удалось найти ссылку на вход в старый кабинет, пробуем получить данные из нового ЛК!');
+		}
+
+		return {old: true, sessionid: sessionid, html: html};
+	}
+
+	throw new AnyBalance.Error('Получение данных из нового ЛК пока не поддерживается');
+}
+
+function changePasswordSG(filial, sessionid, frompass, topass){
+    AnyBalance.trace('Мы в megafonServiceGuidePhysical; sessionid ==' + sessionid);
+
+    var filinfo = filial_info[filial];
+    var baseurl = filinfo.sg;
+    var prefs = AnyBalance.getPreferences(), matches;
+    
+    var result = {success: true, filial: filinfo.id};
+
+    var phone = prefs.login;
+/*  //И без этого работает, незачем сервер мегафона зря нагружать
+    var text = AnyBalance.requestPost(baseurl + 'SCWWW/SUBS_CHANGE_PASSWORD_ONLY_FORM', {
+		P_GRID_LEFT:'0',
+		P_GRID_WIDTH:'740',
+		findspec:'',
+        SUBSCRIBER_MSISDN:phone,
+        CHANNEL: 'WWW', 
+        SESSION_ID: sessionid,
+        P_USER_LANG_ID: 1,
+        CUR_SUBS_MSISDN:phone
+    });
+
+    if(AnyBalance.getLastStatusCode() > 400){
+	AnyBalance.trace(text);
+	throw new AnyBalance.Error('Ошибка на сервере Мегафона. Попробуйте ещё раз позже');
+    }
+    checkTextForError(text);
+*/	
+
+    text = AnyBalance.requestPost(baseurl + 'SCWWW/SUBS_CHANGE_PASSWORD_ONLY_ACTION', {
+		PASSWORD:frompass,
+		NEW_PASSWORD:topass,
+		CONFIRM_PASSWORD:topass,
+		P_GRID_LEFT:'0',
+		P_GRID_WIDTH:'740',
+        SUBSCRIBER_MSISDN:phone,
+        CHANNEL: 'WWW', 
+        SESSION_ID: sessionid,
+        P_USER_LANG_ID: 1,
+        CUR_SUBS_MSISDN:phone
+    }, addHeaders({Referer: baseurl + 'SCC/SC_BASE_LOGIN'}));
+
+   	var action_result = getParam(text, null, null, /<div[^>]+class="action_result"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+   	AnyBalance.trace("Result: " + action_result);
+
+    //Пароль успешно изменен
+    if(/&#1055;&#1072;&#1088;&#1086;&#1083;&#1100; &#1091;&#1089;&#1087;&#1077;&#1096;&#1085;&#1086; &#1089;&#1084;&#1077;&#1085;&#1077;&#1085;/i.test(text))
+		return true;
+
+    var error = getParam(text, null, null, /<STRONG[^>]+class="attention">([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+    if(error)
+		throw new AnyBalance.Error(error);
+
+    if(AnyBalance.getLastStatusCode() > 400){
+		AnyBalance.trace(text);
+		throw new AnyBalance.Error('Ошибка на сервере Мегафона. Попробуйте ещё раз позже');
+    }
+
+    AnyBalance.trace(text);
+    throw new AnyBalance.Error('Не удалось сменить пароль');    
+}
+
+function enterSG(filial, options){
+    var filinfo = filial_info[filial];
+    var baseurl = filinfo.sg;
+
+    var html = AnyBalance.requestGet(baseurl, g_headers);
+    var form = getParam(html, null, null, /<form[^>]+id="LOGIN_FORM"[^>]*>[\s\S]*?<\/form>/i);
+    if(!form){
+        AnyBalance.trace(html);
+        throw new AnyBalance.Error('Не удаётся найти форму входа в Сервис-гид. Сайт изменен?');
+    }
+
+    var psid = getParam(form, null, null, /<input[^>]+name="PHPSESSID"[^>]*value="([^"]*)/i, null, html_entity_decode);
+    var code;
+    if(psid){
+	var imgurl = baseurl + "ps/scc/php/cryptographp.php?PHPSESSID=" + psid + '&ref=' + (Math.round(1E3 * Math.random()) + 1) + '&w=137';
+	var img = AnyBalance.requestGet(imgurl, g_headers);
+        code = AnyBalance.retrieveCode('Пожалуйста, введите код с картинки', img, {inputType: 'number'});
+    }
+
+    html = AnyBalance.requestPost(baseurl + 'ps/scc/php/check.php?CHANNEL=WWW', {
+	PHPSESSID: psid,
+	LOGIN: options.login, 
+        PASSWORD: options.password,
+	CODE: code
+    }, g_headers);
+    
+    var sessionid = getSessionIdFromSGLogin(html);
+/*  //И без этого работает, зачем сервер мегафона нагружать зря
+    html = AnyBalance.requestPost(baseurl + 'SCC/SC_BASE_LOGIN', {
+        SESSION_ID: sessionid,
+        CHANNEL: 'WWW', 
+        LOGIN: options.login,
+        PASSWD:options.password
+    }, addHeaders({Referer: baseurl + 'ps/scc/login.html?MODE=LOGIN&CHANNEL=WWW&CHANNELTYPE=COMMON&P_USER_LANG_ID=1'}));
+    
+    checkTextForError(html);
+*/
+    return {sessionid: sessionid, html: html};;
+}
+
+function getSessionIdFromSGLogin(html){
+    var errid = getParam(html, null, null, /<ERROR_ID>(.*?)<\/ERROR_ID>/i, replaceTagsAndSpaces, html_entity_decode);
+    if(errid){
+        AnyBalance.trace('Got error from sg: ' + errid);
+
+        if(errid == '60020011')
+            throw new AnyBalance.Error('Пользователь заблокирован. Для разблокировки наберите команду *105*00# и нажмите клавишу вызова, новый пароль будет отправлен Вам в SMS.');
+
+        //Случилась ошибка, может быть мы можем даже увидеть её описание
+	var error = getParam(html, null, null, /<ERROR_MESSAGE>(.*?)<\/ERROR_MESSAGE>/i, replaceTagsAndSpaces, html_entity_decode);
+        if(error){
+            AnyBalance.trace('Got error message from sg: ' + error);
+            throw new AnyBalance.Error(error, null, /неправильный пароль|Абонент не найден/i.test(html));
+        }
+
+        errid = "error_" + Math.abs(parseInt(errid));
+        if(g_login_errors[errid])
+            throw new AnyBalance.Error(g_login_errors[errid]);
+
+        AnyBalance.trace('Got unknown error from sg');
+        throw new AnyBalance.Error(g_login_errors.error_0);
+    }
+
+    var sessionid = getParam(html, null, null, /<SESSION_ID>(.*?)<\/SESSION_ID>/i, replaceTagsAndSpaces, html_entity_decode);
+    if(!sessionid){
+	AnyBalance.trace(html);
+        throw new AnyBalance.Error('Не удалось получить сессию'); //Странный ответ, может, можно переконнектиться потом
+    }
+
+    return sessionid;
+}
+
+function turnOffNotificationSMSSG(filial, sessionid, login){
+    var filinfo = filial_info[filial];
+    var baseurl = filinfo.sg;
+
+    var text = AnyBalance.requestPost(baseurl + 'SCWWW/SMS_NG_FORM', {
+    	'P_GRID_LEFT':'0',
+    	'P_GRID_WIDTH':'740',
+    	'find':'',
+    	'CHANNEL':'WWW',
+    	'SESSION_ID':sessionid,
+    	'P_USER_LANG_ID':'1',
+    	'CUR_SUBS_MSISDN':login,
+	'SUBSCRIBER_MSISDN':login
+    }, addHeaders({Referer: baseurl + 'SCC/SC_BASE_LOGIN'}));
+
+    //Ищем строчку с Успешный вход
+    var row = getParam(text, null, null, /<tr[^>]+(?:[\s\S](?!<\/tr>))*?&#1059;&#1089;&#1087;&#1077;&#1096;&#1085;&#1099;&#1081; &#1074;&#1093;&#1086;&#1076;[\s\S]*?<\/tr>/i);
+    if(row){
+        if(/<input[^>]+id="idSMSCheck_\d+"[^>]*checked/i.test(row)){
+        	AnyBalance.trace('Уведомление по смс о входе разрешено. Запрещаем его, чтобы не парило мозг.');
+        	var snev = getParam(row, null, null, /<input[^>]+name="P_SNEV_ID_LIST"[^>]*value="([^"]*)/i, null, html_entity_decode);
+        	text = AnyBalance.requestPost(baseurl + 'SCWWW/SMS_NG_ACTION', {
+        		'RECIPIENT':'',
+        		'P_SNEV_ID_LIST':snev,
+        		'P_SMS_NOTIFY_FLAG_LIST':'',
+        		'P_EMAIL_NOTIFY_FLAG_LIST':'',
+        		'P_GRID_LEFT':'0',
+        		'P_GRID_WIDTH':'740',
+        		'CHANNEL':'WWW',
+        		'SESSION_ID':sessionid,
+        		'P_USER_LANG_ID':'1',
+		'CUR_SUBS_MSISDN':login,
+        		'SUBSCRIBER_MSISDN':login
+        	}, addHeaders({Referer: baseurl + 'SCC/SC_BASE_LOGIN'}));
+        	var action_result = getParam(text, null, null, /<div[^>]+class="action_result"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+        	AnyBalance.trace("Result: " + action_result);
+        }else if(/<input[^>]+id="idSMSCheck_/i.test(row)){
+		AnyBalance.trace('Уведомление по смс о входе отключено. И отлично.');
+        }else{
+        	AnyBalance.trace('Не удалось получить галочку отмены смс оповещения: ' + row);
+        }
+    }else{
+       	AnyBalance.trace('Не удалось найти строку отмены смс оповещения: ' + text);
+    }
+}
+
+function allowRobotsSG(filial, sessionid, login){
+    var filinfo = filial_info[filial];
+    var baseurl = filinfo.sg;
+
+    var text = AnyBalance.requestPost(baseurl + 'SCWWW/UNBLOCK_ROBOT_FORM', {
+    	'P_GRID_LEFT':'0',
+    	'P_GRID_WIDTH':'740',
+    	'findspec':'',
+    	'CHANNEL':'WWW',
+    	'SESSION_ID':sessionid,
+    	'P_USER_LANG_ID':'1',
+    	'CUR_SUBS_MSISDN':login,
+	'SUBSCRIBER_MSISDN':login
+    }, addHeaders({Referer: baseurl + 'SCC/SC_BASE_LOGIN'}));
+
+    if(/<input[^>]+id="robot_allowed_radio"[^>]*checked/i.test(text)){
+	AnyBalance.trace('Доступ для автоматизированных систем разрешен, отлично.');
+    }else{
+	AnyBalance.trace('Доступ для автоматизированных систем запрещен, надо включить...');
+        text = AnyBalance.requestPost(baseurl + 'SCWWW/SAVE_ROBOT_PARAMETERS_ACTION', {
+        	'P_IS_ROBOT_LOGIN_ALLOWED':'1',
+        	'P_GRID_LEFT':'0',
+        	'P_GRID_WIDTH':'740',
+        	'CHANNEL':'WWW',
+        	'SESSION_ID':sessionid,
+        	'P_USER_LANG_ID':'1',
+		'CUR_SUBS_MSISDN':login,
+        	'SUBSCRIBER_MSISDN':login
+        }, addHeaders({Referer: baseurl + 'SCC/SC_BASE_LOGIN'}));
+        var action_result = getParam(text, null, null, /<div[^>]+class="action_result"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+        AnyBalance.trace("Result: " + action_result);
+    }
 }

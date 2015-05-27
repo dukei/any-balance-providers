@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="3" date="2015-05-27">
+	- Поддержка отображения карт.
+	</change>
 	<change version="2" date="2015-05-21">
 	- Поддержка поиска по счету.
 	</change>

@@ -17,13 +17,13 @@ function main(){
     AnyBalance.setDefaultCharset('utf-8'); 
 	AnyBalance.setOptions({forceCharset: 'windows-1251'});
 	
-    var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
+    var html = AnyBalance.requestGet(baseurl + '', g_headers);
 	
 	html = AnyBalance.requestPost(baseurl + 'login', {
         login:prefs.login,
         pass:prefs.password,
         remember:1
-    }, addHeaders({Referer: baseurl + 'login'})); 
+    }, addHeaders({Referer: baseurl + 'login'}));
 	
     if(!/\/Logout/i.test(html)){
         var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
@@ -35,8 +35,8 @@ function main(){
 	
 	AnyBalance.setOptions({forceCharset: 'utf-8'});
 	
-	html = AnyBalance.requestGet(baseurl + 'sdpupil_pg/include/auth.php', g_headers);
-	html = AnyBalance.requestGet(baseurl + 'sdpupil_pg/index.php?page=personal', g_headers);
+	html = AnyBalance.requestGet(baseurl + 'sdpupil/include/auth.php', g_headers);
+	html = AnyBalance.requestGet(baseurl + 'sdpupil/index.php?page=personal', g_headers);
 	
     var result = {success: true};
 	

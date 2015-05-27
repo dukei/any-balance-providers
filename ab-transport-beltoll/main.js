@@ -54,14 +54,22 @@ function main() {
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	
-    var balanceHref = getParam(html, null, null, /\/BalanceStatement\/List\?[^"]+/i, replaceTagsAndSpaces, html_entity_decode);
-    html = AnyBalance.requestGet(baseurl + balanceHref + '&_=' + new Date().getTime(), g_headers);
-
-	
 	var result = {success: true};
 	
+	var tr = getParam(html, null, null, new RegExp('<tr>\\s*<td>\\s*' + (prefs.digits || '\\d+') + '(?:[^>]*>){20,30}\\s*<a href="/BalanceStatement[^"]+', 'i'));
+	var balanceHref = getParam(tr, null, null, /\/BalanceStatement[^"]+/i, replaceTagsAndSpaces, html_entity_decode);
+	
+	getParam(tr, result, 'number', /(BY\s*-[^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+		
+	
+	if(!tr || !balanceHref) {
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось найти ' + (prefs.digits ? 'договор с номером ' + prefs.digits : 'ни одного договора!'));
+	}
+	
+    html = AnyBalance.requestGet(baseurl + balanceHref + '&_=' + new Date().getTime(), g_headers);
+	
 	getParam(html, result, 'balance', /Остаток[\s\S]баланса:(?:[^>]*>){4}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'number', /(BY\s*-[^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
 	
 	AnyBalance.setResult(result);
 }

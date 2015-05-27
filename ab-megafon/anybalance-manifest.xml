@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="3.0" version="152">ab-megafon</id>
+	<id major_version="3.0" version="158">ab-megafon</id>
 	<api flags="no_browser"/>
 	<name>Мегафон</name>
 	<description html="true"><![CDATA[
@@ -43,6 +43,7 @@
 		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
+		<settings target="init">settings_init.xml</settings>
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>

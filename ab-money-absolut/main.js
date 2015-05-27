@@ -70,5 +70,54 @@ function fetchAcc(html, baseurl) {
 }
 
 function fetchCard(html, baseurl) {
-	throw new AnyBalance.Error("Отображение информации по картам пока не поддерживается, свяжитесь с разработчиком для исправления ситуации.");
+	var prefs = AnyBalance.getPreferences();
+	
+	// html = AnyBalance.requestGet(baseurl + 'web_banking/protected/cards/index.jsf', addHeaders({
+		// Referer: baseurl + 'web_banking/protected/cardsdocuments/index.jsf'
+	// }));
+	
+	html = AnyBalance.requestGet(baseurl + 'web_banking/protected/accounts/absolut_current_balance.jsf', addHeaders({
+		Referer: baseurl + 'web_banking/protected/cardsdocuments/index.jsf'
+	}));
+	
+	var lastdigits = prefs.lastdigits || '\\d{4}';
+	// <tr(?:[^>]*>){11}\d{14,}6643(?:[^>]*>){30,80}\s*<\/tr>
+	var tr = getParam(html, null, null, new RegExp('<tr(?:[^>]*>){11}\\d{14,}' + lastdigits + '(?:[^>]*>){30,80}\\s*</tr>', 'i'));
+	if (!tr)
+		throw new AnyBalance.Error("Не удаётся найти " + (prefs.lastdigits ? 'счет с последними цифрами ' + prefs.lastdigits : 'ни одного счета'));
+	
+	AnyBalance.trace(tr);
+	
+	var result = {success: true};
+	
+	getParam(tr, result, 'accname', /(?:[^>]*>){3}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(tr, result, '__tariff', /\d{4}(?:(?:&nbsp;|\s)\*{4}){2}(?:&nbsp;|\s)\d{4}/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(tr, result, 'accnum', /(?:[^>]*>){10}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(result.__tariff, result, 'card_num');
+	
+	var params = createFormParams(tr);
+	
+	params = joinObjects(params, {
+		'filter_SUBMIT': '1',
+		'javax.faces.ViewState': getParam(html, null, null, /name="javax.faces.ViewState"[^>]*value="([^"]+)/i),
+		'javax.faces.behavior.event': 'action',
+		'javax.faces.partial.event': 'click',
+		'javax.faces.source': 'getButton',
+		'javax.faces.partial.ajax': 'true',
+		'javax.faces.partial.execute': 'filter getButton',
+		'javax.faces.partial.render': 'dateGrid globalErrors filterErrors FORM',
+		'filter': 'filter'		
+	});
+	
+	html = AnyBalance.requestPost(baseurl + 'web_banking/protected/accounts/absolut_current_balance.jsf', params, addHeaders({
+		Referer: baseurl + 'web_banking/protected/welcome.jsf'
+	}));
+	
+	getParam(html, result, 'balance', /&#1055;&#1083;&#1072;&#1090;&#1077;&#1078;&#1085;&#1099;&#1081; &#1083;&#1080;&#1084;&#1080;&#1090;(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, ['currency', '__tariff'], /&#1055;&#1083;&#1072;&#1090;&#1077;&#1078;&#1085;&#1099;&#1081; &#1083;&#1080;&#1084;&#1080;&#1090;(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseCurrency);
+	getParam(html, result, 'limit', /&#1051;&#1080;&#1084;&#1080;&#1090; &#1082;&#1088;&#1077;&#1076;&#1080;&#1090;&#1086;&#1074;&#1072;&#1085;&#1080;&#1103;:(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	
+	AnyBalance.setResult(result);	
+	
+	
 }

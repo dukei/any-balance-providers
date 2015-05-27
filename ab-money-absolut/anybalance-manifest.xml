@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-money-absolut</id>
+	<id version="3">ab-money-absolut</id>
 	<api flags="no_browser"/>
 	<name>Банк Абсолют</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе на счетах банка Абсолют (http://www.absolutbank.ru/)</p>
-	<p>Информация берется из личного кабинета https://server105.ibank.absolutbank.ru/</p>
+	<p>Предоставляет информацию о балансе на счетах банка Абсолют <a href="http://www.absolutbank.ru/">http://www.absolutbank.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="https://server105.ibank.absolutbank.ru/">https://server105.ibank.absolutbank.ru/</a></p>
 	]]></description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
@@ -16,9 +16,11 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс"/>
+		<counter id="balance" name="Баланс" units=" {@currency}"/>
+		<counter id="limit" name="Лимит" units=" {@currency}"/>
 		<counter id="accname" name="Название" type="text"/>
 		<counter id="accnum" name="Номер счета" type="text"/>
+		<counter id="card_num" name="Номер карты" type="text"/>
 	</counters>
 	<keywords></keywords>
 	<type>money, bank</type>

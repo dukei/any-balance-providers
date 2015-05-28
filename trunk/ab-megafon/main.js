@@ -19,6 +19,10 @@ var MEGA_FILIAL_KAVKAZ = 6;
 var MEGA_FILIAL_CENTRAL = 7;
 var MEGA_FILIAL_URAL = 8;
 
+var lk_url = 'https://lk.megafon.ru/';
+var api_url = 'https://api.megafon.ru/mlk/';
+
+
 //http://ru.wikipedia.org/wiki/%D0%9C%D0%B5%D0%B3%D0%B0%D0%A4%D0%BE%D0%BD#.D0.A4.D0.B8.D0.BB.D0.B8.D0.B0.D0.BB.D1.8B_.D0.BA.D0.BE.D0.BC.D0.BF.D0.B0.D0.BD.D0.B8.D0.B8
 var filial_info = {
 	moscowsg: MEGA_FILIAL_MOSCOW,
@@ -35,8 +39,7 @@ filial_info[MEGA_FILIAL_MOSCOW] = {
 	name: 'Столичный филиал',
 	id: 'mos',
 	func: megafonServiceGuide,
-        sg: "https://moscowsg.megafon.ru/",
-        lk: "https://lk.megafon.ru/",
+    sg: "https://moscowsg.megafon.ru/",
 	widget: 'https://moscowsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
 //	tray: "https://moscowsg.megafon.ru/TRAY_INFO/TRAY_INFO?LOGIN=%LOGIN%&PASSWORD=%PASSWORD%",
 	internet: "http://user.moscow.megafon.ru/",
@@ -272,7 +275,77 @@ function main(){
     if(prefs.__initialization)
 	return initialize(filial);
     
-    (filinfo.func)(filial);
+    //(filinfo.func)(filial);
+    loadFilialInfo(filial);
+}
+
+function loadFilialInfo(filial){
+    var filinfo = filial_info[filial];
+    var prefs = AnyBalance.getPreferences();
+
+    var ok = false;
+    var e_some = null;
+    var e_total = null;
+
+    if(!ok){
+        try{
+        	var sginfo = enterLK(filial, {login: prefs.login, password: prefs.password, useOldSG: true});
+        	megafonServiceGuidePhysical(filial, sginfo.sessionid);
+			ok = true;
+		}catch(e){
+			if(e.fatal)
+				throw e;
+			if(!e.meaningless)
+				e_total = e;
+			e_some = e;
+	        AnyBalance.trace('Не удалось получить информацию из личного кабинета: ' + e.message);
+		}
+	}
+
+    if(!ok){
+        try{
+			megafonLkAPI(filinfo, {allow_captcha: false});
+			ok = true;
+		}catch(e){
+			if(e.fatal)
+				throw e;
+			if(!e.meaningless)
+				e_total = e;
+			e_some = e;
+	        AnyBalance.trace('Не удалось получить информацию из мобильного приложения: ' + e.message);
+		}
+	}
+	
+    if(!ok){
+        try{
+            megafonTrayInfo(filial);
+			ok = true;
+		}catch(e){
+			if(e.fatal)
+				throw e;
+			if(!e.meaningless)
+				e_total = e;
+			e_some = e;
+	        AnyBalance.trace('Не удалось получить информацию из входа для автоматизированных систем: ' + e.message);
+		}
+	}
+
+    if(!ok){
+        try{
+            megafonBalanceInfo(filial);
+			ok = true;
+		}catch(e){
+			if(e.fatal)
+				throw e;
+			if(!e.meaningless)
+				e_total = e;
+			e_some = e;
+	        AnyBalance.trace('Не удалось получить информацию даже по балансу: ' + e.message);
+		}
+	}
+
+	if(!ok)
+		throw e_total || e_some;
 }
 
 var g_headers = {
@@ -530,7 +603,14 @@ function megafonTrayInfo(filial) {
 	}}else{
 		AnyBalance.trace('Филиал не имеет входа для роботов...');
 		errorInTray = "Вход отсутствует на сервере Мегафон";
-        }
+    }
+    
+    if(errorInTray && !filinfo.widget){
+	    var e = new AnyBalance.Error('Яндекс-виджет отсутствует для этого филиала');
+	    e.meaningless = true;
+	    throw e;
+	}
+	
 	if (AnyBalance.isAvailable('internet_cost', 'bonus_balance', 'last_pay_sum', 'last_pay_date', 'mins_left', 'mins_net_left', 'mins_n_free', 'mins_total', 'internet_left', 'internet_total', 'internet_cur', 'sub_smit', 'sub_smio', 'sub_scl', 'sub_scr', 'sub_soi') || errorInTray || isAvailableButUnset(result, ['balance', 'phone', 'sms_left', 'sms_total', 'mins_left', 'mins_total', 'gb_with_you'])) {
 		//Некоторую инфу можно получить из яндекс виджета. Давайте попробуем.
 		var prefs = AnyBalance.getPreferences();
@@ -681,12 +761,14 @@ function megafonTrayInfo(filial) {
 			}
 		}
 	}
+
+/* //Переехали в гет мегафон баланс, потому что всё равно только в столичном филиале
 	// Возможно фикс грубый, но бывает такое, что в виджете и в internet info трафик различается на 50 мб, из-за этого все суммируется дважды
 	if(!isset(result.internet_total) && !isset(result.internet_left) && !result.internet_cur)
 		getInternetInfo(filial, result, internet_totals_was);
 	else
 		AnyBalance.trace('Мы уже получили весь трафик, в getInternetInfo не пойдем, т.к. иначе все просуммируется и трафика станет в два раза больше')
-
+*/
 	AnyBalance.setResult(result);
 }
 
@@ -846,7 +928,7 @@ function megafonLK(filinfo, tryOldSG) {
 	var prefs = AnyBalance.getPreferences();
 	AnyBalance.trace('Пробуем войти в новый ЛК...');
 	
-	var baseurl = filinfo.lk;
+	var baseurl = lk_url;
 	
 	var html = AnyBalance.requestGet(baseurl + 'login/', g_headers);
 	var token = getParam(html, null, null, /name=CSRF value="([^"]+)/i);
@@ -927,10 +1009,17 @@ function megafonLK(filinfo, tryOldSG) {
 	AnyBalance.setResult(result);	
 }
 
-function megafonBalanceInfo(filinfo) {
+function megafonBalanceInfo(filial) {
+    var filinfo = filial_info[filial];
     var prefs = AnyBalance.getPreferences();
 
     AnyBalance.trace('Connecting to MEGAFON_BALANCE ' + filinfo.name);
+    if(filial != MEGA_FILIAL_MOSCOW){
+	    var e = new AnyBalance.Error('MEGAFON_BALANCE отсутствует для этого филиала');
+	    e.meaningless = true;
+	    throw e;
+    }
+
     var html = AnyBalance.requestGet(filinfo.balanceRobot.replace(/%LOGIN%/i, encodeURIComponent(prefs.login)).replace(/%PASSWORD%/i, encodeURIComponent(prefs.password)));
     if(!/<BALANCE>([^<]*)<\/BALANCE>/i.test(html)){
         var error = getParam(html, null, null, /<ERROR_MESSAGE>([\s\S]*?)<\/ERROR_MESSAGE>/i, replaceTagsAndSpaces, html_entity_decode);
@@ -943,6 +1032,9 @@ function megafonBalanceInfo(filinfo) {
     var result = {success: true, filial: filinfo.id};
     getParam(html, result, 'balance', /<BALANCE>([^<]*)<\/BALANCE>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'phone', /<MSISDN>([^<]*)<\/MSISDN>/i, replaceTagsAndSpaces, html_entity_decode);
+
+    //Не, врет безбожно, бесполезно вызывать
+    //getInternetInfo(filial, result, {});
 
     setCountersToNull(result);
     AnyBalance.setResult(result);
@@ -961,63 +1053,41 @@ function megafonServiceGuide(filial){
     var session;
     if(filinfo.sg) {
 		// Мегафон шлет смс на вход если пытаемся войти через большой кабинет
-		if(filinfo.lk || filinfo.api){
-	   	    try {
-				megafonLkAPI(filinfo);
-		    } catch (e) {
-				// Если ошибка в логине и пароле, дальше идти нет смысла. Позже: А вдруг у кого-то не установлен пароль в новом кабинете, закидают же?
-				if(e.fatal)
-				    throw e;
+	   	try {
+			megafonLkAPI(filinfo, {allow_captcha: true});
+		} catch (e) {
+			// Если ошибка в логине и пароле, дальше идти нет смысла. Позже: А вдруг у кого-то не установлен пароль в новом кабинете, закидают же?
+			if(e.fatal)
+			    throw e;
 
+			try{
+		    	AnyBalance.trace('Невозможно зайти в мобильный клиент, Попробуем получить данные из ЛК. Причина: ' + e.message);
+				megafonLK(filinfo, true);
+			}catch(e){
+			    if(e.fatal)
+			        throw e;
+
+		        AnyBalance.trace('Невозможно зайти в личный кабинет, придется получать данные из виджета. Причина: ' + e.message);
 				try{
-			    	AnyBalance.trace('Невозможно зайти в мобильный клиент, Попробуем получить данные из ЛК. Причина: ' + e.message);
-					megafonLK(filinfo, true);
+					megafonTrayInfo(filial);
+					return;
 				}catch(e){
 				    if(e.fatal)
 				        throw e;
-
-			        AnyBalance.trace('Невозможно зайти в личный кабинет, придется получать данные из виджета. Причина: ' + e.message);
-					try{
-						megafonTrayInfo(filial);
-		   				return;
-					}catch(e){
-					    if(e.fatal)
-					        throw e;
-					    if(/неверный ответ сервера/i.test(e.message) && filinfo.balanceRobot){
-					        //Яндекс виджет, скотина, не даёт получить баланс :(
-					        //Тогда баланс получим хотя бы из московского балансера
-					        AnyBalance.trace('Не удалось получить данные из яндекс виджета: ' + e.message);
-					        AnyBalance.trace('Пробуем получить баланс из ещё одного источника...');
-					        megafonBalanceInfo(filinfo);
-					        return;
-					    }else{
-						    throw e;
-					    }
-					} 
-	            }
+				    if(/неверный ответ сервера/i.test(e.message) && filinfo.balanceRobot){
+				        //Яндекс виджет, скотина, не даёт получить баланс :(
+				        //Тогда баланс получим хотя бы из московского балансера
+				        AnyBalance.trace('Не удалось получить данные из яндекс виджета: ' + e.message);
+				        AnyBalance.trace('Пробуем получить баланс из ещё одного источника...');
+				        megafonBalanceInfo(filial);
+				        return;
+				    }else{
+					    throw e;
+				    }
+				} 
 	        }
-	        return;
-		}
-
-        if(prefs.corporate){
-            session = AnyBalance.requestGet('http://moscow.megafon.ru/ext/sg_gate.phtml?MSISDN=CP_' + prefs.login + '&PASS=' + encodeURIComponent(prefs.password) + '&CHANNEL=WWW');
-        }else{
-			AnyBalance.trace('Не будем и пытаться заходить в сервис-гид, придется получать данные из виджета');
-			try{
-				megafonTrayInfo(filial);
-			}catch(e){
-				if(/неверный ответ сервера/i.test(e.message) && filinfo.balanceRobot){
-					//Яндекс виджет, скотина, не даёт получить баланс :(
-					//Тогда баланс получим хотя бы из московского балансера
-					AnyBalance.trace('Не удалось получить данные из яндекс виджета: ' + e.message);
-					AnyBalance.trace('Пробуем получить баланс из ещё одного источника...');
-					megafonBalanceInfo(filinfo);
-					return;
-				}
-			}
-
-			return;
-        } 
+	    }
+	    return;
     }else{
 		session = AnyBalance.requestPost(baseurl + 'ps/scc/php/check.php?CHANNEL=WWW', {
             LOGIN: (prefs.corporate ? 'CP_' : '') + prefs.login, 
@@ -1166,6 +1236,12 @@ function megafonServiceGuidePhysical(filial, sessionid){
 	var optionGroupHtml = '', optionGroupText = '';
     if(text){//Таблица скидок
         var colnum = /colname="OWNER"/.test(text) ? 2 : 1; //Новая колонка в некоторых кабинетах - владелец скидки
+        var columnsRegexps = [
+ 			/(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i,
+			/(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i,
+			/(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i,
+			/(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i,
+        ];
         var rows = sumParam(text, null, null, /<tr[^>]*>[\s\S]*?<\/tr>/ig, null, html_entity_decode);
 		var reOption = /<tr[^>]*>(?:(?:[\s\S](?!<\/tr>))*?<td[^>]*>\s*<div[^>]+class="td_def"[^>]*>){3}[\s\S]*?<\/tr>/i;
         for(var i=0; i<rows.length; ++i){
@@ -1201,18 +1277,21 @@ function megafonServiceGuidePhysical(filial, sessionid){
 				        AnyBalance.trace('Минуты ' + name + ', относим к просто минутам');
 						sumOption(colnum, row, result, 'mins_total', 'mins_left', '.', parseMinutes);
 					}
-				}else if(/GPRS|Интернет|Internet|\d+\s+[гмкgmk][бb]/i.test(name)){
+				}else if(/GPRS|Интернет|трафик|Internet|\d+\s+[гмкgmk][бb]/i.test(name)){
 				    var internetPacket = getParam(optionGroupText, null, null, /Интернет \w+/i);
 					if(internetPacket)
 					    foundInternetPacketOptions[internetPacket] = true;
 						
-					sumOption(colnum, row, result, 'internet_total', 'internet_left', '.', parseTrafficMy);
-					if(AnyBalance.isAvailable('internet_cur')){
-						var total = getParam(row, null, null, /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTrafficMy);
-						var left = getParam(row, null, null, /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTrafficMy);
-						if(isset(total) && isset(left))
-							result.internet_cur = (result.internet_cur || 0) + total - left;
-					}
+					var total = getParam(row, null, null, columnsRegexps[0 + colnum - 1], replaceTagsAndSpaces, parseTrafficMy);
+					var left = getParam(row, null, null, columnsRegexps[1 + colnum - 1], replaceTagsAndSpaces, parseTrafficMy);
+					var used = getParam(row, null, null, columnsRegexps[2 + colnum - 1], replaceTagsAndSpaces, parseTrafficMy);
+
+					if(isset(total) && isset(left) && !used)
+						used = total - left;
+
+					sumParam(total, result, 'internet_total', null, null, null, aggregate_sum);
+					sumParam(left, result, 'internet_left', null, null, null, aggregate_sum);
+					sumParam(used, result, 'internet_cur', null, null, null, aggregate_sum);
 				}else if(/(?:SMS|СМС|сообщен)/i.test(name)){
 					// Карманный интернет теперь покрывается циклом выше
 					
@@ -1234,6 +1313,9 @@ function megafonServiceGuidePhysical(filial, sessionid){
 				}else if(/Гигабайт в дорогу/i.test(name)){
 					//Гигабайт в дорогу
 					sumOption(colnum, row, result, null, 'gb_with_you', '.');
+				}else if(/на номера МегаФон/i.test(name)){
+					//3 мин на номера МегаФон-Сибирь
+					sumOption(colnum, row, result, 'mins_net_total', 'mins_net_left', '.', parseMinutes);
 				}else{
 				    AnyBalance.trace('??? НЕИЗВЕСТНАЯ ОПЦИЯ (группа ' + optionGroupText + ') ' + name + ': ' + row);
 				}
@@ -1594,8 +1676,6 @@ var g_api_headers = {
 	
 };
 
-var g_baseurl = 'https://api.megafon.ru/mlk/';
-
 function setCountersToNull(result){
 	var arr = AnyBalance.getAvailableCounters();
 	for(var i=0; i<arr.length; ++i){
@@ -1609,9 +1689,9 @@ function setCountersToNull(result){
 
 function callAPI(method, url, params, allowerror) {
 	if(method == 'post')
-		var html = AnyBalance.requestPost(g_baseurl + url, params, g_api_headers);
+		var html = AnyBalance.requestPost(api_url + url, params, g_api_headers);
 	else
-		var html = AnyBalance.requestGet(g_baseurl + url, g_api_headers);
+		var html = AnyBalance.requestGet(api_url + url, g_api_headers);
 	
 	var json = getJson(html);
 	
@@ -1621,7 +1701,7 @@ function callAPI(method, url, params, allowerror) {
 	return json;
 }
 
-function megafonLkAPI(filinfo) {
+function megafonLkAPI(filinfo, options) {
 	var prefs = AnyBalance.getPreferences();
 	
 	AnyBalance.trace('Пробуем войти через API мобильного приложения...');
@@ -1638,21 +1718,21 @@ function megafonLkAPI(filinfo) {
 	}, true);
 
 	if(json.code){
-	    if(json.code == 'a211' && prefs.allowcaptcha){ //Капча отключена
-		var matches = /(\d+)-(\d+)/.exec(prefs.allowcaptcha);
-		if(!matches)
-			throw new AnyBalance.Error('Неверный параметр отключения капчи: ' + prefs.allowcaptcha);
-		var from = parseInt(matches[1]), to = parseInt(matches[2]);
-		var hours = new Date().getHours();
-		if(hours < from || hours >= to)
-			throw new AnyBalance.Error('API мобильного приложения потребовало ввод капчи, а она отключена в настройках (' + prefs.allowcaptcha + ') провайдера! Пропускаем API...');
+	    if(json.code == 'a211' && prefs.allowcaptcha && options.allow_captcha){ //Капча отключена
+			var matches = /(\d+)-(\d+)/.exec(prefs.allowcaptcha);
+			if(!matches)
+				throw new AnyBalance.Error('Неверный параметр отключения капчи: ' + prefs.allowcaptcha);
+			var from = parseInt(matches[1]), to = parseInt(matches[2]);
+			var hours = new Date().getHours();
+			if(hours < from || hours >= to)
+				throw new AnyBalance.Error('API мобильного приложения потребовало ввод капчи, а она отключена в настройках (' + prefs.allowcaptcha + ') провайдера! Пропускаем API...');
 	    }
- 
-	    if(json.code == 'a211'){ //Капча
-		if(!((prefs.$$startReason$$ || 0)&0xFF)){
-			throw new AnyBalance.Error('Сейчас автоматическое обновление. Показываем капчу в мегафоне только при ручном обновлении!');
-		}
-	        var capchaImg = AnyBalance.requestGet(g_baseurl + 'auth/captcha', g_api_headers);
+        
+	    if(json.code == 'a211' && options.allow_captcha){ //Капча
+			if(!((prefs.$$startReason$$ || 0)&0xFF)){
+				throw new AnyBalance.Error('Сейчас автоматическое обновление. Показываем капчу в мегафоне только при ручном обновлении!');
+			}
+	        var capchaImg = AnyBalance.requestGet(api_url + 'auth/captcha', g_api_headers);
 	        var captcha = AnyBalance.retrieveCode('Мегафон иногда требует подтвердить, что вы не робот. Сейчас как раз такой случай. Если вы введете цифры с картинки, то мы сможем получить какую-то информацию помимо баланса. В противном случае получим только баланс.\n\nВы можете отключить показ капчи совсем или только ночью в настройках провайдера.', capchaImg);
 			json = callAPI('post', 'login', {
 				login: prefs.login,
@@ -1831,7 +1911,7 @@ function enterLK(filial, options){
 	var prefs = AnyBalance.getPreferences();
 	AnyBalance.trace('Пробуем войти в новый ЛК...');
 	
-	var baseurl = "https://lk.megafon.ru/";
+	var baseurl = lk_url;
 	
 	var html = AnyBalance.requestGet(baseurl + 'login/', g_headers);
 	var token = getParam(html, null, null, /name=CSRF value="([^"]+)/i);

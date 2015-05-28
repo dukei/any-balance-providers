@@ -40,7 +40,7 @@ function gwtGetJSON(str){
 
 var g_lks = {
     pesc: {
-	url: 'http://ikus.pesc.ru:8080/IKUSUser/',
+	url: 'https://ikus.pesc.ru/IKUSUser/',
 	uid: 'E85D8BB4C101FFBB462908DEC5BC61A6',
 	auth_uid: 'AE742241A0A8AD76E4877D96DE250A42',
 	strong_name: '\\b%VARNAME%,\\w+\\],(\\w+)\\)',
@@ -55,7 +55,7 @@ var g_lks = {
 	user_class: 'com.sigma.personal.client.physical.ClientService',
 	user_data: "7|0|4|%url%%user_url%|%auth_uid%|%user_class%|getAbonsList|1|2|3|4|0|",
 	re_account: /electric.model.AbonentModel[^"]*","([^"]*)/,
-	re_address: /electric.model.AbonentModel[^"]*","[^"]*","([^"]*)/,
+	re_address: /electric.model.AbonentModel[^"]*"(?:,"[^"]*"){2},"([^"]*)/,
 	counters: ['peni', 'balance'],
     },
     pes: {
@@ -73,9 +73,9 @@ var g_lks = {
 	user_file: 'com.sigma.personal.client.physical.ClientService.gwt',
 	user_class: 'com.sigma.personal.client.physical.ClientService',
 	user_data: "7|0|4|%url%%user_url%|%auth_uid%|%user_class%|getAbonsList|1|2|3|4|0|",
-	re_account: /"account","([^"]*)/,
-	re_address: /"address","([^"]*)/,
-	counters: ['balance', 'peni'],
+	re_account: /electric.model.AbonentModel[^"]*","([^"]*)/,
+	re_address: /electric.model.AbonentModel[^"]*"(?:,"[^"]*"){1},"([^"]*)/,
+	counters: ['peni', 'balance'],
     }
 }
 

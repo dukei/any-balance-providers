@@ -1,14 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="7">ab-municipal-krimenergo</id>
-	<name>Интернет-магазин коммунальных услуг (Мегасофт)</name>
+	<id version="8">ab-municipal-krimenergo</id>
+	<name>Интернет-магазин коммунальных услуг (МегаБиллинг)</name>
 	<description html="true"><![CDATA[
-	<p>Получает данные в системе Мегасофт (http://www.krymenergo.com/)</p>
+	<p>Получает данные в системе Мегасофт, МегаБиллинг (http://www.krymenergo.com/)</p>
 	<p>На данный момент поддерживаются: Крымэнерго, Киевэнерго</p>
 	<p>Информация берется из личного кабинета https://secure.mega-billing.com/byt/ru/energo</p>
 	]]></description>	
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
@@ -24,7 +24,7 @@
 		<counter id="acc" name="Лицевой счет" type="text"/>
 		<counter id="tarif" name="Тарификация" type="text"/>
 	</counters>
-	<keywords></keywords>
+	<keywords>Мегасофт</keywords>
 	<type>municipal</type>
-	<country>ua</country>
+	<country>ua, ru</country>
 </provider>

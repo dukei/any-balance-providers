@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="2.0" version="61" date="2015-05-29">
+	- Изменения для нового дизайна личного кабинета.
+	</change>
 	<change major_version="2.0" version="60" date="2015-04-01">
 	- Мелкие улучшения.
 	</change>

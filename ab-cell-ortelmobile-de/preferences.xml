@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Login" 
+        positiveButtonText="ОК" 
+        summary="|13 digits Ortel mobile number (49157........)|{@s}"
+        dialogTitle="Login (Ortel mobile number)" 
+        negativeButtonText="Cancel" 
+        obligatory="true"
+        dialogMessage="Please enter your Ortel mobile number as 13 digits, starting with 49."
+        key="login"
+        inputType="text">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="OK"
+        key="password" 
+        dialogTitle="Password"
+        negativeButtonText="Cancel"
+        title="Password"
+        obligatory="true"
+        summary="|mein.ortelmobile.de password|***********"
+        dialogMessage="Enter your mein.ortelmobile.de password."
+        inputType="textPassword">
+    </EditTextPreference>    
+</PreferenceScreen>

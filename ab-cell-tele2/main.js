@@ -75,7 +75,7 @@ function main() {
 		json = JSON.parse(html);
 		result.balance = parseBalance(json.balance);
 	}
-	if (AnyBalance.isAvailable('sms_used', 'min_used', 'traffic_used')) {
+	if (AnyBalance.isAvailable('sms_used', 'min_used', 'traffic_used', 'mms_used')) {
 		AnyBalance.trace("Searching for used resources in this month");
 		var params = {};
 		params[tokName] = tokVal;
@@ -83,36 +83,7 @@ function main() {
 		html = AnyBalance.requestPost(baseurl + "payments/summary/json", params);
 		json = JSON.parse(html);
 		for (var i = 0; i < json.length; ++i) {
-			var name = json[i].name;
-			var matches;
-			if (AnyBalance.isAvailable('min_used')) {
-				if (matches = /(\d+).*минут/i.exec(name)) {
-					result.min_used = parseInt(matches[1]);
-				}
-			}
-			if (AnyBalance.isAvailable('sms_used')) {
-				if (matches = /(\d+).*SMS/i.exec(name)) {
-					result.sms_used = parseInt(matches[1]);
-				}
-			}
-			if (AnyBalance.isAvailable('traffic_used')) {
-				matches = /GPRS.*?([\d\.\,]+)\s*(Гб|Мб|Кб)/i.exec(name);
-				if (!matches) matches = /([\d\.\,]+)\s*(Гб|Мб|Кб).*GPRS/i.exec(name);
-				if (matches) {
-					var val = parseFloat(matches[1].replace(/^[\s,\.]*|[\s,\.]*$/g, '').replace(',', '.'));
-					switch (matches[2]) {
-					case 'Гб':
-						val *= 1000;
-						break;
-					case 'Мб':
-						break;
-					case 'Кб':
-						val /= 1000;
-						break;
-					}
-					result.traffic_used = val;
-				}
-			}
+			getCounter(result, json[i]);
 		}
 	}
 	if (AnyBalance.isAvailable('history')) {
@@ -131,4 +102,48 @@ function main() {
 		}
 	}	
 	AnyBalance.setResult(result);
+}
+
+function getCounter(result, json){
+	if(json.subTotals){
+	    for(var j=0; j<json.subTotals.length; ++j){
+	        getCounter(result, json.subTotals[j]);
+	    }
+	}else  {
+		var name = json.name;
+		var matches;
+		if (AnyBalance.isAvailable('min_used')) {
+			if (matches = /(\d+).*минут/i.exec(name)) {
+				result.min_used = parseInt(matches[1]);
+			}
+		}
+		if (AnyBalance.isAvailable('sms_used')) {
+			if (matches = /(\d+).*SMS/i.exec(name)) {
+				result.sms_used = parseInt(matches[1]);
+			}
+		}
+		if (AnyBalance.isAvailable('mms_used')) {
+			if (matches = /(\d+).*MMS/i.exec(name)) {
+				result.mms_used = parseInt(matches[1]);
+			}
+		}
+		if (AnyBalance.isAvailable('traffic_used')) {
+			matches = /GPRS.*?([\d\.\,]+)\s*(Гб|Мб|Кб)/i.exec(name);
+			if (!matches) matches = /([\d\.\,]+)\s*(Гб|Мб|Кб).*GPRS/i.exec(name);
+			if (matches) {
+				var val = parseFloat(matches[1].replace(/^[\s,\.]*|[\s,\.]*$/g, '').replace(',', '.'));
+				switch (matches[2]) {
+				case 'Гб':
+					val *= 1000;
+					break;
+				case 'Мб':
+					break;
+				case 'Кб':
+					val /= 1000;
+					break;
+				}
+				result.traffic_used = val;
+			}
+		}
+	}
 }

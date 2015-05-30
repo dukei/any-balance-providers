@@ -193,35 +193,23 @@ function main(){
     sumParam(html, result, 'balanceBonus', /(?:Баланс бонусного счета(?: \d)?):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     getParam(html, result, 'status', /(?:Текущий статус абонента|Статус абонента):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, '__tariff', /Тарифный план:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    //getParam(html, result, 'min', /Остаток минут, SMS, MMS, (?:МБ|GPRS), включенных в абонплату:[\s\S]*?<td[^>]*>(?:[\s\S](?!<\/td>))*?(-?\d[\d,\.]*) мин(?:ут)?(?:\s*во все сети)?(?:,|\s*<)/i, replaceTagsAndSpaces, parseBalance);
-	sumParam(html, result, 'min', [/Остаток исходящего бонуса:[\s\S]*?<td[^>]*>([\s\S]*?мин)/i, /Остаток минут, SMS, MMS, (?:МБ|GPRS), включенных в абонплату:[\s\S]*?<td[^>]*>(?:[\s\S](?!<\/td>))*?(-?\d[\d,\.]*)\s*мин(?:ут)?(?:\s*во все сети)?/i], replaceTagsAndSpaces, parseBalance, aggregate_sum);
-	sumParam(html, result, 'sms', /Остаток минут, SMS, MMS, (?:МБ|GPRS), включенных в абонплату:[\s\S]*?<td[^>]*>(?:[\s\S](?!<\/td>))*?(-?\d[\d,\.]*)\s*SMS/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-	sumParam(html, result, 'mms', /Остаток минут, SMS, MMS, (?:МБ|GPRS), включенных в абонплату:[\s\S]*?<td[^>]*>(?:[\s\S](?!<\/td>))*?(-?\d[\d,\.]*)\s*MMS/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-	getParam(html, result, 'min_fn', /Остаток минут, SMS, MMS, (?:МБ|GPRS), включенных в абонплату:[\s\S]*?<td[^>]*>(?:[\s\S](?!<\/td>))*?(-?\d[\d,\.]*) мин(?:ут)? на ЛН/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'min_velcom', /Остаток минут, SMS, MMS, (?:МБ|GPRS), включенных в абонплату:[\s\S]*?<td[^>]*>(?:[\s\S](?!<\/td>))*?(-?\d[\d,\.]*) мин(?:ут)? на velcom/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'traffic', /Остаток минут, SMS, MMS, (?:МБ|GPRS), включенных в абонплату:[\s\S]*?<td[^>]*>(?:[\s\S](?!<\/td>))*?(-?\d[\d,\.]*)\s*Мб/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'call_barring', /Запрет исходящих с:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDateWord);
-	
-	// Изменилось отображение трафика и минут
-	if(!isset(result.min_velcom) || !isset(result.min) || !isset(result.traffic) || !isset(result.mms)) {
-		var str = getParam(html, null, null, /Остаток трафика:(?:[^>]*>){3}([\s\S]*?)<\//i);
-		if(str) {
-			sumParam(html, result, 'min_velcom', /([\s\d.]+)мин(?:ут)? на velcom/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-			sumParam(html, result, 'min', /([\s\d.]+)мин(?!(?:ут)? на velcom)/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-			sumParam(html, result, 'mms', /([\s\d]+)(?:MMS|ММС)/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-			getParam(html, result, 'traffic', /([\s\d.]+[М|M][B|Б])/i, replaceTagsAndSpaces, parseTraffic);
-			getParam(html, result, 'traffic_night', /([\s\d.]+[М|M][B|Б]\s+ночь)/i, replaceTagsAndSpaces, parseTraffic);
-		} else if(/<td[^>]+id="DISCOUNT"/i.test(html)){
-			//<tr class="uneven">
-            //                     <td class="info_caption"><span>Скидки:</span></td>
-            //                     <td class="info" id="DISCOUNT" colspan="2"><span>У вас осталось 949776 Кб 1 Кб </span></td>
-            //                  </tr>
-			getParam(html, result, 'traffic', /<td[^>]+id="DISCOUNT"[^>]*>([\s\S]*?)<\/td>/i, [replaceTagsAndSpaces, /^\D+/, ''], parseTraffic);
-		}else{
-			AnyBalance.trace(html);
-			AnyBalance.trace('Не удалось найти остатки трафика, минут и ммс, сайт изменен?');
-		}
-	}
+	sumParam(html, result, 'min', /Остаток исходящего бонуса:[\s\S]*?<td[^>]*>([\s\S]*?мин)/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    getParam(html, result, 'call_barring', /Запрет исходящих с:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDateWord);
+//    getParam(html, result, 'traffic', /<td[^>]+id="DISCOUNT"[^>]*>([\s\S]*?)<\/td>/i, [replaceTagsAndSpaces, /^\D+/, ''], parseTraffic);
+
+    var counters = getParam(html, null, null, /(?:Остаток трафика|Остаток минут, SMS, MMS, (?:МБ|GPRS), включенных в абонплату):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i);
+    if(counters){
+	    sumParam(counters, result, 'sms', /(-?\d[\d,\.]*)\s*SMS/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+	    sumParam(counters, result, 'mms', /(-?\d[\d,\.]*)\s*MMS/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+	    counters = sumParam(counters, result, 'min_fn', /(-?\d[\d,\.]*)\s*мин(?:ут[аы]?)? на ЛН/i, replaceTagsAndSpaces, parseBalance, true, aggregate_sum);
+        counters = sumParam(counters, result, 'min_velcom', /(-?\d[\d,\.]*)\s*мин(?:ут[аы]?)? на velcom/i, replaceTagsAndSpaces, parseBalance, true, aggregate_sum);
+        getParam(counters, result, 'traffic', /(-?\d[\d,\.]*)\s*Мб/i, replaceTagsAndSpaces, parseBalance);
+		getParam(counters, result, 'traffic_night', /([\s\d.]+[М|M][B|Б]\s+ночь)/i, replaceTagsAndSpaces, parseTraffic);
+        sumParam(counters, result, 'min', /(-?\d[\d,\.]*)\s*мин/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    }else{
+		AnyBalance.trace(html);
+		AnyBalance.trace('Не удалось найти остатки трафика, минут и ммс, сайт изменен?');
+    }
 	
 	if(AnyBalance.isAvailable('loan_balance', 'loan_left', 'loan_end')) {
 		html = requestPostMultipart(baseurl + 'work.html', {

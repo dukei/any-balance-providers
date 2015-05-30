@@ -97,7 +97,7 @@ function main(){
 			}else if(/NUMBER|MSISDN/i.test(id)){ //Это номер
 				value = phone;
 			}else if(/PWD/i.test(id)){ //Это пароль
-				value = prefs.password.substr(0, 8);  //Велкам принимает только первые 8 символов всё равно.
+				value = prefs.password.substr(0, 10);  //Велкам уже принимает 10 символов пароля
 			}
 		}
 		if(!name)

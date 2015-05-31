@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="8">ab-game-godville</id>
+	<id version="9">ab-game-godville</id>
 	<name>Godville.net</name>
 	<description>
-		Отображает некоторые параметры игры (здоровье, прана, количество кирпичей, уровень героя)
+		Отображает некоторые параметры игры (здоровье, прана, количество кирпичей, бревен, уровень героя и др.)
 	</description>
-	<author>Vitaliy Poluphanov &lt;vitaliy@root.ua&gt;</author>
+	<author>Vitaliy Poluphanov &lt;hetleven@yandex.ua&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
@@ -27,6 +27,7 @@
 		<counter id="savings" name="Сбережения, тыс." suffix=" тыс." type="numeric"/>
 		<counter id="wood_p" name="Бревна, ℅" suffix="℅" type="numeric"/>
 		<counter id="wood" name="Бревна, шт" suffix=" шт" type="numeric"/>
+		<counter id="inventory" name="Инвентарь, шт" suffix=" шт" type="numeric"/>
 	</counters>
 	<keywords>
 		игра, game, godville

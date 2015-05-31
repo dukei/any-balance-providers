@@ -53,7 +53,10 @@ function main(){
 
 	if(AnyBalance.isAvailable('wood'))
 		result['wood'] = js.wood_cnt;
-		
+	
+	if(AnyBalance.isAvailable('inventory'))
+		result['inventory'] = js.inventory_num;
+	
 	if(js.diary_last){
 
 		if(AnyBalance.isAvailable('health_t'))

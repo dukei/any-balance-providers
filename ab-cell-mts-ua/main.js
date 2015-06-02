@@ -93,13 +93,6 @@ function main(){
 
     var min_all_60_isp;
 
-    // Тарифный план
-	getParam (html, result, '__tariff', /(?:Тарифн[ыи]й план|tariff plan):[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-	// Баланс
-    getParam (html, result, 'balance', /(?:Баланс|balance):.*?<strong>([\s\S]*?)<\/strong>/i, replaceTagsAndSpaces, parseBalance);
-    // Телефон
-    getParam (html, result, 'phone', /(?:Ваш телефон|phone):.*?>([^<]*)</i, replaceTagsAndSpaces, html_entity_decode);
-
     AnyBalance.trace("Fetching status...");
 
     html = AnyBalance.requestGet(baseurl + "Account.mvc/Status");
@@ -119,11 +112,18 @@ function main(){
 		return 60 * parseFloat(str)
 	}
 
-	//Срок действия (баланса) номера (!!!пропал из интернет помощника)
+	// Баланс
+    getParam (html, result, 'balance', /(?:Ваш поточний баланс|balance):\s*([\s\S]*?)\s*грн/i, replaceTagsAndSpaces, parseBalance);
+      // Телефон
+    getParam (html, result, 'phone', /(?:Витрачено по номеру|phone)\s*([\s\S]*?)\s*за/i, replaceTagsAndSpaces, html_entity_decode);
+    
+    
+    
+      //Срок действия (баланса) номера (!!!пропал из интернет помощника)
     getParam (html, result, 'termin', /Термін життя балансу:([^<]*)/i, replaceTagsAndSpaces, parseDate);
-	//Денежный бонусный счет.
+      //Денежный бонусный счет.
     getParam (html, result, 'bonus_balance', /<li>Денежный бонусный счет:[^<]*осталось\s*([\d\.,]+)\s*грн. Срок действия до[^<]*<\/li>/i, replaceTagsAndSpaces, parseBalance);
-    //Срок бонусного счета
+      //Срок бонусного счета
     getParam (html, result, 'termin_bonus_balance', /<li>Денежный бонусный счет:[^<]*осталось\s*[^<]*\s*грн. Срок действия до ([^<]*)<\/li>/i, replaceTagsAndSpaces, parseDate);
 	// Пакет бесплатных минут для внутрисетевых звонков
     sumParam (html, result, 'min_paket', /<li>Осталось ([\d\.,]+) бесплатных секунд\.? до[^<]*<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
@@ -303,6 +303,7 @@ function main(){
     // Тариф 3d команда и "Смарфон 0.50"
     sumParam (html, result, 'mms_used', /<li>Израсходовано:\s*(\d+)\s*(?:mms|ммс)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     sumParam (html, result, 'mms_used', /<li>50 MMS по Украине для "Смартфона", израсходовано:\s*(\d+)\s*(?:mms|ммс)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    sumParam (html, result, 'sms_mms_used', /SMS\\MMS по Украине, израсходовано:\s*(\d+)\s*sms\/mms.<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 
     // Интернет С услугой «Супер 3D Ноль»
     sumParam (html, result, 'traffic_used', /<li>Использовано[^\d]*?(\d+,?\d* *(kb|mb|gb|кб|мб|гб|байт|bytes)).<\/li>/ig, null, parseTraffic, aggregate_sum);
@@ -344,6 +345,8 @@ function main(){
 
         AnyBalance.trace("Parsing traffic info...");
 
+	// Тарифный план
+	getParam (html, result, '__tariff', /<p>(?:Ваш тариф|tariff plan):\s*<strong>([\s\S]*?)<\/strong><\/p>/i, replaceTagsAndSpaces, html_entity_decode);
         // Ежемесячная плата
         getParam (html, result, 'monthlypay', /Абонентська плата:[^\d]*?([\d\.,]+)/i, replaceTagsAndSpaces, parseBalance);
     }

@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-money-binbank</id>
+	<id version="3">ab-money-binbank</id>
 	<api flags="no_browser"/>
 	<name>Бинбанк</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию по картам Бин Банка Москва.</p>
-	<p>Информация берется из интернет-банка https://online.binbank.ru/lite/app/pub/Login</p>
+	<p>Информация берется из интернет-банка <a href="https://online.binbank.ru/lite/app/pub/Login">https://online.binbank.ru/lite/app/pub/Login</a></p>
 	]]></description>
 	<instruction html="true"><![CDATA[
 	<p>В настоящий момент Интернет-банком могут воспользоваться клиенты Банка, обслуживающиеся в следующих регионах:</p>

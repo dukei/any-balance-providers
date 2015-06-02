@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-obmenka-kharkov-ua</id>
+	<api flags="no_browser"/>
+	<id version="2">ab-obmenka-kharkov-ua</id>
 	<name>Obmenka.kharkov.ua</name>
 	<description>
 	Обмен валют на Розы Люксембург в Харькове. Актуальный курс ЧЕРНОГО рынка валюты.
@@ -11,6 +12,7 @@
 		<js>main.js</js>
 		<js>library.js</js>
 		<history>history.xml</history>
+		<preferences>preferences.xml</preferences>
 	</files>
 	<counters>
 	

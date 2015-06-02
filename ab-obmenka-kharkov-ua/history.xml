@@ -1,7 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
-<change version="1" date="2014-11-15">
-- Появилась на свет первая версия.
-</change>
-
+	<change version="2" date="2015-06-02">
+	- Розовцы полностью изменили сайт.
+	</change>
+	<change version="1" date="2014-11-15">
+	- Появилась на свет первая версия.
+	</change>
 </history>

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="1.2" version="47">ab-cell-mts-ua</id>
+	<id major_version="1.2" version="48">ab-cell-mts-ua</id>
 	<api flags="no_browser"/>
 	<name>МТС (Украина)</name>
 	<description html="true"><![CDATA[
@@ -75,6 +75,7 @@
 		<counter id="traffic_free_mb" name="Бесплатный интернет" units=" mb"/>
 		<counter id="sms_used" name="Израсходовано SMS" units=" sms"/>
 		<counter id="mms_used" name="Израсходовано MMS" units=" mms"/>
+		<counter id="sms_mms_used" name="Израсходовано SMS/MMS" units=" sms/mms"/>
 		<counter id="traffic_used" name="Использованно Мб" units=" mb"/>
 		<counter id="min_used" name="Израсходовано минут" type="time_interval" format="{@MIN}" units=" мин"/>
 		<counter id="PZS_MB_3D" name="ПЗС за Мб по услуге Супер 3D" flags="zero_when_empty"/>

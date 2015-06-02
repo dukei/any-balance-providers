@@ -1,6 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-gambling-parimatch</id>
+	<api flags="no_browser"/>
+  <id version="2">ab-gambling-parimatch</id>
   <name>Parimatch</name>
   <description>
     Получает баланс на счету сайта Parimatch (http://www.parimatch.com/)

@@ -20,7 +20,7 @@ function main() {
 	
 	var html = AnyBalance.requestGet(baseurl + 'lite/app/pub/Login', g_headers);
 	
-	var matches = /wicketSubmitFormById\('(id\d+?)',\s*'\.\.(\/[^']+)/i.exec(html);
+	var matches = /Wicket.Ajax.ajax\(\{"f":"id([^"]+)","\w":".\/([^"]+)/i.exec(html);
     if(!matches){
         var prof = getParam(html, null, null, /<title>(Профилактические работы)<\/title>/i);
         if(prof)
@@ -36,12 +36,14 @@ function main() {
     params.login = prefs.login;
     params.password = prefs.password;
 	
-	html = AnyBalance.requestPost(baseurl + 'lite/app/' + href, params, addHeaders({Referer: baseurl + 'lite/app/pub/Login'}));
+	html = AnyBalance.requestPost(baseurl + 'lite/app/pub/' + href, params, addHeaders({Referer: baseurl + 'lite/app/pub/Login'}));
 	
 	if(!/lite\/app\/pub\/Exit/i.test(html)) {
 		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
 		if(error)
-			throw new AnyBalance.Error(error);
+			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+		
+		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	
@@ -69,3 +71,12 @@ function fetchCard(html, baseurl, prefs){
     
     AnyBalance.setResult(result);
 }
+
+
+
+
+
+
+
+
+

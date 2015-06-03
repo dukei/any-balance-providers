@@ -11,7 +11,7 @@ var g_headers = {
 };
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://www.xe.com/';
+	var baseurl = 'http://www.xe.com/?c=RUB';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	var html = AnyBalance.requestGet(baseurl, g_headers);
@@ -47,5 +47,14 @@ function main() {
 	getParam(table, result, 'ZARGBP', /ZAR,GBP[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(table, result, 'NZDGBP', /NZD,GBP[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(table, result, 'JPYGBP', /JPY,GBP[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);		
+	// RUB
+	getParam(table, result, 'RUBUSD', /RUB,USD[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(table, result, 'RUBEUR', /RUB,EUR[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(table, result, 'RUBINR', /RUB,INR[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(table, result, 'RUBAUD', /RUB,AUD[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(table, result, 'RUBCAD', /RUB,CAD[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(table, result, 'RUBZAR', /RUB,ZAR[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(table, result, 'RUBNZD', /RUB,NZD[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(table, result, 'RUBJPY', /RUB,JPY[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);	
     AnyBalance.setResult(result);
 }

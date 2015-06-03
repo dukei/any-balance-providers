@@ -1,10 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
 	<change version="2" date="2015-06-03">
-	- Добавили в баланс показатель Рубль (Alexander Kotelevets).
-	</change>
-	<change version="2" date="2015-06-02">
-	- Добавили в баланс показатель Рубль
+	- Добавил в баланс показатель Рубль (Alexander Kotelevets).
 	</change>
 	<change version="1" date="2013-09-21">
 	- Первая версия провайдера.

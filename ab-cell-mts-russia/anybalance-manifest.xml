@@ -31,6 +31,7 @@
 		<js>main.js</js>
 		<js>library.js</js>
 		<history>history.xml</history>
+		<settings target="init">settings_init.xml</settings>
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>

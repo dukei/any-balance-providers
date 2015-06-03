@@ -29,6 +29,9 @@ var regionsOrdinary = {
     ug: "https://ihelper.ug.mts.ru/selfcare/"
 };
 
+var g_baseurl = 'https://lk.ssl.mts.ru';
+var g_baseurlLogin = 'https://login.mts.ru';
+
 function getViewState(html) {
     return getParam(html, null, null, /name="__VIEWSTATE".*?value="([^"]*)"/);
 }
@@ -39,11 +42,15 @@ function getParamByName(html, name) {
 
 function main() {
     var prefs = AnyBalance.getPreferences();
+    checkEmpty(prefs.login, 'Введите телефон (логин)!');
+
+    if(prefs.__initialization)
+	    return initialize();
+
     if (prefs.phone && !/^\d+$/.test(prefs.phone)) {
         throw new AnyBalance.Error('В качестве номера необходимо ввести 10 цифр номера, например, 9161234567, или не вводить ничего, чтобы получить информацию по основному номеру.', null, true);
     }
 
-    checkEmpty(prefs.login, 'Вы не ввели телефон (логин)!');
     checkEmpty(prefs.password, 'Вы не ввели пароль!');
 	
 	//Всё, теперь во все помощники вход через единый логин всё равно
@@ -624,57 +631,50 @@ function checkLoginState(html, loginUrl) {
 	}
 }
 
-function mainLK(allowRetry) {
-    AnyBalance.trace("Entering lk...");
+function enterLK(options){
+    var loginUrl = g_baseurlLogin + "/amserver/UI/Login?gx_charset=UTF-8&service=lk&goto=" + encodeURIComponent(g_baseurl + '/') + "&auth-status=0";
+    var allowRetry = options.allowRetry;
 
-    var prefs = AnyBalance.getPreferences();
-    AnyBalance.setDefaultCharset('utf-8');
+    var html = AnyBalance.requestGet(g_baseurl, g_headers);
+    if(AnyBalance.getLastStatusCode() >= 500){
+        AnyBalance.trace("МТС вернул 500. Пробуем ещё разок...");
+		html = AnyBalance.requestGet(g_baseurl, g_headers);
+	}
 
-    var baseurl = 'https://lk.ssl.mts.ru';
-    var baseurlLogin = 'https://login.mts.ru';
+    if(AnyBalance.getLastStatusCode() >= 500)
+    	throw new AnyBalance.Error("Ошибка на сервере МТС, сервер не смог обработать запрос. Можно попытаться позже...", allowRetry);
 
-    try {
-        var loginUrl = baseurlLogin + "/amserver/UI/Login?gx_charset=UTF-8&service=lk&goto=" + encodeURIComponent(baseurl + '/') + "&auth-status=0";
+	html = checkLoginState(html, loginUrl);
+	
+	AnyBalance.trace('isLoggedIn(html) = ' + isLoggedIn(html));
+	
+    if (isLoggedIn(html)) {
+        AnyBalance.trace("Уже залогинены, проверяем, что на правильный номер...");
+        //Автоматом залогинились, надо проверить, что на тот номер
 
-        var html = AnyBalance.requestGet(baseurl, g_headers);
-        if(AnyBalance.getLastStatusCode() >= 500){
-            AnyBalance.trace("МТС вернул 500. Пробуем ещё разок...");
-			html = AnyBalance.requestGet(baseurl, g_headers);
-		}
+        var json = getJson(getLKJson(html, allowRetry));
 
-        if(AnyBalance.getLastStatusCode() >= 500)
-        	throw new AnyBalance.Error("Ошибка на сервере МТС, сервер не смог обработать запрос. Можно попытаться позже...", allowRetry);
-
-		html = checkLoginState(html, loginUrl);
-		
-		AnyBalance.trace('isLoggedIn(html) = ' + isLoggedIn(html));
-		
-        if (isLoggedIn(html)) {
-            AnyBalance.trace("Уже залогинены, проверяем, что на правильный номер...");
-            //Автоматом залогинились, надо проверить, что на тот номер
-
-            var json = getJson(getLKJson(html, allowRetry));
-
-            var loggedInMSISDN = json.id;
-            if (!loggedInMSISDN) {
-                AnyBalance.trace(html);
-                throw new AnyBalance.Error('Не удалось определить текущий номер в кабинете, сайт изменен?', true);
-            }
-
-            if (loggedInMSISDN != prefs.login) { //Автоматом залогинились не на тот номер
-                AnyBalance.trace("Залогинены на неправильный номер: " + loggedInMSISDN + ", выходим");
-                html = AnyBalance.requestGet(baseurlLogin + '/amserver/UI/Logout', g_headers);
-				
-                if (isLoggedIn(html)) {
-                    AnyBalance.trace(html);
-                    throw new AnyBalance.Error('Не удаётся выйти из личного кабинета, чтобы зайти под правильным номером. Сайт изменен?', allowRetry);
-                }
-            } else {
-                AnyBalance.trace("Залогинены на правильный номер: " + loggedInMSISDN);
-            }
+        var loggedInMSISDN = json.id;
+        if (!loggedInMSISDN) {
+            AnyBalance.trace(html);
+            throw new AnyBalance.Error('Не удалось определить текущий номер в кабинете, сайт изменен?', true);
         }
-		
-        if (!isLoggedIn(html)) {
+
+        if (loggedInMSISDN != options.login) { //Автоматом залогинились не на тот номер
+            AnyBalance.trace("Залогинены на неправильный номер: " + loggedInMSISDN + ", выходим");
+            html = AnyBalance.requestGet(g_baseurlLogin + '/amserver/UI/Logout', g_headers);
+			
+            if (isLoggedIn(html)) {
+                AnyBalance.trace(html);
+                throw new AnyBalance.Error('Не удаётся выйти из личного кабинета, чтобы зайти под правильным номером. Сайт изменен?', allowRetry);
+            }
+        } else {
+            AnyBalance.trace("Залогинены на правильный номер: " + loggedInMSISDN);
+        }
+    }
+
+    if (!isLoggedIn(html)) {
+    	if(!options.onlyAutomatic){
             var form = getParam(html, null, null, /<form[^>]+name="Login"[^>]*>([\s\S]*?)<\/form>/i);
             if (!form) {
                 AnyBalance.trace(html);
@@ -684,9 +684,9 @@ function mainLK(allowRetry) {
             var params = createFormParams(form, function (params, input, name, value) {
                 var undef;
                 if (name == 'IDToken1')
-                    value = prefs.login;
+                    value = options.login;
                 else if (name == 'IDToken2')
-                    value = prefs.password;
+                    value = options.password;
                 else if (name == 'noscript')
                     value = undef; //Снимаем галочку
                 else if (name == 'IDButton')
@@ -708,19 +708,36 @@ function mainLK(allowRetry) {
 
 			if(AnyBalance.getLastStatusCode() >= 500)
         	    throw new AnyBalance.Error("Ошибка на сервере МТС при попытке зайти, сервер не смог обработать запрос! Можно попытаться позже...", allowRetry);
+        }else{
+        	throw new AnyBalance.Error('Ручной вход запрещен', allowRetry);
         }
+    }
 
-        if (!isLoggedIn(html)) {
-            // AnyBalance.trace(html);
-            var error = getParam(html, null, null, /<div[^>]+class="(?:msg_error|field_error)"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
-            if (error)
-                throw new AnyBalance.Error(error, false);
-            if (getParam(html, null, null, /(auth-status=0)/i))
-                throw new AnyBalance.Error('Неверный логин или пароль. Повторите попытку или получите новый пароль на сайте https://lk.ssl.mts.ru/.', false, true);
+    if (!isLoggedIn(html)) {
+        // AnyBalance.trace(html);
+        var error = getParam(html, null, null, /<div[^>]+class="(?:msg_error|field_error)"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+        if (error)
+            throw new AnyBalance.Error(error, false);
+        if (getParam(html, null, null, /(auth-status=0)/i))
+            throw new AnyBalance.Error('Неверный логин или пароль. Повторите попытку или получите новый пароль на сайте https://lk.ssl.mts.ru/.', false, true);
 
-            AnyBalance.trace(html);
-            throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Он изменился или проблемы на сайте.', allowRetry);
-        }
+        AnyBalance.trace(html);
+        throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Он изменился или проблемы на сайте.', allowRetry);
+    }
+
+    return html;
+}
+
+function mainLK(allowRetry) {
+    AnyBalance.trace("Entering lk...");
+
+    var prefs = AnyBalance.getPreferences();
+    AnyBalance.setDefaultCharset('utf-8');
+
+    var html;
+
+    try {
+        html = enterLK({login: prefs.login, password: prefs.password, allowRetry: allowRetry});
     } catch (e) {
         //Если не установлено требование другой попытки, устанавливаем его в переданное в функцию значение
         if (!isset(e.allow_retry))
@@ -764,14 +781,14 @@ function mainLK(allowRetry) {
 			for(var i = 0; i < 3; i++) {
 				AnyBalance.trace('Пробуем получить трафик, попытка: ' + (i+1));
 				
-				html = AnyBalance.requestGet(baseurl, addHeaders({Referer: baseurl}));
+				html = AnyBalance.requestGet(g_baseurl, addHeaders({Referer: g_baseurl}));
 				
 				var widgetJson = getParam(html, null, null, /myInternet.\w+\s*=\s*(\{[\s\S]*?\});/i, null, getJsonEval);
 				var href = widgetJson.widgetDataUrl;
 				if (!href)
 					throw new AnyBalance.Error('Не удалось найти ссылку на трафик.');
 				
-				info = AnyBalance.requestGet(baseurl + href + '&_=' + new Date().getTime(), addHeaders({'X-Requested-With': 'XMLHttpRequest', 'Accept': '*/*', 'Referer': 'https://lk.ssl.mts.ru/'}));
+				info = AnyBalance.requestGet(g_baseurl + href + '&_=' + new Date().getTime(), addHeaders({'X-Requested-With': 'XMLHttpRequest', 'Accept': '*/*', 'Referer': 'https://lk.ssl.mts.ru/'}));
 				AnyBalance.trace(info);
 				
 				if(!info) {
@@ -891,4 +908,101 @@ function parseBalanceRound(str) {
     if (isset(val))
         val = Math.round(val * 100) / 100;
     return val;
+}
+
+function initialize(){
+    var prefs = AnyBalance.getPreferences();
+    checkEmpty(!prefs.password || /^\w{6,26}$/.test(prefs.password), 'Желаемый пароль должен содержать от 6 до 26 символов');
+    if(prefs.password){
+    	checkEmpty(/^[a-zA-Z0-9]+$/.test(prefs.password) && /[a-z]/.test(prefs.password) && /[A-Z]/.test(prefs.password) && /[0-9]/.test(prefs.password),
+    	    'Желаемый пароль должен состоять только из латинских букв и цифр и должен содержать хотя бы одну строчную букву, заглавную букву и цифру');
+    }
+
+    var result = {success: true, __initialization: true};
+    result.login = prefs.login;
+
+    var html, pass;
+    try{
+    	html = enterLK({login: prefs.login, onlyAutomatic: true});
+		if(!prefs.password)
+			pass = generatePassword();
+        if(prefs.password || pass){
+            changePassword(undefined, prefs.password || pass);
+        }
+    }catch(e){
+    	AnyBalance.trace('Автоматический вход в кабинет не удался. Пробуем получить пароль через СМС');
+        pass = getPasswordBySMS(prefs.login);
+        html = enterLK({login: prefs.login, password: pass});
+        if(prefs.password && prefs.password != pass){
+            changePassword(pass, prefs.password);
+        }
+    }
+
+    result.password = prefs.password || pass;
+
+    AnyBalance.setResult(result);
+}
+
+function getPasswordBySMS(login){
+    var url = g_baseurlLogin + '/amserver/UI/Login?service=smspassword&srcsvc=lk&goto=http%3A%2F%2Flk.ssl.mts.ru%2F';
+    var html = AnyBalance.requestGet(url, g_headers);
+
+    var img = getParam(html, null, null, /<img[^>]+id="kaptchaImage"[^>]*src="data:image\/\w+;base64,([^"]+)/i, null, html_entity_decode);
+    var code = AnyBalance.retrieveCode('Для получения пароля к личному кабинету по SMS символы, которые вы видите на картинке.', img, {time: 5000});
+	var form = getParam(html, null, null, /<form[^>]+name="Login"[^>]*>([\s\S]*?)<\/form>/i);
+	var params = createFormParams(form, function (params, input, name, value) {
+        if (name == 'IDToken1')
+            value = login;
+        if (name == 'IDToken2')
+            value = code;
+        return value;
+    });
+
+    html = AnyBalance.requestPost(url, params, addHeaders({Referer: url}));
+    var error = getParam(html, null, null, /var\s+passwordErr\s*=\s*'([^']*)/, replaceSlashes);
+    if(error)
+    	throw new AnyBalance.Error(error);
+
+    var password = AnyBalance.retrieveCode('На номер ' + login + ' выслан пароль к личному кабинету МТС. Введите его в поле ниже', null, {time: 5000});
+    return password;
+}
+
+function changePassword(oldPass, newPass){
+    var url = g_baseurlLogin + '/amserver/UI/Login?service=changepassword2014';
+    var html = AnyBalance.requestGet(url, g_headers);
+    var form = getParam(html, null, null, /<form[^>]+name="Login"[^>]*>[\s\S]*?<\/form>/i);
+    if(!form){
+    	AnyBalance.trace(html);
+    	throw new AnyBalance.Error('Не удалось найти форму смены пароля. Сайт изменен?');
+    }
+
+	var params = createFormParams(form, function (params, input, name, value) {
+        if (name == 'IDToken1')
+            value = oldPass;
+        if (name == 'IDToken2' || name == 'IDToken3')
+            value = newPass;
+        return value;
+    });
+
+    html = AnyBalance.requestPost(url, params, addHeaders({Referer: url}));
+    var lastUrl = AnyBalance.getLastUrl();
+    if(!/#pass_changed/i.test(lastUrl)){
+        var error = sumParam(html, null, null, /var\s+(?:old|new|con)passwordErr\s*=\s*'([^']*)/, replaceSlashes, null, aggregate_join);
+        if(error)
+        	throw new AnyBalance.Error(error);
+
+        AnyBalance.trace(html);
+        throw new AnyBalance.Error('Не удалось сменить пароль на желаемый. Сайт изменен?');
+    }
+
+    return newPass;
+}
+
+function generatePassword(){
+	var pass = String.fromCharCode("A".charCodeAt() + Math.floor(Math.random()*26));
+	pass += String.fromCharCode("0".charCodeAt() + Math.floor(Math.random()*10));
+        for(var i=0; i<4; ++i){
+	    pass += String.fromCharCode("a".charCodeAt() + Math.floor(Math.random()*26));
+	}
+	return pass;
 }

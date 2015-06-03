@@ -1163,6 +1163,10 @@ function checkTextForError(text){
     var error = getParam(text, null, null, /&#1055;&#1088;&#1086;&#1080;&#1079;&#1086;&#1096;&#1083;&#1072; &#1086;&#1096;&#1080;&#1073;&#1082;&#1072; &#1087;&#1088;&#1080; &#1088;&#1072;&#1073;&#1086;&#1090;&#1077; &#1089; &#1089;&#1080;&#1089;&#1090;&#1077;&#1084;&#1086;&#1081;[\s\S]*?<[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
     if(error)
         throw new AnyBalance.Error(error);
+
+    error = getParam(text, null, null, /<STRONG[^>]+class="attention">([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+    if(error)
+		throw new AnyBalance.Error(error);
 }
 
 function sleep(delay) {

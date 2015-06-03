@@ -16,7 +16,14 @@ function main(){
     var baseurl = 'https://bills.megastyle.com:9443/';
     AnyBalance.setDefaultCharset('utf-8'); 
 
-    var html = AnyBalance.requestPost(baseurl + 'index.cgi', {
+	var html = AnyBalance.requestGet(baseurl, g_headers);
+	
+	if(!html || AnyBalance.getLastStatusCode() > 400){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+	}
+	
+    html = AnyBalance.requestPost(baseurl + 'index.cgi', {
 		'DOMAIN_ID':'',
 		'REFERRER':baseurl,
 		'language':'russian',
@@ -25,7 +32,7 @@ function main(){
 		'logined': 'Войти'
     }, addHeaders({Referer: baseurl})); 
 
-	if(!/>\s*Выход\s*</i.test(html)) {
+	if(!/\(UID:\s*\d+\)/i.test(html)) {
 		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));

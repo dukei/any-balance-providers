@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="2">ab-internet-megastyle</id>
+	<id version="3">ab-internet-megastyle</id>
 	<name>MegaStyle (Черкассы)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе провайдера MegaStyle г. Черкассы <a href="http://uch.net">http://uch.net</a></p>
 	<p>Информация берется из личного кабинета <a href="https://bills.megastyle.com:9443/index.cgi">https://bills.megastyle.com:9443/index.cgi</a></p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

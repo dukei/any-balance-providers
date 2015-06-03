@@ -18,7 +18,7 @@ function main() {
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	var html = AnyBalance.requestGet(baseurl + 'users/login', g_headers);
+	var html = AnyBalance.requestGet(baseurl, g_headers);
 	
 	if(!html || AnyBalance.getLastStatusCode() > 400){
 		AnyBalance.trace(html);
@@ -34,7 +34,7 @@ function main() {
 		return value;
 	});
 	
-	html = AnyBalance.requestPost(baseurl + '/users/login', params, addHeaders({Referer: baseurl + 'login'}));
+	html = AnyBalance.requestPost(baseurl + 'users/login', params, addHeaders({Referer: baseurl}));
 	
 	if (!/logout/i.test(html)) {
 		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);

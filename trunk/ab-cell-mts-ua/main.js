@@ -324,6 +324,13 @@ function main(){
 
     // Единоразовое ПЗС за пределами региона (Смартфон)
     sumParam (html, result, 'PZS_first_out', /<li>Единоразовое ПЗС за пределами региона \(Смартфон\)[^<]*([\d\.,]+)<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    
+    html = AnyBalance.requestGet (baseurl + 'TariffChange.mvc');
+
+    AnyBalance.trace("Parsing tariff info...");
+
+    // Тарифный план
+    getParam (html, result, '__tariff', /<p>(?:Ваш тариф|tariff plan):\s*<strong>([\s\S]*?)<\/strong><\/p>/i, replaceTagsAndSpaces, html_entity_decode);
 
     if (AnyBalance.isAvailable ('usedinprevmonth')) {
 
@@ -345,8 +352,6 @@ function main(){
 
         AnyBalance.trace("Parsing traffic info...");
 
-	// Тарифный план
-	getParam (html, result, '__tariff', /<p>(?:Ваш тариф|tariff plan):\s*<strong>([\s\S]*?)<\/strong><\/p>/i, replaceTagsAndSpaces, html_entity_decode);
         // Ежемесячная плата
         getParam (html, result, 'monthlypay', /Абонентська плата:[^\d]*?([\d\.,]+)/i, replaceTagsAndSpaces, parseBalance);
     }

@@ -23,7 +23,7 @@ function main(){
 	
     var html = AnyBalance.requestGet(baseurl + "/pub/Login");
     
-    var matches = /wicketSubmitFormById\(['"](id\d+)['"]\s*,\s*['"][^\/]+([^'"]+)/i.exec(html);
+    var matches = /Wicket.Ajax.ajax\(\{"f":"id([^"]+)","\w":".\/([^"]+)/i.exec(html);
     if(!matches){
         var prof = getParam(html, null, null, /<title>(Профилактические работы)<\/title>/i);
         if(prof)
@@ -38,7 +38,7 @@ function main(){
     params.login=prefs.login;
     params.password=prefs.password;
 
-    html = AnyBalance.requestPost(baseurl + href, params);
+    html = AnyBalance.requestPost(baseurl + '/pub/' + href, params);
 
     var error = getParam(html, null, null, /<span[^>]*class="feedbackPanelERROR"[^>]*>([\s\S]*?)(<script|<\/span>)/i, replaceTagsAndSpaces);
     if(error)

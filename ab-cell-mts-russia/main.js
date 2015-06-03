@@ -590,7 +590,7 @@ function isAnotherNumber(){
 }
 
 function checkLoginState(html, loginUrl) {
-    var img = getParam(html, null, null, /<img[^>]+id="kaptchaImage"[^>]*src="data:image\/\w+;base64,([^"]*)/, null, html_entity_decode);
+    var img = getParam(html, null, null, /<img[^>]+id="kaptchaImage"[^>]*src="data:image\/\w+;base64,([^"]+)/i, null, html_entity_decode);
 	if(img) {
 	    AnyBalance.trace('МТС решило показать капчу :( Жаль');
 	    var code = AnyBalance.retrieveCode('МТС требует ввести капчу для входа в личный кабинет, чтобы подтвердить, что вы не робот. Введите символы, которые вы видите на картинке.', img);

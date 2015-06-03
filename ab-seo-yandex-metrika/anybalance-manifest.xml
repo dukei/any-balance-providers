@@ -1,15 +1,16 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="7">ab-seo-yandex-metrika</id>
+	<id version="8">ab-seo-yandex-metrika</id>
 	<name>Яндекс.Метрика</name>
 	<description html="true"><![CDATA[
-	<p>Получает данные по id счетчика в системе Яндекс Метрика (http://metrika.yandex.ru/stat/?counter_id=)</p>
+	<p>Получает данные по id счетчика в системе Яндекс Метрика <a href="http://metrika.yandex.ru/stat/?counter_id=">http://metrika.yandex.ru/stat/?counter_id=</a></p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
+		<js>login.js</js>
 		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>

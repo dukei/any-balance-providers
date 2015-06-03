@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-money-usbank</id>
+	<api flags="no_browser"/>
+	<name>Us Bank</name>
+	<description html="true"><![CDATA[
+	<p>Obtains information from US Bank personal account <a href="https://www.usbank.com/">https://www.usbank.com/</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance_avail" name="Balance available" units=" {@currency}"/>
+		<counter id="balance" name="Balance total" units=" {@currency}"/>
+		<counter id="credit" name="Credit available" units=" {@currency}"/>
+		<counter id="acc_type" name="Account type" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>money, bank</type>
+	<country>us</country>
+</provider>

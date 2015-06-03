@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="5" date="2015-06-03">
+	- Автоматическое определение типа кабинета.
+	</change>
 	<change version="4" date="2015-05-27">
 	- Опять что-то поменялось на сайте.
 	</change>

@@ -17,7 +17,7 @@ function main(){
     AnyBalance.setDefaultCharset('utf-8'); 
 	AnyBalance.setOptions({forceCharset: 'windows-1251'});
 	
-    var html = AnyBalance.requestGet(baseurl + '', g_headers);
+    var html = AnyBalance.requestGet(baseurl, g_headers);
 	
 	html = AnyBalance.requestPost(baseurl + 'login', {
         login:prefs.login,
@@ -30,13 +30,20 @@ function main(){
         if(error)
             throw new AnyBalance.Error(error);
 		
+		AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
 	
 	AnyBalance.setOptions({forceCharset: 'utf-8'});
 	
-	html = AnyBalance.requestGet(baseurl + 'sdpupil/include/auth.php', g_headers);
-	html = AnyBalance.requestGet(baseurl + 'sdpupil/index.php?page=personal', g_headers);
+	var type = 'sdpupil';
+	if(/sdpupil_pg/i.test(html)) {
+		AnyBalance.trace('Тип кабинета: sdpupil_pg');
+		type = 'sdpupil_pg';
+	}
+	
+	html = AnyBalance.requestGet(baseurl + type + '/include/auth.php', g_headers);
+	html = AnyBalance.requestGet(baseurl + type + '/index.php?page=personal', g_headers);
 	
     var result = {success: true};
 	

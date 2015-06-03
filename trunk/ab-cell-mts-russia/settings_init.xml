@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Номер телефона" 
+        positiveButtonText="ОК" 
+        summary="|Номер телефона (10 цифр)|{@s}" 
+        dialogTitle="Номер телефона" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите номер вашего телефона (10 цифр), например 9161234567"
+        obligatory="true"
+        key="login"
+        inputType="number">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Желаемый пароль"
+        negativeButtonText="Отмена"
+        title="Желаемый пароль"
+        summary="|Желаемый пароль, который вы хотите установить для входа в личный кабинет|***********"
+        dialogMessage="Введите пароль, который вы желаете использовать для входа в личный кабинет. Если хотите, чтобы пароль был сгенерирован автоматически, не вводите ничего."
+        obligatory="true"
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

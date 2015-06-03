@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference
+		title="Login"
+		key="login"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Login"
+		positiveButtonText="OK"
+		negativeButtonText="Cancel"
+		dialogMessage="Enter login to personal account.">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Password"
+		key="password"
+		summary="||***********"
+		obligatory="true"
+		dialogTitle="Password"
+		positiveButtonText="OK"
+		negativeButtonText="Cancel"
+		dialogMessage="Enter password to personal account."
+		inputType="textPassword">
+	</EditTextPreference>
+	
+	<EditTextPreference
+		title="Last digits of account"
+		key="digits"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Last digits of account"
+		positiveButtonText="OK"
+		negativeButtonText="Cancel"
+		dialogMessage="Enter last 4 digits, or enter nothing.">
+	</EditTextPreference>	
+</PreferenceScreen>

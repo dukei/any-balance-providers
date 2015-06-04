@@ -1,12 +1,15 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
-<change version="4" date="2013-12-14">
-- Minor changes
-</change>
-<change version="3" date="2013-10-19">
-- New counter - Quote
-</change>
-<change version="2" date="2013-10-18">
-- New counter - Name
-</change>
+	<change version="5" date="2015-06-04">
+	- Support site changes.
+	</change>
+	<change version="4" date="2013-12-14">
+	- Minor changes
+	</change>
+	<change version="3" date="2013-10-19">
+	- New counter - Quote
+	</change>
+	<change version="2" date="2013-10-18">
+	- New counter - Name
+	</change>
 </history>

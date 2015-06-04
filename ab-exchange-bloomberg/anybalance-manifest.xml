@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-exchange-bloomberg</id>
+	<id version="5">ab-exchange-bloomberg</id>
 	<api flags="no_browser"/>
 	<name>Bloomberg</name>
 	<description html="true"><![CDATA[

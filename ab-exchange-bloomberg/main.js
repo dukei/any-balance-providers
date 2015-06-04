@@ -26,22 +26,19 @@ function main() {
 	
 	html = AnyBalance.requestGet(baseurl + href, g_headers);
 	
-	var header = getParam(html, null, null, /(<div[^>]*class="ticker_header(?:[\s\S]*?<div){10})/i);
+	var header = getParam(html, null, null, /<div[^>]*class="basic-quote[^"]*"(?:[^>]*>){43}(?:\s*<\/div[^>]*>\s*){3}/i);
 	if(!header)
 		throw new AnyBalance.Error('Please check entered quote. The quote ' + prefs.quote + ' has not been found!');
 	
 	var result = {success: true};
 	
 	getParam(href, result, 'quote', /quote\/(.*)/i, null, html_entity_decode);
-	getParam(header, result, '__tariff', /<h2>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(header, result, 'quote_show', /<h2>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(header, result, 'balance', /class\s*=\s*"\s*price[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	
-	var currency = getParam(header, null, null, /class\s*=\s*"\s*price[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, parseCurrency);
-	// У куросов валют валюта получается такая: Priceof1EURinUSD
-	if(currency.length < 5)
-		result.currency = currency;
-	//getParam(header, result, ['currency', 'balance', 'trending'], /class\s*=\s*"\s*price[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, parseCurrency);
+	getParam(header, result, '__tariff', /<h1[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(header, result, 'quote_show', /<h1[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(header, result, 'balance', /class\s*=\s*"price"[^>]*>([\s\d.,]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(header, result, ['currency', 'balance', 'trending'], /class\s*=\s*"currency"[^>]*>([^<]+)/i);
+
+
 	getParam(header, result, 'trending_pcts', /class\s*=\s*"\s*trending_[^>]*>[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);	
 	
 	var i = getParam(header, null, null, /class\s*=\s*"\s*trending_down[^>]*>([\s\S]*?)</i, replaceTagsAndSpaces, parseBalance);
@@ -50,11 +47,11 @@ function main() {
 	} else {
 		getParam(header, result, 'trending', /class\s*=\s*"\s*trending_up[^>]*>([\s\S]*?)</i, replaceTagsAndSpaces, parseBalance);
 	}
-	getParam(html, result, 'open', /<table[^>]*class='snapshot_table[\s\S]*?Open[^>]*>[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'volume', /<table[^>]*class='snapshot_table[\s\S]*?Volume[^>]*>[^>]*>([^<]*)/i, [/\D/g, ''], parseBalance);
-	getParam(html, result, 'prev_close', /<table[^>]*class='snapshot_table[\s\S]*?Previous\s*Close[^>]*>[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'days_range', /<table[^>]*class='snapshot_table[\s\S]*?Day[^>]*Range[^>]*>[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, '52w_range', /<table[^>]*class='snapshot_table[\s\S]*?52wk Range[^>]*>[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'open', />\s*Open(?:[^>]*>){2}([\s\d.,-]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'volume', />\s*Volume(?:[^>]*>){2}([\s\d.,-]+)/i, [/\D/g, ''], parseBalance);
+	getParam(html, result, 'prev_close', />\s*Previous\s+Close(?:[^>]*>){2}([\s\d.,-]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'days_range', />\s*Day[^>]*Range(?:[^>]*>){2}([\s\d.,-]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, '52w_range', />\s*52wk Range(?:[^>]*>){2}([\s\d.,-]+)/i, replaceTagsAndSpaces, html_entity_decode);
 	
     AnyBalance.setResult(result);
 }

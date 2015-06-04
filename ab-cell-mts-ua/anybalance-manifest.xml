@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="1.2" version="49">ab-cell-mts-ua</id>
+	<id major_version="1.2" version="50">ab-cell-mts-ua</id>
 	<api flags="no_browser"/>
 	<name>МТС (Украина)</name>
 	<description html="true"><![CDATA[
@@ -50,6 +50,8 @@
 		<counter id="traffic_kop_mb" name="Интернет за копейку и другие ежедневные пакеты" units=" mb"/>
 		<counter id="traffic_reg_kop_mb" name="Интернет за копейку региональный и общенациональный" units=" mb"/>
 		<counter id="traffic_maxenergy_mb" name="Интернет Max Energy" units=" mb"/>
+		<counter id="traffic_evropa_mb" name="Интернет в Европе" units=" mb"/>
+		<counter id="traffic_russia_mb" name="Интернет в России" units=" mb"/>
 		<counter id="sms_net" name="СМС в сети МТС" units=" sms"/>
 		<counter id="sms_others" name="СМС на сети других мобильных операторов Украины" units=" sms"/>
 		<counter id="sms_mms_others" name="СМС/MMC на сети других мобильных операторов Украины" units=" sms/mms"/>
@@ -74,6 +76,7 @@
 		<counter id="traffic_opera_mb" name="Opera Mini к-во Кб загруженных по АПН opera" units=" mb"/>
 		<counter id="traffic_free_mb" name="Бесплатный интернет" units=" mb"/>
 		<counter id="sms_used" name="Израсходовано SMS" units=" sms"/>
+		<counter id="sms_used_net" name="Израсходовано SMS внутри сети" units=" sms"/>
 		<counter id="mms_used" name="Израсходовано MMS" units=" mms"/>
 		<counter id="sms_mms_used" name="Израсходовано SMS/MMS" units=" sms/mms"/>
 		<counter id="traffic_used" name="Использованно Мб" units=" mb"/>
@@ -82,6 +85,8 @@
 		<counter id="PZS_MB_opera" name="ПЗС за первое событие для APN opera" flags="zero_when_empty"/>
 		<counter id="PZS_first" name="ПЗС за первое событие" flags="zero_when_empty"/>
 		<counter id="PZS_first_out" name="ПЗС за пределами региона" flags="zero_when_empty"/>
+		<counter id="PZS_first_evrope" name="Плата за первое GPRS событие в Европе"/>
+		<counter id="PZS_first_russia" name="Плата за первое GPRS событие в России"/>
 		<!--Сроки пакетов -->
 		<counter id="termin" name="Срок действия номера" type="time" format="dd/MM/yyyy"/>
 		<counter id="termin_bonus_balance" name="Срок действия бонусного баланса" type="time" format="dd/MM/yyyy HH:mm:ss"/>

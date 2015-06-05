@@ -17,25 +17,26 @@ function main(){
     checkEmpty(prefs.password, 'Enter password!');
 
 	var baseurl = 'https://areaprivada.orange.es/';
-	
 	var baseurlLogin = 'https://gidf.orange.es/';
-	var html;
-    AnyBalance.setDefaultCharset('utf-8'); 
-
-	html = AnyBalance.requestPost(baseurlLogin + 'osp_auth/', {
+    AnyBalance.setDefaultCharset('utf-8');
+	
+	var html = AnyBalance.requestPost(baseurlLogin + 'osp_auth/', {
 		'gotoOnFail':'http://m.orange.es/miorange/?eCode=1?msisdn=' + prefs.login,
-		'goto':baseurl+'neos/init-mobile.neos',
+		'goto': baseurl + 'cliente/',
 		'gotoOnBlacklist':baseurl+'error.html?errorCode=LOCK',
 		'serv':'NEOSMO',
 		'wt-msisdn':prefs.login,
 		'wt-pwd':prefs.password
 	}, addHeaders({Referer: 'http://m.orange.es/miorange/', Origin: 'http://m.orange.es'}));
-
-    if(!/div id="balance"/i.test(html)){
+	
+	html = AnyBalance.requestGet(baseurl + 'cliente/client/entry-point-do?controller=client&action=entry-point', g_headers);
+	
+    if(!/logout/i.test(html)){
         //Если в кабинет войти не получилось, то в первую очередь надо поискать в ответе сервера объяснение ошибки
         var error = getParam(html, null, null, /Error de logado[\s\S]{1,50}<p>\s*([\s\S]*?)\s*<br\/>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error);
+		
         throw new AnyBalance.Error('Login failed, please contact to developer!');
     }
 	// balances
@@ -50,7 +51,7 @@ function main(){
 		var json = getJson(html);
 		getParam(json.name, result, '__tariff', null, null, null);
 	} catch(e){
-		AnyBalance.trace('Cant parse JSON object from ' + baseurl+'neos/show-co-header.neos?p=rateplan1st');
+		AnyBalance.trace('Cant parse JSON object from ' + baseurl + 'neos/show-co-header.neos?p=rateplan1st');
 	}
     //Возвращаем результат
     AnyBalance.setResult(result);

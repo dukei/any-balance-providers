@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="7">ab-telephony-allo</id>
+	<id version="8">ab-telephony-allo</id>
 	<api flags="no_browser"/>
 	<name>АллоИнкогнито</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе провайдера IP телефонии АллоИнкогнито https://lk.alloincognito.ru</p>
-	<p>Информация берется из личного кабинета https://lk.alloincognito.ru</p>
+	<p>Предоставляет информацию о балансе провайдера IP телефонии АллоИнкогнито <a href="https://lk.alloincognito.ru">https://lk.alloincognito.ru</a></p>
+	<p>Информация берется из личного кабинета <a href="https://lk.alloincognito.ru">https://lk.alloincognito.ru</a></p>
 	]]></description>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

@@ -60,14 +60,29 @@ function doNewCabinet(prefs) {
 	getParam(html, result, '__tariff', /"komplekt-number"(?:[^>]*>){3}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
 	
 	try {
-		var packs = sumParam(html, null, null, /<div[^>]+class="limitname"(?:[^>]*>){16}\s*<\/div>/i);
+		var setId = getParam(html, null, null, /Лимиты услуг\s*<\/div>\s*<div[^>]*data-set_id="([^"]+)"/i);
+		
+		if(!setId)
+			throw new AnyBalance.Error('Не удалось найти ссылку на пакеты услуг!');
+		
+		html = AnyBalance.requestPost(baseurl + '?option=com_cabinet&task=home.refresh_limits', {
+			'set_id': setId,
+			'refresh': '1',
+		}, g_headers);
+		
+		var json = getJson(html);
+		
+		if(!json.success)
+			throw new AnyBalance.Error('Возникла ошибка при обработке запроса!');
+		
+		var packs = sumParam(json.block, null, null, /<div[^>]+class="limitname"(?:[^>]*>){12,16}\s*<\/div>/ig);
 		AnyBalance.trace('Найдено пакетов: ' + packs.length);
 		for(var i = 0; i < packs.length; i++) {
 			var current = packs[i];
 			var name = getParam(current, null, null, /<span>([\s\S]*?)<\//i, replaceTagsAndSpaces);
 			
-			if(/Интернет/i.test(name)) {
-				getParam(html, result, 'internet', /Осталось([\d\s.,]+МБ)/i, replaceTagsAndSpaces, parseTraffic);
+			if(/Интернет|Продли скорость/i.test(name)) {
+				sumParam(current, result, 'internet', /Осталось([\d\s.,]+МБ)/i, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
 			} else {
 				AnyBalance.trace('Неизвестная опция: ' + current);
 			}

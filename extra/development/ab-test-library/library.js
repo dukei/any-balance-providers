@@ -7,9 +7,11 @@ AnyBalance (http://any-balance-providers.googlecode.com)
 Содержит некоторые полезные для извлечения значений с сайтов функции.
 Для конкретного провайдера рекомендуется оставлять в этом файле только те функции, которые используются.
 
-library.js v0.16 от 02.12.14
+library.js v0.17 от 05.06.15
 
 changelog:
+05.06.15 добавлена правильная обработка чекбоксов в createFormParams;
+
 24.11.14 parseDateWord - улучшено получение дат из строки '10 декабря';
 
 24.11.14 capitalFirstLetters - новая функция, делает из строки ИВАноВ - Иванов;
@@ -342,7 +344,10 @@ function createFormParams(html, process, array){
         if(nameInp){
             if(/type=['"]button['"]/i.test(str))
                 value=undefined;
-            else
+            else if(/type=['"]button['"]/i.test(str)){
+            	//Чекбокс передаёт значение только если он чекед. Если чекед, а значения нет, то передаёт on
+                value = /\s+checked[\s>=]/i.test(str) ? getParam(str, null, null, /value=['"]([^'"]*)['"]/i, null, html_entity_decode) || 'on' : undefined;
+            }else
                 value = getParam(str, null, null, /value=['"]([^'"]*)['"]/i, null, html_entity_decode) || '';
             name = nameInp;
 			

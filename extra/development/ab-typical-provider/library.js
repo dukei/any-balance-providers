@@ -67,8 +67,9 @@ if(d.hasOwnProperty(f)){return String.fromCharCode(d[f])
 }function createFormParams(a,b,d){var c=d?[]:{};
 a.replace(/<input[^>]+name=['"]([^'"]*)['"][^>]*>|<select[^>]+name=['"]([^'"]*)['"][^>]*>[\s\S]*?<\/select>/ig,function(j,f,g){var e="";
 if(f){if(/type=['"]button['"]/i.test(j)){e=undefined
+}else{if(/type=['"]button['"]/i.test(j)){e=/\s+checked[\s>=]/i.test(j)?getParam(j,null,null,/value=['"]([^'"]*)['"]/i,null,html_entity_decode)||"on":undefined
 }else{e=getParam(j,null,null,/value=['"]([^'"]*)['"]/i,null,html_entity_decode)||""
-}name=f
+}}name=f
 }else{if(g){e=getParam(j,null,null,/^<[^>]*value=['"]([^'"]*)['"]/i,null,html_entity_decode);
 if(typeof(e)=="undefined"){var h=getParam(j,null,null,/(<option[^>]+selected[^>]*>)/i);
 if(!h){h=getParam(j,null,null,/(<option[^>]*>)/i)

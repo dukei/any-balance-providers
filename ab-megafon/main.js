@@ -273,7 +273,7 @@ function main(){
         throw new AnyBalance.Error(filinfo.name + ' Мегафона ещё не поддерживается. Пожалуйста, помогите его поддержать. Информация на сайте программы http://any-balance-providers.googlecode.com .');
 
     if(prefs.__initialization)
-	return initialize(filial);
+	    return initialize(filial);
     
     //(filinfo.func)(filial);
     loadFilialInfo(filial);
@@ -1882,7 +1882,7 @@ function initialize(filial){
     var prefs = AnyBalance.getPreferences();
     checkEmpty(!prefs.password || /^\w{6,26}$/.test(prefs.password), 'Желаемый пароль должен содержать от 6 до 26 символов');
     
-    var pass = AnyBalance.retrieveCode('Наберите на телефоне с номером ' + prefs.login + ' команду *105*00# или отправьте СМС с текстом 00 на номер 000105. В ответ придет СМС с паролем. Введите его в поле ввода ниже. <!--#instruction:{"sms":{"number":"000105","text": "00"},"ussd":{"number":"*105*00#"}}#-->', null, {time: 300000});
+    var pass = AnyBalance.retrieveCode('Наберите на телефоне с номером ' + prefs.login + ' команду *105*00# или отправьте СМС с текстом 00 на номер 000105. В ответ придет СМС с паролем. Введите его в поле ввода ниже. <!--#instruction:{"sms":{"number":"000105","text":"00","number_in":"MegaFon","regexp_in":"Пароль для доступа\\D+(\\d+)\\."},"ussd":{"number":"*105*00#","number_in":"MegaFon","regexp_in":"Пароль для доступа\\D+(\\d+)\\."}}#-->', null, {time: 300000});
 
     var sginfo;
     try{
@@ -1893,7 +1893,7 @@ function initialize(filial){
         AnyBalance.trace('Не удалось войти через ЛК, пробуем зайти в СГ напрямую: ' + e.message);
         sginfo = enterSG(filial, {login: prefs.login, password: pass});
     }
-    if(prefs.password /* && pass != prefs.password */){
+    if(prefs.password && pass != prefs.password){
     	changePasswordSG(filial, sginfo.sessionid, pass, prefs.password);
     }
     turnOffNotificationSMSSG(filial, sginfo.sessionid, prefs.login);

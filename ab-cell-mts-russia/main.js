@@ -963,7 +963,7 @@ function getPasswordBySMS(login){
     if(error)
     	throw new AnyBalance.Error(error);
 
-    var password = AnyBalance.retrieveCode('На номер ' + login + ' выслан пароль к личному кабинету МТС. Введите его в поле ниже. <!--#instruction:{"sms":{"number_in":"3339","regexp_in":"Пароль:\\s*(\\w+)"}}#-->', null, {time: 5000});
+    var password = AnyBalance.retrieveCode('На номер ' + login + ' выслан пароль к личному кабинету МТС. Введите его в поле ниже. <!--#instruction:{"sms":{"number_in":"3339","regexp_in":"Пароль:\\s*(\\w+)"}}#-->', null, {time: 300000});
     return password;
 }
 

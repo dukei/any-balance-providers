@@ -290,7 +290,7 @@ function loadFilialInfo(filial){
     if(!ok){
         try{
         	var sginfo = enterLK(filial, {login: prefs.login, password: prefs.password, useOldSG: true});
-        	megafonServiceGuidePhysical(filial, sginfo.sessionid);
+        	megafonServiceGuidePhysical(filial, sginfo.sessionid, sginfo.html);
 			ok = true;
 		}catch(e){
 			if(e.fatal)
@@ -301,7 +301,7 @@ function loadFilialInfo(filial){
 	        AnyBalance.trace('Не удалось получить информацию из личного кабинета: ' + e.message);
 		}
 	}
-
+	
     if(!ok){
         try{
 			megafonLkAPI(filinfo, {allow_captcha: false});
@@ -451,6 +451,7 @@ function loadFilial(filial, addr){
 	return html;
 }
 
+var replaceNumber = [replaceTagsAndSpaces, /\D/g, '', /(\d\d\d)(\d\d\d)(\d\d)(\d\d)$/, '+7 $1 $2-$3-$4'];
 function megafonTrayInfo(filial) {
 	var filinfo = filial_info[filial], errorInTray;
 	var internet_totals_was = {};
@@ -462,7 +463,7 @@ function megafonTrayInfo(filial) {
 		
 		getParam(xml, result, '__tariff', /<RATE_PLAN>([\s\S]*?)<\/RATE_PLAN>/i, replaceTagsAndSpaces, html_entity_decode);
 		getParam(xml, result, 'balance', /<BALANCE>([\s\S]*?)<\/BALANCE>/i, replaceTagsAndSpaces, parseBalance);
-		getParam(xml, result, 'phone', /<NUMBER>([\s\S]*?)<\/NUMBER>/i, replaceTagsAndSpaces, html_entity_decode);
+		getParam(xml, result, 'phone', /<NUMBER>([\s\S]*?)<\/NUMBER>/i, replaceNumber, html_entity_decode);
 		getParam(xml, result, 'prsnl_balance', /<PRSNL_BALANCE>([\s\S]*?)<\/PRSNL_BALANCE>/i, replaceTagsAndSpaces, parseBalance);
 		
 		var packs = xml.split(/<PACK>/ig);
@@ -650,7 +651,7 @@ function megafonTrayInfo(filial) {
 					getParam(json.ok.html, result, 'sub_scr', /Роуминг\s*<\/td>(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 				}
 				// 																										Заменяем строку вида $[widgets.current.user($msisdn)]
-				getParam(json.ok.html, result, 'phone', /<span[^>]*class="login"[^>]*>([\s\S]*?)<\/span>/i, [/\uFFFD/g, ' ', replaceTagsAndSpaces, /\$\[[\s\S]*?\]/i, ''], html_entity_decode);
+				getParam(json.ok.html, result, 'phone', /<span[^>]*class="login"[^>]*>([\s\S]*?)<\/span>/i, [/\uFFFD/g, ' ', replaceTagsAndSpaces, /\$\[[\s\S]*?\]/i, '', replaceNumber], html_entity_decode);
 				if (need_int_cur) getParam(json.ok.html, result, 'internet_cur', /Интернет-траффик \(GPRS\)\s*<\/td>(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTraffic);
 				getParam(json.ok.html, result, 'internet_cost', /Интернет-траффик \(GPRS\)\s*<\/td>(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 				var table = getParam(json.ok.html, null, null, /<table[^>]*class="[^>]*rate-plans[^>][\s\S]*?<\/table>/i);
@@ -997,7 +998,7 @@ function megafonLK(filinfo, tryOldSG) {
 	
 	getParam(html, result, 'balance', /Баланс[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'bonus_balance', /Бонусные баллы[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'phone', /Ваш номер[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'phone', /Ваш номер[^>]*>([\s\S]*?)<\//i, replaceNumber, html_entity_decode);
 	
 	if(isAvailable(['last_pay_sum', 'last_pay_date'])) {
 		html = AnyBalance.requestGet(baseurl + 'history/', g_headers);
@@ -1031,7 +1032,7 @@ function megafonBalanceInfo(filial) {
 
     var result = {success: true, filial: filinfo.id};
     getParam(html, result, 'balance', /<BALANCE>([^<]*)<\/BALANCE>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'phone', /<MSISDN>([^<]*)<\/MSISDN>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'phone', /<MSISDN>([^<]*)<\/MSISDN>/i, replaceNumber, html_entity_decode);
 
     //Не, врет безбожно, бесполезно вызывать
     //getInternetInfo(filial, result, {});
@@ -1181,7 +1182,7 @@ function sleep(delay) {
    }
 } 
 
-function megafonServiceGuidePhysical(filial, sessionid){
+function megafonServiceGuidePhysical(filial, sessionid, text){
 	AnyBalance.trace('Мы в megafonServiceGuidePhysical; sessionid ==' + sessionid);
     var filinfo = filial_info[filial];
     var baseurl = filinfo.sg;
@@ -1191,20 +1192,26 @@ function megafonServiceGuidePhysical(filial, sessionid){
 
     var phone = prefs.phone || prefs.login;
 
-    var text = AnyBalance.requestPost(baseurl + 'SCWWW/ACCOUNT_INFO', {
-        SUBSCRIBER_MSISDN:phone,
-        CHANNEL: 'WWW', 
-        SESSION_ID: sessionid,
-        P_USER_LANG_ID: 1,
-        CUR_SUBS_MSISDN:phone
-    });
+    if(!text || !/id="MAIN_FORM_NAME"[^>]*value="ACCOUNT_INFO"/i.test(text)){
+        text = AnyBalance.requestPost(baseurl + 'SCWWW/ACCOUNT_INFO', {
+            SUBSCRIBER_MSISDN:phone,
+            CHANNEL: 'WWW', 
+            SESSION_ID: sessionid,
+            P_USER_LANG_ID: 1,
+            CUR_SUBS_MSISDN:phone
+        });
+    }
 
     checkTextForError(text);
+    if(!/id="MAIN_FORM_NAME"[^>]*value="ACCOUNT_INFO"/i.test(text)){
+        AnyBalance.trace(text);
+    	throw new AnyBalance.Error('Не удалось зайти в сервис-гид. Сайт изменен?');
+    }
 	
     //Теперь получим баланс
     getParam(text, result, 'balance', /&#1041;&#1072;&#1083;&#1072;&#1085;&#1089;[\s\S]*?<div class="balance_[^>]*>([\S\s]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
     //Теперь получим телефон
-    getParam(text, result, 'phone', /<select[^>]*name="SUBSCRIBER_MSISDN"[\s\S]*?<option[^>]+value="([^"]*)[^>]*selected/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(text, result, 'phone', /<select[^>]*name="SUBSCRIBER_MSISDN"[\s\S]*?<option[^>]+value="([^"]*)[^>]*selected/i, replaceNumber, html_entity_decode);
     //Теперь получим персональный баланс
     getParam(text, result, 'prsnl_balance', /&#1055;&#1077;&#1088;&#1089;&#1086;&#1085;&#1072;&#1083;&#1100;&#1085;&#1099;&#1081; &#1073;&#1072;&#1083;&#1072;&#1085;&#1089;[\s\S]*?<div class="balance_[^>]*>([\S\s]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 
@@ -1240,6 +1247,7 @@ function megafonServiceGuidePhysical(filial, sessionid){
 	var optionGroupHtml = '', optionGroupText = '';
     if(text){//Таблица скидок
         var colnum = /colname="OWNER"/.test(text) ? 2 : 1; //Новая колонка в некоторых кабинетах - владелец скидки
+        var has_used = /colname="SUBS_VOLUME"/.test(text);
         var columnsRegexps = [
  			/(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i,
 			/(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i,
@@ -1288,7 +1296,9 @@ function megafonServiceGuidePhysical(filial, sessionid){
 						
 					var total = getParam(row, null, null, columnsRegexps[0 + colnum - 1], replaceTagsAndSpaces, parseTrafficMy);
 					var left = getParam(row, null, null, columnsRegexps[1 + colnum - 1], replaceTagsAndSpaces, parseTrafficMy);
-					var used = getParam(row, null, null, columnsRegexps[2 + colnum - 1], replaceTagsAndSpaces, parseTrafficMy);
+					var used;
+					if(has_used)
+						used = getParam(row, null, null, columnsRegexps[2 + colnum - 1], replaceTagsAndSpaces, parseTrafficMy);
 
 					if(isset(total) && isset(left) && !used)
 						used = total - left;
@@ -1445,8 +1455,10 @@ function megafonServiceGuidePhysical(filial, sessionid){
 					}
 				}
 			}
-			else
+			else{
+				AnyBalance.trace(text);
 				AnyBalance.trace("Не удаётся найти таблицу услуг, свяжиетсь с автором провайдера");
+			}
         }
 
         //Отключаем посылку смс при входе.
@@ -1754,7 +1766,7 @@ function megafonLkAPI(filinfo, options) {
 	
 	json = callAPI('get', 'api/main/info');
 	
-	getParam(json.msisdn, result, 'phone');
+	getParam(json.msisdn, result, 'phone', null, replaceNumber);
 	getParam(json.originalBalance + '', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
 	getParam(json.bonusBalance + '', result, 'bonus_balance', null, replaceTagsAndSpaces, parseBalance);
 	
@@ -1769,16 +1781,17 @@ function megafonLkAPI(filinfo, options) {
 		// Идем с конца, чтобы игнорировать "замерзшие" остатки
 		for(var i = json.models.length-1; i >= 0; i--) {
 			var model = json.models[i];
-			
+			var optionId = (model.remainders && model.remainders[0] && model.remainders[0].optionId);
+
 			// Этот пакет опций мы уже обработали
-			if(namesProcessed.indexOf(model.name) >= 0 && /OPTION/i.test(model.optionsRemaindersType)) {
+			if(namesProcessed.indexOf(model.name + optionId) >= 0 && /OPTION/i.test(model.optionsRemaindersType)) {
 				AnyBalance.trace('Мы уже обработали пакеты опций из группы ' + model.name);
 				AnyBalance.trace(JSON.stringify(model));
 				continue;
 			}
 			
 			if(model.remainders) {
-				namesProcessed.push(model.name);
+				namesProcessed.push(model.name + optionId);
 				for(var z = 0; z < model.remainders.length; z++) {
 					var current = model.remainders[z];
 					var name = current.name;
@@ -1817,7 +1830,7 @@ function megafonLkAPI(filinfo, options) {
 						if(/Гигабайт в дорогу/i.test(name)) {
 							getParam(current.available + current.unit, result, 'gb_with_you', null, replaceTagsAndSpaces, parseTraffic);
 						} else {
-							if(current.available >= 99999999) {
+							if(current.available >= 999999999999) {
 								AnyBalance.trace('Пропускаем огромный трафик...');
 								continue;
 							}

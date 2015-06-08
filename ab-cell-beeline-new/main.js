@@ -67,17 +67,22 @@ function getBlock(url, html, name, exact, onlyReturnParams) {
 		if(/bonusesForm/i.test(name)) {
 			name = getParam(name, null, null, /([^\s]+)/i);
 		}
-		var re = new RegExp('<update[^>]*id="' + (exact ? '' : '[^"]*') + name + '"[^>]*>\\s*<!\\[CDATA\\[([\\s\\S]*?)\\]\\]></update>', 'i');
-		data = getParam(html, null, null, re);
-		if (!data) {
-			AnyBalance.trace('Неверный ответ для блока ' + name + ': ' + html);
-			return '';
-		}
-		return data;	
+		return extractFromUpdate(html, name, exact);	
 	} else {
 		return params;
 	}
 }
+
+function extractFromUpdate(html, name, exact){
+	var re = new RegExp('<update[^>]*id="' + (exact ? '' : '[^"]*') + name + '"[^>]*>\\s*<!\\[CDATA\\[([\\s\\S]*?)\\]\\]></update>', 'i');
+	var data = getParam(html, null, null, re);
+	if (!data) {
+		AnyBalance.trace('Неверный ответ для блока ' + name + ': ' + html);
+		return '';
+	}
+
+	return data;
+} 
 
 function refreshBalance(url, html, htmlBalance) {
 	//var data = getParam(htmlBalance, null, null, /PrimeFaces\.\w+\s*\(\s*\{[^}]*update:\s*'[^']*headerBalance/);
@@ -113,12 +118,8 @@ function refreshBalance(url, html, htmlBalance) {
 		'Faces-Request': 'partial/ajax',
 		'X-Requested-With': 'XMLHttpRequest'
 	}));
-	data = getParam(html, null, null, new RegExp('<update[^>]+id="' + render + '"[^>]*>\\s*<!\\[CDATA\\[([\\s\\S]*?)\\]\\]></update>', 'i'));
-	if (!data) {
-		AnyBalance.trace('Неверный ответ для блока headerBalance: ' + html);
-		return '';
-	}
-	return data;
+		
+	return extractFromUpdate(html, render, true);	
 }
 
 function getBonusesBlock(url, html, name, exact, onlyReturnParams) {
@@ -239,6 +240,9 @@ function main() {
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	var prefs = AnyBalance.getPreferences();
+	if(prefs.__initialization){
+		return initialize();
+	}
 	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
@@ -576,7 +580,7 @@ function fetchB2B(baseurl, html) {
 function fetchPost(baseurl, html) {
 	var prefs = AnyBalance.getPreferences();
 	AnyBalance.trace('Мы в постоплатном кабинете');
-	
+
 	var result = {success: true, balance: null, currency: null};
 	var multi = /onclick\s*=\s*"\s*selectAccount\('\d{10}|<span[^>]+class="selected"[^>]*>/i.test(html), xhtml='';
 	
@@ -768,6 +772,7 @@ function fetchPost(baseurl, html) {
 		
 		getParam(html, result, 'total_balance', /Сумма по всем номерам(?:[\s\S]*?<th[^>]*>){11}([\s\S]*?)<\/span/i, null, parseBalance);
 	}
+
 	//Возвращаем результат
 	setCountersToNull(result);
 	AnyBalance.setResult(result);
@@ -889,7 +894,7 @@ function fetchPre(baseurl, html) {
 		// }
 		// getParam(html, result, 'fio', /<div[^>]+class="abonent-name"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, capitalFirstLetters);
 	}
-	
+
 	setCountersToNull(result);
 	AnyBalance.setResult(result);
 }
@@ -1992,3 +1997,213 @@ function getBonusesBlockKz(url, html, name, exact, onlyReturnParams) {
 	}
 }
 
+function getTempPasswordSMS(baseurl, html){
+	var prefs = AnyBalance.getPreferences();
+	var url = baseurl + 's/recoveryPassSSO.xhtml';
+	var viewState;
+
+    do{
+		var form = getParam(html, null, null, /<form[^>]+id="form"[^>]*>[\s\S]*?<\/form>/i);
+		if(!form){
+			AnyBalance.trace(html);
+			throw new AnyBalance.Error('Не удаётся найти форму регистрации. Проблемы на сайте или сайт изменен');
+		}
+	    
+		var kaptchaUrl;
+		var params = createFormParams(form, function (params, input, name, value) {
+            if (/login/i.test(name)){
+                value = prefs.login;
+            }else if(name == 'kaptchaId'){
+            	var cinfo = AnyBalance.requestPost(baseurl + 'captcha.jpg', '', addHeaders({'X-Requested-With': 'XMLHttpRequest', Referer: url}));
+            	var json = getJson(cinfo);
+            	kaptchaUrl = json.url;
+            	value = json.id;
+            }else if(/kaptchaInput/i.test(name)){
+                var cError = getParam(form, null, null, /<div[^>]+ui-message-error[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+            	var img = AnyBalance.requestGet(baseurl + kaptchaUrl, g_headers);
+            	var code = AnyBalance.retrieveCode((cError || '') + '\nВведите, пожалуйста, символы с картинки.', img, {time: 3000});
+            	value = code;
+            }
+            return value;
+        });
+        
+        var button = getParam(form, null, null, /<button[^>]+loginInnerBlock[^>]*>/i);
+        if(!button){
+			AnyBalance.trace(form);
+			throw new AnyBalance.Error('Не удаётся найти кнопку подтверждения регистрации. Проблемы на сайте или сайт изменен');
+		}
+		var formId = getParam(button, null, null, /name="([^"]*)/i, null, html_entity_decode);
+	    
+        params['javax.faces.partial.ajax'] = 'true';
+        params['javax.faces.source'] = formId;
+        params['javax.faces.partial.execute'] = '@all';
+        params['javax.faces.partial.render'] = 'loginInnerBlock';
+        params[formId] = formId;
+        if(viewState)
+        	params['javax.faces.ViewState'] = viewState;
+        
+        var output = AnyBalance.requestPost(url, params, addHeaders({'X-Requested-With': 'XMLHttpRequest'}));
+        viewState = extractFromUpdate(output, 'ViewState:0');
+        html = extractFromUpdate(output, 'loginInnerBlock', true);
+    }while(/kaptchaInput/i.test(html));
+    return output;
+}
+
+function initialize(){
+	var prefs = AnyBalance.getPreferences();
+
+	checkEmpty(prefs.login, 'Введите 10 цифр вашего номера телефона в формате 9031234567');
+	checkEmpty(!prefs.password || prefs.password.length >= 6, 'Введите не менее 6 символов желаемого пароля. Или оставьте поле пустым, чтобы автоматически сгенерировать пароль.');
+
+	if(prefs.country && prefs.country != 'ru')
+		throw new AnyBalance.Error('К сожалению, для Казахстана автоматическое получение пароля к личному кабинету ещё не реализовано. Пожалуйста, получите пароль вручную, используя инструкцию в описании провайдера', null, true);
+
+	var baseurl = 'https://my.beeline.' + (prefs.country || 'ru') + '/';
+	var url = baseurl + 's/recoveryPassSSO.xhtml';
+	var urlPass = baseurl + 's/changePassSSO.xhtml';
+
+	//Вводим свой номер
+	var html = AnyBalance.requestGet(baseurl + 's/recoveryPassSSO.xhtml', g_headers);
+	var output = getTempPasswordSMS(baseurl, html);
+    var viewState = extractFromUpdate(output, 'ViewState:0');
+    html = extractFromUpdate(output, 'loginInnerBlock', true);
+
+	//Вводим смс
+	var form = getParam(html, null, null, /<form[^>]+id="tokenForm"[^>]*>[\s\S]*?<\/form>/i);
+	if(!form){
+	    var error = getParam(html, null, null, /<div[^>]*ui-message-error[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+	    if(error)
+	    	throw new AnyBalance.Error(error);
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удаётся найти форму ввода смс пароля. Проблемы на сайте или сайт изменен');
+	}
+
+	var params = createFormParams(form, function (params, input, name, value) {
+        if (/smsToken/i.test(name))
+            value = AnyBalance.retrieveCode('Введите временный пароль, который пришел на номер ' + prefs.login + ' по SMS', null, {time: 5000});
+        return value;
+    });
+
+    var button = getParam(form, null, null, /<button[^>]+loginInnerBlock[^>]*>/i);
+    if(!button){
+		AnyBalance.trace(form);
+		throw new AnyBalance.Error('Не удаётся найти кнопку подтверждения ввода SMS кода. Проблемы на сайте или сайт изменен');
+	}
+	var formId = getParam(button, null, null, /name="([^"]*)/i, null, html_entity_decode);
+
+    params['javax.faces.partial.ajax'] = 'true';
+    params['javax.faces.source'] = formId;
+    params['javax.faces.partial.execute'] = '@all';
+    params['javax.faces.partial.render'] = 'loginInnerBlock';
+    params[formId] = formId;
+    params['javax.faces.ViewState'] = viewState;
+
+    html = AnyBalance.requestPost(url, params, addHeaders({'X-Requested-With': 'XMLHttpRequest'}));
+    var go_to = getParam(html, null, null, /<redirect[^>]+url="([^"]*)/i, null, html_entity_decode);
+
+	//Меняем пароль на постоянный
+    html = AnyBalance.requestGet(go_to, g_headers);
+    var pass = prefs.password || generatePassword();
+
+	var form = getParam(html, null, null, /<form[^>]+id="changePassWordForm"[^>]*>[\s\S]*?<\/form>/i);
+	if(!form){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удаётся найти форму смены пароля. Проблемы на сайте или сайт изменен');
+	}
+
+	var params = createFormParams(form, function (params, input, name, value) {
+        if (/password$/i.test(name))
+            value = pass;
+        return value;
+    });
+
+    var urlPass = AnyBalance.getLastUrl();
+    html = AnyBalance.requestPost(urlPass, params, addHeaders({}));
+	
+	//Подтверждаем и переходим в ЛК
+	var form = getParam(html, null, null, /<form[^>]+id="confirmForm"[^>]*>[\s\S]*?<\/form>/i);
+	if(!form){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удаётся найти форму подтверждения инициализации. Проблемы на сайте или сайт изменен');
+	}
+
+	var params = createFormParams(form);
+
+    var urlConfirm = AnyBalance.getLastUrl();
+    html = AnyBalance.requestPost(urlConfirm, params, addHeaders({}));
+    //И вот здесь мы уже в кабинете.
+    //Отключаем смс-уведомление о входе
+    try{
+        turnOffSMSNotification(baseurl);
+    }catch(e){
+    	AnyBalance.trace('Проблема с отключением уведомления: ' + e.message);
+    }
+	
+	var result = {success: true, __initialization: true};
+	result.login = prefs.login;
+	result.password = pass;
+	result.country = prefs.country;
+
+	AnyBalance.setResult(result);
+}
+
+function turnOffSMSNotification(baseurl){
+    var url = baseurl + 'c/settings/notifications/notifications.xhtml';
+	var html = AnyBalance.requestGet(url, g_headers);
+
+	var form = getParam(html, null, null, /<form[^>]+name="notificationEventsForm"[^>]*>[\s\S]*?<\/form>/i);
+	if(!form){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось найти форму управления уведомлениями.');
+	}
+
+	var checkbox = getParam(form, null, null, /(<input[^>]+id="notificationEventsForm:[^>]*>)(?:[\s\S](?!PrimeFaces))*Вход в личный кабинет/i, null, html_entity_decode);
+	if(!checkbox){
+		AnyBalance.trace(form);
+		throw new AnyBalance.Error('Не удалось найти галочку отключения уведомления.');
+	}
+
+	var chk_name = getParam(checkbox, null, null, /name="([^"]*)/i, null, html_entity_decode);
+	var checked = getParam(checkbox, null, null, /\s+checked=/i, null, html_entity_decode);
+	if(!checked){
+		AnyBalance.trace('Уведомление о входе уже выключено. Отлично :)');
+		return;
+	}
+
+  	var params = createFormParams(form, function (params, input, name, value) {
+        if (name == chk_name)
+            value = undefined;
+        return value;
+    });
+
+    var button = getParam(form, null, null, /<button[^>]*u:'notificationEventsForm'[^>]*>/i);
+    if(!button){
+		AnyBalance.trace(form);
+		throw new AnyBalance.Error('Не удалось найти кнопку сохранения уведомлений.');
+    }
+
+    var source = getParam(button, null, null, /s:'([^']*)/, null, html_entity_decode);
+    params['javax.faces.partial.ajax'] = 'true';
+    params['javax.faces.source'] = source;
+    params['javax.faces.partial.execute'] = '@all';
+    params['javax.faces.partial.render'] = 'notificationEventsForm';
+    params[source] = source;
+
+    html = AnyBalance.requestPost(url, params, g_headers);
+    html = extractFromUpdate(html, 'notificationEventsForm', true);
+    if(!/Настройки уведомлений успешно сохранены/i.test(html)){
+    	AnyBalance.trace(html);
+    	throw new AnyBalance.Error('Не удалось сохранить уведомления');
+    }
+
+    AnyBalance.trace('Уведомление о входе отменено успешно!');
+}
+
+function generatePassword(){
+	var pass = String.fromCharCode("A".charCodeAt() + Math.floor(Math.random()*26));
+	pass += String.fromCharCode("0".charCodeAt() + Math.floor(Math.random()*10));
+        for(var i=0; i<4; ++i){
+	    pass += String.fromCharCode("a".charCodeAt() + Math.floor(Math.random()*26));
+	}
+	return pass;
+}

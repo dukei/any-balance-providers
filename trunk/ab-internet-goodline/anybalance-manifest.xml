@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-internet-goodline</id>
+	<id version="3">ab-internet-goodline</id>
 	<api flags="no_browser|private"/>
 	<name>GoodLine (Кемерово)</name>
 	<description html="true"><![CDATA[

@@ -16,7 +16,7 @@ function main(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('windows-1251');
 
-    var baseurl = "https://stat.eltc.ru/";
+    var baseurl = "https://lk.goodline.info/";
 
     var html = AnyBalance.requestPost(baseurl + 'users/auth', {
         login:prefs.login,

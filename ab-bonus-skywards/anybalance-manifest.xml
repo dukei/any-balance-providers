@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="4">ab-bonus-skywards</id>
+  <id version="5">ab-bonus-skywards</id>
   <api flags="no_browser"/>
   <name>Emirates Skywards</name>
   <description>
@@ -19,6 +19,7 @@
   </files>
   <counters>
     <counter id="balance" name="Skywards Miles" units=""/>
+    <counter id="tier_balance" name="Tier Miles" units=""/>
     <counter id="fio" name="Name" type="text"/>
     <counter id="num" name="Skywards No" type="text"/>
     <counter id="till" name="Miles expiring date" type="time" format="dd/MM/yyyy"/>

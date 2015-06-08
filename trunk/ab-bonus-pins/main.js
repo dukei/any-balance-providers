@@ -10,6 +10,8 @@ var g_headers = {
 };
 
 function main() {
+	throw new AnyBalance.Error('Сайт защищен reCaptcha. Пока мы не в силах пройти эту защиту, провайдер будет удален из каталга в ближайшее время.');
+	
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'http://www.pinsforme.com/ru',
 		requesturl = 'https://www.pinsforme.com/ru'

@@ -1291,7 +1291,7 @@ function megafonServiceGuidePhysical(filial, sessionid, text){
 				        AnyBalance.trace('Минуты ' + name + ', относим к просто минутам');
 						sumOption(colnum, row, result, 'mins_total', 'mins_left', '.', parseMinutes);
 					}
-				}else if(/\bБИТ\b|GPRS|Интернет|трафик|Internet|\d+\s+[гмкgmk][бb]/i.test(name)){
+				}else if(/БИ[ТT]\b|GPRS|Интернет|трафик|Internet|\d+\s+[гмкgmk][бb]/i.test(name)){
 				    var internetPacket = getParam(optionGroupText, null, null, /Интернет \w+/i);
 					if(internetPacket)
 					    foundInternetPacketOptions[internetPacket] = true;

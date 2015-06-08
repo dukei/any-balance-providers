@@ -1,9 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-bonus-pins</id>
+	<id version="2">ab-bonus-pins</id>
 	<api flags="no_browser"/>
 	<name>Pins</name>
 	<description html="true"><![CDATA[
+	<p>Сайт защищен reCaptcha. Пока мы не в силах пройти эту защиту, провайдер будет удален из каталга в ближайшее время.</p>
 	<p>Предоставляет информацию о балансе провайдера Pins <a href="http://www.pinsforme.com/ru/">http://www.pinsforme.com/ru/</a></p>
 	<p>Информация берется из личного кабинета</p>
 	]]></description>

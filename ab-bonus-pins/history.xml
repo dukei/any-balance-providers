@@ -1,5 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="2" date="2015-06-08">
+	- Сайт защищен reCaptcha. Пока мы не в силах пройти эту защиту, провайдер будет удален из каталга в ближайшее время.
+	</change>
 <!--
 	<change version="2" date="2014-09-03">
 	- 

@@ -1192,7 +1192,7 @@ function megafonServiceGuidePhysical(filial, sessionid, text){
 
     var phone = prefs.phone || prefs.login;
 
-    if(!text || !/id="MAIN_FORM_NAME"[^>]*value="ACCOUNT_INFO"/i.test(text)){
+    if(!text || !/id="MAIN_FORM_NAME"[^>]*value="ACCOUNT_INFO"/i.test(text) || !/id="SESSION_ID" value="[^"]+/i.test(text)){
         text = AnyBalance.requestPost(baseurl + 'SCWWW/ACCOUNT_INFO', {
             SUBSCRIBER_MSISDN:phone,
             CHANNEL: 'WWW', 
@@ -1203,8 +1203,10 @@ function megafonServiceGuidePhysical(filial, sessionid, text){
     }
 
     checkTextForError(text);
-    if(!/id="MAIN_FORM_NAME"[^>]*value="ACCOUNT_INFO"/i.test(text)){
+    if(!/id="MAIN_FORM_NAME"[^>]*value="ACCOUNT_INFO"/i.test(text) || !/id="SESSION_ID" value="[^"]+/i.test(text)){
         AnyBalance.trace(text);
+    	if(/SESSION_TIMEOUT_REDIRECT/.test(text))
+    		throw new AnyBalance.Error('Сессия внезапно устарела.');
     	throw new AnyBalance.Error('Не удалось зайти в сервис-гид. Сайт изменен?');
     }
 	
@@ -1283,7 +1285,7 @@ function megafonServiceGuidePhysical(filial, sessionid, text){
 						sumOption(colnum, row, result, 'mins_sng_total', 'mins_sng_left', '.', parseMinutes);
 					else if(/мин по России/i.test(name))
 						sumOption(colnum, row, result, 'mins_country_total', 'mins_country_left', '.', parseMinutes);
-					else if(/внутри сети/i.test(name))
+					else if(/внутри сети|мегафон/i.test(name) && !/мтс/i.test(name))
 						sumOption(colnum, row, result, 'mins_net_total', 'mins_net_left', '.', parseMinutes);
 					else{
 				        AnyBalance.trace('Минуты ' + name + ', относим к просто минутам');
@@ -1808,6 +1810,8 @@ function megafonLkAPI(filinfo, options) {
 						AnyBalance.trace('Parsing minutes...' + JSON.stringify(current));
 						if(/бесплат/i.test(name)) {
 							getParam(current.available, result, 'mins_n_free', null, replaceTagsAndSpaces, parseMinutes);
+						}else if(/МегаФон/i.test(name) && !/МТС/i.test(name)) {
+							sumParam(current.available, result, 'mins_net_left', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
 						} else {
 							sumParam(current.available, result, 'mins_left', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
 							sumParam(current.total, result, 'mins_total', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);

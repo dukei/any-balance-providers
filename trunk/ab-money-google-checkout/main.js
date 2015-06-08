@@ -28,7 +28,7 @@ function main() {
 	
 	// Получаем информацию из кошелька гугл
 	html = AnyBalance.requestGet(baseurl + 'merchant/pages/', g_headers);
-	if (/Merchant Center/i.test(html)) {
+	if (/Payments\s+Merchant\s+Center/i.test(html)) {
 		var href = getParam(html, null, null, /merchant\/pages[^"]+\/transactions\/display/i);
 		if(!href) {
 			AnyBalance.trace(html);

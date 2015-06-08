@@ -16,7 +16,7 @@ function main () {
     }
     checkEmpty (prefs.city, 'Введите индекс или название города!');
 	// Базовый линк
-	var baseurl = 'http://www.gismeteo.' + prefs.domen + '/';
+	var baseurl = 'https://www.gismeteo.' + prefs.domen + '/';
 	// Если не числа, значит надо сделать доп запрос для поиска индекса города
 	if(!/^\d+$/i.test(prefs.city)) {
 		AnyBalance.trace('Ищем ID города ' + prefs.city);
@@ -61,7 +61,7 @@ function main () {
 }
 
 function getWeatherFromHTML (prefs) {
-    var baseurl = 'http://www.gismeteo.' + prefs.domen + '/city/daily/';
+    var baseurl = 'https://www.gismeteo.' + prefs.domen + '/city/daily/';
 
     AnyBalance.trace ('Trying open address: ' + baseurl + prefs.city + '/');
     var html = AnyBalance.requestGet (baseurl + prefs.city + '/');

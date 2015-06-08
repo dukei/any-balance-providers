@@ -9,6 +9,7 @@ var g_headers = {
 	'Connection':'keep-alive',
 	'User-Agent':'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
 };
+
 function main() {
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'http://www.bloomberg.com/';
@@ -20,12 +21,12 @@ function main() {
 	
 	var type = prefs.type || 'WTI';
 	
-	getParam(html, result, 'balance', new RegExp('Crude Oil \\('+ type +'\\)(?:[^>]*>){4}([^<]*)', 'i'), replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, ['currency', 'balance'], new RegExp('Crude Oil \\('+ type +'\\)(?:[^>]*>){2}([^<]*)', 'i'), replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'change', new RegExp('Crude Oil \\('+ type +'\\)(?:[^>]*>){6}([^<]*)', 'i'), replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'change_pcts', new RegExp('Crude Oil \\('+ type +'\\)(?:[^>]*>){8}([^<]*)', 'i'), replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'contract', new RegExp('Crude Oil \\('+ type +'\\)(?:[^>]*>){10}([^<]*)', 'i'), replaceTagsAndSpaces);
-	getParam(html, result, 'contract_time', new RegExp('Crude Oil \\('+ type +'\\)(?:[^>]*>){12}([^<]*)', 'i'), replaceTagsAndSpaces);
+	getParam(html, result, 'balance', new RegExp('Crude Oil \\('+ type +'\\)(?:[^>]*>){5}([^<]+)', 'i'), replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, ['currency', 'balance'], new RegExp('Crude Oil \\('+ type +'\\)(?:[^>]*>){3}([^<]*)', 'i'), replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'change', new RegExp('Crude Oil \\('+ type +'\\)(?:[^>]*>){7}([^<]*)', 'i'), replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'change_pcts', new RegExp('Crude Oil \\('+ type +'\\)(?:[^>]*>){9}([^<]*)', 'i'), replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'contract', new RegExp('Crude Oil \\('+ type +'\\)(?:[^>]*>){11}([^<]*)', 'i'), replaceTagsAndSpaces);
+	getParam(html, result, 'contract_time', new RegExp('Crude Oil \\('+ type +'\\)(?:[^>]*>){13}([^<]*)', 'i'), replaceTagsAndSpaces);
 	getParam(html, result, '__tariff', /<h2>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 	
     AnyBalance.setResult(result);

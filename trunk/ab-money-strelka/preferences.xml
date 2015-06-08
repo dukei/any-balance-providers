@@ -8,7 +8,7 @@
 		dialogTitle="Логин"
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите номер телефона без префикса для входа в личный кабинет, например, 9163456789.">
+		dialogMessage="Введите имейл или номер телефона, без префикса, например, 9163456789.">
 	</EditTextPreference>
 	<EditTextPreference
 		title="Пароль"

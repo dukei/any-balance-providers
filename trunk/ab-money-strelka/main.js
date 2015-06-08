@@ -16,7 +16,7 @@ function main() {
 	
 	AnyBalance.setDefaultCharset('utf-8');
 	
-	checkEmpty(/^\d{10}$/.test(prefs.login), 'Введите номер телефона без +7, 10 цифр!');
+	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 
 	var html = AnyBalance.requestGet(baseurl, g_headers);
@@ -26,9 +26,12 @@ function main() {
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
 	
+	if(/^\d{10}$/.test(prefs.login))
+		prefs.login = '7' + prefs.login;
+	
 	// Логинимся
 	makeRequest('Post', baseurl + 'api/users/login/', {
-		username: '7' + prefs.login,
+		username: prefs.login,
 		password: prefs.password
 	}, baseurl);
 

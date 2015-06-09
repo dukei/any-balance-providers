@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="124" date="2015-06-09">
+	- Мелкие улучшения.
+	</change>
 	<change version="123" date="2015-06-08">
 	- Автоинициализация
 	</change>

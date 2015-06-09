@@ -1,12 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-bonus-etisalat</id>
+	<id version="3">ab-bonus-etisalat</id>
 	<api flags="no_browser"/>
 	<name>Etisalat Rewards</name>
 	<description html="true"><![CDATA[
 	<p>Obtains information from Etisalat Rewards personal account at http://www.etisalatrewards.ae/en/login_membership.do</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

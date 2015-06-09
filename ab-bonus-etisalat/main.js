@@ -12,7 +12,7 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://www.etisalatrewards.ae/';
+	var baseurl = 'https://www.etisalatrewards.ae/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Please, enter login!');
@@ -20,29 +20,70 @@ function main() {
 	
 	var html = AnyBalance.requestGet(baseurl + 'en/logout_member', g_headers);
 	
-	html = AnyBalance.requestPost(baseurl + 'en/login_membership.do', {
-		SID:'1',
-		service_number_detail: prefs.login,
-		password: prefs.password,
-		'LoginId': 'Member'
-	}, addHeaders({Referer: baseurl + 'en/logout_member'}));
+	html = AnyBalance.requestPost(baseurl + 'rest/service/login', {
+		channelId: 'CUST_PORTAL',
+		systemid: 'CUST_PORTAL',
+		systempassword: 'CUST_PoRtal##22',
+		customerauthtype: 'USER',
+		customertype: 'USER',
+		customersecret: prefs.password,
+		customervalue: prefs.login,
+		action: '',
+	}, addHeaders({Referer: baseurl + 'Etisalat-End-User-Portal-1.0.0/logout.html'}));
 	
-	if (!/Card Number\s*:[^>]*>\s*\d{10,}/i.test(html)) {
+	if (!/Successfull/i.test(html)) {
 		var error = getParam(html, null, null, /"color:red"([^>]*>){2}/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
 			throw new AnyBalance.Error(error, null, /has not been recognised/i.test(error));
+
+		if(/wrong password|user name and password to login/.test(html))
+			throw new AnyBalance.Error('Wrong login or password, please try again.', null, true);			
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Can`t login, is the site changed?');
 	}
+
+	var json = getJson(html);
+	var token = json.token;
+
+	html = AnyBalance.requestPost(baseurl + 'rest/service/searchmember', {
+		channelId: 'CUST_PORTAL',
+		systemid: 'CUST_PORTAL',
+		systempassword: 'CUST_PoRtal##22',
+		token:token,
+		accountNumber: '',
+		email: '',
+		emiratesId: '',
+		membershipId: '',
+		e4meUsername: ''
+	}, addHeaders({Referer: baseurl + 'Etisalat-End-User-Portal-1.0.0/logout.html'}));
+
+	var member = getJson(html).customers[0];
+
+	if(!member)
+		throw new AnyBalance.Error('User not found.');
+	
+	html = AnyBalance.requestPost(baseurl + 'rest/service/getAccountsByMember', {
+		channelId: 'CUST_PORTAL',
+		systemid: 'CUST_PORTAL',
+		systempassword: 'CUST_PoRtal##22',
+		membershipId: member.membershipId,
+		token: token,
+		additionalParameters: ''
+	});
+
+	var account = getJson(html).accounts[0];
+
+	if(!account)
+		throw new AnyBalance.Error('Account not found.');
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'fio', /Name\s*:([^>]*>){2}/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'cardnum', /Card Number\s*:([^>]*>){2}/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'tier_level', /Tier Level\s*:([^>]*>){2}/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'points', />Points\s*:([^>]*>){2}/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'tier_points', />Tier Points\s*:([^>]*>){2}/i, replaceTagsAndSpaces, parseBalance);
+	getParam(member.fullname, result, 'fio');
+	getParam(account.accountNumber, result, 'cardnum');
+	getParam(member.tier, result, 'tier_level');
+	getParam(member.points, result, 'points');
+	getParam(member.tierPoints, result, 'tier_points');
 	
 	AnyBalance.setResult(result);
 }

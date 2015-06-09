@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-money-torg-mail-ru</id>
+	<api flags="no_browser"/>
+	<name>Товары@Mail.ru</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе в системе Товары@Mail.ru <a href="http://torg.mail.ru/ecb_account/">http://torg.mail.ru/ecb_account/</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+	</counters>
+	<keywords></keywords>
+	<type>money, wallet</type>
+	<country>ru</country>
+</provider>

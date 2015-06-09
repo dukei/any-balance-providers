@@ -1,13 +1,13 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-money-ipb</id>
+	<id version="2">ab-money-ipb</id>
 	<api flags="no_browser"/>
 	<name>Интерпрогрессбанк</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе на картах Интерпрогрессбанка http://ipb.ru/</p>
-	<p>Информация берется из личного кабинета https://online.ipb.ru/</p>
+	<p>Информация берется из личного кабинета https://on-line.ipb.ru/Login/login.aspx</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
@@ -17,12 +17,11 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" {@currency}"/>
-		<counter id="currency" name="Валюта" type="text"/>
 		<counter id="cardnum" name="№ Карты" type="text"/>
 		<counter id="accnum" name="№ Счета" type="text"/>
 		<counter id="deadline" name="Срок действия" type="time" format="dd/MM/yyyy"/>
 	</counters>
 	<keywords></keywords>
-	<type>money</type>
+	<type>money, bank</type>
 	<country>ru</country>
 </provider>

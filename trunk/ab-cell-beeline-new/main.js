@@ -1255,15 +1255,16 @@ function setCountersToNull(result){
 
 var errors = {
 	AUTH_ERROR:' Ошибка авторизации! Проверьте логин-пароль!',
-
+	
 }
 
 function callAPIProc(url) {
 	var html = AnyBalance.requestGet(url, g_headers);
 	var json = getJson(html);
-	if(json.meta.status != 'OK')
-		throw new AnyBalance.Error('Ошибка вызова API! ' + (errors[json.meta.message] || json.meta.message || '')) ;
-	
+	if(json.meta.status != 'OK'){
+		var error = (errors[json.meta.message] || json.meta.message || '');
+		throw new AnyBalance.Error('Ошибка вызова API! ' + error, null, /Ошибка авторизации/i.test(error)) ;
+	}
 	return json;
 }
 

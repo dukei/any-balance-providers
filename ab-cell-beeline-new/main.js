@@ -2022,7 +2022,7 @@ function getTempPasswordSMS(baseurl, html){
             }else if(/kaptchaInput/i.test(name)){
                 var cError = getParam(form, null, null, /<div[^>]+ui-message-error[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
             	var img = AnyBalance.requestGet(baseurl + kaptchaUrl, g_headers);
-            	var code = AnyBalance.retrieveCode((cError || '') + '\nВведите, пожалуйста, символы с картинки.', img, {time: 3000});
+            	var code = AnyBalance.retrieveCode((cError || '') + '\nВведите, пожалуйста, символы с картинки.', img, {time: 300000});
             	value = code;
             }
             return value;

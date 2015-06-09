@@ -2081,7 +2081,7 @@ function initialize(){
 
 	var params = createFormParams(form, function (params, input, name, value) {
         if (/smsToken/i.test(name))
-            value = AnyBalance.retrieveCode('Введите временный пароль, который пришел на номер ' + prefs.login + ' по SMS', null, {time: 5000});
+            value = AnyBalance.retrieveCode('Введите временный пароль, который пришел на номер ' + prefs.login + ' по SMS <!--#instruction:{"sms":{"number_in":"My Beeline","regexp_in":"Временный пароль:\\s*(\\w+)"}}#-->', null, {time: 5000});
         return value;
     });
 

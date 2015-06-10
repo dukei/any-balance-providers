@@ -282,56 +282,91 @@ function main(){
 function loadFilialInfo(filial){
     var filinfo = filial_info[filial];
     var prefs = AnyBalance.getPreferences();
+   
+    //Проходим все источники в порядке приоритетности, заданном пользователем
+    var priority = (prefs.lkpriority || 'sg,app,tray').split(/,/g);
+
+    var allow_captcha = isCaptchaAllowed();
+    //Если у нас капча показывается по необходимости, то сначала пытаемся получить всё без капчи и только если не получается, второй раз получим с капчей
+    var allow_captcha_sg = allow_captcha, allow_captcha_app = allow_captcha;
+    if(!prefs.allowcaptcha)
+        allow_captcha_sg = allow_captcha_app = false;
 
     var ok = false;
     var e_some = null;
     var e_total = null;
 
-    if(!ok){
-        try{
-        	var sginfo = enterLK(filial, {login: prefs.login, password: prefs.password, useOldSG: true});
-        	megafonServiceGuidePhysical(filial, sginfo.sessionid, sginfo.html);
-			ok = true;
-		}catch(e){
-			if(e.fatal)
-				throw e;
-			if(!e.meaningless)
-				e_total = e;
-			e_some = e;
-	        AnyBalance.trace('Не удалось получить информацию из личного кабинета: ' + e.message);
+    for(var i=0; i<priority.length; ++i){
+    	var src = priority[i];
+        if(src == 'sg' && !ok){
+            try{
+            	var sginfo;
+            	try{
+            		AnyBalance.trace('Пробуем зайти в ЛК');
+            		sginfo = enterLK(filial, {login: prefs.login, password: prefs.password, useOldSG: true});
+            	}catch(e){
+            		if(e.fatal || !allow_captcha_sg) throw e;
+            		AnyBalance.trace('Пробуем зайти в сервис-гид (в лк не получилось: ' + e.message + ')');
+            		sginfo = enterSG(filial, {login: prefs.login, password: prefs.password});
+            	}
+            	megafonServiceGuidePhysical(filial, sginfo.sessionid, sginfo.html);
+				ok = true;
+			}catch(e){
+				if(e.fatal)
+					throw e;
+				if(!e.meaningless)
+					e_total = e;
+				e_some = e;
+				
+				if(/Требуется ввод кода/i.test(e.message || '') && !allow_captcha_sg && allow_captcha_sg != allow_captcha){
+					AnyBalance.trace('Без капчи зайти в sg не удалось, но может, потом попробуем с капчей...');
+				    allow_captcha_sg = allow_captcha;
+				    priority.push('sg');
+				}
+		        AnyBalance.trace('Не удалось получить информацию из личного кабинета: ' + e.message);
+			}
 		}
-	}
-	
-    if(!ok){
-        try{
-			megafonLkAPI(filinfo, {allow_captcha: false});
-			ok = true;
-		}catch(e){
-			if(e.fatal)
-				throw e;
-			if(!e.meaningless)
-				e_total = e;
-			e_some = e;
-	        AnyBalance.trace('Не удалось получить информацию из мобильного приложения: ' + e.message);
+		
+        if(src == 'app' && !ok){
+            try{
+           		AnyBalance.trace('Пробуем зайти в моб. приложение');
+				megafonLkAPI(filinfo, {allow_captcha: allow_captcha_app});
+				ok = true;
+			}catch(e){
+				if(e.fatal)
+					throw e;
+				if(!e.meaningless)
+					e_total = e;
+				e_some = e;
+				if(/Требуется ввод кода/i.test(e.message || '') && !allow_captcha_app && allow_captcha_app != allow_captcha){
+					AnyBalance.trace('Без капчи зайти в app не удалось, но может, потом попробуем с капчей...');
+				    allow_captcha_app = allow_captcha;
+				    priority.push('app');
+				}
+
+		        AnyBalance.trace('Не удалось получить информацию из мобильного приложения: ' + e.message);
+			}
 		}
-	}
-	
-    if(!ok){
-        try{
-            megafonTrayInfo(filial);
-			ok = true;
-		}catch(e){
-			if(e.fatal)
-				throw e;
-			if(!e.meaningless)
-				e_total = e;
-			e_some = e;
-	        AnyBalance.trace('Не удалось получить информацию из входа для автоматизированных систем: ' + e.message);
+		
+        if(src == 'tray' && !ok){
+            try{
+           		AnyBalance.trace('Пробуем получить данные из информации для роботов');
+                megafonTrayInfo(filial);
+				ok = true;
+			}catch(e){
+				if(e.fatal)
+					throw e;
+				if(!e.meaningless)
+					e_total = e;
+				e_some = e;
+		        AnyBalance.trace('Не удалось получить информацию из входа для автоматизированных систем: ' + e.message);
+			}
 		}
 	}
 
     if(!ok){
         try{
+       		AnyBalance.trace('Пытаемся получить хотя бы баланс');
             megafonBalanceInfo(filial);
 			ok = true;
 		}catch(e){
@@ -451,7 +486,7 @@ function loadFilial(filial, addr){
 	return html;
 }
 
-var replaceNumber = [replaceTagsAndSpaces, /\D/g, '', /(\d\d\d)(\d\d\d)(\d\d)(\d\d)$/, '+7 $1 $2-$3-$4'];
+var replaceNumber = [replaceTagsAndSpaces, /\D/g, '', /.*(\d\d\d)(\d\d\d)(\d\d)(\d\d)$/, '+7 $1 $2-$3-$4'];
 function megafonTrayInfo(filial) {
 	var filinfo = filial_info[filial], errorInTray;
 	var internet_totals_was = {};
@@ -1216,6 +1251,9 @@ function megafonServiceGuidePhysical(filial, sessionid, text){
     getParam(text, result, 'phone', /<select[^>]*name="SUBSCRIBER_MSISDN"[\s\S]*?<option[^>]+value="([^"]*)[^>]*selected/i, replaceNumber, html_entity_decode);
     //Теперь получим персональный баланс
     getParam(text, result, 'prsnl_balance', /&#1055;&#1077;&#1088;&#1089;&#1086;&#1085;&#1072;&#1083;&#1100;&#1085;&#1099;&#1081; &#1073;&#1072;&#1083;&#1072;&#1085;&#1089;[\s\S]*?<div class="balance_[^>]*>([\S\s]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+    //Теперь получим кредитный лимит (Уровень кредита|Кредитный лимит):
+    getParam(text, result, 'credit', /(?:&#1059;&#1088;&#1086;&#1074;&#1077;&#1085;&#1100; &#1082;&#1088;&#1077;&#1076;&#1080;&#1090;&#1072;|&#1050;&#1088;&#1077;&#1076;&#1080;&#1090;&#1085;&#1099;&#1081; &#1083;&#1080;&#1084;&#1080;&#1090;):([\S\s]*?)<\/tr>/i, replaceTagsAndSpaces, parseBalance);
+    
 
     //Начислено абонентской платы по тарифному плану:
     getPropValFloat(text, '&#1053;&#1072;&#1095;&#1080;&#1089;&#1083;&#1077;&#1085;&#1086; &#1072;&#1073;&#1086;&#1085;&#1077;&#1085;&#1090;&#1089;&#1082;&#1086;&#1081; &#1087;&#1083;&#1072;&#1090;&#1099; &#1087;&#1086; &#1090;&#1072;&#1088;&#1080;&#1092;&#1085;&#1086;&#1084;&#1091; &#1087;&#1083;&#1072;&#1085;&#1091;:',
@@ -1291,7 +1329,7 @@ function megafonServiceGuidePhysical(filial, sessionid, text){
 				        AnyBalance.trace('Минуты ' + name + ', относим к просто минутам');
 						sumOption(colnum, row, result, 'mins_total', 'mins_left', '.', parseMinutes);
 					}
-				}else if(/БИ[ТT]\b|GPRS|Интернет|трафик|Internet|\d+\s+[гмкgmk][бb]/i.test(name)){
+				}else if(/БИ[ТT]\b|GPRS|Интернет|трафик|Internet|\d+\s+[гмкgmk][бb]/i.test(name) || /[\d\.]+\s*[гмкgmk][бb]/i.test(row)){
 				    var internetPacket = getParam(optionGroupText, null, null, /Интернет \w+/i);
 					if(internetPacket)
 					    foundInternetPacketOptions[internetPacket] = true;
@@ -1719,6 +1757,23 @@ function callAPI(method, url, params, allowerror) {
 	return json;
 }
 
+function isCaptchaAllowed(){
+	var prefs = AnyBalance.getPreferences();
+	
+	var matches = /(\d+)-(\d+)/.exec(prefs.allowcaptcha || '');
+	if(matches){
+		var from = parseInt(matches[1]), to = parseInt(matches[2]);
+		var hours = new Date().getHours();
+		if(hours < from || hours >= to)
+			return false;
+		return true;
+	}else if(prefs.allowcaptcha == 'man'){
+	    return !!(prefs.$$startReason$$ || 0)&0xFF;
+	}else{
+		return true;
+	}
+}
+
 function megafonLkAPI(filinfo, options) {
 	var prefs = AnyBalance.getPreferences();
 	
@@ -1736,22 +1791,9 @@ function megafonLkAPI(filinfo, options) {
 	}, true);
 
 	if(json.code){
-	    if(json.code == 'a211' && prefs.allowcaptcha && options.allow_captcha){ //Капча отключена
-			var matches = /(\d+)-(\d+)/.exec(prefs.allowcaptcha);
-			if(!matches)
-				throw new AnyBalance.Error('Неверный параметр отключения капчи: ' + prefs.allowcaptcha);
-			var from = parseInt(matches[1]), to = parseInt(matches[2]);
-			var hours = new Date().getHours();
-			if(hours < from || hours >= to)
-				throw new AnyBalance.Error('API мобильного приложения потребовало ввод капчи, а она отключена в настройках (' + prefs.allowcaptcha + ') провайдера! Пропускаем API...');
-	    }
-        
 	    if(json.code == 'a211' && options.allow_captcha){ //Капча
-			if(!((prefs.$$startReason$$ || 0)&0xFF)){
-				throw new AnyBalance.Error('Сейчас автоматическое обновление. Показываем капчу в мегафоне только при ручном обновлении!');
-			}
 	        var capchaImg = AnyBalance.requestGet(api_url + 'auth/captcha', g_api_headers);
-	        var captcha = AnyBalance.retrieveCode('Мегафон иногда требует подтвердить, что вы не робот. Сейчас как раз такой случай. Если вы введете цифры с картинки, то мы сможем получить какую-то информацию помимо баланса. В противном случае получим только баланс.\n\nВы можете отключить показ капчи совсем или только ночью в настройках провайдера.', capchaImg);
+	        var captcha = AnyBalance.retrieveCode('Мегафон иногда требует подтвердить, что вы не робот. Сейчас как раз такой случай. Если вы введете цифры с картинки, то мы сможем получить какую-то информацию помимо баланса. В противном случае получим только баланс.\n\nВы можете отключить показ капчи совсем или только ночью в настройках провайдера.', capchaImg, {inputType: 'number'});
 			json = callAPI('post', 'login', {
 				login: prefs.login,
 				password: prefs.password,
@@ -1899,7 +1941,7 @@ function initialize(filial){
     var prefs = AnyBalance.getPreferences();
     checkEmpty(!prefs.password || /^\w{6,26}$/.test(prefs.password), 'Желаемый пароль должен содержать от 6 до 26 символов');
     
-    var pass = AnyBalance.retrieveCode('Наберите на телефоне с номером ' + prefs.login + ' команду *105*00# или отправьте СМС с текстом 00 на номер 000105. В ответ придет СМС с паролем. Введите его в поле ввода ниже. <!--#instruction:{"sms":{"number":"000105","text":"00","number_in":"MegaFon","regexp_in":"Пароль для доступа\\D+(\\d+)\\."},"ussd":{"number":"*105*00#","number_in":"MegaFon","regexp_in":"Пароль для доступа\\D+(\\d+)\\."}}#-->', null, {time: 300000});
+    var pass = AnyBalance.retrieveCode('Наберите на телефоне с номером ' + prefs.login + ' команду *105*00# или отправьте СМС с текстом 00 на номер 000105. В ответ придет СМС с паролем. Введите его в поле ввода ниже. <!--#instruction:{"sms":{"number":"000105","text":"00","number_in":"MegaFon","regexp_in":"Пароль для доступа\\D+(\\d+)\\."},"ussd":{"number":"*105*00#","number_in":"MegaFon","regexp_in":"Пароль для доступа\\D+(\\d+)\\."}}#-->', null, {inputType: 'number', time: 300000});
 
     var sginfo;
     try{

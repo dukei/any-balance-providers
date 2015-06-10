@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="3.0" version="158" date="2015-06-10">
+	- Возможность задать приоритет источников получения данных
+	- Возможность включить или ограничить капчу.
+	</change>
 	<change major_version="3.0" version="157" date="2015-06-08">
 	- Распознавании опции БИТ в некоторых случаях
 	</change>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="1.0" version="6">ab-cell-mymts-ua</id>
+	<id major_version="1.0" version="7">ab-cell-mymts-ua</id>
 	<api flags="no_browser"/>
 	<name>Мой МТС (Украина)</name>
 	<description html="true"><![CDATA[
@@ -32,6 +32,7 @@
 		<counter id="hvylyny_all1" name="Минуты по Украине" type="time_interval" format="{@MIN}" units=" мин"/>
 		<counter id="sms_used" name="Израсходовано SMS" units=" sms"/>
 		<counter id="mms_used" name="Израсходовано MMS" units=" mms"/>
+		<counter id="sms_mms_used" name="Израсходовано SMS/MMS" units=" sms/mms"/>
 		<counter id="sms_net" name="SMS в сети МТС" units=" sms"/>
 		<counter id="mms_net" name="MMS в сети МТС" units=" mms"/>
 		<counter id="sms_mms_all" name="SMS/MMS по Украине" units=" sms/mms"/>

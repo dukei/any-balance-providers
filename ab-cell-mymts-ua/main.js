@@ -6,7 +6,7 @@ var g_headers = {
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.90 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.124 Safari/537.36',
 };
 
 function parseTrafficMb(str){
@@ -32,6 +32,8 @@ function main() {
 	checkEmpty(prefs.password, 'Введите пароль!');
 	var html = AnyBalance.requestGet(baseurl + 'Logon', g_headers);
 	var captchaa;
+	var otpa = getParam(html, null, null, /<div class="captcha-placeholder"><\/div>/i);
+	if(!otpa) {
 	if (AnyBalance.getLevel() >= 7) {
 		AnyBalance.trace('Пытаемся ввести капчу');
 		var captcha = AnyBalance.requestGet(baseurl + 'Captcha/ShowForLogon');
@@ -39,6 +41,7 @@ function main() {
 		AnyBalance.trace('Капча получена: ' + captchaa);
 	} else {
 		throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
+	}
 	}
 
 	html = AnyBalance.requestPost(baseurl + 'Logon', {
@@ -91,6 +94,7 @@ function main() {
 	//СМС и ММС
 	sumParam (html, result, 'sms_used', />50 SMS по Украине для "Смартфона", израсходовано:(\d+)\s*смс.<\/span>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	sumParam (html, result, 'mms_used', />50 MMS по Украине для "Смартфона", израсходовано:(\d+)\s*mms.<\/span>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+	sumParam (html, result, 'sms_mms_used', /SMS\\MMS по Украине, израсходовано:(\d+)\s*sms\/mms/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	sumParam (html, result, 'sms_net', />1500 (?:SMS|SMS и MMS) на МТС для (?:MAX Energy Allo|MAX Energy), осталось (\d+) (?:бесплатных SMS|смс)</ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	sumParam (html, result, 'mms_net', />1500 SMS и MMS на МТС для MAX Energy, осталось (\d+) ммс</ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	sumParam (html, result, 'sms_mms_all', /1000 SMS\/MMS по Украине, осталось: (\d+) SMS\/MMS/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);

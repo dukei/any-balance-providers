@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change major_version="1.0" version="7" date="2015-06-10">
+      - Убран запрос на ввод CAPTCHA в случаях, когда "Мой МТС" ее не запрашивает.
+      - Добавлен счетчик: "Израсходовано SMS/MMS".
+    </change>
     <change major_version="1.0" version="6" date="2015-04-30">
       - Улучшено распознавание счетчика "Минуты по Украине".
       - Добавлен счетчик: "SMS/MMS по Украине".

@@ -206,11 +206,11 @@ function mainBelgorod(region){
 	
     AnyBalance.trace("Parsing data...");
 	
-    getParam (html, result, 'balance', /<b[^>]*>Лицевой счет:[\s\S]*?баланс:([\s\S]*?)<br/i, replaceTagsAndSpaces, parseBalance);
-    getParam (html, result, 'subscriber', /Приветствуем Вас,([^<]*)/i, replaceTagsAndSpaces);
+    getParam (html, result, 'balance', />\s*Баланс:(?:[^>]*>){1,3}\s*([\d.,-]+)/i, replaceTagsAndSpaces, parseBalance);
+    getParam (html, result, 'subscriber', /Приветствуем Вас,([^<]+)/i, replaceTagsAndSpaces);
     getParam (html, result, 'contract', /<b[^>]*>Лицевой счет:([\s\S]*?),/i, replaceTagsAndSpaces);
     getParam (html, result, 'day_left', /(?:Количество дней до ухода в финансовую блокировку|До списания абонентской платы осталось):([\s\S]*?)<br/i, replaceTagsAndSpaces, parseBalance);
-    getParam (html, result, 'bonus_balance', /Баланс:([\s\S]*?)\s*балл/i, replaceTagsAndSpaces, parseBalance);
+    getParam (html, result, 'bonus_balance', /Баланс:([^<]+)\s*балл/i, replaceTagsAndSpaces, parseBalance);
     sumParam(html, result, '__tariff', /Тарифный план:([\s\S]*?)(?:<\/span>|<a)/i, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
     sumParam (html, result, '__tariff', /(<strong[^>]*>\s*Бонусный счет[\s\S]*?)Баланс/i, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
 	

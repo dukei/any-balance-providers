@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="3.0" version="157">ab-megafon</id>
+	<id major_version="3.0" version="158">ab-megafon</id>
 	<api flags="no_browser"/>
 	<name>Мегафон</name>
 	<description html="true"><![CDATA[
@@ -74,6 +74,7 @@
 		<counter id="sms_total" name="Включенные SMS (всего)" units=" sms"/>
 		<counter id="mms_total" name="Включенные MMS (всего)" units=" mms"/>
 		<counter id="handygift_total" name="Нужный подарок - всего (Поволжье)" units=" р"/>
+		<counter id="credit" name="Кредитный лимит" units=" р"/>
 		<counter id="sub_scl" name="За звонки начислено" units=" р"/>
 		<counter id="sub_soi" name="За услуги начислено" units=" р"/>
 		<counter id="sub_scr" name="За роуминг начислено" units=" р"/>

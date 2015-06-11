@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-tv-itce</id>
+	<id version="4">ab-tv-itce</id>
 	<api flags="no_browser"/>
 	<name>Группа Компаний Электрон (Цифровое ТВ, Интернет)</name>
 	<description html="true"><![CDATA[

@@ -26,15 +26,16 @@ function main() {
 }
 
 function mainInet(prefs) {
-	var baseurl = 'http://inet.itce.ru/';
-	var html = AnyBalance.requestPost(baseurl + 'core.php', {
+	var baseurl = 'https://itce.ru/inet/billing/';
+	
+	var html = AnyBalance.requestPost(baseurl + '?page=billing', {
 		'host':'inet.itce.ru',
 		'options[page]':'billing',
 		'module':'inetBilling',
 		'account':prefs.login,
 		'password':prefs.password,
 		'undefined':'Вход',
-    }, addHeaders({Referer: baseurl + 'core.php'}));
+    }, addHeaders({Referer: baseurl + '?page=billing'}));
 	
 	if(!/>выход<|^ok$/i.test(html)) {
 		AnyBalance.trace(html);

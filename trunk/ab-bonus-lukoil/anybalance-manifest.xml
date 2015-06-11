@@ -1,14 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="10">ab-bonus-lukoil</id>
+	<id version="11">ab-bonus-lukoil</id>
 	<name>Лукойл (Бонусы)</name>
 	<description html="true"><![CDATA[
 	<p>Получает информацию по картам "Лукойл Ликард" <a href="http://my.licard.com">http://my.licard.com</a></p>
 	<p>Также получает данные по картам Лояльности:</p>
 	<ul>
 		<li>Россия <a href="http://club-lukoil.ru/cabinet">http://club-lukoil.ru/cabinet</a></li>
-		<li>Болоруссия <a href="http://club-lukoil.by/cabinet">http://club-lukoil.by/cabinet</a></li>
+		<li>Беларусь <a href="http://club-lukoil.by/cabinet">http://club-lukoil.by/cabinet</a></li>
 	</ul>	
 	]]></description>
 	<instruction html="true"><![CDATA[

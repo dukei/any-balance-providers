@@ -1,32 +1,28 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-internet-akado-ural</id>
-  <name>АКАДО Екатеринбург - интернет провайдер</name>
-  <description>
-    Получает баланс и информацию о тарифном плане для провайдера интернет и кабельного телевидения Акадо-Екатеринбург. Информация берется из личного кабинета https://stat.akado-ural.ru.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="credit" name="Кредит" units="р"/>
-    <counter id="blocked" name="Блокировка" type="text"/>
-    <counter id="agreement" name="Договор" type="text"/>
-    <counter id="bonus" name="Бонус" units="р"/>
-    <counter id="friends" name="Друзья"/>
-  </counters>
-  <keywords>
-    интернет, урал, akado, acado
-  </keywords>
-  <type>
-    internet, tv
-  </type>
-  <country>
-    ru
-  </country>
+	<api flags="no_browser"/>
+	<id version="3">ab-internet-akado-ural</id>
+	<name>АКАДО Екатеринбург</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе и тарифном плане для провайдера интернет и кабельного телевидения Акадо-Екатеринбург <a href="https://stat.akado-ural.ru">https://stat.akado-ural.ru</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="credit" name="Кредит" units=" р"/>
+		<counter id="blocked" name="Блокировка" type="text"/>
+		<counter id="agreement" name="Договор" type="text"/>
+		<counter id="bonus" name="Бонус" units=" р"/>
+		<counter id="friends" name="Друзья"/>
+	</counters>
+	<keywords>интернет, урал, akado, acado</keywords>
+	<type>internet, tv</type>
+	<country>ru</country>
 </provider>

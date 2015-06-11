@@ -1,6 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="3" date="2015-06-11">
+	- Поддержка изменений на сайте.
+	</change>
     <change version="2" date="2012-08-24">
-      - Исправлена выдача ошибки при отрицательном балансе (спасибо fricks6)
+	- Исправлена выдача ошибки при отрицательном балансе (спасибо fricks6)
     </change>
 </history>

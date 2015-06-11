@@ -41,6 +41,9 @@ function main() {
         getParam(html, result, 'last_payment', /Последний платёж[\s\S]*?payments">([\s\S]*?)<\/a/i, replaceTagsAndSpaces, parseBalance);
         getParam(html, result, 'name', /class="value user-name">\s*<b>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces);
     } else {
+		if(prefs.type == 'clubby')
+			baseurlFizik = baseurlFizik.replace(/\.ru/i, '.by');
+		
         var html = AnyBalance.requestGet(baseurlFizik + 'login', g_headers);
 		
         html = AnyBalance.requestPost(baseurlFizik + 'login', {
@@ -53,8 +56,10 @@ function main() {
             if (error)
 				throw new AnyBalance.Error(error);
 			
+			AnyBalance.trace(html);
             throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
         }
+		
         getParam(html, result, 'balance', /Количество&nbsp;баллов(?:[^>]*>){3}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
         getParam(html, result, 'cardnum', /cardNumber"(?:[^>]*>){1}([^<]+)/i, replaceTagsAndSpaces, null);
 		getParam(html, result, 'name', /"user-FIO"(?:[^>]*>){1}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);

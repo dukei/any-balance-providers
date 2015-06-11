@@ -23,8 +23,8 @@
         key="type" 
         title="Кабинет"
         summary="||{@s}\n"
-        entries="club-lukoil.ru|my.licard.com"
-        entryValues="club|likard"
+        entries="club-lukoil.ru|my.licard.com|club-lukoil.by"
+        entryValues="club|likard|clubby"
 	defaultValue="club">
     </ListPreference>	
 </PreferenceScreen>

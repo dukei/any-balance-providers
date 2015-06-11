@@ -1329,23 +1329,6 @@ function megafonServiceGuidePhysical(filial, sessionid, text){
 				        AnyBalance.trace('Минуты ' + name + ', относим к просто минутам');
 						sumOption(colnum, row, result, 'mins_total', 'mins_left', '.', parseMinutes);
 					}
-				}else if(/БИ[ТT]\b|GPRS|Интернет|трафик|Internet|\d+\s+[гмкgmk][бb]/i.test(name) || /[\d\.]+\s*[гмкgmk][бb]/i.test(row)){
-				    var internetPacket = getParam(optionGroupText, null, null, /Интернет \w+/i);
-					if(internetPacket)
-					    foundInternetPacketOptions[internetPacket] = true;
-						
-					var total = getParam(row, null, null, columnsRegexps[0 + colnum - 1], replaceTagsAndSpaces, parseTrafficMy);
-					var left = getParam(row, null, null, columnsRegexps[1 + colnum - 1], replaceTagsAndSpaces, parseTrafficMy);
-					var used;
-					if(has_used)
-						used = getParam(row, null, null, columnsRegexps[2 + colnum - 1], replaceTagsAndSpaces, parseTrafficMy);
-
-					if(isset(total) && isset(left) && !used)
-						used = total - left;
-
-					sumParam(total, result, 'internet_total', null, null, null, aggregate_sum);
-					sumParam(left, result, 'internet_left', null, null, null, aggregate_sum);
-					sumParam(used, result, 'internet_cur', null, null, null, aggregate_sum);
 				}else if(/(?:SMS|СМС|сообщен)/i.test(name)){
 					// Карманный интернет теперь покрывается циклом выше
 					
@@ -1370,6 +1353,23 @@ function megafonServiceGuidePhysical(filial, sessionid, text){
 				}else if(/на номера МегаФон/i.test(name)){
 					//3 мин на номера МегаФон-Сибирь
 					sumOption(colnum, row, result, 'mins_net_total', 'mins_net_left', '.', parseMinutes);
+				}else if(/БИ[ТT]\b|GPRS|Интернет|трафик|Internet|\d+\s+[гмкgmk][бb]/i.test(name) || /[\d\.]+\s*[гмкgmk][бb]/i.test(row)){
+				    var internetPacket = getParam(optionGroupText, null, null, /Интернет \w+/i);
+					if(internetPacket)
+					    foundInternetPacketOptions[internetPacket] = true;
+						
+					var total = getParam(row, null, null, columnsRegexps[0 + colnum - 1], replaceTagsAndSpaces, parseTrafficMy);
+					var left = getParam(row, null, null, columnsRegexps[1 + colnum - 1], replaceTagsAndSpaces, parseTrafficMy);
+					var used;
+					if(has_used)
+						used = getParam(row, null, null, columnsRegexps[2 + colnum - 1], replaceTagsAndSpaces, parseTrafficMy);
+
+					if(isset(total) && isset(left) && !used)
+						used = total - left;
+
+					sumParam(total, result, 'internet_total', null, null, null, aggregate_sum);
+					sumParam(left, result, 'internet_left', null, null, null, aggregate_sum);
+					sumParam(used, result, 'internet_cur', null, null, null, aggregate_sum);
 				}else{
 				    AnyBalance.trace('??? НЕИЗВЕСТНАЯ ОПЦИЯ (группа ' + optionGroupText + ') ' + name + ': ' + row);
 				}

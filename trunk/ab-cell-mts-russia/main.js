@@ -32,6 +32,8 @@ var regionsOrdinary = {
 var g_baseurl = 'https://lk.ssl.mts.ru';
 var g_baseurlLogin = 'https://login.mts.ru';
 
+var replaceNumber = [replaceTagsAndSpaces, /\D/g, '', /.*(\d\d\d)(\d\d\d)(\d\d)(\d\d)$/, '+7 $1 $2-$3-$4'];
+
 function getViewState(html) {
     return getParam(html, null, null, /name="__VIEWSTATE".*?value="([^"]*)"/);
 }
@@ -174,7 +176,7 @@ function mainMobile(allowRetry) {
             throw new AnyBalance.Error('Не удалось найти баланс в мобильном помощнике!', allowRetry);
         }
         // Телефон
-        getParam(html, result, 'phone', /Ваш телефон:.*?>([^<]*)</i, replaceTagsAndSpaces, html_entity_decode);
+        getParam(html, result, 'phone', /Ваш телефон:.*?>([^<]*)</i, replaceNumber, html_entity_decode);
         if (isAvailableStatus()) {
             AnyBalance.trace("Fetching status...");
             html = AnyBalance.requestGet(baseurl + "Account.mvc/Status", g_headers);
@@ -399,7 +401,7 @@ function fetchOrdinary(html, baseurl, resultFromLK) {
     getParam(html, result, 'balance', /<span[^>]*id="customer-info-balance[^>]*>([\s\S]*?)(?:\(|<\/span>)/i, replaceTagsAndSpaces, parseBalance);
     // Телефон
 	if(!isset(result.phone))
-		getParam(html, result, 'phone', /Номер:.*?>([^<]*)</i, replaceTagsAndSpaces, html_entity_decode);
+		getParam(html, result, 'phone', /Номер:.*?>([^<]*)</i, replaceNumber, html_entity_decode);
 
     if (AnyBalance.isAvailable('bonus') && !isset(result.bonus))
         result.bonus = null; //Не сбрасываем уже ранее полученное значение бонуса в 0. Может, мы получаем из помощника, потому что сдох ЛК
@@ -769,7 +771,7 @@ function mainLK(allowRetry) {
                     getParam(rel.target.bonusBalance + '', result, 'bonus', null, null, parseBalance);
         
                 if (!isset(result.phone) && isset(rel.target.address))
-                    getParam(rel.target.address + '', result, 'phone', null, [/^(\d{3})(\d{3})(\d{2})(\d{2})$/, '+7 $1 $2 $3 $4'], html_entity_decode);
+                    getParam(rel.target.address + '', result, 'phone', null, replaceNumber, html_entity_decode);
             }
         } catch (e) {
             AnyBalance.trace('Не удалось получить данные о пользователе, скорее всего, виджет временно недоступен... ' + e.message);

@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id major_version="3.3" version="115">ab-cell-mts-russia</id>
+	<id major_version="3.3" version="116">ab-cell-mts-russia</id>
 	<name>МТС (Россия)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе, бонусных баллах, использованных минутах на локальные, мобильные и любимые номера, расходах, статусе блокировки, кредите, номере лицевого счета, ежемесячной плате.</p>
@@ -28,8 +28,8 @@
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>main.js</js>
 		<js>library.js</js>
+		<js>main.js</js>
 		<history>history.xml</history>
 		<settings target="init">settings_init.xml</settings>
 	</files>

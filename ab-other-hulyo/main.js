@@ -22,10 +22,30 @@ function isUniqueFlight(val, idx, arr)
 	return(true);
 };
 	
-	
+// use current and previous flights list to get just the new ones
+function findNewFlightsOnly(oldInfo, newInfo)
+{
+    lines = newInfo.match(/[^\n]+/g);
+    if (!lines)
+        return(null);
+    
+    var result = null;
+    for (var i=0;i<lines.length;i++)
+    {
+        if (oldInfo.indexOf(lines[i])>=0)
+            continue;
+        result = result ? result+"\n"+lines[i] : lines[i];
+    }
+    return(result);
+}
+
 // Main
 function main() 
 {
+    // someone still on the old Anybalance? screw that!
+    if (AnyBalance.getLevel()<9)
+        AnyBalance.Error("Newer AnyBalance version required!");
+    
 	var prefs = AnyBalance.getPreferences();
 	var flights1 = 'http://catalogs.hulyo.co.il/catalogs/Production/Flights/v1.2/under199Flights_B.js';
 	var flights2 = 'http://catalogs.hulyo.co.il/catalogs/Production/Flights/v1.2/above199Flights_B.js';
@@ -74,10 +94,17 @@ function main()
 				" עד " + g_weekdays[back.getDay()] + back.toTimeString().substring(0,5) + ", " + f.DealDestinationName;
 	}
 
+    // load previously saved flights, generate the new info from the diff, save new oldinfo
+    var oldinfo = AnyBalance.getData("oldinfo","");
+    var newinfo = findNewFlightsOnly(oldinfo,info);
+	AnyBalance.setData("oldinfo",info);
+	AnyBalance.saveData();
+
 	// put some message if no flights were found
 	info += info.length ? "" : "אין טיסות";
-	
+    
 	// update the info and get the hell out
-	getParam(info, result, "info", null, null, html_entity_decode)
+	result["info"] = info;
+    result["newinfo"] = newinfo;
 	AnyBalance.setResult(result);
 }

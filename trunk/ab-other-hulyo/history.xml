@@ -18,5 +18,8 @@
 	</change>
 	<change version="6" date="2015-04-29">
 	- עדכון עקב שינוי באפליקציה
-	</change>    
+	</change>   
+    <change version="7" date="2015-04-29">
+	- אפשרות הצגת טיסות חדשות בלבד כשדה נפרד
+	</change>   
 </history>

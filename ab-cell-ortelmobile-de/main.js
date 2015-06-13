@@ -28,12 +28,18 @@ function doLogin(login,password)
     if ((password.length<8) || (password.length>40))
         throw new AnyBalance.Error("The password must be 8 to 40 characters");
     
-    // post the login request, load it into DOM
+    // post the login request, the reply should be an xml, but an html with a temporary error code sometimes
+    // happens as well, while html-reported errors seems to always be temporary
 	var	xml = AnyBalance.requestPost(loginUrl, {username: login, password: password, transactionRef:"dummy1"}, addHeaders({Referer: g_loginPage}));
 	AnyBalance.trace(xml,"Login Reply");
+    if (xml.indexOf("<html>")>=0)
+    {
+        var err = /<title>(.*)<\/title>/.exec(xml);
+        throw new AnyBalance.Error(err ? err[1] : "unexpected server responce",true);
+    }
+
+    // parse as xml and check for errors
     xml = (new DOMParser()).parseFromString(xml,"text/xml");
-    
-    // check for errors
     var errNodes = xml.getElementsByTagName("error");
     if (errNodes.length>0)
         throw new AnyBalance.Error(errNodes[0].getElementsByTagName("text")[0].childNodes[0].nodeValue); 

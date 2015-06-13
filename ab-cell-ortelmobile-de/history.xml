@@ -3,4 +3,7 @@
 	<change version="1" date="2015-05-29">
 	- Initial version.
 	</change>
+	<change version="2" date="2015-06-14">
+	- Handle temporary errors, such as "service temporary unavailable", properly.
+	</change>
 </history>

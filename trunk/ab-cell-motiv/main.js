@@ -28,6 +28,11 @@ function main(){
     }, g_headers);
 
     if(!/\/logout/i.test(html)){
+    	if(AnyBalance.getLastStatusCode() >= 400){
+    		AnyBalance.trace(html);
+    		throw new AnyBalance.Error('ЛИСА временно недоступна. Пожалуйста, попробуйте ещё раз позже.');
+    	}
+
         var error = getParam(html, null, null, /<div[^>]*class="errmsg"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
         if(error)
           throw new AnyBalance.Error(error);

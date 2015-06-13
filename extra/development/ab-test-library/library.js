@@ -12,6 +12,8 @@ library.js v0.17 от 05.06.15
 changelog:
 05.06.15 добавлена правильная обработка чекбоксов в createFormParams;
 
+17.05.15 getElement, getElements - добавлены функции получения HMTL всего элемента, включая вложенные элементы с тем же тегом
+
 24.11.14 parseDateWord - улучшено получение дат из строки '10 декабря';
 
 24.11.14 capitalFirstLetters - новая функция, делает из строки ИВАноВ - Иванов;
@@ -811,5 +813,64 @@ function setCountersToNull(result){
 	}
 	if(!isset(result.__tariff))
 		result.__tariff = null;
+}
+
+/**
+    Ищет элемент в указанном html, тэг которого совпадает с указанным регулярным выражением
+    Возвращает весь элемент целиком, учитывая вложенные элементы с тем же тегом
+    Например, 
+    	getElement(html, /<div[^>]+id="somediv"[^>]*>/i)
+*/
+function getElement(html, re){
+	var elem = getParam(re.toString(), null, null, /<(\w+)/);
+	var amatch = re.exec(html);
+	if(!amatch)
+		return null;
+	var startIndex = amatch.index;
+	var endTag = new RegExp('(?:<' + elem + '|<\/' + elem + ')[^>]*>', 'ig');
+	endTag.lastIndex = startIndex + amatch[0].length;
+	var depth = 0;
+
+	while(true){
+		amatch = endTag.exec(html);
+		if(!amatch)
+			break;
+		var matched = amatch[0];
+		if(matched.charAt(1) == '/'){
+		    if(depth == 0)
+		    	break;
+		    --depth;
+		}else{
+			++depth;
+		}
+		endTag.lastIndex = amatch.index + matched.length;
+	}
+
+	var endIndex = html.length;
+	if(amatch)
+		endIndex = amatch.index + amatch[0].length;
+
+	re.lastIndex = endIndex;
+
+	return html.substring(startIndex, endIndex);
+}
+
+/**
+    Ищет все элементы в указанном html, тэг которых совпадает с указанным регулярным выражением
+    Возвращает все элементы целиком, учитывая вложенные элементы с тем же тегом
+    ВНИМАНИЕ! Чтобы вернулись все элементы, надо указывать регулярное выражение с флагом g
+    Например, 
+    	getElements(html, /<div[^>]+id="somediv"[^>]*>/ig)
+*/
+function getElements(html, re){
+	var results = [];
+	do{
+		var res = getElement(html, re);
+		if(res)
+			results.push(res);
+		if(!re.global)
+			break; //Экспрешн только на один матч
+	}while(res !== null);
+	return results;
 }
 

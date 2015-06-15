@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="1.2" version="50">ab-cell-mts-ua</id>
+	<id major_version="1.2" version="51">ab-cell-mts-ua</id>
 	<api flags="no_browser"/>
 	<name>МТС (Украина)</name>
 	<description html="true"><![CDATA[
@@ -39,7 +39,7 @@
 		<counter id="balance" name="Баланс" units=" ₴"/>
 		<counter id="bonus_balance" name="Бонусный баланс" units=" ₴" flags="zero_when_empty"/>
 		<counter id="min_paket" name="Пакет бесплатных минут для внутрисетевых звонков" type="time_interval" format="{@MIN}" units=" мин"/>
-		<counter id="min_net_70" name="70 минут в день для внутрисетевых звонков" type="time_interval" format="{@MIN}" units=" мин"/>
+		<counter id="min_net_70" name="70/200 минут в день для внутрисетевых звонков" type="time_interval" format="{@MIN}" units=" мин"/>
 		<counter id="min_net_30" name="30 минут в день для внутрисетевых звонков" type="time_interval" format="{@MIN}" units=" мин"/>
 		<counter id="min_net_all_33" name="30/33 минуты в день для внутрисетевых звонков во всех областях" type="time_interval" format="{@MIN}" units=" мин"/>
 		<counter id="min_net_100" name="100 минут в день на внутрисетевое направление" type="time_interval" format="{@MIN}" units=" мин"/>

@@ -129,7 +129,7 @@ function main(){
     sumParam (html, result, 'termin_min_paket', /<li>Осталось[^<]*бесплатных секунд\.? до ([^<]*)<\/li>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
     sumParam (html, result, 'termin_min_paket', /<li>100\/700 минут внутри сети, осталось[^<]*бесплатных секунд\.? до ([^<]*)<\/li>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
 	// 70 минут в день для внутрисетевых звонков
-    sumParam (html, result, 'min_net_70', /<li>70 минут в день для внутрисетевых звонков:[^<]*осталось\s*([\d\.,]+) бесплатных секунд<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    sumParam (html, result, 'min_net_70', /<li>(?:70|200) минут в день для внутрисетевых звонков:[^<]*осталось\s*([\d\.,]+) бесплатных секунд<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	// 30 минут в день для внутрисетевых звонков
     sumParam (html, result, 'min_net_30', /<li>30 минут в день для внутрисетевых звонков:[^<]*осталось\s*([\d\.,]+) бесплатных секунд<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     sumParam (html, result, 'min_net_30', /<li>Осталось\s*([\d\.,]+)\s*минут<\/li>/ig, replaceTagsAndSpaces, parseBalance, parseTime, aggregate_sum);

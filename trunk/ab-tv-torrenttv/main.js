@@ -3,11 +3,10 @@
 */
 
 var g_headers = {
-	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
-	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+	'Accept-Language': 'ru,en;q=0.8',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.124 Safari/537.36',
 };
 
 function main() {
@@ -17,13 +16,20 @@ function main() {
 
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
-
-	var html = AnyBalance.requestPost(baseurl + 'auth.php', {
+	
+	var html = AnyBalance.requestGet(baseurl + 'auth.php', g_headers);
+	
+	if(!html || AnyBalance.getLastStatusCode() > 400){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+	}
+	
+	html = AnyBalance.requestPost(baseurl + 'auth.php', {
 		email: prefs.login,
 		password: prefs.password,
 		enter: 'Войти'
 	}, addHeaders({Referer: baseurl + ''}));
-
+	
 	if (!/document\.location="cabinet\.php"/i.test(html)) {
 		var error = getParam(html, null, null, /"alert alert-error"(?:[^>]*>){4}([\s\S]*?)<\/div/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)

@@ -27,7 +27,7 @@ function parseDateMy(str) {
 		var dt = new Date();
 		val = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate());
 	} else {
-		return parseDate(str);
+		return parseDateWord(str);
 	}
 	AnyBalance.trace("Parsed " + val + " from " + str);
 	return val && val.getTime();

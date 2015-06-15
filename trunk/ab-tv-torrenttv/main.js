@@ -24,6 +24,23 @@ function main() {
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
 	
+	if(/banhammer\/pid/i.test(html)) {
+		AnyBalance.trace('От нас тут защищаются, зачем?!');
+		
+		html = AnyBalance.requestGet(baseurl + 'banhammer/pid', addHeaders({
+			'Accept': '/*',
+			'Referer': baseurl + 'auth.php'
+		}));
+		
+		var token = AnyBalance.getLastResponseHeader('X-BH-Token');
+		if(!token) {
+			AnyBalance.trace(html);
+			throw new AnyBalance.Error('Не удалось найти токен авторизации. Сайт изменен?');
+		}
+		AnyBalance.setCookie('torrent-tv.ru', 'BHC', token);
+		AnyBalance.trace('Успешно прошли защиту от роботов..');
+	}
+	
 	html = AnyBalance.requestPost(baseurl + 'auth.php', {
 		email: prefs.login,
 		password: prefs.password,

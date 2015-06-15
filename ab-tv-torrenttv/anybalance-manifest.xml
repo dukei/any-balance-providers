@@ -1,13 +1,13 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-tv-torrenttv</id>
+	<id version="2">ab-tv-torrenttv</id>
 	<api flags="no_browser"/>
 	<name>Торрент ТВ</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе провайдера iptv Торрент ТВ http://torrent-tv.ru</p>
 	<p>Информация берется из личного кабинета http://torrent-tv.ru/c_iptv.php</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

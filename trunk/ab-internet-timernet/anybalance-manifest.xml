@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-timernet</id>
+	<api flags="no_browser"/>
+	<name>Таймер</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Таймер <a href="http://timernet.ru/">http://timernet.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="http://cabinet.timernet.ru/client2_new/index.php?r=account/index">http://cabinet.timernet.ru/client2_new/index.php?r=account/index</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="balance_tv" name="Баланс ТВ" units=" р"/>
+		<counter id="internet_cur" name="Трафик в этом месяце" suffix=" Mb"/>
+		<counter id="abon" name="Абонентская плата" suffix=" р"/>
+		<counter id="daysleft" name="Хватит на" suffix=" дн"/>
+		<counter id="license" name="Лицевой счет" type="text"/>
+		<counter id="agreement" name="Номер договора" type="text"/>
+		<counter id="username" name="ФИО" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

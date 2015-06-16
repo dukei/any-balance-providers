@@ -41,11 +41,17 @@ function main() {
 	}, addHeaders({Referer: baseurl + 'logon'}));
 	
 	if (!/exit_link|logoff/i.test(html)) {
+		if(/SmsAuth/i.test(html)) {
+			AnyBalance.trace(html);
+			throw new AnyBalance.Error('Для использования данного провайдера необходимо отключить смс-коды подтверждения входа.');
+		}
+		
 		var error = sumParam(html, null, null, /"error"[^>]*>([^<]+)/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
-		if (error && /Неверный логин или пароль/i.test(error))
-			throw new AnyBalance.Error(error, null, true);
+		
 		if (error)
-			throw new AnyBalance.Error(error);
+			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+		
+		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	

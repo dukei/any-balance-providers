@@ -122,6 +122,9 @@ function main(){
 				html = AnyBalance.requestPost(baseurl + 'serverLogic/accountGetExtData', {account: acc.id}, g_headers);
 				json = getRTJson(html).account;
 				
+				if(json.state == "MIGRATE")
+					throw new AnyBalance.Error("Получение данных по сотовым номерам больше недоступно в Едином кабинете. Установите провайдера Ростелеком регионы и настройте новый аккаунт.");
+				
 				acc.__detailedInfo = json;
 
 				var balance = getAccBalance(json);

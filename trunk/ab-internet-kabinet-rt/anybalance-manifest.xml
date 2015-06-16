@@ -1,16 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="19">ab-internet-kabinet-rt</id>
+	<id version="20">ab-internet-kabinet-rt</id>
 	<name>Ростелеком (Единый кабинет)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе и выбранном лицевом счете для пользователей оператора связи "Ростелеком".</p> 
-	<p>Информация берется из единого личного кабинета "Ростелеком" (http://kabinet.rt.ru).</p>
+	<p>Информация берется из единого личного кабинета "Ростелеком" <a href="http://kabinet.rt.ru">http://kabinet.rt.ru</a> и <a href="https://lk.rt.ru">https://lk.rt.ru</a>.</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
 	<p>Как зарегистрироваться:</p>
 	<ul>
-	<li> Для регистрации пройдите по ссылке https://kabinet.rt.ru/?action=reg и подключите  свои услуги.</li>
+		<li> Для регистрации пройдите по ссылке https://kabinet.rt.ru/?action=reg и подключите  свои услуги.</li>
 	<br>
 	<b>ВНИМАНИЕ!</b> В настоящее время работает бета-версия Личного кабинета абонента ОАО "Ростелеком". В связи с этим функция присоединения услуг для некоторых регионов недоступна.
 	]]></instruction>

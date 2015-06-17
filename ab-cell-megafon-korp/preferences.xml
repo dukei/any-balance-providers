@@ -23,12 +23,12 @@
 	</EditTextPreference>
 	<ListPreference
 		key="region"
-		title="Область"
-		dialogTitle="Выберите область"
+		title="Регион"
+		dialogTitle="Выберите регион"
 		summary="||{@s}"
-		entries="Санкт-Петербург и область|Архангельская|Вологодская|Калининградская|Курганская|Мурманская|Новгородская|Псковская|Республика Карелия|Республика Коми|Свердловская|Тюменская|Челябинская"
-		entryValues="szf|szf|szf|szf|ural|szf|szf|szf|szf|ural|ural|ural|ural"
-		defaultValue="ural">
+		entries="Центральный филиал|Сибирский филиал|Северо-западный филиал|Дальневосточный филиал|Поволжский филиал|Кавказский филиал|Уральский филиал"
+		entryValues="center|sib|szf|dv|volga|kavkaz|ural"
+		defaultValue="center">
 	</ListPreference>
 	<EditTextPreference
 		title="Телефон"

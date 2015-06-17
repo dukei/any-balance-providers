@@ -10,6 +10,34 @@ var g_headers = {
 	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
 };
 
+function getRegions() {
+	var html = AnyBalance.requestGet('https://lk.megafon.ru/b2blinks/', g_headers);
+	
+	var regions = sumParam(html, null, null, /data-value="[^"]+(?:[^>]*>){3}[^<]+/ig)
+	
+	AnyBalance.trace('Регионов: ' + regions.length);
+	
+	var values='';
+	var entries='';
+	for(var i= 0; i < regions.length; i++) {
+		var curr = regions[i];
+		
+		var val = getParam(curr, null, null, /data-value="([^"]+)/i, replaceTagsAndSpaces);
+		var name = getParam(curr, null, null, />([^<]+)$/i, replaceTagsAndSpaces);
+		
+		if(!val || !name)
+			throw new AnyBalance.Error('Ошибка при поиске регионов!');
+		
+		values += val + '|';
+		entries += name + '|';
+	}
+	
+	
+	AnyBalance.trace('values: ' + values);
+	AnyBalance.trace('entries: ' + entries);
+	
+}
+
 function main() {
 	var prefs = AnyBalance.getPreferences();
 	
@@ -17,7 +45,10 @@ function main() {
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
 	AnyBalance.setDefaultCharset('utf-8');
-	var baseurl = 'https://' + (prefs.region || 'ural') + '.b2blk.megafon.ru/';
+	var baseurl = 'https://' + (prefs.region || 'center') + '.b2blk.megafon.ru/';
+	
+	// getRegions();
+	// return;
 	
 	var html = AnyBalance.requestGet(baseurl + 'sc_cp_apps/login', g_headers);
 	

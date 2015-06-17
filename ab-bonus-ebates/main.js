@@ -42,12 +42,12 @@ function doCom(baseurl, prefs) {
 		throw new AnyBalance.Error('Login attempt has failed. Maybe site has been changed?');
 	}
 	
-	html = AnyBalance.requestPost('http://www.ebates.com/account-info.htm', {}, addHeaders({
-		Referer: 'http://www.ebates.com/index.do',
+	html = AnyBalance.requestPost(baseurl + 'account-info.htm', {}, addHeaders({
+		Referer: baseurl + 'index.do',
 		'X-Requested-With':'XMLHttpRequest'
 	}));
 	
-	var json = getJson(html);
+	var json = getParam(html, null, null, /ebates\.member\s*=\s*(\{[\s\S]*?\})\s*;/i, replaceTagsAndSpaces, getJson);
 	
 	var result = {success: true};
 	

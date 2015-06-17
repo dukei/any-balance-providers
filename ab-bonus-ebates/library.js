@@ -67,8 +67,9 @@ if(d.hasOwnProperty(f)){return String.fromCharCode(d[f])
 }function createFormParams(a,b,d){var c=d?[]:{};
 a.replace(/<input[^>]+name=['"]([^'"]*)['"][^>]*>|<select[^>]+name=['"]([^'"]*)['"][^>]*>[\s\S]*?<\/select>/ig,function(j,f,g){var e="";
 if(f){if(/type=['"]button['"]/i.test(j)){e=undefined
+}else{if(/type=['"]checkbox['"]/i.test(j)){e=/\s+checked[\s>=]/i.test(j)?getParam(j,null,null,/value=['"]([^'"]*)['"]/i,null,html_entity_decode)||"on":undefined
 }else{e=getParam(j,null,null,/value=['"]([^'"]*)['"]/i,null,html_entity_decode)||""
-}name=f
+}}name=f
 }else{if(g){e=getParam(j,null,null,/^<[^>]*value=['"]([^'"]*)['"]/i,null,html_entity_decode);
 if(typeof(e)=="undefined"){var h=getParam(j,null,null,/(<option[^>]+selected[^>]*>)/i);
 if(!h){h=getParam(j,null,null,/(<option[^>]*>)/i)
@@ -246,4 +247,33 @@ for(i=0;
 i<a.length;
 i++){b+=a[i].substring(0,1).toUpperCase()+a[i].substring(1)+" "
 }return b.replace(/^\s+|\s+$/g,"")
+}function setCountersToNull(b){var a=AnyBalance.getAvailableCounters();
+for(var c=0;
+c<a.length;
+++c){if(a[c]!=="--auto--"&&!isset(b[a[c]])){b[a[c]]=null
+}}if(!isset(b.__tariff)){b.__tariff=null
+}}function getElement(g,j){var c=getParam(j.toString(),null,null,/<(\w+)/);
+var b=j.exec(g);
+if(!b){return null
+}var h=b.index;
+var d=new RegExp("(?:<"+c+"|</"+c+")[^>]*>","ig");
+d.lastIndex=h+b[0].length;
+var e=0;
+while(true){b=d.exec(g);
+if(!b){break
+}var a=b[0];
+if(a.charAt(1)=="/"){if(e==0){break
+}--e
+}else{++e
+}d.lastIndex=b.index+a.length
+}var f=g.length;
+if(b){f=b.index+b[0].length
+}j.lastIndex=f;
+return g.substring(h,f)
+}function getElements(c,d){var b=[];
+do{var a=getElement(c,d);
+if(a){b.push(a)
+}if(!d.global){break
+}}while(a!==null);
+return b
 };

@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="23" date="2015-06-17">
+	- Исправлен счетчик MMS за текущий месяц.
+	</change>
 	<change version="22" date="2015-05-30">
 	Добавлен счетчик ммс
 	</change>

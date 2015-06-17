@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-bonus-robokassa</id>
+	<id version="3">ab-bonus-robokassa</id>
 	<api flags="no_browser"/>
 	<name>Robokassa</name>
 	<description html="true"><![CDATA[

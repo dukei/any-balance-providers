@@ -31,7 +31,9 @@ function main() {
 		password: prefs.password,
 	}, addHeaders({Referer: baseurl, 'X-Requested-With':'XMLHttpRequest'}));
 	
-	if (!/^\s*0/i.test(html)) {
+	var json = getJson(html);
+	
+	if (!json.result) {
 		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));

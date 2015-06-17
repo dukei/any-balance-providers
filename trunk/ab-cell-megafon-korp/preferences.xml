@@ -30,4 +30,13 @@
 		entryValues="szf|szf|szf|szf|ural|szf|szf|szf|szf|ural|ural|ural|ural"
 		defaultValue="ural">
 	</ListPreference>
+	<EditTextPreference
+		title="Телефон"
+		key="phone"
+		summary="||{@s}"
+		dialogTitle="Телефон"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите последние цифры номера телефона, по которому необходимо получать данные или не вводите ничего">
+	</EditTextPreference>	
 </PreferenceScreen>

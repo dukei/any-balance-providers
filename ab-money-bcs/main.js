@@ -24,19 +24,24 @@ function main() {
 		throw new AnyBalance.Error('Ошибка! Сервер не отвечает! Попробуйте обновить баланс позже.');
 	}
 	
-	var params = createFormParams(html, function(params, str, name, value) {
-		if (name == 'login') 
-			return prefs.login;
-		else if (name == 'password')
-			return prefs.password;
-
-		return value;
-	});
+	var captchaa = '';;
+	if(/Перегрузить картинку/i.test(html)) {
+		if(AnyBalance.getLevel() >= 7){
+			AnyBalance.trace('Пытаемся ввести капчу');
+			var captcha = AnyBalance.requestGet(baseurl+ 'bank/web/guest/home?p_p_id=LoginPortlet_WAR_bcsinternetserverportalapp&p_p_lifecycle=2&p_p_state=normal&p_p_mode=view&p_p_resource_id=captcha&p_p_cacheability=cacheLevelPage&force=' + new Date().getTime());
+			captchaa = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
+			AnyBalance.trace('Капча получена: ' + captchaa);
+		}else{
+			throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
+		}
+	}
 	
 	html = AnyBalance.requestPost(baseurl + 'bank/web/guest/home?p_p_id=LoginPortlet_WAR_bcsinternetserverportalapp&p_p_lifecycle=2&p_p_state=normal&p_p_mode=view&p_p_resource_id=login&p_p_cacheability=cacheLevelPage', {
+		'login':prefs.login,
+		'password':prefs.password,
 		'_LoginPortlet_WAR_bcsinternetserverportalapp_login': prefs.login,
 		'_LoginPortlet_WAR_bcsinternetserverportalapp_password': prefs.password,
-		'_LoginPortlet_WAR_bcsinternetserverportalapp_captchaText': ''
+		'_LoginPortlet_WAR_bcsinternetserverportalapp_captchaText': captchaa
 	}, addHeaders({Referer: baseurl + 'bank/web/guest/home', 'X-Requested-With':'XMLHttpRequest'}));
 	
 	var json = getJson(html);

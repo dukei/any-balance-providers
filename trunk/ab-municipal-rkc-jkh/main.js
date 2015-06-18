@@ -41,13 +41,18 @@ function main() {
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'balance', /баланс:(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, ['currency', 'balance'], /Текущий баланс:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseCurrency);
-	getParam(html, result, 'fio', /Имя абонента:(?:[\s\S]*?<b[^>]*>){1}([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, '__tariff', /Тарифный план:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'phone', /Номер:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'deadline', /Действителен до:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseDate);
-	getParam(html, result, 'status', /Статус:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
+	// Задолженность на начало месяца
+	getParam(html, result, 'balance', /Задолженность на конец месяца(?:[^>]*>){9}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	// Плановое начисление
+	getParam(html, result, 'plan', /Задолженность на конец месяца(?:[^>]*>){11}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	// Перерасчеты
+	getParam(html, result, 'pere', /Задолженность на конец месяца(?:[^>]*>){13}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	// Фактическое начисление
+	getParam(html, result, 'fakt', /Задолженность на конец месяца(?:[^>]*>){17}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	// Поступления
+	getParam(html, result, 'postup', /Задолженность на конец месяца(?:[^>]*>){19}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	// Задолженность на конец месяца без учета пеней
+	getParam(html, result, 'debt_end', /Задолженность на конец месяца(?:[^>]*>){21}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 	
 	AnyBalance.setResult(result);
 }

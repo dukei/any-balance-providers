@@ -4,8 +4,7 @@
 	<api flags="no_browser"/>
 	<name>РКЦ ЖКХ Якутск</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе провайдера ИмяПровайдера <a href=""></a></p>
-	<p>Информация берется из личного кабинета <a href=""></a></p>
+	<p>Предоставляет информацию о балансе РКЦ ЖКХ Якутск <a href="http://rkc-jkh.ru/login.asp">http://rkc-jkh.ru/login.asp</a></p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
@@ -16,11 +15,12 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" р"/>
-		<counter id="fio" name="ФИО" type="text"/>
-		<counter id="status" name="Статус" type="text"/>
-		<counter id="phone" name="Телефон" type="text"/>
-		<counter id="deadline" name="Дата отключения" type="time" format="dd/MM/yyyy"/>
+		<counter id="balance" name="Задолженность на начало месяца" units=" р"/>
+		<counter id="plan" name="Плановое начисление" units=" р"/>
+		<counter id="pere" name="Перерасчеты" units=" р"/>
+		<counter id="fakt" name="Фактическое начисление" units=" р"/>
+		<counter id="postup" name="Поступления" units=" р"/>
+		<counter id="debt_end" name="Задолженность на конец месяца" units=" р"/>
 	</counters>
 	<keywords></keywords>
 	<type>municipal</type>

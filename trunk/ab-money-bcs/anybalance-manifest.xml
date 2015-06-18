@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-money-bcs</id>
-	<api flags="no_browser"/>
+	<id version="3">ab-money-bcs</id>
+	<api flags="no_browser|captcha"/>
 	<name>БКС ПРЕМЬЕР</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе провайдера БКС ПРЕМЬЕР http://bcs-bank.com/</p>
@@ -22,6 +22,6 @@
 		<counter id="accnumber" name="Номер счета" type="text"/>
 	</counters>
 	<keywords></keywords>
-	<type>money</type>
+	<type>money, bank</type>
 	<country>ru</country>
 </provider>

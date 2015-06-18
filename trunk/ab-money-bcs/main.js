@@ -36,11 +36,11 @@ function main() {
 		}
 	}
 	
+	// AnyBalance.sleep(5000);
+
 	html = AnyBalance.requestPost(baseurl + 'bank/web/guest/home?p_p_id=LoginPortlet_WAR_bcsinternetserverportalapp&p_p_lifecycle=2&p_p_state=normal&p_p_mode=view&p_p_resource_id=login&p_p_cacheability=cacheLevelPage', {
 		'login':prefs.login,
 		'password':prefs.password,
-		'_LoginPortlet_WAR_bcsinternetserverportalapp_login': prefs.login,
-		'_LoginPortlet_WAR_bcsinternetserverportalapp_password': prefs.password,
 		'_LoginPortlet_WAR_bcsinternetserverportalapp_captchaText': captchaa
 	}, addHeaders({Referer: baseurl + 'bank/web/guest/home', 'X-Requested-With':'XMLHttpRequest'}));
 	
@@ -57,9 +57,18 @@ function main() {
 	
 	html = AnyBalance.requestGet(baseurl + json.redirect, g_headers);
 	
-	html = AnyBalance.requestGet(baseurl + 'bank/group/bcs/accountsandcards', g_headers);
-	
 	var result = {success: true};
+	
+	if(prefs.type == 'brok_acc')
+		processBrokerAcc(baseurl, prefs, html, result);
+	else
+		processCard(baseurl, prefs, result);
+	
+	AnyBalance.setResult(result);
+}
+
+function processCard(baseurl, prefs, result) {
+	var html = AnyBalance.requestGet(baseurl + 'bank/group/bcs/accountsandcards', g_headers);
 	
 	var card = getParam(html, null, null, new RegExp('<tr class="ui-widget-content(?:[^>]*>){3}[^>]*'+ (prefs.cardnum || '') +'(?:[^>]*>){46}\\s*</tr>','i'));
 	if(!card) {
@@ -71,6 +80,35 @@ function main() {
 	getParam(card, result, 'accnumber', /<tr class="ui-widget-content(?:[^>]*>){5}([\s\S]*?)</i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(card, result, 'balance', /<tr class="ui-widget-content(?:[^>]*>){10}([\s\S]*?)</i, replaceTagsAndSpaces, parseBalance);
 	getParam(card, result, ['currency', 'balance'], /<tr class="ui-widget-content(?:[^>]*>){10}([\s\S]*?)</i, replaceTagsAndSpaces, parseCurrency);
-	
-	AnyBalance.setResult(result);
 }
+
+function processBrokerAcc(baseurl, prefs, html, result) {
+	var plid = getParam(html, null, null, /getPlid:function\(\)\{return"(\d+)"/i, replaceTagsAndSpaces);
+	if(!plid) {
+		throw new AnyBalance.Error('Не удалось найти PLID');
+	}
+
+	html = AnyBalance.requestPost(baseurl + 'bank/c/portal/render_portlet?p_l_id='+plid+'&p_p_id=GeneralAgreementListCompactForm_WAR_bcsinternetserverportalapp', {}, addHeaders({Referer: baseurl + 'bank/web/guest/home', 'X-Requested-With':'XMLHttpRequest'}));
+	
+	var acc = getParam(html, null, null, new RegExp('<tr>(?:[^>]*>){1}[^>]*PrimeFaces.ab(?:[^>]*>){3}.*?' + (prefs.cardnum || '') +'от(?:[^>]*>){10}','i'));
+	if(!acc) {
+		throw new AnyBalance.Error('Не удалось найти ' + (prefs.cardnum ? 'счет с последними цифрами' + prefs.cardnum: 'ни одного счета!'));
+	}
+	
+	getParam(acc, result, '__tariff', /<tr>(?:[^>]*>){4}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(acc, result, 'accnumber', /<tr>(?:[^>]*>){4}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(acc, result, 'balance', /<tr>(?:[^>]*>){7}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(acc, result, ['currency', 'balance'], /<tr>(?:[^>]*>){7}([^<]+)/i, replaceTagsAndSpaces, parseCurrency);
+}
+
+
+
+
+
+
+
+
+
+
+
+

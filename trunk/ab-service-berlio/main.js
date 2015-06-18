@@ -12,27 +12,25 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://www.berlio.by/',
-		lkurl = 'http://lkb.by/';
+	var baseurl = 'https://lkb.by/Account/';
 	AnyBalance.setDefaultCharset('windows-1251');
 	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	var html = AnyBalance.requestGet(baseurl, g_headers);
+	var html = AnyBalance.requestGet(baseurl + 'Login', g_headers);
 	
 	var params = createFormParams(html, function(params, str, name, value) {
-		if (name == 'USER_LOGIN') 
+		if (name == 'UserName') 
 			return prefs.login;
-		else if (name == 'USER_PASSWORD')
+		else if (name == 'Password')
 			return prefs.password;
-
 		return value;
 	});
 	
-	html = AnyBalance.requestPost(lkurl + '?login=yes', params, addHeaders({Referer: baseurl + 'personal/profile/'}));
+	html = AnyBalance.requestPost(baseurl + 'Login?ReturnUrl=%2f', params, addHeaders({Referer: baseurl + 'Login'}));
 
-	if (!/logout=yes/i.test(html)) {
+	if (!/ВЫХОД/i.test(html)) {
 		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
@@ -42,7 +40,8 @@ function main() {
 	}
 	
 	var result = {success: true};
-	getParam(html, result, 'balance', /Текущий остаток(?:[^>]*>){3}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	
+	getParam(html, result, 'balance', /Сумма на(?:[^>]*>){2}([^<]+)\s*<\/dd>\s*<\/dl>\s*<\/div>/i, replaceTagsAndSpaces, parseBalance);
 	
 	AnyBalance.setResult(result);
 }

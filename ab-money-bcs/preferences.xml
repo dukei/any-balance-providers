@@ -21,6 +21,14 @@
 		dialogMessage="Введите пароль, используемый для входа в личный кабинет."
 		inputType="textPassword">
 	</EditTextPreference>
+	<ListPreference 
+        key="type" 
+        title="Что смотреть"
+        summary="||{@s}"
+        entries="Карта|Брокерский счет"
+        entryValues="card|brok_acc"
+		defaultValue="card">
+    </ListPreference>
 	<EditTextPreference
 		title="Номер карты"
 		key="cardnum"

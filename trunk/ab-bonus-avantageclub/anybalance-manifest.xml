@@ -1,36 +1,28 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-  <id version="3">ab-bonus-avantageclub</id>
-  <name>Улыбка Радуги (Avantage club)</name>
-  <description>
-    Получает баланс и другую информацию по бонусной карте с сайта магазина Улыбка Радуги (http://r-ulybka.ru)
-
-    Информация берется из личного кабинета: http://avantageclub.ru
-
-  </description>
-  <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units=" Б"/>
-    <counter id="fio" name="ФИО" type="text"/>
-    <counter id="number" name="Номер карты" type="text"/>
-    <counter id="email" name="Email" type="text"/>
-    <counter id="phone" name="Телефон" type="text"/>
-  </counters>
-  <keywords>
-    Улыбка Радуги, avantageclub
-  </keywords>
-  <type>
-    bonus
-  </type>
-  <country>
-    ru
-  </country>
+	<id version="4">ab-bonus-avantageclub</id>
+	<name>Улыбка Радуги (Avantage club)</name>
+	<description>
+	Получает баланс и другую информацию по бонусной карте с сайта магазина Улыбка Радуги (http://r-ulybka.ru)
+	Информация берется из личного кабинета: http://avantageclub.ru
+	</description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" Б"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="number" name="Номер карты" type="text"/>
+		<counter id="email" name="Email" type="text"/>
+		<counter id="phone" name="Телефон" type="text"/>
+	</counters>
+	<keywords>Улыбка Радуги, avantageclub</keywords>
+	<type>bonus</type>
+	<country>ru</country>
 </provider>

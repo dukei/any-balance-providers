@@ -1,33 +1,30 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-telephony-zebra</id>
-  <name>Зебра Телеком</name>
-  <description>
-    Получает текущий баланс, валюту баланса в провайдере IP-телефонии Зебра Телеком (http://www.zebratelecom.ru). 
+	<api flags="no_browser"/>
+	<id version="2">ab-telephony-zebra</id>
+	<name>Зебра Телеком</name>
+	<description>
+	Получает текущий баланс, валюту баланса в провайдере IP-телефонии Зебра Телеком (http://www.zebratelecom.ru). 
 
-    ЗАО “Зебра Телеком” – один из российских операторов связи, предоставляющий частным и корпоративным пользователям услуги дальней связи по технологии VOIP на всей территории России. С 2006 года "Зебра Телеком" входит в группу компаний “Ростелеком”.
+	ЗАО “Зебра Телеком” – один из российских операторов связи, предоставляющий частным и корпоративным пользователям услуги дальней связи по технологии VOIP на всей территории России. С 2006 года "Зебра Телеком" входит в группу компаний “Ростелеком”.
 
-    Провайдер получает данные из личного кабинета для физических лиц https://www.zebratelecom.ru/cabinet/.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс"/>
-    <counter id="currency" name="Валюта" type="text"/>
-    <counter id="userName" name="Владелец" type="text"/>
-    <counter id="licschet" name="№ счета" type="text"/>
-  </counters>
-  <keywords>
-    zebra
-  </keywords>
-  <type>
-    telephony
-  </type>
-  <country>
-    ru
-  </country>
+	Провайдер получает данные из личного кабинета для физических лиц https://www.zebratelecom.ru/cabinet/.
+	</description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" {@currency}"/>
+		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="userName" name="Владелец" type="text"/>
+		<counter id="licschet" name="№ счета" type="text"/>
+	</counters>
+	<keywords>zebra</keywords>
+	<type>telephony</type>
+	<country>ru</country>
 </provider>

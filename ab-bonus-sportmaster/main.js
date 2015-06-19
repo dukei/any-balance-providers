@@ -47,7 +47,7 @@ function main(){
 	getParam(html, result, '__tariff', /smProfile__level[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'cardnum', /<h3>\s*Номер карты\s*<\/h3>\s*<div>\s*([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'balance', /smProfile__total-amount[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'nextlevel', /Совершите покупки еще на([^<]*?)рублей/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'nextlevel', /Совершите покупки еще на([^<]*?)руб/i, replaceTagsAndSpaces, parseBalance);
 	
 	if(isAvailable('all')) {
 		var table = getParam(html, null, null, /<table[^>]*sm-profile__bonustable[^>]*>(?:[\s\S](?!<\/table>))[\s\S]*?<\/table>/i);

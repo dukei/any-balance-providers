@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="13" date="2015-06-19">
+	- Исправлен счетчик Покупок до след уровня.
+	</change>
 	<change version="12" date="2015-06-19">
 	- Поддержка изменений на сайте.
 	</change>

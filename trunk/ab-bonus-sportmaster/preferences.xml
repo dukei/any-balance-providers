@@ -2,12 +2,12 @@
 <PreferenceScreen>
     <EditTextPreference
 		obligatory="true"
-		title="№ карты или логин"
+		title="E-mail"
 		positiveButtonText="ОК"
 		summary="||{@s}"
-		dialogTitle="№ карты или логин"
+		dialogTitle="E-mail"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите № карты или логин. Если вы введете номер карты, то пароль вводить необязательно."
+		dialogMessage="Введите E-mail."
 		key="login">
 	</EditTextPreference>
 	<EditTextPreference
@@ -16,8 +16,8 @@
 		dialogTitle="Пароль"
 		negativeButtonText="Отмена"
 		title="Пароль"
-		summary="|Не требуется, если введен № карты|***********"
-		dialogMessage="Введите пароль, используемый для входа в личный кабинет. Если вы ввели номер карты, то пароль вводить необязательно."
+		summary="||***********"
+		dialogMessage="Введите пароль, используемый для входа в личный кабинет."
 		inputType="textPassword">
 	</EditTextPreference>
 </PreferenceScreen>

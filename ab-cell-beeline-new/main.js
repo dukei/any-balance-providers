@@ -128,12 +128,8 @@ function getBonusesBlock(url, html, name, exact, onlyReturnParams) {
 		formhtml = html[1];
 		html = html[0];
 	}
-
-	var prefs = AnyBalance.getPreferences();
-	if (prefs.country == 'kz')
-		var re = new RegExp("loadingServices = function\\(\\) \\{PrimeFaces\\.\\w+\\s*\\(\\s*\\{[^}]*update:\\s*'" + (exact ? "" : "[^']*") + name);
-	else
-		var re = new RegExp("(?:loadingbonusesloaderDetails|loadingAccumulators)\\s*=\\s*function\\(\\) \\{PrimeFaces\\.\\w+\\s*\\(\\s*\\{[^}]*u:\\s*'" + (exact ? "" : "[^']*") + name);
+	
+	var re = new RegExp("(?:loadingbonusesloaderDetails|loadingAccumulators)\\s*=\\s*function\\(\\) \\{PrimeFaces\\.\\w+\\s*\\(\\s*\\{[^}]*u:\\s*'" + (exact ? "" : "[^']*") + name);
 	
 	var data = getParam(html, null, null, re);
 	if (!data) {
@@ -1080,6 +1076,7 @@ function proceedWithMobileAppAPI(baseurl, prefs, failover) {
 	var json = callAPIProc(baseurl + 'auth?login=' + encodedLogin + '&password=' + encodedPassword);
 	
 	AnyBalance.setCookie('my.beeline.ru', 'token', json.token);
+	AnyBalance.setCookie('my.beeline.kz', 'token', json.token);
 	
 	json = callAPIProc(baseurl + 'info/payType?ctn=' + encodedLogin);
 	
@@ -1283,12 +1280,24 @@ function apiParseBalanceRound(val) {
 
 function proceedWithSiteKz(baseurl, prefs) {
 	try {
-		var html = AnyBalance.requestGet(baseurl + 'login.html', g_headers);
+		var html = AnyBalance.requestGet(baseurl + 'login.xhtml', g_headers);
 		
 		if (AnyBalance.getLastStatusCode() > 400) {
 			AnyBalance.trace('Beeline returned: ' + AnyBalance.getLastStatusString());
 			throw new AnyBalance.Error('Личный кабинет Билайн временно не работает. Пожалуйста, попробуйте позднее.');
 		}
+
+		if(/xbr.x?html/i.test(AnyBalance.getLastUrl())) {
+			AnyBalance.trace('Переадресовались на xbr.xhtml');
+			AnyBalance.setCookie('my.beeline.kz', 'token', 'invalid');
+			
+			// Эдакий хак, чтобы перейти на страницу авторизации
+			html = AnyBalance.requestPost(baseurl + 'login.xhtml', {
+				'selectLk': '1',
+				'login': prefs.login,
+				'password': prefs.password
+			}, addHeaders({Referer: 'http://my.beeline.kz/xbr.xhtml'}));
+		}		
 	} catch(e){
 		if(!prefs.__debug)
 			throw e;
@@ -1297,9 +1306,9 @@ function proceedWithSiteKz(baseurl, prefs) {
 	if(prefs.__debug) {
 		try {
 			if(prefs.__debug == 'b2b') {
-				html = AnyBalance.requestGet(baseurl + 'faces/index.html', g_headers);
+				html = AnyBalance.requestGet(baseurl + 'faces/index.xhtml', g_headers);
 			} else {
-				html = AnyBalance.requestGet(baseurl + 'c/' + prefs.__debug + '/index.html', g_headers);
+				html = AnyBalance.requestGet(baseurl + 'c/' + prefs.__debug + '/index.xhtml', g_headers);
 			}
 		} catch(e){
 		}
@@ -1425,7 +1434,7 @@ function fetchB2BKz(baseurl, html) {
     	getParam(html, result, ['currency', 'balance'], /class="balance"[^>]*>([\s\S]*?)<\/div>/i, [replaceTagsAndSpaces, /все счета оплачены/, '', /[.,]/g, ''], parseCurrency);
 	}
 	//Получим страницу с тарифом и опциями
-    html = AnyBalance.requestGet(baseurl + 'faces/info/abonents/catalog.html', g_headers);
+    html = AnyBalance.requestGet(baseurl + 'faces/info/abonents/catalog.xhtml', g_headers);
 	
     var number = prefs.phone || '\\d{4}';
 	
@@ -1440,7 +1449,7 @@ function fetchB2BKz(baseurl, html) {
 		params['mobileDataForm:abonents:telephoneNum'] = prefs.phone;
 		params['javax.faces.partial.execute'] = 'mobileDataForm';
 		
-		html = AnyBalance.requestPost(baseurl + 'faces/info/abonents/catalog.html', params, addHeaders({
+		html = AnyBalance.requestPost(baseurl + 'faces/info/abonents/catalog.xhtml', params, addHeaders({
 			Referer: baseurl + 'faces/info/abonents/catalog.html',
 			'Faces-Request': 'partial/ajax',
 			'X-Requested-With': 'XMLHttpRequest'
@@ -1602,7 +1611,7 @@ function fetchPostKz(baseurl, html) {
 				}
 				
 				try {
-					html = AnyBalance.requestPost(baseurl + 'c/post/index.html', params, addHeaders({Referer: baseurl + 'c/post/index.html'}));
+					html = AnyBalance.requestPost(baseurl + 'c/post/index.xhtml', params, addHeaders({Referer: baseurl + 'c/post/index.xhtml'}));
 				} catch(e) {}
 				/*if (AnyBalance.getLastStatusCode() > 400) {
 					AnyBalance.trace('Beeline returned: ' + AnyBalance.getLastStatusString());
@@ -1611,18 +1620,18 @@ function fetchPostKz(baseurl, html) {
 				// Бывает что к постоплатному кабинету привязан предоплатный номер, проверяем..
 				if(/c\/pre\/index\.html/i.test(html)) {
 					AnyBalance.trace('Дополнительный номер ' + num + ' предоплатный, но привязан к постоплатному кабинету...');
-					html = AnyBalance.requestGet(baseurl + 'c/pre/index.html', g_headers);
+					html = AnyBalance.requestGet(baseurl + 'c/pre/index.xhtml', g_headers);
 					fetchPre(baseurl, html);
 					return;
 				} else {
 					// Вроде помогает переход на главную
-					html = AnyBalance.requestGet(baseurl + 'c/post/index.html', g_headers);
+					html = AnyBalance.requestGet(baseurl + 'c/post/index.xhtml', g_headers);
 				}
 			}
 		}
 		//Если несколько номеров в кабинете, то почему-то баланс надо брать отсюда
 		if (AnyBalance.isAvailable('balance', 'currency')) {
-			xhtml = refreshBalanceKz(baseurl + 'c/post/index.html', html);
+			xhtml = refreshBalance(baseurl + 'c/post/index.xhtml', html);
 			//xhtml = getBlockKz(baseurl + 'c/post/index.html', html, 'homeBalance');
 			
 			getParam(xhtml + html, result, 'balance', /Расходы по номеру за текущий период с НДС[\s\S]*?<div[^>]+class="balan?ce-summ"[^>]*>([\s\S]*?)<\/div>/i, balancesReplaces, parseBalance);
@@ -1635,9 +1644,9 @@ function fetchPostKz(baseurl, html) {
 	if (isAvailableBonuses()) {
 		AnyBalance.trace('Запросим бонусы...');
 		// Вот геморойщики!!
-		xhtml = getBlockKz(baseurl + 'c/post/index.html', html, 'loadingBonusesAndServicesDetails');
+		xhtml = getBlockKz(baseurl + 'c/post/index.xhtml', html, 'loadingBonusesAndServicesDetails');
 		// Теперь только бонусы станут видны
-		xhtml = getBlockKz(baseurl + 'c/post/index.html', [xhtml || html, html], 'bonusesloaderDetails');
+		xhtml = getBlockKz(baseurl + 'c/post/index.xhtml', [xhtml || html, html], 'bonusesloaderDetails');
 		// Надо проверить, получили ли мы бонусы
 		var bonuses = getFoundBonuses(xhtml);
 		if(bonuses.length === 0) {
@@ -1645,15 +1654,15 @@ function fetchPostKz(baseurl, html) {
 		}
 		
 		// // Корпоративная постоплата
-		// xhtml += getBonusesBlockKz(baseurl + 'c/post/index.html', html, 'subscriberDetailsForm');
+		// xhtml += getBonusesBlock(baseurl + 'c/post/index.html', html, 'subscriberDetailsForm');
 		// // Еще какая-то херь(
-		// xhtml += getBonusesBlockKz(baseurl + 'c/post/index.html', html, 'bonuses');
+		// xhtml += getBonusesBlock(baseurl + 'c/post/index.html', html, 'bonuses');
 		
 		getBonuses(html + xhtml, result);
 	}
 	
     if (AnyBalance.isAvailable('overpay', 'prebal', 'currency')) {
-    	xhtml = getBlockKz(baseurl + 'c/post/index.html', html, 'callDetailsDetails');
+    	xhtml = getBlockKz(baseurl + 'c/post/index.xhtml', html, 'callDetailsDetails');
 		
     	getParam(xhtml, result, 'overpay', /<h4[^>]*>Переплата[\s\S]*?<span[^>]+class="price[^>]*>([\s\S]*?)<\/span>/i, balancesReplaces, parseBalance);
     	getParam(xhtml, result, 'overpay', /<h4[^>]*>Осталось к оплате[\s\S]*?<span[^>]+class="price[^>]*>([\s\S]*?)<\/span>/i, balancesReplaces, parseBalanceNegative);
@@ -1678,7 +1687,7 @@ function fetchPostKz(baseurl, html) {
 		// }
 	// }
 	if (!multi && AnyBalance.isAvailable('balance', 'currency')) {
-		xhtml = refreshBalanceKz(baseurl + 'c/post/index.html', html);
+		xhtml = refreshBalance(baseurl + 'c/post/index.xhtml', html);
 		
 		getParam(xhtml + html, result, 'balance', [/class="price[^>]*>((?:[\s\S]*?span[^>]*>){3})/i, /Расходы по номеру за текущий период с НДС[\s\S]*?<div[^>]+class="balan?ce-summ"[^>]*>([\s\S]*?)<\/div>/i,], balancesReplaces, parseBalance);
 		getParam(xhtml + html, result, ['currency', 'balance'], [/class="price[^>]*>((?:[\s\S]*?span[^>]*>){3})/i, /Расходы по номеру за текущий период с НДС[\s\S]*?<div[^>]+class="balan?ce-summ"[^>]*>([\s\S]*?)<\/div>/i,], balancesReplaces, myParseCurrency);
@@ -1686,7 +1695,7 @@ function fetchPostKz(baseurl, html) {
 	
 	if(prefs.__debug){
 		//Проверяем, не создалась ли лишняя заявка в процессе просмотра личного кабинета
-        html = AnyBalance.requestGet(baseurl + 'c/operations/operationsHistory.html');
+        html = AnyBalance.requestGet(baseurl + 'c/operations/operationsHistory.xhtml');
         var last_time = getParam(html, null, null, /<span[^>]+class="date"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
         AnyBalance.trace('Последняя заявка: ' + last_time);
     }
@@ -1696,8 +1705,8 @@ function fetchPostKz(baseurl, html) {
 		var num = getParam(result.phone, null, null, null, [/\+\s*7([\s\d\-]{10,})/i, '$1', /\D/g, '']);
 		
 		AnyBalance.trace('Пробуем получить данные по трафику из детализации по номеру: ' + num);
-		html = AnyBalance.requestGet(baseurl + 'c/post/fininfo/report/detailUnbilledCalls.html?ctn=' + num, g_headers);
-		xhtml = getBlockKz(baseurl + 'c/post/fininfo/report/detailUnbilledCalls.html', html, 'retrieveSubCurPeriodDataDetails');
+		html = AnyBalance.requestGet(baseurl + 'c/post/fininfo/report/detailUnbilledCalls.xhtml?ctn=' + num, g_headers);
+		xhtml = getBlockKz(baseurl + 'c/post/fininfo/report/detailUnbilledCalls.xhtml', html, 'retrieveSubCurPeriodDataDetails');
 		
 		getParam(xhtml, result, 'traffic_used', /Итоговый объем данных \(MB\):([^>]*>){3}/i, [replaceTagsAndSpaces, /([\s\S]*?)/, '$1 мб'], parseTraffic);
 	}
@@ -1706,7 +1715,7 @@ function fetchPostKz(baseurl, html) {
 	if(isAvailable(['total_balance'])) {
 		AnyBalance.trace('Пробуем получить данные по сумме всех номеров...');
 		
-		html = AnyBalance.requestGet(baseurl + 'c/post/fininfo/index.html', g_headers);
+		html = AnyBalance.requestGet(baseurl + 'c/post/fininfo/index.xhtml', g_headers);
 		
 		getParam(html, result, 'total_balance', /Сумма по всем номерам(?:[^>]*>){59}([\s\d.,]+)/i, null, parseBalance);
 	}
@@ -1752,12 +1761,12 @@ function fetchPreKz(baseurl, html) {
 			});
 			params[source] = source;
 
-			var xhtml = AnyBalance.requestPost(baseurl + 'c/pre/index.html', params, addHeaders({Referer: baseurl + 'c/pre/index.html'}));
+			var xhtml = AnyBalance.requestPost(baseurl + 'c/pre/index.xhtml', params, addHeaders({Referer: baseurl + 'c/pre/index.xhtml'}));
 			var url = getParam(xhtml, null, null, /<redirect[^>]+url="\/([^"]*)/i, null, html_entity_decode);
 			if(!url)
 				AnyBalance.trace('Не удалось переключить номер: ' + xhtml);
 			else
-				html = AnyBalance.requestGet(baseurl + url, addHeaders({Referer: baseurl + 'c/pre/index.html'}));
+				html = AnyBalance.requestGet(baseurl + url, addHeaders({Referer: baseurl + 'c/pre/index.xhtml'}));
 		}
 	}
 	getParam(html, result, 'phone', /<h1[^>]+class="phone-number"[^>]*>([\s\S]*?)<\/h1>/i, replaceTagsAndSpaces, html_entity_decode);
@@ -1765,7 +1774,7 @@ function fetchPreKz(baseurl, html) {
 
 	var xhtml;
 	if(prefs.country == 'kz' && !result.__tariff) {
-		xhtml = getBlockKz(baseurl + 'c/pre/index.html', html, 'currentTariffLoaderDetails');
+		xhtml = getBlockKz(baseurl + 'c/pre/index.xhtml', html, 'currentTariffLoaderDetails');
 		getParam(xhtml, result, '__tariff', [/<div[^>]+:tariffInfo[^>]*class="current"[^>]*>(?:[\s\S](?!<\/div>))*?<h2[^>]*>([\s\S]*?)<\/h2>/i, /<h2>(?:[\s\S](?!<\/h2>))*?Текущий тариф[^>]*>([\s\S]*?)\s*<\/h2>/i], replaceTagsAndSpaces, html_entity_decode);
 	}
 	
@@ -1783,12 +1792,13 @@ function fetchPreKz(baseurl, html) {
 		if(!isset(result.balance) || result.balance == null) {
 			// Теперь запросим блок homeBalance
 			//xhtml = getBlockKz(baseurl + 'c/pre/index.html', html, 'loadingBalanceBlock');
-			xhtml = refreshBalanceKz(baseurl + 'c/pre/index.html', html);
+
+			xhtml = refreshBalance(baseurl + 'c/pre/index.xhtml', html);
 			/*var tries = 0; //Почему-то не работает. Сколько раз ни пробовал, если первый раз баланс недоступен, то и остальные оказывается недоступен...
 			while(/balance-not-found/i.test(xhtml) && tries < 20){
 				AnyBalance.trace('Баланс временно недоступен, пробуем обновить: ' + (++tries));
 				AnyBalance.sleep(2000);
-				xhtml = refreshBalanceKz(baseurl + 'c/pre/index.html', html, xhtml) || xhtml;
+				xhtml = refreshBalance(baseurl + 'c/pre/index.html', html, xhtml) || xhtml;
 			} */
 			// И получим баланс из него
 			getParam(xhtml, result, 'balance', balanceRegExp, replaceTagsAndSpaces, parseBalance);
@@ -1796,7 +1806,7 @@ function fetchPreKz(baseurl, html) {
 		}
 	}
 	if (isAvailableBonuses()) {
-		xhtml = getBonusesBlockKz(baseurl + 'c/pre/index.html', html, 'bonusesForm');
+		xhtml = getBonusesBlock(baseurl + 'c/pre/index.xhtml', html, 'bonusesForm');
 		AnyBalance.trace(xhtml);
 		// Затем надо пнуть систему, чтобы точно получить все бонусы
 		//xhtml = getBlockKz(baseurl + 'c/pre/index.html', html, 'refreshButton');
@@ -1805,31 +1815,33 @@ function fetchPreKz(baseurl, html) {
 	if (AnyBalance.isAvailable('fio')) {
 		AnyBalance.trace('Переходим в настройки для получения ФИО.');
 		var href = getParam(html, null, null, /[^"]*settings.html/i);
-		if(!/http/i.test(href))
-			href = baseurl.replace(/\/$/, '') + href;
-		
-		html = AnyBalance.requestGet(href, g_headers);
-		
-		getParam(html, result, 'fio', /personal_info(?:[^>]*>){5}[^>]*class="value"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, capitalFirstLetters);
-		// А у некоторых ФИО не введен, поэтому и беда
-		if(/\d{5,}/i.test(result.fio) || /^\s*$/i.test(result.fio)) {
-			result.fio = undefined;
-			AnyBalance.trace('ФИО еще не настроено в вашей анкете. Зайдите через браузер и перейдите на вкладку Настройки, в поле Имя и фамилия введите ваше ФИО.');
-		}
-		// AnyBalance.trace('Переходим в мобильную версию для получения ФИО.');
-		// html = AnyBalance.requestGet(baseurl + 'm/pre/index.html', g_headers);
-		// AnyBalance.trace(html);
-		
-		// if(/Вход в личный кабинет/i.test(html)) {
-			// AnyBalance.trace('Перейти в мобильную версию не удалось, попробуем зайти с логином и паролем...');
+		if(href) {
+			if(!/http/i.test(href))
+				href = baseurl.replace(/\/$/, '') + href;
 			
-			// html = AnyBalance.requestGet(baseurl + 'ext/mAuthorization.html?ret_url=https%3A%2F%2Fmy.beeline.ru%2FmLogin.html&login=' + encodeURIComponent(prefs.login) + '&password=' + encodeURIComponent(prefs.password), g_headers);
+			html = AnyBalance.requestGet(href, g_headers);
+			
+			getParam(html, result, 'fio', /personal_info(?:[^>]*>){5}[^>]*class="value"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, capitalFirstLetters);
+			// А у некоторых ФИО не введен, поэтому и беда
+			if(/\d{5,}/i.test(result.fio) || /^\s*$/i.test(result.fio)) {
+				result.fio = undefined;
+				AnyBalance.trace('ФИО еще не настроено в вашей анкете. Зайдите через браузер и перейдите на вкладку Настройки, в поле Имя и фамилия введите ваше ФИО.');
+			}
+			// AnyBalance.trace('Переходим в мобильную версию для получения ФИО.');
 			// html = AnyBalance.requestGet(baseurl + 'm/pre/index.html', g_headers);
-		// }
-		// getParam(html, result, 'fio', /<div[^>]+class="abonent-name"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, capitalFirstLetters);
+			// AnyBalance.trace(html);
+			
+			// if(/Вход в личный кабинет/i.test(html)) {
+				// AnyBalance.trace('Перейти в мобильную версию не удалось, попробуем зайти с логином и паролем...');
+				
+				// html = AnyBalance.requestGet(baseurl + 'ext/mAuthorization.html?ret_url=https%3A%2F%2Fmy.beeline.ru%2FmLogin.html&login=' + encodeURIComponent(prefs.login) + '&password=' + encodeURIComponent(prefs.password), g_headers);
+				// html = AnyBalance.requestGet(baseurl + 'm/pre/index.html', g_headers);
+			// }
+			// getParam(html, result, 'fio', /<div[^>]+class="abonent-name"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, capitalFirstLetters);
+		}
 	}
 	
-    	setCountersToNull(result);
+	setCountersToNull(result);
 	AnyBalance.setResult(result);
 }
 
@@ -1891,7 +1903,7 @@ function getBlockKz(url, html, name, exact, onlyReturnParams) {
 		return params;
 	}
 }
-
+/*
 function refreshBalanceKz(url, html, htmlBalance) {
 	//var data = getParam(htmlBalance, null, null, /PrimeFaces\.\w+\s*\(\s*\{[^}]*update:\s*'[^']*headerBalance/);
 	var data = getParam(html, null, null, /PrimeFaces\.\w+\s*[^}]*(?:header|home)Balance/i);
@@ -1932,8 +1944,8 @@ function refreshBalanceKz(url, html, htmlBalance) {
 		return '';
 	}
 	return data;
-}
-
+}*/
+/*
 function getBonusesBlockKz(url, html, name, exact, onlyReturnParams) {
 	var formhtml = html;
 	if (isArray(html)) { //Если массив, то разный хтмл для поиска блока и для формы
@@ -1996,7 +2008,7 @@ function getBonusesBlockKz(url, html, name, exact, onlyReturnParams) {
 	} else {
 		return params;
 	}
-}
+}*/
 
 function getTempPasswordSMS(baseurl, html){
 	var prefs = AnyBalance.getPreferences();

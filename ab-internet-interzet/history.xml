@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="6" date="2015-06-19">
+	- InterZet и Дом.ru объединились, поэтому для получения информации о балансе InterZet используйте провайдер Дом.ру (Эр-телеком).
+	</change>
 	<change version="5" date="2015-04-01">
 	- Улучшена обработка ошибок.
 	</change>

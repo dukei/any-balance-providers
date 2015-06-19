@@ -821,7 +821,7 @@ function setCountersToNull(result){
     Например, 
     	getElement(html, /<div[^>]+id="somediv"[^>]*>/i)
 */
-function getElement(html, re){
+function getElement(html, re, replaces, parseFunc){
 	var elem = getParam(re.toString(), null, null, /<(\w+)/);
 	var amatch = re.exec(html);
 	if(!amatch)
@@ -852,7 +852,12 @@ function getElement(html, re){
 
 	re.lastIndex = endIndex;
 
-	return html.substring(startIndex, endIndex);
+	var str = html.substring(startIndex, endIndex);
+	if(replaces)
+		str = replaceAll(str, replaces);
+	if(parseFunc)
+		str = parseFunc(str);
+	return str;
 }
 
 /**
@@ -862,10 +867,10 @@ function getElement(html, re){
     Например, 
     	getElements(html, /<div[^>]+id="somediv"[^>]*>/ig)
 */
-function getElements(html, re){
+function getElements(html, re, replaces, parseFunc){
 	var results = [];
 	do{
-		var res = getElement(html, re);
+		var res = getElement(html, re, replaces, parseFunc);
 		if(res)
 			results.push(res);
 		if(!re.global)

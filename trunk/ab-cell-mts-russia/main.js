@@ -32,6 +32,14 @@ var regionsOrdinary = {
 var g_baseurl = 'https://lk.ssl.mts.ru';
 var g_baseurlLogin = 'https://login.mts.ru';
 
+var g_headers = {
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+    'Accept-Language': 'ru,en;q=0.8',
+    'Cache-Control': 'max-age=0',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.124 Safari/537.36',
+    'If-Modified-Since': null, //Иначе МТС глючит с кешированием...
+};
+
 var replaceNumber = [replaceTagsAndSpaces, /\D/g, '', /.*(\d\d\d)(\d\d\d)(\d\d)(\d\d)$/, '+7 $1 $2-$3-$4'];
 
 function getViewState(html) {
@@ -216,14 +224,6 @@ function mainMobile(allowRetry) {
         throw e;
     }
 }
-
-var g_headers = {
-    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-    'Accept-Language': 'ru,en;q=0.8',
-    'Cache-Control': 'max-age=0',
-    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.115 Safari/537.36',
-    'If-Modified-Since': null, //Иначе МТС глючит с кешированием...
-};
 
 function isInOrdinary(html) {
     return /<div[^>]+class="main-menu"/i.test(html);
@@ -599,7 +599,11 @@ function isAnotherNumber(){
 }
 
 function checkLoginState(html, loginUrl) {
+    var error = sumParam(html, null, null, /var\s+(?:passwordErr|loginErr)\s*=\s*'([^']*)/g, replaceSlashes, null, aggregate_join);
+    if(error)
+    	throw new AnyBalance.Error(error, null, /Неверный пароль/i.test(error));
     var img = getParam(html, null, null, /<img[^>]+id="kaptchaImage"[^>]*src="data:image\/\w+;base64,([^"]+)/i, null, html_entity_decode);
+
 	if(img) {
 	    AnyBalance.trace('МТС решило показать капчу :( Жаль');
 	    var code = AnyBalance.retrieveCode('МТС требует ввести капчу для входа в личный кабинет, чтобы подтвердить, что вы не робот. Введите символы, которые вы видите на картинке.', img);
@@ -610,9 +614,9 @@ function checkLoginState(html, loginUrl) {
             return value;
         });
         html = AnyBalance.requestPost(loginUrl, params, addHeaders({Referer: loginUrl}));
-        var error = getParam(html, null, null, /var\s+passwordErr\s*=\s*'([^']*)/, replaceSlashes);
+        var error = sumParam(html, null, null, /var\s+(?:passwordErr|loginErr)\s*=\s*'([^']*)/g, replaceSlashes, null, aggregate_join);
         if(error)
-        	throw new AnyBalance.Error(error);
+        	throw new AnyBalance.Error(error, null, /Неверный пароль/i.test(error));
     }
 
 	if(/checkAuthStatus\(\)|дождитесь окончания процесса авторизации/i.test(html)) {
@@ -634,7 +638,7 @@ function checkLoginState(html, loginUrl) {
 }
 
 function enterLK(options){
-    var loginUrl = g_baseurlLogin + "/amserver/UI/Login?gx_charset=UTF-8&service=lk&goto=" + encodeURIComponent(g_baseurl + '/') + "&auth-status=0";
+    var loginUrl = g_baseurlLogin + "/amserver/UI/Login?service=lk&goto=" + g_baseurl + '/' + "";
     var allowRetry = options.allowRetry;
 
     var html = AnyBalance.requestGet(g_baseurl, g_headers);
@@ -697,15 +701,16 @@ function enterLK(options){
             });
             // AnyBalance.trace("Login params: " + JSON.stringify(params));
             AnyBalance.trace("Логинимся с заданным номером");
-            html = AnyBalance.requestPost(loginUrl, params, addHeaders({Referer: loginUrl}));
+            html = AnyBalance.requestPost(loginUrl, params, addHeaders({Origin: g_baseurlLogin, Referer: loginUrl}));
+			html = checkLoginState(html, loginUrl);
 
             // Бага при авторизации ошибка 502, но если запросить гет еще раз - все ок
             if (AnyBalance.getLastStatusCode() >= 500) {
                 AnyBalance.trace("МТС вернул 500 при попытке логина. Пробуем ещё разок...");
                 html = AnyBalance.requestGet(loginUrl, addHeaders({Referer: loginUrl}));
+				html = checkLoginState(html, loginUrl);
             }
 			
-			html = checkLoginState(html, loginUrl);
             // AnyBalance.trace("Команду логина послали, смотрим, что получилось...");
 
 			if(AnyBalance.getLastStatusCode() >= 500)

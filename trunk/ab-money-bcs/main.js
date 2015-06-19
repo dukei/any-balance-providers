@@ -26,12 +26,12 @@ function main() {
 	
 	var captchaa = '';;
 	if(/Перегрузить картинку/i.test(html)) {
-		if(AnyBalance.getLevel() >= 7){
+		if(AnyBalance.getLevel() >= 7) {
 			AnyBalance.trace('Пытаемся ввести капчу');
 			var captcha = AnyBalance.requestGet(baseurl+ 'bank/web/guest/home?p_p_id=LoginPortlet_WAR_bcsinternetserverportalapp&p_p_lifecycle=2&p_p_state=normal&p_p_mode=view&p_p_resource_id=captcha&p_p_cacheability=cacheLevelPage&force=' + new Date().getTime());
 			captchaa = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
 			AnyBalance.trace('Капча получена: ' + captchaa);
-		}else{
+		} else {
 			throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
 		}
 	}
@@ -90,7 +90,7 @@ function processBrokerAcc(baseurl, prefs, html, result) {
 
 	html = AnyBalance.requestPost(baseurl + 'bank/c/portal/render_portlet?p_l_id='+plid+'&p_p_id=GeneralAgreementListCompactForm_WAR_bcsinternetserverportalapp', {}, addHeaders({Referer: baseurl + 'bank/web/guest/home', 'X-Requested-With':'XMLHttpRequest'}));
 	
-	var acc = getParam(html, null, null, new RegExp('<tr>(?:[^>]*>){1}[^>]*PrimeFaces.ab(?:[^>]*>){3}.*?' + (prefs.cardnum || '') +'от(?:[^>]*>){10}','i'));
+	var acc = getParam(html, null, null, new RegExp('<tr>(?:[^>]*>){1}[^>]*PrimeFaces.ab(?:[^>]*>){3}[^<]+' + (prefs.cardnum || '') +'от(?:[^>]*>){10}','i'));
 	if(!acc) {
 		throw new AnyBalance.Error('Не удалось найти ' + (prefs.cardnum ? 'счет с последними цифрами' + prefs.cardnum: 'ни одного счета!'));
 	}
@@ -100,15 +100,3 @@ function processBrokerAcc(baseurl, prefs, html, result) {
 	getParam(acc, result, 'balance', /<tr>(?:[^>]*>){7}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(acc, result, ['currency', 'balance'], /<tr>(?:[^>]*>){7}([^<]+)/i, replaceTagsAndSpaces, parseCurrency);
 }
-
-
-
-
-
-
-
-
-
-
-
-

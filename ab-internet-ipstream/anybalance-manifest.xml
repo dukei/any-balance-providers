@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id major_version="1" version="1">ab-internet-ipstream</id>
+  <name>Айпистрим.ру</name>
+  <description>
+    Интернет провайдер Айпистрим.ру, Новосибирск
+  </description>
+  <author>M.Kiselev &lt;kiselev.mn@gmail.com&gt;</author>
+  <files>
+    <icon>icon.png</icon> <!-- файл иконки -->
+    <preferences>preferences.xml</preferences> <!-- Файл настроек -->
+    <js>main.js</js> <!-- необходим как минимум один файл с функцией main() -->
+  </files>
+  <counters> <!-- описание счетчиков этого провайдера -->
+    <counter id="balance" name="Баланс счета" suffix=" р" type="numeric"/>
+    <!-- Счетчиков может быть сколько угодно -->
+  </counters>
+  <keywords>
+    <!-- набор слов или фраз, по которым может осуществляться поиск этого провайдера, но которых нет в названии или описании -->
+  </keywords>
+  <type>
+    <!-- некоторый набор ключевых слов для разнесения по каталогам -->
+    internet, tv 
+  </type>
+  <country>
+    <!-- перечисление стран, к которым относится этот провайдер, по ISO_3166-1 -->
+    ru 
+  </country>
+</provider>

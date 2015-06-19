@@ -43,7 +43,9 @@ function main(){
     html = AnyBalance.requestGet(baseurl + 'user/profile/bonus.do', g_headers);
     
     var result = {success: true};
+	
 	getParam(html, result, '__tariff', /smProfile__level[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'cardnum', /<h3>\s*Номер карты\s*<\/h3>\s*<div>\s*([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'balance', /smProfile__total-amount[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'nextlevel', /Совершите покупки еще на([^<]*?)рублей/i, replaceTagsAndSpaces, parseBalance);
 	

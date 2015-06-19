@@ -55,28 +55,24 @@ function main() {
 function fetchCard(html, baseurl, prefs){
     if(prefs.cardnum && !/^\d{4}$/.test(prefs.cardnum))
         throw new AnyBalance.Error("Введите 4 последних цифры номера карты или не вводите ничего, чтобы показать информацию по первой карте");
-
-	var re = new RegExp('(<div\\s*class="account-block"(?:[\\s\\S]*?<div[^>]*>){10}[^>]*>[^<]*' + (prefs.cardnum ? prefs.cardnum : '') + '(?:[\\s\\S]*?</div[^>]*>){6,7})', 'i');
-    var href = getParam(html, null, null, re, replaceTagsAndSpaces, html_entity_decode);
-	if(!href)
+	
+	// <div[^>]*class="card-info"(?:[^>]*>){2}[\d\s*]{10,}5241(?:[^>]*>){20,30}\s*<div[^>]*class="account-amount-info"(?:[^>]*>){10,40}(?:\s*?<\/div>){3}
+	var re = new RegExp('<div[^>]*class="card-info"(?:[^>]*>){2}[\\d\\s*]{10,}' + (prefs.cardnum ? prefs.cardnum : '') + '(?:[^>]*>){20,30}\\s*<div[^>]*class="account-amount-info"(?:[^>]*>){10,40}(?:\\s*?</div>){3}', 'i');
+    var card = getParam(html, null, null, re);
+	if(!card)
 		throw new AnyBalance.Error('Не удаётся найти ' + (prefs.cardnum ? 'карту с последними цифрами ' + prefs.cardnum : 'ни одной карты!'));
 	
+	AnyBalance.trace('Got card div: ' + card);
+	
     var result = {success: true};
-	getParam(html, result, 'accnum', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\//i, replaceTagsAndSpaces);
-	getParam(html, result, 'fio', /(?:[\s\S]*?<td[^>]*>){8}([\s\S]*?)<\//i, replaceTagsAndSpaces);
-    getParam(html, result, 'cardnum', /"card-info"(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces);
-	getParam(html, result, '__tariff', /"card-info"(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces);
-    getParam(html, result, 'balance', /"amount"(?:[^>]*>){2}([\s\S]*?)<\//i, [replaceTagsAndSpaces, /([\s\S]+)-/, '$1.'], parseBalance);
-    getParam(html, result, ['currency', 'balance'], /"amount"(?:[^>]*>){3}([\s\S]*?)<\//i, [replaceTagsAndSpaces, /\./, '']);
+	
+	getParam(card, result, 'fio', /(?:[\s\S]*?<td[^>]*>){8}([\s\S]*?)<\//i, replaceTagsAndSpaces);
+	
+	getParam(card, result, 'accnum', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\//i, replaceTagsAndSpaces);
+    getParam(card, result, 'cardnum', /"card-info"(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces);
+	getParam(card, result, '__tariff', /"card-info"(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces);
+    getParam(card, result, 'balance', /"amount"(?:[^>]*>){2}([\s\S]*?)<\//i, [replaceTagsAndSpaces, /([\s\S]+)-/, '$1.'], parseBalance);
+    getParam(card, result, ['currency', 'balance'], /"amount"(?:[^>]*>){3}([\s\S]*?)<\//i, [replaceTagsAndSpaces, /\./, '']);
     
     AnyBalance.setResult(result);
 }
-
-
-
-
-
-
-
-
-

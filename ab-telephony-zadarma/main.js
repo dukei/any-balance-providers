@@ -22,14 +22,9 @@ function main() {
 	var captcha, captchaSrc, captchaKey;
 	if(AnyBalance.getLevel() >= 7){
 		AnyBalance.trace('Пытаемся ввести капчу');
-		captchaSrc = getParam(html, null, null, /src="\/(captcha\/index.php[^"]+)/i);
-		if(captchaSrc){
-			captcha = AnyBalance.requestGet(baseurl + captchaSrc, g_headers);
-			captchaKey = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
-			AnyBalance.trace('Капча получена: ' + captchaKey);
-		} else {
-			AnyBalance.trace('Капча не нужна.');
-		}
+		captcha = AnyBalance.requestGet(baseurl + 'captcha/index.php?form=login&unq=' + Math.random(), g_headers);
+		captchaKey = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
+		AnyBalance.trace('Капча получена: ' + captchaKey);
 	} else {
 		throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
 	}

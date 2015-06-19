@@ -30,9 +30,9 @@
  		info = AnyBalance.requestGet('https://secure.skype.com/portal/overview');
  	}
  	if (!/skype\.com\/(?:portal\/)?logout/i.test(info)) {
- 		var error = getParam(info, null, null, [/class="messageBody[^>]*>([\s\S]*?)<\/div>/i, /message_error"(?:[^>]*>){3}([^<]*)/i], [/<.*?>/g, '', /^\s*|\s*$/g, '']);
+ 		var error = getElement(info, /<div[^>]+message_error[^>]*>/i, [/<div[^>]+messageIcon[^>]*>[\s\S]*?<\/div>/ig, '', replaceTagsAndSpaces], html_entity_decode);
  		if (error)
-			throw new AnyBalance.Error(error);
+			throw new AnyBalance.Error(error, null, /your password|ваш пароль|введіть пароль/i.test(error)); //Надо бы и другие языки поддержать, конечно, но хотя бы 3
 		AnyBalance.trace(info);
  		throw new AnyBalance.Error("Can`t login in skype account. Maybe site is changed?");
  	}

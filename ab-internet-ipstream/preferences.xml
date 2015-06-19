@@ -3,7 +3,7 @@
     <EditTextPreference 
         key="login"
         title="Логин" 
-        summary="Номер лицевого счета\n" 
+        summary="|Введите номер лицевого счета|{@s}" 
         dialogTitle="Номер лицевого счета" 
         negativeButtonText="Отмена" 
         dialogMessage="Введите номер лицевого счета"
@@ -13,7 +13,7 @@
     <EditTextPreference 
         key="password"
         title="Пароль"
-        summary="Пароль для входа в личный кабинет\n"
+        summary="|Введите пароль для входа в личный кабинет|{@s}" 
         dialogTitle="Пароль"
         negativeButtonText="Отмена"
         dialogMessage="Введите пароль, используемый для входа в личный кабинет"

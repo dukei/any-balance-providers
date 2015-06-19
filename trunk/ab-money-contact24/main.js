@@ -12,7 +12,7 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://www.contact24.com/';
+	var baseurl = 'https://www.c24.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Введите номер телефона!');
@@ -47,9 +47,9 @@ function main() {
 	getParam(html, result, 'balance', /Баланс(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, ['currency', 'balance'], /Баланс(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseCurrency);
     
-   if(prefs.cardnum && !/^\d{4}$/.test(prefs.cardnum))
-    throw new AnyBalance.Error("Введите 4 последних цифры номера карты или не вводите ничего, чтобы показать информацию по первой карте");
-
+	if(prefs.cardnum && !/^\d{4}$/.test(prefs.cardnum))
+		throw new AnyBalance.Error("Введите 4 последних цифры номера карты или не вводите ничего, чтобы показать информацию по первой карте");
+	
     var card_num = getParam(html, null, null, new RegExp('\\*\\*' + (prefs.cardnum || '\\d{4}'), 'i'));
     
 	if(!card_num) {

@@ -1,14 +1,15 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 
-Получает информацию об успехах консультанта Oriflame Украина.
+Получает информацию об успехах консультанта Oriflame Беларусь, Россия, Украина.
 
-Сайт оператора: https://ua-eshop.oriflame.com
-Личный кабинет: http://vip.oriflame.ua 
+Сайт оператора: https://by.oriflame.com
+Личный кабинет: https://by-eshop.oriflame.com/eShop/Login.aspx
 */
 
 var g_baseurl = {
     ua: "https://ua-eshop.oriflame.com/eShop/",
+    by: "https://by-eshop.oriflame.com/eShop/",
     ru: "https://ru-eshop.oriflame.com/eShop/"
 };
 
@@ -50,9 +51,9 @@ function main(){
 
     //AnyBalance.trace(html);
     if(!/eShop\/Logout.aspx/i.test(html)){
-        var error = getParam(html, null, null, /<div[^>]+id="[^"]*pnlErrorPanel"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+        var error = getElement(html, /<div[^>]+id="[^"]*pnlErrorPanel"[^>]*>/i, [/<div[^>]+class="headerText"[^>]*>[\s\S]*?<\/div>/ig, '', replaceTagsAndSpaces], html_entity_decode);
         if(error)
-            throw new AnyBalance.Error(error);
+            throw new AnyBalance.Error(error, null, /Invalid user or password/i.test(error));
         throw new AnyBalance.Error('Не удалось войти в личный кабинет. Проблемы на сайте или сайт изменен.');
     }
 

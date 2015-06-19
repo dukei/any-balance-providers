@@ -24,8 +24,8 @@
         key="country"
         title="Страна" 
         summary="|Выберите страну|{@s}" 
-	entries="Россия|Украина"
-	entryValues="ru|ua"
+	entries="Беларусь|Россия|Украина"
+	entryValues="by|ru|ua"
         defaultValue="ua"
         dialogTitle="Выберите страну">
     </ListPreference>

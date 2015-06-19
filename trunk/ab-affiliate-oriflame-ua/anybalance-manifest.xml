@@ -1,10 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="3">ab-affiliate-oriflame-ua</id>
+	<api flags="no_browser"/>
+  <id version="4">ab-affiliate-oriflame-ua</id>
   <name>Орифлейм</name>
   <description>
     Получает показатели личной активности консультанта Oriflame:
       Украина (https://ua-eshop.oriflame.com), личный кабинет http://vip.oriflame.ua,
+      Беларусь (https://by-eshop.oriflame.com), личный кабинет http://by.oriflame.com/system/UI/LoginPopup,
       Россия (https://ru-eshop.oriflame.com), личный кабинет http://vip.oriflame.ru.
   </description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
@@ -36,6 +38,6 @@
     affiliate
   </type>
   <country>
-    ua, ru
+    ua, by, ru
   </country>
 </provider>

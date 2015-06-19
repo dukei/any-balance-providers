@@ -1,16 +1,18 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="9">ab-game-godville</id>
+	<api flags="no_browser"/>
+	<id version="10">ab-game-godville</id>
 	<name>Godville.net</name>
-	<description>
-		Отображает некоторые параметры игры (здоровье, прана, количество кирпичей, бревен, уровень героя и др.)
-	</description>
+	<description html="true"><![CDATA[
+	<p>Отображает некоторые параметры игры (здоровье, прана, количество кирпичей, бревен, уровень героя и др.)</p>
+	]]></description>
 	<author>Vitaliy Poluphanov &lt;hetleven@yandex.ua&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
 		<js>main.js</js>
-		<js>api:jquery.min.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
@@ -29,10 +31,6 @@
 		<counter id="wood" name="Бревна, шт" suffix=" шт" type="numeric"/>
 		<counter id="inventory" name="Инвентарь, шт" suffix=" шт" type="numeric"/>
 	</counters>
-	<keywords>
-		игра, game, godville
-	</keywords>
-	<type>
-		game
-	</type>
+	<keywords>игра, game, godville</keywords>
+	<type>game</type>
 </provider>
